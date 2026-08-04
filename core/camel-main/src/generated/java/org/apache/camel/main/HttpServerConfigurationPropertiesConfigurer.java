@@ -37,6 +37,11 @@ public class HttpServerConfigurationPropertiesConfigurer extends org.apache.came
         map.put("JwtKeystorePath", java.lang.String.class);
         map.put("JwtKeystoreType", java.lang.String.class);
         map.put("MaxBodySize", java.lang.Long.class);
+        map.put("McpEnabled", boolean.class);
+        map.put("McpPath", java.lang.String.class);
+        map.put("McpServerName", java.lang.String.class);
+        map.put("McpTags", java.lang.String.class);
+        map.put("McpToolTimeout", long.class);
         map.put("Path", java.lang.String.class);
         map.put("Port", int.class);
         map.put("StaticContextPath", java.lang.String.class);
@@ -78,6 +83,16 @@ public class HttpServerConfigurationPropertiesConfigurer extends org.apache.came
         case "jwtKeystoreType": target.setJwtKeystoreType(property(camelContext, java.lang.String.class, value)); return true;
         case "maxbodysize":
         case "maxBodySize": target.setMaxBodySize(property(camelContext, java.lang.Long.class, value)); return true;
+        case "mcpenabled":
+        case "mcpEnabled": target.setMcpEnabled(property(camelContext, boolean.class, value)); return true;
+        case "mcppath":
+        case "mcpPath": target.setMcpPath(property(camelContext, java.lang.String.class, value)); return true;
+        case "mcpservername":
+        case "mcpServerName": target.setMcpServerName(property(camelContext, java.lang.String.class, value)); return true;
+        case "mcptags":
+        case "mcpTags": target.setMcpTags(property(camelContext, java.lang.String.class, value)); return true;
+        case "mcptooltimeout":
+        case "mcpToolTimeout": target.setMcpToolTimeout(property(camelContext, long.class, value)); return true;
         case "path": target.setPath(property(camelContext, java.lang.String.class, value)); return true;
         case "port": target.setPort(property(camelContext, int.class, value)); return true;
         case "staticcontextpath":
@@ -128,6 +143,16 @@ public class HttpServerConfigurationPropertiesConfigurer extends org.apache.came
         case "jwtKeystoreType": return java.lang.String.class;
         case "maxbodysize":
         case "maxBodySize": return java.lang.Long.class;
+        case "mcpenabled":
+        case "mcpEnabled": return boolean.class;
+        case "mcppath":
+        case "mcpPath": return java.lang.String.class;
+        case "mcpservername":
+        case "mcpServerName": return java.lang.String.class;
+        case "mcptags":
+        case "mcpTags": return java.lang.String.class;
+        case "mcptooltimeout":
+        case "mcpToolTimeout": return long.class;
         case "path": return java.lang.String.class;
         case "port": return int.class;
         case "staticcontextpath":
@@ -174,6 +199,16 @@ public class HttpServerConfigurationPropertiesConfigurer extends org.apache.came
         case "jwtKeystoreType": return target.getJwtKeystoreType();
         case "maxbodysize":
         case "maxBodySize": return target.getMaxBodySize();
+        case "mcpenabled":
+        case "mcpEnabled": return target.isMcpEnabled();
+        case "mcppath":
+        case "mcpPath": return target.getMcpPath();
+        case "mcpservername":
+        case "mcpServerName": return target.getMcpServerName();
+        case "mcptags":
+        case "mcpTags": return target.getMcpTags();
+        case "mcptooltimeout":
+        case "mcpToolTimeout": return target.getMcpToolTimeout();
         case "path": return target.getPath();
         case "port": return target.getPort();
         case "staticcontextpath":

@@ -55,6 +55,7 @@ import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+@Deprecated(since = "4.22.0")
 public class LangChain4jToolsProducer extends DefaultProducer {
     private static final Logger LOG = LoggerFactory.getLogger(LangChain4jToolsProducer.class);
 

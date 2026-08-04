@@ -67,7 +67,7 @@ class SettingsPopupRenderTest {
                 new TabRegistry.TabEntry("🩺", "Health", "health", "7", 6, -1)));
         popup.open();
 
-        Rect area = new Rect(0, 0, 80, 20);
+        Rect area = new Rect(0, 0, 80, 25);
         Buffer buffer = Buffer.empty(area);
         Frame frame = Frame.forTesting(buffer);
         popup.render(frame, area);

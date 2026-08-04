@@ -48,11 +48,18 @@ class SourceViewerEditTest {
 
     private SourceViewer viewer;
     private Path sourceFile;
+    private final AtomicReference<String> lastNotification = new AtomicReference<>();
+    private final AtomicReference<Boolean> lastNotificationError = new AtomicReference<>();
 
     @BeforeEach
     void setUp() throws Exception {
         Theme.resetForTesting();
         viewer = new SourceViewer();
+        viewer.setValidateOnSave(false);
+        viewer.setNotificationCallback((msg, error) -> {
+            lastNotification.set(msg);
+            lastNotificationError.set(error);
+        });
         sourceFile = tempDir.resolve("route.camel.yaml");
         Files.writeString(sourceFile, """
                 - route:
@@ -374,6 +381,7 @@ class SourceViewerEditTest {
         AtomicReference<List<IntegrationInfo>> data = new AtomicReference<>(List.of(info));
         MonitorContext ctx = new MonitorContext(data, new AtomicReference<>(List.of()));
         ctx.selectedPid = "1234";
+        ctx.validateOnSave = false;
 
         SourceTab tab = new SourceTab(ctx);
         tab.onTabSelected();
@@ -398,21 +406,20 @@ class SourceViewerEditTest {
     }
 
     @Test
-    void escDismissClearsSaveMessageBeforeReopen() {
+    void saveNotifiesViaCallback() {
         viewer.loadFile(sourceFile);
         viewer.enterEditMode();
         viewer.handleKeyEvent(KeyEvent.ofChar('x', KeyModifiers.NONE));
         viewer.handleKeyEvent(KeyEvent.ofKey(KeyCode.F5, KeyModifiers.NONE));
 
-        List<Span> spans = new ArrayList<>();
-        viewer.renderFooter(spans);
-        assertThat(spansToString(spans)).contains("Saved");
+        assertThat(lastNotification.get()).contains("Saved");
+        assertThat(lastNotificationError.get()).isFalse();
 
         viewer.handleKeyEvent(KeyEvent.ofKey(KeyCode.ESCAPE, KeyModifiers.NONE));
         assertThat(viewer.isVisible()).isFalse();
 
+        List<Span> spans = new ArrayList<>();
         viewer.loadFile(sourceFile);
-        spans.clear();
         viewer.renderFooter(spans);
         assertThat(spansToString(spans)).doesNotContain("Saved");
     }

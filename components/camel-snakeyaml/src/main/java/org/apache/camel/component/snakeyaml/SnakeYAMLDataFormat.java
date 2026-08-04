@@ -332,7 +332,9 @@ public final class SnakeYAMLDataFormat extends ServiceSupport implements DataFor
     final class TrustedTagInspector implements TagInspector {
         @Override
         public boolean isGlobalTagAllowed(Tag tag) {
-            return true;
+            // consult the same typeFilters allow-list as getClassForName, so the SnakeYAML 2.x TagInspector
+            // layer actually enforces the configured filters instead of allowing every global tag (CAMEL-24294)
+            return allowTypeFilter(tag.getClassName());
         }
     }
 }

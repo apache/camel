@@ -27,6 +27,7 @@ import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.InvalidPayloadException;
 import org.apache.camel.Message;
+import org.apache.camel.component.aws.common.AwsExceptionUtil;
 import org.apache.camel.health.HealthCheck;
 import org.apache.camel.health.HealthCheckHelper;
 import org.apache.camel.health.WritableHealthCheckRepository;
@@ -239,7 +240,7 @@ public class Lambda2Producer extends DefaultProducer {
             result = lambdaClient
                     .getFunction(request);
         } catch (AwsServiceException ase) {
-            LOG.trace("getFunction command returned the error code {}", ase.awsErrorDetails().errorCode());
+            LOG.trace("getFunction command returned the error code {}", AwsExceptionUtil.errorCode(ase));
             throw ase;
         }
         Message message = getMessageForResponse(exchange);
@@ -260,7 +261,7 @@ public class Lambda2Producer extends DefaultProducer {
             result = lambdaClient
                     .deleteFunction(request);
         } catch (AwsServiceException ase) {
-            LOG.trace("deleteFunction command returned the error code {}", ase.awsErrorDetails().errorCode());
+            LOG.trace("deleteFunction command returned the error code {}", AwsExceptionUtil.errorCode(ase));
             throw ase;
         }
         Message message = getMessageForResponse(exchange);
@@ -287,7 +288,7 @@ public class Lambda2Producer extends DefaultProducer {
         try {
             result = lambdaClient.listFunctions(request);
         } catch (AwsServiceException ase) {
-            LOG.trace("listFunctions command returned the error code {}", ase.awsErrorDetails().errorCode());
+            LOG.trace("listFunctions command returned the error code {}", AwsExceptionUtil.errorCode(ase));
             throw ase;
         }
         Message message = getMessageForResponse(exchange);
@@ -309,7 +310,7 @@ public class Lambda2Producer extends DefaultProducer {
         try {
             result = lambdaClient.invoke(request);
         } catch (AwsServiceException ase) {
-            LOG.trace("invokeFunction command returned the error code {}", ase.awsErrorDetails().errorCode());
+            LOG.trace("invokeFunction command returned the error code {}", AwsExceptionUtil.errorCode(ase));
             throw ase;
         }
         Message message = getMessageForResponse(exchange);
@@ -448,7 +449,7 @@ public class Lambda2Producer extends DefaultProducer {
         try {
             result = lambdaClient.createFunction(request);
         } catch (AwsServiceException ase) {
-            LOG.trace("createFunction command returned the error code {}", ase.awsErrorDetails().errorCode());
+            LOG.trace("createFunction command returned the error code {}", AwsExceptionUtil.errorCode(ase));
             throw ase;
         }
 
@@ -483,7 +484,7 @@ public class Lambda2Producer extends DefaultProducer {
             result = lambdaClient.updateFunctionCode(request);
 
         } catch (AwsServiceException ase) {
-            LOG.trace("updateFunction command returned the error code {}", ase.awsErrorDetails().errorCode());
+            LOG.trace("updateFunction command returned the error code {}", AwsExceptionUtil.errorCode(ase));
             throw ase;
         }
 
@@ -513,7 +514,7 @@ public class Lambda2Producer extends DefaultProducer {
         try {
             result = lambdaClient.createEventSourceMapping(request);
         } catch (AwsServiceException ase) {
-            LOG.trace("createEventSourceMapping command returned the error code {}", ase.awsErrorDetails().errorCode());
+            LOG.trace("createEventSourceMapping command returned the error code {}", AwsExceptionUtil.errorCode(ase));
             throw ase;
         }
         Message message = getMessageForResponse(exchange);
@@ -538,7 +539,7 @@ public class Lambda2Producer extends DefaultProducer {
         try {
             result = lambdaClient.deleteEventSourceMapping(request);
         } catch (AwsServiceException ase) {
-            LOG.trace("deleteEventSourceMapping command returned the error code {}", ase.awsErrorDetails().errorCode());
+            LOG.trace("deleteEventSourceMapping command returned the error code {}", AwsExceptionUtil.errorCode(ase));
             throw ase;
         }
         Message message = getMessageForResponse(exchange);
@@ -558,7 +559,7 @@ public class Lambda2Producer extends DefaultProducer {
         try {
             result = lambdaClient.listEventSourceMappings(request);
         } catch (AwsServiceException ase) {
-            LOG.trace("listEventSourceMapping command returned the error code {}", ase.awsErrorDetails().errorCode());
+            LOG.trace("listEventSourceMapping command returned the error code {}", AwsExceptionUtil.errorCode(ase));
             throw ase;
         }
         Message message = getMessageForResponse(exchange);
@@ -583,7 +584,7 @@ public class Lambda2Producer extends DefaultProducer {
         try {
             result = lambdaClient.listTags(request);
         } catch (AwsServiceException ase) {
-            LOG.trace("listTags command returned the error code {}", ase.awsErrorDetails().errorCode());
+            LOG.trace("listTags command returned the error code {}", AwsExceptionUtil.errorCode(ase));
             throw ase;
         }
         Message message = getMessageForResponse(exchange);
@@ -615,7 +616,7 @@ public class Lambda2Producer extends DefaultProducer {
         try {
             result = lambdaClient.tagResource(request);
         } catch (AwsServiceException ase) {
-            LOG.trace("listTags command returned the error code {}", ase.awsErrorDetails().errorCode());
+            LOG.trace("listTags command returned the error code {}", AwsExceptionUtil.errorCode(ase));
             throw ase;
         }
         Message message = getMessageForResponse(exchange);
@@ -647,7 +648,7 @@ public class Lambda2Producer extends DefaultProducer {
         try {
             result = lambdaClient.untagResource(request);
         } catch (AwsServiceException ase) {
-            LOG.trace("untagResource command returned the error code {}", ase.awsErrorDetails().errorCode());
+            LOG.trace("untagResource command returned the error code {}", AwsExceptionUtil.errorCode(ase));
             throw ase;
         }
         Message message = getMessageForResponse(exchange);
@@ -675,7 +676,7 @@ public class Lambda2Producer extends DefaultProducer {
         try {
             result = lambdaClient.publishVersion(request);
         } catch (AwsServiceException ase) {
-            LOG.trace("publishVersion command returned the error code {}", ase.awsErrorDetails().errorCode());
+            LOG.trace("publishVersion command returned the error code {}", AwsExceptionUtil.errorCode(ase));
             throw ase;
         }
         Message message = getMessageForResponse(exchange);
@@ -703,7 +704,7 @@ public class Lambda2Producer extends DefaultProducer {
         try {
             result = lambdaClient.listVersionsByFunction(request);
         } catch (AwsServiceException ase) {
-            LOG.trace("listVersions command returned the error code {}", ase.awsErrorDetails().errorCode());
+            LOG.trace("listVersions command returned the error code {}", AwsExceptionUtil.errorCode(ase));
             throw ase;
         }
         Message message = getMessageForResponse(exchange);
@@ -737,7 +738,7 @@ public class Lambda2Producer extends DefaultProducer {
         try {
             result = lambdaClient.createAlias(request);
         } catch (AwsServiceException ase) {
-            LOG.trace("createAlias command returned the error code {}", ase.awsErrorDetails().errorCode());
+            LOG.trace("createAlias command returned the error code {}", AwsExceptionUtil.errorCode(ase));
             throw ase;
         }
         Message message = getMessageForResponse(exchange);
@@ -762,7 +763,7 @@ public class Lambda2Producer extends DefaultProducer {
         try {
             result = lambdaClient.deleteAlias(request);
         } catch (AwsServiceException ase) {
-            LOG.trace("deleteAlias command returned the error code {}", ase.awsErrorDetails().errorCode());
+            LOG.trace("deleteAlias command returned the error code {}", AwsExceptionUtil.errorCode(ase));
             throw ase;
         }
         Message message = getMessageForResponse(exchange);
@@ -787,7 +788,7 @@ public class Lambda2Producer extends DefaultProducer {
         try {
             result = lambdaClient.getAlias(request);
         } catch (AwsServiceException ase) {
-            LOG.trace("getAlias command returned the error code {}", ase.awsErrorDetails().errorCode());
+            LOG.trace("getAlias command returned the error code {}", AwsExceptionUtil.errorCode(ase));
             throw ase;
         }
         Message message = getMessageForResponse(exchange);
@@ -819,7 +820,7 @@ public class Lambda2Producer extends DefaultProducer {
         try {
             result = lambdaClient.listAliases(request);
         } catch (AwsServiceException ase) {
-            LOG.trace("listAliases command returned the error code {}", ase.awsErrorDetails().errorCode());
+            LOG.trace("listAliases command returned the error code {}", AwsExceptionUtil.errorCode(ase));
             throw ase;
         }
         Message message = getMessageForResponse(exchange);
@@ -859,7 +860,7 @@ public class Lambda2Producer extends DefaultProducer {
         try {
             result = lambdaClient.createFunctionUrlConfig(request);
         } catch (AwsServiceException ase) {
-            LOG.trace("createFunctionUrlConfig command returned the error code {}", ase.awsErrorDetails().errorCode());
+            LOG.trace("createFunctionUrlConfig command returned the error code {}", AwsExceptionUtil.errorCode(ase));
             throw ase;
         }
         Message message = getMessageForResponse(exchange);
@@ -887,7 +888,7 @@ public class Lambda2Producer extends DefaultProducer {
         try {
             result = lambdaClient.getFunctionUrlConfig(request);
         } catch (AwsServiceException ase) {
-            LOG.trace("getFunctionUrlConfig command returned the error code {}", ase.awsErrorDetails().errorCode());
+            LOG.trace("getFunctionUrlConfig command returned the error code {}", AwsExceptionUtil.errorCode(ase));
             throw ase;
         }
         Message message = getMessageForResponse(exchange);
@@ -926,7 +927,7 @@ public class Lambda2Producer extends DefaultProducer {
         try {
             result = lambdaClient.updateFunctionUrlConfig(request);
         } catch (AwsServiceException ase) {
-            LOG.trace("updateFunctionUrlConfig command returned the error code {}", ase.awsErrorDetails().errorCode());
+            LOG.trace("updateFunctionUrlConfig command returned the error code {}", AwsExceptionUtil.errorCode(ase));
             throw ase;
         }
         Message message = getMessageForResponse(exchange);
@@ -954,7 +955,7 @@ public class Lambda2Producer extends DefaultProducer {
         try {
             result = lambdaClient.deleteFunctionUrlConfig(request);
         } catch (AwsServiceException ase) {
-            LOG.trace("deleteFunctionUrlConfig command returned the error code {}", ase.awsErrorDetails().errorCode());
+            LOG.trace("deleteFunctionUrlConfig command returned the error code {}", AwsExceptionUtil.errorCode(ase));
             throw ase;
         }
         Message message = getMessageForResponse(exchange);
@@ -984,7 +985,7 @@ public class Lambda2Producer extends DefaultProducer {
         try {
             result = lambdaClient.listFunctionUrlConfigs(request);
         } catch (AwsServiceException ase) {
-            LOG.trace("listFunctionUrlConfigs command returned the error code {}", ase.awsErrorDetails().errorCode());
+            LOG.trace("listFunctionUrlConfigs command returned the error code {}", AwsExceptionUtil.errorCode(ase));
             throw ase;
         }
         Message message = getMessageForResponse(exchange);
@@ -1050,7 +1051,7 @@ public class Lambda2Producer extends DefaultProducer {
         try {
             result = lambdaClient.getFunctionConfiguration(request);
         } catch (AwsServiceException ase) {
-            LOG.trace("getFunctionConfiguration command returned the error code {}", ase.awsErrorDetails().errorCode());
+            LOG.trace("getFunctionConfiguration command returned the error code {}", AwsExceptionUtil.errorCode(ase));
             throw ase;
         }
         Message message = getMessageForResponse(exchange);
@@ -1109,7 +1110,7 @@ public class Lambda2Producer extends DefaultProducer {
         try {
             result = lambdaClient.updateFunctionConfiguration(request);
         } catch (AwsServiceException ase) {
-            LOG.trace("updateFunctionConfiguration command returned the error code {}", ase.awsErrorDetails().errorCode());
+            LOG.trace("updateFunctionConfiguration command returned the error code {}", AwsExceptionUtil.errorCode(ase));
             throw ase;
         }
         Message message = getMessageForResponse(exchange);
@@ -1138,7 +1139,7 @@ public class Lambda2Producer extends DefaultProducer {
         try {
             result = lambdaClient.putFunctionConcurrency(request);
         } catch (AwsServiceException ase) {
-            LOG.trace("putFunctionConcurrency command returned the error code {}", ase.awsErrorDetails().errorCode());
+            LOG.trace("putFunctionConcurrency command returned the error code {}", AwsExceptionUtil.errorCode(ase));
             throw ase;
         }
         Message message = getMessageForResponse(exchange);
@@ -1158,7 +1159,7 @@ public class Lambda2Producer extends DefaultProducer {
         try {
             result = lambdaClient.deleteFunctionConcurrency(request);
         } catch (AwsServiceException ase) {
-            LOG.trace("deleteFunctionConcurrency command returned the error code {}", ase.awsErrorDetails().errorCode());
+            LOG.trace("deleteFunctionConcurrency command returned the error code {}", AwsExceptionUtil.errorCode(ase));
             throw ase;
         }
         Message message = getMessageForResponse(exchange);
@@ -1178,7 +1179,7 @@ public class Lambda2Producer extends DefaultProducer {
         try {
             result = lambdaClient.getFunctionConcurrency(request);
         } catch (AwsServiceException ase) {
-            LOG.trace("getFunctionConcurrency command returned the error code {}", ase.awsErrorDetails().errorCode());
+            LOG.trace("getFunctionConcurrency command returned the error code {}", AwsExceptionUtil.errorCode(ase));
             throw ase;
         }
         Message message = getMessageForResponse(exchange);
@@ -1232,7 +1233,7 @@ public class Lambda2Producer extends DefaultProducer {
         try {
             result = lambdaClient.addPermission(request);
         } catch (AwsServiceException ase) {
-            LOG.trace("addPermission command returned the error code {}", ase.awsErrorDetails().errorCode());
+            LOG.trace("addPermission command returned the error code {}", AwsExceptionUtil.errorCode(ase));
             throw ase;
         }
         Message message = getMessageForResponse(exchange);
@@ -1264,7 +1265,7 @@ public class Lambda2Producer extends DefaultProducer {
         try {
             result = lambdaClient.removePermission(request);
         } catch (AwsServiceException ase) {
-            LOG.trace("removePermission command returned the error code {}", ase.awsErrorDetails().errorCode());
+            LOG.trace("removePermission command returned the error code {}", AwsExceptionUtil.errorCode(ase));
             throw ase;
         }
         Message message = getMessageForResponse(exchange);
@@ -1290,7 +1291,7 @@ public class Lambda2Producer extends DefaultProducer {
         try {
             result = lambdaClient.getPolicy(request);
         } catch (AwsServiceException ase) {
-            LOG.trace("getPolicy command returned the error code {}", ase.awsErrorDetails().errorCode());
+            LOG.trace("getPolicy command returned the error code {}", AwsExceptionUtil.errorCode(ase));
             throw ase;
         }
         Message message = getMessageForResponse(exchange);

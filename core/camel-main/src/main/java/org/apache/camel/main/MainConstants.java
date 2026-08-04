@@ -24,6 +24,7 @@ public final class MainConstants {
     public static final String CLOUD_PROPERTIES_LOCATION = "camel.main.cloud-properties-location";
     public static final String PROPERTY_PLACEHOLDER_LOCATION = "camel.main.property-placeholder-location";
     public static final String PLATFORM_HTTP_SERVER = "platform-http-server";
+    public static final String MCP_SERVER = "mcp-server";
     public static final String PROFILE = "camel.main.profile";
 
     private MainConstants() {

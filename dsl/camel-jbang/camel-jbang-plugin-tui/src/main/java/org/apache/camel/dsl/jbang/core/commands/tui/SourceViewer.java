@@ -27,8 +27,10 @@ import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.function.BiConsumer;
 import java.util.function.IntConsumer;
 
+import com.networknt.schema.Error;
 import dev.tamboui.layout.Constraint;
 import dev.tamboui.layout.Layout;
 import dev.tamboui.layout.Rect;
@@ -43,6 +45,7 @@ import dev.tamboui.tui.event.KeyCode;
 import dev.tamboui.tui.event.KeyEvent;
 import dev.tamboui.tui.event.MouseEvent;
 import dev.tamboui.tui.event.MouseEventKind;
+import dev.tamboui.widgets.Clear;
 import dev.tamboui.widgets.block.Block;
 import dev.tamboui.widgets.block.BorderType;
 import dev.tamboui.widgets.block.Borders;
@@ -124,10 +127,17 @@ class SourceViewer {
     private Path editableFile;
     private boolean editMode;
     private final TextAreaState editState = new TextAreaState();
-    private String saveMessage;
-    private boolean saveError;
     /** Markdown render mode prior to entering edit; restored on cancel. */
     private boolean markdownModeBeforeEdit;
+    private boolean dirty;
+    private BiConsumer<String, Boolean> notificationCallback;
+    private AutocompletePopup.AutocompleteProvider autocompleteProvider;
+    private AutocompletePopup.ValueProvider autocompleteValueProvider;
+    private AutocompletePopup autocompletePopup;
+    private boolean validateOnSave = true;
+    private org.apache.camel.dsl.yaml.validator.YamlValidator yamlValidator;
+    private List<String> validationErrors;
+    private int validationErrorScroll;
 
     private record CachedSource(
             List<String> lines, List<JsonObject> codeData,
@@ -150,6 +160,22 @@ class SourceViewer {
         this.focused = focused;
     }
 
+    void setNotificationCallback(BiConsumer<String, Boolean> callback) {
+        this.notificationCallback = callback;
+    }
+
+    void setAutocompleteProvider(AutocompletePopup.AutocompleteProvider provider) {
+        this.autocompleteProvider = provider;
+    }
+
+    void setAutocompleteValueProvider(AutocompletePopup.ValueProvider provider) {
+        this.autocompleteValueProvider = provider;
+    }
+
+    void setValidateOnSave(boolean validateOnSave) {
+        this.validateOnSave = validateOnSave;
+    }
+
     void hide() {
         exitEditMode();
         visible = false;
@@ -158,8 +184,6 @@ class SourceViewer {
         quickDocEntries = Collections.emptyMap();
         deprecatedLines = Collections.emptySet();
         editableFile = null;
-        saveMessage = null;
-        saveError = false;
     }
 
     void reset() {
@@ -190,9 +214,10 @@ class SourceViewer {
         quickDocEntries = Collections.emptyMap();
         deprecatedLineScanner = null;
         deprecatedLines = Collections.emptySet();
+        autocompleteProvider = null;
+        autocompleteValueProvider = null;
+        autocompletePopup = null;
         editableFile = null;
-        saveMessage = null;
-        saveError = false;
     }
 
     boolean isMarkdownMode() {
@@ -385,8 +410,41 @@ class SourceViewer {
     }
 
     private boolean handleEditKeyEvent(KeyEvent ke) {
+        if (validationErrors != null) {
+            if (ke.isCancel() || ke.isKey(KeyCode.ENTER)) {
+                validationErrors = null;
+            } else if (ke.isUp()) {
+                validationErrorScroll = Math.max(0, validationErrorScroll - 1);
+            } else if (ke.isDown()) {
+                validationErrorScroll++;
+            }
+            return true;
+        }
+        if (autocompletePopup != null) {
+            boolean wasValueMode = autocompletePopup.isValueMode();
+            AutocompletePopup.Result result = autocompletePopup.handleKeyEvent(ke);
+            if (result == AutocompletePopup.Result.CLOSED) {
+                AutocompletePopup.CompletionItem item = autocompletePopup.consumeSelectedItem();
+                autocompletePopup = null;
+                if (item != null) {
+                    insertCompletion(item, wasValueMode);
+                }
+            } else if (result == AutocompletePopup.Result.CURSOR_RIGHT) {
+                editState.moveCursorRight();
+            } else if (result == AutocompletePopup.Result.CURSOR_LEFT) {
+                editState.moveCursorLeft();
+            }
+            if (autocompletePopup != null && !autocompletePopup.hasItems()) {
+                autocompletePopup = null;
+            }
+            return true;
+        }
         if (ke.isCancel()) {
             exitEditMode();
+            return true;
+        }
+        if (ke.isKey(KeyCode.F5) && ke.hasShift()) {
+            saveContinueEdit();
             return true;
         }
         if (ke.isKey(KeyCode.F5)) {
@@ -394,7 +452,14 @@ class SourceViewer {
             return true;
         }
         if (ke.isConfirm()) {
+            int prevRow = editState.cursorRow();
+            String prevLine = editState.getLine(prevRow);
+            int indent = countLeadingSpaces(prevLine);
             editState.insert('\n');
+            if (indent > 0) {
+                editState.insert(" ".repeat(indent));
+            }
+            dirty = true;
             return true;
         }
         if (ke.isUp()) {
@@ -437,14 +502,21 @@ class SourceViewer {
         }
         if (ke.isDeleteBackward()) {
             editState.deleteBackward();
+            dirty = true;
             return true;
         }
         if (ke.isDeleteForward()) {
             editState.deleteForward();
+            dirty = true;
             return true;
         }
-        if (ke.code() == KeyCode.CHAR) {
+        if (ke.isKey(KeyCode.TAB) && autocompleteProvider != null) {
+            openAutocomplete();
+            return true;
+        }
+        if (ke.code() == KeyCode.CHAR && !ke.hasCtrl() && !ke.hasAlt()) {
             editState.insert(ke.character());
+            dirty = true;
             return true;
         }
         return true;
@@ -465,8 +537,8 @@ class SourceViewer {
         markdownMode = false;
         quickDocEnabled = false;
         search.reset();
-        saveMessage = null;
-        saveError = false;
+        dirty = false;
+        validationErrors = null;
         editMode = true;
     }
 
@@ -474,10 +546,820 @@ class SourceViewer {
         boolean wasEditing = editMode;
         editMode = false;
         editState.clear();
+        autocompletePopup = null;
+        validationErrors = null;
         if (wasEditing && isMarkdownFile) {
             markdownMode = markdownModeBeforeEdit;
         }
         markdownModeBeforeEdit = false;
+    }
+
+    private boolean isPropertiesFile() {
+        return editableFile != null
+                && editableFile.getFileName().toString().toLowerCase().endsWith(".properties");
+    }
+
+    private boolean isCamelYamlFile() {
+        if (editableFile == null) {
+            return false;
+        }
+        String name = editableFile.getFileName().toString().toLowerCase();
+        return name.endsWith(".yaml") || name.endsWith(".yml");
+    }
+
+    record YamlEndpointContext(String component, boolean consumer) {
+    }
+
+    private static final java.util.Set<String> CONSUMER_EIPS
+            = java.util.Set.of("from", "pollEnrich", "poll-enrich", "poll", "interceptFrom", "intercept-from");
+    private static final java.util.Set<String> PRODUCER_EIPS
+            = java.util.Set.of("to", "toD", "to-d", "wireTap", "wire-tap", "enrich",
+                    "interceptSendToEndpoint", "intercept-send-to-endpoint");
+
+    YamlEndpointContext findEnclosingComponent(int fromRow) {
+        String cursorLine = editState.getLine(fromRow);
+        int cursorIndent = countLeadingSpaces(cursorLine);
+
+        // blank lines: find the nearest preceding non-blank line for context
+        if (cursorLine.isBlank()) {
+            for (int i = fromRow - 1; i >= 0; i--) {
+                String prev = editState.getLine(i);
+                if (!prev.isBlank()) {
+                    if (prev.trim().startsWith("parameters:")) {
+                        // blank line right after parameters: — cursor is inside the block
+                        cursorIndent = countLeadingSpaces(prev) + 1;
+                        fromRow = i;
+                    } else {
+                        return findEnclosingComponent(i);
+                    }
+                    break;
+                }
+            }
+        }
+
+        int parametersRow = -1;
+        int parametersIndent = -1;
+
+        for (int i = fromRow; i >= 0; i--) {
+            String line = editState.getLine(i);
+            if (line.isBlank()) {
+                continue;
+            }
+            int indent = countLeadingSpaces(line);
+            String trimmed = line.trim();
+
+            if (trimmed.startsWith("parameters:") && indent < cursorIndent) {
+                parametersRow = i;
+                parametersIndent = indent;
+                break;
+            }
+            if (i < fromRow && indent < cursorIndent && !trimmed.startsWith("#")) {
+                break;
+            }
+        }
+
+        if (parametersRow < 0) {
+            return null;
+        }
+
+        String foundScheme = null;
+        for (int i = parametersRow - 1; i >= 0; i--) {
+            String line = editState.getLine(i);
+            if (line.isBlank()) {
+                continue;
+            }
+            int indent = countLeadingSpaces(line);
+            String trimmed = line.trim();
+
+            if (indent == parametersIndent) {
+                if (foundScheme == null && (trimmed.startsWith("uri:") || trimmed.startsWith("- uri:"))) {
+                    foundScheme = extractSchemeFromUriLine(trimmed);
+                }
+            }
+
+            if (indent < parametersIndent) {
+                String eipName = extractEipName(trimmed);
+                if (foundScheme == null) {
+                    foundScheme = extractInlineUri(trimmed);
+                }
+                if (foundScheme != null) {
+                    boolean consumer = eipName != null && CONSUMER_EIPS.contains(eipName);
+                    return new YamlEndpointContext(foundScheme, consumer);
+                }
+                break;
+            }
+        }
+
+        if (foundScheme != null) {
+            return new YamlEndpointContext(foundScheme, false);
+        }
+        return null;
+    }
+
+    java.util.Set<String> collectExistingParameters(int fromRow) {
+        java.util.Set<String> keys = new java.util.LinkedHashSet<>();
+        // find the parameters: row by walking up
+        int parametersRow = -1;
+        int parametersIndent = -1;
+        String cursorLine = editState.getLine(fromRow);
+        int cursorIndent = countLeadingSpaces(cursorLine);
+
+        // blank lines: derive indent from nearest preceding non-blank line
+        if (cursorLine.isBlank()) {
+            for (int i = fromRow - 1; i >= 0; i--) {
+                String prev = editState.getLine(i);
+                if (!prev.isBlank()) {
+                    if (prev.trim().startsWith("parameters:")) {
+                        parametersRow = i;
+                        parametersIndent = countLeadingSpaces(prev);
+                    } else {
+                        cursorIndent = countLeadingSpaces(prev);
+                    }
+                    break;
+                }
+            }
+        }
+
+        if (parametersRow < 0) {
+            for (int i = fromRow; i >= 0; i--) {
+                String line = editState.getLine(i);
+                if (line.isBlank()) {
+                    continue;
+                }
+                String trimmed = line.trim();
+                int indent = countLeadingSpaces(line);
+                if (trimmed.startsWith("parameters:") && indent < cursorIndent) {
+                    parametersRow = i;
+                    parametersIndent = indent;
+                    break;
+                }
+                if (i < fromRow && indent < cursorIndent && !trimmed.startsWith("#")) {
+                    break;
+                }
+            }
+        }
+        if (parametersRow < 0) {
+            return keys;
+        }
+        int childIndent = parametersIndent + 2;
+        for (int i = parametersRow + 1; i < editState.lineCount(); i++) {
+            if (i == fromRow) {
+                continue;
+            }
+            String line = editState.getLine(i);
+            if (line.isBlank()) {
+                continue;
+            }
+            int indent = countLeadingSpaces(line);
+            if (indent < childIndent) {
+                break;
+            }
+            if (indent == childIndent) {
+                String trimmed = line.trim();
+                int colonIdx = trimmed.indexOf(':');
+                if (colonIdx > 0) {
+                    keys.add(trimmed.substring(0, colonIdx).trim());
+                }
+            }
+        }
+        return keys;
+    }
+
+    record YamlUriContext(boolean consumer, String prefix) {
+    }
+
+    YamlUriContext findUriContext(int row) {
+        String lineText = editState.getLine(row);
+        String trimmed = lineText.trim();
+        if (trimmed.startsWith("- ")) {
+            trimmed = trimmed.substring(2).trim();
+        }
+
+        // Check if cursor is on a "uri:" line (possibly with partial value)
+        if (trimmed.startsWith("uri:")) {
+            String value = trimmed.substring(4).trim();
+            if (value.startsWith("\"") || value.startsWith("'")) {
+                value = value.substring(1);
+            }
+            if (value.endsWith("\"") || value.endsWith("'")) {
+                value = value.substring(0, value.length() - 1);
+            }
+            // if value already contains a colon, scheme is already typed
+            if (value.contains(":")) {
+                return null;
+            }
+            // walk up to find the parent EIP
+            int indent = countLeadingSpaces(lineText);
+            for (int i = row - 1; i >= 0; i--) {
+                String prev = editState.getLine(i);
+                if (prev.isBlank()) {
+                    continue;
+                }
+                int prevIndent = countLeadingSpaces(prev);
+                if (prevIndent < indent) {
+                    String eipName = extractEipName(prev.trim());
+                    if (eipName != null) {
+                        boolean consumer = CONSUMER_EIPS.contains(eipName);
+                        return new YamlUriContext(consumer, value);
+                    }
+                    break;
+                }
+            }
+            return null;
+        }
+
+        // Check if cursor is on an inline EIP line: "to: " or "from: kafka" (no colon in value)
+        int colonIdx = trimmed.indexOf(':');
+        if (colonIdx > 0) {
+            String eipName = trimmed.substring(0, colonIdx).trim();
+            if (CONSUMER_EIPS.contains(eipName) || PRODUCER_EIPS.contains(eipName)) {
+                String value = trimmed.substring(colonIdx + 1).trim();
+                if (value.startsWith("\"") || value.startsWith("'")) {
+                    value = value.substring(1);
+                }
+                if (value.endsWith("\"") || value.endsWith("'")) {
+                    value = value.substring(0, value.length() - 1);
+                }
+                if (value.contains(":")) {
+                    return null;
+                }
+                boolean consumer = CONSUMER_EIPS.contains(eipName);
+                return new YamlUriContext(consumer, value);
+            }
+        }
+        return null;
+    }
+
+    record YamlEipContext(String eipName) {
+    }
+
+    private static final java.util.Set<String> STRUCTURAL_KEYS
+            = java.util.Set.of("steps", "uri", "parameters", "from", "route", "routeConfiguration",
+                    "routeTemplate", "templatedRoute", "rest", "beans");
+
+    YamlEipContext findEnclosingEip(int fromRow) {
+        String cursorLine = editState.getLine(fromRow);
+        int cursorIndent = countLeadingSpaces(cursorLine);
+
+        // blank lines: derive indent from context
+        if (cursorLine.isBlank()) {
+            if (cursorIndent == 0) {
+                // truly empty line — look at successor first, then predecessor
+                int succIndent = -1;
+                int lineCount = editState.lineCount();
+                for (int i = fromRow + 1; i < lineCount; i++) {
+                    String next = editState.getLine(i);
+                    if (!next.isBlank()) {
+                        succIndent = countLeadingSpaces(next);
+                        break;
+                    }
+                }
+                if (succIndent > 0) {
+                    cursorIndent = succIndent;
+                } else {
+                    for (int i = fromRow - 1; i >= 0; i--) {
+                        String prev = editState.getLine(i);
+                        if (!prev.isBlank()) {
+                            // treat cursor as sibling of predecessor
+                            cursorIndent = countLeadingSpaces(prev);
+                            break;
+                        }
+                    }
+                }
+            }
+        }
+
+        // if cursor is inside a parameters: block, defer to component completion
+        for (int i = fromRow; i >= 0; i--) {
+            String line = editState.getLine(i);
+            if (line.isBlank()) {
+                continue;
+            }
+            int indent = countLeadingSpaces(line);
+            String trimmed = line.trim();
+            if (trimmed.startsWith("parameters:") && indent < cursorIndent) {
+                return null;
+            }
+            if (i < fromRow && indent < cursorIndent) {
+                break;
+            }
+        }
+
+        // walk up to find the parent EIP
+        for (int i = fromRow; i >= 0; i--) {
+            String line = editState.getLine(i);
+            if (line.isBlank()) {
+                continue;
+            }
+            int indent = countLeadingSpaces(line);
+            if (indent < cursorIndent) {
+                String eipName = extractEipName(line.trim());
+                if (eipName != null && !STRUCTURAL_KEYS.contains(eipName)) {
+                    String camelName = dashToCamelCase(eipName);
+                    return new YamlEipContext(camelName);
+                }
+                // keep walking up if we hit a structural key
+                cursorIndent = indent;
+            }
+        }
+        return null;
+    }
+
+    java.util.Set<String> collectExistingSiblingKeys(int fromRow) {
+        java.util.Set<String> keys = new java.util.LinkedHashSet<>();
+        String cursorLine = editState.getLine(fromRow);
+        int cursorIndent = countLeadingSpaces(cursorLine);
+
+        // for blank lines, derive indent from nearest non-blank sibling
+        if (cursorLine.isBlank()) {
+            for (int i = fromRow - 1; i >= 0; i--) {
+                String prev = editState.getLine(i);
+                if (!prev.isBlank()) {
+                    cursorIndent = countLeadingSpaces(prev);
+                    break;
+                }
+            }
+        }
+
+        // scan upward for siblings at same indent
+        for (int i = fromRow - 1; i >= 0; i--) {
+            String line = editState.getLine(i);
+            if (line.isBlank()) {
+                continue;
+            }
+            int indent = countLeadingSpaces(line);
+            if (indent < cursorIndent) {
+                break;
+            }
+            if (indent == cursorIndent) {
+                String trimmed = line.trim();
+                int colonIdx = trimmed.indexOf(':');
+                if (colonIdx > 0) {
+                    keys.add(trimmed.substring(0, colonIdx).trim());
+                }
+            }
+        }
+        // scan downward for siblings at same indent
+        int lineCount = editState.lineCount();
+        for (int i = fromRow + 1; i < lineCount; i++) {
+            String line = editState.getLine(i);
+            if (line.isBlank()) {
+                continue;
+            }
+            int indent = countLeadingSpaces(line);
+            if (indent < cursorIndent) {
+                break;
+            }
+            if (indent == cursorIndent) {
+                String trimmed = line.trim();
+                int colonIdx = trimmed.indexOf(':');
+                if (colonIdx > 0) {
+                    keys.add(trimmed.substring(0, colonIdx).trim());
+                }
+            }
+        }
+        return keys;
+    }
+
+    static String dashToCamelCase(String text) {
+        if (text == null || !text.contains("-")) {
+            return text;
+        }
+        StringBuilder sb = new StringBuilder(text.length());
+        boolean upper = false;
+        for (int i = 0; i < text.length(); i++) {
+            char c = text.charAt(i);
+            if (c == '-') {
+                upper = true;
+            } else {
+                sb.append(upper ? Character.toUpperCase(c) : c);
+                upper = false;
+            }
+        }
+        return sb.toString();
+    }
+
+    int findScopeLineRow(int cursorRow) {
+        if (cursorRow < 0 || cursorRow >= editState.lineCount()) {
+            return -1;
+        }
+        String cursorLine = editState.getLine(cursorRow);
+        String trimmed = cursorLine.trim();
+        if (trimmed.startsWith("- ")) {
+            trimmed = trimmed.substring(2).trim();
+        }
+
+        // if cursor is on a uri: line, scope is this row
+        if (trimmed.startsWith("uri:")) {
+            return cursorRow;
+        }
+        int colonIdx = trimmed.indexOf(':');
+        if (colonIdx > 0) {
+            String key = trimmed.substring(0, colonIdx).trim();
+            // inline producer/consumer EIP (to:, enrich:) — exclude structural keys like from:
+            if (!STRUCTURAL_KEYS.contains(key)
+                    && (CONSUMER_EIPS.contains(key) || PRODUCER_EIPS.contains(key))) {
+                return cursorRow;
+            }
+            // EIP definition line in a list (e.g., "- split:", "- log:")
+            if (!STRUCTURAL_KEYS.contains(key) && cursorLine.trim().startsWith("- ")) {
+                return cursorRow;
+            }
+        }
+
+        int cursorIndent = countLeadingSpaces(cursorLine);
+
+        // for blank lines, derive indent from context
+        if (cursorLine.isBlank()) {
+            if (cursorIndent == 0) {
+                int lineCount = editState.lineCount();
+                for (int i = cursorRow + 1; i < lineCount; i++) {
+                    String next = editState.getLine(i);
+                    if (!next.isBlank()) {
+                        cursorIndent = countLeadingSpaces(next);
+                        break;
+                    }
+                }
+                if (cursorIndent == 0) {
+                    for (int i = cursorRow - 1; i >= 0; i--) {
+                        String prev = editState.getLine(i);
+                        if (!prev.isBlank()) {
+                            cursorIndent = countLeadingSpaces(prev);
+                            break;
+                        }
+                    }
+                }
+            }
+        }
+
+        // walk up looking for the scope line
+        int parametersRow = -1;
+        int parametersIndent = -1;
+        for (int i = cursorRow; i >= 0; i--) {
+            String line = editState.getLine(i);
+            if (line.isBlank()) {
+                continue;
+            }
+            int indent = countLeadingSpaces(line);
+            String t = line.trim();
+
+            if (t.startsWith("parameters:") && indent < cursorIndent) {
+                parametersRow = i;
+                parametersIndent = indent;
+                break;
+            }
+            if (i < cursorRow && indent < cursorIndent) {
+                String eipName = extractEipName(t);
+                if (eipName != null && !STRUCTURAL_KEYS.contains(eipName)) {
+                    return i;
+                }
+                cursorIndent = indent;
+            }
+        }
+
+        // inside parameters: block — find the uri: line at the same indent
+        if (parametersRow >= 0) {
+            for (int i = parametersRow - 1; i >= 0; i--) {
+                String line = editState.getLine(i);
+                if (line.isBlank()) {
+                    continue;
+                }
+                int indent = countLeadingSpaces(line);
+                String t = line.trim();
+                if (indent == parametersIndent && (t.startsWith("uri:") || t.startsWith("- uri:"))) {
+                    return i;
+                }
+                if (indent < parametersIndent) {
+                    // check for inline uri on the EIP line itself
+                    String eipName = extractEipName(t);
+                    if (eipName != null && (CONSUMER_EIPS.contains(eipName) || PRODUCER_EIPS.contains(eipName))) {
+                        return i;
+                    }
+                    break;
+                }
+            }
+        }
+        return -1;
+    }
+
+    private static int countLeadingSpaces(String line) {
+        int count = 0;
+        for (int i = 0; i < line.length(); i++) {
+            if (line.charAt(i) == ' ') {
+                count++;
+            } else {
+                break;
+            }
+        }
+        return count;
+    }
+
+    private static String extractSchemeFromUriLine(String trimmed) {
+        int colonIdx = trimmed.indexOf(':');
+        if (colonIdx < 0) {
+            return null;
+        }
+        String value = trimmed.substring(colonIdx + 1).trim();
+        if (value.startsWith("\"") || value.startsWith("'")) {
+            value = value.substring(1);
+        }
+        if (value.endsWith("\"") || value.endsWith("'")) {
+            value = value.substring(0, value.length() - 1);
+        }
+        int schemeEnd = value.indexOf(':');
+        if (schemeEnd > 0) {
+            return value.substring(0, schemeEnd);
+        }
+        if (!value.isEmpty()) {
+            return value;
+        }
+        return null;
+    }
+
+    private static String extractEipName(String trimmed) {
+        String line = trimmed;
+        if (line.startsWith("- ")) {
+            line = line.substring(2).trim();
+        }
+        int colonIdx = line.indexOf(':');
+        if (colonIdx > 0) {
+            return line.substring(0, colonIdx).trim();
+        }
+        return null;
+    }
+
+    private static String extractInlineUri(String trimmed) {
+        String line = trimmed;
+        if (line.startsWith("- ")) {
+            line = line.substring(2).trim();
+        }
+        int colonIdx = line.indexOf(':');
+        if (colonIdx <= 0) {
+            return null;
+        }
+        String eipPart = line.substring(0, colonIdx).trim();
+        if (!CONSUMER_EIPS.contains(eipPart) && !PRODUCER_EIPS.contains(eipPart)) {
+            return null;
+        }
+        String uriPart = line.substring(colonIdx + 1).trim();
+        if (uriPart.isEmpty()) {
+            return null;
+        }
+        if (uriPart.startsWith("\"") || uriPart.startsWith("'")) {
+            uriPart = uriPart.substring(1);
+        }
+        if (uriPart.endsWith("\"") || uriPart.endsWith("'")) {
+            uriPart = uriPart.substring(0, uriPart.length() - 1);
+        }
+        int schemeEnd = uriPart.indexOf(':');
+        if (schemeEnd > 0) {
+            return uriPart.substring(0, schemeEnd);
+        }
+        return null;
+    }
+
+    private void openAutocomplete() {
+        if (isCamelYamlFile()) {
+            openYamlAutocomplete();
+        } else {
+            openPropertiesAutocomplete();
+        }
+    }
+
+    private void openPropertiesAutocomplete() {
+        String lineText = editState.getLine(editState.cursorRow());
+        int col = editState.cursorCol();
+        String textBeforeCursor = col <= lineText.length() ? lineText.substring(0, col) : lineText;
+
+        int eq = textBeforeCursor.indexOf('=');
+        if (eq >= 0 && autocompleteValueProvider != null) {
+            // cursor is after '=' — try value completion
+            String key = textBeforeCursor.substring(0, eq).trim();
+            String valuePrefix = textBeforeCursor.substring(eq + 1).trim();
+            List<AutocompletePopup.CompletionItem> values = autocompleteValueProvider.provide(key);
+            if (values != null && !values.isEmpty()) {
+                autocompletePopup = new AutocompletePopup(values, valuePrefix, valuePrefix, true);
+            }
+            return;
+        }
+
+        // key completion
+        String prefix = textBeforeCursor.trim();
+
+        // load all options for the group (up to last dot) so the full list is available
+        int lastDot = prefix.lastIndexOf('.');
+        String groupPrefix = lastDot >= 0 ? prefix.substring(0, lastDot + 1) : prefix;
+
+        // extract full key text for left/right cursor navigation
+        String fullKey = lineText;
+        int eqFull = fullKey.indexOf('=');
+        if (eqFull >= 0) {
+            fullKey = fullKey.substring(0, eqFull);
+        }
+        fullKey = fullKey.trim();
+
+        List<AutocompletePopup.CompletionItem> items = autocompleteProvider.provide(groupPrefix);
+        if (items != null && !items.isEmpty()) {
+            autocompletePopup = new AutocompletePopup(items, prefix, fullKey);
+        }
+    }
+
+    private void openYamlAutocomplete() {
+        int row = editState.cursorRow();
+        String lineText = editState.getLine(row);
+        String trimmed = lineText.trim();
+        if (trimmed.startsWith("- ")) {
+            trimmed = trimmed.substring(2).trim();
+        }
+
+        // try component name completion on uri: lines first
+        YamlUriContext uriCtx = findUriContext(row);
+        if (uriCtx != null && autocompleteProvider != null) {
+            String role = uriCtx.consumer() ? "consumer" : "producer";
+            String context = "yaml-uri:" + role;
+            List<AutocompletePopup.CompletionItem> items = autocompleteProvider.provide(context);
+            if (items != null && !items.isEmpty()) {
+                autocompletePopup = new AutocompletePopup(items, uriCtx.prefix(), uriCtx.prefix(), true);
+                autocompletePopup.setTitlePrefix("Components");
+            }
+            return;
+        }
+
+        YamlEndpointContext ctx = findEnclosingComponent(row);
+        if (ctx != null) {
+            int colonIdx = trimmed.indexOf(':');
+            if (colonIdx > 0) {
+                // value completion — cursor is on a line with key: or key: value
+                String optionName = trimmed.substring(0, colonIdx).trim();
+                String valueText = trimmed.substring(colonIdx + 1).trim();
+                if (valueText.startsWith("\"") || valueText.startsWith("'")) {
+                    valueText = valueText.substring(1);
+                }
+                if (valueText.endsWith("\"") || valueText.endsWith("'")) {
+                    valueText = valueText.substring(0, valueText.length() - 1);
+                }
+                if (autocompleteValueProvider != null) {
+                    String context = "yaml:" + ctx.component() + ":" + optionName;
+                    List<AutocompletePopup.CompletionItem> values = autocompleteValueProvider.provide(context);
+                    if (values != null && !values.isEmpty()) {
+                        autocompletePopup = new AutocompletePopup(values, "", valueText, true);
+                    }
+                }
+            } else {
+                // key completion — cursor is on an empty or partial key line
+                String filter = colonIdx > 0 ? trimmed.substring(0, colonIdx).trim() : trimmed;
+                String role = ctx.consumer() ? "consumer" : "producer";
+                java.util.Set<String> existing = collectExistingParameters(row);
+                String context = "yaml:" + ctx.component() + ":" + role;
+                if (!existing.isEmpty()) {
+                    context += ":" + String.join(",", existing);
+                }
+                List<AutocompletePopup.CompletionItem> items = autocompleteProvider.provide(context);
+                if (items != null && !items.isEmpty()) {
+                    autocompletePopup = new AutocompletePopup(items, filter, filter);
+                    autocompletePopup.setTitlePrefix(ctx.component() + " options");
+                }
+            }
+            return;
+        }
+
+        // EIP option completion — cursor is inside an EIP block (not in parameters:)
+        YamlEipContext eipCtx = findEnclosingEip(row);
+        if (eipCtx != null && autocompleteProvider != null) {
+            int colonIdx = trimmed.indexOf(':');
+            if (colonIdx > 0) {
+                // value completion for EIP option
+                String optionName = trimmed.substring(0, colonIdx).trim();
+                String valueText = trimmed.substring(colonIdx + 1).trim();
+                if (valueText.startsWith("\"") || valueText.startsWith("'")) {
+                    valueText = valueText.substring(1);
+                }
+                if (valueText.endsWith("\"") || valueText.endsWith("'")) {
+                    valueText = valueText.substring(0, valueText.length() - 1);
+                }
+                if (autocompleteValueProvider != null) {
+                    String context = "yaml-eip-value:" + eipCtx.eipName() + ":" + optionName;
+                    List<AutocompletePopup.CompletionItem> values = autocompleteValueProvider.provide(context);
+                    if (values != null && !values.isEmpty()) {
+                        autocompletePopup = new AutocompletePopup(values, "", valueText, true);
+                    }
+                }
+            } else {
+                // key completion for EIP options
+                String filter = trimmed;
+                java.util.Set<String> existing = collectExistingSiblingKeys(row);
+                String context = "yaml-eip:" + eipCtx.eipName();
+                if (!existing.isEmpty()) {
+                    context += ":" + String.join(",", existing);
+                }
+                List<AutocompletePopup.CompletionItem> items = autocompleteProvider.provide(context);
+                if (items != null && !items.isEmpty()) {
+                    autocompletePopup = new AutocompletePopup(items, filter, filter);
+                    autocompletePopup.setTitlePrefix(eipCtx.eipName() + " options");
+                }
+            }
+        }
+    }
+
+    private void insertCompletion(AutocompletePopup.CompletionItem item, boolean valueMode) {
+        dirty = true;
+        String currentLine = editState.getLine(editState.cursorRow());
+        if (isCamelYamlFile()) {
+            insertYamlCompletion(item, valueMode, currentLine);
+        } else {
+            insertPropertiesCompletion(item, valueMode, currentLine);
+        }
+    }
+
+    private void insertPropertiesCompletion(AutocompletePopup.CompletionItem item, boolean valueMode, String currentLine) {
+        if (valueMode) {
+            int eq = currentLine.indexOf('=');
+            if (eq >= 0) {
+                String keyPart = currentLine.substring(0, eq + 1);
+                editState.moveCursorToLineStart();
+                for (int i = 0; i < currentLine.length(); i++) {
+                    editState.deleteForward();
+                }
+                editState.insert(keyPart + item.key());
+            }
+        } else {
+            editState.moveCursorToLineStart();
+            for (int i = 0; i < currentLine.length(); i++) {
+                editState.deleteForward();
+            }
+            boolean isGroup = item.key().endsWith(".");
+            String insertText = isGroup ? item.key() : item.key() + "=";
+            editState.insert(insertText);
+            if (isGroup && autocompleteProvider != null) {
+                openAutocomplete();
+            }
+        }
+    }
+
+    private void insertYamlCompletion(AutocompletePopup.CompletionItem item, boolean valueMode, String currentLine) {
+        int indent = countLeadingSpaces(currentLine);
+        // blank lines: derive indent from context
+        if (currentLine.isBlank() && indent == 0) {
+            int row = editState.cursorRow();
+            // look at next non-blank line first (sibling indent)
+            int lineCount = editState.lineCount();
+            for (int i = row + 1; i < lineCount; i++) {
+                String next = editState.getLine(i);
+                if (!next.isBlank()) {
+                    indent = countLeadingSpaces(next);
+                    break;
+                }
+            }
+            if (indent == 0) {
+                // no successor — derive from predecessor
+                for (int i = row - 1; i >= 0; i--) {
+                    String prev = editState.getLine(i);
+                    if (!prev.isBlank()) {
+                        indent = countLeadingSpaces(prev);
+                        String trimmed = prev.trim();
+                        if (trimmed.endsWith(":")) {
+                            // cursor is inside this block — indent deeper
+                            indent += trimmed.startsWith("- ") ? 4 : 2;
+                        }
+                        break;
+                    }
+                }
+            }
+        }
+        String indentStr = " ".repeat(indent);
+
+        editState.moveCursorToLineStart();
+        for (int i = 0; i < currentLine.length(); i++) {
+            editState.deleteForward();
+        }
+
+        if (valueMode) {
+            String trimmed = currentLine.trim();
+            if (trimmed.startsWith("- ")) {
+                trimmed = trimmed.substring(2).trim();
+            }
+            int colonIdx = trimmed.indexOf(':');
+            if (colonIdx > 0) {
+                String keyPart = trimmed.substring(0, colonIdx);
+                editState.insert(indentStr + keyPart + ": " + item.key());
+            } else {
+                editState.insert(indentStr + item.key());
+            }
+            // for component names, add parameters: block if not already present
+            if ("component".equals(item.type())) {
+                int nextRow = editState.cursorRow() + 1;
+                boolean hasParameters = nextRow < editState.lineCount()
+                        && editState.getLine(nextRow).trim().startsWith("parameters:");
+                if (!hasParameters) {
+                    editState.insert('\n');
+                    editState.insert(indentStr + "parameters:");
+                    editState.insert('\n');
+                    editState.insert(indentStr + "  ");
+                }
+            }
+        } else {
+            editState.insert(indentStr + item.key() + ": ");
+        }
     }
 
     private void saveEdit() {
@@ -485,7 +1367,13 @@ class SourceViewer {
             return;
         }
         try {
-            Files.writeString(editableFile, editState.text(), StandardCharsets.UTF_8);
+            String content = editState.text();
+            Files.writeString(editableFile, content, StandardCharsets.UTF_8);
+            dirty = false;
+            validateAndNotify(content);
+            if (validationErrors != null) {
+                return;
+            }
             Path path = editableFile;
             boolean restoreMarkdownMode = markdownModeBeforeEdit;
             editMode = false;
@@ -495,12 +1383,79 @@ class SourceViewer {
             if (isMarkdownFile) {
                 markdownMode = restoreMarkdownMode;
             }
-            // Preserve save feedback after reload
-            saveMessage = "Saved";
-            saveError = false;
         } catch (IOException e) {
-            saveMessage = "Save failed: " + e.getMessage();
-            saveError = true;
+            notifySave("Save failed: " + e.getMessage(), true);
+        }
+    }
+
+    private void saveContinueEdit() {
+        if (!editMode || editableFile == null) {
+            return;
+        }
+        try {
+            String content = editState.text();
+            Files.writeString(editableFile, content, StandardCharsets.UTF_8);
+            dirty = false;
+            validateAndNotify(content);
+        } catch (IOException e) {
+            notifySave("Save failed: " + e.getMessage(), true);
+        }
+    }
+
+    private void validateAndNotify(String content) {
+        if (validateOnSave && isCamelYamlFile()) {
+            List<Error> errors = validateYaml(content);
+            if (errors != null && !errors.isEmpty()) {
+                List<String> msgs = new ArrayList<>();
+                for (Error error : errors) {
+                    String msg = error.getMessage();
+                    if (msg != null) {
+                        msgs.add(cleanValidationMessage(msg));
+                    }
+                }
+                if (!msgs.isEmpty()) {
+                    validationErrors = msgs;
+                    validationErrorScroll = 0;
+                    return;
+                }
+            }
+        }
+        notifySave("Saved: " + editableFile.getFileName(), false);
+    }
+
+    private List<Error> validateYaml(String content) {
+        try {
+            if (yamlValidator == null) {
+                yamlValidator = new org.apache.camel.dsl.yaml.validator.YamlValidator();
+            }
+            return yamlValidator.validate(content);
+        } catch (Exception e) {
+            return List.of();
+        }
+    }
+
+    private static String cleanValidationMessage(String msg) {
+        // strip FQCN prefix like "com.fasterxml...MarkedYAMLException: "
+        int colonSpace = msg.indexOf(": ");
+        if (colonSpace > 0) {
+            String prefix = msg.substring(0, colonSpace);
+            if (prefix.contains(".") && !prefix.contains(" ")) {
+                msg = msg.substring(colonSpace + 2);
+            }
+        }
+        // strip "at [Source: (StringReader); line: N, column: N]"
+        int atSource = msg.indexOf("at [Source:");
+        if (atSource > 0) {
+            msg = msg.substring(0, atSource).stripTrailing();
+        }
+        // strip "in 'reader', " prefix from snakeyaml messages
+        msg = msg.replace("in 'reader', ", "");
+        return msg;
+    }
+
+    private void notifySave(String message, boolean error) {
+        if (notificationCallback != null) {
+            notificationCallback.accept(message, error);
         }
     }
 
@@ -524,6 +1479,18 @@ class SourceViewer {
             return false;
         }
         if (editMode) {
+            if (autocompletePopup != null) {
+                boolean wasValueMode = autocompletePopup.isValueMode();
+                AutocompletePopup.Result result = autocompletePopup.handleMouseEvent(me);
+                if (result == AutocompletePopup.Result.CLOSED) {
+                    AutocompletePopup.CompletionItem item = autocompletePopup.consumeSelectedItem();
+                    autocompletePopup = null;
+                    if (item != null) {
+                        insertCompletion(item, wasValueMode);
+                    }
+                }
+                return true;
+            }
             if (me.kind() == MouseEventKind.SCROLL_UP) {
                 editState.scrollUp(3);
                 return true;
@@ -574,6 +1541,7 @@ class SourceViewer {
         if (editMode) {
             if (text != null && !text.isEmpty()) {
                 editState.insert(text);
+                dirty = true;
             }
             return;
         }
@@ -746,10 +1714,7 @@ class SourceViewer {
         Style ts = titleStyle != null ? titleStyle : Style.EMPTY;
         List<Span> titleSpans = new ArrayList<>();
         String info = title != null ? title : "";
-        titleSpans.add(Span.styled(" Edit [" + info + "] ", ts));
-        if (saveMessage != null) {
-            titleSpans.add(Span.styled(saveMessage + " ", saveError ? Theme.error() : Theme.success()));
-        }
+        titleSpans.add(Span.styled(" Edit [" + info + (dirty ? " *" : "") + "] ", ts));
         Block.Builder blockBuilder = Block.builder()
                 .borderType(BorderType.ROUNDED).borders(Borders.ALL)
                 .title(Title.from(Line.from(titleSpans)));
@@ -762,23 +1727,119 @@ class SourceViewer {
         lastVisibleLines = Math.max(1, inner.height());
         frame.renderWidget(block, area);
 
-        editState.ensureCursorVisible(inner.width(), inner.height());
         TextArea textArea = TextArea.builder()
                 .cursorStyle(Style.EMPTY.reversed())
                 .showLineNumbers(true)
                 .lineNumberStyle(Style.EMPTY.dim())
                 .build();
         textArea.renderWithCursor(inner, frame.buffer(), editState, frame);
+
+        // cursor line highlight
+        int cursorRelRow = editState.cursorRow() - editState.scrollRow();
+        if (cursorRelRow >= 0 && cursorRelRow < inner.height()) {
+            int screenY = inner.top() + cursorRelRow;
+            Rect lineRect = new Rect(inner.left(), screenY, inner.width(), 1);
+            frame.buffer().setStyle(lineRect, Style.EMPTY.bg(Theme.zebra()));
+        }
+
+        // scope line highlight — shows which EIP or uri: line the cursor belongs to
+        if (isCamelYamlFile()) {
+            int scopeRow = findScopeLineRow(editState.cursorRow());
+            if (scopeRow >= 0 && scopeRow != editState.cursorRow()) {
+                int relativeRow = scopeRow - editState.scrollRow();
+                if (relativeRow >= 0 && relativeRow < inner.height()) {
+                    int screenY = inner.top() + relativeRow;
+                    Rect lineRect = new Rect(inner.left(), screenY, inner.width(), 1);
+                    frame.buffer().setStyle(lineRect, Style.EMPTY.bold());
+                }
+            }
+        }
+
+        if (autocompletePopup != null) {
+            int cursorRow = editState.cursorRow() - editState.scrollRow();
+            int cursorCol = editState.cursorCol() - editState.scrollCol();
+            autocompletePopup.render(frame, inner, cursorRow, cursorCol);
+        }
+
+        if (validationErrors != null) {
+            renderValidationPopup(frame, area);
+        }
+    }
+
+    private void renderValidationPopup(Frame frame, Rect area) {
+        int popupW = Math.min(80, area.width() - 4);
+        int innerW = popupW - 2;
+
+        List<Line> allLines = new ArrayList<>();
+        for (int i = 0; i < validationErrors.size(); i++) {
+            if (i > 0) {
+                allLines.add(Line.from(Span.raw("")));
+            }
+            String msg = validationErrors.get(i);
+            wrapText(msg, innerW, allLines);
+        }
+
+        int contentH = allLines.size();
+        int popupH = Math.min(contentH + 2, area.height() - 4);
+        int x = area.left() + Math.max(0, (area.width() - popupW) / 2);
+        int y = area.top() + 2;
+        Rect popup = new Rect(x, y, popupW, popupH);
+
+        frame.renderWidget(Clear.INSTANCE, popup);
+
+        String titleText = " " + validationErrors.size() + " Validation Error"
+                           + (validationErrors.size() > 1 ? "s" : "") + " ";
+        Block block = Block.builder()
+                .borderType(BorderType.ROUNDED).borders(Borders.ALL)
+                .title(Title.from(Line.from(Span.styled(titleText, Theme.error().bold()))))
+                .titleBottom(Title.from(Line.from(
+                        Span.styled(" Esc", Theme.hintKey()), Span.raw(" close "))))
+                .build();
+        frame.renderWidget(block, popup);
+        Rect inner = block.inner(popup);
+
+        int visibleLines = inner.height();
+        int clampedScroll = Math.min(validationErrorScroll, Math.max(0, contentH - visibleLines));
+        validationErrorScroll = clampedScroll;
+        int end = Math.min(clampedScroll + visibleLines, contentH);
+
+        if (clampedScroll < end) {
+            List<Line> visible = allLines.subList(clampedScroll, end);
+            frame.renderWidget(
+                    Paragraph.builder().text(Text.from(visible.toArray(Line[]::new))).build(),
+                    inner);
+        }
+    }
+
+    private static void wrapText(String text, int width, List<Line> out) {
+        if (width <= 0) {
+            width = 40;
+        }
+        int pos = 0;
+        while (pos < text.length()) {
+            int end = Math.min(pos + width, text.length());
+            out.add(Line.from(Span.styled(text.substring(pos, end), Theme.error())));
+            pos = end;
+        }
+        if (text.isEmpty()) {
+            out.add(Line.from(Span.styled(text, Theme.error())));
+        }
     }
 
     void renderFooter(List<Span> spans) {
+        if (editMode && validationErrors != null) {
+            TuiHelper.hint(spans, TuiIcons.HINT_SCROLL, "scroll");
+            TuiHelper.hintLast(spans, "Esc", "close");
+            return;
+        }
         if (editMode) {
             TuiHelper.hint(spans, "Esc", "cancel");
-            TuiHelper.hint(spans, "F5", "save");
-            TuiHelper.hint(spans, TuiIcons.HINT_SCROLL, "move");
-            if (saveMessage != null) {
-                spans.add(Span.styled("  " + saveMessage, saveError ? Theme.error() : Theme.success()));
+            TuiHelper.hint(spans, "F5", "save & close");
+            TuiHelper.hint(spans, "Shift+F5", "save");
+            if (autocompleteProvider != null) {
+                TuiHelper.hint(spans, "Tab", "complete");
             }
+            TuiHelper.hint(spans, TuiIcons.HINT_SCROLL, "move");
             return;
         }
         if (markdownMode) {
@@ -815,9 +1876,6 @@ class SourceViewer {
         if (onLineSelected != null) {
             TuiHelper.hint(spans, "Enter", "select node");
         }
-        if (saveMessage != null) {
-            spans.add(Span.styled("  " + saveMessage, saveError ? Theme.error() : Theme.success()));
-        }
     }
 
     /**
@@ -832,8 +1890,6 @@ class SourceViewer {
         editMode = false;
         editState.clear();
         markdownModeBeforeEdit = false;
-        saveMessage = null;
-        saveError = false;
         String fileName = filePath.getFileName().toString();
         boolean isMd = fileName.toLowerCase().endsWith(".md");
         try {
@@ -894,8 +1950,6 @@ class SourceViewer {
         editableFile = null;
         editMode = false;
         editState.clear();
-        saveMessage = null;
-        saveError = false;
 
         if (ctx.selectedPid == null || ctx.runner == null) {
             return;
@@ -1108,12 +2162,7 @@ class SourceViewer {
             return Title.from(Line.from(spans));
         }
         if (currentRouteId == null) {
-            List<Span> spans = new ArrayList<>();
-            spans.add(Span.styled(" Source [" + info + "] ", ts));
-            if (saveMessage != null) {
-                spans.add(Span.styled(saveMessage + " ", saveError ? Theme.error() : Theme.success()));
-            }
-            return Title.from(Line.from(spans));
+            return Title.from(Span.styled(" Source [" + info + "] ", ts));
         }
 
         List<Span> spans = new ArrayList<>();

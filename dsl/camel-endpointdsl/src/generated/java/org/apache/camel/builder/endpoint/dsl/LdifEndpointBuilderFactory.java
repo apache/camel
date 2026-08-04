@@ -44,6 +44,46 @@ public interface LdifEndpointBuilderFactory {
             return (AdvancedLdifEndpointBuilder) this;
         }
 
+        /**
+         * Whether to allow a message body that is not LDIF content to be
+         * dereferenced as a URL and fetched. When disabled (default), a body
+         * that does not start with version: 1 is rejected with an
+         * IllegalArgumentException instead of being fetched as a URL, which
+         * avoids a content-sniffed URL fetch (SSRF) from untrusted body
+         * content.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: security
+         * 
+         * @param allowUrlBody the value to set
+         * @return the dsl builder
+         */
+        default LdifEndpointBuilder allowUrlBody(boolean allowUrlBody) {
+            doSetProperty("allowUrlBody", allowUrlBody);
+            return this;
+        }
+        /**
+         * Whether to allow a message body that is not LDIF content to be
+         * dereferenced as a URL and fetched. When disabled (default), a body
+         * that does not start with version: 1 is rejected with an
+         * IllegalArgumentException instead of being fetched as a URL, which
+         * avoids a content-sniffed URL fetch (SSRF) from untrusted body
+         * content.
+         * 
+         * The option will be converted to a <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: security
+         * 
+         * @param allowUrlBody the value to set
+         * @return the dsl builder
+         */
+        default LdifEndpointBuilder allowUrlBody(String allowUrlBody) {
+            doSetProperty("allowUrlBody", allowUrlBody);
+            return this;
+        }
     }
 
     /**

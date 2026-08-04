@@ -25,7 +25,8 @@
         "status",
         "enable",
         "disable",
-        "jfc"
+        "jfc",
+        "snapshot"
       ],
       "deprecated": false,
       "autowired": false,
@@ -70,6 +71,35 @@
       "secret": false,
       "defaultValue": "all",
       "description": "The runtime event to enable or disable, or all for every event"
+    },
+    "limit": {
+      "index": 3,
+      "kind": "option",
+      "displayName": "Limit",
+      "group": "query",
+      "label": "query",
+      "required": false,
+      "type": "integer",
+      "javaType": "int",
+      "deprecated": false,
+      "autowired": false,
+      "secret": false,
+      "defaultValue": 50,
+      "description": "Maximum number of failure and redelivery entries to return in a snapshot"
+    },
+    "routeId": {
+      "index": 4,
+      "kind": "option",
+      "displayName": "Route Id",
+      "group": "query",
+      "label": "query",
+      "required": false,
+      "type": "string",
+      "javaType": "java.lang.String",
+      "deprecated": false,
+      "autowired": false,
+      "secret": false,
+      "description": "Filter snapshot results to the given route id"
     }
   }
 }

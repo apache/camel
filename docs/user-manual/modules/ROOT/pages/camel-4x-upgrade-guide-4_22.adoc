@@ -13,6 +13,16 @@ See the xref:camel-upgrade-recipes-tool.adoc[documentation] page for details.
 
 == Upgrading Camel 4.21 to 4.22
 
+=== camel-reactive-executor-tomcat
+
+The `camel-reactive-executor-tomcat` component has been deprecated. Its cross-thread `ThreadLocal`
+cleanup relied on reflective access to the private `Thread.threadLocals` field, which is denied by
+the JDK module system since JDK 17 and is incompatible with virtual threads. Without that cleanup,
+this executor is functionally identical to the built-in `DefaultReactiveExecutor`.
+
+To migrate, remove the `camel-reactive-executor-tomcat` dependency from your project. Camel will
+automatically use the default reactive executor.
+
 === camel-core
 
 ==== Property placeholders in toD and enrich dynamic endpoint URIs
@@ -61,6 +71,14 @@ The Camel CLI and TUI AI prompt now support native **Google Gemini** when `GEMIN
 (auto-detected before OpenAI). With `--api-type=gemini`, `GOOGLE_API_KEY` is also accepted. Gemini uses
 the `generativelanguage.googleapis.com` API with function-calling support.
 See xref:camel-jbang-ai.adoc[Camel CLI - AI Tools] for the full detection order.
+
+`camel run`, `camel dev`, and `camel debug` accept `--openapi-ui` to expose Swagger UI for REST DSL OpenAPI
+at `/q/openapi` on the embedded HTTP server (OpenAPI JSON at `/q/openapi.json` by default). The feature is
+gated as developer-only (`insecure:dev`) via `camel.jbang.openapiUi` and `camel.management.openapiUiEnabled`.
+When `--port` is set without `--management-port`, the management server is co-bound to the same port so the UI
+and spec stay together. `--openapi-ui` also sets override properties for `camel.rest.component=platform-http`
+and `camel.rest.apiContextPath=/q/openapi.json`, which take precedence over values in `application.properties`
+or other property sources (same as other CLI `--` server flags that use override properties).
 
 The `camel cmd route-diagram` and `camel cmd route-topology` now accept one or more Camel route source files
 (instead of only the name/pid of a running integration), so diagrams and inter-route topology can be
@@ -339,7 +357,41 @@ They were not wired into the component; the `chatModel` is autowired instead.
 If you used these helpers directly, configure your `ChatModel` with LangChain4j's own builders or Spring Boot starters
 and inject it into the component.
 
-=== camel-langchain4j-tools
+=== camel-langchain4j-tools (deprecated)
+
+The `camel-langchain4j-tools` component is deprecated. Use `camel-ai-tool` to define tools
+and `camel-langchain4j-agent` for tool-calling with LangChain4j models.
+
+Migrate your tool definition routes from `langchain4j-tools:` to `ai-tool:`:
+
+[source,java]
+----
+// Before
+from("langchain4j-tools:weather?tags=weather&description=Get weather&parameter.city=string")
+    .setBody(constant("{\"city\": \"Paris\", \"temp\": \"22C\"}"));
+
+// After
+from("ai-tool:weather?tags=weather&description=Get weather&parameter.city=string")
+    .setBody(constant("{\"city\": \"Paris\", \"temp\": \"22C\"}"));
+----
+
+Use `langchain4j-agent` with matching tags to invoke tools:
+
+[source,java]
+----
+from("direct:chat")
+    .to("langchain4j-agent:assistant?agent=#myAgent&tags=weather");
+----
+
+Add the `camel-ai-tool` dependency to your project:
+
+[source,xml]
+----
+<dependency>
+    <groupId>org.apache.camel</groupId>
+    <artifactId>camel-ai-tool</artifactId>
+</dependency>
+----
 
 ==== Tool-calling round trips now bounded by default
 
@@ -561,7 +613,7 @@ Add the `camel-ai-tool` dependency to your project:
 </dependency>
 ----
 
-The `camel-spring-ai-tools` dependency is no longer required by `camel-spring-ai-chat`.
+The `camel-spring-ai-tools` component has been removed. Remove the `camel-spring-ai-tools` dependency from your project.
 
 === camel-pqc - potential breaking change
 
@@ -1494,6 +1546,25 @@ entry name could escape the intended directory (Tar Slip / Zip Slip).
 data format and the iterator/splitter modes. The full, unmodified entry name remains available
 so routes that intentionally recreate the archive's directory structure keep working — read it
 from `CamelTarFileEntryName` for tar and from `zipFileName` for zip instead of `CamelFileName`.
+
+=== camel-ldif - a non-LDIF body is no longer dereferenced as a URL by default
+
+The ldif producer previously treated a message body that does not start with `version: 1` as a URL
+and dereferenced it (`URI.create(body).toURL().openStream()`). This content-sniffed URL fetch is now
+opt-in: a new `allowUrlBody` option (default `false`) gates it. With the default, a body that is not
+LDIF content is rejected with an `IllegalArgumentException` instead of being fetched, which avoids a
+content-sniffed URL fetch (SSRF) from untrusted body content. Routes that rely on passing a URL as the
+body must set `allowUrlBody=true` on the `ldif` endpoint.
+
+=== camel-snakeyaml - typeFilters are now also enforced by the SnakeYAML TagInspector
+
+When `typeFilters` (or `unmarshalType`) is configured, the allow-list is now also enforced by the
+SnakeYAML 2.x `TagInspector` layer, not only by the `getClassForName` constructor override. A YAML
+document that references a disallowed global tag is therefore rejected earlier, during composing, and
+surfaces as an `org.yaml.snakeyaml.composer.ComposerException` (`"Global tag is not allowed: ..."`)
+instead of the previous `ConstructorException` caused by an `IllegalArgumentException`. The set of
+accepted types is unchanged; only the exception raised for a rejected type differs. Routes that do not
+configure `typeFilters` are unaffected.
 
 === camel-jfr
 

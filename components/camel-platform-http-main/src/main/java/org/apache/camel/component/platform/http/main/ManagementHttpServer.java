@@ -129,6 +129,8 @@ public class ManagementHttpServer extends ServiceSupport implements CamelContext
     private String uploadSourceDir;
     private boolean downloadEnabled;
     private boolean sendEnabled;
+    private boolean openapiUiEnabled;
+    private String openapiUiSpecPath = OpenApiUiSupport.DEFAULT_SPEC_PATH;
 
     @Override
     public CamelContext getCamelContext() {
@@ -358,6 +360,30 @@ public class ManagementHttpServer extends ServiceSupport implements CamelContext
         this.sendEnabled = sendEnabled;
     }
 
+    @ManagedAttribute(description = "Whether OpenAPI Swagger UI is enabled (q/openapi)")
+    public boolean isOpenapiUiEnabled() {
+        return openapiUiEnabled;
+    }
+
+    /**
+     * Whether Swagger UI is enabled at {@link OpenApiUiSupport#OPENAPI_UI_PATH}.
+     */
+    public void setOpenapiUiEnabled(boolean openapiUiEnabled) {
+        this.openapiUiEnabled = openapiUiEnabled;
+    }
+
+    @ManagedAttribute(description = "OpenAPI document URL used by Swagger UI")
+    public String getOpenapiUiSpecPath() {
+        return openapiUiSpecPath;
+    }
+
+    /**
+     * Path or URL of the OpenAPI document loaded by Swagger UI (default {@value OpenApiUiSupport#DEFAULT_SPEC_PATH}).
+     */
+    public void setOpenapiUiSpecPath(String openapiUiSpecPath) {
+        this.openapiUiSpecPath = openapiUiSpecPath;
+    }
+
     public VertxPlatformHttpServerConfiguration.Cors getCors() {
         return configuration.getCors();
     }
@@ -456,6 +482,9 @@ public class ManagementHttpServer extends ServiceSupport implements CamelContext
         }
         if (sendEnabled) {
             setupSendConsole();
+        }
+        if (openapiUiEnabled) {
+            OpenApiUiSupport.setup(router, platformHttpComponent, openapiUiSpecPath);
         }
         // metrics will be setup in camel-micrometer-prometheus
     }

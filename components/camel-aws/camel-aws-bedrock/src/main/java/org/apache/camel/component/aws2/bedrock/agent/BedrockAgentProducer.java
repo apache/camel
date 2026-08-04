@@ -20,6 +20,7 @@ import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.InvalidPayloadException;
 import org.apache.camel.Message;
+import org.apache.camel.component.aws.common.AwsExceptionUtil;
 import org.apache.camel.support.DefaultProducer;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.URISupport;
@@ -95,7 +96,7 @@ public class BedrockAgentProducer extends DefaultProducer {
                 try {
                     result = bedrockAgentClient.startIngestionJob(startIngestionJobRequest);
                 } catch (AwsServiceException ase) {
-                    LOG.trace("Start Ingestion Job command returned the error code {}", ase.awsErrorDetails().errorCode());
+                    LOG.trace("Start Ingestion Job command returned the error code {}", AwsExceptionUtil.errorCode(ase));
                     throw ase;
                 }
                 Message message = getMessageForResponse(exchange);
@@ -143,7 +144,7 @@ public class BedrockAgentProducer extends DefaultProducer {
                 try {
                     result = bedrockAgentClient.listIngestionJobs(listIngestionJobsRequest);
                 } catch (AwsServiceException ase) {
-                    LOG.trace("Start Ingestion Job command returned the error code {}", ase.awsErrorDetails().errorCode());
+                    LOG.trace("Start Ingestion Job command returned the error code {}", AwsExceptionUtil.errorCode(ase));
                     throw ase;
                 }
                 Message message = getMessageForResponse(exchange);
@@ -191,7 +192,7 @@ public class BedrockAgentProducer extends DefaultProducer {
                 try {
                     result = bedrockAgentClient.getIngestionJob(getIngestionJobRequest);
                 } catch (AwsServiceException ase) {
-                    LOG.trace("Get Ingestion Job command returned the error code {}", ase.awsErrorDetails().errorCode());
+                    LOG.trace("Get Ingestion Job command returned the error code {}", AwsExceptionUtil.errorCode(ase));
                     throw ase;
                 }
                 Message message = getMessageForResponse(exchange);

@@ -66,14 +66,29 @@ public class YamlValidator {
             var target = mapper.readTree(file);
             return new ArrayList<>(schema.validate(target));
         } catch (Exception e) {
-            String msg = e.getClass().getName() + ": " + e.getMessage();
-            Error error = Error.builder()
-                    .messageKey("parser")
-                    .format(new MessageFormat("{0}"))
-                    .arguments(msg)
-                    .build();
-            return List.of(error);
+            return List.of(parseError(e));
         }
+    }
+
+    public List<Error> validate(String content) throws Exception {
+        if (schema == null) {
+            init();
+        }
+        try {
+            var target = mapper.readTree(content);
+            return new ArrayList<>(schema.validate(target));
+        } catch (Exception e) {
+            return List.of(parseError(e));
+        }
+    }
+
+    private static Error parseError(Exception e) {
+        String msg = e.getClass().getName() + ": " + e.getMessage();
+        return Error.builder()
+                .messageKey("parser")
+                .format(new MessageFormat("{0}"))
+                .arguments(msg)
+                .build();
     }
 
     public void init() throws Exception {

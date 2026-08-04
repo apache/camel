@@ -136,6 +136,8 @@ public class PrepareCamelMainMojo extends AbstractGeneratorMojo {
                     enums = Arrays.asList("allLocalIp,localIp,localHostName".split(","));
                 } else if ("org.apache.camel.util.concurrent.ThreadPoolRejectedPolicy".equals(javaType)) {
                     enums = Arrays.asList("Abort,CallerRuns,DiscardOldest,Discard".split(","));
+                } else if ("java.util.concurrent.TimeUnit".equals(javaType)) {
+                    enums = Arrays.asList("NANOSECONDS,MICROSECONDS,MILLISECONDS,SECONDS,MINUTES,HOURS,DAYS".split(","));
                 }
                 if (enums == null && as != null) {
                     String text = as.getStringValue("enums");

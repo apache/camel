@@ -53,6 +53,7 @@ import static org.apache.camel.component.langchain4j.tools.LangChain4jTools.SCHE
              syntax = "langchain4j-tools:toolId",
              category = { Category.AI },
              headersClass = LangChain4jToolsHeaders.class)
+@Deprecated(since = "4.22.0")
 public class LangChain4jToolsEndpoint extends DefaultEndpoint {
 
     private static final Logger LOG = LoggerFactory.getLogger(LangChain4jToolsEndpoint.class);

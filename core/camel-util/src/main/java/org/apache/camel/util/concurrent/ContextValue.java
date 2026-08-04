@@ -74,8 +74,11 @@ public interface ContextValue<T> {
     /**
      * Returns the value of this context variable for the current thread, or the given default value if no value is
      * bound.
+     * <p>
+     * {@code defaultValue} may be {@code null}; implementations must return {@code null} when unbound and the caller
+     * passes {@code null} as the fallback (for example {@code getCreateRoute()} outside a binding scope).
      *
-     * @param  defaultValue the value to return if no value is bound
+     * @param  defaultValue the value to return if no value is bound (may be {@code null})
      * @return              the current value, or {@code defaultValue} if not bound
      */
     T orElse(T defaultValue);

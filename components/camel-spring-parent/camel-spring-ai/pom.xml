@@ -54,7 +54,6 @@
         <module>camel-spring-ai-chat</module>
         <module>camel-spring-ai-embeddings</module>
         <module>camel-spring-ai-vector-store</module>
-        <module>camel-spring-ai-tools</module>
         <module>camel-spring-ai-image</module>
     </modules>
 

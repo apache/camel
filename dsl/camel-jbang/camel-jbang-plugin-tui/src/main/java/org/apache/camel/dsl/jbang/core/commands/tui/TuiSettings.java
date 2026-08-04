@@ -44,6 +44,7 @@ final class TuiSettings {
     static final String PROP_SHELL_HISTORY = "camel.tui.shell.history";
     static final String PROP_AI_PROMPT_HISTORY = "camel.tui.ai.promptHistory";
     static final String PROP_CONFIRM_ACTIONS = "camel.tui.confirmActions";
+    static final String PROP_VALIDATE_ON_SAVE = "camel.tui.validateOnSave";
 
     private String themeId;
     private String startTab;
@@ -59,6 +60,7 @@ final class TuiSettings {
     private String shellHistory;
     private String aiPromptHistory;
     private String confirmActions;
+    private String validateOnSave;
 
     String getThemeId() {
         return themeId;
@@ -184,6 +186,18 @@ final class TuiSettings {
         return !"false".equals(confirmActions);
     }
 
+    String getValidateOnSave() {
+        return validateOnSave;
+    }
+
+    void setValidateOnSave(String validateOnSave) {
+        this.validateOnSave = validateOnSave;
+    }
+
+    boolean isValidateOnSave() {
+        return !"false".equals(validateOnSave);
+    }
+
     /**
      * Loads the current settings, resolving each key with per-key local/global precedence via {@link TuiUserConfig}.
      * Unset keys yield {@code null} fields; a read failure yields an object with {@code null} fields rather than
@@ -206,6 +220,7 @@ final class TuiSettings {
             settings.shellHistory = trimToNull(TuiUserConfig.read(PROP_SHELL_HISTORY));
             settings.aiPromptHistory = trimToNull(TuiUserConfig.read(PROP_AI_PROMPT_HISTORY));
             settings.confirmActions = trimToNull(TuiUserConfig.read(PROP_CONFIRM_ACTIONS));
+            settings.validateOnSave = trimToNull(TuiUserConfig.read(PROP_VALIDATE_ON_SAVE));
         } catch (RuntimeException e) {
             // best-effort: return an object with null fields on read failure
         }
@@ -233,6 +248,7 @@ final class TuiSettings {
             TuiUserConfig.write(PROP_SHELL_HISTORY, shellHistory);
             TuiUserConfig.write(PROP_AI_PROMPT_HISTORY, aiPromptHistory);
             TuiUserConfig.write(PROP_CONFIRM_ACTIONS, confirmActions);
+            TuiUserConfig.write(PROP_VALIDATE_ON_SAVE, validateOnSave);
         } catch (RuntimeException e) {
             // best-effort: a save failure must not disrupt the TUI
         }

@@ -30,6 +30,7 @@ import org.apache.camel.component.langchain4j.tools.spec.CamelToolSpecification;
  * Native tool that allows LLMs to search for available tools without consuming the context window. This tool is
  * automatically exposed when there are searchable (non-exposed) tools registered.
  */
+@Deprecated(since = "4.22.0")
 public class ToolSearchTool {
 
     public static final String TOOL_NAME = "toolSearchTool";

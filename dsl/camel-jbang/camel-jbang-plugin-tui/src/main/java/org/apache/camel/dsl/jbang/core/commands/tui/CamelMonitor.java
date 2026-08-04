@@ -611,7 +611,9 @@ public class CamelMonitor extends CamelCommand {
     }
 
     private void applyConfirmActions() {
-        ctx.confirmActions = TuiSettings.load().isConfirmActions();
+        TuiSettings settings = TuiSettings.load();
+        ctx.confirmActions = settings.isConfirmActions();
+        ctx.validateOnSave = settings.isValidateOnSave();
     }
 
     // ---- Event Handling ----
@@ -800,10 +802,6 @@ public class CamelMonitor extends CamelCommand {
         }
         MonitorTab activeMonitorTab = tabRegistry.activeTab();
         boolean overlayActive = activeMonitorTab != null && activeMonitorTab.isOverlayActive();
-        if (ke.isKey(KeyCode.F5) && ke.hasShift()) {
-            recordingManager.takeScreenshot();
-            return true;
-        }
         if (opensHelp(ke, textEditing)) {
             // Only opens the overlay: while it is visible, dispatch delegates to
             // helpOverlay.handleKeyEvent (which handles F1/?/q/Esc to close) before reaching here.

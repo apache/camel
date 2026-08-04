@@ -1012,6 +1012,14 @@ public class LocalCliConnector extends ServiceSupport implements CliConnector, C
             if (disable != null) {
                 params.put("disable", disable);
             }
+            String routeId = root.getString("routeId");
+            if (routeId != null) {
+                params.put("routeId", routeId);
+            }
+            String limit = root.getString("limit");
+            if (limit != null) {
+                params.put("limit", limit);
+            }
             JsonObject json = (JsonObject) dc.call(DevConsole.MediaType.JSON, params);
             LOG.trace("Updating output file: {}", outputFile);
             IOHelper.writeText(json.toJson(), outputFile);

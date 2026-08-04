@@ -54,6 +54,10 @@
             <artifactId>camel-diagram</artifactId>
         </dependency>
         <dependency>
+            <groupId>org.apache.camel</groupId>
+            <artifactId>camel-yaml-dsl-validator</artifactId>
+        </dependency>
+        <dependency>
             <groupId>dev.tamboui</groupId>
             <artifactId>tamboui-tui</artifactId>
             <version>${tamboui-version}</version>

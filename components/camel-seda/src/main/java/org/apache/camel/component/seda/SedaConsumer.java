@@ -49,7 +49,7 @@ public class SedaConsumer extends DefaultConsumer implements Runnable, ShutdownA
     private static final Logger LOG = LoggerFactory.getLogger(SedaConsumer.class);
 
     private final AtomicInteger taskCount = new AtomicInteger();
-    private volatile CountDownLatch latch;
+    protected volatile CountDownLatch latch;
     private volatile boolean shutdownPending;
     private volatile boolean forceShutdown;
     private ExecutorService executor;

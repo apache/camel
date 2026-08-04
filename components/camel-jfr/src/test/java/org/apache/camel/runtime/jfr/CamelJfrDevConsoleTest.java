@@ -26,6 +26,7 @@ import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.startup.jfr.FlightRecorderStartupStepRecorder;
 import org.apache.camel.support.PluginHelper;
 import org.apache.camel.test.junit6.CamelTestSupport;
+import org.apache.camel.util.json.JsonArray;
 import org.apache.camel.util.json.JsonObject;
 import org.junit.jupiter.api.Test;
 
@@ -70,7 +71,7 @@ class CamelJfrDevConsoleTest extends CamelTestSupport {
         String text = (String) console.call(DevConsole.MediaType.TEXT, Map.of("command", "status"));
 
         assertThat(text)
-                .contains("registered: false")
+                .contains("runtimeEvents: false")
                 .contains("event route")
                 .contains("event processor")
                 .contains("event exchange")
@@ -91,7 +92,7 @@ class CamelJfrDevConsoleTest extends CamelTestSupport {
 
             String text = (String) resolveConsole(ctx).call(DevConsole.MediaType.TEXT, Map.of("command", "status"));
 
-            assertThat(text).contains("registered: true");
+            assertThat(text).contains("runtimeEvents: true");
         }
     }
 
@@ -179,7 +180,7 @@ class CamelJfrDevConsoleTest extends CamelTestSupport {
         CamelJfrDevConsole console = resolveConsole(context);
         try (Recording recording = startRecordingWithAllEvents()) {
             JsonObject status = (JsonObject) console.call(DevConsole.MediaType.JSON, Map.of("command", "status"));
-            assertThat(status.getBoolean("registered")).isFalse();
+            assertThat(status.getBoolean("runtimeEvents")).isFalse();
             assertThat(status.getJsonObject("events")).containsEntry("route", true);
 
             JsonObject toggle = (JsonObject) console.call(DevConsole.MediaType.JSON,
@@ -255,5 +256,80 @@ class CamelJfrDevConsoleTest extends CamelTestSupport {
                 Map.of("command", "jfc", "disable", "route,bogus"));
         assertThat(json.getString("error")).contains("unknown event: bogus");
         assertThat(json.get("jfc")).isNull();
+    }
+
+    @Test
+    void snapshotReturnsAggregatedDataFromActiveRecording() throws Exception {
+        try (DefaultCamelContext ctx = new DefaultCamelContext(false)) {
+            FlightRecorderStartupStepRecorder recorder = new FlightRecorderStartupStepRecorder();
+            recorder.setRuntimeEnabled(true);
+            recorder.setCamelContext(ctx);
+            ctx.getCamelContextExtension().setStartupStepRecorder(recorder);
+            ctx.addRoutes(new RouteBuilder() {
+                @Override
+                public void configure() {
+                    from("direct:snap").routeId("snap-route").to("mock:snap-result");
+                }
+            });
+            ctx.build();
+            ctx.start();
+
+            try (Recording recording = startRecordingWithAllEvents()) {
+                ctx.createProducerTemplate().sendBody("direct:snap", "hello");
+                ctx.createProducerTemplate().sendBody("direct:snap", "world");
+
+                CamelJfrDevConsole console = resolveConsole(ctx);
+                JsonObject json = (JsonObject) console.call(DevConsole.MediaType.JSON, Map.of("command", "snapshot"));
+
+                assertThat(json.getBoolean("snapshot")).isTrue();
+                assertThat(json.getInteger("eventCount")).isGreaterThan(0);
+
+                JsonArray routes = json.getJsonArray("routes");
+                assertThat(routes).isNotNull().isNotEmpty();
+
+                JsonArray processors = json.getJsonArray("processors");
+                assertThat(processors).isNotNull();
+
+                JsonArray endpoints = json.getJsonArray("endpoints");
+                assertThat(endpoints).isNotNull();
+            }
+        }
+    }
+
+    @Test
+    void snapshotTextFormatContainsRouteData() throws Exception {
+        try (DefaultCamelContext ctx = new DefaultCamelContext(false)) {
+            FlightRecorderStartupStepRecorder recorder = new FlightRecorderStartupStepRecorder();
+            recorder.setRuntimeEnabled(true);
+            recorder.setCamelContext(ctx);
+            ctx.getCamelContextExtension().setStartupStepRecorder(recorder);
+            ctx.addRoutes(new RouteBuilder() {
+                @Override
+                public void configure() {
+                    from("direct:txt").routeId("txt-route").to("mock:txt-result");
+                }
+            });
+            ctx.build();
+            ctx.start();
+
+            try (Recording recording = startRecordingWithAllEvents()) {
+                ctx.createProducerTemplate().sendBody("direct:txt", "test");
+
+                CamelJfrDevConsole console = resolveConsole(ctx);
+                String text = (String) console.call(DevConsole.MediaType.TEXT, Map.of("command", "snapshot"));
+
+                assertThat(text).contains("snapshot").contains("txt-route");
+            }
+        }
+    }
+
+    @Test
+    void snapshotWithNoRecordingReturnsErrorMessage() {
+        CamelJfrDevConsole console = resolveConsole(context);
+
+        JsonObject json = (JsonObject) console.call(DevConsole.MediaType.JSON, Map.of("command", "snapshot"));
+
+        assertThat(json.getBoolean("snapshot")).isTrue();
+        assertThat(json.getString("error")).contains("no JFR data available");
     }
 }

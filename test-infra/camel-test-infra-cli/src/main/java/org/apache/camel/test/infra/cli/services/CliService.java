@@ -51,6 +51,10 @@ public interface CliService extends BeforeEachCallback, AfterEachCallback, TestS
 
     String executeBackground(String command);
 
+    default String executeNohup(String command) {
+        return executeGenericCommand("nohup " + getMainCommand() + " " + command + " &");
+    }
+
     String executeGenericCommand(String command);
 
     String executeGenericCommand(String command, Boolean getError, Boolean expectFail);

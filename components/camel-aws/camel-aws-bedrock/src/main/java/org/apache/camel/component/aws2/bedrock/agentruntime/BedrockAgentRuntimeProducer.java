@@ -27,6 +27,7 @@ import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.InvalidPayloadException;
 import org.apache.camel.Message;
+import org.apache.camel.component.aws.common.AwsExceptionUtil;
 import org.apache.camel.support.DefaultProducer;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.URISupport;
@@ -137,7 +138,7 @@ public class BedrockAgentRuntimeProducer extends DefaultProducer {
                 try {
                     result = bedrockAgentRuntimeClient.retrieveAndGenerate(retrieveAndGenerateRequest);
                 } catch (AwsServiceException ase) {
-                    LOG.trace("Retrieve and Generate command returned the error code {}", ase.awsErrorDetails().errorCode());
+                    LOG.trace("Retrieve and Generate command returned the error code {}", AwsExceptionUtil.errorCode(ase));
                     throw ase;
                 }
                 Message message = getMessageForResponse(exchange);
@@ -213,7 +214,7 @@ public class BedrockAgentRuntimeProducer extends DefaultProducer {
         try {
             response = bedrockAgentRuntimeClient.retrieve(request);
         } catch (AwsServiceException ase) {
-            LOG.trace("Retrieve command returned the error code {}", ase.awsErrorDetails().errorCode());
+            LOG.trace("Retrieve command returned the error code {}", AwsExceptionUtil.errorCode(ase));
             throw ase;
         }
 
@@ -311,7 +312,7 @@ public class BedrockAgentRuntimeProducer extends DefaultProducer {
         try {
             asyncClient.invokeFlow(request, handler).join();
         } catch (AwsServiceException ase) {
-            LOG.trace("InvokeFlow command returned the error code {}", ase.awsErrorDetails().errorCode());
+            LOG.trace("InvokeFlow command returned the error code {}", AwsExceptionUtil.errorCode(ase));
             throw ase;
         } catch (RuntimeException re) {
             // CompletableFuture.join() wraps checked exceptions in CompletionException; rethrow root cause when it is
@@ -541,7 +542,7 @@ public class BedrockAgentRuntimeProducer extends DefaultProducer {
         try {
             invocation.get().join();
         } catch (AwsServiceException ase) {
-            LOG.trace("{} command returned the error code {}", operationName, ase.awsErrorDetails().errorCode());
+            LOG.trace("{} command returned the error code {}", operationName, AwsExceptionUtil.errorCode(ase));
             throw ase;
         } catch (RuntimeException re) {
             Throwable cause = re.getCause();

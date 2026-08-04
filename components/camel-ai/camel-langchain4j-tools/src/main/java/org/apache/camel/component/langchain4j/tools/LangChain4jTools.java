@@ -16,6 +16,7 @@
  */
 package org.apache.camel.component.langchain4j.tools;
 
+@Deprecated(since = "4.22.0")
 public final class LangChain4jTools {
 
     public static final String SCHEME = "langchain4j-tools";

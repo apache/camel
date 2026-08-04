@@ -43,6 +43,8 @@ public class HttpManagementServerConfigurationPropertiesConfigurer extends org.a
         map.put("JwtKeystorePath", java.lang.String.class);
         map.put("JwtKeystoreType", java.lang.String.class);
         map.put("MetricsEnabled", boolean.class);
+        map.put("OpenapiUiEnabled", boolean.class);
+        map.put("OpenapiUiSpecPath", java.lang.String.class);
         map.put("Path", java.lang.String.class);
         map.put("Port", int.class);
         map.put("SendEnabled", boolean.class);
@@ -96,6 +98,10 @@ public class HttpManagementServerConfigurationPropertiesConfigurer extends org.a
         case "jwtKeystoreType": target.setJwtKeystoreType(property(camelContext, java.lang.String.class, value)); return true;
         case "metricsenabled":
         case "metricsEnabled": target.setMetricsEnabled(property(camelContext, boolean.class, value)); return true;
+        case "openapiuienabled":
+        case "openapiUiEnabled": target.setOpenapiUiEnabled(property(camelContext, boolean.class, value)); return true;
+        case "openapiuispecpath":
+        case "openapiUiSpecPath": target.setOpenapiUiSpecPath(property(camelContext, java.lang.String.class, value)); return true;
         case "path": target.setPath(property(camelContext, java.lang.String.class, value)); return true;
         case "port": target.setPort(property(camelContext, int.class, value)); return true;
         case "sendenabled":
@@ -158,6 +164,10 @@ public class HttpManagementServerConfigurationPropertiesConfigurer extends org.a
         case "jwtKeystoreType": return java.lang.String.class;
         case "metricsenabled":
         case "metricsEnabled": return boolean.class;
+        case "openapiuienabled":
+        case "openapiUiEnabled": return boolean.class;
+        case "openapiuispecpath":
+        case "openapiUiSpecPath": return java.lang.String.class;
         case "path": return java.lang.String.class;
         case "port": return int.class;
         case "sendenabled":
@@ -216,6 +226,10 @@ public class HttpManagementServerConfigurationPropertiesConfigurer extends org.a
         case "jwtKeystoreType": return target.getJwtKeystoreType();
         case "metricsenabled":
         case "metricsEnabled": return target.isMetricsEnabled();
+        case "openapiuienabled":
+        case "openapiUiEnabled": return target.isOpenapiUiEnabled();
+        case "openapiuispecpath":
+        case "openapiUiSpecPath": return target.getOpenapiUiSpecPath();
         case "path": return target.getPath();
         case "port": return target.getPort();
         case "sendenabled":

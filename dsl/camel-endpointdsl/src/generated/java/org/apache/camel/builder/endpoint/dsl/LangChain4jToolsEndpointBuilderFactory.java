@@ -594,6 +594,7 @@ public interface LangChain4jToolsEndpointBuilderFactory {
          * 
          * @return the dsl builder for the headers' name.
          */
+        @Deprecated
         default LangChain4jToolsHeaderNameBuilder langchain4jTools() {
             return LangChain4jToolsHeaderNameBuilder.INSTANCE;
         }
@@ -613,6 +614,7 @@ public interface LangChain4jToolsEndpointBuilderFactory {
          * @param path toolId
          * @return the dsl builder
          */
+        @Deprecated
         default LangChain4jToolsEndpointBuilder langchain4jTools(String path) {
             return LangChain4jToolsEndpointBuilderFactory.endpointBuilder("langchain4j-tools", path);
         }
@@ -634,6 +636,7 @@ public interface LangChain4jToolsEndpointBuilderFactory {
          * @param path toolId
          * @return the dsl builder
          */
+        @Deprecated
         default LangChain4jToolsEndpointBuilder langchain4jTools(String componentName, String path) {
             return LangChain4jToolsEndpointBuilderFactory.endpointBuilder(componentName, path);
         }

@@ -45,13 +45,15 @@ public class FileLockClusterService extends AbstractCamelClusterService<FileLock
                             + " computed from the acquireLockInterval.",
               defaultValue = "1")
     private long acquireLockDelay;
-    @Metadata(description = "The time unit for the acquireLockDelay", defaultValue = "SECONDS")
+    @Metadata(description = "The time unit for the acquireLockDelay", defaultValue = "SECONDS",
+              enums = "NANOSECONDS,MICROSECONDS,MILLISECONDS,SECONDS,MINUTES,HOURS,DAYS")
     private TimeUnit acquireLockDelayUnit;
     @Metadata(description = "The time to wait between attempts to try to acquire the cluster lock evaluated using wall-clock time."
                             + " All cluster members must use the same value so leadership checks and leader liveness detection remain consistent.",
               defaultValue = "10")
     private long acquireLockInterval;
-    @Metadata(description = "The time unit for the acquireLockInterval", defaultValue = "SECONDS")
+    @Metadata(description = "The time unit for the acquireLockInterval", defaultValue = "SECONDS",
+              enums = "NANOSECONDS,MICROSECONDS,MILLISECONDS,SECONDS,MINUTES,HOURS,DAYS")
     private TimeUnit acquireLockIntervalUnit;
     @Metadata(description = "Multiplier applied to the cluster leader acquireLockInterval to determine how long followers should wait"
                             + " before considering the leader stale. For example, if the leader updates its heartbeat every 2 seconds"
@@ -69,7 +71,8 @@ public class FileLockClusterService extends AbstractCamelClusterService<FileLock
                             + " for long or unpredictable periods.",
               defaultValue = "10")
     private long clusterDataTaskTimeout;
-    @Metadata(description = "The time unit for the clusterDataTaskTimeoutUnit", defaultValue = "SECONDS")
+    @Metadata(description = "The time unit for the clusterDataTaskTimeoutUnit", defaultValue = "SECONDS",
+              enums = "NANOSECONDS,MICROSECONDS,MILLISECONDS,SECONDS,MINUTES,HOURS,DAYS")
     private TimeUnit clusterDataTaskTimeoutUnit;
 
     public FileLockClusterService() {

@@ -25,6 +25,7 @@ import java.util.function.Supplier;
 import org.apache.camel.Exchange;
 import org.apache.camel.InvalidPayloadException;
 import org.apache.camel.Message;
+import org.apache.camel.component.aws.common.AwsExceptionUtil;
 import org.apache.camel.support.DefaultProducer;
 import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;
@@ -241,14 +242,14 @@ public class KinesisFirehose2Producer extends DefaultProducer {
             try {
                 result = pojoExecutor.apply(requestClass.cast(payload));
             } catch (AwsServiceException ase) {
-                LOG.trace("{} command returned the error code {}", operationName, ase.awsErrorDetails().errorCode());
+                LOG.trace("{} command returned the error code {}", operationName, AwsExceptionUtil.errorCode(ase));
                 throw ase;
             }
         } else if (headerExecutor != null) {
             try {
                 result = headerExecutor.get();
             } catch (AwsServiceException ase) {
-                LOG.trace("{} command returned the error code {}", operationName, ase.awsErrorDetails().errorCode());
+                LOG.trace("{} command returned the error code {}", operationName, AwsExceptionUtil.errorCode(ase));
                 throw ase;
             }
         } else {

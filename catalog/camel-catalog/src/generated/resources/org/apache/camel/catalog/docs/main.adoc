@@ -195,7 +195,7 @@ The camel.routecontroller supports 12 options, which are listed below.
 
 
 === Camel Embedded HTTP Server (only for standalone; not Spring Boot or Quarkus) configurations
-The camel.server supports 21 options, which are listed below.
+The camel.server supports 26 options, which are listed below.
 
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
@@ -215,6 +215,11 @@ The camel.server supports 21 options, which are listed below.
 | *camel.server.jwtKeystorePath* | Path to the keystore file used for JWT tokens validation. |  | String
 | *camel.server.jwtKeystoreType* | Type of the keystore used for JWT tokens validation (jks, pkcs12, etc.). |  | String
 | *camel.server.maxBodySize* | Maximum HTTP body size the embedded HTTP server can accept. |  | Long
+| *camel.server.mcpEnabled* | Whether to expose ai-tool routes as MCP tools over streamable HTTP. Requires camel-mcp-server on the classpath. By default, the MCP server is not enabled. | false | boolean
+| *camel.server.mcpPath* | HTTP path where the MCP endpoint is served. | /mcp | String
+| *camel.server.mcpServerName* | MCP server name advertised to clients. Defaults to the CamelContext name. |  | String
+| *camel.server.mcpTags* | Comma-separated list of ai-tool tags to expose as MCP tools. Only tools registered under one of these tags are exposed; the untagged default pool is never exposed. When not set, no tools are exposed. |  | String
+| *camel.server.mcpToolTimeout* | Per-call MCP tool execution timeout in milliseconds. A call exceeding the timeout returns an error result to the MCP client; the underlying route keeps running until it completes on its own. | 20000 | long
 | *camel.server.path* | Context-path to use for embedded HTTP server | / | String
 | *camel.server.port* | Port to use for binding embedded HTTP server. Use 0 to dynamic assign a free random port number. | 8080 | int
 | *camel.server.staticContextPath* | The context-path to use for serving static content. By default, the root path is used. And if there is an index.html page then this is automatically loaded. | / | String
@@ -225,7 +230,7 @@ The camel.server supports 21 options, which are listed below.
 
 
 === Camel Embedded HTTP management Server (only for standalone; not Spring Boot or Quarkus) configurations
-The camel.management supports 27 options, which are listed below.
+The camel.management supports 29 options, which are listed below.
 
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
@@ -251,6 +256,8 @@ The camel.management supports 27 options, which are listed below.
 | *camel.management.jwtKeystorePath* | Path to the keystore file used for JWT tokens validation. |  | String
 | *camel.management.jwtKeystoreType* | Type of the keystore used for JWT tokens validation (jks, pkcs12, etc.). |  | String
 | *camel.management.metricsEnabled* | Whether to enable metrics. If enabled then you can access metrics on context-path: /observe/metrics | false | boolean
+| *camel.management.openapiUiEnabled* | Whether to enable Swagger UI for REST DSL OpenAPI documents. If enabled then you can browse the API at context-path: /q/openapi. The OpenAPI document is expected at openapiUiSpecPath (by default /q/openapi.json from REST DSL apiContextPath ). | false | boolean
+| *camel.management.openapiUiSpecPath* | Path or URL of the OpenAPI document loaded by Swagger UI at /q/openapi. | /q/openapi.json | String
 | *camel.management.path* | Context-path to use for embedded HTTP server | / | String
 | *camel.management.port* | Port to use for binding embedded HTTP management server. Use 0 to dynamic assign a free random port number. | 8080 | int
 | *camel.management.sendEnabled* | Whether to enable sending messages to Camel via HTTP. This makes it possible to use Camel to send messages to Camel endpoint URIs via HTTP. | false | boolean

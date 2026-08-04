@@ -158,6 +158,25 @@ Agents are configured using the `AgentConfiguration` class which provides a flue
 * Chat Memory Provider (for memory-enabled agents)
 * Retrieval Augmentor (for RAG functionality)
 * Input and Output Guardrails
+* Concurrent tool execution (`withExecuteToolsConcurrently`) for parallel Camel route tools and MCP tools within one LLM round trip
+
+==== Concurrent tool execution
+
+When the LLM requests multiple tools in a single turn, LangChain4j can invoke them in parallel via `AgentConfiguration.withExecuteToolsConcurrently()`. Camel route tools (`ai-tool:` consumers discovered through `tags`) run each invocation on an isolated exchange copy, so concurrent execution does not corrupt the producer exchange.
+
+._Java-only: enable parallel tool calls with a managed Camel executor_
+[source,java]
+----
+AgentConfiguration configuration = new AgentConfiguration()
+    .withChatModel(chatModel)
+    .withExecuteToolsConcurrently();
+
+// When created through langchain4j-agent (agentConfiguration on the endpoint),
+// Camel registers a managed thread pool from ExecutorServiceManager automatically.
+// Pass your own Executor with withExecuteToolsConcurrently(executor) to override.
+----
+
+Tool-route header side-effects are not merged back onto the main exchange when tools run concurrently; only the tool result text is returned to the LLM.
 
 ==== Creating an Agent without Memory
 

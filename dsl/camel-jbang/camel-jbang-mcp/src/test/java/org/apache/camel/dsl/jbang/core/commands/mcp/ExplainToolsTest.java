@@ -54,15 +54,17 @@ class ExplainToolsTest {
         assertThat(Arrays.stream(ExplainTools.RouteContextResult.class.getRecordComponents())
                 .map(RecordComponent::getName))
                 .as("RouteContextResult must not echo input route")
+                .isNotEmpty()
                 .doesNotContain("route");
 
         ObjectMapper mapper = new ObjectMapper();
-        mapper.setSerializationInclusion(JsonInclude.Include.NON_NULL);
+        mapper.setDefaultPropertyInclusion(JsonInclude.Include.NON_NULL);
         String json = mapper.writeValueAsString(result);
 
         // Distinctive input markers must not appear in the response payload.
-        assertThat(json).doesNotContain(marker);
-        assertThat(json).contains("\"format\":\"yaml\"");
+        assertThat(json)
+                .doesNotContain(marker)
+                .contains("\"format\":\"yaml\"");
     }
 
     @Test

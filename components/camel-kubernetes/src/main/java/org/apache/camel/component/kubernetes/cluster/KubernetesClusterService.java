@@ -55,7 +55,8 @@ public class KubernetesClusterService extends AbstractCamelClusterService<Kubern
     @Metadata(label = "advanced",
               description = "Connection timeout in milliseconds to use when making requests to the Kubernetes API server.")
     private Integer connectionTimeout;
-    @Metadata(description = "Kubernetes resource type used to hold the leases.", defaultValue = "Lease")
+    @Metadata(description = "Kubernetes resource type used to hold the leases.", defaultValue = "Lease",
+              enums = "ConfigMap,Lease")
     private LeaseResourceType leaseResourceType = LeaseResourceType.Lease;
     @Metadata(description = "Kubernetes namespace containing the pods and the ConfigMap used for locking.")
     private String kubernetesResourcesNamespace;

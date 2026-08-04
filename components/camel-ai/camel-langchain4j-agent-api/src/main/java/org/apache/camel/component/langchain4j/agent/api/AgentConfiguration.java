@@ -20,6 +20,8 @@ package org.apache.camel.component.langchain4j.agent.api;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
+import java.util.concurrent.Executor;
 import java.util.function.BiPredicate;
 import java.util.function.Consumer;
 import java.util.function.Function;
@@ -79,6 +81,8 @@ public class AgentConfiguration {
     private ToolExecutionErrorHandler toolExecutionErrorHandler;
     private ToolArgumentsErrorHandler toolArgumentsErrorHandler;
     private Boolean compensateOnToolErrors;
+    private Boolean executeToolsConcurrently;
+    private Executor executeToolsExecutor;
     private Consumer<AiServices<?>> aiServicesCustomizer;
 
     /**
@@ -461,6 +465,81 @@ public class AgentConfiguration {
     public AgentConfiguration withCompensateOnToolErrors(Boolean compensateOnToolErrors) {
         this.compensateOnToolErrors = compensateOnToolErrors;
         return this;
+    }
+
+    /**
+     * Gets whether concurrent tool execution is enabled for this agent.
+     *
+     * @return {@code true} if enabled, {@code false} if explicitly disabled, or {@code null} if not configured
+     */
+    public Boolean getExecuteToolsConcurrently() {
+        return executeToolsConcurrently;
+    }
+
+    /**
+     * Gets the executor used for concurrent tool execution, if configured.
+     *
+     * @return the executor, or {@code null} if not configured
+     */
+    public Executor getExecuteToolsExecutor() {
+        return executeToolsExecutor;
+    }
+
+    /**
+     * Enables parallel execution of all tool calls within a single LLM round trip via LangChain4j's
+     * {@code executeToolsConcurrently()} mode. Requires Camel route tools to run on isolated exchange copies (see
+     * {@code LangChain4jAgentProducer}).
+     * <p>
+     * When no explicit executor is supplied, the langchain4j-agent component resolves a managed thread pool from the
+     * Camel {@code ExecutorServiceManager} at startup.
+     *
+     * @return this configuration instance for method chaining
+     */
+    public AgentConfiguration withExecuteToolsConcurrently() {
+        this.executeToolsConcurrently = true;
+        return this;
+    }
+
+    /**
+     * Enables parallel tool execution using the given executor.
+     *
+     * @param  executeToolsExecutor the executor for concurrent tool invocations (must not be {@code null}; use
+     *                              {@link #withExecuteToolsConcurrently()} for the managed executor)
+     * @return                      this configuration instance for method chaining
+     * @throws NullPointerException if {@code executeToolsExecutor} is {@code null}
+     */
+    public AgentConfiguration withExecuteToolsConcurrently(Executor executeToolsExecutor) {
+        this.executeToolsConcurrently = true;
+        this.executeToolsExecutor = Objects.requireNonNull(executeToolsExecutor, "executeToolsExecutor");
+        return this;
+    }
+
+    /**
+     * Creates a shallow copy of this configuration. Used by the langchain4j-agent producer to attach a managed tool
+     * executor without mutating registry-held configuration beans.
+     *
+     * @return a new configuration instance with the same settings
+     * @since  4.22
+     */
+    public AgentConfiguration duplicate() {
+        AgentConfiguration copy = new AgentConfiguration();
+        copy.chatModel = chatModel;
+        copy.chatMemoryProvider = chatMemoryProvider;
+        copy.retrievalAugmentor = retrievalAugmentor;
+        copy.inputGuardrailClasses = inputGuardrailClasses;
+        copy.outputGuardrailClasses = outputGuardrailClasses;
+        copy.customTools = customTools;
+        copy.mcpClients = mcpClients;
+        copy.mcpToolProviderFilter = mcpToolProviderFilter;
+        copy.maxToolCallingRoundTrips = maxToolCallingRoundTrips;
+        copy.hallucinatedToolNameStrategy = hallucinatedToolNameStrategy;
+        copy.toolExecutionErrorHandler = toolExecutionErrorHandler;
+        copy.toolArgumentsErrorHandler = toolArgumentsErrorHandler;
+        copy.compensateOnToolErrors = compensateOnToolErrors;
+        copy.executeToolsConcurrently = executeToolsConcurrently;
+        copy.executeToolsExecutor = executeToolsExecutor;
+        copy.aiServicesCustomizer = aiServicesCustomizer;
+        return copy;
     }
 
     /**

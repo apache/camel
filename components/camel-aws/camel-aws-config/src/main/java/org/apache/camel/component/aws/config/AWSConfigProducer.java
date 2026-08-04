@@ -20,6 +20,7 @@ import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.InvalidPayloadException;
 import org.apache.camel.Message;
+import org.apache.camel.component.aws.common.AwsExceptionUtil;
 import org.apache.camel.health.HealthCheck;
 import org.apache.camel.health.HealthCheckHelper;
 import org.apache.camel.health.WritableHealthCheckRepository;
@@ -104,11 +105,14 @@ public class AWSConfigProducer extends DefaultProducer {
                 try {
                     result = configClient.putConfigRule(request);
                 } catch (AwsServiceException ase) {
-                    LOG.trace("Put Config rule command returned the error code {}", ase.awsErrorDetails().errorCode());
+                    LOG.trace("Put Config rule command returned the error code {}", AwsExceptionUtil.errorCode(ase));
                     throw ase;
                 }
                 Message message = getMessageForResponse(exchange);
                 message.setBody(result);
+            } else {
+                throw new IllegalArgumentException(
+                        "putConfigRule operation requires PutConfigRuleRequest in POJO mode");
             }
         } else {
             PutConfigRuleRequest.Builder builder = PutConfigRuleRequest.builder();
@@ -134,7 +138,7 @@ public class AWSConfigProducer extends DefaultProducer {
                 PutConfigRuleRequest request = builder.configRule(configRule.build()).build();
                 result = configClient.putConfigRule(request);
             } catch (AwsServiceException ase) {
-                LOG.trace("Put Config Rule command returned the error code {}", ase.awsErrorDetails().errorCode());
+                LOG.trace("Put Config Rule command returned the error code {}", AwsExceptionUtil.errorCode(ase));
                 throw ase;
             }
             Message message = getMessageForResponse(exchange);
@@ -150,11 +154,14 @@ public class AWSConfigProducer extends DefaultProducer {
                 try {
                     result = configClient.deleteConfigRule(request);
                 } catch (AwsServiceException ase) {
-                    LOG.trace("Delete Config rule command returned the error code {}", ase.awsErrorDetails().errorCode());
+                    LOG.trace("Delete Config rule command returned the error code {}", AwsExceptionUtil.errorCode(ase));
                     throw ase;
                 }
                 Message message = getMessageForResponse(exchange);
                 message.setBody(result);
+            } else {
+                throw new IllegalArgumentException(
+                        "removeConfigRule operation requires DeleteConfigRuleRequest in POJO mode");
             }
         } else {
             DeleteConfigRuleRequest.Builder builder = DeleteConfigRuleRequest.builder();
@@ -169,7 +176,7 @@ public class AWSConfigProducer extends DefaultProducer {
                 DeleteConfigRuleRequest request = builder.build();
                 result = configClient.deleteConfigRule(request);
             } catch (AwsServiceException ase) {
-                LOG.trace("Delete Config Rule command returned the error code {}", ase.awsErrorDetails().errorCode());
+                LOG.trace("Delete Config Rule command returned the error code {}", AwsExceptionUtil.errorCode(ase));
                 throw ase;
             }
             Message message = getMessageForResponse(exchange);
@@ -191,6 +198,9 @@ public class AWSConfigProducer extends DefaultProducer {
                 }
                 Message message = getMessageForResponse(exchange);
                 message.setBody(result);
+            } else {
+                throw new IllegalArgumentException(
+                        "describeRuleCompliance operation requires DescribeComplianceByConfigRuleRequest in POJO mode");
             }
         } else {
             DescribeComplianceByConfigRuleRequest.Builder builder = DescribeComplianceByConfigRuleRequest.builder();
@@ -220,11 +230,14 @@ public class AWSConfigProducer extends DefaultProducer {
                 try {
                     result = configClient.putConformancePack(request);
                 } catch (AwsServiceException ase) {
-                    LOG.trace("Put Conformance Pack command returned the error code {}", ase.awsErrorDetails().errorCode());
+                    LOG.trace("Put Conformance Pack command returned the error code {}", AwsExceptionUtil.errorCode(ase));
                     throw ase;
                 }
                 Message message = getMessageForResponse(exchange);
                 message.setBody(result);
+            } else {
+                throw new IllegalArgumentException(
+                        "putConformancePack operation requires PutConformancePackRequest in POJO mode");
             }
         } else {
             PutConformancePackRequest.Builder builder = PutConformancePackRequest.builder();
@@ -254,7 +267,7 @@ public class AWSConfigProducer extends DefaultProducer {
                 PutConformancePackRequest request = builder.build();
                 result = configClient.putConformancePack(request);
             } catch (AwsServiceException ase) {
-                LOG.trace("Put Conformance Pack command returned the error code {}", ase.awsErrorDetails().errorCode());
+                LOG.trace("Put Conformance Pack command returned the error code {}", AwsExceptionUtil.errorCode(ase));
                 throw ase;
             }
             Message message = getMessageForResponse(exchange);
@@ -276,6 +289,9 @@ public class AWSConfigProducer extends DefaultProducer {
                 }
                 Message message = getMessageForResponse(exchange);
                 message.setBody(result);
+            } else {
+                throw new IllegalArgumentException(
+                        "removeConformancePack operation requires DeleteConformancePackRequest in POJO mode");
             }
         } else {
             DeleteConformancePackRequest.Builder builder = DeleteConformancePackRequest.builder();
@@ -291,7 +307,7 @@ public class AWSConfigProducer extends DefaultProducer {
                 DeleteConformancePackRequest request = builder.build();
                 result = configClient.deleteConformancePack(request);
             } catch (AwsServiceException ase) {
-                LOG.trace("Remove Conformance Pack command returned the error code {}", ase.awsErrorDetails().errorCode());
+                LOG.trace("Remove Conformance Pack command returned the error code {}", AwsExceptionUtil.errorCode(ase));
                 throw ase;
             }
             Message message = getMessageForResponse(exchange);

@@ -26,6 +26,7 @@ import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.InvalidPayloadException;
 import org.apache.camel.Message;
+import org.apache.camel.component.aws.common.AwsExceptionUtil;
 import org.apache.camel.component.aws2.bedrock.runtime.stream.BedrockStreamHandler;
 import org.apache.camel.component.aws2.bedrock.runtime.stream.ConverseStreamHandler;
 import org.apache.camel.support.DefaultProducer;
@@ -142,7 +143,7 @@ public class BedrockProducer extends DefaultProducer {
                 try {
                     result = bedrockRuntimeClient.invokeModel(invokeModelRequest);
                 } catch (AwsServiceException ase) {
-                    LOG.trace("Invoke Model command returned the error code {}", ase.awsErrorDetails().errorCode());
+                    LOG.trace("Invoke Model command returned the error code {}", AwsExceptionUtil.errorCode(ase));
                     throw ase;
                 }
                 Message message = getMessageForResponse(exchange);
@@ -173,7 +174,7 @@ public class BedrockProducer extends DefaultProducer {
             try {
                 result = bedrockRuntimeClient.invokeModel(request);
             } catch (AwsServiceException ase) {
-                LOG.trace("Invoke Model command returned the error code {}", ase.awsErrorDetails().errorCode());
+                LOG.trace("Invoke Model command returned the error code {}", AwsExceptionUtil.errorCode(ase));
                 throw ase;
             }
             Message message = getMessageForResponse(exchange);
@@ -189,7 +190,7 @@ public class BedrockProducer extends DefaultProducer {
                 try {
                     result = bedrockRuntimeClient.invokeModel(invokeModelRequest);
                 } catch (AwsServiceException ase) {
-                    LOG.trace("Invoke Image Model command returned the error code {}", ase.awsErrorDetails().errorCode());
+                    LOG.trace("Invoke Image Model command returned the error code {}", AwsExceptionUtil.errorCode(ase));
                     throw ase;
                 }
                 Message message = getMessageForResponse(exchange);
@@ -220,7 +221,7 @@ public class BedrockProducer extends DefaultProducer {
             try {
                 result = bedrockRuntimeClient.invokeModel(request);
             } catch (AwsServiceException ase) {
-                LOG.trace("Invoke Model command returned the error code {}", ase.awsErrorDetails().errorCode());
+                LOG.trace("Invoke Model command returned the error code {}", AwsExceptionUtil.errorCode(ase));
                 throw ase;
             }
             Message message = getMessageForResponse(exchange);
@@ -241,7 +242,7 @@ public class BedrockProducer extends DefaultProducer {
                 try {
                     result = bedrockRuntimeClient.invokeModel(invokeModelRequest);
                 } catch (AwsServiceException ase) {
-                    LOG.trace("Invoke Image Model command returned the error code {}", ase.awsErrorDetails().errorCode());
+                    LOG.trace("Invoke Image Model command returned the error code {}", AwsExceptionUtil.errorCode(ase));
                     throw ase;
                 }
                 Message message = getMessageForResponse(exchange);
@@ -272,7 +273,7 @@ public class BedrockProducer extends DefaultProducer {
             try {
                 result = bedrockRuntimeClient.invokeModel(request);
             } catch (AwsServiceException ase) {
-                LOG.trace("Invoke Model command returned the error code {}", ase.awsErrorDetails().errorCode());
+                LOG.trace("Invoke Model command returned the error code {}", AwsExceptionUtil.errorCode(ase));
                 throw ase;
             }
             Message message = getMessageForResponse(exchange);
@@ -634,7 +635,7 @@ public class BedrockProducer extends DefaultProducer {
             }
 
         } catch (AwsServiceException ase) {
-            LOG.trace("Invoke Model Streaming command returned the error code {}", ase.awsErrorDetails().errorCode());
+            LOG.trace("Invoke Model Streaming command returned the error code {}", AwsExceptionUtil.errorCode(ase));
             throw ase;
         }
     }
@@ -760,7 +761,7 @@ public class BedrockProducer extends DefaultProducer {
             }
 
         } catch (AwsServiceException ase) {
-            LOG.trace("Converse command returned the error code {}", ase.awsErrorDetails().errorCode());
+            LOG.trace("Converse command returned the error code {}", AwsExceptionUtil.errorCode(ase));
             throw ase;
         }
     }
@@ -896,7 +897,7 @@ public class BedrockProducer extends DefaultProducer {
             }
 
         } catch (AwsServiceException ase) {
-            LOG.trace("Converse Stream command returned the error code {}", ase.awsErrorDetails().errorCode());
+            LOG.trace("Converse Stream command returned the error code {}", AwsExceptionUtil.errorCode(ase));
             throw ase;
         }
     }
@@ -990,7 +991,7 @@ public class BedrockProducer extends DefaultProducer {
             }
 
         } catch (AwsServiceException ase) {
-            LOG.trace("ApplyGuardrail command returned the error code {}", ase.awsErrorDetails().errorCode());
+            LOG.trace("ApplyGuardrail command returned the error code {}", AwsExceptionUtil.errorCode(ase));
             throw ase;
         }
     }

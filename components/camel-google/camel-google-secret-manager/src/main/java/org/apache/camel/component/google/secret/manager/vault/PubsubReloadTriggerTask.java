@@ -24,6 +24,7 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
+import com.google.api.core.ApiService;
 import com.google.api.gax.core.FixedCredentialsProvider;
 import com.google.auth.Credentials;
 import com.google.auth.oauth2.GoogleCredentials;
@@ -89,7 +90,7 @@ public class PubsubReloadTriggerTask extends ServiceSupport implements CamelCont
     }
 
     /**
-     * Whether Camel should be reloaded on AWS secret updated
+     * Whether Camel should be reloaded on GCP secret updated
      */
     public void setReloadEnabled(boolean reloadEnabled) {
         this.reloadEnabled = reloadEnabled;
@@ -120,6 +121,9 @@ public class PubsubReloadTriggerTask extends ServiceSupport implements CamelCont
     protected void doStart() throws Exception {
         super.doStart();
 
+        // specific secrets
+        secrets = camelContext.getVaultConfiguration().gcp().getSecrets();
+
         // auto-detect secrets in-use
         PropertiesComponent pc = camelContext.getPropertiesComponent();
         PropertiesFunction pf = pc.getPropertiesFunction("gcp");
@@ -127,8 +131,7 @@ public class PubsubReloadTriggerTask extends ServiceSupport implements CamelCont
             propertiesFunction = (GoogleSecretManagerPropertiesFunction) pf;
             LOG.debug("Auto-detecting secrets from properties-function: {}", pf.getName());
         }
-        // specific secrets
-        secrets = camelContext.getVaultConfiguration().aws().getSecrets();
+
         if (ObjectHelper.isEmpty(secrets) && propertiesFunction == null) {
             throw new IllegalArgumentException("Secrets must be configured on GCP vault configuration");
         }
@@ -187,7 +190,14 @@ public class PubsubReloadTriggerTask extends ServiceSupport implements CamelCont
     public void run() {
         lastCheckTime = Instant.now();
 
-        subscriber.startAsync().awaitRunning();
+        if (subscriber == null) {
+            return;
+        }
+        // the subscriber is push based, so it only has to be started once. A Google ApiService can only be
+        // started while it is still NEW, starting it again on every period would fail with an IllegalStateException
+        if (subscriber.state() == ApiService.State.NEW) {
+            subscriber.startAsync().awaitRunning();
+        }
     }
 
     protected boolean matchSecret(String name) {
@@ -220,14 +230,13 @@ public class PubsubReloadTriggerTask extends ServiceSupport implements CamelCont
         private static final String SECRET_UPDATE = "SECRET_UPDATE";
         private static final String SECRET_VERSION_ADD = "SECRET_VERSION_ADD";
 
-        private boolean triggerReloading;
-
         @Override
         public void receiveMessage(PubsubMessage message, AckReplyConsumer consumer) {
+            boolean triggerReloading = false;
             String secretId = message.getAttributesMap().get("secretId");
             String eventType = message.getAttributesMap().get("eventType");
-            if (eventType.equalsIgnoreCase(SECRET_UPDATE) || eventType.equalsIgnoreCase(SECRET_VERSION_ADD)) {
-                if (matchSecret(secretId)) {
+            if (SECRET_UPDATE.equalsIgnoreCase(eventType) || SECRET_VERSION_ADD.equalsIgnoreCase(eventType)) {
+                if (secretId != null && matchSecret(secretId)) {
                     int secretNameBeginInd = secretId.lastIndexOf("/") + 1;
                     updates.put(secretId.substring(secretNameBeginInd),
                             Instant.ofEpochSecond(message.getPublishTime().getSeconds(), message.getPublishTime().getNanos()));

@@ -2611,6 +2611,7 @@ public class EndpointHeaderBuilders {
      * 
      * @return the dsl builder for the headers' name.
      */
+    @Deprecated
     public static LangChain4jToolsEndpointBuilderFactory.LangChain4jToolsHeaderNameBuilder langchain4jTools() {
         return LangChain4jToolsEndpointBuilderFactory.LangChain4jToolsHeaderNameBuilder.INSTANCE;
     }
