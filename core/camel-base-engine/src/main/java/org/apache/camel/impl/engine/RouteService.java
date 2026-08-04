@@ -120,7 +120,7 @@ public class RouteService extends ChildServiceSupport {
         try {
             doWarmUp();
         } catch (Exception e) {
-            throw new FailedToStartRouteException(getId(), e.getLocalizedMessage(), e);
+            throw new FailedToStartRouteException(getId(), getLocation(), extractUsefulMessage(e), e);
         }
     }
 
@@ -129,9 +129,30 @@ public class RouteService extends ChildServiceSupport {
             try {
                 doSetup();
             } catch (Exception e) {
-                throw new FailedToStartRouteException(getId(), e.getLocalizedMessage(), e);
+                throw new FailedToStartRouteException(getId(), getLocation(), extractUsefulMessage(e), e);
             }
         }
+    }
+
+    /**
+     * Extracts a non-null, non-empty error message from the exception or its cause chain.
+     * <p/>
+     * {@link Throwable#getLocalizedMessage()} can return {@code null} for exceptions such as
+     * {@link NullPointerException} that carry no message, which would cause {@link FailedToStartRouteException} to
+     * throw {@link NullPointerException} from its own constructor (via {@code Objects.requireNonNull}) instead of
+     * wrapping the original failure. This helper walks the cause chain to find the first meaningful message and falls
+     * back to the simple class name so the caller always receives a non-null string.
+     */
+    static String extractUsefulMessage(Throwable e) {
+        Throwable current = e;
+        while (current != null) {
+            String msg = current.getLocalizedMessage();
+            if (msg != null && !msg.isBlank()) {
+                return msg;
+            }
+            current = current.getCause();
+        }
+        return e.getClass().getSimpleName();
     }
 
     public boolean isAutoStartup() {
