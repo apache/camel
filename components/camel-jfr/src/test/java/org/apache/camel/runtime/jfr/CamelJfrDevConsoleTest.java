@@ -71,7 +71,7 @@ class CamelJfrDevConsoleTest extends CamelTestSupport {
         String text = (String) console.call(DevConsole.MediaType.TEXT, Map.of("command", "status"));
 
         assertThat(text)
-                .contains("registered: false")
+                .contains("runtimeEvents: false")
                 .contains("event route")
                 .contains("event processor")
                 .contains("event exchange")
@@ -92,7 +92,7 @@ class CamelJfrDevConsoleTest extends CamelTestSupport {
 
             String text = (String) resolveConsole(ctx).call(DevConsole.MediaType.TEXT, Map.of("command", "status"));
 
-            assertThat(text).contains("registered: true");
+            assertThat(text).contains("runtimeEvents: true");
         }
     }
 
@@ -180,7 +180,7 @@ class CamelJfrDevConsoleTest extends CamelTestSupport {
         CamelJfrDevConsole console = resolveConsole(context);
         try (Recording recording = startRecordingWithAllEvents()) {
             JsonObject status = (JsonObject) console.call(DevConsole.MediaType.JSON, Map.of("command", "status"));
-            assertThat(status.getBoolean("registered")).isFalse();
+            assertThat(status.getBoolean("runtimeEvents")).isFalse();
             assertThat(status.getJsonObject("events")).containsEntry("route", true);
 
             JsonObject toggle = (JsonObject) console.call(DevConsole.MediaType.JSON,
