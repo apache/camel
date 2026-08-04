@@ -40,8 +40,10 @@ import org.slf4j.LoggerFactory;
 
 /**
  * {@link McpServerEngine} for Camel Main / JBang: serves MCP streamable HTTP through the Vert.x platform HTTP router
- * using the official MCP Java SDK. The MCP endpoint is registered on the main HTTP server's router, so it serves on the
- * main server port and inherits its lifecycle, authentication and CORS configuration.
+ * using the official MCP Java SDK. By default the MCP endpoint is registered on the main HTTP server's router, so it
+ * serves on the main server port and inherits its lifecycle, authentication and CORS configuration. Set
+ * {@link #setTargetServerType(String)} to {@link VertxPlatformHttpRouter#SERVER_TYPE_MANAGEMENT} to serve on the
+ * management HTTP server router instead (e.g. for dev/diagnostics tools that must not be publicly exposed).
  */
 @JdkService(McpServerConstants.MCP_SERVER_ENGINE_FACTORY)
 public class VertxMcpServerEngine extends ServiceSupport implements McpServerEngine {
@@ -62,6 +64,7 @@ public class VertxMcpServerEngine extends ServiceSupport implements McpServerEng
     private McpJsonMapper jsonMapper;
     private VertxMcpStreamableServerTransportProvider transport;
     private McpSyncServer server;
+    private String targetServerType = VertxPlatformHttpRouter.SERVER_TYPE_SERVER;
 
     @Override
     public CamelContext getCamelContext() {
@@ -76,6 +79,19 @@ public class VertxMcpServerEngine extends ServiceSupport implements McpServerEng
     @Override
     public void initialize(McpServerInfo info) {
         this.info = info;
+    }
+
+    public String getTargetServerType() {
+        return targetServerType;
+    }
+
+    /**
+     * The server type of the {@link VertxPlatformHttpRouter} to register the MCP endpoint on:
+     * {@link VertxPlatformHttpRouter#SERVER_TYPE_SERVER} (default) for the main HTTP server, or
+     * {@link VertxPlatformHttpRouter#SERVER_TYPE_MANAGEMENT} for the management HTTP server.
+     */
+    public void setTargetServerType(String targetServerType) {
+        this.targetServerType = targetServerType;
     }
 
     @Override
@@ -154,16 +170,25 @@ public class VertxMcpServerEngine extends ServiceSupport implements McpServerEng
     }
 
     private VertxPlatformHttpRouter lookupRouter() {
+        boolean mainTarget = VertxPlatformHttpRouter.SERVER_TYPE_SERVER.equals(targetServerType);
         Set<VertxPlatformHttpRouter> routers = camelContext.getRegistry().findByType(VertxPlatformHttpRouter.class);
         VertxPlatformHttpRouter router = routers.stream()
-                .filter(VertxPlatformHttpRouter::isMainServer)
+                .filter(r -> targetServerType.equals(r.getServerType()))
                 .findFirst()
-                .orElseGet(() -> routers.size() == 1 ? routers.iterator().next() : null);
+                // a bare VertxPlatformHttpServer may carry no server type; only the default target may fall
+                // back to it — an explicit management target must never silently use the public server
+                .orElseGet(() -> mainTarget && routers.size() == 1 ? routers.iterator().next() : null);
         if (router == null) {
+            if (mainTarget) {
+                throw new IllegalStateException(
+                        "The MCP server requires the Vert.x platform HTTP server. Enable the Camel main HTTP server "
+                                                + "(camel.server.enabled=true with camel-platform-http-main on the classpath) "
+                                                + "or add a VertxPlatformHttpServer service to the CamelContext.");
+            }
             throw new IllegalStateException(
-                    "The MCP server requires the Vert.x platform HTTP server. Enable the Camel main HTTP server "
-                                            + "(camel.server.enabled=true with camel-platform-http-main on the classpath) "
-                                            + "or add a VertxPlatformHttpServer service to the CamelContext.");
+                    "The MCP server requires the Vert.x platform HTTP server with server type '" + targetServerType
+                                            + "' but no such router was found in the registry. Enable the Camel management HTTP server "
+                                            + "(camel.management.enabled=true with camel-platform-http-main on the classpath).");
         }
         return router;
     }
