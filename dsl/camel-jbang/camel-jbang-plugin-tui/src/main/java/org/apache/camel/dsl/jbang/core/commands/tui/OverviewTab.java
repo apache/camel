@@ -1051,7 +1051,7 @@ class OverviewTab extends AbstractTab {
             });
         }
         if (ctx.selectedPid != null) {
-            hint(spans, "F10", "control");
+            hint(spans, "F10", "run");
         }
     }
 
@@ -1375,9 +1375,9 @@ class OverviewTab extends AbstractTab {
                 - `F2` — actions menu (includes theme toggle, go to tab, etc.)
                 - `F3` — switch integration
 
-                ## Process Control
+                ## Run
 
-                - `F10` — open process control popup (stop routes, start routes, restart, stop, kill)
+                - `F10` — open run popup (run, stop routes, start routes, restart, stop, kill)
                 - `q` — quit the TUI
 
                 By default, stop/restart actions show a confirmation dialog before executing.
@@ -1454,16 +1454,24 @@ class OverviewTab extends AbstractTab {
                 Span.raw("     Press "),
                 Span.styled(" F2 ", Theme.hintKey()),
                 Span.raw(" to open Actions and select "),
-                Span.styled("Open", Style.EMPTY.bold()),
+                Span.styled("Open Project", Style.EMPTY.bold()),
                 Span.raw("."))));
         lines.add(Line.from(Span.raw("")));
-        lines.add(Line.from(Span.styled(TuiIcons.indent(TuiIcons.COMPUTER) + "Or use the embedded JLine shell panel:",
+        lines.add(Line.from(Span.styled(TuiIcons.indent(TuiIcons.COMPUTER) + "Or use the embedded terminal:",
                 Style.EMPTY.bold())));
         lines.add(Line.from(List.of(
                 Span.raw("     Press "),
                 Span.styled(" F6 ", Theme.hintKey()),
                 Span.raw(" to open the shell and run commands directly, e.g.:"))));
         lines.add(Line.from(Span.styled("     camel> run examples/demo.java", Theme.success())));
+        lines.add(Line.from(Span.raw("")));
+        lines.add(Line.from(
+                Span.styled(TuiIcons.indent(TuiIcons.MCP_BRAIN) + "Or ask AI to create an example for you:",
+                        Style.EMPTY.bold())));
+        lines.add(Line.from(List.of(
+                Span.raw("     Press "),
+                Span.styled(" F8 ", Theme.hintKey()),
+                Span.raw(" to open the AI prompt."))));
         lines.add(Line.from(Span.raw("")));
         lines.add(Line.from(List.of(
                 Span.styled(TuiIcons.indent(TuiIcons.HELP) + "For shortcut keys and documentation, press ", Theme.muted()),

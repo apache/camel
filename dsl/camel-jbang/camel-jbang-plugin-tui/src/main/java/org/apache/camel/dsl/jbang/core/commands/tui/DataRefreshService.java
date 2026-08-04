@@ -352,12 +352,16 @@ class DataRefreshService {
     }
 
     private void mergePhantoms(List<IntegrationInfo> infos) {
-        Set<String> liveDirs = infos.stream()
+        Map<String, IntegrationInfo> liveDirs = infos.stream()
                 .filter(i -> !i.vanishing && !i.phantom && i.directory != null)
-                .map(i -> i.directory)
-                .collect(Collectors.toSet());
+                .collect(Collectors.toMap(i -> i.directory, i -> i, (a, b) -> a));
         for (IntegrationInfo phantom : ctx.phantomIntegrations) {
-            if (phantom.sourceDir != null && liveDirs.contains(phantom.sourceDir)) {
+            IntegrationInfo live = phantom.sourceDir != null ? liveDirs.get(phantom.sourceDir) : null;
+            if (live != null) {
+                // Phantom's project is now running — switch selection to the live integration
+                if (phantom.pid.equals(ctx.selectedPid)) {
+                    ctx.selectedPid = live.pid;
+                }
                 ctx.removePhantom(phantom.pid);
             } else {
                 infos.add(phantom);

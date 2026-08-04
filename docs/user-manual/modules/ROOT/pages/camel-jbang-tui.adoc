@@ -67,6 +67,23 @@ is auto-detected and locked to match your project.
 TIP: Press *F1* or *?* on any screen for context-sensitive help.
 Keyboard shortcuts are always shown in the footer bar.
 
+=== Option 3: Open a Project Directory
+
+You can point the TUI directly at a project directory:
+
+[source,bash]
+----
+camel tui .
+camel tui /path/to/my-project
+----
+
+The TUI opens the directory in the Source tab so you can browse the project files immediately.
+When a `pom.xml` is present, the runtime is auto-detected (Spring Boot, Quarkus, or Camel Main).
+Press *F10* to run the project -- Maven projects are launched with the appropriate goal
+(`spring-boot:run`, `quarkus:dev`, or `camel:run`), and plain directories are run with `camel run`.
+
+This is a quick way to explore and run any Camel project without starting it separately first.
+
 === Connecting Existing Spring Boot and Quarkus Applications
 
 The TUI auto-discovers integrations started with `camel run`. To monitor and control
@@ -515,6 +532,7 @@ respectively. Use *↑*/*↓* on the input line to walk previous entries. Limits
 | *F1* / *?* | Context-sensitive help (toggle)
 | *F2* | Actions menu
 | *F3* | Switch between integrations (when multiple running)
+| *F10* | Run menu (run, stop, restart, kill)
 | *Shift+F5* | Take screenshot
 | *Ctrl+R* | Start/stop tape recording
 | *Ctrl+C* / *Q* | Quit
@@ -816,8 +834,8 @@ vhs demo.tape               # .tape -> .gif
 |===
 | Option | Description | Default
 
-| `[name\|pid]`
-| Name or PID of the Camel integration to monitor. When omitted, the TUI auto-discovers running integrations.
+| `[name\|pid\|directory]`
+| Name, PID, or directory path of a Camel integration. When a directory is given, the TUI opens it as a project in the Source tab -- you can browse the source code and run it with *F10*. When omitted, the TUI auto-discovers running integrations.
 |
 
 | `--mcp`

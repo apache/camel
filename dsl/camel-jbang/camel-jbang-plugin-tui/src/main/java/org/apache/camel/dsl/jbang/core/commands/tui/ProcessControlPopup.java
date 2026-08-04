@@ -173,7 +173,7 @@ class ProcessControlPopup {
                 .block(Block.builder()
                         .borderType(BorderType.ROUNDED)
                         .borders(Borders.ALL)
-                        .title(" Control ")
+                        .title(" Run ")
                         .build())
                 .build();
         frame.renderStatefulWidget(list, popup, listState);

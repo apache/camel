@@ -201,7 +201,8 @@ class LaunchManager {
                 case "quarkus" -> cmd.add("quarkus:dev");
                 default -> cmd.add("camel:run");
             }
-            cmd.addAll(extraArgs);
+            // Translate Camel JBang args to Maven-compatible args
+            cmd.addAll(translateArgsForMaven(extraArgs, projectType));
             Path outputFile = createSecureTempFile("camel-maven-", ".log");
             outputFile.toFile().deleteOnExit();
             ProcessBuilder pb = new ProcessBuilder(cmd);
@@ -243,6 +244,55 @@ class LaunchManager {
             return wrapperPath.toString();
         }
         return "mvn";
+    }
+
+    static List<String> translateArgsForMaven(List<String> extraArgs, String projectType) {
+        List<String> mvnArgs = new ArrayList<>();
+        StringBuilder jvmArgs = new StringBuilder();
+        if ("spring-boot".equals(projectType)) {
+            jvmArgs.append("-Dlogging.config=classpath:logback-camel-jbang.xml");
+        }
+        for (String arg : extraArgs) {
+            if (arg.startsWith("--prop=")) {
+                String kv = arg.substring("--prop=".length());
+                mvnArgs.add("-D" + kv);
+            } else if (arg.startsWith("--port=")) {
+                String port = arg.substring("--port=".length());
+                if ("spring-boot".equals(projectType)) {
+                    mvnArgs.add("-Dserver.port=" + port);
+                } else if ("quarkus".equals(projectType)) {
+                    mvnArgs.add("-Dquarkus.http.port=" + port);
+                }
+            } else if (arg.startsWith("--profile=")) {
+                String profile = arg.substring("--profile=".length());
+                if (!"prod".equals(profile)) {
+                    if (!jvmArgs.isEmpty()) {
+                        jvmArgs.append(" ");
+                    }
+                    jvmArgs.append("-Dcamel.main.profile=").append(profile);
+                }
+            } else if (arg.startsWith("--jvm-args=")) {
+                String extra = arg.substring("--jvm-args=".length()).trim();
+                if (!extra.isEmpty()) {
+                    if (!jvmArgs.isEmpty()) {
+                        jvmArgs.append(" ");
+                    }
+                    jvmArgs.append(extra);
+                }
+            }
+            // other Camel JBang flags (--name, --runtime, --dev, --observe, etc.)
+            // are not applicable to Maven and are silently dropped
+        }
+        if (!jvmArgs.isEmpty()) {
+            if ("spring-boot".equals(projectType)) {
+                mvnArgs.add("-Dspring-boot.run.jvmArguments=" + jvmArgs);
+            } else if ("quarkus".equals(projectType)) {
+                mvnArgs.add("-Djvm.args=" + jvmArgs);
+            } else {
+                mvnArgs.add("-Dcamel.jvmArgs=" + jvmArgs);
+            }
+        }
+        return mvnArgs;
     }
 
     private void checkDeferredLaunch(long now) {

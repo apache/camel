@@ -188,6 +188,16 @@ public class CamelMonitor extends CamelCommand {
     public Integer doCall() throws Exception {
         System.setProperty("java.awt.headless", "true");
 
+        // Detect if name arg is a directory path — open it as a project instead of using it as a name/PID filter
+        String openDir = null;
+        if (!"*".equals(name)) {
+            Path p = Path.of(name).toAbsolutePath().normalize();
+            if (Files.isDirectory(p)) {
+                openDir = p.toString();
+                name = "*";
+            }
+        }
+
         if (theme != null) {
             if (!Theme.isValidMode(theme)) {
                 String expected = String.join("' or '", ThemeMode.ids());
@@ -477,8 +487,16 @@ public class CamelMonitor extends CamelCommand {
         // Initial data load (synchronous before TUI starts)
         dataService.refreshSync(this::refreshLogData, this::refreshConditionalData);
 
-        // Auto-select if there's exactly one integration running
-        tabRegistry.overviewTab().selectCurrentIntegration();
+        // If the argument was a directory, open it as a project
+        if (openDir != null) {
+            openDirectoryAsPhantom(openDir);
+            // Re-scan so the phantom is merged into the data list before the Source tab reads it
+            dataService.refreshSync(this::refreshLogData, this::refreshConditionalData);
+            tabRegistry.handleTabKey(TAB_SOURCE, ctx, dataService);
+        } else {
+            // Auto-select if there's exactly one integration running
+            tabRegistry.overviewTab().selectCurrentIntegration();
+        }
 
         canvasOverlay.setOnOpen(() -> {
             popupManager.dismissAll();
@@ -2205,6 +2223,7 @@ public class CamelMonitor extends CamelCommand {
             hint(fKeySpans, "F1", "help");
         }
         hint(fKeySpans, "F2", "actions");
+        hint(fKeySpans, "F10", "run");
         spans.addAll(insertPos, fKeySpans);
         // Return total F-key span count. The footer drop loop uses this to remove pairs from
         // the tail, stopping before the first pair (F1 help when present).
@@ -2373,6 +2392,44 @@ public class CamelMonitor extends CamelCommand {
                 LOG.log(Level.DEBUG, "Failed to delete .mcp.json: {0}", e.getMessage());
             }
         }
+    }
+
+    private void openDirectoryAsPhantom(String directory) {
+        Path dirPath = Path.of(directory).toAbsolutePath().normalize();
+        if (!Files.isDirectory(dirPath)) {
+            return;
+        }
+        // check if this directory already matches a running integration
+        for (IntegrationInfo info : dataService.data().get()) {
+            if (!info.vanishing && directory.equals(info.directory)) {
+                ctx.selectedPid = info.pid;
+                return;
+            }
+        }
+        // check if already registered as a phantom
+        IntegrationInfo existing = ctx.findPhantomByDirectory(dirPath.toString());
+        if (existing != null) {
+            ctx.selectedPid = existing.pid;
+            return;
+        }
+
+        Path pomFile = dirPath.resolve("pom.xml");
+        String runtime = Files.isRegularFile(pomFile) ? TuiHelper.detectPomRuntime(pomFile) : null;
+
+        IntegrationInfo phantom = new IntegrationInfo();
+        phantom.name = dirPath.getFileName().toString();
+        phantom.directory = dirPath.toString();
+        phantom.sourceDir = dirPath.toString();
+        phantom.projectType = runtime;
+        if ("spring-boot".equals(runtime)) {
+            phantom.platform = "Spring Boot";
+        } else if ("quarkus".equals(runtime)) {
+            phantom.platform = "Quarkus";
+        } else {
+            phantom.platform = "Camel";
+        }
+        ctx.addPhantom(phantom);
+        ctx.selectedPid = phantom.pid;
     }
 
     void setRunnerForTesting(Runnable onQuit) {
