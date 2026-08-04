@@ -155,7 +155,7 @@ public class SalesforceEndpointConfig implements Cloneable {
     private Boolean streamQueryResult = false;
     @UriParam(displayName = "SObject Search")
     private String sObjectSearch;
-    @UriParam
+    @UriParam(defaultValue = "GET")
     private String apexMethod;
     @UriParam(displayName = "Event Name", label = "producer")
     private String eventName;
@@ -456,7 +456,8 @@ public class SalesforceEndpointConfig implements Cloneable {
     }
 
     /**
-     * APEX method name
+     * HTTP verb used for the Apex REST invocation, such as GET, POST, PUT, PATCH or DELETE. Applies to the apexCall
+     * operation and defaults to GET. Can be overridden per message with the CamelSalesforceApexMethod header.
      */
     public void setApexMethod(String apexMethod) {
         this.apexMethod = apexMethod;
@@ -467,7 +468,10 @@ public class SalesforceEndpointConfig implements Cloneable {
     }
 
     /**
-     * APEX method URL
+     * Path of the Apex REST resource to invoke, appended to /services/apexrest/ on the instance URL, for example
+     * MyApexClass/. The apexCall operation needs this value, which can be given as this option, in the endpoint path as
+     * apexCall/MyApexClass/, or in the CamelSalesforceApexUrl header. Placeholders written in curly braces are resolved
+     * from message headers of the same name.
      */
     public void setApexUrl(String apexUrl) {
         this.apexUrl = apexUrl;
@@ -534,7 +538,9 @@ public class SalesforceEndpointConfig implements Cloneable {
     }
 
     /**
-     * Bulk API Job ID
+     * Identifies the Bulk API job to act on, for Bulk API v1 operations such as getJob, closeJob, abortJob, createBatch
+     * and getResults, and for the bulk2 operations that target an existing job. Operations that accept a JobInfo or
+     * BatchInfo message body can take the id from there instead.
      */
     public void setJobId(String jobId) {
         this.jobId = jobId;
@@ -545,7 +551,8 @@ public class SalesforceEndpointConfig implements Cloneable {
     }
 
     /**
-     * Bulk API Batch ID
+     * Identifies a batch within a Bulk API v1 job. Required by getBatch, getRequest, getResults, getQueryResultIds and
+     * getQueryResult unless a BatchInfo message body supplies it. Not used by Bulk API 2.0.
      */
     public void setBatchId(String batchId) {
         this.batchId = batchId;
@@ -556,7 +563,8 @@ public class SalesforceEndpointConfig implements Cloneable {
     }
 
     /**
-     * Bulk API Result ID
+     * Identifies one result set of a completed Bulk API v1 query batch, as returned by the getQueryResultIds operation.
+     * Used only by getQueryResult, together with jobId and batchId.
      */
     public void setResultId(String resultId) {
         this.resultId = resultId;

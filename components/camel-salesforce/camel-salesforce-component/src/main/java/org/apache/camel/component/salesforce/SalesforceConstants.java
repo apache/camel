@@ -27,37 +27,83 @@ public final class SalesforceConstants {
     public static final String HEADER_SALESFORCE_EVENT_UUID = "CamelSalesforceEventUuid";
     @Metadata(label = "consumer", description = "The change event schema.", javaType = "Object")
     public static final String HEADER_SALESFORCE_CHANGE_EVENT_SCHEMA = "CamelSalesforceChangeEventSchema";
-    @Metadata(label = "consumer", description = "The event type.", javaType = "String")
+    @Metadata(label = "consumer",
+              description = "For change and platform events, the last segment of the configured topic name, such as"
+                            + " AccountChangeEvent. For PushTopic messages, the Salesforce event type of the"
+                            + " notification, such as created.",
+              javaType = "String")
     public static final String HEADER_SALESFORCE_EVENT_TYPE = "CamelSalesforceEventType";
-    @Metadata(label = "consumer", description = "The commit timestamp.", javaType = "Object")
+    @Metadata(label = "consumer",
+              description = "Time of the Salesforce transaction that produced the change event, from the"
+                            + " ChangeEventHeader.",
+              javaType = "Object")
     public static final String HEADER_SALESFORCE_COMMIT_TIMESTAMP = "CamelSalesforceCommitTimestamp";
-    @Metadata(label = "consumer", description = "The commit user.", javaType = "Object")
+    @Metadata(label = "consumer",
+              description = "Id of the Salesforce user whose transaction produced the change event, from the"
+                            + " ChangeEventHeader.",
+              javaType = "Object")
     public static final String HEADER_SALESFORCE_COMMIT_USER = "CamelSalesforceCommitUser";
-    @Metadata(label = "consumer", description = "The commit number.", javaType = "Object")
+    @Metadata(label = "consumer",
+              description = "System change number of the Salesforce transaction that produced the change event, from"
+                            + " the ChangeEventHeader.",
+              javaType = "Object")
     public static final String HEADER_SALESFORCE_COMMIT_NUMBER = "CamelSalesforceCommitNumber";
-    @Metadata(label = "consumer", description = "The record ids.", javaType = "Object")
+    @Metadata(label = "consumer",
+              description = "Ids of the records affected by the change event, from the ChangeEventHeader. Holds more"
+                            + " than one id when a single transaction changed several records.",
+              javaType = "Object")
     public static final String HEADER_SALESFORCE_RECORD_IDS = "CamelSalesforceRecordIds";
-    @Metadata(label = "consumer", description = "The change type.", javaType = "Object")
+    @Metadata(label = "consumer",
+              description = "Kind of change carried by the change event, from the ChangeEventHeader, for example"
+                            + " CREATE or UPDATE.",
+              javaType = "Object")
     public static final String HEADER_SALESFORCE_CHANGE_TYPE = "CamelSalesforceChangeType";
-    @Metadata(label = "consumer", description = "The change origin.", javaType = "Object")
+    @Metadata(label = "consumer",
+              description = "Identifies the Salesforce API and client that made the change, from the"
+                            + " ChangeEventHeader.",
+              javaType = "Object")
     public static final String HEADER_SALESFORCE_CHANGE_ORIGIN = "CamelSalesforceChangeOrigin";
-    @Metadata(label = "consumer", description = "The transaction key.", javaType = "Object")
+    @Metadata(label = "consumer",
+              description = "Key shared by every change event produced by the same Salesforce transaction, from the"
+                            + " ChangeEventHeader. Use it to group events that belong to one transaction.",
+              javaType = "Object")
     public static final String HEADER_SALESFORCE_TRANSACTION_KEY = "CamelSalesforceTransactionKey";
-    @Metadata(label = "consumer", description = "The sequence number.", javaType = "Object")
+    @Metadata(label = "consumer",
+              description = "Position of this change event within its Salesforce transaction, from the"
+                            + " ChangeEventHeader.",
+              javaType = "Object")
     public static final String HEADER_SALESFORCE_SEQUENCE_NUMBER = "CamelSalesforceSequenceNumber";
-    @Metadata(label = "consumer", description = "Is transaction end.", javaType = "Object")
+    @Metadata(label = "consumer",
+              description = "True when this change event is the last one of its Salesforce transaction, from the"
+                            + " ChangeEventHeader. Use it together with CamelSalesforceTransactionKey to detect the"
+                            + " end of a transaction.",
+              javaType = "Object")
     public static final String HEADER_SALESFORCE_IS_TRANSACTION_END = "CamelSalesforceIsTransactionEnd";
-    @Metadata(label = "consumer", description = "The entity name.", javaType = "Object")
+    @Metadata(label = "consumer",
+              description = "Name of the Salesforce object the change event applies to, such as Account, from the"
+                            + " ChangeEventHeader.",
+              javaType = "Object")
     public static final String HEADER_SALESFORCE_ENTITY_NAME = "CamelSalesforceEntityName";
     @Metadata(label = "consumer", description = "The platform event schema.", javaType = "Object")
     public static final String HEADER_SALESFORCE_PLATFORM_EVENT_SCHEMA = "CamelSalesforcePlatformEventSchema";
-    @Metadata(label = "consumer", description = "The created date.", javaType = "java.time.ZonedDateTime")
+    @Metadata(label = "consumer",
+              description = "Creation time of the event. Platform events supply a ZonedDateTime taken from the event"
+                            + " payload, while PushTopic notifications supply the raw createdDate value as a String.",
+              javaType = "java.time.ZonedDateTime")
     public static final String HEADER_SALESFORCE_CREATED_DATE = "CamelSalesforceCreatedDate";
-    @Metadata(label = "consumer", description = "The topic name.", javaType = "String")
+    @Metadata(label = "consumer",
+              description = "Name of the PushTopic the message was received from. Set for PushTopic messages only.",
+              javaType = "String")
     public static final String HEADER_SALESFORCE_TOPIC_NAME = "CamelSalesforceTopicName";
-    @Metadata(label = "consumer", description = "The channel.", javaType = "String")
+    @Metadata(label = "consumer",
+              description = "Streaming API channel the message was received on, such as /topic/MyTopic or"
+                            + " /data/AccountChangeEvent.",
+              javaType = "String")
     public static final String HEADER_SALESFORCE_CHANNEL = "CamelSalesforceChannel";
-    @Metadata(label = "consumer", description = "The client id.", javaType = "String")
+    @Metadata(label = "consumer",
+              description = "Client id of the Streaming API subscription that received the message. Set only when the"
+                            + " server supplies one.",
+              javaType = "String")
     public static final String HEADER_SALESFORCE_CLIENT_ID = "CamelSalesforceClientId";
 
     // Pub/Sub API headers
