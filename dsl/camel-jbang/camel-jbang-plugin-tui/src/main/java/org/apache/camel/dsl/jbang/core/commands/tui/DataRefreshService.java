@@ -82,6 +82,7 @@ class DataRefreshService {
     private volatile List<Long> cachedPids = Collections.emptyList();
     private volatile long lastFullScanTime;
     private volatile long lastLivenessCheckTime;
+    private volatile long forceFullScanUntil;
     private volatile long burstModeUntil;
     final Set<String> stoppingPids = ConcurrentHashMap.newKeySet();
 
@@ -162,6 +163,10 @@ class DataRefreshService {
         burstModeUntil = System.currentTimeMillis() + 20_000;
     }
 
+    void forceFullScan() {
+        forceFullScanUntil = System.currentTimeMillis() + 20_000;
+    }
+
     boolean isBurstMode() {
         return System.currentTimeMillis() < burstModeUntil;
     }
@@ -229,7 +234,8 @@ class DataRefreshService {
         List<IntegrationInfo> infos = new ArrayList<>();
         long now = System.currentTimeMillis();
         boolean wantFullScan = refreshCtx.selectedTab() == TabRegistry.TAB_OVERVIEW || refreshCtx.isSwitchPopupVisible()
-                || cachedPids.isEmpty();
+                || cachedPids.isEmpty()
+                || forceFullScanUntil > now;
         long scanInterval = isBurstMode() ? 1000 : 2000;
         boolean fullScan = wantFullScan && (now - lastFullScanTime >= scanInterval);
         List<Long> pids;
@@ -286,6 +292,9 @@ class DataRefreshService {
             }
             List<IntegrationInfo> previous = data.get();
             for (IntegrationInfo prev : previous) {
+                if (prev.phantom) {
+                    continue;
+                }
                 if (!prev.vanishing && !ctx.selectedPid.equals(prev.pid)) {
                     if (checkLiveness) {
                         try {
@@ -303,6 +312,7 @@ class DataRefreshService {
         }
 
         handleVanishing(infos, now);
+        mergePhantoms(infos);
         data.set(infos);
         return fullScan;
     }
@@ -311,6 +321,9 @@ class DataRefreshService {
         Set<String> livePids = infos.stream().map(i -> i.pid).collect(Collectors.toSet());
         List<IntegrationInfo> previous = data.get();
         for (IntegrationInfo prev : previous) {
+            if (prev.phantom) {
+                continue;
+            }
             if (!prev.vanishing && !livePids.contains(prev.pid) && !vanishing.containsKey(prev.pid)) {
                 boolean wasExplicitStop = stoppingPids.remove(prev.pid);
                 if (wasExplicitStop) {
@@ -334,6 +347,20 @@ class DataRefreshService {
                 infos.add(ghost);
             } else {
                 it.remove();
+            }
+        }
+    }
+
+    private void mergePhantoms(List<IntegrationInfo> infos) {
+        Set<String> liveDirs = infos.stream()
+                .filter(i -> !i.vanishing && !i.phantom && i.directory != null)
+                .map(i -> i.directory)
+                .collect(Collectors.toSet());
+        for (IntegrationInfo phantom : ctx.phantomIntegrations) {
+            if (phantom.sourceDir != null && liveDirs.contains(phantom.sourceDir)) {
+                ctx.removePhantom(phantom.pid);
+            } else {
+                infos.add(phantom);
             }
         }
     }

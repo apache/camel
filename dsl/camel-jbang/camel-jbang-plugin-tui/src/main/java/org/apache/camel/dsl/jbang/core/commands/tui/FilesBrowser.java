@@ -150,6 +150,12 @@ class FilesBrowser {
             int clicked = listState.offset() + (me.y() - innerTop);
             if (clicked >= 0 && clicked < entries.size()) {
                 listState.select(clicked);
+                FileEntry entry = entries.get(clicked);
+                if (entry.directory()) {
+                    loadDirectory(Path.of(entry.path()));
+                } else {
+                    sourceViewer.loadFile(Path.of(entry.path()));
+                }
             }
             return true;
         }

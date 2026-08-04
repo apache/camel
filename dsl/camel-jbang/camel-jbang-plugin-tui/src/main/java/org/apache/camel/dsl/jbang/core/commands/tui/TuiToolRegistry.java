@@ -127,6 +127,7 @@ class TuiToolRegistry {
             case "tui_toggle_trace_display" -> callToggleTraceDisplay(args);
             case "tui_get_readme" -> callGetReadme(args);
             case "tui_control" -> callControl(args);
+            case "tui_open_project" -> callOpenProject(args);
             case "tui_get_files" -> callGetFiles(args);
             case "tui_get_spans" -> callGetSpans(args);
             case "tui_locate" -> callLocate(args);
@@ -518,10 +519,21 @@ class TuiToolRegistry {
                                + "start-routes (or resume) — resume all routes; "
                                + "restart — gracefully restart the integration; "
                                + "stop — gracefully stop the process; "
-                               + "kill — forcefully terminate the process.",
+                               + "kill — forcefully terminate the process; "
+                               + "stop-all — stop all running processes; "
+                               + "close — close a phantom (opened but not running) project.",
                 Map.of("action", propDef("string",
-                        "Control action: stop-routes, start-routes, pause, resume, restart, stop, or kill")),
+                        "Control action: stop-routes, start-routes, pause, resume, restart, stop, kill, stop-all, or close")),
                 List.of("action"))));
+        tools.add(toToolDef(toolDef(
+                "tui_open_project",
+                "Opens a project directory as a phantom integration (shown as Stopped in Overview). "
+                                    + "The project can then be browsed in the Source tab and run via tui_control. "
+                                    + "Supports Maven projects (Spring Boot, Quarkus, Camel Main detected via pom.xml) "
+                                    + "and flat directories with Camel route files.",
+                Map.of("directory", propDef("string",
+                        "Absolute path to the project directory to open")),
+                List.of("directory"))));
         tools.add(toToolDef(toolDef(
                 "tui_get_files",
                 "Returns source files from the selected integration's directory. "
@@ -1539,6 +1551,14 @@ class TuiToolRegistry {
             return "Error: action is required";
         }
         return facade.controlIntegration(action);
+    }
+
+    private String callOpenProject(Map<String, Object> args) {
+        String directory = (String) args.get("directory");
+        if (directory == null || directory.isBlank()) {
+            return "Error: directory is required";
+        }
+        return facade.openProject(directory);
     }
 
     private String callGetFiles(Map<String, Object> args) {

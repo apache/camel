@@ -19,8 +19,10 @@ package org.apache.camel.dsl.jbang.core.commands.tui;
 import java.nio.file.Path;
 import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.BiConsumer;
 
@@ -46,6 +48,8 @@ class MonitorContext {
 
     volatile String selectedPid;
     volatile String lastSelectedName;
+    final List<IntegrationInfo> phantomIntegrations = new CopyOnWriteArrayList<>();
+    private final AtomicInteger phantomCounter = new AtomicInteger();
     int shellPercent;
     boolean logPinned;
     int logPinPercent;
@@ -104,6 +108,26 @@ class MonitorContext {
             return TuiHelper.truncate(infra.alias, 20);
         }
         return "?";
+    }
+
+    void addPhantom(IntegrationInfo info) {
+        info.phantom = true;
+        info.pid = "phantom-" + phantomCounter.incrementAndGet();
+        info.state = 9;
+        phantomIntegrations.add(info);
+    }
+
+    void removePhantom(String pid) {
+        phantomIntegrations.removeIf(i -> pid.equals(i.pid));
+    }
+
+    IntegrationInfo findPhantomByDirectory(String dir) {
+        if (dir == null) {
+            return null;
+        }
+        return phantomIntegrations.stream()
+                .filter(i -> dir.equals(i.sourceDir))
+                .findFirst().orElse(null);
     }
 
     private final ConcurrentHashMap<String, Object> actionLocks = new ConcurrentHashMap<>();

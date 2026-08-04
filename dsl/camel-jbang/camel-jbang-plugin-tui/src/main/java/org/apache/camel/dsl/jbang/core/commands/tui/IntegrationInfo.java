@@ -32,6 +32,9 @@ class IntegrationInfo {
     String directory;
     String profile;
     boolean devMode;
+    boolean phantom;
+    String projectType;
+    String sourceDir;
     String ready;
     int state;
     long uptime;

@@ -55,6 +55,7 @@ final class TuiIcons {
     static final String GO_TO = "🔍";
     static final String MESSAGE = "📩";
     static final String KEYSTROKES = "🔤";
+    static final String SLEEP = "💤";
     static final String STOP = "🛑";
     static final String RECORD = "🔴";
     static final String DOCTOR = "🩺";

@@ -80,6 +80,8 @@ class McpFacade {
 
         void stopProcess(boolean forceKill);
 
+        void stopAll();
+
         void resetIntegrationTabState();
     }
 
@@ -835,6 +837,22 @@ class McpFacade {
         if (action == null || action.isBlank()) {
             return "Error: action is required";
         }
+        if ("stop-all".equals(action)) {
+            bridge.stopAll();
+            return "Stopping all processes";
+        }
+        if ("close".equals(action)) {
+            if (ctx.selectedPid == null) {
+                return "Error: no integration selected";
+            }
+            IntegrationInfo info = ctx.findSelectedIntegration();
+            if (info == null || !info.phantom) {
+                return "Error: selected integration is not a phantom (opened but not running)";
+            }
+            ctx.removePhantom(info.pid);
+            ctx.selectedPid = null;
+            return "Closed project: " + info.name;
+        }
         if (ctx.selectedPid == null) {
             return "Error: no integration selected";
         }
@@ -870,8 +888,44 @@ class McpFacade {
                 yield "Killed " + name;
             }
             default -> "Unknown action: " + action
-                       + ". Available: stop-routes, start-routes, restart, stop, kill";
+                       + ". Available: stop-routes, start-routes, restart, stop, kill, stop-all, close";
         };
+    }
+
+    String openProject(String directory) {
+        Path dirPath = Path.of(directory).toAbsolutePath().normalize();
+        if (!Files.isDirectory(dirPath)) {
+            if (Files.isRegularFile(dirPath)) {
+                dirPath = dirPath.getParent();
+            } else {
+                return "Error: directory does not exist: " + directory;
+            }
+        }
+        IntegrationInfo existing = ctx.findPhantomByDirectory(dirPath.toString());
+        if (existing != null) {
+            ctx.selectedPid = existing.pid;
+            return "Project already open: " + existing.name;
+        }
+
+        Path pomFile = dirPath.resolve("pom.xml");
+        String runtime = Files.isRegularFile(pomFile) ? TuiHelper.detectPomRuntime(pomFile) : null;
+
+        IntegrationInfo phantom = new IntegrationInfo();
+        phantom.name = dirPath.getFileName().toString();
+        phantom.directory = dirPath.toString();
+        phantom.sourceDir = dirPath.toString();
+        phantom.projectType = runtime;
+        if ("spring-boot".equals(runtime)) {
+            phantom.platform = "Spring Boot";
+        } else if ("quarkus".equals(runtime)) {
+            phantom.platform = "Quarkus";
+        } else {
+            phantom.platform = "Camel";
+        }
+        ctx.addPhantom(phantom);
+        ctx.selectedPid = phantom.pid;
+
+        return "Opened project: " + phantom.name + " (pid: " + phantom.pid + ")";
     }
 
 }

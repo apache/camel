@@ -210,6 +210,7 @@ class SourceTab extends AbstractTab {
                 int clicked = listState.offset() + (me.y() - innerTop);
                 if (clicked >= 0 && clicked < entries.size()) {
                     listState.select(clicked);
+                    openSelectedEntry();
                 }
                 return true;
             }

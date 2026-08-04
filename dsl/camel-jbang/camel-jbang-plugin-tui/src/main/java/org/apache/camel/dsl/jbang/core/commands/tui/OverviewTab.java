@@ -192,47 +192,8 @@ class OverviewTab extends AbstractTab {
             }
             return true;
         }
-        // Process control keys
+        // Process control keys (r/x/p/X moved to F10 ProcessControlPopup)
         if (actions != null) {
-            if (ke.isChar('p') && ctx.selectedPid != null && !ctx.isInfraSelected()) {
-                IntegrationInfo selInfo = ctx.findSelectedIntegration();
-                if (selInfo != null) {
-                    String cmd = selInfo.routeStarted > 0 ? "stop" : "start";
-                    if (ctx.confirmActions) {
-                        String label = selInfo.routeStarted > 0 ? "Stop" : "Start";
-                        actions.showConfirm("Confirm " + label + " Routes",
-                                " " + label + " all routes for " + ctx.selectedName() + "? ",
-                                () -> actions.sendRouteCommand(ctx.selectedPid, "*", cmd));
-                    } else {
-                        actions.sendRouteCommand(ctx.selectedPid, "*", cmd);
-                    }
-                }
-                return true;
-            }
-            if (ke.isChar('x') && ctx.selectedPid != null) {
-                if (ctx.confirmActions) {
-                    actions.showConfirm("Confirm Stop",
-                            " Stop " + ctx.selectedName() + " (PID: " + ctx.selectedPid + ")? ",
-                            () -> actions.stopSelectedProcess(false));
-                } else {
-                    actions.stopSelectedProcess(false);
-                }
-                return true;
-            }
-            if (ke.isChar('X') && ctx.selectedPid != null) {
-                actions.showKillConfirm();
-                return true;
-            }
-            if (ke.isChar('r') && ctx.selectedPid != null && !ctx.isInfraSelected()) {
-                if (ctx.confirmActions) {
-                    actions.showConfirm("Confirm Restart",
-                            " Restart " + ctx.selectedName() + " (PID: " + ctx.selectedPid + ")? ",
-                            () -> actions.restartSelectedProcess());
-                } else {
-                    actions.restartSelectedProcess();
-                }
-                return true;
-            }
             if (ke.isChar('f') && ctx.selectedPid != null && !ctx.isInfraSelected()) {
                 actions.openFilesPopup();
                 return true;
@@ -467,7 +428,22 @@ class OverviewTab extends AbstractTab {
                 boolean isEven = (rowIndex++ % 2 == 0);
                 Style rowBg = isEven ? Style.EMPTY.bg(Theme.zebra()) : Style.EMPTY;
 
-                if (info.vanishing) {
+                if (info.phantom) {
+                    String platformIcon = TuiIcons.runtimeIcon(info.platform != null ? info.platform : "");
+                    String nameText = platformIcon + " " + (info.name != null ? info.name : "");
+                    rows.add(Row.from(
+                            Cell.from(Span.styled("-", Theme.muted())),
+                            Cell.from(Span.styled(nameText, Theme.info())),
+                            Cell.from(Span.styled("", Theme.muted())),
+                            Cell.from(Span.styled("", Theme.muted())),
+                            Cell.from(Span.styled(TuiIcons.STOPPED + " Stopped", Theme.error())),
+                            Cell.from(Span.styled("", Theme.muted())),
+                            Cell.from(Span.styled("", Theme.muted())),
+                            Cell.from(Span.styled("", Theme.muted())),
+                            Cell.from(Span.styled("", Theme.muted())),
+                            Cell.from(Span.styled("", Theme.muted())),
+                            Cell.from(Span.styled("", Theme.muted()))).style(rowBg));
+                } else if (info.vanishing) {
                     long elapsed = System.currentTimeMillis() - info.vanishStart;
                     float fade = 1.0f - Math.min(1.0f, (float) elapsed / VANISH_DURATION_MS);
                     int gray = (int) (100 * fade);
@@ -1074,6 +1050,9 @@ class OverviewTab extends AbstractTab {
                 default -> "[off]";
             });
         }
+        if (ctx.selectedPid != null) {
+            hint(spans, "F10", "control");
+        }
     }
 
     @Override
@@ -1398,15 +1377,11 @@ class OverviewTab extends AbstractTab {
 
                 ## Process Control
 
-                - `p` — stop or start all routes for the selected integration
-                - `x` — stop the selected integration (graceful shutdown)
-                - `X` — kill the selected integration (force terminate, always confirms)
-                - `r` — restart the selected integration
+                - `F10` — open process control popup (stop routes, start routes, restart, stop, kill)
                 - `q` — quit the TUI
 
-                By default, these actions show a confirmation dialog before executing.
+                By default, stop/restart actions show a confirmation dialog before executing.
                 You can turn this off in Settings (`F2` → `Settings...` → `Confirm`).
-                Kill (`X`) always confirms regardless of this setting.
                 """;
     }
 
@@ -1473,12 +1448,13 @@ class OverviewTab extends AbstractTab {
                 Span.styled("Run an Example", Style.EMPTY.bold()),
                 Span.raw("."))));
         lines.add(Line.from(Span.raw("")));
-        lines.add(Line.from(Span.styled(TuiIcons.indent(TuiIcons.FOLDER) + "Or run an existing project:", Style.EMPTY.bold())));
+        lines.add(
+                Line.from(Span.styled(TuiIcons.indent(TuiIcons.FOLDER) + "Or open an existing project:", Style.EMPTY.bold())));
         lines.add(Line.from(List.of(
                 Span.raw("     Press "),
                 Span.styled(" F2 ", Theme.hintKey()),
                 Span.raw(" to open Actions and select "),
-                Span.styled("Run from Folder", Style.EMPTY.bold()),
+                Span.styled("Open", Style.EMPTY.bold()),
                 Span.raw("."))));
         lines.add(Line.from(Span.raw("")));
         lines.add(Line.from(Span.styled(TuiIcons.indent(TuiIcons.COMPUTER) + "Or use the embedded JLine shell panel:",

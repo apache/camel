@@ -192,6 +192,59 @@ class LaunchManager {
         return false;
     }
 
+    void launchMavenProject(String dir, String projectType, String displayName, List<String> extraArgs) {
+        try {
+            List<String> cmd = new ArrayList<>();
+            cmd.add(resolveMvnCommand(dir));
+            switch (projectType) {
+                case "spring-boot" -> cmd.add("spring-boot:run");
+                case "quarkus" -> cmd.add("quarkus:dev");
+                default -> cmd.add("camel:run");
+            }
+            cmd.addAll(extraArgs);
+            Path outputFile = createSecureTempFile("camel-maven-", ".log");
+            outputFile.toFile().deleteOnExit();
+            ProcessBuilder pb = new ProcessBuilder(cmd);
+            pb.directory(new java.io.File(dir));
+            pb.redirectErrorStream(true);
+            pb.redirectOutput(outputFile.toFile());
+            Process process = pb.start();
+            addPendingLaunch(displayName, process, outputFile);
+            notify("Starting: " + displayName + " (mvn " + cmd.get(1) + ")", false);
+        } catch (Exception e) {
+            notify("Failed to start Maven project: " + e.getMessage(), true);
+        }
+    }
+
+    void launchCamelRun(String sourceDir, String displayName, List<String> extraArgs) {
+        try {
+            List<String> cmd = new ArrayList<>(LauncherHelper.getCamelCommand());
+            cmd.add("run");
+            cmd.add("--source-dir=" + sourceDir);
+            cmd.add("--logging-color=true");
+            cmd.addAll(extraArgs);
+            Path outputFile = createSecureTempFile("camel-folder-", ".log");
+            outputFile.toFile().deleteOnExit();
+            ProcessBuilder pb = new ProcessBuilder(cmd);
+            pb.redirectErrorStream(true);
+            pb.redirectOutput(outputFile.toFile());
+            Process process = pb.start();
+            addPendingLaunch(displayName, process, outputFile);
+            notify("Starting: " + displayName, false);
+        } catch (Exception e) {
+            notify("Failed to start: " + sourceDir + " - " + e.getMessage(), true);
+        }
+    }
+
+    private static String resolveMvnCommand(String dir) {
+        String wrapper = System.getProperty("os.name", "").toLowerCase().contains("win") ? "mvnw.cmd" : "./mvnw";
+        Path wrapperPath = Path.of(dir).resolve(wrapper.startsWith("./") ? wrapper.substring(2) : wrapper);
+        if (Files.isRegularFile(wrapperPath)) {
+            return wrapperPath.toString();
+        }
+        return "mvn";
+    }
+
     private void checkDeferredLaunch(long now) {
         if (deferredLaunch != null) {
             Set<String> runningAliases = infraServices.get().stream()

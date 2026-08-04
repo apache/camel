@@ -53,12 +53,11 @@ class ActionsPopup {
         SWITCH_INTEGRATION,
         SEND_MESSAGE,
         RUN_EXAMPLE,
-        RUN_FOLDER,
+        OPEN_PROJECT,
         RUN_INFRA,
         BROWSE_FILES,
         DOCTOR,
         RESET_STATS,
-        STOP_ALL,
         SHELL,
         SCREEN_SUBMENU,
         SETTINGS,
@@ -131,6 +130,7 @@ class ActionsPopup {
     private final CaptionOverlay captionOverlay;
 
     private final LaunchManager launchManager;
+    private IntegrationInfo pendingPhantomRun;
     private BiConsumer<String, Boolean> notificationCallback;
     private String preSelectedRouteId;
 
@@ -160,7 +160,6 @@ class ActionsPopup {
         infraBrowserPopup.setBurstCallback(burstCallback);
         this.folderInputPopup = new FolderInputPopup(launchManager);
         folderInputPopup.setBurstCallback(burstCallback);
-        folderInputPopup.setOnFolderConfirmed(this::openFolderRunOptionsForm);
         folderInputPopup.setInfraCatalogClearer(infraBrowserPopup::clearCatalog);
         sendMessagePopup.setFileBrowser(sendFileBrowser);
     }
@@ -168,6 +167,7 @@ class ActionsPopup {
     void setContext(MonitorContext ctx) {
         this.ctx = ctx;
         docViewerPopup.setContext(ctx);
+        folderInputPopup.setContext(ctx);
     }
 
     LaunchManager getLaunchManager() {
@@ -280,8 +280,7 @@ class ActionsPopup {
         flat.add(Action.SWITCH_INTEGRATION);
         flat.add(null);
         flat.addAll(List.of(
-                Action.SEND_MESSAGE, Action.RUN_EXAMPLE, Action.RUN_FOLDER, Action.RUN_INFRA, Action.BROWSE_FILES,
-                Action.STOP_ALL));
+                Action.SEND_MESSAGE, Action.RUN_EXAMPLE, Action.OPEN_PROJECT, Action.RUN_INFRA, Action.BROWSE_FILES));
         flat.add(null);
         flat.addAll(List.of(Action.DOCTOR, Action.RESET_STATS, Action.SCREEN_SUBMENU, Action.SETTINGS));
         flat.add(null);
@@ -425,10 +424,9 @@ class ActionsPopup {
         labels.add("───");
         labels.add("Send Message");
         labels.add("Run an Example...");
-        labels.add("Run from Folder...");
+        labels.add("Open Project...");
         labels.add("Run Dev/Infra Service...");
         labels.add("Browse Files... (Ctrl+F)");
-        labels.add("Stop All");
         labels.add("───");
         labels.add("Run Doctor");
         labels.add("Reset Stats");
@@ -528,15 +526,18 @@ class ActionsPopup {
         if (runOptionsForm.isVisible()) {
             if (ke.isCancel()) {
                 runOptionsForm.close();
+                pendingPhantomRun = null;
                 if (folderInputPopup.getSelectedFolder() != null) {
                     folderInputPopup.showInput();
-                } else {
+                } else if (!showActionsMenu) {
                     exampleBrowserPopup.open();
                 }
             } else if (ke.isConfirm()) {
                 String error = runOptionsForm.validate();
                 if (error != null) {
                     runOptionsForm.setError(error);
+                } else if (pendingPhantomRun != null) {
+                    launchFromPhantom();
                 } else if (folderInputPopup.getSelectedFolder() != null) {
                     launchFromFolder();
                 } else {
@@ -657,7 +658,7 @@ class ActionsPopup {
                     } else if (action == Action.RUN_EXAMPLE) {
                         showActionsMenu = false;
                         exampleBrowserPopup.open();
-                    } else if (action == Action.RUN_FOLDER) {
+                    } else if (action == Action.OPEN_PROJECT) {
                         showActionsMenu = false;
                         folderInputPopup.open();
                     } else if (action == Action.SCREENSHOT) {
@@ -721,11 +722,6 @@ class ActionsPopup {
                         Theme.toggle();
                         refreshTheme();
                         showActionsMenu = false;
-                    } else if (action == Action.STOP_ALL) {
-                        showActionsMenu = false;
-                        stopAllPopup.setConfirmActions(ctx != null && ctx.confirmActions);
-                        stopAllPopup.open();
-                        checkStopAllNotification();
                     } else if (action == Action.CAPTION) {
                         showActionsMenu = false;
                         captionOverlay.openInline();
@@ -972,10 +968,6 @@ class ActionsPopup {
 
         frame.renderWidget(Clear.INSTANCE, popup);
         String divider = "  ─────────────────────────────────";
-        String stopLabel = stopAllPopup.hasBothGroups()
-                ? TuiIcons.menuItem(TuiIcons.STOP, "Stop All...")
-                : TuiIcons.menuItem(TuiIcons.STOP, "Stop All");
-
         boolean canSwitch = hasMultipleIntegrations();
         List<ListItem> items = new ArrayList<>();
         // Group 0: Navigation
@@ -990,12 +982,11 @@ class ActionsPopup {
                 ? ListItem.from(TuiIcons.menuItem(TuiIcons.MESSAGE, "Send Message"))
                 : ListItem.from(TuiIcons.menuItem(TuiIcons.MESSAGE, "Send Message")).style(Style.EMPTY.dim()));
         items.add(ListItem.from(TuiIcons.menuItem(TuiIcons.CAMEL, "Run an Example...")));
-        items.add(ListItem.from(TuiIcons.menuItem(TuiIcons.FOLDER_OPEN, "Run from Folder...")));
+        items.add(ListItem.from(TuiIcons.menuItem(TuiIcons.FOLDER_OPEN, "Open Project...")));
         items.add(ListItem.from(TuiIcons.menuItem(TuiIcons.INFRA, "Run Dev/Infra Service...")));
         items.add(hasSelection
                 ? ListItem.from(TuiIcons.menuItem(TuiIcons.FOLDER, "Browse Files... (Ctrl+F)"))
                 : ListItem.from(TuiIcons.menuItem(TuiIcons.FOLDER, "Browse Files... (Ctrl+F)")).style(Style.EMPTY.dim()));
-        items.add(ListItem.from(stopLabel));
         items.add(ListItem.from(divider).style(Style.EMPTY.dim()));
         // Group 2: Diagnostics & Screen
         items.add(ListItem.from(TuiIcons.menuItem(TuiIcons.DOCTOR, "Run Doctor")));
@@ -1129,6 +1120,18 @@ class ActionsPopup {
         openDocForEntry(name, kind, catalog);
     }
 
+    void openStopAll() {
+        stopAllPopup.setConfirmActions(ctx != null && ctx.confirmActions);
+        stopAllPopup.open();
+        checkStopAllNotification();
+    }
+
+    boolean hasRunningProcesses() {
+        return stopAllPopup.hasBothGroups()
+                || integrations.get().stream().anyMatch(i -> !i.vanishing && !i.phantom)
+                || infraServices.get().stream().anyMatch(i -> !i.vanishing);
+    }
+
     private void openDocForEntry(String name, String kind, org.apache.camel.catalog.CamelCatalog catalog) {
         if (catalog == null) {
             return;
@@ -1247,6 +1250,44 @@ class ActionsPopup {
         boolean jaegerExport = runOptionsForm.isJaegerExport();
         runOptionsForm.close();
         folderInputPopup.launchFolder(displayName, extraArgs, jaegerExport);
+    }
+
+    void openRunOptionsForPhantom(IntegrationInfo phantom) {
+        pendingPhantomRun = phantom;
+        String displayName = phantom.name != null ? phantom.name : "project";
+        boolean isMaven = phantom.projectType != null;
+        if (isMaven) {
+            int lockedRuntime = switch (phantom.projectType) {
+                case "spring-boot" -> 1;
+                case "quarkus" -> 2;
+                default -> 0;
+            };
+            runOptionsForm.open(displayName, displayName, false, false, lockedRuntime);
+        } else {
+            runOptionsForm.open(displayName, displayName, false, true);
+        }
+    }
+
+    private void launchFromPhantom() {
+        IntegrationInfo phantom = pendingPhantomRun;
+        pendingPhantomRun = null;
+        if (phantom == null) {
+            return;
+        }
+        String displayName = runOptionsForm.name();
+        if (displayName.isEmpty()) {
+            displayName = phantom.name != null ? phantom.name : "project";
+        }
+        List<String> extraArgs = runOptionsForm.buildArgs();
+        runOptionsForm.close();
+
+        ctx.removePhantom(phantom.pid);
+
+        if (phantom.projectType != null) {
+            launchManager.launchMavenProject(phantom.sourceDir, phantom.projectType, displayName, extraArgs);
+        } else {
+            launchManager.launchCamelRun(phantom.sourceDir, displayName, extraArgs);
+        }
     }
 
     // ---- Name Input ----

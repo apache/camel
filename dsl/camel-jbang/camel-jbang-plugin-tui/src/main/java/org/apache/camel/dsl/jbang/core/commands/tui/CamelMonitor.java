@@ -152,6 +152,7 @@ public class CamelMonitor extends CamelCommand {
     private final PanelAnimation logPinAnim = new PanelAnimation();
 
     private ActionsPopup actionsPopup;
+    private ProcessControlPopup processControlPopup;
     private TuiRunner runner;
     // Set by TuiWebServer for browser sessions; local terminal sessions leave this null
     // and let TuiBackendHelper auto-detect the active terminal instead.
@@ -282,6 +283,39 @@ public class CamelMonitor extends CamelCommand {
         actionsPopup.setContext(ctx);
         actionsPopup.setMonitorContext(ctx);
         actionsPopup.setNotificationCallback((msg, error) -> setNotification(msg, error));
+
+        processControlPopup = new ProcessControlPopup(ctx);
+        processControlPopup.setActions(new ProcessControlPopup.ControlActions() {
+            @Override
+            public void sendRouteCommand(String pid, String routeId, String command) {
+                CamelMonitor.this.sendRouteCommand(pid, routeId, command);
+            }
+
+            @Override
+            public void stopSelectedProcess(boolean forceKill) {
+                CamelMonitor.this.stopSelectedProcess(forceKill);
+            }
+
+            @Override
+            public void restartSelectedProcess() {
+                CamelMonitor.this.restartSelectedProcess();
+            }
+
+            @Override
+            public void onRunPhantom(IntegrationInfo phantom) {
+                actionsPopup.openRunOptionsForPhantom(phantom);
+            }
+
+            @Override
+            public void onStopAll() {
+                actionsPopup.openStopAll();
+            }
+
+            @Override
+            public boolean hasRunningProcesses() {
+                return actionsPopup.hasRunningProcesses();
+            }
+        });
         ctx.notificationCallback = (msg, error) -> setNotification(msg, error);
         ctx.openMarkdownCallback = actionsPopup::openMarkdown;
         ctx.openOptionsCallback = actionsPopup::openOptions;
@@ -513,6 +547,11 @@ public class CamelMonitor extends CamelCommand {
                     }
 
                     @Override
+                    public void stopAll() {
+                        actionsPopup.openStopAll();
+                    }
+
+                    @Override
                     public void resetIntegrationTabState() {
                         CamelMonitor.this.resetIntegrationTabState();
                     }
@@ -700,6 +739,9 @@ public class CamelMonitor extends CamelCommand {
                 }
                 return result;
             }
+            if (processControlPopup.isVisible()) {
+                return processControlPopup.handleKeyEvent(ke);
+            }
             if (popupManager.handleKeyEvent(ke, tabRegistry.selectedTabIndex(), TAB_LOG)) {
                 return true;
             }
@@ -816,26 +858,28 @@ public class CamelMonitor extends CamelCommand {
                 if (ke.isChar('2')) {
                     return tabRegistry.handleTabKey(TAB_SOURCE, ctx, dataService);
                 }
-                if (ke.isChar('4')) {
-                    return tabRegistry.handleTabKey(TAB_ACTIVITY, ctx, dataService);
-                }
-                if (ke.isChar('5')) {
-                    return tabRegistry.handleTabKey(TAB_DIAGRAM, ctx, dataService);
-                }
-                if (ke.isChar('6')) {
-                    return tabRegistry.handleTabKey(TAB_ROUTES, ctx, dataService);
-                }
-                if (ke.isChar('7')) {
-                    return tabRegistry.handleTabKey(TAB_ENDPOINTS, ctx, dataService);
-                }
-                if (ke.isChar('8')) {
-                    return tabRegistry.handleTabKey(TAB_HISTORY, ctx, dataService);
-                }
-                if (ke.isChar('9')) {
-                    return tabRegistry.handleTabKey(TAB_ERRORS, ctx, dataService);
-                }
-                if (ke.isChar('0')) {
-                    return tabRegistry.handleTabKey(TAB_MORE, ctx, dataService);
+                if (!isPhantomSelected()) {
+                    if (ke.isChar('4')) {
+                        return tabRegistry.handleTabKey(TAB_ACTIVITY, ctx, dataService);
+                    }
+                    if (ke.isChar('5')) {
+                        return tabRegistry.handleTabKey(TAB_DIAGRAM, ctx, dataService);
+                    }
+                    if (ke.isChar('6')) {
+                        return tabRegistry.handleTabKey(TAB_ROUTES, ctx, dataService);
+                    }
+                    if (ke.isChar('7')) {
+                        return tabRegistry.handleTabKey(TAB_ENDPOINTS, ctx, dataService);
+                    }
+                    if (ke.isChar('8')) {
+                        return tabRegistry.handleTabKey(TAB_HISTORY, ctx, dataService);
+                    }
+                    if (ke.isChar('9')) {
+                        return tabRegistry.handleTabKey(TAB_ERRORS, ctx, dataService);
+                    }
+                    if (ke.isChar('0')) {
+                        return tabRegistry.handleTabKey(TAB_MORE, ctx, dataService);
+                    }
                 }
             }
         }
@@ -904,6 +948,10 @@ public class CamelMonitor extends CamelCommand {
         }
         if (ke.isKey(KeyCode.F3)) {
             popupManager.openSwitchPopup(ctx.selectedPid, getNonVanishingIntegrations());
+            return true;
+        }
+        if (ke.isKey(KeyCode.F10)) {
+            processControlPopup.open();
             return true;
         }
         if (ke.hasCtrl() && ke.isChar('f')) {
@@ -975,9 +1023,13 @@ public class CamelMonitor extends CamelCommand {
         if (ke.isConfirm() && tab == TAB_OVERVIEW) {
             tabRegistry.overviewTab().selectCurrentIntegration();
             if (ctx.selectedPid != null) {
-                int selectTab = resolveSelectTab();
-                if (selectTab != TAB_OVERVIEW) {
-                    tabRegistry.handleTabKey(selectTab, ctx, dataService);
+                if (isPhantomSelected()) {
+                    tabRegistry.handleTabKey(TAB_SOURCE, ctx, dataService);
+                } else {
+                    int selectTab = resolveSelectTab();
+                    if (selectTab != TAB_OVERVIEW) {
+                        tabRegistry.handleTabKey(selectTab, ctx, dataService);
+                    }
                 }
             }
             return true;
@@ -1027,9 +1079,11 @@ public class CamelMonitor extends CamelCommand {
                 int clickedTab = findClickedTab(me.x() - lastTabsArea.x());
                 if (clickedTab >= 0) {
                     if (isInfraSelected()) {
-                        // Infra mode: map 0→Overview, 1→Log
                         int realTab = clickedTab == 1 ? TAB_LOG : TAB_OVERVIEW;
                         tabsState.select(realTab);
+                    } else if (isPhantomSelected()) {
+                        int realTab = clickedTab == 1 ? TAB_SOURCE : TAB_OVERVIEW;
+                        tabRegistry.handleTabKey(realTab, ctx, dataService);
                     } else {
                         tabRegistry.handleTabKey(clickedTab, ctx, dataService);
                     }
@@ -1332,6 +1386,12 @@ public class CamelMonitor extends CamelCommand {
             contentArea = new Rect(area.x(), area.y(), area.width(), area.height() - 1);
             lastContentArea = contentArea;
         } else {
+            if (isPhantomSelected()) {
+                int t = tabRegistry.selectedTabIndex();
+                if (t != TAB_OVERVIEW && t != TAB_SOURCE) {
+                    tabsState.select(TAB_OVERVIEW);
+                }
+            }
             renderHeader(frame, mainChunks.get(0));
             renderTabs(frame, mainChunks.get(1));
             lastTabsArea = mainChunks.get(1);
@@ -1404,6 +1464,7 @@ public class CamelMonitor extends CamelCommand {
             popupManager.renderConfirm(frame, contentArea);
         }
         actionsPopup.render(frame, contentArea);
+        processControlPopup.render(frame, contentArea);
         if (captionOverlay.isCaptionVisible()) {
             captionOverlay.render(frame, contentArea);
         }
@@ -1547,7 +1608,6 @@ public class CamelMonitor extends CamelCommand {
                     Line.from(TuiIcons.primaryTabHeader(TuiIcons.TAB_LOG, "3", "Log"))
             };
 
-            // Map real tab index to infra tab index for highlight
             int infraTabIdx = tabsState.selected() == TAB_LOG ? 1 : 0;
             TabsState infraTabsState = new TabsState(infraTabIdx);
 
@@ -1561,6 +1621,30 @@ public class CamelMonitor extends CamelCommand {
                     ? new Rect(area.x(), area.y() + 1, area.width(), 1)
                     : area;
             frame.renderStatefulWidget(tabs, labelsArea, infraTabsState);
+            lastTabLabels = labels;
+            lastTabDivider = dividerStr;
+            return;
+        }
+
+        if (isPhantomSelected()) {
+            Line[] labels = {
+                    Line.from(TuiIcons.primaryTabHeader(TuiIcons.TAB_OVERVIEW, "1", "Overview")),
+                    Line.from(TuiIcons.primaryTabHeader(TuiIcons.TAB_SOURCE, "2", "Source"))
+            };
+
+            int phantomTabIdx = tabsState.selected() == TAB_SOURCE ? 1 : 0;
+            TabsState phantomTabsState = new TabsState(phantomTabIdx);
+
+            Tabs tabs = Tabs.builder()
+                    .titles(labels)
+                    .highlightStyle(Theme.accentBg())
+                    .divider(divider)
+                    .build();
+
+            Rect labelsArea = area.height() >= 2
+                    ? new Rect(area.x(), area.y() + 1, area.width(), 1)
+                    : area;
+            frame.renderStatefulWidget(tabs, labelsArea, phantomTabsState);
             lastTabLabels = labels;
             lastTabDivider = dividerStr;
             return;
@@ -1831,6 +1915,7 @@ public class CamelMonitor extends CamelCommand {
 
         // remember name so the restarted process gets auto-selected
         ctx.lastSelectedName = name;
+        dataService.forceFullScan();
 
         // stop gracefully
         ph.destroy();
@@ -2152,22 +2237,12 @@ public class CamelMonitor extends CamelCommand {
             actionsPopup.renderFooter(spans);
             return 0;
         }
+        if (processControlPopup.isVisible()) {
+            processControlPopup.renderFooter(spans);
+            return 0;
+        }
         tabRegistry.overviewTab().renderFooter(spans);
         int fKeyTotal = insertFKeyHints(spans);
-        // Process action hints
-        if (ctx.selectedPid != null && !isInfraSelected()) {
-            IntegrationInfo selInfo = findSelectedIntegration();
-            if (selInfo != null) {
-                hint(spans, "p", selInfo.routeStarted > 0 ? "stop routes" : "start routes");
-            }
-        }
-        if (ctx.selectedPid != null) {
-            if (!isInfraSelected()) {
-                hint(spans, "r", "restart");
-            }
-            hint(spans, "x", "stop");
-            hint(spans, "X", "kill");
-        }
         return fKeyTotal;
     }
 
@@ -2252,6 +2327,11 @@ public class CamelMonitor extends CamelCommand {
 
     private boolean isInfraSelected() {
         return ctx.isInfraSelected();
+    }
+
+    private boolean isPhantomSelected() {
+        IntegrationInfo info = ctx.findSelectedIntegration();
+        return info != null && info.phantom;
     }
 
     private String selectedName() {

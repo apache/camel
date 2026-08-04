@@ -51,14 +51,20 @@ class FolderInputPopup {
     private String detectedPomPath;
     private final FolderBrowser folderBrowser = new FolderBrowser();
 
+    private MonitorContext ctx;
     private final LaunchManager launchManager;
     private Runnable burstCallback;
     private BiConsumer<String, Boolean> notificationCallback;
     private Runnable onFolderConfirmed;
     private Runnable infraCatalogClearer;
+    private Runnable onPhantomCreated;
 
     FolderInputPopup(LaunchManager launchManager) {
         this.launchManager = launchManager;
+    }
+
+    void setContext(MonitorContext ctx) {
+        this.ctx = ctx;
     }
 
     void setBurstCallback(Runnable burstCallback) {
@@ -75,6 +81,10 @@ class FolderInputPopup {
 
     void setInfraCatalogClearer(Runnable clearer) {
         this.infraCatalogClearer = clearer;
+    }
+
+    void setOnPhantomCreated(Runnable callback) {
+        this.onPhantomCreated = callback;
     }
 
     boolean isVisible() {
@@ -194,7 +204,7 @@ class FolderInputPopup {
                 TuiHelper.hint(spans, "↑↓", "history");
             }
             TuiHelper.hint(spans, "Tab", "browse");
-            TuiHelper.hint(spans, "Enter", "run...");
+            TuiHelper.hint(spans, "Enter", "open");
             TuiHelper.hintLast(spans, "Esc", "back");
         }
     }
@@ -231,8 +241,9 @@ class FolderInputPopup {
             folder = System.getProperty("user.home") + folder.substring(1);
         }
         Path dirPath = Path.of(folder);
-        if (!Files.isDirectory(dirPath)) {
-            notify("Directory does not exist: " + folder, true);
+        boolean singleFile = Files.isRegularFile(dirPath);
+        if (!singleFile && !Files.isDirectory(dirPath)) {
+            notify("Path does not exist: " + folder, true);
             return;
         }
         folderHistory.remove(folder);
@@ -240,20 +251,33 @@ class FolderInputPopup {
         if (folderHistory.size() > 20) {
             folderHistory.remove(folderHistory.size() - 1);
         }
-        selectedFolder = folder;
         showInput = false;
         persistLastFolder(folder);
 
-        Path pomFile = dirPath.resolve("pom.xml");
+        String projectDir = singleFile ? dirPath.getParent().toString() : folder;
+        Path pomFile = Path.of(projectDir).resolve("pom.xml");
         String runtime = Files.isRegularFile(pomFile) ? TuiHelper.detectPomRuntime(pomFile) : null;
-        if (runtime != null) {
-            detectedPomPath = pomFile.toString();
-        } else {
-            detectedPomPath = null;
-        }
 
-        if (onFolderConfirmed != null) {
-            onFolderConfirmed.run();
+        selectedFolder = projectDir;
+        detectedPomPath = runtime != null ? pomFile.toString() : null;
+
+        IntegrationInfo phantom = new IntegrationInfo();
+        phantom.name = dirPath.getFileName().toString();
+        phantom.directory = projectDir;
+        phantom.sourceDir = projectDir;
+        phantom.projectType = runtime;
+        if ("spring-boot".equals(runtime)) {
+            phantom.platform = "Spring Boot";
+        } else if ("quarkus".equals(runtime)) {
+            phantom.platform = "Quarkus";
+        } else {
+            phantom.platform = "Camel";
+        }
+        ctx.addPhantom(phantom);
+        ctx.selectedPid = phantom.pid;
+
+        if (onPhantomCreated != null) {
+            onPhantomCreated.run();
         }
     }
 
@@ -314,7 +338,7 @@ class FolderInputPopup {
 
         Block block = Block.builder()
                 .borderType(BorderType.ROUNDED).borders(Borders.ALL)
-                .title(" Run from Folder ")
+                .title(" Open Project ")
                 .build();
         frame.renderWidget(block, popup);
         Rect inner = block.inner(popup);
