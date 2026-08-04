@@ -97,6 +97,24 @@
             <artifactId>terminal-http</artifactId>
             <version>${aesh-terminal-version}</version>
         </dependency>
+        <!-- Netty is pulled in transitively by terminal-http, but TuiWebServer uses these
+             packages directly, so declare them explicitly to keep the contract clear. -->
+        <dependency>
+            <groupId>io.netty</groupId>
+            <artifactId>netty-common</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>io.netty</groupId>
+            <artifactId>netty-transport</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>io.netty</groupId>
+            <artifactId>netty-handler</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>io.netty</groupId>
+            <artifactId>netty-codec-http</artifactId>
+        </dependency>
         <dependency>
             <groupId>org.apache.camel</groupId>
             <artifactId>camel-test-junit6</artifactId>

@@ -191,6 +191,8 @@ class TuiWebServer {
 
     private boolean isAllowedOrigin(FullHttpRequest request) {
         String origin = request.headers().get(HttpHeaderNames.ORIGIN);
+        // A missing Origin header is allowed on purpose: non-browser clients (curl, custom
+        // terminal clients) don't send one, and the loopback-only bind is the actual boundary here.
         return origin == null || origin.equals("http://127.0.0.1:" + port) || origin.equals("http://localhost:" + port);
     }
 }
