@@ -51,8 +51,8 @@
         <module>camel-langchain4j-tokenizer</module>
         <module>camel-langchain4j-tools</module>
         <module>camel-langchain4j-web-search</module>
-        <module>camel-mcp-server</module>
         <module>camel-mcp-server-api</module>
+        <module>camel-mcp-server</module>
         <module>camel-milvus</module>
         <module>camel-neo4j</module>
         <module>camel-openai</module>

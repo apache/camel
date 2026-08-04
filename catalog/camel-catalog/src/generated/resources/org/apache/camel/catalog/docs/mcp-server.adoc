@@ -58,20 +58,48 @@ conformance test kit.
 
 Define tools as regular `ai-tool` routes and give them tags:
 
+[tabs]
+====
+Java::
++
+[source,java]
+----
+from("ai-tool:query_db?tags=crm" +
+    "&description=Query customer database" +
+    "&parameter.customerId=string" +
+    "&parameter.customerId.description=The customer id" +
+    "&parameter.customerId.required=true")
+    .to("jdbc:dataSource");
+----
+
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="ai-tool:query_db?tags=crm&amp;description=Query customer database&amp;parameter.customerId=string&amp;parameter.customerId.description=The customer id&amp;parameter.customerId.required=true"/>
+  <to uri="jdbc:dataSource"/>
+</route>
+----
+
+YAML::
++
 [source,yaml]
 ----
 - route:
     from:
-      uri: "ai-tool:query_db"
+      uri: ai-tool:query_db
       parameters:
+        tags: crm
         description: "Query customer database"
-        tags: "crm"
         parameter.customerId: string
         parameter.customerId.description: "The customer id"
         parameter.customerId.required: "true"
       steps:
-        - to: "jdbc:dataSource"
+        - to:
+            uri: jdbc:dataSource
 ----
+====
 
 Start the MCP server by adding the `McpServerBridge` service to the
 CamelContext, selecting the tags to expose:
@@ -97,10 +125,6 @@ from("direct:agent")
         + "&mcpServer.myCamelTools.transportType=streamableHttp"
         + "&mcpServer.myCamelTools.url=http://localhost:8080/mcp");
 ----
-
-NOTE: Configuration through `camel.server.mcp-*` properties (no code at all,
-like Jolokia or Prometheus) is tracked by CAMEL-24311 and arrives together
-with the camel-main wiring.
 
 == Options
 
@@ -129,6 +153,12 @@ engine (Quarkus, Spring Boot) the native configuration decides serving
 concerns and a startup WARN is logged when an ignored option is set.
 
 == Protocol
+
+This section describes the Vert.x engine shipped in `camel-mcp-server`, which
+serves on Camel Main and Camel JBang. On Quarkus and Spring Boot the transport
+is owned by the native engine instead — quarkus-mcp-server and the Spring Boot
+embedded HTTP server (Spring AI MCP server) respectively — and the details
+below do not apply.
 
 The Vert.x engine implements the MCP streamable HTTP transport:
 
