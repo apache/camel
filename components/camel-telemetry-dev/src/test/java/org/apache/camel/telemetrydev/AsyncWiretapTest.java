@@ -71,6 +71,9 @@ class AsyncWiretapTest extends TelemetryDevTracerTestSupport {
                     assertEquals(MESSAGE_COUNT, traces.size());
                     for (DevTrace trace : traces.values()) {
                         assertEquals(SPAN_COUNT, trace.getSpans().size());
+                        for (DevSpanAdapter span : trace.getSpans()) {
+                            assertEquals("true", span.getTag("isDone"));
+                        }
                     }
                 });
         Map<String, DevTrace> traces = tracesFromLog();

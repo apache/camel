@@ -59,7 +59,7 @@ class AsyncWiretapTest extends ExchangeTestSupport {
     }
 
     @Test
-    void testRouteMultipleRequests() throws InterruptedException {
+    void testRouteMultipleRequests() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:end");
         mock.expectedMessageCount(MESSAGE_COUNT);
         for (int i = 0; i < MESSAGE_COUNT; i++) {
@@ -75,6 +75,9 @@ class AsyncWiretapTest extends ExchangeTestSupport {
                     assertEquals(MESSAGE_COUNT, traces.size());
                     for (MockTrace trace : traces.values()) {
                         assertEquals(SPAN_COUNT, trace.spans().size());
+                        for (Span span : trace.spans()) {
+                            assertEquals("true", ((MockSpanAdapter) span).getTag("isDone"));
+                        }
                     }
                 });
         Map<String, MockTrace> traces = mockTracer.traces();

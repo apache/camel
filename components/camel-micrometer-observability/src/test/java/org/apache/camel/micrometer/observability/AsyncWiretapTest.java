@@ -73,7 +73,7 @@ class AsyncWiretapTest extends MicrometerObservabilityTracerPropagationTestSuppo
 
     private void checkTrace(OtelTrace trace, String expectedBody) {
         List<SpanData> spans = trace.getSpans();
-        assertEquals(7, spans.size());
+        assertEquals(SPAN_COUNT, spans.size());
         SpanData testProducer = getSpan(spans, "direct://start", Op.EVENT_SENT);
         SpanData direct = getSpan(spans, "direct://start", Op.EVENT_RECEIVED);
         SpanData wiretapDirectTo = getSpan(spans, "direct://tap", Op.EVENT_SENT);
