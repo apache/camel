@@ -20,6 +20,7 @@ import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.InvalidPayloadException;
 import org.apache.camel.Message;
+import org.apache.camel.component.aws.common.AwsExceptionUtil;
 import org.apache.camel.health.HealthCheck;
 import org.apache.camel.health.HealthCheckHelper;
 import org.apache.camel.health.WritableHealthCheckRepository;
@@ -106,7 +107,7 @@ public class StepFunctions2Producer extends DefaultProducer {
                 try {
                     result = sfnClient.createStateMachine(request);
                 } catch (AwsServiceException ase) {
-                    LOG.trace("Create State Machine command returned the error code {}", ase.awsErrorDetails().errorCode());
+                    LOG.trace("Create State Machine command returned the error code {}", AwsExceptionUtil.errorCode(ase));
                     throw ase;
                 }
                 Message message = getMessageForResponse(exchange);
@@ -146,7 +147,7 @@ public class StepFunctions2Producer extends DefaultProducer {
             try {
                 result = sfnClient.createStateMachine(builder.build());
             } catch (AwsServiceException ase) {
-                LOG.trace("Create State Machine command returned the error code {}", ase.awsErrorDetails().errorCode());
+                LOG.trace("Create State Machine command returned the error code {}", AwsExceptionUtil.errorCode(ase));
                 throw ase;
             }
             Message message = getMessageForResponse(exchange);
@@ -162,7 +163,7 @@ public class StepFunctions2Producer extends DefaultProducer {
                 try {
                     result = sfnClient.deleteStateMachine(request);
                 } catch (AwsServiceException ase) {
-                    LOG.trace("Delete State Machine command returned the error code {}", ase.awsErrorDetails().errorCode());
+                    LOG.trace("Delete State Machine command returned the error code {}", AwsExceptionUtil.errorCode(ase));
                     throw ase;
                 }
                 Message message = getMessageForResponse(exchange);
@@ -183,7 +184,7 @@ public class StepFunctions2Producer extends DefaultProducer {
                 DeleteStateMachineRequest request = builder.build();
                 result = sfnClient.deleteStateMachine(request);
             } catch (AwsServiceException ase) {
-                LOG.trace("Delete State Machine command returned the error code {}", ase.awsErrorDetails().errorCode());
+                LOG.trace("Delete State Machine command returned the error code {}", AwsExceptionUtil.errorCode(ase));
                 throw ase;
             }
             Message message = getMessageForResponse(exchange);
@@ -199,7 +200,7 @@ public class StepFunctions2Producer extends DefaultProducer {
                 try {
                     result = sfnClient.updateStateMachine(request);
                 } catch (AwsServiceException ase) {
-                    LOG.trace("Update State Machine command returned the error code {}", ase.awsErrorDetails().errorCode());
+                    LOG.trace("Update State Machine command returned the error code {}", AwsExceptionUtil.errorCode(ase));
                     throw ase;
                 }
                 Message message = getMessageForResponse(exchange);
@@ -229,7 +230,7 @@ public class StepFunctions2Producer extends DefaultProducer {
             try {
                 result = sfnClient.updateStateMachine(builder.build());
             } catch (AwsServiceException ase) {
-                LOG.trace("Update State Machine command returned the error code {}", ase.awsErrorDetails().errorCode());
+                LOG.trace("Update State Machine command returned the error code {}", AwsExceptionUtil.errorCode(ase));
                 throw ase;
             }
             Message message = getMessageForResponse(exchange);
@@ -245,7 +246,7 @@ public class StepFunctions2Producer extends DefaultProducer {
                 try {
                     result = sfnClient.describeStateMachine(request);
                 } catch (AwsServiceException ase) {
-                    LOG.trace("Describe State Machine command returned the error code {}", ase.awsErrorDetails().errorCode());
+                    LOG.trace("Describe State Machine command returned the error code {}", AwsExceptionUtil.errorCode(ase));
                     throw ase;
                 }
                 Message message = getMessageForResponse(exchange);
@@ -265,7 +266,7 @@ public class StepFunctions2Producer extends DefaultProducer {
             try {
                 result = sfnClient.describeStateMachine(builder.build());
             } catch (AwsServiceException ase) {
-                LOG.trace("Describe State Machine command returned the error code {}", ase.awsErrorDetails().errorCode());
+                LOG.trace("Describe State Machine command returned the error code {}", AwsExceptionUtil.errorCode(ase));
                 throw ase;
             }
             Message message = getMessageForResponse(exchange);
@@ -281,7 +282,7 @@ public class StepFunctions2Producer extends DefaultProducer {
                 try {
                     result = sfnClient.listStateMachines(request);
                 } catch (AwsServiceException ase) {
-                    LOG.trace("List State Machines command returned the error code {}", ase.awsErrorDetails().errorCode());
+                    LOG.trace("List State Machines command returned the error code {}", AwsExceptionUtil.errorCode(ase));
                     throw ase;
                 }
                 Message message = getMessageForResponse(exchange);
@@ -301,7 +302,7 @@ public class StepFunctions2Producer extends DefaultProducer {
             try {
                 result = sfnClient.listStateMachines(builder.build());
             } catch (AwsServiceException ase) {
-                LOG.trace("List State Machines command returned the error code {}", ase.awsErrorDetails().errorCode());
+                LOG.trace("List State Machines command returned the error code {}", AwsExceptionUtil.errorCode(ase));
                 throw ase;
             }
             Message message = getMessageForResponse(exchange);
@@ -317,7 +318,7 @@ public class StepFunctions2Producer extends DefaultProducer {
                 try {
                     result = sfnClient.createActivity(request);
                 } catch (AwsServiceException ase) {
-                    LOG.trace("Create Activity command returned the error code {}", ase.awsErrorDetails().errorCode());
+                    LOG.trace("Create Activity command returned the error code {}", AwsExceptionUtil.errorCode(ase));
                     throw ase;
                 }
                 Message message = getMessageForResponse(exchange);
@@ -337,7 +338,7 @@ public class StepFunctions2Producer extends DefaultProducer {
             try {
                 result = sfnClient.createActivity(builder.build());
             } catch (AwsServiceException ase) {
-                LOG.trace("Create Activity command returned the error code {}", ase.awsErrorDetails().errorCode());
+                LOG.trace("Create Activity command returned the error code {}", AwsExceptionUtil.errorCode(ase));
                 throw ase;
             }
             Message message = getMessageForResponse(exchange);
@@ -353,7 +354,7 @@ public class StepFunctions2Producer extends DefaultProducer {
                 try {
                     result = sfnClient.deleteActivity(request);
                 } catch (AwsServiceException ase) {
-                    LOG.trace("Delete Activity command returned the error code {}", ase.awsErrorDetails().errorCode());
+                    LOG.trace("Delete Activity command returned the error code {}", AwsExceptionUtil.errorCode(ase));
                     throw ase;
                 }
                 Message message = getMessageForResponse(exchange);
@@ -373,7 +374,7 @@ public class StepFunctions2Producer extends DefaultProducer {
             try {
                 result = sfnClient.deleteActivity(builder.build());
             } catch (AwsServiceException ase) {
-                LOG.trace("Delete Activity command returned the error code {}", ase.awsErrorDetails().errorCode());
+                LOG.trace("Delete Activity command returned the error code {}", AwsExceptionUtil.errorCode(ase));
                 throw ase;
             }
             Message message = getMessageForResponse(exchange);
@@ -389,7 +390,7 @@ public class StepFunctions2Producer extends DefaultProducer {
                 try {
                     result = sfnClient.describeActivity(request);
                 } catch (AwsServiceException ase) {
-                    LOG.trace("Describe Activity command returned the error code {}", ase.awsErrorDetails().errorCode());
+                    LOG.trace("Describe Activity command returned the error code {}", AwsExceptionUtil.errorCode(ase));
                     throw ase;
                 }
                 Message message = getMessageForResponse(exchange);
@@ -409,7 +410,7 @@ public class StepFunctions2Producer extends DefaultProducer {
             try {
                 result = sfnClient.describeActivity(builder.build());
             } catch (AwsServiceException ase) {
-                LOG.trace("Describe Activity command returned the error code {}", ase.awsErrorDetails().errorCode());
+                LOG.trace("Describe Activity command returned the error code {}", AwsExceptionUtil.errorCode(ase));
                 throw ase;
             }
             Message message = getMessageForResponse(exchange);
@@ -425,7 +426,7 @@ public class StepFunctions2Producer extends DefaultProducer {
                 try {
                     result = sfnClient.getActivityTask(request);
                 } catch (AwsServiceException ase) {
-                    LOG.trace("Get Activity Task command returned the error code {}", ase.awsErrorDetails().errorCode());
+                    LOG.trace("Get Activity Task command returned the error code {}", AwsExceptionUtil.errorCode(ase));
                     throw ase;
                 }
                 Message message = getMessageForResponse(exchange);
@@ -445,7 +446,7 @@ public class StepFunctions2Producer extends DefaultProducer {
             try {
                 result = sfnClient.getActivityTask(builder.build());
             } catch (AwsServiceException ase) {
-                LOG.trace("Get Activity Task command returned the error code {}", ase.awsErrorDetails().errorCode());
+                LOG.trace("Get Activity Task command returned the error code {}", AwsExceptionUtil.errorCode(ase));
                 throw ase;
             }
             Message message = getMessageForResponse(exchange);
@@ -461,7 +462,7 @@ public class StepFunctions2Producer extends DefaultProducer {
                 try {
                     result = sfnClient.listActivities(request);
                 } catch (AwsServiceException ase) {
-                    LOG.trace("List Activities command returned the error code {}", ase.awsErrorDetails().errorCode());
+                    LOG.trace("List Activities command returned the error code {}", AwsExceptionUtil.errorCode(ase));
                     throw ase;
                 }
                 Message message = getMessageForResponse(exchange);
@@ -481,7 +482,7 @@ public class StepFunctions2Producer extends DefaultProducer {
             try {
                 result = sfnClient.listActivities(builder.build());
             } catch (AwsServiceException ase) {
-                LOG.trace("List Activities command returned the error code {}", ase.awsErrorDetails().errorCode());
+                LOG.trace("List Activities command returned the error code {}", AwsExceptionUtil.errorCode(ase));
                 throw ase;
             }
             Message message = getMessageForResponse(exchange);
@@ -497,7 +498,7 @@ public class StepFunctions2Producer extends DefaultProducer {
                 try {
                     result = sfnClient.startExecution(request);
                 } catch (AwsServiceException ase) {
-                    LOG.trace("Start Execution command returned the error code {}", ase.awsErrorDetails().errorCode());
+                    LOG.trace("Start Execution command returned the error code {}", AwsExceptionUtil.errorCode(ase));
                     throw ase;
                 }
                 Message message = getMessageForResponse(exchange);
@@ -530,7 +531,7 @@ public class StepFunctions2Producer extends DefaultProducer {
             try {
                 result = sfnClient.startExecution(builder.build());
             } catch (AwsServiceException ase) {
-                LOG.trace("Start Execution command returned the error code {}", ase.awsErrorDetails().errorCode());
+                LOG.trace("Start Execution command returned the error code {}", AwsExceptionUtil.errorCode(ase));
                 throw ase;
             }
             Message message = getMessageForResponse(exchange);
@@ -546,7 +547,7 @@ public class StepFunctions2Producer extends DefaultProducer {
                 try {
                     result = sfnClient.startSyncExecution(request);
                 } catch (AwsServiceException ase) {
-                    LOG.trace("Start Sync Execution command returned the error code {}", ase.awsErrorDetails().errorCode());
+                    LOG.trace("Start Sync Execution command returned the error code {}", AwsExceptionUtil.errorCode(ase));
                     throw ase;
                 }
                 Message message = getMessageForResponse(exchange);
@@ -579,7 +580,7 @@ public class StepFunctions2Producer extends DefaultProducer {
             try {
                 result = sfnClient.startSyncExecution(builder.build());
             } catch (AwsServiceException ase) {
-                LOG.trace("Start Sync Execution command returned the error code {}", ase.awsErrorDetails().errorCode());
+                LOG.trace("Start Sync Execution command returned the error code {}", AwsExceptionUtil.errorCode(ase));
                 throw ase;
             }
             Message message = getMessageForResponse(exchange);
@@ -595,7 +596,7 @@ public class StepFunctions2Producer extends DefaultProducer {
                 try {
                     result = sfnClient.stopExecution(request);
                 } catch (AwsServiceException ase) {
-                    LOG.trace("Stop Execution command returned the error code {}", ase.awsErrorDetails().errorCode());
+                    LOG.trace("Stop Execution command returned the error code {}", AwsExceptionUtil.errorCode(ase));
                     throw ase;
                 }
                 Message message = getMessageForResponse(exchange);
@@ -615,7 +616,7 @@ public class StepFunctions2Producer extends DefaultProducer {
             try {
                 result = sfnClient.stopExecution(builder.build());
             } catch (AwsServiceException ase) {
-                LOG.trace("Stop Execution command returned the error code {}", ase.awsErrorDetails().errorCode());
+                LOG.trace("Stop Execution command returned the error code {}", AwsExceptionUtil.errorCode(ase));
                 throw ase;
             }
             Message message = getMessageForResponse(exchange);
@@ -631,7 +632,7 @@ public class StepFunctions2Producer extends DefaultProducer {
                 try {
                     result = sfnClient.describeExecution(request);
                 } catch (AwsServiceException ase) {
-                    LOG.trace("Describe Execution command returned the error code {}", ase.awsErrorDetails().errorCode());
+                    LOG.trace("Describe Execution command returned the error code {}", AwsExceptionUtil.errorCode(ase));
                     throw ase;
                 }
                 Message message = getMessageForResponse(exchange);
@@ -651,7 +652,7 @@ public class StepFunctions2Producer extends DefaultProducer {
             try {
                 result = sfnClient.describeExecution(builder.build());
             } catch (AwsServiceException ase) {
-                LOG.trace("Describe Execution command returned the error code {}", ase.awsErrorDetails().errorCode());
+                LOG.trace("Describe Execution command returned the error code {}", AwsExceptionUtil.errorCode(ase));
                 throw ase;
             }
             Message message = getMessageForResponse(exchange);
@@ -667,7 +668,7 @@ public class StepFunctions2Producer extends DefaultProducer {
                 try {
                     result = sfnClient.listExecutions(request);
                 } catch (AwsServiceException ase) {
-                    LOG.trace("List Executions command returned the error code {}", ase.awsErrorDetails().errorCode());
+                    LOG.trace("List Executions command returned the error code {}", AwsExceptionUtil.errorCode(ase));
                     throw ase;
                 }
                 Message message = getMessageForResponse(exchange);
@@ -691,7 +692,7 @@ public class StepFunctions2Producer extends DefaultProducer {
             try {
                 result = sfnClient.listExecutions(builder.build());
             } catch (AwsServiceException ase) {
-                LOG.trace("List Executions command returned the error code {}", ase.awsErrorDetails().errorCode());
+                LOG.trace("List Executions command returned the error code {}", AwsExceptionUtil.errorCode(ase));
                 throw ase;
             }
             Message message = getMessageForResponse(exchange);
@@ -707,7 +708,7 @@ public class StepFunctions2Producer extends DefaultProducer {
                 try {
                     result = sfnClient.getExecutionHistory(request);
                 } catch (AwsServiceException ase) {
-                    LOG.trace("Get Execution History command returned the error code {}", ase.awsErrorDetails().errorCode());
+                    LOG.trace("Get Execution History command returned the error code {}", AwsExceptionUtil.errorCode(ase));
                     throw ase;
                 }
                 Message message = getMessageForResponse(exchange);
@@ -742,7 +743,7 @@ public class StepFunctions2Producer extends DefaultProducer {
             try {
                 result = sfnClient.getExecutionHistory(builder.build());
             } catch (AwsServiceException ase) {
-                LOG.trace("Get Execution History command returned the error code {}", ase.awsErrorDetails().errorCode());
+                LOG.trace("Get Execution History command returned the error code {}", AwsExceptionUtil.errorCode(ase));
                 throw ase;
             }
             Message message = getMessageForResponse(exchange);

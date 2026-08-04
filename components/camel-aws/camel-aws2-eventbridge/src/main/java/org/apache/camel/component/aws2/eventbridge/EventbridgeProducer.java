@@ -29,6 +29,7 @@ import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.InvalidPayloadException;
 import org.apache.camel.Message;
+import org.apache.camel.component.aws.common.AwsExceptionUtil;
 import org.apache.camel.health.HealthCheck;
 import org.apache.camel.health.HealthCheckHelper;
 import org.apache.camel.health.WritableHealthCheckRepository;
@@ -149,7 +150,7 @@ public class EventbridgeProducer extends DefaultProducer {
                 try {
                     result = eventbridgeClient.putRule(putRuleRequest);
                 } catch (AwsServiceException ase) {
-                    LOG.trace("PutRule command returned the error code {}", ase.awsErrorDetails().errorCode());
+                    LOG.trace("PutRule command returned the error code {}", AwsExceptionUtil.errorCode(ase));
                     throw ase;
                 }
                 Message message = getMessageForResponse(exchange);
@@ -180,7 +181,7 @@ public class EventbridgeProducer extends DefaultProducer {
             try {
                 result = eventbridgeClient.putRule(builder.build());
             } catch (AwsServiceException ase) {
-                LOG.trace("Put Rule command returned the error code {}", ase.awsErrorDetails().errorCode());
+                LOG.trace("Put Rule command returned the error code {}", AwsExceptionUtil.errorCode(ase));
                 throw ase;
             }
             Message message = getMessageForResponse(exchange);
@@ -472,7 +473,7 @@ public class EventbridgeProducer extends DefaultProducer {
                 try {
                     result = pojoExecutor.apply(requestClass.cast(payload));
                 } catch (AwsServiceException ase) {
-                    LOG.trace("{} command returned the error code {}", operationName, ase.awsErrorDetails().errorCode());
+                    LOG.trace("{} command returned the error code {}", operationName, AwsExceptionUtil.errorCode(ase));
                     throw ase;
                 }
             } else {
@@ -485,7 +486,7 @@ public class EventbridgeProducer extends DefaultProducer {
             try {
                 result = headerExecutor.get();
             } catch (AwsServiceException ase) {
-                LOG.trace("{} command returned the error code {}", operationName, ase.awsErrorDetails().errorCode());
+                LOG.trace("{} command returned the error code {}", operationName, AwsExceptionUtil.errorCode(ase));
                 throw ase;
             }
         }

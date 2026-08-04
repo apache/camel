@@ -22,6 +22,7 @@ import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.InvalidPayloadException;
 import org.apache.camel.Message;
+import org.apache.camel.component.aws.common.AwsExceptionUtil;
 import org.apache.camel.health.HealthCheck;
 import org.apache.camel.health.HealthCheckHelper;
 import org.apache.camel.health.WritableHealthCheckRepository;
@@ -118,7 +119,7 @@ public class Textract2Producer extends DefaultProducer {
                 try {
                     result = textractClient.detectDocumentText(req);
                 } catch (AwsServiceException ase) {
-                    LOG.trace("Detect Document Text command returned the error code {}", ase.awsErrorDetails().errorCode());
+                    LOG.trace("Detect Document Text command returned the error code {}", AwsExceptionUtil.errorCode(ase));
                     throw ase;
                 }
                 Message message = getMessageForResponse(exchange);
@@ -136,7 +137,7 @@ public class Textract2Producer extends DefaultProducer {
             try {
                 result = textractClient.detectDocumentText(request.build());
             } catch (AwsServiceException ase) {
-                LOG.trace("Detect Document Text command returned the error code {}", ase.awsErrorDetails().errorCode());
+                LOG.trace("Detect Document Text command returned the error code {}", AwsExceptionUtil.errorCode(ase));
                 throw ase;
             }
             Message message = getMessageForResponse(exchange);
@@ -152,7 +153,7 @@ public class Textract2Producer extends DefaultProducer {
                 try {
                     result = textractClient.analyzeDocument(req);
                 } catch (AwsServiceException ase) {
-                    LOG.trace("Analyze Document command returned the error code {}", ase.awsErrorDetails().errorCode());
+                    LOG.trace("Analyze Document command returned the error code {}", AwsExceptionUtil.errorCode(ase));
                     throw ase;
                 }
                 Message message = getMessageForResponse(exchange);
@@ -179,7 +180,7 @@ public class Textract2Producer extends DefaultProducer {
             try {
                 result = textractClient.analyzeDocument(request.build());
             } catch (AwsServiceException ase) {
-                LOG.trace("Analyze Document command returned the error code {}", ase.awsErrorDetails().errorCode());
+                LOG.trace("Analyze Document command returned the error code {}", AwsExceptionUtil.errorCode(ase));
                 throw ase;
             }
             Message message = getMessageForResponse(exchange);
@@ -195,7 +196,7 @@ public class Textract2Producer extends DefaultProducer {
                 try {
                     result = textractClient.analyzeExpense(req);
                 } catch (AwsServiceException ase) {
-                    LOG.trace("Analyze Expense command returned the error code {}", ase.awsErrorDetails().errorCode());
+                    LOG.trace("Analyze Expense command returned the error code {}", AwsExceptionUtil.errorCode(ase));
                     throw ase;
                 }
                 Message message = getMessageForResponse(exchange);
@@ -213,7 +214,7 @@ public class Textract2Producer extends DefaultProducer {
             try {
                 result = textractClient.analyzeExpense(request.build());
             } catch (AwsServiceException ase) {
-                LOG.trace("Analyze Expense command returned the error code {}", ase.awsErrorDetails().errorCode());
+                LOG.trace("Analyze Expense command returned the error code {}", AwsExceptionUtil.errorCode(ase));
                 throw ase;
             }
             Message message = getMessageForResponse(exchange);
@@ -265,7 +266,7 @@ public class Textract2Producer extends DefaultProducer {
                 try {
                     result = textractClient.startDocumentAnalysis(req);
                 } catch (AwsServiceException ase) {
-                    LOG.trace("Start Document Analysis command returned the error code {}", ase.awsErrorDetails().errorCode());
+                    LOG.trace("Start Document Analysis command returned the error code {}", AwsExceptionUtil.errorCode(ase));
                     throw ase;
                 }
                 Message message = getMessageForResponse(exchange);
@@ -291,7 +292,7 @@ public class Textract2Producer extends DefaultProducer {
             try {
                 result = textractClient.startDocumentAnalysis(request.build());
             } catch (AwsServiceException ase) {
-                LOG.trace("Start Document Analysis command returned the error code {}", ase.awsErrorDetails().errorCode());
+                LOG.trace("Start Document Analysis command returned the error code {}", AwsExceptionUtil.errorCode(ase));
                 throw ase;
             }
             Message message = getMessageForResponse(exchange);
@@ -307,7 +308,7 @@ public class Textract2Producer extends DefaultProducer {
                 try {
                     result = textractClient.startExpenseAnalysis(req);
                 } catch (AwsServiceException ase) {
-                    LOG.trace("Start Expense Analysis command returned the error code {}", ase.awsErrorDetails().errorCode());
+                    LOG.trace("Start Expense Analysis command returned the error code {}", AwsExceptionUtil.errorCode(ase));
                     throw ase;
                 }
                 Message message = getMessageForResponse(exchange);
@@ -325,7 +326,7 @@ public class Textract2Producer extends DefaultProducer {
             try {
                 result = textractClient.startExpenseAnalysis(request.build());
             } catch (AwsServiceException ase) {
-                LOG.trace("Start Expense Analysis command returned the error code {}", ase.awsErrorDetails().errorCode());
+                LOG.trace("Start Expense Analysis command returned the error code {}", AwsExceptionUtil.errorCode(ase));
                 throw ase;
             }
             Message message = getMessageForResponse(exchange);
@@ -377,7 +378,7 @@ public class Textract2Producer extends DefaultProducer {
             try {
                 result = textractClient.getDocumentTextDetection(request.build());
             } catch (AwsServiceException ase) {
-                LOG.trace("Get Document Text Detection command returned the error code {}", ase.awsErrorDetails().errorCode());
+                LOG.trace("Get Document Text Detection command returned the error code {}", AwsExceptionUtil.errorCode(ase));
                 throw ase;
             }
             Message message = getMessageForResponse(exchange);
@@ -393,7 +394,7 @@ public class Textract2Producer extends DefaultProducer {
                 try {
                     result = textractClient.getDocumentAnalysis(req);
                 } catch (AwsServiceException ase) {
-                    LOG.trace("Get Document Analysis command returned the error code {}", ase.awsErrorDetails().errorCode());
+                    LOG.trace("Get Document Analysis command returned the error code {}", AwsExceptionUtil.errorCode(ase));
                     throw ase;
                 }
                 Message message = getMessageForResponse(exchange);
@@ -428,7 +429,7 @@ public class Textract2Producer extends DefaultProducer {
             try {
                 result = textractClient.getDocumentAnalysis(request.build());
             } catch (AwsServiceException ase) {
-                LOG.trace("Get Document Analysis command returned the error code {}", ase.awsErrorDetails().errorCode());
+                LOG.trace("Get Document Analysis command returned the error code {}", AwsExceptionUtil.errorCode(ase));
                 throw ase;
             }
             Message message = getMessageForResponse(exchange);
@@ -444,7 +445,7 @@ public class Textract2Producer extends DefaultProducer {
                 try {
                     result = textractClient.getExpenseAnalysis(req);
                 } catch (AwsServiceException ase) {
-                    LOG.trace("Get Expense Analysis command returned the error code {}", ase.awsErrorDetails().errorCode());
+                    LOG.trace("Get Expense Analysis command returned the error code {}", AwsExceptionUtil.errorCode(ase));
                     throw ase;
                 }
                 Message message = getMessageForResponse(exchange);
@@ -479,7 +480,7 @@ public class Textract2Producer extends DefaultProducer {
             try {
                 result = textractClient.getExpenseAnalysis(request.build());
             } catch (AwsServiceException ase) {
-                LOG.trace("Get Expense Analysis command returned the error code {}", ase.awsErrorDetails().errorCode());
+                LOG.trace("Get Expense Analysis command returned the error code {}", AwsExceptionUtil.errorCode(ase));
                 throw ase;
             }
             Message message = getMessageForResponse(exchange);

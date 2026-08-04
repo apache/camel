@@ -25,6 +25,7 @@ import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.InvalidPayloadException;
 import org.apache.camel.Message;
+import org.apache.camel.component.aws.common.AwsExceptionUtil;
 import org.apache.camel.health.HealthCheck;
 import org.apache.camel.health.HealthCheckHelper;
 import org.apache.camel.health.WritableHealthCheckRepository;
@@ -140,7 +141,7 @@ public class SecretsManagerProducer extends DefaultProducer {
         try {
             result = secretsManagerClient.listSecrets(request);
         } catch (AwsServiceException ase) {
-            LOG.trace("List Secrets command returned the error code {}", ase.awsErrorDetails().errorCode());
+            LOG.trace("List Secrets command returned the error code {}", AwsExceptionUtil.errorCode(ase));
             throw ase;
         }
         Message message = getMessageForResponse(exchange);
@@ -176,7 +177,7 @@ public class SecretsManagerProducer extends DefaultProducer {
         try {
             result = secretsManagerClient.createSecret(request);
         } catch (AwsServiceException ase) {
-            LOG.trace("Create Secret command returned the error code {}", ase.awsErrorDetails().errorCode());
+            LOG.trace("Create Secret command returned the error code {}", AwsExceptionUtil.errorCode(ase));
             throw ase;
         }
         Message message = getMessageForResponse(exchange);
@@ -202,7 +203,7 @@ public class SecretsManagerProducer extends DefaultProducer {
         try {
             result = secretsManagerClient.getSecretValue(request);
         } catch (AwsServiceException ase) {
-            LOG.trace("Get Secret value command returned the error code {}", ase.awsErrorDetails().errorCode());
+            LOG.trace("Get Secret value command returned the error code {}", AwsExceptionUtil.errorCode(ase));
             throw ase;
         }
         Message message = getMessageForResponse(exchange);
@@ -235,7 +236,7 @@ public class SecretsManagerProducer extends DefaultProducer {
         try {
             result = secretsManagerClient.describeSecret(request);
         } catch (AwsServiceException ase) {
-            LOG.trace("Describe Secret value command returned the error code {}", ase.awsErrorDetails().errorCode());
+            LOG.trace("Describe Secret value command returned the error code {}", AwsExceptionUtil.errorCode(ase));
             throw ase;
         }
         Message message = getMessageForResponse(exchange);
@@ -268,7 +269,7 @@ public class SecretsManagerProducer extends DefaultProducer {
         try {
             result = secretsManagerClient.deleteSecret(request);
         } catch (AwsServiceException ase) {
-            LOG.trace("Delete Secret value command returned the error code {}", ase.awsErrorDetails().errorCode());
+            LOG.trace("Delete Secret value command returned the error code {}", AwsExceptionUtil.errorCode(ase));
             throw ase;
         }
         Message message = getMessageForResponse(exchange);
@@ -299,7 +300,7 @@ public class SecretsManagerProducer extends DefaultProducer {
         try {
             result = secretsManagerClient.rotateSecret(request);
         } catch (AwsServiceException ase) {
-            LOG.trace("Rotate Secret value command returned the error code {}", ase.awsErrorDetails().errorCode());
+            LOG.trace("Rotate Secret value command returned the error code {}", AwsExceptionUtil.errorCode(ase));
             throw ase;
         }
         Message message = getMessageForResponse(exchange);
@@ -335,7 +336,7 @@ public class SecretsManagerProducer extends DefaultProducer {
         try {
             result = secretsManagerClient.updateSecret(request);
         } catch (AwsServiceException ase) {
-            LOG.trace("Update Secret command returned the error code {}", ase.awsErrorDetails().errorCode());
+            LOG.trace("Update Secret command returned the error code {}", AwsExceptionUtil.errorCode(ase));
             throw ase;
         }
         Message message = getMessageForResponse(exchange);
@@ -372,7 +373,7 @@ public class SecretsManagerProducer extends DefaultProducer {
         try {
             result = secretsManagerClient.replicateSecretToRegions(request);
         } catch (AwsServiceException ase) {
-            LOG.trace("Replicate Secret to region command returned the error code {}", ase.awsErrorDetails().errorCode());
+            LOG.trace("Replicate Secret to region command returned the error code {}", AwsExceptionUtil.errorCode(ase));
             throw ase;
         }
         Message message = getMessageForResponse(exchange);
@@ -398,7 +399,7 @@ public class SecretsManagerProducer extends DefaultProducer {
         try {
             result = secretsManagerClient.restoreSecret(request);
         } catch (AwsServiceException ase) {
-            LOG.trace("Restore Secret value command returned the error code {}", ase.awsErrorDetails().errorCode());
+            LOG.trace("Restore Secret value command returned the error code {}", AwsExceptionUtil.errorCode(ase));
             throw ase;
         }
         Message message = getMessageForResponse(exchange);
@@ -426,7 +427,7 @@ public class SecretsManagerProducer extends DefaultProducer {
         try {
             result = secretsManagerClient.batchGetSecretValue(request);
         } catch (AwsServiceException ase) {
-            LOG.trace("Batch Get Secret value command returned the error code {}", ase.awsErrorDetails().errorCode());
+            LOG.trace("Batch Get Secret value command returned the error code {}", AwsExceptionUtil.errorCode(ase));
             throw ase;
         }
         Message message = getMessageForResponse(exchange);
@@ -483,7 +484,7 @@ public class SecretsManagerProducer extends DefaultProducer {
         try {
             result = secretsManagerClient.putSecretValue(request);
         } catch (AwsServiceException ase) {
-            LOG.trace("Put Secret Value command returned the error code {}", ase.awsErrorDetails().errorCode());
+            LOG.trace("Put Secret Value command returned the error code {}", AwsExceptionUtil.errorCode(ase));
             throw ase;
         }
         Message message = getMessageForResponse(exchange);

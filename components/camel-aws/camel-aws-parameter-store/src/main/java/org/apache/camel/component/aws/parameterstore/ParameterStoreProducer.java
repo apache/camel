@@ -23,6 +23,7 @@ import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.InvalidPayloadException;
 import org.apache.camel.Message;
+import org.apache.camel.component.aws.common.AwsExceptionUtil;
 import org.apache.camel.health.HealthCheck;
 import org.apache.camel.health.HealthCheckHelper;
 import org.apache.camel.health.WritableHealthCheckRepository;
@@ -150,7 +151,7 @@ public class ParameterStoreProducer extends DefaultProducer {
         try {
             result = ssmClient.getParameter(request);
         } catch (AwsServiceException ase) {
-            LOG.trace("Get Parameter command returned the error code {}", ase.awsErrorDetails().errorCode());
+            LOG.trace("Get Parameter command returned the error code {}", AwsExceptionUtil.errorCode(ase));
             throw ase;
         }
         Message message = getMessageForResponse(exchange);
@@ -184,7 +185,7 @@ public class ParameterStoreProducer extends DefaultProducer {
         try {
             result = ssmClient.getParameters(request);
         } catch (AwsServiceException ase) {
-            LOG.trace("Get Parameters command returned the error code {}", ase.awsErrorDetails().errorCode());
+            LOG.trace("Get Parameters command returned the error code {}", AwsExceptionUtil.errorCode(ase));
             throw ase;
         }
         Message message = getMessageForResponse(exchange);
@@ -222,7 +223,7 @@ public class ParameterStoreProducer extends DefaultProducer {
         try {
             result = ssmClient.getParametersByPath(request);
         } catch (AwsServiceException ase) {
-            LOG.trace("Get Parameters By Path command returned the error code {}", ase.awsErrorDetails().errorCode());
+            LOG.trace("Get Parameters By Path command returned the error code {}", AwsExceptionUtil.errorCode(ase));
             throw ase;
         }
         Message message = getMessageForResponse(exchange);
@@ -270,7 +271,7 @@ public class ParameterStoreProducer extends DefaultProducer {
         try {
             result = ssmClient.putParameter(request);
         } catch (AwsServiceException ase) {
-            LOG.trace("Put Parameter command returned the error code {}", ase.awsErrorDetails().errorCode());
+            LOG.trace("Put Parameter command returned the error code {}", AwsExceptionUtil.errorCode(ase));
             throw ase;
         }
         Message message = getMessageForResponse(exchange);
@@ -299,7 +300,7 @@ public class ParameterStoreProducer extends DefaultProducer {
         try {
             result = ssmClient.deleteParameter(request);
         } catch (AwsServiceException ase) {
-            LOG.trace("Delete Parameter command returned the error code {}", ase.awsErrorDetails().errorCode());
+            LOG.trace("Delete Parameter command returned the error code {}", AwsExceptionUtil.errorCode(ase));
             throw ase;
         }
         Message message = getMessageForResponse(exchange);
@@ -326,7 +327,7 @@ public class ParameterStoreProducer extends DefaultProducer {
         try {
             result = ssmClient.deleteParameters(request);
         } catch (AwsServiceException ase) {
-            LOG.trace("Delete Parameters command returned the error code {}", ase.awsErrorDetails().errorCode());
+            LOG.trace("Delete Parameters command returned the error code {}", AwsExceptionUtil.errorCode(ase));
             throw ase;
         }
         Message message = getMessageForResponse(exchange);
@@ -350,7 +351,7 @@ public class ParameterStoreProducer extends DefaultProducer {
         try {
             result = ssmClient.describeParameters(request);
         } catch (AwsServiceException ase) {
-            LOG.trace("Describe Parameters command returned the error code {}", ase.awsErrorDetails().errorCode());
+            LOG.trace("Describe Parameters command returned the error code {}", AwsExceptionUtil.errorCode(ase));
             throw ase;
         }
         Message message = getMessageForResponse(exchange);
@@ -384,7 +385,7 @@ public class ParameterStoreProducer extends DefaultProducer {
         try {
             result = ssmClient.getParameterHistory(request);
         } catch (AwsServiceException ase) {
-            LOG.trace("Get Parameter History command returned the error code {}", ase.awsErrorDetails().errorCode());
+            LOG.trace("Get Parameter History command returned the error code {}", AwsExceptionUtil.errorCode(ase));
             throw ase;
         }
         Message message = getMessageForResponse(exchange);
