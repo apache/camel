@@ -26,12 +26,11 @@ import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.support.DefaultContextReloadStrategy;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatCode;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
-public class PubsubReloadTriggerTaskTest {
+class PubsubReloadTriggerTaskTest {
 
     private static final class CountingReloadStrategy extends DefaultContextReloadStrategy {
         private final AtomicInteger reloads = new AtomicInteger();
@@ -79,7 +78,7 @@ public class PubsubReloadTriggerTaskTest {
     }
 
     @Test
-    public void secretsAreReadFromTheGcpVaultConfiguration() throws Exception {
+    void secretsAreReadFromTheGcpVaultConfiguration() throws Exception {
         DefaultCamelContext context = new DefaultCamelContext();
         context.getVaultConfiguration().gcp().setSecrets("gcp-secret");
         context.getVaultConfiguration().aws().setSecrets("aws-secret");
@@ -89,12 +88,12 @@ public class PubsubReloadTriggerTaskTest {
 
         // no GCP credentials are configured, so starting the task fails once it reaches the gcp properties
         // function. By then the secrets to watch must already have been read from the GCP vault configuration
-        assertThrows(RuntimeCamelException.class, task::start);
-        assertEquals("gcp-secret", getField(task, "secrets"));
+        assertThatThrownBy(task::start).isInstanceOf(RuntimeCamelException.class);
+        assertThat(getField(task, "secrets")).isEqualTo("gcp-secret");
     }
 
     @Test
-    public void reloadIsTriggeredOnlyForMatchingSecrets() throws Exception {
+    void reloadIsTriggeredOnlyForMatchingSecrets() throws Exception {
         DefaultCamelContext context = new DefaultCamelContext();
         CountingReloadStrategy reload = new CountingReloadStrategy();
         context.addService(reload);
@@ -108,27 +107,27 @@ public class PubsubReloadTriggerTaskTest {
 
         RecordingAck matching = new RecordingAck();
         receiver.receiveMessage(message("SECRET_UPDATE", "projects/p/secrets/tracked"), matching);
-        assertEquals(1, reload.reloads.get());
-        assertTrue(matching.acked);
-        assertTrue(task.getUpdates().containsKey("tracked"));
+        assertThat(reload.reloads.get()).isEqualTo(1);
+        assertThat(matching.acked).isTrue();
+        assertThat(task.getUpdates()).containsKey("tracked");
 
         // a message for a secret that is not watched must not trigger another reload
         RecordingAck other = new RecordingAck();
         receiver.receiveMessage(message("SECRET_UPDATE", "projects/p/secrets/other"), other);
-        assertEquals(1, reload.reloads.get());
-        assertTrue(other.acked);
+        assertThat(reload.reloads.get()).isEqualTo(1);
+        assertThat(other.acked).isTrue();
 
         // neither must an event type that is not a secret update
         RecordingAck unrelated = new RecordingAck();
         receiver.receiveMessage(message("SECRET_DELETE", "projects/p/secrets/tracked"), unrelated);
-        assertEquals(1, reload.reloads.get());
-        assertTrue(unrelated.acked);
+        assertThat(reload.reloads.get()).isEqualTo(1);
+        assertThat(unrelated.acked).isTrue();
 
         context.stop();
     }
 
     @Test
-    public void messagesWithoutAttributesAreAcknowledged() throws Exception {
+    void messagesWithoutAttributesAreAcknowledged() throws Exception {
         DefaultCamelContext context = new DefaultCamelContext();
         PubsubReloadTriggerTask task = new PubsubReloadTriggerTask();
         task.setCamelContext(context);
@@ -138,20 +137,20 @@ public class PubsubReloadTriggerTaskTest {
 
         // a message published on the subscription by something other than the secret manager event feed
         RecordingAck noAttributes = new RecordingAck();
-        assertDoesNotThrow(() -> receiver.receiveMessage(message(null, null), noAttributes));
-        assertTrue(noAttributes.acked);
+        assertThatCode(() -> receiver.receiveMessage(message(null, null), noAttributes)).doesNotThrowAnyException();
+        assertThat(noAttributes.acked).isTrue();
 
         RecordingAck noSecretId = new RecordingAck();
-        assertDoesNotThrow(() -> receiver.receiveMessage(message("SECRET_UPDATE", null), noSecretId));
-        assertTrue(noSecretId.acked);
+        assertThatCode(() -> receiver.receiveMessage(message("SECRET_UPDATE", null), noSecretId)).doesNotThrowAnyException();
+        assertThat(noSecretId.acked).isTrue();
     }
 
     @Test
-    public void runWithoutSubscriberDoesNotThrow() {
+    void runWithoutSubscriberDoesNotThrow() {
         PubsubReloadTriggerTask task = new PubsubReloadTriggerTask();
         task.setCamelContext(new DefaultCamelContext());
 
-        assertDoesNotThrow(task::run);
-        assertTrue(task.getLastCheckTime() != null);
+        assertThatCode(task::run).doesNotThrowAnyException();
+        assertThat(task.getLastCheckTime()).isNotNull();
     }
 }
