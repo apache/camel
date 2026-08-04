@@ -166,11 +166,13 @@ public class SalesforceComponent extends DefaultComponent implements SSLContextP
               defaultValue = "false", label = "common,security")
     private boolean lazyLogin;
 
-    @Metadata(description = "Pub/Sub host",
+    @Metadata(description = "Host name of the Salesforce Pub/Sub API gRPC service used by the pubSubSubscribe and"
+                            + " pubSubPublish operations. Give a bare host name, without scheme or port.",
               defaultValue = "api.pubsub.salesforce.com", label = "common,security")
     private String pubSubHost = "api.pubsub.salesforce.com";
 
-    @Metadata(description = "Pub/Sub port",
+    @Metadata(description = "TCP port of the Salesforce Pub/Sub API gRPC service used by the pubSubSubscribe and"
+                            + " pubSubPublish operations.",
               defaultValue = "7443", label = "common,security")
     private int pubSubPort = 7443;
 
