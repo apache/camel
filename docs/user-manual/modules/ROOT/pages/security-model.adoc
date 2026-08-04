@@ -641,6 +641,17 @@ be closed as `not a vulnerability`.
   "MBean operation X executes code or sends to endpoint Y when invoked
   from a JMX or Jolokia connection" describes the documented contract,
   not a framework vulnerability.
+* *The Camel TUI's `--mcp` and `--web` servers.* Camel TUI
+  (`dsl/camel-jbang/camel-jbang-plugin-tui`) can optionally expose an MCP
+  server (`--mcp`, for AI-agent access) and a browser-accessible terminal
+  (`--web`, over WebSocket). Both are management surfaces under the same
+  framing as above: opt-in (off unless the flag is passed), bound to
+  `127.0.0.1` only, and - like JMX and Jolokia without an auth layer
+  configured - carry no authentication of their own beyond that loopback
+  bind. Full interactive control of the TUI (including anything it can
+  shell out to, such as `docker`/`podman`/`camel run`) reachable from
+  `127.0.0.1` is the documented contract for both flags, not a framework
+  vulnerability.
 * *Vulnerabilities in third-party transitive dependencies.* Camel fixes
   CVEs in Camel code, not in third-party JARs; the report belongs
   upstream. Camel may upgrade the dependency to pick up an upstream fix,
@@ -1084,8 +1095,10 @@ YAML::
   upstream broker is not inside the trust boundary. If the option is
   unavoidable, install an `ObjectInputFilter`.
 * *Do not expose management surfaces.* `camel-management`, the developer
-  console, `camel-jolokia` and JMX should listen on a loopback interface, a
-  sidecar, or a separate network only.
+  console, `camel-jolokia`, JMX, and Camel TUI's `--mcp` / `--web` servers
+  should listen on a loopback interface, a sidecar, or a separate network
+  only. The TUI servers already default to `127.0.0.1`; do not front them
+  with a reverse proxy that makes them reachable from a public network.
 * *Keep components patched.* Pin Camel to a supported version, subscribe to
   the announce list, and respond to advisories at
   link:/security/[].

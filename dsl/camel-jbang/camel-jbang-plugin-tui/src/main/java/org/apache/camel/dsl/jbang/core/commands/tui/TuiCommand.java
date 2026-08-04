@@ -40,6 +40,15 @@ public class TuiCommand extends CamelCommand {
                         defaultValue = "8123")
     int mcpPort = 8123;
 
+    @CommandLine.Option(names = { "--web" },
+                        description = "Enable browser-accessible terminal (WebSocket) server")
+    boolean web;
+
+    @CommandLine.Option(names = { "--web-port" },
+                        description = "Web terminal server port (default: ${DEFAULT-VALUE})",
+                        defaultValue = "8090")
+    int webPort = 8090;
+
     @CommandLine.Option(names = { "--refresh" },
                         description = "Refresh interval in milliseconds (default: ${DEFAULT-VALUE})",
                         defaultValue = "100")
@@ -72,6 +81,13 @@ public class TuiCommand extends CamelCommand {
         if (mcpPort != 8123) {
             args.add("--mcp-port");
             args.add(String.valueOf(mcpPort));
+        }
+        if (web) {
+            args.add("--web");
+        }
+        if (webPort != 8090) {
+            args.add("--web-port");
+            args.add(String.valueOf(webPort));
         }
         if (refreshInterval != 100) {
             args.add("--refresh");

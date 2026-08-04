@@ -760,6 +760,25 @@ The MCP server exposes tools organized by purpose:
 
 See xref:camel-jbang-mcp.adoc[Camel MCP Server] for more about MCP and AI integration with Camel.
 
+== Web Browser Access
+
+The TUI can also be reached from a web browser on the same host, using the same dashboard you'd see in a
+local terminal -- useful when you prefer a browser session to a terminal window.
+
+[source,bash]
+----
+camel tui --web
+----
+
+This starts a web terminal server on `localhost:8090` (configurable with `--web-port`).
+Open `http://localhost:8090` in a browser to get a full xterm.js terminal driving the same
+TUI dashboard, with the same tabs, keyboard shortcuts, and F2 actions menu as a local session.
+
+Like the MCP server, the web server is bound to `127.0.0.1` only -- it never listens on
+external interfaces -- and there is no authentication beyond that. Each browser connection
+gets its own independent TUI session (its own process discovery and navigation state), the
+same as if you'd run `camel tui` again in a new terminal.
+
 == Recording Demos
 
 The TUI can record terminal sessions for demos and documentation.
@@ -808,6 +827,14 @@ vhs demo.tape               # .tape -> .gif
 | `--mcp-port`
 | Port for the embedded MCP server.
 | `8123`
+
+| `--web`
+| Enable the browser-accessible terminal (WebSocket) server.
+| `false`
+
+| `--web-port`
+| Port for the web terminal server.
+| `8090`
 
 | `--refresh`
 | Screen refresh interval in milliseconds.

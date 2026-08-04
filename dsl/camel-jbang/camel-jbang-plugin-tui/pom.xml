@@ -88,6 +88,34 @@
             <version>${tamboui-version}</version>
         </dependency>
         <dependency>
+            <groupId>dev.tamboui</groupId>
+            <artifactId>tamboui-aesh-backend</artifactId>
+            <version>${tamboui-version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.aesh</groupId>
+            <artifactId>terminal-http</artifactId>
+            <version>${aesh-terminal-version}</version>
+        </dependency>
+        <!-- Netty is pulled in transitively by terminal-http, but TuiWebServer uses these
+             packages directly, so declare them explicitly to keep the contract clear. -->
+        <dependency>
+            <groupId>io.netty</groupId>
+            <artifactId>netty-common</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>io.netty</groupId>
+            <artifactId>netty-transport</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>io.netty</groupId>
+            <artifactId>netty-handler</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>io.netty</groupId>
+            <artifactId>netty-codec-http</artifactId>
+        </dependency>
+        <dependency>
             <groupId>org.apache.camel</groupId>
             <artifactId>camel-test-junit6</artifactId>
             <scope>test</scope>
@@ -104,5 +132,36 @@
             <scope>test</scope>
         </dependency>
     </dependencies>
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.rat</groupId>
+                <artifactId>apache-rat-plugin</artifactId>
+                <configuration>
+                    <excludes combine.children="append">
+                        <!-- vendored MIT-licensed xterm.js assets; see src/main/resources/tui/web/vendor/LICENSE-xterm.txt -->
+                        <exclude>**/tui/web/vendor/*.js</exclude>
+                        <exclude>**/tui/web/vendor/*.css</exclude>
+                    </excludes>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>com.mycila</groupId>
+                <artifactId>license-maven-plugin</artifactId>
+                <configuration>
+                    <licenseSets>
+                        <licenseSet>
+                            <excludes combine.children="append">
+                                <!-- vendored MIT-licensed xterm.js assets; see src/main/resources/tui/web/vendor/LICENSE-xterm.txt -->
+                                <exclude>**/tui/web/vendor/*.js</exclude>
+                                <exclude>**/tui/web/vendor/*.css</exclude>
+                            </excludes>
+                        </licenseSet>
+                    </licenseSets>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
 
 </project>

@@ -17,6 +17,7 @@
 package org.apache.camel.dsl.jbang.core.commands.tui;
 
 import dev.tamboui.backend.jline3.JLineBackend;
+import dev.tamboui.terminal.Backend;
 import dev.tamboui.tui.TuiConfig;
 import dev.tamboui.tui.TuiRunner;
 import org.apache.camel.dsl.jbang.core.common.EnvironmentHelper;
@@ -29,10 +30,15 @@ final class TuiBackendHelper {
 
     static TuiRunner createTuiRunner() throws Exception {
         Terminal activeTerminal = EnvironmentHelper.getActiveTerminal();
-        if (activeTerminal != null) {
-            JLineBackend backend = new JLineBackend(activeTerminal);
-            return TuiRunner.create(TuiConfig.builder().backend(backend).mouseCapture(true).build());
-        }
-        return TuiRunner.create(TuiConfig.builder().mouseCapture(true).build());
+        // Build the JLine backend explicitly rather than leaving backend selection to
+        // TamboUI's ServiceLoader-based auto-discovery: with tamboui-aesh-backend also on the
+        // classpath (for --web), auto-discovery can pick AeshBackend for the local session too,
+        // which drives a native PosixSysTerminal that doesn't shut down cleanly here.
+        JLineBackend backend = activeTerminal != null ? new JLineBackend(activeTerminal) : new JLineBackend();
+        return TuiRunner.create(TuiConfig.builder().backend(backend).mouseCapture(true).build());
+    }
+
+    static TuiRunner createTuiRunner(Backend backend) throws Exception {
+        return TuiRunner.create(TuiConfig.builder().backend(backend).mouseCapture(true).build());
     }
 }
