@@ -443,4 +443,16 @@ And in XML:
 </route>
 ----
 
+And in YAML:
+
+[source,yaml]
+----
+- from:
+    uri: direct:start
+    steps:
+      - toD:
+          uri: "${header.target}"
+          allowedSchemes: "http,https"
+----
+
 NOTE: `wireTap` extends `toD` and therefore honours the same `allowedSchemes` option.

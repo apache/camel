@@ -49,12 +49,42 @@ class ToDynamicAllowedSchemesTest extends ContextTestSupport {
                 .hasMessageContaining("not in the allowed schemes");
     }
 
+    @Test
+    void multipleAllowedSchemesHonored() throws Exception {
+        getMockEndpoint("mock:ok").expectedMessageCount(1);
+
+        // both mock and seda are in the allow-list
+        template.sendBodyAndHeader("direct:multi", "Hello", "target", "mock:ok");
+        template.sendBodyAndHeader("direct:multi", "Hello", "target", "seda:ok");
+
+        assertMockEndpointsSatisfied();
+
+        // a scheme outside the allow-list is still rejected
+        assertThatThrownBy(() -> template.sendBodyAndHeader("direct:multi", "Hello", "target", "log:blocked"))
+                .isInstanceOf(CamelExecutionException.class)
+                .cause()
+                .isInstanceOf(ResolveEndpointFailedException.class);
+    }
+
+    @Test
+    void disallowedSchemeRejectedEvenWithIgnoreInvalidEndpoint() {
+        // a disallowed scheme hard-fails even when ignoreInvalidEndpoint=true: the allow-list check sets the
+        // exception directly instead of throwing, so it bypasses the ignoreInvalidEndpoint handling
+        assertThatThrownBy(() -> template.sendBodyAndHeader("direct:ignore", "Hello", "target", "seda:blocked"))
+                .isInstanceOf(CamelExecutionException.class)
+                .cause()
+                .isInstanceOf(ResolveEndpointFailedException.class)
+                .hasMessageContaining("not in the allowed schemes");
+    }
+
     @Override
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
             public void configure() {
                 from("direct:start").toD().allowedSchemes("mock").uri("${header.target}");
+                from("direct:multi").toD().allowedSchemes("mock,seda").uri("${header.target}");
+                from("direct:ignore").toD().ignoreInvalidEndpoint(true).allowedSchemes("mock").uri("${header.target}");
             }
         };
     }
