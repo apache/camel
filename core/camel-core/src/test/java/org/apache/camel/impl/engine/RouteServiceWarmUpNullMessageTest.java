@@ -33,7 +33,6 @@ import org.apache.camel.support.DefaultEndpoint;
 import org.apache.camel.support.DefaultProducer;
 import org.junit.jupiter.api.Test;
 
-import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 /**
@@ -62,15 +61,22 @@ class RouteServiceWarmUpNullMessageTest {
         CamelContext context = new DefaultCamelContext();
         context.addComponent("fail", new NullMessageFailComponent());
 
-        assertThatThrownBy(() -> {
-            context.addRoutes(new RouteBuilder() {
-                @Override
-                public void configure() {
-                    from("fail:trigger").routeId("test-route").to("direct:out");
-                }
-            });
-            context.start();
-        }).isInstanceOf(FailedToStartRouteException.class);
+        try {
+            assertThatThrownBy(() -> {
+                context.addRoutes(new RouteBuilder() {
+                    @Override
+                    public void configure() {
+                        from("fail:trigger").routeId("test-route").to("direct:out");
+                    }
+                });
+                context.start();
+            }).isInstanceOf(FailedToStartRouteException.class);
+        } finally {
+            try {
+                context.stop();
+            } catch (Exception ignored) {
+            }
+        }
     }
 
     /**
@@ -82,41 +88,24 @@ class RouteServiceWarmUpNullMessageTest {
         CamelContext context = new DefaultCamelContext();
         context.addComponent("fail", new NullMessageFailComponent());
 
-        FailedToStartRouteException caught = null;
         try {
-            context.addRoutes(new RouteBuilder() {
-                @Override
-                public void configure() {
-                    from("fail:trigger").routeId("meaningful-route").to("direct:out");
-                }
-            });
-            context.start();
-        } catch (FailedToStartRouteException e) {
-            caught = e;
-        } catch (Exception e) {
-            Throwable t = e;
-            while (t != null) {
-                if (t instanceof FailedToStartRouteException ftsre) {
-                    caught = ftsre;
-                    break;
-                }
-                t = t.getCause();
-            }
+            assertThatThrownBy(() -> {
+                context.addRoutes(new RouteBuilder() {
+                    @Override
+                    public void configure() {
+                        from("fail:trigger").routeId("meaningful-route").to("direct:out");
+                    }
+                });
+                context.start();
+            }).isInstanceOf(FailedToStartRouteException.class)
+                    .hasMessageContaining("meaningful-route")
+                    .hasMessageNotContaining("because: null");
         } finally {
             try {
                 context.stop();
             } catch (Exception ignored) {
             }
         }
-
-        assertThat(caught).as("Expected FailedToStartRouteException").isNotNull();
-        assertThat(caught.getMessage())
-                .as("FailedToStartRouteException message must not be null")
-                .isNotNull()
-                .as("Message must contain the route id")
-                .contains("meaningful-route")
-                .as("Message must not contain 'because: null'")
-                .doesNotContain("because: null");
     }
 
     /**
@@ -129,37 +118,23 @@ class RouteServiceWarmUpNullMessageTest {
         String expectedFragment = "real cause message from chain";
         context.addComponent("fail", new ChainedNullMessageFailComponent(expectedFragment));
 
-        FailedToStartRouteException caught = null;
         try {
-            context.addRoutes(new RouteBuilder() {
-                @Override
-                public void configure() {
-                    from("fail:trigger").routeId("chain-route").to("direct:out");
-                }
-            });
-            context.start();
-        } catch (FailedToStartRouteException e) {
-            caught = e;
-        } catch (Exception e) {
-            Throwable t = e;
-            while (t != null) {
-                if (t instanceof FailedToStartRouteException ftsre) {
-                    caught = ftsre;
-                    break;
-                }
-                t = t.getCause();
-            }
+            assertThatThrownBy(() -> {
+                context.addRoutes(new RouteBuilder() {
+                    @Override
+                    public void configure() {
+                        from("fail:trigger").routeId("chain-route").to("direct:out");
+                    }
+                });
+                context.start();
+            }).isInstanceOf(FailedToStartRouteException.class)
+                    .hasMessageContaining(expectedFragment);
         } finally {
             try {
                 context.stop();
             } catch (Exception ignored) {
             }
         }
-
-        assertThat(caught).as("Expected FailedToStartRouteException").isNotNull();
-        assertThat(caught.getMessage())
-                .as("Message should surface cause chain message")
-                .contains(expectedFragment);
     }
 
     // ---- helpers ----

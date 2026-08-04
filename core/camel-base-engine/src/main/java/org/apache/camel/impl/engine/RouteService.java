@@ -150,7 +150,7 @@ public class RouteService extends ChildServiceSupport {
      * wrapping the original failure. This helper walks the cause chain to find the first meaningful message and falls
      * back to the simple class name so the caller always receives a non-null string.
      */
-    private static String extractUsefulMessage(Throwable e) {
+    static String extractUsefulMessage(Throwable e) {
         Throwable current = e;
         while (current != null) {
             String msg = current.getLocalizedMessage();
