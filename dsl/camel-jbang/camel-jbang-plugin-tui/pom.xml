@@ -115,4 +115,35 @@
         </dependency>
     </dependencies>
 
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.rat</groupId>
+                <artifactId>apache-rat-plugin</artifactId>
+                <configuration>
+                    <excludes combine.children="append">
+                        <!-- vendored MIT-licensed xterm.js assets; see src/main/resources/tui/web/vendor/LICENSE-xterm.txt -->
+                        <exclude>**/tui/web/vendor/*.js</exclude>
+                        <exclude>**/tui/web/vendor/*.css</exclude>
+                    </excludes>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>com.mycila</groupId>
+                <artifactId>license-maven-plugin</artifactId>
+                <configuration>
+                    <licenseSets>
+                        <licenseSet>
+                            <excludes combine.children="append">
+                                <!-- vendored MIT-licensed xterm.js assets; see src/main/resources/tui/web/vendor/LICENSE-xterm.txt -->
+                                <exclude>**/tui/web/vendor/*.js</exclude>
+                                <exclude>**/tui/web/vendor/*.css</exclude>
+                            </excludes>
+                        </licenseSet>
+                    </licenseSets>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
+
 </project>

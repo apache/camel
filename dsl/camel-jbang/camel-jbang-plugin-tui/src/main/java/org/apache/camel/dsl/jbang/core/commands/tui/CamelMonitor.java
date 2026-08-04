@@ -20,6 +20,7 @@ import java.io.File;
 import java.io.IOException;
 import java.lang.System.Logger;
 import java.lang.System.Logger.Level;
+import java.net.BindException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
@@ -529,7 +530,7 @@ public class CamelMonitor extends CamelCommand {
                 actionsPopup.setMcpEnabled(true, mcpPort, mcpServer::getConnectedClient,
                         mcpServer::getActivityLog, mcpServer::getToolCallCount);
                 mcpJsonFile = writeMcpJson(mcpPort);
-            } catch (java.net.BindException e) {
+            } catch (BindException e) {
                 System.err.println("MCP server failed to start: port " + mcpPort + " is already in use.");
                 System.err.println("Use --mcp-port to specify a different port, e.g.: camel tui --mcp --mcp-port 8124");
                 mcpServer = null;
@@ -542,7 +543,7 @@ public class CamelMonitor extends CamelCommand {
             webServer = new TuiWebServer(webPort, getMain(), classLoader, name, refreshInterval, theme);
             try {
                 webServer.start();
-            } catch (java.net.BindException e) {
+            } catch (BindException e) {
                 System.err.println("Web server failed to start: port " + webPort + " is already in use.");
                 System.err.println("Use --web-port to specify a different port, e.g.: camel tui --web --web-port 8091");
                 webServer = null;

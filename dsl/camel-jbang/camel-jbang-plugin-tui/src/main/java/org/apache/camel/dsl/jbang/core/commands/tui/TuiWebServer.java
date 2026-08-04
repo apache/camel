@@ -73,11 +73,12 @@ class TuiWebServer {
     private final ChannelGroup channels = new DefaultChannelGroup(ImmediateEventExecutor.INSTANCE);
     private final EventLoopGroup bossGroup = new MultiThreadIoEventLoopGroup(1, NioIoHandler.newFactory());
     private final EventLoopGroup workerGroup = new MultiThreadIoEventLoopGroup(NioIoHandler.newFactory());
-    private final ExecutorService sessionExecutor = Executors.newCachedThreadPool(r -> {
-        Thread t = new Thread(r, "tui-web-session");
-        t.setDaemon(true);
-        return t;
-    });
+    private final ExecutorService sessionExecutor = Executors.newFixedThreadPool(
+            Math.max(4, Runtime.getRuntime().availableProcessors() * 2), r -> {
+                Thread t = new Thread(r, "tui-web-session");
+                t.setDaemon(true);
+                return t;
+            });
     private Channel serverChannel;
     private boolean stopped;
 
@@ -132,8 +133,10 @@ class TuiWebServer {
     }
 
     boolean awaitTermination(long timeout, TimeUnit unit) throws InterruptedException {
+        long deadline = System.nanoTime() + unit.toNanos(timeout);
         return bossGroup.terminationFuture().await(timeout, unit)
-                && workerGroup.terminationFuture().await(timeout, unit);
+                && workerGroup.terminationFuture().await(timeout, unit)
+                && sessionExecutor.awaitTermination(Math.max(0, deadline - System.nanoTime()), TimeUnit.NANOSECONDS);
     }
 
     private void accept(Connection connection) {
