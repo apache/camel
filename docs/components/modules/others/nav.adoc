@@ -50,6 +50,7 @@
 ** xref:lra.adoc[LRA]
 ** xref:mail-microsoft-oauth.adoc[Mail Microsoft Oauth]
 ** xref:main.adoc[Main]
+** xref:mcp-server.adoc[MCP Server]
 ** xref:mdc.adoc[MDC Logging]
 ** xref:observation.adoc[Micrometer Observability]
 ** xref:micrometer-observability.adoc[Micrometer Observability 2]
