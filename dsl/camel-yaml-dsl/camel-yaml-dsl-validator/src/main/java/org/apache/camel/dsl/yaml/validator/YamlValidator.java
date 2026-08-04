@@ -32,6 +32,9 @@ import com.networknt.schema.SchemaLocation;
 import com.networknt.schema.SchemaRegistry;
 import com.networknt.schema.SchemaRegistryConfig;
 import com.networknt.schema.SpecificationVersion;
+import com.networknt.schema.dialect.Dialect;
+import com.networknt.schema.dialect.Dialects;
+import com.networknt.schema.keyword.NonValidationKeyword;
 
 /**
  * YAML DSL validator that tooling can use to validate Camel source files if they can be parsed and are valid according
@@ -97,12 +100,28 @@ public class YamlValidator {
         var version = getSpecificationVersion(model).orElse(SpecificationVersion.DRAFT_4);
         var config = SchemaRegistryConfig.builder().locale(Locale.ENGLISH).build();
 
-        var schemaRegistry = SchemaRegistry.withDefaultDialect(version,
+        // Register "deprecated" as a known non-validation keyword to suppress warnings
+        Dialect base = getBaseDialect(version);
+        Dialect dialect = Dialect.builder(base)
+                .keyword(new NonValidationKeyword("deprecated"))
+                .build();
+
+        var schemaRegistry = SchemaRegistry.withDefaultDialect(dialect,
                 builder -> builder.schemaRegistryConfig(config));
 
         // Use a proper URI for the schema location to ensure $ref resolution works
         var schemaLocation = SchemaLocation.of(location);
         schema = schemaRegistry.getSchema(schemaLocation, model);
+    }
+
+    private static Dialect getBaseDialect(SpecificationVersion version) {
+        return switch (version) {
+            case DRAFT_4 -> Dialects.getDraft4();
+            case DRAFT_6 -> Dialects.getDraft6();
+            case DRAFT_7 -> Dialects.getDraft7();
+            case DRAFT_2019_09 -> Dialects.getDraft201909();
+            case DRAFT_2020_12 -> Dialects.getDraft202012();
+        };
     }
 
     private static Optional<SpecificationVersion> getSpecificationVersion(JsonNode schemaNode) {

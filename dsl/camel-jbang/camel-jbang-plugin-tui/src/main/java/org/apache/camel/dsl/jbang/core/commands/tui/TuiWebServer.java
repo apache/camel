@@ -197,6 +197,9 @@ class TuiWebServer {
             monitor.theme = theme;
             monitor.webBackend = backend;
             monitor.call();
+        } catch (NullPointerException e) {
+            // Browser disconnected mid-render — Aesh websocket handler's context is null
+            LOG.log(Level.DEBUG, "Web TUI session disconnected", e);
         } catch (Exception e) {
             LOG.log(Level.WARNING, "Web TUI session ended with an error", e);
         }

@@ -1512,11 +1512,6 @@ public class CamelMonitor extends CamelCommand {
             titleSpans.add(Span.raw("  "));
             titleSpans.add(Span.styled(activeInfra + " infra(s)", Theme.notice()));
         }
-        if (web && webBackend == null) {
-            titleSpans.add(Span.raw("  "));
-            titleSpans.add(Span.styled("web :" + webPort,
-                    Theme.notice().underlined().hyperlink("http://127.0.0.1:" + webPort + "/")));
-        }
         if (ctx.selectedPid != null) {
             titleSpans.add(Span.raw("  "));
             InfraInfo selInfra = findSelectedInfra();
@@ -1531,6 +1526,13 @@ public class CamelMonitor extends CamelCommand {
                 monitorNotification = null;
             }
         }
+        // Right-aligned header spans (web server indicator)
+        List<Span> headerRight = new ArrayList<>();
+        if (web && webBackend == null) {
+            headerRight.add(Span.styled("web :" + webPort + " ",
+                    Theme.notice().underlined().hyperlink("http://127.0.0.1:" + webPort + "/")));
+        }
+
         String activeNotification = monitorNotification;
         boolean activeNotificationError = monitorNotificationError;
         Line titleLine = Line.from(titleSpans);
@@ -1541,9 +1543,10 @@ public class CamelMonitor extends CamelCommand {
                 lastWaveNotification = activeNotification;
             }
             int titleWidth = titleSpans.stream().mapToInt(s -> s.width()).sum();
+            int rightWidth = headerRight.stream().mapToInt(Span::width).sum();
             int waveWidth = activeNotification.length() + 2;
-            int leftWidth = Math.min(titleWidth + 2, area.width() - waveWidth);
-            if (leftWidth > 0 && waveWidth > 0 && leftWidth + waveWidth <= area.width()) {
+            int leftWidth = Math.min(titleWidth + 2, area.width() - waveWidth - rightWidth);
+            if (leftWidth > 0 && waveWidth > 0 && leftWidth + waveWidth + rightWidth <= area.width()) {
                 Rect leftArea = new Rect(area.x(), area.y(), leftWidth, 1);
                 Rect waveArea = new Rect(area.x() + leftWidth, area.y(), waveWidth, 1);
                 frame.renderWidget(
@@ -1570,6 +1573,15 @@ public class CamelMonitor extends CamelCommand {
             frame.renderWidget(
                     Paragraph.builder().text(Text.from(titleLine)).build(),
                     area);
+        }
+        if (!headerRight.isEmpty()) {
+            int rightWidth = headerRight.stream().mapToInt(Span::width).sum();
+            if (rightWidth < area.width()) {
+                Rect rightArea = new Rect(area.x() + area.width() - rightWidth, area.y(), rightWidth, 1);
+                frame.renderWidget(
+                        Paragraph.builder().text(Text.from(Line.from(headerRight))).build(),
+                        rightArea);
+            }
         }
     }
 
