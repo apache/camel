@@ -23,6 +23,7 @@ import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.InvalidPayloadException;
 import org.apache.camel.Message;
+import org.apache.camel.component.aws.common.AwsExceptionUtil;
 import org.apache.camel.health.HealthCheck;
 import org.apache.camel.health.HealthCheckHelper;
 import org.apache.camel.health.WritableHealthCheckRepository;
@@ -183,7 +184,7 @@ public class Rekognition2Producer extends DefaultProducer {
                 try {
                     result = rekognitionClient.associateFaces(request);
                 } catch (AwsServiceException ase) {
-                    LOG.trace("Associate Faces command returned the error code {}", ase.awsErrorDetails().errorCode());
+                    LOG.trace("Associate Faces command returned the error code {}", AwsExceptionUtil.errorCode(ase));
                     throw ase;
                 }
                 Message message = getMessageForResponse(exchange);
@@ -219,7 +220,7 @@ public class Rekognition2Producer extends DefaultProducer {
             try {
                 result = rekognitionClient.associateFaces(builder.build());
             } catch (AwsServiceException ase) {
-                LOG.trace("Associate Faces command returned the error code {}", ase.awsErrorDetails().errorCode());
+                LOG.trace("Associate Faces command returned the error code {}", AwsExceptionUtil.errorCode(ase));
                 throw ase;
             }
             Message message = getMessageForResponse(exchange);
@@ -235,7 +236,7 @@ public class Rekognition2Producer extends DefaultProducer {
                 try {
                     result = rekognitionClient.compareFaces(request);
                 } catch (AwsServiceException ase) {
-                    LOG.trace("Compare Faces command returned the error code {}", ase.awsErrorDetails().errorCode());
+                    LOG.trace("Compare Faces command returned the error code {}", AwsExceptionUtil.errorCode(ase));
                     throw ase;
                 }
                 Message message = getMessageForResponse(exchange);
@@ -266,7 +267,7 @@ public class Rekognition2Producer extends DefaultProducer {
             try {
                 result = rekognitionClient.compareFaces(builder.build());
             } catch (AwsServiceException ase) {
-                LOG.trace("Compare Faces command returned the error code {}", ase.awsErrorDetails().errorCode());
+                LOG.trace("Compare Faces command returned the error code {}", AwsExceptionUtil.errorCode(ase));
                 throw ase;
             }
             Message message = getMessageForResponse(exchange);
@@ -282,7 +283,7 @@ public class Rekognition2Producer extends DefaultProducer {
                 try {
                     result = rekognitionClient.createCollection(request);
                 } catch (AwsServiceException ase) {
-                    LOG.trace("Create Collection command returned the error code {}", ase.awsErrorDetails().errorCode());
+                    LOG.trace("Create Collection command returned the error code {}", AwsExceptionUtil.errorCode(ase));
                     throw ase;
                 }
                 Message message = getMessageForResponse(exchange);
@@ -301,7 +302,7 @@ public class Rekognition2Producer extends DefaultProducer {
             try {
                 result = rekognitionClient.createCollection(builder.build());
             } catch (AwsServiceException ase) {
-                LOG.trace("Create Collection command returned the error code {}", ase.awsErrorDetails().errorCode());
+                LOG.trace("Create Collection command returned the error code {}", AwsExceptionUtil.errorCode(ase));
                 throw ase;
             }
             Message message = getMessageForResponse(exchange);
@@ -317,7 +318,7 @@ public class Rekognition2Producer extends DefaultProducer {
                 try {
                     result = rekognitionClient.createUser(request);
                 } catch (AwsServiceException ase) {
-                    LOG.trace("Create User command returned the error code {}", ase.awsErrorDetails().errorCode());
+                    LOG.trace("Create User command returned the error code {}", AwsExceptionUtil.errorCode(ase));
                     throw ase;
                 }
                 Message message = getMessageForResponse(exchange);
@@ -345,7 +346,7 @@ public class Rekognition2Producer extends DefaultProducer {
             try {
                 result = rekognitionClient.createUser(builder.build());
             } catch (AwsServiceException ase) {
-                LOG.trace("Create User command returned the error code {}", ase.awsErrorDetails().errorCode());
+                LOG.trace("Create User command returned the error code {}", AwsExceptionUtil.errorCode(ase));
                 throw ase;
             }
             Message message = getMessageForResponse(exchange);
@@ -361,7 +362,7 @@ public class Rekognition2Producer extends DefaultProducer {
                 try {
                     result = rekognitionClient.deleteCollection(request);
                 } catch (AwsServiceException ase) {
-                    LOG.trace("Delete Collection command returned the error code {}", ase.awsErrorDetails().errorCode());
+                    LOG.trace("Delete Collection command returned the error code {}", AwsExceptionUtil.errorCode(ase));
                     throw ase;
                 }
                 Message message = getMessageForResponse(exchange);
@@ -380,7 +381,7 @@ public class Rekognition2Producer extends DefaultProducer {
             try {
                 result = rekognitionClient.deleteCollection(builder.build());
             } catch (AwsServiceException ase) {
-                LOG.trace("Delete Collection command returned the error code {}", ase.awsErrorDetails().errorCode());
+                LOG.trace("Delete Collection command returned the error code {}", AwsExceptionUtil.errorCode(ase));
                 throw ase;
             }
             Message message = getMessageForResponse(exchange);
@@ -396,7 +397,7 @@ public class Rekognition2Producer extends DefaultProducer {
                 try {
                     result = rekognitionClient.deleteFaces(request);
                 } catch (AwsServiceException ase) {
-                    LOG.trace("Delete Faces command returned the error code {}", ase.awsErrorDetails().errorCode());
+                    LOG.trace("Delete Faces command returned the error code {}", AwsExceptionUtil.errorCode(ase));
                     throw ase;
                 }
                 Message message = getMessageForResponse(exchange);
@@ -419,7 +420,7 @@ public class Rekognition2Producer extends DefaultProducer {
             try {
                 result = rekognitionClient.deleteFaces(builder.build());
             } catch (AwsServiceException ase) {
-                LOG.trace("Delete Faces command returned the error code {}", ase.awsErrorDetails().errorCode());
+                LOG.trace("Delete Faces command returned the error code {}", AwsExceptionUtil.errorCode(ase));
                 throw ase;
             }
             Message message = getMessageForResponse(exchange);
@@ -435,7 +436,7 @@ public class Rekognition2Producer extends DefaultProducer {
                 try {
                     result = rekognitionClient.deleteUser(request);
                 } catch (AwsServiceException ase) {
-                    LOG.trace("Delete User command returned the error code {}", ase.awsErrorDetails().errorCode());
+                    LOG.trace("Delete User command returned the error code {}", AwsExceptionUtil.errorCode(ase));
                     throw ase;
                 }
                 Message message = getMessageForResponse(exchange);
@@ -463,7 +464,7 @@ public class Rekognition2Producer extends DefaultProducer {
             try {
                 result = rekognitionClient.deleteUser(builder.build());
             } catch (AwsServiceException ase) {
-                LOG.trace("Delete User command returned the error code {}", ase.awsErrorDetails().errorCode());
+                LOG.trace("Delete User command returned the error code {}", AwsExceptionUtil.errorCode(ase));
                 throw ase;
             }
             Message message = getMessageForResponse(exchange);
@@ -479,7 +480,7 @@ public class Rekognition2Producer extends DefaultProducer {
                 try {
                     result = rekognitionClient.describeCollection(request);
                 } catch (AwsServiceException ase) {
-                    LOG.trace("Describe Collection command returned the error code {}", ase.awsErrorDetails().errorCode());
+                    LOG.trace("Describe Collection command returned the error code {}", AwsExceptionUtil.errorCode(ase));
                     throw ase;
                 }
                 Message message = getMessageForResponse(exchange);
@@ -498,7 +499,7 @@ public class Rekognition2Producer extends DefaultProducer {
             try {
                 result = rekognitionClient.describeCollection(builder.build());
             } catch (AwsServiceException ase) {
-                LOG.trace("Describe Collection command returned the error code {}", ase.awsErrorDetails().errorCode());
+                LOG.trace("Describe Collection command returned the error code {}", AwsExceptionUtil.errorCode(ase));
                 throw ase;
             }
             Message message = getMessageForResponse(exchange);
@@ -514,7 +515,7 @@ public class Rekognition2Producer extends DefaultProducer {
                 try {
                     result = rekognitionClient.detectFaces(request);
                 } catch (AwsServiceException ase) {
-                    LOG.trace("Detect Faces command returned the error code {}", ase.awsErrorDetails().errorCode());
+                    LOG.trace("Detect Faces command returned the error code {}", AwsExceptionUtil.errorCode(ase));
                     throw ase;
                 }
                 Message message = getMessageForResponse(exchange);
@@ -537,7 +538,7 @@ public class Rekognition2Producer extends DefaultProducer {
             try {
                 result = rekognitionClient.detectFaces(builder.build());
             } catch (AwsServiceException ase) {
-                LOG.trace("Detect Faces command returned the error code {}", ase.awsErrorDetails().errorCode());
+                LOG.trace("Detect Faces command returned the error code {}", AwsExceptionUtil.errorCode(ase));
                 throw ase;
             }
             Message message = getMessageForResponse(exchange);
@@ -553,7 +554,7 @@ public class Rekognition2Producer extends DefaultProducer {
                 try {
                     result = rekognitionClient.detectLabels(request);
                 } catch (AwsServiceException ase) {
-                    LOG.trace("Detect Labels command returned the error code {}", ase.awsErrorDetails().errorCode());
+                    LOG.trace("Detect Labels command returned the error code {}", AwsExceptionUtil.errorCode(ase));
                     throw ase;
                 }
                 Message message = getMessageForResponse(exchange);
@@ -590,7 +591,7 @@ public class Rekognition2Producer extends DefaultProducer {
             try {
                 result = rekognitionClient.detectLabels(builder.build());
             } catch (AwsServiceException ase) {
-                LOG.trace("Detect Labels command returned the error code {}", ase.awsErrorDetails().errorCode());
+                LOG.trace("Detect Labels command returned the error code {}", AwsExceptionUtil.errorCode(ase));
                 throw ase;
             }
             Message message = getMessageForResponse(exchange);
@@ -606,7 +607,7 @@ public class Rekognition2Producer extends DefaultProducer {
                 try {
                     result = rekognitionClient.detectModerationLabels(request);
                 } catch (AwsServiceException ase) {
-                    LOG.trace("Detect Moderation Labels command returned the error code {}", ase.awsErrorDetails().errorCode());
+                    LOG.trace("Detect Moderation Labels command returned the error code {}", AwsExceptionUtil.errorCode(ase));
                     throw ase;
                 }
                 Message message = getMessageForResponse(exchange);
@@ -638,7 +639,7 @@ public class Rekognition2Producer extends DefaultProducer {
             try {
                 result = rekognitionClient.detectModerationLabels(builder.build());
             } catch (AwsServiceException ase) {
-                LOG.trace("Detect Moderation Labels command returned the error code {}", ase.awsErrorDetails().errorCode());
+                LOG.trace("Detect Moderation Labels command returned the error code {}", AwsExceptionUtil.errorCode(ase));
                 throw ase;
             }
             Message message = getMessageForResponse(exchange);
@@ -682,7 +683,7 @@ public class Rekognition2Producer extends DefaultProducer {
             try {
                 result = rekognitionClient.detectProtectiveEquipment(builder.build());
             } catch (AwsServiceException ase) {
-                LOG.trace("Detect Protective Equipment command returned the error code {}", ase.awsErrorDetails().errorCode());
+                LOG.trace("Detect Protective Equipment command returned the error code {}", AwsExceptionUtil.errorCode(ase));
                 throw ase;
             }
             Message message = getMessageForResponse(exchange);
@@ -698,7 +699,7 @@ public class Rekognition2Producer extends DefaultProducer {
                 try {
                     result = rekognitionClient.detectText(request);
                 } catch (AwsServiceException ase) {
-                    LOG.trace("Detect Text command returned the error code {}", ase.awsErrorDetails().errorCode());
+                    LOG.trace("Detect Text command returned the error code {}", AwsExceptionUtil.errorCode(ase));
                     throw ase;
                 }
                 Message message = getMessageForResponse(exchange);
@@ -722,7 +723,7 @@ public class Rekognition2Producer extends DefaultProducer {
             try {
                 result = rekognitionClient.detectText(builder.build());
             } catch (AwsServiceException ase) {
-                LOG.trace("Detect Text command returned the error code {}", ase.awsErrorDetails().errorCode());
+                LOG.trace("Detect Text command returned the error code {}", AwsExceptionUtil.errorCode(ase));
                 throw ase;
             }
             Message message = getMessageForResponse(exchange);
@@ -738,7 +739,7 @@ public class Rekognition2Producer extends DefaultProducer {
                 try {
                     result = rekognitionClient.disassociateFaces(request);
                 } catch (AwsServiceException ase) {
-                    LOG.trace("Disassociate Faces command returned the error code {}", ase.awsErrorDetails().errorCode());
+                    LOG.trace("Disassociate Faces command returned the error code {}", AwsExceptionUtil.errorCode(ase));
                     throw ase;
                 }
                 Message message = getMessageForResponse(exchange);
@@ -770,7 +771,7 @@ public class Rekognition2Producer extends DefaultProducer {
             try {
                 result = rekognitionClient.disassociateFaces(builder.build());
             } catch (AwsServiceException ase) {
-                LOG.trace("Disassociate Faces command returned the error code {}", ase.awsErrorDetails().errorCode());
+                LOG.trace("Disassociate Faces command returned the error code {}", AwsExceptionUtil.errorCode(ase));
                 throw ase;
             }
             Message message = getMessageForResponse(exchange);
@@ -786,7 +787,7 @@ public class Rekognition2Producer extends DefaultProducer {
                 try {
                     result = rekognitionClient.getCelebrityInfo(request);
                 } catch (AwsServiceException ase) {
-                    LOG.trace("Get Celebrity Info command returned the error code {}", ase.awsErrorDetails().errorCode());
+                    LOG.trace("Get Celebrity Info command returned the error code {}", AwsExceptionUtil.errorCode(ase));
                     throw ase;
                 }
                 Message message = getMessageForResponse(exchange);
@@ -805,7 +806,7 @@ public class Rekognition2Producer extends DefaultProducer {
             try {
                 result = rekognitionClient.getCelebrityInfo(builder.build());
             } catch (AwsServiceException ase) {
-                LOG.trace("Get Celebrity Info command returned the error code {}", ase.awsErrorDetails().errorCode());
+                LOG.trace("Get Celebrity Info command returned the error code {}", AwsExceptionUtil.errorCode(ase));
                 throw ase;
             }
             Message message = getMessageForResponse(exchange);
@@ -821,7 +822,7 @@ public class Rekognition2Producer extends DefaultProducer {
                 try {
                     result = rekognitionClient.getMediaAnalysisJob(request);
                 } catch (AwsServiceException ase) {
-                    LOG.trace("Get Media Analysis Job command returned the error code {}", ase.awsErrorDetails().errorCode());
+                    LOG.trace("Get Media Analysis Job command returned the error code {}", AwsExceptionUtil.errorCode(ase));
                     throw ase;
                 }
                 Message message = getMessageForResponse(exchange);
@@ -840,7 +841,7 @@ public class Rekognition2Producer extends DefaultProducer {
             try {
                 result = rekognitionClient.getMediaAnalysisJob(builder.build());
             } catch (AwsServiceException ase) {
-                LOG.trace("Get Media Analysis Job command returned the error code {}", ase.awsErrorDetails().errorCode());
+                LOG.trace("Get Media Analysis Job command returned the error code {}", AwsExceptionUtil.errorCode(ase));
                 throw ase;
             }
             Message message = getMessageForResponse(exchange);
@@ -856,7 +857,7 @@ public class Rekognition2Producer extends DefaultProducer {
                 try {
                     result = rekognitionClient.indexFaces(request);
                 } catch (AwsServiceException ase) {
-                    LOG.trace("Index Faces command returned the error code {}", ase.awsErrorDetails().errorCode());
+                    LOG.trace("Index Faces command returned the error code {}", AwsExceptionUtil.errorCode(ase));
                     throw ase;
                 }
                 Message message = getMessageForResponse(exchange);
@@ -896,7 +897,7 @@ public class Rekognition2Producer extends DefaultProducer {
             try {
                 result = rekognitionClient.indexFaces(builder.build());
             } catch (AwsServiceException ase) {
-                LOG.trace("Index Faces command returned the error code {}", ase.awsErrorDetails().errorCode());
+                LOG.trace("Index Faces command returned the error code {}", AwsExceptionUtil.errorCode(ase));
                 throw ase;
             }
             Message message = getMessageForResponse(exchange);
@@ -912,7 +913,7 @@ public class Rekognition2Producer extends DefaultProducer {
                 try {
                     result = rekognitionClient.listCollections(request);
                 } catch (AwsServiceException ase) {
-                    LOG.trace("List Collections command returned the error code {}", ase.awsErrorDetails().errorCode());
+                    LOG.trace("List Collections command returned the error code {}", AwsExceptionUtil.errorCode(ase));
                     throw ase;
                 }
                 Message message = getMessageForResponse(exchange);
@@ -935,7 +936,7 @@ public class Rekognition2Producer extends DefaultProducer {
             try {
                 result = rekognitionClient.listCollections(builder.build());
             } catch (AwsServiceException ase) {
-                LOG.trace("List Collections command returned the error code {}", ase.awsErrorDetails().errorCode());
+                LOG.trace("List Collections command returned the error code {}", AwsExceptionUtil.errorCode(ase));
                 throw ase;
             }
             Message message = getMessageForResponse(exchange);
@@ -951,7 +952,7 @@ public class Rekognition2Producer extends DefaultProducer {
                 try {
                     result = rekognitionClient.listMediaAnalysisJobs(request);
                 } catch (AwsServiceException ase) {
-                    LOG.trace("List Media Analysis Jobs command returned the error code {}", ase.awsErrorDetails().errorCode());
+                    LOG.trace("List Media Analysis Jobs command returned the error code {}", AwsExceptionUtil.errorCode(ase));
                     throw ase;
                 }
                 Message message = getMessageForResponse(exchange);
@@ -974,7 +975,7 @@ public class Rekognition2Producer extends DefaultProducer {
             try {
                 result = rekognitionClient.listMediaAnalysisJobs(builder.build());
             } catch (AwsServiceException ase) {
-                LOG.trace("List Media Analysis Jobs command returned the error code {}", ase.awsErrorDetails().errorCode());
+                LOG.trace("List Media Analysis Jobs command returned the error code {}", AwsExceptionUtil.errorCode(ase));
                 throw ase;
             }
             Message message = getMessageForResponse(exchange);
@@ -990,7 +991,7 @@ public class Rekognition2Producer extends DefaultProducer {
                 try {
                     result = rekognitionClient.listFaces(request);
                 } catch (AwsServiceException ase) {
-                    LOG.trace("List Faces command returned the error code {}", ase.awsErrorDetails().errorCode());
+                    LOG.trace("List Faces command returned the error code {}", AwsExceptionUtil.errorCode(ase));
                     throw ase;
                 }
                 Message message = getMessageForResponse(exchange);
@@ -1025,7 +1026,7 @@ public class Rekognition2Producer extends DefaultProducer {
             try {
                 result = rekognitionClient.listFaces(builder.build());
             } catch (AwsServiceException ase) {
-                LOG.trace("List Faces command returned the error code {}", ase.awsErrorDetails().errorCode());
+                LOG.trace("List Faces command returned the error code {}", AwsExceptionUtil.errorCode(ase));
                 throw ase;
             }
             Message message = getMessageForResponse(exchange);
@@ -1041,7 +1042,7 @@ public class Rekognition2Producer extends DefaultProducer {
                 try {
                     result = rekognitionClient.listUsers(request);
                 } catch (AwsServiceException ase) {
-                    LOG.trace("List Users command returned the error code {}", ase.awsErrorDetails().errorCode());
+                    LOG.trace("List Users command returned the error code {}", AwsExceptionUtil.errorCode(ase));
                     throw ase;
                 }
                 Message message = getMessageForResponse(exchange);
@@ -1068,7 +1069,7 @@ public class Rekognition2Producer extends DefaultProducer {
             try {
                 result = rekognitionClient.listUsers(builder.build());
             } catch (AwsServiceException ase) {
-                LOG.trace("List Users command returned the error code {}", ase.awsErrorDetails().errorCode());
+                LOG.trace("List Users command returned the error code {}", AwsExceptionUtil.errorCode(ase));
                 throw ase;
             }
             Message message = getMessageForResponse(exchange);
@@ -1084,7 +1085,7 @@ public class Rekognition2Producer extends DefaultProducer {
                 try {
                     result = rekognitionClient.recognizeCelebrities(request);
                 } catch (AwsServiceException ase) {
-                    LOG.trace("Recognize Celebrities command returned the error code {}", ase.awsErrorDetails().errorCode());
+                    LOG.trace("Recognize Celebrities command returned the error code {}", AwsExceptionUtil.errorCode(ase));
                     throw ase;
                 }
                 Message message = getMessageForResponse(exchange);
@@ -1103,7 +1104,7 @@ public class Rekognition2Producer extends DefaultProducer {
             try {
                 result = rekognitionClient.recognizeCelebrities(builder.build());
             } catch (AwsServiceException ase) {
-                LOG.trace("Recognize Celebrities command returned the error code {}", ase.awsErrorDetails().errorCode());
+                LOG.trace("Recognize Celebrities command returned the error code {}", AwsExceptionUtil.errorCode(ase));
                 throw ase;
             }
             Message message = getMessageForResponse(exchange);
@@ -1119,7 +1120,7 @@ public class Rekognition2Producer extends DefaultProducer {
                 try {
                     result = rekognitionClient.searchFaces(request);
                 } catch (AwsServiceException ase) {
-                    LOG.trace("Search Faces command returned the error code {}", ase.awsErrorDetails().errorCode());
+                    LOG.trace("Search Faces command returned the error code {}", AwsExceptionUtil.errorCode(ase));
                     throw ase;
                 }
                 Message message = getMessageForResponse(exchange);
@@ -1150,7 +1151,7 @@ public class Rekognition2Producer extends DefaultProducer {
             try {
                 result = rekognitionClient.searchFaces(builder.build());
             } catch (AwsServiceException ase) {
-                LOG.trace("Search Faces command returned the error code {}", ase.awsErrorDetails().errorCode());
+                LOG.trace("Search Faces command returned the error code {}", AwsExceptionUtil.errorCode(ase));
                 throw ase;
             }
             Message message = getMessageForResponse(exchange);
@@ -1166,7 +1167,7 @@ public class Rekognition2Producer extends DefaultProducer {
                 try {
                     result = rekognitionClient.searchFacesByImage(request);
                 } catch (AwsServiceException ase) {
-                    LOG.trace("Search Faces By Image command returned the error code {}", ase.awsErrorDetails().errorCode());
+                    LOG.trace("Search Faces By Image command returned the error code {}", AwsExceptionUtil.errorCode(ase));
                     throw ase;
                 }
                 Message message = getMessageForResponse(exchange);
@@ -1201,7 +1202,7 @@ public class Rekognition2Producer extends DefaultProducer {
             try {
                 result = rekognitionClient.searchFacesByImage(builder.build());
             } catch (AwsServiceException ase) {
-                LOG.trace("Search Faces By Image command returned the error code {}", ase.awsErrorDetails().errorCode());
+                LOG.trace("Search Faces By Image command returned the error code {}", AwsExceptionUtil.errorCode(ase));
                 throw ase;
             }
             Message message = getMessageForResponse(exchange);
@@ -1217,7 +1218,7 @@ public class Rekognition2Producer extends DefaultProducer {
                 try {
                     result = rekognitionClient.searchUsers(request);
                 } catch (AwsServiceException ase) {
-                    LOG.trace("Search Users command returned the error code {}", ase.awsErrorDetails().errorCode());
+                    LOG.trace("Search Users command returned the error code {}", AwsExceptionUtil.errorCode(ase));
                     throw ase;
                 }
                 Message message = getMessageForResponse(exchange);
@@ -1252,7 +1253,7 @@ public class Rekognition2Producer extends DefaultProducer {
             try {
                 result = rekognitionClient.searchUsers(builder.build());
             } catch (AwsServiceException ase) {
-                LOG.trace("Search Users command returned the error code {}", ase.awsErrorDetails().errorCode());
+                LOG.trace("Search Users command returned the error code {}", AwsExceptionUtil.errorCode(ase));
                 throw ase;
             }
             Message message = getMessageForResponse(exchange);
@@ -1268,7 +1269,7 @@ public class Rekognition2Producer extends DefaultProducer {
                 try {
                     result = rekognitionClient.searchUsersByImage(request);
                 } catch (AwsServiceException ase) {
-                    LOG.trace("Search Users By Image command returned the error code {}", ase.awsErrorDetails().errorCode());
+                    LOG.trace("Search Users By Image command returned the error code {}", AwsExceptionUtil.errorCode(ase));
                     throw ase;
                 }
                 Message message = getMessageForResponse(exchange);
@@ -1303,7 +1304,7 @@ public class Rekognition2Producer extends DefaultProducer {
             try {
                 result = rekognitionClient.searchUsersByImage(builder.build());
             } catch (AwsServiceException ase) {
-                LOG.trace("Search Users By Image command returned the error code {}", ase.awsErrorDetails().errorCode());
+                LOG.trace("Search Users By Image command returned the error code {}", AwsExceptionUtil.errorCode(ase));
                 throw ase;
             }
             Message message = getMessageForResponse(exchange);
@@ -1319,7 +1320,7 @@ public class Rekognition2Producer extends DefaultProducer {
                 try {
                     result = rekognitionClient.startMediaAnalysisJob(request);
                 } catch (AwsServiceException ase) {
-                    LOG.trace("Start Media Analysis Job command returned the error code {}", ase.awsErrorDetails().errorCode());
+                    LOG.trace("Start Media Analysis Job command returned the error code {}", AwsExceptionUtil.errorCode(ase));
                     throw ase;
                 }
                 Message message = getMessageForResponse(exchange);
@@ -1361,7 +1362,7 @@ public class Rekognition2Producer extends DefaultProducer {
             try {
                 result = rekognitionClient.startMediaAnalysisJob(builder.build());
             } catch (AwsServiceException ase) {
-                LOG.trace("Start Media Analysis Job command returned the error code {}", ase.awsErrorDetails().errorCode());
+                LOG.trace("Start Media Analysis Job command returned the error code {}", AwsExceptionUtil.errorCode(ase));
                 throw ase;
             }
             Message message = getMessageForResponse(exchange);

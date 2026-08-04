@@ -24,6 +24,7 @@ import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.InvalidPayloadException;
 import org.apache.camel.Message;
+import org.apache.camel.component.aws.common.AwsExceptionUtil;
 import org.apache.camel.support.DefaultProducer;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.URISupport;
@@ -259,7 +260,7 @@ public class KMS2Producer extends DefaultProducer {
                 try {
                     result = pojoExecutor.apply(requestClass.cast(payload));
                 } catch (AwsServiceException ase) {
-                    LOG.trace("{} command returned the error code {}", operationName, ase.awsErrorDetails().errorCode());
+                    LOG.trace("{} command returned the error code {}", operationName, AwsExceptionUtil.errorCode(ase));
                     throw ase;
                 }
             } else {
@@ -272,7 +273,7 @@ public class KMS2Producer extends DefaultProducer {
             try {
                 result = headerExecutor.get();
             } catch (AwsServiceException ase) {
-                LOG.trace("{} command returned the error code {}", operationName, ase.awsErrorDetails().errorCode());
+                LOG.trace("{} command returned the error code {}", operationName, AwsExceptionUtil.errorCode(ase));
                 throw ase;
             }
         }

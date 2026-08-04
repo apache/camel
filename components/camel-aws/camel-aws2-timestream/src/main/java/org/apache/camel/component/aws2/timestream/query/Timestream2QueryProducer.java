@@ -23,6 +23,7 @@ import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.InvalidPayloadException;
 import org.apache.camel.Message;
+import org.apache.camel.component.aws.common.AwsExceptionUtil;
 import org.apache.camel.component.aws2.timestream.Timestream2Configuration;
 import org.apache.camel.component.aws2.timestream.Timestream2Constants;
 import org.apache.camel.component.aws2.timestream.Timestream2Operations;
@@ -108,7 +109,7 @@ public class Timestream2QueryProducer extends DefaultProducer {
                 try {
                     result = timestreamQueryClient.describeEndpoints(request);
                 } catch (AwsServiceException ase) {
-                    LOG.trace("Describe Endpoints command returned the error code {}", ase.awsErrorDetails().errorCode());
+                    LOG.trace("Describe Endpoints command returned the error code {}", AwsExceptionUtil.errorCode(ase));
                     throw ase;
                 }
                 Message message = getMessageForResponse(exchange);
@@ -124,7 +125,7 @@ public class Timestream2QueryProducer extends DefaultProducer {
             try {
                 result = timestreamQueryClient.describeEndpoints(builder.build());
             } catch (AwsServiceException ase) {
-                LOG.trace("Describe Endpoints command returned the error code {}", ase.awsErrorDetails().errorCode());
+                LOG.trace("Describe Endpoints command returned the error code {}", AwsExceptionUtil.errorCode(ase));
                 throw ase;
             }
             Message message = getMessageForResponse(exchange);
@@ -141,7 +142,7 @@ public class Timestream2QueryProducer extends DefaultProducer {
                 try {
                     result = timestreamQueryClient.createScheduledQuery(request);
                 } catch (AwsServiceException ase) {
-                    LOG.trace("Create Scheduled Query command returned the error code {}", ase.awsErrorDetails().errorCode());
+                    LOG.trace("Create Scheduled Query command returned the error code {}", AwsExceptionUtil.errorCode(ase));
                     throw ase;
                 }
                 Message message = getMessageForResponse(exchange);
@@ -247,7 +248,7 @@ public class Timestream2QueryProducer extends DefaultProducer {
             try {
                 result = timestreamQueryClient.createScheduledQuery(builder.build());
             } catch (AwsServiceException ase) {
-                LOG.trace("Create Scheduled Query command returned the error code {}", ase.awsErrorDetails().errorCode());
+                LOG.trace("Create Scheduled Query command returned the error code {}", AwsExceptionUtil.errorCode(ase));
                 throw ase;
             }
             Message message = getMessageForResponse(exchange);
@@ -264,7 +265,7 @@ public class Timestream2QueryProducer extends DefaultProducer {
                 try {
                     result = timestreamQueryClient.deleteScheduledQuery(request);
                 } catch (AwsServiceException ase) {
-                    LOG.trace("Delete Scheduled Query command returned the error code {}", ase.awsErrorDetails().errorCode());
+                    LOG.trace("Delete Scheduled Query command returned the error code {}", AwsExceptionUtil.errorCode(ase));
                     throw ase;
                 }
                 Message message = getMessageForResponse(exchange);
@@ -285,7 +286,7 @@ public class Timestream2QueryProducer extends DefaultProducer {
             try {
                 result = timestreamQueryClient.deleteScheduledQuery(builder.build());
             } catch (AwsServiceException ase) {
-                LOG.trace("Delete Scheduled Query command returned the error code {}", ase.awsErrorDetails().errorCode());
+                LOG.trace("Delete Scheduled Query command returned the error code {}", AwsExceptionUtil.errorCode(ase));
                 throw ase;
             }
             Message message = getMessageForResponse(exchange);
@@ -303,7 +304,7 @@ public class Timestream2QueryProducer extends DefaultProducer {
                 try {
                     result = timestreamQueryClient.executeScheduledQuery(request);
                 } catch (AwsServiceException ase) {
-                    LOG.trace("Execute Scheduled Query command returned the error code {}", ase.awsErrorDetails().errorCode());
+                    LOG.trace("Execute Scheduled Query command returned the error code {}", AwsExceptionUtil.errorCode(ase));
                     throw ase;
                 }
                 Message message = getMessageForResponse(exchange);
@@ -335,7 +336,7 @@ public class Timestream2QueryProducer extends DefaultProducer {
             try {
                 result = timestreamQueryClient.executeScheduledQuery(builder.build());
             } catch (AwsServiceException ase) {
-                LOG.trace("Execute Scheduled Query command returned the error code {}", ase.awsErrorDetails().errorCode());
+                LOG.trace("Execute Scheduled Query command returned the error code {}", AwsExceptionUtil.errorCode(ase));
                 throw ase;
             }
             Message message = getMessageForResponse(exchange);
@@ -352,7 +353,7 @@ public class Timestream2QueryProducer extends DefaultProducer {
                 try {
                     result = timestreamQueryClient.updateScheduledQuery(request);
                 } catch (AwsServiceException ase) {
-                    LOG.trace("Update Scheduled Query command returned the error code {}", ase.awsErrorDetails().errorCode());
+                    LOG.trace("Update Scheduled Query command returned the error code {}", AwsExceptionUtil.errorCode(ase));
                     throw ase;
                 }
                 Message message = getMessageForResponse(exchange);
@@ -378,7 +379,7 @@ public class Timestream2QueryProducer extends DefaultProducer {
             try {
                 result = timestreamQueryClient.updateScheduledQuery(builder.build());
             } catch (AwsServiceException ase) {
-                LOG.trace("Update Scheduled Query command returned the error code {}", ase.awsErrorDetails().errorCode());
+                LOG.trace("Update Scheduled Query command returned the error code {}", AwsExceptionUtil.errorCode(ase));
                 throw ase;
             }
             Message message = getMessageForResponse(exchange);
@@ -395,7 +396,7 @@ public class Timestream2QueryProducer extends DefaultProducer {
                 try {
                     result = timestreamQueryClient.describeScheduledQuery(request);
                 } catch (AwsServiceException ase) {
-                    LOG.trace("Describe Scheduled Query command returned the error code {}", ase.awsErrorDetails().errorCode());
+                    LOG.trace("Describe Scheduled Query command returned the error code {}", AwsExceptionUtil.errorCode(ase));
                     throw ase;
                 }
                 Message message = getMessageForResponse(exchange);
@@ -411,7 +412,7 @@ public class Timestream2QueryProducer extends DefaultProducer {
             try {
                 result = timestreamQueryClient.describeScheduledQuery(builder.build());
             } catch (AwsServiceException ase) {
-                LOG.trace("Describe Scheduled Query command returned the error code {}", ase.awsErrorDetails().errorCode());
+                LOG.trace("Describe Scheduled Query command returned the error code {}", AwsExceptionUtil.errorCode(ase));
                 throw ase;
             }
             Message message = getMessageForResponse(exchange);
@@ -428,7 +429,7 @@ public class Timestream2QueryProducer extends DefaultProducer {
                 try {
                     result = timestreamQueryClient.listScheduledQueries(request);
                 } catch (AwsServiceException ase) {
-                    LOG.trace("List Scheduled Queries command returned the error code {}", ase.awsErrorDetails().errorCode());
+                    LOG.trace("List Scheduled Queries command returned the error code {}", AwsExceptionUtil.errorCode(ase));
                     throw ase;
                 }
                 Message message = getMessageForResponse(exchange);
@@ -449,7 +450,7 @@ public class Timestream2QueryProducer extends DefaultProducer {
             try {
                 result = timestreamQueryClient.listScheduledQueries(builder.build());
             } catch (AwsServiceException ase) {
-                LOG.trace("List Scheduled Queries command returned the error code {}", ase.awsErrorDetails().errorCode());
+                LOG.trace("List Scheduled Queries command returned the error code {}", AwsExceptionUtil.errorCode(ase));
                 throw ase;
             }
             Message message = getMessageForResponse(exchange);
@@ -465,7 +466,7 @@ public class Timestream2QueryProducer extends DefaultProducer {
                 try {
                     result = timestreamQueryClient.prepareQuery(request);
                 } catch (AwsServiceException ase) {
-                    LOG.trace("Prepare Query command returned the error code {}", ase.awsErrorDetails().errorCode());
+                    LOG.trace("Prepare Query command returned the error code {}", AwsExceptionUtil.errorCode(ase));
                     throw ase;
                 }
                 Message message = getMessageForResponse(exchange);
@@ -491,7 +492,7 @@ public class Timestream2QueryProducer extends DefaultProducer {
             try {
                 result = timestreamQueryClient.prepareQuery(builder.build());
             } catch (AwsServiceException ase) {
-                LOG.trace("Prepare Query command returned the error code {}", ase.awsErrorDetails().errorCode());
+                LOG.trace("Prepare Query command returned the error code {}", AwsExceptionUtil.errorCode(ase));
                 throw ase;
             }
             Message message = getMessageForResponse(exchange);
@@ -507,7 +508,7 @@ public class Timestream2QueryProducer extends DefaultProducer {
                 try {
                     result = timestreamQueryClient.query(request);
                 } catch (AwsServiceException ase) {
-                    LOG.trace("Query command returned the error code {}", ase.awsErrorDetails().errorCode());
+                    LOG.trace("Query command returned the error code {}", AwsExceptionUtil.errorCode(ase));
                     throw ase;
                 }
                 Message message = getMessageForResponse(exchange);
@@ -533,7 +534,7 @@ public class Timestream2QueryProducer extends DefaultProducer {
             try {
                 result = timestreamQueryClient.query(builder.build());
             } catch (AwsServiceException ase) {
-                LOG.trace("Query command returned the error code {}", ase.awsErrorDetails().errorCode());
+                LOG.trace("Query command returned the error code {}", AwsExceptionUtil.errorCode(ase));
                 throw ase;
             }
             Message message = getMessageForResponse(exchange);
@@ -549,7 +550,7 @@ public class Timestream2QueryProducer extends DefaultProducer {
                 try {
                     result = timestreamQueryClient.cancelQuery(request);
                 } catch (AwsServiceException ase) {
-                    LOG.trace("Cancel Query command returned the error code {}", ase.awsErrorDetails().errorCode());
+                    LOG.trace("Cancel Query command returned the error code {}", AwsExceptionUtil.errorCode(ase));
                     throw ase;
                 }
                 Message message = getMessageForResponse(exchange);
@@ -570,7 +571,7 @@ public class Timestream2QueryProducer extends DefaultProducer {
             try {
                 result = timestreamQueryClient.cancelQuery(builder.build());
             } catch (AwsServiceException ase) {
-                LOG.trace("Cancel Query command returned the error code {}", ase.awsErrorDetails().errorCode());
+                LOG.trace("Cancel Query command returned the error code {}", AwsExceptionUtil.errorCode(ase));
                 throw ase;
             }
             Message message = getMessageForResponse(exchange);

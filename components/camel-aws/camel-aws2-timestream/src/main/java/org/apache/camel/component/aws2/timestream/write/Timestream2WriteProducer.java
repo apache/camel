@@ -22,6 +22,7 @@ import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.InvalidPayloadException;
 import org.apache.camel.Message;
+import org.apache.camel.component.aws.common.AwsExceptionUtil;
 import org.apache.camel.component.aws2.timestream.Timestream2Configuration;
 import org.apache.camel.component.aws2.timestream.Timestream2Constants;
 import org.apache.camel.component.aws2.timestream.Timestream2Operations;
@@ -114,7 +115,7 @@ public class Timestream2WriteProducer extends DefaultProducer {
                 try {
                     result = timestreamWriteClient.describeEndpoints(request);
                 } catch (AwsServiceException ase) {
-                    LOG.trace("Describe Endpoints command returned the error code {}", ase.awsErrorDetails().errorCode());
+                    LOG.trace("Describe Endpoints command returned the error code {}", AwsExceptionUtil.errorCode(ase));
                     throw ase;
                 }
                 Message message = getMessageForResponse(exchange);
@@ -130,7 +131,7 @@ public class Timestream2WriteProducer extends DefaultProducer {
             try {
                 result = timestreamWriteClient.describeEndpoints(builder.build());
             } catch (AwsServiceException ase) {
-                LOG.trace("Describe Endpoints command returned the error code {}", ase.awsErrorDetails().errorCode());
+                LOG.trace("Describe Endpoints command returned the error code {}", AwsExceptionUtil.errorCode(ase));
                 throw ase;
             }
             Message message = getMessageForResponse(exchange);
@@ -147,7 +148,7 @@ public class Timestream2WriteProducer extends DefaultProducer {
                 try {
                     result = timestreamWriteClient.createBatchLoadTask(request);
                 } catch (AwsServiceException ase) {
-                    LOG.trace("Create Batch Load Task command returned the error code {}", ase.awsErrorDetails().errorCode());
+                    LOG.trace("Create Batch Load Task command returned the error code {}", AwsExceptionUtil.errorCode(ase));
                     throw ase;
                 }
                 Message message = getMessageForResponse(exchange);
@@ -194,7 +195,7 @@ public class Timestream2WriteProducer extends DefaultProducer {
             try {
                 result = timestreamWriteClient.createBatchLoadTask(builder.build());
             } catch (AwsServiceException ase) {
-                LOG.trace("Create Batch Load Task command returned the error code {}", ase.awsErrorDetails().errorCode());
+                LOG.trace("Create Batch Load Task command returned the error code {}", AwsExceptionUtil.errorCode(ase));
                 throw ase;
             }
             Message message = getMessageForResponse(exchange);
@@ -211,7 +212,7 @@ public class Timestream2WriteProducer extends DefaultProducer {
                 try {
                     result = timestreamWriteClient.describeBatchLoadTask(request);
                 } catch (AwsServiceException ase) {
-                    LOG.trace("Describe Batch Load Task command returned the error code {}", ase.awsErrorDetails().errorCode());
+                    LOG.trace("Describe Batch Load Task command returned the error code {}", AwsExceptionUtil.errorCode(ase));
                     throw ase;
                 }
                 Message message = getMessageForResponse(exchange);
@@ -231,7 +232,7 @@ public class Timestream2WriteProducer extends DefaultProducer {
             try {
                 result = timestreamWriteClient.describeBatchLoadTask(builder.build());
             } catch (AwsServiceException ase) {
-                LOG.trace("Describe Batch Load Task command returned the error code {}", ase.awsErrorDetails().errorCode());
+                LOG.trace("Describe Batch Load Task command returned the error code {}", AwsExceptionUtil.errorCode(ase));
                 throw ase;
             }
             Message message = getMessageForResponse(exchange);
@@ -248,7 +249,7 @@ public class Timestream2WriteProducer extends DefaultProducer {
                 try {
                     result = timestreamWriteClient.resumeBatchLoadTask(request);
                 } catch (AwsServiceException ase) {
-                    LOG.trace("Resume Batch Load Task command returned the error code {}", ase.awsErrorDetails().errorCode());
+                    LOG.trace("Resume Batch Load Task command returned the error code {}", AwsExceptionUtil.errorCode(ase));
                     throw ase;
                 }
                 Message message = getMessageForResponse(exchange);
@@ -268,7 +269,7 @@ public class Timestream2WriteProducer extends DefaultProducer {
             try {
                 result = timestreamWriteClient.resumeBatchLoadTask(builder.build());
             } catch (AwsServiceException ase) {
-                LOG.trace("Resume Batch Load Task command returned the error code {}", ase.awsErrorDetails().errorCode());
+                LOG.trace("Resume Batch Load Task command returned the error code {}", AwsExceptionUtil.errorCode(ase));
                 throw ase;
             }
             Message message = getMessageForResponse(exchange);
@@ -285,7 +286,7 @@ public class Timestream2WriteProducer extends DefaultProducer {
                 try {
                     result = timestreamWriteClient.listBatchLoadTasks(request);
                 } catch (AwsServiceException ase) {
-                    LOG.trace("List Batch Load Tasks command returned the error code {}", ase.awsErrorDetails().errorCode());
+                    LOG.trace("List Batch Load Tasks command returned the error code {}", AwsExceptionUtil.errorCode(ase));
                     throw ase;
                 }
                 Message message = getMessageForResponse(exchange);
@@ -309,7 +310,7 @@ public class Timestream2WriteProducer extends DefaultProducer {
             try {
                 result = timestreamWriteClient.listBatchLoadTasks(builder.build());
             } catch (AwsServiceException ase) {
-                LOG.trace("List Batch Load Tasks command returned the error code {}", ase.awsErrorDetails().errorCode());
+                LOG.trace("List Batch Load Tasks command returned the error code {}", AwsExceptionUtil.errorCode(ase));
                 throw ase;
             }
             Message message = getMessageForResponse(exchange);
@@ -325,7 +326,7 @@ public class Timestream2WriteProducer extends DefaultProducer {
                 try {
                     result = timestreamWriteClient.createDatabase(request);
                 } catch (AwsServiceException ase) {
-                    LOG.trace("Create Database command returned the error code {}", ase.awsErrorDetails().errorCode());
+                    LOG.trace("Create Database command returned the error code {}", AwsExceptionUtil.errorCode(ase));
                     throw ase;
                 }
                 Message message = getMessageForResponse(exchange);
@@ -349,7 +350,7 @@ public class Timestream2WriteProducer extends DefaultProducer {
             try {
                 result = timestreamWriteClient.createDatabase(builder.build());
             } catch (AwsServiceException ase) {
-                LOG.trace("Create Database command returned the error code {}", ase.awsErrorDetails().errorCode());
+                LOG.trace("Create Database command returned the error code {}", AwsExceptionUtil.errorCode(ase));
                 throw ase;
             }
             Message message = getMessageForResponse(exchange);
@@ -365,7 +366,7 @@ public class Timestream2WriteProducer extends DefaultProducer {
                 try {
                     result = timestreamWriteClient.deleteDatabase(request);
                 } catch (AwsServiceException ase) {
-                    LOG.trace("Delete Database command returned the error code {}", ase.awsErrorDetails().errorCode());
+                    LOG.trace("Delete Database command returned the error code {}", AwsExceptionUtil.errorCode(ase));
                     throw ase;
                 }
                 Message message = getMessageForResponse(exchange);
@@ -385,7 +386,7 @@ public class Timestream2WriteProducer extends DefaultProducer {
             try {
                 result = timestreamWriteClient.deleteDatabase(builder.build());
             } catch (AwsServiceException ase) {
-                LOG.trace("Delete Database command returned the error code {}", ase.awsErrorDetails().errorCode());
+                LOG.trace("Delete Database command returned the error code {}", AwsExceptionUtil.errorCode(ase));
                 throw ase;
             }
             Message message = getMessageForResponse(exchange);
@@ -402,7 +403,7 @@ public class Timestream2WriteProducer extends DefaultProducer {
                 try {
                     result = timestreamWriteClient.describeDatabase(request);
                 } catch (AwsServiceException ase) {
-                    LOG.trace("Describe Database command returned the error code {}", ase.awsErrorDetails().errorCode());
+                    LOG.trace("Describe Database command returned the error code {}", AwsExceptionUtil.errorCode(ase));
                     throw ase;
                 }
                 Message message = getMessageForResponse(exchange);
@@ -422,7 +423,7 @@ public class Timestream2WriteProducer extends DefaultProducer {
             try {
                 result = timestreamWriteClient.describeDatabase(builder.build());
             } catch (AwsServiceException ase) {
-                LOG.trace("Describe Database command returned the error code {}", ase.awsErrorDetails().errorCode());
+                LOG.trace("Describe Database command returned the error code {}", AwsExceptionUtil.errorCode(ase));
                 throw ase;
             }
             Message message = getMessageForResponse(exchange);
@@ -438,7 +439,7 @@ public class Timestream2WriteProducer extends DefaultProducer {
                 try {
                     result = timestreamWriteClient.updateDatabase(request);
                 } catch (AwsServiceException ase) {
-                    LOG.trace("Update Database command returned the error code {}", ase.awsErrorDetails().errorCode());
+                    LOG.trace("Update Database command returned the error code {}", AwsExceptionUtil.errorCode(ase));
                     throw ase;
                 }
                 Message message = getMessageForResponse(exchange);
@@ -462,7 +463,7 @@ public class Timestream2WriteProducer extends DefaultProducer {
             try {
                 result = timestreamWriteClient.updateDatabase(builder.build());
             } catch (AwsServiceException ase) {
-                LOG.trace("Update Database command returned the error code {}", ase.awsErrorDetails().errorCode());
+                LOG.trace("Update Database command returned the error code {}", AwsExceptionUtil.errorCode(ase));
                 throw ase;
             }
             Message message = getMessageForResponse(exchange);
@@ -478,7 +479,7 @@ public class Timestream2WriteProducer extends DefaultProducer {
                 try {
                     result = timestreamWriteClient.listDatabases(request);
                 } catch (AwsServiceException ase) {
-                    LOG.trace("List Databases command returned the error code {}", ase.awsErrorDetails().errorCode());
+                    LOG.trace("List Databases command returned the error code {}", AwsExceptionUtil.errorCode(ase));
                     throw ase;
                 }
                 Message message = getMessageForResponse(exchange);
@@ -498,7 +499,7 @@ public class Timestream2WriteProducer extends DefaultProducer {
             try {
                 result = timestreamWriteClient.listDatabases(builder.build());
             } catch (AwsServiceException ase) {
-                LOG.trace("List Databases command returned the error code {}", ase.awsErrorDetails().errorCode());
+                LOG.trace("List Databases command returned the error code {}", AwsExceptionUtil.errorCode(ase));
                 throw ase;
             }
             Message message = getMessageForResponse(exchange);
@@ -514,7 +515,7 @@ public class Timestream2WriteProducer extends DefaultProducer {
                 try {
                     result = timestreamWriteClient.createTable(request);
                 } catch (AwsServiceException ase) {
-                    LOG.trace("Create Table command returned the error code {}", ase.awsErrorDetails().errorCode());
+                    LOG.trace("Create Table command returned the error code {}", AwsExceptionUtil.errorCode(ase));
                     throw ase;
                 }
                 Message message = getMessageForResponse(exchange);
@@ -552,7 +553,7 @@ public class Timestream2WriteProducer extends DefaultProducer {
             try {
                 result = timestreamWriteClient.createTable(builder.build());
             } catch (AwsServiceException ase) {
-                LOG.trace("Create Table command returned the error code {}", ase.awsErrorDetails().errorCode());
+                LOG.trace("Create Table command returned the error code {}", AwsExceptionUtil.errorCode(ase));
                 throw ase;
             }
             Message message = getMessageForResponse(exchange);
@@ -568,7 +569,7 @@ public class Timestream2WriteProducer extends DefaultProducer {
                 try {
                     result = timestreamWriteClient.deleteTable(request);
                 } catch (AwsServiceException ase) {
-                    LOG.trace("Delete Table command returned the error code {}", ase.awsErrorDetails().errorCode());
+                    LOG.trace("Delete Table command returned the error code {}", AwsExceptionUtil.errorCode(ase));
                     throw ase;
                 }
                 Message message = getMessageForResponse(exchange);
@@ -592,7 +593,7 @@ public class Timestream2WriteProducer extends DefaultProducer {
             try {
                 result = timestreamWriteClient.deleteTable(builder.build());
             } catch (AwsServiceException ase) {
-                LOG.trace("Delete Table command returned the error code {}", ase.awsErrorDetails().errorCode());
+                LOG.trace("Delete Table command returned the error code {}", AwsExceptionUtil.errorCode(ase));
                 throw ase;
             }
             Message message = getMessageForResponse(exchange);
@@ -608,7 +609,7 @@ public class Timestream2WriteProducer extends DefaultProducer {
                 try {
                     result = timestreamWriteClient.describeTable(request);
                 } catch (AwsServiceException ase) {
-                    LOG.trace("Describe Table command returned the error code {}", ase.awsErrorDetails().errorCode());
+                    LOG.trace("Describe Table command returned the error code {}", AwsExceptionUtil.errorCode(ase));
                     throw ase;
                 }
                 Message message = getMessageForResponse(exchange);
@@ -632,7 +633,7 @@ public class Timestream2WriteProducer extends DefaultProducer {
             try {
                 result = timestreamWriteClient.describeTable(builder.build());
             } catch (AwsServiceException ase) {
-                LOG.trace("Describe Table command returned the error code {}", ase.awsErrorDetails().errorCode());
+                LOG.trace("Describe Table command returned the error code {}", AwsExceptionUtil.errorCode(ase));
                 throw ase;
             }
             Message message = getMessageForResponse(exchange);
@@ -648,7 +649,7 @@ public class Timestream2WriteProducer extends DefaultProducer {
                 try {
                     result = timestreamWriteClient.updateTable(request);
                 } catch (AwsServiceException ase) {
-                    LOG.trace("Update Table command returned the error code {}", ase.awsErrorDetails().errorCode());
+                    LOG.trace("Update Table command returned the error code {}", AwsExceptionUtil.errorCode(ase));
                     throw ase;
                 }
                 Message message = getMessageForResponse(exchange);
@@ -686,7 +687,7 @@ public class Timestream2WriteProducer extends DefaultProducer {
             try {
                 result = timestreamWriteClient.updateTable(builder.build());
             } catch (AwsServiceException ase) {
-                LOG.trace("Update Table command returned the error code {}", ase.awsErrorDetails().errorCode());
+                LOG.trace("Update Table command returned the error code {}", AwsExceptionUtil.errorCode(ase));
                 throw ase;
             }
             Message message = getMessageForResponse(exchange);
@@ -702,7 +703,7 @@ public class Timestream2WriteProducer extends DefaultProducer {
                 try {
                     result = timestreamWriteClient.listTables(request);
                 } catch (AwsServiceException ase) {
-                    LOG.trace("List Tables command returned the error code {}", ase.awsErrorDetails().errorCode());
+                    LOG.trace("List Tables command returned the error code {}", AwsExceptionUtil.errorCode(ase));
                     throw ase;
                 }
                 Message message = getMessageForResponse(exchange);
@@ -726,7 +727,7 @@ public class Timestream2WriteProducer extends DefaultProducer {
             try {
                 result = timestreamWriteClient.listTables(builder.build());
             } catch (AwsServiceException ase) {
-                LOG.trace("List Tables command returned the error code {}", ase.awsErrorDetails().errorCode());
+                LOG.trace("List Tables command returned the error code {}", AwsExceptionUtil.errorCode(ase));
                 throw ase;
             }
             Message message = getMessageForResponse(exchange);
@@ -742,7 +743,7 @@ public class Timestream2WriteProducer extends DefaultProducer {
                 try {
                     result = timestreamWriteClient.writeRecords(request);
                 } catch (AwsServiceException ase) {
-                    LOG.trace("Write Records command returned the error code {}", ase.awsErrorDetails().errorCode());
+                    LOG.trace("Write Records command returned the error code {}", AwsExceptionUtil.errorCode(ase));
                     throw ase;
                 }
                 Message message = getMessageForResponse(exchange);
@@ -774,7 +775,7 @@ public class Timestream2WriteProducer extends DefaultProducer {
             try {
                 result = timestreamWriteClient.writeRecords(builder.build());
             } catch (AwsServiceException ase) {
-                LOG.trace("Write Records command returned the error code {}", ase.awsErrorDetails().errorCode());
+                LOG.trace("Write Records command returned the error code {}", AwsExceptionUtil.errorCode(ase));
                 throw ase;
             }
             Message message = getMessageForResponse(exchange);

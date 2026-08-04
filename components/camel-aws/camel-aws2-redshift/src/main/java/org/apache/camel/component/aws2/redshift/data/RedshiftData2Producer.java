@@ -22,6 +22,7 @@ import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.InvalidPayloadException;
 import org.apache.camel.Message;
+import org.apache.camel.component.aws.common.AwsExceptionUtil;
 import org.apache.camel.support.DefaultProducer;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.URISupport;
@@ -97,7 +98,7 @@ public class RedshiftData2Producer extends DefaultProducer {
                 try {
                     result = redshiftDataClient.listDatabases(request);
                 } catch (AwsServiceException ase) {
-                    LOG.trace("List Databases command returned the error code {}", ase.awsErrorDetails().errorCode());
+                    LOG.trace("List Databases command returned the error code {}", AwsExceptionUtil.errorCode(ase));
                     throw ase;
                 }
                 Message message = getMessageForResponse(exchange);
@@ -138,7 +139,7 @@ public class RedshiftData2Producer extends DefaultProducer {
             try {
                 result = redshiftDataClient.listDatabases(builder.build());
             } catch (AwsServiceException ase) {
-                LOG.trace("List Databases command returned the error code {}", ase.awsErrorDetails().errorCode());
+                LOG.trace("List Databases command returned the error code {}", AwsExceptionUtil.errorCode(ase));
                 throw ase;
             }
             Message message = getMessageForResponse(exchange);
@@ -154,7 +155,7 @@ public class RedshiftData2Producer extends DefaultProducer {
                 try {
                     result = redshiftDataClient.listSchemas(request);
                 } catch (AwsServiceException ase) {
-                    LOG.trace("List Schemas command returned the error code {}", ase.awsErrorDetails().errorCode());
+                    LOG.trace("List Schemas command returned the error code {}", AwsExceptionUtil.errorCode(ase));
                     throw ase;
                 }
                 Message message = getMessageForResponse(exchange);
@@ -202,7 +203,7 @@ public class RedshiftData2Producer extends DefaultProducer {
             try {
                 result = redshiftDataClient.listSchemas(builder.build());
             } catch (AwsServiceException ase) {
-                LOG.trace("List Schemas command returned the error code {}", ase.awsErrorDetails().errorCode());
+                LOG.trace("List Schemas command returned the error code {}", AwsExceptionUtil.errorCode(ase));
                 throw ase;
             }
             Message message = getMessageForResponse(exchange);
@@ -218,7 +219,7 @@ public class RedshiftData2Producer extends DefaultProducer {
                 try {
                     result = redshiftDataClient.listStatements(request);
                 } catch (AwsServiceException ase) {
-                    LOG.trace("List Statements command returned the error code {}", ase.awsErrorDetails().errorCode());
+                    LOG.trace("List Statements command returned the error code {}", AwsExceptionUtil.errorCode(ase));
                     throw ase;
                 }
                 Message message = getMessageForResponse(exchange);
@@ -251,7 +252,7 @@ public class RedshiftData2Producer extends DefaultProducer {
             try {
                 result = redshiftDataClient.listStatements(builder.build());
             } catch (AwsServiceException ase) {
-                LOG.trace("List Statements command returned the error code {}", ase.awsErrorDetails().errorCode());
+                LOG.trace("List Statements command returned the error code {}", AwsExceptionUtil.errorCode(ase));
                 throw ase;
             }
             Message message = getMessageForResponse(exchange);
@@ -267,7 +268,7 @@ public class RedshiftData2Producer extends DefaultProducer {
                 try {
                     result = redshiftDataClient.listTables(request);
                 } catch (AwsServiceException ase) {
-                    LOG.trace("List Tables command returned the error code {}", ase.awsErrorDetails().errorCode());
+                    LOG.trace("List Tables command returned the error code {}", AwsExceptionUtil.errorCode(ase));
                     throw ase;
                 }
                 Message message = getMessageForResponse(exchange);
@@ -319,7 +320,7 @@ public class RedshiftData2Producer extends DefaultProducer {
             try {
                 result = redshiftDataClient.listTables(builder.build());
             } catch (AwsServiceException ase) {
-                LOG.trace("List Tables command returned the error code {}", ase.awsErrorDetails().errorCode());
+                LOG.trace("List Tables command returned the error code {}", AwsExceptionUtil.errorCode(ase));
                 throw ase;
             }
             Message message = getMessageForResponse(exchange);
@@ -335,7 +336,7 @@ public class RedshiftData2Producer extends DefaultProducer {
                 try {
                     result = redshiftDataClient.describeTable(request);
                 } catch (AwsServiceException ase) {
-                    LOG.trace("Describe Table command returned the error code {}", ase.awsErrorDetails().errorCode());
+                    LOG.trace("Describe Table command returned the error code {}", AwsExceptionUtil.errorCode(ase));
                     throw ase;
                 }
                 Message message = getMessageForResponse(exchange);
@@ -388,7 +389,7 @@ public class RedshiftData2Producer extends DefaultProducer {
             try {
                 result = redshiftDataClient.describeTable(builder.build());
             } catch (AwsServiceException ase) {
-                LOG.trace("Describe Table command returned the error code {}", ase.awsErrorDetails().errorCode());
+                LOG.trace("Describe Table command returned the error code {}", AwsExceptionUtil.errorCode(ase));
                 throw ase;
             }
             Message message = getMessageForResponse(exchange);
@@ -404,7 +405,7 @@ public class RedshiftData2Producer extends DefaultProducer {
                 try {
                     result = redshiftDataClient.executeStatement(request);
                 } catch (AwsServiceException ase) {
-                    LOG.trace("Execute Statement command returned the error code {}", ase.awsErrorDetails().errorCode());
+                    LOG.trace("Execute Statement command returned the error code {}", AwsExceptionUtil.errorCode(ase));
                     throw ase;
                 }
                 Message message = getMessageForResponse(exchange);
@@ -461,7 +462,7 @@ public class RedshiftData2Producer extends DefaultProducer {
             try {
                 result = redshiftDataClient.executeStatement(builder.build());
             } catch (AwsServiceException ase) {
-                LOG.trace("Execute Statement command returned the error code {}", ase.awsErrorDetails().errorCode());
+                LOG.trace("Execute Statement command returned the error code {}", AwsExceptionUtil.errorCode(ase));
                 throw ase;
             }
             Message message = getMessageForResponse(exchange);
@@ -478,7 +479,7 @@ public class RedshiftData2Producer extends DefaultProducer {
                 try {
                     result = redshiftDataClient.batchExecuteStatement(request);
                 } catch (AwsServiceException ase) {
-                    LOG.trace("Batch Execute Statement command returned the error code {}", ase.awsErrorDetails().errorCode());
+                    LOG.trace("Batch Execute Statement command returned the error code {}", AwsExceptionUtil.errorCode(ase));
                     throw ase;
                 }
                 Message message = getMessageForResponse(exchange);
@@ -530,7 +531,7 @@ public class RedshiftData2Producer extends DefaultProducer {
             try {
                 result = redshiftDataClient.batchExecuteStatement(builder.build());
             } catch (AwsServiceException ase) {
-                LOG.trace("Batch Execute Statement command returned the error code {}", ase.awsErrorDetails().errorCode());
+                LOG.trace("Batch Execute Statement command returned the error code {}", AwsExceptionUtil.errorCode(ase));
                 throw ase;
             }
             Message message = getMessageForResponse(exchange);
@@ -546,7 +547,7 @@ public class RedshiftData2Producer extends DefaultProducer {
                 try {
                     result = redshiftDataClient.cancelStatement(request);
                 } catch (AwsServiceException ase) {
-                    LOG.trace("Cancel Statement command returned the error code {}", ase.awsErrorDetails().errorCode());
+                    LOG.trace("Cancel Statement command returned the error code {}", AwsExceptionUtil.errorCode(ase));
                     throw ase;
                 }
                 Message message = getMessageForResponse(exchange);
@@ -566,7 +567,7 @@ public class RedshiftData2Producer extends DefaultProducer {
             try {
                 result = redshiftDataClient.cancelStatement(builder.build());
             } catch (AwsServiceException ase) {
-                LOG.trace("Cancel Statement command returned the error code {}", ase.awsErrorDetails().errorCode());
+                LOG.trace("Cancel Statement command returned the error code {}", AwsExceptionUtil.errorCode(ase));
                 throw ase;
             }
             Message message = getMessageForResponse(exchange);
@@ -582,7 +583,7 @@ public class RedshiftData2Producer extends DefaultProducer {
                 try {
                     result = redshiftDataClient.describeStatement(request);
                 } catch (AwsServiceException ase) {
-                    LOG.trace("Describe Statement command returned the error code {}", ase.awsErrorDetails().errorCode());
+                    LOG.trace("Describe Statement command returned the error code {}", AwsExceptionUtil.errorCode(ase));
                     throw ase;
                 }
                 Message message = getMessageForResponse(exchange);
@@ -602,7 +603,7 @@ public class RedshiftData2Producer extends DefaultProducer {
             try {
                 result = redshiftDataClient.describeStatement(builder.build());
             } catch (AwsServiceException ase) {
-                LOG.trace("Describe Statement command returned the error code {}", ase.awsErrorDetails().errorCode());
+                LOG.trace("Describe Statement command returned the error code {}", AwsExceptionUtil.errorCode(ase));
                 throw ase;
             }
             Message message = getMessageForResponse(exchange);
@@ -618,7 +619,7 @@ public class RedshiftData2Producer extends DefaultProducer {
                 try {
                     result = redshiftDataClient.getStatementResult(request);
                 } catch (AwsServiceException ase) {
-                    LOG.trace("Get Statement Result command returned the error code {}", ase.awsErrorDetails().errorCode());
+                    LOG.trace("Get Statement Result command returned the error code {}", AwsExceptionUtil.errorCode(ase));
                     throw ase;
                 }
                 Message message = getMessageForResponse(exchange);
@@ -638,7 +639,7 @@ public class RedshiftData2Producer extends DefaultProducer {
             try {
                 result = redshiftDataClient.getStatementResult(builder.build());
             } catch (AwsServiceException ase) {
-                LOG.trace("Get Statement Result command returned the error code {}", ase.awsErrorDetails().errorCode());
+                LOG.trace("Get Statement Result command returned the error code {}", AwsExceptionUtil.errorCode(ase));
                 throw ase;
             }
             Message message = getMessageForResponse(exchange);

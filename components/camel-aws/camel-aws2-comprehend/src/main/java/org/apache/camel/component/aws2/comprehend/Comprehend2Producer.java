@@ -22,6 +22,7 @@ import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.InvalidPayloadException;
 import org.apache.camel.Message;
+import org.apache.camel.component.aws.common.AwsExceptionUtil;
 import org.apache.camel.health.HealthCheck;
 import org.apache.camel.health.HealthCheckHelper;
 import org.apache.camel.health.WritableHealthCheckRepository;
@@ -137,7 +138,7 @@ public class Comprehend2Producer extends DefaultProducer {
                 try {
                     result = comprehendClient.detectDominantLanguage(req);
                 } catch (AwsServiceException ase) {
-                    LOG.trace("Detect Dominant Language command returned the error code {}", ase.awsErrorDetails().errorCode());
+                    LOG.trace("Detect Dominant Language command returned the error code {}", AwsExceptionUtil.errorCode(ase));
                     throw ase;
                 }
                 Message message = getMessageForResponse(exchange);
@@ -158,7 +159,7 @@ public class Comprehend2Producer extends DefaultProducer {
             try {
                 result = comprehendClient.detectDominantLanguage(request.build());
             } catch (AwsServiceException ase) {
-                LOG.trace("Detect Dominant Language command returned the error code {}", ase.awsErrorDetails().errorCode());
+                LOG.trace("Detect Dominant Language command returned the error code {}", AwsExceptionUtil.errorCode(ase));
                 throw ase;
             }
             Message message = getMessageForResponse(exchange);
@@ -179,7 +180,7 @@ public class Comprehend2Producer extends DefaultProducer {
                 try {
                     result = comprehendClient.detectEntities(req);
                 } catch (AwsServiceException ase) {
-                    LOG.trace("Detect Entities command returned the error code {}", ase.awsErrorDetails().errorCode());
+                    LOG.trace("Detect Entities command returned the error code {}", AwsExceptionUtil.errorCode(ase));
                     throw ase;
                 }
                 Message message = getMessageForResponse(exchange);
@@ -196,7 +197,7 @@ public class Comprehend2Producer extends DefaultProducer {
             try {
                 result = comprehendClient.detectEntities(request.build());
             } catch (AwsServiceException ase) {
-                LOG.trace("Detect Entities command returned the error code {}", ase.awsErrorDetails().errorCode());
+                LOG.trace("Detect Entities command returned the error code {}", AwsExceptionUtil.errorCode(ase));
                 throw ase;
             }
             Message message = getMessageForResponse(exchange);
@@ -212,7 +213,7 @@ public class Comprehend2Producer extends DefaultProducer {
                 try {
                     result = comprehendClient.detectKeyPhrases(req);
                 } catch (AwsServiceException ase) {
-                    LOG.trace("Detect Key Phrases command returned the error code {}", ase.awsErrorDetails().errorCode());
+                    LOG.trace("Detect Key Phrases command returned the error code {}", AwsExceptionUtil.errorCode(ase));
                     throw ase;
                 }
                 Message message = getMessageForResponse(exchange);
@@ -229,7 +230,7 @@ public class Comprehend2Producer extends DefaultProducer {
             try {
                 result = comprehendClient.detectKeyPhrases(request.build());
             } catch (AwsServiceException ase) {
-                LOG.trace("Detect Key Phrases command returned the error code {}", ase.awsErrorDetails().errorCode());
+                LOG.trace("Detect Key Phrases command returned the error code {}", AwsExceptionUtil.errorCode(ase));
                 throw ase;
             }
             Message message = getMessageForResponse(exchange);
@@ -245,7 +246,7 @@ public class Comprehend2Producer extends DefaultProducer {
                 try {
                     result = comprehendClient.detectSentiment(req);
                 } catch (AwsServiceException ase) {
-                    LOG.trace("Detect Sentiment command returned the error code {}", ase.awsErrorDetails().errorCode());
+                    LOG.trace("Detect Sentiment command returned the error code {}", AwsExceptionUtil.errorCode(ase));
                     throw ase;
                 }
                 Message message = getMessageForResponse(exchange);
@@ -264,7 +265,7 @@ public class Comprehend2Producer extends DefaultProducer {
             try {
                 result = comprehendClient.detectSentiment(request.build());
             } catch (AwsServiceException ase) {
-                LOG.trace("Detect Sentiment command returned the error code {}", ase.awsErrorDetails().errorCode());
+                LOG.trace("Detect Sentiment command returned the error code {}", AwsExceptionUtil.errorCode(ase));
                 throw ase;
             }
             Message message = getMessageForResponse(exchange);
@@ -282,7 +283,7 @@ public class Comprehend2Producer extends DefaultProducer {
                 try {
                     result = comprehendClient.detectSyntax(req);
                 } catch (AwsServiceException ase) {
-                    LOG.trace("Detect Syntax command returned the error code {}", ase.awsErrorDetails().errorCode());
+                    LOG.trace("Detect Syntax command returned the error code {}", AwsExceptionUtil.errorCode(ase));
                     throw ase;
                 }
                 Message message = getMessageForResponse(exchange);
@@ -299,7 +300,7 @@ public class Comprehend2Producer extends DefaultProducer {
             try {
                 result = comprehendClient.detectSyntax(request.build());
             } catch (AwsServiceException ase) {
-                LOG.trace("Detect Syntax command returned the error code {}", ase.awsErrorDetails().errorCode());
+                LOG.trace("Detect Syntax command returned the error code {}", AwsExceptionUtil.errorCode(ase));
                 throw ase;
             }
             Message message = getMessageForResponse(exchange);
@@ -315,7 +316,7 @@ public class Comprehend2Producer extends DefaultProducer {
                 try {
                     result = comprehendClient.detectPiiEntities(req);
                 } catch (AwsServiceException ase) {
-                    LOG.trace("Detect PII Entities command returned the error code {}", ase.awsErrorDetails().errorCode());
+                    LOG.trace("Detect PII Entities command returned the error code {}", AwsExceptionUtil.errorCode(ase));
                     throw ase;
                 }
                 Message message = getMessageForResponse(exchange);
@@ -332,7 +333,7 @@ public class Comprehend2Producer extends DefaultProducer {
             try {
                 result = comprehendClient.detectPiiEntities(request.build());
             } catch (AwsServiceException ase) {
-                LOG.trace("Detect PII Entities command returned the error code {}", ase.awsErrorDetails().errorCode());
+                LOG.trace("Detect PII Entities command returned the error code {}", AwsExceptionUtil.errorCode(ase));
                 throw ase;
             }
             Message message = getMessageForResponse(exchange);
@@ -348,7 +349,7 @@ public class Comprehend2Producer extends DefaultProducer {
                 try {
                     result = comprehendClient.detectToxicContent(req);
                 } catch (AwsServiceException ase) {
-                    LOG.trace("Detect Toxic Content command returned the error code {}", ase.awsErrorDetails().errorCode());
+                    LOG.trace("Detect Toxic Content command returned the error code {}", AwsExceptionUtil.errorCode(ase));
                     throw ase;
                 }
                 Message message = getMessageForResponse(exchange);
@@ -366,7 +367,7 @@ public class Comprehend2Producer extends DefaultProducer {
             try {
                 result = comprehendClient.detectToxicContent(request.build());
             } catch (AwsServiceException ase) {
-                LOG.trace("Detect Toxic Content command returned the error code {}", ase.awsErrorDetails().errorCode());
+                LOG.trace("Detect Toxic Content command returned the error code {}", AwsExceptionUtil.errorCode(ase));
                 throw ase;
             }
             Message message = getMessageForResponse(exchange);
@@ -382,7 +383,7 @@ public class Comprehend2Producer extends DefaultProducer {
                 try {
                     result = comprehendClient.classifyDocument(req);
                 } catch (AwsServiceException ase) {
-                    LOG.trace("Classify Document command returned the error code {}", ase.awsErrorDetails().errorCode());
+                    LOG.trace("Classify Document command returned the error code {}", AwsExceptionUtil.errorCode(ase));
                     throw ase;
                 }
                 Message message = getMessageForResponse(exchange);
@@ -403,7 +404,7 @@ public class Comprehend2Producer extends DefaultProducer {
             try {
                 result = comprehendClient.classifyDocument(request.build());
             } catch (AwsServiceException ase) {
-                LOG.trace("Classify Document command returned the error code {}", ase.awsErrorDetails().errorCode());
+                LOG.trace("Classify Document command returned the error code {}", AwsExceptionUtil.errorCode(ase));
                 throw ase;
             }
             Message message = getMessageForResponse(exchange);
@@ -419,7 +420,7 @@ public class Comprehend2Producer extends DefaultProducer {
                 try {
                     result = comprehendClient.containsPiiEntities(req);
                 } catch (AwsServiceException ase) {
-                    LOG.trace("Contains PII Entities command returned the error code {}", ase.awsErrorDetails().errorCode());
+                    LOG.trace("Contains PII Entities command returned the error code {}", AwsExceptionUtil.errorCode(ase));
                     throw ase;
                 }
                 Message message = getMessageForResponse(exchange);
@@ -436,7 +437,7 @@ public class Comprehend2Producer extends DefaultProducer {
             try {
                 result = comprehendClient.containsPiiEntities(request.build());
             } catch (AwsServiceException ase) {
-                LOG.trace("Contains PII Entities command returned the error code {}", ase.awsErrorDetails().errorCode());
+                LOG.trace("Contains PII Entities command returned the error code {}", AwsExceptionUtil.errorCode(ase));
                 throw ase;
             }
             Message message = getMessageForResponse(exchange);

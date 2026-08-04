@@ -22,6 +22,7 @@ import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.InvalidPayloadException;
 import org.apache.camel.Message;
+import org.apache.camel.component.aws.common.AwsExceptionUtil;
 import org.apache.camel.health.HealthCheck;
 import org.apache.camel.health.HealthCheckHelper;
 import org.apache.camel.health.WritableHealthCheckRepository;
@@ -139,7 +140,7 @@ public class Polly2Producer extends DefaultProducer {
                 try {
                     result = pollyClient.synthesizeSpeech(req);
                 } catch (AwsServiceException ase) {
-                    LOG.trace("Synthesize Speech command returned the error code {}", ase.awsErrorDetails().errorCode());
+                    LOG.trace("Synthesize Speech command returned the error code {}", AwsExceptionUtil.errorCode(ase));
                     throw ase;
                 }
                 Message message = getMessageForResponse(exchange);
@@ -226,7 +227,7 @@ public class Polly2Producer extends DefaultProducer {
             try {
                 result = pollyClient.synthesizeSpeech(request.build());
             } catch (AwsServiceException ase) {
-                LOG.trace("Synthesize Speech command returned the error code {}", ase.awsErrorDetails().errorCode());
+                LOG.trace("Synthesize Speech command returned the error code {}", AwsExceptionUtil.errorCode(ase));
                 throw ase;
             }
             Message message = getMessageForResponse(exchange);
@@ -246,7 +247,7 @@ public class Polly2Producer extends DefaultProducer {
                 try {
                     result = pollyClient.describeVoices(req);
                 } catch (AwsServiceException ase) {
-                    LOG.trace("Describe Voices command returned the error code {}", ase.awsErrorDetails().errorCode());
+                    LOG.trace("Describe Voices command returned the error code {}", AwsExceptionUtil.errorCode(ase));
                     throw ase;
                 }
                 Message message = getMessageForResponse(exchange);
@@ -280,7 +281,7 @@ public class Polly2Producer extends DefaultProducer {
             try {
                 result = pollyClient.describeVoices(request.build());
             } catch (AwsServiceException ase) {
-                LOG.trace("Describe Voices command returned the error code {}", ase.awsErrorDetails().errorCode());
+                LOG.trace("Describe Voices command returned the error code {}", AwsExceptionUtil.errorCode(ase));
                 throw ase;
             }
             Message message = getMessageForResponse(exchange);
@@ -296,7 +297,7 @@ public class Polly2Producer extends DefaultProducer {
                 try {
                     result = pollyClient.listLexicons(req);
                 } catch (AwsServiceException ase) {
-                    LOG.trace("List Lexicons command returned the error code {}", ase.awsErrorDetails().errorCode());
+                    LOG.trace("List Lexicons command returned the error code {}", AwsExceptionUtil.errorCode(ase));
                     throw ase;
                 }
                 Message message = getMessageForResponse(exchange);
@@ -311,7 +312,7 @@ public class Polly2Producer extends DefaultProducer {
             try {
                 result = pollyClient.listLexicons(request);
             } catch (AwsServiceException ase) {
-                LOG.trace("List Lexicons command returned the error code {}", ase.awsErrorDetails().errorCode());
+                LOG.trace("List Lexicons command returned the error code {}", AwsExceptionUtil.errorCode(ase));
                 throw ase;
             }
             Message message = getMessageForResponse(exchange);
@@ -327,7 +328,7 @@ public class Polly2Producer extends DefaultProducer {
                 try {
                     result = pollyClient.getLexicon(req);
                 } catch (AwsServiceException ase) {
-                    LOG.trace("Get Lexicon command returned the error code {}", ase.awsErrorDetails().errorCode());
+                    LOG.trace("Get Lexicon command returned the error code {}", AwsExceptionUtil.errorCode(ase));
                     throw ase;
                 }
                 Message message = getMessageForResponse(exchange);
@@ -349,7 +350,7 @@ public class Polly2Producer extends DefaultProducer {
             try {
                 result = pollyClient.getLexicon(request);
             } catch (AwsServiceException ase) {
-                LOG.trace("Get Lexicon command returned the error code {}", ase.awsErrorDetails().errorCode());
+                LOG.trace("Get Lexicon command returned the error code {}", AwsExceptionUtil.errorCode(ase));
                 throw ase;
             }
             Message message = getMessageForResponse(exchange);
@@ -365,7 +366,7 @@ public class Polly2Producer extends DefaultProducer {
                 try {
                     result = pollyClient.putLexicon(req);
                 } catch (AwsServiceException ase) {
-                    LOG.trace("Put Lexicon command returned the error code {}", ase.awsErrorDetails().errorCode());
+                    LOG.trace("Put Lexicon command returned the error code {}", AwsExceptionUtil.errorCode(ase));
                     throw ase;
                 }
                 Message message = getMessageForResponse(exchange);
@@ -400,7 +401,7 @@ public class Polly2Producer extends DefaultProducer {
             try {
                 result = pollyClient.putLexicon(request);
             } catch (AwsServiceException ase) {
-                LOG.trace("Put Lexicon command returned the error code {}", ase.awsErrorDetails().errorCode());
+                LOG.trace("Put Lexicon command returned the error code {}", AwsExceptionUtil.errorCode(ase));
                 throw ase;
             }
             Message message = getMessageForResponse(exchange);
@@ -416,7 +417,7 @@ public class Polly2Producer extends DefaultProducer {
                 try {
                     result = pollyClient.deleteLexicon(req);
                 } catch (AwsServiceException ase) {
-                    LOG.trace("Delete Lexicon command returned the error code {}", ase.awsErrorDetails().errorCode());
+                    LOG.trace("Delete Lexicon command returned the error code {}", AwsExceptionUtil.errorCode(ase));
                     throw ase;
                 }
                 Message message = getMessageForResponse(exchange);
@@ -438,7 +439,7 @@ public class Polly2Producer extends DefaultProducer {
             try {
                 result = pollyClient.deleteLexicon(request);
             } catch (AwsServiceException ase) {
-                LOG.trace("Delete Lexicon command returned the error code {}", ase.awsErrorDetails().errorCode());
+                LOG.trace("Delete Lexicon command returned the error code {}", AwsExceptionUtil.errorCode(ase));
                 throw ase;
             }
             Message message = getMessageForResponse(exchange);

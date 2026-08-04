@@ -25,6 +25,7 @@ import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.InvalidPayloadException;
 import org.apache.camel.Message;
+import org.apache.camel.component.aws.common.AwsExceptionUtil;
 import org.apache.camel.support.DefaultProducer;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.URISupport;
@@ -151,7 +152,7 @@ public class Transcribe2Producer extends DefaultProducer {
                 try {
                     result = transcribeClient.startTranscriptionJob(req);
                 } catch (AwsServiceException ase) {
-                    LOG.trace("Start Transcription Job command returned the error code {}", ase.awsErrorDetails().errorCode());
+                    LOG.trace("Start Transcription Job command returned the error code {}", AwsExceptionUtil.errorCode(ase));
                     throw ase;
                 }
                 Message message = getMessageForResponse(exchange);
@@ -182,7 +183,7 @@ public class Transcribe2Producer extends DefaultProducer {
             try {
                 result = transcribeClient.startTranscriptionJob(builder.build());
             } catch (AwsServiceException ase) {
-                LOG.trace("Start Transcription Job command returned the error code {}", ase.awsErrorDetails().errorCode());
+                LOG.trace("Start Transcription Job command returned the error code {}", AwsExceptionUtil.errorCode(ase));
                 throw ase;
             }
             Message message = getMessageForResponse(exchange);
@@ -198,7 +199,7 @@ public class Transcribe2Producer extends DefaultProducer {
                 try {
                     result = transcribeClient.getTranscriptionJob(req);
                 } catch (AwsServiceException ase) {
-                    LOG.trace("Get Transcription Job command returned the error code {}", ase.awsErrorDetails().errorCode());
+                    LOG.trace("Get Transcription Job command returned the error code {}", AwsExceptionUtil.errorCode(ase));
                     throw ase;
                 }
                 Message message = getMessageForResponse(exchange);
@@ -217,7 +218,7 @@ public class Transcribe2Producer extends DefaultProducer {
             try {
                 result = transcribeClient.getTranscriptionJob(builder.build());
             } catch (AwsServiceException ase) {
-                LOG.trace("Get Transcription Job command returned the error code {}", ase.awsErrorDetails().errorCode());
+                LOG.trace("Get Transcription Job command returned the error code {}", AwsExceptionUtil.errorCode(ase));
                 throw ase;
             }
             Message message = getMessageForResponse(exchange);
@@ -233,7 +234,7 @@ public class Transcribe2Producer extends DefaultProducer {
                 try {
                     result = transcribeClient.listTranscriptionJobs(req);
                 } catch (AwsServiceException ase) {
-                    LOG.trace("List Transcription Jobs command returned the error code {}", ase.awsErrorDetails().errorCode());
+                    LOG.trace("List Transcription Jobs command returned the error code {}", AwsExceptionUtil.errorCode(ase));
                     throw ase;
                 }
                 Message message = getMessageForResponse(exchange);
@@ -256,7 +257,7 @@ public class Transcribe2Producer extends DefaultProducer {
             try {
                 result = transcribeClient.listTranscriptionJobs(builder.build());
             } catch (AwsServiceException ase) {
-                LOG.trace("List Transcription Jobs command returned the error code {}", ase.awsErrorDetails().errorCode());
+                LOG.trace("List Transcription Jobs command returned the error code {}", AwsExceptionUtil.errorCode(ase));
                 throw ase;
             }
             Message message = getMessageForResponse(exchange);
@@ -271,7 +272,7 @@ public class Transcribe2Producer extends DefaultProducer {
                 try {
                     transcribeClient.deleteTranscriptionJob(req);
                 } catch (AwsServiceException ase) {
-                    LOG.trace("Delete Transcription Job command returned the error code {}", ase.awsErrorDetails().errorCode());
+                    LOG.trace("Delete Transcription Job command returned the error code {}", AwsExceptionUtil.errorCode(ase));
                     throw ase;
                 }
             } else {
@@ -287,7 +288,7 @@ public class Transcribe2Producer extends DefaultProducer {
             try {
                 transcribeClient.deleteTranscriptionJob(builder.build());
             } catch (AwsServiceException ase) {
-                LOG.trace("Delete Transcription Job command returned the error code {}", ase.awsErrorDetails().errorCode());
+                LOG.trace("Delete Transcription Job command returned the error code {}", AwsExceptionUtil.errorCode(ase));
                 throw ase;
             }
         }
@@ -302,7 +303,7 @@ public class Transcribe2Producer extends DefaultProducer {
                 try {
                     result = transcribeClient.createVocabulary(req);
                 } catch (AwsServiceException ase) {
-                    LOG.trace("Create Vocabulary command returned the error code {}", ase.awsErrorDetails().errorCode());
+                    LOG.trace("Create Vocabulary command returned the error code {}", AwsExceptionUtil.errorCode(ase));
                     throw ase;
                 }
                 Message message = getMessageForResponse(exchange);
@@ -329,7 +330,7 @@ public class Transcribe2Producer extends DefaultProducer {
             try {
                 result = transcribeClient.createVocabulary(builder.build());
             } catch (AwsServiceException ase) {
-                LOG.trace("Create Vocabulary command returned the error code {}", ase.awsErrorDetails().errorCode());
+                LOG.trace("Create Vocabulary command returned the error code {}", AwsExceptionUtil.errorCode(ase));
                 throw ase;
             }
             Message message = getMessageForResponse(exchange);
@@ -345,7 +346,7 @@ public class Transcribe2Producer extends DefaultProducer {
                 try {
                     result = transcribeClient.getVocabulary(req);
                 } catch (AwsServiceException ase) {
-                    LOG.trace("Get Vocabulary command returned the error code {}", ase.awsErrorDetails().errorCode());
+                    LOG.trace("Get Vocabulary command returned the error code {}", AwsExceptionUtil.errorCode(ase));
                     throw ase;
                 }
                 Message message = getMessageForResponse(exchange);
@@ -364,7 +365,7 @@ public class Transcribe2Producer extends DefaultProducer {
             try {
                 result = transcribeClient.getVocabulary(builder.build());
             } catch (AwsServiceException ase) {
-                LOG.trace("Get Vocabulary command returned the error code {}", ase.awsErrorDetails().errorCode());
+                LOG.trace("Get Vocabulary command returned the error code {}", AwsExceptionUtil.errorCode(ase));
                 throw ase;
             }
             Message message = getMessageForResponse(exchange);
@@ -380,7 +381,7 @@ public class Transcribe2Producer extends DefaultProducer {
                 try {
                     result = transcribeClient.listVocabularies(req);
                 } catch (AwsServiceException ase) {
-                    LOG.trace("List Vocabularies command returned the error code {}", ase.awsErrorDetails().errorCode());
+                    LOG.trace("List Vocabularies command returned the error code {}", AwsExceptionUtil.errorCode(ase));
                     throw ase;
                 }
                 Message message = getMessageForResponse(exchange);
@@ -399,7 +400,7 @@ public class Transcribe2Producer extends DefaultProducer {
             try {
                 result = transcribeClient.listVocabularies(builder.build());
             } catch (AwsServiceException ase) {
-                LOG.trace("List Vocabularies command returned the error code {}", ase.awsErrorDetails().errorCode());
+                LOG.trace("List Vocabularies command returned the error code {}", AwsExceptionUtil.errorCode(ase));
                 throw ase;
             }
             Message message = getMessageForResponse(exchange);
@@ -415,7 +416,7 @@ public class Transcribe2Producer extends DefaultProducer {
                 try {
                     result = transcribeClient.updateVocabulary(req);
                 } catch (AwsServiceException ase) {
-                    LOG.trace("Update Vocabulary command returned the error code {}", ase.awsErrorDetails().errorCode());
+                    LOG.trace("Update Vocabulary command returned the error code {}", AwsExceptionUtil.errorCode(ase));
                     throw ase;
                 }
                 Message message = getMessageForResponse(exchange);
@@ -438,7 +439,7 @@ public class Transcribe2Producer extends DefaultProducer {
             try {
                 result = transcribeClient.updateVocabulary(builder.build());
             } catch (AwsServiceException ase) {
-                LOG.trace("Update Vocabulary command returned the error code {}", ase.awsErrorDetails().errorCode());
+                LOG.trace("Update Vocabulary command returned the error code {}", AwsExceptionUtil.errorCode(ase));
                 throw ase;
             }
             Message message = getMessageForResponse(exchange);
@@ -453,7 +454,7 @@ public class Transcribe2Producer extends DefaultProducer {
                 try {
                     transcribeClient.deleteVocabulary(req);
                 } catch (AwsServiceException ase) {
-                    LOG.trace("Delete Vocabulary command returned the error code {}", ase.awsErrorDetails().errorCode());
+                    LOG.trace("Delete Vocabulary command returned the error code {}", AwsExceptionUtil.errorCode(ase));
                     throw ase;
                 }
             } else {
@@ -469,7 +470,7 @@ public class Transcribe2Producer extends DefaultProducer {
             try {
                 transcribeClient.deleteVocabulary(builder.build());
             } catch (AwsServiceException ase) {
-                LOG.trace("Delete Vocabulary command returned the error code {}", ase.awsErrorDetails().errorCode());
+                LOG.trace("Delete Vocabulary command returned the error code {}", AwsExceptionUtil.errorCode(ase));
                 throw ase;
             }
         }
@@ -930,7 +931,7 @@ public class Transcribe2Producer extends DefaultProducer {
         try {
             return call.get();
         } catch (AwsServiceException ase) {
-            LOG.trace("{} command returned the error code {}", operationName, ase.awsErrorDetails().errorCode());
+            LOG.trace("{} command returned the error code {}", operationName, AwsExceptionUtil.errorCode(ase));
             throw ase;
         }
     }

@@ -22,6 +22,7 @@ import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.InvalidPayloadException;
 import org.apache.camel.Message;
+import org.apache.camel.component.aws.common.AwsExceptionUtil;
 import org.apache.camel.health.HealthCheck;
 import org.apache.camel.health.HealthCheckHelper;
 import org.apache.camel.health.WritableHealthCheckRepository;
@@ -126,7 +127,7 @@ public class MQ2Producer extends DefaultProducer {
                 try {
                     result = mqClient.listBrokers(listBrokersRequest);
                 } catch (AwsServiceException ase) {
-                    LOG.trace("List Brokers command returned the error code {}", ase.awsErrorDetails().errorCode());
+                    LOG.trace("List Brokers command returned the error code {}", AwsExceptionUtil.errorCode(ase));
                     throw ase;
                 }
                 Message message = getMessageForResponse(exchange);
@@ -151,7 +152,7 @@ public class MQ2Producer extends DefaultProducer {
             try {
                 result = mqClient.listBrokers(builder.build());
             } catch (AwsServiceException ase) {
-                LOG.trace("List Brokers command returned the error code {}", ase.awsErrorDetails().errorCode());
+                LOG.trace("List Brokers command returned the error code {}", AwsExceptionUtil.errorCode(ase));
                 throw ase;
             }
             Message message = getMessageForResponse(exchange);
@@ -177,7 +178,7 @@ public class MQ2Producer extends DefaultProducer {
                 try {
                     result = mqClient.createBroker(createBrokerRequest);
                 } catch (AwsServiceException ase) {
-                    LOG.trace("Create Broker command returned the error code {}", ase.awsErrorDetails().errorCode());
+                    LOG.trace("Create Broker command returned the error code {}", AwsExceptionUtil.errorCode(ase));
                     throw ase;
                 }
                 Message message = getMessageForResponse(exchange);
@@ -234,7 +235,7 @@ public class MQ2Producer extends DefaultProducer {
             try {
                 result = mqClient.createBroker(builder.build());
             } catch (AwsServiceException ase) {
-                LOG.trace("Create Broker command returned the error code {}", ase.awsErrorDetails().errorCode());
+                LOG.trace("Create Broker command returned the error code {}", AwsExceptionUtil.errorCode(ase));
                 throw ase;
             }
             Message message = getMessageForResponse(exchange);
@@ -253,7 +254,7 @@ public class MQ2Producer extends DefaultProducer {
                 try {
                     result = mqClient.deleteBroker(deleteBrokerRequest);
                 } catch (AwsServiceException ase) {
-                    LOG.trace("Delete Broker command returned the error code {}", ase.awsErrorDetails().errorCode());
+                    LOG.trace("Delete Broker command returned the error code {}", AwsExceptionUtil.errorCode(ase));
                     throw ase;
                 }
                 Message message = getMessageForResponse(exchange);
@@ -274,7 +275,7 @@ public class MQ2Producer extends DefaultProducer {
             try {
                 result = mqClient.deleteBroker(builder.build());
             } catch (AwsServiceException ase) {
-                LOG.trace("Delete Broker command returned the error code {}", ase.awsErrorDetails().errorCode());
+                LOG.trace("Delete Broker command returned the error code {}", AwsExceptionUtil.errorCode(ase));
                 throw ase;
             }
             Message message = getMessageForResponse(exchange);
@@ -291,7 +292,7 @@ public class MQ2Producer extends DefaultProducer {
                 try {
                     result = mqClient.rebootBroker(rebootBrokerRequest);
                 } catch (AwsServiceException ase) {
-                    LOG.trace("Reboot Broker command returned the error code {}", ase.awsErrorDetails().errorCode());
+                    LOG.trace("Reboot Broker command returned the error code {}", AwsExceptionUtil.errorCode(ase));
                     throw ase;
                 }
                 Message message = getMessageForResponse(exchange);
@@ -312,7 +313,7 @@ public class MQ2Producer extends DefaultProducer {
             try {
                 result = mqClient.rebootBroker(builder.build());
             } catch (AwsServiceException ase) {
-                LOG.trace("Reboot Broker command returned the error code {}", ase.awsErrorDetails().errorCode());
+                LOG.trace("Reboot Broker command returned the error code {}", AwsExceptionUtil.errorCode(ase));
                 throw ase;
             }
             Message message = getMessageForResponse(exchange);
@@ -330,7 +331,7 @@ public class MQ2Producer extends DefaultProducer {
                 try {
                     result = mqClient.updateBroker(updateBrokerRequest);
                 } catch (AwsServiceException ase) {
-                    LOG.trace("Update Broker command returned the error code {}", ase.awsErrorDetails().errorCode());
+                    LOG.trace("Update Broker command returned the error code {}", AwsExceptionUtil.errorCode(ase));
                     throw ase;
                 }
                 Message message = getMessageForResponse(exchange);
@@ -357,7 +358,7 @@ public class MQ2Producer extends DefaultProducer {
             try {
                 result = mqClient.updateBroker(builder.build());
             } catch (AwsServiceException ase) {
-                LOG.trace("Update Broker command returned the error code {}", ase.awsErrorDetails().errorCode());
+                LOG.trace("Update Broker command returned the error code {}", AwsExceptionUtil.errorCode(ase));
                 throw ase;
             }
             Message message = getMessageForResponse(exchange);
@@ -374,7 +375,7 @@ public class MQ2Producer extends DefaultProducer {
                 try {
                     result = mqClient.describeBroker(describeBrokerRequest);
                 } catch (AwsServiceException ase) {
-                    LOG.trace("Reboot Broker command returned the error code {}", ase.awsErrorDetails().errorCode());
+                    LOG.trace("Reboot Broker command returned the error code {}", AwsExceptionUtil.errorCode(ase));
                     throw ase;
                 }
                 Message message = getMessageForResponse(exchange);
@@ -395,7 +396,7 @@ public class MQ2Producer extends DefaultProducer {
             try {
                 result = mqClient.describeBroker(builder.build());
             } catch (AwsServiceException ase) {
-                LOG.trace("Describe Broker command returned the error code {}", ase.awsErrorDetails().errorCode());
+                LOG.trace("Describe Broker command returned the error code {}", AwsExceptionUtil.errorCode(ase));
                 throw ase;
             }
             Message message = getMessageForResponse(exchange);
