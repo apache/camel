@@ -63,6 +63,7 @@ import org.apache.camel.dsl.jbang.core.common.CatalogLoader;
 import org.apache.camel.tooling.model.BaseOptionModel;
 import org.apache.camel.tooling.model.ComponentModel;
 import org.apache.camel.tooling.model.DataFormatModel;
+import org.apache.camel.tooling.model.EipModel;
 import org.apache.camel.tooling.model.LanguageModel;
 import org.apache.camel.tooling.model.MainModel;
 import org.apache.camel.util.json.JsonArray;
@@ -323,6 +324,7 @@ class SourceTab extends AbstractTab {
                 ## File List (left panel)
                 - **Up/Down** — navigate files
                 - **Enter** — open file or directory
+                - **e** — open file directly in edit mode
                 - **Backspace** — go to parent directory
 
                 ## Source Viewer (right panel)
@@ -355,6 +357,9 @@ class SourceTab extends AbstractTab {
                 - Inside `parameters:` blocks, key completion shows endpoint options from the
                   Camel catalog, filtered by consumer/producer role. Required options appear
                   first (marked with `*`). Already-specified options are excluded.
+                - Inside EIP blocks (e.g. `split:`, `aggregate:`, `filter:`), Tab shows
+                  the EIP's configurable options (attribute-type only, excluding structural
+                  elements like `steps:` and `expression:`).
                 - Value completion shows enum choices, boolean values, and `{{placeholder}}`
                   suggestions from your `.properties` files
 
@@ -515,6 +520,13 @@ class SourceTab extends AbstractTab {
         }
         if (ke.isConfirm()) {
             openSelectedEntry();
+            return true;
+        }
+        if (ke.isChar('e')) {
+            openSelectedEntry();
+            if (sourceViewer.isVisible() && sourceViewer.isEditable()) {
+                sourceViewer.enterEditMode();
+            }
             return true;
         }
         return false;
@@ -933,6 +945,11 @@ class SourceTab extends AbstractTab {
             return provideComponentNameCompletions(context.substring(9));
         }
 
+        // EIP option completion
+        if (context.startsWith("yaml-eip:")) {
+            return provideEipKeyCompletions(context.substring(9));
+        }
+
         if (!context.startsWith("yaml:")) {
             return List.of();
         }
@@ -1042,6 +1059,51 @@ class SourceTab extends AbstractTab {
         return items;
     }
 
+    private static final Set<String> EIP_BOILERPLATE = Set.of("id", "note", "description", "disabled");
+
+    private List<AutocompletePopup.CompletionItem> provideEipKeyCompletions(String contextAfterPrefix) {
+        CamelCatalog catalog = getCatalog();
+        if (catalog == null) {
+            return List.of();
+        }
+
+        // context format: "eipName" or "eipName:existingKey1,existingKey2,..."
+        String[] parts = contextAfterPrefix.split(":", 2);
+        String eipName = parts[0];
+
+        Set<String> existingKeys = Set.of();
+        if (parts.length > 1 && !parts[1].isEmpty()) {
+            existingKeys = new HashSet<>(Arrays.asList(parts[1].split(",")));
+        }
+
+        EipModel model = catalog.eipModel(eipName);
+        if (model == null) {
+            return List.of();
+        }
+
+        List<AutocompletePopup.CompletionItem> items = new ArrayList<>();
+        for (EipModel.EipOptionModel opt : model.getOptions()) {
+            if (!"attribute".equals(opt.getKind())) {
+                continue;
+            }
+            if (EIP_BOILERPLATE.contains(opt.getName())) {
+                continue;
+            }
+            if (existingKeys.contains(opt.getName()) && !opt.isMultiValue()) {
+                continue;
+            }
+            items.add(new AutocompletePopup.CompletionItem(
+                    opt.getName(), opt.getDescription(), opt.getType(),
+                    opt.getDefaultValue(), opt.isDeprecated(), opt.getDeprecationNote(),
+                    opt.getGroup(), opt.isRequired()));
+        }
+
+        items.sort(Comparator.comparing(AutocompletePopup.CompletionItem::deprecated)
+                .thenComparing((a, b) -> Boolean.compare(b.required(), a.required()))
+                .thenComparing(AutocompletePopup.CompletionItem::key, String.CASE_INSENSITIVE_ORDER));
+        return items;
+    }
+
     private static boolean includeEndpointOption(ComponentModel.EndpointOptionModel opt, boolean isConsumer) {
         String label = opt.getLabel();
         if (label == null || label.isEmpty()) {
@@ -1058,7 +1120,16 @@ class SourceTab extends AbstractTab {
     }
 
     private List<AutocompletePopup.CompletionItem> provideYamlValueCompletions(String context) {
-        if (context == null || !context.startsWith("yaml:")) {
+        if (context == null) {
+            return List.of();
+        }
+
+        // EIP value completion
+        if (context.startsWith("yaml-eip-value:")) {
+            return provideEipValueCompletions(context.substring(15));
+        }
+
+        if (!context.startsWith("yaml:")) {
             return List.of();
         }
         CamelCatalog catalog = getCatalog();
@@ -1090,6 +1161,71 @@ class SourceTab extends AbstractTab {
         List<AutocompletePopup.CompletionItem> items = new ArrayList<>();
         java.util.function.Predicate<String> valueFilter = null;
 
+        if (opt != null) {
+            List<String> enums = opt.getEnums();
+            if (enums != null && !enums.isEmpty()) {
+                java.util.Set<String> validValues = new java.util.HashSet<>();
+                for (String value : enums) {
+                    validValues.add(value.toLowerCase());
+                    boolean isDefault = value.equals(String.valueOf(opt.getDefaultValue()));
+                    items.add(new AutocompletePopup.CompletionItem(
+                            value, opt.getDescription(), opt.getType(),
+                            isDefault ? value : opt.getDefaultValue(),
+                            false, null, opt.getGroup()));
+                }
+                valueFilter = v -> validValues.contains(v.toLowerCase());
+            } else if ("boolean".equalsIgnoreCase(opt.getType())
+                    || "java.lang.Boolean".equals(opt.getJavaType())) {
+                valueFilter = v -> "true".equalsIgnoreCase(v) || "false".equalsIgnoreCase(v);
+                items.add(new AutocompletePopup.CompletionItem(
+                        "true", opt.getDescription(), "boolean", opt.getDefaultValue(),
+                        false, null, opt.getGroup()));
+                items.add(new AutocompletePopup.CompletionItem(
+                        "false", opt.getDescription(), "boolean", opt.getDefaultValue(),
+                        false, null, opt.getGroup()));
+            } else if (isNumericType(opt.getType(), opt.getJavaType())) {
+                valueFilter = SourceTab::isNumericValue;
+            }
+        }
+
+        // only include placeholders whose actual value is compatible with the option type
+        for (AutocompletePopup.CompletionItem ph : loadPropertyPlaceholders()) {
+            if (valueFilter == null || (ph.description() != null && valueFilter.test(ph.description()))) {
+                items.add(ph);
+            }
+        }
+        return items;
+    }
+
+    private List<AutocompletePopup.CompletionItem> provideEipValueCompletions(String contextAfterPrefix) {
+        CamelCatalog catalog = getCatalog();
+        if (catalog == null) {
+            return List.of();
+        }
+
+        // context format: "eipName:optionName"
+        String[] parts = contextAfterPrefix.split(":", 2);
+        if (parts.length < 2) {
+            return List.of();
+        }
+        String eipName = parts[0];
+        String optionName = parts[1];
+
+        EipModel model = catalog.eipModel(eipName);
+        if (model == null) {
+            return loadPropertyPlaceholders();
+        }
+
+        EipModel.EipOptionModel opt = null;
+        for (EipModel.EipOptionModel o : model.getOptions()) {
+            if (o.getName().equals(optionName)) {
+                opt = o;
+                break;
+            }
+        }
+
+        List<AutocompletePopup.CompletionItem> items = new ArrayList<>();
+        java.util.function.Predicate<String> valueFilter = null;
         if (opt != null) {
             List<String> enums = opt.getEnums();
             if (enums != null && !enums.isEmpty()) {

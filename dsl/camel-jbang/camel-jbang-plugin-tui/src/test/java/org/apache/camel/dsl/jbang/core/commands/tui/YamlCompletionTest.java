@@ -21,12 +21,14 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Comparator;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
 import org.apache.camel.catalog.CamelCatalog;
 import org.apache.camel.catalog.DefaultCamelCatalog;
 import org.apache.camel.tooling.model.ComponentModel;
+import org.apache.camel.tooling.model.EipModel;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
@@ -663,6 +665,389 @@ class YamlCompletionTest {
         assertThat(items).isNotEmpty();
     }
 
+    // --- EIP context detection ---
+
+    @Test
+    void findEnclosingEipDetectsSplit() throws IOException {
+        String yaml = String.join("\n",
+                "- from:",
+                "    uri: timer:tick",
+                "    steps:",
+                "      - split:",
+                "          expression:",
+                "            simple: \"${body}\"",
+                "          ",
+                "");
+
+        Path file = tempDir.resolve("route.camel.yaml");
+        Files.writeString(file, yaml);
+
+        SourceViewer viewer = new SourceViewer();
+        viewer.loadFile(file);
+        viewer.enterEditMode();
+
+        SourceViewer.YamlEipContext ctx = viewer.findEnclosingEip(6);
+        assertThat(ctx).isNotNull();
+        assertThat(ctx.eipName()).isEqualTo("split");
+    }
+
+    @Test
+    void findEnclosingEipReturnsNullInsideParameters() throws IOException {
+        String yaml = String.join("\n",
+                "- from:",
+                "    uri: kafka",
+                "    parameters:",
+                "      brokers: localhost",
+                "      ",
+                "");
+
+        Path file = tempDir.resolve("route.camel.yaml");
+        Files.writeString(file, yaml);
+
+        SourceViewer viewer = new SourceViewer();
+        viewer.loadFile(file);
+        viewer.enterEditMode();
+
+        SourceViewer.YamlEipContext ctx = viewer.findEnclosingEip(4);
+        assertThat(ctx).isNull();
+    }
+
+    @Test
+    void findEnclosingEipConvertsKebabCase() throws IOException {
+        String yaml = String.join("\n",
+                "- from:",
+                "    uri: timer:tick",
+                "    steps:",
+                "      - circuit-breaker:",
+                "          ",
+                "");
+
+        Path file = tempDir.resolve("route.camel.yaml");
+        Files.writeString(file, yaml);
+
+        SourceViewer viewer = new SourceViewer();
+        viewer.loadFile(file);
+        viewer.enterEditMode();
+
+        SourceViewer.YamlEipContext ctx = viewer.findEnclosingEip(4);
+        assertThat(ctx).isNotNull();
+        assertThat(ctx.eipName()).isEqualTo("circuitBreaker");
+    }
+
+    @Test
+    void findEnclosingEipSkipsStructuralKeys() throws IOException {
+        String yaml = String.join("\n",
+                "- from:",
+                "    uri: timer:tick",
+                "    steps:",
+                "      - split:",
+                "          expression:",
+                "            simple: \"${body}\"",
+                "          steps:",
+                "            - log:",
+                "                ",
+                "");
+
+        Path file = tempDir.resolve("route.camel.yaml");
+        Files.writeString(file, yaml);
+
+        SourceViewer viewer = new SourceViewer();
+        viewer.loadFile(file);
+        viewer.enterEditMode();
+
+        // cursor inside log: block (nested in split's steps)
+        SourceViewer.YamlEipContext ctx = viewer.findEnclosingEip(8);
+        assertThat(ctx).isNotNull();
+        assertThat(ctx.eipName()).isEqualTo("log");
+    }
+
+    @Test
+    void findEnclosingEipOnEmptyLineBetweenEipAndOptions() throws IOException {
+        String yaml = String.join("\n",
+                "- from:",
+                "    uri: timer:tick",
+                "    steps:",
+                "      - log:",
+                "",
+                "            message: \"${body}\"",
+                "");
+
+        Path file = tempDir.resolve("route.camel.yaml");
+        Files.writeString(file, yaml);
+
+        SourceViewer viewer = new SourceViewer();
+        viewer.loadFile(file);
+        viewer.enterEditMode();
+
+        // empty line between log: and message: should detect log as enclosing EIP
+        SourceViewer.YamlEipContext ctx = viewer.findEnclosingEip(4);
+        assertThat(ctx).isNotNull();
+        assertThat(ctx.eipName()).isEqualTo("log");
+    }
+
+    // --- EIP option completion ---
+
+    @Test
+    void eipCompletionIncludesOnlyAttributes() {
+        List<AutocompletePopup.CompletionItem> items = provideEipKeyCompletions("split");
+
+        // streaming is an attribute — should be included
+        assertThat(items).anyMatch(i -> i.key().equals("streaming"));
+        assertThat(items).anyMatch(i -> i.key().equals("parallelProcessing"));
+    }
+
+    @Test
+    void eipCompletionExcludesBoilerplate() {
+        List<AutocompletePopup.CompletionItem> items = provideEipKeyCompletions("split");
+
+        assertThat(items).noneMatch(i -> i.key().equals("id"));
+        assertThat(items).noneMatch(i -> i.key().equals("note"));
+        assertThat(items).noneMatch(i -> i.key().equals("description"));
+        assertThat(items).noneMatch(i -> i.key().equals("disabled"));
+    }
+
+    @Test
+    void eipCompletionExcludesExpressionAndElement() {
+        List<AutocompletePopup.CompletionItem> items = provideEipKeyCompletions("split");
+
+        // expression and outputs are not attribute kind
+        assertThat(items).noneMatch(i -> i.key().equals("expression"));
+        assertThat(items).noneMatch(i -> i.key().equals("outputs"));
+    }
+
+    @Test
+    void eipCompletionExcludesExistingOptions() {
+        Set<String> existing = Set.of("streaming", "delimiter");
+        List<AutocompletePopup.CompletionItem> items = provideEipKeyCompletions("split", existing);
+
+        assertThat(items).noneMatch(i -> i.key().equals("streaming"));
+        assertThat(items).noneMatch(i -> i.key().equals("delimiter"));
+        assertThat(items).isNotEmpty();
+    }
+
+    @Test
+    void eipCompletionForLogEip() {
+        List<AutocompletePopup.CompletionItem> items = provideEipKeyCompletions("log");
+
+        assertThat(items).anyMatch(i -> i.key().equals("message"));
+        assertThat(items).anyMatch(i -> i.key().equals("loggingLevel"));
+        assertThat(items).anyMatch(i -> i.key().equals("logName"));
+    }
+
+    @Test
+    void eipValueCompletionForEnum() {
+        List<AutocompletePopup.CompletionItem> items = provideEipValueCompletions("log", "loggingLevel");
+
+        assertThat(items).anyMatch(i -> i.key().equals("INFO"));
+        assertThat(items).anyMatch(i -> i.key().equals("ERROR"));
+        assertThat(items).anyMatch(i -> i.key().equals("DEBUG"));
+    }
+
+    @Test
+    void eipValueCompletionForBoolean() {
+        List<AutocompletePopup.CompletionItem> items = provideEipValueCompletions("split", "streaming");
+
+        assertThat(items).anyMatch(i -> i.key().equals("true"));
+        assertThat(items).anyMatch(i -> i.key().equals("false"));
+    }
+
+    @Test
+    void eipValueCompletionFiltersIncompatiblePlaceholders() {
+        List<AutocompletePopup.CompletionItem> placeholders = List.of(
+                new AutocompletePopup.CompletionItem(
+                        "{{greeting.message}}", "Hello World", "placeholder",
+                        null, false, null, "application.properties"),
+                new AutocompletePopup.CompletionItem(
+                        "{{log.level}}", "WARN", "placeholder",
+                        null, false, null, "application.properties"));
+
+        // enum option: only placeholders whose value matches a valid enum choice should be included
+        List<AutocompletePopup.CompletionItem> items = provideEipValueCompletions("log", "loggingLevel", placeholders);
+
+        assertThat(items).anyMatch(i -> i.key().equals("INFO"));
+        assertThat(items).anyMatch(i -> i.key().equals("ERROR"));
+        // {{log.level}} has value "WARN" which IS a valid enum value
+        assertThat(items).anyMatch(i -> i.key().equals("{{log.level}}"));
+        // {{greeting.message}} has value "Hello World" which is NOT a valid enum value
+        assertThat(items).noneMatch(i -> i.key().equals("{{greeting.message}}"));
+    }
+
+    @Test
+    void eipValueCompletionAllowsPlaceholdersForStringOptions() {
+        List<AutocompletePopup.CompletionItem> placeholders = List.of(
+                new AutocompletePopup.CompletionItem(
+                        "{{greeting.message}}", "Hello World", "placeholder",
+                        null, false, null, "application.properties"));
+
+        // string option (logName): no type filter, all placeholders should be included
+        List<AutocompletePopup.CompletionItem> items = provideEipValueCompletions("log", "logName", placeholders);
+
+        assertThat(items).anyMatch(i -> i.key().equals("{{greeting.message}}"));
+    }
+
+    // --- collectExistingSiblingKeys ---
+
+    @Test
+    void collectExistingSiblingKeysFindsKeys() throws IOException {
+        String yaml = String.join("\n",
+                "- from:",
+                "    uri: timer:tick",
+                "    steps:",
+                "      - split:",
+                "          streaming: true",
+                "          delimiter: \",\"",
+                "          ",
+                "");
+
+        Path file = tempDir.resolve("route.camel.yaml");
+        Files.writeString(file, yaml);
+
+        SourceViewer viewer = new SourceViewer();
+        viewer.loadFile(file);
+        viewer.enterEditMode();
+
+        Set<String> keys = viewer.collectExistingSiblingKeys(6);
+        assertThat(keys).containsExactlyInAnyOrder("streaming", "delimiter");
+    }
+
+    // --- dashToCamelCase ---
+
+    @Test
+    void dashToCamelCaseConverts() {
+        assertThat(SourceViewer.dashToCamelCase("circuit-breaker")).isEqualTo("circuitBreaker");
+        assertThat(SourceViewer.dashToCamelCase("wire-tap")).isEqualTo("wireTap");
+        assertThat(SourceViewer.dashToCamelCase("split")).isEqualTo("split");
+        assertThat(SourceViewer.dashToCamelCase(null)).isNull();
+    }
+
+    // --- findScopeLineRow ---
+
+    @Test
+    void findScopeLineRowDetectsUriLine() throws IOException {
+        String yaml = String.join("\n",
+                "- from:",
+                "    uri: timer:tick",
+                "    steps:",
+                "      - to:",
+                "          uri: kafka",
+                "");
+
+        Path file = tempDir.resolve("route.camel.yaml");
+        Files.writeString(file, yaml);
+
+        SourceViewer viewer = new SourceViewer();
+        viewer.loadFile(file);
+        viewer.enterEditMode();
+
+        // cursor on uri: line → scope is that row
+        assertThat(viewer.findScopeLineRow(1)).isEqualTo(1);
+        assertThat(viewer.findScopeLineRow(4)).isEqualTo(4);
+    }
+
+    @Test
+    void findScopeLineRowInsideParameters() throws IOException {
+        String yaml = String.join("\n",
+                "- from:",
+                "    uri: kafka",
+                "    parameters:",
+                "      brokers: localhost",
+                "      groupId: test",
+                "");
+
+        Path file = tempDir.resolve("route.camel.yaml");
+        Files.writeString(file, yaml);
+
+        SourceViewer viewer = new SourceViewer();
+        viewer.loadFile(file);
+        viewer.enterEditMode();
+
+        // cursor inside parameters: block → scope is the uri: line
+        assertThat(viewer.findScopeLineRow(3)).isEqualTo(1);
+        assertThat(viewer.findScopeLineRow(4)).isEqualTo(1);
+    }
+
+    @Test
+    void findScopeLineRowInsideEip() throws IOException {
+        String yaml = String.join("\n",
+                "- from:",
+                "    uri: timer:tick",
+                "    steps:",
+                "      - split:",
+                "          expression:",
+                "            simple: \"${body}\"",
+                "          streaming: true",
+                "");
+
+        Path file = tempDir.resolve("route.camel.yaml");
+        Files.writeString(file, yaml);
+
+        SourceViewer viewer = new SourceViewer();
+        viewer.loadFile(file);
+        viewer.enterEditMode();
+
+        // cursor on streaming: → scope is split: line
+        assertThat(viewer.findScopeLineRow(6)).isEqualTo(3);
+    }
+
+    @Test
+    void findScopeLineRowOnScopeLineItself() throws IOException {
+        String yaml = String.join("\n",
+                "- from:",
+                "    uri: timer:tick",
+                "    steps:",
+                "      - split:",
+                "          streaming: true",
+                "");
+
+        Path file = tempDir.resolve("route.camel.yaml");
+        Files.writeString(file, yaml);
+
+        SourceViewer viewer = new SourceViewer();
+        viewer.loadFile(file);
+        viewer.enterEditMode();
+
+        // cursor on the split: line itself → returns that row
+        assertThat(viewer.findScopeLineRow(3)).isEqualTo(3);
+    }
+
+    @Test
+    void findScopeLineRowNoScope() throws IOException {
+        String yaml = String.join("\n",
+                "- from:",
+                "    uri: timer:tick",
+                "");
+
+        Path file = tempDir.resolve("route.camel.yaml");
+        Files.writeString(file, yaml);
+
+        SourceViewer viewer = new SourceViewer();
+        viewer.loadFile(file);
+        viewer.enterEditMode();
+
+        // cursor on top-level from: → no parent scope
+        assertThat(viewer.findScopeLineRow(0)).isEqualTo(-1);
+    }
+
+    @Test
+    void findScopeLineRowInlineEip() throws IOException {
+        String yaml = String.join("\n",
+                "- from:",
+                "    uri: timer:tick",
+                "    steps:",
+                "      - to: kafka:topic",
+                "");
+
+        Path file = tempDir.resolve("route.camel.yaml");
+        Files.writeString(file, yaml);
+
+        SourceViewer viewer = new SourceViewer();
+        viewer.loadFile(file);
+        viewer.enterEditMode();
+
+        // cursor on inline to: line → scope is that row
+        assertThat(viewer.findScopeLineRow(3)).isEqualTo(3);
+    }
+
     // --- Helpers that replicate SourceTab logic for testing ---
 
     private List<AutocompletePopup.CompletionItem> provideKeyCompletions(String componentName, String role) {
@@ -768,6 +1153,90 @@ class YamlCompletionTest {
                 items.add(new AutocompletePopup.CompletionItem(
                         "false", opt.getDescription(), "boolean", opt.getDefaultValue(),
                         false, null, opt.getGroup()));
+            }
+        }
+        return items;
+    }
+
+    private static final Set<String> EIP_BOILERPLATE = Set.of("id", "note", "description", "disabled");
+
+    private List<AutocompletePopup.CompletionItem> provideEipKeyCompletions(String eipName) {
+        return provideEipKeyCompletions(eipName, Set.of());
+    }
+
+    private List<AutocompletePopup.CompletionItem> provideEipKeyCompletions(String eipName, Set<String> existingKeys) {
+        EipModel model = catalog.eipModel(eipName);
+        if (model == null) {
+            return List.of();
+        }
+        List<AutocompletePopup.CompletionItem> items = new ArrayList<>();
+        for (EipModel.EipOptionModel opt : model.getOptions()) {
+            if (!"attribute".equals(opt.getKind())) {
+                continue;
+            }
+            if (EIP_BOILERPLATE.contains(opt.getName())) {
+                continue;
+            }
+            if (existingKeys.contains(opt.getName()) && !opt.isMultiValue()) {
+                continue;
+            }
+            items.add(new AutocompletePopup.CompletionItem(
+                    opt.getName(), opt.getDescription(), opt.getType(),
+                    opt.getDefaultValue(), opt.isDeprecated(), opt.getDeprecationNote(),
+                    opt.getGroup(), opt.isRequired()));
+        }
+        items.sort(Comparator.comparing(AutocompletePopup.CompletionItem::deprecated)
+                .thenComparing(ci -> !ci.required())
+                .thenComparing(AutocompletePopup.CompletionItem::key, String.CASE_INSENSITIVE_ORDER));
+        return items;
+    }
+
+    private List<AutocompletePopup.CompletionItem> provideEipValueCompletions(String eipName, String optionName) {
+        return provideEipValueCompletions(eipName, optionName, List.of());
+    }
+
+    private List<AutocompletePopup.CompletionItem> provideEipValueCompletions(
+            String eipName, String optionName, List<AutocompletePopup.CompletionItem> placeholders) {
+        EipModel model = catalog.eipModel(eipName);
+        if (model == null) {
+            return List.of();
+        }
+        EipModel.EipOptionModel opt = null;
+        for (EipModel.EipOptionModel o : model.getOptions()) {
+            if (o.getName().equals(optionName)) {
+                opt = o;
+                break;
+            }
+        }
+        List<AutocompletePopup.CompletionItem> items = new ArrayList<>();
+        java.util.function.Predicate<String> valueFilter = null;
+        if (opt != null) {
+            List<String> enums = opt.getEnums();
+            if (enums != null && !enums.isEmpty()) {
+                Set<String> validValues = new HashSet<>();
+                for (String value : enums) {
+                    validValues.add(value.toLowerCase());
+                    boolean isDefault = value.equals(String.valueOf(opt.getDefaultValue()));
+                    items.add(new AutocompletePopup.CompletionItem(
+                            value, opt.getDescription(), opt.getType(),
+                            isDefault ? value : opt.getDefaultValue(),
+                            false, null, opt.getGroup()));
+                }
+                valueFilter = v -> validValues.contains(v.toLowerCase());
+            } else if ("boolean".equalsIgnoreCase(opt.getType())
+                    || "java.lang.Boolean".equals(opt.getJavaType())) {
+                valueFilter = v -> "true".equalsIgnoreCase(v) || "false".equalsIgnoreCase(v);
+                items.add(new AutocompletePopup.CompletionItem(
+                        "true", opt.getDescription(), "boolean", opt.getDefaultValue(),
+                        false, null, opt.getGroup()));
+                items.add(new AutocompletePopup.CompletionItem(
+                        "false", opt.getDescription(), "boolean", opt.getDefaultValue(),
+                        false, null, opt.getGroup()));
+            }
+        }
+        for (AutocompletePopup.CompletionItem ph : placeholders) {
+            if (valueFilter == null || (ph.description() != null && valueFilter.test(ph.description()))) {
+                items.add(ph);
             }
         }
         return items;
