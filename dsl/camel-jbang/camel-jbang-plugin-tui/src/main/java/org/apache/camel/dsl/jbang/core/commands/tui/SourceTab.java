@@ -347,8 +347,14 @@ class SourceTab extends AbstractTab {
                 - Value completion with enum choices, boolean values, and `{{placeholder}}` suggestions
 
                 **YAML DSL routes:**
+                - On `uri:` lines (or inline EIPs like `to:`, `from:`), Tab shows a list of
+                  Camel component names filtered by role: consumer endpoints (e.g. `from:`)
+                  exclude producer-only components, and producer endpoints (e.g. `to:`) exclude
+                  consumer-only components. Type to filter by name or label (e.g. "cloud",
+                  "messaging"). Selecting a component auto-inserts a `parameters:` block.
                 - Inside `parameters:` blocks, key completion shows endpoint options from the
-                  Camel catalog, filtered by consumer/producer role
+                  Camel catalog, filtered by consumer/producer role. Required options appear
+                  first (marked with `*`). Already-specified options are excluded.
                 - Value completion shows enum choices, boolean values, and `{{placeholder}}`
                   suggestions from your `.properties` files
 
