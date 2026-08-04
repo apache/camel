@@ -29,7 +29,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
-public class NIOConverterTest extends ContextTestSupport {
+class NIOConverterTest extends ContextTestSupport {
     private static final String TEST_FILE_NAME = "hello" + UUID.randomUUID() + ".txt";
 
     @Test
@@ -89,6 +89,18 @@ public class NIOConverterTest extends ContextTestSupport {
         byte[] out = NIOConverter.toByteArray(bb);
 
         assertThat(out).isEmpty();
+    }
+
+    @Test
+    void testToByteArrayReadOnlyFullyConsumedBuffer() {
+        ByteBuffer bb = ByteBuffer.wrap("Hello".getBytes()).asReadOnlyBuffer();
+        while (bb.hasRemaining()) {
+            bb.get();
+        }
+
+        byte[] out = NIOConverter.toByteArray(bb);
+
+        assertThat(out).containsExactly("Hello".getBytes());
     }
 
     @Test
