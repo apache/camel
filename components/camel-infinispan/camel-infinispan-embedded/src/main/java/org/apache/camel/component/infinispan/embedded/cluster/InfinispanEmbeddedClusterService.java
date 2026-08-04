@@ -46,7 +46,8 @@ public class InfinispanEmbeddedClusterService extends InfinispanClusterService {
     @Metadata(description = "The lifespan of the cache entry for the local cluster member registered to the inventory",
               defaultValue = "30")
     private long lifespan;
-    @Metadata(description = "The TimeUnit of the lifespan", defaultValue = "SECONDS")
+    @Metadata(description = "The TimeUnit of the lifespan", defaultValue = "SECONDS",
+              enums = "NANOSECONDS,MICROSECONDS,MILLISECONDS,SECONDS,MINUTES,HOURS,DAYS")
     private TimeUnit lifespanTimeUnit;
 
     public InfinispanEmbeddedClusterService() {
