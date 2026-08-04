@@ -634,7 +634,8 @@ public class PrepareDocSymlinksMojo extends AbstractMojo {
                 "core/camel-main/src/main/docs/*.adoc",
                 "components/{*,*/*,*/*/*}/src/main/docs/*.adoc");
         List<String> nonComponentSuffixExcludes = List.of(
-                "**/*-component.adoc", "**/*-language.adoc", "**/*-dataformat.adoc", "**/*-summary.adoc");
+                "**/*-component.adoc", "**/*-language.adoc", "**/*-dataformat.adoc", "**/*-summary.adoc",
+                "**/*-guide.adoc");
         List<String> componentJsonIncludes = List.of(
                 "components/{*,*/*,*/*/*}/src/generated/resources/META-INF/org/apache/camel/{,**/}*.json");
 
@@ -644,7 +645,8 @@ public class PrepareDocSymlinksMojo extends AbstractMojo {
         components.asciidoc = new KindSpec(
                 List.of("core/camel-base/src/main/docs/*-component.adoc",
                         "components/{*,*/*,*/*/*}/src/main/docs/*-component.adoc",
-                        "components/{*,*/*}/src/main/docs/*-summary.adoc"),
+                        "components/{*,*/*}/src/main/docs/*-summary.adoc",
+                        "components/{*,*/*}/src/main/docs/*-guide.adoc"),
                 null, "docs/components/modules/ROOT/pages", null, null, null);
         components.image = new KindSpec(
                 List.of("components/{*,*/*}/src/main/docs/*.png"),
