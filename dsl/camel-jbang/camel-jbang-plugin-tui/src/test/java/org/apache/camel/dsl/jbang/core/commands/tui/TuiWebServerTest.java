@@ -16,7 +16,12 @@
  */
 package org.apache.camel.dsl.jbang.core.commands.tui;
 
+import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.OutputStreamWriter;
+import java.io.PrintWriter;
+import java.net.BindException;
 import java.net.InetSocketAddress;
 import java.net.Socket;
 import java.net.URI;
@@ -76,6 +81,52 @@ class TuiWebServerTest {
                     socket.connect(new InetSocketAddress("127.0.0.1", reserved.getPort()), 2000);
                 }
             }).isInstanceOf(IOException.class);
+        }
+    }
+
+    @Test
+    void rejectsWebSocketUpgradeFromForeignOrigin() throws Exception {
+        try (Port reserved = AvailablePortFinder.find()) {
+            server = newServer(reserved.getPort());
+            server.start();
+
+            assertThat(webSocketHandshake(reserved.getPort(), "https://attacker.invalid"))
+                    .startsWith("HTTP/1.1 403");
+        }
+    }
+
+    @Test
+    void acceptsWebSocketUpgradeFromTheLoopbackPage() throws Exception {
+        try (Port reserved = AvailablePortFinder.find()) {
+            server = newServer(reserved.getPort());
+            server.start();
+
+            assertThat(webSocketHandshake(reserved.getPort(), "http://127.0.0.1:" + reserved.getPort()))
+                    .startsWith("HTTP/1.1 101");
+        }
+    }
+
+    @Test
+    void startPropagatesBindExceptionForAnOccupiedPort() throws Exception {
+        try (Port reserved = AvailablePortFinder.find()) {
+            server = newServer(reserved.getPort());
+            server.start();
+            TuiWebServer conflictingServer = newServer(reserved.getPort());
+
+            assertThatThrownBy(conflictingServer::start).isInstanceOf(BindException.class);
+            conflictingServer.stop();
+        }
+    }
+
+    @Test
+    void stopTerminatesTheServerEventLoops() throws Exception {
+        try (Port reserved = AvailablePortFinder.find()) {
+            server = newServer(reserved.getPort());
+            server.start();
+
+            server.stop();
+
+            assertThat(server.awaitTermination(5, TimeUnit.SECONDS)).isTrue();
         }
     }
 
@@ -142,5 +193,21 @@ class TuiWebServerTest {
         return new TuiWebServer(
                 port, new CamelJBangMain(), Thread.currentThread().getContextClassLoader(), null, 200,
                 "dark");
+    }
+
+    private static String webSocketHandshake(int port, String origin) throws IOException {
+        try (Socket socket = new Socket("127.0.0.1", port);
+             PrintWriter writer = new PrintWriter(new OutputStreamWriter(socket.getOutputStream()), true);
+             BufferedReader reader = new BufferedReader(new InputStreamReader(socket.getInputStream()))) {
+            writer.print("GET /ws HTTP/1.1\r\n");
+            writer.print("Host: 127.0.0.1:" + port + "\r\n");
+            writer.print("Upgrade: websocket\r\n");
+            writer.print("Connection: Upgrade\r\n");
+            writer.print("Sec-WebSocket-Key: dGhlIHNhbXBsZSBub25jZQ==\r\n");
+            writer.print("Sec-WebSocket-Version: 13\r\n");
+            writer.print("Origin: " + origin + "\r\n\r\n");
+            writer.flush();
+            return reader.readLine();
+        }
     }
 }
