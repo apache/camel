@@ -50,7 +50,11 @@ public final class NIOConverter {
     @Converter(order = 1)
     public static byte[] toByteArray(ByteBuffer buffer) {
         byte[] bArray = new byte[buffer.limit()];
-        buffer.get(bArray);
+        if (bArray.length > 0) {
+            ByteBuffer copy = buffer.duplicate();
+            copy.rewind();
+            copy.get(bArray);
+        }
         return bArray;
     }
 
