@@ -277,7 +277,7 @@ class AutocompletePopup {
             Style keyStyle = ci.deprecated() ? deprecatedStyle : normalStyle;
 
             String displayKey = key;
-            if (!key.endsWith(".")) {
+            if (!key.startsWith("{{") && !key.endsWith(".")) {
                 int lastDot = key.lastIndexOf('.');
                 if (lastDot >= 0) {
                     displayKey = key.substring(lastDot + 1);

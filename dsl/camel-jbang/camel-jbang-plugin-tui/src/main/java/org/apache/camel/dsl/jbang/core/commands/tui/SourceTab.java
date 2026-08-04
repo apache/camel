@@ -332,6 +332,23 @@ class SourceTab extends AbstractTab {
                 - **w** — toggle word wrap
                 - **Esc/c** — close source viewer
 
+                ## Edit Mode (Tab Completion)
+                Press **e** to enter edit mode, then **Tab** for context-aware completion:
+
+                **application.properties:**
+                - Key completion for `camel.main.*`, `camel.component.*`, `camel.dataformat.*`,
+                  and `camel.language.*` options from the Camel catalog
+                - Value completion with enum choices, boolean values, and `{{placeholder}}` suggestions
+
+                **YAML DSL routes:**
+                - Inside `parameters:` blocks, key completion shows endpoint options from the
+                  Camel catalog, filtered by consumer/producer role
+                - Value completion shows enum choices, boolean values, and `{{placeholder}}`
+                  suggestions from your `.properties` files
+
+                Use **Up/Down** to navigate, **Enter** to accept, **Esc** to dismiss, and
+                type to filter the completion list.
+
                 ## General
                 - **Tab** — toggle focus between file list and source viewer
                 - The focused panel title is highlighted; the unfocused panel dims
@@ -505,8 +522,13 @@ class SourceTab extends AbstractTab {
                 if (isCamelSourceFile(filePath)) {
                     sourceViewer.setQuickDocProvider(this::provideCamelQuickDocs);
                     sourceViewer.setDeprecatedLineScanner(null);
-                    sourceViewer.setAutocompleteProvider(null);
-                    sourceViewer.setAutocompleteValueProvider(null);
+                    if (isYamlFile(filePath)) {
+                        sourceViewer.setAutocompleteProvider(this::provideYamlKeyCompletions);
+                        sourceViewer.setAutocompleteValueProvider(this::provideYamlValueCompletions);
+                    } else {
+                        sourceViewer.setAutocompleteProvider(null);
+                        sourceViewer.setAutocompleteValueProvider(null);
+                    }
                 } else if (isPropertiesFile(filePath)) {
                     sourceViewer.setQuickDocProvider(this::providePropertiesQuickDocs);
                     sourceViewer.setDeprecatedLineScanner(this::scanDeprecatedProperties);
@@ -596,6 +618,11 @@ class SourceTab extends AbstractTab {
 
     private static boolean isPropertiesFile(Path path) {
         return path.getFileName().toString().toLowerCase().endsWith(".properties");
+    }
+
+    private static boolean isYamlFile(Path path) {
+        String name = path.getFileName().toString().toLowerCase();
+        return name.endsWith(".yaml") || name.endsWith(".yml");
     }
 
     private List<AutocompletePopup.CompletionItem> providePropertyCompletions(String linePrefix) {
@@ -731,13 +758,13 @@ class SourceTab extends AbstractTab {
     private List<AutocompletePopup.CompletionItem> providePropertyValueCompletions(String key) {
         CamelCatalog catalog = getCatalog();
         if (catalog == null || key == null || key.isEmpty()) {
-            return List.of();
+            return loadPropertyPlaceholders();
         }
         ensureMainOptionsCache(catalog);
 
         BaseOptionModel opt = lookupOption(catalog, key);
         if (opt == null) {
-            return List.of();
+            return loadPropertyPlaceholders();
         }
 
         String optDesc = opt.getDescription();
@@ -746,28 +773,36 @@ class SourceTab extends AbstractTab {
         String optGroup = opt.getGroup();
 
         List<AutocompletePopup.CompletionItem> items = new ArrayList<>();
+        java.util.function.Predicate<String> valueFilter = null;
 
         // enum values
         List<String> enums = opt.getEnums();
         if (enums != null && !enums.isEmpty()) {
+            java.util.Set<String> validValues = new java.util.HashSet<>();
             for (String value : enums) {
+                validValues.add(value.toLowerCase());
                 boolean isDefault = value.equals(String.valueOf(optDefault));
                 items.add(new AutocompletePopup.CompletionItem(
                         value, optDesc, optType, isDefault ? value : optDefault,
                         false, null, optGroup));
             }
-            return items;
-        }
-
-        // boolean values
-        if ("boolean".equalsIgnoreCase(optType) || "java.lang.Boolean".equals(opt.getJavaType())) {
+            valueFilter = v -> validValues.contains(v.toLowerCase());
+        } else if ("boolean".equalsIgnoreCase(optType) || "java.lang.Boolean".equals(opt.getJavaType())) {
+            valueFilter = v -> "true".equalsIgnoreCase(v) || "false".equalsIgnoreCase(v);
             items.add(new AutocompletePopup.CompletionItem(
                     "true", optDesc, "boolean", optDefault, false, null, optGroup));
             items.add(new AutocompletePopup.CompletionItem(
                     "false", optDesc, "boolean", optDefault, false, null, optGroup));
-            return items;
+        } else if (isNumericType(optType, opt.getJavaType())) {
+            valueFilter = SourceTab::isNumericValue;
         }
 
+        // only include placeholders whose actual value is compatible with the option type
+        for (AutocompletePopup.CompletionItem ph : loadPropertyPlaceholders()) {
+            if (valueFilter == null || (ph.description() != null && valueFilter.test(ph.description()))) {
+                items.add(ph);
+            }
+        }
         return items;
     }
 
@@ -824,11 +859,228 @@ class SourceTab extends AbstractTab {
         return null;
     }
 
+    private static boolean isNumericType(String type, String javaType) {
+        if (type != null) {
+            switch (type.toLowerCase()) {
+                case "integer":
+                case "int":
+                case "long":
+                case "short":
+                case "byte":
+                case "float":
+                case "double":
+                case "number":
+                    return true;
+            }
+        }
+        if (javaType != null) {
+            switch (javaType) {
+                case "int":
+                case "long":
+                case "short":
+                case "byte":
+                case "float":
+                case "double":
+                case "java.lang.Integer":
+                case "java.lang.Long":
+                case "java.lang.Short":
+                case "java.lang.Byte":
+                case "java.lang.Float":
+                case "java.lang.Double":
+                    return true;
+            }
+        }
+        return false;
+    }
+
+    private static boolean isNumericValue(String value) {
+        try {
+            Double.parseDouble(value);
+            return true;
+        } catch (NumberFormatException e) {
+            return false;
+        }
+    }
+
     private static String capitalize(String s) {
         if (s == null || s.isEmpty()) {
             return s;
         }
         return Character.toUpperCase(s.charAt(0)) + s.substring(1);
+    }
+
+    // ---- YAML DSL completion ----
+
+    private List<AutocompletePopup.CompletionItem> provideYamlKeyCompletions(String context) {
+        if (context == null || !context.startsWith("yaml:")) {
+            return List.of();
+        }
+        CamelCatalog catalog = getCatalog();
+        if (catalog == null) {
+            return List.of();
+        }
+
+        // context format: "yaml:componentName:consumer|producer"
+        String[] parts = context.substring(5).split(":", 2);
+        if (parts.length < 2) {
+            return List.of();
+        }
+        String componentName = parts[0];
+        String role = parts[1];
+        boolean isConsumer = "consumer".equals(role);
+
+        ComponentModel model = catalog.componentModel(componentName);
+        if (model == null) {
+            return List.of();
+        }
+
+        List<AutocompletePopup.CompletionItem> items = new ArrayList<>();
+        for (ComponentModel.EndpointOptionModel opt : model.getEndpointParameterOptions()) {
+            if (includeEndpointOption(opt, isConsumer)) {
+                items.add(new AutocompletePopup.CompletionItem(
+                        opt.getName(), opt.getDescription(), opt.getType(),
+                        opt.getDefaultValue(), opt.isDeprecated(), opt.getDeprecationNote(),
+                        opt.getGroup()));
+            }
+        }
+
+        items.sort(Comparator.comparing(AutocompletePopup.CompletionItem::deprecated)
+                .thenComparing(AutocompletePopup.CompletionItem::key, String.CASE_INSENSITIVE_ORDER));
+        return items;
+    }
+
+    private static boolean includeEndpointOption(ComponentModel.EndpointOptionModel opt, boolean isConsumer) {
+        String label = opt.getLabel();
+        if (label == null || label.isEmpty()) {
+            return true;
+        }
+        if (label.contains("consumer") && label.contains("producer")) {
+            return true;
+        }
+        if (isConsumer) {
+            return !label.contains("producer");
+        } else {
+            return !label.contains("consumer");
+        }
+    }
+
+    private List<AutocompletePopup.CompletionItem> provideYamlValueCompletions(String context) {
+        if (context == null || !context.startsWith("yaml:")) {
+            return List.of();
+        }
+        CamelCatalog catalog = getCatalog();
+        if (catalog == null) {
+            return List.of();
+        }
+
+        // context format: "yaml:componentName:optionName"
+        String[] parts = context.substring(5).split(":", 2);
+        if (parts.length < 2) {
+            return List.of();
+        }
+        String componentName = parts[0];
+        String optionName = parts[1];
+
+        ComponentModel model = catalog.componentModel(componentName);
+        if (model == null) {
+            return loadPropertyPlaceholders();
+        }
+
+        ComponentModel.EndpointOptionModel opt = null;
+        for (ComponentModel.EndpointOptionModel o : model.getEndpointOptions()) {
+            if (o.getName().equals(optionName)) {
+                opt = o;
+                break;
+            }
+        }
+
+        List<AutocompletePopup.CompletionItem> items = new ArrayList<>();
+        java.util.function.Predicate<String> valueFilter = null;
+
+        if (opt != null) {
+            List<String> enums = opt.getEnums();
+            if (enums != null && !enums.isEmpty()) {
+                java.util.Set<String> validValues = new java.util.HashSet<>();
+                for (String value : enums) {
+                    validValues.add(value.toLowerCase());
+                    boolean isDefault = value.equals(String.valueOf(opt.getDefaultValue()));
+                    items.add(new AutocompletePopup.CompletionItem(
+                            value, opt.getDescription(), opt.getType(),
+                            isDefault ? value : opt.getDefaultValue(),
+                            false, null, opt.getGroup()));
+                }
+                valueFilter = v -> validValues.contains(v.toLowerCase());
+            } else if ("boolean".equalsIgnoreCase(opt.getType())
+                    || "java.lang.Boolean".equals(opt.getJavaType())) {
+                valueFilter = v -> "true".equalsIgnoreCase(v) || "false".equalsIgnoreCase(v);
+                items.add(new AutocompletePopup.CompletionItem(
+                        "true", opt.getDescription(), "boolean", opt.getDefaultValue(),
+                        false, null, opt.getGroup()));
+                items.add(new AutocompletePopup.CompletionItem(
+                        "false", opt.getDescription(), "boolean", opt.getDefaultValue(),
+                        false, null, opt.getGroup()));
+            } else if (isNumericType(opt.getType(), opt.getJavaType())) {
+                valueFilter = SourceTab::isNumericValue;
+            }
+        }
+
+        // only include placeholders whose actual value is compatible with the option type
+        for (AutocompletePopup.CompletionItem ph : loadPropertyPlaceholders()) {
+            if (valueFilter == null || (ph.description() != null && valueFilter.test(ph.description()))) {
+                items.add(ph);
+            }
+        }
+        return items;
+    }
+
+    // ---- Property placeholder loading ----
+
+    private List<AutocompletePopup.CompletionItem> placeholderCache;
+    private long placeholderCacheTime;
+    private Path placeholderCacheDir;
+
+    private List<AutocompletePopup.CompletionItem> loadPropertyPlaceholders() {
+        if (rootDir == null || !java.nio.file.Files.isDirectory(rootDir)) {
+            return List.of();
+        }
+
+        long now = System.currentTimeMillis();
+        if (placeholderCache != null && rootDir.equals(placeholderCacheDir) && (now - placeholderCacheTime) < 5000) {
+            return placeholderCache;
+        }
+
+        List<AutocompletePopup.CompletionItem> items = new ArrayList<>();
+        try (var stream = java.nio.file.Files.list(rootDir)) {
+            stream.filter(p -> p.getFileName().toString().endsWith(".properties"))
+                    .forEach(p -> {
+                        try {
+                            for (String line : java.nio.file.Files.readAllLines(p)) {
+                                String trimmed = line.trim();
+                                if (trimmed.isEmpty() || trimmed.startsWith("#") || trimmed.startsWith("!")) {
+                                    continue;
+                                }
+                                int eq = trimmed.indexOf('=');
+                                if (eq > 0) {
+                                    String key = trimmed.substring(0, eq).trim();
+                                    String value = trimmed.substring(eq + 1).trim();
+                                    items.add(new AutocompletePopup.CompletionItem(
+                                            "{{" + key + "}}", value, "placeholder",
+                                            null, false, null, p.getFileName().toString()));
+                                }
+                            }
+                        } catch (IOException e) {
+                            // skip unreadable files
+                        }
+                    });
+        } catch (IOException e) {
+            return List.of();
+        }
+
+        items.sort(Comparator.comparing(AutocompletePopup.CompletionItem::key, String.CASE_INSENSITIVE_ORDER));
+        placeholderCache = items;
+        placeholderCacheTime = now;
+        placeholderCacheDir = rootDir;
+        return items;
     }
 
     private Map<Integer, List<SourceViewer.DocEntry>> providePropertiesQuickDocs(List<JsonObject> codeData) {

@@ -484,7 +484,7 @@ class SourceViewer {
             dirty = true;
             return true;
         }
-        if (ke.isKey(KeyCode.TAB) && autocompleteProvider != null && isPropertiesFile()) {
+        if (ke.isKey(KeyCode.TAB) && autocompleteProvider != null) {
             openAutocomplete();
             return true;
         }
@@ -531,7 +531,186 @@ class SourceViewer {
                 && editableFile.getFileName().toString().toLowerCase().endsWith(".properties");
     }
 
+    private boolean isCamelYamlFile() {
+        if (editableFile == null) {
+            return false;
+        }
+        String name = editableFile.getFileName().toString().toLowerCase();
+        return name.endsWith(".yaml") || name.endsWith(".yml");
+    }
+
+    record YamlEndpointContext(String component, boolean consumer) {
+    }
+
+    private static final java.util.Set<String> CONSUMER_EIPS = java.util.Set.of("from", "pollEnrich", "poll-enrich");
+    private static final java.util.Set<String> PRODUCER_EIPS
+            = java.util.Set.of("to", "toD", "to-d", "wireTap", "wire-tap", "enrich");
+
+    YamlEndpointContext findEnclosingComponent(int fromRow) {
+        String cursorLine = editState.getLine(fromRow);
+        int cursorIndent = countLeadingSpaces(cursorLine);
+
+        // blank lines: find the nearest preceding non-blank line for context
+        if (cursorLine.isBlank()) {
+            for (int i = fromRow - 1; i >= 0; i--) {
+                String prev = editState.getLine(i);
+                if (!prev.isBlank()) {
+                    if (prev.trim().startsWith("parameters:")) {
+                        // blank line right after parameters: — cursor is inside the block
+                        cursorIndent = countLeadingSpaces(prev) + 1;
+                        fromRow = i;
+                    } else {
+                        return findEnclosingComponent(i);
+                    }
+                    break;
+                }
+            }
+        }
+
+        int parametersRow = -1;
+        int parametersIndent = -1;
+
+        for (int i = fromRow; i >= 0; i--) {
+            String line = editState.getLine(i);
+            if (line.isBlank()) {
+                continue;
+            }
+            int indent = countLeadingSpaces(line);
+            String trimmed = line.trim();
+
+            if (trimmed.startsWith("parameters:") && indent < cursorIndent) {
+                parametersRow = i;
+                parametersIndent = indent;
+                break;
+            }
+            if (i < fromRow && indent < cursorIndent && !trimmed.startsWith("#")) {
+                break;
+            }
+        }
+
+        if (parametersRow < 0) {
+            return null;
+        }
+
+        String foundScheme = null;
+        for (int i = parametersRow - 1; i >= 0; i--) {
+            String line = editState.getLine(i);
+            if (line.isBlank()) {
+                continue;
+            }
+            int indent = countLeadingSpaces(line);
+            String trimmed = line.trim();
+
+            if (indent == parametersIndent) {
+                if (foundScheme == null && (trimmed.startsWith("uri:") || trimmed.startsWith("- uri:"))) {
+                    foundScheme = extractSchemeFromUriLine(trimmed);
+                }
+            }
+
+            if (indent < parametersIndent) {
+                String eipName = extractEipName(trimmed);
+                if (foundScheme == null) {
+                    foundScheme = extractInlineUri(trimmed);
+                }
+                if (foundScheme != null) {
+                    boolean consumer = eipName != null && CONSUMER_EIPS.contains(eipName);
+                    return new YamlEndpointContext(foundScheme, consumer);
+                }
+                break;
+            }
+        }
+
+        if (foundScheme != null) {
+            return new YamlEndpointContext(foundScheme, false);
+        }
+        return null;
+    }
+
+    private static int countLeadingSpaces(String line) {
+        int count = 0;
+        for (int i = 0; i < line.length(); i++) {
+            if (line.charAt(i) == ' ') {
+                count++;
+            } else {
+                break;
+            }
+        }
+        return count;
+    }
+
+    private static String extractSchemeFromUriLine(String trimmed) {
+        int colonIdx = trimmed.indexOf(':');
+        if (colonIdx < 0) {
+            return null;
+        }
+        String value = trimmed.substring(colonIdx + 1).trim();
+        if (value.startsWith("\"") || value.startsWith("'")) {
+            value = value.substring(1);
+        }
+        if (value.endsWith("\"") || value.endsWith("'")) {
+            value = value.substring(0, value.length() - 1);
+        }
+        int schemeEnd = value.indexOf(':');
+        if (schemeEnd > 0) {
+            return value.substring(0, schemeEnd);
+        }
+        if (!value.isEmpty()) {
+            return value;
+        }
+        return null;
+    }
+
+    private static String extractEipName(String trimmed) {
+        String line = trimmed;
+        if (line.startsWith("- ")) {
+            line = line.substring(2).trim();
+        }
+        int colonIdx = line.indexOf(':');
+        if (colonIdx > 0) {
+            return line.substring(0, colonIdx).trim();
+        }
+        return null;
+    }
+
+    private static String extractInlineUri(String trimmed) {
+        String line = trimmed;
+        if (line.startsWith("- ")) {
+            line = line.substring(2).trim();
+        }
+        int colonIdx = line.indexOf(':');
+        if (colonIdx <= 0) {
+            return null;
+        }
+        String eipPart = line.substring(0, colonIdx).trim();
+        if (!CONSUMER_EIPS.contains(eipPart) && !PRODUCER_EIPS.contains(eipPart)) {
+            return null;
+        }
+        String uriPart = line.substring(colonIdx + 1).trim();
+        if (uriPart.isEmpty()) {
+            return null;
+        }
+        if (uriPart.startsWith("\"") || uriPart.startsWith("'")) {
+            uriPart = uriPart.substring(1);
+        }
+        if (uriPart.endsWith("\"") || uriPart.endsWith("'")) {
+            uriPart = uriPart.substring(0, uriPart.length() - 1);
+        }
+        int schemeEnd = uriPart.indexOf(':');
+        if (schemeEnd > 0) {
+            return uriPart.substring(0, schemeEnd);
+        }
+        return null;
+    }
+
     private void openAutocomplete() {
+        if (isCamelYamlFile()) {
+            openYamlAutocomplete();
+        } else {
+            openPropertiesAutocomplete();
+        }
+    }
+
+    private void openPropertiesAutocomplete() {
         String lineText = editState.getLine(editState.cursorRow());
         int col = editState.cursorCol();
         String textBeforeCursor = col <= lineText.length() ? lineText.substring(0, col) : lineText;
@@ -569,11 +748,61 @@ class SourceViewer {
         }
     }
 
+    private void openYamlAutocomplete() {
+        int row = editState.cursorRow();
+        String lineText = editState.getLine(row);
+        String trimmed = lineText.trim();
+        if (trimmed.startsWith("- ")) {
+            trimmed = trimmed.substring(2).trim();
+        }
+
+        YamlEndpointContext ctx = findEnclosingComponent(row);
+        if (ctx == null) {
+            return;
+        }
+
+        int colonIdx = trimmed.indexOf(':');
+        if (colonIdx > 0) {
+            // value completion — cursor is on a line with key: or key: value
+            String optionName = trimmed.substring(0, colonIdx).trim();
+            String valueText = trimmed.substring(colonIdx + 1).trim();
+            if (valueText.startsWith("\"") || valueText.startsWith("'")) {
+                valueText = valueText.substring(1);
+            }
+            if (valueText.endsWith("\"") || valueText.endsWith("'")) {
+                valueText = valueText.substring(0, valueText.length() - 1);
+            }
+            if (autocompleteValueProvider != null) {
+                String context = "yaml:" + ctx.component() + ":" + optionName;
+                List<AutocompletePopup.CompletionItem> values = autocompleteValueProvider.provide(context);
+                if (values != null && !values.isEmpty()) {
+                    autocompletePopup = new AutocompletePopup(values, "", valueText, true);
+                }
+            }
+        } else {
+            // key completion — cursor is on an empty or partial key line
+            String filter = colonIdx > 0 ? trimmed.substring(0, colonIdx).trim() : trimmed;
+            String role = ctx.consumer() ? "consumer" : "producer";
+            String context = "yaml:" + ctx.component() + ":" + role;
+            List<AutocompletePopup.CompletionItem> items = autocompleteProvider.provide(context);
+            if (items != null && !items.isEmpty()) {
+                autocompletePopup = new AutocompletePopup(items, filter, filter);
+            }
+        }
+    }
+
     private void insertCompletion(AutocompletePopup.CompletionItem item, boolean valueMode) {
         dirty = true;
         String currentLine = editState.getLine(editState.cursorRow());
+        if (isCamelYamlFile()) {
+            insertYamlCompletion(item, valueMode, currentLine);
+        } else {
+            insertPropertiesCompletion(item, valueMode, currentLine);
+        }
+    }
+
+    private void insertPropertiesCompletion(AutocompletePopup.CompletionItem item, boolean valueMode, String currentLine) {
         if (valueMode) {
-            // replace value portion (after =)
             int eq = currentLine.indexOf('=');
             if (eq >= 0) {
                 String keyPart = currentLine.substring(0, eq + 1);
@@ -594,6 +823,46 @@ class SourceViewer {
             if (isGroup && autocompleteProvider != null) {
                 openAutocomplete();
             }
+        }
+    }
+
+    private void insertYamlCompletion(AutocompletePopup.CompletionItem item, boolean valueMode, String currentLine) {
+        int indent = countLeadingSpaces(currentLine);
+        // blank lines: derive indent from the nearest preceding non-blank line
+        if (currentLine.isBlank() && indent == 0) {
+            int row = editState.cursorRow();
+            for (int i = row - 1; i >= 0; i--) {
+                String prev = editState.getLine(i);
+                if (!prev.isBlank()) {
+                    indent = countLeadingSpaces(prev);
+                    if (prev.trim().startsWith("parameters:")) {
+                        indent += 2;
+                    }
+                    break;
+                }
+            }
+        }
+        String indentStr = " ".repeat(indent);
+
+        editState.moveCursorToLineStart();
+        for (int i = 0; i < currentLine.length(); i++) {
+            editState.deleteForward();
+        }
+
+        if (valueMode) {
+            String trimmed = currentLine.trim();
+            if (trimmed.startsWith("- ")) {
+                trimmed = trimmed.substring(2).trim();
+            }
+            int colonIdx = trimmed.indexOf(':');
+            if (colonIdx > 0) {
+                String keyPart = trimmed.substring(0, colonIdx);
+                editState.insert(indentStr + keyPart + ": " + item.key());
+            } else {
+                editState.insert(indentStr + item.key());
+            }
+        } else {
+            editState.insert(indentStr + item.key() + ": ");
         }
     }
 
@@ -925,7 +1194,7 @@ class SourceViewer {
             TuiHelper.hint(spans, "Esc", "cancel");
             TuiHelper.hint(spans, "F5", "save & close");
             TuiHelper.hint(spans, "Shift+F5", "save");
-            if (autocompleteProvider != null && isPropertiesFile()) {
+            if (autocompleteProvider != null) {
                 TuiHelper.hint(spans, "Tab", "complete");
             }
             TuiHelper.hint(spans, TuiIcons.HINT_SCROLL, "move");
