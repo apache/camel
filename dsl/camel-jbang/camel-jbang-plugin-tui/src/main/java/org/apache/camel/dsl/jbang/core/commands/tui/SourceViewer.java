@@ -30,6 +30,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.function.BiConsumer;
 import java.util.function.IntConsumer;
 
+import com.networknt.schema.Error;
 import dev.tamboui.layout.Constraint;
 import dev.tamboui.layout.Layout;
 import dev.tamboui.layout.Rect;
@@ -44,6 +45,7 @@ import dev.tamboui.tui.event.KeyCode;
 import dev.tamboui.tui.event.KeyEvent;
 import dev.tamboui.tui.event.MouseEvent;
 import dev.tamboui.tui.event.MouseEventKind;
+import dev.tamboui.widgets.Clear;
 import dev.tamboui.widgets.block.Block;
 import dev.tamboui.widgets.block.BorderType;
 import dev.tamboui.widgets.block.Borders;
@@ -132,6 +134,10 @@ class SourceViewer {
     private AutocompletePopup.AutocompleteProvider autocompleteProvider;
     private AutocompletePopup.ValueProvider autocompleteValueProvider;
     private AutocompletePopup autocompletePopup;
+    private boolean validateOnSave = true;
+    private org.apache.camel.dsl.yaml.validator.YamlValidator yamlValidator;
+    private List<String> validationErrors;
+    private int validationErrorScroll;
 
     private record CachedSource(
             List<String> lines, List<JsonObject> codeData,
@@ -164,6 +170,10 @@ class SourceViewer {
 
     void setAutocompleteValueProvider(AutocompletePopup.ValueProvider provider) {
         this.autocompleteValueProvider = provider;
+    }
+
+    void setValidateOnSave(boolean validateOnSave) {
+        this.validateOnSave = validateOnSave;
     }
 
     void hide() {
@@ -400,6 +410,16 @@ class SourceViewer {
     }
 
     private boolean handleEditKeyEvent(KeyEvent ke) {
+        if (validationErrors != null) {
+            if (ke.isCancel() || ke.isKey(KeyCode.ENTER)) {
+                validationErrors = null;
+            } else if (ke.isUp()) {
+                validationErrorScroll = Math.max(0, validationErrorScroll - 1);
+            } else if (ke.isDown()) {
+                validationErrorScroll++;
+            }
+            return true;
+        }
         if (autocompletePopup != null) {
             boolean wasValueMode = autocompletePopup.isValueMode();
             AutocompletePopup.Result result = autocompletePopup.handleKeyEvent(ke);
@@ -518,6 +538,7 @@ class SourceViewer {
         quickDocEnabled = false;
         search.reset();
         dirty = false;
+        validationErrors = null;
         editMode = true;
     }
 
@@ -526,6 +547,7 @@ class SourceViewer {
         editMode = false;
         editState.clear();
         autocompletePopup = null;
+        validationErrors = null;
         if (wasEditing && isMarkdownFile) {
             markdownMode = markdownModeBeforeEdit;
         }
@@ -1345,8 +1367,13 @@ class SourceViewer {
             return;
         }
         try {
-            Files.writeString(editableFile, editState.text(), StandardCharsets.UTF_8);
+            String content = editState.text();
+            Files.writeString(editableFile, content, StandardCharsets.UTF_8);
             dirty = false;
+            validateAndNotify(content);
+            if (validationErrors != null) {
+                return;
+            }
             Path path = editableFile;
             boolean restoreMarkdownMode = markdownModeBeforeEdit;
             editMode = false;
@@ -1356,7 +1383,6 @@ class SourceViewer {
             if (isMarkdownFile) {
                 markdownMode = restoreMarkdownMode;
             }
-            notifySave("Saved: " + editableFile.getFileName(), false);
         } catch (IOException e) {
             notifySave("Save failed: " + e.getMessage(), true);
         }
@@ -1367,12 +1393,64 @@ class SourceViewer {
             return;
         }
         try {
-            Files.writeString(editableFile, editState.text(), StandardCharsets.UTF_8);
+            String content = editState.text();
+            Files.writeString(editableFile, content, StandardCharsets.UTF_8);
             dirty = false;
-            notifySave("Saved: " + editableFile.getFileName(), false);
+            validateAndNotify(content);
         } catch (IOException e) {
             notifySave("Save failed: " + e.getMessage(), true);
         }
+    }
+
+    private void validateAndNotify(String content) {
+        if (validateOnSave && isCamelYamlFile()) {
+            List<Error> errors = validateYaml(content);
+            if (errors != null && !errors.isEmpty()) {
+                List<String> msgs = new ArrayList<>();
+                for (Error error : errors) {
+                    String msg = error.getMessage();
+                    if (msg != null) {
+                        msgs.add(cleanValidationMessage(msg));
+                    }
+                }
+                if (!msgs.isEmpty()) {
+                    validationErrors = msgs;
+                    validationErrorScroll = 0;
+                    return;
+                }
+            }
+        }
+        notifySave("Saved: " + editableFile.getFileName(), false);
+    }
+
+    private List<Error> validateYaml(String content) {
+        try {
+            if (yamlValidator == null) {
+                yamlValidator = new org.apache.camel.dsl.yaml.validator.YamlValidator();
+            }
+            return yamlValidator.validate(content);
+        } catch (Exception e) {
+            return List.of();
+        }
+    }
+
+    private static String cleanValidationMessage(String msg) {
+        // strip FQCN prefix like "com.fasterxml...MarkedYAMLException: "
+        int colonSpace = msg.indexOf(": ");
+        if (colonSpace > 0) {
+            String prefix = msg.substring(0, colonSpace);
+            if (prefix.contains(".") && !prefix.contains(" ")) {
+                msg = msg.substring(colonSpace + 2);
+            }
+        }
+        // strip "at [Source: (StringReader); line: N, column: N]"
+        int atSource = msg.indexOf("at [Source:");
+        if (atSource > 0) {
+            msg = msg.substring(0, atSource).stripTrailing();
+        }
+        // strip "in 'reader', " prefix from snakeyaml messages
+        msg = msg.replace("in 'reader', ", "");
+        return msg;
     }
 
     private void notifySave(String message, boolean error) {
@@ -1656,6 +1734,14 @@ class SourceViewer {
                 .build();
         textArea.renderWithCursor(inner, frame.buffer(), editState, frame);
 
+        // cursor line highlight
+        int cursorRelRow = editState.cursorRow() - editState.scrollRow();
+        if (cursorRelRow >= 0 && cursorRelRow < inner.height()) {
+            int screenY = inner.top() + cursorRelRow;
+            Rect lineRect = new Rect(inner.left(), screenY, inner.width(), 1);
+            frame.buffer().setStyle(lineRect, Style.EMPTY.bg(Theme.zebra()));
+        }
+
         // scope line highlight — shows which EIP or uri: line the cursor belongs to
         if (isCamelYamlFile()) {
             int scopeRow = findScopeLineRow(editState.cursorRow());
@@ -1674,9 +1760,78 @@ class SourceViewer {
             int cursorCol = editState.cursorCol() - editState.scrollCol();
             autocompletePopup.render(frame, inner, cursorRow, cursorCol);
         }
+
+        if (validationErrors != null) {
+            renderValidationPopup(frame, area);
+        }
+    }
+
+    private void renderValidationPopup(Frame frame, Rect area) {
+        int popupW = Math.min(80, area.width() - 4);
+        int innerW = popupW - 2;
+
+        List<Line> allLines = new ArrayList<>();
+        for (int i = 0; i < validationErrors.size(); i++) {
+            if (i > 0) {
+                allLines.add(Line.from(Span.raw("")));
+            }
+            String msg = validationErrors.get(i);
+            wrapText(msg, innerW, allLines);
+        }
+
+        int contentH = allLines.size();
+        int popupH = Math.min(contentH + 2, area.height() - 4);
+        int x = area.left() + Math.max(0, (area.width() - popupW) / 2);
+        int y = area.top() + 2;
+        Rect popup = new Rect(x, y, popupW, popupH);
+
+        frame.renderWidget(Clear.INSTANCE, popup);
+
+        String titleText = " " + validationErrors.size() + " Validation Error"
+                           + (validationErrors.size() > 1 ? "s" : "") + " ";
+        Block block = Block.builder()
+                .borderType(BorderType.ROUNDED).borders(Borders.ALL)
+                .title(Title.from(Line.from(Span.styled(titleText, Theme.error().bold()))))
+                .titleBottom(Title.from(Line.from(
+                        Span.styled(" Esc", Theme.hintKey()), Span.raw(" close "))))
+                .build();
+        frame.renderWidget(block, popup);
+        Rect inner = block.inner(popup);
+
+        int visibleLines = inner.height();
+        int clampedScroll = Math.min(validationErrorScroll, Math.max(0, contentH - visibleLines));
+        validationErrorScroll = clampedScroll;
+        int end = Math.min(clampedScroll + visibleLines, contentH);
+
+        if (clampedScroll < end) {
+            List<Line> visible = allLines.subList(clampedScroll, end);
+            frame.renderWidget(
+                    Paragraph.builder().text(Text.from(visible.toArray(Line[]::new))).build(),
+                    inner);
+        }
+    }
+
+    private static void wrapText(String text, int width, List<Line> out) {
+        if (width <= 0) {
+            width = 40;
+        }
+        int pos = 0;
+        while (pos < text.length()) {
+            int end = Math.min(pos + width, text.length());
+            out.add(Line.from(Span.styled(text.substring(pos, end), Theme.error())));
+            pos = end;
+        }
+        if (text.isEmpty()) {
+            out.add(Line.from(Span.styled(text, Theme.error())));
+        }
     }
 
     void renderFooter(List<Span> spans) {
+        if (editMode && validationErrors != null) {
+            TuiHelper.hint(spans, TuiIcons.HINT_SCROLL, "scroll");
+            TuiHelper.hintLast(spans, "Esc", "close");
+            return;
+        }
         if (editMode) {
             TuiHelper.hint(spans, "Esc", "cancel");
             TuiHelper.hint(spans, "F5", "save & close");

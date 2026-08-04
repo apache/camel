@@ -52,6 +52,7 @@ class MonitorContext {
     boolean logPinVisible;
     boolean ratePerMinute;
     boolean confirmActions;
+    boolean validateOnSave = true;
     BiConsumer<String, Boolean> notificationCallback;
     BiConsumer<String, String> openMarkdownCallback;
     OpenOptionsCallback openOptionsCallback;

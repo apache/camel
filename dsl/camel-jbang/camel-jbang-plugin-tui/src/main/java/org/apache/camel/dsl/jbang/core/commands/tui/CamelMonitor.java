@@ -611,7 +611,9 @@ public class CamelMonitor extends CamelCommand {
     }
 
     private void applyConfirmActions() {
-        ctx.confirmActions = TuiSettings.load().isConfirmActions();
+        TuiSettings settings = TuiSettings.load();
+        ctx.confirmActions = settings.isConfirmActions();
+        ctx.validateOnSave = settings.isValidateOnSave();
     }
 
     // ---- Event Handling ----

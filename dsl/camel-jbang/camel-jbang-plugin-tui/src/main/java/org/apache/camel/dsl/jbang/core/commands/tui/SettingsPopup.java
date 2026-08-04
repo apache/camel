@@ -52,15 +52,16 @@ class SettingsPopup {
     private static final int ROW_LOG_PIN = 3;
     private static final int ROW_RATE_PER = 4;
     private static final int ROW_CONFIRM_ACTIONS = 5;
-    private static final int ROW_FOLDER = 6;
-    private static final int ROW_PROXY_HOST = 7;
-    private static final int ROW_PROXY_PORT = 8;
-    private static final int ROW_SHELL_HISTORY = 9;
-    private static final int ROW_AI_PROVIDER = 10;
-    private static final int ROW_AI_MODEL = 11;
-    private static final int ROW_AI_URL = 12;
-    private static final int ROW_AI_PROMPT_HISTORY = 13;
-    private static final int ROW_COUNT = 14;
+    private static final int ROW_VALIDATE_ON_SAVE = 6;
+    private static final int ROW_FOLDER = 7;
+    private static final int ROW_PROXY_HOST = 8;
+    private static final int ROW_PROXY_PORT = 9;
+    private static final int ROW_SHELL_HISTORY = 10;
+    private static final int ROW_AI_PROVIDER = 11;
+    private static final int ROW_AI_MODEL = 12;
+    private static final int ROW_AI_URL = 13;
+    private static final int ROW_AI_PROMPT_HISTORY = 14;
+    private static final int ROW_COUNT = 15;
 
     private static final String[] LOG_PIN_OPTIONS = { "off", "25", "50", "75" };
     private static final String[] RATE_PER_OPTIONS = { "seconds", "minutes" };
@@ -85,6 +86,7 @@ class SettingsPopup {
     private int logPinIndex;
     private int ratePerIndex;
     private int confirmActionsIndex;
+    private int validateOnSaveIndex;
     private int aiProviderIndex;
     private TextInputState folderInput;
     private TextInputState proxyHostInput;
@@ -161,6 +163,7 @@ class SettingsPopup {
         ratePerIndex = "minutes".equals(currentRatePer) ? 1 : 0;
 
         confirmActionsIndex = settings.isConfirmActions() ? 1 : 0;
+        validateOnSaveIndex = settings.isValidateOnSave() ? 1 : 0;
 
         folderInput = new TextInputState(settings.getDefaultFolder() != null ? settings.getDefaultFolder() : "");
         proxyHostInput = new TextInputState(settings.getProxyHost() != null ? settings.getProxyHost() : "");
@@ -263,6 +266,12 @@ class SettingsPopup {
             }
             return true;
         }
+        if (selectedRow == ROW_VALIDATE_ON_SAVE) {
+            if (ke.isChar(' ') || ke.isRight() || ke.isLeft()) {
+                validateOnSaveIndex = validateOnSaveIndex == 0 ? 1 : 0;
+            }
+            return true;
+        }
         if (selectedRow == ROW_FOLDER) {
             handleTextInput(ke, folderInput);
             return true;
@@ -323,6 +332,10 @@ class SettingsPopup {
         if (monitorContext != null) {
             monitorContext.confirmActions = confirmActionsIndex == 1;
         }
+        settings.setValidateOnSave(validateOnSaveIndex == 1 ? "true" : "false");
+        if (monitorContext != null) {
+            monitorContext.validateOnSave = validateOnSaveIndex == 1;
+        }
         settings.setDefaultFolder(stripControlChars(folderInput.text().trim()));
         settings.setProxyHost(stripControlChars(proxyHostInput.text().trim()));
         settings.setProxyPort(stripControlChars(proxyPortInput.text().trim()));
@@ -344,8 +357,9 @@ class SettingsPopup {
     }
 
     void render(Frame frame, Rect area) {
-        int popupW = Math.min(60, area.width() - 4);
-        int popupH = 2 + ROW_COUNT;
+        int dividers = 4;
+        int popupW = Math.min(70, area.width() - 4);
+        int popupH = 2 + ROW_COUNT + dividers;
         int x = area.left() + Math.max(0, (area.width() - popupW) / 2);
         int y = area.top() + 2;
         Rect popup = new Rect(x, y, Math.min(popupW, area.width()), Math.min(popupH, area.height() - 2));
@@ -360,10 +374,11 @@ class SettingsPopup {
 
         int innerX = popup.left() + 2;
         int innerW = popup.width() - 4;
-        int labelW = 16;
+        int labelW = 24;
         int fieldW = innerW - labelW;
         int rowY = popup.top() + 1;
 
+        // --- Appearance ---
         renderLabel(frame, innerX, rowY, labelW, "Theme:", selectedRow == ROW_THEME);
         renderValue(frame, innerX + labelW, rowY, fieldW, ThemeMode.values()[themeIndex].label(), selectedRow == ROW_THEME);
         rowY++;
@@ -376,10 +391,14 @@ class SettingsPopup {
         renderValue(frame, innerX + labelW, rowY, fieldW, currentSelectTabLabel(), selectedRow == ROW_SELECT_TAB);
         rowY++;
 
+        renderDivider(frame, innerX, rowY, innerW);
+        rowY++;
+
+        // --- Display ---
         String logPinLabel = "off".equals(LOG_PIN_OPTIONS[logPinIndex])
                 ? "off"
                 : LOG_PIN_OPTIONS[logPinIndex] + "%";
-        renderLabel(frame, innerX, rowY, labelW, "  Log Pin:", selectedRow == ROW_LOG_PIN);
+        renderLabel(frame, innerX, rowY, labelW, "Log Pin:", selectedRow == ROW_LOG_PIN);
         renderValue(frame, innerX + labelW, rowY, fieldW, logPinLabel, selectedRow == ROW_LOG_PIN);
         rowY++;
 
@@ -387,15 +406,28 @@ class SettingsPopup {
         renderValue(frame, innerX + labelW, rowY, fieldW, RATE_PER_OPTIONS[ratePerIndex], selectedRow == ROW_RATE_PER);
         rowY++;
 
-        renderLabel(frame, innerX, rowY, labelW, "Confirm:", selectedRow == ROW_CONFIRM_ACTIONS);
+        renderDivider(frame, innerX, rowY, innerW);
+        rowY++;
+
+        // --- Editor ---
+        renderLabel(frame, innerX, rowY, labelW, "Confirm Actions:", selectedRow == ROW_CONFIRM_ACTIONS);
         renderValue(frame, innerX + labelW, rowY, fieldW, confirmActionsIndex == 1 ? "on" : "off",
                 selectedRow == ROW_CONFIRM_ACTIONS);
+        rowY++;
+
+        renderLabel(frame, innerX, rowY, labelW, "Validate on Save:", selectedRow == ROW_VALIDATE_ON_SAVE);
+        renderValue(frame, innerX + labelW, rowY, fieldW, validateOnSaveIndex == 1 ? "on" : "off",
+                selectedRow == ROW_VALIDATE_ON_SAVE);
         rowY++;
 
         renderLabel(frame, innerX, rowY, labelW, "Default Folder:", selectedRow == ROW_FOLDER);
         renderFolder(frame, innerX + labelW, rowY, fieldW, selectedRow == ROW_FOLDER);
         rowY++;
 
+        renderDivider(frame, innerX, rowY, innerW);
+        rowY++;
+
+        // --- Network ---
         renderLabel(frame, innerX, rowY, labelW, "Proxy Host:", selectedRow == ROW_PROXY_HOST);
         renderTextInput(frame, innerX + labelW, rowY, fieldW, proxyHostInput,
                 selectedRow == ROW_PROXY_HOST, "proxy.corp.com");
@@ -411,6 +443,10 @@ class SettingsPopup {
                 selectedRow == ROW_SHELL_HISTORY, "(100)");
         rowY++;
 
+        renderDivider(frame, innerX, rowY, innerW);
+        rowY++;
+
+        // --- AI ---
         renderLabel(frame, innerX, rowY, labelW, "AI Provider:", selectedRow == ROW_AI_PROVIDER);
         renderValue(frame, innerX + labelW, rowY, fieldW, AI_PROVIDERS.get(aiProviderIndex),
                 selectedRow == ROW_AI_PROVIDER);
@@ -433,7 +469,8 @@ class SettingsPopup {
         hint(spans, TuiIcons.HINT_SCROLL, "navigate");
         if (selectedRow == ROW_THEME || selectedRow == ROW_START_TAB || selectedRow == ROW_SELECT_TAB
                 || selectedRow == ROW_LOG_PIN || selectedRow == ROW_RATE_PER
-                || selectedRow == ROW_CONFIRM_ACTIONS || selectedRow == ROW_AI_PROVIDER) {
+                || selectedRow == ROW_CONFIRM_ACTIONS || selectedRow == ROW_VALIDATE_ON_SAVE
+                || selectedRow == ROW_AI_PROVIDER) {
             hint(spans, "Space", "cycle");
         }
         hint(spans, "Enter", "save");
@@ -502,6 +539,10 @@ class SettingsPopup {
             }
         }
         return sb.toString();
+    }
+
+    private void renderDivider(Frame frame, int x, int y, int w) {
+        frame.renderWidget(Paragraph.from(Line.from(Span.styled("─".repeat(w), Style.EMPTY.dim()))), new Rect(x, y, w, 1));
     }
 
     private void renderLabel(Frame frame, int x, int y, int w, String label, boolean selected) {

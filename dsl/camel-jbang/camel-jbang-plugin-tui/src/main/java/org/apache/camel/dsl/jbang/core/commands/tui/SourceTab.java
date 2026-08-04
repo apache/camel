@@ -119,6 +119,7 @@ class SourceTab extends AbstractTab {
                 ctx.notificationCallback.accept(msg, error);
             }
         });
+        sourceViewer.setValidateOnSave(ctx.validateOnSave);
     }
 
     boolean isSourceViewerEditMode() {
@@ -260,6 +261,7 @@ class SourceTab extends AbstractTab {
 
     @Override
     public void render(Frame frame, Rect area) {
+        sourceViewer.setValidateOnSave(ctx.validateOnSave);
         if (ctx.selectedPid == null) {
             renderNoSelection(frame, area);
             return;

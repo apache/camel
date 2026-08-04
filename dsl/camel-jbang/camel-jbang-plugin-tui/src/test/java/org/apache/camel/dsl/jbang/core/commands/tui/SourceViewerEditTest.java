@@ -55,6 +55,7 @@ class SourceViewerEditTest {
     void setUp() throws Exception {
         Theme.resetForTesting();
         viewer = new SourceViewer();
+        viewer.setValidateOnSave(false);
         viewer.setNotificationCallback((msg, error) -> {
             lastNotification.set(msg);
             lastNotificationError.set(error);
@@ -380,6 +381,7 @@ class SourceViewerEditTest {
         AtomicReference<List<IntegrationInfo>> data = new AtomicReference<>(List.of(info));
         MonitorContext ctx = new MonitorContext(data, new AtomicReference<>(List.of()));
         ctx.selectedPid = "1234";
+        ctx.validateOnSave = false;
 
         SourceTab tab = new SourceTab(ctx);
         tab.onTabSelected();
