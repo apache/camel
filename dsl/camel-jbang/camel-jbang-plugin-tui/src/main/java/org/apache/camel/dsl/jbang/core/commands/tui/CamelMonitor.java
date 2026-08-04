@@ -258,7 +258,6 @@ public class CamelMonitor extends CamelCommand {
 
         // Create shared context and tab instances
         ctx = new MonitorContext(dataService.data(), dataService.infraData());
-        ctx.webSession = webBackend != null;
         dataService.setContext(ctx);
 
         actionsPopup = new ActionsPopup(
@@ -792,12 +791,9 @@ public class CamelMonitor extends CamelCommand {
         boolean textEditing = probeEditing || sourceSearchActive || logSearchActive || spanFilterActive
                 || beanFilterActive || classpathFilterActive || mavenDepsFilterActive || sqlInputActive
                 || catalogFilterActive || filesBrowserTextActive;
-        // A browser session only views the shared monitor; it must not be able to quit the TUI
-        // process that the local terminal session (or another browser tab) is still using.
+        // Each session (the local terminal, or a browser tab connected via --web) owns an
+        // independent CamelMonitor/TuiRunner, so quitting here only ends this session.
         if (!textEditing && (ke.isCharIgnoreCase('q') || ke.isCtrlC())) {
-            if (webBackend != null) {
-                return true;
-            }
             if (!ke.isCtrlC() && ctx.confirmActions) {
                 popupManager.showConfirm("Confirm Quit", " Quit the TUI? ", () -> runner.quit());
             } else {
@@ -806,9 +802,7 @@ public class CamelMonitor extends CamelCommand {
             return true;
         }
         if (ke.isCtrlC()) {
-            if (webBackend == null) {
-                runner.quit();
-            }
+            runner.quit();
             return true;
         }
         if (!textEditing) {

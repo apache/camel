@@ -98,10 +98,21 @@ class TuiWebServerTest {
     @Test
     void acceptsWebSocketUpgradeFromTheLoopbackPage() throws Exception {
         try (Port reserved = AvailablePortFinder.find()) {
-            server = newServer(reserved.getPort());
+            server = newServerWithNoOpSession(reserved.getPort());
             server.start();
 
             assertThat(webSocketHandshake(reserved.getPort(), "http://127.0.0.1:" + reserved.getPort()))
+                    .startsWith("HTTP/1.1 101");
+        }
+    }
+
+    @Test
+    void acceptsWebSocketUpgradeFromTheLoopbackHostname() throws Exception {
+        try (Port reserved = AvailablePortFinder.find()) {
+            server = newServerWithNoOpSession(reserved.getPort());
+            server.start();
+
+            assertThat(webSocketHandshake(reserved.getPort(), "http://localhost:" + reserved.getPort()))
                     .startsWith("HTTP/1.1 101");
         }
     }
@@ -133,7 +144,7 @@ class TuiWebServerTest {
     @Test
     void acceptsAWebSocketHandshakeOnTheWsEndpoint() throws Exception {
         try (Port reserved = AvailablePortFinder.find()) {
-            server = newServer(reserved.getPort());
+            server = newServerWithNoOpSession(reserved.getPort());
             server.start();
 
             HttpClient client = HttpClient.newHttpClient();
@@ -193,6 +204,17 @@ class TuiWebServerTest {
         return new TuiWebServer(
                 port, new CamelJBangMain(), Thread.currentThread().getContextClassLoader(), null, 200,
                 "dark");
+    }
+
+    /**
+     * A server whose accepted sessions do nothing, so tests exercising the HTTP/WebSocket transport don't pay the cost
+     * of spinning up a full {@link CamelMonitor}.
+     */
+    private static TuiWebServer newServerWithNoOpSession(int port) {
+        return new TuiWebServer(
+                port, new CamelJBangMain(), Thread.currentThread().getContextClassLoader(), null, 200,
+                "dark", connection -> {
+                });
     }
 
     private static String webSocketHandshake(int port, String origin) throws IOException {

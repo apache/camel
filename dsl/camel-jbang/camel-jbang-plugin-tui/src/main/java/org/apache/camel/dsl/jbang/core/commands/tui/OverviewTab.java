@@ -1053,9 +1053,7 @@ class OverviewTab extends AbstractTab {
 
     @Override
     public void renderFooter(List<Span> spans) {
-        if (!ctx.webSession) {
-            hint(spans, "q", "quit");
-        }
+        hint(spans, "q", "quit");
         if (ctx.selectedPid != null) {
             hint(spans, "Esc", "unselect");
         }

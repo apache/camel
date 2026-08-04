@@ -176,6 +176,7 @@
         var term = null;
         var fitAddon = null;
         var resizeTimeout = null;
+        var resizeObserver = null;
 
         socket.onopen = function () {
           setStatus('connected', 'Connected');
@@ -245,13 +246,23 @@
 
           window.addEventListener('resize', handleResize);
           if (window.ResizeObserver) {
-            new ResizeObserver(handleResize).observe(document.getElementById('terminal-container'));
+            resizeObserver = new ResizeObserver(handleResize);
+            resizeObserver.observe(document.getElementById('terminal-container'));
           }
 
           socket.onclose = function (event) {
             setStatus('disconnected', 'Disconnected (code: ' + event.code + ')');
             showDisconnectOverlay('The session ended (code ' + event.code + '). Reload the page to reconnect.');
             window.removeEventListener('resize', handleResize);
+            if (resizeObserver) {
+              resizeObserver.disconnect();
+            }
+            if (resizeTimeout) {
+              clearTimeout(resizeTimeout);
+            }
+            if (term) {
+              term.dispose();
+            }
           };
 
           socket.onerror = function (error) {
