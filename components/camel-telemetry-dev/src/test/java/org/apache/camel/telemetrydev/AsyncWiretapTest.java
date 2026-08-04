@@ -37,7 +37,11 @@ import static org.junit.jupiter.api.Assertions.assertNull;
  * WiretappedRouteTest tests the execution of a new spin off component which would create a new exchange, for example,
  * using the wiretap component.
  */
-public class AsyncWiretapTest extends TelemetryDevTracerTestSupport {
+class AsyncWiretapTest extends TelemetryDevTracerTestSupport {
+
+    private static final int MESSAGE_COUNT = 10;
+    private static final int SPAN_COUNT = 7;
+    private static final long TIMEOUT_SECONDS = 30;
 
     @Override
     protected CamelContext createCamelContext() throws Exception {
@@ -52,27 +56,24 @@ public class AsyncWiretapTest extends TelemetryDevTracerTestSupport {
 
     @Test
     void testRouteMultipleRequests() throws Exception {
-        int j = 10;
         MockEndpoint mock = getMockEndpoint("mock:end");
-        mock.expectedMessageCount(j);
-        for (int i = 0; i < j; i++) {
+        mock.expectedMessageCount(MESSAGE_COUNT);
+        for (int i = 0; i < MESSAGE_COUNT; i++) {
             context.createProducerTemplate().sendBody("direct:start", "Hello!");
         }
-        MockEndpoint.assertIsSatisfied(context, 30, TimeUnit.SECONDS);
+        MockEndpoint.assertIsSatisfied(context, TIMEOUT_SECONDS, TimeUnit.SECONDS);
         // Wait for async trace writing to complete — traces are written asynchronously
         // after exchange processing, so we poll until all traces with expected spans arrive.
-        await().atMost(30, TimeUnit.SECONDS).untilAsserted(() -> {
-            Map<String, DevTrace> traces = tracesFromLog();
-            assertEquals(j, traces.size());
-            for (DevTrace trace : traces.values()) {
-                assertEquals(7, trace.getSpans().size());
-            }
-        });
+        await().atMost(TIMEOUT_SECONDS, TimeUnit.SECONDS)
+                .pollInterval(100, TimeUnit.MILLISECONDS)
+                .untilAsserted(() -> {
+                    Map<String, DevTrace> traces = tracesFromLog();
+                    assertEquals(MESSAGE_COUNT, traces.size());
+                    for (DevTrace trace : traces.values()) {
+                        assertEquals(SPAN_COUNT, trace.getSpans().size());
+                    }
+                });
         Map<String, DevTrace> traces = tracesFromLog();
-        // Each trace should have a unique trace id. It is enough to assert that
-        // the number of elements in the map is the same of the requests to prove
-        // all traces have been generated uniquely.
-        assertEquals(j, traces.size());
         // Each trace should have the same structure
         for (DevTrace trace : traces.values()) {
             checkTrace(trace, "Hello!");
@@ -81,7 +82,7 @@ public class AsyncWiretapTest extends TelemetryDevTracerTestSupport {
 
     private void checkTrace(DevTrace trace, String expectedBody) {
         List<DevSpanAdapter> spans = trace.getSpans();
-        assertEquals(7, spans.size());
+        assertEquals(SPAN_COUNT, spans.size());
         DevSpanAdapter testProducer = TelemetryDevTracerTestSupport.getSpan(spans, "direct://start", Op.EVENT_SENT);
         DevSpanAdapter direct = TelemetryDevTracerTestSupport.getSpan(spans, "direct://start", Op.EVENT_RECEIVED);
         DevSpanAdapter wiretapDirectTo = TelemetryDevTracerTestSupport.getSpan(spans, "direct://tap", Op.EVENT_SENT);

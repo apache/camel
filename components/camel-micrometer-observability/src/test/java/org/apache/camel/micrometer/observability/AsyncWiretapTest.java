@@ -16,9 +16,9 @@
  */
 package org.apache.camel.micrometer.observability;
 
-import java.io.IOException;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.TimeUnit;
 
 import io.opentelemetry.api.common.AttributeKey;
 import io.opentelemetry.api.trace.SpanId;
@@ -30,6 +30,7 @@ import org.apache.camel.micrometer.observability.CamelOpenTelemetryExtension.Ote
 import org.apache.camel.telemetry.Op;
 import org.junit.jupiter.api.Test;
 
+import static org.awaitility.Awaitility.await;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -38,28 +39,36 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
  * WiretappedRouteTest tests the execution of a new spin off component which would create a new exchange,
  * for example, using the wiretap component.
  */
-public class AsyncWiretapTest extends MicrometerObservabilityTracerPropagationTestSupport {
+class AsyncWiretapTest extends MicrometerObservabilityTracerPropagationTestSupport {
+
+    private static final int MESSAGE_COUNT = 10;
+    private static final int SPAN_COUNT = 7;
+    private static final long TIMEOUT_SECONDS = 30;
 
     @Test
-    void testRouteMultipleRequests() throws InterruptedException, IOException {
-        int j = 10;
+    void testRouteMultipleRequests() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:end");
-        mock.expectedMessageCount(j);
-        mock.setAssertPeriod(5000);
-        for (int i = 0; i < j; i++) {
+        mock.expectedMessageCount(MESSAGE_COUNT);
+        for (int i = 0; i < MESSAGE_COUNT; i++) {
             context.createProducerTemplate().sendBody("direct:start", "Hello!");
         }
-        mock.assertIsSatisfied(1000);
+        MockEndpoint.assertIsSatisfied(context, TIMEOUT_SECONDS, TimeUnit.SECONDS);
+        // Wait for async trace export to complete — spans are written asynchronously
+        // after exchange processing, so we poll until all traces with expected spans arrive.
+        await().atMost(TIMEOUT_SECONDS, TimeUnit.SECONDS)
+                .pollInterval(100, TimeUnit.MILLISECONDS)
+                .untilAsserted(() -> {
+                    Map<String, OtelTrace> traces = otelExtension.getTraces();
+                    assertEquals(MESSAGE_COUNT, traces.size());
+                    for (OtelTrace trace : traces.values()) {
+                        assertEquals(SPAN_COUNT, trace.getSpans().size());
+                    }
+                });
         Map<String, OtelTrace> traces = otelExtension.getTraces();
-        // Each trace should have a unique trace id. It is enough to assert that
-        // the number of elements in the map is the same of the requests to prove
-        // all traces have been generated uniquely.
-        assertEquals(j, traces.size());
         // Each trace should have the same structure
         for (OtelTrace trace : traces.values()) {
             checkTrace(trace, "Hello!");
         }
-
     }
 
     private void checkTrace(OtelTrace trace, String expectedBody) {
