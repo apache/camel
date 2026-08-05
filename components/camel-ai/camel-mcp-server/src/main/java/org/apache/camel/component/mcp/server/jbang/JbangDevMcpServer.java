@@ -25,6 +25,7 @@ import java.util.Set;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.CamelContextAware;
+import org.apache.camel.component.ai.tool.AiToolParameterHelper;
 import org.apache.camel.component.ai.tool.AiToolParameterHelper.ParameterDef;
 import org.apache.camel.component.mcp.server.McpServerInfo;
 import org.apache.camel.component.mcp.server.McpServerTool;
@@ -33,8 +34,6 @@ import org.apache.camel.component.mcp.server.McpToolCallResult;
 import org.apache.camel.component.mcp.server.vertx.VertxMcpServerEngine;
 import org.apache.camel.component.platform.http.vertx.VertxPlatformHttpRouter;
 import org.apache.camel.support.service.ServiceSupport;
-import org.apache.camel.util.json.JsonArray;
-import org.apache.camel.util.json.JsonObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -103,6 +102,8 @@ public class JbangDevMcpServer extends ServiceSupport implements CamelContextAwa
 
     private McpServerTool toMcpTool(Object descriptor) {
         String toolName = invokeString(descriptor, "name");
+        List<?> params = invokeList(descriptor, "params");
+        Map<String, ParameterDef> parameterDefs = buildParameterDefs(params);
         McpToolCallHandler handler = arguments -> {
             try {
                 Object result = executeTool(toolName, stringArguments(arguments));
@@ -132,13 +133,12 @@ public class JbangDevMcpServer extends ServiceSupport implements CamelContextAwa
 
             @Override
             public String inputSchemaJson() {
-                List<?> params = invokeList(descriptor, "params");
-                return params == null || params.isEmpty() ? null : buildInputSchemaJson(params);
+                return parameterDefs.isEmpty() ? null : AiToolParameterHelper.buildJsonSchemaFromDefs(parameterDefs);
             }
 
             @Override
             public Map<String, ParameterDef> parameters() {
-                return Map.of();
+                return parameterDefs;
             }
 
             @Override
@@ -192,26 +192,29 @@ public class JbangDevMcpServer extends ServiceSupport implements CamelContextAwa
         }
     }
 
-    private static String buildInputSchemaJson(List<?> params) {
-        JsonObject schema = new JsonObject();
-        schema.put("type", "object");
-        JsonObject properties = new JsonObject();
-        JsonArray required = new JsonArray();
+    private static Map<String, ParameterDef> buildParameterDefs(List<?> params) {
+        if (params == null || params.isEmpty()) {
+            return Map.of();
+        }
+        Map<String, String> flat = new LinkedHashMap<>();
         for (Object param : params) {
             String name = invokeString(param, "name");
-            JsonObject prop = new JsonObject();
-            prop.put("type", invokeString(param, "type"));
-            prop.put("description", invokeString(param, "description"));
-            properties.put(name, prop);
+            if (name == null || name.isBlank()) {
+                continue;
+            }
+            String type = invokeString(param, "type");
+            if (type != null && !type.isBlank()) {
+                flat.put(name, type);
+            }
+            String description = invokeString(param, "description");
+            if (description != null && !description.isBlank()) {
+                flat.put(name + ".description", description);
+            }
             if (Boolean.TRUE.equals(invokeBoolean(param, "required"))) {
-                required.add(name);
+                flat.put(name + ".required", "true");
             }
         }
-        schema.put("properties", properties);
-        if (!required.isEmpty()) {
-            schema.put("required", required);
-        }
-        return schema.toJson();
+        return AiToolParameterHelper.parseParameterMetadata(flat);
     }
 
     private static Boolean invokeBoolean(Object target, String method) {
