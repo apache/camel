@@ -19,6 +19,8 @@ package org.apache.camel.test.infra.ftp.services.embedded;
 
 import java.io.File;
 
+import org.apache.camel.test.infra.common.services.ContainerEnvironmentUtil;
+import org.apache.camel.test.infra.ftp.common.FtpProperties;
 import org.apache.camel.test.infra.ftp.services.FtpService;
 import org.apache.ftpserver.FtpServerFactory;
 import org.apache.ftpserver.listener.ListenerFactory;
@@ -44,7 +46,8 @@ public class FtpsEmbeddedService extends FtpEmbeddedService implements FtpServic
         FtpServerFactory serverFactory = super.createFtpServerFactory(embeddedConfiguration);
 
         ListenerFactory listenerFactory = new ListenerFactory(serverFactory.getListener(DEFAULT_LISTENER));
-        listenerFactory.setPort(port);
+        // Always assign the FTPS default port; do not reuse the instance field which may be stale (CAMEL-23499).
+        listenerFactory.setPort(ContainerEnvironmentUtil.getConfiguredPortOrRandom(FtpProperties.DEFAULT_FTPS_PORT));
         listenerFactory.setImplicitSsl(embeddedConfiguration.getSecurityConfiguration().isUseImplicit());
         listenerFactory.setSslConfiguration(createSslConfiguration(embeddedConfiguration).createSslConfiguration());
 
