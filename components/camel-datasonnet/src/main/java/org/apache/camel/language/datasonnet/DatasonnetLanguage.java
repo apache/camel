@@ -29,6 +29,7 @@ import io.github.classgraph.ClassGraph;
 import io.github.classgraph.ScanResult;
 import org.apache.camel.Expression;
 import org.apache.camel.Predicate;
+import org.apache.camel.component.dataweave.DataWeaveConverter;
 import org.apache.camel.spi.annotations.Language;
 import org.apache.camel.support.LRUCacheFactory;
 import org.apache.camel.support.SingleInputTypedLanguageSupport;
@@ -69,7 +70,11 @@ public class DatasonnetLanguage extends SingleInputTypedLanguageSupport {
 
     @Override
     public Expression createExpression(Expression source, String expression, Object[] properties) {
+        boolean dataWeave = isDataWeaveResource(expression);
         expression = loadResource(expression);
+        if (dataWeave || isDataWeaveContent(expression)) {
+            expression = convertDataWeave(expression);
+        }
 
         DatasonnetExpression answer = new DatasonnetExpression(expression);
         answer.setSource(source);
@@ -98,6 +103,28 @@ public class DatasonnetLanguage extends SingleInputTypedLanguageSupport {
 
     public Map<String, String> getClasspathImports() {
         return classpathImports;
+    }
+
+    private static boolean isDataWeaveResource(String expression) {
+        return expression != null && expression.endsWith(".dwl");
+    }
+
+    private static boolean isDataWeaveContent(String expression) {
+        return expression != null && expression.stripLeading().startsWith("%dw");
+    }
+
+    private static String convertDataWeave(String expression) {
+        DataWeaveConverter converter = new DataWeaveConverter();
+        converter.setIncludeComments(false);
+        String result;
+        if (expression.contains("%dw") || expression.contains("---")) {
+            result = converter.convert(expression);
+        } else {
+            result = converter.convertExpression(expression);
+        }
+        LOG.debug("Converted DataWeave to DataSonnet: {} expression(s), {} require manual review",
+                converter.getConvertedCount(), converter.getTodoCount());
+        return result;
     }
 
     private Map<String, String> discoverDataSonnetLibraries() {
