@@ -16,45 +16,60 @@
  */
 package org.apache.camel.component.xslt;
 
+import java.util.concurrent.TimeUnit;
+
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.junit.jupiter.api.Test;
 
+import static org.awaitility.Awaitility.await;
+
 /**
  *
  */
-public class XsltFromFileExceptionTest extends ContextTestSupport {
+class XsltFromFileExceptionTest extends ContextTestSupport {
+
+    private static final long TIMEOUT_SECONDS = 30;
 
     @Test
-    public void testXsltFromFileExceptionOk() throws Exception {
+    void testXsltFromFileExceptionOk() throws Exception {
         getMockEndpoint("mock:result").expectedMessageCount(1);
         getMockEndpoint("mock:error").expectedMessageCount(0);
 
         template.sendBodyAndHeader(fileUri(), "<hello>world!</hello>", Exchange.FILE_NAME, "hello.xml");
 
-        assertMockEndpointsSatisfied();
+        // Do not use oneExchangeDone here: the producer write to fileUri() can satisfy
+        // the global whenDone(1) notify before the file consumer route runs.
+        assertMockEndpointsSatisfied(TIMEOUT_SECONDS, TimeUnit.SECONDS);
 
-        oneExchangeDone.matchesWaitTime();
-
-        assertFileNotExists(testFile("hello.xml"));
-        assertFileExists(testFile("ok/hello.xml"));
+        // File move happens after route processing; poll until the consumer has moved the file.
+        await().atMost(TIMEOUT_SECONDS, TimeUnit.SECONDS)
+                .pollInterval(100, TimeUnit.MILLISECONDS)
+                .untilAsserted(() -> {
+                    assertFileNotExists(testFile("hello.xml"));
+                    assertFileExists(testFile("ok/hello.xml"));
+                });
     }
 
     @Test
-    public void testXsltFromFileExceptionFail() throws Exception {
+    void testXsltFromFileExceptionFail() throws Exception {
         getMockEndpoint("mock:result").expectedMessageCount(0);
         getMockEndpoint("mock:error").expectedMessageCount(1);
 
         // the last tag is not ended properly
         template.sendBodyAndHeader(fileUri(), "<hello>world!</hello", Exchange.FILE_NAME, "hello2.xml");
 
-        assertMockEndpointsSatisfied();
+        // Do not use oneExchangeDone here: the producer write to fileUri() can satisfy
+        // the global whenDone(1) notify before the file consumer route runs.
+        assertMockEndpointsSatisfied(TIMEOUT_SECONDS, TimeUnit.SECONDS);
 
-        oneExchangeDone.matchesWaitTime();
-
-        assertFileNotExists(testFile("hello2.xml"));
-        assertFileExists(testFile("error/hello2.xml"));
+        await().atMost(TIMEOUT_SECONDS, TimeUnit.SECONDS)
+                .pollInterval(100, TimeUnit.MILLISECONDS)
+                .untilAsserted(() -> {
+                    assertFileNotExists(testFile("hello2.xml"));
+                    assertFileExists(testFile("error/hello2.xml"));
+                });
     }
 
     @Override
