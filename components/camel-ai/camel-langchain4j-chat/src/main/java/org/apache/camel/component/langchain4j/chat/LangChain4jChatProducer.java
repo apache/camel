@@ -135,7 +135,7 @@ public class LangChain4jChatProducer extends DefaultProducer {
             message.setHeader(LangChain4jChatHeaders.TOTAL_TOKEN_COUNT, chatResponse.tokenUsage().totalTokenCount());
         }
 
-        String responseModel = resolveResponseModel(chatResponse, requestModel);
+        String responseModel = GenAiModelResolver.resolveResponseModelName(chatResponse, requestModel);
         if (responseModel != null) {
             message.setHeader(LangChain4jChatHeaders.RESPONSE_MODEL, responseModel);
         }
@@ -158,7 +158,7 @@ public class LangChain4jChatProducer extends DefaultProducer {
                     chatResponse.tokenUsage() != null ? chatResponse.tokenUsage().inputTokenCount() : null,
                     chatResponse.tokenUsage() != null ? chatResponse.tokenUsage().outputTokenCount() : null,
                     chatResponse.finishReason(),
-                    resolveResponseModel(chatResponse, observationContext.requestModel())));
+                    GenAiModelResolver.resolveResponseModelName(chatResponse, observationContext.requestModel())));
             return extractAiResponse(chatResponse.aiMessage());
         } catch (RuntimeException e) {
             observation.recordError(e);
@@ -219,7 +219,7 @@ public class LangChain4jChatProducer extends DefaultProducer {
                     chatResponse.tokenUsage() != null ? chatResponse.tokenUsage().inputTokenCount() : null,
                     chatResponse.tokenUsage() != null ? chatResponse.tokenUsage().outputTokenCount() : null,
                     chatResponse.finishReason(),
-                    resolveResponseModel(chatResponse, observationContext.requestModel())));
+                    GenAiModelResolver.resolveResponseModelName(chatResponse, observationContext.requestModel())));
             response = chatResponse.aiMessage();
             return extractAiResponse(response);
         } catch (RuntimeException e) {
@@ -238,10 +238,6 @@ public class LangChain4jChatProducer extends DefaultProducer {
                 .requestModel(requestModel)
                 .componentScheme("langchain4j-chat")
                 .build();
-    }
-
-    private static String resolveResponseModel(ChatResponse chatResponse, String requestModel) {
-        return requestModel;
     }
 
     private String extractAiResponse(AiMessage response) {

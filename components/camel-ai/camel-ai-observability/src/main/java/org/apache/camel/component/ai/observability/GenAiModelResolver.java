@@ -16,7 +16,10 @@
  */
 package org.apache.camel.component.ai.observability;
 
-import java.lang.reflect.Method;
+import dev.langchain4j.model.ModelProvider;
+import dev.langchain4j.model.chat.ChatModel;
+import dev.langchain4j.model.chat.response.ChatResponse;
+import dev.langchain4j.model.embedding.EmbeddingModel;
 
 /**
  * Resolves GenAI provider and model metadata from LangChain4j model beans.
@@ -32,60 +35,91 @@ public final class GenAiModelResolver {
         if (model == null) {
             return UNKNOWN;
         }
-        String className = model.getClass().getName().toLowerCase();
-        if (className.contains("openai")) {
-            return "openai";
+        if (model instanceof ChatModel chatModel) {
+            return mapProvider(chatModel.provider());
         }
-        if (className.contains("anthropic")) {
-            return "anthropic";
+        if (model instanceof EmbeddingModel embeddingModel) {
+            return mapProvider(embeddingModel.provider());
         }
-        if (className.contains("ollama")) {
-            return "ollama";
-        }
-        if (className.contains("azure")) {
-            return "azure.ai.openai";
-        }
-        if (className.contains("vertex") || className.contains("google")) {
-            return "gcp.vertex_ai";
-        }
-        if (className.contains("mistral")) {
-            return "mistral_ai";
-        }
-        if (className.contains("huggingface") || className.contains("hugging")) {
-            return "huggingface";
-        }
-        if (className.contains("bedrock") || className.contains("amazon")) {
-            return "aws.bedrock";
-        }
-        return UNKNOWN;
+        return resolveSystemFromPackage(model.getClass().getPackageName());
     }
 
     public static String resolveModelName(Object model) {
         if (model == null) {
             return UNKNOWN;
         }
-        String fromMethod = invokeStringMethod(model, "modelName");
-        if (fromMethod != null && !fromMethod.isBlank()) {
-            return fromMethod;
+        if (model instanceof ChatModel chatModel) {
+            String modelName = chatModel.defaultRequestParameters().modelName();
+            if (modelName != null && !modelName.isBlank()) {
+                return modelName;
+            }
         }
-        fromMethod = invokeStringMethod(model, "getModelName");
-        if (fromMethod != null && !fromMethod.isBlank()) {
-            return fromMethod;
-        }
-        fromMethod = invokeStringMethod(model, "model");
-        if (fromMethod != null && !fromMethod.isBlank()) {
-            return fromMethod;
+        if (model instanceof EmbeddingModel embeddingModel) {
+            String modelName = embeddingModel.modelName();
+            if (modelName != null && !modelName.isBlank()) {
+                return modelName;
+            }
         }
         return UNKNOWN;
     }
 
-    private static String invokeStringMethod(Object target, String methodName) {
-        try {
-            Method method = target.getClass().getMethod(methodName);
-            Object value = method.invoke(target);
-            return value != null ? value.toString() : null;
-        } catch (ReflectiveOperationException e) {
-            return null;
+    /**
+     * Resolves the response model from a LangChain4j {@link ChatResponse}, falling back when absent.
+     */
+    public static String resolveResponseModelName(ChatResponse chatResponse, String fallback) {
+        if (chatResponse == null) {
+            return fallback;
         }
+        String modelName = chatResponse.modelName();
+        return modelName != null && !modelName.isBlank() ? modelName : fallback;
+    }
+
+    private static String mapProvider(ModelProvider provider) {
+        if (provider == null) {
+            return UNKNOWN;
+        }
+        return switch (provider) {
+            case OPEN_AI -> "openai";
+            case ANTHROPIC -> "anthropic";
+            case OLLAMA -> "ollama";
+            case AZURE_OPEN_AI -> "azure.ai.openai";
+            case GOOGLE_VERTEX_AI_GEMINI, GOOGLE_VERTEX_AI_ANTHROPIC -> "gcp.vertex_ai";
+            case GOOGLE_AI_GEMINI, GOOGLE_GENAI -> "google";
+            case MISTRAL_AI -> "mistral_ai";
+            case AMAZON_BEDROCK -> "aws.bedrock";
+            default -> UNKNOWN;
+        };
+    }
+
+    private static String resolveSystemFromPackage(String packageName) {
+        if (packageName == null || packageName.isBlank()) {
+            return UNKNOWN;
+        }
+        if (packageName.startsWith("dev.langchain4j.model.openai")) {
+            return "openai";
+        }
+        if (packageName.startsWith("dev.langchain4j.model.anthropic")) {
+            return "anthropic";
+        }
+        if (packageName.startsWith("dev.langchain4j.model.ollama")) {
+            return "ollama";
+        }
+        if (packageName.startsWith("dev.langchain4j.model.azure")) {
+            return "azure.ai.openai";
+        }
+        if (packageName.startsWith("dev.langchain4j.model.vertexai")
+                || packageName.startsWith("dev.langchain4j.model.google")) {
+            return "gcp.vertex_ai";
+        }
+        if (packageName.startsWith("dev.langchain4j.model.mistralai")) {
+            return "mistral_ai";
+        }
+        if (packageName.startsWith("dev.langchain4j.model.huggingface")) {
+            return "huggingface";
+        }
+        if (packageName.startsWith("dev.langchain4j.model.bedrock")) {
+            return "aws.bedrock";
+        }
+        return UNKNOWN;
     }
 }

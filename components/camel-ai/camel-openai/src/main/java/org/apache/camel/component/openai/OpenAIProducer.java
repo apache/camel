@@ -26,6 +26,7 @@ import java.util.Base64;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.atomic.AtomicReference;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
@@ -47,6 +48,7 @@ import com.openai.models.chat.completions.ChatCompletionFunctionTool;
 import com.openai.models.chat.completions.ChatCompletionMessage;
 import com.openai.models.chat.completions.ChatCompletionMessageParam;
 import com.openai.models.chat.completions.ChatCompletionMessageToolCall;
+import com.openai.models.chat.completions.ChatCompletionStreamOptions;
 import com.openai.models.chat.completions.ChatCompletionSystemMessageParam;
 import com.openai.models.chat.completions.ChatCompletionToolMessageParam;
 import com.openai.models.chat.completions.ChatCompletionUserMessageParam;
@@ -608,6 +610,9 @@ public class OpenAIProducer extends DefaultAsyncProducer {
 
     private void processStreaming(Exchange exchange, ChatCompletionCreateParams params) {
         String requestModel = params.model().toString();
+        ChatCompletionCreateParams streamingParams = params.toBuilder()
+                .streamOptions(ChatCompletionStreamOptions.builder().includeUsage(true).build())
+                .build();
         GenAiObservationContext observationContext = GenAiObservationContext.builder()
                 .operationName(GenAiOperationName.CHAT)
                 .system("openai")
@@ -618,17 +623,42 @@ public class OpenAIProducer extends DefaultAsyncProducer {
 
         // NOTE: the stream is going to be closed after the exchange completes.
         StreamResponse<ChatCompletionChunk> streamResponse = getEndpoint().getClient().chat().completions() // NOSONAR
-                .createStreaming(params);
+                .createStreaming(streamingParams);
+
+        AtomicReference<CompletionUsage> usageRef = new AtomicReference<>();
+        AtomicReference<String> responseModelRef = new AtomicReference<>();
+        Iterator<ChatCompletionChunk> delegate = streamResponse.stream().iterator();
+        Iterator<ChatCompletionChunk> it = new Iterator<>() {
+            @Override
+            public boolean hasNext() {
+                return delegate.hasNext();
+            }
+
+            @Override
+            public ChatCompletionChunk next() {
+                ChatCompletionChunk chunk = delegate.next();
+                chunk.usage().ifPresent(usageRef::set);
+                if (chunk.model() != null && !chunk.model().isBlank()) {
+                    responseModelRef.set(chunk.model());
+                }
+                return chunk;
+            }
+        };
 
         // hand Camel an Iterator for streaming EIPs (split, recipientList, etc.)
-        Iterator<ChatCompletionChunk> it = streamResponse.stream().iterator();
         exchange.getMessage().setBody(it);
 
         // ensure resp.close() after the Exchange completes (success or failure)
         exchange.getUnitOfWork().addSynchronization(new Synchronization() {
             @Override
             public void onComplete(Exchange e) {
-                observation.recordSuccess(GenAiUsage.of(null, null, null, requestModel));
+                CompletionUsage usage = usageRef.get();
+                String responseModel = responseModelRef.get() != null ? responseModelRef.get() : requestModel;
+                observation.recordSuccess(GenAiUsage.of(
+                        usage != null ? (int) usage.promptTokens() : null,
+                        usage != null ? (int) usage.completionTokens() : null,
+                        null,
+                        responseModel));
                 observation.close();
                 safeClose();
             }

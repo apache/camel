@@ -405,8 +405,9 @@ public class LangChain4jToolsProducer extends DefaultProducer {
                     chatResponse.tokenUsage() != null ? chatResponse.tokenUsage().inputTokenCount() : null,
                     chatResponse.tokenUsage() != null ? chatResponse.tokenUsage().outputTokenCount() : null,
                     chatResponse.finishReason(),
-                    observationContext.requestModel()));
-            exchange.getMessage().setHeader(LangChain4jToolsHeaders.RESPONSE_MODEL, observationContext.requestModel());
+                    GenAiModelResolver.resolveResponseModelName(chatResponse, observationContext.requestModel())));
+            exchange.getMessage().setHeader(LangChain4jToolsHeaders.RESPONSE_MODEL,
+                    GenAiModelResolver.resolveResponseModelName(chatResponse, observationContext.requestModel()));
 
             AiMessage aiMessage = chatResponse.aiMessage();
 
