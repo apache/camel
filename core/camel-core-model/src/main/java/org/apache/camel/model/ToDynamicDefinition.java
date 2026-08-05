@@ -74,6 +74,13 @@ public class ToDynamicDefinition extends NoOutputDefinition<ToDynamicDefinition>
     @Metadata(label = "advanced", defaultValue = "true", javaType = "java.lang.Boolean",
               description = "Whether to auto startup components when toD is starting up.")
     private String autoStartComponents;
+    @XmlAttribute
+    @Metadata(label = "advanced,security",
+              description = "Sets an optional comma-separated allow-list of component schemes that the dynamic recipient"
+                            + " may resolve to (e.g. http,https). When set, a dynamic endpoint whose scheme is not in the"
+                            + " list is rejected. This is a defence-in-depth restriction, useful for low-code / Kamelet"
+                            + " deployments; by default (unset) any scheme is allowed.")
+    private String allowedSchemes;
 
     public ToDynamicDefinition() {
     }
@@ -93,6 +100,7 @@ public class ToDynamicDefinition extends NoOutputDefinition<ToDynamicDefinition>
         this.ignoreInvalidEndpoint = source.ignoreInvalidEndpoint;
         this.allowOptimisedComponents = source.allowOptimisedComponents;
         this.autoStartComponents = source.autoStartComponents;
+        this.allowedSchemes = source.allowedSchemes;
     }
 
     @Override
@@ -264,6 +272,18 @@ public class ToDynamicDefinition extends NoOutputDefinition<ToDynamicDefinition>
         return this;
     }
 
+    /**
+     * Sets an optional comma-separated allow-list of component schemes that the dynamic recipient may resolve to (e.g.
+     * http,https). When set, a dynamic endpoint whose scheme is not in the list is rejected. By default (unset) any
+     * scheme is allowed.
+     *
+     * @return the builder
+     */
+    public ToDynamicDefinition allowedSchemes(String allowedSchemes) {
+        setAllowedSchemes(allowedSchemes);
+        return this;
+    }
+
     // Properties
     // -------------------------------------------------------------------------
 
@@ -337,6 +357,14 @@ public class ToDynamicDefinition extends NoOutputDefinition<ToDynamicDefinition>
 
     public void setAutoStartComponents(String autoStartComponents) {
         this.autoStartComponents = autoStartComponents;
+    }
+
+    public String getAllowedSchemes() {
+        return allowedSchemes;
+    }
+
+    public void setAllowedSchemes(String allowedSchemes) {
+        this.allowedSchemes = allowedSchemes;
     }
 
     public ToDynamicDefinition copyDefinition() {

@@ -13153,6 +13153,17 @@ Whether to auto startup components when toD is starting up. Default value: true
             </xs:documentation>
           </xs:annotation>
         </xs:attribute>
+        <xs:attribute name="allowedSchemes" type="xs:string">
+          <xs:annotation>
+            <xs:documentation xml:lang="en">
+<![CDATA[
+Sets an optional comma-separated allow-list of component schemes that the dynamic recipient may resolve to (e.g.
+http,https). When set, a dynamic endpoint whose scheme is not in the list is rejected. This is a defence-in-depth
+restriction, useful for low-code / Kamelet deployments; by default (unset) any scheme is allowed.
+]]>
+            </xs:documentation>
+          </xs:annotation>
+        </xs:attribute>
       </xs:extension>
     </xs:complexContent>
   </xs:complexType>

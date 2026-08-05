@@ -18416,6 +18416,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
             deprecated = false,
             properties = {
                     @YamlProperty(name = "allowOptimisedComponents", type = "boolean", defaultValue = "true", description = "Whether to allow components to optimise toD if they are SendDynamicAware.", displayName = "Allow Optimised Components"),
+                    @YamlProperty(name = "allowedSchemes", type = "string", description = "Sets an optional comma-separated allow-list of component schemes that the dynamic recipient may resolve to (e.g. http,https). When set, a dynamic endpoint whose scheme is not in the list is rejected. This is a defence-in-depth restriction, useful for low-code / Kamelet deployments; by default (unset) any scheme is allowed.", displayName = "Allowed Schemes"),
                     @YamlProperty(name = "autoStartComponents", type = "boolean", defaultValue = "true", description = "Whether to auto startup components when toD is starting up.", displayName = "Auto Start Components"),
                     @YamlProperty(name = "cacheSize", type = "number", description = "Sets the maximum size used by the ProducerCache which is used to cache and reuse producers when uris are reused. Use 0 for default cache size, or -1 to turn cache off.", displayName = "Cache Size"),
                     @YamlProperty(name = "description", type = "string", description = "The description for this node", displayName = "Description"),
@@ -18459,6 +18460,11 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                 case "allowOptimisedComponents": {
                     String val = asText(node);
                     target.setAllowOptimisedComponents(val);
+                    break;
+                }
+                case "allowedSchemes": {
+                    String val = asText(node);
+                    target.setAllowedSchemes(val);
                     break;
                 }
                 case "autoStartComponents": {
@@ -20491,6 +20497,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
             deprecated = false,
             properties = {
                     @YamlProperty(name = "allowOptimisedComponents", type = "boolean", defaultValue = "true", description = "Whether to allow components to optimise toD if they are SendDynamicAware.", displayName = "Allow Optimised Components"),
+                    @YamlProperty(name = "allowedSchemes", type = "string", description = "Sets an optional comma-separated allow-list of component schemes that the dynamic recipient may resolve to (e.g. http,https). When set, a dynamic endpoint whose scheme is not in the list is rejected. This is a defence-in-depth restriction, useful for low-code / Kamelet deployments; by default (unset) any scheme is allowed.", displayName = "Allowed Schemes"),
                     @YamlProperty(name = "autoStartComponents", type = "boolean", defaultValue = "true", description = "Whether to auto startup components when toD is starting up.", displayName = "Auto Start Components"),
                     @YamlProperty(name = "cacheSize", type = "number", description = "Sets the maximum size used by the ProducerCache which is used to cache and reuse producers when uris are reused. Use 0 for default cache size, or -1 to turn cache off.", displayName = "Cache Size"),
                     @YamlProperty(name = "copy", type = "boolean", defaultValue = "true", description = "Whether to use a copy of the original exchange.", displayName = "Copy"),
@@ -20532,6 +20539,11 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                 case "allowOptimisedComponents": {
                     String val = asText(node);
                     target.setAllowOptimisedComponents(val);
+                    break;
+                }
+                case "allowedSchemes": {
+                    String val = asText(node);
+                    target.setAllowedSchemes(val);
                     break;
                 }
                 case "autoStartComponents": {
