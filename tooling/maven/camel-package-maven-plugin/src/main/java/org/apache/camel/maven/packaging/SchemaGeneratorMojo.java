@@ -1404,8 +1404,8 @@ public class SchemaGeneratorMojo extends AbstractGeneratorMojo {
 
     private boolean findRequired(Field fieldElement, boolean defaultValue) {
         Metadata metadata = fieldElement.getAnnotation(Metadata.class);
-        if (metadata != null) {
-            return metadata.required();
+        if (metadata != null && metadata.required()) {
+            return true;
         }
         return defaultValue;
     }

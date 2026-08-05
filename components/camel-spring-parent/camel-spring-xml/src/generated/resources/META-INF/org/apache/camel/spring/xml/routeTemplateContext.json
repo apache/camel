@@ -13,6 +13,6 @@
   },
   "properties": {
     "id": { "index": 0, "kind": "attribute", "displayName": "Id", "group": "common", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "autowired": false, "secret": false, "description": "The id of this node" },
-    "routeTemplate": { "index": 1, "kind": "element", "displayName": "Route Template", "group": "common", "required": false, "type": "array", "javaType": "java.util.List<org.apache.camel.model.RouteTemplateDefinition>", "deprecated": false, "autowired": false, "secret": false, "description": "Route Templates" }
+    "routeTemplate": { "index": 1, "kind": "element", "displayName": "Route Template", "group": "common", "required": true, "type": "array", "javaType": "java.util.List<org.apache.camel.model.RouteTemplateDefinition>", "deprecated": false, "autowired": false, "secret": false, "description": "Route Templates" }
   }
 }
