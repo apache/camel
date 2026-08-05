@@ -41,7 +41,7 @@ public class FileToFtpsImplicitSSLWithoutClientAuthAndSSLContextParametersIT
 
     @Override
     protected String getFtpUrl() {
-        return "ftps://admin@localhost:{{ftp.server.port}}"
+        return "ftps://admin@localhost:" + service.getPort()
                + "/tmp2/camel?password=admin&initialDelay=2000&disableSecureDataChannelDefaults=true"
                + "&implicit=true&sslContextParameters=#sslContextParameters&delete=true";
     }

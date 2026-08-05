@@ -28,7 +28,7 @@ import org.junit.jupiter.api.condition.EnabledIf;
 public class FileToFtpsWithCustomKeyAndTrustStorePropertiesIT extends FtpsServerExplicitSSLWithClientAuthTestSupport {
 
     private String getFtpUrl() {
-        return "ftps://admin@localhost:{{ftp.server.port}}"
+        return "ftps://admin@localhost:" + service.getPort()
                + "/tmp2/camel?password=admin&initialDelay=2000&disableSecureDataChannelDefaults=true"
                + "&securityProtocol=TLSv1.2&implicit=false&ftpClient.keyStore.file=./src/test/resources/server.jks&ftpClient.keyStore.type=JKS"
                + "&ftpClient.keyStore.algorithm=SunX509&ftpClient.keyStore.password=password&ftpClient.keyStore.keyPassword=password"

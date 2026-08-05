@@ -25,6 +25,8 @@ import java.nio.file.Path;
 import java.nio.file.StandardCopyOption;
 
 import org.apache.camel.spi.annotations.InfraService;
+import org.apache.camel.test.infra.common.services.ContainerEnvironmentUtil;
+import org.apache.camel.test.infra.ftp.common.FtpProperties;
 import org.apache.camel.test.infra.ftp.services.FtpInfraService;
 import org.apache.ftpserver.FtpServerFactory;
 import org.apache.ftpserver.listener.ListenerFactory;
@@ -62,8 +64,8 @@ public class FtpsEmbeddedInfraService extends FtpEmbeddedInfraService {
         FtpServerFactory serverFactory = super.createFtpServerFactory(embeddedConfiguration);
 
         ListenerFactory listenerFactory = new ListenerFactory(serverFactory.getListener(DEFAULT_LISTENER));
-        // Port is already assigned by super.createFtpServerFactory — do not overwrite with the
-        // instance field which may be stale from a previous test method (CAMEL-23499).
+        // Always assign the FTPS default port; do not reuse the instance field which may be stale (CAMEL-23499).
+        listenerFactory.setPort(ContainerEnvironmentUtil.getConfiguredPortOrRandom(FtpProperties.DEFAULT_FTPS_PORT));
         listenerFactory.setImplicitSsl(embeddedConfiguration.getSecurityConfiguration().isUseImplicit());
         listenerFactory.setSslConfiguration(createSslConfiguration(embeddedConfiguration).createSslConfiguration());
 
