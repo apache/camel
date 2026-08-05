@@ -18,10 +18,15 @@ package org.apache.camel.component.undertow;
 
 import java.net.URI;
 
+import org.apache.camel.http.base.HttpHeaderFilterStrategy;
+import org.apache.camel.spi.HeaderFilterStrategy;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertInstanceOf;
+import static org.junit.jupiter.api.Assertions.assertSame;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class UndertowEndpointTest {
 
@@ -46,5 +51,36 @@ public class UndertowEndpointTest {
     public void nonEmptyPathShouldBeKeptSame() {
         endpoint.setHttpURI(withSlash);
         assertEquals(withSlash, endpoint.getHttpURI());
+    }
+
+    @Test
+    void defaultHeaderFilterStrategyIsUndertowSpecific() {
+        assertInstanceOf(UndertowHeaderFilterStrategy.class, endpoint.getHeaderFilterStrategy());
+    }
+
+    @Test
+    void defaultBindingKeepsUndertowHeaderFilterStrategy() {
+        // the endpoint pushes its own strategy into the lazily created binding, so the endpoint default
+        // decides which strategy the binding ends up running
+        DefaultUndertowHttpBinding binding
+                = assertInstanceOf(DefaultUndertowHttpBinding.class, endpoint.getUndertowHttpBinding());
+        HeaderFilterStrategy strategy = binding.getHeaderFilterStrategy();
+        assertInstanceOf(UndertowHeaderFilterStrategy.class, strategy);
+
+        // the undertow-specific prefixes added by CAMEL-23588 must therefore be in effect
+        assertTrue(strategy.applyFilterToExternalHeaders(UndertowConstants.CONNECTION_KEY, "aValue", null));
+        assertTrue(strategy.applyFilterToExternalHeaders(UndertowConstants.CONNECTION_KEY_LIST, "aValue", null));
+        assertTrue(strategy.applyFilterToExternalHeaders(UndertowConstants.SEND_TO_ALL, "aValue", null));
+        assertTrue(strategy.applyFilterToCamelHeaders(UndertowConstants.CONNECTION_KEY, "aValue", null));
+    }
+
+    @Test
+    void explicitHeaderFilterStrategyIsHandedToTheBinding() {
+        HeaderFilterStrategy custom = new HttpHeaderFilterStrategy();
+        endpoint.setHeaderFilterStrategy(custom);
+
+        DefaultUndertowHttpBinding binding
+                = assertInstanceOf(DefaultUndertowHttpBinding.class, endpoint.getUndertowHttpBinding());
+        assertSame(custom, binding.getHeaderFilterStrategy());
     }
 }

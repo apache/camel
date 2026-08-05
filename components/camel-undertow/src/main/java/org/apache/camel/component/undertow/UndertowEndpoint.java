@@ -37,7 +37,6 @@ import org.apache.camel.Producer;
 import org.apache.camel.component.undertow.UndertowConstants.EventType;
 import org.apache.camel.component.undertow.handlers.CamelWebSocketHandler;
 import org.apache.camel.component.undertow.spi.UndertowSecurityProvider;
-import org.apache.camel.http.base.HttpHeaderFilterStrategy;
 import org.apache.camel.http.base.OAuthHttpSecuritySupport;
 import org.apache.camel.http.base.OAuthProfileAwareHttpEndpoint;
 import org.apache.camel.http.base.cookie.CookieHandler;
@@ -85,7 +84,7 @@ public class UndertowEndpoint extends DefaultEndpoint
     @UriParam(label = "advanced")
     private AccessLogReceiver accessLogReceiver;
     @UriParam(label = "advanced")
-    private HeaderFilterStrategy headerFilterStrategy = new HttpHeaderFilterStrategy();
+    private HeaderFilterStrategy headerFilterStrategy = new UndertowHeaderFilterStrategy();
     @UriParam(label = "security")
     private SSLContextParameters sslContextParameters;
     @UriParam(label = "consumer")
