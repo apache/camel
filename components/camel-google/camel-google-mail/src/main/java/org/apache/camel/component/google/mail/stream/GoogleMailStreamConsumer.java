@@ -92,7 +92,8 @@ public class GoogleMailStreamConsumer extends ScheduledBatchPollingConsumer {
 
         if (c.getMessages() != null) {
             for (Message message : c.getMessages()) {
-                Message mess = getClient().users().messages().get("me", message.getId()).setFormat("FULL").execute();
+                Message mess
+                        = getClient().users().messages().get("me", message.getId()).setFormat(messageFormat()).execute();
                 Exchange exchange = createExchange(getEndpoint().getExchangePattern(), mess);
                 answer.add(exchange);
             }
@@ -167,8 +168,13 @@ public class GoogleMailStreamConsumer extends ScheduledBatchPollingConsumer {
      * Strategy when processing the exchange failed.
      */
     protected void processRollback(Exchange exchange, String unreadLabelId) {
+        if (!getConfiguration().isMarkAsRead()) {
+            // the mail was never marked as read, so there is nothing to roll back
+            LOG.warn("Exchange failed: {}", exchange);
+            return;
+        }
         try {
-            LOG.warn("Exchange failed, so rolling back mail {} to un {}", exchange, unreadLabelId);
+            LOG.warn("Exchange failed, so marking mail {} as unread again", exchange);
 
             List<String> add = new ArrayList<>();
             add.add(unreadLabelId);
@@ -176,7 +182,8 @@ public class GoogleMailStreamConsumer extends ScheduledBatchPollingConsumer {
             getClient().users().messages()
                     .modify("me", exchange.getIn().getHeader(GoogleMailStreamConstants.MAIL_ID, String.class), mods).execute();
         } catch (Exception e) {
-            getExceptionHandler().handleException("Error occurred mark as read mail. This exception is ignored.", exchange, e);
+            getExceptionHandler().handleException("Error occurred marking the mail as unread. This exception is ignored.",
+                    exchange, e);
         }
     }
 
@@ -190,15 +197,50 @@ public class GoogleMailStreamConsumer extends ScheduledBatchPollingConsumer {
         if (getConfiguration().isRaw()) {
             message.setBody(mail.getRaw());
         } else {
-            List<MessagePart> parts = mail.getPayload().getParts();
-            if (parts != null && parts.get(0).getBody().getData() != null) {
-                byte[] bodyBytes = Base64.decodeBase64(parts.get(0).getBody().getData().trim());
-                String body = new String(bodyBytes, StandardCharsets.UTF_8);
+            String body = extractBody(mail.getPayload());
+            if (body != null) {
                 message.setBody(body);
             }
         }
-        configureHeaders(message, mail.getPayload().getHeaders());
+        if (mail.getPayload() != null && mail.getPayload().getHeaders() != null) {
+            configureHeaders(message, mail.getPayload().getHeaders());
+        }
         return exchange;
+    }
+
+    /**
+     * The message format the consumer has to ask for. The raw field of a message is only populated when the RAW format
+     * is requested, the payload only when the FULL format is.
+     */
+    String messageFormat() {
+        return getConfiguration().isRaw() ? "RAW" : "FULL";
+    }
+
+    /**
+     * Returns the decoded content of the first part carrying data, walking into nested multiparts. A message that is
+     * not multipart at all keeps its content directly on the payload.
+     */
+    private String extractBody(MessagePart part) {
+        if (part == null) {
+            return null;
+        }
+
+        if (part.getBody() != null && part.getBody().getData() != null) {
+            byte[] bodyBytes = Base64.decodeBase64(part.getBody().getData().trim());
+            return new String(bodyBytes, StandardCharsets.UTF_8);
+        }
+
+        List<MessagePart> parts = part.getParts();
+        if (parts != null) {
+            for (MessagePart child : parts) {
+                String body = extractBody(child);
+                if (body != null) {
+                    return body;
+                }
+            }
+        }
+
+        return null;
     }
 
     private void configureHeaders(org.apache.camel.Message message, List<MessagePartHeader> headers) {
