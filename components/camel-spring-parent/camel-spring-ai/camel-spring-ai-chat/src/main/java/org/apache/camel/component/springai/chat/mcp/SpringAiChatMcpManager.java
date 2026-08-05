@@ -23,13 +23,12 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import io.modelcontextprotocol.client.McpClient;
 import io.modelcontextprotocol.client.McpSyncClient;
 import io.modelcontextprotocol.client.transport.HttpClientSseClientTransport;
 import io.modelcontextprotocol.client.transport.ServerParameters;
 import io.modelcontextprotocol.client.transport.StdioClientTransport;
-import io.modelcontextprotocol.json.jackson.JacksonMcpJsonMapper;
+import io.modelcontextprotocol.json.McpJsonDefaults;
 import io.modelcontextprotocol.spec.McpClientTransport;
 import org.apache.camel.CamelContext;
 import org.apache.camel.support.OAuthHelper;
@@ -165,7 +164,7 @@ public class SpringAiChatMcpManager {
                 if (args != null) {
                     paramsBuilder.args(List.of(args.split(",")));
                 }
-                yield new StdioClientTransport(paramsBuilder.build(), new JacksonMcpJsonMapper(new ObjectMapper()));
+                yield new StdioClientTransport(paramsBuilder.build(), McpJsonDefaults.getMapper());
             }
             case "sse" -> {
                 String url = props.get("url");

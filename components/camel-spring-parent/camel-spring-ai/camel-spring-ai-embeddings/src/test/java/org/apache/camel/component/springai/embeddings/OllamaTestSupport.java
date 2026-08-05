@@ -58,7 +58,7 @@ public class OllamaTestSupport extends CamelTestSupport {
 
         EmbeddingModel embeddingModel = OllamaEmbeddingModel.builder()
                 .ollamaApi(ollamaApi)
-                .defaultOptions(ollamaOptions)
+                .options(ollamaOptions)
                 .build();
 
         return embeddingModel;

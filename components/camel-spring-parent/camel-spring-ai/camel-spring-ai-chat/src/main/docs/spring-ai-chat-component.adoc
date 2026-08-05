@@ -934,9 +934,9 @@ In addition to Camel route tools (via `tags`), you can use Spring AI `@Tool`-ann
 
 ==== Camel Spring Boot (Recommended)
 
-When using Camel Spring Boot, Spring AI's auto-configuration automatically discovers `@Tool`-annotated
-methods from Spring beans via `ToolCallbackResolver`. Simply define your tool as a Spring bean and
-reference it by name using `toolNames`:
+When using Camel Spring Boot, Spring AI's auto-configuration contributes a `ToolCallbackResolver` built from the
+`ToolCallback` and `ToolCallbackProvider` beans in the application context. Expose your `@Tool`-annotated bean as a
+`ToolCallbackProvider` and reference the tool by name using `toolNames`:
 
 ._Java-only: Spring `@Component` with `@Tool` annotation_
 [source,java]
@@ -955,14 +955,22 @@ public class MyTools {
     }
 }
 
-// In your route — no manual callback registration needed
+@Bean
+ToolCallbackProvider myTools(MyTools myTools) {
+    return MethodToolCallbackProvider.builder().toolObjects(myTools).build();
+}
+
+// In your route
 from("direct:chat")
     .to("spring-ai-chat:chat?chatModel=#chatModel&toolNames=getCapital");
 ----
 
+NOTE: Spring AI 2.0 removed `SpringBeanToolCallbackResolver`, so a bare `@Bean Function<...>` is no longer resolvable
+by bean name. Expose tools as `ToolCallback` or `ToolCallbackProvider` beans instead.
+
 ==== Without Spring Boot
 
-Outside Spring Boot (e.g., in plain Camel or tests), there is no `ToolCallbackResolver`.
+Outside Spring Boot (e.g., in plain Camel or tests), there is no auto-configured `ToolCallbackResolver`.
 You need to resolve the callbacks manually and bind them in the registry:
 
 ._Java-only: programmatic `ToolCallbackProvider` setup_
@@ -994,8 +1002,10 @@ template.requestBodyAndHeader("direct:chat", "What is the capital of France?",
     SpringAiChatConstants.TOOL_NAMES, "getCapital", String.class);
 ----
 
-Tool names are resolved via Spring AI's `ToolCallbackResolver`. You can combine `toolNames` with `tags` —
-both tool sources are additive.
+Each name is resolved, in order, against a `ToolCallbackResolver` bound in the registry, then against the tools
+discovered via `tags` and configured via `toolCallbacks`, and finally against a `ToolCallback` bound in the registry
+under that name. A name that resolves nowhere fails the exchange with an `IllegalArgumentException` listing the
+available tools. You can combine `toolNames` with `tags` — both tool sources are additive.
 
 === Tool Context
 

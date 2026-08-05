@@ -29,7 +29,8 @@ import org.springframework.ai.chat.model.ChatModel;
 import org.springframework.ai.ollama.OllamaChatModel;
 import org.springframework.ai.ollama.api.OllamaApi;
 import org.springframework.ai.ollama.api.OllamaChatOptions;
-import org.springframework.retry.support.RetryTemplate;
+import org.springframework.core.retry.RetryPolicy;
+import org.springframework.core.retry.RetryTemplate;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -68,14 +69,13 @@ public class SpringAiChatWrappedFileIT extends OllamaTestSupport {
                 = OllamaChatOptions.builder()
                         .model(modelName())
                         .temperature(0.3)
+                        .disableThinking()
                         .build();
 
         return OllamaChatModel.builder()
                 .ollamaApi(ollamaApi)
-                .defaultOptions(ollamaOptions)
-                .retryTemplate(RetryTemplate.builder()
-                        .maxAttempts(1)
-                        .build())
+                .options(ollamaOptions)
+                .retryTemplate(new RetryTemplate(RetryPolicy.withMaxRetries(0)))
                 .build();
     }
 
