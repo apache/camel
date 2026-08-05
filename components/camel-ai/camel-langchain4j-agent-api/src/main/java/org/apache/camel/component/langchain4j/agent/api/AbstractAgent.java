@@ -70,7 +70,7 @@ public abstract class AbstractAgent<S> implements Agent {
      * Returns the LangChain4j chat model configured for this agent.
      *
      * @return the chat model from agent configuration
-     * @since 4.22
+     * @since  4.22
      */
     public ChatModel getChatModel() {
         return configuration.getChatModel();
