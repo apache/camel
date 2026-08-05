@@ -50,7 +50,7 @@ import static org.mockito.Mockito.when;
  * {@code SpringBeanToolCallbackResolver}, so the component resolves the names itself. These tests capture the
  * {@link Prompt} handed to the {@link ChatModel} and assert which tool callbacks made it through.
  */
-public class SpringAiChatToolNamesTest extends CamelTestSupport {
+class SpringAiChatToolNamesTest extends CamelTestSupport {
 
     private ChatModel mockChatModel;
 
@@ -72,7 +72,7 @@ public class SpringAiChatToolNamesTest extends CamelTestSupport {
      * {@code ToolCallingChatOptions} carrying two tools with the same name.
      */
     @Test
-    public void testToolNameAlreadyInConfiguredCallbacksIsNotRegisteredTwice() {
+    void testToolNameAlreadyInConfiguredCallbacksIsNotRegisteredTwice() {
         String response = template().requestBody("direct:named", "What is the capital of France?", String.class);
 
         assertThat(response).isEqualTo("mock answer");
@@ -80,7 +80,7 @@ public class SpringAiChatToolNamesTest extends CamelTestSupport {
     }
 
     @Test
-    public void testToolNamesFromHeaderAreAdditive() {
+    void testToolNamesFromHeaderAreAdditive() {
         String response = template().requestBodyAndHeader("direct:callbacks", "What time is it?",
                 SpringAiChatConstants.TOOL_NAMES, "getCurrentDateTime", String.class);
 
@@ -93,7 +93,7 @@ public class SpringAiChatToolNamesTest extends CamelTestSupport {
      * otherwise available to the endpoint.
      */
     @Test
-    public void testToolResolvedFromRegistryByBeanName() {
+    void testToolResolvedFromRegistryByBeanName() {
         String response = template().requestBodyAndHeader("direct:callbacks", "What is the weather?",
                 SpringAiChatConstants.TOOL_NAMES, "weatherTool", String.class);
 
@@ -102,7 +102,7 @@ public class SpringAiChatToolNamesTest extends CamelTestSupport {
     }
 
     @Test
-    public void testUnknownToolNameFailsTheExchange() {
+    void testUnknownToolNameFailsTheExchange() {
         Exchange exchange = template().request("direct:plain", e -> {
             e.getIn().setBody("Anything");
             e.getIn().setHeader(SpringAiChatConstants.TOOL_NAMES, "noSuchTool");
