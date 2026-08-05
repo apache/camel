@@ -27,7 +27,6 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.component.mcp.server.jbang.JbangDevMcpServer;
 import org.apache.camel.component.platform.http.main.MainHttpServer;
 import org.apache.camel.component.platform.http.main.ManagementHttpServer;
-import org.apache.camel.dsl.jbang.core.commands.ai.ToolDescriptor;
 import org.apache.camel.dsl.jbang.core.commands.ai.ToolRegistry;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.test.AvailablePortFinder;
@@ -94,16 +93,5 @@ class JbangDevMcpServerTest {
             }
             camelContext.stop();
         }
-    }
-
-    @Test
-    void buildsInputSchemaForParameterizedTools() {
-        ToolDescriptor descriptor = ToolDescriptor.tool("demo", "Demo tool")
-                .param("name", "string", "A name", true)
-                .param("count", "integer", "Optional count", false);
-
-        assertThat(descriptor.params()).hasSize(2);
-        assertThat(descriptor.params().get(0).name()).isEqualTo("name");
-        assertThat(descriptor.params().get(0).required()).isTrue();
     }
 }

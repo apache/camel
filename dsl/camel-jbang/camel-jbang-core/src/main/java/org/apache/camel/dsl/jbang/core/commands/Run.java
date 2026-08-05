@@ -3095,7 +3095,8 @@ public class Run extends CamelCommand {
         boolean console;
 
         @Option(names = { "--mcp" }, defaultValue = "false",
-                description = "Embed dev/diagnostics MCP tools on the local HTTP management server (/mcp by default)")
+                description = "Embed dev/diagnostics MCP tools on the local HTTP management server (/mcp by default). "
+                              + "When management shares the main HTTP port, MCP is served on the main server bind address.")
         boolean mcp;
 
         @Option(names = { "--openapi-ui" }, defaultValue = "false",

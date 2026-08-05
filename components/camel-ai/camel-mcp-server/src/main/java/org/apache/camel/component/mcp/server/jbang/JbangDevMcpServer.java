@@ -35,6 +35,8 @@ import org.apache.camel.component.platform.http.vertx.VertxPlatformHttpRouter;
 import org.apache.camel.support.service.ServiceSupport;
 import org.apache.camel.util.json.JsonArray;
 import org.apache.camel.util.json.JsonObject;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Dev/diagnostics MCP server on the management HTTP port, exposing shared JBang {@code ToolRegistry} tools through
@@ -43,6 +45,7 @@ import org.apache.camel.util.json.JsonObject;
  */
 public class JbangDevMcpServer extends ServiceSupport implements CamelContextAware {
 
+    private static final Logger LOG = LoggerFactory.getLogger(JbangDevMcpServer.class);
     private static final String SERVER_NAME = "camel-jbang-dev-tools";
     private static final String TOOL_REGISTRY = "org.apache.camel.dsl.jbang.core.commands.ai.ToolRegistry";
     private static final String TOOL_CONTEXT = "org.apache.camel.dsl.jbang.core.commands.ai.ToolContext";
@@ -146,7 +149,7 @@ public class JbangDevMcpServer extends ServiceSupport implements CamelContextAwa
     }
 
     private Object createToolContext() throws ReflectiveOperationException {
-        Class<?> contextClass = camelContext.getClassResolver().resolveClass(TOOL_CONTEXT);
+        Class<?> contextClass = mandatoryClass(TOOL_CONTEXT);
         Object context = contextClass.getDeclaredConstructor().newInstance();
         Method selectProcess = contextClass.getMethod("selectProcess", long.class);
         selectProcess.invoke(context, ProcessHandle.current().pid());
@@ -155,16 +158,20 @@ public class JbangDevMcpServer extends ServiceSupport implements CamelContextAwa
 
     @SuppressWarnings("unchecked")
     private List<Object> allToolDescriptors() throws ReflectiveOperationException {
-        Class<?> registry = camelContext.getClassResolver().resolveClass(TOOL_REGISTRY);
+        Class<?> registry = mandatoryClass(TOOL_REGISTRY);
         Method allTools = registry.getMethod("allTools");
         return (List<Object>) allTools.invoke(null);
     }
 
     private Object executeTool(String name, Map<String, String> args) throws ReflectiveOperationException {
-        Class<?> registry = camelContext.getClassResolver().resolveClass(TOOL_REGISTRY);
-        Class<?> contextClass = camelContext.getClassResolver().resolveClass(TOOL_CONTEXT);
+        Class<?> registry = mandatoryClass(TOOL_REGISTRY);
+        Class<?> contextClass = mandatoryClass(TOOL_CONTEXT);
         Method execute = registry.getMethod("execute", String.class, contextClass, Map.class);
         return execute.invoke(null, name, toolContext, args);
+    }
+
+    private Class<?> mandatoryClass(String name) throws ClassNotFoundException {
+        return camelContext.getClassResolver().resolveMandatoryClass(name);
     }
 
     private static String invokeString(Object target, String method) {
@@ -232,8 +239,12 @@ public class JbangDevMcpServer extends ServiceSupport implements CamelContextAwa
         Set<VertxPlatformHttpRouter> routers = camelContext.getRegistry().findByType(VertxPlatformHttpRouter.class);
         boolean hasManagementRouter = routers.stream()
                 .anyMatch(r -> VertxPlatformHttpRouter.SERVER_TYPE_MANAGEMENT.equals(r.getServerType()));
-        return hasManagementRouter
-                ? VertxPlatformHttpRouter.SERVER_TYPE_MANAGEMENT
-                : VertxPlatformHttpRouter.SERVER_TYPE_SERVER;
+        if (hasManagementRouter) {
+            return VertxPlatformHttpRouter.SERVER_TYPE_MANAGEMENT;
+        }
+        LOG.warn("No management HTTP router found; attaching JBang dev MCP endpoint to the main HTTP server. "
+                 + "When management shares the main server port, MCP is served on the main server bind address "
+                 + "(for example 0.0.0.0) rather than 127.0.0.1.");
+        return VertxPlatformHttpRouter.SERVER_TYPE_SERVER;
     }
 }

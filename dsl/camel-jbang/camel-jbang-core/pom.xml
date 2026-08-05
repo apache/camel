@@ -214,6 +214,7 @@
             <version>${mcp-java-sdk-version}</version>
             <scope>test</scope>
         </dependency>
+        <!-- MCP SDK schema validation requires networknt 2.x; wiremock pulls 1.5.x without Dialects -->
         <dependency>
             <groupId>com.networknt</groupId>
             <artifactId>json-schema-validator</artifactId>
