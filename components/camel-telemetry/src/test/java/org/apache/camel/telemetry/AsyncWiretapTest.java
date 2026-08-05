@@ -40,7 +40,11 @@ import static org.junit.jupiter.api.Assertions.assertNull;
  * WiretappedRouteTest tests the execution of a new spin off component which would create a new exchange, for example,
  * using the wiretap component.
  */
-public class AsyncWiretapTest extends ExchangeTestSupport {
+class AsyncWiretapTest extends ExchangeTestSupport {
+
+    private static final int MESSAGE_COUNT = 10;
+    private static final int SPAN_COUNT = 7;
+    private static final long TIMEOUT_SECONDS = 30;
 
     MockTracer mockTracer;
 
@@ -56,27 +60,27 @@ public class AsyncWiretapTest extends ExchangeTestSupport {
 
     @Test
     void testRouteMultipleRequests() throws Exception {
-        int j = 10;
         MockEndpoint mock = getMockEndpoint("mock:end");
-        mock.expectedMessageCount(j);
-        for (int i = 0; i < j; i++) {
+        mock.expectedMessageCount(MESSAGE_COUNT);
+        for (int i = 0; i < MESSAGE_COUNT; i++) {
             context.createProducerTemplate().sendBody("direct:start", "Hello!");
         }
-        MockEndpoint.assertIsSatisfied(context, 30, TimeUnit.SECONDS);
+        MockEndpoint.assertIsSatisfied(context, TIMEOUT_SECONDS, TimeUnit.SECONDS);
         // Wait for async trace writing to complete — traces are written asynchronously
         // after exchange processing, so we poll until all traces with expected spans arrive.
-        await().atMost(30, TimeUnit.SECONDS).untilAsserted(() -> {
-            Map<String, MockTrace> traces = mockTracer.traces();
-            assertEquals(j, traces.size());
-            for (MockTrace trace : traces.values()) {
-                assertEquals(7, trace.spans().size());
-            }
-        });
+        await().atMost(TIMEOUT_SECONDS, TimeUnit.SECONDS)
+                .pollInterval(100, TimeUnit.MILLISECONDS)
+                .untilAsserted(() -> {
+                    Map<String, MockTrace> traces = mockTracer.traces();
+                    assertEquals(MESSAGE_COUNT, traces.size());
+                    for (MockTrace trace : traces.values()) {
+                        assertEquals(SPAN_COUNT, trace.spans().size());
+                        for (Span span : trace.spans()) {
+                            assertEquals("true", ((MockSpanAdapter) span).getTag("isDone"));
+                        }
+                    }
+                });
         Map<String, MockTrace> traces = mockTracer.traces();
-        // Each trace should have a unique trace id. It is enough to assert that
-        // the number of elements in the map is the same of the requests to prove
-        // all traces have been generated uniquely.
-        assertEquals(j, traces.size());
         // Each trace should have the same structure
         for (MockTrace trace : traces.values()) {
             checkTrace(trace, "Hello!");
@@ -85,7 +89,7 @@ public class AsyncWiretapTest extends ExchangeTestSupport {
 
     private void checkTrace(MockTrace trace, String expectedBody) {
         List<Span> spans = trace.spans();
-        assertEquals(7, spans.size());
+        assertEquals(SPAN_COUNT, spans.size());
         // Cast to implementation object to be able to
         // inspect the status of the Span.
         MockSpanAdapter testProducer = SpanTestSupport.getSpan(spans, "direct://start", Op.EVENT_SENT);
