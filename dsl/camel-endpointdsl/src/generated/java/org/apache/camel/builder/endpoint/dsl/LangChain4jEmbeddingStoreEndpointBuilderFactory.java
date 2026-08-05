@@ -75,6 +75,44 @@ public interface LangChain4jEmbeddingStoreEndpointBuilderFactory {
             return this;
         }
         /**
+         * Embedding model for auto-computing embeddings from message body text.
+         * When set, ADD and SEARCH operations can accept plain text body
+         * instead of requiring a pre-computed embedding in the
+         * CamelLangChain4jEmbeddingsEmbedding header. The header always takes
+         * precedence when present.
+         * 
+         * The option is a:
+         * <code>dev.langchain4j.model.embedding.EmbeddingModel</code> type.
+         * 
+         * Group: producer
+         * 
+         * @param embeddingModel the value to set
+         * @return the dsl builder
+         */
+        default LangChain4jEmbeddingStoreEndpointBuilder embeddingModel(dev.langchain4j.model.embedding.EmbeddingModel embeddingModel) {
+            doSetProperty("embeddingModel", embeddingModel);
+            return this;
+        }
+        /**
+         * Embedding model for auto-computing embeddings from message body text.
+         * When set, ADD and SEARCH operations can accept plain text body
+         * instead of requiring a pre-computed embedding in the
+         * CamelLangChain4jEmbeddingsEmbedding header. The header always takes
+         * precedence when present.
+         * 
+         * The option will be converted to a
+         * <code>dev.langchain4j.model.embedding.EmbeddingModel</code> type.
+         * 
+         * Group: producer
+         * 
+         * @param embeddingModel the value to set
+         * @return the dsl builder
+         */
+        default LangChain4jEmbeddingStoreEndpointBuilder embeddingModel(String embeddingModel) {
+            doSetProperty("embeddingModel", embeddingModel);
+            return this;
+        }
+        /**
          * Direct embedding store instance for vector operations.
          * 
          * The option is a:

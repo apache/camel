@@ -17,6 +17,7 @@
 package org.apache.camel.component.langchain4j.embeddingstore;
 
 import dev.langchain4j.data.segment.TextSegment;
+import dev.langchain4j.model.embedding.EmbeddingModel;
 import dev.langchain4j.store.embedding.EmbeddingStore;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.spi.Configurer;
@@ -63,6 +64,13 @@ public class LangChain4jEmbeddingStoreConfiguration implements Cloneable {
     @UriParam(description = "When true, SEARCH returns List<String> with text content instead of List<EmbeddingMatch>",
               defaultValue = "false")
     private boolean returnTextContent = false;
+
+    @UriParam(description = "Embedding model for auto-computing embeddings from message body text. "
+                            + "When set, ADD and SEARCH operations can accept plain text body instead of requiring "
+                            + "a pre-computed embedding in the CamelLangChain4jEmbeddingsEmbedding header. "
+                            + "The header always takes precedence when present.")
+    @Metadata(autowired = true)
+    private EmbeddingModel embeddingModel;
 
     public EmbeddingStore<TextSegment> getEmbeddingStore() {
         return embeddingStore;
@@ -118,6 +126,14 @@ public class LangChain4jEmbeddingStoreConfiguration implements Cloneable {
 
     public void setReturnTextContent(boolean returnTextContent) {
         this.returnTextContent = returnTextContent;
+    }
+
+    public EmbeddingModel getEmbeddingModel() {
+        return embeddingModel;
+    }
+
+    public void setEmbeddingModel(EmbeddingModel embeddingModel) {
+        this.embeddingModel = embeddingModel;
     }
 
     // ************************

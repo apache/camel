@@ -83,6 +83,26 @@ public interface Langchain4jEmbeddingstoreComponentBuilderFactory {
         }
     
         /**
+         * Embedding model for auto-computing embeddings from message body text.
+         * When set, ADD and SEARCH operations can accept plain text body
+         * instead of requiring a pre-computed embedding in the
+         * CamelLangChain4jEmbeddingsEmbedding header. The header always takes
+         * precedence when present.
+         * 
+         * The option is a:
+         * &lt;code&gt;dev.langchain4j.model.embedding.EmbeddingModel&lt;/code&gt; type.
+         * 
+         * Group: producer
+         * 
+         * @param embeddingModel the value to set
+         * @return the dsl builder
+         */
+        default Langchain4jEmbeddingstoreComponentBuilder embeddingModel(dev.langchain4j.model.embedding.EmbeddingModel embeddingModel) {
+            doSetProperty("embeddingModel", embeddingModel);
+            return this;
+        }
+    
+        /**
          * Direct embedding store instance for vector operations.
          * 
          * The option is a:
@@ -233,6 +253,7 @@ public interface Langchain4jEmbeddingstoreComponentBuilderFactory {
             switch (name) {
             case "action": getOrCreateConfiguration((LangChain4jEmbeddingStoreComponent) component).setAction((org.apache.camel.component.langchain4j.embeddingstore.LangChain4jEmbeddingStoreAction) value); return true;
             case "configuration": ((LangChain4jEmbeddingStoreComponent) component).setConfiguration((org.apache.camel.component.langchain4j.embeddingstore.LangChain4jEmbeddingStoreConfiguration) value); return true;
+            case "embeddingModel": getOrCreateConfiguration((LangChain4jEmbeddingStoreComponent) component).setEmbeddingModel((dev.langchain4j.model.embedding.EmbeddingModel) value); return true;
             case "embeddingStore": getOrCreateConfiguration((LangChain4jEmbeddingStoreComponent) component).setEmbeddingStore((dev.langchain4j.store.embedding.EmbeddingStore) value); return true;
             case "embeddingStoreFactory": getOrCreateConfiguration((LangChain4jEmbeddingStoreComponent) component).setEmbeddingStoreFactory((org.apache.camel.component.langchain4j.embeddingstore.EmbeddingStoreFactory) value); return true;
             case "lazyStartProducer": ((LangChain4jEmbeddingStoreComponent) component).setLazyStartProducer((boolean) value); return true;

@@ -72,9 +72,54 @@ EmbeddingStore<TextSegment> embeddingStore = PgVectorEmbeddingStore.builder()
 context.getRegistry().bind("myEmbeddingStore", embeddingStore);
 ----
 
+=== Auto-Embedding with `embeddingModel`
+
+When an `EmbeddingModel` is configured (either explicitly or via autowiring from the registry), the ADD and SEARCH operations can accept plain text in the message body instead of requiring a pre-computed embedding in the `CamelLangChain4jEmbeddingsEmbedding` header. The component will automatically compute the embedding from the body text.
+
+If the `CamelLangChain4jEmbeddingsEmbedding` header is present, it always takes precedence over auto-embedding.
+
+[tabs]
+====
+Java::
++
+[source,java]
+----
+from("direct:store")
+    .to("langchain4j-embeddingstore:myStore?action=ADD");
+
+from("direct:search")
+    .to("langchain4j-embeddingstore:myStore?action=SEARCH&returnTextContent=true");
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:store
+    steps:
+      - to:
+          uri: langchain4j-embeddingstore:myStore
+          parameters:
+            action: ADD
+- route:
+    from:
+      uri: direct:search
+    steps:
+      - to:
+          uri: langchain4j-embeddingstore:myStore
+          parameters:
+            action: SEARCH
+            returnTextContent: true
+----
+====
+
+This eliminates the need for a separate `langchain4j-embeddings:embed` step in the route.
+
 === Storing Embeddings (ADD Operation)
 
-Store embeddings with optional text segments:
+Store embeddings with optional text segments. Without `embeddingModel`, a pre-computed embedding must be provided via the `langchain4j-embeddings` component:
 
 [tabs]
 ====
@@ -108,7 +153,7 @@ The response body contains the generated embedding ID.
 
 === Searching Embeddings (SEARCH Operation)
 
-Perform similarity search to find relevant content:
+Perform similarity search to find relevant content. Without `embeddingModel`, a pre-computed query embedding must be provided:
 
 [tabs]
 ====

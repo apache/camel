@@ -34,6 +34,8 @@ public class LangChain4jEmbeddingStoreComponentConfigurer extends PropertyConfig
         case "autowiredenabled":
         case "autowiredEnabled": target.setAutowiredEnabled(property(camelContext, boolean.class, value)); return true;
         case "configuration": target.setConfiguration(property(camelContext, org.apache.camel.component.langchain4j.embeddingstore.LangChain4jEmbeddingStoreConfiguration.class, value)); return true;
+        case "embeddingmodel":
+        case "embeddingModel": getOrCreateConfiguration(target).setEmbeddingModel(property(camelContext, dev.langchain4j.model.embedding.EmbeddingModel.class, value)); return true;
         case "embeddingstore":
         case "embeddingStore": getOrCreateConfiguration(target).setEmbeddingStore(property(camelContext, dev.langchain4j.store.embedding.EmbeddingStore.class, value)); return true;
         case "embeddingstorefactory":
@@ -52,7 +54,7 @@ public class LangChain4jEmbeddingStoreComponentConfigurer extends PropertyConfig
 
     @Override
     public String[] getAutowiredNames() {
-        return new String[]{"embeddingStore", "embeddingStoreFactory"};
+        return new String[]{"embeddingModel", "embeddingStore", "embeddingStoreFactory"};
     }
 
     @Override
@@ -62,6 +64,8 @@ public class LangChain4jEmbeddingStoreComponentConfigurer extends PropertyConfig
         case "autowiredenabled":
         case "autowiredEnabled": return boolean.class;
         case "configuration": return org.apache.camel.component.langchain4j.embeddingstore.LangChain4jEmbeddingStoreConfiguration.class;
+        case "embeddingmodel":
+        case "embeddingModel": return dev.langchain4j.model.embedding.EmbeddingModel.class;
         case "embeddingstore":
         case "embeddingStore": return dev.langchain4j.store.embedding.EmbeddingStore.class;
         case "embeddingstorefactory":
@@ -86,6 +90,8 @@ public class LangChain4jEmbeddingStoreComponentConfigurer extends PropertyConfig
         case "autowiredenabled":
         case "autowiredEnabled": return target.isAutowiredEnabled();
         case "configuration": return target.getConfiguration();
+        case "embeddingmodel":
+        case "embeddingModel": return getOrCreateConfiguration(target).getEmbeddingModel();
         case "embeddingstore":
         case "embeddingStore": return getOrCreateConfiguration(target).getEmbeddingStore();
         case "embeddingstorefactory":
