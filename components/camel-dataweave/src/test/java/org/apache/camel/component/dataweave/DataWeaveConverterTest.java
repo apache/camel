@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.dsl.jbang.core.commands.transform;
+package org.apache.camel.component.dataweave;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -34,7 +34,7 @@ class DataWeaveConverterTest {
         converter = new DataWeaveConverter();
     }
 
-    // ── Header conversion ──
+    // -- Header conversion --
 
     @Test
     void testHeaderConversion() {
@@ -51,7 +51,7 @@ class DataWeaveConverterTest {
         assertTrue(result.contains("*/"));
     }
 
-    // ── Field access ──
+    // -- Field access --
 
     @Test
     void testPayloadToBody() {
@@ -83,7 +83,7 @@ class DataWeaveConverterTest {
         assertEquals("cml.header('page')", result);
     }
 
-    // ── Operators ──
+    // -- Operators --
 
     @Test
     void testStringConcat() {
@@ -109,7 +109,7 @@ class DataWeaveConverterTest {
         assertEquals("body.active && body.verified", result);
     }
 
-    // ── Default operator ──
+    // -- Default operator --
 
     @Test
     void testDefault() {
@@ -117,7 +117,7 @@ class DataWeaveConverterTest {
         assertEquals("cml.defaultVal(body.currency, \"USD\")", result);
     }
 
-    // ── Type coercion ──
+    // -- Type coercion --
 
     @Test
     void testAsNumber() {
@@ -143,7 +143,7 @@ class DataWeaveConverterTest {
         assertEquals("cml.toBoolean(body.active)", result);
     }
 
-    // ── Built-in functions ──
+    // -- Built-in functions --
 
     @Test
     void testSizeOf() {
@@ -194,7 +194,7 @@ class DataWeaveConverterTest {
         assertTrue(converter.needsCamelLib());
     }
 
-    // ── String operations ──
+    // -- String operations --
 
     @Test
     void testContains() {
@@ -221,7 +221,7 @@ class DataWeaveConverterTest {
         assertEquals("std.strReplace(body.text, \"old\", \"new\")", result);
     }
 
-    // ── Collection operations ──
+    // -- Collection operations --
 
     @Test
     void testMap() {
@@ -250,10 +250,8 @@ class DataWeaveConverterTest {
 
     @Test
     void testReduceParamSwap() {
-        // Verify that acc and item params are swapped for std.foldl
         String result = converter.convertExpression(
                 "payload.items reduce ((item, acc = 0) -> acc + item.price)");
-        // In std.foldl, it should be function(acc, item) not function(item, acc)
         assertTrue(result.contains("function(acc, item)"));
     }
 
@@ -265,7 +263,7 @@ class DataWeaveConverterTest {
         assertTrue(result.contains("item.tags"));
     }
 
-    // ── If/else ──
+    // -- If/else --
 
     @Test
     void testIfElse() {
@@ -274,7 +272,7 @@ class DataWeaveConverterTest {
         assertEquals("if body.age >= 18 then \"adult\" else \"minor\"", result);
     }
 
-    // ── Object and array literals ──
+    // -- Object and array literals --
 
     @Test
     void testObjectLiteral() {
@@ -289,7 +287,7 @@ class DataWeaveConverterTest {
         assertEquals("[1, 2, 3]", result);
     }
 
-    // ── Full script tests ──
+    // -- Full script tests --
 
     @Test
     void testSimpleRenameScript() throws IOException {
@@ -382,7 +380,7 @@ class DataWeaveConverterTest {
         assertTrue(result.contains("name: body.name"));
     }
 
-    // ── startsWith / endsWith ──
+    // -- startsWith / endsWith --
 
     @Test
     void testStartsWith() {
@@ -398,7 +396,7 @@ class DataWeaveConverterTest {
         assertTrue(converter.needsCamelLib());
     }
 
-    // ── Math functions ──
+    // -- Math functions --
 
     @Test
     void testAbs() {
@@ -427,17 +425,16 @@ class DataWeaveConverterTest {
         assertTrue(converter.needsCamelLib());
     }
 
-    // ── mapWithIndex parameter order ──
+    // -- mapWithIndex parameter order --
 
     @Test
     void testMapWithIndex() {
         String result = converter.convertExpression(
                 "payload.items map ((item, idx) -> { index: idx, name: item.name })");
-        // DataSonnet std.mapWithIndex uses function(index, item), so params must be swapped
         assertTrue(result.contains("std.mapWithIndex(function(idx, item)"));
     }
 
-    // ── distinctBy ──
+    // -- distinctBy --
 
     @Test
     void testDistinctBy() {
@@ -448,7 +445,7 @@ class DataWeaveConverterTest {
         assertTrue(converter.needsCamelLib());
     }
 
-    // ── Lambda shorthand ──
+    // -- Lambda shorthand --
 
     @Test
     void testLambdaShorthand() {
@@ -456,7 +453,7 @@ class DataWeaveConverterTest {
         assertTrue(result.contains("function(x) x.name"));
     }
 
-    // ── match expression ──
+    // -- match expression --
 
     @Test
     void testMatchExpressionUnsupported() {
@@ -466,7 +463,7 @@ class DataWeaveConverterTest {
         assertTrue(converter.getTodoCount() > 0);
     }
 
-    // ── Multi-value selector ──
+    // -- Multi-value selector --
 
     @Test
     void testMultiValueSelector() {
@@ -475,7 +472,7 @@ class DataWeaveConverterTest {
         assertEquals(0, converter.getTodoCount());
     }
 
-    // ── Escape handling ──
+    // -- Escape handling --
 
     @Test
     void testStringEscapesPreserved() {
@@ -483,7 +480,7 @@ class DataWeaveConverterTest {
         assertTrue(result.contains("\"\\n\""), "Newline escape should be preserved, got: " + result);
     }
 
-    // ── Helpers ──
+    // -- Helpers --
 
     private String loadResource(String path) throws IOException {
         try (InputStream is = getClass().getClassLoader().getResourceAsStream(path)) {

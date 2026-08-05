@@ -1,0 +1,15 @@
+{
+  "other": {
+    "kind": "other",
+    "name": "dataweave",
+    "title": "Dataweave",
+    "description": "Camel DataWeave support",
+    "deprecated": false,
+    "firstVersion": "4.22.0",
+    "label": "transformation",
+    "supportLevel": "Preview",
+    "groupId": "org.apache.camel",
+    "artifactId": "camel-dataweave",
+    "version": "4.22.0-SNAPSHOT"
+  }
+}

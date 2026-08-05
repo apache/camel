@@ -14,13 +14,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.dsl.jbang.core.commands.transform;
+package org.apache.camel.component.dataweave;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import org.apache.camel.dsl.jbang.core.commands.transform.DataWeaveLexer.Token;
-import org.apache.camel.dsl.jbang.core.commands.transform.DataWeaveLexer.TokenType;
+import org.apache.camel.component.dataweave.DataWeaveLexer.Token;
+import org.apache.camel.component.dataweave.DataWeaveLexer.TokenType;
 
 /**
  * Recursive descent parser for DataWeave 2.0 scripts producing {@link DataWeaveAst} nodes.
@@ -45,7 +45,7 @@ public class DataWeaveParser {
         return parseExpression();
     }
 
-    // ── Header parsing ──
+    // -- Header parsing --
 
     private DataWeaveAst.Header parseHeader() {
         String version = "2.0";
@@ -57,7 +57,7 @@ public class DataWeaveParser {
                 || checkIdentifier("output") || checkIdentifier("input");
 
         if (!hasHeader) {
-            // No header section — skip directly to body
+            // No header section -- skip directly to body
             return new DataWeaveAst.Header(version, null, inputs);
         }
 
@@ -118,7 +118,7 @@ public class DataWeaveParser {
         return sb.toString();
     }
 
-    // ── Expression parsing (precedence climbing) ──
+    // -- Expression parsing (precedence climbing) --
 
     private DataWeaveAst parseExpression() {
         // Handle var/fun declarations at expression level
@@ -442,7 +442,7 @@ public class DataWeaveParser {
                 expr = new DataWeaveAst.ReplaceExpr(expr, target, replacement);
             } else if (checkIdentifier("match")) {
                 advance(); // match
-                // Capture the match block as unsupported — skip braces
+                // Capture the match block as unsupported -- skip braces
                 StringBuilder matchText = new StringBuilder("match ");
                 if (check(TokenType.LBRACE)) {
                     int depth = 1;
@@ -717,7 +717,7 @@ public class DataWeaveParser {
         return new DataWeaveAst.ArrayLit(elements);
     }
 
-    // ── Token helpers ──
+    // -- Token helpers --
 
     private Token current() {
         return pos < tokens.size() ? tokens.get(pos) : tokens.get(tokens.size() - 1);

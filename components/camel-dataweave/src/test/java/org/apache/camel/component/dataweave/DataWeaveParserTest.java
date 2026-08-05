@@ -14,31 +14,31 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.dsl.jbang.core.commands.transform;
+package org.apache.camel.component.dataweave;
 
 import java.util.List;
 
-import org.apache.camel.dsl.jbang.core.commands.transform.DataWeaveAst.ArrayLit;
-import org.apache.camel.dsl.jbang.core.commands.transform.DataWeaveAst.BinaryOp;
-import org.apache.camel.dsl.jbang.core.commands.transform.DataWeaveAst.DefaultExpr;
-import org.apache.camel.dsl.jbang.core.commands.transform.DataWeaveAst.FieldAccess;
-import org.apache.camel.dsl.jbang.core.commands.transform.DataWeaveAst.FunctionCall;
-import org.apache.camel.dsl.jbang.core.commands.transform.DataWeaveAst.Identifier;
-import org.apache.camel.dsl.jbang.core.commands.transform.DataWeaveAst.IfElse;
-import org.apache.camel.dsl.jbang.core.commands.transform.DataWeaveAst.IndexAccess;
-import org.apache.camel.dsl.jbang.core.commands.transform.DataWeaveAst.Lambda;
-import org.apache.camel.dsl.jbang.core.commands.transform.DataWeaveAst.LambdaShorthand;
-import org.apache.camel.dsl.jbang.core.commands.transform.DataWeaveAst.MapExpr;
-import org.apache.camel.dsl.jbang.core.commands.transform.DataWeaveAst.NumberLit;
-import org.apache.camel.dsl.jbang.core.commands.transform.DataWeaveAst.ObjectLit;
-import org.apache.camel.dsl.jbang.core.commands.transform.DataWeaveAst.Parens;
-import org.apache.camel.dsl.jbang.core.commands.transform.DataWeaveAst.Script;
-import org.apache.camel.dsl.jbang.core.commands.transform.DataWeaveAst.StringLit;
-import org.apache.camel.dsl.jbang.core.commands.transform.DataWeaveAst.TypeCoercion;
-import org.apache.camel.dsl.jbang.core.commands.transform.DataWeaveAst.UnaryOp;
-import org.apache.camel.dsl.jbang.core.commands.transform.DataWeaveAst.Unsupported;
-import org.apache.camel.dsl.jbang.core.commands.transform.DataWeaveAst.VarDecl;
-import org.apache.camel.dsl.jbang.core.commands.transform.DataWeaveLexer.Token;
+import org.apache.camel.component.dataweave.DataWeaveAst.ArrayLit;
+import org.apache.camel.component.dataweave.DataWeaveAst.BinaryOp;
+import org.apache.camel.component.dataweave.DataWeaveAst.DefaultExpr;
+import org.apache.camel.component.dataweave.DataWeaveAst.FieldAccess;
+import org.apache.camel.component.dataweave.DataWeaveAst.FunctionCall;
+import org.apache.camel.component.dataweave.DataWeaveAst.Identifier;
+import org.apache.camel.component.dataweave.DataWeaveAst.IfElse;
+import org.apache.camel.component.dataweave.DataWeaveAst.IndexAccess;
+import org.apache.camel.component.dataweave.DataWeaveAst.Lambda;
+import org.apache.camel.component.dataweave.DataWeaveAst.LambdaShorthand;
+import org.apache.camel.component.dataweave.DataWeaveAst.MapExpr;
+import org.apache.camel.component.dataweave.DataWeaveAst.NumberLit;
+import org.apache.camel.component.dataweave.DataWeaveAst.ObjectLit;
+import org.apache.camel.component.dataweave.DataWeaveAst.Parens;
+import org.apache.camel.component.dataweave.DataWeaveAst.Script;
+import org.apache.camel.component.dataweave.DataWeaveAst.StringLit;
+import org.apache.camel.component.dataweave.DataWeaveAst.TypeCoercion;
+import org.apache.camel.component.dataweave.DataWeaveAst.UnaryOp;
+import org.apache.camel.component.dataweave.DataWeaveAst.Unsupported;
+import org.apache.camel.component.dataweave.DataWeaveAst.VarDecl;
+import org.apache.camel.component.dataweave.DataWeaveLexer.Token;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -47,14 +47,6 @@ import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-/**
- * Unit tests for {@link DataWeaveParser}.
- *
- * The parser is recursive descent and best-effort (it never throws on malformed input). These tests assert the shape of
- * the produced {@link DataWeaveAst} for representative scripts, with emphasis on operator precedence, postfix
- * collection operations, header parsing, and graceful handling of unsupported constructs. The AST records are exercised
- * transitively here rather than in a separate test, since they carry no logic of their own.
- */
 class DataWeaveParserTest {
 
     private static DataWeaveAst parseExpr(String src) {
@@ -67,7 +59,7 @@ class DataWeaveParserTest {
         return new DataWeaveParser(tokens).parse();
     }
 
-    // ── Header ──
+    // -- Header --
 
     @Test
     void shouldParseHeaderVersionAndOutputType() {
@@ -102,14 +94,13 @@ class DataWeaveParserTest {
 
     @Test
     void shouldDefaultVersionWhenNoHeaderPresent() {
-        // an expression with no %dw header still yields a Script with the default 2.0 version
         Script script = assertInstanceOf(Script.class, parseScript("payload"));
         assertEquals("2.0", script.header().version());
         assertNull(script.header().outputType());
         assertInstanceOf(Identifier.class, script.body());
     }
 
-    // ── Literals and field access ──
+    // -- Literals and field access --
 
     @Test
     void shouldParseLiterals() {
@@ -121,7 +112,6 @@ class DataWeaveParserTest {
 
     @Test
     void shouldParseFieldAccessAndIndexAccessChain() {
-        // payload.items[0] -> IndexAccess(FieldAccess(Identifier(payload), items), NumberLit(0))
         IndexAccess idx = assertInstanceOf(IndexAccess.class, parseExpr("payload.items[0]"));
         assertEquals("0", assertInstanceOf(NumberLit.class, idx.index()).value());
         FieldAccess fa = assertInstanceOf(FieldAccess.class, idx.object());
@@ -129,11 +119,10 @@ class DataWeaveParserTest {
         assertEquals("payload", assertInstanceOf(Identifier.class, fa.object()).name());
     }
 
-    // ── Precedence ──
+    // -- Precedence --
 
     @Test
     void shouldGiveMultiplicationHigherPrecedenceThanAddition() {
-        // 1 + 2 * 3 -> BinaryOp(+, 1, BinaryOp(*, 2, 3))
         BinaryOp add = assertInstanceOf(BinaryOp.class, parseExpr("1 + 2 * 3"));
         assertEquals("+", add.op());
         assertEquals("1", assertInstanceOf(NumberLit.class, add.left()).value());
@@ -145,7 +134,6 @@ class DataWeaveParserTest {
 
     @Test
     void shouldGiveAndHigherPrecedenceThanOr() {
-        // a and b or c -> BinaryOp(or, BinaryOp(and, a, b), c)
         BinaryOp or = assertInstanceOf(BinaryOp.class, parseExpr("a and b or c"));
         assertEquals("or", or.op());
         assertEquals("c", assertInstanceOf(Identifier.class, or.right()).name());
@@ -165,16 +153,14 @@ class DataWeaveParserTest {
         assertEquals("+", assertInstanceOf(BinaryOp.class, parens.expr()).op());
     }
 
-    // ── Object / array literals ──
+    // -- Object / array literals --
 
     @Test
     void shouldParseObjectLiteralWithStaticAndDynamicKeys() {
         ObjectLit obj = assertInstanceOf(ObjectLit.class, parseExpr("{ name: payload.x, (k): v }"));
         assertEquals(2, obj.entries().size());
-        // static key
         assertEquals("name", assertInstanceOf(Identifier.class, obj.entries().get(0).key()).name());
         assertFalse(obj.entries().get(0).dynamic());
-        // dynamic key parsed from a parenthesized expression
         assertTrue(obj.entries().get(1).dynamic());
         assertEquals("k", assertInstanceOf(Identifier.class, obj.entries().get(1).key()).name());
     }
@@ -186,7 +172,7 @@ class DataWeaveParserTest {
         assertEquals("2", assertInstanceOf(NumberLit.class, arr.elements().get(1)).value());
     }
 
-    // ── Collection operations / lambdas ──
+    // -- Collection operations / lambdas --
 
     @Test
     void shouldParseMapWithExplicitLambda() {
@@ -205,7 +191,7 @@ class DataWeaveParserTest {
         assertEquals(List.of("name"), sh.fields());
     }
 
-    // ── Function calls ──
+    // -- Function calls --
 
     @Test
     void shouldParseBuiltinFunctionCall() {
@@ -215,7 +201,7 @@ class DataWeaveParserTest {
         assertEquals("payload", assertInstanceOf(Identifier.class, call.args().get(0)).name());
     }
 
-    // ── Type coercion ──
+    // -- Type coercion --
 
     @Test
     void shouldParseTypeCoercionWithoutFormat() {
@@ -231,7 +217,7 @@ class DataWeaveParserTest {
         assertEquals("yyyy-MM-dd", tc.format());
     }
 
-    // ── Control flow ──
+    // -- Control flow --
 
     @Test
     void shouldParseIfElse() {
@@ -250,14 +236,13 @@ class DataWeaveParserTest {
 
     @Test
     void shouldParseVarDeclarationWithTrailingBody() {
-        // "var x = 1 x" -> VarDecl(x, NumberLit(1), body=Identifier(x))
         VarDecl var = assertInstanceOf(VarDecl.class, parseExpr("var x = 1 x"));
         assertEquals("x", var.name());
         assertEquals("1", assertInstanceOf(NumberLit.class, var.value()).value());
         assertEquals("x", assertInstanceOf(Identifier.class, var.body()).name());
     }
 
-    // ── Unary ──
+    // -- Unary --
 
     @Test
     void shouldParseLogicalNot() {
@@ -266,7 +251,7 @@ class DataWeaveParserTest {
         assertEquals("a", assertInstanceOf(Identifier.class, not.operand()).name());
     }
 
-    // ── Graceful degradation ──
+    // -- Graceful degradation --
 
     @Test
     void shouldRepresentMatchExpressionAsUnsupported() {
@@ -278,7 +263,6 @@ class DataWeaveParserTest {
 
     @Test
     void shouldNotThrowOnUnbalancedInput() {
-        // expect() silently skips a missing RPAREN, so a best-effort AST is still produced
         List<Token> tokens = new DataWeaveLexer("(a + b").tokenize();
         assertEquals(DataWeaveLexer.TokenType.EOF, tokens.get(tokens.size() - 1).type());
         assertInstanceOf(Parens.class, parseExpr("(a + b"));

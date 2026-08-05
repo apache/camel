@@ -14,13 +14,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.dsl.jbang.core.commands.transform;
+package org.apache.camel.component.dataweave;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import org.apache.camel.dsl.jbang.core.commands.transform.DataWeaveAst.*;
-import org.apache.camel.dsl.jbang.core.commands.transform.DataWeaveLexer.Token;
+import org.apache.camel.component.dataweave.DataWeaveAst.*;
+import org.apache.camel.component.dataweave.DataWeaveLexer.Token;
 
 /**
  * Converts DataWeave 2.0 scripts to DataSonnet. Parses the DataWeave input, walks the AST, and emits equivalent
@@ -84,7 +84,7 @@ public class DataWeaveConverter {
         return emitNode(ast);
     }
 
-    // ── Emission ──
+    // -- Emission --
 
     private String emit(DataWeaveAst node) {
         if (node instanceof Script script) {
@@ -352,7 +352,7 @@ public class DataWeaveConverter {
             case "Boolean" -> "cml.toBoolean(" + expr + ")";
             default -> {
                 todoCount++;
-                yield expr + (includeComments ? " // TODO: manual conversion needed — as " + tc.type() : "");
+                yield expr + (includeComments ? " // TODO: manual conversion needed -- as " + tc.type() : "");
             }
         };
     }
@@ -410,9 +410,9 @@ public class DataWeaveConverter {
                 yield "c.max(" + argStr + ")";
             }
             case "read" -> "std.parseJson(" + argStr + ")"
-                           + (includeComments ? " // NOTE: assumes JSON input — DW read() supports multiple formats" : "");
+                           + (includeComments ? " // NOTE: assumes JSON input -- DW read() supports multiple formats" : "");
             case "write" -> "std.manifestJsonEx(" + argStr + ", \"  \")"
-                            + (includeComments ? " // NOTE: outputs JSON — DW write() supports multiple formats" : "");
+                            + (includeComments ? " // NOTE: outputs JSON -- DW write() supports multiple formats" : "");
             default -> fc.name() + "(" + argStr + ")";
         };
     }
@@ -436,7 +436,7 @@ public class DataWeaveConverter {
             List<String> paramNames = lambdaParamNames(lam);
             String body = emitNode(lam.body());
             if (paramNames.size() == 2) {
-                // DW: map ((item, index) -> body) — DS: std.mapWithIndex(function(index, item) body, collection)
+                // DW: map ((item, index) -> body) -- DS: std.mapWithIndex(function(index, item) body, collection)
                 // Parameter order is swapped: DW is (item, index), DS is (index, item)
                 return "std.mapWithIndex(function(" + paramNames.get(1) + ", " + paramNames.get(0)
                        + ") " + body + ", " + collection + ")";
@@ -498,7 +498,7 @@ public class DataWeaveConverter {
         if (dbe.lambda() instanceof Lambda lam) {
             List<String> paramNames = lambdaParamNames(lam);
             String body = emitNode(lam.body());
-            // distinctBy keeps first occurrence per key — use distinctBy helper
+            // distinctBy keeps first occurrence per key -- use distinctBy helper
             return "c.distinctBy(" + collection + ", function(" + paramNames.get(0) + ") " + body + ")";
         }
         return "c.distinct(" + collection + ")";
@@ -593,7 +593,7 @@ public class DataWeaveConverter {
         todoCount++;
         convertedCount--;
         return includeComments
-                ? "// TODO: manual conversion needed — " + u.reason() + ": " + u.originalText() + "\nnull"
+                ? "// TODO: manual conversion needed -- " + u.reason() + ": " + u.originalText() + "\nnull"
                 : "null";
     }
 
