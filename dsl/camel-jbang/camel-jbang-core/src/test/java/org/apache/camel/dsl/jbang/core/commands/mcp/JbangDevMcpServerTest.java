@@ -81,7 +81,7 @@ class JbangDevMcpServerTest {
                     .findFirst()
                     .orElseThrow();
             assertThat(parameterizedTool.inputSchema()).isNotNull();
-            assertThat(parameterizedTool.inputSchema().toString()).contains("name");
+            assertThat(parameterizedTool.inputSchema().toString()).contains("name").contains("required");
 
             McpSchema.CallToolResult result = client.callTool(
                     new McpSchema.CallToolRequest("list_processes", Map.of()));

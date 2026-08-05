@@ -584,8 +584,8 @@ public class HttpManagementServerConfigurationProperties implements BootstrapClo
     /**
      * Whether to expose dev/diagnostics MCP tools on this management server (requires camel-mcp-server on the
      * classpath). Currently honored only when Camel JBang registers {@code JbangDevMcpMainListener} (for example
-     * {@code camel run --mcp}); plain camel-main users should use {@code camel.server.mcpEnabled} for route-based MCP.
-     * Not intended for production use.
+     * {@code camel run --mcp}). For route-based MCP on the main HTTP server in plain camel-main, configure
+     * {@code camel.server.mcpEnabled} instead. Not intended for production use.
      */
     public void setMcpEnabled(boolean mcpEnabled) {
         this.mcpEnabled = mcpEnabled;
