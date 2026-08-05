@@ -56,6 +56,11 @@ import org.apache.camel.CamelExchangeException;
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.apache.camel.WrappedFile;
+import org.apache.camel.component.ai.observability.GenAiObservability;
+import org.apache.camel.component.ai.observability.GenAiObservation;
+import org.apache.camel.component.ai.observability.GenAiObservationContext;
+import org.apache.camel.component.ai.observability.GenAiOperationName;
+import org.apache.camel.component.ai.observability.GenAiUsage;
 import org.apache.camel.spi.Synchronization;
 import org.apache.camel.support.DefaultAsyncProducer;
 import org.apache.camel.support.ResourceHelper;
@@ -462,7 +467,7 @@ public class OpenAIProducer extends DefaultAsyncProducer {
     private void processNonStreamingSimple(
             Exchange exchange, ChatCompletionCreateParams params, OpenAIConfiguration config)
             throws Exception {
-        ChatCompletion response = getEndpoint().getClient().chat().completions().create(params);
+        ChatCompletion response = createChatCompletion(exchange, params);
         if (config.isStoreFullResponse()) {
             exchange.setProperty(OpenAIConstants.RESPONSE, response);
         }
@@ -498,7 +503,7 @@ public class OpenAIProducer extends DefaultAsyncProducer {
         int iteration = 0;
 
         while (iteration < maxIterations) {
-            ChatCompletion response = getEndpoint().getClient().chat().completions().create(paramsBuilder.build());
+            ChatCompletion response = createChatCompletion(exchange, paramsBuilder.build());
             tokenTracker.addUsage(response);
             setAgenticTokenHeaders(exchange.getMessage(), tokenTracker);
 
@@ -653,6 +658,32 @@ public class OpenAIProducer extends DefaultAsyncProducer {
         return field.asKnown()
                 .map(ChatCompletion.Choice.FinishReason::toString)
                 .orElse("stop");
+    }
+
+    private ChatCompletion createChatCompletion(Exchange exchange, ChatCompletionCreateParams params) {
+        String requestModel = params.model().toString();
+        GenAiObservationContext observationContext = GenAiObservationContext.builder()
+                .operationName(GenAiOperationName.CHAT)
+                .system("openai")
+                .requestModel(requestModel)
+                .componentScheme("openai")
+                .build();
+        GenAiObservation observation = GenAiObservability.start(exchange, observationContext);
+        try {
+            ChatCompletion response = getEndpoint().getClient().chat().completions().create(params);
+            CompletionUsage usage = response.usage().orElse(null);
+            observation.recordSuccess(GenAiUsage.of(
+                    usage != null ? (int) usage.promptTokens() : null,
+                    usage != null ? (int) usage.completionTokens() : null,
+                    response.choices().isEmpty() ? null : getFinishReasonString(response.choices().get(0)),
+                    response.model()));
+            return response;
+        } catch (RuntimeException e) {
+            observation.recordError(e);
+            throw e;
+        } finally {
+            observation.close();
+        }
     }
 
     private void setResponseHeaders(Message message, ChatCompletion response) {

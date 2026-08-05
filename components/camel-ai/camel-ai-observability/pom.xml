@@ -28,63 +28,35 @@
         <version>4.22.0-SNAPSHOT</version>
     </parent>
 
-    <artifactId>camel-langchain4j-chat</artifactId>
+    <artifactId>camel-ai-observability</artifactId>
     <packaging>jar</packaging>
-    <name>Camel :: AI :: LangChain4j :: Chat</name>
-    <description>LangChain4j Chat component</description>
+    <name>Camel :: AI :: Observability</name>
+    <description>GenAI observability support for Camel AI components (OpenTelemetry and Micrometer)</description>
+
+    <properties>
+        <firstVersion>4.22.0</firstVersion>
+        <label>ai</label>
+        <title>AI Observability</title>
+        <supportLevel>Preview</supportLevel>
+    </properties>
 
     <dependencies>
-
         <dependency>
             <groupId>org.apache.camel</groupId>
             <artifactId>camel-support</artifactId>
         </dependency>
         <dependency>
-            <groupId>dev.langchain4j</groupId>
-            <artifactId>langchain4j-core</artifactId>
-            <version>${langchain4j-version}</version>
-        </dependency>
-
-        <!-- these 2 model beans - we may want to check if they can be deleted in some future -->
-        <dependency>
-            <groupId>dev.langchain4j</groupId>
-            <artifactId>langchain4j-open-ai</artifactId>
-            <version>${langchain4j-version}</version>
+            <groupId>org.apache.camel</groupId>
+            <artifactId>camel-telemetry</artifactId>
         </dependency>
         <dependency>
-            <groupId>dev.langchain4j</groupId>
-            <artifactId>langchain4j-hugging-face</artifactId>
-            <version>${langchain4j-beta-version}</version>
-        </dependency>
-
-        <dependency>
-            <groupId>com.fasterxml.jackson.core</groupId>
-            <artifactId>jackson-databind</artifactId>
-            <version>${jackson2-version}</version>
+            <groupId>io.micrometer</groupId>
+            <artifactId>micrometer-core</artifactId>
         </dependency>
 
         <dependency>
             <groupId>org.apache.camel</groupId>
-            <artifactId>camel-ai-observability</artifactId>
-            <version>${project.version}</version>
-        </dependency>
-
-        <!-- for testing -->
-        <dependency>
-            <groupId>org.apache.camel</groupId>
-            <artifactId>camel-test-spring-junit6</artifactId>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>dev.langchain4j</groupId>
-            <artifactId>langchain4j-ollama</artifactId>
-            <version>${langchain4j-version}</version>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.camel</groupId>
-            <artifactId>camel-test-infra-ollama</artifactId>
-            <version>${project.version}</version>
+            <artifactId>camel-test-junit6</artifactId>
             <scope>test</scope>
         </dependency>
         <dependency>
@@ -92,7 +64,6 @@
             <artifactId>assertj-core</artifactId>
             <scope>test</scope>
         </dependency>
-
     </dependencies>
 
 </project>
