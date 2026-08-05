@@ -1,4 +1,15 @@
-= AI Observability
+= AI Observability Component
+:doctitle: AI Observability
+:shortname: ai-observability
+:artifactid: camel-ai-observability
+:description: GenAI observability support for Camel AI components (OpenTelemetry and Micrometer)
+:since: 4.22
+:supportlevel: Preview
+:tabs-sync-option:
+//Manually maintained attributes
+:group: AI
+
+*Since Camel {since}*
 
 The `camel-ai-observability` module provides GenAI observability for Camel AI components following the
 OpenTelemetry semantic conventions for GenAI (stable subset aligned with Spring AI).
@@ -24,5 +35,3 @@ Metrics recorded (when Micrometer is available):
 
 * `gen_ai.client.operation` — operation duration timer
 * `gen_ai.client.token.usage` — token usage counter (tags: `gen_ai.token.type=input|output`)
-
-See xref:components:ai-observability.adoc[AI Observability] for details.

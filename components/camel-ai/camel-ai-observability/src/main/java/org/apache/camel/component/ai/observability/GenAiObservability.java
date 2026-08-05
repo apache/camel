@@ -16,6 +16,11 @@
  */
 package org.apache.camel.component.ai.observability;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
+import java.util.concurrent.TimeUnit;
+
 import io.micrometer.core.instrument.Counter;
 import io.micrometer.core.instrument.MeterRegistry;
 import io.micrometer.core.instrument.Tag;
@@ -47,7 +52,7 @@ public final class GenAiObservability {
         if (camelContext == null) {
             return false;
         }
-        java.util.Optional<String> property
+        Optional<String> property
                 = camelContext.getPropertiesComponent().resolveProperty(GenAiObservabilityProperties.ENABLED);
         if (property.isPresent()) {
             return Boolean.parseBoolean(property.get().trim());
@@ -63,7 +68,7 @@ public final class GenAiObservability {
         if (exchange == null || context == null || !isEnabled(exchange.getContext())) {
             return NOOP;
         }
-        Tracer tracer = CamelContextHelper.findSingleByType(exchange.getContext(), Tracer.class);
+        Tracer tracer = exchange.getContext().hasService(Tracer.class);
         MeterRegistry meterRegistry = resolveMeterRegistry(exchange.getContext());
         if (tracer == null && meterRegistry == null) {
             return NOOP;
@@ -159,7 +164,7 @@ public final class GenAiObservability {
             Timer.builder(GenAiMetrics.CLIENT_OPERATION)
                     .tags(baseTags)
                     .register(meterRegistry)
-                    .record(System.nanoTime() - startNanos, java.util.concurrent.TimeUnit.NANOSECONDS);
+                    .record(System.nanoTime() - startNanos, TimeUnit.NANOSECONDS);
 
             if (usage != null) {
                 recordTokenCounter(usage.inputTokens(), GenAiMetrics.TOKEN_TYPE_INPUT);
@@ -179,7 +184,7 @@ public final class GenAiObservability {
         }
 
         private static Iterable<Tag> baseTags(GenAiObservationContext context, Throwable error) {
-            java.util.List<Tag> tags = new java.util.ArrayList<>();
+            List<Tag> tags = new ArrayList<>();
             tags.add(Tag.of(GenAiMetrics.TAG_OPERATION_NAME, context.operationName().value()));
             tags.add(Tag.of(GenAiMetrics.TAG_SYSTEM, nullToUnknown(context.system())));
             tags.add(Tag.of(GenAiMetrics.TAG_REQUEST_MODEL, nullToUnknown(context.requestModel())));
