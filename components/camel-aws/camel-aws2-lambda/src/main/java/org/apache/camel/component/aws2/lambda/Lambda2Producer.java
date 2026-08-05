@@ -468,8 +468,35 @@ public class Lambda2Producer extends DefaultProducer {
 
             if (ObjectHelper.isEmpty(exchange.getIn().getBody())
                     && ObjectHelper.isEmpty(exchange.getIn().getHeader(Lambda2Constants.S3_BUCKET))
-                    && ObjectHelper.isEmpty(exchange.getIn().getHeader(Lambda2Constants.S3_KEY))) {
+                    && ObjectHelper.isEmpty(exchange.getIn().getHeader(Lambda2Constants.S3_KEY))
+                    && ObjectHelper.isEmpty(exchange.getIn().getHeader(Lambda2Constants.ZIP_FILE))) {
                 throw new IllegalArgumentException("At least S3 bucket/S3 key or zip file must be specified");
+            }
+
+            if (ObjectHelper.isNotEmpty(exchange.getIn().getHeader(Lambda2Constants.S3_BUCKET))) {
+                String s3Bucket = exchange.getIn().getHeader(Lambda2Constants.S3_BUCKET, String.class);
+                builder.s3Bucket(s3Bucket);
+            }
+
+            if (ObjectHelper.isNotEmpty(exchange.getIn().getHeader(Lambda2Constants.S3_KEY))) {
+                String s3Key = exchange.getIn().getHeader(Lambda2Constants.S3_KEY, String.class);
+                builder.s3Key(s3Key);
+            }
+
+            if (ObjectHelper.isNotEmpty(exchange.getIn().getHeader(Lambda2Constants.S3_OBJECT_VERSION))) {
+                String s3ObjectVersion = exchange.getIn().getHeader(Lambda2Constants.S3_OBJECT_VERSION, String.class);
+                builder.s3ObjectVersion(s3ObjectVersion);
+            }
+
+            if (ObjectHelper.isNotEmpty(exchange.getIn().getHeader(Lambda2Constants.ZIP_FILE))) {
+                String zipFile = exchange.getIn().getHeader(Lambda2Constants.ZIP_FILE, String.class);
+                File fileLocalPath = new File(zipFile);
+                try (FileInputStream inputStream = new FileInputStream(fileLocalPath)) {
+                    builder.zipFile(SdkBytes.fromInputStream(inputStream));
+                }
+            }
+            if (ObjectHelper.isNotEmpty(exchange.getIn().getBody())) {
+                builder.zipFile(SdkBytes.fromByteBuffer(exchange.getIn().getBody(ByteBuffer.class)));
             }
 
             if (ObjectHelper.isNotEmpty(exchange.getIn().getHeader(Lambda2Constants.PUBLISH))) {
@@ -530,7 +557,7 @@ public class Lambda2Producer extends DefaultProducer {
             if (ObjectHelper.isNotEmpty(exchange.getIn().getHeader(Lambda2Constants.EVENT_SOURCE_UUID))) {
                 builder.uuid(exchange.getIn().getHeader(Lambda2Constants.EVENT_SOURCE_UUID, String.class));
             } else {
-                throw new IllegalArgumentException("Event Source Arn must be specified");
+                throw new IllegalArgumentException("Event Source UUID must be specified");
             }
             request = builder.build();
         }
