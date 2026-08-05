@@ -68,6 +68,7 @@ public class RecipientListReifier extends ProcessorReifier<RecipientListDefiniti
         answer.setShareUnitOfWork(isShareUnitOfWork);
         answer.setStopOnException(isStopOnException);
         answer.setIgnoreInvalidEndpoints(isIgnoreInvalidEndpoints);
+        answer.setAllowedSchemes(parseString(definition.getAllowedSchemes()));
         Integer num = parseInt(definition.getCacheSize());
         if (num != null) {
             answer.setCacheSize(num);

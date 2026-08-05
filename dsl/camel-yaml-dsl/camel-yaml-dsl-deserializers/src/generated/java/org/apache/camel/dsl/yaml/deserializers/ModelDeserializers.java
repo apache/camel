@@ -4725,6 +4725,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
             deprecated = false,
             properties = {
                     @YamlProperty(name = "__extends", type = "object:org.apache.camel.model.language.ExpressionDefinition", oneOf = "expression"),
+                    @YamlProperty(name = "allowedSchemes", type = "string", description = "Sets an optional comma-separated allow-list of component schemes that the dynamic recipient may resolve to (e.g. http,https). When set, a dynamic endpoint whose scheme is not in the list is rejected. This is a defence-in-depth restriction, useful for low-code / Kamelet deployments; by default (unset) any scheme is allowed.", displayName = "Allowed Schemes"),
                     @YamlProperty(name = "cacheSize", type = "number", description = "Configures the cache size for ProducerCache which caches producers for reuse. The default cache size is 1000. Set to -1 to turn off caching.", displayName = "Cache Size"),
                     @YamlProperty(name = "description", type = "string", description = "The description for this node", displayName = "Description"),
                     @YamlProperty(name = "disabled", type = "boolean", defaultValue = "false", description = "Whether to disable this EIP from the route during build time. Once an EIP has been disabled then it cannot be enabled later at runtime.", displayName = "Disabled"),
@@ -4750,6 +4751,11 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                 String propertyName, Node node) {
             propertyKey = org.apache.camel.util.StringHelper.dashToCamelCase(propertyKey);
             switch(propertyKey) {
+                case "allowedSchemes": {
+                    String val = asText(node);
+                    target.setAllowedSchemes(val);
+                    break;
+                }
                 case "cacheSize": {
                     String val = asText(node);
                     target.setCacheSize(val);
@@ -4941,6 +4947,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     @YamlProperty(name = "aggregationStrategyMethodAllowNull", type = "string", description = "If this option is false then the aggregate method is not used if there was no data to enrich. If this option is true then null values is used as the oldExchange (when no data to enrich), when using POJOs as the AggregationStrategy.", displayName = "Aggregation Strategy Method Allow Null"),
                     @YamlProperty(name = "aggregationStrategyMethodName", type = "string", description = "This option can be used to explicitly declare the method name to use, when using POJOs as the AggregationStrategy.", displayName = "Aggregation Strategy Method Name"),
                     @YamlProperty(name = "allowOptimisedComponents", type = "boolean", defaultValue = "true", description = "Whether to allow components to optimise enricher if they are SendDynamicAware.", displayName = "Allow Optimised Components"),
+                    @YamlProperty(name = "allowedSchemes", type = "string", description = "Sets an optional comma-separated allow-list of component schemes that the dynamic recipient may resolve to (e.g. http,https). When set, a dynamic endpoint whose scheme is not in the list is rejected. This is a defence-in-depth restriction, useful for low-code / Kamelet deployments; by default (unset) any scheme is allowed.", displayName = "Allowed Schemes"),
                     @YamlProperty(name = "autoStartComponents", type = "boolean", defaultValue = "true", description = "Whether to auto startup components when enricher is starting up.", displayName = "Auto Start Components"),
                     @YamlProperty(name = "cacheSize", type = "number", description = "Sets the maximum size used by the ProducerCache which is used to cache and reuse producers when uris are reused. Use 0 for default cache size, or -1 to turn cache off.", displayName = "Cache Size"),
                     @YamlProperty(name = "description", type = "string", description = "The description for this node", displayName = "Description"),
@@ -4992,6 +4999,11 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                 case "allowOptimisedComponents": {
                     String val = asText(node);
                     target.setAllowOptimisedComponents(val);
+                    break;
+                }
+                case "allowedSchemes": {
+                    String val = asText(node);
+                    target.setAllowedSchemes(val);
                     break;
                 }
                 case "autoStartComponents": {
@@ -12074,6 +12086,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     @YamlProperty(name = "aggregationStrategyMethodAllowNull", type = "string", description = "If this option is false then the aggregate method is not used if there was no data to enrich. If this option is true then null values is used as the oldExchange (when no data to enrich), when using POJOs as the AggregationStrategy.", displayName = "Aggregation Strategy Method Allow Null"),
                     @YamlProperty(name = "aggregationStrategyMethodName", type = "string", description = "This option can be used to explicitly declare the method name to use, when using POJOs as the AggregationStrategy.", displayName = "Aggregation Strategy Method Name"),
                     @YamlProperty(name = "allowOptimisedComponents", type = "boolean", defaultValue = "true", description = "Whether to allow components to optimise if they are PollDynamicAware.", displayName = "Allow Optimised Components"),
+                    @YamlProperty(name = "allowedSchemes", type = "string", description = "Sets an optional comma-separated allow-list of component schemes that the dynamic recipient may resolve to (e.g. http,https). When set, a dynamic endpoint whose scheme is not in the list is rejected. This is a defence-in-depth restriction, useful for low-code / Kamelet deployments; by default (unset) any scheme is allowed.", displayName = "Allowed Schemes"),
                     @YamlProperty(name = "autoStartComponents", type = "boolean", defaultValue = "true", description = "Whether to auto startup components when poll enricher is starting up.", displayName = "Auto Start Components"),
                     @YamlProperty(name = "cacheSize", type = "number", description = "Sets the maximum size used by the ConsumerCache which is used to cache and reuse consumers when uris are reused. Use 0 for default cache size, or -1 to turn cache off.", displayName = "Cache Size"),
                     @YamlProperty(name = "description", type = "string", description = "The description for this node", displayName = "Description"),
@@ -12124,6 +12137,11 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                 case "allowOptimisedComponents": {
                     String val = asText(node);
                     target.setAllowOptimisedComponents(val);
+                    break;
+                }
+                case "allowedSchemes": {
+                    String val = asText(node);
+                    target.setAllowedSchemes(val);
                     break;
                 }
                 case "autoStartComponents": {
@@ -13034,6 +13052,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     @YamlProperty(name = "aggregationStrategy", type = "string", description = "Sets the AggregationStrategy to be used to assemble the replies from the recipients, into a single outgoing message.", displayName = "Aggregation Strategy"),
                     @YamlProperty(name = "aggregationStrategyMethodAllowNull", type = "boolean", defaultValue = "false", description = "If this option is false then the aggregate method is not used if there was no data to enrich. If this option is true then null values is used as the oldExchange (when no data to enrich), when using POJOs as the AggregationStrategy.", displayName = "Aggregation Strategy Method Allow Null"),
                     @YamlProperty(name = "aggregationStrategyMethodName", type = "string", description = "This option can be used to explicitly declare the method name to use, when using POJOs as the AggregationStrategy.", displayName = "Aggregation Strategy Method Name"),
+                    @YamlProperty(name = "allowedSchemes", type = "string", description = "Sets an optional comma-separated allow-list of component schemes that the dynamic recipient may resolve to (e.g. http,https). When set, a dynamic endpoint whose scheme is not in the list is rejected. This is a defence-in-depth restriction, useful for low-code / Kamelet deployments; by default (unset) any scheme is allowed.", displayName = "Allowed Schemes"),
                     @YamlProperty(name = "cacheSize", type = "number", description = "Sets the maximum size used by the ProducerCache which is used to cache and reuse producers when uris are reused. Use 0 for default cache size, or -1 to turn cache off.", displayName = "Cache Size"),
                     @YamlProperty(name = "delimiter", type = "string", defaultValue = ",", description = "Delimiter used if the Expression returned multiple endpoints. Can be turned off using the value false.", displayName = "Delimiter"),
                     @YamlProperty(name = "description", type = "string", description = "The description for this node", displayName = "Description"),
@@ -13081,6 +13100,11 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                 case "aggregationStrategyMethodName": {
                     String val = asText(node);
                     target.setAggregationStrategyMethodName(val);
+                    break;
+                }
+                case "allowedSchemes": {
+                    String val = asText(node);
+                    target.setAllowedSchemes(val);
                     break;
                 }
                 case "cacheSize": {
@@ -15550,6 +15574,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
             deprecated = false,
             properties = {
                     @YamlProperty(name = "__extends", type = "object:org.apache.camel.model.language.ExpressionDefinition", oneOf = "expression"),
+                    @YamlProperty(name = "allowedSchemes", type = "string", description = "Sets an optional comma-separated allow-list of component schemes that the dynamic recipient may resolve to (e.g. http,https). When set, a dynamic endpoint whose scheme is not in the list is rejected. This is a defence-in-depth restriction, useful for low-code / Kamelet deployments; by default (unset) any scheme is allowed.", displayName = "Allowed Schemes"),
                     @YamlProperty(name = "cacheSize", type = "number", description = "Configures the cache size for ProducerCache which caches producers for reuse. The default cache size is 1000. Set to -1 to turn off caching.", displayName = "Cache Size"),
                     @YamlProperty(name = "description", type = "string", description = "The description for this node", displayName = "Description"),
                     @YamlProperty(name = "disabled", type = "boolean", defaultValue = "false", description = "Whether to disable this EIP from the route during build time. Once an EIP has been disabled then it cannot be enabled later at runtime.", displayName = "Disabled"),
@@ -15580,6 +15605,11 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                 String propertyName, Node node) {
             propertyKey = org.apache.camel.util.StringHelper.dashToCamelCase(propertyKey);
             switch(propertyKey) {
+                case "allowedSchemes": {
+                    String val = asText(node);
+                    target.setAllowedSchemes(val);
+                    break;
+                }
                 case "cacheSize": {
                     String val = asText(node);
                     target.setCacheSize(val);

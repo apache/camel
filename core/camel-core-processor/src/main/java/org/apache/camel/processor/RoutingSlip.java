@@ -17,6 +17,7 @@
 package org.apache.camel.processor;
 
 import java.util.Iterator;
+import java.util.Set;
 
 import org.apache.camel.AsyncCallback;
 import org.apache.camel.AsyncProcessor;
@@ -71,6 +72,7 @@ public class RoutingSlip extends BaseProcessorSupport implements Traceable, IdAw
     protected String uriDelimiter;
     protected final CamelContext camelContext;
     protected AsyncProcessor errorHandler;
+    protected Set<String> allowedSchemes;
 
     /**
      * The iterator to be used for retrieving the next routing slip(s) to be used.
@@ -176,6 +178,10 @@ public class RoutingSlip extends BaseProcessorSupport implements Traceable, IdAw
         this.errorHandler = errorHandler;
     }
 
+    public void setAllowedSchemes(String allowedSchemes) {
+        this.allowedSchemes = ProcessorHelper.parseAllowedSchemes(allowedSchemes);
+    }
+
     @Override
     public String toString() {
         return id;
@@ -257,6 +263,8 @@ public class RoutingSlip extends BaseProcessorSupport implements Traceable, IdAw
             try {
                 Object recipient = iter.next(exchange);
                 recipient = prepareRecipient(exchange, recipient);
+                // enforce the optional allowed-schemes allow-list on the resolved dynamic recipient (CAMEL-24298)
+                ProcessorHelper.checkAllowedSchemes(allowedSchemes, recipient);
                 Endpoint existing = getExistingEndpoint(exchange, recipient);
                 if (existing == null) {
                     endpoint = resolveEndpoint(exchange, recipient, prototype);

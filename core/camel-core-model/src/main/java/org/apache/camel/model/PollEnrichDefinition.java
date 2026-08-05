@@ -85,6 +85,13 @@ public class PollEnrichDefinition extends ExpressionNode
     @Metadata(label = "advanced", defaultValue = "true", javaType = "java.lang.Boolean",
               description = "Whether to auto startup components when poll enricher is starting up.")
     private String autoStartComponents;
+    @XmlAttribute
+    @Metadata(label = "advanced,security",
+              description = "Sets an optional comma-separated allow-list of component schemes that the dynamic recipient"
+                            + " may resolve to (e.g. http,https). When set, a dynamic endpoint whose scheme is not in the"
+                            + " list is rejected. This is a defence-in-depth restriction, useful for low-code / Kamelet"
+                            + " deployments; by default (unset) any scheme is allowed.")
+    private String allowedSchemes;
 
     public PollEnrichDefinition() {
     }
@@ -107,6 +114,7 @@ public class PollEnrichDefinition extends ExpressionNode
         this.ignoreInvalidEndpoint = source.ignoreInvalidEndpoint;
         this.allowOptimisedComponents = source.allowOptimisedComponents;
         this.autoStartComponents = source.autoStartComponents;
+        this.allowedSchemes = source.allowedSchemes;
     }
 
     @Override
@@ -186,6 +194,18 @@ public class PollEnrichDefinition extends ExpressionNode
     @Override
     public PollEnrichDefinition aggregationStrategy(AggregationStrategy aggregationStrategy) {
         this.aggregationStrategyBean = aggregationStrategy;
+        return this;
+    }
+
+    /**
+     * Sets an optional comma-separated allow-list of component schemes that the dynamic resource may resolve to (e.g.
+     * http,https). When set, a dynamic endpoint whose scheme is not in the list is rejected. By default (unset) any
+     * scheme is allowed.
+     *
+     * @return the builder
+     */
+    public PollEnrichDefinition allowedSchemes(String allowedSchemes) {
+        setAllowedSchemes(allowedSchemes);
         return this;
     }
 
@@ -368,6 +388,14 @@ public class PollEnrichDefinition extends ExpressionNode
 
     public void setAggregationStrategy(String aggregationStrategy) {
         this.aggregationStrategy = aggregationStrategy;
+    }
+
+    public String getAllowedSchemes() {
+        return allowedSchemes;
+    }
+
+    public void setAllowedSchemes(String allowedSchemes) {
+        this.allowedSchemes = allowedSchemes;
     }
 
     public void setAggregationStrategy(AggregationStrategy aggregationStrategy) {

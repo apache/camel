@@ -54,6 +54,13 @@ public class RoutingSlipDefinition<Type extends ProcessorDefinition<Type>> exten
               description = "Configures the cache size for ProducerCache which caches producers for reuse. The default cache size is 1000."
                             + " Set to -1 to turn off caching.")
     private String cacheSize;
+    @XmlAttribute
+    @Metadata(label = "advanced,security",
+              description = "Sets an optional comma-separated allow-list of component schemes that the dynamic recipient"
+                            + " may resolve to (e.g. http,https). When set, a dynamic endpoint whose scheme is not in the"
+                            + " list is rejected. This is a defence-in-depth restriction, useful for low-code / Kamelet"
+                            + " deployments; by default (unset) any scheme is allowed.")
+    private String allowedSchemes;
 
     public RoutingSlipDefinition() {
         if (uriDelimiter == null) {
@@ -128,6 +135,14 @@ public class RoutingSlipDefinition<Type extends ProcessorDefinition<Type>> exten
         return uriDelimiter;
     }
 
+    public String getAllowedSchemes() {
+        return allowedSchemes;
+    }
+
+    public void setAllowedSchemes(String allowedSchemes) {
+        this.allowedSchemes = allowedSchemes;
+    }
+
     public void setIgnoreInvalidEndpoints(String ignoreInvalidEndpoints) {
         this.ignoreInvalidEndpoints = ignoreInvalidEndpoints;
     }
@@ -190,6 +205,18 @@ public class RoutingSlipDefinition<Type extends ProcessorDefinition<Type>> exten
      */
     public RoutingSlipDefinition<Type> uriDelimiter(String uriDelimiter) {
         setUriDelimiter(uriDelimiter);
+        return this;
+    }
+
+    /**
+     * Sets an optional comma-separated allow-list of component schemes that the dynamic recipient may resolve to (e.g.
+     * http,https). When set, a dynamic endpoint whose scheme is not in the list is rejected. By default (unset) any
+     * scheme is allowed.
+     *
+     * @return the builder
+     */
+    public RoutingSlipDefinition<Type> allowedSchemes(String allowedSchemes) {
+        setAllowedSchemes(allowedSchemes);
         return this;
     }
 

@@ -18,6 +18,7 @@ package org.apache.camel.processor;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Set;
 
 import org.apache.camel.AggregationStrategy;
 import org.apache.camel.AsyncCallback;
@@ -88,6 +89,7 @@ public class PollEnricher extends BaseProcessorSupport implements IdAware, Route
     private boolean aggregateOnException;
     private int cacheSize;
     private boolean ignoreInvalidEndpoint;
+    private Set<String> allowedSchemes;
     private boolean autoStartupComponents = true;
     private boolean allowOptimisedComponents = true;
 
@@ -232,6 +234,10 @@ public class PollEnricher extends BaseProcessorSupport implements IdAware, Route
         this.ignoreInvalidEndpoint = ignoreInvalidEndpoint;
     }
 
+    public void setAllowedSchemes(String allowedSchemes) {
+        this.allowedSchemes = ProcessorHelper.parseAllowedSchemes(allowedSchemes);
+    }
+
     public boolean isAutoStartupComponents() {
         return autoStartupComponents;
     }
@@ -297,6 +303,8 @@ public class PollEnricher extends BaseProcessorSupport implements IdAware, Route
             }
             Object targetRecipient = staticUri != null ? staticUri : recipient;
             targetRecipient = prepareRecipient(exchange, targetRecipient);
+            // enforce the optional allowed-schemes allow-list on the resolved dynamic recipient (CAMEL-24298)
+            ProcessorHelper.checkAllowedSchemes(allowedSchemes, targetRecipient);
             if (targetRecipient == null) {
                 if (LOG.isDebugEnabled()) {
                     LOG.debug("Poll dynamic evaluated as null so cannot poll from any endpoint");

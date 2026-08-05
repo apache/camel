@@ -5218,6 +5218,17 @@ to turn off caching.
             </xs:documentation>
           </xs:annotation>
         </xs:attribute>
+        <xs:attribute name="allowedSchemes" type="xs:string">
+          <xs:annotation>
+            <xs:documentation xml:lang="en">
+<![CDATA[
+Sets an optional comma-separated allow-list of component schemes that the dynamic recipient may resolve to (e.g.
+http,https). When set, a dynamic endpoint whose scheme is not in the list is rejected. This is a defence-in-depth
+restriction, useful for low-code / Kamelet deployments; by default (unset) any scheme is allowed.
+]]>
+            </xs:documentation>
+          </xs:annotation>
+        </xs:attribute>
       </xs:extension>
     </xs:complexContent>
   </xs:complexType>
@@ -5358,6 +5369,17 @@ Whether to allow components to optimise enricher if they are SendDynamicAware. D
             <xs:documentation xml:lang="en">
 <![CDATA[
 Whether to auto startup components when enricher is starting up. Default value: true
+]]>
+            </xs:documentation>
+          </xs:annotation>
+        </xs:attribute>
+        <xs:attribute name="allowedSchemes" type="xs:string">
+          <xs:annotation>
+            <xs:documentation xml:lang="en">
+<![CDATA[
+Sets an optional comma-separated allow-list of component schemes that the dynamic recipient may resolve to (e.g.
+http,https). When set, a dynamic endpoint whose scheme is not in the list is rejected. This is a defence-in-depth
+restriction, useful for low-code / Kamelet deployments; by default (unset) any scheme is allowed.
 ]]>
             </xs:documentation>
           </xs:annotation>
@@ -11491,6 +11513,17 @@ Whether to auto startup components when poll enricher is starting up. Default va
             </xs:documentation>
           </xs:annotation>
         </xs:attribute>
+        <xs:attribute name="allowedSchemes" type="xs:string">
+          <xs:annotation>
+            <xs:documentation xml:lang="en">
+<![CDATA[
+Sets an optional comma-separated allow-list of component schemes that the dynamic recipient may resolve to (e.g.
+http,https). When set, a dynamic endpoint whose scheme is not in the list is rejected. This is a defence-in-depth
+restriction, useful for low-code / Kamelet deployments; by default (unset) any scheme is allowed.
+]]>
+            </xs:documentation>
+          </xs:annotation>
+        </xs:attribute>
       </xs:extension>
     </xs:complexContent>
   </xs:complexType>
@@ -11737,6 +11770,17 @@ for default cache size, or -1 to turn cache off.
 Shares the UnitOfWork with the parent and each of the sub messages. Recipient List will by default not share unit of
 work between the parent exchange and each recipient exchange. This means each sub exchange has its own individual unit
 of work. Default value: false
+]]>
+            </xs:documentation>
+          </xs:annotation>
+        </xs:attribute>
+        <xs:attribute name="allowedSchemes" type="xs:string">
+          <xs:annotation>
+            <xs:documentation xml:lang="en">
+<![CDATA[
+Sets an optional comma-separated allow-list of component schemes that the dynamic recipient may resolve to (e.g.
+http,https). When set, a dynamic endpoint whose scheme is not in the list is rejected. This is a defence-in-depth
+restriction, useful for low-code / Kamelet deployments; by default (unset) any scheme is allowed.
 ]]>
             </xs:documentation>
           </xs:annotation>
@@ -12605,6 +12649,17 @@ If enabled then invalid endpoint URIs are ignored and logged instead of throwing
 <![CDATA[
 Configures the cache size for ProducerCache which caches producers for reuse. The default cache size is 1000. Set to -1
 to turn off caching.
+]]>
+            </xs:documentation>
+          </xs:annotation>
+        </xs:attribute>
+        <xs:attribute name="allowedSchemes" type="xs:string">
+          <xs:annotation>
+            <xs:documentation xml:lang="en">
+<![CDATA[
+Sets an optional comma-separated allow-list of component schemes that the dynamic recipient may resolve to (e.g.
+http,https). When set, a dynamic endpoint whose scheme is not in the list is rejected. This is a defence-in-depth
+restriction, useful for low-code / Kamelet deployments; by default (unset) any scheme is allowed.
 ]]>
             </xs:documentation>
           </xs:annotation>

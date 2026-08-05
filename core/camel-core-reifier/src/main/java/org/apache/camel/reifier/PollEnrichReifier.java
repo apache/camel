@@ -81,6 +81,7 @@ public class PollEnrichReifier extends ProcessorReifier<PollEnrichDefinition> {
         }
         enricher.setVariableReceive(parseString(definition.getVariableReceive()));
         enricher.setIgnoreInvalidEndpoint(parseBoolean(definition.getIgnoreInvalidEndpoint(), false));
+        enricher.setAllowedSchemes(parseString(definition.getAllowedSchemes()));
         enricher.setAggregateOnException(parseBoolean(definition.getAggregateOnException(), false));
         if (definition.getAutoStartComponents() != null) {
             enricher.setAutoStartupComponents(parseBoolean(definition.getAutoStartComponents(), true));

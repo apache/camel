@@ -17,20 +17,55 @@
 
 package org.apache.camel.processor;
 
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.ExtendedCamelContext;
 import org.apache.camel.NoTypeConversionAvailableException;
+import org.apache.camel.ResolveEndpointFailedException;
 import org.apache.camel.spi.NormalizedEndpointUri;
+import org.apache.camel.support.ExchangeHelper;
 import org.apache.camel.support.PatternHelper;
 import org.slf4j.MDC;
 
 final class ProcessorHelper {
 
     private ProcessorHelper() {
+    }
+
+    /**
+     * Parses a comma-separated list of component schemes into a set, or {@code null} when unset. Used by the
+     * dynamic-uri EIPs to hold an optional {@code allowedSchemes} allow-list (see CAMEL-24298).
+     */
+    static Set<String> parseAllowedSchemes(String allowedSchemes) {
+        if (allowedSchemes == null) {
+            return null;
+        }
+        Set<String> answer = new HashSet<>();
+        for (String scheme : allowedSchemes.split(",")) {
+            answer.add(scheme.trim());
+        }
+        return answer;
+    }
+
+    /**
+     * Enforces the optional {@code allowedSchemes} allow-list on a resolved dynamic recipient: when the set is non-null
+     * and the recipient's scheme is not in it, a {@link ResolveEndpointFailedException} is thrown. A null set (the
+     * default) allows any scheme.
+     */
+    static void checkAllowedSchemes(Set<String> allowedSchemes, Object recipient) {
+        if (allowedSchemes != null && recipient != null) {
+            String uri = recipient.toString();
+            String scheme = ExchangeHelper.resolveScheme(uri);
+            if (scheme != null && !allowedSchemes.contains(scheme)) {
+                throw new ResolveEndpointFailedException(
+                        uri, "Scheme " + scheme + " is not in the allowed schemes: " + allowedSchemes);
+            }
+        }
     }
 
     static Object prepareRecipient(Exchange exchange, Object recipient) throws NoTypeConversionAvailableException {

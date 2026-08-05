@@ -72,6 +72,7 @@ public class Enricher extends BaseProcessorSupport
     private HeadersMapFactory headersMapFactory;
     private ProcessorExchangeFactory processorExchangeFactory;
     private SendDynamicProcessor sendDynamicProcessor;
+    private String allowedSchemes;
 
     public Enricher(Expression expression, String uri) {
         this.expression = expression;
@@ -180,6 +181,10 @@ public class Enricher extends BaseProcessorSupport
 
     public void setIgnoreInvalidEndpoint(boolean ignoreInvalidEndpoint) {
         this.ignoreInvalidEndpoint = ignoreInvalidEndpoint;
+    }
+
+    public void setAllowedSchemes(String allowedSchemes) {
+        this.allowedSchemes = allowedSchemes;
     }
 
     public boolean isAllowOptimisedComponents() {
@@ -308,6 +313,7 @@ public class Enricher extends BaseProcessorSupport
         this.sendDynamicProcessor.setIgnoreInvalidEndpoint(ignoreInvalidEndpoint);
         this.sendDynamicProcessor.setAllowOptimisedComponents(allowOptimisedComponents);
         this.sendDynamicProcessor.setAutoStartupComponents(autoStartupComponents);
+        this.sendDynamicProcessor.setAllowedSchemes(allowedSchemes);
         this.sendDynamicProcessor.setVariableSend(variableSend);
 
         // create a per processor exchange factory

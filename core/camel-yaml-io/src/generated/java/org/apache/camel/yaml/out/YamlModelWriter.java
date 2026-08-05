@@ -951,6 +951,7 @@ public class YamlModelWriter extends YamlModelWriterSupport {
         doWriteAttribute(jo, "uriDelimiter", def.getUriDelimiter(), ",");
         doWriteAttribute(jo, "ignoreInvalidEndpoints", def.getIgnoreInvalidEndpoints(), null);
         doWriteAttribute(jo, "cacheSize", def.getCacheSize(), null);
+        doWriteAttribute(jo, "allowedSchemes", def.getAllowedSchemes(), null);
         doWriteExpressionNodeElements(jo, def);
         return jo;
     }
@@ -968,6 +969,7 @@ public class YamlModelWriter extends YamlModelWriterSupport {
         doWriteAttribute(jo, "ignoreInvalidEndpoint", def.getIgnoreInvalidEndpoint(), null);
         doWriteAttribute(jo, "allowOptimisedComponents", def.getAllowOptimisedComponents(), "true");
         doWriteAttribute(jo, "autoStartComponents", def.getAutoStartComponents(), "true");
+        doWriteAttribute(jo, "allowedSchemes", def.getAllowedSchemes(), null);
         doWriteExpressionNodeElements(jo, def);
         return jo;
     }
@@ -1370,6 +1372,7 @@ public class YamlModelWriter extends YamlModelWriterSupport {
         doWriteAttribute(jo, "ignoreInvalidEndpoint", def.getIgnoreInvalidEndpoint(), null);
         doWriteAttribute(jo, "allowOptimisedComponents", def.getAllowOptimisedComponents(), "true");
         doWriteAttribute(jo, "autoStartComponents", def.getAutoStartComponents(), "true");
+        doWriteAttribute(jo, "allowedSchemes", def.getAllowedSchemes(), null);
         doWriteExpressionNodeElements(jo, def);
         return jo;
     }
@@ -1423,6 +1426,7 @@ public class YamlModelWriter extends YamlModelWriterSupport {
         doWriteAttribute(jo, "onPrepare", def.getOnPrepare(), null);
         doWriteAttribute(jo, "cacheSize", def.getCacheSize(), null);
         doWriteAttribute(jo, "shareUnitOfWork", def.getShareUnitOfWork(), null);
+        doWriteAttribute(jo, "allowedSchemes", def.getAllowedSchemes(), null);
         doWriteExpressionNodeElements(jo, def);
         return jo;
     }
@@ -1665,6 +1669,7 @@ public class YamlModelWriter extends YamlModelWriterSupport {
         doWriteAttribute(jo, "uriDelimiter", def.getUriDelimiter(), ",");
         doWriteAttribute(jo, "ignoreInvalidEndpoints", def.getIgnoreInvalidEndpoints(), null);
         doWriteAttribute(jo, "cacheSize", def.getCacheSize(), null);
+        doWriteAttribute(jo, "allowedSchemes", def.getAllowedSchemes(), null);
         doWriteExpressionNodeElements(jo, def);
         return jo;
     }

@@ -1145,6 +1145,11 @@
         "type" : "object",
         "additionalProperties" : false,
         "properties" : {
+          "allowedSchemes" : {
+            "type" : "string",
+            "title" : "Allowed Schemes",
+            "description" : "Sets an optional comma-separated allow-list of component schemes that the dynamic recipient may resolve to (e.g. http,https). When set, a dynamic endpoint whose scheme is not in the list is rejected. This is a defence-in-depth restriction, useful for low-code / Kamelet deployments; by default (unset) any scheme is allowed."
+          },
           "cacheSize" : {
             "type" : "number",
             "title" : "Cache Size",
@@ -1222,6 +1227,11 @@
             "title" : "Allow Optimised Components",
             "description" : "Whether to allow components to optimise enricher if they are SendDynamicAware.",
             "default" : true
+          },
+          "allowedSchemes" : {
+            "type" : "string",
+            "title" : "Allowed Schemes",
+            "description" : "Sets an optional comma-separated allow-list of component schemes that the dynamic recipient may resolve to (e.g. http,https). When set, a dynamic endpoint whose scheme is not in the list is rejected. This is a defence-in-depth restriction, useful for low-code / Kamelet deployments; by default (unset) any scheme is allowed."
           },
           "autoStartComponents" : {
             "type" : "boolean",
@@ -2961,6 +2971,11 @@
             "description" : "Whether to allow components to optimise if they are PollDynamicAware.",
             "default" : true
           },
+          "allowedSchemes" : {
+            "type" : "string",
+            "title" : "Allowed Schemes",
+            "description" : "Sets an optional comma-separated allow-list of component schemes that the dynamic recipient may resolve to (e.g. http,https). When set, a dynamic endpoint whose scheme is not in the list is rejected. This is a defence-in-depth restriction, useful for low-code / Kamelet deployments; by default (unset) any scheme is allowed."
+          },
           "autoStartComponents" : {
             "type" : "boolean",
             "title" : "Auto Start Components",
@@ -3111,6 +3126,11 @@
             "type" : "string",
             "title" : "Aggregation Strategy Method Name",
             "description" : "This option can be used to explicitly declare the method name to use, when using POJOs as the AggregationStrategy."
+          },
+          "allowedSchemes" : {
+            "type" : "string",
+            "title" : "Allowed Schemes",
+            "description" : "Sets an optional comma-separated allow-list of component schemes that the dynamic recipient may resolve to (e.g. http,https). When set, a dynamic endpoint whose scheme is not in the list is rejected. This is a defence-in-depth restriction, useful for low-code / Kamelet deployments; by default (unset) any scheme is allowed."
           },
           "cacheSize" : {
             "type" : "number",
@@ -4158,6 +4178,11 @@
         "type" : "object",
         "additionalProperties" : false,
         "properties" : {
+          "allowedSchemes" : {
+            "type" : "string",
+            "title" : "Allowed Schemes",
+            "description" : "Sets an optional comma-separated allow-list of component schemes that the dynamic recipient may resolve to (e.g. http,https). When set, a dynamic endpoint whose scheme is not in the list is rejected. This is a defence-in-depth restriction, useful for low-code / Kamelet deployments; by default (unset) any scheme is allowed."
+          },
           "cacheSize" : {
             "type" : "number",
             "title" : "Cache Size",

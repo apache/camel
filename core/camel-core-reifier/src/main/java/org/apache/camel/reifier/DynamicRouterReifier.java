@@ -45,6 +45,7 @@ public class DynamicRouterReifier extends ExpressionReifier<DynamicRouterDefinit
         if (num != null) {
             dynamicRouter.setCacheSize(num);
         }
+        dynamicRouter.setAllowedSchemes(parseString(definition.getAllowedSchemes()));
 
         AsyncProcessor errorHandler
                 = (AsyncProcessor) wrapInErrorHandler(dynamicRouter.newRoutingSlipProcessorForErrorHandler());

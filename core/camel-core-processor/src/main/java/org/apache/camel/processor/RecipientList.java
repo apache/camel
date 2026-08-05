@@ -61,6 +61,7 @@ public class RecipientList extends BaseProcessorSupport implements IdAware, Rout
     private final String delimiter;
     private boolean parallelProcessing;
     private boolean synchronous;
+    private String allowedSchemes;
     private boolean parallelAggregate;
     private boolean stopOnException;
     private boolean ignoreInvalidEndpoints;
@@ -222,6 +223,7 @@ public class RecipientList extends BaseProcessorSupport implements IdAware, Rout
         recipientListProcessor.setErrorHandler(errorHandler);
         recipientListProcessor.setAggregateExecutorService(aggregateExecutorService);
         recipientListProcessor.setIgnoreInvalidEndpoints(isIgnoreInvalidEndpoints());
+        recipientListProcessor.setAllowedSchemes(allowedSchemes);
         recipientListProcessor.setCacheSize(getCacheSize());
         recipientListProcessor.setId(getId());
         recipientListProcessor.setRouteId(getRouteId());
@@ -284,6 +286,10 @@ public class RecipientList extends BaseProcessorSupport implements IdAware, Rout
 
     public void setSynchronous(boolean synchronous) {
         this.synchronous = synchronous;
+    }
+
+    public void setAllowedSchemes(String allowedSchemes) {
+        this.allowedSchemes = allowedSchemes;
     }
 
     public boolean isParallelAggregate() {
