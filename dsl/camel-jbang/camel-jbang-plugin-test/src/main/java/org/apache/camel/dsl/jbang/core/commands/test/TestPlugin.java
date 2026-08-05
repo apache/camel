@@ -25,15 +25,15 @@ import org.apache.camel.dsl.jbang.core.common.Plugin;
 import org.apache.camel.dsl.jbang.core.common.PluginExporter;
 import org.apache.camel.dsl.jbang.core.common.Printer;
 import org.citrusframework.CitrusVersion;
-import org.citrusframework.jbang.CitrusJBangMain;
-import org.citrusframework.jbang.commands.Agent;
-import org.citrusframework.jbang.commands.AgentRun;
-import org.citrusframework.jbang.commands.AgentStart;
-import org.citrusframework.jbang.commands.AgentStop;
-import org.citrusframework.jbang.commands.CitrusCommand;
-import org.citrusframework.jbang.commands.Inspect;
-import org.citrusframework.jbang.commands.ListTests;
-import org.citrusframework.jbang.commands.Run;
+import org.citrusframework.jbang.cli.CitrusJBangMain;
+import org.citrusframework.jbang.cli.commands.Agent;
+import org.citrusframework.jbang.cli.commands.AgentRun;
+import org.citrusframework.jbang.cli.commands.AgentStart;
+import org.citrusframework.jbang.cli.commands.AgentStop;
+import org.citrusframework.jbang.cli.commands.CitrusCommand;
+import org.citrusframework.jbang.cli.commands.Inspect;
+import org.citrusframework.jbang.cli.commands.ListTests;
+import org.citrusframework.jbang.cli.commands.Run;
 import picocli.CommandLine;
 
 @CamelJBangPlugin(name = "camel-jbang-plugin-test", firstVersion = "4.14.0")
@@ -129,7 +129,7 @@ public class TestPlugin implements Plugin {
      *
      * @param delegate the Camel printer.
      */
-    private record PipedPrinter(Printer delegate) implements org.citrusframework.jbang.Printer {
+    private record PipedPrinter(Printer delegate) implements org.citrusframework.jbang.cli.Printer {
         @Override
         public void println() {
             delegate.println();
