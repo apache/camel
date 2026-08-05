@@ -101,6 +101,8 @@ import software.amazon.awssdk.services.lambda.model.UpdateFunctionUrlConfigRespo
 
 public class AmazonLambdaClientMock implements LambdaClient {
 
+    public UpdateFunctionCodeRequest updateFunctionCodeRequest;
+
     public AmazonLambdaClientMock() {
     }
 
@@ -319,6 +321,7 @@ public class AmazonLambdaClientMock implements LambdaClient {
 
     @Override
     public UpdateFunctionCodeResponse updateFunctionCode(UpdateFunctionCodeRequest updateFunctionCodeRequest) {
+        this.updateFunctionCodeRequest = updateFunctionCodeRequest;
         UpdateFunctionCodeResponse.Builder result = UpdateFunctionCodeResponse.builder();
 
         result.functionName(updateFunctionCodeRequest.functionName());
