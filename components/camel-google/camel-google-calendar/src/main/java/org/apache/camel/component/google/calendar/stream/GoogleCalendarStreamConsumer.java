@@ -18,9 +18,11 @@ package org.apache.camel.component.google.calendar.stream;
 
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Queue;
+import java.util.Set;
 
 import com.google.api.client.googleapis.json.GoogleJsonResponseException;
 import com.google.api.client.util.DateTime;
@@ -46,6 +48,9 @@ public class GoogleCalendarStreamConsumer extends ScheduledBatchPollingConsumer 
     private static final Logger LOG = LoggerFactory.getLogger(GoogleCalendarStreamConsumer.class);
 
     private DateTime lastUpdate;
+    // the updatedMin filter is inclusive, so the events carrying exactly the lastUpdate timestamp are
+    // returned again on the next poll: remember them to not deliver them twice
+    private final Set<String> lastUpdateEventIds = new HashSet<>();
 
     // sync and page tokens for synchronization flow
     // see https://developers.google.com/calendar/v3/sync
@@ -90,7 +95,6 @@ public class GoogleCalendarStreamConsumer extends ScheduledBatchPollingConsumer 
         }
 
         Queue<Exchange> answer = new LinkedList<>();
-        List<Date> dateList = new ArrayList<>();
 
         Events c;
 
@@ -109,18 +113,23 @@ public class GoogleCalendarStreamConsumer extends ScheduledBatchPollingConsumer 
             try {
                 c = request.execute();
             } catch (GoogleJsonResponseException e) {
-                if (e.getStatusCode() == 410) {
-                    // A 410 status code, "Gone", indicates that the sync token is invalid.
-                    LOG.info("Invalid sync token, clearing sync and page tokens and re-syncing.");
-                    syncToken = null;
-                    pageToken = null;
-                    return poll();
-                } else {
+                if (e.getStatusCode() != 410) {
                     throw e;
                 }
+                // A 410 status code, "Gone", indicates that the sync token is invalid. Drop the tokens and
+                // perform a single full sync instead of recursing into poll() again
+                LOG.info("Invalid sync token, clearing sync and page tokens and re-syncing.");
+                syncToken = null;
+                pageToken = null;
+                request.setSyncToken(null);
+                request.setPageToken(null);
+                if (getConfiguration().isConsumeFromNow()) {
+                    request.setTimeMin(new DateTime(new Date()));
+                }
+                c = request.execute();
             }
 
-            if (c.getItems().isEmpty()) {
+            if (c.getItems() == null || c.getItems().isEmpty()) {
                 LOG.info("No new events to sync.");
             }
 
@@ -134,36 +143,74 @@ public class GoogleCalendarStreamConsumer extends ScheduledBatchPollingConsumer 
             c = request.setOrderBy("updated").execute();
         }
 
-        if (c != null) {
-            List<Event> list = c.getItems();
+        if (c != null && c.getItems() != null) {
+            for (Event event : selectUndeliveredAndMoveCursor(c.getItems())) {
+                answer.add(getEndpoint().createExchange(getEndpoint().getExchangePattern(), event));
+            }
+        }
 
-            for (Event event : list) {
-                Exchange exchange = getEndpoint().createExchange(getEndpoint().getExchangePattern(), event);
-                answer.add(exchange);
-                DateTime updated = event.getUpdated();
-                if (updated != null) {
-                    dateList.add(new Date(updated.getValue()));
+        return processBatch(CastUtils.cast(answer));
+    }
+
+    /**
+     * Returns the events of this poll that a previous poll did not already deliver, and moves the update cursor to the
+     * newest event actually returned.
+     * <p>
+     * The cursor is only moved when something was delivered: a poll that returned nothing must not advance it, or the
+     * events modified between the two polls would never be seen.
+     */
+    List<Event> selectUndeliveredAndMoveCursor(List<Event> events) {
+        List<Event> answer = new ArrayList<>(events.size());
+        long newestUpdate = lastUpdate != null ? lastUpdate.getValue() : Long.MIN_VALUE;
+        Set<String> newestEventIds = new HashSet<>();
+
+        for (Event event : events) {
+            DateTime updated = event.getUpdated();
+            if (alreadyDelivered(event, updated)) {
+                continue;
+            }
+
+            answer.add(event);
+
+            if (updated != null) {
+                if (updated.getValue() > newestUpdate) {
+                    newestUpdate = updated.getValue();
+                    newestEventIds.clear();
+                    newestEventIds.add(event.getId());
+                } else if (updated.getValue() == newestUpdate) {
+                    newestEventIds.add(event.getId());
                 }
             }
         }
 
-        lastUpdate = retrieveLastUpdateDate(dateList);
-        return processBatch(CastUtils.cast(answer));
+        if (!newestEventIds.isEmpty()) {
+            if (lastUpdate != null && newestUpdate == lastUpdate.getValue()) {
+                // still the same instant: the events remembered for it have to be kept, or they would be
+                // delivered again by the next poll
+                lastUpdateEventIds.addAll(newestEventIds);
+            } else {
+                lastUpdate = new DateTime(newestUpdate);
+                lastUpdateEventIds.clear();
+                lastUpdateEventIds.addAll(newestEventIds);
+            }
+        }
+
+        return answer;
     }
 
-    private DateTime retrieveLastUpdateDate(List<Date> dateList) {
-        Date finalLastUpdate;
-        if (!dateList.isEmpty()) {
-            dateList.sort(Date::compareTo);
-            Date lastUpdateDate = dateList.get(dateList.size() - 1);
-            java.util.Calendar calendar = java.util.Calendar.getInstance();
-            calendar.setTime(lastUpdateDate);
-            calendar.add(java.util.Calendar.SECOND, 1);
-            finalLastUpdate = calendar.getTime();
-        } else {
-            finalLastUpdate = new Date();
-        }
-        return new DateTime(finalLastUpdate);
+    DateTime getLastUpdate() {
+        return lastUpdate;
+    }
+
+    /**
+     * The updatedMin filter is inclusive, so the events carrying exactly the lastUpdate timestamp come back on the next
+     * poll. They were already delivered, and the cursor cannot be moved past them without risking events modified
+     * within the same instant.
+     */
+    private boolean alreadyDelivered(Event event, DateTime updated) {
+        return updated != null && lastUpdate != null
+                && updated.getValue() == lastUpdate.getValue()
+                && lastUpdateEventIds.contains(event.getId());
     }
 
     @Override
