@@ -16,6 +16,13 @@
  */
 package org.apache.camel.component.ai.observability;
 
+import dev.langchain4j.data.message.AiMessage;
+import dev.langchain4j.model.ModelProvider;
+import dev.langchain4j.model.chat.ChatModel;
+import dev.langchain4j.model.chat.request.ChatRequestParameters;
+import dev.langchain4j.model.chat.request.DefaultChatRequestParameters;
+import dev.langchain4j.model.chat.response.ChatResponse;
+import dev.langchain4j.model.embedding.EmbeddingModel;
 import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -23,18 +30,32 @@ import static org.assertj.core.api.Assertions.assertThat;
 class GenAiModelResolverTest {
 
     @Test
-    void shouldResolveOpenAiProvider() {
-        assertThat(GenAiModelResolver.resolveSystem(new FakeOpenAiModel())).isEqualTo("openai");
+    void shouldResolveOpenAiProviderFromChatModel() {
+        assertThat(GenAiModelResolver.resolveSystem(new FakeOpenAiChatModel())).isEqualTo("openai");
     }
 
     @Test
-    void shouldResolveOllamaProvider() {
-        assertThat(GenAiModelResolver.resolveSystem(new FakeOllamaModel())).isEqualTo("ollama");
+    void shouldResolveOllamaProviderFromChatModel() {
+        assertThat(GenAiModelResolver.resolveSystem(new FakeOllamaChatModel())).isEqualTo("ollama");
     }
 
     @Test
-    void shouldResolveModelNameFromMethod() {
-        assertThat(GenAiModelResolver.resolveModelName(new FakeOpenAiModel())).isEqualTo("gpt-4o");
+    void shouldResolveModelNameFromChatModelDefaults() {
+        assertThat(GenAiModelResolver.resolveModelName(new FakeOpenAiChatModel())).isEqualTo("gpt-4o");
+    }
+
+    @Test
+    void shouldResolveResponseModelNameFromChatResponse() {
+        ChatResponse response = ChatResponse.builder()
+                .aiMessage(AiMessage.from("ok"))
+                .modelName("gpt-4o-mini")
+                .build();
+        assertThat(GenAiModelResolver.resolveResponseModelName(response, "gpt-4o")).isEqualTo("gpt-4o-mini");
+    }
+
+    @Test
+    void shouldNotMatchOpenAiFromUnrelatedPackageName() {
+        assertThat(GenAiModelResolver.resolveSystem(new UnrelatedPackageModel())).isEqualTo("unknown");
     }
 
     @Test
@@ -43,15 +64,39 @@ class GenAiModelResolverTest {
         assertThat(GenAiModelResolver.resolveModelName(null)).isEqualTo("unknown");
     }
 
-    static class FakeOpenAiModel {
-        public String modelName() {
-            return "gpt-4o";
+    static class FakeOpenAiChatModel implements ChatModel {
+        @Override
+        public ModelProvider provider() {
+            return ModelProvider.OPEN_AI;
+        }
+
+        @Override
+        public ChatRequestParameters defaultRequestParameters() {
+            return DefaultChatRequestParameters.builder().modelName("gpt-4o").build();
         }
     }
 
-    static class FakeOllamaModel {
-        public String getModelName() {
-            return "llama3";
+    static class FakeOllamaChatModel implements ChatModel {
+        @Override
+        public ModelProvider provider() {
+            return ModelProvider.OLLAMA;
+        }
+
+        @Override
+        public ChatRequestParameters defaultRequestParameters() {
+            return DefaultChatRequestParameters.builder().modelName("llama3").build();
+        }
+    }
+
+    static class UnrelatedPackageModel implements EmbeddingModel {
+        @Override
+        public ModelProvider provider() {
+            return ModelProvider.OTHER;
+        }
+
+        @Override
+        public String modelName() {
+            return "custom";
         }
     }
 }
