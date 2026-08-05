@@ -26,10 +26,9 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.google.storage.GoogleCloudStorageConstants;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.assertj.core.api.Assertions.assertThat;
 
-public class ProducerBlobMetadataTest extends GoogleCloudStorageBaseTest {
+class ProducerBlobMetadataTest extends GoogleCloudStorageBaseTest {
 
     private static final String FILE_NAME = "metadata.txt";
 
@@ -48,7 +47,7 @@ public class ProducerBlobMetadataTest extends GoogleCloudStorageBaseTest {
     }
 
     @Test
-    public void contentEncodingAndCacheControlAreStoredAsSent() {
+    void contentEncodingAndCacheControlAreStoredAsSent() {
         Exchange exchange = template.request("direct:store", e -> {
             e.getIn().setHeader(GoogleCloudStorageConstants.OBJECT_NAME, FILE_NAME);
             e.getIn().setHeader(GoogleCloudStorageConstants.CONTENT_TYPE, "text/plain");
@@ -57,24 +56,24 @@ public class ProducerBlobMetadataTest extends GoogleCloudStorageBaseTest {
             e.getIn().setBody(new ByteArrayInputStream("Hi, How are you ?".getBytes()));
         });
 
-        assertNotNull(exchange);
+        assertThat(exchange).isNotNull();
         Blob blob = exchange.getMessage().getBody(Blob.class);
-        assertNotNull(blob);
+        assertThat(blob).isNotNull();
         // each field has to carry its own header value, they used to be overwritten with the content type
-        assertEquals("text/plain", blob.getContentType());
-        assertEquals("gzip", blob.getContentEncoding());
-        assertEquals("max-age=3600", blob.getCacheControl());
+        assertThat(blob.getContentType()).isEqualTo("text/plain");
+        assertThat(blob.getContentEncoding()).isEqualTo("gzip");
+        assertThat(blob.getCacheControl()).isEqualTo("max-age=3600");
     }
 
     @Test
-    public void getObjectOnAMissingObjectReportsTheObjectName() {
+    void getObjectOnAMissingObjectReportsTheObjectName() {
         Exchange exchange = template.request("direct:getObject",
                 e -> e.getIn().setHeader(GoogleCloudStorageConstants.OBJECT_NAME, "there-is-no-such-object.txt"));
 
-        assertNotNull(exchange);
+        assertThat(exchange).isNotNull();
         Exception exception = exchange.getException();
-        assertNotNull(exception, "a missing object must fail the exchange");
-        assertEquals("Object there-is-no-such-object.txt does not exist in bucket myCamelBucket",
-                exception.getMessage());
+        assertThat(exception).as("a missing object must fail the exchange").isNotNull();
+        assertThat(exception.getMessage())
+                .isEqualTo("Object there-is-no-such-object.txt does not exist in bucket myCamelBucket");
     }
 }
