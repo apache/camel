@@ -110,6 +110,10 @@ public final class CamelJBangConstants {
               javaType = "boolean", defaultValue = "true")
     public static final String MAVEN_WRAPPER = "camel.jbang.mavenWrapper";
 
+    @Metadata(description = "Include Camel Wrapper scripts in the exported project for version pinning",
+              javaType = "boolean", defaultValue = "false")
+    public static final String CAMEL_WRAPPER = "camel.jbang.camelWrapper";
+
     @Metadata(description = "Directory where the project will be exported",
               javaType = "String", defaultValue = ".")
     public static final String EXPORT_DIR = "camel.jbang.exportDir";

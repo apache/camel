@@ -480,6 +480,7 @@ public class KubernetesRun extends KubernetesBaseCommand {
                 true,
                 true,
                 false,
+                false,
                 mavenResolver.download(),
                 packageScanJars,
                 (quiet || output != null),

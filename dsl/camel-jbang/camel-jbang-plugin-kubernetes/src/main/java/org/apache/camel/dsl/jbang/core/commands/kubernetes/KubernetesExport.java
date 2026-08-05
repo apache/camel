@@ -179,6 +179,7 @@ public class KubernetesExport extends Export {
         javaLiveReload = configurer.javaLiveReload;
         ignoreLoadingError = configurer.ignoreLoadingError;
         mavenWrapper = configurer.mavenWrapper;
+        camelWrapper = configurer.camelWrapper;
         skipPlugins = configurer.skipPlugins;
         packageScanJars = configurer.packageScanJars;
         quiet = configurer.quiet;
@@ -655,6 +656,7 @@ public class KubernetesExport extends Export {
             boolean javaLiveReload,
             boolean ignoreLoadingError,
             boolean mavenWrapper,
+            boolean camelWrapper,
             boolean fresh,
             boolean download,
             boolean packageScanJars,

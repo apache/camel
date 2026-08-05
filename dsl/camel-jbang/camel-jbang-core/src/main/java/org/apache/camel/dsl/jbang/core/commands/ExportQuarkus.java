@@ -173,6 +173,9 @@ class ExportQuarkus extends Export {
         if (mavenWrapper) {
             copyMavenWrapper();
         }
+        if (camelWrapper) {
+            copyCamelWrapper();
+        }
 
         if (cleanExportDir || !exportDir.equals(".")) {
             // cleaning current dir can be a bit dangerous so only clean if explicit enabled

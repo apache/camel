@@ -22,6 +22,7 @@ camel export [options]
 | `--build-property` | Maven build properties, ex. --build-property=prop1=foo |  | List
 | `--camel-spring-boot-version` | Camel version to use with Spring Boot |  | String
 | `--camel-version` | To export using a different Camel version than the default version. |  | String
+| `--camel-wrapper` | Include Camel Wrapper scripts in exported project for version pinning | false | boolean
 | `--clean-dir` | If exporting to current directory (default) then all existing files are preserved. Enabling this option will force cleaning current directory including all sub dirs (use this with care) | false | boolean
 | `--dep,--dependency` | Add additional dependencies |  | List
 | `--dir,--directory` | Directory where the project will be exported | . | String

@@ -4,13 +4,14 @@ This page covers configuring the Camel CLI — available options, configuration 
 
 // jbang options: START
 == Camel CLI configurations
-The camel.jbang supports 51 options, which are listed below.
+The camel.jbang supports 52 options, which are listed below.
 
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
 | Name | Description | Default | Type
 | *camel.jbang.camel-version* | The version of Apache Camel to use |  | String
 | *camel.jbang.camelSpringBootVersion* | To use a custom Camel version when running or export to Spring Boot |  | String
+| *camel.jbang.camelWrapper* | Include Camel Wrapper scripts in the exported project for version pinning | false | boolean
 | *camel.jbang.classpathFiles* | Additional files to add to classpath (Use commas to separate multiple files). |  | String
 | *camel.jbang.compileWorkDir* | Work directory for compiler. Can be used to write compiled classes or other resources. | .camel-jbang/compile | String
 | *camel.jbang.console* | Developer console at /q/dev on local HTTP server (port 8080 by default) | false | boolean

@@ -507,6 +507,45 @@ class ExportTest {
 
     @ParameterizedTest
     @MethodSource("runtimeProvider")
+    public void shouldExportCamelWrapper(RuntimeType rt) throws Exception {
+        LOG.info("shouldExportCamelWrapper {}", rt);
+        Export command = createCommand(rt, new String[] { "src/test/resources/route.yaml" },
+                "--gav=examples:route:1.0.0", "--dir=" + workingDir, "--quiet", "--camel-wrapper");
+        int exit = command.doCall();
+
+        Assertions.assertEquals(0, exit);
+        Assertions.assertTrue(new File(workingDir, "camel").exists(), "Missing camel wrapper script");
+        Assertions.assertTrue(new File(workingDir, "camel.cmd").exists(), "Missing camel.cmd wrapper script");
+        Assertions.assertTrue(new File(workingDir, ".camel/camel-wrapper.properties").exists(),
+                "Missing .camel/camel-wrapper.properties");
+
+        String properties = Files.readString(workingDir.toPath().resolve(".camel/camel-wrapper.properties"));
+        assertThat(properties).contains("camel.version=");
+        assertThat(properties).contains("distributionUrl=");
+        assertThat(properties).contains("camel-launcher-");
+
+        String camelScript = Files.readString(workingDir.toPath().resolve("camel"));
+        assertThat(camelScript).startsWith("#!/bin/sh");
+        assertThat(camelScript).contains("camel-wrapper.properties");
+    }
+
+    @ParameterizedTest
+    @MethodSource("runtimeProvider")
+    public void shouldNotExportCamelWrapperByDefault(RuntimeType rt) throws Exception {
+        LOG.info("shouldNotExportCamelWrapperByDefault {}", rt);
+        Export command = createCommand(rt, new String[] { "src/test/resources/route.yaml" },
+                "--gav=examples:route:1.0.0", "--dir=" + workingDir, "--quiet");
+        int exit = command.doCall();
+
+        Assertions.assertEquals(0, exit);
+        Assertions.assertFalse(new File(workingDir, "camel").exists(),
+                "Camel wrapper script should not exist by default");
+        Assertions.assertFalse(new File(workingDir, ".camel/camel-wrapper.properties").exists(),
+                "Camel wrapper properties should not exist by default");
+    }
+
+    @ParameterizedTest
+    @MethodSource("runtimeProvider")
     public void shouldSkipDockerFiles(RuntimeType rt) throws Exception {
         LOG.info("shouldSkipDockerFiles {}", rt);
         Export command = createCommand(rt, new String[] { "src/test/resources/route.yaml" },
