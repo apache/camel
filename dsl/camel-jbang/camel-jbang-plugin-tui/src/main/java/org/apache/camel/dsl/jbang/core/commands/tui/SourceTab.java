@@ -957,6 +957,26 @@ class SourceTab extends AbstractTab {
             return provideEipKeyCompletions(context.substring(9));
         }
 
+        // expression language name completion inside expression: block
+        if (context.startsWith("yaml-expr:")) {
+            return provideExpressionLanguageCompletions(context.substring(10));
+        }
+
+        // language option completion inside a language block under expression:
+        if (context.startsWith("yaml-lang-opt:")) {
+            return provideLanguageOptionCompletions(context.substring(14));
+        }
+
+        // data format name completion inside marshal/unmarshal
+        if (context.startsWith("yaml-df:")) {
+            return provideDataFormatNameCompletions(context.substring(8));
+        }
+
+        // data format option completion
+        if (context.startsWith("yaml-df-opt:")) {
+            return provideDataFormatOptionCompletions(context.substring(12));
+        }
+
         if (!context.startsWith("yaml:")) {
             return List.of();
         }
@@ -1090,6 +1110,306 @@ class SourceTab extends AbstractTab {
 
         List<AutocompletePopup.CompletionItem> items = new ArrayList<>();
         for (EipModel.EipOptionModel opt : model.getOptions()) {
+            if ("expression".equals(opt.getKind()) || "element".equals(opt.getKind())) {
+                if (EIP_BOILERPLATE.contains(opt.getName())) {
+                    continue;
+                }
+                if (existingKeys.contains(opt.getName())) {
+                    continue;
+                }
+                items.add(new AutocompletePopup.CompletionItem(
+                        opt.getName(), opt.getDescription(), opt.getType(),
+                        opt.getDefaultValue(), opt.isDeprecated(), opt.getDeprecationNote(),
+                        opt.getGroup(), opt.isRequired()));
+                continue;
+            }
+            if (!"attribute".equals(opt.getKind())) {
+                continue;
+            }
+            if (EIP_BOILERPLATE.contains(opt.getName())) {
+                continue;
+            }
+            if (existingKeys.contains(opt.getName()) && !opt.isMultiValue()) {
+                continue;
+            }
+            items.add(new AutocompletePopup.CompletionItem(
+                    opt.getName(), opt.getDescription(), opt.getType(),
+                    opt.getDefaultValue(), opt.isDeprecated(), opt.getDeprecationNote(),
+                    opt.getGroup(), opt.isRequired()));
+        }
+
+        items.sort(Comparator.comparing(AutocompletePopup.CompletionItem::deprecated)
+                .thenComparing((a, b) -> Boolean.compare(b.required(), a.required()))
+                .thenComparing(AutocompletePopup.CompletionItem::key, String.CASE_INSENSITIVE_ORDER));
+        return items;
+    }
+
+    private List<AutocompletePopup.CompletionItem> provideExpressionLanguageCompletions(String contextAfterPrefix) {
+        CamelCatalog catalog = getCatalog();
+        if (catalog == null) {
+            return List.of();
+        }
+
+        // context format: "eipName" or "eipName:existingKey1,existingKey2,..."
+        String[] parts = contextAfterPrefix.split(":", 2);
+        String eipName = parts[0];
+
+        Set<String> existingKeys = Set.of();
+        if (parts.length > 1 && !parts[1].isEmpty()) {
+            existingKeys = new HashSet<>(Arrays.asList(parts[1].split(",")));
+        }
+
+        EipModel model = catalog.eipModel(eipName);
+        if (model == null) {
+            return List.of();
+        }
+
+        List<AutocompletePopup.CompletionItem> items = new ArrayList<>();
+        for (EipModel.EipOptionModel opt : model.getOptions()) {
+            if (!"expression".equals(opt.getKind())) {
+                continue;
+            }
+            List<String> oneOfs = opt.getOneOfs();
+            if (oneOfs == null || oneOfs.isEmpty()) {
+                continue;
+            }
+            if (oneOfs.stream().anyMatch(existingKeys::contains)) {
+                continue;
+            }
+            for (String langName : oneOfs) {
+                LanguageModel langModel = catalog.languageModel(langName);
+                String desc = langModel != null
+                        ? langModel.getTitle() + " - " + langModel.getDescription()
+                        : langName;
+                String label = langModel != null ? langModel.getLabel() : "language";
+                boolean dep = langModel != null && langModel.isDeprecated();
+                String depNote = langModel != null ? langModel.getDeprecationNote() : null;
+                items.add(new AutocompletePopup.CompletionItem(
+                        langName, desc, "language",
+                        null, dep, depNote, label));
+            }
+        }
+
+        items.sort(Comparator.comparing(AutocompletePopup.CompletionItem::deprecated)
+                .thenComparing(AutocompletePopup.CompletionItem::key, String.CASE_INSENSITIVE_ORDER));
+        return items;
+    }
+
+    private List<AutocompletePopup.CompletionItem> provideLanguageOptionCompletions(String contextAfterPrefix) {
+        CamelCatalog catalog = getCatalog();
+        if (catalog == null) {
+            return List.of();
+        }
+
+        // context format: "languageName" or "languageName:existingKey1,existingKey2,..."
+        String[] parts = contextAfterPrefix.split(":", 2);
+        String langName = parts[0];
+
+        Set<String> existingKeys = Set.of();
+        if (parts.length > 1 && !parts[1].isEmpty()) {
+            existingKeys = new HashSet<>(Arrays.asList(parts[1].split(",")));
+        }
+
+        LanguageModel model = catalog.languageModel(langName);
+        if (model == null) {
+            return List.of();
+        }
+
+        List<AutocompletePopup.CompletionItem> items = new ArrayList<>();
+        for (LanguageModel.LanguageOptionModel opt : model.getOptions()) {
+            if (!"attribute".equals(opt.getKind()) && !"value".equals(opt.getKind())) {
+                continue;
+            }
+            if (EIP_BOILERPLATE.contains(opt.getName())) {
+                continue;
+            }
+            if (existingKeys.contains(opt.getName()) && !opt.isMultiValue()) {
+                continue;
+            }
+            items.add(new AutocompletePopup.CompletionItem(
+                    opt.getName(), opt.getDescription(), opt.getType(),
+                    opt.getDefaultValue(), opt.isDeprecated(), opt.getDeprecationNote(),
+                    opt.getGroup(), opt.isRequired()));
+        }
+
+        items.sort(Comparator.comparing(AutocompletePopup.CompletionItem::deprecated)
+                .thenComparing((a, b) -> Boolean.compare(b.required(), a.required()))
+                .thenComparing(AutocompletePopup.CompletionItem::key, String.CASE_INSENSITIVE_ORDER));
+        return items;
+    }
+
+    private List<AutocompletePopup.CompletionItem> provideLanguageValueCompletions(String contextAfterPrefix) {
+        CamelCatalog catalog = getCatalog();
+        if (catalog == null) {
+            return List.of();
+        }
+
+        // context format: "languageName:optionName"
+        String[] parts = contextAfterPrefix.split(":", 2);
+        if (parts.length < 2) {
+            return List.of();
+        }
+        String langName = parts[0];
+        String optionName = parts[1];
+
+        LanguageModel model = catalog.languageModel(langName);
+        if (model == null) {
+            return List.of();
+        }
+
+        LanguageModel.LanguageOptionModel opt = null;
+        for (LanguageModel.LanguageOptionModel o : model.getOptions()) {
+            if (o.getName().equals(optionName)) {
+                opt = o;
+                break;
+            }
+        }
+
+        List<AutocompletePopup.CompletionItem> items = new ArrayList<>();
+        if (opt != null) {
+            List<String> enums = opt.getEnums();
+            if (enums != null && !enums.isEmpty()) {
+                for (String value : enums) {
+                    boolean isDefault = value.equals(String.valueOf(opt.getDefaultValue()));
+                    items.add(new AutocompletePopup.CompletionItem(
+                            value, opt.getDescription(), opt.getType(),
+                            isDefault ? value : opt.getDefaultValue(),
+                            false, null, opt.getGroup()));
+                }
+            } else if ("boolean".equalsIgnoreCase(opt.getType())
+                    || "java.lang.Boolean".equals(opt.getJavaType())) {
+                items.add(new AutocompletePopup.CompletionItem(
+                        "true", opt.getDescription(), "boolean", opt.getDefaultValue(),
+                        false, null, opt.getGroup()));
+                items.add(new AutocompletePopup.CompletionItem(
+                        "false", opt.getDescription(), "boolean", opt.getDefaultValue(),
+                        false, null, opt.getGroup()));
+            }
+        }
+        return items;
+    }
+
+    private List<AutocompletePopup.CompletionItem> provideDataFormatValueCompletions(String contextAfterPrefix) {
+        CamelCatalog catalog = getCatalog();
+        if (catalog == null) {
+            return List.of();
+        }
+
+        String[] parts = contextAfterPrefix.split(":", 2);
+        if (parts.length < 2) {
+            return List.of();
+        }
+        String dfName = parts[0];
+        String optionName = parts[1];
+
+        DataFormatModel model = catalog.dataFormatModel(dfName);
+        if (model == null) {
+            return List.of();
+        }
+
+        DataFormatModel.DataFormatOptionModel opt = null;
+        for (DataFormatModel.DataFormatOptionModel o : model.getOptions()) {
+            if (o.getName().equals(optionName)) {
+                opt = o;
+                break;
+            }
+        }
+
+        List<AutocompletePopup.CompletionItem> items = new ArrayList<>();
+        if (opt != null) {
+            List<String> enums = opt.getEnums();
+            if (enums != null && !enums.isEmpty()) {
+                for (String value : enums) {
+                    boolean isDefault = value.equals(String.valueOf(opt.getDefaultValue()));
+                    items.add(new AutocompletePopup.CompletionItem(
+                            value, opt.getDescription(), opt.getType(),
+                            isDefault ? value : opt.getDefaultValue(),
+                            false, null, opt.getGroup()));
+                }
+            } else if ("boolean".equalsIgnoreCase(opt.getType())
+                    || "java.lang.Boolean".equals(opt.getJavaType())) {
+                items.add(new AutocompletePopup.CompletionItem(
+                        "true", opt.getDescription(), "boolean", opt.getDefaultValue(),
+                        false, null, opt.getGroup()));
+                items.add(new AutocompletePopup.CompletionItem(
+                        "false", opt.getDescription(), "boolean", opt.getDefaultValue(),
+                        false, null, opt.getGroup()));
+            }
+        }
+        return items;
+    }
+
+    private List<AutocompletePopup.CompletionItem> provideDataFormatNameCompletions(String contextAfterPrefix) {
+        CamelCatalog catalog = getCatalog();
+        if (catalog == null) {
+            return List.of();
+        }
+
+        // context format: "eipName" or "eipName:existingKey1,existingKey2,..."
+        String[] parts = contextAfterPrefix.split(":", 2);
+        String eipName = parts[0];
+
+        Set<String> existingKeys = Set.of();
+        if (parts.length > 1 && !parts[1].isEmpty()) {
+            existingKeys = new HashSet<>(Arrays.asList(parts[1].split(",")));
+        }
+
+        EipModel model = catalog.eipModel(eipName);
+        if (model == null) {
+            return List.of();
+        }
+
+        List<AutocompletePopup.CompletionItem> items = new ArrayList<>();
+        for (EipModel.EipOptionModel opt : model.getOptions()) {
+            List<String> oneOfs = opt.getOneOfs();
+            if (oneOfs == null || oneOfs.isEmpty()) {
+                continue;
+            }
+            // only offer data format names if none is already specified
+            if (oneOfs.stream().anyMatch(existingKeys::contains)) {
+                continue;
+            }
+            for (String dfName : oneOfs) {
+                DataFormatModel dfModel = catalog.dataFormatModel(dfName);
+                String desc = dfModel != null
+                        ? dfModel.getTitle() + " - " + dfModel.getDescription()
+                        : dfName;
+                String label = dfModel != null ? dfModel.getLabel() : "dataformat";
+                boolean dep = dfModel != null && dfModel.isDeprecated();
+                String depNote = dfModel != null ? dfModel.getDeprecationNote() : null;
+                items.add(new AutocompletePopup.CompletionItem(
+                        dfName, desc, "dataformat",
+                        null, dep, depNote, label));
+            }
+        }
+
+        items.sort(Comparator.comparing(AutocompletePopup.CompletionItem::deprecated)
+                .thenComparing(AutocompletePopup.CompletionItem::key, String.CASE_INSENSITIVE_ORDER));
+        return items;
+    }
+
+    private List<AutocompletePopup.CompletionItem> provideDataFormatOptionCompletions(String contextAfterPrefix) {
+        CamelCatalog catalog = getCatalog();
+        if (catalog == null) {
+            return List.of();
+        }
+
+        // context format: "dataFormatName" or "dataFormatName:existingKey1,existingKey2,..."
+        String[] parts = contextAfterPrefix.split(":", 2);
+        String dfName = parts[0];
+
+        Set<String> existingKeys = Set.of();
+        if (parts.length > 1 && !parts[1].isEmpty()) {
+            existingKeys = new HashSet<>(Arrays.asList(parts[1].split(",")));
+        }
+
+        DataFormatModel model = catalog.dataFormatModel(dfName);
+        if (model == null) {
+            return List.of();
+        }
+
+        List<AutocompletePopup.CompletionItem> items = new ArrayList<>();
+        for (DataFormatModel.DataFormatOptionModel opt : model.getOptions()) {
             if (!"attribute".equals(opt.getKind())) {
                 continue;
             }
@@ -1134,6 +1454,16 @@ class SourceTab extends AbstractTab {
         // EIP value completion
         if (context.startsWith("yaml-eip-value:")) {
             return provideEipValueCompletions(context.substring(15));
+        }
+
+        // Language option value completion
+        if (context.startsWith("yaml-lang-value:")) {
+            return provideLanguageValueCompletions(context.substring(16));
+        }
+
+        // Data format option value completion
+        if (context.startsWith("yaml-df-value:")) {
+            return provideDataFormatValueCompletions(context.substring(14));
         }
 
         if (!context.startsWith("yaml:")) {

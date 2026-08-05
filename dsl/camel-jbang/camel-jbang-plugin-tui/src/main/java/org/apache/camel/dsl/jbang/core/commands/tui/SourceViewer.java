@@ -821,9 +821,24 @@ class SourceViewer {
     record YamlEipContext(String eipName) {
     }
 
+    record YamlDataFormatContext(String eipName) {
+    }
+
+    record YamlDataFormatOptionContext(String dataFormatName) {
+    }
+
+    record YamlExpressionContext(String eipName) {
+    }
+
+    record YamlLanguageOptionContext(String languageName) {
+    }
+
     private static final java.util.Set<String> STRUCTURAL_KEYS
-            = java.util.Set.of("steps", "uri", "parameters", "from", "route", "routeConfiguration",
+            = java.util.Set.of("steps", "uri", "parameters", "from", "expression", "routeConfiguration",
                     "routeTemplate", "templatedRoute", "rest", "beans");
+
+    private static final java.util.Set<String> MARSHAL_EIPS
+            = java.util.Set.of("marshal", "unmarshal");
 
     YamlEipContext findEnclosingEip(int fromRow) {
         String cursorLine = editState.getLine(fromRow);
@@ -891,6 +906,191 @@ class SourceViewer {
             }
         }
         return null;
+    }
+
+    YamlExpressionContext findExpressionContext(int fromRow) {
+        // cursor is inside an expression: block — find the parent EIP
+        String cursorLine = editState.getLine(fromRow);
+        int cursorIndent = countLeadingSpaces(cursorLine);
+        if (cursorLine.isBlank() && cursorIndent == 0) {
+            int lineCount = editState.lineCount();
+            for (int i = fromRow + 1; i < lineCount; i++) {
+                String next = editState.getLine(i);
+                if (!next.isBlank()) {
+                    cursorIndent = countLeadingSpaces(next);
+                    break;
+                }
+            }
+            if (cursorIndent == 0) {
+                for (int i = fromRow - 1; i >= 0; i--) {
+                    String prev = editState.getLine(i);
+                    if (!prev.isBlank()) {
+                        cursorIndent = countLeadingSpaces(prev);
+                        break;
+                    }
+                }
+            }
+        }
+
+        // walk up to find the immediate parent key
+        for (int i = fromRow; i >= 0; i--) {
+            String line = editState.getLine(i);
+            if (line.isBlank()) {
+                continue;
+            }
+            int indent = countLeadingSpaces(line);
+            if (indent < cursorIndent) {
+                String parentKey = extractEipName(line.trim());
+                if ("expression".equals(parentKey)) {
+                    // found expression: — now find the EIP above it
+                    YamlEipContext eipCtx = findEnclosingEip(i);
+                    if (eipCtx != null) {
+                        return new YamlExpressionContext(eipCtx.eipName());
+                    }
+                }
+                break;
+            }
+        }
+        return null;
+    }
+
+    YamlLanguageOptionContext findLanguageOptionContext(int fromRow) {
+        // cursor is inside a language block (e.g., simple:) under expression: under an EIP
+        String cursorLine = editState.getLine(fromRow);
+        int cursorIndent = countLeadingSpaces(cursorLine);
+        if (cursorLine.isBlank() && cursorIndent == 0) {
+            int lineCount = editState.lineCount();
+            for (int i = fromRow + 1; i < lineCount; i++) {
+                String next = editState.getLine(i);
+                if (!next.isBlank()) {
+                    cursorIndent = countLeadingSpaces(next);
+                    break;
+                }
+            }
+            if (cursorIndent == 0) {
+                for (int i = fromRow - 1; i >= 0; i--) {
+                    String prev = editState.getLine(i);
+                    if (!prev.isBlank()) {
+                        cursorIndent = countLeadingSpaces(prev);
+                        break;
+                    }
+                }
+            }
+        }
+
+        // walk up: parent should be a language name, grandparent should be expression:
+        String parentKey = null;
+        int parentIndent = -1;
+        for (int i = fromRow; i >= 0; i--) {
+            String line = editState.getLine(i);
+            if (line.isBlank()) {
+                continue;
+            }
+            int indent = countLeadingSpaces(line);
+            if (indent < cursorIndent) {
+                parentKey = extractEipName(line.trim());
+                parentIndent = indent;
+                break;
+            }
+        }
+        if (parentKey == null || parentIndent < 0) {
+            return null;
+        }
+
+        // grandparent should be expression:
+        for (int i = findLineAbove(fromRow, parentIndent); i >= 0; i--) {
+            String line = editState.getLine(i);
+            if (line.isBlank()) {
+                continue;
+            }
+            int indent = countLeadingSpaces(line);
+            if (indent < parentIndent) {
+                String grandparent = extractEipName(line.trim());
+                if ("expression".equals(grandparent)) {
+                    return new YamlLanguageOptionContext(parentKey);
+                }
+                break;
+            }
+        }
+        return null;
+    }
+
+    YamlDataFormatContext findMarshalContext(int fromRow) {
+        YamlEipContext eipCtx = findEnclosingEip(fromRow);
+        if (eipCtx != null && MARSHAL_EIPS.contains(eipCtx.eipName())) {
+            return new YamlDataFormatContext(eipCtx.eipName());
+        }
+        return null;
+    }
+
+    YamlDataFormatOptionContext findDataFormatOptionContext(int fromRow) {
+        String cursorLine = editState.getLine(fromRow);
+        int cursorIndent = countLeadingSpaces(cursorLine);
+        if (cursorLine.isBlank() && cursorIndent == 0) {
+            int lineCount = editState.lineCount();
+            for (int i = fromRow + 1; i < lineCount; i++) {
+                String next = editState.getLine(i);
+                if (!next.isBlank()) {
+                    cursorIndent = countLeadingSpaces(next);
+                    break;
+                }
+            }
+            if (cursorIndent == 0) {
+                for (int i = fromRow - 1; i >= 0; i--) {
+                    String prev = editState.getLine(i);
+                    if (!prev.isBlank()) {
+                        cursorIndent = countLeadingSpaces(prev);
+                        break;
+                    }
+                }
+            }
+        }
+
+        // walk up to find parent key (data format name) then grandparent (marshal/unmarshal)
+        String parentKey = null;
+        int parentIndent = -1;
+        for (int i = fromRow; i >= 0; i--) {
+            String line = editState.getLine(i);
+            if (line.isBlank()) {
+                continue;
+            }
+            int indent = countLeadingSpaces(line);
+            if (indent < cursorIndent) {
+                parentKey = extractEipName(line.trim());
+                parentIndent = indent;
+                break;
+            }
+        }
+        if (parentKey == null || parentIndent < 0) {
+            return null;
+        }
+
+        // now find the grandparent — should be marshal or unmarshal
+        for (int i = findLineAbove(fromRow, parentIndent); i >= 0; i--) {
+            String line = editState.getLine(i);
+            if (line.isBlank()) {
+                continue;
+            }
+            int indent = countLeadingSpaces(line);
+            if (indent < parentIndent) {
+                String grandparent = extractEipName(line.trim());
+                if (grandparent != null && MARSHAL_EIPS.contains(grandparent)) {
+                    return new YamlDataFormatOptionContext(parentKey);
+                }
+                break;
+            }
+        }
+        return null;
+    }
+
+    private int findLineAbove(int fromRow, int maxIndent) {
+        for (int i = fromRow - 1; i >= 0; i--) {
+            String line = editState.getLine(i);
+            if (!line.isBlank() && countLeadingSpaces(line) < maxIndent) {
+                return i;
+            }
+        }
+        return -1;
     }
 
     java.util.Set<String> collectExistingSiblingKeys(int fromRow) {
@@ -1247,6 +1447,116 @@ class SourceViewer {
                     autocompletePopup = new AutocompletePopup(items, filter, filter);
                     autocompletePopup.setTitlePrefix(ctx.component() + " options");
                 }
+            }
+            return;
+        }
+
+        // Language option completion — cursor inside a language block (e.g., simple:) under expression:
+        YamlLanguageOptionContext langOptCtx = findLanguageOptionContext(row);
+        if (langOptCtx != null && autocompleteProvider != null) {
+            int colonIdx = trimmed.indexOf(':');
+            if (colonIdx > 0) {
+                // value completion for language option
+                String optionName = trimmed.substring(0, colonIdx).trim();
+                String valueText = trimmed.substring(colonIdx + 1).trim();
+                if (valueText.startsWith("\"") || valueText.startsWith("'")) {
+                    valueText = valueText.substring(1);
+                }
+                if (valueText.endsWith("\"") || valueText.endsWith("'")) {
+                    valueText = valueText.substring(0, valueText.length() - 1);
+                }
+                if (autocompleteValueProvider != null) {
+                    String context = "yaml-lang-value:" + langOptCtx.languageName() + ":" + optionName;
+                    List<AutocompletePopup.CompletionItem> values = autocompleteValueProvider.provide(context);
+                    if (values != null && !values.isEmpty()) {
+                        autocompletePopup = new AutocompletePopup(values, "", valueText, true);
+                    }
+                }
+            } else {
+                // key completion for language options
+                String filter = trimmed;
+                java.util.Set<String> existing = collectExistingSiblingKeys(row);
+                String context = "yaml-lang-opt:" + langOptCtx.languageName();
+                if (!existing.isEmpty()) {
+                    context += ":" + String.join(",", existing);
+                }
+                List<AutocompletePopup.CompletionItem> items = autocompleteProvider.provide(context);
+                if (items != null && !items.isEmpty()) {
+                    autocompletePopup = new AutocompletePopup(items, filter, filter);
+                    autocompletePopup.setTitlePrefix(langOptCtx.languageName() + " options");
+                }
+            }
+            return;
+        }
+
+        // Expression language name completion — cursor inside an expression: block under an EIP
+        YamlExpressionContext exprCtx = findExpressionContext(row);
+        if (exprCtx != null && autocompleteProvider != null) {
+            String filter = trimmed;
+            java.util.Set<String> existing = collectExistingSiblingKeys(row);
+            String context = "yaml-expr:" + exprCtx.eipName();
+            if (!existing.isEmpty()) {
+                context += ":" + String.join(",", existing);
+            }
+            List<AutocompletePopup.CompletionItem> items = autocompleteProvider.provide(context);
+            if (items != null && !items.isEmpty()) {
+                autocompletePopup = new AutocompletePopup(items, filter, filter);
+                autocompletePopup.setTitlePrefix("Languages");
+            }
+            return;
+        }
+
+        // Data format option completion — cursor inside a data format block under marshal/unmarshal
+        YamlDataFormatOptionContext dfOptCtx = findDataFormatOptionContext(row);
+        if (dfOptCtx != null && autocompleteProvider != null) {
+            int colonIdx = trimmed.indexOf(':');
+            if (colonIdx > 0) {
+                // value completion for data format option
+                String optionName = trimmed.substring(0, colonIdx).trim();
+                String valueText = trimmed.substring(colonIdx + 1).trim();
+                if (valueText.startsWith("\"") || valueText.startsWith("'")) {
+                    valueText = valueText.substring(1);
+                }
+                if (valueText.endsWith("\"") || valueText.endsWith("'")) {
+                    valueText = valueText.substring(0, valueText.length() - 1);
+                }
+                if (autocompleteValueProvider != null) {
+                    String context = "yaml-df-value:" + dfOptCtx.dataFormatName() + ":" + optionName;
+                    List<AutocompletePopup.CompletionItem> values = autocompleteValueProvider.provide(context);
+                    if (values != null && !values.isEmpty()) {
+                        autocompletePopup = new AutocompletePopup(values, "", valueText, true);
+                    }
+                }
+            } else {
+                // key completion for data format options
+                String filter = trimmed;
+                java.util.Set<String> existing = collectExistingSiblingKeys(row);
+                String context = "yaml-df-opt:" + dfOptCtx.dataFormatName();
+                if (!existing.isEmpty()) {
+                    context += ":" + String.join(",", existing);
+                }
+                List<AutocompletePopup.CompletionItem> items = autocompleteProvider.provide(context);
+                if (items != null && !items.isEmpty()) {
+                    autocompletePopup = new AutocompletePopup(items, filter, filter);
+                    autocompletePopup.setTitlePrefix(dfOptCtx.dataFormatName() + " options");
+                }
+            }
+            return;
+        }
+
+        // Data format name completion — cursor inside a marshal/unmarshal block
+        YamlDataFormatContext dfCtx = findMarshalContext(row);
+        if (dfCtx != null && autocompleteProvider != null) {
+            String filter = trimmed;
+            java.util.Set<String> existing = collectExistingSiblingKeys(row);
+            String context = "yaml-df:" + dfCtx.eipName();
+            if (!existing.isEmpty()) {
+                context += ":" + String.join(",", existing);
+            }
+            List<AutocompletePopup.CompletionItem> items = autocompleteProvider.provide(context);
+            if (items != null && !items.isEmpty()) {
+                autocompletePopup = new AutocompletePopup(items, filter, filter);
+                autocompletePopup.setTitlePrefix("Data Formats");
             }
             return;
         }
