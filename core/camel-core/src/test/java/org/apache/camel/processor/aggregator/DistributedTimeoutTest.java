@@ -30,7 +30,9 @@ import static org.awaitility.Awaitility.await;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
-public class DistributedTimeoutTest extends AbstractDistributedTest {
+class DistributedTimeoutTest extends AbstractDistributedTest {
+
+    private static final long TIMEOUT_SECONDS = 30;
 
     private final MemoryAggregationRepository sharedAggregationRepository = new MemoryAggregationRepository(true);
 
@@ -41,7 +43,7 @@ public class DistributedTimeoutTest extends AbstractDistributedTest {
     private volatile long receivedTimeout;
 
     @Test
-    public void testAggregateTimeout() throws Exception {
+    void testAggregateTimeout() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:aggregated");
         MockEndpoint mock2 = getMockEndpoint2("mock:aggregated");
         mock.expectedMessageCount(0);
@@ -50,7 +52,7 @@ public class DistributedTimeoutTest extends AbstractDistributedTest {
         template.sendBodyAndHeader("direct:start", "A", "id", 123);
         template2.sendBodyAndHeader("direct:start", "B", "id", 123);
 
-        // wait a bit until the timeout was triggered
+        // wait until the timeout was triggered
         await().atMost(10, TimeUnit.SECONDS).until(() -> invoked.get() == 1);
 
         mock.assertIsSatisfied();
@@ -72,8 +74,8 @@ public class DistributedTimeoutTest extends AbstractDistributedTest {
         template2.sendBodyAndHeader("direct:start", "B", "id", 123);
         template2.sendBodyAndHeader("direct:start", "C", "id", 123);
 
-        MockEndpoint.assertIsSatisfied(context, 30, TimeUnit.SECONDS);
-        MockEndpoint.assertIsSatisfied(context2, 30, TimeUnit.SECONDS);
+        MockEndpoint.assertIsSatisfied(context, TIMEOUT_SECONDS, TimeUnit.SECONDS);
+        MockEndpoint.assertIsSatisfied(context2, TIMEOUT_SECONDS, TimeUnit.SECONDS);
 
         // should have not invoked the timeout method anymore
         assertEquals(1, invoked.get());
