@@ -176,7 +176,10 @@ public class LangChain4jAgentProducer extends DefaultProducer {
         if (endpoint.getConfiguration().getAgentConfiguration() != null) {
             return endpoint.getConfiguration().getAgentConfiguration().getChatModel();
         }
-        return agent;
+        if (agent instanceof AbstractAgent<?> abstractAgent) {
+            return abstractAgent.getChatModel();
+        }
+        return null;
     }
 
     private void populateResultHeaders(Result<String> result, Exchange exchange, String requestModel) {

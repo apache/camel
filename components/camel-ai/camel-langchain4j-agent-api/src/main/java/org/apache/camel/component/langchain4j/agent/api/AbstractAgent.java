@@ -24,6 +24,7 @@ import java.util.function.BiPredicate;
 import dev.langchain4j.agent.tool.ToolSpecification;
 import dev.langchain4j.mcp.McpToolProvider;
 import dev.langchain4j.mcp.client.McpClient;
+import dev.langchain4j.model.chat.ChatModel;
 import dev.langchain4j.model.chat.request.ResponseFormat;
 import dev.langchain4j.service.AiServices;
 import dev.langchain4j.service.tool.ToolProvider;
@@ -63,6 +64,13 @@ public abstract class AbstractAgent<S> implements Agent {
      */
     protected AgentConfiguration getConfiguration() {
         return configuration;
+    }
+
+    /**
+     * Returns the LangChain4j chat model configured for this agent.
+     */
+    public ChatModel getChatModel() {
+        return configuration.getChatModel();
     }
 
     /**
