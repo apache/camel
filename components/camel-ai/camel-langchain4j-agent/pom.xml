@@ -72,7 +72,7 @@
     </dependency>
     <dependency>
       <groupId>org.apache.camel</groupId>
-      <artifactId>camel-ai-observability</artifactId>
+      <artifactId>camel-ai-observability-api</artifactId>
       <version>${project.version}</version>
     </dependency>
     <!-- for testing -->

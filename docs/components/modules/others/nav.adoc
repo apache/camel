@@ -4,7 +4,7 @@
 * xref:others:index.adoc[Miscellaneous Components]
 ** xref:a2a-consumer.adoc[A2A - Consumer Guide]
 ** xref:a2a-producer.adoc[A2A - Producer Guide]
-*** xref:ai-observability.adoc[AI Observability]
+** xref:ai-observability.adoc[AI Observability]
 ** xref:attachments.adoc[Attachments]
 ** xref:aws-bedrock-examples.adoc[AWS Bedrock - Examples]
 ** xref:aws-bedrock-models.adoc[AWS Bedrock - Supported Models]
