@@ -607,6 +607,15 @@ public class OpenAIProducer extends DefaultAsyncProducer {
     }
 
     private void processStreaming(Exchange exchange, ChatCompletionCreateParams params) {
+        String requestModel = params.model().toString();
+        GenAiObservationContext observationContext = GenAiObservationContext.builder()
+                .operationName(GenAiOperationName.CHAT)
+                .system("openai")
+                .requestModel(requestModel)
+                .componentScheme("openai")
+                .build();
+        GenAiObservation observation = GenAiObservability.start(exchange, observationContext);
+
         // NOTE: the stream is going to be closed after the exchange completes.
         StreamResponse<ChatCompletionChunk> streamResponse = getEndpoint().getClient().chat().completions() // NOSONAR
                 .createStreaming(params);
@@ -619,11 +628,17 @@ public class OpenAIProducer extends DefaultAsyncProducer {
         exchange.getUnitOfWork().addSynchronization(new Synchronization() {
             @Override
             public void onComplete(Exchange e) {
+                observation.recordSuccess(GenAiUsage.of(null, null, null, requestModel));
+                observation.close();
                 safeClose();
             }
 
             @Override
             public void onFailure(Exchange e) {
+                if (e.getException() != null) {
+                    observation.recordError(e.getException());
+                }
+                observation.close();
                 safeClose();
             }
 

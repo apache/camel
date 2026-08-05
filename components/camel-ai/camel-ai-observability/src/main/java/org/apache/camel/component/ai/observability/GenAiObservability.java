@@ -32,6 +32,7 @@ import org.apache.camel.telemetry.Span;
 import org.apache.camel.telemetry.SpanLifecycleManager;
 import org.apache.camel.telemetry.SpanStorageManagerExchange;
 import org.apache.camel.telemetry.Tracer;
+import org.apache.camel.telemetry.propagation.CamelHeadersSpanContextPropagationExtractor;
 import org.apache.camel.util.ObjectHelper;
 
 /**
@@ -39,7 +40,7 @@ import org.apache.camel.util.ObjectHelper;
  */
 public final class GenAiObservability {
 
-    private static final String INTERNAL_SPAN_KIND = "INTERNAL";
+    private static final String CLIENT_SPAN_KIND = "CLIENT";
     private static final GenAiObservation NOOP = new NoopGenAiObservation();
 
     private GenAiObservability() {
@@ -114,7 +115,8 @@ public final class GenAiObservability {
             SpanStorageManagerExchange storage = new SpanStorageManagerExchange();
             Span parent = storage.peek(exchange);
             SpanLifecycleManager lifecycleManager = tracer.getSpanLifecycleManager();
-            span = lifecycleManager.create(context.spanName(), INTERNAL_SPAN_KIND, parent, null);
+            var extractor = new CamelHeadersSpanContextPropagationExtractor(exchange.getIn().getHeaders());
+            span = lifecycleManager.create(context.spanName(), CLIENT_SPAN_KIND, parent, extractor);
             lifecycleManager.activate(span);
             applyContextAttributes(span, context, null, null);
         }
