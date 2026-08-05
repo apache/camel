@@ -18,6 +18,7 @@ package org.apache.camel.dsl.jbang.core.commands.mcp;
 
 import java.util.LinkedHashMap;
 import java.util.Map;
+import java.util.Set;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.CamelContextAware;
@@ -72,7 +73,7 @@ public class JbangDevMcpServer extends ServiceSupport implements CamelContextAwa
 
         engine = new VertxMcpServerEngine();
         engine.setCamelContext(camelContext);
-        engine.setTargetServerType(VertxPlatformHttpRouter.SERVER_TYPE_MANAGEMENT);
+        engine.setTargetServerType(resolveTargetServerType());
         String version = camelContext.getVersion();
         if (version == null || version.isBlank()) {
             version = "unknown";
@@ -142,5 +143,18 @@ public class JbangDevMcpServer extends ServiceSupport implements CamelContextAwa
             }
         }
         return out;
+    }
+
+    /**
+     * Prefer the management router when it exists; when the management server reuses the main HTTP server on the same
+     * port, only a {@code server}-typed router is registered and MCP must attach there.
+     */
+    private String resolveTargetServerType() {
+        Set<VertxPlatformHttpRouter> routers = camelContext.getRegistry().findByType(VertxPlatformHttpRouter.class);
+        boolean hasManagementRouter = routers.stream()
+                .anyMatch(r -> VertxPlatformHttpRouter.SERVER_TYPE_MANAGEMENT.equals(r.getServerType()));
+        return hasManagementRouter
+                ? VertxPlatformHttpRouter.SERVER_TYPE_MANAGEMENT
+                : VertxPlatformHttpRouter.SERVER_TYPE_SERVER;
     }
 }
