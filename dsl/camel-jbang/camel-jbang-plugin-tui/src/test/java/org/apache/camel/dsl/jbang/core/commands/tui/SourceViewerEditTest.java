@@ -438,6 +438,126 @@ class SourceViewerEditTest {
         assertThat(viewer.isTextInputActive()).isFalse();
     }
 
+    @Test
+    void propertiesValidationOnSaveShowsErrors() throws Exception {
+        Path propsFile = tempDir.resolve("application.properties");
+        Files.writeString(propsFile, "camel.component.seda.queueSize=1234\n", StandardCharsets.UTF_8);
+        viewer.setValidateOnSave(true);
+        viewer.setPropertiesValidator(line -> {
+            String trimmed = line.trim();
+            if (trimmed.startsWith("camel.component.seda.foo")) {
+                return "Unknown option: camel.component.seda.foo";
+            }
+            return null;
+        });
+
+        viewer.loadFile(propsFile);
+        viewer.enterEditMode();
+
+        // move to end and add an invalid property
+        for (int i = 0; i < 20; i++) {
+            viewer.handleKeyEvent(KeyEvent.ofKey(KeyCode.DOWN, KeyModifiers.NONE));
+        }
+        viewer.handleKeyEvent(KeyEvent.ofKey(KeyCode.END, KeyModifiers.NONE));
+        viewer.handleKeyEvent(KeyEvent.ofKey(KeyCode.ENTER, KeyModifiers.NONE));
+        for (char ch : "camel.component.seda.foo=abc".toCharArray()) {
+            viewer.handleKeyEvent(KeyEvent.ofChar(ch, KeyModifiers.NONE));
+        }
+
+        // save — should stay in edit mode with validation errors
+        viewer.handleKeyEvent(KeyEvent.ofKey(KeyCode.F5, KeyModifiers.NONE));
+        assertThat(viewer.isEditMode()).isTrue();
+
+        // dismiss errors via Esc — must stay in edit mode
+        viewer.handleKeyEvent(KeyEvent.ofKey(KeyCode.ESCAPE, KeyModifiers.NONE));
+        assertThat(viewer.isEditMode()).isTrue();
+
+        // file is still saved (validation is informational)
+        String saved = Files.readString(propsFile, StandardCharsets.UTF_8);
+        assertThat(saved).contains("camel.component.seda.foo=abc");
+    }
+
+    @Test
+    void cancelEditDismissesValidationErrorsFirst() throws Exception {
+        Path propsFile = tempDir.resolve("application.properties");
+        Files.writeString(propsFile, "camel.component.seda.queueSize=1234\n", StandardCharsets.UTF_8);
+        viewer.setValidateOnSave(true);
+        viewer.setPropertiesValidator(line -> {
+            if (line.trim().startsWith("camel.component.seda.foo")) {
+                return "Unknown option";
+            }
+            return null;
+        });
+
+        viewer.loadFile(propsFile);
+        viewer.enterEditMode();
+
+        for (int i = 0; i < 20; i++) {
+            viewer.handleKeyEvent(KeyEvent.ofKey(KeyCode.DOWN, KeyModifiers.NONE));
+        }
+        viewer.handleKeyEvent(KeyEvent.ofKey(KeyCode.END, KeyModifiers.NONE));
+        viewer.handleKeyEvent(KeyEvent.ofKey(KeyCode.ENTER, KeyModifiers.NONE));
+        for (char ch : "camel.component.seda.foo=abc".toCharArray()) {
+            viewer.handleKeyEvent(KeyEvent.ofChar(ch, KeyModifiers.NONE));
+        }
+
+        viewer.handleKeyEvent(KeyEvent.ofKey(KeyCode.F5, KeyModifiers.NONE));
+        assertThat(viewer.isEditMode()).isTrue();
+
+        // cancelEdit (used by CamelMonitor via handleEscape) should dismiss popup first
+        assertThat(viewer.cancelEdit()).isTrue();
+        assertThat(viewer.isEditMode()).isTrue();
+
+        // second cancelEdit exits edit mode
+        assertThat(viewer.cancelEdit()).isTrue();
+        assertThat(viewer.isEditMode()).isFalse();
+    }
+
+    @Test
+    void propertiesValidationSkipsCommentsAndBlankLines() throws Exception {
+        Path propsFile = tempDir.resolve("application.properties");
+        Files.writeString(propsFile, "# comment\n\ncamel.component.seda.queueSize=1234\n", StandardCharsets.UTF_8);
+        viewer.setValidateOnSave(true);
+        viewer.setPropertiesValidator(line -> null);
+
+        viewer.loadFile(propsFile);
+        viewer.enterEditMode();
+        viewer.handleKeyEvent(KeyEvent.ofKey(KeyCode.F5, KeyModifiers.NONE));
+
+        // no errors — should exit edit mode
+        assertThat(viewer.isEditMode()).isFalse();
+        assertThat(lastNotification.get()).contains("Saved");
+    }
+
+    @Test
+    void yamlEndpointValidationOnSaveShowsErrors() throws Exception {
+        String yaml = """
+                - from:
+                    uri: timer:tick
+                    parameters:
+                      period: 1000
+                      badOption: xyz
+                  steps:
+                    - log: "${body}"
+                """;
+        Path yamlFile = tempDir.resolve("route.camel.yaml");
+        Files.writeString(yamlFile, yaml, StandardCharsets.UTF_8);
+
+        viewer.setValidateOnSave(true);
+        List<String> capturedErrors = new ArrayList<>();
+        viewer.setEndpointValidator(content -> {
+            capturedErrors.add("timer: Unknown option. Did you mean: [fixedRate]");
+            return List.of("timer: Unknown option. Did you mean: [fixedRate]");
+        });
+
+        viewer.loadFile(yamlFile);
+        viewer.enterEditMode();
+        viewer.handleKeyEvent(KeyEvent.ofKey(KeyCode.F5, KeyModifiers.NONE));
+
+        assertThat(viewer.isEditMode()).isTrue();
+        assertThat(capturedErrors).isNotEmpty();
+    }
+
     private static String spansToString(List<Span> spans) {
         StringBuilder sb = new StringBuilder();
         for (Span span : spans) {

@@ -59,6 +59,28 @@ public class YamlValidatorTest {
     }
 
     @Test
+    public void testTypeMismatchFiltersOneOfNoise() throws Exception {
+        var report = validator.validate(new File("src/test/resources/type-mismatch.yaml"));
+        // should filter dozens of "required property 'X' not found" noise down to the real error
+        Assertions.assertTrue(report.size() <= 3, "Expected at most 3 errors but got " + report.size());
+        Assertions.assertTrue(report.stream().anyMatch(e -> e.getMessage().contains("integer found, boolean expected")),
+                "Should contain the actual type error");
+        Assertions.assertTrue(report.stream().noneMatch(e -> e.getMessage().contains("required property")),
+                "Should not contain required property noise from oneOf branches");
+    }
+
+    @Test
+    public void testUnknownEipOptionShowsPropertyError() throws Exception {
+        var report = validator.validate(new File("src/test/resources/unknown-eip-option.yaml"));
+        Assertions.assertFalse(report.isEmpty());
+        // should show "cheese" as the unknown property, not "object found, string expected"
+        Assertions.assertTrue(report.stream().anyMatch(e -> e.getMessage().contains("cheese")),
+                "Should identify the unknown property 'cheese', got: " + report.stream().map(e -> e.getMessage()).toList());
+        Assertions.assertTrue(report.stream().noneMatch(e -> e.getMessage().contains("string expected")),
+                "Should not show misleading 'string expected' from the wrong oneOf branch");
+    }
+
+    @Test
     public void testValidateRuntimeCustomStepRejectedBySchema() throws Exception {
         var report = validator.validate(new File("src/test/resources/custom-parser-step.yaml"));
         Assertions.assertFalse(report.isEmpty());

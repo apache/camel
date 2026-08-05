@@ -19,9 +19,14 @@ package org.apache.camel.dsl.yaml.validator;
 import java.io.File;
 import java.text.MessageFormat;
 import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.LinkedHashMap;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 import java.util.Optional;
+import java.util.Set;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -67,7 +72,7 @@ public class YamlValidator {
         }
         try {
             var target = mapper.readTree(file);
-            return new ArrayList<>(schema.validate(target));
+            return filterOneOfNoise(new ArrayList<>(schema.validate(target)));
         } catch (Exception e) {
             return List.of(parseError(e));
         }
@@ -79,10 +84,141 @@ public class YamlValidator {
         }
         try {
             var target = mapper.readTree(content);
-            return new ArrayList<>(schema.validate(target));
+            return filterOneOfNoise(new ArrayList<>(schema.validate(target)));
         } catch (Exception e) {
             return List.of(parseError(e));
         }
+    }
+
+    /**
+     * Filters noise from {@code oneOf} validation. When a {@code oneOf} has N branches and none match, the validator
+     * reports errors from ALL branches — producing dozens of "required property 'X' not found" messages for branches
+     * the user never intended. This method keeps only the errors from the branch that matched the user's YAML most
+     * closely (deepest structural match) and drops the rest.
+     */
+    static List<Error> filterOneOfNoise(List<Error> errors) {
+        if (errors.size() <= 1) {
+            return errors;
+        }
+
+        List<Error> oneOfMetas = errors.stream()
+                .filter(e -> "oneOf".equals(e.getKeyword()))
+                .sorted(Comparator.comparingInt(
+                        (Error e) -> e.getEvaluationPath().toString().length()).reversed())
+                .toList();
+
+        if (oneOfMetas.isEmpty()) {
+            return errors;
+        }
+
+        Set<Error> toRemove = new LinkedHashSet<>();
+
+        for (Error meta : oneOfMetas) {
+            if (toRemove.contains(meta)) {
+                continue;
+            }
+
+            String prefix = meta.getEvaluationPath().toString();
+
+            Map<String, List<Error>> branches = new LinkedHashMap<>();
+            for (Error e : errors) {
+                if (toRemove.contains(e) || e == meta) {
+                    continue;
+                }
+                String path = e.getEvaluationPath().toString();
+                if (path.startsWith(prefix + "/")) {
+                    String rest = path.substring(prefix.length() + 1);
+                    String branchIndex = rest.contains("/") ? rest.substring(0, rest.indexOf('/')) : rest;
+                    branches.computeIfAbsent(branchIndex, k -> new ArrayList<>()).add(e);
+                }
+            }
+
+            if (branches.isEmpty()) {
+                continue;
+            }
+
+            // find the best-matching branch using a three-tier priority:
+            //   1. property-level errors (additionalProperties, enum, pattern, etc.) — "right branch, wrong value/property"
+            //   2. type errors only — "wrong branch entirely" (less informative)
+            //   3. structural errors only (required, oneOf, not) — wrong-branch noise
+            // within the same tier, prefer the deepest instance location
+            String bestBranch = null;
+            int bestDepth = -1;
+            int bestTier = 0;
+
+            for (Map.Entry<String, List<Error>> entry : branches.entrySet()) {
+                int tier = branchTier(entry.getValue());
+                int maxDepth = entry.getValue().stream()
+                        .mapToInt(e -> e.getInstanceLocation().toString().length())
+                        .max().orElse(0);
+
+                if (tier > bestTier) {
+                    bestBranch = entry.getKey();
+                    bestDepth = maxDepth;
+                    bestTier = tier;
+                } else if (tier == bestTier && maxDepth > bestDepth) {
+                    bestBranch = entry.getKey();
+                    bestDepth = maxDepth;
+                }
+            }
+
+            for (Map.Entry<String, List<Error>> entry : branches.entrySet()) {
+                if (!entry.getKey().equals(bestBranch)) {
+                    toRemove.addAll(entry.getValue());
+                }
+            }
+
+            if (bestTier > 0) {
+                toRemove.add(meta);
+            }
+        }
+
+        if (toRemove.isEmpty()) {
+            return errors;
+        }
+
+        List<Error> result = new ArrayList<>(errors.size() - toRemove.size());
+        for (Error e : errors) {
+            if (!toRemove.contains(e)) {
+                result.add(e);
+            }
+        }
+        return result;
+    }
+
+    private static int branchTier(List<Error> branchErrors) {
+        boolean hasPropertyLevel = false;
+        boolean hasType = false;
+        for (Error e : branchErrors) {
+            String kw = e.getKeyword();
+            if (isPropertyLevelError(kw)) {
+                hasPropertyLevel = true;
+            } else if ("type".equals(kw)) {
+                hasType = true;
+            }
+        }
+        if (hasPropertyLevel) {
+            return 2;
+        }
+        if (hasType) {
+            return 1;
+        }
+        return 0;
+    }
+
+    private static boolean isPropertyLevelError(String keyword) {
+        return keyword != null
+                && ("additionalProperties".equals(keyword)
+                        || "enum".equals(keyword)
+                        || "pattern".equals(keyword)
+                        || "minimum".equals(keyword)
+                        || "maximum".equals(keyword)
+                        || "minLength".equals(keyword)
+                        || "maxLength".equals(keyword)
+                        || "format".equals(keyword)
+                        || "const".equals(keyword)
+                        || "minItems".equals(keyword)
+                        || "maxItems".equals(keyword));
     }
 
     private static Error parseError(Exception e) {

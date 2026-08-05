@@ -83,6 +83,16 @@ class SourceViewer {
     }
 
     @FunctionalInterface
+    interface PropertiesValidator {
+        String validate(String line);
+    }
+
+    @FunctionalInterface
+    interface EndpointValidator {
+        List<String> validate(String content);
+    }
+
+    @FunctionalInterface
     interface DeprecatedLineScanner {
         Set<Integer> scan(List<JsonObject> codeData);
     }
@@ -136,6 +146,8 @@ class SourceViewer {
     private AutocompletePopup autocompletePopup;
     private boolean validateOnSave = true;
     private org.apache.camel.dsl.yaml.validator.YamlValidator yamlValidator;
+    private PropertiesValidator propertiesValidator;
+    private EndpointValidator endpointValidator;
     private List<String> validationErrors;
     private int validationErrorScroll;
 
@@ -176,6 +188,14 @@ class SourceViewer {
         this.validateOnSave = validateOnSave;
     }
 
+    void setPropertiesValidator(PropertiesValidator propertiesValidator) {
+        this.propertiesValidator = propertiesValidator;
+    }
+
+    void setEndpointValidator(EndpointValidator endpointValidator) {
+        this.endpointValidator = endpointValidator;
+    }
+
     void hide() {
         exitEditMode();
         visible = false;
@@ -184,6 +204,8 @@ class SourceViewer {
         quickDocEntries = Collections.emptyMap();
         deprecatedLines = Collections.emptySet();
         editableFile = null;
+        propertiesValidator = null;
+        endpointValidator = null;
     }
 
     void reset() {
@@ -218,6 +240,8 @@ class SourceViewer {
         autocompleteValueProvider = null;
         autocompletePopup = null;
         editableFile = null;
+        propertiesValidator = null;
+        endpointValidator = null;
     }
 
     boolean isMarkdownMode() {
@@ -246,6 +270,10 @@ class SourceViewer {
     boolean cancelEdit() {
         if (!editMode) {
             return false;
+        }
+        if (validationErrors != null) {
+            validationErrors = null;
+            return true;
         }
         exitEditMode();
         return true;
@@ -570,9 +598,9 @@ class SourceViewer {
     record YamlEndpointContext(String component, boolean consumer) {
     }
 
-    private static final java.util.Set<String> CONSUMER_EIPS
+    static final java.util.Set<String> CONSUMER_EIPS
             = java.util.Set.of("from", "pollEnrich", "poll-enrich", "poll", "interceptFrom", "intercept-from");
-    private static final java.util.Set<String> PRODUCER_EIPS
+    static final java.util.Set<String> PRODUCER_EIPS
             = java.util.Set.of("to", "toD", "to-d", "wireTap", "wire-tap", "enrich",
                     "interceptSendToEndpoint", "intercept-send-to-endpoint");
 
@@ -1339,11 +1367,15 @@ class SourceViewer {
                 trimmed = trimmed.substring(2).trim();
             }
             int colonIdx = trimmed.indexOf(':');
+            String value = item.key();
+            if (value.contains("{{")) {
+                value = "\"" + value + "\"";
+            }
             if (colonIdx > 0) {
                 String keyPart = trimmed.substring(0, colonIdx);
-                editState.insert(indentStr + keyPart + ": " + item.key());
+                editState.insert(indentStr + keyPart + ": " + value);
             } else {
-                editState.insert(indentStr + item.key());
+                editState.insert(indentStr + value);
             }
             // for component names, add parameters: block if not already present
             if ("component".equals(item.type())) {
@@ -1404,23 +1436,63 @@ class SourceViewer {
 
     private void validateAndNotify(String content) {
         if (validateOnSave && isCamelYamlFile()) {
+            List<String> msgs = new ArrayList<>();
             List<Error> errors = validateYaml(content);
             if (errors != null && !errors.isEmpty()) {
-                List<String> msgs = new ArrayList<>();
                 for (Error error : errors) {
                     String msg = error.getMessage();
                     if (msg != null) {
-                        msgs.add(cleanValidationMessage(msg));
+                        String loc = error.getInstanceLocation() != null
+                                ? error.getInstanceLocation().toString() : null;
+                        String node = extractNodeName(loc);
+                        String clean = cleanValidationMessage(msg);
+                        if (node != null) {
+                            msgs.add(node + ": " + clean);
+                        } else {
+                            msgs.add(clean);
+                        }
                     }
                 }
-                if (!msgs.isEmpty()) {
-                    validationErrors = msgs;
-                    validationErrorScroll = 0;
-                    return;
+            }
+            if (endpointValidator != null) {
+                List<String> endpointErrors = endpointValidator.validate(content);
+                if (endpointErrors != null) {
+                    msgs.addAll(endpointErrors);
                 }
+            }
+            if (!msgs.isEmpty()) {
+                validationErrors = msgs;
+                validationErrorScroll = 0;
+                return;
+            }
+        } else if (validateOnSave && isPropertiesFile() && propertiesValidator != null) {
+            List<String> msgs = validateProperties(content);
+            if (!msgs.isEmpty()) {
+                validationErrors = msgs;
+                validationErrorScroll = 0;
+                return;
             }
         }
         notifySave("Saved: " + editableFile.getFileName(), false);
+    }
+
+    private List<String> validateProperties(String content) {
+        List<String> msgs = new ArrayList<>();
+        String[] lines = content.split("\n", -1);
+        for (int i = 0; i < lines.length; i++) {
+            String line = lines[i].trim();
+            if (line.isEmpty() || line.startsWith("#") || line.startsWith("!")) {
+                continue;
+            }
+            if (!line.contains("=")) {
+                continue;
+            }
+            String error = propertiesValidator.validate(lines[i]);
+            if (error != null) {
+                msgs.add("Line " + (i + 1) + ": " + error);
+            }
+        }
+        return msgs;
     }
 
     private List<Error> validateYaml(String content) {
@@ -1451,6 +1523,24 @@ class SourceViewer {
         // strip "in 'reader', " prefix from snakeyaml messages
         msg = msg.replace("in 'reader', ", "");
         return msg;
+    }
+
+    private static String extractNodeName(String instanceLocation) {
+        if (instanceLocation == null || instanceLocation.isEmpty()) {
+            return null;
+        }
+        int slash = instanceLocation.lastIndexOf('/');
+        String last = slash >= 0 ? instanceLocation.substring(slash + 1) : instanceLocation;
+        if (last.isEmpty()) {
+            return null;
+        }
+        // skip pure numeric segments (array indices)
+        try {
+            Integer.parseInt(last);
+            return null;
+        } catch (NumberFormatException e) {
+            return last;
+        }
     }
 
     private void notifySave(String message, boolean error) {

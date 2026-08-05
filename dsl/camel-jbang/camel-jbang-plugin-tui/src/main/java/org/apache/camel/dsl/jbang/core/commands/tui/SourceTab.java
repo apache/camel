@@ -59,6 +59,8 @@ import dev.tamboui.widgets.paragraph.Paragraph;
 import dev.tamboui.widgets.scrollbar.Scrollbar;
 import dev.tamboui.widgets.scrollbar.ScrollbarState;
 import org.apache.camel.catalog.CamelCatalog;
+import org.apache.camel.catalog.ConfigurationPropertiesValidationResult;
+import org.apache.camel.catalog.EndpointValidationResult;
 import org.apache.camel.dsl.jbang.core.common.CatalogLoader;
 import org.apache.camel.tooling.model.BaseOptionModel;
 import org.apache.camel.tooling.model.ComponentModel;
@@ -552,6 +554,7 @@ class SourceTab extends AbstractTab {
                     if (isYamlFile(filePath)) {
                         sourceViewer.setAutocompleteProvider(this::provideYamlKeyCompletions);
                         sourceViewer.setAutocompleteValueProvider(this::provideYamlValueCompletions);
+                        sourceViewer.setEndpointValidator(this::validateYamlEndpoints);
                     } else {
                         sourceViewer.setAutocompleteProvider(null);
                         sourceViewer.setAutocompleteValueProvider(null);
@@ -561,6 +564,7 @@ class SourceTab extends AbstractTab {
                     sourceViewer.setDeprecatedLineScanner(this::scanDeprecatedProperties);
                     sourceViewer.setAutocompleteProvider(this::providePropertyCompletions);
                     sourceViewer.setAutocompleteValueProvider(this::providePropertyValueCompletions);
+                    sourceViewer.setPropertiesValidator(this::validatePropertyLine);
                 } else {
                     sourceViewer.setQuickDocProvider(null);
                     sourceViewer.setDeprecatedLineScanner(null);
@@ -1403,6 +1407,226 @@ class SourceTab extends AbstractTab {
             }
         }
         return result;
+    }
+
+    private String validatePropertyLine(String line) {
+        CamelCatalog catalog = getCatalog();
+        if (catalog == null) {
+            return null;
+        }
+        try {
+            ConfigurationPropertiesValidationResult result = catalog.validateConfigurationProperty(line);
+            if (!result.isAccepted()) {
+                return null;
+            }
+            if (!result.isSuccess()) {
+                String msg = result.summaryErrorMessage(false);
+                if (msg != null) {
+                    return msg.trim();
+                }
+            }
+        } catch (Exception e) {
+            // ignore validation errors
+        }
+        return null;
+    }
+
+    private List<String> validateYamlEndpoints(String content) {
+        CamelCatalog catalog = getCatalog();
+        if (catalog == null) {
+            return List.of();
+        }
+        return doValidateYamlEndpoints(content, catalog);
+    }
+
+    static List<String> doValidateYamlEndpoints(String content, CamelCatalog catalog) {
+        List<String> errors = new ArrayList<>();
+        String[] lines = content.split("\n", -1);
+
+        for (int i = 0; i < lines.length; i++) {
+            String line = lines[i];
+            if (line.isBlank()) {
+                continue;
+            }
+            String trimmed = line.trim();
+            if (trimmed.startsWith("#")) {
+                continue;
+            }
+
+            Matcher m = YAML_URI_PATTERN.matcher(line);
+            if (!m.find()) {
+                continue;
+            }
+
+            String uri = m.group(1);
+            if (uri.endsWith("\"")) {
+                uri = uri.substring(0, uri.length() - 1);
+            }
+            if (uri.startsWith("{{")) {
+                continue;
+            }
+            // scheme-only URI (e.g., "uri: timer") needs a colon for catalog parsing
+            if (!uri.contains(":")) {
+                uri = uri + ":";
+            }
+
+            String eipName = extractEipFromLine(trimmed);
+            int lineIndent = countLeadingSpaces(line);
+
+            // for "uri:" lines, walk backwards to find the parent EIP (from, to, etc.)
+            if ("uri".equals(eipName)) {
+                for (int j = i - 1; j >= 0; j--) {
+                    String prev = lines[j];
+                    if (prev.isBlank()) {
+                        continue;
+                    }
+                    int prevIndent = countLeadingSpaces(prev);
+                    if (prevIndent < lineIndent) {
+                        eipName = extractEipFromLine(prev.trim());
+                        break;
+                    }
+                }
+            }
+
+            boolean consumerOnly = eipName != null && SourceViewer.CONSUMER_EIPS.contains(eipName);
+            boolean producerOnly = eipName != null && SourceViewer.PRODUCER_EIPS.contains(eipName);
+
+            // look ahead for a parameters: block at the same indent level as uri
+            StringBuilder uriBuilder = new StringBuilder(uri);
+            boolean hasParams = uri.contains("?");
+            for (int j = i + 1; j < lines.length; j++) {
+                String next = lines[j];
+                if (next.isBlank()) {
+                    continue;
+                }
+                int nextIndent = countLeadingSpaces(next);
+                if (nextIndent < lineIndent) {
+                    break;
+                }
+                String nextTrimmed = next.trim();
+                if (nextIndent == lineIndent && nextTrimmed.startsWith("parameters:")) {
+                    int paramBlockIndent = nextIndent;
+                    for (int k = j + 1; k < lines.length; k++) {
+                        String paramLine = lines[k];
+                        if (paramLine.isBlank()) {
+                            continue;
+                        }
+                        int paramIndent = countLeadingSpaces(paramLine);
+                        if (paramIndent <= paramBlockIndent) {
+                            break;
+                        }
+                        String paramTrimmed = paramLine.trim();
+                        int colonPos = paramTrimmed.indexOf(':');
+                        if (colonPos > 0) {
+                            String key = paramTrimmed.substring(0, colonPos).trim();
+                            String val = paramTrimmed.substring(colonPos + 1).trim();
+                            if (val.startsWith("\"") && val.endsWith("\"") && val.length() > 1) {
+                                val = val.substring(1, val.length() - 1);
+                            } else if (val.startsWith("'") && val.endsWith("'") && val.length() > 1) {
+                                val = val.substring(1, val.length() - 1);
+                            }
+                            char sep = hasParams ? '&' : '?';
+                            uriBuilder.append(sep).append(key).append('=').append(val);
+                            hasParams = true;
+                        }
+                    }
+                    break;
+                }
+                if (nextIndent == lineIndent) {
+                    break;
+                }
+            }
+
+            String fullUri = uriBuilder.toString();
+            try {
+                EndpointValidationResult result
+                        = catalog.validateEndpointProperties(fullUri, false, consumerOnly, producerOnly);
+                if (!result.isSuccess()) {
+                    String scheme = fullUri.contains(":") ? fullUri.substring(0, fullUri.indexOf(':')) : fullUri;
+                    collectEndpointErrors(errors, result, scheme);
+                }
+            } catch (Exception e) {
+                // ignore validation errors
+            }
+        }
+        return errors;
+    }
+
+    private static void collectEndpointErrors(List<String> errors, EndpointValidationResult result, String scheme) {
+        if (result.getUnknown() != null) {
+            for (String name : result.getUnknown()) {
+                StringBuilder sb = new StringBuilder(scheme).append(": Unknown option '").append(name).append("'");
+                if (result.getUnknownSuggestions() != null) {
+                    String[] suggestions = result.getUnknownSuggestions().get(name);
+                    if (suggestions != null && suggestions.length > 0) {
+                        sb.append(". Did you mean: ").append(Arrays.asList(suggestions));
+                    }
+                }
+                errors.add(sb.toString());
+            }
+        }
+        if (result.getInvalidBoolean() != null) {
+            for (Map.Entry<String, String> entry : result.getInvalidBoolean().entrySet()) {
+                errors.add(scheme + ": Invalid boolean value '" + entry.getValue() + "' for option '" + entry.getKey() + "'");
+            }
+        }
+        if (result.getInvalidInteger() != null) {
+            for (Map.Entry<String, String> entry : result.getInvalidInteger().entrySet()) {
+                errors.add(scheme + ": Invalid integer value '" + entry.getValue() + "' for option '" + entry.getKey() + "'");
+            }
+        }
+        if (result.getInvalidNumber() != null) {
+            for (Map.Entry<String, String> entry : result.getInvalidNumber().entrySet()) {
+                errors.add(scheme + ": Invalid number value '" + entry.getValue() + "' for option '" + entry.getKey() + "'");
+            }
+        }
+        if (result.getInvalidEnum() != null) {
+            for (Map.Entry<String, String> entry : result.getInvalidEnum().entrySet()) {
+                StringBuilder sb = new StringBuilder(scheme)
+                        .append(": Invalid enum value '").append(entry.getValue())
+                        .append("' for option '").append(entry.getKey()).append("'");
+                if (result.getInvalidEnumChoices() != null) {
+                    String[] choices = result.getInvalidEnumChoices().get(entry.getKey());
+                    if (choices != null) {
+                        sb.append(". Possible values: ").append(Arrays.asList(choices));
+                    }
+                }
+                errors.add(sb.toString());
+            }
+        }
+        if (result.getNotConsumerOnly() != null) {
+            for (String name : result.getNotConsumerOnly()) {
+                errors.add(scheme + ": Option '" + name + "' is not applicable in consumer only mode");
+            }
+        }
+        if (result.getNotProducerOnly() != null) {
+            for (String name : result.getNotProducerOnly()) {
+                errors.add(scheme + ": Option '" + name + "' is not applicable in producer only mode");
+            }
+        }
+    }
+
+    private static String extractEipFromLine(String trimmed) {
+        if (trimmed.startsWith("- ")) {
+            trimmed = trimmed.substring(2).trim();
+        }
+        int colon = trimmed.indexOf(':');
+        if (colon > 0) {
+            return trimmed.substring(0, colon).trim();
+        }
+        return null;
+    }
+
+    private static int countLeadingSpaces(String line) {
+        int count = 0;
+        for (int i = 0; i < line.length(); i++) {
+            if (line.charAt(i) == ' ') {
+                count++;
+            } else {
+                break;
+            }
+        }
+        return count;
     }
 
     private BaseOptionModel lookupPropertyOption(CamelCatalog catalog, String key) {
