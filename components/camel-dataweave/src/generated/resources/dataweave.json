@@ -2,7 +2,7 @@
   "other": {
     "kind": "other",
     "name": "dataweave",
-    "title": "Dataweave",
+    "title": "DataWeave",
     "description": "Camel DataWeave support",
     "deprecated": false,
     "firstVersion": "4.22.0",

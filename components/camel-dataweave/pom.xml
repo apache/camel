@@ -35,6 +35,7 @@
     <properties>
         <firstVersion>4.22.0</firstVersion>
         <label>transformation</label>
+        <title>DataWeave</title>
     </properties>
 
     <dependencies>

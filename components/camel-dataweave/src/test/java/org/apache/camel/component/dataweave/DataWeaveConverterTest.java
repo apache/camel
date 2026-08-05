@@ -250,8 +250,10 @@ class DataWeaveConverterTest {
 
     @Test
     void testReduceParamSwap() {
+        // Verify that acc and item params are swapped for std.foldl
         String result = converter.convertExpression(
                 "payload.items reduce ((item, acc = 0) -> acc + item.price)");
+        // In std.foldl, it should be function(acc, item) not function(item, acc)
         assertTrue(result.contains("function(acc, item)"));
     }
 
@@ -429,6 +431,7 @@ class DataWeaveConverterTest {
 
     @Test
     void testMapWithIndex() {
+        // DataSonnet std.mapWithIndex uses function(index, item), so params must be swapped
         String result = converter.convertExpression(
                 "payload.items map ((item, idx) -> { index: idx, name: item.name })");
         assertTrue(result.contains("std.mapWithIndex(function(idx, item)"));

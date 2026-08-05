@@ -47,6 +47,14 @@ import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+/**
+ * Unit tests for {@link DataWeaveParser}.
+ *
+ * The parser is recursive descent and best-effort (it never throws on malformed input). These tests assert the shape of
+ * the produced {@link DataWeaveAst} for representative scripts, with emphasis on operator precedence, postfix
+ * collection operations, header parsing, and graceful handling of unsupported constructs. The AST records are exercised
+ * transitively here rather than in a separate test, since they carry no logic of their own.
+ */
 class DataWeaveParserTest {
 
     private static DataWeaveAst parseExpr(String src) {
@@ -94,6 +102,7 @@ class DataWeaveParserTest {
 
     @Test
     void shouldDefaultVersionWhenNoHeaderPresent() {
+        // an expression with no %dw header still yields a Script with the default 2.0 version
         Script script = assertInstanceOf(Script.class, parseScript("payload"));
         assertEquals("2.0", script.header().version());
         assertNull(script.header().outputType());
@@ -112,6 +121,7 @@ class DataWeaveParserTest {
 
     @Test
     void shouldParseFieldAccessAndIndexAccessChain() {
+        // payload.items[0] -> IndexAccess(FieldAccess(Identifier(payload), items), NumberLit(0))
         IndexAccess idx = assertInstanceOf(IndexAccess.class, parseExpr("payload.items[0]"));
         assertEquals("0", assertInstanceOf(NumberLit.class, idx.index()).value());
         FieldAccess fa = assertInstanceOf(FieldAccess.class, idx.object());
@@ -123,6 +133,7 @@ class DataWeaveParserTest {
 
     @Test
     void shouldGiveMultiplicationHigherPrecedenceThanAddition() {
+        // 1 + 2 * 3 -> BinaryOp(+, 1, BinaryOp(*, 2, 3))
         BinaryOp add = assertInstanceOf(BinaryOp.class, parseExpr("1 + 2 * 3"));
         assertEquals("+", add.op());
         assertEquals("1", assertInstanceOf(NumberLit.class, add.left()).value());
@@ -134,6 +145,7 @@ class DataWeaveParserTest {
 
     @Test
     void shouldGiveAndHigherPrecedenceThanOr() {
+        // a and b or c -> BinaryOp(or, BinaryOp(and, a, b), c)
         BinaryOp or = assertInstanceOf(BinaryOp.class, parseExpr("a and b or c"));
         assertEquals("or", or.op());
         assertEquals("c", assertInstanceOf(Identifier.class, or.right()).name());
@@ -159,8 +171,10 @@ class DataWeaveParserTest {
     void shouldParseObjectLiteralWithStaticAndDynamicKeys() {
         ObjectLit obj = assertInstanceOf(ObjectLit.class, parseExpr("{ name: payload.x, (k): v }"));
         assertEquals(2, obj.entries().size());
+        // static key
         assertEquals("name", assertInstanceOf(Identifier.class, obj.entries().get(0).key()).name());
         assertFalse(obj.entries().get(0).dynamic());
+        // dynamic key parsed from a parenthesized expression
         assertTrue(obj.entries().get(1).dynamic());
         assertEquals("k", assertInstanceOf(Identifier.class, obj.entries().get(1).key()).name());
     }
@@ -236,6 +250,7 @@ class DataWeaveParserTest {
 
     @Test
     void shouldParseVarDeclarationWithTrailingBody() {
+        // "var x = 1 x" -> VarDecl(x, NumberLit(1), body=Identifier(x))
         VarDecl var = assertInstanceOf(VarDecl.class, parseExpr("var x = 1 x"));
         assertEquals("x", var.name());
         assertEquals("1", assertInstanceOf(NumberLit.class, var.value()).value());
@@ -265,6 +280,7 @@ class DataWeaveParserTest {
     void shouldNotThrowOnUnbalancedInput() {
         List<Token> tokens = new DataWeaveLexer("(a + b").tokenize();
         assertEquals(DataWeaveLexer.TokenType.EOF, tokens.get(tokens.size() - 1).type());
+        // expect() silently skips a missing RPAREN, so a best-effort AST is still produced
         assertInstanceOf(Parens.class, parseExpr("(a + b"));
     }
 }
