@@ -22,6 +22,12 @@ import dev.langchain4j.model.embedding.EmbeddingModel;
 import dev.langchain4j.model.output.Response;
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
+import org.apache.camel.component.ai.observability.GenAiModelResolver;
+import org.apache.camel.component.ai.observability.GenAiObservability;
+import org.apache.camel.component.ai.observability.GenAiObservation;
+import org.apache.camel.component.ai.observability.GenAiObservationContext;
+import org.apache.camel.component.ai.observability.GenAiOperationName;
+import org.apache.camel.component.ai.observability.GenAiUsage;
 import org.apache.camel.support.DefaultProducer;
 
 public class LangChain4jEmbeddingsProducer extends DefaultProducer {
@@ -38,8 +44,35 @@ public class LangChain4jEmbeddingsProducer extends DefaultProducer {
     public void process(Exchange exchange) throws Exception {
         final TextSegment in = exchange.getMessage().getMandatoryBody(TextSegment.class);
         final EmbeddingModel model = getEndpoint().getConfiguration().getEmbeddingModel();
-        final Response<Embedding> result = model.embed(in);
-        final Message message = exchange.getMessage();
+        GenAiObservationContext observationContext = GenAiObservationContext.builder()
+                .operationName(GenAiOperationName.EMBEDDINGS)
+                .system(GenAiModelResolver.resolveSystem(model))
+                .requestModel(GenAiModelResolver.resolveModelName(model))
+                .componentScheme("langchain4j-embeddings")
+                .build();
+        GenAiObservation observation = GenAiObservability.start(exchange, observationContext);
+        try {
+            final Response<Embedding> result = model.embed(in);
+            populateHeaders(exchange.getMessage(), result, in, observationContext.requestModel());
+            observation.recordSuccess(GenAiUsage.of(
+                    result.tokenUsage() != null ? result.tokenUsage().inputTokenCount() : null,
+                    result.tokenUsage() != null ? result.tokenUsage().outputTokenCount() : null,
+                    result.finishReason(),
+                    observationContext.requestModel()));
+        } catch (RuntimeException e) {
+            observation.recordError(e);
+            throw e;
+        } finally {
+            observation.close();
+        }
+    }
+
+    private static void populateHeaders(
+            Message message, Response<Embedding> result, TextSegment textSegment, String requestModel) {
+        if (requestModel != null) {
+            message.setHeader(LangChain4jEmbeddingsHeaders.REQUEST_MODEL, requestModel);
+            message.setHeader(LangChain4jEmbeddingsHeaders.RESPONSE_MODEL, requestModel);
+        }
 
         if (result.finishReason() != null) {
             message.setHeader(LangChain4jEmbeddingsHeaders.FINISH_REASON, result.finishReason());
@@ -52,7 +85,7 @@ public class LangChain4jEmbeddingsProducer extends DefaultProducer {
         }
 
         message.setHeader(LangChain4jEmbeddingsHeaders.VECTOR, result.content().vector());
-        message.setHeader(LangChain4jEmbeddingsHeaders.TEXT_SEGMENT, in);
+        message.setHeader(LangChain4jEmbeddingsHeaders.TEXT_SEGMENT, textSegment);
         message.setHeader(LangChain4jEmbeddingsHeaders.EMBEDDING, result.content());
     }
 }

@@ -47,6 +47,12 @@ import org.apache.camel.InvalidPayloadException;
 import org.apache.camel.Message;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.TypeConverter;
+import org.apache.camel.component.ai.observability.GenAiModelResolver;
+import org.apache.camel.component.ai.observability.GenAiObservability;
+import org.apache.camel.component.ai.observability.GenAiObservation;
+import org.apache.camel.component.ai.observability.GenAiObservationContext;
+import org.apache.camel.component.ai.observability.GenAiOperationName;
+import org.apache.camel.component.ai.observability.GenAiUsage;
 import org.apache.camel.component.langchain4j.tools.spec.CamelToolExecutorCache;
 import org.apache.camel.component.langchain4j.tools.spec.CamelToolSpecification;
 import org.apache.camel.support.DefaultProducer;
@@ -383,21 +389,40 @@ public class LangChain4jToolsProducer extends DefaultProducer {
             requestBuilder.toolSpecifications(toolPair.toolSpecifications());
         }
 
-        // build request
         ChatRequest chatRequest = requestBuilder.build();
+        GenAiObservationContext observationContext = GenAiObservationContext.builder()
+                .operationName(GenAiOperationName.CHAT)
+                .system(GenAiModelResolver.resolveSystem(chatModel))
+                .requestModel(GenAiModelResolver.resolveModelName(chatModel))
+                .componentScheme("langchain4j-tools")
+                .build();
+        exchange.getMessage().setHeader(LangChain4jToolsHeaders.REQUEST_MODEL, observationContext.requestModel());
 
-        // generate response
-        ChatResponse chatResponse = this.chatModel.chat(chatRequest);
+        GenAiObservation observation = GenAiObservability.start(exchange, observationContext);
+        try {
+            ChatResponse chatResponse = this.chatModel.chat(chatRequest);
+            observation.recordSuccess(GenAiUsage.of(
+                    chatResponse.tokenUsage() != null ? chatResponse.tokenUsage().inputTokenCount() : null,
+                    chatResponse.tokenUsage() != null ? chatResponse.tokenUsage().outputTokenCount() : null,
+                    chatResponse.finishReason(),
+                    observationContext.requestModel()));
+            exchange.getMessage().setHeader(LangChain4jToolsHeaders.RESPONSE_MODEL, observationContext.requestModel());
 
-        AiMessage aiMessage = chatResponse.aiMessage();
+            AiMessage aiMessage = chatResponse.aiMessage();
 
-        if (!aiMessage.hasToolExecutionRequests()) {
-            exchange.getMessage().setHeader(LangChain4jTools.NO_TOOLS_CALLED_HEADER, Boolean.TRUE);
+            if (!aiMessage.hasToolExecutionRequests()) {
+                exchange.getMessage().setHeader(LangChain4jTools.NO_TOOLS_CALLED_HEADER, Boolean.TRUE);
+                return chatResponse;
+            }
+
+            chatMessages.add(aiMessage);
             return chatResponse;
+        } catch (RuntimeException e) {
+            observation.recordError(e);
+            throw e;
+        } finally {
+            observation.close();
         }
-
-        chatMessages.add(aiMessage);
-        return chatResponse;
     }
 
     /**

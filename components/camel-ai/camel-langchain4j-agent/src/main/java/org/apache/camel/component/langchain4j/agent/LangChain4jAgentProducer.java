@@ -49,6 +49,12 @@ import dev.langchain4j.service.tool.ToolProviderResult;
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.apache.camel.RuntimeCamelException;
+import org.apache.camel.component.ai.observability.GenAiModelResolver;
+import org.apache.camel.component.ai.observability.GenAiObservability;
+import org.apache.camel.component.ai.observability.GenAiObservation;
+import org.apache.camel.component.ai.observability.GenAiObservationContext;
+import org.apache.camel.component.ai.observability.GenAiOperationName;
+import org.apache.camel.component.ai.observability.GenAiUsage;
 import org.apache.camel.component.ai.tool.AiToolExecutor;
 import org.apache.camel.component.ai.tool.AiToolRegistry;
 import org.apache.camel.component.ai.tool.AiToolResult;
@@ -141,13 +147,45 @@ public class LangChain4jAgentProducer extends DefaultProducer {
         AiAgentBody<?> aiAgentBody = exchange.getMessage().getMandatoryBody(AiAgentBody.class);
 
         ToolProvider toolProvider = createComposedToolProvider(tags, exchange);
-        Result<String> result = agent.chat(aiAgentBody, toolProvider);
-        exchange.getMessage().setBody(result.content());
-        populateResultHeaders(result, exchange);
+        Object chatModel = resolveChatModel(agent);
+        GenAiObservationContext observationContext = GenAiObservationContext.builder()
+                .operationName(GenAiOperationName.GENERATE_CONTENT)
+                .system(GenAiModelResolver.resolveSystem(chatModel))
+                .requestModel(GenAiModelResolver.resolveModelName(chatModel))
+                .componentScheme("langchain4j-agent")
+                .build();
+        GenAiObservation observation = GenAiObservability.start(exchange, observationContext);
+        try {
+            Result<String> result = agent.chat(aiAgentBody, toolProvider);
+            exchange.getMessage().setBody(result.content());
+            populateResultHeaders(result, exchange, observationContext.requestModel());
+            observation.recordSuccess(GenAiUsage.of(
+                    result.tokenUsage() != null ? result.tokenUsage().inputTokenCount() : null,
+                    result.tokenUsage() != null ? result.tokenUsage().outputTokenCount() : null,
+                    result.finishReason(),
+                    observationContext.requestModel()));
+        } catch (RuntimeException e) {
+            observation.recordError(e);
+            throw e;
+        } finally {
+            observation.close();
+        }
     }
 
-    private void populateResultHeaders(Result<String> result, Exchange exchange) {
+    private Object resolveChatModel(Agent agent) {
+        if (endpoint.getConfiguration().getAgentConfiguration() != null) {
+            return endpoint.getConfiguration().getAgentConfiguration().getChatModel();
+        }
+        return agent;
+    }
+
+    private void populateResultHeaders(Result<String> result, Exchange exchange, String requestModel) {
         Message message = exchange.getMessage();
+
+        if (requestModel != null) {
+            message.setHeader(Headers.REQUEST_MODEL, requestModel);
+            message.setHeader(Headers.RESPONSE_MODEL, requestModel);
+        }
 
         if (result.finishReason() != null) {
             message.setHeader(Headers.FINISH_REASON, result.finishReason());
