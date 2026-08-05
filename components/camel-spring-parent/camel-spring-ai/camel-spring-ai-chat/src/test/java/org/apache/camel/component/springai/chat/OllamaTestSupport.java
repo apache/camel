@@ -56,9 +56,13 @@ public class OllamaTestSupport extends CamelTestSupport {
                 .baseUrl(OLLAMA.baseUrl())
                 .build();
 
+        // Reasoning models otherwise spend the whole token budget on the thinking channel and answer with
+        // empty content, which makes the assertions in these tests fail or hang. Ollama accepts think=false
+        // on models without a thinking mode too, so this is safe for every model.
         OllamaChatOptions ollamaOptions = OllamaChatOptions.builder()
                 .model(modelName())
                 .temperature(0.3)
+                .disableThinking()
                 .build();
 
         ChatModel chatModel = OllamaChatModel.builder()

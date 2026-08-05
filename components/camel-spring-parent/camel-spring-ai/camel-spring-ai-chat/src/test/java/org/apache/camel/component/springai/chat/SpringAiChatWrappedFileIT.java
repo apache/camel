@@ -69,6 +69,7 @@ public class SpringAiChatWrappedFileIT extends OllamaTestSupport {
                 = OllamaChatOptions.builder()
                         .model(modelName())
                         .temperature(0.3)
+                        .disableThinking()
                         .build();
 
         return OllamaChatModel.builder()
