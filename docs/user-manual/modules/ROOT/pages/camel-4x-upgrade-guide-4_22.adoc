@@ -80,6 +80,12 @@ and spec stay together. `--openapi-ui` also sets override properties for `camel.
 and `camel.rest.apiContextPath=/q/openapi.json`, which take precedence over values in `application.properties`
 or other property sources (same as other CLI `--` server flags that use override properties).
 
+`camel run`, `camel dev`, and `camel debug` accept `--mcp` to expose JBang dev/diagnostics tools over MCP
+streamable HTTP on the management server (`/mcp` by default). The feature is gated as developer-only
+(`insecure:dev`) via `camel.jbang.mcp` and `camel.management.mcpEnabled`. It uses `VertxMcpServerEngine`
+from `camel-mcp-server` on the management HTTP router — distinct from business `ai-tool` MCP exposed on the
+main server via `camel.server.mcpEnabled`.
+
 The `camel cmd route-diagram` and `camel cmd route-topology` now accept one or more Camel route source files
 (instead of only the name/pid of a running integration), so diagrams and inter-route topology can be
 generated at design/source time without starting the application first, for example:

@@ -846,6 +846,7 @@ public class Run extends CamelCommand {
         writeSetting(main, profileProperties, HEALTH, serverOptions.health ? "true" : "false");
         writeSetting(main, profileProperties, METRICS, serverOptions.metrics ? "true" : "false");
         writeSetting(main, profileProperties, CONSOLE, serverOptions.console ? "true" : "false");
+        writeSetting(main, profileProperties, MCP, serverOptions.mcp ? "true" : "false");
         writeSetting(main, profileProperties, OPENAPI_UI, serverOptions.openapiUi ? "true" : "false");
         writeSetting(main, profileProperties, VERBOSE, verbose ? "true" : "false");
         // the runtime version of Camel is what is loaded via the catalog
@@ -1257,6 +1258,10 @@ public class Run extends CamelCommand {
             dependencies.add("camel:platform-http-main");
             dependencies.add("camel:openapi-java");
             applyOpenApiUiRuntimeOptions(main);
+        }
+        if (serverOptions.mcp) {
+            dependencies.add("camel:platform-http-main");
+            dependencies.add("camel:mcp-server");
         }
         if (debugOptions.openTelemetryAgent) {
             dependencies.add("camel:opentelemetry2");
@@ -3088,6 +3093,10 @@ public class Run extends CamelCommand {
         @Option(names = { "--console" }, defaultValue = "false",
                 description = "Developer console at /q/dev on local HTTP server (port 8080 by default)")
         boolean console;
+
+        @Option(names = { "--mcp" }, defaultValue = "false",
+                description = "Embed dev/diagnostics MCP tools on the local HTTP management server (/mcp by default)")
+        boolean mcp;
 
         @Option(names = { "--openapi-ui" }, defaultValue = "false",
                 description = "Swagger UI for REST OpenAPI at /q/openapi (OpenAPI document at /q/openapi.json; port 8080 by default)")
