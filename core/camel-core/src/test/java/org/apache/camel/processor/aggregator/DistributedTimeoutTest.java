@@ -53,10 +53,10 @@ class DistributedTimeoutTest extends AbstractDistributedTest {
         template2.sendBodyAndHeader("direct:start", "B", "id", 123);
 
         // wait until the timeout was triggered
-        await().atMost(TIMEOUT_SECONDS, TimeUnit.SECONDS).until(() -> invoked.get() == 1);
+        await().atMost(10, TimeUnit.SECONDS).until(() -> invoked.get() == 1);
 
-        MockEndpoint.assertIsSatisfied(context, TIMEOUT_SECONDS, TimeUnit.SECONDS);
-        MockEndpoint.assertIsSatisfied(context2, TIMEOUT_SECONDS, TimeUnit.SECONDS);
+        mock.assertIsSatisfied();
+        mock2.assertIsSatisfied();
 
         assertNotNull(receivedExchange);
         assertEquals("AB", receivedExchange.getIn().getBody());

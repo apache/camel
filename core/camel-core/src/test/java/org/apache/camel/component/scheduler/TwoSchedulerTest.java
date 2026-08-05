@@ -25,16 +25,14 @@ import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-class TwoSchedulerTest extends ContextTestSupport {
-
-    private static final long TIMEOUT_SECONDS = 30;
+public class TwoSchedulerTest extends ContextTestSupport {
 
     @Test
-    void testTwoScheduler() throws Exception {
+    public void testTwoScheduler() throws Exception {
         getMockEndpoint("mock:a").expectedMinimumMessageCount(4);
         getMockEndpoint("mock:b").expectedMinimumMessageCount(2);
 
-        MockEndpoint.assertIsSatisfied(context, TIMEOUT_SECONDS, TimeUnit.SECONDS);
+        MockEndpoint.assertIsSatisfied(context, 30, TimeUnit.SECONDS);
 
         // should use same thread as they share the same scheduler
         String tn1 = getMockEndpoint("mock:a").getReceivedExchanges().get(0).getMessage().getHeader("tn", String.class);
