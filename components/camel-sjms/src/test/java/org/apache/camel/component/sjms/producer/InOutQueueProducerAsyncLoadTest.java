@@ -91,7 +91,7 @@ class InOutQueueProducerAsyncLoadTest extends JmsTestSupport {
                         String response = template.requestBody("direct:start", requestText, String.class);
                         assertNotNull(response);
                         assertEquals(responseText, response);
-                    } catch (Exception e) {
+                    } catch (Throwable e) {
                         failures.incrementAndGet();
                         log.error("Failed to process message {}", tempI, e);
                     } finally {
@@ -104,8 +104,8 @@ class InOutQueueProducerAsyncLoadTest extends JmsTestSupport {
             assertEquals(0, listenerErrors.get(), "Some JMS listener callbacks failed");
         } finally {
             executor.shutdown();
-            assertTrue(executor.awaitTermination(EXECUTOR_SHUTDOWN_SECONDS, SECONDS), "Executor did not terminate in time");
         }
+        assertTrue(executor.awaitTermination(EXECUTOR_SHUTDOWN_SECONDS, SECONDS), "Executor did not terminate in time");
 
         // async route completion can lag behind request/reply futures — poll until inflight is drained
         await().atMost(INFLIGHT_TIMEOUT_SECONDS, SECONDS)
