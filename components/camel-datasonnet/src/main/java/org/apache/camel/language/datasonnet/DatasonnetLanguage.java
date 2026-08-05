@@ -69,13 +69,21 @@ public class DatasonnetLanguage extends SingleInputTypedLanguageSupport {
     }
 
     @Override
-    public Expression createExpression(Expression source, String expression, Object[] properties) {
-        boolean dataWeave = isDataWeaveResource(expression);
-        expression = loadResource(expression);
-        if (dataWeave || isDataWeaveContent(expression)) {
-            expression = convertDataWeave(expression);
+    public Expression createExpression(String expression, Object[] properties) {
+        if (expression != null) {
+            boolean dwlResource = isDataWeaveResource(expression);
+            if (dwlResource) {
+                expression = loadResource(expression);
+            }
+            if (dwlResource || isDataWeaveContent(expression)) {
+                expression = convertDataWeave(expression);
+            }
         }
+        return super.createExpression(expression, properties);
+    }
 
+    @Override
+    public Expression createExpression(Expression source, String expression, Object[] properties) {
         DatasonnetExpression answer = new DatasonnetExpression(expression);
         answer.setSource(source);
         answer.setResultType(property(Class.class, properties, 0, null));
@@ -122,8 +130,12 @@ public class DatasonnetLanguage extends SingleInputTypedLanguageSupport {
         } else {
             result = converter.convertExpression(expression);
         }
-        LOG.debug("Converted DataWeave to DataSonnet: {} expression(s), {} require manual review",
-                converter.getConvertedCount(), converter.getTodoCount());
+        if (converter.getTodoCount() > 0) {
+            LOG.warn("DataWeave conversion has {} construct(s) that could not be auto-converted and were emitted as null",
+                    converter.getTodoCount());
+        } else {
+            LOG.debug("Converted DataWeave to DataSonnet: {} expression(s)", converter.getConvertedCount());
+        }
         return result;
     }
 
