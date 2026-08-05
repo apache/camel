@@ -1086,7 +1086,8 @@ class SourceTab extends AbstractTab {
         return items;
     }
 
-    private static final Set<String> EIP_BOILERPLATE = Set.of("id", "note", "description", "disabled");
+    private static final Set<String> EIP_BOILERPLATE = Set.of("id", "note", "description", "disabled",
+            "input", "outputs", "steps");
 
     private List<AutocompletePopup.CompletionItem> provideEipKeyCompletions(String contextAfterPrefix) {
         CamelCatalog catalog = getCatalog();

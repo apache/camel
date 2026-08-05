@@ -827,6 +827,9 @@ class SourceViewer {
     record YamlDataFormatOptionContext(String dataFormatName) {
     }
 
+    record YamlEndpointBlockContext(String eipName, boolean consumer, java.util.Set<String> existingKeys) {
+    }
+
     record YamlExpressionContext(String eipName) {
     }
 
@@ -889,6 +892,7 @@ class SourceViewer {
         }
 
         // walk up to find the parent EIP
+        boolean skippedStructural = false;
         for (int i = fromRow; i >= 0; i--) {
             String line = editState.getLine(i);
             if (line.isBlank()) {
@@ -898,11 +902,69 @@ class SourceViewer {
             if (indent < cursorIndent) {
                 String eipName = extractEipName(line.trim());
                 if (eipName != null && !STRUCTURAL_KEYS.contains(eipName)) {
+                    if (skippedStructural) {
+                        return null;
+                    }
                     String camelName = dashToCamelCase(eipName);
                     return new YamlEipContext(camelName);
                 }
                 // keep walking up if we hit a structural key
+                skippedStructural = true;
                 cursorIndent = indent;
+            }
+        }
+        return null;
+    }
+
+    YamlEndpointBlockContext findEndpointBlockContext(int fromRow) {
+        String cursorLine = editState.getLine(fromRow);
+        int cursorIndent = countLeadingSpaces(cursorLine);
+        if (cursorLine.isBlank() && cursorIndent == 0) {
+            int lineCount = editState.lineCount();
+            for (int i = fromRow + 1; i < lineCount; i++) {
+                String next = editState.getLine(i);
+                if (!next.isBlank()) {
+                    cursorIndent = countLeadingSpaces(next);
+                    break;
+                }
+            }
+            if (cursorIndent == 0) {
+                for (int i = fromRow - 1; i >= 0; i--) {
+                    String prev = editState.getLine(i);
+                    if (!prev.isBlank()) {
+                        cursorIndent = countLeadingSpaces(prev);
+                        break;
+                    }
+                }
+            }
+        }
+
+        // walk up to find the parent key
+        for (int i = fromRow; i >= 0; i--) {
+            String line = editState.getLine(i);
+            if (line.isBlank()) {
+                continue;
+            }
+            int indent = countLeadingSpaces(line);
+            if (indent < cursorIndent) {
+                String parentKey = extractEipName(line.trim());
+                if (parentKey != null && (CONSUMER_EIPS.contains(parentKey) || PRODUCER_EIPS.contains(parentKey))) {
+                    // check siblings: must have uri: and NOT be inside parameters:
+                    java.util.Set<String> siblings = collectExistingSiblingKeys(fromRow);
+                    if (siblings.contains("uri") && !siblings.contains("parameters")) {
+                        // skip if the cursor line itself has a key with colon (not a blank addition)
+                        String ct = cursorLine.trim();
+                        if (ct.startsWith("- ")) {
+                            ct = ct.substring(2).trim();
+                        }
+                        if (ct.indexOf(':') > 0) {
+                            return null;
+                        }
+                        boolean isConsumer = CONSUMER_EIPS.contains(parentKey);
+                        return new YamlEndpointBlockContext(parentKey, isConsumer, siblings);
+                    }
+                }
+                break;
             }
         }
         return null;
@@ -1410,6 +1472,24 @@ class SourceViewer {
                 autocompletePopup = new AutocompletePopup(items, uriCtx.prefix(), uriCtx.prefix(), true);
                 autocompletePopup.setTitlePrefix("Components");
             }
+            return;
+        }
+
+        // offer parameters: (and steps: for from:) when inside a from:/to: block with uri: but no parameters: yet
+        YamlEndpointBlockContext blockCtx = findEndpointBlockContext(row);
+        if (blockCtx != null && autocompleteProvider != null) {
+            String filter = trimmed;
+            List<AutocompletePopup.CompletionItem> items = new ArrayList<>();
+            items.add(new AutocompletePopup.CompletionItem(
+                    "parameters", "Endpoint configuration options", "object",
+                    null, false, null, "common", true));
+            if (blockCtx.consumer() && !blockCtx.existingKeys().contains("steps")) {
+                items.add(new AutocompletePopup.CompletionItem(
+                        "steps", "Processing steps for this route", "array",
+                        null, false, null, "common", true));
+            }
+            autocompletePopup = new AutocompletePopup(items, filter, filter);
+            autocompletePopup.setTitlePrefix(blockCtx.eipName());
             return;
         }
 
