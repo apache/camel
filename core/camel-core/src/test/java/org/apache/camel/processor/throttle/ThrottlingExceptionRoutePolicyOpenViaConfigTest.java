@@ -28,7 +28,9 @@ import org.junit.jupiter.api.Test;
 
 import static org.awaitility.Awaitility.await;
 
-public class ThrottlingExceptionRoutePolicyOpenViaConfigTest extends ContextTestSupport {
+class ThrottlingExceptionRoutePolicyOpenViaConfigTest extends ContextTestSupport {
+
+    private static final long TIMEOUT_SECONDS = 30;
 
     private final String url = "seda:foo?concurrentConsumers=20";
     private MockEndpoint result;
@@ -55,7 +57,7 @@ public class ThrottlingExceptionRoutePolicyOpenViaConfigTest extends ContextTest
     }
 
     @Test
-    public void testThrottlingRoutePolicyStartWithAlwaysOpenOffThenToggle() throws Exception {
+    void testThrottlingRoutePolicyStartWithAlwaysOpenOffThenToggle() throws Exception {
         final ServiceSupport consumer = (ServiceSupport) context.getRoute("foo").getConsumer();
 
         // send first set of messages
@@ -65,7 +67,7 @@ public class ThrottlingExceptionRoutePolicyOpenViaConfigTest extends ContextTest
             template.sendBody(url, "MessageRound1 " + i);
         }
         result.expectedMessageCount(size);
-        MockEndpoint.assertIsSatisfied(context, 30, TimeUnit.SECONDS);
+        MockEndpoint.assertIsSatisfied(context, TIMEOUT_SECONDS, TimeUnit.SECONDS);
 
         // set keepOpen to true
         policy.setKeepOpen(true);
@@ -75,7 +77,7 @@ public class ThrottlingExceptionRoutePolicyOpenViaConfigTest extends ContextTest
         template.sendBody(url, "MessageTrigger");
 
         // wait for the circuit to open (consumer suspended)
-        await().atMost(10, TimeUnit.SECONDS).until(consumer::isSuspended);
+        await().atMost(TIMEOUT_SECONDS, TimeUnit.SECONDS).until(consumer::isSuspended);
 
         // send next set of messages
         // should NOT go through b/c circuit is open
@@ -85,17 +87,17 @@ public class ThrottlingExceptionRoutePolicyOpenViaConfigTest extends ContextTest
 
         // should not close b/c keepOpen is true
         result.expectedMessageCount(size + 1);
-        MockEndpoint.assertIsSatisfied(context, 30, TimeUnit.SECONDS);
+        MockEndpoint.assertIsSatisfied(context, TIMEOUT_SECONDS, TimeUnit.SECONDS);
 
         // set keepOpen to false
         policy.setKeepOpen(false);
 
         // wait for the consumer to resume since keepOpen is now false
-        await().atMost(10, TimeUnit.SECONDS).until(consumer::isStarted);
+        await().atMost(TIMEOUT_SECONDS, TimeUnit.SECONDS).until(consumer::isStarted);
 
         // it should close b/c keepOpen is false — queued messages should now arrive
         result.expectedMessageCount(size * 2 + 1);
-        MockEndpoint.assertIsSatisfied(context, 30, TimeUnit.SECONDS);
+        MockEndpoint.assertIsSatisfied(context, TIMEOUT_SECONDS, TimeUnit.SECONDS);
     }
 
     @Override
