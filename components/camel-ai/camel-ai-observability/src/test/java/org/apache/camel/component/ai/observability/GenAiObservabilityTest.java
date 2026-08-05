@@ -16,6 +16,8 @@
  */
 package org.apache.camel.component.ai.observability;
 
+import java.util.Properties;
+
 import io.micrometer.core.instrument.simple.SimpleMeterRegistry;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
@@ -34,7 +36,7 @@ class GenAiObservabilityTest extends ExchangeTestSupport {
 
     @Test
     void shouldDisableWhenPropertyIsFalse() {
-        java.util.Properties properties = new java.util.Properties();
+        Properties properties = new Properties();
         properties.setProperty(GenAiObservabilityProperties.ENABLED, "false");
         context.getPropertiesComponent().setOverrideProperties(properties);
         assertThat(GenAiObservability.isEnabled(context)).isFalse();
@@ -70,7 +72,7 @@ class GenAiObservabilityTest extends ExchangeTestSupport {
 
     @Test
     void shouldReturnNoopWhenDisabled() {
-        java.util.Properties properties = new java.util.Properties();
+        Properties properties = new Properties();
         properties.setProperty(GenAiObservabilityProperties.ENABLED, "false");
         context.getPropertiesComponent().setOverrideProperties(properties);
 
