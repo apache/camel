@@ -170,7 +170,6 @@ public class GoogleMailStreamConsumer extends ScheduledBatchPollingConsumer {
     protected void processRollback(Exchange exchange, String unreadLabelId) {
         if (!getConfiguration().isMarkAsRead()) {
             // the mail was never marked as read, so there is nothing to roll back
-            LOG.warn("Exchange failed: {}", exchange);
             return;
         }
         try {

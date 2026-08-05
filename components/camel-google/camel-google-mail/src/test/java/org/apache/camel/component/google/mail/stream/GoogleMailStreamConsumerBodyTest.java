@@ -49,6 +49,9 @@ class GoogleMailStreamConsumerBodyTest {
     }
 
     private GoogleMailStreamConsumer consumer(boolean raw) throws Exception {
+        if (context != null) {
+            context.stop();
+        }
         context = new DefaultCamelContext();
         context.start();
         GoogleMailStreamEndpoint endpoint = context.getEndpoint(
