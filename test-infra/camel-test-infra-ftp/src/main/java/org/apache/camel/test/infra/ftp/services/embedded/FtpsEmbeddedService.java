@@ -44,7 +44,8 @@ public class FtpsEmbeddedService extends FtpEmbeddedService implements FtpServic
         FtpServerFactory serverFactory = super.createFtpServerFactory(embeddedConfiguration);
 
         ListenerFactory listenerFactory = new ListenerFactory(serverFactory.getListener(DEFAULT_LISTENER));
-        listenerFactory.setPort(port);
+        // Port is already assigned by super.createFtpServerFactory — do not overwrite with the
+        // instance field which may be stale from a previous test method (CAMEL-23499).
         listenerFactory.setImplicitSsl(embeddedConfiguration.getSecurityConfiguration().isUseImplicit());
         listenerFactory.setSslConfiguration(createSslConfiguration(embeddedConfiguration).createSslConfiguration());
 

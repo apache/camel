@@ -27,11 +27,11 @@ import org.junit.jupiter.api.extension.RegisterExtension;
 public abstract class FtpsServerImplicitTLSWithoutClientAuthTestSupport extends FtpsServerTestSupport {
 
     @RegisterExtension
-    static FtpsEmbeddedService service = FtpServiceFactory
+    FtpsEmbeddedService service = FtpServiceFactory
             .createSecureEmbeddedService(new EmbeddedConfiguration.SecurityConfiguration(true, AUTH_VALUE_TLS, false));
 
     @Deprecated
-    public static int getPort() {
+    public int getPort() {
         return service.getPort();
     }
 }

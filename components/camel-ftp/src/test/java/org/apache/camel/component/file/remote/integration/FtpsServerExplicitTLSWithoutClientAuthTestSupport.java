@@ -26,6 +26,6 @@ import org.junit.jupiter.api.extension.RegisterExtension;
  */
 public abstract class FtpsServerExplicitTLSWithoutClientAuthTestSupport extends FtpsServerTestSupport {
     @RegisterExtension
-    static FtpsEmbeddedService service = FtpServiceFactory
+    FtpsEmbeddedService service = FtpServiceFactory
             .createSecureEmbeddedService(new EmbeddedConfiguration.SecurityConfiguration(false, AUTH_VALUE_TLS, false));
 }

@@ -164,6 +164,7 @@ public class FtpEmbeddedInfraService extends AbstractService implements FtpInfra
             LOG.trace("Exception while shutting down: {}", e.getMessage(), e);
         } finally {
             ftpServer = null;
+            port = 0;
         }
     }
 
