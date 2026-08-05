@@ -340,7 +340,7 @@ class SourceViewer {
             hide();
             return true;
         }
-        if (isEditable() && ke.isChar('e')) {
+        if (isEditable() && ke.isKey(KeyCode.F4)) {
             enterEditMode();
             return true;
         }
@@ -1938,7 +1938,7 @@ class SourceViewer {
             TuiHelper.hint(spans, "Space", "format");
             TuiHelper.hint(spans, "PgUp/PgDn", "page");
             if (isEditable()) {
-                TuiHelper.hint(spans, "e", "edit");
+                TuiHelper.hint(spans, "F4", "edit");
             }
             return;
         }
@@ -1952,7 +1952,7 @@ class SourceViewer {
             TuiHelper.hint(spans, "Esc/c", "close");
         }
         if (isEditable()) {
-            TuiHelper.hint(spans, "e", "edit");
+            TuiHelper.hint(spans, "F4", "edit");
         }
         if (quickDocProvider != null) {
             TuiHelper.hint(spans, "i", "quick doc" + (quickDocEnabled ? " [on]" : ""));

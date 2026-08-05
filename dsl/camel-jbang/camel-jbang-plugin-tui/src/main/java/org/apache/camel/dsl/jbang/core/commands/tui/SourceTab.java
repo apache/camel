@@ -329,12 +329,12 @@ class SourceTab extends AbstractTab {
                 ## File List (left panel)
                 - **Up/Down** — navigate files
                 - **Enter** — open file or directory
-                - **e** — open file directly in edit mode
+                - **F4** — open file directly in edit mode
                 - **Backspace** — go to parent directory
 
                 ## Source Viewer (right panel)
                 - **Up/Down** — scroll through source code
-                - **e** — edit local file (plain text; only when file is writable)
+                - **F4** — edit local file (plain text; only when file is writable)
                 - **Esc** — cancel edit (in edit mode) or close viewer
                 - **F5** — save file (in edit mode; Camel dev mode auto-reloads)
                 - **Space** — cycle format (YAML/Java/XML) for Camel routes
@@ -346,7 +346,7 @@ class SourceTab extends AbstractTab {
                 - **Esc/c** — close source viewer
 
                 ## Edit Mode (Tab Completion)
-                Press **e** to enter edit mode, then **Tab** for context-aware completion:
+                Press **F4** to enter edit mode, then **Tab** for context-aware completion:
 
                 **application.properties:**
                 - Key completion for `camel.main.*`, `camel.component.*`, `camel.dataformat.*`,
@@ -527,7 +527,7 @@ class SourceTab extends AbstractTab {
             openSelectedEntry();
             return true;
         }
-        if (ke.isChar('e')) {
+        if (ke.isKey(KeyCode.F4)) {
             openSelectedEntry();
             if (sourceViewer.isVisible() && sourceViewer.isEditable()) {
                 sourceViewer.enterEditMode();

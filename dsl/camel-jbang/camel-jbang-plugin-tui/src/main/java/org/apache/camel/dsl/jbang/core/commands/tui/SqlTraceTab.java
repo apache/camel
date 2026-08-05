@@ -32,6 +32,7 @@ import dev.tamboui.terminal.Frame;
 import dev.tamboui.text.Line;
 import dev.tamboui.text.Span;
 import dev.tamboui.text.Text;
+import dev.tamboui.tui.event.KeyCode;
 import dev.tamboui.tui.event.KeyEvent;
 import dev.tamboui.tui.event.MouseEvent;
 import dev.tamboui.widgets.block.Block;
@@ -85,7 +86,7 @@ class SqlTraceTab extends AbstractTableTab {
             wordWrap = !wordWrap;
             return true;
         }
-        if (ke.isCharIgnoreCase('e') && editSqlAction != null) {
+        if (ke.isKey(KeyCode.F4) && editSqlAction != null) {
             String sql = getSelectedQuery();
             if (sql != null) {
                 editSqlAction.accept(sql);
@@ -389,7 +390,7 @@ class SqlTraceTab extends AbstractTableTab {
         hint(spans, TuiIcons.HINT_SCROLL, "navigate");
         hint(spans, "Home/End", "top/end");
         hint(spans, "PgUp/Dn", "detail");
-        hint(spans, "e", "edit SQL");
+        hint(spans, "F4", "edit SQL");
         hint(spans, "s", "sort");
         hint(spans, "w", "wrap [" + (wordWrap ? "on" : "off") + "]");
     }

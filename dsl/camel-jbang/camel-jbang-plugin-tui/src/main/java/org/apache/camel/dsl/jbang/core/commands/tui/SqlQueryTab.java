@@ -182,15 +182,16 @@ class SqlQueryTab extends AbstractTab {
             return true;
         }
 
-        // Enter: newline in input, or open edit in results
+        // F4: open edit in results
+        if (!focusOnInput && ke.isKey(KeyCode.F4) && isEditable()) {
+            openEditMode();
+            return true;
+        }
+        // Enter: newline in input
         if (ke.isConfirm()) {
             if (focusOnInput) {
                 sqlInput.insert('\n');
                 return true;
-            }
-            // results mode: open edit if editable
-            if (isEditable()) {
-                openEditMode();
             }
             return true;
         }
@@ -837,7 +838,7 @@ class SqlQueryTab extends AbstractTab {
             hint(spans, "Tab", "input");
             hint(spans, TuiIcons.HINT_SCROLL, "navigate");
             if (isEditable()) {
-                hint(spans, "Enter", "edit");
+                hint(spans, "F4", "edit");
             }
         }
     }
@@ -866,7 +867,7 @@ class SqlQueryTab extends AbstractTab {
                 - Use **Ctrl+Left/Right** to switch between DataSources (when multiple exist)
 
                 ## Inline Editing
-                - For simple single-table SELECT queries, press **Enter** on a result row to edit
+                - For simple single-table SELECT queries, press **F4** on a result row to edit
                 - Primary key columns (marked with *) are read-only
                 - Changed values are highlighted in green
                 - Press **F5** to save changes (executes an UPDATE statement)

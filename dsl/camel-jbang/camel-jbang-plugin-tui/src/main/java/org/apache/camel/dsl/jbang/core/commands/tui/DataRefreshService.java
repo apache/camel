@@ -290,12 +290,13 @@ class DataRefreshService {
             if (checkLiveness) {
                 lastLivenessCheckTime = now;
             }
+            Set<String> refreshedPids = infos.stream().map(i -> i.pid).collect(Collectors.toSet());
             List<IntegrationInfo> previous = data.get();
             for (IntegrationInfo prev : previous) {
                 if (prev.phantom) {
                     continue;
                 }
-                if (!prev.vanishing && !ctx.selectedPid.equals(prev.pid)) {
+                if (!prev.vanishing && !refreshedPids.contains(prev.pid)) {
                     if (checkLiveness) {
                         try {
                             long pid = Long.parseLong(prev.pid);
