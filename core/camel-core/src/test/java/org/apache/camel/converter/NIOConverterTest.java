@@ -25,10 +25,11 @@ import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.junit.jupiter.api.Test;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
-public class NIOConverterTest extends ContextTestSupport {
+class NIOConverterTest extends ContextTestSupport {
     private static final String TEST_FILE_NAME = "hello" + UUID.randomUUID() + ".txt";
 
     @Test
@@ -51,6 +52,79 @@ public class NIOConverterTest extends ContextTestSupport {
         byte[] out = NIOConverter.toByteArray(bb);
         assertNotNull(out);
         assertEquals(5, out.length);
+    }
+
+    @Test
+    void testToByteArrayFullyConsumedBuffer() {
+        ByteBuffer bb = ByteBuffer.wrap("Hello".getBytes());
+        while (bb.hasRemaining()) {
+            bb.get();
+        }
+        assertThat(bb.position()).isEqualTo(bb.limit());
+
+        byte[] out = NIOConverter.toByteArray(bb);
+
+        assertThat(out).containsExactly("Hello".getBytes());
+        assertThat(bb.position()).isEqualTo(bb.limit());
+    }
+
+    @Test
+    void testToByteArrayPartiallyConsumedBuffer() {
+        ByteBuffer bb = ByteBuffer.allocate(100);
+        bb.put("Hello".getBytes());
+        bb.flip();
+        bb.get();
+        assertThat(bb.position()).isEqualTo(1);
+
+        byte[] out = NIOConverter.toByteArray(bb);
+
+        assertThat(out).containsExactly("Hello".getBytes());
+        assertThat(bb.position()).isEqualTo(1);
+    }
+
+    @Test
+    void testToByteArrayEmptyBuffer() {
+        ByteBuffer bb = ByteBuffer.allocate(0);
+
+        byte[] out = NIOConverter.toByteArray(bb);
+
+        assertThat(out).isEmpty();
+    }
+
+    @Test
+    void testToByteArrayReadOnlyFullyConsumedBuffer() {
+        ByteBuffer bb = ByteBuffer.wrap("Hello".getBytes()).asReadOnlyBuffer();
+        while (bb.hasRemaining()) {
+            bb.get();
+        }
+
+        byte[] out = NIOConverter.toByteArray(bb);
+
+        assertThat(out).containsExactly("Hello".getBytes());
+    }
+
+    @Test
+    void testToStringFullyConsumedBuffer() throws Exception {
+        ByteBuffer bb = ByteBuffer.wrap("Hello".getBytes());
+        while (bb.hasRemaining()) {
+            bb.get();
+        }
+
+        String out = NIOConverter.toString(bb, null);
+
+        assertThat(out).isEqualTo("Hello");
+    }
+
+    @Test
+    void testToInputStreamFullyConsumedBuffer() throws Exception {
+        ByteBuffer bb = ByteBuffer.wrap("Hello".getBytes());
+        while (bb.hasRemaining()) {
+            bb.get();
+        }
+
+        InputStream is = NIOConverter.toInputStream(bb);
+
+        assertThat(IOConverter.toString(is, null)).isEqualTo("Hello");
     }
 
     @Test
