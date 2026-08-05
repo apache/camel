@@ -314,7 +314,7 @@ Disable globally with `camel.ai.observability.enabled=false` (default is enabled
 
 LangChain4j components also expose request/response model names on new exchange headers
 (`CamelLangChain4j*RequestModel`, `CamelLangChain4j*ResponseModel`). See
-xref:components:others:ai-observability.adoc[AI Observability] for metric names and span attributes.
+xref:next@components:others:ai-observability.adoc[AI Observability] for metric names and span attributes.
 
 === camel-langchain4j-agent
 
