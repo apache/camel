@@ -93,6 +93,35 @@ camel export bar.xml cheese.yaml --runtime=spring-boot --gav=com.foo:cheese:1.0-
 
 NOTE: `application.properties` is included in all exports automatically.
 
+=== Exporting with Camel Wrapper
+
+Use `--camel-wrapper` to include Camel Wrapper scripts in the exported project.
+This works like the Maven Wrapper — it pins a specific Camel CLI version so that anyone
+working on the project uses the same version without a separate install:
+
+[source,bash]
+----
+camel export --runtime=spring-boot --gav=com.foo:acme:1.0-SNAPSHOT --camel-wrapper
+----
+
+This adds the following files to the exported project:
+
+- `camel` and `camel.cmd` — launcher scripts that download and run the pinned Camel CLI version
+- `.camel/camel-wrapper.properties` — contains the pinned `camel.version` and download URL
+
+The pinned version matches the Camel version used in the export. After exporting, use `./camel`
+instead of a globally installed `camel` to ensure the project always uses the correct version.
+
+You can also set this in `application.properties`:
+
+[source,properties]
+----
+camel.jbang.camelWrapper=true
+----
+
+TIP: The Camel Wrapper can also be installed standalone with `camel wrapper`.
+See xref:camel-jbang-installation.adoc[Installation Options] for details.
+
 === Including JMX management or CLI connector
 
 JMX management and CLI connector are not included by default. Add them with `--dep`:

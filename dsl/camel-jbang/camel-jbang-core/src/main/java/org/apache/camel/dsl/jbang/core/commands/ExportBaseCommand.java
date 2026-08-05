@@ -207,6 +207,10 @@ public abstract class ExportBaseCommand extends CamelCommand {
                         description = "Include Maven Wrapper files in exported project")
     protected boolean mavenWrapper = true;
 
+    @CommandLine.Option(names = { "--camel-wrapper" }, defaultValue = "false",
+                        description = "Include Camel Wrapper scripts in exported project for version pinning")
+    protected boolean camelWrapper;
+
     @CommandLine.Option(names = { "--docker" }, defaultValue = "true",
                         description = "Include Docker files in exported project")
     protected boolean docker = true;
@@ -1187,6 +1191,36 @@ public abstract class ExportBaseCommand extends CamelCommand {
         // set execute file permission on mvnw/mvnw.cmd files
         FileUtil.setPosixFilePermissions(mvnwPath, "rwxr-xr-x");
         FileUtil.setPosixFilePermissions(mvnwCmdPath, "rwxr-xr-x");
+    }
+
+    protected void copyCamelWrapper() throws Exception {
+        Path camelDir = Paths.get(BUILD_DIR, ".camel");
+        Files.createDirectories(camelDir);
+
+        // write camel-wrapper.properties with the export's camel version
+        String distributionUrl = "https://repo1.maven.org/maven2"
+                                 + "/org/apache/camel/camel-launcher/"
+                                 + camelVersion
+                                 + "/camel-launcher-"
+                                 + camelVersion
+                                 + ".jar";
+        String content = "camel.version=" + camelVersion + "\n"
+                         + "distributionUrl=" + distributionUrl + "\n";
+        Files.writeString(camelDir.resolve("camel-wrapper.properties"), content);
+
+        // copy wrapper scripts
+        Path camelPath = Paths.get(BUILD_DIR, "camel");
+        Path camelCmdPath = Paths.get(BUILD_DIR, "camel.cmd");
+        try (InputStream is = ExportBaseCommand.class.getClassLoader().getResourceAsStream("camel-wrapper/camelw")) {
+            Files.copy(is, camelPath, StandardCopyOption.REPLACE_EXISTING);
+        }
+        try (InputStream is = ExportBaseCommand.class.getClassLoader().getResourceAsStream("camel-wrapper/camelw.cmd")) {
+            Files.copy(is, camelCmdPath, StandardCopyOption.REPLACE_EXISTING);
+        }
+
+        // set execute file permission on camel/camel.cmd files
+        FileUtil.setPosixFilePermissions(camelPath, "rwxr-xr-x");
+        FileUtil.setPosixFilePermissions(camelCmdPath, "rwxr-xr-x");
     }
 
     protected String applicationPropertyLine(String key, String value) {

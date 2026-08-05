@@ -166,6 +166,9 @@ class ExportSpringBoot extends Export {
         if (mavenWrapper) {
             copyMavenWrapper();
         }
+        if (camelWrapper) {
+            copyCamelWrapper();
+        }
         if (docker) {
             copyDockerFiles(BUILD_DIR);
         }
