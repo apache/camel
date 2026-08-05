@@ -5,7 +5,6 @@
   "properties": [
     { "name": "camel.jbang.camel-version", "required": false, "description": "The version of Apache Camel to use", "type": "string", "javaType": "String", "secret": false },
     { "name": "camel.jbang.camelSpringBootVersion", "required": false, "description": "To use a custom Camel version when running or export to Spring Boot", "label": "spring-boot", "type": "string", "javaType": "String", "secret": false },
-    { "name": "camel.jbang.camelWrapper", "required": false, "description": "Include Camel Wrapper scripts in the exported project for version pinning", "type": "boolean", "javaType": "boolean", "defaultValue": false, "secret": false },
     { "name": "camel.jbang.classpathFiles", "required": false, "description": "Additional files to add to classpath (Use commas to separate multiple files).", "type": "string", "javaType": "String", "secret": false },
     { "name": "camel.jbang.compileWorkDir", "required": false, "description": "Work directory for compiler. Can be used to write compiled classes or other resources.", "label": "advanced", "type": "string", "javaType": "String", "defaultValue": ".camel-jbang\/compile", "secret": false },
     { "name": "camel.jbang.console", "required": false, "description": "Developer console at \/q\/dev on local HTTP server (port 8080 by default)", "type": "boolean", "javaType": "boolean", "defaultValue": false, "secret": false },

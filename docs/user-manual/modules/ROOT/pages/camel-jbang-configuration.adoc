@@ -4,7 +4,7 @@ This page covers configuring the Camel CLI — available options, configuration 
 
 // jbang options: START
 == Camel CLI configurations
-The camel.jbang supports 52 options, which are listed below.
+The camel.jbang supports 53 options, which are listed below.
 
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
