@@ -1179,6 +1179,7 @@ public class Run extends CamelCommand {
         eq.port = this.port;
         eq.managementPort = this.managementPort;
         eq.gav = this.gav;
+        eq.repositories = this.repositories;
         eq.runtime = this.runtime;
         if (eq.gav == null) {
             if (eq.name == null) {
