@@ -163,7 +163,7 @@ public class LangChain4jAgentProducer extends DefaultProducer {
                     result.tokenUsage() != null ? result.tokenUsage().inputTokenCount() : null,
                     result.tokenUsage() != null ? result.tokenUsage().outputTokenCount() : null,
                     result.finishReason(),
-                    observationContext.requestModel()));
+                    null));
         } catch (RuntimeException e) {
             observation.recordError(e);
             throw e;
@@ -187,7 +187,6 @@ public class LangChain4jAgentProducer extends DefaultProducer {
 
         if (requestModel != null) {
             message.setHeader(Headers.REQUEST_MODEL, requestModel);
-            message.setHeader(Headers.RESPONSE_MODEL, requestModel);
         }
 
         if (result.finishReason() != null) {

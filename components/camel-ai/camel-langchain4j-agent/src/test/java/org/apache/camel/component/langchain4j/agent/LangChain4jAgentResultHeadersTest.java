@@ -114,6 +114,25 @@ class LangChain4jAgentResultHeadersTest extends CamelTestSupport {
     }
 
     @Test
+    void shouldNotSetResponseModelWhenUnavailableFromAgentResult() throws Exception {
+        agentRef.set((body, exchange) -> Result.<String> builder()
+                .content("Plain answer")
+                .finishReason(FinishReason.STOP)
+                .tokenUsage(new TokenUsage(10, 5, 15))
+                .build());
+
+        MockEndpoint mock = getMockEndpoint("mock:result");
+        mock.expectedMessageCount(1);
+
+        template.sendBody("direct:start", "Hello");
+
+        mock.assertIsSatisfied(10, TimeUnit.SECONDS);
+
+        Exchange exchange = mock.getExchanges().get(0);
+        assertNull(exchange.getMessage().getHeader(Headers.RESPONSE_MODEL));
+    }
+
+    @Test
     void shouldNotSetSourcesOrToolExecutionsWhenEmpty() throws Exception {
         agentRef.set((body, exchange) -> Result.<String> builder()
                 .content("Plain answer")

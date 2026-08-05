@@ -58,7 +58,7 @@ public class LangChain4jEmbeddingsProducer extends DefaultProducer {
                     result.tokenUsage() != null ? result.tokenUsage().inputTokenCount() : null,
                     result.tokenUsage() != null ? result.tokenUsage().outputTokenCount() : null,
                     result.finishReason(),
-                    observationContext.requestModel()));
+                    null));
         } catch (RuntimeException e) {
             observation.recordError(e);
             throw e;
@@ -71,7 +71,6 @@ public class LangChain4jEmbeddingsProducer extends DefaultProducer {
             Message message, Response<Embedding> result, TextSegment textSegment, String requestModel) {
         if (requestModel != null) {
             message.setHeader(LangChain4jEmbeddingsHeaders.REQUEST_MODEL, requestModel);
-            message.setHeader(LangChain4jEmbeddingsHeaders.RESPONSE_MODEL, requestModel);
         }
 
         if (result.finishReason() != null) {

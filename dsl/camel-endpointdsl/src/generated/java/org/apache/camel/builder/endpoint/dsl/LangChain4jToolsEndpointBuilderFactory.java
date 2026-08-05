@@ -704,6 +704,30 @@ public interface LangChain4jToolsEndpointBuilderFactory {
         public String langChain4jToolsTotalTokenCount() {
             return "CamelLangChain4jToolsTotalTokenCount";
         }
+        /**
+         * The request model name.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: common
+         * 
+         * @return the name of the header {@code LangChain4jToolsRequestModel}.
+         */
+        public String langChain4jToolsRequestModel() {
+            return "CamelLangChain4jToolsRequestModel";
+        }
+        /**
+         * The response model name.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: common
+         * 
+         * @return the name of the header {@code LangChain4jToolsResponseModel}.
+         */
+        public String langChain4jToolsResponseModel() {
+            return "CamelLangChain4jToolsResponseModel";
+        }
     }
     static LangChain4jToolsEndpointBuilder endpointBuilder(String componentName, String path) {
         class LangChain4jToolsEndpointBuilderImpl extends AbstractEndpointBuilder implements LangChain4jToolsEndpointBuilder, AdvancedLangChain4jToolsEndpointBuilder {
