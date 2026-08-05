@@ -600,7 +600,7 @@ public class KameletMain extends MainCommandLineSupport {
             configure().httpManagementServer().withMcpEnabled(true);
             configure().httpManagementServer().withHost("127.0.0.1");
             String listeners = getInitialProperties().getProperty("camel.main.mainListenerClasses");
-            String embedded = "org.apache.camel.dsl.jbang.core.commands.mcp.JbangDevMcpMainListener";
+            String embedded = "org.apache.camel.component.mcp.server.jbang.JbangDevMcpMainListener";
             if (listeners == null || listeners.isBlank()) {
                 addInitialProperty("camel.main.mainListenerClasses", embedded);
             } else if (!listeners.contains(embedded)) {

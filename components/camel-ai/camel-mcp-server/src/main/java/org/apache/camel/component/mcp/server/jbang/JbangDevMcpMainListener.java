@@ -14,13 +14,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.dsl.jbang.core.commands.mcp;
+package org.apache.camel.component.mcp.server.jbang;
 
 import org.apache.camel.main.BaseMainSupport;
 import org.apache.camel.main.MainListenerSupport;
 
 /**
  * Starts {@link JbangDevMcpServer} on the management HTTP server when {@code camel.management.mcpEnabled} is set.
+ * Loaded at runtime when {@code camel-mcp-server} is on the classpath (e.g. {@code camel run --mcp}).
  */
 public class JbangDevMcpMainListener extends MainListenerSupport {
 

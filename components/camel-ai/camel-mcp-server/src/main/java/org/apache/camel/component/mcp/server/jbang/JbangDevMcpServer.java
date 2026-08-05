@@ -14,9 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.dsl.jbang.core.commands.mcp;
+package org.apache.camel.component.mcp.server.jbang;
 
+import java.lang.reflect.Method;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -29,24 +31,27 @@ import org.apache.camel.component.mcp.server.McpToolCallHandler;
 import org.apache.camel.component.mcp.server.McpToolCallResult;
 import org.apache.camel.component.mcp.server.vertx.VertxMcpServerEngine;
 import org.apache.camel.component.platform.http.vertx.VertxPlatformHttpRouter;
-import org.apache.camel.dsl.jbang.core.commands.ai.ToolContext;
-import org.apache.camel.dsl.jbang.core.commands.ai.ToolDescriptor;
-import org.apache.camel.dsl.jbang.core.commands.ai.ToolExecutionException;
-import org.apache.camel.dsl.jbang.core.commands.ai.ToolRegistry;
 import org.apache.camel.support.service.ServiceSupport;
+import org.apache.camel.util.json.JsonArray;
+import org.apache.camel.util.json.JsonObject;
 
 /**
- * Dev/diagnostics MCP server on the management HTTP port, exposing shared {@link ToolRegistry} tools through
- * {@link VertxMcpServerEngine}.
+ * Dev/diagnostics MCP server on the management HTTP port, exposing shared JBang {@code ToolRegistry} tools through
+ * {@link VertxMcpServerEngine}. JBang classes are resolved reflectively so {@code camel-jbang-core} is not required at
+ * compile time.
  */
 public class JbangDevMcpServer extends ServiceSupport implements CamelContextAware {
 
     private static final String SERVER_NAME = "camel-jbang-dev-tools";
+    private static final String TOOL_REGISTRY = "org.apache.camel.dsl.jbang.core.commands.ai.ToolRegistry";
+    private static final String TOOL_CONTEXT = "org.apache.camel.dsl.jbang.core.commands.ai.ToolContext";
+    private static final String TOOL_EXECUTION_EXCEPTION
+            = "org.apache.camel.dsl.jbang.core.commands.ai.ToolExecutionException";
 
     private CamelContext camelContext;
     private String path = "/mcp";
     private VertxMcpServerEngine engine;
-    private ToolContext toolContext;
+    private Object toolContext;
 
     @Override
     public CamelContext getCamelContext() {
@@ -68,8 +73,7 @@ public class JbangDevMcpServer extends ServiceSupport implements CamelContextAwa
 
     @Override
     protected void doStart() throws Exception {
-        toolContext = new ToolContext();
-        toolContext.selectProcess(ProcessHandle.current().pid());
+        toolContext = createToolContext();
 
         engine = new VertxMcpServerEngine();
         engine.setCamelContext(camelContext);
@@ -81,7 +85,7 @@ public class JbangDevMcpServer extends ServiceSupport implements CamelContextAwa
         engine.initialize(new McpServerInfo(SERVER_NAME, version, path));
         engine.start();
 
-        for (ToolDescriptor descriptor : ToolRegistry.allTools()) {
+        for (Object descriptor : allToolDescriptors()) {
             engine.toolAdded(toMcpTool(descriptor));
         }
     }
@@ -95,29 +99,35 @@ public class JbangDevMcpServer extends ServiceSupport implements CamelContextAwa
         toolContext = null;
     }
 
-    private McpServerTool toMcpTool(ToolDescriptor descriptor) {
+    private McpServerTool toMcpTool(Object descriptor) {
+        String toolName = invokeString(descriptor, "name");
         McpToolCallHandler handler = arguments -> {
             try {
-                Object result = ToolRegistry.execute(descriptor.name(), toolContext, stringArguments(arguments));
+                Object result = executeTool(toolName, stringArguments(arguments));
                 return new McpToolCallResult(result != null ? result.toString() : "", false);
-            } catch (ToolExecutionException e) {
+            } catch (ReflectiveOperationException e) {
+                Throwable cause = e.getCause();
+                if (cause != null && TOOL_EXECUTION_EXCEPTION.equals(cause.getClass().getName())) {
+                    return new McpToolCallResult(cause.getMessage(), true);
+                }
                 return new McpToolCallResult(e.getMessage(), true);
             }
         };
         return new McpServerTool() {
             @Override
             public String name() {
-                return descriptor.name();
+                return toolName;
             }
 
             @Override
             public String description() {
-                return descriptor.description();
+                return invokeString(descriptor, "description");
             }
 
             @Override
             public String inputSchemaJson() {
-                return descriptor.params().isEmpty() ? null : ToolMcpSchemas.inputSchemaJson(descriptor);
+                List<?> params = invokeList(descriptor, "params");
+                return params == null || params.isEmpty() ? null : buildInputSchemaJson(params);
             }
 
             @Override
@@ -130,6 +140,74 @@ public class JbangDevMcpServer extends ServiceSupport implements CamelContextAwa
                 return handler;
             }
         };
+    }
+
+    private Object createToolContext() throws ReflectiveOperationException {
+        Object context = Class.forName(TOOL_CONTEXT).getDeclaredConstructor().newInstance();
+        Method selectProcess = context.getClass().getMethod("selectProcess", long.class);
+        selectProcess.invoke(context, ProcessHandle.current().pid());
+        return context;
+    }
+
+    @SuppressWarnings("unchecked")
+    private static List<Object> allToolDescriptors() throws ReflectiveOperationException {
+        Class<?> registry = Class.forName(TOOL_REGISTRY);
+        Method allTools = registry.getMethod("allTools");
+        return (List<Object>) allTools.invoke(null);
+    }
+
+    private Object executeTool(String name, Map<String, String> args) throws ReflectiveOperationException {
+        Class<?> registry = Class.forName(TOOL_REGISTRY);
+        Method execute = registry.getMethod("execute", String.class, Class.forName(TOOL_CONTEXT), Map.class);
+        return execute.invoke(null, name, toolContext, args);
+    }
+
+    private static String invokeString(Object target, String method) {
+        try {
+            Object value = target.getClass().getMethod(method).invoke(target);
+            return value != null ? value.toString() : null;
+        } catch (ReflectiveOperationException e) {
+            return null;
+        }
+    }
+
+    @SuppressWarnings("unchecked")
+    private static List<?> invokeList(Object target, String method) {
+        try {
+            return (List<?>) target.getClass().getMethod(method).invoke(target);
+        } catch (ReflectiveOperationException e) {
+            return List.of();
+        }
+    }
+
+    private static String buildInputSchemaJson(List<?> params) {
+        JsonObject schema = new JsonObject();
+        schema.put("type", "object");
+        JsonObject properties = new JsonObject();
+        JsonArray required = new JsonArray();
+        for (Object param : params) {
+            String name = invokeString(param, "name");
+            JsonObject prop = new JsonObject();
+            prop.put("type", invokeString(param, "type"));
+            prop.put("description", invokeString(param, "description"));
+            properties.put(name, prop);
+            if (Boolean.TRUE.equals(invokeBoolean(param, "required"))) {
+                required.add(name);
+            }
+        }
+        schema.put("properties", properties);
+        if (!required.isEmpty()) {
+            schema.put("required", required);
+        }
+        return schema.toJson();
+    }
+
+    private static Boolean invokeBoolean(Object target, String method) {
+        try {
+            return (Boolean) target.getClass().getMethod(method).invoke(target);
+        } catch (ReflectiveOperationException e) {
+            return false;
+        }
     }
 
     private static Map<String, String> stringArguments(Map<String, Object> args) {
@@ -145,10 +223,6 @@ public class JbangDevMcpServer extends ServiceSupport implements CamelContextAwa
         return out;
     }
 
-    /**
-     * Prefer the management router when it exists; when the management server reuses the main HTTP server on the same
-     * port, only a {@code server}-typed router is registered and MCP must attach there.
-     */
     private String resolveTargetServerType() {
         Set<VertxPlatformHttpRouter> routers = camelContext.getRegistry().findByType(VertxPlatformHttpRouter.class);
         boolean hasManagementRouter = routers.stream()

@@ -79,12 +79,12 @@
         <!-- integration tests -->
         <dependency>
             <groupId>org.apache.camel</groupId>
-            <artifactId>camel-openai</artifactId>
+            <artifactId>camel-platform-http-main</artifactId>
             <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>org.apache.camel</groupId>
-            <artifactId>camel-platform-http-main</artifactId>
+            <artifactId>camel-openai</artifactId>
             <scope>test</scope>
         </dependency>
         <dependency>

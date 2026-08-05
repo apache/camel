@@ -24,8 +24,10 @@ import io.modelcontextprotocol.client.McpSyncClient;
 import io.modelcontextprotocol.client.transport.HttpClientStreamableHttpTransport;
 import io.modelcontextprotocol.spec.McpSchema;
 import org.apache.camel.CamelContext;
+import org.apache.camel.component.mcp.server.jbang.JbangDevMcpServer;
 import org.apache.camel.component.platform.http.main.MainHttpServer;
 import org.apache.camel.component.platform.http.main.ManagementHttpServer;
+import org.apache.camel.dsl.jbang.core.commands.ai.ToolDescriptor;
 import org.apache.camel.dsl.jbang.core.commands.ai.ToolRegistry;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.test.AvailablePortFinder;
@@ -41,7 +43,6 @@ class JbangDevMcpServerTest {
         int managementPort = AvailablePortFinder.getNextAvailable();
 
         CamelContext camelContext = new DefaultCamelContext();
-        ManagementHttpServer management = new ManagementHttpServer();
         JbangDevMcpServer devMcp = new JbangDevMcpServer();
         McpSyncClient client = null;
         try {
@@ -51,6 +52,7 @@ class JbangDevMcpServerTest {
             main.setPort(mainPort);
             camelContext.addService(main);
 
+            ManagementHttpServer management = new ManagementHttpServer();
             management.setCamelContext(camelContext);
             management.setHost("127.0.0.1");
             management.setPort(managementPort);
@@ -85,5 +87,16 @@ class JbangDevMcpServerTest {
             }
             camelContext.stop();
         }
+    }
+
+    @Test
+    void buildsInputSchemaForParameterizedTools() {
+        ToolDescriptor descriptor = ToolDescriptor.tool("demo", "Demo tool")
+                .param("name", "string", "A name", true)
+                .param("count", "integer", "Optional count", false);
+
+        assertThat(descriptor.params()).hasSize(2);
+        assertThat(descriptor.params().get(0).name()).isEqualTo("name");
+        assertThat(descriptor.params().get(0).required()).isTrue();
     }
 }
