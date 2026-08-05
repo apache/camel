@@ -17,7 +17,6 @@
 package org.apache.camel.component.ai.observability;
 
 import java.lang.reflect.Constructor;
-import java.util.Optional;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
@@ -29,42 +28,23 @@ import org.apache.camel.telemetry.propagation.CamelHeadersSpanContextPropagation
 import org.apache.camel.util.ObjectHelper;
 
 /**
- * Entry point for GenAI observability in Camel AI producers.
+ * GenAI observability implementation loaded reflectively from {@link GenAiObservability}.
  */
-public final class GenAiObservability {
+public final class GenAiObservabilityImpl {
 
+    private static final GenAiObservation NOOP = new NoopGenAiObservation();
     private static final String CLIENT_SPAN_KIND = "CLIENT";
     private static final String METER_REGISTRY_CLASS = "io.micrometer.core.instrument.MeterRegistry";
     private static final String MICROMETER_SUPPORT_CLASS
             = "org.apache.camel.component.ai.observability.GenAiMicrometerSupport";
-    private static final GenAiObservation NOOP = new NoopGenAiObservation();
 
-    private GenAiObservability() {
+    private GenAiObservabilityImpl() {
     }
 
     /**
-     * Whether GenAI observability is enabled for the given context.
-     */
-    public static boolean isEnabled(CamelContext camelContext) {
-        if (camelContext == null) {
-            return false;
-        }
-        Optional<String> property
-                = camelContext.getPropertiesComponent().resolveProperty(GenAiObservabilityProperties.ENABLED);
-        if (property.isPresent()) {
-            return Boolean.parseBoolean(property.get().trim());
-        }
-        return true;
-    }
-
-    /**
-     * Starts a GenAI observation for a single LLM client call. Returns a no-op when disabled or no backend is
-     * available.
+     * Starts a GenAI observation for a single LLM client call. Returns a no-op when no backend is available.
      */
     public static GenAiObservation start(Exchange exchange, GenAiObservationContext context) {
-        if (exchange == null || context == null || !isEnabled(exchange.getContext())) {
-            return NOOP;
-        }
         Tracer tracer = exchange.getContext().hasService(Tracer.class);
         GenAiMetricsBackend metricsBackend = resolveMetricsBackend(exchange.getContext());
         if (tracer == null && (metricsBackend == null || !metricsBackend.isAvailable())) {
@@ -78,7 +58,6 @@ public final class GenAiObservability {
             Class.forName(METER_REGISTRY_CLASS);
             Class<?> supportClass = Class.forName(MICROMETER_SUPPORT_CLASS);
             Constructor<?> constructor = supportClass.getDeclaredConstructor(CamelContext.class);
-            constructor.setAccessible(true);
             return (GenAiMetricsBackend) constructor.newInstance(camelContext);
         } catch (ReflectiveOperationException | LinkageError e) {
             return null;
