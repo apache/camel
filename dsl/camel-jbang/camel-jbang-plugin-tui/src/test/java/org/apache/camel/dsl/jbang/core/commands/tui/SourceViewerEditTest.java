@@ -83,7 +83,7 @@ class SourceViewerEditTest {
     void eEntersEditModeForLocalFile() {
         viewer.loadFile(sourceFile);
 
-        assertThat(viewer.handleKeyEvent(KeyEvent.ofChar('e', KeyModifiers.NONE))).isTrue();
+        assertThat(viewer.handleKeyEvent(KeyEvent.ofKey(KeyCode.F4, KeyModifiers.NONE))).isTrue();
 
         assertThat(viewer.isEditMode()).isTrue();
         assertThat(viewer.isTextInputActive()).isTrue();
@@ -92,7 +92,7 @@ class SourceViewerEditTest {
     @Test
     void escCancelsEditModeWithoutClosingViewer() {
         viewer.loadFile(sourceFile);
-        viewer.handleKeyEvent(KeyEvent.ofChar('e', KeyModifiers.NONE));
+        viewer.handleKeyEvent(KeyEvent.ofKey(KeyCode.F4, KeyModifiers.NONE));
         assertThat(viewer.isEditMode()).isTrue();
 
         assertThat(viewer.handleKeyEvent(KeyEvent.ofKey(KeyCode.ESCAPE, KeyModifiers.NONE))).isTrue();
@@ -176,7 +176,7 @@ class SourceViewerEditTest {
         assertThat(viewer.isVisible()).isFalse();
         assertThat(viewer.isEditable()).isFalse();
         assertThat(viewer.isEditMode()).isFalse();
-        assertThat(viewer.handleKeyEvent(KeyEvent.ofChar('e', KeyModifiers.NONE))).isFalse();
+        assertThat(viewer.handleKeyEvent(KeyEvent.ofKey(KeyCode.F4, KeyModifiers.NONE))).isFalse();
     }
 
     @Test
@@ -254,7 +254,7 @@ class SourceViewerEditTest {
         try {
             viewer.loadFile(readOnly);
             assertThat(viewer.isEditable()).isFalse();
-            assertThat(viewer.handleKeyEvent(KeyEvent.ofChar('e', KeyModifiers.NONE))).isFalse();
+            assertThat(viewer.handleKeyEvent(KeyEvent.ofKey(KeyCode.F4, KeyModifiers.NONE))).isFalse();
             assertThat(viewer.isEditMode()).isFalse();
         } finally {
             readOnly.toFile().setWritable(true);
@@ -386,7 +386,7 @@ class SourceViewerEditTest {
         SourceTab tab = new SourceTab(ctx);
         tab.onTabSelected();
         assertThat(tab.handleKeyEvent(KeyEvent.ofKey(KeyCode.ENTER, KeyModifiers.NONE))).isTrue();
-        assertThat(tab.handleKeyEvent(KeyEvent.ofChar('e', KeyModifiers.NONE))).isTrue();
+        assertThat(tab.handleKeyEvent(KeyEvent.ofKey(KeyCode.F4, KeyModifiers.NONE))).isTrue();
         assertThat(tab.isSourceViewerEditMode()).isTrue();
 
         Rect area = new Rect(0, 0, 80, 24);

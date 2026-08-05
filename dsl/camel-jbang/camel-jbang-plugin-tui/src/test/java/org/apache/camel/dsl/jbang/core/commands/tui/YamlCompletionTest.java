@@ -21,16 +21,12 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Comparator;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
 import org.apache.camel.catalog.CamelCatalog;
 import org.apache.camel.catalog.DefaultCamelCatalog;
 import org.apache.camel.tooling.model.ComponentModel;
-import org.apache.camel.tooling.model.DataFormatModel;
-import org.apache.camel.tooling.model.EipModel;
-import org.apache.camel.tooling.model.LanguageModel;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
@@ -787,105 +783,6 @@ class YamlCompletionTest {
         assertThat(ctx.eipName()).isEqualTo("log");
     }
 
-    // --- EIP option completion ---
-
-    @Test
-    void eipCompletionIncludesOnlyAttributes() {
-        List<AutocompletePopup.CompletionItem> items = provideEipKeyCompletions("split");
-
-        // streaming is an attribute — should be included
-        assertThat(items).anyMatch(i -> i.key().equals("streaming"));
-        assertThat(items).anyMatch(i -> i.key().equals("parallelProcessing"));
-    }
-
-    @Test
-    void eipCompletionExcludesBoilerplate() {
-        List<AutocompletePopup.CompletionItem> items = provideEipKeyCompletions("split");
-
-        assertThat(items).noneMatch(i -> i.key().equals("id"));
-        assertThat(items).noneMatch(i -> i.key().equals("note"));
-        assertThat(items).noneMatch(i -> i.key().equals("description"));
-        assertThat(items).noneMatch(i -> i.key().equals("disabled"));
-    }
-
-    @Test
-    void eipCompletionIncludesExpressionAndElementKinds() {
-        List<AutocompletePopup.CompletionItem> items = provideEipKeyCompletions("split");
-
-        // canonical format: expression and element kinds are included as keys
-        assertThat(items).anyMatch(i -> i.key().equals("expression"));
-    }
-
-    @Test
-    void eipCompletionExcludesExistingOptions() {
-        Set<String> existing = Set.of("streaming", "delimiter");
-        List<AutocompletePopup.CompletionItem> items = provideEipKeyCompletions("split", existing);
-
-        assertThat(items).noneMatch(i -> i.key().equals("streaming"));
-        assertThat(items).noneMatch(i -> i.key().equals("delimiter"));
-        assertThat(items).isNotEmpty();
-    }
-
-    @Test
-    void eipCompletionForLogEip() {
-        List<AutocompletePopup.CompletionItem> items = provideEipKeyCompletions("log");
-
-        assertThat(items).anyMatch(i -> i.key().equals("message"));
-        assertThat(items).anyMatch(i -> i.key().equals("loggingLevel"));
-        assertThat(items).anyMatch(i -> i.key().equals("logName"));
-    }
-
-    @Test
-    void eipValueCompletionForEnum() {
-        List<AutocompletePopup.CompletionItem> items = provideEipValueCompletions("log", "loggingLevel");
-
-        assertThat(items).anyMatch(i -> i.key().equals("INFO"));
-        assertThat(items).anyMatch(i -> i.key().equals("ERROR"));
-        assertThat(items).anyMatch(i -> i.key().equals("DEBUG"));
-    }
-
-    @Test
-    void eipValueCompletionForBoolean() {
-        List<AutocompletePopup.CompletionItem> items = provideEipValueCompletions("split", "streaming");
-
-        assertThat(items).anyMatch(i -> i.key().equals("true"));
-        assertThat(items).anyMatch(i -> i.key().equals("false"));
-    }
-
-    @Test
-    void eipValueCompletionFiltersIncompatiblePlaceholders() {
-        List<AutocompletePopup.CompletionItem> placeholders = List.of(
-                new AutocompletePopup.CompletionItem(
-                        "{{greeting.message}}", "Hello World", "placeholder",
-                        null, false, null, "application.properties"),
-                new AutocompletePopup.CompletionItem(
-                        "{{log.level}}", "WARN", "placeholder",
-                        null, false, null, "application.properties"));
-
-        // enum option: only placeholders whose value matches a valid enum choice should be included
-        List<AutocompletePopup.CompletionItem> items = provideEipValueCompletions("log", "loggingLevel", placeholders);
-
-        assertThat(items).anyMatch(i -> i.key().equals("INFO"));
-        assertThat(items).anyMatch(i -> i.key().equals("ERROR"));
-        // {{log.level}} has value "WARN" which IS a valid enum value
-        assertThat(items).anyMatch(i -> i.key().equals("{{log.level}}"));
-        // {{greeting.message}} has value "Hello World" which is NOT a valid enum value
-        assertThat(items).noneMatch(i -> i.key().equals("{{greeting.message}}"));
-    }
-
-    @Test
-    void eipValueCompletionAllowsPlaceholdersForStringOptions() {
-        List<AutocompletePopup.CompletionItem> placeholders = List.of(
-                new AutocompletePopup.CompletionItem(
-                        "{{greeting.message}}", "Hello World", "placeholder",
-                        null, false, null, "application.properties"));
-
-        // string option (logName): no type filter, all placeholders should be included
-        List<AutocompletePopup.CompletionItem> items = provideEipValueCompletions("log", "logName", placeholders);
-
-        assertThat(items).anyMatch(i -> i.key().equals("{{greeting.message}}"));
-    }
-
     // --- collectExistingSiblingKeys ---
 
     @Test
@@ -1049,173 +946,30 @@ class YamlCompletionTest {
         assertThat(viewer.findScopeLineRow(3)).isEqualTo(3);
     }
 
-    // --- Canonical expression completion (expression: → language → language options) ---
+    // --- findParentYamlKey context detection (tree-driven) ---
 
     @Test
-    void eipCompletionIncludesExpressionKey() {
-        List<AutocompletePopup.CompletionItem> items = provideEipKeyCompletions("split");
+    void findParentYamlKeyInsideSplit() throws IOException {
+        String yaml = String.join("\n",
+                "- from:",
+                "    uri: timer:tick",
+                "    steps:",
+                "      - split:",
+                "          ",
+                "");
 
-        // canonical format: expression is a key, not expanded into language names
-        assertThat(items).anyMatch(i -> i.key().equals("expression"));
-        // language names should NOT appear at EIP level
-        assertThat(items).noneMatch(i -> i.key().equals("simple"));
-        assertThat(items).noneMatch(i -> i.key().equals("jsonpath"));
+        Path file = tempDir.resolve("route.camel.yaml");
+        Files.writeString(file, yaml);
+
+        SourceViewer viewer = new SourceViewer();
+        viewer.loadFile(file);
+        viewer.enterEditMode();
+
+        assertThat(viewer.findParentYamlKey(4)).isEqualTo("split");
     }
 
     @Test
-    void eipCompletionForSetHeaderIncludesExpressionKey() {
-        List<AutocompletePopup.CompletionItem> items = provideEipKeyCompletions("setHeader");
-
-        assertThat(items).anyMatch(i -> i.key().equals("expression"));
-        assertThat(items).anyMatch(i -> i.key().equals("name"));
-        // no inline languages at EIP level
-        assertThat(items).noneMatch(i -> i.key().equals("simple"));
-    }
-
-    @Test
-    void eipCompletionExcludesExpressionWhenAlreadySpecified() {
-        Set<String> existing = Set.of("expression");
-        List<AutocompletePopup.CompletionItem> items = provideEipKeyCompletions("split", existing);
-
-        assertThat(items).noneMatch(i -> i.key().equals("expression"));
-        assertThat(items).anyMatch(i -> i.key().equals("streaming"));
-    }
-
-    @Test
-    void expressionContextOffersLanguageNames() {
-        List<AutocompletePopup.CompletionItem> items = provideExpressionLanguageCompletions("split");
-
-        assertThat(items).anyMatch(i -> i.key().equals("simple"));
-        assertThat(items).anyMatch(i -> i.key().equals("jsonpath"));
-        assertThat(items).anyMatch(i -> i.key().equals("xpath"));
-        assertThat(items).anyMatch(i -> i.key().equals("constant"));
-        var simple = items.stream().filter(i -> i.key().equals("simple")).findFirst();
-        assertThat(simple).isPresent();
-        assertThat(simple.get().type()).isEqualTo("language");
-    }
-
-    @Test
-    void expressionContextExcludesAlreadySpecified() {
-        Set<String> existing = Set.of("simple");
-        List<AutocompletePopup.CompletionItem> items = provideExpressionLanguageCompletions("split", existing);
-
-        assertThat(items).isEmpty();
-    }
-
-    @Test
-    void languageOptionCompletionForSimple() {
-        List<AutocompletePopup.CompletionItem> items = provideLanguageOptionCompletions("simple");
-
-        assertThat(items).anyMatch(i -> i.key().equals("expression"));
-        assertThat(items).anyMatch(i -> i.key().equals("resultType"));
-    }
-
-    @Test
-    void languageOptionCompletionForJsonpath() {
-        List<AutocompletePopup.CompletionItem> items = provideLanguageOptionCompletions("jsonpath");
-
-        assertThat(items).anyMatch(i -> i.key().equals("expression"));
-        assertThat(items).anyMatch(i -> i.key().equals("resultType"));
-    }
-
-    @Test
-    void languageOptionCompletionExcludesExisting() {
-        Set<String> existing = Set.of("expression");
-        List<AutocompletePopup.CompletionItem> items = provideLanguageOptionCompletions("simple", existing);
-
-        assertThat(items).noneMatch(i -> i.key().equals("expression"));
-        assertThat(items).anyMatch(i -> i.key().equals("resultType"));
-    }
-
-    @Test
-    void languageOptionCompletionExcludesBoilerplate() {
-        List<AutocompletePopup.CompletionItem> items = provideLanguageOptionCompletions("simple");
-
-        assertThat(items).noneMatch(i -> i.key().equals("id"));
-        assertThat(items).noneMatch(i -> i.key().equals("description"));
-    }
-
-    @Test
-    void eipCompletionForLogDoesNotIncludeExpression() {
-        List<AutocompletePopup.CompletionItem> items = provideEipKeyCompletions("log");
-
-        // log has no expression option
-        assertThat(items).noneMatch(i -> i.key().equals("expression"));
-    }
-
-    // --- Data format name completion ---
-
-    @Test
-    void dataFormatNameCompletionForMarshal() {
-        List<AutocompletePopup.CompletionItem> items = provideDataFormatNameCompletions("marshal");
-
-        assertThat(items).isNotEmpty();
-        assertThat(items).anyMatch(i -> i.key().equals("json"));
-        assertThat(items).anyMatch(i -> i.key().equals("csv"));
-        assertThat(items).anyMatch(i -> i.key().equals("avro"));
-        // type should be "dataformat"
-        var json = items.stream().filter(i -> i.key().equals("json")).findFirst();
-        assertThat(json).isPresent();
-        assertThat(json.get().type()).isEqualTo("dataformat");
-    }
-
-    @Test
-    void dataFormatNameCompletionForUnmarshal() {
-        List<AutocompletePopup.CompletionItem> items = provideDataFormatNameCompletions("unmarshal");
-
-        assertThat(items).isNotEmpty();
-        assertThat(items).anyMatch(i -> i.key().equals("json"));
-    }
-
-    @Test
-    void dataFormatNameCompletionExcludesAlreadySpecified() {
-        Set<String> existing = Set.of("json");
-        List<AutocompletePopup.CompletionItem> items = provideDataFormatNameCompletions("marshal", existing);
-
-        // once a data format is specified, no more should appear
-        assertThat(items).isEmpty();
-    }
-
-    // --- Data format option completion ---
-
-    @Test
-    void dataFormatOptionCompletionForJackson() {
-        List<AutocompletePopup.CompletionItem> items = provideDataFormatOptionCompletions("jackson");
-
-        assertThat(items).isNotEmpty();
-        assertThat(items).anyMatch(i -> i.key().equals("prettyPrint"));
-        assertThat(items).anyMatch(i -> i.key().equals("unmarshalType"));
-    }
-
-    @Test
-    void dataFormatOptionCompletionExcludesBoilerplate() {
-        List<AutocompletePopup.CompletionItem> items = provideDataFormatOptionCompletions("jackson");
-
-        assertThat(items).noneMatch(i -> i.key().equals("id"));
-        assertThat(items).noneMatch(i -> i.key().equals("description"));
-    }
-
-    @Test
-    void dataFormatOptionCompletionExcludesExisting() {
-        Set<String> existing = Set.of("prettyPrint");
-        List<AutocompletePopup.CompletionItem> items = provideDataFormatOptionCompletions("jackson", existing);
-
-        assertThat(items).noneMatch(i -> i.key().equals("prettyPrint"));
-        assertThat(items).anyMatch(i -> i.key().equals("unmarshalType"));
-    }
-
-    @Test
-    void dataFormatOptionCompletionForCsv() {
-        List<AutocompletePopup.CompletionItem> items = provideDataFormatOptionCompletions("csv");
-
-        assertThat(items).isNotEmpty();
-        assertThat(items).anyMatch(i -> i.key().equals("delimiter"));
-    }
-
-    // --- Expression context detection ---
-
-    @Test
-    void findExpressionContextInsideExpressionBlock() throws IOException {
+    void findParentYamlKeyInsideExpression() throws IOException {
         String yaml = String.join("\n",
                 "- from:",
                 "    uri: timer:tick",
@@ -1232,37 +986,11 @@ class YamlCompletionTest {
         viewer.loadFile(file);
         viewer.enterEditMode();
 
-        SourceViewer.YamlExpressionContext ctx = viewer.findExpressionContext(5);
-        assertThat(ctx).isNotNull();
-        assertThat(ctx.eipName()).isEqualTo("split");
+        assertThat(viewer.findParentYamlKey(5)).isEqualTo("expression");
     }
 
     @Test
-    void findExpressionContextReturnsNullOutsideExpression() throws IOException {
-        String yaml = String.join("\n",
-                "- from:",
-                "    uri: timer:tick",
-                "    steps:",
-                "      - split:",
-                "          streaming: true",
-                "          ",
-                "");
-
-        Path file = tempDir.resolve("route.camel.yaml");
-        Files.writeString(file, yaml);
-
-        SourceViewer viewer = new SourceViewer();
-        viewer.loadFile(file);
-        viewer.enterEditMode();
-
-        SourceViewer.YamlExpressionContext ctx = viewer.findExpressionContext(5);
-        assertThat(ctx).isNull();
-    }
-
-    // --- Language option context detection ---
-
-    @Test
-    void findLanguageOptionContextInsideSimple() throws IOException {
+    void findParentYamlKeyInsideSimpleUnderExpression() throws IOException {
         String yaml = String.join("\n",
                 "- from:",
                 "    uri: timer:tick",
@@ -1280,20 +1008,16 @@ class YamlCompletionTest {
         viewer.loadFile(file);
         viewer.enterEditMode();
 
-        SourceViewer.YamlLanguageOptionContext ctx = viewer.findLanguageOptionContext(6);
-        assertThat(ctx).isNotNull();
-        assertThat(ctx.languageName()).isEqualTo("simple");
+        assertThat(viewer.findParentYamlKey(6)).isEqualTo("simple");
     }
 
     @Test
-    void findLanguageOptionContextReturnsNullWhenParentIsNotExpression() throws IOException {
+    void findParentYamlKeyInsideFrom() throws IOException {
         String yaml = String.join("\n",
-                "- from:",
-                "    uri: timer:tick",
-                "    steps:",
-                "      - split:",
-                "          streaming:",
-                "            ",
+                "- route:",
+                "    from:",
+                "      uri: timer",
+                "      ",
                 "");
 
         Path file = tempDir.resolve("route.camel.yaml");
@@ -1303,20 +1027,16 @@ class YamlCompletionTest {
         viewer.loadFile(file);
         viewer.enterEditMode();
 
-        SourceViewer.YamlLanguageOptionContext ctx = viewer.findLanguageOptionContext(5);
-        assertThat(ctx).isNull();
+        assertThat(viewer.findParentYamlKey(3)).isEqualTo("from");
     }
 
-    // --- Marshal/unmarshal context detection ---
-
     @Test
-    void findMarshalContextInsideMarshal() throws IOException {
+    void findParentYamlKeyInsideSteps() throws IOException {
         String yaml = String.join("\n",
                 "- from:",
                 "    uri: timer:tick",
                 "    steps:",
-                "      - marshal:",
-                "          ",
+                "      ",
                 "");
 
         Path file = tempDir.resolve("route.camel.yaml");
@@ -1326,134 +1046,14 @@ class YamlCompletionTest {
         viewer.loadFile(file);
         viewer.enterEditMode();
 
-        SourceViewer.YamlDataFormatContext ctx = viewer.findMarshalContext(4);
-        assertThat(ctx).isNotNull();
-        assertThat(ctx.eipName()).isEqualTo("marshal");
+        assertThat(viewer.findParentYamlKey(3)).isEqualTo("steps");
     }
 
     @Test
-    void findMarshalContextInsideUnmarshal() throws IOException {
-        String yaml = String.join("\n",
-                "- from:",
-                "    uri: timer:tick",
-                "    steps:",
-                "      - unmarshal:",
-                "          ",
-                "");
-
-        Path file = tempDir.resolve("route.camel.yaml");
-        Files.writeString(file, yaml);
-
-        SourceViewer viewer = new SourceViewer();
-        viewer.loadFile(file);
-        viewer.enterEditMode();
-
-        SourceViewer.YamlDataFormatContext ctx = viewer.findMarshalContext(4);
-        assertThat(ctx).isNotNull();
-        assertThat(ctx.eipName()).isEqualTo("unmarshal");
-    }
-
-    @Test
-    void findMarshalContextReturnsNullForSplit() throws IOException {
-        String yaml = String.join("\n",
-                "- from:",
-                "    uri: timer:tick",
-                "    steps:",
-                "      - split:",
-                "          ",
-                "");
-
-        Path file = tempDir.resolve("route.camel.yaml");
-        Files.writeString(file, yaml);
-
-        SourceViewer viewer = new SourceViewer();
-        viewer.loadFile(file);
-        viewer.enterEditMode();
-
-        SourceViewer.YamlDataFormatContext ctx = viewer.findMarshalContext(4);
-        assertThat(ctx).isNull();
-    }
-
-    // --- Data format option context detection ---
-
-    @Test
-    void findDataFormatOptionContextInsideCsv() throws IOException {
-        String yaml = String.join("\n",
-                "- from:",
-                "    uri: timer:tick",
-                "    steps:",
-                "      - marshal:",
-                "          csv:",
-                "            ",
-                "");
-
-        Path file = tempDir.resolve("route.camel.yaml");
-        Files.writeString(file, yaml);
-
-        SourceViewer viewer = new SourceViewer();
-        viewer.loadFile(file);
-        viewer.enterEditMode();
-
-        SourceViewer.YamlDataFormatOptionContext ctx = viewer.findDataFormatOptionContext(5);
-        assertThat(ctx).isNotNull();
-        assertThat(ctx.dataFormatName()).isEqualTo("csv");
-    }
-
-    @Test
-    void findDataFormatOptionContextInsideUnmarshal() throws IOException {
-        String yaml = String.join("\n",
-                "- from:",
-                "    uri: timer:tick",
-                "    steps:",
-                "      - unmarshal:",
-                "          csv:",
-                "            delimiter: \";\"",
-                "            ",
-                "");
-
-        Path file = tempDir.resolve("route.camel.yaml");
-        Files.writeString(file, yaml);
-
-        SourceViewer viewer = new SourceViewer();
-        viewer.loadFile(file);
-        viewer.enterEditMode();
-
-        SourceViewer.YamlDataFormatOptionContext ctx = viewer.findDataFormatOptionContext(6);
-        assertThat(ctx).isNotNull();
-        assertThat(ctx.dataFormatName()).isEqualTo("csv");
-    }
-
-    @Test
-    void findDataFormatOptionContextReturnsNullInsideSplit() throws IOException {
-        String yaml = String.join("\n",
-                "- from:",
-                "    uri: timer:tick",
-                "    steps:",
-                "      - split:",
-                "          simple:",
-                "            ",
-                "");
-
-        Path file = tempDir.resolve("route.camel.yaml");
-        Files.writeString(file, yaml);
-
-        SourceViewer viewer = new SourceViewer();
-        viewer.loadFile(file);
-        viewer.enterEditMode();
-
-        SourceViewer.YamlDataFormatOptionContext ctx = viewer.findDataFormatOptionContext(5);
-        assertThat(ctx).isNull();
-    }
-
-    // --- Route-level option completion ---
-
-    @Test
-    void findEnclosingEipDetectsRoute() throws IOException {
+    void findParentYamlKeyInsideRoute() throws IOException {
         String yaml = String.join("\n",
                 "- route:",
                 "    ",
-                "    from:",
-                "      uri: timer:tick",
                 "");
 
         Path file = tempDir.resolve("route.camel.yaml");
@@ -1463,27 +1063,84 @@ class YamlCompletionTest {
         viewer.loadFile(file);
         viewer.enterEditMode();
 
-        SourceViewer.YamlEipContext ctx = viewer.findEnclosingEip(1);
-        assertThat(ctx).isNotNull();
-        assertThat(ctx.eipName()).isEqualTo("route");
+        assertThat(viewer.findParentYamlKey(1)).isEqualTo("route");
     }
 
     @Test
-    void routeEipCompletionIncludesRouteOptions() {
-        List<AutocompletePopup.CompletionItem> items = provideEipKeyCompletions("route");
+    void findParentYamlKeyInsideMarshal() throws IOException {
+        String yaml = String.join("\n",
+                "- from:",
+                "    uri: timer:tick",
+                "    steps:",
+                "      - marshal:",
+                "          ",
+                "");
 
-        assertThat(items).anyMatch(i -> i.key().equals("autoStartup"));
-        assertThat(items).anyMatch(i -> i.key().equals("streamCache"));
-        assertThat(items).anyMatch(i -> i.key().equals("logMask"));
-        assertThat(items).anyMatch(i -> i.key().equals("messageHistory"));
+        Path file = tempDir.resolve("route.camel.yaml");
+        Files.writeString(file, yaml);
+
+        SourceViewer viewer = new SourceViewer();
+        viewer.loadFile(file);
+        viewer.enterEditMode();
+
+        assertThat(viewer.findParentYamlKey(4)).isEqualTo("marshal");
     }
 
     @Test
-    void routeEipCompletionExcludesStructural() {
-        List<AutocompletePopup.CompletionItem> items = provideEipKeyCompletions("route");
+    void findParentYamlKeyInsideCsvUnderMarshal() throws IOException {
+        String yaml = String.join("\n",
+                "- from:",
+                "    uri: timer:tick",
+                "    steps:",
+                "      - marshal:",
+                "          csv:",
+                "            ",
+                "");
 
-        // from and steps are not attribute kind, should not appear
-        assertThat(items).noneMatch(i -> i.key().equals("from"));
+        Path file = tempDir.resolve("route.camel.yaml");
+        Files.writeString(file, yaml);
+
+        SourceViewer viewer = new SourceViewer();
+        viewer.loadFile(file);
+        viewer.enterEditMode();
+
+        assertThat(viewer.findParentYamlKey(5)).isEqualTo("csv");
+    }
+
+    @Test
+    void findParentYamlKeyAtRootLevel() throws IOException {
+        String yaml = String.join("\n",
+                "",
+                "");
+
+        Path file = tempDir.resolve("route.camel.yaml");
+        Files.writeString(file, yaml);
+
+        SourceViewer viewer = new SourceViewer();
+        viewer.loadFile(file);
+        viewer.enterEditMode();
+
+        assertThat(viewer.findParentYamlKey(0)).isEqualTo("root");
+    }
+
+    @Test
+    void findParentYamlKeyConvertsKebabCase() throws IOException {
+        String yaml = String.join("\n",
+                "- from:",
+                "    uri: timer:tick",
+                "    steps:",
+                "      - circuit-breaker:",
+                "          ",
+                "");
+
+        Path file = tempDir.resolve("route.camel.yaml");
+        Files.writeString(file, yaml);
+
+        SourceViewer viewer = new SourceViewer();
+        viewer.loadFile(file);
+        viewer.enterEditMode();
+
+        assertThat(viewer.findParentYamlKey(4)).isEqualTo("circuitBreaker");
     }
 
     // --- Helpers that replicate SourceTab logic for testing ---
@@ -1593,243 +1250,6 @@ class YamlCompletionTest {
                         false, null, opt.getGroup()));
             }
         }
-        return items;
-    }
-
-    private static final Set<String> EIP_BOILERPLATE = Set.of("id", "note", "description", "disabled",
-            "input", "outputs", "steps");
-
-    private List<AutocompletePopup.CompletionItem> provideEipKeyCompletions(String eipName) {
-        return provideEipKeyCompletions(eipName, Set.of());
-    }
-
-    private List<AutocompletePopup.CompletionItem> provideEipKeyCompletions(String eipName, Set<String> existingKeys) {
-        EipModel model = catalog.eipModel(eipName);
-        if (model == null) {
-            return List.of();
-        }
-        List<AutocompletePopup.CompletionItem> items = new ArrayList<>();
-        for (EipModel.EipOptionModel opt : model.getOptions()) {
-            if ("expression".equals(opt.getKind()) || "element".equals(opt.getKind())) {
-                if (EIP_BOILERPLATE.contains(opt.getName())) {
-                    continue;
-                }
-                if (existingKeys.contains(opt.getName())) {
-                    continue;
-                }
-                items.add(new AutocompletePopup.CompletionItem(
-                        opt.getName(), opt.getDescription(), opt.getType(),
-                        opt.getDefaultValue(), opt.isDeprecated(), opt.getDeprecationNote(),
-                        opt.getGroup(), opt.isRequired()));
-                continue;
-            }
-            if (!"attribute".equals(opt.getKind())) {
-                continue;
-            }
-            if (EIP_BOILERPLATE.contains(opt.getName())) {
-                continue;
-            }
-            if (existingKeys.contains(opt.getName()) && !opt.isMultiValue()) {
-                continue;
-            }
-            items.add(new AutocompletePopup.CompletionItem(
-                    opt.getName(), opt.getDescription(), opt.getType(),
-                    opt.getDefaultValue(), opt.isDeprecated(), opt.getDeprecationNote(),
-                    opt.getGroup(), opt.isRequired()));
-        }
-        items.sort(Comparator.comparing(AutocompletePopup.CompletionItem::deprecated)
-                .thenComparing((a, b) -> Boolean.compare(b.required(), a.required()))
-                .thenComparing(AutocompletePopup.CompletionItem::key, String.CASE_INSENSITIVE_ORDER));
-        return items;
-    }
-
-    private List<AutocompletePopup.CompletionItem> provideExpressionLanguageCompletions(String eipName) {
-        return provideExpressionLanguageCompletions(eipName, Set.of());
-    }
-
-    private List<AutocompletePopup.CompletionItem> provideExpressionLanguageCompletions(
-            String eipName, Set<String> existingKeys) {
-        EipModel model = catalog.eipModel(eipName);
-        if (model == null) {
-            return List.of();
-        }
-        List<AutocompletePopup.CompletionItem> items = new ArrayList<>();
-        for (EipModel.EipOptionModel opt : model.getOptions()) {
-            if (!"expression".equals(opt.getKind())) {
-                continue;
-            }
-            List<String> oneOfs = opt.getOneOfs();
-            if (oneOfs == null || oneOfs.isEmpty()) {
-                continue;
-            }
-            if (oneOfs.stream().anyMatch(existingKeys::contains)) {
-                continue;
-            }
-            for (String langName : oneOfs) {
-                LanguageModel langModel = catalog.languageModel(langName);
-                String desc = langModel != null
-                        ? langModel.getTitle() + " - " + langModel.getDescription()
-                        : langName;
-                String label = langModel != null ? langModel.getLabel() : "language";
-                boolean dep = langModel != null && langModel.isDeprecated();
-                String depNote = langModel != null ? langModel.getDeprecationNote() : null;
-                items.add(new AutocompletePopup.CompletionItem(
-                        langName, desc, "language", null, dep, depNote, label));
-            }
-        }
-        items.sort(Comparator.comparing(AutocompletePopup.CompletionItem::deprecated)
-                .thenComparing(AutocompletePopup.CompletionItem::key, String.CASE_INSENSITIVE_ORDER));
-        return items;
-    }
-
-    private List<AutocompletePopup.CompletionItem> provideLanguageOptionCompletions(String langName) {
-        return provideLanguageOptionCompletions(langName, Set.of());
-    }
-
-    private List<AutocompletePopup.CompletionItem> provideLanguageOptionCompletions(
-            String langName, Set<String> existingKeys) {
-        LanguageModel model = catalog.languageModel(langName);
-        if (model == null) {
-            return List.of();
-        }
-        List<AutocompletePopup.CompletionItem> items = new ArrayList<>();
-        for (LanguageModel.LanguageOptionModel opt : model.getOptions()) {
-            if (!"attribute".equals(opt.getKind()) && !"value".equals(opt.getKind())) {
-                continue;
-            }
-            if (EIP_BOILERPLATE.contains(opt.getName())) {
-                continue;
-            }
-            if (existingKeys.contains(opt.getName()) && !opt.isMultiValue()) {
-                continue;
-            }
-            items.add(new AutocompletePopup.CompletionItem(
-                    opt.getName(), opt.getDescription(), opt.getType(),
-                    opt.getDefaultValue(), opt.isDeprecated(), opt.getDeprecationNote(),
-                    opt.getGroup(), opt.isRequired()));
-        }
-        items.sort(Comparator.comparing(AutocompletePopup.CompletionItem::deprecated)
-                .thenComparing((a, b) -> Boolean.compare(b.required(), a.required()))
-                .thenComparing(AutocompletePopup.CompletionItem::key, String.CASE_INSENSITIVE_ORDER));
-        return items;
-    }
-
-    private List<AutocompletePopup.CompletionItem> provideEipValueCompletions(String eipName, String optionName) {
-        return provideEipValueCompletions(eipName, optionName, List.of());
-    }
-
-    private List<AutocompletePopup.CompletionItem> provideEipValueCompletions(
-            String eipName, String optionName, List<AutocompletePopup.CompletionItem> placeholders) {
-        EipModel model = catalog.eipModel(eipName);
-        if (model == null) {
-            return List.of();
-        }
-        EipModel.EipOptionModel opt = null;
-        for (EipModel.EipOptionModel o : model.getOptions()) {
-            if (o.getName().equals(optionName)) {
-                opt = o;
-                break;
-            }
-        }
-        List<AutocompletePopup.CompletionItem> items = new ArrayList<>();
-        java.util.function.Predicate<String> valueFilter = null;
-        if (opt != null) {
-            List<String> enums = opt.getEnums();
-            if (enums != null && !enums.isEmpty()) {
-                Set<String> validValues = new HashSet<>();
-                for (String value : enums) {
-                    validValues.add(value.toLowerCase());
-                    boolean isDefault = value.equals(String.valueOf(opt.getDefaultValue()));
-                    items.add(new AutocompletePopup.CompletionItem(
-                            value, opt.getDescription(), opt.getType(),
-                            isDefault ? value : opt.getDefaultValue(),
-                            false, null, opt.getGroup()));
-                }
-                valueFilter = v -> validValues.contains(v.toLowerCase());
-            } else if ("boolean".equalsIgnoreCase(opt.getType())
-                    || "java.lang.Boolean".equals(opt.getJavaType())) {
-                valueFilter = v -> "true".equalsIgnoreCase(v) || "false".equalsIgnoreCase(v);
-                items.add(new AutocompletePopup.CompletionItem(
-                        "true", opt.getDescription(), "boolean", opt.getDefaultValue(),
-                        false, null, opt.getGroup()));
-                items.add(new AutocompletePopup.CompletionItem(
-                        "false", opt.getDescription(), "boolean", opt.getDefaultValue(),
-                        false, null, opt.getGroup()));
-            }
-        }
-        for (AutocompletePopup.CompletionItem ph : placeholders) {
-            if (valueFilter == null || (ph.description() != null && valueFilter.test(ph.description()))) {
-                items.add(ph);
-            }
-        }
-        return items;
-    }
-
-    private List<AutocompletePopup.CompletionItem> provideDataFormatNameCompletions(String eipName) {
-        return provideDataFormatNameCompletions(eipName, Set.of());
-    }
-
-    private List<AutocompletePopup.CompletionItem> provideDataFormatNameCompletions(
-            String eipName, Set<String> existingKeys) {
-        EipModel model = catalog.eipModel(eipName);
-        if (model == null) {
-            return List.of();
-        }
-        List<AutocompletePopup.CompletionItem> items = new ArrayList<>();
-        for (EipModel.EipOptionModel opt : model.getOptions()) {
-            List<String> oneOfs = opt.getOneOfs();
-            if (oneOfs == null || oneOfs.isEmpty()) {
-                continue;
-            }
-            if (oneOfs.stream().anyMatch(existingKeys::contains)) {
-                continue;
-            }
-            for (String dfName : oneOfs) {
-                DataFormatModel dfModel = catalog.dataFormatModel(dfName);
-                String desc = dfModel != null
-                        ? dfModel.getTitle() + " - " + dfModel.getDescription()
-                        : dfName;
-                String label = dfModel != null ? dfModel.getLabel() : "dataformat";
-                boolean dep = dfModel != null && dfModel.isDeprecated();
-                String depNote = dfModel != null ? dfModel.getDeprecationNote() : null;
-                items.add(new AutocompletePopup.CompletionItem(
-                        dfName, desc, "dataformat", null, dep, depNote, label));
-            }
-        }
-        items.sort(Comparator.comparing(AutocompletePopup.CompletionItem::deprecated)
-                .thenComparing(AutocompletePopup.CompletionItem::key, String.CASE_INSENSITIVE_ORDER));
-        return items;
-    }
-
-    private List<AutocompletePopup.CompletionItem> provideDataFormatOptionCompletions(String dfName) {
-        return provideDataFormatOptionCompletions(dfName, Set.of());
-    }
-
-    private List<AutocompletePopup.CompletionItem> provideDataFormatOptionCompletions(
-            String dfName, Set<String> existingKeys) {
-        DataFormatModel model = catalog.dataFormatModel(dfName);
-        if (model == null) {
-            return List.of();
-        }
-        List<AutocompletePopup.CompletionItem> items = new ArrayList<>();
-        for (DataFormatModel.DataFormatOptionModel opt : model.getOptions()) {
-            if (!"attribute".equals(opt.getKind())) {
-                continue;
-            }
-            if (EIP_BOILERPLATE.contains(opt.getName())) {
-                continue;
-            }
-            if (existingKeys.contains(opt.getName()) && !opt.isMultiValue()) {
-                continue;
-            }
-            items.add(new AutocompletePopup.CompletionItem(
-                    opt.getName(), opt.getDescription(), opt.getType(),
-                    opt.getDefaultValue(), opt.isDeprecated(), opt.getDeprecationNote(),
-                    opt.getGroup(), opt.isRequired()));
-        }
-        items.sort(Comparator.comparing(AutocompletePopup.CompletionItem::deprecated)
-                .thenComparing(ci -> !ci.required())
-                .thenComparing(AutocompletePopup.CompletionItem::key, String.CASE_INSENSITIVE_ORDER));
         return items;
     }
 
