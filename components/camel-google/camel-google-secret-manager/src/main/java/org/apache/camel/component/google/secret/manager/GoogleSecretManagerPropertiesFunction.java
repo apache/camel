@@ -55,8 +55,8 @@ import org.apache.camel.vault.GcpVaultConfiguration;
  * Otherwise it is possible to specify the credentials as properties:
  *
  * <ul>
- * <li><tt>camel.vault.aws.serviceAccountKey</tt></li>
- * <li><tt>camel.vault.aws.projectId</tt></li>
+ * <li><tt>camel.vault.gcp.serviceAccountKey</tt></li>
+ * <li><tt>camel.vault.gcp.projectId</tt></li>
  * </ul>
  * <p/>
  *
@@ -78,6 +78,8 @@ public class GoogleSecretManagerPropertiesFunction extends ServiceSupport implem
     private static final String CAMEL_VAULT_GCP_SERVICE_ACCOUNT_KEY = "CAMEL_VAULT_GCP_SERVICE_ACCOUNT_KEY";
     private static final String CAMEL_VAULT_GCP_PROJECT_ID = "CAMEL_VAULT_GCP_PROJECT_ID";
     private static final String CAMEL_VAULT_GCP_USE_DEFAULT_INSTANCE = "CAMEL_VAULT_GCP_USE_DEFAULT_INSTANCE";
+
+    private static final ObjectMapper MAPPER = new ObjectMapper();
 
     boolean useDefaultInstance;
 
@@ -207,8 +209,7 @@ public class GoogleSecretManagerPropertiesFunction extends ServiceSupport implem
                 returnValue = response.getPayload().getData().toStringUtf8();
             }
             if (ObjectHelper.isNotEmpty(subkey) && ObjectHelper.isNotEmpty(returnValue)) {
-                ObjectMapper mapper = new ObjectMapper();
-                JsonNode actualObj = mapper.readTree(returnValue);
+                JsonNode actualObj = MAPPER.readTree(returnValue);
                 JsonNode field = actualObj.get(subkey);
                 if (ObjectHelper.isNotEmpty(field)) {
                     returnValue = field.textValue();
