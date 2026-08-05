@@ -557,6 +557,30 @@ public interface LangChain4jAgentEndpointBuilderFactory {
             return "CamelLangChain4jAgentTotalTokenCount";
         }
         /**
+         * The request model name.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code LangChain4jAgentRequestModel}.
+         */
+        public String langChain4jAgentRequestModel() {
+            return "CamelLangChain4jAgentRequestModel";
+        }
+        /**
+         * The response model name.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code LangChain4jAgentResponseModel}.
+         */
+        public String langChain4jAgentResponseModel() {
+            return "CamelLangChain4jAgentResponseModel";
+        }
+        /**
          * RAG sources retrieved during agent invocation.
          * 
          * The option is a: {@code

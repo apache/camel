@@ -16,18 +16,11 @@
  */
 package org.apache.camel.component.ai.observability;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.lang.reflect.Constructor;
 import java.util.Optional;
-import java.util.concurrent.TimeUnit;
 
-import io.micrometer.core.instrument.Counter;
-import io.micrometer.core.instrument.MeterRegistry;
-import io.micrometer.core.instrument.Tag;
-import io.micrometer.core.instrument.Timer;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
-import org.apache.camel.support.CamelContextHelper;
 import org.apache.camel.telemetry.Span;
 import org.apache.camel.telemetry.SpanLifecycleManager;
 import org.apache.camel.telemetry.SpanStorageManagerExchange;
@@ -41,6 +34,9 @@ import org.apache.camel.util.ObjectHelper;
 public final class GenAiObservability {
 
     private static final String CLIENT_SPAN_KIND = "CLIENT";
+    private static final String METER_REGISTRY_CLASS = "io.micrometer.core.instrument.MeterRegistry";
+    private static final String MICROMETER_SUPPORT_CLASS
+            = "org.apache.camel.component.ai.observability.GenAiMicrometerSupport";
     private static final GenAiObservation NOOP = new NoopGenAiObservation();
 
     private GenAiObservability() {
@@ -70,19 +66,23 @@ public final class GenAiObservability {
             return NOOP;
         }
         Tracer tracer = exchange.getContext().hasService(Tracer.class);
-        MeterRegistry meterRegistry = resolveMeterRegistry(exchange.getContext());
-        if (tracer == null && meterRegistry == null) {
+        GenAiMetricsBackend metricsBackend = resolveMetricsBackend(exchange.getContext());
+        if (tracer == null && (metricsBackend == null || !metricsBackend.isAvailable())) {
             return NOOP;
         }
-        return new DefaultGenAiObservation(exchange, context, tracer, meterRegistry);
+        return new DefaultGenAiObservation(exchange, context, tracer, metricsBackend);
     }
 
-    private static MeterRegistry resolveMeterRegistry(CamelContext camelContext) {
-        MeterRegistry registry = CamelContextHelper.findSingleByType(camelContext, MeterRegistry.class);
-        if (registry != null) {
-            return registry;
+    private static GenAiMetricsBackend resolveMetricsBackend(CamelContext camelContext) {
+        try {
+            Class.forName(METER_REGISTRY_CLASS);
+            Class<?> supportClass = Class.forName(MICROMETER_SUPPORT_CLASS);
+            Constructor<?> constructor = supportClass.getDeclaredConstructor(CamelContext.class);
+            constructor.setAccessible(true);
+            return (GenAiMetricsBackend) constructor.newInstance(camelContext);
+        } catch (ReflectiveOperationException | LinkageError e) {
+            return null;
         }
-        return camelContext.getRegistry().lookupByNameAndType("metricsRegistry", MeterRegistry.class);
     }
 
     private static final class DefaultGenAiObservation implements GenAiObservation {
@@ -90,7 +90,7 @@ public final class GenAiObservability {
         private final Exchange exchange;
         private final GenAiObservationContext context;
         private final Tracer tracer;
-        private final MeterRegistry meterRegistry;
+        private final GenAiMetricsBackend metricsBackend;
         private final long startNanos;
         private Span span;
         private GenAiUsage usage;
@@ -99,11 +99,11 @@ public final class GenAiObservability {
 
         private DefaultGenAiObservation(
                                         Exchange exchange, GenAiObservationContext context, Tracer tracer,
-                                        MeterRegistry meterRegistry) {
+                                        GenAiMetricsBackend metricsBackend) {
             this.exchange = exchange;
             this.context = context;
             this.tracer = tracer;
-            this.meterRegistry = meterRegistry;
+            this.metricsBackend = metricsBackend;
             this.startNanos = System.nanoTime();
             startSpan();
         }
@@ -159,44 +159,10 @@ public final class GenAiObservability {
         }
 
         private void recordMetrics() {
-            if (meterRegistry == null) {
+            if (metricsBackend == null) {
                 return;
             }
-            Iterable<Tag> baseTags = baseTags(context, error);
-            Timer.builder(GenAiMetrics.CLIENT_OPERATION)
-                    .tags(baseTags)
-                    .register(meterRegistry)
-                    .record(System.nanoTime() - startNanos, TimeUnit.NANOSECONDS);
-
-            if (usage != null) {
-                recordTokenCounter(usage.inputTokens(), GenAiMetrics.TOKEN_TYPE_INPUT);
-                recordTokenCounter(usage.outputTokens(), GenAiMetrics.TOKEN_TYPE_OUTPUT);
-            }
-        }
-
-        private void recordTokenCounter(Integer tokens, String tokenType) {
-            if (tokens == null || tokens <= 0) {
-                return;
-            }
-            Counter.builder(GenAiMetrics.CLIENT_TOKEN_USAGE)
-                    .tags(baseTags(context, error))
-                    .tag(GenAiMetrics.TAG_TOKEN_TYPE, tokenType)
-                    .register(meterRegistry)
-                    .increment(tokens);
-        }
-
-        private static Iterable<Tag> baseTags(GenAiObservationContext context, Throwable error) {
-            List<Tag> tags = new ArrayList<>();
-            tags.add(Tag.of(GenAiMetrics.TAG_OPERATION_NAME, context.operationName().value()));
-            tags.add(Tag.of(GenAiMetrics.TAG_SYSTEM, nullToUnknown(context.system())));
-            tags.add(Tag.of(GenAiMetrics.TAG_REQUEST_MODEL, nullToUnknown(context.requestModel())));
-            if (ObjectHelper.isNotEmpty(context.componentScheme())) {
-                tags.add(Tag.of(GenAiMetrics.TAG_CAMEL_COMPONENT, context.componentScheme()));
-            }
-            if (error != null) {
-                tags.add(Tag.of(GenAiMetrics.TAG_ERROR_TYPE, error.getClass().getSimpleName()));
-            }
-            return tags;
+            metricsBackend.recordMetrics(context, usage, error, startNanos);
         }
 
         private static void applyContextAttributes(
