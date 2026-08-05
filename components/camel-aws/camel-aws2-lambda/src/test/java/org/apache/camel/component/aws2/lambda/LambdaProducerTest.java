@@ -90,6 +90,29 @@ public class LambdaProducerTest extends CamelTestSupport {
     }
 
     @Test
+    public void lambdaUpdateFunctionTest() throws Exception {
+
+        Exchange exchange = template.send("direct:updateFunction", ExchangePattern.InOut, new Processor() {
+            @Override
+            public void process(Exchange exchange) throws Exception {
+                ClassLoader classLoader = getClass().getClassLoader();
+                File file = new File(
+                        classLoader.getResource("org/apache/camel/component/aws2/lambda/function/node/GetHelloWithName.zip")
+                                .getFile());
+                FileInputStream inputStream = new FileInputStream(file);
+                exchange.getIn().setBody(inputStream);
+            }
+        });
+
+        assertNotNull(exchange.getMessage().getBody());
+        // the fix: the code source (the zip taken from the body) must actually reach the request,
+        // otherwise AWS rejects UpdateFunctionCode with "Please provide a source for function code."
+        assertNotNull(clientMock.updateFunctionCodeRequest);
+        assertEquals("GetHelloWithName", clientMock.updateFunctionCodeRequest.functionName());
+        assertNotNull(clientMock.updateFunctionCodeRequest.zipFile());
+    }
+
+    @Test
     public void lambdaDeleteFunctionTest() {
 
         Exchange exchange = template.send("direct:deleteFunction", ExchangePattern.InOut, new Processor() {
