@@ -16,6 +16,7 @@
  */
 package org.apache.camel.component.mcp.server.jbang;
 
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -45,8 +46,6 @@ public class JbangDevMcpServer extends ServiceSupport implements CamelContextAwa
     private static final String SERVER_NAME = "camel-jbang-dev-tools";
     private static final String TOOL_REGISTRY = "org.apache.camel.dsl.jbang.core.commands.ai.ToolRegistry";
     private static final String TOOL_CONTEXT = "org.apache.camel.dsl.jbang.core.commands.ai.ToolContext";
-    private static final String TOOL_EXECUTION_EXCEPTION
-            = "org.apache.camel.dsl.jbang.core.commands.ai.ToolExecutionException";
 
     private CamelContext camelContext;
     private String path = "/mcp";
@@ -105,12 +104,16 @@ public class JbangDevMcpServer extends ServiceSupport implements CamelContextAwa
             try {
                 Object result = executeTool(toolName, stringArguments(arguments));
                 return new McpToolCallResult(result != null ? result.toString() : "", false);
-            } catch (ReflectiveOperationException e) {
-                Throwable cause = e.getCause();
-                if (cause != null && TOOL_EXECUTION_EXCEPTION.equals(cause.getClass().getName())) {
-                    return new McpToolCallResult(cause.getMessage(), true);
+            } catch (Exception e) {
+                Throwable failure = e;
+                if (e instanceof InvocationTargetException ite && ite.getCause() != null) {
+                    failure = ite.getCause();
                 }
-                return new McpToolCallResult(e.getMessage(), true);
+                String message = failure.getMessage();
+                if (message == null || message.isBlank()) {
+                    message = failure.getClass().getSimpleName();
+                }
+                return new McpToolCallResult(message, true);
             }
         };
         return new McpServerTool() {
@@ -143,22 +146,24 @@ public class JbangDevMcpServer extends ServiceSupport implements CamelContextAwa
     }
 
     private Object createToolContext() throws ReflectiveOperationException {
-        Object context = Class.forName(TOOL_CONTEXT).getDeclaredConstructor().newInstance();
-        Method selectProcess = context.getClass().getMethod("selectProcess", long.class);
+        Class<?> contextClass = camelContext.getClassResolver().resolveClass(TOOL_CONTEXT);
+        Object context = contextClass.getDeclaredConstructor().newInstance();
+        Method selectProcess = contextClass.getMethod("selectProcess", long.class);
         selectProcess.invoke(context, ProcessHandle.current().pid());
         return context;
     }
 
     @SuppressWarnings("unchecked")
-    private static List<Object> allToolDescriptors() throws ReflectiveOperationException {
-        Class<?> registry = Class.forName(TOOL_REGISTRY);
+    private List<Object> allToolDescriptors() throws ReflectiveOperationException {
+        Class<?> registry = camelContext.getClassResolver().resolveClass(TOOL_REGISTRY);
         Method allTools = registry.getMethod("allTools");
         return (List<Object>) allTools.invoke(null);
     }
 
     private Object executeTool(String name, Map<String, String> args) throws ReflectiveOperationException {
-        Class<?> registry = Class.forName(TOOL_REGISTRY);
-        Method execute = registry.getMethod("execute", String.class, Class.forName(TOOL_CONTEXT), Map.class);
+        Class<?> registry = camelContext.getClassResolver().resolveClass(TOOL_REGISTRY);
+        Class<?> contextClass = camelContext.getClassResolver().resolveClass(TOOL_CONTEXT);
+        Method execute = registry.getMethod("execute", String.class, contextClass, Map.class);
         return execute.invoke(null, name, toolContext, args);
     }
 

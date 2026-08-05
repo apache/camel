@@ -77,6 +77,13 @@ class JbangDevMcpServerTest {
                     .extracting(McpSchema.Tool::name)
                     .contains(ToolRegistry.allTools().get(0).name());
 
+            McpSchema.Tool parameterizedTool = client.listTools().tools().stream()
+                    .filter(t -> "select_process".equals(t.name()))
+                    .findFirst()
+                    .orElseThrow();
+            assertThat(parameterizedTool.inputSchema()).isNotNull();
+            assertThat(parameterizedTool.inputSchema().toString()).contains("name");
+
             McpSchema.CallToolResult result = client.callTool(
                     new McpSchema.CallToolRequest("list_processes", Map.of()));
             assertThat(result.isError()).isNotEqualTo(Boolean.TRUE);
