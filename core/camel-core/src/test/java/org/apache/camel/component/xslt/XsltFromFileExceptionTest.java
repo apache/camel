@@ -39,7 +39,8 @@ class XsltFromFileExceptionTest extends ContextTestSupport {
 
         template.sendBodyAndHeader(fileUri(), "<hello>world!</hello>", Exchange.FILE_NAME, "hello.xml");
 
-        // Wait for the file consumer route to finish — producer write alone is not enough.
+        // Do not use oneExchangeDone here: the producer write to fileUri() can satisfy
+        // the global whenDone(1) notify before the file consumer route runs.
         assertMockEndpointsSatisfied(TIMEOUT_SECONDS, TimeUnit.SECONDS);
 
         // File move happens after route processing; poll until the consumer has moved the file.
@@ -59,6 +60,8 @@ class XsltFromFileExceptionTest extends ContextTestSupport {
         // the last tag is not ended properly
         template.sendBodyAndHeader(fileUri(), "<hello>world!</hello", Exchange.FILE_NAME, "hello2.xml");
 
+        // Do not use oneExchangeDone here: the producer write to fileUri() can satisfy
+        // the global whenDone(1) notify before the file consumer route runs.
         assertMockEndpointsSatisfied(TIMEOUT_SECONDS, TimeUnit.SECONDS);
 
         await().atMost(TIMEOUT_SECONDS, TimeUnit.SECONDS)
