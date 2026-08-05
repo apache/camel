@@ -22,6 +22,7 @@ import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
@@ -63,6 +64,8 @@ import org.springframework.ai.converter.StructuredOutputConverter;
 import org.springframework.ai.document.Document;
 import org.springframework.ai.model.tool.ToolCallingChatOptions;
 import org.springframework.ai.tool.ToolCallback;
+import org.springframework.ai.tool.ToolCallbackProvider;
+import org.springframework.ai.tool.resolution.ToolCallbackResolver;
 import org.springframework.ai.vectorstore.SearchRequest;
 import org.springframework.ai.vectorstore.VectorStore;
 import org.springframework.core.convert.support.DefaultConversionService;
@@ -554,10 +557,39 @@ public class SpringAiChatProducer extends DefaultProducer {
         // This ensures tool callbacks are properly included in the options
         ToolCallingChatOptions.Builder optionsBuilder = ToolCallingChatOptions.builder();
 
-        // Add tool callbacks to the options builder if present
-        if (!toolCallbacks.isEmpty()) {
-            LOG.debug("Adding {} tool callbacks to ToolCallingChatOptions", toolCallbacks.size());
-            optionsBuilder.toolCallbacks(toolCallbacks);
+        // Collect the tool callbacks from every source keyed by tool name. Spring AI 2.0 rejects duplicate
+        // tool names, so a tool reachable through more than one source must be registered only once.
+        Map<String, ToolCallback> callbacksByName = new LinkedHashMap<>();
+        for (ToolCallback callback : toolCallbacks) {
+            callbacksByName.putIfAbsent(callback.getToolDefinition().name(), callback);
+        }
+        List<ToolCallback> configuredCallbacks = getEndpoint().getConfiguration().getToolCallbacks();
+        if (configuredCallbacks != null) {
+            for (ToolCallback callback : configuredCallbacks) {
+                callbacksByName.putIfAbsent(callback.getToolDefinition().name(), callback);
+            }
+        }
+
+        // Apply tool names by resolving them to ToolCallback instances
+        String toolNames = exchange.getIn().getHeader(SpringAiChatConstants.TOOL_NAMES, String.class);
+        if (toolNames == null) {
+            toolNames = getEndpoint().getConfiguration().getToolNames();
+        }
+        if (toolNames != null && !toolNames.trim().isEmpty()) {
+            List<String> names = Arrays.stream(toolNames.split(","))
+                    .map(String::trim)
+                    .filter(s -> !s.isEmpty())
+                    .toList();
+            for (ToolCallback callback : resolveToolCallbacksByName(names, callbacksByName)) {
+                callbacksByName.putIfAbsent(callback.getToolDefinition().name(), callback);
+            }
+            LOG.debug("Resolved tool names {} to ToolCallbacks", names);
+        }
+
+        if (!callbacksByName.isEmpty()) {
+            LOG.debug("Adding {} tool callbacks to ToolCallingChatOptions: {}",
+                    callbacksByName.size(), callbacksByName.keySet());
+            optionsBuilder.toolCallbacks(List.copyOf(callbacksByName.values()));
         }
 
         // Check configuration first
@@ -595,34 +627,13 @@ public class SpringAiChatProducer extends DefaultProducer {
             optionsBuilder.topK(topK);
         }
 
-        ToolCallingChatOptions options = optionsBuilder.build();
-        request.options(options);
-
-        // Add direct ToolCallbacks if configured
-        List<ToolCallback> configuredCallbacks = getEndpoint().getConfiguration().getToolCallbacks();
-        if (configuredCallbacks != null && !configuredCallbacks.isEmpty()) {
-            request.toolCallbacks(configuredCallbacks);
-            LOG.debug("Added {} configured ToolCallbacks", configuredCallbacks.size());
-        }
+        // Spring AI 2.0 takes the options builder rather than a built ChatOptions instance
+        request.options(optionsBuilder);
 
         // Add MCP tool callbacks if MCP servers are configured
         if (mcpManager != null && mcpManager.getToolCallbackProvider() != null) {
             request.toolCallbacks(mcpManager.getToolCallbackProvider());
             LOG.debug("Added MCP tool callback provider");
-        }
-
-        // Apply tool names for resolution via ToolCallbackResolver
-        String toolNames = exchange.getIn().getHeader(SpringAiChatConstants.TOOL_NAMES, String.class);
-        if (toolNames == null) {
-            toolNames = getEndpoint().getConfiguration().getToolNames();
-        }
-        if (toolNames != null && !toolNames.trim().isEmpty()) {
-            String[] names = Arrays.stream(toolNames.split(","))
-                    .map(String::trim)
-                    .filter(s -> !s.isEmpty())
-                    .toArray(String[]::new);
-            request.toolNames(names);
-            LOG.debug("Added {} tool names for resolution: {}", names.length, Arrays.toString(names));
         }
 
         // Apply tool context if configured
@@ -992,6 +1003,49 @@ public class SpringAiChatProducer extends DefaultProducer {
         }
 
         return toolCallbacks;
+    }
+
+    /**
+     * Resolve the configured tool names to {@link ToolCallback} instances.
+     * <p>
+     * Spring AI 2.0 removed {@code ChatClient.ChatClientRequestSpec.toolNames(String...)} and the Spring bean based
+     * {@code SpringBeanToolCallbackResolver}, so the names are resolved here instead. Each name is looked up, in order,
+     * against:
+     * <ol>
+     * <li>a {@link ToolCallbackResolver} bound in the Camel registry - Spring Boot applications get Spring AI's
+     * auto-configured resolver, which covers {@link ToolCallback} and {@link ToolCallbackProvider} beans</li>
+     * <li>the tool callbacks already available to this endpoint, i.e. the ones discovered from {@code tags} and the
+     * ones configured via {@code toolCallbacks}, matched on their tool definition name</li>
+     * <li>a {@link ToolCallback} bound in the Camel registry under that name</li>
+     * </ol>
+     *
+     * @param  names                    the tool names to resolve
+     * @param  availableByName          the callbacks already available to this endpoint, keyed by tool name
+     * @return                          the resolved callbacks, never {@code null}
+     * @throws IllegalArgumentException if a name cannot be resolved
+     */
+    private List<ToolCallback> resolveToolCallbacksByName(List<String> names, Map<String, ToolCallback> availableByName) {
+        final ToolCallbackResolver resolver = getEndpoint().getCamelContext().getRegistry()
+                .findSingleByType(ToolCallbackResolver.class);
+
+        final List<ToolCallback> resolved = new ArrayList<>(names.size());
+        for (String name : names) {
+            ToolCallback callback = resolver != null ? resolver.resolve(name) : null;
+            if (callback == null) {
+                callback = availableByName.get(name);
+            }
+            if (callback == null) {
+                callback = getEndpoint().getCamelContext().getRegistry().lookupByNameAndType(name, ToolCallback.class);
+            }
+            if (callback == null) {
+                throw new IllegalArgumentException(
+                        "Cannot resolve tool name '" + name + "'. Available tools: " + availableByName.keySet()
+                                                   + ". Bind the tool as a ToolCallback in the registry, expose it via"
+                                                   + " toolCallbacks, or discover it with tags.");
+            }
+            resolved.add(callback);
+        }
+        return resolved;
     }
 
     /**

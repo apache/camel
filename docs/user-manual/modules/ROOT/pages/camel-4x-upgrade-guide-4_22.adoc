@@ -1579,3 +1579,43 @@ read once while the `CamelContext` initializes and cannot be changed afterwards.
 `org.apache.camel.spi.StartupStepRecorder` gained the default methods
 `isRuntimeEnabled()` and `setRuntimeEnabled(boolean)`. Both have no-op defaults, so
 existing implementations continue to compile and behave as before.
+
+=== camel-spring-ai - upgraded to Spring AI 2.0
+
+The `camel-spring-ai-chat`, `camel-spring-ai-embeddings`, `camel-spring-ai-image` and
+`camel-spring-ai-vector-store` components now build on Spring AI 2.0 instead of Spring AI 1.1.
+Spring AI 1.1 targets Spring Boot 3.5 and Spring Framework 6, while Camel is already on Spring Boot
+4.1 and Spring Framework 7, which is the baseline Spring AI 2.0 was designed for. The upgrade also
+aligns the MCP Java SDK that `camel-spring-ai-chat` pulls in transitively (previously 0.18.2) with
+the 2.0.0 version already used by `camel-mcp-server` and `camel-openai`.
+
+Applications that configure Spring AI themselves must migrate along with it. The full list of
+changes is in the
+https://docs.spring.io/spring-ai/reference/upgrade-notes.html[Spring AI upgrade notes]; the ones
+most likely to affect a Camel route are:
+
+* Spring AI moved from Jackson 2 to Jackson 3 (`tools.jackson`).
+* Configuration property keys lost the `options` segment, for example
+  `spring.ai.openai.chat.options.model` is now `spring.ai.openai.chat.model`.
+* Spring AI no longer applies a default `temperature` of `0.7`; each provider's own default is used
+  unless the endpoint or a header sets one.
+* `spring-ai-advisors-vector-store` was renamed to `spring-ai-vector-store-advisor`, and the
+  `spring-ai-azure-openai` and `spring-ai-openai-sdk` modules were folded into `spring-ai-openai`.
+
+==== camel-spring-ai-chat - toolNames resolution
+
+Spring AI 2.0 removed `ChatClient.ChatClientRequestSpec.toolNames(String...)` together with the
+Spring bean based `SpringBeanToolCallbackResolver`, so the `toolNames` endpoint option and the
+`CamelSpringAiChatToolNames` header are now resolved by the component itself. Each name is looked up,
+in order, against a `ToolCallbackResolver` bound in the registry, then against the tools discovered
+via `tags` and configured via `toolCallbacks`, and finally against a `ToolCallback` bound in the
+registry under that name. A name that resolves nowhere now fails the exchange with an
+`IllegalArgumentException` listing the available tools, rather than being silently ignored.
+
+Because Spring AI 2.0 rejects a `ToolCallingChatOptions` that carries two tools with the same name,
+tools reachable through more than one source (tags, `toolCallbacks`, `toolNames`) are now registered
+only once.
+
+In a Spring Boot application, Spring AI's auto-configured `ToolCallbackResolver` is built from the
+`ToolCallback` and `ToolCallbackProvider` beans in the context. A bare `@Bean Function<...>` is no
+longer resolvable by bean name; expose such tools as `ToolCallback` or `ToolCallbackProvider` beans.

@@ -95,7 +95,7 @@ public class QdrantVectorStoreIT extends CamelTestSupport {
 
         embeddingModel = OllamaEmbeddingModel.builder()
                 .ollamaApi(ollamaApi)
-                .defaultOptions(ollamaOptions)
+                .options(ollamaOptions)
                 .build();
 
         // Create Qdrant client

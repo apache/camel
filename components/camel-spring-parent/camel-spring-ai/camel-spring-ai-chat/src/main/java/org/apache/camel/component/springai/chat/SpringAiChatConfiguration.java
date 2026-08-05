@@ -121,8 +121,11 @@ public class SpringAiChatConfiguration implements Cloneable {
     @UriParam(label = "advanced", defaultValue = "1048576")
     private long maxFileSize = 1024 * 1024; // 1MB default
 
-    @UriParam(description = "Comma-separated tool names for selecting tools by name via Spring AI's ToolCallbackResolver. "
-                            + "This enables selecting Spring @Tool annotated beans or any registered ToolCallback by name.")
+    @UriParam(description = "Comma-separated tool names for selecting tools by name. Names are resolved against a "
+                            + "ToolCallbackResolver bound in the registry (Spring Boot applications get Spring AI's "
+                            + "auto-configured one), then against the tools discovered via tags and configured via "
+                            + "toolCallbacks, and finally against a ToolCallback bound in the registry under that name. "
+                            + "An unresolvable name fails the exchange.")
     private String toolNames;
 
     @UriParam(label = "advanced",
@@ -479,9 +482,10 @@ public class SpringAiChatConfiguration implements Cloneable {
     }
 
     /**
-     * Comma-separated tool names for selecting tools by name via Spring AI's ToolCallbackResolver. This enables
-     * selecting Spring @Tool annotated beans or any registered ToolCallback by name, in addition to tag-based
-     * discovery.
+     * Comma-separated tool names for selecting tools by name. Names are resolved against a ToolCallbackResolver bound
+     * in the registry (Spring Boot applications get Spring AI's auto-configured one), then against the tools discovered
+     * via tags and configured via toolCallbacks, and finally against a ToolCallback bound in the registry under that
+     * name. An unresolvable name fails the exchange.
      */
     public void setToolNames(String toolNames) {
         this.toolNames = toolNames;

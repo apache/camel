@@ -63,7 +63,7 @@ public class OllamaTestSupport extends CamelTestSupport {
 
         ChatModel chatModel = OllamaChatModel.builder()
                 .ollamaApi(ollamaApi)
-                .defaultOptions(ollamaOptions)
+                .options(ollamaOptions)
                 .build();
 
         return chatModel;

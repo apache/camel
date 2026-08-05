@@ -50,7 +50,7 @@ public class SpringAiChatVectorMemoryIT extends OllamaTestSupport {
 
         EmbeddingModel embeddingModel = OllamaEmbeddingModel.builder()
                 .ollamaApi(ollamaApi)
-                .defaultOptions(OllamaEmbeddingOptions.builder()
+                .options(OllamaEmbeddingOptions.builder()
                         .model("embeddinggemma:300m")
                         .build())
                 .build();

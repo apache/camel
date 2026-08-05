@@ -20,8 +20,10 @@ import java.io.File;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Base64;
-import java.util.List;
 
+import com.openai.client.OpenAIClient;
+import com.openai.client.OpenAIClientImpl;
+import com.openai.core.ClientOptions;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.test.infra.ollama.services.OllamaService;
@@ -38,11 +40,7 @@ import org.springframework.ai.image.Image;
 import org.springframework.ai.image.ImageModel;
 import org.springframework.ai.openai.OpenAiImageModel;
 import org.springframework.ai.openai.OpenAiImageOptions;
-import org.springframework.ai.openai.api.OpenAiImageApi;
-import org.springframework.http.MediaType;
-import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
-import org.springframework.retry.support.RetryTemplate;
-import org.springframework.web.client.RestClient;
+import org.springframework.ai.openai.http.okhttp.SpringAiOpenAiHttpClient;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -52,8 +50,8 @@ import static org.assertj.core.api.Assertions.assertThat;
  * Uses x/flux2-klein:4b model running on Ollama, accessed via OpenAI base URL override. The model must be pre-pulled in
  * Ollama.
  *
- * Ollama returns application/x-ndjson content type, so a custom RestClient.Builder is used to register a Jackson
- * converter that supports this media type.
+ * Since Spring AI 2.0 the OpenAI models are built on the official openai-java SDK, so the Ollama endpoint is configured
+ * through the SDK client options rather than through a Spring RestClient.
  */
 @DisabledIfSystemProperty(named = "ci.env.name", matches = ".*", disabledReason = "Disabled unless running in CI")
 @Timeout(180)
@@ -82,33 +80,27 @@ public class SpringAiImageOllamaIT extends CamelTestSupport {
         LOG.info("*******************************************************************************");
         LOG.info("Setting up ImageModel with Ollama at {} using model '{}'", OLLAMA.baseUrl(), IMAGE_MODEL_NAME);
 
-        // Ollama returns application/x-ndjson which Spring's default RestClient doesn't handle.
-        // Add a Jackson converter that supports this media type.
-        MappingJackson2HttpMessageConverter ndjsonConverter = new MappingJackson2HttpMessageConverter();
-        ndjsonConverter.setSupportedMediaTypes(
-                List.of(MediaType.APPLICATION_JSON, MediaType.valueOf("application/x-ndjson")));
-
-        RestClient.Builder restClientBuilder = RestClient.builder()
-                .messageConverters(converters -> converters.add(0, ndjsonConverter));
-
-        OpenAiImageApi imageApi = OpenAiImageApi.builder()
-                .baseUrl(OLLAMA.baseUrl())
-                .apiKey("unused")
-                .restClientBuilder(restClientBuilder)
-                .build();
+        // Spring AI 2.0 builds the OpenAI models on the official openai-java SDK, so the endpoint and the
+        // credentials are configured on the SDK client rather than on a Spring RestClient.
+        // maxRetries(0) disables the SDK default exponential backoff retries in ITs: a failing Ollama call
+        // would otherwise block CI for many minutes (see CAMEL-23215).
+        OpenAIClient openAiClient = new OpenAIClientImpl(
+                ClientOptions.builder()
+                        .httpClient(SpringAiOpenAiHttpClient.builder().build())
+                        .baseUrl(OLLAMA.baseUrlV1())
+                        .apiKey("unused")
+                        .maxRetries(0)
+                        .build());
 
         // Only set the model name here; width/height are configured on the Camel endpoint or via headers
         OpenAiImageOptions defaultOptions = OpenAiImageOptions.builder()
                 .model(IMAGE_MODEL_NAME)
                 .build();
 
-        // Disable Spring AI default exponential backoff retries in ITs: a failing Ollama call would
-        // otherwise block CI for many minutes (see CAMEL-23215).
-        RetryTemplate noRetryTemplate = RetryTemplate.builder()
-                .maxAttempts(1)
+        imageModel = OpenAiImageModel.builder()
+                .openAiClient(openAiClient)
+                .options(defaultOptions)
                 .build();
-
-        imageModel = new OpenAiImageModel(imageApi, defaultOptions, noRetryTemplate);
         LOG.info("ImageModel initialized successfully");
     }
 

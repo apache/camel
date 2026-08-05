@@ -90,7 +90,7 @@ public class SpringAiImageProducer extends DefaultProducer {
         // Headers override configuration
         Integer n = getOption(exchange, SpringAiImageHeaders.N, Integer.class, config.getN());
         if (n != null) {
-            builder.N(n);
+            builder.n(n);
         }
 
         Integer width = getOption(exchange, SpringAiImageHeaders.WIDTH, Integer.class, config.getWidth());
