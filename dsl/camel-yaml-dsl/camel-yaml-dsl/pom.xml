@@ -302,6 +302,18 @@
                             <outputFile>src/generated/resources/schema/camelYamlDsl-canonical.json</outputFile>
                         </configuration>
                     </execution>
+                    <!-- completion tree (derived from canonical schema + catalog metadata) -->
+                    <execution>
+                        <id>generate-yaml-completion</id>
+                        <phase>generate-sources</phase>
+                        <goals>
+                            <goal>generate-yaml-completion</goal>
+                        </goals>
+                        <configuration>
+                            <canonicalSchemaFile>src/generated/resources/schema/camelYamlDsl-canonical.json</canonicalSchemaFile>
+                            <outputFile>src/generated/resources/schema/camelYamlDsl-completion.json</outputFile>
+                        </configuration>
+                    </execution>
                 </executions>
             </plugin>
             <plugin>
