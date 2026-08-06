@@ -165,20 +165,27 @@ class GotoNodePopup {
         String sep = "─".repeat(Math.max(1, popupW - 2));
         items.add(ListItem.from(Line.from(Span.styled(sep, Style.EMPTY.dim()))));
 
+        // compute column width for type tag alignment
+        int maxTypeW = 0;
+        for (NodeEntry entry : filteredEntries) {
+            maxTypeW = Math.max(maxTypeW, entry.type().length());
+        }
+        int maxLabelW = popupW - maxTypeW - 6;
+
         Style normalStyle = Style.EMPTY;
         Style matchStyle = Theme.label().bold();
-        Style dimStyle = Style.EMPTY.dim();
         for (NodeEntry entry : filteredEntries) {
             List<Span> spans = new ArrayList<>();
             spans.add(Span.raw(" "));
 
+            String typeTag = entry.type();
+            String typePad = " ".repeat(Math.max(0, maxTypeW - typeTag.length()));
             dev.tamboui.style.Color eipColor
-                    = org.apache.camel.dsl.jbang.core.commands.tui.diagram.DiagramColors.getEipColor(entry.type());
-            spans.add(Span.styled("[" + entry.type() + "]", Style.EMPTY.fg(eipColor).bold()));
+                    = org.apache.camel.dsl.jbang.core.commands.tui.diagram.DiagramColors.getEipColor(typeTag);
+            spans.add(Span.styled("[" + typeTag + "]" + typePad, Style.EMPTY.fg(eipColor).bold()));
             spans.add(Span.raw(" "));
 
             String searchable = entry.label().isBlank() ? entry.nodeId() : entry.label();
-            int maxLabelW = popupW - entry.type().length() - entry.nodeId().length() - 10;
             if (searchable.length() > maxLabelW && maxLabelW > 3) {
                 searchable = searchable.substring(0, maxLabelW - 1) + "…";
             }
@@ -195,7 +202,6 @@ class GotoNodePopup {
                 spans.add(Span.styled(searchable, normalStyle));
             }
 
-            spans.add(Span.styled(" (" + entry.nodeId() + ")", dimStyle));
             items.add(ListItem.from(Line.from(spans)));
         }
 
