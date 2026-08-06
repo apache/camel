@@ -102,6 +102,7 @@ from("direct:extract-person")
 * Validate with xref:json-validator-component.adoc[JSON Validator] when compliance matters
 * For LangChain4j agents, see xref:langchain4j-agent-component.adoc[LangChain4j Agent] — structured output guardrails avoid prompt-engineering response formats
 
+[[generation-parameters]]
 == Generation parameters (temperature and more)
 
 === Chat temperature on OpenAI
