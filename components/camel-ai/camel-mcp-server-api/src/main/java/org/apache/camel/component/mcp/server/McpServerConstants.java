@@ -39,6 +39,18 @@ public final class McpServerConstants {
      */
     public static final long DEFAULT_TOOL_TIMEOUT = 20_000;
 
+    /**
+     * Default MCP session keep-alive ping interval in milliseconds for the Vert.x streamable transport. {@code 0}
+     * disables keep-alive pings.
+     */
+    public static final long DEFAULT_SESSION_KEEP_ALIVE_INTERVAL = 30_000;
+
+    /**
+     * Default MCP session idle TTL in milliseconds for the Vert.x streamable transport. Sessions with no activity for
+     * longer than this interval are evicted. {@code 0} disables idle eviction.
+     */
+    public static final long DEFAULT_SESSION_IDLE_TTL = 300_000;
+
     private McpServerConstants() {
     }
 }

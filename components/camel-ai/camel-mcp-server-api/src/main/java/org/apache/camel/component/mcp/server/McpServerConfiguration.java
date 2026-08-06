@@ -31,6 +31,8 @@ public class McpServerConfiguration {
     private long toolTimeout = McpServerConstants.DEFAULT_TOOL_TIMEOUT;
     private String path = McpServerConstants.DEFAULT_PATH;
     private String serverName;
+    private long sessionKeepAliveInterval = McpServerConstants.DEFAULT_SESSION_KEEP_ALIVE_INTERVAL;
+    private long sessionIdleTtl = McpServerConstants.DEFAULT_SESSION_IDLE_TTL;
 
     /**
      * Comma-separated list of ai-tool tags to expose as MCP tools. Only tools registered under one of these tags are
@@ -77,5 +79,30 @@ public class McpServerConfiguration {
 
     public void setServerName(String serverName) {
         this.serverName = serverName;
+    }
+
+    /**
+     * Keep-alive ping interval in milliseconds for the Vert.x streamable transport. Dead sessions are evicted after
+     * consecutive ping failures. {@code 0} disables keep-alive pings. Engine-owned: ignored by native engines.
+     */
+    public long getSessionKeepAliveInterval() {
+        return sessionKeepAliveInterval;
+    }
+
+    public void setSessionKeepAliveInterval(long sessionKeepAliveInterval) {
+        this.sessionKeepAliveInterval = sessionKeepAliveInterval;
+    }
+
+    /**
+     * Idle TTL in milliseconds for MCP sessions managed by the Vert.x streamable transport. Sessions with no activity
+     * for longer than this interval are evicted. {@code 0} disables idle eviction. Engine-owned: ignored by native
+     * engines.
+     */
+    public long getSessionIdleTtl() {
+        return sessionIdleTtl;
+    }
+
+    public void setSessionIdleTtl(long sessionIdleTtl) {
+        this.sessionIdleTtl = sessionIdleTtl;
     }
 }

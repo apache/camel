@@ -117,7 +117,13 @@ public class McpServerBridge extends ServiceSupport implements CamelContextAware
         CamelContextAware.trySetCamelContext(engine, camelContext);
 
         String serverName = configuration.getServerName() != null ? configuration.getServerName() : camelContext.getName();
-        engine.initialize(new McpServerInfo(serverName, camelContext.getVersion(), configuration.getPath()));
+        String version = camelContext.getVersion();
+        if (version == null || version.isBlank()) {
+            version = "1.0";
+        }
+        engine.initialize(new McpServerInfo(
+                serverName, version, configuration.getPath(),
+                configuration.getSessionKeepAliveInterval(), configuration.getSessionIdleTtl()));
 
         if (!engine.consumesServingConfiguration()) {
             if (!McpServerConstants.DEFAULT_PATH.equals(configuration.getPath())) {
