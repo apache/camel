@@ -318,6 +318,7 @@ public interface EndpointBuilderFactory
             org.apache.camel.builder.endpoint.dsl.RestApiEndpointBuilderFactory.RestApiBuilders,
             org.apache.camel.builder.endpoint.dsl.RestEndpointBuilderFactory.RestBuilders,
             org.apache.camel.builder.endpoint.dsl.RestOpenApiEndpointBuilderFactory.RestOpenApiBuilders,
+            org.apache.camel.builder.endpoint.dsl.RestPostmanEndpointBuilderFactory.RestPostmanBuilders,
             org.apache.camel.builder.endpoint.dsl.RobotFrameworkEndpointBuilderFactory.RobotFrameworkBuilders,
             org.apache.camel.builder.endpoint.dsl.RocketMQEndpointBuilderFactory.RocketMQBuilders,
             org.apache.camel.builder.endpoint.dsl.RssEndpointBuilderFactory.RssBuilders,

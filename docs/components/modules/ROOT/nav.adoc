@@ -332,6 +332,7 @@
 ** xref:rest-component.adoc[REST]
 ** xref:rest-api-component.adoc[REST API]
 ** xref:rest-openapi-component.adoc[REST OpenApi]
+** xref:rest-postman-component.adoc[REST Postman]
 ** xref:robotframework-component.adoc[Robot Framework]
 ** xref:rocketmq-component.adoc[RocketMQ]
 ** xref:rss-component.adoc[RSS]
