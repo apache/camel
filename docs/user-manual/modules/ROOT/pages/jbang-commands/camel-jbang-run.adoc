@@ -57,6 +57,7 @@ camel run [options]
 | `--max-idle-seconds` | For how long time in seconds Camel can be idle before stopping | 0 | int
 | `--max-messages` | Max number of messages to process before stopping | 0 | int
 | `--max-seconds` | Max seconds to run before stopping | 0 | int
+| `--mcp` | Embed dev/diagnostics MCP tools on the local HTTP management server (/mcp by default). When management shares the main HTTP port, MCP is served on the main server bind address. Also binds the management server to 127.0.0.1 (affecting health/metrics when --observe is used). | false | boolean
 | `--metrics` _(deprecated)_ | Deprecated: use --observe instead. Metrics (Micrometer and Prometheus) at /q/metrics on local HTTP server (port 8080 by default) | false | boolean
 | `--modeline` | Whether to support JBang style //DEPS to specify additional dependencies | true | boolean
 | `--name` | The name of the Camel application | CamelJBang | String

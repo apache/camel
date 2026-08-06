@@ -42,6 +42,8 @@ public class HttpManagementServerConfigurationPropertiesConfigurer extends org.a
         map.put("JwtKeystorePassword", java.lang.String.class);
         map.put("JwtKeystorePath", java.lang.String.class);
         map.put("JwtKeystoreType", java.lang.String.class);
+        map.put("McpEnabled", boolean.class);
+        map.put("McpPath", java.lang.String.class);
         map.put("MetricsEnabled", boolean.class);
         map.put("OpenapiUiEnabled", boolean.class);
         map.put("OpenapiUiSpecPath", java.lang.String.class);
@@ -96,6 +98,10 @@ public class HttpManagementServerConfigurationPropertiesConfigurer extends org.a
         case "jwtKeystorePath": target.setJwtKeystorePath(property(camelContext, java.lang.String.class, value)); return true;
         case "jwtkeystoretype":
         case "jwtKeystoreType": target.setJwtKeystoreType(property(camelContext, java.lang.String.class, value)); return true;
+        case "mcpenabled":
+        case "mcpEnabled": target.setMcpEnabled(property(camelContext, boolean.class, value)); return true;
+        case "mcppath":
+        case "mcpPath": target.setMcpPath(property(camelContext, java.lang.String.class, value)); return true;
         case "metricsenabled":
         case "metricsEnabled": target.setMetricsEnabled(property(camelContext, boolean.class, value)); return true;
         case "openapiuienabled":
@@ -162,6 +168,10 @@ public class HttpManagementServerConfigurationPropertiesConfigurer extends org.a
         case "jwtKeystorePath": return java.lang.String.class;
         case "jwtkeystoretype":
         case "jwtKeystoreType": return java.lang.String.class;
+        case "mcpenabled":
+        case "mcpEnabled": return boolean.class;
+        case "mcppath":
+        case "mcpPath": return java.lang.String.class;
         case "metricsenabled":
         case "metricsEnabled": return boolean.class;
         case "openapiuienabled":
@@ -224,6 +234,10 @@ public class HttpManagementServerConfigurationPropertiesConfigurer extends org.a
         case "jwtKeystorePath": return target.getJwtKeystorePath();
         case "jwtkeystoretype":
         case "jwtKeystoreType": return target.getJwtKeystoreType();
+        case "mcpenabled":
+        case "mcpEnabled": return target.isMcpEnabled();
+        case "mcppath":
+        case "mcpPath": return target.getMcpPath();
         case "metricsenabled":
         case "metricsEnabled": return target.isMetricsEnabled();
         case "openapiuienabled":

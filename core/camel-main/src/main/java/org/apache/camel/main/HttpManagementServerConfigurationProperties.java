@@ -84,6 +84,10 @@ public class HttpManagementServerConfigurationProperties implements BootstrapClo
     private String jwtAudience;
     @Metadata(label = "security", defaultValue = "false", security = "insecure:dev")
     private boolean jwtAllowMissingIssuerAndAudience;
+    @Metadata(security = "insecure:dev")
+    private boolean mcpEnabled;
+    @Metadata(defaultValue = "/mcp")
+    private String mcpPath = "/mcp";
 
     public HttpManagementServerConfigurationProperties(MainConfigurationProperties parent) {
         this.parent = parent;
@@ -570,6 +574,41 @@ public class HttpManagementServerConfigurationProperties implements BootstrapClo
      */
     public HttpManagementServerConfigurationProperties withOpenapiUiSpecPath(String openapiUiSpecPath) {
         this.openapiUiSpecPath = openapiUiSpecPath;
+        return this;
+    }
+
+    public boolean isMcpEnabled() {
+        return mcpEnabled;
+    }
+
+    /**
+     * Whether to expose dev/diagnostics MCP tools on this management server (requires camel-mcp-server on the
+     * classpath). Currently honored only when Camel JBang registers JbangDevMcpMainListener (for example camel run
+     * --mcp). For route-based MCP on the main HTTP server in plain camel-main, configure camel.server.mcpEnabled
+     * instead. Not intended for production use.
+     */
+    public void setMcpEnabled(boolean mcpEnabled) {
+        this.mcpEnabled = mcpEnabled;
+    }
+
+    public String getMcpPath() {
+        return mcpPath;
+    }
+
+    /**
+     * HTTP path where the management MCP endpoint is served.
+     */
+    public void setMcpPath(String mcpPath) {
+        this.mcpPath = mcpPath;
+    }
+
+    public HttpManagementServerConfigurationProperties withMcpEnabled(boolean mcpEnabled) {
+        this.mcpEnabled = mcpEnabled;
+        return this;
+    }
+
+    public HttpManagementServerConfigurationProperties withMcpPath(String mcpPath) {
+        this.mcpPath = mcpPath;
         return this;
     }
 

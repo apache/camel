@@ -594,6 +594,21 @@ public class KameletMain extends MainCommandLineSupport {
             configure().httpManagementServer().withEnabled(true);
             configure().httpManagementServer().withInfoEnabled(true);
         }
+        boolean mcp = "true".equals(getInitialProperties().get(getInstanceType() + ".mcp"));
+        if (mcp) {
+            configure().httpManagementServer().withEnabled(true);
+            configure().httpManagementServer().withMcpEnabled(true);
+            if (!isConfigured("camel.management.host")) {
+                configure().httpManagementServer().withHost("127.0.0.1");
+            }
+            String listeners = getInitialProperties().getProperty("camel.main.mainListenerClasses");
+            String embedded = "org.apache.camel.component.mcp.server.jbang.JbangDevMcpMainListener";
+            if (listeners == null || listeners.isBlank()) {
+                addInitialProperty("camel.main.mainListenerClasses", embedded);
+            } else if (!listeners.contains(embedded)) {
+                addInitialProperty("camel.main.mainListenerClasses", listeners + "," + embedded);
+            }
+        }
         // Deprecated: to be replaced by observe flag
         boolean health = "true".equals(getInitialProperties().get(getInstanceType() + ".health"));
         if (health) {
