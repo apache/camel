@@ -139,22 +139,6 @@ public interface EKS2EndpointBuilderFactory {
             return this;
         }
         /**
-         * If using a profile credentials provider, this parameter will set the
-         * profile name.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Default: false
-         * Group: producer
-         * 
-         * @param profileCredentialsName the value to set
-         * @return the dsl builder
-         */
-        default EKS2EndpointBuilder profileCredentialsName(String profileCredentialsName) {
-            doSetProperty("profileCredentialsName", profileCredentialsName);
-            return this;
-        }
-        /**
          * The region in which EKS client needs to work. When using this
          * parameter, the configuration will expect the lowercase name of the
          * region (for example, ap-east-1) You'll need to use the name
@@ -339,6 +323,21 @@ public interface EKS2EndpointBuilderFactory {
          */
         default EKS2EndpointBuilder accessKey(String accessKey) {
             doSetProperty("accessKey", accessKey);
+            return this;
+        }
+        /**
+         * If using a profile credentials provider, this parameter will set the
+         * profile name.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: security
+         * 
+         * @param profileCredentialsName the value to set
+         * @return the dsl builder
+         */
+        default EKS2EndpointBuilder profileCredentialsName(String profileCredentialsName) {
+            doSetProperty("profileCredentialsName", profileCredentialsName);
             return this;
         }
         /**
