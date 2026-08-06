@@ -85,6 +85,10 @@ public class AWS2S3VectorsEndpoint extends ScheduledPollEndpoint implements Endp
     public Consumer createConsumer(Processor processor) throws Exception {
         AWS2S3VectorsConsumer consumer = new AWS2S3VectorsConsumer(this, processor);
         configureConsumer(consumer);
+        consumer.setMaxMessagesPerPoll(configuration.getMaxMessagesPerPoll());
+        // the delay is a configuration option (it would otherwise shadow ScheduledPollEndpoint#delay and be
+        // ignored), so propagate it to the consumer's scheduler
+        consumer.setDelay(configuration.getDelay());
         return consumer;
     }
 
