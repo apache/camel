@@ -458,7 +458,7 @@ public interface DebeziumDb2ComponentBuilderFactory {
          * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Default:
-         * .*secret$|.*password$|.*sasl\.jaas\.config$|.*basic\.auth\.user\.info|.*registry\.auth\.client-secret|.*credentials\.json$
+         * .*secret$|.*password$|.*sasl\.jaas\.config$|.*basic\.auth\.user\.info|.*registry\.auth\.client-secret|.*credentials\.json$|.*connectionstring$|.*connection\.string$
          * Group: db2
          * 
          * @param customSanitizePattern the value to set
@@ -820,6 +820,26 @@ public interface DebeziumDb2ComponentBuilderFactory {
          */
         default DebeziumDb2ComponentBuilder incrementalSnapshotWatermarkingStrategy(java.lang.String incrementalSnapshotWatermarkingStrategy) {
             doSetProperty("incrementalSnapshotWatermarkingStrategy", incrementalSnapshotWatermarkingStrategy);
+            return this;
+        }
+    
+        
+        /**
+         * When enabled, uses the legacy table-per-thread parallel snapshot
+         * algorithm. When set to false (the default), tables are split into
+         * chunks and processed across all snapshot threads, allowing for higher
+         * concurrency for snapshots.
+         * 
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * 
+         * Default: false
+         * Group: db2
+         * 
+         * @param legacySnapshotMaxThreads the value to set
+         * @return the dsl builder
+         */
+        default DebeziumDb2ComponentBuilder legacySnapshotMaxThreads(boolean legacySnapshotMaxThreads) {
+            doSetProperty("legacySnapshotMaxThreads", legacySnapshotMaxThreads);
             return this;
         }
     
@@ -1917,6 +1937,7 @@ public interface DebeziumDb2ComponentBuilderFactory {
             case "includeSchemaChanges": getOrCreateConfiguration((DebeziumDb2Component) component).setIncludeSchemaChanges((boolean) value); return true;
             case "incrementalSnapshotChunkSize": getOrCreateConfiguration((DebeziumDb2Component) component).setIncrementalSnapshotChunkSize((int) value); return true;
             case "incrementalSnapshotWatermarkingStrategy": getOrCreateConfiguration((DebeziumDb2Component) component).setIncrementalSnapshotWatermarkingStrategy((java.lang.String) value); return true;
+            case "legacySnapshotMaxThreads": getOrCreateConfiguration((DebeziumDb2Component) component).setLegacySnapshotMaxThreads((boolean) value); return true;
             case "maxBatchSize": getOrCreateConfiguration((DebeziumDb2Component) component).setMaxBatchSize((int) value); return true;
             case "maxQueueSize": getOrCreateConfiguration((DebeziumDb2Component) component).setMaxQueueSize((int) value); return true;
             case "maxQueueSizeInBytes": getOrCreateConfiguration((DebeziumDb2Component) component).setMaxQueueSizeInBytes((long) value); return true;

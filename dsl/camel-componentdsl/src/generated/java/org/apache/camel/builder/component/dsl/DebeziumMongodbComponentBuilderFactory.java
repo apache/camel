@@ -443,7 +443,7 @@ public interface DebeziumMongodbComponentBuilderFactory {
          * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Default:
-         * .*secret$|.*password$|.*sasl\.jaas\.config$|.*basic\.auth\.user\.info|.*registry\.auth\.client-secret|.*credentials\.json$
+         * .*secret$|.*password$|.*sasl\.jaas\.config$|.*basic\.auth\.user\.info|.*registry\.auth\.client-secret|.*credentials\.json$|.*connectionstring$|.*connection\.string$
          * Group: mongodb
          * 
          * @param customSanitizePattern the value to set
@@ -689,6 +689,26 @@ public interface DebeziumMongodbComponentBuilderFactory {
          */
         default DebeziumMongodbComponentBuilder incrementalSnapshotWatermarkingStrategy(java.lang.String incrementalSnapshotWatermarkingStrategy) {
             doSetProperty("incrementalSnapshotWatermarkingStrategy", incrementalSnapshotWatermarkingStrategy);
+            return this;
+        }
+    
+        
+        /**
+         * When enabled, uses the legacy table-per-thread parallel snapshot
+         * algorithm. When set to false (the default), tables are split into
+         * chunks and processed across all snapshot threads, allowing for higher
+         * concurrency for snapshots.
+         * 
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * 
+         * Default: false
+         * Group: mongodb
+         * 
+         * @param legacySnapshotMaxThreads the value to set
+         * @return the dsl builder
+         */
+        default DebeziumMongodbComponentBuilder legacySnapshotMaxThreads(boolean legacySnapshotMaxThreads) {
+            doSetProperty("legacySnapshotMaxThreads", legacySnapshotMaxThreads);
             return this;
         }
     
@@ -1710,6 +1730,7 @@ public interface DebeziumMongodbComponentBuilderFactory {
             case "heartbeatIntervalMs": getOrCreateConfiguration((DebeziumMongodbComponent) component).setHeartbeatIntervalMs((int) value); return true;
             case "heartbeatTopicsPrefix": getOrCreateConfiguration((DebeziumMongodbComponent) component).setHeartbeatTopicsPrefix((java.lang.String) value); return true;
             case "incrementalSnapshotWatermarkingStrategy": getOrCreateConfiguration((DebeziumMongodbComponent) component).setIncrementalSnapshotWatermarkingStrategy((java.lang.String) value); return true;
+            case "legacySnapshotMaxThreads": getOrCreateConfiguration((DebeziumMongodbComponent) component).setLegacySnapshotMaxThreads((boolean) value); return true;
             case "maxBatchSize": getOrCreateConfiguration((DebeziumMongodbComponent) component).setMaxBatchSize((int) value); return true;
             case "maxQueueSize": getOrCreateConfiguration((DebeziumMongodbComponent) component).setMaxQueueSize((int) value); return true;
             case "maxQueueSizeInBytes": getOrCreateConfiguration((DebeziumMongodbComponent) component).setMaxQueueSizeInBytes((long) value); return true;

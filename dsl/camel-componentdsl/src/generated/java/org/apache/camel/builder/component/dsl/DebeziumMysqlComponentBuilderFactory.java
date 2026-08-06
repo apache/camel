@@ -554,7 +554,7 @@ public interface DebeziumMysqlComponentBuilderFactory {
          * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Default:
-         * .*secret$|.*password$|.*sasl\.jaas\.config$|.*basic\.auth\.user\.info|.*registry\.auth\.client-secret|.*credentials\.json$
+         * .*secret$|.*password$|.*sasl\.jaas\.config$|.*basic\.auth\.user\.info|.*registry\.auth\.client-secret|.*credentials\.json$|.*connectionstring$|.*connection\.string$
          * Group: mysql
          * 
          * @param customSanitizePattern the value to set
@@ -1355,6 +1355,26 @@ public interface DebeziumMysqlComponentBuilderFactory {
          */
         default DebeziumMysqlComponentBuilder incrementalSnapshotWatermarkingStrategy(java.lang.String incrementalSnapshotWatermarkingStrategy) {
             doSetProperty("incrementalSnapshotWatermarkingStrategy", incrementalSnapshotWatermarkingStrategy);
+            return this;
+        }
+    
+        
+        /**
+         * When enabled, uses the legacy table-per-thread parallel snapshot
+         * algorithm. When set to false (the default), tables are split into
+         * chunks and processed across all snapshot threads, allowing for higher
+         * concurrency for snapshots.
+         * 
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * 
+         * Default: false
+         * Group: mysql
+         * 
+         * @param legacySnapshotMaxThreads the value to set
+         * @return the dsl builder
+         */
+        default DebeziumMysqlComponentBuilder legacySnapshotMaxThreads(boolean legacySnapshotMaxThreads) {
+            doSetProperty("legacySnapshotMaxThreads", legacySnapshotMaxThreads);
             return this;
         }
     
@@ -2608,6 +2628,7 @@ public interface DebeziumMysqlComponentBuilderFactory {
             case "incrementalSnapshotAllowSchemaChanges": getOrCreateConfiguration((DebeziumMySqlComponent) component).setIncrementalSnapshotAllowSchemaChanges((boolean) value); return true;
             case "incrementalSnapshotChunkSize": getOrCreateConfiguration((DebeziumMySqlComponent) component).setIncrementalSnapshotChunkSize((int) value); return true;
             case "incrementalSnapshotWatermarkingStrategy": getOrCreateConfiguration((DebeziumMySqlComponent) component).setIncrementalSnapshotWatermarkingStrategy((java.lang.String) value); return true;
+            case "legacySnapshotMaxThreads": getOrCreateConfiguration((DebeziumMySqlComponent) component).setLegacySnapshotMaxThreads((boolean) value); return true;
             case "maxBatchSize": getOrCreateConfiguration((DebeziumMySqlComponent) component).setMaxBatchSize((int) value); return true;
             case "maxQueueSize": getOrCreateConfiguration((DebeziumMySqlComponent) component).setMaxQueueSize((int) value); return true;
             case "maxQueueSizeInBytes": getOrCreateConfiguration((DebeziumMySqlComponent) component).setMaxQueueSizeInBytes((long) value); return true;

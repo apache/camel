@@ -444,7 +444,7 @@ public interface DebeziumSqlserverComponentBuilderFactory {
          * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Default:
-         * .*secret$|.*password$|.*sasl\.jaas\.config$|.*basic\.auth\.user\.info|.*registry\.auth\.client-secret|.*credentials\.json$
+         * .*secret$|.*password$|.*sasl\.jaas\.config$|.*basic\.auth\.user\.info|.*registry\.auth\.client-secret|.*credentials\.json$|.*connectionstring$|.*connection\.string$
          * Group: sqlserver
          * 
          * @param customSanitizePattern the value to set
@@ -919,6 +919,26 @@ public interface DebeziumSqlserverComponentBuilderFactory {
          */
         default DebeziumSqlserverComponentBuilder incrementalSnapshotWatermarkingStrategy(java.lang.String incrementalSnapshotWatermarkingStrategy) {
             doSetProperty("incrementalSnapshotWatermarkingStrategy", incrementalSnapshotWatermarkingStrategy);
+            return this;
+        }
+    
+        
+        /**
+         * When enabled, uses the legacy table-per-thread parallel snapshot
+         * algorithm. When set to false (the default), tables are split into
+         * chunks and processed across all snapshot threads, allowing for higher
+         * concurrency for snapshots.
+         * 
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * 
+         * Default: false
+         * Group: sqlserver
+         * 
+         * @param legacySnapshotMaxThreads the value to set
+         * @return the dsl builder
+         */
+        default DebeziumSqlserverComponentBuilder legacySnapshotMaxThreads(boolean legacySnapshotMaxThreads) {
+            doSetProperty("legacySnapshotMaxThreads", legacySnapshotMaxThreads);
             return this;
         }
     
@@ -2098,6 +2118,7 @@ public interface DebeziumSqlserverComponentBuilderFactory {
             case "incrementalSnapshotChunkSize": getOrCreateConfiguration((DebeziumSqlserverComponent) component).setIncrementalSnapshotChunkSize((int) value); return true;
             case "incrementalSnapshotOptionRecompile": getOrCreateConfiguration((DebeziumSqlserverComponent) component).setIncrementalSnapshotOptionRecompile((boolean) value); return true;
             case "incrementalSnapshotWatermarkingStrategy": getOrCreateConfiguration((DebeziumSqlserverComponent) component).setIncrementalSnapshotWatermarkingStrategy((java.lang.String) value); return true;
+            case "legacySnapshotMaxThreads": getOrCreateConfiguration((DebeziumSqlserverComponent) component).setLegacySnapshotMaxThreads((boolean) value); return true;
             case "maxBatchSize": getOrCreateConfiguration((DebeziumSqlserverComponent) component).setMaxBatchSize((int) value); return true;
             case "maxIterationTransactions": getOrCreateConfiguration((DebeziumSqlserverComponent) component).setMaxIterationTransactions((int) value); return true;
             case "maxQueueSize": getOrCreateConfiguration((DebeziumSqlserverComponent) component).setMaxQueueSize((int) value); return true;

@@ -498,7 +498,7 @@ public interface DebeziumOracleComponentBuilderFactory {
          * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Default:
-         * .*secret$|.*password$|.*sasl\.jaas\.config$|.*basic\.auth\.user\.info|.*registry\.auth\.client-secret|.*credentials\.json$
+         * .*secret$|.*password$|.*sasl\.jaas\.config$|.*basic\.auth\.user\.info|.*registry\.auth\.client-secret|.*credentials\.json$|.*connectionstring$|.*connection\.string$
          * Group: oracle
          * 
          * @param customSanitizePattern the value to set
@@ -984,6 +984,26 @@ public interface DebeziumOracleComponentBuilderFactory {
          */
         default DebeziumOracleComponentBuilder legacyDecimalHandlingStrategy(boolean legacyDecimalHandlingStrategy) {
             doSetProperty("legacyDecimalHandlingStrategy", legacyDecimalHandlingStrategy);
+            return this;
+        }
+    
+        
+        /**
+         * When enabled, uses the legacy table-per-thread parallel snapshot
+         * algorithm. When set to false (the default), tables are split into
+         * chunks and processed across all snapshot threads, allowing for higher
+         * concurrency for snapshots.
+         * 
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * 
+         * Default: false
+         * Group: oracle
+         * 
+         * @param legacySnapshotMaxThreads the value to set
+         * @return the dsl builder
+         */
+        default DebeziumOracleComponentBuilder legacySnapshotMaxThreads(boolean legacySnapshotMaxThreads) {
+            doSetProperty("legacySnapshotMaxThreads", legacySnapshotMaxThreads);
             return this;
         }
     
@@ -3082,6 +3102,7 @@ public interface DebeziumOracleComponentBuilderFactory {
             case "incrementalSnapshotWatermarkingStrategy": getOrCreateConfiguration((DebeziumOracleComponent) component).setIncrementalSnapshotWatermarkingStrategy((java.lang.String) value); return true;
             case "intervalHandlingMode": getOrCreateConfiguration((DebeziumOracleComponent) component).setIntervalHandlingMode((java.lang.String) value); return true;
             case "legacyDecimalHandlingStrategy": getOrCreateConfiguration((DebeziumOracleComponent) component).setLegacyDecimalHandlingStrategy((boolean) value); return true;
+            case "legacySnapshotMaxThreads": getOrCreateConfiguration((DebeziumOracleComponent) component).setLegacySnapshotMaxThreads((boolean) value); return true;
             case "lobEnabled": getOrCreateConfiguration((DebeziumOracleComponent) component).setLobEnabled((boolean) value); return true;
             case "logMiningArchiveLogOnlyMode": getOrCreateConfiguration((DebeziumOracleComponent) component).setLogMiningArchiveLogOnlyMode((boolean) value); return true;
             case "logMiningArchiveLogOnlyScnPollIntervalMs": getOrCreateConfiguration((DebeziumOracleComponent) component).setLogMiningArchiveLogOnlyScnPollIntervalMs((long) value); return true;

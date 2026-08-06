@@ -444,7 +444,7 @@ public interface DebeziumPostgresComponentBuilderFactory {
          * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Default:
-         * .*secret$|.*password$|.*sasl\.jaas\.config$|.*basic\.auth\.user\.info|.*registry\.auth\.client-secret|.*credentials\.json$
+         * .*secret$|.*password$|.*sasl\.jaas\.config$|.*basic\.auth\.user\.info|.*registry\.auth\.client-secret|.*credentials\.json$|.*connectionstring$|.*connection\.string$
          * Group: postgres
          * 
          * @param customSanitizePattern the value to set
@@ -1024,6 +1024,26 @@ public interface DebeziumPostgresComponentBuilderFactory {
          */
         default DebeziumPostgresComponentBuilder intervalHandlingMode(java.lang.String intervalHandlingMode) {
             doSetProperty("intervalHandlingMode", intervalHandlingMode);
+            return this;
+        }
+    
+        
+        /**
+         * When enabled, uses the legacy table-per-thread parallel snapshot
+         * algorithm. When set to false (the default), tables are split into
+         * chunks and processed across all snapshot threads, allowing for higher
+         * concurrency for snapshots.
+         * 
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * 
+         * Default: false
+         * Group: postgres
+         * 
+         * @param legacySnapshotMaxThreads the value to set
+         * @return the dsl builder
+         */
+        default DebeziumPostgresComponentBuilder legacySnapshotMaxThreads(boolean legacySnapshotMaxThreads) {
+            doSetProperty("legacySnapshotMaxThreads", legacySnapshotMaxThreads);
             return this;
         }
     
@@ -2622,6 +2642,7 @@ public interface DebeziumPostgresComponentBuilderFactory {
             case "incrementalSnapshotChunkSize": getOrCreateConfiguration((DebeziumPostgresComponent) component).setIncrementalSnapshotChunkSize((int) value); return true;
             case "incrementalSnapshotWatermarkingStrategy": getOrCreateConfiguration((DebeziumPostgresComponent) component).setIncrementalSnapshotWatermarkingStrategy((java.lang.String) value); return true;
             case "intervalHandlingMode": getOrCreateConfiguration((DebeziumPostgresComponent) component).setIntervalHandlingMode((java.lang.String) value); return true;
+            case "legacySnapshotMaxThreads": getOrCreateConfiguration((DebeziumPostgresComponent) component).setLegacySnapshotMaxThreads((boolean) value); return true;
             case "lsnFlushMode": getOrCreateConfiguration((DebeziumPostgresComponent) component).setLsnFlushMode((java.lang.String) value); return true;
             case "lsnFlushTimeoutAction": getOrCreateConfiguration((DebeziumPostgresComponent) component).setLsnFlushTimeoutAction((java.lang.String) value); return true;
             case "lsnFlushTimeoutMs": getOrCreateConfiguration((DebeziumPostgresComponent) component).setLsnFlushTimeoutMs((long) value); return true;
