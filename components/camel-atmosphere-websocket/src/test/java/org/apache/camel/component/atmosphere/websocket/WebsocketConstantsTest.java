@@ -20,8 +20,7 @@ import org.apache.camel.http.base.HttpHeaderFilterStrategy;
 import org.apache.camel.spi.HeaderFilterStrategy;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.assertj.core.api.Assertions.assertThat;
 
 /**
  * Verifies that the Exchange header constants follow the {@code Camel<Component><Feature>} naming convention, and
@@ -41,11 +40,11 @@ class WebsocketConstantsTest {
 
     @Test
     void testHeaderNamesFollowCamelNamingConvention() {
-        assertEquals("CamelAtmosphereWebsocketConnectionKey", WebsocketConstants.CONNECTION_KEY);
-        assertEquals("CamelAtmosphereWebsocketConnectionKeyList", WebsocketConstants.CONNECTION_KEY_LIST);
-        assertEquals("CamelAtmosphereWebsocketSendToAll", WebsocketConstants.SEND_TO_ALL);
-        assertEquals("CamelAtmosphereWebsocketEventType", WebsocketConstants.EVENT_TYPE);
-        assertEquals("CamelAtmosphereWebsocketErrorType", WebsocketConstants.ERROR_TYPE);
+        assertThat(WebsocketConstants.CONNECTION_KEY).isEqualTo("CamelAtmosphereWebsocketConnectionKey");
+        assertThat(WebsocketConstants.CONNECTION_KEY_LIST).isEqualTo("CamelAtmosphereWebsocketConnectionKeyList");
+        assertThat(WebsocketConstants.SEND_TO_ALL).isEqualTo("CamelAtmosphereWebsocketSendToAll");
+        assertThat(WebsocketConstants.EVENT_TYPE).isEqualTo("CamelAtmosphereWebsocketEventType");
+        assertThat(WebsocketConstants.ERROR_TYPE).isEqualTo("CamelAtmosphereWebsocketErrorType");
     }
 
     @Test
@@ -53,10 +52,12 @@ class WebsocketConstantsTest {
         // WebsocketEndpoint extends ServletEndpoint, so it inherits HttpHeaderFilterStrategy, which filters
         // the Camel namespace case-insensitively in both directions
         for (String header : HEADERS) {
-            assertTrue(strategy.applyFilterToExternalHeaders(header, "aValue", null),
-                    header + " should be filtered when mapping external headers in");
-            assertTrue(strategy.applyFilterToCamelHeaders(header, "aValue", null),
-                    header + " should be filtered when mapping Camel headers out");
+            assertThat(strategy.applyFilterToExternalHeaders(header, "aValue", null))
+                    .as("%s should be filtered when mapping external headers in", header)
+                    .isTrue();
+            assertThat(strategy.applyFilterToCamelHeaders(header, "aValue", null))
+                    .as("%s should be filtered when mapping Camel headers out", header)
+                    .isTrue();
         }
     }
 }
