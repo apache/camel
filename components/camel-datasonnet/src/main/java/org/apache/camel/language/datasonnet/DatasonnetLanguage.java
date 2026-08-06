@@ -29,6 +29,7 @@ import io.github.classgraph.ClassGraph;
 import io.github.classgraph.ScanResult;
 import org.apache.camel.Expression;
 import org.apache.camel.Predicate;
+import org.apache.camel.component.dataweave.DataWeaveConverter;
 import org.apache.camel.spi.annotations.Language;
 import org.apache.camel.support.LRUCacheFactory;
 import org.apache.camel.support.SingleInputTypedLanguageSupport;
@@ -68,9 +69,21 @@ public class DatasonnetLanguage extends SingleInputTypedLanguageSupport {
     }
 
     @Override
-    public Expression createExpression(Expression source, String expression, Object[] properties) {
-        expression = loadResource(expression);
+    public Expression createExpression(String expression, Object[] properties) {
+        if (expression != null) {
+            boolean dwlResource = isDataWeaveResource(expression);
+            if (dwlResource) {
+                expression = loadResource(expression);
+            }
+            if (dwlResource || isDataWeaveContent(expression)) {
+                expression = convertDataWeave(expression);
+            }
+        }
+        return super.createExpression(expression, properties);
+    }
 
+    @Override
+    public Expression createExpression(Expression source, String expression, Object[] properties) {
         DatasonnetExpression answer = new DatasonnetExpression(expression);
         answer.setSource(source);
         answer.setResultType(property(Class.class, properties, 0, null));
@@ -98,6 +111,32 @@ public class DatasonnetLanguage extends SingleInputTypedLanguageSupport {
 
     public Map<String, String> getClasspathImports() {
         return classpathImports;
+    }
+
+    private static boolean isDataWeaveResource(String expression) {
+        return expression != null && expression.endsWith(".dwl");
+    }
+
+    private static boolean isDataWeaveContent(String expression) {
+        return expression != null && expression.stripLeading().startsWith("%dw");
+    }
+
+    private static String convertDataWeave(String expression) {
+        DataWeaveConverter converter = new DataWeaveConverter();
+        converter.setIncludeComments(false);
+        String result;
+        if (expression.contains("%dw") || expression.contains("---")) {
+            result = converter.convert(expression);
+        } else {
+            result = converter.convertExpression(expression);
+        }
+        if (converter.getTodoCount() > 0) {
+            LOG.warn("DataWeave conversion has {} construct(s) that could not be auto-converted and were emitted as null",
+                    converter.getTodoCount());
+        } else {
+            LOG.debug("Converted DataWeave to DataSonnet: {} expression(s)", converter.getConvertedCount());
+        }
+        return result;
     }
 
     private Map<String, String> discoverDataSonnetLibraries() {

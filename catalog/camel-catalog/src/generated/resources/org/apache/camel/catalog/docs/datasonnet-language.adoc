@@ -404,24 +404,94 @@ YAML::
 ====
 
 
-== Migrating from DataWeave
+== DataWeave Support
 
-If you have existing DataWeave (`.dwl`) scripts, Camel provides a transpiler to convert them to DataSonnet format via the Camel CLI CLI.
+Camel can execute DataWeave (`.dwl`) scripts directly by auto-detecting and transpiling them to DataSonnet at load time.
+No extra configuration is needed -- just reference a `.dwl` resource and Camel handles the conversion automatically.
 
-=== Converting an inline expression
+=== Auto-detection
+
+DataWeave scripts are detected in two ways:
+
+- **By file extension**: any resource ending in `.dwl` (e.g., `resource:classpath:transform.dwl`)
+- **By content**: inline expressions starting with the `%dw` header
+
+Once detected, the script is transpiled to DataSonnet and executed via the datasonnet-mapper runtime.
+The conversion happens once at route initialization, so there is no runtime overhead.
+
+=== Example
+
+Given a DataWeave file `transform.dwl` on the classpath:
+
+[source,dataweave]
+----
+%dw 2.0
+output application/json
+---
+{
+    orderId: payload.order_id,
+    customer: payload.customer.first_name ++ " " ++ payload.customer.last_name,
+    total: payload.items map ((item) -> item.price * item.qty)
+                         reduce ((item, acc = 0) -> acc + item)
+}
+----
+
+You can use it directly in a route:
+
+[tabs]
+====
+Java::
++
+[source,java]
+----
+from("direct:in")
+    .transform(datasonnet("resource:classpath:transform.dwl", String.class))
+    .to("mock:result");
+----
+
+XML::
++
+[source,xml]
+----
+<route>
+    <from uri="direct:in"/>
+    <transform>
+        <datasonnet resultTypeName="java.lang.String">resource:classpath:transform.dwl</datasonnet>
+    </transform>
+    <to uri="mock:result"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:in
+      steps:
+        - transform:
+            expression:
+              datasonnet:
+                expression: "resource:classpath:transform.dwl"
+                resultType: java.lang.String
+        - to:
+            uri: mock:result
+----
+====
+
+=== CLI Transpiler
+
+You can also convert DataWeave scripts ahead of time using the Camel CLI:
 
 [source,bash]
 ----
 camel transform dataweave -e "payload.name ++ ' ' ++ payload.surname"
-----
-
-=== Converting a file or directory
-
-[source,bash]
-----
 camel transform dataweave --input my-transform.dwl --output my-transform.ds
 camel transform dataweave --input src/main/resources/dwl/ --output src/main/resources/ds/
 ----
+
+=== Supported Constructs
 
 The transpiler automatically maps DataWeave constructs to their DataSonnet equivalents, including:
 
@@ -431,7 +501,7 @@ The transpiler automatically maps DataWeave constructs to their DataSonnet equiv
 - String operations: `contains`, `startsWith`, `endsWith`, `splitBy`, `joinBy`, `replace`
 - Functions: `sizeOf`, `upper`, `lower`, `trim`, `now`, `uuid`, `abs`, `round`, `sqrt`
 
-Constructs that cannot be automatically converted (such as `match` expressions) are marked with `TODO` comments in the output for manual review.
+Constructs that cannot be automatically converted (such as `match` expressions) are emitted as `null` for manual review.
 
 == Dependencies
 

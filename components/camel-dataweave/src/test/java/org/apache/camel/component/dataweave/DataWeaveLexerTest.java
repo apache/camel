@@ -14,12 +14,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.dsl.jbang.core.commands.transform;
+package org.apache.camel.component.dataweave;
 
 import java.util.List;
 
-import org.apache.camel.dsl.jbang.core.commands.transform.DataWeaveLexer.Token;
-import org.apache.camel.dsl.jbang.core.commands.transform.DataWeaveLexer.TokenType;
+import org.apache.camel.component.dataweave.DataWeaveLexer.Token;
+import org.apache.camel.component.dataweave.DataWeaveLexer.TokenType;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;

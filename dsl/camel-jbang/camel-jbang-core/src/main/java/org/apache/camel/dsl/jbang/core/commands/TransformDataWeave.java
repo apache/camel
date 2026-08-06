@@ -23,7 +23,7 @@ import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.apache.camel.dsl.jbang.core.commands.transform.DataWeaveConverter;
+import org.apache.camel.component.dataweave.DataWeaveConverter;
 import picocli.CommandLine;
 import picocli.CommandLine.Command;
 
