@@ -18,6 +18,7 @@ package org.apache.camel.component.ai.tool;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -136,7 +137,7 @@ class AiToolRegistryListenerTest {
     }
 
     private static AiToolSpec spec(String name) {
-        return new AiToolSpec(name, name + " description", null, null, null, null);
+        return new AiToolSpec(name, name + " description", null, null, Map.of(), null, null, null);
     }
 
     private record Event(String type, String tag, AiToolSpec spec) {

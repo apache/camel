@@ -371,4 +371,76 @@ public class AiToolParameterHelperTest {
                 .isInstanceOf(IllegalArgumentException.class)
                 .hasMessageContaining("properties must be a JSON object");
     }
+
+    @Test
+    void testValidateOutputSourceExclusive() {
+        assertThatThrownBy(() -> AiToolParameterHelper.validateOutputSourceExclusive(
+                Map.of("temperature", "number"), "{\"type\":\"object\"}"))
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessageContaining("mutually exclusive");
+    }
+
+    @Test
+    void testResolveOutputSchemaFromInlineJson() {
+        String schema = AiToolParameterHelper.resolveOutputSchema(camelContext, """
+                {
+                  "type": "object",
+                  "properties": {
+                    "temperature": { "type": "number" }
+                  }
+                }
+                """);
+
+        assertThat(schema).contains("\"temperature\"");
+    }
+
+    @Test
+    void testResolveOutputSchemaAllowsNonObjectRootType() {
+        String schema = AiToolParameterHelper.resolveOutputSchema(camelContext, "{\"type\":\"string\"}");
+
+        assertThat(schema).contains("\"type\":\"string\"");
+    }
+
+    @Test
+    void testResolveOutputSchemaFromClasspath() {
+        String schema = AiToolParameterHelper.resolveOutputSchema(camelContext,
+                "classpath:output-schemas/weather-result.json");
+
+        assertThat(schema).contains("\"temperature\"").contains("\"unit\"");
+    }
+
+    @Test
+    void testParseStructuredOutputFromJsonString() {
+        Object structured = AiToolParameterHelper.parseStructuredOutput("""
+                {"temperature":21.5,"unit":"celsius"}
+                """);
+
+        assertThat(structured).isInstanceOf(JsonObject.class);
+        assertThat(((JsonObject) structured).get("temperature").toString()).isEqualTo("21.5");
+        assertThat(((JsonObject) structured).getString("unit")).isEqualTo("celsius");
+    }
+
+    @Test
+    void testParseStructuredOutputFromMap() {
+        Map<String, Object> body = Map.of("temperature", 21.5, "unit", "celsius");
+
+        Object structured = AiToolParameterHelper.parseStructuredOutput(body);
+
+        assertThat(structured).isSameAs(body);
+    }
+
+    @Test
+    void testParseStructuredOutputRejectsInvalidJsonString() {
+        assertThatThrownBy(() -> AiToolParameterHelper.parseStructuredOutput("{not-json"))
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessageContaining("valid JSON");
+    }
+
+    @Test
+    void testStructuredContentToTextUsesOriginalJsonString() {
+        String json = "{\"temperature\":21.5,\"unit\":\"celsius\"}";
+        JsonObject structured = (JsonObject) AiToolParameterHelper.parseStructuredOutput(json);
+
+        assertThat(AiToolParameterHelper.structuredContentToText(structured, json)).isEqualTo(json);
+    }
 }

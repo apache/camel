@@ -32,6 +32,10 @@ public class AiToolConfigurationConfigurer extends org.apache.camel.support.comp
         case "idempotentHint": target.setIdempotentHint(property(camelContext, java.lang.Boolean.class, value)); return true;
         case "openworldhint":
         case "openWorldHint": target.setOpenWorldHint(property(camelContext, java.lang.Boolean.class, value)); return true;
+        case "outputparameters":
+        case "outputParameters": target.setOutputParameters(property(camelContext, java.util.Map.class, value)); return true;
+        case "outputschema":
+        case "outputSchema": target.setOutputSchema(property(camelContext, java.lang.String.class, value)); return true;
         case "parameters": target.setParameters(property(camelContext, java.util.Map.class, value)); return true;
         case "readonlyhint":
         case "readOnlyHint": target.setReadOnlyHint(property(camelContext, java.lang.Boolean.class, value)); return true;
@@ -53,6 +57,10 @@ public class AiToolConfigurationConfigurer extends org.apache.camel.support.comp
         case "idempotentHint": return java.lang.Boolean.class;
         case "openworldhint":
         case "openWorldHint": return java.lang.Boolean.class;
+        case "outputparameters":
+        case "outputParameters": return java.util.Map.class;
+        case "outputschema":
+        case "outputSchema": return java.lang.String.class;
         case "parameters": return java.util.Map.class;
         case "readonlyhint":
         case "readOnlyHint": return java.lang.Boolean.class;
@@ -75,6 +83,10 @@ public class AiToolConfigurationConfigurer extends org.apache.camel.support.comp
         case "idempotentHint": return target.getIdempotentHint();
         case "openworldhint":
         case "openWorldHint": return target.getOpenWorldHint();
+        case "outputparameters":
+        case "outputParameters": return target.getOutputParameters();
+        case "outputschema":
+        case "outputSchema": return target.getOutputSchema();
         case "parameters": return target.getParameters();
         case "readonlyhint":
         case "readOnlyHint": return target.getReadOnlyHint();
@@ -87,6 +99,8 @@ public class AiToolConfigurationConfigurer extends org.apache.camel.support.comp
     @Override
     public Object getCollectionValueType(Object target, String name, boolean ignoreCase) {
         switch (ignoreCase ? name.toLowerCase() : name) {
+        case "outputparameters":
+        case "outputParameters": return java.lang.String.class;
         case "parameters": return java.lang.String.class;
         default: return null;
         }

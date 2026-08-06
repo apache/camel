@@ -85,6 +85,26 @@ public class AiToolExecutorTest extends CamelTestSupport {
                             List<?> items = exchange.getMessage().getHeader("items", List.class);
                             exchange.getMessage().setBody("order:" + customer.get("id") + ":" + items.size());
                         });
+
+                from("ai-tool:getWeather"
+                     + "?tags=test"
+                     + "&description=Get weather"
+                     + "&outputSchema=classpath:output-schemas/weather-result.json")
+                        .setBody(constant("{\"temperature\":21.5,\"unit\":\"celsius\"}"));
+
+                from("ai-tool:getWeatherMap"
+                     + "?tags=test"
+                     + "&description=Get weather as map"
+                     + "&outputParameter.temperature=number"
+                     + "&outputParameter.unit=string")
+                        .process(exchange -> exchange.getMessage().setBody(
+                                Map.of("temperature", 18, "unit", "celsius")));
+
+                from("ai-tool:badStructuredOutput"
+                     + "?tags=test"
+                     + "&description=Returns invalid JSON"
+                     + "&outputSchema=classpath:output-schemas/weather-result.json")
+                        .setBody(constant("not-json"));
             }
         };
     }
@@ -217,7 +237,7 @@ public class AiToolExecutorTest extends CamelTestSupport {
 
     @Test
     public void testExecuteReturnsExecutionErrorForNullConsumer() {
-        AiToolSpec spec = new AiToolSpec("ghostTool", "A tool with no consumer", Map.of(), null, null, null);
+        AiToolSpec spec = new AiToolSpec("ghostTool", "A tool with no consumer", Map.of(), null, Map.of(), null, null, null);
         Exchange exchange = new DefaultExchange(context);
 
         AiToolResult result = AiToolExecutor.execute(spec, null, exchange);
@@ -235,7 +255,7 @@ public class AiToolExecutorTest extends CamelTestSupport {
         DefaultConsumer consumerWithNullProcessor = new DefaultConsumer(endpoint, null);
 
         AiToolSpec spec = new AiToolSpec(
-                "nullProc", "test", Map.of(), null, null, consumerWithNullProcessor);
+                "nullProc", "test", Map.of(), null, Map.of(), null, null, consumerWithNullProcessor);
         Exchange exchange = new DefaultExchange(context);
 
         AiToolResult result = AiToolExecutor.execute(spec, null, exchange);
@@ -370,7 +390,9 @@ public class AiToolExecutorTest extends CamelTestSupport {
                   "required": ["country"]
                 }
                 """;
-        AiToolSpec spec = new AiToolSpec("badRequired", "test", Map.of(), schema, null, findSpec("greetUser").getConsumer());
+        AiToolSpec spec = new AiToolSpec(
+                "badRequired", "test", Map.of(), schema, Map.of(), null, null,
+                findSpec("greetUser").getConsumer());
         Exchange exchange = new DefaultExchange(context);
 
         Map<String, Object> arguments = Map.of("country", "Paris");
@@ -379,6 +401,43 @@ public class AiToolExecutorTest extends CamelTestSupport {
 
         assertThat(result).isInstanceOf(AiToolResult.ArgumentError.class);
         assertThat(((AiToolResult.ArgumentError) result).message()).contains("Missing required argument 'country'");
+    }
+
+    @Test
+    public void testExecuteReturnsStructuredContentFromJsonString() {
+        AiToolSpec spec = findSpec("getWeather");
+        Exchange exchange = new DefaultExchange(context);
+
+        AiToolResult result = AiToolExecutor.execute(spec, Map.of(), exchange);
+
+        assertThat(result).isInstanceOf(AiToolResult.Success.class);
+        AiToolResult.Success success = (AiToolResult.Success) result;
+        assertThat(success.value()).contains("\"temperature\":21.5");
+        assertThat(success.structuredContent()).isNotNull();
+    }
+
+    @Test
+    public void testExecuteReturnsStructuredContentFromMapBody() {
+        AiToolSpec spec = findSpec("getWeatherMap");
+        Exchange exchange = new DefaultExchange(context);
+
+        AiToolResult result = AiToolExecutor.execute(spec, Map.of(), exchange);
+
+        assertThat(result).isInstanceOf(AiToolResult.Success.class);
+        AiToolResult.Success success = (AiToolResult.Success) result;
+        assertThat(success.structuredContent()).isInstanceOf(Map.class);
+        assertThat(success.value()).contains("\"temperature\":18");
+    }
+
+    @Test
+    public void testExecuteReturnsExecutionErrorForInvalidStructuredOutput() {
+        AiToolSpec spec = findSpec("badStructuredOutput");
+        Exchange exchange = new DefaultExchange(context);
+
+        AiToolResult result = AiToolExecutor.execute(spec, Map.of(), exchange);
+
+        assertThat(result).isInstanceOf(AiToolResult.ExecutionError.class);
+        assertThat(((AiToolResult.ExecutionError) result).message()).contains("valid JSON");
     }
 
     private AiToolSpec findSpec(String toolName) {

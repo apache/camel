@@ -43,7 +43,7 @@ public class AiToolRegistryTest {
 
     @Test
     public void testPutAndGetTool() {
-        AiToolSpec spec = new AiToolSpec("getTool", "A test tool", Map.of(), null, null, null);
+        AiToolSpec spec = new AiToolSpec("getTool", "A test tool", Map.of(), null, Map.of(), null, null, null);
 
         registry.put("weather", spec);
 
@@ -56,7 +56,7 @@ public class AiToolRegistryTest {
 
     @Test
     public void testRemoveTool() {
-        AiToolSpec spec = new AiToolSpec("getTool", "A test tool", Map.of(), null, null, null);
+        AiToolSpec spec = new AiToolSpec("getTool", "A test tool", Map.of(), null, Map.of(), null, null, null);
 
         registry.put("weather", spec);
         assertThat(registry.getTools().get("weather"))
@@ -71,8 +71,8 @@ public class AiToolRegistryTest {
 
     @Test
     public void testMultipleToolsWithSameTag() {
-        AiToolSpec spec1 = new AiToolSpec("tool1", "Tool 1", Map.of(), null, null, null);
-        AiToolSpec spec2 = new AiToolSpec("tool2", "Tool 2", Map.of(), null, null, null);
+        AiToolSpec spec1 = new AiToolSpec("tool1", "Tool 1", Map.of(), null, Map.of(), null, null, null);
+        AiToolSpec spec2 = new AiToolSpec("tool2", "Tool 2", Map.of(), null, Map.of(), null, null, null);
 
         registry.put("assistant", spec1);
         registry.put("assistant", spec2);
@@ -84,8 +84,8 @@ public class AiToolRegistryTest {
 
     @Test
     public void testRemoveOneOfMultipleTools() {
-        AiToolSpec spec1 = new AiToolSpec("tool1", "Tool 1", Map.of(), null, null, null);
-        AiToolSpec spec2 = new AiToolSpec("tool2", "Tool 2", Map.of(), null, null, null);
+        AiToolSpec spec1 = new AiToolSpec("tool1", "Tool 1", Map.of(), null, Map.of(), null, null, null);
+        AiToolSpec spec2 = new AiToolSpec("tool2", "Tool 2", Map.of(), null, Map.of(), null, null, null);
 
         registry.put("assistant", spec1);
         registry.put("assistant", spec2);
@@ -101,8 +101,8 @@ public class AiToolRegistryTest {
 
     @Test
     public void testTagIsolation() {
-        AiToolSpec weatherSpec = new AiToolSpec("weather", "Weather", Map.of(), null, null, null);
-        AiToolSpec emailSpec = new AiToolSpec("email", "Email", Map.of(), null, null, null);
+        AiToolSpec weatherSpec = new AiToolSpec("weather", "Weather", Map.of(), null, Map.of(), null, null, null);
+        AiToolSpec emailSpec = new AiToolSpec("email", "Email", Map.of(), null, Map.of(), null, null, null);
 
         registry.put("weather", weatherSpec);
         registry.put("email", emailSpec);
@@ -120,7 +120,7 @@ public class AiToolRegistryTest {
 
     @Test
     public void testRemoveFromNonExistentTag() {
-        AiToolSpec spec = new AiToolSpec("tool", "A tool", Map.of(), null, null, null);
+        AiToolSpec spec = new AiToolSpec("tool", "A tool", Map.of(), null, Map.of(), null, null, null);
         registry.remove("nonexistent", spec);
 
         assertThat(registry.getTools())
@@ -133,7 +133,7 @@ public class AiToolRegistryTest {
 
     @Test
     public void testDefaultPoolPutAndRemove() {
-        AiToolSpec spec = new AiToolSpec("defaultTool", "Default", Map.of(), null, null, null);
+        AiToolSpec spec = new AiToolSpec("defaultTool", "Default", Map.of(), null, Map.of(), null, null, null);
 
         registry.putDefault(spec);
         assertThat(registry.getDefaultTools())
@@ -149,8 +149,8 @@ public class AiToolRegistryTest {
 
     @Test
     public void testGetToolsByTagIncludesDefaultPool() {
-        AiToolSpec taggedTool = new AiToolSpec("tagged", "Tagged", Map.of(), null, null, null);
-        AiToolSpec defaultTool = new AiToolSpec("default", "Default", Map.of(), null, null, null);
+        AiToolSpec taggedTool = new AiToolSpec("tagged", "Tagged", Map.of(), null, Map.of(), null, null, null);
+        AiToolSpec defaultTool = new AiToolSpec("default", "Default", Map.of(), null, Map.of(), null, null, null);
 
         registry.put("weather", taggedTool);
         registry.putDefault(defaultTool);
@@ -164,7 +164,7 @@ public class AiToolRegistryTest {
 
     @Test
     public void testGetToolsByTagWithNoMatchReturnsDefaultOnly() {
-        AiToolSpec defaultTool = new AiToolSpec("default", "Default", Map.of(), null, null, null);
+        AiToolSpec defaultTool = new AiToolSpec("default", "Default", Map.of(), null, Map.of(), null, null, null);
         registry.putDefault(defaultTool);
 
         assertThat(registry.getToolsByTag("nonexistent"))
@@ -192,7 +192,7 @@ public class AiToolRegistryTest {
                 }
                 for (int i = 0; i < opsPerThread; i++) {
                     AiToolSpec spec = new AiToolSpec(
-                            "tool-" + threadId + "-" + i, "desc", Map.of(), null, null, null);
+                            "tool-" + threadId + "-" + i, "desc", Map.of(), null, Map.of(), null, null, null);
                     registry.put("concurrent", spec);
                     registry.getToolsByTag("concurrent");
                     registry.getAllTools();
@@ -215,8 +215,8 @@ public class AiToolRegistryTest {
 
     @Test
     public void testDuplicateToolNameUnderSameTagThrows() {
-        AiToolSpec spec1 = new AiToolSpec("sameName", "First", Map.of(), null, null, null);
-        AiToolSpec spec2 = new AiToolSpec("sameName", "Second", Map.of(), null, null, null);
+        AiToolSpec spec1 = new AiToolSpec("sameName", "First", Map.of(), null, Map.of(), null, null, null);
+        AiToolSpec spec2 = new AiToolSpec("sameName", "Second", Map.of(), null, Map.of(), null, null, null);
 
         registry.put("weather", spec1);
 
@@ -233,8 +233,8 @@ public class AiToolRegistryTest {
 
     @Test
     public void testDuplicateToolNameInDefaultPoolThrows() {
-        AiToolSpec spec1 = new AiToolSpec("sameName", "First", Map.of(), null, null, null);
-        AiToolSpec spec2 = new AiToolSpec("sameName", "Second", Map.of(), null, null, null);
+        AiToolSpec spec1 = new AiToolSpec("sameName", "First", Map.of(), null, Map.of(), null, null, null);
+        AiToolSpec spec2 = new AiToolSpec("sameName", "Second", Map.of(), null, Map.of(), null, null, null);
 
         registry.putDefault(spec1);
 
@@ -251,8 +251,8 @@ public class AiToolRegistryTest {
 
     @Test
     public void testSameToolNameDifferentTagsIsAllowed() {
-        AiToolSpec spec1 = new AiToolSpec("sameName", "Weather version", Map.of(), null, null, null);
-        AiToolSpec spec2 = new AiToolSpec("sameName", "Email version", Map.of(), null, null, null);
+        AiToolSpec spec1 = new AiToolSpec("sameName", "Weather version", Map.of(), null, Map.of(), null, null, null);
+        AiToolSpec spec2 = new AiToolSpec("sameName", "Email version", Map.of(), null, Map.of(), null, null, null);
 
         registry.put("weather", spec1);
         registry.put("email", spec2);
@@ -263,8 +263,8 @@ public class AiToolRegistryTest {
 
     @Test
     public void testReRegisterAfterRemoveIsAllowed() {
-        AiToolSpec spec1 = new AiToolSpec("tool", "First", Map.of(), null, null, null);
-        AiToolSpec spec2 = new AiToolSpec("tool", "Second", Map.of(), null, null, null);
+        AiToolSpec spec1 = new AiToolSpec("tool", "First", Map.of(), null, Map.of(), null, null, null);
+        AiToolSpec spec2 = new AiToolSpec("tool", "Second", Map.of(), null, Map.of(), null, null, null);
 
         registry.put("weather", spec1);
         registry.remove("weather", spec1);
@@ -277,9 +277,9 @@ public class AiToolRegistryTest {
 
     @Test
     public void testGetAllToolsMergesTaggedAndDefault() {
-        AiToolSpec tool1 = new AiToolSpec("tool1", "Tool 1", Map.of(), null, null, null);
-        AiToolSpec tool2 = new AiToolSpec("tool2", "Tool 2", Map.of(), null, null, null);
-        AiToolSpec defaultTool = new AiToolSpec("default", "Default", Map.of(), null, null, null);
+        AiToolSpec tool1 = new AiToolSpec("tool1", "Tool 1", Map.of(), null, Map.of(), null, null, null);
+        AiToolSpec tool2 = new AiToolSpec("tool2", "Tool 2", Map.of(), null, Map.of(), null, null, null);
+        AiToolSpec defaultTool = new AiToolSpec("default", "Default", Map.of(), null, Map.of(), null, null, null);
 
         registry.put("weather", tool1);
         registry.put("email", tool2);
