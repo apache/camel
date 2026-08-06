@@ -105,6 +105,12 @@ public class AiToolExecutorTest extends CamelTestSupport {
                      + "&description=Returns invalid JSON"
                      + "&outputSchema=classpath:output-schemas/weather-result.json")
                         .setBody(constant("not-json"));
+
+                from("ai-tool:nullStructuredOutput"
+                     + "?tags=test"
+                     + "&description=Returns null body with output schema"
+                     + "&outputSchema=classpath:output-schemas/weather-result.json")
+                        .setBody(constant((Object) null));
             }
         };
     }
@@ -438,6 +444,17 @@ public class AiToolExecutorTest extends CamelTestSupport {
 
         assertThat(result).isInstanceOf(AiToolResult.ExecutionError.class);
         assertThat(((AiToolResult.ExecutionError) result).message()).contains("valid JSON");
+    }
+
+    @Test
+    public void testExecuteReturnsExecutionErrorForNullBodyWithOutputSchema() {
+        AiToolSpec spec = findSpec("nullStructuredOutput");
+        Exchange exchange = new DefaultExchange(context);
+
+        AiToolResult result = AiToolExecutor.execute(spec, Map.of(), exchange);
+
+        assertThat(result).isInstanceOf(AiToolResult.ExecutionError.class);
+        assertThat(((AiToolResult.ExecutionError) result).message()).contains("must not be null");
     }
 
     private AiToolSpec findSpec(String toolName) {

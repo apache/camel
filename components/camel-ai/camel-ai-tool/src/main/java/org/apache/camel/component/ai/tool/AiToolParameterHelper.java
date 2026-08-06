@@ -227,14 +227,16 @@ public final class AiToolParameterHelper {
      */
     public static Object parseStructuredOutput(Object body) {
         if (body == null) {
-            return null;
+            throw new IllegalArgumentException(
+                    "Route body must not be null when an output schema is declared");
         }
         if (body instanceof Map<?, ?> || body instanceof List<?> || body instanceof Number || body instanceof Boolean) {
             return body;
         }
         if (body instanceof String text) {
             if (text.isBlank()) {
-                return null;
+                throw new IllegalArgumentException(
+                        "Route body must not be blank when an output schema is declared");
             }
             try {
                 Object parsed = Jsoner.deserialize(text);
