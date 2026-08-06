@@ -52,6 +52,27 @@ public interface AiToolComponentBuilderFactory {
      */
     interface AiToolComponentBuilder extends ComponentBuilder<AiToolComponent> {
     
+        /**
+         * Raw JSON Schema for tool input parameters. Supports inline JSON and
+         * resource references (classpath:, file:, resource:). Mutually
+         * exclusive with the parameter multi-value options. Use for nested
+         * objects, arrays, oneOf, and other complex schemas.
+         * 
+         * This option can also be loaded from an existing file, by prefixing
+         * with file: or classpath: followed by the location of the file.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: consumer
+         * 
+         * @param argSchema the value to set
+         * @return the dsl builder
+         */
+        default AiToolComponentBuilder argSchema(java.lang.String argSchema) {
+            doSetProperty("argSchema", argSchema);
+            return this;
+        }
+    
         
         /**
          * Allows for bridging the consumer to the Camel routing Error Handler,
@@ -117,8 +138,8 @@ public interface AiToolComponentBuilderFactory {
          * Tool input parameters. Format: parameter.NAME=TYPE,
          * parameter.NAME.description=TEXT, parameter.NAME.required=true or
          * false, parameter.NAME.enum=val1,val2. Supported types: string,
-         * integer, number, boolean. This is a multi-value option with prefix:
-         * parameter.
+         * integer, number, boolean. Mutually exclusive with argSchema. This is
+         * a multi-value option with prefix: parameter.
          * 
          * The option is a: &lt;code&gt;java.util.Map&amp;lt;java.lang.String,
          * java.lang.String&amp;gt;&lt;/code&gt; type.
@@ -193,6 +214,7 @@ public interface AiToolComponentBuilderFactory {
                 String name,
                 Object value) {
             switch (name) {
+            case "argSchema": getOrCreateConfiguration((AiToolComponent) component).setArgSchema((java.lang.String) value); return true;
             case "bridgeErrorHandler": ((AiToolComponent) component).setBridgeErrorHandler((boolean) value); return true;
             case "configuration": ((AiToolComponent) component).setConfiguration((org.apache.camel.component.ai.tool.AiToolConfiguration) value); return true;
             case "description": getOrCreateConfiguration((AiToolComponent) component).setDescription((java.lang.String) value); return true;

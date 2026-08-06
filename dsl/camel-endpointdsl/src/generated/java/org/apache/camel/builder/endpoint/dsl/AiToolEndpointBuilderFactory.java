@@ -46,6 +46,26 @@ public interface AiToolEndpointBuilderFactory {
         }
 
         /**
+         * Raw JSON Schema for tool input parameters. Supports inline JSON and
+         * resource references (classpath:, file:, resource:). Mutually
+         * exclusive with the parameter multi-value options. Use for nested
+         * objects, arrays, oneOf, and other complex schemas.
+         * 
+         * This option can also be loaded from an existing file, by prefixing
+         * with file: or classpath: followed by the location of the file.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: consumer
+         * 
+         * @param argSchema the value to set
+         * @return the dsl builder
+         */
+        default AiToolEndpointBuilder argSchema(String argSchema) {
+            doSetProperty("argSchema", argSchema);
+            return this;
+        }
+        /**
          * Human-readable description of what this tool does. Passed verbatim to
          * the LLM; be precise and action-oriented. When omitted, defaults to
          * the tool name.
@@ -65,8 +85,8 @@ public interface AiToolEndpointBuilderFactory {
          * Tool input parameters. Format: parameter.NAME=TYPE,
          * parameter.NAME.description=TEXT, parameter.NAME.required=true or
          * false, parameter.NAME.enum=val1,val2. Supported types: string,
-         * integer, number, boolean. This is a multi-value option with prefix:
-         * parameter.
+         * integer, number, boolean. Mutually exclusive with argSchema. This is
+         * a multi-value option with prefix: parameter.
          * 
          * The option is a: <code>java.util.Map&lt;java.lang.String,
          * java.lang.String&gt;</code> type.
@@ -88,8 +108,8 @@ public interface AiToolEndpointBuilderFactory {
          * Tool input parameters. Format: parameter.NAME=TYPE,
          * parameter.NAME.description=TEXT, parameter.NAME.required=true or
          * false, parameter.NAME.enum=val1,val2. Supported types: string,
-         * integer, number, boolean. This is a multi-value option with prefix:
-         * parameter.
+         * integer, number, boolean. Mutually exclusive with argSchema. This is
+         * a multi-value option with prefix: parameter.
          * 
          * The option is a: <code>java.util.Map&lt;java.lang.String,
          * java.lang.String&gt;</code> type.
