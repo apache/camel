@@ -1143,6 +1143,69 @@ class YamlCompletionTest {
         assertThat(viewer.findParentYamlKey(4)).isEqualTo("circuitBreaker");
     }
 
+    // --- Insertion behavior ---
+
+    @Test
+    void insertStructuralKeyAddsNewlineAndIndent() throws IOException {
+        // line "          " has 10 spaces — structural key should insert key:\n + 12 spaces
+        String yaml = String.join("\n",
+                "- from:",
+                "    uri: timer:tick",
+                "    steps:",
+                "      - split:",
+                "          ",
+                "");
+
+        Path file = tempDir.resolve("route.camel.yaml");
+        Files.writeString(file, yaml);
+
+        SourceViewer viewer = new SourceViewer();
+        viewer.loadFile(file);
+        viewer.enterEditMode();
+        // move cursor to the blank line (line 4)
+        viewer.editState().moveCursorToStart();
+        for (int i = 0; i < 4; i++) {
+            viewer.editState().moveCursorDown();
+        }
+
+        AutocompletePopup.CompletionItem item = new AutocompletePopup.CompletionItem(
+                "expression", "The expression", "object", null, false, null, "common", true);
+        viewer.insertYamlCompletion(item, false, "          ");
+
+        String result = viewer.editState().text();
+        assertThat(result).contains("expression:\n            ");
+    }
+
+    @Test
+    void insertScalarKeyAddsSpaceAfterColon() throws IOException {
+        String yaml = String.join("\n",
+                "- from:",
+                "    uri: timer:tick",
+                "    steps:",
+                "      - split:",
+                "          ",
+                "");
+
+        Path file = tempDir.resolve("route.camel.yaml");
+        Files.writeString(file, yaml);
+
+        SourceViewer viewer = new SourceViewer();
+        viewer.loadFile(file);
+        viewer.enterEditMode();
+        viewer.editState().moveCursorToStart();
+        for (int i = 0; i < 4; i++) {
+            viewer.editState().moveCursorDown();
+        }
+
+        AutocompletePopup.CompletionItem item = new AutocompletePopup.CompletionItem(
+                "streaming", "Enable streaming", "boolean", "false", false, null, "common");
+        viewer.insertYamlCompletion(item, false, "          ");
+
+        String result = viewer.editState().text();
+        assertThat(result).contains("streaming: ");
+        assertThat(result).doesNotContain("streaming:\n");
+    }
+
     // --- Helpers that replicate SourceTab logic for testing ---
 
     private List<AutocompletePopup.CompletionItem> provideKeyCompletions(String componentName, String role) {

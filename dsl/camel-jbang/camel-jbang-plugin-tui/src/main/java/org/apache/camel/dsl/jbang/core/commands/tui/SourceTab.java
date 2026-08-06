@@ -1162,12 +1162,12 @@ class SourceTab extends AbstractTab {
 
         JsonObject node = getTreeNode(nodeName);
         if (node == null) {
-            return List.of();
+            return loadPropertyPlaceholders();
         }
 
         JsonArray children = (JsonArray) node.get("children");
         if (children == null) {
-            return List.of();
+            return loadPropertyPlaceholders();
         }
 
         // find the matching child
@@ -1180,7 +1180,7 @@ class SourceTab extends AbstractTab {
             }
         }
         if (matchedChild == null) {
-            return List.of();
+            return loadPropertyPlaceholders();
         }
 
         List<AutocompletePopup.CompletionItem> items = new ArrayList<>();
@@ -1189,19 +1189,32 @@ class SourceTab extends AbstractTab {
         Object defVal = matchedChild.get("default");
         String group = (String) matchedChild.get("group");
 
+        java.util.function.Predicate<String> valueFilter = null;
         JsonArray enumValues = (JsonArray) matchedChild.get("enum");
         if (enumValues != null && !enumValues.isEmpty()) {
+            Set<String> validValues = new HashSet<>();
             for (Object e : enumValues) {
                 String value = String.valueOf(e);
+                validValues.add(value.toLowerCase());
                 boolean isDefault = value.equals(String.valueOf(defVal));
                 items.add(new AutocompletePopup.CompletionItem(
                         value, desc, type, isDefault ? value : defVal, false, null, group));
             }
+            valueFilter = v -> validValues.contains(v.toLowerCase());
         } else if ("boolean".equalsIgnoreCase(type)) {
+            valueFilter = v -> "true".equalsIgnoreCase(v) || "false".equalsIgnoreCase(v);
             items.add(new AutocompletePopup.CompletionItem(
                     "true", desc, "boolean", defVal, false, null, group));
             items.add(new AutocompletePopup.CompletionItem(
                     "false", desc, "boolean", defVal, false, null, group));
+        } else if ("number".equalsIgnoreCase(type) || "integer".equalsIgnoreCase(type)) {
+            valueFilter = SourceTab::isNumericValue;
+        }
+
+        for (AutocompletePopup.CompletionItem ph : loadPropertyPlaceholders()) {
+            if (valueFilter == null || (ph.description() != null && valueFilter.test(ph.description()))) {
+                items.add(ph);
+            }
         }
         return items;
     }

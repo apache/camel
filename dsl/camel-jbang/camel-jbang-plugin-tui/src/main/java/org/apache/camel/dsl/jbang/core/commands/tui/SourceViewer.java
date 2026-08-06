@@ -253,6 +253,10 @@ class SourceViewer {
         return editMode;
     }
 
+    TextAreaState editState() {
+        return editState;
+    }
+
     boolean isEditable() {
         return editableFile != null;
     }
@@ -282,9 +286,6 @@ class SourceViewer {
         }
         if (dirty && !pendingDiscard) {
             pendingDiscard = true;
-            if (notificationCallback != null) {
-                notificationCallback.accept("Unsaved changes will be lost — press Esc again to discard", true);
-            }
             return true;
         }
         pendingDiscard = false;
@@ -483,9 +484,6 @@ class SourceViewer {
         if (ke.isCancel()) {
             if (dirty && !pendingDiscard) {
                 pendingDiscard = true;
-                if (notificationCallback != null) {
-                    notificationCallback.accept("Unsaved changes will be lost — press Esc again to discard", true);
-                }
                 return true;
             }
             pendingDiscard = false;
@@ -861,6 +859,12 @@ class SourceViewer {
                     String prev = editState.getLine(i);
                     if (!prev.isBlank()) {
                         cursorIndent = countLeadingSpaces(prev);
+                        String pt = prev.trim();
+                        if (pt.startsWith("- ") && pt.endsWith(":")) {
+                            cursorIndent += 4;
+                        } else if (pt.endsWith(":")) {
+                            cursorIndent += 2;
+                        }
                         break;
                     }
                 }
@@ -1406,7 +1410,7 @@ class SourceViewer {
         }
     }
 
-    private void insertYamlCompletion(AutocompletePopup.CompletionItem item, boolean valueMode, String currentLine) {
+    void insertYamlCompletion(AutocompletePopup.CompletionItem item, boolean valueMode, String currentLine) {
         int indent = countLeadingSpaces(currentLine);
         // blank lines: derive indent from context
         if (currentLine.isBlank() && indent == 0) {
@@ -1472,7 +1476,13 @@ class SourceViewer {
                 }
             }
         } else {
-            editState.insert(indentStr + item.key() + ": ");
+            editState.insert(indentStr + item.key() + ":");
+            if ("object".equals(item.type()) || "array".equals(item.type())) {
+                editState.insert('\n');
+                editState.insert(indentStr + "  ");
+            } else {
+                editState.insert(' ');
+            }
         }
     }
 
@@ -1936,6 +1946,9 @@ class SourceViewer {
         if (validationErrors != null) {
             renderValidationPopup(frame, area);
         }
+        if (pendingDiscard) {
+            renderDiscardPopup(frame, area);
+        }
     }
 
     private void renderValidationPopup(Frame frame, Rect area) {
@@ -1981,6 +1994,32 @@ class SourceViewer {
                     Paragraph.builder().text(Text.from(visible.toArray(Line[]::new))).build(),
                     inner);
         }
+    }
+
+    private void renderDiscardPopup(Frame frame, Rect area) {
+        String msg = "Unsaved changes will be lost.";
+        int popupW = Math.min(msg.length() + 6, area.width() - 4);
+        int popupH = 5;
+        int x = area.left() + Math.max(0, (area.width() - popupW) / 2);
+        int y = area.top() + Math.max(0, (area.height() - popupH) / 2);
+        Rect popup = new Rect(x, y, popupW, popupH);
+
+        frame.renderWidget(Clear.INSTANCE, popup);
+
+        Block block = Block.builder()
+                .borderType(BorderType.ROUNDED).borders(Borders.ALL)
+                .title(Title.from(Line.from(Span.styled(" Discard Changes? ", Theme.warning().bold()))))
+                .titleBottom(Title.from(Line.from(
+                        Span.styled(" Esc", Theme.hintKey()), Span.raw(" discard  "),
+                        Span.styled("any key", Theme.hintKey()), Span.raw(" cancel "))))
+                .build();
+        frame.renderWidget(block, popup);
+        Rect inner = block.inner(popup);
+
+        frame.renderWidget(
+                Paragraph.builder().text(Text.from(
+                        Line.from(Span.styled(msg, Theme.warning())))).build(),
+                inner);
     }
 
     private static void wrapText(String text, int width, List<Line> out) {
