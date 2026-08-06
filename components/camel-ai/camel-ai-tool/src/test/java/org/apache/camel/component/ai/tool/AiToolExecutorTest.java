@@ -359,6 +359,28 @@ public class AiToolExecutorTest extends CamelTestSupport {
         assertThat(((AiToolResult.ArgumentError) result).message()).contains("Missing required argument 'items'");
     }
 
+    @Test
+    public void testExecuteReturnsArgumentErrorWhenRequiredNameIsUndeclared() {
+        String schema = """
+                {
+                  "type": "object",
+                  "properties": {
+                    "city": { "type": "string" }
+                  },
+                  "required": ["country"]
+                }
+                """;
+        AiToolSpec spec = new AiToolSpec("badRequired", "test", Map.of(), schema, findSpec("greetUser").getConsumer());
+        Exchange exchange = new DefaultExchange(context);
+
+        Map<String, Object> arguments = Map.of("country", "Paris");
+
+        AiToolResult result = AiToolExecutor.execute(spec, arguments, exchange);
+
+        assertThat(result).isInstanceOf(AiToolResult.ArgumentError.class);
+        assertThat(((AiToolResult.ArgumentError) result).message()).contains("Missing required argument 'country'");
+    }
+
     private AiToolSpec findSpec(String toolName) {
         return AiToolRegistry.getOrCreate(context).getToolsByTag("test").stream()
                 .filter(s -> toolName.equals(s.getName()))

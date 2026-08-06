@@ -114,7 +114,7 @@ public final class AiToolExecutor {
         }
 
         for (String requiredName : spec.getRequiredArgumentNames()) {
-            if (arguments == null || !arguments.containsKey(requiredName)) {
+            if (!argsCopy.containsKey(requiredName)) {
                 LOG.warn("Missing required argument '{}' for tool '{}' -- the LLM did not send "
                          + "a parameter that is declared as required in the tool specification",
                         requiredName, toolName);
