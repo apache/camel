@@ -199,7 +199,7 @@ The root schema must be a JSON Schema object with a top-level `properties` map. 
 
 === MCP Tool Annotation Hints
 
-When exposing `ai-tool` routes through the xref:components::mcp-server.adoc[MCP Server] component, you can declare optional behavioral hints aligned with the MCP specification (`ToolAnnotations`). MCP clients may use these hints for per-tool policy (for example auto-approving read-only tools or requiring confirmation before destructive ones).
+When exposing `ai-tool` routes through the xref:others::mcp-server.adoc[MCP Server] component, you can declare optional behavioral hints aligned with the MCP specification (`ToolAnnotations`). MCP clients may use these hints for per-tool policy (for example auto-approving read-only tools or requiring confirmation before destructive ones).
 
 These hints are **advisory only** — Camel does not enforce them. MCP clients must treat them as untrusted UX metadata (per the MCP specification), not as authorization. Inaccurate hints can mislead client-side confirmation flows.
 
