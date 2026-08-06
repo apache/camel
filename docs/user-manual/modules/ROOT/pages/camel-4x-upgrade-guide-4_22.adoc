@@ -70,6 +70,14 @@ allow-list must pass an explicit filter pattern to the new
 `CamelObjectInputStream(InputStream, CamelContext, String)` constructor (or configure
 `jdk.serialFilter`) to permit them.
 
+==== Attachments preserved when a producer creates a fresh OUT message
+
+Since Camel 4.10.1, message attachments were silently lost when a producer (such as `camel-http`)
+created a fresh OUT message via `exchange.getOut()`. The attachment trait is now copied from the
+IN message to the new OUT message, restoring the pre-4.10.1 behavior where attachments survived
+across the exchange. If you added a workaround (for example, stashing and restoring attachments
+in exchange properties around a producer call), it can be removed.
+
 === camel-jbang
 
 The Camel JBang CLI (Camel CLI) and TUI have been promoted from _Preview_ to _Stable_ support level.
