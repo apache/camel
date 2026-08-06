@@ -306,6 +306,12 @@ class AutocompletePopup {
 
             if (ci.type() != null) {
                 String type = simplifyType(ci.type());
+                if ("object".equals(type) && ci.group() != null && !ci.group().isEmpty()) {
+                    String label = primaryLabel(ci.group());
+                    if (label != null) {
+                        type = label;
+                    }
+                }
                 int remaining = nameColW - displayKey.length() - 3;
                 if (remaining > 3 && type.length() <= remaining) {
                     int pad = remaining - type.length();
@@ -368,9 +374,21 @@ class AutocompletePopup {
             lines.add(Line.empty());
 
             if (selected.type() != null) {
-                lines.add(Line.from(
-                        Span.styled("Type: ", normalStyle.bold()),
-                        Span.styled(simplifyType(selected.type()), normalStyle)));
+                String typeDisplay = simplifyType(selected.type());
+                if ("object".equals(typeDisplay) && selected.group() != null && !selected.group().isEmpty()) {
+                    String label = primaryLabel(selected.group());
+                    if (label != null) {
+                        lines.add(Line.from(
+                                Span.styled("Category: ", normalStyle.bold()),
+                                Span.styled(label, normalStyle)));
+                        typeDisplay = null;
+                    }
+                }
+                if (typeDisplay != null) {
+                    lines.add(Line.from(
+                            Span.styled("Type: ", normalStyle.bold()),
+                            Span.styled(typeDisplay, normalStyle)));
+                }
             }
             if (selected.defaultValue() != null) {
                 lines.add(Line.from(
@@ -422,6 +440,42 @@ class AutocompletePopup {
         }
         int dot = type.lastIndexOf('.');
         return dot >= 0 ? type.substring(dot + 1) : type;
+    }
+
+    private static final String[][] LABEL_PRIORITY = {
+            { "errorhandling", "error handling" },
+            { "resilience", "resilience" },
+            { "loadbalancing", "load balancing" },
+            { "flowcontrol", "flow control" },
+            { "enrichment", "enrichment" },
+            { "transformation", "transformation" },
+            { "dataformat", "data format" },
+            { "messaging", "messaging" },
+            { "ai", "ai" },
+            { "routing", "routing" },
+            { "rest", "rest" },
+            { "configuration", "configuration" },
+            { "monitoring", "monitoring" },
+            { "security", "security" },
+            { "health", "health" },
+            { "validation", "validation" },
+            { "endpoint", "endpoint" },
+            { "language", "language" },
+    };
+
+    static String primaryLabel(String group) {
+        if (group == null || group.isEmpty()) {
+            return null;
+        }
+        String[] parts = group.split(",");
+        for (String[] entry : LABEL_PRIORITY) {
+            for (String part : parts) {
+                if (entry[0].equals(part.trim())) {
+                    return entry[1];
+                }
+            }
+        }
+        return null;
     }
 
     boolean isValueMode() {
