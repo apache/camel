@@ -142,8 +142,7 @@ public final class HttpHelper {
         }
 
         Object answer;
-        ObjectInputStream ois = new CamelObjectInputStream(is, context);
-        ois.setObjectInputFilter(DeserializationFilterHelper.resolveDeserializationFilter(deserializationFilter));
+        ObjectInputStream ois = new CamelObjectInputStream(is, context, deserializationFilter);
         try {
             answer = ois.readObject();
         } finally {
