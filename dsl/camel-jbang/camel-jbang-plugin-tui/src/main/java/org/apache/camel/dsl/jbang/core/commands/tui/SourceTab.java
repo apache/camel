@@ -17,6 +17,7 @@
 package org.apache.camel.dsl.jbang.core.commands.tui;
 
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.attribute.BasicFileAttributes;
@@ -118,6 +119,19 @@ class SourceTab extends AbstractTab {
     private static final Pattern YAML_KEY_PATTERN = Pattern.compile(
             "^\\s*-?\\s*([a-zA-Z][a-zA-Z0-9]*)\\s*:");
 
+    private static final Set<String> LINKABLE_KEYWORDS = Set.of(
+            "to", "toD", "wireTap", "enrich", "pollEnrich", "deadLetterChannel");
+
+    record RouteEntry(String routeId, String fromUri, String filePath, int fromLine) {
+    }
+
+    record ToEntry(String routeId, String toUri, String filePath, int toLine) {
+    }
+
+    private List<RouteEntry> routeIndex = Collections.emptyList();
+    private List<ToEntry> toIndex = Collections.emptyList();
+    private final GotoRoutePopup gotoRoutePopup = new GotoRoutePopup();
+
     SourceTab(MonitorContext ctx) {
         super(ctx);
         sourceViewer.setNotificationCallback((msg, error) -> {
@@ -126,6 +140,7 @@ class SourceTab extends AbstractTab {
             }
         });
         sourceViewer.setValidateOnSave(ctx.validateOnSave);
+        sourceViewer.setOnJumpLink(this::handleJumpLink);
     }
 
     boolean isSourceViewerEditMode() {
@@ -157,11 +172,22 @@ class SourceTab extends AbstractTab {
         leftPanelWidth = -1;
         completionTreeLoaded = false;
         completionTree = null;
+        routeIndex = Collections.emptyList();
+        toIndex = Collections.emptyList();
         refreshFiles();
     }
 
     @Override
     public boolean handleKeyEvent(KeyEvent ke) {
+        if (gotoRoutePopup.isVisible()) {
+            gotoRoutePopup.handleKeyEvent(ke);
+            GotoRoutePopup.RouteItem sel = gotoRoutePopup.consumeSelection();
+            if (sel != null) {
+                openFileAt(sel.filePath(), sel.fromLine());
+            }
+            return true;
+        }
+
         if (sourceViewer.isEditMode() && sourceViewer.isVisible()) {
             return sourceViewer.handleKeyEvent(ke);
         }
@@ -185,6 +211,11 @@ class SourceTab extends AbstractTab {
                 focusOnViewer = false;
                 return true;
             }
+        }
+
+        if (!routeIndex.isEmpty() && ke.isChar('g')) {
+            gotoRoutePopup.open(routeIndex);
+            return true;
         }
 
         if (!focusOnViewer) {
@@ -304,6 +335,10 @@ class SourceTab extends AbstractTab {
         renderInfoPanel(frame, leftChunks.get(1));
         hSplit.setBorderPos(rightArea.x());
         renderSourcePanel(frame, rightArea);
+
+        if (gotoRoutePopup.isVisible()) {
+            gotoRoutePopup.render(frame, area);
+        }
     }
 
     @Override
@@ -321,6 +356,9 @@ class SourceTab extends AbstractTab {
             }
             if (sourceViewer.isVisible()) {
                 TuiHelper.hint(spans, "Tab", "viewer");
+            }
+            if (!routeIndex.isEmpty()) {
+                TuiHelper.hint(spans, "g", "go to");
             }
         }
     }
@@ -384,6 +422,18 @@ class SourceTab extends AbstractTab {
 
                 Use **Up/Down** to navigate, **Enter** to accept, **Esc** to dismiss, and
                 type to filter the completion list.
+
+                ## Route Jump Links
+                Lines with `to:`, `toD:`, `wireTap:`, or similar endpoints that reference
+                another route show a **↵ routeId** indicator. Press **Enter** on such a line
+                to jump to the target route's definition (within the same file or across files).
+                Reverse links are shown on `from:` lines, indicating which route calls this one.
+                Jump indicators are hidden in plain mode.
+
+                ## Go to Route
+                - **g** — open a filterable popup listing all routes found in the source files.
+                  Type to fuzzy-filter by route ID or endpoint URI, then press **Enter** to
+                  navigate to the selected route.
 
                 ## General
                 - **Tab** — toggle focus between file list and source viewer
@@ -499,6 +549,7 @@ class SourceTab extends AbstractTab {
         entries = found;
         listState.select(0);
         currentDir = dir;
+        buildRouteIndex();
         return true;
     }
 
@@ -587,6 +638,9 @@ class SourceTab extends AbstractTab {
                     sourceViewer.setAutocompleteValueProvider(null);
                 }
                 sourceViewer.loadFile(filePath);
+                if (isCamelSourceFile(filePath)) {
+                    sourceViewer.setJumpLinks(computeJumpLinks(filePath));
+                }
                 focusOnViewer = true;
             }
         }
@@ -2019,5 +2073,348 @@ class SourceTab extends AbstractTab {
                             .build(),
                     area);
         }
+    }
+
+    // ---- Route jump links ----
+
+    private void buildRouteIndex() {
+        List<RouteEntry> fromEntries = new ArrayList<>();
+        List<ToEntry> toEntries = new ArrayList<>();
+        for (FilesBrowser.FileEntry entry : entries) {
+            if (entry.directory()) {
+                continue;
+            }
+            Path path = Path.of(entry.path());
+            if (!isCamelSourceFile(path)) {
+                continue;
+            }
+            if (isYamlFile(path)) {
+                scanYamlRoutes(path, fromEntries, toEntries);
+            }
+        }
+        routeIndex = fromEntries;
+        toIndex = toEntries;
+    }
+
+    private void scanYamlRoutes(Path file, List<RouteEntry> fromEntries, List<ToEntry> toEntries) {
+        List<String> lines;
+        try {
+            lines = Files.readAllLines(file, StandardCharsets.UTF_8);
+        } catch (IOException e) {
+            return;
+        }
+
+        String filePath = file.toString();
+        String currentRouteId = null;
+        int routeIdIndent = -1;
+        int pendingFromLine = -1;
+        boolean inLinkableBlock = false;
+        int linkableBlockIndent = -1;
+
+        for (int i = 0; i < lines.size(); i++) {
+            String line = lines.get(i);
+            String trimmed = line.trim();
+            if (trimmed.isEmpty() || trimmed.startsWith("#")) {
+                continue;
+            }
+
+            int indent = lineIndent(line);
+
+            // reset linkable context when dedented
+            if (linkableBlockIndent >= 0 && indent <= linkableBlockIndent) {
+                inLinkableBlock = false;
+                linkableBlockIndent = -1;
+            }
+
+            // detect route id
+            if (trimmed.startsWith("id:") && !trimmed.startsWith("id: \"\"")) {
+                String val = extractYamlValue(trimmed, "id");
+                if (val != null && !val.isEmpty()) {
+                    currentRouteId = val;
+                    routeIdIndent = indent;
+                }
+                continue;
+            }
+
+            // detect from: with inline URI
+            if (trimmed.startsWith("from:") || trimmed.startsWith("- from:")) {
+                inLinkableBlock = false;
+                linkableBlockIndent = -1;
+                String inlineUri = extractInlineUri(trimmed, "from");
+                if (inlineUri != null) {
+                    emitRouteEntry(fromEntries, currentRouteId, inlineUri, filePath, i);
+                } else {
+                    pendingFromLine = i;
+                }
+                continue;
+            }
+
+            // detect uri: line following a from: block
+            if (pendingFromLine >= 0 && trimmed.startsWith("uri:")) {
+                String uri = extractYamlValue(trimmed, "uri");
+                if (uri != null) {
+                    emitRouteEntry(fromEntries, currentRouteId, uri, filePath, pendingFromLine);
+                }
+                pendingFromLine = -1;
+                continue;
+            }
+
+            // reset pending from if we've moved past it
+            if (pendingFromLine >= 0 && indent <= lineIndent(lines.get(pendingFromLine))) {
+                pendingFromLine = -1;
+            }
+
+            // reset route id when a new route block starts
+            if (trimmed.startsWith("- route:") || trimmed.equals("route:")) {
+                currentRouteId = null;
+                routeIdIndent = -1;
+            }
+
+            // detect linkable keywords (to, toD, wireTap, etc.) and index their URIs
+            for (String kw : LINKABLE_KEYWORDS) {
+                String prefix1 = kw + ":";
+                String prefix2 = "- " + kw + ":";
+                if (trimmed.startsWith(prefix1) || trimmed.startsWith(prefix2)) {
+                    String after = trimmed.startsWith(prefix2)
+                            ? trimmed.substring(prefix2.length()).trim()
+                            : trimmed.substring(prefix1.length()).trim();
+                    if (!after.isEmpty() && !after.equals("{") && !after.startsWith("#")) {
+                        String toUri = stripQueryParams(unquote(after));
+                        if (toUri != null && !toUri.isEmpty()) {
+                            toEntries.add(new ToEntry(
+                                    currentRouteId != null ? currentRouteId : "", toUri, filePath, i));
+                        }
+                    } else {
+                        inLinkableBlock = true;
+                        linkableBlockIndent = indent;
+                    }
+                    break;
+                }
+            }
+
+            // uri: under a linkable block → index it as a to entry
+            if (inLinkableBlock && trimmed.startsWith("uri:")) {
+                String val = extractYamlValue(trimmed, "uri");
+                if (val != null && !val.isEmpty()) {
+                    String toUri = stripQueryParams(val);
+                    if (toUri != null && !toUri.isEmpty()) {
+                        toEntries.add(new ToEntry(
+                                currentRouteId != null ? currentRouteId : "", toUri, filePath, i));
+                    }
+                }
+            }
+        }
+    }
+
+    private void emitRouteEntry(List<RouteEntry> index, String routeId, String fromUri, String filePath, int fromLine) {
+        String baseUri = stripQueryParams(fromUri);
+        if (baseUri == null || baseUri.isEmpty()) {
+            return;
+        }
+        if (routeId == null || routeId.isEmpty()) {
+            // derive route id from the from URI
+            int colon = baseUri.indexOf(':');
+            routeId = colon >= 0 ? baseUri.substring(colon + 1) : baseUri;
+            if (routeId.startsWith("//")) {
+                routeId = routeId.substring(2);
+            }
+        }
+        index.add(new RouteEntry(routeId, baseUri, filePath, fromLine));
+    }
+
+    private Map<Integer, SourceViewer.JumpLink> computeJumpLinks(Path currentFile) {
+        if (routeIndex.isEmpty()) {
+            return Collections.emptyMap();
+        }
+
+        List<String> lines;
+        try {
+            lines = Files.readAllLines(currentFile, StandardCharsets.UTF_8);
+        } catch (IOException e) {
+            return Collections.emptyMap();
+        }
+
+        String currentFilePath = currentFile.toString();
+        Map<Integer, SourceViewer.JumpLink> result = new LinkedHashMap<>();
+
+        Map<String, RouteEntry> fromUriToRoute = new HashMap<>();
+        for (RouteEntry re : routeIndex) {
+            fromUriToRoute.put(re.fromUri(), re);
+        }
+
+        // forward links: to/toD/wireTap → target route's from
+        boolean inLinkableBlock = false;
+        int linkableBlockIndent = -1;
+        String currentRouteId = null;
+
+        for (int i = 0; i < lines.size(); i++) {
+            String line = lines.get(i);
+            String trimmed = line.trim();
+            if (trimmed.isEmpty() || trimmed.startsWith("#")) {
+                continue;
+            }
+
+            int indent = lineIndent(line);
+
+            if (linkableBlockIndent >= 0 && indent <= linkableBlockIndent) {
+                inLinkableBlock = false;
+                linkableBlockIndent = -1;
+            }
+
+            if (trimmed.startsWith("id:") && !trimmed.startsWith("id: \"\"")) {
+                String val = extractYamlValue(trimmed, "id");
+                if (val != null && !val.isEmpty()) {
+                    currentRouteId = val;
+                }
+            }
+
+            if (trimmed.startsWith("from:") || trimmed.startsWith("- from:")) {
+                inLinkableBlock = false;
+                linkableBlockIndent = -1;
+                continue;
+            }
+
+            String uri = null;
+            for (String kw : LINKABLE_KEYWORDS) {
+                String prefix1 = kw + ":";
+                String prefix2 = "- " + kw + ":";
+                if (trimmed.startsWith(prefix1) || trimmed.startsWith(prefix2)) {
+                    String after = trimmed.startsWith(prefix2)
+                            ? trimmed.substring(prefix2.length()).trim()
+                            : trimmed.substring(prefix1.length()).trim();
+                    if (!after.isEmpty() && !after.equals("{") && !after.startsWith("#")) {
+                        uri = unquote(after);
+                    } else {
+                        inLinkableBlock = true;
+                        linkableBlockIndent = indent;
+                    }
+                    break;
+                }
+            }
+
+            if (uri == null && inLinkableBlock && trimmed.startsWith("uri:")) {
+                String val = extractYamlValue(trimmed, "uri");
+                if (val != null && !val.isEmpty()) {
+                    uri = val;
+                }
+            }
+
+            if (uri != null) {
+                String baseUri = stripQueryParams(uri);
+                RouteEntry target = fromUriToRoute.get(baseUri);
+                if (target != null && !target.routeId().equals(currentRouteId)) {
+                    result.put(i, new SourceViewer.JumpLink(target.routeId(), target.filePath(), target.fromLine()));
+                }
+            }
+        }
+
+        // reverse links: from URI ← routes that send to it (jump to the caller's to: line)
+        for (RouteEntry re : routeIndex) {
+            if (!currentFilePath.equals(re.filePath())) {
+                continue;
+            }
+            for (ToEntry te : toIndex) {
+                if (te.routeId().equals(re.routeId())) {
+                    continue;
+                }
+                if (re.fromUri().equals(te.toUri())) {
+                    // add jump link on the from: line pointing to the caller
+                    String callerRouteId = te.routeId().isEmpty() ? "route" : te.routeId();
+                    result.putIfAbsent(re.fromLine(),
+                            new SourceViewer.JumpLink(callerRouteId, te.filePath(), te.toLine()));
+                    break;
+                }
+            }
+        }
+
+        return result;
+    }
+
+    private void openFileAt(String targetFilePath, int targetLine) {
+        String currentFile = sourceViewer.getCurrentFilePath();
+        if (currentFile != null && currentFile.equals(targetFilePath)) {
+            sourceViewer.goToLine(targetLine);
+            return;
+        }
+        for (int idx = 0; idx < entries.size(); idx++) {
+            FilesBrowser.FileEntry entry = entries.get(idx);
+            if (!entry.directory() && entry.path().equals(targetFilePath)) {
+                listState.select(idx);
+                Path filePath = Path.of(entry.path());
+                if (isCamelSourceFile(filePath)) {
+                    sourceViewer.setQuickDocProvider(this::provideCamelQuickDocs);
+                    sourceViewer.setDeprecatedLineScanner(null);
+                    if (isYamlFile(filePath)) {
+                        sourceViewer.setAutocompleteProvider(this::provideYamlKeyCompletions);
+                        sourceViewer.setAutocompleteValueProvider(this::provideYamlValueCompletions);
+                        sourceViewer.setEndpointValidator(this::validateYamlEndpoints);
+                        sourceViewer.setListItemNodeChecker(this::isListChildrenNode);
+                    } else {
+                        sourceViewer.setAutocompleteProvider(null);
+                        sourceViewer.setAutocompleteValueProvider(null);
+                    }
+                }
+                sourceViewer.loadFile(filePath);
+                sourceViewer.setJumpLinks(computeJumpLinks(filePath));
+                sourceViewer.goToLine(targetLine);
+                focusOnViewer = true;
+                break;
+            }
+        }
+    }
+
+    private void handleJumpLink(SourceViewer.JumpLink link) {
+        openFileAt(link.filePath(), link.targetLine());
+    }
+
+    private static String extractYamlValue(String trimmed, String key) {
+        String prefix = key + ":";
+        if (!trimmed.startsWith(prefix)) {
+            return null;
+        }
+        String val = trimmed.substring(prefix.length()).trim();
+        return unquote(val);
+    }
+
+    private static String extractInlineUri(String trimmed, String key) {
+        String prefix = trimmed.startsWith("- ") ? "- " + key + ":" : key + ":";
+        if (!trimmed.startsWith(prefix)) {
+            return null;
+        }
+        String val = trimmed.substring(prefix.length()).trim();
+        if (val.isEmpty() || val.equals("{") || val.startsWith("#")) {
+            return null;
+        }
+        return unquote(val);
+    }
+
+    private static String unquote(String val) {
+        if (val.length() >= 2 && val.startsWith("\"") && val.endsWith("\"")) {
+            return val.substring(1, val.length() - 1);
+        }
+        if (val.length() >= 2 && val.startsWith("'") && val.endsWith("'")) {
+            return val.substring(1, val.length() - 1);
+        }
+        return val;
+    }
+
+    private static String stripQueryParams(String uri) {
+        if (uri == null) {
+            return null;
+        }
+        int q = uri.indexOf('?');
+        return q >= 0 ? uri.substring(0, q) : uri;
+    }
+
+    private static int lineIndent(String line) {
+        int indent = 0;
+        for (int i = 0; i < line.length(); i++) {
+            if (line.charAt(i) == ' ') {
+                indent++;
+            } else {
+                break;
+            }
+        }
+        return indent;
     }
 }

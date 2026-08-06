@@ -28,6 +28,7 @@ import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.function.BiConsumer;
+import java.util.function.Consumer;
 import java.util.function.IntConsumer;
 
 import com.networknt.schema.Error;
@@ -97,6 +98,9 @@ class SourceViewer {
         Set<Integer> scan(List<JsonObject> codeData);
     }
 
+    record JumpLink(String routeId, String filePath, int targetLine) {
+    }
+
     private boolean visible;
     private List<String> lines = Collections.emptyList();
     private List<JsonObject> codeData = Collections.emptyList();
@@ -129,6 +133,9 @@ class SourceViewer {
     private Map<Integer, List<DocEntry>> quickDocEntries = Collections.emptyMap();
     private DeprecatedLineScanner deprecatedLineScanner;
     private Set<Integer> deprecatedLines = Collections.emptySet();
+    private Map<Integer, JumpLink> jumpLinks = Collections.emptyMap();
+    private Consumer<JumpLink> onJumpLink;
+    private String loadedFilePath;
     private Style titleStyle;
     private Style borderStyle;
     private boolean focused = true;
@@ -243,6 +250,8 @@ class SourceViewer {
         quickDocEntries = Collections.emptyMap();
         deprecatedLineScanner = null;
         deprecatedLines = Collections.emptySet();
+        jumpLinks = Collections.emptyMap();
+        loadedFilePath = null;
         autocompleteProvider = null;
         autocompleteValueProvider = null;
         autocompletePopup = null;
@@ -308,6 +317,33 @@ class SourceViewer {
 
     void setOnLineSelected(IntConsumer callback) {
         this.onLineSelected = callback;
+    }
+
+    void setJumpLinks(Map<Integer, JumpLink> links) {
+        this.jumpLinks = links != null ? links : Collections.emptyMap();
+    }
+
+    JumpLink getJumpLink(int lineIndex) {
+        return jumpLinks.get(lineIndex);
+    }
+
+    void setOnJumpLink(Consumer<JumpLink> callback) {
+        this.onJumpLink = callback;
+    }
+
+    int getSelectedLine() {
+        return selectedLine;
+    }
+
+    void goToLine(int lineIndex) {
+        if (lineIndex >= 0 && lineIndex < lines.size()) {
+            selectedLine = lineIndex;
+            pendingScroll = true;
+        }
+    }
+
+    String getCurrentFilePath() {
+        return loadedFilePath;
     }
 
     void toggleQuickDoc() {
@@ -454,6 +490,9 @@ class SourceViewer {
             if (!lines.isEmpty()) {
                 selectedLine = lines.size() - 1;
             }
+        } else if (ke.isConfirm() && onJumpLink != null && jumpLinks.containsKey(selectedLine)) {
+            onJumpLink.accept(jumpLinks.get(selectedLine));
+            return true;
         } else if (ke.isConfirm() && onLineSelected != null) {
             if (selectedLine >= 0 && selectedLine < codeData.size()) {
                 Integer lineNum = codeData.get(selectedLine).getInteger("line");
@@ -2135,6 +2174,7 @@ class SourceViewer {
         originalFormat = null;
         currentCtx = null;
         currentPid = null;
+        loadedFilePath = filePath.toString();
         editMode = false;
         editState.clear();
         markdownModeBeforeEdit = false;
@@ -2174,6 +2214,7 @@ class SourceViewer {
             }
             editableFile = Files.isWritable(filePath) ? filePath : null;
             scanDeprecatedLines();
+            jumpLinks = Collections.emptyMap();
         } catch (IOException e) {
             title = fileName;
             lines = List.of("(Failed to read file: " + e.getMessage() + ")");
@@ -2614,6 +2655,15 @@ class SourceViewer {
                 spans.add(Span.styled(prefix, Style.EMPTY.dim()));
             }
             spans.addAll(highlighted.spans());
+        }
+
+        JumpLink jl = plainMode ? null : jumpLinks.get(lineIndex);
+        if (jl != null) {
+            Style linkStyle = Theme.label().bold();
+            if (isSelected) {
+                linkStyle = linkStyle.patch(selBg);
+            }
+            spans.add(Span.styled(" ↵ " + jl.routeId(), linkStyle));
         }
 
         Line full = Line.from(spans);
