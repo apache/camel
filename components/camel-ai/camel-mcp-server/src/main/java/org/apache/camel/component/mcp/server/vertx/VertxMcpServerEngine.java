@@ -104,7 +104,9 @@ public class VertxMcpServerEngine extends ServiceSupport implements McpServerEng
     protected void doStart() throws Exception {
         VertxPlatformHttpRouter router = lookupRouter();
         jsonMapper = McpJsonDefaults.getMapper();
-        transport = new VertxMcpStreamableServerTransportProvider(jsonMapper, info.path());
+        transport = new VertxMcpStreamableServerTransportProvider(
+                jsonMapper, info.path(),
+                info.sessionKeepAliveIntervalMs(), info.sessionIdleTtlMs());
         server = McpServer.sync(transport)
                 .serverInfo(info.serverName(), info.version())
                 .capabilities(McpSchema.ServerCapabilities.builder().tools(true).build())
@@ -165,6 +167,10 @@ public class VertxMcpServerEngine extends ServiceSupport implements McpServerEng
         } catch (Exception e) {
             LOG.debug("Failed to remove MCP tool {}: {}", toolName, e.getMessage());
         }
+    }
+
+    int sessionCount() {
+        return transport != null ? transport.sessionCount() : 0;
     }
 
     private McpSchema.Tool buildMcpTool(McpServerTool tool) {

@@ -169,6 +169,14 @@ JBang (see the xref:main.adoc[camel-main] options) or on
   `/mcp` | engine
 | `camel.server.mcp-server-name` | MCP server name advertised to clients. |
   CamelContext name | engine
+| `camel.server.mcp-session-keep-alive-interval` | Keep-alive ping interval in
+  milliseconds for MCP sessions on the Vert.x streamable transport. Dead sessions
+  are evicted after consecutive ping failures. `0` disables keep-alive
+  pings. | `30000` | engine
+| `camel.server.mcp-session-idle-ttl` | Idle TTL in milliseconds for MCP
+  sessions on the Vert.x streamable transport. Sessions with no activity for
+  longer than this interval are evicted. `0` disables idle eviction. |
+  `300000` | engine
 |===
 
 Bridge-owned options are honored identically on every runtime. Engine-owned
@@ -192,6 +200,11 @@ The Vert.x engine implements the MCP streamable HTTP transport:
   `Last-Event-ID` replay,
 * session management via the `Mcp-Session-Id` header and `DELETE /mcp` for
   session termination.
+* active session eviction: keep-alive pings (default every 30 seconds) remove
+  sessions whose ping fails repeatedly, and an idle TTL (default 5 minutes)
+  removes sessions with no traffic. Configure with
+  `camel.server.mcp-session-keep-alive-interval` and
+  `camel.server.mcp-session-idle-ttl` (set either to `0` to disable).
 
 Tools appearing or disappearing (routes starting and stopping) emit
 `notifications/tools/list_changed` to connected clients.

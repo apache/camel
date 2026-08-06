@@ -39,6 +39,8 @@ public class DefaultMcpServerFactory implements McpServerFactory {
         mcpConfiguration.setToolTimeout(configuration.getMcpToolTimeout());
         mcpConfiguration.setPath(configuration.getMcpPath());
         mcpConfiguration.setServerName(configuration.getMcpServerName());
+        mcpConfiguration.setSessionKeepAliveInterval(configuration.getMcpSessionKeepAliveInterval());
+        mcpConfiguration.setSessionIdleTtl(configuration.getMcpSessionIdleTtl());
         return new McpServerBridge(mcpConfiguration);
     }
 }

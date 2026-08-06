@@ -20,6 +20,8 @@ import java.time.Duration;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import io.modelcontextprotocol.json.McpJsonMapper;
 import io.modelcontextprotocol.json.TypeRef;
@@ -59,6 +61,8 @@ public class VertxMcpStreamableServerTransportProvider implements McpStreamableS
 
     private static final Duration NOTIFICATION_TIMEOUT = Duration.ofSeconds(5);
     private static final Duration INITIALIZATION_TIMEOUT = Duration.ofSeconds(30);
+    private static final Duration KEEP_ALIVE_PING_TIMEOUT = Duration.ofSeconds(5);
+    private static final int MAX_CONSECUTIVE_PING_FAILURES = 3;
 
     private static final String ACCEPT = "Accept";
     private static final String APPLICATION_JSON = "application/json";
@@ -66,15 +70,30 @@ public class VertxMcpStreamableServerTransportProvider implements McpStreamableS
 
     private final McpJsonMapper jsonMapper;
     private final String path;
-    private final ConcurrentHashMap<String, McpStreamableServerSession> sessions = new ConcurrentHashMap<>();
+    private final long sessionKeepAliveIntervalMs;
+    private final long sessionIdleTtlMs;
+    private final ConcurrentHashMap<String, ManagedSession> sessions = new ConcurrentHashMap<>();
     private final List<Route> routes = new ArrayList<>();
 
     private McpStreamableServerSession.Factory sessionFactory;
     private volatile boolean closing;
+    private Vertx vertx;
+    private Long keepAliveTimerId;
+    private Long idleTimerId;
+    private final AtomicBoolean keepAliveInProgress = new AtomicBoolean();
+    private final AtomicBoolean idleEvictionInProgress = new AtomicBoolean();
 
     public VertxMcpStreamableServerTransportProvider(McpJsonMapper jsonMapper, String path) {
+        this(jsonMapper, path, 0, 0);
+    }
+
+    public VertxMcpStreamableServerTransportProvider(
+                                                     McpJsonMapper jsonMapper, String path, long sessionKeepAliveIntervalMs,
+                                                     long sessionIdleTtlMs) {
         this.jsonMapper = jsonMapper;
         this.path = path;
+        this.sessionKeepAliveIntervalMs = sessionKeepAliveIntervalMs;
+        this.sessionIdleTtlMs = sessionIdleTtlMs;
     }
 
     @Override
@@ -87,12 +106,12 @@ public class VertxMcpStreamableServerTransportProvider implements McpStreamableS
         if (sessions.isEmpty()) {
             return Mono.empty();
         }
-        return Mono.fromRunnable(() -> sessions.values().forEach(session -> {
+        return Mono.fromRunnable(() -> sessions.values().forEach(managed -> {
             try {
                 // bounded so a single stalled session cannot starve notifications to healthy sessions
-                session.sendNotification(method, params).block(NOTIFICATION_TIMEOUT);
+                managed.session.sendNotification(method, params).block(NOTIFICATION_TIMEOUT);
             } catch (Exception e) {
-                LOG.debug("Failed to send notification to MCP session {}: {}", session.getId(), e.getMessage());
+                LOG.debug("Failed to send notification to MCP session {}: {}", managed.session.getId(), e.getMessage());
             }
         }));
     }
@@ -101,11 +120,12 @@ public class VertxMcpStreamableServerTransportProvider implements McpStreamableS
     public Mono<Void> closeGracefully() {
         return Mono.fromRunnable(() -> {
             closing = true;
-            sessions.values().forEach(session -> {
+            stopSessionMaintenance();
+            sessions.values().forEach(managed -> {
                 try {
-                    session.closeGracefully().block(NOTIFICATION_TIMEOUT);
+                    managed.session.closeGracefully().block(NOTIFICATION_TIMEOUT);
                 } catch (Exception e) {
-                    LOG.debug("Failed to close MCP session {}: {}", session.getId(), e.getMessage());
+                    LOG.debug("Failed to close MCP session {}: {}", managed.session.getId(), e.getMessage());
                 }
             });
             sessions.clear();
@@ -117,7 +137,7 @@ public class VertxMcpStreamableServerTransportProvider implements McpStreamableS
      * (the server sets the session factory on construction).
      */
     public void registerRoutes(VertxPlatformHttpRouter router) {
-        Vertx vertx = router.vertx();
+        vertx = router.vertx();
         Route post = router.route(path).method(HttpMethod.POST);
         post.handler(BodyHandler.create(false));
         post.handler(ctx -> dispatch(vertx, ctx, this::handlePost));
@@ -128,11 +148,17 @@ public class VertxMcpStreamableServerTransportProvider implements McpStreamableS
         Route delete = router.route(path).method(HttpMethod.DELETE);
         delete.handler(ctx -> dispatch(vertx, ctx, this::handleDelete));
         routes.add(delete);
+        startSessionMaintenance();
     }
 
     public void unregisterRoutes() {
+        stopSessionMaintenance();
         routes.forEach(Route::remove);
         routes.clear();
+    }
+
+    int sessionCount() {
+        return sessions.size();
     }
 
     @FunctionalInterface
@@ -200,23 +226,24 @@ public class VertxMcpStreamableServerTransportProvider implements McpStreamableS
         if (respondBadRequest(connection, ctx, badRequestErrors)) {
             return;
         }
-        McpStreamableServerSession session = sessions.get(sessionId);
-        if (session == null) {
+        ManagedSession managed = sessions.get(sessionId);
+        if (managed == null) {
             respondError(connection, ctx, 404, McpError.builder(McpSchema.ErrorCodes.INTERNAL_ERROR)
                     .message("Session not found: " + sessionId).build());
             return;
         }
+        managed.touch();
 
         if (message instanceof McpSchema.JSONRPCResponse response) {
-            session.accept(response).block();
+            managed.session.accept(response).block();
             endWithStatus(connection, ctx, 202);
         } else if (message instanceof McpSchema.JSONRPCNotification notification) {
-            session.accept(notification).block();
+            managed.session.accept(notification).block();
             endWithStatus(connection, ctx, 202);
         } else if (message instanceof McpSchema.JSONRPCRequest request) {
             VertxMcpSessionTransport transport = startSseResponse(ctx, connection, sessionId);
             try {
-                session.responseStream(request, transport).block();
+                managed.session.responseStream(request, transport).block();
             } catch (Exception e) {
                 LOG.warn("Failed to handle MCP request stream: {}", e.getMessage());
                 transport.close();
@@ -233,7 +260,7 @@ public class VertxMcpStreamableServerTransportProvider implements McpStreamableS
                 = jsonMapper.convertValue(request.params(), new TypeRef<McpSchema.InitializeRequest>() {
                 });
         McpStreamableServerSession.McpStreamableServerSessionInit init = sessionFactory.startSession(initializeRequest);
-        sessions.put(init.session().getId(), init.session());
+        sessions.put(init.session().getId(), new ManagedSession(init.session()));
         McpSchema.InitializeResult initResult = init.initResult().block(INITIALIZATION_TIMEOUT);
         String json = jsonMapper.writeValueAsString(McpSchema.JSONRPCResponse.result(request.id(), initResult));
         connection.runOnContext(v -> ctx.response()
@@ -260,24 +287,25 @@ public class VertxMcpStreamableServerTransportProvider implements McpStreamableS
         if (respondBadRequest(connection, ctx, badRequestErrors)) {
             return;
         }
-        McpStreamableServerSession session = sessions.get(sessionId);
-        if (session == null) {
+        ManagedSession managed = sessions.get(sessionId);
+        if (managed == null) {
             endWithStatus(connection, ctx, 404);
             return;
         }
+        managed.touch();
 
         VertxMcpSessionTransport transport = startSseResponse(ctx, connection, sessionId);
         String lastEventId = ctx.request().getHeader(HttpHeaders.LAST_EVENT_ID);
         if (lastEventId != null) {
             try {
-                session.replay(lastEventId).toIterable().forEach(message -> transport.sendMessage(message).block());
+                managed.session.replay(lastEventId).toIterable().forEach(message -> transport.sendMessage(message).block());
             } catch (Exception e) {
                 LOG.warn("Failed to replay MCP messages: {}", e.getMessage());
                 transport.close();
             }
         } else {
             McpStreamableServerSession.McpStreamableServerSessionStream listeningStream
-                    = session.listeningStream(transport);
+                    = managed.session.listeningStream(transport);
             connection.runOnContext(v -> ctx.response().closeHandler(x -> listeningStream.close()));
         }
     }
@@ -293,14 +321,139 @@ public class VertxMcpStreamableServerTransportProvider implements McpStreamableS
                     .message("Session ID required in " + HttpHeaders.MCP_SESSION_ID + " header").build());
             return;
         }
-        McpStreamableServerSession session = sessions.get(sessionId);
-        if (session == null) {
+        ManagedSession managed = sessions.get(sessionId);
+        if (managed == null) {
             endWithStatus(connection, ctx, 404);
             return;
         }
-        session.delete().block();
+        managed.session.delete().block();
         sessions.remove(sessionId);
         endWithStatus(connection, ctx, 200);
+    }
+
+    private void startSessionMaintenance() {
+        if (vertx == null) {
+            return;
+        }
+        if (sessionKeepAliveIntervalMs > 0) {
+            keepAliveTimerId = vertx.setPeriodic(sessionKeepAliveIntervalMs, id -> {
+                if (!keepAliveInProgress.compareAndSet(false, true)) {
+                    return;
+                }
+                vertx.executeBlocking(() -> {
+                    try {
+                        pingSessions();
+                    } finally {
+                        keepAliveInProgress.set(false);
+                    }
+                    return null;
+                }, false);
+            });
+        }
+        if (sessionIdleTtlMs > 0) {
+            long scanInterval = Math.max(100L, Math.min(sessionIdleTtlMs / 2, 1_000L));
+            idleTimerId = vertx.setPeriodic(scanInterval, id -> {
+                if (!idleEvictionInProgress.compareAndSet(false, true)) {
+                    return;
+                }
+                vertx.executeBlocking(() -> {
+                    try {
+                        evictIdleSessions();
+                    } finally {
+                        idleEvictionInProgress.set(false);
+                    }
+                    return null;
+                }, false);
+            });
+        }
+    }
+
+    private void stopSessionMaintenance() {
+        if (vertx == null) {
+            return;
+        }
+        if (keepAliveTimerId != null) {
+            vertx.cancelTimer(keepAliveTimerId);
+            keepAliveTimerId = null;
+        }
+        if (idleTimerId != null) {
+            vertx.cancelTimer(idleTimerId);
+            idleTimerId = null;
+        }
+    }
+
+    private void pingSessions() {
+        if (closing || sessions.isEmpty()) {
+            return;
+        }
+        for (ManagedSession managed : sessions.values()) {
+            try {
+                managed.session.sendRequest(McpSchema.METHOD_PING, null, new TypeRef<Object>() {
+                }).block(KEEP_ALIVE_PING_TIMEOUT);
+                managed.resetPingFailures();
+                managed.touch();
+            } catch (Exception e) {
+                if (isMissingTransport(e)) {
+                    // POST-only clients without an open GET stream cannot receive pings; idle TTL handles orphans
+                    continue;
+                }
+                if (managed.recordPingFailure() >= MAX_CONSECUTIVE_PING_FAILURES) {
+                    evictSession(managed.session.getId(), "keep-alive ping failed");
+                }
+            }
+        }
+    }
+
+    private static boolean isMissingTransport(Throwable error) {
+        Throwable current = error;
+        while (current != null) {
+            if (current instanceof IllegalStateException && current.getMessage() != null
+                    && current.getMessage().contains("Stream unavailable")) {
+                return true;
+            }
+            current = current.getCause();
+        }
+        return false;
+    }
+
+    private void evictIdleSessions() {
+        if (closing || sessions.isEmpty()) {
+            return;
+        }
+        long cutoff = System.nanoTime() - Duration.ofMillis(sessionIdleTtlMs).toNanos();
+        sessions.forEach((sessionId, managed) -> {
+            if (managed.lastActivityNanos() < cutoff) {
+                evictSession(sessionId, "idle TTL exceeded");
+            }
+        });
+    }
+
+    private void evictSession(String sessionId, String reason) {
+        ManagedSession managed = sessions.remove(sessionId);
+        if (managed == null) {
+            return;
+        }
+        LOG.debug("Evicting MCP session {}: {}", sessionId, reason);
+        closeSessionQuietly(managed.session, sessionId);
+    }
+
+    private void scheduleAsyncSessionClose(String sessionId, McpStreamableServerSession session) {
+        if (vertx == null) {
+            closeSessionQuietly(session, sessionId);
+            return;
+        }
+        vertx.executeBlocking(() -> {
+            closeSessionQuietly(session, sessionId);
+            return null;
+        }, false);
+    }
+
+    private void closeSessionQuietly(McpStreamableServerSession session, String sessionId) {
+        try {
+            session.closeGracefully().block(NOTIFICATION_TIMEOUT);
+        } catch (Exception e) {
+            LOG.debug("Failed to close MCP session {}: {}", sessionId, e.getMessage());
+        }
     }
 
     private VertxMcpSessionTransport startSseResponse(RoutingContext ctx, Context connection, String sessionId) {
@@ -336,6 +489,35 @@ public class VertxMcpStreamableServerTransportProvider implements McpStreamableS
 
     private void endWithStatus(Context connection, RoutingContext ctx, int status) {
         connection.runOnContext(v -> ctx.response().setStatusCode(status).end());
+    }
+
+    private static final class ManagedSession {
+
+        private final McpStreamableServerSession session;
+        private volatile long lastActivityNanos;
+        private final AtomicInteger consecutivePingFailures = new AtomicInteger();
+
+        private ManagedSession(McpStreamableServerSession session) {
+            this.session = session;
+            touch();
+        }
+
+        private void touch() {
+            lastActivityNanos = System.nanoTime();
+            consecutivePingFailures.set(0);
+        }
+
+        private long lastActivityNanos() {
+            return lastActivityNanos;
+        }
+
+        private void resetPingFailures() {
+            consecutivePingFailures.set(0);
+        }
+
+        private int recordPingFailure() {
+            return consecutivePingFailures.incrementAndGet();
+        }
     }
 
     /**
@@ -377,8 +559,10 @@ public class VertxMcpStreamableServerTransportProvider implements McpStreamableS
                             LOG.debug("Failed to write to MCP session {}: {}", sessionId,
                                     result.cause() != null ? result.cause().getMessage() : "unknown");
                             closed = true;
-                            // the client is gone: drop the session like the SDK servlet transport does
-                            sessions.remove(sessionId);
+                            ManagedSession managed = sessions.remove(sessionId);
+                            if (managed != null) {
+                                scheduleAsyncSessionClose(sessionId, managed.session);
+                            }
                         }
                         sink.success();
                     });

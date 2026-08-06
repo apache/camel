@@ -23,6 +23,14 @@ this executor is functionally identical to the built-in `DefaultReactiveExecutor
 To migrate, remove the `camel-reactive-executor-tomcat` dependency from your project. Camel will
 automatically use the default reactive executor.
 
+=== camel-mcp-server
+
+The Vert.x streamable transport now evicts orphaned MCP sessions automatically: keep-alive pings
+every 30 seconds (evict after consecutive failures on sessions with an open SSE stream) and an idle
+TTL of 5 minutes (evict sessions with no POST/GET activity). Configure with
+`camel.server.mcp-session-keep-alive-interval` and `camel.server.mcp-session-idle-ttl`; set either
+option to `0` to disable that mechanism.
+
 === camel-core
 
 ==== Property placeholders in toD and enrich dynamic endpoint URIs

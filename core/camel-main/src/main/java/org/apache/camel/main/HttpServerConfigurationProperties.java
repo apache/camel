@@ -79,6 +79,10 @@ public class HttpServerConfigurationProperties implements BootstrapCloseable {
     private long mcpToolTimeout = 20000;
     @Metadata(defaultValue = "/mcp")
     private String mcpPath = "/mcp";
+    @Metadata(defaultValue = "30000")
+    private long mcpSessionKeepAliveInterval = 30000;
+    @Metadata(defaultValue = "300000")
+    private long mcpSessionIdleTtl = 300000;
     @Metadata
     private String mcpServerName;
 
@@ -395,6 +399,30 @@ public class HttpServerConfigurationProperties implements BootstrapCloseable {
         this.mcpServerName = mcpServerName;
     }
 
+    public long getMcpSessionKeepAliveInterval() {
+        return mcpSessionKeepAliveInterval;
+    }
+
+    /**
+     * Keep-alive ping interval in milliseconds for MCP sessions on the Vert.x streamable transport. Dead sessions are
+     * evicted after consecutive ping failures. {@code 0} disables keep-alive pings.
+     */
+    public void setMcpSessionKeepAliveInterval(long mcpSessionKeepAliveInterval) {
+        this.mcpSessionKeepAliveInterval = mcpSessionKeepAliveInterval;
+    }
+
+    public long getMcpSessionIdleTtl() {
+        return mcpSessionIdleTtl;
+    }
+
+    /**
+     * Idle TTL in milliseconds for MCP sessions on the Vert.x streamable transport. Sessions with no activity for
+     * longer than this interval are evicted. {@code 0} disables idle eviction.
+     */
+    public void setMcpSessionIdleTtl(long mcpSessionIdleTtl) {
+        this.mcpSessionIdleTtl = mcpSessionIdleTtl;
+    }
+
     /**
      * Whether embedded HTTP server is enabled. By default, the server is not enabled.
      */
@@ -615,6 +643,22 @@ public class HttpServerConfigurationProperties implements BootstrapCloseable {
      */
     public HttpServerConfigurationProperties withMcpServerName(String mcpServerName) {
         this.mcpServerName = mcpServerName;
+        return this;
+    }
+
+    /**
+     * Keep-alive ping interval in milliseconds for MCP sessions on the Vert.x streamable transport.
+     */
+    public HttpServerConfigurationProperties withMcpSessionKeepAliveInterval(long mcpSessionKeepAliveInterval) {
+        this.mcpSessionKeepAliveInterval = mcpSessionKeepAliveInterval;
+        return this;
+    }
+
+    /**
+     * Idle TTL in milliseconds for MCP sessions on the Vert.x streamable transport.
+     */
+    public HttpServerConfigurationProperties withMcpSessionIdleTtl(long mcpSessionIdleTtl) {
+        this.mcpSessionIdleTtl = mcpSessionIdleTtl;
         return this;
     }
 

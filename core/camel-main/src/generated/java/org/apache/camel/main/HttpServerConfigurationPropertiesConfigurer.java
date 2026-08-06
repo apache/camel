@@ -40,6 +40,8 @@ public class HttpServerConfigurationPropertiesConfigurer extends org.apache.came
         map.put("McpEnabled", boolean.class);
         map.put("McpPath", java.lang.String.class);
         map.put("McpServerName", java.lang.String.class);
+        map.put("McpSessionIdleTtl", long.class);
+        map.put("McpSessionKeepAliveInterval", long.class);
         map.put("McpTags", java.lang.String.class);
         map.put("McpToolTimeout", long.class);
         map.put("Path", java.lang.String.class);
@@ -89,6 +91,10 @@ public class HttpServerConfigurationPropertiesConfigurer extends org.apache.came
         case "mcpPath": target.setMcpPath(property(camelContext, java.lang.String.class, value)); return true;
         case "mcpservername":
         case "mcpServerName": target.setMcpServerName(property(camelContext, java.lang.String.class, value)); return true;
+        case "mcpsessionidlettl":
+        case "mcpSessionIdleTtl": target.setMcpSessionIdleTtl(property(camelContext, long.class, value)); return true;
+        case "mcpsessionkeepaliveinterval":
+        case "mcpSessionKeepAliveInterval": target.setMcpSessionKeepAliveInterval(property(camelContext, long.class, value)); return true;
         case "mcptags":
         case "mcpTags": target.setMcpTags(property(camelContext, java.lang.String.class, value)); return true;
         case "mcptooltimeout":
@@ -149,6 +155,10 @@ public class HttpServerConfigurationPropertiesConfigurer extends org.apache.came
         case "mcpPath": return java.lang.String.class;
         case "mcpservername":
         case "mcpServerName": return java.lang.String.class;
+        case "mcpsessionidlettl":
+        case "mcpSessionIdleTtl": return long.class;
+        case "mcpsessionkeepaliveinterval":
+        case "mcpSessionKeepAliveInterval": return long.class;
         case "mcptags":
         case "mcpTags": return java.lang.String.class;
         case "mcptooltimeout":
@@ -205,6 +215,10 @@ public class HttpServerConfigurationPropertiesConfigurer extends org.apache.came
         case "mcpPath": return target.getMcpPath();
         case "mcpservername":
         case "mcpServerName": return target.getMcpServerName();
+        case "mcpsessionidlettl":
+        case "mcpSessionIdleTtl": return target.getMcpSessionIdleTtl();
+        case "mcpsessionkeepaliveinterval":
+        case "mcpSessionKeepAliveInterval": return target.getMcpSessionKeepAliveInterval();
         case "mcptags":
         case "mcpTags": return target.getMcpTags();
         case "mcptooltimeout":
