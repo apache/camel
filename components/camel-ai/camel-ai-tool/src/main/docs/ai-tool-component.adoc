@@ -201,7 +201,7 @@ The root schema must be a JSON Schema object with a top-level `properties` map. 
 
 When exposing `ai-tool` routes through the xref:components::mcp-server.adoc[MCP Server] component, you can declare optional behavioral hints aligned with the MCP specification (`ToolAnnotations`). MCP clients may use these hints for per-tool policy (for example auto-approving read-only tools or requiring confirmation before destructive ones).
 
-These hints are **advisory only** — Camel does not enforce them. Untrusted MCP clients must not rely on them for security decisions.
+These hints are **advisory only** — Camel does not enforce them. MCP clients must treat them as untrusted UX metadata (per the MCP specification), not as authorization. Inaccurate hints can mislead client-side confirmation flows.
 
 [tabs]
 ====
@@ -237,7 +237,7 @@ YAML::
 ----
 ====
 
-Supported options: `title`, `readOnlyHint`, `destructiveHint`, `idempotentHint`, and `openWorldHint`. When omitted, the hint is not published to MCP clients.
+Supported options: `title`, `readOnlyHint`, `destructiveHint`, `idempotentHint`, and `openWorldHint`. When a hint is omitted, it is not published; MCP clients then apply their own defaults (for example assuming destructive/open-world unless told otherwise).
 
 === Tag-Based Discovery
 
