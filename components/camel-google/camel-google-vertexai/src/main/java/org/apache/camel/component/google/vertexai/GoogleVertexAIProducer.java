@@ -51,6 +51,8 @@ public class GoogleVertexAIProducer extends DefaultProducer {
 
     private static final Logger LOG = LoggerFactory.getLogger(GoogleVertexAIProducer.class);
     private static final ObjectMapper OBJECT_MAPPER = new ObjectMapper();
+    private static final String CHUNKS_OUTPUT_MODE = "chunks";
+    private static final String JSON_MIME_TYPE = "application/json";
 
     private final GoogleVertexAIEndpoint endpoint;
 
@@ -154,27 +156,38 @@ public class GoogleVertexAIProducer extends DefaultProducer {
         try (ResponseStream<GenerateContentResponse> stream
                 = client.models.generateContentStream(modelId, prompt, config)) {
 
-            StringBuilder fullText = new StringBuilder();
-            int chunkCount = 0;
+            List<String> chunks = new ArrayList<>();
             GenerateContentResponse lastResponse = null;
 
             for (GenerateContentResponse chunk : stream) {
-                chunkCount++;
                 lastResponse = chunk;
                 String chunkText = chunk.text();
                 if (chunkText != null) {
-                    fullText.append(chunkText);
+                    chunks.add(chunkText);
                 }
             }
 
             Message message = getMessageForResponse(exchange);
-            message.setBody(fullText.toString());
-            message.setHeader(GoogleVertexAIConstants.CHUNK_COUNT, chunkCount);
+            if (CHUNKS_OUTPUT_MODE.equalsIgnoreCase(determineStreamOutputMode(exchange))) {
+                // one element per chunk, so the route can split them
+                message.setBody(chunks);
+            } else {
+                message.setBody(String.join("", chunks));
+            }
+            message.setHeader(GoogleVertexAIConstants.CHUNK_COUNT, chunks.size());
 
             if (lastResponse != null) {
                 setMetadataHeaders(exchange, lastResponse);
             }
         }
+    }
+
+    String determineStreamOutputMode(Exchange exchange) {
+        String mode = exchange.getIn().getHeader(GoogleVertexAIConstants.STREAM_OUTPUT_MODE, String.class);
+        if (mode == null) {
+            mode = endpoint.getConfiguration().getStreamOutputMode();
+        }
+        return mode;
     }
 
     private void generateImage(Exchange exchange) throws Exception {
@@ -505,7 +518,8 @@ public class GoogleVertexAIProducer extends DefaultProducer {
         }
 
         throw new IllegalArgumentException(
-                "Request body must be a JSON String, Map, or plain text prompt. Got: " + body.getClass().getName());
+                "Request body must be a JSON String, Map, or plain text prompt. Got: "
+                                           + (body == null ? "no body" : body.getClass().getName()));
     }
 
     /**
@@ -630,7 +644,7 @@ public class GoogleVertexAIProducer extends DefaultProducer {
         return prompt;
     }
 
-    private GenerateContentConfig buildConfig(Exchange exchange) {
+    GenerateContentConfig buildConfig(Exchange exchange) {
         GoogleVertexAIConfiguration config = endpoint.getConfiguration();
 
         GenerateContentConfig.Builder configBuilder = GenerateContentConfig.builder();
@@ -674,6 +688,10 @@ public class GoogleVertexAIProducer extends DefaultProducer {
         }
         if (candidateCount != null) {
             configBuilder.candidateCount(candidateCount);
+        }
+
+        if (config.isJsonMode()) {
+            configBuilder.responseMimeType(JSON_MIME_TYPE);
         }
 
         return configBuilder.build();
