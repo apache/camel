@@ -38,8 +38,17 @@ public class AiToolComponentConfigurer extends PropertyConfigurerSupport impleme
         case "bridgeErrorHandler": target.setBridgeErrorHandler(property(camelContext, boolean.class, value)); return true;
         case "configuration": target.setConfiguration(property(camelContext, org.apache.camel.component.ai.tool.AiToolConfiguration.class, value)); return true;
         case "description": getOrCreateConfiguration(target).setDescription(property(camelContext, java.lang.String.class, value)); return true;
+        case "destructivehint":
+        case "destructiveHint": getOrCreateConfiguration(target).setDestructiveHint(property(camelContext, java.lang.Boolean.class, value)); return true;
+        case "idempotenthint":
+        case "idempotentHint": getOrCreateConfiguration(target).setIdempotentHint(property(camelContext, java.lang.Boolean.class, value)); return true;
+        case "openworldhint":
+        case "openWorldHint": getOrCreateConfiguration(target).setOpenWorldHint(property(camelContext, java.lang.Boolean.class, value)); return true;
         case "parameters": getOrCreateConfiguration(target).setParameters(property(camelContext, java.util.Map.class, value)); return true;
+        case "readonlyhint":
+        case "readOnlyHint": getOrCreateConfiguration(target).setReadOnlyHint(property(camelContext, java.lang.Boolean.class, value)); return true;
         case "tags": getOrCreateConfiguration(target).setTags(property(camelContext, java.lang.String.class, value)); return true;
+        case "title": getOrCreateConfiguration(target).setTitle(property(camelContext, java.lang.String.class, value)); return true;
         default: return false;
         }
     }
@@ -55,8 +64,17 @@ public class AiToolComponentConfigurer extends PropertyConfigurerSupport impleme
         case "bridgeErrorHandler": return boolean.class;
         case "configuration": return org.apache.camel.component.ai.tool.AiToolConfiguration.class;
         case "description": return java.lang.String.class;
+        case "destructivehint":
+        case "destructiveHint": return java.lang.Boolean.class;
+        case "idempotenthint":
+        case "idempotentHint": return java.lang.Boolean.class;
+        case "openworldhint":
+        case "openWorldHint": return java.lang.Boolean.class;
         case "parameters": return java.util.Map.class;
+        case "readonlyhint":
+        case "readOnlyHint": return java.lang.Boolean.class;
         case "tags": return java.lang.String.class;
+        case "title": return java.lang.String.class;
         default: return null;
         }
     }
@@ -73,8 +91,17 @@ public class AiToolComponentConfigurer extends PropertyConfigurerSupport impleme
         case "bridgeErrorHandler": return target.isBridgeErrorHandler();
         case "configuration": return target.getConfiguration();
         case "description": return getOrCreateConfiguration(target).getDescription();
+        case "destructivehint":
+        case "destructiveHint": return getOrCreateConfiguration(target).getDestructiveHint();
+        case "idempotenthint":
+        case "idempotentHint": return getOrCreateConfiguration(target).getIdempotentHint();
+        case "openworldhint":
+        case "openWorldHint": return getOrCreateConfiguration(target).getOpenWorldHint();
         case "parameters": return getOrCreateConfiguration(target).getParameters();
+        case "readonlyhint":
+        case "readOnlyHint": return getOrCreateConfiguration(target).getReadOnlyHint();
         case "tags": return getOrCreateConfiguration(target).getTags();
+        case "title": return getOrCreateConfiguration(target).getTitle();
         default: return null;
         }
     }

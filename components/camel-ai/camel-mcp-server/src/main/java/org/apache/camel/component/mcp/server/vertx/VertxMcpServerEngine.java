@@ -26,6 +26,7 @@ import io.modelcontextprotocol.server.McpServerFeatures;
 import io.modelcontextprotocol.server.McpSyncServer;
 import io.modelcontextprotocol.spec.McpSchema;
 import org.apache.camel.CamelContext;
+import org.apache.camel.component.ai.tool.AiToolAnnotations;
 import org.apache.camel.component.mcp.server.McpServerConstants;
 import org.apache.camel.component.mcp.server.McpServerEngine;
 import org.apache.camel.component.mcp.server.McpServerInfo;
@@ -140,10 +141,7 @@ public class VertxMcpServerEngine extends ServiceSupport implements McpServerEng
 
     @Override
     public void toolAdded(McpServerTool tool) {
-        String schema = tool.inputSchemaJson() != null ? tool.inputSchemaJson() : EMPTY_OBJECT_SCHEMA;
-        McpSchema.Tool mcpTool = McpSchema.Tool.builder(tool.name(), jsonMapper, schema)
-                .description(tool.description())
-                .build();
+        McpSchema.Tool mcpTool = buildMcpTool(tool);
         McpServerFeatures.SyncToolSpecification spec = McpServerFeatures.SyncToolSpecification.builder()
                 .tool(mcpTool)
                 .callHandler((exchange, request) -> {
@@ -166,6 +164,44 @@ public class VertxMcpServerEngine extends ServiceSupport implements McpServerEng
             LOG.debug("MCP tool removed: {}", toolName);
         } catch (Exception e) {
             LOG.debug("Failed to remove MCP tool {}: {}", toolName, e.getMessage());
+        }
+    }
+
+    private McpSchema.Tool buildMcpTool(McpServerTool tool) {
+        String schema = tool.inputSchemaJson() != null ? tool.inputSchemaJson() : EMPTY_OBJECT_SCHEMA;
+        McpSchema.Tool.Builder builder = McpSchema.Tool.builder(tool.name(), jsonMapper, schema)
+                .description(tool.description());
+        applyAnnotations(builder, tool.annotations());
+        return builder.build();
+    }
+
+    private static void applyAnnotations(McpSchema.Tool.Builder builder, AiToolAnnotations annotations) {
+        if (annotations == null) {
+            return;
+        }
+        if (annotations.title() != null) {
+            builder.title(annotations.title());
+        }
+        McpSchema.ToolAnnotations.Builder hintBuilder = McpSchema.ToolAnnotations.builder();
+        boolean hasHints = false;
+        if (annotations.readOnlyHint() != null) {
+            hintBuilder.readOnlyHint(annotations.readOnlyHint());
+            hasHints = true;
+        }
+        if (annotations.destructiveHint() != null) {
+            hintBuilder.destructiveHint(annotations.destructiveHint());
+            hasHints = true;
+        }
+        if (annotations.idempotentHint() != null) {
+            hintBuilder.idempotentHint(annotations.idempotentHint());
+            hasHints = true;
+        }
+        if (annotations.openWorldHint() != null) {
+            hintBuilder.openWorldHint(annotations.openWorldHint());
+            hasHints = true;
+        }
+        if (hasHints) {
+            builder.annotations(hintBuilder.build());
         }
     }
 

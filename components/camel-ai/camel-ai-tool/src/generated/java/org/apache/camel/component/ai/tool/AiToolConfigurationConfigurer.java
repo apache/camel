@@ -26,8 +26,17 @@ public class AiToolConfigurationConfigurer extends org.apache.camel.support.comp
         case "argschema":
         case "argSchema": target.setArgSchema(property(camelContext, java.lang.String.class, value)); return true;
         case "description": target.setDescription(property(camelContext, java.lang.String.class, value)); return true;
+        case "destructivehint":
+        case "destructiveHint": target.setDestructiveHint(property(camelContext, java.lang.Boolean.class, value)); return true;
+        case "idempotenthint":
+        case "idempotentHint": target.setIdempotentHint(property(camelContext, java.lang.Boolean.class, value)); return true;
+        case "openworldhint":
+        case "openWorldHint": target.setOpenWorldHint(property(camelContext, java.lang.Boolean.class, value)); return true;
         case "parameters": target.setParameters(property(camelContext, java.util.Map.class, value)); return true;
+        case "readonlyhint":
+        case "readOnlyHint": target.setReadOnlyHint(property(camelContext, java.lang.Boolean.class, value)); return true;
         case "tags": target.setTags(property(camelContext, java.lang.String.class, value)); return true;
+        case "title": target.setTitle(property(camelContext, java.lang.String.class, value)); return true;
         default: return false;
         }
     }
@@ -38,8 +47,17 @@ public class AiToolConfigurationConfigurer extends org.apache.camel.support.comp
         case "argschema":
         case "argSchema": return java.lang.String.class;
         case "description": return java.lang.String.class;
+        case "destructivehint":
+        case "destructiveHint": return java.lang.Boolean.class;
+        case "idempotenthint":
+        case "idempotentHint": return java.lang.Boolean.class;
+        case "openworldhint":
+        case "openWorldHint": return java.lang.Boolean.class;
         case "parameters": return java.util.Map.class;
+        case "readonlyhint":
+        case "readOnlyHint": return java.lang.Boolean.class;
         case "tags": return java.lang.String.class;
+        case "title": return java.lang.String.class;
         default: return null;
         }
     }
@@ -51,8 +69,17 @@ public class AiToolConfigurationConfigurer extends org.apache.camel.support.comp
         case "argschema":
         case "argSchema": return target.getArgSchema();
         case "description": return target.getDescription();
+        case "destructivehint":
+        case "destructiveHint": return target.getDestructiveHint();
+        case "idempotenthint":
+        case "idempotentHint": return target.getIdempotentHint();
+        case "openworldhint":
+        case "openWorldHint": return target.getOpenWorldHint();
         case "parameters": return target.getParameters();
+        case "readonlyhint":
+        case "readOnlyHint": return target.getReadOnlyHint();
         case "tags": return target.getTags();
+        case "title": return target.getTitle();
         default: return null;
         }
     }

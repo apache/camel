@@ -32,6 +32,7 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.CamelContextAware;
 import org.apache.camel.Exchange;
 import org.apache.camel.StaticService;
+import org.apache.camel.component.ai.tool.AiToolAnnotations;
 import org.apache.camel.component.ai.tool.AiToolExecutor;
 import org.apache.camel.component.ai.tool.AiToolParameterHelper;
 import org.apache.camel.component.ai.tool.AiToolParameterHelper.ParameterDef;
@@ -242,6 +243,11 @@ public class McpServerBridge extends ServiceSupport implements CamelContextAware
             @Override
             public McpToolCallHandler handler() {
                 return handler;
+            }
+
+            @Override
+            public AiToolAnnotations annotations() {
+                return spec.getAnnotations();
             }
         };
     }

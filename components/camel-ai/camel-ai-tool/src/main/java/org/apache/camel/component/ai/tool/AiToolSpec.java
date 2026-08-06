@@ -40,6 +40,7 @@ public final class AiToolSpec {
     private final String parametersJsonSchema;
     private final Set<String> declaredArgumentNames;
     private final Set<String> requiredArgumentNames;
+    private final AiToolAnnotations annotations;
     private final DefaultConsumer consumer;
 
     public AiToolSpec(
@@ -47,6 +48,7 @@ public final class AiToolSpec {
                       String description,
                       Map<String, AiToolParameterHelper.ParameterDef> parameterDefs,
                       String parametersJsonSchema,
+                      AiToolAnnotations annotations,
                       DefaultConsumer consumer) {
         this.name = name;
         this.description = description;
@@ -65,6 +67,7 @@ public final class AiToolSpec {
             this.declaredArgumentNames = Set.of();
             this.requiredArgumentNames = Set.of();
         }
+        this.annotations = annotations;
         this.consumer = consumer;
     }
 
@@ -109,6 +112,13 @@ public final class AiToolSpec {
     }
 
     /**
+     * Optional MCP tool annotation hints, or {@code null} when none are configured.
+     */
+    public AiToolAnnotations getAnnotations() {
+        return annotations;
+    }
+
+    /**
      * The Camel consumer that executes this tool's route when the LLM invokes it.
      */
     public DefaultConsumer getConsumer() {
@@ -132,13 +142,14 @@ public final class AiToolSpec {
                 && Objects.equals(parametersJsonSchema, that.parametersJsonSchema)
                 && Objects.equals(declaredArgumentNames, that.declaredArgumentNames)
                 && Objects.equals(requiredArgumentNames, that.requiredArgumentNames)
+                && Objects.equals(annotations, that.annotations)
                 && Objects.equals(consumer, that.consumer);
     }
 
     @Override
     public int hashCode() {
         return Objects.hash(name, description, parameterDefs, parametersJsonSchema, declaredArgumentNames,
-                requiredArgumentNames, consumer);
+                requiredArgumentNames, annotations, consumer);
     }
 
     @Override

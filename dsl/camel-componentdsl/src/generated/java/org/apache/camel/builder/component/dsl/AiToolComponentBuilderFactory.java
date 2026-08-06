@@ -134,6 +134,61 @@ public interface AiToolComponentBuilderFactory {
             return this;
         }
     
+        
+        /**
+         * MCP hint that the tool may perform destructive or irreversible
+         * updates. Advisory for MCP clients; not enforced by Camel.
+         * 
+         * The option is a: &lt;code&gt;java.lang.Boolean&lt;/code&gt; type.
+         * 
+         * Default: false
+         * Group: consumer
+         * 
+         * @param destructiveHint the value to set
+         * @return the dsl builder
+         */
+        default AiToolComponentBuilder destructiveHint(java.lang.Boolean destructiveHint) {
+            doSetProperty("destructiveHint", destructiveHint);
+            return this;
+        }
+    
+        
+        /**
+         * MCP hint that repeating the tool call with the same arguments has no
+         * additional effect. Advisory for MCP clients; not enforced by Camel.
+         * 
+         * The option is a: &lt;code&gt;java.lang.Boolean&lt;/code&gt; type.
+         * 
+         * Default: false
+         * Group: consumer
+         * 
+         * @param idempotentHint the value to set
+         * @return the dsl builder
+         */
+        default AiToolComponentBuilder idempotentHint(java.lang.Boolean idempotentHint) {
+            doSetProperty("idempotentHint", idempotentHint);
+            return this;
+        }
+    
+        
+        /**
+         * MCP hint that the tool interacts with external systems outside the
+         * application's control. Advisory for MCP clients; not enforced by
+         * Camel.
+         * 
+         * The option is a: &lt;code&gt;java.lang.Boolean&lt;/code&gt; type.
+         * 
+         * Default: false
+         * Group: consumer
+         * 
+         * @param openWorldHint the value to set
+         * @return the dsl builder
+         */
+        default AiToolComponentBuilder openWorldHint(java.lang.Boolean openWorldHint) {
+            doSetProperty("openWorldHint", openWorldHint);
+            return this;
+        }
+    
         /**
          * Tool input parameters. Format: parameter.NAME=TYPE,
          * parameter.NAME.description=TEXT, parameter.NAME.required=true or
@@ -154,6 +209,24 @@ public interface AiToolComponentBuilderFactory {
             return this;
         }
     
+        
+        /**
+         * MCP hint that the tool only reads data and does not modify state.
+         * Advisory for MCP clients; not enforced by Camel.
+         * 
+         * The option is a: &lt;code&gt;java.lang.Boolean&lt;/code&gt; type.
+         * 
+         * Default: false
+         * Group: consumer
+         * 
+         * @param readOnlyHint the value to set
+         * @return the dsl builder
+         */
+        default AiToolComponentBuilder readOnlyHint(java.lang.Boolean readOnlyHint) {
+            doSetProperty("readOnlyHint", readOnlyHint);
+            return this;
+        }
+    
         /**
          * Comma-separated list of tags used to group tools. Producers filter
          * the registry by these tags to select which tools to expose to the
@@ -169,6 +242,22 @@ public interface AiToolComponentBuilderFactory {
          */
         default AiToolComponentBuilder tags(java.lang.String tags) {
             doSetProperty("tags", tags);
+            return this;
+        }
+    
+        /**
+         * Optional display title for MCP tool listings. Advisory hint for MCP
+         * clients only.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: consumer
+         * 
+         * @param title the value to set
+         * @return the dsl builder
+         */
+        default AiToolComponentBuilder title(java.lang.String title) {
+            doSetProperty("title", title);
             return this;
         }
     
@@ -218,8 +307,13 @@ public interface AiToolComponentBuilderFactory {
             case "bridgeErrorHandler": ((AiToolComponent) component).setBridgeErrorHandler((boolean) value); return true;
             case "configuration": ((AiToolComponent) component).setConfiguration((org.apache.camel.component.ai.tool.AiToolConfiguration) value); return true;
             case "description": getOrCreateConfiguration((AiToolComponent) component).setDescription((java.lang.String) value); return true;
+            case "destructiveHint": getOrCreateConfiguration((AiToolComponent) component).setDestructiveHint((java.lang.Boolean) value); return true;
+            case "idempotentHint": getOrCreateConfiguration((AiToolComponent) component).setIdempotentHint((java.lang.Boolean) value); return true;
+            case "openWorldHint": getOrCreateConfiguration((AiToolComponent) component).setOpenWorldHint((java.lang.Boolean) value); return true;
             case "parameters": getOrCreateConfiguration((AiToolComponent) component).setParameters((java.util.Map) value); return true;
+            case "readOnlyHint": getOrCreateConfiguration((AiToolComponent) component).setReadOnlyHint((java.lang.Boolean) value); return true;
             case "tags": getOrCreateConfiguration((AiToolComponent) component).setTags((java.lang.String) value); return true;
+            case "title": getOrCreateConfiguration((AiToolComponent) component).setTitle((java.lang.String) value); return true;
             case "autowiredEnabled": ((AiToolComponent) component).setAutowiredEnabled((boolean) value); return true;
             default: return false;
             }

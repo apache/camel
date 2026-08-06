@@ -48,9 +48,15 @@ class McpServerBridgeTest extends CamelTestSupport {
         return new RouteBuilder() {
             public void configure() {
                 from("ai-tool:query_db?tags=crm&description=Query the customer database"
-                     + "&parameter.customerId=string&parameter.customerId.required=true")
+                     + "&parameter.customerId=string&parameter.customerId.required=true"
+                     + "&readOnlyHint=true&title=Query database")
                         .routeId("query-db-route")
                         .setBody(simple("customer-${header.customerId}"));
+
+                from("ai-tool:delete_order?tags=crm&description=Delete an order"
+                     + "&destructiveHint=true&idempotentHint=false")
+                        .routeId("delete-order-route")
+                        .setBody(constant("deleted"));
 
                 from("ai-tool:send_email?tags=notify,crm&description=Send an email")
                         .routeId("send-email-route")
@@ -87,6 +93,19 @@ class McpServerBridgeTest extends CamelTestSupport {
         assertThat(tool.description()).isEqualTo("Query the customer database");
         assertThat(tool.inputSchemaJson()).contains("customerId");
         assertThat(tool.parameters()).containsKey("customerId");
+    }
+
+    @Test
+    void testToolAnnotationsPassedThroughBridge() {
+        McpServerTool readTool = engine.tools().get("query_db");
+        assertThat(readTool.annotations()).isNotNull();
+        assertThat(readTool.annotations().title()).isEqualTo("Query database");
+        assertThat(readTool.annotations().readOnlyHint()).isTrue();
+
+        McpServerTool destructiveTool = engine.tools().get("delete_order");
+        assertThat(destructiveTool.annotations()).isNotNull();
+        assertThat(destructiveTool.annotations().destructiveHint()).isTrue();
+        assertThat(destructiveTool.annotations().idempotentHint()).isFalse();
     }
 
     @Test
