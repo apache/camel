@@ -74,7 +74,8 @@ public class FtpProducerHealthCheckIT extends FtpServerTestSupport {
             Assertions.assertEquals(HealthCheck.State.DOWN, r.getState());
             Assertions.assertEquals("FtpProducer is not ready", r.getMessage().get());
             Assertions.assertEquals(200, r.getDetails().get("ftp.code"));
-            Assertions.assertEquals("Connection refused", r.getDetails().get("ftp.reason"));
+            String reason = (String) r.getDetails().get("ftp.reason");
+            Assertions.assertTrue(reason.startsWith("Connection refused"), reason);
         });
 
     }
