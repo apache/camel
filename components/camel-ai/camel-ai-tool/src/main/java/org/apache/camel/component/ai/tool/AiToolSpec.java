@@ -38,6 +38,8 @@ public final class AiToolSpec {
     private final String description;
     private final Map<String, AiToolParameterHelper.ParameterDef> parameterDefs;
     private final String parametersJsonSchema;
+    private final Map<String, AiToolParameterHelper.ParameterDef> outputParameterDefs;
+    private final String outputJsonSchema;
     private final Set<String> declaredArgumentNames;
     private final Set<String> requiredArgumentNames;
     private final AiToolAnnotations annotations;
@@ -48,12 +50,16 @@ public final class AiToolSpec {
                       String description,
                       Map<String, AiToolParameterHelper.ParameterDef> parameterDefs,
                       String parametersJsonSchema,
+                      Map<String, AiToolParameterHelper.ParameterDef> outputParameterDefs,
+                      String outputJsonSchema,
                       AiToolAnnotations annotations,
                       DefaultConsumer consumer) {
         this.name = name;
         this.description = description;
         this.parameterDefs = parameterDefs != null ? Collections.unmodifiableMap(parameterDefs) : Map.of();
         this.parametersJsonSchema = parametersJsonSchema;
+        this.outputParameterDefs = outputParameterDefs != null ? Collections.unmodifiableMap(outputParameterDefs) : Map.of();
+        this.outputJsonSchema = outputJsonSchema;
         if (!this.parameterDefs.isEmpty()) {
             this.declaredArgumentNames = Set.copyOf(this.parameterDefs.keySet());
             this.requiredArgumentNames = this.parameterDefs.entrySet().stream()
@@ -93,6 +99,20 @@ public final class AiToolSpec {
      */
     public String getParametersJsonSchema() {
         return parametersJsonSchema;
+    }
+
+    /**
+     * Structured output field definitions declared via flat {@code outputParameter.*} metadata.
+     */
+    public Map<String, AiToolParameterHelper.ParameterDef> getOutputParameterDefs() {
+        return outputParameterDefs;
+    }
+
+    /**
+     * Pre-built JSON Schema string describing the tool's structured output, or {@code null} when none is declared.
+     */
+    public String getOutputJsonSchema() {
+        return outputJsonSchema;
     }
 
     /**
@@ -140,6 +160,8 @@ public final class AiToolSpec {
                 && Objects.equals(description, that.description)
                 && Objects.equals(parameterDefs, that.parameterDefs)
                 && Objects.equals(parametersJsonSchema, that.parametersJsonSchema)
+                && Objects.equals(outputParameterDefs, that.outputParameterDefs)
+                && Objects.equals(outputJsonSchema, that.outputJsonSchema)
                 && Objects.equals(declaredArgumentNames, that.declaredArgumentNames)
                 && Objects.equals(requiredArgumentNames, that.requiredArgumentNames)
                 && Objects.equals(annotations, that.annotations)
@@ -148,7 +170,8 @@ public final class AiToolSpec {
 
     @Override
     public int hashCode() {
-        return Objects.hash(name, description, parameterDefs, parametersJsonSchema, declaredArgumentNames,
+        return Objects.hash(name, description, parameterDefs, parametersJsonSchema, outputParameterDefs,
+                outputJsonSchema, declaredArgumentNames,
                 requiredArgumentNames, annotations, consumer);
     }
 

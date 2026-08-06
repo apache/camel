@@ -62,6 +62,21 @@ public class AiToolConfiguration implements Cloneable {
     private String argSchema;
 
     @Metadata(label = "consumer")
+    @UriParam(description = "Tool output schema fields. "
+                            + "Format: outputParameter.NAME=TYPE, outputParameter.NAME.description=TEXT. "
+                            + "Supported types: string, integer, number, boolean. "
+                            + "Mutually exclusive with outputSchema.",
+              prefix = "outputParameter.", multiValue = true)
+    private Map<String, String> outputParameters;
+
+    @UriParam(description = "Raw JSON Schema describing the tool's structured output. Supports inline JSON and "
+                            + "resource references (classpath:, file:, resource:). Mutually exclusive with the "
+                            + "outputParameter multi-value options. When declared, the route body is parsed as JSON "
+                            + "and exposed as structured content to MCP clients.")
+    @Metadata(label = "consumer", supportFileReference = true, largeInput = true, inputLanguage = "json")
+    private String outputSchema;
+
+    @Metadata(label = "consumer")
     @UriParam(description = "Optional display title for MCP tool listings. Advisory hint for MCP clients only.")
     private String title;
 
@@ -120,6 +135,22 @@ public class AiToolConfiguration implements Cloneable {
         this.argSchema = argSchema;
     }
 
+    public Map<String, String> getOutputParameters() {
+        return outputParameters;
+    }
+
+    public void setOutputParameters(Map<String, String> outputParameters) {
+        this.outputParameters = outputParameters;
+    }
+
+    public String getOutputSchema() {
+        return outputSchema;
+    }
+
+    public void setOutputSchema(String outputSchema) {
+        this.outputSchema = outputSchema;
+    }
+
     public String getTitle() {
         return title;
     }
@@ -165,6 +196,9 @@ public class AiToolConfiguration implements Cloneable {
             AiToolConfiguration copy = (AiToolConfiguration) super.clone();
             if (this.parameters != null) {
                 copy.parameters = new HashMap<>(this.parameters);
+            }
+            if (this.outputParameters != null) {
+                copy.outputParameters = new HashMap<>(this.outputParameters);
             }
             return copy;
         } catch (CloneNotSupportedException e) {

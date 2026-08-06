@@ -149,10 +149,13 @@ public class VertxMcpServerEngine extends ServiceSupport implements McpServerEng
                 .callHandler((exchange, request) -> {
                     Map<String, Object> arguments = request.arguments() != null ? request.arguments() : Map.of();
                     McpToolCallResult result = tool.handler().call(arguments);
-                    return McpSchema.CallToolResult.builder()
+                    McpSchema.CallToolResult.Builder builder = McpSchema.CallToolResult.builder()
                             .addTextContent(result.text())
-                            .isError(result.isError())
-                            .build();
+                            .isError(result.isError());
+                    if (result.structuredContent() != null) {
+                        builder.structuredContent(result.structuredContent());
+                    }
+                    return builder.build();
                 })
                 .build();
         server.addTool(spec);
@@ -177,6 +180,9 @@ public class VertxMcpServerEngine extends ServiceSupport implements McpServerEng
         String schema = tool.inputSchemaJson() != null ? tool.inputSchemaJson() : EMPTY_OBJECT_SCHEMA;
         McpSchema.Tool.Builder builder = McpSchema.Tool.builder(tool.name(), jsonMapper, schema)
                 .description(tool.description());
+        if (tool.outputSchemaJson() != null && !tool.outputSchemaJson().isBlank()) {
+            builder.outputSchema(jsonMapper, tool.outputSchemaJson());
+        }
         applyAnnotations(builder, tool.annotations());
         return builder.build();
     }

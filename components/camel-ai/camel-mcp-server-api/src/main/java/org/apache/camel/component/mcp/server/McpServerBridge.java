@@ -255,6 +255,11 @@ public class McpServerBridge extends ServiceSupport implements CamelContextAware
             public AiToolAnnotations annotations() {
                 return spec.getAnnotations();
             }
+
+            @Override
+            public String outputSchemaJson() {
+                return spec.getOutputJsonSchema();
+            }
         };
     }
 
@@ -284,7 +289,7 @@ public class McpServerBridge extends ServiceSupport implements CamelContextAware
                 return new McpToolCallResult(GENERIC_EXECUTION_ERROR, true);
             }
             if (result instanceof AiToolResult.Success success) {
-                return new McpToolCallResult(success.value(), false);
+                return new McpToolCallResult(success.value(), false, success.structuredContent());
             } else if (result instanceof AiToolResult.ArgumentError error) {
                 return new McpToolCallResult(error.message(), true);
             } else {
