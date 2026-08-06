@@ -78,6 +78,12 @@ allow-list must pass an explicit filter pattern to the new
 `CamelObjectInputStream(InputStream, CamelContext, String)` constructor (or configure
 `jdk.serialFilter`) to permit them.
 
+Because the two-argument `CamelObjectInputStream(InputStream, CamelContext)` constructor now always
+installs a filter, calling `setObjectInputFilter()` on the resulting stream throws
+`IllegalStateException` ("filter can not be set more than once") on JDK 17+. Downstream code that
+previously constructed the stream and then set a filter separately should pass the pattern to the
+new `CamelObjectInputStream(InputStream, CamelContext, String)` constructor instead.
+
 ==== Attachments preserved when a producer creates a fresh OUT message
 
 Since Camel 4.10.1, message attachments were silently lost when a producer (such as `camel-http`)
