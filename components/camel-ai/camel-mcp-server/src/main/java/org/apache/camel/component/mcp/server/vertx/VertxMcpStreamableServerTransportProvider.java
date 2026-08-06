@@ -20,6 +20,8 @@ import java.time.Duration;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import io.modelcontextprotocol.json.McpJsonMapper;
 import io.modelcontextprotocol.json.TypeRef;
@@ -78,6 +80,8 @@ public class VertxMcpStreamableServerTransportProvider implements McpStreamableS
     private Vertx vertx;
     private Long keepAliveTimerId;
     private Long idleTimerId;
+    private final AtomicBoolean keepAliveInProgress = new AtomicBoolean();
+    private final AtomicBoolean idleEvictionInProgress = new AtomicBoolean();
 
     public VertxMcpStreamableServerTransportProvider(McpJsonMapper jsonMapper, String path) {
         this(jsonMapper, path, 0, 0);
@@ -332,17 +336,35 @@ public class VertxMcpStreamableServerTransportProvider implements McpStreamableS
             return;
         }
         if (sessionKeepAliveIntervalMs > 0) {
-            keepAliveTimerId = vertx.setPeriodic(sessionKeepAliveIntervalMs, id -> vertx.executeBlocking(() -> {
-                pingSessions();
-                return null;
-            }, false));
+            keepAliveTimerId = vertx.setPeriodic(sessionKeepAliveIntervalMs, id -> {
+                if (!keepAliveInProgress.compareAndSet(false, true)) {
+                    return;
+                }
+                vertx.executeBlocking(() -> {
+                    try {
+                        pingSessions();
+                    } finally {
+                        keepAliveInProgress.set(false);
+                    }
+                    return null;
+                }, false);
+            });
         }
         if (sessionIdleTtlMs > 0) {
             long scanInterval = Math.max(100L, Math.min(sessionIdleTtlMs / 2, 1_000L));
-            idleTimerId = vertx.setPeriodic(scanInterval, id -> vertx.executeBlocking(() -> {
-                evictIdleSessions();
-                return null;
-            }, false));
+            idleTimerId = vertx.setPeriodic(scanInterval, id -> {
+                if (!idleEvictionInProgress.compareAndSet(false, true)) {
+                    return;
+                }
+                vertx.executeBlocking(() -> {
+                    try {
+                        evictIdleSessions();
+                    } finally {
+                        idleEvictionInProgress.set(false);
+                    }
+                    return null;
+                }, false);
+            });
         }
     }
 
@@ -473,7 +495,7 @@ public class VertxMcpStreamableServerTransportProvider implements McpStreamableS
 
         private final McpStreamableServerSession session;
         private volatile long lastActivityNanos;
-        private volatile int consecutivePingFailures;
+        private final AtomicInteger consecutivePingFailures = new AtomicInteger();
 
         private ManagedSession(McpStreamableServerSession session) {
             this.session = session;
@@ -482,7 +504,7 @@ public class VertxMcpStreamableServerTransportProvider implements McpStreamableS
 
         private void touch() {
             lastActivityNanos = System.nanoTime();
-            consecutivePingFailures = 0;
+            consecutivePingFailures.set(0);
         }
 
         private long lastActivityNanos() {
@@ -490,11 +512,11 @@ public class VertxMcpStreamableServerTransportProvider implements McpStreamableS
         }
 
         private void resetPingFailures() {
-            consecutivePingFailures = 0;
+            consecutivePingFailures.set(0);
         }
 
         private int recordPingFailure() {
-            return ++consecutivePingFailures;
+            return consecutivePingFailures.incrementAndGet();
         }
     }
 
