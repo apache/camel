@@ -23,7 +23,11 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
-import java.util.*;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
 import com.google.cloud.storage.Blob;
@@ -36,6 +40,7 @@ import com.google.cloud.storage.Storage.CopyRequest;
 import org.apache.camel.Exchange;
 import org.apache.camel.InvalidPayloadException;
 import org.apache.camel.Message;
+import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.WrappedFile;
 import org.apache.camel.support.DefaultProducer;
 import org.apache.camel.util.IOHelper;
@@ -126,7 +131,7 @@ public class GoogleCloudStorageProducer extends DefaultProducer {
         }
         String ce = objectMetadata.remove("Content-Encoding");
         if (ce != null) {
-            builder.setContentEncoding(ct);
+            builder.setContentEncoding(ce);
         }
         String md5 = objectMetadata.remove("Content-Md5");
         if (md5 != null) {
@@ -134,7 +139,7 @@ public class GoogleCloudStorageProducer extends DefaultProducer {
         }
         String cc = objectMetadata.remove("Cache-Control");
         if (cc != null) {
-            builder.setCacheControl(ct);
+            builder.setCacheControl(cc);
         }
         BlobInfo blobInfo = builder.setMetadata(objectMetadata).build();
         // According to documentation, this internally uses a WriteChannel
@@ -221,18 +226,12 @@ public class GoogleCloudStorageProducer extends DefaultProducer {
     private void createDownloadLink(Storage storage, Exchange exchange) {
         final String bucketName = determineBucketName(exchange);
         final String objectName = determineObjectName(exchange);
-        Long expirationMillis
+        long expirationMillis
                 = exchange.getIn().getHeader(GoogleCloudStorageConstants.DOWNLOAD_LINK_EXPIRATION_TIME, 300000L, Long.class);
-        long milliSeconds = 0;
-        if (expirationMillis != null) {
-            milliSeconds += expirationMillis;
-        } else {
-            milliSeconds += 1000 * 60 * 60;
-        }
 
         BlobId blobId = BlobId.of(bucketName, objectName);
         BlobInfo blobInfo = BlobInfo.newBuilder(blobId).build();
-        URL url = storage.signUrl(blobInfo, milliSeconds, TimeUnit.MILLISECONDS);
+        URL url = storage.signUrl(blobInfo, expirationMillis, TimeUnit.MILLISECONDS);
 
         Message message = getMessageForResponse(exchange);
         message.setBody(url.toString());
@@ -316,6 +315,10 @@ public class GoogleCloudStorageProducer extends DefaultProducer {
         final String objectName = determineObjectName(exchange);
 
         Blob blob = storage.get(BlobId.of(bucketName, objectName));
+        if (blob == null) {
+            throw new RuntimeCamelException(
+                    "Object " + objectName + " does not exist in bucket " + bucketName);
+        }
         Message message = getMessageForResponse(exchange);
         message.setBody(blob.getContent(Blob.BlobSourceOption.generationMatch()));
         message.setHeader(GoogleCloudStorageConstants.OBJECT_NAME, blob.getName());
@@ -362,6 +365,8 @@ public class GoogleCloudStorageProducer extends DefaultProducer {
     }
 
     private String determineObjectName(Exchange exchange) {
+        // the configured objectName deliberately wins over the header, see CAMEL-20998: a consumer in the
+        // same route sets the object name header, which would otherwise hijack the producer destination
         String key = getConfiguration().getObjectName();
         if (ObjectHelper.isEmpty(key)) {
             key = exchange.getIn().getHeader(GoogleCloudStorageConstants.OBJECT_NAME, String.class);
