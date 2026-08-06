@@ -344,6 +344,29 @@ camel.main.streamCachingSpoolRules=#class:com.foo.MySpoolRule
 ====
 
 
+== Using custom spool directory per Exchange (advanced)
+
+By default, all spooled streams are written to a single spool directory. If you want to control where each exchange's spool files are written (for example, to isolate spool data per route), you can implement a custom `StreamCachingStrategy` that overrides the `resolveSpoolDirectory` method.
+
+The `resolveSpoolDirectory` method is called for each exchange when a stream is about to be spooled to disk. The default implementation returns the configured `spoolDirectory`. Custom implementations can return a different directory based on the exchange, for example using the route id as a subdirectory:
+
+[source,java]
+----
+DefaultStreamCachingStrategy strategy = new DefaultStreamCachingStrategy() {
+    @Override
+    public File resolveSpoolDirectory(Exchange exchange) {
+        String routeId = exchange.getFromRouteId();
+        if (routeId != null) {
+            return new File(getSpoolDirectory(), routeId);
+        }
+        return getSpoolDirectory();
+    }
+};
+context.setStreamCachingStrategy(strategy);
+----
+
+The resolved directory is created automatically if it does not exist.
+
 == Using StreamCachingProcessor
 
 Since *Camel 4.11* this processor can be used to convert the current message body to a `StreamCache`. This allows the body to be re-read multiple times and can be placed at any point in a Camel route.
