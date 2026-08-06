@@ -69,6 +69,16 @@ class DynamicUriEipAllowedSchemesTest extends ContextTestSupport {
         assertRejected("direct:pe");
     }
 
+    @Test
+    void recipientListRejectsDisallowedSchemeEvenWithIgnoreInvalidEndpoints() {
+        assertRejected("direct:rl-ignore");
+    }
+
+    @Test
+    void pollEnrichRejectsDisallowedSchemeEvenWithIgnoreInvalidEndpoints() {
+        assertRejected("direct:pe-ignore");
+    }
+
     private void assertRejected(String from) {
         assertThatThrownBy(() -> template.sendBodyAndHeader(from, "Hello", "target", "seda:blocked"))
                 .isInstanceOf(CamelExecutionException.class)
@@ -95,6 +105,10 @@ class DynamicUriEipAllowedSchemesTest extends ContextTestSupport {
                 from("direct:dr").dynamicRouter(method(DynamicUriEipAllowedSchemesTest.this, "slip")).allowedSchemes("mock");
                 from("direct:en").enrich().simple("${header.target}").allowedSchemes("mock");
                 from("direct:pe").pollEnrich().simple("${header.target}").allowedSchemes("mock").timeout(1000).end();
+
+                from("direct:rl-ignore").recipientList(header("target")).ignoreInvalidEndpoints().allowedSchemes("mock");
+                from("direct:pe-ignore").pollEnrich().simple("${header.target}").ignoreInvalidEndpoint()
+                        .allowedSchemes("mock").timeout(1000).end();
             }
         };
     }
