@@ -34,6 +34,76 @@ include::partial$component-endpoint-headers.adoc[]
 
 == Usage
 
+=== Single vs Batch Embedding
+
+The component supports both single and batch embedding operations:
+
+* **Single**: Send a `String` or `TextSegment` body to compute a single embedding. The result is available via the `CamelLangChain4jEmbeddingsEmbedding` header.
+* **Batch**: Send a `List<String>` or `List<TextSegment>` body to embed all items in one API call using `EmbeddingModel.embedAll()`. The resulting `List<Embedding>` is set as the message body and also available via the `CamelLangChain4jEmbeddingsEmbeddings` header.
+
+Batch embedding is significantly more efficient for RAG ingestion pipelines where many text segments need to be embedded at once.
+
+==== Single Embedding Example
+
+[tabs]
+====
+Java::
++
+[source,java]
+----
+from("direct:embed")
+    .setBody(constant("Hello world"))
+    .to("langchain4j-embeddings:embed");
+// Result: Embedding in the CamelLangChain4jEmbeddingsEmbedding header
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:embed
+    steps:
+      - setBody:
+          constant: "Hello world"
+      - to:
+          uri: langchain4j-embeddings:embed
+----
+====
+
+==== Batch Embedding Example
+
+[tabs]
+====
+Java::
++
+[source,java]
+----
+from("direct:embed-batch")
+    .setBody(constant(List.of("Hello", "World", "Test")))
+    .to("langchain4j-embeddings:embed");
+// Result: List<Embedding> as body and in the CamelLangChain4jEmbeddingsEmbeddings header
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:embed-batch
+    steps:
+      - setBody:
+          constant:
+            - "Hello"
+            - "World"
+            - "Test"
+      - to:
+          uri: langchain4j-embeddings:embed
+----
+====
+
 === Using Embedding Models
 
 The Camel LangChain4j embeddings component provides support for generating embeddings using various embedding models supported by https://docs.langchain4j.dev/[LangChain4j].
