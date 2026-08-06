@@ -257,6 +257,36 @@ This SPI is not a sandbox for processing untrusted YAML documents.
 Resolver implementations should not fetch external resources, load classes named by route fields, or evaluate route
 fields as expressions while parsing YAML.
 
+=== YAML DSL Model for Tooling
+
+The `camelYamlDsl-model.json` file is a generated data structure that describes the complete YAML DSL
+structural tree — every valid key at every nesting level, with types, descriptions, required flags,
+default values, enum choices, and references to child nodes. It is generated during the build from
+the canonical YAML DSL JSON schema and enriched with metadata from the Camel catalog (EIP models,
+expression languages, and data formats).
+
+The file is available on the classpath at `schema/camelYamlDsl-model.json` and can be used by
+third-party tooling such as editors, IDE plugins, and visual designers (e.g., Kaoto, Karavan)
+to provide context-aware code completion, validation, and documentation for YAML DSL routes.
+
+The model is organized as a flat map of node definitions under a top-level `nodes` object.
+Key nodes include:
+
+- `root` — the top-level YAML DSL elements (route, from, rest, beans, errorHandler, etc.)
+- `steps` — all valid EIP names that can appear inside a `steps` block
+- `expression` — all available expression language names (simple, jsonpath, xpath, etc.)
+- EIP nodes (e.g., `split`, `filter`, `setHeader`) — each EIP's options including attributes,
+  expression references, and nested steps
+- Language nodes (e.g., `simple`, `jsonpath`) — each language's configuration options
+- Data format nodes (e.g., `csv`, `avro`) — each data format's configuration options
+
+Each child entry in a node carries: `name`, `type`, `description`, `index` (display order),
+`group`, `label`, `required`, `default`, `enum`, `deprecated`, and optionally a `ref`
+pointing to a child node for nested structures.
+
+NOTE: Component endpoint parameters are not included in this file — those are available
+as individual JSON files in the `camel-catalog` module (e.g., `components/kafka.json`).
+
 == Defining endpoints
 
 To define an endpoint with the YAML dsl you have two options:

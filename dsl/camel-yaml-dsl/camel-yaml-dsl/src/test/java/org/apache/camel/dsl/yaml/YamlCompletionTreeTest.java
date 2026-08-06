@@ -39,7 +39,7 @@ class YamlCompletionTreeTest {
     static void loadTree() throws Exception {
         ObjectMapper mapper = new ObjectMapper();
         try (InputStream is
-                = YamlCompletionTreeTest.class.getResourceAsStream("/schema/camelYamlDsl-completion.json")) {
+                = YamlCompletionTreeTest.class.getResourceAsStream("/schema/camelYamlDsl-model.json")) {
             assertThat(is).as("completion tree must be on classpath").isNotNull();
             tree = mapper.readTree(is);
         }

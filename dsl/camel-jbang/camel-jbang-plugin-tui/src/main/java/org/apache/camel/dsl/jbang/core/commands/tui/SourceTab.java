@@ -1075,7 +1075,7 @@ class SourceTab extends AbstractTab {
     private JsonObject getCompletionTree() {
         if (!completionTreeLoaded) {
             completionTreeLoaded = true;
-            try (var is = getClass().getResourceAsStream("/schema/camelYamlDsl-completion.json")) {
+            try (var is = getClass().getResourceAsStream("/schema/camelYamlDsl-model.json")) {
                 if (is != null) {
                     String json = new String(is.readAllBytes(), java.nio.charset.StandardCharsets.UTF_8);
                     completionTree = (JsonObject) org.apache.camel.util.json.Jsoner.deserialize(json);

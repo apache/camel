@@ -311,7 +311,7 @@
                         </goals>
                         <configuration>
                             <canonicalSchemaFile>src/generated/resources/schema/camelYamlDsl-canonical.json</canonicalSchemaFile>
-                            <outputFile>src/generated/resources/schema/camelYamlDsl-completion.json</outputFile>
+                            <outputFile>src/generated/resources/schema/camelYamlDsl-model.json</outputFile>
                         </configuration>
                     </execution>
                 </executions>
