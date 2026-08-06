@@ -75,6 +75,7 @@ public class RoutingSlipDefinition<Type extends ProcessorDefinition<Type>> exten
         this.uriDelimiter = source.uriDelimiter;
         this.ignoreInvalidEndpoints = source.ignoreInvalidEndpoints;
         this.cacheSize = source.cacheSize;
+        this.allowedSchemes = source.allowedSchemes;
     }
 
     public RoutingSlipDefinition(String headerName) {

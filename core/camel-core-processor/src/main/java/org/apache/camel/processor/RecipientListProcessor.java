@@ -257,10 +257,10 @@ public class RecipientListProcessor extends MulticastProcessor {
         Endpoint endpoint;
         Producer producer;
         ExchangePattern pattern;
+        recipient = prepareRecipient(exchange, recipient);
+        // enforce the optional allowed-schemes allow-list before the ignoreInvalidEndpoints catch (CAMEL-24298)
+        ProcessorHelper.checkAllowedSchemes(allowedSchemes, recipient);
         try {
-            recipient = prepareRecipient(exchange, recipient);
-            // enforce the optional allowed-schemes allow-list on the resolved dynamic recipient (CAMEL-24298)
-            ProcessorHelper.checkAllowedSchemes(allowedSchemes, recipient);
             Endpoint existing = getExistingEndpoint(exchange, recipient);
             if (existing == null) {
                 endpoint = resolveEndpoint(exchange, recipient, prototype);

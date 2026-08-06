@@ -22,6 +22,7 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Header;
 import org.apache.camel.ResolveEndpointFailedException;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
@@ -32,6 +33,16 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
  * {@code pollEnrich}. A resolved recipient whose scheme is not in the list is rejected.
  */
 class DynamicUriEipAllowedSchemesTest extends ContextTestSupport {
+
+    @Test
+    void recipientListAllowsMatchingScheme() throws Exception {
+        MockEndpoint mock = getMockEndpoint("mock:result");
+        mock.expectedBodiesReceived("Hello");
+
+        template.sendBodyAndHeader("direct:rl-ok", "Hello", "target", "mock:result");
+
+        mock.assertIsSatisfied();
+    }
 
     @Test
     void recipientListRejectsDisallowedScheme() {
@@ -78,6 +89,7 @@ class DynamicUriEipAllowedSchemesTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() {
+                from("direct:rl-ok").recipientList(header("target")).allowedSchemes("mock");
                 from("direct:rl").recipientList(header("target")).allowedSchemes("mock");
                 from("direct:rs").routingSlip(header("target")).allowedSchemes("mock");
                 from("direct:dr").dynamicRouter(method(DynamicUriEipAllowedSchemesTest.this, "slip")).allowedSchemes("mock");

@@ -303,8 +303,15 @@ public class PollEnricher extends BaseProcessorSupport implements IdAware, Route
             }
             Object targetRecipient = staticUri != null ? staticUri : recipient;
             targetRecipient = prepareRecipient(exchange, targetRecipient);
-            // enforce the optional allowed-schemes allow-list on the resolved dynamic recipient (CAMEL-24298)
-            ProcessorHelper.checkAllowedSchemes(allowedSchemes, targetRecipient);
+            // enforce the optional allowed-schemes allow-list; must throw before the ignoreInvalidEndpoint
+            // catch so that a disallowed scheme is always a hard boundary (CAMEL-24298)
+            try {
+                ProcessorHelper.checkAllowedSchemes(allowedSchemes, targetRecipient);
+            } catch (ResolveEndpointFailedException e) {
+                exchange.setException(e);
+                callback.done(true);
+                return true;
+            }
             if (targetRecipient == null) {
                 if (LOG.isDebugEnabled()) {
                     LOG.debug("Poll dynamic evaluated as null so cannot poll from any endpoint");

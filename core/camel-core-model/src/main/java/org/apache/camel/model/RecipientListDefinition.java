@@ -140,6 +140,7 @@ public class RecipientListDefinition<Type extends ProcessorDefinition<Type>> ext
         this.onPrepare = source.onPrepare;
         this.cacheSize = source.cacheSize;
         this.shareUnitOfWork = source.shareUnitOfWork;
+        this.allowedSchemes = source.allowedSchemes;
     }
 
     public RecipientListDefinition(ExpressionDefinition expression) {
