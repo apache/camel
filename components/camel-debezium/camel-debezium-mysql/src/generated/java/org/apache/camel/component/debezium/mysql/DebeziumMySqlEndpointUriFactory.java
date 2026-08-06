@@ -24,7 +24,7 @@ public class DebeziumMySqlEndpointUriFactory extends org.apache.camel.support.co
     private static final Set<String> ENDPOINT_IDENTITY_PROPERTY_NAMES;
     private static final Map<String, String> MULTI_VALUE_PREFIXES;
     static {
-        Set<String> props = new HashSet<>(132);
+        Set<String> props = new HashSet<>(133);
         props.add("additionalProperties");
         props.add("bigintUnsignedHandlingMode");
         props.add("binlogBufferSize");
@@ -87,6 +87,7 @@ public class DebeziumMySqlEndpointUriFactory extends org.apache.camel.support.co
         props.add("incrementalSnapshotWatermarkingStrategy");
         props.add("internalKeyConverter");
         props.add("internalValueConverter");
+        props.add("legacySnapshotMaxThreads");
         props.add("maxBatchSize");
         props.add("maxQueueSize");
         props.add("maxQueueSizeInBytes");

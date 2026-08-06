@@ -112,6 +112,8 @@ public class DebeziumPostgresEndpointConfigurer extends PropertyConfigurerSuppor
         case "internalValueConverter": target.getConfiguration().setInternalValueConverter(property(camelContext, java.lang.String.class, value)); return true;
         case "intervalhandlingmode":
         case "intervalHandlingMode": target.getConfiguration().setIntervalHandlingMode(property(camelContext, java.lang.String.class, value)); return true;
+        case "legacysnapshotmaxthreads":
+        case "legacySnapshotMaxThreads": target.getConfiguration().setLegacySnapshotMaxThreads(property(camelContext, boolean.class, value)); return true;
         case "lsnflushmode":
         case "lsnFlushMode": target.getConfiguration().setLsnFlushMode(property(camelContext, java.lang.String.class, value)); return true;
         case "lsnflushtimeoutaction":
@@ -382,6 +384,8 @@ public class DebeziumPostgresEndpointConfigurer extends PropertyConfigurerSuppor
         case "internalValueConverter": return java.lang.String.class;
         case "intervalhandlingmode":
         case "intervalHandlingMode": return java.lang.String.class;
+        case "legacysnapshotmaxthreads":
+        case "legacySnapshotMaxThreads": return boolean.class;
         case "lsnflushmode":
         case "lsnFlushMode": return java.lang.String.class;
         case "lsnflushtimeoutaction":
@@ -653,6 +657,8 @@ public class DebeziumPostgresEndpointConfigurer extends PropertyConfigurerSuppor
         case "internalValueConverter": return target.getConfiguration().getInternalValueConverter();
         case "intervalhandlingmode":
         case "intervalHandlingMode": return target.getConfiguration().getIntervalHandlingMode();
+        case "legacysnapshotmaxthreads":
+        case "legacySnapshotMaxThreads": return target.getConfiguration().isLegacySnapshotMaxThreads();
         case "lsnflushmode":
         case "lsnFlushMode": return target.getConfiguration().getLsnFlushMode();
         case "lsnflushtimeoutaction":

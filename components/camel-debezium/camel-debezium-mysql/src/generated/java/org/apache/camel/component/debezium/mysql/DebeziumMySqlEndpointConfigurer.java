@@ -146,6 +146,8 @@ public class DebeziumMySqlEndpointConfigurer extends PropertyConfigurerSupport i
         case "internalKeyConverter": target.getConfiguration().setInternalKeyConverter(property(camelContext, java.lang.String.class, value)); return true;
         case "internalvalueconverter":
         case "internalValueConverter": target.getConfiguration().setInternalValueConverter(property(camelContext, java.lang.String.class, value)); return true;
+        case "legacysnapshotmaxthreads":
+        case "legacySnapshotMaxThreads": target.getConfiguration().setLegacySnapshotMaxThreads(property(camelContext, boolean.class, value)); return true;
         case "maxbatchsize":
         case "maxBatchSize": target.getConfiguration().setMaxBatchSize(property(camelContext, int.class, value)); return true;
         case "maxqueuesize":
@@ -414,6 +416,8 @@ public class DebeziumMySqlEndpointConfigurer extends PropertyConfigurerSupport i
         case "internalKeyConverter": return java.lang.String.class;
         case "internalvalueconverter":
         case "internalValueConverter": return java.lang.String.class;
+        case "legacysnapshotmaxthreads":
+        case "legacySnapshotMaxThreads": return boolean.class;
         case "maxbatchsize":
         case "maxBatchSize": return int.class;
         case "maxqueuesize":
@@ -683,6 +687,8 @@ public class DebeziumMySqlEndpointConfigurer extends PropertyConfigurerSupport i
         case "internalKeyConverter": return target.getConfiguration().getInternalKeyConverter();
         case "internalvalueconverter":
         case "internalValueConverter": return target.getConfiguration().getInternalValueConverter();
+        case "legacysnapshotmaxthreads":
+        case "legacySnapshotMaxThreads": return target.getConfiguration().isLegacySnapshotMaxThreads();
         case "maxbatchsize":
         case "maxBatchSize": return target.getConfiguration().getMaxBatchSize();
         case "maxqueuesize":

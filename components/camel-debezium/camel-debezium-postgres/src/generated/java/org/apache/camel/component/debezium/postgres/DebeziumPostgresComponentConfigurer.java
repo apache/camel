@@ -118,6 +118,8 @@ public class DebeziumPostgresComponentConfigurer extends PropertyConfigurerSuppo
         case "internalValueConverter": getOrCreateConfiguration(target).setInternalValueConverter(property(camelContext, java.lang.String.class, value)); return true;
         case "intervalhandlingmode":
         case "intervalHandlingMode": getOrCreateConfiguration(target).setIntervalHandlingMode(property(camelContext, java.lang.String.class, value)); return true;
+        case "legacysnapshotmaxthreads":
+        case "legacySnapshotMaxThreads": getOrCreateConfiguration(target).setLegacySnapshotMaxThreads(property(camelContext, boolean.class, value)); return true;
         case "lsnflushmode":
         case "lsnFlushMode": getOrCreateConfiguration(target).setLsnFlushMode(property(camelContext, java.lang.String.class, value)); return true;
         case "lsnflushtimeoutaction":
@@ -387,6 +389,8 @@ public class DebeziumPostgresComponentConfigurer extends PropertyConfigurerSuppo
         case "internalValueConverter": return java.lang.String.class;
         case "intervalhandlingmode":
         case "intervalHandlingMode": return java.lang.String.class;
+        case "legacysnapshotmaxthreads":
+        case "legacySnapshotMaxThreads": return boolean.class;
         case "lsnflushmode":
         case "lsnFlushMode": return java.lang.String.class;
         case "lsnflushtimeoutaction":
@@ -657,6 +661,8 @@ public class DebeziumPostgresComponentConfigurer extends PropertyConfigurerSuppo
         case "internalValueConverter": return getOrCreateConfiguration(target).getInternalValueConverter();
         case "intervalhandlingmode":
         case "intervalHandlingMode": return getOrCreateConfiguration(target).getIntervalHandlingMode();
+        case "legacysnapshotmaxthreads":
+        case "legacySnapshotMaxThreads": return getOrCreateConfiguration(target).isLegacySnapshotMaxThreads();
         case "lsnflushmode":
         case "lsnFlushMode": return getOrCreateConfiguration(target).getLsnFlushMode();
         case "lsnflushtimeoutaction":

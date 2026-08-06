@@ -34,6 +34,8 @@ public class MongoDbConnectorEmbeddedDebeziumConfiguration
     @UriParam(label = LABEL_NAME, defaultValue = "source")
     private String signalEnabledChannels = "source";
     @UriParam(label = LABEL_NAME, defaultValue = "false")
+    private boolean legacySnapshotMaxThreads = false;
+    @UriParam(label = LABEL_NAME, defaultValue = "false")
     private boolean mongodbSslEnabled = false;
     @UriParam(label = LABEL_NAME, javaType = "java.time.Duration")
     private int cursorMaxAwaitTimeMs;
@@ -95,8 +97,8 @@ public class MongoDbConnectorEmbeddedDebeziumConfiguration
     private int maxQueueSize = 8192;
     @UriParam(label = LABEL_NAME, defaultValue = "warn")
     private String guardrailCollectionsLimitAction = "warn";
-    @UriParam(label = LABEL_NAME, defaultValue = ".*secret$|.*password$|.*sasl\\.jaas\\.config$|.*basic\\.auth\\.user\\.info|.*registry\\.auth\\.client-secret|.*credentials\\.json$")
-    private String customSanitizePattern = ".*secret$|.*password$|.*sasl\\.jaas\\.config$|.*basic\\.auth\\.user\\.info|.*registry\\.auth\\.client-secret|.*credentials\\.json$";
+    @UriParam(label = LABEL_NAME, defaultValue = ".*secret$|.*password$|.*sasl\\.jaas\\.config$|.*basic\\.auth\\.user\\.info|.*registry\\.auth\\.client-secret|.*credentials\\.json$|.*connectionstring$|.*connection\\.string$")
+    private String customSanitizePattern = ".*secret$|.*password$|.*sasl\\.jaas\\.config$|.*basic\\.auth\\.user\\.info|.*registry\\.auth\\.client-secret|.*credentials\\.json$|.*connectionstring$|.*connection\\.string$";
     @UriParam(label = LABEL_NAME)
     private String collectionIncludeList;
     @UriParam(label = LABEL_NAME)
@@ -262,6 +264,20 @@ public class MongoDbConnectorEmbeddedDebeziumConfiguration
 
     public String getSignalEnabledChannels() {
         return signalEnabledChannels;
+    }
+
+    /**
+     * When enabled, uses the legacy table-per-thread parallel snapshot
+     * algorithm. When set to false (the default), tables are split into chunks
+     * and processed across all snapshot threads, allowing for higher
+     * concurrency for snapshots.
+     */
+    public void setLegacySnapshotMaxThreads(boolean legacySnapshotMaxThreads) {
+        this.legacySnapshotMaxThreads = legacySnapshotMaxThreads;
+    }
+
+    public boolean isLegacySnapshotMaxThreads() {
+        return legacySnapshotMaxThreads;
     }
 
     /**
@@ -1150,6 +1166,7 @@ public class MongoDbConnectorEmbeddedDebeziumConfiguration
         addPropertyIfNotNull(configBuilder, "openlineage.integration.job.namespace", openlineageIntegrationJobNamespace);
         addPropertyIfNotNull(configBuilder, "query.fetch.size", queryFetchSize);
         addPropertyIfNotNull(configBuilder, "signal.enabled.channels", signalEnabledChannels);
+        addPropertyIfNotNull(configBuilder, "legacy.snapshot.max.threads", legacySnapshotMaxThreads);
         addPropertyIfNotNull(configBuilder, "mongodb.ssl.enabled", mongodbSslEnabled);
         addPropertyIfNotNull(configBuilder, "cursor.max.await.time.ms", cursorMaxAwaitTimeMs);
         addPropertyIfNotNull(configBuilder, "field.renames", fieldRenames);

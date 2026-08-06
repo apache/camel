@@ -178,6 +178,8 @@ public class OracleConnectorEmbeddedDebeziumConfiguration
     private int queryFetchSize = 10000;
     @UriParam(label = LABEL_NAME)
     private String logMiningBufferEhcacheGlobalConfig;
+    @UriParam(label = LABEL_NAME, defaultValue = "false")
+    private boolean legacySnapshotMaxThreads = false;
     @UriParam(label = LABEL_NAME, defaultValue = "__debezium_unavailable_value")
     private String unavailableValuePlaceholder = "__debezium_unavailable_value";
     @UriParam(label = LABEL_NAME)
@@ -251,8 +253,8 @@ public class OracleConnectorEmbeddedDebeziumConfiguration
     private int maxQueueSize = 8192;
     @UriParam(label = LABEL_NAME, defaultValue = "warn")
     private String guardrailCollectionsLimitAction = "warn";
-    @UriParam(label = LABEL_NAME, defaultValue = ".*secret$|.*password$|.*sasl\\.jaas\\.config$|.*basic\\.auth\\.user\\.info|.*registry\\.auth\\.client-secret|.*credentials\\.json$")
-    private String customSanitizePattern = ".*secret$|.*password$|.*sasl\\.jaas\\.config$|.*basic\\.auth\\.user\\.info|.*registry\\.auth\\.client-secret|.*credentials\\.json$";
+    @UriParam(label = LABEL_NAME, defaultValue = ".*secret$|.*password$|.*sasl\\.jaas\\.config$|.*basic\\.auth\\.user\\.info|.*registry\\.auth\\.client-secret|.*credentials\\.json$|.*connectionstring$|.*connection\\.string$")
+    private String customSanitizePattern = ".*secret$|.*password$|.*sasl\\.jaas\\.config$|.*basic\\.auth\\.user\\.info|.*registry\\.auth\\.client-secret|.*credentials\\.json$|.*connectionstring$|.*connection\\.string$";
     @UriParam(label = LABEL_NAME)
     private String racNodes;
     @UriParam(label = LABEL_NAME)
@@ -1442,6 +1444,20 @@ public class OracleConnectorEmbeddedDebeziumConfiguration
     }
 
     /**
+     * When enabled, uses the legacy table-per-thread parallel snapshot
+     * algorithm. When set to false (the default), tables are split into chunks
+     * and processed across all snapshot threads, allowing for higher
+     * concurrency for snapshots.
+     */
+    public void setLegacySnapshotMaxThreads(boolean legacySnapshotMaxThreads) {
+        this.legacySnapshotMaxThreads = legacySnapshotMaxThreads;
+    }
+
+    public boolean isLegacySnapshotMaxThreads() {
+        return legacySnapshotMaxThreads;
+    }
+
+    /**
      * Specify the constant that will be provided by Debezium to indicate that
      * the original value is unavailable and not provided by the database.
      */
@@ -2379,6 +2395,7 @@ public class OracleConnectorEmbeddedDebeziumConfiguration
         addPropertyIfNotNull(configBuilder, "database.query.timeout.ms", databaseQueryTimeoutMs);
         addPropertyIfNotNull(configBuilder, "query.fetch.size", queryFetchSize);
         addPropertyIfNotNull(configBuilder, "log.mining.buffer.ehcache.global.config", logMiningBufferEhcacheGlobalConfig);
+        addPropertyIfNotNull(configBuilder, "legacy.snapshot.max.threads", legacySnapshotMaxThreads);
         addPropertyIfNotNull(configBuilder, "unavailable.value.placeholder", unavailableValuePlaceholder);
         addPropertyIfNotNull(configBuilder, "log.mining.clientid.include.list", logMiningClientidIncludeList);
         addPropertyIfNotNull(configBuilder, "heartbeat.action.query", heartbeatActionQuery);

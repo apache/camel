@@ -114,6 +114,8 @@ public class DebeziumOracleComponentConfigurer extends PropertyConfigurerSupport
         case "intervalHandlingMode": getOrCreateConfiguration(target).setIntervalHandlingMode(property(camelContext, java.lang.String.class, value)); return true;
         case "legacydecimalhandlingstrategy":
         case "legacyDecimalHandlingStrategy": getOrCreateConfiguration(target).setLegacyDecimalHandlingStrategy(property(camelContext, boolean.class, value)); return true;
+        case "legacysnapshotmaxthreads":
+        case "legacySnapshotMaxThreads": getOrCreateConfiguration(target).setLegacySnapshotMaxThreads(property(camelContext, boolean.class, value)); return true;
         case "lobenabled":
         case "lobEnabled": getOrCreateConfiguration(target).setLobEnabled(property(camelContext, boolean.class, value)); return true;
         case "logminingarchivelogonlymode":
@@ -439,6 +441,8 @@ public class DebeziumOracleComponentConfigurer extends PropertyConfigurerSupport
         case "intervalHandlingMode": return java.lang.String.class;
         case "legacydecimalhandlingstrategy":
         case "legacyDecimalHandlingStrategy": return boolean.class;
+        case "legacysnapshotmaxthreads":
+        case "legacySnapshotMaxThreads": return boolean.class;
         case "lobenabled":
         case "lobEnabled": return boolean.class;
         case "logminingarchivelogonlymode":
@@ -765,6 +769,8 @@ public class DebeziumOracleComponentConfigurer extends PropertyConfigurerSupport
         case "intervalHandlingMode": return getOrCreateConfiguration(target).getIntervalHandlingMode();
         case "legacydecimalhandlingstrategy":
         case "legacyDecimalHandlingStrategy": return getOrCreateConfiguration(target).isLegacyDecimalHandlingStrategy();
+        case "legacysnapshotmaxthreads":
+        case "legacySnapshotMaxThreads": return getOrCreateConfiguration(target).isLegacySnapshotMaxThreads();
         case "lobenabled":
         case "lobEnabled": return getOrCreateConfiguration(target).isLobEnabled();
         case "logminingarchivelogonlymode":

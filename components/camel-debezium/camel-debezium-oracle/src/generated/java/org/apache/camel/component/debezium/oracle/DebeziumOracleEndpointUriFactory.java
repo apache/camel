@@ -24,7 +24,7 @@ public class DebeziumOracleEndpointUriFactory extends org.apache.camel.support.c
     private static final Set<String> ENDPOINT_IDENTITY_PROPERTY_NAMES;
     private static final Map<String, String> MULTI_VALUE_PREFIXES;
     static {
-        Set<String> props = new HashSet<>(161);
+        Set<String> props = new HashSet<>(162);
         props.add("additionalProperties");
         props.add("archiveDestinationName");
         props.add("archiveLogHours");
@@ -68,6 +68,7 @@ public class DebeziumOracleEndpointUriFactory extends org.apache.camel.support.c
         props.add("internalValueConverter");
         props.add("intervalHandlingMode");
         props.add("legacyDecimalHandlingStrategy");
+        props.add("legacySnapshotMaxThreads");
         props.add("lobEnabled");
         props.add("logMiningArchiveLogOnlyMode");
         props.add("logMiningArchiveLogOnlyScnPollIntervalMs");

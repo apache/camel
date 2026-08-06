@@ -152,6 +152,8 @@ public class PostgresConnectorEmbeddedDebeziumConfiguration
     private String schemaIncludeList;
     @UriParam(label = LABEL_NAME, defaultValue = "30s", javaType = "java.time.Duration")
     private long lsnFlushTimeoutMs = 30000;
+    @UriParam(label = LABEL_NAME, defaultValue = "false")
+    private boolean legacySnapshotMaxThreads = false;
     @UriParam(label = LABEL_NAME, defaultValue = "__debezium_unavailable_value")
     private String unavailableValuePlaceholder = "__debezium_unavailable_value";
     @UriParam(label = LABEL_NAME)
@@ -203,8 +205,8 @@ public class PostgresConnectorEmbeddedDebeziumConfiguration
     private int maxQueueSize = 8192;
     @UriParam(label = LABEL_NAME, defaultValue = "warn")
     private String guardrailCollectionsLimitAction = "warn";
-    @UriParam(label = LABEL_NAME, defaultValue = ".*secret$|.*password$|.*sasl\\.jaas\\.config$|.*basic\\.auth\\.user\\.info|.*registry\\.auth\\.client-secret|.*credentials\\.json$")
-    private String customSanitizePattern = ".*secret$|.*password$|.*sasl\\.jaas\\.config$|.*basic\\.auth\\.user\\.info|.*registry\\.auth\\.client-secret|.*credentials\\.json$";
+    @UriParam(label = LABEL_NAME, defaultValue = ".*secret$|.*password$|.*sasl\\.jaas\\.config$|.*basic\\.auth\\.user\\.info|.*registry\\.auth\\.client-secret|.*credentials\\.json$|.*connectionstring$|.*connection\\.string$")
+    private String customSanitizePattern = ".*secret$|.*password$|.*sasl\\.jaas\\.config$|.*basic\\.auth\\.user\\.info|.*registry\\.auth\\.client-secret|.*credentials\\.json$|.*connectionstring$|.*connection\\.string$";
     @UriParam(label = LABEL_NAME, defaultValue = "json")
     private String hstoreHandlingMode = "json";
     @UriParam(label = LABEL_NAME)
@@ -1201,6 +1203,20 @@ public class PostgresConnectorEmbeddedDebeziumConfiguration
     }
 
     /**
+     * When enabled, uses the legacy table-per-thread parallel snapshot
+     * algorithm. When set to false (the default), tables are split into chunks
+     * and processed across all snapshot threads, allowing for higher
+     * concurrency for snapshots.
+     */
+    public void setLegacySnapshotMaxThreads(boolean legacySnapshotMaxThreads) {
+        this.legacySnapshotMaxThreads = legacySnapshotMaxThreads;
+    }
+
+    public boolean isLegacySnapshotMaxThreads() {
+        return legacySnapshotMaxThreads;
+    }
+
+    /**
      * Specify the constant that will be provided by Debezium to indicate that
      * the original value is a toasted value not provided by the database. If
      * starts with 'hex:' prefix it is expected that the rest of the string
@@ -1950,6 +1966,7 @@ public class PostgresConnectorEmbeddedDebeziumConfiguration
         addPropertyIfNotNull(configBuilder, "query.fetch.size", queryFetchSize);
         addPropertyIfNotNull(configBuilder, "schema.include.list", schemaIncludeList);
         addPropertyIfNotNull(configBuilder, "lsn.flush.timeout.ms", lsnFlushTimeoutMs);
+        addPropertyIfNotNull(configBuilder, "legacy.snapshot.max.threads", legacySnapshotMaxThreads);
         addPropertyIfNotNull(configBuilder, "unavailable.value.placeholder", unavailableValuePlaceholder);
         addPropertyIfNotNull(configBuilder, "heartbeat.action.query", heartbeatActionQuery);
         addPropertyIfNotNull(configBuilder, "replica.identity.autoset.values", replicaIdentityAutosetValues);

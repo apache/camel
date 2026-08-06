@@ -154,6 +154,8 @@ public class MySqlConnectorEmbeddedDebeziumConfiguration
     private int queryFetchSize = 0;
     @UriParam(label = LABEL_NAME, defaultValue = "default")
     private String ddlParserType = "default";
+    @UriParam(label = LABEL_NAME, defaultValue = "false")
+    private boolean legacySnapshotMaxThreads = false;
     @UriParam(label = LABEL_NAME)
     private String gtidSourceIncludes;
     @UriParam(label = LABEL_NAME)
@@ -205,8 +207,8 @@ public class MySqlConnectorEmbeddedDebeziumConfiguration
     private int maxQueueSize = 8192;
     @UriParam(label = LABEL_NAME, defaultValue = "warn")
     private String guardrailCollectionsLimitAction = "warn";
-    @UriParam(label = LABEL_NAME, defaultValue = ".*secret$|.*password$|.*sasl\\.jaas\\.config$|.*basic\\.auth\\.user\\.info|.*registry\\.auth\\.client-secret|.*credentials\\.json$")
-    private String customSanitizePattern = ".*secret$|.*password$|.*sasl\\.jaas\\.config$|.*basic\\.auth\\.user\\.info|.*registry\\.auth\\.client-secret|.*credentials\\.json$";
+    @UriParam(label = LABEL_NAME, defaultValue = ".*secret$|.*password$|.*sasl\\.jaas\\.config$|.*basic\\.auth\\.user\\.info|.*registry\\.auth\\.client-secret|.*credentials\\.json$|.*connectionstring$|.*connection\\.string$")
+    private String customSanitizePattern = ".*secret$|.*password$|.*sasl\\.jaas\\.config$|.*basic\\.auth\\.user\\.info|.*registry\\.auth\\.client-secret|.*credentials\\.json$|.*connectionstring$|.*connection\\.string$";
     @UriParam(label = LABEL_NAME, defaultValue = "false")
     private boolean provideTransactionMetadata = false;
     @UriParam(label = LABEL_NAME, defaultValue = "select_all")
@@ -1220,6 +1222,20 @@ public class MySqlConnectorEmbeddedDebeziumConfiguration
     }
 
     /**
+     * When enabled, uses the legacy table-per-thread parallel snapshot
+     * algorithm. When set to false (the default), tables are split into chunks
+     * and processed across all snapshot threads, allowing for higher
+     * concurrency for snapshots.
+     */
+    public void setLegacySnapshotMaxThreads(boolean legacySnapshotMaxThreads) {
+        this.legacySnapshotMaxThreads = legacySnapshotMaxThreads;
+    }
+
+    public boolean isLegacySnapshotMaxThreads() {
+        return legacySnapshotMaxThreads;
+    }
+
+    /**
      * The source UUIDs used to include GTID ranges when determine the starting
      * position in the MySQL server's binlog.
      */
@@ -1926,6 +1942,7 @@ public class MySqlConnectorEmbeddedDebeziumConfiguration
         addPropertyIfNotNull(configBuilder, "database.query.timeout.ms", databaseQueryTimeoutMs);
         addPropertyIfNotNull(configBuilder, "query.fetch.size", queryFetchSize);
         addPropertyIfNotNull(configBuilder, "ddl.parser.type", ddlParserType);
+        addPropertyIfNotNull(configBuilder, "legacy.snapshot.max.threads", legacySnapshotMaxThreads);
         addPropertyIfNotNull(configBuilder, "gtid.source.includes", gtidSourceIncludes);
         addPropertyIfNotNull(configBuilder, "heartbeat.action.query", heartbeatActionQuery);
         addPropertyIfNotNull(configBuilder, "poll.interval.ms", pollIntervalMs);

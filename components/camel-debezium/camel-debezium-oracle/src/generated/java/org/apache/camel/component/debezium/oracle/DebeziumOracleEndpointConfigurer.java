@@ -108,6 +108,8 @@ public class DebeziumOracleEndpointConfigurer extends PropertyConfigurerSupport 
         case "intervalHandlingMode": target.getConfiguration().setIntervalHandlingMode(property(camelContext, java.lang.String.class, value)); return true;
         case "legacydecimalhandlingstrategy":
         case "legacyDecimalHandlingStrategy": target.getConfiguration().setLegacyDecimalHandlingStrategy(property(camelContext, boolean.class, value)); return true;
+        case "legacysnapshotmaxthreads":
+        case "legacySnapshotMaxThreads": target.getConfiguration().setLegacySnapshotMaxThreads(property(camelContext, boolean.class, value)); return true;
         case "lobenabled":
         case "lobEnabled": target.getConfiguration().setLobEnabled(property(camelContext, boolean.class, value)); return true;
         case "logminingarchivelogonlymode":
@@ -434,6 +436,8 @@ public class DebeziumOracleEndpointConfigurer extends PropertyConfigurerSupport 
         case "intervalHandlingMode": return java.lang.String.class;
         case "legacydecimalhandlingstrategy":
         case "legacyDecimalHandlingStrategy": return boolean.class;
+        case "legacysnapshotmaxthreads":
+        case "legacySnapshotMaxThreads": return boolean.class;
         case "lobenabled":
         case "lobEnabled": return boolean.class;
         case "logminingarchivelogonlymode":
@@ -761,6 +765,8 @@ public class DebeziumOracleEndpointConfigurer extends PropertyConfigurerSupport 
         case "intervalHandlingMode": return target.getConfiguration().getIntervalHandlingMode();
         case "legacydecimalhandlingstrategy":
         case "legacyDecimalHandlingStrategy": return target.getConfiguration().isLegacyDecimalHandlingStrategy();
+        case "legacysnapshotmaxthreads":
+        case "legacySnapshotMaxThreads": return target.getConfiguration().isLegacySnapshotMaxThreads();
         case "lobenabled":
         case "lobEnabled": return target.getConfiguration().isLobEnabled();
         case "logminingarchivelogonlymode":

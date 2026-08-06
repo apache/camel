@@ -464,7 +464,7 @@ public interface DebeziumDb2EndpointBuilderFactory {
          * The option is a: <code>java.lang.String</code> type.
          * 
          * Default:
-         * .*secret$|.*password$|.*sasl\.jaas\.config$|.*basic\.auth\.user\.info|.*registry\.auth\.client-secret|.*credentials\.json$
+         * .*secret$|.*password$|.*sasl\.jaas\.config$|.*basic\.auth\.user\.info|.*registry\.auth\.client-secret|.*credentials\.json$|.*connectionstring$|.*connection\.string$
          * Group: db2
          * 
          * @param customSanitizePattern the value to set
@@ -932,6 +932,42 @@ public interface DebeziumDb2EndpointBuilderFactory {
          */
         default DebeziumDb2EndpointBuilder incrementalSnapshotWatermarkingStrategy(String incrementalSnapshotWatermarkingStrategy) {
             doSetProperty("incrementalSnapshotWatermarkingStrategy", incrementalSnapshotWatermarkingStrategy);
+            return this;
+        }
+        /**
+         * When enabled, uses the legacy table-per-thread parallel snapshot
+         * algorithm. When set to false (the default), tables are split into
+         * chunks and processed across all snapshot threads, allowing for higher
+         * concurrency for snapshots.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: db2
+         * 
+         * @param legacySnapshotMaxThreads the value to set
+         * @return the dsl builder
+         */
+        default DebeziumDb2EndpointBuilder legacySnapshotMaxThreads(boolean legacySnapshotMaxThreads) {
+            doSetProperty("legacySnapshotMaxThreads", legacySnapshotMaxThreads);
+            return this;
+        }
+        /**
+         * When enabled, uses the legacy table-per-thread parallel snapshot
+         * algorithm. When set to false (the default), tables are split into
+         * chunks and processed across all snapshot threads, allowing for higher
+         * concurrency for snapshots.
+         * 
+         * The option will be converted to a <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: db2
+         * 
+         * @param legacySnapshotMaxThreads the value to set
+         * @return the dsl builder
+         */
+        default DebeziumDb2EndpointBuilder legacySnapshotMaxThreads(String legacySnapshotMaxThreads) {
+            doSetProperty("legacySnapshotMaxThreads", legacySnapshotMaxThreads);
             return this;
         }
         /**
