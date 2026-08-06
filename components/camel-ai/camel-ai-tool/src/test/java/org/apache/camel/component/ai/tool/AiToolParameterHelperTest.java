@@ -272,7 +272,7 @@ public class AiToolParameterHelperTest {
     }
 
     @Test
-    public void testValidateParameterSourceExclusive() {
+    void testValidateParameterSourceExclusive() {
         assertThatThrownBy(() -> AiToolParameterHelper.validateParameterSourceExclusive(
                 Map.of("city", "string"), "{\"type\":\"object\"}"))
                 .isInstanceOf(IllegalArgumentException.class)
@@ -280,7 +280,7 @@ public class AiToolParameterHelperTest {
     }
 
     @Test
-    public void testExtractTopLevelPropertyNamesFromRawSchema() throws DeserializationException {
+    void testExtractTopLevelPropertyNamesFromRawSchema() throws DeserializationException {
         String schema = """
                 {
                   "type": "object",
@@ -296,7 +296,7 @@ public class AiToolParameterHelperTest {
     }
 
     @Test
-    public void testExtractRequiredPropertyNamesFromRawSchema() throws DeserializationException {
+    void testExtractRequiredPropertyNamesFromRawSchema() throws DeserializationException {
         String schema = """
                 {
                   "type": "object",
@@ -313,35 +313,35 @@ public class AiToolParameterHelperTest {
     }
 
     @Test
-    public void testResolveArgSchemaRejectsJsonNull() {
+    void testResolveArgSchemaRejectsJsonNull() {
         assertThatThrownBy(() -> AiToolParameterHelper.resolveArgSchema(camelContext, "null"))
                 .isInstanceOf(IllegalArgumentException.class)
                 .hasMessageContaining("null");
     }
 
     @Test
-    public void testResolveArgSchemaRejectsInvalidJson() {
+    void testResolveArgSchemaRejectsInvalidJson() {
         assertThatThrownBy(() -> AiToolParameterHelper.resolveArgSchema(camelContext, "{not-json"))
                 .isInstanceOf(IllegalArgumentException.class)
                 .hasMessageContaining("valid JSON");
     }
 
     @Test
-    public void testResolveArgSchemaRejectsNonObjectRootType() {
+    void testResolveArgSchemaRejectsNonObjectRootType() {
         assertThatThrownBy(() -> AiToolParameterHelper.resolveArgSchema(camelContext, "{\"type\":\"string\"}"))
                 .isInstanceOf(IllegalArgumentException.class)
                 .hasMessageContaining("root type must be 'object'");
     }
 
     @Test
-    public void testResolveArgSchemaRejectsMissingProperties() {
+    void testResolveArgSchemaRejectsMissingProperties() {
         assertThatThrownBy(() -> AiToolParameterHelper.resolveArgSchema(camelContext, "{\"type\":\"object\"}"))
                 .isInstanceOf(IllegalArgumentException.class)
                 .hasMessageContaining("properties map");
     }
 
     @Test
-    public void testResolveArgSchemaRejectsEmptyProperties() {
+    void testResolveArgSchemaRejectsEmptyProperties() {
         assertThatThrownBy(() -> AiToolParameterHelper.resolveArgSchema(camelContext,
                 "{\"type\":\"object\",\"properties\":{}}"))
                 .isInstanceOf(IllegalArgumentException.class)
@@ -349,7 +349,7 @@ public class AiToolParameterHelperTest {
     }
 
     @Test
-    public void testResolveArgSchemaRejectsInvalidRequiredArray() {
+    void testResolveArgSchemaRejectsInvalidRequiredArray() {
         assertThatThrownBy(() -> AiToolParameterHelper.resolveArgSchema(camelContext,
                 "{\"type\":\"object\",\"properties\":{\"city\":{\"type\":\"string\"}},\"required\":\"city\"}"))
                 .isInstanceOf(IllegalArgumentException.class)
@@ -357,7 +357,7 @@ public class AiToolParameterHelperTest {
     }
 
     @Test
-    public void testResolveArgSchemaRejectsUnknownRequiredName() {
+    void testResolveArgSchemaRejectsUnknownRequiredName() {
         assertThatThrownBy(() -> AiToolParameterHelper.resolveArgSchema(camelContext,
                 "{\"type\":\"object\",\"properties\":{\"city\":{\"type\":\"string\"}},\"required\":[\"country\"]}"))
                 .isInstanceOf(IllegalArgumentException.class)
@@ -365,7 +365,7 @@ public class AiToolParameterHelperTest {
     }
 
     @Test
-    public void testExtractTopLevelPropertyNamesRejectsInvalidProperties() {
+    void testExtractTopLevelPropertyNamesRejectsInvalidProperties() {
         assertThatThrownBy(() -> AiToolParameterHelper.extractTopLevelPropertyNames(
                 "{\"type\":\"object\",\"properties\":[]}"))
                 .isInstanceOf(IllegalArgumentException.class)

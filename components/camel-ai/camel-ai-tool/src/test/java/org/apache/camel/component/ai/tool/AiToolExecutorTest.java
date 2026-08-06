@@ -310,7 +310,7 @@ public class AiToolExecutorTest extends CamelTestSupport {
     }
 
     @Test
-    public void testExecuteWithRawArgSchemaNestedArguments() {
+    void testExecuteWithRawArgSchemaNestedArguments() {
         AiToolSpec spec = findSpec("createOrder");
         Exchange exchange = new DefaultExchange(context);
 
@@ -330,7 +330,7 @@ public class AiToolExecutorTest extends CamelTestSupport {
     }
 
     @Test
-    public void testExecuteIgnoresUndeclaredArgumentsForRawArgSchema() {
+    void testExecuteIgnoresUndeclaredArgumentsForRawArgSchema() {
         AiToolSpec spec = findSpec("createOrder");
         Exchange exchange = new DefaultExchange(context);
 
@@ -346,7 +346,7 @@ public class AiToolExecutorTest extends CamelTestSupport {
     }
 
     @Test
-    public void testExecuteReturnsArgumentErrorForMissingRequiredRawSchemaArgument() {
+    void testExecuteReturnsArgumentErrorForMissingRequiredRawSchemaArgument() {
         AiToolSpec spec = findSpec("createOrder");
         Exchange exchange = new DefaultExchange(context);
 
@@ -360,7 +360,7 @@ public class AiToolExecutorTest extends CamelTestSupport {
     }
 
     @Test
-    public void testExecuteReturnsArgumentErrorWhenRequiredNameIsUndeclared() {
+    void testExecuteReturnsArgumentErrorWhenRequiredNameIsUndeclared() {
         String schema = """
                 {
                   "type": "object",

@@ -102,7 +102,6 @@ public class AiToolConfiguration implements Cloneable {
             if (this.parameters != null) {
                 copy.parameters = new HashMap<>(this.parameters);
             }
-            copy.argSchema = this.argSchema;
             return copy;
         } catch (CloneNotSupportedException e) {
             throw new RuntimeCamelException(e);

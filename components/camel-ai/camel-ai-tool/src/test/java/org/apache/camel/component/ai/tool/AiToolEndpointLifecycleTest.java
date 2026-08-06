@@ -321,7 +321,7 @@ public class AiToolEndpointLifecycleTest extends CamelTestSupport {
     }
 
     @Test
-    public void testArgSchemaToolRegisteredOnStart() throws Exception {
+    void testArgSchemaToolRegisteredOnStart() throws Exception {
         context.addRoutes(new RouteBuilder() {
             public void configure() {
                 from("ai-tool:createOrder"
@@ -343,7 +343,7 @@ public class AiToolEndpointLifecycleTest extends CamelTestSupport {
     }
 
     @Test
-    public void testArgSchemaAndParametersAreMutuallyExclusive() {
+    void testArgSchemaAndParametersAreMutuallyExclusive() {
         assertThatThrownBy(() -> context.addRoutes(new RouteBuilder() {
             public void configure() {
                 from("ai-tool:invalid"

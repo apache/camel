@@ -30,6 +30,7 @@ import org.apache.camel.component.ai.tool.AiToolParameterHelper;
 import org.apache.camel.component.ai.tool.AiToolSpec;
 import org.junit.jupiter.api.Test;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -191,12 +192,9 @@ class AiToolSpecToLangChain4jTest {
         AiToolSpec spec = new AiToolSpec("createOrder", "Create order", Map.of(), schema, null);
         ToolSpecification result = AiToolSpecToLangChain4j.toToolSpecification(spec);
 
-        assertNotNull(result.parameters());
-        assertEquals(2, result.parameters().properties().size());
-        assertTrue(result.parameters().properties().containsKey("customer"));
-        assertTrue(result.parameters().properties().containsKey("items"));
-        assertTrue(result.parameters().required().contains("customer"));
-        assertTrue(result.parameters().required().contains("items"));
+        assertThat(result.parameters()).isNotNull();
+        assertThat(result.parameters().properties()).hasSize(2).containsKeys("customer", "items");
+        assertThat(result.parameters().required()).contains("customer", "items");
     }
 
     @Test
