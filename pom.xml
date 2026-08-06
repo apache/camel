@@ -595,6 +595,10 @@
                             <exclude>**/examples/*</exclude>
                             <exclude>**/examples/**/*</exclude>
                             <exclude>**/src/main/resources/testdata/**/*</exclude>
+                            <!-- vendored third-party TUI web assets -->
+                            <exclude>**/tui/web/vendor/*</exclude>
+                            <!-- JReleaser templates -->
+                            <exclude>**/jreleaser/**/*.tpl</exclude>
                             <!-- Claude Code / OMC worktrees -->
                             <exclude>.claude/**/*</exclude>
                             <exclude>.omc/**/*</exclude>
