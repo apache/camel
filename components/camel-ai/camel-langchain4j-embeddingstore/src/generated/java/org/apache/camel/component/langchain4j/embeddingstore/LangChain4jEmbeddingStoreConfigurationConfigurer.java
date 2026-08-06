@@ -24,6 +24,8 @@ public class LangChain4jEmbeddingStoreConfigurationConfigurer extends org.apache
         org.apache.camel.component.langchain4j.embeddingstore.LangChain4jEmbeddingStoreConfiguration target = (org.apache.camel.component.langchain4j.embeddingstore.LangChain4jEmbeddingStoreConfiguration) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "action": target.setAction(property(camelContext, org.apache.camel.component.langchain4j.embeddingstore.LangChain4jEmbeddingStoreAction.class, value)); return true;
+        case "embeddingmodel":
+        case "embeddingModel": target.setEmbeddingModel(property(camelContext, dev.langchain4j.model.embedding.EmbeddingModel.class, value)); return true;
         case "embeddingstore":
         case "embeddingStore": target.setEmbeddingStore(property(camelContext, dev.langchain4j.store.embedding.EmbeddingStore.class, value)); return true;
         case "embeddingstorefactory":
@@ -42,6 +44,8 @@ public class LangChain4jEmbeddingStoreConfigurationConfigurer extends org.apache
     public Class<?> getOptionType(String name, boolean ignoreCase) {
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "action": return org.apache.camel.component.langchain4j.embeddingstore.LangChain4jEmbeddingStoreAction.class;
+        case "embeddingmodel":
+        case "embeddingModel": return dev.langchain4j.model.embedding.EmbeddingModel.class;
         case "embeddingstore":
         case "embeddingStore": return dev.langchain4j.store.embedding.EmbeddingStore.class;
         case "embeddingstorefactory":
@@ -61,6 +65,8 @@ public class LangChain4jEmbeddingStoreConfigurationConfigurer extends org.apache
         org.apache.camel.component.langchain4j.embeddingstore.LangChain4jEmbeddingStoreConfiguration target = (org.apache.camel.component.langchain4j.embeddingstore.LangChain4jEmbeddingStoreConfiguration) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "action": return target.getAction();
+        case "embeddingmodel":
+        case "embeddingModel": return target.getEmbeddingModel();
         case "embeddingstore":
         case "embeddingStore": return target.getEmbeddingStore();
         case "embeddingstorefactory":

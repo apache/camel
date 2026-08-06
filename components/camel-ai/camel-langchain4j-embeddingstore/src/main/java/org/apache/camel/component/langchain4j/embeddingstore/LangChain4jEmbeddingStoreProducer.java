@@ -127,26 +127,18 @@ public class LangChain4jEmbeddingStoreProducer extends DefaultProducer {
      * @throws Exception if the add operation fails
      */
     private void add(Exchange exchange) throws Exception {
-        final Message in = exchange.getMessage();
+        LangChain4jEmbeddingStoreConfiguration config = getEndpoint().getConfiguration();
 
-        if (in.getHeader(LangChain4jEmbeddingsHeaders.EMBEDDING) == null) {
-            throw new NoSuchHeaderException(
-                    "The embedding is a required header for ADD operations", exchange,
-                    LangChain4jEmbeddingsHeaders.EMBEDDING);
-        }
+        EmbeddingResult resolved = resolveEmbedding(exchange);
 
-        Embedding embedding = in.getHeader(LangChain4jEmbeddingsHeaders.EMBEDDING, Embedding.class);
         String id;
-
-        if (in.getHeader(LangChain4jEmbeddingsHeaders.TEXT_SEGMENT) != null) {
-            TextSegment text = in.getHeader(LangChain4jEmbeddingsHeaders.TEXT_SEGMENT, TextSegment.class);
-            id = getEndpoint().getConfiguration().getEmbeddingStore().add(embedding, text);
+        if (resolved.textSegment() != null) {
+            id = config.getEmbeddingStore().add(resolved.embedding(), resolved.textSegment());
         } else {
-            id = getEndpoint().getConfiguration().getEmbeddingStore().add(embedding);
+            id = config.getEmbeddingStore().add(resolved.embedding());
         }
 
-        Message out = exchange.getMessage();
-        out.setBody(id);
+        exchange.getMessage().setBody(id);
     }
 
     /**
@@ -192,7 +184,7 @@ public class LangChain4jEmbeddingStoreProducer extends DefaultProducer {
         final Message in = exchange.getMessage();
         LangChain4jEmbeddingStoreConfiguration config = getEndpoint().getConfiguration();
 
-        Embedding embedding = in.getHeader(LangChain4jEmbeddingsHeaders.EMBEDDING, Embedding.class);
+        Embedding embedding = resolveEmbedding(exchange).embedding();
 
         // Get maxResults from header, fallback to endpoint config
         Integer maxResults = in.getHeader(LangChain4jEmbeddingStoreHeaders.MAX_RESULTS, Integer.class);
@@ -234,6 +226,40 @@ public class LangChain4jEmbeddingStoreProducer extends DefaultProducer {
         } else {
             out.setBody(matches);
         }
+    }
+
+    private EmbeddingResult resolveEmbedding(Exchange exchange) throws NoSuchHeaderException {
+        final Message in = exchange.getMessage();
+        LangChain4jEmbeddingStoreConfiguration config = getEndpoint().getConfiguration();
+
+        Embedding embedding = in.getHeader(LangChain4jEmbeddingsHeaders.EMBEDDING, Embedding.class);
+        TextSegment textSegment = in.getHeader(LangChain4jEmbeddingsHeaders.TEXT_SEGMENT, TextSegment.class);
+
+        if (embedding == null && config.getEmbeddingModel() != null) {
+            String text = in.getBody(String.class);
+            if (text == null) {
+                throw new IllegalArgumentException(
+                        "Message body cannot be converted to String for auto-embedding. "
+                                                   + "Either set the body to a text value or provide a pre-computed embedding via the "
+                                                   + LangChain4jEmbeddingsHeaders.EMBEDDING + " header.");
+            }
+            if (textSegment == null) {
+                textSegment = TextSegment.from(text);
+            }
+            embedding = config.getEmbeddingModel().embed(textSegment).content();
+        }
+
+        if (embedding == null) {
+            throw new NoSuchHeaderException(
+                    "The embedding is a required header (or configure embeddingModel for auto-embedding)",
+                    exchange,
+                    LangChain4jEmbeddingsHeaders.EMBEDDING);
+        }
+
+        return new EmbeddingResult(embedding, textSegment);
+    }
+
+    private record EmbeddingResult(Embedding embedding, TextSegment textSegment) {
     }
 
     private CamelContext getCamelContext() {

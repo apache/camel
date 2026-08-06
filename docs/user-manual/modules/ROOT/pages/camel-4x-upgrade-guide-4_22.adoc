@@ -364,6 +364,13 @@ If your code reads tool-related headers from the calling exchange after agent in
 you will need to adjust it. The agent's `Result<String>` (and the new `CamelLangChain4jAgentToolExecutions`
 header) is the intended way to observe tool execution results.
 
+=== camel-langchain4j-embeddingstore
+
+A new `embeddingModel` option has been added. It is autowired, so if an `EmbeddingModel` bean is present
+in the registry it will be automatically picked up. When set, ADD and SEARCH operations can accept plain
+text in the message body instead of requiring a pre-computed embedding in the
+`CamelLangChain4jEmbeddingsEmbedding` header. The header always takes precedence when present.
+
 === camel-langchain4j-chat
 
 The helper classes `OpenAiChatLanguageModelBuilder` and `HugginFaceChatLanguageModelBuilder` have been removed.
