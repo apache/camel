@@ -1710,3 +1710,15 @@ transport `from` and the `atmosphere-websocket:` `to`. Allowing untrusted sender
 drive `WebsocketConstants.CONNECTION_KEY_LIST`, which selects the target peers and
 takes precedence over `CONNECTION_KEY`, without such a mapping step is not the intended
 use of the component.
+
+=== camel-google-mail - the raw option now returns the message
+
+The `google-mail-stream` consumer always asked the Gmail API for the `FULL` message format, but the
+`raw` field is only populated for the `RAW` format, so `raw=true` produced a `null` body. The consumer
+now requests the format that matches the option.
+
+Because the Gmail API does not return the parsed `payload` for the `RAW` format, a route running with
+`raw=true` no longer receives the `CamelGoogleMailStreamSubject`, `...From`, `...To`, `...Cc`, `...Bcc`
+and `...MessageId` headers — those values are part of the RFC 2822 content that is now in the body.
+`CamelGoogleMailStreamId`, `...ThreadId` and `...LabelIds` are still set. Routes that need the parsed
+headers should keep the default `raw=false`.
