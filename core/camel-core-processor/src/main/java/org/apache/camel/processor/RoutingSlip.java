@@ -467,6 +467,8 @@ public class RoutingSlip extends BaseProcessorSupport implements Traceable, IdAw
                             try {
                                 Object recipient = iter.next(ex);
                                 recipient = prepareRecipient(exchange, recipient);
+                                // enforce the optional allowed-schemes allow-list on the resolved dynamic recipient (CAMEL-24298)
+                                ProcessorHelper.checkAllowedSchemes(allowedSchemes, recipient);
                                 Endpoint existing = getExistingEndpoint(exchange, recipient);
                                 if (existing == null) {
                                     nextEndpoint = resolveEndpoint(exchange, recipient, prototype);
