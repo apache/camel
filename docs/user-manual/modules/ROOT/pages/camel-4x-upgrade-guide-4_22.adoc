@@ -306,8 +306,13 @@ LangChain4j and OpenAI producers now emit GenAI observability data (OpenTelemetr
 Micrometer metrics) when `camel-opentelemetry2` and/or `camel-micrometer` is on the classpath.
 Disable globally with `camel.ai.observability.enabled=false` (default is enabled).
 
-LangChain4j components also expose request/response model names on new exchange headers
-(`CamelLangChain4j*RequestModel`, `CamelLangChain4j*ResponseModel`). See
+OpenAI streaming chat sets `stream_options.include_usage=true` only when GenAI observability is enabled,
+adding a final chunk with token usage for span/metric recording.
+
+LangChain4j components also expose request model names on new exchange headers
+(`CamelLangChain4j*RequestModel`). The response model header (`CamelLangChain4j*ResponseModel`) is set when
+the underlying client exposes it (for example langchain4j-chat); the agent and embeddings producers omit it when
+unavailable. See
 xref:next@components:others:ai-observability.adoc[AI Observability] for metric names and span attributes.
 
 === camel-langchain4j-agent

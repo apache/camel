@@ -59,14 +59,14 @@ public final class GenAiObservability {
             return NOOP;
         }
         CamelContext camelContext = exchange.getContext();
-        if (camelContext.getClassResolver().resolveClass(IMPL_CLASS) == null) {
+        Class<?> implClass = camelContext.getClassResolver().resolveClass(IMPL_CLASS);
+        if (implClass == null) {
             return NOOP;
         }
         try {
-            Class<?> implClass = camelContext.getClassResolver().resolveClass(IMPL_CLASS);
             return (GenAiObservation) implClass.getMethod("start", Exchange.class, GenAiObservationContext.class)
                     .invoke(null, exchange, context);
-        } catch (Throwable t) {
+        } catch (ReflectiveOperationException | LinkageError e) {
             return NOOP;
         }
     }

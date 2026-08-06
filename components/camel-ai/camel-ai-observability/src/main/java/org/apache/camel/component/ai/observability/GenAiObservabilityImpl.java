@@ -165,9 +165,6 @@ public final class GenAiObservabilityImpl {
                 if (usage.finishReason() != null) {
                     span.setTag(GenAiAttributes.FINISH_REASONS, usage.finishReason());
                 }
-                if (usage.responseModel() != null && !usage.responseModel().isBlank()) {
-                    span.setTag(GenAiAttributes.RESPONSE_MODEL, usage.responseModel());
-                }
             }
         }
 
