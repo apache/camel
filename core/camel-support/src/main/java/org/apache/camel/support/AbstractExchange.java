@@ -19,6 +19,7 @@ package org.apache.camel.support;
 import java.util.ArrayList;
 import java.util.EnumMap;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -514,10 +515,19 @@ abstract class AbstractExchange implements Exchange, ExchangeExtension {
         return out;
     }
 
+    @SuppressWarnings("unchecked")
     private Message newOutMessage() {
         if (in != null) {
             Message answer = in.newInstance();
             CamelContextAware.trySetCamelContext(answer, getContext());
+            // copy attachments from IN so they survive when a producer swaps in a fresh OUT
+            if (in.hasTrait(MessageTrait.ATTACHMENTS)) {
+                Map<String, Object> attachments
+                        = (Map<String, Object>) in.getPayloadForTrait(MessageTrait.ATTACHMENTS);
+                if (attachments != null) {
+                    answer.setPayloadForTrait(MessageTrait.ATTACHMENTS, new LinkedHashMap<>(attachments));
+                }
+            }
             return answer;
         } else {
             return new DefaultMessage(getContext());

@@ -17,7 +17,6 @@
 package org.apache.camel.component.jms;
 
 import java.io.File;
-import java.util.LinkedHashMap;
 import java.util.Map;
 
 import jakarta.jms.Destination;
@@ -120,12 +119,6 @@ public class JmsMessage extends DefaultMessage {
         // we have already cleared the headers
         if (that.hasHeaders()) {
             getHeaders().putAll(that.getHeaders());
-        }
-
-        // copy attachments
-        Map<String, Object> attachments = (Map<String, Object>) that.getPayloadForTrait(MessageTrait.ATTACHMENTS);
-        if (attachments != null) {
-            setPayloadForTrait(MessageTrait.ATTACHMENTS, new LinkedHashMap<>(attachments));
         }
     }
 
