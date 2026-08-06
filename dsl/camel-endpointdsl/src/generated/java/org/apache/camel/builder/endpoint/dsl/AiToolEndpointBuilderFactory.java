@@ -183,6 +183,70 @@ public interface AiToolEndpointBuilderFactory {
             return this;
         }
         /**
+         * Tool output schema fields. Format: outputParameter.NAME=TYPE,
+         * outputParameter.NAME.description=TEXT. Supported types: string,
+         * integer, number, boolean. Mutually exclusive with outputSchema. This
+         * is a multi-value option with prefix: outputParameter.
+         * 
+         * The option is a: <code>java.util.Map&lt;java.lang.String,
+         * java.lang.String&gt;</code> type.
+         * The option is multivalued, and you can use the
+         * outputParameters(String, Object) method to add a value (call the
+         * method multiple times to set more values).
+         * 
+         * Group: consumer
+         * 
+         * @param key the option key
+         * @param value the option value
+         * @return the dsl builder
+         */
+        default AiToolEndpointBuilder outputParameters(String key, Object value) {
+            doSetMultiValueProperty("outputParameters", "outputParameter." + key, value);
+            return this;
+        }
+        /**
+         * Tool output schema fields. Format: outputParameter.NAME=TYPE,
+         * outputParameter.NAME.description=TEXT. Supported types: string,
+         * integer, number, boolean. Mutually exclusive with outputSchema. This
+         * is a multi-value option with prefix: outputParameter.
+         * 
+         * The option is a: <code>java.util.Map&lt;java.lang.String,
+         * java.lang.String&gt;</code> type.
+         * The option is multivalued, and you can use the
+         * outputParameters(String, Object) method to add a value (call the
+         * method multiple times to set more values).
+         * 
+         * Group: consumer
+         * 
+         * @param values the values
+         * @return the dsl builder
+         */
+        default AiToolEndpointBuilder outputParameters(Map values) {
+            doSetMultiValueProperties("outputParameters", "outputParameter.", values);
+            return this;
+        }
+        /**
+         * Raw JSON Schema describing the tool's structured output. Supports
+         * inline JSON and resource references (classpath:, file:, resource:).
+         * Mutually exclusive with the outputParameter multi-value options. When
+         * declared, the route body is parsed as JSON and exposed as structured
+         * content to MCP clients.
+         * 
+         * This option can also be loaded from an existing file, by prefixing
+         * with file: or classpath: followed by the location of the file.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: consumer
+         * 
+         * @param outputSchema the value to set
+         * @return the dsl builder
+         */
+        default AiToolEndpointBuilder outputSchema(String outputSchema) {
+            doSetProperty("outputSchema", outputSchema);
+            return this;
+        }
+        /**
          * Tool input parameters. Format: parameter.NAME=TYPE,
          * parameter.NAME.description=TEXT, parameter.NAME.required=true or
          * false, parameter.NAME.enum=val1,val2. Supported types: string,
