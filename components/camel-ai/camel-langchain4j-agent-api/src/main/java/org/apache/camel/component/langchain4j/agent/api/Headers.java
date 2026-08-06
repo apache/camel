@@ -59,7 +59,9 @@ public class Headers {
     @Metadata(description = "The request model name.", javaType = "String")
     public static final String REQUEST_MODEL = "CamelLangChain4jAgentRequestModel";
 
-    @Metadata(description = "The response model name.", javaType = "String")
+    @Metadata(description = "The response model name. Not set by the agent producer when langchain4j Result "
+                            + "does not expose it.",
+              javaType = "String")
     public static final String RESPONSE_MODEL = "CamelLangChain4jAgentResponseModel";
 
     @Metadata(description = "RAG sources retrieved during agent invocation.",

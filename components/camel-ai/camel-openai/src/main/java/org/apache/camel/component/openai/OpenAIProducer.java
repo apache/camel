@@ -610,9 +610,11 @@ public class OpenAIProducer extends DefaultAsyncProducer {
 
     private void processStreaming(Exchange exchange, ChatCompletionCreateParams params) {
         String requestModel = params.model().toString();
-        ChatCompletionCreateParams streamingParams = params.toBuilder()
-                .streamOptions(ChatCompletionStreamOptions.builder().includeUsage(true).build())
-                .build();
+        ChatCompletionCreateParams.Builder streamingBuilder = params.toBuilder();
+        if (GenAiObservability.isEnabled(exchange.getContext())) {
+            streamingBuilder.streamOptions(ChatCompletionStreamOptions.builder().includeUsage(true).build());
+        }
+        ChatCompletionCreateParams streamingParams = streamingBuilder.build();
         GenAiObservationContext observationContext = GenAiObservationContext.builder()
                 .operationName(GenAiOperationName.CHAT)
                 .system("openai")
