@@ -18,6 +18,7 @@ package org.apache.camel.component.mcp.server;
 
 import java.util.Map;
 
+import org.apache.camel.component.ai.tool.AiToolAnnotations;
 import org.apache.camel.component.ai.tool.AiToolParameterHelper.ParameterDef;
 
 /**
@@ -52,4 +53,11 @@ public interface McpServerTool {
      * The handler executing the tool. Blocking, timeout-bounded and pre-sanitized by the bridge.
      */
     McpToolCallHandler handler();
+
+    /**
+     * Optional MCP tool annotation hints, or {@code null} when none are configured.
+     */
+    default AiToolAnnotations annotations() {
+        return null;
+    }
 }

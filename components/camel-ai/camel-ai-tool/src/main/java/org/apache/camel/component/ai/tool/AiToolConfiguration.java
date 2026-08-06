@@ -61,6 +61,30 @@ public class AiToolConfiguration implements Cloneable {
     @Metadata(label = "consumer", supportFileReference = true, largeInput = true, inputLanguage = "json")
     private String argSchema;
 
+    @Metadata(label = "consumer")
+    @UriParam(description = "Optional display title for MCP tool listings. Advisory hint for MCP clients only.")
+    private String title;
+
+    @Metadata(label = "consumer")
+    @UriParam(description = "MCP hint that the tool only reads data and does not modify state. Advisory for MCP clients; "
+                            + "not enforced by Camel.")
+    private Boolean readOnlyHint;
+
+    @Metadata(label = "consumer")
+    @UriParam(description = "MCP hint that the tool may perform destructive or irreversible updates. Advisory for MCP "
+                            + "clients; not enforced by Camel.")
+    private Boolean destructiveHint;
+
+    @Metadata(label = "consumer")
+    @UriParam(description = "MCP hint that repeating the tool call with the same arguments has no additional effect. "
+                            + "Advisory for MCP clients; not enforced by Camel.")
+    private Boolean idempotentHint;
+
+    @Metadata(label = "consumer")
+    @UriParam(description = "MCP hint that the tool interacts with external systems outside the application's control. "
+                            + "Advisory for MCP clients; not enforced by Camel.")
+    private Boolean openWorldHint;
+
     public AiToolConfiguration() {
     }
 
@@ -94,6 +118,46 @@ public class AiToolConfiguration implements Cloneable {
 
     public void setArgSchema(String argSchema) {
         this.argSchema = argSchema;
+    }
+
+    public String getTitle() {
+        return title;
+    }
+
+    public void setTitle(String title) {
+        this.title = title;
+    }
+
+    public Boolean getReadOnlyHint() {
+        return readOnlyHint;
+    }
+
+    public void setReadOnlyHint(Boolean readOnlyHint) {
+        this.readOnlyHint = readOnlyHint;
+    }
+
+    public Boolean getDestructiveHint() {
+        return destructiveHint;
+    }
+
+    public void setDestructiveHint(Boolean destructiveHint) {
+        this.destructiveHint = destructiveHint;
+    }
+
+    public Boolean getIdempotentHint() {
+        return idempotentHint;
+    }
+
+    public void setIdempotentHint(Boolean idempotentHint) {
+        this.idempotentHint = idempotentHint;
+    }
+
+    public Boolean getOpenWorldHint() {
+        return openWorldHint;
+    }
+
+    public void setOpenWorldHint(Boolean openWorldHint) {
+        this.openWorldHint = openWorldHint;
     }
 
     public AiToolConfiguration copy() {

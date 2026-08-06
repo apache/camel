@@ -136,7 +136,7 @@ class AiToolRegistryListenerTest {
     }
 
     private static AiToolSpec spec(String name) {
-        return new AiToolSpec(name, name + " description", null, null, null);
+        return new AiToolSpec(name, name + " description", null, null, null, null);
     }
 
     private record Event(String type, String tag, AiToolSpec spec) {

@@ -217,7 +217,7 @@ public class AiToolExecutorTest extends CamelTestSupport {
 
     @Test
     public void testExecuteReturnsExecutionErrorForNullConsumer() {
-        AiToolSpec spec = new AiToolSpec("ghostTool", "A tool with no consumer", Map.of(), null, null);
+        AiToolSpec spec = new AiToolSpec("ghostTool", "A tool with no consumer", Map.of(), null, null, null);
         Exchange exchange = new DefaultExchange(context);
 
         AiToolResult result = AiToolExecutor.execute(spec, null, exchange);
@@ -235,7 +235,7 @@ public class AiToolExecutorTest extends CamelTestSupport {
         DefaultConsumer consumerWithNullProcessor = new DefaultConsumer(endpoint, null);
 
         AiToolSpec spec = new AiToolSpec(
-                "nullProc", "test", Map.of(), null, consumerWithNullProcessor);
+                "nullProc", "test", Map.of(), null, null, consumerWithNullProcessor);
         Exchange exchange = new DefaultExchange(context);
 
         AiToolResult result = AiToolExecutor.execute(spec, null, exchange);
@@ -370,7 +370,7 @@ public class AiToolExecutorTest extends CamelTestSupport {
                   "required": ["country"]
                 }
                 """;
-        AiToolSpec spec = new AiToolSpec("badRequired", "test", Map.of(), schema, findSpec("greetUser").getConsumer());
+        AiToolSpec spec = new AiToolSpec("badRequired", "test", Map.of(), schema, null, findSpec("greetUser").getConsumer());
         Exchange exchange = new DefaultExchange(context);
 
         Map<String, Object> arguments = Map.of("country", "Paris");

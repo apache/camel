@@ -357,7 +357,34 @@ public class AiToolEndpointLifecycleTest extends CamelTestSupport {
     }
 
     @Test
-    public void testGetAllToolsReturnsAllPools() throws Exception {
+    void testMcpAnnotationsRegisteredOnSpec() throws Exception {
+        context.addRoutes(new RouteBuilder() {
+            public void configure() {
+                from("ai-tool:delete_order"
+                     + "?tags=orders"
+                     + "&description=Delete an order"
+                     + "&title=Delete order"
+                     + "&readOnlyHint=false"
+                     + "&destructiveHint=true"
+                     + "&idempotentHint=false"
+                     + "&openWorldHint=true")
+                        .setBody(constant("deleted"));
+            }
+        });
+
+        AiToolSpec spec = AiToolRegistry.getOrCreate(context).getToolsByTag("orders").iterator().next();
+        AiToolAnnotations annotations = spec.getAnnotations();
+
+        assertThat(annotations).isNotNull();
+        assertThat(annotations.title()).isEqualTo("Delete order");
+        assertThat(annotations.readOnlyHint()).isFalse();
+        assertThat(annotations.destructiveHint()).isTrue();
+        assertThat(annotations.idempotentHint()).isFalse();
+        assertThat(annotations.openWorldHint()).isTrue();
+    }
+
+    @Test
+    void testGetAllToolsReturnsAllPools() throws Exception {
         context.addRoutes(new RouteBuilder() {
             public void configure() {
                 from("ai-tool:toolA?tags=alpha&description=Tool A")

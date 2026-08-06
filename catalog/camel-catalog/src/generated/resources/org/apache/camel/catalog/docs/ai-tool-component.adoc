@@ -197,6 +197,48 @@ Top-level schema properties are exposed as exchange headers. Nested values are p
 
 The root schema must be a JSON Schema object with a top-level `properties` map. Camel always allowlists top-level property names when invoking the tool route, even if the schema sets `additionalProperties: true`. Nested fields are not flattened into headers; only top-level properties become exchange headers (Map/List/primitive values).
 
+=== MCP Tool Annotation Hints
+
+When exposing `ai-tool` routes through the xref:components::mcp-server.adoc[MCP Server] component, you can declare optional behavioral hints aligned with the MCP specification (`ToolAnnotations`). MCP clients may use these hints for per-tool policy (for example auto-approving read-only tools or requiring confirmation before destructive ones).
+
+These hints are **advisory only** — Camel does not enforce them. Untrusted MCP clients must not rely on them for security decisions.
+
+[tabs]
+====
+Java::
++
+[source,java]
+----
+from("ai-tool:delete_order?tags=orders&description=Delete an order"
+     + "&title=Delete order"
+     + "&readOnlyHint=false"
+     + "&destructiveHint=true"
+     + "&idempotentHint=false"
+     + "&openWorldHint=true")
+    .to("direct:deleteOrder");
+----
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: ai-tool:delete_order
+      parameters:
+        tags: orders
+        description: "Delete an order"
+        title: "Delete order"
+        readOnlyHint: false
+        destructiveHint: true
+        idempotentHint: false
+        openWorldHint: true
+      steps:
+        - to: direct:deleteOrder
+----
+====
+
+Supported options: `title`, `readOnlyHint`, `destructiveHint`, `idempotentHint`, and `openWorldHint`. When omitted, the hint is not published to MCP clients.
+
 === Tag-Based Discovery
 
 Tags group tools so that AI producers can select relevant subsets.

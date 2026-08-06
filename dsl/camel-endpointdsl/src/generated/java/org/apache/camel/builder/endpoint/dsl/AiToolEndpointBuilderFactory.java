@@ -82,6 +82,107 @@ public interface AiToolEndpointBuilderFactory {
             return this;
         }
         /**
+         * MCP hint that the tool may perform destructive or irreversible
+         * updates. Advisory for MCP clients; not enforced by Camel.
+         * 
+         * The option is a: <code>java.lang.Boolean</code> type.
+         * 
+         * Default: false
+         * Group: consumer
+         * 
+         * @param destructiveHint the value to set
+         * @return the dsl builder
+         */
+        default AiToolEndpointBuilder destructiveHint(Boolean destructiveHint) {
+            doSetProperty("destructiveHint", destructiveHint);
+            return this;
+        }
+        /**
+         * MCP hint that the tool may perform destructive or irreversible
+         * updates. Advisory for MCP clients; not enforced by Camel.
+         * 
+         * The option will be converted to a <code>java.lang.Boolean</code>
+         * type.
+         * 
+         * Default: false
+         * Group: consumer
+         * 
+         * @param destructiveHint the value to set
+         * @return the dsl builder
+         */
+        default AiToolEndpointBuilder destructiveHint(String destructiveHint) {
+            doSetProperty("destructiveHint", destructiveHint);
+            return this;
+        }
+        /**
+         * MCP hint that repeating the tool call with the same arguments has no
+         * additional effect. Advisory for MCP clients; not enforced by Camel.
+         * 
+         * The option is a: <code>java.lang.Boolean</code> type.
+         * 
+         * Default: false
+         * Group: consumer
+         * 
+         * @param idempotentHint the value to set
+         * @return the dsl builder
+         */
+        default AiToolEndpointBuilder idempotentHint(Boolean idempotentHint) {
+            doSetProperty("idempotentHint", idempotentHint);
+            return this;
+        }
+        /**
+         * MCP hint that repeating the tool call with the same arguments has no
+         * additional effect. Advisory for MCP clients; not enforced by Camel.
+         * 
+         * The option will be converted to a <code>java.lang.Boolean</code>
+         * type.
+         * 
+         * Default: false
+         * Group: consumer
+         * 
+         * @param idempotentHint the value to set
+         * @return the dsl builder
+         */
+        default AiToolEndpointBuilder idempotentHint(String idempotentHint) {
+            doSetProperty("idempotentHint", idempotentHint);
+            return this;
+        }
+        /**
+         * MCP hint that the tool interacts with external systems outside the
+         * application's control. Advisory for MCP clients; not enforced by
+         * Camel.
+         * 
+         * The option is a: <code>java.lang.Boolean</code> type.
+         * 
+         * Default: false
+         * Group: consumer
+         * 
+         * @param openWorldHint the value to set
+         * @return the dsl builder
+         */
+        default AiToolEndpointBuilder openWorldHint(Boolean openWorldHint) {
+            doSetProperty("openWorldHint", openWorldHint);
+            return this;
+        }
+        /**
+         * MCP hint that the tool interacts with external systems outside the
+         * application's control. Advisory for MCP clients; not enforced by
+         * Camel.
+         * 
+         * The option will be converted to a <code>java.lang.Boolean</code>
+         * type.
+         * 
+         * Default: false
+         * Group: consumer
+         * 
+         * @param openWorldHint the value to set
+         * @return the dsl builder
+         */
+        default AiToolEndpointBuilder openWorldHint(String openWorldHint) {
+            doSetProperty("openWorldHint", openWorldHint);
+            return this;
+        }
+        /**
          * Tool input parameters. Format: parameter.NAME=TYPE,
          * parameter.NAME.description=TEXT, parameter.NAME.required=true or
          * false, parameter.NAME.enum=val1,val2. Supported types: string,
@@ -127,6 +228,39 @@ public interface AiToolEndpointBuilderFactory {
             return this;
         }
         /**
+         * MCP hint that the tool only reads data and does not modify state.
+         * Advisory for MCP clients; not enforced by Camel.
+         * 
+         * The option is a: <code>java.lang.Boolean</code> type.
+         * 
+         * Default: false
+         * Group: consumer
+         * 
+         * @param readOnlyHint the value to set
+         * @return the dsl builder
+         */
+        default AiToolEndpointBuilder readOnlyHint(Boolean readOnlyHint) {
+            doSetProperty("readOnlyHint", readOnlyHint);
+            return this;
+        }
+        /**
+         * MCP hint that the tool only reads data and does not modify state.
+         * Advisory for MCP clients; not enforced by Camel.
+         * 
+         * The option will be converted to a <code>java.lang.Boolean</code>
+         * type.
+         * 
+         * Default: false
+         * Group: consumer
+         * 
+         * @param readOnlyHint the value to set
+         * @return the dsl builder
+         */
+        default AiToolEndpointBuilder readOnlyHint(String readOnlyHint) {
+            doSetProperty("readOnlyHint", readOnlyHint);
+            return this;
+        }
+        /**
          * Comma-separated list of tags used to group tools. Producers filter
          * the registry by these tags to select which tools to expose to the
          * LLM. When omitted, the tool goes into a default pool available to all
@@ -141,6 +275,21 @@ public interface AiToolEndpointBuilderFactory {
          */
         default AiToolEndpointBuilder tags(String tags) {
             doSetProperty("tags", tags);
+            return this;
+        }
+        /**
+         * Optional display title for MCP tool listings. Advisory hint for MCP
+         * clients only.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: consumer
+         * 
+         * @param title the value to set
+         * @return the dsl builder
+         */
+        default AiToolEndpointBuilder title(String title) {
+            doSetProperty("title", title);
             return this;
         }
     }

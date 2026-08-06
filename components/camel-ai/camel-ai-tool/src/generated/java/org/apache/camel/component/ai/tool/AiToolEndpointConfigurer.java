@@ -28,12 +28,21 @@ public class AiToolEndpointConfigurer extends PropertyConfigurerSupport implemen
         case "bridgeerrorhandler":
         case "bridgeErrorHandler": target.setBridgeErrorHandler(property(camelContext, boolean.class, value)); return true;
         case "description": target.getConfiguration().setDescription(property(camelContext, java.lang.String.class, value)); return true;
+        case "destructivehint":
+        case "destructiveHint": target.getConfiguration().setDestructiveHint(property(camelContext, java.lang.Boolean.class, value)); return true;
         case "exceptionhandler":
         case "exceptionHandler": target.setExceptionHandler(property(camelContext, org.apache.camel.spi.ExceptionHandler.class, value)); return true;
         case "exchangepattern":
         case "exchangePattern": target.setExchangePattern(property(camelContext, org.apache.camel.ExchangePattern.class, value)); return true;
+        case "idempotenthint":
+        case "idempotentHint": target.getConfiguration().setIdempotentHint(property(camelContext, java.lang.Boolean.class, value)); return true;
+        case "openworldhint":
+        case "openWorldHint": target.getConfiguration().setOpenWorldHint(property(camelContext, java.lang.Boolean.class, value)); return true;
         case "parameters": target.getConfiguration().setParameters(property(camelContext, java.util.Map.class, value)); return true;
+        case "readonlyhint":
+        case "readOnlyHint": target.getConfiguration().setReadOnlyHint(property(camelContext, java.lang.Boolean.class, value)); return true;
         case "tags": target.getConfiguration().setTags(property(camelContext, java.lang.String.class, value)); return true;
+        case "title": target.getConfiguration().setTitle(property(camelContext, java.lang.String.class, value)); return true;
         default: return false;
         }
     }
@@ -46,12 +55,21 @@ public class AiToolEndpointConfigurer extends PropertyConfigurerSupport implemen
         case "bridgeerrorhandler":
         case "bridgeErrorHandler": return boolean.class;
         case "description": return java.lang.String.class;
+        case "destructivehint":
+        case "destructiveHint": return java.lang.Boolean.class;
         case "exceptionhandler":
         case "exceptionHandler": return org.apache.camel.spi.ExceptionHandler.class;
         case "exchangepattern":
         case "exchangePattern": return org.apache.camel.ExchangePattern.class;
+        case "idempotenthint":
+        case "idempotentHint": return java.lang.Boolean.class;
+        case "openworldhint":
+        case "openWorldHint": return java.lang.Boolean.class;
         case "parameters": return java.util.Map.class;
+        case "readonlyhint":
+        case "readOnlyHint": return java.lang.Boolean.class;
         case "tags": return java.lang.String.class;
+        case "title": return java.lang.String.class;
         default: return null;
         }
     }
@@ -65,12 +83,21 @@ public class AiToolEndpointConfigurer extends PropertyConfigurerSupport implemen
         case "bridgeerrorhandler":
         case "bridgeErrorHandler": return target.isBridgeErrorHandler();
         case "description": return target.getConfiguration().getDescription();
+        case "destructivehint":
+        case "destructiveHint": return target.getConfiguration().getDestructiveHint();
         case "exceptionhandler":
         case "exceptionHandler": return target.getExceptionHandler();
         case "exchangepattern":
         case "exchangePattern": return target.getExchangePattern();
+        case "idempotenthint":
+        case "idempotentHint": return target.getConfiguration().getIdempotentHint();
+        case "openworldhint":
+        case "openWorldHint": return target.getConfiguration().getOpenWorldHint();
         case "parameters": return target.getConfiguration().getParameters();
+        case "readonlyhint":
+        case "readOnlyHint": return target.getConfiguration().getReadOnlyHint();
         case "tags": return target.getConfiguration().getTags();
+        case "title": return target.getConfiguration().getTitle();
         default: return null;
         }
     }
