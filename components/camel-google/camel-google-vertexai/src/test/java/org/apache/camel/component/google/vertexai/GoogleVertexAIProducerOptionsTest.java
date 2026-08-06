@@ -26,11 +26,10 @@ import org.junit.jupiter.api.Test;
 import static org.assertj.core.api.Assertions.assertThat;
 
 /**
- * Verifies that the producer applies the options that describe the shape of the request and of the response.
+ * Verifies that the producer applies the options that describe the shape of the request and of the response. Uses
+ * direct object construction to avoid starting the endpoint (which requires Google Cloud credentials).
  */
 class GoogleVertexAIProducerOptionsTest {
-
-    private static final String BASE = "google-vertexai:my-project:us-central1:gemini-2.0-flash";
 
     private DefaultCamelContext context;
 
@@ -41,30 +40,36 @@ class GoogleVertexAIProducerOptionsTest {
         }
     }
 
-    private GoogleVertexAIProducer producer(String query) throws Exception {
+    private GoogleVertexAIProducer producer(GoogleVertexAIConfiguration config) {
         context = new DefaultCamelContext();
-        context.start();
-        GoogleVertexAIEndpoint endpoint = context.getEndpoint(BASE + query, GoogleVertexAIEndpoint.class);
+        GoogleVertexAIComponent component = new GoogleVertexAIComponent(context);
+        GoogleVertexAIEndpoint endpoint
+                = new GoogleVertexAIEndpoint("google-vertexai:my-project:us-central1:gemini-2.0-flash", component, config);
         return new GoogleVertexAIProducer(endpoint);
     }
 
     @Test
-    void jsonModeAsksTheModelForJson() throws Exception {
-        GenerateContentConfig config = producer("?jsonMode=true").buildConfig(new DefaultExchange(context));
+    void jsonModeAsksTheModelForJson() {
+        GoogleVertexAIConfiguration config = new GoogleVertexAIConfiguration();
+        config.setJsonMode(true);
+        GenerateContentConfig result = producer(config).buildConfig(new DefaultExchange(context));
 
-        assertThat(config.responseMimeType()).contains("application/json");
+        assertThat(result.responseMimeType()).contains("application/json");
     }
 
     @Test
-    void jsonModeIsOffByDefault() throws Exception {
-        GenerateContentConfig config = producer("").buildConfig(new DefaultExchange(context));
+    void jsonModeIsOffByDefault() {
+        GoogleVertexAIConfiguration config = new GoogleVertexAIConfiguration();
+        GenerateContentConfig result = producer(config).buildConfig(new DefaultExchange(context));
 
-        assertThat(config.responseMimeType()).isEmpty();
+        assertThat(result.responseMimeType()).isEmpty();
     }
 
     @Test
-    void theStreamOutputModeComesFromTheConfigurationOrTheHeader() throws Exception {
-        GoogleVertexAIProducer producer = producer("?streamOutputMode=chunks");
+    void theStreamOutputModeComesFromTheConfigurationOrTheHeader() {
+        GoogleVertexAIConfiguration config = new GoogleVertexAIConfiguration();
+        config.setStreamOutputMode("chunks");
+        GoogleVertexAIProducer producer = producer(config);
 
         Exchange exchange = new DefaultExchange(context);
         assertThat(producer.determineStreamOutputMode(exchange)).isEqualTo("chunks");
@@ -75,7 +80,8 @@ class GoogleVertexAIProducerOptionsTest {
     }
 
     @Test
-    void theStreamOutputModeDefaultsToComplete() throws Exception {
-        assertThat(producer("").determineStreamOutputMode(new DefaultExchange(context))).isEqualTo("complete");
+    void theStreamOutputModeDefaultsToComplete() {
+        GoogleVertexAIConfiguration config = new GoogleVertexAIConfiguration();
+        assertThat(producer(config).determineStreamOutputMode(new DefaultExchange(context))).isEqualTo("complete");
     }
 }
