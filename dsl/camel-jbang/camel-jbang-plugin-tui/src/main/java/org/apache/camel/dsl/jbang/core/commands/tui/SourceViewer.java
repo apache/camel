@@ -132,6 +132,7 @@ class SourceViewer {
     private Style titleStyle;
     private Style borderStyle;
     private boolean focused = true;
+    private boolean plainMode;
 
     /** Local file path when content was loaded via {@link #loadFile(Path)} and is writable. */
     private Path editableFile;
@@ -264,6 +265,10 @@ class SourceViewer {
 
     boolean isEditable() {
         return editableFile != null;
+    }
+
+    boolean isPlainMode() {
+        return plainMode;
     }
 
     /**
@@ -414,6 +419,10 @@ class SourceViewer {
         if (ke.isChar('w')) {
             wordWrap = !wordWrap;
             scrollX = 0;
+            return true;
+        }
+        if (ke.isChar('p')) {
+            plainMode = !plainMode;
             return true;
         }
         if (ke.isKey(KeyCode.UP) && ke.hasCtrl()) {
@@ -1751,8 +1760,16 @@ class SourceViewer {
         }
 
         Block.Builder blockBuilder = Block.builder()
-                .borderType(BorderType.ROUNDED).borders(Borders.ALL)
-                .title(buildTitle());
+                .borderType(BorderType.ROUNDED);
+        if (plainMode) {
+            int lineNum = selectedLine + 1;
+            Title posTitle = Title.from(
+                    Line.from(Span.styled(" line:" + lineNum + " ", Style.EMPTY.dim()))).right();
+            blockBuilder.borders(java.util.EnumSet.of(Borders.TOP, Borders.BOTTOM))
+                    .titleBottom(posTitle);
+        } else {
+            blockBuilder.borders(Borders.ALL).title(buildTitle());
+        }
         if (borderStyle != null) {
             blockBuilder.borderStyle(borderStyle);
         }
@@ -1872,6 +1889,14 @@ class SourceViewer {
         Overflow overflow = wordWrap ? Overflow.WRAP_WORD : Overflow.CLIP;
         frame.renderWidget(Paragraph.builder().text(Text.from(visible)).overflow(overflow).build(), hChunks.get(0));
 
+        if (plainMode && selectedLine >= scrollY && selectedLine < scrollY + visibleLines) {
+            int relRow = selectedLine - scrollY;
+            int screenY = inner.top() + relRow;
+            Rect lineRect = new Rect(inner.left(), screenY, inner.width(), 1);
+            Style selBg = focused ? Theme.selectionBg() : Theme.selectionBg().dim();
+            frame.buffer().setStyle(lineRect, selBg);
+        }
+
         int totalDocLines = quickDocEnabled ? quickDocEntries.values().stream().mapToInt(List::size).sum() : 0;
         int totalContentLines = lines.size() + totalDocLines;
         if (totalContentLines > visibleLines) {
@@ -1899,9 +1924,15 @@ class SourceViewer {
         Title posTitle = Title.from(
                 Line.from(Span.styled(" row:" + row + " col:" + col + " ", Style.EMPTY.dim()))).right();
         Block.Builder blockBuilder = Block.builder()
-                .borderType(BorderType.ROUNDED).borders(Borders.ALL)
-                .title(Title.from(Line.from(titleSpans)))
-                .titleBottom(posTitle);
+                .borderType(BorderType.ROUNDED);
+        if (plainMode) {
+            blockBuilder.borders(java.util.EnumSet.of(Borders.TOP, Borders.BOTTOM))
+                    .titleBottom(posTitle);
+        } else {
+            blockBuilder.borders(Borders.ALL)
+                    .title(Title.from(Line.from(titleSpans)))
+                    .titleBottom(posTitle);
+        }
         if (borderStyle != null) {
             blockBuilder.borderStyle(borderStyle);
         }
@@ -1913,7 +1944,7 @@ class SourceViewer {
 
         TextArea textArea = TextArea.builder()
                 .cursorStyle(Style.EMPTY.reversed())
-                .showLineNumbers(true)
+                .showLineNumbers(!plainMode)
                 .lineNumberStyle(Style.EMPTY.dim())
                 .build();
         textArea.renderWithCursor(inner, frame.buffer(), editState, frame);
@@ -2089,6 +2120,7 @@ class SourceViewer {
         }
         search.renderSearchHints(spans);
         TuiHelper.hint(spans, "w", "wrap" + (wordWrap ? " [on]" : " [off]"));
+        TuiHelper.hint(spans, "p", "plain" + (plainMode ? " [on]" : " [off]"));
         if (onLineSelected != null) {
             TuiHelper.hint(spans, "Enter", "select node");
         }
@@ -2552,7 +2584,21 @@ class SourceViewer {
 
         List<Span> spans = new ArrayList<>();
         Style selBg = focused ? Theme.selectionBg() : Theme.selectionBg().dim();
-        if (isSelected) {
+        if (plainMode) {
+            // strip line-number prefix (spaces, digits, 2 separator spaces) but keep code indentation
+            int pos = 0;
+            while (pos < raw.length() && raw.charAt(pos) == ' ') {
+                pos++;
+            }
+            while (pos < raw.length() && Character.isDigit(raw.charAt(pos))) {
+                pos++;
+            }
+            if (pos + 1 < raw.length() && raw.charAt(pos) == ' ' && raw.charAt(pos + 1) == ' ') {
+                pos += 2;
+            }
+            String plainCode = raw.substring(pos);
+            spans.addAll(SyntaxHighlighter.highlightLine(plainCode, language).spans());
+        } else if (isSelected) {
             spans.add(Span.styled(">> ", focused ? Theme.label().bold() : Theme.label().dim()));
             if (!prefix.isEmpty()) {
                 spans.add(Span.styled(prefix, (focused ? Theme.label().bold() : Theme.label().dim()).patch(selBg)));

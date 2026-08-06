@@ -2602,6 +2602,8 @@ class RoutesTab extends AbstractTab {
                 - `←→` — horizontal scroll
                 - `PgUp/PgDn` — page jump
                 - `Home/End` — go to top/bottom
+                - `w` — toggle word wrap
+                - `p` — toggle plain mode (hides line numbers and borders for easy copy/paste)
                 - `Enter` — select the closest diagram node at cursor line
                 - `Esc/c` — close source view
                 """;

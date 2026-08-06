@@ -276,6 +276,13 @@ class SourceTab extends AbstractTab {
             return;
         }
 
+        if (sourceViewer.isPlainMode() && sourceViewer.isVisible()) {
+            leftArea = null;
+            rightArea = area;
+            renderSourcePanel(frame, area);
+            return;
+        }
+
         if (leftPanelWidth < 0) {
             leftPanelWidth = Math.max(25, Math.min(35, area.width() * 25 / 100));
         }
@@ -349,6 +356,7 @@ class SourceTab extends AbstractTab {
                 - **h** — highlight text
                 - **n/N** — next/previous match
                 - **w** — toggle word wrap
+                - **p** — toggle plain mode (hides line numbers, borders, and file panel for easy copy/paste)
                 - **Esc/c** — close source viewer
 
                 ## Edit Mode (Tab Completion)
