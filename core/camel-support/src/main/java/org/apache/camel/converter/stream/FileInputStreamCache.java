@@ -322,7 +322,8 @@ public final class FileInputStreamCache extends InputStream implements StreamCac
             }
             File spoolDir = strategy.resolveSpoolDirectory(exchange);
             if (spoolDir != null && !spoolDir.exists()) {
-                spoolDir.mkdirs();
+            File spoolDir = strategy.resolveSpoolDirectory(exchange);
+            tempFile = FileUtil.createTempFile("cos", ".tmp", spoolDir);
             }
             tempFile = FileUtil.createTempFile("cos", ".tmp", spoolDir);
 
