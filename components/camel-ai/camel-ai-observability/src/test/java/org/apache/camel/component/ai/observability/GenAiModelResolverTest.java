@@ -64,6 +64,18 @@ class GenAiModelResolverTest {
         assertThat(GenAiModelResolver.resolveModelName(null)).isEqualTo("unknown");
     }
 
+    @Test
+    void shouldResolveGoogleProviderFromPackageName() {
+        assertThat(GenAiModelResolver.resolveSystem(new dev.langchain4j.model.google.FakeGoogleModel()))
+                .isEqualTo("google");
+    }
+
+    @Test
+    void shouldResolveVertexAiProviderFromPackageName() {
+        assertThat(GenAiModelResolver.resolveSystem(new dev.langchain4j.model.vertexai.FakeVertexAiModel()))
+                .isEqualTo("gcp.vertex_ai");
+    }
+
     static class FakeOpenAiChatModel implements ChatModel {
         @Override
         public ModelProvider provider() {

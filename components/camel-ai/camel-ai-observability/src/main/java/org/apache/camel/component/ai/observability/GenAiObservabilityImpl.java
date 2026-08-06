@@ -17,6 +17,8 @@
 package org.apache.camel.component.ai.observability;
 
 import java.lang.reflect.Constructor;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentMap;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
@@ -26,17 +28,22 @@ import org.apache.camel.telemetry.SpanStorageManagerExchange;
 import org.apache.camel.telemetry.Tracer;
 import org.apache.camel.telemetry.propagation.CamelHeadersSpanContextPropagationExtractor;
 import org.apache.camel.util.ObjectHelper;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * GenAI observability implementation loaded reflectively from {@link GenAiObservability}.
  */
 public final class GenAiObservabilityImpl {
 
+    private static final Logger LOG = LoggerFactory.getLogger(GenAiObservabilityImpl.class);
     private static final GenAiObservation NOOP = new NoopGenAiObservation();
     private static final String CLIENT_SPAN_KIND = "CLIENT";
     private static final String METER_REGISTRY_CLASS = "io.micrometer.core.instrument.MeterRegistry";
     private static final String MICROMETER_SUPPORT_CLASS
             = "org.apache.camel.component.ai.observability.GenAiMicrometerSupport";
+    private static final GenAiMetricsBackend NO_METRICS_BACKEND = new NoMetricsBackend();
+    private static final ConcurrentMap<CamelContext, GenAiMetricsBackend> METRICS_BACKENDS = new ConcurrentHashMap<>();
 
     private GenAiObservabilityImpl() {
     }
@@ -47,20 +54,27 @@ public final class GenAiObservabilityImpl {
     public static GenAiObservation start(Exchange exchange, GenAiObservationContext context) {
         Tracer tracer = exchange.getContext().hasService(Tracer.class);
         GenAiMetricsBackend metricsBackend = resolveMetricsBackend(exchange.getContext());
-        if (tracer == null && (metricsBackend == null || !metricsBackend.isAvailable())) {
+        if (tracer == null && !metricsBackend.isAvailable()) {
             return NOOP;
         }
         return new DefaultGenAiObservation(exchange, context, tracer, metricsBackend);
     }
 
     private static GenAiMetricsBackend resolveMetricsBackend(CamelContext camelContext) {
+        return METRICS_BACKENDS.computeIfAbsent(camelContext, GenAiObservabilityImpl::createMetricsBackend);
+    }
+
+    private static GenAiMetricsBackend createMetricsBackend(CamelContext camelContext) {
         try {
             Class.forName(METER_REGISTRY_CLASS);
             Class<?> supportClass = Class.forName(MICROMETER_SUPPORT_CLASS);
             Constructor<?> constructor = supportClass.getDeclaredConstructor(CamelContext.class);
             return (GenAiMetricsBackend) constructor.newInstance(camelContext);
         } catch (ReflectiveOperationException | LinkageError e) {
-            return null;
+            if (LOG.isDebugEnabled()) {
+                LOG.debug("Micrometer metrics backend unavailable for GenAI observability", e);
+            }
+            return NO_METRICS_BACKEND;
         }
     }
 
@@ -138,7 +152,7 @@ public final class GenAiObservabilityImpl {
         }
 
         private void recordMetrics() {
-            if (metricsBackend == null) {
+            if (!metricsBackend.isAvailable()) {
                 return;
             }
             metricsBackend.recordMetrics(context, usage, error, startNanos);
@@ -186,6 +200,18 @@ public final class GenAiObservabilityImpl {
 
         @Override
         public void close() {
+            // noop
+        }
+    }
+
+    private static final class NoMetricsBackend implements GenAiMetricsBackend {
+        @Override
+        public boolean isAvailable() {
+            return false;
+        }
+
+        @Override
+        public void recordMetrics(GenAiObservationContext context, GenAiUsage usage, Throwable error, long startNanos) {
             // noop
         }
     }

@@ -107,9 +107,11 @@ public final class GenAiModelResolver {
         if (packageName.startsWith("dev.langchain4j.model.azure")) {
             return "azure.ai.openai";
         }
-        if (packageName.startsWith("dev.langchain4j.model.vertexai")
-                || packageName.startsWith("dev.langchain4j.model.google")) {
+        if (packageName.startsWith("dev.langchain4j.model.vertexai")) {
             return "gcp.vertex_ai";
+        }
+        if (packageName.startsWith("dev.langchain4j.model.google")) {
+            return "google";
         }
         if (packageName.startsWith("dev.langchain4j.model.mistralai")) {
             return "mistral_ai";
