@@ -22,6 +22,7 @@ import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ExecutorService;
 
@@ -66,6 +67,7 @@ public class RecipientListProcessor extends MulticastProcessor {
 
     private boolean ignoreInvalidEndpoints;
     private final Expression expression;
+    private Set<String> allowedSchemes;
     private final String delimiter;
     private final ProducerCache producerCache;
     private int cacheSize;
@@ -188,6 +190,10 @@ public class RecipientListProcessor extends MulticastProcessor {
         this.ignoreInvalidEndpoints = ignoreInvalidEndpoints;
     }
 
+    public void setAllowedSchemes(String allowedSchemes) {
+        this.allowedSchemes = ProcessorHelper.parseAllowedSchemes(allowedSchemes);
+    }
+
     @Override
     protected Iterable<ProcessorExchangePair> createProcessorExchangePairs(Exchange exchange)
             throws Exception {
@@ -251,8 +257,10 @@ public class RecipientListProcessor extends MulticastProcessor {
         Endpoint endpoint;
         Producer producer;
         ExchangePattern pattern;
+        recipient = prepareRecipient(exchange, recipient);
+        // enforce the optional allowed-schemes allow-list before the ignoreInvalidEndpoints catch (CAMEL-24298)
+        ProcessorHelper.checkAllowedSchemes(allowedSchemes, recipient);
         try {
-            recipient = prepareRecipient(exchange, recipient);
             Endpoint existing = getExistingEndpoint(exchange, recipient);
             if (existing == null) {
                 endpoint = resolveEndpoint(exchange, recipient, prototype);

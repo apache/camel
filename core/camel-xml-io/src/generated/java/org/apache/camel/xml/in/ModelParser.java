@@ -373,6 +373,7 @@ public class ModelParser extends BaseParser {
     }
     protected DynamicRouterDefinition doParseDynamicRouterDefinition() throws IOException, XmlPullParserException {
         return doParse(new DynamicRouterDefinition(), (def, key, val) -> switch (key) {
+                case "allowedSchemes": def.setAllowedSchemes(val); yield true;
                 case "cacheSize": def.setCacheSize(val); yield true;
                 case "ignoreInvalidEndpoints": def.setIgnoreInvalidEndpoints(val); yield true;
                 case "uriDelimiter": def.setUriDelimiter(val); yield true;
@@ -386,6 +387,7 @@ public class ModelParser extends BaseParser {
                 case "aggregationStrategyMethodAllowNull": def.setAggregationStrategyMethodAllowNull(val); yield true;
                 case "aggregationStrategyMethodName": def.setAggregationStrategyMethodName(val); yield true;
                 case "allowOptimisedComponents": def.setAllowOptimisedComponents(val); yield true;
+                case "allowedSchemes": def.setAllowedSchemes(val); yield true;
                 case "autoStartComponents": def.setAutoStartComponents(val); yield true;
                 case "cacheSize": def.setCacheSize(val); yield true;
                 case "ignoreInvalidEndpoint": def.setIgnoreInvalidEndpoint(val); yield true;
@@ -683,6 +685,7 @@ public class ModelParser extends BaseParser {
                 case "aggregationStrategyMethodAllowNull": def.setAggregationStrategyMethodAllowNull(val); yield true;
                 case "aggregationStrategyMethodName": def.setAggregationStrategyMethodName(val); yield true;
                 case "allowOptimisedComponents": def.setAllowOptimisedComponents(val); yield true;
+                case "allowedSchemes": def.setAllowedSchemes(val); yield true;
                 case "autoStartComponents": def.setAutoStartComponents(val); yield true;
                 case "cacheSize": def.setCacheSize(val); yield true;
                 case "ignoreInvalidEndpoint": def.setIgnoreInvalidEndpoint(val); yield true;
@@ -728,6 +731,7 @@ public class ModelParser extends BaseParser {
                 case "aggregationStrategy": def.setAggregationStrategy(val); yield true;
                 case "aggregationStrategyMethodAllowNull": def.setAggregationStrategyMethodAllowNull(val); yield true;
                 case "aggregationStrategyMethodName": def.setAggregationStrategyMethodName(val); yield true;
+                case "allowedSchemes": def.setAllowedSchemes(val); yield true;
                 case "cacheSize": def.setCacheSize(val); yield true;
                 case "delimiter": def.setDelimiter(val); yield true;
                 case "executorService": def.setExecutorService(val); yield true;
@@ -1062,6 +1066,7 @@ public class ModelParser extends BaseParser {
     }
     protected RoutingSlipDefinition doParseRoutingSlipDefinition() throws IOException, XmlPullParserException {
         return doParse(new RoutingSlipDefinition(), (def, key, val) -> switch (key) {
+                case "allowedSchemes": def.setAllowedSchemes(val); yield true;
                 case "cacheSize": def.setCacheSize(val); yield true;
                 case "ignoreInvalidEndpoints": def.setIgnoreInvalidEndpoints(val); yield true;
                 case "uriDelimiter": def.setUriDelimiter(val); yield true;

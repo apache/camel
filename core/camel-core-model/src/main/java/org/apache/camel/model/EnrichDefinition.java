@@ -90,6 +90,13 @@ public class EnrichDefinition extends ExpressionNode
     @Metadata(label = "advanced", defaultValue = "true", javaType = "java.lang.Boolean",
               description = "Whether to auto startup components when enricher is starting up.")
     private String autoStartComponents;
+    @XmlAttribute
+    @Metadata(label = "advanced,security",
+              description = "Sets an optional comma-separated allow-list of component schemes that the dynamic recipient"
+                            + " may resolve to (e.g. http,https). When set, a dynamic endpoint whose scheme is not in the"
+                            + " list is rejected. This is a defence-in-depth restriction, useful for low-code / Kamelet"
+                            + " deployments; by default (unset) any scheme is allowed.")
+    private String allowedSchemes;
 
     public EnrichDefinition() {
         this((AggregationStrategy) null);
@@ -113,6 +120,7 @@ public class EnrichDefinition extends ExpressionNode
         this.ignoreInvalidEndpoint = source.ignoreInvalidEndpoint;
         this.allowOptimisedComponents = source.allowOptimisedComponents;
         this.autoStartComponents = source.autoStartComponents;
+        this.allowedSchemes = source.allowedSchemes;
     }
 
     @Override
@@ -165,6 +173,18 @@ public class EnrichDefinition extends ExpressionNode
     @Override
     public EnrichDefinition aggregationStrategy(AggregationStrategy aggregationStrategy) {
         setAggregationStrategy(aggregationStrategy);
+        return this;
+    }
+
+    /**
+     * Sets an optional comma-separated allow-list of component schemes that the dynamic resource may resolve to (e.g.
+     * http,https). When set, a dynamic endpoint whose scheme is not in the list is rejected. By default (unset) any
+     * scheme is allowed.
+     *
+     * @return the builder
+     */
+    public EnrichDefinition allowedSchemes(String allowedSchemes) {
+        setAllowedSchemes(allowedSchemes);
         return this;
     }
 
@@ -329,6 +349,14 @@ public class EnrichDefinition extends ExpressionNode
 
     public void setAggregationStrategy(String aggregationStrategy) {
         this.aggregationStrategy = aggregationStrategy;
+    }
+
+    public String getAllowedSchemes() {
+        return allowedSchemes;
+    }
+
+    public void setAllowedSchemes(String allowedSchemes) {
+        this.allowedSchemes = allowedSchemes;
     }
 
     public void setAggregationStrategy(AggregationStrategy aggregationStrategy) {

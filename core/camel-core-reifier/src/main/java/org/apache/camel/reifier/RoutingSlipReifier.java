@@ -45,6 +45,7 @@ public class RoutingSlipReifier extends ExpressionReifier<RoutingSlipDefinition<
         if (definition.getIgnoreInvalidEndpoints() != null) {
             routingSlip.setIgnoreInvalidEndpoints(parseBoolean(definition.getIgnoreInvalidEndpoints(), false));
         }
+        routingSlip.setAllowedSchemes(parseString(definition.getAllowedSchemes()));
         Integer num = parseInt(definition.getCacheSize());
         if (num != null) {
             routingSlip.setCacheSize(num);

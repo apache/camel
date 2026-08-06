@@ -65,6 +65,7 @@ public class EnrichReifier extends ExpressionReifier<EnrichDefinition> {
         enricher.setVariableReceive(parseString(definition.getVariableReceive()));
         enricher.setShareUnitOfWork(parseBoolean(definition.getShareUnitOfWork(), false));
         enricher.setIgnoreInvalidEndpoint(parseBoolean(definition.getIgnoreInvalidEndpoint(), false));
+        enricher.setAllowedSchemes(parseString(definition.getAllowedSchemes()));
         enricher.setAggregateOnException(parseBoolean(definition.getAggregateOnException(), false));
         Integer num = parseInt(definition.getCacheSize());
         if (num != null) {

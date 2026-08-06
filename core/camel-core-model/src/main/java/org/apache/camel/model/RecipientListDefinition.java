@@ -109,6 +109,13 @@ public class RecipientListDefinition<Type extends ProcessorDefinition<Type>> ext
     @Metadata(label = "advanced", javaType = "java.lang.Boolean",
               description = "Shares the UnitOfWork with the parent and each of the sub messages. Recipient List will by default not share unit of work between the parent exchange and each recipient exchange. This means each sub exchange has its own individual unit of work.")
     private String shareUnitOfWork;
+    @XmlAttribute
+    @Metadata(label = "advanced,security",
+              description = "Sets an optional comma-separated allow-list of component schemes that the dynamic recipient"
+                            + " may resolve to (e.g. http,https). When set, a dynamic endpoint whose scheme is not in the"
+                            + " list is rejected. This is a defence-in-depth restriction, useful for low-code / Kamelet"
+                            + " deployments; by default (unset) any scheme is allowed.")
+    private String allowedSchemes;
 
     public RecipientListDefinition() {
     }
@@ -133,6 +140,7 @@ public class RecipientListDefinition<Type extends ProcessorDefinition<Type>> ext
         this.onPrepare = source.onPrepare;
         this.cacheSize = source.cacheSize;
         this.shareUnitOfWork = source.shareUnitOfWork;
+        this.allowedSchemes = source.allowedSchemes;
     }
 
     public RecipientListDefinition(ExpressionDefinition expression) {
@@ -193,6 +201,18 @@ public class RecipientListDefinition<Type extends ProcessorDefinition<Type>> ext
      */
     public RecipientListDefinition<Type> aggregationStrategy(AggregationStrategy aggregationStrategy) {
         setAggregationStrategy(aggregationStrategy);
+        return this;
+    }
+
+    /**
+     * Sets an optional comma-separated allow-list of component schemes that the dynamic recipient may resolve to (e.g.
+     * http,https). When set, a dynamic endpoint whose scheme is not in the list is rejected. By default (unset) any
+     * scheme is allowed.
+     *
+     * @return the builder
+     */
+    public RecipientListDefinition<Type> allowedSchemes(String allowedSchemes) {
+        setAllowedSchemes(allowedSchemes);
         return this;
     }
 
@@ -574,6 +594,14 @@ public class RecipientListDefinition<Type extends ProcessorDefinition<Type>> ext
 
     public void setDelimiter(String delimiter) {
         this.delimiter = delimiter;
+    }
+
+    public String getAllowedSchemes() {
+        return allowedSchemes;
+    }
+
+    public void setAllowedSchemes(String allowedSchemes) {
+        this.allowedSchemes = allowedSchemes;
     }
 
     public String getParallelProcessing() {

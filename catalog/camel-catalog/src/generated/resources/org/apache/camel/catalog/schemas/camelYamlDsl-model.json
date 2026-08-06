@@ -2174,6 +2174,16 @@
         "index" : 7,
         "group" : "advanced",
         "label" : "advanced"
+      }, {
+        "name" : "allowedSchemes",
+        "type" : "string",
+        "description" : "Sets an optional comma-separated allow-list of component schemes that the dynamic recipient may resolve to (e.g. http,https). When set, a dynamic endpoint whose scheme is not in the list is rejected. This is a defence-in-depth restriction, useful for low-code / Kamelet deployments; by default (unset) any scheme is allowed.",
+        "title" : "Allowed Schemes",
+        "displayName" : "Allowed Schemes",
+        "kind" : "attribute",
+        "index" : 8,
+        "group" : "security",
+        "label" : "advanced,security"
       } ]
     },
     "enrich" : {
@@ -2344,6 +2354,16 @@
         "index" : 15,
         "group" : "advanced",
         "label" : "advanced"
+      }, {
+        "name" : "allowedSchemes",
+        "type" : "string",
+        "description" : "Sets an optional comma-separated allow-list of component schemes that the dynamic recipient may resolve to (e.g. http,https). When set, a dynamic endpoint whose scheme is not in the list is rejected. This is a defence-in-depth restriction, useful for low-code / Kamelet deployments; by default (unset) any scheme is allowed.",
+        "title" : "Allowed Schemes",
+        "displayName" : "Allowed Schemes",
+        "kind" : "attribute",
+        "index" : 16,
+        "group" : "security",
+        "label" : "advanced,security"
       } ]
     },
     "errorHandler" : {
@@ -4994,6 +5014,16 @@
         "index" : 14,
         "group" : "advanced",
         "label" : "advanced"
+      }, {
+        "name" : "allowedSchemes",
+        "type" : "string",
+        "description" : "Sets an optional comma-separated allow-list of component schemes that the dynamic recipient may resolve to (e.g. http,https). When set, a dynamic endpoint whose scheme is not in the list is rejected. This is a defence-in-depth restriction, useful for low-code / Kamelet deployments; by default (unset) any scheme is allowed.",
+        "title" : "Allowed Schemes",
+        "displayName" : "Allowed Schemes",
+        "kind" : "attribute",
+        "index" : 15,
+        "group" : "security",
+        "label" : "advanced,security"
       } ]
     },
     "process" : {
@@ -5316,6 +5346,16 @@
         "index" : 19,
         "group" : "advanced",
         "label" : "advanced"
+      }, {
+        "name" : "allowedSchemes",
+        "type" : "string",
+        "description" : "Sets an optional comma-separated allow-list of component schemes that the dynamic recipient may resolve to (e.g. http,https). When set, a dynamic endpoint whose scheme is not in the list is rejected. This is a defence-in-depth restriction, useful for low-code / Kamelet deployments; by default (unset) any scheme is allowed.",
+        "title" : "Allowed Schemes",
+        "displayName" : "Allowed Schemes",
+        "kind" : "attribute",
+        "index" : 20,
+        "group" : "security",
+        "label" : "advanced,security"
       } ]
     },
     "redeliveryPolicy" : {
@@ -6907,6 +6947,16 @@
         "index" : 7,
         "group" : "advanced",
         "label" : "advanced"
+      }, {
+        "name" : "allowedSchemes",
+        "type" : "string",
+        "description" : "Sets an optional comma-separated allow-list of component schemes that the dynamic recipient may resolve to (e.g. http,https). When set, a dynamic endpoint whose scheme is not in the list is rejected. This is a defence-in-depth restriction, useful for low-code / Kamelet deployments; by default (unset) any scheme is allowed.",
+        "title" : "Allowed Schemes",
+        "displayName" : "Allowed Schemes",
+        "kind" : "attribute",
+        "index" : 8,
+        "group" : "security",
+        "label" : "advanced,security"
       } ]
     },
     "saga" : {

@@ -1871,6 +1871,7 @@ public class JavaDslModelWriter extends JavaDslModelWriterSupport {
         doWriteAttribute(sb, "uriDelimiter", def.getUriDelimiter(), ",");
         doWriteAttribute(sb, "ignoreInvalidEndpoints", def.getIgnoreInvalidEndpoints(), null);
         doWriteAttribute(sb, "cacheSize", def.getCacheSize(), null);
+        doWriteAttribute(sb, "allowedSchemes", def.getAllowedSchemes(), null);
         doWriteExpressionNodeElements(sb, def);
     }
     protected void doWriteEnrichDefinition(StringBuilder sb, EnrichDefinition def) {
@@ -1886,6 +1887,7 @@ public class JavaDslModelWriter extends JavaDslModelWriterSupport {
         doWriteAttribute(sb, "ignoreInvalidEndpoint", def.getIgnoreInvalidEndpoint(), null);
         doWriteAttribute(sb, "allowOptimisedComponents", def.getAllowOptimisedComponents(), "true");
         doWriteAttribute(sb, "autoStartComponents", def.getAutoStartComponents(), "true");
+        doWriteAttribute(sb, "allowedSchemes", def.getAllowedSchemes(), null);
         doWriteExpressionNodeElements(sb, def);
     }
     protected void doWriteErrorHandlerDefinition(StringBuilder sb, ErrorHandlerDefinition def) {
@@ -2212,6 +2214,7 @@ public class JavaDslModelWriter extends JavaDslModelWriterSupport {
         doWriteAttribute(sb, "ignoreInvalidEndpoint", def.getIgnoreInvalidEndpoint(), null);
         doWriteAttribute(sb, "allowOptimisedComponents", def.getAllowOptimisedComponents(), "true");
         doWriteAttribute(sb, "autoStartComponents", def.getAutoStartComponents(), "true");
+        doWriteAttribute(sb, "allowedSchemes", def.getAllowedSchemes(), null);
         doWriteExpressionNodeElements(sb, def);
     }
     protected void doWriteProcessDefinition(StringBuilder sb, ProcessDefinition def) {
@@ -2253,6 +2256,7 @@ public class JavaDslModelWriter extends JavaDslModelWriterSupport {
         doWriteAttribute(sb, "onPrepare", def.getOnPrepare(), null);
         doWriteAttribute(sb, "cacheSize", def.getCacheSize(), null);
         doWriteAttribute(sb, "shareUnitOfWork", def.getShareUnitOfWork(), null);
+        doWriteAttribute(sb, "allowedSchemes", def.getAllowedSchemes(), null);
         doWriteExpressionNodeElements(sb, def);
     }
     protected void doWriteRedeliveryPolicyDefinition(StringBuilder sb, RedeliveryPolicyDefinition def) {
@@ -2446,6 +2450,7 @@ public class JavaDslModelWriter extends JavaDslModelWriterSupport {
         doWriteAttribute(sb, "uriDelimiter", def.getUriDelimiter(), ",");
         doWriteAttribute(sb, "ignoreInvalidEndpoints", def.getIgnoreInvalidEndpoints(), null);
         doWriteAttribute(sb, "cacheSize", def.getCacheSize(), null);
+        doWriteAttribute(sb, "allowedSchemes", def.getAllowedSchemes(), null);
         doWriteExpressionNodeElements(sb, def);
     }
     protected void doWriteSagaDefinition(StringBuilder sb, SagaDefinition def) {

@@ -956,6 +956,7 @@ public class ModelWriter extends BaseWriter {
         doWriteAttribute("uriDelimiter", def.getUriDelimiter(), ",");
         doWriteAttribute("ignoreInvalidEndpoints", def.getIgnoreInvalidEndpoints(), null);
         doWriteAttribute("cacheSize", def.getCacheSize(), null);
+        doWriteAttribute("allowedSchemes", def.getAllowedSchemes(), null);
         doWriteExpressionNodeElements(def);
         endElement(name);
     }
@@ -973,6 +974,7 @@ public class ModelWriter extends BaseWriter {
         doWriteAttribute("ignoreInvalidEndpoint", def.getIgnoreInvalidEndpoint(), null);
         doWriteAttribute("allowOptimisedComponents", def.getAllowOptimisedComponents(), "true");
         doWriteAttribute("autoStartComponents", def.getAutoStartComponents(), "true");
+        doWriteAttribute("allowedSchemes", def.getAllowedSchemes(), null);
         doWriteExpressionNodeElements(def);
         endElement(name);
     }
@@ -1375,6 +1377,7 @@ public class ModelWriter extends BaseWriter {
         doWriteAttribute("ignoreInvalidEndpoint", def.getIgnoreInvalidEndpoint(), null);
         doWriteAttribute("allowOptimisedComponents", def.getAllowOptimisedComponents(), "true");
         doWriteAttribute("autoStartComponents", def.getAutoStartComponents(), "true");
+        doWriteAttribute("allowedSchemes", def.getAllowedSchemes(), null);
         doWriteExpressionNodeElements(def);
         endElement(name);
     }
@@ -1428,6 +1431,7 @@ public class ModelWriter extends BaseWriter {
         doWriteAttribute("onPrepare", def.getOnPrepare(), null);
         doWriteAttribute("cacheSize", def.getCacheSize(), null);
         doWriteAttribute("shareUnitOfWork", def.getShareUnitOfWork(), null);
+        doWriteAttribute("allowedSchemes", def.getAllowedSchemes(), null);
         doWriteExpressionNodeElements(def);
         endElement(name);
     }
@@ -1669,6 +1673,7 @@ public class ModelWriter extends BaseWriter {
         doWriteAttribute("uriDelimiter", def.getUriDelimiter(), ",");
         doWriteAttribute("ignoreInvalidEndpoints", def.getIgnoreInvalidEndpoints(), null);
         doWriteAttribute("cacheSize", def.getCacheSize(), null);
+        doWriteAttribute("allowedSchemes", def.getAllowedSchemes(), null);
         doWriteExpressionNodeElements(def);
         endElement(name);
     }
