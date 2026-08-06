@@ -912,11 +912,20 @@ class SourceViewer {
 
     String findParentYamlKey(int fromRow) {
         String cursorLine = editState.getLine(fromRow);
-        int cursorIndent = countLeadingSpaces(cursorLine);
 
-        if (cursorLine.isBlank() && cursorIndent == 0) {
-            cursorIndent = deriveBlankLineIndent(fromRow);
+        // on a blank line, use the scope line (the highlighted EIP) as parent
+        if (cursorLine.isBlank()) {
+            int scopeRow = findScopeLineRow(fromRow);
+            if (scopeRow >= 0) {
+                String scopeLine = editState.getLine(scopeRow);
+                String scopeKey = extractEipName(scopeLine.trim());
+                if (scopeKey != null) {
+                    return dashToCamelCase(scopeKey);
+                }
+            }
         }
+
+        int cursorIndent = countLeadingSpaces(cursorLine);
 
         // walk up to find parent key at lower indent
         for (int i = fromRow; i >= 0; i--) {
@@ -928,7 +937,6 @@ class SourceViewer {
             if (indent < cursorIndent) {
                 String key = extractEipName(line.trim());
                 if (key != null) {
-                    // "steps" in YAML maps to the "steps" node in the tree
                     return dashToCamelCase(key);
                 }
                 break;
@@ -1093,7 +1101,7 @@ class SourceViewer {
         int cursorIndent = countLeadingSpaces(cursorLine);
 
         if (cursorLine.isBlank()) {
-            cursorIndent = deriveBlankLineIndent(cursorRow);
+            cursorIndent = editState.cursorCol();
         }
 
         // walk up looking for the scope line
@@ -1280,6 +1288,9 @@ class SourceViewer {
 
     private void openYamlAutocomplete() {
         int row = editState.cursorRow();
+        if (findScopeLineRow(row) < 0) {
+            return;
+        }
         String lineText = editState.getLine(row);
         String trimmed = lineText.trim();
         if (trimmed.startsWith("- ")) {
@@ -1883,9 +1894,14 @@ class SourceViewer {
         List<Span> titleSpans = new ArrayList<>();
         String info = title != null ? title : "";
         titleSpans.add(Span.styled(" Edit [" + info + (dirty ? " *" : "") + "] ", ts));
+        int row = editState.cursorRow() + 1;
+        int col = editState.cursorCol() + 1;
+        Title posTitle = Title.from(
+                Line.from(Span.styled(" row:" + row + " col:" + col + " ", Style.EMPTY.dim()))).right();
         Block.Builder blockBuilder = Block.builder()
                 .borderType(BorderType.ROUNDED).borders(Borders.ALL)
-                .title(Title.from(Line.from(titleSpans)));
+                .title(Title.from(Line.from(titleSpans)))
+                .titleBottom(posTitle);
         if (borderStyle != null) {
             blockBuilder.borderStyle(borderStyle);
         }
