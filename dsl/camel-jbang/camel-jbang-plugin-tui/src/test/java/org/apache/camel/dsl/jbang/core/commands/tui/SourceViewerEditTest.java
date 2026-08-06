@@ -150,6 +150,9 @@ class SourceViewerEditTest {
         for (char ch : "CHANGED".toCharArray()) {
             viewer.handleKeyEvent(KeyEvent.ofChar(ch, KeyModifiers.NONE));
         }
+        // first Esc shows discard warning, second Esc confirms
+        viewer.handleKeyEvent(KeyEvent.ofKey(KeyCode.ESCAPE, KeyModifiers.NONE));
+        assertThat(viewer.isEditMode()).isTrue();
         viewer.handleKeyEvent(KeyEvent.ofKey(KeyCode.ESCAPE, KeyModifiers.NONE));
 
         assertThat(viewer.isEditMode()).isFalse();

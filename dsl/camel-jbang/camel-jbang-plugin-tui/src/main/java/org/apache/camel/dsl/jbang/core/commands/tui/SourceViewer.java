@@ -140,6 +140,7 @@ class SourceViewer {
     /** Markdown render mode prior to entering edit; restored on cancel. */
     private boolean markdownModeBeforeEdit;
     private boolean dirty;
+    private boolean pendingDiscard;
     private BiConsumer<String, Boolean> notificationCallback;
     private AutocompletePopup.AutocompleteProvider autocompleteProvider;
     private AutocompletePopup.ValueProvider autocompleteValueProvider;
@@ -279,6 +280,14 @@ class SourceViewer {
             autocompletePopup = null;
             return true;
         }
+        if (dirty && !pendingDiscard) {
+            pendingDiscard = true;
+            if (notificationCallback != null) {
+                notificationCallback.accept("Unsaved changes will be lost — press Esc again to discard", true);
+            }
+            return true;
+        }
+        pendingDiscard = false;
         exitEditMode();
         return true;
     }
@@ -468,7 +477,18 @@ class SourceViewer {
             }
             return true;
         }
+        if (!ke.isCancel()) {
+            pendingDiscard = false;
+        }
         if (ke.isCancel()) {
+            if (dirty && !pendingDiscard) {
+                pendingDiscard = true;
+                if (notificationCallback != null) {
+                    notificationCallback.accept("Unsaved changes will be lost — press Esc again to discard", true);
+                }
+                return true;
+            }
+            pendingDiscard = false;
             exitEditMode();
             return true;
         }
@@ -577,6 +597,7 @@ class SourceViewer {
         editState.clear();
         autocompletePopup = null;
         validationErrors = null;
+        pendingDiscard = false;
         if (wasEditing && isMarkdownFile) {
             markdownMode = markdownModeBeforeEdit;
         }
