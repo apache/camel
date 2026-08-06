@@ -226,6 +226,12 @@ public class PrepareCatalogMojo extends AbstractMojo {
     protected File xmlioSchemaDir;
 
     /**
+     * The directory where the camel-yaml-dsl model schema are
+     */
+    @Parameter(defaultValue = "${project.basedir}/../../dsl/camel-yaml-dsl/camel-yaml-dsl/src/generated/resources/schema")
+    protected File yamlDslSchemaDir;
+
+    /**
      * The directory where the camel-main metadata are
      */
     @Parameter(defaultValue = "${project.basedir}/../../core/camel-main/target/classes/META-INF")
@@ -1026,6 +1032,11 @@ public class PrepareCatalogMojo extends AbstractMojo {
         copyFile(this.springSchemaDir.toPath().resolve("camel-spring.xsd"), schemasOutDir);
         getLog().info("Copying XML-IO schema");
         copyFile(this.xmlioSchemaDir.toPath().resolve("camel-xml-io.xsd"), schemasOutDir);
+        Path yamlModel = this.yamlDslSchemaDir.toPath().resolve("camelYamlDsl-model.json");
+        if (Files.exists(yamlModel)) {
+            getLog().info("Copying YAML DSL model");
+            copyFile(yamlModel, schemasOutDir);
+        }
     }
 
     protected void executeMain() throws Exception {

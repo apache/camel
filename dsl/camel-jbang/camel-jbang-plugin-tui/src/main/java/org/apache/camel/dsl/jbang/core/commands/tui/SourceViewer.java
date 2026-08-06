@@ -144,6 +144,7 @@ class SourceViewer {
     private BiConsumer<String, Boolean> notificationCallback;
     private AutocompletePopup.AutocompleteProvider autocompleteProvider;
     private AutocompletePopup.ValueProvider autocompleteValueProvider;
+    private java.util.function.Predicate<String> listItemNodeChecker;
     private AutocompletePopup autocompletePopup;
     private boolean validateOnSave = true;
     private org.apache.camel.dsl.yaml.validator.YamlValidator yamlValidator;
@@ -183,6 +184,10 @@ class SourceViewer {
 
     void setAutocompleteValueProvider(AutocompletePopup.ValueProvider provider) {
         this.autocompleteValueProvider = provider;
+    }
+
+    void setListItemNodeChecker(java.util.function.Predicate<String> checker) {
+        this.listItemNodeChecker = checker;
     }
 
     void setValidateOnSave(boolean validateOnSave) {
@@ -284,11 +289,14 @@ class SourceViewer {
             autocompletePopup = null;
             return true;
         }
-        if (dirty && !pendingDiscard) {
+        if (pendingDiscard) {
+            pendingDiscard = false;
+            return true;
+        }
+        if (dirty) {
             pendingDiscard = true;
             return true;
         }
-        pendingDiscard = false;
         exitEditMode();
         return true;
     }
@@ -464,12 +472,13 @@ class SourceViewer {
         }
         if (autocompletePopup != null) {
             boolean wasValueMode = autocompletePopup.isValueMode();
+            boolean wasListItem = autocompletePopup.isListItemInsertion();
             AutocompletePopup.Result result = autocompletePopup.handleKeyEvent(ke);
             if (result == AutocompletePopup.Result.CLOSED) {
                 AutocompletePopup.CompletionItem item = autocompletePopup.consumeSelectedItem();
                 autocompletePopup = null;
                 if (item != null) {
-                    insertCompletion(item, wasValueMode);
+                    insertCompletion(item, wasValueMode, wasListItem);
                 }
             } else if (result == AutocompletePopup.Result.CURSOR_RIGHT) {
                 editState.moveCursorRight();
@@ -478,15 +487,20 @@ class SourceViewer {
             }
             return true;
         }
-        if (!ke.isCancel()) {
-            pendingDiscard = false;
+        if (pendingDiscard) {
+            if (ke.isConfirm()) {
+                pendingDiscard = false;
+                exitEditMode();
+            } else if (ke.isCancel()) {
+                pendingDiscard = false;
+            }
+            return true;
         }
         if (ke.isCancel()) {
-            if (dirty && !pendingDiscard) {
+            if (dirty) {
                 pendingDiscard = true;
                 return true;
             }
-            pendingDiscard = false;
             exitEditMode();
             return true;
         }
@@ -502,8 +516,21 @@ class SourceViewer {
             int prevRow = editState.cursorRow();
             String prevLine = editState.getLine(prevRow);
             int indent = countLeadingSpaces(prevLine);
+            String pt = prevLine.trim();
             editState.insert('\n');
-            if (indent > 0) {
+            if (isCamelYamlFile() && pt.endsWith(":")) {
+                // parent key with no value — indent deeper for children
+                String key = extractEipName(pt);
+                if (listItemNodeChecker != null && key != null
+                        && listItemNodeChecker.test(dashToCamelCase(key))) {
+                    // children are list items (e.g., steps:, root)
+                    int childIndent = indent + (pt.startsWith("- ") ? 4 : 2);
+                    editState.insert(" ".repeat(childIndent) + "- ");
+                } else {
+                    int childIndent = indent + (pt.startsWith("- ") ? 4 : 2);
+                    editState.insert(" ".repeat(childIndent));
+                }
+            } else if (indent > 0) {
                 editState.insert(" ".repeat(indent));
             }
             dirty = true;
@@ -628,15 +655,24 @@ class SourceViewer {
         String cursorLine = editState.getLine(fromRow);
         int cursorIndent = countLeadingSpaces(cursorLine);
 
+        // list items (- key:) are inside steps, not inside parameters
+        if (!cursorLine.isBlank() && cursorLine.trim().startsWith("- ")) {
+            return null;
+        }
+
         // blank lines: find the nearest preceding non-blank line for context
         if (cursorLine.isBlank()) {
             for (int i = fromRow - 1; i >= 0; i--) {
                 String prev = editState.getLine(i);
                 if (!prev.isBlank()) {
-                    if (prev.trim().startsWith("parameters:")) {
+                    String pt = prev.trim();
+                    if (pt.startsWith("parameters:")) {
                         // blank line right after parameters: — cursor is inside the block
                         cursorIndent = countLeadingSpaces(prev) + 1;
                         fromRow = i;
+                    } else if (pt.startsWith("- ") || pt.startsWith("steps:")) {
+                        // inside a steps block or list item — not inside parameters
+                        return null;
                     } else {
                         return findEnclosingComponent(i);
                     }
@@ -662,7 +698,16 @@ class SourceViewer {
                 break;
             }
             if (i < fromRow && indent < cursorIndent && !trimmed.startsWith("#")) {
+                // stop if we hit a structural boundary (steps:, from:, etc.)
                 break;
+            }
+            // also stop if we hit a list item at a shallower or equal indent — we've left the parameters scope
+            if (i < fromRow && indent <= cursorIndent) {
+                String key = extractEipName(trimmed);
+                if (key != null && ("steps".equals(key) || "from".equals(key)
+                        || trimmed.startsWith("- "))) {
+                    break;
+                }
             }
         }
 
@@ -841,34 +886,36 @@ class SourceViewer {
     record YamlEipContext(String eipName) {
     }
 
+    int deriveBlankLineIndent(int fromRow) {
+        return deriveIndentFromPredecessor(fromRow);
+    }
+
+    private int deriveInsertionIndent(int fromRow) {
+        return deriveIndentFromPredecessor(fromRow);
+    }
+
+    private int deriveIndentFromPredecessor(int fromRow) {
+        for (int i = fromRow - 1; i >= 0; i--) {
+            String prev = editState.getLine(i);
+            if (prev.isBlank()) {
+                continue;
+            }
+            int indent = countLeadingSpaces(prev);
+            String pt = prev.trim();
+            if (pt.endsWith(":")) {
+                return indent + (pt.startsWith("- ") ? 4 : 2);
+            }
+            return indent;
+        }
+        return 0;
+    }
+
     String findParentYamlKey(int fromRow) {
         String cursorLine = editState.getLine(fromRow);
         int cursorIndent = countLeadingSpaces(cursorLine);
 
         if (cursorLine.isBlank() && cursorIndent == 0) {
-            int lineCount = editState.lineCount();
-            for (int i = fromRow + 1; i < lineCount; i++) {
-                String next = editState.getLine(i);
-                if (!next.isBlank()) {
-                    cursorIndent = countLeadingSpaces(next);
-                    break;
-                }
-            }
-            if (cursorIndent == 0) {
-                for (int i = fromRow - 1; i >= 0; i--) {
-                    String prev = editState.getLine(i);
-                    if (!prev.isBlank()) {
-                        cursorIndent = countLeadingSpaces(prev);
-                        String pt = prev.trim();
-                        if (pt.startsWith("- ") && pt.endsWith(":")) {
-                            cursorIndent += 4;
-                        } else if (pt.endsWith(":")) {
-                            cursorIndent += 2;
-                        }
-                        break;
-                    }
-                }
-            }
+            cursorIndent = deriveBlankLineIndent(fromRow);
         }
 
         // walk up to find parent key at lower indent
@@ -898,32 +945,8 @@ class SourceViewer {
         String cursorLine = editState.getLine(fromRow);
         int cursorIndent = countLeadingSpaces(cursorLine);
 
-        // blank lines: derive indent from context
-        if (cursorLine.isBlank()) {
-            if (cursorIndent == 0) {
-                // truly empty line — look at successor first, then predecessor
-                int succIndent = -1;
-                int lineCount = editState.lineCount();
-                for (int i = fromRow + 1; i < lineCount; i++) {
-                    String next = editState.getLine(i);
-                    if (!next.isBlank()) {
-                        succIndent = countLeadingSpaces(next);
-                        break;
-                    }
-                }
-                if (succIndent > 0) {
-                    cursorIndent = succIndent;
-                } else {
-                    for (int i = fromRow - 1; i >= 0; i--) {
-                        String prev = editState.getLine(i);
-                        if (!prev.isBlank()) {
-                            // treat cursor as sibling of predecessor
-                            cursorIndent = countLeadingSpaces(prev);
-                            break;
-                        }
-                    }
-                }
-            }
+        if (cursorLine.isBlank() && cursorIndent == 0) {
+            cursorIndent = deriveBlankLineIndent(fromRow);
         }
 
         // if cursor is inside a parameters: block, defer to component completion
@@ -972,29 +995,8 @@ class SourceViewer {
         String cursorLine = editState.getLine(fromRow);
         int cursorIndent = countLeadingSpaces(cursorLine);
 
-        // for blank lines, check both directions and use the deeper indent (sibling level)
-        if (cursorLine.isBlank()) {
-            int succIndent = -1;
-            int predIndent = -1;
-            int lineCount2 = editState.lineCount();
-            for (int i = fromRow + 1; i < lineCount2; i++) {
-                String next = editState.getLine(i);
-                if (!next.isBlank()) {
-                    succIndent = countLeadingSpaces(next);
-                    break;
-                }
-            }
-            for (int i = fromRow - 1; i >= 0; i--) {
-                String prev = editState.getLine(i);
-                if (!prev.isBlank()) {
-                    predIndent = countLeadingSpaces(prev);
-                    break;
-                }
-            }
-            cursorIndent = Math.max(succIndent, predIndent);
-            if (cursorIndent < 0) {
-                cursorIndent = 0;
-            }
+        if (cursorLine.isBlank() && cursorIndent == 0) {
+            cursorIndent = deriveBlankLineIndent(fromRow);
         }
 
         // scan upward for siblings at same indent
@@ -1065,6 +1067,11 @@ class SourceViewer {
             trimmed = trimmed.substring(2).trim();
         }
 
+        // bare list item (- ) with no key yet — no scope
+        if (cursorLine.trim().startsWith("- ") && trimmed.isEmpty()) {
+            return -1;
+        }
+
         // if cursor is on a uri: line, scope is this row
         if (trimmed.startsWith("uri:")) {
             return cursorRow;
@@ -1085,27 +1092,8 @@ class SourceViewer {
 
         int cursorIndent = countLeadingSpaces(cursorLine);
 
-        // for blank lines, derive indent from context
         if (cursorLine.isBlank()) {
-            if (cursorIndent == 0) {
-                int lineCount = editState.lineCount();
-                for (int i = cursorRow + 1; i < lineCount; i++) {
-                    String next = editState.getLine(i);
-                    if (!next.isBlank()) {
-                        cursorIndent = countLeadingSpaces(next);
-                        break;
-                    }
-                }
-                if (cursorIndent == 0) {
-                    for (int i = cursorRow - 1; i >= 0; i--) {
-                        String prev = editState.getLine(i);
-                        if (!prev.isBlank()) {
-                            cursorIndent = countLeadingSpaces(prev);
-                            break;
-                        }
-                    }
-                }
-            }
+            cursorIndent = deriveBlankLineIndent(cursorRow);
         }
 
         // walk up looking for the scope line
@@ -1128,6 +1116,16 @@ class SourceViewer {
                 String eipName = extractEipName(t);
                 if (eipName != null && !STRUCTURAL_KEYS.contains(eipName)) {
                     return i;
+                }
+                // for from:/to: blocks, look for uri: sibling as scope
+                if (eipName != null && ("from".equals(eipName) || CONSUMER_EIPS.contains(eipName)
+                        || PRODUCER_EIPS.contains(eipName))) {
+                    for (int j = i + 1; j < cursorRow; j++) {
+                        String jl = editState.getLine(j);
+                        if (!jl.isBlank() && jl.trim().startsWith("uri:")) {
+                            return j;
+                        }
+                    }
                 }
                 cursorIndent = indent;
             }
@@ -1286,6 +1284,8 @@ class SourceViewer {
         String trimmed = lineText.trim();
         if (trimmed.startsWith("- ")) {
             trimmed = trimmed.substring(2).trim();
+        } else if (trimmed.equals("-")) {
+            trimmed = "";
         }
 
         // try component name completion on uri: lines first
@@ -1321,7 +1321,7 @@ class SourceViewer {
                     }
                 }
             } else {
-                String filter = colonIdx > 0 ? trimmed.substring(0, colonIdx).trim() : trimmed;
+                String filter = trimmed;
                 String role = ctx.consumer() ? "consumer" : "producer";
                 java.util.Set<String> existing = collectExistingParameters(row);
                 String context = "yaml:" + ctx.component() + ":" + role;
@@ -1341,6 +1341,7 @@ class SourceViewer {
         if (autocompleteProvider != null) {
             String parentKey = findParentYamlKey(row);
             int colonIdx = trimmed.indexOf(':');
+
             if (colonIdx > 0) {
                 // value completion
                 String optionName = trimmed.substring(0, colonIdx).trim();
@@ -1370,16 +1371,19 @@ class SourceViewer {
                 if (items != null && !items.isEmpty()) {
                     autocompletePopup = new AutocompletePopup(items, filter, filter);
                     autocompletePopup.setTitlePrefix(parentKey);
+                    if (listItemNodeChecker != null && listItemNodeChecker.test(parentKey)) {
+                        autocompletePopup.setListItemInsertion(true);
+                    }
                 }
             }
         }
     }
 
-    private void insertCompletion(AutocompletePopup.CompletionItem item, boolean valueMode) {
+    private void insertCompletion(AutocompletePopup.CompletionItem item, boolean valueMode, boolean listItem) {
         dirty = true;
         String currentLine = editState.getLine(editState.cursorRow());
         if (isCamelYamlFile()) {
-            insertYamlCompletion(item, valueMode, currentLine);
+            insertYamlCompletion(item, valueMode, currentLine, listItem);
         } else {
             insertPropertiesCompletion(item, valueMode, currentLine);
         }
@@ -1411,34 +1415,14 @@ class SourceViewer {
     }
 
     void insertYamlCompletion(AutocompletePopup.CompletionItem item, boolean valueMode, String currentLine) {
+        insertYamlCompletion(item, valueMode, currentLine, false);
+    }
+
+    private void insertYamlCompletion(
+            AutocompletePopup.CompletionItem item, boolean valueMode, String currentLine, boolean listItem) {
         int indent = countLeadingSpaces(currentLine);
-        // blank lines: derive indent from context
-        if (currentLine.isBlank() && indent == 0) {
-            int row = editState.cursorRow();
-            // look at next non-blank line first (sibling indent)
-            int lineCount = editState.lineCount();
-            for (int i = row + 1; i < lineCount; i++) {
-                String next = editState.getLine(i);
-                if (!next.isBlank()) {
-                    indent = countLeadingSpaces(next);
-                    break;
-                }
-            }
-            if (indent == 0) {
-                // no successor — derive from predecessor
-                for (int i = row - 1; i >= 0; i--) {
-                    String prev = editState.getLine(i);
-                    if (!prev.isBlank()) {
-                        indent = countLeadingSpaces(prev);
-                        String trimmed = prev.trim();
-                        if (trimmed.endsWith(":")) {
-                            // cursor is inside this block — indent deeper
-                            indent += trimmed.startsWith("- ") ? 4 : 2;
-                        }
-                        break;
-                    }
-                }
-            }
+        if (currentLine.isBlank()) {
+            indent = deriveInsertionIndent(editState.cursorRow());
         }
         String indentStr = " ".repeat(indent);
 
@@ -1476,10 +1460,11 @@ class SourceViewer {
                 }
             }
         } else {
-            editState.insert(indentStr + item.key() + ":");
+            String prefix = listItem ? "- " : "";
+            editState.insert(indentStr + prefix + item.key() + ":");
             if ("object".equals(item.type()) || "array".equals(item.type())) {
                 editState.insert('\n');
-                editState.insert(indentStr + "  ");
+                editState.insert(indentStr + (listItem ? "    " : "  "));
             } else {
                 editState.insert(' ');
             }
@@ -1663,12 +1648,13 @@ class SourceViewer {
         if (editMode) {
             if (autocompletePopup != null) {
                 boolean wasValueMode = autocompletePopup.isValueMode();
+                boolean wasListItem = autocompletePopup.isListItemInsertion();
                 AutocompletePopup.Result result = autocompletePopup.handleMouseEvent(me);
                 if (result == AutocompletePopup.Result.CLOSED) {
                     AutocompletePopup.CompletionItem item = autocompletePopup.consumeSelectedItem();
                     autocompletePopup = null;
                     if (item != null) {
-                        insertCompletion(item, wasValueMode);
+                        insertCompletion(item, wasValueMode, wasListItem);
                     }
                 }
                 return true;
@@ -1932,7 +1918,7 @@ class SourceViewer {
                 if (relativeRow >= 0 && relativeRow < inner.height()) {
                     int screenY = inner.top() + relativeRow;
                     Rect lineRect = new Rect(inner.left(), screenY, inner.width(), 1);
-                    frame.buffer().setStyle(lineRect, Style.EMPTY.bold());
+                    frame.buffer().setStyle(lineRect, Style.EMPTY.bold().fg(Theme.accent()));
                 }
             }
         }
@@ -1963,6 +1949,9 @@ class SourceViewer {
             String msg = validationErrors.get(i);
             wrapText(msg, innerW, allLines);
         }
+        allLines.add(Line.empty());
+        allLines.add(Line.from(Span.raw("  "),
+                Span.styled("Esc", Style.EMPTY.bold()), Span.raw(" close")));
 
         int contentH = allLines.size();
         int popupH = Math.min(contentH + 2, area.height() - 4);
@@ -1977,8 +1966,6 @@ class SourceViewer {
         Block block = Block.builder()
                 .borderType(BorderType.ROUNDED).borders(Borders.ALL)
                 .title(Title.from(Line.from(Span.styled(titleText, Theme.error().bold()))))
-                .titleBottom(Title.from(Line.from(
-                        Span.styled(" Esc", Theme.hintKey()), Span.raw(" close "))))
                 .build();
         frame.renderWidget(block, popup);
         Rect inner = block.inner(popup);
@@ -1997,9 +1984,8 @@ class SourceViewer {
     }
 
     private void renderDiscardPopup(Frame frame, Rect area) {
-        String msg = "Unsaved changes will be lost.";
-        int popupW = Math.min(msg.length() + 6, area.width() - 4);
-        int popupH = 5;
+        int popupW = Math.min(40, area.width() - 4);
+        int popupH = 6;
         int x = area.left() + Math.max(0, (area.width() - popupW) / 2);
         int y = area.top() + Math.max(0, (area.height() - popupH) / 2);
         Rect popup = new Rect(x, y, popupW, popupH);
@@ -2009,16 +1995,19 @@ class SourceViewer {
         Block block = Block.builder()
                 .borderType(BorderType.ROUNDED).borders(Borders.ALL)
                 .title(Title.from(Line.from(Span.styled(" Discard Changes? ", Theme.warning().bold()))))
-                .titleBottom(Title.from(Line.from(
-                        Span.styled(" Esc", Theme.hintKey()), Span.raw(" discard  "),
-                        Span.styled("any key", Theme.hintKey()), Span.raw(" cancel "))))
                 .build();
         frame.renderWidget(block, popup);
         Rect inner = block.inner(popup);
 
         frame.renderWidget(
                 Paragraph.builder().text(Text.from(
-                        Line.from(Span.styled(msg, Theme.warning())))).build(),
+                        Line.empty(),
+                        Line.from(Span.raw(" Unsaved changes will be lost.")),
+                        Line.empty(),
+                        Line.from(Span.raw("  "),
+                                Span.styled("Enter", Style.EMPTY.bold()), Span.raw(" confirm  "),
+                                Span.styled("Esc", Style.EMPTY.bold()), Span.raw(" cancel"))))
+                        .build(),
                 inner);
     }
 

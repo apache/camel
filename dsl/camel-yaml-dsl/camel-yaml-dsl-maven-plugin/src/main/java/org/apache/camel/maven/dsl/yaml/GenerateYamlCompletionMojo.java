@@ -22,10 +22,12 @@ import java.io.StringWriter;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -99,6 +101,27 @@ public class GenerateYamlCompletionMojo extends AbstractMojo {
             ObjectNode nodes = mapper.createObjectNode();
             root.set("nodes", nodes);
 
+            // collect which FQ definitions are step-capable (children of ProcessorDefinition)
+            Set<String> stepDefinitions = new java.util.HashSet<>();
+            JsonNode processorDef = definitions.get(PROCESSOR_DEFINITION);
+            if (processorDef != null && processorDef.has("properties")) {
+                processorDef.get("properties").fields().forEachRemaining(e -> {
+                    String ref = resolveRefFq(e.getValue());
+                    if (ref != null) {
+                        stepDefinitions.add(ref);
+                    }
+                });
+            }
+
+            // collect which FQ definitions are top-level elements
+            Set<String> topLevelDefinitions = new java.util.HashSet<>();
+            topLevelProps.fields().forEachRemaining(e -> {
+                String ref = resolveRefFq(e.getValue());
+                if (ref != null) {
+                    topLevelDefinitions.add(ref);
+                }
+            });
+
             // root node — top-level elements
             buildRootNode(nodes, topLevelProps);
 
@@ -109,7 +132,7 @@ public class GenerateYamlCompletionMojo extends AbstractMojo {
             buildExpressionNode(nodes, definitions);
 
             // all other definition nodes (EIPs, languages, data formats, etc.)
-            buildDefinitionNodes(nodes, definitions);
+            buildDefinitionNodes(nodes, definitions, stepDefinitions, topLevelDefinitions);
 
             // write output
             StringWriter sw = new StringWriter();
@@ -170,6 +193,7 @@ public class GenerateYamlCompletionMojo extends AbstractMojo {
         ObjectNode rootNode = mapper.createObjectNode();
         rootNode.put("title", "Root");
         rootNode.put("description", "Top-level YAML DSL elements");
+        rootNode.put("listChildren", true);
 
         ArrayNode children = mapper.createArrayNode();
         Iterator<Map.Entry<String, JsonNode>> fields = topLevelProps.fields();
@@ -207,6 +231,7 @@ public class GenerateYamlCompletionMojo extends AbstractMojo {
         ObjectNode stepsNode = mapper.createObjectNode();
         stepsNode.put("title", "Steps");
         stepsNode.put("description", "Processing steps that can be used inside a route");
+        stepsNode.put("listChildren", true);
 
         ArrayNode children = mapper.createArrayNode();
         JsonNode props = processorDef.get("properties");
@@ -293,7 +318,9 @@ public class GenerateYamlCompletionMojo extends AbstractMojo {
         nodes.set("expression", exprNode);
     }
 
-    private void buildDefinitionNodes(ObjectNode nodes, JsonNode definitions) {
+    private void buildDefinitionNodes(
+            ObjectNode nodes, JsonNode definitions,
+            Set<String> stepDefinitions, Set<String> topLevelDefinitions) {
         Iterator<Map.Entry<String, JsonNode>> fields = definitions.fields();
         while (fields.hasNext()) {
             Map.Entry<String, JsonNode> entry = fields.next();
@@ -317,6 +344,11 @@ public class GenerateYamlCompletionMojo extends AbstractMojo {
 
             ObjectNode node = mapper.createObjectNode();
             enrichNodeMetadata(node, nodeName, fqName, def);
+
+            // mark nodes that appear as list items (in steps or at root level)
+            if (stepDefinitions.contains(fqName) || topLevelDefinitions.contains(fqName)) {
+                node.put("isListItem", true);
+            }
 
             ArrayNode children = buildChildrenFromDefinition(def, fqName);
             node.set("children", children);
@@ -523,6 +555,16 @@ public class GenerateYamlCompletionMojo extends AbstractMojo {
         }
 
         return optMap;
+    }
+
+    private String resolveRefFq(JsonNode prop) {
+        if (prop.has("$ref")) {
+            return prop.get("$ref").asText().replace("#/items/definitions/", "");
+        }
+        if (prop.has("items") && prop.get("items").has("$ref")) {
+            return prop.get("items").get("$ref").asText().replace("#/items/definitions/", "");
+        }
+        return null;
     }
 
     private String resolveRef(JsonNode prop) {

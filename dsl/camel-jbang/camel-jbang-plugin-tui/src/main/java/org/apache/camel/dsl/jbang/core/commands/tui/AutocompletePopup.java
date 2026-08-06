@@ -440,6 +440,16 @@ class AutocompletePopup {
         this.titlePrefix = titlePrefix;
     }
 
+    private boolean listItemInsertion;
+
+    void setListItemInsertion(boolean listItemInsertion) {
+        this.listItemInsertion = listItemInsertion;
+    }
+
+    boolean isListItemInsertion() {
+        return listItemInsertion;
+    }
+
     private void rebuildList() {
         if (!filter.hasFilter()) {
             filteredItems = new ArrayList<>(allItems);

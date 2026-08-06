@@ -1050,6 +1050,27 @@ class YamlCompletionTest {
     }
 
     @Test
+    void findParentYamlKeyOnDashLineInsideSteps() throws IOException {
+        String yaml = String.join("\n",
+                "- from:",
+                "    uri: timer:tick",
+                "    steps:",
+                "      - ",
+                "");
+
+        Path file = tempDir.resolve("route.camel.yaml");
+        Files.writeString(file, yaml);
+
+        SourceViewer viewer = new SourceViewer();
+        viewer.loadFile(file);
+        viewer.enterEditMode();
+
+        // "      - " is a list item starter inside steps
+        assertThat(viewer.findParentYamlKey(3)).isEqualTo("steps");
+        assertThat(viewer.findEnclosingComponent(3)).isNull();
+    }
+
+    @Test
     void findParentYamlKeyInsideRoute() throws IOException {
         String yaml = String.join("\n",
                 "- route:",

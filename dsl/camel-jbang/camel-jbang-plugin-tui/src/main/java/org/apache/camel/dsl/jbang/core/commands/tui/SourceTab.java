@@ -155,6 +155,8 @@ class SourceTab extends AbstractTab {
         sourceViewer.reset();
         focusOnViewer = false;
         leftPanelWidth = -1;
+        completionTreeLoaded = false;
+        completionTree = null;
         refreshFiles();
     }
 
@@ -559,6 +561,7 @@ class SourceTab extends AbstractTab {
                         sourceViewer.setAutocompleteProvider(this::provideYamlKeyCompletions);
                         sourceViewer.setAutocompleteValueProvider(this::provideYamlValueCompletions);
                         sourceViewer.setEndpointValidator(this::validateYamlEndpoints);
+                        sourceViewer.setListItemNodeChecker(this::isListChildrenNode);
                     } else {
                         sourceViewer.setAutocompleteProvider(null);
                         sourceViewer.setAutocompleteValueProvider(null);
@@ -1070,18 +1073,39 @@ class SourceTab extends AbstractTab {
         return items;
     }
 
+    private boolean isListChildrenNode(String nodeName) {
+        JsonObject node = getTreeNode(nodeName);
+        return node != null && Boolean.TRUE.equals(node.get("listChildren"));
+    }
+
     private static final Set<String> TREE_BOILERPLATE = Set.of("id", "note", "description", "disabled");
 
     private JsonObject getCompletionTree() {
         if (!completionTreeLoaded) {
             completionTreeLoaded = true;
+            // try bundled resource first
             try (var is = getClass().getResourceAsStream("/schema/camelYamlDsl-model.json")) {
                 if (is != null) {
                     String json = new String(is.readAllBytes(), java.nio.charset.StandardCharsets.UTF_8);
                     completionTree = (JsonObject) org.apache.camel.util.json.Jsoner.deserialize(json);
                 }
             } catch (Exception e) {
-                // ignore — tree not available
+                // ignore
+            }
+            // fallback: try catalog version manager (may have a different Camel version)
+            if (completionTree == null) {
+                CamelCatalog cat = getCatalog();
+                if (cat != null) {
+                    try (var is = cat.getVersionManager()
+                            .getResourceAsStream("org/apache/camel/catalog/schemas/camelYamlDsl-model.json")) {
+                        if (is != null) {
+                            String json = new String(is.readAllBytes(), java.nio.charset.StandardCharsets.UTF_8);
+                            completionTree = (JsonObject) org.apache.camel.util.json.Jsoner.deserialize(json);
+                        }
+                    } catch (Exception e) {
+                        // ignore — tree not available for this Camel version
+                    }
+                }
             }
         }
         return completionTree;
@@ -1147,6 +1171,11 @@ class SourceTab extends AbstractTab {
         }
 
         items.sort(Comparator.comparing(AutocompletePopup.CompletionItem::deprecated)
+                .thenComparing((a, b) -> {
+                    boolean aIsSteps = "steps".equals(a.key()) || "outputs".equals(a.key());
+                    boolean bIsSteps = "steps".equals(b.key()) || "outputs".equals(b.key());
+                    return Boolean.compare(aIsSteps, bIsSteps);
+                })
                 .thenComparing((a, b) -> Boolean.compare(b.required(), a.required())));
         return items;
     }

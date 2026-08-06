@@ -136,6 +136,29 @@
     <build>
         <plugins>
             <plugin>
+                <artifactId>maven-resources-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>copy-yaml-dsl-model</id>
+                        <phase>generate-resources</phase>
+                        <goals>
+                            <goal>copy-resources</goal>
+                        </goals>
+                        <configuration>
+                            <outputDirectory>${project.build.outputDirectory}/schema</outputDirectory>
+                            <resources>
+                                <resource>
+                                    <directory>${project.basedir}/../../camel-yaml-dsl/camel-yaml-dsl/src/generated/resources/schema</directory>
+                                    <includes>
+                                        <include>camelYamlDsl-model.json</include>
+                                    </includes>
+                                </resource>
+                            </resources>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
                 <groupId>org.apache.rat</groupId>
                 <artifactId>apache-rat-plugin</artifactId>
                 <configuration>
