@@ -239,6 +239,8 @@ YAML::
 
 Supported options: `title`, `readOnlyHint`, `destructiveHint`, `idempotentHint`, and `openWorldHint`. When a hint is omitted, it is not published; MCP clients then apply their own defaults (for example assuming destructive/open-world unless told otherwise).
 
+The `title` option maps to the MCP tool's top-level `title` field (not `ToolAnnotations.title`). Boolean hint options use nullable configuration: when unset, Camel omits them from the published MCP tool even though the component catalog may list `defaultValue: false` for documentation tooling.
+
 === Tag-Based Discovery
 
 Tags group tools so that AI producers can select relevant subsets.

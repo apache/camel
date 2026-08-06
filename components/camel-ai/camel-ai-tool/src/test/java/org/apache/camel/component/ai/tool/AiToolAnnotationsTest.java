@@ -60,4 +60,32 @@ class AiToolAnnotationsTest {
         assertThat(annotations.title()).isNull();
         assertThat(annotations.readOnlyHint()).isTrue();
     }
+
+    @Test
+    void shouldBuildTitleOnlyAnnotations() {
+        AiToolConfiguration configuration = new AiToolConfiguration();
+        configuration.setTitle("Lookup customer");
+
+        AiToolAnnotations annotations = AiToolAnnotations.fromConfiguration(configuration);
+
+        assertThat(annotations).isNotNull();
+        assertThat(annotations.title()).isEqualTo("Lookup customer");
+        assertThat(annotations.readOnlyHint()).isNull();
+        assertThat(annotations.destructiveHint()).isNull();
+        assertThat(annotations.idempotentHint()).isNull();
+        assertThat(annotations.openWorldHint()).isNull();
+    }
+
+    @Test
+    void shouldBuildPartialBooleanHintsOnly() {
+        AiToolConfiguration configuration = new AiToolConfiguration();
+        configuration.setDestructiveHint(true);
+
+        AiToolAnnotations annotations = AiToolAnnotations.fromConfiguration(configuration);
+
+        assertThat(annotations).isNotNull();
+        assertThat(annotations.title()).isNull();
+        assertThat(annotations.destructiveHint()).isTrue();
+        assertThat(annotations.readOnlyHint()).isNull();
+    }
 }
