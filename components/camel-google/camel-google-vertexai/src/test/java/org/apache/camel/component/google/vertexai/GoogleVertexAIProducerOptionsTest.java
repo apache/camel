@@ -43,8 +43,10 @@ class GoogleVertexAIProducerOptionsTest {
 
     private GoogleVertexAIProducer producer(String query) throws Exception {
         context = new DefaultCamelContext();
-        context.start();
-        GoogleVertexAIEndpoint endpoint = context.getEndpoint(BASE + query, GoogleVertexAIEndpoint.class);
+        // the endpoint is deliberately created without starting it: starting it builds the Vertex AI client,
+        // which looks up Application Default Credentials and fails wherever none are configured
+        GoogleVertexAIComponent component = context.getComponent("google-vertexai", GoogleVertexAIComponent.class);
+        GoogleVertexAIEndpoint endpoint = (GoogleVertexAIEndpoint) component.createEndpoint(BASE + query);
         return new GoogleVertexAIProducer(endpoint);
     }
 
