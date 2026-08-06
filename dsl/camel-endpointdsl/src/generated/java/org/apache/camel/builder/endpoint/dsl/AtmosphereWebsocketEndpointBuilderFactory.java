@@ -1606,10 +1606,11 @@ public interface AtmosphereWebsocketEndpointBuilderFactory {
          * 
          * Group: common
          * 
-         * @return the name of the header {@code websocket.connectionKey}.
+         * @return the name of the header {@code
+         * AtmosphereWebsocketConnectionKey}.
          */
-        public String websocketConnectionkey() {
-            return "websocket.connectionKey";
+        public String atmosphereWebsocketConnectionKey() {
+            return "CamelAtmosphereWebsocketConnectionKey";
         }
         /**
          * The list of connection keys.
@@ -1618,10 +1619,11 @@ public interface AtmosphereWebsocketEndpointBuilderFactory {
          * 
          * Group: common
          * 
-         * @return the name of the header {@code websocket.connectionKey.list}.
+         * @return the name of the header {@code
+         * AtmosphereWebsocketConnectionKeyList}.
          */
-        public String websocketConnectionkeyList() {
-            return "websocket.connectionKey.list";
+        public String atmosphereWebsocketConnectionKeyList() {
+            return "CamelAtmosphereWebsocketConnectionKeyList";
         }
         /**
          * The type of event received. It can be ONOPEN_EVENT_TYPE,
@@ -1631,10 +1633,10 @@ public interface AtmosphereWebsocketEndpointBuilderFactory {
          * 
          * Group: consumer
          * 
-         * @return the name of the header {@code websocket.eventType}.
+         * @return the name of the header {@code AtmosphereWebsocketEventType}.
          */
-        public String websocketEventtype() {
-            return "websocket.eventType";
+        public String atmosphereWebsocketEventType() {
+            return "CamelAtmosphereWebsocketEventType";
         }
         /**
          * The type of error that occurred. It can be
@@ -1644,10 +1646,10 @@ public interface AtmosphereWebsocketEndpointBuilderFactory {
          * 
          * Group: consumer
          * 
-         * @return the name of the header {@code websocket.errorType}.
+         * @return the name of the header {@code AtmosphereWebsocketErrorType}.
          */
-        public String websocketErrortype() {
-            return "websocket.errorType";
+        public String atmosphereWebsocketErrorType() {
+            return "CamelAtmosphereWebsocketErrorType";
         }
     }
     static AtmosphereWebsocketEndpointBuilder endpointBuilder(String componentName, String path) {
