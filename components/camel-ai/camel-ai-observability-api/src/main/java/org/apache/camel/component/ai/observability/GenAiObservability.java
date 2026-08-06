@@ -16,10 +16,15 @@
  */
 package org.apache.camel.component.ai.observability;
 
+import java.lang.reflect.Method;
 import java.util.Optional;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentMap;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Entry point for GenAI observability in Camel AI producers.
@@ -29,8 +34,11 @@ import org.apache.camel.Exchange;
  */
 public final class GenAiObservability {
 
+    private static final Logger LOG = LoggerFactory.getLogger(GenAiObservability.class);
     private static final String IMPL_CLASS = "org.apache.camel.component.ai.observability.GenAiObservabilityImpl";
     private static final GenAiObservation NOOP = new NoopGenAiObservation();
+    private static final ImplBridge UNAVAILABLE_BRIDGE = new ImplBridge(null);
+    private static final ConcurrentMap<CamelContext, ImplBridge> BRIDGES = new ConcurrentHashMap<>();
 
     private GenAiObservability() {
     }
@@ -59,15 +67,41 @@ public final class GenAiObservability {
             return NOOP;
         }
         CamelContext camelContext = exchange.getContext();
-        Class<?> implClass = camelContext.getClassResolver().resolveClass(IMPL_CLASS);
-        if (implClass == null) {
+        ImplBridge bridge = BRIDGES.computeIfAbsent(camelContext, GenAiObservability::resolveBridge);
+        if (bridge.startMethod == null) {
             return NOOP;
         }
         try {
-            return (GenAiObservation) implClass.getMethod("start", Exchange.class, GenAiObservationContext.class)
-                    .invoke(null, exchange, context);
+            return (GenAiObservation) bridge.startMethod.invoke(null, exchange, context);
         } catch (ReflectiveOperationException | LinkageError e) {
+            if (LOG.isDebugEnabled()) {
+                LOG.debug("Unable to start GenAI observation via {}", IMPL_CLASS, e);
+            }
             return NOOP;
+        }
+    }
+
+    private static ImplBridge resolveBridge(CamelContext camelContext) {
+        Class<?> implClass = camelContext.getClassResolver().resolveClass(IMPL_CLASS);
+        if (implClass == null) {
+            return UNAVAILABLE_BRIDGE;
+        }
+        try {
+            Method startMethod = implClass.getMethod("start", Exchange.class, GenAiObservationContext.class);
+            return new ImplBridge(startMethod);
+        } catch (ReflectiveOperationException | LinkageError e) {
+            if (LOG.isDebugEnabled()) {
+                LOG.debug("Unable to resolve GenAI observability bridge from {}", IMPL_CLASS, e);
+            }
+            return UNAVAILABLE_BRIDGE;
+        }
+    }
+
+    private static final class ImplBridge {
+        private final Method startMethod;
+
+        private ImplBridge(Method startMethod) {
+            this.startMethod = startMethod;
         }
     }
 
