@@ -30,6 +30,7 @@ public final class ImportantHeaderUtils {
                     "CamelAggregatedCorrelationKey",
                     "CamelAggregatedSize",
                     "CamelAsteriskEventName",
+                    "CamelAtmosphereWebsocketEventType",
                     "CamelExecExitValue",
                     "CamelFileLength",
                     "CamelFileName",

@@ -49,6 +49,65 @@ the response header and strips stale compression headers after the HTTP call. Th
 decompression attempt that could fail with `ZipException: Not in GZIP format` against gzip-compressing
 servers with default settings.
 
+=== camel-atmosphere-websocket - potential breaking change
+
+The Exchange header constants in `WebsocketConstants` have been renamed to follow the
+Camel naming convention used across the rest of the component catalog. The Java field
+names are unchanged; only the header string values have changed:
+
+[options="header"]
+|===
+| Constant | Previous value | New value
+| `WebsocketConstants.CONNECTION_KEY`      | `websocket.connectionKey`      | `CamelAtmosphereWebsocketConnectionKey`
+| `WebsocketConstants.CONNECTION_KEY_LIST` | `websocket.connectionKey.list` | `CamelAtmosphereWebsocketConnectionKeyList`
+| `WebsocketConstants.SEND_TO_ALL`         | `websocket.sendToAll`          | `CamelAtmosphereWebsocketSendToAll`
+| `WebsocketConstants.EVENT_TYPE`          | `websocket.eventType`          | `CamelAtmosphereWebsocketEventType`
+| `WebsocketConstants.ERROR_TYPE`          | `websocket.errorType`          | `CamelAtmosphereWebsocketErrorType`
+|===
+
+Routes that reference the constant symbolically (for example
+`setHeader(WebsocketConstants.CONNECTION_KEY, ...)`) continue to work without changes.
+Routes that set the header by its literal string value must be updated to use the new
+value:
+
+._Java-only: updated atmosphere-websocket header names in route_
+[source,java]
+----
+// before
+from("direct:next")
+    .setHeader("websocket.connectionKey", header("myKey"))
+    .to("atmosphere-websocket:///servicepath");
+
+// after
+from("direct:next")
+    .setHeader("CamelAtmosphereWebsocketConnectionKey", header("myKey"))
+    .to("atmosphere-websocket:///servicepath");
+----
+
+The sibling websocket components are not affected by this change: `camel-undertow`
+keeps the `websocket.*` values in `UndertowConstants` (as documented in the 4.18
+upgrade guide), and `camel-vertx-websocket` keeps its `CamelVertxWebsocket.*` values.
+
+Note that `WebsocketConstants.SEND_TO_ALL` is not read by this component. Broadcast is
+selected through the `sendToAll` endpoint option, not through the header; the constant
+is renamed here only to keep the class internally consistent.
+
+==== Behaviour change: cross-transport propagation of the dispatch headers
+
+Because the renamed header values now begin with `Camel`, they are filtered by the
+standard transport `HeaderFilterStrategy` (`HttpHeaderFilterStrategy`,
+`JmsHeaderFilterStrategy`, etc.) when crossing a transport boundary, by design —
+`Camel*` headers are framework-internal and are not propagated over the wire.
+
+Routes that bridge an external transport (HTTP, JMS, ...) into an
+`atmosphere-websocket:` producer and let the sender choose the dispatch target via
+headers must therefore carry those values in non-`Camel`-prefixed application headers
+and map them to the corresponding `WebsocketConstants` value in the route between the
+transport `from` and the `atmosphere-websocket:` `to`. Allowing untrusted senders to
+drive `WebsocketConstants.CONNECTION_KEY_LIST`, which selects the target peers and
+takes precedence over `CONNECTION_KEY`, without such a mapping step is not the intended
+use of the component.
+
 == Upgrading from 4.18.2 to 4.18.3
 
 === camel-spring-ws - potential breaking change
