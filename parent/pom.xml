@@ -124,7 +124,7 @@
         <commons-pool2-version>2.13.1</commons-pool2-version>
         <commons-text-version>1.15.0</commons-text-version>
         <commons-validator-version>1.11.0</commons-validator-version>
-        <compress-lzf-version>1.2.0</compress-lzf-version>
+        <compress-lzf-version>1.2.1</compress-lzf-version>
         <consul-client-version>1.12.1</consul-client-version>
         <couchbase-client-version>3.12.2</couchbase-client-version>
         <curator-version>5.9.0</curator-version>
