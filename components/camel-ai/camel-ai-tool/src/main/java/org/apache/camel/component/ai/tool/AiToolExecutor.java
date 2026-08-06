@@ -100,7 +100,7 @@ public final class AiToolExecutor {
         // A tool that declares no parameters accepts none, so an empty declaration must filter
         // everything rather than let every argument through.
         if (!argsCopy.isEmpty()) {
-            Set<String> declaredParams = spec.getParameterDefs().keySet();
+            Set<String> declaredParams = spec.getDeclaredArgumentNames();
 
             argsCopy.keySet().removeIf(name -> {
                 if (!declaredParams.contains(name)) {
@@ -113,14 +113,13 @@ public final class AiToolExecutor {
             });
         }
 
-        for (Map.Entry<String, AiToolParameterHelper.ParameterDef> entry : spec.getParameterDefs().entrySet()) {
-            if (entry.getValue().isRequired()
-                    && (arguments == null || !arguments.containsKey(entry.getKey()))) {
+        for (String requiredName : spec.getRequiredArgumentNames()) {
+            if (!argsCopy.containsKey(requiredName)) {
                 LOG.warn("Missing required argument '{}' for tool '{}' -- the LLM did not send "
                          + "a parameter that is declared as required in the tool specification",
-                        entry.getKey(), toolName);
+                        requiredName, toolName);
                 IllegalArgumentException cause = new IllegalArgumentException(
-                        String.format("Missing required argument '%s' for tool '%s'", entry.getKey(), toolName));
+                        String.format("Missing required argument '%s' for tool '%s'", requiredName, toolName));
                 return new AiToolResult.ArgumentError(cause.getMessage(), cause);
             }
         }

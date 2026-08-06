@@ -321,6 +321,42 @@ public class AiToolEndpointLifecycleTest extends CamelTestSupport {
     }
 
     @Test
+    void testArgSchemaToolRegisteredOnStart() throws Exception {
+        context.addRoutes(new RouteBuilder() {
+            public void configure() {
+                from("ai-tool:createOrder"
+                     + "?tags=orders"
+                     + "&description=Create an order"
+                     + "&argSchema=classpath:arg-schemas/create-order.json")
+                        .setBody(constant("ok"));
+            }
+        });
+
+        AiToolRegistry registry = AiToolRegistry.getOrCreate(context);
+        AiToolSpec spec = registry.getToolsByTag("orders").iterator().next();
+
+        assertThat(spec.getName()).isEqualTo("createOrder");
+        assertThat(spec.getParameterDefs()).isEmpty();
+        assertThat(spec.getParametersJsonSchema()).isNotNull().contains("\"customer\"");
+        assertThat(spec.getDeclaredArgumentNames()).containsExactlyInAnyOrder("customer", "items");
+        assertThat(spec.getRequiredArgumentNames()).containsExactlyInAnyOrder("customer", "items");
+    }
+
+    @Test
+    void testArgSchemaAndParametersAreMutuallyExclusive() {
+        assertThatThrownBy(() -> context.addRoutes(new RouteBuilder() {
+            public void configure() {
+                from("ai-tool:invalid"
+                     + "?tags=test"
+                     + "&parameter.city=string"
+                     + "&argSchema={\"type\":\"object\"}")
+                        .setBody(constant("invalid"));
+            }
+        })).isInstanceOf(IllegalArgumentException.class)
+                .hasMessageContaining("mutually exclusive");
+    }
+
+    @Test
     public void testGetAllToolsReturnsAllPools() throws Exception {
         context.addRoutes(new RouteBuilder() {
             public void configure() {

@@ -30,6 +30,7 @@ import org.apache.camel.component.ai.tool.AiToolParameterHelper;
 import org.apache.camel.component.ai.tool.AiToolSpec;
 import org.junit.jupiter.api.Test;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -158,6 +159,42 @@ class AiToolSpecToLangChain4jTest {
 
         assertTrue(result.parameters().required().contains("name"));
         assertEquals(1, result.parameters().required().size());
+    }
+
+    @Test
+    void testRawArgSchemaConversion() {
+        String schema = """
+                {
+                  "type": "object",
+                  "properties": {
+                    "customer": {
+                      "type": "object",
+                      "properties": {
+                        "id": { "type": "string" }
+                      },
+                      "required": ["id"]
+                    },
+                    "items": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "sku": { "type": "string" },
+                          "qty": { "type": "integer" }
+                        }
+                      }
+                    }
+                  },
+                  "required": ["customer", "items"]
+                }
+                """;
+
+        AiToolSpec spec = new AiToolSpec("createOrder", "Create order", Map.of(), schema, null);
+        ToolSpecification result = AiToolSpecToLangChain4j.toToolSpecification(spec);
+
+        assertThat(result.parameters()).isNotNull();
+        assertThat(result.parameters().properties()).hasSize(2).containsKeys("customer", "items");
+        assertThat(result.parameters().required()).contains("customer", "items");
     }
 
     @Test

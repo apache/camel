@@ -22,15 +22,20 @@ import java.util.Locale;
 import java.util.Map;
 
 import dev.langchain4j.agent.tool.ToolSpecification;
+import dev.langchain4j.internal.JsonSchemaElementJsonUtils;
 import dev.langchain4j.model.chat.request.json.JsonBooleanSchema;
 import dev.langchain4j.model.chat.request.json.JsonEnumSchema;
 import dev.langchain4j.model.chat.request.json.JsonIntegerSchema;
 import dev.langchain4j.model.chat.request.json.JsonNumberSchema;
 import dev.langchain4j.model.chat.request.json.JsonObjectSchema;
+import dev.langchain4j.model.chat.request.json.JsonRawSchema;
 import dev.langchain4j.model.chat.request.json.JsonSchemaElement;
 import dev.langchain4j.model.chat.request.json.JsonStringSchema;
 import org.apache.camel.component.ai.tool.AiToolParameterHelper;
 import org.apache.camel.component.ai.tool.AiToolSpec;
+import org.apache.camel.util.json.DeserializationException;
+import org.apache.camel.util.json.JsonObject;
+import org.apache.camel.util.json.Jsoner;
 
 /**
  * Converts {@link AiToolSpec} instances to langchain4j {@link ToolSpecification} objects, mapping Camel parameter
@@ -48,9 +53,58 @@ public final class AiToolSpecToLangChain4j {
 
         if (spec.getParameterDefs() != null && !spec.getParameterDefs().isEmpty()) {
             builder.parameters(buildSchema(spec.getParameterDefs()));
+        } else if (spec.getParametersJsonSchema() != null && !spec.getParametersJsonSchema().isBlank()) {
+            builder.parameters(buildSchemaFromJson(spec.getParametersJsonSchema()));
         }
 
         return builder.build();
+    }
+
+    private static JsonObjectSchema buildSchemaFromJson(String jsonSchema) {
+        try {
+            Object parsed = Jsoner.deserialize(jsonSchema);
+            if (parsed == null) {
+                throw new IllegalArgumentException("Tool JSON Schema must be a JSON object, but was: null");
+            }
+            if (!(parsed instanceof JsonObject root)) {
+                throw new IllegalArgumentException(
+                        "Tool JSON Schema must be a JSON object, but was: " + parsed.getClass().getSimpleName());
+            }
+            JsonSchemaElement element = JsonSchemaElementJsonUtils.fromMap(root);
+            if (element instanceof JsonObjectSchema objectSchema) {
+                return objectSchema;
+            }
+            JsonObject stripped = stripSchemaMetadata(root);
+            if (!stripped.equals(root)) {
+                element = JsonSchemaElementJsonUtils.fromMap(stripped);
+                if (element instanceof JsonObjectSchema objectSchema) {
+                    return objectSchema;
+                }
+            }
+            if (element instanceof JsonRawSchema rawSchema) {
+                throw new IllegalArgumentException(
+                        "Tool JSON Schema root could not be converted to JsonObjectSchema. "
+                                                   + "Remove unsupported root keywords such as $schema or schema-valued "
+                                                   + "additionalProperties, or simplify the root schema.");
+            }
+            throw new IllegalArgumentException(
+                    "Tool JSON Schema root must deserialize to JsonObjectSchema, but was: "
+                                               + element.getClass().getSimpleName());
+        } catch (DeserializationException e) {
+            throw new IllegalArgumentException("Tool JSON Schema is not valid JSON", e);
+        }
+    }
+
+    private static JsonObject stripSchemaMetadata(JsonObject root) {
+        JsonObject copy = new JsonObject();
+        for (Map.Entry<String, Object> entry : root.entrySet()) {
+            String key = entry.getKey();
+            if ("$schema".equals(key) || "$id".equals(key) || "$defs".equals(key) || "definitions".equals(key)) {
+                continue;
+            }
+            copy.put(key, entry.getValue());
+        }
+        return copy;
     }
 
     private static JsonObjectSchema buildSchema(Map<String, AiToolParameterHelper.ParameterDef> defs) {

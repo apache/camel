@@ -19,6 +19,8 @@ package org.apache.camel.component.ai.tool;
 import java.util.Collections;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 import org.apache.camel.support.DefaultConsumer;
 
@@ -36,6 +38,8 @@ public final class AiToolSpec {
     private final String description;
     private final Map<String, AiToolParameterHelper.ParameterDef> parameterDefs;
     private final String parametersJsonSchema;
+    private final Set<String> declaredArgumentNames;
+    private final Set<String> requiredArgumentNames;
     private final DefaultConsumer consumer;
 
     public AiToolSpec(
@@ -48,6 +52,19 @@ public final class AiToolSpec {
         this.description = description;
         this.parameterDefs = parameterDefs != null ? Collections.unmodifiableMap(parameterDefs) : Map.of();
         this.parametersJsonSchema = parametersJsonSchema;
+        if (!this.parameterDefs.isEmpty()) {
+            this.declaredArgumentNames = Set.copyOf(this.parameterDefs.keySet());
+            this.requiredArgumentNames = this.parameterDefs.entrySet().stream()
+                    .filter(entry -> entry.getValue().isRequired())
+                    .map(Map.Entry::getKey)
+                    .collect(Collectors.toUnmodifiableSet());
+        } else if (parametersJsonSchema != null && !parametersJsonSchema.isBlank()) {
+            this.declaredArgumentNames = AiToolParameterHelper.extractTopLevelPropertyNames(parametersJsonSchema);
+            this.requiredArgumentNames = AiToolParameterHelper.extractRequiredPropertyNames(parametersJsonSchema);
+        } else {
+            this.declaredArgumentNames = Set.of();
+            this.requiredArgumentNames = Set.of();
+        }
         this.consumer = consumer;
     }
 
@@ -76,6 +93,22 @@ public final class AiToolSpec {
     }
 
     /**
+     * Top-level argument names accepted by this tool. Derived from flat parameter definitions or from a raw
+     * {@code argSchema}'s top-level {@code properties} map.
+     */
+    public Set<String> getDeclaredArgumentNames() {
+        return declaredArgumentNames;
+    }
+
+    /**
+     * Top-level required argument names. Derived from flat parameter definitions or from a raw schema's top-level
+     * {@code required} array.
+     */
+    public Set<String> getRequiredArgumentNames() {
+        return requiredArgumentNames;
+    }
+
+    /**
      * The Camel consumer that executes this tool's route when the LLM invokes it.
      */
     public DefaultConsumer getConsumer() {
@@ -97,12 +130,15 @@ public final class AiToolSpec {
                 && Objects.equals(description, that.description)
                 && Objects.equals(parameterDefs, that.parameterDefs)
                 && Objects.equals(parametersJsonSchema, that.parametersJsonSchema)
+                && Objects.equals(declaredArgumentNames, that.declaredArgumentNames)
+                && Objects.equals(requiredArgumentNames, that.requiredArgumentNames)
                 && Objects.equals(consumer, that.consumer);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(name, description, parameterDefs, parametersJsonSchema, consumer);
+        return Objects.hash(name, description, parameterDefs, parametersJsonSchema, declaredArgumentNames,
+                requiredArgumentNames, consumer);
     }
 
     @Override

@@ -23,6 +23,8 @@ public class AiToolEndpointConfigurer extends PropertyConfigurerSupport implemen
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         AiToolEndpoint target = (AiToolEndpoint) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
+        case "argschema":
+        case "argSchema": target.getConfiguration().setArgSchema(property(camelContext, java.lang.String.class, value)); return true;
         case "bridgeerrorhandler":
         case "bridgeErrorHandler": target.setBridgeErrorHandler(property(camelContext, boolean.class, value)); return true;
         case "description": target.getConfiguration().setDescription(property(camelContext, java.lang.String.class, value)); return true;
@@ -39,6 +41,8 @@ public class AiToolEndpointConfigurer extends PropertyConfigurerSupport implemen
     @Override
     public Class<?> getOptionType(String name, boolean ignoreCase) {
         switch (ignoreCase ? name.toLowerCase() : name) {
+        case "argschema":
+        case "argSchema": return java.lang.String.class;
         case "bridgeerrorhandler":
         case "bridgeErrorHandler": return boolean.class;
         case "description": return java.lang.String.class;
@@ -56,6 +60,8 @@ public class AiToolEndpointConfigurer extends PropertyConfigurerSupport implemen
     public Object getOptionValue(Object obj, String name, boolean ignoreCase) {
         AiToolEndpoint target = (AiToolEndpoint) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
+        case "argschema":
+        case "argSchema": return target.getConfiguration().getArgSchema();
         case "bridgeerrorhandler":
         case "bridgeErrorHandler": return target.isBridgeErrorHandler();
         case "description": return target.getConfiguration().getDescription();

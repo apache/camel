@@ -19,6 +19,7 @@ package org.apache.camel.component.ai.tool;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
+import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.util.json.DeserializationException;
 import org.apache.camel.util.json.JsonArray;
 import org.apache.camel.util.json.JsonObject;
@@ -26,8 +27,11 @@ import org.apache.camel.util.json.Jsoner;
 import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 public class AiToolParameterHelperTest {
+
+    private final DefaultCamelContext camelContext = new DefaultCamelContext();
 
     @Test
     public void testSplitTags() {
@@ -265,5 +269,106 @@ public class AiToolParameterHelperTest {
         assertThat(defs.get("city").getType())
                 .as("Default type should be string when only description is provided")
                 .isEqualTo("string");
+    }
+
+    @Test
+    void testValidateParameterSourceExclusive() {
+        assertThatThrownBy(() -> AiToolParameterHelper.validateParameterSourceExclusive(
+                Map.of("city", "string"), "{\"type\":\"object\"}"))
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessageContaining("mutually exclusive");
+    }
+
+    @Test
+    void testExtractTopLevelPropertyNamesFromRawSchema() throws DeserializationException {
+        String schema = """
+                {
+                  "type": "object",
+                  "properties": {
+                    "customer": { "type": "object" },
+                    "items": { "type": "array" }
+                  }
+                }
+                """;
+
+        assertThat(AiToolParameterHelper.extractTopLevelPropertyNames(schema))
+                .containsExactlyInAnyOrder("customer", "items");
+    }
+
+    @Test
+    void testExtractRequiredPropertyNamesFromRawSchema() throws DeserializationException {
+        String schema = """
+                {
+                  "type": "object",
+                  "properties": {
+                    "customer": { "type": "object" },
+                    "items": { "type": "array" }
+                  },
+                  "required": ["customer"]
+                }
+                """;
+
+        assertThat(AiToolParameterHelper.extractRequiredPropertyNames(schema))
+                .containsExactly("customer");
+    }
+
+    @Test
+    void testResolveArgSchemaRejectsJsonNull() {
+        assertThatThrownBy(() -> AiToolParameterHelper.resolveArgSchema(camelContext, "null"))
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessageContaining("null");
+    }
+
+    @Test
+    void testResolveArgSchemaRejectsInvalidJson() {
+        assertThatThrownBy(() -> AiToolParameterHelper.resolveArgSchema(camelContext, "{not-json"))
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessageContaining("valid JSON");
+    }
+
+    @Test
+    void testResolveArgSchemaRejectsNonObjectRootType() {
+        assertThatThrownBy(() -> AiToolParameterHelper.resolveArgSchema(camelContext, "{\"type\":\"string\"}"))
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessageContaining("root type must be 'object'");
+    }
+
+    @Test
+    void testResolveArgSchemaRejectsMissingProperties() {
+        assertThatThrownBy(() -> AiToolParameterHelper.resolveArgSchema(camelContext, "{\"type\":\"object\"}"))
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessageContaining("properties map");
+    }
+
+    @Test
+    void testResolveArgSchemaRejectsEmptyProperties() {
+        assertThatThrownBy(() -> AiToolParameterHelper.resolveArgSchema(camelContext,
+                "{\"type\":\"object\",\"properties\":{}}"))
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessageContaining("at least one top-level property");
+    }
+
+    @Test
+    void testResolveArgSchemaRejectsInvalidRequiredArray() {
+        assertThatThrownBy(() -> AiToolParameterHelper.resolveArgSchema(camelContext,
+                "{\"type\":\"object\",\"properties\":{\"city\":{\"type\":\"string\"}},\"required\":\"city\"}"))
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessageContaining("required must be a JSON array");
+    }
+
+    @Test
+    void testResolveArgSchemaRejectsUnknownRequiredName() {
+        assertThatThrownBy(() -> AiToolParameterHelper.resolveArgSchema(camelContext,
+                "{\"type\":\"object\",\"properties\":{\"city\":{\"type\":\"string\"}},\"required\":[\"country\"]}"))
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessageContaining("not declared in properties");
+    }
+
+    @Test
+    void testExtractTopLevelPropertyNamesRejectsInvalidProperties() {
+        assertThatThrownBy(() -> AiToolParameterHelper.extractTopLevelPropertyNames(
+                "{\"type\":\"object\",\"properties\":[]}"))
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessageContaining("properties must be a JSON object");
     }
 }

@@ -145,6 +145,58 @@ YAML::
 ----
 ====
 
+=== Complex Parameters with argSchema
+
+Use `argSchema` when the flat `parameter.*` syntax is not expressive enough for nested objects, arrays, or other advanced JSON Schema constructs. `argSchema` is mutually exclusive with `parameter.*`.
+
+[tabs]
+====
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: ai-tool:createOrder
+      parameters:
+        tags: orders
+        description: "Create an order"
+        argSchema: |
+          {
+            "type": "object",
+            "properties": {
+              "customer": {
+                "type": "object",
+                "properties": {
+                  "id": { "type": "string" }
+                },
+                "required": ["id"]
+              },
+              "items": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "sku": { "type": "string" },
+                    "qty": { "type": "integer" }
+                  }
+                }
+              }
+            },
+            "required": ["customer", "items"],
+            "additionalProperties": false
+          }
+      steps:
+        - to: direct:createOrder
+----
+====
+
+Top-level schema properties are exposed as exchange headers. Nested values are passed as Map or List objects.
+
+`argSchema` also supports Camel resource references such as `classpath:schemas/create-order.json`.
+
+The root schema must be a JSON Schema object with a top-level `properties` map. Camel always allowlists top-level property names when invoking the tool route, even if the schema sets `additionalProperties: true`. Nested fields are not flattened into headers; only top-level properties become exchange headers (Map/List/primitive values).
+
 === Tag-Based Discovery
 
 Tags group tools so that AI producers can select relevant subsets.

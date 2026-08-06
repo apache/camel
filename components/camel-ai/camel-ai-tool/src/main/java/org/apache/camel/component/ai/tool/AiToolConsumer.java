@@ -49,14 +49,18 @@ public class AiToolConsumer extends DefaultConsumer {
         super.doStart();
 
         Map<String, String> params = configuration.getParameters();
-        Map<String, AiToolParameterHelper.ParameterDef> parameterDefs
-                = (params != null && !params.isEmpty())
-                        ? AiToolParameterHelper.parseParameterMetadata(params)
-                        : Map.of();
+        String argSchema = configuration.getArgSchema();
+        AiToolParameterHelper.validateParameterSourceExclusive(params, argSchema);
 
-        String jsonSchema = !parameterDefs.isEmpty()
-                ? AiToolParameterHelper.buildJsonSchemaFromDefs(parameterDefs)
-                : null;
+        Map<String, AiToolParameterHelper.ParameterDef> parameterDefs = Map.of();
+        String jsonSchema = null;
+
+        if (params != null && !params.isEmpty()) {
+            parameterDefs = AiToolParameterHelper.parseParameterMetadata(params);
+            jsonSchema = AiToolParameterHelper.buildJsonSchemaFromDefs(parameterDefs);
+        } else if (argSchema != null && !argSchema.isBlank()) {
+            jsonSchema = AiToolParameterHelper.resolveArgSchema(getEndpoint().getCamelContext(), argSchema);
+        }
 
         String desc = configuration.getDescription();
         if (desc == null || desc.isBlank()) {
