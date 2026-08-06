@@ -186,16 +186,7 @@ public final class AiToolParameterHelper {
         }
 
         JsonObject root = parseJsonObject(resolved, argSchema);
-        Object type = root.get("type");
-        if (type != null && !"object".equals(type)) {
-            throw new IllegalArgumentException(
-                    "argSchema root type must be 'object' when specified, but was: " + type);
-        }
-        if (type == null && !root.containsKey("properties")) {
-            throw new IllegalArgumentException(
-                    "argSchema must be a JSON Schema object with a properties map");
-        }
-
+        validateRootSchemaObject(root);
         return root.toJson();
     }
 
@@ -207,8 +198,8 @@ public final class AiToolParameterHelper {
             return Set.of();
         }
         JsonObject root = parseJsonObject(jsonSchema, jsonSchema);
-        Map<String, Object> properties = root.getMap("properties");
-        if (properties == null || properties.isEmpty()) {
+        Map<String, Object> properties = requirePropertiesMap(root, jsonSchema);
+        if (properties.isEmpty()) {
             return Set.of();
         }
         return Set.copyOf(properties.keySet());
@@ -222,8 +213,8 @@ public final class AiToolParameterHelper {
             return Set.of();
         }
         JsonObject root = parseJsonObject(jsonSchema, jsonSchema);
-        Collection<?> required = root.getCollection("required");
-        if (required == null || required.isEmpty()) {
+        Collection<?> required = readRequiredArray(root, jsonSchema);
+        if (required.isEmpty()) {
             return Set.of();
         }
         Set<String> names = new LinkedHashSet<>();
@@ -238,6 +229,9 @@ public final class AiToolParameterHelper {
     private static JsonObject parseJsonObject(String json, String originalValue) {
         try {
             Object parsed = Jsoner.deserialize(json);
+            if (parsed == null) {
+                throw new IllegalArgumentException("argSchema must be a JSON object, but was: null");
+            }
             if (!(parsed instanceof JsonObject root)) {
                 throw new IllegalArgumentException(
                         "argSchema must be a JSON object, but was: " + parsed.getClass().getSimpleName());
@@ -247,6 +241,57 @@ public final class AiToolParameterHelper {
             throw new IllegalArgumentException(
                     "argSchema does not contain valid JSON. Provided value: " + originalValue, e);
         }
+    }
+
+    private static void validateRootSchemaObject(JsonObject root) {
+        Object type = root.get("type");
+        if (type != null && !"object".equals(type)) {
+            throw new IllegalArgumentException(
+                    "argSchema root type must be 'object' when specified, but was: " + type);
+        }
+        Map<String, Object> properties = requirePropertiesMap(root, "argSchema");
+        if (properties.isEmpty()) {
+            throw new IllegalArgumentException("argSchema must declare at least one top-level property");
+        }
+        Collection<?> required = readRequiredArray(root, "argSchema");
+        for (Object requiredName : required) {
+            if (requiredName == null || !properties.containsKey(requiredName.toString())) {
+                throw new IllegalArgumentException(
+                        "argSchema required entry '" + requiredName + "' is not declared in properties");
+            }
+        }
+    }
+
+    private static Map<String, Object> requirePropertiesMap(JsonObject root, String context) {
+        Object properties = root.get("properties");
+        if (properties == null) {
+            throw new IllegalArgumentException(context + " must be a JSON Schema object with a properties map");
+        }
+        if (!(properties instanceof Map<?, ?> map)) {
+            throw new IllegalArgumentException(
+                    context + " properties must be a JSON object, but was: "
+                                               + properties.getClass().getSimpleName());
+        }
+        Map<String, Object> typed = new HashMap<>();
+        for (Map.Entry<?, ?> entry : map.entrySet()) {
+            if (entry.getKey() != null) {
+                typed.put(entry.getKey().toString(), entry.getValue());
+            }
+        }
+        return typed;
+    }
+
+    private static Collection<?> readRequiredArray(JsonObject root, String context) {
+        Object required = root.get("required");
+        if (required == null) {
+            return List.of();
+        }
+        if (!(required instanceof Collection<?> collection)) {
+            throw new IllegalArgumentException(
+                    context + " required must be a JSON array, but was: "
+                                               + required.getClass().getSimpleName());
+        }
+        return collection;
     }
 
     private static String resolveResourceContent(CamelContext camelContext, String property) {

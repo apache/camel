@@ -56,8 +56,8 @@ public class AiToolConfiguration implements Cloneable {
     private Map<String, String> parameters;
 
     @UriParam(description = "Raw JSON Schema for tool input parameters. Supports inline JSON and resource "
-                            + "references (classpath:, file:, resource:). Mutually exclusive with parameter.*. "
-                            + "Use for nested objects, arrays, oneOf, and other complex schemas.")
+                            + "references (classpath:, file:, resource:). Mutually exclusive with the parameter "
+                            + "multi-value options. Use for nested objects, arrays, oneOf, and other complex schemas.")
     @Metadata(label = "consumer", supportFileReference = true, largeInput = true, inputLanguage = "json")
     private String argSchema;
 

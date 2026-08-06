@@ -195,6 +195,8 @@ Top-level schema properties are exposed as exchange headers. Nested values are p
 
 `argSchema` also supports Camel resource references such as `classpath:schemas/create-order.json`.
 
+The root schema must be a JSON Schema object with a top-level `properties` map. Camel always allowlists top-level property names when invoking the tool route, even if the schema sets `additionalProperties: true`. Nested fields are not flattened into headers; only top-level properties become exchange headers (Map/List/primitive values).
+
 === Tag-Based Discovery
 
 Tags group tools so that AI producers can select relevant subsets.
