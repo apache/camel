@@ -1116,6 +1116,29 @@ class ExportTest {
 
     @ParameterizedTest
     @MethodSource("runtimeProvider")
+    public void shouldExportWithCustomRepos(RuntimeType rt) throws Exception {
+        LOG.info("shouldExportWithCustomRepos {}", rt);
+        Export command = createCommand(rt, new String[] { "src/test/resources/route.yaml" },
+                "--gav=examples:route:1.0.0", "--dir=" + workingDir, "--quiet",
+                "--repos=https://my.custom.repo/releases,https://other.repo/snapshots");
+        int exit = command.doCall();
+
+        Assertions.assertEquals(0, exit);
+        Model model = readMavenModel();
+
+        assertThat(model.getRepositories())
+                .as("Expected custom repositories in generated pom.xml")
+                .anySatisfy(repo -> assertThat(repo.getUrl()).isEqualTo("https://my.custom.repo/releases"))
+                .anySatisfy(repo -> assertThat(repo.getUrl()).isEqualTo("https://other.repo/snapshots"));
+
+        assertThat(model.getPluginRepositories())
+                .as("Expected custom plugin repositories in generated pom.xml")
+                .anySatisfy(repo -> assertThat(repo.getUrl()).isEqualTo("https://my.custom.repo/releases"))
+                .anySatisfy(repo -> assertThat(repo.getUrl()).isEqualTo("https://other.repo/snapshots"));
+    }
+
+    @ParameterizedTest
+    @MethodSource("runtimeProvider")
     public void shouldContainJibProfile(RuntimeType rt) throws Exception {
         Export command = new Export(new CamelJBangMain());
         List<String> cmdArgs = new ArrayList<>(
