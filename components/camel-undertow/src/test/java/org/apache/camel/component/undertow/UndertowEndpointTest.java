@@ -23,10 +23,8 @@ import org.apache.camel.spi.HeaderFilterStrategy;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertInstanceOf;
-import static org.junit.jupiter.api.Assertions.assertSame;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class UndertowEndpointTest {
 
@@ -55,23 +53,23 @@ public class UndertowEndpointTest {
 
     @Test
     void defaultHeaderFilterStrategyIsUndertowSpecific() {
-        assertInstanceOf(UndertowHeaderFilterStrategy.class, endpoint.getHeaderFilterStrategy());
+        assertThat(endpoint.getHeaderFilterStrategy()).isInstanceOf(UndertowHeaderFilterStrategy.class);
     }
 
     @Test
     void defaultBindingKeepsUndertowHeaderFilterStrategy() {
         // the endpoint pushes its own strategy into the lazily created binding, so the endpoint default
         // decides which strategy the binding ends up running
-        DefaultUndertowHttpBinding binding
-                = assertInstanceOf(DefaultUndertowHttpBinding.class, endpoint.getUndertowHttpBinding());
-        HeaderFilterStrategy strategy = binding.getHeaderFilterStrategy();
-        assertInstanceOf(UndertowHeaderFilterStrategy.class, strategy);
+        assertThat(endpoint.getUndertowHttpBinding()).isInstanceOf(DefaultUndertowHttpBinding.class);
+        HeaderFilterStrategy strategy
+                = ((DefaultUndertowHttpBinding) endpoint.getUndertowHttpBinding()).getHeaderFilterStrategy();
+        assertThat(strategy).isInstanceOf(UndertowHeaderFilterStrategy.class);
 
         // the undertow-specific prefixes added by CAMEL-23588 must therefore be in effect
-        assertTrue(strategy.applyFilterToExternalHeaders(UndertowConstants.CONNECTION_KEY, "aValue", null));
-        assertTrue(strategy.applyFilterToExternalHeaders(UndertowConstants.CONNECTION_KEY_LIST, "aValue", null));
-        assertTrue(strategy.applyFilterToExternalHeaders(UndertowConstants.SEND_TO_ALL, "aValue", null));
-        assertTrue(strategy.applyFilterToCamelHeaders(UndertowConstants.CONNECTION_KEY, "aValue", null));
+        assertThat(strategy.applyFilterToExternalHeaders(UndertowConstants.CONNECTION_KEY, "aValue", null)).isTrue();
+        assertThat(strategy.applyFilterToExternalHeaders(UndertowConstants.CONNECTION_KEY_LIST, "aValue", null)).isTrue();
+        assertThat(strategy.applyFilterToExternalHeaders(UndertowConstants.SEND_TO_ALL, "aValue", null)).isTrue();
+        assertThat(strategy.applyFilterToCamelHeaders(UndertowConstants.CONNECTION_KEY, "aValue", null)).isTrue();
     }
 
     @Test
@@ -79,8 +77,8 @@ public class UndertowEndpointTest {
         HeaderFilterStrategy custom = new HttpHeaderFilterStrategy();
         endpoint.setHeaderFilterStrategy(custom);
 
-        DefaultUndertowHttpBinding binding
-                = assertInstanceOf(DefaultUndertowHttpBinding.class, endpoint.getUndertowHttpBinding());
-        assertSame(custom, binding.getHeaderFilterStrategy());
+        assertThat(endpoint.getUndertowHttpBinding()).isInstanceOf(DefaultUndertowHttpBinding.class);
+        assertThat(((DefaultUndertowHttpBinding) endpoint.getUndertowHttpBinding()).getHeaderFilterStrategy())
+                .isSameAs(custom);
     }
 }
