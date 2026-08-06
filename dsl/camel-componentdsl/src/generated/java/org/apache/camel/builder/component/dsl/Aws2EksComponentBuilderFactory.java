@@ -142,24 +142,6 @@ public interface Aws2EksComponentBuilderFactory {
             return this;
         }
     
-        
-        /**
-         * If using a profile credentials provider, this parameter will set the
-         * profile name.
-         * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
-         * 
-         * Default: false
-         * Group: producer
-         * 
-         * @param profileCredentialsName the value to set
-         * @return the dsl builder
-         */
-        default Aws2EksComponentBuilder profileCredentialsName(java.lang.String profileCredentialsName) {
-            doSetProperty("profileCredentialsName", profileCredentialsName);
-            return this;
-        }
-    
         /**
          * The region in which EKS client needs to work. When using this
          * parameter, the configuration will expect the lowercase name of the
@@ -371,6 +353,22 @@ public interface Aws2EksComponentBuilderFactory {
         }
     
         /**
+         * If using a profile credentials provider, this parameter will set the
+         * profile name.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: security
+         * 
+         * @param profileCredentialsName the value to set
+         * @return the dsl builder
+         */
+        default Aws2EksComponentBuilder profileCredentialsName(java.lang.String profileCredentialsName) {
+            doSetProperty("profileCredentialsName", profileCredentialsName);
+            return this;
+        }
+    
+        /**
          * Amazon AWS Secret Key.
          * 
          * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
@@ -463,7 +461,6 @@ public interface Aws2EksComponentBuilderFactory {
             case "operation": getOrCreateConfiguration((EKS2Component) component).setOperation((org.apache.camel.component.aws2.eks.EKS2Operations) value); return true;
             case "overrideEndpoint": getOrCreateConfiguration((EKS2Component) component).setOverrideEndpoint((boolean) value); return true;
             case "pojoRequest": getOrCreateConfiguration((EKS2Component) component).setPojoRequest((boolean) value); return true;
-            case "profileCredentialsName": getOrCreateConfiguration((EKS2Component) component).setProfileCredentialsName((java.lang.String) value); return true;
             case "region": getOrCreateConfiguration((EKS2Component) component).setRegion((java.lang.String) value); return true;
             case "uriEndpointOverride": getOrCreateConfiguration((EKS2Component) component).setUriEndpointOverride((java.lang.String) value); return true;
             case "useDefaultCredentialsProvider": getOrCreateConfiguration((EKS2Component) component).setUseDefaultCredentialsProvider((boolean) value); return true;
@@ -476,6 +473,7 @@ public interface Aws2EksComponentBuilderFactory {
             case "proxyPort": getOrCreateConfiguration((EKS2Component) component).setProxyPort((java.lang.Integer) value); return true;
             case "proxyProtocol": getOrCreateConfiguration((EKS2Component) component).setProxyProtocol((software.amazon.awssdk.core.Protocol) value); return true;
             case "accessKey": getOrCreateConfiguration((EKS2Component) component).setAccessKey((java.lang.String) value); return true;
+            case "profileCredentialsName": getOrCreateConfiguration((EKS2Component) component).setProfileCredentialsName((java.lang.String) value); return true;
             case "secretKey": getOrCreateConfiguration((EKS2Component) component).setSecretKey((java.lang.String) value); return true;
             case "sessionToken": getOrCreateConfiguration((EKS2Component) component).setSessionToken((java.lang.String) value); return true;
             case "trustAllCertificates": getOrCreateConfiguration((EKS2Component) component).setTrustAllCertificates((boolean) value); return true;

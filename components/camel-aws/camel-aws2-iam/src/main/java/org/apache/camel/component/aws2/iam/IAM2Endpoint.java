@@ -78,6 +78,7 @@ public class IAM2Endpoint extends ScheduledPollEndpoint implements EndpointServi
                 iamClient.close();
             }
         }
+        super.doStop();
     }
 
     public IAM2Configuration getConfiguration() {

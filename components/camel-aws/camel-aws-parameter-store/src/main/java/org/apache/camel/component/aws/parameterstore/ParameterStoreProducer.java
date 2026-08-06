@@ -244,7 +244,10 @@ public class ParameterStoreProducer extends DefaultProducer {
             } else {
                 throw new IllegalArgumentException("Parameter Name must be specified");
             }
-            String payload = exchange.getIn().getMandatoryBody(String.class);
+            String payload = exchange.getIn().getHeader(ParameterStoreConstants.PARAMETER_VALUE, String.class);
+            if (ObjectHelper.isEmpty(payload)) {
+                payload = exchange.getIn().getMandatoryBody(String.class);
+            }
             builder.value(payload);
             if (ObjectHelper.isNotEmpty(exchange.getIn().getHeader(ParameterStoreConstants.PARAMETER_TYPE))) {
                 String type = exchange.getIn().getHeader(ParameterStoreConstants.PARAMETER_TYPE, String.class);

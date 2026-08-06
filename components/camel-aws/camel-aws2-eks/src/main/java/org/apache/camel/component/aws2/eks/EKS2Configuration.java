@@ -65,7 +65,7 @@ public class EKS2Configuration implements Cloneable, AwsCommonConfiguration {
     private boolean useProfileCredentialsProvider;
     @UriParam(label = "security")
     private boolean useSessionCredentials;
-    @UriParam(defaultValue = "false")
+    @UriParam(label = "security")
     private String profileCredentialsName;
 
     public EksClient getEksClient() {
