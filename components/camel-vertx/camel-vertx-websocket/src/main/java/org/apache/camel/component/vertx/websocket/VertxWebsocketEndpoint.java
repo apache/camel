@@ -18,6 +18,7 @@ package org.apache.camel.component.vertx.websocket;
 
 import java.net.URI;
 import java.util.Arrays;
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.TimeUnit;
@@ -259,9 +260,10 @@ public class VertxWebsocketEndpoint extends DefaultEndpoint implements EndpointS
     }
 
     /**
-     * Finds all WebSockets associated with a host matching this endpoint configured port and resource path
+     * Finds all VertxWebsocketPeer objects associated with a host matching this endpoint configured port and resource
+     * path
      */
-    protected Map<String, ServerWebSocket> findPeersForHostPort() {
+    public List<VertxWebsocketPeer> findPeerObjectsForHostPort() {
         return getVertxHostRegistry()
                 .values()
                 .stream()
@@ -278,6 +280,15 @@ public class VertxWebsocketEndpoint extends DefaultEndpoint implements EndpointS
                     }
                     return VertxWebsocketHelper.webSocketHostPathMatches(peerConnectedPath, producerPath);
                 })
+                .collect(Collectors.toList());
+    }
+
+    /**
+     * Finds all WebSockets associated with a host matching this endpoint configured port and resource path
+     */
+    protected Map<String, ServerWebSocket> findPeersForHostPort() {
+        return findPeerObjectsForHostPort()
+                .stream()
                 .collect(Collectors.toMap(VertxWebsocketPeer::getConnectionKey, VertxWebsocketPeer::getWebSocket));
     }
 }

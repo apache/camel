@@ -17,12 +17,15 @@
 package org.apache.camel.opentelemetry2;
 
 import java.lang.management.ManagementFactory;
+import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 
 import io.opentelemetry.api.GlobalOpenTelemetry;
 import io.opentelemetry.api.baggage.Baggage;
 import io.opentelemetry.api.trace.SpanBuilder;
+import io.opentelemetry.api.trace.SpanContext;
 import io.opentelemetry.api.trace.SpanKind;
 import io.opentelemetry.api.trace.Tracer;
 import io.opentelemetry.api.trace.propagation.W3CTraceContextPropagator;
@@ -180,6 +183,11 @@ public class OpenTelemetryTracer extends org.apache.camel.telemetry.Tracer {
     private class OpentelemetrySpanLifecycleManager implements SpanLifecycleManager {
 
         private final static String BAGGAGE_VAR_PREFIX = "OTEL_BAGGAGE_";
+        /**
+         * Exchange property name for storing a span context to create span links. This is used by components like
+         * vertx-websocket to link WebSocket message spans back to the original HTTP upgrade request span.
+         */
+        private final static String SPAN_LINK_CONTEXT_PROPERTY = "CamelVertxWebsocketHandshakeSpanContext";
 
         private final Tracer tracer;
         private final ContextPropagators contextPropagators;
@@ -193,6 +201,14 @@ public class OpenTelemetryTracer extends org.apache.camel.telemetry.Tracer {
         public Span create(String spanName, String spanKind, Span parent, SpanContextPropagationExtractor extractor) {
             SpanBuilder builder = tracer.spanBuilder(spanName);
             Baggage baggage = Baggage.current();
+
+            // Extract span link contexts (can be multiple for scenarios like sendToAll)
+            List<SpanContext> linkContexts = extractSpanLinkContexts(extractor);
+            for (SpanContext linkContext : linkContexts) {
+                if (linkContext != null && linkContext.isValid()) {
+                    builder = builder.addLink(linkContext);
+                }
+            }
 
             if (parent != null) {
                 OpenTelemetrySpanAdapter otelParentSpan = (OpenTelemetrySpanAdapter) parent;
@@ -229,6 +245,49 @@ public class OpenTelemetryTracer extends org.apache.camel.telemetry.Tracer {
             }
 
             return new OpenTelemetrySpanAdapter(builder.startSpan(), baggage);
+        }
+
+        /**
+         * Extracts span contexts from the exchange properties to create span links. This allows linking spans across
+         * asynchronous boundaries, such as WebSocket messages back to the HTTP upgrade request.
+         * <p>
+         * Supports multiple span links for scenarios like broadcasting to multiple WebSocket connections from different
+         * HTTP requests.
+         *
+         * @param  extractor the span context propagation extractor (usually the Exchange)
+         * @return           list of span contexts to link to (empty if none present)
+         */
+        private List<SpanContext> extractSpanLinkContexts(SpanContextPropagationExtractor extractor) {
+            List<SpanContext> result = new ArrayList<>();
+            if (extractor == null) {
+                return result;
+            }
+
+            Object value = extractor.get(SPAN_LINK_CONTEXT_PROPERTY);
+
+            if (value instanceof SpanContext) {
+                result.add((SpanContext) value);
+            } else if (value instanceof String) {
+                try {
+                    String str = (String) value;
+                    // Format: "traceId1:spanId1,traceId2:spanId2,..."
+                    // Split by comma to support multiple span links
+                    for (String part : str.split(",")) {
+                        String[] components = part.trim().split(":");
+                        if (components.length == 2) {
+                            SpanContext ctx = SpanContext.createFromRemoteParent(
+                                    components[0], components[1],
+                                    io.opentelemetry.api.trace.TraceFlags.getSampled(),
+                                    io.opentelemetry.api.trace.TraceState.getDefault());
+                            result.add(ctx);
+                        }
+                    }
+                } catch (Exception e) {
+                    LOG.warn("Failed to parse span link contexts from string: {}", value, e);
+                }
+            }
+
+            return result;
         }
 
         // We inspect the exchange in order to find any baggage variable

@@ -104,7 +104,7 @@ public class VertxWebsocketProducer extends DefaultAsyncProducer {
         }
     }
 
-    private Map<String, WebSocketBase> getConnectedPeers(Exchange exchange) throws Exception {
+    protected Map<String, WebSocketBase> getConnectedPeers(Exchange exchange) throws Exception {
         VertxWebsocketEndpoint endpoint = getEndpoint();
         Map<String, ServerWebSocket> peers = endpoint.findPeersForHostPort();
         Map<String, WebSocketBase> connectedPeers = new HashMap<>();

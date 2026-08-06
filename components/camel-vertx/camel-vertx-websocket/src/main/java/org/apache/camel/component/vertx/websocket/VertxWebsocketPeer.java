@@ -29,12 +29,21 @@ public class VertxWebsocketPeer {
     private final String rawPath;
     private final String path;
     private final String connectionKey;
+    private Object handshakeSpanContext;
 
     public VertxWebsocketPeer(ServerWebSocket webSocket, String rawPath) {
         this.webSocket = Objects.requireNonNull(webSocket);
         this.rawPath = Objects.requireNonNull(rawPath);
         this.path = webSocket.path();
         this.connectionKey = UUID.randomUUID().toString();
+    }
+
+    public void setHandshakeSpanContext(Object spanContext) {
+        this.handshakeSpanContext = spanContext;
+    }
+
+    public Object getHandshakeSpanContext() {
+        return handshakeSpanContext;
     }
 
     public ServerWebSocket getWebSocket() {
