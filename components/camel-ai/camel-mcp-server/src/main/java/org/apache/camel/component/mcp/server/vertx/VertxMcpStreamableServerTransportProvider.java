@@ -332,11 +332,17 @@ public class VertxMcpStreamableServerTransportProvider implements McpStreamableS
             return;
         }
         if (sessionKeepAliveIntervalMs > 0) {
-            keepAliveTimerId = vertx.setPeriodic(sessionKeepAliveIntervalMs, id -> pingSessions());
+            keepAliveTimerId = vertx.setPeriodic(sessionKeepAliveIntervalMs, id -> vertx.executeBlocking(() -> {
+                pingSessions();
+                return null;
+            }, false));
         }
         if (sessionIdleTtlMs > 0) {
             long scanInterval = Math.max(100L, Math.min(sessionIdleTtlMs / 2, 1_000L));
-            idleTimerId = vertx.setPeriodic(scanInterval, id -> evictIdleSessions());
+            idleTimerId = vertx.setPeriodic(scanInterval, id -> vertx.executeBlocking(() -> {
+                evictIdleSessions();
+                return null;
+            }, false));
         }
     }
 
@@ -360,15 +366,32 @@ public class VertxMcpStreamableServerTransportProvider implements McpStreamableS
         }
         for (ManagedSession managed : sessions.values()) {
             try {
-                managed.session.sendRequest("ping", null, new TypeRef<Object>() {
+                managed.session.sendRequest(McpSchema.METHOD_PING, null, new TypeRef<Object>() {
                 }).block(KEEP_ALIVE_PING_TIMEOUT);
                 managed.resetPingFailures();
+                managed.touch();
             } catch (Exception e) {
+                if (isMissingTransport(e)) {
+                    // POST-only clients without an open GET stream cannot receive pings; idle TTL handles orphans
+                    continue;
+                }
                 if (managed.recordPingFailure() >= MAX_CONSECUTIVE_PING_FAILURES) {
                     evictSession(managed.session.getId(), "keep-alive ping failed");
                 }
             }
         }
+    }
+
+    private static boolean isMissingTransport(Throwable error) {
+        Throwable current = error;
+        while (current != null) {
+            if (current instanceof IllegalStateException && current.getMessage() != null
+                    && current.getMessage().contains("Stream unavailable")) {
+                return true;
+            }
+            current = current.getCause();
+        }
+        return false;
     }
 
     private void evictIdleSessions() {
@@ -389,10 +412,25 @@ public class VertxMcpStreamableServerTransportProvider implements McpStreamableS
             return;
         }
         LOG.debug("Evicting MCP session {}: {}", sessionId, reason);
+        closeSessionQuietly(managed.session, sessionId);
+    }
+
+    private void scheduleAsyncSessionClose(String sessionId, McpStreamableServerSession session) {
+        if (vertx == null) {
+            closeSessionQuietly(session, sessionId);
+            return;
+        }
+        vertx.executeBlocking(() -> {
+            closeSessionQuietly(session, sessionId);
+            return null;
+        }, false);
+    }
+
+    private void closeSessionQuietly(McpStreamableServerSession session, String sessionId) {
         try {
-            managed.session.closeGracefully().block(NOTIFICATION_TIMEOUT);
+            session.closeGracefully().block(NOTIFICATION_TIMEOUT);
         } catch (Exception e) {
-            LOG.debug("Failed to close evicted MCP session {}: {}", sessionId, e.getMessage());
+            LOG.debug("Failed to close MCP session {}: {}", sessionId, e.getMessage());
         }
     }
 
@@ -444,6 +482,7 @@ public class VertxMcpStreamableServerTransportProvider implements McpStreamableS
 
         private void touch() {
             lastActivityNanos = System.nanoTime();
+            consecutivePingFailures = 0;
         }
 
         private long lastActivityNanos() {
@@ -498,8 +537,10 @@ public class VertxMcpStreamableServerTransportProvider implements McpStreamableS
                             LOG.debug("Failed to write to MCP session {}: {}", sessionId,
                                     result.cause() != null ? result.cause().getMessage() : "unknown");
                             closed = true;
-                            // the client is gone: drop the session like the SDK servlet transport does
-                            evictSession(sessionId, "SSE write failed");
+                            ManagedSession managed = sessions.remove(sessionId);
+                            if (managed != null) {
+                                scheduleAsyncSessionClose(sessionId, managed.session);
+                            }
                         }
                         sink.success();
                     });

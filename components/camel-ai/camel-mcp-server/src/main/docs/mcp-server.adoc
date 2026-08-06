@@ -171,11 +171,11 @@ JBang (see the xref:main.adoc[camel-main] options) or on
   CamelContext name | engine
 | `camel.server.mcp-session-keep-alive-interval` | Keep-alive ping interval in
   milliseconds for MCP sessions on the Vert.x streamable transport. Dead sessions
-  are evicted after consecutive ping failures. {@code 0} disables keep-alive
+  are evicted after consecutive ping failures. `0` disables keep-alive
   pings. | `30000` | engine
 | `camel.server.mcp-session-idle-ttl` | Idle TTL in milliseconds for MCP
   sessions on the Vert.x streamable transport. Sessions with no activity for
-  longer than this interval are evicted. {@code 0} disables idle eviction. |
+  longer than this interval are evicted. `0` disables idle eviction. |
   `300000` | engine
 |===
 

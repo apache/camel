@@ -62,14 +62,16 @@ class VertxMcpSessionEvictionTest {
     }
 
     @Test
-    void evictsSessionAfterRepeatedKeepAliveFailures() throws Exception {
+    void postOnlySessionSurvivesKeepAliveUntilIdle() throws Exception {
         int port = AvailablePortFinder.getNextAvailable();
-        VertxMcpServerEngine engine = startEngine(port, new McpServerInfo("eviction", "1.0", "/mcp", 300, 0));
+        VertxMcpServerEngine engine = startEngine(port, new McpServerInfo("eviction", "1.0", "/mcp", 300, 10_000));
         try {
-            initializeSession(port);
-            assertThat(engine.sessionCount()).isEqualTo(1);
+            String sessionId = initializeSession(port);
 
-            await().atMost(5, TimeUnit.SECONDS).untilAsserted(() -> assertThat(engine.sessionCount()).isZero());
+            await().during(2, TimeUnit.SECONDS).atMost(3, TimeUnit.SECONDS).untilAsserted(() -> {
+                assertThat(postWithSession(port, sessionId, INITIALIZED_NOTIFICATION)).isEqualTo(202);
+                assertThat(engine.sessionCount()).isEqualTo(1);
+            });
         } finally {
             engine.stop();
         }
