@@ -4,7 +4,7 @@
 
 This guide helps you choose the right Camel AI component and apply common LLM integration patterns in production routes. It addresses practical gaps reported by users building document-processing and chat pipelines — structured extraction, streaming to browsers, dynamic prompts, and prompt management at scale.
 
-TIP: For a catalog of all AI components, start at xref:ai-summary.adoc[AI Components]. For coding-agent context about Camel itself, see https://camel.apache.org/llms.txt[llms.txt].
+TIP: For a catalog of all AI components, start at xref:ai-summary.adoc[AI Components]. For coding-agent context about Camel itself, see link:/llms.txt[llms.txt].
 
 == Choosing an AI component
 
