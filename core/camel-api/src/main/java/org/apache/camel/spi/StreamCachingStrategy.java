@@ -196,6 +196,22 @@ public interface StreamCachingStrategy extends StaticService {
     @Nullable
     File getSpoolDirectory();
 
+    /**
+     * Resolves the spool directory to use for the given {@link Exchange}. This allows custom implementations to direct
+     * each route's spooled bytes to a separate directory, for example to isolate spool data per route or to monitor
+     * spool usage at the route level.
+     * <p/>
+     * The default implementation delegates to {@link #getSpoolDirectory()}, which returns the single context-wide spool
+     * directory. Custom implementations may override this to return a per-route or per-exchange directory.
+     *
+     * @param  exchange the exchange being processed
+     * @return          the spool directory to use for this exchange, or {@code null} if spooling is not configured
+     * @since           4.22
+     */
+    default @Nullable File resolveSpoolDirectory(Exchange exchange) {
+        return getSpoolDirectory();
+    }
+
     void setSpoolDirectory(String path);
 
     /**

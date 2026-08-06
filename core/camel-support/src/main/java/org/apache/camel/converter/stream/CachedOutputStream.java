@@ -43,6 +43,7 @@ import org.apache.camel.util.IOHelper;
 public class CachedOutputStream extends OutputStream {
 
     private final StreamCachingStrategy strategy;
+    private final Exchange exchange;
     private OutputStream currentStream;
     private boolean inMemory = true;
     private int totalLength;
@@ -55,6 +56,7 @@ public class CachedOutputStream extends OutputStream {
 
     public CachedOutputStream(Exchange exchange, final boolean closedOnCompletion) {
         this.closedOnCompletion = closedOnCompletion;
+        this.exchange = exchange;
         this.tempFileManager = new TempFileManager(closedOnCompletion);
         this.tempFileManager.addExchange(exchange);
         this.strategy = exchange.getContext().getStreamCachingStrategy();
@@ -159,7 +161,7 @@ public class CachedOutputStream extends OutputStream {
         CachedByteArrayOutputStream bout = (CachedByteArrayOutputStream) currentStream;
         try {
             // creates a tmp file and a file output stream
-            currentStream = tempFileManager.createOutputStream(strategy);
+            currentStream = tempFileManager.createOutputStream(strategy, exchange);
             IOHelper.copy(bout.newInputStreamCache(), currentStream, strategy.getBufferSize());
         } finally {
             // ensure flag is flipped to file based

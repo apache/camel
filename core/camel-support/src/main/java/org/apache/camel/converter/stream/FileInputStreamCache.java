@@ -303,7 +303,7 @@ public final class FileInputStreamCache extends InputStream implements StreamCac
             }
         }
 
-        OutputStream createOutputStream(StreamCachingStrategy strategy) throws IOException {
+        OutputStream createOutputStream(StreamCachingStrategy strategy, Exchange exchange) throws IOException {
             // should only be called once
             if (tempFile != null) {
                 throw new IllegalStateException("The method 'createOutputStream' can only be called once!");
@@ -320,7 +320,8 @@ public final class FileInputStreamCache extends InputStream implements StreamCac
                 LOG.error(error);
                 throw new IOException(error);
             }
-            tempFile = FileUtil.createTempFile("cos", ".tmp", strategy.getSpoolDirectory());
+            File spoolDir = strategy.resolveSpoolDirectory(exchange);
+            tempFile = FileUtil.createTempFile("cos", ".tmp", spoolDir);
 
             LOG.trace("Creating temporary stream cache file: {}", tempFile);
             OutputStream out = new BufferedOutputStream(
