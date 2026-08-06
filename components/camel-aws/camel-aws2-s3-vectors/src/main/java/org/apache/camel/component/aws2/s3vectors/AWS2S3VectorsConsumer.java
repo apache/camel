@@ -83,7 +83,7 @@ public class AWS2S3VectorsConsumer extends ScheduledBatchPollingConsumer {
                     .vectorBucketName(vectorBucketName)
                     .indexName(vectorIndexName)
                     .queryVector(VectorData.builder().float32(queryVector).build())
-                    .topK(Math.min(getMaxMessagesPerPoll(), getConfiguration().getTopK()));
+                    .topK(resolveTopK());
 
             // Add metadata filter if configured
             String metadataFilter = getConfiguration().getConsumerMetadataFilter();
@@ -121,15 +121,18 @@ public class AWS2S3VectorsConsumer extends ScheduledBatchPollingConsumer {
                     message.setHeader(AWS2S3VectorsConstants.VECTOR_BUCKET_NAME, vectorBucketName);
                     message.setHeader(AWS2S3VectorsConstants.VECTOR_INDEX_NAME, vectorIndexName);
 
-                    // Add to processed set
-                    processedVectorIds.add(vectorId);
-
                     // Add delete callback if deleteAfterRead is enabled
                     if (getConfiguration().isDeleteAfterRead()) {
                         exchange.getExchangeExtension().addOnCompletion(
                                 new VectorDeleteSynchronization(
                                         getS3VectorsClient(), vectorBucketName, vectorIndexName,
                                         vectorId));
+                    } else {
+                        // Track for de-duplication only when we are not deleting (a deleted vector cannot be
+                        // returned again). Mark it now to avoid re-delivering it on overlapping polls, but drop it
+                        // again if the exchange fails so it can be retried on a subsequent poll.
+                        processedVectorIds.add(vectorId);
+                        exchange.getExchangeExtension().addOnCompletion(new VectorDedupSynchronization(vectorId));
                     }
 
                     exchanges.add(exchange);
@@ -201,6 +204,18 @@ public class AWS2S3VectorsConsumer extends ScheduledBatchPollingConsumer {
     }
 
     /**
+     * Resolves the number of nearest vectors to request from the similarity search. The configured {@code topK} is
+     * capped by {@code maxMessagesPerPoll} only when that is a positive value; a non-positive
+     * {@code maxMessagesPerPoll} (the "unlimited" default) leaves the configured {@code topK} unchanged. AWS S3 Vectors
+     * requires {@code topK >= 1}.
+     */
+    private int resolveTopK() {
+        int topK = getConfiguration().getTopK();
+        int max = getMaxMessagesPerPoll();
+        return max > 0 ? Math.min(max, topK) : topK;
+    }
+
+    /**
      * Parse comma-separated vector string into List<Float>
      *
      * @param  vectorString comma-separated float values (e.g., "0.1,0.2,0.3")
@@ -266,6 +281,24 @@ public class AWS2S3VectorsConsumer extends ScheduledBatchPollingConsumer {
         @Override
         public void onFailure(Exchange exchange) {
             LOG.trace("Exchange failed, not deleting vector [{}]", vectorId);
+        }
+    }
+
+    /**
+     * Synchronization callback that drops a vector id from the de-duplication set when the exchange fails, so the
+     * vector can be reprocessed on a subsequent poll instead of being skipped forever.
+     */
+    private class VectorDedupSynchronization extends SynchronizationAdapter {
+
+        private final String vectorId;
+
+        VectorDedupSynchronization(String vectorId) {
+            this.vectorId = vectorId;
+        }
+
+        @Override
+        public void onFailure(Exchange exchange) {
+            processedVectorIds.remove(vectorId);
         }
     }
 }
