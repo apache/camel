@@ -26,6 +26,7 @@ import org.apache.camel.util.json.Jsoner;
 import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 public class AiToolParameterHelperTest {
 
@@ -265,5 +266,46 @@ public class AiToolParameterHelperTest {
         assertThat(defs.get("city").getType())
                 .as("Default type should be string when only description is provided")
                 .isEqualTo("string");
+    }
+
+    @Test
+    public void testValidateParameterSourceExclusive() {
+        assertThatThrownBy(() -> AiToolParameterHelper.validateParameterSourceExclusive(
+                Map.of("city", "string"), "{\"type\":\"object\"}"))
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessageContaining("mutually exclusive");
+    }
+
+    @Test
+    public void testExtractTopLevelPropertyNamesFromRawSchema() throws DeserializationException {
+        String schema = """
+                {
+                  "type": "object",
+                  "properties": {
+                    "customer": { "type": "object" },
+                    "items": { "type": "array" }
+                  }
+                }
+                """;
+
+        assertThat(AiToolParameterHelper.extractTopLevelPropertyNames(schema))
+                .containsExactlyInAnyOrder("customer", "items");
+    }
+
+    @Test
+    public void testExtractRequiredPropertyNamesFromRawSchema() throws DeserializationException {
+        String schema = """
+                {
+                  "type": "object",
+                  "properties": {
+                    "customer": { "type": "object" },
+                    "items": { "type": "array" }
+                  },
+                  "required": ["customer"]
+                }
+                """;
+
+        assertThat(AiToolParameterHelper.extractRequiredPropertyNames(schema))
+                .containsExactly("customer");
     }
 }

@@ -23,6 +23,8 @@ public class AiToolConfigurationConfigurer extends org.apache.camel.support.comp
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         org.apache.camel.component.ai.tool.AiToolConfiguration target = (org.apache.camel.component.ai.tool.AiToolConfiguration) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
+        case "argschema":
+        case "argSchema": target.setArgSchema(property(camelContext, java.lang.String.class, value)); return true;
         case "description": target.setDescription(property(camelContext, java.lang.String.class, value)); return true;
         case "parameters": target.setParameters(property(camelContext, java.util.Map.class, value)); return true;
         case "tags": target.setTags(property(camelContext, java.lang.String.class, value)); return true;
@@ -33,6 +35,8 @@ public class AiToolConfigurationConfigurer extends org.apache.camel.support.comp
     @Override
     public Class<?> getOptionType(String name, boolean ignoreCase) {
         switch (ignoreCase ? name.toLowerCase() : name) {
+        case "argschema":
+        case "argSchema": return java.lang.String.class;
         case "description": return java.lang.String.class;
         case "parameters": return java.util.Map.class;
         case "tags": return java.lang.String.class;
@@ -44,6 +48,8 @@ public class AiToolConfigurationConfigurer extends org.apache.camel.support.comp
     public Object getOptionValue(Object obj, String name, boolean ignoreCase) {
         org.apache.camel.component.ai.tool.AiToolConfiguration target = (org.apache.camel.component.ai.tool.AiToolConfiguration) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
+        case "argschema":
+        case "argSchema": return target.getArgSchema();
         case "description": return target.getDescription();
         case "parameters": return target.getParameters();
         case "tags": return target.getTags();

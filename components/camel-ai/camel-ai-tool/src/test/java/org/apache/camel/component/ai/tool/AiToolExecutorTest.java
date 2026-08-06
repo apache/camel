@@ -17,6 +17,7 @@
 package org.apache.camel.component.ai.tool;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.apache.camel.Exchange;
@@ -74,6 +75,16 @@ public class AiToolExecutorTest extends CamelTestSupport {
                      + "&description=A tool that sets exception on exchange")
                         .process(exchange -> exchange.setException(
                                 new RuntimeException("Exchange-level failure")));
+
+                from("ai-tool:createOrder"
+                     + "?tags=test"
+                     + "&description=Create an order"
+                     + "&argSchema=classpath:arg-schemas/create-order.json")
+                        .process(exchange -> {
+                            Map<?, ?> customer = exchange.getMessage().getHeader("customer", Map.class);
+                            List<?> items = exchange.getMessage().getHeader("items", List.class);
+                            exchange.getMessage().setBody("order:" + customer.get("id") + ":" + items.size());
+                        });
             }
         };
     }
@@ -296,6 +307,56 @@ public class AiToolExecutorTest extends CamelTestSupport {
         assertThat(exchange.getMessage().getHeader("safeParam", String.class))
                 .as("Declared non-Camel argument should be set as header")
                 .isEqualTo("ok");
+    }
+
+    @Test
+    public void testExecuteWithRawArgSchemaNestedArguments() {
+        AiToolSpec spec = findSpec("createOrder");
+        Exchange exchange = new DefaultExchange(context);
+
+        Map<String, Object> customer = Map.of("id", "cust-1", "email", "a@example.com");
+        List<Map<String, Object>> items = List.of(Map.of("sku", "ABC", "qty", 2));
+
+        Map<String, Object> arguments = new HashMap<>();
+        arguments.put("customer", customer);
+        arguments.put("items", items);
+
+        AiToolResult result = AiToolExecutor.execute(spec, arguments, exchange);
+
+        assertThat(result).isInstanceOf(AiToolResult.Success.class);
+        assertThat(((AiToolResult.Success) result).value()).isEqualTo("order:cust-1:1");
+        assertThat(exchange.getMessage().getHeader("customer", Map.class)).isEqualTo(customer);
+        assertThat(exchange.getMessage().getHeader("items", List.class)).isEqualTo(items);
+    }
+
+    @Test
+    public void testExecuteIgnoresUndeclaredArgumentsForRawArgSchema() {
+        AiToolSpec spec = findSpec("createOrder");
+        Exchange exchange = new DefaultExchange(context);
+
+        Map<String, Object> arguments = new HashMap<>();
+        arguments.put("customer", Map.of("id", "cust-1"));
+        arguments.put("items", List.of(Map.of("sku", "ABC", "qty", 1)));
+        arguments.put("promoCode", "SAVE10");
+
+        AiToolResult result = AiToolExecutor.execute(spec, arguments, exchange);
+
+        assertThat(result).isInstanceOf(AiToolResult.Success.class);
+        assertThat(exchange.getMessage().getHeader("promoCode")).isNull();
+    }
+
+    @Test
+    public void testExecuteReturnsArgumentErrorForMissingRequiredRawSchemaArgument() {
+        AiToolSpec spec = findSpec("createOrder");
+        Exchange exchange = new DefaultExchange(context);
+
+        Map<String, Object> arguments = new HashMap<>();
+        arguments.put("customer", Map.of("id", "cust-1"));
+
+        AiToolResult result = AiToolExecutor.execute(spec, arguments, exchange);
+
+        assertThat(result).isInstanceOf(AiToolResult.ArgumentError.class);
+        assertThat(((AiToolResult.ArgumentError) result).message()).contains("Missing required argument 'items'");
     }
 
     private AiToolSpec findSpec(String toolName) {

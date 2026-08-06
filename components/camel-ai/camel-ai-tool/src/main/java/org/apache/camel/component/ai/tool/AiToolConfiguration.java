@@ -50,9 +50,16 @@ public class AiToolConfiguration implements Cloneable {
     @UriParam(description = "Tool input parameters. "
                             + "Format: parameter.NAME=TYPE, parameter.NAME.description=TEXT, "
                             + "parameter.NAME.required=true or false, parameter.NAME.enum=val1,val2. "
-                            + "Supported types: string, integer, number, boolean.",
+                            + "Supported types: string, integer, number, boolean. "
+                            + "Mutually exclusive with argSchema.",
               prefix = "parameter.", multiValue = true)
     private Map<String, String> parameters;
+
+    @UriParam(description = "Raw JSON Schema for tool input parameters. Supports inline JSON and resource "
+                            + "references (classpath:, file:, resource:). Mutually exclusive with parameter.*. "
+                            + "Use for nested objects, arrays, oneOf, and other complex schemas.")
+    @Metadata(label = "consumer", supportFileReference = true, largeInput = true, inputLanguage = "json")
+    private String argSchema;
 
     public AiToolConfiguration() {
     }
@@ -81,12 +88,21 @@ public class AiToolConfiguration implements Cloneable {
         this.parameters = parameters;
     }
 
+    public String getArgSchema() {
+        return argSchema;
+    }
+
+    public void setArgSchema(String argSchema) {
+        this.argSchema = argSchema;
+    }
+
     public AiToolConfiguration copy() {
         try {
             AiToolConfiguration copy = (AiToolConfiguration) super.clone();
             if (this.parameters != null) {
                 copy.parameters = new HashMap<>(this.parameters);
             }
+            copy.argSchema = this.argSchema;
             return copy;
         } catch (CloneNotSupportedException e) {
             throw new RuntimeCamelException(e);

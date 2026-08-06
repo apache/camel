@@ -22,6 +22,7 @@ import java.util.Locale;
 import java.util.Map;
 
 import dev.langchain4j.agent.tool.ToolSpecification;
+import dev.langchain4j.internal.JsonSchemaElementJsonUtils;
 import dev.langchain4j.model.chat.request.json.JsonBooleanSchema;
 import dev.langchain4j.model.chat.request.json.JsonEnumSchema;
 import dev.langchain4j.model.chat.request.json.JsonIntegerSchema;
@@ -31,6 +32,9 @@ import dev.langchain4j.model.chat.request.json.JsonSchemaElement;
 import dev.langchain4j.model.chat.request.json.JsonStringSchema;
 import org.apache.camel.component.ai.tool.AiToolParameterHelper;
 import org.apache.camel.component.ai.tool.AiToolSpec;
+import org.apache.camel.util.json.DeserializationException;
+import org.apache.camel.util.json.JsonObject;
+import org.apache.camel.util.json.Jsoner;
 
 /**
  * Converts {@link AiToolSpec} instances to langchain4j {@link ToolSpecification} objects, mapping Camel parameter
@@ -48,9 +52,30 @@ public final class AiToolSpecToLangChain4j {
 
         if (spec.getParameterDefs() != null && !spec.getParameterDefs().isEmpty()) {
             builder.parameters(buildSchema(spec.getParameterDefs()));
+        } else if (spec.getParametersJsonSchema() != null && !spec.getParametersJsonSchema().isBlank()) {
+            builder.parameters(buildSchemaFromJson(spec.getParametersJsonSchema()));
         }
 
         return builder.build();
+    }
+
+    private static JsonObjectSchema buildSchemaFromJson(String jsonSchema) {
+        try {
+            Object parsed = Jsoner.deserialize(jsonSchema);
+            if (!(parsed instanceof JsonObject root)) {
+                throw new IllegalArgumentException(
+                        "Tool JSON Schema must be a JSON object, but was: " + parsed.getClass().getSimpleName());
+            }
+            JsonSchemaElement element = JsonSchemaElementJsonUtils.fromMap(root);
+            if (!(element instanceof JsonObjectSchema objectSchema)) {
+                throw new IllegalArgumentException(
+                        "Tool JSON Schema root must deserialize to JsonObjectSchema, but was: "
+                                                   + element.getClass().getSimpleName());
+            }
+            return objectSchema;
+        } catch (DeserializationException e) {
+            throw new IllegalArgumentException("Tool JSON Schema is not valid JSON", e);
+        }
     }
 
     private static JsonObjectSchema buildSchema(Map<String, AiToolParameterHelper.ParameterDef> defs) {

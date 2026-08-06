@@ -30,6 +30,8 @@ public class AiToolComponentConfigurer extends PropertyConfigurerSupport impleme
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         AiToolComponent target = (AiToolComponent) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
+        case "argschema":
+        case "argSchema": getOrCreateConfiguration(target).setArgSchema(property(camelContext, java.lang.String.class, value)); return true;
         case "autowiredenabled":
         case "autowiredEnabled": target.setAutowiredEnabled(property(camelContext, boolean.class, value)); return true;
         case "bridgeerrorhandler":
@@ -45,6 +47,8 @@ public class AiToolComponentConfigurer extends PropertyConfigurerSupport impleme
     @Override
     public Class<?> getOptionType(String name, boolean ignoreCase) {
         switch (ignoreCase ? name.toLowerCase() : name) {
+        case "argschema":
+        case "argSchema": return java.lang.String.class;
         case "autowiredenabled":
         case "autowiredEnabled": return boolean.class;
         case "bridgeerrorhandler":
@@ -61,6 +65,8 @@ public class AiToolComponentConfigurer extends PropertyConfigurerSupport impleme
     public Object getOptionValue(Object obj, String name, boolean ignoreCase) {
         AiToolComponent target = (AiToolComponent) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
+        case "argschema":
+        case "argSchema": return getOrCreateConfiguration(target).getArgSchema();
         case "autowiredenabled":
         case "autowiredEnabled": return target.isAutowiredEnabled();
         case "bridgeerrorhandler":

@@ -16,16 +16,25 @@
  */
 package org.apache.camel.component.ai.tool;
 
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.HashMap;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Set;
 
+import org.apache.camel.CamelContext;
+import org.apache.camel.support.ResourceHelper;
+import org.apache.camel.util.json.DeserializationException;
 import org.apache.camel.util.json.JsonArray;
 import org.apache.camel.util.json.JsonObject;
+import org.apache.camel.util.json.Jsoner;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -148,6 +157,116 @@ public final class AiToolParameterHelper {
         schema.put("additionalProperties", false);
 
         return schema.toJson();
+    }
+
+    /**
+     * Validates that flat {@code parameter.*} metadata and {@code argSchema} are not both configured.
+     */
+    public static void validateParameterSourceExclusive(Map<String, String> parameters, String argSchema) {
+        boolean hasParameters = parameters != null && !parameters.isEmpty();
+        boolean hasArgSchema = argSchema != null && !argSchema.isBlank();
+        if (hasParameters && hasArgSchema) {
+            throw new IllegalArgumentException(
+                    "argSchema and parameter.* are mutually exclusive on ai-tool endpoints");
+        }
+    }
+
+    /**
+     * Resolves, validates, and normalizes a raw JSON Schema for tool input.
+     */
+    public static String resolveArgSchema(CamelContext camelContext, String argSchema) {
+        if (argSchema == null || argSchema.isBlank()) {
+            throw new IllegalArgumentException("argSchema must not be blank");
+        }
+
+        String resolved = camelContext.resolvePropertyPlaceholders(argSchema);
+        String content = resolveResourceContent(camelContext, resolved);
+        if (content != null) {
+            resolved = content;
+        }
+
+        JsonObject root = parseJsonObject(resolved, argSchema);
+        Object type = root.get("type");
+        if (type != null && !"object".equals(type)) {
+            throw new IllegalArgumentException(
+                    "argSchema root type must be 'object' when specified, but was: " + type);
+        }
+        if (type == null && !root.containsKey("properties")) {
+            throw new IllegalArgumentException(
+                    "argSchema must be a JSON Schema object with a properties map");
+        }
+
+        return root.toJson();
+    }
+
+    /**
+     * Returns top-level property names declared in a JSON Schema object.
+     */
+    public static Set<String> extractTopLevelPropertyNames(String jsonSchema) {
+        if (jsonSchema == null || jsonSchema.isBlank()) {
+            return Set.of();
+        }
+        JsonObject root = parseJsonObject(jsonSchema, jsonSchema);
+        Map<String, Object> properties = root.getMap("properties");
+        if (properties == null || properties.isEmpty()) {
+            return Set.of();
+        }
+        return Set.copyOf(properties.keySet());
+    }
+
+    /**
+     * Returns top-level required property names declared in a JSON Schema object.
+     */
+    public static Set<String> extractRequiredPropertyNames(String jsonSchema) {
+        if (jsonSchema == null || jsonSchema.isBlank()) {
+            return Set.of();
+        }
+        JsonObject root = parseJsonObject(jsonSchema, jsonSchema);
+        Collection<?> required = root.getCollection("required");
+        if (required == null || required.isEmpty()) {
+            return Set.of();
+        }
+        Set<String> names = new LinkedHashSet<>();
+        for (Object value : required) {
+            if (value != null) {
+                names.add(value.toString());
+            }
+        }
+        return Set.copyOf(names);
+    }
+
+    private static JsonObject parseJsonObject(String json, String originalValue) {
+        try {
+            Object parsed = Jsoner.deserialize(json);
+            if (!(parsed instanceof JsonObject root)) {
+                throw new IllegalArgumentException(
+                        "argSchema must be a JSON object, but was: " + parsed.getClass().getSimpleName());
+            }
+            return root;
+        } catch (DeserializationException e) {
+            throw new IllegalArgumentException(
+                    "argSchema does not contain valid JSON. Provided value: " + originalValue, e);
+        }
+    }
+
+    private static String resolveResourceContent(CamelContext camelContext, String property) {
+        try {
+            if (ResourceHelper.hasScheme(property)) {
+                try (InputStream is = ResourceHelper.resolveMandatoryResourceAsInputStream(camelContext, property)) {
+                    return camelContext.getTypeConverter().convertTo(String.class, is);
+                }
+            }
+            try (InputStream is = ResourceHelper.resolveResourceAsInputStream(camelContext, property)) {
+                if (is != null) {
+                    return camelContext.getTypeConverter().convertTo(String.class, is);
+                }
+            }
+        } catch (IOException e) {
+            throw new IllegalArgumentException("Failed to load argSchema resource: " + property, e);
+        } catch (Exception e) {
+            // not a resolvable resource URI — fall through and treat as inline JSON content
+        }
+        return null;
     }
 
     private static String mapType(String type) {

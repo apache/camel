@@ -161,6 +161,45 @@ class AiToolSpecToLangChain4jTest {
     }
 
     @Test
+    void testRawArgSchemaConversion() {
+        String schema = """
+                {
+                  "type": "object",
+                  "properties": {
+                    "customer": {
+                      "type": "object",
+                      "properties": {
+                        "id": { "type": "string" }
+                      },
+                      "required": ["id"]
+                    },
+                    "items": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "sku": { "type": "string" },
+                          "qty": { "type": "integer" }
+                        }
+                      }
+                    }
+                  },
+                  "required": ["customer", "items"]
+                }
+                """;
+
+        AiToolSpec spec = new AiToolSpec("createOrder", "Create order", Map.of(), schema, null);
+        ToolSpecification result = AiToolSpecToLangChain4j.toToolSpecification(spec);
+
+        assertNotNull(result.parameters());
+        assertEquals(2, result.parameters().properties().size());
+        assertTrue(result.parameters().properties().containsKey("customer"));
+        assertTrue(result.parameters().properties().containsKey("items"));
+        assertTrue(result.parameters().required().contains("customer"));
+        assertTrue(result.parameters().required().contains("items"));
+    }
+
+    @Test
     void testEmptyParameters() {
         AiToolSpec spec = new AiToolSpec("noParams", "Tool with no params", Map.of(), null, null);
 
