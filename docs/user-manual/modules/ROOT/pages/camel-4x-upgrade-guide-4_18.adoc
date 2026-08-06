@@ -1605,6 +1605,37 @@ Routes that intentionally relied on undertow mapping `websocket.*` wire
 headers in or out can supply a custom `headerFilterStrategy` endpoint option
 to restore the previous behaviour.
 
+=== camel-undertow - UndertowHeaderFilterStrategy is now the endpoint default
+
+`UndertowEndpoint` defaulted its `headerFilterStrategy` to the base
+`HttpHeaderFilterStrategy`, and pushed that strategy into the `DefaultUndertowHttpBinding`
+it creates lazily, overwriting the `UndertowHeaderFilterStrategy` that the binding installs
+in its own constructor. The undertow-specific filtering was therefore not applied on
+endpoint-configured routes.
+
+The endpoint now defaults to `UndertowHeaderFilterStrategy`, which makes two already
+documented behaviours take effect:
+
+* The legacy `websocket.*` Exchange-header prefix, added to the in and out filters in
+  4.14.8 / 4.18.3 / 4.21.0 (see above), is now filtered at the undertow
+  transport boundary as described there.
+* Header names that undertow does not accept (those for which
+  `io.undertow.util.HttpString.tryFromString` returns `null`) are skipped when mapping
+  external headers in, rather than being mapped onto the message.
+
+Ordinary application headers are unaffected, and Rest DSL consumers already used an
+undertow-specific strategy (`UndertowRestHeaderFilterStrategy`) so their behaviour does not
+change. Routes that relied on `websocket.*` headers crossing the undertow boundary in either
+direction, and routes that relied on undertow-invalid header names being mapped, can restore
+the previous behaviour by configuring `headerFilterStrategy` explicitly on the endpoint:
+
+[source,java]
+----
+from("undertow:http://0.0.0.0:8080/foo?headerFilterStrategy=#myStrategy")
+----
+
+Routes that already supply a custom `headerFilterStrategy` or a custom `undertowHttpBinding`
+are unaffected.
 
 === camel-aws2-sqs
 
