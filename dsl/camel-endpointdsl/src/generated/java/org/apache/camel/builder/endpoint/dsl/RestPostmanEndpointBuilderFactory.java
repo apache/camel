@@ -415,10 +415,10 @@ public interface RestPostmanEndpointBuilderFactory {
         }
         /**
          * Name of the Camel component that will service the requests. The
-         * component must be present in Camel registry and it must implement
-         * RestOpenApiConsumerFactory service provider interface. If not set
-         * CLASSPATH is searched for single component that implements
-         * RestOpenApiConsumerFactory SPI.
+         * component must be present in Camel registry and it must be able to
+         * service contract-first REST consumers, as platform-http does. If not
+         * set CLASSPATH is searched for a single component with that
+         * capability.
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
