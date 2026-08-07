@@ -1,0 +1,41 @@
+= Apache Camel 4.x Upgrade Guide
+
+This document is for helping you upgrade your Apache Camel application
+from Camel 4.x to 4.y. For example, if you are upgrading Camel 4.0 to 4.2, then you should follow the guides
+from both 4.0 to 4.1 and 4.1 to 4.2.
+
+[NOTE]
+====
+https://github.com/apache/camel-upgrade-recipes/[The Camel Upgrade Recipes project] provides automated assistance for some common migration tasks.
+Note that manual migration is still required.
+See the xref:camel-upgrade-recipes-tool.adoc[documentation] page for details.
+====
+
+== Upgrading Camel 4.22 to 4.23
+
+=== camel-a2a - webhook URL address classification
+
+Push notification webhook URLs are now classified by the address the host resolves to, using the
+same rules whether the host is written as an IP literal or as a name. Previously a few ranges were
+recognised only in literal form, and host names were partly classified by how they were spelled.
+
+Webhook URLs are now rejected when the host resolves into any of the following, in addition to the
+loopback, wildcard, link-local and site-local ranges that were already rejected:
+
+* IPv6 unique local addresses, `fc00::/7`
+* IPv4-compatible IPv6 addresses, `::a.b.c.d`, when the embedded IPv4 address is itself non-global
+* NAT64 addresses under the well-known prefix `64:ff9b::/96`, when the embedded IPv4 address is
+  itself non-global
+* 6to4 addresses under `2002::/16`, when the embedded IPv4 address is itself non-global
+* The shared address space used for carrier-grade NAT, `100.64.0.0/10`
+
+NAT64 and 6to4 addresses carrying a globally routable IPv4 address remain allowed, so an IPv6-only
+deployment can still reach public webhook endpoints through a translation prefix.
+
+In the other direction, host names are no longer rejected on the basis of their spelling. Names
+beginning with `fc` or `fd`, such as `fcm.googleapis.com`, were previously refused because those are
+the leading hex digits of the IPv6 unique local prefixes; they are now resolved and classified like
+any other name.
+
+Set `allowLocalWebhookUrls=true` to permit loopback targets during local development. That option is
+unchanged and still does not permit any of the ranges above.
