@@ -313,4 +313,4 @@ YAML::
 
 * xref:langchain4j-agent-component.adoc[LangChain4j Agent Component] — discovers ai-tool tools via the `tags` option
 * xref:spring-ai-chat-component.adoc[Spring AI Chat Component] — discovers ai-tool tools via the `tags` option
-* xref:mcp-server.adoc[MCP Server] — exposes ai-tool routes as MCP tools over streamable HTTP
+* xref:others:mcp-server.adoc[MCP Server] — exposes ai-tool routes as MCP tools over streamable HTTP
