@@ -239,8 +239,7 @@ public final class AiToolParameterHelper {
                         "Route body must not be blank when an output schema is declared");
             }
             try {
-                Object parsed = Jsoner.deserialize(text);
-                return toPlainJsonValue(parsed);
+                return Jsoner.deserialize(text);
             } catch (DeserializationException e) {
                 throw new IllegalArgumentException(
                         "Route body must be valid JSON when an output schema is declared", e);
@@ -325,16 +324,6 @@ public final class AiToolParameterHelper {
             throw new IllegalArgumentException(
                     context + " does not contain valid JSON. Provided value: " + originalValue, e);
         }
-    }
-
-    private static Object toPlainJsonValue(Object parsed) {
-        if (parsed instanceof JsonObject jsonObject) {
-            return jsonObject;
-        }
-        if (parsed instanceof JsonArray jsonArray) {
-            return jsonArray;
-        }
-        return parsed;
     }
 
     private static void validateRootSchemaObject(JsonObject root) {
