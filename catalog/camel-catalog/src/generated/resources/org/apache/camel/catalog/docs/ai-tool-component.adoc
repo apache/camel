@@ -232,6 +232,13 @@ YAML::
 ----
 ====
 
+Flat `outputParameter.*` options use the same sub-option syntax as input `parameter.*`:
+
+* `outputParameter.NAME=TYPE` — field type (`string`, `integer`, `number`, `boolean`)
+* `outputParameter.NAME.description=TEXT` — field description in the generated JSON Schema
+* `outputParameter.NAME.required=true` — marks the field as required in the output schema
+* `outputParameter.NAME.enum=val1,val2` — restricts allowed values
+
 `outputSchema` supports Camel resource references such as `classpath:schemas/weather-result.json`.
 
 === MCP Tool Annotation Hints
