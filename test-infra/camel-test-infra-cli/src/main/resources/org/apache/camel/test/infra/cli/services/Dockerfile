@@ -15,7 +15,7 @@
 # limitations under the License.
 #
 
-ARG FROMIMAGE
+ARG FROMIMAGE=mirror.gcr.io/fedora:43
 
 FROM $FROMIMAGE
 

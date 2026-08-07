@@ -15,7 +15,8 @@
 # limitations under the License.
 #
 
-FROM mirror.gcr.io/fedora:43 as samba
+ARG FROMIMAGE=mirror.gcr.io/fedora:43
+FROM $FROMIMAGE as samba
 LABEL maintainer="orpiske@apache.org"
 ENV SAMBA_ROOT /opt/camel/samba
 EXPOSE 139 445

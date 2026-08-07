@@ -18,6 +18,7 @@ package org.apache.camel.test.infra.hivemq.services;
 
 import org.apache.camel.spi.annotations.InfraService;
 import org.apache.camel.test.infra.common.LocalPropertyResolver;
+import org.apache.camel.test.infra.common.TestUtils;
 import org.apache.camel.test.infra.common.services.ContainerEnvironmentUtil;
 import org.apache.camel.test.infra.hivemq.common.HiveMQProperties;
 import org.testcontainers.hivemq.HiveMQContainer;
@@ -40,8 +41,14 @@ public class LocalHiveMQSparkplugTCKInfraService extends AbstractLocalHiveMQServ
         String dockerfileResourcePath = LocalPropertyResolver.getProperty(LocalHiveMQSparkplugTCKInfraService.class,
                 HiveMQProperties.HIVEMQ_RESOURCE_PATH);
 
+        String fromImage = TestUtils.prependHubImageNamePrefixIfNeeded(
+                LocalPropertyResolver.getProperty(
+                        LocalHiveMQSparkplugTCKInfraService.class, HiveMQProperties.HIVEMQ_SPARKPLUG_FROM_IMAGE));
+
         ImageFromDockerfile newImage
-                = new ImageFromDockerfile(imageName, false).withFileFromClasspath(".", dockerfileResourcePath);
+                = new ImageFromDockerfile(imageName, false)
+                        .withFileFromClasspath(".", dockerfileResourcePath)
+                        .withBuildArg("FROMIMAGE", fromImage);
         String newImageName = newImage.get();
 
         class TestInfraHiveMQContainer extends HiveMQContainer {
