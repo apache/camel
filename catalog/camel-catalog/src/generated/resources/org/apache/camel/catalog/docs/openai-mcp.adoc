@@ -732,7 +732,7 @@ Two endpoint options control what happens when a tool call fails:
 |===
 | Scenario | Behavior
 
-| MCP client initialization failure | Route fails to start (`RuntimeException` during `doStart()`)
+| MCP server unreachable at startup | Route starts anyway: a WARN is logged and initialization of that server is deferred and retried on first use. This lets an application consume its own MCP endpoint (or one of a service starting concurrently) on runtimes where the HTTP server only accepts connections after the application has started. Invalid configuration (for example a missing `transportType`) still fails the route at startup.
 | Tool execution throws an exception | Governed by `toolExecutionErrorStrategy`: `failExchange` (default) propagates the exception to the exchange; `repromptModel` catches the error, logs it as WARN, and sends it as tool result text to the model
 | MCP transport error (`mcpReconnect=true`) | Automatic reconnection and retry (once). If retry fails, behavior follows `toolExecutionErrorStrategy`
 | MCP `CallToolResult.isError()` is true | Error content is sent as tool result text to the model

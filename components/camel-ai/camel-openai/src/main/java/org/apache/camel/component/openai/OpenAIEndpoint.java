@@ -99,6 +99,13 @@ public class OpenAIEndpoint extends DefaultEndpoint {
     private final Set<String> manualReturnDirectAdded = ConcurrentHashMap.newKeySet();
     private final Set<String> manualReturnDirectRemoved = ConcurrentHashMap.newKeySet();
 
+    /**
+     * MCP servers that were unreachable when the endpoint started. Initialization is retried lazily on first use so
+     * that an application acting as MCP client of itself (or of another service starting concurrently) does not fail
+     * route startup on runtimes where the HTTP server only accepts connections after the application has started.
+     */
+    private final Set<String> pendingMcpServers = ConcurrentHashMap.newKeySet();
+
     private volatile McpToolState mcpToolState = McpToolState.empty();
     private volatile boolean mcpStopped;
     private Map<String, Map<String, String>> serverConfigs;
@@ -140,6 +147,7 @@ public class OpenAIEndpoint extends DefaultEndpoint {
         globalMcpLock.lock();
         try {
             mcpStopped = true;
+            pendingMcpServers.clear();
             toClose = new HashSet<>(mcpToolState.toolClientMap().values());
             mcpToolState = McpToolState.empty();
         } finally {
@@ -198,11 +206,24 @@ public class OpenAIEndpoint extends DefaultEndpoint {
                 throw new IllegalArgumentException("mcpServer." + serverName + ".transportType is required");
             }
 
-            McpSyncClient mcpClient = createMcpClient(serverName, props);
-            LOG.debug("MCP server '{}' initialized, listing tools", serverName);
+            McpSyncClient mcpClient;
+            List<McpSchema.Tool> serverTools;
+            try {
+                mcpClient = createMcpClient(serverName, props);
+                LOG.debug("MCP server '{}' initialized, listing tools", serverName);
 
-            McpSchema.ListToolsResult toolsResult = mcpClient.listTools();
-            List<McpSchema.Tool> serverTools = filterTools(toolsResult.tools(), serverName, props);
+                McpSchema.ListToolsResult toolsResult = mcpClient.listTools();
+                serverTools = filterTools(toolsResult.tools(), serverName, props);
+            } catch (Exception e) {
+                // do not fail route startup on an unreachable server: the server may simply not be
+                // accepting connections yet (e.g. this application's own MCP endpoint on runtimes
+                // where the HTTP server starts after the CamelContext); retry lazily on first use
+                pendingMcpServers.add(serverName);
+                LOG.warn("MCP server '{}' is unreachable at endpoint startup ({}); "
+                         + "initialization deferred to first use",
+                        serverName, e.getMessage());
+                continue;
+            }
 
             for (McpSchema.Tool tool : serverTools) {
                 if (toolClientMap.putIfAbsent(tool.name(), mcpClient) != null) {
@@ -780,7 +801,34 @@ public class OpenAIEndpoint extends DefaultEndpoint {
     }
 
     McpToolState getMcpToolState() {
+        if (!pendingMcpServers.isEmpty()) {
+            initializePendingMcpServers();
+        }
         return mcpToolState;
+    }
+
+    /**
+     * Retries the initialization of MCP servers that were unreachable when the endpoint started. Runs at most one
+     * initialization attempt per server at a time via the per-server locks; a thread that finds a server being
+     * initialized by another thread simply skips it and serves the current tool state.
+     */
+    private void initializePendingMcpServers() {
+        for (String serverName : pendingMcpServers) {
+            ReentrantLock lock = mcpClientLocks.get(serverName);
+            if (lock == null || !lock.tryLock()) {
+                continue;
+            }
+            try {
+                if (mcpStopped || !pendingMcpServers.contains(serverName)) {
+                    continue;
+                }
+                if (doReconnectMcpServer(null, serverName) != null) {
+                    pendingMcpServers.remove(serverName);
+                }
+            } finally {
+                lock.unlock();
+            }
+        }
     }
 
     // Package-private setters for testing

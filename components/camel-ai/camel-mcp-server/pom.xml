@@ -63,6 +63,14 @@
             <artifactId>mcp-json-jackson2</artifactId>
             <version>${mcp-java-sdk-version}</version>
         </dependency>
+        <!-- direct dependency so consumers resolving without the jackson-bom get a
+             jackson-annotations aligned with jackson-databind: mcp-core declares an older
+             jackson-annotations that otherwise wins by nearest-wins and breaks databind
+             at runtime (NoClassDefFoundError: JsonSerializeAs) -->
+        <dependency>
+            <groupId>com.fasterxml.jackson.core</groupId>
+            <artifactId>jackson-annotations</artifactId>
+        </dependency>
 
         <!-- test dependencies -->
         <dependency>
