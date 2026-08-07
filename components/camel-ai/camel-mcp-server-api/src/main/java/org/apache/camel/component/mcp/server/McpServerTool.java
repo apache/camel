@@ -60,4 +60,13 @@ public interface McpServerTool {
     default AiToolAnnotations annotations() {
         return null;
     }
+
+    /**
+     * The tool output as a JSON Schema object string, or {@code null} when the tool declares no structured output.
+     *
+     * @since 4.22
+     */
+    default String outputSchemaJson() {
+        return null;
+    }
 }

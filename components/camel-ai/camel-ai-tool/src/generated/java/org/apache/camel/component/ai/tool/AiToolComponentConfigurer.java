@@ -44,6 +44,10 @@ public class AiToolComponentConfigurer extends PropertyConfigurerSupport impleme
         case "idempotentHint": getOrCreateConfiguration(target).setIdempotentHint(property(camelContext, java.lang.Boolean.class, value)); return true;
         case "openworldhint":
         case "openWorldHint": getOrCreateConfiguration(target).setOpenWorldHint(property(camelContext, java.lang.Boolean.class, value)); return true;
+        case "outputparameters":
+        case "outputParameters": getOrCreateConfiguration(target).setOutputParameters(property(camelContext, java.util.Map.class, value)); return true;
+        case "outputschema":
+        case "outputSchema": getOrCreateConfiguration(target).setOutputSchema(property(camelContext, java.lang.String.class, value)); return true;
         case "parameters": getOrCreateConfiguration(target).setParameters(property(camelContext, java.util.Map.class, value)); return true;
         case "readonlyhint":
         case "readOnlyHint": getOrCreateConfiguration(target).setReadOnlyHint(property(camelContext, java.lang.Boolean.class, value)); return true;
@@ -70,6 +74,10 @@ public class AiToolComponentConfigurer extends PropertyConfigurerSupport impleme
         case "idempotentHint": return java.lang.Boolean.class;
         case "openworldhint":
         case "openWorldHint": return java.lang.Boolean.class;
+        case "outputparameters":
+        case "outputParameters": return java.util.Map.class;
+        case "outputschema":
+        case "outputSchema": return java.lang.String.class;
         case "parameters": return java.util.Map.class;
         case "readonlyhint":
         case "readOnlyHint": return java.lang.Boolean.class;
@@ -97,6 +105,10 @@ public class AiToolComponentConfigurer extends PropertyConfigurerSupport impleme
         case "idempotentHint": return getOrCreateConfiguration(target).getIdempotentHint();
         case "openworldhint":
         case "openWorldHint": return getOrCreateConfiguration(target).getOpenWorldHint();
+        case "outputparameters":
+        case "outputParameters": return getOrCreateConfiguration(target).getOutputParameters();
+        case "outputschema":
+        case "outputSchema": return getOrCreateConfiguration(target).getOutputSchema();
         case "parameters": return getOrCreateConfiguration(target).getParameters();
         case "readonlyhint":
         case "readOnlyHint": return getOrCreateConfiguration(target).getReadOnlyHint();
@@ -109,6 +121,8 @@ public class AiToolComponentConfigurer extends PropertyConfigurerSupport impleme
     @Override
     public Object getCollectionValueType(Object target, String name, boolean ignoreCase) {
         switch (ignoreCase ? name.toLowerCase() : name) {
+        case "outputparameters":
+        case "outputParameters": return java.lang.String.class;
         case "parameters": return java.lang.String.class;
         default: return null;
         }

@@ -197,6 +197,50 @@ Top-level schema properties are exposed as exchange headers. Nested values are p
 
 The root schema must be a JSON Schema object with a top-level `properties` map. Camel always allowlists top-level property names when invoking the tool route, even if the schema sets `additionalProperties: true`. Nested fields are not flattened into headers; only top-level properties become exchange headers (Map/List/primitive values).
 
+=== Structured Tool Output (outputSchema)
+
+MCP tools can declare an `outputSchema` and return `structuredContent` (typed JSON) so clients parse tool results reliably instead of re-interpreting free text. Use `outputParameter.*` for flat field definitions or `outputSchema` for raw JSON Schema (mirroring the input-side `parameter.*` / `argSchema` pattern). The two options are mutually exclusive.
+
+When an output schema is declared, the route body must be JSON (a JSON string, `Map`, or `List`). Camel parses it into structured content and forwards it through the MCP bridge as `CallToolResult.structuredContent`. The text representation remains available for LLM adapters (LangChain4j, Spring AI) that consume string tool results.
+
+[tabs]
+====
+Java::
++
+[source,java]
+----
+from("ai-tool:getWeather?tags=weather&description=Get weather"
+     + "&outputSchema=classpath:schemas/weather-result.json")
+    .process(exchange -> exchange.getMessage().setBody(
+        "{\"temperature\":21.5,\"unit\":\"celsius\"}"));
+----
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: ai-tool:getWeather
+      parameters:
+        tags: weather
+        description: "Get weather"
+        outputParameter.temperature: number
+        outputParameter.unit: string
+      steps:
+        - setBody:
+            constant: '{"temperature":21.5,"unit":"celsius"}'
+----
+====
+
+Flat `outputParameter.*` options use the same sub-option syntax as input `parameter.*`:
+
+* `outputParameter.NAME=TYPE` — field type (`string`, `integer`, `number`, `boolean`)
+* `outputParameter.NAME.description=TEXT` — field description in the generated JSON Schema
+* `outputParameter.NAME.required=true` — marks the field as required in the output schema
+* `outputParameter.NAME.enum=val1,val2` — restricts allowed values
+
+`outputSchema` supports Camel resource references such as `classpath:schemas/weather-result.json`.
+
 === MCP Tool Annotation Hints
 
 When exposing `ai-tool` routes through the MCP Server component, you can declare optional behavioral hints aligned with the MCP specification (`ToolAnnotations`). MCP clients may use these hints for per-tool policy (for example auto-approving read-only tools or requiring confirmation before destructive ones).

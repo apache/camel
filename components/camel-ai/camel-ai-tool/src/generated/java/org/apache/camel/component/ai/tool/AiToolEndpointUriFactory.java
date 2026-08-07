@@ -24,7 +24,7 @@ public class AiToolEndpointUriFactory extends org.apache.camel.support.component
     private static final Set<String> ENDPOINT_IDENTITY_PROPERTY_NAMES;
     private static final Map<String, String> MULTI_VALUE_PREFIXES;
     static {
-        Set<String> props = new HashSet<>(13);
+        Set<String> props = new HashSet<>(15);
         props.add("argSchema");
         props.add("bridgeErrorHandler");
         props.add("description");
@@ -33,6 +33,8 @@ public class AiToolEndpointUriFactory extends org.apache.camel.support.component
         props.add("exchangePattern");
         props.add("idempotentHint");
         props.add("openWorldHint");
+        props.add("outputParameters");
+        props.add("outputSchema");
         props.add("parameters");
         props.add("readOnlyHint");
         props.add("tags");
@@ -41,7 +43,8 @@ public class AiToolEndpointUriFactory extends org.apache.camel.support.component
         PROPERTY_NAMES = Collections.unmodifiableSet(props);
         SECRET_PROPERTY_NAMES = Collections.emptySet();
         ENDPOINT_IDENTITY_PROPERTY_NAMES = Collections.emptySet();
-        Map<String, String> prefixes = new HashMap<>(1);
+        Map<String, String> prefixes = new HashMap<>(2);
+        prefixes.put("outputParameters", "outputParameter.");
         prefixes.put("parameters", "parameter.");
         MULTI_VALUE_PREFIXES = Collections.unmodifiableMap(prefixes);
     }

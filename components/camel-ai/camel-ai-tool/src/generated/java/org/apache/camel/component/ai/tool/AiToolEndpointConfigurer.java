@@ -38,6 +38,10 @@ public class AiToolEndpointConfigurer extends PropertyConfigurerSupport implemen
         case "idempotentHint": target.getConfiguration().setIdempotentHint(property(camelContext, java.lang.Boolean.class, value)); return true;
         case "openworldhint":
         case "openWorldHint": target.getConfiguration().setOpenWorldHint(property(camelContext, java.lang.Boolean.class, value)); return true;
+        case "outputparameters":
+        case "outputParameters": target.getConfiguration().setOutputParameters(property(camelContext, java.util.Map.class, value)); return true;
+        case "outputschema":
+        case "outputSchema": target.getConfiguration().setOutputSchema(property(camelContext, java.lang.String.class, value)); return true;
         case "parameters": target.getConfiguration().setParameters(property(camelContext, java.util.Map.class, value)); return true;
         case "readonlyhint":
         case "readOnlyHint": target.getConfiguration().setReadOnlyHint(property(camelContext, java.lang.Boolean.class, value)); return true;
@@ -65,6 +69,10 @@ public class AiToolEndpointConfigurer extends PropertyConfigurerSupport implemen
         case "idempotentHint": return java.lang.Boolean.class;
         case "openworldhint":
         case "openWorldHint": return java.lang.Boolean.class;
+        case "outputparameters":
+        case "outputParameters": return java.util.Map.class;
+        case "outputschema":
+        case "outputSchema": return java.lang.String.class;
         case "parameters": return java.util.Map.class;
         case "readonlyhint":
         case "readOnlyHint": return java.lang.Boolean.class;
@@ -93,6 +101,10 @@ public class AiToolEndpointConfigurer extends PropertyConfigurerSupport implemen
         case "idempotentHint": return target.getConfiguration().getIdempotentHint();
         case "openworldhint":
         case "openWorldHint": return target.getConfiguration().getOpenWorldHint();
+        case "outputparameters":
+        case "outputParameters": return target.getConfiguration().getOutputParameters();
+        case "outputschema":
+        case "outputSchema": return target.getConfiguration().getOutputSchema();
         case "parameters": return target.getConfiguration().getParameters();
         case "readonlyhint":
         case "readOnlyHint": return target.getConfiguration().getReadOnlyHint();
@@ -105,6 +117,8 @@ public class AiToolEndpointConfigurer extends PropertyConfigurerSupport implemen
     @Override
     public Object getCollectionValueType(Object target, String name, boolean ignoreCase) {
         switch (ignoreCase ? name.toLowerCase() : name) {
+        case "outputparameters":
+        case "outputParameters": return java.lang.String.class;
         case "parameters": return java.lang.String.class;
         default: return null;
         }
