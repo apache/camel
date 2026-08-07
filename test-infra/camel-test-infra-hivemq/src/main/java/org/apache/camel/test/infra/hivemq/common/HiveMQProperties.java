@@ -26,6 +26,7 @@ public final class HiveMQProperties {
     public static final String HIVEMQ_CONTAINER = "hivemq.container";
     public static final String HIVEMQ_RESOURCE_PATH = "hivemq.resource.path";
     public static final String HIVEMQ_SPARKPLUG_CONTAINER = "hivemq.sparkplug.container";
+    public static final String HIVEMQ_SPARKPLUG_FROM_IMAGE = "hivemq.sparkplug.from.image";
     public static final String HIVEMQ_SPARKPLUG_INSTANCE_SELECTOR = "hivemq-sparkplug";
 
     public static final String HIVEMQ_TEST_SERVICE_NAME = "hivemq";

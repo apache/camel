@@ -15,9 +15,9 @@
 # limitations under the License.
 #
 
-ARG HIVEMQ_VERSION=2024.6
+ARG FROMIMAGE=mirror.gcr.io/hivemq/hivemq-ce:2024.6
 
-FROM mirror.gcr.io/hivemq/hivemq-ce:$HIVEMQ_VERSION as hivemq-ce-sparkplug-tck
+FROM $FROMIMAGE as hivemq-ce-sparkplug-tck
 
 ARG SPARKPLUG_TCK_VERSION=3.0.0
 
