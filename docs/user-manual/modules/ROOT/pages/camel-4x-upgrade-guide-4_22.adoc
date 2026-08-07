@@ -1389,40 +1389,6 @@ This change is necessary for IBM MQ 10.0 compatibility but applies to all JMS pr
 exceptions from vendor-specific property failures propagating through `JmsBinding.appendJmsProperty()`, be
 aware that they are now caught and logged at `WARN` level for `JMS_`-prefixed properties only.
 
-=== camel-clickhouse (new component)
-
-A new `camel-clickhouse` producer component has been added. It integrates with
-https://clickhouse.com/[ClickHouse], the high-performance columnar OLAP database, using the official
-ClickHouse Java client (client-v2). It exposes ClickHouse's native capabilities as first-class endpoint
-options: native format streaming inserts (`RowBinary`, `JSONEachRow`, `CSV`, `TSV`, `Parquet`),
-server-side asynchronous inserts, OLAP queries and health checks.
-
-[source,java]
-----
-from("direct:events")
-    .to("clickhouse://analytics.events?operation=insert&format=JSONEachRow");
-----
-
-The component supports the `insert` (default), `query` and `ping` operations, and can either use a shared
-autowired `com.clickhouse.client.api.Client` bean or build its own client from the `serverUrl`, `username`,
-`password` and `ssl` endpoint options. See the xref:next@components::clickhouse-component.adoc[ClickHouse component]
-documentation for details.
-
-=== camel-duckdb (new component)
-
-A new `camel-duckdb` producer component integrates with https://duckdb.org/[DuckDB] using the
-official JDBC driver. It targets embedded analytics: in-memory or file-backed databases, SQL
-`execute` and `query`, batch `insert`, bulk file `copy` (CSV, Parquet, JSON), and `ping`.
-
-[source,java]
-----
-from("direct:events")
-    .to("duckdb:analytics.db?operation=insert&table=events&batchSize=1000");
-----
-
-See the xref:next@components::duckdb-component.adoc[DuckDB component] documentation for details.
-Test support is provided by the `camel-test-infra-duckdb` module (in-process embedded database).
-
 === camel-minio - Upgraded to minio 9.0.3 - Breaking Changes
 
 The underlying `io.minio:minio` library has been upgraded from 8.x to 9.0.3.
