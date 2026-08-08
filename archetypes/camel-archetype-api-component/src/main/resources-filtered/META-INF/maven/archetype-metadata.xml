@@ -63,11 +63,19 @@
       </includes>
     </fileSet>
 
+    <!-- project root docs -->
+    <fileSet encoding="UTF-8">
+      <directory></directory>
+      <includes>
+        <include>README.md</include>
+        <include>AGENTS.md</include>
+      </includes>
+    </fileSet>
+
     <!-- component directories -->
     <fileSet filtered="true" encoding="UTF-8">
       <directory>__artifactId__-component/</directory>
       <includes>
-        <include>ReadMe.txt</include>
         <include>pom.xml</include>
       </includes>
     </fileSet>
