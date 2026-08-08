@@ -22,6 +22,7 @@ import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 
+import dev.tamboui.tui.event.KeyCode;
 import dev.tamboui.tui.event.KeyEvent;
 import dev.tamboui.tui.event.KeyModifiers;
 import org.junit.jupiter.api.BeforeEach;
@@ -36,6 +37,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 class SourceViewerEditorOpsTest {
 
     private static final KeyModifiers CTRL = KeyModifiers.of(true, false, false);
+    private static final KeyModifiers ALT = KeyModifiers.of(false, true, false);
     private static final KeyModifiers CTRL_SHIFT = KeyModifiers.of(true, false, true);
 
     @TempDir
@@ -130,14 +132,23 @@ class SourceViewerEditorOpsTest {
     }
 
     @Test
-    void ctrlLeftAndRightMoveByWord() {
+    void altDownMovesBlockDown() {
+        moveCursorToLineContaining("log:info");
+
+        viewer.handleKeyEvent(KeyEvent.ofKey(KeyCode.DOWN, KeyModifiers.ALT));
+
+        assertThat(viewer.editText().indexOf("log:warn")).isLessThan(viewer.editText().indexOf("log:info"));
+    }
+
+    @Test
+    void ctrlLeftAndRightMoveByWordViaKeyBindings() {
         moveCursorToLineContaining("uri:");
         SourceEditHistory.positionCursor(viewer.editState(), viewer.editState().cursorRow(), 0);
 
-        SourceEditorNavigation.moveWordRight(viewer.editState());
+        viewer.handleKeyEvent(KeyEvent.ofKey(KeyCode.RIGHT, CTRL));
         assertThat(viewer.editState().cursorCol()).isEqualTo(9);
 
-        SourceEditorNavigation.moveWordLeft(viewer.editState());
+        viewer.handleKeyEvent(KeyEvent.ofKey(KeyCode.LEFT, CTRL));
         assertThat(viewer.editState().cursorCol()).isEqualTo(6);
     }
 
