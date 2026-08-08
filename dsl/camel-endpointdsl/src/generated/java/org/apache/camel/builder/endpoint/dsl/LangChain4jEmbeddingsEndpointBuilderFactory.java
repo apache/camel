@@ -256,6 +256,32 @@ public interface LangChain4jEmbeddingsEndpointBuilderFactory {
             return "CamelLangChain4jEmbeddingsTotalTokenCount";
         }
         /**
+         * The request model name.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code
+         * LangChain4jEmbeddingsRequestModel}.
+         */
+        public String langChain4jEmbeddingsRequestModel() {
+            return "CamelLangChain4jEmbeddingsRequestModel";
+        }
+        /**
+         * The response model name.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code
+         * LangChain4jEmbeddingsResponseModel}.
+         */
+        public String langChain4jEmbeddingsResponseModel() {
+            return "CamelLangChain4jEmbeddingsResponseModel";
+        }
+        /**
          * Embedding representation of a text.
          * 
          * The option is a: {@code dev.langchain4j.data.embedding.Embedding}

@@ -61,10 +61,27 @@
             <version>${langchain4j-version}</version>
         </dependency>
 
+        <dependency>
+            <groupId>org.apache.camel</groupId>
+            <artifactId>camel-ai-observability-api</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+
         <!-- test -->
         <dependency>
             <groupId>org.apache.camel</groupId>
             <artifactId>camel-test-junit6</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.camel</groupId>
+            <artifactId>camel-ai-observability</artifactId>
+            <version>${project.version}</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.camel</groupId>
+            <artifactId>camel-telemetry</artifactId>
             <scope>test</scope>
         </dependency>
         <dependency>

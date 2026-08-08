@@ -56,6 +56,14 @@ public class Headers {
     @Metadata(description = "The Total Token Count.", javaType = "int")
     public static final String TOTAL_TOKEN_COUNT = "CamelLangChain4jAgentTotalTokenCount";
 
+    @Metadata(description = "The request model name.", javaType = "String")
+    public static final String REQUEST_MODEL = "CamelLangChain4jAgentRequestModel";
+
+    @Metadata(description = "The response model name. Not set by the agent producer when langchain4j Result "
+                            + "does not expose it.",
+              javaType = "String")
+    public static final String RESPONSE_MODEL = "CamelLangChain4jAgentResponseModel";
+
     @Metadata(description = "RAG sources retrieved during agent invocation.",
               javaType = "java.util.List<dev.langchain4j.rag.content.Content>")
     public static final String SOURCES = "CamelLangChain4jAgentSources";

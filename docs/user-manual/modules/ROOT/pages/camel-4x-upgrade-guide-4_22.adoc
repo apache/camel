@@ -306,6 +306,21 @@ when its package manager is absent, so the same entry point runs on macOS, Linux
 Windows x64 CI. Validation performs no remote publication and calls no SDKMAN Vendor
 API; that is the `publish` workflow.
 
+=== camel-ai-observability (GenAI observability)
+
+LangChain4j and OpenAI producers now emit GenAI observability data (OpenTelemetry span attributes and
+Micrometer metrics) when `camel-opentelemetry2` and/or `camel-micrometer` is on the classpath.
+Disable globally with `camel.ai.observability.enabled=false` (default is enabled).
+
+OpenAI streaming chat sets `stream_options.include_usage=true` only when GenAI observability is enabled,
+adding a final chunk with token usage for span/metric recording.
+
+LangChain4j components also expose request model names on new exchange headers
+(`CamelLangChain4j*RequestModel`). The response model header (`CamelLangChain4j*ResponseModel`) is set when
+the underlying client exposes it (for example langchain4j-chat); the agent and embeddings producers omit it when
+unavailable. See
+xref:next@components:others:ai-observability.adoc[AI Observability] for metric names and span attributes.
+
 === camel-langchain4j-agent
 
 The `Agent.chat()` method return type has changed from `String` to `Result<String>` (from `dev.langchain4j.service.Result`).

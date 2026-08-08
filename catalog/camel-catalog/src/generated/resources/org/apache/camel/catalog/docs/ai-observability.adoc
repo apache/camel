@@ -1,0 +1,38 @@
+= AI Observability Component
+:doctitle: AI Observability
+:shortname: ai-observability
+:artifactid: camel-ai-observability
+:description: GenAI observability support for Camel AI components (OpenTelemetry and Micrometer)
+:since: 4.22
+:supportlevel: Preview
+:tabs-sync-option:
+
+*Since Camel {since}*
+
+The `camel-ai-observability` module provides GenAI observability for Camel AI components following the
+OpenTelemetry semantic conventions for GenAI (stable subset aligned with Spring AI).
+
+AI producers depend on the lightweight `camel-ai-observability-api` module. Add `camel-ai-observability` to your
+application classpath together with a tracing or metrics backend to enable span and metric emission.
+
+When `camel-opentelemetry2` and/or `camel-micrometer` is on the classpath, langchain4j and OpenAI producers
+emit child spans and metrics per LLM call with attributes such as `gen_ai.operation.name`, `gen_ai.system`,
+`gen_ai.request.model`, `gen_ai.usage.input_tokens`, and `gen_ai.usage.output_tokens`.
+
+Global toggle: set `camel.ai.observability.enabled=false` to disable GenAI observability across all AI
+components (default is `true` when a tracing or metrics backend is present).
+
+Phase 1 coverage: `langchain4j-chat`, `langchain4j-tools`, `langchain4j-agent`, `langchain4j-embeddings`,
+and `openai`.
+
+New exchange headers for model identification on langchain4j components:
+
+* `CamelLangChain4jChatRequestModel` / `CamelLangChain4jChatResponseModel`
+* `CamelLangChain4jToolsRequestModel` / `CamelLangChain4jToolsResponseModel`
+* `CamelLangChain4jAgentRequestModel` / `CamelLangChain4jAgentResponseModel`
+* `CamelLangChain4jEmbeddingsRequestModel` / `CamelLangChain4jEmbeddingsResponseModel`
+
+Metrics recorded (when Micrometer is available):
+
+* `gen_ai.client.operation` — operation duration timer
+* `gen_ai.client.token.usage` — token usage counter (tags: `gen_ai.token.type=input|output`)
