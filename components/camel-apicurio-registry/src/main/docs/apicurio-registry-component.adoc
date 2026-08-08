@@ -1,0 +1,198 @@
+= Apicurio Registry Component
+:doctitle: Apicurio Registry
+:shortname: apicurio-registry
+:artifactid: camel-apicurio-registry
+:description: Manage artifacts, versions, and groups in Apicurio Registry v3.
+:since: 4.22
+:supportlevel: Preview
+:tabs-sync-option:
+:component-header: Both producer and consumer are supported
+
+*Since Camel {since}*
+
+*{component-header}*
+
+The Apicurio Registry component provides integration with https://www.apicur.io/registry/[Apicurio Registry] v3
+using the https://github.com/Apicurio/apicurio-registry[Apicurio Registry Java SDK].
+
+It supports CRUD operations on artifacts, groups, and versions, as well as schema validation
+and polling for new artifact versions.
+
+Maven users will need to add the following dependency to their `pom.xml`
+for this component:
+
+[source,xml]
+----
+<dependency>
+    <groupId>org.apache.camel</groupId>
+    <artifactId>camel-apicurio-registry</artifactId>
+    <version>x.x.x</version>
+    <!-- use the same version as your Camel core version -->
+</dependency>
+----
+
+== URI format
+
+----
+apicurio-registry:groupId/artifactId[?options]
+----
+
+Where `groupId` and `artifactId` identify the registry artifact. Both are optional for
+operations that do not require them (e.g., `searchArtifacts`, `createGroup`).
+
+// component options: START
+include::partial$component-configure-options.adoc[]
+include::partial$component-endpoint-options.adoc[]
+include::partial$component-endpoint-headers.adoc[]
+// component options: END
+
+== Producer Operations
+
+The producer supports the following operations, set via the `operation` endpoint option or
+the `CamelApicurioRegistryOperation` header:
+
+[cols="1,3"]
+|===
+| Operation | Description
+
+| `createArtifact` | Create a new artifact. Body contains the artifact content.
+| `updateArtifact` | Create a new version of an existing artifact. Body contains the new content.
+| `deleteArtifact` | Delete an artifact.
+| `getArtifactContent` | Retrieve the content of an artifact version.
+| `getArtifactMetadata` | Retrieve artifact metadata.
+| `searchArtifacts` | Search for artifacts using filter headers.
+| `listVersions` | List all versions of an artifact.
+| `createGroup` | Create a new group.
+| `testCompatibility` | Test schema compatibility (dry run). Returns `true`/`false` in the body.
+| `validate` | Validate the message body against the artifact's rules (dry run). Throws `ApicurioRegistryValidationException` on failure when `failOnValidation=true`.
+|===
+
+== Consumer
+
+The consumer polls the registry for new versions of the specified artifact. It tracks the last
+seen `globalId` and only delivers new versions. Set the `delay` option to control the polling
+interval (default: 500ms).
+
+When `fetchContent=true`, the consumer fetches the version content and sets it as the exchange body.
+Otherwise, the version metadata object is set as the body.
+
+== Examples
+
+=== Create an artifact
+
+[tabs]
+====
+Java::
++
+[source,java]
+----
+from("direct:create")
+    .setBody(constant("{\"type\":\"record\",\"name\":\"Test\",\"fields\":[]}"))
+    .to("apicurio-registry:myGroup/myArtifact?registryUrl=http://localhost:8080/apis/registry/v3&operation=createArtifact&artifactType=AVRO");
+----
+
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="direct:create"/>
+  <setBody><constant>{"type":"record","name":"Test","fields":[]}</constant></setBody>
+  <to uri="apicurio-registry:myGroup/myArtifact?registryUrl=http://localhost:8080/apis/registry/v3&amp;operation=createArtifact&amp;artifactType=AVRO"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:create
+    steps:
+      - setBody:
+          constant: '{"type":"record","name":"Test","fields":[]}'
+      - to:
+          uri: apicurio-registry:myGroup/myArtifact
+          parameters:
+            registryUrl: http://localhost:8080/apis/registry/v3
+            operation: createArtifact
+            artifactType: AVRO
+----
+====
+
+=== Poll for new versions
+
+[tabs]
+====
+Java::
++
+[source,java]
+----
+from("apicurio-registry:myGroup/myArtifact?registryUrl=http://localhost:8080/apis/registry/v3&delay=5000")
+    .log("New version detected: ${header.CamelApicurioRegistryVersion}")
+    .to("log:newVersions");
+----
+
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="apicurio-registry:myGroup/myArtifact?registryUrl=http://localhost:8080/apis/registry/v3&amp;delay=5000"/>
+  <log message="New version detected: ${header.CamelApicurioRegistryVersion}"/>
+  <to uri="log:newVersions"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: apicurio-registry:myGroup/myArtifact
+      parameters:
+        registryUrl: http://localhost:8080/apis/registry/v3
+        delay: 5000
+    steps:
+      - log:
+          message: "New version detected: ${header.CamelApicurioRegistryVersion}"
+      - to:
+          uri: log:newVersions
+----
+====
+
+=== Validate message against a schema
+
+[source,java]
+----
+from("platform-http:/orders")
+    .doTry()
+        .to("apicurio-registry:my-group/order-schema?operation=validate&registryUrl=http://localhost:8080/apis/registry/v3")
+        .to("bean:orderService")
+    .doCatch(ApicurioRegistryValidationException.class)
+        .setHeader(Exchange.HTTP_RESPONSE_CODE, constant(400))
+        .setBody(simple("${exception.validationErrors}"))
+    .end();
+----
+
+== Authentication
+
+The component supports three authentication modes via the `authType` option:
+
+* `none` (default): No authentication.
+* `basic`: Basic authentication using `username` and `password`.
+* `oidc`: OAuth2/OIDC using `tokenEndpoint`, `clientId`, `clientSecret`, and optionally `scope`.
+
+Example with OIDC:
+
+[source,java]
+----
+from("direct:secured")
+    .to("apicurio-registry:myGroup/myArtifact?registryUrl=http://localhost:8080/apis/registry/v3"
+        + "&operation=getArtifactContent"
+        + "&authType=oidc"
+        + "&tokenEndpoint=http://keycloak:8080/realms/registry/protocol/openid-connect/token"
+        + "&clientId=registry-client&clientSecret=secret");
+----

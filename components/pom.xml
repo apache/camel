@@ -81,6 +81,7 @@
         <module>camel-activemq6</module>
         <module>camel-ai</module>
         <module>camel-amqp</module>
+        <module>camel-apicurio-registry</module>
         <module>camel-arangodb</module>
         <module>camel-as2</module>
         <module>camel-asn1</module>
