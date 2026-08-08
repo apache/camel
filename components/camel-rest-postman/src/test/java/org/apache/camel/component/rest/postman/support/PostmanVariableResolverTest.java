@@ -17,7 +17,9 @@
 package org.apache.camel.component.rest.postman.support;
 
 import java.util.Map;
+import java.util.Properties;
 
+import org.apache.camel.impl.DefaultCamelContext;
 import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -91,6 +93,51 @@ class PostmanVariableResolverTest {
     @Test
     void shouldPassThroughNull() {
         assertThat(resolver(Map.of()).resolve(null, "'x'")).isNull();
+    }
+
+    /**
+     * A cloud-hosted collection is editable by anyone with access to the Postman workspace, so its content must not be
+     * able to name a Camel property placeholder function and pull an environment variable into an outgoing request.
+     */
+    @Test
+    void shouldNotResolvePropertyPlaceholderFunctionsFromCollectionContent() throws Exception {
+        try (DefaultCamelContext context = new DefaultCamelContext()) {
+            context.start();
+            PostmanVariableResolver resolver = new PostmanVariableResolver(Map.of(), context, false);
+
+            assertThat(resolver.resolve("{{env:PATH}}", "'x'")).isEqualTo("{{env:PATH}}");
+            assertThat(resolver.resolve("{{sys:user.home}}", "'x'")).isEqualTo("{{sys:user.home}}");
+            assertThat(resolver.resolve("{{bean:foo}}", "'x'")).isEqualTo("{{bean:foo}}");
+        }
+    }
+
+    @Test
+    void shouldStillResolvePlainNamesFromCamelProperties() throws Exception {
+        try (DefaultCamelContext context = new DefaultCamelContext()) {
+            context.getPropertiesComponent().setInitialProperties(propertiesOf("myBaseUrl", "https://from.properties"));
+            context.start();
+            PostmanVariableResolver resolver = new PostmanVariableResolver(Map.of(), context, false);
+
+            assertThat(resolver.resolve("{{myBaseUrl}}", "'x'")).isEqualTo("https://from.properties");
+        }
+    }
+
+    @Test
+    void shouldPreferTheCollectionScopeOverCamelProperties() throws Exception {
+        try (DefaultCamelContext context = new DefaultCamelContext()) {
+            context.getPropertiesComponent().setInitialProperties(propertiesOf("baseUrl", "https://from.properties"));
+            context.start();
+            PostmanVariableResolver resolver
+                    = new PostmanVariableResolver(Map.of("baseUrl", "https://from.collection"), context, false);
+
+            assertThat(resolver.resolve("{{baseUrl}}", "'x'")).isEqualTo("https://from.collection");
+        }
+    }
+
+    private static Properties propertiesOf(String key, String value) {
+        Properties properties = new Properties();
+        properties.setProperty(key, value);
+        return properties;
     }
 
     @Test

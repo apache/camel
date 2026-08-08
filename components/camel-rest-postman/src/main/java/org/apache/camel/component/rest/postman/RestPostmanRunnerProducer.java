@@ -28,7 +28,9 @@ import org.apache.camel.Message;
 import org.apache.camel.Producer;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.component.rest.postman.support.PostmanRequestBinding;
+import org.apache.camel.spi.UnitOfWork;
 import org.apache.camel.support.DefaultProducer;
+import org.apache.camel.support.UnitOfWorkHelper;
 import org.apache.camel.support.service.ServiceHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -74,6 +76,7 @@ public class RestPostmanRunnerProducer extends DefaultProducer {
             }
 
             results.add(toResult(prepared.binding(), sub, failure));
+            releaseUnitOfWork(sub);
 
             if (failure != null) {
                 failed++;
@@ -92,6 +95,21 @@ public class RestPostmanRunnerProducer extends DefaultProducer {
         out.setBody(results);
         out.setHeader(RestPostmanConstants.REQUEST_COUNT, results.size());
         out.setHeader(RestPostmanConstants.FAILED_COUNT, failed);
+    }
+
+    /**
+     * Completes the unit of work of a sub-exchange, if it has one.
+     * <p>
+     * A sub-exchange created straight from the delegate endpoint and handed to a producer normally carries no unit of
+     * work, because nothing in that path starts one. Releasing it when present keeps the cleanup deterministic rather
+     * than leaving any registered synchronization to garbage collection, which matters when a run covers a large
+     * collection.
+     */
+    private static void releaseUnitOfWork(Exchange sub) {
+        UnitOfWork uow = sub.getUnitOfWork();
+        if (uow != null) {
+            UnitOfWorkHelper.doneUow(uow, sub);
+        }
     }
 
     /**

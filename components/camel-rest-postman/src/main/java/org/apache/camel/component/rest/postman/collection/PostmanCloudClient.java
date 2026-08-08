@@ -49,18 +49,26 @@ public final class PostmanCloudClient {
     private final String apiUrl;
     private final String apiKey;
     private final String apiKeyHeader;
-    private final Duration connectTimeout;
     private final Duration requestTimeout;
-    private final SSLContext sslContext;
+    private final HttpClient client;
 
     public PostmanCloudClient(String apiUrl, String apiKey, String apiKeyHeader,
                               Duration connectTimeout, Duration requestTimeout, SSLContext sslContext) {
         this.apiUrl = stripTrailingSlash(apiUrl);
         this.apiKey = apiKey;
         this.apiKeyHeader = apiKeyHeader;
-        this.connectTimeout = connectTimeout;
         this.requestTimeout = requestTimeout;
-        this.sslContext = sslContext;
+
+        // built once: every HttpClient allocates its own selector and executor threads, so creating one per
+        // fetch would leak threads across repeated cache misses
+        HttpClient.Builder builder = HttpClient.newBuilder()
+                // never follow a redirect: doing so would replay the API key to the redirect target
+                .followRedirects(HttpClient.Redirect.NEVER)
+                .connectTimeout(connectTimeout);
+        if (sslContext != null) {
+            builder.sslContext(sslContext);
+        }
+        this.client = builder.build();
     }
 
     /**
@@ -74,15 +82,6 @@ public final class PostmanCloudClient {
      */
     public String fetchCollection(String uid) throws IOException, InterruptedException, URISyntaxException {
         URI uri = new URI(apiUrl + "/collections/" + encodePathSegment(uid));
-
-        HttpClient.Builder builder = HttpClient.newBuilder()
-                // never follow a redirect: doing so would replay the API key to the redirect target
-                .followRedirects(HttpClient.Redirect.NEVER)
-                .connectTimeout(connectTimeout);
-        if (sslContext != null) {
-            builder.sslContext(sslContext);
-        }
-        HttpClient client = builder.build();
 
         HttpRequest.Builder request = HttpRequest.newBuilder()
                 .uri(uri)

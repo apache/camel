@@ -122,7 +122,7 @@ public final class PostmanVariableResolver {
         if (value != null) {
             return value;
         }
-        if (camelContext != null) {
+        if (camelContext != null && isSafeToResolveAsProperty(name)) {
             try {
                 // resolvePropertyPlaceholders throws when the key is unknown, which here just means "not ours"
                 return camelContext.resolvePropertyPlaceholders("{{" + name + "}}");
@@ -131,6 +131,26 @@ public final class PostmanVariableResolver {
             }
         }
         return null;
+    }
+
+    /**
+     * Whether a placeholder name read out of a collection may be handed to Camel's property resolver.
+     * <p>
+     * Camel's placeholder <em>functions</em> are all written {@code prefix:argument} - {@code env:}, {@code sys:},
+     * {@code bean:} and the vault functions among them. A collection is route-author configuration, but a cloud-hosted
+     * one is editable by anyone with access to the Postman workspace, so letting its content name those functions would
+     * turn "read the collection" into "read this environment variable and put it in an outgoing request". Plain names
+     * are resolved as before, so an operator can still override any variable through properties; only the function
+     * syntax is refused.
+     */
+    private static boolean isSafeToResolveAsProperty(String name) {
+        if (name.indexOf(':') < 0) {
+            return true;
+        }
+        LOG.debug("Postman variable {} is not resolved from Camel properties because it uses the prefix:value syntax"
+                  + " of a property placeholder function. Supply it with the variables option instead.",
+                name);
+        return false;
     }
 
     /**

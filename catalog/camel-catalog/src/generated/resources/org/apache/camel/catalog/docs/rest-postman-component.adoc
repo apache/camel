@@ -178,6 +178,12 @@ from("direct:start")
 Postman environment files are not supported. Unresolved placeholders are left as they are unless
 `failOnUnresolvedVariable=true`.
 
+A placeholder name written in the `prefix:value` form of a Camel property placeholder function -- `+{{env:HOME}}+`,
+`+{{sys:user.home}}+`, `+{{bean:foo}}+` and the vault functions among them -- is deliberately *not* resolved from
+Camel properties. A collection is route-author configuration, but a cloud-hosted one is editable by anyone with
+access to the Postman workspace, and resolving those would let its content pull an environment variable into an
+outgoing request. Supply such values through the `variables` option instead.
+
 NOTE: Pre-request and test scripts in the collection's `event` blocks are never parsed or executed.
 
 == Security
