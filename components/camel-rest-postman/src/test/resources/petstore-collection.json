@@ -1,0 +1,145 @@
+{
+  "info": {
+    "_postman_id": "0b3f0f52-4c1e-4a3a-9e57-3a2b4a1f9c11",
+    "name": "Petstore",
+    "description": "A small collection used to test camel-rest-postman.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "https://api.example.com/v3"
+    },
+    {
+      "key": "tenant",
+      "value": "acme"
+    },
+    {
+      "key": "apiToken",
+      "value": "s3cr3t",
+      "type": "secret"
+    }
+  ],
+  "auth": {
+    "type": "bearer",
+    "bearer": [
+      {
+        "key": "token",
+        "value": "{{apiToken}}",
+        "type": "string"
+      }
+    ]
+  },
+  "item": [
+    {
+      "id": "3f2504e0-4f89-11d3-9a0c-0305e82c3301",
+      "name": "Get Pet By Id",
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "X-Tenant",
+            "value": "{{tenant}}"
+          },
+          {
+            "key": "X-Disabled",
+            "value": "nope",
+            "disabled": true
+          }
+        ],
+        "url": {
+          "raw": "{{baseUrl}}/pet/:petId?verbose=true",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "pet",
+            ":petId"
+          ],
+          "query": [
+            {
+              "key": "verbose",
+              "value": "true"
+            }
+          ],
+          "variable": [
+            {
+              "key": "petId",
+              "value": "42"
+            }
+          ]
+        }
+      },
+      "response": [
+        {
+          "name": "found",
+          "code": 200,
+          "header": [
+            {
+              "key": "Content-Type",
+              "value": "application/json"
+            }
+          ],
+          "body": "{\"id\":42,\"name\":\"Rex\"}"
+        }
+      ]
+    },
+    {
+      "name": "Pets",
+      "item": [
+        {
+          "name": "Add Pet",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\"name\":\"Rex\",\"tenant\":\"{{tenant}}\"}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/pet",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "pet"
+              ]
+            }
+          }
+        },
+        {
+          "name": "List Pets",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/pet/findByStatus?status=available",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "pet",
+                "findByStatus"
+              ],
+              "query": [
+                {
+                  "key": "status",
+                  "value": "available"
+                }
+              ]
+            }
+          }
+        }
+      ]
+    }
+  ]
+}

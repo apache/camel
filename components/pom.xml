@@ -354,8 +354,9 @@
         <module>camel-zipfile</module>
         <module>camel-zookeeper-master</module>
         <module>camel-zookeeper</module>
-        <!-- build rest-openapi at end as it uses all the http based components -->
+        <!-- build rest-openapi and rest-postman at end as they use all the http based components -->
         <module>camel-rest-openapi</module>
+        <module>camel-rest-postman</module>
         <!-- build jooq last as it cause component builds to be slower afterwards -->
         <module>camel-jooq</module>
         <!-- observability-services requires the availability of other components -->
