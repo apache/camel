@@ -312,4 +312,42 @@ class SearchHighlighter {
         highlightTerm = null;
         highlightPattern = null;
     }
+
+    /** Closes an active search input without clearing an existing find term. */
+    void closeInputOnly() {
+        findInputActive = false;
+        highlightInputActive = false;
+        searchInputState = new TextInputState("");
+    }
+
+    void openFindInput() {
+        findInputActive = true;
+        highlightInputActive = false;
+        searchInputState = new TextInputState(findTerm != null ? findTerm : "");
+    }
+
+    /**
+     * Find navigation while editing plain text (Ctrl+F opens find, Ctrl+N/Ctrl+Shift+N step matches).
+     * <p>
+     * Unlike view mode, plain {@code n}/{@code N} are not consumed so users can type freely while a find term is
+     * active.
+     */
+    boolean handleEditFindKeyEvent(KeyEvent ke) {
+        if (findInputActive || highlightInputActive) {
+            return handleSearchInput(ke);
+        }
+        if (ke.hasCtrl() && ke.isCharIgnoreCase('f')) {
+            openFindInput();
+            return true;
+        }
+        if (findTerm != null && ke.hasCtrl() && ke.isCharIgnoreCase('n') && !ke.hasAlt()) {
+            if (ke.hasShift()) {
+                navigateToPrevMatch();
+            } else {
+                navigateToNextMatch();
+            }
+            return true;
+        }
+        return false;
+    }
 }
