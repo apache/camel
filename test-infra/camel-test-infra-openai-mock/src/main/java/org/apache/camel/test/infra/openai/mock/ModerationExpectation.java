@@ -81,8 +81,8 @@ public class ModerationExpectation {
     }
 
     /**
-     * Controls whether the {@code illicit} and {@code illicit/violent} categories are reported. Only the
-     * {@code omni-moderation-*} models return them, so this allows reproducing a legacy moderation model.
+     * Controls whether the {@code illicit} and {@code illicit/violent} categories are reported. They are optional in
+     * the API model, so this allows reproducing an OpenAI-compatible provider that does not return them.
      */
     public void setIllicitCategoriesIncluded(boolean illicitCategoriesIncluded) {
         this.illicitCategoriesIncluded = illicitCategoriesIncluded;

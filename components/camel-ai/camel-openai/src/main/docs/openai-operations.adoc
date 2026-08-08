@@ -257,8 +257,9 @@ The following headers are set after a moderation request:
 The category names are the ones returned by the API, for example `hate`, `hate/threatening`, `self-harm/intent`,
 `sexual/minors` and `violence/graphic`.
 
-NOTE: The `illicit` and `illicit/violent` categories are only returned by the `omni-moderation-*` models, so they are
-absent from the category map when an older moderation model is used.
+NOTE: The `illicit` and `illicit/violent` categories are optional in the API model. OpenAI returns them, but an
+xref:others:openai-providers.adoc[OpenAI-compatible provider] may not, in which case they are absent from the
+category map. The score map always contains every category.
 
 == Audio Transcription Operation
 

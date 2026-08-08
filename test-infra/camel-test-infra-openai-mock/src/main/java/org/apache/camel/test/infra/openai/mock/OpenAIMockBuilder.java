@@ -233,8 +233,8 @@ public class OpenAIMockBuilder {
     }
 
     /**
-     * Replies without the {@code illicit} and {@code illicit/violent} categories, as the legacy
-     * {@code text-moderation-*} models do.
+     * Replies without the {@code illicit} and {@code illicit/violent} categories, as an OpenAI-compatible provider that
+     * does not implement them would.
      */
     public OpenAIMockBuilder replyWithoutIllicitCategories() {
         validateCurrentModerationExpectation("replyWithoutIllicitCategories()");

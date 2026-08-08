@@ -64,7 +64,8 @@ public class ModerationResponseBuilder {
             results.add(new ModerationResult(
                     expectation.isFlagged(),
                     categories(expectation),
-                    categoryScores(expectation)));
+                    categoryScores(expectation),
+                    categoryAppliedInputTypes(expectation)));
         }
 
         return objectMapper.writeValueAsString(new ModerationResponse("modr-camel", model, results));
@@ -89,6 +90,17 @@ public class ModerationResponseBuilder {
         return scores;
     }
 
+    /**
+     * The real API reports which input modality triggered each category. The mock only ever moderates text.
+     */
+    private Map<String, List<String>> categoryAppliedInputTypes(ModerationExpectation expectation) {
+        Map<String, List<String>> appliedInputTypes = new LinkedHashMap<>();
+        for (String category : categories(expectation).keySet()) {
+            appliedInputTypes.put(category, List.of("text"));
+        }
+        return appliedInputTypes;
+    }
+
     private record ModerationResponse(
             @JsonProperty("id") String id,
             @JsonProperty("model") String model,
@@ -98,6 +110,7 @@ public class ModerationResponseBuilder {
     private record ModerationResult(
             @JsonProperty("flagged") boolean flagged,
             @JsonProperty("categories") Map<String, Boolean> categories,
-            @JsonProperty("category_scores") Map<String, Double> categoryScores) {
+            @JsonProperty("category_scores") Map<String, Double> categoryScores,
+            @JsonProperty("category_applied_input_types") Map<String, List<String>> categoryAppliedInputTypes) {
     }
 }

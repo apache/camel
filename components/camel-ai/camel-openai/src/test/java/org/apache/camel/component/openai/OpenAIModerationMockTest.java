@@ -62,7 +62,7 @@ class OpenAIModerationMockTest extends CamelTestSupport {
                             + openAIMock.getBaseUrl() + "/v1");
 
                 from("direct:moderation-explicit-model")
-                        .to("openai:moderation?apiKey=dummy&moderationModel=text-moderation-stable&baseUrl="
+                        .to("openai:moderation?apiKey=dummy&moderationModel=omni-moderation-2024-09-26&baseUrl="
                             + openAIMock.getBaseUrl() + "/v1");
 
                 from("direct:guard")
@@ -171,6 +171,8 @@ class OpenAIModerationMockTest extends CamelTestSupport {
         // the stored response must stay usable, not just deserializable
         assertThat(moderationResponse.results().get(0).flagged()).isTrue();
         assertThat(moderationResponse.results().get(0).categories().hate()).isTrue();
+        // guards the mock against drifting from the payload the API actually returns
+        assertThat(moderationResponse.isValid()).isTrue();
     }
 
     @Test
@@ -178,15 +180,15 @@ class OpenAIModerationMockTest extends CamelTestSupport {
         Exchange fromOption = template.request("direct:moderation-explicit-model",
                 e -> e.getIn().setBody("Apache Camel is an integration framework"));
         assertThat(fromOption.getMessage().getHeader(OpenAIConstants.MODERATION_RESPONSE_MODEL))
-                .isEqualTo("text-moderation-stable");
+                .isEqualTo("omni-moderation-2024-09-26");
 
         // the header wins over the endpoint option
         Exchange fromHeader = template.request("direct:moderation-explicit-model", e -> {
             e.getIn().setBody("Apache Camel is an integration framework");
-            e.getIn().setHeader(OpenAIConstants.MODERATION_MODEL, "omni-moderation-2024-09-26");
+            e.getIn().setHeader(OpenAIConstants.MODERATION_MODEL, "omni-moderation-latest");
         });
         assertThat(fromHeader.getMessage().getHeader(OpenAIConstants.MODERATION_RESPONSE_MODEL))
-                .isEqualTo("omni-moderation-2024-09-26");
+                .isEqualTo("omni-moderation-latest");
 
         // and the default applies when neither is set
         Exchange fromDefault = template.request("direct:moderation",
@@ -196,7 +198,7 @@ class OpenAIModerationMockTest extends CamelTestSupport {
     }
 
     @Test
-    void testLegacyModelWithoutIllicitCategories() {
+    void testProviderWithoutIllicitCategories() {
         Exchange result = template.request("direct:moderation", e -> e.getIn().setBody("Legacy model input"));
 
         assertThat(result.getException()).isNull();
@@ -205,7 +207,7 @@ class OpenAIModerationMockTest extends CamelTestSupport {
         @SuppressWarnings("unchecked")
         Map<String, Boolean> categories
                 = result.getMessage().getHeader(OpenAIConstants.MODERATION_CATEGORIES, Map.class);
-        // illicit is only reported by the omni-moderation models
+        // illicit is optional in the API model, so a provider may omit it
         assertThat(categories).doesNotContainKeys("illicit", "illicit/violent");
         assertThat(categories).containsEntry("hate", false);
 
