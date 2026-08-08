@@ -125,6 +125,7 @@ public class OpenAIEndpoint extends DefaultEndpoint {
             case audioTranscription -> new OpenAIAudioTranscriptionProducer(this);
             case audioTranslation -> new OpenAIAudioTranslationProducer(this);
             case audioSpeech -> new OpenAIAudioSpeechProducer(this);
+            case moderation -> new OpenAIModerationProducer(this);
         };
     }
 

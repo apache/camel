@@ -101,6 +101,9 @@ public final class OpenAIConstants {
     @Metadata(description = "The complete OpenAI Responses API response object",
               javaType = "com.openai.models.responses.Response")
     public static final String RESPONSES_RESPONSE = "CamelOpenAIResponsesResponse";
+    @Metadata(description = "The complete OpenAI moderation response object",
+              javaType = "com.openai.models.moderations.ModerationCreateResponse")
+    public static final String MODERATION_RESPONSE = "CamelOpenAIModerationResponse";
 
     // Embeddings Input Headers
     @Metadata(description = "The model to use for embeddings", javaType = "String")
@@ -123,6 +126,26 @@ public final class OpenAIConstants {
     public static final String SIMILARITY_SCORE = "CamelOpenAISimilarityScore";
     @Metadata(description = "Original text content when embeddings operation is used", javaType = "String or List<String>")
     public static final String ORIGINAL_TEXT = "CamelOpenAIOriginalText";
+
+    // Moderation Input Headers
+    @Metadata(description = "The model to use for moderation (e.g., omni-moderation-latest)", javaType = "String")
+    public static final String MODERATION_MODEL = "CamelOpenAIModerationModel";
+
+    // Moderation Output Headers
+    @Metadata(description = "Whether the moderation API flagged the input as violating the usage policies. "
+                            + "For a batch of inputs this is true when at least one input was flagged",
+              javaType = "Boolean")
+    public static final String MODERATION_FLAGGED = "CamelOpenAIModerationFlagged";
+    @Metadata(description = "The moderation categories and whether each one was violated. A Map<String, Boolean> for a "
+                            + "single input, or a List<Map<String, Boolean>> (one per input) for a batch",
+              javaType = "java.util.Map<String, Boolean> or java.util.List<java.util.Map<String, Boolean>>")
+    public static final String MODERATION_CATEGORIES = "CamelOpenAIModerationCategories";
+    @Metadata(description = "The moderation confidence score per category. A Map<String, Double> for a single input, "
+                            + "or a List<Map<String, Double>> (one per input) for a batch",
+              javaType = "java.util.Map<String, Double> or java.util.List<java.util.Map<String, Double>>")
+    public static final String MODERATION_CATEGORY_SCORES = "CamelOpenAIModerationCategoryScores";
+    @Metadata(description = "The moderation model used in the response", javaType = "String")
+    public static final String MODERATION_RESPONSE_MODEL = "CamelOpenAIModerationResponseModel";
 
     // Audio Transcription Input Headers
     @Metadata(description = "The model to use for audio transcription", javaType = "String")

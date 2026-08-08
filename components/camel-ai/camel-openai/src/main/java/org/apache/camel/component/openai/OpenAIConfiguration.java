@@ -290,6 +290,12 @@ public class OpenAIConfiguration implements Cloneable {
                             + "Only applicable with verbose_json response format.")
     private String audioTimestampGranularities;
 
+    // ========== MODERATION CONFIGURATION ==========
+
+    @UriParam(defaultValue = "omni-moderation-latest")
+    @Metadata(description = "The model to use for moderation")
+    private String moderationModel = "omni-moderation-latest";
+
     // ========== AUDIO SPEECH (TEXT-TO-SPEECH) CONFIGURATION ==========
 
     @UriParam
@@ -662,6 +668,14 @@ public class OpenAIConfiguration implements Cloneable {
 
     public void setAudioTimestampGranularities(String audioTimestampGranularities) {
         this.audioTimestampGranularities = audioTimestampGranularities;
+    }
+
+    public String getModerationModel() {
+        return moderationModel;
+    }
+
+    public void setModerationModel(String moderationModel) {
+        this.moderationModel = moderationModel;
     }
 
     public String getSpeechModel() {
