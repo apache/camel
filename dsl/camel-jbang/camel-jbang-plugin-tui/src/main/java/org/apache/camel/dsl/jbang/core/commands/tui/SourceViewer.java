@@ -535,7 +535,7 @@ class SourceViewer {
     }
 
     private void jumpEditToCurrentFindMatch() {
-        int line = search.currentMatchLine();
+        int line = search.jumpToNearestMatch(editState.cursorRow());
         if (line >= 0) {
             SourceEditHistory.positionCursor(editState, line, 0);
         }
@@ -580,14 +580,14 @@ class SourceViewer {
             }
             return true;
         }
-        if (ke.hasCtrl() && ke.isChar('z') && !ke.hasShift()) {
+        if (ke.hasCtrl() && ke.isCharIgnoreCase('z') && !ke.hasShift()) {
             if (editHistory.undo(editState)) {
                 dirty = true;
                 refreshEditFindMatches();
             }
             return true;
         }
-        if (ke.hasCtrl() && (ke.isChar('y') || (ke.isChar('z') && ke.hasShift()))) {
+        if (ke.hasCtrl() && (ke.isCharIgnoreCase('y') || (ke.isCharIgnoreCase('z') && ke.hasShift()))) {
             if (editHistory.redo(editState)) {
                 dirty = true;
                 refreshEditFindMatches();
@@ -595,15 +595,15 @@ class SourceViewer {
             return true;
         }
         boolean yamlListBlocks = isCamelYamlFile();
-        if (ke.hasAlt() && ke.isUp() && !ke.hasShift()) {
+        if (ke.isKey(KeyCode.UP) && ke.hasAlt() && !ke.hasShift()) {
             applyBlockEdit(YamlBlockEditor.moveBlockUp(editLines(), editState.cursorRow(), yamlListBlocks));
             return true;
         }
-        if (ke.hasAlt() && ke.isDown() && !ke.hasShift()) {
+        if (ke.isKey(KeyCode.DOWN) && ke.hasAlt() && !ke.hasShift()) {
             applyBlockEdit(YamlBlockEditor.moveBlockDown(editLines(), editState.cursorRow(), yamlListBlocks));
             return true;
         }
-        if (ke.hasCtrl() && ke.isChar('d') && !ke.hasShift()) {
+        if (ke.hasCtrl() && ke.isCharIgnoreCase('d') && !ke.hasShift()) {
             applyBlockEdit(YamlBlockEditor.duplicateBlock(editLines(), editState.cursorRow(), yamlListBlocks));
             return true;
         }
@@ -621,20 +621,20 @@ class SourceViewer {
                     YamlBlockEditor.leadingSpaces(toggled.get(block.startRow())));
             return true;
         }
-        if (ke.hasCtrl() && ke.isLeft()) {
+        if (ke.isKey(KeyCode.LEFT) && ke.hasCtrl()) {
             SourceEditorNavigation.moveWordLeft(editState);
             return true;
         }
-        if (ke.hasCtrl() && ke.isRight()) {
+        if (ke.isKey(KeyCode.RIGHT) && ke.hasCtrl()) {
             SourceEditorNavigation.moveWordRight(editState);
             return true;
         }
-        if (ke.hasCtrl() && ke.isDeleteBackward()) {
+        if (ke.isKey(KeyCode.BACKSPACE) && ke.hasCtrl()) {
             recordEditChange();
             SourceEditorNavigation.deleteWordBackward(editState);
             return true;
         }
-        if (ke.hasCtrl() && ke.isDeleteForward()) {
+        if (ke.isKey(KeyCode.DELETE) && ke.hasCtrl()) {
             recordEditChange();
             SourceEditorNavigation.deleteWordForward(editState);
             return true;
@@ -649,6 +649,9 @@ class SourceViewer {
             return true;
         }
         if (ke.isCancel()) {
+            if (search.handleEscape()) {
+                return true;
+            }
             if (dirty) {
                 pendingDiscard = true;
                 return true;
@@ -1879,6 +1882,10 @@ class SourceViewer {
 
     void handlePaste(String text) {
         if (editMode) {
+            if (search.isSearchInputActive()) {
+                search.handlePaste(text);
+                return;
+            }
             if (text != null && !text.isEmpty()) {
                 recordEditChange();
                 editState.insert(text);

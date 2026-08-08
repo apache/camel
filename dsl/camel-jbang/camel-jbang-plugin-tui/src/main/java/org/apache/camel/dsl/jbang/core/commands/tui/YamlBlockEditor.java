@@ -94,7 +94,11 @@ final class YamlBlockEditor {
         if (previous == null || previous.isEmpty()) {
             return null;
         }
-        return swapBlocks(lines, previous, block);
+        EditResult swapped = swapBlocks(lines, previous, block);
+        List<String> answer = swapped.lines();
+        int cursorRow = previous.startRow();
+        int cursorCol = answer.isEmpty() ? 0 : YamlBlockEditor.leadingSpaces(answer.get(cursorRow));
+        return new EditResult(answer, cursorRow, cursorCol);
     }
 
     static EditResult moveBlockDown(List<String> lines, int row, boolean yamlListBlocks) {

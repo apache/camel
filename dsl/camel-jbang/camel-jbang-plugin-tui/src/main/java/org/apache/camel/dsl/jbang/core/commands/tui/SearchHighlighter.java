@@ -333,16 +333,16 @@ class SearchHighlighter {
         if (findInputActive || highlightInputActive) {
             return handleSearchInput(ke);
         }
-        if (ke.hasCtrl() && ke.isChar('f')) {
+        if (ke.hasCtrl() && ke.isCharIgnoreCase('f')) {
             openFindInput();
             return true;
         }
         if (findTerm != null && ke.isChar('n') && !ke.hasCtrl() && !ke.hasAlt()) {
-            if (ke.hasShift()) {
-                navigateToPrevMatch();
-            } else {
-                navigateToNextMatch();
-            }
+            navigateToNextMatch();
+            return true;
+        }
+        if (findTerm != null && ke.isChar('N') && !ke.hasCtrl() && !ke.hasAlt()) {
+            navigateToPrevMatch();
             return true;
         }
         return false;
