@@ -160,6 +160,7 @@ class SourceViewer {
     private EndpointValidator endpointValidator;
     private List<String> validationErrors;
     private int validationErrorScroll;
+    private final SourceEditHistory editHistory = new SourceEditHistory();
 
     private record CachedSource(
             List<String> lines, List<JsonObject> codeData,
@@ -507,6 +508,43 @@ class SourceViewer {
         return true;
     }
 
+    private void recordEditChange() {
+        editHistory.beforeChange(editState);
+        dirty = true;
+    }
+
+    private List<String> editLines() {
+        List<String> answer = new ArrayList<>(editState.lineCount());
+        for (int i = 0; i < editState.lineCount(); i++) {
+            answer.add(editState.getLine(i));
+        }
+        return answer;
+    }
+
+    private void applyBlockEdit(YamlBlockEditor.EditResult result) {
+        if (result == null) {
+            return;
+        }
+        recordEditChange();
+        editState.setText(YamlBlockEditor.fromLines(result.lines()));
+        SourceEditHistory.positionCursor(editState, result.cursorRow(), result.cursorCol());
+    }
+
+    private void refreshEditFindMatches() {
+        search.buildFindMatches(editLines());
+    }
+
+    private void jumpEditToCurrentFindMatch() {
+        int line = search.currentMatchLine();
+        if (line >= 0) {
+            SourceEditHistory.positionCursor(editState, line, 0);
+        }
+    }
+
+    String editText() {
+        return editState.text();
+    }
+
     private boolean handleEditKeyEvent(KeyEvent ke) {
         if (validationErrors != null) {
             if (ke.isCancel() || ke.isKey(KeyCode.ENTER)) {
@@ -535,6 +573,72 @@ class SourceViewer {
             }
             return true;
         }
+        if (search.handleEditFindKeyEvent(ke)) {
+            if (!search.isSearchInputActive()) {
+                refreshEditFindMatches();
+                jumpEditToCurrentFindMatch();
+            }
+            return true;
+        }
+        if (ke.hasCtrl() && ke.isChar('z') && !ke.hasShift()) {
+            if (editHistory.undo(editState)) {
+                dirty = true;
+                refreshEditFindMatches();
+            }
+            return true;
+        }
+        if (ke.hasCtrl() && (ke.isChar('y') || (ke.isChar('z') && ke.hasShift()))) {
+            if (editHistory.redo(editState)) {
+                dirty = true;
+                refreshEditFindMatches();
+            }
+            return true;
+        }
+        boolean yamlListBlocks = isCamelYamlFile();
+        if (ke.hasAlt() && ke.isUp() && !ke.hasShift()) {
+            applyBlockEdit(YamlBlockEditor.moveBlockUp(editLines(), editState.cursorRow(), yamlListBlocks));
+            return true;
+        }
+        if (ke.hasAlt() && ke.isDown() && !ke.hasShift()) {
+            applyBlockEdit(YamlBlockEditor.moveBlockDown(editLines(), editState.cursorRow(), yamlListBlocks));
+            return true;
+        }
+        if (ke.hasCtrl() && ke.isChar('d') && !ke.hasShift()) {
+            applyBlockEdit(YamlBlockEditor.duplicateBlock(editLines(), editState.cursorRow(), yamlListBlocks));
+            return true;
+        }
+        if (ke.hasCtrl() && ke.hasShift() && (ke.isChar('k') || ke.isChar('K'))) {
+            applyBlockEdit(YamlBlockEditor.deleteBlock(editLines(), editState.cursorRow(), yamlListBlocks));
+            return true;
+        }
+        if (ke.hasCtrl() && ke.isChar('/')) {
+            YamlBlockEditor.BlockRange block
+                    = YamlBlockEditor.findBlock(editLines(), editState.cursorRow(), yamlListBlocks);
+            recordEditChange();
+            List<String> toggled = YamlBlockEditor.toggleComment(editLines(), block);
+            editState.setText(YamlBlockEditor.fromLines(toggled));
+            SourceEditHistory.positionCursor(editState, block.startRow(),
+                    YamlBlockEditor.leadingSpaces(toggled.get(block.startRow())));
+            return true;
+        }
+        if (ke.hasCtrl() && ke.isLeft()) {
+            SourceEditorNavigation.moveWordLeft(editState);
+            return true;
+        }
+        if (ke.hasCtrl() && ke.isRight()) {
+            SourceEditorNavigation.moveWordRight(editState);
+            return true;
+        }
+        if (ke.hasCtrl() && ke.isDeleteBackward()) {
+            recordEditChange();
+            SourceEditorNavigation.deleteWordBackward(editState);
+            return true;
+        }
+        if (ke.hasCtrl() && ke.isDeleteForward()) {
+            recordEditChange();
+            SourceEditorNavigation.deleteWordForward(editState);
+            return true;
+        }
         if (pendingDiscard) {
             if (ke.isConfirm()) {
                 pendingDiscard = false;
@@ -561,6 +665,7 @@ class SourceViewer {
             return true;
         }
         if (ke.isConfirm()) {
+            recordEditChange();
             int prevRow = editState.cursorRow();
             String prevLine = editState.getLine(prevRow);
             int indent = countLeadingSpaces(prevLine);
@@ -581,7 +686,6 @@ class SourceViewer {
             } else if (indent > 0) {
                 editState.insert(" ".repeat(indent));
             }
-            dirty = true;
             return true;
         }
         if (ke.isUp()) {
@@ -601,7 +705,13 @@ class SourceViewer {
             return true;
         }
         if (ke.isHome() || ke.isKey(KeyCode.HOME)) {
-            editState.moveCursorToLineStart();
+            String line = editState.getLine(editState.cursorRow());
+            int contentStart = YamlBlockEditor.leadingSpaces(line);
+            if (editState.cursorCol() > contentStart) {
+                SourceEditHistory.positionCursor(editState, editState.cursorRow(), contentStart);
+            } else {
+                SourceEditHistory.positionCursor(editState, editState.cursorRow(), 0);
+            }
             return true;
         }
         if (ke.isEnd() || ke.isKey(KeyCode.END)) {
@@ -623,13 +733,13 @@ class SourceViewer {
             return true;
         }
         if (ke.isDeleteBackward()) {
+            recordEditChange();
             editState.deleteBackward();
-            dirty = true;
             return true;
         }
         if (ke.isDeleteForward()) {
+            recordEditChange();
             editState.deleteForward();
-            dirty = true;
             return true;
         }
         if (ke.isKey(KeyCode.TAB) && autocompleteProvider != null) {
@@ -637,8 +747,8 @@ class SourceViewer {
             return true;
         }
         if (ke.code() == KeyCode.CHAR && !ke.hasCtrl() && !ke.hasAlt()) {
+            recordEditChange();
             editState.insert(ke.character());
-            dirty = true;
             return true;
         }
         return true;
@@ -658,16 +768,19 @@ class SourceViewer {
         markdownModeBeforeEdit = markdownMode;
         markdownMode = false;
         quickDocEnabled = false;
-        search.reset();
+        search.closeInputOnly();
         dirty = false;
         validationErrors = null;
         editMode = true;
+        editHistory.seedInitial(editState);
+        refreshEditFindMatches();
     }
 
     private void exitEditMode() {
         boolean wasEditing = editMode;
         editMode = false;
         editState.clear();
+        editHistory.clear();
         autocompletePopup = null;
         validationErrors = null;
         pendingDiscard = false;
@@ -1439,7 +1552,7 @@ class SourceViewer {
     }
 
     private void insertCompletion(AutocompletePopup.CompletionItem item, boolean valueMode, boolean listItem) {
-        dirty = true;
+        recordEditChange();
         String currentLine = editState.getLine(editState.cursorRow());
         if (isCamelYamlFile()) {
             insertYamlCompletion(item, valueMode, currentLine, listItem);
@@ -1767,8 +1880,8 @@ class SourceViewer {
     void handlePaste(String text) {
         if (editMode) {
             if (text != null && !text.isEmpty()) {
+                recordEditChange();
                 editState.insert(text);
-                dirty = true;
             }
             return;
         }
@@ -2122,10 +2235,16 @@ class SourceViewer {
             TuiHelper.hint(spans, "Esc", "cancel");
             TuiHelper.hint(spans, "F5", "save & close");
             TuiHelper.hint(spans, "Shift+F5", "save");
+            TuiHelper.hint(spans, "Ctrl+Z", "undo");
+            TuiHelper.hint(spans, "Alt+↑/↓", "move block");
+            TuiHelper.hint(spans, "Ctrl+D", "duplicate");
+            TuiHelper.hint(spans, "Ctrl+/", "comment");
+            TuiHelper.hint(spans, "Ctrl+F", "find");
             if (autocompleteProvider != null) {
                 TuiHelper.hint(spans, "Tab", "complete");
             }
             TuiHelper.hint(spans, TuiIcons.HINT_SCROLL, "move");
+            search.renderFindStatus(spans);
             return;
         }
         if (markdownMode) {
