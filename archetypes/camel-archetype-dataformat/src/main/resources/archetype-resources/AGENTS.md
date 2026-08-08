@@ -23,4 +23,5 @@ Guidance for AI coding assistants working on this project, which was generated f
 
 - Implement both `marshal` and `unmarshal`, and stream from the given `InputStream`/`OutputStream` instead of buffering whole messages where possible.
 - Use the Camel type converters (`exchange.getContext().getTypeConverter()`) rather than casting the body directly.
-- Reference: https://camel.apache.org/manual/writing-components.html
+- Data formats in Camel: https://camel.apache.org/manual/data-format.html
+- Writing the implementation: https://camel.apache.org/manual/writing-components.html

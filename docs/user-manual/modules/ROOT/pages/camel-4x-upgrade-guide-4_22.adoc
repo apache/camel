@@ -1744,13 +1744,3 @@ they say:
   `CamelGoogleVertexAIStreamOutputMode` header.
 * `jsonMode=true` sets the response MIME type of the request to `application/json`, so the model is
   asked to answer with JSON. The default `false` leaves the request untouched.
-
-=== camel-archetypes
-
-The Camel Maven archetypes now generate a `README.md` instead of the previous `ReadMe.txt`, with the
-content rewritten in Markdown and the documentation links updated. Each generated project also gets
-an `AGENTS.md` file with guidance for AI coding assistants, pointing at the Apache Camel LLM index
-(`https://camel.apache.org/llms.txt`), the Camel CLI and the Camel MCP server.
-
-The `camel-archetype-api-component` archetype also generates its readme again: the file was declared
-in the wrong file set and was therefore silently skipped.

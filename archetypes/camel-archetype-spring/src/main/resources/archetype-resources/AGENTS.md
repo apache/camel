@@ -3,6 +3,12 @@
 Guidance for AI coding assistants working on this project, which was generated from the
 `camel-archetype-spring` Maven archetype.
 
+## Status
+
+This project was generated from a **deprecated** archetype. It uses the plain Spring XML setup rather
+than Camel on Spring Boot. Before investing in large changes here, consider whether the project should
+be migrated to Camel on Spring Boot, or regenerated with the Camel CLI (`camel init`).
+
 ## Start here
 
 - Apache Camel LLM index: https://camel.apache.org/llms.txt

@@ -16,4 +16,6 @@ https://camel.apache.org/llms.txt
 
 ## More information
 
-Writing custom data formats: https://camel.apache.org/manual/writing-components.html
+Data formats in Camel: https://camel.apache.org/manual/data-format.html
+
+Writing the implementation: https://camel.apache.org/manual/writing-components.html
