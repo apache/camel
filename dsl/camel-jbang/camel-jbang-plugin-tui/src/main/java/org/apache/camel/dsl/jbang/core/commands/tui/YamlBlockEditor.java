@@ -110,7 +110,12 @@ final class YamlBlockEditor {
         if (next == null || next.isEmpty()) {
             return null;
         }
-        return swapBlocks(lines, block, next);
+        EditResult swapped = swapBlocks(lines, block, next);
+        List<String> answer = swapped.lines();
+        int nextHeight = next.endRow() - next.startRow() + 1;
+        int cursorRow = block.startRow() + nextHeight + (next.startRow() - block.endRow() - 1);
+        int cursorCol = answer.isEmpty() ? 0 : leadingSpaces(answer.get(cursorRow));
+        return new EditResult(answer, cursorRow, cursorCol);
     }
 
     static List<String> toggleComment(List<String> lines, BlockRange block) {

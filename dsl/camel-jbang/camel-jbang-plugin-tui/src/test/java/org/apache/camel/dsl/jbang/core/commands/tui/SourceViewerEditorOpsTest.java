@@ -160,16 +160,32 @@ class SourceViewerEditorOpsTest {
     }
 
     @Test
+    void plainNInsertsWhileFindTermActive() {
+        viewer.handleKeyEvent(KeyEvent.ofChar('f', CTRL));
+        viewer.handleKeyEvent(KeyEvent.ofChar('l', KeyModifiers.NONE));
+        viewer.handleKeyEvent(KeyEvent.ofChar('o', KeyModifiers.NONE));
+        viewer.handleKeyEvent(KeyEvent.ofChar('g', KeyModifiers.NONE));
+        viewer.handleKeyEvent(KeyEvent.ofKey(KeyCode.ENTER, KeyModifiers.NONE));
+
+        viewer.handleKeyEvent(KeyEvent.ofChar('n', KeyModifiers.NONE));
+
+        assertThat(viewer.editText()).contains("n");
+    }
+
+    @Test
     void footerShowsNewEditorHints() {
         List<dev.tamboui.text.Span> spans = new ArrayList<>();
         viewer.renderFooter(spans);
         String footer = spansToString(spans);
 
         assertThat(footer).contains("Ctrl+Z");
+        assertThat(footer).contains("Ctrl+Y");
         assertThat(footer).contains("Alt+↑/↓");
         assertThat(footer).contains("Ctrl+D");
+        assertThat(footer).contains("Ctrl+Shift+K");
         assertThat(footer).contains("Ctrl+/");
         assertThat(footer).contains("Ctrl+F");
+        assertThat(footer).contains("Ctrl+N");
     }
 
     private void moveCursorToLineContaining(String needle) {

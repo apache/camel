@@ -75,6 +75,19 @@ class YamlBlockEditorTest {
     }
 
     @Test
+    void moveBlockDownCursorFollowsMovedBlock() {
+        List<String> lines = YamlBlockEditor.toLines(SAMPLE);
+        int firstStep = findLineContaining(lines, "- to: log:info");
+
+        YamlBlockEditor.EditResult result = YamlBlockEditor.moveBlockDown(lines, firstStep, true);
+
+        assertThat(result).isNotNull();
+        assertThat(result.lines().get(result.cursorRow())).contains("log:info");
+        assertThat(YamlBlockEditor.fromLines(result.lines()).indexOf("log:warn"))
+                .isLessThan(YamlBlockEditor.fromLines(result.lines()).indexOf("log:info"));
+    }
+
+    @Test
     void moveBlockDownSwapsWithNextSibling() {
         List<String> lines = YamlBlockEditor.toLines(SAMPLE);
         int firstStep = findLineContaining(lines, "- to: log:info");
