@@ -273,6 +273,7 @@ class SourceViewer {
         return dirty;
     }
 
+    /** Package-private for tests that drive the edit buffer directly. */
     TextAreaState editState() {
         return editState;
     }
@@ -553,6 +554,7 @@ class SourceViewer {
         }
     }
 
+    /** Package-private for tests that assert on edit buffer content. */
     String editText() {
         return editState.text();
     }
@@ -2335,10 +2337,13 @@ class SourceViewer {
             TuiHelper.hint(spans, "F5", "save & close");
             TuiHelper.hint(spans, "Shift+F5", "save");
             TuiHelper.hint(spans, "Ctrl+Z", "undo");
+            TuiHelper.hint(spans, "Ctrl+Y", "redo");
             TuiHelper.hint(spans, "Alt+↑/↓", "move block");
             TuiHelper.hint(spans, "Ctrl+D", "duplicate");
+            TuiHelper.hint(spans, "Ctrl+Shift+K", "delete block");
             TuiHelper.hint(spans, "Ctrl+/", "comment");
             TuiHelper.hint(spans, "Ctrl+F", "find");
+            TuiHelper.hint(spans, "Ctrl+N", "next match");
             if (autocompleteProvider != null) {
                 TuiHelper.hint(spans, "Tab", "complete");
             }

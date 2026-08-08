@@ -327,7 +327,10 @@ class SearchHighlighter {
     }
 
     /**
-     * Find navigation while editing plain text (Ctrl+F opens find, n/N step matches).
+     * Find navigation while editing plain text (Ctrl+F opens find, Ctrl+N/Ctrl+Shift+N step matches).
+     * <p>
+     * Unlike view mode, plain {@code n}/{@code N} are not consumed so users can type freely while a find term is
+     * active.
      */
     boolean handleEditFindKeyEvent(KeyEvent ke) {
         if (findInputActive || highlightInputActive) {
@@ -337,12 +340,12 @@ class SearchHighlighter {
             openFindInput();
             return true;
         }
-        if (findTerm != null && ke.isChar('n') && !ke.hasCtrl() && !ke.hasAlt()) {
-            navigateToNextMatch();
-            return true;
-        }
-        if (findTerm != null && ke.isChar('N') && !ke.hasCtrl() && !ke.hasAlt()) {
-            navigateToPrevMatch();
+        if (findTerm != null && ke.hasCtrl() && ke.isCharIgnoreCase('n') && !ke.hasAlt()) {
+            if (ke.hasShift()) {
+                navigateToPrevMatch();
+            } else {
+                navigateToNextMatch();
+            }
             return true;
         }
         return false;
