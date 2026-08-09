@@ -339,6 +339,14 @@ class SourceViewer {
         if (lineIndex >= 0 && lineIndex < lines.size()) {
             selectedLine = lineIndex;
             pendingScroll = true;
+            if (editMode) {
+                editState.moveCursorToStart();
+                int targetRow = Math.max(0, lineIndex);
+                for (int i = 0; i < targetRow && i < editState.lineCount() - 1; i++) {
+                    editState.moveCursorDown();
+                }
+                editState.moveCursorToLineStart();
+            }
         }
     }
 
