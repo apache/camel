@@ -22,6 +22,7 @@ import java.util.List;
 import java.util.Map;
 
 import dev.tamboui.layout.Rect;
+import dev.tamboui.style.Color;
 import dev.tamboui.style.Style;
 import dev.tamboui.terminal.Frame;
 import dev.tamboui.text.Line;
@@ -38,6 +39,7 @@ import dev.tamboui.widgets.list.ListWidget;
 import dev.tamboui.widgets.list.ScrollMode;
 import dev.tamboui.widgets.scrollbar.Scrollbar;
 import dev.tamboui.widgets.scrollbar.ScrollbarState;
+import org.apache.camel.dsl.jbang.core.commands.tui.diagram.DiagramColors;
 
 class GotoSourceNodePopup {
 
@@ -184,9 +186,7 @@ class GotoSourceNodePopup {
                 spans.add(Span.raw(indent));
                 String typeTag = entry.type();
                 String typePad = " ".repeat(Math.max(0, maxTypeW - typeTag.length()));
-                dev.tamboui.style.Color eipColor
-                        = org.apache.camel.dsl.jbang.core.commands.tui.diagram.DiagramColors.getEipColor(
-                                SourceViewer.dashToCamelCase(typeTag));
+                Color eipColor = DiagramColors.getEipColor(SourceViewer.dashToCamelCase(typeTag));
                 spans.add(Span.styled("[" + typeTag + "]" + typePad, Style.EMPTY.fg(eipColor).bold()));
                 spans.add(Span.raw(" "));
 

@@ -2377,6 +2377,9 @@ class SourceTab extends AbstractTab {
             return;
         }
         if (sourceViewer.isEditMode() && sourceViewer.isDirty()) {
+            if (ctx.notificationCallback != null) {
+                ctx.notificationCallback.accept("Save or discard edits before navigating to another file", false);
+            }
             return;
         }
         for (int idx = 0; idx < entries.size(); idx++) {
