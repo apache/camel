@@ -461,7 +461,19 @@ public final class CamelContextHelper {
      * @throws IllegalStateException is thrown if illegal argument or type conversion not possible
      */
     public static Duration parseDuration(CamelContext camelContext, String text) {
-        return parse(camelContext, Duration.class, text);
+        if (text == null) {
+            return null;
+        }
+        // ensure we support property placeholders
+        String s = camelContext.resolvePropertyPlaceholders(text);
+        if (s == null) {
+            return null;
+        }
+        if (s.startsWith("P") || s.startsWith("-P") || s.startsWith("p") || s.startsWith("-p")) {
+            return Duration.parse(s);
+        } else {
+            return Duration.ofMillis(TimeUtils.toMilliSeconds(s));
+        }
     }
 
     /**
