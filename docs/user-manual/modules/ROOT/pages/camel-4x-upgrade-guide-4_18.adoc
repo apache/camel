@@ -1581,6 +1581,18 @@ to restore the previous behaviour.
 
 === camel-undertow - potential breaking change
 
+[NOTE]
+====
+The behaviour described in this section did not take effect in 4.18.3 on
+endpoint-configured routes. `UndertowEndpoint` defaulted its
+`headerFilterStrategy` to the base `HttpHeaderFilterStrategy` and pushed that
+into the `UndertowHttpBinding` it creates lazily, discarding the
+`UndertowHeaderFilterStrategy` this section describes. The filtering takes
+effect from 4.18.4 onwards; see the
+`camel-undertow - UndertowHeaderFilterStrategy is now the endpoint default`
+entry below.
+====
+
 `UndertowHeaderFilterStrategy` now also filters the legacy `websocket.*`
 Exchange-header prefix (in addition to the `Camel*` / `camel*` /
 `org.apache.camel.*` prefixes it already filtered). This applies to both the
