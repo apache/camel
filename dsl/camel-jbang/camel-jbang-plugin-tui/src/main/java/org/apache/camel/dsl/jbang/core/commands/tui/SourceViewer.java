@@ -268,6 +268,10 @@ class SourceViewer {
         return editMode;
     }
 
+    boolean isDirty() {
+        return dirty;
+    }
+
     TextAreaState editState() {
         return editState;
     }

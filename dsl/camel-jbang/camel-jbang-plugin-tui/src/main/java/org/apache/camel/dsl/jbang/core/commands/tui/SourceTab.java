@@ -2376,6 +2376,9 @@ class SourceTab extends AbstractTab {
             sourceViewer.goToLine(targetLine);
             return;
         }
+        if (sourceViewer.isEditMode() && sourceViewer.isDirty()) {
+            return;
+        }
         for (int idx = 0; idx < entries.size(); idx++) {
             FilesBrowser.FileEntry entry = entries.get(idx);
             if (!entry.directory() && entry.path().equals(targetFilePath)) {

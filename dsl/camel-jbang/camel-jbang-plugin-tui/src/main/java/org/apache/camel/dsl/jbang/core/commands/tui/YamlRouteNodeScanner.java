@@ -53,7 +53,8 @@ class YamlRouteNodeScanner {
             String label,
             String filePath,
             int lineIndex,
-            int indent) {
+            int indent,
+            int routeFromLine) {
     }
 
     static List<NodeEntry> scanFile(Path file) {
@@ -73,6 +74,10 @@ class YamlRouteNodeScanner {
         String currentFromUri = null;
         int pendingFromLine = -1;
         boolean routeHeaderEmitted = false;
+        int activeRouteFromLine = -1;
+        int activeRouteIndent = -1;
+        String pendingEndpointEip = null;
+        int pendingEndpointIndent = -1;
 
         for (int i = 0; i < lines.size(); i++) {
             String line = lines.get(i);
@@ -81,10 +86,24 @@ class YamlRouteNodeScanner {
                 continue;
             }
 
+            int indent = lineIndent(line);
+
+            if (routeHeaderEmitted && activeRouteIndent >= 0 && indent <= activeRouteIndent
+                    && !trimmed.startsWith("uri:") && !trimmed.startsWith("from:")
+                    && !trimmed.startsWith("- from:")) {
+                routeHeaderEmitted = false;
+                activeRouteFromLine = -1;
+                activeRouteIndent = -1;
+                pendingEndpointEip = null;
+                pendingEndpointIndent = -1;
+            }
+
             if (trimmed.startsWith("id:") && !trimmed.startsWith("id: \"\"")) {
-                String val = extractYamlValue(trimmed, "id");
-                if (val != null && !val.isEmpty()) {
-                    currentRouteId = val;
+                if (!routeHeaderEmitted) {
+                    String val = extractYamlValue(trimmed, "id");
+                    if (val != null && !val.isEmpty()) {
+                        currentRouteId = val;
+                    }
                 }
                 continue;
             }
@@ -94,20 +113,34 @@ class YamlRouteNodeScanner {
                 currentFromUri = null;
                 pendingFromLine = -1;
                 routeHeaderEmitted = false;
+                activeRouteFromLine = -1;
+                activeRouteIndent = -1;
+                pendingEndpointEip = null;
+                pendingEndpointIndent = -1;
                 continue;
             }
 
             if (trimmed.startsWith("from:") || trimmed.startsWith("- from:")) {
+                if (trimmed.startsWith("- from:")) {
+                    currentRouteId = null;
+                }
                 currentFromUri = null;
                 routeHeaderEmitted = false;
+                activeRouteFromLine = -1;
+                activeRouteIndent = -1;
+                pendingEndpointEip = null;
+                pendingEndpointIndent = -1;
                 String inlineUri = extractInlineUri(trimmed, "from");
                 if (inlineUri != null) {
                     currentFromUri = stripQueryParams(inlineUri);
+                    activeRouteFromLine = i;
+                    activeRouteIndent = indent;
                     emitRouteHeader(result, currentRouteId, currentFromUri, filePath, i);
                     routeHeaderEmitted = true;
                     pendingFromLine = -1;
                 } else {
                     pendingFromLine = i;
+                    activeRouteIndent = indent;
                 }
                 continue;
             }
@@ -116,6 +149,7 @@ class YamlRouteNodeScanner {
                 String uri = extractYamlValue(trimmed, "uri");
                 if (uri != null) {
                     currentFromUri = stripQueryParams(uri);
+                    activeRouteFromLine = pendingFromLine;
                     emitRouteHeader(result, currentRouteId, currentFromUri, filePath, pendingFromLine);
                     routeHeaderEmitted = true;
                 }
@@ -123,11 +157,20 @@ class YamlRouteNodeScanner {
                 continue;
             }
 
-            if (pendingFromLine >= 0 && lineIndent(line) <= lineIndent(lines.get(pendingFromLine))) {
+            if (pendingFromLine >= 0 && indent <= lineIndent(lines.get(pendingFromLine))) {
                 pendingFromLine = -1;
             }
 
-            if (!routeHeaderEmitted) {
+            if (!routeHeaderEmitted || activeRouteFromLine < 0) {
+                continue;
+            }
+
+            if (isBlockEndpointEipLine(trimmed)) {
+                String eip = extractNodeType(line);
+                if (eip != null && ENDPOINT_EIPS.contains(eip)) {
+                    pendingEndpointEip = eip;
+                    pendingEndpointIndent = indent;
+                }
                 continue;
             }
 
@@ -136,14 +179,20 @@ class YamlRouteNodeScanner {
                 if (type == null || BOILERPLATE_KEYS.contains(type)) {
                     continue;
                 }
-                if (STRUCTURAL_KEYS.contains(type) && !line.trim().substring(line.trim().startsWith("- ")
-                        ? 2 : 0).trim().startsWith("uri:")) {
+                if (STRUCTURAL_KEYS.contains(type) && !isUriLine(line)) {
                     continue;
+                }
+                if ("uri".equals(type) && pendingEndpointEip != null && indent > pendingEndpointIndent) {
+                    type = pendingEndpointEip;
+                    pendingEndpointEip = null;
+                    pendingEndpointIndent = -1;
                 }
                 String routeId = resolveRouteId(currentRouteId, currentFromUri);
                 String label = buildNodeLabel(line, lines, i);
+                int nodeIndent = Math.max(1, (indent - activeRouteIndent) / 2);
                 result.add(new NodeEntry(
-                        EntryKind.PROCESSOR, routeId, null, type, label, filePath, i, 1));
+                        EntryKind.PROCESSOR, routeId, null, type, label, filePath, i, nodeIndent,
+                        activeRouteFromLine));
             }
         }
 
@@ -154,7 +203,7 @@ class YamlRouteNodeScanner {
             List<NodeEntry> result, String routeId, String fromUri, String filePath, int fromLine) {
         String resolvedId = resolveRouteId(routeId, fromUri);
         result.add(new NodeEntry(
-                EntryKind.ROUTE, resolvedId, fromUri, "route", fromUri, filePath, fromLine, 0));
+                EntryKind.ROUTE, resolvedId, fromUri, "route", fromUri, filePath, fromLine, 0, fromLine));
     }
 
     private static String resolveRouteId(String routeId, String fromUri) {
@@ -178,11 +227,11 @@ class YamlRouteNodeScanner {
             return false;
         }
 
-        String content = trimmed.startsWith("- ") ? trimmed.substring(2).trim() : trimmed;
-        if (content.startsWith("uri:")) {
+        if (isUriLine(line)) {
             return true;
         }
 
+        String content = trimmed.startsWith("- ") ? trimmed.substring(2).trim() : trimmed;
         int colonIdx = content.indexOf(':');
         if (colonIdx <= 0) {
             return false;
@@ -195,10 +244,7 @@ class YamlRouteNodeScanner {
 
         String after = content.substring(colonIdx + 1).trim();
         if (ENDPOINT_EIPS.contains(key)) {
-            if (after.isEmpty() || after.equals("{")) {
-                return false;
-            }
-            return true;
+            return !after.isEmpty() && !after.equals("{");
         }
 
         if (trimmed.startsWith("- ")) {
@@ -206,6 +252,31 @@ class YamlRouteNodeScanner {
         }
 
         return false;
+    }
+
+    private static boolean isBlockEndpointEipLine(String trimmed) {
+        if (!trimmed.startsWith("- ")) {
+            return false;
+        }
+        String content = trimmed.substring(2).trim();
+        int colonIdx = content.indexOf(':');
+        if (colonIdx <= 0) {
+            return false;
+        }
+        String key = content.substring(0, colonIdx).trim();
+        if (!ENDPOINT_EIPS.contains(key)) {
+            return false;
+        }
+        String after = content.substring(colonIdx + 1).trim();
+        return after.isEmpty() || after.equals("{");
+    }
+
+    private static boolean isUriLine(String line) {
+        String content = line.trim();
+        if (content.startsWith("- ")) {
+            content = content.substring(2).trim();
+        }
+        return content.startsWith("uri:");
     }
 
     static String extractNodeType(String line) {
@@ -249,7 +320,7 @@ class YamlRouteNodeScanner {
                 break;
             }
             String nt = next.trim();
-            for (String prop : List.of("message:", "name:", "id:", "simple:", "constant:", "language:")) {
+            for (String prop : List.of("message:", "name:", "simple:", "constant:", "language:")) {
                 if (nt.startsWith(prop)) {
                     String val = nt.substring(prop.length()).trim();
                     return unquote(val);

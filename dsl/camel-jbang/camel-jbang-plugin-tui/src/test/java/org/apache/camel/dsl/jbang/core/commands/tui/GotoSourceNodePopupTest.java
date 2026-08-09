@@ -79,24 +79,45 @@ class GotoSourceNodePopupTest {
 
         YamlRouteNodeScanner.NodeEntry selected = popup.consumeSelection();
         assertThat(selected).isNotNull();
-        assertThat(selected.type()).isEqualTo("uri");
+        assertThat(selected.type()).isEqualTo("to");
         assertThat(selected.label()).contains("kafka");
     }
 
     @Test
-    void typingRouteIdKeepsRouteHeaderAndMatchingProcessors() {
+    void duplicateRouteIdsFilteredIndependently() {
+        var entries = List.of(
+                new YamlRouteNodeScanner.NodeEntry(
+                        YamlRouteNodeScanner.EntryKind.ROUTE,
+                        "dup", "timer:a", "route", "timer:a",
+                        "/tmp/routes.yaml", 0, 0, 0),
+                new YamlRouteNodeScanner.NodeEntry(
+                        YamlRouteNodeScanner.EntryKind.PROCESSOR,
+                        "dup", null, "log", "alpha",
+                        "/tmp/routes.yaml", 3, 1, 0),
+                new YamlRouteNodeScanner.NodeEntry(
+                        YamlRouteNodeScanner.EntryKind.ROUTE,
+                        "dup", "timer:b", "route", "timer:b",
+                        "/tmp/routes.yaml", 5, 0, 5),
+                new YamlRouteNodeScanner.NodeEntry(
+                        YamlRouteNodeScanner.EntryKind.PROCESSOR,
+                        "dup", null, "log", "beta",
+                        "/tmp/routes.yaml", 8, 1, 5));
+
         var popup = new GotoSourceNodePopup();
-        popup.open(sampleEntries());
+        popup.open(entries);
 
-        popup.handleKeyEvent(KeyEvent.ofChar('m', KeyModifiers.NONE));
-        popup.handleKeyEvent(KeyEvent.ofChar('y', KeyModifiers.NONE));
-
+        popup.handleKeyEvent(KeyEvent.ofChar('a', KeyModifiers.NONE));
+        popup.handleKeyEvent(KeyEvent.ofChar('l', KeyModifiers.NONE));
+        popup.handleKeyEvent(KeyEvent.ofChar('p', KeyModifiers.NONE));
+        popup.handleKeyEvent(KeyEvent.ofChar('h', KeyModifiers.NONE));
+        popup.handleKeyEvent(KeyEvent.ofChar('a', KeyModifiers.NONE));
         popup.handleKeyEvent(KeyEvent.ofKey(KeyCode.DOWN, KeyModifiers.NONE));
         popup.handleKeyEvent(KeyEvent.ofKey(KeyCode.ENTER, KeyModifiers.NONE));
 
         YamlRouteNodeScanner.NodeEntry selected = popup.consumeSelection();
         assertThat(selected).isNotNull();
-        assertThat(selected.routeId()).isEqualTo("myRoute");
+        assertThat(selected.label()).isEqualTo("alpha");
+        assertThat(selected.routeFromLine()).isEqualTo(0);
     }
 
     private static List<YamlRouteNodeScanner.NodeEntry> sampleEntries() {
@@ -104,14 +125,14 @@ class GotoSourceNodePopupTest {
                 new YamlRouteNodeScanner.NodeEntry(
                         YamlRouteNodeScanner.EntryKind.ROUTE,
                         "myRoute", "timer:tick", "route", "timer:tick",
-                        "/tmp/route.camel.yaml", 2, 0),
+                        "/tmp/route.camel.yaml", 2, 0, 2),
                 new YamlRouteNodeScanner.NodeEntry(
                         YamlRouteNodeScanner.EntryKind.PROCESSOR,
                         "myRoute", null, "log", "hello",
-                        "/tmp/route.camel.yaml", 5, 1),
+                        "/tmp/route.camel.yaml", 5, 1, 2),
                 new YamlRouteNodeScanner.NodeEntry(
                         YamlRouteNodeScanner.EntryKind.PROCESSOR,
-                        "myRoute", null, "uri", "kafka:orders",
-                        "/tmp/route.camel.yaml", 8, 1));
+                        "myRoute", null, "to", "kafka:orders",
+                        "/tmp/route.camel.yaml", 8, 1, 2));
     }
 }

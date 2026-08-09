@@ -61,7 +61,7 @@ class YamlRouteNodeScannerTest {
         assertThat(entries.get(1).label()).isEqualTo("hello");
         assertThat(entries.get(1).lineIndex()).isEqualTo(5);
 
-        assertThat(entries.get(2).type()).isEqualTo("uri");
+        assertThat(entries.get(2).type()).isEqualTo("to");
         assertThat(entries.get(2).label()).isEqualTo("kafka:orders");
         assertThat(entries.get(2).lineIndex()).isEqualTo(8);
     }
@@ -103,6 +103,76 @@ class YamlRouteNodeScannerTest {
         assertThat(entries.get(0).lineIndex()).isEqualTo(0);
         assertThat(entries.get(1).type()).isEqualTo("setBody");
         assertThat(entries.get(1).label()).isEqualTo("test");
+    }
+
+    @Test
+    void processorIdDoesNotOverwriteRouteId() throws IOException {
+        String yaml = String.join("\n",
+                "- route:",
+                "    id: myRoute",
+                "    from:",
+                "      uri: timer:tick",
+                "      steps:",
+                "        - log:",
+                "            id: myLog",
+                "            message: hello",
+                "        - to:",
+                "            uri: kafka:orders",
+                "");
+
+        Path file = tempDir.resolve("route.camel.yaml");
+        Files.writeString(file, yaml);
+
+        List<YamlRouteNodeScanner.NodeEntry> entries = YamlRouteNodeScanner.scanFile(file);
+
+        assertThat(entries.get(0).routeId()).isEqualTo("myRoute");
+        assertThat(entries.get(1).routeId()).isEqualTo("myRoute");
+        assertThat(entries.get(1).label()).isEqualTo("hello");
+        assertThat(entries.get(2).routeId()).isEqualTo("myRoute");
+        assertThat(entries.get(2).type()).isEqualTo("to");
+    }
+
+    @Test
+    void newFromRouteClearsPreviousRouteId() throws IOException {
+        String yaml = String.join("\n",
+                "- route:",
+                "    id: myRoute",
+                "    from:",
+                "      uri: timer:a",
+                "- from:",
+                "    uri: timer:b",
+                "");
+
+        Path file = tempDir.resolve("routes.camel.yaml");
+        Files.writeString(file, yaml);
+
+        List<YamlRouteNodeScanner.NodeEntry> entries = YamlRouteNodeScanner.scanFile(file);
+
+        assertThat(entries).hasSize(2);
+        assertThat(entries.get(0).routeId()).isEqualTo("myRoute");
+        assertThat(entries.get(1).routeId()).isEqualTo("b");
+    }
+
+    @Test
+    void beansSectionNotIndexedAsProcessors() throws IOException {
+        String yaml = String.join("\n",
+                "- from:",
+                "    uri: timer:a",
+                "    steps:",
+                "      - log:",
+                "          message: hi",
+                "- beans:",
+                "    - name: myBean",
+                "      type: java.lang.String",
+                "");
+
+        Path file = tempDir.resolve("routes.camel.yaml");
+        Files.writeString(file, yaml);
+
+        List<YamlRouteNodeScanner.NodeEntry> entries = YamlRouteNodeScanner.scanFile(file);
+
+        assertThat(entries).hasSize(2);
+        assertThat(entries.get(1).type()).isEqualTo("log");
     }
 
     @Test

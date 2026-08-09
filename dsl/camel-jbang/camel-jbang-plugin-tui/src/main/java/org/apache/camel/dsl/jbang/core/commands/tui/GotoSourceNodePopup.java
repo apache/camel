@@ -295,7 +295,7 @@ class GotoSourceNodePopup {
     }
 
     private static String routeKey(YamlRouteNodeScanner.NodeEntry entry) {
-        return entry.filePath() + "#" + entry.routeId();
+        return entry.filePath() + "#" + entry.routeFromLine();
     }
 
     private boolean matches(YamlRouteNodeScanner.NodeEntry entry, String f) {
