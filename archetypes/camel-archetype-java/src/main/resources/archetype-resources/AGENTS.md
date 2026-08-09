@@ -11,8 +11,8 @@ Guidance for AI coding assistants working on this project, which was generated f
 
 ## Project layout
 
-- `src/main/java/MyRouteBuilder.java` — the Camel routes.
-- `src/main/java/MainApp.java` — starts the application via `org.apache.camel.main.Main`.
+- `src/main/java/<package>/MyRouteBuilder.java` — the Camel routes.
+- `src/main/java/<package>/MainApp.java` — starts the application via `org.apache.camel.main.Main`.
 - `src/main/resources/log4j2.properties` — logging.
 - `src/data` — sample messages consumed by the generated route.
 
@@ -23,5 +23,5 @@ Guidance for AI coding assistants working on this project, which was generated f
 
 ## Conventions
 
-- Add routes as `RouteBuilder` classes and register them with `Main` (or let component scanning pick them up).
+- Add routes as `RouteBuilder` classes and register them on `Main` the same way as `MyRouteBuilder`, with `main.configure().addRoutesBuilder(...)`. This archetype does not scan for routes.
 - Keep endpoint configuration in `pom.xml` dependencies plus route URIs; add a component dependency before using its scheme.

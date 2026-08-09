@@ -11,11 +11,11 @@ Guidance for AI coding assistants working on this project, which was generated f
 
 ## Project layout
 
-- `src/main/java/MyRouteBuilder.java` — the Camel routes.
-- `src/main/java/MyApplication.java` — starts the application via `org.apache.camel.main.Main`.
-- `src/main/java/MyBean.java`, `src/main/java/MyConfiguration.java` — beans wired by Camel's built-in dependency injection.
+- `src/main/java/<package>/MyRouteBuilder.java` — the Camel routes.
+- `src/main/java/<package>/MyApplication.java` — starts the application via `org.apache.camel.main.Main`.
+- `src/main/java/<package>/MyBean.java`, `src/main/java/<package>/MyConfiguration.java` — beans wired by Camel's built-in dependency injection.
 - `src/main/resources/application.properties` — Camel Main configuration.
-- `src/test/java/MyApplicationTest.java` — test using `CamelMainTestSupport`.
+- `src/test/java/<package>/MyApplicationTest.java` — test using `CamelMainTestSupport`.
 
 ## Build and run
 

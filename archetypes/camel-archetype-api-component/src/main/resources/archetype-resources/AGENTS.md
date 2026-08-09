@@ -24,6 +24,6 @@ This is a multi-module project:
 
 ## Conventions
 
-- The endpoint configuration and the API method proxies are generated at build time from the API signatures — change the API or the signature files rather than editing generated sources.
-- Annotate the endpoint with `@UriEndpoint` and its options with `@UriPath`, `@UriParam` and `@Metadata`.
+- The API method proxies and collections are generated at build time by `camel-api-component-maven-plugin` from the API signatures. Do not hand-edit them — change the API or the signature files instead.
+- The endpoint and configuration classes under `*-component/src/main/java` are hand-written: annotate the endpoint with `@UriEndpoint` and its options with `@UriPath`, `@UriParam` and `@Metadata`.
 - Reference: https://camel.apache.org/manual/writing-components.html

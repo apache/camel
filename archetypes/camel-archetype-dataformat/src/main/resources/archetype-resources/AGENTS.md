@@ -23,5 +23,6 @@ Guidance for AI coding assistants working on this project, which was generated f
 
 - Implement both `marshal` and `unmarshal`, and stream from the given `InputStream`/`OutputStream` instead of buffering whole messages where possible.
 - Use the Camel type converters (`exchange.getContext().getTypeConverter()`) rather than casting the body directly.
+- The data format is registered by the `@org.apache.camel.spi.annotations.Dataformat("<scheme>")` annotation on the class; there is no `META-INF/services` file to add. Keep the annotation value and `getDataFormatName()` in sync.
 - Data formats in Camel: https://camel.apache.org/manual/data-format.html
 - Writing the implementation: https://camel.apache.org/manual/writing-components.html

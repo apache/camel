@@ -1,7 +1,8 @@
 # Camel Java Router Project
 
 A standalone Apache Camel application generated from the `camel-archetype-java` Maven archetype.
-Routes live in `src/main/java/MyRouteBuilder.java` and are started by `src/main/java/MainApp.java`.
+Routes live in `src/main/java/<package>/MyRouteBuilder.java` and are started by
+`src/main/java/<package>/MainApp.java`.
 
 ## Build
 
