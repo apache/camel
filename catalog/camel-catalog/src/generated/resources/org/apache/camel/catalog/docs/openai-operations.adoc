@@ -217,7 +217,11 @@ YAML::
 === Batch Moderation
 
 A `List` body moderates every element in a single API call. `CamelOpenAIModerationFlagged` is then `true` when at least
-one element was flagged, while the category headers hold one entry per input, in the order of the input list:
+one element was flagged, while the category headers hold one entry per input, in the order of the input list.
+
+The header shape follows the body shape: a `String` body yields `Map` headers and a `List` body yields `List` headers,
+including a list with a single element. That way a route processing batches does not have to special-case a batch that
+happens to hold one item:
 
 [source,java]
 ----
@@ -239,6 +243,15 @@ from("direct:moderate-batch")
 | `moderationModel` | String | `omni-moderation-latest` | The moderation model to use
 | `storeFullResponse` | boolean | `false` | Store the full SDK response in the `CamelOpenAIModerationResponse` exchange property
 |===
+
+=== Failure Modes
+
+The operation is meant to gate untrusted content, so it fails the exchange rather than letting a message through
+without a verdict:
+
+* the API returning a number of results that does not match the number of inputs raises a `CamelExchangeException`,
+  instead of leaving `CamelOpenAIModerationFlagged` as `false`;
+* a missing body, an empty list, or a list containing `null` elements raises an `IllegalArgumentException`.
 
 === Moderation Output Headers
 

@@ -16,10 +16,12 @@
  */
 package org.apache.camel.component.openai;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
 import com.openai.models.moderations.ModerationCreateResponse;
+import org.apache.camel.CamelExchangeException;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.test.infra.openai.mock.OpenAIMock;
@@ -47,6 +49,9 @@ class OpenAIModerationMockTest extends CamelTestSupport {
             .end()
             .whenModeration("42")
             .replyWithModerationAllowed()
+            .end()
+            .whenModeration("Provider returns no verdict")
+            .replyWithoutModerationResult()
             .build();
 
     @Override
@@ -223,6 +228,82 @@ class OpenAIModerationMockTest extends CamelTestSupport {
 
         assertThat(result.getException()).isNull();
         assertThat(result.getMessage().getHeader(OpenAIConstants.MODERATION_FLAGGED)).isEqualTo(false);
+        // the body is passed through untouched, not replaced by the converted input
+        assertThat(result.getMessage().getBody()).isEqualTo(42);
+
+        @SuppressWarnings("unchecked")
+        Map<String, Boolean> categories
+                = result.getMessage().getHeader(OpenAIConstants.MODERATION_CATEGORIES, Map.class);
+        assertThat(categories).containsEntry("hate", false);
+    }
+
+    @Test
+    void testSingleElementListKeepsTheBatchShape() {
+        Exchange result = template.request("direct:moderation",
+                e -> e.getIn().setBody(List.of("Apache Camel is an integration framework")));
+
+        assertThat(result.getException()).isNull();
+        assertThat(result.getMessage().getHeader(OpenAIConstants.MODERATION_FLAGGED)).isEqualTo(false);
+
+        // a List body yields List headers even for one element, so batch processors need no special case
+        assertThat(result.getMessage().getHeader(OpenAIConstants.MODERATION_CATEGORIES)).isInstanceOf(List.class);
+        assertThat(result.getMessage().getHeader(OpenAIConstants.MODERATION_CATEGORY_SCORES)).isInstanceOf(List.class);
+
+        @SuppressWarnings("unchecked")
+        List<Map<String, Boolean>> categories
+                = result.getMessage().getHeader(OpenAIConstants.MODERATION_CATEGORIES, List.class);
+        assertThat(categories).hasSize(1);
+        assertThat(categories.get(0)).containsEntry("hate", false);
+    }
+
+    @Test
+    void testStringBodyKeepsTheSingleShape() {
+        Exchange result = template.request("direct:moderation",
+                e -> e.getIn().setBody("Apache Camel is an integration framework"));
+
+        assertThat(result.getMessage().getHeader(OpenAIConstants.MODERATION_CATEGORIES)).isInstanceOf(Map.class);
+        assertThat(result.getMessage().getHeader(OpenAIConstants.MODERATION_CATEGORY_SCORES)).isInstanceOf(Map.class);
+    }
+
+    @Test
+    void testMissingVerdictFailsClosed() {
+        Exchange result = template.request("direct:moderation", e -> e.getIn().setBody("Provider returns no verdict"));
+
+        // no verdict must fail the exchange rather than leave the flag false and let the message through
+        assertThat(result.getException())
+                .isInstanceOf(CamelExchangeException.class)
+                .hasMessageContaining("Moderation returned 0 result(s) for 1 input(s)");
+        assertThat(result.getMessage().getHeader(OpenAIConstants.MODERATION_FLAGGED)).isNull();
+    }
+
+    @Test
+    void testGuardRouteDoesNotLetContentThroughWithoutVerdict() {
+        Exchange result = template.request("direct:guard", e -> e.getIn().setBody("Provider returns no verdict"));
+
+        assertThat(result.getException()).isInstanceOf(CamelExchangeException.class);
+        assertThat(result.getMessage().getBody(String.class)).isNotEqualTo("accepted");
+    }
+
+    @Test
+    void testEmptyListFails() {
+        Exchange result = template.request("direct:moderation", e -> e.getIn().setBody(List.of()));
+
+        assertThat(result.getException())
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessageContaining("No input text provided for moderation");
+    }
+
+    @Test
+    void testListWithNullElementFails() {
+        List<String> inputs = new ArrayList<>();
+        inputs.add("Apache Camel is an integration framework");
+        inputs.add(null);
+
+        Exchange result = template.request("direct:moderation", e -> e.getIn().setBody(inputs));
+
+        assertThat(result.getException())
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessageContaining("must not contain null elements");
     }
 
     @Test

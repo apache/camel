@@ -61,6 +61,9 @@ public class ModerationResponseBuilder {
 
         List<ModerationResult> results = new ArrayList<>(expectations.size());
         for (ModerationExpectation expectation : expectations) {
+            if (expectation.isResultOmitted()) {
+                continue;
+            }
             results.add(new ModerationResult(
                     expectation.isFlagged(),
                     categories(expectation),

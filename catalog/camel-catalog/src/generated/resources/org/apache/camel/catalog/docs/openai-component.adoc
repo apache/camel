@@ -1264,8 +1264,11 @@ The component may throw the following exceptions:
 * `IllegalArgumentException`:
   ** When an invalid operation is specified (supported: `chat-completion`, `responses`, `embeddings`, `tool-execution`, `audio-transcription`, `audio-translation`, `audio-speech`, `moderation`)
   ** When message body or user message is missing
-  ** When the audio model is missing (audio-transcription, audio-translation), the speech model is missing (audio-speech) or the moderation model is missing (moderation)
+  ** When the audio model is missing (audio-transcription, audio-translation) or the speech model is missing (audio-speech)
   ** When image file is provided without userMessage (chat-completion)
   ** When unsupported file type is provided (only text and image files are supported)
   ** When invalid JSON schema string is provided
+  ** When the moderation input list is empty or contains null elements (moderation)
+* `CamelExchangeException`:
+  ** When moderation returns a number of results that does not match the number of inputs (moderation)
 * API-specific exceptions from the OpenAI SDK for network errors, authentication failures, rate limiting, etc.

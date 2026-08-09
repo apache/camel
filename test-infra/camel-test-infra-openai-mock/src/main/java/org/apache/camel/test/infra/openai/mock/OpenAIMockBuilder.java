@@ -243,6 +243,16 @@ public class OpenAIMockBuilder {
         return this;
     }
 
+    /**
+     * Replies without a result for this input, reproducing a provider that returns fewer verdicts than inputs.
+     */
+    public OpenAIMockBuilder replyWithoutModerationResult() {
+        validateCurrentModerationExpectation("replyWithoutModerationResult()");
+        log.debug("Omitting the moderation result for this input");
+        currentModerationExpectation.setResultOmitted(true);
+        return this;
+    }
+
     // Audio Transcription API methods
 
     public OpenAIMockBuilder whenTranscription() {

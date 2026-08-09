@@ -25,6 +25,7 @@ import com.openai.models.moderations.Moderation;
 import com.openai.models.moderations.ModerationCreateParams;
 import com.openai.models.moderations.ModerationCreateResponse;
 import org.apache.camel.AsyncCallback;
+import org.apache.camel.CamelExchangeException;
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.apache.camel.support.DefaultAsyncProducer;
@@ -71,6 +72,7 @@ public class OpenAIModerationProducer extends DefaultAsyncProducer {
             throw new IllegalArgumentException("Moderation model must be specified via moderationModel parameter");
         }
 
+        boolean batch = in.getBody() instanceof List;
         List<String> inputs = extractInputs(in);
         if (inputs.isEmpty()) {
             throw new IllegalArgumentException("No input text provided for moderation");
@@ -92,7 +94,16 @@ public class OpenAIModerationProducer extends DefaultAsyncProducer {
             exchange.setProperty(OpenAIConstants.MODERATION_RESPONSE, response);
         }
 
-        setResponseHeaders(exchange.getMessage(), response, inputs.size());
+        // this operation is used to gate untrusted content, so a missing verdict must fail the exchange
+        // instead of leaving CamelOpenAIModerationFlagged false and letting the message through
+        if (response.results().size() != inputs.size()) {
+            throw new CamelExchangeException(
+                    "Moderation returned " + response.results().size() + " result(s) for " + inputs.size()
+                                             + " input(s)",
+                    exchange);
+        }
+
+        setResponseHeaders(exchange.getMessage(), response, batch);
     }
 
     private List<String> extractInputs(Message in) {
@@ -103,6 +114,10 @@ public class OpenAIModerationProducer extends DefaultAsyncProducer {
             inputs.add(text);
         } else if (body instanceof List<?> list) {
             for (Object item : list) {
+                if (item == null) {
+                    // moderating the literal "null" would silently report a verdict for content that was not sent
+                    throw new IllegalArgumentException("The input list for moderation must not contain null elements");
+                }
                 if (item instanceof String s) {
                     inputs.add(s);
                 } else {
@@ -116,7 +131,7 @@ public class OpenAIModerationProducer extends DefaultAsyncProducer {
         return inputs;
     }
 
-    private void setResponseHeaders(Message message, ModerationCreateResponse response, int inputCount) {
+    private void setResponseHeaders(Message message, ModerationCreateResponse response, boolean batch) {
         message.setHeader(OpenAIConstants.MODERATION_RESPONSE_MODEL, response.model());
 
         List<Moderation> results = response.results();
@@ -130,8 +145,9 @@ public class OpenAIModerationProducer extends DefaultAsyncProducer {
             categoryScores.add(toCategoryScores(result.categoryScores()));
         }
 
-        // a single input yields a single verdict, so unwrap it for convenient routing
-        if (inputCount == 1 && categories.size() == 1) {
+        // the header shape follows the body shape, so a List body always yields a list of verdicts,
+        // even when it holds a single element
+        if (!batch) {
             message.setHeader(OpenAIConstants.MODERATION_CATEGORIES, categories.get(0));
             message.setHeader(OpenAIConstants.MODERATION_CATEGORY_SCORES, categoryScores.get(0));
         } else {

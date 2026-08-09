@@ -31,6 +31,7 @@ public class ModerationExpectation {
     private final Map<String, Double> categoryScores = new LinkedHashMap<>();
     private boolean flagged;
     private boolean illicitCategoriesIncluded = true;
+    private boolean resultOmitted;
     private String model = DEFAULT_MODEL;
 
     public ModerationExpectation(String expectedInput) {
@@ -74,6 +75,17 @@ public class ModerationExpectation {
      */
     public void scoreCategory(String category, double score) {
         categoryScores.put(category, score);
+    }
+
+    public boolean isResultOmitted() {
+        return resultOmitted;
+    }
+
+    /**
+     * Replies without a result for this input, reproducing a provider that returns fewer verdicts than inputs.
+     */
+    public void setResultOmitted(boolean resultOmitted) {
+        this.resultOmitted = resultOmitted;
     }
 
     public boolean isIllicitCategoriesIncluded() {
