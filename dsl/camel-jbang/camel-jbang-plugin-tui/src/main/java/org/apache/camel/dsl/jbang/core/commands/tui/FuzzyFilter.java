@@ -78,10 +78,11 @@ class FuzzyFilter {
             return new int[0];
         }
         String lowerText = text.toLowerCase();
-        int[] positions = new int[pattern.length()];
+        String lowerPattern = pattern.toLowerCase();
+        int[] positions = new int[lowerPattern.length()];
         int textIdx = 0;
-        for (int i = 0; i < pattern.length(); i++) {
-            char c = pattern.charAt(i);
+        for (int i = 0; i < lowerPattern.length(); i++) {
+            char c = lowerPattern.charAt(i);
             int found = lowerText.indexOf(c, textIdx);
             if (found < 0) {
                 return null;
@@ -90,6 +91,52 @@ class FuzzyFilter {
             textIdx = found + 1;
         }
         return positions;
+    }
+
+    /**
+     * CamelCase-aware matching for option names. Single char: prefix match only. Two or more chars: matches prefix,
+     * substring, or camelCase segment initials. Each filter char must match the start of a camelCase segment in order.
+     * For example "hfs" matches "headerFilterStrategy" (h-eader, f-ilter, s-trategy) but "hlr" does not.
+     */
+    static boolean camelCaseMatch(String key, String filter) {
+        String lower = key.toLowerCase();
+        String lowerFilter = filter.toLowerCase();
+        if (lower.startsWith(lowerFilter)) {
+            return true;
+        }
+        if (lowerFilter.length() < 2) {
+            return false;
+        }
+        if (lower.contains(lowerFilter)) {
+            return true;
+        }
+        // each filter char must match the start of a camelCase segment in order
+        int si = 0;
+        int segStart = 0;
+        for (int fi = 0; fi < lowerFilter.length(); fi++) {
+            char fc = lowerFilter.charAt(fi);
+            boolean found = false;
+            while (segStart < key.length()) {
+                // find the next segment boundary
+                int nextSeg = key.length();
+                for (int j = segStart + 1; j < key.length(); j++) {
+                    if (Character.isUpperCase(key.charAt(j))) {
+                        nextSeg = j;
+                        break;
+                    }
+                }
+                if (lower.charAt(segStart) == fc) {
+                    segStart = nextSeg;
+                    found = true;
+                    break;
+                }
+                segStart = nextSeg;
+            }
+            if (!found) {
+                return false;
+            }
+        }
+        return true;
     }
 
     /**

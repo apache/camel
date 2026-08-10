@@ -511,7 +511,7 @@ class AutocompletePopup {
             filteredItems = new ArrayList<>();
             String f = filter.filter();
             for (CompletionItem item : allItems) {
-                if (item.key().toLowerCase().startsWith(f) || matchesLabel(item.group(), f)) {
+                if (FuzzyFilter.camelCaseMatch(item.key(), f) || matchesLabel(item.group(), f)) {
                     filteredItems.add(item);
                 }
             }
@@ -524,7 +524,7 @@ class AutocompletePopup {
             return false;
         }
         for (String label : group.split(",")) {
-            if (label.trim().toLowerCase().startsWith(filter)) {
+            if (FuzzyFilter.camelCaseMatch(label.trim(), filter)) {
                 return true;
             }
         }

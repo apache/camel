@@ -182,4 +182,53 @@ class FuzzyFilterTest {
         assertNotNull(positions);
         assertArrayEquals(new int[] { 0, 2 }, positions);
     }
+
+    // ---- camelCaseMatch tests ----
+
+    @Test
+    void camelCaseMatchPrefixSingleChar() {
+        assertTrue(FuzzyFilter.camelCaseMatch("headerFilterStrategy", "h"));
+        assertFalse(FuzzyFilter.camelCaseMatch("headerFilterStrategy", "f"));
+    }
+
+    @Test
+    void camelCaseMatchPrefix() {
+        assertTrue(FuzzyFilter.camelCaseMatch("headerFilterStrategy", "header"));
+    }
+
+    @Test
+    void camelCaseMatchSubstring() {
+        assertTrue(FuzzyFilter.camelCaseMatch("headerFilterStrategy", "fil"));
+        assertTrue(FuzzyFilter.camelCaseMatch("headerFilterStrategy", "strategy"));
+    }
+
+    @Test
+    void camelCaseMatchSegmentInitials() {
+        // h-eader, f-ilter, s-trategy
+        assertTrue(FuzzyFilter.camelCaseMatch("headerFilterStrategy", "hfs"));
+        assertTrue(FuzzyFilter.camelCaseMatch("headerFilterStrategy", "hf"));
+        assertTrue(FuzzyFilter.camelCaseMatch("headerFilterStrategy", "fs"));
+        assertTrue(FuzzyFilter.camelCaseMatch("headerFilterStrategy", "hs"));
+    }
+
+    @Test
+    void camelCaseMatchSegmentInitialsNoMatch() {
+        // no segment starts with 'l' or 'r' after 'h'
+        assertFalse(FuzzyFilter.camelCaseMatch("headerFilterStrategy", "hlr"));
+        assertFalse(FuzzyFilter.camelCaseMatch("headerFilterStrategy", "xyz"));
+    }
+
+    @Test
+    void camelCaseMatchCaseInsensitive() {
+        assertTrue(FuzzyFilter.camelCaseMatch("headerFilterStrategy", "HFS"));
+        assertTrue(FuzzyFilter.camelCaseMatch("headerFilterStrategy", "Hfs"));
+        assertTrue(FuzzyFilter.camelCaseMatch("brokers", "BROKERS"));
+    }
+
+    @Test
+    void camelCaseMatchSimpleKey() {
+        assertTrue(FuzzyFilter.camelCaseMatch("brokers", "br"));
+        assertTrue(FuzzyFilter.camelCaseMatch("brokers", "b"));
+        assertFalse(FuzzyFilter.camelCaseMatch("brokers", "x"));
+    }
 }

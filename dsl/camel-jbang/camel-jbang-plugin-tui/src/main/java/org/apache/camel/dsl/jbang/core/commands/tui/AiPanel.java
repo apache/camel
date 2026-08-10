@@ -948,6 +948,7 @@ class AiPanel {
         Block block = Block.builder()
                 .borders(Borders.ALL)
                 .borderType(BorderType.ROUNDED)
+                .borderStyle(Theme.borderFocused())
                 .title(Title.from(titleLine))
                 .build();
         frame.renderWidget(block, area);

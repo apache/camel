@@ -690,7 +690,10 @@ class SourceViewer {
         return name.endsWith(".yaml") || name.endsWith(".yml");
     }
 
-    record YamlEndpointContext(String component, boolean consumer) {
+    record YamlEndpointContext(String component, boolean consumer, String uri, boolean needsParameters) {
+        YamlEndpointContext(String component, boolean consumer, String uri) {
+            this(component, consumer, uri, false);
+        }
     }
 
     static final java.util.Set<String> CONSUMER_EIPS
@@ -721,6 +724,9 @@ class SourceViewer {
                     } else if (pt.startsWith("- ") || pt.startsWith("steps:")) {
                         // inside a steps block or list item — not inside parameters
                         return null;
+                    } else if (pt.startsWith("uri:") || pt.startsWith("id:")) {
+                        // below uri: or id: — look for uri: sibling to offer component options
+                        return findComponentFromUriSibling(i);
                     } else {
                         return findEnclosingComponent(i);
                     }
@@ -764,6 +770,7 @@ class SourceViewer {
         }
 
         String foundScheme = null;
+        String foundUri = null;
         for (int i = parametersRow - 1; i >= 0; i--) {
             String line = editState.getLine(i);
             if (line.isBlank()) {
@@ -775,6 +782,7 @@ class SourceViewer {
             if (indent == parametersIndent) {
                 if (foundScheme == null && (trimmed.startsWith("uri:") || trimmed.startsWith("- uri:"))) {
                     foundScheme = extractSchemeFromUriLine(trimmed);
+                    foundUri = extractUriValue(trimmed);
                 }
             }
 
@@ -782,19 +790,68 @@ class SourceViewer {
                 String eipName = extractEipName(trimmed);
                 if (foundScheme == null) {
                     foundScheme = extractInlineUri(trimmed);
+                    foundUri = foundScheme;
                 }
                 if (foundScheme != null) {
                     boolean consumer = eipName != null && CONSUMER_EIPS.contains(eipName);
-                    return new YamlEndpointContext(foundScheme, consumer);
+                    return new YamlEndpointContext(foundScheme, consumer, foundUri);
                 }
                 break;
             }
         }
 
         if (foundScheme != null) {
-            return new YamlEndpointContext(foundScheme, false);
+            return new YamlEndpointContext(foundScheme, false, foundUri);
         }
         return null;
+    }
+
+    /**
+     * When cursor is below a uri: line (no parameters: block), find the uri: among siblings and build the endpoint
+     * context. Walks up to find the parent EIP to determine consumer vs producer.
+     */
+    private YamlEndpointContext findComponentFromUriSibling(int uriOrSiblingRow) {
+        int indent = countLeadingSpaces(editState.getLine(uriOrSiblingRow));
+
+        // find the uri: line among siblings at the same indent
+        String uriValue = null;
+        String scheme = null;
+        for (int i = uriOrSiblingRow; i >= 0; i--) {
+            String line = editState.getLine(i);
+            if (line.isBlank()) {
+                continue;
+            }
+            int li = countLeadingSpaces(line);
+            if (li < indent) {
+                break;
+            }
+            if (li == indent && line.trim().startsWith("uri:")) {
+                scheme = extractSchemeFromUriLine(line.trim());
+                uriValue = extractUriValue(line.trim());
+                break;
+            }
+        }
+        if (scheme == null) {
+            return null;
+        }
+
+        // find the parent EIP to determine consumer vs producer
+        boolean consumer = false;
+        for (int i = uriOrSiblingRow; i >= 0; i--) {
+            String line = editState.getLine(i);
+            if (line.isBlank()) {
+                continue;
+            }
+            int li = countLeadingSpaces(line);
+            if (li < indent) {
+                String eipName = extractEipName(line.trim());
+                if (eipName != null) {
+                    consumer = CONSUMER_EIPS.contains(eipName);
+                }
+                break;
+            }
+        }
+        return new YamlEndpointContext(scheme, consumer, uriValue, true);
     }
 
     java.util.Set<String> collectExistingParameters(int fromRow) {
@@ -1171,17 +1228,17 @@ class SourceViewer {
             if (i < cursorRow && indent < cursorIndent) {
                 String eipName = extractEipName(t);
                 if (eipName != null && !STRUCTURAL_KEYS.contains(eipName)) {
-                    return i;
-                }
-                // for from:/to: blocks, look for uri: sibling as scope
-                if (eipName != null && ("from".equals(eipName) || CONSUMER_EIPS.contains(eipName)
-                        || PRODUCER_EIPS.contains(eipName))) {
-                    for (int j = i + 1; j < cursorRow; j++) {
-                        String jl = editState.getLine(j);
-                        if (!jl.isBlank() && jl.trim().startsWith("uri:")) {
-                            return j;
+                    // for from:/to: blocks, scope to the uri: line if cursor is below it
+                    if ("from".equals(eipName) || CONSUMER_EIPS.contains(eipName)
+                            || PRODUCER_EIPS.contains(eipName)) {
+                        for (int j = i + 1; j < cursorRow; j++) {
+                            String jl = editState.getLine(j);
+                            if (!jl.isBlank() && jl.trim().startsWith("uri:")) {
+                                return j;
+                            }
                         }
                     }
+                    return i;
                 }
                 cursorIndent = indent;
             }
@@ -1225,6 +1282,18 @@ class SourceViewer {
     }
 
     private static String extractSchemeFromUriLine(String trimmed) {
+        String value = extractUriValue(trimmed);
+        if (value == null) {
+            return null;
+        }
+        int schemeEnd = value.indexOf(':');
+        if (schemeEnd > 0) {
+            return value.substring(0, schemeEnd);
+        }
+        return value;
+    }
+
+    static String extractUriValue(String trimmed) {
         int colonIdx = trimmed.indexOf(':');
         if (colonIdx < 0) {
             return null;
@@ -1235,10 +1304,6 @@ class SourceViewer {
         }
         if (value.endsWith("\"") || value.endsWith("'")) {
             value = value.substring(0, value.length() - 1);
-        }
-        int schemeEnd = value.indexOf(':');
-        if (schemeEnd > 0) {
-            return value.substring(0, schemeEnd);
         }
         if (!value.isEmpty()) {
             return value;
@@ -1380,12 +1445,27 @@ class SourceViewer {
                     }
                 }
             } else {
+                // auto-insert parameters: block if cursor is below uri: without one
+                if (ctx.needsParameters() && lineText.isBlank()) {
+                    int indent = deriveInsertionIndent(row);
+                    String indentStr = " ".repeat(indent);
+                    editState.moveCursorToLineStart();
+                    editState.insert(indentStr + "parameters:");
+                    editState.insert('\n');
+                    editState.insert(indentStr + "  ");
+                    dirty = true;
+                    trimmed = "";
+                }
+
                 String filter = trimmed;
                 String role = ctx.consumer() ? "consumer" : "producer";
-                java.util.Set<String> existing = collectExistingParameters(row);
+                java.util.Set<String> existing = collectExistingParameters(editState.cursorRow());
                 String context = "yaml:" + ctx.component() + ":" + role;
                 if (!existing.isEmpty()) {
                     context += ":" + String.join(",", existing);
+                }
+                if (ctx.uri() != null) {
+                    context += "|" + ctx.uri();
                 }
                 List<AutocompletePopup.CompletionItem> items = autocompleteProvider.provide(context);
                 if (items != null && !items.isEmpty()) {

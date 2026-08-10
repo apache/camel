@@ -1034,8 +1034,15 @@ class SourceTab extends AbstractTab {
             return List.of();
         }
 
-        // context format: "yaml:componentName:consumer|producer[:existingKey1,existingKey2,...]"
-        String[] parts = context.substring(5).split(":", 3);
+        // context format: "yaml:componentName:consumer|producer[:existingKey1,existingKey2,...][|uri]"
+        String contextBody = context.substring(5);
+        String uri = null;
+        int pipeIdx = contextBody.indexOf('|');
+        if (pipeIdx >= 0) {
+            uri = contextBody.substring(pipeIdx + 1);
+            contextBody = contextBody.substring(0, pipeIdx);
+        }
+        String[] parts = contextBody.split(":", 3);
         if (parts.length < 2) {
             return List.of();
         }
@@ -1043,14 +1050,23 @@ class SourceTab extends AbstractTab {
         String role = parts[1];
         boolean isConsumer = "consumer".equals(role);
 
-        Set<String> existingKeys = Set.of();
+        Set<String> existingKeys = new HashSet<>();
         if (parts.length > 2 && !parts[2].isEmpty()) {
-            existingKeys = new HashSet<>(Arrays.asList(parts[2].split(",")));
+            existingKeys.addAll(Arrays.asList(parts[2].split(",")));
         }
 
         ComponentModel model = catalog.componentModel(componentName);
         if (model == null) {
             return List.of();
+        }
+
+        // use the catalog to parse the URI and find parameters already set via the context path
+        if (uri != null) {
+            try {
+                existingKeys.addAll(catalog.endpointProperties(uri).keySet());
+            } catch (Exception e) {
+                // ignore
+            }
         }
 
         // build a set of multi-valued option names so we can allow duplicates
