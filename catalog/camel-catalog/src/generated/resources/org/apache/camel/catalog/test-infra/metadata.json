@@ -359,7 +359,7 @@
   "groupId" : "org.apache.camel",
   "artifactId" : "camel-test-infra-opensearch",
   "version" : "4.22.0-SNAPSHOT",
-  "serviceVersion" : "3.7.0",
+  "serviceVersion" : "3.8.0",
   "uiSupported" : true
 }, {
   "service" : "org.apache.camel.test.infra.pulsar.services.PulsarInfraService",
