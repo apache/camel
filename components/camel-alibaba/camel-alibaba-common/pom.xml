@@ -44,7 +44,7 @@
         <dependency>
             <groupId>com.aliyun</groupId>
             <artifactId>alibabacloud-oss-v2</artifactId>
-            <version>0.4.1</version>
+            <version>${alibabacloud-oss-version}</version>
         </dependency>
         <dependency>
             <groupId>org.apache.camel</groupId>

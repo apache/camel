@@ -64,6 +64,8 @@
         <aesh-terminal-version>3.14.1</aesh-terminal-version>
         <agroal-version>3.2.1</agroal-version>
         <allegro-converter-version>0.3.0</allegro-converter-version>
+        <alibabacloud-oss-version>0.4.1</alibabacloud-oss-version>
+        <aliyun-sdk-mns-version>2.0.0</aliyun-sdk-mns-version>
         <amazon-kinesis-client-version>3.5.1</amazon-kinesis-client-version>
         <angus-mail-version>2.0.5</angus-mail-version>
         <apacheds-version>2.0.0.AM27</apacheds-version>
