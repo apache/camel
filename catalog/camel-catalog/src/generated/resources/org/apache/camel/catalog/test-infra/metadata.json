@@ -7,7 +7,7 @@
   "groupId" : "org.apache.camel",
   "artifactId" : "camel-test-infra-milvus",
   "version" : "4.22.0-SNAPSHOT",
-  "serviceVersion" : "v2.6.21",
+  "serviceVersion" : "v2.6.22",
   "uiSupported" : false
 }, {
   "service" : "org.apache.camel.test.infra.aws.common.services.AWSInfraService",
