@@ -1473,6 +1473,18 @@ A worked example is in `ShiroOverJmsTest` in the `camel-itest` module.
 
 === camel-undertow - potential breaking change
 
+[NOTE]
+====
+The behaviour described in this section did not take effect in 4.21.0 on
+endpoint-configured routes. `UndertowEndpoint` defaulted its
+`headerFilterStrategy` to the base `HttpHeaderFilterStrategy` and pushed that
+into the `UndertowHttpBinding` it creates lazily, discarding the
+`UndertowHeaderFilterStrategy` this section describes. The filtering takes
+effect from 4.22.0 onwards; see the
+`camel-undertow - UndertowHeaderFilterStrategy is now the endpoint default`
+entry in the 4.21 to 4.22 upgrade guide.
+====
+
 `UndertowHeaderFilterStrategy` now also filters the legacy `websocket.*`
 Exchange-header prefix (in addition to the `Camel*` / `camel*` /
 `org.apache.camel.*` prefixes it already filtered). This applies to both the
