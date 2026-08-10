@@ -121,7 +121,7 @@ class SourceViewerEditorOpsTest {
     void smartHomeInEditModeUsesContentThenLineStart() {
         moveCursorToLineContaining("uri:");
         String line = viewer.editState().getLine(viewer.editState().cursorRow());
-        SourceEditHistory.positionCursor(viewer.editState(), viewer.editState().cursorRow(), line.length());
+        SourceEditorNavigation.positionCursor(viewer.editState(), viewer.editState().cursorRow(), line.length());
         int contentStart = YamlBlockEditor.leadingSpaces(line);
 
         SourceEditorNavigation.smartHome(viewer.editState(), false);
@@ -143,7 +143,7 @@ class SourceViewerEditorOpsTest {
     @Test
     void ctrlLeftAndRightMoveByWordViaKeyBindings() {
         moveCursorToLineContaining("uri:");
-        SourceEditHistory.positionCursor(viewer.editState(), viewer.editState().cursorRow(), 0);
+        SourceEditorNavigation.positionCursor(viewer.editState(), viewer.editState().cursorRow(), 0);
 
         viewer.handleKeyEvent(KeyEvent.ofKey(KeyCode.RIGHT, CTRL));
         assertThat(viewer.editState().cursorCol()).isEqualTo(9);
@@ -192,7 +192,7 @@ class SourceViewerEditorOpsTest {
         String[] lines = viewer.editText().split("\n", -1);
         for (int row = 0; row < lines.length; row++) {
             if (lines[row].contains(needle)) {
-                SourceEditHistory.positionCursor(viewer.editState(), row, lines[row].indexOf(needle));
+                SourceEditorNavigation.positionCursor(viewer.editState(), row, lines[row].indexOf(needle));
                 return;
             }
         }

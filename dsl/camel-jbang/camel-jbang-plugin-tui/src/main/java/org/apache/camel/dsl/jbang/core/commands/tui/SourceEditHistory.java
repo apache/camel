@@ -78,20 +78,7 @@ final class SourceEditHistory {
 
     private static void restore(TextAreaState state, Snapshot snapshot) {
         state.setText(snapshot.text());
-        positionCursor(state, snapshot.row(), snapshot.col());
-    }
-
-    static void positionCursor(TextAreaState state, int row, int col) {
-        state.moveCursorToStart();
-        for (int i = 0; i < row && i < state.lineCount(); i++) {
-            state.moveCursorDown();
-        }
-        state.moveCursorToLineStart();
-        String line = state.getLine(state.cursorRow());
-        int target = Math.min(col, line.length());
-        for (int i = 0; i < target; i++) {
-            state.moveCursorRight();
-        }
+        SourceEditorNavigation.positionCursor(state, snapshot.row(), snapshot.col());
     }
 
     private static void trim(Deque<Snapshot> stack) {

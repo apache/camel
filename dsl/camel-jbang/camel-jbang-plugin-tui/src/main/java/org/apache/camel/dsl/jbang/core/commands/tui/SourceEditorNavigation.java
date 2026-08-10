@@ -65,7 +65,7 @@ final class SourceEditorNavigation {
         if (target == col && col > 0) {
             target = wordBoundaryLeft(line, col - 1);
         }
-        SourceEditHistory.positionCursor(state, state.cursorRow(), target);
+        positionCursor(state, state.cursorRow(), target);
     }
 
     static void moveWordRight(TextAreaState state) {
@@ -75,7 +75,7 @@ final class SourceEditorNavigation {
         if (target == col && col < line.length()) {
             target = wordBoundaryRight(line, col + 1);
         }
-        SourceEditHistory.positionCursor(state, state.cursorRow(), target);
+        positionCursor(state, state.cursorRow(), target);
     }
 
     static void deleteWordBackward(TextAreaState state) {
@@ -113,9 +113,22 @@ final class SourceEditorNavigation {
             contentStart++;
         }
         if (toAbsoluteStart || state.cursorCol() <= contentStart) {
-            SourceEditHistory.positionCursor(state, state.cursorRow(), 0);
+            positionCursor(state, state.cursorRow(), 0);
         } else {
-            SourceEditHistory.positionCursor(state, state.cursorRow(), contentStart);
+            positionCursor(state, state.cursorRow(), contentStart);
+        }
+    }
+
+    static void positionCursor(TextAreaState state, int row, int col) {
+        state.moveCursorToStart();
+        for (int i = 0; i < row && i < state.lineCount(); i++) {
+            state.moveCursorDown();
+        }
+        state.moveCursorToLineStart();
+        String line = state.getLine(state.cursorRow());
+        int target = Math.min(col, line.length());
+        for (int i = 0; i < target; i++) {
+            state.moveCursorRight();
         }
     }
 
@@ -129,6 +142,6 @@ final class SourceEditorNavigation {
             text.append(i == row ? newLine : state.getLine(i));
         }
         state.setText(text.toString());
-        SourceEditHistory.positionCursor(state, row, Math.min(cursorCol, newLine.length()));
+        positionCursor(state, row, Math.min(cursorCol, newLine.length()));
     }
 }

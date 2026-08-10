@@ -32,7 +32,7 @@ class SourceEditorNavigationTest {
     @BeforeEach
     void setUp() {
         state = new TextAreaState("  from: timer:tick\n");
-        SourceEditHistory.positionCursor(state, 0, 14);
+        SourceEditorNavigation.positionCursor(state, 0, 14);
     }
 
     @Test
@@ -73,7 +73,7 @@ class SourceEditorNavigationTest {
 
     @Test
     void deleteWordForwardRemovesNextWordToken() {
-        SourceEditHistory.positionCursor(state, 0, 8);
+        SourceEditorNavigation.positionCursor(state, 0, 8);
 
         SourceEditorNavigation.deleteWordForward(state);
 

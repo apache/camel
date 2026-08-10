@@ -540,7 +540,7 @@ class SourceViewer {
         }
         recordEditChange();
         editState.setText(YamlBlockEditor.fromLines(result.lines()));
-        SourceEditHistory.positionCursor(editState, result.cursorRow(), result.cursorCol());
+        SourceEditorNavigation.positionCursor(editState, result.cursorRow(), result.cursorCol());
     }
 
     private void refreshEditFindMatches() {
@@ -550,7 +550,7 @@ class SourceViewer {
     private void jumpEditToCurrentFindMatch() {
         int line = search.jumpToNearestMatch(editState.cursorRow());
         if (line >= 0) {
-            SourceEditHistory.positionCursor(editState, line, 0);
+            SourceEditorNavigation.positionCursor(editState, line, 0);
         }
     }
 
@@ -631,7 +631,7 @@ class SourceViewer {
             recordEditChange();
             List<String> toggled = YamlBlockEditor.toggleComment(editLines(), block);
             editState.setText(YamlBlockEditor.fromLines(toggled));
-            SourceEditHistory.positionCursor(editState, block.startRow(),
+            SourceEditorNavigation.positionCursor(editState, block.startRow(),
                     YamlBlockEditor.leadingSpaces(toggled.get(block.startRow())));
             return true;
         }
@@ -722,13 +722,7 @@ class SourceViewer {
             return true;
         }
         if (ke.isHome() || ke.isKey(KeyCode.HOME)) {
-            String line = editState.getLine(editState.cursorRow());
-            int contentStart = YamlBlockEditor.leadingSpaces(line);
-            if (editState.cursorCol() > contentStart) {
-                SourceEditHistory.positionCursor(editState, editState.cursorRow(), contentStart);
-            } else {
-                SourceEditHistory.positionCursor(editState, editState.cursorRow(), 0);
-            }
+            SourceEditorNavigation.smartHome(editState, false);
             return true;
         }
         if (ke.isEnd() || ke.isKey(KeyCode.END)) {

@@ -68,7 +68,7 @@ class SourceEditHistoryTest {
 
     @Test
     void positionCursorRestoresRowAndColumn() {
-        SourceEditHistory.positionCursor(state, 1, 2);
+        SourceEditorNavigation.positionCursor(state, 1, 2);
 
         assertThat(state.cursorRow()).isEqualTo(1);
         assertThat(state.cursorCol()).isEqualTo(2);
