@@ -162,6 +162,7 @@ class SourceViewer {
     private org.apache.camel.dsl.yaml.validator.YamlValidator yamlValidator;
     private PropertiesValidator propertiesValidator;
     private EndpointValidator endpointValidator;
+    private EndpointValidator simpleValidator;
     private List<String> validationErrors;
     private int validationErrorScroll;
     private final SourceEditHistory editHistory = new SourceEditHistory();
@@ -215,6 +216,10 @@ class SourceViewer {
         this.endpointValidator = endpointValidator;
     }
 
+    void setSimpleValidator(EndpointValidator simpleValidator) {
+        this.simpleValidator = simpleValidator;
+    }
+
     void hide() {
         exitEditMode();
         visible = false;
@@ -225,6 +230,7 @@ class SourceViewer {
         editableFile = null;
         propertiesValidator = null;
         endpointValidator = null;
+        simpleValidator = null;
     }
 
     void reset() {
@@ -263,6 +269,7 @@ class SourceViewer {
         editableFile = null;
         propertiesValidator = null;
         endpointValidator = null;
+        simpleValidator = null;
     }
 
     boolean isMarkdownMode() {
@@ -1761,12 +1768,12 @@ class SourceViewer {
         }
         try {
             String content = editState.text();
-            Files.writeString(editableFile, content, StandardCharsets.UTF_8);
-            dirty = false;
             validateAndNotify(content);
             if (validationErrors != null) {
                 return;
             }
+            Files.writeString(editableFile, content, StandardCharsets.UTF_8);
+            dirty = false;
             Path path = editableFile;
             boolean restoreMarkdownMode = markdownModeBeforeEdit;
             editMode = false;
@@ -1787,11 +1794,15 @@ class SourceViewer {
         }
         try {
             String content = editState.text();
+            validateAndNotify(content);
+            if (validationErrors != null) {
+                return;
+            }
             Files.writeString(editableFile, content, StandardCharsets.UTF_8);
             dirty = false;
             originalEditText = content;
             lineStatuses = null;
-            validateAndNotify(content);
+            notifySave("Saved: " + editableFile.getFileName(), false);
         } catch (IOException e) {
             notifySave("Save failed: " + e.getMessage(), true);
         }
@@ -1823,6 +1834,12 @@ class SourceViewer {
                     msgs.addAll(endpointErrors);
                 }
             }
+            if (simpleValidator != null) {
+                List<String> simpleErrors = simpleValidator.validate(content);
+                if (simpleErrors != null) {
+                    msgs.addAll(simpleErrors);
+                }
+            }
             if (!msgs.isEmpty()) {
                 validationErrors = msgs;
                 validationErrorScroll = 0;
@@ -1836,7 +1853,6 @@ class SourceViewer {
                 return;
             }
         }
-        notifySave("Saved: " + editableFile.getFileName(), false);
     }
 
     private List<String> validateProperties(String content) {
