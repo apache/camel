@@ -21,9 +21,15 @@ import java.io.IOException;
 
 import org.apache.camel.dsl.jbang.it.support.JBangTestSupport;
 import org.assertj.core.api.Assertions;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 
 public class PlatformHttpITCase extends JBangTestSupport {
+
+    @AfterEach
+    void stopAll() {
+        execute("stop");
+    }
 
     @Test
     public void testPlatformHttp() throws IOException {

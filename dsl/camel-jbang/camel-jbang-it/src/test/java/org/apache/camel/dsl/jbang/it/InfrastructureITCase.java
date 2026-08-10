@@ -21,6 +21,7 @@ import java.time.Duration;
 import org.apache.camel.dsl.jbang.it.support.JBangTestSupport;
 import org.assertj.core.api.Assertions;
 import org.awaitility.Awaitility;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.DisabledIfSystemProperty;
@@ -33,7 +34,14 @@ import static org.junit.jupiter.api.condition.OS.WINDOWS;
 public class InfrastructureITCase extends JBangTestSupport {
     private static final String SERVICE = "ftp";
     private static final String IMPL_SERVICE = "artemis";
+
     private static final String IMPLEMENTATION = "amqp";
+
+    @AfterEach
+    public void stopInfraServices() {
+        execute("infra stop " + SERVICE, false, true);
+        execute("infra stop " + IMPL_SERVICE, false, true);
+    }
 
     private String getServicePID(String message) {
         return message.split(":")[1].replaceAll("[^0-9]", "");

@@ -30,12 +30,22 @@ import java.util.Random;
 import org.apache.camel.dsl.jbang.it.support.InVersion;
 import org.apache.camel.dsl.jbang.it.support.JBangTestSupport;
 import org.assertj.core.api.Assertions;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.testcontainers.shaded.com.fasterxml.jackson.databind.ObjectMapper;
 
 @Tag("container-only")
 public class OpenApiITCase extends JBangTestSupport {
+
+    @AfterEach
+    public void cleanupOpenApiArtifacts() {
+        execInContainer(String.format(
+                "rm -f %1$s/petstore-v3.json %1$s/petstore.camel.yaml %1$s/Greetings.java %1$s/greetings-api.json %1$s/rest-dsl.yaml",
+                DEFAULT_ROUTE_FOLDER));
+        execInContainer(String.format("rm -rf %1$s/camel-mock %1$s/model", DEFAULT_ROUTE_FOLDER));
+        execute("plugin delete generate", false, true);
+    }
 
     final HttpClient httpClient = HttpClient.newHttpClient();
 
