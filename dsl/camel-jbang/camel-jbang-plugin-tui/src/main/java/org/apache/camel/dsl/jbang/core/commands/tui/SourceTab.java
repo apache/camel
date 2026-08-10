@@ -290,6 +290,14 @@ class SourceTab extends AbstractTab {
     @Override
     public boolean handleEscape() {
         // Esc is routed here from CamelMonitor before tab key handling — cancel overlays locally
+        if (gotoRoutePopup.isVisible()) {
+            gotoRoutePopup.close();
+            return true;
+        }
+        if (gotoSourceNodePopup.isVisible()) {
+            gotoSourceNodePopup.close();
+            return true;
+        }
         if (sourceViewer.cancelEdit()) {
             return true;
         }

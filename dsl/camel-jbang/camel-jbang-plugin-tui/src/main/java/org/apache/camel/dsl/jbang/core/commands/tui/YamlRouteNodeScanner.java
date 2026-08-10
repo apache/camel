@@ -182,14 +182,16 @@ class YamlRouteNodeScanner {
                 if (STRUCTURAL_KEYS.contains(type) && !isUriLine(line)) {
                     continue;
                 }
+                int effectiveIndent = indent;
                 if ("uri".equals(type) && pendingEndpointEip != null && indent > pendingEndpointIndent) {
                     type = pendingEndpointEip;
+                    effectiveIndent = pendingEndpointIndent;
                     pendingEndpointEip = null;
                     pendingEndpointIndent = -1;
                 }
                 String routeId = resolveRouteId(currentRouteId, currentFromUri);
                 String label = buildNodeLabel(line, lines, i);
-                int nodeIndent = Math.max(1, (indent - activeRouteIndent) / 2);
+                int nodeIndent = Math.max(1, (effectiveIndent - activeRouteIndent) / 2);
                 result.add(new NodeEntry(
                         EntryKind.PROCESSOR, routeId, null, type, label, filePath, i, nodeIndent,
                         activeRouteFromLine));
