@@ -69,7 +69,6 @@
         <apacheds-version>2.0.0.AM27</apacheds-version>
         <apache-drill-version>1.22.0</apache-drill-version>
         <arangodb-java-version>7.26.0</arangodb-java-version>
-        <as2-lib-version>5.1.8</as2-lib-version>
         <ascii-table-version>1.13.0</ascii-table-version>
         <asm-version>9.10.1</asm-version>
         <asn1bean-version>1.14.0</asn1bean-version>
@@ -426,6 +425,7 @@
         <pgjdbc-driver-version>42.7.13</pgjdbc-driver-version>
         <pgjdbc-ng-driver-version>0.8.9</pgjdbc-ng-driver-version>
         <pgvector-version>0.1.6</pgvector-version>
+        <phase2-lib-version>6.2.1</phase2-lib-version>
         <picocli-version>4.7.7</picocli-version>
         <pinecone-client-version>3.1.0</pinecone-client-version>
         <plc4x-version>0.13.1</plc4x-version>
