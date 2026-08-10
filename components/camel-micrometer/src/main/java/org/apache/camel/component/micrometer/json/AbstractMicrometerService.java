@@ -16,7 +16,9 @@
  */
 package org.apache.camel.component.micrometer.json;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.concurrent.TimeUnit;
@@ -31,6 +33,7 @@ import io.micrometer.core.instrument.DistributionSummary;
 import io.micrometer.core.instrument.FunctionCounter;
 import io.micrometer.core.instrument.FunctionTimer;
 import io.micrometer.core.instrument.Gauge;
+import io.micrometer.core.instrument.LongTaskTimer;
 import io.micrometer.core.instrument.Meter;
 import io.micrometer.core.instrument.MeterRegistry;
 import io.micrometer.core.instrument.Tag;
@@ -56,6 +59,7 @@ public class AbstractMicrometerService extends ServiceSupport {
     private boolean prettyPrint = true;
     private boolean skipCamelInfo = false;
     private boolean logMetricsOnShutdown = false;
+    private String logMetricsOnShutdownFormat = "json";
     private String logMetricsOnShutdownFilters[];
     private TimeUnit durationUnit = TimeUnit.MILLISECONDS;
     private Iterable<Tag> matchingTags = Tags.empty();
@@ -101,6 +105,22 @@ public class AbstractMicrometerService extends ServiceSupport {
 
     public void setLogMetricsOnShutdown(boolean logMetricsOnShutdown) {
         this.logMetricsOnShutdown = logMetricsOnShutdown;
+    }
+
+    /**
+     * Returns the output format used when logging metrics on shutdown. Accepted values are {@code "json"} (default) and
+     * {@code "prometheus"}.
+     */
+    public String getLogMetricsOnShutdownFormat() {
+        return logMetricsOnShutdownFormat;
+    }
+
+    /**
+     * Sets the output format used when logging metrics on shutdown. Accepted values are {@code "json"} (default) and
+     * {@code "prometheus"}.
+     */
+    public void setLogMetricsOnShutdownFormat(String logMetricsOnShutdownFormat) {
+        this.logMetricsOnShutdownFormat = logMetricsOnShutdownFormat;
     }
 
     public String[] getLogMetricsOnShutdownFilters() {
@@ -243,19 +263,125 @@ public class AbstractMicrometerService extends ServiceSupport {
     }
 
     void logMetricsOnShutdown(String... filters) {
-        meterRegistry.getMeters().stream()
-                .filter(m -> AbstractMicrometerService.matchesFilter(m.getId().getName(), filters))
-                .map(AbstractMicrometerService::convertMeterToMap)
-                .forEach(logEntry -> {
-                    try {
-                        // we include a start and end tag to make sure the
-                        // scraper can more easily identify the metric content.
-                        String metric = "#METRIC-START#" + mapper.writeValueAsString(logEntry) + "#METRIC-END#";
-                        LOG.info(metric);
-                    } catch (Exception e) {
-                        LOG.error("Error logging metric " + logEntry.get("name"), e);
-                    }
-                });
+        if ("prometheus".equalsIgnoreCase(logMetricsOnShutdownFormat)) {
+            meterRegistry.getMeters().stream()
+                    .filter(m -> AbstractMicrometerService.matchesFilter(m.getId().getName(), filters))
+                    .forEach(this::logMetricsAsPrometheus);
+        } else {
+            meterRegistry.getMeters().stream()
+                    .filter(m -> AbstractMicrometerService.matchesFilter(m.getId().getName(), filters))
+                    .map(AbstractMicrometerService::convertMeterToMap)
+                    .forEach(this::logMetricsAsJson);
+        }
+    }
+
+    private void logMetricsAsJson(Map<String, Object> logEntry) {
+        try {
+            // we include a start and end tag to make sure the
+            // scraper can more easily identify the metric content.
+            String metric = "#METRIC-START#" + mapper.writeValueAsString(logEntry) + "#METRIC-END#";
+            LOG.info(metric);
+        } catch (Exception e) {
+            LOG.error("Error logging metric {}", logEntry.get("name"), e);
+        }
+    }
+
+    private void logMetricsAsPrometheus(Meter meter) {
+        for (String line : convertMeterToPrometheusLines(meter)) {
+            LOG.info("#METRIC-START#{}#METRIC-END#", line);
+        }
+    }
+
+    /**
+     * Converts a single {@link Meter} into one or more Prometheus text-exposition lines.
+     * <p>
+     * The output follows the Prometheus text format specification:
+     *
+     * <pre>
+     * # HELP &lt;name&gt; &lt;description&gt;
+     * # TYPE &lt;name&gt; &lt;type&gt;
+     * &lt;name&gt;{labels} &lt;value&gt;
+     * </pre>
+     *
+     * Metric names use underscores in place of dots/hyphens as required by Prometheus naming rules.
+     */
+    static List<String> convertMeterToPrometheusLines(Meter meter) {
+        String rawName = meter.getId().getName();
+        String promName = rawName.replace('.', '_').replace('-', '_');
+        String description = meter.getId().getDescription() != null ? meter.getId().getDescription() : promName;
+        String labels = buildPrometheusLabels(meter.getId().getTags());
+
+        List<String> lines = new ArrayList<>();
+
+        if (meter instanceof Gauge g) {
+            lines.add("# HELP " + promName + " " + description);
+            lines.add("# TYPE " + promName + " gauge");
+            lines.add(promName + labels + " " + formatPrometheusDouble(g.value()));
+        } else if (meter instanceof Counter c) {
+            lines.add("# HELP " + promName + "_total " + description);
+            lines.add("# TYPE " + promName + "_total counter");
+            lines.add(promName + "_total" + labels + " " + formatPrometheusDouble(c.count()));
+        } else if (meter instanceof Timer t) {
+            lines.add("# HELP " + promName + "_seconds " + description);
+            lines.add("# TYPE " + promName + "_seconds summary");
+            lines.add(promName + "_seconds_count" + labels + " " + t.count());
+            lines.add(promName + "_seconds_sum" + labels + " " + formatPrometheusDouble(t.totalTime(TimeUnit.SECONDS)));
+            lines.add(promName + "_seconds_max" + labels + " " + formatPrometheusDouble(t.max(TimeUnit.SECONDS)));
+        } else if (meter instanceof DistributionSummary ds) {
+            lines.add("# HELP " + promName + " " + description);
+            lines.add("# TYPE " + promName + " summary");
+            lines.add(promName + "_count" + labels + " " + ds.count());
+            lines.add(promName + "_sum" + labels + " " + formatPrometheusDouble(ds.totalAmount()));
+            lines.add(promName + "_max" + labels + " " + formatPrometheusDouble(ds.max()));
+        } else if (meter instanceof FunctionCounter fc) {
+            lines.add("# HELP " + promName + "_total " + description);
+            lines.add("# TYPE " + promName + "_total counter");
+            lines.add(promName + "_total" + labels + " " + formatPrometheusDouble(fc.count()));
+        } else if (meter instanceof FunctionTimer ft) {
+            lines.add("# HELP " + promName + "_seconds " + description);
+            lines.add("# TYPE " + promName + "_seconds summary");
+            lines.add(promName + "_seconds_count" + labels + " " + formatPrometheusDouble(ft.count()));
+            lines.add(promName + "_seconds_sum" + labels + " " + formatPrometheusDouble(ft.totalTime(TimeUnit.SECONDS)));
+        } else if (meter instanceof LongTaskTimer ltt) {
+            lines.add("# HELP " + promName + "_active_seconds " + description);
+            lines.add("# TYPE " + promName + "_active_seconds gauge");
+            lines.add(promName + "_active_seconds_active" + labels + " " + ltt.activeTasks());
+            lines.add(promName + "_active_seconds_duration" + labels + " "
+                      + formatPrometheusDouble(ltt.duration(TimeUnit.SECONDS)));
+            lines.add(promName + "_active_seconds_max" + labels + " "
+                      + formatPrometheusDouble(ltt.max(TimeUnit.SECONDS)));
+        } else {
+            // Generic fallback for unknown meter types
+            lines.add("# HELP " + promName + " " + description);
+            lines.add("# TYPE " + promName + " untyped");
+            lines.add(promName + labels + " 0");
+        }
+
+        return lines;
+    }
+
+    private static String buildPrometheusLabels(Iterable<Tag> tags) {
+        StringBuilder sb = new StringBuilder();
+        for (Tag tag : tags) {
+            if (sb.length() > 0) {
+                sb.append(",");
+            }
+            sb.append(tag.getKey().replace('.', '_').replace('-', '_'));
+            sb.append("=\"");
+            sb.append(tag.getValue().replace("\\", "\\\\").replace("\"", "\\\"").replace("\n", "\\n"));
+            sb.append("\"");
+        }
+        return sb.length() == 0 ? "" : "{" + sb + "}";
+    }
+
+    private static String formatPrometheusDouble(double value) {
+        if (Double.isNaN(value)) {
+            return "NaN";
+        }
+        if (Double.isInfinite(value)) {
+            return value > 0 ? "+Inf" : "-Inf";
+        }
+        return Double.toString(value);
     }
 
     // This method does a best effort attempt to recover information about versioning of the runtime.
