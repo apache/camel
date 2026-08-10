@@ -60,6 +60,19 @@ final class YamlBlockEditor {
         return new BlockRange(startRow, endRow);
     }
 
+    static EditResult deleteLine(List<String> lines, int row) {
+        if (lines.isEmpty() || row < 0 || row >= lines.size()) {
+            return new EditResult(lines, row, 0);
+        }
+        List<String> answer = new ArrayList<>(lines);
+        answer.remove(row);
+        if (answer.isEmpty()) {
+            answer.add("");
+        }
+        int cursorRow = Math.min(row, answer.size() - 1);
+        return new EditResult(answer, cursorRow, leadingSpaces(answer.get(cursorRow)));
+    }
+
     static EditResult deleteBlock(List<String> lines, int row, boolean yamlListBlocks) {
         BlockRange block = findBlock(lines, row, yamlListBlocks);
         if (block.isEmpty()) {
@@ -216,20 +229,19 @@ final class YamlBlockEditor {
     }
 
     private static int findBlockEnd(List<String> lines, int startRow, int blockIndent) {
-        int endRow = startRow;
+        int lastContentRow = startRow;
         for (int i = startRow + 1; i < lines.size(); i++) {
             String line = lines.get(i);
             if (line.isBlank()) {
-                endRow = i;
                 continue;
             }
             int indent = leadingSpaces(line);
             if (indent <= blockIndent && (line.trim().startsWith("- ") || indent < blockIndent)) {
                 break;
             }
-            endRow = i;
+            lastContentRow = i;
         }
-        return endRow;
+        return lastContentRow;
     }
 
     static int leadingSpaces(String line) {

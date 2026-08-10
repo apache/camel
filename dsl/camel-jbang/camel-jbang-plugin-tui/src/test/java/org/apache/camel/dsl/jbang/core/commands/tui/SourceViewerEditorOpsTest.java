@@ -84,20 +84,6 @@ class SourceViewerEditorOpsTest {
     }
 
     @Test
-    void ctrlSlashTogglesCommentOnCurrentBlock() {
-        moveCursorToLineContaining("log:info");
-
-        viewer.handleKeyEvent(KeyEvent.ofChar('/', CTRL));
-
-        assertThat(viewer.editText()).contains("# ");
-        assertThat(viewer.editText()).contains("log:info");
-
-        viewer.handleKeyEvent(KeyEvent.ofChar('/', CTRL));
-
-        assertThat(viewer.editText()).doesNotContain("# log:info");
-    }
-
-    @Test
     void ctrlDDuplicatesYamlBlock() {
         moveCursorToLineContaining("log:info");
         int before = countOccurrences(viewer.editText(), "log:info");
@@ -108,10 +94,10 @@ class SourceViewerEditorOpsTest {
     }
 
     @Test
-    void ctrlShiftKDeletesYamlBlock() {
+    void ctrlKDeletesCurrentLine() {
         moveCursorToLineContaining("log:warn");
 
-        viewer.handleKeyEvent(KeyEvent.ofChar('k', CTRL_SHIFT));
+        viewer.handleKeyEvent(KeyEvent.ofChar('k', CTRL));
 
         assertThat(viewer.editText()).doesNotContain("log:warn");
         assertThat(viewer.editText()).contains("log:info");
@@ -153,26 +139,6 @@ class SourceViewerEditorOpsTest {
     }
 
     @Test
-    void ctrlFOpensFindInEditMode() {
-        viewer.handleKeyEvent(KeyEvent.ofChar('f', CTRL));
-
-        assertThat(viewer.isSearchInputActive()).isTrue();
-    }
-
-    @Test
-    void plainNInsertsWhileFindTermActive() {
-        viewer.handleKeyEvent(KeyEvent.ofChar('f', CTRL));
-        viewer.handleKeyEvent(KeyEvent.ofChar('l', KeyModifiers.NONE));
-        viewer.handleKeyEvent(KeyEvent.ofChar('o', KeyModifiers.NONE));
-        viewer.handleKeyEvent(KeyEvent.ofChar('g', KeyModifiers.NONE));
-        viewer.handleKeyEvent(KeyEvent.ofKey(KeyCode.ENTER, KeyModifiers.NONE));
-
-        viewer.handleKeyEvent(KeyEvent.ofChar('n', KeyModifiers.NONE));
-
-        assertThat(viewer.editText()).contains("n");
-    }
-
-    @Test
     void footerShowsNewEditorHints() {
         List<dev.tamboui.text.Span> spans = new ArrayList<>();
         viewer.renderFooter(spans);
@@ -182,10 +148,7 @@ class SourceViewerEditorOpsTest {
         assertThat(footer).contains("Ctrl+Y");
         assertThat(footer).contains("Alt+↑/↓");
         assertThat(footer).contains("Ctrl+D");
-        assertThat(footer).contains("Ctrl+Shift+K");
-        assertThat(footer).contains("Ctrl+/");
-        assertThat(footer).contains("Ctrl+F");
-        assertThat(footer).contains("Ctrl+N");
+        assertThat(footer).contains("Ctrl+K");
     }
 
     private void moveCursorToLineContaining(String needle) {

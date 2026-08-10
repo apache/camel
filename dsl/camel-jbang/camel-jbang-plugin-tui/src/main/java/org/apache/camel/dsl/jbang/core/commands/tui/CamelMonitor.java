@@ -715,24 +715,10 @@ public class CamelMonitor extends CamelCommand {
     private boolean handleEvent(Event event, TuiRunner runner) {
         if (event instanceof KeyEvent ke) {
             recordingManager.recordKey(ke, mcpInjectedKey);
-            if (ke.hasCtrl() && ke.isChar('r')) {
-                if (aiPanel.isOpen()) {
-                    return aiPanel.handleKeyEvent(ke);
-                }
-                return true;
-            }
             if (captionOverlay.isVisible()) {
                 if (captionOverlay.handleKeyEvent(ke)) {
                     return true;
                 }
-            }
-            if (ke.hasCtrl() && ke.isChar('k')) {
-                recordingManager.toggleRecording();
-                return true;
-            }
-            if (ke.hasCtrl() && ke.isChar('t')) {
-                captionOverlay.openInline();
-                return true;
             }
             if (helpOverlay.isVisible()) {
                 return helpOverlay.handleKeyEvent(ke);
@@ -970,10 +956,6 @@ public class CamelMonitor extends CamelCommand {
         }
         if (ke.isKey(KeyCode.F10)) {
             processControlPopup.open();
-            return true;
-        }
-        if (ke.hasCtrl() && ke.isChar('f')) {
-            openFilesPopup();
             return true;
         }
         return false;

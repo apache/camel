@@ -421,13 +421,10 @@ class SourceTab extends AbstractTab {
                 - **Ctrl+Y / Ctrl+Shift+Z** — redo
                 - **Alt+Up / Alt+Down** — move YAML list block up/down
                 - **Ctrl+D** — duplicate current block
-                - **Ctrl+Shift+K** — delete current block
-                - **Ctrl+/** — toggle comment on current block
+                - **Ctrl+K** — delete current line
                 - **Ctrl+Left / Ctrl+Right** — word navigation
-                - **Ctrl+Backspace / Ctrl+Delete** — delete word backward/forward
-                - **Ctrl+F** — find in edit mode
-                - **Ctrl+N / Ctrl+Shift+N** — next/previous find match
                 - **Home** — smart home (content indent, then column 0)
+                - **F7** — show diff of unsaved changes
 
                 ## Edit Mode (Tab Completion)
                 Press **F4** to enter edit mode, then **Tab** for context-aware completion:

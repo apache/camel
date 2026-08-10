@@ -336,10 +336,6 @@ class SearchHighlighter {
         if (findInputActive || highlightInputActive) {
             return handleSearchInput(ke);
         }
-        if (ke.hasCtrl() && ke.isCharIgnoreCase('f')) {
-            openFindInput();
-            return true;
-        }
         if (findTerm != null && ke.hasCtrl() && ke.isCharIgnoreCase('n') && !ke.hasAlt()) {
             if (ke.hasShift()) {
                 navigateToPrevMatch();

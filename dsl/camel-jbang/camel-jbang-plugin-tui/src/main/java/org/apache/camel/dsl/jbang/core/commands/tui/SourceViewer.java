@@ -149,6 +149,10 @@ class SourceViewer {
     private boolean markdownModeBeforeEdit;
     private boolean dirty;
     private boolean pendingDiscard;
+    private String originalEditText;
+    private EditDiff.LineStatus[] lineStatuses;
+    private boolean diffOverlay;
+    private int diffScrollY;
     private BiConsumer<String, Boolean> notificationCallback;
     private AutocompletePopup.AutocompleteProvider autocompleteProvider;
     private AutocompletePopup.ValueProvider autocompleteValueProvider;
@@ -300,6 +304,10 @@ class SourceViewer {
     boolean cancelEdit() {
         if (!editMode) {
             return false;
+        }
+        if (diffOverlay) {
+            diffOverlay = false;
+            return true;
         }
         if (validationErrors != null) {
             validationErrors = null;
@@ -524,6 +532,7 @@ class SourceViewer {
     private void recordEditChange() {
         editHistory.beforeChange(editState);
         dirty = true;
+        lineStatuses = null;
     }
 
     private List<String> editLines() {
@@ -539,8 +548,13 @@ class SourceViewer {
             return;
         }
         recordEditChange();
+        int prevScroll = editState.scrollRow();
         editState.setText(YamlBlockEditor.fromLines(result.lines()));
         SourceEditorNavigation.positionCursor(editState, result.cursorRow(), result.cursorCol());
+        // Restore scroll so the viewport doesn't jump; ensureCursorVisible during
+        // rendering will adjust if the cursor ended up off-screen.
+        int maxScroll = Math.max(0, editState.lineCount() - Math.max(1, lastVisibleLines));
+        editState.scrollDown(Math.min(prevScroll, maxScroll), lastVisibleLines);
     }
 
     private void refreshEditFindMatches() {
@@ -567,6 +581,20 @@ class SourceViewer {
                 validationErrorScroll = Math.max(0, validationErrorScroll - 1);
             } else if (ke.isDown()) {
                 validationErrorScroll++;
+            }
+            return true;
+        }
+        if (diffOverlay) {
+            if (ke.isCancel() || ke.isKey(KeyCode.F7)) {
+                diffOverlay = false;
+            } else if (ke.isUp()) {
+                diffScrollY = Math.max(0, diffScrollY - 1);
+            } else if (ke.isDown()) {
+                diffScrollY++;
+            } else if (ke.isPageUp() || ke.isKey(KeyCode.PAGE_UP)) {
+                diffScrollY = Math.max(0, diffScrollY - Math.max(1, lastVisibleLines));
+            } else if (ke.isPageDown() || ke.isKey(KeyCode.PAGE_DOWN)) {
+                diffScrollY += Math.max(1, lastVisibleLines);
             }
             return true;
         }
@@ -597,6 +625,7 @@ class SourceViewer {
         if (ke.hasCtrl() && ke.isCharIgnoreCase('z') && !ke.hasShift()) {
             if (editHistory.undo(editState)) {
                 dirty = true;
+                lineStatuses = null;
                 refreshEditFindMatches();
             }
             return true;
@@ -604,6 +633,7 @@ class SourceViewer {
         if (ke.hasCtrl() && (ke.isCharIgnoreCase('y') || (ke.isCharIgnoreCase('z') && ke.hasShift()))) {
             if (editHistory.redo(editState)) {
                 dirty = true;
+                lineStatuses = null;
                 refreshEditFindMatches();
             }
             return true;
@@ -621,18 +651,8 @@ class SourceViewer {
             applyBlockEdit(YamlBlockEditor.duplicateBlock(editLines(), editState.cursorRow(), yamlListBlocks));
             return true;
         }
-        if (ke.hasCtrl() && ke.hasShift() && (ke.isChar('k') || ke.isChar('K'))) {
-            applyBlockEdit(YamlBlockEditor.deleteBlock(editLines(), editState.cursorRow(), yamlListBlocks));
-            return true;
-        }
-        if (ke.hasCtrl() && ke.isChar('/')) {
-            YamlBlockEditor.BlockRange block
-                    = YamlBlockEditor.findBlock(editLines(), editState.cursorRow(), yamlListBlocks);
-            recordEditChange();
-            List<String> toggled = YamlBlockEditor.toggleComment(editLines(), block);
-            editState.setText(YamlBlockEditor.fromLines(toggled));
-            SourceEditorNavigation.positionCursor(editState, block.startRow(),
-                    YamlBlockEditor.leadingSpaces(toggled.get(block.startRow())));
+        if (ke.hasCtrl() && ke.isCharIgnoreCase('k') && !ke.hasShift()) {
+            applyBlockEdit(YamlBlockEditor.deleteLine(editLines(), editState.cursorRow()));
             return true;
         }
         if (ke.isKey(KeyCode.LEFT) && ke.hasCtrl()) {
@@ -641,16 +661,6 @@ class SourceViewer {
         }
         if (ke.isKey(KeyCode.RIGHT) && ke.hasCtrl()) {
             SourceEditorNavigation.moveWordRight(editState);
-            return true;
-        }
-        if (ke.isKey(KeyCode.BACKSPACE) && ke.hasCtrl()) {
-            recordEditChange();
-            SourceEditorNavigation.deleteWordBackward(editState);
-            return true;
-        }
-        if (ke.isKey(KeyCode.DELETE) && ke.hasCtrl()) {
-            recordEditChange();
-            SourceEditorNavigation.deleteWordForward(editState);
             return true;
         }
         if (pendingDiscard) {
@@ -671,6 +681,11 @@ class SourceViewer {
                 return true;
             }
             exitEditMode();
+            return true;
+        }
+        if (ke.isKey(KeyCode.F7) && dirty && originalEditText != null) {
+            diffOverlay = true;
+            diffScrollY = 0;
             return true;
         }
         if (ke.isKey(KeyCode.F5) && ke.hasShift()) {
@@ -782,6 +797,9 @@ class SourceViewer {
         search.closeInputOnly();
         dirty = false;
         validationErrors = null;
+        originalEditText = editState.text();
+        lineStatuses = null;
+        diffOverlay = false;
         editMode = true;
         editHistory.seedInitial(editState);
         refreshEditFindMatches();
@@ -795,6 +813,9 @@ class SourceViewer {
         autocompletePopup = null;
         validationErrors = null;
         pendingDiscard = false;
+        originalEditText = null;
+        lineStatuses = null;
+        diffOverlay = false;
         if (wasEditing && isMarkdownFile) {
             markdownMode = markdownModeBeforeEdit;
         }
@@ -1768,6 +1789,8 @@ class SourceViewer {
             String content = editState.text();
             Files.writeString(editableFile, content, StandardCharsets.UTF_8);
             dirty = false;
+            originalEditText = content;
+            lineStatuses = null;
             validateAndNotify(content);
         } catch (IOException e) {
             notifySave("Save failed: " + e.getMessage(), true);
@@ -2165,11 +2188,21 @@ class SourceViewer {
         Style ts = titleStyle != null ? titleStyle : Style.EMPTY;
         List<Span> titleSpans = new ArrayList<>();
         String info = title != null ? title : "";
-        titleSpans.add(Span.styled(" Edit [" + info + (dirty ? " *" : "") + "] ", ts));
-        int row = editState.cursorRow() + 1;
-        int col = editState.cursorCol() + 1;
-        Title posTitle = Title.from(
-                Line.from(Span.styled(" row:" + row + " col:" + col + " ", Style.EMPTY.dim()))).right();
+        if (diffOverlay) {
+            titleSpans.add(Span.styled(" Diff [" + info + "] ", ts));
+        } else {
+            titleSpans.add(Span.styled(" Edit [" + info + (dirty ? " *" : "") + "] ", ts));
+        }
+        Title posTitle;
+        if (diffOverlay) {
+            posTitle = Title.from(
+                    Line.from(Span.styled(" F7/Esc close  ↑↓ scroll ", Style.EMPTY.dim()))).right();
+        } else {
+            int row = editState.cursorRow() + 1;
+            int col = editState.cursorCol() + 1;
+            posTitle = Title.from(
+                    Line.from(Span.styled(" row:" + row + " col:" + col + " ", Style.EMPTY.dim()))).right();
+        }
         Block.Builder blockBuilder = Block.builder()
                 .borderType(BorderType.ROUNDED);
         if (plainMode) {
@@ -2188,6 +2221,11 @@ class SourceViewer {
         lastInnerArea = inner;
         lastVisibleLines = Math.max(1, inner.height());
         frame.renderWidget(block, area);
+
+        if (diffOverlay) {
+            renderDiffContent(frame, inner);
+            return;
+        }
 
         TextArea textArea = TextArea.builder()
                 .cursorStyle(Style.EMPTY.reversed())
@@ -2217,6 +2255,31 @@ class SourceViewer {
             }
         }
 
+        // gutter change markers — background color on the gutter area
+        if (dirty && !plainMode && originalEditText != null) {
+            if (lineStatuses == null) {
+                List<String> orig = YamlBlockEditor.toLines(originalEditText);
+                lineStatuses = EditDiff.diff(orig, editLines());
+            }
+            int gutterWidth = Math.max(2, String.valueOf(editState.lineCount()).length()) + 2;
+            for (int r = 0; r < inner.height(); r++) {
+                int lineIdx = editState.scrollRow() + r;
+                if (lineIdx >= 0 && lineIdx < lineStatuses.length) {
+                    EditDiff.LineStatus status = lineStatuses[lineIdx];
+                    if (status != EditDiff.LineStatus.UNCHANGED) {
+                        Style bg = Style.EMPTY.fg(dev.tamboui.style.Color.WHITE)
+                                .bg(dev.tamboui.style.Color.rgb(0x1B, 0x4D, 0x1B));
+                        int screenY = inner.top() + r;
+                        for (int x = inner.left(); x < inner.left() + gutterWidth; x++) {
+                            dev.tamboui.buffer.Cell cell = frame.buffer().get(x, screenY);
+                            frame.buffer().set(x, screenY,
+                                    new dev.tamboui.buffer.Cell(cell.symbol(), bg));
+                        }
+                    }
+                }
+            }
+        }
+
         if (autocompletePopup != null) {
             int cursorRow = editState.cursorRow() - editState.scrollRow();
             int cursorCol = editState.cursorCol() - editState.scrollCol();
@@ -2228,6 +2291,66 @@ class SourceViewer {
         }
         if (pendingDiscard) {
             renderDiscardPopup(frame, area);
+        }
+    }
+
+    private void renderDiffContent(Frame frame, Rect inner) {
+        List<String> orig = YamlBlockEditor.toLines(originalEditText);
+        List<EditDiff.DiffEntry> entries = EditDiff.unifiedDiff(orig, editLines(), 3);
+        if (entries.isEmpty()) {
+            entries = List.of(new EditDiff.DiffEntry(' ', "(no changes)", 0));
+        }
+
+        int maxLineNum = entries.stream().mapToInt(EditDiff.DiffEntry::lineNum).max().orElse(1);
+        int lineDigits = Math.max(2, String.valueOf(maxLineNum).length());
+        int gutterWidth = lineDigits + 2;
+
+        diffScrollY = Math.max(0, Math.min(diffScrollY, Math.max(0, entries.size() - inner.height())));
+        for (int r = 0; r < inner.height(); r++) {
+            int idx = diffScrollY + r;
+            if (idx >= entries.size()) {
+                break;
+            }
+            int screenY = inner.top() + r;
+            EditDiff.DiffEntry entry = entries.get(idx);
+            Style lineStyle;
+            Style gutterStyle;
+            if (entry.type() == '-') {
+                lineStyle = Style.EMPTY.fg(dev.tamboui.style.Color.WHITE).bg(dev.tamboui.style.Color.rgb(0x6E, 0x1B, 0x1B));
+                gutterStyle = lineStyle;
+            } else if (entry.type() == '+') {
+                lineStyle = Style.EMPTY.fg(dev.tamboui.style.Color.WHITE).bg(dev.tamboui.style.Color.rgb(0x1B, 0x4D, 0x1B));
+                gutterStyle = lineStyle;
+            } else if (entry.type() == '~') {
+                lineStyle = Style.EMPTY.dim();
+                gutterStyle = Style.EMPTY.dim();
+            } else {
+                lineStyle = Style.EMPTY;
+                gutterStyle = Style.EMPTY.dim();
+            }
+
+            // fill entire row with background for changed lines
+            if (entry.type() == '-' || entry.type() == '+') {
+                Rect rowRect = new Rect(inner.left(), screenY, inner.width(), 1);
+                frame.buffer().setStyle(rowRect, lineStyle);
+            }
+
+            // line number from original file (for -) or current file (for + and context)
+            String lineNum = entry.lineNum() > 0
+                    ? String.format("%" + lineDigits + "d ", entry.lineNum())
+                    : " ".repeat(lineDigits + 1);
+            frame.buffer().setString(inner.left(), screenY, lineNum, gutterStyle);
+            frame.buffer().set(inner.left() + gutterWidth - 1, screenY,
+                    new dev.tamboui.buffer.Cell("│", gutterStyle));
+
+            int textX = inner.left() + gutterWidth;
+            int maxWidth = Math.max(0, inner.width() - gutterWidth);
+            String prefix = entry.type() == ' ' ? "  " : entry.type() + " ";
+            String text = prefix + entry.text();
+            if (text.length() > maxWidth) {
+                text = text.substring(0, maxWidth);
+            }
+            frame.buffer().setString(textX, screenY, text, lineStyle);
         }
     }
 
@@ -2326,23 +2449,27 @@ class SourceViewer {
             TuiHelper.hintLast(spans, "Esc", "close");
             return;
         }
+        if (editMode && diffOverlay) {
+            TuiHelper.hint(spans, "Esc/F7", "close diff");
+            TuiHelper.hint(spans, TuiIcons.HINT_SCROLL, "scroll");
+            return;
+        }
         if (editMode) {
             TuiHelper.hint(spans, "Esc", "cancel");
             TuiHelper.hint(spans, "F5", "save & close");
             TuiHelper.hint(spans, "Shift+F5", "save");
+            if (dirty) {
+                TuiHelper.hint(spans, "F7", "diff");
+            }
             TuiHelper.hint(spans, "Ctrl+Z", "undo");
             TuiHelper.hint(spans, "Ctrl+Y", "redo");
             TuiHelper.hint(spans, "Alt+↑/↓", "move block");
             TuiHelper.hint(spans, "Ctrl+D", "duplicate");
-            TuiHelper.hint(spans, "Ctrl+Shift+K", "delete block");
-            TuiHelper.hint(spans, "Ctrl+/", "comment");
-            TuiHelper.hint(spans, "Ctrl+F", "find");
-            TuiHelper.hint(spans, "Ctrl+N", "next match");
+            TuiHelper.hint(spans, "Ctrl+K", "delete line");
             if (autocompleteProvider != null) {
                 TuiHelper.hint(spans, "Tab", "complete");
             }
             TuiHelper.hint(spans, TuiIcons.HINT_SCROLL, "move");
-            search.renderFindStatus(spans);
             return;
         }
         if (markdownMode) {

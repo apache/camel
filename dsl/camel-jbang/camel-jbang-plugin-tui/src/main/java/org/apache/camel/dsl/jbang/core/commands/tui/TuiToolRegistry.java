@@ -170,7 +170,7 @@ class TuiToolRegistry {
                                  + "and integration count. "
                                  + "Includes a 'selection' field with structured metadata about the active list/table. "
                                  + "captionVisible indicates if a caption overlay is on screen. "
-                                 + "keystrokesVisible indicates if the keystroke overlay is on; toggle with Ctrl+K. "
+                                 + "keystrokesVisible indicates if the keystroke overlay is on. "
                                  + "detailFocused (boolean, present on tabs with master/detail panels) indicates "
                                  + "which panel has focus: true=detail panel, false=table panel. "
                                  + "Press Tab to toggle focus. Up/Down and PgUp/PgDn operate on the focused panel.",

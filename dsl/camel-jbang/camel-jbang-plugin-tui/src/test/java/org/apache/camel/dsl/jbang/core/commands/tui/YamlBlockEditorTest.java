@@ -62,6 +62,20 @@ class YamlBlockEditorTest {
     }
 
     @Test
+    void deleteLineRemovesSingleLine() {
+        List<String> lines = YamlBlockEditor.toLines(SAMPLE);
+        int row = findLineContaining(lines, "- to: log:warn");
+        int before = lines.size();
+
+        YamlBlockEditor.EditResult result = YamlBlockEditor.deleteLine(lines, row);
+
+        assertThat(result.lines()).hasSize(before - 1);
+        assertThat(YamlBlockEditor.fromLines(result.lines())).doesNotContain("log:warn");
+        assertThat(YamlBlockEditor.fromLines(result.lines())).contains("log:info");
+        assertThat(YamlBlockEditor.fromLines(result.lines())).contains("timer:tick");
+    }
+
+    @Test
     void deleteBlockRemovesSelectedYamlBlock() {
         List<String> lines = YamlBlockEditor.toLines(SAMPLE);
         int row = findLineContaining(lines, "- to: log:warn");
