@@ -28,12 +28,15 @@ public final class AlibabaClientRegistry {
     private final Map<String, Object> clients = new ConcurrentHashMap<>();
 
     public <T> T getOrCreate(String key, Supplier<T> supplier) {
-        @SuppressWarnings("unchecked")
-        T client = (T) clients.get(key);
-        if (client != null) {
+        Object existing = clients.get(key);
+        if (existing != null) {
+            @SuppressWarnings("unchecked")
+            T client = (T) existing;
             return client;
         }
-        return clients.computeIfAbsent(key, k -> supplier.get());
+        T created = supplier.get();
+        clients.put(key, created);
+        return created;
     }
 
     public void clear() {
