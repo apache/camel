@@ -78,6 +78,7 @@ import org.apache.camel.util.json.JsonObject;
  */
 class SourceTab extends AbstractTab {
 
+    private String lastSeenPid;
     private Path rootDir;
     private Path currentDir;
     private final ListState listState = new ListState();
@@ -160,11 +161,13 @@ class SourceTab extends AbstractTab {
 
     @Override
     public void onTabSelected() {
+        lastSeenPid = ctx.selectedPid;
         refreshFiles();
     }
 
     @Override
     public void onIntegrationChanged() {
+        lastSeenPid = ctx.selectedPid;
         rootDir = null;
         currentDir = null;
         entries = Collections.emptyList();
@@ -326,8 +329,14 @@ class SourceTab extends AbstractTab {
     public void render(Frame frame, Rect area) {
         sourceViewer.setValidateOnSave(ctx.validateOnSave);
         if (ctx.selectedPid == null) {
+            lastSeenPid = null;
             renderNoSelection(frame, area);
             return;
+        }
+        // Detect PID change (e.g. after restart) and refresh stale file references
+        if (!ctx.selectedPid.equals(lastSeenPid)) {
+            lastSeenPid = ctx.selectedPid;
+            onIntegrationChanged();
         }
 
         if (sourceViewer.isPlainMode() && sourceViewer.isVisible()) {

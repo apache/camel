@@ -281,6 +281,32 @@ class LaunchManager {
         }
     }
 
+    private static Path writeSpringBootLogbackConfig() {
+        try {
+            Path camelDir = Path.of(System.getProperty("user.home"), ".camel");
+            Files.createDirectories(camelDir);
+            Path logbackFile = camelDir.resolve(".tui-logback-spring-boot.xml");
+            String config = """
+                    <?xml version="1.0" encoding="UTF-8"?>
+                    <configuration>
+                        <include resource="org/springframework/boot/logging/logback/defaults.xml"/>
+                        <include resource="org/springframework/boot/logging/logback/console-appender.xml"/>
+                        <include resource="org/springframework/boot/logging/logback/file-appender.xml"/>
+                        <property name="LOG_FILE" value="${user.home}${file.separator}.camel${file.separator}${PID}.log"/>
+                        <property name="FILE_LOG_PATTERN" value="${CONSOLE_LOG_PATTERN}"/>
+                        <root level="INFO">
+                            <appender-ref ref="CONSOLE"/>
+                            <appender-ref ref="FILE"/>
+                        </root>
+                    </configuration>
+                    """;
+            Files.writeString(logbackFile, config);
+            return logbackFile;
+        } catch (Exception e) {
+            return null;
+        }
+    }
+
     void launchCamelRun(String sourceDir, String displayName, List<String> extraArgs) {
         try {
             List<String> cmd = new ArrayList<>(LauncherHelper.getCamelCommand());
@@ -314,7 +340,10 @@ class LaunchManager {
         List<String> mvnArgs = new ArrayList<>();
         StringBuilder jvmArgs = new StringBuilder();
         if ("spring-boot".equals(projectType)) {
-            jvmArgs.append("-Dlogging.config=classpath:logback-camel-jbang.xml");
+            Path logbackFile = writeSpringBootLogbackConfig();
+            if (logbackFile != null) {
+                jvmArgs.append("-Dlogging.config=file:").append(logbackFile);
+            }
         }
         for (String arg : extraArgs) {
             if (arg.startsWith("--prop=")) {
