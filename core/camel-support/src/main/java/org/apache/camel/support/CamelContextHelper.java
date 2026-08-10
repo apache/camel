@@ -469,11 +469,7 @@ public final class CamelContextHelper {
         if (s == null) {
             return null;
         }
-        if (s.startsWith("P") || s.startsWith("-P") || s.startsWith("p") || s.startsWith("-p")) {
-            return Duration.parse(s);
-        } else {
-            return Duration.ofMillis(TimeUtils.toMilliSeconds(s));
-        }
+        return TimeUtils.toDuration(s);
     }
 
     /**

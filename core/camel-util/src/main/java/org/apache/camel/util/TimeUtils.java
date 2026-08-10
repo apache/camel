@@ -173,7 +173,11 @@ public final class TimeUtils {
      * @param source duration which can be in text format such as 15s
      */
     public static Duration toDuration(String source) {
-        return Duration.ofMillis(toMilliSeconds(source));
+        if (source.startsWith("P") || source.startsWith("-P") || source.startsWith("p") || source.startsWith("-p")) {
+            return Duration.parse(source);
+        } else {
+            return Duration.ofMillis(toMilliSeconds(source));
+        }
     }
 
     /**
