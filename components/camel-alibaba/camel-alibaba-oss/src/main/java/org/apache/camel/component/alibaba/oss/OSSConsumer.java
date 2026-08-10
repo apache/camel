@@ -88,14 +88,17 @@ public class OSSConsumer extends ScheduledBatchPollingConsumer {
 
         forceConsumerAsReady();
 
+        String nextToken = null;
         if (Boolean.TRUE.equals(listing.isTruncated()) && listing.nextContinuationToken() != null) {
-            continuationToken = listing.nextContinuationToken();
-        } else {
-            continuationToken = null;
+            nextToken = listing.nextContinuationToken();
         }
 
         Queue<Exchange> exchanges = createExchanges(bucketName, listing.contents());
-        return processBatch(CastUtils.cast(exchanges));
+        int processed = processBatch(CastUtils.cast(exchanges));
+        if (processed >= 0) {
+            continuationToken = nextToken;
+        }
+        return processed;
     }
 
     @Override

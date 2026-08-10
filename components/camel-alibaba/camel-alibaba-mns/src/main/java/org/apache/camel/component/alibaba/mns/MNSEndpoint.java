@@ -227,6 +227,13 @@ public class MNSEndpoint extends ScheduledPollEndpoint {
         if (topicEndpoint) {
             return MNSOperations.PUBLISH_MESSAGE;
         }
+        return MNSOperations.SEND_MESSAGE;
+    }
+
+    public String resolveConsumerOperation() {
+        if (operation != null) {
+            return operation;
+        }
         return MNSOperations.RECEIVE_MESSAGE;
     }
 

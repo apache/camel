@@ -111,13 +111,16 @@ public class OSSProducer extends DefaultProducer {
     private void putObject(Exchange exchange, ClientConfigurations clientConfigurations) throws Exception {
         Object body = exchange.getMessage().getBody();
 
+        if (ObjectHelper.isEmpty(clientConfigurations.getBucketName())) {
+            throw new IllegalArgumentException("Bucket name is mandatory to put objects into bucket");
+        }
+
         if (body instanceof WrappedFile<?> wf) {
             body = wf.getFile();
         }
 
-        if ((ObjectHelper.isEmpty(clientConfigurations.getBucketName())
-                || ObjectHelper.isEmpty(clientConfigurations.getObjectName())) && !(body instanceof File)) {
-            throw new IllegalArgumentException("Bucket and object names are mandatory to put objects into bucket");
+        if (ObjectHelper.isEmpty(clientConfigurations.getObjectName()) && !(body instanceof File)) {
+            throw new IllegalArgumentException("Object name is mandatory when body is not a file");
         }
 
         PutObjectRequest.Builder requestBuilder = PutObjectRequest.newBuilder()
