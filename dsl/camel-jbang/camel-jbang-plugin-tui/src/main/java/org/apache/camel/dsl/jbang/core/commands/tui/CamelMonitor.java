@@ -1904,16 +1904,80 @@ public class CamelMonitor extends CamelCommand {
         }
 
         String platform = info.platform;
-        boolean isSpringBoot = "Spring Boot".equals(platform);
-        boolean isQuarkus = "Quarkus".equals(platform);
+        boolean isMavenManaged = "Spring Boot".equals(platform) || "Quarkus".equals(platform);
+        if (isMavenManaged) {
+            restartMavenProcess(ph, info);
+        } else {
+            restartCamelMainProcess(ph, info);
+        }
+    }
 
-        // TODO: restart for Spring Boot and Quarkus is not yet reliable
-        if (isSpringBoot || isQuarkus) {
-            setNotification("Restart not supported for " + platform, true);
+    private void restartMavenProcess(ProcessHandle ph, IntegrationInfo info) {
+        // Find the Maven parent process (mvn spring-boot:run / quarkus:dev)
+        ProcessHandle mavenPh = ph.parent().orElse(null);
+        if (mavenPh == null) {
+            setNotification("Cannot restart: Maven parent process not found", true);
             return;
         }
 
-        restartCamelMainProcess(ph, info);
+        // Capture Maven parent command line before stopping
+        Optional<String> cmdOpt = mavenPh.info().command();
+        Optional<String[]> argsOpt = mavenPh.info().arguments();
+        Optional<String> cmdLineOpt = mavenPh.info().commandLine();
+
+        String name = info.name;
+        String directory = info.directory;
+
+        ctx.lastSelectedName = name;
+        dataService.forceFullScan();
+
+        // Kill the Maven parent (which also kills the child Java process)
+        mavenPh.destroy();
+        setNotification("Restarting: " + name, false);
+
+        if (runner != null) {
+            ctx.backgroundExecutor.execute(() -> {
+                try {
+                    CompletableFuture<ProcessHandle> exitFuture = mavenPh.onExit().toCompletableFuture();
+                    try {
+                        exitFuture.get(15, TimeUnit.SECONDS);
+                    } catch (Exception e) {
+                        mavenPh.destroyForcibly();
+                        Thread.sleep(500);
+                    }
+
+                    List<String> cmd = new ArrayList<>();
+                    if (cmdOpt.isPresent() && argsOpt.isPresent() && argsOpt.get().length > 0) {
+                        cmd.add(cmdOpt.get());
+                        Collections.addAll(cmd, argsOpt.get());
+                    } else {
+                        cmdLineOpt.ifPresent(s -> cmd.addAll(parseCommandLine(s)));
+                    }
+
+                    if (cmd.isEmpty()) {
+                        runner.runOnRenderThread(
+                                () -> setNotification("Cannot restart: Maven command line not available", true));
+                        return;
+                    }
+
+                    ProcessBuilder pb = new ProcessBuilder(cmd);
+                    if (directory != null) {
+                        pb.directory(new File(directory));
+                    }
+                    pb.redirectErrorStream(true);
+                    Path outputFile = LaunchManager.createSecureTempFile("camel-restart-", ".log");
+                    outputFile.toFile().deleteOnExit();
+                    pb.redirectOutput(outputFile.toFile());
+                    Process process = pb.start();
+                    actionsPopup.getLaunchManager().addPendingLaunch(name, process, outputFile);
+
+                    runner.runOnRenderThread(() -> setNotification("Restarted: " + name + " (recompiling)", false));
+                } catch (Exception e) {
+                    runner.runOnRenderThread(
+                            () -> setNotification("Restart failed: " + e.getMessage(), true));
+                }
+            });
+        }
     }
 
     private void restartCamelMainProcess(ProcessHandle ph, IntegrationInfo info) {
