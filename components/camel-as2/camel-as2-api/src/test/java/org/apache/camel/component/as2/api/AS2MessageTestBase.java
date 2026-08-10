@@ -33,14 +33,14 @@ import java.time.Duration;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.helger.as2lib.client.AS2Client;
-import com.helger.as2lib.client.AS2ClientRequest;
-import com.helger.as2lib.client.AS2ClientResponse;
-import com.helger.as2lib.client.AS2ClientSettings;
-import com.helger.as2lib.crypto.ECompressionType;
-import com.helger.as2lib.crypto.ECryptoAlgorithmCrypt;
-import com.helger.as2lib.crypto.ECryptoAlgorithmSign;
 import com.helger.mail.cte.EContentTransferEncoding;
+import com.helger.phase2.client.AS2Client;
+import com.helger.phase2.client.AS2ClientRequest;
+import com.helger.phase2.client.AS2ClientResponse;
+import com.helger.phase2.client.AS2ClientSettings;
+import com.helger.phase2.crypto.ECompressionType;
+import com.helger.phase2.crypto.ECryptoAlgorithmCrypt;
+import com.helger.phase2.crypto.ECryptoAlgorithmSign;
 import com.helger.security.keystore.EKeyStoreType;
 import org.apache.camel.component.as2.api.entity.ApplicationEntity;
 import org.apache.hc.core5.http.protocol.HttpDateGenerator;
@@ -144,7 +144,7 @@ public class AS2MessageTestBase {
         signingKP = kpg.generateKeyPair();
         signingCert = Utils.makeCertificate(signingKP, signingDN, issueKP, issueDN);
 
-        // initialize as2-lib keystore file
+        // initialize phase2 keystore file
         KeyStore ks = KeyStore.getInstance(EKeyStoreType.PKCS12.getID());
         ks.load(null, "test".toCharArray());
         ks.setKeyEntry("openas2a_alias", issueKP.getPrivate(), "test".toCharArray(), new X509Certificate[] { issueCert });
@@ -160,8 +160,8 @@ public class AS2MessageTestBase {
     }
 
     protected void binaryContentTransferEncodingTest(boolean encrypt, boolean sign, boolean compress) throws IOException {
-        // test with as2-lib because Camel AS2 client doesn't support binary content transfer encoding at the moment
-        // inspired from https://github.com/phax/as2-lib/wiki/Submodule-as2%E2%80%90lib#as2-client
+        // test with phase2 because Camel AS2 client doesn't support binary content transfer encoding at the moment
+        // inspired from https://github.com/phax/phase2/wiki/Submodule-phase2%E2%80%90lib#as2-client
 
         // Start client configuration
         final AS2ClientSettings aSettings = new AS2ClientSettings();
@@ -178,7 +178,7 @@ public class AS2MessageTestBase {
         aSettings.setPartnershipName(aSettings.getSenderAS2ID() + "_" + aSettings.getReceiverAS2ID());
 
         // Build client request
-        final AS2ClientRequest aRequest = new AS2ClientRequest("AS2 test message from as2-lib");
+        final AS2ClientRequest aRequest = new AS2ClientRequest("AS2 test message from phase2");
         aRequest.setData(EDI_MESSAGE, StandardCharsets.US_ASCII);
         aRequest.setContentType(AS2MediaType.APPLICATION_EDIFACT);
 
@@ -206,8 +206,8 @@ public class AS2MessageTestBase {
     }
 
     protected void compressionSignatureOrderTest(boolean encrypt, boolean compressBeforeSign) throws IOException {
-        // test with as2-lib because Camel AS2 client doesn't support different orders at the moment
-        // inspired from https://github.com/phax/as2-lib/wiki/Submodule-as2%E2%80%90lib#as2-client
+        // test with phase2 because Camel AS2 client doesn't support different orders at the moment
+        // inspired from https://github.com/phax/phase2/wiki/Submodule-phase2%E2%80%90lib#as2-client
 
         // Start client configuration
         final AS2ClientSettings aSettings = new AS2ClientSettings();
@@ -224,7 +224,7 @@ public class AS2MessageTestBase {
         aSettings.setPartnershipName(aSettings.getSenderAS2ID() + "_" + aSettings.getReceiverAS2ID());
 
         // Build client request
-        final AS2ClientRequest aRequest = new AS2ClientRequest("AS2 test message from as2-lib");
+        final AS2ClientRequest aRequest = new AS2ClientRequest("AS2 test message from phase2");
         aRequest.setData(EDI_MESSAGE, StandardCharsets.US_ASCII);
         aRequest.setContentType(AS2MediaType.APPLICATION_EDIFACT);
 
