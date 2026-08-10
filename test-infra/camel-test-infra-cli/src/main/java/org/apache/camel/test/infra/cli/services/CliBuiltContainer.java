@@ -25,6 +25,7 @@ import java.util.Map;
 import java.util.Objects;
 
 import org.apache.camel.test.infra.cli.common.CliProperties;
+import org.apache.camel.test.infra.common.LocalPropertyResolver;
 import org.apache.camel.test.infra.common.TestUtils;
 import org.junit.platform.commons.util.StringUtils;
 import org.slf4j.Logger;
@@ -48,9 +49,6 @@ public class CliBuiltContainer extends GenericContainer<CliBuiltContainer> {
     private static final String KEEP_RUNNING_ARG = "KEEP_RUNNING";
     private static final String MOUNT_POINT = "/deployments/data";
     private static final String SSH_PASSWORD_ARG = "SSH_PASSWORD_ARG";
-    // NOTE: make sure to run integration tests locally when changing in order to
-    // validate potential breaking changes compatibility when building the container
-    private static final String FROM_IMAGE_NAME = "mirror.gcr.io/fedora:43";
     private static final String FROM_IMAGE_ARG = "FROMIMAGE";
     protected static final int DEV_CONSOLE_PORT = 8080;
     protected static final int SSH_PORT = 22;
@@ -87,7 +85,7 @@ public class CliBuiltContainer extends GenericContainer<CliBuiltContainer> {
                 .withFileFromClasspath("99-ssh-jbang.conf",
                         "org/apache/camel/test/infra/cli/services/99-ssh-jbang.conf")
                 .withBuildArg(FROM_IMAGE_ARG, TestUtils.prependHubImageNamePrefixIfNeeded(
-                        System.getProperty(CliProperties.FROM_IMAGE, FROM_IMAGE_NAME)))
+                        LocalPropertyResolver.getProperty(CliBuiltContainer.class, CliProperties.FROM_IMAGE)))
                 .withBuildArg(CAMEL_REF_ARG, params.getCamelRef())
                 .withBuildArg(KEEP_RUNNING_ARG, String.valueOf(params.getKeepContainerRunning()))
                 .withBuildArg(SSH_PASSWORD_ARG, params.getSshPassword())

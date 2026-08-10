@@ -19,7 +19,10 @@ package org.apache.camel.test.infra.smb.services;
 
 import java.nio.file.Path;
 
+import org.apache.camel.test.infra.common.LocalPropertyResolver;
+import org.apache.camel.test.infra.common.TestUtils;
 import org.apache.camel.test.infra.common.services.ContainerEnvironmentUtil;
+import org.apache.camel.test.infra.smb.common.SmbProperties;
 import org.testcontainers.containers.GenericContainer;
 import org.testcontainers.containers.wait.strategy.Wait;
 import org.testcontainers.images.builder.ImageFromDockerfile;
@@ -31,6 +34,7 @@ public class SmbContainer extends GenericContainer<SmbContainer> {
     public static final String DEFAULT_USER = "camel";
     // NOTE: default value used for testing purposes only.
     public static final String DEFAULT_PASSWORD = "camelTester123"; // NOSONAR
+    private static final String FROM_IMAGE_ARG = "FROMIMAGE";
 
     public SmbContainer(boolean fixedPort) {
         super(new ImageFromDockerfile("localhost/samba:camel", false)
@@ -41,7 +45,10 @@ public class SmbContainer extends GenericContainer<SmbContainer> {
                 .withFileFromClasspath("smb.conf",
                         "org/apache/camel/test/infra/smb/services/smb.conf")
                 .withFileFromClasspath("start.sh",
-                        "org/apache/camel/test/infra/smb/services/start.sh"));
+                        "org/apache/camel/test/infra/smb/services/start.sh")
+                .withBuildArg(FROM_IMAGE_ARG,
+                        TestUtils.prependHubImageNamePrefixIfNeeded(
+                                LocalPropertyResolver.getProperty(SmbContainer.class, SmbProperties.SMB_FROM_IMAGE))));
 
         ContainerEnvironmentUtil.configurePort(this, fixedPort, SMB_PORT_DEFAULT);
 
