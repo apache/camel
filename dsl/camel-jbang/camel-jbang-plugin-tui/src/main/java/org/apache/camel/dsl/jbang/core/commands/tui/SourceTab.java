@@ -131,6 +131,7 @@ class SourceTab extends AbstractTab {
     private List<RouteEntry> routeIndex = Collections.emptyList();
     private List<ToEntry> toIndex = Collections.emptyList();
     private final GotoRoutePopup gotoRoutePopup = new GotoRoutePopup();
+    private final GotoSourceNodePopup gotoSourceNodePopup = new GotoSourceNodePopup();
 
     SourceTab(MonitorContext ctx) {
         super(ctx);
@@ -185,6 +186,20 @@ class SourceTab extends AbstractTab {
             if (sel != null) {
                 openFileAt(sel.filePath(), sel.fromLine());
             }
+            return true;
+        }
+
+        if (gotoSourceNodePopup.isVisible()) {
+            gotoSourceNodePopup.handleKeyEvent(ke);
+            YamlRouteNodeScanner.NodeEntry sel = gotoSourceNodePopup.consumeSelection();
+            if (sel != null) {
+                openFileAt(sel.filePath(), sel.lineIndex());
+            }
+            return true;
+        }
+
+        if (ke.hasCtrl() && ke.isCharIgnoreCase('g') && !routeIndex.isEmpty()) {
+            gotoSourceNodePopup.open(buildSourceNodeIndex());
             return true;
         }
 
@@ -339,6 +354,9 @@ class SourceTab extends AbstractTab {
         if (gotoRoutePopup.isVisible()) {
             gotoRoutePopup.render(frame, area);
         }
+        if (gotoSourceNodePopup.isVisible()) {
+            gotoSourceNodePopup.render(frame, area);
+        }
     }
 
     @Override
@@ -358,7 +376,8 @@ class SourceTab extends AbstractTab {
                 TuiHelper.hint(spans, "Tab", "viewer");
             }
             if (!routeIndex.isEmpty()) {
-                TuiHelper.hint(spans, "g", "go to");
+                TuiHelper.hint(spans, "g", "go to route");
+                TuiHelper.hint(spans, "Ctrl+G", "go to node");
             }
         }
     }
@@ -434,6 +453,12 @@ class SourceTab extends AbstractTab {
                 - **g** — open a filterable popup listing all routes found in the source files.
                   Type to fuzzy-filter by route ID or endpoint URI, then press **Enter** to
                   navigate to the selected route.
+
+                ## Go to Node
+                - **Ctrl+G** — open an expanded popup showing routes and their individual
+                  processors/EIPs in a tree structure. Type to fuzzy-filter by route ID,
+                  EIP type, or label, then press **Enter** to jump directly to the selected
+                  node in the source editor.
 
                 ## General
                 - **Tab** — toggle focus between file list and source viewer
@@ -2112,6 +2137,21 @@ class SourceTab extends AbstractTab {
         toIndex = toEntries;
     }
 
+    private List<YamlRouteNodeScanner.NodeEntry> buildSourceNodeIndex() {
+        List<YamlRouteNodeScanner.NodeEntry> nodes = new ArrayList<>();
+        for (FilesBrowser.FileEntry entry : entries) {
+            if (entry.directory()) {
+                continue;
+            }
+            Path path = Path.of(entry.path());
+            if (!isCamelSourceFile(path) || !isYamlFile(path)) {
+                continue;
+            }
+            nodes.addAll(YamlRouteNodeScanner.scanFile(path));
+        }
+        return nodes;
+    }
+
     private void scanYamlRoutes(Path file, List<RouteEntry> fromEntries, List<ToEntry> toEntries) {
         List<String> lines;
         try {
@@ -2350,6 +2390,12 @@ class SourceTab extends AbstractTab {
         String currentFile = sourceViewer.getCurrentFilePath();
         if (currentFile != null && currentFile.equals(targetFilePath)) {
             sourceViewer.goToLine(targetLine);
+            return;
+        }
+        if (sourceViewer.isEditMode() && sourceViewer.isDirty()) {
+            if (ctx.notificationCallback != null) {
+                ctx.notificationCallback.accept("Save or discard edits before navigating to another file", false);
+            }
             return;
         }
         for (int idx = 0; idx < entries.size(); idx++) {
