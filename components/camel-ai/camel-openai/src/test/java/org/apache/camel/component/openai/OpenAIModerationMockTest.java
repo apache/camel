@@ -24,6 +24,7 @@ import com.openai.models.moderations.ModerationCreateResponse;
 import org.apache.camel.CamelExchangeException;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.infra.openai.mock.OpenAIMock;
 import org.apache.camel.test.junit6.CamelTestSupport;
 import org.junit.jupiter.api.Test;
@@ -70,6 +71,25 @@ class OpenAIModerationMockTest extends CamelTestSupport {
                         .to("openai:moderation?apiKey=dummy&moderationModel=omni-moderation-2024-09-26&baseUrl="
                             + openAIMock.getBaseUrl() + "/v1");
 
+                from("direct:split-verdicts")
+                        .to("openai:moderation?apiKey=dummy&baseUrl=" + openAIMock.getBaseUrl() + "/v1")
+                        .split(header(OpenAIConstants.MODERATION_RESULTS))
+                        .choice()
+                        .when(simple("${body[flagged]}"))
+                        .to("mock:quarantine")
+                        .otherwise()
+                        .to("mock:downstream")
+                        .end();
+
+                from("direct:score-threshold")
+                        .to("openai:moderation?apiKey=dummy&baseUrl=" + openAIMock.getBaseUrl() + "/v1")
+                        .choice()
+                        .when(simple("${header.CamelOpenAIModerationCategoryScores[hate]} > 0.85"))
+                        .to("mock:review")
+                        .otherwise()
+                        .to("mock:score-accepted")
+                        .end();
+
                 from("direct:guard")
                         .to("openai:moderation?apiKey=dummy&baseUrl=" + openAIMock.getBaseUrl() + "/v1")
                         .choice()
@@ -102,6 +122,8 @@ class OpenAIModerationMockTest extends CamelTestSupport {
                 = result.getMessage().getHeader(OpenAIConstants.MODERATION_CATEGORY_SCORES, Map.class);
         assertThat(scores).containsKeys("hate", "self-harm/intent", "violence/graphic");
         assertThat(scores.get("hate")).isEqualTo(0.0);
+        // the omni-moderation models do report the illicit categories
+        assertThat(categories).containsKeys("illicit", "illicit/violent");
     }
 
     @Test
@@ -150,17 +172,62 @@ class OpenAIModerationMockTest extends CamelTestSupport {
         assertThat(result.getMessage().getHeader(OpenAIConstants.MODERATION_FLAGGED)).isEqualTo(true);
 
         @SuppressWarnings("unchecked")
-        List<Map<String, Boolean>> categories
-                = result.getMessage().getHeader(OpenAIConstants.MODERATION_CATEGORIES, List.class);
-        assertThat(categories).hasSize(2);
-        assertThat(categories.get(0)).containsEntry("hate", false);
-        assertThat(categories.get(1)).containsEntry("hate", true);
+        List<Map<String, Object>> verdicts
+                = result.getMessage().getHeader(OpenAIConstants.MODERATION_RESULTS, List.class);
+        assertThat(verdicts).hasSize(2);
+
+        assertThat(verdicts.get(0))
+                .containsEntry(OpenAIConstants.MODERATION_RESULT_INPUT, "Apache Camel is an integration framework")
+                .containsEntry(OpenAIConstants.MODERATION_RESULT_FLAGGED, false);
+        assertThat(verdicts.get(1))
+                .containsEntry(OpenAIConstants.MODERATION_RESULT_INPUT, "I hate everyone")
+                .containsEntry(OpenAIConstants.MODERATION_RESULT_FLAGGED, true);
 
         @SuppressWarnings("unchecked")
-        List<Map<String, Double>> scores
-                = result.getMessage().getHeader(OpenAIConstants.MODERATION_CATEGORY_SCORES, List.class);
-        assertThat(scores).hasSize(2);
-        assertThat(scores.get(1).get("hate")).isEqualTo(0.92);
+        Map<String, Boolean> flaggedCategories
+                = (Map<String, Boolean>) verdicts.get(1).get(OpenAIConstants.MODERATION_RESULT_CATEGORIES);
+        assertThat(flaggedCategories).containsEntry("hate", true);
+
+        @SuppressWarnings("unchecked")
+        Map<String, Double> flaggedScores
+                = (Map<String, Double>) verdicts.get(1).get(OpenAIConstants.MODERATION_RESULT_CATEGORY_SCORES);
+        assertThat(flaggedScores.get("hate")).isEqualTo(0.92);
+
+        // the plain maps belong to the single-input shape only
+        assertThat(result.getMessage().getHeader(OpenAIConstants.MODERATION_CATEGORIES)).isNull();
+        assertThat(result.getMessage().getHeader(OpenAIConstants.MODERATION_CATEGORY_SCORES)).isNull();
+    }
+
+    @Test
+    void testBatchVerdictsCanBeSplitAndRouted() throws Exception {
+        MockEndpoint quarantine = getMockEndpoint("mock:quarantine");
+        MockEndpoint downstream = getMockEndpoint("mock:downstream");
+        quarantine.expectedMessageCount(1);
+        downstream.expectedMessageCount(1);
+
+        template.sendBody("direct:split-verdicts",
+                List.of("Apache Camel is an integration framework", "I hate everyone"));
+
+        MockEndpoint.assertIsSatisfied(context);
+        assertThat(quarantine.getExchanges().get(0).getMessage().getBody(Map.class))
+                .containsEntry(OpenAIConstants.MODERATION_RESULT_INPUT, "I hate everyone");
+        assertThat(downstream.getExchanges().get(0).getMessage().getBody(Map.class))
+                .containsEntry(OpenAIConstants.MODERATION_RESULT_INPUT, "Apache Camel is an integration framework");
+    }
+
+    @Test
+    void testCategoryScoreThresholdInSimpleExpression() throws Exception {
+        MockEndpoint review = getMockEndpoint("mock:review");
+        MockEndpoint accepted = getMockEndpoint("mock:score-accepted");
+        review.expectedMessageCount(1);
+        accepted.expectedMessageCount(1);
+
+        // hate scores 0.92, above the 0.85 threshold
+        template.sendBody("direct:score-threshold", "I hate everyone");
+        // hate scores 0.0
+        template.sendBody("direct:score-threshold", "Apache Camel is an integration framework");
+
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Test
@@ -245,43 +312,41 @@ class OpenAIModerationMockTest extends CamelTestSupport {
         assertThat(result.getException()).isNull();
         assertThat(result.getMessage().getHeader(OpenAIConstants.MODERATION_FLAGGED)).isEqualTo(false);
 
-        // a List body yields List headers even for one element, so batch processors need no special case
-        assertThat(result.getMessage().getHeader(OpenAIConstants.MODERATION_CATEGORIES)).isInstanceOf(List.class);
-        assertThat(result.getMessage().getHeader(OpenAIConstants.MODERATION_CATEGORY_SCORES)).isInstanceOf(List.class);
-
+        // a List body is a batch even with one element, so batch processors need no special case
         @SuppressWarnings("unchecked")
-        List<Map<String, Boolean>> categories
-                = result.getMessage().getHeader(OpenAIConstants.MODERATION_CATEGORIES, List.class);
-        assertThat(categories).hasSize(1);
-        assertThat(categories.get(0)).containsEntry("hate", false);
+        List<Map<String, Object>> verdicts
+                = result.getMessage().getHeader(OpenAIConstants.MODERATION_RESULTS, List.class);
+        assertThat(verdicts).hasSize(1);
+        assertThat(verdicts.get(0)).containsEntry(OpenAIConstants.MODERATION_RESULT_FLAGGED, false);
+        assertThat(result.getMessage().getHeader(OpenAIConstants.MODERATION_CATEGORIES)).isNull();
     }
 
     @Test
-    void testStringBodyKeepsTheSingleShape() {
+    void testStringBodyExposesPlainMaps() {
         Exchange result = template.request("direct:moderation",
                 e -> e.getIn().setBody("Apache Camel is an integration framework"));
 
         assertThat(result.getMessage().getHeader(OpenAIConstants.MODERATION_CATEGORIES)).isInstanceOf(Map.class);
         assertThat(result.getMessage().getHeader(OpenAIConstants.MODERATION_CATEGORY_SCORES)).isInstanceOf(Map.class);
+
+        // the results header is always present, so a route can use one shape everywhere
+        @SuppressWarnings("unchecked")
+        List<Map<String, Object>> verdicts
+                = result.getMessage().getHeader(OpenAIConstants.MODERATION_RESULTS, List.class);
+        assertThat(verdicts).hasSize(1);
     }
 
     @Test
-    void testMissingVerdictFailsClosed() {
-        Exchange result = template.request("direct:moderation", e -> e.getIn().setBody("Provider returns no verdict"));
+    void testPartialBatchVerdictFailsClosed() {
+        List<String> inputs = List.of("Apache Camel is an integration framework", "Provider returns no verdict");
 
-        // no verdict must fail the exchange rather than leave the flag false and let the message through
+        Exchange result = template.request("direct:moderation", e -> e.getIn().setBody(inputs));
+
+        // one verdict short of the batch must fail as well, not just an empty response
         assertThat(result.getException())
                 .isInstanceOf(CamelExchangeException.class)
-                .hasMessageContaining("Moderation returned 0 result(s) for 1 input(s)");
-        assertThat(result.getMessage().getHeader(OpenAIConstants.MODERATION_FLAGGED)).isNull();
-    }
-
-    @Test
-    void testGuardRouteDoesNotLetContentThroughWithoutVerdict() {
-        Exchange result = template.request("direct:guard", e -> e.getIn().setBody("Provider returns no verdict"));
-
-        assertThat(result.getException()).isInstanceOf(CamelExchangeException.class);
-        assertThat(result.getMessage().getBody(String.class)).isNotEqualTo("accepted");
+                .hasMessageContaining("Moderation returned 1 result(s) for 2 input(s)");
+        assertThat(result.getMessage().getHeader(OpenAIConstants.MODERATION_RESULTS)).isNull();
     }
 
     @Test

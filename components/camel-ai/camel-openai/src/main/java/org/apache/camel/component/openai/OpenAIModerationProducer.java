@@ -73,7 +73,7 @@ public class OpenAIModerationProducer extends DefaultAsyncProducer {
         }
 
         boolean batch = in.getBody() instanceof List;
-        List<String> inputs = extractInputs(in);
+        List<String> inputs = extractInputs(exchange);
         if (inputs.isEmpty()) {
             throw new IllegalArgumentException("No input text provided for moderation");
         }
@@ -90,10 +90,6 @@ public class OpenAIModerationProducer extends DefaultAsyncProducer {
         ModerationCreateResponse response = getEndpoint().getClient()
                 .moderations().create(paramsBuilder.build());
 
-        if (config.isStoreFullResponse()) {
-            exchange.setProperty(OpenAIConstants.MODERATION_RESPONSE, response);
-        }
-
         // this operation is used to gate untrusted content, so a missing verdict must fail the exchange
         // instead of leaving CamelOpenAIModerationFlagged false and letting the message through
         if (response.results().size() != inputs.size()) {
@@ -103,10 +99,16 @@ public class OpenAIModerationProducer extends DefaultAsyncProducer {
                     exchange);
         }
 
-        setResponseHeaders(exchange.getMessage(), response, batch);
+        // stored only once the response is known to be complete, so a failed exchange carries no verdict
+        if (config.isStoreFullResponse()) {
+            exchange.setProperty(OpenAIConstants.MODERATION_RESPONSE, response);
+        }
+
+        setResponseHeaders(exchange.getMessage(), response, inputs, batch);
     }
 
-    private List<String> extractInputs(Message in) {
+    private List<String> extractInputs(Exchange exchange) {
+        Message in = exchange.getIn();
         Object body = in.getBody();
         List<String> inputs = new ArrayList<>();
 
@@ -121,7 +123,15 @@ public class OpenAIModerationProducer extends DefaultAsyncProducer {
                 if (item instanceof String s) {
                     inputs.add(s);
                 } else {
-                    inputs.add(String.valueOf(item));
+                    // convert as a non-String body would be, so an unconvertible type fails instead of
+                    // being moderated as its toString()
+                    String converted = exchange.getContext().getTypeConverter().tryConvertTo(String.class, exchange, item);
+                    if (converted == null) {
+                        throw new IllegalArgumentException(
+                                "Cannot convert the moderation input of type " + item.getClass().getName()
+                                                           + " to String");
+                    }
+                    inputs.add(converted);
                 }
             }
         } else if (body != null) {
@@ -131,28 +141,29 @@ public class OpenAIModerationProducer extends DefaultAsyncProducer {
         return inputs;
     }
 
-    private void setResponseHeaders(Message message, ModerationCreateResponse response, boolean batch) {
+    private void setResponseHeaders(
+            Message message, ModerationCreateResponse response, List<String> inputs, boolean batch) {
         message.setHeader(OpenAIConstants.MODERATION_RESPONSE_MODEL, response.model());
 
         List<Moderation> results = response.results();
-        boolean flagged = results.stream().anyMatch(Moderation::flagged);
-        message.setHeader(OpenAIConstants.MODERATION_FLAGGED, flagged);
+        message.setHeader(OpenAIConstants.MODERATION_FLAGGED, results.stream().anyMatch(Moderation::flagged));
 
-        List<Map<String, Boolean>> categories = new ArrayList<>(results.size());
-        List<Map<String, Double>> categoryScores = new ArrayList<>(results.size());
-        for (Moderation result : results) {
-            categories.add(toCategories(result.categories()));
-            categoryScores.add(toCategoryScores(result.categoryScores()));
+        List<Map<String, Object>> verdicts = new ArrayList<>(results.size());
+        for (int i = 0; i < results.size(); i++) {
+            Moderation result = results.get(i);
+            Map<String, Object> verdict = new LinkedHashMap<>();
+            verdict.put(OpenAIConstants.MODERATION_RESULT_INPUT, inputs.get(i));
+            verdict.put(OpenAIConstants.MODERATION_RESULT_FLAGGED, result.flagged());
+            verdict.put(OpenAIConstants.MODERATION_RESULT_CATEGORIES, toCategories(result.categories()));
+            verdict.put(OpenAIConstants.MODERATION_RESULT_CATEGORY_SCORES, toCategoryScores(result.categoryScores()));
+            verdicts.add(verdict);
         }
+        message.setHeader(OpenAIConstants.MODERATION_RESULTS, verdicts);
 
-        // the header shape follows the body shape, so a List body always yields a list of verdicts,
-        // even when it holds a single element
-        if (!batch) {
-            message.setHeader(OpenAIConstants.MODERATION_CATEGORIES, categories.get(0));
-            message.setHeader(OpenAIConstants.MODERATION_CATEGORY_SCORES, categoryScores.get(0));
-        } else {
-            message.setHeader(OpenAIConstants.MODERATION_CATEGORIES, categories);
-            message.setHeader(OpenAIConstants.MODERATION_CATEGORY_SCORES, categoryScores);
+        if (!batch && results.size() == 1) {
+            message.setHeader(OpenAIConstants.MODERATION_CATEGORIES, toCategories(results.get(0).categories()));
+            message.setHeader(OpenAIConstants.MODERATION_CATEGORY_SCORES,
+                    toCategoryScores(results.get(0).categoryScores()));
         }
     }
 

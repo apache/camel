@@ -176,6 +176,14 @@ input on a public-facing route: rejecting policy-violating content before spendi
 The message body is passed through unchanged and the verdict is exposed as headers, so the result can be used for
 content-based routing while the original content stays available to the rest of the route.
 
+IMPORTANT: Moderation is a policy filter, not a trust boundary. The verdict is probabilistic and its categories are
+defined by the provider, so it is not a substitute for authentication, authorization, schema validation or defences
+against prompt injection. The operation only reports a verdict — a flagged body keeps flowing unless the route stops
+or replaces it, as in the example below.
+
+NOTE: The operation moderates text only. The body, or each element of a list body, is converted to a `String` and sent
+as text input; the multi-modal inputs of the moderation API are not exposed.
+
 === Guarding a Route
 
 [tabs]
@@ -214,35 +222,45 @@ YAML::
 ----
 ====
 
-=== Batch Moderation
+=== Verdicts per Input
 
-A `List` body moderates every element in a single API call. `CamelOpenAIModerationFlagged` is then `true` when at least
-one element was flagged, while the category headers hold one entry per input, in the order of the input list.
-
-The header shape follows the body shape: a `String` body yields `Map` headers and a `List` body yields `List` headers,
-including a list with a single element. That way a route processing batches does not have to special-case a batch that
-happens to hold one item:
+`CamelOpenAIModerationResults` always holds one verdict per moderated input, in the order of the inputs. Each entry is
+a map with the keys `input`, `flagged`, `categories` and `categoryScores`, which makes a batch straightforward to split
+and route per item:
 
 [source,java]
 ----
 from("direct:moderate-batch")
     .to("openai:moderation")
-    .process(exchange -> {
-        List<Map<String, Boolean>> categories
-            = exchange.getMessage().getHeader(OpenAIConstants.MODERATION_CATEGORIES, List.class);
-        // categories.get(0) belongs to the first input, and so on
-    });
+    .split(header(OpenAIConstants.MODERATION_RESULTS))
+        .choice()
+            .when(simple("${body[flagged]}"))
+                .to("direct:quarantine")
+            .otherwise()
+                .to("direct:downstream")
+        .end();
 ----
 
-=== Moderation Parameters
+A `List` body moderates every element in a single API call, and `CamelOpenAIModerationFlagged` is then `true` when at
+least one element was flagged.
 
-[cols="1,1,1,3"]
-|===
-| Parameter | Type | Default | Description
+For a single input, the same categories are also exposed as plain maps in `CamelOpenAIModerationCategories` and
+`CamelOpenAIModerationCategoryScores`, which is convenient for acting on one category directly — for example routing
+anything the model is fairly confident about to human review:
 
-| `moderationModel` | String | `omni-moderation-latest` | The moderation model to use
-| `storeFullResponse` | boolean | `false` | Store the full SDK response in the `CamelOpenAIModerationResponse` exchange property
-|===
+[source,java]
+----
+from("direct:moderate")
+    .to("openai:moderation")
+    .choice()
+        .when(simple("${header.CamelOpenAIModerationCategoryScores[hate]} > 0.85"))
+            .to("direct:human-review")
+        .otherwise()
+            .to("direct:downstream")
+    .end();
+----
+
+Those two headers are not set for a list body, where `CamelOpenAIModerationResults` carries the verdicts.
 
 === Failure Modes
 
@@ -262,8 +280,9 @@ The following headers are set after a moderation request:
 | Header | Type | Description
 
 | `CamelOpenAIModerationFlagged` | Boolean | Whether the input violates the usage policies. For a batch, `true` when at least one input was flagged
-| `CamelOpenAIModerationCategories` | Map/List | Category name to violation flag. A `Map` for a single input, a `List` of maps for a batch
-| `CamelOpenAIModerationCategoryScores` | Map/List | Category name to confidence score. A `Map` for a single input, a `List` of maps for a batch
+| `CamelOpenAIModerationResults` | List | One verdict per input, in input order. Each entry holds `input`, `flagged`, `categories` and `categoryScores`
+| `CamelOpenAIModerationCategories` | Map | Category name to violation flag, for a single input. Not set for a list body
+| `CamelOpenAIModerationCategoryScores` | Map | Category name to confidence score, for a single input. Not set for a list body
 | `CamelOpenAIModerationResponseModel` | String | The model used for moderation
 |===
 

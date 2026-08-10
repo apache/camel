@@ -85,7 +85,7 @@ public class OpenAIEndpoint extends DefaultEndpoint {
     @UriPath
     @Metadata(required = true,
               description = "The operation to perform: 'chat-completion', 'responses', 'embeddings', 'tool-execution', "
-                            + "'audio-transcription', 'audio-translation', or 'audio-speech'")
+                            + "'audio-transcription', 'audio-translation', 'audio-speech', or 'moderation'")
     private OpenAIOperations operation;
 
     @UriParam

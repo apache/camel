@@ -136,14 +136,25 @@ public final class OpenAIConstants {
                             + "For a batch of inputs this is true when at least one input was flagged",
               javaType = "Boolean")
     public static final String MODERATION_FLAGGED = "CamelOpenAIModerationFlagged";
-    @Metadata(description = "The moderation categories and whether each one was violated. A Map<String, Boolean> for a "
-                            + "single input, or a List<Map<String, Boolean>> (one per input) for a batch",
-              javaType = "java.util.Map<String, Boolean> or java.util.List<java.util.Map<String, Boolean>>")
+    @Metadata(description = "One verdict per moderated input, in the order of the inputs. Each entry holds the keys "
+                            + "'input', 'flagged', 'categories' and 'categoryScores', so a batch can be split and "
+                            + "routed per item",
+              javaType = "java.util.List<java.util.Map<String, Object>>")
+    public static final String MODERATION_RESULTS = "CamelOpenAIModerationResults";
+    @Metadata(description = "The moderation categories and whether each one was violated, for a single input. "
+                            + "Not set for a list body, where 'CamelOpenAIModerationResults' carries the verdicts",
+              javaType = "java.util.Map<String, Boolean>")
     public static final String MODERATION_CATEGORIES = "CamelOpenAIModerationCategories";
-    @Metadata(description = "The moderation confidence score per category. A Map<String, Double> for a single input, "
-                            + "or a List<Map<String, Double>> (one per input) for a batch",
-              javaType = "java.util.Map<String, Double> or java.util.List<java.util.Map<String, Double>>")
+    @Metadata(description = "The moderation confidence score per category, for a single input. Not set for a list "
+                            + "body, where 'CamelOpenAIModerationResults' carries the verdicts",
+              javaType = "java.util.Map<String, Double>")
     public static final String MODERATION_CATEGORY_SCORES = "CamelOpenAIModerationCategoryScores";
+
+    // Keys of a single entry of the CamelOpenAIModerationResults header
+    public static final String MODERATION_RESULT_INPUT = "input";
+    public static final String MODERATION_RESULT_FLAGGED = "flagged";
+    public static final String MODERATION_RESULT_CATEGORIES = "categories";
+    public static final String MODERATION_RESULT_CATEGORY_SCORES = "categoryScores";
     @Metadata(description = "The moderation model used in the response", javaType = "String")
     public static final String MODERATION_RESPONSE_MODEL = "CamelOpenAIModerationResponseModel";
 
