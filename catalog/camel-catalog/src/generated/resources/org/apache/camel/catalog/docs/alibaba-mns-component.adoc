@@ -17,6 +17,10 @@
 The Alibaba Cloud Message Service (MNS) component allows you to integrate with
 https://www.alibabacloud.com/product/mns[Alibaba Cloud MNS] for queue and topic messaging.
 
+NOTE: Alibaba Cloud recommends RocketMQ for new messaging workloads. MNS remains supported,
+but evaluate https://www.alibabacloud.com/product/rocketmq[RocketMQ] or the Camel RocketMQ
+component for greenfield projects.
+
 Maven users will need to add the following dependency to their `pom.xml`
 for this component:
 
