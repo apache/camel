@@ -34,7 +34,7 @@
     <description>Receive events from ClickUp</description>
 
     <properties>
-        <firstVersion>4.22.0-SNAPSHOT</firstVersion>
+        <firstVersion>4.23.0-SNAPSHOT</firstVersion>
         <supportLevel>Preview</supportLevel>
     </properties>
 
