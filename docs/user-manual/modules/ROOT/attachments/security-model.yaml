@@ -25,7 +25,7 @@
 meta:
   title: Apache Camel Security Model
   canonical_page: docs/user-manual/modules/ROOT/pages/security-model.adoc
-  project_version: 4.22.0-SNAPSHOT
+  project_version: 4.23.0-SNAPSHOT
   status: accepted
   advisory_index: https://camel.apache.org/security/
   report_to: private-security@camel.apache.org
