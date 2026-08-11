@@ -37,7 +37,7 @@ jobs:
       github.event.workflow_run.conclusion == 'success'
     steps:
       - name: 'Download coverage artifact'
-        uses: actions/github-script@v9
+        uses: actions/github-script@3a2844b7e9c422d3c10d287c895573f7108da1b3 # v9.0.0
         with:
           script: |
             var artifacts = await github.rest.actions.listWorkflowRunArtifacts({
@@ -60,7 +60,7 @@ jobs:
 
       - name: 'Extract PR id'
         id: pr
-        uses: actions/github-script@v9
+        uses: actions/github-script@3a2844b7e9c422d3c10d287c895573f7108da1b3 # v9.0.0
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           script: |
