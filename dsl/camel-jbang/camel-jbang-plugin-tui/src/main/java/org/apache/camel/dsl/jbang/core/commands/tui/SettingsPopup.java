@@ -138,7 +138,7 @@ class SettingsPopup {
         primaryTabNames = new ArrayList<>();
         if (tabEntries != null) {
             for (TabRegistry.TabEntry entry : tabEntries) {
-                if (entry.tabIndex() != TabRegistry.TAB_MORE) {
+                if (entry.tabIndex() >= 0 && entry.tabIndex() != TabRegistry.TAB_MORE) {
                     primaryTabNames.add(entry.name());
                 }
             }
