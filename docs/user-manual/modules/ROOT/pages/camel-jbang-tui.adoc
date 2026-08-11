@@ -115,6 +115,11 @@ Once added, start your application normally and the TUI will discover it automat
 No additional configuration is needed -- the connector auto-detects on the classpath and
 registers the application with the local Camel CLI.
 
+TIP: When you open a Spring Boot project via *F2 > Open Project* and run it with *F10*,
+the TUI automatically injects the `camel-cli-connector-starter` dependency if it's not
+already in your `pom.xml`. This means the TUI can monitor the application without
+modifying your project.
+
 See xref:camel-jbang-managing.adoc[Managing Integrations] for more details.
 
 == Tabs Overview
@@ -171,7 +176,47 @@ Additional features:
 * *Format cycling* -- press *Space* to convert Camel routes between YAML, Java, and XML DSL formats
 * *Search* -- press */* to search within the source code, *n*/*N* to jump between matches
 * *Highlight* -- press *h* to highlight text occurrences
+* *Go to node* -- press *Ctrl+G* to open a fuzzy-search popup showing the route tree structure,
+  matching the diagram panel format (`route[id]`, `├─to[uri]`, etc.). Select a node to jump to its
+  source line.
 * *Resizable panels* -- drag the split border with the mouse to resize the file list and viewer
+
+=== Source Editor
+
+Press *F4* to enter edit mode for YAML routes, `application.properties`, and other local files.
+The editor provides a plain-text editing experience with features designed for working with
+Camel routes:
+
+* *Undo / Redo* -- *Ctrl+Z* to undo, *Ctrl+Y* to redo
+* *Block operations* -- *Alt+Up/Down* to move YAML list blocks up/down, *Ctrl+D* to duplicate
+  a block
+* *Delete line* -- *Ctrl+K* to delete the current line
+* *Word navigation* -- *Ctrl+Left/Right* to jump by word
+* *Smart Home* -- *Home* key alternates between content indent and column 0
+* *Tab completion* -- press *Tab* for context-aware YAML completion (EIP names, component URIs,
+  option keys and values)
+
+The editor shows *gutter change markers* -- a green background on line numbers that have been
+modified or added since the file was opened. This gives an at-a-glance view of what you've changed.
+
+Press *F7* to open a *diff view* showing all unsaved changes in a unified diff format with
+red/green background coloring (like `git diff`). Line numbers correspond to the actual source
+file positions. Press *Esc* or *F7* to return to editing.
+
+Press *F5* to save and close, or *Shift+F5* to save and continue editing.
+
+=== Validate on Save
+
+When saving, the editor validates the content before writing to disk. If validation fails, the
+file is not saved and errors are displayed in a popup. This catches mistakes early:
+
+* *YAML schema validation* -- checks the YAML DSL structure against the Camel schema
+* *Endpoint URI validation* -- validates component URIs, option names, and values against the
+  Camel catalog
+* *Simple expression validation* -- validates Simple language expressions for syntax errors,
+  detecting the correct context (predicate vs expression) from the parent EIP
+
+Validation can be toggled off in the Settings (F2 > Settings).
 
 == Activity
 
@@ -426,9 +471,10 @@ Press *F2* to open the actions menu with quick access to common operations:
 
 | Send Message | Send a test message to any route with custom body, headers, and exchange pattern.
 | Run an example... | Browse and launch built-in Camel examples from the catalog.
+| Open Project... | Open a project directory in the Source tab for browsing and editing. Run with F10.
 | Run from folder... | Run routes from a local directory.
 | Run Dev/Infra Service... | Start infrastructure services (Kafka, databases, etc.) in Docker.
-| Browse Files... | Browse the integration's source files with syntax highlighting.
+| Browse Files | Browse the integration's source files with syntax highlighting.
 | Run Doctor | Check your environment: Java version, JBang, Maven, Docker, port conflicts, disk space.
 | Reset Stats | Reset all statistics and metrics for the selected integration.
 | Stop All | Stop running integrations and/or infrastructure services.
@@ -534,7 +580,6 @@ respectively. Use *↑*/*↓* on the input line to walk previous entries. Limits
 | *F3* | Switch between integrations (when multiple running)
 | *F10* | Run menu (run, stop, restart, kill)
 | *Shift+F5* | Take screenshot
-| *Ctrl+R* | Start/stop tape recording
 | *Ctrl+C* / *Q* | Quit
 | *Esc* | Close popup / go back / return to Overview
 |===
@@ -555,7 +600,30 @@ respectively. Use *↑*/*↓* on the input line to walk previous entries. Limits
 | *h* | Highlight text
 | *n* / *N* | Next / previous search match
 | *w* | Toggle word wrap
+| *p* | Toggle plain mode (borderless)
+| *Ctrl+G* | Go to node (fuzzy search popup)
 | *Esc* / *c* | Close source viewer
+| *F4* | Enter edit mode
+|===
+
+==== Edit Mode
+
+[cols="2,5",options="header"]
+|===
+| Key | Action
+
+| *Ctrl+Z* | Undo
+| *Ctrl+Y* | Redo
+| *Alt+Up/Down* | Move YAML block up/down
+| *Ctrl+D* | Duplicate block
+| *Ctrl+K* | Delete current line
+| *Ctrl+Left/Right* | Word navigation
+| *Home* | Smart home (content indent / column 0)
+| *Tab* | Context-aware completion
+| *F7* | Diff view (unsaved changes)
+| *F5* | Save and close
+| *Shift+F5* | Save and continue editing
+| *Esc* | Cancel (discard prompt if unsaved changes)
 |===
 
 === Diagram Tab
@@ -803,9 +871,9 @@ The TUI can record terminal sessions for demos and documentation.
 
 === Live Recording
 
-Press *Ctrl+R* (or use the *F2* actions menu) to start recording your session as a `.tape` file.
-Press *Ctrl+R* again to stop. The tape captures your keystrokes with timing, producing a script
-that can be replayed or converted to an animated GIF.
+Use the *F2* actions menu and select *Start Tape Recording* to start recording your session
+as a `.tape` file. Select *Stop Tape Recording* to stop. The tape captures your keystrokes
+with timing, producing a script that can be replayed or converted to an animated GIF.
 
 === Scripted Recording
 

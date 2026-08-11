@@ -138,7 +138,7 @@ TIP: You can also install without JBang using the xref:camel-jbang-launcher.adoc
 | Automated testing with the Citrus test framework.
 
 | xref:camel-jbang-tui.adoc[Camel TUI]
-| Terminal dashboard for visualizing route topology and message flow.
+| Terminal dashboard for developing, monitoring, and debugging Camel integrations with a source editor, route topology, message tracing, and AI integration.
 
 | xref:camel-jbang-mcp.adoc[Camel MCP Server]
 | Expose the Camel catalog and tools to AI coding assistants via the Model Context Protocol.
