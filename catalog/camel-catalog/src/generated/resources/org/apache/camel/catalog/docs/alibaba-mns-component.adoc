@@ -3,7 +3,7 @@
 :shortname: alibaba-mns
 :artifactid: camel-alibaba-mns
 :description: Send and receive messages to/from Alibaba Cloud Message Service (MNS).
-:since: 4.22
+:since: 4.23
 :supportlevel: Preview
 :tabs-sync-option:
 :component-header: Both producer and consumer are supported

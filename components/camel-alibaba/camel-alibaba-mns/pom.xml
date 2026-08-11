@@ -24,11 +24,11 @@
     <parent>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-alibaba-parent</artifactId>
-        <version>4.22.0-SNAPSHOT</version>
+        <version>4.23.0-SNAPSHOT</version>
     </parent>
 
     <properties>
-        <firstVersion>4.22.0</firstVersion>
+        <firstVersion>4.23.0</firstVersion>
     </properties>
 
     <artifactId>camel-alibaba-mns</artifactId>

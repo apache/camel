@@ -33,7 +33,7 @@ import org.apache.camel.support.ScheduledPollEndpoint;
 /**
  * Send and receive messages to/from Alibaba Cloud Message Service (MNS).
  */
-@UriEndpoint(firstVersion = "4.22.0", scheme = "alibaba-mns", title = "Alibaba Message Service (MNS)",
+@UriEndpoint(firstVersion = "4.23.0", scheme = "alibaba-mns", title = "Alibaba Message Service (MNS)",
              syntax = "alibaba-mns:queueName", category = { Category.CLOUD, Category.MESSAGING },
              headersClass = MNSHeaders.class)
 public class MNSEndpoint extends ScheduledPollEndpoint {

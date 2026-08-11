@@ -32,7 +32,7 @@ import org.apache.camel.support.ScheduledPollEndpoint;
 /**
  * Alibaba Cloud Object Storage Service (OSS) component
  */
-@UriEndpoint(firstVersion = "4.22.0", scheme = "alibaba-oss", title = "Alibaba Object Storage Service (OSS)",
+@UriEndpoint(firstVersion = "4.23.0", scheme = "alibaba-oss", title = "Alibaba Object Storage Service (OSS)",
              syntax = "alibaba-oss:operation",
              category = { Category.CLOUD }, headersClass = OSSHeaders.class)
 public class OSSEndpoint extends ScheduledPollEndpoint {
