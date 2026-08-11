@@ -12599,8 +12599,8 @@ public class StaticEndpointBuilders {
      * 
      * Path parameter: operation (required)
      * The operation to perform: 'chat-completion', 'responses', 'embeddings',
-     * 'tool-execution', 'audio-transcription', 'audio-translation', or
-     * 'audio-speech'
+     * 'tool-execution', 'audio-transcription', 'audio-translation',
+     * 'audio-speech', or 'moderation'
      * There are 8 enums and the value can be one of: chat-completion,
      * responses, embeddings, tool-execution, audio-transcription,
      * audio-translation, audio-speech, moderation
@@ -12624,8 +12624,8 @@ public class StaticEndpointBuilders {
      * 
      * Path parameter: operation (required)
      * The operation to perform: 'chat-completion', 'responses', 'embeddings',
-     * 'tool-execution', 'audio-transcription', 'audio-translation', or
-     * 'audio-speech'
+     * 'tool-execution', 'audio-transcription', 'audio-translation',
+     * 'audio-speech', or 'moderation'
      * There are 8 enums and the value can be one of: chat-completion,
      * responses, embeddings, tool-execution, audio-transcription,
      * audio-translation, audio-speech, moderation

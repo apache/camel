@@ -1763,7 +1763,7 @@ public interface OpenAIEndpointBuilderFactory {
          * Path parameter: operation (required)
          * The operation to perform: 'chat-completion', 'responses',
          * 'embeddings', 'tool-execution', 'audio-transcription',
-         * 'audio-translation', or 'audio-speech'
+         * 'audio-translation', 'audio-speech', or 'moderation'
          * There are 8 enums and the value can be one of: chat-completion,
          * responses, embeddings, tool-execution, audio-transcription,
          * audio-translation, audio-speech, moderation
@@ -1788,7 +1788,7 @@ public interface OpenAIEndpointBuilderFactory {
          * Path parameter: operation (required)
          * The operation to perform: 'chat-completion', 'responses',
          * 'embeddings', 'tool-execution', 'audio-transcription',
-         * 'audio-translation', or 'audio-speech'
+         * 'audio-translation', 'audio-speech', or 'moderation'
          * There are 8 enums and the value can be one of: chat-completion,
          * responses, embeddings, tool-execution, audio-transcription,
          * audio-translation, audio-speech, moderation
@@ -2312,11 +2312,26 @@ public interface OpenAIEndpointBuilderFactory {
             return "CamelOpenAIModerationFlagged";
         }
         /**
-         * The moderation categories and whether each one was violated. A Map
-         * for a single input, or a List (one per input) for a batch.
+         * One verdict per moderated input, in the order of the inputs. Each
+         * entry holds the keys 'input', 'flagged', 'categories' and
+         * 'categoryScores', so a batch can be split and routed per item.
          * 
-         * The option is a: {@code java.util.Map<String, Boolean> or
-         * java.util.List<java.util.Map<String, Boolean>>} type.
+         * The option is a: {@code java.util.List<java.util.Map<String,
+         * Object>>} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code OpenAIModerationResults}.
+         */
+        public String openAIModerationResults() {
+            return "CamelOpenAIModerationResults";
+        }
+        /**
+         * The moderation categories and whether each one was violated, for a
+         * single input. Not set for a list body, where
+         * 'CamelOpenAIModerationResults' carries the verdicts.
+         * 
+         * The option is a: {@code java.util.Map<String, Boolean>} type.
          * 
          * Group: producer
          * 
@@ -2326,11 +2341,11 @@ public interface OpenAIEndpointBuilderFactory {
             return "CamelOpenAIModerationCategories";
         }
         /**
-         * The moderation confidence score per category. A Map for a single
-         * input, or a List (one per input) for a batch.
+         * The moderation confidence score per category, for a single input. Not
+         * set for a list body, where 'CamelOpenAIModerationResults' carries the
+         * verdicts.
          * 
-         * The option is a: {@code java.util.Map<String, Double> or
-         * java.util.List<java.util.Map<String, Double>>} type.
+         * The option is a: {@code java.util.Map<String, Double>} type.
          * 
          * Group: producer
          * 
