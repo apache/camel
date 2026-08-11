@@ -73,6 +73,36 @@ public class TimeUtilsTest {
     }
 
     @Test
+    public void testToDurationMillis() {
+        assertEquals(Duration.ofMillis(20000), TimeUtils.toDuration("20000"));
+    }
+
+    @Test
+    public void testToDurationHumanReadable() {
+        assertEquals(Duration.ofSeconds(20), TimeUtils.toDuration("20s"));
+    }
+
+    @Test
+    public void testToDurationHumanReadableMinutes() {
+        assertEquals(Duration.ofSeconds(90), TimeUtils.toDuration("1m30s"));
+    }
+
+    @Test
+    public void testToDurationISO8601() {
+        assertEquals(Duration.ofSeconds(20), TimeUtils.toDuration("PT20S"));
+    }
+
+    @Test
+    public void testToDurationISO8601Lowercase() {
+        assertEquals(Duration.ofSeconds(20), TimeUtils.toDuration("pt20s"));
+    }
+
+    @Test
+    public void testToDurationISO8601Negative() {
+        assertEquals(Duration.ofSeconds(-30), TimeUtils.toDuration("-PT30S"));
+    }
+
+    @Test
     void testDurationMatchesExpectWithDate() throws InterruptedException {
         Date startTime = new Date();
 
