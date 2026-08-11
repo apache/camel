@@ -42,6 +42,7 @@ import org.apache.hc.client5.http.io.ConnectionEndpoint;
 import org.apache.hc.client5.http.io.LeaseRequest;
 import org.apache.hc.client5.http.io.ManagedHttpClientConnection;
 import org.apache.hc.client5.http.ssl.DefaultClientTlsStrategy;
+import org.apache.hc.client5.http.ssl.HostnameVerificationPolicy;
 import org.apache.hc.client5.http.ssl.TlsSocketStrategy;
 import org.apache.hc.core5.http.*;
 import org.apache.hc.core5.http.config.Http1Config;
@@ -136,7 +137,7 @@ public class AS2ClientConnection {
             if (hostnameVerifier == null) {
                 tlsStrategy = new DefaultClientTlsStrategy(sslContext);
             } else {
-                tlsStrategy = new DefaultClientTlsStrategy(sslContext, hostnameVerifier);
+                tlsStrategy = new DefaultClientTlsStrategy(sslContext, HostnameVerificationPolicy.CLIENT, hostnameVerifier);
             }
             builder.setTlsSocketStrategy(tlsStrategy);
         }
