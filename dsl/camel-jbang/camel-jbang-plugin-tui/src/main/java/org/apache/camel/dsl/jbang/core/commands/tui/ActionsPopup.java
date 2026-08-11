@@ -426,7 +426,7 @@ class ActionsPopup {
         labels.add("Run an Example...");
         labels.add("Open Project...");
         labels.add("Run Dev/Infra Service...");
-        labels.add("Browse Files... (Ctrl+F)");
+        labels.add("Browse Files...");
         labels.add("───");
         labels.add("Run Doctor");
         labels.add("Reset Stats");
@@ -985,8 +985,8 @@ class ActionsPopup {
         items.add(ListItem.from(TuiIcons.menuItem(TuiIcons.FOLDER_OPEN, "Open Project...")));
         items.add(ListItem.from(TuiIcons.menuItem(TuiIcons.INFRA, "Run Dev/Infra Service...")));
         items.add(hasSelection
-                ? ListItem.from(TuiIcons.menuItem(TuiIcons.FOLDER, "Browse Files... (Ctrl+F)"))
-                : ListItem.from(TuiIcons.menuItem(TuiIcons.FOLDER, "Browse Files... (Ctrl+F)")).style(Style.EMPTY.dim()));
+                ? ListItem.from(TuiIcons.menuItem(TuiIcons.FOLDER, "Browse Files..."))
+                : ListItem.from(TuiIcons.menuItem(TuiIcons.FOLDER, "Browse Files...")).style(Style.EMPTY.dim()));
         items.add(ListItem.from(divider).style(Style.EMPTY.dim()));
         // Group 2: Diagnostics & Screen
         items.add(ListItem.from(TuiIcons.menuItem(TuiIcons.DOCTOR, "Run Doctor")));

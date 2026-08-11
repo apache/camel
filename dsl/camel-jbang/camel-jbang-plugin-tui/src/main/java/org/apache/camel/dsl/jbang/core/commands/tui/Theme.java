@@ -75,6 +75,9 @@ public final class Theme {
     private static final Style FALLBACK_CHANGE = Style.EMPTY.fg(Color.rgb(0xDC, 0xDC, 0xAA));
     private static final Style FALLBACK_SEARCH_MATCH = Style.EMPTY.fg(Color.BLACK).bg(Color.rgb(0xDC, 0xDC, 0xAA));
     private static final Style FALLBACK_MNEMONIC = Style.EMPTY.fg(Color.rgb(0xDC, 0xDC, 0xAA)).bold().underlined();
+    private static final Style FALLBACK_DIFF_ADDED = Style.EMPTY.fg(Color.BLACK).bg(Color.rgb(0x4E, 0xC9, 0xB0)).bold();
+    private static final Style FALLBACK_DIFF_MODIFIED = Style.EMPTY.fg(Color.BLACK).bg(Color.rgb(0x56, 0x9C, 0xD6)).bold();
+    private static final Style FALLBACK_DIFF_REMOVED = Style.EMPTY.fg(Color.LIGHT_RED);
 
     // Diagram token fallbacks (dark-theme defaults).
     private static final Color FALLBACK_DIAGRAM_BORDER = Color.rgb(0x80, 0x80, 0x80);
@@ -247,6 +250,18 @@ public final class Theme {
     /** Keyboard shortcut mnemonic in tab headers and menus (bold + underlined). */
     public static Style mnemonic() {
         return style("mnemonic", FALLBACK_MNEMONIC);
+    }
+
+    public static Style diffAdded() {
+        return style("diff-added", FALLBACK_DIFF_ADDED);
+    }
+
+    public static Style diffModified() {
+        return style("diff-modified", FALLBACK_DIFF_MODIFIED);
+    }
+
+    public static Style diffRemoved() {
+        return style("diff-removed", FALLBACK_DIFF_REMOVED);
     }
 
     /** Theme-aware markdown styles for MarkdownView headings and other elements. */

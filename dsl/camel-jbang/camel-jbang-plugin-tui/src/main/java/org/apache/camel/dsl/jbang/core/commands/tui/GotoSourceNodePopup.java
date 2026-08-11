@@ -161,50 +161,51 @@ class GotoSourceNodePopup {
         Style normalStyle = Style.EMPTY;
         Style matchStyle = Theme.label().bold();
         Style dimStyle = Style.EMPTY.dim();
+        Style treeStyle = Style.EMPTY.dim();
         Style routeStyle = Theme.label().bold();
 
-        for (YamlRouteNodeScanner.NodeEntry entry : filteredEntries) {
+        for (int idx = 0; idx < filteredEntries.size(); idx++) {
+            YamlRouteNodeScanner.NodeEntry entry = filteredEntries.get(idx);
             List<Span> spans = new ArrayList<>();
-            String indent = " ".repeat(entry.indent() * 2 + 1);
 
             if (entry.kind() == YamlRouteNodeScanner.EntryKind.ROUTE) {
-                spans.add(Span.raw(indent));
-                String routeLabel = entry.routeId() + "  " + entry.fromUri();
+                // route[routeId]  from[uri]
+                spans.add(Span.raw(" "));
+                String searchable = "route[" + entry.routeId() + "]";
+                Color routeColor = DiagramColors.getEipColor("route");
                 if (filter.hasFilter()) {
-                    int[] match = FuzzyFilter.fuzzyMatch(routeLabel, filter.filter());
+                    int[] match = FuzzyFilter.fuzzyMatch(searchable, filter.filter());
                     if (match != null) {
-                        spans.addAll(FuzzyFilter.highlightLine(routeLabel, match, routeStyle, matchStyle).spans());
+                        spans.addAll(FuzzyFilter.highlightLine(searchable, match, routeStyle, matchStyle).spans());
                     } else {
-                        spans.add(Span.styled(routeLabel, routeStyle));
+                        spans.add(Span.styled(searchable, routeStyle));
                     }
                 } else {
-                    spans.add(Span.styled(routeLabel, routeStyle));
+                    spans.add(Span.styled(searchable, routeStyle));
                 }
-                String fileName = shortFileName(entry.filePath());
-                spans.add(Span.styled("  " + fileName + ":" + (entry.lineIndex() + 1), dimStyle));
             } else {
-                spans.add(Span.raw(indent));
+                // tree prefix + type[label] matching diagram panel format
+                String prefix = buildTreePrefix(filteredEntries, idx, entry);
+                spans.add(Span.styled(prefix, treeStyle));
                 String typeTag = entry.type();
-                String typePad = " ".repeat(Math.max(0, maxTypeW - typeTag.length()));
                 Color eipColor = DiagramColors.getEipColor(SourceViewer.dashToCamelCase(typeTag));
-                spans.add(Span.styled("[" + typeTag + "]" + typePad, Style.EMPTY.fg(eipColor).bold()));
-                spans.add(Span.raw(" "));
-
-                String searchable = entry.label().isBlank() ? entry.type() : entry.label();
-                if (searchable.length() > maxLabelW && maxLabelW > 3) {
-                    searchable = searchable.substring(0, maxLabelW - 1) + "…";
+                String label = entry.label().isBlank() ? "" : entry.label();
+                if (label.length() > maxLabelW && maxLabelW > 3) {
+                    label = label.substring(0, maxLabelW - 1) + "…";
                 }
+                String searchable = typeTag + "[" + label + "]";
 
                 if (filter.hasFilter()) {
                     int[] nameMatch = FuzzyFilter.fuzzyMatch(searchable, filter.filter());
                     if (nameMatch != null) {
-                        Line hl = FuzzyFilter.highlightLine(searchable, nameMatch, normalStyle, matchStyle);
+                        Line hl = FuzzyFilter.highlightLine(searchable, nameMatch,
+                                Style.EMPTY.fg(eipColor), matchStyle);
                         spans.addAll(hl.spans());
                     } else {
-                        spans.add(Span.styled(searchable, normalStyle));
+                        spans.add(Span.styled(searchable, Style.EMPTY.fg(eipColor)));
                     }
                 } else {
-                    spans.add(Span.styled(searchable, normalStyle));
+                    spans.add(Span.styled(searchable, Style.EMPTY.fg(eipColor)));
                 }
             }
 
@@ -243,6 +244,101 @@ class GotoSourceNodePopup {
                     .position(sel != null ? sel : 0);
             frame.renderStatefulWidget(Scrollbar.builder().build(), popup, scrollbarState);
         }
+    }
+
+    private static String buildTreePrefix(
+            List<YamlRouteNodeScanner.NodeEntry> entries, int idx, YamlRouteNodeScanner.NodeEntry entry) {
+        // Normalize indent to sequential depth within the route group
+        int depth = normalizeDepth(entries, idx, entry);
+        boolean last = isLastSiblingNorm(entries, idx, entry.indent());
+        StringBuilder sb = new StringBuilder(" ");
+        for (int d = 1; d < depth; d++) {
+            sb.append(hasAncestorSiblingNorm(entries, idx, d, entries) ? "│ " : "  ");
+        }
+        if (depth > 0) {
+            sb.append(last ? "└─" : "├─");
+        }
+        return sb.toString();
+    }
+
+    private static int normalizeDepth(
+            List<YamlRouteNodeScanner.NodeEntry> entries, int idx,
+            YamlRouteNodeScanner.NodeEntry entry) {
+        // Walk backwards to find ancestor chain and count distinct indent levels
+        int depth = 1;
+        int curIndent = entry.indent();
+        for (int i = idx - 1; i >= 0; i--) {
+            YamlRouteNodeScanner.NodeEntry e = entries.get(i);
+            if (e.kind() == YamlRouteNodeScanner.EntryKind.ROUTE) {
+                break;
+            }
+            if (e.indent() < curIndent) {
+                depth++;
+                curIndent = e.indent();
+            }
+        }
+        return depth;
+    }
+
+    private static boolean isLastSiblingNorm(List<YamlRouteNodeScanner.NodeEntry> entries, int idx, int rawIndent) {
+        for (int i = idx + 1; i < entries.size(); i++) {
+            YamlRouteNodeScanner.NodeEntry e = entries.get(i);
+            if (e.kind() == YamlRouteNodeScanner.EntryKind.ROUTE) {
+                return true;
+            }
+            if (e.indent() < rawIndent) {
+                return true;
+            }
+            if (e.indent() == rawIndent) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    private static boolean hasAncestorSiblingNorm(
+            List<YamlRouteNodeScanner.NodeEntry> entries, int idx, int normDepth,
+            List<YamlRouteNodeScanner.NodeEntry> allEntries) {
+        // Find the raw indent that corresponds to normDepth for this entry's route
+        int rawIndent = findRawIndentForDepth(entries, idx, normDepth);
+        if (rawIndent < 0) {
+            return false;
+        }
+        for (int i = idx + 1; i < entries.size(); i++) {
+            YamlRouteNodeScanner.NodeEntry e = entries.get(i);
+            if (e.kind() == YamlRouteNodeScanner.EntryKind.ROUTE) {
+                return false;
+            }
+            if (e.indent() < rawIndent) {
+                return false;
+            }
+            if (e.indent() == rawIndent) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private static int findRawIndentForDepth(List<YamlRouteNodeScanner.NodeEntry> entries, int idx, int targetDepth) {
+        // Walk backwards collecting ancestor indent levels
+        java.util.List<Integer> indents = new java.util.ArrayList<>();
+        int curIndent = entries.get(idx).indent();
+        indents.add(curIndent);
+        for (int i = idx - 1; i >= 0; i--) {
+            YamlRouteNodeScanner.NodeEntry e = entries.get(i);
+            if (e.kind() == YamlRouteNodeScanner.EntryKind.ROUTE) {
+                break;
+            }
+            if (e.indent() < curIndent) {
+                indents.add(e.indent());
+                curIndent = e.indent();
+            }
+        }
+        java.util.Collections.reverse(indents);
+        if (targetDepth > 0 && targetDepth <= indents.size()) {
+            return indents.get(targetDepth - 1);
+        }
+        return -1;
     }
 
     private static String shortFileName(String filePath) {

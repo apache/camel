@@ -62,6 +62,7 @@ import dev.tamboui.widgets.scrollbar.ScrollbarState;
 import org.apache.camel.catalog.CamelCatalog;
 import org.apache.camel.catalog.ConfigurationPropertiesValidationResult;
 import org.apache.camel.catalog.EndpointValidationResult;
+import org.apache.camel.catalog.LanguageValidationResult;
 import org.apache.camel.dsl.jbang.core.common.CatalogLoader;
 import org.apache.camel.tooling.model.BaseOptionModel;
 import org.apache.camel.tooling.model.ComponentModel;
@@ -78,6 +79,7 @@ import org.apache.camel.util.json.JsonObject;
  */
 class SourceTab extends AbstractTab {
 
+    private String lastSeenPid;
     private Path rootDir;
     private Path currentDir;
     private final ListState listState = new ListState();
@@ -160,11 +162,18 @@ class SourceTab extends AbstractTab {
 
     @Override
     public void onTabSelected() {
-        refreshFiles();
+        if (ctx.selectedPid != null && !ctx.selectedPid.equals(lastSeenPid)) {
+            lastSeenPid = ctx.selectedPid;
+            onIntegrationChanged();
+        } else {
+            lastSeenPid = ctx.selectedPid;
+            refreshFiles();
+        }
     }
 
     @Override
     public void onIntegrationChanged() {
+        lastSeenPid = ctx.selectedPid;
         rootDir = null;
         currentDir = null;
         entries = Collections.emptyList();
@@ -290,6 +299,14 @@ class SourceTab extends AbstractTab {
     @Override
     public boolean handleEscape() {
         // Esc is routed here from CamelMonitor before tab key handling — cancel overlays locally
+        if (gotoRoutePopup.isVisible()) {
+            gotoRoutePopup.close();
+            return true;
+        }
+        if (gotoSourceNodePopup.isVisible()) {
+            gotoSourceNodePopup.close();
+            return true;
+        }
         if (sourceViewer.cancelEdit()) {
             return true;
         }
@@ -318,8 +335,14 @@ class SourceTab extends AbstractTab {
     public void render(Frame frame, Rect area) {
         sourceViewer.setValidateOnSave(ctx.validateOnSave);
         if (ctx.selectedPid == null) {
+            lastSeenPid = null;
             renderNoSelection(frame, area);
             return;
+        }
+        // Detect PID change (e.g. after restart) and refresh stale file references
+        if (!ctx.selectedPid.equals(lastSeenPid)) {
+            lastSeenPid = ctx.selectedPid;
+            onIntegrationChanged();
         }
 
         if (sourceViewer.isPlainMode() && sourceViewer.isVisible()) {
@@ -415,6 +438,16 @@ class SourceTab extends AbstractTab {
                 - **w** — toggle word wrap
                 - **p** — toggle plain mode (hides line numbers, borders, and file panel for easy copy/paste)
                 - **Esc/c** — close source viewer
+
+                ## Edit Mode (Shortcuts)
+                - **Ctrl+Z** — undo
+                - **Ctrl+Y / Ctrl+Shift+Z** — redo
+                - **Alt+Up / Alt+Down** — move YAML list block up/down
+                - **Ctrl+D** — duplicate current block
+                - **Ctrl+K** — delete current line
+                - **Ctrl+Left / Ctrl+Right** — word navigation
+                - **Home** — smart home (content indent, then column 0)
+                - **F7** — show diff of unsaved changes
 
                 ## Edit Mode (Tab Completion)
                 Press **F4** to enter edit mode, then **Tab** for context-aware completion:
@@ -645,6 +678,7 @@ class SourceTab extends AbstractTab {
                         sourceViewer.setAutocompleteProvider(this::provideYamlKeyCompletions);
                         sourceViewer.setAutocompleteValueProvider(this::provideYamlValueCompletions);
                         sourceViewer.setEndpointValidator(this::validateYamlEndpoints);
+                        sourceViewer.setSimpleValidator(this::validateYamlSimple);
                         sourceViewer.setListItemNodeChecker(this::isListChildrenNode);
                     } else {
                         sourceViewer.setAutocompleteProvider(null);
@@ -1680,6 +1714,115 @@ class SourceTab extends AbstractTab {
         return doValidateYamlEndpoints(content, catalog);
     }
 
+    private List<String> validateYamlSimple(String content) {
+        CamelCatalog catalog = getCatalog();
+        if (catalog == null) {
+            return List.of();
+        }
+        return doValidateYamlSimple(content, catalog);
+    }
+
+    private static final Set<String> PREDICATE_EIPS = Set.of(
+            "filter", "when", "validate", "onWhen", "on-when",
+            "handled", "continued", "retryWhile", "retry-while",
+            "completionPredicate", "completion-predicate",
+            "completion", "loopDoWhile", "loop-do-while");
+
+    static List<String> doValidateYamlSimple(String content, CamelCatalog catalog) {
+        List<String> errors = new ArrayList<>();
+        String[] lines = content.split("\n", -1);
+
+        for (int i = 0; i < lines.length; i++) {
+            String line = lines[i];
+            if (line.isBlank()) {
+                continue;
+            }
+            String trimmed = line.trim();
+            if (trimmed.startsWith("#")) {
+                continue;
+            }
+
+            String simpleText = null;
+            int lineNum = i + 1;
+            int lineIndent = countLeadingSpaces(line);
+            boolean isLogMessage = false;
+
+            // Strip YAML list prefix for matching
+            String key = trimmed.startsWith("- ") ? trimmed.substring(2) : trimmed;
+
+            // Match "simple: <value>" (inline shorthand)
+            if (key.startsWith("simple:") && !key.equals("simple:")) {
+                simpleText = extractYamlValue(key, "simple");
+            }
+            // Match "simple:" followed by "expression: <value>" on next line
+            else if (key.equals("simple:")) {
+                for (int j = i + 1; j < lines.length; j++) {
+                    String next = lines[j].trim();
+                    if (next.isBlank()) {
+                        continue;
+                    }
+                    if (next.startsWith("expression:")) {
+                        simpleText = extractYamlValue(next, "expression");
+                        lineNum = j + 1;
+                    }
+                    break;
+                }
+            }
+            // Match "message: <value>" under log: EIP
+            else if (key.startsWith("message:") && !key.equals("message:")) {
+                String parentEip = findParentEip(lines, i, lineIndent);
+                if ("log".equals(parentEip)) {
+                    simpleText = extractYamlValue(key, "message");
+                    isLogMessage = true;
+                }
+            }
+
+            if (simpleText == null || simpleText.isEmpty()) {
+                continue;
+            }
+            // Skip placeholder-only expressions
+            if (simpleText.startsWith("{{") && simpleText.endsWith("}}")) {
+                continue;
+            }
+
+            // Determine predicate vs expression context
+            boolean predicate = false;
+            if (!isLogMessage) {
+                String parentEip = findParentEip(lines, i, lineIndent);
+                predicate = parentEip != null && PREDICATE_EIPS.contains(parentEip);
+            }
+
+            try {
+                LanguageValidationResult result = predicate
+                        ? catalog.validateLanguagePredicate(null, "simple", simpleText)
+                        : catalog.validateLanguageExpression(null, "simple", simpleText);
+                if (!result.isSuccess()) {
+                    String error = result.getShortError() != null ? result.getShortError() : result.getError();
+                    if (error != null) {
+                        errors.add("Line " + lineNum + ": Simple syntax error: " + error);
+                    }
+                }
+            } catch (Exception e) {
+                // best effort
+            }
+        }
+        return errors;
+    }
+
+    private static String findParentEip(String[] lines, int lineIdx, int lineIndent) {
+        for (int j = lineIdx - 1; j >= 0; j--) {
+            String prev = lines[j];
+            if (prev.isBlank()) {
+                continue;
+            }
+            int prevIndent = countLeadingSpaces(prev);
+            if (prevIndent < lineIndent) {
+                return extractEipFromLine(prev.trim());
+            }
+        }
+        return null;
+    }
+
     static List<String> doValidateYamlEndpoints(String content, CamelCatalog catalog) {
         List<String> errors = new ArrayList<>();
         String[] lines = content.split("\n", -1);
@@ -2410,6 +2553,7 @@ class SourceTab extends AbstractTab {
                         sourceViewer.setAutocompleteProvider(this::provideYamlKeyCompletions);
                         sourceViewer.setAutocompleteValueProvider(this::provideYamlValueCompletions);
                         sourceViewer.setEndpointValidator(this::validateYamlEndpoints);
+                        sourceViewer.setSimpleValidator(this::validateYamlSimple);
                         sourceViewer.setListItemNodeChecker(this::isListChildrenNode);
                     } else {
                         sourceViewer.setAutocompleteProvider(null);

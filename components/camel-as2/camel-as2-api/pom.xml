@@ -94,9 +94,9 @@
         </dependency>
         <!-- added for binary content transfer encoding test because Camel AS2 client doesn't support binary currently -->
         <dependency>
-            <groupId>com.helger.as2</groupId>
-            <artifactId>as2-lib</artifactId>
-            <version>${as2-lib-version}</version>
+            <groupId>com.helger.phase2</groupId>
+            <artifactId>phase2-lib</artifactId>
+            <version>${phase2-lib-version}</version>
             <scope>test</scope>
         </dependency>
     </dependencies>

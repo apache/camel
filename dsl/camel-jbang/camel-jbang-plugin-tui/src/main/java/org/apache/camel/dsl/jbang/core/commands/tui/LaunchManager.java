@@ -203,6 +203,10 @@ class LaunchManager {
             }
             // Translate Camel JBang args to Maven-compatible args
             cmd.addAll(translateArgsForMaven(extraArgs, projectType));
+            // Inject camel-cli-connector if not already in the project
+            if ("spring-boot".equals(projectType)) {
+                injectCliConnectorIfMissing(dir, cmd);
+            }
             Path outputFile = createSecureTempFile("camel-maven-", ".log");
             outputFile.toFile().deleteOnExit();
             ProcessBuilder pb = new ProcessBuilder(cmd);
@@ -214,6 +218,92 @@ class LaunchManager {
             notify("Starting: " + displayName + " (mvn " + cmd.get(1) + ")", false);
         } catch (Exception e) {
             notify("Failed to start Maven project: " + e.getMessage(), true);
+        }
+    }
+
+    private void injectCliConnectorIfMissing(String dir, List<String> cmd) {
+        try {
+            Path pomFile = Path.of(dir, "pom.xml");
+            if (!Files.isRegularFile(pomFile)) {
+                return;
+            }
+            String pomContent = Files.readString(pomFile);
+            if (pomContent.contains("camel-cli-connector")) {
+                return;
+            }
+            // Add cli-connector-starter dependency (version managed by BOM)
+            String dep = "\n        <dependency>\n"
+                         + "            <groupId>org.apache.camel.springboot</groupId>\n"
+                         + "            <artifactId>camel-cli-connector-starter</artifactId>\n"
+                         + "        </dependency>";
+            // Find the project-level </dependencies> (not inside dependencyManagement or plugins)
+            int insertIdx = findProjectDependenciesEnd(pomContent);
+            if (insertIdx < 0) {
+                return;
+            }
+            String modified = pomContent.substring(0, insertIdx) + dep + "\n    " + pomContent.substring(insertIdx);
+            // Write temp pom in the project dir so Maven can find sources
+            Path tempPom = Path.of(dir, ".camel-tui-pom.xml");
+            tempPom.toFile().deleteOnExit();
+            Files.writeString(tempPom, modified);
+            cmd.add("-f");
+            cmd.add(tempPom.getFileName().toString());
+        } catch (Exception e) {
+            // best effort — don't fail the launch
+        }
+    }
+
+    private static int findProjectDependenciesEnd(String pom) {
+        // Find <dependencies> that is a direct child of <project>,
+        // not nested inside <dependencyManagement>, <plugin>, or <profile>
+        int dmStart = pom.indexOf("<dependencyManagement>");
+        int dmEnd = dmStart >= 0 ? pom.indexOf("</dependencyManagement>", dmStart) : -1;
+        int buildStart = pom.indexOf("<build>");
+
+        int searchFrom = 0;
+        while (true) {
+            int depStart = pom.indexOf("<dependencies>", searchFrom);
+            if (depStart < 0) {
+                return -1;
+            }
+            // Skip if inside <dependencyManagement>
+            if (dmStart >= 0 && depStart > dmStart && (dmEnd < 0 || depStart < dmEnd)) {
+                searchFrom = dmEnd > 0 ? dmEnd : depStart + 14;
+                continue;
+            }
+            // Skip if inside <build> (plugins can have dependencies)
+            if (buildStart >= 0 && depStart > buildStart) {
+                searchFrom = depStart + 14;
+                continue;
+            }
+            int depEnd = pom.indexOf("</dependencies>", depStart);
+            return depEnd >= 0 ? depEnd : -1;
+        }
+    }
+
+    private static Path writeSpringBootLogbackConfig() {
+        try {
+            Path camelDir = Path.of(System.getProperty("user.home"), ".camel");
+            Files.createDirectories(camelDir);
+            Path logbackFile = camelDir.resolve(".tui-logback-spring-boot.xml");
+            String config = """
+                    <?xml version="1.0" encoding="UTF-8"?>
+                    <configuration>
+                        <include resource="org/springframework/boot/logging/logback/defaults.xml"/>
+                        <include resource="org/springframework/boot/logging/logback/console-appender.xml"/>
+                        <include resource="org/springframework/boot/logging/logback/file-appender.xml"/>
+                        <property name="LOG_FILE" value="${user.home}${file.separator}.camel${file.separator}${PID}.log"/>
+                        <property name="FILE_LOG_PATTERN" value="${CONSOLE_LOG_PATTERN}"/>
+                        <root level="INFO">
+                            <appender-ref ref="CONSOLE"/>
+                            <appender-ref ref="FILE"/>
+                        </root>
+                    </configuration>
+                    """;
+            Files.writeString(logbackFile, config);
+            return logbackFile;
+        } catch (Exception e) {
+            return null;
         }
     }
 
@@ -250,7 +340,10 @@ class LaunchManager {
         List<String> mvnArgs = new ArrayList<>();
         StringBuilder jvmArgs = new StringBuilder();
         if ("spring-boot".equals(projectType)) {
-            jvmArgs.append("-Dlogging.config=classpath:logback-camel-jbang.xml");
+            Path logbackFile = writeSpringBootLogbackConfig();
+            if (logbackFile != null) {
+                jvmArgs.append("-Dlogging.config=file:").append(logbackFile);
+            }
         }
         for (String arg : extraArgs) {
             if (arg.startsWith("--prop=")) {
