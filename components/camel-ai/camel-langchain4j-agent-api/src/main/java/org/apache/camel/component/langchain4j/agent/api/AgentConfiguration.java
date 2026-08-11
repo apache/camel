@@ -519,7 +519,7 @@ public class AgentConfiguration {
      * executor without mutating registry-held configuration beans.
      *
      * @return a new configuration instance with the same settings
-     * @since  4.22
+     * @since  4.23
      */
     public AgentConfiguration duplicate() {
         AgentConfiguration copy = new AgentConfiguration();

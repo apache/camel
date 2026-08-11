@@ -70,7 +70,7 @@ public abstract class AbstractAgent<S> implements Agent {
      * Returns the LangChain4j chat model configured for this agent.
      *
      * @return the chat model from agent configuration
-     * @since  4.22
+     * @since  4.23
      */
     public ChatModel getChatModel() {
         return configuration.getChatModel();
@@ -81,7 +81,7 @@ public abstract class AbstractAgent<S> implements Agent {
      *
      * @param  agent the abstract agent, may be {@code null}
      * @return       the filter predicate, or {@code null} when the agent is {@code null} or no filter is configured
-     * @since        4.22
+     * @since        4.23
      */
     public static BiPredicate<McpClient, ToolSpecification> mcpToolProviderFilter(AbstractAgent<?> agent) {
         if (agent == null) {

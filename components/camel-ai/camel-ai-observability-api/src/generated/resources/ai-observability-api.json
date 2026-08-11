@@ -5,10 +5,10 @@
     "title": "Ai Observability Api",
     "description": "Lightweight GenAI observability API for Camel AI producers",
     "deprecated": false,
-    "firstVersion": "4.22.0",
+    "firstVersion": "4.23.0",
     "supportLevel": "Preview",
     "groupId": "org.apache.camel",
     "artifactId": "camel-ai-observability-api",
-    "version": "4.22.0-SNAPSHOT"
+    "version": "4.23.0-SNAPSHOT"
   }
 }
