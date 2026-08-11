@@ -19,13 +19,18 @@ package org.apache.camel.component.alibaba.oss;
 import java.io.IOException;
 import java.io.InputStream;
 
+import com.aliyun.sdk.service.oss2.OSSClient;
+import com.aliyun.sdk.service.oss2.OSSClientBuilder;
+import com.aliyun.sdk.service.oss2.credentials.StaticCredentialsProvider;
 import com.aliyun.sdk.service.oss2.models.GetObjectResult;
 import com.aliyun.sdk.service.oss2.utils.IOUtils;
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.apache.camel.RuntimeCamelException;
+import org.apache.camel.component.alibaba.common.models.ServiceKeys;
 import org.apache.camel.component.alibaba.oss.constants.OSSConstants;
 import org.apache.camel.component.alibaba.oss.constants.OSSHeaders;
+import org.apache.camel.util.ObjectHelper;
 
 public final class OSSUtils {
     private OSSUtils() {
@@ -82,5 +87,50 @@ public final class OSSUtils {
 
     public static RuntimeCamelException wrapIOException(IOException e) {
         return new RuntimeCamelException(e);
+    }
+
+    public static OSSClient createClient(OSSEndpoint endpoint) {
+        String accessKey = resolveAccessKey(endpoint);
+        String secretKey = resolveSecretKey(endpoint);
+        String region = endpoint.getRegion();
+        String endpointUrl = endpoint.getEndpoint();
+
+        if (ObjectHelper.isEmpty(region) && ObjectHelper.isEmpty(endpointUrl)) {
+            throw new IllegalArgumentException("Region/endpoint not found");
+        }
+
+        OSSClientBuilder clientBuilder = OSSClient.newBuilder()
+                .credentialsProvider(new StaticCredentialsProvider(accessKey, secretKey));
+
+        if (ObjectHelper.isNotEmpty(region)) {
+            clientBuilder.region(region);
+        }
+        if (ObjectHelper.isNotEmpty(endpointUrl)) {
+            clientBuilder.endpoint(endpointUrl);
+        }
+
+        return clientBuilder.build();
+    }
+
+    private static String resolveAccessKey(OSSEndpoint endpoint) {
+        ServiceKeys serviceKeys = endpoint.getServiceKeys();
+        if (serviceKeys != null) {
+            return serviceKeys.getAccessKey();
+        }
+        if (ObjectHelper.isEmpty(endpoint.getAccessKey())) {
+            throw new IllegalArgumentException("Authentication parameter 'access key (AK)' not found");
+        }
+        return endpoint.getAccessKey();
+    }
+
+    private static String resolveSecretKey(OSSEndpoint endpoint) {
+        ServiceKeys serviceKeys = endpoint.getServiceKeys();
+        if (serviceKeys != null) {
+            return serviceKeys.getSecretKey();
+        }
+        if (ObjectHelper.isEmpty(endpoint.getSecretKey())) {
+            throw new IllegalArgumentException("Authentication parameter 'secret key (SK)' not found");
+        }
+        return endpoint.getSecretKey();
     }
 }

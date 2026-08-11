@@ -82,7 +82,13 @@
         <avro-ipc-jetty-version>1.12.1</avro-ipc-jetty-version>
         <avro-ipc-netty-version>1.12.1</avro-ipc-netty-version>
         <awaitility-version>4.3.0</awaitility-version>
+<<<<<<< HEAD
         <aws-java-sdk2-version>2.51.3</aws-java-sdk2-version>
+=======
+        <alibabacloud-oss-version>0.4.1</alibabacloud-oss-version>
+        <aliyun-sdk-mns-version>2.0.0</aliyun-sdk-mns-version>
+        <aws-java-sdk2-version>2.50.3</aws-java-sdk2-version>
+>>>>>>> da84d76e898 (CAMEL-24373: Address PR review feedback for camel-alibaba phase 1)
         <azure-sdk-bom-version>1.3.3</azure-sdk-bom-version>
         <azure-storage-blob-changefeed-version>12.0.0-beta.39</azure-storage-blob-changefeed-version>
         <beanio-version>3.2.1</beanio-version>

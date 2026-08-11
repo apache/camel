@@ -88,8 +88,8 @@ class GetObjectTest extends CamelTestSupport {
 
         mock.assertIsSatisfied();
 
-        assertThat(responseExchange.getIn().getHeader(Exchange.CONTENT_LENGTH)).isEqualTo(9L);
-        assertThat(responseExchange.getIn().getHeader(Exchange.CONTENT_TYPE)).isEqualTo("text/plain");
+        assertThat(responseExchange.getIn().getHeader(OSSHeaders.CONTENT_LENGTH)).isEqualTo(9L);
+        assertThat(responseExchange.getIn().getHeader(OSSHeaders.CONTENT_TYPE)).isEqualTo("text/plain");
         assertThat(responseExchange.getIn().getHeader(OSSHeaders.ETAG)).isEqualTo("eb733a00c0c9d336e65691a37ab54293");
         assertThat(responseExchange.getIn().getHeader(OSSHeaders.CONTENT_MD5)).isEqualTo("63M6AMDJ0zbmVpGjerVCkw==");
         assertThat(responseExchange.getIn().getHeader(OSSHeaders.LAST_MODIFIED)).isEqualTo("2024-01-01T00:00:00Z");

@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.alibaba.common;
+package org.apache.camel.component.alibaba.oss;
 
 import com.aliyun.sdk.service.oss2.OSSClient;
 import org.junit.jupiter.api.Test;
@@ -22,33 +22,50 @@ import org.junit.jupiter.api.Test;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
-class AlibabaClientBuilderUtilTest {
+class OSSUtilsTest {
 
     @Test
-    void createOssClientWithRegion() throws Exception {
-        try (OSSClient client = AlibabaClientBuilderUtil.createOssClient("ak", "sk", "cn-hangzhou", null)) {
+    void createClientWithRegion() throws Exception {
+        OSSEndpoint endpoint = new OSSEndpoint();
+        endpoint.setAccessKey("ak");
+        endpoint.setSecretKey("sk");
+        endpoint.setRegion("cn-hangzhou");
+
+        try (OSSClient client = OSSUtils.createClient(endpoint)) {
             assertThat(client).isNotNull();
         }
     }
 
     @Test
-    void createOssClientWithEndpoint() throws Exception {
-        try (OSSClient client = AlibabaClientBuilderUtil.createOssClient("ak", "sk", null,
-                "https://oss-cn-hangzhou.aliyuncs.com")) {
+    void createClientWithEndpoint() throws Exception {
+        OSSEndpoint endpoint = new OSSEndpoint();
+        endpoint.setAccessKey("ak");
+        endpoint.setSecretKey("sk");
+        endpoint.setEndpoint("https://oss-cn-hangzhou.aliyuncs.com");
+
+        try (OSSClient client = OSSUtils.createClient(endpoint)) {
             assertThat(client).isNotNull();
         }
     }
 
     @Test
-    void createOssClientMissingAccessKey() {
-        assertThatThrownBy(() -> AlibabaClientBuilderUtil.createOssClient(null, "sk", "cn-hangzhou", null))
+    void createClientMissingAccessKey() {
+        OSSEndpoint endpoint = new OSSEndpoint();
+        endpoint.setSecretKey("sk");
+        endpoint.setRegion("cn-hangzhou");
+
+        assertThatThrownBy(() -> OSSUtils.createClient(endpoint))
                 .isInstanceOf(IllegalArgumentException.class)
                 .hasMessageContaining("access key");
     }
 
     @Test
-    void createOssClientMissingRegionAndEndpoint() {
-        assertThatThrownBy(() -> AlibabaClientBuilderUtil.createOssClient("ak", "sk", null, null))
+    void createClientMissingRegionAndEndpoint() {
+        OSSEndpoint endpoint = new OSSEndpoint();
+        endpoint.setAccessKey("ak");
+        endpoint.setSecretKey("sk");
+
+        assertThatThrownBy(() -> OSSUtils.createClient(endpoint))
                 .isInstanceOf(IllegalArgumentException.class)
                 .hasMessageContaining("Region/endpoint");
     }

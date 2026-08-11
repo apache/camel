@@ -25,6 +25,7 @@ import org.apache.camel.support.HealthCheckComponent;
 @Component("alibaba-oss")
 public class OSSComponent extends HealthCheckComponent {
 
+    @Override
     protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
         Endpoint endpoint = new OSSEndpoint(uri, remaining, this);
         setProperties(endpoint, parameters);

@@ -36,9 +36,9 @@ public final class OSSHeaders {
     @Metadata(label = "consumer", description = "Shows whether the object is a `file` or a `folder`", javaType = "String")
     public static final String OBJECT_TYPE = "CamelAlibabaOssObjectType";
     @Metadata(label = "consumer", description = "The size of the object body in bytes", javaType = "Long")
-    public static final String CONTENT_LENGTH = Exchange.CONTENT_LENGTH;
+    public static final String CONTENT_LENGTH = "CamelAlibabaOssContentLength";
     @Metadata(label = "consumer", description = "The type of content stored in the object", javaType = "String")
-    public static final String CONTENT_TYPE = Exchange.CONTENT_TYPE;
+    public static final String CONTENT_TYPE = "CamelAlibabaOssContentType";
     @Metadata(label = "consumer", description = "Name of the object with which the operation is to be performed",
               javaType = "String")
     public static final String FILE_NAME = Exchange.FILE_NAME;

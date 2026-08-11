@@ -21,7 +21,6 @@ import org.apache.camel.Category;
 import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
-import org.apache.camel.component.alibaba.common.AlibabaClientBuilderUtil;
 import org.apache.camel.component.alibaba.common.models.ServiceKeys;
 import org.apache.camel.component.alibaba.oss.constants.OSSHeaders;
 import org.apache.camel.spi.Metadata;
@@ -29,7 +28,6 @@ import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriPath;
 import org.apache.camel.support.ScheduledPollEndpoint;
-import org.apache.camel.util.ObjectHelper;
 
 /**
  * Alibaba Cloud Object Storage Service (OSS) component
@@ -91,6 +89,8 @@ public class OSSEndpoint extends ScheduledPollEndpoint {
     @Metadata(autowired = true)
     private OSSClient ossClient;
 
+    private boolean autowiredOssClient;
+
     public OSSEndpoint() {
     }
 
@@ -99,10 +99,12 @@ public class OSSEndpoint extends ScheduledPollEndpoint {
         this.operation = operation;
     }
 
+    @Override
     public Producer createProducer() throws Exception {
         return new OSSProducer(this);
     }
 
+    @Override
     public Consumer createConsumer(Processor processor) throws Exception {
         OSSConsumer consumer = new OSSConsumer(this, processor);
         configureConsumer(consumer);
@@ -118,20 +120,17 @@ public class OSSEndpoint extends ScheduledPollEndpoint {
             return ossClient;
         }
 
-        if (ObjectHelper.isEmpty(getServiceKeys()) && ObjectHelper.isEmpty(getAccessKey())) {
-            throw new IllegalArgumentException("Authentication parameter 'access key (AK)' not found");
-        }
-        if (ObjectHelper.isEmpty(getServiceKeys()) && ObjectHelper.isEmpty(getSecretKey())) {
-            throw new IllegalArgumentException("Authentication parameter 'secret key (SK)' not found");
-        }
-        if (ObjectHelper.isEmpty(getRegion()) && ObjectHelper.isEmpty(getEndpoint())) {
-            throw new IllegalArgumentException("Region/endpoint not found");
-        }
+        ossClient = OSSUtils.createClient(this);
+        return ossClient;
+    }
 
-        String auth = getServiceKeys() != null ? getServiceKeys().getAccessKey() : getAccessKey();
-        String secret = getServiceKeys() != null ? getServiceKeys().getSecretKey() : getSecretKey();
-
-        return AlibabaClientBuilderUtil.createOssClient(auth, secret, region, endpoint);
+    @Override
+    protected void doStop() throws Exception {
+        if (ossClient != null && !autowiredOssClient) {
+            ossClient.close();
+            ossClient = null;
+        }
+        super.doStop();
     }
 
     public String getOperation() {
@@ -236,5 +235,6 @@ public class OSSEndpoint extends ScheduledPollEndpoint {
 
     public void setOssClient(OSSClient ossClient) {
         this.ossClient = ossClient;
+        this.autowiredOssClient = ossClient != null;
     }
 }
