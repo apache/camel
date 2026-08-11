@@ -42,7 +42,7 @@ import org.slf4j.LoggerFactory;
  * committed with @Disabled annotation due to the test can bring dependency on 3rd party resource.
  */
 @Disabled("Run this test manually")
-public class MendelsonSslEndpointManualTest extends AbstractAS2ITSupport {
+class MendelsonSslEndpointManualTest extends AbstractAS2ITSupport {
 
     private static final Logger LOG = LoggerFactory.getLogger(MendelsonSslEndpointManualTest.class);
     private static HostnameVerifier hostnameVerifier;
@@ -51,7 +51,7 @@ public class MendelsonSslEndpointManualTest extends AbstractAS2ITSupport {
     private static final Properties props = new Properties();
 
     @BeforeAll
-    public static void setupTest() {
+    static void setupTest() {
         TestSupport.loadExternalPropertiesQuietly(props, MendelsonSslEndpointManualTest.class.getClassLoader(),
                 "test-server.properties");
 
@@ -66,7 +66,7 @@ public class MendelsonSslEndpointManualTest extends AbstractAS2ITSupport {
     }
 
     @Test
-    public void testCreateEndpointAndSendViaHTTPS() throws Exception {
+    void testCreateEndpointAndSendViaHTTPS() throws Exception {
         CamelContext camelContext = new DefaultCamelContext();
         camelContext.start();
 
@@ -89,7 +89,6 @@ public class MendelsonSslEndpointManualTest extends AbstractAS2ITSupport {
         endpointConfiguration.setAs2From(props.getProperty("as2.as2from"));
         endpointConfiguration.setFrom(props.getProperty("as2.from"));
         endpointConfiguration.setSubject(props.getProperty("as2.subject"));
-        endpointConfiguration.setSigningAlgorithm(AS2SignatureAlgorithm.MD2WITHRSA);
         endpointConfiguration.setEdiMessageTransferEncoding(props.getProperty("as2.transfer.encoding"));
         endpointConfiguration.setAttachedFileName(props.getProperty("as2.attached.filename"));
 
@@ -113,10 +112,17 @@ public class MendelsonSslEndpointManualTest extends AbstractAS2ITSupport {
                 = camelContext.createProducerTemplate().request(endpoint,
                         exchange -> exchange.getIn().setBody(props.getProperty("as2.edi.message")));
         Throwable cause = out.getException();
-        Assertions.assertNull(cause);
+        Assertions.assertNull(cause, () -> "AS2 send failed; root cause: " + getRootCause(cause));
         LOG.debug(
                 "Sending done. If you used Mendelson settings for connection, " +
                   "you can check your message in http://testas2.mendelson-e-c.com:8080/webas2/ " +
                   "Login guest, password guest");
+    }
+
+    private static Throwable getRootCause(Throwable t) {
+        while (t.getCause() != null) {
+            t = t.getCause();
+        }
+        return t;
     }
 }
