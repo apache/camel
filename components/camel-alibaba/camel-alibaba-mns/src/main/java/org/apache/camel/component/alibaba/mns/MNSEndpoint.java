@@ -84,6 +84,8 @@ public class MNSEndpoint extends ScheduledPollEndpoint {
     @Metadata(autowired = true)
     private MNSClient mnsClient;
 
+    private boolean autowiredMnsClient;
+
     private boolean topicEndpoint;
 
     public MNSEndpoint() {
@@ -114,6 +116,15 @@ public class MNSEndpoint extends ScheduledPollEndpoint {
             return;
         }
         mnsClient = MNSUtils.createClient(this);
+    }
+
+    @Override
+    protected void doStop() throws Exception {
+        if (mnsClient != null && !autowiredMnsClient) {
+            mnsClient.close();
+            mnsClient = null;
+        }
+        super.doStop();
     }
 
     public boolean isTopicEndpoint() {
@@ -218,6 +229,7 @@ public class MNSEndpoint extends ScheduledPollEndpoint {
 
     public void setMnsClient(MNSClient mnsClient) {
         this.mnsClient = mnsClient;
+        this.autowiredMnsClient = mnsClient != null;
     }
 
     public String resolveOperation() {

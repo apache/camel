@@ -113,24 +113,24 @@ public final class OSSUtils {
     }
 
     private static String resolveAccessKey(OSSEndpoint endpoint) {
+        if (ObjectHelper.isNotEmpty(endpoint.getAccessKey())) {
+            return endpoint.getAccessKey();
+        }
         ServiceKeys serviceKeys = endpoint.getServiceKeys();
-        if (serviceKeys != null) {
+        if (serviceKeys != null && ObjectHelper.isNotEmpty(serviceKeys.getAccessKey())) {
             return serviceKeys.getAccessKey();
         }
-        if (ObjectHelper.isEmpty(endpoint.getAccessKey())) {
-            throw new IllegalArgumentException("Authentication parameter 'access key (AK)' not found");
-        }
-        return endpoint.getAccessKey();
+        throw new IllegalArgumentException("Authentication parameter 'access key (AK)' not found");
     }
 
     private static String resolveSecretKey(OSSEndpoint endpoint) {
+        if (ObjectHelper.isNotEmpty(endpoint.getSecretKey())) {
+            return endpoint.getSecretKey();
+        }
         ServiceKeys serviceKeys = endpoint.getServiceKeys();
-        if (serviceKeys != null) {
+        if (serviceKeys != null && ObjectHelper.isNotEmpty(serviceKeys.getSecretKey())) {
             return serviceKeys.getSecretKey();
         }
-        if (ObjectHelper.isEmpty(endpoint.getSecretKey())) {
-            throw new IllegalArgumentException("Authentication parameter 'secret key (SK)' not found");
-        }
-        return endpoint.getSecretKey();
+        throw new IllegalArgumentException("Authentication parameter 'secret key (SK)' not found");
     }
 }

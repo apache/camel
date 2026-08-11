@@ -223,10 +223,16 @@ public class OSSProducer extends DefaultProducer {
         List<Map<String, Object>> objects = new ArrayList<>();
         ListObjectsResult result;
         ListObjectsRequest request = requestBuilder.build();
+        long maxKeysLimit = clientConfigurations.getMaxKeys() != null
+                ? clientConfigurations.getMaxKeys().longValue()
+                : Long.MAX_VALUE;
         do {
             result = ossClient.listObjects(request);
             if (result.contents() != null) {
                 for (ObjectSummary summary : result.contents()) {
+                    if (objects.size() >= maxKeysLimit) {
+                        break;
+                    }
                     Map<String, Object> objectMap = new HashMap<>();
                     objectMap.put("bucketName", clientConfigurations.getBucketName());
                     objectMap.put("objectKey", summary.key());
@@ -235,6 +241,9 @@ public class OSSProducer extends DefaultProducer {
                     objectMap.put("lastModified", summary.lastModified() != null ? summary.lastModified().toString() : null);
                     objects.add(objectMap);
                 }
+            }
+            if (objects.size() >= maxKeysLimit) {
+                break;
             }
             if (Boolean.TRUE.equals(result.isTruncated()) && result.nextMarker() != null) {
                 request = request.toBuilder().marker(result.nextMarker()).build();
