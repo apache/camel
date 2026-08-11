@@ -24,7 +24,7 @@
     <parent>
         <groupId>org.apache.camel</groupId>
         <artifactId>components</artifactId>
-        <version>4.22.0-SNAPSHOT</version>
+        <version>4.23.0-SNAPSHOT</version>
     </parent>
 
     <artifactId>camel-rest-postman</artifactId>
@@ -33,7 +33,7 @@
     <description>Camel REST support using Postman Collections</description>
 
     <properties>
-        <firstVersion>4.22.0</firstVersion>
+        <firstVersion>4.23.0</firstVersion>
         <label>rest,api,http</label>
     </properties>
 

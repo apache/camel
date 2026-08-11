@@ -3298,7 +3298,7 @@ public class EndpointHeaderBuilders {
      * To call and expose REST services using a Postman Collection as contract.
      * 
      * Category: rest,api
-     * Since: 4.22
+     * Since: 4.23
      * Maven coordinates: org.apache.camel:camel-rest-postman
      * 
      * @return the dsl builder for the headers' name.

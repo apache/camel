@@ -14187,7 +14187,7 @@ public class StaticEndpointBuilders {
      * To call and expose REST services using a Postman Collection as contract.
      * 
      * Category: rest,api
-     * Since: 4.22
+     * Since: 4.23
      * Maven coordinates: org.apache.camel:camel-rest-postman
      * 
      * Syntax: <code>rest-postman:collectionSource#requestId</code>
@@ -14217,7 +14217,7 @@ public class StaticEndpointBuilders {
      * To call and expose REST services using a Postman Collection as contract.
      * 
      * Category: rest,api
-     * Since: 4.22
+     * Since: 4.23
      * Maven coordinates: org.apache.camel:camel-rest-postman
      * 
      * Syntax: <code>rest-postman:collectionSource#requestId</code>

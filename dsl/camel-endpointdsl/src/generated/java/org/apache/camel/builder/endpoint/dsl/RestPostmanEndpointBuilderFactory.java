@@ -1541,7 +1541,7 @@ public interface RestPostmanEndpointBuilderFactory {
          * contract.
          * 
          * Category: rest,api
-         * Since: 4.22
+         * Since: 4.23
          * Maven coordinates: org.apache.camel:camel-rest-postman
          * 
          * @return the dsl builder for the headers' name.
@@ -1555,7 +1555,7 @@ public interface RestPostmanEndpointBuilderFactory {
          * contract.
          * 
          * Category: rest,api
-         * Since: 4.22
+         * Since: 4.23
          * Maven coordinates: org.apache.camel:camel-rest-postman
          * 
          * Syntax: <code>rest-postman:collectionSource#requestId</code>
@@ -1587,7 +1587,7 @@ public interface RestPostmanEndpointBuilderFactory {
          * contract.
          * 
          * Category: rest,api
-         * Since: 4.22
+         * Since: 4.23
          * Maven coordinates: org.apache.camel:camel-rest-postman
          * 
          * Syntax: <code>rest-postman:collectionSource#requestId</code>

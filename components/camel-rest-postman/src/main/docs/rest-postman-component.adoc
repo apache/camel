@@ -3,7 +3,7 @@
 :shortname: rest-postman
 :artifactid: camel-rest-postman
 :description: To call and expose REST services using a Postman Collection as contract.
-:since: 4.22
+:since: 4.23
 :supportlevel: Preview
 :tabs-sync-option:
 :component-header: Both producer and consumer are supported

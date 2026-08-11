@@ -69,7 +69,7 @@ import static org.apache.camel.util.StringHelper.before;
 /**
  * To call and expose REST services using a Postman Collection as contract.
  */
-@UriEndpoint(firstVersion = "4.22.0", scheme = "rest-postman", title = "REST Postman",
+@UriEndpoint(firstVersion = "4.23.0", scheme = "rest-postman", title = "REST Postman",
              syntax = "rest-postman:collectionSource#requestId", category = { Category.REST, Category.API },
              headersClass = RestPostmanConstants.class)
 public class RestPostmanEndpoint extends DefaultEndpoint {
