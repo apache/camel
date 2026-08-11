@@ -326,6 +326,7 @@ class SourceViewer {
         }
         if (pendingDiscard) {
             pendingDiscard = false;
+            exitEditMode();
             return true;
         }
         if (dirty) {
@@ -1776,6 +1777,7 @@ class SourceViewer {
             dirty = false;
             Path path = editableFile;
             boolean restoreMarkdownMode = markdownModeBeforeEdit;
+            notifySave("Saved: " + editableFile.getFileName(), false);
             editMode = false;
             editState.clear();
             markdownModeBeforeEdit = false;

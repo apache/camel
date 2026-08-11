@@ -475,9 +475,9 @@ class SourceViewerEditTest {
         viewer.handleKeyEvent(KeyEvent.ofKey(KeyCode.ESCAPE, KeyModifiers.NONE));
         assertThat(viewer.isEditMode()).isTrue();
 
-        // file is still saved (validation is informational)
+        // file is NOT saved when validation fails
         String saved = Files.readString(propsFile, StandardCharsets.UTF_8);
-        assertThat(saved).contains("camel.component.seda.foo=abc");
+        assertThat(saved).doesNotContain("camel.component.seda.foo=abc");
     }
 
     @Test
@@ -511,7 +511,11 @@ class SourceViewerEditTest {
         assertThat(viewer.cancelEdit()).isTrue();
         assertThat(viewer.isEditMode()).isTrue();
 
-        // second cancelEdit exits edit mode
+        // second cancelEdit triggers unsaved-changes prompt (dirty=true)
+        assertThat(viewer.cancelEdit()).isTrue();
+        assertThat(viewer.isEditMode()).isTrue();
+
+        // third cancelEdit dismisses the unsaved-changes prompt and exits edit mode
         assertThat(viewer.cancelEdit()).isTrue();
         assertThat(viewer.isEditMode()).isFalse();
     }
