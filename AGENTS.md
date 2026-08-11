@@ -97,7 +97,7 @@ When merging a PR, an agent MUST perform the following steps **in order**:
 1. **Derive the milestone from the target branch**:
    - Read the `<version>` from the root `pom.xml` on the PR's **target branch** (e.g., `main`,
      `camel-4.18.x`).
-   - Strip the `-SNAPSHOT` suffix to get the milestone name (e.g., `4.23.0-SNAPSHOT` → `4.22.0`).
+   - Strip the `-SNAPSHOT` suffix to get the milestone name (e.g., `4.23.0-SNAPSHOT` → `4.23.0`).
 
 2. **Assign the milestone**:
    - Set the GitHub milestone on the PR: `gh pr edit <PR> --milestone <version>`.
