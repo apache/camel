@@ -292,7 +292,7 @@ class WebsiteManifestGeneratorTest {
         Path zip = writeFixture(work, "s.zip", "s-zip");
         Path output = work.resolve("website");
 
-        Result r = run("--version", "4.22.0-SNAPSHOT", "--tar", tar.toString(), "--zip", zip.toString(), "--output",
+        Result r = run("--version", "4.22.1-SNAPSHOT", "--tar", tar.toString(), "--zip", zip.toString(), "--output",
                 output.toString(), "--latest", "false");
 
         assertNotEquals(0, r.exit, "SNAPSHOT versions must be rejected");

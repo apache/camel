@@ -51,7 +51,7 @@ class SelfUpdateIntegrationTest {
     private static final Path REAL_INSTALL_SH = Paths.get("src/install/install.sh").toAbsolutePath();
 
     // SelfUpdateCommand compares the published manifest version against the REAL running Camel catalog version
-    // (org.apache.camel.catalog.DefaultCamelCatalog#getCatalogVersion(), e.g. "4.22.0-SNAPSHOT" in this repo) - not
+    // (org.apache.camel.catalog.DefaultCamelCatalog#getCatalogVersion(), e.g. "4.22.1-SNAPSHOT" in this repo) - not
     // against the arbitrary labels markRunningAsWebInstaller() uses for its fake install directory, which only
     // matter for InstallDetector's classification. NEWER_VERSION/OLDER_VERSION must therefore stay far outside
     // Camel's own version range so "is an update available" comes out right regardless of what version this repo
