@@ -45,11 +45,7 @@ public final class DurationConverter {
 
     @Converter(order = 3)
     public static Duration toDuration(String source) {
-        if (source.startsWith("P") || source.startsWith("-P") || source.startsWith("p") || source.startsWith("-p")) {
-            return Duration.parse(source);
-        } else {
-            return Duration.ofMillis(TimeUtils.toMilliSeconds(source));
-        }
+        return TimeUtils.toDuration(source);
     }
 
     @Converter(order = 4)
