@@ -17,6 +17,7 @@
 package org.apache.camel.component.alibaba.oss;
 
 import com.aliyun.sdk.service.oss2.OSSClient;
+import org.apache.camel.component.alibaba.common.models.ServiceKeys;
 import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -68,5 +69,18 @@ class OSSUtilsTest {
         assertThatThrownBy(() -> OSSUtils.createClient(endpoint))
                 .isInstanceOf(IllegalArgumentException.class)
                 .hasMessageContaining("Region/endpoint");
+    }
+
+    @Test
+    void createClientPrefersEndpointCredentialsOverEmptyServiceKeys() throws Exception {
+        OSSEndpoint endpoint = new OSSEndpoint();
+        endpoint.setAccessKey("uri-ak");
+        endpoint.setSecretKey("uri-sk");
+        endpoint.setRegion("cn-hangzhou");
+        endpoint.setServiceKeys(new ServiceKeys("", ""));
+
+        try (OSSClient client = OSSUtils.createClient(endpoint)) {
+            assertThat(client).isNotNull();
+        }
     }
 }
