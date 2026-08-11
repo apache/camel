@@ -243,16 +243,24 @@ public class GoogleFirestoreProducer extends DefaultProducer {
         List<Map<String, Object>> results = new ArrayList<>();
 
         for (QueryDocumentSnapshot document : querySnapshot.getDocuments()) {
-            Map<String, Object> docData = document.getData();
-            docData.put("_id", document.getId());
-            docData.put("_path", document.getReference().getPath());
-            results.add(docData);
+            results.add(withDocumentMetadata(document));
         }
 
         LOG.debug("Query returned {} documents from collection: {}", results.size(), collectionName);
 
         Message message = getMessageForResponse(exchange);
         message.setBody(results);
+    }
+
+    /**
+     * The document data plus its id and path. The snapshot data is copied first: the returned map is handed to the
+     * route, and the id/path entries must not be written into the object the SDK gave us.
+     */
+    private static Map<String, Object> withDocumentMetadata(QueryDocumentSnapshot document) {
+        Map<String, Object> docData = new HashMap<>(document.getData());
+        docData.put("_id", document.getId());
+        docData.put("_path", document.getReference().getPath());
+        return docData;
     }
 
     private Query applyWhereClause(Query query, String field, String operator, Object value) {
@@ -291,10 +299,7 @@ public class GoogleFirestoreProducer extends DefaultProducer {
         List<Map<String, Object>> results = new ArrayList<>();
 
         for (QueryDocumentSnapshot document : querySnapshot.getDocuments()) {
-            Map<String, Object> docData = document.getData();
-            docData.put("_id", document.getId());
-            docData.put("_path", document.getReference().getPath());
-            results.add(docData);
+            results.add(withDocumentMetadata(document));
         }
 
         LOG.debug("Listed {} documents from collection: {}", results.size(), collectionName);
@@ -304,7 +309,7 @@ public class GoogleFirestoreProducer extends DefaultProducer {
     }
 
     private void listCollections(Firestore firestore, Exchange exchange) throws Exception {
-        String documentId = exchange.getIn().getHeader(GoogleFirestoreConstants.DOCUMENT_ID, String.class);
+        String documentId = determineListedDocumentId(exchange);
         List<String> collectionIds = new ArrayList<>();
 
         Iterable<CollectionReference> collections;
@@ -382,6 +387,19 @@ public class GoogleFirestoreProducer extends DefaultProducer {
             throw new IllegalArgumentException("Collection name must be specified.");
         }
         return collectionName;
+    }
+
+    /**
+     * The document id for listCollections, where it is optional: without one the root collections are listed. Unlike
+     * {@link #determineDocumentId(Exchange)} this does not fail when none is set, but it does fall back to the
+     * configured id the same way.
+     */
+    String determineListedDocumentId(Exchange exchange) {
+        String documentId = exchange.getIn().getHeader(GoogleFirestoreConstants.DOCUMENT_ID, String.class);
+        if (ObjectHelper.isEmpty(documentId)) {
+            documentId = getConfiguration().getDocumentId();
+        }
+        return documentId;
     }
 
     private String determineDocumentId(Exchange exchange) {
