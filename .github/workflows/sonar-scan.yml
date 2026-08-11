@@ -57,7 +57,7 @@ jobs:
           echo "target_artifact_id=$(sed '5q;d' pr-event.txt)" >> "$GITHUB_ENV"
 
       - name: Create PR check
-        uses: actions/github-script@v9
+        uses: actions/github-script@3a2844b7e9c422d3c10d287c895573f7108da1b3 # v9.0.0
         id: check
         with:
           script: |
@@ -104,7 +104,7 @@ jobs:
 
       - name: Delete compiled classes artifact
         if: always()
-        uses: actions/github-script@v9
+        uses: actions/github-script@3a2844b7e9c422d3c10d287c895573f7108da1b3 # v9.0.0
         with:
           script: |
             await github.rest.actions.deleteArtifact({
@@ -124,7 +124,7 @@ jobs:
           cache: 'maven'
 
       - name: Cache SonarCloud packages
-        uses: actions/cache@v6
+        uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
         with:
           path: ~/.sonar/cache
           key: ${{ runner.os }}-sonar
@@ -154,7 +154,7 @@ jobs:
           SONAR_TOKEN: ${{ secrets.SONARCLOUD_TOKEN }}
 
       - name: Update PR check status
-        uses: actions/github-script@v9
+        uses: actions/github-script@3a2844b7e9c422d3c10d287c895573f7108da1b3 # v9.0.0
         if: always()
         env:
           CHECK_ID: ${{ steps.check.outputs.result }}
