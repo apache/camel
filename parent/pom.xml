@@ -450,7 +450,7 @@
         <quarkus-mcp-server-version>1.13.1</quarkus-mcp-server-version>
         <quarkus-version>3.38.0</quarkus-version>
         <quartz-version>2.5.2</quartz-version>
-        <quickfixj-version>3.0.1</quickfixj-version>
+        <quickfixj-version>3.0.2</quickfixj-version>
         <reactive-streams-version>1.0.4</reactive-streams-version>
         <reactor-version>3.8.6</reactor-version>
         <reactor-netty-version>1.3.6</reactor-netty-version>
