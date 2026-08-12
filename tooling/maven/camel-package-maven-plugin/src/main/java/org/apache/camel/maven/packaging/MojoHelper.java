@@ -142,6 +142,9 @@ public final class MojoHelper {
                 return Arrays.asList(dir.resolve("camel-vertx"),
                         dir.resolve("camel-vertx-http"),
                         dir.resolve("camel-vertx-websocket"));
+            case "camel-alibaba":
+                return Arrays.asList(dir.resolve("camel-alibaba-oss"),
+                        dir.resolve("camel-alibaba-mns"));
             case "camel-huawei":
                 return Arrays.asList(dir.resolve("camel-huaweicloud-frs"),
                         dir.resolve("camel-huaweicloud-dms"),
