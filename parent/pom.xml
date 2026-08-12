@@ -111,7 +111,7 @@
         <commons-beanutils-version>1.11.0</commons-beanutils-version>
         <commons-codec-version>1.22.1</commons-codec-version>
         <commons-collections-version>3.2.2</commons-collections-version>
-        <commons-collections4-version>4.5.0</commons-collections4-version>
+        <commons-collections4-version>4.6.0</commons-collections4-version>
         <commons-compress-version>1.28.0</commons-compress-version>
         <commons-csv-version>1.14.1</commons-csv-version>
         <commons-dbcp2-version>2.14.0</commons-dbcp2-version>
