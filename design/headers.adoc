@@ -202,7 +202,7 @@ migration. The upgrade guide is the primary migration aid.
 === Backport policy
 
 When a header rename is backported to a maintenance branch (e.g.,
-`camel-4.18.x`, `camel-4.14.x`):
+`camel-4.22.x`, `camel-4.18.x`):
 
 * Add an upgrade guide entry on the maintenance branch.
 * Also add the corresponding entry on `main` to keep the version-specific
