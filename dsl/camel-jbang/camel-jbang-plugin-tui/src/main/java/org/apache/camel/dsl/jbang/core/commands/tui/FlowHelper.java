@@ -117,6 +117,11 @@ final class FlowHelper {
         }
         long curIn = inArr[renderPoints - 1];
         long curOut = outArr[renderPoints - 1];
+        // scale down from internal precision (rate * THROUGHPUT_SCALE) to actual msg/s for y-axis
+        for (int i = 0; i < renderPoints; i++) {
+            inArr[i] = Math.round((double) inArr[i] / MetricsCollector.THROUGHPUT_SCALE);
+            outArr[i] = Math.round((double) outArr[i] / MetricsCollector.THROUGHPUT_SCALE);
+        }
 
         List<Span> titleSpans = new ArrayList<>();
         if (chartLabel != null) {
