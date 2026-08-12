@@ -1,0 +1,22 @@
+{
+  "dataformat": {
+    "kind": "dataformat",
+    "name": "ubl",
+    "title": "UBL",
+    "description": "Marshal and unmarshal UBL 2.1 (Universal Business Language) documents.",
+    "deprecated": false,
+    "firstVersion": "4.23.0",
+    "label": "dataformat,transformation,xml",
+    "javaType": "org.apache.camel.component.ubl.UblDataFormat",
+    "supportLevel": "Preview",
+    "groupId": "org.apache.camel",
+    "artifactId": "camel-ubl",
+    "version": "4.23.0-SNAPSHOT",
+    "modelName": "ubl",
+    "modelJavaType": "org.apache.camel.model.dataformat.UblDataFormat"
+  },
+  "properties": {
+    "id": { "index": 0, "kind": "attribute", "displayName": "Id", "group": "common", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "autowired": false, "secret": false, "description": "The id of this node" },
+    "prettyPrint": { "index": 1, "kind": "attribute", "displayName": "Pretty Print", "group": "common", "required": false, "type": "boolean", "javaType": "java.lang.Boolean", "deprecated": false, "autowired": false, "secret": false, "defaultValue": false, "description": "Whether to enable pretty printing (formatted) output of the XML" }
+  }
+}

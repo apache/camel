@@ -3195,6 +3195,8 @@
               }, {
                 "required" : [ "thrift" ]
               }, {
+                "required" : [ "ubl" ]
+              }, {
                 "required" : [ "univocityCsv" ]
               }, {
                 "required" : [ "univocityFixed" ]
@@ -3532,6 +3534,14 @@
             }
           }, {
             "type" : "object",
+            "required" : [ "ubl" ],
+            "properties" : {
+              "ubl" : {
+                "$ref" : "#/items/definitions/org.apache.camel.model.dataformat.UblDataFormat"
+              }
+            }
+          }, {
+            "type" : "object",
             "required" : [ "univocityCsv" ],
             "properties" : {
               "univocityCsv" : {
@@ -3661,6 +3671,7 @@
           "syslog" : { },
           "tarFile" : { },
           "thrift" : { },
+          "ubl" : { },
           "univocityCsv" : { },
           "univocityFixed" : { },
           "univocityTsv" : { },
@@ -8643,6 +8654,7 @@
           "syslog" : { },
           "tarFile" : { },
           "thrift" : { },
+          "ubl" : { },
           "univocityCsv" : { },
           "univocityFixed" : { },
           "univocityTsv" : { },
@@ -8978,6 +8990,14 @@
             "properties" : {
               "thrift" : {
                 "$ref" : "#/items/definitions/org.apache.camel.model.dataformat.ThriftDataFormat"
+              }
+            }
+          }, {
+            "type" : "object",
+            "required" : [ "ubl" ],
+            "properties" : {
+              "ubl" : {
+                "$ref" : "#/items/definitions/org.apache.camel.model.dataformat.UblDataFormat"
               }
             }
           }, {
@@ -10443,6 +10463,9 @@
           },
           "thrift" : {
             "$ref" : "#/items/definitions/org.apache.camel.model.dataformat.ThriftDataFormat"
+          },
+          "ubl" : {
+            "$ref" : "#/items/definitions/org.apache.camel.model.dataformat.UblDataFormat"
           },
           "univocityCsv" : {
             "$ref" : "#/items/definitions/org.apache.camel.model.dataformat.UniVocityCsvDataFormat"
@@ -12025,6 +12048,25 @@
             }
           }
         } ]
+      },
+      "org.apache.camel.model.dataformat.UblDataFormat" : {
+        "title" : "UBL",
+        "description" : "Marshal and unmarshal UBL 2.1 (Universal Business Language) documents.",
+        "type" : "object",
+        "additionalProperties" : false,
+        "properties" : {
+          "id" : {
+            "type" : "string",
+            "title" : "Id",
+            "description" : "The id of this node"
+          },
+          "prettyPrint" : {
+            "type" : "boolean",
+            "title" : "Pretty Print",
+            "description" : "Whether to enable pretty printing (formatted) output of the XML",
+            "default" : false
+          }
+        }
       },
       "org.apache.camel.model.dataformat.UniVocityCsvDataFormat" : {
         "title" : "uniVocity CSV",
@@ -16712,6 +16754,8 @@
               }, {
                 "required" : [ "thrift" ]
               }, {
+                "required" : [ "ubl" ]
+              }, {
                 "required" : [ "univocityCsv" ]
               }, {
                 "required" : [ "univocityFixed" ]
@@ -17049,6 +17093,14 @@
             }
           }, {
             "type" : "object",
+            "required" : [ "ubl" ],
+            "properties" : {
+              "ubl" : {
+                "$ref" : "#/items/definitions/org.apache.camel.model.dataformat.UblDataFormat"
+              }
+            }
+          }, {
+            "type" : "object",
             "required" : [ "univocityCsv" ],
             "properties" : {
               "univocityCsv" : {
@@ -17167,6 +17219,7 @@
           "syslog" : { },
           "tarFile" : { },
           "thrift" : { },
+          "ubl" : { },
           "univocityCsv" : { },
           "univocityFixed" : { },
           "univocityTsv" : { },

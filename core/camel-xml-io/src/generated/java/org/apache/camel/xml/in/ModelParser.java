@@ -2065,6 +2065,12 @@ public class ModelParser extends BaseParser {
                 default: yield identifiedTypeAttributeHandler().accept(def, key, val);
             }, noElementHandler(), noValueHandler());
     }
+    protected UblDataFormat doParseUblDataFormat() throws IOException, XmlPullParserException {
+        return doParse(new UblDataFormat(), (def, key, val) -> switch (key) {
+                case "prettyPrint": def.setPrettyPrint(val); yield true;
+                default: yield identifiedTypeAttributeHandler().accept(def, key, val);
+            }, noElementHandler(), noValueHandler());
+    }
     protected UniVocityCsvDataFormat doParseUniVocityCsvDataFormat() throws IOException, XmlPullParserException {
         return doParse(new UniVocityCsvDataFormat(), (def, key, val) -> switch (key) {
                 case "delimiter": def.setDelimiter(val); yield true;
@@ -2868,6 +2874,7 @@ public class ModelParser extends BaseParser {
             case "syslog": return doParseSyslogDataFormat();
             case "tarFile": return doParseTarFileDataFormat();
             case "thrift": return doParseThriftDataFormat();
+            case "ubl": return doParseUblDataFormat();
             case "univocityCsv": return doParseUniVocityCsvDataFormat();
             case "univocityFixed": return doParseUniVocityFixedDataFormat();
             case "univocityTsv": return doParseUniVocityTsvDataFormat();

@@ -1111,6 +1111,13 @@ public class JavaDslModelWriter extends JavaDslModelWriterSupport {
         doWriteThriftDataFormat(sb, def);
         return sb.toString();
     }
+    public String writeUblDataFormat(UblDataFormat def) {
+        resetState();
+        StringBuilder sb = new StringBuilder();
+        beginStep(sb, "ubl", def);
+        doWriteUblDataFormat(sb, def);
+        return sb.toString();
+    }
     public String writeUniVocityCsvDataFormat(UniVocityCsvDataFormat def) {
         resetState();
         StringBuilder sb = new StringBuilder();
@@ -2081,6 +2088,7 @@ public class JavaDslModelWriter extends JavaDslModelWriterSupport {
                 case "SwiftMxDataFormat" -> doWriteChildElement(sb, "swiftMx", (SwiftMxDataFormat) def.getDataFormatType(), this::doWriteSwiftMxDataFormat);
                 case "SyslogDataFormat" -> doWriteChildElement(sb, "syslog", (SyslogDataFormat) def.getDataFormatType(), this::doWriteSyslogDataFormat);
                 case "TarFileDataFormat" -> doWriteChildElement(sb, "tarFile", (TarFileDataFormat) def.getDataFormatType(), this::doWriteTarFileDataFormat);
+                case "UblDataFormat" -> doWriteChildElement(sb, "ubl", (UblDataFormat) def.getDataFormatType(), this::doWriteUblDataFormat);
                 case "ThriftDataFormat" -> doWriteChildElement(sb, "thrift", (ThriftDataFormat) def.getDataFormatType(), this::doWriteThriftDataFormat);
                 case "UniVocityCsvDataFormat" -> doWriteChildElement(sb, "univocityCsv", (UniVocityCsvDataFormat) def.getDataFormatType(), this::doWriteUniVocityCsvDataFormat);
                 case "UniVocityFixedDataFormat" -> doWriteChildElement(sb, "univocityFixed", (UniVocityFixedDataFormat) def.getDataFormatType(), this::doWriteUniVocityFixedDataFormat);
@@ -2704,6 +2712,7 @@ public class JavaDslModelWriter extends JavaDslModelWriterSupport {
                 case "SwiftMxDataFormat" -> doWriteChildElement(sb, "swiftMx", (SwiftMxDataFormat) def.getDataFormatType(), this::doWriteSwiftMxDataFormat);
                 case "SyslogDataFormat" -> doWriteChildElement(sb, "syslog", (SyslogDataFormat) def.getDataFormatType(), this::doWriteSyslogDataFormat);
                 case "TarFileDataFormat" -> doWriteChildElement(sb, "tarFile", (TarFileDataFormat) def.getDataFormatType(), this::doWriteTarFileDataFormat);
+                case "UblDataFormat" -> doWriteChildElement(sb, "ubl", (UblDataFormat) def.getDataFormatType(), this::doWriteUblDataFormat);
                 case "ThriftDataFormat" -> doWriteChildElement(sb, "thrift", (ThriftDataFormat) def.getDataFormatType(), this::doWriteThriftDataFormat);
                 case "UniVocityCsvDataFormat" -> doWriteChildElement(sb, "univocityCsv", (UniVocityCsvDataFormat) def.getDataFormatType(), this::doWriteUniVocityCsvDataFormat);
                 case "UniVocityFixedDataFormat" -> doWriteChildElement(sb, "univocityFixed", (UniVocityFixedDataFormat) def.getDataFormatType(), this::doWriteUniVocityFixedDataFormat);
@@ -2982,6 +2991,7 @@ public class JavaDslModelWriter extends JavaDslModelWriterSupport {
                     case "SwiftMxDataFormat" -> doWriteChildElement(sb, "swiftMx", (SwiftMxDataFormat) item, this::doWriteSwiftMxDataFormat);
                     case "SyslogDataFormat" -> doWriteChildElement(sb, "syslog", (SyslogDataFormat) item, this::doWriteSyslogDataFormat);
                     case "TarFileDataFormat" -> doWriteChildElement(sb, "tarFile", (TarFileDataFormat) item, this::doWriteTarFileDataFormat);
+                    case "UblDataFormat" -> doWriteChildElement(sb, "ubl", (UblDataFormat) item, this::doWriteUblDataFormat);
                     case "ThriftDataFormat" -> doWriteChildElement(sb, "thrift", (ThriftDataFormat) item, this::doWriteThriftDataFormat);
                     case "UniVocityCsvDataFormat" -> doWriteChildElement(sb, "univocityCsv", (UniVocityCsvDataFormat) item, this::doWriteUniVocityCsvDataFormat);
                     case "UniVocityFixedDataFormat" -> doWriteChildElement(sb, "univocityFixed", (UniVocityFixedDataFormat) item, this::doWriteUniVocityFixedDataFormat);
@@ -3278,6 +3288,10 @@ public class JavaDslModelWriter extends JavaDslModelWriterSupport {
         doWriteAttribute(sb, "instanceClass", def.getInstanceClass(), null);
         doWriteAttribute(sb, "contentTypeFormat", def.getContentTypeFormat(), "binary");
         doWriteAttribute(sb, "contentTypeHeader", def.getContentTypeHeader(), "true");
+    }
+    protected void doWriteUblDataFormat(StringBuilder sb, UblDataFormat def) {
+        doWriteIdentifiedTypeAttributes(sb, def);
+        doWriteAttribute(sb, "prettyPrint", def.getPrettyPrint(), "false");
     }
     protected void doWriteUniVocityAbstractDataFormatAttributes(StringBuilder sb, UniVocityAbstractDataFormat def) {
         doWriteIdentifiedTypeAttributes(sb, def);
@@ -3932,6 +3946,7 @@ public class JavaDslModelWriter extends JavaDslModelWriterSupport {
                 case "SwiftMxDataFormat" -> doWriteChildElement(sb, "swiftMx", (SwiftMxDataFormat) def.getDataFormatType(), this::doWriteSwiftMxDataFormat);
                 case "SyslogDataFormat" -> doWriteChildElement(sb, "syslog", (SyslogDataFormat) def.getDataFormatType(), this::doWriteSyslogDataFormat);
                 case "TarFileDataFormat" -> doWriteChildElement(sb, "tarFile", (TarFileDataFormat) def.getDataFormatType(), this::doWriteTarFileDataFormat);
+                case "UblDataFormat" -> doWriteChildElement(sb, "ubl", (UblDataFormat) def.getDataFormatType(), this::doWriteUblDataFormat);
                 case "ThriftDataFormat" -> doWriteChildElement(sb, "thrift", (ThriftDataFormat) def.getDataFormatType(), this::doWriteThriftDataFormat);
                 case "UniVocityCsvDataFormat" -> doWriteChildElement(sb, "univocityCsv", (UniVocityCsvDataFormat) def.getDataFormatType(), this::doWriteUniVocityCsvDataFormat);
                 case "UniVocityFixedDataFormat" -> doWriteChildElement(sb, "univocityFixed", (UniVocityFixedDataFormat) def.getDataFormatType(), this::doWriteUniVocityFixedDataFormat);
