@@ -16,6 +16,8 @@
  */
 package org.apache.camel.dsl.jbang.core.commands.tui;
 
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -63,9 +65,10 @@ class ConfigurationTab extends AbstractTableTab {
     private Map<String, BaseOptionModel> mainOptionsMap;
     private final Map<String, Map<String, BaseOptionModel>> componentOptionsCache = new HashMap<>();
 
-    // Spring Boot configuration metadata cache (lazy-loaded on-demand via IPC)
+    // Spring Boot configuration metadata cache (lazy-loaded on-demand via IPC or from local JARs)
     private Map<String, JsonObject> springBootMetadataCache;
     private boolean springBootMetadataLoaded;
+    private java.util.concurrent.CompletableFuture<SpringBootMetadataResolver.MetadataResult> springBootMetadataFuture;
 
     ConfigurationTab(MonitorContext ctx) {
         super(ctx, "key", "value", "source");
@@ -368,6 +371,13 @@ class ConfigurationTab extends AbstractTableTab {
 
     private void ensureSpringBootMetadataCache() {
         if (springBootMetadataLoaded) {
+            if (springBootMetadataFuture != null && springBootMetadataFuture.isDone()) {
+                SpringBootMetadataResolver.MetadataResult result = springBootMetadataFuture.join();
+                if (result != null) {
+                    springBootMetadataCache = result.properties();
+                }
+                springBootMetadataFuture = null;
+            }
             return;
         }
         springBootMetadataLoaded = true;
@@ -375,7 +385,21 @@ class ConfigurationTab extends AbstractTableTab {
         if (info == null || !"Spring Boot".equals(info.platform)) {
             return;
         }
-        springBootMetadataCache = SpringBootMetadataHelper.fetchMetadata(ctx, info.pid);
+
+        if (!info.phantom && info.pid != null && !info.pid.isEmpty()) {
+            springBootMetadataCache = SpringBootMetadataHelper.fetchMetadata(ctx, info.pid);
+        }
+
+        if ((springBootMetadataCache == null || springBootMetadataCache.isEmpty())
+                && info.directory != null) {
+            Path pomFile = Path.of(info.directory, "pom.xml");
+            if (Files.isRegularFile(pomFile)) {
+                String camelVer = info.camelVersion;
+                springBootMetadataFuture = java.util.concurrent.CompletableFuture.supplyAsync(
+                        () -> SpringBootMetadataResolver.loadFromPom(pomFile, camelVer),
+                        ctx.backgroundExecutor);
+            }
+        }
     }
 
     private void initCatalog() {
@@ -397,6 +421,7 @@ class ConfigurationTab extends AbstractTableTab {
         componentOptionsCache.clear();
         springBootMetadataCache = null;
         springBootMetadataLoaded = false;
+        springBootMetadataFuture = null;
         MainModel mainModel = catalog.mainModel();
         if (mainModel != null) {
             for (MainModel.MainOptionModel opt : mainModel.getOptions()) {

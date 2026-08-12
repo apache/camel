@@ -112,9 +112,13 @@ class SourceTab extends AbstractTab {
     private JsonObject completionTree;
     private boolean completionTreeLoaded;
 
-    // Spring Boot configuration metadata cache (lazy-loaded on-demand via IPC)
+    // Spring Boot configuration metadata cache (lazy-loaded on-demand via IPC or from local JARs)
     private Map<String, JsonObject> springBootMetadataCache;
     private boolean springBootMetadataLoaded;
+    private Map<String, BaseOptionModel> springBootOptionsCache;
+    private Map<String, String> springBootGroupsCache;
+    private Map<String, List<String>> springBootHintsCache;
+    private java.util.concurrent.CompletableFuture<SpringBootMetadataResolver.MetadataResult> springBootMetadataFuture;
 
     private static final Pattern YAML_URI_PATTERN = Pattern.compile(
             "^\\s*-?\\s*(?:uri|from|to|toD|wireTap|enrich|pollEnrich|deadLetterChannel):\\s*\"?([a-zA-Z][a-zA-Z0-9+.-]*(?::[^\"\\s]*)?)");
@@ -455,7 +459,11 @@ class SourceTab extends AbstractTab {
                 **application.properties:**
                 - Key completion for `camel.main.*`, `camel.component.*`, `camel.dataformat.*`,
                   and `camel.language.*` options from the Camel catalog
-                - Value completion with enum choices, boolean values, and `{{placeholder}}` suggestions
+                - Spring Boot auto-configuration properties (`server.*`, `spring.*`, `management.*`,
+                  etc.) resolved from starter JARs in the local Maven repository — works even when
+                  the application is not running (phantom/stopped projects)
+                - Value completion with enum choices, boolean values, Spring Boot value hints,
+                  and `{{placeholder}}` suggestions
 
                 **YAML DSL routes:**
                 - On `uri:` lines (or inline EIPs like `to:`, `from:`), Tab shows a list of
@@ -786,10 +794,13 @@ class SourceTab extends AbstractTab {
 
     private List<AutocompletePopup.CompletionItem> providePropertyCompletions(String linePrefix) {
         CamelCatalog catalog = getCatalog();
-        if (catalog == null) {
+        if (catalog != null) {
+            ensureMainOptionsCache(catalog);
+        }
+        ensureSpringBootMetadataCache();
+        if (catalog == null && (springBootOptionsCache == null || springBootOptionsCache.isEmpty())) {
             return List.of();
         }
-        ensureMainOptionsCache(catalog);
 
         String keyPrefix = linePrefix != null ? linePrefix.trim().toLowerCase() : "";
 
@@ -849,6 +860,10 @@ class SourceTab extends AbstractTab {
                         LanguageModel m = catalog.languageModel(name);
                         return m != null ? m.getOptions() : null;
                     });
+        } else if (!keyPrefix.isEmpty() && !keyPrefix.startsWith("camel.")
+                && springBootOptionsCache != null) {
+            // Spring Boot property completions (e.g., server., spring.datasource.)
+            addSpringBootCompletions(items, keyPrefix);
         } else {
             // show group-level entries
             if (mainGroupsCache != null) {
@@ -872,10 +887,19 @@ class SourceTab extends AbstractTab {
                 items.add(new AutocompletePopup.CompletionItem(
                         "camel.language.", "Language configuration prefix", null, null, false, null, null));
             }
+            // Spring Boot top-level groups
+            addSpringBootTopLevelGroups(items, keyPrefix);
         }
 
         items.sort(Comparator.comparing(AutocompletePopup.CompletionItem::deprecated)
-                .thenComparing(AutocompletePopup.CompletionItem::key, String.CASE_INSENSITIVE_ORDER));
+                .thenComparing((a, b) -> {
+                    boolean aGroup = a.key().endsWith(".");
+                    boolean bGroup = b.key().endsWith(".");
+                    if (aGroup != bGroup) {
+                        return aGroup ? -1 : 1;
+                    }
+                    return String.CASE_INSENSITIVE_ORDER.compare(a.key(), b.key());
+                }));
 
         return items;
     }
@@ -914,15 +938,94 @@ class SourceTab extends AbstractTab {
         }
     }
 
+    private void addSpringBootCompletions(List<AutocompletePopup.CompletionItem> items, String keyPrefix) {
+        // collect next-level sub-groups under this prefix
+        Set<String> subGroups = new java.util.TreeSet<>();
+        List<Map.Entry<String, BaseOptionModel>> directOptions = new ArrayList<>();
+
+        for (Map.Entry<String, BaseOptionModel> entry : springBootOptionsCache.entrySet()) {
+            String key = entry.getKey();
+            if (!key.toLowerCase().startsWith(keyPrefix)) {
+                continue;
+            }
+            String rest = key.substring(keyPrefix.length());
+            int dot = rest.indexOf('.');
+            if (dot > 0) {
+                // has sub-group: e.g. "aop.auto" under "spring." → sub-group "aop"
+                subGroups.add(keyPrefix + rest.substring(0, dot));
+            } else {
+                // direct property at this level
+                directOptions.add(entry);
+            }
+        }
+
+        if (subGroups.size() > 1 || (!subGroups.isEmpty() && !directOptions.isEmpty())) {
+            // show sub-groups as drill-down entries
+            for (String group : subGroups) {
+                String groupKey = group + ".";
+                items.add(new AutocompletePopup.CompletionItem(
+                        groupKey, "Spring Boot configuration", null, null, false, null, null));
+            }
+            // also show any direct properties at this level
+            for (Map.Entry<String, BaseOptionModel> entry : directOptions) {
+                BaseOptionModel opt = entry.getValue();
+                items.add(new AutocompletePopup.CompletionItem(
+                        entry.getKey(), opt.getDescription(), opt.getType(),
+                        opt.getDefaultValue(), opt.isDeprecated(), opt.getDeprecationNote(),
+                        "Spring Boot"));
+            }
+        } else {
+            // single sub-group or leaf level: show all matching properties
+            for (Map.Entry<String, BaseOptionModel> entry : springBootOptionsCache.entrySet()) {
+                if (entry.getKey().toLowerCase().startsWith(keyPrefix)) {
+                    BaseOptionModel opt = entry.getValue();
+                    items.add(new AutocompletePopup.CompletionItem(
+                            entry.getKey(), opt.getDescription(), opt.getType(),
+                            opt.getDefaultValue(), opt.isDeprecated(), opt.getDeprecationNote(),
+                            "Spring Boot"));
+                }
+            }
+        }
+    }
+
+    private void addSpringBootTopLevelGroups(
+            List<AutocompletePopup.CompletionItem> items, String keyPrefix) {
+        if (springBootGroupsCache == null || springBootGroupsCache.isEmpty()) {
+            return;
+        }
+        Set<String> topLevelGroups = new java.util.TreeSet<>();
+        for (String group : springBootGroupsCache.keySet()) {
+            int dot = group.indexOf('.');
+            String topLevel = dot > 0 ? group.substring(0, dot) : group;
+            topLevelGroups.add(topLevel);
+        }
+        for (String group : topLevelGroups) {
+            String groupKey = group + ".";
+            if (keyPrefix.isEmpty() || groupKey.toLowerCase().contains(keyPrefix)) {
+                items.add(new AutocompletePopup.CompletionItem(
+                        groupKey, "Spring Boot configuration", null, null, false, null, null));
+            }
+        }
+    }
+
     private List<AutocompletePopup.CompletionItem> providePropertyValueCompletions(String key) {
         CamelCatalog catalog = getCatalog();
-        if (catalog == null || key == null || key.isEmpty()) {
+        if (key == null || key.isEmpty()) {
             return loadPropertyPlaceholders();
         }
-        ensureMainOptionsCache(catalog);
+        if (catalog != null) {
+            ensureMainOptionsCache(catalog);
+        }
+        ensureSpringBootMetadataCache();
 
         BaseOptionModel opt = lookupOption(catalog, key);
         if (opt == null) {
+            // check Spring Boot hints even without a matching option model
+            List<AutocompletePopup.CompletionItem> hintItems = lookupSpringBootHints(key);
+            if (!hintItems.isEmpty()) {
+                hintItems.addAll(loadPropertyPlaceholders());
+                return hintItems;
+            }
             return loadPropertyPlaceholders();
         }
 
@@ -956,6 +1059,11 @@ class SourceTab extends AbstractTab {
             valueFilter = SourceTab::isNumericValue;
         }
 
+        // Spring Boot hints for values without enum metadata
+        if (items.isEmpty()) {
+            items.addAll(lookupSpringBootHints(key));
+        }
+
         // only include placeholders whose actual value is compatible with the option type
         for (AutocompletePopup.CompletionItem ph : loadPropertyPlaceholders()) {
             if (valueFilter == null || (ph.description() != null && valueFilter.test(ph.description()))) {
@@ -965,10 +1073,32 @@ class SourceTab extends AbstractTab {
         return items;
     }
 
+    private List<AutocompletePopup.CompletionItem> lookupSpringBootHints(String key) {
+        List<AutocompletePopup.CompletionItem> items = new ArrayList<>();
+        if (springBootHintsCache != null) {
+            List<String> hintValues = springBootHintsCache.get(key);
+            if (hintValues != null) {
+                for (String value : hintValues) {
+                    items.add(new AutocompletePopup.CompletionItem(
+                            value, null, null, null, false, null, "Spring Boot"));
+                }
+            }
+        }
+        return items;
+    }
+
     private BaseOptionModel lookupOption(CamelCatalog catalog, String key) {
         // camel.main.* options
         if (mainOptionsCache != null && mainOptionsCache.containsKey(key)) {
             return mainOptionsCache.get(key);
+        }
+
+        if (catalog == null) {
+            // no Camel catalog — only Spring Boot options available
+            if (springBootOptionsCache != null && springBootOptionsCache.containsKey(key)) {
+                return springBootOptionsCache.get(key);
+            }
+            return null;
         }
 
         // camel.component.<name>.<option>
@@ -994,6 +1124,10 @@ class SourceTab extends AbstractTab {
                         LanguageModel m = catalog.languageModel(name);
                         return m != null ? m.getOptions() : null;
                     });
+        }
+        // Spring Boot options
+        if (springBootOptionsCache != null && springBootOptionsCache.containsKey(key)) {
+            return springBootOptionsCache.get(key);
         }
         return null;
     }
@@ -2082,6 +2216,10 @@ class SourceTab extends AbstractTab {
             dataformatOptionsCache.clear();
             springBootMetadataCache = null;
             springBootMetadataLoaded = false;
+            springBootOptionsCache = null;
+            springBootGroupsCache = null;
+            springBootHintsCache = null;
+            springBootMetadataFuture = null;
             propsCatalogVersion = version;
         }
         if (mainOptionsCache == null) {
@@ -2105,6 +2243,11 @@ class SourceTab extends AbstractTab {
 
     private void ensureSpringBootMetadataCache() {
         if (springBootMetadataLoaded) {
+            // check if async loading completed
+            if (springBootMetadataFuture != null && springBootMetadataFuture.isDone()) {
+                applySpringBootMetadataResult(springBootMetadataFuture.join());
+                springBootMetadataFuture = null;
+            }
             return;
         }
         springBootMetadataLoaded = true;
@@ -2112,7 +2255,49 @@ class SourceTab extends AbstractTab {
         if (info == null || !"Spring Boot".equals(info.platform)) {
             return;
         }
-        springBootMetadataCache = SpringBootMetadataHelper.fetchMetadata(ctx, info.pid);
+
+        if (!info.phantom && info.pid != null && !info.pid.isEmpty()) {
+            springBootMetadataCache = SpringBootMetadataHelper.fetchMetadata(ctx, info.pid);
+            if (springBootMetadataCache != null && !springBootMetadataCache.isEmpty()) {
+                applySpringBootMetadataResult(
+                        new SpringBootMetadataResolver.MetadataResult(springBootMetadataCache, Map.of()));
+                return;
+            }
+        }
+
+        if (info.directory != null) {
+            Path pomFile = Path.of(info.directory, "pom.xml");
+            if (Files.isRegularFile(pomFile)) {
+                String camelVer = info.camelVersion;
+                springBootMetadataFuture = java.util.concurrent.CompletableFuture.supplyAsync(
+                        () -> SpringBootMetadataResolver.loadFromPom(pomFile, camelVer),
+                        ctx.backgroundExecutor);
+            }
+        }
+    }
+
+    private void applySpringBootMetadataResult(SpringBootMetadataResolver.MetadataResult result) {
+        if (result == null) {
+            return;
+        }
+        springBootMetadataCache = result.properties();
+        if (springBootMetadataCache != null && !springBootMetadataCache.isEmpty()) {
+            springBootOptionsCache = new HashMap<>();
+            springBootGroupsCache = new HashMap<>();
+            springBootHintsCache = result.hints() != null ? result.hints() : Map.of();
+
+            for (Map.Entry<String, JsonObject> entry : springBootMetadataCache.entrySet()) {
+                String name = entry.getKey();
+                BaseOptionModel model = SpringBootMetadataHelper.toOptionModel(entry.getValue());
+                springBootOptionsCache.put(name, model);
+
+                int lastDot = name.lastIndexOf('.');
+                if (lastDot > 0) {
+                    String group = name.substring(0, lastDot);
+                    springBootGroupsCache.putIfAbsent(group, "");
+                }
+            }
+        }
     }
 
     private void renderFileList(Frame frame, Rect area) {

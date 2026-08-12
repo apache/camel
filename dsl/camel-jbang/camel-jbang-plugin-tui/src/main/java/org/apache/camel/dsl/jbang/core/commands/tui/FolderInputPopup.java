@@ -273,6 +273,9 @@ class FolderInputPopup {
         } else {
             phantom.platform = "Camel";
         }
+        if (runtime != null) {
+            phantom.camelVersion = DependencyLoader.detectCamelVersion(pomFile);
+        }
         ctx.addPhantom(phantom);
         ctx.selectedPid = phantom.pid;
 

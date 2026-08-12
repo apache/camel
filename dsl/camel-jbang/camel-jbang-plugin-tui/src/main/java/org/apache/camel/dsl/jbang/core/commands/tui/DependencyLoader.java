@@ -287,6 +287,9 @@ final class DependencyLoader {
                 g = resolveProperty(g, properties);
                 a = resolveProperty(a, properties);
                 v = resolveProperty(v, properties);
+                if (v != null && v.contains("${")) {
+                    v = null;
+                }
 
                 if (skipArtifact(g, a)) {
                     continue;
@@ -366,6 +369,101 @@ final class DependencyLoader {
             }
         }
         return value;
+    }
+
+    static String detectCamelVersion(Path pomFile) {
+        Map<String, String> versions = detectPomVersions(pomFile);
+        return versions != null ? versions.get("camel") : null;
+    }
+
+    static String detectSpringBootVersion(Path pomFile) {
+        Map<String, String> versions = detectPomVersions(pomFile);
+        return versions != null ? versions.get("spring-boot") : null;
+    }
+
+    private static Map<String, String> detectPomVersions(Path pomFile) {
+        try {
+            DocumentBuilderFactory dbf = XmlHelper.createDocumentBuilderFactory();
+            DocumentBuilder db = dbf.newDocumentBuilder();
+            Document dom;
+            try (InputStream is = Files.newInputStream(pomFile)) {
+                dom = db.parse(is);
+            }
+
+            Map<String, String> properties = new HashMap<>();
+            NodeList propsList = dom.getElementsByTagName("properties");
+            if (propsList.getLength() > 0) {
+                Element propsEl = (Element) propsList.item(0);
+                for (int i = 0; i < propsEl.getChildNodes().getLength(); i++) {
+                    if (propsEl.getChildNodes().item(i) instanceof Element prop) {
+                        properties.put(prop.getTagName(), prop.getTextContent().trim());
+                    }
+                }
+            }
+
+            // resolve implicit Maven properties (project.version inherits from parent)
+            String parentVersion = null;
+            NodeList parentList = dom.getElementsByTagName("parent");
+            if (parentList.getLength() > 0) {
+                parentVersion = textContent((Element) parentList.item(0), "version");
+            }
+            Element root = dom.getDocumentElement();
+            String projectVersion = textContent(root, "version");
+            if (projectVersion == null) {
+                projectVersion = parentVersion;
+            }
+            if (projectVersion != null) {
+                properties.putIfAbsent("project.version", projectVersion);
+            }
+
+            String camelVersion = null;
+            String springBootVersion = null;
+
+            if (parentList.getLength() > 0) {
+                Element parentEl = (Element) parentList.item(0);
+                String pg = textContent(parentEl, "groupId");
+                String pa = textContent(parentEl, "artifactId");
+                String pv = resolveProperty(parentVersion, properties);
+                if ("org.springframework.boot".equals(pg)
+                        && ("spring-boot-starter-parent".equals(pa) || "spring-boot-dependencies".equals(pa))) {
+                    springBootVersion = pv;
+                }
+                if ("org.apache.camel.springboot".equals(pg) && "camel-spring-boot-bom".equals(pa)) {
+                    camelVersion = pv;
+                }
+            }
+
+            NodeList nl = dom.getElementsByTagName("dependency");
+            for (int i = 0; i < nl.getLength(); i++) {
+                Element node = (Element) nl.item(i);
+                String g = textContent(node, "groupId");
+                String a = textContent(node, "artifactId");
+                String v = textContent(node, "version");
+                v = resolveProperty(v, properties);
+                if (camelVersion == null && "org.apache.camel".equals(g) && "camel-bom".equals(a)) {
+                    camelVersion = v;
+                }
+                if (camelVersion == null && "org.apache.camel.springboot".equals(g)
+                        && "camel-spring-boot-bom".equals(a)) {
+                    camelVersion = v;
+                }
+                if (springBootVersion == null && "org.springframework.boot".equals(g)
+                        && "spring-boot-dependencies".equals(a)) {
+                    springBootVersion = v;
+                }
+            }
+
+            Map<String, String> result = new HashMap<>();
+            if (camelVersion != null && !camelVersion.contains("${")) {
+                result.put("camel", camelVersion);
+            }
+            if (springBootVersion != null && !springBootVersion.contains("${")) {
+                result.put("spring-boot", springBootVersion);
+            }
+            return result;
+        } catch (Exception e) {
+            return null;
+        }
     }
 
     static String textContent(Element parent, String tag) {

@@ -193,8 +193,11 @@ Camel routes:
 * *Delete line* -- *Ctrl+K* to delete the current line
 * *Word navigation* -- *Ctrl+Left/Right* to jump by word
 * *Smart Home* -- *Home* key alternates between content indent and column 0
-* *Tab completion* -- press *Tab* for context-aware YAML completion (EIP names, component URIs,
-  option keys and values)
+* *Tab completion* -- press *Tab* for context-aware completion:
+** In `application.properties`: Camel configuration options (`camel.main.*`, `camel.component.*`, etc.)
+   and Spring Boot auto-configuration properties (`server.*`, `spring.*`, `management.*`, etc.)
+   resolved from starter JARs in the local Maven repository — works even for stopped projects
+** In YAML DSL routes: EIP names, component URIs, option keys and values
 
 The editor shows *gutter change markers* -- a green background on line numbers that have been
 modified or added since the file was opened. This gives an at-a-glance view of what you've changed.
