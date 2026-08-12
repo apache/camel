@@ -29,6 +29,7 @@ import com.aliyun.eventbridge.models.Config;
 import com.aliyun.eventbridge.models.PutEventsResponse;
 import com.aliyun.eventbridge.models.PutEventsResponseEntry;
 import com.aliyun.eventbridge.util.EventBuilder;
+import com.google.gson.Gson;
 import org.apache.camel.Exchange;
 import org.apache.camel.component.alibaba.common.OpenApiClientSupport;
 import org.apache.camel.component.alibaba.eventbridge.constants.EventBridgeProperties;
@@ -36,6 +37,8 @@ import org.apache.camel.component.alibaba.eventbridge.models.ClientConfiguration
 import org.apache.camel.util.ObjectHelper;
 
 public final class EventBridgeUtils {
+
+    private static final Gson GSON = new Gson();
 
     private EventBridgeUtils() {
     }
@@ -97,7 +100,7 @@ public final class EventBridgeUtils {
             String source = stringValue(mapBody.get("source"), configuration.getEventSource());
             String type = stringValue(mapBody.get("type"), configuration.getEventType());
             String subject = stringValue(mapBody.get("subject"), configuration.getEventSubject());
-            String data = stringValue(mapBody.get("data"), null);
+            String data = jsonDataValue(mapBody.get("data"));
 
             if (ObjectHelper.isEmpty(source) || ObjectHelper.isEmpty(type) || ObjectHelper.isEmpty(eventBusName)) {
                 throw new IllegalArgumentException("Event source, type and event bus name are required");
@@ -147,6 +150,23 @@ public final class EventBridgeUtils {
             return stringValue;
         }
         return value.toString();
+    }
+
+    private static String jsonDataValue(Object value) {
+        if (value == null) {
+            return null;
+        }
+        if (value instanceof String stringValue) {
+            return stringValue;
+        }
+        if (value instanceof byte[] bytes) {
+            return new String(bytes, StandardCharsets.UTF_8);
+        }
+        try {
+            return GSON.toJson(value);
+        } catch (Exception e) {
+            throw new IllegalArgumentException("Unable to serialize event data as JSON", e);
+        }
     }
 
     public static Map<String, Object> toPutEventsMap(PutEventsResponse response) {

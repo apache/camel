@@ -16,9 +16,12 @@
  */
 package org.apache.camel.component.alibaba.eventbridge;
 
+import java.nio.charset.StandardCharsets;
+import java.util.HashMap;
 import java.util.Map;
 
 import com.aliyun.eventbridge.EventBridgeClient;
+import com.aliyun.eventbridge.models.CloudEvent;
 import com.aliyun.eventbridge.models.PutEventsResponse;
 import org.apache.camel.BindToRegistry;
 import org.apache.camel.Exchange;
@@ -30,6 +33,7 @@ import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.anyList;
+import static org.mockito.ArgumentMatchers.argThat;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -82,5 +86,36 @@ class PutEventsTest extends CamelTestSupport {
         assertThat(exchange.getProperty(EventBridgeProperties.REQUEST_ID)).isEqualTo("req-eb-1");
 
         verify(eventBridgeClient).putEvents(anyList());
+    }
+
+    @Test
+    void testPutEventsWithMapBody() throws Exception {
+        PutEventsResponse response = new PutEventsResponse();
+        response.setRequestId("req-eb-2");
+        response.setFailedEntryCount(0);
+
+        when(eventBridgeClient.putEvents(anyList())).thenReturn(response);
+
+        MockEndpoint mock = getMockEndpoint("mock:result");
+        mock.expectedMinimumMessageCount(1);
+
+        Map<String, Object> event = new HashMap<>();
+        event.put("eventBusName", testConfiguration.getProperty("eventBusName"));
+        event.put("source", testConfiguration.getProperty("eventSource"));
+        event.put("type", testConfiguration.getProperty("eventType"));
+        event.put("data", Map.of("key", "value"));
+
+        template.sendBody("direct:put", event);
+
+        mock.assertIsSatisfied();
+
+        verify(eventBridgeClient).putEvents(argThat(events -> {
+            if (events.size() != 1) {
+                return false;
+            }
+            CloudEvent cloudEvent = events.get(0);
+            String data = new String(cloudEvent.getData(), StandardCharsets.UTF_8);
+            return data.contains("\"key\":\"value\"");
+        }));
     }
 }

@@ -39,8 +39,10 @@ public class KMSEndpointUriFactory extends org.apache.camel.support.component.En
         props.add("secretKey");
         props.add("serviceKeys");
         PROPERTY_NAMES = Collections.unmodifiableSet(props);
-        Set<String> secretProps = new HashSet<>(3);
+        Set<String> secretProps = new HashSet<>(5);
         secretProps.add("accessKey");
+        secretProps.add("ciphertextBlob");
+        secretProps.add("plaintext");
         secretProps.add("secretKey");
         secretProps.add("serviceKeys");
         SECRET_PROPERTY_NAMES = Collections.unmodifiableSet(secretProps);
