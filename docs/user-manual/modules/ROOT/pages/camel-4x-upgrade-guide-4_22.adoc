@@ -31,6 +31,18 @@ TTL of 5 minutes (evict sessions with no POST/GET activity). Configure with
 `camel.server.mcp-session-keep-alive-interval` and `camel.server.mcp-session-idle-ttl`; set either
 option to `0` to disable that mechanism.
 
+=== camel-ai-tool
+
+`AiToolResult.Success` now carries an optional `structuredContent` field when the tool declares an
+output schema (`outputParameter.*` or `outputSchema`). The MCP bridge maps this to
+`CallToolResult.structuredContent` and publishes `Tool.outputSchema` to MCP clients. LangChain4j
+and Spring AI adapters continue to use the string `value()` only.
+
+SPI extensions in this release (before 4.22 ships): `McpToolCallResult` gains a third
+`structuredContent` component; `McpServerTool` adds `outputSchemaJson()`; `AiToolSpec` constructor
+accepts output schema fields. Custom `McpServerEngine` implementations should forward structured
+content when present.
+
 === camel-core
 
 ==== Property placeholders in toD and enrich dynamic endpoint URIs

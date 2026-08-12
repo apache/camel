@@ -52,14 +52,27 @@ public class AiToolConsumer extends DefaultConsumer {
         String argSchema = configuration.getArgSchema();
         AiToolParameterHelper.validateParameterSourceExclusive(params, argSchema);
 
+        Map<String, String> outputParams = configuration.getOutputParameters();
+        String outputSchema = configuration.getOutputSchema();
+        AiToolParameterHelper.validateOutputSourceExclusive(outputParams, outputSchema);
+
         Map<String, AiToolParameterHelper.ParameterDef> parameterDefs = Map.of();
         String jsonSchema = null;
+        Map<String, AiToolParameterHelper.ParameterDef> outputParameterDefs = Map.of();
+        String outputJsonSchema = null;
 
         if (params != null && !params.isEmpty()) {
             parameterDefs = AiToolParameterHelper.parseParameterMetadata(params);
             jsonSchema = AiToolParameterHelper.buildJsonSchemaFromDefs(parameterDefs);
         } else if (argSchema != null && !argSchema.isBlank()) {
             jsonSchema = AiToolParameterHelper.resolveArgSchema(getEndpoint().getCamelContext(), argSchema);
+        }
+
+        if (outputParams != null && !outputParams.isEmpty()) {
+            outputParameterDefs = AiToolParameterHelper.parseParameterMetadata(outputParams);
+            outputJsonSchema = AiToolParameterHelper.buildJsonSchemaFromDefs(outputParameterDefs);
+        } else if (outputSchema != null && !outputSchema.isBlank()) {
+            outputJsonSchema = AiToolParameterHelper.resolveOutputSchema(getEndpoint().getCamelContext(), outputSchema);
         }
 
         String desc = configuration.getDescription();
@@ -69,7 +82,7 @@ public class AiToolConsumer extends DefaultConsumer {
 
         AiToolAnnotations annotations = AiToolAnnotations.fromConfiguration(configuration);
         registeredSpec = new AiToolSpec(
-                toolName, desc, parameterDefs, jsonSchema, annotations, this);
+                toolName, desc, parameterDefs, jsonSchema, outputParameterDefs, outputJsonSchema, annotations, this);
 
         String tags = configuration.getTags();
         String[] parsedTags = (tags != null && !tags.isBlank())

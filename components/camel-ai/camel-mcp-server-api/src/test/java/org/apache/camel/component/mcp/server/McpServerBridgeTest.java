@@ -78,6 +78,11 @@ class McpServerBridgeTest extends CamelTestSupport {
 
                 from("ai-tool:other_tool?tags=untrusted&description=Other tag")
                         .setBody(constant("other"));
+
+                from("ai-tool:getWeather?tags=crm&description=Get weather"
+                     + "&outputSchema={\"type\":\"object\",\"properties\":{\"temperature\":{\"type\":\"number\"},\"unit\":{\"type\":\"string\"}},\"required\":[\"temperature\",\"unit\"]}")
+                        .routeId("weather-route")
+                        .setBody(constant("{\"temperature\":21.5,\"unit\":\"celsius\"}"));
             }
         };
     }
@@ -160,6 +165,22 @@ class McpServerBridgeTest extends CamelTestSupport {
 
         assertThat(engine.tools()).doesNotContainKey("send_email");
         assertThat(engine.removed()).containsOnlyOnce("send_email");
+    }
+
+    @Test
+    void testToolOutputSchemaPassedThroughBridge() {
+        McpServerTool tool = engine.tools().get("getWeather");
+
+        assertThat(tool.outputSchemaJson()).isNotNull().contains("\"temperature\"");
+    }
+
+    @Test
+    void testCallToolReturnsStructuredContent() {
+        McpToolCallResult result = engine.tools().get("getWeather").handler().call(Map.of());
+
+        assertThat(result.isError()).isFalse();
+        assertThat(result.text()).contains("\"temperature\":21.5");
+        assertThat(result.structuredContent()).isNotNull();
     }
 
     @Test
