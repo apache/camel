@@ -65,7 +65,7 @@
 ** xref:oauth.adoc[Oauth]
 ** xref:observability-services.adoc[Observability Services]
 ** xref:openai-providers.adoc[OpenAI - Compatible Providers]
-** xref:openai-operations.adoc[OpenAI - Embeddings and Audio Operations]
+** xref:openai-operations.adoc[OpenAI - Embeddings, Moderation and Audio Operations]
 ** xref:openai-mcp.adoc[OpenAI - MCP Tool Calling]
 ** xref:openai-responses.adoc[OpenAI - Responses API Operation]
 ** xref:openapi-java.adoc[Openapi Java]

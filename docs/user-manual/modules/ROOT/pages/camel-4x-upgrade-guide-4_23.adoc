@@ -54,3 +54,13 @@ LangChain4j components also expose request model names on new exchange headers
 the underlying client exposes it (for example langchain4j-chat); the agent and embeddings producers omit it when
 unavailable. See
 xref:components:others:ai-observability.adoc[AI Observability] for metric names and span attributes.
+
+=== camel-archetypes
+
+The Camel Maven archetypes now generate a `README.md` instead of the previous `ReadMe.txt`, with the
+content rewritten in Markdown and the documentation links updated. Each generated project also gets
+an `AGENTS.md` file with guidance for AI coding assistants, pointing at the Apache Camel LLM index
+(`/llms.txt`), the Camel CLI and the Camel MCP server.
+
+The `camel-archetype-api-component` archetype also generates its readme again: the file was declared
+in the wrong file set and was therefore silently skipped.

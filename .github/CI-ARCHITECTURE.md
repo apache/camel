@@ -63,7 +63,7 @@ PR comment: /component-test kafka http
 
 ### `main-build.yml` — Main branch build
 
-- **Trigger**: `push` to main, camel-4.14.x, camel-4.18.x
+- **Trigger**: `push` to main, camel-4.18.x, camel-4.22.x
 - **Steps**: Same as PR build but without comment posting
 
 ### `sonar-build.yml` + `sonar-scan.yml` — SonarCloud PR analysis

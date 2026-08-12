@@ -1,4 +1,4 @@
-= OpenAI - Embeddings and Audio Operations
+= OpenAI - Embeddings, Moderation and Audio Operations
 :tabs-sync-option:
 
 xref:ROOT:openai-component.adoc[Back to OpenAI Component]
@@ -167,6 +167,131 @@ The following headers are set after an embeddings request:
 | `CamelOpenAIOriginalText` | String/List | Original input text(s)
 | `CamelOpenAISimilarityScore` | Double | Cosine similarity (if reference embedding provided)
 |===
+
+== Moderation Operation
+
+The `moderation` operation checks text against the OpenAI usage policies. It is the canonical pre-filter for untrusted
+input on a public-facing route: rejecting policy-violating content before spending chat tokens or triggering tool calls.
+
+The message body is passed through unchanged and the verdict is exposed as headers, so the result can be used for
+content-based routing while the original content stays available to the rest of the route.
+
+IMPORTANT: Moderation is a policy filter, not a trust boundary. The verdict is probabilistic and its categories are
+defined by the provider, so it is not a substitute for authentication, authorization, schema validation or defences
+against prompt injection. The operation only reports a verdict — a flagged body keeps flowing unless the route stops
+or replaces it, as in the example below.
+
+NOTE: The operation moderates text only. The body, or each element of a list body, is converted to a `String` and sent
+as text input; the multi-modal inputs of the moderation API are not exposed.
+
+=== Guarding a Route
+
+[tabs]
+====
+Java::
++
+[source,java]
+----
+from("platform-http:/chat")
+    .to("openai:moderation?moderationModel=omni-moderation-latest")
+    .choice()
+        .when(header(OpenAIConstants.MODERATION_FLAGGED).isEqualTo(true))
+            .setBody(constant("Your message violates our usage policy."))
+        .otherwise()
+            .to("openai:chat-completion?model=gpt-5")
+    .end();
+----
+
+YAML::
++
+[source,yaml]
+----
+- from:
+    uri: platform-http:/chat
+    steps:
+      - to: openai:moderation?moderationModel=omni-moderation-latest
+      - choice:
+          when:
+            - simple: "${header.CamelOpenAIModerationFlagged} == true"
+              steps:
+                - setBody:
+                    constant: "Your message violates our usage policy."
+          otherwise:
+            steps:
+              - to: openai:chat-completion?model=gpt-5
+----
+====
+
+=== Verdicts per Input
+
+`CamelOpenAIModerationResults` always holds one verdict per moderated input, in the order of the inputs. Each entry is
+a map with the keys `input`, `flagged`, `categories` and `categoryScores`, which makes a batch straightforward to split
+and route per item:
+
+[source,java]
+----
+from("direct:moderate-batch")
+    .to("openai:moderation")
+    .split(header(OpenAIConstants.MODERATION_RESULTS))
+        .choice()
+            .when(simple("${body[flagged]}"))
+                .to("direct:quarantine")
+            .otherwise()
+                .to("direct:downstream")
+        .end();
+----
+
+A `List` body moderates every element in a single API call, and `CamelOpenAIModerationFlagged` is then `true` when at
+least one element was flagged.
+
+For a single input, the same categories are also exposed as plain maps in `CamelOpenAIModerationCategories` and
+`CamelOpenAIModerationCategoryScores`, which is convenient for acting on one category directly — for example routing
+anything the model is fairly confident about to human review:
+
+[source,java]
+----
+from("direct:moderate")
+    .to("openai:moderation")
+    .choice()
+        .when(simple("${header.CamelOpenAIModerationCategoryScores[hate]} > 0.85"))
+            .to("direct:human-review")
+        .otherwise()
+            .to("direct:downstream")
+    .end();
+----
+
+Those two headers are not set for a list body, where `CamelOpenAIModerationResults` carries the verdicts.
+
+=== Failure Modes
+
+The operation is meant to gate untrusted content, so it fails the exchange rather than letting a message through
+without a verdict:
+
+* the API returning a number of results that does not match the number of inputs raises a `CamelExchangeException`,
+  instead of leaving `CamelOpenAIModerationFlagged` as `false`;
+* a missing body, an empty list, or a list containing `null` elements raises an `IllegalArgumentException`.
+
+=== Moderation Output Headers
+
+The following headers are set after a moderation request:
+
+[cols="1,1,3"]
+|===
+| Header | Type | Description
+
+| `CamelOpenAIModerationFlagged` | Boolean | Whether the input violates the usage policies. For a batch, `true` when at least one input was flagged
+| `CamelOpenAIModerationResults` | List | One verdict per input, in input order. Each entry holds `input`, `flagged`, `categories` and `categoryScores`
+| `CamelOpenAIModerationCategories` | Map | Category name to violation flag, for a single input. Not set for a list body
+| `CamelOpenAIModerationCategoryScores` | Map | Category name to confidence score, for a single input. Not set for a list body
+| `CamelOpenAIModerationResponseModel` | String | The model used for moderation
+|===
+
+The category names are the ones returned by the API, for example `hate`, `hate/threatening`, `self-harm/intent`,
+`sexual/minors` and `violence/graphic`.
+
+NOTE: The `illicit` and `illicit/violent` categories are optional in the API model. OpenAI returns them, but an
+xref:others:openai-providers.adoc[OpenAI-compatible provider] may not, in which case they are absent from the
+category map. The score map always contains every category.
 
 == Audio Transcription Operation
 

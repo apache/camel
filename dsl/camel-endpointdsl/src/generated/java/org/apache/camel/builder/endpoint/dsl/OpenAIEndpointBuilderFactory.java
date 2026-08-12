@@ -970,6 +970,21 @@ public interface OpenAIEndpointBuilderFactory {
             return this;
         }
         /**
+         * The model to use for moderation.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Default: omni-moderation-latest
+         * Group: producer
+         * 
+         * @param moderationModel the value to set
+         * @return the dsl builder
+         */
+        default OpenAIEndpointBuilder moderationModel(String moderationModel) {
+            doSetProperty("moderationModel", moderationModel);
+            return this;
+        }
+        /**
          * Fully qualified class name for structured output using response
          * format.
          * 
@@ -1210,7 +1225,8 @@ public interface OpenAIEndpointBuilderFactory {
         /**
          * Store the full SDK response in non-streaming mode: chat-completion
          * uses exchange property 'CamelOpenAIResponse'; responses uses
-         * 'CamelOpenAIResponsesResponse'.
+         * 'CamelOpenAIResponsesResponse'; moderation uses
+         * 'CamelOpenAIModerationResponse'.
          * 
          * The option is a: <code>boolean</code> type.
          * 
@@ -1227,7 +1243,8 @@ public interface OpenAIEndpointBuilderFactory {
         /**
          * Store the full SDK response in non-streaming mode: chat-completion
          * uses exchange property 'CamelOpenAIResponse'; responses uses
-         * 'CamelOpenAIResponsesResponse'.
+         * 'CamelOpenAIResponsesResponse'; moderation uses
+         * 'CamelOpenAIModerationResponse'.
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
@@ -1746,10 +1763,10 @@ public interface OpenAIEndpointBuilderFactory {
          * Path parameter: operation (required)
          * The operation to perform: 'chat-completion', 'responses',
          * 'embeddings', 'tool-execution', 'audio-transcription',
-         * 'audio-translation', or 'audio-speech'
-         * There are 7 enums and the value can be one of: chat-completion,
+         * 'audio-translation', 'audio-speech', or 'moderation'
+         * There are 8 enums and the value can be one of: chat-completion,
          * responses, embeddings, tool-execution, audio-transcription,
-         * audio-translation, audio-speech
+         * audio-translation, audio-speech, moderation
          * 
          * @param path operation
          * @return the dsl builder
@@ -1771,10 +1788,10 @@ public interface OpenAIEndpointBuilderFactory {
          * Path parameter: operation (required)
          * The operation to perform: 'chat-completion', 'responses',
          * 'embeddings', 'tool-execution', 'audio-transcription',
-         * 'audio-translation', or 'audio-speech'
-         * There are 7 enums and the value can be one of: chat-completion,
+         * 'audio-translation', 'audio-speech', or 'moderation'
+         * There are 8 enums and the value can be one of: chat-completion,
          * responses, embeddings, tool-execution, audio-transcription,
-         * audio-translation, audio-speech
+         * audio-translation, audio-speech, moderation
          * 
          * @param componentName to use a custom component name for the endpoint
          * instead of the default name
@@ -2160,6 +2177,19 @@ public interface OpenAIEndpointBuilderFactory {
             return "CamelOpenAIResponsesResponse";
         }
         /**
+         * The complete OpenAI moderation response object.
+         * 
+         * The option is a: {@code
+         * com.openai.models.moderations.ModerationCreateResponse} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code OpenAIModerationResponse}.
+         */
+        public String openAIModerationResponse() {
+            return "CamelOpenAIModerationResponse";
+        }
+        /**
          * The model to use for embeddings.
          * 
          * The option is a: {@code String} type.
@@ -2254,6 +2284,88 @@ public interface OpenAIEndpointBuilderFactory {
          */
         public String openAIOriginalText() {
             return "CamelOpenAIOriginalText";
+        }
+        /**
+         * The model to use for moderation (e.g., omni-moderation-latest).
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code OpenAIModerationModel}.
+         */
+        public String openAIModerationModel() {
+            return "CamelOpenAIModerationModel";
+        }
+        /**
+         * Whether the moderation API flagged the input as violating the usage
+         * policies. For a batch of inputs this is true when at least one input
+         * was flagged.
+         * 
+         * The option is a: {@code Boolean} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code OpenAIModerationFlagged}.
+         */
+        public String openAIModerationFlagged() {
+            return "CamelOpenAIModerationFlagged";
+        }
+        /**
+         * One verdict per moderated input, in the order of the inputs. Each
+         * entry holds the keys 'input', 'flagged', 'categories' and
+         * 'categoryScores', so a batch can be split and routed per item.
+         * 
+         * The option is a: {@code java.util.List<java.util.Map<String,
+         * Object>>} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code OpenAIModerationResults}.
+         */
+        public String openAIModerationResults() {
+            return "CamelOpenAIModerationResults";
+        }
+        /**
+         * The moderation categories and whether each one was violated, for a
+         * single input. Not set for a list body, where
+         * 'CamelOpenAIModerationResults' carries the verdicts.
+         * 
+         * The option is a: {@code java.util.Map<String, Boolean>} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code OpenAIModerationCategories}.
+         */
+        public String openAIModerationCategories() {
+            return "CamelOpenAIModerationCategories";
+        }
+        /**
+         * The moderation confidence score per category, for a single input. Not
+         * set for a list body, where 'CamelOpenAIModerationResults' carries the
+         * verdicts.
+         * 
+         * The option is a: {@code java.util.Map<String, Double>} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code
+         * OpenAIModerationCategoryScores}.
+         */
+        public String openAIModerationCategoryScores() {
+            return "CamelOpenAIModerationCategoryScores";
+        }
+        /**
+         * The moderation model used in the response.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code OpenAIModerationResponseModel}.
+         */
+        public String openAIModerationResponseModel() {
+            return "CamelOpenAIModerationResponseModel";
         }
         /**
          * The model to use for audio transcription.
