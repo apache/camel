@@ -160,6 +160,7 @@ import org.apache.camel.model.dataformat.SwiftMxDataFormat;
 import org.apache.camel.model.dataformat.SyslogDataFormat;
 import org.apache.camel.model.dataformat.TarFileDataFormat;
 import org.apache.camel.model.dataformat.ThriftDataFormat;
+import org.apache.camel.model.dataformat.UblDataFormat;
 import org.apache.camel.model.dataformat.UniVocityCsvDataFormat;
 import org.apache.camel.model.dataformat.UniVocityFixedDataFormat;
 import org.apache.camel.model.dataformat.UniVocityHeader;
@@ -3204,6 +3205,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     @YamlProperty(name = "tarFile", type = "object:org.apache.camel.model.dataformat.TarFileDataFormat", oneOf = "dataFormatType"),
                     @YamlProperty(name = "thrift", type = "object:org.apache.camel.model.dataformat.ThriftDataFormat", oneOf = "dataFormatType"),
                     @YamlProperty(name = "toType", type = "string", description = "The destination (to) data type name. If you specify 'json:XYZ', the transformer is picked up when destination type matches. If you specify just 'json', it matches all json destination types.", displayName = "To Type"),
+                    @YamlProperty(name = "ubl", type = "object:org.apache.camel.model.dataformat.UblDataFormat", oneOf = "dataFormatType"),
                     @YamlProperty(name = "univocityCsv", type = "object:org.apache.camel.model.dataformat.UniVocityCsvDataFormat", oneOf = "dataFormatType"),
                     @YamlProperty(name = "univocityFixed", type = "object:org.apache.camel.model.dataformat.UniVocityFixedDataFormat", oneOf = "dataFormatType"),
                     @YamlProperty(name = "univocityTsv", type = "object:org.apache.camel.model.dataformat.UniVocityTsvDataFormat", oneOf = "dataFormatType"),
@@ -3433,6 +3435,11 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     target.setDataFormatType(val);
                     break;
                 }
+                case "ubl": {
+                    org.apache.camel.model.dataformat.UblDataFormat val = asType(node, org.apache.camel.model.dataformat.UblDataFormat.class);
+                    target.setDataFormatType(val);
+                    break;
+                }
                 case "thrift": {
                     org.apache.camel.model.dataformat.ThriftDataFormat val = asType(node, org.apache.camel.model.dataformat.ThriftDataFormat.class);
                     target.setDataFormatType(val);
@@ -3550,6 +3557,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     @YamlProperty(name = "syslog", type = "object:org.apache.camel.model.dataformat.SyslogDataFormat"),
                     @YamlProperty(name = "tarFile", type = "object:org.apache.camel.model.dataformat.TarFileDataFormat"),
                     @YamlProperty(name = "thrift", type = "object:org.apache.camel.model.dataformat.ThriftDataFormat"),
+                    @YamlProperty(name = "ubl", type = "object:org.apache.camel.model.dataformat.UblDataFormat"),
                     @YamlProperty(name = "univocityCsv", type = "object:org.apache.camel.model.dataformat.UniVocityCsvDataFormat"),
                     @YamlProperty(name = "univocityFixed", type = "object:org.apache.camel.model.dataformat.UniVocityFixedDataFormat"),
                     @YamlProperty(name = "univocityTsv", type = "object:org.apache.camel.model.dataformat.UniVocityTsvDataFormat"),
@@ -3971,6 +3979,16 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                 }
                 case "tarFile": {
                     org.apache.camel.model.dataformat.TarFileDataFormat val = asType(node, org.apache.camel.model.dataformat.TarFileDataFormat.class);
+                    java.util.List<org.apache.camel.model.DataFormatDefinition> existing = target.getDataFormats();
+                    if (existing == null) {
+                        existing = new java.util.ArrayList<>();
+                    }
+                    existing.add(val);
+                    target.setDataFormats(existing);
+                    break;
+                }
+                case "ubl": {
+                    org.apache.camel.model.dataformat.UblDataFormat val = asType(node, org.apache.camel.model.dataformat.UblDataFormat.class);
                     java.util.List<org.apache.camel.model.DataFormatDefinition> existing = target.getDataFormats();
                     if (existing == null) {
                         existing = new java.util.ArrayList<>();
@@ -9468,6 +9486,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     @YamlProperty(name = "syslog", type = "object:org.apache.camel.model.dataformat.SyslogDataFormat", oneOf = "dataFormatType"),
                     @YamlProperty(name = "tarFile", type = "object:org.apache.camel.model.dataformat.TarFileDataFormat", oneOf = "dataFormatType"),
                     @YamlProperty(name = "thrift", type = "object:org.apache.camel.model.dataformat.ThriftDataFormat", oneOf = "dataFormatType"),
+                    @YamlProperty(name = "ubl", type = "object:org.apache.camel.model.dataformat.UblDataFormat", oneOf = "dataFormatType"),
                     @YamlProperty(name = "univocityCsv", type = "object:org.apache.camel.model.dataformat.UniVocityCsvDataFormat", oneOf = "dataFormatType"),
                     @YamlProperty(name = "univocityFixed", type = "object:org.apache.camel.model.dataformat.UniVocityFixedDataFormat", oneOf = "dataFormatType"),
                     @YamlProperty(name = "univocityTsv", type = "object:org.apache.camel.model.dataformat.UniVocityTsvDataFormat", oneOf = "dataFormatType"),
@@ -9696,6 +9715,11 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                 }
                 case "tarFile": {
                     org.apache.camel.model.dataformat.TarFileDataFormat val = asType(node, org.apache.camel.model.dataformat.TarFileDataFormat.class);
+                    target.setDataFormatType(val);
+                    break;
+                }
+                case "ubl": {
+                    org.apache.camel.model.dataformat.UblDataFormat val = asType(node, org.apache.camel.model.dataformat.UblDataFormat.class);
                     target.setDataFormatType(val);
                     break;
                 }
@@ -19216,6 +19240,51 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
     }
 
     @YamlType(
+            nodes = "ubl",
+            types = org.apache.camel.model.dataformat.UblDataFormat.class,
+            order = org.apache.camel.dsl.yaml.common.YamlDeserializerResolver.ORDER_LOWEST - 1,
+            displayName = "UBL",
+            description = "Marshal and unmarshal UBL 2.1 (Universal Business Language) documents.",
+            deprecated = false,
+            properties = {
+                    @YamlProperty(name = "id", type = "string", description = "The id of this node", displayName = "Id"),
+                    @YamlProperty(name = "prettyPrint", type = "boolean", defaultValue = "false", description = "Whether to enable pretty printing (formatted) output of the XML", displayName = "Pretty Print")
+            }
+    )
+    public static class UblDataFormatDeserializer extends YamlDeserializerBase<UblDataFormat> {
+        public UblDataFormatDeserializer() {
+            super(UblDataFormat.class);
+        }
+
+        @Override
+        protected UblDataFormat newInstance() {
+            return new UblDataFormat();
+        }
+
+        @Override
+        protected boolean setProperty(UblDataFormat target, String propertyKey, String propertyName,
+                Node node) {
+            propertyKey = org.apache.camel.util.StringHelper.dashToCamelCase(propertyKey);
+            switch(propertyKey) {
+                case "id": {
+                    String val = asText(node);
+                    target.setId(val);
+                    break;
+                }
+                case "prettyPrint": {
+                    String val = asText(node);
+                    target.setPrettyPrint(val);
+                    break;
+                }
+                default: {
+                    return false;
+                }
+            }
+            return true;
+        }
+    }
+
+    @YamlType(
             nodes = "univocityCsv",
             types = org.apache.camel.model.dataformat.UniVocityCsvDataFormat.class,
             order = org.apache.camel.dsl.yaml.common.YamlDeserializerResolver.ORDER_LOWEST - 1,
@@ -19731,6 +19800,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     @YamlProperty(name = "syslog", type = "object:org.apache.camel.model.dataformat.SyslogDataFormat", required = true, oneOf = "dataFormatType"),
                     @YamlProperty(name = "tarFile", type = "object:org.apache.camel.model.dataformat.TarFileDataFormat", required = true, oneOf = "dataFormatType"),
                     @YamlProperty(name = "thrift", type = "object:org.apache.camel.model.dataformat.ThriftDataFormat", required = true, oneOf = "dataFormatType"),
+                    @YamlProperty(name = "ubl", type = "object:org.apache.camel.model.dataformat.UblDataFormat", required = true, oneOf = "dataFormatType"),
                     @YamlProperty(name = "univocityCsv", type = "object:org.apache.camel.model.dataformat.UniVocityCsvDataFormat", required = true, oneOf = "dataFormatType"),
                     @YamlProperty(name = "univocityFixed", type = "object:org.apache.camel.model.dataformat.UniVocityFixedDataFormat", required = true, oneOf = "dataFormatType"),
                     @YamlProperty(name = "univocityTsv", type = "object:org.apache.camel.model.dataformat.UniVocityTsvDataFormat", required = true, oneOf = "dataFormatType"),
@@ -19964,6 +20034,11 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                 }
                 case "tarFile": {
                     org.apache.camel.model.dataformat.TarFileDataFormat val = asType(node, org.apache.camel.model.dataformat.TarFileDataFormat.class);
+                    target.setDataFormatType(val);
+                    break;
+                }
+                case "ubl": {
+                    org.apache.camel.model.dataformat.UblDataFormat val = asType(node, org.apache.camel.model.dataformat.UblDataFormat.class);
                     target.setDataFormatType(val);
                     break;
                 }

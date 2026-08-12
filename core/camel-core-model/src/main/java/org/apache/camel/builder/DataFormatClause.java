@@ -64,6 +64,7 @@ import org.apache.camel.model.dataformat.SwiftMxDataFormat;
 import org.apache.camel.model.dataformat.SyslogDataFormat;
 import org.apache.camel.model.dataformat.TarFileDataFormat;
 import org.apache.camel.model.dataformat.ThriftDataFormat;
+import org.apache.camel.model.dataformat.UblDataFormat;
 import org.apache.camel.model.dataformat.XMLSecurityDataFormat;
 import org.apache.camel.model.dataformat.YAMLDataFormat;
 import org.apache.camel.model.dataformat.YAMLLibrary;
@@ -1092,6 +1093,24 @@ public class DataFormatClause<T extends ProcessorDefinition<?>> {
 
     public T thrift(String instanceClassName, String contentTypeFormat) {
         return dataFormat(new ThriftDataFormat(instanceClassName, contentTypeFormat));
+    }
+
+    /**
+     * Uses the UBL (Universal Business Language) 2.1 data format
+     */
+    public T ubl() {
+        return dataFormat(new UblDataFormat());
+    }
+
+    /**
+     * Uses the UBL (Universal Business Language) 2.1 data format
+     *
+     * @param prettyPrint turn pretty printing on or off
+     */
+    public T ubl(boolean prettyPrint) {
+        UblDataFormat ublDataFormat = new UblDataFormat();
+        ublDataFormat.setPrettyPrint(Boolean.toString(prettyPrint));
+        return dataFormat(ublDataFormat);
     }
 
     /**

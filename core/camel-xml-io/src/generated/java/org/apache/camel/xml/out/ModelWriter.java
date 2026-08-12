@@ -512,6 +512,9 @@ public class ModelWriter extends BaseWriter {
     public void writeThriftDataFormat(ThriftDataFormat def) throws IOException {
         doWriteThriftDataFormat("thrift", def);
     }
+    public void writeUblDataFormat(UblDataFormat def) throws IOException {
+        doWriteUblDataFormat("ubl", def);
+    }
     public void writeUniVocityCsvDataFormat(UniVocityCsvDataFormat def) throws IOException {
         doWriteUniVocityCsvDataFormat("univocityCsv", def);
     }
@@ -1212,6 +1215,7 @@ public class ModelWriter extends BaseWriter {
                 case "SwiftMxDataFormat" -> doWriteSwiftMxDataFormat("swiftMx", (SwiftMxDataFormat) v);
                 case "SyslogDataFormat" -> doWriteSyslogDataFormat("syslog", (SyslogDataFormat) v);
                 case "TarFileDataFormat" -> doWriteTarFileDataFormat("tarFile", (TarFileDataFormat) v);
+                case "UblDataFormat" -> doWriteUblDataFormat("ubl", (UblDataFormat) v);
                 case "ThriftDataFormat" -> doWriteThriftDataFormat("thrift", (ThriftDataFormat) v);
                 case "UniVocityCsvDataFormat" -> doWriteUniVocityCsvDataFormat("univocityCsv", (UniVocityCsvDataFormat) v);
                 case "UniVocityFixedDataFormat" -> doWriteUniVocityFixedDataFormat("univocityFixed", (UniVocityFixedDataFormat) v);
@@ -1989,6 +1993,7 @@ public class ModelWriter extends BaseWriter {
                 case "SwiftMxDataFormat" -> doWriteSwiftMxDataFormat("swiftMx", (SwiftMxDataFormat) v);
                 case "SyslogDataFormat" -> doWriteSyslogDataFormat("syslog", (SyslogDataFormat) v);
                 case "TarFileDataFormat" -> doWriteTarFileDataFormat("tarFile", (TarFileDataFormat) v);
+                case "UblDataFormat" -> doWriteUblDataFormat("ubl", (UblDataFormat) v);
                 case "ThriftDataFormat" -> doWriteThriftDataFormat("thrift", (ThriftDataFormat) v);
                 case "UniVocityCsvDataFormat" -> doWriteUniVocityCsvDataFormat("univocityCsv", (UniVocityCsvDataFormat) v);
                 case "UniVocityFixedDataFormat" -> doWriteUniVocityFixedDataFormat("univocityFixed", (UniVocityFixedDataFormat) v);
@@ -2318,6 +2323,7 @@ public class ModelWriter extends BaseWriter {
                 case "SwiftMxDataFormat" -> doWriteSwiftMxDataFormat("swiftMx", (SwiftMxDataFormat) v);
                 case "SyslogDataFormat" -> doWriteSyslogDataFormat("syslog", (SyslogDataFormat) v);
                 case "TarFileDataFormat" -> doWriteTarFileDataFormat("tarFile", (TarFileDataFormat) v);
+                case "UblDataFormat" -> doWriteUblDataFormat("ubl", (UblDataFormat) v);
                 case "ThriftDataFormat" -> doWriteThriftDataFormat("thrift", (ThriftDataFormat) v);
                 case "UniVocityCsvDataFormat" -> doWriteUniVocityCsvDataFormat("univocityCsv", (UniVocityCsvDataFormat) v);
                 case "UniVocityFixedDataFormat" -> doWriteUniVocityFixedDataFormat("univocityFixed", (UniVocityFixedDataFormat) v);
@@ -2677,6 +2683,12 @@ public class ModelWriter extends BaseWriter {
         doWriteAttribute("instanceClass", def.getInstanceClass(), null);
         doWriteAttribute("contentTypeFormat", def.getContentTypeFormat(), "binary");
         doWriteAttribute("contentTypeHeader", def.getContentTypeHeader(), "true");
+        endElement(name);
+    }
+    protected void doWriteUblDataFormat(String name, UblDataFormat def) throws IOException {
+        startElement(name);
+        doWriteIdentifiedTypeAttributes(def);
+        doWriteAttribute("prettyPrint", def.getPrettyPrint(), "false");
         endElement(name);
     }
     protected void doWriteUniVocityAbstractDataFormatAttributes(UniVocityAbstractDataFormat def) throws IOException {
@@ -3503,6 +3515,7 @@ public class ModelWriter extends BaseWriter {
                 case "SwiftMxDataFormat" -> doWriteSwiftMxDataFormat("swiftMx", (SwiftMxDataFormat) v);
                 case "SyslogDataFormat" -> doWriteSyslogDataFormat("syslog", (SyslogDataFormat) v);
                 case "TarFileDataFormat" -> doWriteTarFileDataFormat("tarFile", (TarFileDataFormat) v);
+                case "UblDataFormat" -> doWriteUblDataFormat("ubl", (UblDataFormat) v);
                 case "ThriftDataFormat" -> doWriteThriftDataFormat("thrift", (ThriftDataFormat) v);
                 case "UniVocityCsvDataFormat" -> doWriteUniVocityCsvDataFormat("univocityCsv", (UniVocityCsvDataFormat) v);
                 case "UniVocityFixedDataFormat" -> doWriteUniVocityFixedDataFormat("univocityFixed", (UniVocityFixedDataFormat) v);

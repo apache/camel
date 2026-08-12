@@ -3790,6 +3790,10 @@
         "type" : "object",
         "ref" : "thrift"
       }, {
+        "name" : "ubl",
+        "type" : "object",
+        "ref" : "ubl"
+      }, {
         "name" : "univocityCsv",
         "type" : "object",
         "ref" : "uniVocityCsv"
@@ -9313,6 +9317,11 @@
         "ref" : "thrift",
         "required" : true
       }, {
+        "name" : "ubl",
+        "type" : "object",
+        "ref" : "ubl",
+        "required" : true
+      }, {
         "name" : "univocityCsv",
         "type" : "object",
         "ref" : "uniVocityCsv",
@@ -11038,6 +11047,10 @@
         "name" : "thrift",
         "type" : "object",
         "ref" : "thrift"
+      }, {
+        "name" : "ubl",
+        "type" : "object",
+        "ref" : "ubl"
       }, {
         "name" : "univocityCsv",
         "type" : "object",
@@ -13359,6 +13372,31 @@
         "displayName" : "Content Type Header",
         "kind" : "attribute",
         "index" : 3,
+        "group" : "common"
+      } ]
+    },
+    "ubl" : {
+      "title" : "UBL",
+      "description" : "Marshal and unmarshal UBL 2.1 (Universal Business Language) documents.",
+      "label" : "dataformat,transformation,xml",
+      "children" : [ {
+        "name" : "id",
+        "type" : "string",
+        "description" : "The id of this node",
+        "title" : "Id",
+        "displayName" : "Id",
+        "kind" : "attribute",
+        "index" : 0,
+        "group" : "common"
+      }, {
+        "name" : "prettyPrint",
+        "type" : "boolean",
+        "description" : "Whether to enable pretty printing (formatted) output of the XML",
+        "title" : "Pretty Print",
+        "default" : "false",
+        "displayName" : "Pretty Print",
+        "kind" : "attribute",
+        "index" : 1,
         "group" : "common"
       } ]
     },
@@ -19553,6 +19591,10 @@
         "name" : "thrift",
         "type" : "object",
         "ref" : "thrift"
+      }, {
+        "name" : "ubl",
+        "type" : "object",
+        "ref" : "ubl"
       }, {
         "name" : "univocityCsv",
         "type" : "object",

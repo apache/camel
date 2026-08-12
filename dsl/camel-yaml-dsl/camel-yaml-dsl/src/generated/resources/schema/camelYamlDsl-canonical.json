@@ -2238,6 +2238,9 @@
           "thrift" : {
             "$ref" : "#/items/definitions/org.apache.camel.model.dataformat.ThriftDataFormat"
           },
+          "ubl" : {
+            "$ref" : "#/items/definitions/org.apache.camel.model.dataformat.UblDataFormat"
+          },
           "univocityCsv" : {
             "$ref" : "#/items/definitions/org.apache.camel.model.dataformat.UniVocityCsvDataFormat"
           },
@@ -5718,6 +5721,9 @@
           "thrift" : {
             "$ref" : "#/items/definitions/org.apache.camel.model.dataformat.ThriftDataFormat"
           },
+          "ubl" : {
+            "$ref" : "#/items/definitions/org.apache.camel.model.dataformat.UblDataFormat"
+          },
           "univocityCsv" : {
             "$ref" : "#/items/definitions/org.apache.camel.model.dataformat.UniVocityCsvDataFormat"
           },
@@ -5750,7 +5756,7 @@
             "$ref" : "#/items/definitions/org.apache.camel.model.dataformat.ZipFileDataFormat"
           }
         },
-        "required" : [ "asn1", "avro", "barcode", "base64", "beanio", "bindy", "cbor", "crypto", "csv", "custom", "dfdl", "fhirJson", "fhirXml", "flatpack", "fory", "grok", "groovyJson", "groovyXml", "gzipDeflater", "hl7", "ical", "iso8583", "jacksonXml", "jaxb", "json", "jsonApi", "lzf", "mimeMultipart", "ocsf", "parquetAvro", "pgp", "pqc", "protobuf", "rss", "smooks", "soap", "swiftMt", "swiftMx", "syslog", "tarFile", "thrift", "univocityCsv", "univocityFixed", "univocityTsv", "xmlSecurity", "yaml", "zipDeflater", "zipFile" ]
+        "required" : [ "asn1", "avro", "barcode", "base64", "beanio", "bindy", "cbor", "crypto", "csv", "custom", "dfdl", "fhirJson", "fhirXml", "flatpack", "fory", "grok", "groovyJson", "groovyXml", "gzipDeflater", "hl7", "ical", "iso8583", "jacksonXml", "jaxb", "json", "jsonApi", "lzf", "mimeMultipart", "ocsf", "parquetAvro", "pgp", "pqc", "protobuf", "rss", "smooks", "soap", "swiftMt", "swiftMx", "syslog", "tarFile", "thrift", "ubl", "univocityCsv", "univocityFixed", "univocityTsv", "xmlSecurity", "yaml", "zipDeflater", "zipFile" ]
       },
       "org.apache.camel.model.ValidateDefinition" : {
         "title" : "Validate",
@@ -6940,6 +6946,9 @@
           },
           "thrift" : {
             "$ref" : "#/items/definitions/org.apache.camel.model.dataformat.ThriftDataFormat"
+          },
+          "ubl" : {
+            "$ref" : "#/items/definitions/org.apache.camel.model.dataformat.UblDataFormat"
           },
           "univocityCsv" : {
             "$ref" : "#/items/definitions/org.apache.camel.model.dataformat.UniVocityCsvDataFormat"
@@ -8496,6 +8505,25 @@
             "type" : "string",
             "title" : "Instance Class",
             "description" : "Name of class to use when unmarshalling."
+          }
+        }
+      },
+      "org.apache.camel.model.dataformat.UblDataFormat" : {
+        "title" : "UBL",
+        "description" : "Marshal and unmarshal UBL 2.1 (Universal Business Language) documents.",
+        "type" : "object",
+        "additionalProperties" : false,
+        "properties" : {
+          "id" : {
+            "type" : "string",
+            "title" : "Id",
+            "description" : "The id of this node"
+          },
+          "prettyPrint" : {
+            "type" : "boolean",
+            "title" : "Pretty Print",
+            "description" : "Whether to enable pretty printing (formatted) output of the XML",
+            "default" : false
           }
         }
       },
@@ -12958,6 +12986,9 @@
             "type" : "string",
             "title" : "To Type",
             "description" : "The destination (to) data type name. If you specify 'json:XYZ', the transformer is picked up when destination type matches. If you specify just 'json', it matches all json destination types."
+          },
+          "ubl" : {
+            "$ref" : "#/items/definitions/org.apache.camel.model.dataformat.UblDataFormat"
           },
           "univocityCsv" : {
             "$ref" : "#/items/definitions/org.apache.camel.model.dataformat.UniVocityCsvDataFormat"

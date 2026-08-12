@@ -1,0 +1,193 @@
+= UBL DataFormat
+:doctitle: UBL
+:shortname: ubl
+:artifactid: camel-ubl
+:description: Marshal and unmarshal UBL 2.1 (Universal Business Language) documents.
+:since: 4.23
+:supportlevel: Preview
+:tabs-sync-option:
+
+*Since Camel {since}*
+
+The UBL data format is used for marshalling and unmarshalling
+https://docs.oasis-open.org/ubl/UBL-2.1.html[UBL 2.1 (Universal Business Language)] documents.
+
+UBL 2.1 is an OASIS standard that defines XML business document types such as invoices,
+credit notes, orders, despatch advice, and more. It is the document format used by the
+https://peppol.org/[Peppol e-invoicing network] and is increasingly mandated across the EU
+(ViDA directive), and other countries.
+
+The data format uses the https://github.com/phax/ph-ubl[ph-ubl] library by Philip Helger
+as the underlying JAXB binding layer. It supports all 65 UBL 2.1 document types and
+auto-detects the document type from the Java class name (when marshalling) or from the
+XML root element (when unmarshalling).
+
+== UBL Options
+
+// dataformat options: START
+include::partial$dataformat-options.adoc[]
+// dataformat options: END
+
+== Supported Document Types
+
+The data format supports all 65 UBL 2.1 document types, including:
+
+* Invoice, CreditNote, DebitNote
+* Order, OrderResponse, OrderCancellation, OrderChange
+* DespatchAdvice, ReceiptAdvice
+* Quotation, RequestForQuotation
+* Catalogue, CatalogueRequest
+* ApplicationResponse
+* Waybill, BillOfLading, FreightInvoice
+* Statement, RemittanceAdvice, Reminder
+* and many more
+
+== Usage
+
+=== Marshalling (Java object to XML)
+
+[tabs]
+====
+Java::
++
+[source,java]
+----
+from("direct:marshal")
+    .marshal().ubl()
+    .to("file:output");
+----
+
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="direct:marshal"/>
+  <marshal>
+    <ubl/>
+  </marshal>
+  <to uri="file:output"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:marshal
+    steps:
+      - marshal:
+          ubl: {}
+      - to:
+          uri: file:output
+----
+====
+
+=== Unmarshalling (XML to Java object)
+
+[tabs]
+====
+Java::
++
+[source,java]
+----
+from("file:invoices")
+    .unmarshal().ubl()
+    .process(exchange -> {
+        InvoiceType invoice = exchange.getIn().getBody(InvoiceType.class);
+        String id = invoice.getIDValue();
+    });
+----
+
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="file:invoices"/>
+  <unmarshal>
+    <ubl/>
+  </unmarshal>
+  <to uri="direct:process"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: file:invoices
+    steps:
+      - unmarshal:
+          ubl: {}
+      - to:
+          uri: direct:process
+----
+====
+
+=== With pretty printing
+
+[tabs]
+====
+Java::
++
+[source,java]
+----
+UblDataFormat ubl = new UblDataFormat();
+ubl.setPrettyPrint(true);
+
+from("direct:marshal")
+    .marshal(ubl)
+    .to("file:output");
+----
+
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="direct:marshal"/>
+  <marshal>
+    <ubl prettyPrint="true"/>
+  </marshal>
+  <to uri="file:output"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:marshal
+    steps:
+      - marshal:
+          ubl:
+            prettyPrint: true
+      - to:
+          uri: file:output
+----
+====
+
+== Dependencies
+
+To use UBL in your Camel routes, you need to add the dependency on *camel-ubl*
+which implements this data format.
+
+If you use Maven, you could add the following to your `pom.xml`,
+substituting the version number for the latest and greatest release.
+
+[source,xml]
+----------------------------------------------------------
+<dependency>
+  <groupId>org.apache.camel</groupId>
+  <artifactId>camel-ubl</artifactId>
+  <version>x.x.x</version>
+  <!-- use the same version as your Camel core version -->
+</dependency>
+----------------------------------------------------------

@@ -332,6 +332,7 @@
         <module>camel-tika</module>
         <module>camel-twilio</module>
         <module>camel-twitter</module>
+        <module>camel-ubl</module>
         <module>camel-univocity-parsers</module>
         <module>camel-velocity</module>
         <module>camel-vertx</module>

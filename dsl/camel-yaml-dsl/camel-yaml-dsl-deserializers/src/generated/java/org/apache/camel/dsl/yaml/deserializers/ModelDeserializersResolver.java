@@ -438,6 +438,8 @@ public final class ModelDeserializersResolver implements YamlDeserializerResolve
             case "org.apache.camel.model.transformer.TransformersDefinition": return new ModelDeserializers.TransformersDefinitionDeserializer();
             case "doTry": return new ModelDeserializers.TryDefinitionDeserializer();
             case "org.apache.camel.model.TryDefinition": return new ModelDeserializers.TryDefinitionDeserializer();
+            case "ubl": return new ModelDeserializers.UblDataFormatDeserializer();
+            case "org.apache.camel.model.dataformat.UblDataFormat": return new ModelDeserializers.UblDataFormatDeserializer();
             case "univocityCsv": return new ModelDeserializers.UniVocityCsvDataFormatDeserializer();
             case "org.apache.camel.model.dataformat.UniVocityCsvDataFormat": return new ModelDeserializers.UniVocityCsvDataFormatDeserializer();
             case "univocityFixed": return new ModelDeserializers.UniVocityFixedDataFormatDeserializer();
