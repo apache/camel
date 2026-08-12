@@ -16,6 +16,8 @@
  */
 package org.apache.camel.component.alibaba.kms;
 
+import java.nio.charset.StandardCharsets;
+import java.util.Base64;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -66,15 +68,22 @@ public final class KMSUtils {
         return configuration;
     }
 
-    public static String resolvePlaintext(Exchange exchange, ClientConfigurations configuration) throws Exception {
+    public static String encodePlaintextForEncrypt(Exchange exchange, ClientConfigurations configuration) throws Exception {
         if (ObjectHelper.isNotEmpty(configuration.getPlaintext())) {
-            return configuration.getPlaintext();
+            return Base64.getEncoder().encodeToString(configuration.getPlaintext().getBytes(StandardCharsets.UTF_8));
         }
         Object body = exchange.getMessage().getBody();
-        if (body instanceof String stringBody) {
-            return stringBody;
+        if (body instanceof byte[] bytes) {
+            return Base64.getEncoder().encodeToString(bytes);
         }
-        return exchange.getMessage().getBody(String.class);
+        if (body instanceof String stringBody) {
+            return Base64.getEncoder().encodeToString(stringBody.getBytes(StandardCharsets.UTF_8));
+        }
+        String value = exchange.getMessage().getBody(String.class);
+        if (ObjectHelper.isEmpty(value)) {
+            return null;
+        }
+        return Base64.getEncoder().encodeToString(value.getBytes(StandardCharsets.UTF_8));
     }
 
     public static Map<String, Object> toEncryptMap(EncryptResponse response) {

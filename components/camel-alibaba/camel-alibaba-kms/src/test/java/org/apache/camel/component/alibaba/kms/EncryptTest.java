@@ -18,6 +18,8 @@ package org.apache.camel.component.alibaba.kms;
 
 import java.util.Map;
 
+import java.util.Base64;
+
 import com.aliyun.kms20160120.Client;
 import com.aliyun.kms20160120.models.EncryptRequest;
 import com.aliyun.kms20160120.models.EncryptResponse;
@@ -33,6 +35,7 @@ import org.junit.jupiter.api.Test;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
+import static org.mockito.ArgumentMatchers.argThat;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -86,6 +89,7 @@ class EncryptTest extends CamelTestSupport {
                 .containsEntry("keyId", testConfiguration.getProperty("keyId"));
         assertThat(exchange.getProperty(KMSProperties.REQUEST_ID)).isEqualTo("req-789");
 
-        verify(kmsClient).encrypt(any(EncryptRequest.class));
+        verify(kmsClient).encrypt(argThat((EncryptRequest request) ->
+                Base64.getEncoder().encodeToString("secret-value".getBytes()).equals(request.getPlaintext())));
     }
 }

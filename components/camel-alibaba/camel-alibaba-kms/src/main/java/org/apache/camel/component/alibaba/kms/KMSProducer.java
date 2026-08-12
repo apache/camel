@@ -61,7 +61,7 @@ public class KMSProducer extends DefaultProducer {
             throw new IllegalArgumentException("Key id is required for encrypt");
         }
 
-        String plaintext = KMSUtils.resolvePlaintext(exchange, configuration);
+        String plaintext = KMSUtils.encodePlaintextForEncrypt(exchange, configuration);
         if (ObjectHelper.isEmpty(plaintext)) {
             throw new IllegalArgumentException("Plaintext is required for encrypt");
         }

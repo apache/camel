@@ -65,10 +65,12 @@ public class KMSEndpoint extends DefaultEndpoint {
     @UriParam(description = "KMS key id", displayName = "Key Id")
     private String keyId;
 
-    @UriParam(description = "Plaintext to encrypt", displayName = "Plaintext")
+    @UriParam(description = "Plaintext to encrypt", displayName = "Plaintext",
+              secret = true, security = "secret", label = "security")
     private String plaintext;
 
-    @UriParam(description = "Ciphertext blob to decrypt", displayName = "Ciphertext Blob")
+    @UriParam(description = "Ciphertext blob to decrypt", displayName = "Ciphertext Blob",
+              secret = true, security = "secret", label = "security")
     private String ciphertextBlob;
 
     @UriParam(description = "Key spec for generateDataKey", displayName = "Key Spec")

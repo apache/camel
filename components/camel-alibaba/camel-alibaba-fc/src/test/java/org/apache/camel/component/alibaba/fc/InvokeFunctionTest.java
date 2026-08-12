@@ -16,6 +16,8 @@
  */
 package org.apache.camel.component.alibaba.fc;
 
+import java.nio.charset.StandardCharsets;
+import java.util.Base64;
 import java.util.Map;
 
 import com.aliyun.fc_open20210406.Client;
@@ -81,7 +83,7 @@ class InvokeFunctionTest extends CamelTestSupport {
         Exchange exchange = mock.getExchanges().get(0);
         assertThat(exchange.getMessage().getBody(Map.class))
                 .containsEntry("statusCode", 200)
-                .containsEntry("body", "hello fc");
+                .containsEntry("body", "hello fc".getBytes(StandardCharsets.UTF_8));
 
         verify(fcClient).invokeFunction(
                 eq(testConfiguration.getProperty("serviceName")),

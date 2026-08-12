@@ -80,7 +80,7 @@ public final class FCUtils {
         map.put("statusCode", response.getStatusCode());
         map.put("headers", response.getHeaders());
         if (response.getBody() != null) {
-            map.put("body", new String(response.getBody(), StandardCharsets.UTF_8));
+            map.put("body", response.getBody());
         }
         return map;
     }
