@@ -31,6 +31,8 @@
 *** xref:spring-ai-vector-store-component.adoc[Spring AI Vector Store]
 *** xref:tensorflow-serving-component.adoc[TensorFlow Serving]
 *** xref:weaviate-component.adoc[weaviate]
+*** xref:alibaba-mns-component.adoc[Alibaba Message Service (MNS)]
+*** xref:alibaba-oss-component.adoc[Alibaba Object Storage Service (OSS)]
 ** xref:amqp-component.adoc[AMQP]
 ** xref:arangodb-component.adoc[ArangoDb]
 ** xref:as2-component.adoc[AS2]

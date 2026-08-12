@@ -219,6 +219,86 @@ public class StaticEndpointBuilders {
         return AiToolEndpointBuilderFactory.endpointBuilder(componentName, path);
     }
     /**
+     * Alibaba Message Service (MNS) (camel-alibaba-mns)
+     * Send and receive messages to/from Alibaba Cloud Message Service (MNS).
+     * 
+     * Category: cloud,messaging
+     * Since: 4.23
+     * Maven coordinates: org.apache.camel:camel-alibaba-mns
+     * 
+     * Syntax: <code>alibaba-mns:queueName</code>
+     * 
+     * Path parameter: queueName (required)
+     * Queue name, or topic name when using the topic URI syntax
+     * 
+     * @param path queueName
+     * @return the dsl builder
+     */
+    public static MNSEndpointBuilderFactory.MNSEndpointBuilder alibabaMns(String path) {
+        return alibabaMns("alibaba-mns", path);
+    }
+    /**
+     * Alibaba Message Service (MNS) (camel-alibaba-mns)
+     * Send and receive messages to/from Alibaba Cloud Message Service (MNS).
+     * 
+     * Category: cloud,messaging
+     * Since: 4.23
+     * Maven coordinates: org.apache.camel:camel-alibaba-mns
+     * 
+     * Syntax: <code>alibaba-mns:queueName</code>
+     * 
+     * Path parameter: queueName (required)
+     * Queue name, or topic name when using the topic URI syntax
+     * 
+     * @param componentName to use a custom component name for the endpoint
+     * instead of the default name
+     * @param path queueName
+     * @return the dsl builder
+     */
+    public static MNSEndpointBuilderFactory.MNSEndpointBuilder alibabaMns(String componentName, String path) {
+        return MNSEndpointBuilderFactory.endpointBuilder(componentName, path);
+    }
+    /**
+     * Alibaba Object Storage Service (OSS) (camel-alibaba-oss)
+     * Alibaba Cloud Object Storage Service (OSS) component
+     * 
+     * Category: cloud
+     * Since: 4.23
+     * Maven coordinates: org.apache.camel:camel-alibaba-oss
+     * 
+     * Syntax: <code>alibaba-oss:bucketName</code>
+     * 
+     * Path parameter: bucketName
+     * Name of bucket to perform operation on
+     * 
+     * @param path bucketName
+     * @return the dsl builder
+     */
+    public static OSSEndpointBuilderFactory.OSSEndpointBuilder alibabaOss(String path) {
+        return alibabaOss("alibaba-oss", path);
+    }
+    /**
+     * Alibaba Object Storage Service (OSS) (camel-alibaba-oss)
+     * Alibaba Cloud Object Storage Service (OSS) component
+     * 
+     * Category: cloud
+     * Since: 4.23
+     * Maven coordinates: org.apache.camel:camel-alibaba-oss
+     * 
+     * Syntax: <code>alibaba-oss:bucketName</code>
+     * 
+     * Path parameter: bucketName
+     * Name of bucket to perform operation on
+     * 
+     * @param componentName to use a custom component name for the endpoint
+     * instead of the default name
+     * @param path bucketName
+     * @return the dsl builder
+     */
+    public static OSSEndpointBuilderFactory.OSSEndpointBuilder alibabaOss(String componentName, String path) {
+        return OSSEndpointBuilderFactory.endpointBuilder(componentName, path);
+    }
+    /**
      * AMQP (camel-amqp)
      * Messaging with AMQP protocol using Apache Qpid Client.
      * 

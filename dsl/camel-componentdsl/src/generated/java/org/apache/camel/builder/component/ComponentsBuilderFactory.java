@@ -101,6 +101,32 @@ public interface ComponentsBuilderFactory {
         return AiToolComponentBuilderFactory.aiTool();
     }
     /**
+     * Alibaba Message Service (MNS) (camel-alibaba-mns)
+     * Send and receive messages to/from Alibaba Cloud Message Service (MNS).
+     * 
+     * Category: cloud,messaging
+     * Since: 4.23
+     * Maven coordinates: org.apache.camel:camel-alibaba-mns
+     * 
+     * @return the dsl builder
+     */
+    static AlibabaMnsComponentBuilderFactory.AlibabaMnsComponentBuilder alibabaMns() {
+        return AlibabaMnsComponentBuilderFactory.alibabaMns();
+    }
+    /**
+     * Alibaba Object Storage Service (OSS) (camel-alibaba-oss)
+     * Alibaba Cloud Object Storage Service (OSS) component
+     * 
+     * Category: cloud
+     * Since: 4.23
+     * Maven coordinates: org.apache.camel:camel-alibaba-oss
+     * 
+     * @return the dsl builder
+     */
+    static AlibabaOssComponentBuilderFactory.AlibabaOssComponentBuilder alibabaOss() {
+        return AlibabaOssComponentBuilderFactory.alibabaOss();
+    }
+    /**
      * AMQP (camel-amqp)
      * Messaging with AMQP protocol using Apache Qpid Client.
      * 

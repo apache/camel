@@ -80,6 +80,32 @@ public class EndpointHeaderBuilders {
         return ActiveMQ6EndpointBuilderFactory.ActiveMQ6HeaderNameBuilder.INSTANCE;
     }
     /**
+     * Alibaba Message Service (MNS) (camel-alibaba-mns)
+     * Send and receive messages to/from Alibaba Cloud Message Service (MNS).
+     * 
+     * Category: cloud,messaging
+     * Since: 4.23
+     * Maven coordinates: org.apache.camel:camel-alibaba-mns
+     * 
+     * @return the dsl builder for the headers' name.
+     */
+    public static MNSEndpointBuilderFactory.MNSHeaderNameBuilder alibabaMns() {
+        return MNSEndpointBuilderFactory.MNSHeaderNameBuilder.INSTANCE;
+    }
+    /**
+     * Alibaba Object Storage Service (OSS) (camel-alibaba-oss)
+     * Alibaba Cloud Object Storage Service (OSS) component
+     * 
+     * Category: cloud
+     * Since: 4.23
+     * Maven coordinates: org.apache.camel:camel-alibaba-oss
+     * 
+     * @return the dsl builder for the headers' name.
+     */
+    public static OSSEndpointBuilderFactory.OSSHeaderNameBuilder alibabaOss() {
+        return OSSEndpointBuilderFactory.OSSHeaderNameBuilder.INSTANCE;
+    }
+    /**
      * AMQP (camel-amqp)
      * Messaging with AMQP protocol using Apache Qpid Client.
      * 
