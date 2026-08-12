@@ -12600,10 +12600,10 @@ public class StaticEndpointBuilders {
      * Path parameter: operation (required)
      * The operation to perform: 'chat-completion', 'responses', 'embeddings',
      * 'tool-execution', 'audio-transcription', 'audio-translation',
-     * 'audio-speech', or 'moderation'
-     * There are 8 enums and the value can be one of: chat-completion,
+     * 'audio-speech', 'moderation', 'image-generation', or 'image-edit'
+     * There are 10 enums and the value can be one of: chat-completion,
      * responses, embeddings, tool-execution, audio-transcription,
-     * audio-translation, audio-speech, moderation
+     * audio-translation, audio-speech, moderation, image-generation, image-edit
      * 
      * @param path operation
      * @return the dsl builder
@@ -12625,10 +12625,10 @@ public class StaticEndpointBuilders {
      * Path parameter: operation (required)
      * The operation to perform: 'chat-completion', 'responses', 'embeddings',
      * 'tool-execution', 'audio-transcription', 'audio-translation',
-     * 'audio-speech', or 'moderation'
-     * There are 8 enums and the value can be one of: chat-completion,
+     * 'audio-speech', 'moderation', 'image-generation', or 'image-edit'
+     * There are 10 enums and the value can be one of: chat-completion,
      * responses, embeddings, tool-execution, audio-transcription,
-     * audio-translation, audio-speech, moderation
+     * audio-translation, audio-speech, moderation, image-generation, image-edit
      * 
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name

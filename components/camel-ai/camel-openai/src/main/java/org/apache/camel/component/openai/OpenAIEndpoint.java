@@ -85,7 +85,8 @@ public class OpenAIEndpoint extends DefaultEndpoint {
     @UriPath
     @Metadata(required = true,
               description = "The operation to perform: 'chat-completion', 'responses', 'embeddings', 'tool-execution', "
-                            + "'audio-transcription', 'audio-translation', 'audio-speech', or 'moderation'")
+                            + "'audio-transcription', 'audio-translation', 'audio-speech', 'moderation', "
+                            + "'image-generation', or 'image-edit'")
     private OpenAIOperations operation;
 
     @UriParam
@@ -126,6 +127,8 @@ public class OpenAIEndpoint extends DefaultEndpoint {
             case audioTranslation -> new OpenAIAudioTranslationProducer(this);
             case audioSpeech -> new OpenAIAudioSpeechProducer(this);
             case moderation -> new OpenAIModerationProducer(this);
+            case imageGeneration -> new OpenAIImageGenerationProducer(this);
+            case imageEdit -> new OpenAIImageEditProducer(this);
         };
     }
 
