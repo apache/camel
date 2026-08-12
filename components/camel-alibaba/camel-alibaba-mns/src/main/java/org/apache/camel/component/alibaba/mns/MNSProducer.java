@@ -109,13 +109,13 @@ public class MNSProducer extends DefaultProducer {
             return;
         }
         if (ObjectHelper.isNotEmpty(response.getMessageId())) {
-            exchange.setProperty(MNSProperties.MESSAGE_ID, response.getMessageId());
+            exchange.setProperty(MNSHeaders.MESSAGE_ID, response.getMessageId());
         }
         if (ObjectHelper.isNotEmpty(response.getRequestId())) {
             exchange.setProperty(MNSProperties.REQUEST_ID, response.getRequestId());
         }
         if (ObjectHelper.isNotEmpty(response.getMessageBodyMD5())) {
-            exchange.setProperty(MNSProperties.MESSAGE_BODY_MD5, response.getMessageBodyMD5());
+            exchange.setProperty(MNSHeaders.MESSAGE_BODY_MD5, response.getMessageBodyMD5());
         }
     }
 

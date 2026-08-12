@@ -41,11 +41,9 @@ import com.aliyun.sdk.service.oss2.models.ObjectSummary;
 import com.aliyun.sdk.service.oss2.models.PutObjectRequest;
 import com.aliyun.sdk.service.oss2.models.PutObjectResult;
 import com.aliyun.sdk.service.oss2.transport.BinaryData;
-import com.google.gson.Gson;
 import org.apache.camel.Exchange;
 import org.apache.camel.WrappedFile;
 import org.apache.camel.component.alibaba.oss.constants.OSSOperations;
-import org.apache.camel.component.alibaba.oss.constants.OSSProperties;
 import org.apache.camel.component.alibaba.oss.models.ClientConfigurations;
 import org.apache.camel.support.DefaultProducer;
 import org.apache.camel.util.ObjectHelper;
@@ -57,7 +55,6 @@ public class OSSProducer extends DefaultProducer {
 
     private final OSSEndpoint endpoint;
     private OSSClient ossClient;
-    private Gson gson;
 
     public OSSProducer(OSSEndpoint endpoint) {
         super(endpoint);
@@ -65,20 +62,12 @@ public class OSSProducer extends DefaultProducer {
     }
 
     @Override
-    protected void doInit() throws Exception {
-        super.doInit();
-        this.gson = new Gson();
-    }
-
-    @Override
     public void process(Exchange exchange) throws Exception {
-        ClientConfigurations clientConfigurations = new ClientConfigurations();
+        ClientConfigurations clientConfigurations = OSSUtils.createClientConfigurations(endpoint, exchange);
 
         if (ossClient == null) {
             this.ossClient = endpoint.initClient();
         }
-
-        updateClientConfigs(exchange, clientConfigurations);
 
         switch (clientConfigurations.getOperation()) {
             case OSSOperations.LIST_BUCKETS:
@@ -133,32 +122,32 @@ public class OSSProducer extends DefaultProducer {
             requestBuilder.key(objectName);
             PutObjectResult result = ossClient.putObjectFromFile(requestBuilder.build(), file);
             exchange.getMessage()
-                    .setBody(gson.toJson(toPutObjectMap(result, clientConfigurations.getBucketName(), objectName)));
+                    .setBody(toPutObjectMap(result, clientConfigurations.getBucketName(), objectName));
         } else if (body instanceof String stringBody) {
             requestBuilder.key(clientConfigurations.getObjectName())
                     .body(BinaryData.fromString(stringBody));
             PutObjectResult result = ossClient.putObject(requestBuilder.build());
-            exchange.getMessage().setBody(gson.toJson(toPutObjectMap(result, clientConfigurations.getBucketName(),
-                    clientConfigurations.getObjectName())));
+            exchange.getMessage().setBody(toPutObjectMap(result, clientConfigurations.getBucketName(),
+                    clientConfigurations.getObjectName()));
         } else if (body instanceof InputStream inputStream) {
             requestBuilder.key(clientConfigurations.getObjectName())
                     .body(BinaryData.fromStream(inputStream));
             PutObjectResult result = ossClient.putObject(requestBuilder.build());
-            exchange.getMessage().setBody(gson.toJson(toPutObjectMap(result, clientConfigurations.getBucketName(),
-                    clientConfigurations.getObjectName())));
+            exchange.getMessage().setBody(toPutObjectMap(result, clientConfigurations.getBucketName(),
+                    clientConfigurations.getObjectName()));
         } else if (body instanceof byte[] bytes) {
             requestBuilder.key(clientConfigurations.getObjectName())
                     .body(BinaryData.fromBytes(bytes));
             PutObjectResult result = ossClient.putObject(requestBuilder.build());
-            exchange.getMessage().setBody(gson.toJson(toPutObjectMap(result, clientConfigurations.getBucketName(),
-                    clientConfigurations.getObjectName())));
+            exchange.getMessage().setBody(toPutObjectMap(result, clientConfigurations.getBucketName(),
+                    clientConfigurations.getObjectName()));
         } else {
             InputStream is = exchange.getMessage().getMandatoryBody(InputStream.class);
             requestBuilder.key(clientConfigurations.getObjectName())
                     .body(BinaryData.fromStream(is));
             PutObjectResult result = ossClient.putObject(requestBuilder.build());
-            exchange.getMessage().setBody(gson.toJson(toPutObjectMap(result, clientConfigurations.getBucketName(),
-                    clientConfigurations.getObjectName())));
+            exchange.getMessage().setBody(toPutObjectMap(result, clientConfigurations.getBucketName(),
+                    clientConfigurations.getObjectName()));
         }
     }
 
@@ -202,7 +191,7 @@ public class OSSProducer extends DefaultProducer {
                 buckets.add(bucketMap);
             }
         }
-        exchange.getMessage().setBody(gson.toJson(buckets));
+        exchange.getMessage().setBody(buckets);
     }
 
     private void listObjects(Exchange exchange, ClientConfigurations clientConfigurations) {
@@ -252,7 +241,7 @@ public class OSSProducer extends DefaultProducer {
             }
         } while (Boolean.TRUE.equals(result.isTruncated()));
 
-        exchange.getMessage().setBody(gson.toJson(objects));
+        exchange.getMessage().setBody(objects);
     }
 
     private void deleteObject(Exchange exchange, ClientConfigurations clientConfigurations) {
@@ -271,7 +260,7 @@ public class OSSProducer extends DefaultProducer {
         map.put("requestId", result.requestId());
         map.put("deleteMarker", result.deleteMarker());
         map.put("versionId", result.versionId());
-        exchange.getMessage().setBody(gson.toJson(map));
+        exchange.getMessage().setBody(map);
     }
 
     private void copyObject(Exchange exchange, ClientConfigurations clientConfigurations) {
@@ -295,7 +284,7 @@ public class OSSProducer extends DefaultProducer {
         map.put("lastModified", result.lastModified());
         map.put("statusCode", result.statusCode());
         map.put("requestId", result.requestId());
-        exchange.getMessage().setBody(gson.toJson(map));
+        exchange.getMessage().setBody(map);
     }
 
     private void headObject(Exchange exchange, ClientConfigurations clientConfigurations) {
@@ -319,59 +308,6 @@ public class OSSProducer extends DefaultProducer {
         map.put("metadata", result.metadata());
         map.put("statusCode", result.statusCode());
         map.put("requestId", result.requestId());
-        exchange.getMessage().setBody(gson.toJson(map));
-    }
-
-    private void updateClientConfigs(Exchange exchange, ClientConfigurations clientConfigurations) {
-        if (ObjectHelper.isEmpty(exchange.getProperty(OSSProperties.OPERATION))
-                && ObjectHelper.isEmpty(endpoint.getOperation())) {
-            LOG.error("No operation name given. Cannot proceed with OSS operations.");
-            throw new IllegalArgumentException("Operation name not found");
-        } else {
-            clientConfigurations.setOperation(
-                    ObjectHelper.isNotEmpty(exchange.getProperty(OSSProperties.OPERATION))
-                            ? (String) exchange.getProperty(OSSProperties.OPERATION)
-                            : endpoint.getOperation());
-        }
-
-        if (ObjectHelper.isNotEmpty(exchange.getProperty(OSSProperties.BUCKET_NAME))
-                || ObjectHelper.isNotEmpty(endpoint.getBucketName())) {
-            clientConfigurations.setBucketName(
-                    ObjectHelper.isNotEmpty(exchange.getProperty(OSSProperties.BUCKET_NAME))
-                            ? (String) exchange.getProperty(OSSProperties.BUCKET_NAME)
-                            : endpoint.getBucketName());
-        }
-
-        if (ObjectHelper.isNotEmpty(exchange.getProperty(OSSProperties.OBJECT_NAME))
-                || ObjectHelper.isNotEmpty(endpoint.getObjectName())) {
-            clientConfigurations.setObjectName(
-                    ObjectHelper.isNotEmpty(exchange.getProperty(OSSProperties.OBJECT_NAME))
-                            ? (String) exchange.getProperty(OSSProperties.OBJECT_NAME)
-                            : endpoint.getObjectName());
-        }
-
-        if (ObjectHelper.isNotEmpty(exchange.getProperty(OSSProperties.SOURCE_BUCKET_NAME))) {
-            clientConfigurations.setSourceBucketName((String) exchange.getProperty(OSSProperties.SOURCE_BUCKET_NAME));
-        }
-
-        if (ObjectHelper.isNotEmpty(exchange.getProperty(OSSProperties.SOURCE_OBJECT_NAME))) {
-            clientConfigurations.setSourceObjectName((String) exchange.getProperty(OSSProperties.SOURCE_OBJECT_NAME));
-        }
-
-        if (ObjectHelper.isNotEmpty(exchange.getProperty(OSSProperties.PREFIX))
-                || ObjectHelper.isNotEmpty(endpoint.getPrefix())) {
-            clientConfigurations.setPrefix(
-                    ObjectHelper.isNotEmpty(exchange.getProperty(OSSProperties.PREFIX))
-                            ? (String) exchange.getProperty(OSSProperties.PREFIX)
-                            : endpoint.getPrefix());
-        }
-
-        if (ObjectHelper.isNotEmpty(exchange.getProperty(OSSProperties.MAX_KEYS))
-                || ObjectHelper.isNotEmpty(endpoint.getMaxKeys())) {
-            clientConfigurations.setMaxKeys(
-                    ObjectHelper.isNotEmpty(exchange.getProperty(OSSProperties.MAX_KEYS))
-                            ? (Integer) exchange.getProperty(OSSProperties.MAX_KEYS)
-                            : endpoint.getMaxKeys());
-        }
+        exchange.getMessage().setBody(map);
     }
 }

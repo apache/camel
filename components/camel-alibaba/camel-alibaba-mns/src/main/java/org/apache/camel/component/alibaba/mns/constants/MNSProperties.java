@@ -21,11 +21,7 @@ public final class MNSProperties {
     public static final String OPERATION = "CamelAlibabaMnsOperation";
     public static final String QUEUE_NAME = "CamelAlibabaMnsQueueName";
     public static final String TOPIC_NAME = "CamelAlibabaMnsTopicName";
-    public static final String RECEIPT_HANDLE = "CamelAlibabaMnsReceiptHandle";
-
-    public static final String MESSAGE_ID = "CamelAlibabaMnsMessageId";
     public static final String REQUEST_ID = "CamelAlibabaMnsRequestId";
-    public static final String MESSAGE_BODY_MD5 = "CamelAlibabaMnsMessageBodyMd5";
 
     private MNSProperties() {
     }

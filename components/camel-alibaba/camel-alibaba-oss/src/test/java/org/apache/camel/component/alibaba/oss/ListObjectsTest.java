@@ -18,6 +18,7 @@ package org.apache.camel.component.alibaba.oss;
 
 import java.time.Instant;
 import java.util.List;
+import java.util.Map;
 
 import com.aliyun.sdk.service.oss2.OSSClient;
 import com.aliyun.sdk.service.oss2.models.ListObjectsRequest;
@@ -27,7 +28,6 @@ import org.apache.camel.BindToRegistry;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.alibaba.common.models.ServiceKeys;
-import org.apache.camel.component.alibaba.oss.constants.OSSProperties;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.junit6.CamelTestSupport;
 import org.junit.jupiter.api.Test;
@@ -53,9 +53,8 @@ class ListObjectsTest extends CamelTestSupport {
             @Override
             public void configure() {
                 from("direct:list_objects")
-                        .setProperty(OSSProperties.BUCKET_NAME, constant(testConfiguration.getProperty("bucketName")))
-                        .to("alibaba-oss:listObjects?" +
-                            "serviceKeys=#serviceKeys" +
+                        .to("alibaba-oss:" + testConfiguration.getProperty("bucketName") + "?operation=listObjects" +
+                            "&serviceKeys=#serviceKeys" +
                             "&region=" + testConfiguration.getProperty("region") +
                             "&ossClient=#ossClient")
                         .to("mock:list_objects_result");
@@ -91,9 +90,12 @@ class ListObjectsTest extends CamelTestSupport {
 
         mock.assertIsSatisfied();
 
-        assertThat(responseExchange.getIn().getBody(String.class))
-                .contains("\"objectKey\":\"Object 1\"")
-                .contains("\"objectKey\":\"Object 2\"")
-                .contains("\"bucketName\":\"dummy_bucket_name\"");
+        @SuppressWarnings("unchecked")
+        List<Map<String, Object>> body = responseExchange.getIn().getBody(List.class);
+        assertThat(body).hasSize(2);
+        assertThat(body.get(0))
+                .containsEntry("objectKey", "Object 1")
+                .containsEntry("bucketName", "dummy_bucket_name");
+        assertThat(body.get(1)).containsEntry("objectKey", "Object 2");
     }
 }

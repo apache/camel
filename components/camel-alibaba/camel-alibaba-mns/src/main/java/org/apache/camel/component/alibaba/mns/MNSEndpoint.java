@@ -55,14 +55,16 @@ public class MNSEndpoint extends ScheduledPollEndpoint {
     @Metadata(required = true)
     private String accountEndpoint;
 
-    @UriParam(description = "Access key for the cloud user", displayName = "Access Key", secret = true)
+    @UriParam(description = "Access key for the cloud user", displayName = "Access Key",
+              secret = true, security = "secret", label = "security")
     private String accessKey;
 
-    @UriParam(description = "Secret key for the cloud user", displayName = "Secret Key", secret = true)
+    @UriParam(description = "Secret key for the cloud user", displayName = "Secret Key",
+              secret = true, security = "secret", label = "security")
     private String secretKey;
 
     @UriParam(description = "Configuration object for cloud service authentication", displayName = "Service Keys",
-              security = "secret")
+              secret = true, security = "secret", label = "security")
     private ServiceKeys serviceKeys;
 
     @UriParam(description = "Topic name for publishMessage operations", displayName = "Topic Name")

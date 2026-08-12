@@ -16,6 +16,8 @@
  */
 package org.apache.camel.component.alibaba.oss;
 
+import java.util.Map;
+
 import com.aliyun.sdk.service.oss2.OSSClient;
 import com.aliyun.sdk.service.oss2.models.DeleteObjectRequest;
 import com.aliyun.sdk.service.oss2.models.DeleteObjectResult;
@@ -49,10 +51,9 @@ class DeleteObjectTest extends CamelTestSupport {
             @Override
             public void configure() {
                 from("direct:delete_object")
-                        .setProperty(OSSProperties.BUCKET_NAME, constant(testConfiguration.getProperty("bucketName")))
-                        .setProperty(OSSProperties.OBJECT_NAME, constant(testConfiguration.getProperty("objectName")))
-                        .to("alibaba-oss:deleteObject?" +
-                            "serviceKeys=#serviceKeys" +
+                        .setHeader(OSSProperties.OBJECT_NAME, constant(testConfiguration.getProperty("objectName")))
+                        .to("alibaba-oss:" + testConfiguration.getProperty("bucketName") + "?operation=deleteObject" +
+                            "&serviceKeys=#serviceKeys" +
                             "&region=" + testConfiguration.getProperty("region") +
                             "&ossClient=#ossClient")
                         .to("mock:delete_object_result");
@@ -77,8 +78,10 @@ class DeleteObjectTest extends CamelTestSupport {
 
         mock.assertIsSatisfied();
 
-        assertThat(responseExchange.getIn().getBody(String.class))
-                .contains("\"statusCode\":204")
-                .contains("\"requestId\":\"request-id-123\"");
+        @SuppressWarnings("unchecked")
+        Map<String, Object> body = responseExchange.getIn().getBody(Map.class);
+        assertThat(body)
+                .containsEntry("statusCode", 204)
+                .containsEntry("requestId", "request-id-123");
     }
 }

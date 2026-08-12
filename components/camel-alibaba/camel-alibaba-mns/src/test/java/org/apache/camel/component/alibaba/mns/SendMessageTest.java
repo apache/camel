@@ -22,6 +22,7 @@ import com.aliyun.mns.model.Message;
 import org.apache.camel.BindToRegistry;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.component.alibaba.mns.constants.MNSHeaders;
 import org.apache.camel.component.alibaba.mns.constants.MNSProperties;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.junit6.CamelTestSupport;
@@ -78,9 +79,9 @@ class SendMessageTest extends CamelTestSupport {
         mock.assertIsSatisfied();
 
         Exchange exchange = mock.getExchanges().get(0);
-        assertThat(exchange.getProperty(MNSProperties.MESSAGE_ID)).isEqualTo("message-id-123");
+        assertThat(exchange.getProperty(MNSHeaders.MESSAGE_ID)).isEqualTo("message-id-123");
         assertThat(exchange.getProperty(MNSProperties.REQUEST_ID)).isEqualTo("request-id-456");
-        assertThat(exchange.getProperty(MNSProperties.MESSAGE_BODY_MD5)).isEqualTo("md5-value");
+        assertThat(exchange.getProperty(MNSHeaders.MESSAGE_BODY_MD5)).isEqualTo("md5-value");
 
         verify(cloudQueue).putMessage(any(Message.class));
     }

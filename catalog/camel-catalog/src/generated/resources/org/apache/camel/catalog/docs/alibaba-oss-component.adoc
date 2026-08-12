@@ -31,8 +31,10 @@ Maven users will need to add the following dependency to their `pom.xml` for thi
 == URI Format
 
 ----
-alibaba-oss:operation[?options]
+alibaba-oss:bucketName[?options]
 ----
+
+The `operation` query parameter selects the OSS operation to perform (for example `putObject`, `getObject`, `listObjects`).
 
 // component options: START
 include::partial$component-configure-options.adoc[]
@@ -42,7 +44,7 @@ include::partial$component-endpoint-headers.adoc[]
 
 == Usage
 
-=== Message properties evaluated by the OSS producer
+=== Message headers evaluated by the OSS producer
 
 [width="100%",cols="10%,10%,80%",options="header",]
 |=======================================================================
@@ -50,7 +52,7 @@ include::partial$component-endpoint-headers.adoc[]
 
 |`CamelAlibabaOssOperation` |`String` | Name of operation to invoke
 
-|`CamelAlibabaOssBucketName` |`String` | Bucket name to invoke operation on
+|`CamelAlibabaOssBucketName` |`String` | Bucket name to invoke operation on (overrides the URI path bucket name)
 
 |`CamelAlibabaOssObjectName` |`String` | Name of the object to be used in operation
 
@@ -64,7 +66,7 @@ include::partial$component-endpoint-headers.adoc[]
 
 |=======================================================================
 
-If any of the above properties are set, they will override their corresponding query parameter.
+If any of the above headers are set, they will override their corresponding query parameter or URI path value.
 
 === List of Supported OSS Operations
 
@@ -88,15 +90,16 @@ The consumer polls objects from a bucket using `listObjectsV2`, downloads each o
 ----
 from("direct:start")
   .setBody(constant("Hello OSS"))
-  .setProperty("CamelAlibabaOssBucketName", constant("my-bucket"))
-  .setProperty("CamelAlibabaOssObjectName", constant("hello.txt"))
-  .to("alibaba-oss:putObject?region=cn-hangzhou&accessKey=xxx&secretKey=yyy");
+  .setHeader("CamelAlibabaOssObjectName", constant("hello.txt"))
+  .to("alibaba-oss:my-bucket?operation=putObject&region=cn-hangzhou&accessKey=xxx&secretKey=yyy");
 ----
+
+Producer operations return structured response metadata in the message body (`Map` or `List<Map>` depending on the operation).
 
 === Consume objects from a bucket
 
 [source,java]
 ----
-from("alibaba-oss:consumer?bucketName=my-bucket&region=cn-hangzhou&accessKey=xxx&secretKey=yyy&deleteAfterRead=true")
+from("alibaba-oss:my-bucket?region=cn-hangzhou&accessKey=xxx&secretKey=yyy&deleteAfterRead=true")
   .to("log:output");
 ----

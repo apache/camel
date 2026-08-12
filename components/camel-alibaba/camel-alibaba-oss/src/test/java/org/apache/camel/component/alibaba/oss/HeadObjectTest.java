@@ -16,6 +16,8 @@
  */
 package org.apache.camel.component.alibaba.oss;
 
+import java.util.Map;
+
 import com.aliyun.sdk.service.oss2.OSSClient;
 import com.aliyun.sdk.service.oss2.models.HeadObjectRequest;
 import com.aliyun.sdk.service.oss2.models.HeadObjectResult;
@@ -49,10 +51,9 @@ class HeadObjectTest extends CamelTestSupport {
             @Override
             public void configure() {
                 from("direct:head_object")
-                        .setProperty(OSSProperties.BUCKET_NAME, constant(testConfiguration.getProperty("bucketName")))
-                        .setProperty(OSSProperties.OBJECT_NAME, constant(testConfiguration.getProperty("objectName")))
-                        .to("alibaba-oss:headObject?" +
-                            "serviceKeys=#serviceKeys" +
+                        .setHeader(OSSProperties.OBJECT_NAME, constant(testConfiguration.getProperty("objectName")))
+                        .to("alibaba-oss:" + testConfiguration.getProperty("bucketName") + "?operation=headObject" +
+                            "&serviceKeys=#serviceKeys" +
                             "&region=" + testConfiguration.getProperty("region") +
                             "&ossClient=#ossClient")
                         .to("mock:head_object_result");
@@ -82,10 +83,12 @@ class HeadObjectTest extends CamelTestSupport {
 
         mock.assertIsSatisfied();
 
-        assertThat(responseExchange.getIn().getBody(String.class))
-                .contains("\"eTag\":\"eb733a00c0c9d336e65691a37ab54293\"")
-                .contains("\"contentLength\":1024")
-                .contains("\"contentType\":\"text/plain\"")
-                .contains("\"storageClass\":\"Standard\"");
+        @SuppressWarnings("unchecked")
+        Map<String, Object> body = responseExchange.getIn().getBody(Map.class);
+        assertThat(body)
+                .containsEntry("eTag", "eb733a00c0c9d336e65691a37ab54293")
+                .containsEntry("contentLength", 1024L)
+                .containsEntry("contentType", "text/plain")
+                .containsEntry("storageClass", "Standard");
     }
 }

@@ -16,6 +16,8 @@
  */
 package org.apache.camel.component.alibaba.oss;
 
+import java.util.Map;
+
 import com.aliyun.sdk.service.oss2.OSSClient;
 import com.aliyun.sdk.service.oss2.models.PutObjectRequest;
 import com.aliyun.sdk.service.oss2.models.PutObjectResult;
@@ -50,10 +52,9 @@ class PutObjectTest extends CamelTestSupport {
             public void configure() {
                 from("direct:put_object")
                         .setBody(constant("a test string"))
-                        .setProperty(OSSProperties.OBJECT_NAME, constant("string_file.txt"))
-                        .setProperty(OSSProperties.BUCKET_NAME, constant("test-bucket"))
-                        .to("alibaba-oss:putObject?" +
-                            "serviceKeys=#serviceKeys" +
+                        .setHeader(OSSProperties.OBJECT_NAME, constant("string_file.txt"))
+                        .to("alibaba-oss:test-bucket?operation=putObject" +
+                            "&serviceKeys=#serviceKeys" +
                             "&region=" + testConfiguration.getProperty("region") +
                             "&ossClient=#ossClient")
                         .to("mock:put_object_result");
@@ -79,9 +80,11 @@ class PutObjectTest extends CamelTestSupport {
 
         mock.assertIsSatisfied();
 
-        assertThat(responseExchange.getIn().getBody(String.class))
-                .contains("\"bucketName\":\"test-bucket\"")
-                .contains("\"objectKey\":\"string_file.txt\"")
-                .contains("\"eTag\":\"eb733a00c0c9d336e65691a37ab54293\"");
+        @SuppressWarnings("unchecked")
+        Map<String, Object> body = responseExchange.getIn().getBody(Map.class);
+        assertThat(body)
+                .containsEntry("bucketName", "test-bucket")
+                .containsEntry("objectKey", "string_file.txt")
+                .containsEntry("eTag", "eb733a00c0c9d336e65691a37ab54293");
     }
 }

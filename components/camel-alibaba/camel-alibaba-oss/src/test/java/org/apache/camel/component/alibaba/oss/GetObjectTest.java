@@ -56,11 +56,9 @@ class GetObjectTest extends CamelTestSupport {
             @Override
             public void configure() {
                 from("direct:get_object")
-                        .setProperty(OSSProperties.BUCKET_NAME, constant(bucketName))
-                        .setProperty(OSSProperties.OBJECT_NAME, constant(objectName))
-                        .to("alibaba-oss:getObject?" +
-                            "accessKey=" + testConfiguration.getProperty("accessKey") +
-                            "&secretKey=" + testConfiguration.getProperty("secretKey") +
+                        .setHeader(OSSProperties.OBJECT_NAME, constant(objectName))
+                        .to("alibaba-oss:" + bucketName + "?operation=getObject" +
+                            "&serviceKeys=#serviceKeys" +
                             "&region=" + testConfiguration.getProperty("region") +
                             "&ossClient=#ossClient")
                         .to("mock:get_object_result");

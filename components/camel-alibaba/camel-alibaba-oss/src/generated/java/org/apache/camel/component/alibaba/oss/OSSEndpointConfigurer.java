@@ -33,8 +33,6 @@ public class OSSEndpointConfigurer extends PropertyConfigurerSupport implements 
         case "backoffMultiplier": target.setBackoffMultiplier(property(camelContext, int.class, value)); return true;
         case "bridgeerrorhandler":
         case "bridgeErrorHandler": target.setBridgeErrorHandler(property(camelContext, boolean.class, value)); return true;
-        case "bucketname":
-        case "bucketName": target.setBucketName(property(camelContext, java.lang.String.class, value)); return true;
         case "delay": target.setDelay(property(camelContext, long.class, value)); return true;
         case "deleteafterread":
         case "deleteAfterRead": target.setDeleteAfterRead(property(camelContext, boolean.class, value)); return true;
@@ -54,6 +52,7 @@ public class OSSEndpointConfigurer extends PropertyConfigurerSupport implements 
         case "maxMessagesPerPoll": target.setMaxMessagesPerPoll(property(camelContext, int.class, value)); return true;
         case "objectname":
         case "objectName": target.setObjectName(property(camelContext, java.lang.String.class, value)); return true;
+        case "operation": target.setOperation(property(camelContext, java.lang.String.class, value)); return true;
         case "ossclient":
         case "ossClient": target.setOssClient(property(camelContext, com.aliyun.sdk.service.oss2.OSSClient.class, value)); return true;
         case "pollstrategy":
@@ -103,8 +102,6 @@ public class OSSEndpointConfigurer extends PropertyConfigurerSupport implements 
         case "backoffMultiplier": return int.class;
         case "bridgeerrorhandler":
         case "bridgeErrorHandler": return boolean.class;
-        case "bucketname":
-        case "bucketName": return java.lang.String.class;
         case "delay": return long.class;
         case "deleteafterread":
         case "deleteAfterRead": return boolean.class;
@@ -124,6 +121,7 @@ public class OSSEndpointConfigurer extends PropertyConfigurerSupport implements 
         case "maxMessagesPerPoll": return int.class;
         case "objectname":
         case "objectName": return java.lang.String.class;
+        case "operation": return java.lang.String.class;
         case "ossclient":
         case "ossClient": return com.aliyun.sdk.service.oss2.OSSClient.class;
         case "pollstrategy":
@@ -169,8 +167,6 @@ public class OSSEndpointConfigurer extends PropertyConfigurerSupport implements 
         case "backoffMultiplier": return target.getBackoffMultiplier();
         case "bridgeerrorhandler":
         case "bridgeErrorHandler": return target.isBridgeErrorHandler();
-        case "bucketname":
-        case "bucketName": return target.getBucketName();
         case "delay": return target.getDelay();
         case "deleteafterread":
         case "deleteAfterRead": return target.isDeleteAfterRead();
@@ -190,6 +186,7 @@ public class OSSEndpointConfigurer extends PropertyConfigurerSupport implements 
         case "maxMessagesPerPoll": return target.getMaxMessagesPerPoll();
         case "objectname":
         case "objectName": return target.getObjectName();
+        case "operation": return target.getOperation();
         case "ossclient":
         case "ossClient": return target.getOssClient();
         case "pollstrategy":

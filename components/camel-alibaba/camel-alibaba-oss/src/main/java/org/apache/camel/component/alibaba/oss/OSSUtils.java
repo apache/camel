@@ -30,10 +30,81 @@ import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.component.alibaba.common.models.ServiceKeys;
 import org.apache.camel.component.alibaba.oss.constants.OSSConstants;
 import org.apache.camel.component.alibaba.oss.constants.OSSHeaders;
+import org.apache.camel.component.alibaba.oss.constants.OSSProperties;
+import org.apache.camel.component.alibaba.oss.models.ClientConfigurations;
 import org.apache.camel.util.ObjectHelper;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public final class OSSUtils {
+    private static final Logger LOG = LoggerFactory.getLogger(OSSUtils.class);
+
     private OSSUtils() {
+    }
+
+    public static ClientConfigurations createClientConfigurations(OSSEndpoint endpoint, Exchange exchange) {
+        ClientConfigurations clientConfigurations = new ClientConfigurations();
+
+        String operation = resolveString(exchange, OSSProperties.OPERATION, endpoint.getOperation());
+        if (ObjectHelper.isEmpty(operation)) {
+            LOG.error("No operation name given. Cannot proceed with OSS operations.");
+            throw new IllegalArgumentException("Operation name not found");
+        }
+        clientConfigurations.setOperation(operation);
+
+        String bucketName = resolveString(exchange, OSSProperties.BUCKET_NAME, endpoint.getBucketName());
+        if (ObjectHelper.isNotEmpty(bucketName)) {
+            clientConfigurations.setBucketName(bucketName);
+        }
+
+        String objectName = resolveString(exchange, OSSProperties.OBJECT_NAME, endpoint.getObjectName());
+        if (ObjectHelper.isNotEmpty(objectName)) {
+            clientConfigurations.setObjectName(objectName);
+        }
+
+        String sourceBucketName = resolveString(exchange, OSSProperties.SOURCE_BUCKET_NAME, null);
+        if (ObjectHelper.isNotEmpty(sourceBucketName)) {
+            clientConfigurations.setSourceBucketName(sourceBucketName);
+        }
+
+        String sourceObjectName = resolveString(exchange, OSSProperties.SOURCE_OBJECT_NAME, null);
+        if (ObjectHelper.isNotEmpty(sourceObjectName)) {
+            clientConfigurations.setSourceObjectName(sourceObjectName);
+        }
+
+        String prefix = resolveString(exchange, OSSProperties.PREFIX, endpoint.getPrefix());
+        if (ObjectHelper.isNotEmpty(prefix)) {
+            clientConfigurations.setPrefix(prefix);
+        }
+
+        Integer maxKeys = resolveInteger(exchange, OSSProperties.MAX_KEYS, endpoint.getMaxKeys());
+        if (maxKeys != null) {
+            clientConfigurations.setMaxKeys(maxKeys);
+        }
+
+        return clientConfigurations;
+    }
+
+    private static String resolveString(Exchange exchange, String name, String endpointValue) {
+        String value = exchange.getIn().getHeader(name, String.class);
+        if (ObjectHelper.isEmpty(value)) {
+            value = exchange.getProperty(name, String.class);
+        }
+        if (ObjectHelper.isEmpty(value)) {
+            value = endpointValue;
+        }
+        return value;
+    }
+
+    private static Integer resolveInteger(Exchange exchange, String name, Integer endpointValue) {
+        Integer value = exchange.getIn().getHeader(name, Integer.class);
+        if (value == null) {
+            value = exchange.getProperty(name, Integer.class);
+        }
+        if (value == null) {
+            value = endpointValue;
+        }
+        return value;
     }
 
     /**

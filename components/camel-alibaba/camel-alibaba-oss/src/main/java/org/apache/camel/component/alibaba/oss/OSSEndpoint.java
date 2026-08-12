@@ -33,12 +33,15 @@ import org.apache.camel.support.ScheduledPollEndpoint;
  * Alibaba Cloud Object Storage Service (OSS) component
  */
 @UriEndpoint(firstVersion = "4.23.0", scheme = "alibaba-oss", title = "Alibaba Object Storage Service (OSS)",
-             syntax = "alibaba-oss:operation",
+             syntax = "alibaba-oss:bucketName",
              category = { Category.CLOUD }, headersClass = OSSHeaders.class)
 public class OSSEndpoint extends ScheduledPollEndpoint {
 
-    @UriPath(description = "Operation to be performed", displayName = "Operation", label = "producer")
-    @Metadata(required = true)
+    @UriPath(description = "Name of bucket to perform operation on", displayName = "Bucket Name")
+    private String bucketName;
+
+    @UriParam(description = "Operation to be performed", displayName = "Operation", label = "producer",
+              enums = "listBuckets,listObjects,putObject,getObject,deleteObject,copyObject,headObject")
     private String operation;
 
     @UriParam(description = "OSS service region", displayName = "Service region")
@@ -50,21 +53,18 @@ public class OSSEndpoint extends ScheduledPollEndpoint {
     private String endpoint;
 
     @UriParam(description = "Configuration object for cloud service authentication", displayName = "Service Configuration",
-              security = "secret", label = "security")
+              secret = true, security = "secret", label = "security")
     private ServiceKeys serviceKeys;
 
     @UriParam(description = "Access key for the cloud user", displayName = "API access key (AK)",
-              security = "secret", label = "security")
+              secret = true, security = "secret", label = "security")
     @Metadata(required = true)
     private String accessKey;
 
     @UriParam(description = "Secret key for the cloud user", displayName = "API secret key (SK)",
-              security = "secret", label = "security")
+              secret = true, security = "secret", label = "security")
     @Metadata(required = true)
     private String secretKey;
-
-    @UriParam(description = "Name of bucket to perform operation on", displayName = "Bucket Name", endpointIdentity = true)
-    private String bucketName;
 
     @UriParam(description = "Name of object to perform operation with", displayName = "Object Name")
     private String objectName;
@@ -94,9 +94,9 @@ public class OSSEndpoint extends ScheduledPollEndpoint {
     public OSSEndpoint() {
     }
 
-    public OSSEndpoint(String uri, String operation, OSSComponent component) {
+    public OSSEndpoint(String uri, String bucketName, OSSComponent component) {
         super(uri, component);
-        this.operation = operation;
+        this.bucketName = bucketName;
     }
 
     @Override

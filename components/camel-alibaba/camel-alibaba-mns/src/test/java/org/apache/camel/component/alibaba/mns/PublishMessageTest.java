@@ -23,6 +23,7 @@ import com.aliyun.mns.model.TopicMessage;
 import org.apache.camel.BindToRegistry;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.component.alibaba.mns.constants.MNSHeaders;
 import org.apache.camel.component.alibaba.mns.constants.MNSProperties;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.junit6.CamelTestSupport;
@@ -78,7 +79,7 @@ class PublishMessageTest extends CamelTestSupport {
         mock.assertIsSatisfied();
 
         Exchange exchange = mock.getExchanges().get(0);
-        assertThat(exchange.getProperty(MNSProperties.MESSAGE_ID)).isEqualTo("topic-message-id");
+        assertThat(exchange.getProperty(MNSHeaders.MESSAGE_ID)).isEqualTo("topic-message-id");
         assertThat(exchange.getProperty(MNSProperties.REQUEST_ID)).isEqualTo("topic-request-id");
 
         verify(cloudTopic).publishMessage(any(TopicMessage.class));

@@ -104,12 +104,9 @@ public final class MNSUtils {
     }
 
     public static String resolveReceiptHandle(Exchange exchange) {
-        String receiptHandle = exchange.getProperty(MNSProperties.RECEIPT_HANDLE, String.class);
+        String receiptHandle = exchange.getIn().getHeader(MNSHeaders.RECEIPT_HANDLE, String.class);
         if (ObjectHelper.isEmpty(receiptHandle)) {
-            receiptHandle = exchange.getIn().getHeader(MNSProperties.RECEIPT_HANDLE, String.class);
-        }
-        if (ObjectHelper.isEmpty(receiptHandle)) {
-            receiptHandle = exchange.getIn().getHeader(MNSHeaders.RECEIPT_HANDLE, String.class);
+            receiptHandle = exchange.getProperty(MNSHeaders.RECEIPT_HANDLE, String.class);
         }
         return receiptHandle;
     }
