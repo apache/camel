@@ -103,4 +103,13 @@ public class CSimplePredicateParserTest {
                 "isNotEqualTo(exchange, exchangePropertyAs(exchange, \"foo\", com.foo.User.class).getName(), \"bar\")", code);
     }
 
+    @Test
+    public void testParseBooleanZenLogicalOr() {
+        CSimplePredicateParser parser = new CSimplePredicateParser();
+        String code = parser.parsePredicate("${header.token} == null || ${exchangeProperty.forceNewSessionToken}");
+        Assertions.assertEquals(
+                "isEqualTo(exchange, header(message, \"token\"), null) || matchesValue(exchange, exchangeProperty(exchange, \"forceNewSessionToken\"))",
+                code);
+    }
+
 }
