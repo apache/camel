@@ -2197,6 +2197,15 @@ Container for defining data type transformer definitions
       </xs:documentation>
     </xs:annotation>
   </xs:element>
+  <xs:element name="ubl" type="tns:ublDataFormat">
+    <xs:annotation>
+      <xs:documentation xml:lang="en">
+<![CDATA[
+Marshal and unmarshal UBL 2.1 (Universal Business Language) documents.
+]]>
+      </xs:documentation>
+    </xs:annotation>
+  </xs:element>
   <xs:element name="univocityCsv" type="tns:uniVocityCsvDataFormat">
     <xs:annotation>
       <xs:documentation xml:lang="en">
@@ -15896,6 +15905,22 @@ An example value of this response header.
         <xs:element ref="tns:zipFile"/>
       </xs:choice>
     </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="ublDataFormat">
+    <xs:complexContent>
+      <xs:extension base="tns:dataFormat">
+        <xs:sequence/>
+        <xs:attribute name="prettyPrint" type="xs:string">
+          <xs:annotation>
+            <xs:documentation xml:lang="en">
+<![CDATA[
+Whether to enable pretty printing (formatted) output of the XML. Default value: false
+]]>
+            </xs:documentation>
+          </xs:annotation>
+        </xs:attribute>
+      </xs:extension>
+    </xs:complexContent>
   </xs:complexType>
   <xs:complexType name="cSimpleExpression">
     <xs:simpleContent>
