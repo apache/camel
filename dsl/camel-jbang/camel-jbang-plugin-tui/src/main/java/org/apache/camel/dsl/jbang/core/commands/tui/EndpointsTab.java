@@ -371,11 +371,17 @@ class EndpointsTab extends AbstractTableTab {
                         .sum();
 
                 if (hasSizeHistory) {
-                    List<Rect> chartSplit = Layout.horizontal()
-                            .constraints(Constraint.percentage(50), Constraint.percentage(50))
+                    // three-column layout: flow panel (fixed) | throughput chart | payload chart
+                    List<Rect> threeParts = Layout.horizontal()
+                            .constraints(Constraint.length(flowPanelWidth), Constraint.fill(), Constraint.fill())
                             .split(chunks.get(1));
-                    renderEndpointFlow(frame, chartSplit.get(0), inTotal, outTotal, info.name, info.pid);
-                    renderPayloadSizeChart(frame, chartSplit.get(1), info.pid);
+                    hSplit.setBorderPos(threeParts.get(1).x());
+                    FlowHelper.renderFlowPanel(frame, threeParts.get(0), inTotal, outTotal, info.name);
+                    int renderPoints = Math.min(
+                            FlowHelper.computeRenderPoints(threeParts.get(1)),
+                            FlowHelper.computeRenderPoints(threeParts.get(2)));
+                    renderThroughputChartDirect(frame, threeParts.get(1), info.pid, renderPoints);
+                    renderPayloadSizeChart(frame, threeParts.get(2), info.pid, renderPoints);
                 } else {
                     renderEndpointFlow(frame, chunks.get(1), inTotal, outTotal, info.name, info.pid);
                 }
@@ -457,7 +463,7 @@ class EndpointsTab extends AbstractTableTab {
         return 2;
     }
 
-    private void renderEndpointFlow(
+    private int renderEndpointFlow(
             Frame frame, Rect area, long inTotal, long outTotal, String name, String pid) {
         flowPanelWidth = Math.max(20, Math.min(flowPanelWidth, area.width() - 20));
         List<Rect> hParts = Layout.horizontal()
@@ -480,7 +486,9 @@ class EndpointsTab extends AbstractTableTab {
         LinkedList<Long> inHist = inHistMap.getOrDefault(pid, new LinkedList<>());
         LinkedList<Long> outHist = outHistMap.getOrDefault(pid, new LinkedList<>());
 
-        FlowHelper.renderThroughputChart(frame, hParts.get(1), inHist, outHist);
+        int renderPoints = FlowHelper.computeRenderPoints(hParts.get(1));
+        FlowHelper.renderThroughputChart(frame, hParts.get(1), inHist, outHist, null, renderPoints);
+        return renderPoints;
     }
 
     private void renderSingleEndpointChart(Frame frame, Rect area, String selectedUri, IntegrationInfo info) {
@@ -519,17 +527,37 @@ class EndpointsTab extends AbstractTableTab {
             List<Rect> chartSplit = Layout.horizontal()
                     .constraints(Constraint.percentage(50), Constraint.percentage(50))
                     .split(hParts.get(1));
-            FlowHelper.renderThroughputChart(frame, chartSplit.get(0), inHist, outHist, selectedUri);
-            FlowHelper.renderPayloadSizeChart(frame, chartSplit.get(1), inSizeHist, outSizeHist);
+            // use the same render points for both charts so their x-axis timelines align
+            int renderPoints = Math.min(
+                    FlowHelper.computeRenderPoints(chartSplit.get(0)),
+                    FlowHelper.computeRenderPoints(chartSplit.get(1)));
+            FlowHelper.renderThroughputChart(frame, chartSplit.get(0), inHist, outHist, selectedUri, renderPoints);
+            FlowHelper.renderPayloadSizeChart(frame, chartSplit.get(1), inSizeHist, outSizeHist, renderPoints);
         } else {
             FlowHelper.renderThroughputChart(frame, hParts.get(1), inHist, outHist, selectedUri);
         }
     }
 
-    private void renderPayloadSizeChart(Frame frame, Rect area, String pid) {
+    private void renderThroughputChartDirect(Frame frame, Rect area, String pid, int renderPoints) {
+        Map<String, LinkedList<Long>> inHistMap = switch (filter) {
+            case 1 -> endpointRemoteInHistory;
+            case 2 -> endpointRemoteStubInHistory;
+            default -> endpointInHistory;
+        };
+        Map<String, LinkedList<Long>> outHistMap = switch (filter) {
+            case 1 -> endpointRemoteOutHistory;
+            case 2 -> endpointRemoteStubOutHistory;
+            default -> endpointOutHistory;
+        };
+        LinkedList<Long> inHist = inHistMap.getOrDefault(pid, new LinkedList<>());
+        LinkedList<Long> outHist = outHistMap.getOrDefault(pid, new LinkedList<>());
+        FlowHelper.renderThroughputChart(frame, area, inHist, outHist, null, renderPoints);
+    }
+
+    private void renderPayloadSizeChart(Frame frame, Rect area, String pid, int renderPoints) {
         LinkedList<Long> inHist = endpointInSizeHistory.getOrDefault(pid, new LinkedList<>());
         LinkedList<Long> outHist = endpointOutSizeHistory.getOrDefault(pid, new LinkedList<>());
-        FlowHelper.renderPayloadSizeChart(frame, area, inHist, outHist);
+        FlowHelper.renderPayloadSizeChart(frame, area, inHist, outHist, renderPoints);
     }
 
     private void renderDetail(Frame frame, Rect area, List<EndpointInfo> sortedEndpoints, IntegrationInfo info) {

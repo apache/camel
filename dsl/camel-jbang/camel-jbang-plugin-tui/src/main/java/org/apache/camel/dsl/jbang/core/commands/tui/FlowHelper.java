@@ -100,9 +100,18 @@ final class FlowHelper {
         renderThroughputChart(frame, area, inHist, outHist, null);
     }
 
+    static int computeRenderPoints(Rect area) {
+        return Math.max(20, (Math.min(MAX_CHART_POINTS, area.width() - 6) / 20) * 20);
+    }
+
     static void renderThroughputChart(
             Frame frame, Rect area, LinkedList<Long> inHist, LinkedList<Long> outHist, String chartLabel) {
-        int renderPoints = Math.max(20, (Math.min(MAX_CHART_POINTS, area.width() - 6) / 20) * 20);
+        renderThroughputChart(frame, area, inHist, outHist, chartLabel, computeRenderPoints(area));
+    }
+
+    static void renderThroughputChart(
+            Frame frame, Rect area, LinkedList<Long> inHist, LinkedList<Long> outHist,
+            String chartLabel, int renderPoints) {
         long[] inArr = new long[renderPoints];
         long[] outArr = new long[renderPoints];
         for (int i = 0; i < renderPoints; i++) {
@@ -133,6 +142,9 @@ final class FlowHelper {
             titleSpans.add(Span.styled(label, Theme.label().bold()));
             titleSpans.add(Span.raw("] "));
         }
+        if (chartLabel == null) {
+            titleSpans.add(Span.raw(" "));
+        }
         titleSpans.add(Span.styled("▬", Theme.success()));
         titleSpans.add(Span.raw(String.format(" in:%-4s ", MetricsCollector.formatThroughput(curIn))));
         titleSpans.add(Span.styled("▬", Style.EMPTY.fg(Theme.accent())));
@@ -153,7 +165,11 @@ final class FlowHelper {
 
     static void renderPayloadSizeChart(
             Frame frame, Rect area, LinkedList<Long> inHist, LinkedList<Long> outHist) {
-        int renderPoints = Math.max(20, (Math.min(MAX_CHART_POINTS, area.width() - 6) / 20) * 20);
+        renderPayloadSizeChart(frame, area, inHist, outHist, computeRenderPoints(area));
+    }
+
+    static void renderPayloadSizeChart(
+            Frame frame, Rect area, LinkedList<Long> inHist, LinkedList<Long> outHist, int renderPoints) {
         long[] inArr = new long[renderPoints];
         long[] outArr = new long[renderPoints];
         for (int i = 0; i < renderPoints; i++) {
@@ -170,6 +186,7 @@ final class FlowHelper {
         long curOut = outArr[renderPoints - 1];
 
         Line chartTitle = Line.from(
+                Span.raw(" "),
                 Span.styled("▬", Theme.label()),
                 Span.raw(String.format(" in:%-8s ", sizeToString(curIn))),
                 Span.styled("▬", Theme.notice()),
