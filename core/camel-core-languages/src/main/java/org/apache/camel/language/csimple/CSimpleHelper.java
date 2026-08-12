@@ -1310,6 +1310,10 @@ public final class CSimpleHelper {
         return null;
     }
 
+    public static boolean matchesValue(Exchange exchange, Object value) {
+        return ObjectHelper.evaluateValuePredicate(value);
+    }
+
     public static boolean isNot(Exchange exchange, Object value) {
         if (value == null) {
             return true;

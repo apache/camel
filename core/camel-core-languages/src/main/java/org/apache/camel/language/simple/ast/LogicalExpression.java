@@ -48,7 +48,7 @@ public class LogicalExpression extends BaseSimpleNode {
     }
 
     public boolean acceptLeftNode(SimpleNode lef) {
-        if (!(lef instanceof BinaryExpression) && !(lef instanceof LogicalExpression)) {
+        if (!isValidPredicateOperand(lef)) {
             return false;
         }
         this.left = lef;
@@ -56,11 +56,22 @@ public class LogicalExpression extends BaseSimpleNode {
     }
 
     public boolean acceptRightNode(SimpleNode right) {
-        if (!(right instanceof BinaryExpression) && !(right instanceof LogicalExpression)) {
+        if (!isValidPredicateOperand(right)) {
             return false;
         }
         this.right = right;
         return true;
+    }
+
+    /**
+     * Predicate operands for logical AND/OR include binary/logical expressions as well as boolean-zen shorthand
+     * (standalone functions such as {@code ${header.active}} or {@code ${exchangeProperty.flag}}) that are evaluated
+     * via {@link org.apache.camel.support.ExpressionToPredicateAdapter}.
+     */
+    private static boolean isValidPredicateOperand(SimpleNode node) {
+        return node instanceof BinaryExpression
+                || node instanceof LogicalExpression
+                || node instanceof SimpleFunctionStart;
     }
 
     public LogicalOperatorType getOperator() {
@@ -137,8 +148,8 @@ public class LogicalExpression extends BaseSimpleNode {
         ObjectHelper.notNull(left, "left node", this);
         ObjectHelper.notNull(right, "right node", this);
 
-        final String leftExp = left.createCode(camelContext, expression);
-        final String rightExp = right.createCode(camelContext, expression);
+        final String leftExp = predicateOperandCode(left, camelContext, expression);
+        final String rightExp = predicateOperandCode(right, camelContext, expression);
 
         if (operator == LogicalOperatorType.AND) {
             return leftExp + " && " + rightExp;
@@ -147,5 +158,16 @@ public class LogicalExpression extends BaseSimpleNode {
         }
 
         throw new SimpleParserException("Unknown logical operator " + operator, token.getIndex());
+    }
+
+    private static String predicateOperandCode(SimpleNode node, CamelContext camelContext, String expression)
+            throws SimpleParserException {
+        String code = node.createCode(camelContext, expression);
+        code = code.replace(BaseSimpleParser.CODE_START, "");
+        code = code.replace(BaseSimpleParser.CODE_END, "");
+        if (node instanceof SimpleFunctionStart) {
+            return "matchesValue(exchange, " + code + ")";
+        }
+        return code;
     }
 }
