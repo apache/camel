@@ -1,0 +1,232 @@
+= REST Postman Component
+:doctitle: REST Postman
+:shortname: rest-postman
+:artifactid: camel-rest-postman
+:description: To call and expose REST services using a Postman Collection as contract.
+:since: 4.23
+:supportlevel: Preview
+:tabs-sync-option:
+:component-header: Both producer and consumer are supported
+
+*Since Camel {since}*
+
+*{component-header}*
+
+The REST Postman component configures rest producers and contract-first rest consumers from a
+https://learning.postman.com/docs/collections/collections-overview/[Postman Collection], and delegates to a component
+implementing the _RestProducerFactory_ interface. Currently, known working components are:
+
+* xref:http-component.adoc[http]
+* xref:netty-http-component.adoc[netty-http]
+* xref:undertow-component.adoc[undertow]
+* xref:vertx-http-component.adoc[vertx-http]
+
+It is the Postman equivalent of xref:rest-openapi-component.adoc[rest-openapi]. Use it when a Postman Collection is
+the description of the API you have, rather than an OpenAPI specification.
+
+IMPORTANT: Only the Postman Collection Format v2.1 is supported.
+
+Maven users will need to add the following dependency to their `pom.xml` for this component:
+
+[source,xml]
+----
+<dependency>
+    <groupId>org.apache.camel</groupId>
+    <artifactId>camel-rest-postman</artifactId>
+    <version>x.x.x</version>
+    <!-- use the same version as your Camel core version -->
+</dependency>
+----
+
+== URI format
+
+----
+rest-postman:[collectionSource#]requestId
+----
+
+`collectionSource` is either a resource URI of a Collection v2.1 JSON document (`classpath:`, `file:` or `http:`), or
+the uid of a collection to fetch from the Postman cloud. It defaults to `postman-collection.json` on the classpath.
+
+`requestId` selects what to invoke:
+
+[cols="1,3", options="header"]
+|===
+| Fragment | Selects
+| `getPetById` | the single request whose name slugifies to `getPetById`
+| `pets/addPet` | the request `Add Pet` inside the folder `Pets`, used when a name is not unique
+| `3f2504e0-4f89-11d3-9a0c-0305e82c3301` | the request with that `id`, which only collections fetched from the cloud carry
+| `pets` | every request in the folder `Pets`
+| `pets/` | the folder `Pets`, forced, for when a request and a folder share a name
+| _omitted_ | every request in the collection
+|===
+
+This component's endpoint URI is lenient, which means that in addition to message headers you can specify a request's
+parameters as endpoint parameters. These will be constant for all subsequent invocations, so it makes sense to use
+this feature only for parameters that are indeed constant for all invocations.
+
+// component options: START
+include::partial$component-configure-options.adoc[]
+include::partial$component-endpoint-options.adoc[]
+include::partial$component-endpoint-headers.adoc[]
+// component options: END
+
+== Usage
+
+=== Identifying requests
+
+A Postman item has a human readable name rather than an operation id, so this component slugifies it:
+`Get Pet By Id` becomes `getPetById`. When two requests slugify to the same thing, both are addressed by their folder
+qualified id instead, such as `pets/get` and `users/get`, and using the bare `get` is an error that lists the
+alternatives.
+
+`item.id` is also accepted when the collection records one. Note that it is optional in the v2.1 schema, and Postman's
+exporter strips auto-generated item ids, so an exported `collection.json` usually has none. Collections fetched from
+the Postman cloud do.
+
+IMPORTANT: Because the common case is to address a request by its slugified name, renaming a request in the Postman
+UI changes its id and will break routes bound to it.
+
+=== Invoking a single request
+
+[source,java]
+----
+from("direct:start")
+    .to("rest-postman:petstore.json#getPetById");
+----
+
+The message body and headers of the exchange are what is sent. The collection supplies the method, the URL, and any
+headers the message does not already carry; the body written in the collection is treated as sample data and is not
+sent.
+
+Path parameters written as `:petId` become `+{petId}+` placeholders resolved per exchange from the message header of the
+same name, falling back to the value declared in `url.variable`. Query parameters are bound to message headers in the
+same way and are dropped when unresolved. Set `queryParameterMode=literal` to send the values written in the
+collection instead.
+
+=== Running a folder or a whole collection
+
+Naming a folder, or naming nothing at all, runs every request in turn, in the manner of Postman's collection runner:
+
+[source,java]
+----
+from("direct:smokeTest")
+    .to("rest-postman:petstore.json#pets")    // every request in the Pets folder
+    .to("rest-postman:petstore.json");        // every request in the collection
+----
+
+Because one exchange body cannot stand in for many different requests, each request sends the body and headers written
+in the collection. `raw`, `graphql` and `urlencoded` bodies are reconstructed; `formdata` and `file` bodies cannot be,
+and are skipped with a warning. The `file` body mode is never read from disk, as it records a path on the machine of
+whoever authored the collection.
+
+The message body becomes a `List` of `PostmanRunResult`, one per request, each carrying the request id, method, URI,
+status code, response body, headers and any failure. The headers `CamelRestPostmanRequestCount` and
+`CamelRestPostmanFailedCount` summarise the run.
+
+By default the run stops and fails on the first request that fails. Set `runFailFast=false` to attempt every request
+and record the failures in their results instead:
+
+[source,java]
+----
+from("timer:smoke?period=60000")
+    .to("rest-postman:petstore.json?runFailFast=false")
+    .split(body())
+        .filter(simple("${body.success} == false"))
+        .to("log:failures");
+----
+
+=== Contract-first consumer
+
+Pointing a route's `from` at a collection serves its requests over HTTP, dispatching each one to a route consuming
+from `direct:<requestId>`:
+
+[source,java]
+----
+from("rest-postman:petstore.json")
+    .to("direct:dummy");
+
+from("direct:getPetById")
+    .setBody(constant("{ \"id\": 42 }"));
+----
+
+Use a folder id to serve only part of a collection, and `requestFilter` to include or exclude requests by Ant-style
+patterns over their folder qualified ids.
+
+Because a collection does not describe a base path, the split between base path and route path is inferred from what
+`+{{baseUrl}}+` expands to. Set `basePath` explicitly to control the context path the consumer serves on.
+
+`missingRequest` decides what happens when a request has no corresponding route: `fail` (the default) refuses to
+start, `ignore` warns, and `mock` returns a mocked response. Mock responses are taken from the collection's own saved
+example responses where there are any, which is the one place a collection is richer than an OpenAPI specification,
+and fall back to files matched by `mockIncludePattern`.
+
+If two requests share an HTTP method and path, which is common when a collection keeps a success and an error variant
+of the same call, the consumer fails at startup rather than letting one silently shadow the other. Use `requestFilter`
+to choose between them.
+
+=== Variables
+
+`+{{variable}}+` placeholders are resolved from the collection's own `variable` arrays, with folder scopes overriding
+the collection scope, then from the endpoint's `variables` option, then from Camel property placeholders:
+
+[source,java]
+----
+from("direct:start")
+    .to("rest-postman:petstore.json#getPetById?variable.baseUrl=https://staging.example.com/v3");
+----
+
+Postman environment files are not supported. Unresolved placeholders are left as they are unless
+`failOnUnresolvedVariable=true`.
+
+A placeholder name written in the `prefix:value` form of a Camel property placeholder function -- `+{{env:HOME}}+`,
+`+{{sys:user.home}}+`, `+{{bean:foo}}+` and the vault functions among them -- is deliberately *not* resolved from
+Camel properties. A collection is route-author configuration, but a cloud-hosted one is editable by anyone with
+access to the Postman workspace, and resolving those would let its content pull an environment variable into an
+outgoing request. Supply such values through the `variables` option instead.
+
+NOTE: Pre-request and test scripts in the collection's `event` blocks are never parsed or executed.
+
+== Security
+
+=== Two different credentials
+
+There are two unrelated credentials in play, and the option names keep them apart:
+
+`postmanApiKey`:: authenticates against *Postman itself*, in order to download a collection from the Postman cloud. It
+is sent only to `postmanApiUrl`, and never to the API that the collection describes.
+
+the collection's own `auth` block:: authenticates against *the API the collection describes*. It is governed by the
+`collectionAuth` option.
+
+=== Fetching a collection from the Postman cloud
+
+[source,java]
+----
+from("direct:start")
+    .to("rest-postman:12ece9e1-2abf-4edc-8e34-de66e74114d2#getPetById?postmanApiKey=PMAK-xxxx");
+----
+
+Prefer resolving the key from a vault or a property placeholder over writing it in the URI. Redirects from
+`postmanApiUrl` are rejected rather than followed, because following one would send the key to the redirect target,
+and `postmanApiUrl` must use HTTPS unless it names a loopback host.
+
+=== Applying the collection's auth block
+
+`collectionAuth` defaults to `ignore`: the block is not applied, and a warning names the type that was found. This is
+deliberate, because the values in a collection's auth block are usually unresolved `+{{placeholders}}+`, and silently
+attaching a credential found in a configuration file to outbound requests is surprising.
+
+Set `collectionAuth=header` to apply it. The `basic`, `bearer` and `apikey` types are reproduced as a static header or
+query parameter. The types that require per-request signing or a token exchange -- `awsv4`, `digest`, `hawk`,
+`edgegrid`, `ntlm`, `oauth1` and `oauth2` -- fail at startup rather than silently sending no credential; configure
+those on the delegate HTTP component instead. `collectionAuth=fail` rejects any auth block at all.
+
+On the consumer side the collection's auth block describes what a client must present, and is *not* enforced. Use
+`oauthProfile`, or the delegate consumer component's own authentication, for that.
+
+=== Serving the collection document
+
+When `apiContextPath` is set, the collection is served on that path with every `auth` block removed and the value of
+every variable of type `secret` replaced. This redaction is unconditional.
+
+include::spring-boot:partial$starter.adoc[]

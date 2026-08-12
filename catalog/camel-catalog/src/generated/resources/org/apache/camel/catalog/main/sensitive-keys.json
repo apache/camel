@@ -49,6 +49,7 @@
   "passphrase",
   "password",
   "personalaccesstoken",
+  "postmanapikey",
   "privatekey",
   "privatekeyfile",
   "privatekeyname",

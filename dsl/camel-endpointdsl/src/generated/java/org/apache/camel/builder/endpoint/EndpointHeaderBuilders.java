@@ -3294,6 +3294,19 @@ public class EndpointHeaderBuilders {
         return RestEndpointBuilderFactory.RestHeaderNameBuilder.INSTANCE;
     }
     /**
+     * REST Postman (camel-rest-postman)
+     * To call and expose REST services using a Postman Collection as contract.
+     * 
+     * Category: rest,api
+     * Since: 4.23
+     * Maven coordinates: org.apache.camel:camel-rest-postman
+     * 
+     * @return the dsl builder for the headers' name.
+     */
+    public static RestPostmanEndpointBuilderFactory.RestPostmanHeaderNameBuilder restPostman() {
+        return RestPostmanEndpointBuilderFactory.RestPostmanHeaderNameBuilder.INSTANCE;
+    }
+    /**
      * Robot Framework (camel-robotframework)
      * Pass camel exchanges to acceptance test written in Robot DSL.
      * 

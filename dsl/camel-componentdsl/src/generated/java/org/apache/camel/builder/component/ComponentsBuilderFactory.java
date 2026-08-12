@@ -4252,6 +4252,19 @@ public interface ComponentsBuilderFactory {
         return RestOpenapiComponentBuilderFactory.restOpenapi();
     }
     /**
+     * REST Postman (camel-rest-postman)
+     * To call and expose REST services using a Postman Collection as contract.
+     * 
+     * Category: rest,api
+     * Since: 4.23
+     * Maven coordinates: org.apache.camel:camel-rest-postman
+     * 
+     * @return the dsl builder
+     */
+    static RestPostmanComponentBuilderFactory.RestPostmanComponentBuilder restPostman() {
+        return RestPostmanComponentBuilderFactory.restPostman();
+    }
+    /**
      * Robot Framework (camel-robotframework)
      * Pass camel exchanges to acceptance test written in Robot DSL.
      * 
