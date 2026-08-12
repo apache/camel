@@ -7099,6 +7099,7 @@ custom logic needed before the looping executes.
             <xs:element ref="tns:swiftMx"/>
             <xs:element ref="tns:syslog"/>
             <xs:element ref="tns:tarFile"/>
+            <xs:element ref="tns:ubl"/>
             <xs:element ref="tns:thrift"/>
             <xs:element ref="tns:univocityCsv"/>
             <xs:element ref="tns:univocityFixed"/>
@@ -9993,6 +9994,22 @@ Whether to preserve path elements when the file name contains path elements in t
 <![CDATA[
 The maximum decompressed size of a tar file (in bytes). An IOException is thrown if the decompressed size exceeds this
 amount. Set to -1 to disable. Default value: 1073741824
+]]>
+            </xs:documentation>
+          </xs:annotation>
+        </xs:attribute>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+  <xs:complexType name="ublDataFormat">
+    <xs:complexContent>
+      <xs:extension base="tns:dataFormat">
+        <xs:sequence/>
+        <xs:attribute name="prettyPrint" type="xs:string">
+          <xs:annotation>
+            <xs:documentation xml:lang="en">
+<![CDATA[
+Whether to enable pretty printing (formatted) output of the XML. Default value: false
 ]]>
             </xs:documentation>
           </xs:annotation>
@@ -14467,6 +14484,7 @@ into.
             <xs:element ref="tns:swiftMx"/>
             <xs:element ref="tns:syslog"/>
             <xs:element ref="tns:tarFile"/>
+            <xs:element ref="tns:ubl"/>
             <xs:element ref="tns:thrift"/>
             <xs:element ref="tns:univocityCsv"/>
             <xs:element ref="tns:univocityFixed"/>
@@ -15895,6 +15913,7 @@ An example value of this response header.
         <xs:element ref="tns:swiftMx"/>
         <xs:element ref="tns:syslog"/>
         <xs:element ref="tns:tarFile"/>
+        <xs:element ref="tns:ubl"/>
         <xs:element ref="tns:thrift"/>
         <xs:element ref="tns:univocityCsv"/>
         <xs:element ref="tns:univocityFixed"/>
@@ -15905,22 +15924,6 @@ An example value of this response header.
         <xs:element ref="tns:zipFile"/>
       </xs:choice>
     </xs:sequence>
-  </xs:complexType>
-  <xs:complexType name="ublDataFormat">
-    <xs:complexContent>
-      <xs:extension base="tns:dataFormat">
-        <xs:sequence/>
-        <xs:attribute name="prettyPrint" type="xs:string">
-          <xs:annotation>
-            <xs:documentation xml:lang="en">
-<![CDATA[
-Whether to enable pretty printing (formatted) output of the XML. Default value: false
-]]>
-            </xs:documentation>
-          </xs:annotation>
-        </xs:attribute>
-      </xs:extension>
-    </xs:complexContent>
   </xs:complexType>
   <xs:complexType name="cSimpleExpression">
     <xs:simpleContent>
@@ -16794,6 +16797,7 @@ matches. If you specify just 'json', it matches all json destination types.
             <xs:element ref="tns:swiftMx"/>
             <xs:element ref="tns:syslog"/>
             <xs:element ref="tns:tarFile"/>
+            <xs:element ref="tns:ubl"/>
             <xs:element ref="tns:thrift"/>
             <xs:element ref="tns:univocityCsv"/>
             <xs:element ref="tns:univocityFixed"/>
