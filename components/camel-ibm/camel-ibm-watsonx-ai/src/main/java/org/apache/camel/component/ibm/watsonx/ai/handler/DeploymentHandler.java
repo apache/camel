@@ -20,9 +20,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import com.ibm.watsonx.ai.chat.ChatRequest;
 import com.ibm.watsonx.ai.chat.ChatResponse;
 import com.ibm.watsonx.ai.chat.model.ChatMessage;
+import com.ibm.watsonx.ai.deployment.DeploymentChatRequest;
 import com.ibm.watsonx.ai.deployment.DeploymentResource;
 import com.ibm.watsonx.ai.deployment.DeploymentService;
 import com.ibm.watsonx.ai.deployment.FindByIdRequest;
@@ -192,7 +192,7 @@ public class DeploymentHandler extends AbstractWatsonxAiHandler {
 
         // Build request - deployment chat API only supports 'messages' and optionally
         // 'context', 'tools', 'tool_choice', 'tool_choice_option' - no parameters allowed
-        ChatRequest request = ChatRequest.builder()
+        DeploymentChatRequest request = DeploymentChatRequest.builder()
                 .deploymentId(deploymentId)
                 .messages(messages)
                 .build();
