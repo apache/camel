@@ -219,6 +219,138 @@ public class StaticEndpointBuilders {
         return AiToolEndpointBuilderFactory.endpointBuilder(componentName, path);
     }
     /**
+     * Alibaba EventBridge (camel-alibaba-eventbridge)
+     * Publish events to Alibaba Cloud EventBridge.
+     * 
+     * Category: cloud,messaging
+     * Since: 4.23
+     * Maven coordinates: org.apache.camel:camel-alibaba-eventbridge
+     * 
+     * Syntax: <code>alibaba-eventbridge:operation</code>
+     * 
+     * Path parameter: operation (required)
+     * Operation to perform
+     * There are 1 enums and the value can be one of: putEvents
+     * 
+     * @param path operation
+     * @return the dsl builder
+     */
+    public static EventBridgeEndpointBuilderFactory.EventBridgeEndpointBuilder alibabaEventbridge(String path) {
+        return alibabaEventbridge("alibaba-eventbridge", path);
+    }
+    /**
+     * Alibaba EventBridge (camel-alibaba-eventbridge)
+     * Publish events to Alibaba Cloud EventBridge.
+     * 
+     * Category: cloud,messaging
+     * Since: 4.23
+     * Maven coordinates: org.apache.camel:camel-alibaba-eventbridge
+     * 
+     * Syntax: <code>alibaba-eventbridge:operation</code>
+     * 
+     * Path parameter: operation (required)
+     * Operation to perform
+     * There are 1 enums and the value can be one of: putEvents
+     * 
+     * @param componentName to use a custom component name for the endpoint
+     * instead of the default name
+     * @param path operation
+     * @return the dsl builder
+     */
+    public static EventBridgeEndpointBuilderFactory.EventBridgeEndpointBuilder alibabaEventbridge(String componentName, String path) {
+        return EventBridgeEndpointBuilderFactory.endpointBuilder(componentName, path);
+    }
+    /**
+     * Alibaba Function Compute (FC) (camel-alibaba-fc)
+     * Invoke serverless functions on Alibaba Cloud Function Compute (FC).
+     * 
+     * Category: cloud,serverless
+     * Since: 4.23
+     * Maven coordinates: org.apache.camel:camel-alibaba-fc
+     * 
+     * Syntax: <code>alibaba-fc:operation</code>
+     * 
+     * Path parameter: operation (required)
+     * Operation to perform
+     * There are 2 enums and the value can be one of: invokeFunction,
+     * getFunction
+     * 
+     * @param path operation
+     * @return the dsl builder
+     */
+    public static FCEndpointBuilderFactory.FCEndpointBuilder alibabaFc(String path) {
+        return alibabaFc("alibaba-fc", path);
+    }
+    /**
+     * Alibaba Function Compute (FC) (camel-alibaba-fc)
+     * Invoke serverless functions on Alibaba Cloud Function Compute (FC).
+     * 
+     * Category: cloud,serverless
+     * Since: 4.23
+     * Maven coordinates: org.apache.camel:camel-alibaba-fc
+     * 
+     * Syntax: <code>alibaba-fc:operation</code>
+     * 
+     * Path parameter: operation (required)
+     * Operation to perform
+     * There are 2 enums and the value can be one of: invokeFunction,
+     * getFunction
+     * 
+     * @param componentName to use a custom component name for the endpoint
+     * instead of the default name
+     * @param path operation
+     * @return the dsl builder
+     */
+    public static FCEndpointBuilderFactory.FCEndpointBuilder alibabaFc(String componentName, String path) {
+        return FCEndpointBuilderFactory.endpointBuilder(componentName, path);
+    }
+    /**
+     * Alibaba Key Management Service (KMS) (camel-alibaba-kms)
+     * Encrypt and decrypt data using Alibaba Cloud Key Management Service
+     * (KMS).
+     * 
+     * Category: cloud
+     * Since: 4.23
+     * Maven coordinates: org.apache.camel:camel-alibaba-kms
+     * 
+     * Syntax: <code>alibaba-kms:operation</code>
+     * 
+     * Path parameter: operation (required)
+     * Operation to perform
+     * There are 3 enums and the value can be one of: encrypt, decrypt,
+     * generateDataKey
+     * 
+     * @param path operation
+     * @return the dsl builder
+     */
+    public static KMSEndpointBuilderFactory.KMSEndpointBuilder alibabaKms(String path) {
+        return alibabaKms("alibaba-kms", path);
+    }
+    /**
+     * Alibaba Key Management Service (KMS) (camel-alibaba-kms)
+     * Encrypt and decrypt data using Alibaba Cloud Key Management Service
+     * (KMS).
+     * 
+     * Category: cloud
+     * Since: 4.23
+     * Maven coordinates: org.apache.camel:camel-alibaba-kms
+     * 
+     * Syntax: <code>alibaba-kms:operation</code>
+     * 
+     * Path parameter: operation (required)
+     * Operation to perform
+     * There are 3 enums and the value can be one of: encrypt, decrypt,
+     * generateDataKey
+     * 
+     * @param componentName to use a custom component name for the endpoint
+     * instead of the default name
+     * @param path operation
+     * @return the dsl builder
+     */
+    public static KMSEndpointBuilderFactory.KMSEndpointBuilder alibabaKms(String componentName, String path) {
+        return KMSEndpointBuilderFactory.endpointBuilder(componentName, path);
+    }
+    /**
      * Alibaba Message Service (MNS) (camel-alibaba-mns)
      * Send and receive messages to/from Alibaba Cloud Message Service (MNS).
      * 
@@ -297,6 +429,48 @@ public class StaticEndpointBuilders {
      */
     public static OSSEndpointBuilderFactory.OSSEndpointBuilder alibabaOss(String componentName, String path) {
         return OSSEndpointBuilderFactory.endpointBuilder(componentName, path);
+    }
+    /**
+     * Alibaba Short Message Service (SMS) (camel-alibaba-sms)
+     * Send SMS messages using Alibaba Cloud Short Message Service (SMS).
+     * 
+     * Category: cloud,messaging
+     * Since: 4.23
+     * Maven coordinates: org.apache.camel:camel-alibaba-sms
+     * 
+     * Syntax: <code>alibaba-sms:operation</code>
+     * 
+     * Path parameter: operation (required)
+     * Operation to perform
+     * There are 1 enums and the value can be one of: sendSms
+     * 
+     * @param path operation
+     * @return the dsl builder
+     */
+    public static SMSEndpointBuilderFactory.SMSEndpointBuilder alibabaSms(String path) {
+        return alibabaSms("alibaba-sms", path);
+    }
+    /**
+     * Alibaba Short Message Service (SMS) (camel-alibaba-sms)
+     * Send SMS messages using Alibaba Cloud Short Message Service (SMS).
+     * 
+     * Category: cloud,messaging
+     * Since: 4.23
+     * Maven coordinates: org.apache.camel:camel-alibaba-sms
+     * 
+     * Syntax: <code>alibaba-sms:operation</code>
+     * 
+     * Path parameter: operation (required)
+     * Operation to perform
+     * There are 1 enums and the value can be one of: sendSms
+     * 
+     * @param componentName to use a custom component name for the endpoint
+     * instead of the default name
+     * @param path operation
+     * @return the dsl builder
+     */
+    public static SMSEndpointBuilderFactory.SMSEndpointBuilder alibabaSms(String componentName, String path) {
+        return SMSEndpointBuilderFactory.endpointBuilder(componentName, path);
     }
     /**
      * AMQP (camel-amqp)

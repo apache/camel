@@ -80,6 +80,46 @@ public class EndpointHeaderBuilders {
         return ActiveMQ6EndpointBuilderFactory.ActiveMQ6HeaderNameBuilder.INSTANCE;
     }
     /**
+     * Alibaba EventBridge (camel-alibaba-eventbridge)
+     * Publish events to Alibaba Cloud EventBridge.
+     * 
+     * Category: cloud,messaging
+     * Since: 4.23
+     * Maven coordinates: org.apache.camel:camel-alibaba-eventbridge
+     * 
+     * @return the dsl builder for the headers' name.
+     */
+    public static EventBridgeEndpointBuilderFactory.EventBridgeHeaderNameBuilder alibabaEventbridge() {
+        return EventBridgeEndpointBuilderFactory.EventBridgeHeaderNameBuilder.INSTANCE;
+    }
+    /**
+     * Alibaba Function Compute (FC) (camel-alibaba-fc)
+     * Invoke serverless functions on Alibaba Cloud Function Compute (FC).
+     * 
+     * Category: cloud,serverless
+     * Since: 4.23
+     * Maven coordinates: org.apache.camel:camel-alibaba-fc
+     * 
+     * @return the dsl builder for the headers' name.
+     */
+    public static FCEndpointBuilderFactory.FCHeaderNameBuilder alibabaFc() {
+        return FCEndpointBuilderFactory.FCHeaderNameBuilder.INSTANCE;
+    }
+    /**
+     * Alibaba Key Management Service (KMS) (camel-alibaba-kms)
+     * Encrypt and decrypt data using Alibaba Cloud Key Management Service
+     * (KMS).
+     * 
+     * Category: cloud
+     * Since: 4.23
+     * Maven coordinates: org.apache.camel:camel-alibaba-kms
+     * 
+     * @return the dsl builder for the headers' name.
+     */
+    public static KMSEndpointBuilderFactory.KMSHeaderNameBuilder alibabaKms() {
+        return KMSEndpointBuilderFactory.KMSHeaderNameBuilder.INSTANCE;
+    }
+    /**
      * Alibaba Message Service (MNS) (camel-alibaba-mns)
      * Send and receive messages to/from Alibaba Cloud Message Service (MNS).
      * 
@@ -104,6 +144,19 @@ public class EndpointHeaderBuilders {
      */
     public static OSSEndpointBuilderFactory.OSSHeaderNameBuilder alibabaOss() {
         return OSSEndpointBuilderFactory.OSSHeaderNameBuilder.INSTANCE;
+    }
+    /**
+     * Alibaba Short Message Service (SMS) (camel-alibaba-sms)
+     * Send SMS messages using Alibaba Cloud Short Message Service (SMS).
+     * 
+     * Category: cloud,messaging
+     * Since: 4.23
+     * Maven coordinates: org.apache.camel:camel-alibaba-sms
+     * 
+     * @return the dsl builder for the headers' name.
+     */
+    public static SMSEndpointBuilderFactory.SMSHeaderNameBuilder alibabaSms() {
+        return SMSEndpointBuilderFactory.SMSHeaderNameBuilder.INSTANCE;
     }
     /**
      * AMQP (camel-amqp)
