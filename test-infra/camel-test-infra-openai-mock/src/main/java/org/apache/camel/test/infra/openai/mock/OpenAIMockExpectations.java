@@ -27,12 +27,13 @@ public record OpenAIMockExpectations(
         List<EmbeddingExpectation> embeddings,
         List<AudioTranscriptionExpectation> transcriptions,
         List<AudioTranscriptionExpectation> translations,
-        List<SpeechExpectation> speeches) {
+        List<SpeechExpectation> speeches,
+        List<ModerationExpectation> moderations) {
 
     /**
      * Convenience factory for callers that only need chat completion expectations (e.g. SSL/TLS tests).
      */
     public static OpenAIMockExpectations ofChat(List<MockExpectation> chat) {
-        return new OpenAIMockExpectations(chat, List.of(), List.of(), List.of(), List.of());
+        return new OpenAIMockExpectations(chat, List.of(), List.of(), List.of(), List.of(), List.of());
     }
 }

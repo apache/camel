@@ -37,23 +37,27 @@ public class OpenAIMockBuilder {
     private final List<AudioTranscriptionExpectation> audioTranscriptionExpectations;
     private final List<AudioTranscriptionExpectation> audioTranslationExpectations;
     private final List<SpeechExpectation> speechExpectations;
+    private final List<ModerationExpectation> moderationExpectations;
     private MockExpectation currentExpectation;
     private EmbeddingExpectation currentEmbeddingExpectation;
     private AudioTranscriptionExpectation currentAudioTranscriptionExpectation;
     private AudioTranscriptionExpectation currentAudioTranslationExpectation;
     private SpeechExpectation currentSpeechExpectation;
+    private ModerationExpectation currentModerationExpectation;
 
     public OpenAIMockBuilder(OpenAIMock mock, List<MockExpectation> expectations,
                              List<EmbeddingExpectation> embeddingExpectations,
                              List<AudioTranscriptionExpectation> audioTranscriptionExpectations,
                              List<AudioTranscriptionExpectation> audioTranslationExpectations,
-                             List<SpeechExpectation> speechExpectations) {
+                             List<SpeechExpectation> speechExpectations,
+                             List<ModerationExpectation> moderationExpectations) {
         this.mock = mock;
         this.expectations = expectations;
         this.embeddingExpectations = embeddingExpectations;
         this.audioTranscriptionExpectations = audioTranscriptionExpectations;
         this.audioTranslationExpectations = audioTranslationExpectations;
         this.speechExpectations = speechExpectations;
+        this.moderationExpectations = moderationExpectations;
     }
 
     public OpenAIMockBuilder when(String expectedInput) {
@@ -187,6 +191,68 @@ public class OpenAIMockBuilder {
         return this;
     }
 
+    // Moderation API methods
+
+    public OpenAIMockBuilder whenModeration(String expectedInput) {
+        log.debug("Setting up moderation expectation for input: {}", expectedInput);
+        currentModerationExpectation = new ModerationExpectation(expectedInput);
+        return this;
+    }
+
+    /**
+     * Replies with a verdict that violates no category.
+     */
+    public OpenAIMockBuilder replyWithModerationAllowed() {
+        validateCurrentModerationExpectation("replyWithModerationAllowed()");
+        log.debug("Setting moderation verdict: allowed");
+        currentModerationExpectation.setFlagged(false);
+        return this;
+    }
+
+    /**
+     * Replies with a verdict that violates the given category, which flags the whole result.
+     *
+     * @param category the OpenAI category name, for example {@code hate} or {@code self-harm/intent}
+     * @param score    the confidence score reported for that category
+     */
+    public OpenAIMockBuilder replyWithModerationFlagged(String category, double score) {
+        validateCurrentModerationExpectation("replyWithModerationFlagged()");
+        log.debug("Setting moderation verdict: flagged for category {} with score {}", category, score);
+        currentModerationExpectation.flagCategory(category, score);
+        return this;
+    }
+
+    /**
+     * Reports a score for a category without marking it as violated.
+     */
+    public OpenAIMockBuilder replyWithModerationScore(String category, double score) {
+        validateCurrentModerationExpectation("replyWithModerationScore()");
+        log.debug("Setting moderation score for category {}: {}", category, score);
+        currentModerationExpectation.scoreCategory(category, score);
+        return this;
+    }
+
+    /**
+     * Replies without the {@code illicit} and {@code illicit/violent} categories, as an OpenAI-compatible provider that
+     * does not implement them would.
+     */
+    public OpenAIMockBuilder replyWithoutIllicitCategories() {
+        validateCurrentModerationExpectation("replyWithoutIllicitCategories()");
+        log.debug("Omitting the illicit categories from the moderation verdict");
+        currentModerationExpectation.setIllicitCategoriesIncluded(false);
+        return this;
+    }
+
+    /**
+     * Replies without a result for this input, reproducing a provider that returns fewer verdicts than inputs.
+     */
+    public OpenAIMockBuilder replyWithoutModerationResult() {
+        validateCurrentModerationExpectation("replyWithoutModerationResult()");
+        log.debug("Omitting the moderation result for this input");
+        currentModerationExpectation.setResultOmitted(true);
+        return this;
+    }
+
     // Audio Transcription API methods
 
     public OpenAIMockBuilder whenTranscription() {
@@ -274,9 +340,14 @@ public class OpenAIMockBuilder {
             log.debug("Finalizing audio speech expectation");
             speechExpectations.add(currentSpeechExpectation);
             currentSpeechExpectation = null;
+        } else if (currentModerationExpectation != null) {
+            log.debug("Finalizing moderation expectation for input: {}", currentModerationExpectation.getExpectedInput());
+            moderationExpectations.add(currentModerationExpectation);
+            currentModerationExpectation = null;
         } else {
             throw new IllegalStateException(
-                    "Call when(), whenEmbedding(), whenTranscription(), whenTranslation(), or whenSpeech() before end()");
+                    "Call when(), whenEmbedding(), whenTranscription(), whenTranslation(), whenSpeech(), "
+                                            + "or whenModeration() before end()");
         }
         return this;
     }
@@ -307,10 +378,15 @@ public class OpenAIMockBuilder {
             speechExpectations.add(currentSpeechExpectation);
             currentSpeechExpectation = null;
         }
+        if (currentModerationExpectation != null) {
+            log.debug("Auto-finalizing current moderation expectation during build");
+            moderationExpectations.add(currentModerationExpectation);
+            currentModerationExpectation = null;
+        }
         log.info("Built OpenAIMock with {} chat, {} embedding, {} transcription, {} translation, "
-                 + "and {} speech expectations",
+                 + "{} speech, and {} moderation expectations",
                 expectations.size(), embeddingExpectations.size(), audioTranscriptionExpectations.size(),
-                audioTranslationExpectations.size(), speechExpectations.size());
+                audioTranslationExpectations.size(), speechExpectations.size(), moderationExpectations.size());
         return mock;
     }
 
@@ -341,6 +417,12 @@ public class OpenAIMockBuilder {
     private void validateCurrentSpeechExpectation(String methodName) {
         if (currentSpeechExpectation == null) {
             throw new IllegalStateException("Call whenSpeech() before " + methodName);
+        }
+    }
+
+    private void validateCurrentModerationExpectation(String methodName) {
+        if (currentModerationExpectation == null) {
+            throw new IllegalStateException("Call whenModeration() before " + methodName);
         }
     }
 

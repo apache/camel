@@ -93,6 +93,8 @@ public class OpenAIEndpointConfigurer extends PropertyConfigurerSupport implemen
         case "mcptoolrefresh":
         case "mcpToolRefresh": target.getConfiguration().setMcpToolRefresh(property(camelContext, boolean.class, value)); return true;
         case "model": target.getConfiguration().setModel(property(camelContext, java.lang.String.class, value)); return true;
+        case "moderationmodel":
+        case "moderationModel": target.getConfiguration().setModerationModel(property(camelContext, java.lang.String.class, value)); return true;
         case "oauthprofile":
         case "oauthProfile": target.getConfiguration().setOauthProfile(property(camelContext, java.lang.String.class, value)); return true;
         case "outputclass":
@@ -230,6 +232,8 @@ public class OpenAIEndpointConfigurer extends PropertyConfigurerSupport implemen
         case "mcptoolrefresh":
         case "mcpToolRefresh": return boolean.class;
         case "model": return java.lang.String.class;
+        case "moderationmodel":
+        case "moderationModel": return java.lang.String.class;
         case "oauthprofile":
         case "oauthProfile": return java.lang.String.class;
         case "outputclass":
@@ -368,6 +372,8 @@ public class OpenAIEndpointConfigurer extends PropertyConfigurerSupport implemen
         case "mcptoolrefresh":
         case "mcpToolRefresh": return target.getConfiguration().isMcpToolRefresh();
         case "model": return target.getConfiguration().getModel();
+        case "moderationmodel":
+        case "moderationModel": return target.getConfiguration().getModerationModel();
         case "oauthprofile":
         case "oauthProfile": return target.getConfiguration().getOauthProfile();
         case "outputclass":

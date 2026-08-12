@@ -149,7 +149,8 @@ public class OpenAIConfiguration implements Cloneable {
 
     @UriParam(defaultValue = "false")
     @Metadata(description = "Store the full SDK response in non-streaming mode: chat-completion uses exchange property "
-                            + "'CamelOpenAIResponse'; responses uses 'CamelOpenAIResponsesResponse'")
+                            + "'CamelOpenAIResponse'; responses uses 'CamelOpenAIResponsesResponse'; "
+                            + "moderation uses 'CamelOpenAIModerationResponse'")
     private boolean storeFullResponse = false;
 
     @UriParam(defaultValue = "false")
@@ -289,6 +290,12 @@ public class OpenAIConfiguration implements Cloneable {
     @Metadata(description = "Comma-separated timestamp granularities: 'word', 'segment', or 'word,segment'. "
                             + "Only applicable with verbose_json response format.")
     private String audioTimestampGranularities;
+
+    // ========== MODERATION CONFIGURATION ==========
+
+    @UriParam(defaultValue = "omni-moderation-latest")
+    @Metadata(description = "The model to use for moderation")
+    private String moderationModel = "omni-moderation-latest";
 
     // ========== AUDIO SPEECH (TEXT-TO-SPEECH) CONFIGURATION ==========
 
@@ -662,6 +669,14 @@ public class OpenAIConfiguration implements Cloneable {
 
     public void setAudioTimestampGranularities(String audioTimestampGranularities) {
         this.audioTimestampGranularities = audioTimestampGranularities;
+    }
+
+    public String getModerationModel() {
+        return moderationModel;
+    }
+
+    public void setModerationModel(String moderationModel) {
+        this.moderationModel = moderationModel;
     }
 
     public String getSpeechModel() {
