@@ -1820,22 +1820,60 @@ class SourceTab extends AbstractTab {
 
     private String validatePropertyLine(String line) {
         CamelCatalog catalog = getCatalog();
-        if (catalog == null) {
+        if (catalog != null) {
+            try {
+                ConfigurationPropertiesValidationResult result = catalog.validateConfigurationProperty(line);
+                if (result.isAccepted()) {
+                    if (!result.isSuccess()) {
+                        String msg = result.summaryErrorMessage(false);
+                        if (msg != null) {
+                            return msg.trim();
+                        }
+                    }
+                    return null;
+                }
+            } catch (Exception e) {
+                // ignore validation errors
+            }
+        }
+        // validate Spring Boot properties
+        return validateSpringBootPropertyLine(line);
+    }
+
+    private String validateSpringBootPropertyLine(String line) {
+        ensureSpringBootMetadataCache();
+        if (springBootOptionsCache == null || springBootOptionsCache.isEmpty()) {
             return null;
         }
-        try {
-            ConfigurationPropertiesValidationResult result = catalog.validateConfigurationProperty(line);
-            if (!result.isAccepted()) {
-                return null;
-            }
-            if (!result.isSuccess()) {
-                String msg = result.summaryErrorMessage(false);
-                if (msg != null) {
-                    return msg.trim();
+        String trimmed = line.trim();
+        int eq = trimmed.indexOf('=');
+        if (eq <= 0) {
+            return null;
+        }
+        String key = trimmed.substring(0, eq).trim();
+        // only validate keys that look like Spring Boot properties
+        if (key.startsWith("camel.") || key.startsWith("#") || key.startsWith("!")) {
+            return null;
+        }
+        // check if the key exists in Spring Boot metadata
+        if (!springBootOptionsCache.containsKey(key)) {
+            // check if it's a known prefix (partial key) — don't flag those
+            for (String known : springBootOptionsCache.keySet()) {
+                if (known.startsWith(key + ".")) {
+                    return null;
                 }
             }
-        } catch (Exception e) {
-            // ignore validation errors
+            // check if it belongs to a known Spring Boot group
+            boolean inSpringBootNamespace = false;
+            for (String group : springBootGroupsCache.keySet()) {
+                if (key.startsWith(group + ".")) {
+                    inSpringBootNamespace = true;
+                    break;
+                }
+            }
+            if (inSpringBootNamespace) {
+                return "Unknown Spring Boot property: " + key;
+            }
         }
         return null;
     }
