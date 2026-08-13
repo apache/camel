@@ -354,7 +354,7 @@
         <logback-version>1.6.1</logback-version>
         <lucene-version>9.12.3</lucene-version>
         <littleproxy-version>2.9.0</littleproxy-version>
-        <lz4-java-version>1.11.1</lz4-java-version>
+        <lz4-java-version>1.11.2</lz4-java-version>
         <mapstruct-version>1.6.3</mapstruct-version>
         <!-- needed from tooling/archetypes -->
         <maven-version>3.9.16</maven-version>
