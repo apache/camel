@@ -48,38 +48,42 @@ public class PropertiesDevConsole extends AbstractDevConsole {
         sb.append(String.format("Properties loaded from locations: %s", loc));
         sb.append("\n");
 
-        Properties p = pc.loadProperties();
-        OrderedLocationProperties olp = null;
-        if (p instanceof OrderedLocationProperties orderedlocationproperties2) {
-            olp = orderedlocationproperties2;
-        }
-        for (var entry : p.entrySet()) {
-            String k = entry.getKey().toString();
-            Object v = entry.getValue();
-            loc = olp != null ? locationSummary(olp, k) : null;
-            if (SensitiveUtils.containsSensitive(k)) {
-                sb.append(String.format("    %s %s = xxxxxx%n", loc, k));
-            } else {
-                sb.append(String.format("    %s %s = %s%n", loc, k, v));
-            }
-        }
-        sb.append("\n");
-
-        // include properties from runtime providers (Spring Boot, Quarkus, etc.)
+        // when a runtime provider is present (Spring Boot, Quarkus, etc.) it is the
+        // authoritative source — skip pc.loadProperties() to avoid noisy duplicates
+        // from runtime-managed config sources (env vars, system properties, etc.)
         Set<RuntimePropertiesProvider> providers
                 = getCamelContext().getRegistry().findByType(RuntimePropertiesProvider.class);
-        for (RuntimePropertiesProvider provider : providers) {
-            Collection<RuntimePropertiesProvider.Property> runtimeProps = provider.getProperties();
-            if (runtimeProps != null && !runtimeProps.isEmpty()) {
-                for (RuntimePropertiesProvider.Property prop : runtimeProps) {
-                    if (SensitiveUtils.containsSensitive(prop.key())) {
-                        sb.append(String.format("    %s %s = xxxxxx%n", prop.source(), prop.key()));
-                    } else {
-                        sb.append(String.format("    %s %s = %s%n", prop.source(), prop.key(), prop.value()));
+        if (!providers.isEmpty()) {
+            for (RuntimePropertiesProvider provider : providers) {
+                Collection<RuntimePropertiesProvider.Property> runtimeProps = provider.getProperties();
+                if (runtimeProps != null && !runtimeProps.isEmpty()) {
+                    for (RuntimePropertiesProvider.Property prop : runtimeProps) {
+                        if (SensitiveUtils.containsSensitive(prop.key())) {
+                            sb.append(String.format("    %s %s = xxxxxx%n", prop.source(), prop.key()));
+                        } else {
+                            sb.append(String.format("    %s %s = %s%n", prop.source(), prop.key(), prop.value()));
+                        }
                     }
+                    sb.append("\n");
                 }
-                sb.append("\n");
             }
+        } else {
+            Properties p = pc.loadProperties();
+            OrderedLocationProperties olp = null;
+            if (p instanceof OrderedLocationProperties orderedlocationproperties2) {
+                olp = orderedlocationproperties2;
+            }
+            for (var entry : p.entrySet()) {
+                String k = entry.getKey().toString();
+                Object v = entry.getValue();
+                loc = olp != null ? locationSummary(olp, k) : null;
+                if (SensitiveUtils.containsSensitive(k)) {
+                    sb.append(String.format("    %s %s = xxxxxx%n", loc, k));
+                } else {
+                    sb.append(String.format("    %s %s = %s%n", loc, k, v));
+                }
+            }
+            sb.append("\n");
         }
 
         return sb.toString();
@@ -93,33 +97,36 @@ public class PropertiesDevConsole extends AbstractDevConsole {
         root.put("locations", pc.getLocations());
 
         JsonArray arr = new JsonArray();
-        Properties p = pc.loadProperties();
-        OrderedLocationProperties olp = p instanceof OrderedLocationProperties o ? o : null;
-        for (var entry : p.entrySet()) {
-            arr.add(toPropertyJson(pc, olp, entry));
-        }
-        if (!arr.isEmpty()) {
-            root.put("properties", arr);
-        }
 
-        // include properties from runtime providers (Spring Boot, Quarkus, etc.)
+        // when a runtime provider is present (Spring Boot, Quarkus, etc.) it is the
+        // authoritative source — skip pc.loadProperties() to avoid noisy duplicates
+        // from runtime-managed config sources (env vars, system properties, etc.)
         Set<RuntimePropertiesProvider> providers
                 = getCamelContext().getRegistry().findByType(RuntimePropertiesProvider.class);
-        for (RuntimePropertiesProvider provider : providers) {
-            Collection<RuntimePropertiesProvider.Property> runtimeProps = provider.getProperties();
-            if (runtimeProps != null && !runtimeProps.isEmpty()) {
-                for (RuntimePropertiesProvider.Property prop : runtimeProps) {
-                    boolean sensitive = SensitiveUtils.containsSensitive(prop.key());
-                    JsonObject jo = new JsonObject();
-                    jo.put("key", prop.key());
-                    jo.put("value", sensitive ? "xxxxxx" : prop.value());
-                    jo.put("source", prop.source());
-                    arr.add(jo);
-                }
-                if (!root.containsKey("properties")) {
-                    root.put("properties", arr);
+        if (!providers.isEmpty()) {
+            for (RuntimePropertiesProvider provider : providers) {
+                Collection<RuntimePropertiesProvider.Property> runtimeProps = provider.getProperties();
+                if (runtimeProps != null && !runtimeProps.isEmpty()) {
+                    for (RuntimePropertiesProvider.Property prop : runtimeProps) {
+                        boolean sensitive = SensitiveUtils.containsSensitive(prop.key());
+                        JsonObject jo = new JsonObject();
+                        jo.put("key", prop.key());
+                        jo.put("value", sensitive ? "xxxxxx" : prop.value());
+                        jo.put("source", prop.source());
+                        arr.add(jo);
+                    }
                 }
             }
+        } else {
+            Properties p = pc.loadProperties();
+            OrderedLocationProperties olp = p instanceof OrderedLocationProperties o ? o : null;
+            for (var entry : p.entrySet()) {
+                arr.add(toPropertyJson(pc, olp, entry));
+            }
+        }
+
+        if (!arr.isEmpty()) {
+            root.put("properties", arr);
         }
 
         return root;
