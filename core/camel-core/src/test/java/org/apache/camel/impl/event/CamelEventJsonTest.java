@@ -185,6 +185,21 @@ class CamelEventJsonTest extends ContextTestSupport {
     }
 
     @Test
+    void testExchangeRedeliveryEventAsJson() {
+        Exchange exchange = createExchangeWithBody("payload");
+        exchange.setException(new RuntimeException("redelivery cause"));
+
+        ExchangeRedeliveryEvent event = new ExchangeRedeliveryEvent(exchange, 2);
+
+        Map<String, Object> json = event.asJSon();
+
+        assertThat(json)
+                .containsEntry("type", "ExchangeRedelivery")
+                .containsEntry("attempt", 2)
+                .containsKey("exception");
+    }
+
+    @Test
     void testAsJsonReturnsJsonObjectCompatibleMap() {
         CamelEvent event = new CamelContextInitializedEvent(context);
 

@@ -69,6 +69,7 @@ public final class CamelEventJsonSupport {
         }
         if (event instanceof CamelEvent.ExchangeRedeliveryEvent redeliveryEvent) {
             jo.put("attempt", redeliveryEvent.getAttempt());
+            appendException(jo, redeliveryEvent.getExchange().getException());
         }
         if (event instanceof CamelEvent.ExchangeFailureEvent failureEvent) {
             appendFailureHandling(jo, failureEvent);
@@ -175,8 +176,13 @@ public final class CamelEventJsonSupport {
     }
 
     private static void appendException(JsonObject jo, Throwable cause) {
-        if (cause != null) {
+        if (cause == null) {
+            return;
+        }
+        try {
             jo.put("exception", MessageHelper.dumpExceptionAsJSonObject(cause).get("exception"));
+        } catch (Exception e) {
+            jo.put("exceptionMessage", cause.getMessage());
         }
     }
 
