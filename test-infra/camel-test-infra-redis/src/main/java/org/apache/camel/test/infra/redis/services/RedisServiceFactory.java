@@ -17,8 +17,26 @@
 package org.apache.camel.test.infra.redis.services;
 
 import org.apache.camel.test.infra.common.services.SimpleTestServiceBuilder;
+import org.apache.camel.test.infra.common.services.SingletonService;
 
 public final class RedisServiceFactory {
+
+    private static class SingletonRedisService extends SingletonService<RedisService> implements RedisService {
+        public SingletonRedisService(RedisService service, String name) {
+            super(service, name);
+        }
+
+        @Override
+        public String host() {
+            return getService().host();
+        }
+
+        @Override
+        public int port() {
+            return getService().port();
+        }
+    }
+
     private RedisServiceFactory() {
 
     }
@@ -32,6 +50,21 @@ public final class RedisServiceFactory {
                 .addLocalMapping(RedisLocalContainerService::new)
                 .addRemoteMapping(RedisRemoteService::new)
                 .build();
+    }
+
+    public static RedisService createSingletonService() {
+        return SingletonServiceHolder.INSTANCE;
+    }
+
+    private static class SingletonServiceHolder {
+        static final RedisService INSTANCE;
+        static {
+            SimpleTestServiceBuilder<RedisService> instance = builder();
+            instance.addLocalMapping(
+                    () -> new SingletonRedisService(new RedisLocalContainerService(), "redis"))
+                    .addRemoteMapping(RedisRemoteService::new);
+            INSTANCE = instance.build();
+        }
     }
 
     public static class RedisRemoteService extends RedisRemoteInfraService implements RedisService {

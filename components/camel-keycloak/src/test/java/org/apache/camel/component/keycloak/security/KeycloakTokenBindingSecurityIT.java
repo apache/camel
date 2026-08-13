@@ -69,7 +69,7 @@ public class KeycloakTokenBindingSecurityIT extends CamelTestSupport {
     private static final Logger log = LoggerFactory.getLogger(KeycloakTokenBindingSecurityIT.class);
 
     @RegisterExtension
-    static KeycloakService keycloakService = KeycloakServiceFactory.createService();
+    static KeycloakService keycloakService = KeycloakServiceFactory.createSingletonService();
 
     // Test data - use unique names
     private static final String TEST_REALM_NAME = "token-binding-realm-" + UUID.randomUUID().toString().substring(0, 8);

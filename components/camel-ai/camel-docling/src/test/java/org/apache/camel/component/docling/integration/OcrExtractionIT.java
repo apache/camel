@@ -58,7 +58,7 @@ class OcrExtractionIT extends CamelTestSupport {
     private static final String TEST_TEXT_LINE3 = "OCR Test Document";
 
     @RegisterExtension
-    static DoclingService doclingService = DoclingServiceFactory.createService();
+    static DoclingService doclingService = DoclingServiceFactory.createSingletonService();
 
     @Override
     protected CamelContext createCamelContext() throws Exception {

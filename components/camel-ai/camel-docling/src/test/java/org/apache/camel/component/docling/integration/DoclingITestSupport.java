@@ -31,7 +31,7 @@ public abstract class DoclingITestSupport extends CamelTestSupport {
     protected static final Logger LOG = LoggerFactory.getLogger(DoclingITestSupport.class);
 
     @RegisterExtension
-    static DoclingService doclingService = DoclingServiceFactory.createService();
+    static DoclingService doclingService = DoclingServiceFactory.createSingletonService();
 
     @Override
     protected CamelContext createCamelContext() throws Exception {

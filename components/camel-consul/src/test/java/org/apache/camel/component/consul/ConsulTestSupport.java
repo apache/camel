@@ -31,7 +31,7 @@ import org.kiwiproject.consul.Consul;
 
 public class ConsulTestSupport extends CamelTestSupport {
     @RegisterExtension
-    public static ConsulService service = ConsulServiceFactory.createService();
+    public static ConsulService service = ConsulServiceFactory.createSingletonService();
 
     @RegisterExtension
     @Order(10)

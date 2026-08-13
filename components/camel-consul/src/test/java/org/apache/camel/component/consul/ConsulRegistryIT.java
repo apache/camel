@@ -39,7 +39,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
  */
 public class ConsulRegistryIT implements Serializable {
     @RegisterExtension
-    public static ConsulService consulService = ConsulServiceFactory.createService();
+    public static ConsulService consulService = ConsulServiceFactory.createSingletonService();
 
     private static final long serialVersionUID = -3482971969351609265L;
     private static ConsulRegistry registry;
