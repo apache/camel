@@ -35,8 +35,9 @@ public class McpServerConfiguration {
     private long sessionIdleTtl = McpServerConstants.DEFAULT_SESSION_IDLE_TTL;
 
     /**
-     * Comma-separated list of ai-tool tags to expose as MCP tools. Only tools registered under one of these tags are
-     * published; the untagged default pool is never exposed. When not set, no tools are published.
+     * Comma-separated list of ai-tool tag patterns to expose as MCP tools. Patterns support exact match, wildcard
+     * prefix ({@code foo*}), and {@code *} to match all tags. Only tools registered under a matching tag are published;
+     * the untagged default pool is never exposed. When not set, no tools are published.
      */
     public String getTags() {
         return tags;
