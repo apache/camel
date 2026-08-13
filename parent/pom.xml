@@ -350,7 +350,7 @@
         <libphonenumber-version>9.0.36</libphonenumber-version>
         <!-- virtual dependency only used by Eclipse m2e -->
         <lifecycle-mapping-version>1.0.0</lifecycle-mapping-version>
-        <log4j2-version>2.25.4</log4j2-version>
+        <log4j2-version>2.25.5</log4j2-version>
         <logback-version>1.6.1</logback-version>
         <lucene-version>9.12.3</lucene-version>
         <littleproxy-version>2.9.0</littleproxy-version>
