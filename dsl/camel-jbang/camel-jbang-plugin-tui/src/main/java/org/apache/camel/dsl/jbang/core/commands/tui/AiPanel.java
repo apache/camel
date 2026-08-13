@@ -167,6 +167,7 @@ class AiPanel {
     private final TableState statsTableState = new TableState();
     private boolean statsView;
     private int statsScrollOffset;
+    boolean spanRefreshRequested;
 
     enum AiUsageSource {
         TUI,
@@ -421,6 +422,9 @@ class AiPanel {
         if (ke.hasCtrl() && ke.isCharIgnoreCase('u')) {
             statsView = !statsView;
             statsScrollOffset = 0;
+            if (statsView) {
+                spanRefreshRequested = true;
+            }
             return true;
         }
         if (ke.hasCtrl() && ke.isCharIgnoreCase('y')) {
@@ -1345,7 +1349,7 @@ class AiPanel {
         if (entries.isEmpty()) {
             frame.renderWidget(
                     Paragraph.from(Line.from(Span.styled(
-                            "No AI usage data yet. Ask a question in the AI panel or run routes with GenAI observability enabled.",
+                            "No AI usage data yet. Ask a question in the AI panel, or run routes with GenAI observability and OTel span export (--observe).",
                             Style.EMPTY.dim()))),
                     area);
             return;
@@ -1540,6 +1544,9 @@ class AiPanel {
     void toggleStatsViewForTesting() {
         statsView = !statsView;
         statsScrollOffset = 0;
+        if (statsView) {
+            spanRefreshRequested = true;
+        }
     }
 
     List<AiUsageEntry> combinedUsageEntriesForTesting() {

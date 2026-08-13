@@ -72,10 +72,6 @@ final class GenAiSpanUsageExtractor {
         int inputTokens = intAttr(attrs, GenAiAttributes.INPUT_TOKENS);
         int outputTokens = intAttr(attrs, GenAiAttributes.OUTPUT_TOKENS);
         int totalTokens = inputTokens + outputTokens;
-        if (totalTokens == 0 && inputTokens == 0 && outputTokens == 0) {
-            // Keep zero-token spans visible when latency or route context is present.
-            totalTokens = 0;
-        }
 
         long latencyMs = span.durationMs() > 0 ? span.durationMs() : 0;
         String stopReason = stringAttr(attrs, GenAiAttributes.FINISH_REASONS);

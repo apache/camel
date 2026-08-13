@@ -2392,6 +2392,11 @@ public class CamelMonitor extends CamelCommand {
             tabRegistry.spansTab().spanRefreshRequested = false;
             dataService.refreshSpanData();
         }
+        if (aiPanel.isOpen() && aiPanel.isStatsViewForTesting()
+                && ctx.selectedPid != null && aiPanel.spanRefreshRequested) {
+            aiPanel.spanRefreshRequested = false;
+            dataService.refreshSpanData();
+        }
     }
 
     // ---- Helpers ----

@@ -78,6 +78,20 @@ class AiPanelGenAiUsageTest {
     }
 
     @Test
+    void togglingStatsViewRequestsSpanRefresh() {
+        AiPanel panel = new AiPanel();
+        assertThat(panel.spanRefreshRequested).isFalse();
+
+        panel.toggleStatsViewForTesting();
+        assertThat(panel.isStatsViewForTesting()).isTrue();
+        assertThat(panel.spanRefreshRequested).isTrue();
+
+        panel.toggleStatsViewForTesting();
+        assertThat(panel.isStatsViewForTesting()).isFalse();
+        assertThat(panel.spanRefreshRequested).isTrue();
+    }
+
+    @Test
     void statsViewShowsGuidanceWhenNoDataAvailable() {
         AiPanel panel = new AiPanel();
         panel.setOtelSpans(spans);
