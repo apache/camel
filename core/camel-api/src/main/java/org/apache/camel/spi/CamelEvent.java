@@ -16,6 +16,8 @@
  */
 package org.apache.camel.spi;
 
+import java.util.Map;
+
 import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
@@ -93,6 +95,22 @@ public interface CamelEvent {
     long getTimestamp();
 
     void setTimestamp(long timestamp);
+
+    /**
+     * Dumps the full event as a pretty-printed JSON string.
+     *
+     * @param  indent number of spaces to indent
+     * @return        JSON representation of this event
+     * @since         4.23
+     */
+    String toJSon(int indent);
+
+    /**
+     * The full event as a {@link Map} suitable for JSON serialization, containing structured metadata for this event.
+     *
+     * @since 4.23
+     */
+    Map<String, Object> asJSon();
 
     /**
      * This interface is implemented by all events that contain an exception and is used to retrieve the exception in a
