@@ -358,9 +358,9 @@ public class HttpServerConfigurationProperties implements BootstrapCloseable {
     }
 
     /**
-     * Comma-separated list of ai-tool tag patterns to expose as MCP tools. Patterns support exact match, wildcard prefix
-     * ({@code foo*}), and {@code *} to match all tags. Only tools registered under a matching tag are exposed; the
-     * untagged default pool is never exposed. When not set, no tools are exposed.
+     * Comma-separated list of ai-tool tag patterns to expose as MCP tools. Matching is case-insensitive and supports
+     * exact match, wildcard prefix ({@code foo*}), and {@code *} to match all tags. Only tools registered under a
+     * matching tag are exposed; the untagged default pool is never exposed. When not set, no tools are exposed.
      */
     public void setMcpTags(String mcpTags) {
         this.mcpTags = mcpTags;
@@ -614,9 +614,9 @@ public class HttpServerConfigurationProperties implements BootstrapCloseable {
     }
 
     /**
-     * Comma-separated list of ai-tool tag patterns to expose as MCP tools. Patterns support exact match, wildcard prefix
-     * ({@code foo*}), and {@code *} to match all tags. Only tools registered under a matching tag are exposed; the
-     * untagged default pool is never exposed. When not set, no tools are exposed.
+     * Comma-separated list of ai-tool tag patterns to expose as MCP tools. Matching is case-insensitive and supports
+     * exact match, wildcard prefix ({@code foo*}), and {@code *} to match all tags. Only tools registered under a
+     * matching tag are exposed; the untagged default pool is never exposed. When not set, no tools are exposed.
      */
     public HttpServerConfigurationProperties withMcpTags(String mcpTags) {
         this.mcpTags = mcpTags;
