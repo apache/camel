@@ -64,7 +64,7 @@ public class OpenAIMcpParallelToolExecutionIT extends OpenAITestSupport {
             = "Add 3 and 4 using the add tool, and echo the word hello using the echo tool. Call both tools now, together.";
 
     @RegisterExtension
-    static McpEverythingService MCP_EVERYTHING = McpEverythingServiceFactory.createService();
+    static McpEverythingService MCP_EVERYTHING = McpEverythingServiceFactory.createSingletonService();
 
     @Override
     protected RouteBuilder createRouteBuilder() {

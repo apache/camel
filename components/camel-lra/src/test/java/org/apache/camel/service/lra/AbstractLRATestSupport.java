@@ -43,7 +43,7 @@ import static org.awaitility.Awaitility.await;
 public abstract class AbstractLRATestSupport extends CamelTestSupport {
 
     @RegisterExtension
-    static MicroprofileLRAService service = MicroprofileLRAServiceFactory.createService();
+    static MicroprofileLRAService service = MicroprofileLRAServiceFactory.createSingletonService();
 
     @RegisterExtension
     AvailablePortFinder.Port serverPortHolder = AvailablePortFinder.find();

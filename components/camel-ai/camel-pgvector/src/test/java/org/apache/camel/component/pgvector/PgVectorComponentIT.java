@@ -46,7 +46,7 @@ public class PgVectorComponentIT extends CamelTestSupport {
     private static final int DIMENSION = 3;
 
     @RegisterExtension
-    static PostgresService POSTGRES = PostgresVectorServiceFactory.createService();
+    static PostgresService POSTGRES = PostgresVectorServiceFactory.createSingletonService();
 
     @Override
     protected CamelContext createCamelContext() throws Exception {
