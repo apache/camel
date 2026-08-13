@@ -337,20 +337,24 @@ public class OpenAIEndpoint extends DefaultEndpoint {
 
     private void republishCombinedState() {
         McpToolState current = mcpToolState;
-        Set<String> oldRouteNames = current.routeTools().keySet();
+        Set<String> routeNames = routeTools.keySet();
 
+        // Keep only MCP-backed tools from the current snapshot; route entries are rebuilt below
         List<ChatCompletionFunctionTool> mcpTools = current.tools().stream()
-                .filter(tool -> !oldRouteNames.contains(tool.function().name()))
+                .filter(tool -> current.toolClientMap().containsKey(tool.function().name()))
+                .filter(tool -> !routeNames.contains(tool.function().name()))
                 .toList();
 
-        Set<String> mcpReturnDirect = new HashSet<>(current.returnDirectTools());
-        mcpReturnDirect.removeAll(oldRouteNames);
+        Set<String> mcpReturnDirect = current.returnDirectTools().stream()
+                .filter(name -> current.toolClientMap().containsKey(name))
+                .filter(name -> !routeNames.contains(name))
+                .collect(Collectors.toCollection(HashSet::new));
 
         Set<String> allReturnDirect = new HashSet<>(mcpReturnDirect);
         allReturnDirect.addAll(OpenAIRouteToolSupport.returnDirectToolNames(routeTools));
 
         Set<String> knownTools = new HashSet<>(current.toolClientMap().keySet());
-        knownTools.addAll(routeTools.keySet());
+        knownTools.addAll(routeNames);
 
         List<ChatCompletionFunctionTool> allTools = new ArrayList<>(mcpTools);
         allTools.addAll(OpenAIRouteToolSupport.toOpenAiTools(routeTools));
