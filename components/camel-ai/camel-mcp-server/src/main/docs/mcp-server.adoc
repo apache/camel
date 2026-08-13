@@ -120,6 +120,9 @@ camel.server.mcp-tags = crm,notify
 camel.server.mcp-server-name = my-integration-app
 ----
 
+Tag patterns support wildcards: use `*` to expose all tagged tools, or a
+prefix pattern like `crm*` to expose all tags starting with `crm`:
+
 On other runtimes, or when wiring programmatically, add the
 `McpServerBridge` service to the CamelContext instead:
 
@@ -157,10 +160,11 @@ JBang (see the xref:main.adoc[camel-main] options) or on
 
 | `camel.server.mcp-enabled` | Whether to expose ai-tool routes as MCP tools
   over streamable HTTP. | `false` | bridge
-| `camel.server.mcp-tags` | Comma-separated list of ai-tool tags to expose as
-  MCP tools. Only tools registered under one of these tags are published; the
-  untagged default pool is never exposed. When not set, no tools are
-  published. |  | bridge
+| `camel.server.mcp-tags` | Comma-separated list of ai-tool tag patterns to
+  expose as MCP tools. Patterns support exact match, wildcard prefix
+  (`foo*`), and `*` to match all tags. Only tools registered under a matching
+  tag are published; the untagged default pool is never exposed. When not
+  set, no tools are published. |  | bridge
 | `camel.server.mcp-tool-timeout` | Per-call tool execution timeout in
   milliseconds. A call exceeding the timeout returns an error result to the
   MCP client; the underlying route keeps running until it completes on its
@@ -215,8 +219,9 @@ External MCP clients are *untrusted senders* under the
 xref:manual::security-model.adoc[Camel security model]. The module applies the
 following rules:
 
-* *Explicit opt-in per tool*: only tools whose tags intersect the configured
-  `tags` are exposed. The untagged default pool is never exposed implicitly.
+* *Explicit opt-in per tool*: only tools whose tags match the configured tag
+  patterns are exposed. The untagged default pool is never exposed, even when
+  using the `*` wildcard.
 * *Flat namespace protection*: a tool whose name collides with an already
   exposed tool is refused with an ERROR log — never silently replaced.
 * *Error sanitization*: route exceptions are mapped to a generic error
