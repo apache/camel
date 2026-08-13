@@ -22,24 +22,33 @@ import java.util.Set;
 
 import com.openai.models.chat.completions.ChatCompletionFunctionTool;
 import io.modelcontextprotocol.client.McpSyncClient;
+import org.apache.camel.component.ai.tool.AiToolSpec;
 
 /**
- * Immutable snapshot of the MCP tool state shared by all concurrent exchanges.
+ * Immutable snapshot of the MCP and route-based tool state shared by all concurrent exchanges.
  */
 record McpToolState(
         List<ChatCompletionFunctionTool> tools,
         Map<String, McpSyncClient> toolClientMap,
         Map<String, String> toolToServerName,
-        Set<String> returnDirectTools) {
+        Set<String> returnDirectTools,
+        Map<String, AiToolSpec> routeTools) {
 
     McpToolState {
         tools = List.copyOf(tools);
         toolClientMap = Map.copyOf(toolClientMap);
         toolToServerName = Map.copyOf(toolToServerName);
         returnDirectTools = Set.copyOf(returnDirectTools);
+        routeTools = Map.copyOf(routeTools);
     }
 
     static McpToolState empty() {
-        return new McpToolState(List.of(), Map.of(), Map.of(), Set.of());
+        return new McpToolState(List.of(), Map.of(), Map.of(), Set.of(), Map.of());
+    }
+
+    Set<String> knownToolNames() {
+        java.util.Set<String> names = new java.util.HashSet<>(toolClientMap.keySet());
+        names.addAll(routeTools.keySet());
+        return Set.copyOf(names);
     }
 }

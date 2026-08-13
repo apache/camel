@@ -195,6 +195,11 @@ public class OpenAIConfiguration implements Cloneable {
     private boolean autoToolExecution = true;
 
     @UriParam
+    @Metadata(description = "Comma-separated tags for discovering route-based tools registered via the ai-tool component. "
+                            + "When set, matching tools from the shared AiToolRegistry are exposed to the model alongside MCP tools.")
+    private String tags;
+
+    @UriParam
     @Metadata(description = "Comma-separated list of MCP protocol versions to advertise when connecting to MCP servers "
                             + "using Streamable HTTP transport. When not set, the SDK default is used. "
                             + "Example: 2024-11-05,2025-03-26,2025-06-18")
@@ -749,6 +754,14 @@ public class OpenAIConfiguration implements Cloneable {
 
     public void setAutoToolExecution(boolean autoToolExecution) {
         this.autoToolExecution = autoToolExecution;
+    }
+
+    public String getTags() {
+        return tags;
+    }
+
+    public void setTags(String tags) {
+        this.tags = tags;
     }
 
     public String getMcpProtocolVersions() {

@@ -46,6 +46,19 @@ class AiToolAnnotationsTest {
         assertThat(annotations.destructiveHint()).isTrue();
         assertThat(annotations.idempotentHint()).isFalse();
         assertThat(annotations.openWorldHint()).isTrue();
+        assertThat(annotations.returnDirect()).isNull();
+    }
+
+    @Test
+    void shouldBuildReturnDirectHint() {
+        AiToolConfiguration configuration = new AiToolConfiguration();
+        configuration.setReturnDirect(true);
+
+        AiToolAnnotations annotations = AiToolAnnotations.fromConfiguration(configuration);
+
+        assertThat(annotations).isNotNull();
+        assertThat(annotations.returnDirect()).isTrue();
+        assertThat(annotations.isReturnDirect()).isTrue();
     }
 
     @Test

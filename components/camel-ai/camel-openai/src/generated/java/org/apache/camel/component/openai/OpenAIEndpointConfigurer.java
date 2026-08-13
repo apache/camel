@@ -148,6 +148,7 @@ public class OpenAIEndpointConfigurer extends PropertyConfigurerSupport implemen
         case "stripThinking": target.getConfiguration().setStripThinking(property(camelContext, boolean.class, value)); return true;
         case "systemmessage":
         case "systemMessage": target.getConfiguration().setSystemMessage(property(camelContext, java.lang.String.class, value)); return true;
+        case "tags": target.getConfiguration().setTags(property(camelContext, java.lang.String.class, value)); return true;
         case "temperature": target.getConfiguration().setTemperature(property(camelContext, java.lang.Double.class, value)); return true;
         case "toolexecutionerrorstrategy":
         case "toolExecutionErrorStrategy": target.getConfiguration().setToolExecutionErrorStrategy(property(camelContext, org.apache.camel.component.openai.ToolExecutionErrorStrategy.class, value)); return true;
@@ -287,6 +288,7 @@ public class OpenAIEndpointConfigurer extends PropertyConfigurerSupport implemen
         case "stripThinking": return boolean.class;
         case "systemmessage":
         case "systemMessage": return java.lang.String.class;
+        case "tags": return java.lang.String.class;
         case "temperature": return java.lang.Double.class;
         case "toolexecutionerrorstrategy":
         case "toolExecutionErrorStrategy": return org.apache.camel.component.openai.ToolExecutionErrorStrategy.class;
@@ -427,6 +429,7 @@ public class OpenAIEndpointConfigurer extends PropertyConfigurerSupport implemen
         case "stripThinking": return target.getConfiguration().isStripThinking();
         case "systemmessage":
         case "systemMessage": return target.getConfiguration().getSystemMessage();
+        case "tags": return target.getConfiguration().getTags();
         case "temperature": return target.getConfiguration().getTemperature();
         case "toolexecutionerrorstrategy":
         case "toolExecutionErrorStrategy": return target.getConfiguration().getToolExecutionErrorStrategy();

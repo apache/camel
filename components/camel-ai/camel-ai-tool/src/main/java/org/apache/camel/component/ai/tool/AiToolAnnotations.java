@@ -18,7 +18,8 @@ package org.apache.camel.component.ai.tool;
 
 /**
  * Optional MCP tool annotation hints for a route-based {@code ai-tool}. Values are advisory for MCP clients and are not
- * enforced by Camel.
+ * enforced by Camel, except {@link #returnDirect()} which is also honoured by AI producers such as {@code camel-openai}
+ * when executing route tools in an agentic loop.
  *
  * @since 4.22
  */
@@ -27,7 +28,8 @@ public record AiToolAnnotations(
         Boolean readOnlyHint,
         Boolean destructiveHint,
         Boolean idempotentHint,
-        Boolean openWorldHint) {
+        Boolean openWorldHint,
+        Boolean returnDirect) {
 
     /**
      * Builds annotations from endpoint configuration, or {@code null} when no hint is configured.
@@ -41,11 +43,19 @@ public record AiToolAnnotations(
         Boolean destructiveHint = configuration.getDestructiveHint();
         Boolean idempotentHint = configuration.getIdempotentHint();
         Boolean openWorldHint = configuration.getOpenWorldHint();
+        Boolean returnDirect = configuration.getReturnDirect();
         if (title == null && readOnlyHint == null && destructiveHint == null && idempotentHint == null
-                && openWorldHint == null) {
+                && openWorldHint == null && returnDirect == null) {
             return null;
         }
-        return new AiToolAnnotations(title, readOnlyHint, destructiveHint, idempotentHint, openWorldHint);
+        return new AiToolAnnotations(title, readOnlyHint, destructiveHint, idempotentHint, openWorldHint, returnDirect);
+    }
+
+    /**
+     * Whether the agentic loop should return this tool's result directly without sending it back to the model.
+     */
+    public boolean isReturnDirect() {
+        return Boolean.TRUE.equals(returnDirect);
     }
 
     private static String blankToNull(String value) {
