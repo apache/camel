@@ -30,7 +30,7 @@ class GotoSourceNodePopupTest {
     @Test
     void escClosesPopup() {
         var popup = new GotoSourceNodePopup();
-        popup.open(sampleEntries());
+        popup.open(sampleEntries(), 100);
         assertThat(popup.isVisible()).isTrue();
 
         popup.handleKeyEvent(KeyEvent.ofKey(KeyCode.ESCAPE, KeyModifiers.NONE));
@@ -40,7 +40,7 @@ class GotoSourceNodePopupTest {
     @Test
     void enterSelectsRouteEntry() {
         var popup = new GotoSourceNodePopup();
-        popup.open(sampleEntries());
+        popup.open(sampleEntries(), 100);
 
         popup.handleKeyEvent(KeyEvent.ofKey(KeyCode.ENTER, KeyModifiers.NONE));
 
@@ -53,7 +53,7 @@ class GotoSourceNodePopupTest {
     @Test
     void downThenEnterSelectsProcessor() {
         var popup = new GotoSourceNodePopup();
-        popup.open(sampleEntries());
+        popup.open(sampleEntries(), 100);
 
         popup.handleKeyEvent(KeyEvent.ofKey(KeyCode.DOWN, KeyModifiers.NONE));
         popup.handleKeyEvent(KeyEvent.ofKey(KeyCode.ENTER, KeyModifiers.NONE));
@@ -67,7 +67,7 @@ class GotoSourceNodePopupTest {
     @Test
     void typingFiltersToMatchingProcessor() {
         var popup = new GotoSourceNodePopup();
-        popup.open(sampleEntries());
+        popup.open(sampleEntries(), 100);
 
         popup.handleKeyEvent(KeyEvent.ofChar('k', KeyModifiers.NONE));
         popup.handleKeyEvent(KeyEvent.ofChar('a', KeyModifiers.NONE));
@@ -104,7 +104,7 @@ class GotoSourceNodePopupTest {
                         "/tmp/routes.yaml", 8, 1, 5));
 
         var popup = new GotoSourceNodePopup();
-        popup.open(entries);
+        popup.open(entries, 100);
 
         popup.handleKeyEvent(KeyEvent.ofChar('a', KeyModifiers.NONE));
         popup.handleKeyEvent(KeyEvent.ofChar('l', KeyModifiers.NONE));
@@ -118,6 +118,69 @@ class GotoSourceNodePopupTest {
         assertThat(selected).isNotNull();
         assertThat(selected.label()).isEqualTo("alpha");
         assertThat(selected.routeFromLine()).isEqualTo(0);
+    }
+
+    @Test
+    void typingLineNumberJumpsToLine() {
+        var popup = new GotoSourceNodePopup();
+        popup.open(sampleEntries(), 100);
+
+        popup.handleKeyEvent(KeyEvent.ofChar('4', KeyModifiers.NONE));
+        popup.handleKeyEvent(KeyEvent.ofChar('7', KeyModifiers.NONE));
+        popup.handleKeyEvent(KeyEvent.ofKey(KeyCode.ENTER, KeyModifiers.NONE));
+
+        assertThat(popup.isVisible()).isFalse();
+        assertThat(popup.consumeSelection()).isNull();
+        assertThat(popup.consumeGotoLineNumber()).isEqualTo(47);
+    }
+
+    @Test
+    void lineNumberClampedToFileSize() {
+        var popup = new GotoSourceNodePopup();
+        popup.open(sampleEntries(), 30);
+
+        popup.handleKeyEvent(KeyEvent.ofChar('9', KeyModifiers.NONE));
+        popup.handleKeyEvent(KeyEvent.ofChar('9', KeyModifiers.NONE));
+        popup.handleKeyEvent(KeyEvent.ofChar('9', KeyModifiers.NONE));
+        popup.handleKeyEvent(KeyEvent.ofKey(KeyCode.ENTER, KeyModifiers.NONE));
+
+        assertThat(popup.consumeGotoLineNumber()).isEqualTo(30);
+    }
+
+    @Test
+    void lineNumberZeroClampedToOne() {
+        var popup = new GotoSourceNodePopup();
+        popup.open(sampleEntries(), 100);
+
+        popup.handleKeyEvent(KeyEvent.ofChar('0', KeyModifiers.NONE));
+        popup.handleKeyEvent(KeyEvent.ofKey(KeyCode.ENTER, KeyModifiers.NONE));
+
+        assertThat(popup.consumeGotoLineNumber()).isEqualTo(1);
+    }
+
+    @Test
+    void mixedTextNotTreatedAsLineNumber() {
+        var popup = new GotoSourceNodePopup();
+        popup.open(sampleEntries(), 100);
+
+        popup.handleKeyEvent(KeyEvent.ofChar('4', KeyModifiers.NONE));
+        popup.handleKeyEvent(KeyEvent.ofChar('a', KeyModifiers.NONE));
+        popup.handleKeyEvent(KeyEvent.ofKey(KeyCode.ENTER, KeyModifiers.NONE));
+
+        assertThat(popup.consumeGotoLineNumber()).isEqualTo(-1);
+    }
+
+    @Test
+    void gotoLineWorksWithEmptyNodeList() {
+        var popup = new GotoSourceNodePopup();
+        popup.open(List.of(), 50);
+
+        popup.handleKeyEvent(KeyEvent.ofChar('2', KeyModifiers.NONE));
+        popup.handleKeyEvent(KeyEvent.ofChar('5', KeyModifiers.NONE));
+        popup.handleKeyEvent(KeyEvent.ofKey(KeyCode.ENTER, KeyModifiers.NONE));
+
+        assertThat(popup.isVisible()).isFalse();
+        assertThat(popup.consumeGotoLineNumber()).isEqualTo(25);
     }
 
     private static List<YamlRouteNodeScanner.NodeEntry> sampleEntries() {

@@ -204,6 +204,11 @@ class SourceTab extends AbstractTab {
 
         if (gotoSourceNodePopup.isVisible()) {
             gotoSourceNodePopup.handleKeyEvent(ke);
+            int gotoLine = gotoSourceNodePopup.consumeGotoLineNumber();
+            if (gotoLine > 0) {
+                sourceViewer.goToLine(gotoLine - 1);
+                return true;
+            }
             YamlRouteNodeScanner.NodeEntry sel = gotoSourceNodePopup.consumeSelection();
             if (sel != null) {
                 openFileAt(sel.filePath(), sel.lineIndex());
@@ -211,8 +216,8 @@ class SourceTab extends AbstractTab {
             return true;
         }
 
-        if (ke.hasCtrl() && ke.isCharIgnoreCase('g') && !routeIndex.isEmpty()) {
-            gotoSourceNodePopup.open(buildSourceNodeIndex());
+        if (ke.hasCtrl() && ke.isCharIgnoreCase('g')) {
+            gotoSourceNodePopup.open(buildSourceNodeIndex(), sourceViewer.getLineCount());
             return true;
         }
 
@@ -404,7 +409,9 @@ class SourceTab extends AbstractTab {
             }
             if (!routeIndex.isEmpty()) {
                 TuiHelper.hint(spans, "g", "go to route");
-                TuiHelper.hint(spans, "Ctrl+G", "go to node");
+            }
+            if (sourceViewer.isVisible()) {
+                TuiHelper.hint(spans, "Ctrl+G", "go to");
             }
         }
     }
@@ -433,9 +440,10 @@ class SourceTab extends AbstractTab {
                 - **Up/Down** — scroll through source code
                 - **F4** — edit local file (plain text; only when file is writable)
                 - **Esc** — cancel edit (in edit mode) or close viewer
-                - **F5** — save file (in edit mode; Camel dev mode auto-reloads)
+                - **Ctrl+S** — save file and continue editing (Camel dev mode auto-reloads)
+                - **F5** — save file and close editor
                 - **Space** — cycle format (YAML/Java/XML) for Camel routes
-                - **i** — toggle inline Camel documentation for Camel source files
+                - Quick documentation panel is shown at the bottom for Camel source files
                 - **/** — search in source
                 - **h** — highlight text
                 - **n/N** — next/previous match
@@ -451,6 +459,7 @@ class SourceTab extends AbstractTab {
                 - **Ctrl+K** — delete current line
                 - **Ctrl+Left / Ctrl+Right** — word navigation
                 - **Home** — smart home (content indent, then column 0)
+                - Quick documentation panel is shown at the bottom (shows doc for current line)
                 - **F7** — show diff of unsaved changes
 
                 ## Edit Mode (Tab Completion)
@@ -495,11 +504,12 @@ class SourceTab extends AbstractTab {
                   Type to fuzzy-filter by route ID or endpoint URI, then press **Enter** to
                   navigate to the selected route.
 
-                ## Go to Node
-                - **Ctrl+G** — open an expanded popup showing routes and their individual
+                ## Go to Node / Line
+                - **Ctrl+G** — open a popup showing routes and their individual
                   processors/EIPs in a tree structure. Type to fuzzy-filter by route ID,
                   EIP type, or label, then press **Enter** to jump directly to the selected
-                  node in the source editor.
+                  node in the source editor. Type a **line number** (e.g. `47`) and press
+                  **Enter** to jump directly to that line.
 
                 ## General
                 - **Tab** — toggle focus between file list and source viewer
@@ -688,9 +698,11 @@ class SourceTab extends AbstractTab {
                         sourceViewer.setEndpointValidator(this::validateYamlEndpoints);
                         sourceViewer.setSimpleValidator(this::validateYamlSimple);
                         sourceViewer.setListItemNodeChecker(this::isListChildrenNode);
+                        sourceViewer.setEditQuickDocProvider(this::provideEditQuickDoc);
                     } else {
                         sourceViewer.setAutocompleteProvider(null);
                         sourceViewer.setAutocompleteValueProvider(null);
+                        sourceViewer.setEditQuickDocProvider(null);
                     }
                 } else if (isPropertiesFile(filePath)) {
                     sourceViewer.setQuickDocProvider(this::providePropertiesQuickDocs);
@@ -698,10 +710,12 @@ class SourceTab extends AbstractTab {
                     sourceViewer.setAutocompleteProvider(this::providePropertyCompletions);
                     sourceViewer.setAutocompleteValueProvider(this::providePropertyValueCompletions);
                     sourceViewer.setPropertiesValidator(this::validatePropertyLine);
+                    sourceViewer.setEditQuickDocProvider(this::provideEditPropertyQuickDoc);
                 } else {
                     sourceViewer.setQuickDocProvider(null);
                     sourceViewer.setDeprecatedLineScanner(null);
                     sourceViewer.setAutocompleteProvider(null);
+                    sourceViewer.setEditQuickDocProvider(null);
                     sourceViewer.setAutocompleteValueProvider(null);
                 }
                 sourceViewer.loadFile(filePath);
@@ -781,6 +795,232 @@ class SourceTab extends AbstractTab {
             }
         }
         return result;
+    }
+
+    private List<SourceViewer.DocEntry> provideEditQuickDoc(List<String> lines, int cursorRow) {
+        CamelCatalog catalog = getCatalog();
+        if (catalog == null || lines == null || cursorRow < 0 || cursorRow >= lines.size()) {
+            return List.of();
+        }
+        String line = lines.get(cursorRow);
+
+        Matcher uriMatcher = YAML_URI_PATTERN.matcher(line);
+        if (uriMatcher.find()) {
+            String uri = uriMatcher.group(1);
+            if (uri.endsWith("\"")) {
+                uri = uri.substring(0, uri.length() - 1);
+            }
+            String component = uri.contains(":") ? uri.substring(0, uri.indexOf(':')) : uri;
+            ComponentModel model = catalog.componentModel(component);
+            if (model != null) {
+                String title = model.getTitle() != null ? model.getTitle() : component;
+                String desc = model.getDescription() != null ? model.getDescription() : "";
+                return List.of(SourceViewer.DocEntry.of(title + " — " + desc));
+            }
+        }
+
+        // check if inside a parameters: block — look up component endpoint option doc
+        SourceViewer.DocEntry optionDoc = resolveParameterOptionDoc(catalog, lines, cursorRow);
+        if (optionDoc != null) {
+            return List.of(optionDoc);
+        }
+
+        // check if this is an EIP option (e.g., message under log, expression under split)
+        SourceViewer.DocEntry eipOptionDoc = resolveEipOptionDoc(catalog, lines, cursorRow);
+        if (eipOptionDoc != null) {
+            return List.of(eipOptionDoc);
+        }
+
+        Matcher keyMatcher = YAML_KEY_PATTERN.matcher(line);
+        if (keyMatcher.find()) {
+            String key = keyMatcher.group(1);
+            EipModel eipModel = catalog.eipModel(key);
+            if (eipModel != null) {
+                String title = eipModel.getTitle() != null ? eipModel.getTitle() : key;
+                String desc = eipModel.getDescription() != null ? eipModel.getDescription() : "";
+                return List.of(SourceViewer.DocEntry.of(title + " — " + desc));
+            }
+        }
+
+        return List.of();
+    }
+
+    private SourceViewer.DocEntry resolveEipOptionDoc(CamelCatalog catalog, List<String> lines, int cursorRow) {
+        String cursorLine = lines.get(cursorRow);
+        String trimmed = cursorLine.trim();
+        if (trimmed.isEmpty() || trimmed.startsWith("#")) {
+            return null;
+        }
+        if (trimmed.startsWith("- ")) {
+            trimmed = trimmed.substring(2).trim();
+        }
+        int colonIdx = trimmed.indexOf(':');
+        if (colonIdx <= 0) {
+            return null;
+        }
+        String optionName = trimmed.substring(0, colonIdx).trim();
+        int cursorIndent = countLeadingSpaces(cursorLine);
+
+        // walk up to find the parent EIP
+        for (int i = cursorRow - 1; i >= 0; i--) {
+            String l = lines.get(i);
+            if (l.isBlank()) {
+                continue;
+            }
+            int indent = countLeadingSpaces(l);
+            if (indent < cursorIndent) {
+                String t = l.trim();
+                if (t.startsWith("- ")) {
+                    t = t.substring(2).trim();
+                }
+                int ci = t.indexOf(':');
+                if (ci > 0) {
+                    String eipName = t.substring(0, ci).trim();
+                    EipModel model = catalog.eipModel(eipName);
+                    if (model != null) {
+                        for (BaseOptionModel opt : model.getOptions()) {
+                            if (optionName.equals(opt.getName())) {
+                                String desc = formatFullOptionDoc(opt);
+                                return desc != null
+                                        ? SourceViewer.DocEntry.withTitle(formatOptionTitle(opt), desc)
+                                        : null;
+                            }
+                        }
+                    }
+                }
+                break;
+            }
+        }
+        return null;
+    }
+
+    private SourceViewer.DocEntry resolveParameterOptionDoc(CamelCatalog catalog, List<String> lines, int cursorRow) {
+        String cursorLine = lines.get(cursorRow);
+        String trimmed = cursorLine.trim();
+        if (trimmed.isEmpty() || trimmed.startsWith("#") || trimmed.startsWith("-")) {
+            return null;
+        }
+        int colonIdx = trimmed.indexOf(':');
+        if (colonIdx <= 0) {
+            return null;
+        }
+        String optionName = trimmed.substring(0, colonIdx).trim();
+        int cursorIndent = countLeadingSpaces(cursorLine);
+
+        // walk up to find parameters: and then the component URI
+        boolean foundParameters = false;
+        int parametersIndent = -1;
+        for (int i = cursorRow - 1; i >= 0; i--) {
+            String l = lines.get(i);
+            if (l.isBlank()) {
+                continue;
+            }
+            int indent = countLeadingSpaces(l);
+            if (indent < cursorIndent && !foundParameters) {
+                String t = l.trim();
+                if (t.startsWith("- ")) {
+                    t = t.substring(2).trim();
+                }
+                if (t.equals("parameters:")) {
+                    foundParameters = true;
+                    parametersIndent = indent;
+                    continue;
+                }
+                break;
+            }
+            if (foundParameters && indent <= parametersIndent) {
+                // look for uri: line at same or lower indent
+                String t = l.trim();
+                if (t.startsWith("- ")) {
+                    t = t.substring(2).trim();
+                }
+                Matcher m = YAML_URI_PATTERN.matcher(l);
+                if (m.find()) {
+                    String uri = m.group(1);
+                    if (uri.endsWith("\"")) {
+                        uri = uri.substring(0, uri.length() - 1);
+                    }
+                    String comp = uri.contains(":") ? uri.substring(0, uri.indexOf(':')) : uri;
+                    ComponentModel model = catalog.componentModel(comp);
+                    if (model != null) {
+                        for (ComponentModel.EndpointOptionModel opt : model.getEndpointOptions()) {
+                            if (optionName.equals(opt.getName())) {
+                                String desc = formatFullOptionDoc(opt);
+                                return desc != null
+                                        ? SourceViewer.DocEntry.withTitle(formatOptionTitle(opt), desc)
+                                        : null;
+                            }
+                        }
+                    }
+                    break;
+                }
+                if (indent < parametersIndent) {
+                    break;
+                }
+            }
+        }
+        return null;
+    }
+
+    private static int countLeadingSpaces(String line) {
+        int count = 0;
+        for (int i = 0; i < line.length(); i++) {
+            if (line.charAt(i) == ' ') {
+                count++;
+            } else {
+                break;
+            }
+        }
+        return count;
+    }
+
+    private List<SourceViewer.DocEntry> provideEditPropertyQuickDoc(List<String> lines, int cursorRow) {
+        if (lines == null || cursorRow < 0 || cursorRow >= lines.size()) {
+            return List.of();
+        }
+        String line = lines.get(cursorRow);
+        if (line == null) {
+            return List.of();
+        }
+        String trimmed = line.trim();
+        if (trimmed.isEmpty() || trimmed.startsWith("#") || trimmed.startsWith("!")) {
+            return List.of();
+        }
+        int eq = trimmed.indexOf('=');
+        if (eq <= 0) {
+            return List.of();
+        }
+        String key = trimmed.substring(0, eq).trim();
+
+        CamelCatalog catalog = getCatalog();
+        if (catalog != null) {
+            ensureMainOptionsCache(catalog);
+            BaseOptionModel opt = lookupPropertyOption(catalog, key);
+            if (opt != null) {
+                String desc = formatFullOptionDoc(opt);
+                if (desc != null) {
+                    String title = formatOptionTitle(opt);
+                    return List.of(opt.isDeprecated()
+                            ? SourceViewer.DocEntry.deprecated(desc)
+                            : SourceViewer.DocEntry.withTitle(title, desc));
+                }
+            }
+        }
+
+        ensureSpringBootMetadataCache();
+        if (springBootMetadataCache != null) {
+            JsonObject sbProp = springBootMetadataCache.get(key);
+            if (sbProp != null) {
+                String doc = SpringBootMetadataHelper.formatDoc(sbProp);
+                if (doc != null) {
+                    boolean deprecated = Boolean.TRUE.equals(sbProp.get("deprecated"));
+                    return List.of(deprecated
+                            ? SourceViewer.DocEntry.deprecated(doc)
+                            : SourceViewer.DocEntry.of(doc));
+                }
+            }
+        }
+        return List.of();
     }
 
     private static boolean isPropertiesFile(Path path) {
@@ -2173,16 +2413,30 @@ class SourceTab extends AbstractTab {
         return null;
     }
 
-    private static int countLeadingSpaces(String line) {
-        int count = 0;
-        for (int i = 0; i < line.length(); i++) {
-            if (line.charAt(i) == ' ') {
-                count++;
-            } else {
-                break;
-            }
+    private static String formatFullOptionDoc(BaseOptionModel opt) {
+        if (opt == null) {
+            return null;
         }
-        return count;
+        return opt.getDescription();
+    }
+
+    private static String formatOptionTitle(BaseOptionModel opt) {
+        List<String> parts = new ArrayList<>();
+        parts.add(opt.getName());
+        List<String> meta = new ArrayList<>();
+        if (opt.getType() != null) {
+            meta.add(opt.getType());
+        }
+        if (opt.isRequired()) {
+            meta.add("required");
+        }
+        if (opt.getDefaultValue() != null) {
+            meta.add("default: " + opt.getDefaultValue());
+        }
+        if (!meta.isEmpty()) {
+            parts.add("(" + String.join(", ", meta) + ")");
+        }
+        return String.join(" ", parts);
     }
 
     private BaseOptionModel lookupPropertyOption(CamelCatalog catalog, String key) {
@@ -2778,9 +3032,11 @@ class SourceTab extends AbstractTab {
                         sourceViewer.setEndpointValidator(this::validateYamlEndpoints);
                         sourceViewer.setSimpleValidator(this::validateYamlSimple);
                         sourceViewer.setListItemNodeChecker(this::isListChildrenNode);
+                        sourceViewer.setEditQuickDocProvider(this::provideEditQuickDoc);
                     } else {
                         sourceViewer.setAutocompleteProvider(null);
                         sourceViewer.setAutocompleteValueProvider(null);
+                        sourceViewer.setEditQuickDocProvider(null);
                     }
                 }
                 sourceViewer.loadFile(filePath);

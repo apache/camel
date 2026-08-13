@@ -233,11 +233,31 @@ class AutocompletePopup {
         int popupH = Math.min(contentH + 2, maxH);
         popupH = Math.max(popupH, 12);
 
+        // in value mode, ensure enough height for the detail panel description
+        if (valueMode) {
+            Integer sel = listState.selected();
+            if (sel != null && sel < filteredItems.size()) {
+                CompletionItem item = filteredItems.get(sel);
+                if (item.description() != null) {
+                    int rightW = popupW - Math.max(30, popupW * 2 / 5);
+                    int descWidth = Math.max(20, rightW - 4);
+                    int metaLines = 6;
+                    int descLines = (item.description().length() + descWidth - 1) / descWidth;
+                    int neededH = metaLines + descLines + 4;
+                    popupH = Math.max(popupH, Math.min(neededH, maxH));
+                }
+            }
+        }
+
         int x = area.left() + 2;
         int y;
         int spaceBelow = area.bottom() - (area.top() + cursorScreenRow + 1);
         int spaceAbove = cursorScreenRow;
-        if (spaceBelow >= popupH || spaceBelow >= spaceAbove) {
+        if (valueMode && popupH > Math.max(spaceBelow, spaceAbove)) {
+            // value mode with long description: use full area height, position at top
+            popupH = Math.min(popupH, area.height());
+            y = area.top();
+        } else if (spaceBelow >= popupH || spaceBelow >= spaceAbove) {
             y = area.top() + cursorScreenRow + 1;
             popupH = Math.min(popupH, Math.max(8, spaceBelow));
         } else {

@@ -68,19 +68,32 @@ import org.apache.camel.util.json.Jsoner;
  */
 class SourceViewer {
 
-    record DocEntry(String text, boolean deprecated) {
+    record DocEntry(String text, boolean deprecated, String title) {
+        DocEntry(String text, boolean deprecated) {
+            this(text, deprecated, null);
+        }
+
         static DocEntry of(String text) {
-            return new DocEntry(text, false);
+            return new DocEntry(text, false, null);
         }
 
         static DocEntry deprecated(String text) {
-            return new DocEntry(text, true);
+            return new DocEntry(text, true, null);
+        }
+
+        static DocEntry withTitle(String title, String text) {
+            return new DocEntry(text, false, title);
         }
     }
 
     @FunctionalInterface
     interface QuickDocProvider {
         Map<Integer, List<DocEntry>> provideAll(List<JsonObject> codeData);
+    }
+
+    @FunctionalInterface
+    interface EditQuickDocProvider {
+        List<DocEntry> provideForLine(List<String> lines, int cursorRow);
     }
 
     @FunctionalInterface
@@ -131,6 +144,8 @@ class SourceViewer {
     private QuickDocProvider quickDocProvider;
     private boolean quickDocEnabled;
     private Map<Integer, List<DocEntry>> quickDocEntries = Collections.emptyMap();
+    private EditQuickDocProvider editQuickDocProvider;
+    private boolean editQuickDocEnabled = true;
     private DeprecatedLineScanner deprecatedLineScanner;
     private Set<Integer> deprecatedLines = Collections.emptySet();
     private Map<Integer, JumpLink> jumpLinks = Collections.emptyMap();
@@ -357,6 +372,13 @@ class SourceViewer {
         return selectedLine;
     }
 
+    int getLineCount() {
+        if (editMode) {
+            return editState.lineCount();
+        }
+        return lines != null ? lines.size() : 0;
+    }
+
     void goToLine(int lineIndex) {
         if (lineIndex >= 0 && lineIndex < lines.size()) {
             selectedLine = lineIndex;
@@ -401,6 +423,10 @@ class SourceViewer {
 
     void setQuickDocProvider(QuickDocProvider provider) {
         this.quickDocProvider = provider;
+    }
+
+    void setEditQuickDocProvider(EditQuickDocProvider provider) {
+        this.editQuickDocProvider = provider;
     }
 
     void setDeprecatedLineScanner(DeprecatedLineScanner scanner) {
@@ -476,10 +502,6 @@ class SourceViewer {
             if (matchLine >= 0) {
                 selectedLine = matchLine;
             }
-            return true;
-        }
-        if (ke.isChar('i') && quickDocProvider != null) {
-            toggleQuickDoc();
             return true;
         }
         if (ke.isChar('w')) {
@@ -696,7 +718,7 @@ class SourceViewer {
             diffScrollY = 0;
             return true;
         }
-        if (ke.isKey(KeyCode.F5) && ke.hasShift()) {
+        if (ke.hasCtrl() && ke.isCharIgnoreCase('s')) {
             saveContinueEdit();
             return true;
         }
@@ -1207,6 +1229,10 @@ class SourceViewer {
             = java.util.Set.of("steps", "uri", "parameters", "from", "expression", "routeConfiguration",
                     "routeTemplate", "templatedRoute", "rest", "beans");
 
+    private static final java.util.Set<String> BREADCRUMB_SKIP_KEYS
+            = java.util.Set.of("steps", "uri", "expression",
+                    "routeConfiguration", "routeTemplate", "templatedRoute", "rest", "beans");
+
     YamlEipContext findEnclosingEip(int fromRow) {
         String cursorLine = editState.getLine(fromRow);
         int cursorIndent = countLeadingSpaces(cursorLine);
@@ -1420,6 +1446,111 @@ class SourceViewer {
             }
         }
         return -1;
+    }
+
+    private String buildBreadcrumb(int cursorRow) {
+        if (cursorRow < 0 || cursorRow >= editState.lineCount()) {
+            return "";
+        }
+        List<String> parts = new ArrayList<>();
+        String cursorLine = editState.getLine(cursorRow);
+        int cursorIndent = countLeadingSpaces(cursorLine);
+        if (cursorLine.isBlank()) {
+            cursorIndent = Integer.MAX_VALUE;
+        }
+
+        int prevIndent = cursorIndent;
+        for (int i = cursorRow - 1; i >= 0; i--) {
+            String line = editState.getLine(i);
+            if (line.isBlank()) {
+                continue;
+            }
+            int indent = countLeadingSpaces(line);
+            if (indent < prevIndent) {
+                String trimmed = line.trim();
+                if (trimmed.startsWith("- ")) {
+                    trimmed = trimmed.substring(2).trim();
+                }
+                // only include structural parent keys (lines ending with ":" with no value)
+                if (!trimmed.endsWith(":")) {
+                    prevIndent = indent;
+                    continue;
+                }
+                String key = extractEipName(line.trim());
+                if (key != null) {
+                    if (!BREADCRUMB_SKIP_KEYS.contains(key)) {
+                        parts.add(key);
+                    }
+                    if ("route".equals(key)) {
+                        break;
+                    }
+                }
+                prevIndent = indent;
+            }
+        }
+
+        if (parts.isEmpty()) {
+            return "";
+        }
+        Collections.reverse(parts);
+        return String.join(" > ", parts);
+    }
+
+    private String adjustPasteIndent(String text, int cursorRow) {
+        int targetIndent = editState.cursorCol();
+        // when cursor is at col 0, infer indent from the previous non-blank line
+        if (targetIndent == 0) {
+            for (int i = cursorRow - 1; i >= 0; i--) {
+                String l = editState.getLine(i);
+                if (!l.isBlank()) {
+                    targetIndent = countLeadingSpaces(l);
+                    String trimmed = l.trim();
+                    if (trimmed.startsWith("- ")) {
+                        trimmed = trimmed.substring(2).trim();
+                    }
+                    // if previous line is a parent key, indent children deeper
+                    if (trimmed.endsWith(":")) {
+                        targetIndent += 2;
+                    }
+                    break;
+                }
+            }
+        }
+        return reindentBlock(text, targetIndent);
+    }
+
+    static String reindentBlock(String text, int targetIndent) {
+        text = text.replace("\t", "  ");
+        String[] pasteLines = text.split("\n", -1);
+        int minIndent = Integer.MAX_VALUE;
+        for (String pl : pasteLines) {
+            if (!pl.isBlank()) {
+                minIndent = Math.min(minIndent, countLeadingSpaces(pl));
+            }
+        }
+        if (minIndent == Integer.MAX_VALUE) {
+            minIndent = 0;
+        }
+        int delta = targetIndent - minIndent;
+        if (delta == 0) {
+            return text;
+        }
+        StringBuilder sb = new StringBuilder();
+        for (int i = 0; i < pasteLines.length; i++) {
+            if (i > 0) {
+                sb.append('\n');
+            }
+            String pl = pasteLines[i];
+            if (pl.isBlank()) {
+                sb.append(pl);
+            } else if (delta > 0) {
+                sb.append(" ".repeat(delta)).append(pl);
+            } else {
+                int strip = Math.min(-delta, countLeadingSpaces(pl));
+                sb.append(pl.substring(strip));
+            }
+        }
+        return sb.toString();
     }
 
     private static int countLeadingSpaces(String line) {
@@ -2070,13 +2201,30 @@ class SourceViewer {
             return;
         }
 
-        int visibleLines = inner.height();
+        // quick doc panel at the bottom (same as edit mode)
+        Rect contentArea = inner;
+        Rect viewDocArea = null;
+        List<DocEntry> viewDocEntries = null;
+        int docPanelHeight = 4;
+        if (editQuickDocEnabled && editQuickDocProvider != null && inner.height() > 10) {
+            contentArea = new Rect(inner.left(), inner.top(), inner.width(), inner.height() - docPanelHeight);
+            viewDocArea = new Rect(inner.left(), inner.top() + inner.height() - docPanelHeight, inner.width(), docPanelHeight);
+            if (selectedLine >= 0 && selectedLine < codeData.size()) {
+                List<String> rawLines = new ArrayList<>(codeData.size());
+                for (JsonObject jo : codeData) {
+                    rawLines.add(jo.getString("code") != null ? jo.getString("code") : "");
+                }
+                viewDocEntries = editQuickDocProvider.provideForLine(rawLines, selectedLine);
+            }
+        }
+
+        int visibleLines = contentArea.height();
 
         // Reserve bottom row for horizontal scrollbar when content is wider than viewport
         if (!wordWrap) {
             int cursorWidth = 3;
             int maxLineWidth = lines.stream().mapToInt(String::length).max().orElse(0) + cursorWidth;
-            if (maxLineWidth > inner.width()) {
+            if (maxLineWidth > contentArea.width()) {
                 visibleLines = Math.max(1, visibleLines - 1);
             }
         }
@@ -2089,13 +2237,13 @@ class SourceViewer {
             pendingScroll = false;
         }
 
-        int contentWidth = inner.width() - 1;
+        int contentWidth = contentArea.width() - 1;
 
-        // Auto-scroll to keep selected line visible (accounting for word wrap and inline doc lines)
+        // Auto-scroll to keep selected line visible
         if (selectedLine >= 0) {
             if (selectedLine < scrollY) {
                 scrollY = selectedLine;
-            } else if (wordWrap || (quickDocEnabled && !quickDocEntries.isEmpty())) {
+            } else if (wordWrap) {
                 while (scrollY < selectedLine
                         && countVisualRows(scrollY, selectedLine + 1, contentWidth) > visibleLines) {
                     scrollY++;
@@ -2106,17 +2254,11 @@ class SourceViewer {
         }
 
         int maxScroll;
-        if (wordWrap || (quickDocEnabled && !quickDocEntries.isEmpty())) {
+        if (wordWrap) {
             maxScroll = 0;
             int visualFromEnd = 0;
             for (int i = lines.size() - 1; i >= 0; i--) {
                 visualFromEnd += wrapRowCount(lines.get(i), contentWidth);
-                if (quickDocEnabled) {
-                    List<DocEntry> docs = quickDocEntries.get(i);
-                    if (docs != null) {
-                        visualFromEnd += docs.size();
-                    }
-                }
                 if (visualFromEnd >= visibleLines) {
                     maxScroll = i;
                     break;
@@ -2131,74 +2273,78 @@ class SourceViewer {
         if (!wordWrap) {
             int cursorWidth = 3;
             int maxLineWidth = lines.stream().mapToInt(String::length).max().orElse(0) + cursorWidth;
-            int maxHScroll = Math.max(0, maxLineWidth - inner.width());
+            int maxHScroll = Math.max(0, maxLineWidth - contentArea.width());
             scrollX = Math.min(scrollX, maxHScroll);
         }
 
         int currentMatchLine = search.currentMatchLine();
 
-        int gutterWidth = quickDocEnabled && !quickDocEntries.isEmpty() ? computeGutterWidth() : 0;
-
         List<Line> visible = new ArrayList<>();
         for (int i = scrollY; i < lines.size() && visible.size() < visibleLines; i++) {
             String raw = lines.get(i);
             boolean isSelected = (i == selectedLine);
-            Line line = highlightSourceLine(raw, i, hSkip, isSelected, inner.width());
+            Line line = highlightSourceLine(raw, i, hSkip, isSelected, contentArea.width());
             line = search.applyHighlights(line, i, currentMatchLine);
             visible.add(line);
-
-            List<DocEntry> docLines = quickDocEnabled ? quickDocEntries.get(i) : null;
-            if (docLines != null) {
-                String code = i < codeData.size() && codeData.get(i).get("code") != null
-                        ? codeData.get(i).get("code").toString()
-                        : "";
-                int si = 0;
-                while (si < code.length() && code.charAt(si) == ' ') {
-                    si++;
-                }
-                for (DocEntry docEntry : docLines) {
-                    for (Line docLine : renderQuickDocLines(docEntry, si, gutterWidth, inner.width())) {
-                        if (visible.size() >= visibleLines) {
-                            break;
-                        }
-                        if (hSkip > 0) {
-                            docLine = applyHorizontalSkip(docLine, hSkip);
-                        }
-                        visible.add(docLine);
-                    }
-                }
-            }
         }
 
         List<Rect> hChunks = Layout.horizontal()
                 .constraints(Constraint.fill(), Constraint.length(1))
-                .split(inner);
+                .split(contentArea);
 
         Overflow overflow = wordWrap ? Overflow.WRAP_WORD : Overflow.CLIP;
         frame.renderWidget(Paragraph.builder().text(Text.from(visible)).overflow(overflow).build(), hChunks.get(0));
 
         if (plainMode && selectedLine >= scrollY && selectedLine < scrollY + visibleLines) {
             int relRow = selectedLine - scrollY;
-            int screenY = inner.top() + relRow;
-            Rect lineRect = new Rect(inner.left(), screenY, inner.width(), 1);
+            int screenY = contentArea.top() + relRow;
+            Rect lineRect = new Rect(contentArea.left(), screenY, contentArea.width(), 1);
             Style selBg = focused ? Theme.selectionBg() : Theme.selectionBg().dim();
             frame.buffer().setStyle(lineRect, selBg);
         }
 
-        int totalDocLines = quickDocEnabled ? quickDocEntries.values().stream().mapToInt(List::size).sum() : 0;
-        int totalContentLines = lines.size() + totalDocLines;
-        if (totalContentLines > visibleLines) {
-            vScrollState.contentLength(totalContentLines).viewportContentLength(visibleLines).position(scrollY);
+        if (lines.size() > visibleLines) {
+            vScrollState.contentLength(lines.size()).viewportContentLength(visibleLines).position(scrollY);
             frame.renderStatefulWidget(Scrollbar.builder().build(), hChunks.get(1), vScrollState);
         }
         if (!wordWrap) {
             int cursorWidth = 3;
             int maxLineWidth = lines.stream().mapToInt(String::length).max().orElse(0) + cursorWidth;
-            int maxHScroll = Math.max(0, maxLineWidth - inner.width());
+            int maxHScroll = Math.max(0, maxLineWidth - contentArea.width());
             if (maxHScroll > 0) {
-                hScrollState.contentLength(maxLineWidth).viewportContentLength(inner.width()).position(scrollX);
-                frame.renderStatefulWidget(Scrollbar.horizontal(), inner, hScrollState);
+                hScrollState.contentLength(maxLineWidth).viewportContentLength(contentArea.width()).position(scrollX);
+                frame.renderStatefulWidget(Scrollbar.horizontal(), contentArea, hScrollState);
             }
+        }
+
+        // quick doc panel at the bottom
+        if (viewDocArea != null) {
+            List<Line> docLines = new ArrayList<>();
+            String titleText = null;
+            if (viewDocEntries != null && !viewDocEntries.isEmpty()) {
+                titleText = viewDocEntries.get(0).title();
+            }
+            if (titleText != null) {
+                String prefix = "─── ";
+                String suffix = " ";
+                int remaining = Math.max(0, viewDocArea.width() - prefix.length() - titleText.length() - suffix.length());
+                docLines.add(Line.from(
+                        Span.styled(prefix, Style.EMPTY.dim()),
+                        Span.styled(titleText, Style.EMPTY.dim().bold()),
+                        Span.styled(suffix + "─".repeat(remaining), Style.EMPTY.dim())));
+            } else {
+                docLines.add(Line.from(Span.styled("─".repeat(Math.max(1, viewDocArea.width())), Style.EMPTY.dim())));
+            }
+            if (viewDocEntries != null && !viewDocEntries.isEmpty()) {
+                for (int d = 0; d < viewDocEntries.size() && d < viewDocArea.height() - 1; d++) {
+                    DocEntry entry = viewDocEntries.get(d);
+                    Style docStyle = entry.deprecated() ? Style.EMPTY.dim().italic() : Style.EMPTY.dim();
+                    docLines.add(Line.from(Span.styled(entry.text(), docStyle)));
+                }
+            }
+            frame.renderWidget(
+                    Paragraph.builder().text(Text.from(docLines)).overflow(Overflow.WRAP_WORD).build(),
+                    viewDocArea);
         }
     }
 
@@ -2210,6 +2356,12 @@ class SourceViewer {
             titleSpans.add(Span.styled(" Diff [" + info + "] ", ts));
         } else {
             titleSpans.add(Span.styled(" Edit [" + info + (dirty ? " *" : "") + "] ", ts));
+            if (isCamelYamlFile()) {
+                String breadcrumb = buildBreadcrumb(editState.cursorRow());
+                if (!breadcrumb.isEmpty()) {
+                    titleSpans.add(Span.styled(" " + breadcrumb + " ", Style.EMPTY.dim().italic()));
+                }
+            }
         }
         Title posTitle;
         if (diffOverlay) {
@@ -2245,18 +2397,30 @@ class SourceViewer {
             return;
         }
 
+        // split inner area for quick doc panel at the bottom (fixed height to avoid flicker)
+        List<DocEntry> editDocEntries = null;
+        Rect editorArea = inner;
+        Rect docArea = null;
+        int docPanelHeight = 4;
+        if (editQuickDocEnabled && editQuickDocProvider != null && inner.height() > 10) {
+            editorArea = new Rect(inner.left(), inner.top(), inner.width(), inner.height() - docPanelHeight);
+            docArea = new Rect(inner.left(), inner.top() + inner.height() - docPanelHeight, inner.width(), docPanelHeight);
+            lastVisibleLines = Math.max(1, editorArea.height());
+            editDocEntries = editQuickDocProvider.provideForLine(editLines(), editState.cursorRow());
+        }
+
         TextArea textArea = TextArea.builder()
                 .cursorStyle(Style.EMPTY.reversed())
                 .showLineNumbers(!plainMode)
                 .lineNumberStyle(Style.EMPTY.dim())
                 .build();
-        textArea.renderWithCursor(inner, frame.buffer(), editState, frame);
+        textArea.renderWithCursor(editorArea, frame.buffer(), editState, frame);
 
         // cursor line highlight
         int cursorRelRow = editState.cursorRow() - editState.scrollRow();
-        if (cursorRelRow >= 0 && cursorRelRow < inner.height()) {
-            int screenY = inner.top() + cursorRelRow;
-            Rect lineRect = new Rect(inner.left(), screenY, inner.width(), 1);
+        if (cursorRelRow >= 0 && cursorRelRow < editorArea.height()) {
+            int screenY = editorArea.top() + cursorRelRow;
+            Rect lineRect = new Rect(editorArea.left(), screenY, editorArea.width(), 1);
             frame.buffer().setStyle(lineRect, Style.EMPTY.bg(Theme.zebra()));
         }
 
@@ -2265,9 +2429,9 @@ class SourceViewer {
             int scopeRow = findScopeLineRow(editState.cursorRow());
             if (scopeRow >= 0 && scopeRow != editState.cursorRow()) {
                 int relativeRow = scopeRow - editState.scrollRow();
-                if (relativeRow >= 0 && relativeRow < inner.height()) {
-                    int screenY = inner.top() + relativeRow;
-                    Rect lineRect = new Rect(inner.left(), screenY, inner.width(), 1);
+                if (relativeRow >= 0 && relativeRow < editorArea.height()) {
+                    int screenY = editorArea.top() + relativeRow;
+                    Rect lineRect = new Rect(editorArea.left(), screenY, editorArea.width(), 1);
                     frame.buffer().setStyle(lineRect, Style.EMPTY.bold().fg(Theme.accent()));
                 }
             }
@@ -2280,15 +2444,15 @@ class SourceViewer {
                 lineStatuses = EditDiff.diff(orig, editLines());
             }
             int gutterWidth = Math.max(2, String.valueOf(editState.lineCount()).length()) + 2;
-            for (int r = 0; r < inner.height(); r++) {
+            for (int r = 0; r < editorArea.height(); r++) {
                 int lineIdx = editState.scrollRow() + r;
                 if (lineIdx >= 0 && lineIdx < lineStatuses.length) {
                     EditDiff.LineStatus status = lineStatuses[lineIdx];
                     if (status != EditDiff.LineStatus.UNCHANGED) {
                         Style bg = Style.EMPTY.fg(dev.tamboui.style.Color.WHITE)
                                 .bg(dev.tamboui.style.Color.rgb(0x1B, 0x4D, 0x1B));
-                        int screenY = inner.top() + r;
-                        for (int x = inner.left(); x < inner.left() + gutterWidth; x++) {
+                        int screenY = editorArea.top() + r;
+                        for (int x = editorArea.left(); x < editorArea.left() + gutterWidth; x++) {
                             dev.tamboui.buffer.Cell cell = frame.buffer().get(x, screenY);
                             frame.buffer().set(x, screenY,
                                     new dev.tamboui.buffer.Cell(cell.symbol(), bg));
@@ -2298,10 +2462,40 @@ class SourceViewer {
             }
         }
 
+        // quick doc panel at the bottom of the editor (fixed height)
+        if (docArea != null) {
+            List<Line> docLines = new ArrayList<>();
+            String titleText = null;
+            if (editDocEntries != null && !editDocEntries.isEmpty()) {
+                titleText = editDocEntries.get(0).title();
+            }
+            if (titleText != null) {
+                String prefix = "─── ";
+                String suffix = " ";
+                int remaining = Math.max(0, docArea.width() - prefix.length() - titleText.length() - suffix.length());
+                docLines.add(Line.from(
+                        Span.styled(prefix, Style.EMPTY.dim()),
+                        Span.styled(titleText, Style.EMPTY.dim().bold()),
+                        Span.styled(suffix + "─".repeat(remaining), Style.EMPTY.dim())));
+            } else {
+                docLines.add(Line.from(Span.styled("─".repeat(Math.max(1, docArea.width())), Style.EMPTY.dim())));
+            }
+            if (editDocEntries != null && !editDocEntries.isEmpty()) {
+                for (int d = 0; d < editDocEntries.size() && d < docArea.height() - 1; d++) {
+                    DocEntry entry = editDocEntries.get(d);
+                    Style docStyle = entry.deprecated() ? Style.EMPTY.dim().italic() : Style.EMPTY.dim();
+                    docLines.add(Line.from(Span.styled(entry.text(), docStyle)));
+                }
+            }
+            frame.renderWidget(
+                    Paragraph.builder().text(Text.from(docLines)).overflow(Overflow.WRAP_WORD).build(),
+                    docArea);
+        }
+
         if (autocompletePopup != null) {
             int cursorRow = editState.cursorRow() - editState.scrollRow();
             int cursorCol = editState.cursorCol() - editState.scrollCol();
-            autocompletePopup.render(frame, inner, cursorRow, cursorCol);
+            autocompletePopup.render(frame, editorArea, cursorRow, cursorCol);
         }
 
         if (validationErrors != null) {
@@ -2474,8 +2668,8 @@ class SourceViewer {
         }
         if (editMode) {
             TuiHelper.hint(spans, "Esc", "cancel");
+            TuiHelper.hint(spans, "Ctrl+S", "save");
             TuiHelper.hint(spans, "F5", "save & close");
-            TuiHelper.hint(spans, "Shift+F5", "save");
             if (dirty) {
                 TuiHelper.hint(spans, "F7", "diff");
             }
@@ -2511,9 +2705,6 @@ class SourceViewer {
         }
         if (isEditable()) {
             TuiHelper.hint(spans, "F4", "edit");
-        }
-        if (quickDocProvider != null) {
-            TuiHelper.hint(spans, "i", "quick doc" + (quickDocEnabled ? " [on]" : ""));
         }
         TuiHelper.hint(spans, TuiIcons.HINT_SCROLL, "navigate");
         if (isMarkdownFile || currentRouteId != null) {

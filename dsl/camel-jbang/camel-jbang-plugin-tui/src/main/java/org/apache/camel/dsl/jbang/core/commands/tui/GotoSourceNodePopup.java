@@ -50,27 +50,38 @@ class GotoSourceNodePopup {
     private List<YamlRouteNodeScanner.NodeEntry> allEntries;
     private List<YamlRouteNodeScanner.NodeEntry> filteredEntries;
     private YamlRouteNodeScanner.NodeEntry selectedEntry;
+    private int gotoLineNumber = -1;
+    private int totalLineCount;
 
     boolean isVisible() {
         return visible;
     }
 
-    void open(List<YamlRouteNodeScanner.NodeEntry> entries) {
+    void open(List<YamlRouteNodeScanner.NodeEntry> entries, int lineCount) {
         allEntries = entries != null ? new ArrayList<>(entries) : List.of();
+        totalLineCount = lineCount;
         visible = true;
         filter.clearFilter();
+        gotoLineNumber = -1;
         rebuildList();
     }
 
     void close() {
         visible = false;
         filter.clearFilter();
+        gotoLineNumber = -1;
     }
 
     YamlRouteNodeScanner.NodeEntry consumeSelection() {
         YamlRouteNodeScanner.NodeEntry entry = selectedEntry;
         selectedEntry = null;
         return entry;
+    }
+
+    int consumeGotoLineNumber() {
+        int line = gotoLineNumber;
+        gotoLineNumber = -1;
+        return line;
     }
 
     boolean handleKeyEvent(KeyEvent ke) {
@@ -108,6 +119,13 @@ class GotoSourceNodePopup {
             return true;
         }
         if (ke.isConfirm()) {
+            if (filter.hasFilter() && isLineNumber(filter.filter())) {
+                int num = Integer.parseInt(filter.filter().trim());
+                gotoLineNumber = Math.max(1, Math.min(num, totalLineCount));
+                visible = false;
+                filter.clearFilter();
+                return true;
+            }
             Integer sel = listState.selected();
             if (sel != null && filteredEntries != null && sel < filteredEntries.size()) {
                 selectedEntry = filteredEntries.get(sel);
@@ -143,10 +161,17 @@ class GotoSourceNodePopup {
         frame.renderWidget(Clear.INSTANCE, popup);
 
         String filterText = filter.hasFilter() ? filter.filter() : "";
+        boolean lineNumberMode = filter.hasFilter() && isLineNumber(filterText);
         String prompt = "> " + filterText + "█";
 
         List<ListItem> items = new ArrayList<>();
-        items.add(ListItem.from(Line.from(Span.styled(prompt, Theme.info()))));
+        if (lineNumberMode) {
+            items.add(ListItem.from(Line.from(
+                    Span.styled(prompt, Theme.info()),
+                    Span.styled("  Go to line " + filterText.trim(), Style.EMPTY.dim()))));
+        } else {
+            items.add(ListItem.from(Line.from(Span.styled(prompt, Theme.info()))));
+        }
         String sep = "─".repeat(Math.max(1, popupW - 2));
         items.add(ListItem.from(Line.from(Span.styled(sep, Style.EMPTY.dim()))));
 
@@ -220,9 +245,16 @@ class GotoSourceNodePopup {
 
         int total = allEntries != null ? allEntries.size() : 0;
         int shown = filteredEntries.size();
-        String title = shown == total
-                ? " Go to Node (" + total + ") "
-                : " Go to Node (" + shown + "/" + total + ") ";
+        String title;
+        if (lineNumberMode) {
+            title = " Go to Line ";
+        } else if (total == 0) {
+            title = " Go to Line (type a line number) ";
+        } else if (shown == total) {
+            title = " Go to Node (" + total + ") ";
+        } else {
+            title = " Go to Node (" + shown + "/" + total + ") ";
+        }
 
         ListWidget list = ListWidget.builder()
                 .items(items.toArray(ListItem[]::new))
@@ -339,6 +371,19 @@ class GotoSourceNodePopup {
             return indents.get(targetDepth - 1);
         }
         return -1;
+    }
+
+    private static boolean isLineNumber(String text) {
+        String t = text.trim();
+        if (t.isEmpty()) {
+            return false;
+        }
+        for (int i = 0; i < t.length(); i++) {
+            if (!Character.isDigit(t.charAt(i))) {
+                return false;
+            }
+        }
+        return true;
     }
 
     private static String shortFileName(String filePath) {
