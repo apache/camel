@@ -37,7 +37,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 class DuckDbProducerIT extends CamelTestSupport {
 
     @RegisterExtension
-    static DuckDbService service = DuckDbServiceFactory.createService();
+    static DuckDbService service = DuckDbServiceFactory.createSingletonService();
 
     @BeforeEach
     void setUpDatabase() throws Exception {
