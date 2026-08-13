@@ -18,6 +18,7 @@ package org.apache.camel.impl.event;
 
 import java.io.Serial;
 import java.util.EventObject;
+import java.util.Map;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.spi.CamelEvent.ExchangeEvent;
@@ -48,6 +49,16 @@ public abstract class AbstractExchangeEvent extends EventObject implements Excha
     @Override
     public void setTimestamp(long timestamp) {
         this.timestamp = timestamp;
+    }
+
+    @Override
+    public Map<String, Object> asJSon() {
+        return CamelEventJsonSupport.asJSon(this);
+    }
+
+    @Override
+    public String toJSon(int indent) {
+        return CamelEventJsonSupport.toJSon(this, indent);
     }
 
 }

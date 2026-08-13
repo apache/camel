@@ -39,7 +39,8 @@ public class EventConsole extends AbstractDevConsole {
             @Metadata(description = "The event type") String type,
             @Metadata(description = "Epoch time in milliseconds (only present when known)") Long timestamp,
             @Metadata(description = "The exchange ID (only present for exchange events)") String exchangeId,
-            @Metadata(description = "The event's string representation") String message) {
+            @Metadata(description = "The event's string representation") String message,
+            @Metadata(description = "Structured event metadata as JSON") Map<String, Object> details) {
     }
 
     public record Response(
@@ -160,13 +161,21 @@ public class EventConsole extends AbstractDevConsole {
         CamelEvent event = events[cursor];
         while (pos < capacity) {
             if (event != null) {
-                Long timestamp = event.getTimestamp() > 0 ? event.getTimestamp() : null;
-                String exchangeId = null;
-                if (event instanceof CamelEvent.ExchangeEvent) {
-                    CamelEvent.ExchangeEvent ee = (CamelEvent.ExchangeEvent) event;
-                    exchangeId = ee.getExchange().getExchangeId();
+                Map<String, Object> json = event.asJSon();
+                Long timestamp = null;
+                Object ts = json.get("timestamp");
+                if (ts instanceof Number number && number.longValue() > 0) {
+                    timestamp = number.longValue();
                 }
-                arr.add(new EventEntry(event.getType().toString(), timestamp, exchangeId, event.toString()));
+                String exchangeId = (String) json.get("exchangeId");
+                Object type = json.get("type");
+                String message = (String) json.get("message");
+                arr.add(new EventEntry(
+                        type != null ? type.toString() : event.getType().toString(),
+                        timestamp,
+                        exchangeId,
+                        message,
+                        json));
             }
             // move to next
             pos++;
