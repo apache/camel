@@ -16,11 +16,8 @@
  */
 package org.apache.camel.component.mcp.server;
 
-import java.util.Arrays;
 import java.util.HashMap;
-import java.util.LinkedHashSet;
 import java.util.Map;
-import java.util.Set;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Future;
@@ -40,6 +37,7 @@ import org.apache.camel.component.ai.tool.AiToolRegistry;
 import org.apache.camel.component.ai.tool.AiToolRegistryListener;
 import org.apache.camel.component.ai.tool.AiToolResult;
 import org.apache.camel.component.ai.tool.AiToolSpec;
+import org.apache.camel.support.PatternHelper;
 import org.apache.camel.support.ResolverHelper;
 import org.apache.camel.support.service.ServiceHelper;
 import org.apache.camel.support.service.ServiceSupport;
@@ -52,9 +50,9 @@ import org.slf4j.LoggerFactory;
  * <p>
  * Security notes:
  * <ul>
- * <li>Only tools whose tags intersect the configured {@code tags} are exposed. The untagged default pool is never
- * exposed — external MCP clients are untrusted senders and crossing that trust boundary is an explicit per-tool
- * opt-in.</li>
+ * <li>Only tools whose tags match the configured tag patterns are exposed. Tag patterns support exact match, wildcard
+ * prefix ({@code foo*}), and {@code *} to match all tags. The untagged default pool is never exposed — external MCP
+ * clients are untrusted senders and crossing that trust boundary is an explicit per-tool opt-in.</li>
  * <li>MCP has a flat tool namespace: a tool whose name collides with an already published tool is refused with an ERROR
  * log, never silently replaced.</li>
  * <li>Raw route exception messages never reach the engine: execution failures map to a generic error message and the
@@ -78,7 +76,7 @@ public class McpServerBridge extends ServiceSupport implements CamelContextAware
     private CamelContext camelContext;
     private McpServerEngine engine;
     private AiToolRegistry registry;
-    private Set<String> selectedTags = Set.of();
+    private String[] tagPatterns = new String[0];
     private ExecutorService executor;
 
     public McpServerBridge(McpServerConfiguration configuration) {
@@ -106,9 +104,9 @@ public class McpServerBridge extends ServiceSupport implements CamelContextAware
     @Override
     protected void doInit() throws Exception {
         if (configuration.getTags() != null) {
-            selectedTags = new LinkedHashSet<>(Arrays.asList(AiToolParameterHelper.splitTags(configuration.getTags())));
+            tagPatterns = AiToolParameterHelper.splitTags(configuration.getTags());
         }
-        if (selectedTags.isEmpty()) {
+        if (tagPatterns.length == 0) {
             LOG.warn("No MCP tags configured: no ai-tool routes will be exposed as MCP tools. "
                      + "Set tags to opt-in the tools to expose.");
         }
@@ -150,7 +148,7 @@ public class McpServerBridge extends ServiceSupport implements CamelContextAware
         // subscribe before snapshotting so no concurrent registration is missed; publishing is idempotent
         registry.addListener(listener);
         registry.getTools().forEach((tag, specs) -> {
-            if (selectedTags.contains(tag)) {
+            if (matchesTag(tag)) {
                 specs.forEach(this::publish);
             }
         });
@@ -213,7 +211,7 @@ public class McpServerBridge extends ServiceSupport implements CamelContextAware
             }
             // the same spec may be registered under several selected tags; only remove when it is gone from all
             boolean stillSelected = registry.getTools().entrySet().stream()
-                    .anyMatch(e -> selectedTags.contains(e.getKey()) && e.getValue().contains(spec));
+                    .anyMatch(e -> matchesTag(e.getKey()) && e.getValue().contains(spec));
             if (!stillSelected) {
                 published.remove(spec.getName());
                 engine.toolRemoved(spec.getName());
@@ -305,19 +303,22 @@ public class McpServerBridge extends ServiceSupport implements CamelContextAware
         }
     }
 
+    private boolean matchesTag(String tag) {
+        return tag != null && PatternHelper.matchPatterns(tag, tagPatterns);
+    }
+
     private final class RegistryListener implements AiToolRegistryListener {
 
         @Override
         public void toolRegistered(String tag, AiToolSpec spec) {
-            // the untagged default pool (tag == null) is never exposed
-            if (tag != null && selectedTags.contains(tag) && isStartingOrStarted()) {
+            if (matchesTag(tag) && isStartingOrStarted()) {
                 publish(spec);
             }
         }
 
         @Override
         public void toolDeregistered(String tag, AiToolSpec spec) {
-            if (tag != null && selectedTags.contains(tag) && isStartingOrStarted()) {
+            if (matchesTag(tag) && isStartingOrStarted()) {
                 unpublish(spec);
             }
         }
