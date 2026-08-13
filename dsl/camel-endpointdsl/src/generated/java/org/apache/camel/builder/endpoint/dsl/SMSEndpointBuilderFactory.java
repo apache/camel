@@ -420,6 +420,18 @@ public interface SMSEndpointBuilderFactory {
         public String alibabaSmsOutId() {
             return "CamelAlibabaSmsOutId";
         }
+        /**
+         * Alibaba Cloud request id.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code AlibabaSmsRequestId}.
+         */
+        public String alibabaSmsRequestId() {
+            return "CamelAlibabaSmsRequestId";
+        }
     }
     static SMSEndpointBuilder endpointBuilder(String componentName, String path) {
         class SMSEndpointBuilderImpl extends AbstractEndpointBuilder implements SMSEndpointBuilder, AdvancedSMSEndpointBuilder {

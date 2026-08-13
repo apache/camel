@@ -45,20 +45,6 @@ public interface KMSEndpointBuilderFactory {
         }
 
         /**
-         * Ciphertext blob to decrypt.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: producer
-         * 
-         * @param ciphertextBlob the value to set
-         * @return the dsl builder
-         */
-        default KMSEndpointBuilder ciphertextBlob(String ciphertextBlob) {
-            doSetProperty("ciphertextBlob", ciphertextBlob);
-            return this;
-        }
-        /**
          * KMS endpoint URL. Carries higher precedence than region based client
          * initialization.
          * 
@@ -131,20 +117,6 @@ public interface KMSEndpointBuilderFactory {
             return this;
         }
         /**
-         * Plaintext to encrypt.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: producer
-         * 
-         * @param plaintext the value to set
-         * @return the dsl builder
-         */
-        default KMSEndpointBuilder plaintext(String plaintext) {
-            doSetProperty("plaintext", plaintext);
-            return this;
-        }
-        /**
          * Alibaba Cloud region.
          * 
          * The option is a: <code>java.lang.String</code> type.
@@ -171,6 +143,34 @@ public interface KMSEndpointBuilderFactory {
          */
         default KMSEndpointBuilder accessKey(String accessKey) {
             doSetProperty("accessKey", accessKey);
+            return this;
+        }
+        /**
+         * Ciphertext blob to decrypt.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: security
+         * 
+         * @param ciphertextBlob the value to set
+         * @return the dsl builder
+         */
+        default KMSEndpointBuilder ciphertextBlob(String ciphertextBlob) {
+            doSetProperty("ciphertextBlob", ciphertextBlob);
+            return this;
+        }
+        /**
+         * Plaintext to encrypt.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: security
+         * 
+         * @param plaintext the value to set
+         * @return the dsl builder
+         */
+        default KMSEndpointBuilder plaintext(String plaintext) {
+            doSetProperty("plaintext", plaintext);
             return this;
         }
         /**
@@ -438,6 +438,18 @@ public interface KMSEndpointBuilderFactory {
          */
         public String alibabaKmsNumberOfBytes() {
             return "CamelAlibabaKmsNumberOfBytes";
+        }
+        /**
+         * Alibaba Cloud request id.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code AlibabaKmsRequestId}.
+         */
+        public String alibabaKmsRequestId() {
+            return "CamelAlibabaKmsRequestId";
         }
     }
     static KMSEndpointBuilder endpointBuilder(String componentName, String path) {

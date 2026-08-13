@@ -396,6 +396,18 @@ public interface EventBridgeEndpointBuilderFactory {
         public String alibabaEventBridgeEventSubject() {
             return "CamelAlibabaEventBridgeEventSubject";
         }
+        /**
+         * Alibaba Cloud request id.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code AlibabaEventBridgeRequestId}.
+         */
+        public String alibabaEventBridgeRequestId() {
+            return "CamelAlibabaEventBridgeRequestId";
+        }
     }
     static EventBridgeEndpointBuilder endpointBuilder(String componentName, String path) {
         class EventBridgeEndpointBuilderImpl extends AbstractEndpointBuilder implements EventBridgeEndpointBuilder, AdvancedEventBridgeEndpointBuilder {
