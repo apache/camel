@@ -575,6 +575,7 @@ public class CamelMonitor extends CamelCommand {
                     }
                 });
         aiPanel.setMcpFacade(mcpFacade);
+        aiPanel.setOtelSpans(dataService.otelSpans());
         mcpFacade.setAiActivityLog(aiPanel::getActivityLog);
         Path mcpJsonFile = null;
         actionsPopup.setAiActivityLog(aiPanel::getActivityLog);
