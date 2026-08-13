@@ -32,6 +32,12 @@ public class LangChain4jEmbeddingsHeaders {
     @Metadata(description = "The Total Token Count.", javaType = "int")
     public static final String TOTAL_TOKEN_COUNT = "CamelLangChain4jEmbeddingsTotalTokenCount";
 
+    @Metadata(description = "The request model name.", javaType = "String")
+    public static final String REQUEST_MODEL = "CamelLangChain4jEmbeddingsRequestModel";
+
+    @Metadata(description = "The response model name.", javaType = "String")
+    public static final String RESPONSE_MODEL = "CamelLangChain4jEmbeddingsResponseModel";
+
     @Metadata(description = "Embedding representation of a text", javaType = "dev.langchain4j.data.embedding.Embedding")
     public static final String EMBEDDING = CamelLangchain4jAttributes.CAMEL_LANGCHAIN4J_EMBEDDING;
 

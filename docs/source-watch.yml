@@ -23,8 +23,7 @@
           branch_includes: main
           start_path_includes: docs/components,components-starter
       components:
-# uncomment to work only on components
-#        - name: components
-#          version: next
+        - name: components
+          version: next
 # uncomment to work only on the user manual
 #        - name: manual

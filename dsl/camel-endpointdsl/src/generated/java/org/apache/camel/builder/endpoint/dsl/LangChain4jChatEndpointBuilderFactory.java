@@ -314,6 +314,30 @@ public interface LangChain4jChatEndpointBuilderFactory {
         public String langChain4jChatTotalTokenCount() {
             return "CamelLangChain4jChatTotalTokenCount";
         }
+        /**
+         * The request model name.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code LangChain4jChatRequestModel}.
+         */
+        public String langChain4jChatRequestModel() {
+            return "CamelLangChain4jChatRequestModel";
+        }
+        /**
+         * The response model name.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code LangChain4jChatResponseModel}.
+         */
+        public String langChain4jChatResponseModel() {
+            return "CamelLangChain4jChatResponseModel";
+        }
     }
     static LangChain4jChatEndpointBuilder endpointBuilder(String componentName, String path) {
         class LangChain4jChatEndpointBuilderImpl extends AbstractEndpointBuilder implements LangChain4jChatEndpointBuilder, AdvancedLangChain4jChatEndpointBuilder {
