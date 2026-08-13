@@ -554,35 +554,40 @@ public class OpenAIEndpoint extends DefaultEndpoint {
             }
 
             Set<String> oldServerTools = toolsForServer(serverName);
-            List<ChatCompletionFunctionTool> newTools = new ArrayList<>(mcpToolState.tools());
+            List<ChatCompletionFunctionTool> mcpTools = mcpToolState.tools().stream()
+                    .filter(tool -> mcpToolState.toolClientMap().containsKey(tool.function().name()))
+                    .filter(tool -> !oldServerTools.contains(tool.function().name()))
+                    .collect(Collectors.toCollection(ArrayList::new));
             Map<String, McpSyncClient> newClientMap = new HashMap<>(mcpToolState.toolClientMap());
             Map<String, String> newToolToServer = new HashMap<>(mcpToolState.toolToServerName());
-            Set<String> newReturnDirect = new HashSet<>(mcpToolState.returnDirectTools());
+            Set<String> mcpReturnDirect = mcpToolState.returnDirectTools().stream()
+                    .filter(name -> mcpToolState.toolClientMap().containsKey(name))
+                    .filter(name -> !oldServerTools.contains(name))
+                    .collect(Collectors.toCollection(HashSet::new));
 
-            newTools.removeIf(t -> oldServerTools.contains(t.function().name()));
             newClientMap.keySet().removeIf(oldServerTools::contains);
             newToolToServer.keySet().removeIf(oldServerTools::contains);
-            newReturnDirect.removeIf(oldServerTools::contains);
 
             for (McpSchema.Tool tool : tools) {
                 if (newClientMap.containsKey(tool.name())) {
                     LOG.warn("Duplicate MCP tool name '{}' from server '{}', using first registered", tool.name(),
                             serverName);
                 } else {
-                    newTools.addAll(McpToolConverter.convert(List.of(tool)));
+                    mcpTools.addAll(McpToolConverter.convert(List.of(tool)));
                     newClientMap.put(tool.name(), client);
                     newToolToServer.put(tool.name(), serverName);
                     if (isReturnDirect(tool)) {
-                        newReturnDirect.add(tool.name());
+                        mcpReturnDirect.add(tool.name());
                     }
                 }
             }
 
-            // Publish immutable snapshots for lock-free readers
+            // Publish MCP-only snapshot, then merge route tools with the same shadowing rules
             mcpToolState = new McpToolState(
-                    newTools, newClientMap, newToolToServer,
-                    applyManualReturnDirectOverrides(newReturnDirect, knownToolsFrom(newClientMap, routeTools)),
-                    routeTools);
+                    mcpTools, newClientMap, newToolToServer,
+                    applyManualReturnDirectOverrides(mcpReturnDirect, knownToolsFrom(newClientMap, Map.of())),
+                    mcpToolState.routeTools());
+            republishCombinedState();
             return true;
         } finally {
             globalMcpLock.unlock();
