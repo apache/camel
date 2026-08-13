@@ -17,8 +17,25 @@
 package org.apache.camel.test.infra.duckdb.services;
 
 import org.apache.camel.test.infra.common.services.SimpleTestServiceBuilder;
+import org.apache.camel.test.infra.common.services.SingletonService;
 
 public final class DuckDbServiceFactory {
+
+    private static class SingletonDuckDbService extends SingletonService<DuckDbService> implements DuckDbService {
+        public SingletonDuckDbService(DuckDbService service, String name) {
+            super(service, name);
+        }
+
+        @Override
+        public String getJdbcUrl() {
+            return getService().getJdbcUrl();
+        }
+
+        @Override
+        public String getDatabasePath() {
+            return getService().getDatabasePath();
+        }
+    }
 
     private DuckDbServiceFactory() {
     }
@@ -32,6 +49,21 @@ public final class DuckDbServiceFactory {
                 .addLocalMapping(DuckDbEmbeddedService::new)
                 .addRemoteMapping(DuckDbRemoteService::new)
                 .build();
+    }
+
+    public static DuckDbService createSingletonService() {
+        return SingletonServiceHolder.INSTANCE;
+    }
+
+    private static class SingletonServiceHolder {
+        static final DuckDbService INSTANCE;
+        static {
+            SimpleTestServiceBuilder<DuckDbService> instance = builder();
+            instance.addLocalMapping(
+                    () -> new SingletonDuckDbService(new DuckDbEmbeddedService(), "duckdb"))
+                    .addRemoteMapping(DuckDbRemoteService::new);
+            INSTANCE = instance.build();
+        }
     }
 
     public static class DuckDbRemoteService extends RemoteDuckDbInfraService implements DuckDbService {

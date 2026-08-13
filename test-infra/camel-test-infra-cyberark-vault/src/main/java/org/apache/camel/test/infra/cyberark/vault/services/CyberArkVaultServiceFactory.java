@@ -17,8 +17,42 @@
 package org.apache.camel.test.infra.cyberark.vault.services;
 
 import org.apache.camel.test.infra.common.services.SimpleTestServiceBuilder;
+import org.apache.camel.test.infra.common.services.SingletonService;
 
 public final class CyberArkVaultServiceFactory {
+
+    private static class SingletonCyberArkVaultService extends SingletonService<CyberArkVaultService>
+            implements CyberArkVaultService {
+        public SingletonCyberArkVaultService(CyberArkVaultService service, String name) {
+            super(service, name);
+        }
+
+        @Override
+        public String account() {
+            return getService().account();
+        }
+
+        @Override
+        public String username() {
+            return getService().username();
+        }
+
+        @Override
+        public String apiKey() {
+            return getService().apiKey();
+        }
+
+        @Override
+        public int port() {
+            return getService().port();
+        }
+
+        @Override
+        public String host() {
+            return getService().host();
+        }
+    }
+
     private CyberArkVaultServiceFactory() {
 
     }
@@ -31,6 +65,20 @@ public final class CyberArkVaultServiceFactory {
         return builder()
                 .addLocalMapping(CyberArkVaultLocalContainerService::new)
                 .build();
+    }
+
+    public static CyberArkVaultService createSingletonService() {
+        return SingletonServiceHolder.INSTANCE;
+    }
+
+    private static class SingletonServiceHolder {
+        static final CyberArkVaultService INSTANCE;
+        static {
+            SimpleTestServiceBuilder<CyberArkVaultService> instance = builder();
+            instance.addLocalMapping(
+                    () -> new SingletonCyberArkVaultService(new CyberArkVaultLocalContainerService(), "cyberark-vault"));
+            INSTANCE = instance.build();
+        }
     }
 
     public static class CyberArkVaultLocalContainerService extends CyberArkVaultLocalContainerInfraService
