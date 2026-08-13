@@ -299,7 +299,7 @@ public class McpServerBridge extends ServiceSupport implements CamelContextAware
     }
 
     private boolean matchesTag(String tag) {
-        return tag != null && PatternHelper.matchPatterns(tag, tagPatterns);
+        return tag != null && PatternHelper.matchSimplePatterns(tag, tagPatterns);
     }
 
     private final class RegistryListener implements AiToolRegistryListener {
