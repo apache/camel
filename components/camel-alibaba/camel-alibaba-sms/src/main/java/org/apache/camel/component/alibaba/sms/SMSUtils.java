@@ -22,8 +22,10 @@ import java.util.Map;
 import com.aliyun.dysmsapi20170525.Client;
 import com.aliyun.dysmsapi20170525.models.SendSmsResponse;
 import com.aliyun.dysmsapi20170525.models.SendSmsResponseBody;
+import com.aliyun.teaopenapi.models.Config;
 import org.apache.camel.Exchange;
 import org.apache.camel.component.alibaba.common.OpenApiClientSupport;
+import org.apache.camel.component.alibaba.common.models.ServiceKeys;
 import org.apache.camel.component.alibaba.sms.constants.SMSProperties;
 import org.apache.camel.component.alibaba.sms.models.ClientConfigurations;
 import org.apache.camel.util.ObjectHelper;
@@ -39,12 +41,26 @@ public final class SMSUtils {
         }
 
         return new Client(
-                OpenApiClientSupport.createConfig(
+                createTeaConfig(
                         endpoint.getAccessKey(),
                         endpoint.getSecretKey(),
                         endpoint.getServiceKeys(),
                         endpoint.getRegion(),
                         endpoint.getEndpoint()));
+    }
+
+    private static Config createTeaConfig(
+            String accessKey, String secretKey, ServiceKeys serviceKeys, String region, String endpoint) {
+        Config config = new Config();
+        config.setAccessKeyId(OpenApiClientSupport.resolveAccessKey(accessKey, serviceKeys));
+        config.setAccessKeySecret(OpenApiClientSupport.resolveSecretKey(secretKey, serviceKeys));
+        if (ObjectHelper.isNotEmpty(region)) {
+            config.setRegionId(region);
+        }
+        if (ObjectHelper.isNotEmpty(endpoint)) {
+            config.setEndpoint(endpoint);
+        }
+        return config;
     }
 
     public static ClientConfigurations createClientConfigurations(SMSEndpoint endpoint, Exchange exchange) {

@@ -22,8 +22,8 @@ import com.aliyun.eventbridge.EventBridgeClient;
 import com.aliyun.eventbridge.models.CloudEvent;
 import com.aliyun.eventbridge.models.PutEventsResponse;
 import org.apache.camel.Exchange;
+import org.apache.camel.component.alibaba.eventbridge.constants.EventBridgeHeaders;
 import org.apache.camel.component.alibaba.eventbridge.constants.EventBridgeOperations;
-import org.apache.camel.component.alibaba.eventbridge.constants.EventBridgeProperties;
 import org.apache.camel.component.alibaba.eventbridge.models.ClientConfigurations;
 import org.apache.camel.support.DefaultProducer;
 import org.apache.camel.util.ObjectHelper;
@@ -64,7 +64,7 @@ public class EventBridgeProducer extends DefaultProducer {
         PutEventsResponse response = eventBridgeClient.putEvents(events);
         exchange.getMessage().setBody(EventBridgeUtils.toPutEventsMap(response));
         if (ObjectHelper.isNotEmpty(response.getRequestId())) {
-            exchange.setProperty(EventBridgeProperties.REQUEST_ID, response.getRequestId());
+            exchange.getMessage().setHeader(EventBridgeHeaders.REQUEST_ID, response.getRequestId());
         }
     }
 

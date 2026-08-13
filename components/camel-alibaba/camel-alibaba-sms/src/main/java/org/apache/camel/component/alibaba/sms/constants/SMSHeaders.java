@@ -35,6 +35,9 @@ public final class SMSHeaders {
     @Metadata(label = "producer", description = "Out id for the SMS", javaType = "String")
     public static final String OUT_ID = SMSProperties.OUT_ID;
 
+    @Metadata(label = "producer", description = "Alibaba Cloud request id", javaType = "String")
+    public static final String REQUEST_ID = SMSProperties.REQUEST_ID;
+
     private SMSHeaders() {
     }
 }

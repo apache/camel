@@ -958,10 +958,10 @@ public class PrepareCatalogMojo extends AbstractMojo {
                 case "camel-debezium-common":
                 case "camel-fhir":
                 case "camel-google":
+                case "camel-alibaba":
                 case "camel-google-common":
                 case "camel-http-base":
                 case "camel-http-common":
-                case "camel-alibaba":
                 case "camel-huawei":
                 case "camel-ibm":
                 case "camel-infinispan":

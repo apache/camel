@@ -21,8 +21,8 @@ import com.aliyun.kms20160120.models.DecryptRequest;
 import com.aliyun.kms20160120.models.EncryptRequest;
 import com.aliyun.kms20160120.models.GenerateDataKeyRequest;
 import org.apache.camel.Exchange;
+import org.apache.camel.component.alibaba.kms.constants.KMSHeaders;
 import org.apache.camel.component.alibaba.kms.constants.KMSOperations;
-import org.apache.camel.component.alibaba.kms.constants.KMSProperties;
 import org.apache.camel.component.alibaba.kms.models.ClientConfigurations;
 import org.apache.camel.support.DefaultProducer;
 import org.apache.camel.util.ObjectHelper;
@@ -108,7 +108,7 @@ public class KMSProducer extends DefaultProducer {
 
     private void setRequestId(Exchange exchange, String requestId) {
         if (ObjectHelper.isNotEmpty(requestId)) {
-            exchange.setProperty(KMSProperties.REQUEST_ID, requestId);
+            exchange.getMessage().setHeader(KMSHeaders.REQUEST_ID, requestId);
         }
     }
 

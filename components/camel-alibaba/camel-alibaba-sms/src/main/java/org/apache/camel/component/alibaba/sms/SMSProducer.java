@@ -20,8 +20,8 @@ import com.aliyun.dysmsapi20170525.Client;
 import com.aliyun.dysmsapi20170525.models.SendSmsRequest;
 import com.aliyun.dysmsapi20170525.models.SendSmsResponse;
 import org.apache.camel.Exchange;
+import org.apache.camel.component.alibaba.sms.constants.SMSHeaders;
 import org.apache.camel.component.alibaba.sms.constants.SMSOperations;
-import org.apache.camel.component.alibaba.sms.constants.SMSProperties;
 import org.apache.camel.component.alibaba.sms.models.ClientConfigurations;
 import org.apache.camel.support.DefaultProducer;
 import org.apache.camel.util.ObjectHelper;
@@ -75,7 +75,7 @@ public class SMSProducer extends DefaultProducer {
         SendSmsResponse response = smsClient.sendSms(request);
         exchange.getMessage().setBody(SMSUtils.toSendSmsMap(response));
         if (response.getBody() != null && ObjectHelper.isNotEmpty(response.getBody().getRequestId())) {
-            exchange.setProperty(SMSProperties.REQUEST_ID, response.getBody().getRequestId());
+            exchange.getMessage().setHeader(SMSHeaders.REQUEST_ID, response.getBody().getRequestId());
         }
     }
 

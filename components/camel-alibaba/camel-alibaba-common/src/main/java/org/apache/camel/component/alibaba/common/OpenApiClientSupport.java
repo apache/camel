@@ -16,7 +16,6 @@
  */
 package org.apache.camel.component.alibaba.common;
 
-import com.aliyun.teaopenapi.models.Config;
 import org.apache.camel.Exchange;
 import org.apache.camel.component.alibaba.common.models.ServiceKeys;
 import org.apache.camel.util.ObjectHelper;
@@ -24,28 +23,6 @@ import org.apache.camel.util.ObjectHelper;
 public final class OpenApiClientSupport {
 
     private OpenApiClientSupport() {
-    }
-
-    public static Config createConfig(String accessKey, String secretKey, String region, String endpoint) {
-        Config config = new Config();
-        config.setAccessKeyId(accessKey);
-        config.setAccessKeySecret(secretKey);
-        if (ObjectHelper.isNotEmpty(region)) {
-            config.setRegionId(region);
-        }
-        if (ObjectHelper.isNotEmpty(endpoint)) {
-            config.setEndpoint(endpoint);
-        }
-        return config;
-    }
-
-    public static Config createConfig(
-            String accessKey, String secretKey, ServiceKeys serviceKeys, String region, String endpoint) {
-        return createConfig(
-                resolveAccessKey(accessKey, serviceKeys),
-                resolveSecretKey(secretKey, serviceKeys),
-                region,
-                endpoint);
     }
 
     public static String resolveAccessKey(String accessKey, ServiceKeys serviceKeys) {

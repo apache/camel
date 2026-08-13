@@ -35,6 +35,9 @@ public final class KMSHeaders {
     @Metadata(label = "producer", description = "Number of bytes for generateDataKey", javaType = "Integer")
     public static final String NUMBER_OF_BYTES = KMSProperties.NUMBER_OF_BYTES;
 
+    @Metadata(label = "producer", description = "Alibaba Cloud request id", javaType = "String")
+    public static final String REQUEST_ID = KMSProperties.REQUEST_ID;
+
     private KMSHeaders() {
     }
 }

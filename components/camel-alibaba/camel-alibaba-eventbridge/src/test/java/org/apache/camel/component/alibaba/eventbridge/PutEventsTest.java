@@ -26,7 +26,7 @@ import com.aliyun.eventbridge.models.PutEventsResponse;
 import org.apache.camel.BindToRegistry;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.component.alibaba.eventbridge.constants.EventBridgeProperties;
+import org.apache.camel.component.alibaba.eventbridge.constants.EventBridgeHeaders;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.junit6.CamelTestSupport;
 import org.junit.jupiter.api.Test;
@@ -83,7 +83,7 @@ class PutEventsTest extends CamelTestSupport {
         assertThat(exchange.getMessage().getBody(Map.class))
                 .containsEntry("requestId", "req-eb-1")
                 .containsEntry("failedEntryCount", 0);
-        assertThat(exchange.getProperty(EventBridgeProperties.REQUEST_ID)).isEqualTo("req-eb-1");
+        assertThat(exchange.getMessage().getHeader(EventBridgeHeaders.REQUEST_ID)).isEqualTo("req-eb-1");
 
         verify(eventBridgeClient).putEvents(anyList());
     }

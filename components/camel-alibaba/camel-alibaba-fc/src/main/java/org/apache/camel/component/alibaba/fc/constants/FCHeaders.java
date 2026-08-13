@@ -29,6 +29,9 @@ public final class FCHeaders {
     @Metadata(label = "producer", description = "Function qualifier override", javaType = "String")
     public static final String QUALIFIER = FCProperties.QUALIFIER;
 
+    @Metadata(label = "producer", description = "Alibaba Cloud request id", javaType = "String")
+    public static final String REQUEST_ID = FCProperties.REQUEST_ID;
+
     @Metadata(label = "producer", description = "HTTP status code from FC invoke response", javaType = "Integer")
     public static final String STATUS_CODE = "CamelAlibabaFcStatusCode";
 

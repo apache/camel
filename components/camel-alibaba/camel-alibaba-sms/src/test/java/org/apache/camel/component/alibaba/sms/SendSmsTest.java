@@ -25,7 +25,7 @@ import com.aliyun.dysmsapi20170525.models.SendSmsResponseBody;
 import org.apache.camel.BindToRegistry;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.component.alibaba.sms.constants.SMSProperties;
+import org.apache.camel.component.alibaba.sms.constants.SMSHeaders;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.junit6.CamelTestSupport;
 import org.junit.jupiter.api.Test;
@@ -87,7 +87,7 @@ class SendSmsTest extends CamelTestSupport {
         assertThat(exchange.getMessage().getBody(Map.class))
                 .containsEntry("code", "OK")
                 .containsEntry("bizId", "biz-123");
-        assertThat(exchange.getProperty(SMSProperties.REQUEST_ID)).isEqualTo("req-456");
+        assertThat(exchange.getMessage().getHeader(SMSHeaders.REQUEST_ID)).isEqualTo("req-456");
 
         verify(smsClient).sendSms(any(SendSmsRequest.class));
     }

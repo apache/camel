@@ -16,9 +16,8 @@
  */
 package org.apache.camel.component.alibaba.kms;
 
-import java.util.Map;
-
 import java.util.Base64;
+import java.util.Map;
 
 import com.aliyun.kms20160120.Client;
 import com.aliyun.kms20160120.models.EncryptRequest;
@@ -27,15 +26,15 @@ import com.aliyun.kms20160120.models.EncryptResponseBody;
 import org.apache.camel.BindToRegistry;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.component.alibaba.kms.constants.KMSProperties;
+import org.apache.camel.component.alibaba.kms.constants.KMSHeaders;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.junit6.CamelTestSupport;
 import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.mock;
 import static org.mockito.ArgumentMatchers.argThat;
+import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -87,9 +86,9 @@ class EncryptTest extends CamelTestSupport {
         assertThat(exchange.getMessage().getBody(Map.class))
                 .containsEntry("ciphertextBlob", "encrypted-data")
                 .containsEntry("keyId", testConfiguration.getProperty("keyId"));
-        assertThat(exchange.getProperty(KMSProperties.REQUEST_ID)).isEqualTo("req-789");
+        assertThat(exchange.getMessage().getHeader(KMSHeaders.REQUEST_ID)).isEqualTo("req-789");
 
-        verify(kmsClient).encrypt(argThat((EncryptRequest request) ->
-                Base64.getEncoder().encodeToString("secret-value".getBytes()).equals(request.getPlaintext())));
+        verify(kmsClient).encrypt(argThat((EncryptRequest request) -> Base64.getEncoder()
+                .encodeToString("secret-value".getBytes()).equals(request.getPlaintext())));
     }
 }

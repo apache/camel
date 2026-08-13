@@ -17,7 +17,6 @@
 package org.apache.camel.component.alibaba.fc;
 
 import java.nio.charset.StandardCharsets;
-import java.util.Base64;
 import java.util.Map;
 
 import com.aliyun.fc_open20210406.Client;

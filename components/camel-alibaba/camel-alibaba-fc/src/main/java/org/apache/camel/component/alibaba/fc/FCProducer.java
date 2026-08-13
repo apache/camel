@@ -24,7 +24,6 @@ import com.aliyun.fc_open20210406.models.InvokeFunctionResponse;
 import org.apache.camel.Exchange;
 import org.apache.camel.component.alibaba.fc.constants.FCHeaders;
 import org.apache.camel.component.alibaba.fc.constants.FCOperations;
-import org.apache.camel.component.alibaba.fc.constants.FCProperties;
 import org.apache.camel.component.alibaba.fc.models.ClientConfigurations;
 import org.apache.camel.support.DefaultProducer;
 import org.apache.camel.util.ObjectHelper;
@@ -76,7 +75,7 @@ public class FCProducer extends DefaultProducer {
             exchange.getMessage().setHeader(FCHeaders.STATUS_CODE, response.getStatusCode());
         }
         if (response.getHeaders() != null && ObjectHelper.isNotEmpty(response.getHeaders().get("x-fc-request-id"))) {
-            exchange.setProperty(FCProperties.REQUEST_ID, response.getHeaders().get("x-fc-request-id"));
+            exchange.getMessage().setHeader(FCHeaders.REQUEST_ID, response.getHeaders().get("x-fc-request-id"));
         }
     }
 

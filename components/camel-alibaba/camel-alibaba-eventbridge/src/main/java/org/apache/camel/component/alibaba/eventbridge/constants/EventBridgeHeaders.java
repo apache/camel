@@ -32,6 +32,9 @@ public final class EventBridgeHeaders {
     @Metadata(label = "producer", description = "Event subject override", javaType = "String")
     public static final String EVENT_SUBJECT = EventBridgeProperties.EVENT_SUBJECT;
 
+    @Metadata(label = "producer", description = "Alibaba Cloud request id", javaType = "String")
+    public static final String REQUEST_ID = EventBridgeProperties.REQUEST_ID;
+
     private EventBridgeHeaders() {
     }
 }

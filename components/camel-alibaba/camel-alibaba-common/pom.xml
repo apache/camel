@@ -41,12 +41,6 @@
             <groupId>org.apache.camel</groupId>
             <artifactId>camel-support</artifactId>
         </dependency>
-
-        <dependency>
-            <groupId>com.aliyun</groupId>
-            <artifactId>tea-openapi</artifactId>
-            <version>${tea-openapi-version}</version>
-        </dependency>
     </dependencies>
 
 </project>
