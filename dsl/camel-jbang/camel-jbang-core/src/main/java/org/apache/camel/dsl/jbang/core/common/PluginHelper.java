@@ -170,8 +170,9 @@ public final class PluginHelper {
         // Maven resolution for plugins unrelated to the current command.
         Map<String, Plugin> plugins = getActivePlugins(main, repos, target);
         for (Map.Entry<String, Plugin> plugin : plugins.entrySet()) {
-            // Skip if this plugin was already loaded from embedded plugins
-            if (foundEmbeddedPlugins && commandLine.getSubcommands().containsKey(plugin.getKey())) {
+            // Skip if this plugin command is already registered (e.g. loaded from embedded plugins,
+            // or stale JSON config listing a plugin that is now built-in)
+            if (commandLine.getSubcommands().containsKey(plugin.getKey())) {
                 continue;
             }
 
@@ -754,6 +755,11 @@ public final class PluginHelper {
                     if (!version.isBlank() && !firstVersion.isBlank()) {
                         PluginHelper.versionCheck(main, version, firstVersion, command);
                     }
+                }
+
+                // Skip if this plugin command is already registered
+                if (command != null && commandLine.getSubcommands().containsKey(command)) {
+                    return true;
                 }
 
                 plugin.customize(commandLine, main);
