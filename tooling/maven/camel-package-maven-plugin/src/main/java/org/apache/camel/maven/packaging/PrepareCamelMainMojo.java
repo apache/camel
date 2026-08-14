@@ -333,6 +333,11 @@ public class PrepareCamelMainMojo extends AbstractGeneratorMojo {
                     prefix = "camel.trace.";
                 } else if (file.getName().contains("RouteControllerConfigurationProperties")) {
                     prefix = "camel.routecontroller.";
+                } else if (file.getName().contains("AiObservabilityConfigurationProperties")) {
+                    prefix = "camel.ai.observability.";
+                } else if (file.getName().contains("AiConfigurationProperties")) {
+                    // skip wrapper, options are on AiObservabilityConfigurationProperties
+                    continue;
                 } else {
                     prefix = "camel.main.";
                 }
@@ -594,6 +599,9 @@ public class PrepareCamelMainMojo extends AbstractGeneratorMojo {
             model.getGroups().add(new MainGroupModel(
                     "camel.errorRegistry", "Camel Error Registry configurations",
                     "org.apache.camel.main.ErrorRegistryConfigurationProperties"));
+            model.getGroups().add(new MainGroupModel(
+                    "camel.ai.observability", "Camel GenAI Observability configurations",
+                    "org.apache.camel.main.AiObservabilityConfigurationProperties"));
             model.getGroups().add(new MainGroupModel(
                     "camel.cluster.file", "Camel File Cluster Service configurations",
                     "org.apache.camel.component.file.cluster.FileLockClusterService"));

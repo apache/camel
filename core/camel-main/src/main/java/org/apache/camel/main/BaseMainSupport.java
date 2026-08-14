@@ -150,6 +150,7 @@ public abstract class BaseMainSupport extends BaseService {
     private static final String PREFIX_TRACE = "camel.trace.";
     private static final String PREFIX_ROUTE_CONTROLLER = "camel.routeController.";
     private static final String PREFIX_ERROR_REGISTRY = "camel.errorRegistry.";
+    private static final String PREFIX_AI_OBSERVABILITY = "camel.ai.observability.";
 
     private static final String[] GROUP_PREFIXES = new String[] {
             "camel.context.", "camel.resilience4j.", "camel.faulttolerance.",
@@ -1421,6 +1422,7 @@ public abstract class BaseMainSupport extends BaseService {
         OrderedLocationProperties tracerProperties = new OrderedLocationProperties();
         OrderedLocationProperties routeControllerProperties = new OrderedLocationProperties();
         OrderedLocationProperties errorRegistryProperties = new OrderedLocationProperties();
+        OrderedLocationProperties aiObservabilityProperties = new OrderedLocationProperties();
 
         for (String key : prop.stringPropertyNames()) {
             String loc = prop.getLocation(key);
@@ -1580,6 +1582,12 @@ public abstract class BaseMainSupport extends BaseService {
                 String option = key.substring(20);
                 validateOptionAndValue(key, option, value);
                 errorRegistryProperties.put(loc, optionKey(option), value);
+            } else if (startsWithIgnoreCase(key, PREFIX_AI_OBSERVABILITY)) {
+                // grab the value
+                String value = prop.getProperty(key);
+                String option = key.substring(PREFIX_AI_OBSERVABILITY.length());
+                validateOptionAndValue(key, option, value);
+                aiObservabilityProperties.put(loc, optionKey(option), value);
             }
         }
 
@@ -1731,6 +1739,12 @@ public abstract class BaseMainSupport extends BaseService {
         if (!errorRegistryProperties.isEmpty() || mainConfigurationProperties.hasErrorRegistryConfiguration()) {
             LOG.debug("Auto-configuring Error Registry from loaded properties: {}", errorRegistryProperties.size());
             setErrorRegistryProperties(camelContext, errorRegistryProperties,
+                    mainConfigurationProperties.isAutoConfigurationFailFast(),
+                    autoConfiguredProperties);
+        }
+        if (!aiObservabilityProperties.isEmpty() || mainConfigurationProperties.hasAiConfiguration()) {
+            LOG.debug("Auto-configuring GenAI observability from loaded properties: {}", aiObservabilityProperties.size());
+            setAiObservabilityProperties(camelContext, aiObservabilityProperties,
                     mainConfigurationProperties.isAutoConfigurationFailFast(),
                     autoConfiguredProperties);
         }
@@ -2604,6 +2618,26 @@ public abstract class BaseMainSupport extends BaseService {
         registry.setBodyIncludeFiles(config.isBodyIncludeFiles());
         registry.setIncludeExchangeProperties(config.isIncludeExchangeProperties());
         registry.setIncludeExchangeVariables(config.isIncludeExchangeVariables());
+    }
+
+    private void setAiObservabilityProperties(
+            CamelContext camelContext, OrderedLocationProperties properties,
+            boolean failIfNotSet, OrderedLocationProperties autoConfiguredProperties)
+            throws Exception {
+
+        AiObservabilityConfigurationProperties config = mainConfigurationProperties.ai().observability();
+        setPropertiesOnTarget(camelContext, config, properties, PREFIX_AI_OBSERVABILITY,
+                failIfNotSet, true, autoConfiguredProperties);
+
+        if (mainConfigurationProperties.hasAiConfiguration() || !properties.isEmpty()) {
+            PropertiesComponent pc = camelContext.getPropertiesComponent();
+            Properties local = pc.getLocalProperties();
+            if (local == null) {
+                local = new Properties();
+                pc.setLocalProperties(local);
+            }
+            local.setProperty("camel.ai.observability.enabled", Boolean.toString(config.isEnabled()));
+        }
     }
 
     private void bindBeansToRegistry(
