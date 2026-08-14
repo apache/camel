@@ -30,8 +30,6 @@ import org.apache.camel.util.ObjectHelper;
 
 public class OTSProducer extends DefaultProducer {
 
-    private SyncClient otsClient;
-
     public OTSProducer(OTSEndpoint endpoint) {
         super(endpoint);
     }
@@ -45,49 +43,47 @@ public class OTSProducer extends DefaultProducer {
             throw new IllegalArgumentException("Operation name not found");
         }
 
-        if (otsClient == null) {
-            otsClient = endpoint.initClient();
-        }
+        SyncClient otsClient = endpoint.initClient();
 
         switch (configuration.getOperation()) {
-            case OTSOperations.PUT_ROW -> putRow(exchange);
-            case OTSOperations.GET_ROW -> getRow(exchange);
-            case OTSOperations.UPDATE_ROW -> updateRow(exchange);
-            case OTSOperations.DELETE_ROW -> deleteRow(exchange);
-            case OTSOperations.LIST_TABLES -> listTables(exchange);
+            case OTSOperations.PUT_ROW -> putRow(exchange, otsClient);
+            case OTSOperations.GET_ROW -> getRow(exchange, otsClient);
+            case OTSOperations.UPDATE_ROW -> updateRow(exchange, otsClient);
+            case OTSOperations.DELETE_ROW -> deleteRow(exchange, otsClient);
+            case OTSOperations.LIST_TABLES -> listTables(exchange, otsClient);
             default -> throw new UnsupportedOperationException("Unsupported operation: " + configuration.getOperation());
         }
     }
 
-    private void putRow(Exchange exchange) throws Exception {
+    private void putRow(Exchange exchange, SyncClient otsClient) throws Exception {
         PutRowRequest request = exchange.getMessage().getMandatoryBody(PutRowRequest.class);
         var response = otsClient.putRow(request);
         exchange.getMessage().setBody(OTSUtils.toPutRowMap(response));
         setResponseHeaders(exchange, response.getRequestId());
     }
 
-    private void getRow(Exchange exchange) throws Exception {
+    private void getRow(Exchange exchange, SyncClient otsClient) throws Exception {
         GetRowRequest request = exchange.getMessage().getMandatoryBody(GetRowRequest.class);
         var response = otsClient.getRow(request);
         exchange.getMessage().setBody(OTSUtils.toGetRowMap(response));
         setResponseHeaders(exchange, response.getRequestId());
     }
 
-    private void updateRow(Exchange exchange) throws Exception {
+    private void updateRow(Exchange exchange, SyncClient otsClient) throws Exception {
         UpdateRowRequest request = exchange.getMessage().getMandatoryBody(UpdateRowRequest.class);
         var response = otsClient.updateRow(request);
         exchange.getMessage().setBody(OTSUtils.toUpdateRowMap(response));
         setResponseHeaders(exchange, response.getRequestId());
     }
 
-    private void deleteRow(Exchange exchange) throws Exception {
+    private void deleteRow(Exchange exchange, SyncClient otsClient) throws Exception {
         DeleteRowRequest request = exchange.getMessage().getMandatoryBody(DeleteRowRequest.class);
         var response = otsClient.deleteRow(request);
         exchange.getMessage().setBody(OTSUtils.toDeleteRowMap(response));
         setResponseHeaders(exchange, response.getRequestId());
     }
 
-    private void listTables(Exchange exchange) throws Exception {
+    private void listTables(Exchange exchange, SyncClient otsClient) throws Exception {
         var response = otsClient.listTable();
         exchange.getMessage().setBody(OTSUtils.toListTablesBody(response));
         setResponseHeaders(exchange, response.getRequestId());

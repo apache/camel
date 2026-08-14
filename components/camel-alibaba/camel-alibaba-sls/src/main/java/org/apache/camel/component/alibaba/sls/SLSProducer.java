@@ -34,8 +34,6 @@ import org.apache.camel.util.ObjectHelper;
 
 public class SLSProducer extends DefaultProducer {
 
-    private Client slsClient;
-
     public SLSProducer(SLSEndpoint endpoint) {
         super(endpoint);
     }
@@ -49,19 +47,17 @@ public class SLSProducer extends DefaultProducer {
             throw new IllegalArgumentException("Operation name not found");
         }
 
-        if (slsClient == null) {
-            slsClient = endpoint.initClient();
-        }
+        Client slsClient = endpoint.initClient();
 
         switch (configuration.getOperation()) {
-            case SLSOperations.PUT_LOGS -> putLogs(exchange, configuration);
-            case SLSOperations.GET_LOGS -> getLogs(exchange, configuration);
-            case SLSOperations.LIST_LOG_STORES -> listLogStores(exchange, configuration);
+            case SLSOperations.PUT_LOGS -> putLogs(exchange, configuration, slsClient);
+            case SLSOperations.GET_LOGS -> getLogs(exchange, configuration, slsClient);
+            case SLSOperations.LIST_LOG_STORES -> listLogStores(exchange, configuration, slsClient);
             default -> throw new UnsupportedOperationException("Unsupported operation: " + configuration.getOperation());
         }
     }
 
-    private void putLogs(Exchange exchange, ClientConfigurations configuration) throws Exception {
+    private void putLogs(Exchange exchange, ClientConfigurations configuration, Client slsClient) throws Exception {
         validateProjectAndLogStore(configuration);
 
         PutLogsRequest request = SLSUtils.resolvePutLogsRequest(exchange);
@@ -74,7 +70,7 @@ public class SLSProducer extends DefaultProducer {
         setResponseHeaders(exchange, response.getStatusCode(), response.getHeaders());
     }
 
-    private void getLogs(Exchange exchange, ClientConfigurations configuration) throws Exception {
+    private void getLogs(Exchange exchange, ClientConfigurations configuration, Client slsClient) throws Exception {
         validateProjectAndLogStore(configuration);
 
         GetLogsRequest request = SLSUtils.buildGetLogsRequest(configuration);
@@ -87,7 +83,7 @@ public class SLSProducer extends DefaultProducer {
         setResponseHeaders(exchange, response.getStatusCode(), response.getHeaders());
     }
 
-    private void listLogStores(Exchange exchange, ClientConfigurations configuration) throws Exception {
+    private void listLogStores(Exchange exchange, ClientConfigurations configuration, Client slsClient) throws Exception {
         validateProject(configuration);
 
         ListLogStoresRequest request = SLSUtils.buildListLogStoresRequest(configuration);
