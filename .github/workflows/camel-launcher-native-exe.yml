@@ -24,6 +24,7 @@ on:
   push:
     branches:
       - main
+      - camel-4.22.x
     paths:
       - 'tooling/camel-exe/**'
       - 'dsl/camel-jbang/camel-launcher/**'
@@ -32,6 +33,7 @@ on:
   pull_request:
     branches:
       - main
+      - camel-4.22.x
     paths:
       - 'tooling/camel-exe/**'
       - 'dsl/camel-jbang/camel-launcher/**'
