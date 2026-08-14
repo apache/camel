@@ -1536,7 +1536,9 @@ class AiPanel {
         }
         return "[tui] " + modelProvider;
     }
-
+    boolean isStatsView() {
+        return statsView;
+    }
     boolean isStatsViewForTesting() {
         return statsView;
     }
