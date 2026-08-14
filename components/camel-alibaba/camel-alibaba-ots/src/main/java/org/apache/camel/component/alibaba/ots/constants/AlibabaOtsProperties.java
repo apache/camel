@@ -14,21 +14,18 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.alibaba.sls;
+package org.apache.camel.component.alibaba.ots.constants;
 
-import java.util.Map;
+import org.apache.camel.spi.Metadata;
 
-import org.apache.camel.Endpoint;
-import org.apache.camel.spi.annotations.Component;
-import org.apache.camel.support.HealthCheckComponent;
+public final class AlibabaOtsProperties {
 
-@Component("alibaba-sls")
-public class SLSComponent extends HealthCheckComponent {
+    @Metadata(label = "producer", description = "Operation to perform", javaType = "String")
+    public static final String OPERATION = "CamelAlibabaOtsOperation";
 
-    @Override
-    protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
-        SLSEndpoint endpoint = new SLSEndpoint(uri, remaining, this);
-        setProperties(endpoint, parameters);
-        return endpoint;
+    @Metadata(label = "producer", description = "Request id returned by Tablestore", javaType = "String")
+    public static final String REQUEST_ID = "CamelAlibabaOtsRequestId";
+
+    private AlibabaOtsProperties() {
     }
 }

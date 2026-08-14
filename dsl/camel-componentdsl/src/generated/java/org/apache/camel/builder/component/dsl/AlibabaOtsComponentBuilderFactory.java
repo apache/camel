@@ -21,7 +21,7 @@ import javax.annotation.processing.Generated;
 import org.apache.camel.Component;
 import org.apache.camel.builder.component.AbstractComponentBuilder;
 import org.apache.camel.builder.component.ComponentBuilder;
-import org.apache.camel.component.alibaba.ots.OTSComponent;
+import org.apache.camel.component.alibaba.ots.AlibabaOtsComponent;
 
 /**
  * Perform row operations on Alibaba Cloud Tablestore (OTS).
@@ -48,7 +48,7 @@ public interface AlibabaOtsComponentBuilderFactory {
     /**
      * Builder for the Alibaba Tablestore (OTS) component.
      */
-    interface AlibabaOtsComponentBuilder extends ComponentBuilder<OTSComponent> {
+    interface AlibabaOtsComponentBuilder extends ComponentBuilder<AlibabaOtsComponent> {
     
         
         /**
@@ -137,11 +137,11 @@ public interface AlibabaOtsComponentBuilderFactory {
     }
 
     class AlibabaOtsComponentBuilderImpl
-            extends AbstractComponentBuilder<OTSComponent>
+            extends AbstractComponentBuilder<AlibabaOtsComponent>
             implements AlibabaOtsComponentBuilder {
         @Override
-        protected OTSComponent buildConcreteComponent() {
-            return new OTSComponent();
+        protected AlibabaOtsComponent buildConcreteComponent() {
+            return new AlibabaOtsComponent();
         }
         @Override
         protected boolean setPropertyOnComponent(
@@ -149,10 +149,10 @@ public interface AlibabaOtsComponentBuilderFactory {
                 String name,
                 Object value) {
             switch (name) {
-            case "lazyStartProducer": ((OTSComponent) component).setLazyStartProducer((boolean) value); return true;
-            case "autowiredEnabled": ((OTSComponent) component).setAutowiredEnabled((boolean) value); return true;
-            case "healthCheckConsumerEnabled": ((OTSComponent) component).setHealthCheckConsumerEnabled((boolean) value); return true;
-            case "healthCheckProducerEnabled": ((OTSComponent) component).setHealthCheckProducerEnabled((boolean) value); return true;
+            case "lazyStartProducer": ((AlibabaOtsComponent) component).setLazyStartProducer((boolean) value); return true;
+            case "autowiredEnabled": ((AlibabaOtsComponent) component).setAutowiredEnabled((boolean) value); return true;
+            case "healthCheckConsumerEnabled": ((AlibabaOtsComponent) component).setHealthCheckConsumerEnabled((boolean) value); return true;
+            case "healthCheckProducerEnabled": ((AlibabaOtsComponent) component).setHealthCheckProducerEnabled((boolean) value); return true;
             default: return false;
             }
         }

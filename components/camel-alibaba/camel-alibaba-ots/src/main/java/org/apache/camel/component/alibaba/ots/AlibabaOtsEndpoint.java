@@ -22,7 +22,7 @@ import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.component.alibaba.common.models.ServiceKeys;
-import org.apache.camel.component.alibaba.ots.constants.OTSHeaders;
+import org.apache.camel.component.alibaba.ots.constants.AlibabaOtsHeaders;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
@@ -34,8 +34,8 @@ import org.apache.camel.support.DefaultEndpoint;
  */
 @UriEndpoint(firstVersion = "4.23.0", scheme = "alibaba-ots", title = "Alibaba Tablestore (OTS)",
              syntax = "alibaba-ots:operation", category = { Category.CLOUD, Category.DATABASE },
-             headersClass = OTSHeaders.class, producerOnly = true)
-public class OTSEndpoint extends DefaultEndpoint {
+             headersClass = AlibabaOtsHeaders.class, producerOnly = true)
+public class AlibabaOtsEndpoint extends DefaultEndpoint {
 
     @UriPath(description = "Operation to perform", displayName = "Operation", label = "producer",
              enums = "putRow,getRow,updateRow,deleteRow,listTables")
@@ -69,17 +69,17 @@ public class OTSEndpoint extends DefaultEndpoint {
 
     private boolean autowiredOtsClient;
 
-    public OTSEndpoint() {
+    public AlibabaOtsEndpoint() {
     }
 
-    public OTSEndpoint(String uri, String operation, OTSComponent component) {
+    public AlibabaOtsEndpoint(String uri, String operation, AlibabaOtsComponent component) {
         super(uri, component);
         this.operation = operation;
     }
 
     @Override
     public Producer createProducer() throws Exception {
-        return new OTSProducer(this);
+        return new AlibabaOtsProducer(this);
     }
 
     @Override
@@ -91,7 +91,7 @@ public class OTSEndpoint extends DefaultEndpoint {
         if (otsClient != null) {
             return otsClient;
         }
-        otsClient = OTSUtils.createClient(this);
+        otsClient = AlibabaOtsUtils.createClient(this);
         return otsClient;
     }
 

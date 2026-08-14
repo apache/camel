@@ -21,7 +21,7 @@ import javax.annotation.processing.Generated;
 import org.apache.camel.Component;
 import org.apache.camel.builder.component.AbstractComponentBuilder;
 import org.apache.camel.builder.component.ComponentBuilder;
-import org.apache.camel.component.alibaba.sls.SLSComponent;
+import org.apache.camel.component.alibaba.sls.AlibabaSlsComponent;
 
 /**
  * Manage logs on Alibaba Cloud Simple Log Service (SLS).
@@ -48,7 +48,7 @@ public interface AlibabaSlsComponentBuilderFactory {
     /**
      * Builder for the Alibaba Simple Log Service (SLS) component.
      */
-    interface AlibabaSlsComponentBuilder extends ComponentBuilder<SLSComponent> {
+    interface AlibabaSlsComponentBuilder extends ComponentBuilder<AlibabaSlsComponent> {
     
         
         /**
@@ -137,11 +137,11 @@ public interface AlibabaSlsComponentBuilderFactory {
     }
 
     class AlibabaSlsComponentBuilderImpl
-            extends AbstractComponentBuilder<SLSComponent>
+            extends AbstractComponentBuilder<AlibabaSlsComponent>
             implements AlibabaSlsComponentBuilder {
         @Override
-        protected SLSComponent buildConcreteComponent() {
-            return new SLSComponent();
+        protected AlibabaSlsComponent buildConcreteComponent() {
+            return new AlibabaSlsComponent();
         }
         @Override
         protected boolean setPropertyOnComponent(
@@ -149,10 +149,10 @@ public interface AlibabaSlsComponentBuilderFactory {
                 String name,
                 Object value) {
             switch (name) {
-            case "lazyStartProducer": ((SLSComponent) component).setLazyStartProducer((boolean) value); return true;
-            case "autowiredEnabled": ((SLSComponent) component).setAutowiredEnabled((boolean) value); return true;
-            case "healthCheckConsumerEnabled": ((SLSComponent) component).setHealthCheckConsumerEnabled((boolean) value); return true;
-            case "healthCheckProducerEnabled": ((SLSComponent) component).setHealthCheckProducerEnabled((boolean) value); return true;
+            case "lazyStartProducer": ((AlibabaSlsComponent) component).setLazyStartProducer((boolean) value); return true;
+            case "autowiredEnabled": ((AlibabaSlsComponent) component).setAutowiredEnabled((boolean) value); return true;
+            case "healthCheckConsumerEnabled": ((AlibabaSlsComponent) component).setHealthCheckConsumerEnabled((boolean) value); return true;
+            case "healthCheckProducerEnabled": ((AlibabaSlsComponent) component).setHealthCheckProducerEnabled((boolean) value); return true;
             default: return false;
             }
         }

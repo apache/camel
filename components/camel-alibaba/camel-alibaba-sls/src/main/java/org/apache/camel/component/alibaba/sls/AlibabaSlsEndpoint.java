@@ -22,7 +22,7 @@ import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.component.alibaba.common.models.ServiceKeys;
-import org.apache.camel.component.alibaba.sls.constants.SLSHeaders;
+import org.apache.camel.component.alibaba.sls.constants.AlibabaSlsHeaders;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
@@ -34,8 +34,8 @@ import org.apache.camel.support.DefaultEndpoint;
  */
 @UriEndpoint(firstVersion = "4.23.0", scheme = "alibaba-sls", title = "Alibaba Simple Log Service (SLS)",
              syntax = "alibaba-sls:operation", category = { Category.CLOUD, Category.MONITORING },
-             headersClass = SLSHeaders.class, producerOnly = true)
-public class SLSEndpoint extends DefaultEndpoint {
+             headersClass = AlibabaSlsHeaders.class, producerOnly = true)
+public class AlibabaSlsEndpoint extends DefaultEndpoint {
 
     @UriPath(description = "Operation to perform", displayName = "Operation", label = "producer",
              enums = "putLogs,getLogs,listLogStores")
@@ -100,17 +100,17 @@ public class SLSEndpoint extends DefaultEndpoint {
 
     private boolean autowiredSlsClient;
 
-    public SLSEndpoint() {
+    public AlibabaSlsEndpoint() {
     }
 
-    public SLSEndpoint(String uri, String operation, SLSComponent component) {
+    public AlibabaSlsEndpoint(String uri, String operation, AlibabaSlsComponent component) {
         super(uri, component);
         this.operation = operation;
     }
 
     @Override
     public Producer createProducer() throws Exception {
-        return new SLSProducer(this);
+        return new AlibabaSlsProducer(this);
     }
 
     @Override
@@ -122,7 +122,7 @@ public class SLSEndpoint extends DefaultEndpoint {
         if (slsClient != null) {
             return slsClient;
         }
-        slsClient = SLSUtils.createClient(this);
+        slsClient = AlibabaSlsUtils.createClient(this);
         return slsClient;
     }
 

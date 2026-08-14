@@ -32,16 +32,16 @@ import com.aliyun.teaopenapi.models.Config;
 import org.apache.camel.Exchange;
 import org.apache.camel.component.alibaba.common.OpenApiClientSupport;
 import org.apache.camel.component.alibaba.common.models.ServiceKeys;
-import org.apache.camel.component.alibaba.sls.constants.SLSProperties;
+import org.apache.camel.component.alibaba.sls.constants.AlibabaSlsProperties;
 import org.apache.camel.component.alibaba.sls.models.ClientConfigurations;
 import org.apache.camel.util.ObjectHelper;
 
-public final class SLSUtils {
+public final class AlibabaSlsUtils {
 
-    private SLSUtils() {
+    private AlibabaSlsUtils() {
     }
 
-    public static Client createClient(SLSEndpoint endpoint) throws Exception {
+    public static Client createClient(AlibabaSlsEndpoint endpoint) throws Exception {
         if (ObjectHelper.isEmpty(endpoint.getRegion()) && ObjectHelper.isEmpty(endpoint.getEndpoint())) {
             throw new IllegalArgumentException("Region or endpoint is required");
         }
@@ -69,28 +69,29 @@ public final class SLSUtils {
         return config;
     }
 
-    public static ClientConfigurations createClientConfigurations(SLSEndpoint endpoint, Exchange exchange) {
+    public static ClientConfigurations createClientConfigurations(AlibabaSlsEndpoint endpoint, Exchange exchange) {
         ClientConfigurations configuration = new ClientConfigurations();
         configuration
-                .setOperation(OpenApiClientSupport.resolveString(exchange, SLSProperties.OPERATION, endpoint.getOperation()));
+                .setOperation(
+                        OpenApiClientSupport.resolveString(exchange, AlibabaSlsProperties.OPERATION, endpoint.getOperation()));
         configuration.setProject(
-                OpenApiClientSupport.resolveString(exchange, SLSProperties.PROJECT, endpoint.getProject()));
+                OpenApiClientSupport.resolveString(exchange, AlibabaSlsProperties.PROJECT, endpoint.getProject()));
         configuration.setLogStoreName(
-                OpenApiClientSupport.resolveString(exchange, SLSProperties.LOG_STORE_NAME, endpoint.getLogStoreName()));
-        configuration.setQuery(OpenApiClientSupport.resolveString(exchange, SLSProperties.QUERY, endpoint.getQuery()));
-        configuration.setFrom(OpenApiClientSupport.resolveInteger(exchange, SLSProperties.FROM, endpoint.getFrom()));
-        configuration.setTo(OpenApiClientSupport.resolveInteger(exchange, SLSProperties.TO, endpoint.getTo()));
-        configuration.setLine(resolveLong(exchange, SLSProperties.LINE, endpoint.getLine()));
-        configuration.setOffset(resolveLong(exchange, SLSProperties.OFFSET, endpoint.getOffset()));
-        configuration.setTopic(OpenApiClientSupport.resolveString(exchange, SLSProperties.TOPIC, endpoint.getTopic()));
-        configuration.setReverse(resolveBoolean(exchange, SLSProperties.REVERSE, endpoint.getReverse()));
+                OpenApiClientSupport.resolveString(exchange, AlibabaSlsProperties.LOG_STORE_NAME, endpoint.getLogStoreName()));
+        configuration.setQuery(OpenApiClientSupport.resolveString(exchange, AlibabaSlsProperties.QUERY, endpoint.getQuery()));
+        configuration.setFrom(OpenApiClientSupport.resolveInteger(exchange, AlibabaSlsProperties.FROM, endpoint.getFrom()));
+        configuration.setTo(OpenApiClientSupport.resolveInteger(exchange, AlibabaSlsProperties.TO, endpoint.getTo()));
+        configuration.setLine(resolveLong(exchange, AlibabaSlsProperties.LINE, endpoint.getLine()));
+        configuration.setOffset(resolveLong(exchange, AlibabaSlsProperties.OFFSET, endpoint.getOffset()));
+        configuration.setTopic(OpenApiClientSupport.resolveString(exchange, AlibabaSlsProperties.TOPIC, endpoint.getTopic()));
+        configuration.setReverse(resolveBoolean(exchange, AlibabaSlsProperties.REVERSE, endpoint.getReverse()));
         configuration.setLogstoreName(
-                OpenApiClientSupport.resolveString(exchange, SLSProperties.LOGSTORE_NAME, null));
-        configuration.setMode(OpenApiClientSupport.resolveString(exchange, SLSProperties.MODE, null));
-        configuration.setListOffset(OpenApiClientSupport.resolveInteger(exchange, SLSProperties.OFFSET, null));
-        configuration.setSize(OpenApiClientSupport.resolveInteger(exchange, SLSProperties.SIZE, null));
+                OpenApiClientSupport.resolveString(exchange, AlibabaSlsProperties.LOGSTORE_NAME, null));
+        configuration.setMode(OpenApiClientSupport.resolveString(exchange, AlibabaSlsProperties.MODE, null));
+        configuration.setListOffset(OpenApiClientSupport.resolveInteger(exchange, AlibabaSlsProperties.OFFSET, null));
+        configuration.setSize(OpenApiClientSupport.resolveInteger(exchange, AlibabaSlsProperties.SIZE, null));
         configuration.setTelemetryType(
-                OpenApiClientSupport.resolveString(exchange, SLSProperties.TELEMETRY_TYPE, null));
+                OpenApiClientSupport.resolveString(exchange, AlibabaSlsProperties.TELEMETRY_TYPE, null));
         return configuration;
     }
 

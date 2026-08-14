@@ -14,18 +14,21 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.alibaba.ots.constants;
+package org.apache.camel.component.alibaba.ots;
 
-import org.apache.camel.spi.Metadata;
+import java.util.Map;
 
-public final class OTSProperties {
+import org.apache.camel.Endpoint;
+import org.apache.camel.spi.annotations.Component;
+import org.apache.camel.support.HealthCheckComponent;
 
-    @Metadata(label = "producer", description = "Operation to perform", javaType = "String")
-    public static final String OPERATION = "CamelAlibabaOtsOperation";
+@Component("alibaba-ots")
+public class AlibabaOtsComponent extends HealthCheckComponent {
 
-    @Metadata(label = "producer", description = "Request id returned by Tablestore", javaType = "String")
-    public static final String REQUEST_ID = "CamelAlibabaOtsRequestId";
-
-    private OTSProperties() {
+    @Override
+    protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
+        AlibabaOtsEndpoint endpoint = new AlibabaOtsEndpoint(uri, remaining, this);
+        setProperties(endpoint, parameters);
+        return endpoint;
     }
 }

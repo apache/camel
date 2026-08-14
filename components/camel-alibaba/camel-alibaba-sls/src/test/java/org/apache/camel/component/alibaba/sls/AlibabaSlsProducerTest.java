@@ -29,11 +29,11 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-class SLSProducerTest extends CamelTestSupport {
+class AlibabaSlsProducerTest extends CamelTestSupport {
 
     @Test
     void processReinitializesClientFromEndpointOnEachExchange() throws Exception {
-        SLSEndpoint endpoint = mock(SLSEndpoint.class);
+        AlibabaSlsEndpoint endpoint = mock(AlibabaSlsEndpoint.class);
         when(endpoint.getOperation()).thenReturn("listLogStores");
         when(endpoint.getProject()).thenReturn("demo-project");
         when(endpoint.getCamelContext()).thenReturn(context);
@@ -46,7 +46,7 @@ class SLSProducerTest extends CamelTestSupport {
         when(firstClient.listLogStores(eq("demo-project"), any(ListLogStoresRequest.class))).thenReturn(response);
         when(secondClient.listLogStores(eq("demo-project"), any(ListLogStoresRequest.class))).thenReturn(response);
 
-        SLSProducer producer = new SLSProducer(endpoint);
+        AlibabaSlsProducer producer = new AlibabaSlsProducer(endpoint);
         producer.process(new DefaultExchange(context));
         producer.process(new DefaultExchange(context));
 

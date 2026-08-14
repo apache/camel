@@ -22,22 +22,22 @@ import com.alicloud.openservices.tablestore.model.GetRowRequest;
 import com.alicloud.openservices.tablestore.model.PutRowRequest;
 import com.alicloud.openservices.tablestore.model.UpdateRowRequest;
 import org.apache.camel.Exchange;
-import org.apache.camel.component.alibaba.ots.constants.OTSHeaders;
-import org.apache.camel.component.alibaba.ots.constants.OTSOperations;
+import org.apache.camel.component.alibaba.ots.constants.AlibabaOtsHeaders;
+import org.apache.camel.component.alibaba.ots.constants.AlibabaOtsOperations;
 import org.apache.camel.component.alibaba.ots.models.ClientConfigurations;
 import org.apache.camel.support.DefaultProducer;
 import org.apache.camel.util.ObjectHelper;
 
-public class OTSProducer extends DefaultProducer {
+public class AlibabaOtsProducer extends DefaultProducer {
 
-    public OTSProducer(OTSEndpoint endpoint) {
+    public AlibabaOtsProducer(AlibabaOtsEndpoint endpoint) {
         super(endpoint);
     }
 
     @Override
     public void process(Exchange exchange) throws Exception {
-        OTSEndpoint endpoint = getEndpoint();
-        ClientConfigurations configuration = OTSUtils.createClientConfigurations(endpoint, exchange);
+        AlibabaOtsEndpoint endpoint = getEndpoint();
+        ClientConfigurations configuration = AlibabaOtsUtils.createClientConfigurations(endpoint, exchange);
 
         if (ObjectHelper.isEmpty(configuration.getOperation())) {
             throw new IllegalArgumentException("Operation name not found");
@@ -46,11 +46,11 @@ public class OTSProducer extends DefaultProducer {
         SyncClient otsClient = endpoint.initClient();
 
         switch (configuration.getOperation()) {
-            case OTSOperations.PUT_ROW -> putRow(exchange, otsClient);
-            case OTSOperations.GET_ROW -> getRow(exchange, otsClient);
-            case OTSOperations.UPDATE_ROW -> updateRow(exchange, otsClient);
-            case OTSOperations.DELETE_ROW -> deleteRow(exchange, otsClient);
-            case OTSOperations.LIST_TABLES -> listTables(exchange, otsClient);
+            case AlibabaOtsOperations.PUT_ROW -> putRow(exchange, otsClient);
+            case AlibabaOtsOperations.GET_ROW -> getRow(exchange, otsClient);
+            case AlibabaOtsOperations.UPDATE_ROW -> updateRow(exchange, otsClient);
+            case AlibabaOtsOperations.DELETE_ROW -> deleteRow(exchange, otsClient);
+            case AlibabaOtsOperations.LIST_TABLES -> listTables(exchange, otsClient);
             default -> throw new UnsupportedOperationException("Unsupported operation: " + configuration.getOperation());
         }
     }
@@ -58,45 +58,45 @@ public class OTSProducer extends DefaultProducer {
     private void putRow(Exchange exchange, SyncClient otsClient) throws Exception {
         PutRowRequest request = exchange.getMessage().getMandatoryBody(PutRowRequest.class);
         var response = otsClient.putRow(request);
-        exchange.getMessage().setBody(OTSUtils.toPutRowMap(response));
+        exchange.getMessage().setBody(AlibabaOtsUtils.toPutRowMap(response));
         setResponseHeaders(exchange, response.getRequestId());
     }
 
     private void getRow(Exchange exchange, SyncClient otsClient) throws Exception {
         GetRowRequest request = exchange.getMessage().getMandatoryBody(GetRowRequest.class);
         var response = otsClient.getRow(request);
-        exchange.getMessage().setBody(OTSUtils.toGetRowMap(response));
+        exchange.getMessage().setBody(AlibabaOtsUtils.toGetRowMap(response));
         setResponseHeaders(exchange, response.getRequestId());
     }
 
     private void updateRow(Exchange exchange, SyncClient otsClient) throws Exception {
         UpdateRowRequest request = exchange.getMessage().getMandatoryBody(UpdateRowRequest.class);
         var response = otsClient.updateRow(request);
-        exchange.getMessage().setBody(OTSUtils.toUpdateRowMap(response));
+        exchange.getMessage().setBody(AlibabaOtsUtils.toUpdateRowMap(response));
         setResponseHeaders(exchange, response.getRequestId());
     }
 
     private void deleteRow(Exchange exchange, SyncClient otsClient) throws Exception {
         DeleteRowRequest request = exchange.getMessage().getMandatoryBody(DeleteRowRequest.class);
         var response = otsClient.deleteRow(request);
-        exchange.getMessage().setBody(OTSUtils.toDeleteRowMap(response));
+        exchange.getMessage().setBody(AlibabaOtsUtils.toDeleteRowMap(response));
         setResponseHeaders(exchange, response.getRequestId());
     }
 
     private void listTables(Exchange exchange, SyncClient otsClient) throws Exception {
         var response = otsClient.listTable();
-        exchange.getMessage().setBody(OTSUtils.toListTablesBody(response));
+        exchange.getMessage().setBody(AlibabaOtsUtils.toListTablesBody(response));
         setResponseHeaders(exchange, response.getRequestId());
     }
 
     private void setResponseHeaders(Exchange exchange, String requestId) {
         if (ObjectHelper.isNotEmpty(requestId)) {
-            exchange.getMessage().setHeader(OTSHeaders.REQUEST_ID, requestId);
+            exchange.getMessage().setHeader(AlibabaOtsHeaders.REQUEST_ID, requestId);
         }
     }
 
     @Override
-    public OTSEndpoint getEndpoint() {
-        return (OTSEndpoint) super.getEndpoint();
+    public AlibabaOtsEndpoint getEndpoint() {
+        return (AlibabaOtsEndpoint) super.getEndpoint();
     }
 }

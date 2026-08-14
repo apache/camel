@@ -26,7 +26,7 @@ import com.aliyun.sls20201230.models.GetLogsResponse;
 import org.apache.camel.BindToRegistry;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.component.alibaba.sls.constants.SLSHeaders;
+import org.apache.camel.component.alibaba.sls.constants.AlibabaSlsHeaders;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.junit6.CamelTestSupport;
 import org.junit.jupiter.api.Test;
@@ -91,8 +91,8 @@ class GetLogsTest extends CamelTestSupport {
         assertThat(exchange.getMessage().getBody(Map.class))
                 .containsEntry("statusCode", 200)
                 .containsEntry("body", List.of(Map.of("message", "log line")));
-        assertThat(exchange.getMessage().getHeader(SLSHeaders.STATUS_CODE)).isEqualTo(200);
-        assertThat(exchange.getMessage().getHeader(SLSHeaders.REQUEST_ID)).isEqualTo("req-456");
+        assertThat(exchange.getMessage().getHeader(AlibabaSlsHeaders.STATUS_CODE)).isEqualTo(200);
+        assertThat(exchange.getMessage().getHeader(AlibabaSlsHeaders.REQUEST_ID)).isEqualTo("req-456");
 
         verify(slsClient).getLogs(
                 eq(testConfiguration.getProperty("project")),

@@ -29,7 +29,7 @@ import com.aliyun.sls20201230.models.PutLogsResponse;
 import org.apache.camel.BindToRegistry;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.component.alibaba.sls.constants.SLSHeaders;
+import org.apache.camel.component.alibaba.sls.constants.AlibabaSlsHeaders;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.junit6.CamelTestSupport;
 import org.junit.jupiter.api.Test;
@@ -93,8 +93,8 @@ class PutLogsTest extends CamelTestSupport {
         Exchange exchange = mock.getExchanges().get(0);
         assertThat(exchange.getMessage().getBody(Map.class))
                 .containsEntry("statusCode", 200);
-        assertThat(exchange.getMessage().getHeader(SLSHeaders.STATUS_CODE)).isEqualTo(200);
-        assertThat(exchange.getMessage().getHeader(SLSHeaders.REQUEST_ID)).isEqualTo("req-123");
+        assertThat(exchange.getMessage().getHeader(AlibabaSlsHeaders.STATUS_CODE)).isEqualTo(200);
+        assertThat(exchange.getMessage().getHeader(AlibabaSlsHeaders.REQUEST_ID)).isEqualTo("req-123");
 
         verify(slsClient).putLogs(
                 eq(testConfiguration.getProperty("project")),

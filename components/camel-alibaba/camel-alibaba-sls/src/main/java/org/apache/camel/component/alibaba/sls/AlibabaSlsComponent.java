@@ -14,14 +14,21 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.alibaba.sls.constants;
+package org.apache.camel.component.alibaba.sls;
 
-public final class SLSOperations {
+import java.util.Map;
 
-    public static final String PUT_LOGS = "putLogs";
-    public static final String GET_LOGS = "getLogs";
-    public static final String LIST_LOG_STORES = "listLogStores";
+import org.apache.camel.Endpoint;
+import org.apache.camel.spi.annotations.Component;
+import org.apache.camel.support.HealthCheckComponent;
 
-    private SLSOperations() {
+@Component("alibaba-sls")
+public class AlibabaSlsComponent extends HealthCheckComponent {
+
+    @Override
+    protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
+        AlibabaSlsEndpoint endpoint = new AlibabaSlsEndpoint(uri, remaining, this);
+        setProperties(endpoint, parameters);
+        return endpoint;
     }
 }

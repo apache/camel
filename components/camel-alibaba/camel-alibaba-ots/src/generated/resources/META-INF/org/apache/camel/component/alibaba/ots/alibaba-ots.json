@@ -7,7 +7,7 @@
     "deprecated": false,
     "firstVersion": "4.23.0",
     "label": "cloud,database",
-    "javaType": "org.apache.camel.component.alibaba.ots.OTSComponent",
+    "javaType": "org.apache.camel.component.alibaba.ots.AlibabaOtsComponent",
     "supportLevel": "Preview",
     "groupId": "org.apache.camel",
     "artifactId": "camel-alibaba-ots",
@@ -30,8 +30,8 @@
     "healthCheckProducerEnabled": { "index": 3, "kind": "property", "displayName": "Health Check Producer Enabled", "group": "health", "label": "health", "required": false, "type": "boolean", "javaType": "boolean", "deprecated": false, "autowired": false, "secret": false, "defaultValue": true, "description": "Used for enabling or disabling all producer based health checks from this component. Notice: Camel has by default disabled all producer based health-checks. You can turn on producer checks globally by setting camel.health.producersEnabled=true." }
   },
   "headers": {
-    "CamelAlibabaOtsOperation": { "index": 0, "kind": "header", "displayName": "", "group": "producer", "label": "producer", "required": false, "javaType": "String", "deprecated": false, "deprecationNote": "", "autowired": false, "secret": false, "description": "Operation override", "constantName": "org.apache.camel.component.alibaba.ots.constants.OTSHeaders#OPERATION" },
-    "CamelAlibabaOtsRequestId": { "index": 1, "kind": "header", "displayName": "", "group": "producer", "label": "producer", "required": false, "javaType": "String", "deprecated": false, "deprecationNote": "", "autowired": false, "secret": false, "description": "Tablestore request id", "constantName": "org.apache.camel.component.alibaba.ots.constants.OTSHeaders#REQUEST_ID" }
+    "CamelAlibabaOtsOperation": { "index": 0, "kind": "header", "displayName": "", "group": "producer", "label": "producer", "required": false, "javaType": "String", "deprecated": false, "deprecationNote": "", "autowired": false, "secret": false, "description": "Operation override", "constantName": "org.apache.camel.component.alibaba.ots.constants.AlibabaOtsHeaders#OPERATION" },
+    "CamelAlibabaOtsRequestId": { "index": 1, "kind": "header", "displayName": "", "group": "producer", "label": "producer", "required": false, "javaType": "String", "deprecated": false, "deprecationNote": "", "autowired": false, "secret": false, "description": "Tablestore request id", "constantName": "org.apache.camel.component.alibaba.ots.constants.AlibabaOtsHeaders#REQUEST_ID" }
   },
   "properties": {
     "operation": { "index": 0, "kind": "path", "displayName": "Operation", "group": "producer", "label": "producer", "required": true, "type": "enum", "javaType": "java.lang.String", "enum": [ "putRow", "getRow", "updateRow", "deleteRow", "listTables" ], "deprecated": false, "deprecationNote": "", "autowired": false, "secret": false, "description": "Operation to perform" },

@@ -14,21 +14,18 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.alibaba.ots;
+package org.apache.camel.component.alibaba.sls.constants;
 
-import java.util.Map;
+import org.junit.jupiter.api.Test;
 
-import org.apache.camel.Endpoint;
-import org.apache.camel.spi.annotations.Component;
-import org.apache.camel.support.HealthCheckComponent;
+import static org.assertj.core.api.Assertions.assertThat;
 
-@Component("alibaba-ots")
-public class OTSComponent extends HealthCheckComponent {
+class AlibabaSlsOperationsTest {
 
-    @Override
-    protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
-        OTSEndpoint endpoint = new OTSEndpoint(uri, remaining, this);
-        setProperties(endpoint, parameters);
-        return endpoint;
+    @Test
+    void testOperationNames() {
+        assertThat(AlibabaSlsOperations.PUT_LOGS).isEqualTo("putLogs");
+        assertThat(AlibabaSlsOperations.GET_LOGS).isEqualTo("getLogs");
+        assertThat(AlibabaSlsOperations.LIST_LOG_STORES).isEqualTo("listLogStores");
     }
 }

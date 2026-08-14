@@ -27,7 +27,7 @@ import com.aliyun.sls20201230.models.ListLogStoresResponseBody;
 import org.apache.camel.BindToRegistry;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.component.alibaba.sls.constants.SLSHeaders;
+import org.apache.camel.component.alibaba.sls.constants.AlibabaSlsHeaders;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.junit6.CamelTestSupport;
 import org.junit.jupiter.api.Test;
@@ -91,8 +91,8 @@ class ListLogStoresTest extends CamelTestSupport {
                 .containsEntry("count", 2)
                 .containsEntry("total", 2)
                 .containsEntry("logstores", List.of("logstore-a", "logstore-b"));
-        assertThat(exchange.getMessage().getHeader(SLSHeaders.STATUS_CODE)).isEqualTo(200);
-        assertThat(exchange.getMessage().getHeader(SLSHeaders.REQUEST_ID)).isEqualTo("req-789");
+        assertThat(exchange.getMessage().getHeader(AlibabaSlsHeaders.STATUS_CODE)).isEqualTo(200);
+        assertThat(exchange.getMessage().getHeader(AlibabaSlsHeaders.REQUEST_ID)).isEqualTo("req-789");
 
         verify(slsClient).listLogStores(
                 eq(testConfiguration.getProperty("project")),

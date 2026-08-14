@@ -14,18 +14,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.alibaba.sls.constants;
+package org.apache.camel.component.alibaba.ots.constants;
 
-import org.junit.jupiter.api.Test;
+public final class AlibabaOtsOperations {
 
-import static org.assertj.core.api.Assertions.assertThat;
+    public static final String PUT_ROW = "putRow";
+    public static final String GET_ROW = "getRow";
+    public static final String UPDATE_ROW = "updateRow";
+    public static final String DELETE_ROW = "deleteRow";
+    public static final String LIST_TABLES = "listTables";
 
-class SLSOperationsTest {
-
-    @Test
-    void testOperationNames() {
-        assertThat(SLSOperations.PUT_LOGS).isEqualTo("putLogs");
-        assertThat(SLSOperations.GET_LOGS).isEqualTo("getLogs");
-        assertThat(SLSOperations.LIST_LOG_STORES).isEqualTo("listLogStores");
+    private AlibabaOtsOperations() {
     }
 }

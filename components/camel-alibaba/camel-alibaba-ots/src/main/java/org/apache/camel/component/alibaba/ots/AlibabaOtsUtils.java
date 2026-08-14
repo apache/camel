@@ -38,16 +38,16 @@ import com.alicloud.openservices.tablestore.model.UpdateRowResponse;
 import org.apache.camel.Exchange;
 import org.apache.camel.component.alibaba.common.OpenApiClientSupport;
 import org.apache.camel.component.alibaba.common.models.ServiceKeys;
-import org.apache.camel.component.alibaba.ots.constants.OTSProperties;
+import org.apache.camel.component.alibaba.ots.constants.AlibabaOtsProperties;
 import org.apache.camel.component.alibaba.ots.models.ClientConfigurations;
 import org.apache.camel.util.ObjectHelper;
 
-public final class OTSUtils {
+public final class AlibabaOtsUtils {
 
-    private OTSUtils() {
+    private AlibabaOtsUtils() {
     }
 
-    public static SyncClient createClient(OTSEndpoint endpoint) {
+    public static SyncClient createClient(AlibabaOtsEndpoint endpoint) {
         if (ObjectHelper.isEmpty(endpoint.getEndpoint())) {
             throw new IllegalArgumentException("Endpoint is required");
         }
@@ -82,10 +82,10 @@ public final class OTSUtils {
         throw new IllegalArgumentException("Authentication parameter 'secret key (SK)' not found");
     }
 
-    public static ClientConfigurations createClientConfigurations(OTSEndpoint endpoint, Exchange exchange) {
+    public static ClientConfigurations createClientConfigurations(AlibabaOtsEndpoint endpoint, Exchange exchange) {
         ClientConfigurations configuration = new ClientConfigurations();
         configuration.setOperation(
-                OpenApiClientSupport.resolveString(exchange, OTSProperties.OPERATION, endpoint.getOperation()));
+                OpenApiClientSupport.resolveString(exchange, AlibabaOtsProperties.OPERATION, endpoint.getOperation()));
         return configuration;
     }
 
