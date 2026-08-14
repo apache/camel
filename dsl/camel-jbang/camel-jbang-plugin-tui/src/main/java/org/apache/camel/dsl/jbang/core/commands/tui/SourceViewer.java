@@ -2416,6 +2416,8 @@ class SourceViewer {
                 .build();
         textArea.renderWithCursor(editorArea, frame.buffer(), editState, frame);
 
+        applySyntaxHighlightOverlay(frame, editorArea);
+
         // cursor line highlight
         int cursorRelRow = editState.cursorRow() - editState.scrollRow();
         if (cursorRelRow >= 0 && cursorRelRow < editorArea.height()) {
@@ -2503,6 +2505,57 @@ class SourceViewer {
         }
         if (pendingDiscard) {
             renderDiscardPopup(frame, area);
+        }
+    }
+
+    private void applySyntaxHighlightOverlay(Frame frame, Rect editorArea) {
+        if (language == SyntaxHighlighter.Language.PLAIN) {
+            return;
+        }
+        int gutterWidth = plainMode
+                ? 0
+                : Math.max(2, String.valueOf(editState.lineCount()).length()) + 2;
+        int contentStartX = editorArea.left() + gutterWidth;
+        int scrollCol = editState.scrollCol();
+        int rightEdge = editorArea.right();
+
+        for (int row = 0; row < editorArea.height(); row++) {
+            int lineIdx = editState.scrollRow() + row;
+            if (lineIdx >= editState.lineCount()) {
+                break;
+            }
+            String lineText = editState.getLine(lineIdx);
+            if (lineText.isEmpty()) {
+                continue;
+            }
+            Line highlighted = SyntaxHighlighter.highlightLine(lineText, language);
+            int screenY = editorArea.top() + row;
+            int textCol = 0;
+            for (Span span : highlighted.spans()) {
+                Style spanStyle = span.style();
+                boolean hasStyle = spanStyle != null && !Style.EMPTY.equals(spanStyle);
+                String content = span.content();
+                for (int c = 0; c < content.length(); c++) {
+                    int col = textCol + c;
+                    if (col < scrollCol) {
+                        continue;
+                    }
+                    int screenX = contentStartX + (col - scrollCol);
+                    if (screenX >= rightEdge) {
+                        break;
+                    }
+                    if (hasStyle) {
+                        dev.tamboui.buffer.Cell cell = frame.buffer().get(screenX, screenY);
+                        if (cell != null && !cell.isContinuation()) {
+                            frame.buffer().set(screenX, screenY, cell.patchStyle(spanStyle));
+                        }
+                    }
+                }
+                textCol += content.length();
+                if (contentStartX + (textCol - scrollCol) >= rightEdge) {
+                    break;
+                }
+            }
         }
     }
 
