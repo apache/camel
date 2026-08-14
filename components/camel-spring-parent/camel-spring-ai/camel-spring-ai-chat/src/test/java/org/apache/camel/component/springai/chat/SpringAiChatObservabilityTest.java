@@ -20,6 +20,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Properties;
 import java.util.concurrent.TimeUnit;
 
 import org.apache.camel.CamelContext;
@@ -110,10 +111,7 @@ class SpringAiChatObservabilityTest extends CamelTestSupport {
 
     @Test
     void shouldResolveModelFromChatClientOnlyConfiguration() throws Exception {
-        RecordingTracer chatClientTracer = new RecordingTracer();
         CamelContext chatClientContext = createCamelContext();
-        CamelContextAware.trySetCamelContext(chatClientTracer, chatClientContext);
-        chatClientTracer.init(chatClientContext);
 
         ChatModel stubModel = new StubOpenAiChatModel();
         ChatClient chatClient = ChatClient.builder(stubModel).build();
@@ -135,8 +133,8 @@ class SpringAiChatObservabilityTest extends CamelTestSupport {
             chatClientContext.createProducerTemplate().sendBody("direct:chatClientOnly", "Hello");
             mock.assertIsSatisfied(10, TimeUnit.SECONDS);
 
-            assertThat(chatClientTracer.genAiSpans()).hasSize(1);
-            Map<String, String> tags = chatClientTracer.genAiSpans().get(0).tags();
+            assertThat(tracer.genAiSpans()).hasSize(1);
+            Map<String, String> tags = tracer.genAiSpans().get(0).tags();
             assertThat(tags.get(GenAiAttributes.REQUEST_MODEL)).isEqualTo("gpt-4o");
             assertThat(tags.get(GenAiAttributes.SYSTEM)).isEqualTo("openai");
         } finally {
@@ -146,10 +144,7 @@ class SpringAiChatObservabilityTest extends CamelTestSupport {
 
     @Test
     void shouldEmitGenAiSpanForEntityConversion() throws Exception {
-        RecordingTracer entityTracer = new RecordingTracer();
         CamelContext entityContext = createCamelContext();
-        CamelContextAware.trySetCamelContext(entityTracer, entityContext);
-        entityTracer.init(entityContext);
 
         ChatModel entityModel = new EntityJsonStubOpenAiChatModel();
         SpringAiChatComponent component = new SpringAiChatComponent();
@@ -174,8 +169,8 @@ class SpringAiChatObservabilityTest extends CamelTestSupport {
             mock.assertIsSatisfied(10, TimeUnit.SECONDS);
 
             assertThat(mock.getExchanges().get(0).getMessage().getBody(Person.class).name()).isEqualTo("Alice");
-            assertThat(entityTracer.genAiSpans()).hasSize(1);
-            Map<String, String> tags = entityTracer.genAiSpans().get(0).tags();
+            assertThat(tracer.genAiSpans()).hasSize(1);
+            Map<String, String> tags = tracer.genAiSpans().get(0).tags();
             assertThat(tags.get(GenAiAttributes.REQUEST_MODEL)).isEqualTo("gpt-4o");
             assertThat(tags.get(GenAiAttributes.RESPONSE_MODEL)).isEqualTo("gpt-4o-mini");
             assertThat(tags.get(GenAiAttributes.INPUT_TOKENS)).isEqualTo("4");
@@ -187,12 +182,10 @@ class SpringAiChatObservabilityTest extends CamelTestSupport {
 
     @Test
     void shouldNotEmitGenAiSpanWhenObservabilityDisabled() throws Exception {
-        RecordingTracer disabledTracer = new RecordingTracer();
         CamelContext disabledContext = createCamelContext();
-        disabledContext.getPropertiesComponent().addInitialProperties(
-                Map.of(GenAiObservabilityProperties.ENABLED, "false"));
-        CamelContextAware.trySetCamelContext(disabledTracer, disabledContext);
-        disabledTracer.init(disabledContext);
+        Properties properties = new Properties();
+        properties.setProperty(GenAiObservabilityProperties.ENABLED, "false");
+        disabledContext.getPropertiesComponent().setOverrideProperties(properties);
 
         ChatModel stubModel = new StubOpenAiChatModel();
         SpringAiChatComponent component = new SpringAiChatComponent();
@@ -214,7 +207,7 @@ class SpringAiChatObservabilityTest extends CamelTestSupport {
             mock.expectedMessageCount(1);
             disabledContext.createProducerTemplate().sendBody("direct:disabled", "Hello");
             mock.assertIsSatisfied(10, TimeUnit.SECONDS);
-            assertThat(disabledTracer.genAiSpans()).isEmpty();
+            assertThat(tracer.genAiSpans()).isEmpty();
         } finally {
             disabledContext.stop();
         }
