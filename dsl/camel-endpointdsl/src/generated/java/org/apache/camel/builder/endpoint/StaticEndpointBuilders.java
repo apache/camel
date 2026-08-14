@@ -235,7 +235,7 @@ public class StaticEndpointBuilders {
      * @param path operation
      * @return the dsl builder
      */
-    public static EventBridgeEndpointBuilderFactory.EventBridgeEndpointBuilder alibabaEventbridge(String path) {
+    public static AlibabaEventBridgeEndpointBuilderFactory.AlibabaEventBridgeEndpointBuilder alibabaEventbridge(String path) {
         return alibabaEventbridge("alibaba-eventbridge", path);
     }
     /**
@@ -257,8 +257,8 @@ public class StaticEndpointBuilders {
      * @param path operation
      * @return the dsl builder
      */
-    public static EventBridgeEndpointBuilderFactory.EventBridgeEndpointBuilder alibabaEventbridge(String componentName, String path) {
-        return EventBridgeEndpointBuilderFactory.endpointBuilder(componentName, path);
+    public static AlibabaEventBridgeEndpointBuilderFactory.AlibabaEventBridgeEndpointBuilder alibabaEventbridge(String componentName, String path) {
+        return AlibabaEventBridgeEndpointBuilderFactory.endpointBuilder(componentName, path);
     }
     /**
      * Alibaba Function Compute (FC) (camel-alibaba-fc)

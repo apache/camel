@@ -21,7 +21,7 @@ import javax.annotation.processing.Generated;
 import org.apache.camel.Component;
 import org.apache.camel.builder.component.AbstractComponentBuilder;
 import org.apache.camel.builder.component.ComponentBuilder;
-import org.apache.camel.component.alibaba.eventbridge.EventBridgeComponent;
+import org.apache.camel.component.alibaba.eventbridge.AlibabaEventBridgeComponent;
 
 /**
  * Publish events to Alibaba Cloud EventBridge.
@@ -48,7 +48,7 @@ public interface AlibabaEventbridgeComponentBuilderFactory {
     /**
      * Builder for the Alibaba EventBridge component.
      */
-    interface AlibabaEventbridgeComponentBuilder extends ComponentBuilder<EventBridgeComponent> {
+    interface AlibabaEventbridgeComponentBuilder extends ComponentBuilder<AlibabaEventBridgeComponent> {
     
         
         /**
@@ -137,11 +137,11 @@ public interface AlibabaEventbridgeComponentBuilderFactory {
     }
 
     class AlibabaEventbridgeComponentBuilderImpl
-            extends AbstractComponentBuilder<EventBridgeComponent>
+            extends AbstractComponentBuilder<AlibabaEventBridgeComponent>
             implements AlibabaEventbridgeComponentBuilder {
         @Override
-        protected EventBridgeComponent buildConcreteComponent() {
-            return new EventBridgeComponent();
+        protected AlibabaEventBridgeComponent buildConcreteComponent() {
+            return new AlibabaEventBridgeComponent();
         }
         @Override
         protected boolean setPropertyOnComponent(
@@ -149,10 +149,10 @@ public interface AlibabaEventbridgeComponentBuilderFactory {
                 String name,
                 Object value) {
             switch (name) {
-            case "lazyStartProducer": ((EventBridgeComponent) component).setLazyStartProducer((boolean) value); return true;
-            case "autowiredEnabled": ((EventBridgeComponent) component).setAutowiredEnabled((boolean) value); return true;
-            case "healthCheckConsumerEnabled": ((EventBridgeComponent) component).setHealthCheckConsumerEnabled((boolean) value); return true;
-            case "healthCheckProducerEnabled": ((EventBridgeComponent) component).setHealthCheckProducerEnabled((boolean) value); return true;
+            case "lazyStartProducer": ((AlibabaEventBridgeComponent) component).setLazyStartProducer((boolean) value); return true;
+            case "autowiredEnabled": ((AlibabaEventBridgeComponent) component).setAutowiredEnabled((boolean) value); return true;
+            case "healthCheckConsumerEnabled": ((AlibabaEventBridgeComponent) component).setHealthCheckConsumerEnabled((boolean) value); return true;
+            case "healthCheckProducerEnabled": ((AlibabaEventBridgeComponent) component).setHealthCheckProducerEnabled((boolean) value); return true;
             default: return false;
             }
         }

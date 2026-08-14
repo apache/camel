@@ -17,11 +17,11 @@ import org.apache.camel.support.component.PropertyConfigurerSupport;
  */
 @Generated("org.apache.camel.maven.packaging.EndpointSchemaGeneratorMojo")
 @SuppressWarnings("unchecked")
-public class EventBridgeEndpointConfigurer extends PropertyConfigurerSupport implements GeneratedPropertyConfigurer, PropertyConfigurerGetter {
+public class AlibabaEventBridgeEndpointConfigurer extends PropertyConfigurerSupport implements GeneratedPropertyConfigurer, PropertyConfigurerGetter {
 
     @Override
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
-        EventBridgeEndpoint target = (EventBridgeEndpoint) obj;
+        AlibabaEventBridgeEndpoint target = (AlibabaEventBridgeEndpoint) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "accesskey":
         case "accessKey": target.setAccessKey(property(camelContext, java.lang.String.class, value)); return true;
@@ -81,7 +81,7 @@ public class EventBridgeEndpointConfigurer extends PropertyConfigurerSupport imp
 
     @Override
     public Object getOptionValue(Object obj, String name, boolean ignoreCase) {
-        EventBridgeEndpoint target = (EventBridgeEndpoint) obj;
+        AlibabaEventBridgeEndpoint target = (AlibabaEventBridgeEndpoint) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "accesskey":
         case "accessKey": return target.getAccessKey();

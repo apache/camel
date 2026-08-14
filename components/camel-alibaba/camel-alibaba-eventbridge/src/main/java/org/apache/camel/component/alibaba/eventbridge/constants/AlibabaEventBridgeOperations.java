@@ -16,10 +16,10 @@
  */
 package org.apache.camel.component.alibaba.eventbridge.constants;
 
-public final class EventBridgeOperations {
+public final class AlibabaEventBridgeOperations {
 
     public static final String PUT_EVENTS = "putEvents";
 
-    private EventBridgeOperations() {
+    private AlibabaEventBridgeOperations() {
     }
 }

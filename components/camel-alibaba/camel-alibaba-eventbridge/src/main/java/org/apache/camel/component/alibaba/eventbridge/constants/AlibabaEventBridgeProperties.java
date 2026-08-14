@@ -18,7 +18,7 @@ package org.apache.camel.component.alibaba.eventbridge.constants;
 
 import org.apache.camel.spi.Metadata;
 
-public final class EventBridgeProperties {
+public final class AlibabaEventBridgeProperties {
 
     @Metadata(label = "producer", description = "Operation to perform", javaType = "String")
     public static final String OPERATION = "CamelAlibabaEventBridgeOperation";
@@ -38,6 +38,6 @@ public final class EventBridgeProperties {
     @Metadata(label = "producer", description = "Request id returned by EventBridge", javaType = "String")
     public static final String REQUEST_ID = "CamelAlibabaEventBridgeRequestId";
 
-    private EventBridgeProperties() {
+    private AlibabaEventBridgeProperties() {
     }
 }

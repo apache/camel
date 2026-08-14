@@ -32,18 +32,18 @@ import com.aliyun.eventbridge.util.EventBuilder;
 import com.google.gson.Gson;
 import org.apache.camel.Exchange;
 import org.apache.camel.component.alibaba.common.OpenApiClientSupport;
-import org.apache.camel.component.alibaba.eventbridge.constants.EventBridgeProperties;
+import org.apache.camel.component.alibaba.eventbridge.constants.AlibabaEventBridgeProperties;
 import org.apache.camel.component.alibaba.eventbridge.models.ClientConfigurations;
 import org.apache.camel.util.ObjectHelper;
 
-public final class EventBridgeUtils {
+public final class AlibabaEventBridgeUtils {
 
     private static final Gson GSON = new Gson();
 
-    private EventBridgeUtils() {
+    private AlibabaEventBridgeUtils() {
     }
 
-    public static EventBridgeClient createClient(EventBridgeEndpoint endpoint) {
+    public static EventBridgeClient createClient(AlibabaEventBridgeEndpoint endpoint) {
         if (ObjectHelper.isEmpty(endpoint.getRegion()) && ObjectHelper.isEmpty(endpoint.getEndpoint())) {
             throw new IllegalArgumentException("Region or endpoint is required");
         }
@@ -60,18 +60,21 @@ public final class EventBridgeUtils {
         return new EventBridgeClient(config);
     }
 
-    public static ClientConfigurations createClientConfigurations(EventBridgeEndpoint endpoint, Exchange exchange) {
+    public static ClientConfigurations createClientConfigurations(AlibabaEventBridgeEndpoint endpoint, Exchange exchange) {
         ClientConfigurations configuration = new ClientConfigurations();
         configuration.setOperation(
-                OpenApiClientSupport.resolveString(exchange, EventBridgeProperties.OPERATION, endpoint.getOperation()));
+                OpenApiClientSupport.resolveString(exchange, AlibabaEventBridgeProperties.OPERATION, endpoint.getOperation()));
         configuration.setEventBusName(
-                OpenApiClientSupport.resolveString(exchange, EventBridgeProperties.EVENT_BUS_NAME, endpoint.getEventBusName()));
+                OpenApiClientSupport.resolveString(exchange, AlibabaEventBridgeProperties.EVENT_BUS_NAME,
+                        endpoint.getEventBusName()));
         configuration.setEventSource(
-                OpenApiClientSupport.resolveString(exchange, EventBridgeProperties.EVENT_SOURCE, endpoint.getEventSource()));
+                OpenApiClientSupport.resolveString(exchange, AlibabaEventBridgeProperties.EVENT_SOURCE,
+                        endpoint.getEventSource()));
         configuration.setEventType(
-                OpenApiClientSupport.resolveString(exchange, EventBridgeProperties.EVENT_TYPE, endpoint.getEventType()));
+                OpenApiClientSupport.resolveString(exchange, AlibabaEventBridgeProperties.EVENT_TYPE, endpoint.getEventType()));
         configuration.setEventSubject(
-                OpenApiClientSupport.resolveString(exchange, EventBridgeProperties.EVENT_SUBJECT, endpoint.getEventSubject()));
+                OpenApiClientSupport.resolveString(exchange, AlibabaEventBridgeProperties.EVENT_SUBJECT,
+                        endpoint.getEventSubject()));
         return configuration;
     }
 

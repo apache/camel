@@ -17,11 +17,11 @@ import org.apache.camel.support.component.PropertyConfigurerSupport;
  */
 @Generated("org.apache.camel.maven.packaging.EndpointSchemaGeneratorMojo")
 @SuppressWarnings("unchecked")
-public class EventBridgeComponentConfigurer extends PropertyConfigurerSupport implements GeneratedPropertyConfigurer, PropertyConfigurerGetter {
+public class AlibabaEventBridgeComponentConfigurer extends PropertyConfigurerSupport implements GeneratedPropertyConfigurer, PropertyConfigurerGetter {
 
     @Override
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
-        EventBridgeComponent target = (EventBridgeComponent) obj;
+        AlibabaEventBridgeComponent target = (AlibabaEventBridgeComponent) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "autowiredenabled":
         case "autowiredEnabled": target.setAutowiredEnabled(property(camelContext, boolean.class, value)); return true;
@@ -52,7 +52,7 @@ public class EventBridgeComponentConfigurer extends PropertyConfigurerSupport im
 
     @Override
     public Object getOptionValue(Object obj, String name, boolean ignoreCase) {
-        EventBridgeComponent target = (EventBridgeComponent) obj;
+        AlibabaEventBridgeComponent target = (AlibabaEventBridgeComponent) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "autowiredenabled":
         case "autowiredEnabled": return target.isAutowiredEnabled();

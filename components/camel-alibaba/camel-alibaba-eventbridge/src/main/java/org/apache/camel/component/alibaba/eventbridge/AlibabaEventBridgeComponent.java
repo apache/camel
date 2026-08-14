@@ -23,11 +23,11 @@ import org.apache.camel.spi.annotations.Component;
 import org.apache.camel.support.HealthCheckComponent;
 
 @Component("alibaba-eventbridge")
-public class EventBridgeComponent extends HealthCheckComponent {
+public class AlibabaEventBridgeComponent extends HealthCheckComponent {
 
     @Override
     protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
-        EventBridgeEndpoint endpoint = new EventBridgeEndpoint(uri, remaining, this);
+        AlibabaEventBridgeEndpoint endpoint = new AlibabaEventBridgeEndpoint(uri, remaining, this);
         setProperties(endpoint, parameters);
         return endpoint;
     }

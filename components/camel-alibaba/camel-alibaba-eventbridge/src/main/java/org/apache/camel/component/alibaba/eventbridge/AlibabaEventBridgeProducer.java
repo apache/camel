@@ -22,24 +22,24 @@ import com.aliyun.eventbridge.EventBridgeClient;
 import com.aliyun.eventbridge.models.CloudEvent;
 import com.aliyun.eventbridge.models.PutEventsResponse;
 import org.apache.camel.Exchange;
-import org.apache.camel.component.alibaba.eventbridge.constants.EventBridgeHeaders;
-import org.apache.camel.component.alibaba.eventbridge.constants.EventBridgeOperations;
+import org.apache.camel.component.alibaba.eventbridge.constants.AlibabaEventBridgeHeaders;
+import org.apache.camel.component.alibaba.eventbridge.constants.AlibabaEventBridgeOperations;
 import org.apache.camel.component.alibaba.eventbridge.models.ClientConfigurations;
 import org.apache.camel.support.DefaultProducer;
 import org.apache.camel.util.ObjectHelper;
 
-public class EventBridgeProducer extends DefaultProducer {
+public class AlibabaEventBridgeProducer extends DefaultProducer {
 
     private EventBridgeClient eventBridgeClient;
 
-    public EventBridgeProducer(EventBridgeEndpoint endpoint) {
+    public AlibabaEventBridgeProducer(AlibabaEventBridgeEndpoint endpoint) {
         super(endpoint);
     }
 
     @Override
     public void process(Exchange exchange) throws Exception {
-        EventBridgeEndpoint endpoint = getEndpoint();
-        ClientConfigurations configuration = EventBridgeUtils.createClientConfigurations(endpoint, exchange);
+        AlibabaEventBridgeEndpoint endpoint = getEndpoint();
+        ClientConfigurations configuration = AlibabaEventBridgeUtils.createClientConfigurations(endpoint, exchange);
 
         if (ObjectHelper.isEmpty(configuration.getOperation())) {
             throw new IllegalArgumentException("Operation name not found");
@@ -50,26 +50,26 @@ public class EventBridgeProducer extends DefaultProducer {
         }
 
         switch (configuration.getOperation()) {
-            case EventBridgeOperations.PUT_EVENTS -> putEvents(exchange, configuration);
+            case AlibabaEventBridgeOperations.PUT_EVENTS -> putEvents(exchange, configuration);
             default -> throw new UnsupportedOperationException("Unsupported operation: " + configuration.getOperation());
         }
     }
 
     private void putEvents(Exchange exchange, ClientConfigurations configuration) {
-        List<CloudEvent> events = EventBridgeUtils.resolveCloudEvents(exchange, configuration);
+        List<CloudEvent> events = AlibabaEventBridgeUtils.resolveCloudEvents(exchange, configuration);
         if (events.isEmpty()) {
             throw new IllegalArgumentException("At least one event is required for putEvents");
         }
 
         PutEventsResponse response = eventBridgeClient.putEvents(events);
-        exchange.getMessage().setBody(EventBridgeUtils.toPutEventsMap(response));
+        exchange.getMessage().setBody(AlibabaEventBridgeUtils.toPutEventsMap(response));
         if (ObjectHelper.isNotEmpty(response.getRequestId())) {
-            exchange.getMessage().setHeader(EventBridgeHeaders.REQUEST_ID, response.getRequestId());
+            exchange.getMessage().setHeader(AlibabaEventBridgeHeaders.REQUEST_ID, response.getRequestId());
         }
     }
 
     @Override
-    public EventBridgeEndpoint getEndpoint() {
-        return (EventBridgeEndpoint) super.getEndpoint();
+    public AlibabaEventBridgeEndpoint getEndpoint() {
+        return (AlibabaEventBridgeEndpoint) super.getEndpoint();
     }
 }

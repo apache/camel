@@ -22,7 +22,7 @@ import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.component.alibaba.common.models.ServiceKeys;
-import org.apache.camel.component.alibaba.eventbridge.constants.EventBridgeHeaders;
+import org.apache.camel.component.alibaba.eventbridge.constants.AlibabaEventBridgeHeaders;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
@@ -34,8 +34,8 @@ import org.apache.camel.support.DefaultEndpoint;
  */
 @UriEndpoint(firstVersion = "4.23.0", scheme = "alibaba-eventbridge", title = "Alibaba EventBridge",
              syntax = "alibaba-eventbridge:operation", category = { Category.CLOUD, Category.MESSAGING },
-             headersClass = EventBridgeHeaders.class, producerOnly = true)
-public class EventBridgeEndpoint extends DefaultEndpoint {
+             headersClass = AlibabaEventBridgeHeaders.class, producerOnly = true)
+public class AlibabaEventBridgeEndpoint extends DefaultEndpoint {
 
     @UriPath(description = "Operation to perform", displayName = "Operation", label = "producer",
              enums = "putEvents")
@@ -81,17 +81,17 @@ public class EventBridgeEndpoint extends DefaultEndpoint {
 
     private boolean autowiredEventBridgeClient;
 
-    public EventBridgeEndpoint() {
+    public AlibabaEventBridgeEndpoint() {
     }
 
-    public EventBridgeEndpoint(String uri, String operation, EventBridgeComponent component) {
+    public AlibabaEventBridgeEndpoint(String uri, String operation, AlibabaEventBridgeComponent component) {
         super(uri, component);
         this.operation = operation;
     }
 
     @Override
     public Producer createProducer() throws Exception {
-        return new EventBridgeProducer(this);
+        return new AlibabaEventBridgeProducer(this);
     }
 
     @Override
@@ -103,7 +103,7 @@ public class EventBridgeEndpoint extends DefaultEndpoint {
         if (eventBridgeClient != null) {
             return eventBridgeClient;
         }
-        eventBridgeClient = EventBridgeUtils.createClient(this);
+        eventBridgeClient = AlibabaEventBridgeUtils.createClient(this);
         return eventBridgeClient;
     }
 

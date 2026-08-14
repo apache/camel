@@ -89,8 +89,8 @@ public class EndpointHeaderBuilders {
      * 
      * @return the dsl builder for the headers' name.
      */
-    public static EventBridgeEndpointBuilderFactory.EventBridgeHeaderNameBuilder alibabaEventbridge() {
-        return EventBridgeEndpointBuilderFactory.EventBridgeHeaderNameBuilder.INSTANCE;
+    public static AlibabaEventBridgeEndpointBuilderFactory.AlibabaEventBridgeHeaderNameBuilder alibabaEventbridge() {
+        return AlibabaEventBridgeEndpointBuilderFactory.AlibabaEventBridgeHeaderNameBuilder.INSTANCE;
     }
     /**
      * Alibaba Function Compute (FC) (camel-alibaba-fc)
