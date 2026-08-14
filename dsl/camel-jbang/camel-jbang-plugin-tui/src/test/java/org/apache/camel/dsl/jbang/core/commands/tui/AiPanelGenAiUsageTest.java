@@ -83,11 +83,11 @@ class AiPanelGenAiUsageTest {
         assertThat(panel.spanRefreshRequested).isFalse();
 
         panel.toggleStatsViewForTesting();
-        assertThat(panel.isStatsViewForTesting()).isTrue();
+        assertThat(panel.isStatsView()).isTrue();
         assertThat(panel.spanRefreshRequested).isTrue();
 
         panel.toggleStatsViewForTesting();
-        assertThat(panel.isStatsViewForTesting()).isFalse();
+        assertThat(panel.isStatsView()).isFalse();
         assertThat(panel.spanRefreshRequested).isTrue();
     }
 
