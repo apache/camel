@@ -200,6 +200,9 @@ public class CamelInternalProcessor extends DelegateAsyncProcessor implements In
     @Override
     public void addRouteLifecycleAdvice(CamelContext camelContext, Route route, NamedRoute node) {
         addAdvice(new CamelInternalProcessor.RouteLifecycleAdvice());
+        if (route.isStreamCaching()) {
+            addAdvice(new StreamCachingAdvice(camelContext.getStreamCachingStrategy()));
+        }
         if (camelContext.isBacklogTracingStandby() || route.isBacklogTracing()) {
             addAdvice(new BacklogTracerRouteAdvice(camelContext, node));
         }
