@@ -20,7 +20,7 @@ name: SonarBuild
 on:
   pull_request:
     branches:
-      - main
+      - camel-4.22.x
     paths-ignore:
       - README.md
       - SECURITY.md
