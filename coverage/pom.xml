@@ -253,6 +253,11 @@
         </dependency>
         <dependency>
             <groupId>org.apache.camel</groupId>
+            <artifactId>camel-alibaba-sls</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.camel</groupId>
             <artifactId>camel-alibaba-ots</artifactId>
             <version>${project.version}</version>
         </dependency>

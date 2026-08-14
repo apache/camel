@@ -146,6 +146,32 @@ public class EndpointHeaderBuilders {
         return OSSEndpointBuilderFactory.OSSHeaderNameBuilder.INSTANCE;
     }
     /**
+     * Alibaba Tablestore (OTS) (camel-alibaba-ots)
+     * Perform row operations on Alibaba Cloud Tablestore (OTS).
+     * 
+     * Category: cloud,database
+     * Since: 4.23
+     * Maven coordinates: org.apache.camel:camel-alibaba-ots
+     * 
+     * @return the dsl builder for the headers' name.
+     */
+    public static OTSEndpointBuilderFactory.OTSHeaderNameBuilder alibabaOts() {
+        return OTSEndpointBuilderFactory.OTSHeaderNameBuilder.INSTANCE;
+    }
+    /**
+     * Alibaba Simple Log Service (SLS) (camel-alibaba-sls)
+     * Manage logs on Alibaba Cloud Simple Log Service (SLS).
+     * 
+     * Category: cloud,monitoring
+     * Since: 4.23
+     * Maven coordinates: org.apache.camel:camel-alibaba-sls
+     * 
+     * @return the dsl builder for the headers' name.
+     */
+    public static SLSEndpointBuilderFactory.SLSHeaderNameBuilder alibabaSls() {
+        return SLSEndpointBuilderFactory.SLSHeaderNameBuilder.INSTANCE;
+    }
+    /**
      * Alibaba Short Message Service (SMS) (camel-alibaba-sms)
      * Send SMS messages using Alibaba Cloud Short Message Service (SMS).
      * 
