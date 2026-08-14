@@ -385,7 +385,8 @@ class SourceViewer {
     }
 
     void goToLine(int lineIndex) {
-        if (lineIndex >= 0 && lineIndex < lines.size()) {
+        int maxLine = editMode ? editState.lineCount() : lines.size();
+        if (lineIndex >= 0 && lineIndex < maxLine) {
             selectedLine = lineIndex;
             pendingScroll = true;
             if (editMode) {
