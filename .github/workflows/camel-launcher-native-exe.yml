@@ -23,7 +23,7 @@ name: Camel launcher native exe build
 on:
   push:
     branches:
-      - main
+      - camel-4.22.x
     paths:
       - 'tooling/camel-exe/**'
       - 'dsl/camel-jbang/camel-launcher/**'
@@ -31,7 +31,7 @@ on:
       - '.github/workflows/camel-launcher-native-exe.yml'
   pull_request:
     branches:
-      - main
+      - camel-4.22.x
     paths:
       - 'tooling/camel-exe/**'
       - 'dsl/camel-jbang/camel-launcher/**'

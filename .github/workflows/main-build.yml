@@ -20,7 +20,7 @@ name: Main build
 on:
   push:
     branches:
-      - main
+      - camel-4.22.x
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.sha }}

@@ -19,7 +19,7 @@ name: PR CI scripts validation
 on:
   pull_request:
     branches:
-      - main
+      - camel-4.22.x
     paths:
       - '.github/actions/check-container-upgrade/**'
 
