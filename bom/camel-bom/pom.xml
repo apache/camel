@@ -108,6 +108,11 @@
       </dependency>
       <dependency>
         <groupId>org.apache.camel</groupId>
+        <artifactId>camel-alibaba-ots</artifactId>
+        <version>4.23.0-SNAPSHOT</version>
+      </dependency>
+      <dependency>
+        <groupId>org.apache.camel</groupId>
         <artifactId>camel-alibaba-sms</artifactId>
         <version>4.23.0-SNAPSHOT</version>
       </dependency>

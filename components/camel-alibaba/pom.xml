@@ -39,7 +39,9 @@
         <module>camel-alibaba-fc</module>
         <module>camel-alibaba-sms</module>
         <module>camel-alibaba-kms</module>
+        <module>camel-alibaba-sls</module>
         <module>camel-alibaba-eventbridge</module>
+        <module>camel-alibaba-ots</module>
     </modules>
 
 </project>
