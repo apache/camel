@@ -19,7 +19,7 @@ name: PR doc validation
 on:
   pull_request:
     branches:
-      - main
+      - camel-4.22.x
     paths:
       - '**.adoc'
       - 'docs/**/*'

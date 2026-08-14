@@ -20,7 +20,7 @@ name: Build and test
 on:
   pull_request:
     branches:
-      - main
+      - camel-4.22.x
     # CI-only changes don't need a full build. Use workflow_dispatch to
     # test CI changes: gh workflow run "Build and test" -f pr_number=XXXX -f pr_ref=branch-name
     paths-ignore:
@@ -90,7 +90,7 @@ jobs:
           # Scalpel needs the merge base between HEAD and the base branch.
           # The checkout is depth=1; progressively deepen: 50 → 200 → 1000 → full.
           # Scalpel is observational — fetch failures must not break the build.
-          BASE_REF="${GITHUB_BASE_REF:-main}"
+          BASE_REF="${GITHUB_BASE_REF:-camel-4.22.x}"
           for depth in 50 200 1000; do
             git fetch --deepen=$depth 2>/dev/null || true
             git fetch --no-tags --depth=$depth origin "${BASE_REF}:refs/remotes/origin/${BASE_REF}" 2>/dev/null || true
