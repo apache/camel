@@ -43,6 +43,10 @@ public final class GenAiModelResolver {
         }
         String packageName = model.getClass().getPackageName();
         if (packageName.startsWith("org.springframework.ai.")) {
+            String fromUnderlyingModel = resolveSystemFromSpringAiUnderlyingModel(model);
+            if (!UNKNOWN.equals(fromUnderlyingModel)) {
+                return fromUnderlyingModel;
+            }
             return resolveSystemFromSpringAiPackage(packageName);
         }
         return resolveSystemFromPackage(packageName);
@@ -119,14 +123,40 @@ public final class GenAiModelResolver {
         };
     }
 
+    private static String resolveSystemFromSpringAiUnderlyingModel(Object model) {
+        try {
+            Object chatModel = invokeNoArgOptional(model, "getChatModel");
+            if (chatModel != null) {
+                return resolveSystem(chatModel);
+            }
+        } catch (ReflectiveOperationException e) {
+            // ignore
+        }
+        return UNKNOWN;
+    }
+
     private static String resolveSpringAiModelName(Object model) {
         try {
-            Object options = invokeNoArg(model, "getDefaultOptions");
+            Object chatModel = invokeNoArgOptional(model, "getChatModel");
+            if (chatModel != null) {
+                String resolved = resolveModelName(chatModel);
+                if (!UNKNOWN.equals(resolved)) {
+                    return resolved;
+                }
+            }
+        } catch (ReflectiveOperationException e) {
+            // ignore
+        }
+        try {
+            Object options = invokeNoArgOptional(model, "getDefaultOptions");
             if (options == null) {
-                options = invokeNoArg(model, "getOptions");
+                options = invokeNoArgOptional(model, "getOptions");
+            }
+            if (options == null) {
+                options = invokeNoArgOptional(model, "getDefaultChatOptions");
             }
             if (options != null) {
-                Object modelName = invokeNoArg(options, "getModel");
+                Object modelName = invokeNoArgOptional(options, "getModel");
                 if (modelName != null && !modelName.toString().isBlank()) {
                     return modelName.toString();
                 }
@@ -135,6 +165,14 @@ public final class GenAiModelResolver {
             // ignore
         }
         return UNKNOWN;
+    }
+
+    private static Object invokeNoArgOptional(Object target, String methodName) throws ReflectiveOperationException {
+        try {
+            return invokeNoArg(target, methodName);
+        } catch (NoSuchMethodException e) {
+            return null;
+        }
     }
 
     private static Object invokeNoArg(Object target, String methodName) throws ReflectiveOperationException {
