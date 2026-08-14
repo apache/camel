@@ -181,6 +181,7 @@ class SourceViewer {
     private List<String> validationErrors;
     private int validationErrorScroll;
     private Map<Integer, String> inlineErrors = Collections.emptyMap();
+    private boolean editInitialScroll;
     private long lastBackgroundValidationTime;
     private String lastBackgroundValidationContent;
     private static final long BACKGROUND_VALIDATION_INTERVAL_MS = 2000;
@@ -829,6 +830,8 @@ class SourceViewer {
         for (int i = 0; i < targetRow && i < editState.lineCount() - 1; i++) {
             editState.moveCursorDown();
         }
+        editState.moveCursorToLineStart();
+        editInitialScroll = true;
         markdownModeBeforeEdit = markdownMode;
         markdownMode = false;
         quickDocEnabled = false;
@@ -2495,21 +2498,46 @@ class SourceViewer {
             editDocEntries = editQuickDocProvider.provideForLine(editLines(), editState.cursorRow());
         }
 
+        int prefixWidth = plainMode ? 0 : 3;
+        Rect textAreaRect = plainMode
+                ? editorArea
+                : new Rect(
+                        editorArea.left() + prefixWidth, editorArea.top(),
+                        editorArea.width() - prefixWidth, editorArea.height());
+
         TextArea textArea = TextArea.builder()
                 .cursorStyle(Style.EMPTY.reversed())
                 .showLineNumbers(!plainMode)
                 .lineNumberStyle(Style.EMPTY.dim())
                 .build();
-        textArea.renderWithCursor(editorArea, frame.buffer(), editState, frame);
+        // on first render, position cursor at 2/3 of viewport before TextArea renders
+        if (editInitialScroll) {
+            editInitialScroll = false;
+            int viewportH = textAreaRect.height();
+            int twoThirds = viewportH * 2 / 3;
+            int targetScroll = Math.max(0, editState.cursorRow() - twoThirds);
+            if (targetScroll > 0) {
+                editState.scrollDown(targetScroll, viewportH);
+            }
+        }
 
-        applySyntaxHighlightOverlay(frame, editorArea);
+        textArea.renderWithCursor(textAreaRect, frame.buffer(), editState, frame);
 
-        // cursor line highlight
+        applySyntaxHighlightOverlay(frame, textAreaRect);
+
+        // cursor line highlight with >> marker
         int cursorRelRow = editState.cursorRow() - editState.scrollRow();
         if (cursorRelRow >= 0 && cursorRelRow < editorArea.height()) {
             int screenY = editorArea.top() + cursorRelRow;
             Rect lineRect = new Rect(editorArea.left(), screenY, editorArea.width(), 1);
             frame.buffer().setStyle(lineRect, Style.EMPTY.bg(Theme.zebra()));
+            if (!plainMode) {
+                Style markerStyle = Theme.label().bold().bg(Theme.zebra());
+                frame.buffer().set(editorArea.left(), screenY,
+                        new dev.tamboui.buffer.Cell(">", markerStyle));
+                frame.buffer().set(editorArea.left() + 1, screenY,
+                        new dev.tamboui.buffer.Cell(">", markerStyle));
+            }
         }
 
         // scope line highlight — shows which EIP or uri: line the cursor belongs to
@@ -2540,7 +2568,7 @@ class SourceViewer {
                         Style bg = Style.EMPTY.fg(dev.tamboui.style.Color.WHITE)
                                 .bg(dev.tamboui.style.Color.rgb(0x1B, 0x4D, 0x1B));
                         int screenY = editorArea.top() + r;
-                        for (int x = editorArea.left(); x < editorArea.left() + gutterWidth; x++) {
+                        for (int x = textAreaRect.left(); x < textAreaRect.left() + gutterWidth; x++) {
                             dev.tamboui.buffer.Cell cell = frame.buffer().get(x, screenY);
                             frame.buffer().set(x, screenY,
                                     new dev.tamboui.buffer.Cell(cell.symbol(), bg));
@@ -2559,7 +2587,7 @@ class SourceViewer {
                     Style errorBg = Style.EMPTY.fg(dev.tamboui.style.Color.WHITE)
                             .bg(dev.tamboui.style.Color.rgb(0x8B, 0x00, 0x00));
                     int screenY = editorArea.top() + r;
-                    for (int x = editorArea.left(); x < editorArea.left() + gutterWidth; x++) {
+                    for (int x = textAreaRect.left(); x < textAreaRect.left() + gutterWidth; x++) {
                         dev.tamboui.buffer.Cell cell = frame.buffer().get(x, screenY);
                         frame.buffer().set(x, screenY,
                                 new dev.tamboui.buffer.Cell(cell.symbol(), errorBg));
@@ -2908,13 +2936,13 @@ class SourceViewer {
         boolean isMd = fileName.toLowerCase().endsWith(".md");
         try {
             List<String> rawLines = Files.readAllLines(filePath, StandardCharsets.UTF_8);
-            int lineNumWidth = String.valueOf(rawLines.size()).length();
+            int lineNumWidth = Math.max(2, String.valueOf(rawLines.size()).length());
             List<String> result = new ArrayList<>();
             List<JsonObject> codeLines = new ArrayList<>();
             for (int i = 0; i < rawLines.size(); i++) {
                 int lineNum = i + 1;
                 String code = rawLines.get(i);
-                result.add(String.format("%" + lineNumWidth + "d  %s", lineNum, code));
+                result.add(String.format("%" + lineNumWidth + "d |%s", lineNum, code));
                 JsonObject jo = new JsonObject();
                 jo.put("line", lineNum);
                 jo.put("code", code);
@@ -3082,15 +3110,15 @@ class SourceViewer {
                 maxLineNum = lineNum;
             }
         }
-        int lineNumWidth = String.valueOf(maxLineNum).length();
+        int lineNumWidth = Math.max(2, String.valueOf(maxLineNum).length());
         int matchIdx = -1;
         int idx = 0;
         for (JsonObject codeLine : codeLines) {
             Integer lineNum = codeLine.getInteger("line");
             String code = Jsoner.unescape(objToString(codeLine.get("code")));
             String prefix = lineNum != null
-                    ? String.format("%" + lineNumWidth + "d  ", lineNum)
-                    : String.format("%" + lineNumWidth + "s  ", "");
+                    ? String.format("%" + lineNumWidth + "d |", lineNum)
+                    : String.format("%" + lineNumWidth + "s |", "");
             result.add(prefix + code);
             if (targetLine > 0 && lineNum != null && lineNum == targetLine && matchIdx < 0) {
                 matchIdx = idx;
@@ -3342,6 +3370,10 @@ class SourceViewer {
         while (prefixEnd < raw.length() && (raw.charAt(prefixEnd) == ' ' || Character.isDigit(raw.charAt(prefixEnd)))) {
             prefixEnd++;
         }
+        // include the | separator after the line number
+        if (prefixEnd < raw.length() && raw.charAt(prefixEnd) == '|') {
+            prefixEnd++;
+        }
 
         String prefix = raw.substring(0, prefixEnd);
         String code = raw.substring(prefixEnd);
@@ -3352,7 +3384,7 @@ class SourceViewer {
         List<Span> spans = new ArrayList<>();
         Style selBg = focused ? Theme.selectionBg() : Theme.selectionBg().dim();
         if (plainMode) {
-            // strip line-number prefix (spaces, digits, 2 separator spaces) but keep code indentation
+            // strip line-number prefix (spaces, digits, space, pipe separator) but keep code indentation
             int pos = 0;
             while (pos < raw.length() && raw.charAt(pos) == ' ') {
                 pos++;
@@ -3360,8 +3392,11 @@ class SourceViewer {
             while (pos < raw.length() && Character.isDigit(raw.charAt(pos))) {
                 pos++;
             }
-            if (pos + 1 < raw.length() && raw.charAt(pos) == ' ' && raw.charAt(pos + 1) == ' ') {
-                pos += 2;
+            if (pos < raw.length() && raw.charAt(pos) == ' ') {
+                pos++;
+            }
+            if (pos < raw.length() && raw.charAt(pos) == '|') {
+                pos++;
             }
             String plainCode = raw.substring(pos);
             spans.addAll(SyntaxHighlighter.highlightLine(plainCode, language).spans());
