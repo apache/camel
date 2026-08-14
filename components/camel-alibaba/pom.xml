@@ -36,6 +36,10 @@
         <module>camel-alibaba-common</module>
         <module>camel-alibaba-oss</module>
         <module>camel-alibaba-mns</module>
+        <module>camel-alibaba-fc</module>
+        <module>camel-alibaba-sms</module>
+        <module>camel-alibaba-kms</module>
+        <module>camel-alibaba-eventbridge</module>
     </modules>
 
 </project>

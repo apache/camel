@@ -66,6 +66,12 @@
         <allegro-converter-version>0.3.0</allegro-converter-version>
         <alibabacloud-oss-version>0.4.1</alibabacloud-oss-version>
         <aliyun-sdk-mns-version>2.0.0</aliyun-sdk-mns-version>
+        <aliyun-fc-open-version>2.1.0</aliyun-fc-open-version>
+        <aliyun-dysmsapi-version>4.1.1</aliyun-dysmsapi-version>
+        <aliyun-kms-version>1.2.3</aliyun-kms-version>
+        <aliyun-eventbridge-version>5.2.2</aliyun-eventbridge-version>
+        <aliyun-eventbridge-client-version>1.2.6</aliyun-eventbridge-client-version>
+        <tea-openapi-version>0.3.8</tea-openapi-version>
         <amazon-kinesis-client-version>3.5.1</amazon-kinesis-client-version>
         <angus-mail-version>2.0.5</angus-mail-version>
         <apacheds-version>2.0.0.AM27</apacheds-version>
@@ -706,6 +712,36 @@
             <!-- NOTE: auto-generated list of components when building camel catalog -->
             <!-- camel components: START -->
             <dependency>
+                <groupId>com.aliyun</groupId>
+                <artifactId>dysmsapi20170525</artifactId>
+                <version>${aliyun-dysmsapi-version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.aliyun</groupId>
+                <artifactId>eventbridge-client</artifactId>
+                <version>${aliyun-eventbridge-client-version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.aliyun</groupId>
+                <artifactId>eventbridge20200401</artifactId>
+                <version>${aliyun-eventbridge-version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.aliyun</groupId>
+                <artifactId>fc_open20210406</artifactId>
+                <version>${aliyun-fc-open-version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.aliyun</groupId>
+                <artifactId>kms20160120</artifactId>
+                <version>${aliyun-kms-version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.aliyun</groupId>
+                <artifactId>tea-openapi</artifactId>
+                <version>${tea-openapi-version}</version>
+            </dependency>
+            <dependency>
                 <groupId>org.apache.camel</groupId>
                 <artifactId>camel-a2a</artifactId>
                 <version>${project.version}</version>
@@ -742,12 +778,32 @@
             </dependency>
             <dependency>
                 <groupId>org.apache.camel</groupId>
+                <artifactId>camel-alibaba-eventbridge</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.camel</groupId>
+                <artifactId>camel-alibaba-fc</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.camel</groupId>
+                <artifactId>camel-alibaba-kms</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.camel</groupId>
                 <artifactId>camel-alibaba-mns</artifactId>
                 <version>${project.version}</version>
             </dependency>
             <dependency>
                 <groupId>org.apache.camel</groupId>
                 <artifactId>camel-alibaba-oss</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.camel</groupId>
+                <artifactId>camel-alibaba-sms</artifactId>
                 <version>${project.version}</version>
             </dependency>
             <dependency>
