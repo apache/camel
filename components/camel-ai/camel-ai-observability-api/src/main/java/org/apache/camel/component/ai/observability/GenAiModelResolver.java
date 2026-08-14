@@ -16,73 +16,51 @@
  */
 package org.apache.camel.component.ai.observability;
 
-import dev.langchain4j.model.ModelProvider;
-import dev.langchain4j.model.chat.ChatModel;
-import dev.langchain4j.model.chat.response.ChatResponse;
-import dev.langchain4j.model.embedding.EmbeddingModel;
+import java.util.HashSet;
+import java.util.Set;
 
 /**
- * Resolves GenAI provider and model metadata from LangChain4j model beans.
+ * Resolves GenAI provider and model metadata from LangChain4j and Spring AI model beans.
+ * <p/>
+ * LangChain4j types are resolved reflectively so callers such as {@code camel-spring-ai-chat} do not require
+ * {@code langchain4j-core} on the classpath.
  */
 public final class GenAiModelResolver {
 
     private static final String UNKNOWN = "unknown";
+    private static final int MAX_MODEL_UNWRAP_DEPTH = 4;
+
+    private static final String LANGCHAIN4J_CHAT_MODEL = "dev.langchain4j.model.chat.ChatModel";
+    private static final String LANGCHAIN4J_EMBEDDING_MODEL = "dev.langchain4j.model.embedding.EmbeddingModel";
+    private static final String LANGCHAIN4J_CHAT_RESPONSE = "dev.langchain4j.model.chat.response.ChatResponse";
+
+    private static volatile Boolean langChain4jPresent;
 
     private GenAiModelResolver() {
     }
 
     public static String resolveSystem(Object model) {
-        if (model == null) {
-            return UNKNOWN;
-        }
-        if (model instanceof ChatModel chatModel) {
-            return mapProvider(chatModel.provider());
-        }
-        if (model instanceof EmbeddingModel embeddingModel) {
-            return mapProvider(embeddingModel.provider());
-        }
-        String packageName = model.getClass().getPackageName();
-        if (packageName.startsWith("org.springframework.ai.")) {
-            String fromUnderlyingModel = resolveSystemFromSpringAiUnderlyingModel(model);
-            if (!UNKNOWN.equals(fromUnderlyingModel)) {
-                return fromUnderlyingModel;
-            }
-            return resolveSystemFromSpringAiPackage(packageName);
-        }
-        return resolveSystemFromPackage(packageName);
+        return resolveSystem(model, new HashSet<>(), 0);
     }
 
     public static String resolveModelName(Object model) {
-        if (model == null) {
-            return UNKNOWN;
-        }
-        if (model instanceof ChatModel chatModel) {
-            String modelName = chatModel.defaultRequestParameters().modelName();
-            if (modelName != null && !modelName.isBlank()) {
-                return modelName;
-            }
-        }
-        if (model instanceof EmbeddingModel embeddingModel) {
-            String modelName = embeddingModel.modelName();
-            if (modelName != null && !modelName.isBlank()) {
-                return modelName;
-            }
-        }
-        if (model.getClass().getName().startsWith("org.springframework.ai.")) {
-            return resolveSpringAiModelName(model);
-        }
-        return UNKNOWN;
+        return resolveModelName(model, new HashSet<>(), 0);
     }
 
     /**
-     * Resolves the response model from a LangChain4j {@link ChatResponse}, falling back when absent.
+     * Resolves the response model from a LangChain4j or Spring AI chat response, falling back when absent.
      */
-    public static String resolveResponseModelName(ChatResponse chatResponse, String fallback) {
+    public static String resolveResponseModelName(Object chatResponse, String fallback) {
         if (chatResponse == null) {
             return fallback;
         }
-        String modelName = chatResponse.modelName();
-        return modelName != null && !modelName.isBlank() ? modelName : fallback;
+        if (isLangChain4jPresent() && isInstanceOf(chatResponse, LANGCHAIN4J_CHAT_RESPONSE)) {
+            String modelName = invokeToString(chatResponse, "modelName");
+            if (modelName != null && !modelName.isBlank()) {
+                return modelName;
+            }
+        }
+        return resolveSpringAiResponseModelName(chatResponse, fallback);
     }
 
     /**
@@ -106,28 +84,77 @@ public final class GenAiModelResolver {
         return fallback;
     }
 
-    private static String mapProvider(ModelProvider provider) {
-        if (provider == null) {
+    private static String resolveSystem(Object model, Set<Integer> visited, int depth) {
+        if (model == null || depth > MAX_MODEL_UNWRAP_DEPTH) {
             return UNKNOWN;
         }
-        return switch (provider) {
-            case OPEN_AI -> "openai";
-            case ANTHROPIC -> "anthropic";
-            case OLLAMA -> "ollama";
-            case AZURE_OPEN_AI -> "azure.ai.openai";
-            case GOOGLE_VERTEX_AI_GEMINI, GOOGLE_VERTEX_AI_ANTHROPIC -> "gcp.vertex_ai";
-            case GOOGLE_AI_GEMINI, GOOGLE_GENAI -> "google";
-            case MISTRAL_AI -> "mistral_ai";
-            case AMAZON_BEDROCK -> "aws.bedrock";
-            default -> UNKNOWN;
-        };
+        if (!markVisited(model, visited)) {
+            return UNKNOWN;
+        }
+        if (isLangChain4jPresent() && isInstanceOf(model, LANGCHAIN4J_CHAT_MODEL)) {
+            return mapLangChain4jProvider(invokeToString(model, "provider"));
+        }
+        if (isLangChain4jPresent() && isInstanceOf(model, LANGCHAIN4J_EMBEDDING_MODEL)) {
+            return mapLangChain4jProvider(invokeToString(model, "provider"));
+        }
+        if (isSpringAiType(model)) {
+            String fromUnderlyingModel = resolveSystemFromSpringAiUnderlyingModel(model, visited, depth + 1);
+            if (!UNKNOWN.equals(fromUnderlyingModel)) {
+                return fromUnderlyingModel;
+            }
+            String fromPackage = resolveSystemFromSpringAiPackage(resolveSpringAiPackageName(model));
+            if (!UNKNOWN.equals(fromPackage)) {
+                return fromPackage;
+            }
+        }
+        return resolveSystemFromPackage(model.getClass().getPackageName());
     }
 
-    private static String resolveSystemFromSpringAiUnderlyingModel(Object model) {
+    private static String resolveModelName(Object model, Set<Integer> visited, int depth) {
+        if (model == null || depth > MAX_MODEL_UNWRAP_DEPTH) {
+            return UNKNOWN;
+        }
+        if (!markVisited(model, visited)) {
+            return UNKNOWN;
+        }
+        if (isLangChain4jPresent() && isInstanceOf(model, LANGCHAIN4J_CHAT_MODEL)) {
+            String modelName = resolveLangChain4jChatModelName(model);
+            if (modelName != null && !modelName.isBlank()) {
+                return modelName;
+            }
+        }
+        if (isLangChain4jPresent() && isInstanceOf(model, LANGCHAIN4J_EMBEDDING_MODEL)) {
+            String modelName = invokeToString(model, "modelName");
+            if (modelName != null && !modelName.isBlank()) {
+                return modelName;
+            }
+        }
+        if (isSpringAiType(model)) {
+            return resolveSpringAiModelName(model, visited, depth + 1);
+        }
+        return UNKNOWN;
+    }
+
+    private static String resolveLangChain4jChatModelName(Object model) {
+        try {
+            Object parameters = invokeNoArg(model, "defaultRequestParameters");
+            if (parameters != null) {
+                Object modelName = invokeNoArgOptional(parameters, "modelName");
+                if (modelName != null && !modelName.toString().isBlank()) {
+                    return modelName.toString();
+                }
+            }
+        } catch (ReflectiveOperationException e) {
+            // ignore
+        }
+        return null;
+    }
+
+    private static String resolveSystemFromSpringAiUnderlyingModel(Object model, Set<Integer> visited, int depth) {
         try {
             Object chatModel = invokeNoArgOptional(model, "getChatModel");
-            if (chatModel != null) {
-                return resolveSystem(chatModel);
+            if (chatModel != null && chatModel != model) {
+                return resolveSystem(chatModel, visited, depth);
             }
         } catch (ReflectiveOperationException e) {
             // ignore
@@ -135,11 +162,11 @@ public final class GenAiModelResolver {
         return UNKNOWN;
     }
 
-    private static String resolveSpringAiModelName(Object model) {
+    private static String resolveSpringAiModelName(Object model, Set<Integer> visited, int depth) {
         try {
             Object chatModel = invokeNoArgOptional(model, "getChatModel");
-            if (chatModel != null) {
-                String resolved = resolveModelName(chatModel);
+            if (chatModel != null && chatModel != model) {
+                String resolved = resolveModelName(chatModel, visited, depth);
                 if (!UNKNOWN.equals(resolved)) {
                     return resolved;
                 }
@@ -167,6 +194,60 @@ public final class GenAiModelResolver {
         return UNKNOWN;
     }
 
+    private static boolean isSpringAiType(Object model) {
+        if (resolveSpringAiPackageName(model) != null) {
+            return true;
+        }
+        for (Class<?> iface : model.getClass().getInterfaces()) {
+            if (iface.getName().startsWith("org.springframework.ai.")) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private static String resolveSpringAiPackageName(Object model) {
+        String packageName = model.getClass().getPackageName();
+        if (packageName.startsWith("org.springframework.ai.")) {
+            return packageName;
+        }
+        return null;
+    }
+
+    private static boolean markVisited(Object model, Set<Integer> visited) {
+        return visited.add(System.identityHashCode(model));
+    }
+
+    private static boolean isLangChain4jPresent() {
+        if (langChain4jPresent == null) {
+            try {
+                Class.forName(LANGCHAIN4J_CHAT_MODEL, false, GenAiModelResolver.class.getClassLoader());
+                langChain4jPresent = true;
+            } catch (ClassNotFoundException e) {
+                langChain4jPresent = false;
+            }
+        }
+        return langChain4jPresent;
+    }
+
+    private static boolean isInstanceOf(Object model, String className) {
+        try {
+            Class<?> type = Class.forName(className, false, model.getClass().getClassLoader());
+            return type.isInstance(model);
+        } catch (ClassNotFoundException e) {
+            return false;
+        }
+    }
+
+    private static String invokeToString(Object target, String methodName) {
+        try {
+            Object value = invokeNoArg(target, methodName);
+            return value != null ? value.toString() : null;
+        } catch (ReflectiveOperationException e) {
+            return null;
+        }
+    }
+
     private static Object invokeNoArgOptional(Object target, String methodName) throws ReflectiveOperationException {
         try {
             return invokeNoArg(target, methodName);
@@ -176,14 +257,30 @@ public final class GenAiModelResolver {
     }
 
     private static Object invokeNoArg(Object target, String methodName) throws ReflectiveOperationException {
-        var method = target.getClass().getMethod(methodName);
-        if (!method.canAccess(target)) {
-            method.setAccessible(true);
+        return target.getClass().getMethod(methodName).invoke(target);
+    }
+
+    private static String mapLangChain4jProvider(String provider) {
+        if (provider == null || provider.isBlank()) {
+            return UNKNOWN;
         }
-        return method.invoke(target);
+        return switch (provider) {
+            case "OPEN_AI" -> "openai";
+            case "ANTHROPIC" -> "anthropic";
+            case "OLLAMA" -> "ollama";
+            case "AZURE_OPEN_AI" -> "azure.ai.openai";
+            case "GOOGLE_VERTEX_AI_GEMINI", "GOOGLE_VERTEX_AI_ANTHROPIC" -> "gcp.vertex_ai";
+            case "GOOGLE_AI_GEMINI", "GOOGLE_GENAI" -> "google";
+            case "MISTRAL_AI" -> "mistral_ai";
+            case "AMAZON_BEDROCK" -> "aws.bedrock";
+            default -> UNKNOWN;
+        };
     }
 
     private static String resolveSystemFromSpringAiPackage(String packageName) {
+        if (packageName == null) {
+            return UNKNOWN;
+        }
         if (packageName.startsWith("org.springframework.ai.openai")) {
             return "openai";
         }
@@ -207,6 +304,9 @@ public final class GenAiModelResolver {
         }
         if (packageName.startsWith("org.springframework.ai.deepseek")) {
             return "deepseek";
+        }
+        if (packageName.startsWith("org.springframework.ai.chat.client")) {
+            return UNKNOWN;
         }
         return UNKNOWN;
     }
