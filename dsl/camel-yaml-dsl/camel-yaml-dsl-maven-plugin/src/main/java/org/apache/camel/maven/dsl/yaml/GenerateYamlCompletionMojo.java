@@ -94,8 +94,8 @@ public class GenerateYamlCompletionMojo extends AbstractMojo {
             JsonNode definitions = items.get("definitions");
             JsonNode topLevelProps = items.get("properties");
 
-            // build name mappings from definitions
-            buildNameMappings(definitions);
+            // build name mappings from definitions, using YAML property names where available
+            buildNameMappings(definitions, topLevelProps);
 
             ObjectNode root = mapper.createObjectNode();
             ObjectNode nodes = mapper.createObjectNode();
@@ -145,14 +145,39 @@ public class GenerateYamlCompletionMojo extends AbstractMojo {
         }
     }
 
-    private void buildNameMappings(JsonNode definitions) {
+    private void buildNameMappings(JsonNode definitions, JsonNode topLevelProps) {
+        // build a map from FQ definition name → YAML property name from the canonical schema
+        Map<String, String> fqToYamlName = new HashMap<>();
+        collectYamlPropertyNames(fqToYamlName, definitions.get(PROCESSOR_DEFINITION));
+        if (topLevelProps != null) {
+            topLevelProps.fields().forEachRemaining(e -> {
+                String ref = resolveRefFq(e.getValue());
+                if (ref != null) {
+                    fqToYamlName.putIfAbsent(ref, e.getKey());
+                }
+            });
+        }
+
         Iterator<String> fieldNames = definitions.fieldNames();
         while (fieldNames.hasNext()) {
             String fqName = fieldNames.next();
-            String shortName = deriveShortName(fqName);
+            // prefer the YAML property name from the canonical schema over the derived class name
+            String shortName = fqToYamlName.getOrDefault(fqName, deriveShortName(fqName));
             defToNodeName.put(fqName, shortName);
             nodeNameToDef.put(shortName, fqName);
         }
+    }
+
+    private void collectYamlPropertyNames(Map<String, String> fqToYamlName, JsonNode definition) {
+        if (definition == null || !definition.has("properties")) {
+            return;
+        }
+        definition.get("properties").fields().forEachRemaining(e -> {
+            String ref = resolveRefFq(e.getValue());
+            if (ref != null) {
+                fqToYamlName.putIfAbsent(ref, e.getKey());
+            }
+        });
     }
 
     private String deriveShortName(String fqName) {
