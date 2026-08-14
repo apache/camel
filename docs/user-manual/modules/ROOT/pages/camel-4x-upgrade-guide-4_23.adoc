@@ -53,7 +53,7 @@ LangChain4j components also expose request model names on new exchange headers
 (`CamelLangChain4j*RequestModel`). The response model header (`CamelLangChain4j*ResponseModel`) is set when
 the underlying client exposes it (for example langchain4j-chat); the agent and embeddings producers omit it when
 unavailable. See
-xref:components:others:ai-observability.adoc[AI Observability] for metric names and span attributes.
+xref:next@components:others:ai-observability.adoc[AI Observability] for metric names and span attributes.
 
 === camel-archetypes
 
