@@ -180,6 +180,10 @@ class SourceViewer {
     private EndpointValidator simpleValidator;
     private List<String> validationErrors;
     private int validationErrorScroll;
+    private Map<Integer, String> inlineErrors = Collections.emptyMap();
+    private long lastBackgroundValidationTime;
+    private String lastBackgroundValidationContent;
+    private static final long BACKGROUND_VALIDATION_INTERVAL_MS = 2000;
     private final SourceEditHistory editHistory = new SourceEditHistory();
 
     private record CachedSource(
@@ -668,6 +672,10 @@ class SourceViewer {
             }
             return true;
         }
+        if (ke.isKey(KeyCode.F9) && !inlineErrors.isEmpty()) {
+            jumpToNextError();
+            return true;
+        }
         boolean yamlListBlocks = isCamelYamlFile();
         if (ke.isKey(KeyCode.UP) && ke.hasAlt() && !ke.hasShift()) {
             applyBlockEdit(YamlBlockEditor.moveBlockUp(editLines(), editState.cursorRow(), yamlListBlocks));
@@ -842,6 +850,9 @@ class SourceViewer {
         editHistory.clear();
         autocompletePopup = null;
         validationErrors = null;
+        inlineErrors = Collections.emptyMap();
+        lastBackgroundValidationTime = 0;
+        lastBackgroundValidationContent = null;
         pendingDiscard = false;
         originalEditText = null;
         lineStatuses = null;
@@ -1976,6 +1987,7 @@ class SourceViewer {
             if (!msgs.isEmpty()) {
                 validationErrors = msgs;
                 validationErrorScroll = 0;
+                inlineErrors = buildInlineErrors(msgs, content);
                 return;
             }
         } else if (validateOnSave && isPropertiesFile() && propertiesValidator != null) {
@@ -1983,9 +1995,76 @@ class SourceViewer {
             if (!msgs.isEmpty()) {
                 validationErrors = msgs;
                 validationErrorScroll = 0;
+                inlineErrors = buildInlineErrors(msgs, content);
                 return;
             }
         }
+        inlineErrors = Collections.emptyMap();
+    }
+
+    private void jumpToNextError() {
+        List<Integer> errorLines = new ArrayList<>(inlineErrors.keySet());
+        Collections.sort(errorLines);
+        int cursorRow = editState.cursorRow();
+        // find the first error line after the cursor
+        for (int line : errorLines) {
+            if (line > cursorRow) {
+                goToLine(line);
+                return;
+            }
+        }
+        // wrap around to the first error
+        if (!errorLines.isEmpty()) {
+            goToLine(errorLines.get(0));
+        }
+    }
+
+    private void runBackgroundValidation() {
+        if (!dirty || validationErrors != null) {
+            return;
+        }
+        long now = System.currentTimeMillis();
+        if (now - lastBackgroundValidationTime < BACKGROUND_VALIDATION_INTERVAL_MS) {
+            return;
+        }
+        String content = editState.text();
+        if (content.equals(lastBackgroundValidationContent)) {
+            return;
+        }
+        lastBackgroundValidationTime = now;
+        lastBackgroundValidationContent = content;
+
+        List<String> msgs = new ArrayList<>();
+        if (isCamelYamlFile()) {
+            if (endpointValidator != null) {
+                List<String> endpointErrors = endpointValidator.validate(content);
+                if (endpointErrors != null) {
+                    msgs.addAll(endpointErrors);
+                }
+            }
+            if (simpleValidator != null) {
+                List<String> simpleErrors = simpleValidator.validate(content);
+                if (simpleErrors != null) {
+                    msgs.addAll(simpleErrors);
+                }
+            }
+        } else if (isPropertiesFile() && propertiesValidator != null) {
+            msgs.addAll(validateProperties(content));
+        }
+        inlineErrors = msgs.isEmpty() ? Collections.emptyMap() : buildInlineErrors(msgs, content);
+    }
+
+    static Map<Integer, String> buildInlineErrors(List<String> errors, String content) {
+        Map<Integer, String> result = new java.util.LinkedHashMap<>();
+        java.util.regex.Pattern linePattern = java.util.regex.Pattern.compile("^Line (\\d+): (.*)");
+        for (String error : errors) {
+            java.util.regex.Matcher m = linePattern.matcher(error);
+            if (m.matches()) {
+                int lineNum = Integer.parseInt(m.group(1)) - 1;
+                result.putIfAbsent(lineNum, m.group(2));
+            }
+        }
+        return result;
     }
 
     private List<String> validateProperties(String content) {
@@ -2382,6 +2461,11 @@ class SourceViewer {
             blockBuilder.borders(Borders.ALL)
                     .title(Title.from(Line.from(titleSpans)))
                     .titleBottom(posTitle);
+            if (!inlineErrors.isEmpty()) {
+                Style errorStyle = Style.EMPTY.fg(dev.tamboui.style.Color.rgb(0xFF, 0x66, 0x66));
+                blockBuilder.title(Title.from(Line.from(
+                        Span.styled(" errors: " + inlineErrors.size() + " ", errorStyle))).right());
+            }
         }
         if (borderStyle != null) {
             blockBuilder.borderStyle(borderStyle);
@@ -2396,6 +2480,8 @@ class SourceViewer {
             renderDiffContent(frame, inner);
             return;
         }
+
+        runBackgroundValidation();
 
         // split inner area for quick doc panel at the bottom (fixed height to avoid flicker)
         List<DocEntry> editDocEntries = null;
@@ -2464,14 +2550,45 @@ class SourceViewer {
             }
         }
 
-        // quick doc panel at the bottom of the editor (fixed height)
+        // error gutter markers — red line number for lines with validation errors
+        if (!inlineErrors.isEmpty() && !plainMode) {
+            int gutterWidth = Math.max(2, String.valueOf(editState.lineCount()).length()) + 2;
+            for (int r = 0; r < editorArea.height(); r++) {
+                int lineIdx = editState.scrollRow() + r;
+                if (inlineErrors.containsKey(lineIdx)) {
+                    Style errorBg = Style.EMPTY.fg(dev.tamboui.style.Color.WHITE)
+                            .bg(dev.tamboui.style.Color.rgb(0x8B, 0x00, 0x00));
+                    int screenY = editorArea.top() + r;
+                    for (int x = editorArea.left(); x < editorArea.left() + gutterWidth; x++) {
+                        dev.tamboui.buffer.Cell cell = frame.buffer().get(x, screenY);
+                        frame.buffer().set(x, screenY,
+                                new dev.tamboui.buffer.Cell(cell.symbol(), errorBg));
+                    }
+                }
+            }
+        }
+
+        // quick doc panel at the bottom — errors take priority over doc
         if (docArea != null) {
+            String cursorError = inlineErrors.get(editState.cursorRow());
             List<Line> docLines = new ArrayList<>();
             String titleText = null;
-            if (editDocEntries != null && !editDocEntries.isEmpty()) {
+            if (cursorError != null) {
+                titleText = "Error";
+            } else if (editDocEntries != null && !editDocEntries.isEmpty()) {
                 titleText = editDocEntries.get(0).title();
             }
-            if (titleText != null) {
+            if (cursorError != null) {
+                String prefix = "─── ";
+                String suffix = " ";
+                int remaining = Math.max(0, docArea.width() - prefix.length() - titleText.length() - suffix.length());
+                Style errorDim = Style.EMPTY.fg(dev.tamboui.style.Color.rgb(0xFF, 0x66, 0x66));
+                docLines.add(Line.from(
+                        Span.styled(prefix, errorDim),
+                        Span.styled(titleText, errorDim.bold()),
+                        Span.styled(suffix + "─".repeat(remaining), errorDim)));
+                docLines.add(Line.from(Span.styled(cursorError, errorDim)));
+            } else if (titleText != null) {
                 String prefix = "─── ";
                 String suffix = " ";
                 int remaining = Math.max(0, docArea.width() - prefix.length() - titleText.length() - suffix.length());
@@ -2482,7 +2599,7 @@ class SourceViewer {
             } else {
                 docLines.add(Line.from(Span.styled("─".repeat(Math.max(1, docArea.width())), Style.EMPTY.dim())));
             }
-            if (editDocEntries != null && !editDocEntries.isEmpty()) {
+            if (cursorError == null && editDocEntries != null && !editDocEntries.isEmpty()) {
                 for (int d = 0; d < editDocEntries.size() && d < docArea.height() - 1; d++) {
                     DocEntry entry = editDocEntries.get(d);
                     Style docStyle = entry.deprecated() ? Style.EMPTY.dim().italic() : Style.EMPTY.dim();
@@ -2733,6 +2850,9 @@ class SourceViewer {
             TuiHelper.hint(spans, "Ctrl+K", "delete line");
             if (autocompleteProvider != null) {
                 TuiHelper.hint(spans, "Tab", "complete");
+            }
+            if (!inlineErrors.isEmpty()) {
+                TuiHelper.hint(spans, "F9", "next error");
             }
             TuiHelper.hint(spans, TuiIcons.HINT_SCROLL, "move");
             return;
