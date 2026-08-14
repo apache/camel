@@ -19,6 +19,8 @@ package org.apache.camel.dsl.yaml.common;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
@@ -107,15 +109,17 @@ public class DefaultYamlDeserializerResolverProvider implements YamlDeserializer
         return uncommentedLine.trim();
     }
 
-    private Set<URL> findResolverResources(CamelContext camelContext) {
-        Set<URL> resolverResources = new LinkedHashSet<>();
+    private List<URL> findResolverResources(CamelContext camelContext) {
+        // Use URI for deduplication — URL.hashCode()/equals() trigger DNS resolution
+        Set<URI> seen = new LinkedHashSet<>();
+        List<URL> resolverResources = new ArrayList<>();
 
         try {
-            addResolverResources(resolverResources,
+            addResolverResources(seen, resolverResources,
                     camelContext.getClassResolver().loadAllResourcesAsURL(YamlDeserializerResolver.RESOURCE_PATH));
-            addResolverResources(resolverResources, camelContext.getApplicationContextClassLoader());
+            addResolverResources(seen, resolverResources, camelContext.getApplicationContextClassLoader());
             for (ClassLoader classLoader : camelContext.getClassResolver().getClassLoaders()) {
-                addResolverResources(resolverResources, classLoader);
+                addResolverResources(seen, resolverResources, classLoader);
             }
         } catch (IOException e) {
             throw new YamlDeserializationException(
@@ -125,16 +129,28 @@ public class DefaultYamlDeserializerResolverProvider implements YamlDeserializer
         return resolverResources;
     }
 
-    private static void addResolverResources(Set<URL> resolverResources, ClassLoader classLoader) throws IOException {
+    private static void addResolverResources(Set<URI> seen, List<URL> resolverResources, ClassLoader classLoader)
+            throws IOException {
         if (classLoader != null) {
-            addResolverResources(resolverResources, classLoader.getResources(YamlDeserializerResolver.RESOURCE_PATH));
+            addResolverResources(seen, resolverResources,
+                    classLoader.getResources(YamlDeserializerResolver.RESOURCE_PATH));
         }
     }
 
-    private static void addResolverResources(Set<URL> resolverResources, Enumeration<URL> resources) {
+    private static void addResolverResources(Set<URI> seen, List<URL> resolverResources, Enumeration<URL> resources) {
         if (resources != null) {
             while (resources.hasMoreElements()) {
-                resolverResources.add(resources.nextElement());
+                URL url = resources.nextElement();
+                try {
+                    if (seen.add(url.toURI())) {
+                        resolverResources.add(url);
+                    }
+                } catch (URISyntaxException e) {
+                    // URI conversion failed — fall back to string comparison
+                    if (seen.add(URI.create(url.toExternalForm()))) {
+                        resolverResources.add(url);
+                    }
+                }
             }
         }
     }
