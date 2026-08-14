@@ -1,0 +1,73 @@
+= Alibaba Tablestore (OTS) Component
+:doctitle: Alibaba Tablestore (OTS)
+:shortname: alibaba-ots
+:artifactid: camel-alibaba-ots
+:description: Perform row operations on Alibaba Cloud Tablestore (OTS).
+:since: 4.23
+:supportlevel: Preview
+:tabs-sync-option:
+:component-header: Only producer is supported
+//Manually maintained attributes
+:group: Alibaba Cloud
+
+*Since Camel {since}*
+
+*{component-header}*
+
+The Alibaba Cloud Tablestore (OTS) component allows you to perform row operations against a Tablestore instance using the native Tablestore SDK.
+
+Maven users will need to add the following dependency to their `pom.xml`
+for this component:
+
+[source,xml]
+----
+<dependency>
+    <groupId>org.apache.camel</groupId>
+    <artifactId>camel-alibaba-ots</artifactId>
+    <version>x.x.x</version>
+    <!-- use the same version as your Camel core version -->
+</dependency>
+----
+
+== URI format
+
+[source]
+----
+alibaba-ots:operation[?options]
+----
+
+// component options: START
+include::partial$component-configure-options.adoc[]
+include::partial$component-endpoint-options.adoc[]
+include::partial$component-endpoint-headers.adoc[]
+// component options: END
+
+== Usage
+
+=== Operations
+
+The component supports the following operations:
+
+* `putRow` - insert a row (producer)
+* `getRow` - read a row (producer)
+* `updateRow` - update a row (producer)
+* `deleteRow` - delete a row (producer)
+* `listTables` - list tables in the instance (producer)
+
+For row operations, the exchange body must be the corresponding Tablestore SDK request type (`PutRowRequest`, `GetRowRequest`, `UpdateRowRequest`, or `DeleteRowRequest`). The `listTables` operation does not require a message body.
+
+=== Producer example
+
+[source,java]
+----
+from("direct:start")
+    .process(exchange -> {
+        PutRowRequest request = new PutRowRequest(new RowPutChange("my-table", primaryKey));
+        exchange.getMessage().setBody(request);
+    })
+    .to("alibaba-ots:putRow?endpoint=https://my-instance.cn-hangzhou.ots.aliyuncs.com&instanceName=my-instance&accessKey=RAW(accessKey)&secretKey=RAW(secretKey)");
+----
+
+== Examples
+
+For more examples, see the unit tests in the `camel-alibaba-ots` module.

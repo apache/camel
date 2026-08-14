@@ -431,6 +431,94 @@ public class StaticEndpointBuilders {
         return OSSEndpointBuilderFactory.endpointBuilder(componentName, path);
     }
     /**
+     * Alibaba Tablestore (OTS) (camel-alibaba-ots)
+     * Perform row operations on Alibaba Cloud Tablestore (OTS).
+     * 
+     * Category: cloud,database
+     * Since: 4.23
+     * Maven coordinates: org.apache.camel:camel-alibaba-ots
+     * 
+     * Syntax: <code>alibaba-ots:operation</code>
+     * 
+     * Path parameter: operation (required)
+     * Operation to perform
+     * There are 5 enums and the value can be one of: putRow, getRow, updateRow,
+     * deleteRow, listTables
+     * 
+     * @param path operation
+     * @return the dsl builder
+     */
+    public static OTSEndpointBuilderFactory.OTSEndpointBuilder alibabaOts(String path) {
+        return alibabaOts("alibaba-ots", path);
+    }
+    /**
+     * Alibaba Tablestore (OTS) (camel-alibaba-ots)
+     * Perform row operations on Alibaba Cloud Tablestore (OTS).
+     * 
+     * Category: cloud,database
+     * Since: 4.23
+     * Maven coordinates: org.apache.camel:camel-alibaba-ots
+     * 
+     * Syntax: <code>alibaba-ots:operation</code>
+     * 
+     * Path parameter: operation (required)
+     * Operation to perform
+     * There are 5 enums and the value can be one of: putRow, getRow, updateRow,
+     * deleteRow, listTables
+     * 
+     * @param componentName to use a custom component name for the endpoint
+     * instead of the default name
+     * @param path operation
+     * @return the dsl builder
+     */
+    public static OTSEndpointBuilderFactory.OTSEndpointBuilder alibabaOts(String componentName, String path) {
+        return OTSEndpointBuilderFactory.endpointBuilder(componentName, path);
+    }
+    /**
+     * Alibaba Simple Log Service (SLS) (camel-alibaba-sls)
+     * Manage logs on Alibaba Cloud Simple Log Service (SLS).
+     * 
+     * Category: cloud,monitoring
+     * Since: 4.23
+     * Maven coordinates: org.apache.camel:camel-alibaba-sls
+     * 
+     * Syntax: <code>alibaba-sls:operation</code>
+     * 
+     * Path parameter: operation (required)
+     * Operation to perform
+     * There are 3 enums and the value can be one of: putLogs, getLogs,
+     * listLogStores
+     * 
+     * @param path operation
+     * @return the dsl builder
+     */
+    public static SLSEndpointBuilderFactory.SLSEndpointBuilder alibabaSls(String path) {
+        return alibabaSls("alibaba-sls", path);
+    }
+    /**
+     * Alibaba Simple Log Service (SLS) (camel-alibaba-sls)
+     * Manage logs on Alibaba Cloud Simple Log Service (SLS).
+     * 
+     * Category: cloud,monitoring
+     * Since: 4.23
+     * Maven coordinates: org.apache.camel:camel-alibaba-sls
+     * 
+     * Syntax: <code>alibaba-sls:operation</code>
+     * 
+     * Path parameter: operation (required)
+     * Operation to perform
+     * There are 3 enums and the value can be one of: putLogs, getLogs,
+     * listLogStores
+     * 
+     * @param componentName to use a custom component name for the endpoint
+     * instead of the default name
+     * @param path operation
+     * @return the dsl builder
+     */
+    public static SLSEndpointBuilderFactory.SLSEndpointBuilder alibabaSls(String componentName, String path) {
+        return SLSEndpointBuilderFactory.endpointBuilder(componentName, path);
+    }
+    /**
      * Alibaba Short Message Service (SMS) (camel-alibaba-sms)
      * Send SMS messages using Alibaba Cloud Short Message Service (SMS).
      * 
