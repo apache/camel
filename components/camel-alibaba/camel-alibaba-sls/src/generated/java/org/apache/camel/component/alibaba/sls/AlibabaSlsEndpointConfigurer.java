@@ -17,11 +17,11 @@ import org.apache.camel.support.component.PropertyConfigurerSupport;
  */
 @Generated("org.apache.camel.maven.packaging.EndpointSchemaGeneratorMojo")
 @SuppressWarnings("unchecked")
-public class SLSEndpointConfigurer extends PropertyConfigurerSupport implements GeneratedPropertyConfigurer, PropertyConfigurerGetter {
+public class AlibabaSlsEndpointConfigurer extends PropertyConfigurerSupport implements GeneratedPropertyConfigurer, PropertyConfigurerGetter {
 
     @Override
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
-        SLSEndpoint target = (SLSEndpoint) obj;
+        AlibabaSlsEndpoint target = (AlibabaSlsEndpoint) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "accesskey":
         case "accessKey": target.setAccessKey(property(camelContext, java.lang.String.class, value)); return true;
@@ -85,7 +85,7 @@ public class SLSEndpointConfigurer extends PropertyConfigurerSupport implements 
 
     @Override
     public Object getOptionValue(Object obj, String name, boolean ignoreCase) {
-        SLSEndpoint target = (SLSEndpoint) obj;
+        AlibabaSlsEndpoint target = (AlibabaSlsEndpoint) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "accesskey":
         case "accessKey": return target.getAccessKey();

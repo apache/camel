@@ -18,7 +18,7 @@ package org.apache.camel.component.alibaba.sls.constants;
 
 import org.apache.camel.spi.Metadata;
 
-public final class SLSProperties {
+public final class AlibabaSlsProperties {
 
     @Metadata(label = "producer", description = "Operation to perform", javaType = "String")
     public static final String OPERATION = "CamelAlibabaSlsOperation";
@@ -65,6 +65,6 @@ public final class SLSProperties {
     @Metadata(label = "producer", description = "Request id returned by SLS", javaType = "String")
     public static final String REQUEST_ID = "CamelAlibabaSlsRequestId";
 
-    private SLSProperties() {
+    private AlibabaSlsProperties() {
     }
 }

@@ -24,11 +24,11 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 
-class OTSEndpointTest {
+class AlibabaOtsEndpointTest {
 
     @Test
     void initClientReturnsCachedInstance() throws Exception {
-        OTSEndpoint endpoint = new OTSEndpoint();
+        AlibabaOtsEndpoint endpoint = new AlibabaOtsEndpoint();
         endpoint.setAccessKey("ak");
         endpoint.setSecretKey("sk");
         endpoint.setEndpoint("https://test-instance.cn-hangzhou.ots.aliyuncs.com");
@@ -43,7 +43,7 @@ class OTSEndpointTest {
 
     @Test
     void doStopSkipsShutdownForAutowiredClient() throws Exception {
-        OTSEndpoint endpoint = new OTSEndpoint();
+        AlibabaOtsEndpoint endpoint = new AlibabaOtsEndpoint();
         SyncClient client = mock(SyncClient.class);
         endpoint.setOtsClient(client);
 
@@ -54,14 +54,14 @@ class OTSEndpointTest {
 
     @Test
     void doStopShutsDownOwnedClient() throws Exception {
-        OTSEndpoint endpoint = new OTSEndpoint();
+        AlibabaOtsEndpoint endpoint = new AlibabaOtsEndpoint();
         SyncClient client = mock(SyncClient.class);
 
-        var clientField = OTSEndpoint.class.getDeclaredField("otsClient");
+        var clientField = AlibabaOtsEndpoint.class.getDeclaredField("otsClient");
         clientField.setAccessible(true);
         clientField.set(endpoint, client);
 
-        var autowiredField = OTSEndpoint.class.getDeclaredField("autowiredOtsClient");
+        var autowiredField = AlibabaOtsEndpoint.class.getDeclaredField("autowiredOtsClient");
         autowiredField.setAccessible(true);
         autowiredField.setBoolean(endpoint, false);
 

@@ -29,11 +29,11 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-class OTSProducerTest extends CamelTestSupport {
+class AlibabaOtsProducerTest extends CamelTestSupport {
 
     @Test
     void processReinitializesClientFromEndpointOnEachExchange() throws Exception {
-        OTSEndpoint endpoint = mock(OTSEndpoint.class);
+        AlibabaOtsEndpoint endpoint = mock(AlibabaOtsEndpoint.class);
         when(endpoint.getOperation()).thenReturn("listTables");
         when(endpoint.getCamelContext()).thenReturn(context);
 
@@ -46,7 +46,7 @@ class OTSProducerTest extends CamelTestSupport {
         when(firstClient.listTable()).thenReturn(response);
         when(secondClient.listTable()).thenReturn(response);
 
-        OTSProducer producer = new OTSProducer(endpoint);
+        AlibabaOtsProducer producer = new AlibabaOtsProducer(endpoint);
         producer.process(new DefaultExchange(context));
         producer.process(new DefaultExchange(context));
 

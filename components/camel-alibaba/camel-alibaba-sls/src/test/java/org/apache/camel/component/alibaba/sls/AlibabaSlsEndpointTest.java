@@ -22,11 +22,11 @@ import org.junit.jupiter.api.Test;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.mock;
 
-class SLSEndpointTest {
+class AlibabaSlsEndpointTest {
 
     @Test
     void doStopKeepsAutowiredClient() throws Exception {
-        SLSEndpoint endpoint = new SLSEndpoint();
+        AlibabaSlsEndpoint endpoint = new AlibabaSlsEndpoint();
         Client client = mock(Client.class);
         endpoint.setSlsClient(client);
 
@@ -37,14 +37,14 @@ class SLSEndpointTest {
 
     @Test
     void doStopClearsOwnedClient() throws Exception {
-        SLSEndpoint endpoint = new SLSEndpoint();
+        AlibabaSlsEndpoint endpoint = new AlibabaSlsEndpoint();
         Client client = mock(Client.class);
 
-        var clientField = SLSEndpoint.class.getDeclaredField("slsClient");
+        var clientField = AlibabaSlsEndpoint.class.getDeclaredField("slsClient");
         clientField.setAccessible(true);
         clientField.set(endpoint, client);
 
-        var autowiredField = SLSEndpoint.class.getDeclaredField("autowiredSlsClient");
+        var autowiredField = AlibabaSlsEndpoint.class.getDeclaredField("autowiredSlsClient");
         autowiredField.setAccessible(true);
         autowiredField.setBoolean(endpoint, false);
 

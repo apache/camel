@@ -14,16 +14,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.alibaba.ots.constants;
+package org.apache.camel.component.alibaba.sls.constants;
 
-public final class OTSOperations {
+public final class AlibabaSlsOperations {
 
-    public static final String PUT_ROW = "putRow";
-    public static final String GET_ROW = "getRow";
-    public static final String UPDATE_ROW = "updateRow";
-    public static final String DELETE_ROW = "deleteRow";
-    public static final String LIST_TABLES = "listTables";
+    public static final String PUT_LOGS = "putLogs";
+    public static final String GET_LOGS = "getLogs";
+    public static final String LIST_LOG_STORES = "listLogStores";
 
-    private OTSOperations() {
+    private AlibabaSlsOperations() {
     }
 }

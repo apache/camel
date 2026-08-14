@@ -448,7 +448,7 @@ public class StaticEndpointBuilders {
      * @param path operation
      * @return the dsl builder
      */
-    public static OTSEndpointBuilderFactory.OTSEndpointBuilder alibabaOts(String path) {
+    public static AlibabaOtsEndpointBuilderFactory.AlibabaOtsEndpointBuilder alibabaOts(String path) {
         return alibabaOts("alibaba-ots", path);
     }
     /**
@@ -471,8 +471,8 @@ public class StaticEndpointBuilders {
      * @param path operation
      * @return the dsl builder
      */
-    public static OTSEndpointBuilderFactory.OTSEndpointBuilder alibabaOts(String componentName, String path) {
-        return OTSEndpointBuilderFactory.endpointBuilder(componentName, path);
+    public static AlibabaOtsEndpointBuilderFactory.AlibabaOtsEndpointBuilder alibabaOts(String componentName, String path) {
+        return AlibabaOtsEndpointBuilderFactory.endpointBuilder(componentName, path);
     }
     /**
      * Alibaba Simple Log Service (SLS) (camel-alibaba-sls)
@@ -492,7 +492,7 @@ public class StaticEndpointBuilders {
      * @param path operation
      * @return the dsl builder
      */
-    public static SLSEndpointBuilderFactory.SLSEndpointBuilder alibabaSls(String path) {
+    public static AlibabaSlsEndpointBuilderFactory.AlibabaSlsEndpointBuilder alibabaSls(String path) {
         return alibabaSls("alibaba-sls", path);
     }
     /**
@@ -515,8 +515,8 @@ public class StaticEndpointBuilders {
      * @param path operation
      * @return the dsl builder
      */
-    public static SLSEndpointBuilderFactory.SLSEndpointBuilder alibabaSls(String componentName, String path) {
-        return SLSEndpointBuilderFactory.endpointBuilder(componentName, path);
+    public static AlibabaSlsEndpointBuilderFactory.AlibabaSlsEndpointBuilder alibabaSls(String componentName, String path) {
+        return AlibabaSlsEndpointBuilderFactory.endpointBuilder(componentName, path);
     }
     /**
      * Alibaba Short Message Service (SMS) (camel-alibaba-sms)

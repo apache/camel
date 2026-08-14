@@ -16,16 +16,18 @@
  */
 package org.apache.camel.component.alibaba.ots.constants;
 
-import org.apache.camel.spi.Metadata;
+import org.junit.jupiter.api.Test;
 
-public final class OTSHeaders {
+import static org.assertj.core.api.Assertions.assertThat;
 
-    @Metadata(label = "producer", description = "Operation override", javaType = "String")
-    public static final String OPERATION = OTSProperties.OPERATION;
+class AlibabaOtsOperationsTest {
 
-    @Metadata(label = "producer", description = "Tablestore request id", javaType = "String")
-    public static final String REQUEST_ID = OTSProperties.REQUEST_ID;
-
-    private OTSHeaders() {
+    @Test
+    void testOperations() {
+        assertThat(AlibabaOtsOperations.PUT_ROW).isEqualTo("putRow");
+        assertThat(AlibabaOtsOperations.GET_ROW).isEqualTo("getRow");
+        assertThat(AlibabaOtsOperations.UPDATE_ROW).isEqualTo("updateRow");
+        assertThat(AlibabaOtsOperations.DELETE_ROW).isEqualTo("deleteRow");
+        assertThat(AlibabaOtsOperations.LIST_TABLES).isEqualTo("listTables");
     }
 }

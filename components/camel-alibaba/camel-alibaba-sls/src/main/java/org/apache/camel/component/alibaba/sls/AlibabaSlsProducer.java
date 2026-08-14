@@ -26,22 +26,22 @@ import com.aliyun.sls20201230.models.ListLogStoresResponse;
 import com.aliyun.sls20201230.models.PutLogsRequest;
 import com.aliyun.sls20201230.models.PutLogsResponse;
 import org.apache.camel.Exchange;
-import org.apache.camel.component.alibaba.sls.constants.SLSHeaders;
-import org.apache.camel.component.alibaba.sls.constants.SLSOperations;
+import org.apache.camel.component.alibaba.sls.constants.AlibabaSlsHeaders;
+import org.apache.camel.component.alibaba.sls.constants.AlibabaSlsOperations;
 import org.apache.camel.component.alibaba.sls.models.ClientConfigurations;
 import org.apache.camel.support.DefaultProducer;
 import org.apache.camel.util.ObjectHelper;
 
-public class SLSProducer extends DefaultProducer {
+public class AlibabaSlsProducer extends DefaultProducer {
 
-    public SLSProducer(SLSEndpoint endpoint) {
+    public AlibabaSlsProducer(AlibabaSlsEndpoint endpoint) {
         super(endpoint);
     }
 
     @Override
     public void process(Exchange exchange) throws Exception {
-        SLSEndpoint endpoint = getEndpoint();
-        ClientConfigurations configuration = SLSUtils.createClientConfigurations(endpoint, exchange);
+        AlibabaSlsEndpoint endpoint = getEndpoint();
+        ClientConfigurations configuration = AlibabaSlsUtils.createClientConfigurations(endpoint, exchange);
 
         if (ObjectHelper.isEmpty(configuration.getOperation())) {
             throw new IllegalArgumentException("Operation name not found");
@@ -50,9 +50,9 @@ public class SLSProducer extends DefaultProducer {
         Client slsClient = endpoint.initClient();
 
         switch (configuration.getOperation()) {
-            case SLSOperations.PUT_LOGS -> putLogs(exchange, configuration, slsClient);
-            case SLSOperations.GET_LOGS -> getLogs(exchange, configuration, slsClient);
-            case SLSOperations.LIST_LOG_STORES -> listLogStores(exchange, configuration, slsClient);
+            case AlibabaSlsOperations.PUT_LOGS -> putLogs(exchange, configuration, slsClient);
+            case AlibabaSlsOperations.GET_LOGS -> getLogs(exchange, configuration, slsClient);
+            case AlibabaSlsOperations.LIST_LOG_STORES -> listLogStores(exchange, configuration, slsClient);
             default -> throw new UnsupportedOperationException("Unsupported operation: " + configuration.getOperation());
         }
     }
@@ -60,36 +60,36 @@ public class SLSProducer extends DefaultProducer {
     private void putLogs(Exchange exchange, ClientConfigurations configuration, Client slsClient) throws Exception {
         validateProjectAndLogStore(configuration);
 
-        PutLogsRequest request = SLSUtils.resolvePutLogsRequest(exchange);
+        PutLogsRequest request = AlibabaSlsUtils.resolvePutLogsRequest(exchange);
         PutLogsResponse response = slsClient.putLogs(
                 configuration.getProject(),
                 configuration.getLogStoreName(),
                 request);
 
-        exchange.getMessage().setBody(SLSUtils.toPutLogsMap(response));
+        exchange.getMessage().setBody(AlibabaSlsUtils.toPutLogsMap(response));
         setResponseHeaders(exchange, response.getStatusCode(), response.getHeaders());
     }
 
     private void getLogs(Exchange exchange, ClientConfigurations configuration, Client slsClient) throws Exception {
         validateProjectAndLogStore(configuration);
 
-        GetLogsRequest request = SLSUtils.buildGetLogsRequest(configuration);
+        GetLogsRequest request = AlibabaSlsUtils.buildGetLogsRequest(configuration);
         GetLogsResponse response = slsClient.getLogs(
                 configuration.getProject(),
                 configuration.getLogStoreName(),
                 request);
 
-        exchange.getMessage().setBody(SLSUtils.toGetLogsMap(response));
+        exchange.getMessage().setBody(AlibabaSlsUtils.toGetLogsMap(response));
         setResponseHeaders(exchange, response.getStatusCode(), response.getHeaders());
     }
 
     private void listLogStores(Exchange exchange, ClientConfigurations configuration, Client slsClient) throws Exception {
         validateProject(configuration);
 
-        ListLogStoresRequest request = SLSUtils.buildListLogStoresRequest(configuration);
+        ListLogStoresRequest request = AlibabaSlsUtils.buildListLogStoresRequest(configuration);
         ListLogStoresResponse response = slsClient.listLogStores(configuration.getProject(), request);
 
-        exchange.getMessage().setBody(SLSUtils.toListLogStoresMap(response));
+        exchange.getMessage().setBody(AlibabaSlsUtils.toListLogStoresMap(response));
         setResponseHeaders(exchange, response.getStatusCode(), response.getHeaders());
     }
 
@@ -107,16 +107,16 @@ public class SLSProducer extends DefaultProducer {
 
     private void setResponseHeaders(Exchange exchange, Integer statusCode, Map<String, String> headers) {
         if (statusCode != null) {
-            exchange.getMessage().setHeader(SLSHeaders.STATUS_CODE, statusCode);
+            exchange.getMessage().setHeader(AlibabaSlsHeaders.STATUS_CODE, statusCode);
         }
-        String requestId = SLSUtils.extractRequestId(headers);
+        String requestId = AlibabaSlsUtils.extractRequestId(headers);
         if (ObjectHelper.isNotEmpty(requestId)) {
-            exchange.getMessage().setHeader(SLSHeaders.REQUEST_ID, requestId);
+            exchange.getMessage().setHeader(AlibabaSlsHeaders.REQUEST_ID, requestId);
         }
     }
 
     @Override
-    public SLSEndpoint getEndpoint() {
-        return (SLSEndpoint) super.getEndpoint();
+    public AlibabaSlsEndpoint getEndpoint() {
+        return (AlibabaSlsEndpoint) super.getEndpoint();
     }
 }

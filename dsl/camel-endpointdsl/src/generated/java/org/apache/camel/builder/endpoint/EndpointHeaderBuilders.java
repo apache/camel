@@ -155,8 +155,8 @@ public class EndpointHeaderBuilders {
      * 
      * @return the dsl builder for the headers' name.
      */
-    public static OTSEndpointBuilderFactory.OTSHeaderNameBuilder alibabaOts() {
-        return OTSEndpointBuilderFactory.OTSHeaderNameBuilder.INSTANCE;
+    public static AlibabaOtsEndpointBuilderFactory.AlibabaOtsHeaderNameBuilder alibabaOts() {
+        return AlibabaOtsEndpointBuilderFactory.AlibabaOtsHeaderNameBuilder.INSTANCE;
     }
     /**
      * Alibaba Simple Log Service (SLS) (camel-alibaba-sls)
@@ -168,8 +168,8 @@ public class EndpointHeaderBuilders {
      * 
      * @return the dsl builder for the headers' name.
      */
-    public static SLSEndpointBuilderFactory.SLSHeaderNameBuilder alibabaSls() {
-        return SLSEndpointBuilderFactory.SLSHeaderNameBuilder.INSTANCE;
+    public static AlibabaSlsEndpointBuilderFactory.AlibabaSlsHeaderNameBuilder alibabaSls() {
+        return AlibabaSlsEndpointBuilderFactory.AlibabaSlsHeaderNameBuilder.INSTANCE;
     }
     /**
      * Alibaba Short Message Service (SMS) (camel-alibaba-sms)
