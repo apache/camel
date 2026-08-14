@@ -46,14 +46,6 @@
             <version>${project.version}</version>
         </dependency>
 
-        <!-- Required at runtime because GenAiModelResolver references LangChain4j types -->
-        <dependency>
-            <groupId>dev.langchain4j</groupId>
-            <artifactId>langchain4j-core</artifactId>
-            <version>${langchain4j-version}</version>
-            <optional>true</optional>
-        </dependency>
-
         <!-- Camel AI Tool for unified AiToolRegistry -->
         <dependency>
             <groupId>org.apache.camel</groupId>

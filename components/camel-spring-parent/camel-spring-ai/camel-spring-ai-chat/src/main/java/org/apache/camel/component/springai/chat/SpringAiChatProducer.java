@@ -85,6 +85,7 @@ public class SpringAiChatProducer extends DefaultProducer {
     private static final Logger LOG = LoggerFactory.getLogger(SpringAiChatProducer.class);
 
     private ChatClient chatClient;
+    private ChatModel observabilityChatModel;
     private SpringAiChatMcpManager mcpManager;
     private Advisor chatMemoryAdvisor;
 
@@ -103,16 +104,23 @@ public class SpringAiChatProducer extends DefaultProducer {
 
         // Initialize ChatClient
         ChatClient configuredClient = getEndpoint().getConfiguration().getChatClient();
+        ChatModel configuredChatModel = getEndpoint().getConfiguration().getChatModel();
         if (configuredClient != null) {
             // Use the provided ChatClient
             this.chatClient = configuredClient;
+            if (configuredChatModel != null) {
+                this.observabilityChatModel = configuredChatModel;
+            } else {
+                this.observabilityChatModel = extractChatModelFromClient(configuredClient);
+            }
         } else {
             // Create ChatClient from ChatModel
-            ChatModel chatModel = getEndpoint().getConfiguration().getChatModel();
+            ChatModel chatModel = configuredChatModel;
             if (chatModel == null) {
                 throw new IllegalArgumentException(
                         "Either ChatClient or ChatModel must be configured");
             }
+            this.observabilityChatModel = chatModel;
 
             ChatClient.Builder builder = ChatClient.builder(chatModel);
 
@@ -861,8 +869,13 @@ public class SpringAiChatProducer extends DefaultProducer {
         GenAiObservationContext observationContext = buildObservationContext();
         GenAiObservation observation = GenAiObservability.start(exchange, observationContext);
         try {
-            T entity = request.call().entity(entityClass);
-            observation.recordSuccess(GenAiUsage.of(null, null, null, null));
+            org.springframework.ai.chat.client.ResponseEntity<ChatResponse, T> responseEntity
+                    = request.call().responseEntity(entityClass);
+            ChatResponse chatResponse = responseEntity.response();
+            T entity = responseEntity.entity();
+            recordObservationSuccess(observation, chatResponse, observationContext.requestModel());
+            populateTokenUsage(chatResponse, exchange);
+            populateResponseMetadata(chatResponse, exchange);
             exchange.getMessage().setBody(entity);
             LOG.debug("Converted response to entity of type: {}", entityClass.getName());
         } catch (RuntimeException e) {
@@ -1221,7 +1234,6 @@ public class SpringAiChatProducer extends DefaultProducer {
         GenAiObservation observation = GenAiObservability.start(exchange, observationContext);
         try {
             ChatResponse response = request.call().chatResponse();
-            populateTokenUsage(response, exchange);
             recordObservationSuccess(observation, response, observationContext.requestModel());
             return response;
         } catch (RuntimeException e) {
@@ -1236,19 +1248,21 @@ public class SpringAiChatProducer extends DefaultProducer {
         Integer inputTokens = null;
         Integer outputTokens = null;
         String finishReason = null;
-        if (response.getMetadata() != null && response.getMetadata().getUsage() != null) {
-            var usage = response.getMetadata().getUsage();
-            inputTokens = usage.getPromptTokens();
-            outputTokens = usage.getCompletionTokens();
+        String responseModel = requestModel;
+        if (response.getMetadata() != null) {
+            if (response.getMetadata().getUsage() != null) {
+                var usage = response.getMetadata().getUsage();
+                inputTokens = usage.getPromptTokens();
+                outputTokens = usage.getCompletionTokens();
+            }
+            if (response.getMetadata().getModel() != null) {
+                responseModel = response.getMetadata().getModel();
+            }
         }
         if (response.getResult() != null && response.getResult().getMetadata() != null) {
             finishReason = response.getResult().getMetadata().getFinishReason();
         }
-        observation.recordSuccess(GenAiUsage.of(
-                inputTokens,
-                outputTokens,
-                finishReason,
-                GenAiModelResolver.resolveSpringAiResponseModelName(response, requestModel)));
+        observation.recordSuccess(GenAiUsage.of(inputTokens, outputTokens, finishReason, responseModel));
     }
 
     private GenAiObservationContext buildObservationContext() {
@@ -1263,11 +1277,26 @@ public class SpringAiChatProducer extends DefaultProducer {
     }
 
     private Object resolveObservabilityModelSource() {
+        if (observabilityChatModel != null) {
+            return observabilityChatModel;
+        }
         ChatModel chatModel = getEndpoint().getConfiguration().getChatModel();
         if (chatModel != null) {
             return chatModel;
         }
         return chatClient;
+    }
+
+    private ChatModel extractChatModelFromClient(ChatClient client) {
+        try {
+            ChatClient.ChatClientRequestSpec requestSpec = client.prompt();
+            var field = requestSpec.getClass().getDeclaredField("chatModel");
+            field.setAccessible(true);
+            return (ChatModel) field.get(requestSpec);
+        } catch (ReflectiveOperationException e) {
+            LOG.debug("Could not extract ChatModel from ChatClient for observability: {}", e.getMessage());
+            return null;
+        }
     }
 
     /**

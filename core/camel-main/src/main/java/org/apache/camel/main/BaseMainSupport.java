@@ -159,7 +159,7 @@ public abstract class BaseMainSupport extends BaseService {
             "camel.telemetryDev.", "camel.management.", "camel.mdc.", "camel.metrics.", "camel.routeTemplate",
             "camel.devConsole.", "camel.variable.", "camel.beans.", "camel.globalOptions.",
             PREFIX_SERVER, PREFIX_SSL, PREFIX_SECURITY, PREFIX_DEBUG, PREFIX_TRACE,
-            PREFIX_ROUTE_CONTROLLER, PREFIX_ERROR_REGISTRY };
+            PREFIX_ROUTE_CONTROLLER, PREFIX_ERROR_REGISTRY, PREFIX_AI_OBSERVABILITY };
 
     protected final List<MainListener> listeners = new ArrayList<>();
     protected volatile CamelContext camelContext;

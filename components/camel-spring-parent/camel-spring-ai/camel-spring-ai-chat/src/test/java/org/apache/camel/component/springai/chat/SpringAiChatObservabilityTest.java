@@ -27,6 +27,7 @@ import org.apache.camel.CamelContextAware;
 import org.apache.camel.RoutesBuilder;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.ai.observability.GenAiAttributes;
+import org.apache.camel.component.ai.observability.GenAiObservabilityProperties;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.spi.Registry;
 import org.apache.camel.telemetry.Span;
@@ -36,7 +37,10 @@ import org.apache.camel.telemetry.SpanLifecycleManager;
 import org.apache.camel.telemetry.Tracer;
 import org.apache.camel.test.junit6.CamelTestSupport;
 import org.junit.jupiter.api.Test;
+import org.springframework.ai.chat.client.ChatClient;
 import org.springframework.ai.chat.model.ChatModel;
+import org.springframework.ai.openai.EntityJsonStubOpenAiChatModel;
+import org.springframework.ai.openai.StubOpenAiChatModel;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -56,7 +60,7 @@ class SpringAiChatObservabilityTest extends CamelTestSupport {
 
     @Override
     protected void bindToRegistry(Registry registry) {
-        chatModel = new org.springframework.ai.openai.StubOpenAiChatModel();
+        chatModel = new StubOpenAiChatModel();
         registry.bind("chatModel", chatModel);
     }
 
@@ -98,8 +102,125 @@ class SpringAiChatObservabilityTest extends CamelTestSupport {
         assertThat(tags.get(GenAiAttributes.OPERATION_NAME)).isEqualTo("chat");
         assertThat(tags.get(GenAiAttributes.REQUEST_MODEL)).isEqualTo("gpt-4o");
         assertThat(tags.get(GenAiAttributes.RESPONSE_MODEL)).isEqualTo("gpt-4o-mini");
+        assertThat(tags.get(GenAiAttributes.INPUT_TOKENS)).isEqualTo("3");
+        assertThat(tags.get(GenAiAttributes.OUTPUT_TOKENS)).isEqualTo("2");
         assertThat(tags.get(GenAiAttributes.CAMEL_COMPONENT)).isEqualTo("spring-ai-chat");
         assertThat(tags.get(GenAiAttributes.SYSTEM)).isEqualTo("openai");
+    }
+
+    @Test
+    void shouldResolveModelFromChatClientOnlyConfiguration() throws Exception {
+        RecordingTracer chatClientTracer = new RecordingTracer();
+        CamelContext chatClientContext = createCamelContext();
+        CamelContextAware.trySetCamelContext(chatClientTracer, chatClientContext);
+        chatClientTracer.init(chatClientContext);
+
+        ChatModel stubModel = new StubOpenAiChatModel();
+        ChatClient chatClient = ChatClient.builder(stubModel).build();
+        chatClientContext.getRegistry().bind("chatClient", chatClient);
+
+        chatClientContext.addRoutes(new RouteBuilder() {
+            @Override
+            public void configure() {
+                from("direct:chatClientOnly")
+                        .to("spring-ai-chat:test?chatClient=#chatClient")
+                        .to("mock:chatClientResult");
+            }
+        });
+
+        chatClientContext.start();
+        try {
+            MockEndpoint mock = chatClientContext.getEndpoint("mock:chatClientResult", MockEndpoint.class);
+            mock.expectedMessageCount(1);
+            chatClientContext.createProducerTemplate().sendBody("direct:chatClientOnly", "Hello");
+            mock.assertIsSatisfied(10, TimeUnit.SECONDS);
+
+            assertThat(chatClientTracer.genAiSpans()).hasSize(1);
+            Map<String, String> tags = chatClientTracer.genAiSpans().get(0).tags();
+            assertThat(tags.get(GenAiAttributes.REQUEST_MODEL)).isEqualTo("gpt-4o");
+            assertThat(tags.get(GenAiAttributes.SYSTEM)).isEqualTo("openai");
+        } finally {
+            chatClientContext.stop();
+        }
+    }
+
+    @Test
+    void shouldEmitGenAiSpanForEntityConversion() throws Exception {
+        RecordingTracer entityTracer = new RecordingTracer();
+        CamelContext entityContext = createCamelContext();
+        CamelContextAware.trySetCamelContext(entityTracer, entityContext);
+        entityTracer.init(entityContext);
+
+        ChatModel entityModel = new EntityJsonStubOpenAiChatModel();
+        SpringAiChatComponent component = new SpringAiChatComponent();
+        component.setChatModel(entityModel);
+        entityContext.addComponent("spring-ai-chat", component);
+
+        entityContext.addRoutes(new RouteBuilder() {
+            @Override
+            public void configure() {
+                from("direct:entity")
+                        .setHeader(SpringAiChatConstants.ENTITY_CLASS, constant(Person.class))
+                        .to("spring-ai-chat:test")
+                        .to("mock:entityResult");
+            }
+        });
+
+        entityContext.start();
+        try {
+            MockEndpoint mock = entityContext.getEndpoint("mock:entityResult", MockEndpoint.class);
+            mock.expectedMessageCount(1);
+            entityContext.createProducerTemplate().sendBody("direct:entity", "Who?");
+            mock.assertIsSatisfied(10, TimeUnit.SECONDS);
+
+            assertThat(mock.getExchanges().get(0).getMessage().getBody(Person.class).name()).isEqualTo("Alice");
+            assertThat(entityTracer.genAiSpans()).hasSize(1);
+            Map<String, String> tags = entityTracer.genAiSpans().get(0).tags();
+            assertThat(tags.get(GenAiAttributes.REQUEST_MODEL)).isEqualTo("gpt-4o");
+            assertThat(tags.get(GenAiAttributes.RESPONSE_MODEL)).isEqualTo("gpt-4o-mini");
+            assertThat(tags.get(GenAiAttributes.INPUT_TOKENS)).isEqualTo("4");
+            assertThat(tags.get(GenAiAttributes.OUTPUT_TOKENS)).isEqualTo("3");
+        } finally {
+            entityContext.stop();
+        }
+    }
+
+    @Test
+    void shouldNotEmitGenAiSpanWhenObservabilityDisabled() throws Exception {
+        RecordingTracer disabledTracer = new RecordingTracer();
+        CamelContext disabledContext = createCamelContext();
+        disabledContext.getPropertiesComponent().addInitialProperties(
+                Map.of(GenAiObservabilityProperties.ENABLED, "false"));
+        CamelContextAware.trySetCamelContext(disabledTracer, disabledContext);
+        disabledTracer.init(disabledContext);
+
+        ChatModel stubModel = new StubOpenAiChatModel();
+        SpringAiChatComponent component = new SpringAiChatComponent();
+        component.setChatModel(stubModel);
+        disabledContext.addComponent("spring-ai-chat", component);
+
+        disabledContext.addRoutes(new RouteBuilder() {
+            @Override
+            public void configure() {
+                from("direct:disabled")
+                        .to("spring-ai-chat:test")
+                        .to("mock:disabledResult");
+            }
+        });
+
+        disabledContext.start();
+        try {
+            MockEndpoint mock = disabledContext.getEndpoint("mock:disabledResult", MockEndpoint.class);
+            mock.expectedMessageCount(1);
+            disabledContext.createProducerTemplate().sendBody("direct:disabled", "Hello");
+            mock.assertIsSatisfied(10, TimeUnit.SECONDS);
+            assertThat(disabledTracer.genAiSpans()).isEmpty();
+        } finally {
+            disabledContext.stop();
+        }
+    }
+
+    record Person(String name) {
     }
 
     private static final class RecordingTracer extends Tracer {
