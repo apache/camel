@@ -75,6 +75,7 @@ public class MainConfigurationProperties extends DefaultConfigurationProperties<
     private TracerConfigurationProperties tracerConfigurationProperties;
     private RouteControllerConfigurationProperties routeControllerConfigurationProperties;
     private ErrorRegistryConfigurationProperties errorRegistryConfigurationProperties;
+    private AiConfigurationProperties aiConfigurationProperties;
 
     @Override
     public void close() {
@@ -157,6 +158,10 @@ public class MainConfigurationProperties extends DefaultConfigurationProperties<
         if (errorRegistryConfigurationProperties != null) {
             errorRegistryConfigurationProperties.close();
             errorRegistryConfigurationProperties = null;
+        }
+        if (aiConfigurationProperties != null) {
+            aiConfigurationProperties.close();
+            aiConfigurationProperties = null;
         }
         if (routesBuilders != null) {
             routesBuilders.clear();
@@ -395,6 +400,23 @@ public class MainConfigurationProperties extends DefaultConfigurationProperties<
      */
     public boolean hasErrorRegistryConfiguration() {
         return errorRegistryConfigurationProperties != null;
+    }
+
+    /**
+     * To configure Camel AI features.
+     */
+    public AiConfigurationProperties ai() {
+        if (aiConfigurationProperties == null) {
+            aiConfigurationProperties = new AiConfigurationProperties(this);
+        }
+        return aiConfigurationProperties;
+    }
+
+    /**
+     * Whether there has been any Camel AI configuration specified.
+     */
+    public boolean hasAiConfiguration() {
+        return aiConfigurationProperties != null;
     }
 
     /**

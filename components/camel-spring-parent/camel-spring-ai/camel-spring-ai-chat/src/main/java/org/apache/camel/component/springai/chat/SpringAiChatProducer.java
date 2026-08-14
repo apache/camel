@@ -33,6 +33,12 @@ import org.apache.camel.Exchange;
 import org.apache.camel.InvalidPayloadException;
 import org.apache.camel.NoSuchHeaderException;
 import org.apache.camel.WrappedFile;
+import org.apache.camel.component.ai.observability.GenAiModelResolver;
+import org.apache.camel.component.ai.observability.GenAiObservability;
+import org.apache.camel.component.ai.observability.GenAiObservation;
+import org.apache.camel.component.ai.observability.GenAiObservationContext;
+import org.apache.camel.component.ai.observability.GenAiOperationName;
+import org.apache.camel.component.ai.observability.GenAiUsage;
 import org.apache.camel.component.ai.tool.AiToolParameterHelper;
 import org.apache.camel.component.ai.tool.AiToolRegistry;
 import org.apache.camel.component.ai.tool.AiToolSpec;
@@ -852,13 +858,19 @@ public class SpringAiChatProducer extends DefaultProducer {
      */
     private <T> void processEntityRequest(
             ChatClient.ChatClientRequestSpec request, Exchange exchange, Class<T> entityClass) {
-        // Execute the request and convert to entity
-        T entity = request.call().entity(entityClass);
-
-        // Set the entity as the body
-        exchange.getMessage().setBody(entity);
-
-        LOG.debug("Converted response to entity of type: {}", entityClass.getName());
+        GenAiObservationContext observationContext = buildObservationContext();
+        GenAiObservation observation = GenAiObservability.start(exchange, observationContext);
+        try {
+            T entity = request.call().entity(entityClass);
+            observation.recordSuccess(GenAiUsage.of(null, null, null, observationContext.requestModel()));
+            exchange.getMessage().setBody(entity);
+            LOG.debug("Converted response to entity of type: {}", entityClass.getName());
+        } catch (RuntimeException e) {
+            observation.recordError(e);
+            throw e;
+        } finally {
+            observation.close();
+        }
     }
 
     private StructuredOutputConverter<?> getStructuredOutputConverter(Exchange exchange) {
@@ -950,8 +962,7 @@ public class SpringAiChatProducer extends DefaultProducer {
         // Append format instructions to the request
         request.user(u -> u.text(format));
 
-        // Execute the request
-        ChatResponse response = request.call().chatResponse();
+        ChatResponse response = callWithObservability(request, exchange);
 
         // Get the raw response text
         String responseText = response.getResult().getOutput().getText();
@@ -965,8 +976,6 @@ public class SpringAiChatProducer extends DefaultProducer {
         // Also set headers
         exchange.getMessage().setHeader(SpringAiChatConstants.CHAT_RESPONSE, responseText);
         exchange.getMessage().setHeader(SpringAiChatConstants.STRUCTURED_OUTPUT, structuredOutput);
-
-        populateTokenUsage(response, exchange);
     }
 
     /**
@@ -1202,9 +1211,59 @@ public class SpringAiChatProducer extends DefaultProducer {
         } else if (converter != null) {
             processStructuredOutputRequest(request, exchange, converter);
         } else {
-            ChatResponse response = request.call().chatResponse();
+            ChatResponse response = callWithObservability(request, exchange);
             populateResponse(response, exchange);
         }
+    }
+
+    private ChatResponse callWithObservability(ChatClient.ChatClientRequestSpec request, Exchange exchange) {
+        GenAiObservationContext observationContext = buildObservationContext();
+        GenAiObservation observation = GenAiObservability.start(exchange, observationContext);
+        try {
+            ChatResponse response = request.call().chatResponse();
+            populateTokenUsage(response, exchange);
+            recordObservationSuccess(observation, response, observationContext.requestModel());
+            return response;
+        } catch (RuntimeException e) {
+            observation.recordError(e);
+            throw e;
+        } finally {
+            observation.close();
+        }
+    }
+
+    private void recordObservationSuccess(GenAiObservation observation, ChatResponse response, String requestModel) {
+        Integer inputTokens = null;
+        Integer outputTokens = null;
+        String finishReason = null;
+        if (response.getMetadata() != null && response.getMetadata().getUsage() != null) {
+            var usage = response.getMetadata().getUsage();
+            inputTokens = usage.getPromptTokens();
+            outputTokens = usage.getCompletionTokens();
+        }
+        if (response.getResult() != null && response.getResult().getMetadata() != null) {
+            finishReason = response.getResult().getMetadata().getFinishReason();
+        }
+        observation.recordSuccess(GenAiUsage.of(
+                inputTokens,
+                outputTokens,
+                finishReason,
+                GenAiModelResolver.resolveSpringAiResponseModelName(response, requestModel)));
+    }
+
+    private GenAiObservationContext buildObservationContext() {
+        ChatModel chatModel = resolveChatModel();
+        String requestModel = GenAiModelResolver.resolveModelName(chatModel);
+        return GenAiObservationContext.builder()
+                .operationName(GenAiOperationName.CHAT)
+                .system(GenAiModelResolver.resolveSystem(chatModel))
+                .requestModel(requestModel)
+                .componentScheme("spring-ai-chat")
+                .build();
+    }
+
+    private ChatModel resolveChatModel() {
+        return getEndpoint().getConfiguration().getChatModel();
     }
 
     /**

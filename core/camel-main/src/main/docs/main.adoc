@@ -756,6 +756,16 @@ The camel.errorRegistry supports 8 options, which are listed below.
 |===
 
 
+=== Camel GenAI Observability configurations
+The camel.ai.observability supports 1 options, which are listed below.
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *camel.ai.observability.enabled* | Enables GenAI observability for Camel AI producers (OpenTelemetry spans and Micrometer metrics when backends are present). | true | boolean
+|===
+
+
 === Camel File Cluster Service configurations
 The camel.cluster.file supports 10 options, which are listed below.
 

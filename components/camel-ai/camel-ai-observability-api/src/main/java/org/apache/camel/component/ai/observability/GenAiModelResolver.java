@@ -41,7 +41,11 @@ public final class GenAiModelResolver {
         if (model instanceof EmbeddingModel embeddingModel) {
             return mapProvider(embeddingModel.provider());
         }
-        return resolveSystemFromPackage(model.getClass().getPackageName());
+        String packageName = model.getClass().getPackageName();
+        if (packageName.startsWith("org.springframework.ai.")) {
+            return resolveSystemFromSpringAiPackage(packageName);
+        }
+        return resolveSystemFromPackage(packageName);
     }
 
     public static String resolveModelName(Object model) {
@@ -60,6 +64,9 @@ public final class GenAiModelResolver {
                 return modelName;
             }
         }
+        if (model.getClass().getName().startsWith("org.springframework.ai.")) {
+            return resolveSpringAiModelName(model);
+        }
         return UNKNOWN;
     }
 
@@ -72,6 +79,27 @@ public final class GenAiModelResolver {
         }
         String modelName = chatResponse.modelName();
         return modelName != null && !modelName.isBlank() ? modelName : fallback;
+    }
+
+    /**
+     * Resolves the response model from a Spring AI {@code ChatResponse}, falling back when absent.
+     */
+    public static String resolveSpringAiResponseModelName(Object chatResponse, String fallback) {
+        if (chatResponse == null) {
+            return fallback;
+        }
+        try {
+            Object metadata = chatResponse.getClass().getMethod("getMetadata").invoke(chatResponse);
+            if (metadata != null) {
+                Object model = metadata.getClass().getMethod("getModel").invoke(metadata);
+                if (model != null && !model.toString().isBlank()) {
+                    return model.toString();
+                }
+            }
+        } catch (ReflectiveOperationException e) {
+            // ignore
+        }
+        return fallback;
     }
 
     private static String mapProvider(ModelProvider provider) {
@@ -89,6 +117,60 @@ public final class GenAiModelResolver {
             case AMAZON_BEDROCK -> "aws.bedrock";
             default -> UNKNOWN;
         };
+    }
+
+    private static String resolveSpringAiModelName(Object model) {
+        try {
+            Object options = invokeNoArg(model, "getDefaultOptions");
+            if (options == null) {
+                options = invokeNoArg(model, "getOptions");
+            }
+            if (options != null) {
+                Object modelName = invokeNoArg(options, "getModel");
+                if (modelName != null && !modelName.toString().isBlank()) {
+                    return modelName.toString();
+                }
+            }
+        } catch (ReflectiveOperationException e) {
+            // ignore
+        }
+        return UNKNOWN;
+    }
+
+    private static Object invokeNoArg(Object target, String methodName) throws ReflectiveOperationException {
+        var method = target.getClass().getMethod(methodName);
+        if (!method.canAccess(target)) {
+            method.setAccessible(true);
+        }
+        return method.invoke(target);
+    }
+
+    private static String resolveSystemFromSpringAiPackage(String packageName) {
+        if (packageName.startsWith("org.springframework.ai.openai")) {
+            return "openai";
+        }
+        if (packageName.startsWith("org.springframework.ai.ollama")) {
+            return "ollama";
+        }
+        if (packageName.startsWith("org.springframework.ai.anthropic")) {
+            return "anthropic";
+        }
+        if (packageName.startsWith("org.springframework.ai.azure")) {
+            return "azure.ai.openai";
+        }
+        if (packageName.startsWith("org.springframework.ai.vertexai")) {
+            return "gcp.vertex_ai";
+        }
+        if (packageName.startsWith("org.springframework.ai.bedrock")) {
+            return "aws.bedrock";
+        }
+        if (packageName.startsWith("org.springframework.ai.mistralai")) {
+            return "mistral_ai";
+        }
+        if (packageName.startsWith("org.springframework.ai.deepseek")) {
+            return "deepseek";
+        }
+        return UNKNOWN;
     }
 
     private static String resolveSystemFromPackage(String packageName) {
