@@ -575,6 +575,7 @@ public class CamelMonitor extends CamelCommand {
                     }
                 });
         aiPanel.setMcpFacade(mcpFacade);
+        aiPanel.setOtelSpans(dataService.otelSpans());
         mcpFacade.setAiActivityLog(aiPanel::getActivityLog);
         Path mcpJsonFile = null;
         actionsPopup.setAiActivityLog(aiPanel::getActivityLog);
@@ -2389,6 +2390,11 @@ public class CamelMonitor extends CamelCommand {
                 && tabRegistry.getActiveMoreTab() == tabRegistry.spansTab()
                 && ctx.selectedPid != null && tabRegistry.spansTab().spanRefreshRequested) {
             tabRegistry.spansTab().spanRefreshRequested = false;
+            dataService.refreshSpanData();
+        }
+        if (aiPanel.isOpen() && aiPanel.isStatsView()
+                && ctx.selectedPid != null && aiPanel.spanRefreshRequested) {
+            aiPanel.spanRefreshRequested = false;
             dataService.refreshSpanData();
         }
     }

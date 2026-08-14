@@ -32,6 +32,7 @@ import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.ThreadLocalRandom;
 import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.atomic.AtomicReference;
 
 import dev.tamboui.layout.Constraint;
 import dev.tamboui.layout.Layout;
@@ -162,9 +163,16 @@ class AiPanel {
 
     // AI usage stats
     private final List<AiUsageEntry> usageHistory = new CopyOnWriteArrayList<>();
+    private AtomicReference<List<SpanEntry>> otelSpans = new AtomicReference<>(List.of());
     private final TableState statsTableState = new TableState();
     private boolean statsView;
     private int statsScrollOffset;
+    boolean spanRefreshRequested;
+
+    enum AiUsageSource {
+        TUI,
+        ROUTE
+    }
 
     record ConversationEntry(AiRole role, String text, long elapsedSeconds, int totalTokens) {
         ConversationEntry(AiRole role, String text) {
@@ -173,7 +181,14 @@ class AiPanel {
     }
 
     record AiUsageEntry(String model, String provider, int inputTokens, int outputTokens,
-            int totalTokens, long latencyMs, String stopReason, Instant timestamp) {
+            int totalTokens, long latencyMs, String stopReason, Instant timestamp,
+            AiUsageSource source, String routeId) {
+
+        AiUsageEntry(String model, String provider, int inputTokens, int outputTokens,
+                     int totalTokens, long latencyMs, String stopReason, Instant timestamp) {
+            this(model, provider, inputTokens, outputTokens, totalTokens, latencyMs, stopReason, timestamp,
+                 AiUsageSource.TUI, null);
+        }
     }
 
     void setContext(MonitorContext ctx) {
@@ -200,6 +215,10 @@ class AiPanel {
     void setMcpInfo(boolean active, int port) {
         this.mcpServerActive = active;
         this.mcpServerPort = port;
+    }
+
+    void setOtelSpans(AtomicReference<List<SpanEntry>> otelSpans) {
+        this.otelSpans = otelSpans != null ? otelSpans : new AtomicReference<>(List.of());
     }
 
     synchronized List<LogEntry> getActivityLog() {
@@ -403,6 +422,9 @@ class AiPanel {
         if (ke.hasCtrl() && ke.isCharIgnoreCase('u')) {
             statsView = !statsView;
             statsScrollOffset = 0;
+            if (statsView) {
+                spanRefreshRequested = true;
+            }
             return true;
         }
         if (ke.hasCtrl() && ke.isCharIgnoreCase('y')) {
@@ -1323,9 +1345,12 @@ class AiPanel {
             return;
         }
 
-        if (usageHistory.isEmpty()) {
+        List<AiUsageEntry> entries = combinedUsageEntries();
+        if (entries.isEmpty()) {
             frame.renderWidget(
-                    Paragraph.from(Line.from(Span.styled("No AI usage data yet. Ask a question first.", Style.EMPTY.dim()))),
+                    Paragraph.from(Line.from(Span.styled(
+                            "No AI usage data yet. Ask a question in the AI panel, or run routes with GenAI observability and OTel span export (--observe).",
+                            Style.EMPTY.dim()))),
                     area);
             return;
         }
@@ -1335,18 +1360,25 @@ class AiPanel {
         int totalOutput = 0;
         int totalTokens = 0;
         long totalLatency = 0;
-        for (AiUsageEntry e : usageHistory) {
+        int tuiRequests = 0;
+        int routeRequests = 0;
+        for (AiUsageEntry e : entries) {
             totalInput += e.inputTokens();
             totalOutput += e.outputTokens();
             totalTokens += e.totalTokens();
             totalLatency += e.latencyMs();
+            if (e.source() == AiUsageSource.ROUTE) {
+                routeRequests++;
+            } else {
+                tuiRequests++;
+            }
         }
-        int requestCount = usageHistory.size();
+        int requestCount = entries.size();
 
         // Per-model aggregation
         Map<String, int[]> perModel = new LinkedHashMap<>();
-        for (AiUsageEntry e : usageHistory) {
-            String key = e.model() + " (" + e.provider() + ")";
+        for (AiUsageEntry e : entries) {
+            String key = modelTableKey(e);
             int[] stats = perModel.computeIfAbsent(key, k -> new int[4]);
             stats[0]++; // requests
             stats[1] += e.inputTokens();
@@ -1354,7 +1386,7 @@ class AiPanel {
             stats[3] += e.totalTokens();
         }
 
-        // Per-conversation token totals (group by consecutive runs between user questions)
+        // Per-conversation token totals (TUI ask sessions only)
         List<Integer> turnTokens = new ArrayList<>();
         int currentTurn = 0;
         int turnIndex = 0;
@@ -1398,7 +1430,11 @@ class AiPanel {
         summaryLines.add(Line.from(
                 Span.styled("Requests: ", dimStyle),
                 Span.styled(String.valueOf(requestCount), cyanStyle),
-                Span.styled("   Total tokens: ", dimStyle),
+                Span.styled(" (TUI: ", dimStyle),
+                Span.styled(String.valueOf(tuiRequests), cyanStyle),
+                Span.styled(" / routes: ", dimStyle),
+                Span.styled(String.valueOf(routeRequests), cyanStyle),
+                Span.styled(")   Total tokens: ", dimStyle),
                 Span.styled(LlmClient.formatTokens(totalTokens), cyanStyle),
                 Span.styled(" (in: ", dimStyle),
                 Span.styled(LlmClient.formatTokens(totalInput), Theme.success()),
@@ -1480,6 +1516,45 @@ class AiPanel {
                     .build();
             frame.renderWidget(barChart, barArea);
         }
+    }
+
+    private List<AiUsageEntry> combinedUsageEntries() {
+        List<AiUsageEntry> combined = new ArrayList<>(usageHistory.size() + 8);
+        combined.addAll(usageHistory);
+        List<SpanEntry> spans = otelSpans.get();
+        if (spans != null && !spans.isEmpty()) {
+            combined.addAll(GenAiSpanUsageExtractor.extract(spans));
+        }
+        return combined;
+    }
+
+    private static String modelTableKey(AiUsageEntry entry) {
+        String modelProvider = entry.model() + " (" + entry.provider() + ")";
+        if (entry.source() == AiUsageSource.ROUTE) {
+            String route = entry.routeId() != null && !entry.routeId().isBlank() ? entry.routeId() : "route";
+            return "[route:" + route + "] " + modelProvider;
+        }
+        return "[tui] " + modelProvider;
+    }
+
+    boolean isStatsView() {
+        return statsView;
+    }
+
+    void toggleStatsViewForTesting() {
+        statsView = !statsView;
+        statsScrollOffset = 0;
+        if (statsView) {
+            spanRefreshRequested = true;
+        }
+    }
+
+    List<AiUsageEntry> combinedUsageEntriesForTesting() {
+        return combinedUsageEntries();
+    }
+
+    void recordUsageForTesting(AiUsageEntry entry) {
+        usageHistory.add(entry);
     }
 
     private void renderScrollbar(Frame frame, Rect area, int totalLines, int visibleHeight, int scroll) {

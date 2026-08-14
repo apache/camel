@@ -36,3 +36,13 @@ Metrics recorded (when Micrometer is available):
 
 * `gen_ai.client.operation` — operation duration timer
 * `gen_ai.client.token.usage` — token usage counter (tags: `gen_ai.token.type=input|output`)
+
+== Camel TUI integration (Phase 2)
+
+When monitoring a running integration with `camel tui` and observability enabled, the AI panel usage view
+(*Ctrl+U* while the AI panel is open) combines:
+
+* *TUI ask* token usage from `camel ask` / the embedded AI prompt
+* *Route* GenAI usage extracted from exported OpenTelemetry spans with `gen_ai.*` attributes
+
+This gives a single dashboard for developer CLI usage and production route LLM calls.

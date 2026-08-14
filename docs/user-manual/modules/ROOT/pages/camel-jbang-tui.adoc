@@ -807,6 +807,10 @@ When the AI panel is open, input that starts with `/` runs a local panel command
 Submitted prompts (including slash commands) participate in AI prompt history when
 `camel.tui.ai.promptHistory` is not `0`. Use *↑*/*↓* on the prompt line to recall them.
 
+Press *Ctrl+U* while the AI panel is open to toggle the AI Usage view. It shows token consumption from
+the embedded AI prompt (*TUI ask*) and from monitored route LLM calls exported as OpenTelemetry GenAI spans
+when observability is enabled on the integration.
+
 === Connecting an AI Agent
 
 To connect Claude Code to the TUI, add the MCP server to your project configuration
