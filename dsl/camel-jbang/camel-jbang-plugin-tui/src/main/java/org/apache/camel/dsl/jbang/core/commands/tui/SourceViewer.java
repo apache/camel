@@ -1185,6 +1185,41 @@ class SourceViewer {
     }
 
     private int deriveInsertionIndent(int fromRow) {
+        // use the scope line (parent EIP) to derive indent for correct nesting
+        int scopeRow = findScopeLineRow(fromRow);
+        if (scopeRow >= 0) {
+            String scopeLine = editState.getLine(scopeRow);
+            int scopeIndent = countLeadingSpaces(scopeLine);
+            String scopeTrimmed = scopeLine.trim();
+            if (scopeTrimmed.startsWith("- ")) {
+                return scopeIndent + 4;
+            }
+            return scopeIndent + 2;
+        }
+        // on a blank line with whitespace, walk up to find the parent EIP at lower indent
+        String cursorLine = editState.getLine(fromRow);
+        if (cursorLine.isBlank()) {
+            int wsIndent = cursorLine.length();
+            if (wsIndent > 0) {
+                for (int i = fromRow - 1; i >= 0; i--) {
+                    String line = editState.getLine(i);
+                    if (line.isBlank()) {
+                        continue;
+                    }
+                    int indent = countLeadingSpaces(line);
+                    if (indent < wsIndent) {
+                        String t = line.trim();
+                        if (t.startsWith("- ")) {
+                            t = t.substring(2).trim();
+                        }
+                        if (t.endsWith(":") && !STRUCTURAL_KEYS.contains(extractEipName(t))) {
+                            return indent + (line.trim().startsWith("- ") ? 4 : 2);
+                        }
+                        wsIndent = indent;
+                    }
+                }
+            }
+        }
         return deriveIndentFromPredecessor(fromRow);
     }
 
@@ -1492,7 +1527,8 @@ class SourceViewer {
                 }
                 String key = extractEipName(line.trim());
                 if (key != null) {
-                    if (!BREADCRUMB_SKIP_KEYS.contains(key)) {
+                    if (!BREADCRUMB_SKIP_KEYS.contains(key)
+                            && !key.endsWith("Configuration")) {
                         parts.add(key);
                     }
                     if ("route".equals(key)) {
@@ -1899,7 +1935,11 @@ class SourceViewer {
         } else {
             String prefix = listItem ? "- " : "";
             editState.insert(indentStr + prefix + item.key() + ":");
-            if ("object".equals(item.type()) || "array".equals(item.type())) {
+            if ("array".equals(item.type())) {
+                editState.insert('\n');
+                int childIndent = indent + (listItem ? 4 : 2);
+                editState.insert(" ".repeat(childIndent) + "- ");
+            } else if ("object".equals(item.type())) {
                 editState.insert('\n');
                 editState.insert(indentStr + (listItem ? "    " : "  "));
             } else {
