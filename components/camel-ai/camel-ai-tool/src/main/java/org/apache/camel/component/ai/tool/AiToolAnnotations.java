@@ -32,6 +32,20 @@ public record AiToolAnnotations(
         Boolean returnDirect) {
 
     /**
+     * Convenience constructor for callers that do not configure {@link #returnDirect()}.
+     *
+     * @since 4.22
+     */
+    public AiToolAnnotations(
+                             String title,
+                             Boolean readOnlyHint,
+                             Boolean destructiveHint,
+                             Boolean idempotentHint,
+                             Boolean openWorldHint) {
+        this(title, readOnlyHint, destructiveHint, idempotentHint, openWorldHint, null);
+    }
+
+    /**
      * Builds annotations from endpoint configuration, or {@code null} when no hint is configured.
      */
     public static AiToolAnnotations fromConfiguration(AiToolConfiguration configuration) {

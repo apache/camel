@@ -90,6 +90,14 @@ class AiToolAnnotationsTest {
     }
 
     @Test
+    void shouldDefaultReturnDirectToNullInFiveArgConstructor() {
+        AiToolAnnotations annotations = new AiToolAnnotations("Lookup", true, false, true, false);
+
+        assertThat(annotations.returnDirect()).isNull();
+        assertThat(annotations.isReturnDirect()).isFalse();
+    }
+
+    @Test
     void shouldBuildPartialBooleanHintsOnly() {
         AiToolConfiguration configuration = new AiToolConfiguration();
         configuration.setDestructiveHint(true);

@@ -16,6 +16,7 @@
  */
 package org.apache.camel.component.openai;
 
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -47,7 +48,7 @@ record McpToolState(
     }
 
     Set<String> knownToolNames() {
-        java.util.Set<String> names = new java.util.HashSet<>(toolClientMap.keySet());
+        Set<String> names = new HashSet<>(toolClientMap.keySet());
         names.addAll(routeTools.keySet());
         return Set.copyOf(names);
     }

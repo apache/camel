@@ -277,7 +277,6 @@ class McpToolCallExecutor extends ServiceSupport {
         try {
             Map<String, Object> argsMap = OBJECT_MAPPER.readValue(argsJson, Map.class);
             Exchange toolExchange = spec.getConsumer().getEndpoint().createExchange();
-            boolean release = true;
             try {
                 AiToolResult result = AiToolExecutor.execute(spec, argsMap, toolExchange);
                 if (result instanceof AiToolResult.Success success) {
@@ -300,9 +299,7 @@ class McpToolCallExecutor extends ServiceSupport {
                     return errorResult(toolCall, "Error: Tool execution failed: " + error.message());
                 }
             } finally {
-                if (release) {
-                    spec.getConsumer().releaseExchange(toolExchange, false);
-                }
+                spec.getConsumer().releaseExchange(toolExchange, false);
             }
         } catch (JsonProcessingException e) {
             if (config.getToolExecutionErrorStrategy() == ToolExecutionErrorStrategy.FAIL_EXCHANGE) {
