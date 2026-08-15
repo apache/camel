@@ -420,6 +420,13 @@ public class MainConfigurationProperties extends DefaultConfigurationProperties<
     }
 
     /**
+     * Whether there has been any GenAI observability configuration specified.
+     */
+    public boolean hasAiObservabilityConfiguration() {
+        return aiConfigurationProperties != null && aiConfigurationProperties.hasObservabilityConfiguration();
+    }
+
+    /**
      * To configure Route Controller.
      */
     public RouteControllerConfigurationProperties routeControllerConfig() {
