@@ -29,16 +29,13 @@ class AlibabaOtsEndpointTest {
     @Test
     void initClientReturnsCachedInstance() throws Exception {
         AlibabaOtsEndpoint endpoint = new AlibabaOtsEndpoint();
-        endpoint.setAccessKey("ak");
-        endpoint.setSecretKey("sk");
-        endpoint.setEndpoint("https://test-instance.cn-hangzhou.ots.aliyuncs.com");
-        endpoint.setInstanceName("test-instance");
+        SyncClient client = mock(SyncClient.class);
+        endpoint.setOtsClient(client);
 
         SyncClient first = endpoint.initClient();
         SyncClient second = endpoint.initClient();
 
-        assertThat(first).isSameAs(second);
-        first.shutdown();
+        assertThat(first).isSameAs(second).isSameAs(client);
     }
 
     @Test

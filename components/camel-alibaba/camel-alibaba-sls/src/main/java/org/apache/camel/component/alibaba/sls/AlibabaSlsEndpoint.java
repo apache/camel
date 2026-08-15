@@ -43,7 +43,6 @@ public class AlibabaSlsEndpoint extends DefaultEndpoint {
     private String operation;
 
     @UriParam(description = "Alibaba Cloud region", displayName = "Region")
-    @Metadata(required = true)
     private String region;
 
     @UriParam(description = "SLS endpoint URL (e.g. cn-hangzhou.log.aliyuncs.com). "

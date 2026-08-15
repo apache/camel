@@ -63,7 +63,7 @@ public final class AlibabaSlsHeaders {
     public static final String REQUEST_ID = AlibabaSlsProperties.REQUEST_ID;
 
     @Metadata(label = "producer", description = "HTTP status code from SLS response", javaType = "Integer")
-    public static final String STATUS_CODE = "CamelAlibabaSlsStatusCode";
+    public static final String STATUS_CODE = AlibabaSlsProperties.STATUS_CODE;
 
     private AlibabaSlsHeaders() {
     }
