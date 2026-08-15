@@ -17,7 +17,7 @@
 package org.apache.camel.component.langchain4j.agent;
 
 import java.util.List;
-import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.CyclicBarrier;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -50,16 +50,16 @@ class LangChain4jAgentToolCallingUriParamsTest extends CamelTestSupport {
     private final SingleToolRoundTripChatModel singleToolChatModel = new SingleToolRoundTripChatModel();
     private final AlwaysToolChatModel alwaysToolChatModel = new AlwaysToolChatModel();
     private final AtomicInteger chatRound = new AtomicInteger();
-    private CountDownLatch bothToolsEntered = new CountDownLatch(2);
     private final AtomicInteger inFlight = new AtomicInteger();
     private final AtomicInteger maxConcurrent = new AtomicInteger();
+    private CyclicBarrier overlapBarrier = new CyclicBarrier(2);
 
     @BeforeEach
     void resetState() {
         chatRound.set(0);
-        bothToolsEntered = new CountDownLatch(2);
         maxConcurrent.set(0);
         inFlight.set(0);
+        overlapBarrier = new CyclicBarrier(2);
     }
 
     @Override
@@ -68,8 +68,12 @@ class LangChain4jAgentToolCallingUriParamsTest extends CamelTestSupport {
             @Override
             public void configure() {
                 from("direct:concurrent-uri")
-                        .to("langchain4j-agent:test?agentConfiguration=#agentConfig&tags=" + TAG
+                        .to("langchain4j-agent:test?agentConfiguration=#concurrentConfig&tags=" + TAG
                             + "&executeToolsConcurrently=true");
+
+                from("direct:disable-concurrent-uri")
+                        .to("langchain4j-agent:test?agentConfiguration=#singleToolConfig&tags=" + TAG
+                            + "&executeToolsConcurrently=false");
 
                 from("direct:limited-uri")
                         .to("langchain4j-agent:test?agentConfiguration=#singleToolConfig&tags=" + TAG
@@ -95,9 +99,14 @@ class LangChain4jAgentToolCallingUriParamsTest extends CamelTestSupport {
     protected void bindToRegistry(Registry registry) {
         registry.bind("agentConfig", new AgentConfiguration()
                 .withChatModel(twoToolChatModel)
+                .withExecuteToolsConcurrently()
+                .withMaxToolCallingRoundTrips(5));
+        registry.bind("concurrentConfig", new AgentConfiguration()
+                .withChatModel(twoToolChatModel)
                 .withMaxToolCallingRoundTrips(5));
         registry.bind("singleToolConfig", new AgentConfiguration()
                 .withChatModel(singleToolChatModel)
+                .withExecuteToolsConcurrently()
                 .withMaxToolCallingRoundTrips(5));
         registry.bind("highLimitConfig", new AgentConfiguration()
                 .withChatModel(alwaysToolChatModel)
@@ -105,12 +114,18 @@ class LangChain4jAgentToolCallingUriParamsTest extends CamelTestSupport {
     }
 
     @Test
-    void executeToolsConcurrentlyCanBeEnabledViaEndpointUri() throws Exception {
+    void executeToolsConcurrentlyCanBeEnabledViaEndpointUri() {
         String response = template.requestBody("direct:concurrent-uri", new AiAgentBody<>("run tools"), String.class);
 
         assertThat(response).isEqualTo("done");
-        assertThat(bothToolsEntered.await(10, TimeUnit.SECONDS)).isTrue();
         assertThat(maxConcurrent.get()).isGreaterThanOrEqualTo(2);
+    }
+
+    @Test
+    void executeToolsConcurrentlyFalseViaEndpointUriOverridesBean() {
+        String response = template.requestBody("direct:disable-concurrent-uri", new AiAgentBody<>("run tools"), String.class);
+
+        assertThat(response).isEqualTo("done");
     }
 
     @Test
@@ -171,11 +186,14 @@ class LangChain4jAgentToolCallingUriParamsTest extends CamelTestSupport {
         }
     }
 
-    private void recordConcurrentEntry(String label, Exchange exchange) throws InterruptedException {
+    private void recordConcurrentEntry(String label, Exchange exchange) {
         int concurrent = inFlight.incrementAndGet();
         maxConcurrent.updateAndGet(current -> Math.max(current, concurrent));
-        bothToolsEntered.countDown();
-        assertThat(bothToolsEntered.await(10, TimeUnit.SECONDS)).isTrue();
+        try {
+            overlapBarrier.await(10, TimeUnit.SECONDS);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
         inFlight.decrementAndGet();
         exchange.getMessage().setBody(label);
     }
