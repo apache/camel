@@ -37,7 +37,6 @@ import com.alicloud.openservices.tablestore.model.Row;
 import com.alicloud.openservices.tablestore.model.UpdateRowResponse;
 import org.apache.camel.Exchange;
 import org.apache.camel.component.alibaba.common.OpenApiClientSupport;
-import org.apache.camel.component.alibaba.common.models.ServiceKeys;
 import org.apache.camel.component.alibaba.ots.constants.AlibabaOtsProperties;
 import org.apache.camel.component.alibaba.ots.models.ClientConfigurations;
 import org.apache.camel.util.ObjectHelper;
@@ -57,29 +56,9 @@ public final class AlibabaOtsUtils {
 
         return new SyncClient(
                 endpoint.getEndpoint(),
-                resolveAccessKey(endpoint.getAccessKey(), endpoint.getServiceKeys()),
-                resolveSecretKey(endpoint.getSecretKey(), endpoint.getServiceKeys()),
+                OpenApiClientSupport.resolveAccessKey(endpoint.getAccessKey(), endpoint.getServiceKeys()),
+                OpenApiClientSupport.resolveSecretKey(endpoint.getSecretKey(), endpoint.getServiceKeys()),
                 endpoint.getInstanceName());
-    }
-
-    public static String resolveAccessKey(String accessKey, ServiceKeys serviceKeys) {
-        if (ObjectHelper.isNotEmpty(accessKey)) {
-            return accessKey;
-        }
-        if (serviceKeys != null && ObjectHelper.isNotEmpty(serviceKeys.getAccessKey())) {
-            return serviceKeys.getAccessKey();
-        }
-        throw new IllegalArgumentException("Authentication parameter 'access key (AK)' not found");
-    }
-
-    public static String resolveSecretKey(String secretKey, ServiceKeys serviceKeys) {
-        if (ObjectHelper.isNotEmpty(secretKey)) {
-            return secretKey;
-        }
-        if (serviceKeys != null && ObjectHelper.isNotEmpty(serviceKeys.getSecretKey())) {
-            return serviceKeys.getSecretKey();
-        }
-        throw new IllegalArgumentException("Authentication parameter 'secret key (SK)' not found");
     }
 
     public static ClientConfigurations createClientConfigurations(AlibabaOtsEndpoint endpoint, Exchange exchange) {

@@ -65,6 +65,9 @@ public final class AlibabaSlsProperties {
     @Metadata(label = "producer", description = "Request id returned by SLS", javaType = "String")
     public static final String REQUEST_ID = "CamelAlibabaSlsRequestId";
 
+    @Metadata(label = "producer", description = "HTTP status code from SLS response", javaType = "Integer")
+    public static final String STATUS_CODE = "CamelAlibabaSlsStatusCode";
+
     private AlibabaSlsProperties() {
     }
 }
