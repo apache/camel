@@ -433,6 +433,11 @@ class AgentConfigurationTest {
         } finally {
             ((ExecutorService) executor).shutdownNow();
         }
+
+        AgentConfiguration disabled = config.withExecuteToolsConcurrentlyEnabled(false);
+        assertThat(disabled).isSameAs(config);
+        assertThat(config.getExecuteToolsConcurrently()).isFalse();
+        assertThat(config.getExecuteToolsExecutor()).isNull();
     }
 
     @Test
