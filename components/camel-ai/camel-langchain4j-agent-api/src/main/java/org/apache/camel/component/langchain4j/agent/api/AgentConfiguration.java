@@ -515,6 +515,20 @@ public class AgentConfiguration {
     }
 
     /**
+     * Sets whether concurrent tool execution is enabled.
+     *
+     * @param  executeToolsConcurrently {@code true} to enable, {@code false} to disable, or {@code null} to leave unset
+     * @return                          this configuration instance for method chaining
+     */
+    public AgentConfiguration withExecuteToolsConcurrentlyEnabled(Boolean executeToolsConcurrently) {
+        this.executeToolsConcurrently = executeToolsConcurrently;
+        if (!Boolean.TRUE.equals(executeToolsConcurrently)) {
+            this.executeToolsExecutor = null;
+        }
+        return this;
+    }
+
+    /**
      * Creates a shallow copy of this configuration. Used by the langchain4j-agent producer to attach a managed tool
      * executor without mutating registry-held configuration beans.
      *

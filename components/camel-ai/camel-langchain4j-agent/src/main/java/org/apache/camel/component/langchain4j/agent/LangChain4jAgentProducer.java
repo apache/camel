@@ -260,8 +260,8 @@ public class LangChain4jAgentProducer extends DefaultProducer {
         if (endpointConfiguration.getCompensateOnToolErrors() != null) {
             agentConfiguration.withCompensateOnToolErrors(endpointConfiguration.getCompensateOnToolErrors());
         }
-        if (Boolean.TRUE.equals(endpointConfiguration.getExecuteToolsConcurrently())) {
-            agentConfiguration.withExecuteToolsConcurrently();
+        if (endpointConfiguration.getExecuteToolsConcurrently() != null) {
+            agentConfiguration.withExecuteToolsConcurrentlyEnabled(endpointConfiguration.getExecuteToolsConcurrently());
         }
     }
 
