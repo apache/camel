@@ -150,7 +150,7 @@ public abstract class BaseMainSupport extends BaseService {
     private static final String PREFIX_TRACE = "camel.trace.";
     private static final String PREFIX_ROUTE_CONTROLLER = "camel.routeController.";
     private static final String PREFIX_ERROR_REGISTRY = "camel.errorRegistry.";
-    private static final String PREFIX_AI_OBSERVABILITY = "camel.ai.observability.";
+    private static final String PREFIX_AI_OBSERVABILITY = "camel.aiObservability.";
 
     private static final String[] GROUP_PREFIXES = new String[] {
             "camel.context.", "camel.resilience4j.", "camel.faulttolerance.",
@@ -1742,7 +1742,7 @@ public abstract class BaseMainSupport extends BaseService {
                     mainConfigurationProperties.isAutoConfigurationFailFast(),
                     autoConfiguredProperties);
         }
-        if (!aiObservabilityProperties.isEmpty() || mainConfigurationProperties.hasAiConfiguration()) {
+        if (!aiObservabilityProperties.isEmpty() || mainConfigurationProperties.hasAiObservabilityConfiguration()) {
             LOG.debug("Auto-configuring GenAI observability from loaded properties: {}", aiObservabilityProperties.size());
             setAiObservabilityProperties(camelContext, aiObservabilityProperties,
                     mainConfigurationProperties.isAutoConfigurationFailFast(),
@@ -2629,14 +2629,14 @@ public abstract class BaseMainSupport extends BaseService {
         setPropertiesOnTarget(camelContext, config, properties, PREFIX_AI_OBSERVABILITY,
                 failIfNotSet, true, autoConfiguredProperties);
 
-        if (mainConfigurationProperties.hasAiConfiguration() || !properties.isEmpty()) {
+        if (mainConfigurationProperties.hasAiObservabilityConfiguration() || !properties.isEmpty()) {
             PropertiesComponent pc = camelContext.getPropertiesComponent();
             Properties local = pc.getLocalProperties();
             if (local == null) {
                 local = new Properties();
                 pc.setLocalProperties(local);
             }
-            local.setProperty("camel.ai.observability.enabled", Boolean.toString(config.isEnabled()));
+            local.setProperty("camel.aiObservability.enabled", Boolean.toString(config.isEnabled()));
         }
     }
 

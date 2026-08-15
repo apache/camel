@@ -47,6 +47,7 @@ import org.apache.camel.support.DefaultProducer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.ai.chat.client.ChatClient;
+import org.springframework.ai.chat.client.ResponseEntity;
 import org.springframework.ai.chat.client.advisor.MessageChatMemoryAdvisor;
 import org.springframework.ai.chat.client.advisor.SafeGuardAdvisor;
 import org.springframework.ai.chat.client.advisor.SimpleLoggerAdvisor;
@@ -869,8 +870,7 @@ public class SpringAiChatProducer extends DefaultProducer {
         GenAiObservationContext observationContext = buildObservationContext();
         GenAiObservation observation = GenAiObservability.start(exchange, observationContext);
         try {
-            org.springframework.ai.chat.client.ResponseEntity<ChatResponse, T> responseEntity
-                    = request.call().responseEntity(entityClass);
+            ResponseEntity<ChatResponse, T> responseEntity = request.call().responseEntity(entityClass);
             ChatResponse chatResponse = responseEntity.response();
             T entity = responseEntity.entity();
             recordObservationSuccess(observation, chatResponse, observationContext.requestModel());
@@ -976,6 +976,7 @@ public class SpringAiChatProducer extends DefaultProducer {
         request.user(u -> u.text(format));
 
         ChatResponse response = callWithObservability(request, exchange);
+        populateTokenUsage(response, exchange);
 
         // Get the raw response text
         String responseText = response.getResult().getOutput().getText();

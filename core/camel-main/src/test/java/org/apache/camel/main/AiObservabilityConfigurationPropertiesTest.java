@@ -38,6 +38,20 @@ class AiObservabilityConfigurationPropertiesTest {
     }
 
     @Test
+    void shouldDisableGenAiObservabilityViaApplicationProperties() throws Exception {
+        Main main = new Main();
+        main.setDefaultPropertyPlaceholderLocation("classpath:ai-observability.properties");
+
+        main.start();
+
+        try {
+            assertThat(GenAiObservability.isEnabled(main.getCamelContext())).isFalse();
+        } finally {
+            main.stop();
+        }
+    }
+
+    @Test
     void shouldEnableGenAiObservabilityByDefault() throws Exception {
         Main main = new Main();
         main.start();
