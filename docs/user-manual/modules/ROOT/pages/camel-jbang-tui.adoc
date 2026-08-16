@@ -892,6 +892,19 @@ https://asciinema.org/[Asciinema] `.cast` recording:
 camel tui --record=demo.tape
 ----
 
+The `.cast` file is written next to the tape, with the `.tape` suffix replaced by `.cast`.
+Recording is headless: the TUI is driven entirely by the tape rather than by your terminal,
+so no keyboard input is read and nothing is drawn on screen.
+
+The recorded terminal is 200x50 by default, which is wider than a documentation page can
+display. Use `--record-size` to record at a size that fits, and `--record-fps` or
+`--record-duration` to control the capture rate and the cut-off:
+
+[source,bash]
+----
+camel tui --record=demo.tape --record-size=160x44 --record-fps=15
+----
+
 === Converting to GIF
 
 Convert recordings using https://github.com/asciinema/agg[agg] (for `.cast` files) or
@@ -940,4 +953,16 @@ vhs demo.tape               # .tape -> .gif
 | `--record`
 | Replay a `.tape` file and record the session to an Asciinema `.cast` file.
 |
+
+| `--record-size`
+| Size of the recorded terminal for `--record`, as `<cols>x<rows>`.
+| `200x50`
+
+| `--record-fps`
+| Frames per second captured by `--record`.
+| `10`
+
+| `--record-duration`
+| Maximum duration in milliseconds captured by `--record`.
+| `120000`
 |===

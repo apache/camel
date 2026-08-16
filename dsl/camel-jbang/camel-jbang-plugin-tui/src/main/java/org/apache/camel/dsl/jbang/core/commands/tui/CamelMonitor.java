@@ -27,6 +27,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Locale;
 import java.util.Optional;
 import java.util.Queue;
 import java.util.concurrent.CompletableFuture;
@@ -100,6 +101,21 @@ public class CamelMonitor extends CamelCommand {
                         description = "Replay a .tape file inside the TUI and record to an Asciinema .cast file",
                         arity = "0..1")
     String record;
+
+    @CommandLine.Option(names = { "--record-size" },
+                        description = "Size of the recorded terminal for --record, as <cols>x<rows> (default: ${DEFAULT-VALUE})",
+                        defaultValue = "200x50")
+    String recordSize = "200x50";
+
+    @CommandLine.Option(names = { "--record-fps" },
+                        description = "Frames per second captured by --record (default: ${DEFAULT-VALUE})",
+                        defaultValue = "10")
+    int recordFps = 10;
+
+    @CommandLine.Option(names = { "--record-duration" },
+                        description = "Maximum duration in milliseconds captured by --record (default: ${DEFAULT-VALUE})",
+                        defaultValue = "120000")
+    int recordDuration = 120000;
 
     @CommandLine.Option(names = { "--mcp" },
                         description = "Enable embedded MCP server for AI agent access to the TUI")
@@ -184,6 +200,28 @@ public class CamelMonitor extends CamelCommand {
         this.classLoader = classLoader;
     }
 
+    /**
+     * Parses a {@code --record-size} value such as {@code 160x44} into {@code [cols, rows]}.
+     */
+    int[] parseRecordSize(String size) {
+        String[] parts = size == null ? new String[0] : size.toLowerCase(Locale.ROOT).split("x", -1);
+        if (parts.length == 2) {
+            try {
+                int cols = Integer.parseInt(parts[0].trim());
+                int rows = Integer.parseInt(parts[1].trim());
+                if (cols > 0 && rows > 0) {
+                    return new int[] { cols, rows };
+                }
+            } catch (NumberFormatException e) {
+                // fall through to the parameter error below
+            }
+        }
+        throw new CommandLine.ParameterException(
+                new CommandLine(this),
+                "Invalid value for option '--record-size': expected '<cols>x<rows>' with positive numbers, was '"
+                                       + size + "'");
+    }
+
     @Override
     public Integer doCall() throws Exception {
         System.setProperty("java.awt.headless", "true");
@@ -212,12 +250,13 @@ public class CamelMonitor extends CamelCommand {
         if (record != null) {
             Path tapeFile = Path.of(record);
             Path castFile = Path.of(record.replaceAll("\\.tape$", "") + ".cast");
+            int[] size = parseRecordSize(recordSize);
             System.setProperty("tamboui.record", castFile.toAbsolutePath().toString());
             System.setProperty("tamboui.record.config", tapeFile.toAbsolutePath().toString());
-            System.setProperty("tamboui.record.width", "200");
-            System.setProperty("tamboui.record.height", "50");
-            System.setProperty("tamboui.record.duration", "120000");
-            System.setProperty("tamboui.record.fps", "10");
+            System.setProperty("tamboui.record.width", String.valueOf(size[0]));
+            System.setProperty("tamboui.record.height", String.valueOf(size[1]));
+            System.setProperty("tamboui.record.duration", String.valueOf(recordDuration));
+            System.setProperty("tamboui.record.fps", String.valueOf(recordFps));
         }
 
         recordingManager.init(record != null);
