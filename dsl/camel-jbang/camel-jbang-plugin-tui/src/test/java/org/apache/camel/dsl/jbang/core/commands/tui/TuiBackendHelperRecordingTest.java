@@ -28,6 +28,7 @@ import dev.tamboui.terminal.Backend;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
+import org.junitpioneer.jupiter.ClearSystemProperty;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -41,6 +42,15 @@ import static org.assertj.core.api.Assertions.assertThat;
  * wrapping is missing, {@code --record} replays no tape and writes no {@code .cast} file, yet still exits cleanly, so
  * only a test like this one catches the regression.
  */
+// RecordingConfig.load() also reads fps and duration, so every key camel-tui sets has to be managed here: a value
+// leaking out of this class would silently reconfigure recording in an unrelated test. junit-pioneer clears each key
+// before the test and restores the original value afterwards, which also covers values the test body sets itself.
+@ClearSystemProperty(key = "tamboui.record")
+@ClearSystemProperty(key = "tamboui.record.config")
+@ClearSystemProperty(key = "tamboui.record.width")
+@ClearSystemProperty(key = "tamboui.record.height")
+@ClearSystemProperty(key = "tamboui.record.duration")
+@ClearSystemProperty(key = "tamboui.record.fps")
 class TuiBackendHelperRecordingTest {
 
     @TempDir
@@ -52,10 +62,6 @@ class TuiBackendHelperRecordingTest {
         if (AnsiTerminalCapture.isInstalled()) {
             AnsiTerminalCapture.uninstall();
         }
-        System.clearProperty("tamboui.record");
-        System.clearProperty("tamboui.record.config");
-        System.clearProperty("tamboui.record.width");
-        System.clearProperty("tamboui.record.height");
     }
 
     @Test

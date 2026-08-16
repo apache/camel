@@ -129,3 +129,10 @@ now also stops the route.
 Routes that relied on steps after these processors running for unauthenticated requests must be
 restructured. The authenticated paths are unchanged: a successfully authenticated request continues
 through the rest of the route exactly as before, and `OAuthLogoutProcessor` is unchanged.
+
+=== camel-jbang (TUI)
+
+`camel tui --record` is now rejected when combined with `--web`. The recording configuration applies
+to the whole process, so a browser session served by `--web` would be recorded into the same `.cast`
+file as the local session. Previously the combination was accepted, but recording never produced any
+output, so run the two modes in separate processes instead.

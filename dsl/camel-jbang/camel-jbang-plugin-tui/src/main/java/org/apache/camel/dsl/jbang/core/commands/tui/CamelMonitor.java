@@ -83,6 +83,19 @@ public class CamelMonitor extends CamelCommand {
     private static final Logger LOG = System.getLogger(CamelMonitor.class.getName());
     private static final long DEFAULT_REFRESH_MS = 500;
 
+    /**
+     * The TamboUI system properties {@code --record} configures. They are process-wide, so the session that sets them
+     * clears them again on the way out; otherwise a later TUI backend created in the same JVM would still see recording
+     * enabled via {@code RecordingConfig.isEnabled()}.
+     */
+    static final List<String> RECORD_PROPERTIES = List.of(
+            "tamboui.record",
+            "tamboui.record.config",
+            "tamboui.record.width",
+            "tamboui.record.height",
+            "tamboui.record.duration",
+            "tamboui.record.fps");
+
     // Compact tab bar (10 labels + 9 "|" dividers) needs 88 chars — that is the true minimum
     private static final int MIN_WIDTH = 88;
     private static final int MIN_HEIGHT = 24;
@@ -222,6 +235,46 @@ public class CamelMonitor extends CamelCommand {
                                        + size + "'");
     }
 
+    /**
+     * Hands the {@code --record*} options to TamboUI through the {@link #RECORD_PROPERTIES} system properties, which is
+     * the only way TamboUI accepts a recording configuration.
+     */
+    void configureRecording() {
+        if (record == null) {
+            return;
+        }
+        if (web) {
+            // The properties below are process-wide, so every browser session spawned by TuiWebServer would be
+            // wrapped for recording too, all writing the same cast file. The two modes are also conceptually
+            // exclusive: --record drives a headless TUI from a tape rather than from a connected terminal.
+            throw new CommandLine.ParameterException(
+                    new CommandLine(this),
+                    "Option '--record' cannot be combined with '--web': recording replays a tape headlessly "
+                                           + "and would be inherited by every browser session");
+        }
+        Path tapeFile = Path.of(record);
+        Path castFile = Path.of(record.replaceAll("\\.tape$", "") + ".cast");
+        int[] size = parseRecordSize(recordSize);
+        System.setProperty("tamboui.record", castFile.toAbsolutePath().toString());
+        System.setProperty("tamboui.record.config", tapeFile.toAbsolutePath().toString());
+        System.setProperty("tamboui.record.width", String.valueOf(size[0]));
+        System.setProperty("tamboui.record.height", String.valueOf(size[1]));
+        System.setProperty("tamboui.record.duration", String.valueOf(recordDuration));
+        System.setProperty("tamboui.record.fps", String.valueOf(recordFps));
+    }
+
+    /**
+     * Undoes {@link #configureRecording()} at the end of the session that ran it.
+     * <p>
+     * The already-loaded {@code RecordingConfig} keeps its own copy, so the shutdown hook still writes the cast file;
+     * clearing only stops a TUI backend created later in the same JVM from being wrapped for recording again.
+     */
+    void clearRecordingProperties() {
+        for (String key : RECORD_PROPERTIES) {
+            System.clearProperty(key);
+        }
+    }
+
     @Override
     public Integer doCall() throws Exception {
         System.setProperty("java.awt.headless", "true");
@@ -247,17 +300,7 @@ public class CamelMonitor extends CamelCommand {
         }
 
         // Configure TamboUI recording if --record is specified
-        if (record != null) {
-            Path tapeFile = Path.of(record);
-            Path castFile = Path.of(record.replaceAll("\\.tape$", "") + ".cast");
-            int[] size = parseRecordSize(recordSize);
-            System.setProperty("tamboui.record", castFile.toAbsolutePath().toString());
-            System.setProperty("tamboui.record.config", tapeFile.toAbsolutePath().toString());
-            System.setProperty("tamboui.record.width", String.valueOf(size[0]));
-            System.setProperty("tamboui.record.height", String.valueOf(size[1]));
-            System.setProperty("tamboui.record.duration", String.valueOf(recordDuration));
-            System.setProperty("tamboui.record.fps", String.valueOf(recordFps));
-        }
+        configureRecording();
 
         recordingManager.init(record != null);
 
@@ -688,6 +731,10 @@ public class CamelMonitor extends CamelCommand {
             }
             deleteMcpJson(mcpJsonFile);
             this.runner = null;
+            if (record != null) {
+                // Only the session that set the properties clears them again
+                clearRecordingProperties();
+            }
         }
         return 0;
     }

@@ -905,6 +905,10 @@ display. Use `--record-size` to record at a size that fits, and `--record-fps` o
 camel tui --record=demo.tape --record-size=160x44 --record-fps=15
 ----
 
+`--record` cannot be combined with `--web`. Recording drives a headless TUI from the tape, and
+the recording configuration applies to the whole process, so every browser session would be
+recorded into the same `.cast` file. Camel rejects the combination with an error instead.
+
 === Converting to GIF
 
 Convert recordings using https://github.com/asciinema/agg[agg] (for `.cast` files) or
