@@ -14,23 +14,26 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.ai.observability;
+package org.springframework.ai.openai;
 
 /**
- * Global configuration for GenAI observability.
+ * Test stub placed in Spring AI package namespace for GenAiModelResolver tests.
  */
-public final class GenAiObservabilityProperties {
+public class FakeOpenAiChatModel {
 
-    /**
-     * Global property to enable or disable GenAI observability across all AI components. Default is {@code true}.
-     */
-    public static final String ENABLED = "camel.aiObservability.enabled";
+    public Object getDefaultOptions() {
+        return new FakeOpenAiOptions("gpt-4o");
+    }
 
-    /**
-     * Dash-style alias for {@link #ENABLED}, accepted in application.properties and resolved by Camel Main.
-     */
-    public static final String ENABLED_DASH = "camel.ai-observability.enabled";
+    public static final class FakeOpenAiOptions {
+        private final String model;
 
-    private GenAiObservabilityProperties() {
+        public FakeOpenAiOptions(String model) {
+            this.model = model;
+        }
+
+        public String getModel() {
+            return model;
+        }
     }
 }

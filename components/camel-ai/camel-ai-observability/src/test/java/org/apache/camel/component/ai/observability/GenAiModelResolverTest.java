@@ -111,4 +111,46 @@ class GenAiModelResolverTest {
             return "custom";
         }
     }
+
+    @Test
+    void shouldResolveSpringAiProviderFromPackageName() {
+        assertThat(GenAiModelResolver.resolveSystem(new org.springframework.ai.openai.FakeOpenAiChatModel()))
+                .isEqualTo("openai");
+    }
+
+    @Test
+    void shouldResolveSpringAiModelNameFromOptions() {
+        assertThat(GenAiModelResolver.resolveModelName(new org.springframework.ai.openai.FakeOpenAiChatModel()))
+                .isEqualTo("gpt-4o");
+    }
+
+    @Test
+    void shouldResolveSpringAiResponseModelNameFromMetadata() {
+        Object response = new FakeSpringAiChatResponse("gpt-4o-mini");
+        assertThat(GenAiModelResolver.resolveSpringAiResponseModelName(response, "gpt-4o")).isEqualTo("gpt-4o-mini");
+    }
+
+    static class FakeSpringAiChatResponse {
+        private final FakeSpringAiResponseMetadata metadata;
+
+        FakeSpringAiChatResponse(String model) {
+            this.metadata = new FakeSpringAiResponseMetadata(model);
+        }
+
+        public FakeSpringAiResponseMetadata getMetadata() {
+            return metadata;
+        }
+    }
+
+    static class FakeSpringAiResponseMetadata {
+        private final String model;
+
+        FakeSpringAiResponseMetadata(String model) {
+            this.model = model;
+        }
+
+        public String getModel() {
+            return model;
+        }
+    }
 }
