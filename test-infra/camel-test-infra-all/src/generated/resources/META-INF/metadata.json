@@ -689,7 +689,7 @@
   "groupId" : "org.apache.camel",
   "artifactId" : "camel-test-infra-qdrant",
   "version" : "4.23.0-SNAPSHOT",
-  "serviceVersion" : "v1.18.3-unprivileged",
+  "serviceVersion" : "v1.19.0-unprivileged",
   "uiSupported" : true
 }, {
   "service" : "org.apache.camel.test.infra.ftp.services.FtpInfraService",
