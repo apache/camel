@@ -480,7 +480,7 @@
   "groupId" : "org.apache.camel",
   "artifactId" : "camel-test-infra-neo4j",
   "version" : "4.23.0-SNAPSHOT",
-  "serviceVersion" : "2026.06-community-ubi10",
+  "serviceVersion" : "2026.07-community-ubi10",
   "uiSupported" : true
 }, {
   "service" : "org.apache.camel.test.infra.rocketmq.services.RocketMQInfraService",
