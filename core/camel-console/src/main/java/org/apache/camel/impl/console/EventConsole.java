@@ -152,16 +152,7 @@ public class EventConsole extends AbstractDevConsole {
         CamelEvent event = events[cursor];
         while (pos < capacity) {
             if (event != null) {
-                JsonObject jo = new JsonObject();
-                jo.put("type", event.getType().toString());
-                if (event.getTimestamp() > 0) {
-                    jo.put("timestamp", event.getTimestamp());
-                }
-                if (event instanceof CamelEvent.ExchangeEvent) {
-                    CamelEvent.ExchangeEvent ee = (CamelEvent.ExchangeEvent) event;
-                    jo.put("exchangeId", ee.getExchange().getExchangeId());
-                }
-                jo.put("message", event.toString());
+                JsonObject jo = new JsonObject(event.asJSon());
                 arr.add(jo);
             }
             // move to next

@@ -18,6 +18,7 @@ package org.apache.camel.impl.event;
 
 import java.io.Serial;
 import java.util.EventObject;
+import java.util.Map;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.spi.CamelEvent;
@@ -59,6 +60,16 @@ public class ServiceStopFailureEvent extends EventObject implements CamelEvent.S
     @Override
     public void setTimestamp(long timestamp) {
         this.timestamp = timestamp;
+    }
+
+    @Override
+    public Map<String, Object> asJSon() {
+        return CamelEventJsonSupport.asJSon(this);
+    }
+
+    @Override
+    public String toJSon(int indent) {
+        return CamelEventJsonSupport.toJSon(this, indent);
     }
 
     @Override
