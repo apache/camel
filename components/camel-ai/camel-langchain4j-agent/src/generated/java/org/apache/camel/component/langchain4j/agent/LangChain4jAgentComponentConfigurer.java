@@ -37,11 +37,17 @@ public class LangChain4jAgentComponentConfigurer extends PropertyConfigurerSuppo
         case "agentFactory": getOrCreateConfiguration(target).setAgentFactory(property(camelContext, org.apache.camel.component.langchain4j.agent.api.AgentFactory.class, value)); return true;
         case "autowiredenabled":
         case "autowiredEnabled": target.setAutowiredEnabled(property(camelContext, boolean.class, value)); return true;
+        case "compensateontoolerrors":
+        case "compensateOnToolErrors": getOrCreateConfiguration(target).setCompensateOnToolErrors(property(camelContext, java.lang.Boolean.class, value)); return true;
         case "configuration": target.setConfiguration(property(camelContext, org.apache.camel.component.langchain4j.agent.LangChain4jAgentConfiguration.class, value)); return true;
+        case "executetoolsconcurrently":
+        case "executeToolsConcurrently": getOrCreateConfiguration(target).setExecuteToolsConcurrently(property(camelContext, java.lang.Boolean.class, value)); return true;
         case "jsonschema":
         case "jsonSchema": getOrCreateConfiguration(target).setJsonSchema(property(camelContext, java.lang.String.class, value)); return true;
         case "lazystartproducer":
         case "lazyStartProducer": target.setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
+        case "maxtoolcallingroundtrips":
+        case "maxToolCallingRoundTrips": getOrCreateConfiguration(target).setMaxToolCallingRoundTrips(property(camelContext, int.class, value)); return true;
         case "mcpclients":
         case "mcpClients": getOrCreateConfiguration(target).setMcpClients(property(camelContext, java.util.List.class, value)); return true;
         case "mcpserver":
@@ -68,11 +74,17 @@ public class LangChain4jAgentComponentConfigurer extends PropertyConfigurerSuppo
         case "agentFactory": return org.apache.camel.component.langchain4j.agent.api.AgentFactory.class;
         case "autowiredenabled":
         case "autowiredEnabled": return boolean.class;
+        case "compensateontoolerrors":
+        case "compensateOnToolErrors": return java.lang.Boolean.class;
         case "configuration": return org.apache.camel.component.langchain4j.agent.LangChain4jAgentConfiguration.class;
+        case "executetoolsconcurrently":
+        case "executeToolsConcurrently": return java.lang.Boolean.class;
         case "jsonschema":
         case "jsonSchema": return java.lang.String.class;
         case "lazystartproducer":
         case "lazyStartProducer": return boolean.class;
+        case "maxtoolcallingroundtrips":
+        case "maxToolCallingRoundTrips": return int.class;
         case "mcpclients":
         case "mcpClients": return java.util.List.class;
         case "mcpserver":
@@ -95,11 +107,17 @@ public class LangChain4jAgentComponentConfigurer extends PropertyConfigurerSuppo
         case "agentFactory": return getOrCreateConfiguration(target).getAgentFactory();
         case "autowiredenabled":
         case "autowiredEnabled": return target.isAutowiredEnabled();
+        case "compensateontoolerrors":
+        case "compensateOnToolErrors": return getOrCreateConfiguration(target).getCompensateOnToolErrors();
         case "configuration": return target.getConfiguration();
+        case "executetoolsconcurrently":
+        case "executeToolsConcurrently": return getOrCreateConfiguration(target).getExecuteToolsConcurrently();
         case "jsonschema":
         case "jsonSchema": return getOrCreateConfiguration(target).getJsonSchema();
         case "lazystartproducer":
         case "lazyStartProducer": return target.isLazyStartProducer();
+        case "maxtoolcallingroundtrips":
+        case "maxToolCallingRoundTrips": return getOrCreateConfiguration(target).getMaxToolCallingRoundTrips();
         case "mcpclients":
         case "mcpClients": return getOrCreateConfiguration(target).getMcpClients();
         case "mcpserver":

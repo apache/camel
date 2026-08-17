@@ -178,6 +178,27 @@ AgentConfiguration configuration = new AgentConfiguration()
 
 Tool-route header side-effects are not merged back onto the main exchange when tools run concurrently; only the tool result text is returned to the LLM.
 
+The same tool-calling options can also be set directly on the endpoint URI when using inline agent creation mode (`agentConfiguration` without `agent` or `agentFactory`). URI values override the same options on the `AgentConfiguration` bean:
+
+[source,yaml]
+----
+- to:
+    uri: "langchain4j-agent:assistant"
+    parameters:
+      agentConfiguration: "#myConfig"
+      tags: "orders"
+      maxToolCallingRoundTrips: 5
+      compensateOnToolErrors: true
+      executeToolsConcurrently: true
+----
+
+[source,java]
+----
+from("direct:start")
+    .to("langchain4j-agent:assistant?agentConfiguration=#myConfig&tags=orders"
+        + "&maxToolCallingRoundTrips=5&compensateOnToolErrors=true&executeToolsConcurrently=true");
+----
+
 ==== Creating an Agent without Memory
 
 ._Java-only: LangChain4j `AgentConfiguration` and programmatic bean registration_
