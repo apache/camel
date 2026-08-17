@@ -722,7 +722,7 @@
   "groupId" : "org.apache.camel",
   "artifactId" : "camel-test-infra-ollama",
   "version" : "4.23.0-SNAPSHOT",
-  "serviceVersion" : "0.32.6",
+  "serviceVersion" : "0.32.14",
   "uiSupported" : false
 }, {
   "service" : "org.apache.camel.test.infra.azure.common.services.AzureInfraService",
