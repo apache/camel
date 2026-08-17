@@ -468,6 +468,8 @@ The `CamelOpenAIMcpReturnDirect` header is set to `true` when this occurs, so do
 
 NOTE: Tool execution errors always bypass `returnDirect` — errors are sent back to the model for graceful handling.
 
+Route-based tools registered via the xref:components::ai-tool-component.adoc[ai-tool component] can also declare `returnDirect=true` on the `ai-tool` endpoint. Configure the OpenAI endpoint with the `tags` option to expose matching route tools alongside MCP tools; their annotations (including `returnDirect`) are honoured in the agentic loop the same way as MCP tool annotations.
+
 === MCP Tool Call Headers
 
 The following headers are set after the agentic loop completes:
