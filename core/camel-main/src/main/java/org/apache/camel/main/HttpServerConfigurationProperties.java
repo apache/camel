@@ -85,6 +85,16 @@ public class HttpServerConfigurationProperties implements BootstrapCloseable {
     private long mcpSessionIdleTtl = 300000;
     @Metadata
     private String mcpServerName;
+    @Metadata
+    private String mcpServerTitle;
+    @Metadata
+    private String mcpServerDescription;
+    @Metadata
+    private String mcpServerWebsiteUrl;
+    @Metadata
+    private String mcpInstructions;
+    @Metadata
+    private String mcpServerIcons;
 
     public HttpServerConfigurationProperties(MainConfigurationProperties parent) {
         this.parent = parent;
@@ -400,6 +410,62 @@ public class HttpServerConfigurationProperties implements BootstrapCloseable {
         this.mcpServerName = mcpServerName;
     }
 
+    public String getMcpServerTitle() {
+        return mcpServerTitle;
+    }
+
+    /**
+     * MCP server display title advertised to clients in {@code serverInfo.title}.
+     */
+    public void setMcpServerTitle(String mcpServerTitle) {
+        this.mcpServerTitle = mcpServerTitle;
+    }
+
+    public String getMcpServerDescription() {
+        return mcpServerDescription;
+    }
+
+    /**
+     * MCP server description advertised to clients in {@code serverInfo.description}.
+     */
+    public void setMcpServerDescription(String mcpServerDescription) {
+        this.mcpServerDescription = mcpServerDescription;
+    }
+
+    public String getMcpServerWebsiteUrl() {
+        return mcpServerWebsiteUrl;
+    }
+
+    /**
+     * MCP server website URL advertised to clients in {@code serverInfo.websiteUrl}.
+     */
+    public void setMcpServerWebsiteUrl(String mcpServerWebsiteUrl) {
+        this.mcpServerWebsiteUrl = mcpServerWebsiteUrl;
+    }
+
+    public String getMcpInstructions() {
+        return mcpInstructions;
+    }
+
+    /**
+     * Top-level MCP instructions returned to clients on initialize.
+     */
+    public void setMcpInstructions(String mcpInstructions) {
+        this.mcpInstructions = mcpInstructions;
+    }
+
+    public String getMcpServerIcons() {
+        return mcpServerIcons;
+    }
+
+    /**
+     * JSON array of MCP server icons advertised to clients in {@code serverInfo.icons}. Each entry must include a
+     * {@code src} URL and may include {@code mimeType}, {@code sizes} and {@code theme}.
+     */
+    public void setMcpServerIcons(String mcpServerIcons) {
+        this.mcpServerIcons = mcpServerIcons;
+    }
+
     public long getMcpSessionKeepAliveInterval() {
         return mcpSessionKeepAliveInterval;
     }
@@ -645,6 +711,46 @@ public class HttpServerConfigurationProperties implements BootstrapCloseable {
      */
     public HttpServerConfigurationProperties withMcpServerName(String mcpServerName) {
         this.mcpServerName = mcpServerName;
+        return this;
+    }
+
+    /**
+     * MCP server display title advertised to clients in {@code serverInfo.title}.
+     */
+    public HttpServerConfigurationProperties withMcpServerTitle(String mcpServerTitle) {
+        this.mcpServerTitle = mcpServerTitle;
+        return this;
+    }
+
+    /**
+     * MCP server description advertised to clients in {@code serverInfo.description}.
+     */
+    public HttpServerConfigurationProperties withMcpServerDescription(String mcpServerDescription) {
+        this.mcpServerDescription = mcpServerDescription;
+        return this;
+    }
+
+    /**
+     * MCP server website URL advertised to clients in {@code serverInfo.websiteUrl}.
+     */
+    public HttpServerConfigurationProperties withMcpServerWebsiteUrl(String mcpServerWebsiteUrl) {
+        this.mcpServerWebsiteUrl = mcpServerWebsiteUrl;
+        return this;
+    }
+
+    /**
+     * Top-level MCP instructions returned to clients on initialize.
+     */
+    public HttpServerConfigurationProperties withMcpInstructions(String mcpInstructions) {
+        this.mcpInstructions = mcpInstructions;
+        return this;
+    }
+
+    /**
+     * JSON array of MCP server icons advertised to clients in {@code serverInfo.icons}.
+     */
+    public HttpServerConfigurationProperties withMcpServerIcons(String mcpServerIcons) {
+        this.mcpServerIcons = mcpServerIcons;
         return this;
     }
 
