@@ -26,6 +26,7 @@ import com.aliyun.eventbridge.models.PutEventsResponse;
 import org.apache.camel.BindToRegistry;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.component.alibaba.eventbridge.constants.AlibabaEventBridgeConstants;
 import org.apache.camel.component.alibaba.eventbridge.constants.AlibabaEventBridgeHeaders;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.junit6.CamelTestSupport;
@@ -81,8 +82,8 @@ class PutEventsTest extends CamelTestSupport {
 
         Exchange exchange = mock.getExchanges().get(0);
         assertThat(exchange.getMessage().getBody(Map.class))
-                .containsEntry("requestId", "req-eb-1")
-                .containsEntry("failedEntryCount", 0);
+                .containsEntry(AlibabaEventBridgeConstants.EVENT_RESPONSE_REQUEST_IDENTIFIER, "req-eb-1")
+                .containsEntry(AlibabaEventBridgeConstants.EVENT_RESPONSE_FAILED_ENTRY_COUNT, 0);
         assertThat(exchange.getMessage().getHeader(AlibabaEventBridgeHeaders.REQUEST_ID)).isEqualTo("req-eb-1");
 
         verify(eventBridgeClient).putEvents(anyList());
@@ -100,10 +101,10 @@ class PutEventsTest extends CamelTestSupport {
         mock.expectedMinimumMessageCount(1);
 
         Map<String, Object> event = new HashMap<>();
-        event.put("eventBusName", testConfiguration.getProperty("eventBusName"));
-        event.put("source", testConfiguration.getProperty("eventSource"));
-        event.put("type", testConfiguration.getProperty("eventType"));
-        event.put("data", Map.of("key", "value"));
+        event.put(AlibabaEventBridgeConstants.EVENT_BUS_NAME, testConfiguration.getProperty("eventBusName"));
+        event.put(AlibabaEventBridgeConstants.EVENT_SOURCE, testConfiguration.getProperty("eventSource"));
+        event.put(AlibabaEventBridgeConstants.EVENT_TYPE, testConfiguration.getProperty("eventType"));
+        event.put(AlibabaEventBridgeConstants.EVENT_DATA, Map.of("key", "value"));
 
         template.sendBody("direct:put", event);
 
