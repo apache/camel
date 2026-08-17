@@ -195,7 +195,7 @@ The camel.routecontroller supports 12 options, which are listed below.
 
 
 === Camel Embedded HTTP Server (only for standalone; not Spring Boot or Quarkus) configurations
-The camel.server supports 28 options, which are listed below.
+The camel.server supports 33 options, which are listed below.
 
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
@@ -216,8 +216,13 @@ The camel.server supports 28 options, which are listed below.
 | *camel.server.jwtKeystoreType* | Type of the keystore used for JWT tokens validation (jks, pkcs12, etc.). |  | String
 | *camel.server.maxBodySize* | Maximum HTTP body size the embedded HTTP server can accept. |  | Long
 | *camel.server.mcpEnabled* | Whether to expose ai-tool routes as MCP tools over streamable HTTP. Requires camel-mcp-server on the classpath. By default, the MCP server is not enabled. | false | boolean
+| *camel.server.mcpInstructions* | Top-level MCP instructions returned to clients on initialize. |  | String
 | *camel.server.mcpPath* | HTTP path where the MCP endpoint is served. | /mcp | String
+| *camel.server.mcpServerDescription* | MCP server description advertised to clients in serverInfo.description . |  | String
+| *camel.server.mcpServerIcons* | JSON array of MCP server icons advertised to clients in serverInfo.icons . Each entry must include a src URL and may include mimeType , sizes and theme . |  | String
 | *camel.server.mcpServerName* | MCP server name advertised to clients. Defaults to the CamelContext name. |  | String
+| *camel.server.mcpServerTitle* | MCP server display title advertised to clients in serverInfo.title . |  | String
+| *camel.server.mcpServerWebsiteUrl* | MCP server website URL advertised to clients in serverInfo.websiteUrl . |  | String
 | *camel.server.mcpSessionIdleTtl* | Idle TTL in milliseconds for MCP sessions on the Vert.x streamable transport. Sessions with no activity for longer than this interval are evicted. 0 disables idle eviction. | 300000 | long
 | *camel.server.mcpSessionKeepAliveInterval* | Keep-alive ping interval in milliseconds for MCP sessions on the Vert.x streamable transport. Dead sessions are evicted after consecutive ping failures. 0 disables keep-alive pings. | 30000 | long
 | *camel.server.mcpTags* | Comma-separated list of ai-tool tag patterns to expose as MCP tools. Matching is case-insensitive and supports exact match, wildcard prefix ( {code foo} ), and {code } to match all tags. Only tools registered under a matching tag are exposed; the untagged default pool is never exposed. When not set, no tools are exposed. |  | String
