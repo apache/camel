@@ -43,7 +43,7 @@ class PahoMqtt5ConsumerLifecycleTest {
         doThrow(connectException).when(client).connect(any(MqttConnectionOptions.class));
         PahoMqtt5Consumer consumer = createConsumer(new PahoMqtt5Configuration(), client);
 
-        MqttException thrown = catchThrowableOfType(consumer::doStart, MqttException.class);
+        MqttException thrown = catchThrowableOfType(MqttException.class, consumer::doStart);
 
         assertThat(thrown).isSameAs(connectException);
         verify(client).close(true);
@@ -58,7 +58,7 @@ class PahoMqtt5ConsumerLifecycleTest {
         doThrow(closeException).when(client).close(true);
         PahoMqtt5Consumer consumer = createConsumer(new PahoMqtt5Configuration(), client);
 
-        MqttException thrown = catchThrowableOfType(consumer::doStart, MqttException.class);
+        MqttException thrown = catchThrowableOfType(MqttException.class, consumer::doStart);
 
         assertThat(thrown).isSameAs(connectException);
         assertThat(thrown.getSuppressed()).containsExactly(closeException);
@@ -89,7 +89,7 @@ class PahoMqtt5ConsumerLifecycleTest {
         PahoMqtt5Consumer consumer = createConsumer(configuration, client);
         consumer.doStart();
 
-        MqttException thrown = catchThrowableOfType(consumer::doStop, MqttException.class);
+        MqttException thrown = catchThrowableOfType(MqttException.class, consumer::doStop);
 
         assertThat(thrown).isSameAs(disconnectException);
         assertThat(thrown.getSuppressed()).containsExactly(closeException);
