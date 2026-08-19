@@ -211,7 +211,7 @@
         <google-cloud-speech-version>4.90.0</google-cloud-speech-version>
         <google-cloud-texttospeech-version>2.96.0</google-cloud-texttospeech-version>
         <google-genai-version>1.65.0</google-genai-version>
-        <graaljs-version>25.2.4</graaljs-version>
+        <graalvm-version>25.2.4</graalvm-version>
         <graphql-java-version>26.0</graphql-java-version>
         <greenmail-version>2.1.12</greenmail-version>
         <groovy-version>5.0.8</groovy-version>
@@ -2524,6 +2524,11 @@
             <dependency>
                 <groupId>org.apache.camel</groupId>
                 <artifactId>camel-python</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.camel</groupId>
+                <artifactId>camel-python3</artifactId>
                 <version>${project.version}</version>
             </dependency>
             <dependency>

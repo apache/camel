@@ -287,6 +287,8 @@ public final class ModelDeserializersResolver implements YamlDeserializerResolve
             case "org.apache.camel.model.dataformat.ProtobufDataFormat": return new ModelDeserializers.ProtobufDataFormatDeserializer();
             case "put": return new ModelDeserializers.PutDefinitionDeserializer();
             case "org.apache.camel.model.rest.PutDefinition": return new ModelDeserializers.PutDefinitionDeserializer();
+            case "python3": return new ModelDeserializers.Python3ExpressionDeserializer();
+            case "org.apache.camel.model.language.Python3Expression": return new ModelDeserializers.Python3ExpressionDeserializer();
             case "python": return new ModelDeserializers.PythonExpressionDeserializer();
             case "org.apache.camel.model.language.PythonExpression": return new ModelDeserializers.PythonExpressionDeserializer();
             case "randomLoadBalancer": return new ModelDeserializers.RandomLoadBalancerDefinitionDeserializer();
