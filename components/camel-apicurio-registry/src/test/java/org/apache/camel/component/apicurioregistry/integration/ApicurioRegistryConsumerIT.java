@@ -27,6 +27,8 @@ import org.apache.camel.component.apicurioregistry.ApicurioRegistryConstants;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.Test;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+
 class ApicurioRegistryConsumerIT extends ApicurioRegistryTestSupport {
 
     private static final String JSON_SCHEMA = """
@@ -89,7 +91,4 @@ class ApicurioRegistryConsumerIT extends ApicurioRegistryTestSupport {
         assertEquals(artifactId, receivedHeaders.get(ApicurioRegistryConstants.HEADER_ARTIFACT_ID));
     }
 
-    private void assertEquals(Object expected, Object actual) {
-        org.junit.jupiter.api.Assertions.assertEquals(expected, actual);
-    }
 }

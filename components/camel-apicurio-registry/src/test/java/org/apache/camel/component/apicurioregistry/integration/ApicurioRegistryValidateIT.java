@@ -27,6 +27,7 @@ import org.apache.camel.component.apicurioregistry.ApicurioRegistryConstants;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 class ApicurioRegistryValidateIT extends ApicurioRegistryTestSupport {
@@ -108,7 +109,7 @@ class ApicurioRegistryValidateIT extends ApicurioRegistryTestSupport {
             exchange.getIn().setBody(compatibleSchema);
         });
 
-        assertNotNull(result.getIn().getHeader(ApicurioRegistryConstants.HEADER_VALIDATION_RESULT));
+        assertEquals(true, result.getIn().getHeader(ApicurioRegistryConstants.HEADER_VALIDATION_RESULT));
     }
 
     @Test
@@ -127,6 +128,6 @@ class ApicurioRegistryValidateIT extends ApicurioRegistryTestSupport {
             exchange.getIn().setBody(compatibleSchema);
         });
 
-        assertNotNull(result.getIn().getBody());
+        assertEquals(true, result.getIn().getBody());
     }
 }
