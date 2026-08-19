@@ -20,8 +20,10 @@ import java.io.ByteArrayInputStream;
 import java.nio.charset.StandardCharsets;
 import java.util.List;
 
+import com.microsoft.kiota.ApiException;
 import io.apicurio.registry.rest.client.RegistryClient;
 import io.apicurio.registry.rest.client.models.ArtifactMetaData;
+import io.apicurio.registry.rest.client.models.ArtifactSearchResults;
 import io.apicurio.registry.rest.client.models.CreateArtifact;
 import io.apicurio.registry.rest.client.models.CreateArtifactResponse;
 import io.apicurio.registry.rest.client.models.CreateGroup;
@@ -30,13 +32,17 @@ import io.apicurio.registry.rest.client.models.GroupMetaData;
 import io.apicurio.registry.rest.client.models.VersionMetaData;
 import io.apicurio.registry.rest.client.models.VersionSearchResults;
 import org.apache.camel.BindToRegistry;
+import org.apache.camel.CamelExecutionException;
 import org.apache.camel.RoutesBuilder;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.mock;
@@ -82,6 +88,15 @@ class ApicurioRegistryProducerTest extends CamelTestSupport {
 
                 from("direct:searchArtifacts")
                         .to("apicurio-registry:testGroup?registryUrl=http://localhost:8080/apis/registry/v3&operation=searchArtifacts");
+
+                from("direct:testCompatibility")
+                        .to("apicurio-registry:testGroup/testArtifact?registryUrl=http://localhost:8080/apis/registry/v3&operation=testCompatibility");
+
+                from("direct:validate")
+                        .to("apicurio-registry:testGroup/testArtifact?registryUrl=http://localhost:8080/apis/registry/v3&operation=validate&failOnValidation=false");
+
+                from("direct:validateFail")
+                        .to("apicurio-registry:testGroup/testArtifact?registryUrl=http://localhost:8080/apis/registry/v3&operation=validate&failOnValidation=true");
 
                 from("direct:operationFromHeader")
                         .to("apicurio-registry:testGroup/testArtifact?registryUrl=http://localhost:8080/apis/registry/v3");
@@ -205,5 +220,94 @@ class ApicurioRegistryProducerTest extends CamelTestSupport {
         Object result = template.requestBodyAndHeader("direct:operationFromHeader", null,
                 ApicurioRegistryConstants.HEADER_OPERATION, "getArtifactMetadata");
         assertEquals(mockMetadata, result);
+    }
+
+    @Test
+    void testSearchArtifacts() throws Exception {
+        String endpointUri
+                = "apicurio-registry:testGroup?registryUrl=http://localhost:8080/apis/registry/v3&operation=searchArtifacts";
+        injectMockClient(endpointUri);
+
+        ArtifactSearchResults mockResults = new ArtifactSearchResults();
+        when(mockClient.search().artifacts().get(any())).thenReturn(mockResults);
+
+        Object result = template.requestBody("direct:searchArtifacts", (Object) null);
+        assertEquals(mockResults, result);
+    }
+
+    @Test
+    void testTestCompatibilitySuccess() throws Exception {
+        String endpointUri
+                = "apicurio-registry:testGroup/testArtifact?registryUrl=http://localhost:8080/apis/registry/v3&operation=testCompatibility";
+        injectMockClient(endpointUri);
+
+        VersionMetaData mockVersion = new VersionMetaData();
+        when(mockClient.groups().byGroupId("testGroup").artifacts().byArtifactId("testArtifact")
+                .versions().post(any(CreateVersion.class), any()))
+                .thenReturn(mockVersion);
+
+        Object result = template.requestBody("direct:testCompatibility", "{\"test\":true}");
+        assertEquals(true, result);
+    }
+
+    @Test
+    void testTestCompatibilityFailure() throws Exception {
+        String endpointUri
+                = "apicurio-registry:testGroup/testArtifact?registryUrl=http://localhost:8080/apis/registry/v3&operation=testCompatibility";
+        injectMockClient(endpointUri);
+
+        when(mockClient.groups().byGroupId("testGroup").artifacts().byArtifactId("testArtifact")
+                .versions().post(any(CreateVersion.class), any()))
+                .thenThrow(new ApiException("incompatible"));
+
+        Object result = template.requestBody("direct:testCompatibility", "{\"bad\":true}");
+        assertEquals(false, result);
+    }
+
+    @Test
+    void testValidateSuccess() throws Exception {
+        String endpointUri
+                = "apicurio-registry:testGroup/testArtifact?registryUrl=http://localhost:8080/apis/registry/v3&operation=validate&failOnValidation=false";
+        injectMockClient(endpointUri);
+
+        VersionMetaData mockVersion = new VersionMetaData();
+        when(mockClient.groups().byGroupId("testGroup").artifacts().byArtifactId("testArtifact")
+                .versions().post(any(CreateVersion.class), any()))
+                .thenReturn(mockVersion);
+
+        var exchange = template.request("direct:validate", ex -> ex.getIn().setBody("{\"test\":true}"));
+        assertTrue(exchange.getIn().getHeader(ApicurioRegistryConstants.HEADER_VALIDATION_RESULT, Boolean.class));
+    }
+
+    @Test
+    void testValidateFailureNoThrow() throws Exception {
+        String endpointUri
+                = "apicurio-registry:testGroup/testArtifact?registryUrl=http://localhost:8080/apis/registry/v3&operation=validate&failOnValidation=false";
+        injectMockClient(endpointUri);
+
+        when(mockClient.groups().byGroupId("testGroup").artifacts().byArtifactId("testArtifact")
+                .versions().post(any(CreateVersion.class), any()))
+                .thenThrow(new ApiException("validation error"));
+
+        var exchange = template.request("direct:validate", ex -> ex.getIn().setBody("{\"bad\":true}"));
+        assertFalse(exchange.getIn().getHeader(ApicurioRegistryConstants.HEADER_VALIDATION_RESULT, Boolean.class));
+        assertNotNull(exchange.getIn().getHeader(ApicurioRegistryConstants.HEADER_VALIDATION_ERRORS));
+    }
+
+    @Test
+    void testValidateFailureThrows() throws Exception {
+        String endpointUri
+                = "apicurio-registry:testGroup/testArtifact?registryUrl=http://localhost:8080/apis/registry/v3&operation=validate&failOnValidation=true";
+        injectMockClient(endpointUri);
+
+        when(mockClient.groups().byGroupId("testGroup").artifacts().byArtifactId("testArtifact")
+                .versions().post(any(CreateVersion.class), any()))
+                .thenThrow(new ApiException("validation error"));
+
+        try {
+            template.requestBody("direct:validateFail", "{\"bad\":true}");
+        } catch (CamelExecutionException e) {
+            assertInstanceOf(ApicurioRegistryValidationException.class, e.getCause());
+        }
     }
 }

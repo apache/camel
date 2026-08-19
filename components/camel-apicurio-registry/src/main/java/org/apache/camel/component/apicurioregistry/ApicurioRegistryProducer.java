@@ -18,6 +18,7 @@ package org.apache.camel.component.apicurioregistry;
 
 import java.io.InputStream;
 
+import com.microsoft.kiota.ApiException;
 import io.apicurio.registry.rest.client.RegistryClient;
 import io.apicurio.registry.rest.client.models.ArtifactMetaData;
 import io.apicurio.registry.rest.client.models.CreateArtifact;
@@ -126,15 +127,16 @@ public class ApicurioRegistryProducer extends HeaderSelectorProducer {
     }
 
     @InvokeOnHeader(ApicurioRegistryConstants.OPERATION_GET_ARTIFACT_CONTENT)
-    public void getArtifactContent(Message message) {
+    public void getArtifactContent(Message message) throws Exception {
         String groupId = resolveGroupId(message);
         String artifactId = resolveArtifactId(message);
         String version = message.getHeader(
                 ApicurioRegistryConstants.HEADER_VERSION, "branch=latest", String.class);
 
-        InputStream content = getClient().groups().byGroupId(groupId).artifacts()
-                .byArtifactId(artifactId).versions().byVersionExpression(version).content().get();
-        message.setBody(content);
+        try (InputStream content = getClient().groups().byGroupId(groupId).artifacts()
+                .byArtifactId(artifactId).versions().byVersionExpression(version).content().get()) {
+            message.setBody(content.readAllBytes());
+        }
     }
 
     @InvokeOnHeader(ApicurioRegistryConstants.OPERATION_GET_ARTIFACT_METADATA)
@@ -192,32 +194,26 @@ public class ApicurioRegistryProducer extends HeaderSelectorProducer {
     }
 
     @InvokeOnHeader(ApicurioRegistryConstants.OPERATION_TEST_COMPATIBILITY)
-    public void testCompatibility(Message message) {
-        String groupId = resolveGroupId(message);
-        String artifactId = resolveArtifactId(message);
-        String content = message.getBody(String.class);
-        String contentType = message.getHeader(
-                ApicurioRegistryConstants.HEADER_CONTENT_TYPE, "application/json", String.class);
-
-        CreateVersion createVersion = new CreateVersion();
-        VersionContent vc = new VersionContent();
-        vc.setContent(content);
-        vc.setContentType(contentType);
-        createVersion.setContent(vc);
-
-        try {
-            getClient().groups().byGroupId(groupId).artifacts()
-                    .byArtifactId(artifactId).versions()
-                    .post(createVersion, config -> config.queryParameters.dryRun = true);
-            message.setBody(true);
-        } catch (Exception e) {
-            message.setBody(false);
-            message.setHeader(ApicurioRegistryConstants.HEADER_VALIDATION_ERRORS, e.getMessage());
-        }
+    public void testCompatibility(Message message) throws Exception {
+        boolean compatible = doDryRun(message);
+        message.setBody(compatible);
     }
 
     @InvokeOnHeader(ApicurioRegistryConstants.OPERATION_VALIDATE)
     public void validate(Message message) throws Exception {
+        boolean valid = doDryRun(message);
+        message.setHeader(ApicurioRegistryConstants.HEADER_VALIDATION_RESULT, valid);
+        if (!valid && configuration.isFailOnValidation()) {
+            String errors = message.getHeader(
+                    ApicurioRegistryConstants.HEADER_VALIDATION_ERRORS, String.class);
+            String groupId = resolveGroupId(message);
+            String artifactId = resolveArtifactId(message);
+            throw new ApicurioRegistryValidationException(
+                    "Validation failed for artifact " + groupId + "/" + artifactId, errors);
+        }
+    }
+
+    private boolean doDryRun(Message message) throws Exception {
         String groupId = resolveGroupId(message);
         String artifactId = resolveArtifactId(message);
         String content = message.getBody(String.class);
@@ -234,14 +230,10 @@ public class ApicurioRegistryProducer extends HeaderSelectorProducer {
             getClient().groups().byGroupId(groupId).artifacts()
                     .byArtifactId(artifactId).versions()
                     .post(createVersion, config -> config.queryParameters.dryRun = true);
-            message.setHeader(ApicurioRegistryConstants.HEADER_VALIDATION_RESULT, true);
-        } catch (Exception e) {
-            message.setHeader(ApicurioRegistryConstants.HEADER_VALIDATION_RESULT, false);
+            return true;
+        } catch (ApiException e) {
             message.setHeader(ApicurioRegistryConstants.HEADER_VALIDATION_ERRORS, e.getMessage());
-            if (configuration.isFailOnValidation()) {
-                throw new ApicurioRegistryValidationException(
-                        "Validation failed for artifact " + groupId + "/" + artifactId, e.getMessage());
-            }
+            return false;
         }
     }
 }

@@ -73,6 +73,10 @@ The consumer polls the registry for new versions of the specified artifact. It t
 seen `globalId` and only delivers new versions. Set the `delay` option to control the polling
 interval (default: 500ms).
 
+On first start, all existing versions of the artifact are emitted as exchanges. Subsequent polls
+only deliver versions created after the consumer started. The watermark is held in memory and
+resets on route/context restart.
+
 When `fetchContent=true`, the consumer fetches the version content and sets it as the exchange body.
 Otherwise, the version metadata object is set as the body.
 
