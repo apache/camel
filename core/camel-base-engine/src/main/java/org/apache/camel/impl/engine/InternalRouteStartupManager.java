@@ -426,7 +426,9 @@ final class InternalRouteStartupManager {
                         route.getProperties().remove("route.start.exception");
                     } catch (Exception e) {
                         route.getProperties().put("route.start.exception", e);
-                        throw e;
+                        throw new FailedToStartRouteException(
+                                routeService.getId(), routeService.getLocation(),
+                                extractUsefulMessage(e), e);
                     }
 
                     // use basic endpoint uri to not log verbose details or potential sensitive data
@@ -464,7 +466,9 @@ final class InternalRouteStartupManager {
                     route.getProperties().remove("route.start.exception");
                 } catch (Exception e) {
                     route.getProperties().put("route.start.exception", e);
-                    throw e;
+                    throw new FailedToStartRouteException(
+                            routeService.getId(), routeService.getLocation(),
+                            extractUsefulMessage(e), e);
                 }
             }
 
@@ -494,6 +498,27 @@ final class InternalRouteStartupManager {
 
     int incrementRouteStartupOrder() {
         return defaultRouteStartupOrder++;
+    }
+
+    /**
+     * Extracts a non-null, non-empty error message from the exception or its cause chain.
+     * <p/>
+     * {@link Throwable#getLocalizedMessage()} can return {@code null} for exceptions such as
+     * {@link NullPointerException} that carry no message, which would cause {@link FailedToStartRouteException} to
+     * throw {@link NullPointerException} from its own constructor (via {@code Objects.requireNonNull}) instead of
+     * wrapping the original failure. This helper walks the cause chain to find the first meaningful message and falls
+     * back to the simple class name so the caller always receives a non-null string.
+     */
+    private static String extractUsefulMessage(Throwable e) {
+        Throwable current = e;
+        while (current != null) {
+            String msg = current.getLocalizedMessage();
+            if (msg != null && !msg.isBlank()) {
+                return msg;
+            }
+            current = current.getCause();
+        }
+        return e.getClass().getSimpleName();
     }
 
 }
