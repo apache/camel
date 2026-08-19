@@ -22,49 +22,61 @@ import java.util.concurrent.TimeUnit;
 import io.apicurio.registry.rest.client.RegistryClient;
 import io.apicurio.registry.rest.client.models.SearchedVersion;
 import io.apicurio.registry.rest.client.models.VersionSearchResults;
-import org.apache.camel.BindToRegistry;
-import org.apache.camel.RoutesBuilder;
+import org.apache.camel.CamelContext;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.test.junit5.CamelTestSupport;
+import org.apache.camel.impl.DefaultCamelContext;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-class ApicurioRegistryConsumerTest extends CamelTestSupport {
+class ApicurioRegistryConsumerTest {
+
+    private static final String ENDPOINT_URI
+            = "apicurio-registry:testGroup/testArtifact?registryUrl=http://localhost:8080/apis/registry/v3&delay=500";
 
     private final RegistryClient mockClient = mock(RegistryClient.class, org.mockito.Mockito.RETURNS_DEEP_STUBS);
+    private CamelContext context;
 
-    @BindToRegistry("apicurio-registry")
-    public ApicurioRegistryComponent getComponent() {
+    @BeforeEach
+    void setUp() {
+        context = new DefaultCamelContext();
         ApicurioRegistryComponent component = new ApicurioRegistryComponent(context);
         component.getConfiguration().setRegistryUrl("http://localhost:8080/apis/registry/v3");
-        return component;
+        context.addComponent("apicurio-registry", component);
     }
 
-    @Override
-    protected RoutesBuilder createRouteBuilder() {
-        return new RouteBuilder() {
+    @AfterEach
+    void tearDown() throws Exception {
+        if (context != null) {
+            context.stop();
+        }
+    }
+
+    private void setupAndStartRoute(VersionSearchResults results) throws Exception {
+        when(mockClient.groups().byGroupId("testGroup").artifacts().byArtifactId("testArtifact")
+                .versions().get())
+                .thenReturn(results);
+
+        ApicurioRegistryEndpoint endpoint = (ApicurioRegistryEndpoint) context.getEndpoint(ENDPOINT_URI);
+        endpoint.setRegistryClient(mockClient);
+
+        context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() {
-                from("apicurio-registry:testGroup/testArtifact?registryUrl=http://localhost:8080/apis/registry/v3&delay=500")
-                        .to("mock:result");
+                from(ENDPOINT_URI).to("mock:result");
             }
-        };
-    }
+        });
 
-    private void injectMockClient() {
-        ApicurioRegistryEndpoint endpoint = (ApicurioRegistryEndpoint) context.getEndpoint(
-                "apicurio-registry:testGroup/testArtifact?registryUrl=http://localhost:8080/apis/registry/v3&delay=500");
-        endpoint.setRegistryClient(mockClient);
+        context.start();
     }
 
     @Test
     void testPollNewVersions() throws Exception {
-        injectMockClient();
-
         SearchedVersion v1 = new SearchedVersion();
         v1.setGlobalId(1L);
         v1.setVersion("1.0");
@@ -80,19 +92,15 @@ class ApicurioRegistryConsumerTest extends CamelTestSupport {
         VersionSearchResults results = new VersionSearchResults();
         results.setVersions(List.of(v1, v2));
 
-        when(mockClient.groups().byGroupId("testGroup").artifacts().byArtifactId("testArtifact")
-                .versions().get())
-                .thenReturn(results);
+        setupAndStartRoute(results);
 
-        MockEndpoint mock = getMockEndpoint("mock:result");
+        MockEndpoint mock = context.getEndpoint("mock:result", MockEndpoint.class);
         mock.expectedMinimumMessageCount(2);
         MockEndpoint.assertIsSatisfied(context, 10, TimeUnit.SECONDS);
     }
 
     @Test
     void testPollOutOfOrderGlobalIds() throws Exception {
-        injectMockClient();
-
         SearchedVersion v1 = new SearchedVersion();
         v1.setGlobalId(5L);
         v1.setVersion("1.0");
@@ -114,15 +122,12 @@ class ApicurioRegistryConsumerTest extends CamelTestSupport {
         VersionSearchResults results = new VersionSearchResults();
         results.setVersions(List.of(v1, v2, v3));
 
-        when(mockClient.groups().byGroupId("testGroup").artifacts().byArtifactId("testArtifact")
-                .versions().get())
-                .thenReturn(results);
+        setupAndStartRoute(results);
 
-        MockEndpoint mock = getMockEndpoint("mock:result");
+        MockEndpoint mock = context.getEndpoint("mock:result", MockEndpoint.class);
         mock.expectedMinimumMessageCount(3);
         MockEndpoint.assertIsSatisfied(context, 10, TimeUnit.SECONDS);
 
-        // Verify exchanges arrive sorted by globalId (ascending)
         List<Long> receivedIds = mock.getReceivedExchanges().stream()
                 .map(e -> e.getIn().getHeader(ApicurioRegistryConstants.HEADER_GLOBAL_ID, Long.class))
                 .toList();
@@ -131,8 +136,6 @@ class ApicurioRegistryConsumerTest extends CamelTestSupport {
 
     @Test
     void testPollNoNewVersionsAfterInitial() throws Exception {
-        injectMockClient();
-
         SearchedVersion v1 = new SearchedVersion();
         v1.setGlobalId(1L);
         v1.setVersion("1.0");
@@ -142,11 +145,9 @@ class ApicurioRegistryConsumerTest extends CamelTestSupport {
         VersionSearchResults results = new VersionSearchResults();
         results.setVersions(List.of(v1));
 
-        when(mockClient.groups().byGroupId("testGroup").artifacts().byArtifactId("testArtifact")
-                .versions().get())
-                .thenReturn(results);
+        setupAndStartRoute(results);
 
-        MockEndpoint mock = getMockEndpoint("mock:result");
+        MockEndpoint mock = context.getEndpoint("mock:result", MockEndpoint.class);
         mock.expectedMessageCount(1);
         MockEndpoint.assertIsSatisfied(context, 10, TimeUnit.SECONDS);
     }
