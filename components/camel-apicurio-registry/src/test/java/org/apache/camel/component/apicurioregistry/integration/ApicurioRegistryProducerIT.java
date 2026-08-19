@@ -16,7 +16,6 @@
  */
 package org.apache.camel.component.apicurioregistry.integration;
 
-import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.Map;
@@ -124,14 +123,9 @@ class ApicurioRegistryProducerIT extends ApicurioRegistryTestSupport {
         Exchange contentResult = template.request("direct:operation", exchange -> {
             exchange.getIn().setHeaders(getContentHeaders);
         });
-        Object contentBody = contentResult.getIn().getBody();
+        byte[] contentBody = contentResult.getIn().getBody(byte[].class);
         assertNotNull(contentBody);
-        String contentStr;
-        if (contentBody instanceof InputStream) {
-            contentStr = new String(((InputStream) contentBody).readAllBytes(), StandardCharsets.UTF_8);
-        } else {
-            contentStr = contentBody.toString();
-        }
+        String contentStr = new String(contentBody, StandardCharsets.UTF_8);
         assertTrue(contentStr.contains("name"));
 
         // 5. Update artifact (new version)
