@@ -35,9 +35,7 @@ import org.apache.camel.spi.ExchangeFactory;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertInstanceOf;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.doThrow;
@@ -49,11 +47,10 @@ import static org.mockito.Mockito.when;
  * Verifies that processCommit() wraps MessageRemovedException (message already expunged on the IMAP server) with a
  * non-null cause message so that the error log never shows "Caused by: [... - null]".
  */
-public class MailConsumerCommitExpungedMessageTest {
+class MailConsumerCommitExpungedMessageTest {
 
     @Test
-    public void testCommitWithExpungedMessageProducesNonNullCause() throws Exception {
-        // --- infrastructure mocks ---
+    void testCommitWithExpungedMessageProducesNonNullCause() throws Exception {
         JavaMailSender sender = mock(JavaMailSender.class);
         Processor processor = mock(Processor.class);
         CamelContext camelContext = mock(CamelContext.class);
@@ -66,7 +63,6 @@ public class MailConsumerCommitExpungedMessageTest {
         when(ecc.getExchangeFactory()).thenReturn(ef);
         when(ef.newExchangeFactory(any())).thenReturn(ef);
 
-        // --- endpoint/configuration ---
         MailEndpoint endpoint = new MailEndpoint();
         endpoint.setCamelContext(camelContext);
         MailConfiguration config = new MailConfiguration();
@@ -76,28 +72,22 @@ public class MailConsumerCommitExpungedMessageTest {
         config.setDelete(false);
         endpoint.setConfiguration(config);
 
-        // --- message mock: setFlag throws MessageRemovedException (no message text — simulates the null cause) ---
         Message mail = mock(Message.class);
         doThrow(new MessageRemovedException()).when(mail).setFlag(any(Flags.Flag.class), any(boolean.class));
 
-        // --- folder mock: open and isOpen so processCommit doesn't bail early ---
         Folder folder = mock(Folder.class);
         when(folder.isOpen()).thenReturn(true);
 
-        // --- exchange mock ---
         Exchange exchange = mock(Exchange.class);
         org.apache.camel.Message camelMsg = mock(org.apache.camel.Message.class);
         when(exchange.getIn()).thenReturn(camelMsg);
         when(camelMsg.getHeader(MailConstants.MAIL_COPY_TO, config.getCopyTo(), String.class)).thenReturn(null);
         when(camelMsg.getHeader(MailConstants.MAIL_MOVE_TO, config.getMoveTo(), String.class)).thenReturn(null);
         when(camelMsg.getHeader(MailConstants.MAIL_DELETE, config.isDelete(), boolean.class)).thenReturn(false);
-        // removeProperty returns null uid — fine because protocol is imap (not pop3)
         when(exchange.removeProperty(MailConsumer.MAIL_MESSAGE_UID)).thenReturn(null);
 
-        // --- capture exception handler calls ---
         ExceptionHandler exceptionHandler = mock(ExceptionHandler.class);
 
-        // --- build consumer and inject mocks via reflection ---
         MailConsumer consumer = new MailConsumer(endpoint, processor, sender);
         consumer.setExceptionHandler(exceptionHandler);
 
@@ -105,28 +95,21 @@ public class MailConsumerCommitExpungedMessageTest {
         folderField.setAccessible(true);
         folderField.set(consumer, folder);
 
-        // --- exercise ---
         consumer.processCommit(mail, exchange);
 
-        // --- verify exception handler was called with a MessagingException whose message is non-null ---
         ArgumentCaptor<String> msgCaptor = ArgumentCaptor.forClass(String.class);
         ArgumentCaptor<Throwable> causeCaptor = ArgumentCaptor.forClass(Throwable.class);
         verify(exceptionHandler).handleException(msgCaptor.capture(), any(Exchange.class), causeCaptor.capture());
 
         Throwable caught = causeCaptor.getValue();
-        assertInstanceOf(MessagingException.class, caught,
-                "Expected MessagingException wrapping MessageRemovedException");
-        assertNotNull(caught.getMessage(),
-                "Cause message must not be null — was: " + caught.getMessage());
-        assertEquals("Message already removed/expunged on server (no flag update possible)", caught.getMessage());
-
-        assertInstanceOf(MessageRemovedException.class, caught.getCause(),
-                "Root cause must be the original MessageRemovedException");
+        assertThat(caught)
+                .isInstanceOf(MessagingException.class)
+                .hasMessage("Message already removed/expunged on server (no flag update possible)")
+                .hasCauseInstanceOf(MessageRemovedException.class);
     }
 
     @Test
-    public void testCommitWithOtherMessagingExceptionPassedThroughAsIs() throws Exception {
-        // --- infrastructure mocks ---
+    void testCommitWithOtherMessagingExceptionPassedThroughAsIs() throws Exception {
         JavaMailSender sender = mock(JavaMailSender.class);
         Processor processor = mock(Processor.class);
         CamelContext camelContext = mock(CamelContext.class);
@@ -178,8 +161,8 @@ public class MailConsumerCommitExpungedMessageTest {
         ArgumentCaptor<Throwable> causeCaptor = ArgumentCaptor.forClass(Throwable.class);
         verify(exceptionHandler).handleException(anyString(), any(Exchange.class), causeCaptor.capture());
 
-        // non-MessageRemovedException must be passed through unchanged (no wrapping)
-        assertInstanceOf(MessagingException.class, causeCaptor.getValue());
-        assertEquals("Some other server error", causeCaptor.getValue().getMessage());
+        assertThat(causeCaptor.getValue())
+                .isInstanceOf(MessagingException.class)
+                .hasMessage("Some other server error");
     }
 }
