@@ -17,6 +17,8 @@
 package org.apache.camel.component.apicurioregistry;
 
 import java.io.InputStream;
+import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 
 import io.apicurio.registry.rest.client.RegistryClient;
@@ -58,7 +60,9 @@ public class ApicurioRegistryConsumer extends ScheduledPollConsumer {
             return 0;
         }
 
-        List<SearchedVersion> versions = results.getVersions();
+        List<SearchedVersion> versions = new ArrayList<>(results.getVersions());
+        versions.sort(Comparator.comparingLong(SearchedVersion::getGlobalId));
+
         int count = 0;
         for (SearchedVersion version : versions) {
             Long globalId = version.getGlobalId();
@@ -78,19 +82,17 @@ public class ApicurioRegistryConsumer extends ScheduledPollConsumer {
                 }
 
                 if (configuration.isFetchContent()) {
-                    InputStream content = client.groups().byGroupId(groupId).artifacts()
+                    try (InputStream content = client.groups().byGroupId(groupId).artifacts()
                             .byArtifactId(artifactId).versions()
-                            .byVersionExpression(version.getVersion()).content().get();
-                    message.setBody(content);
+                            .byVersionExpression(version.getVersion()).content().get()) {
+                        message.setBody(content.readAllBytes());
+                    }
                 } else {
                     message.setBody(version);
                 }
 
                 getProcessor().process(exchange);
-
-                if (lastSeenGlobalId == null || globalId > lastSeenGlobalId) {
-                    lastSeenGlobalId = globalId;
-                }
+                lastSeenGlobalId = globalId;
                 count++;
             }
         }

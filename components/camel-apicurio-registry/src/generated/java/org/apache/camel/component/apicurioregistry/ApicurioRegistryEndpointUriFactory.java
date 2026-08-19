@@ -24,7 +24,7 @@ public class ApicurioRegistryEndpointUriFactory extends org.apache.camel.support
     private static final Set<String> ENDPOINT_IDENTITY_PROPERTY_NAMES;
     private static final Map<String, String> MULTI_VALUE_PREFIXES;
     static {
-        Set<String> props = new HashSet<>(37);
+        Set<String> props = new HashSet<>(36);
         props.add("artifactId");
         props.add("artifactType");
         props.add("authType");
@@ -32,7 +32,6 @@ public class ApicurioRegistryEndpointUriFactory extends org.apache.camel.support
         props.add("backoffIdleThreshold");
         props.add("backoffMultiplier");
         props.add("bridgeErrorHandler");
-        props.add("cacheTtl");
         props.add("clientId");
         props.add("clientSecret");
         props.add("delay");

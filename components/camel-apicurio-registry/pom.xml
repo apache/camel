@@ -33,10 +33,6 @@
     <name>Camel :: Apicurio Registry</name>
     <description>Camel Apicurio Registry component</description>
 
-    <properties>
-        <apicurio-registry-sdk-version>3.3.0</apicurio-registry-sdk-version>
-    </properties>
-
     <dependencies>
         <!-- camel -->
         <dependency>

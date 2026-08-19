@@ -35,8 +35,6 @@ public class ApicurioRegistryEndpointConfigurer extends PropertyConfigurerSuppor
         case "backoffMultiplier": target.setBackoffMultiplier(property(camelContext, int.class, value)); return true;
         case "bridgeerrorhandler":
         case "bridgeErrorHandler": target.setBridgeErrorHandler(property(camelContext, boolean.class, value)); return true;
-        case "cachettl":
-        case "cacheTtl": target.getConfiguration().setCacheTtl(property(camelContext, long.class, value)); return true;
         case "clientid":
         case "clientId": target.getConfiguration().setClientId(property(camelContext, java.lang.String.class, value)); return true;
         case "clientsecret":
@@ -105,8 +103,6 @@ public class ApicurioRegistryEndpointConfigurer extends PropertyConfigurerSuppor
         case "backoffMultiplier": return int.class;
         case "bridgeerrorhandler":
         case "bridgeErrorHandler": return boolean.class;
-        case "cachettl":
-        case "cacheTtl": return long.class;
         case "clientid":
         case "clientId": return java.lang.String.class;
         case "clientsecret":
@@ -176,8 +172,6 @@ public class ApicurioRegistryEndpointConfigurer extends PropertyConfigurerSuppor
         case "backoffMultiplier": return target.getBackoffMultiplier();
         case "bridgeerrorhandler":
         case "bridgeErrorHandler": return target.isBridgeErrorHandler();
-        case "cachettl":
-        case "cacheTtl": return target.getConfiguration().getCacheTtl();
         case "clientid":
         case "clientId": return target.getConfiguration().getClientId();
         case "clientsecret":
