@@ -1200,6 +1200,8 @@
               }, {
                 "required" : [ "python" ]
               }, {
+                "required" : [ "python3" ]
+              }, {
                 "required" : [ "ref" ]
               }, {
                 "required" : [ "simple" ]
@@ -1288,6 +1290,7 @@
           "mvel" : { },
           "ognl" : { },
           "python" : { },
+          "python3" : { },
           "ref" : { },
           "simple" : { },
           "spel" : { },
@@ -1348,6 +1351,8 @@
                 "required" : [ "ognl" ]
               }, {
                 "required" : [ "python" ]
+              }, {
+                "required" : [ "python3" ]
               }, {
                 "required" : [ "ref" ]
               }, {
@@ -1442,6 +1447,7 @@
           "mvel" : { },
           "ognl" : { },
           "python" : { },
+          "python3" : { },
           "ref" : { },
           "simple" : { },
           "spel" : { },
@@ -1502,6 +1508,8 @@
                 "required" : [ "ognl" ]
               }, {
                 "required" : [ "python" ]
+              }, {
+                "required" : [ "python3" ]
               }, {
                 "required" : [ "ref" ]
               }, {
@@ -1639,6 +1647,7 @@
           "mvel" : { },
           "ognl" : { },
           "python" : { },
+          "python3" : { },
           "ref" : { },
           "simple" : { },
           "spel" : { },
@@ -1787,6 +1796,8 @@
                 "required" : [ "ognl" ]
               }, {
                 "required" : [ "python" ]
+              }, {
+                "required" : [ "python3" ]
               }, {
                 "required" : [ "ref" ]
               }, {
@@ -1945,6 +1956,14 @@
             }
           }, {
             "type" : "object",
+            "required" : [ "python3" ],
+            "properties" : {
+              "python3" : {
+                "$ref" : "#/items/definitions/org.apache.camel.model.language.Python3Expression"
+              }
+            }
+          }, {
+            "type" : "object",
             "required" : [ "ref" ],
             "properties" : {
               "ref" : {
@@ -2036,6 +2055,7 @@
           "mvel" : { },
           "ognl" : { },
           "python" : { },
+          "python3" : { },
           "ref" : { },
           "simple" : { },
           "spel" : { },
@@ -2173,6 +2193,8 @@
               }, {
                 "required" : [ "python" ]
               }, {
+                "required" : [ "python3" ]
+              }, {
                 "required" : [ "ref" ]
               }, {
                 "required" : [ "simple" ]
@@ -2255,6 +2277,7 @@
           "mvel" : { },
           "ognl" : { },
           "python" : { },
+          "python3" : { },
           "ref" : { },
           "simple" : { },
           "spel" : { },
@@ -2417,6 +2440,8 @@
               }, {
                 "required" : [ "python" ]
               }, {
+                "required" : [ "python3" ]
+              }, {
                 "required" : [ "ref" ]
               }, {
                 "required" : [ "simple" ]
@@ -2523,6 +2548,7 @@
           "mvel" : { },
           "ognl" : { },
           "python" : { },
+          "python3" : { },
           "ref" : { },
           "simple" : { },
           "spel" : { },
@@ -2984,6 +3010,8 @@
               }, {
                 "required" : [ "python" ]
               }, {
+                "required" : [ "python3" ]
+              }, {
                 "required" : [ "ref" ]
               }, {
                 "required" : [ "simple" ]
@@ -3084,6 +3112,7 @@
           "mvel" : { },
           "ognl" : { },
           "python" : { },
+          "python3" : { },
           "ref" : { },
           "simple" : { },
           "spel" : { },
@@ -4041,6 +4070,8 @@
               }, {
                 "required" : [ "python" ]
               }, {
+                "required" : [ "python3" ]
+              }, {
                 "required" : [ "ref" ]
               }, {
                 "required" : [ "simple" ]
@@ -4106,6 +4137,7 @@
           "mvel" : { },
           "ognl" : { },
           "python" : { },
+          "python3" : { },
           "ref" : { },
           "simple" : { },
           "spel" : { },
@@ -4499,6 +4531,8 @@
               }, {
                 "required" : [ "python" ]
               }, {
+                "required" : [ "python3" ]
+              }, {
                 "required" : [ "ref" ]
               }, {
                 "required" : [ "simple" ]
@@ -4630,6 +4664,7 @@
           "mvel" : { },
           "ognl" : { },
           "python" : { },
+          "python3" : { },
           "ref" : { },
           "simple" : { },
           "spel" : { },
@@ -4743,6 +4778,8 @@
               }, {
                 "required" : [ "python" ]
               }, {
+                "required" : [ "python3" ]
+              }, {
                 "required" : [ "ref" ]
               }, {
                 "required" : [ "simple" ]
@@ -4798,6 +4835,7 @@
           "mvel" : { },
           "ognl" : { },
           "python" : { },
+          "python3" : { },
           "ref" : { },
           "simple" : { },
           "spel" : { },
@@ -4859,6 +4897,8 @@
                 "required" : [ "ognl" ]
               }, {
                 "required" : [ "python" ]
+              }, {
+                "required" : [ "python3" ]
               }, {
                 "required" : [ "ref" ]
               }, {
@@ -5022,6 +5062,7 @@
           "mvel" : { },
           "ognl" : { },
           "python" : { },
+          "python3" : { },
           "ref" : { },
           "simple" : { },
           "spel" : { },
@@ -5442,6 +5483,8 @@
               }, {
                 "required" : [ "python" ]
               }, {
+                "required" : [ "python3" ]
+              }, {
                 "required" : [ "ref" ]
               }, {
                 "required" : [ "simple" ]
@@ -5545,6 +5588,7 @@
           "mvel" : { },
           "ognl" : { },
           "python" : { },
+          "python3" : { },
           "ref" : { },
           "simple" : { },
           "spel" : { },
@@ -6185,6 +6229,8 @@
                 }, {
                   "required" : [ "python" ]
                 }, {
+                  "required" : [ "python3" ]
+                }, {
                   "required" : [ "ref" ]
                 }, {
                   "required" : [ "simple" ]
@@ -6278,6 +6324,7 @@
             "mvel" : { },
             "ognl" : { },
             "python" : { },
+            "python3" : { },
             "ref" : { },
             "simple" : { },
             "spel" : { },
@@ -6461,6 +6508,8 @@
               }, {
                 "required" : [ "python" ]
               }, {
+                "required" : [ "python3" ]
+              }, {
                 "required" : [ "ref" ]
               }, {
                 "required" : [ "simple" ]
@@ -6532,6 +6581,7 @@
           "mvel" : { },
           "ognl" : { },
           "python" : { },
+          "python3" : { },
           "ref" : { },
           "simple" : { },
           "spel" : { },
@@ -6592,6 +6642,8 @@
                 "required" : [ "ognl" ]
               }, {
                 "required" : [ "python" ]
+              }, {
+                "required" : [ "python3" ]
               }, {
                 "required" : [ "ref" ]
               }, {
@@ -6664,6 +6716,7 @@
           "mvel" : { },
           "ognl" : { },
           "python" : { },
+          "python3" : { },
           "ref" : { },
           "simple" : { },
           "spel" : { },
@@ -6765,6 +6818,8 @@
               }, {
                 "required" : [ "python" ]
               }, {
+                "required" : [ "python3" ]
+              }, {
                 "required" : [ "ref" ]
               }, {
                 "required" : [ "simple" ]
@@ -6841,6 +6896,7 @@
           "mvel" : { },
           "ognl" : { },
           "python" : { },
+          "python3" : { },
           "ref" : { },
           "simple" : { },
           "spel" : { },
@@ -6940,6 +6996,8 @@
               }, {
                 "required" : [ "python" ]
               }, {
+                "required" : [ "python3" ]
+              }, {
                 "required" : [ "ref" ]
               }, {
                 "required" : [ "simple" ]
@@ -7016,6 +7074,7 @@
           "mvel" : { },
           "ognl" : { },
           "python" : { },
+          "python3" : { },
           "ref" : { },
           "simple" : { },
           "spel" : { },
@@ -7077,6 +7136,8 @@
                 "required" : [ "ognl" ]
               }, {
                 "required" : [ "python" ]
+              }, {
+                "required" : [ "python3" ]
               }, {
                 "required" : [ "ref" ]
               }, {
@@ -7154,6 +7215,7 @@
           "mvel" : { },
           "ognl" : { },
           "python" : { },
+          "python3" : { },
           "ref" : { },
           "simple" : { },
           "spel" : { },
@@ -7253,6 +7315,8 @@
               }, {
                 "required" : [ "python" ]
               }, {
+                "required" : [ "python3" ]
+              }, {
                 "required" : [ "ref" ]
               }, {
                 "required" : [ "simple" ]
@@ -7329,6 +7393,7 @@
           "mvel" : { },
           "ognl" : { },
           "python" : { },
+          "python3" : { },
           "ref" : { },
           "simple" : { },
           "spel" : { },
@@ -7389,6 +7454,8 @@
                 "required" : [ "ognl" ]
               }, {
                 "required" : [ "python" ]
+              }, {
+                "required" : [ "python3" ]
               }, {
                 "required" : [ "ref" ]
               }, {
@@ -7572,6 +7639,7 @@
           "mvel" : { },
           "ognl" : { },
           "python" : { },
+          "python3" : { },
           "ref" : { },
           "simple" : { },
           "spel" : { },
@@ -7898,6 +7966,8 @@
               }, {
                 "required" : [ "python" ]
               }, {
+                "required" : [ "python3" ]
+              }, {
                 "required" : [ "ref" ]
               }, {
                 "required" : [ "simple" ]
@@ -8010,6 +8080,7 @@
           "mvel" : { },
           "ognl" : { },
           "python" : { },
+          "python3" : { },
           "ref" : { },
           "simple" : { },
           "spel" : { },
@@ -8439,6 +8510,8 @@
               }, {
                 "required" : [ "python" ]
               }, {
+                "required" : [ "python3" ]
+              }, {
                 "required" : [ "ref" ]
               }, {
                 "required" : [ "simple" ]
@@ -8510,6 +8583,7 @@
           "mvel" : { },
           "ognl" : { },
           "python" : { },
+          "python3" : { },
           "ref" : { },
           "simple" : { },
           "spel" : { },
@@ -9108,6 +9182,8 @@
               }, {
                 "required" : [ "python" ]
               }, {
+                "required" : [ "python3" ]
+              }, {
                 "required" : [ "ref" ]
               }, {
                 "required" : [ "simple" ]
@@ -9184,6 +9260,7 @@
           "mvel" : { },
           "ognl" : { },
           "python" : { },
+          "python3" : { },
           "ref" : { },
           "simple" : { },
           "spel" : { },
@@ -9262,6 +9339,8 @@
               }, {
                 "required" : [ "python" ]
               }, {
+                "required" : [ "python3" ]
+              }, {
                 "required" : [ "ref" ]
               }, {
                 "required" : [ "simple" ]
@@ -9339,6 +9418,7 @@
           "mvel" : { },
           "ognl" : { },
           "python" : { },
+          "python3" : { },
           "ref" : { },
           "simple" : { },
           "spel" : { },
@@ -13322,6 +13402,14 @@
             }
           }, {
             "type" : "object",
+            "required" : [ "python3" ],
+            "properties" : {
+              "python3" : {
+                "$ref" : "#/items/definitions/org.apache.camel.model.language.Python3Expression"
+              }
+            }
+          }, {
+            "type" : "object",
             "required" : [ "ref" ],
             "properties" : {
               "ref" : {
@@ -13413,6 +13501,7 @@
           "mvel" : { },
           "ognl" : { },
           "python" : { },
+          "python3" : { },
           "ref" : { },
           "simple" : { },
           "spel" : { },
@@ -13925,6 +14014,40 @@
         "title" : "OGNL",
         "description" : "Evaluates an OGNL expression (Apache Commons OGNL)",
         "deprecated" : true,
+        "oneOf" : [ {
+          "type" : "string"
+        }, {
+          "type" : "object",
+          "additionalProperties" : false,
+          "properties" : {
+            "expression" : {
+              "type" : "string",
+              "title" : "Expression",
+              "description" : "The expression value in your chosen language syntax."
+            },
+            "id" : {
+              "type" : "string",
+              "title" : "Id",
+              "description" : "The id of this node."
+            },
+            "resultType" : {
+              "type" : "string",
+              "title" : "Result Type",
+              "description" : "The class of the result type (type from output)."
+            },
+            "trim" : {
+              "type" : "boolean",
+              "title" : "Trim",
+              "description" : "Whether to trim the source code to remove leading and trailing whitespaces and line breaks.",
+              "default" : true
+            }
+          }
+        } ],
+        "required" : [ "expression" ]
+      },
+      "org.apache.camel.model.language.Python3Expression" : {
+        "title" : "Python 3",
+        "description" : "Evaluates a Python 3 expression",
         "oneOf" : [ {
           "type" : "string"
         }, {

@@ -611,6 +611,9 @@ public class ModelWriter extends BaseWriter {
     public void writeOgnlExpression(OgnlExpression def) throws IOException {
         doWriteOgnlExpression("ognl", def);
     }
+    public void writePython3Expression(Python3Expression def) throws IOException {
+        doWritePython3Expression("python3", def);
+    }
     public void writePythonExpression(PythonExpression def) throws IOException {
         doWritePythonExpression("python", def);
     }
@@ -3005,6 +3008,12 @@ public class ModelWriter extends BaseWriter {
         doWriteValue(def.getExpression());
         endElement(name);
     }
+    protected void doWritePython3Expression(String name, Python3Expression def) throws IOException {
+        startElement(name);
+        doWriteTypedExpressionDefinitionAttributes(def);
+        doWriteValue(def.getExpression());
+        endElement(name);
+    }
     protected void doWritePythonExpression(String name, PythonExpression def) throws IOException {
         startElement(name);
         doWriteTypedExpressionDefinitionAttributes(def);
@@ -3881,6 +3890,7 @@ public class ModelWriter extends BaseWriter {
                 case "MethodCallExpression" -> doWriteMethodCallExpression("method", (MethodCallExpression) v);
                 case "MvelExpression" -> doWriteMvelExpression("mvel", (MvelExpression) v);
                 case "OgnlExpression" -> doWriteOgnlExpression("ognl", (OgnlExpression) v);
+                case "Python3Expression" -> doWritePython3Expression("python3", (Python3Expression) v);
                 case "PythonExpression" -> doWritePythonExpression("python", (PythonExpression) v);
                 case "RefExpression" -> doWriteRefExpression("ref", (RefExpression) v);
                 case "SimpleExpression" -> doWriteSimpleExpression("simple", (SimpleExpression) v);
