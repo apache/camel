@@ -38,8 +38,6 @@ public class ApicurioRegistryComponentConfigurer extends PropertyConfigurerSuppo
         case "autowiredEnabled": target.setAutowiredEnabled(property(camelContext, boolean.class, value)); return true;
         case "bridgeerrorhandler":
         case "bridgeErrorHandler": target.setBridgeErrorHandler(property(camelContext, boolean.class, value)); return true;
-        case "cachettl":
-        case "cacheTtl": getOrCreateConfiguration(target).setCacheTtl(property(camelContext, long.class, value)); return true;
         case "clientid":
         case "clientId": getOrCreateConfiguration(target).setClientId(property(camelContext, java.lang.String.class, value)); return true;
         case "clientsecret":
@@ -76,8 +74,6 @@ public class ApicurioRegistryComponentConfigurer extends PropertyConfigurerSuppo
         case "autowiredEnabled": return boolean.class;
         case "bridgeerrorhandler":
         case "bridgeErrorHandler": return boolean.class;
-        case "cachettl":
-        case "cacheTtl": return long.class;
         case "clientid":
         case "clientId": return java.lang.String.class;
         case "clientsecret":
@@ -115,8 +111,6 @@ public class ApicurioRegistryComponentConfigurer extends PropertyConfigurerSuppo
         case "autowiredEnabled": return target.isAutowiredEnabled();
         case "bridgeerrorhandler":
         case "bridgeErrorHandler": return target.isBridgeErrorHandler();
-        case "cachettl":
-        case "cacheTtl": return getOrCreateConfiguration(target).getCacheTtl();
         case "clientid":
         case "clientId": return getOrCreateConfiguration(target).getClientId();
         case "clientsecret":
