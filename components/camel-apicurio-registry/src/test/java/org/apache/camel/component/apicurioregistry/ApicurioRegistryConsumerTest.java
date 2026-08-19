@@ -29,6 +29,7 @@ import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Test;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -86,6 +87,46 @@ class ApicurioRegistryConsumerTest extends CamelTestSupport {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMinimumMessageCount(2);
         MockEndpoint.assertIsSatisfied(context, 10, TimeUnit.SECONDS);
+    }
+
+    @Test
+    void testPollOutOfOrderGlobalIds() throws Exception {
+        injectMockClient();
+
+        SearchedVersion v1 = new SearchedVersion();
+        v1.setGlobalId(5L);
+        v1.setVersion("1.0");
+        v1.setContentId(100L);
+        v1.setArtifactType("JSON");
+
+        SearchedVersion v2 = new SearchedVersion();
+        v2.setGlobalId(2L);
+        v2.setVersion("0.1");
+        v2.setContentId(99L);
+        v2.setArtifactType("JSON");
+
+        SearchedVersion v3 = new SearchedVersion();
+        v3.setGlobalId(8L);
+        v3.setVersion("2.0");
+        v3.setContentId(102L);
+        v3.setArtifactType("JSON");
+
+        VersionSearchResults results = new VersionSearchResults();
+        results.setVersions(List.of(v1, v2, v3));
+
+        when(mockClient.groups().byGroupId("testGroup").artifacts().byArtifactId("testArtifact")
+                .versions().get())
+                .thenReturn(results);
+
+        MockEndpoint mock = getMockEndpoint("mock:result");
+        mock.expectedMinimumMessageCount(3);
+        MockEndpoint.assertIsSatisfied(context, 10, TimeUnit.SECONDS);
+
+        // Verify exchanges arrive sorted by globalId (ascending)
+        List<Long> receivedIds = mock.getReceivedExchanges().stream()
+                .map(e -> e.getIn().getHeader(ApicurioRegistryConstants.HEADER_GLOBAL_ID, Long.class))
+                .toList();
+        assertEquals(List.of(2L, 5L, 8L), receivedIds);
     }
 
     @Test

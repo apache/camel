@@ -74,11 +74,6 @@ public class ApicurioRegistryConfiguration implements Cloneable {
               defaultValue = "true")
     private boolean failOnValidation = true;
 
-    @UriParam(label = "producer",
-              description = "Schema cache TTL in milliseconds for the validate operation. 0 means no caching.",
-              defaultValue = "300000")
-    private long cacheTtl = 300000;
-
     public String getRegistryUrl() {
         return registryUrl;
     }
@@ -181,14 +176,6 @@ public class ApicurioRegistryConfiguration implements Cloneable {
 
     public void setFailOnValidation(boolean failOnValidation) {
         this.failOnValidation = failOnValidation;
-    }
-
-    public long getCacheTtl() {
-        return cacheTtl;
-    }
-
-    public void setCacheTtl(long cacheTtl) {
-        this.cacheTtl = cacheTtl;
     }
 
     public ApicurioRegistryConfiguration copy() {
