@@ -61,7 +61,7 @@
         <activemq-version>5.19.9</activemq-version>
         <activemq6-version>6.3.1</activemq6-version>
         <activemq-artemis-version>2.55.0</activemq-artemis-version>
-        <aesh-terminal-version>3.14.1</aesh-terminal-version>
+        <aesh-terminal-version>3.16.4</aesh-terminal-version>
         <agroal-version>3.2.1</agroal-version>
         <allegro-converter-version>0.3.0</allegro-converter-version>
         <alibabacloud-oss-version>0.4.1</alibabacloud-oss-version>
