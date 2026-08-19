@@ -48,9 +48,6 @@ public interface ApicurioRegistryConstants {
     @Metadata(description = "The content type of the artifact", javaType = "String")
     String HEADER_CONTENT_TYPE = "CamelApicurioRegistryContentType";
 
-    @Metadata(description = "Whether the operation is a dry run", javaType = "Boolean")
-    String HEADER_DRY_RUN = "CamelApicurioRegistryDryRun";
-
     @Metadata(label = "consumer", description = "The version global ID", javaType = "Long")
     String HEADER_GLOBAL_ID = "CamelApicurioRegistryGlobalId";
 
