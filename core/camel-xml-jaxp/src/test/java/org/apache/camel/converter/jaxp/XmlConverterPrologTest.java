@@ -18,21 +18,30 @@ package org.apache.camel.converter.jaxp;
 
 import java.nio.charset.StandardCharsets;
 
+import org.apache.camel.TypeConversionException;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
- * Verifies the prolog-guard {@link XmlConverter#looksLikeXml(byte[])} which prevents
- * {@code SAXParseException: Content is not allowed in prolog} from being thrown when non-XML content (empty body, JSON,
- * plain-text HTTP error response, BOM-only) is passed to {@code toDOMDocument}.
+ * Verifies the prolog-guard in {@link XmlConverter}.
  *
  * <p>
- * Real-world trigger: {@code ByteArrayInputStreamCache} carrying a non-XML HTTP response body routed through
- * {@code CxfPayloadConverter} -> {@code XmlConverter.toDOMDocument(StreamCache, Exchange)}.
+ * {@link XmlConverter#looksLikeXml(byte[])} unit tests confirm the helper correctly identifies XML vs non-XML content.
+ * Integration tests via {@link XmlConverter#toDOMDocument(byte[], Exchange)} confirm that non-XML payloads throw
+ * {@link TypeConversionException} (explicit, diagnosable failure) rather than propagating a
+ * {@code SAXParseException: Content is not allowed in prolog} from deep inside the JDK parser.
+ *
+ * <p>
+ * Real-world trigger: {@code ByteArrayInputStreamCache} carrying a non-XML HTTP response body (JSON error page, empty
+ * body, BOM-only) routed through {@code CxfPayloadConverter} ->
+ * {@code XmlConverter.toDOMDocument(StreamCache, Exchange)}.
  */
 class XmlConverterPrologTest {
+
+    // ---- looksLikeXml unit tests ----
 
     @Test
     void looksLikeXml_nullReturnsFalse() {
@@ -115,5 +124,30 @@ class XmlConverterPrologTest {
         // UTF-16 LE BOM: FF FE — XML parsers handle this natively
         byte[] data = { (byte) 0xFF, (byte) 0xFE, '<', 0x00 };
         assertTrue(XmlConverter.looksLikeXml(data));
+    }
+
+    // ---- toDOMDocument prolog-guard integration tests ----
+
+    @Test
+    void toDOMDocument_emptyByteArrayThrowsTypeConversionException() {
+        XmlConverter converter = new XmlConverter();
+        assertThrows(TypeConversionException.class,
+                () -> converter.toDOMDocument(new byte[0], null));
+    }
+
+    @Test
+    void toDOMDocument_jsonBodyThrowsTypeConversionException() {
+        XmlConverter converter = new XmlConverter();
+        byte[] json = "{\"status\":\"error\"}".getBytes(StandardCharsets.UTF_8);
+        assertThrows(TypeConversionException.class,
+                () -> converter.toDOMDocument(json, null));
+    }
+
+    @Test
+    void toDOMDocument_plainTextThrowsTypeConversionException() {
+        XmlConverter converter = new XmlConverter();
+        byte[] text = "HTTP/1.1 503 Service Unavailable".getBytes(StandardCharsets.UTF_8);
+        assertThrows(TypeConversionException.class,
+                () -> converter.toDOMDocument(text, null));
     }
 }

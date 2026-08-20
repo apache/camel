@@ -75,6 +75,7 @@ import org.xml.sax.XMLReader;
 import org.apache.camel.Converter;
 import org.apache.camel.Exchange;
 import org.apache.camel.StreamCache;
+import org.apache.camel.TypeConversionException;
 import org.apache.camel.support.CamelContextHelper;
 import org.apache.camel.util.IOHelper;
 import org.apache.camel.util.ObjectHelper;
@@ -693,24 +694,32 @@ public class XmlConverter {
      * @param  exchange is the exchange to be used when calling the converter
      * @return          the parsed document
      */
-    @Converter(order = 54, allowNull = true)
+    @Converter(order = 54)
     public Document toDOMDocument(byte[] data, Exchange exchange)
             throws IOException, SAXException, ParserConfigurationException {
         if (!looksLikeXml(data)) {
-            LOG.debug("Skipping DOM parse: byte[] content does not start with a valid XML prolog");
-            return null;
+            throw new TypeConversionException(
+                    data, Document.class,
+                    new IllegalArgumentException(
+                            "Payload does not start with a valid XML prolog"
+                                                 + " (first bytes do not look like XML —"
+                                                 + " possible causes: empty body, JSON/HTML error response, wrong encoding)"));
         }
         DocumentBuilder documentBuilder = createDocumentBuilder(getDocumentBuilderFactory(exchange));
         return documentBuilder.parse(new ByteArrayInputStream(data));
     }
 
-    @Converter(order = 55, allowNull = true)
+    @Converter(order = 55)
     public Document toDOMDocument(StreamCache cache, Exchange exchange)
             throws IOException, SAXException, ParserConfigurationException {
         byte[] data = exchange.getContext().getTypeConverter().convertTo(byte[].class, exchange, cache);
         if (!looksLikeXml(data)) {
-            LOG.debug("Skipping DOM parse: StreamCache content does not start with a valid XML prolog");
-            return null;
+            throw new TypeConversionException(
+                    data, Document.class,
+                    new IllegalArgumentException(
+                            "Payload does not start with a valid XML prolog"
+                                                 + " (first bytes do not look like XML —"
+                                                 + " possible causes: empty body, JSON/HTML error response, wrong encoding)"));
         }
         return toDOMDocument(data, exchange);
     }
