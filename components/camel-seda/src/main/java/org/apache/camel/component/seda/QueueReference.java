@@ -115,4 +115,19 @@ public final class QueueReference {
             lock.unlock();
         }
     }
+
+    public boolean hasProducers() {
+        lock.lock();
+        try {
+            for (SedaEndpoint endpoint : endpoints) {
+                if (!endpoint.getProducers().isEmpty()) {
+                    return true;
+                }
+            }
+
+            return false;
+        } finally {
+            lock.unlock();
+        }
+    }
 }
