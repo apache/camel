@@ -15888,6 +15888,11 @@
         "description" : "Injects the XML Namespaces of prefix to uri mappings.",
         "title" : "Namespace"
       }, {
+        "name" : "namespacesRef",
+        "type" : "string",
+        "description" : "Reference to a org.apache.camel.support.builder.Namespaces bean in the registry to use for the XML Namespaces of prefix to uri mappings.",
+        "title" : "Namespaces Ref"
+      }, {
         "name" : "resultType",
         "type" : "string",
         "description" : "The class of the result type (type from output).",
@@ -15941,6 +15946,11 @@
         "ref" : "property",
         "description" : "Injects the XML Namespaces of prefix to uri mappings.",
         "title" : "Namespace"
+      }, {
+        "name" : "namespacesRef",
+        "type" : "string",
+        "description" : "Reference to a org.apache.camel.support.builder.Namespaces bean in the registry to use for the XML Namespaces of prefix to uri mappings.",
+        "title" : "Namespaces Ref"
       }, {
         "name" : "objectModel",
         "type" : "string",
@@ -16014,6 +16024,11 @@
         "ref" : "property",
         "description" : "Injects the XML Namespaces of prefix to uri mappings.",
         "title" : "Namespace"
+      }, {
+        "name" : "namespacesRef",
+        "type" : "string",
+        "description" : "Reference to a org.apache.camel.support.builder.Namespaces bean in the registry to use for the XML Namespaces of prefix to uri mappings.",
+        "title" : "Namespaces Ref"
       }, {
         "name" : "resultType",
         "type" : "string",

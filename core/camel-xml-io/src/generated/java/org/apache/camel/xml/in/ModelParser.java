@@ -2369,8 +2369,14 @@ public class ModelParser extends BaseParser {
         return doParse(new XMLTokenizerExpression(), (def, key, val) -> switch (key) {
                 case "group": def.setGroup(val); yield true;
                 case "mode": def.setMode(val); yield true;
-                default: yield singleInputTypedExpressionDefinitionAttributeHandler().accept(def, key, val);
+                default: yield namespaceAwareExpressionAttributeHandler().accept(def, key, val);
             }, namespaceAwareExpressionElementHandler(), expressionDefinitionValueHandler());
+    }
+    protected <T extends NamespaceAwareExpression> AttributeHandler<T> namespaceAwareExpressionAttributeHandler() {
+        return (def, key, val) -> switch (key) {
+            case "namespacesRef": def.setNamespacesRef(val); yield true;
+            default: yield singleInputTypedExpressionDefinitionAttributeHandler().accept(def, key, val);
+        };
     }
     protected <T extends NamespaceAwareExpression> ElementHandler<T> namespaceAwareExpressionElementHandler() {
         return (def, key) -> switch (key) {
@@ -2388,13 +2394,13 @@ public class ModelParser extends BaseParser {
                 case "resultQName": def.setResultQName(val); yield true;
                 case "saxon": def.setSaxon(val); yield true;
                 case "threadSafety": def.setThreadSafety(val); yield true;
-                default: yield singleInputTypedExpressionDefinitionAttributeHandler().accept(def, key, val);
+                default: yield namespaceAwareExpressionAttributeHandler().accept(def, key, val);
             }, namespaceAwareExpressionElementHandler(), expressionDefinitionValueHandler());
     }
     protected XQueryExpression doParseXQueryExpression() throws IOException, XmlPullParserException {
         return doParse(new XQueryExpression(), (def, key, val) -> switch (key) {
                 case "configurationRef": def.setConfigurationRef(val); yield true;
-                default: yield singleInputTypedExpressionDefinitionAttributeHandler().accept(def, key, val);
+                default: yield namespaceAwareExpressionAttributeHandler().accept(def, key, val);
             }, namespaceAwareExpressionElementHandler(), expressionDefinitionValueHandler());
     }
     protected CustomLoadBalancerDefinition doParseCustomLoadBalancerDefinition() throws IOException, XmlPullParserException {

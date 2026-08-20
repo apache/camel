@@ -23,6 +23,7 @@ import org.apache.camel.model.language.ExpressionDefinition;
 import org.apache.camel.model.language.XQueryExpression;
 import org.apache.camel.spi.Language;
 import org.apache.camel.spi.NamespaceAware;
+import org.apache.camel.support.builder.Namespaces;
 
 public class XQueryExpressionReifier extends SingleInputTypedExpressionReifier<XQueryExpression> {
 
@@ -41,8 +42,13 @@ public class XQueryExpressionReifier extends SingleInputTypedExpressionReifier<X
     }
 
     protected void configureNamespaceAware(Object builder) {
-        if (definition.getNamespaces() != null && builder instanceof NamespaceAware namespaceAware) {
-            namespaceAware.setNamespaces(parseMap(definition.getNamespaces()));
+        if (builder instanceof NamespaceAware namespaceAware) {
+            if (definition.getNamespaces() != null && !definition.getNamespaces().isEmpty()) {
+                namespaceAware.setNamespaces(parseMap(definition.getNamespaces()));
+            } else if (definition.getNamespacesRef() != null) {
+                Namespaces namespaces = mandatoryLookup(definition.getNamespacesRef(), Namespaces.class);
+                namespaceAware.setNamespaces(namespaces.getNamespaces());
+            }
         }
     }
 
