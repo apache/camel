@@ -633,7 +633,9 @@ public class SedaEndpoint extends DefaultEndpoint implements AsyncEndpoint, Brow
             LOG.debug("There is still active consumers.");
         }
 
-        ref = null;
+        if (getConsumers().isEmpty() && getProducers().isEmpty()) {
+            ref = null;
+        }
     }
 
     @Override
@@ -648,10 +650,10 @@ public class SedaEndpoint extends DefaultEndpoint implements AsyncEndpoint, Brow
             getComponent().onShutdownEndpoint(this);
         }
 
-        if (getConsumers().isEmpty()) {
+        if (getConsumers().isEmpty() && getProducers().isEmpty()) {
             super.shutdown();
         } else {
-            LOG.debug("There is still active consumers.");
+            LOG.debug("There is still active consumers or producers.");
         }
     }
 
