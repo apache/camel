@@ -65,6 +65,22 @@ class PahoMqtt5ConsumerLifecycleTest {
     }
 
     @Test
+    void failedStartAfterConnectDisconnectsAndClosesOwnedClient() throws Exception {
+        MqttClient client = mock(MqttClient.class);
+        MqttException subscribeException = new MqttException(MqttException.REASON_CODE_CLIENT_EXCEPTION);
+        PahoMqtt5Configuration configuration = new PahoMqtt5Configuration();
+        when(client.isConnected()).thenReturn(true);
+        doThrow(subscribeException).when(client).subscribe("test", configuration.getQos());
+        PahoMqtt5Consumer consumer = createConsumer(configuration, client);
+
+        MqttException thrown = catchThrowableOfType(MqttException.class, consumer::doStart);
+
+        assertThat(thrown).isSameAs(subscribeException);
+        verify(client).disconnect();
+        verify(client).close(true);
+    }
+
+    @Test
     void stopForceClosesOwnedClientWhenDisconnected() throws Exception {
         MqttClient client = mock(MqttClient.class);
         PahoMqtt5Consumer consumer = createConsumer(new PahoMqtt5Configuration(), client);

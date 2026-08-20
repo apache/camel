@@ -126,6 +126,13 @@ public class PahoMqtt5Consumer extends DefaultConsumer {
             if (ownedClient != null) {
                 client = null;
                 stopClient = false;
+                if (ownedClient.isConnected()) {
+                    try {
+                        ownedClient.disconnect();
+                    } catch (Exception disconnectException) {
+                        startException.addSuppressed(disconnectException);
+                    }
+                }
                 closeOwnedClient(ownedClient, startException);
             }
             throw startException;
