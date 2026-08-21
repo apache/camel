@@ -101,6 +101,9 @@ public final class QueueReference {
         return queue;
     }
 
+    /**
+     * Whether any of the endpoints sharing this queue reference still have active consumers.
+     */
     public boolean hasConsumers() {
         lock.lock();
         try {
@@ -116,6 +119,9 @@ public final class QueueReference {
         }
     }
 
+    /**
+     * Whether any of the endpoints sharing this queue reference still have active producers.
+     */
     public boolean hasProducers() {
         lock.lock();
         try {
