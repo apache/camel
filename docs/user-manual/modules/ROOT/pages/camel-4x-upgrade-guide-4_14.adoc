@@ -4,6 +4,24 @@ This document is for helping you upgrade your Apache Camel application
 from Camel 4.x to 4.y. For example, if you are upgrading Camel 4.0 to 4.2, then you should follow the guides
 from both 4.0 to 4.1 and 4.1 to 4.2.
 
+== Upgrading from 4.14.9 to 4.14.10
+
+=== camel-hazelcast - ReplicatedHazelcastAggregationRepository now applies the default serialization filter
+
+`ReplicatedHazelcastAggregationRepository` now applies the same default
+`JavaSerializationFilterConfig` that the other repositories and the component endpoints have applied
+since 4.14.8, when it bootstraps its own `HazelcastInstance` (that is, when no `hazelcastInstance` is
+supplied). It overrides `doStart()` without calling `super.doStart()` and was therefore left out of
+that change.
+
+The default whitelists the class name prefixes `java.`, `javax.`, `org.apache.camel.` and blacklists
+`java.net.`, and a user-supplied `JavaSerializationFilterConfig` is still respected and never
+overwritten.
+
+Applications that aggregate classes outside the default whitelist through the replicated repository
+without supplying their own `hazelcastInstance` must now provide a `Config` with a
+`JavaSerializationFilterConfig` covering their class names.
+
 == Upgrading from 4.14.8 to 4.14.9
 
 === camel-atmosphere-websocket - potential breaking change
