@@ -624,7 +624,7 @@ from("netty:udp://0.0.0.0:5155?sync=true&decoders=#decoder")
 
 [NOTE]
 ====
-Since Camel 4.22, `ObjectDecoder` and `DatagramPacketObjectDecoder` always install a JEP-290
+Since Camel 4.23, `ObjectDecoder` and `DatagramPacketObjectDecoder` always install a JEP-290
 `java.io.ObjectInputFilter` while decoding, as a defense-in-depth measure against unsafe Java deserialization. When no
 explicit pattern is passed, the JVM-wide `jdk.serialFilter` is honoured if set, otherwise the shared Camel default
 allow-list is applied (it permits standard Java and Apache Camel types, denies `java.net.**`, and enforces JEP-290
