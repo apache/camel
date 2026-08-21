@@ -609,6 +609,9 @@ public class SedaEndpoint extends DefaultEndpoint implements AsyncEndpoint, Brow
 
     void onStopped(SedaProducer producer) {
         producers.remove(producer);
+        if (getConsumers().isEmpty() && getProducers().isEmpty() && getComponent() != null) {
+            getComponent().onShutdownEndpoint(this);
+        }
     }
 
     void onStarted(SedaConsumer consumer) throws Exception {
@@ -660,13 +663,12 @@ public class SedaEndpoint extends DefaultEndpoint implements AsyncEndpoint, Brow
 
     @Override
     public void stop() {
-        if (getConsumers().isEmpty()) {
+        if (getConsumers().isEmpty() && getProducers().isEmpty()) {
             super.stop();
+            ref = null;
         } else {
-            LOG.debug("There is still active consumers.");
+            LOG.debug("There is still active consumers or producers.");
         }
-
-        ref = null;
     }
 
     @Override
@@ -681,10 +683,10 @@ public class SedaEndpoint extends DefaultEndpoint implements AsyncEndpoint, Brow
             getComponent().onShutdownEndpoint(this);
         }
 
-        if (getConsumers().isEmpty()) {
+        if (getConsumers().isEmpty() && getProducers().isEmpty()) {
             super.shutdown();
         } else {
-            LOG.debug("There is still active consumers.");
+            LOG.debug("There is still active consumers or producers.");
         }
     }
 
