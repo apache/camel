@@ -95,3 +95,25 @@ denies `java.net.**`, and enforces JEP-290 graph-shape limits). Routes that dese
 outside that allow-list must pass an explicit filter pattern to the two-argument
 `ObjectDecoder(ClassResolver, String)` / `DatagramPacketObjectDecoder(ClassResolver, String)`
 constructor (or configure `jdk.serialFilter`) to permit them.
+
+=== camel-oauth
+
+The OAuth processors now stop the route on the paths where they do not authenticate the caller, so
+that no subsequent step of the route runs for such a request. Previously they set a response code
+and returned, which left the rest of the route to execute and overwrite the response the processor
+had just prepared.
+
+What changed:
+
+* `OAuthBearerTokenProcessor` — a request with no `Authorization` header, or with one that does not
+parse as `Bearer <token>`, is now answered with `401` and a `WWW-Authenticate: Bearer` challenge
+(RFC 6750) instead of `400`, and the route is stopped. A present-but-invalid token continues to fail
+by propagating the exception from `OAuth.authenticate()`, as before.
+* `OAuthCodeFlowProcessor` — when the caller has no authenticated session and is redirected to the
+identity provider, the route is now stopped; the `302` is the whole response.
+* `OAuthCodeFlowCallback` — a callback request without the `code` parameter still answers `400`, and
+now also stops the route.
+
+Routes that relied on steps after these processors running for unauthenticated requests must be
+restructured. The authenticated paths are unchanged: a successfully authenticated request continues
+through the rest of the route exactly as before, and `OAuthLogoutProcessor` is unchanged.
