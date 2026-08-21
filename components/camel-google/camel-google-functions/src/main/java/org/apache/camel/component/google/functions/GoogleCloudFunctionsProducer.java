@@ -41,6 +41,7 @@ import org.apache.camel.Exchange;
 import org.apache.camel.InvalidPayloadException;
 import org.apache.camel.Message;
 import org.apache.camel.support.DefaultProducer;
+import org.apache.camel.util.ObjectHelper;
 
 /**
  * The GoogleCloudFunctions producer.
@@ -93,10 +94,12 @@ public class GoogleCloudFunctionsProducer extends DefaultProducer {
             ListFunctionsPagedResponse pagedListResponse = client.listFunctions(request);
             response = Lists.newArrayList(pagedListResponse.iterateAll());
         } else {
+            // no page size: iterateAll below follows the pages itself, and the service rejects an
+            // oversized one
             ListFunctionsRequest request = ListFunctionsRequest
                     .newBuilder().setParent(LocationName
                             .of(getConfiguration().getProject(), getConfiguration().getLocation()).toString())
-                    .setPageSize(Integer.MAX_VALUE).build();
+                    .build();
             ListFunctionsPagedResponse pagedListResponse = client.listFunctions(request);
             response = Lists.newArrayList(pagedListResponse.iterateAll());
         }
@@ -182,11 +185,9 @@ public class GoogleCloudFunctionsProducer extends DefaultProducer {
             final String project = getConfiguration().getProject();
             final String location = getConfiguration().getLocation();
             final String functionName = getConfiguration().getFunctionName();
-            final String entryPoint = exchange.getIn().getHeader(GoogleCloudFunctionsConstants.ENTRY_POINT,
-                    String.class);
-            final String runtime = exchange.getIn().getHeader(GoogleCloudFunctionsConstants.RUNTIME, String.class);
-            final String sourceArchiveUrl = exchange.getIn().getHeader(GoogleCloudFunctionsConstants.SOURCE_ARCHIVE_URL,
-                    String.class);
+            final String entryPoint = mandatoryHeader(exchange, GoogleCloudFunctionsConstants.ENTRY_POINT);
+            final String runtime = mandatoryHeader(exchange, GoogleCloudFunctionsConstants.RUNTIME);
+            final String sourceArchiveUrl = mandatoryHeader(exchange, GoogleCloudFunctionsConstants.SOURCE_ARCHIVE_URL);
             CloudFunction function = CloudFunction.newBuilder()
                     .setName(CloudFunctionName.of(project, location, functionName).toString()).setEntryPoint(entryPoint)
                     .setRuntime(runtime).setHttpsTrigger(HttpsTrigger.getDefaultInstance())
@@ -226,6 +227,18 @@ public class GoogleCloudFunctionsProducer extends DefaultProducer {
         }
         Message message = getMessageForResponse(exchange);
         message.setBody(response);
+    }
+
+    /**
+     * A header the request cannot be built without. The protobuf setters reject null, so without this the missing
+     * header surfaces as a bare NullPointerException instead of naming what is missing.
+     */
+    private static String mandatoryHeader(Exchange exchange, String header) {
+        String value = exchange.getIn().getHeader(header, String.class);
+        if (ObjectHelper.isEmpty(value)) {
+            throw new IllegalArgumentException("The " + header + " header must be set for this operation");
+        }
+        return value;
     }
 
     private GoogleCloudFunctionsOperations determineOperation(Exchange exchange) {
