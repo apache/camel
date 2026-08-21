@@ -112,6 +112,26 @@ public interface AWS2S3Constants {
     @Metadata(label = "producer", description = "A well constructed Amazon S3 Access Control List object.",
               javaType = "software.amazon.awssdk.services.s3.model.BucketCannedACL")
     String ACL = "CamelAwsS3Acl";
+    @Metadata(label = "producer", description = """
+            Gives the grantee READ, READ_ACP, and WRITE_ACP permissions on the object. The value is a grantee
+            expression such as `id=<canonical-user-id>`, `emailAddress=<email>` or `uri=<group-uri>`.""",
+              javaType = "String")
+    String GRANT_FULL_CONTROL = "CamelAwsS3GrantFullControl";
+    @Metadata(label = "producer", description = """
+            Allows the grantee to read the object data and its metadata. The value is a grantee expression such as
+            `id=<canonical-user-id>`, `emailAddress=<email>` or `uri=<group-uri>`.""",
+              javaType = "String")
+    String GRANT_READ = "CamelAwsS3GrantRead";
+    @Metadata(label = "producer", description = """
+            Allows the grantee to read the object ACL. The value is a grantee expression such as
+            `id=<canonical-user-id>`, `emailAddress=<email>` or `uri=<group-uri>`.""",
+              javaType = "String")
+    String GRANT_READ_ACP = "CamelAwsS3GrantReadACP";
+    @Metadata(label = "producer", description = """
+            Allows the grantee to write the ACL for the object. The value is a grantee expression such as
+            `id=<canonical-user-id>`, `emailAddress=<email>` or `uri=<group-uri>`.""",
+              javaType = "String")
+    String GRANT_WRITE_ACP = "CamelAwsS3GrantWriteACP";
     @Metadata(description = "The operation to perform. Permitted values are copyObject, deleteObject, listBuckets, deleteBucket, listObjects",
               javaType = "String")
     String S3_OPERATION = "CamelAwsS3Operation";

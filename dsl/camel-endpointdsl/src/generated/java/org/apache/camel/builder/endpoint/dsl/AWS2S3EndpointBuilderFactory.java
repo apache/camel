@@ -3983,6 +3983,59 @@ public interface AWS2S3EndpointBuilderFactory {
             return "CamelAwsS3Acl";
         }
         /**
+         * Gives the grantee READ, READ_ACP, and WRITE_ACP permissions on the
+         * object. The value is a grantee expression such as id=, emailAddress=
+         * or uri=.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code AwsS3GrantFullControl}.
+         */
+        public String awsS3GrantFullControl() {
+            return "CamelAwsS3GrantFullControl";
+        }
+        /**
+         * Allows the grantee to read the object data and its metadata. The
+         * value is a grantee expression such as id=, emailAddress= or uri=.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code AwsS3GrantRead}.
+         */
+        public String awsS3GrantRead() {
+            return "CamelAwsS3GrantRead";
+        }
+        /**
+         * Allows the grantee to read the object ACL. The value is a grantee
+         * expression such as id=, emailAddress= or uri=.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code AwsS3GrantReadACP}.
+         */
+        public String awsS3GrantReadACP() {
+            return "CamelAwsS3GrantReadACP";
+        }
+        /**
+         * Allows the grantee to write the ACL for the object. The value is a
+         * grantee expression such as id=, emailAddress= or uri=.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code AwsS3GrantWriteACP}.
+         */
+        public String awsS3GrantWriteACP() {
+            return "CamelAwsS3GrantWriteACP";
+        }
+        /**
          * The operation to perform. Permitted values are copyObject,
          * deleteObject, listBuckets, deleteBucket, listObjects.
          * 
