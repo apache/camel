@@ -19,6 +19,7 @@ package org.apache.camel.component.seda;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.apache.camel.support.service.ServiceHelper;
 import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -28,7 +29,9 @@ class SedaDiscardIfNoConsumerAfterRemovalTest extends ContextTestSupport {
 
     @Test
     void testDiscardAfterConsumerRouteRemoved() throws Exception {
+        SedaComponent seda = context.getComponent("seda", SedaComponent.class);
         SedaEndpoint bar = getMandatoryEndpoint("seda:bar?discardIfNoConsumers=true", SedaEndpoint.class);
+        String key = seda.getQueueKey(bar.getEndpointUri());
         assertThat(bar.getCurrentQueueSize()).isZero();
 
         MockEndpoint mock = getMockEndpoint("mock:result");
@@ -41,17 +44,68 @@ class SedaDiscardIfNoConsumerAfterRemovalTest extends ContextTestSupport {
         context.getRouteController().stopRoute("consumer");
         context.removeRoute("consumer");
 
-        mock.reset();
-        mock.expectedMessageCount(0);
+        assertThat(ServiceHelper.isStarted(bar)).isTrue();
+        assertThat(bar.getQueueReference()).isNotNull();
+        assertThat(seda.getQueues().get(key)).isNotNull();
+        assertThat(bar.getQueueReference().hasConsumers()).isFalse();
 
         template.sendBody("direct:start", "Should be discarded");
 
-        mock.assertIsSatisfied();
         assertThat(bar.getCurrentQueueSize()).isZero();
     }
 
     @Test
-    void testQueueReferenceKeptWhenProducerStillActive() throws Exception {
+    void testReAddConsumerAfterRemoval() throws Exception {
+        template.sendBody("direct:start", "Hello World");
+        getMockEndpoint("mock:result").assertIsSatisfied();
+
+        context.getRouteController().stopRoute("consumer");
+        context.removeRoute("consumer");
+
+        context.addRoutes(new RouteBuilder() {
+            @Override
+            public void configure() {
+                from("seda:bar?discardIfNoConsumers=true").routeId("consumer").to("mock:result");
+            }
+        });
+
+        MockEndpoint mock = getMockEndpoint("mock:result");
+        mock.reset();
+        mock.expectedBodiesReceived("After re-add");
+
+        template.sendBody("direct:start", "After re-add");
+
+        mock.assertIsSatisfied();
+    }
+
+    @Test
+    void testFailIfNoConsumersAfterConsumerRouteRemoved() throws Exception {
+        context.addRoutes(new RouteBuilder() {
+            @Override
+            public void configure() {
+                from("direct:fail").routeId("failProducer").to("seda:fail?failIfNoConsumers=true");
+                from("seda:fail?failIfNoConsumers=true").routeId("failConsumer").to("mock:fail");
+            }
+        });
+
+        SedaComponent seda = context.getComponent("seda", SedaComponent.class);
+        SedaEndpoint fail = getMandatoryEndpoint("seda:fail?failIfNoConsumers=true", SedaEndpoint.class);
+        String key = seda.getQueueKey(fail.getEndpointUri());
+
+        context.getRouteController().stopRoute("failConsumer");
+        context.removeRoute("failConsumer");
+
+        assertThat(fail.getQueueReference()).isNotNull();
+        assertThat(seda.getQueues().get(key)).isNotNull();
+
+        assertThatThrownBy(() -> template.sendBody("direct:fail", "Should fail"))
+                .cause()
+                .isInstanceOf(SedaConsumerNotAvailableException.class)
+                .hasMessageContaining("No consumers available");
+    }
+
+    @Test
+    void testQueueRemovedAfterProducerRouteRemoved() throws Exception {
         SedaComponent seda = context.getComponent("seda", SedaComponent.class);
         SedaEndpoint bar = getMandatoryEndpoint("seda:bar?discardIfNoConsumers=true", SedaEndpoint.class);
         String key = seda.getQueueKey(bar.getEndpointUri());
@@ -63,26 +117,11 @@ class SedaDiscardIfNoConsumerAfterRemovalTest extends ContextTestSupport {
         context.removeRoute("consumer");
 
         assertThat(seda.getQueues().get(key)).isNotNull();
-        assertThat(seda.getQueues().get(key).getCount()).isGreaterThan(0);
-    }
 
-    @Test
-    void testFailIfNoConsumersAfterConsumerRouteRemoved() throws Exception {
         context.getRouteController().stopRoute("producer");
         context.removeRoute("producer");
 
-        context.addRoutes(new RouteBuilder() {
-            @Override
-            public void configure() {
-                from("direct:fail").to("seda:fail?failIfNoConsumers=true");
-            }
-        });
-
-        context.getRouteController().stopRoute("failConsumer");
-        context.removeRoute("failConsumer");
-
-        assertThatThrownBy(() -> template.sendBody("direct:fail", "Should fail"))
-                .hasCauseInstanceOf(SedaConsumerNotAvailableException.class);
+        assertThat(seda.getQueues().get(key)).isNull();
     }
 
     @Override
@@ -92,7 +131,6 @@ class SedaDiscardIfNoConsumerAfterRemovalTest extends ContextTestSupport {
             public void configure() {
                 from("direct:start").routeId("producer").to("seda:bar?discardIfNoConsumers=true");
                 from("seda:bar?discardIfNoConsumers=true").routeId("consumer").to("mock:result");
-                from("seda:fail").routeId("failConsumer").to("mock:fail");
             }
         };
     }
