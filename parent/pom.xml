@@ -69,8 +69,10 @@
         <aliyun-fc-open-version>2.1.0</aliyun-fc-open-version>
         <aliyun-dysmsapi-version>4.1.1</aliyun-dysmsapi-version>
         <aliyun-kms-version>2.2.0</aliyun-kms-version>
+        <aliyun-sls-version>5.9.0</aliyun-sls-version>
         <aliyun-eventbridge-version>5.2.2</aliyun-eventbridge-version>
         <aliyun-eventbridge-client-version>1.2.6</aliyun-eventbridge-client-version>
+        <aliyun-tablestore-version>5.17.11</aliyun-tablestore-version>
         <tea-openapi-version>0.3.8</tea-openapi-version>
         <amazon-kinesis-client-version>3.5.1</amazon-kinesis-client-version>
         <angus-mail-version>2.0.5</angus-mail-version>
@@ -738,8 +740,18 @@
             </dependency>
             <dependency>
                 <groupId>com.aliyun</groupId>
+                <artifactId>sls20201230</artifactId>
+                <version>${aliyun-sls-version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.aliyun</groupId>
                 <artifactId>tea-openapi</artifactId>
                 <version>${tea-openapi-version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.aliyun.openservices</groupId>
+                <artifactId>tablestore</artifactId>
+                <version>${aliyun-tablestore-version}</version>
             </dependency>
             <dependency>
                 <groupId>org.apache.camel</groupId>
@@ -799,6 +811,16 @@
             <dependency>
                 <groupId>org.apache.camel</groupId>
                 <artifactId>camel-alibaba-oss</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.camel</groupId>
+                <artifactId>camel-alibaba-ots</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.camel</groupId>
+                <artifactId>camel-alibaba-sls</artifactId>
                 <version>${project.version}</version>
             </dependency>
             <dependency>
