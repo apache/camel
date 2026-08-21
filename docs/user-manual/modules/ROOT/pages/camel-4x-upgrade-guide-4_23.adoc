@@ -81,6 +81,18 @@ Applications that aggregate classes outside the default whitelist through the re
 without supplying their own `hazelcastInstance` must now provide a `Config` with a
 `JavaSerializationFilterConfig` covering their class names.
 
+=== camel-mail
+
+`MimeMultipartDataFormat` now uses `MailHeaderFilterStrategy` instead of a plain
+`DefaultHeaderFilterStrategy` when `headersInline` unmarshal copies the remaining MIME headers onto
+the Camel message. That strategy filters the `mail.smtp.` and `mail.smtps.` prefixes on the inbound
+path in addition to `Camel*`/`camel*`, so the data format now filters the same namespace the mail
+consumer has filtered since 4.14.9/4.18.4/4.22.0.
+
+Routes that relied on `mail.smtp.*` or `mail.smtps.*` headers arriving on the exchange from an
+unmarshalled MIME message must set those values explicitly on the route instead. Ordinary
+application headers are unaffected.
+
 === camel-netty - object codecs apply a deserialization filter by default
 
 The `ObjectDecoder` and `DatagramPacketObjectDecoder` codecs (used when a route configures Netty
