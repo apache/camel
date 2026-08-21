@@ -64,3 +64,19 @@ an `AGENTS.md` file with guidance for AI coding assistants, pointing at the Apac
 
 The `camel-archetype-api-component` archetype also generates its readme again: the file was declared
 in the wrong file set and was therefore silently skipped.
+
+=== camel-hazelcast
+
+`ReplicatedHazelcastAggregationRepository` now applies the same default
+`JavaSerializationFilterConfig` that the other repositories and the component endpoints have applied
+since 4.14.8/4.18.3/4.21.0, when it bootstraps its own `HazelcastInstance` (that is, when no
+`hazelcastInstance` is supplied). It overrides `doStart()` without calling `super.doStart()` and was
+therefore left out of that change.
+
+The default whitelists the class name prefixes `java.`, `javax.`, `org.apache.camel.` and blacklists
+`java.net.`, and a user-supplied `JavaSerializationFilterConfig` is still respected and never
+overwritten.
+
+Applications that aggregate classes outside the default whitelist through the replicated repository
+without supplying their own `hazelcastInstance` must now provide a `Config` with a
+`JavaSerializationFilterConfig` covering their class names.
