@@ -80,3 +80,18 @@ overwritten.
 Applications that aggregate classes outside the default whitelist through the replicated repository
 without supplying their own `hazelcastInstance` must now provide a `Config` with a
 `JavaSerializationFilterConfig` covering their class names.
+
+=== camel-netty - object codecs apply a deserialization filter by default
+
+The `ObjectDecoder` and `DatagramPacketObjectDecoder` codecs (used when a route configures Netty
+object serialization through the `encoders` / `decoders` options) now always install a JEP-290
+`java.io.ObjectInputFilter` while decoding, resolved through `DeserializationFilterHelper`.
+Previously a decoder built without an explicit filter pattern applied no filter at all and only
+logged a warning.
+
+When no explicit pattern is passed, the JVM-wide `jdk.serialFilter` is honoured if set, otherwise
+the shared Camel default allow-list is applied (it permits standard Java and Apache Camel types,
+denies `java.net.**`, and enforces JEP-290 graph-shape limits). Routes that deserialize classes
+outside that allow-list must pass an explicit filter pattern to the two-argument
+`ObjectDecoder(ClassResolver, String)` / `DatagramPacketObjectDecoder(ClassResolver, String)`
+constructor (or configure `jdk.serialFilter`) to permit them.
