@@ -81,6 +81,28 @@ Applications that aggregate classes outside the default whitelist through the re
 without supplying their own `hazelcastInstance` must now provide a `Config` with a
 `JavaSerializationFilterConfig` covering their class names.
 
+=== camel-http, camel-http-common, camel-undertow - property placeholders in the CamelHttpUri header
+
+The HTTP producers no longer resolve property placeholders (`{{...}}`) in the value of the
+`CamelHttpUri` header. That header carries message content, while property placeholders are a
+route/configuration authoring feature resolved at build time on the endpoint URI written in the
+route. This is the same alignment 4.22 applied to `toD` and `enrich`.
+
+Placeholders written in the route's endpoint URI continue to be resolved exactly as before:
+
+[source,java]
+----
+.to("http://localhost/{{basePath}}")
+----
+
+A `{{...}}` token arriving in the `CamelHttpUri` header is now treated as a literal part of the URI
+(and percent-encoded like any other unsafe character in a header-supplied URI) rather than being
+expanded. Routes that relied on that expansion must resolve the value before it reaches the header.
+
+This affects `camel-http`, everything built on `camel-http-common` (including `camel-servlet` and
+`camel-jetty`) and `camel-undertow`. `camel-http` had a `skipControlHeaders` option that could turn
+the header read off entirely; `camel-http-common` and `camel-undertow` did not.
+
 === camel-netty - object codecs apply a deserialization filter by default
 
 The `ObjectDecoder` and `DatagramPacketObjectDecoder` codecs (used when a route configures Netty
