@@ -326,11 +326,10 @@ public class SedaComponent extends DefaultComponent {
         // we need to remove the endpoint from the reference counter
         String key = getQueueKey(endpoint.getEndpointUri());
         QueueReference ref = getQueues().get(key);
-        if (ref != null && endpoint.getConsumers().isEmpty()) {
-            if (endpoint.getProducers().isEmpty()) {
-                ref.removeReference(endpoint);
-            }
-            if (ref.getCount() <= 0 && !ref.hasProducers()) {
+        if (ref != null && endpoint.getConsumers().isEmpty() && endpoint.getProducers().isEmpty()) {
+            // only remove the endpoint when both consumers and producers are removed
+            ref.removeReference(endpoint);
+            if (ref.getCount() <= 0) {
                 // reference no longer needed so remove from queues
                 getQueues().remove(key);
             }
