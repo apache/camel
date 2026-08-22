@@ -36,16 +36,14 @@ public class OAuthBearerTokenProcessor extends AbstractOAuthProcessor {
         var authHeader = msg.getHeader("Authorization", String.class);
         if (authHeader == null) {
             log.error("No Authorization header in request");
-            msg.setHeader("CamelHttpResponseCode", 400);
-            msg.setBody("Authorization header");
+            rejectUnauthorized(exchange, "Authorization header");
             return;
         }
 
         var toks = authHeader.split(" ");
         if (toks.length != 2 || !"Bearer".equals(toks[0])) {
-            log.error("Invalid Authorization header: {}", authHeader);
-            msg.setHeader("CamelHttpResponseCode", 400);
-            msg.setBody("Invalid Authorization header");
+            log.error("Invalid Authorization header");
+            rejectUnauthorized(exchange, "Invalid Authorization header");
             return;
         }
 
