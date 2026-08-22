@@ -70,6 +70,9 @@ public class OAuthCodeFlowProcessor extends AbstractOAuthProcessor {
         var authRequestUrl = oauth.buildCodeFlowAuthRequestUrl(params);
 
         sendRedirect(msg, authRequestUrl);
+
+        // The caller is not authenticated: the redirect is the whole response, so the protected route must not run
+        exchange.setRouteStop(true);
     }
 
     private String getPostLoginUrl(Message msg) {
