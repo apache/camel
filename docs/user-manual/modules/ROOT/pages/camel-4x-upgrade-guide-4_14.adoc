@@ -22,6 +22,10 @@ Applications that aggregate classes outside the default whitelist through the re
 without supplying their own `hazelcastInstance` must now provide a `Config` with a
 `JavaSerializationFilterConfig` covering their class names.
 
+The same default is now also applied to the `ClientConfig` that Camel builds for `hazelcastMode=client`
+endpoints, when neither a referenced `ClientConfig` nor `hazelcastConfigUri` is supplied. Client mode
+previously behaved differently from node mode for an otherwise identical endpoint configuration.
+
 == Upgrading from 4.14.8 to 4.14.9
 
 === camel-atmosphere-websocket - potential breaking change
