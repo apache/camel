@@ -217,15 +217,13 @@ public class HttpServerChannelHandler extends ServerChannelHandler {
     private String extractTarget(URI uri) {
         String target = uri.getPath();
 
-        // strip the starting endpoint path so the target is relative to the endpoint uri
+        // strip the starting endpoint path so the target is relative to the endpoint uri.
+        // the comparison must ignore case on the context-path, the same way consumer dispatch does
+        // (RestConsumerContextPathMatcher), so the security constraint is evaluated against the same
+        // normalized target the request is actually routed to
         String path = consumer.getConfiguration().getPath();
-        if (path != null && target.startsWith(path)) {
-            // need to match by lower case as we want to ignore case on context-path
-            path = path.toLowerCase(Locale.US);
-            String match = target.toLowerCase(Locale.US);
-            if (match.startsWith(path)) {
-                target = target.substring(path.length());
-            }
+        if (path != null && target.toLowerCase(Locale.US).startsWith(path.toLowerCase(Locale.US))) {
+            target = target.substring(path.length());
         }
         return target;
     }

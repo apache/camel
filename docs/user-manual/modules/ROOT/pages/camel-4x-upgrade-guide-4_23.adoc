@@ -129,3 +129,19 @@ now also stops the route.
 Routes that relied on steps after these processors running for unauthenticated requests must be
 restructured. The authenticated paths are unchanged: a successfully authenticated request continues
 through the rest of the route exactly as before, and `OAuthLogoutProcessor` is unchanged.
+
+=== camel-netty-http
+
+The security-constraint lookup now strips the endpoint context-path from the request target
+case-insensitively, matching how consumer dispatch already matches it
+(`RestConsumerContextPathMatcher` compares with `equalsIgnoreCase` and a lower-cased prefix).
+
+Previously the strip was guarded by a case-sensitive `startsWith`, so a request whose context-path
+differed only by case was evaluated against the unstripped target. With `matchOnUriPrefix=true` and
+a `securityConstraint` whose inclusions are specific sub-paths rather than a catch-all, such a
+request could match no inclusion — and an unmatched target counts as unrestricted — while still
+being dispatched to the route.
+
+Requests that differ from the configured context-path only by case are therefore now subject to the
+same constraint as the exact-case form. Deployments that relied on the previous behaviour to reach a
+route without a challenge will now receive `401`.
