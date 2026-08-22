@@ -23,6 +23,7 @@ import java.util.List;
 import java.util.Queue;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import com.google.api.services.sheets.v4.Sheets;
 import com.google.api.services.sheets.v4.model.BatchGetValuesResponse;
@@ -84,39 +85,7 @@ public class GoogleSheetsStreamConsumer extends ScheduledBatchPollingConsumer {
             forceConsumerAsReady();
 
             if (response.getValueRanges() != null) {
-                if (getConfiguration().isSplitResults()) {
-                    for (ValueRange valueRange : response.getValueRanges()) {
-                        AtomicInteger rangeIndex = new AtomicInteger(1);
-                        AtomicInteger valueIndex = new AtomicInteger();
-                        if (getConfiguration().getMaxResults() > 0) {
-                            valueRange.getValues().stream()
-                                    .limit(getConfiguration().getMaxResults())
-                                    .map(values -> createExchange(rangeIndex.get(), valueIndex.incrementAndGet(),
-                                            valueRange.getRange(), valueRange.getMajorDimension(), values))
-                                    .forEach(answer::add);
-                        } else {
-                            valueRange.getValues().stream()
-                                    .map(values -> createExchange(rangeIndex.get(), valueIndex.incrementAndGet(),
-                                            valueRange.getRange(), valueRange.getMajorDimension(), values))
-                                    .forEach(answer::add);
-                        }
-                        rangeIndex.incrementAndGet();
-                    }
-                } else {
-                    AtomicInteger rangeIndex = new AtomicInteger();
-                    response.getValueRanges()
-                            .stream()
-                            .peek(valueRange -> {
-                                if (getConfiguration().getMaxResults() > 0) {
-                                    valueRange.setValues(valueRange.getValues()
-                                            .stream()
-                                            .limit(getConfiguration().getMaxResults())
-                                            .collect(Collectors.toList()));
-                                }
-                            })
-                            .map(valueRange -> createExchange(rangeIndex.incrementAndGet(), valueRange))
-                            .forEach(answer::add);
-                }
+                answer.addAll(createExchanges(response.getValueRanges()));
             }
         } else {
             Sheets.Spreadsheets.Get request = getClient().spreadsheets().get(getConfiguration().getSpreadsheetId());
@@ -124,10 +93,58 @@ public class GoogleSheetsStreamConsumer extends ScheduledBatchPollingConsumer {
             request.setIncludeGridData(getConfiguration().isIncludeGridData());
 
             Spreadsheet spreadsheet = request.execute();
+
+            // okay we have some response from Google so lets mark the consumer as ready
+            forceConsumerAsReady();
+
             answer.add(createExchange(spreadsheet));
         }
 
         return processBatch(CastUtils.cast(answer));
+    }
+
+    /**
+     * Builds one exchange per value when the results are split, one per range otherwise. The range index counts the
+     * ranges of the whole response, not of a single range.
+     */
+    Queue<Exchange> createExchanges(List<ValueRange> valueRanges) {
+        Queue<Exchange> answer = new ArrayDeque<>();
+        AtomicInteger rangeIndex = new AtomicInteger();
+
+        if (getConfiguration().isSplitResults()) {
+            for (ValueRange valueRange : valueRanges) {
+                int currentRange = rangeIndex.incrementAndGet();
+                AtomicInteger valueIndex = new AtomicInteger();
+                Stream<List<Object>> values = valuesOf(valueRange).stream();
+                if (getConfiguration().getMaxResults() > 0) {
+                    values = values.limit(getConfiguration().getMaxResults());
+                }
+                values.map(value -> createExchange(currentRange, valueIndex.incrementAndGet(),
+                        valueRange.getRange(), valueRange.getMajorDimension(), value))
+                        .forEach(answer::add);
+            }
+        } else {
+            valueRanges.stream()
+                    .peek(valueRange -> {
+                        if (getConfiguration().getMaxResults() > 0) {
+                            valueRange.setValues(valuesOf(valueRange)
+                                    .stream()
+                                    .limit(getConfiguration().getMaxResults())
+                                    .collect(Collectors.toList()));
+                        }
+                    })
+                    .map(valueRange -> createExchange(rangeIndex.incrementAndGet(), valueRange))
+                    .forEach(answer::add);
+        }
+
+        return answer;
+    }
+
+    /**
+     * The values of a range, never null: the sheets API omits the field for a range that holds no value at all.
+     */
+    private static List<List<Object>> valuesOf(ValueRange valueRange) {
+        return valueRange.getValues() != null ? valueRange.getValues() : List.of();
     }
 
     @Override
