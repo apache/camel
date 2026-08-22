@@ -98,6 +98,9 @@ public final class ExpressionDeserializers extends YamlDeserializerSupport {
             case "python": {
                 return asType(node, org.apache.camel.model.language.PythonExpression.class);
             }
+            case "python3": {
+                return asType(node, org.apache.camel.model.language.Python3Expression.class);
+            }
             case "ref": {
                 return asType(node, org.apache.camel.model.language.RefExpression.class);
             }
@@ -160,6 +163,7 @@ public final class ExpressionDeserializers extends YamlDeserializerSupport {
                     @YamlProperty(name = "mvel", type = "object:org.apache.camel.model.language.MvelExpression", oneOf = "expression"),
                     @YamlProperty(name = "ognl", type = "object:org.apache.camel.model.language.OgnlExpression", oneOf = "expression"),
                     @YamlProperty(name = "python", type = "object:org.apache.camel.model.language.PythonExpression", oneOf = "expression"),
+                    @YamlProperty(name = "python3", type = "object:org.apache.camel.model.language.Python3Expression", oneOf = "expression"),
                     @YamlProperty(name = "ref", type = "object:org.apache.camel.model.language.RefExpression", oneOf = "expression"),
                     @YamlProperty(name = "simple", type = "object:org.apache.camel.model.language.SimpleExpression", oneOf = "expression"),
                     @YamlProperty(name = "spel", type = "object:org.apache.camel.model.language.SpELExpression", oneOf = "expression"),
@@ -200,6 +204,7 @@ public final class ExpressionDeserializers extends YamlDeserializerSupport {
                     @YamlProperty(name = "mvel", type = "object:org.apache.camel.model.language.MvelExpression", oneOf = "expression"),
                     @YamlProperty(name = "ognl", type = "object:org.apache.camel.model.language.OgnlExpression", oneOf = "expression"),
                     @YamlProperty(name = "python", type = "object:org.apache.camel.model.language.PythonExpression", oneOf = "expression"),
+                    @YamlProperty(name = "python3", type = "object:org.apache.camel.model.language.Python3Expression", oneOf = "expression"),
                     @YamlProperty(name = "ref", type = "object:org.apache.camel.model.language.RefExpression", oneOf = "expression"),
                     @YamlProperty(name = "simple", type = "object:org.apache.camel.model.language.SimpleExpression", oneOf = "expression"),
                     @YamlProperty(name = "spel", type = "object:org.apache.camel.model.language.SpELExpression", oneOf = "expression"),

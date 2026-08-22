@@ -1342,6 +1342,13 @@ public class JavaDslModelWriter extends JavaDslModelWriterSupport {
         doWriteOgnlExpression(sb, def);
         return sb.toString();
     }
+    public String writePython3Expression(Python3Expression def) {
+        resetState();
+        StringBuilder sb = new StringBuilder();
+        beginStep(sb, "python3", def);
+        doWritePython3Expression(sb, def);
+        return sb.toString();
+    }
     public String writePythonExpression(PythonExpression def) {
         resetState();
         StringBuilder sb = new StringBuilder();
@@ -3534,6 +3541,10 @@ public class JavaDslModelWriter extends JavaDslModelWriterSupport {
         doWriteNamespaceAwareExpressionElements(sb, def);
     }
     protected void doWriteOgnlExpression(StringBuilder sb, OgnlExpression def) {
+        doWriteTypedExpressionDefinitionAttributes(sb, def);
+        doWriteValue(sb, def.getExpression());
+    }
+    protected void doWritePython3Expression(StringBuilder sb, Python3Expression def) {
         doWriteTypedExpressionDefinitionAttributes(sb, def);
         doWriteValue(sb, def.getExpression());
     }
@@ -6318,6 +6329,11 @@ public class JavaDslModelWriter extends JavaDslModelWriterSupport {
                     beginStep(sb, "ognl", v);
                     doWriteOgnlExpression(sb, (OgnlExpression) v);
                     endStep(sb, "ognl", v);
+                }
+                case "Python3Expression" -> {
+                    beginStep(sb, "python3", v);
+                    doWritePython3Expression(sb, (Python3Expression) v);
+                    endStep(sb, "python3", v);
                 }
                 case "PythonExpression" -> {
                     beginStep(sb, "python", v);

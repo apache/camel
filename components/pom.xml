@@ -274,6 +274,7 @@
         <module>camel-pulsar</module>
         <module>camel-pqc</module>
         <module>camel-python</module>
+        <module>camel-python3</module>
         <module>camel-quartz</module>
         <module>camel-quickfix</module>
         <module>camel-reactive-executor-tomcat</module>
