@@ -39,8 +39,7 @@ public class OAuthCodeFlowCallback extends AbstractOAuthProcessor {
         var authCode = msg.getHeader("code", String.class);
         if (authCode == null) {
             log.error("Authorization code is missing in the request");
-            msg.setHeader("CamelHttpResponseCode", 400);
-            msg.setBody("Authorization code missing");
+            reject(exchange, 400, "Authorization code missing");
             return;
         }
 
