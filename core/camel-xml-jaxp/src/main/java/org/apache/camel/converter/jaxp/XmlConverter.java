@@ -75,6 +75,7 @@ import org.xml.sax.XMLReader;
 import org.apache.camel.Converter;
 import org.apache.camel.Exchange;
 import org.apache.camel.StreamCache;
+import org.apache.camel.TypeConversionException;
 import org.apache.camel.support.CamelContextHelper;
 import org.apache.camel.util.IOHelper;
 import org.apache.camel.util.ObjectHelper;
@@ -696,6 +697,14 @@ public class XmlConverter {
     @Converter(order = 54)
     public Document toDOMDocument(byte[] data, Exchange exchange)
             throws IOException, SAXException, ParserConfigurationException {
+        if (!looksLikeXml(data)) {
+            throw new TypeConversionException(
+                    data, Document.class,
+                    new IllegalArgumentException(
+                            "Payload does not start with a valid XML prolog"
+                                                 + " (first bytes do not look like XML —"
+                                                 + " possible causes: empty body, JSON/HTML error response, wrong encoding)"));
+        }
         DocumentBuilder documentBuilder = createDocumentBuilder(getDocumentBuilderFactory(exchange));
         return documentBuilder.parse(new ByteArrayInputStream(data));
     }
@@ -703,8 +712,16 @@ public class XmlConverter {
     @Converter(order = 55)
     public Document toDOMDocument(StreamCache cache, Exchange exchange)
             throws IOException, SAXException, ParserConfigurationException {
-        InputStream is = exchange.getContext().getTypeConverter().convertTo(InputStream.class, exchange, cache);
-        return toDOMDocument(is, exchange);
+        byte[] data = exchange.getContext().getTypeConverter().convertTo(byte[].class, exchange, cache);
+        if (!looksLikeXml(data)) {
+            throw new TypeConversionException(
+                    data, Document.class,
+                    new IllegalArgumentException(
+                            "Payload does not start with a valid XML prolog"
+                                                 + " (first bytes do not look like XML —"
+                                                 + " possible causes: empty body, JSON/HTML error response, wrong encoding)"));
+        }
+        return toDOMDocument(data, exchange);
     }
 
     /**
@@ -1226,4 +1243,56 @@ public class XmlConverter {
             LOG.error(exception.getMessage(), exception);
         }
     }
+
+    /**
+     * Returns {@code true} if the given byte array looks like it could be well-formed XML, by inspecting only the first
+     * few bytes.
+     * <p>
+     * The check handles:
+     * <ul>
+     * <li>UTF-8 BOM (EF BB BF) — skipped before the prolog test</li>
+     * <li>UTF-16 BE/LE BOM (FE FF / FF FE) — accepted, XML parsers handle these natively</li>
+     * <li>Leading ASCII whitespace — skipped before the {@code <} test</li>
+     * <li>Any content whose first non-BOM, non-whitespace byte is not {@code <} — rejected</li>
+     * </ul>
+     * <p>
+     * This is intentionally a fast, conservative check: it returns {@code true} for anything that <em>could</em> be XML
+     * (starts with {@code <}), which means it will not reject e.g. HTML. Its only purpose is to avoid handing obviously
+     * non-XML content (empty, JSON, plain-text error bodies) to {@code DocumentBuilder.parse()}, which would throw a
+     * {@code SAXParseException: Content is not allowed in prolog}.
+     *
+     * @param  data the bytes to inspect (may be null or empty)
+     * @return      {@code true} if the content may be XML; {@code false} if it is definitely not XML
+     */
+    static boolean looksLikeXml(byte[] data) {
+        if (data == null || data.length == 0) {
+            return false;
+        }
+        int offset = 0;
+        // skip UTF-8 BOM (EF BB BF)
+        if (data.length >= 3
+                && (data[0] & 0xFF) == 0xEF
+                && (data[1] & 0xFF) == 0xBB
+                && (data[2] & 0xFF) == 0xBF) {
+            offset = 3;
+        } else if (data.length >= 2) {
+            // UTF-16 BE (FE FF) or LE (FF FE) BOM — XML parsers handle these natively, accept as-is
+            int b0 = data[0] & 0xFF;
+            int b1 = data[1] & 0xFF;
+            if ((b0 == 0xFE && b1 == 0xFF) || (b0 == 0xFF && b1 == 0xFE)) {
+                return true;
+            }
+        }
+        // skip leading ASCII whitespace
+        while (offset < data.length) {
+            byte b = data[offset];
+            if (b == ' ' || b == '\t' || b == '\r' || b == '\n') {
+                offset++;
+            } else {
+                break;
+            }
+        }
+        return offset < data.length && data[offset] == '<';
+    }
+
 }
