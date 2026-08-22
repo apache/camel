@@ -16,6 +16,7 @@
  */
 package org.apache.camel.component.hazelcast;
 
+import com.hazelcast.client.config.ClientConfig;
 import com.hazelcast.config.ClassFilter;
 import com.hazelcast.config.Config;
 import com.hazelcast.config.JavaSerializationFilterConfig;
@@ -67,7 +68,37 @@ class HazelcastSerializationFilterHelperTest {
     }
 
     @Test
+    void appliesDefaultToClientConfigWhenNoneConfigured() {
+        ClientConfig config = new ClientConfig();
+        assertNull(config.getSerializationConfig().getJavaSerializationFilterConfig());
+
+        HazelcastSerializationFilterHelper.applyDefault(config);
+
+        JavaSerializationFilterConfig filter = config.getSerializationConfig().getJavaSerializationFilterConfig();
+        assertNotNull(filter);
+        assertTrue(filter.getWhitelist().getPrefixes().contains("java."));
+        assertTrue(filter.getWhitelist().getPrefixes().contains("javax."));
+        assertTrue(filter.getWhitelist().getPrefixes().contains("org.apache.camel."));
+        assertTrue(filter.getBlacklist().getPrefixes().contains("java.net."));
+    }
+
+    @Test
+    void respectsExistingUserConfigurationOnClientConfig() {
+        ClientConfig config = new ClientConfig();
+        JavaSerializationFilterConfig userFilter = new JavaSerializationFilterConfig();
+        userFilter.setWhitelist(new ClassFilter().addPrefixes("com.example."));
+        config.getSerializationConfig().setJavaSerializationFilterConfig(userFilter);
+
+        HazelcastSerializationFilterHelper.applyDefault(config);
+
+        assertSame(userFilter, config.getSerializationConfig().getJavaSerializationFilterConfig());
+        assertEquals(1, userFilter.getWhitelist().getPrefixes().size());
+        assertTrue(userFilter.getWhitelist().getPrefixes().contains("com.example."));
+    }
+
+    @Test
     void handlesNullConfigGracefully() {
-        assertDoesNotThrow(() -> HazelcastSerializationFilterHelper.applyDefault(null));
+        assertDoesNotThrow(() -> HazelcastSerializationFilterHelper.applyDefault((Config) null));
+        assertDoesNotThrow(() -> HazelcastSerializationFilterHelper.applyDefault((ClientConfig) null));
     }
 }
