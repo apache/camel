@@ -18,25 +18,10 @@ package org.apache.camel.component.alibaba.eventbridge.constants;
 
 import org.apache.camel.spi.Metadata;
 
-public final class AlibabaEventBridgeProperties {
+public final class AlibabaEventBridgeProperties extends AlibabaEventBridgeHeaders {
 
     @Metadata(label = "producer", description = "Operation to perform", javaType = "String")
     public static final String OPERATION = "CamelAlibabaEventBridgeOperation";
-
-    @Metadata(label = "producer", description = "Event bus name override", javaType = "String")
-    public static final String EVENT_BUS_NAME = "CamelAlibabaEventBridgeEventBusName";
-
-    @Metadata(label = "producer", description = "Event source override", javaType = "String")
-    public static final String EVENT_SOURCE = "CamelAlibabaEventBridgeEventSource";
-
-    @Metadata(label = "producer", description = "Event type override", javaType = "String")
-    public static final String EVENT_TYPE = "CamelAlibabaEventBridgeEventType";
-
-    @Metadata(label = "producer", description = "Event subject override", javaType = "String")
-    public static final String EVENT_SUBJECT = "CamelAlibabaEventBridgeEventSubject";
-
-    @Metadata(label = "producer", description = "Request id returned by EventBridge", javaType = "String")
-    public static final String REQUEST_ID = "CamelAlibabaEventBridgeRequestId";
 
     private AlibabaEventBridgeProperties() {
     }
