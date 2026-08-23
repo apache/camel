@@ -84,7 +84,6 @@ public class EventGridProducer extends DefaultProducer {
         String eventType = message.getHeader(EventGridConstants.EVENT_TYPE, String.class);
         String subject = message.getHeader(EventGridConstants.SUBJECT, String.class);
         String id = message.getHeader(EventGridConstants.ID, String.class);
-        String dataVersion = message.getHeader(EventGridConstants.DATA_VERSION, String.class);
         OffsetDateTime eventTime = message.getHeader(EventGridConstants.EVENT_TIME, OffsetDateTime.class);
 
         // Set defaults if not provided
