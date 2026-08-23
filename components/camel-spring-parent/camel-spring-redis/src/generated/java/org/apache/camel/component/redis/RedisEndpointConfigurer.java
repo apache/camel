@@ -29,6 +29,8 @@ public class RedisEndpointConfigurer extends PropertyConfigurerSupport implement
         case "command": target.getConfiguration().setCommand(property(camelContext, org.apache.camel.component.redis.Command.class, value)); return true;
         case "connectionfactory":
         case "connectionFactory": target.getConfiguration().setConnectionFactory(property(camelContext, org.springframework.data.redis.connection.RedisConnectionFactory.class, value)); return true;
+        case "deserializationfilter":
+        case "deserializationFilter": target.getConfiguration().setDeserializationFilter(property(camelContext, java.lang.String.class, value)); return true;
         case "exceptionhandler":
         case "exceptionHandler": target.setExceptionHandler(property(camelContext, org.apache.camel.spi.ExceptionHandler.class, value)); return true;
         case "exchangepattern":
@@ -53,6 +55,8 @@ public class RedisEndpointConfigurer extends PropertyConfigurerSupport implement
         case "command": return org.apache.camel.component.redis.Command.class;
         case "connectionfactory":
         case "connectionFactory": return org.springframework.data.redis.connection.RedisConnectionFactory.class;
+        case "deserializationfilter":
+        case "deserializationFilter": return java.lang.String.class;
         case "exceptionhandler":
         case "exceptionHandler": return org.apache.camel.spi.ExceptionHandler.class;
         case "exchangepattern":
@@ -78,6 +82,8 @@ public class RedisEndpointConfigurer extends PropertyConfigurerSupport implement
         case "command": return target.getConfiguration().getCommand();
         case "connectionfactory":
         case "connectionFactory": return target.getConfiguration().getConnectionFactory();
+        case "deserializationfilter":
+        case "deserializationFilter": return target.getConfiguration().getDeserializationFilter();
         case "exceptionhandler":
         case "exceptionHandler": return target.getExceptionHandler();
         case "exchangepattern":
