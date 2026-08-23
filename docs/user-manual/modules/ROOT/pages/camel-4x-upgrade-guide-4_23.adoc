@@ -702,3 +702,22 @@ inherit values set on `defaultInstance`, and `defaultInstance` itself remains un
 
 Routes that compared unmarshalled bodies by identity, or that mutated one body expecting the change to
 be visible on another, must be updated.
+
+=== camel-platform-http-vertx
+
+The CORS handler used to send `Access-Control-Allow-Credentials: true` on every response to a request
+carrying an `Origin` header — including responses to origins it had just decided not to allow, because
+the header was set outside the origin check. Combined with an unset `camel.server.cors.origins`, which
+makes the handler echo back whatever origin the caller sent, that produced the credentialed
+any-origin configuration the fetch specification forbids expressing as `*`.
+
+Two changes:
+
+* `Access-Control-Allow-Credentials` is now sent only when the request origin matched an origin the
+operator explicitly configured. With `camel.server.cors.origins` unset, the origin is still reflected
+back as before, but credentials are not granted.
+* A `Vary: Origin` response header is now added whenever the origin is reflected, so a shared cache
+cannot serve one origin's response to another.
+
+Deployments that relied on credentialed cross-origin requests must list the permitted origins in
+`camel.server.cors.origins`.
