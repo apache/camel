@@ -28,6 +28,7 @@ public class AS2AsyncMDNServerManagerEndpointConfigurationConfigurer extends org
         map.put("As2MessageStructure", org.apache.camel.component.as2.api.AS2MessageStructure.class);
         map.put("As2To", java.lang.String.class);
         map.put("As2Version", java.lang.String.class);
+        map.put("AsyncMdnAllowedHosts", java.lang.String.class);
         map.put("AsyncMdnPortNumber", java.lang.Integer.class);
         map.put("AttachedFileName", java.lang.String.class);
         map.put("ClientFqdn", java.lang.String.class);
@@ -89,6 +90,8 @@ public class AS2AsyncMDNServerManagerEndpointConfigurationConfigurer extends org
         case "as2To": target.setAs2To(property(camelContext, java.lang.String.class, value)); return true;
         case "as2version":
         case "as2Version": target.setAs2Version(property(camelContext, java.lang.String.class, value)); return true;
+        case "asyncmdnallowedhosts":
+        case "asyncMdnAllowedHosts": target.setAsyncMdnAllowedHosts(property(camelContext, java.lang.String.class, value)); return true;
         case "asyncmdnportnumber":
         case "asyncMdnPortNumber": target.setAsyncMdnPortNumber(property(camelContext, java.lang.Integer.class, value)); return true;
         case "attachedfilename":
@@ -193,6 +196,8 @@ public class AS2AsyncMDNServerManagerEndpointConfigurationConfigurer extends org
         case "as2To": return java.lang.String.class;
         case "as2version":
         case "as2Version": return java.lang.String.class;
+        case "asyncmdnallowedhosts":
+        case "asyncMdnAllowedHosts": return java.lang.String.class;
         case "asyncmdnportnumber":
         case "asyncMdnPortNumber": return java.lang.Integer.class;
         case "attachedfilename":
@@ -293,6 +298,8 @@ public class AS2AsyncMDNServerManagerEndpointConfigurationConfigurer extends org
         case "as2To": return target.getAs2To();
         case "as2version":
         case "as2Version": return target.getAs2Version();
+        case "asyncmdnallowedhosts":
+        case "asyncMdnAllowedHosts": return target.getAsyncMdnAllowedHosts();
         case "asyncmdnportnumber":
         case "asyncMdnPortNumber": return target.getAsyncMdnPortNumber();
         case "attachedfilename":

@@ -284,3 +284,28 @@ Ordinary listings are unaffected, as a listed name is normally a single path seg
 resolves back inside the polled directory remains accepted. Two configurations can newly see files skipped: a
 server that reports names navigating above the polled directory, and a `fileName` expression (used when
 `useList=false`) that navigates above it. Set `jailStartingDirectory=false` if such a path is intended.
+=== camel-as2
+
+The AS2 server no longer attaches the configured `mdnUserName` / `mdnPassword` / `mdnAccessToken`
+credentials to an asynchronous MDN unless the delivery address names a host the operator has
+authorised.
+
+The delivery address comes from the `Receipt-Delivery-Option` header of the received AS2 message, so
+it is chosen by the sender. A new option lists the hosts an asynchronous MDN may be delivered to:
+
+[source,text]
+----
+as2://server/listen?asyncMdnAllowedHosts=partner.example,partner2.example
+----
+
+* When `asyncMdnAllowedHosts` is set, an asynchronous MDN whose delivery address names a host outside
+the list is refused, and the credentials are attached only for a host on the list.
+* When it is not set, the MDN is still delivered to the sender-supplied address, as before, but **no
+credentials are attached** and a warning naming the option is logged.
+
+Deployments that rely on authenticating to a partner's asynchronous MDN endpoint must add that
+partner's host to `asyncMdnAllowedHosts`.
+
+Two further checks are applied to the delivery address regardless of the option: the scheme must be
+`http` or `https`, and an address with no explicit port now uses 80 or 443 rather than being passed
+to the socket as `-1`.
