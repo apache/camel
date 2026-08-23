@@ -73,6 +73,8 @@ import static org.apache.camel.component.mail.MailConstants.MAIL_HANDLE_DUPLICAT
 public class MailBinding {
 
     private static final Logger LOG = LoggerFactory.getLogger(MailBinding.class);
+
+    private static final int MAX_MULTIPART_DEPTH = 20;
     private final HeaderFilterStrategy headerFilterStrategy;
     private ContentTypeResolver contentTypeResolver;
     private boolean decodeFilename;
@@ -363,6 +365,20 @@ public class MailBinding {
 
     protected void extractAttachmentsFromMultipart(Multipart mp, Map<String, Attachment> map)
             throws MessagingException, IOException {
+        extractAttachmentsFromMultipart(mp, map, 0);
+    }
+
+    private void extractAttachmentsFromMultipart(Multipart mp, Map<String, Attachment> map, int depth)
+            throws MessagingException, IOException {
+
+        if (depth > MAX_MULTIPART_DEPTH) {
+            // A single message must not be able to exhaust the stack: without a bound, a deeply nested
+            // multipart throws StackOverflowError before the message is processed, and the poll aborts
+            // on every subsequent attempt until the message is removed out of band.
+            LOG.warn("Ignoring multipart nested deeper than {} levels while extracting attachments",
+                    MAX_MULTIPART_DEPTH);
+            return;
+        }
 
         for (int i = 0; i < mp.getCount(); i++) {
             Part part = mp.getBodyPart(i);
@@ -370,7 +386,7 @@ public class MailBinding {
 
             if (part.isMimeType("multipart/*")) {
                 LOG.trace("Part #{}: is mimetype: multipart/*", i);
-                extractAttachmentsFromMultipart((Multipart) part.getContent(), map);
+                extractAttachmentsFromMultipart((Multipart) part.getContent(), map, depth + 1);
                 continue;
             }
 
