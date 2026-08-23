@@ -24,11 +24,12 @@ public class RedisEndpointUriFactory extends org.apache.camel.support.component.
     private static final Set<String> ENDPOINT_IDENTITY_PROPERTY_NAMES;
     private static final Map<String, String> MULTI_VALUE_PREFIXES;
     static {
-        Set<String> props = new HashSet<>(12);
+        Set<String> props = new HashSet<>(13);
         props.add("bridgeErrorHandler");
         props.add("channels");
         props.add("command");
         props.add("connectionFactory");
+        props.add("deserializationFilter");
         props.add("exceptionHandler");
         props.add("exchangePattern");
         props.add("host");
