@@ -625,7 +625,7 @@ public class DoclingProducer extends DefaultProducer {
     private void addSourceToChunkRequest(
             ChunkDocumentRequest.Builder requestBuilder, String inputSource)
             throws IOException {
-        if (inputSource.startsWith("http://") || inputSource.startsWith("https://")) {
+        if (isRemoteSource(inputSource)) {
             requestBuilder.source(
                     HttpSource.builder()
                             .url(URI.create(inputSource))
@@ -667,7 +667,7 @@ public class DoclingProducer extends DefaultProducer {
 
         try {
             // Extract basic file information for file paths
-            if (!inputPath.startsWith("http://") && !inputPath.startsWith("https://")) {
+            if (!isRemoteSource(inputPath)) {
                 File file = new File(inputPath);
                 if (file.exists()) {
                     metadata.setFileName(file.getName());
@@ -1046,7 +1046,27 @@ public class DoclingProducer extends DefaultProducer {
     }
 
     @SuppressWarnings("unchecked")
-    private List<String> extractDocumentList(Exchange exchange) {
+    private List<String> extractDocumentList(Exchange exchange) throws IOException {
+        return containBatchPaths(extractDocumentPaths(exchange));
+    }
+
+    /**
+     * Applies the {@code inputBaseDirectory} restriction to every path of a batch. When no base directory is configured
+     * the paths are returned untouched.
+     */
+    private List<String> containBatchPaths(List<String> paths) throws IOException {
+        String base = configuration.getInputBaseDirectory();
+        if (base == null || base.isEmpty()) {
+            return paths;
+        }
+        List<String> contained = new ArrayList<>(paths.size());
+        for (String path : paths) {
+            contained.add(resolveWithinInputBaseDirectory(path).toString());
+        }
+        return contained;
+    }
+
+    private List<String> extractDocumentPaths(Exchange exchange) {
         Object body = exchange.getIn().getBody();
 
         // Handle List<String>
@@ -1105,6 +1125,15 @@ public class DoclingProducer extends DefaultProducer {
 
         // Handle single String (directory path to scan)
         if (body instanceof String path) {
+            // as in getInputPath, a bare String body is ambiguous - reading it as a location must be opted into.
+            // Typed bodies (List<String>, String[], List<File>, File[]) are explicit path collections and are
+            // handled above without a gate.
+            if (!configuration.isAllowFilePathSource()) {
+                throw new IllegalArgumentException(
+                        "Batch message body is a String path but allowFilePathSource is disabled."
+                                                   + " Set allowFilePathSource=true, or pass the documents as a List<String>,"
+                                                   + " String[], List<File> or File[] body.");
+            }
             File dir = new File(path);
             if (dir.isDirectory()) {
                 File[] files = dir.listFiles();
@@ -1522,7 +1551,7 @@ public class DoclingProducer extends DefaultProducer {
 
     private void addSourceToRequest(ConvertDocumentRequest.Builder requestBuilder, String inputSource) throws IOException {
         // Check if input is a URL or file path
-        if (inputSource.startsWith("http://") || inputSource.startsWith("https://")) {
+        if (isRemoteSource(inputSource)) {
             requestBuilder.source(
                     HttpSource.builder()
                             .url(URI.create(inputSource))
@@ -1712,7 +1741,11 @@ public class DoclingProducer extends DefaultProducer {
         String inputPath = exchange.getIn().getHeader(DoclingHeaders.INPUT_FILE_PATH, String.class);
 
         if (inputPath != null) {
-            validateFileSize(inputPath);
+            // the header is an explicit "the document lives here" signal from the route, so it keeps its
+            // meaning - but a local path is still bound by inputBaseDirectory when one is configured
+            if (!isRemoteSource(inputPath)) {
+                return validateLocalInputPath(inputPath);
+            }
             return inputPath;
         }
 
@@ -1722,21 +1755,29 @@ public class DoclingProducer extends DefaultProducer {
             body = wf.getBody();
         }
         if (body instanceof String content) {
-            // Check if it's a URL (http:// or https://) or a file path
-            if (content.startsWith("http://") || content.startsWith("https://")) {
-                // Return URL as-is, no validation needed
+            // A String body is ambiguous: it may be the document itself, a location to fetch, or a path to
+            // read. Only the content reading is unconditional; the two location readings must be opted into.
+            if (isRemoteSource(content)) {
+                if (!configuration.isAllowUrlSource()) {
+                    throw new IllegalArgumentException(
+                            "Message body starts with http:// or https:// but allowUrlSource is disabled."
+                                                       + " Set allowUrlSource=true to have Docling fetch it, or pass the document itself as the body.");
+                }
                 return content;
-            } else if (content.startsWith("/") || content.contains("\\")) {
-                // It's a file path
-                validateFileSize(content);
-                return content;
+            } else if (isLocalPathSource(content)) {
+                if (!configuration.isAllowFilePathSource()) {
+                    throw new IllegalArgumentException(
+                            "Message body looks like a file path but allowFilePathSource is disabled."
+                                                       + " Set allowFilePathSource=true to have Docling read it, or pass the document itself as the body.");
+                }
+                return validateLocalInputPath(content);
             } else {
                 // Treat as content to be written to a temp file
                 Path secureTempDir = createSecureTempDir();
                 Path tempFile = createSecureTempFile(secureTempDir);
                 Files.write(tempFile, content.getBytes());
                 registerTempDirCleanup(exchange, secureTempDir);
-                validateFileSize(tempFile.toString());
+                validateFileSizeIfPresent(tempFile.toString());
                 return tempFile.toString();
             }
         } else if (body instanceof byte[] content) {
@@ -1749,8 +1790,7 @@ public class DoclingProducer extends DefaultProducer {
             registerTempDirCleanup(exchange, secureTempDir);
             return tempFile.toString();
         } else if (body instanceof File file) {
-            validateFileSize(file.getAbsolutePath());
-            return file.getAbsolutePath();
+            return validateLocalInputPath(file.getAbsolutePath());
         }
 
         throw new InvalidPayloadException(exchange, String.class);
@@ -1813,7 +1853,64 @@ public class DoclingProducer extends DefaultProducer {
         }
     }
 
-    private void validateFileSize(String filePath) throws IOException {
+    /**
+     * Returns whether the given input source is a remote location that Docling should fetch itself, rather than
+     * something to be read from the local filesystem.
+     */
+    private static boolean isRemoteSource(String inputSource) {
+        return inputSource.startsWith("http://") || inputSource.startsWith("https://");
+    }
+
+    /**
+     * Returns whether the given String body looks like a local filesystem path rather than document content.
+     */
+    private static boolean isLocalPathSource(String content) {
+        return content.startsWith("/") || content.contains("\\");
+    }
+
+    /**
+     * Validates a local filesystem path used as Docling input: it must stay inside {@code inputBaseDirectory} when one
+     * is configured, it must exist, and it must not exceed {@code maxFileSize}.
+     *
+     * @return the normalized path, as a string
+     */
+    private String validateLocalInputPath(String filePath) throws IOException {
+        Path path = resolveWithinInputBaseDirectory(filePath);
+        if (!Files.exists(path)) {
+            throw new IOException("File not found: " + filePath);
+        }
+        validateFileSizeIfPresent(path.toString());
+        return path.toString();
+    }
+
+    /**
+     * Normalizes the given path and, when {@code inputBaseDirectory} is configured, verifies that it stays inside that
+     * directory. Normalization is lexical and the comparison is made on path-segment boundaries, so a sibling directory
+     * sharing a name prefix with the base directory is not accepted.
+     */
+    private Path resolveWithinInputBaseDirectory(String filePath) throws IOException {
+        String base = configuration.getInputBaseDirectory();
+        if (base == null || base.isEmpty()) {
+            // no directory restriction: normalize lexically only, and leave relative paths relative so that
+            // they keep resolving the way they did before - against the CLI working directory, when one is set
+            return Paths.get(filePath).normalize();
+        }
+        Path baseDir = Paths.get(base).toAbsolutePath().normalize();
+        // resolve relative paths against the base directory itself, so that the path checked here is exactly
+        // the path used downstream regardless of the process working directory
+        Path path = baseDir.resolve(Paths.get(filePath)).normalize();
+        if (!path.startsWith(baseDir)) {
+            throw new IOException("Input path resolves outside of inputBaseDirectory (" + baseDir + "): " + filePath);
+        }
+        return path;
+    }
+
+    /**
+     * Enforces {@code maxFileSize} on the given path <em>if the path currently resolves to something on disk</em>. A
+     * path that does not exist is not an error here - callers that require the input to exist must use
+     * {@link #validateLocalInputPath(String)} instead.
+     */
+    private void validateFileSizeIfPresent(String filePath) throws IOException {
         Path path = Paths.get(filePath);
         if (Files.exists(path)) {
             long fileSize = Files.size(path);
