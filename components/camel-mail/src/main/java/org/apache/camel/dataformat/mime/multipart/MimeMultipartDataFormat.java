@@ -56,6 +56,7 @@ import org.apache.camel.spi.annotations.Dataformat;
 import org.apache.camel.support.DefaultDataFormat;
 import org.apache.camel.support.ExchangeHelper;
 import org.apache.camel.support.MessageHelper;
+import org.apache.camel.util.FileUtil;
 import org.apache.camel.util.IOHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -417,7 +418,12 @@ public class MimeMultipartDataFormat extends DefaultDataFormat {
         if (key == null) {
             key = UUID.randomUUID() + "@camel.apache.org";
         }
-        return MimeUtility.decodeText(key);
+        key = MimeUtility.decodeText(key);
+        // The name is chosen by the sender of the message being unmarshalled, so normalise it the same
+        // way MailBinding.extractAndNormalizeFileName does before it is used to identify the attachment:
+        // strip control characters, then reduce it to a leaf name so it cannot carry path components.
+        key = key.replaceAll("[\n\r\t]", "_");
+        return FileUtil.stripPath(key);
     }
 
     @Override

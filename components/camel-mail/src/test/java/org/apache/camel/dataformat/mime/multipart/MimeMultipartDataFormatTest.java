@@ -429,6 +429,18 @@ public class MimeMultipartDataFormatTest extends CamelTestSupport {
     }
 
     @Test
+    void unmarshalAttachmentNameIsReducedToALeafName() {
+        // the attachment file name is chosen by the sender of the message being unmarshalled
+        in.setBody(new File("src/test/resources/multipart-traversal-name.txt"));
+        Exchange out = template.send("direct:unmarshalonlyinlineheaders", exchange);
+
+        AttachmentMessage am = out.getMessage(AttachmentMessage.class);
+        assertThat(am.getAttachmentNames())
+                .contains("evil.sh")
+                .doesNotContain("../../evil.sh");
+    }
+
+    @Test
     void unmarshalInlineHeadersFiltersMailSessionPropertyHeaders() {
         // MailHeaderFilterStrategy adds the mail.smtp. / mail.smtps. prefixes to the inbound filter
         // (CAMEL-23522) so an external mail message cannot inject JavaMail session properties. The

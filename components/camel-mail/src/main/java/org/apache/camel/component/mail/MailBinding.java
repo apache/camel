@@ -39,6 +39,7 @@ import jakarta.mail.MessagingException;
 import jakarta.mail.Multipart;
 import jakarta.mail.Part;
 import jakarta.mail.internet.AddressException;
+import jakarta.mail.internet.ContentType;
 import jakarta.mail.internet.InternetAddress;
 import jakarta.mail.internet.MimeBodyPart;
 import jakarta.mail.internet.MimeMessage;
@@ -724,8 +725,12 @@ public class MailBinding {
                         LOG.trace("Attachment #{}: Using content type resolver: {} resolved content type as: {}", i,
                                 contentTypeResolver, contentType);
                         if (contentType != null) {
-                            String value = contentType + "; name=" + attachmentFilename;
-                            messageBodyPart.setHeader("Content-Type", value);
+                            // The file name comes from the message being relayed, so it must go out as a
+                            // parameter value rather than be concatenated into the header. ParameterList
+                            // quotes and escapes anything that would otherwise change the header's structure.
+                            ContentType parsed = new ContentType(contentType);
+                            parsed.setParameter("name", attachmentFilename);
+                            messageBodyPart.setHeader("Content-Type", parsed.toString());
                             LOG.trace("Attachment #{}: ContentType: {}", i, messageBodyPart.getContentType());
                         }
                     }
