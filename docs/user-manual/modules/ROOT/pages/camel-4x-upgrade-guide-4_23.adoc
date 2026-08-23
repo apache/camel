@@ -491,3 +491,16 @@ is truncated rather than recreated and would otherwise keep its original permiss
 
 Deployments where another account legitimately reads these files — a sidecar or a backup agent running as
 a different user — need to run as the owner, or use a group-aware key store instead.
+Setting `camel.knative.client.ssl.enabled=true` without also configuring
+`camel.knative.client.ssl.truststore.path` or `camel.knative.client.ssl.trust.cert.path` used to install
+a trust manager that accepts every certificate, so enabling TLS was what disabled certificate
+validation. No option named `trustAll` was involved.
+
+The client now leaves the trust options unset in that case, which means the JVM default trust anchors
+apply — the same fallback `SSLContextParameters` and the rest of Camel use. Accepting any certificate is
+still available, but has to be asked for with the new
+`camel.knative.client.ssl.trust.all=true` property.
+
+Deployments that relied on the previous behaviour — a development cluster with a self-signed
+certificate, for example — must either configure a truststore or set `camel.knative.client.ssl.trust.all`
+explicitly. `KnativeOidcClientOptions` extends this class and is affected the same way.
