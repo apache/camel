@@ -563,7 +563,6 @@ is truncated rather than recreated and would otherwise keep its original permiss
 
 Deployments where another account legitimately reads these files — a sidecar or a backup agent running as
 a different user — need to run as the owner, or use a group-aware key store instead.
-
 === camel-jetty
 
 `enableCORS=true` added `new CrossOriginFilter()` with no init parameters, so Jetty's own defaults
@@ -667,3 +666,18 @@ Audience validation already behaved this way; the two are now consistent.
 Deployments whose introspection endpoint omits `iss` must either have it include the claim, or turn
 `validateIssuer` off. The locally verified JWT path is unaffected — it uses Keycloak's own
 `TokenVerifier.RealmUrlCheck`.
+
+=== camel-thrift
+
+The `thrift` data format used to deserialize into its own `defaultInstance` and return that object to
+every exchange. Because Thrift's `TBase.read()` assigns only the fields present in the incoming bytes,
+a message that omitted an optional field kept the value left there by the previous message, concurrent
+unmarshals interleaved into the same object, and all in-flight bodies were the same reference.
+
+`unmarshal` now deserializes into a copy of `defaultInstance` and returns that, so each exchange gets
+its own object. `defaultInstance` is left untouched and therefore keeps working as a template: values
+preset on it are now visible on every unmarshalled message, where previously they were overwritten by
+the first message and lost.
+
+Routes that compared unmarshalled bodies by identity, or that mutated one body expecting the change to
+be visible on another, must be updated.
