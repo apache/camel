@@ -16,27 +16,37 @@
  */
 package org.apache.camel.component.jms.reply;
 
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import jakarta.jms.Connection;
+import jakarta.jms.Destination;
 import jakarta.jms.JMSException;
 import jakarta.jms.Session;
 import jakarta.jms.TemporaryQueue;
 
 import org.apache.camel.CamelContext;
+import org.apache.camel.component.jms.DefaultJmsMessageListenerContainer;
+import org.apache.camel.component.jms.JmsComponent;
 import org.apache.camel.component.jms.JmsConfiguration;
 import org.apache.camel.component.jms.JmsEndpoint;
 import org.apache.camel.component.jms.TemporaryQueueResolver;
+import org.apache.camel.support.service.ServiceHelper;
 import org.apache.camel.test.infra.artemis.common.ConnectionFactoryHelper;
 import org.apache.camel.test.infra.artemis.services.ArtemisService;
 import org.apache.camel.test.infra.artemis.services.ArtemisServiceFactory;
 import org.apache.camel.test.infra.core.DefaultCamelContextExtension;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.RegisterExtension;
 
+import static org.apache.camel.component.jms.JmsComponent.jmsComponentAutoAcknowledge;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.awaitility.Awaitility.await;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -49,6 +59,7 @@ class TemporaryQueueReplyManagerRefreshTest {
     static ArtemisService service = ArtemisServiceFactory.createVMService();
 
     private TemporaryQueueReplyManager replyManager;
+    private JmsEndpoint startedEndpoint;
 
     @BeforeEach
     void setUp() {
@@ -61,6 +72,61 @@ class TemporaryQueueReplyManagerRefreshTest {
 
         replyManager = new TemporaryQueueReplyManager(context, null);
         replyManager.setEndpoint(endpoint);
+    }
+
+    @AfterEach
+    void tearDown() throws Exception {
+        if (replyManager != null && replyManager.isStarted()) {
+            replyManager.stop();
+        }
+        if (startedEndpoint != null && startedEndpoint.isStarted()) {
+            startedEndpoint.stop();
+        }
+    }
+
+    @Test
+    void shouldRecoverReplyDestinationAfterRefreshWithRunningListenerContainer() throws Exception {
+        CamelContext context = contextExtension.getContext();
+        JmsComponent component = jmsComponentAutoAcknowledge(ConnectionFactoryHelper.createConnectionFactory(service));
+        context.addComponent("jms", component);
+
+        startedEndpoint = (JmsEndpoint) component.createEndpoint(
+                "jms:queue:TemporaryQueueReplyManagerRefreshTest?recoveryInterval=100");
+        ServiceHelper.startService(startedEndpoint);
+
+        replyManager = new TemporaryQueueReplyManager(context, null);
+        replyManager.setEndpoint(startedEndpoint);
+
+        ScheduledExecutorService scheduledExecutorService
+                = context.getExecutorServiceManager().newSingleThreadScheduledExecutor(replyManager, "test-timeout-checker");
+        ExecutorService onTimeoutExecutorService
+                = context.getExecutorServiceManager().newThreadPool(replyManager, "test-on-timeout", 0, 1);
+        replyManager.setScheduledExecutorService(scheduledExecutorService);
+        replyManager.setOnTimeoutExecutorService(onTimeoutExecutorService);
+        replyManager.start();
+
+        assertThat(replyManager.listenerContainer).isInstanceOf(DefaultJmsMessageListenerContainer.class);
+        DefaultJmsMessageListenerContainer listenerContainer
+                = (DefaultJmsMessageListenerContainer) replyManager.listenerContainer;
+        assertThat(listenerContainer.isRunning()).isTrue();
+
+        TemporaryQueueReplyManager.TemporaryReplyQueueDestinationResolver destinationResolver
+                = replyManager.destinationResolver;
+
+        Destination firstReplyTo = replyManager.getReplyTo();
+        assertThat(firstReplyTo).isNotNull();
+        assertThat(destinationResolver.isRefreshPending()).isFalse();
+
+        destinationResolver.scheduleRefresh();
+        assertThat(destinationResolver.isRefreshPending()).isTrue();
+
+        await().atMost(30, TimeUnit.SECONDS).untilAsserted(() -> {
+            assertThat(destinationResolver.isRefreshPending()).isFalse();
+            assertThat(replyManager.getReplyTo()).isNotNull();
+            assertThat(listenerContainer.isRunning()).isTrue();
+        });
+
+        assertThat(replyManager.getReplyTo()).isNotEqualTo(firstReplyTo);
     }
 
     @Test
