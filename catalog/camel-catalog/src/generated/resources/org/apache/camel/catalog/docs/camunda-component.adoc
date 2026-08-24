@@ -15,7 +15,7 @@
 The *Camunda* component provides the ability to interact with https://camunda.com/[Camunda 8] process orchestration clusters
 using the https://docs.camunda.io/docs/apis-tools/java-client/[Camunda Java Client].
 
-This component replaces the deprecated xref:zeebe-component.adoc[camel-zeebe] component, which used the older Zeebe Java Client.
+This component replaces the deprecated camel-zeebe component, which used the older Zeebe Java Client.
 
 [NOTE]
 ====
