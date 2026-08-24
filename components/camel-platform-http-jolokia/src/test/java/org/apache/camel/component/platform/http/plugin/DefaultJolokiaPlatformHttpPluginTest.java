@@ -29,6 +29,7 @@ import org.jolokia.server.core.http.HttpRequestHandler;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
@@ -56,6 +57,17 @@ public class DefaultJolokiaPlatformHttpPluginTest extends ContextTestSupport {
 
         assertEquals("version", type);
         assertNotNull(agentVersion, "There should be an agent version");
+    }
+
+    @Test
+    void jolokiaPlatformHttpPluginCheckAccessTest() throws Exception {
+        PlatformHttpPluginRegistry registry = resolvePlatformHttpPluginRegistry();
+        DefaultJolokiaPlatformHttpPlugin plugin = registry
+                .resolvePluginById("jolokia", DefaultJolokiaPlatformHttpPlugin.class).orElseThrow();
+        HttpRequestHandler handler = plugin.getJolokiaRequestHandler();
+
+        assertDoesNotThrow(
+                () -> handler.checkAccess("http", "localhost", new String[] { "127.0.0.1" }, null, null));
     }
 
     private PlatformHttpPluginRegistry resolvePlatformHttpPluginRegistry() {
