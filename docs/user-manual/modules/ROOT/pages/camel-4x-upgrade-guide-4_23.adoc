@@ -491,3 +491,24 @@ is truncated rather than recreated and would otherwise keep its original permiss
 
 Deployments where another account legitimately reads these files — a sidecar or a backup agent running as
 a different user — need to run as the owner, or use a group-aware key store instead.
+=== camel-http
+
+Credentials are no longer sent to a host the endpoint was not configured with. Two paths reached that
+outcome once `followRedirects=true`, since a redirect target is chosen by the remote server rather than
+by the route:
+
+* The OAuth2 interceptor is registered with `addRequestInterceptorFirst`, and HttpClient runs
+protocol-level request interceptors inside `ProtocolExec`, which sits below `RedirectExec` — so it ran
+again for every redirect hop and re-attached `Authorization: Bearer <token>` to whatever host the
+`Location` header named. The token is now attached only for the endpoint's own host.
+* `authHost` is optional and unset in the common basic-auth configuration, which made the credentials
+scope `new AuthScope(null, -1)` — any host, any port, any scheme — so HttpClient offered the credentials
+to whichever host issued a `401` challenge. The scope now falls back to the endpoint's host when
+`authHost` is not set.
+
+Routes that relied on credentials following a redirect to a different host must set `authHost`
+explicitly, which continues to take precedence.
+
+`HttpComponent.createHttpClientConfigurer(Map, boolean)` is unchanged and still behaves as before; a new
+`createHttpClientConfigurer(Map, boolean, URI)` overload carries the endpoint's target URI, and the
+two-argument form delegates to it with a null URI.

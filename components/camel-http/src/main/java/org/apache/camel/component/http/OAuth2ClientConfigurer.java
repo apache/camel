@@ -41,8 +41,12 @@ import org.apache.hc.core5.http.HttpRequest;
 import org.apache.hc.core5.http.io.entity.EntityUtils;
 import org.apache.hc.core5.http.io.entity.StringEntity;
 import org.apache.hc.core5.http.protocol.HttpContext;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class OAuth2ClientConfigurer extends ServiceSupport implements HttpClientConfigurer {
+
+    private static final Logger LOG = LoggerFactory.getLogger(OAuth2ClientConfigurer.class);
 
     private final String clientId;
     private final String clientSecret;
@@ -54,12 +58,27 @@ public class OAuth2ClientConfigurer extends ServiceSupport implements HttpClient
     private final static ConcurrentMap<OAuth2URIAndCredentials, TokenCache> tokenCache = new ConcurrentHashMap<>();
     private final boolean useBodyAuthentication;
     private final String resourceIndicator;
+    private final String targetHost;
     private HttpClient httpClient;
 
     public OAuth2ClientConfigurer(String clientId, String clientSecret, String tokenEndpoint, String resourceIndicator,
                                   String scope, boolean cacheTokens,
                                   long cachedTokensDefaultExpirySeconds, long cachedTokensExpirationMarginSeconds,
                                   boolean useBodyAuthentication) {
+        this(clientId, clientSecret, tokenEndpoint, resourceIndicator, scope, cacheTokens,
+             cachedTokensDefaultExpirySeconds, cachedTokensExpirationMarginSeconds, useBodyAuthentication, null);
+    }
+
+    /**
+     * @param targetHost the host the endpoint addresses. The bearer token is only attached to requests for that host,
+     *                   so that a redirect chosen by the remote server cannot collect it. Null keeps the previous
+     *                   behaviour of attaching it to whatever host the request names.
+     */
+    public OAuth2ClientConfigurer(String clientId, String clientSecret, String tokenEndpoint, String resourceIndicator,
+                                  String scope, boolean cacheTokens,
+                                  long cachedTokensDefaultExpirySeconds, long cachedTokensExpirationMarginSeconds,
+                                  boolean useBodyAuthentication, String targetHost) {
+        this.targetHost = targetHost;
         this.clientId = clientId;
         this.clientSecret = clientSecret;
         this.tokenEndpoint = tokenEndpoint;
@@ -78,6 +97,14 @@ public class OAuth2ClientConfigurer extends ServiceSupport implements HttpClient
 
         clientBuilder.addRequestInterceptorFirst((HttpRequest request, EntityDetails entity, HttpContext context) -> {
             URI requestUri = getUriFromRequest(request);
+            if (!isTargetHost(requestUri)) {
+                // HttpClient runs protocol-level request interceptors inside ProtocolExec, which sits below
+                // RedirectExec, so this runs again for every redirect hop. Without this check the bearer token is
+                // re-attached to whichever host the Location header named.
+                LOG.debug("Not attaching the OAuth2 bearer token to {}, which is not the endpoint's host {}",
+                        requestUri, targetHost);
+                return;
+            }
             OAuth2URIAndCredentials uriAndCredentials = new OAuth2URIAndCredentials(requestUri, clientId, clientSecret);
             if (cacheTokens) {
                 if (tokenCache.containsKey(uriAndCredentials)
@@ -100,6 +127,13 @@ public class OAuth2ClientConfigurer extends ServiceSupport implements HttpClient
                 request.setHeader(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken);
             }
         });
+    }
+
+    private boolean isTargetHost(URI requestUri) {
+        if (targetHost == null || requestUri == null || requestUri.getHost() == null) {
+            return true;
+        }
+        return targetHost.equalsIgnoreCase(requestUri.getHost());
     }
 
     private JsonObject getAccessTokenResponse(HttpClient httpClient) throws IOException {
