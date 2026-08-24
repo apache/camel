@@ -491,3 +491,27 @@ is truncated rather than recreated and would otherwise keep its original permiss
 
 Deployments where another account legitimately reads these files — a sidecar or a backup agent running as
 a different user — need to run as the owner, or use a group-aware key store instead.
+=== camel-jetty
+
+`enableCORS=true` added `new CrossOriginFilter()` with no init parameters, so Jetty's own defaults
+applied: `allowedOrigins=*` together with `allowCredentials=true`. Since the filter reflects the request's
+origin rather than sending `*`, that is the credentialed any-origin configuration the fetch specification
+refuses to express — reflecting the origin being the usual way around that rule. An option named "enable
+CORS" should not mean "every origin, with credentials".
+
+`allowCredentials` now defaults to `false` when CORS is enabled. The origin is still reflected, so
+enabling CORS keeps working for requests that carry no credentials.
+
+Deployments that need credentialed cross-origin requests must ask for them explicitly:
+
+[source,text]
+----
+jetty://http://0.0.0.0:8080/api?enableCORS=true
+    &filterInit.allowedOrigins=https://app.example
+    &filterInit.allowCredentials=true
+----
+
+Setting `filterInit.allowCredentials=true` while leaving `filterInit.allowedOrigins` unset or `*` is
+logged as a warning at startup, because that combination lets any origin make credentialed requests.
+
+The same change was made to camel-platform-http-vertx.
