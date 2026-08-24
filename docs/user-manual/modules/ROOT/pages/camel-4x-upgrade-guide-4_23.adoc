@@ -64,3 +64,84 @@ an `AGENTS.md` file with guidance for AI coding assistants, pointing at the Apac
 
 The `camel-archetype-api-component` archetype also generates its readme again: the file was declared
 in the wrong file set and was therefore silently skipped.
+
+=== camel-hazelcast
+
+`ReplicatedHazelcastAggregationRepository` now applies the same default
+`JavaSerializationFilterConfig` that the other repositories and the component endpoints have applied
+since 4.14.8/4.18.3/4.21.0, when it bootstraps its own `HazelcastInstance` (that is, when no
+`hazelcastInstance` is supplied). It overrides `doStart()` without calling `super.doStart()` and was
+therefore left out of that change.
+
+The default whitelists the class name prefixes `java.`, `javax.`, `org.apache.camel.` and blacklists
+`java.net.`, and a user-supplied `JavaSerializationFilterConfig` is still respected and never
+overwritten.
+
+Applications that aggregate classes outside the default whitelist through the replicated repository
+without supplying their own `hazelcastInstance` must now provide a `Config` with a
+`JavaSerializationFilterConfig` covering their class names.
+
+=== camel-mail
+
+`MimeMultipartDataFormat` now uses `MailHeaderFilterStrategy` instead of a plain
+`DefaultHeaderFilterStrategy` when `headersInline` unmarshal copies the remaining MIME headers onto
+the Camel message. That strategy filters the `mail.smtp.` and `mail.smtps.` prefixes on the inbound
+path in addition to `Camel*`/`camel*`, so the data format now filters the same namespace the mail
+consumer has filtered since 4.14.9/4.18.4/4.22.0.
+
+Routes that relied on `mail.smtp.*` or `mail.smtps.*` headers arriving on the exchange from an
+unmarshalled MIME message must set those values explicitly on the route instead. Ordinary
+application headers are unaffected.
+
+=== camel-netty - object codecs apply a deserialization filter by default
+
+The `ObjectDecoder` and `DatagramPacketObjectDecoder` codecs (used when a route configures Netty
+object serialization through the `encoders` / `decoders` options) now always install a JEP-290
+`java.io.ObjectInputFilter` while decoding, resolved through `DeserializationFilterHelper`.
+Previously a decoder built without an explicit filter pattern applied no filter at all and only
+logged a warning.
+
+When no explicit pattern is passed, the JVM-wide `jdk.serialFilter` is honoured if set, otherwise
+the shared Camel default allow-list is applied (it permits standard Java and Apache Camel types,
+denies `java.net.**`, and enforces JEP-290 graph-shape limits). Routes that deserialize classes
+outside that allow-list must pass an explicit filter pattern to the two-argument
+`ObjectDecoder(ClassResolver, String)` / `DatagramPacketObjectDecoder(ClassResolver, String)`
+constructor (or configure `jdk.serialFilter`) to permit them.
+
+=== camel-oauth
+
+The OAuth processors now stop the route on the paths where they do not authenticate the caller, so
+that no subsequent step of the route runs for such a request. Previously they set a response code
+and returned, which left the rest of the route to execute and overwrite the response the processor
+had just prepared.
+
+What changed:
+
+* `OAuthBearerTokenProcessor` — a request with no `Authorization` header, or with one that does not
+parse as `Bearer <token>`, is now answered with `401` and a `WWW-Authenticate: Bearer` challenge
+(RFC 6750) instead of `400`, and the route is stopped. A present-but-invalid token continues to fail
+by propagating the exception from `OAuth.authenticate()`, as before.
+* `OAuthCodeFlowProcessor` — when the caller has no authenticated session and is redirected to the
+identity provider, the route is now stopped; the `302` is the whole response.
+* `OAuthCodeFlowCallback` — a callback request without the `code` parameter still answers `400`, and
+now also stops the route.
+
+Routes that relied on steps after these processors running for unauthenticated requests must be
+restructured. The authenticated paths are unchanged: a successfully authenticated request continues
+through the rest of the route exactly as before, and `OAuthLogoutProcessor` is unchanged.
+
+=== camel-netty-http
+
+The security-constraint lookup now strips the endpoint context-path from the request target
+case-insensitively, matching how consumer dispatch already matches it
+(`RestConsumerContextPathMatcher` compares with `equalsIgnoreCase` and a lower-cased prefix).
+
+Previously the strip was guarded by a case-sensitive `startsWith`, so a request whose context-path
+differed only by case was evaluated against the unstripped target. With `matchOnUriPrefix=true` and
+a `securityConstraint` whose inclusions are specific sub-paths rather than a catch-all, such a
+request could match no inclusion — and an unmatched target counts as unrestricted — while still
+being dispatched to the route.
+
+Requests that differ from the configured context-path only by case are therefore now subject to the
+same constraint as the exact-case form. Deployments that relied on the previous behaviour to reach a
+route without a challenge will now receive `401`.
