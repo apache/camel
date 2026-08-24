@@ -702,3 +702,26 @@ inherit values set on `defaultInstance`, and `defaultInstance` itself remains un
 
 Routes that compared unmarshalled bodies by identity, or that mutated one body expecting the change to
 be visible on another, must be updated.
+
+=== camel-oauth
+
+The authorization code flow now sends a `state` parameter and requires it back on the callback.
+
+`OAuthCodeFlowProcessor` generates a random `state`, stores it in the OAuth session and includes it in
+the authorization request. `OAuthCodeFlowCallback` then accepts an authorization code only when the
+callback carries the same value, consuming it so it cannot be replayed. Previously no `state` was sent and
+the callback redeemed whatever `code` arrived, binding the resulting profile to the caller's session with
+nothing tying the callback to a flow that session had started — the login CSRF that RFC 6749 section
+10.12 and OpenID Connect Core require this binding to prevent.
+
+Two callbacks that used to succeed are now answered with `400` and stop the route:
+
+* no authorization code flow is in progress for the session — `No authorization code flow in progress`
+* the `state` is absent or does not match — `Authorization state mismatch`
+
+Deployments where the session is not sticky across the redirect will see the second case, because the
+session holding the `state` has to be the one that returns. Sessions must survive the round trip to the
+identity provider.
+
+Note that `nonce` and PKCE (`code_challenge`) are still not sent, and the session cookie is still
+`SameSite=None; Secure`.
