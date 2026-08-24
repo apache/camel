@@ -125,11 +125,20 @@ Two outputs:
 - A section appended to the PR comment and the job summary, naming the module,
   test, attempt count and first failure message. Nothing is emitted when no test
   was retried.
-- `flakes.json`, uploaded as the `flakes-java-<version>` artifact. Develocity's
-  flaky-test data does not cover fork PRs (`.mvn/develocity.xml` publishes build
-  scans only when authenticated), so this artifact is the only per-PR record.
+- `flakes.json`, uploaded as `flakes-java-<version>` on PRs and
+  `flakes-main-java-<version>` on `main`. Develocity's flaky-test data does not
+  cover fork PRs (`.mvn/develocity.xml` publishes build scans only when
+  authenticated), so this artifact is the only per-PR record.
 
 Notes:
+
+- **The section names its JDK** (`flake-label` on the action, `--label` on the
+  script, also recorded in `flakes.json`). The PR-comment artifact is uploaded
+  with `overwrite: true` across the JDK matrix on the grounds that the content is
+  identical between entries. Flake data is the one part that is not: if JDK 17
+  flakes and JDK 25 does not, whichever finishes last decides what the comment
+  shows. The label means the reader can tell which entry a shown flake came from,
+  and the per-JDK artifacts remain the complete record.
 
 - **No time figure is reported.** Surefire records no per-attempt timing, and
   `<testcase time>` reflects only the final successful attempt. Estimating cost
@@ -137,9 +146,12 @@ Notes:
 - The script declares its dependencies inline via
   [PEP 723](https://peps.python.org/pep-0723/) and must be run with `uv run`;
   plain `python3` ignores the metadata block. `uv` is installed by the action.
-- XML is parsed with `defusedxml`. A pre-parse byte scan for `<!DOCTYPE` is not
-  sufficient: it misses a UTF-16 document, where the marker is interleaved with
-  NUL bytes. `testdata/TEST-utf16-doctype-rejected.xml` covers that case.
+- XML is parsed with `defusedxml`, with `forbid_dtd=True` passed explicitly —
+  the default only forbids entity *declarations*, which would let a bare
+  `<!DOCTYPE .. SYSTEM ..>` through. A pre-parse byte scan for `<!DOCTYPE` is
+  not sufficient either: it misses a UTF-16 document, where the marker is
+  interleaved with NUL bytes. `testdata/TEST-utf16-doctype-rejected.xml` covers
+  that case.
 - Failures are logged and skipped. This step must never be the reason a job fails.
 
 Unit tests live in `test_collect_flakes.py` and run in `pr-ci-scripts-validation.yml`.

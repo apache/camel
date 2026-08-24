@@ -41,6 +41,10 @@ inputs:
     description: 'Extra Maven arguments to pass to the build (e.g. -Denforcer.phase=none)'
     required: false
     default: ''
+  flake-label:
+    description: 'Names the matrix entry in the recovered-flake report (e.g. "JDK 17"), so a reader can tell which entry a reported flake came from'
+    required: false
+    default: ''
 runs:
   using: "composite"
   steps:
@@ -62,5 +66,6 @@ runs:
         GITHUB_REPO: ${{ inputs.github-repo }}
         EXTRA_MODULES: ${{ inputs.extra-modules }}
         MAVEN_EXTRA_ARGS: ${{ inputs.maven-extra-args }}
+        FLAKE_LABEL: ${{ inputs.flake-label }}
       shell: bash
       run: ${{ github.action_path }}/incremental-build.sh ${{ steps.install-mvnd.outputs.mvnd-dir }}/mvnd "$PR_ID" "$GITHUB_REPO" "$EXTRA_MODULES"

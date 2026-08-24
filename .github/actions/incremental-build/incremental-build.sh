@@ -433,15 +433,21 @@ reportRecoveredFlakes() {
     return
   fi
 
-  local step_summary_args=()
+  local extra_args=()
   if [ -n "${GITHUB_STEP_SUMMARY:-}" ]; then
-    step_summary_args=(--step-summary "$GITHUB_STEP_SUMMARY")
+    extra_args+=(--step-summary "$GITHUB_STEP_SUMMARY")
+  fi
+  # Names the matrix entry in the section. The PR comment is overwritten
+  # last-writer-wins across the JDK matrix, and flake data, unlike the rest of
+  # the comment, differs between entries.
+  if [ -n "${FLAKE_LABEL:-}" ]; then
+    extra_args+=(--label "$FLAKE_LABEL")
   fi
 
   uv run --quiet "${script_dir}/collect-flakes.py" . \
     --comment-file "$comment_file" \
     --json-out flakes.json \
-    "${step_summary_args[@]}" \
+    "${extra_args[@]}" \
     || echo "WARNING: recovered-flake reporting failed, continuing"
 }
 
@@ -976,6 +982,20 @@ main() {
   local comment_file="incremental-test-comment.md"
   writeComment "$comment_file" "$pl" "$grep_dep_module_ids" "$grep_changed_props" "$testedDependents" "$extraModules"
 
+  # Step summary header. Written before anything else appends to the summary so
+  # the reader gets "what was built" before "what happened while building it".
+  if [ -n "${GITHUB_STEP_SUMMARY:-}" ]; then
+    {
+      echo ""
+      echo "### Tested modules"
+      echo ""
+      for w in $(echo "$final_pl" | tr ',' '\n'); do
+        echo "- \`$w\`"
+      done
+      echo ""
+    } >> "$GITHUB_STEP_SUMMARY"
+  fi
+
   # Recovered flakes: a green build can still have retried its way there
   reportRecoveredFlakes "$comment_file"
 
@@ -1042,19 +1062,6 @@ main() {
       echo "" >> "$comment_file"
       echo "</details>" >> "$comment_file"
     fi
-  fi
-
-  # Write step summary header
-  if [ -n "${GITHUB_STEP_SUMMARY:-}" ]; then
-    {
-      echo ""
-      echo "### Tested modules"
-      echo ""
-      for w in $(echo "$final_pl" | tr ',' '\n'); do
-        echo "- \`$w\`"
-      done
-      echo ""
-    } >> "$GITHUB_STEP_SUMMARY"
   fi
 
   if [[ ${ret} -ne 0 ]]; then

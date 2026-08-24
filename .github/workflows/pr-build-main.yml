@@ -170,6 +170,7 @@ jobs:
           skip-mvnd-install: 'true'
           extra-modules: ${{ inputs.extra_modules || '' }}
           maven-extra-args: ${{ matrix.maven_extra_args || '' }}
+          flake-label: JDK ${{ matrix.java }}
       - name: archive incremental test logs
         uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
         if: always()
@@ -191,6 +192,12 @@ jobs:
       # comment file actually exists — a cancelled build (e.g., JDK 25 killed
       # while JDK 17 fails) won't have the file and must not overwrite an
       # artifact from a matrix entry that did produce it.
+      #
+      # The recovered-flake section is the one part that is NOT identical across
+      # JDKs, so it names its JDK (flake-label above) and the reader can tell
+      # which entry it came from. Last writer still wins, so the comment shows
+      # one JDK's flakes; the per-JDK flakes-java-* artifacts above are the
+      # complete record.
       - name: Save PR number and test comment for commenter workflow
         if: always() && !matrix.experimental
         shell: bash
