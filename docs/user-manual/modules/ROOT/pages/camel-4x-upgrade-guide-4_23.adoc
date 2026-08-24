@@ -491,3 +491,18 @@ is truncated rather than recreated and would otherwise keep its original permiss
 
 Deployments where another account legitimately reads these files — a sidecar or a backup agent running as
 a different user — need to run as the owner, or use a group-aware key store instead.
+=== camel-keycloak
+
+When `validateIssuer` is enabled and the token is checked by introspection, an introspection response
+carrying no `iss` claim used to log a warning and pass. It is now rejected with
+`Token issuer missing: expected '<issuer>' but the introspection result carries no issuer`.
+
+Issuer validation is opt-in, so an operator who enabled it is asking for tokens from other issuers to be
+refused, and a response with no issuer is not evidence that the token came from the expected one. RFC 7662
+makes `iss` optional in an introspection response, so this is reachable wherever the introspection
+endpoint is a broker, a gateway, or a minimal implementation rather than the realm that issued the token.
+Audience validation already behaved this way; the two are now consistent.
+
+Deployments whose introspection endpoint omits `iss` must either have it include the claim, or turn
+`validateIssuer` off. The locally verified JWT path is unaffected — it uses Keycloak's own
+`TokenVerifier.RealmUrlCheck`.
