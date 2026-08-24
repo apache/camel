@@ -35,12 +35,10 @@ import static org.assertj.core.api.Assertions.assertThat;
  * only appears in the per-message evaluated recipient (e.g. from a header) is therefore treated as a literal endpoint
  * uri and not re-expanded. See CAMEL-24282.
  * <p/>
- * {@code recipientList} / {@code routingSlip} / {@code dynamicRouter} compute their recipients entirely from a runtime
- * expression (no static template resolved at build time), so they continue to resolve {@code {{...}}} in those
- * recipients - this is relied upon e.g. by routes carrying a {@code {{port}}}-style placeholder in the recipient
- * header, and must be preserved. {@code pollEnrich} does resolve its static uri at build time, but its per-message
- * recipient goes through the same shared resolution path, so it too still resolves {@code {{...}}} (left unchanged in
- * this PR).
+ * CAMEL-24414 extends the same treatment to {@code recipientList}, {@code routingSlip}, {@code dynamicRouter} and
+ * {@code pollEnrich}, which share {@code ProcessorHelper.prepareRecipient}. A placeholder written in the route is still
+ * resolved for those EIPs, at build time, by the model - see {@link #recipientListPlaceholderInRouteTextIsResolved()},
+ * which is why removing the per-message expansion does not take the legitimate pattern away.
  */
 class DynamicEndpointMessagePlaceholderTest extends ContextTestSupport {
 
@@ -75,11 +73,23 @@ class DynamicEndpointMessagePlaceholderTest extends ContextTestSupport {
 
     @Test
     void recipientListPlaceholderInHeaderStillResolved() throws Exception {
-        // recipientList has no build-time template, so {{...}} in the recipient header is still resolved
+        // unchanged: a recipient supplied at runtime may legitimately carry a placeholder that comes from
+        // configuration (camel-ftp's FtpProducerRecipientListIT is an in-tree example)
         getMockEndpoint("mock:resolved").expectedMessageCount(1);
         getMockEndpoint("mock:done").expectedMessageCount(1);
 
         template.sendBodyAndHeader("direct:rl", "Hello", "target", "mock:{{secretTarget}}");
+
+        assertMockEndpointsSatisfied();
+    }
+
+    @Test
+    void recipientListPlaceholderInRouteTextIsResolved() throws Exception {
+        // the legitimate pattern: a placeholder written in the route is resolved at build time by the model,
+        // independently of the per-message path, so aligning recipientList does not remove it
+        getMockEndpoint("mock:resolved").expectedMessageCount(1);
+
+        template.sendBody("direct:rlConstant", "Hello");
 
         assertMockEndpointsSatisfied();
     }
@@ -105,17 +115,17 @@ class DynamicEndpointMessagePlaceholderTest extends ContextTestSupport {
     }
 
     @Test
-    void pollEnrichPlaceholderInHeaderStillResolved() throws Exception {
-        // pollEnrich's per-message recipient goes through the shared resolution path, so {{...}} is still resolved
+    void pollEnrichPlaceholderInHeaderNotResolved() throws Exception {
+        // CAMEL-24282 deferred aligning pollEnrich to a follow-up; this is that follow-up
         template.sendBody("seda:resolved", "SEED");
         getMockEndpoint("mock:done").expectedMessageCount(1);
 
         template.sendBodyAndHeader("direct:pe", "trigger", "target", "seda:{{secretTarget}}");
 
         assertMockEndpointsSatisfied();
-        // resolved -> pollEnrich drained the seed from seda:resolved (not from the literal seda:{{secretTarget}})
+        // not resolved -> pollEnrich polled the literal seda:{{secretTarget}} and left the seed untouched
         SedaEndpoint seda = context.getEndpoint("seda:resolved", SedaEndpoint.class);
-        assertThat(seda.getQueue()).isEmpty();
+        assertThat(seda.getQueue()).hasSize(1);
     }
 
     @Test
@@ -144,6 +154,7 @@ class DynamicEndpointMessagePlaceholderTest extends ContextTestSupport {
                 from("direct:en").enrich().simple("${header.target}")
                         .aggregationStrategy(AggregationStrategies.useOriginal()).to("mock:done");
                 from("direct:rl").recipientList(header("target")).to("mock:done");
+                from("direct:rlConstant").recipientList(constant("mock:{{secretTarget}}"));
                 from("direct:rs").routingSlip(header("target")).to("mock:done");
                 from("direct:dr").dynamicRouter(method(DynamicEndpointMessagePlaceholderTest.this, "route"));
                 from("direct:pe").pollEnrich().simple("${header.target}").timeout(2000).end().to("mock:done");
