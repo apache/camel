@@ -60,7 +60,8 @@ public final class GenAiModelResolver {
         if (chatResponse == null) {
             return fallback;
         }
-        if (isLangChain4jPresent(classResolver) && isInstanceOf(classResolver, chatResponse, LANGCHAIN4J_CHAT_RESPONSE)) {
+        if (isLangChain4jPresent(classResolver, chatResponse)
+                && isInstanceOf(classResolver, chatResponse, LANGCHAIN4J_CHAT_RESPONSE)) {
             String modelName = invokeToString(classResolver, chatResponse, "modelName");
             if (modelName != null && !modelName.isBlank()) {
                 return modelName;
@@ -97,10 +98,10 @@ public final class GenAiModelResolver {
         if (!markVisited(model, visited)) {
             return UNKNOWN;
         }
-        if (isLangChain4jPresent(classResolver) && isInstanceOf(classResolver, model, LANGCHAIN4J_CHAT_MODEL)) {
+        if (isLangChain4jPresent(classResolver, model) && isInstanceOf(classResolver, model, LANGCHAIN4J_CHAT_MODEL)) {
             return mapLangChain4jProvider(invokeToString(classResolver, model, "provider"));
         }
-        if (isLangChain4jPresent(classResolver) && isInstanceOf(classResolver, model, LANGCHAIN4J_EMBEDDING_MODEL)) {
+        if (isLangChain4jPresent(classResolver, model) && isInstanceOf(classResolver, model, LANGCHAIN4J_EMBEDDING_MODEL)) {
             return mapLangChain4jProvider(invokeToString(classResolver, model, "provider"));
         }
         if (isSpringAiType(model)) {
@@ -123,14 +124,14 @@ public final class GenAiModelResolver {
         if (!markVisited(model, visited)) {
             return UNKNOWN;
         }
-        if (isLangChain4jPresent(classResolver) && isInstanceOf(classResolver, model, LANGCHAIN4J_CHAT_MODEL)) {
+        if (isLangChain4jPresent(classResolver, model) && isInstanceOf(classResolver, model, LANGCHAIN4J_CHAT_MODEL)) {
             String modelName = resolveLangChain4jChatModelName(classResolver, model);
             if (modelName != null && !modelName.isBlank()) {
                 return modelName;
             }
         }
-        if (isLangChain4jPresent(classResolver) && isInstanceOf(classResolver, model, LANGCHAIN4J_EMBEDDING_MODEL)) {
-            String modelName = invokeToString(classResolver, model, "modelName");
+        if (isLangChain4jPresent(classResolver, model) && isInstanceOf(classResolver, model, LANGCHAIN4J_EMBEDDING_MODEL)) {
+            String modelName = resolveLangChain4jEmbeddingModelName(classResolver, model);
             if (modelName != null && !modelName.isBlank()) {
                 return modelName;
             }
@@ -154,6 +155,21 @@ public final class GenAiModelResolver {
             // ignore
         }
         return null;
+    }
+
+    private static String resolveLangChain4jEmbeddingModelName(ClassResolver classResolver, Object model) {
+        try {
+            Object parameters = invokeNoArgOptional(classResolver, model, "defaultRequestParameters");
+            if (parameters != null) {
+                Object modelName = invokeNoArgOptional(classResolver, parameters, "modelName");
+                if (modelName != null && !modelName.toString().isBlank()) {
+                    return modelName.toString();
+                }
+            }
+        } catch (ReflectiveOperationException e) {
+            // ignore
+        }
+        return invokeToString(classResolver, model, "modelName");
     }
 
     private static String resolveSystemFromSpringAiUnderlyingModel(
@@ -225,18 +241,29 @@ public final class GenAiModelResolver {
         return visited.add(System.identityHashCode(model));
     }
 
-    private static boolean isLangChain4jPresent(ClassResolver classResolver) {
+    private static boolean isLangChain4jPresent(ClassResolver classResolver, Object model) {
         if (classResolver == null) {
             return false;
         }
-        return classResolver.resolveClass(LANGCHAIN4J_CHAT_MODEL) != null;
+        ClassLoader loader = model != null ? model.getClass().getClassLoader() : null;
+        if (loader != null) {
+            if (classResolver.resolveClass(LANGCHAIN4J_CHAT_MODEL, loader) != null) {
+                return true;
+            }
+            return classResolver.resolveClass(LANGCHAIN4J_EMBEDDING_MODEL, loader) != null;
+        }
+        return classResolver.resolveClass(LANGCHAIN4J_CHAT_MODEL) != null
+                || classResolver.resolveClass(LANGCHAIN4J_EMBEDDING_MODEL) != null;
     }
 
     private static boolean isInstanceOf(ClassResolver classResolver, Object model, String className) {
-        if (classResolver == null) {
+        if (classResolver == null || model == null) {
             return false;
         }
-        Class<?> type = classResolver.resolveClass(className);
+        Class<?> type = classResolver.resolveClass(className, model.getClass().getClassLoader());
+        if (type == null) {
+            type = classResolver.resolveClass(className);
+        }
         return type != null && type.isInstance(model);
     }
 
@@ -263,6 +290,9 @@ public final class GenAiModelResolver {
         Method method = resolveMethod(target.getClass(), methodName);
         if (method == null) {
             throw new NoSuchMethodException(target.getClass().getName() + "." + methodName + "()");
+        }
+        if (!method.canAccess(target)) {
+            method.setAccessible(true);
         }
         return method.invoke(target);
     }

@@ -40,6 +40,13 @@ class GenAiModelResolverTest extends ExchangeTestSupport {
     }
 
     @Test
+    void shouldResolveEmbeddingModelNameFromModelNameMethod() {
+        assertThat(GenAiModelResolver.resolveModelName(classResolver, new FakeEmbeddingModel()))
+                .isEqualTo("text-embedding-3-small");
+        assertThat(GenAiModelResolver.resolveSystem(classResolver, new FakeEmbeddingModel())).isEqualTo("openai");
+    }
+
+    @Test
     void shouldResolveOpenAiProviderFromChatModel() {
         assertThat(GenAiModelResolver.resolveSystem(classResolver, new FakeOpenAiChatModel())).isEqualTo("openai");
     }
@@ -107,6 +114,18 @@ class GenAiModelResolverTest extends ExchangeTestSupport {
         @Override
         public ChatRequestParameters defaultRequestParameters() {
             return DefaultChatRequestParameters.builder().modelName("llama3").build();
+        }
+    }
+
+    static class FakeEmbeddingModel implements EmbeddingModel {
+        @Override
+        public ModelProvider provider() {
+            return ModelProvider.OPEN_AI;
+        }
+
+        @Override
+        public String modelName() {
+            return "text-embedding-3-small";
         }
     }
 
