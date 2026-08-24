@@ -48,6 +48,13 @@ runs:
       uses: apache/camel/.github/actions/install-mvnd@main
       with:
         dry-run: ${{ inputs.skip-mvnd-install }}
+    # collect-flakes.py declares its dependencies inline (PEP 723); uv is what
+    # honours that block. Installed here rather than in the caller so the action
+    # stays self-contained for downstream repos that reuse it.
+    - id: install-uv
+      uses: astral-sh/setup-uv@20cfd1bf945f4377ade1205e4dbc17946fc9a30d # v10.0.1
+      with:
+        enable-cache: true
     - name: maven test
       env:
         GITHUB_TOKEN: ${{ inputs.github-token }}
