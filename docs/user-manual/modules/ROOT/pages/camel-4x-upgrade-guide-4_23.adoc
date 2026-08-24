@@ -65,6 +65,26 @@ an `AGENTS.md` file with guidance for AI coding assistants, pointing at the Apac
 The `camel-archetype-api-component` archetype also generates its readme again: the file was declared
 in the wrong file set and was therefore silently skipped.
 
+=== camel-core - property placeholders in pollEnrich
+
+Camel 4.22 stopped resolving property placeholders (`{{...}}`) on the _per-message evaluated_
+recipient for `toD` and `enrich`, and said that aligning `pollEnrich` was deferred to a follow-up.
+This is that follow-up: a `{{...}}` token that appears only in the value produced at runtime by the
+`pollEnrich` expression is now treated as a literal part of the endpoint URI instead of being
+expanded.
+
+Like `toD` and `enrich`, `pollEnrich` resolves its static endpoint URI at build time, so a
+placeholder belongs there:
+
+[source,java]
+----
+.pollEnrich("file:{{inbox}}", 5000)
+----
+
+`recipientList`, `routingSlip` and `dynamicRouter` are unchanged. Their recipient is supplied
+entirely at runtime and may legitimately carry a placeholder that comes from configuration, so they
+continue to resolve `{{...}}` in the computed recipient.
+
 === camel-hazelcast
 
 `ReplicatedHazelcastAggregationRepository` now applies the same default
@@ -80,6 +100,17 @@ overwritten.
 Applications that aggregate classes outside the default whitelist through the replicated repository
 without supplying their own `hazelcastInstance` must now provide a `Config` with a
 `JavaSerializationFilterConfig` covering their class names.
+
+The same default is now also applied to the `ClientConfig` that Camel builds for `hazelcastMode=client`
+endpoints, when neither a referenced `ClientConfig` nor `hazelcastConfigUri` is supplied. Client mode
+previously behaved differently from node mode for an otherwise identical endpoint configuration.
+
+=== camel-jbang (TUI)
+
+`camel tui --record` is now rejected when combined with `--web`. The recording configuration applies
+to the whole process, so a browser session served by `--web` would be recorded into the same `.cast`
+file as the local session. Previously the combination was accepted, but recording never produced any
+output, so run the two modes in separate processes instead.
 
 === camel-mail
 
@@ -168,3 +199,7 @@ from("spring-redis://localhost:6379?command=SUBSCRIBE&channels=myChannel"
 
 Setting the `serializer` option to a custom `RedisSerializer` bypasses the filter entirely, since
 Camel then no longer controls how the payload is read.
+=== camel-langchain4j
+
+The legacy `sse` `transportType` has been removed. It follows the support removal in 
+https://github.com/langchain4j/langchain4j/commit/7f4e99fd637137ab9d3bf116eb62047ac757a818[langchain4j-core 1.19.0].

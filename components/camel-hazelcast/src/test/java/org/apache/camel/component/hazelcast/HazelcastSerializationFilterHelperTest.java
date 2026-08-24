@@ -16,12 +16,14 @@
  */
 package org.apache.camel.component.hazelcast;
 
+import com.hazelcast.client.config.ClientConfig;
 import com.hazelcast.config.ClassFilter;
 import com.hazelcast.config.Config;
 import com.hazelcast.config.JavaSerializationFilterConfig;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatCode;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
@@ -67,7 +69,35 @@ class HazelcastSerializationFilterHelperTest {
     }
 
     @Test
+    void appliesDefaultToClientConfigWhenNoneConfigured() {
+        ClientConfig config = new ClientConfig();
+        assertThat(config.getSerializationConfig().getJavaSerializationFilterConfig()).isNull();
+
+        HazelcastSerializationFilterHelper.applyDefault(config);
+
+        JavaSerializationFilterConfig filter = config.getSerializationConfig().getJavaSerializationFilterConfig();
+        assertThat(filter).isNotNull();
+        assertThat(filter.getWhitelist().getPrefixes()).contains("java.", "javax.", "org.apache.camel.");
+        assertThat(filter.getBlacklist().getPrefixes()).contains("java.net.");
+    }
+
+    @Test
+    void respectsExistingUserConfigurationOnClientConfig() {
+        ClientConfig config = new ClientConfig();
+        JavaSerializationFilterConfig userFilter = new JavaSerializationFilterConfig();
+        userFilter.setWhitelist(new ClassFilter().addPrefixes("com.example."));
+        config.getSerializationConfig().setJavaSerializationFilterConfig(userFilter);
+
+        HazelcastSerializationFilterHelper.applyDefault(config);
+
+        assertThat(config.getSerializationConfig().getJavaSerializationFilterConfig()).isSameAs(userFilter);
+        assertThat(userFilter.getWhitelist().getPrefixes()).containsExactly("com.example.");
+    }
+
+    @Test
     void handlesNullConfigGracefully() {
-        assertDoesNotThrow(() -> HazelcastSerializationFilterHelper.applyDefault(null));
+        assertThatCode(() -> HazelcastSerializationFilterHelper.applyDefault((Config) null)).doesNotThrowAnyException();
+        assertThatCode(() -> HazelcastSerializationFilterHelper.applyDefault((ClientConfig) null))
+                .doesNotThrowAnyException();
     }
 }
