@@ -1,0 +1,15 @@
+{
+  "bean": {
+    "kind": "bean",
+    "name": "MemoryKeyValueRepository",
+    "javaType": "org.apache.camel.support.MemoryKeyValueRepository",
+    "interfaceType": "org.apache.camel.spi.KeyValueRepository",
+    "title": "Memory Key Value Repository",
+    "description": "An in-memory KeyValueRepository with optional TTL support.",
+    "deprecated": false,
+    "groupId": "org.apache.camel",
+    "artifactId": "camel-support",
+    "version": "4.23.0-SNAPSHOT"
+  }
+}
+

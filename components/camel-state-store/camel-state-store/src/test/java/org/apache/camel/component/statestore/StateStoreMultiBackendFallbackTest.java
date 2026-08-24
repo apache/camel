@@ -20,27 +20,29 @@ import java.util.Map;
 
 import org.apache.camel.BindToRegistry;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.support.MemoryKeyValueRepository;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
 /**
- * Tests that when multiple {@link StateStoreBackend} instances are in the registry and no explicit backend is
- * specified, the component falls back to {@link InMemoryStateStoreBackend} and logs a warning.
+ * Tests that when multiple {@link org.apache.camel.spi.KeyValueRepository} instances are in the registry and no
+ * explicit backend is specified, the component falls back to a fresh {@link MemoryKeyValueRepository} and logs a
+ * warning.
  */
 class StateStoreMultiBackendFallbackTest extends CamelTestSupport {
 
     @BindToRegistry("backend1")
-    private final InMemoryStateStoreBackend backendOne = new InMemoryStateStoreBackend();
+    private final MemoryKeyValueRepository backendOne = new MemoryKeyValueRepository();
 
     @BindToRegistry("backend2")
-    private final InMemoryStateStoreBackend backendTwo = new InMemoryStateStoreBackend();
+    private final MemoryKeyValueRepository backendTwo = new MemoryKeyValueRepository();
 
     @Test
     void testFallsBackToInMemoryWhenMultipleBackends() {
         // With two backends in the registry and no explicit reference,
-        // auto-discovery should fall back to a fresh InMemoryStateStoreBackend
+        // auto-discovery should fall back to a fresh MemoryKeyValueRepository
         Object previous = template.requestBodyAndHeaders(
                 "direct:put", "hello",
                 Map.of(StateStoreConstants.KEY, "key1"));
