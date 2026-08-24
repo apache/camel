@@ -43,14 +43,6 @@ class GenAiObservabilityTest extends ExchangeTestSupport {
     }
 
     @Test
-    void shouldDisableWhenDashStylePropertyIsFalse() {
-        Properties properties = new Properties();
-        properties.setProperty(GenAiObservabilityProperties.ENABLED_DASH, "false");
-        context.getPropertiesComponent().setOverrideProperties(properties);
-        assertThat(GenAiObservability.isEnabled(context)).isFalse();
-    }
-
-    @Test
     void shouldRecordMicrometerMetricsWhenRegistryPresent() {
         SimpleMeterRegistry registry = new SimpleMeterRegistry();
         context.getRegistry().bind("metricsRegistry", registry);

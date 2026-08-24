@@ -52,9 +52,6 @@ public final class GenAiObservability {
         }
         Optional<String> property
                 = camelContext.getPropertiesComponent().resolveProperty(GenAiObservabilityProperties.ENABLED);
-        if (property.isEmpty()) {
-            property = camelContext.getPropertiesComponent().resolveProperty(GenAiObservabilityProperties.ENABLED_DASH);
-        }
         if (property.isPresent()) {
             return Boolean.parseBoolean(property.get().trim());
         }

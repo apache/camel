@@ -84,6 +84,7 @@ import org.springframework.util.MimeType;
 public class SpringAiChatProducer extends DefaultProducer {
 
     private static final Logger LOG = LoggerFactory.getLogger(SpringAiChatProducer.class);
+    private static volatile boolean chatModelExtractionWarnLogged;
 
     private ChatClient chatClient;
     private ChatModel observabilityChatModel;
@@ -1268,10 +1269,11 @@ public class SpringAiChatProducer extends DefaultProducer {
 
     private GenAiObservationContext buildObservationContext() {
         Object modelSource = resolveObservabilityModelSource();
-        String requestModel = GenAiModelResolver.resolveModelName(modelSource);
+        String requestModel = GenAiModelResolver.resolveModelName(
+                getEndpoint().getCamelContext().getClassResolver(), modelSource);
         return GenAiObservationContext.builder()
                 .operationName(GenAiOperationName.CHAT)
-                .system(GenAiModelResolver.resolveSystem(modelSource))
+                .system(GenAiModelResolver.resolveSystem(getEndpoint().getCamelContext().getClassResolver(), modelSource))
                 .requestModel(requestModel)
                 .componentScheme("spring-ai-chat")
                 .build();
@@ -1295,7 +1297,14 @@ public class SpringAiChatProducer extends DefaultProducer {
             field.setAccessible(true);
             return (ChatModel) field.get(requestSpec);
         } catch (ReflectiveOperationException e) {
-            LOG.debug("Could not extract ChatModel from ChatClient for observability: {}", e.getMessage());
+            if (!chatModelExtractionWarnLogged) {
+                chatModelExtractionWarnLogged = true;
+                LOG.warn(
+                        "Could not extract ChatModel from ChatClient for observability; model metadata may be incomplete: {}",
+                        e.getMessage());
+            } else if (LOG.isDebugEnabled()) {
+                LOG.debug("Could not extract ChatModel from ChatClient for observability: {}", e.getMessage());
+            }
             return null;
         }
     }

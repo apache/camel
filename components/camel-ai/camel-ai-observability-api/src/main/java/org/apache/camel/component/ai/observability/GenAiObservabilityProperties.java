@@ -26,11 +26,6 @@ public final class GenAiObservabilityProperties {
      */
     public static final String ENABLED = "camel.aiObservability.enabled";
 
-    /**
-     * Dash-style alias for {@link #ENABLED}, accepted in application.properties and resolved by Camel Main.
-     */
-    public static final String ENABLED_DASH = "camel.ai-observability.enabled";
-
     private GenAiObservabilityProperties() {
     }
 }

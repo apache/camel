@@ -19,8 +19,7 @@ When `camel-opentelemetry2` and/or `camel-micrometer` is on the classpath, langc
 producers emit child spans and metrics per LLM call with attributes such as `gen_ai.operation.name`, `gen_ai.system`,
 `gen_ai.request.model`, `gen_ai.usage.input_tokens`, and `gen_ai.usage.output_tokens`.
 
-Global toggle: set `camel.aiObservability.enabled=false` (or `camel.ai-observability.enabled=false`) to disable GenAI observability across all AI
-components (default is `true` when a tracing or metrics backend is present). Camel Main exposes the same setting
+Global toggle: set `camel.aiObservability.enabled=false` (default is `true` when a tracing or metrics backend is present). Camel Main exposes the same setting
 via `camel.aiObservability.enabled` in application.properties or programmatically with
 `main.configure().ai().observability().withEnabled(false)`.
 

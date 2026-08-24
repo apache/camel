@@ -135,7 +135,8 @@ public class LangChain4jChatProducer extends DefaultProducer {
             message.setHeader(LangChain4jChatHeaders.TOTAL_TOKEN_COUNT, chatResponse.tokenUsage().totalTokenCount());
         }
 
-        String responseModel = GenAiModelResolver.resolveResponseModelName(chatResponse, requestModel);
+        String responseModel = GenAiModelResolver.resolveResponseModelName(
+                exchange.getContext().getClassResolver(), chatResponse, requestModel);
         if (responseModel != null) {
             message.setHeader(LangChain4jChatHeaders.RESPONSE_MODEL, responseModel);
         }
@@ -158,7 +159,8 @@ public class LangChain4jChatProducer extends DefaultProducer {
                     chatResponse.tokenUsage() != null ? chatResponse.tokenUsage().inputTokenCount() : null,
                     chatResponse.tokenUsage() != null ? chatResponse.tokenUsage().outputTokenCount() : null,
                     chatResponse.finishReason(),
-                    GenAiModelResolver.resolveResponseModelName(chatResponse, observationContext.requestModel())));
+                    GenAiModelResolver.resolveResponseModelName(
+                            exchange.getContext().getClassResolver(), chatResponse, observationContext.requestModel())));
             return extractAiResponse(chatResponse.aiMessage());
         } catch (RuntimeException e) {
             observation.recordError(e);
@@ -219,7 +221,8 @@ public class LangChain4jChatProducer extends DefaultProducer {
                     chatResponse.tokenUsage() != null ? chatResponse.tokenUsage().inputTokenCount() : null,
                     chatResponse.tokenUsage() != null ? chatResponse.tokenUsage().outputTokenCount() : null,
                     chatResponse.finishReason(),
-                    GenAiModelResolver.resolveResponseModelName(chatResponse, observationContext.requestModel())));
+                    GenAiModelResolver.resolveResponseModelName(
+                            exchange.getContext().getClassResolver(), chatResponse, observationContext.requestModel())));
             response = chatResponse.aiMessage();
             return extractAiResponse(response);
         } catch (RuntimeException e) {
@@ -231,10 +234,10 @@ public class LangChain4jChatProducer extends DefaultProducer {
     }
 
     private GenAiObservationContext buildObservationContext() {
-        String requestModel = GenAiModelResolver.resolveModelName(chatModel);
+        String requestModel = GenAiModelResolver.resolveModelName(getEndpoint().getCamelContext().getClassResolver(), chatModel);
         return GenAiObservationContext.builder()
                 .operationName(GenAiOperationName.CHAT)
-                .system(GenAiModelResolver.resolveSystem(chatModel))
+                .system(GenAiModelResolver.resolveSystem(getEndpoint().getCamelContext().getClassResolver(), chatModel))
                 .requestModel(requestModel)
                 .componentScheme("langchain4j-chat")
                 .build();
