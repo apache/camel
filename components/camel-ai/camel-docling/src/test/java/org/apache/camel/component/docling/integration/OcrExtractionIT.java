@@ -310,19 +310,19 @@ class OcrExtractionIT extends CamelTestSupport {
             public void configure() throws Exception {
                 // OCR text extraction route
                 from("direct:ocr-extract-text")
-                        .to("docling:ocr?operation=EXTRACT_TEXT&enableOCR=true&ocrLanguage=en");
+                        .to("docling:ocr?allowFilePathSource=true&operation=EXTRACT_TEXT&enableOCR=true&ocrLanguage=en");
 
                 // OCR to Markdown conversion
                 from("direct:ocr-convert-markdown")
-                        .to("docling:ocr?operation=CONVERT_TO_MARKDOWN&enableOCR=true&ocrLanguage=en");
+                        .to("docling:ocr?allowFilePathSource=true&operation=CONVERT_TO_MARKDOWN&enableOCR=true&ocrLanguage=en");
 
                 // OCR to JSON conversion
                 from("direct:ocr-convert-json")
-                        .to("docling:ocr?operation=CONVERT_TO_JSON&enableOCR=true&ocrLanguage=en");
+                        .to("docling:ocr?allowFilePathSource=true&operation=CONVERT_TO_JSON&enableOCR=true&ocrLanguage=en");
 
                 // OCR with async mode
                 from("direct:ocr-async-extract")
-                        .to("docling:ocr?operation=EXTRACT_TEXT&enableOCR=true&ocrLanguage=en&useAsyncMode=true&asyncPollInterval=1000&asyncTimeout=180000");
+                        .to("docling:ocr?allowFilePathSource=true&operation=EXTRACT_TEXT&enableOCR=true&ocrLanguage=en&useAsyncMode=true&asyncPollInterval=1000&asyncTimeout=180000");
             }
         };
     }
