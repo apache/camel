@@ -16,7 +16,11 @@
 # limitations under the License.
 #
 
-"""Tests for collect-flakes.py. Run with: python3 -m unittest discover"""
+"""Tests for collect-flakes.py.
+
+Run with: uv run --with defusedxml python3 -m unittest discover
+(plain python3 fails on the defusedxml import unless it is already installed).
+"""
 
 import contextlib
 import importlib.util
@@ -25,6 +29,7 @@ import json
 import shutil
 import tempfile
 import unittest
+from dataclasses import replace
 from pathlib import Path
 
 HERE = Path(__file__).parent
@@ -65,6 +70,16 @@ class FlakeAttributionTest(unittest.TestCase):
 
         self.assertEqual("org.apache.camel.component.probe.ProbeTest", flake.classname)
         self.assertEqual("deliberate first-attempt failure", flake.message)
+
+    def test_reports_the_earliest_attempt_when_the_kinds_differ(self):
+        (flake,) = collector.parse_report(TESTDATA / "TEST-error-then-failure-flake.xml")
+
+        self.assertEqual(
+            "first attempt timed out",
+            flake.message,
+            "the column is labelled 'First failure'; reading flakyFailure before "
+            "flakyError would report the second attempt and hide the real cause",
+        )
 
     def test_counts_every_failed_attempt_not_just_the_first(self):
         (flake,) = collector.parse_report(TESTDATA / "TEST-two-attempt-flake.xml")
@@ -159,9 +174,42 @@ class RenderTest(unittest.TestCase):
         self.assertIn("2", rendered)
         self.assertIn("Connection refused", rendered)
 
+    def test_escapes_a_message_github_would_otherwise_render_as_html(self):
+        rendered = collector.render_markdown(
+            [replace(self.FLAKES[0], message="expected: <true> but was: <false>")]
+        )
+
+        self.assertIn(
+            "expected: &lt;true&gt; but was: &lt;false&gt;",
+            rendered,
+            "GitHub strips <true> as raw HTML, which would empty the column for "
+            "the assertion messages that produce most flake reports",
+        )
+
+    def test_names_the_matrix_entry_so_the_overwritten_comment_stays_readable(self):
+        rendered = collector.render_markdown(self.FLAKES, "JDK 25")
+
+        self.assertIn(
+            "on JDK 25",
+            rendered,
+            "the PR comment is overwritten last-writer-wins across the JDK "
+            "matrix, so an unlabelled section leaves the reader unable to tell "
+            "which JDK the flake came from",
+        )
+
+    def test_omits_the_label_entirely_when_no_matrix_entry_was_given(self):
+        rendered = collector.render_markdown(self.FLAKES)
+
+        self.assertNotIn(
+            " on ",
+            rendered.splitlines()[1],
+            "a single-entry caller must not get a dangling 'on ' in the heading",
+        )
+
     def test_json_payload_records_the_total_and_the_detail(self):
         payload = collector.to_payload(self.FLAKES)
 
+        self.assertEqual("", payload["label"])
         self.assertEqual(1, payload["total_flakes"])
         self.assertEqual(2, payload["total_retried_attempts"])
         self.assertEqual(
@@ -175,6 +223,17 @@ class RenderTest(unittest.TestCase):
                 }
             ],
             payload["flakes"],
+        )
+
+    def test_json_payload_records_the_matrix_entry_for_cross_run_aggregation(self):
+        payload = collector.to_payload(self.FLAKES, "JDK 17")
+
+        self.assertEqual(
+            "JDK 17",
+            payload["label"],
+            "aggregating these artifacts is the point, and it cannot "
+            "distinguish a test that only flakes on one JDK from one that "
+            "flakes everywhere unless each payload says which JDK it is",
         )
 
 
@@ -250,6 +309,14 @@ class DoctypeRejectionTest(unittest.TestCase):
     def test_rejects_a_report_containing_a_doctype(self):
         with self.assertRaises(ValueError):
             collector.parse_report(TESTDATA / "TEST-doctype-rejected.xml")
+
+    def test_rejects_a_doctype_that_declares_no_entities_of_its_own(self):
+        """defusedxml forbids entity *declarations* by default but allows a bare
+        DOCTYPE, so forbid_dtd has to be requested explicitly. Without it an
+        external subset pointing at an attacker-controlled DTD is accepted.
+        """
+        with self.assertRaises(ValueError):
+            collector.parse_report(TESTDATA / "TEST-doctype-no-entities-rejected.xml")
 
     def test_rejects_a_doctype_hidden_by_a_non_utf8_encoding(self):
         """A byte-level scan for b'<!DOCTYPE' misses a UTF-16 document, where
