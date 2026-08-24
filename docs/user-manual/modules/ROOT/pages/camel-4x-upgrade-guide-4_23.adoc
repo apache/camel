@@ -491,3 +491,29 @@ is truncated rather than recreated and would otherwise keep its original permiss
 
 Deployments where another account legitimately reads these files — a sidecar or a backup agent running as
 a different user — need to run as the owner, or use a group-aware key store instead.
+=== camel-crypto-pgp
+
+The `pgp` data format verifies a message's modification detection code only when the message is an
+OpenPGP symmetrically encrypted *integrity protected* data packet:
+
+[source,java]
+----
+if (pbe.isIntegrityProtected()) {
+    if (!pbe.verify()) {
+        throw new PGPException("Message failed integrity check");
+    }
+}
+----
+
+The older symmetrically encrypted data packet carries no such code, so a message using it skipped the
+check entirely. Because the packet type is chosen by whoever produced the message, that left the sender
+— or anyone able to rewrite the message in transit — deciding whether the check applied. The existing
+`integrity` option governs marshalling only and has no decrypt-side counterpart.
+
+A new `requireIntegrityProtection` option, **defaulting to `true`**, now rejects a message that is not
+integrity protected. Routes that must interoperate with a sender still emitting the legacy packet have to
+set `requireIntegrityProtection=false` explicitly.
+
+Note that `signatureVerificationOption` still defaults to `optional`, which accepts a message carrying no
+signature at all. Set it to `required` where the sender is expected to sign; the two options together are
+what give a decrypted message authenticity as well as confidentiality.

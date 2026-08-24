@@ -2590,6 +2590,7 @@ public class ModelWriter extends BaseWriter {
         doWriteAttribute("compressionAlgorithm", def.getCompressionAlgorithm(), null);
         doWriteAttribute("hashAlgorithm", def.getHashAlgorithm(), null);
         doWriteAttribute("signatureVerificationOption", def.getSignatureVerificationOption(), null);
+        doWriteAttribute("requireIntegrityProtection", def.getRequireIntegrityProtection(), "true");
         endElement(name);
     }
     protected void doWritePQCDataFormat(String name, PQCDataFormat def) throws IOException {

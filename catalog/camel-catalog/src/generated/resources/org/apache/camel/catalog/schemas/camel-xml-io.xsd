@@ -8688,6 +8688,18 @@ no_signature_allowed.
             </xs:documentation>
           </xs:annotation>
         </xs:attribute>
+        <xs:attribute name="requireIntegrityProtection" type="xs:string">
+          <xs:annotation>
+            <xs:documentation xml:lang="en">
+<![CDATA[
+Whether a message must be integrity protected in order to be decrypted. The legacy symmetrically encrypted data packet
+carries no modification detection code, and the packet type is chosen by whoever produced the message, so accepting it
+lets the sender decide whether the integrity check applies. Set to false only to interoperate with a sender that still
+emits the legacy packet. Default value: true
+]]>
+            </xs:documentation>
+          </xs:annotation>
+        </xs:attribute>
       </xs:extension>
     </xs:complexContent>
   </xs:complexType>
