@@ -39,6 +39,7 @@ import com.google.cloud.bigquery.StandardSQLTypeName;
 import com.google.cloud.bigquery.TableResult;
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
+import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.RuntimeExchangeException;
 import org.apache.camel.component.google.bigquery.GoogleBigQueryConstants;
 import org.apache.camel.support.DefaultProducer;
@@ -130,6 +131,10 @@ public class GoogleBigQuerySQLProducer extends DefaultProducer {
             }
 
             Job job = bigquery.create(JobInfo.of(queryJobId, queryJobConfiguration)).waitFor();
+            if (job == null) {
+                // waitFor returns null when the job does not exist any more, for example when it expired
+                throw new RuntimeCamelException("BigQuery job " + queryJobId + " is no longer available");
+            }
             JobStatistics.QueryStatistics statistics = job.getStatistics();
             TableResult result;
             if (pageToken != null) {
@@ -150,9 +155,9 @@ public class GoogleBigQuerySQLProducer extends DefaultProducer {
             //in other cases (SELECT), process results
             return result;
         } catch (JobException e) {
-            throw new Exception("Query " + translatedQuery + " failed: " + e.getErrors(), e);
+            throw new RuntimeCamelException("Query " + translatedQuery + " failed: " + e.getErrors(), e);
         } catch (BigQueryException e) {
-            throw new Exception("Query " + translatedQuery + " failed: " + e.getError(), e);
+            throw new RuntimeCamelException("Query " + translatedQuery + " failed: " + e.getError(), e);
         }
     }
 
