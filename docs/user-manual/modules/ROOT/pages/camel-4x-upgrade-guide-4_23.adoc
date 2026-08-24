@@ -156,3 +156,8 @@ being dispatched to the route.
 Requests that differ from the configured context-path only by case are therefore now subject to the
 same constraint as the exact-case form. Deployments that relied on the previous behaviour to reach a
 route without a challenge will now receive `401`.
+
+=== camel-langchain4j
+
+The legacy `sse` `transportType` has been removed. It follows the support removal in 
+https://github.com/langchain4j/langchain4j/commit/7f4e99fd637137ab9d3bf116eb62047ac757a818[langchain4j-core 1.19.0].
