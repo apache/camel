@@ -65,6 +65,35 @@ an `AGENTS.md` file with guidance for AI coding assistants, pointing at the Apac
 The `camel-archetype-api-component` archetype also generates its readme again: the file was declared
 in the wrong file set and was therefore silently skipped.
 
+=== camel-docling
+
+A `String` message body is no longer interpreted as a location by default. Previously the producer
+inspected the body and, when it started with `http://` or `https://`, handed it to Docling as a remote
+URL to fetch; when it started with `/` or contained `\`, it read it from the local filesystem; otherwise
+it converted it as document content.
+
+The two location readings must now be enabled explicitly:
+
+* `allowUrlSource` (default `false`) - interpret a body starting with `http://` or `https://` as a URL.
+* `allowFilePathSource` (default `false`) - interpret a body starting with `/`, or containing `\`, as a
+  local file path. This also covers the single directory-or-file `String` body accepted by the batch
+  operations.
+
+A route that passes the document itself in the body is unaffected. A route that passes a URL or a path in
+the body must set the matching option, otherwise the exchange fails with an `IllegalArgumentException`
+naming the option to enable.
+
+The `CamelDoclingInputFilePath` header is unchanged and still accepts a path without any opt-in, as are
+`File`, `byte[]` and `InputStream` bodies and the explicit path collections (`List<String>`, `String[]`,
+`List<File>`, `File[]`) used by the batch operations.
+
+A new `inputBaseDirectory` option is also available. When set, every local input path - from the header,
+from a file path body, and from the batch operations - must resolve inside that directory once normalized.
+It is unset by default, which keeps the previous behaviour of accepting any path.
+
+Additionally, a local input path that does not exist is now reported as a `File not found` `IOException`
+before Docling is invoked. Previously the size check silently skipped a path that resolved to nothing and
+the failure surfaced later, from the Docling process or API call.
 === camel-azure-eventgrid
 
 The `CamelAzureEventGridDataVersion` header (`EventGridConstants.DATA_VERSION`) has been removed. The
