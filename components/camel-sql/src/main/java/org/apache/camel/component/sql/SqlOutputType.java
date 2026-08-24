@@ -25,26 +25,26 @@ public enum SqlOutputType {
      * Returns the result of the query as a single object.
      * <p>
      * If the query has only a single column, the value of that column is returned (for example
-     * {@code SELECT COUNT(*) FROM PROJECT} returns a {@link Long}). If the query has more than one
-     * column, a {@link java.util.Map} of the row is returned. If {@code outputClass} is set, the row
-     * is instead converted into a Java bean of that type by calling the setters that match the column
-     * names; the class must have a default constructor.
+     * {@code SELECT COUNT(*) FROM PROJECT} returns a {@link Long}). If the query has more than one column, a
+     * {@link java.util.Map} of the row is returned. If {@code outputClass} is set, the row is instead converted into a
+     * Java bean of that type by calling the setters that match the column names; the class must have a default
+     * constructor.
      * <p>
      * If the query returns more than one row, a non-unique result exception is thrown.
      */
     SelectOne,
 
     /**
-     * Returns the result of the query as a {@link java.util.List} of {@link java.util.Map}, one map per
-     * row keyed by column name. If {@code outputClass} is set, each row is instead converted into a Java
-     * bean of that type by calling the setters that match the column names.
+     * Returns the result of the query as a {@link java.util.List} of {@link java.util.Map}, one map per row keyed by
+     * column name. If {@code outputClass} is set, each row is instead converted into a Java bean of that type by
+     * calling the setters that match the column names.
      */
     SelectList,
 
     /**
      * Streams the result of the query using an {@link java.util.Iterator}, so rows are read from the
-     * {@link java.sql.ResultSet} lazily instead of being loaded into memory all at once. This can be
-     * combined with the Splitter EIP in streaming mode to process the result set in a streaming fashion.
+     * {@link java.sql.ResultSet} lazily instead of being loaded into memory all at once. This can be combined with the
+     * Splitter EIP in streaming mode to process the result set in a streaming fashion.
      */
     StreamList
 }
