@@ -477,3 +477,17 @@ camel.routeController.enabled = true
 camel.routeController.backOffDelay = 2000
 camel.routeController.backOffMaxDelay = 60000
 ----
+=== camel-pqc
+
+`FileBasedKeyLifecycleManager` stores private keys unencrypted, as Base64 PKCS#8 inside a JSON file, and
+used to create both the key directory and those files with whatever the process umask allowed — commonly
+`rw-r--r--` and `rwxr-xr-x` under the usual `022`, leaving private keys readable by every account on the
+host.
+
+The key directory is now created as `rwx------` and each `<keyId>.private.json` as `rw-------`, on file
+systems that support POSIX permissions; elsewhere the equivalent owner-only flags are applied. A private
+key file left behind by an earlier version is tightened the next time that key is stored, because the file
+is truncated rather than recreated and would otherwise keep its original permissions.
+
+Deployments where another account legitimately reads these files — a sidecar or a backup agent running as
+a different user — need to run as the owner, or use a group-aware key store instead.
