@@ -413,6 +413,38 @@ checkManualItTests() {
   fi
 }
 
+# ── Recovered flake reporting ──────────────────────────────────────────
+#
+# Surefire retries failing tests (rerunFailingTestsCount, set project-wide in
+# parent/pom.xml). A test that fails and then passes leaves the build green and
+# leaves nothing in the console output, so it is invisible unless the XML
+# reports are read. parse_errors.sh cannot cover this: it reads .txt reports,
+# which carry no flake data, and it only runs when the build failed.
+#
+# Appends a section to the PR comment and writes flakes.json for aggregation
+# across PRs. Never fails the build: by this point the verdict is already set.
+reportRecoveredFlakes() {
+  local comment_file="$1"
+  local script_dir
+  script_dir="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+
+  if ! command -v uv >/dev/null 2>&1; then
+    echo "uv not found, skipping recovered-flake reporting"
+    return
+  fi
+
+  local step_summary_args=()
+  if [ -n "${GITHUB_STEP_SUMMARY:-}" ]; then
+    step_summary_args=(--step-summary "$GITHUB_STEP_SUMMARY")
+  fi
+
+  uv run --quiet "${script_dir}/collect-flakes.py" . \
+    --comment-file "$comment_file" \
+    --json-out flakes.json \
+    "${step_summary_args[@]}" \
+    || echo "WARNING: recovered-flake reporting failed, continuing"
+}
+
 # ── Scalpel shadow comparison ──────────────────────────────────────────
 
 # Write Scalpel shadow comparison section to the PR comment.
@@ -943,6 +975,9 @@ main() {
   # ── Step 5: Write comment and summary ──
   local comment_file="incremental-test-comment.md"
   writeComment "$comment_file" "$pl" "$grep_dep_module_ids" "$grep_changed_props" "$testedDependents" "$extraModules"
+
+  # Recovered flakes: a green build can still have retried its way there
+  reportRecoveredFlakes "$comment_file"
 
   # Scalpel shadow comparison (observation only — after separator)
   # Filter reactor_ids through EXCLUSION_LIST so the comparison is

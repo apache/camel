@@ -102,7 +102,47 @@ The script also:
 - Detects tests disabled in CI (`@DisabledIfSystemProperty(named = "ci.env.name")`)
 - Applies an exclusion list for generated/meta modules
 - Checks for excluded modules with associated integration tests (via `manual-it-mapping.txt`) and advises contributors to run them manually
+- Reports recovered flaky tests (see below)
 - Generates a unified PR comment with all test information
+
+#### Recovered flake reporting (`collect-flakes.py`)
+
+Surefire retries failing tests: `surefire.rerunFailingTestsCount` defaults to `2`
+in the `full` profile of `parent/pom.xml`, and both CI systems pass it again
+explicitly. A test that fails and then passes within those attempts is a
+**recovered flake**. The build stays green and nothing appears in the console
+output, so without this step the retry is invisible.
+
+`collect-flakes.py` runs on the always-path (a recovered flake means exit code 0,
+so it cannot live in the failure branch where `parse_errors.sh` runs). It walks
+`**/target/{surefire,failsafe}-reports/TEST-*.xml` and reports every `<testcase>`
+carrying `<flakyFailure>`/`<flakyError>` children. Tests with
+`<rerunFailure>`/`<rerunError>` failed every attempt and already fail the build,
+so they are deliberately excluded.
+
+Two outputs:
+
+- A section appended to the PR comment and the job summary, naming the module,
+  test, attempt count and first failure message. Nothing is emitted when no test
+  was retried.
+- `flakes.json`, uploaded as the `flakes-java-<version>` artifact. Develocity's
+  flaky-test data does not cover fork PRs (`.mvn/develocity.xml` publishes build
+  scans only when authenticated), so this artifact is the only per-PR record.
+
+Notes:
+
+- **No time figure is reported.** Surefire records no per-attempt timing, and
+  `<testcase time>` reflects only the final successful attempt. Estimating cost
+  from it would understate timeout-driven flakes, which are the common kind.
+- The script declares its dependencies inline via
+  [PEP 723](https://peps.python.org/pep-0723/) and must be run with `uv run`;
+  plain `python3` ignores the metadata block. `uv` is installed by the action.
+- XML is parsed with `defusedxml`. A pre-parse byte scan for `<!DOCTYPE` is not
+  sufficient: it misses a UTF-16 document, where the marker is interleaved with
+  NUL bytes. `testdata/TEST-utf16-doctype-rejected.xml` covers that case.
+- Failures are logged and skipped. This step must never be the reason a job fails.
+
+Unit tests live in `test_collect_flakes.py` and run in `pr-ci-scripts-validation.yml`.
 
 ### `install-mvnd`
 

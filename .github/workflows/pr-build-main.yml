@@ -176,6 +176,15 @@ jobs:
         with:
           name: incremental-test-java-${{ matrix.java }}.log
           path: incremental-test.log
+      # Recovered flakes (tests that failed then passed on retry) leave the build
+      # green, so this artifact is the only durable record of them. Aggregating it
+      # across PRs is what turns flakiness into evidence instead of anecdote.
+      - name: Upload recovered-flake report
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        if: always() && hashFiles('flakes.json') != ''
+        with:
+          name: flakes-java-${{ matrix.java }}
+          path: flakes.json
       # All non-experimental JDK matrix entries upload with overwrite: true.
       # The comment content is identical across JDKs (same modules tested),
       # so last writer wins. However, we only upload (and overwrite) when the
