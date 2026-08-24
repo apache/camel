@@ -217,6 +217,7 @@ public abstract class HazelcastDefaultComponent extends DefaultComponent {
                 // Disable the version check
                 config.getProperties().setProperty("hazelcast.version.check.enabled", "false");
                 config.getProperties().setProperty("hazelcast.phone.home.enabled", "false");
+                HazelcastSerializationFilterHelper.applyDefault(config);
 
                 hzInstance = HazelcastClient.newHazelcastClient(config);
             } else if (config != null) {
