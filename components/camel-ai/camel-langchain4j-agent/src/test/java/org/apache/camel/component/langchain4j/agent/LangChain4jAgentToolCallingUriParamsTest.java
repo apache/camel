@@ -26,9 +26,12 @@ import dev.langchain4j.data.message.AiMessage;
 import dev.langchain4j.model.chat.ChatModel;
 import dev.langchain4j.model.chat.request.ChatRequest;
 import dev.langchain4j.model.chat.response.ChatResponse;
+import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.component.langchain4j.agent.api.Agent;
 import org.apache.camel.component.langchain4j.agent.api.AgentConfiguration;
+import org.apache.camel.component.langchain4j.agent.api.AgentFactory;
 import org.apache.camel.component.langchain4j.agent.api.AiAgentBody;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.spi.Registry;
@@ -49,6 +52,7 @@ class LangChain4jAgentToolCallingUriParamsTest extends CamelTestSupport {
     private final TwoToolRoundTripChatModel twoToolChatModel = new TwoToolRoundTripChatModel();
     private final SingleToolRoundTripChatModel singleToolChatModel = new SingleToolRoundTripChatModel();
     private final AlwaysToolChatModel alwaysToolChatModel = new AlwaysToolChatModel();
+    private final FailingToolRoundTripChatModel failingToolChatModel = new FailingToolRoundTripChatModel();
     private final AtomicInteger chatRound = new AtomicInteger();
     private final AtomicInteger inFlight = new AtomicInteger();
     private final AtomicInteger maxConcurrent = new AtomicInteger();
@@ -60,6 +64,7 @@ class LangChain4jAgentToolCallingUriParamsTest extends CamelTestSupport {
         maxConcurrent.set(0);
         inFlight.set(0);
         overlapBarrier = new CyclicBarrier(2);
+        failingToolChatModel.reset();
     }
 
     @Override
@@ -83,6 +88,10 @@ class LangChain4jAgentToolCallingUriParamsTest extends CamelTestSupport {
                         .to("langchain4j-agent:test?agentConfiguration=#highLimitConfig&tags=" + TAG
                             + "&maxToolCallingRoundTrips=1");
 
+                from("direct:compensate-uri")
+                        .to("langchain4j-agent:test?agentConfiguration=#failingToolConfig&tags=" + TAG
+                            + "&compensateOnToolErrors=true&maxToolCallingRoundTrips=2");
+
                 from("ai-tool:countTool?tags=" + TAG + "&description=Counting tool")
                         .setBody(constant("ok"));
 
@@ -91,6 +100,9 @@ class LangChain4jAgentToolCallingUriParamsTest extends CamelTestSupport {
 
                 from("ai-tool:slowToolB?tags=" + TAG + "&description=Slow tool B")
                         .process(exchange -> recordConcurrentEntry("B", exchange));
+
+                from("ai-tool:failingTool?tags=" + TAG + "&description=A tool that always fails")
+                        .throwException(new RuntimeException("Simulated tool failure"));
             }
         };
     }
@@ -111,6 +123,9 @@ class LangChain4jAgentToolCallingUriParamsTest extends CamelTestSupport {
         registry.bind("highLimitConfig", new AgentConfiguration()
                 .withChatModel(alwaysToolChatModel)
                 .withMaxToolCallingRoundTrips(10));
+        registry.bind("failingToolConfig", new AgentConfiguration()
+                .withChatModel(failingToolChatModel)
+                .withMaxToolCallingRoundTrips(5));
     }
 
     @Test
@@ -162,6 +177,33 @@ class LangChain4jAgentToolCallingUriParamsTest extends CamelTestSupport {
             assertThatThrownBy(ctx::start)
                     .isInstanceOf(Exception.class)
                     .hasMessageContaining("agentConfiguration");
+        }
+    }
+
+    @Test
+    void compensateOnToolErrorsCanBeEnabledViaEndpointUri() {
+        String response = template.requestBody("direct:compensate-uri", new AiAgentBody<>("run tools"), String.class);
+
+        assertThat(response).isEqualTo("recovered");
+        assertThat(failingToolChatModel.getRoundCount()).isEqualTo(2);
+    }
+
+    @Test
+    void toolCallingUriParamsCannotBeCombinedWithAgentFactory() throws Exception {
+        try (DefaultCamelContext ctx = new DefaultCamelContext()) {
+            ctx.getRegistry().bind("agentConfig", new AgentConfiguration().withChatModel(twoToolChatModel));
+            ctx.getRegistry().bind("myFactory", new StubAgentFactory());
+            ctx.addRoutes(new RouteBuilder() {
+                @Override
+                public void configure() {
+                    from("direct:x").to(
+                            "langchain4j-agent:test?agentConfiguration=#agentConfig&agentFactory=#myFactory&maxToolCallingRoundTrips=3");
+                }
+            });
+
+            assertThatThrownBy(ctx::start)
+                    .isInstanceOf(Exception.class)
+                    .hasMessageContaining("agentFactory");
         }
     }
 
@@ -241,6 +283,52 @@ class LangChain4jAgentToolCallingUriParamsTest extends CamelTestSupport {
             return ChatResponse.builder()
                     .aiMessage(AiMessage.builder().toolExecutionRequests(List.of(toolRequest)).build())
                     .build();
+        }
+    }
+
+    private final class FailingToolRoundTripChatModel implements ChatModel {
+        private final AtomicInteger round = new AtomicInteger();
+
+        @Override
+        public ChatResponse doChat(ChatRequest request) {
+            if (round.getAndIncrement() == 0) {
+                ToolExecutionRequest toolRequest = ToolExecutionRequest.builder()
+                        .id("fail1")
+                        .name("failingTool")
+                        .arguments("{}")
+                        .build();
+                return ChatResponse.builder()
+                        .aiMessage(AiMessage.builder().toolExecutionRequests(List.of(toolRequest)).build())
+                        .build();
+            }
+            return ChatResponse.builder().aiMessage(AiMessage.from("recovered")).build();
+        }
+
+        int getRoundCount() {
+            return round.get();
+        }
+
+        void reset() {
+            round.set(0);
+        }
+    }
+
+    private static final class StubAgentFactory implements AgentFactory {
+        private CamelContext camelContext;
+
+        @Override
+        public Agent createAgent(Exchange exchange) {
+            return (body, toolProvider) -> dev.langchain4j.service.Result.<String> builder().content("ok").build();
+        }
+
+        @Override
+        public void setCamelContext(CamelContext camelContext) {
+            this.camelContext = camelContext;
+        }
+
+        @Override
+        public CamelContext getCamelContext() {
+            return camelContext;
         }
     }
 }

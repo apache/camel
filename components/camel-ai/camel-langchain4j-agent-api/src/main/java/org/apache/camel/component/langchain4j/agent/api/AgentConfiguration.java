@@ -519,6 +519,7 @@ public class AgentConfiguration {
      *
      * @param  executeToolsConcurrently {@code true} to enable, {@code false} to disable, or {@code null} to leave unset
      * @return                          this configuration instance for method chaining
+     * @since                           4.23
      */
     public AgentConfiguration withExecuteToolsConcurrentlyEnabled(Boolean executeToolsConcurrently) {
         this.executeToolsConcurrently = executeToolsConcurrently;
