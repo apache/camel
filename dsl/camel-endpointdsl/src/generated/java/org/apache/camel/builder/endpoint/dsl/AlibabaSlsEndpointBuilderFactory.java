@@ -92,7 +92,6 @@ public interface AlibabaSlsEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Required: true
          * Group: producer
          * 
          * @param region the value to set
@@ -635,6 +634,18 @@ public interface AlibabaSlsEndpointBuilderFactory {
          */
         public String alibabaSlsSize() {
             return "CamelAlibabaSlsSize";
+        }
+        /**
+         * Pagination offset for listLogStores.
+         * 
+         * The option is a: {@code Integer} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code AlibabaSlsListOffset}.
+         */
+        public String alibabaSlsListOffset() {
+            return "CamelAlibabaSlsListOffset";
         }
         /**
          * Telemetry type filter for listLogStores.
