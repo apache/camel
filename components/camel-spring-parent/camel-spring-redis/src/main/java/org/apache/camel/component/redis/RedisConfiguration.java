@@ -20,6 +20,8 @@ import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriParams;
 import org.apache.camel.spi.UriPath;
+import org.springframework.core.serializer.support.DeserializingConverter;
+import org.springframework.core.serializer.support.SerializingConverter;
 import org.springframework.data.redis.connection.RedisConnectionFactory;
 import org.springframework.data.redis.connection.jedis.JedisConnectionFactory;
 import org.springframework.data.redis.core.RedisTemplate;
@@ -50,6 +52,13 @@ public class RedisConfiguration {
     private RedisConnectionFactory connectionFactory;
     @UriParam
     private RedisSerializer<?> serializer;
+    @UriParam(label = "advanced,security",
+              description = "Sets an ObjectInputFilter pattern (jdk.serialFilter syntax) applied when the default"
+                            + " JDK serializer deserializes Redis payloads, both on the consumer and on producer read"
+                            + " commands. When not set, the JVM-wide jdk.serialFilter is used if present; otherwise a"
+                            + " conservative default filter denying java.net.* and otherwise allowing java.*, javax.*"
+                            + " and org.apache.camel.* packages is applied. Ignored when a custom serializer is set.")
+    private String deserializationFilter;
 
     public Command getCommand() {
         return command;
@@ -141,6 +150,19 @@ public class RedisConfiguration {
         this.serializer = serializer;
     }
 
+    public String getDeserializationFilter() {
+        return deserializationFilter;
+    }
+
+    /**
+     * Sets an {@link java.io.ObjectInputFilter} pattern ({@code jdk.serialFilter} syntax) applied when the default JDK
+     * serializer deserializes Redis payloads. When not set, the JVM-wide {@code jdk.serialFilter} is used if present,
+     * otherwise a conservative default filter is applied. Ignored when a custom serializer is set.
+     */
+    public void setDeserializationFilter(String deserializationFilter) {
+        this.deserializationFilter = deserializationFilter;
+    }
+
     private RedisConnectionFactory createDefaultConnectionFactory() {
         JedisConnectionFactory jedisConnectionFactory = new JedisConnectionFactory();
         managedConnectionFactory = true;
@@ -174,7 +196,10 @@ public class RedisConfiguration {
     }
 
     private RedisSerializer<?> createDefaultSerializer() {
-        serializer = new JdkSerializationRedisSerializer();
+        // JdkSerializationRedisSerializer exposes no hook to install an ObjectInputFilter, so supply a deserializing
+        // converter that sets one on the stream. Serialization is left untouched.
+        serializer = new JdkSerializationRedisSerializer(
+                new SerializingConverter(), new DeserializingConverter(new FilteringDeserializer(deserializationFilter)));
         return serializer;
     }
 
