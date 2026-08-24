@@ -2724,11 +2724,6 @@
       </dependency>
       <dependency>
         <groupId>org.apache.camel</groupId>
-        <artifactId>camel-zeebe</artifactId>
-        <version>4.23.0-SNAPSHOT</version>
-      </dependency>
-      <dependency>
-        <groupId>org.apache.camel</groupId>
         <artifactId>camel-zendesk</artifactId>
         <version>4.23.0-SNAPSHOT</version>
       </dependency>

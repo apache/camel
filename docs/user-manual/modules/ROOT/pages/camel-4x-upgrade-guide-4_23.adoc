@@ -13,6 +13,12 @@ See the xref:camel-upgrade-recipes-tool.adoc[documentation] page for details.
 
 == Upgrading Camel 4.22 to 4.23
 
+=== Components removal
+
+==== camel-zeebe
+
+`camel-zeebe` component was deprecated in 4.19 and has a straightforward replacement with `camel-camunda`. It is removed in 4.23.
+
 === camel-a2a - webhook URL address classification
 
 Push notification webhook URLs are now classified by the address the host resolves to, using the

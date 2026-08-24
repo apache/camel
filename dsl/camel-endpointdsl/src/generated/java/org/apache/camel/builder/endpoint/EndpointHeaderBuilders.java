@@ -4151,21 +4151,6 @@ public class EndpointHeaderBuilders {
         return XsltSaxonEndpointBuilderFactory.XsltSaxonHeaderNameBuilder.INSTANCE;
     }
     /**
-     * Zeebe (camel-zeebe)
-     * Zeebe component which integrates with Camunda Zeebe to interact with the
-     * API.
-     * 
-     * Category: workflow,saas
-     * Since: 3.21
-     * Maven coordinates: org.apache.camel:camel-zeebe
-     * 
-     * @return the dsl builder for the headers' name.
-     */
-    @Deprecated
-    public static ZeebeEndpointBuilderFactory.ZeebeHeaderNameBuilder zeebe() {
-        return ZeebeEndpointBuilderFactory.ZeebeHeaderNameBuilder.INSTANCE;
-    }
-    /**
      * ZooKeeper (camel-zookeeper)
      * Manage ZooKeeper clusters.
      * 
