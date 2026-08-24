@@ -81,6 +81,17 @@ Applications that aggregate classes outside the default whitelist through the re
 without supplying their own `hazelcastInstance` must now provide a `Config` with a
 `JavaSerializationFilterConfig` covering their class names.
 
+The same default is now also applied to the `ClientConfig` that Camel builds for `hazelcastMode=client`
+endpoints, when neither a referenced `ClientConfig` nor `hazelcastConfigUri` is supplied. Client mode
+previously behaved differently from node mode for an otherwise identical endpoint configuration.
+
+=== camel-jbang (TUI)
+
+`camel tui --record` is now rejected when combined with `--web`. The recording configuration applies
+to the whole process, so a browser session served by `--web` would be recorded into the same `.cast`
+file as the local session. Previously the combination was accepted, but recording never produced any
+output, so run the two modes in separate processes instead.
+
 === camel-mail
 
 `MimeMultipartDataFormat` now uses `MailHeaderFilterStrategy` instead of a plain
@@ -130,9 +141,18 @@ Routes that relied on steps after these processors running for unauthenticated r
 restructured. The authenticated paths are unchanged: a successfully authenticated request continues
 through the rest of the route exactly as before, and `OAuthLogoutProcessor` is unchanged.
 
-=== camel-jbang (TUI)
+=== camel-netty-http
 
-`camel tui --record` is now rejected when combined with `--web`. The recording configuration applies
-to the whole process, so a browser session served by `--web` would be recorded into the same `.cast`
-file as the local session. Previously the combination was accepted, but recording never produced any
-output, so run the two modes in separate processes instead.
+The security-constraint lookup now strips the endpoint context-path from the request target
+case-insensitively, matching how consumer dispatch already matches it
+(`RestConsumerContextPathMatcher` compares with `equalsIgnoreCase` and a lower-cased prefix).
+
+Previously the strip was guarded by a case-sensitive `startsWith`, so a request whose context-path
+differed only by case was evaluated against the unstripped target. With `matchOnUriPrefix=true` and
+a `securityConstraint` whose inclusions are specific sub-paths rather than a catch-all, such a
+request could match no inclusion — and an unmatched target counts as unrestricted — while still
+being dispatched to the route.
+
+Requests that differ from the configured context-path only by case are therefore now subject to the
+same constraint as the exact-case form. Deployments that relied on the previous behaviour to reach a
+route without a challenge will now receive `401`.
