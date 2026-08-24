@@ -182,6 +182,43 @@ Elements):
 ----
 
  
+== Correlating the Verified Output with the Signed Content
+
+Signature validation proves that each `Reference` digest matches the content that
+`Reference` resolves to. It proves nothing about the rest of the document.
+
+For an enveloped or detached signature the default output node search emits the whole
+document element. Where the signature covers only a sub-element, an attacker who obtains
+such a signed document can embed the signed fragment unchanged inside a document of their
+own: the same-document `Reference` URI still resolves to that fragment, validation still
+passes, and the verifier hands the whole surrounding document downstream as verified
+content. This is XML signature wrapping.
+
+Whether that matters depends on what the route expects. A detached signature that
+deliberately covers a sub-element and emits the whole document — the pattern described in
+_Detached XML Signatures as Siblings of the Signed Elements_ below — is doing exactly this
+on purpose, and nothing in the document distinguishes it from the wrapping case. Only the
+route knows which it is, so there is no safe default.
+
+Two ways to correlate, in increasing order of specificity:
+
+* Set `enforceReferenceCoverage` on `DefaultXmlSignature2Message` when the signature is
+expected to cover the document element — a plain enveloped signature with `URI=""`, or with
+the document element's own id. Verification then fails if the validated References cover
+only sub-elements:
++
+[source,java]
+----
+DefaultXmlSignature2Message mapper = new DefaultXmlSignature2Message();
+mapper.setEnforceReferenceCoverage(true);
+// ... to("xmlsecurity-verify:verify?xmlSignature2Message=#mapper")
+----
+* Configure an `outputNodeSearch` (by element name or XPath), so the output is the signed
+node rather than the document element, or supply an `xmlSignatureChecker` that inspects the
+References against what the route expects.
+
+Leaving all three unset means the verified body may contain content no `Reference` covered.
+
 == Basic Example
 
 The following example shows the basic usage of the component.

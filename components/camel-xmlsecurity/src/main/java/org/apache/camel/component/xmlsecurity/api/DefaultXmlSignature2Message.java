@@ -142,7 +142,39 @@ public class DefaultXmlSignature2Message implements XmlSignature2Message {
      */
     public static final String OUTPUT_NODE_SEARCH_TYPE_XPATH = "XPath";
 
+    private static final String[] ID_ATTRIBUTE_NAMES = { "Id", "ID", "id" };
+
     private static final Logger LOG = LoggerFactory.getLogger(DefaultXmlSignature2Message.class);
+
+    private boolean enforceReferenceCoverage;
+
+    /**
+     * Whether the default output node search requires a validated Reference to cover the document element before
+     * emitting it. Off by default; see {@link #setEnforceReferenceCoverage(boolean)}.
+     */
+    public boolean isEnforceReferenceCoverage() {
+        return enforceReferenceCoverage;
+    }
+
+    /**
+     * Requires, for an enveloped or detached signature handled by the default output node search, that one of the
+     * validated References covered the document element being emitted.
+     * <p>
+     * Core signature validation proves only that each Reference's digest matches the content that Reference resolves
+     * to; it says nothing about the rest of the document. An attacker can therefore take a legitimately signed
+     * fragment, embed it unchanged inside a document of their own, and validation still passes - the same-document URI
+     * resolves to that fragment exactly as before - while the default search hands the whole surrounding document
+     * downstream as verified content. That is XML signature wrapping.
+     * <p>
+     * This is off by default because the framework cannot tell that shape apart from the component's documented
+     * detached-signature flow, where a Reference deliberately covers a sub-element and the whole document is emitted on
+     * purpose. Only the route knows which it is. Turn this on when the signature is expected to cover the document
+     * element - a plain enveloped signature with {@code URI=""} or with the document element's own id - and use an
+     * output node search or an {@link XmlSignatureChecker} instead when it is not.
+     */
+    public void setEnforceReferenceCoverage(boolean enforceReferenceCoverage) {
+        this.enforceReferenceCoverage = enforceReferenceCoverage;
+    }
 
     @Override
     public void mapToMessage(Input input, Message output) throws Exception {
@@ -155,7 +187,11 @@ public class DefaultXmlSignature2Message implements XmlSignature2Message {
                 node = getNodeForMessageBodyInEnvelopingCase(input);
             } else {
                 // enveloped or detached XML signature  --> remove signature element
-                node = input.getMessageBodyDocument().getDocumentElement();
+                Element documentElement = input.getMessageBodyDocument().getDocumentElement();
+                if (enforceReferenceCoverage) {
+                    checkDocumentElementIsCoveredByAReference(input, documentElement);
+                }
+                node = documentElement;
                 removeSignatureElements = true;
             }
         } else if (OUTPUT_NODE_SEARCH_TYPE_ELEMENT_NAME.equals(input.getOutputNodeSearchType())) {
@@ -312,6 +348,96 @@ public class DefaultXmlSignature2Message implements XmlSignature2Message {
         DOMStructure domStruc = getDomStructureForMessageBody(relevantReferences, relevantObjects);
         node = domStruc.getNode();
         return node;
+    }
+
+    /**
+     * Checks that a validated Reference actually covered the document element the default search is about to emit.
+     * <p>
+     * Core signature validation only proves that each Reference's digest matches the content that Reference resolves
+     * to. It says nothing about the rest of the document. So an attacker can take a legitimately signed fragment, embed
+     * it unchanged inside a larger document of their own, and validation still passes - the same-document URI resolves
+     * to that fragment exactly as before - while this method would hand the whole attacker document downstream as
+     * verified content. That is XML signature wrapping.
+     * <p>
+     * The check is deliberately narrow, so that it rejects that shape and nothing else. It only complains when the
+     * signature carries same-document references and none of them covers the document element. A Reference with an
+     * empty URI covers the whole document, and a signature whose References are all external says nothing about this
+     * document either way, so both are left alone.
+     *
+     * @param input           the verification input, carrying the validated References
+     * @param documentElement the element the default search would emit
+     */
+    protected void checkDocumentElementIsCoveredByAReference(Input input, Element documentElement) throws Exception {
+        List<Reference> references = getReferencesForMessageMapping(input);
+        if (references == null || references.isEmpty()) {
+            return;
+        }
+
+        boolean sameDocumentReferenceSeen = false;
+        for (Reference reference : references) {
+            String uri = reference.getURI();
+            if (uri == null) {
+                // Nothing to correlate against
+                return;
+            }
+            if (uri.isEmpty()) {
+                // The whole document is covered
+                return;
+            }
+            if (!uri.startsWith("#")) {
+                // External reference - it tells us nothing about the document we are emitting
+                continue;
+            }
+            sameDocumentReferenceSeen = true;
+            String identifier = uri.substring(1);
+            if (identifier.startsWith("xpointer(/)")) {
+                // #xpointer(/) is the whole document
+                return;
+            }
+            if (coversElement(identifier, documentElement)) {
+                return;
+            }
+        }
+
+        if (sameDocumentReferenceSeen) {
+            throw new XmlSignatureException(
+                    "Cannot extract the root node for the output document from the XML signature document. "
+                                            + "None of the validated References covers the document element, so the "
+                                            + "document contains content which was not signed. Configure an output node "
+                                            + "search, or an XmlSignatureChecker, which selects the signed content.");
+        }
+    }
+
+    private static boolean coversElement(String identifier, Element documentElement) {
+        String xpointerId = getXPointerId(identifier);
+        String id = xpointerId != null ? xpointerId : identifier;
+
+        for (String attribute : ID_ATTRIBUTE_NAMES) {
+            if (id.equals(documentElement.getAttribute(attribute))) {
+                return true;
+            }
+        }
+        // In case an ID attribute was declared for the document, ask the DOM as well
+        Element byId = documentElement.getOwnerDocument().getElementById(id);
+        return byId != null && byId == documentElement;
+    }
+
+    /**
+     * Extracts {@code x} out of the {@code xpointer(id('x'))} and {@code xpointer(id("x"))} forms, returning null when
+     * the identifier is not one of them.
+     */
+    private static String getXPointerId(String identifier) {
+        String prefix = "xpointer(id(";
+        if (!identifier.startsWith(prefix) || !identifier.endsWith("))")) {
+            return null;
+        }
+        String value = identifier.substring(prefix.length(), identifier.length() - 2).trim();
+        if (value.length() > 1
+                && (value.charAt(0) == '\'' && value.charAt(value.length() - 1) == '\''
+                        || value.charAt(0) == '"' && value.charAt(value.length() - 1) == '"')) {
+            return value.substring(1, value.length() - 1);
+        }
+        return null;
     }
 
     /**
