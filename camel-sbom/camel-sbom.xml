@@ -11702,16 +11702,6 @@ file comparators, endian transformation classes, and much more.</description>
       <version>4.23.0-SNAPSHOT</version>
       <description>Maven plugin to help package Camel components and plugins</description>
       <scope>required</scope>
-      <hashes>
-        <hash alg="MD5">a4ceea9b3b8ea7406f751fce14b7a0b7</hash>
-        <hash alg="SHA-1">6bdee99e2a73b828d8a273c38f44dd028f6b775d</hash>
-        <hash alg="SHA-256">09b488739e23e216f5a2d0f6b821336e640006f2f1b41ca63226b2cd687348c7</hash>
-        <hash alg="SHA-512">239c8a0a986bac1b5359c700c2ec19e821a729014be755c2596c04808ec6b8102cb157864eecd1700d1fc3c6fae11e9625a756be83c060c4912129ddd1f6f339</hash>
-        <hash alg="SHA-384">ed4608bb1aa52545bc486811bffc2d0c7bcdf8ac66f36ad471f5e73eb2d127c62650a6ba0a8c163cfcbb1d3267da4934</hash>
-        <hash alg="SHA3-384">a0911fdcc3771845cf418118467a9a99279cb6fb1a1e4af50d21fcdf0654f0fc321008a0f988a03bd938b17aef1c3086</hash>
-        <hash alg="SHA3-256">515ba1ec23461085e3517ec96ba755435bae2511050d589b412067949cc23f56</hash>
-        <hash alg="SHA3-512">1f43d081c514e6efadba950548c897346a1aae56a071e20c0897e01dba6233871b791fd649102791b57b7b97cd2a37858f76ec038a5d5bb56872c5363375a6ef</hash>
-      </hashes>
       <licenses>
         <license>
           <id>Apache-2.0</id>
@@ -128989,16 +128979,6 @@ introspection of method/constructor parameter names, without having to add expli
       <version>4.23.0-SNAPSHOT</version>
       <description>Camel Debezium Maven Plugin</description>
       <scope>required</scope>
-      <hashes>
-        <hash alg="MD5">ea5908bea6b84d03ebe86d17d0afb6ef</hash>
-        <hash alg="SHA-1">55aa12f4f6fb5f05f6b419e588cacac601fe50ab</hash>
-        <hash alg="SHA-256">65bbab59522aee1225ec0e6ebac2f35515450ad07567181646dc8536117d0f4a</hash>
-        <hash alg="SHA-512">04ec5cbb466d6fe32a0de1eb4ae475f5924eca369c8a3a4d7543328a860d4294f5be857e3b8eb1fcd9b1f377c001798a4abf872db0eb14d3bfd2594f0319ab5d</hash>
-        <hash alg="SHA-384">5c3f4b891b078b2b0fa1ce8be9a3c83c3f519efa97a537d77397a9782b5a7a748eaa94623ff664776cb50290f5a6edb5</hash>
-        <hash alg="SHA3-384">6b3dcb8f11114463d80d87a11c7c5efe81429202989bca10cb9b3cf1897f731c1683bbbfc7d257bbed58dc8ab7ebd4bf</hash>
-        <hash alg="SHA3-256">66878df07967e4be862a50116699b742c4923c8b7284313f1fb9669629fca042</hash>
-        <hash alg="SHA3-512">966a48afa0218cb6abcf900f0778aa194d436849f82756f5838a5d30d7ab5197db091fcd15ad05b7b514731adf9a614d72f39caf4b215de217abaefb7d8a0348</hash>
-      </hashes>
       <licenses>
         <license>
           <id>Apache-2.0</id>
@@ -129031,16 +129011,6 @@ introspection of method/constructor parameter names, without having to add expli
       <version>4.23.0-SNAPSHOT</version>
       <description>Camel Salesforce Maven Plugin</description>
       <scope>required</scope>
-      <hashes>
-        <hash alg="MD5">6eed2072a4e61b080bc2d2bee8c47d4b</hash>
-        <hash alg="SHA-1">edb8532753dbfc567c26e4a43682be5d5e47a23d</hash>
-        <hash alg="SHA-256">b0df01e6397e67b23043ae9443edaa1c3b1acff4c7192cc1d549144f971d3ff7</hash>
-        <hash alg="SHA-512">ce2e5c4d14a695253c9b7d57e9584fc96a75ed9a64e45554ac69b81ccba63b80381514ca490937ef6f0fd762087cbe4499e4082420a14dd2b006ec989c968fbe</hash>
-        <hash alg="SHA-384">ac511bfdd76dcac86762f556de9b27a71a138ba3e53fe1ac39fabfa36d249f40534bea81c6455efaca6555040dae2ffd</hash>
-        <hash alg="SHA3-384">3809ac6b69efca368aa37a5f0952873dd79142a188090f92512382cb711c2ee8283e5da8f7990f9775fe4d82b2c0d6c1</hash>
-        <hash alg="SHA3-256">589b92eeebf48c63ee0f576c5d67f5fcee6aeb5e0a1176e56875010d229db129</hash>
-        <hash alg="SHA3-512">e8963013a703885bfed5693f9a70b515dfb0b1b704d00f3f341fe9eb59668a3ab5afcdc85faf239655610a44a75155cf23dd6d65c3e99092db566cd7b38ca429</hash>
-      </hashes>
       <licenses>
         <license>
           <id>Apache-2.0</id>
@@ -129117,16 +129087,6 @@ introspection of method/constructor parameter names, without having to add expli
       <version>4.23.0-SNAPSHOT</version>
       <description>Camel ServiceNow Maven Plugin</description>
       <scope>required</scope>
-      <hashes>
-        <hash alg="MD5">98fba27ce5700a48418fb9d118a538a9</hash>
-        <hash alg="SHA-1">b47b7d7157564ae793c14c9d28f0f862358d71dd</hash>
-        <hash alg="SHA-256">b72102384a7f93bc3607c6b362a4f19cbf9eec5b156296ea3dc86f9c12e3f4e5</hash>
-        <hash alg="SHA-512">c979f83c7d303e948675a7e7b2a178154e4e1118a8004ca63ca04249d0e501265b78a2b03975a57309fbcbc33c1253c26a8cfbb1db1ce9147e9307e60e479400</hash>
-        <hash alg="SHA-384">575842563b4e1b56a139e0320919956e1210cc959bf2e29a6f0c5aaebd403c653255e44fb050d15c3b77831e2a6d7efb</hash>
-        <hash alg="SHA3-384">a1bfb95beff8b5bafcec0e196513953ff1d917af93b3c10d12c9336e577c8ad7185a2cfecd76342dd32c6419a95c3b50</hash>
-        <hash alg="SHA3-256">97450f21dacdc30af00a076e00e52cf5790e68dc0d2e15efbe8a197d8148c9e5</hash>
-        <hash alg="SHA3-512">508eea457e5092f53f8e4c500f680773ec26528bad012fac0b144a6d236d6a692abbe44e4bbe4a3a22a1cf8624749253a844f54fea8f08c5ecb8cdd8977519aa</hash>
-      </hashes>
       <licenses>
         <license>
           <id>Apache-2.0</id>
@@ -129159,16 +129119,6 @@ introspection of method/constructor parameter names, without having to add expli
       <version>4.23.0-SNAPSHOT</version>
       <description>Maven plugin to source code generate csimple language</description>
       <scope>required</scope>
-      <hashes>
-        <hash alg="MD5">9e4795614c558b9157ecad634dacdebf</hash>
-        <hash alg="SHA-1">30ec00c816bd1cdbf5918672be07b931bb6a3702</hash>
-        <hash alg="SHA-256">e160dc962ac86dd13e7b55cb7b3ed4b805f6fd9d3ffa1802cd4a4418a549b8a4</hash>
-        <hash alg="SHA-512">d6b419b99ad761e53f2eb03e500e680ec4ff192d62ab702241f0ee0d9690e049b569bf2813c4b6f07b63b5c825031f1bae63195af32483a5783887189d8fa60d</hash>
-        <hash alg="SHA-384">12bdf52aaebe221626d0f84a1ec3d0a1c4a5a3d3e39dcff573953defd5bc65f9edfec45681b40acaba6b5d131a74240b</hash>
-        <hash alg="SHA3-384">e7f323571f5a685afcae5bc0ea3229ee4827d4e58ea72b24e345319bfead59eb4310632680bff61991732dfac1bc0eb8</hash>
-        <hash alg="SHA3-256">001d46ebb624f290a8e1c8adeef3f5caa839b30a536b9ddb56d2069a14e79e12</hash>
-        <hash alg="SHA3-512">36fab923159ed7a15f92643ca2eae5a8e384d71aca7c22ad5f2f53ebd9d3ac10667a746cefa3a53fe48d1a814de25fedbd36af13601334b77a260193b930c7d1</hash>
-      </hashes>
       <licenses>
         <license>
           <id>Apache-2.0</id>
@@ -129201,16 +129151,6 @@ introspection of method/constructor parameter names, without having to add expli
       <version>4.23.0-SNAPSHOT</version>
       <description>Maven plugin with tools to generate reports on your Camel projects</description>
       <scope>required</scope>
-      <hashes>
-        <hash alg="MD5">10f7b889c86da709c95518fdcdec2781</hash>
-        <hash alg="SHA-1">a5bf69d8ca10f5c91ff6c4488fa81c391939d9e1</hash>
-        <hash alg="SHA-256">bdfa1b72e7998ad466e73decf225a6b1277610fe929e6445a17eb8e184ed0c08</hash>
-        <hash alg="SHA-512">f27536e12966c0abbb8e179f94176fe93af3229df72b1931ddaea0d30544915e1d583b08f1654f21fa4058a8ffd0571f00ccdb3b6c534f692178172a2eb01ec0</hash>
-        <hash alg="SHA-384">d95302085e11924f8f088e14af91e1129f81e031099a55f478baa8a5f21c824266890bd133c672758a999b21e0cd84d4</hash>
-        <hash alg="SHA3-384">67d652234dc74c6ee2325bd2b7170aa5cb1b331652521f7271c083363ff4a3bd05605009d6a2e98565da805ab76ce6cc</hash>
-        <hash alg="SHA3-256">d64130c9715315686a457577aabd701460242f4bd3948a541e53ebe0fa63873e</hash>
-        <hash alg="SHA3-512">8b2d95e85f8dfeba7d64110a6b62ed6f23e4919ee22533127b15ab70570b86435980abc8422c18c133aeb272a2e2fb06eee960c25178bac320996e5a00ef9072</hash>
-      </hashes>
       <licenses>
         <license>
           <id>Apache-2.0</id>

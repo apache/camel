@@ -40,6 +40,7 @@ import org.apache.camel.support.service.ServiceSupport;
 import org.apache.camel.util.ReflectionHelper;
 import org.jolokia.core.api.LogHandler;
 import org.jolokia.server.core.config.ConfigKey;
+import org.jolokia.server.core.config.Configuration;
 import org.jolokia.server.core.config.StaticConfiguration;
 import org.jolokia.server.core.http.HttpRequestHandler;
 import org.jolokia.server.core.restrictor.AllowAllRestrictor;
@@ -62,13 +63,15 @@ public class DefaultJolokiaPlatformHttpPlugin extends ServiceSupport implements 
     private CamelContext camelContext;
     private final JolokiaServiceManager serviceManager;
     private final LogHandler jolokiaLogHandler;
+    private final Configuration config;
+    private final Restrictor restrictor;
     private HttpRequestHandler requestHandler;
     private Handler<RoutingContext> handler;
 
     public DefaultJolokiaPlatformHttpPlugin() {
-        var config = new StaticConfiguration(ConfigKey.AGENT_ID, NetworkUtil.getAgentId(hashCode(), "vertx"));
+        config = new StaticConfiguration(ConfigKey.AGENT_ID, NetworkUtil.getAgentId(hashCode(), "vertx"));
         jolokiaLogHandler = new JolokiaLogHandler(LOG);
-        var restrictor = createRestrictor(config.getConfig(ConfigKey.POLICY_LOCATION));
+        restrictor = createRestrictor(config.getConfig(ConfigKey.POLICY_LOCATION));
 
         serviceManager = JolokiaServiceManagerFactory.createJolokiaServiceManager(
                 config,
@@ -83,7 +86,8 @@ public class DefaultJolokiaPlatformHttpPlugin extends ServiceSupport implements 
     @Override
     public void doStart() {
         var jolokiaContext = serviceManager.start();
-        requestHandler = new HttpRequestHandler(jolokiaContext);
+        requestHandler
+                = new HttpRequestHandler(jolokiaContext, restrictor, config.getSecurityDetails().isAuthenticationEnabled());
         handler = createVertxHandler();
     }
 
@@ -175,8 +179,8 @@ public class DefaultJolokiaPlatformHttpPlugin extends ServiceSupport implements 
             Object json = null;
             int status = 200;
             try {
-                ObjectHelper.invokeMethodSafe("checkAccess", requestHandler, req.scheme(), req.remoteAddress().host(),
-                        req.remoteAddress().host(), getOriginOrReferer(req));
+                requestHandler.checkAccess(req.scheme(), req.remoteAddress().host(),
+                        new String[] { req.remoteAddress().host() }, getOriginOrReferer(req), null);
                 if (req.method() == HttpMethod.GET) {
                     Method m = ReflectionHelper.findMethod(requestHandler.getClass(), "handleGetRequest", String.class,
                             String.class, Map.class);

@@ -24,7 +24,6 @@ class {{brewFormulaName}} < Formula
   desc "{{projectDescription}}"
   homepage "{{{projectLinkHomepage}}}"
   url "{{{distributionUrl}}}"{{#brewDownloadStrategy}}, :using => {{.}}{{/brewDownloadStrategy}}
-  version "{{projectVersion}}"
   sha256 "{{distributionChecksumSha256}}"
   license "{{projectLicense}}"
 {{#brewVersionedFormula}}

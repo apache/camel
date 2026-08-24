@@ -344,6 +344,26 @@ public interface RedisEndpointBuilderFactory {
             doSetProperty("listenerContainer", listenerContainer);
             return this;
         }
+        /**
+         * Sets an ObjectInputFilter pattern (jdk.serialFilter syntax) applied
+         * when the default JDK serializer deserializes Redis payloads, both on
+         * the consumer and on producer read commands. When not set, the
+         * JVM-wide jdk.serialFilter is used if present; otherwise a
+         * conservative default filter denying java.net. and otherwise allowing
+         * java., javax. and org.apache.camel. packages is applied. Ignored when
+         * a custom serializer is set.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: security
+         * 
+         * @param deserializationFilter the value to set
+         * @return the dsl builder
+         */
+        default AdvancedRedisEndpointConsumerBuilder deserializationFilter(String deserializationFilter) {
+            doSetProperty("deserializationFilter", deserializationFilter);
+            return this;
+        }
     }
 
     /**
@@ -553,6 +573,26 @@ public interface RedisEndpointBuilderFactory {
             doSetProperty("lazyStartProducer", lazyStartProducer);
             return this;
         }
+        /**
+         * Sets an ObjectInputFilter pattern (jdk.serialFilter syntax) applied
+         * when the default JDK serializer deserializes Redis payloads, both on
+         * the consumer and on producer read commands. When not set, the
+         * JVM-wide jdk.serialFilter is used if present; otherwise a
+         * conservative default filter denying java.net. and otherwise allowing
+         * java., javax. and org.apache.camel. packages is applied. Ignored when
+         * a custom serializer is set.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: security
+         * 
+         * @param deserializationFilter the value to set
+         * @return the dsl builder
+         */
+        default AdvancedRedisEndpointProducerBuilder deserializationFilter(String deserializationFilter) {
+            doSetProperty("deserializationFilter", deserializationFilter);
+            return this;
+        }
     }
 
     /**
@@ -720,6 +760,26 @@ public interface RedisEndpointBuilderFactory {
             return (RedisEndpointBuilder) this;
         }
 
+        /**
+         * Sets an ObjectInputFilter pattern (jdk.serialFilter syntax) applied
+         * when the default JDK serializer deserializes Redis payloads, both on
+         * the consumer and on producer read commands. When not set, the
+         * JVM-wide jdk.serialFilter is used if present; otherwise a
+         * conservative default filter denying java.net. and otherwise allowing
+         * java., javax. and org.apache.camel. packages is applied. Ignored when
+         * a custom serializer is set.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: security
+         * 
+         * @param deserializationFilter the value to set
+         * @return the dsl builder
+         */
+        default AdvancedRedisEndpointBuilder deserializationFilter(String deserializationFilter) {
+            doSetProperty("deserializationFilter", deserializationFilter);
+            return this;
+        }
     }
 
     public interface RedisBuilders {
