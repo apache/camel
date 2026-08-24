@@ -491,3 +491,14 @@ is truncated rather than recreated and would otherwise keep its original permiss
 
 Deployments where another account legitimately reads these files — a sidecar or a backup agent running as
 a different user — need to run as the owner, or use a group-aware key store instead.
+=== camel-platform-http
+
+`PlatformHttpEndpoint` wraps the endpoint's `HeaderFilterStrategy` so that common request headers —
+`Authorization`, `Cookie`, `Proxy-Authorization` and the rest of `COMMON_HTTP_REQUEST_HEADERS` — are not
+echoed back on the response. The lookup compared names exactly against that canonically capitalised set,
+while exchange headers keep the casing of the inbound request. HTTP/2 requires field names to be lower
+case, so on an HTTP/2 request the names are `authorization`, `cookie` and so on, none of which matched:
+the suppression never fired for HTTP/2 traffic, or for any client that varied the casing.
+
+Names are now compared case-insensitively. Responses that previously echoed these headers back on HTTP/2
+requests no longer do.
