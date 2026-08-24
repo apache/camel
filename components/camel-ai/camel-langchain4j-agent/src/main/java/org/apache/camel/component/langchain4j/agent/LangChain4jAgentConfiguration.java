@@ -72,8 +72,8 @@ public class LangChain4jAgentConfiguration implements Cloneable {
     private Class<?> outputClass;
 
     @UriParam(description = "MCP server definitions in the form of mcpServer.<name>.<property>=<value>."
-                            + " Supported properties: transportType (stdio, http, streamableHttp, or sse, default: stdio),"
-                            + " command (comma-separated, for stdio), url (for http/sse),"
+                            + " Supported properties: transportType (stdio, http or streamableHttp, default: stdio),"
+                            + " command (comma-separated, for stdio), url (for http/streamableHttp),"
                             + " environment.<key>=<value> (for stdio), timeout (in seconds, default: 60),"
                             + " logRequests, logResponses,"
                             + " oauthProfile (OAuth profile for HTTP auth, requires camel-oauth).",
