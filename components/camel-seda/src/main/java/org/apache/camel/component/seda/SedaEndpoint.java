@@ -605,6 +605,12 @@ public class SedaEndpoint extends DefaultEndpoint implements AsyncEndpoint, Brow
 
     void onStarted(SedaProducer producer) {
         producers.add(producer);
+        if (getComponent() != null) {
+            // re-register queue reference when producer restarts after queue was released on stop
+            Integer size = (getSize() == Integer.MAX_VALUE || getSize() == SedaConstants.QUEUE_SIZE) ? null : getSize();
+            ref = getComponent().getOrCreateQueue(this, size, isMultipleConsumers(), queueFactory);
+            queue = ref.getQueue();
+        }
     }
 
     void onStopped(SedaProducer producer) {
