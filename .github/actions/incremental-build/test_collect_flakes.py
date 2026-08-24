@@ -186,6 +186,19 @@ class RenderTest(unittest.TestCase):
             "the assertion messages that produce most flake reports",
         )
 
+    def test_escapes_a_pipe_in_the_test_name_so_it_cannot_split_the_row(self):
+        rendered = collector.render_markdown(
+            [replace(self.FLAKES[0], test="[1] input=<script>alert(1)</script>|extra")]
+        )
+
+        self.assertIn(
+            "&lt;script&gt;alert(1)&lt;/script&gt;\\|extra",
+            rendered,
+            "a JUnit 5 @ParameterizedTest display name or a Camel URI/DSL "
+            "parameterized test routinely contains '|', which would otherwise "
+            "split the row into the wrong columns",
+        )
+
     def test_names_the_matrix_entry_so_the_overwritten_comment_stays_readable(self):
         rendered = collector.render_markdown(self.FLAKES, "JDK 25")
 
