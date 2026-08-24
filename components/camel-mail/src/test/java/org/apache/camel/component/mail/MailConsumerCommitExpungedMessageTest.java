@@ -104,7 +104,7 @@ class MailConsumerCommitExpungedMessageTest {
         Throwable caught = causeCaptor.getValue();
         assertThat(caught)
                 .isInstanceOf(MessagingException.class)
-                .hasMessage("Message already removed/expunged on server (no flag update possible)")
+                .hasMessage("Message already removed/expunged on server (message state could not be updated)")
                 .hasCauseInstanceOf(MessageRemovedException.class);
     }
 

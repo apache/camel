@@ -529,7 +529,7 @@ public class MailConsumer extends ScheduledBatchPollingConsumer {
 
         } catch (MessageRemovedException e) {
             MessagingException wrapped = new MessagingException(
-                    "Message already removed/expunged on server (no flag update possible)", e);
+                    "Message already removed/expunged on server (message state could not be updated)", e);
             getExceptionHandler().handleException(
                     "Error occurred during committing mail message: " + mail, exchange, wrapped);
         } catch (MessagingException e) {
