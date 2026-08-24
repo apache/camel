@@ -94,6 +94,14 @@ public class GoogleCloudStorageConsumer extends ScheduledBatchPollingConsumer {
 
             Blob blob = getStorageClient().get(bucketName, fileName);
 
+            // okay we have some response from Google so lets mark the consumer as ready
+            forceConsumerAsReady();
+
+            if (blob == null) {
+                LOG.trace("No object found in bucket [{}] with file name [{}]", bucketName, fileName);
+                return 0;
+            }
+
             exchanges = createExchanges(blob, fileName);
         } else {
             LOG.trace("Queueing objects in bucket [{}]...", bucketName);
