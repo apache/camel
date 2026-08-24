@@ -75,6 +75,7 @@ import org.xml.sax.XMLReader;
 import org.apache.camel.Converter;
 import org.apache.camel.Exchange;
 import org.apache.camel.StreamCache;
+import org.apache.camel.TypeConversionException;
 import org.apache.camel.support.CamelContextHelper;
 import org.apache.camel.util.IOHelper;
 import org.apache.camel.util.ObjectHelper;
@@ -696,8 +697,7 @@ public class XmlConverter {
     @Converter(order = 54)
     public Document toDOMDocument(byte[] data, Exchange exchange)
             throws IOException, SAXException, ParserConfigurationException {
-        DocumentBuilder documentBuilder = createDocumentBuilder(getDocumentBuilderFactory(exchange));
-        return documentBuilder.parse(new ByteArrayInputStream(data));
+        return toDOMDocument(new ByteArrayInputStream(data), exchange);
     }
 
     @Converter(order = 55)
@@ -718,12 +718,21 @@ public class XmlConverter {
     public Document toDOMDocument(InputStream in, Exchange exchange)
             throws IOException, SAXException, ParserConfigurationException {
         DocumentBuilder documentBuilder = createDocumentBuilder(getDocumentBuilderFactory(exchange));
-        if (in instanceof IOHelper.EncodingInputStream encIn) {
-            // DocumentBuilder detects encoding from XML declaration, so we need to
-            // revert the converted encoding for the input stream
-            return documentBuilder.parse(encIn.toOriginalInputStream());
-        } else {
-            return documentBuilder.parse(in);
+        try {
+            if (in instanceof IOHelper.EncodingInputStream encIn) {
+                // DocumentBuilder detects encoding from XML declaration, so we need to
+                // revert the converted encoding for the input stream
+                return documentBuilder.parse(encIn.toOriginalInputStream());
+            } else {
+                return documentBuilder.parse(in);
+            }
+        } catch (SAXParseException e) {
+            throw new TypeConversionException(
+                    in, Document.class,
+                    new IllegalArgumentException(
+                            "Payload is not valid XML: " + e.getMessage()
+                                                 + " (possible causes: empty body, JSON/HTML error response, wrong encoding)",
+                            e));
         }
     }
 
@@ -1226,4 +1235,5 @@ public class XmlConverter {
             LOG.error(exception.getMessage(), exception);
         }
     }
+
 }
