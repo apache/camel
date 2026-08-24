@@ -499,6 +499,7 @@
         <spring-data-redis-version>4.1.0</spring-data-redis-version>
         <spring-ldap-version>4.1.0</spring-ldap-version>
         <spring-vault-core-version>4.1.0</spring-vault-core-version>
+        <java-spiffe-version>0.8.17</java-spiffe-version>
         <spring-version>7.0.8</spring-version>
         <spring-rabbitmq-version>4.1.0</spring-rabbitmq-version>
         <spring-security-version>7.1.0</spring-security-version>
@@ -2729,6 +2730,11 @@
             <dependency>
                 <groupId>org.apache.camel</groupId>
                 <artifactId>camel-solr</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.camel</groupId>
+                <artifactId>camel-spiffe</artifactId>
                 <version>${project.version}</version>
             </dependency>
             <dependency>
