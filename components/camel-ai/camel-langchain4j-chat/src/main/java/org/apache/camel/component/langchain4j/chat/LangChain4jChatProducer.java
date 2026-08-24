@@ -234,7 +234,8 @@ public class LangChain4jChatProducer extends DefaultProducer {
     }
 
     private GenAiObservationContext buildObservationContext() {
-        String requestModel = GenAiModelResolver.resolveModelName(getEndpoint().getCamelContext().getClassResolver(), chatModel);
+        String requestModel
+                = GenAiModelResolver.resolveModelName(getEndpoint().getCamelContext().getClassResolver(), chatModel);
         return GenAiObservationContext.builder()
                 .operationName(GenAiOperationName.CHAT)
                 .system(GenAiModelResolver.resolveSystem(getEndpoint().getCamelContext().getClassResolver(), chatModel))
