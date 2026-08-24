@@ -214,9 +214,9 @@ def render_markdown(flakes, label=""):
         "| --- | --- | --- | --- |",
     ]
     for f in ordered:
-        simple_class = f.classname.rsplit(".", 1)[-1]
+        simple_class = _cell(f.classname.rsplit(".", 1)[-1])
         lines.append(
-            f"| `{f.module}` | `{simple_class}.{f.test}` | {f.failed_attempts} "
+            f"| `{_cell(f.module)}` | `{simple_class}.{_cell(f.test)}` | {f.failed_attempts} "
             f"| {_cell(f.message)} |"
         )
     lines += [
