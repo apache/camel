@@ -276,7 +276,7 @@ class McpToolCallExecutor extends ServiceSupport {
 
         try {
             Map<String, Object> argsMap = OBJECT_MAPPER.readValue(argsJson, Map.class);
-            Exchange toolExchange = spec.getConsumer().getEndpoint().createExchange();
+            Exchange toolExchange = spec.getConsumer().createExchange(false);
             try {
                 AiToolResult result = AiToolExecutor.execute(spec, argsMap, toolExchange);
                 if (result instanceof AiToolResult.Success success) {
