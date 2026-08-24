@@ -935,3 +935,21 @@ example:
 
 This is not a functional change for messages without a `DOCTYPE`, and it does not add a document parse:
 `XPathExpression.evaluate(InputSource)` already built a full DOM internally.
+
+=== camel-core, camel-lra
+
+The saga id normally travels in the exchange's internal state, which survives `removeHeaders("*")`.
+`SagaProcessor` also read it from the `Long-Running-Action` message header when that state was absent, so
+that a coordinator started elsewhere could be joined — the LRA protocol carries the id that way.
+
+That fallback applied to every saga service, including the default `InMemorySagaService` where no external
+coordinator exists. The header sits outside the `Camel` namespace consumers filter, and the id is written
+back onto responses, so a message could name a saga and have its exchange joined to it.
+
+`CamelSagaService` gains `isLongRunningActionHeaderSupported()`, defaulting to `false`. The header is
+consulted only when the configured service says it takes part in such a protocol; `LRASagaService`
+overrides it to `true`, so LRA interoperability is unchanged.
+
+A custom `CamelSagaService` that relies on the header to join sagas started by another participant must
+override the new method. Everything else is unaffected: the header is still set on the exchange, and
+routes reading it continue to work.
