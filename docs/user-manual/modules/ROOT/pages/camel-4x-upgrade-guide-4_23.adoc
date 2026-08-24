@@ -65,6 +65,12 @@ an `AGENTS.md` file with guidance for AI coding assistants, pointing at the Apac
 The `camel-archetype-api-component` archetype also generates its readme again: the file was declared
 in the wrong file set and was therefore silently skipped.
 
+=== camel-azure-eventgrid
+
+The `CamelAzureEventGridDataVersion` header (`EventGridConstants.DATA_VERSION`) has been removed. The
+component publishes events in the CloudEvents schema, which has no `dataVersion` attribute (that field
+belongs to the legacy Event Grid event schema), so the header was read but never applied to the
+published event. Remove any use of that header; there is no CloudEvents equivalent.
 === camel-core - property placeholders in pollEnrich
 
 Camel 4.22 stopped resolving property placeholders (`{{...}}`) on the _per-message evaluated_
