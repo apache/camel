@@ -114,4 +114,36 @@ class SpiffeProducerTest extends CamelTestSupport {
         assertThat(out.isFailed()).isTrue();
         assertThat(out.getException()).isInstanceOf(IllegalArgumentException.class);
     }
+
+    @Test
+    void fetchJwtSvidMultipleAudiences() throws Exception {
+        SpiffeId id = spiffeId("spiffe://example.org/workload");
+        JwtSvid svid = mock(JwtSvid.class);
+        when(svid.getToken()).thenReturn("multi-tok");
+        when(svid.getSpiffeId()).thenReturn(id);
+        // the additional audiences are passed as varargs after the first one; the comma-separated
+        // header value is split and trimmed by the producer
+        when(client.fetchJwtSvid("aud1", "aud2", "aud3")).thenReturn(svid);
+
+        Exchange out = template.request("spiffe:test?workloadApiClient=#client&operation=fetchJwtSvid",
+                e -> e.getIn().setHeader(SpiffeConstants.AUDIENCE, "aud1, aud2, aud3"));
+
+        assertThat(out.getMessage().getBody(String.class)).isEqualTo("multi-tok");
+    }
+
+    @Test
+    void validateJwtSvidTokenFromBody() throws Exception {
+        SpiffeId id = spiffeId("spiffe://example.org/client");
+        JwtSvid svid = mock(JwtSvid.class);
+        when(svid.getSpiffeId()).thenReturn(id);
+        when(client.validateJwtSvid("body-token", "my-audience")).thenReturn(svid);
+
+        // no CamelSpiffeToken header -> the producer falls back to the message body
+        Exchange out = template.request(
+                "spiffe:test?workloadApiClient=#client&operation=validateJwtSvid&audience=my-audience",
+                e -> e.getIn().setBody("body-token"));
+
+        assertThat(out.getMessage().getBody()).isSameAs(svid);
+        assertThat(out.getMessage().getHeader(SpiffeConstants.SPIFFE_ID)).isEqualTo("spiffe://example.org/client");
+    }
 }

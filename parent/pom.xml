@@ -272,6 +272,7 @@
         <jactl-version>2.9.2</jactl-version>
         <jasypt-version>1.9.3</jasypt-version>
         <java-grok-version>0.2.1</java-grok-version>
+        <java-spiffe-version>0.8.17</java-spiffe-version>
         <java-util-version>4.110.0</java-util-version>
         <jnats-version>2.26.1</jnats-version>
         <javacc-maven-plugin-version>3.2.0</javacc-maven-plugin-version>
@@ -499,7 +500,6 @@
         <spring-data-redis-version>4.1.0</spring-data-redis-version>
         <spring-ldap-version>4.1.0</spring-ldap-version>
         <spring-vault-core-version>4.1.0</spring-vault-core-version>
-        <java-spiffe-version>0.8.17</java-spiffe-version>
         <spring-version>7.0.8</spring-version>
         <spring-rabbitmq-version>4.1.0</spring-rabbitmq-version>
         <spring-security-version>7.1.0</spring-security-version>

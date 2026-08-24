@@ -23,6 +23,7 @@ import org.apache.camel.Component;
 import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
+import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriPath;
@@ -38,7 +39,7 @@ import org.apache.camel.util.ObjectHelper;
 public class SpiffeEndpoint extends DefaultEndpoint {
 
     @UriPath(description = "Logical name of the endpoint")
-    @org.apache.camel.spi.Metadata(required = false)
+    @Metadata(required = false)
     private String label;
 
     @UriParam
