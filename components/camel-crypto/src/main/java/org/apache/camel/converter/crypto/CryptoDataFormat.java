@@ -21,7 +21,9 @@ import java.io.DataOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.security.GeneralSecurityException;
 import java.security.Key;
+import java.security.SecureRandom;
 import java.security.spec.AlgorithmParameterSpec;
 
 import javax.crypto.Cipher;
@@ -121,9 +123,24 @@ public class CryptoDataFormat extends ServiceSupport implements DataFormat, Data
         return cipher;
     }
 
+    /**
+     * Upper bound on the length of an inlined initialization vector read from the stream. A JCE initialization vector
+     * is at most a cipher block, so this is generous; the bound exists because the length is read from the message and
+     * used directly to size an allocation.
+     */
+    private static final int MAX_INLINE_IV_LENGTH = 1024;
+
+    private static final SecureRandom SECURE_RANDOM = new SecureRandom();
+
     @Override
     public void marshal(Exchange exchange, Object graph, OutputStream outputStream) throws Exception {
         byte[] iv = getInitializationVector(exchange);
+        if (iv == null && inline) {
+            // The whole point of inlining is that the IV travels with the message, so there is no reason to make
+            // the caller supply a fixed one - and requiring it is what used to push users into reusing a single IV
+            // across every message.
+            iv = generateInitializationVector();
+        }
         Key key = getKey(exchange);
 
         InputStream plaintextStream = ExchangeHelper.convertToMandatoryType(exchange, InputStream.class, graph);
@@ -166,8 +183,20 @@ public class CryptoDataFormat extends ServiceSupport implements DataFormat, Data
                 byte[] buffer = new byte[bufferSize];
                 hmac.attachStream(osb);
                 int read;
-                while ((read = cipherStream.read(buffer)) >= 0) {
-                    hmac.decryptUpdate(buffer, read);
+                try {
+                    while ((read = cipherStream.read(buffer)) >= 0) {
+                        hmac.decryptUpdate(buffer, read);
+                    }
+                } catch (IOException e) {
+                    if (e.getCause() instanceof GeneralSecurityException) {
+                        // CipherInputStream surfaces bad padding as an IOException wrapping
+                        // BadPaddingException, while a bad MAC surfaces from validate() below. Reporting the two
+                        // differently is exactly what lets a caller who can submit ciphertext and watch the
+                        // outcome tell them apart, which is the padding-oracle distinguisher. Report the same
+                        // authentication failure for both.
+                        throw new IllegalStateException(HMACAccumulator.AUTHENTICATION_FAILED);
+                    }
+                    throw e;
                 }
                 hmac.validate();
                 return osb.build();
@@ -207,6 +236,11 @@ public class CryptoDataFormat extends ServiceSupport implements DataFormat, Data
         if (inline) {
             try {
                 int ivLength = new DataInputStream(encryptedStream).readInt();
+                if (ivLength < 0 || ivLength > MAX_INLINE_IV_LENGTH) {
+                    throw new IOException(
+                            String.format("Inlined initialization vector length '%d' is not between 0 and %d",
+                                    ivLength, MAX_INLINE_IV_LENGTH));
+                }
                 iv = new byte[ivLength];
                 int read = encryptedStream.read(iv);
                 if (read != ivLength) {
@@ -245,6 +279,22 @@ public class CryptoDataFormat extends ServiceSupport implements DataFormat, Data
                 return empty;
             }
         };
+    }
+
+    /**
+     * A fresh initialization vector, sized to the cipher's block length. Only used when the vector is inlined into the
+     * message, so the reader takes it from the stream and nothing needs to be shared out of band.
+     */
+    private byte[] generateInitializationVector() throws Exception {
+        Cipher cipher = cryptoProvider == null ? Cipher.getInstance(algorithm) : Cipher.getInstance(algorithm, cryptoProvider);
+        int blockSize = cipher.getBlockSize();
+        if (blockSize <= 0) {
+            // A stream cipher reports no block size; 16 bytes is the usual nonce length
+            blockSize = 16;
+        }
+        byte[] iv = new byte[blockSize];
+        SECURE_RANDOM.nextBytes(iv);
+        return iv;
     }
 
     private byte[] getInitializationVector(Exchange exchange) {
