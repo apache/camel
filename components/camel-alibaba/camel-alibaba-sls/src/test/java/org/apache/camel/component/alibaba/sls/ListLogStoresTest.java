@@ -98,4 +98,29 @@ class ListLogStoresTest extends CamelTestSupport {
                 eq(testConfiguration.getProperty("project")),
                 any(ListLogStoresRequest.class));
     }
+
+    @Test
+    void testListLogStoresUsesDedicatedListOffset() throws Exception {
+        ListLogStoresResponse response = new ListLogStoresResponse();
+        response.setStatusCode(200);
+        response.setBody(new ListLogStoresResponseBody().setCount(0).setTotal(0));
+
+        when(slsClient.listLogStores(
+                eq(testConfiguration.getProperty("project")),
+                any(ListLogStoresRequest.class))).thenAnswer(invocation -> {
+                    ListLogStoresRequest request = invocation.getArgument(1);
+                    assertThat(request.getOffset()).isEqualTo(5);
+                    return response;
+                });
+
+        MockEndpoint mock = getMockEndpoint("mock:result");
+        mock.expectedMinimumMessageCount(1);
+
+        template.send("direct:listLogStores", exchange -> {
+            exchange.getIn().setHeader(AlibabaSlsHeaders.OFFSET, 99L);
+            exchange.getIn().setHeader(AlibabaSlsHeaders.LIST_OFFSET, 5);
+        });
+
+        mock.assertIsSatisfied();
+    }
 }

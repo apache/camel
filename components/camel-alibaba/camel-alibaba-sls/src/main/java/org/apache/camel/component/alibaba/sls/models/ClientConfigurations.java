@@ -28,7 +28,7 @@ public class ClientConfigurations {
     private Long offset;
     private String topic;
     private Boolean reverse;
-    private String logstoreName;
+    private String logstoreNamePrefix;
     private String mode;
     private Integer listOffset;
     private Integer size;
@@ -114,12 +114,12 @@ public class ClientConfigurations {
         this.reverse = reverse;
     }
 
-    public String getLogstoreName() {
-        return logstoreName;
+    public String getLogstoreNamePrefix() {
+        return logstoreNamePrefix;
     }
 
-    public void setLogstoreName(String logstoreName) {
-        this.logstoreName = logstoreName;
+    public void setLogstoreNamePrefix(String logstoreNamePrefix) {
+        this.logstoreNamePrefix = logstoreNamePrefix;
     }
 
     public String getMode() {

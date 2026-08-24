@@ -56,6 +56,9 @@ public final class AlibabaSlsHeaders {
     @Metadata(label = "producer", description = "Page size for listLogStores", javaType = "Integer")
     public static final String SIZE = AlibabaSlsProperties.SIZE;
 
+    @Metadata(label = "producer", description = "Pagination offset for listLogStores", javaType = "Integer")
+    public static final String LIST_OFFSET = AlibabaSlsProperties.LIST_OFFSET;
+
     @Metadata(label = "producer", description = "Telemetry type filter for listLogStores", javaType = "String")
     public static final String TELEMETRY_TYPE = AlibabaSlsProperties.TELEMETRY_TYPE;
 

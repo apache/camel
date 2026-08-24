@@ -85,10 +85,10 @@ public final class AlibabaSlsUtils {
         configuration.setOffset(resolveLong(exchange, AlibabaSlsProperties.OFFSET, endpoint.getOffset()));
         configuration.setTopic(OpenApiClientSupport.resolveString(exchange, AlibabaSlsProperties.TOPIC, endpoint.getTopic()));
         configuration.setReverse(resolveBoolean(exchange, AlibabaSlsProperties.REVERSE, endpoint.getReverse()));
-        configuration.setLogstoreName(
+        configuration.setLogstoreNamePrefix(
                 OpenApiClientSupport.resolveString(exchange, AlibabaSlsProperties.LOGSTORE_NAME, null));
         configuration.setMode(OpenApiClientSupport.resolveString(exchange, AlibabaSlsProperties.MODE, null));
-        configuration.setListOffset(OpenApiClientSupport.resolveInteger(exchange, AlibabaSlsProperties.OFFSET, null));
+        configuration.setListOffset(OpenApiClientSupport.resolveInteger(exchange, AlibabaSlsProperties.LIST_OFFSET, null));
         configuration.setSize(OpenApiClientSupport.resolveInteger(exchange, AlibabaSlsProperties.SIZE, null));
         configuration.setTelemetryType(
                 OpenApiClientSupport.resolveString(exchange, AlibabaSlsProperties.TELEMETRY_TYPE, null));
@@ -134,8 +134,8 @@ public final class AlibabaSlsUtils {
 
     public static ListLogStoresRequest buildListLogStoresRequest(ClientConfigurations configuration) {
         ListLogStoresRequest request = new ListLogStoresRequest();
-        if (ObjectHelper.isNotEmpty(configuration.getLogstoreName())) {
-            request.setLogstoreName(configuration.getLogstoreName());
+        if (ObjectHelper.isNotEmpty(configuration.getLogstoreNamePrefix())) {
+            request.setLogstoreName(configuration.getLogstoreNamePrefix());
         }
         if (ObjectHelper.isNotEmpty(configuration.getMode())) {
             request.setMode(configuration.getMode());

@@ -152,8 +152,8 @@ public final class MojoHelper {
                         dir.resolve("camel-alibaba-fc"),
                         dir.resolve("camel-alibaba-sms"),
                         dir.resolve("camel-alibaba-kms"),
-                        dir.resolve("camel-alibaba-sls"),
                         dir.resolve("camel-alibaba-eventbridge"),
+                        dir.resolve("camel-alibaba-sls"),
                         dir.resolve("camel-alibaba-ots"));
             case "camel-huawei":
                 return Arrays.asList(dir.resolve("camel-huaweicloud-frs"),
