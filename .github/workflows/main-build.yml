@@ -91,9 +91,19 @@ jobs:
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           skip-mvnd-install: 'true'
+          flake-label: JDK ${{ matrix.java }}
       - name: archive incremental test logs
         uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
         if: always()
         with:
           name: incremental-test-main-java-${{ matrix.java }}.log
           path: incremental-test.log
+      # Main-branch flakes are the least noisy signal there is: no PR-specific
+      # changes to blame, so a retry here points at the test, not the diff.
+      # The action already produces flakes.json — without this it is discarded.
+      - name: Upload recovered-flake report
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        if: always() && hashFiles('flakes.json') != ''
+        with:
+          name: flakes-main-java-${{ matrix.java }}
+          path: flakes.json

@@ -38,8 +38,10 @@ defusedxml import.
 
 import argparse
 import json
+import os
 import sys
 from dataclasses import dataclass, replace
+from html import escape
 from pathlib import Path
 from xml.etree.ElementTree import ParseError
 
@@ -66,13 +68,15 @@ class Flake:
 def parse_report(path):
     """Return the recovered flakes recorded in a single surefire/failsafe report.
 
-    Raises ValueError if the document tries an entity-expansion or external-entity
-    attack. Surefire never emits a DOCTYPE, so any report that declares entities
-    did not come from the build.
+    Raises ValueError if the document carries a DOCTYPE or tries an
+    entity-expansion or external-entity attack. Surefire never emits a DOCTYPE,
+    so any report that declares one did not come from the build. forbid_dtd has
+    to be passed explicitly: defusedxml only forbids entity *declarations* by
+    default, which would let a bare `<!DOCTYPE .. SYSTEM ..>` through.
     """
     raw = Path(path).read_bytes()
     try:
-        root = ET.fromstring(raw)
+        root = ET.fromstring(raw, forbid_dtd=True)
     except DefusedXmlException as exc:
         raise ValueError(
             f"refusing hostile XML report {path}: {type(exc).__name__}"
@@ -80,7 +84,9 @@ def parse_report(path):
 
     flakes = []
     for testcase in root.iter("testcase"):
-        attempts = [el for tag in FLAKY_TAGS for el in testcase.findall(tag)]
+        # Document order, so attempts[0] really is the first attempt: grouping by
+        # tag would report the first flakyFailure even when a flakyError came first.
+        attempts = [el for el in testcase if el.tag in FLAKY_TAGS]
         if not attempts:
             continue
         flakes.append(
@@ -94,25 +100,47 @@ def parse_report(path):
     return flakes
 
 
+def _report_files(root):
+    """Yield ``(module, report path)`` for every report under a reactor root.
+
+    os.walk rather than a ``**`` glob so the recursion can be pruned: after a
+    full build every module's target/ holds thousands of class and
+    generated-source directories, none of which can hold a report.
+    """
+    for dirpath, dirnames, filenames in os.walk(root):
+        name = os.path.basename(dirpath)
+        parent = os.path.basename(os.path.dirname(dirpath))
+        if name in REPORT_DIRS and parent == "target":
+            dirnames[:] = []
+            # .../<module>/target/<reports_dir>
+            module = Path(dirpath).parent.parent.relative_to(root).as_posix()
+            for filename in sorted(filenames):
+                if filename.startswith("TEST-") and filename.endswith(".xml"):
+                    yield module, Path(dirpath) / filename
+        elif name == "target":
+            dirnames[:] = [d for d in dirnames if d in REPORT_DIRS]
+        else:
+            dirnames[:] = [d for d in dirnames if not d.startswith(".")]
+
+
 def collect(root):
     """Walk a reactor and return every recovered flake, labelled by module.
 
     An unreadable or hostile report is skipped with a warning rather than
     aborting: this runs on the always-path of a build whose result is already
-    determined, and must never be the reason a job fails.
+    determined, and must never be the reason a job fails. ParseError covers a
+    report truncated by a JVM killed mid-write, ValueError the hostile documents
+    parse_report rejects, and OSError an unreadable file.
     """
     root = Path(root)
     flakes = []
-    for reports_dir in REPORT_DIRS:
-        for report in sorted(root.glob(f"**/target/{reports_dir}/TEST-*.xml")):
-            # .../<module>/target/<reports_dir>/TEST-*.xml
-            module = report.parent.parent.parent.relative_to(root).as_posix()
-            try:
-                parsed = parse_report(report)
-            except (ParseError, ValueError, OSError) as exc:
-                print(f"skipping unreadable report {report}: {exc}", file=sys.stderr)
-                continue
-            flakes.extend(replace(flake, module=module) for flake in parsed)
+    for module, report in _report_files(root):
+        try:
+            parsed = parse_report(report)
+        except (ParseError, ValueError, OSError) as exc:
+            print(f"skipping unreadable report {report}: {exc}", file=sys.stderr)
+            continue
+        flakes.extend(replace(flake, module=module) for flake in parsed)
     return flakes
 
 
@@ -120,14 +148,17 @@ def _ordered(flakes):
     return sorted(flakes, key=lambda f: (f.module, f.classname, f.test))
 
 
-def to_payload(flakes):
+def to_payload(flakes, label=""):
     """Build the machine-readable summary uploaded as a workflow artifact.
 
     Aggregating this across PRs is what turns anecdotes about flaky tests into
-    the evidence needed to decide which ones to quarantine.
+    the evidence needed to decide which ones to quarantine. ``label`` records
+    which matrix entry produced the data, so the aggregate can tell a test that
+    only flakes on one JDK from one that flakes everywhere.
     """
     ordered = _ordered(flakes)
     return {
+        "label": label,
         "total_flakes": len(ordered),
         "total_retried_attempts": sum(f.failed_attempts for f in ordered),
         "flakes": [
@@ -144,24 +175,40 @@ def to_payload(flakes):
 
 
 def _cell(text):
-    """Make a value safe to drop into a markdown table cell."""
-    return " ".join(text.split()).replace("|", "\\|") or "(no message)"
+    """Make a value safe to drop into a markdown table cell.
+
+    Angle brackets are escaped, not just passed through: assertion messages are
+    full of them (``expected: <true> but was: <false>``) and GitHub's renderer
+    treats ``<true>`` as raw HTML and strips it, silently eating the message.
+    """
+    collapsed = escape(" ".join(text.split()), quote=False)
+    return collapsed.replace("|", "\\|") or "(no message)"
 
 
-def render_markdown(flakes):
-    """Render the PR-comment section, or an empty string when nothing was retried."""
+def render_markdown(flakes, label=""):
+    """Render the PR-comment section, or an empty string when nothing was retried.
+
+    ``label`` names the matrix entry the data came from (for example ``JDK 17``).
+    The PR-comment artifact is uploaded with overwrite: true across the JDK
+    matrix, and unlike the rest of the comment, flake data is genuinely not
+    identical between entries. Naming the entry means a reader can at least tell
+    which JDK a reported flake came from; the per-JDK flakes-java-* artifacts
+    remain the complete record.
+    """
     ordered = _ordered(flakes)
     if not ordered:
         return ""
 
     attempts = sum(f.failed_attempts for f in ordered)
     noun = "test" if len(ordered) == 1 else "tests"
+    attempt_noun = "attempt" if attempts == 1 else "attempts"
+    on_label = f" on {label}" if label else ""
     lines = [
         "",
-        f":repeat: **{len(ordered)} {noun} passed only after a retry** "
-        f"({attempts} retried attempts)",
+        f":repeat: **{len(ordered)} {noun} passed only after a retry{on_label}** "
+        f"({attempts} retried {attempt_noun})",
         "",
-        f"<details><summary>Recovered flaky tests ({len(ordered)})</summary>",
+        f"<details><summary>Recovered flaky tests{on_label} ({len(ordered)})</summary>",
         "",
         "| Module | Test | Failed attempts | First failure |",
         "| --- | --- | --- | --- |",
@@ -197,10 +244,16 @@ def main(argv=None):
         "--step-summary",
         help="path to append the section to as well, typically $GITHUB_STEP_SUMMARY",
     )
+    parser.add_argument(
+        "--label",
+        default="",
+        help="matrix entry this run covers (e.g. 'JDK 17'), named in the section "
+        "and recorded in the JSON so aggregation can tell the entries apart",
+    )
     args = parser.parse_args(argv)
 
     flakes = collect(args.root)
-    section = render_markdown(flakes)
+    section = render_markdown(flakes, args.label)
 
     for target in (args.comment_file, args.step_summary):
         if target and section:
@@ -209,7 +262,8 @@ def main(argv=None):
 
     if args.json_out:
         Path(args.json_out).write_text(
-            json.dumps(to_payload(flakes), indent=2) + "\n", encoding="utf-8"
+            json.dumps(to_payload(flakes, args.label), indent=2) + "\n",
+            encoding="utf-8",
         )
 
     print(f"recovered flaky tests: {len(flakes)}")
