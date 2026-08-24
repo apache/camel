@@ -768,6 +768,47 @@ public interface DoclingComponentBuilderFactory {
     
         
         /**
+         * Whether a String message body that starts with / or contains \ is
+         * interpreted as a local filesystem path to read. When disabled, such a
+         * body is rejected instead of being read. This does not affect the
+         * CamelDoclingInputFilePath header, nor File, byte or explicit path
+         * collection bodies used by the batch operations.
+         * 
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * 
+         * Default: false
+         * Group: security
+         * 
+         * @param allowFilePathSource the value to set
+         * @return the dsl builder
+         */
+        default DoclingComponentBuilder allowFilePathSource(boolean allowFilePathSource) {
+            doSetProperty("allowFilePathSource", allowFilePathSource);
+            return this;
+        }
+    
+        
+        /**
+         * Whether a String message body that starts with http:// or https:// is
+         * interpreted as a remote URL for Docling to fetch. When disabled, such
+         * a body is rejected instead of being fetched. This does not affect the
+         * CamelDoclingInputFilePath header, nor bodies of any other type.
+         * 
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * 
+         * Default: false
+         * Group: security
+         * 
+         * @param allowUrlSource the value to set
+         * @return the dsl builder
+         */
+        default DoclingComponentBuilder allowUrlSource(boolean allowUrlSource) {
+            doSetProperty("allowUrlSource", allowUrlSource);
+            return this;
+        }
+    
+        
+        /**
          * Header name for API key authentication.
          * 
          * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
@@ -813,6 +854,24 @@ public interface DoclingComponentBuilderFactory {
          */
         default DoclingComponentBuilder authenticationToken(java.lang.String authenticationToken) {
             doSetProperty("authenticationToken", authenticationToken);
+            return this;
+        }
+    
+        /**
+         * When set, every local input file path must resolve inside this
+         * directory once normalized. Applies to the CamelDoclingInputFilePath
+         * header, to file path message bodies, and to the paths used by the
+         * batch operations. When empty, no directory restriction is applied.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: security
+         * 
+         * @param inputBaseDirectory the value to set
+         * @return the dsl builder
+         */
+        default DoclingComponentBuilder inputBaseDirectory(java.lang.String inputBaseDirectory) {
+            doSetProperty("inputBaseDirectory", inputBaseDirectory);
             return this;
         }
     
@@ -895,9 +954,12 @@ public interface DoclingComponentBuilderFactory {
             case "splitBatchResults": getOrCreateConfiguration((DoclingComponent) component).setSplitBatchResults((boolean) value); return true;
             case "includeMetadataInHeaders": getOrCreateConfiguration((DoclingComponent) component).setIncludeMetadataInHeaders((boolean) value); return true;
             case "includeRawMetadata": getOrCreateConfiguration((DoclingComponent) component).setIncludeRawMetadata((boolean) value); return true;
+            case "allowFilePathSource": getOrCreateConfiguration((DoclingComponent) component).setAllowFilePathSource((boolean) value); return true;
+            case "allowUrlSource": getOrCreateConfiguration((DoclingComponent) component).setAllowUrlSource((boolean) value); return true;
             case "apiKeyHeader": getOrCreateConfiguration((DoclingComponent) component).setApiKeyHeader((java.lang.String) value); return true;
             case "authenticationScheme": getOrCreateConfiguration((DoclingComponent) component).setAuthenticationScheme((org.apache.camel.component.docling.AuthenticationScheme) value); return true;
             case "authenticationToken": getOrCreateConfiguration((DoclingComponent) component).setAuthenticationToken((java.lang.String) value); return true;
+            case "inputBaseDirectory": getOrCreateConfiguration((DoclingComponent) component).setInputBaseDirectory((java.lang.String) value); return true;
             case "maxFileSize": getOrCreateConfiguration((DoclingComponent) component).setMaxFileSize((long) value); return true;
             default: return false;
             }
