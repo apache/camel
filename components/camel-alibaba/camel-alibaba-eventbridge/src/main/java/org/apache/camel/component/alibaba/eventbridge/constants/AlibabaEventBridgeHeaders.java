@@ -18,23 +18,23 @@ package org.apache.camel.component.alibaba.eventbridge.constants;
 
 import org.apache.camel.spi.Metadata;
 
-public final class AlibabaEventBridgeHeaders {
+public sealed class AlibabaEventBridgeHeaders permits AlibabaEventBridgeProperties {
 
     @Metadata(label = "producer", description = "Event bus name override", javaType = "String")
-    public static final String EVENT_BUS_NAME = AlibabaEventBridgeProperties.EVENT_BUS_NAME;
+    public static final String EVENT_BUS_NAME = "CamelAlibabaEventBridgeEventBusName";
 
     @Metadata(label = "producer", description = "Event source override", javaType = "String")
-    public static final String EVENT_SOURCE = AlibabaEventBridgeProperties.EVENT_SOURCE;
+    public static final String EVENT_SOURCE = "CamelAlibabaEventBridgeEventSource";
 
     @Metadata(label = "producer", description = "Event type override", javaType = "String")
-    public static final String EVENT_TYPE = AlibabaEventBridgeProperties.EVENT_TYPE;
+    public static final String EVENT_TYPE = "CamelAlibabaEventBridgeEventType";
 
     @Metadata(label = "producer", description = "Event subject override", javaType = "String")
-    public static final String EVENT_SUBJECT = AlibabaEventBridgeProperties.EVENT_SUBJECT;
+    public static final String EVENT_SUBJECT = "CamelAlibabaEventBridgeEventSubject";
 
     @Metadata(label = "producer", description = "Alibaba Cloud request id", javaType = "String")
-    public static final String REQUEST_ID = AlibabaEventBridgeProperties.REQUEST_ID;
+    public static final String REQUEST_ID = "CamelAlibabaEventBridgeRequestId";
 
-    private AlibabaEventBridgeHeaders() {
+    AlibabaEventBridgeHeaders() {
     }
 }
