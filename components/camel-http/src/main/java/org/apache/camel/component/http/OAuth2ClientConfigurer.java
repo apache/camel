@@ -78,7 +78,8 @@ public class OAuth2ClientConfigurer extends ServiceSupport implements HttpClient
 
         clientBuilder.addRequestInterceptorFirst((HttpRequest request, EntityDetails entity, HttpContext context) -> {
             URI requestUri = getUriFromRequest(request);
-            OAuth2URIAndCredentials uriAndCredentials = new OAuth2URIAndCredentials(requestUri, clientId, clientSecret);
+            OAuth2URIAndCredentials uriAndCredentials = new OAuth2URIAndCredentials(
+                    requestUri, clientId, clientSecret, tokenEndpoint, scope, resourceIndicator);
             if (cacheTokens) {
                 if (tokenCache.containsKey(uriAndCredentials)
                         && !tokenCache.get(uriAndCredentials).isExpiredWithMargin(cachedTokensExpirationMarginSeconds)) {
@@ -177,7 +178,16 @@ public class OAuth2ClientConfigurer extends ServiceSupport implements HttpClient
         }
     }
 
-    private record OAuth2URIAndCredentials(URI uri, String clientId, String clientSecret) {
+    /**
+     * Cache key for a minted token.
+     * <p>
+     * Every field that shapes the token request has to be part of it. The map is static, so it is shared by every
+     * configurer instance and every CamelContext in the JVM; a key that left out the scope, the token endpoint or the
+     * resource indicator would let a route configured for a narrow scope be served a broad-scope token that another
+     * route cached first, which defeats the scoping the operator asked for and makes the audit trail misleading.
+     */
+    private record OAuth2URIAndCredentials(URI uri, String clientId, String clientSecret, String tokenEndpoint,
+            String scope, String resourceIndicator) {
     }
 
     @Override
