@@ -69,7 +69,7 @@
         <aliyun-fc-open-version>2.1.0</aliyun-fc-open-version>
         <aliyun-dysmsapi-version>4.1.1</aliyun-dysmsapi-version>
         <aliyun-kms-version>2.2.0</aliyun-kms-version>
-        <aliyun-eventbridge-version>5.2.2</aliyun-eventbridge-version>
+        <aliyun-eventbridge-version>7.3.0</aliyun-eventbridge-version>
         <aliyun-eventbridge-client-version>1.2.6</aliyun-eventbridge-client-version>
         <tea-openapi-version>0.3.8</tea-openapi-version>
         <amazon-kinesis-client-version>3.5.1</amazon-kinesis-client-version>
