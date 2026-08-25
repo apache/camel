@@ -53,10 +53,10 @@ Where `storeName` is a logical name for the store. Endpoints with the same `stor
 share the same backend instance within the same `CamelContext`.
 
 // component-configure options: START
-include::partial$component-configure-options.adoc[]
 // component-configure options: END
 
 // component options: START
+include::partial$component-configure-options.adoc[]
 include::partial$component-endpoint-options.adoc[]
 include::partial$component-endpoint-headers.adoc[]
 // component options: END
