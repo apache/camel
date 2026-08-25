@@ -128,6 +128,8 @@ public class AlibabaSlsEndpoint extends DefaultEndpoint {
     @Override
     protected void doStop() throws Exception {
         if (slsClient != null && !autowiredSlsClient) {
+            // com.aliyun.sls20201230.Client extends com.aliyun.teaopenapi.Client, which has no
+            // close/shutdown lifecycle API (same as camel-alibaba-eventbridge)
             slsClient = null;
         }
         super.doStop();

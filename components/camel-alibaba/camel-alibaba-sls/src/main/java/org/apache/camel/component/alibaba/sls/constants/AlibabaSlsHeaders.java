@@ -20,6 +20,9 @@ import org.apache.camel.spi.Metadata;
 
 public final class AlibabaSlsHeaders {
 
+    @Metadata(label = "producer", description = "Operation override", javaType = "String")
+    public static final String OPERATION = AlibabaSlsProperties.OPERATION;
+
     @Metadata(label = "producer", description = "SLS project name override", javaType = "String")
     public static final String PROJECT = AlibabaSlsProperties.PROJECT;
 
