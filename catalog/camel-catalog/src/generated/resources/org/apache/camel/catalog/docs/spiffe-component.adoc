@@ -65,6 +65,15 @@ message body is set to the JWT token string, with the `CamelSpiffeSpiffeId` and 
 * `validateJwtSvid` — validates the JWT-SVID passed in the `CamelSpiffeToken` header (or the body) against the
 `audience`. The message body is set to the validated `io.spiffe.svid.jwtsvid.JwtSvid`.
 
+[NOTE]
+====
+The `fetchX509Svid` and `fetchJwtSvid` operations place sensitive key material on the message: the `X509Svid`
+carries the workload's private key, and the JWT-SVID is a bearer token. Route authors are trusted with Exchange
+contents, but you should avoid logging or tracing the message body for these operations — for example via the
+`log`/`trace` components or the message-history / breadcrumb EIPs — to prevent accidental disclosure of the key
+or token.
+====
+
 == Example
 
 Fetch a JWT-SVID for an outbound call:
