@@ -498,7 +498,7 @@
         <spring-batch-version>6.0.4</spring-batch-version>
         <spring-boot-version>4.1.0</spring-boot-version>
         <spring-data-redis-version>4.1.0</spring-data-redis-version>
-        <spring-ldap-version>4.1.0</spring-ldap-version>
+        <spring-ldap-version>4.1.1</spring-ldap-version>
         <spring-vault-core-version>4.1.0</spring-vault-core-version>
         <spring-version>7.0.8</spring-version>
         <spring-rabbitmq-version>4.1.0</spring-rabbitmq-version>
