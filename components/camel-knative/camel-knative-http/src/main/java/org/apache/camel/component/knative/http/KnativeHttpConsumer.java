@@ -353,12 +353,17 @@ public class KnativeHttpConsumer extends DefaultConsumer {
         Exception exception = message.getExchange().getException();
 
         if (exception != null) {
-            // we failed due an exception so print it as plain text
+            if (configuration.isMuteException()) {
+                // do not include the stacktrace in the body. Empty rather than null: a null body makes the
+                // caller send 204 No Content, which would discard the error status that was just computed
+                body = new byte[0];
+            } else {
+                // we failed due an exception so print it as plain text
+                final String stackTrace = ExceptionHelper.stackTraceToString(exception);
 
-            final String stackTrace = ExceptionHelper.stackTraceToString(exception);
-
-            // the body should then be the stacktrace
-            body = stackTrace.getBytes(StandardCharsets.UTF_8);
+                // the body should then be the stacktrace
+                body = stackTrace.getBytes(StandardCharsets.UTF_8);
+            }
             // force content type to be text/plain as that is what the stacktrace is
             message.setHeader(Exchange.CONTENT_TYPE, "text/plain");
 

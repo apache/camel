@@ -23,11 +23,22 @@ public final class KnativeTransportConfiguration {
     private final CloudEvent cloudEvent;
     private final boolean removeCloudEventHeadersInReply;
     private final boolean reply;
+    private final boolean muteException;
 
+    /**
+     * Retained for backwards compatibility. Mutes the exception, matching the default of the {@code muteException}
+     * option and of the http consumers aligned by CAMEL-23651.
+     */
     public KnativeTransportConfiguration(CloudEvent cloudEvent, boolean removeCloudEventHeadersInReply, boolean reply) {
+        this(cloudEvent, removeCloudEventHeadersInReply, reply, true);
+    }
+
+    public KnativeTransportConfiguration(CloudEvent cloudEvent, boolean removeCloudEventHeadersInReply, boolean reply,
+                                         boolean muteException) {
         this.cloudEvent = cloudEvent;
         this.removeCloudEventHeadersInReply = removeCloudEventHeadersInReply;
         this.reply = reply;
+        this.muteException = muteException;
     }
 
     public CloudEvent getCloudEvent() {
@@ -40,5 +51,15 @@ public final class KnativeTransportConfiguration {
 
     public boolean isReply() {
         return reply;
+    }
+
+    /**
+     * Whether the stack trace of an exception that failed the exchange is kept out of the response returned to the
+     * caller.
+     *
+     * @since 4.23
+     */
+    public boolean isMuteException() {
+        return muteException;
     }
 }

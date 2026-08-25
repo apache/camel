@@ -355,3 +355,26 @@ to `CamelIBMCOSCacheControl`, so the header name matches the Cache-Control metad
 breaking change for routes that reference the header by its literal string name: they must switch to
 `CamelIBMCOSCacheControl`, although the change is trivial to adapt. Routes using the
 `IBMCOSConstants.CACHE_CONTROL` constant are unaffected.
+=== camel-knative
+
+The Knative HTTP consumer no longer returns the stack trace of a failed exchange to the caller.
+
+When a route consuming from `knative:endpoint/...` or `knative:event/...` failed, the response body was
+the exception's full stack trace, sent as `text/plain`. A new `muteException` consumer option controls
+this, and it defaults to `true` — the same default the HTTP consumers carry
+(`camel-http-common` and therefore `camel-servlet` and `camel-jetty`, plus `camel-http`,
+`camel-platform-http`, and `camel-netty-http` and `camel-undertow` since 4.21.0).
+
+The response status is unchanged: a failed exchange still returns 500 (or whatever
+`CamelHttpResponseCode` the route set), only the body is now empty.
+
+A route that relies on the stack trace reaching the caller must opt back in explicitly:
+
+[source,text]
+----
+knative:endpoint/myEndpoint?muteException=false
+----
+
+`org.apache.camel.component.knative.spi.KnativeTransportConfiguration` gains a fourth constructor
+argument for the flag. The three-argument constructor is retained and mutes the exception, so existing
+code compiles unchanged and picks up the new default.
