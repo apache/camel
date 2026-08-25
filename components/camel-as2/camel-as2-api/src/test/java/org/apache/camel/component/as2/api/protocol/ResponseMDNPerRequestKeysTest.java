@@ -27,7 +27,7 @@ import org.apache.hc.core5.http.message.BasicHttpResponse;
 import org.apache.hc.core5.http.protocol.HttpCoreContext;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.assertj.core.api.Assertions.assertThat;
 
 /**
  * A single {@link ResponseMDN} is registered on the shared {@code HttpProcessor} and serves every request, so the
@@ -56,11 +56,11 @@ class ResponseMDNPerRequestKeysTest {
         HttpResponse response = new BasicHttpResponse(200);
         responseMDN.process(response, null, context);
 
-        assertNull(fieldValue(responseMDN, "signingAlgorithm"));
-        assertNull(fieldValue(responseMDN, "signingPrivateKey"));
-        assertNull(fieldValue(responseMDN, "signingCertificateChain"));
-        assertNull(fieldValue(responseMDN, "decryptingPrivateKey"));
-        assertNull(fieldValue(responseMDN, "validateSigningCertificateChain"));
+        assertThat(fieldValue(responseMDN, "signingAlgorithm")).isNull();
+        assertThat(fieldValue(responseMDN, "signingPrivateKey")).isNull();
+        assertThat(fieldValue(responseMDN, "signingCertificateChain")).isNull();
+        assertThat(fieldValue(responseMDN, "decryptingPrivateKey")).isNull();
+        assertThat(fieldValue(responseMDN, "validateSigningCertificateChain")).isNull();
     }
 
     private static Object fieldValue(ResponseMDN target, String name) throws Exception {
