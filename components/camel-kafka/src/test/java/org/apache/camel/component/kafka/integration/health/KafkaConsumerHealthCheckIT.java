@@ -64,7 +64,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 @EnabledOnOs(value = { OS.LINUX, OS.MAC, OS.FREEBSD, OS.OPENBSD, OS.WINDOWS },
              architectures = { "amd64", "aarch64", "s390x" },
              disabledReason = "This test does not run reliably on ppc64le")
-public class KafkaConsumerHealthCheckIT extends KafkaHealthCheckTestSupport {
+class KafkaConsumerHealthCheckIT extends KafkaHealthCheckTestSupport {
     public static final String TOPIC = "test-health";
     public static final String SKIPPED_HEADER_KEY = "CamelSkippedHeader";
     public static final String PROPAGATED_CUSTOM_HEADER = "PropagatedCustomHeader";
@@ -167,15 +167,19 @@ public class KafkaConsumerHealthCheckIT extends KafkaHealthCheckTestSupport {
 
     @Order(5)
     @Test
+    @Timeout(60)
     @DisplayName("Tests that readiness reports down when it's actually down")
-    public void testReadinessWhenDown() {
+    void testReadinessWhenDown() {
         CamelContext context = contextExtension.getContext();
         // and shutdown Kafka which will make readiness report as DOWN
         service.shutdown();
         serviceShutdown = true;
 
-        // health-check readiness should be DOWN
-        await().atMost(20, TimeUnit.SECONDS).untilAsserted(() -> {
+        // Detecting a downed broker relies on the Kafka client's hasReadyNodes(), which only flips
+        // after connection-failure detection bounded by request.timeout.ms (default 30s). The await
+        // window must therefore exceed 30s (and the method-level @Timeout must exceed the await) to
+        // avoid a flaky ConditionTimeout under CI load. See CAMEL-24466.
+        await().atMost(45, TimeUnit.SECONDS).untilAsserted(() -> {
             Collection<HealthCheck.Result> res2 = HealthCheckHelper.invokeReadiness(context);
             Assertions.assertTrue(res2.size() > 0);
             Optional<HealthCheck.Result> down
