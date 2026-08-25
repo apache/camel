@@ -100,6 +100,8 @@ public class IBMSecretsManagerPropertiesFunction extends ServiceSupport implemen
                 token = ibmVaultConfiguration.getToken();
                 serviceUrl = ibmVaultConfiguration.getServiceUrl();
             }
+        }
+        if (ObjectHelper.isNotEmpty(token) && ObjectHelper.isNotEmpty(serviceUrl)) {
             IamAuthenticator iamAuthenticator = new IamAuthenticator.Builder()
                     .apikey(token)
                     .build();
