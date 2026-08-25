@@ -32,7 +32,7 @@ Use State Store when:
 * You need a *simple key-value API* and want to switch backends without changing route logic.
 * You are *migrating from MuleSoft* and want an Object Store equivalent.
 * You want *backend portability* — develop with in-memory, deploy with Redis or Infinispan.
-* Your use case is limited to *put, get, delete, contains, keys* operations.
+* Your use case is limited to *put, putIfAbsent, get, delete, contains, keys, size, clear* operations.
 
 [width="100%",cols="1,2,1",options="header"]
 |===
@@ -57,7 +57,6 @@ include::partial$component-configure-options.adoc[]
 // component-configure options: END
 
 // component options: START
-include::partial$component-configure-options.adoc[]
 include::partial$component-endpoint-options.adoc[]
 include::partial$component-endpoint-headers.adoc[]
 // component options: END
