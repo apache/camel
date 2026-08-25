@@ -328,7 +328,7 @@
         <json-patch-version>1.13</json-patch-version>
         <json-smart-version>2.6.0</json-smart-version>
         <jsonata-version>0.9.10</jsonata-version>
-        <json-unit-version>6.1.0</json-unit-version>
+        <json-unit-version>6.2.0</json-unit-version>
         <jsoup-version>1.23.1</jsoup-version>
         <jspecify-version>1.0.1</jspecify-version>
 
