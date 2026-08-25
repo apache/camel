@@ -15,7 +15,7 @@ Java objects to and from http://www.yaml.org/[YAML].
 For YAML to object marshalling, Camel provides integration with three
 popular YAML libraries:
 
-* The http://www.snakeyaml.org/[SnakeYAML] library
+* The https://bitbucket.org/snakeyaml/snakeyaml[SnakeYAML] library
 
 Every library requires adding the special camel component (see
 "Dependency..." paragraphs further down). By default Camel uses the
