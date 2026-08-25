@@ -197,7 +197,6 @@ xref:ROOT:cql-component.adoc[CassandraQL],
 xref:ROOT:ehcache-component.adoc[EHCache],
 xref:ROOT:infinispan-component.adoc[Infinispan],
 xref:ROOT:jcache-component.adoc[JCache],
-xref:others:leveldb.adoc[LevelDB],
 xref:others:redis.adoc[Redis],
 or xref:ROOT:sql-component.adoc[SQL] components.
 

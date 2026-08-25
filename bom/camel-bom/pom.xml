@@ -1654,11 +1654,6 @@
       </dependency>
       <dependency>
         <groupId>org.apache.camel</groupId>
-        <artifactId>camel-leveldb</artifactId>
-        <version>4.23.0-SNAPSHOT</version>
-      </dependency>
-      <dependency>
-        <groupId>org.apache.camel</groupId>
         <artifactId>camel-log</artifactId>
         <version>4.23.0-SNAPSHOT</version>
       </dependency>
