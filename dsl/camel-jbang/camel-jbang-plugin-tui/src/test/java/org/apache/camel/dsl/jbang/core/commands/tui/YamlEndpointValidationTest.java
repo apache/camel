@@ -62,7 +62,7 @@ class YamlEndpointValidationTest {
                 """;
         List<String> errors = SourceTab.doValidateYamlEndpoints(yaml, catalog);
         assertThat(errors).isNotEmpty();
-        assertThat(errors.get(0)).startsWith("timer:");
+        assertThat(errors.get(0)).contains("timer:");
         assertThat(errors.get(0)).containsIgnoringCase("unknown");
     }
 
@@ -78,7 +78,7 @@ class YamlEndpointValidationTest {
                 """;
         List<String> errors = SourceTab.doValidateYamlEndpoints(yaml, catalog);
         assertThat(errors).isNotEmpty();
-        assertThat(errors.get(0)).startsWith("timer:");
+        assertThat(errors.get(0)).contains("timer:");
     }
 
     @Test
@@ -101,7 +101,7 @@ class YamlEndpointValidationTest {
                 """;
         List<String> errors = SourceTab.doValidateYamlEndpoints(yaml, catalog);
         assertThat(errors).isNotEmpty();
-        assertThat(errors.get(0)).startsWith("timer:");
+        assertThat(errors.get(0)).contains("timer:");
         assertThat(errors.get(0)).containsIgnoringCase("unknown");
     }
 
@@ -143,7 +143,7 @@ class YamlEndpointValidationTest {
                 """;
         List<String> errors = SourceTab.doValidateYamlEndpoints(yaml, catalog);
         assertThat(errors).isNotEmpty();
-        assertThat(errors.get(0)).startsWith("timer:");
+        assertThat(errors.get(0)).contains("timer:");
     }
 
     @Test
@@ -161,8 +161,8 @@ class YamlEndpointValidationTest {
                 """;
         List<String> errors = SourceTab.doValidateYamlEndpoints(yaml, catalog);
         assertThat(errors).isNotEmpty();
-        assertThat(errors).allSatisfy(e -> assertThat(e).startsWith("log:"));
-        assertThat(errors).noneSatisfy(e -> assertThat(e).startsWith("timer:"));
+        assertThat(errors).allSatisfy(e -> assertThat(e).contains("log:"));
+        assertThat(errors).noneSatisfy(e -> assertThat(e).contains("timer:"));
     }
 
     @Test
@@ -214,7 +214,7 @@ class YamlEndpointValidationTest {
                 """;
         List<String> errors = SourceTab.doValidateYamlEndpoints(yaml, catalog);
         assertThat(errors).hasSize(1);
-        assertThat(errors.get(0)).startsWith("seda:");
+        assertThat(errors.get(0)).contains("seda:");
     }
 
     @Test
@@ -252,7 +252,7 @@ class YamlEndpointValidationTest {
                 """;
         List<String> errors = SourceTab.doValidateYamlEndpoints(yaml, catalog);
         assertThat(errors).isNotEmpty();
-        assertThat(errors).anyMatch(e -> e.startsWith("timer:") && e.contains("bridgeErrorHandler2"));
+        assertThat(errors).anyMatch(e -> e.contains("timer:") && e.contains("bridgeErrorHandler2"));
     }
 
     @Test

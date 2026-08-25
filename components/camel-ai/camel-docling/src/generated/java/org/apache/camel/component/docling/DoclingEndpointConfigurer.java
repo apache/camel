@@ -25,6 +25,10 @@ public class DoclingEndpointConfigurer extends PropertyConfigurerSupport impleme
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "abortonerror":
         case "abortOnError": target.getConfiguration().setAbortOnError(property(camelContext, java.lang.Boolean.class, value)); return true;
+        case "allowfilepathsource":
+        case "allowFilePathSource": target.getConfiguration().setAllowFilePathSource(property(camelContext, boolean.class, value)); return true;
+        case "allowurlsource":
+        case "allowUrlSource": target.getConfiguration().setAllowUrlSource(property(camelContext, boolean.class, value)); return true;
         case "apikeyheader":
         case "apiKeyHeader": target.getConfiguration().setApiKeyHeader(property(camelContext, java.lang.String.class, value)); return true;
         case "asyncpollinterval":
@@ -91,6 +95,8 @@ public class DoclingEndpointConfigurer extends PropertyConfigurerSupport impleme
         case "includeMetadataInHeaders": target.getConfiguration().setIncludeMetadataInHeaders(property(camelContext, boolean.class, value)); return true;
         case "includerawmetadata":
         case "includeRawMetadata": target.getConfiguration().setIncludeRawMetadata(property(camelContext, boolean.class, value)); return true;
+        case "inputbasedirectory":
+        case "inputBaseDirectory": target.getConfiguration().setInputBaseDirectory(property(camelContext, java.lang.String.class, value)); return true;
         case "lazystartproducer":
         case "lazyStartProducer": target.setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
         case "maxfilesize":
@@ -132,6 +138,10 @@ public class DoclingEndpointConfigurer extends PropertyConfigurerSupport impleme
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "abortonerror":
         case "abortOnError": return java.lang.Boolean.class;
+        case "allowfilepathsource":
+        case "allowFilePathSource": return boolean.class;
+        case "allowurlsource":
+        case "allowUrlSource": return boolean.class;
         case "apikeyheader":
         case "apiKeyHeader": return java.lang.String.class;
         case "asyncpollinterval":
@@ -198,6 +208,8 @@ public class DoclingEndpointConfigurer extends PropertyConfigurerSupport impleme
         case "includeMetadataInHeaders": return boolean.class;
         case "includerawmetadata":
         case "includeRawMetadata": return boolean.class;
+        case "inputbasedirectory":
+        case "inputBaseDirectory": return java.lang.String.class;
         case "lazystartproducer":
         case "lazyStartProducer": return boolean.class;
         case "maxfilesize":
@@ -240,6 +252,10 @@ public class DoclingEndpointConfigurer extends PropertyConfigurerSupport impleme
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "abortonerror":
         case "abortOnError": return target.getConfiguration().getAbortOnError();
+        case "allowfilepathsource":
+        case "allowFilePathSource": return target.getConfiguration().isAllowFilePathSource();
+        case "allowurlsource":
+        case "allowUrlSource": return target.getConfiguration().isAllowUrlSource();
         case "apikeyheader":
         case "apiKeyHeader": return target.getConfiguration().getApiKeyHeader();
         case "asyncpollinterval":
@@ -306,6 +322,8 @@ public class DoclingEndpointConfigurer extends PropertyConfigurerSupport impleme
         case "includeMetadataInHeaders": return target.getConfiguration().isIncludeMetadataInHeaders();
         case "includerawmetadata":
         case "includeRawMetadata": return target.getConfiguration().isIncludeRawMetadata();
+        case "inputbasedirectory":
+        case "inputBaseDirectory": return target.getConfiguration().getInputBaseDirectory();
         case "lazystartproducer":
         case "lazyStartProducer": return target.isLazyStartProducer();
         case "maxfilesize":

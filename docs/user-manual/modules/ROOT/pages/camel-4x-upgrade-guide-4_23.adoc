@@ -13,6 +13,12 @@ See the xref:camel-upgrade-recipes-tool.adoc[documentation] page for details.
 
 == Upgrading Camel 4.22 to 4.23
 
+=== Components removal
+
+==== camel-zeebe
+
+`camel-zeebe` component was deprecated in 4.19 and has a straightforward replacement with `camel-camunda`. It is removed in 4.23.
+
 === camel-a2a - webhook URL address classification
 
 Push notification webhook URLs are now classified by the address the host resolves to, using the
@@ -64,3 +70,177 @@ an `AGENTS.md` file with guidance for AI coding assistants, pointing at the Apac
 
 The `camel-archetype-api-component` archetype also generates its readme again: the file was declared
 in the wrong file set and was therefore silently skipped.
+
+=== camel-docling
+
+A `String` message body is no longer interpreted as a location by default. Previously the producer
+inspected the body and, when it started with `http://` or `https://`, handed it to Docling as a remote
+URL to fetch; when it started with `/` or contained `\`, it read it from the local filesystem; otherwise
+it converted it as document content.
+
+The two location readings must now be enabled explicitly:
+
+* `allowUrlSource` (default `false`) - interpret a body starting with `http://` or `https://` as a URL.
+* `allowFilePathSource` (default `false`) - interpret a body starting with `/`, or containing `\`, as a
+  local file path. This also covers the single directory-or-file `String` body accepted by the batch
+  operations.
+
+A route that passes the document itself in the body is unaffected. A route that passes a URL or a path in
+the body must set the matching option, otherwise the exchange fails with an `IllegalArgumentException`
+naming the option to enable.
+
+The `CamelDoclingInputFilePath` header is unchanged and still accepts a path without any opt-in, as are
+`File`, `byte[]` and `InputStream` bodies and the explicit path collections (`List<String>`, `String[]`,
+`List<File>`, `File[]`) used by the batch operations.
+
+A new `inputBaseDirectory` option is also available. When set, every local input path - from the header,
+from a file path body, and from the batch operations - must resolve inside that directory once normalized.
+It is unset by default, which keeps the previous behaviour of accepting any path.
+
+Additionally, a local input path that does not exist is now reported as a `File not found` `IOException`
+before Docling is invoked. Previously the size check silently skipped a path that resolved to nothing and
+the failure surfaced later, from the Docling process or API call.
+=== camel-azure-eventgrid
+
+The `CamelAzureEventGridDataVersion` header (`EventGridConstants.DATA_VERSION`) has been removed. The
+component publishes events in the CloudEvents schema, which has no `dataVersion` attribute (that field
+belongs to the legacy Event Grid event schema), so the header was read but never applied to the
+published event. Remove any use of that header; there is no CloudEvents equivalent.
+=== camel-core - property placeholders in pollEnrich
+
+Camel 4.22 stopped resolving property placeholders (`{{...}}`) on the _per-message evaluated_
+recipient for `toD` and `enrich`, and said that aligning `pollEnrich` was deferred to a follow-up.
+This is that follow-up: a `{{...}}` token that appears only in the value produced at runtime by the
+`pollEnrich` expression is now treated as a literal part of the endpoint URI instead of being
+expanded.
+
+Like `toD` and `enrich`, `pollEnrich` resolves its static endpoint URI at build time, so a
+placeholder belongs there:
+
+[source,java]
+----
+.pollEnrich("file:{{inbox}}", 5000)
+----
+
+`recipientList`, `routingSlip` and `dynamicRouter` are unchanged. Their recipient is supplied
+entirely at runtime and may legitimately carry a placeholder that comes from configuration, so they
+continue to resolve `{{...}}` in the computed recipient.
+
+=== camel-hazelcast
+
+`ReplicatedHazelcastAggregationRepository` now applies the same default
+`JavaSerializationFilterConfig` that the other repositories and the component endpoints have applied
+since 4.14.8/4.18.3/4.21.0, when it bootstraps its own `HazelcastInstance` (that is, when no
+`hazelcastInstance` is supplied). It overrides `doStart()` without calling `super.doStart()` and was
+therefore left out of that change.
+
+The default whitelists the class name prefixes `java.`, `javax.`, `org.apache.camel.` and blacklists
+`java.net.`, and a user-supplied `JavaSerializationFilterConfig` is still respected and never
+overwritten.
+
+Applications that aggregate classes outside the default whitelist through the replicated repository
+without supplying their own `hazelcastInstance` must now provide a `Config` with a
+`JavaSerializationFilterConfig` covering their class names.
+
+The same default is now also applied to the `ClientConfig` that Camel builds for `hazelcastMode=client`
+endpoints, when neither a referenced `ClientConfig` nor `hazelcastConfigUri` is supplied. Client mode
+previously behaved differently from node mode for an otherwise identical endpoint configuration.
+
+=== camel-jbang (TUI)
+
+`camel tui --record` is now rejected when combined with `--web`. The recording configuration applies
+to the whole process, so a browser session served by `--web` would be recorded into the same `.cast`
+file as the local session. Previously the combination was accepted, but recording never produced any
+output, so run the two modes in separate processes instead.
+
+=== camel-mail
+
+`MimeMultipartDataFormat` now uses `MailHeaderFilterStrategy` instead of a plain
+`DefaultHeaderFilterStrategy` when `headersInline` unmarshal copies the remaining MIME headers onto
+the Camel message. That strategy filters the `mail.smtp.` and `mail.smtps.` prefixes on the inbound
+path in addition to `Camel*`/`camel*`, so the data format now filters the same namespace the mail
+consumer has filtered since 4.14.9/4.18.4/4.22.0.
+
+Routes that relied on `mail.smtp.*` or `mail.smtps.*` headers arriving on the exchange from an
+unmarshalled MIME message must set those values explicitly on the route instead. Ordinary
+application headers are unaffected.
+
+=== camel-netty - object codecs apply a deserialization filter by default
+
+The `ObjectDecoder` and `DatagramPacketObjectDecoder` codecs (used when a route configures Netty
+object serialization through the `encoders` / `decoders` options) now always install a JEP-290
+`java.io.ObjectInputFilter` while decoding, resolved through `DeserializationFilterHelper`.
+Previously a decoder built without an explicit filter pattern applied no filter at all and only
+logged a warning.
+
+When no explicit pattern is passed, the JVM-wide `jdk.serialFilter` is honoured if set, otherwise
+the shared Camel default allow-list is applied (it permits standard Java and Apache Camel types,
+denies `java.net.**`, and enforces JEP-290 graph-shape limits). Routes that deserialize classes
+outside that allow-list must pass an explicit filter pattern to the two-argument
+`ObjectDecoder(ClassResolver, String)` / `DatagramPacketObjectDecoder(ClassResolver, String)`
+constructor (or configure `jdk.serialFilter`) to permit them.
+
+=== camel-oauth
+
+The OAuth processors now stop the route on the paths where they do not authenticate the caller, so
+that no subsequent step of the route runs for such a request. Previously they set a response code
+and returned, which left the rest of the route to execute and overwrite the response the processor
+had just prepared.
+
+What changed:
+
+* `OAuthBearerTokenProcessor` — a request with no `Authorization` header, or with one that does not
+parse as `Bearer <token>`, is now answered with `401` and a `WWW-Authenticate: Bearer` challenge
+(RFC 6750) instead of `400`, and the route is stopped. A present-but-invalid token continues to fail
+by propagating the exception from `OAuth.authenticate()`, as before.
+* `OAuthCodeFlowProcessor` — when the caller has no authenticated session and is redirected to the
+identity provider, the route is now stopped; the `302` is the whole response.
+* `OAuthCodeFlowCallback` — a callback request without the `code` parameter still answers `400`, and
+now also stops the route.
+
+Routes that relied on steps after these processors running for unauthenticated requests must be
+restructured. The authenticated paths are unchanged: a successfully authenticated request continues
+through the rest of the route exactly as before, and `OAuthLogoutProcessor` is unchanged.
+
+=== camel-netty-http
+
+The security-constraint lookup now strips the endpoint context-path from the request target
+case-insensitively, matching how consumer dispatch already matches it
+(`RestConsumerContextPathMatcher` compares with `equalsIgnoreCase` and a lower-cased prefix).
+
+Previously the strip was guarded by a case-sensitive `startsWith`, so a request whose context-path
+differed only by case was evaluated against the unstripped target. With `matchOnUriPrefix=true` and
+a `securityConstraint` whose inclusions are specific sub-paths rather than a catch-all, such a
+request could match no inclusion — and an unmatched target counts as unrestricted — while still
+being dispatched to the route.
+
+Requests that differ from the configured context-path only by case are therefore now subject to the
+same constraint as the exact-case form. Deployments that relied on the previous behaviour to reach a
+route without a challenge will now receive `401`.
+
+=== camel-spring-redis - the default serializer applies a deserialization filter
+
+The default serializer, `JdkSerializationRedisSerializer`, now installs a JEP-290
+`java.io.ObjectInputFilter` while reading Redis payloads, resolved through
+`DeserializationFilterHelper`. Previously no filter was applied at all. This affects both the
+consumer, which deserializes the payload of every message published to the subscribed channels,
+and the producer read commands, which deserialize the values stored in Redis.
+
+When no explicit pattern is configured, the JVM-wide `jdk.serialFilter` is honoured if set,
+otherwise the shared Camel default allow-list is applied (it permits standard Java and Apache Camel
+types, denies `java.net.**`, and enforces JEP-290 graph-shape limits). Routes that exchange classes
+outside that allow-list must widen it through the new `deserializationFilter` endpoint option, for
+example:
+
+[source,java]
+----
+from("spring-redis://localhost:6379?command=SUBSCRIBE&channels=myChannel"
+     + "&deserializationFilter=com.example.model.**;java.**;!*")
+----
+
+Setting the `serializer` option to a custom `RedisSerializer` bypasses the filter entirely, since
+Camel then no longer controls how the payload is read.
+=== camel-langchain4j
+
+The legacy `sse` `transportType` has been removed. It follows the support removal in 
+https://github.com/langchain4j/langchain4j/commit/7f4e99fd637137ab9d3bf116eb62047ac757a818[langchain4j-core 1.19.0].

@@ -274,6 +274,7 @@
         <module>camel-pulsar</module>
         <module>camel-pqc</module>
         <module>camel-python</module>
+        <module>camel-python3</module>
         <module>camel-quartz</module>
         <module>camel-quickfix</module>
         <module>camel-reactive-executor-tomcat</module>
@@ -312,6 +313,7 @@
         <module>camel-splunk-hec</module>
         <module>camel-sql</module>
         <module>camel-ssh</module>
+        <module>camel-state-store</module>
         <module>camel-stax</module>
         <module>camel-stream</module>
         <module>camel-stringtemplate</module>
@@ -350,7 +352,6 @@
         <module>camel-xmlsecurity</module>
         <module>camel-xmpp</module>
         <module>camel-xslt-saxon</module>
-        <module>camel-zeebe</module>
         <module>camel-zendesk</module>
         <module>camel-zip-deflater</module>
         <module>camel-zipfile</module>

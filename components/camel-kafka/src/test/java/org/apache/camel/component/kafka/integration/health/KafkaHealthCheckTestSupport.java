@@ -48,7 +48,7 @@ abstract class KafkaHealthCheckTestSupport implements ConfigurableRoute, Configu
     protected static final Logger LOG = LoggerFactory.getLogger(KafkaConsumerUnresolvableHealthCheckIT.class);
     @Order(1)
     @RegisterExtension
-    protected static KafkaService service = KafkaServiceFactory.createSingletonService();
+    protected static KafkaService service = KafkaServiceFactory.createService();
 
     @Order(2)
     @RegisterExtension

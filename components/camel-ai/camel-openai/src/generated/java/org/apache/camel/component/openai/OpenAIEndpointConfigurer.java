@@ -66,6 +66,30 @@ public class OpenAIEndpointConfigurer extends PropertyConfigurerSupport implemen
         case "hallucinatedToolNameStrategy": target.getConfiguration().setHallucinatedToolNameStrategy(property(camelContext, org.apache.camel.component.openai.HallucinatedToolNameStrategy.class, value)); return true;
         case "hostedmcptools":
         case "hostedMcpTools": target.getConfiguration().setHostedMcpTools(property(camelContext, java.lang.String.class, value)); return true;
+        case "imagebackground":
+        case "imageBackground": target.getConfiguration().setImageBackground(property(camelContext, java.lang.String.class, value)); return true;
+        case "imagecount":
+        case "imageCount": target.getConfiguration().setImageCount(property(camelContext, java.lang.Integer.class, value)); return true;
+        case "imageinputfidelity":
+        case "imageInputFidelity": target.getConfiguration().setImageInputFidelity(property(camelContext, java.lang.String.class, value)); return true;
+        case "imagemodel":
+        case "imageModel": target.getConfiguration().setImageModel(property(camelContext, java.lang.String.class, value)); return true;
+        case "imagemoderation":
+        case "imageModeration": target.getConfiguration().setImageModeration(property(camelContext, java.lang.String.class, value)); return true;
+        case "imageoutputcompression":
+        case "imageOutputCompression": target.getConfiguration().setImageOutputCompression(property(camelContext, java.lang.Integer.class, value)); return true;
+        case "imageoutputformat":
+        case "imageOutputFormat": target.getConfiguration().setImageOutputFormat(property(camelContext, java.lang.String.class, value)); return true;
+        case "imageprompt":
+        case "imagePrompt": target.getConfiguration().setImagePrompt(property(camelContext, java.lang.String.class, value)); return true;
+        case "imagequality":
+        case "imageQuality": target.getConfiguration().setImageQuality(property(camelContext, java.lang.String.class, value)); return true;
+        case "imageresponseformat":
+        case "imageResponseFormat": target.getConfiguration().setImageResponseFormat(property(camelContext, java.lang.String.class, value)); return true;
+        case "imagesize":
+        case "imageSize": target.getConfiguration().setImageSize(property(camelContext, java.lang.String.class, value)); return true;
+        case "imagestyle":
+        case "imageStyle": target.getConfiguration().setImageStyle(property(camelContext, java.lang.String.class, value)); return true;
         case "jsonschema":
         case "jsonSchema": target.getConfiguration().setJsonSchema(property(camelContext, java.lang.String.class, value)); return true;
         case "lazystartproducer":
@@ -206,6 +230,30 @@ public class OpenAIEndpointConfigurer extends PropertyConfigurerSupport implemen
         case "hallucinatedToolNameStrategy": return org.apache.camel.component.openai.HallucinatedToolNameStrategy.class;
         case "hostedmcptools":
         case "hostedMcpTools": return java.lang.String.class;
+        case "imagebackground":
+        case "imageBackground": return java.lang.String.class;
+        case "imagecount":
+        case "imageCount": return java.lang.Integer.class;
+        case "imageinputfidelity":
+        case "imageInputFidelity": return java.lang.String.class;
+        case "imagemodel":
+        case "imageModel": return java.lang.String.class;
+        case "imagemoderation":
+        case "imageModeration": return java.lang.String.class;
+        case "imageoutputcompression":
+        case "imageOutputCompression": return java.lang.Integer.class;
+        case "imageoutputformat":
+        case "imageOutputFormat": return java.lang.String.class;
+        case "imageprompt":
+        case "imagePrompt": return java.lang.String.class;
+        case "imagequality":
+        case "imageQuality": return java.lang.String.class;
+        case "imageresponseformat":
+        case "imageResponseFormat": return java.lang.String.class;
+        case "imagesize":
+        case "imageSize": return java.lang.String.class;
+        case "imagestyle":
+        case "imageStyle": return java.lang.String.class;
         case "jsonschema":
         case "jsonSchema": return java.lang.String.class;
         case "lazystartproducer":
@@ -347,6 +395,30 @@ public class OpenAIEndpointConfigurer extends PropertyConfigurerSupport implemen
         case "hallucinatedToolNameStrategy": return target.getConfiguration().getHallucinatedToolNameStrategy();
         case "hostedmcptools":
         case "hostedMcpTools": return target.getConfiguration().getHostedMcpTools();
+        case "imagebackground":
+        case "imageBackground": return target.getConfiguration().getImageBackground();
+        case "imagecount":
+        case "imageCount": return target.getConfiguration().getImageCount();
+        case "imageinputfidelity":
+        case "imageInputFidelity": return target.getConfiguration().getImageInputFidelity();
+        case "imagemodel":
+        case "imageModel": return target.getConfiguration().getImageModel();
+        case "imagemoderation":
+        case "imageModeration": return target.getConfiguration().getImageModeration();
+        case "imageoutputcompression":
+        case "imageOutputCompression": return target.getConfiguration().getImageOutputCompression();
+        case "imageoutputformat":
+        case "imageOutputFormat": return target.getConfiguration().getImageOutputFormat();
+        case "imageprompt":
+        case "imagePrompt": return target.getConfiguration().getImagePrompt();
+        case "imagequality":
+        case "imageQuality": return target.getConfiguration().getImageQuality();
+        case "imageresponseformat":
+        case "imageResponseFormat": return target.getConfiguration().getImageResponseFormat();
+        case "imagesize":
+        case "imageSize": return target.getConfiguration().getImageSize();
+        case "imagestyle":
+        case "imageStyle": return target.getConfiguration().getImageStyle();
         case "jsonschema":
         case "jsonSchema": return target.getConfiguration().getJsonSchema();
         case "lazystartproducer":

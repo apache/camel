@@ -104,6 +104,22 @@ class ExportTest {
 
     @ParameterizedTest
     @MethodSource("runtimeProvider")
+    void shouldExportRouteConfigurationWithStringRedeliveryDelay(RuntimeType rt) throws Exception {
+        LOG.info("shouldExportRouteConfigurationWithStringRedeliveryDelay {}", rt);
+        Export command = createCommand(rt,
+                new String[] { "src/test/resources/route-configuration-redelivery-delay.yaml" },
+                "--gav=examples:route:1.0.0", "--dir=" + workingDir, "--quiet");
+        int exit = command.doCall();
+
+        assertThat(exit).isZero();
+        Model model = readMavenModel();
+        assertThat(model.getGroupId()).isEqualTo("examples");
+        assertThat(model.getArtifactId()).isEqualTo("route");
+        assertThat(model.getVersion()).isEqualTo("1.0.0");
+    }
+
+    @ParameterizedTest
+    @MethodSource("runtimeProvider")
     public void shouldExportDifferentVersion(RuntimeType rt) throws Exception {
         LOG.info("shouldExportDifferentVersion {}", rt);
         // only test for main/spring-boot
@@ -1112,6 +1128,32 @@ class ExportTest {
         } finally {
             FileUtil.deleteFile(profile);
         }
+    }
+
+    @Test
+    void shouldOverrideAutoDetectedDriverVersion() throws Exception {
+        LOG.info("shouldOverrideAutoDetectedDriverVersion");
+        // the bean uses driverClassName org.postgresql.Driver which Camel auto-detects and adds
+        // org.postgresql:postgresql with the version from the camel-dependencies BOM. An explicit
+        // --dep for the same groupId:artifactId must override that auto-detected version.
+        Export command = new Export(new CamelJBangMain());
+        CommandLine.populateCommand(command,
+                "--gav=examples:route:1.0.0", "--dir=" + workingDir, "--quiet",
+                "--runtime=camel-main",
+                "--dep=org.postgresql:postgresql:42.7.99",
+                "src/test/resources/k8s-secret-bean.yaml");
+        int exit = command.doCall();
+
+        assertThat(exit).isZero();
+        Model model = readMavenModel();
+
+        List<Dependency> pg = model.getDependencies().stream()
+                .filter(d -> "org.postgresql".equals(d.getGroupId()) && "postgresql".equals(d.getArtifactId()))
+                .toList();
+        assertThat(pg)
+                .as("Explicit --dep version must override the auto-detected postgresql driver version")
+                .singleElement()
+                .satisfies(d -> assertThat(d.getVersion()).isEqualTo("42.7.99"));
     }
 
     @ParameterizedTest

@@ -4886,6 +4886,19 @@ public interface ComponentsBuilderFactory {
         return SshComponentBuilderFactory.ssh();
     }
     /**
+     * State Store (camel-state-store)
+     * Perform key-value operations against a pluggable state store backend.
+     * 
+     * Category: cache
+     * Since: 4.23
+     * Maven coordinates: org.apache.camel:camel-state-store
+     * 
+     * @return the dsl builder
+     */
+    static StateStoreComponentBuilderFactory.StateStoreComponentBuilder stateStore() {
+        return StateStoreComponentBuilderFactory.stateStore();
+    }
+    /**
      * StAX (camel-stax)
      * Process XML payloads by a SAX ContentHandler.
      * 
@@ -5410,20 +5423,6 @@ public interface ComponentsBuilderFactory {
      */
     static XsltSaxonComponentBuilderFactory.XsltSaxonComponentBuilder xsltSaxon() {
         return XsltSaxonComponentBuilderFactory.xsltSaxon();
-    }
-    /**
-     * Zeebe (camel-zeebe)
-     * Zeebe component which integrates with Camunda Zeebe to interact with the
-     * API.
-     * 
-     * Category: workflow,saas
-     * Since: 3.21
-     * Maven coordinates: org.apache.camel:camel-zeebe
-     * 
-     * @return the dsl builder
-     */
-    static ZeebeComponentBuilderFactory.ZeebeComponentBuilder zeebe() {
-        return ZeebeComponentBuilderFactory.zeebe();
     }
     /**
      * Zendesk (camel-zendesk)

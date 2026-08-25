@@ -32,6 +32,7 @@ import com.aliyun.eventbridge.util.EventBuilder;
 import com.google.gson.Gson;
 import org.apache.camel.Exchange;
 import org.apache.camel.component.alibaba.common.OpenApiClientSupport;
+import org.apache.camel.component.alibaba.eventbridge.constants.AlibabaEventBridgeConstants;
 import org.apache.camel.component.alibaba.eventbridge.constants.AlibabaEventBridgeProperties;
 import org.apache.camel.component.alibaba.eventbridge.models.ClientConfigurations;
 import org.apache.camel.util.ObjectHelper;
@@ -99,11 +100,13 @@ public final class AlibabaEventBridgeUtils {
         }
 
         if (body instanceof Map<?, ?> mapBody) {
-            String eventBusName = stringValue(mapBody.get("eventBusName"), configuration.getEventBusName());
-            String source = stringValue(mapBody.get("source"), configuration.getEventSource());
-            String type = stringValue(mapBody.get("type"), configuration.getEventType());
-            String subject = stringValue(mapBody.get("subject"), configuration.getEventSubject());
-            String data = jsonDataValue(mapBody.get("data"));
+            String eventBusName
+                    = stringValue(mapBody.get(AlibabaEventBridgeConstants.EVENT_BUS_NAME), configuration.getEventBusName());
+            String source = stringValue(mapBody.get(AlibabaEventBridgeConstants.EVENT_SOURCE), configuration.getEventSource());
+            String type = stringValue(mapBody.get(AlibabaEventBridgeConstants.EVENT_TYPE), configuration.getEventType());
+            String subject
+                    = stringValue(mapBody.get(AlibabaEventBridgeConstants.EVENT_SUBJECT), configuration.getEventSubject());
+            String data = jsonDataValue(mapBody.get(AlibabaEventBridgeConstants.EVENT_DATA));
 
             if (ObjectHelper.isEmpty(source) || ObjectHelper.isEmpty(type) || ObjectHelper.isEmpty(eventBusName)) {
                 throw new IllegalArgumentException("Event source, type and event bus name are required");
@@ -174,20 +177,21 @@ public final class AlibabaEventBridgeUtils {
 
     public static Map<String, Object> toPutEventsMap(PutEventsResponse response) {
         Map<String, Object> map = new HashMap<>();
-        map.put("requestId", response.getRequestId());
-        map.put("resourceOwnerAccountId", response.getResourceOwnerAccountId());
-        map.put("failedEntryCount", response.getFailedEntryCount());
+        map.put(AlibabaEventBridgeConstants.EVENT_RESPONSE_REQUEST_IDENTIFIER, response.getRequestId());
+        map.put(AlibabaEventBridgeConstants.EVENT_RESPONSE_RESOURCE_OWNER_ACCOUNT_IDENTIFIER,
+                response.getResourceOwnerAccountId());
+        map.put(AlibabaEventBridgeConstants.EVENT_RESPONSE_FAILED_ENTRY_COUNT, response.getFailedEntryCount());
 
         if (response.getEntryList() != null) {
             List<Map<String, Object>> entries = new ArrayList<>();
             for (PutEventsResponseEntry entry : response.getEntryList()) {
                 Map<String, Object> entryMap = new HashMap<>();
-                entryMap.put("eventId", entry.getEventId());
-                entryMap.put("errorCode", entry.getErrorCode());
-                entryMap.put("errorMessage", entry.getErrorMessage());
+                entryMap.put(AlibabaEventBridgeConstants.EVENT_RESPONSE_ID, entry.getEventId());
+                entryMap.put(AlibabaEventBridgeConstants.EVENT_RESPONSE_ERROR_CODE, entry.getErrorCode());
+                entryMap.put(AlibabaEventBridgeConstants.EVENT_RESPONSE_ERROR_MESSAGE, entry.getErrorMessage());
                 entries.add(entryMap);
             }
-            map.put("entryList", entries);
+            map.put(AlibabaEventBridgeConstants.EVENT_RESPONSE_ENTRY_LIST, entries);
         }
         return map;
     }

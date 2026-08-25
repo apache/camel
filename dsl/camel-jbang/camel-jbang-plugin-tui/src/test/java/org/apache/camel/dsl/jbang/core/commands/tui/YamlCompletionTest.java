@@ -1227,6 +1227,75 @@ class YamlCompletionTest {
         assertThat(result).doesNotContain("streaming:\n");
     }
 
+    @Test
+    void insertStepsUnderCircuitBreakerNotUnderConfiguration() throws IOException {
+        String yaml = String.join("\n",
+                "- route:",
+                "    from:",
+                "      uri: timer:tick",
+                "      steps:",
+                "        - circuitBreaker:",
+                "            resilience4jConfiguration:",
+                "              failureRateThreshold: 123",
+                "            ",
+                "");
+
+        Path file = tempDir.resolve("route.camel.yaml");
+        Files.writeString(file, yaml);
+
+        SourceViewer viewer = new SourceViewer();
+        viewer.loadFile(file);
+        viewer.enterEditMode();
+        // move cursor to the blank line (line 7) after failureRateThreshold
+        viewer.editState().moveCursorToStart();
+        for (int i = 0; i < 7; i++) {
+            viewer.editState().moveCursorDown();
+        }
+
+        AutocompletePopup.CompletionItem item = new AutocompletePopup.CompletionItem(
+                "steps", "Steps", "array", null, false, null, "common");
+        viewer.insertYamlCompletion(item, false, "            ");
+
+        String result = viewer.editState().text();
+        // steps: should be at same indent as resilience4jConfiguration (child of circuitBreaker)
+        assertThat(result).contains("            steps:");
+        // NOT at deeper indent under resilience4jConfiguration
+        assertThat(result).doesNotContain("              steps:");
+    }
+
+    @Test
+    void insertStepsAfterEnterAddsListItemPrefix() throws IOException {
+        String yaml = String.join("\n",
+                "- route:",
+                "    from:",
+                "      uri: timer:tick",
+                "      steps:",
+                "        - circuitBreaker:",
+                "            steps:",
+                "              ",
+                "");
+
+        Path file = tempDir.resolve("route.camel.yaml");
+        Files.writeString(file, yaml);
+
+        SourceViewer viewer = new SourceViewer();
+        viewer.loadFile(file);
+        viewer.enterEditMode();
+        viewer.setListItemNodeChecker(key -> "steps".equals(key) || "root".equals(key));
+        // move cursor to line 5 (steps:) and press Enter
+        viewer.editState().moveCursorToStart();
+        for (int i = 0; i < 5; i++) {
+            viewer.editState().moveCursorDown();
+        }
+        viewer.editState().moveCursorToLineEnd();
+        viewer.handleKeyEvent(dev.tamboui.tui.event.KeyEvent.ofKey(
+                dev.tamboui.tui.event.KeyCode.ENTER, dev.tamboui.tui.event.KeyModifiers.NONE));
+
+        String result = viewer.editState().text();
+        // after steps:, the new line should have "- " list item prefix
+        assertThat(result).contains("            steps:\n              - ");
+    }
+
     // --- Helpers that replicate SourceTab logic for testing ---
 
     private List<AutocompletePopup.CompletionItem> provideKeyCompletions(String componentName, String role) {

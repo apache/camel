@@ -21,7 +21,7 @@ import org.apache.camel.test.infra.common.services.SingletonService;
 
 public final class DuckDbServiceFactory {
 
-    private static class SingletonDuckDbService extends SingletonService<DuckDbService> implements DuckDbService {
+    public static class SingletonDuckDbService extends SingletonService<DuckDbService> implements DuckDbService {
         public SingletonDuckDbService(DuckDbService service, String name) {
             super(service, name);
         }
@@ -34,6 +34,11 @@ public final class DuckDbServiceFactory {
         @Override
         public String getDatabasePath() {
             return getService().getDatabasePath();
+        }
+
+        @Override
+        public DuckDbService getService() {
+            return super.getService();
         }
     }
 

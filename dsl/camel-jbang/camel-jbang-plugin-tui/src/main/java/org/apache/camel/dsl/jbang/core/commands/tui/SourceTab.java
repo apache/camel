@@ -461,6 +461,7 @@ class SourceTab extends AbstractTab {
                 - **Home** — smart home (content indent, then column 0)
                 - Quick documentation panel is shown at the bottom (shows doc for current line)
                 - **F7** — show diff of unsaved changes
+                - **F9** — jump to next validation error
 
                 ## Edit Mode (Tab Completion)
                 Press **F4** to enter edit mode, then **Tab** for context-aware completion:
@@ -2290,6 +2291,7 @@ class SourceTab extends AbstractTab {
             // look ahead for a parameters: block at the same indent level as uri
             StringBuilder uriBuilder = new StringBuilder(uri);
             boolean hasParams = uri.contains("?");
+            Map<String, Integer> optionLineMap = new LinkedHashMap<>();
             for (int j = i + 1; j < lines.length; j++) {
                 String next = lines[j];
                 if (next.isBlank()) {
@@ -2324,6 +2326,7 @@ class SourceTab extends AbstractTab {
                             char sep = hasParams ? '&' : '?';
                             uriBuilder.append(sep).append(key).append('=').append(val);
                             hasParams = true;
+                            optionLineMap.put(key, k);
                         }
                     }
                     break;
@@ -2339,7 +2342,7 @@ class SourceTab extends AbstractTab {
                         = catalog.validateEndpointProperties(fullUri, false, consumerOnly, producerOnly);
                 if (!result.isSuccess()) {
                     String scheme = fullUri.contains(":") ? fullUri.substring(0, fullUri.indexOf(':')) : fullUri;
-                    collectEndpointErrors(errors, result, scheme);
+                    collectEndpointErrors(errors, result, scheme, i, optionLineMap);
                 }
             } catch (Exception e) {
                 // ignore validation errors
@@ -2348,7 +2351,9 @@ class SourceTab extends AbstractTab {
         return errors;
     }
 
-    private static void collectEndpointErrors(List<String> errors, EndpointValidationResult result, String scheme) {
+    private static void collectEndpointErrors(
+            List<String> errors, EndpointValidationResult result, String scheme,
+            int uriLineIdx, Map<String, Integer> optionLineMap) {
         if (result.getUnknown() != null) {
             for (String name : result.getUnknown()) {
                 StringBuilder sb = new StringBuilder(scheme).append(": Unknown option '").append(name).append("'");
@@ -2358,22 +2363,25 @@ class SourceTab extends AbstractTab {
                         sb.append(". Did you mean: ").append(Arrays.asList(suggestions));
                     }
                 }
-                errors.add(sb.toString());
+                errors.add(linePrefix(optionLineMap.getOrDefault(name, uriLineIdx)) + sb);
             }
         }
         if (result.getInvalidBoolean() != null) {
             for (Map.Entry<String, String> entry : result.getInvalidBoolean().entrySet()) {
-                errors.add(scheme + ": Invalid boolean value '" + entry.getValue() + "' for option '" + entry.getKey() + "'");
+                errors.add(linePrefix(optionLineMap.getOrDefault(entry.getKey(), uriLineIdx))
+                           + scheme + ": Invalid boolean value '" + entry.getValue() + "' for option '" + entry.getKey() + "'");
             }
         }
         if (result.getInvalidInteger() != null) {
             for (Map.Entry<String, String> entry : result.getInvalidInteger().entrySet()) {
-                errors.add(scheme + ": Invalid integer value '" + entry.getValue() + "' for option '" + entry.getKey() + "'");
+                errors.add(linePrefix(optionLineMap.getOrDefault(entry.getKey(), uriLineIdx))
+                           + scheme + ": Invalid integer value '" + entry.getValue() + "' for option '" + entry.getKey() + "'");
             }
         }
         if (result.getInvalidNumber() != null) {
             for (Map.Entry<String, String> entry : result.getInvalidNumber().entrySet()) {
-                errors.add(scheme + ": Invalid number value '" + entry.getValue() + "' for option '" + entry.getKey() + "'");
+                errors.add(linePrefix(optionLineMap.getOrDefault(entry.getKey(), uriLineIdx))
+                           + scheme + ": Invalid number value '" + entry.getValue() + "' for option '" + entry.getKey() + "'");
             }
         }
         if (result.getInvalidEnum() != null) {
@@ -2387,19 +2395,25 @@ class SourceTab extends AbstractTab {
                         sb.append(". Possible values: ").append(Arrays.asList(choices));
                     }
                 }
-                errors.add(sb.toString());
+                errors.add(linePrefix(optionLineMap.getOrDefault(entry.getKey(), uriLineIdx)) + sb);
             }
         }
         if (result.getNotConsumerOnly() != null) {
             for (String name : result.getNotConsumerOnly()) {
-                errors.add(scheme + ": Option '" + name + "' is not applicable in consumer only mode");
+                errors.add(linePrefix(optionLineMap.getOrDefault(name, uriLineIdx))
+                           + scheme + ": Option '" + name + "' is not applicable in consumer only mode");
             }
         }
         if (result.getNotProducerOnly() != null) {
             for (String name : result.getNotProducerOnly()) {
-                errors.add(scheme + ": Option '" + name + "' is not applicable in producer only mode");
+                errors.add(linePrefix(optionLineMap.getOrDefault(name, uriLineIdx))
+                           + scheme + ": Option '" + name + "' is not applicable in producer only mode");
             }
         }
+    }
+
+    private static String linePrefix(int lineIdx) {
+        return "Line " + (lineIdx + 1) + ": ";
     }
 
     private static String extractEipFromLine(String trimmed) {

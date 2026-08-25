@@ -130,7 +130,7 @@ class ExtractStructuredDataIT extends DoclingITestSupport {
             @Override
             public void configure() throws Exception {
                 from("direct:extract-structured-data")
-                        .to("docling:convert?operation=EXTRACT_STRUCTURED_DATA&contentInBody=true");
+                        .to("docling:convert?allowFilePathSource=true&operation=EXTRACT_STRUCTURED_DATA&contentInBody=true");
             }
         };
     }
