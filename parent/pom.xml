@@ -515,7 +515,7 @@
         <swagger-java-parser-version>1.0.65</swagger-java-parser-version>
         <swagger-openapi3-java-parser-version>2.1.47</swagger-openapi3-java-parser-version>
         <swagger-request-validator-version>2.46.1</swagger-request-validator-version>
-        <swagger-ui-version>5.32.11</swagger-ui-version>
+        <swagger-ui-version>5.32.14</swagger-ui-version>
         <stringtemplate-version>4.3.4</stringtemplate-version>
         <tahu-version>1.0.21</tahu-version>
         <tamboui-version>0.4.0</tamboui-version>
