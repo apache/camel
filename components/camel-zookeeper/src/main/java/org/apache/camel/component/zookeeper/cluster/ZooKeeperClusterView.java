@@ -120,10 +120,11 @@ final class ZooKeeperClusterView extends AbstractCamelClusterView {
 
     @Override
     protected void doStop() throws Exception {
-        if (leaderSelector != null) {
+        LeaderSelector selector = leaderSelector;
+        leaderSelector = null;
+        if (selector != null) {
             leader = false;
-            leaderSelector.interruptLeadership();
-            fireLeadershipChangedEvent((CamelClusterMember) null);
+            selector.close();
         }
     }
 
@@ -154,13 +155,11 @@ final class ZooKeeperClusterView extends AbstractCamelClusterView {
                     .build())
                     .build();
             try {
-                task.run(getCamelContext(), () -> !isRunAllowed() || !leaderSelector.hasLeadership());
+                task.run(getCamelContext(), () -> !isRunAllowed());
             } finally {
                 leader = false;
                 fireLeadershipChangedEvent((CamelClusterMember) null);
             }
-
-            fireLeadershipChangedEvent(getLeader().orElse(null));
         }
     }
 
