@@ -84,7 +84,7 @@
         <asterisk-java-version>3.42.2</asterisk-java-version>
         <atlassian-fugue-version>6.1.5</atlassian-fugue-version>
         <atmosphere-version>3.1.0</atmosphere-version>
-        <avro-version>1.12.1</avro-version>
+        <avro-version>1.12.2</avro-version>
         <avro-ipc-jetty-version>1.12.1</avro-ipc-jetty-version>
         <avro-ipc-netty-version>1.12.1</avro-ipc-netty-version>
         <awaitility-version>4.3.0</awaitility-version>
