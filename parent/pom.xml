@@ -266,7 +266,7 @@
         <jackson2-version>2.22.1</jackson2-version>
         <jackson2-annotations-version>2.20</jackson2-annotations-version>
         <jackson3-version>3.2.2</jackson3-version>
-        <jackrabbit-version>2.22.3</jackrabbit-version>
+        <jackrabbit-version>2.22.4</jackrabbit-version>
         <jasminb-jsonapi-version>0.15</jasminb-jsonapi-version>
         <jandex-version>3.6.0</jandex-version>
         <jansi-version>2.4.3</jansi-version>
