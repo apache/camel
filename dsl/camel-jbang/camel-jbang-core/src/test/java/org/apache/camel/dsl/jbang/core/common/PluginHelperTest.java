@@ -28,6 +28,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
 import picocli.CommandLine;
 
+import static org.assertj.core.api.Assertions.assertThatCode;
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
@@ -262,6 +263,26 @@ public class PluginHelperTest {
         assertFalse(after.quitCalled, "cache fast path resolved the plugin without invoking the resolver");
         assertEquals(FakePluginJar.PLUGIN_CLASS, plugins.get("fake").getClass().getName(),
                 "plugin loaded from the cached jar, not via FACTORY_FINDER");
+    }
+
+    @Test
+    void testVersionCheckAcceptsSameSnapshotVersion() {
+        // CAMEL-24469: a SNAPSHOT build must not be rejected against a plugin whose firstVersion
+        // is the same SNAPSHOT release. Rejection calls quit() which, on the real main, is System.exit
+        // and crashes the surefire fork. This regressed on patch releases such as 4.22.1-SNAPSHOT.
+        QuitCapture main = new QuitCapture();
+        assertThatCode(() -> PluginHelper.versionCheck(main, "4.22.1-SNAPSHOT", "4.22.1-SNAPSHOT", "fake"))
+                .doesNotThrowAnyException();
+        assertFalse(main.quitCalled, "same SNAPSHOT version must be accepted, not quit");
+    }
+
+    @Test
+    void testVersionCheckRejectsOlderVersion() {
+        // A plugin requiring a newer firstVersion than the current build must be rejected (quit).
+        QuitCapture main = new QuitCapture();
+        assertThrows(RuntimeException.class,
+                () -> PluginHelper.versionCheck(main, "4.22.1-SNAPSHOT", "4.23.0", "fake"));
+        assertTrue(main.quitCalled, "older build than plugin firstVersion must be rejected");
     }
 
     private void writeConfig(JsonObject pluginEntry) throws Exception {
