@@ -570,7 +570,7 @@ public class KafkaFetchRecords implements Runnable {
             return false;
         }
 
-        boolean ready = true;
+        boolean ready = false;
         try {
             if (consumer instanceof org.apache.kafka.clients.consumer.KafkaConsumer) {
                 // need to use reflection to access the network client which has API to check if the client has ready
@@ -585,12 +585,17 @@ public class KafkaFetchRecords implements Runnable {
                             "Health-Check calling org.apache.kafka.clients.consumer.internals.ConsumerNetworkClient.hasReadyNode");
                     ready = nc.hasReadyNodes(System.currentTimeMillis());
                 }
+            } else {
+                // fail-closed: unknown consumer type (e.g. AsyncKafkaConsumer with group.protocol=consumer) -> not ready
+                // alternative would be to reflectively check AsyncKafkaConsumer.applicationEventHandler
+                ready = false;
             }
         } catch (Exception e) {
-            // ignore
+            // fail-closed on reflection failure
             LOG.debug("Cannot check hasReadyNodes on KafkaConsumer client (ConsumerNetworkClient) due to: "
                       + e.getMessage() + ". This exception is ignored.",
                     e);
+            ready = false;
         }
         return ready;
     }
