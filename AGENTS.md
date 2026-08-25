@@ -251,57 +251,6 @@ await().atMost(10, TimeUnit.SECONDS).until(() -> mock.getReceivedCounter() >= 2)
 - Use `untilAsserted` or `until` with a clear predicate — do not replace a sleep with a
   busy-wait loop.
 
-### Test Visibility: Drop `public` From Test Classes and Methods
-
-JUnit 5 does **not** require test classes or test methods to be `public` — package-private
-(the default, no modifier) is sufficient and preferred. Removing the unnecessary `public`
-qualifier reduces visual noise and follows modern JUnit 5 conventions.
-
-**Examples:**
-
-```java
-// Preferred — package-private (no modifier):
-class MyComponentTest extends CamelTestSupport {
-    @Test
-    void testSendMessage() { ... }
-
-    @Override
-    protected RoutesBuilder createRouteBuilder() throws Exception {
-        return new RouteBuilder() {
-            @Override
-            public void configure() {   // stays public — overrides RouteBuilder.configure()
-                from("direct:start").to("mock:result");
-            }
-        };
-    }
-}
-
-// Avoid — unnecessary public:
-public class MyComponentTest extends CamelTestSupport {
-    @Test
-    public void testSendMessage() { ... }
-}
-```
-
-**Rules:**
-
-- New test classes and test methods MUST NOT use the `public` modifier.
-- When modifying an existing test file, remove the `public` modifier from the class declaration
-  and from any test methods you touch. Do NOT sweep the entire file — only change what you are
-  already modifying.
-- `@BeforeAll`, `@AfterAll`, `@BeforeEach` and `@AfterEach` methods follow the same rule: drop
-  `public` when adding or modifying them.
-- **Exception — methods that override or implement a supertype method keep the supertype's
-  visibility.** Java forbids reducing visibility on an override (JLS 8.4.8.3), so
-  `public void configure()` in a `RouteBuilder`, and any override of a public method from
-  `CamelTestSupport` or an implemented interface, MUST stay `public`.
-- **Exception — base and support classes stay `public`** when they are extended from another
-  package or module (a package-private class cannot be), and anything under
-  `components/camel-test/**` or `test-infra/**` stays `public` because those are released
-  artifacts consumed by downstream projects and by users' own tests.
-- Do NOT create a standalone PR solely to remove `public` from test files in bulk — apply the
-  convention incrementally as part of other work.
-
 ### Issue Investigation (Before Implementation)
 
 Before implementing a fix for a JIRA issue, **thoroughly investigate** the issue's validity and context.
