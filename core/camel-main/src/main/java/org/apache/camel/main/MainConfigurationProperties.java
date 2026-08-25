@@ -75,7 +75,7 @@ public class MainConfigurationProperties extends DefaultConfigurationProperties<
     private TracerConfigurationProperties tracerConfigurationProperties;
     private RouteControllerConfigurationProperties routeControllerConfigurationProperties;
     private ErrorRegistryConfigurationProperties errorRegistryConfigurationProperties;
-    private AiConfigurationProperties aiConfigurationProperties;
+    private AiObservabilityConfigurationProperties aiObservabilityConfigurationProperties;
 
     @Override
     public void close() {
@@ -159,9 +159,9 @@ public class MainConfigurationProperties extends DefaultConfigurationProperties<
             errorRegistryConfigurationProperties.close();
             errorRegistryConfigurationProperties = null;
         }
-        if (aiConfigurationProperties != null) {
-            aiConfigurationProperties.close();
-            aiConfigurationProperties = null;
+        if (aiObservabilityConfigurationProperties != null) {
+            aiObservabilityConfigurationProperties.close();
+            aiObservabilityConfigurationProperties = null;
         }
         if (routesBuilders != null) {
             routesBuilders.clear();
@@ -403,27 +403,20 @@ public class MainConfigurationProperties extends DefaultConfigurationProperties<
     }
 
     /**
-     * To configure Camel AI features.
+     * To configure GenAI observability.
      */
-    public AiConfigurationProperties ai() {
-        if (aiConfigurationProperties == null) {
-            aiConfigurationProperties = new AiConfigurationProperties(this);
+    public AiObservabilityConfigurationProperties aiObservability() {
+        if (aiObservabilityConfigurationProperties == null) {
+            aiObservabilityConfigurationProperties = new AiObservabilityConfigurationProperties(this);
         }
-        return aiConfigurationProperties;
-    }
-
-    /**
-     * Whether there has been any Camel AI configuration specified.
-     */
-    public boolean hasAiConfiguration() {
-        return aiConfigurationProperties != null;
+        return aiObservabilityConfigurationProperties;
     }
 
     /**
      * Whether there has been any GenAI observability configuration specified.
      */
     public boolean hasAiObservabilityConfiguration() {
-        return aiConfigurationProperties != null && aiConfigurationProperties.hasObservabilityConfiguration();
+        return aiObservabilityConfigurationProperties != null;
     }
 
     /**

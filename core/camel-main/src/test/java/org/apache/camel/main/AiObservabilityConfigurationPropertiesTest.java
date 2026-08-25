@@ -26,7 +26,7 @@ class AiObservabilityConfigurationPropertiesTest {
     @Test
     void shouldDisableGenAiObservabilityViaMainConfiguration() throws Exception {
         Main main = new Main();
-        main.configure().ai().observability().withEnabled(false);
+        main.configure().aiObservability().withEnabled(false);
 
         main.start();
 

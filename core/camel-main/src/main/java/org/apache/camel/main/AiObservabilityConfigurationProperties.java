@@ -26,16 +26,16 @@ import org.apache.camel.spi.Metadata;
 @Configurer(extended = true)
 public class AiObservabilityConfigurationProperties implements BootstrapCloseable {
 
-    private AiConfigurationProperties parent;
+    private MainConfigurationProperties parent;
 
     @Metadata(defaultValue = "true")
     private boolean enabled = true;
 
-    public AiObservabilityConfigurationProperties(AiConfigurationProperties parent) {
+    public AiObservabilityConfigurationProperties(MainConfigurationProperties parent) {
         this.parent = parent;
     }
 
-    public AiConfigurationProperties end() {
+    public MainConfigurationProperties end() {
         return parent;
     }
 

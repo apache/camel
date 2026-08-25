@@ -335,9 +335,6 @@ public class PrepareCamelMainMojo extends AbstractGeneratorMojo {
                     prefix = "camel.routecontroller.";
                 } else if (file.getName().contains("AiObservabilityConfigurationProperties")) {
                     prefix = "camel.aiObservability.";
-                } else if (file.getName().contains("AiConfigurationProperties")) {
-                    // skip wrapper, options are on AiObservabilityConfigurationProperties
-                    continue;
                 } else {
                     prefix = "camel.main.";
                 }

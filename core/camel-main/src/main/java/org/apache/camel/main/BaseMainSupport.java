@@ -2625,7 +2625,7 @@ public abstract class BaseMainSupport extends BaseService {
             boolean failIfNotSet, OrderedLocationProperties autoConfiguredProperties)
             throws Exception {
 
-        AiObservabilityConfigurationProperties config = mainConfigurationProperties.ai().observability();
+        AiObservabilityConfigurationProperties config = mainConfigurationProperties.aiObservability();
         setPropertiesOnTarget(camelContext, config, properties, PREFIX_AI_OBSERVABILITY,
                 failIfNotSet, true, autoConfiguredProperties);
 
