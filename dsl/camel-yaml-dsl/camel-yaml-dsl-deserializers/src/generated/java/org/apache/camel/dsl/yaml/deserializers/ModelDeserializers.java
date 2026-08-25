@@ -193,6 +193,7 @@ import org.apache.camel.model.language.LanguageExpression;
 import org.apache.camel.model.language.MethodCallExpression;
 import org.apache.camel.model.language.MvelExpression;
 import org.apache.camel.model.language.OgnlExpression;
+import org.apache.camel.model.language.Python3Expression;
 import org.apache.camel.model.language.PythonExpression;
 import org.apache.camel.model.language.RefExpression;
 import org.apache.camel.model.language.SimpleExpression;
@@ -12949,6 +12950,78 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                 }
                 default: {
                     return false;
+                }
+            }
+            return true;
+        }
+    }
+
+    @YamlType(
+            nodes = "python3",
+            inline = true,
+            types = org.apache.camel.model.language.Python3Expression.class,
+            order = org.apache.camel.dsl.yaml.common.YamlDeserializerResolver.ORDER_LOWEST - 1,
+            displayName = "Python 3",
+            description = "Evaluates a Python 3 expression",
+            deprecated = false,
+            properties = {
+                    @YamlProperty(name = "expression", type = "string", required = true, description = "The expression value in your chosen language syntax.", displayName = "Expression"),
+                    @YamlProperty(name = "id", type = "string", description = "The id of this node.", displayName = "Id"),
+                    @YamlProperty(name = "resultType", type = "string", description = "The class of the result type (type from output).", displayName = "Result Type"),
+                    @YamlProperty(name = "trim", type = "boolean", defaultValue = "true", description = "Whether to trim the source code to remove leading and trailing whitespaces and line breaks.", displayName = "Trim")
+            }
+    )
+    public static class Python3ExpressionDeserializer extends YamlDeserializerBase<Python3Expression> {
+        public Python3ExpressionDeserializer() {
+            super(Python3Expression.class);
+        }
+
+        @Override
+        protected Python3Expression newInstance() {
+            return new Python3Expression();
+        }
+
+        @Override
+        protected Python3Expression newInstance(String value) {
+            return new Python3Expression(value);
+        }
+
+        @Override
+        protected boolean setProperty(Python3Expression target, String propertyKey,
+                String propertyName, Node node) {
+            propertyKey = org.apache.camel.util.StringHelper.dashToCamelCase(propertyKey);
+            switch(propertyKey) {
+                case "expression": {
+                    String val = asText(node);
+                    target.setExpression(val);
+                    break;
+                }
+                case "id": {
+                    String val = asText(node);
+                    target.setId(val);
+                    break;
+                }
+                case "resultType": {
+                    String val = asText(node);
+                    target.setResultTypeName(val);
+                    break;
+                }
+                case "trim": {
+                    String val = asText(node);
+                    target.setTrim(val);
+                    break;
+                }
+                default: {
+                    ExpressionDefinition ed = target.getExpressionType();
+                    if (ed != null) {
+                        throw new org.apache.camel.dsl.yaml.common.exception.DuplicateFieldException(node, propertyName, "as an expression");
+                    }
+                    ed = ExpressionDeserializers.constructExpressionType(propertyKey, node);
+                    if (ed != null) {
+                        target.setExpressionType(ed);
+                    } else {
+                        return false;
+                    }
                 }
             }
             return true;
