@@ -3944,6 +3944,10 @@
         "type" : "object",
         "ref" : "thrift"
       }, {
+        "name" : "toon",
+        "type" : "object",
+        "ref" : "toon"
+      }, {
         "name" : "ubl",
         "type" : "object",
         "ref" : "ubl"
@@ -9589,6 +9593,11 @@
         "ref" : "thrift",
         "required" : true
       }, {
+        "name" : "toon",
+        "type" : "object",
+        "ref" : "toon",
+        "required" : true
+      }, {
         "name" : "ubl",
         "type" : "object",
         "ref" : "ubl",
@@ -13442,6 +13451,72 @@
         "displayName" : "Content Type Header",
         "kind" : "attribute",
         "index" : 3,
+        "group" : "common"
+      } ]
+    },
+    "toon" : {
+      "title" : "TOON",
+      "description" : "Marshal JSON-compatible Java values to TOON (Token-Oriented Object Notation) and unmarshal TOON back to Java objects.",
+      "label" : "dataformat,transformation,json",
+      "children" : [ {
+        "name" : "id",
+        "type" : "string",
+        "description" : "The id of this node",
+        "title" : "Id",
+        "displayName" : "Id",
+        "kind" : "attribute",
+        "index" : 0,
+        "group" : "common"
+      }, {
+        "name" : "indent",
+        "type" : "number",
+        "description" : "Number of spaces per indentation level.",
+        "title" : "Indent",
+        "default" : "2",
+        "displayName" : "Indent",
+        "kind" : "attribute",
+        "index" : 1,
+        "group" : "common"
+      }, {
+        "name" : "delimiter",
+        "type" : "enum",
+        "enum" : [ "COMMA", "TAB", "PIPE" ],
+        "description" : "Delimiter used for tabular array rows and inline primitive arrays.",
+        "title" : "Delimiter",
+        "default" : "COMMA",
+        "displayName" : "Delimiter",
+        "kind" : "attribute",
+        "index" : 2,
+        "group" : "common"
+      }, {
+        "name" : "lengthMarker",
+        "type" : "boolean",
+        "description" : "Whether to prefix array lengths with a hash marker so arrays render as hash-prefixed lengths instead of plain lengths.",
+        "title" : "Length Marker",
+        "default" : "false",
+        "displayName" : "Length Marker",
+        "kind" : "attribute",
+        "index" : 3,
+        "group" : "common"
+      }, {
+        "name" : "strict",
+        "type" : "boolean",
+        "description" : "Whether to enable strict validation when unmarshalling TOON. When false, JToon uses best-effort parsing.",
+        "title" : "Strict",
+        "default" : "true",
+        "displayName" : "Strict",
+        "kind" : "attribute",
+        "index" : 4,
+        "group" : "common"
+      }, {
+        "name" : "contentTypeHeader",
+        "type" : "boolean",
+        "description" : "Whether the data format should set the Content-Type header to text/toon when marshalling.",
+        "title" : "Content Type Header",
+        "default" : "true",
+        "displayName" : "Content Type Header",
+        "kind" : "attribute",
+        "index" : 5,
         "group" : "common"
       } ]
     },
@@ -19706,6 +19781,10 @@
         "name" : "thrift",
         "type" : "object",
         "ref" : "thrift"
+      }, {
+        "name" : "toon",
+        "type" : "object",
+        "ref" : "toon"
       }, {
         "name" : "ubl",
         "type" : "object",

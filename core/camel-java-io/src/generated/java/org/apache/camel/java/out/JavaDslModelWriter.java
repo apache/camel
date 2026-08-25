@@ -1111,6 +1111,13 @@ public class JavaDslModelWriter extends JavaDslModelWriterSupport {
         doWriteThriftDataFormat(sb, def);
         return sb.toString();
     }
+    public String writeToonDataFormat(ToonDataFormat def) {
+        resetState();
+        StringBuilder sb = new StringBuilder();
+        beginStep(sb, "toon", def);
+        doWriteToonDataFormat(sb, def);
+        return sb.toString();
+    }
     public String writeUblDataFormat(UblDataFormat def) {
         resetState();
         StringBuilder sb = new StringBuilder();
@@ -2095,6 +2102,7 @@ public class JavaDslModelWriter extends JavaDslModelWriterSupport {
                 case "SwiftMxDataFormat" -> doWriteChildElement(sb, "swiftMx", (SwiftMxDataFormat) def.getDataFormatType(), this::doWriteSwiftMxDataFormat);
                 case "SyslogDataFormat" -> doWriteChildElement(sb, "syslog", (SyslogDataFormat) def.getDataFormatType(), this::doWriteSyslogDataFormat);
                 case "TarFileDataFormat" -> doWriteChildElement(sb, "tarFile", (TarFileDataFormat) def.getDataFormatType(), this::doWriteTarFileDataFormat);
+                case "ToonDataFormat" -> doWriteChildElement(sb, "toon", (ToonDataFormat) def.getDataFormatType(), this::doWriteToonDataFormat);
                 case "UblDataFormat" -> doWriteChildElement(sb, "ubl", (UblDataFormat) def.getDataFormatType(), this::doWriteUblDataFormat);
                 case "ThriftDataFormat" -> doWriteChildElement(sb, "thrift", (ThriftDataFormat) def.getDataFormatType(), this::doWriteThriftDataFormat);
                 case "UniVocityCsvDataFormat" -> doWriteChildElement(sb, "univocityCsv", (UniVocityCsvDataFormat) def.getDataFormatType(), this::doWriteUniVocityCsvDataFormat);
@@ -2719,6 +2727,7 @@ public class JavaDslModelWriter extends JavaDslModelWriterSupport {
                 case "SwiftMxDataFormat" -> doWriteChildElement(sb, "swiftMx", (SwiftMxDataFormat) def.getDataFormatType(), this::doWriteSwiftMxDataFormat);
                 case "SyslogDataFormat" -> doWriteChildElement(sb, "syslog", (SyslogDataFormat) def.getDataFormatType(), this::doWriteSyslogDataFormat);
                 case "TarFileDataFormat" -> doWriteChildElement(sb, "tarFile", (TarFileDataFormat) def.getDataFormatType(), this::doWriteTarFileDataFormat);
+                case "ToonDataFormat" -> doWriteChildElement(sb, "toon", (ToonDataFormat) def.getDataFormatType(), this::doWriteToonDataFormat);
                 case "UblDataFormat" -> doWriteChildElement(sb, "ubl", (UblDataFormat) def.getDataFormatType(), this::doWriteUblDataFormat);
                 case "ThriftDataFormat" -> doWriteChildElement(sb, "thrift", (ThriftDataFormat) def.getDataFormatType(), this::doWriteThriftDataFormat);
                 case "UniVocityCsvDataFormat" -> doWriteChildElement(sb, "univocityCsv", (UniVocityCsvDataFormat) def.getDataFormatType(), this::doWriteUniVocityCsvDataFormat);
@@ -2998,6 +3007,7 @@ public class JavaDslModelWriter extends JavaDslModelWriterSupport {
                     case "SwiftMxDataFormat" -> doWriteChildElement(sb, "swiftMx", (SwiftMxDataFormat) item, this::doWriteSwiftMxDataFormat);
                     case "SyslogDataFormat" -> doWriteChildElement(sb, "syslog", (SyslogDataFormat) item, this::doWriteSyslogDataFormat);
                     case "TarFileDataFormat" -> doWriteChildElement(sb, "tarFile", (TarFileDataFormat) item, this::doWriteTarFileDataFormat);
+                    case "ToonDataFormat" -> doWriteChildElement(sb, "toon", (ToonDataFormat) item, this::doWriteToonDataFormat);
                     case "UblDataFormat" -> doWriteChildElement(sb, "ubl", (UblDataFormat) item, this::doWriteUblDataFormat);
                     case "ThriftDataFormat" -> doWriteChildElement(sb, "thrift", (ThriftDataFormat) item, this::doWriteThriftDataFormat);
                     case "UniVocityCsvDataFormat" -> doWriteChildElement(sb, "univocityCsv", (UniVocityCsvDataFormat) item, this::doWriteUniVocityCsvDataFormat);
@@ -3294,6 +3304,14 @@ public class JavaDslModelWriter extends JavaDslModelWriterSupport {
         doWriteIdentifiedTypeAttributes(sb, def);
         doWriteAttribute(sb, "instanceClass", def.getInstanceClass(), null);
         doWriteAttribute(sb, "contentTypeFormat", def.getContentTypeFormat(), "binary");
+        doWriteAttribute(sb, "contentTypeHeader", def.getContentTypeHeader(), "true");
+    }
+    protected void doWriteToonDataFormat(StringBuilder sb, ToonDataFormat def) {
+        doWriteIdentifiedTypeAttributes(sb, def);
+        doWriteAttribute(sb, "indent", def.getIndent(), "2");
+        doWriteAttribute(sb, "delimiter", def.getDelimiter(), "COMMA");
+        doWriteAttribute(sb, "lengthMarker", def.getLengthMarker(), "false");
+        doWriteAttribute(sb, "strict", def.getStrict(), "true");
         doWriteAttribute(sb, "contentTypeHeader", def.getContentTypeHeader(), "true");
     }
     protected void doWriteUblDataFormat(StringBuilder sb, UblDataFormat def) {
@@ -3957,6 +3975,7 @@ public class JavaDslModelWriter extends JavaDslModelWriterSupport {
                 case "SwiftMxDataFormat" -> doWriteChildElement(sb, "swiftMx", (SwiftMxDataFormat) def.getDataFormatType(), this::doWriteSwiftMxDataFormat);
                 case "SyslogDataFormat" -> doWriteChildElement(sb, "syslog", (SyslogDataFormat) def.getDataFormatType(), this::doWriteSyslogDataFormat);
                 case "TarFileDataFormat" -> doWriteChildElement(sb, "tarFile", (TarFileDataFormat) def.getDataFormatType(), this::doWriteTarFileDataFormat);
+                case "ToonDataFormat" -> doWriteChildElement(sb, "toon", (ToonDataFormat) def.getDataFormatType(), this::doWriteToonDataFormat);
                 case "UblDataFormat" -> doWriteChildElement(sb, "ubl", (UblDataFormat) def.getDataFormatType(), this::doWriteUblDataFormat);
                 case "ThriftDataFormat" -> doWriteChildElement(sb, "thrift", (ThriftDataFormat) def.getDataFormatType(), this::doWriteThriftDataFormat);
                 case "UniVocityCsvDataFormat" -> doWriteChildElement(sb, "univocityCsv", (UniVocityCsvDataFormat) def.getDataFormatType(), this::doWriteUniVocityCsvDataFormat);

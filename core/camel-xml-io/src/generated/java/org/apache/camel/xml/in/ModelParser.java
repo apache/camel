@@ -2065,6 +2065,16 @@ public class ModelParser extends BaseParser {
                 default: yield identifiedTypeAttributeHandler().accept(def, key, val);
             }, noElementHandler(), noValueHandler());
     }
+    protected ToonDataFormat doParseToonDataFormat() throws IOException, XmlPullParserException {
+        return doParse(new ToonDataFormat(), (def, key, val) -> switch (key) {
+                case "contentTypeHeader": def.setContentTypeHeader(val); yield true;
+                case "delimiter": def.setDelimiter(val); yield true;
+                case "indent": def.setIndent(val); yield true;
+                case "lengthMarker": def.setLengthMarker(val); yield true;
+                case "strict": def.setStrict(val); yield true;
+                default: yield identifiedTypeAttributeHandler().accept(def, key, val);
+            }, noElementHandler(), noValueHandler());
+    }
     protected UblDataFormat doParseUblDataFormat() throws IOException, XmlPullParserException {
         return doParse(new UblDataFormat(), (def, key, val) -> switch (key) {
                 case "prettyPrint": def.setPrettyPrint(val); yield true;
@@ -2877,6 +2887,7 @@ public class ModelParser extends BaseParser {
             case "syslog": return doParseSyslogDataFormat();
             case "tarFile": return doParseTarFileDataFormat();
             case "thrift": return doParseThriftDataFormat();
+            case "toon": return doParseToonDataFormat();
             case "ubl": return doParseUblDataFormat();
             case "univocityCsv": return doParseUniVocityCsvDataFormat();
             case "univocityFixed": return doParseUniVocityFixedDataFormat();
