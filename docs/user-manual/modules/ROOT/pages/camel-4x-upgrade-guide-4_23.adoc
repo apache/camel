@@ -244,3 +244,20 @@ Camel then no longer controls how the payload is read.
 
 The legacy `sse` `transportType` has been removed. It follows the support removal in 
 https://github.com/langchain4j/langchain4j/commit/7f4e99fd637137ab9d3bf116eb62047ac757a818[langchain4j-core 1.19.0].
+
+=== camel-ftp, camel-sftp, camel-ftps, camel-mina-sftp, camel-azure-files, camel-smb
+
+The remote-file consumers now ensure the path resolved for a polled file stays within the directory being
+polled. The file name that path is built from is reported by the remote server in its directory listing and is
+not guaranteed to be a single path segment, so a listing entry containing `../` sequences could previously
+resolve to a path outside the configured directory and be used as the operand for retrieving, deleting or
+renaming a file.
+
+The containment check honours the existing `jailStartingDirectory` option (default `true`), consistent with the
+file producer and with the `localWorkDirectory` download path; set `jailStartingDirectory=false` to disable it.
+A file that resolves outside the configured directory is now skipped, and a warning is logged.
+
+Ordinary listings are unaffected, as a listed name is normally a single path segment, and a `../` that still
+resolves back inside the polled directory remains accepted. Two configurations can newly see files skipped: a
+server that reports names navigating above the polled directory, and a `fileName` expression (used when
+`useList=false`) that navigates above it. Set `jailStartingDirectory=false` if such a path is intended.
