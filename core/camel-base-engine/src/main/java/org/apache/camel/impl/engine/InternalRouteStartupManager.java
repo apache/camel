@@ -426,6 +426,12 @@ final class InternalRouteStartupManager {
                         route.getProperties().remove("route.start.exception");
                     } catch (Exception e) {
                         route.getProperties().put("route.start.exception", e);
+                        String msg = e.getMessage();
+                        if (msg == null || msg.isBlank()) {
+                            throw new FailedToStartRouteException(
+                                    routeService.getId(), routeService.getLocation(),
+                                    RouteService.extractUsefulMessage(e), e);
+                        }
                         throw e;
                     }
 
@@ -464,6 +470,12 @@ final class InternalRouteStartupManager {
                     route.getProperties().remove("route.start.exception");
                 } catch (Exception e) {
                     route.getProperties().put("route.start.exception", e);
+                    String msg = e.getMessage();
+                    if (msg == null || msg.isBlank()) {
+                        throw new FailedToStartRouteException(
+                                routeService.getId(), routeService.getLocation(),
+                                RouteService.extractUsefulMessage(e), e);
+                    }
                     throw e;
                 }
             }
