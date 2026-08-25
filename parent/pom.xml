@@ -500,7 +500,7 @@
         <spring-data-redis-version>4.1.0</spring-data-redis-version>
         <spring-ldap-version>4.1.1</spring-ldap-version>
         <spring-vault-core-version>4.1.0</spring-vault-core-version>
-        <spring-version>7.0.8</spring-version>
+        <spring-version>7.0.9</spring-version>
         <spring-rabbitmq-version>4.1.0</spring-rabbitmq-version>
         <spring-security-version>7.1.0</spring-security-version>
         <spring-ws-version>5.0.2</spring-ws-version>
