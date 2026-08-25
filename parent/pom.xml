@@ -485,7 +485,7 @@
         <smallrye-config-version>3.18.2</smallrye-config-version>
         <smallrye-health-version>4.3.0</smallrye-health-version>
         <smallrye-fault-tolerance-version>6.11.2</smallrye-fault-tolerance-version>
-        <smbj-version>0.14.0</smbj-version>
+        <smbj-version>0.15.0</smbj-version>
         <smooks-version>2.2.1</smooks-version>
         <snakeyaml-version>2.6</snakeyaml-version>
         <snakeyaml-engine-version>3.1.1</snakeyaml-engine-version>
