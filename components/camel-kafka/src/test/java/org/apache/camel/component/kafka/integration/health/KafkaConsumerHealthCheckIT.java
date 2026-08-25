@@ -64,7 +64,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 @EnabledOnOs(value = { OS.LINUX, OS.MAC, OS.FREEBSD, OS.OPENBSD, OS.WINDOWS },
              architectures = { "amd64", "aarch64", "s390x" },
              disabledReason = "This test does not run reliably on ppc64le")
-class KafkaConsumerHealthCheckIT extends KafkaHealthCheckTestSupport {
+public class KafkaConsumerHealthCheckIT extends KafkaHealthCheckTestSupport {
     public static final String TOPIC = "test-health";
     public static final String SKIPPED_HEADER_KEY = "CamelSkippedHeader";
     public static final String PROPAGATED_CUSTOM_HEADER = "PropagatedCustomHeader";
