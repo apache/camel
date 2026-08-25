@@ -33,6 +33,10 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.openai.models.chat.completions.ChatCompletionMessageToolCall;
 import io.modelcontextprotocol.client.McpSyncClient;
 import io.modelcontextprotocol.spec.McpSchema;
+import org.apache.camel.Exchange;
+import org.apache.camel.component.ai.tool.AiToolExecutor;
+import org.apache.camel.component.ai.tool.AiToolResult;
+import org.apache.camel.component.ai.tool.AiToolSpec;
 import org.apache.camel.support.service.ServiceSupport;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -211,13 +215,18 @@ class McpToolCallExecutor extends ServiceSupport {
         String toolName = toolCall.asFunction().function().name();
         String argsJson = toolCall.asFunction().function().arguments();
 
+        AiToolSpec routeSpec = toolState.routeTools().get(toolName);
+        if (routeSpec != null) {
+            return executeRouteTool(toolCall, routeSpec, toolState, config);
+        }
+
         McpSyncClient mcpClient = toolState.toolClientMap().get(toolName);
         if (mcpClient == null) {
             if (config.getHallucinatedToolNameStrategy() == HallucinatedToolNameStrategy.FAIL_EXCHANGE) {
                 throw new IllegalStateException("Tool '" + toolName + "' not found in any configured MCP server");
             }
             // repromptModel: send a corrective tool result listing available tools
-            String available = String.join(", ", toolState.toolClientMap().keySet());
+            String available = String.join(", ", toolState.knownToolNames());
             LOG.warn("Hallucinated tool name '{}', sending corrective result to model", toolName);
             return errorResult(toolCall,
                     "Error: tool '" + toolName + "' does not exist. Available tools: " + available);
@@ -251,6 +260,53 @@ class McpToolCallExecutor extends ServiceSupport {
             }
             LOG.warn("MCP tool '{}' execution failed: {}", toolName, e.getMessage(), e);
             return errorResult(toolCall, "Error: Tool execution failed: " + e.getMessage());
+        }
+    }
+
+    private ToolResult executeRouteTool(
+            ChatCompletionMessageToolCall toolCall,
+            AiToolSpec spec,
+            McpToolState toolState,
+            OpenAIConfiguration config)
+            throws Exception {
+        String toolName = toolCall.asFunction().function().name();
+        String argsJson = toolCall.asFunction().function().arguments();
+
+        LOG.debug("Executing route tool '{}' with args: {}", toolName, argsJson);
+
+        try {
+            Map<String, Object> argsMap = OBJECT_MAPPER.readValue(argsJson, Map.class);
+            Exchange toolExchange = spec.getConsumer().createExchange(false);
+            try {
+                AiToolResult result = AiToolExecutor.execute(spec, argsMap, toolExchange);
+                if (result instanceof AiToolResult.Success success) {
+                    LOG.debug("Route tool '{}' result: {}", toolName, success.value());
+                    return new ToolResult(
+                            toolCall.asFunction().id(), toolName, success.value(),
+                            toolState.returnDirectTools().contains(toolName));
+                } else if (result instanceof AiToolResult.ArgumentError error) {
+                    LOG.warn("Route tool '{}' argument error: {}", toolName, error.message());
+                    return errorResult(toolCall, "Error: invalid tool arguments: " + error.message());
+                } else {
+                    AiToolResult.ExecutionError error = (AiToolResult.ExecutionError) result;
+                    if (config.getToolExecutionErrorStrategy() == ToolExecutionErrorStrategy.FAIL_EXCHANGE) {
+                        if (error.cause() != null) {
+                            throw error.cause();
+                        }
+                        throw new IllegalStateException(error.message());
+                    }
+                    LOG.warn("Route tool '{}' execution failed: {}", toolName, error.message(), error.cause());
+                    return errorResult(toolCall, "Error: Tool execution failed: " + error.message());
+                }
+            } finally {
+                spec.getConsumer().releaseExchange(toolExchange, false);
+            }
+        } catch (JsonProcessingException e) {
+            if (config.getToolExecutionErrorStrategy() == ToolExecutionErrorStrategy.FAIL_EXCHANGE) {
+                throw e;
+            }
+            LOG.warn("Invalid tool arguments for route tool '{}': {}", toolName, argsJson, e);
+            return errorResult(toolCall, "Error: invalid tool arguments: " + e.getMessage());
         }
     }
 

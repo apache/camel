@@ -85,6 +85,12 @@ public class AiToolConfiguration implements Cloneable {
                             + "Advisory for MCP clients; not enforced by Camel.")
     private Boolean openWorldHint;
 
+    @Metadata(label = "consumer", defaultValue = "false")
+    @UriParam(description = "When true, AI producers that support agentic tool loops (such as camel-openai) return "
+                            + "this tool's result directly to the caller without sending it back to the model. "
+                            + "Also published as an MCP tool annotation when the tool is exposed via camel-mcp-server.")
+    private Boolean returnDirect;
+
     public AiToolConfiguration() {
     }
 
@@ -158,6 +164,14 @@ public class AiToolConfiguration implements Cloneable {
 
     public void setOpenWorldHint(Boolean openWorldHint) {
         this.openWorldHint = openWorldHint;
+    }
+
+    public Boolean getReturnDirect() {
+        return returnDirect;
+    }
+
+    public void setReturnDirect(Boolean returnDirect) {
+        this.returnDirect = returnDirect;
     }
 
     public AiToolConfiguration copy() {

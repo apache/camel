@@ -1321,6 +1321,22 @@ public interface OpenAIEndpointBuilderFactory {
             return this;
         }
         /**
+         * Comma-separated tags for discovering route-based tools registered via
+         * the ai-tool component. When set, matching tools from the shared
+         * AiToolRegistry are exposed to the model alongside MCP tools.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: producer
+         * 
+         * @param tags the value to set
+         * @return the dsl builder
+         */
+        default OpenAIEndpointBuilder tags(String tags) {
+            doSetProperty("tags", tags);
+            return this;
+        }
+        /**
          * Temperature for response generation (0.0 to 2.0).
          * 
          * The option is a: <code>java.lang.Double</code> type.
