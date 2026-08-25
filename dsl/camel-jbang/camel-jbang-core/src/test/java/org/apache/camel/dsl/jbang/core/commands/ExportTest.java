@@ -104,6 +104,22 @@ class ExportTest {
 
     @ParameterizedTest
     @MethodSource("runtimeProvider")
+    void shouldExportRouteConfigurationWithStringRedeliveryDelay(RuntimeType rt) throws Exception {
+        LOG.info("shouldExportRouteConfigurationWithStringRedeliveryDelay {}", rt);
+        Export command = createCommand(rt,
+                new String[] { "src/test/resources/route-configuration-redelivery-delay.yaml" },
+                "--gav=examples:route:1.0.0", "--dir=" + workingDir, "--quiet");
+        int exit = command.doCall();
+
+        assertThat(exit).isZero();
+        Model model = readMavenModel();
+        assertThat(model.getGroupId()).isEqualTo("examples");
+        assertThat(model.getArtifactId()).isEqualTo("route");
+        assertThat(model.getVersion()).isEqualTo("1.0.0");
+    }
+
+    @ParameterizedTest
+    @MethodSource("runtimeProvider")
     public void shouldExportDifferentVersion(RuntimeType rt) throws Exception {
         LOG.info("shouldExportDifferentVersion {}", rt);
         // only test for main/spring-boot
