@@ -51,6 +51,8 @@ updates:
         patterns: ["org.elasticsearch.client:*", "co.elastic.clients:*"]
       Google-cloud:
         patterns: ["com.google.cloud:*"]
+      Avro:
+        patterns: ["org.apache.avro:*"]
     open-pull-requests-limit: 20
   - package-ecosystem: "npm"
     directory: "docs"
