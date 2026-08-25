@@ -315,7 +315,7 @@
   "groupId" : "org.apache.camel",
   "artifactId" : "camel-test-infra-smb",
   "version" : "4.23.0-SNAPSHOT",
-  "serviceVersion" : "0.14.0",
+  "serviceVersion" : "0.15.0",
   "uiSupported" : false
 }, {
   "service" : "org.apache.camel.test.infra.openldap.services.OpenldapInfraService",
