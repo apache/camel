@@ -107,8 +107,10 @@ public class FileIdempotentRenameRepositoryReadLockStrategy extends ServiceSuppo
     public void releaseExclusiveReadLockOnAbort(
             GenericFileOperations<File> operations, GenericFile<File> file, Exchange exchange)
             throws Exception {
-        String key = asKey(exchange, file);
-        idempotentRepository.remove(exchange, key);
+        // this is only called after acquireExclusiveReadLock failed. If it failed because the key
+        // already existed (owned by a previous run or another node) it must not be removed here. If
+        // it failed because the rename-check did not pass after we added the key, acquireExclusiveReadLock
+        // already removed it, so there is nothing left to clean up
         rename.releaseExclusiveReadLockOnAbort(operations, file, exchange);
     }
 

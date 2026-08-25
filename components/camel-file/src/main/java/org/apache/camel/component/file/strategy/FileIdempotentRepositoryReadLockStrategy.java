@@ -95,8 +95,9 @@ public class FileIdempotentRepositoryReadLockStrategy extends ServiceSupport
     public void releaseExclusiveReadLockOnAbort(
             GenericFileOperations<File> operations, GenericFile<File> file, Exchange exchange)
             throws Exception {
-        String key = asKey(exchange, file);
-        idempotentRepository.remove(exchange, key);
+        // this is only called after acquireExclusiveReadLock failed to add the key, which means
+        // either the key already existed (owned by a previous run or another node) and must not
+        // be touched, so there is nothing to release/remove here
     }
 
     @Override
