@@ -4886,6 +4886,19 @@ public interface ComponentsBuilderFactory {
         return SshComponentBuilderFactory.ssh();
     }
     /**
+     * State Store (camel-state-store)
+     * Perform key-value operations against a pluggable state store backend.
+     * 
+     * Category: cache
+     * Since: 4.23
+     * Maven coordinates: org.apache.camel:camel-state-store
+     * 
+     * @return the dsl builder
+     */
+    static StateStoreComponentBuilderFactory.StateStoreComponentBuilder stateStore() {
+        return StateStoreComponentBuilderFactory.stateStore();
+    }
+    /**
      * StAX (camel-stax)
      * Process XML payloads by a SAX ContentHandler.
      * 

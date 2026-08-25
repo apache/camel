@@ -3756,6 +3756,19 @@ public class EndpointHeaderBuilders {
         return SshEndpointBuilderFactory.SshHeaderNameBuilder.INSTANCE;
     }
     /**
+     * State Store (camel-state-store)
+     * Perform key-value operations against a pluggable state store backend.
+     * 
+     * Category: cache
+     * Since: 4.23
+     * Maven coordinates: org.apache.camel:camel-state-store
+     * 
+     * @return the dsl builder for the headers' name.
+     */
+    public static StateStoreEndpointBuilderFactory.StateStoreHeaderNameBuilder stateStore() {
+        return StateStoreEndpointBuilderFactory.StateStoreHeaderNameBuilder.INSTANCE;
+    }
+    /**
      * Stitch (camel-stitch)
      * Stitch is a cloud ETL service that integrates various data sources into a
      * central data warehouse through various integrations.
