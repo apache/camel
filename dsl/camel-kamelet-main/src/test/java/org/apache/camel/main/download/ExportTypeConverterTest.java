@@ -18,6 +18,8 @@ package org.apache.camel.main.download;
 
 import java.time.Duration;
 
+import org.apache.camel.NoTypeConversionAvailableException;
+import org.apache.camel.TypeConverterExists;
 import org.apache.camel.impl.engine.SimpleCamelContext;
 import org.apache.camel.spi.TypeConverterRegistry;
 import org.junit.jupiter.api.AfterEach;
@@ -25,6 +27,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 class ExportTypeConverterTest {
 
@@ -34,8 +37,8 @@ class ExportTypeConverterTest {
     void setUp() throws Exception {
         context = new SimpleCamelContext();
         TypeConverterRegistry registry = context.getTypeConverterRegistry();
-        ExportTypeConverter exportConverter = new ExportTypeConverter();
-        registry.addTypeConverter(Duration.class, String.class, exportConverter);
+        registry.setTypeConverterExists(TypeConverterExists.Override);
+        registry.addTypeConverter(Duration.class, String.class, new ExportTypeConverter());
         context.start();
     }
 
@@ -47,17 +50,26 @@ class ExportTypeConverterTest {
     }
 
     @Test
-    void shouldConvertStringToDurationAsMilliseconds() {
-        Duration duration = context.getTypeConverter().convertTo(Duration.class, "500");
+    void shouldConvertStringToDurationWhenExportConverterOverridesDefault() throws Exception {
+        Duration duration = context.getTypeConverter().mandatoryConvertTo(Duration.class, "500");
 
         assertEquals(Duration.ofMillis(500), duration);
     }
 
     @Test
-    void shouldConvertDurationTextWithUnit() {
-        Duration duration = context.getTypeConverter().convertTo(Duration.class, "2s");
+    void shouldConvertDurationTextWithUnitWhenExportConverterOverridesDefault() throws Exception {
+        Duration duration = context.getTypeConverter().mandatoryConvertTo(Duration.class, "2s");
 
         assertEquals(Duration.ofSeconds(2), duration);
+    }
+
+    @Test
+    void shouldFailMandatoryConversionWithoutDurationSupport() {
+        TypeConverterRegistry registry = context.getTypeConverterRegistry();
+        registry.addTypeConverter(Duration.class, String.class, new ExportTypeConverterWithoutDuration());
+
+        assertThrows(NoTypeConversionAvailableException.class,
+                () -> context.getTypeConverter().mandatoryConvertTo(Duration.class, "500"));
     }
 
     @Test
@@ -67,5 +79,18 @@ class ExportTypeConverterTest {
         Duration duration = converter.convertTo(Duration.class, null, "500ms");
 
         assertEquals(Duration.ofMillis(500), duration);
+    }
+
+    /**
+     * Mimics ExportTypeConverter before Duration support was added.
+     */
+    private static final class ExportTypeConverterWithoutDuration extends ExportTypeConverter {
+        @Override
+        public <T> T convertTo(Class<T> type, org.apache.camel.Exchange exchange, Object value) {
+            if (type == Duration.class) {
+                return null;
+            }
+            return super.convertTo(type, exchange, value);
+        }
     }
 }
