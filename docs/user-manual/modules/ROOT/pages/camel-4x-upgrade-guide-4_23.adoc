@@ -307,5 +307,9 @@ Deployments that rely on authenticating to a partner's asynchronous MDN endpoint
 partner's host to `asyncMdnAllowedHosts`.
 
 Two further checks are applied to the delivery address regardless of the option: the scheme must be
-`http` or `https`, and an address with no explicit port now uses 80 or 443 rather than being passed
-to the socket as `-1`.
+`http`, and an address with no explicit port now uses 80 rather than being passed to the socket as `-1`.
+
+`https` is refused. `AS2AsynchronousMDNManager` delivers over a plain socket and has no TLS support, so an
+`https` address was never actually delivered over TLS — the request was written in cleartext to the TLS
+port and the peer reset the connection. Such an address is now refused outright rather than attempted, and
+TLS delivery of asynchronous MDNs remains unsupported.

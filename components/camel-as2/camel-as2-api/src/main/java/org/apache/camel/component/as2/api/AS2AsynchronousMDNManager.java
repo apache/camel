@@ -161,15 +161,19 @@ public class AS2AsynchronousMDNManager {
         // header), so it is untrusted input that selects an outbound destination.
         URI uri = URI.create(recipientDeliveryAddress);
         String scheme = uri.getScheme() == null ? null : uri.getScheme().toLowerCase(Locale.US);
-        if (!"http".equals(scheme) && !"https".equals(scheme)) {
+        // Only http. This class delivers over a plain Socket and has no TLS of any kind, so accepting https
+        // would mean writing the request - including the Authorization header - in cleartext to the TLS port.
+        // https delivery has never worked here for that reason, so refusing it removes nothing that functioned.
+        if (!"http".equals(scheme)) {
             throw new HttpException(
-                    "Refusing to deliver the asynchronous MDN: the delivery address must use http or https");
+                    "Refusing to deliver the asynchronous MDN: the delivery address must use http."
+                                    + " TLS delivery of asynchronous MDNs is not supported");
         }
-        String host = uri.getHost();
+        String host = normalizeHost(uri.getHost());
         if (host == null) {
             throw new HttpException("Refusing to deliver the asynchronous MDN: the delivery address has no host");
         }
-        int port = uri.getPort() != -1 ? uri.getPort() : ("https".equals(scheme) ? 443 : 80);
+        int port = uri.getPort() != -1 ? uri.getPort() : 80;
 
         boolean hostIsAllowed = isAllowedHost(host);
         if (allowedHosts != null && !allowedHosts.isBlank() && !hostIsAllowed) {
@@ -217,6 +221,17 @@ public class AS2AsynchronousMDNManager {
         } catch (Exception e) {
             throw new HttpException("failed to send MDN", e);
         }
+    }
+
+    /**
+     * {@link URI#getHost()} returns an IPv6 literal in its bracketed form ({@code [::1]}), which would never match an
+     * allow-list entry written the way an operator writes it. Compare the address itself.
+     */
+    private static String normalizeHost(String host) {
+        if (host != null && host.length() > 1 && host.charAt(0) == '[' && host.charAt(host.length() - 1) == ']') {
+            return host.substring(1, host.length() - 1);
+        }
+        return host;
     }
 
     private boolean isAllowedHost(String host) {
