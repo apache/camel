@@ -219,7 +219,6 @@
         <module>camel-kudu</module>
         <module>camel-ldap</module>
         <module>camel-ldif</module>
-        <module>camel-leveldb</module>
         <module>camel-lra</module>
         <module>camel-lucene</module>
         <module>camel-lumberjack</module>
