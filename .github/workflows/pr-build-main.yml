@@ -23,6 +23,7 @@ on:
       - main
     # CI-only changes don't need a full build. Use workflow_dispatch to
     # test CI changes: gh workflow run "Build and test" -f pr_number=XXXX -f pr_ref=branch-name
+    # -f pr_repo=owner/camel (pr_repo only needed when the branch lives on a fork)
     paths-ignore:
       - .claude-plugin/**
       - .idea/**
@@ -44,6 +45,11 @@ on:
         description: 'Git ref of the pull request branch'
         required: true
         type: string
+      pr_repo:
+        description: 'Repository the branch lives on (owner/camel), only needed for a fork branch'
+        required: false
+        type: string
+        default: ''
       extra_modules:
         description: 'Additional modules to test (comma-separated paths, e.g. from /component-test)'
         required: false
@@ -83,6 +89,7 @@ jobs:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           persist-credentials: false
+          repository: ${{ inputs.pr_repo || github.repository }}
           ref: ${{ inputs.pr_ref || '' }}
       - name: Fetch base branch for Scalpel change detection
         if: ${{ !inputs.skip_full_build }}
