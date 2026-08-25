@@ -133,6 +133,6 @@ public class OpenAIEmptyChoicesResponseTest extends CamelTestSupport {
                 McpToolConverter.convert(mcpTools),
                 toolClients,
                 Map.of(),
-                Set.of()));
+                Set.of(), Map.of()));
     }
 }
