@@ -165,10 +165,18 @@ public class IBMCOSConsumer extends ScheduledBatchPollingConsumer {
                 continue;
             }
 
-            S3Object s3Object = getCosClient().getObject(
-                    new GetObjectRequest(s3ObjectSummary.getBucketName(), s3ObjectSummary.getKey()));
-            Exchange exchange = createExchange(s3Object, s3ObjectSummary.getKey());
-            exchanges.add(exchange);
+            try {
+                S3Object s3Object = getCosClient().getObject(
+                        new GetObjectRequest(s3ObjectSummary.getBucketName(), s3ObjectSummary.getKey()));
+                Exchange exchange = createExchange(s3Object, s3ObjectSummary.getKey());
+                exchanges.add(exchange);
+            } catch (Exception e) {
+                // Fetching the object or creating the exchange failed after we claimed the in-progress key;
+                // release it so the object is not left permanently unconsumable, and skip it for this poll.
+                LOG.warn("Error fetching object {} from bucket {}: {}. Skipping it for this poll.",
+                        s3ObjectSummary.getKey(), s3ObjectSummary.getBucketName(), e.getMessage());
+                removeInProgress(s3ObjectSummary.getKey());
+            }
         }
 
         return exchanges;
