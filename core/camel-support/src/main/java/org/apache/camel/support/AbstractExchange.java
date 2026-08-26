@@ -38,6 +38,7 @@ import org.apache.camel.Message;
 import org.apache.camel.MessageHistory;
 import org.apache.camel.Route;
 import org.apache.camel.SafeCopyProperty;
+import org.apache.camel.TypeConverter;
 import org.apache.camel.spi.Synchronization;
 import org.apache.camel.spi.UnitOfWork;
 import org.apache.camel.spi.VariableRepository;
@@ -496,7 +497,14 @@ abstract class AbstractExchange implements Exchange, ExchangeExtension {
         }
 
         // fallback to use type converter
-        return context.getTypeConverter().convertTo(type, this, in);
+        TypeConverter tc = context.getTypeConverter();
+        if (tc == null) {
+            throw new IllegalStateException(
+                    "Cannot convert message body to " + type.getName()
+                                            + " because CamelContext type converter is not available"
+                                            + " (context not started, stopped, or not initialized)");
+        }
+        return tc.convertTo(type, this, in);
     }
 
     @Override
@@ -550,7 +558,14 @@ abstract class AbstractExchange implements Exchange, ExchangeExtension {
         }
 
         // fallback to use type converter
-        return context.getTypeConverter().convertTo(type, this, out);
+        TypeConverter tc = context.getTypeConverter();
+        if (tc == null) {
+            throw new IllegalStateException(
+                    "Cannot convert message body to " + type.getName()
+                                            + " because CamelContext type converter is not available"
+                                            + " (context not started, stopped, or not initialized)");
+        }
+        return tc.convertTo(type, this, out);
     }
 
     @SuppressWarnings("deprecated")
