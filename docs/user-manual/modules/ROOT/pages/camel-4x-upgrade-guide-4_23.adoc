@@ -317,6 +317,7 @@ TLS delivery of asynchronous MDNs remains unsupported.
 === camel-ibm-cos
 
 The `CACHE_CONTROL` header constant's value has been corrected from the misspelled `CamelIBMCOSContentControl`
-to `CamelIBMCOSCacheControl`, so the header name matches the Cache-Control metadata it carries. Routes that
-referenced the previous header name directly (as a string) must use `CamelIBMCOSCacheControl`; routes using the
+to `CamelIBMCOSCacheControl`, so the header name matches the Cache-Control metadata it carries. This is a
+breaking change for routes that reference the header by its literal string name: they must switch to
+`CamelIBMCOSCacheControl`, although the change is trivial to adapt. Routes using the
 `IBMCOSConstants.CACHE_CONTROL` constant are unaffected.
