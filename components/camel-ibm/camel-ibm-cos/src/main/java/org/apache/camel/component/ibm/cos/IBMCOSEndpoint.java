@@ -115,6 +115,9 @@ public class IBMCOSEndpoint extends ScheduledPollEndpoint implements EndpointSer
     protected void doStart() throws Exception {
         super.doStart();
 
+        // Start the in-progress repository up front so consumer deduplication works even when doStart returns early
+        ServiceHelper.startService(inProgressRepository);
+
         cosClient = configuration.getCosClient() != null
                 ? configuration.getCosClient() : createCosClient();
 
@@ -146,8 +149,6 @@ public class IBMCOSEndpoint extends ScheduledPollEndpoint implements EndpointSer
             cosClient.createBucket(bucketName);
             LOG.trace("Bucket created");
         }
-
-        ServiceHelper.startService(inProgressRepository);
     }
 
     @Override
