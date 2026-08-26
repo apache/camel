@@ -49,6 +49,10 @@ this executor is functionally identical to the built-in `DefaultReactiveExecutor
 To migrate, remove the `camel-reactive-executor-tomcat` dependency from your project. Camel will
 automatically use the default reactive executor.
 
+==== camel-threadpoolfactory-vertx
+
+The component camel-threadpoolfactory-vertx was deprecated in 4.21. The component has been in an experimental state for a long time and no user feedback has been received to justify continued maintenance.
+
 ==== camel-zeebe
 
 `camel-zeebe` component was deprecated in 4.19 and has a straightforward replacement with `camel-camunda`. It is removed in 4.23.
