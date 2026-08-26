@@ -209,6 +209,44 @@ public class ModelParser extends BaseParser {
                 default: yield false;
             }, noValueHandler());
     }
+    protected CacheDefinition doParseCacheDefinition() throws IOException, XmlPullParserException {
+        return doParse(new CacheDefinition(), (def, key, val) -> switch (key) {
+                case "cacheNull": def.setCacheNull(val); yield true;
+                case "keyValueRepository": def.setKeyValueRepository(val); yield true;
+                case "ttl": def.setTtl(val); yield true;
+                default: yield processorDefinitionAttributeHandler().accept(def, key, val);
+            }, outputExpressionNodeElementHandler(), noValueHandler());
+    }
+    protected <T extends OutputExpressionNode> ElementHandler<T> outputExpressionNodeElementHandler() {
+        return (def, key) -> {
+            ProcessorDefinition v = doParseProcessorDefinitionRef(key);
+            if (v != null) {
+                doAdd(v, def.getOutputs(), def::setOutputs);
+                return true;
+            }
+            return expressionNodeElementHandler().accept(def, key);
+        };
+    }
+    protected <T extends ExpressionNode> ElementHandler<T> expressionNodeElementHandler() {
+        return (def, key) -> {
+            ExpressionDefinition v = doParseExpressionDefinitionRef(key);
+            if (v != null) {
+                def.setExpression(v);
+                return true;
+            }
+            return optionalIdentifiedDefinitionElementHandler().accept(def, key);
+        };
+    }
+    protected <T extends ExpressionDefinition> AttributeHandler<T> expressionDefinitionAttributeHandler() {
+        return (def, key, val) -> switch (key) {
+            case "id": def.setId(val); yield true;
+            case "trim": def.setTrim(val); yield true;
+            default: yield false;
+        };
+    }
+    protected ExpressionDefinition doParseExpressionDefinition() throws IOException, XmlPullParserException {
+        return doParse(new ExpressionDefinition(), expressionDefinitionAttributeHandler(), noElementHandler(), expressionDefinitionValueHandler());
+    }
     protected CatchDefinition doParseCatchDefinition() throws IOException, XmlPullParserException {
         return doParse(new CatchDefinition(), processorDefinitionAttributeHandler(), (def, key) -> switch (key) {
                 case "exception": doAdd(doParseText(), def.getExceptions(), def::setExceptions); yield true;
@@ -351,26 +389,6 @@ public class ModelParser extends BaseParser {
                 default: yield processorDefinitionAttributeHandler().accept(def, key, val);
             }, expressionNodeElementHandler(), noValueHandler());
     }
-    protected <T extends ExpressionNode> ElementHandler<T> expressionNodeElementHandler() {
-        return (def, key) -> {
-            ExpressionDefinition v = doParseExpressionDefinitionRef(key);
-            if (v != null) {
-                def.setExpression(v);
-                return true;
-            }
-            return optionalIdentifiedDefinitionElementHandler().accept(def, key);
-        };
-    }
-    protected <T extends ExpressionDefinition> AttributeHandler<T> expressionDefinitionAttributeHandler() {
-        return (def, key, val) -> switch (key) {
-            case "id": def.setId(val); yield true;
-            case "trim": def.setTrim(val); yield true;
-            default: yield false;
-        };
-    }
-    protected ExpressionDefinition doParseExpressionDefinition() throws IOException, XmlPullParserException {
-        return doParse(new ExpressionDefinition(), expressionDefinitionAttributeHandler(), noElementHandler(), expressionDefinitionValueHandler());
-    }
     protected DynamicRouterDefinition doParseDynamicRouterDefinition() throws IOException, XmlPullParserException {
         return doParse(new DynamicRouterDefinition(), (def, key, val) -> switch (key) {
                 case "allowedSchemes": def.setAllowedSchemes(val); yield true;
@@ -432,16 +450,6 @@ public class ModelParser extends BaseParser {
                 case "statusPropertyName": def.setStatusPropertyName(val); yield true;
                 default: yield processorDefinitionAttributeHandler().accept(def, key, val);
             }, outputExpressionNodeElementHandler(), noValueHandler());
-    }
-    protected <T extends OutputExpressionNode> ElementHandler<T> outputExpressionNodeElementHandler() {
-        return (def, key) -> {
-            ProcessorDefinition v = doParseProcessorDefinitionRef(key);
-            if (v != null) {
-                doAdd(v, def.getOutputs(), def::setOutputs);
-                return true;
-            }
-            return expressionNodeElementHandler().accept(def, key);
-        };
     }
     protected FinallyDefinition doParseFinallyDefinition() throws IOException, XmlPullParserException {
         return doParse(new FinallyDefinition(), processorDefinitionAttributeHandler(), outputDefinitionElementHandler(), noValueHandler());
@@ -2763,6 +2771,7 @@ public class ModelParser extends BaseParser {
             case "a2aSubTask": return doParseA2ASubTaskDefinition();
             case "aggregate": return doParseAggregateDefinition();
             case "bean": return doParseBeanDefinition();
+            case "cache": return doParseCacheDefinition();
             case "doCatch": return doParseCatchDefinition();
             case "choice": return doParseChoiceDefinition();
             case "circuitBreaker": return doParseCircuitBreakerDefinition();
@@ -2834,6 +2843,40 @@ public class ModelParser extends BaseParser {
             default: return null;
         }
     }
+    protected ExpressionDefinition doParseExpressionDefinitionRef(String key) throws IOException, XmlPullParserException {
+        switch (key) {
+            case "expressionDefinition": return doParseExpressionDefinition();
+            case "csimple": return doParseCSimpleExpression();
+            case "constant": return doParseConstantExpression();
+            case "datasonnet": return doParseDatasonnetExpression();
+            case "exchangeProperty": return doParseExchangePropertyExpression();
+            case "groovy": return doParseGroovyExpression();
+            case "header": return doParseHeaderExpression();
+            case "hl7terser": return doParseHl7TerserExpression();
+            case "jactl": return doParseJactlExpression();
+            case "java": return doParseJavaExpression();
+            case "js": return doParseJavaScriptExpression();
+            case "joor": return doParseJoorExpression();
+            case "jq": return doParseJqExpression();
+            case "jsonpath": return doParseJsonPathExpression();
+            case "language": return doParseLanguageExpression();
+            case "method": return doParseMethodCallExpression();
+            case "mvel": return doParseMvelExpression();
+            case "ognl": return doParseOgnlExpression();
+            case "python3": return doParsePython3Expression();
+            case "python": return doParsePythonExpression();
+            case "ref": return doParseRefExpression();
+            case "simple": return doParseSimpleExpression();
+            case "spel": return doParseSpELExpression();
+            case "tokenize": return doParseTokenizerExpression();
+            case "variable": return doParseVariableExpression();
+            case "wasm": return doParseWasmExpression();
+            case "xtokenize": return doParseXMLTokenizerExpression();
+            case "xpath": return doParseXPathExpression();
+            case "xquery": return doParseXQueryExpression();
+            default: return null;
+        }
+    }
     protected DataFormatDefinition doParseDataFormatDefinitionRef(String key) throws IOException, XmlPullParserException {
         switch (key) {
             case "asn1": return doParseASN1DataFormat();
@@ -2885,40 +2928,6 @@ public class ModelParser extends BaseParser {
             case "yaml": return doParseYAMLDataFormat();
             case "zipDeflater": return doParseZipDeflaterDataFormat();
             case "zipFile": return doParseZipFileDataFormat();
-            default: return null;
-        }
-    }
-    protected ExpressionDefinition doParseExpressionDefinitionRef(String key) throws IOException, XmlPullParserException {
-        switch (key) {
-            case "expressionDefinition": return doParseExpressionDefinition();
-            case "csimple": return doParseCSimpleExpression();
-            case "constant": return doParseConstantExpression();
-            case "datasonnet": return doParseDatasonnetExpression();
-            case "exchangeProperty": return doParseExchangePropertyExpression();
-            case "groovy": return doParseGroovyExpression();
-            case "header": return doParseHeaderExpression();
-            case "hl7terser": return doParseHl7TerserExpression();
-            case "jactl": return doParseJactlExpression();
-            case "java": return doParseJavaExpression();
-            case "js": return doParseJavaScriptExpression();
-            case "joor": return doParseJoorExpression();
-            case "jq": return doParseJqExpression();
-            case "jsonpath": return doParseJsonPathExpression();
-            case "language": return doParseLanguageExpression();
-            case "method": return doParseMethodCallExpression();
-            case "mvel": return doParseMvelExpression();
-            case "ognl": return doParseOgnlExpression();
-            case "python3": return doParsePython3Expression();
-            case "python": return doParsePythonExpression();
-            case "ref": return doParseRefExpression();
-            case "simple": return doParseSimpleExpression();
-            case "spel": return doParseSpELExpression();
-            case "tokenize": return doParseTokenizerExpression();
-            case "variable": return doParseVariableExpression();
-            case "wasm": return doParseWasmExpression();
-            case "xtokenize": return doParseXMLTokenizerExpression();
-            case "xpath": return doParseXPathExpression();
-            case "xquery": return doParseXQueryExpression();
             default: return null;
         }
     }

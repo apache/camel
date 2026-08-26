@@ -2,7 +2,7 @@
 :doctitle: State Store
 :shortname: state-store
 :artifactid: camel-state-store
-:description: Perform key-value operations against a pluggable state store backend.
+:description: Perform key-value operations against a pluggable KeyValueRepository backend.
 :since: 4.23
 :supportlevel: Preview
 :tabs-sync-option:
@@ -12,13 +12,14 @@
 
 *{component-header}*
 
-The State Store component provides a simple, unified key-value store API with pluggable backends.
-It is useful for caching, session state, and scenarios where you need a simple object store
-(similar to MuleSoft's Object Store).
+The State Store component provides a simple, unified key-value store API backed by the
+`KeyValueRepository` SPI from `camel-api`. It is useful for caching, session state, and
+scenarios where you need a simple object store (similar to MuleSoft's Object Store).
 
-By default, an in-memory backend is used (based on `ConcurrentHashMap`), but you can plug in
-any custom backend by implementing the `StateStoreBackend` interface or using one of the
-provided backend modules:
+By default, an in-memory backend is used (`MemoryKeyValueRepository` from `camel-support`),
+but you can plug in any `KeyValueRepository` implementation. The same `KeyValueRepository`
+can also be used as the backend for the Idempotent Consumer and Aggregator EIPs via the
+`KeyValueIdempotentRepository` and `KeyValueAggregationRepository` adapters.
 
 == When to use State Store vs individual components
 
@@ -33,6 +34,7 @@ Use State Store when:
 * You are *migrating from MuleSoft* and want an Object Store equivalent.
 * You want *backend portability* — develop with in-memory, deploy with Redis or Infinispan.
 * Your use case is limited to *put, putIfAbsent, get, delete, contains, keys, size, clear* operations.
+* You want a *single backend* to serve state store, idempotent consumer, and aggregation patterns.
 
 [width="100%",cols="1,2,1",options="header"]
 |===
@@ -164,226 +166,35 @@ from("direct:init")
 === Backend auto-discovery
 
 If no `backend` option is specified on the endpoint, the component automatically looks up a
-`StateStoreBackend` bean from the Camel registry. If exactly one is found, it is used for all
-endpoints. If none is found, the default in-memory backend is used.
+`KeyValueRepository` bean from the Camel registry. If exactly one is found, it is used for all
+endpoints. If none is found, the default in-memory backend (`MemoryKeyValueRepository`) is used.
 
 This means you can configure a backend once (via Java or properties) and all `state-store`
 endpoints will use it without needing `backend=#beanName` on each endpoint URI.
 
-=== Configuring backends via properties
-
-Backends can be configured entirely via `application.properties` using Camel's `camel.beans.*`
-syntax, without writing any Java code. This is especially useful for YAML DSL or Camel JBang users.
-
-[tabs]
-====
-Caffeine::
-+
-[source,properties]
-----
-# application.properties
-camel.beans.caffeineBackend = #class:org.apache.camel.component.statestore.caffeine.CaffeineStateStoreBackend
-camel.beans.caffeineBackend.maximumSize = 50000
-----
-
-Redis::
-+
-[source,properties]
-----
-# application.properties
-camel.beans.redisBackend = #class:org.apache.camel.component.statestore.redis.RedisStateStoreBackend
-camel.beans.redisBackend.redisUrl = redis://myhost:6379
-camel.beans.redisBackend.mapName = my-app-state
-----
-
-Infinispan::
-+
-[source,properties]
-----
-# application.properties
-camel.beans.infinispanBackend = #class:org.apache.camel.component.statestore.infinispan.InfinispanStateStoreBackend
-camel.beans.infinispanBackend.hosts = myhost:11222
-camel.beans.infinispanBackend.cacheName = my-cache
-----
-====
-
-With the backend configured via properties and auto-discovery, no `backend=#...` reference
-is needed in the route:
-
-[source,yaml]
-----
-- route:
-    from:
-      uri: direct:store
-    steps:
-      - setHeader:
-          name: CamelStateStoreKey
-          constant: myKey
-      - to:
-          uri: state-store:myStore?operation=put
-----
-
 === In-Memory (default)
 
-The default backend stores entries in a `ConcurrentHashMap`. TTL expiry is lazy -- entries are
-checked and removed on access rather than by a background thread.
+The default backend (`MemoryKeyValueRepository`) stores entries in a `ConcurrentHashMap`. TTL
+expiry is lazy -- entries are checked and removed on access rather than by a background thread.
 
 No additional dependency is needed beyond `camel-state-store`.
 
-=== Caffeine
-
-Add the dependency:
-
-[source,xml]
-----
-<dependency>
-    <groupId>org.apache.camel</groupId>
-    <artifactId>camel-state-store-caffeine</artifactId>
-</dependency>
-----
-
-[tabs]
-====
-Java::
-+
-[source,java]
-----
-@BindToRegistry("caffeineBackend")
-public CaffeineStateStoreBackend caffeine() {
-    CaffeineStateStoreBackend backend = new CaffeineStateStoreBackend();
-    backend.setMaximumSize(50_000); // default is 10,000
-    return backend;
-}
-----
-
-Properties::
-+
-[source,properties]
-----
-camel.beans.caffeineBackend = #class:org.apache.camel.component.statestore.caffeine.CaffeineStateStoreBackend
-camel.beans.caffeineBackend.maximumSize = 50000
-----
-====
-
-With auto-discovery, the backend is picked up automatically. You can also reference it explicitly:
-
-[source,java]
-----
-from("direct:store")
-    .to("state-store:myStore?operation=put&backend=#caffeineBackend");
-----
-
-Caffeine provides proper eviction policies and active TTL expiration using variable expiry.
-
-=== Redis
-
-Add the dependency:
-
-[source,xml]
-----
-<dependency>
-    <groupId>org.apache.camel</groupId>
-    <artifactId>camel-state-store-redis</artifactId>
-</dependency>
-----
-
-[tabs]
-====
-Java::
-+
-[source,java]
-----
-@BindToRegistry("redisBackend")
-public RedisStateStoreBackend redis() {
-    RedisStateStoreBackend backend = new RedisStateStoreBackend();
-    backend.setRedisUrl("redis://myhost:6379");
-    backend.setMapName("my-app-state"); // Redis map name
-    return backend;
-}
-----
-
-Properties::
-+
-[source,properties]
-----
-camel.beans.redisBackend = #class:org.apache.camel.component.statestore.redis.RedisStateStoreBackend
-camel.beans.redisBackend.redisUrl = redis://myhost:6379
-camel.beans.redisBackend.mapName = my-app-state
-----
-====
-
-You can also inject a pre-configured `RedissonClient`:
-
-[source,java]
-----
-backend.setRedisson(existingRedissonClient);
-----
-
-Redis provides native per-entry TTL via `RMapCache`. Data is distributed and persisted according
-to your Redis configuration.
-
-=== Infinispan
-
-Add the dependency:
-
-[source,xml]
-----
-<dependency>
-    <groupId>org.apache.camel</groupId>
-    <artifactId>camel-state-store-infinispan</artifactId>
-</dependency>
-----
-
-[tabs]
-====
-Java::
-+
-[source,java]
-----
-@BindToRegistry("infinispanBackend")
-public InfinispanStateStoreBackend infinispan() {
-    InfinispanStateStoreBackend backend = new InfinispanStateStoreBackend();
-    backend.setHosts("myhost:11222");
-    backend.setCacheName("my-cache");
-    return backend;
-}
-----
-
-Properties::
-+
-[source,properties]
-----
-camel.beans.infinispanBackend = #class:org.apache.camel.component.statestore.infinispan.InfinispanStateStoreBackend
-camel.beans.infinispanBackend.hosts = myhost:11222
-camel.beans.infinispanBackend.cacheName = my-cache
-----
-====
-
-You can also inject a pre-configured `RemoteCacheManager`:
-
-[source,java]
-----
-backend.setCacheManager(existingCacheManager);
-----
-
-Infinispan provides native per-entry TTL via the lifespan parameter and supports distributed caching.
-
 == Custom Backend
 
-Implement the `StateStoreBackend` interface to create your own backend:
+Implement the `KeyValueRepository` interface (from `org.apache.camel.spi`) to create your own backend:
 
 [source,java]
 ----
-public class MyCustomBackend implements StateStoreBackend {
-
-    @Override
-    public Object put(String key, Object value, long ttlMillis) {
-        // store the value, return previous
-    }
+public class MyCustomBackend extends ServiceSupport implements KeyValueRepository {
 
     @Override
     public Object get(String key) {
         // retrieve the value
+    }
+
+    @Override
+    public void put(String key, Object value, long ttlMillis) {
+        // store the value
     }
 
     @Override
@@ -405,16 +216,6 @@ public class MyCustomBackend implements StateStoreBackend {
     public void clear() {
         // remove all entries
     }
-
-    @Override
-    public void start() {
-        // initialize connections
-    }
-
-    @Override
-    public void stop() {
-        // clean up resources
-    }
 }
 ----
 
@@ -428,3 +229,24 @@ Then reference it via bean or let auto-discovery find it:
 from("direct:store")
     .to("state-store:myStore?operation=put&backend=#myCustomBackend");
 ----
+
+=== Sharing a backend across patterns
+
+Because `KeyValueRepository` is the unified SPI, the same implementation can be reused as the
+backend for the Idempotent Consumer and Aggregator EIPs:
+
+[source,java]
+----
+@BindToRegistry("kvRepo")
+public KeyValueRepository kvRepo() {
+    return new MemoryKeyValueRepository();
+}
+----
+
+With a single `KeyValueRepository` in the registry:
+
+* The State Store component auto-discovers and uses it.
+* The Idempotent Consumer EIP auto-discovers and wraps it in a `KeyValueIdempotentRepository`.
+* The Aggregator EIP auto-discovers and wraps it in a `KeyValueAggregationRepository`.
+
+No explicit wiring is needed — all three patterns share the same backend.

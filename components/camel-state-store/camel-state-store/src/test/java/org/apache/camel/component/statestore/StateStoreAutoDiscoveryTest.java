@@ -20,21 +20,23 @@ import java.util.Map;
 
 import org.apache.camel.BindToRegistry;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.spi.KeyValueRepository;
+import org.apache.camel.support.MemoryKeyValueRepository;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
 /**
- * Tests that a single {@link StateStoreBackend} in the registry is auto-discovered when no explicit backend is
+ * Tests that a single {@link KeyValueRepository} in the registry is auto-discovered when no explicit backend is
  * specified on the endpoint.
  */
 class StateStoreAutoDiscoveryTest extends CamelTestSupport {
 
-    private final TrackingInMemoryBackend trackingBackend = new TrackingInMemoryBackend();
+    private final TrackingKeyValueRepository trackingBackend = new TrackingKeyValueRepository();
 
     @BindToRegistry("myBackend")
-    public StateStoreBackend getBackend() {
+    public KeyValueRepository getBackend() {
         return trackingBackend;
     }
 
@@ -50,8 +52,8 @@ class StateStoreAutoDiscoveryTest extends CamelTestSupport {
                 Map.of(StateStoreConstants.KEY, "key1"));
         assertThat(result).isEqualTo("hello");
 
-        // Verify our tracking backend was used, not the default InMemoryStateStoreBackend
-        assertThat(trackingBackend).isInstanceOf(TrackingInMemoryBackend.class);
+        // Verify our tracking backend was used, not the default MemoryKeyValueRepository
+        assertThat(trackingBackend).isInstanceOf(TrackingKeyValueRepository.class);
         assertThat(trackingBackend.keys()).containsExactly("key1");
     }
 
@@ -68,8 +70,8 @@ class StateStoreAutoDiscoveryTest extends CamelTestSupport {
     }
 
     /**
-     * A simple wrapper around InMemoryStateStoreBackend to verify it was used instead of a fresh default instance.
+     * A simple wrapper around MemoryKeyValueRepository to verify it was used instead of a fresh default instance.
      */
-    static class TrackingInMemoryBackend extends InMemoryStateStoreBackend {
+    static class TrackingKeyValueRepository extends MemoryKeyValueRepository {
     }
 }

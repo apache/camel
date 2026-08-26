@@ -54,6 +54,7 @@ import org.apache.camel.processor.BaseProcessorSupport;
 import org.apache.camel.spi.AggregationRepository;
 import org.apache.camel.spi.ExceptionHandler;
 import org.apache.camel.spi.IdAware;
+import org.apache.camel.spi.KeyValueRepository;
 import org.apache.camel.spi.OptimisticLockingAggregationRepository;
 import org.apache.camel.spi.ReactiveExecutor;
 import org.apache.camel.spi.RecoverableAggregationRepository;
@@ -63,6 +64,7 @@ import org.apache.camel.spi.StepIdAware;
 import org.apache.camel.spi.Synchronization;
 import org.apache.camel.support.DefaultTimeoutMap;
 import org.apache.camel.support.ExchangeHelper;
+import org.apache.camel.support.KeyValueAggregationRepository;
 import org.apache.camel.support.LRUCacheFactory;
 import org.apache.camel.support.LoggingExceptionHandler;
 import org.apache.camel.support.NoLock;
@@ -1617,8 +1619,15 @@ public class AggregateProcessor extends BaseProcessorSupport
         }
 
         if (aggregationRepository == null) {
-            aggregationRepository = new MemoryAggregationRepository(optimisticLocking);
-            LOG.info("Defaulting to MemoryAggregationRepository");
+            // Auto-discover a KeyValueRepository from the registry and wrap it
+            KeyValueRepository kvRepo = camelContext.getRegistry().findSingleByType(KeyValueRepository.class);
+            if (kvRepo != null) {
+                aggregationRepository = new KeyValueAggregationRepository(kvRepo);
+                LOG.info("Auto-discovered KeyValueRepository from registry, wrapping as AggregationRepository");
+            } else {
+                aggregationRepository = new MemoryAggregationRepository(optimisticLocking);
+                LOG.info("Defaulting to MemoryAggregationRepository");
+            }
         }
 
         if (optimisticLocking) {

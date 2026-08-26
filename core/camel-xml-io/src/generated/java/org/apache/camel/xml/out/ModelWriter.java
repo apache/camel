@@ -65,6 +65,9 @@ public class ModelWriter extends BaseWriter {
     public void writeBeanFactoryDefinition(BeanFactoryDefinition def) throws IOException {
         doWriteBeanFactoryDefinition("beanFactory", def);
     }
+    public void writeCacheDefinition(CacheDefinition def) throws IOException {
+        doWriteCacheDefinition("cache", def);
+    }
     public void writeCatchDefinition(CatchDefinition def) throws IOException {
         doWriteCatchDefinition("doCatch", def);
     }
@@ -868,6 +871,15 @@ public class ModelWriter extends BaseWriter {
         doWriteElement("constructors", new BeanConstructorsAdapter().marshal(def.getConstructors()), this::doWriteBeanConstructorsDefinition);
         doWriteElement("properties", new BeanPropertiesAdapter().marshal(def.getProperties()), this::doWriteBeanPropertiesDefinition);
         doWriteElement("script", def.getScript(), this::doWriteString);
+        endElement(name);
+    }
+    protected void doWriteCacheDefinition(String name, CacheDefinition def) throws IOException {
+        startElement(name);
+        doWriteProcessorDefinitionAttributes(def);
+        doWriteAttribute("keyValueRepository", def.getKeyValueRepository(), null);
+        doWriteAttribute("ttl", def.getTtl(), "-1");
+        doWriteAttribute("cacheNull", def.getCacheNull(), "false");
+        doWriteOutputExpressionNodeElements(def);
         endElement(name);
     }
     protected void doWriteCatchDefinition(String name, CatchDefinition def) throws IOException {
@@ -3634,6 +3646,7 @@ public class ModelWriter extends BaseWriter {
                 case "A2ASubTaskDefinition" -> doWriteA2ASubTaskDefinition("a2aSubTask", (A2ASubTaskDefinition) v);
                 case "AggregateDefinition" -> doWriteAggregateDefinition("aggregate", (AggregateDefinition) v);
                 case "BeanDefinition" -> doWriteBeanDefinition("bean", (BeanDefinition) v);
+                case "CacheDefinition" -> doWriteCacheDefinition("cache", (CacheDefinition) v);
                 case "CatchDefinition" -> doWriteCatchDefinition("doCatch", (CatchDefinition) v);
                 case "ChoiceDefinition" -> doWriteChoiceDefinition("choice", (ChoiceDefinition) v);
                 case "CircuitBreakerDefinition" -> doWriteCircuitBreakerDefinition("circuitBreaker", (CircuitBreakerDefinition) v);
@@ -3742,6 +3755,7 @@ public class ModelWriter extends BaseWriter {
                 case "A2ASubTaskDefinition" -> doWriteA2ASubTaskDefinition("a2aSubTask", (A2ASubTaskDefinition) v);
                 case "AggregateDefinition" -> doWriteAggregateDefinition("aggregate", (AggregateDefinition) v);
                 case "BeanDefinition" -> doWriteBeanDefinition("bean", (BeanDefinition) v);
+                case "CacheDefinition" -> doWriteCacheDefinition("cache", (CacheDefinition) v);
                 case "CatchDefinition" -> doWriteCatchDefinition("doCatch", (CatchDefinition) v);
                 case "ChoiceDefinition" -> doWriteChoiceDefinition("choice", (ChoiceDefinition) v);
                 case "CircuitBreakerDefinition" -> doWriteCircuitBreakerDefinition("circuitBreaker", (CircuitBreakerDefinition) v);

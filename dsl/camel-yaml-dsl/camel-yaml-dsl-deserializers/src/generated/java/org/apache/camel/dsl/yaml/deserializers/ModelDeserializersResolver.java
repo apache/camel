@@ -53,6 +53,8 @@ public final class ModelDeserializersResolver implements YamlDeserializerResolve
             case "org.apache.camel.model.dataformat.CBORDataFormat": return new ModelDeserializers.CBORDataFormatDeserializer();
             case "csimple": return new ModelDeserializers.CSimpleExpressionDeserializer();
             case "org.apache.camel.model.language.CSimpleExpression": return new ModelDeserializers.CSimpleExpressionDeserializer();
+            case "cache": return new ModelDeserializers.CacheDefinitionDeserializer();
+            case "org.apache.camel.model.CacheDefinition": return new ModelDeserializers.CacheDefinitionDeserializer();
             case "doCatch": return new ModelDeserializers.CatchDefinitionDeserializer();
             case "org.apache.camel.model.CatchDefinition": return new ModelDeserializers.CatchDefinitionDeserializer();
             case "choice": return new ModelDeserializers.ChoiceDefinitionDeserializer();

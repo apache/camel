@@ -20,10 +20,11 @@ import java.util.Arrays;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
+import org.apache.camel.spi.KeyValueRepository;
 import org.apache.camel.support.DefaultProducer;
 
 /**
- * Producer for the State Store component that performs key-value operations.
+ * Producer for the State Store component that performs key-value operations against a {@link KeyValueRepository}.
  *
  * @since 4.23
  */
@@ -44,7 +45,7 @@ public class StateStoreProducer extends DefaultProducer {
                     "No operation specified. Set the operation via URI option or header " + StateStoreConstants.OPERATION);
         }
 
-        StateStoreBackend backend = endpoint.getBackend();
+        KeyValueRepository backend = endpoint.getBackend();
         long ttl = determineTtl(exchange);
         Message message = exchange.getMessage();
 
@@ -52,7 +53,9 @@ public class StateStoreProducer extends DefaultProducer {
             case put -> {
                 String key = requireKey(message);
                 Object value = message.getBody();
-                Object previous = backend.put(key, value, ttl);
+                // KeyValueRepository.put() is void; retrieve old value first for backward compat
+                Object previous = backend.get(key);
+                backend.put(key, value, ttl);
                 message.setBody(previous);
             }
             case putIfAbsent -> {

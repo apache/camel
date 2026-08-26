@@ -69,6 +69,13 @@ public class JavaDslModelWriter extends JavaDslModelWriterSupport {
         doWriteBeanFactoryDefinition(sb, def);
         return sb.toString();
     }
+    public String writeCacheDefinition(CacheDefinition def) {
+        resetState();
+        StringBuilder sb = new StringBuilder();
+        beginStep(sb, "cache", def);
+        doWriteCacheDefinition(sb, def);
+        return sb.toString();
+    }
     public String writeCatchDefinition(CatchDefinition def) {
         resetState();
         StringBuilder sb = new StringBuilder();
@@ -1813,6 +1820,13 @@ public class JavaDslModelWriter extends JavaDslModelWriterSupport {
         if (def.getScript() != null) {
             doWriteAttribute(sb, "script", def.getScript(), null);
         }
+    }
+    protected void doWriteCacheDefinition(StringBuilder sb, CacheDefinition def) {
+        doWriteProcessorDefinitionAttributes(sb, def);
+        doWriteAttribute(sb, "keyValueRepository", def.getKeyValueRepository(), null);
+        doWriteAttribute(sb, "ttl", def.getTtl(), "-1");
+        doWriteAttribute(sb, "cacheNull", def.getCacheNull(), "false");
+        doWriteOutputExpressionNodeElements(sb, def);
     }
     protected void doWriteCatchDefinition(StringBuilder sb, CatchDefinition def) {
         doWriteProcessorDefinitionAttributes(sb, def);
@@ -4099,6 +4113,22 @@ public class JavaDslModelWriter extends JavaDslModelWriterSupport {
                     doWriteBeanDefinition(sb, _d);
                     endStep(sb, "bean", v);
                 }
+                case "CacheDefinition" -> {
+                    CacheDefinition _d = (CacheDefinition) v;
+                    handledAttributes.clear();
+                    sb.append("\n").append(indent()).append(".cache(");
+                    boolean _first = true;
+                    if (_d.getExpression() != null) {
+                        if (!_first) sb.append(", ");
+                        _first = false;
+                        sb.append(expressionDsl(_d.getExpression()));
+                    }
+                    handledAttributes.add("expression");
+                    handledAttributes.add("expression");
+                    sb.append(")");
+                    doWriteCacheDefinition(sb, _d);
+                    endStep(sb, "cache", v);
+                }
                 case "CatchDefinition" -> {
                     CatchDefinition _d = (CatchDefinition) v;
                     handledAttributes.clear();
@@ -5229,6 +5259,22 @@ public class JavaDslModelWriter extends JavaDslModelWriterSupport {
                     sb.append(")");
                     doWriteBeanDefinition(sb, _d);
                     endStep(sb, "bean", v);
+                }
+                case "CacheDefinition" -> {
+                    CacheDefinition _d = (CacheDefinition) v;
+                    handledAttributes.clear();
+                    sb.append("\n").append(indent()).append(".cache(");
+                    boolean _first = true;
+                    if (_d.getExpression() != null) {
+                        if (!_first) sb.append(", ");
+                        _first = false;
+                        sb.append(expressionDsl(_d.getExpression()));
+                    }
+                    handledAttributes.add("expression");
+                    handledAttributes.add("expression");
+                    sb.append(")");
+                    doWriteCacheDefinition(sb, _d);
+                    endStep(sb, "cache", v);
                 }
                 case "CatchDefinition" -> {
                     CatchDefinition _d = (CatchDefinition) v;

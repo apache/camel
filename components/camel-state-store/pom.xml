@@ -34,9 +34,6 @@
 
     <modules>
         <module>camel-state-store</module>
-        <module>camel-state-store-caffeine</module>
-        <module>camel-state-store-redis</module>
-        <module>camel-state-store-infinispan</module>
     </modules>
 
 </project>
