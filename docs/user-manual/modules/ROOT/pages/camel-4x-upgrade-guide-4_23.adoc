@@ -313,3 +313,11 @@ Two further checks are applied to the delivery address regardless of the option:
 `https` address was never actually delivered over TLS — the request was written in cleartext to the TLS
 port and the peer reset the connection. Such an address is now refused outright rather than attempted, and
 TLS delivery of asynchronous MDNs remains unsupported.
+
+=== camel-ibm-cos
+
+The `CACHE_CONTROL` header constant's value has been corrected from the misspelled `CamelIBMCOSContentControl`
+to `CamelIBMCOSCacheControl`, so the header name matches the Cache-Control metadata it carries. This is a
+breaking change for routes that reference the header by its literal string name: they must switch to
+`CamelIBMCOSCacheControl`, although the change is trivial to adapt. Routes using the
+`IBMCOSConstants.CACHE_CONTROL` constant are unaffected.
