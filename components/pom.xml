@@ -276,7 +276,6 @@
         <module>camel-python3</module>
         <module>camel-quartz</module>
         <module>camel-quickfix</module>
-        <module>camel-reactive-executor-tomcat</module>
         <module>camel-reactive-executor-vertx</module>
         <module>camel-reactive-streams</module>
         <module>camel-reactor</module>
