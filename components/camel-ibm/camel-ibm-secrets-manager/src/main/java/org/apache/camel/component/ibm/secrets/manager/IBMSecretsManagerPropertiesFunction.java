@@ -100,6 +100,8 @@ public class IBMSecretsManagerPropertiesFunction extends ServiceSupport implemen
                 token = ibmVaultConfiguration.getToken();
                 serviceUrl = ibmVaultConfiguration.getServiceUrl();
             }
+        }
+        if (ObjectHelper.isNotEmpty(token) && ObjectHelper.isNotEmpty(serviceUrl)) {
             IamAuthenticator iamAuthenticator = new IamAuthenticator.Builder()
                     .apikey(token)
                     .build();
@@ -212,14 +214,8 @@ public class IBMSecretsManagerPropertiesFunction extends ServiceSupport implemen
                     Response<SecretVersion> secVersion = client.getSecretVersion(getSecretVersionOptions).execute();
                     data = secVersion.getResult().getData();
                 }
-                if (ObjectHelper.isNotEmpty(data)) {
-                    data = response.getResult().getData();
-                }
-                if (ObjectHelper.isNotEmpty(subkey)) {
-                    returnValue = String.valueOf(data.get(subkey));
-                } else {
-                    returnValue = null;
-                }
+                Object subValue = data.get(subkey);
+                returnValue = subValue != null ? String.valueOf(subValue) : null;
                 if (ObjectHelper.isEmpty(returnValue)) {
                     returnValue = defaultValue;
                 }
