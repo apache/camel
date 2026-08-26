@@ -27,6 +27,12 @@ project — the core implementation now provides equivalent or better performanc
 `camel-iec60870` was deprecated in 4.21. The library used to implement it NeoScada is no more maintained since
 2021. There are no alternatives in Java with compatible license.
 
+=== camel-ironmq
+
+The component camel-ironmq was deprecated in 4.21. The official library used has been unmaintained since 2017
+All the other client libraries (in other languages) are unmaintained since the same amount of time.
+The whole iron-io GitHub organization has almost no activity.
+
 ==== camel-leveldb
 
 `camel-leveldb` was deprecated in 4.18. `leveldb` library is no more maintained and it exists several alternatives for file-based database nowadays.
