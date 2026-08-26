@@ -36,7 +36,7 @@ import static org.assertj.core.api.Assertions.assertThat;
  * rename fails afterwards, so a pre-existing key (owned by a previous run or another node) must never be touched, while
  * a key we own must be cleaned up.
  */
-public class FileIdempotentRepositoryReadLockStrategyAbortTest extends ContextTestSupport {
+class FileIdempotentRepositoryReadLockStrategyAbortTest extends ContextTestSupport {
 
     private FileIdempotentRepositoryReadLockStrategy newStrategy(MemoryIdempotentRepository repo) throws Exception {
         ServiceHelper.startService(repo);
@@ -63,7 +63,7 @@ public class FileIdempotentRepositoryReadLockStrategyAbortTest extends ContextTe
     }
 
     @Test
-    public void testAbortDoesNotRemovePreExistingKey() throws Exception {
+    void testAbortDoesNotRemovePreExistingKey() throws Exception {
         MemoryIdempotentRepository repo = new MemoryIdempotentRepository();
         FileIdempotentRepositoryReadLockStrategy strategy = newStrategy(repo);
 
@@ -84,7 +84,7 @@ public class FileIdempotentRepositoryReadLockStrategyAbortTest extends ContextTe
     }
 
     @Test
-    public void testAbortRemovesKeyWeAcquired() throws Exception {
+    void testAbortRemovesKeyWeAcquired() throws Exception {
         MemoryIdempotentRepository repo = new MemoryIdempotentRepository();
         FileIdempotentRepositoryReadLockStrategy strategy = newStrategy(repo);
 

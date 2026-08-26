@@ -29,7 +29,7 @@ import org.junit.jupiter.api.Test;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.awaitility.Awaitility.await;
 
-public class FileIdempotentChangedReadLockRemoveOnCommitTest extends ContextTestSupport {
+class FileIdempotentChangedReadLockRemoveOnCommitTest extends ContextTestSupport {
 
     final MemoryIdempotentRepository myRepo = new MemoryIdempotentRepository();
 
@@ -41,7 +41,7 @@ public class FileIdempotentChangedReadLockRemoveOnCommitTest extends ContextTest
     }
 
     @Test
-    public void testExistingEntryNotRemovedOnCommitFalse() throws Exception {
+    void testExistingEntryNotRemovedOnCommitFalse() throws Exception {
         assertThat(myRepo.getCacheSize()).isZero();
 
         MockEndpoint mock = getMockEndpoint("mock:result");
