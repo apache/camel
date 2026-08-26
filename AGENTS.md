@@ -75,6 +75,21 @@ marked ready for review.
 - For cross-cutting changes (core, API), include committers with broader project knowledge.
 - Request review from **at least 2 relevant committers** using `gh pr edit --add-reviewer`.
 - When all comments on the Pull Request are addressed (by providing a fix or providing more explanation) and the PR checks are green, re-request review on existing reviewers so that they are aware that the new changeset is ready to be reviewed.
+- **Exception — backport PRs:** do not request reviewers on a PR that is a straight backport
+  (cherry-pick) of a PR already reviewed and merged on `main`. See "Backport PRs" below.
+
+### Backport PRs
+
+A backport PR that cherry-picks a commit from a PR already reviewed and merged on `main` onto an
+older LTS maintenance branch (e.g. `camel-4.14.x`, `camel-4.18.x`) does not need a fresh review —
+the code change already went through human review on the PR it was backported from.
+
+- A backport PR MUST NOT be assigned any reviewers.
+- A backport PR MAY be merged as-is, once CI is green, without waiting for a new human approval.
+  This is the one exception to the "at least one human approval" rule in "Merge Requirements" below.
+- This exception applies only to straight cherry-picks. If a backport required manual conflict
+  resolution that changed the code beyond a mechanical port, treat it as a normal PR and request
+  review.
 
 ### Doing a review
 
