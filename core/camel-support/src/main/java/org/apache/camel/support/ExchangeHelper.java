@@ -51,6 +51,7 @@ import org.apache.camel.Route;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.StreamCache;
 import org.apache.camel.TypeConversionException;
+import org.apache.camel.TypeConverter;
 import org.apache.camel.VariableAware;
 import org.apache.camel.WrappedFile;
 import org.apache.camel.spi.NormalizedEndpointUri;
@@ -261,7 +262,15 @@ public final class ExchangeHelper {
      */
     public static <T> T convertToMandatoryType(Exchange exchange, Class<T> type, Object value)
             throws TypeConversionException, NoTypeConversionAvailableException {
-        return exchange.getContext().getTypeConverter().mandatoryConvertTo(type, exchange, value);
+        CamelContext ctx = exchange != null ? exchange.getContext() : null;
+        TypeConverter converter = ctx != null ? ctx.getTypeConverter() : null;
+        if (converter == null) {
+            throw new IllegalStateException(
+                    "Cannot convert to " + (type != null ? type.getName() : "null")
+                                            + " because CamelContext type converter is not available"
+                                            + " (context not started, stopped, or not initialized)");
+        }
+        return converter.mandatoryConvertTo(type, exchange, value);
     }
 
     /**
@@ -271,7 +280,22 @@ public final class ExchangeHelper {
      * @throws org.apache.camel.TypeConversionException is thrown if error during type conversion
      */
     public static <T> T convertToType(Exchange exchange, Class<T> type, Object value) throws TypeConversionException {
-        return exchange.getContext().getTypeConverter().convertTo(type, exchange, value);
+        if (value == null) {
+            return null;
+        }
+        if (type != null && type.isInstance(value)) {
+            return type.cast(value);
+        }
+        CamelContext ctx = exchange != null ? exchange.getContext() : null;
+        TypeConverter converter = ctx != null ? ctx.getTypeConverter() : null;
+        if (converter == null) {
+            throw new IllegalStateException(
+                    "Cannot convert from " + value.getClass().getName()
+                                            + " to " + (type != null ? type.getName() : "null")
+                                            + " because CamelContext type converter is not available"
+                                            + " (context not started, stopped, or not initialized)");
+        }
+        return converter.convertTo(type, exchange, value);
     }
 
     /**
