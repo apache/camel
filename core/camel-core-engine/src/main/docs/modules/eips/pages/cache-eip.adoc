@@ -159,6 +159,12 @@ from("direct:start")
 
 If a single `KeyValueRepository` bean exists in the registry, it is auto-discovered — no explicit reference needed.
 
+NOTE: When multiple `.cache()` blocks auto-discover the same `KeyValueRepository`, they share a single key namespace.
+If two unrelated blocks can produce the same cache key value, they will collide and return each other's cached data.
+To avoid this, either give each block its own named `KeyValueRepository`, or design cache keys that are inherently
+unique across blocks (e.g. include the target service name in the key expression:
+`simple("product:${header.productId}")` vs `simple("order:${header.orderId}")`).
+
 == Cache Invalidation
 
 The Cache EIP uses TTL-based expiration by default — entries expire automatically after the configured `ttl`.
