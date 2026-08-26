@@ -3224,6 +3224,8 @@
               }, {
                 "required" : [ "thrift" ]
               }, {
+                "required" : [ "toon" ]
+              }, {
                 "required" : [ "ubl" ]
               }, {
                 "required" : [ "univocityCsv" ]
@@ -3563,6 +3565,14 @@
             }
           }, {
             "type" : "object",
+            "required" : [ "toon" ],
+            "properties" : {
+              "toon" : {
+                "$ref" : "#/items/definitions/org.apache.camel.model.dataformat.ToonDataFormat"
+              }
+            }
+          }, {
+            "type" : "object",
             "required" : [ "ubl" ],
             "properties" : {
               "ubl" : {
@@ -3700,6 +3710,7 @@
           "syslog" : { },
           "tarFile" : { },
           "thrift" : { },
+          "toon" : { },
           "ubl" : { },
           "univocityCsv" : { },
           "univocityFixed" : { },
@@ -8728,6 +8739,7 @@
           "syslog" : { },
           "tarFile" : { },
           "thrift" : { },
+          "toon" : { },
           "ubl" : { },
           "univocityCsv" : { },
           "univocityFixed" : { },
@@ -9064,6 +9076,14 @@
             "properties" : {
               "thrift" : {
                 "$ref" : "#/items/definitions/org.apache.camel.model.dataformat.ThriftDataFormat"
+              }
+            }
+          }, {
+            "type" : "object",
+            "required" : [ "toon" ],
+            "properties" : {
+              "toon" : {
+                "$ref" : "#/items/definitions/org.apache.camel.model.dataformat.ToonDataFormat"
               }
             }
           }, {
@@ -10543,6 +10563,9 @@
           },
           "thrift" : {
             "$ref" : "#/items/definitions/org.apache.camel.model.dataformat.ThriftDataFormat"
+          },
+          "toon" : {
+            "$ref" : "#/items/definitions/org.apache.camel.model.dataformat.ToonDataFormat"
           },
           "ubl" : {
             "$ref" : "#/items/definitions/org.apache.camel.model.dataformat.UblDataFormat"
@@ -12128,6 +12151,50 @@
             }
           }
         } ]
+      },
+      "org.apache.camel.model.dataformat.ToonDataFormat" : {
+        "title" : "TOON",
+        "description" : "Marshal JSON-compatible Java values to TOON (Token-Oriented Object Notation) and unmarshal TOON back to Java objects.",
+        "type" : "object",
+        "additionalProperties" : false,
+        "properties" : {
+          "contentTypeHeader" : {
+            "type" : "boolean",
+            "title" : "Content Type Header",
+            "description" : "Whether the data format should set the Content-Type header to text/toon when marshalling.",
+            "default" : true
+          },
+          "delimiter" : {
+            "type" : "string",
+            "title" : "Delimiter",
+            "description" : "Delimiter used for tabular array rows and inline primitive arrays.",
+            "default" : "COMMA",
+            "enum" : [ "COMMA", "TAB", "PIPE" ]
+          },
+          "id" : {
+            "type" : "string",
+            "title" : "Id",
+            "description" : "The id of this node"
+          },
+          "indent" : {
+            "type" : "number",
+            "title" : "Indent",
+            "description" : "Number of spaces per indentation level.",
+            "default" : 2
+          },
+          "lengthMarker" : {
+            "type" : "boolean",
+            "title" : "Length Marker",
+            "description" : "Whether to prefix array lengths with a hash marker so arrays render as hash-prefixed lengths instead of plain lengths.",
+            "default" : false
+          },
+          "strict" : {
+            "type" : "boolean",
+            "title" : "Strict",
+            "description" : "Whether to enable strict validation when unmarshalling TOON. When false, JToon uses best-effort parsing.",
+            "default" : true
+          }
+        }
       },
       "org.apache.camel.model.dataformat.UblDataFormat" : {
         "title" : "UBL",
@@ -16877,6 +16944,8 @@
               }, {
                 "required" : [ "thrift" ]
               }, {
+                "required" : [ "toon" ]
+              }, {
                 "required" : [ "ubl" ]
               }, {
                 "required" : [ "univocityCsv" ]
@@ -17216,6 +17285,14 @@
             }
           }, {
             "type" : "object",
+            "required" : [ "toon" ],
+            "properties" : {
+              "toon" : {
+                "$ref" : "#/items/definitions/org.apache.camel.model.dataformat.ToonDataFormat"
+              }
+            }
+          }, {
+            "type" : "object",
             "required" : [ "ubl" ],
             "properties" : {
               "ubl" : {
@@ -17342,6 +17419,7 @@
           "syslog" : { },
           "tarFile" : { },
           "thrift" : { },
+          "toon" : { },
           "ubl" : { },
           "univocityCsv" : { },
           "univocityFixed" : { },

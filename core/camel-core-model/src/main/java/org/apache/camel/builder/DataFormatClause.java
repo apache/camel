@@ -64,6 +64,7 @@ import org.apache.camel.model.dataformat.SwiftMxDataFormat;
 import org.apache.camel.model.dataformat.SyslogDataFormat;
 import org.apache.camel.model.dataformat.TarFileDataFormat;
 import org.apache.camel.model.dataformat.ThriftDataFormat;
+import org.apache.camel.model.dataformat.ToonDataFormat;
 import org.apache.camel.model.dataformat.UblDataFormat;
 import org.apache.camel.model.dataformat.XMLSecurityDataFormat;
 import org.apache.camel.model.dataformat.YAMLDataFormat;
@@ -1093,6 +1094,13 @@ public class DataFormatClause<T extends ProcessorDefinition<?>> {
 
     public T thrift(String instanceClassName, String contentTypeFormat) {
         return dataFormat(new ThriftDataFormat(instanceClassName, contentTypeFormat));
+    }
+
+    /**
+     * Uses the TOON (Token-Oriented Object Notation) data format
+     */
+    public T toon() {
+        return dataFormat(new ToonDataFormat());
     }
 
     /**
