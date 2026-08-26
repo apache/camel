@@ -595,3 +595,35 @@ Audience validation already behaved this way; the two are now consistent.
 Deployments whose introspection endpoint omits `iss` must either have it include the claim, or turn
 `validateIssuer` off. The locally verified JWT path is unaffected — it uses Keycloak's own
 `TokenVerifier.RealmUrlCheck`.
+
+=== camel-cxf
+
+The CXF consumer no longer describes an undeclared route failure in the SOAP fault returned to the caller.
+
+When a route consuming from `cxf:` failed with an exception the service contract does not declare, the
+exception's message — or its class name, when it had no message — became the SOAP `faultstring`. A new
+`muteException` consumer option controls this, and it defaults to `true`, the same default the HTTP
+consumers carry (`camel-http-common` and therefore `camel-servlet` and `camel-jetty`, plus `camel-http`,
+`camel-platform-http`, and `camel-netty-http` and `camel-undertow` since 4.21.0).
+
+Muting applies **only to undeclared failures**. Faults the route raises deliberately are part of the
+service contract and are still returned in full:
+
+* a CXF `Fault` or `SoapFault` thrown by the route,
+* an exception annotated `@WebFault` (a fault the WSDL declares),
+* a `Throwable` or a `CxfPayload` carrying a `<soap:Fault>` set as the message body.
+
+Only an exception that reaches `Exchange.getException()` without a `@WebFault` annotation is replaced,
+by a fault reading `Exchange processing failed`.
+
+Note that this includes framework failures, not just route exceptions. In particular, a `continuationTimeout`
+expiry previously returned `The OUT message was not received within: 5000 millis.` to the caller and now
+returns the generic fault; set `muteException=false` on that endpoint if the timeout detail is relied upon
+for diagnostics.
+
+A route that relies on an undeclared exception's message reaching the caller must opt back in explicitly:
+
+[source,text]
+----
+cxf://http://localhost:8080/service?serviceClass=com.example.MyService&muteException=false
+----
