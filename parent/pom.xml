@@ -274,7 +274,6 @@
         <jactl-version>2.9.2</jactl-version>
         <jasypt-version>1.9.3</jasypt-version>
         <java-grok-version>0.2.1</java-grok-version>
-        <java-util-version>4.110.0</java-util-version>
         <jnats-version>2.26.2</jnats-version>
         <javacc-maven-plugin-version>3.2.0</javacc-maven-plugin-version>
         <javapoet-version>0.19.0</javapoet-version>
@@ -1664,11 +1663,6 @@
             <dependency>
                 <groupId>org.apache.camel</groupId>
                 <artifactId>camel-hazelcast</artifactId>
-                <version>${project.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.apache.camel</groupId>
-                <artifactId>camel-headersmap</artifactId>
                 <version>${project.version}</version>
             </dependency>
             <dependency>
