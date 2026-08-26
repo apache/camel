@@ -1113,20 +1113,6 @@ public class EndpointHeaderBuilders {
         return DebeziumSqlserverEndpointBuilderFactory.DebeziumSqlserverHeaderNameBuilder.INSTANCE;
     }
     /**
-     * DigitalOcean (camel-digitalocean)
-     * Manage Droplets and resources within the DigitalOcean cloud.
-     * 
-     * Category: cloud,management
-     * Since: 2.19
-     * Maven coordinates: org.apache.camel:camel-digitalocean
-     * 
-     * @return the dsl builder for the headers' name.
-     */
-    @Deprecated
-    public static DigitalOceanEndpointBuilderFactory.DigitalOceanHeaderNameBuilder digitalocean() {
-        return DigitalOceanEndpointBuilderFactory.DigitalOceanHeaderNameBuilder.INSTANCE;
-    }
-    /**
      * Deep Java Library (camel-djl)
      * Infer Deep Learning models from message exchanges data using Deep Java
      * Library (DJL).

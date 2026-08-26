@@ -126,7 +126,6 @@
         <module>camel-diagram</module>
         <module>camel-debezium</module>
         <module>camel-dhis2</module>
-        <module>camel-digitalocean</module>
         <module>camel-disruptor</module>
         <module>camel-dns</module>
         <module>camel-docker</module>

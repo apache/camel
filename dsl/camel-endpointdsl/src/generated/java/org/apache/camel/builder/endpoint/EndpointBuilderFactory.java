@@ -98,7 +98,6 @@ public interface EndpointBuilderFactory
             org.apache.camel.builder.endpoint.dsl.DebeziumSqlserverEndpointBuilderFactory.DebeziumSqlserverBuilders,
             org.apache.camel.builder.endpoint.dsl.DfdlEndpointBuilderFactory.DfdlBuilders,
             org.apache.camel.builder.endpoint.dsl.Dhis2EndpointBuilderFactory.Dhis2Builders,
-            org.apache.camel.builder.endpoint.dsl.DigitalOceanEndpointBuilderFactory.DigitalOceanBuilders,
             org.apache.camel.builder.endpoint.dsl.DigitalSignatureEndpointBuilderFactory.DigitalSignatureBuilders,
             org.apache.camel.builder.endpoint.dsl.DirectEndpointBuilderFactory.DirectBuilders,
             org.apache.camel.builder.endpoint.dsl.DisruptorEndpointBuilderFactory.DisruptorBuilders,

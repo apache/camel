@@ -1456,19 +1456,6 @@ public interface ComponentsBuilderFactory {
         return Dhis2ComponentBuilderFactory.dhis2();
     }
     /**
-     * DigitalOcean (camel-digitalocean)
-     * Manage Droplets and resources within the DigitalOcean cloud.
-     * 
-     * Category: cloud,management
-     * Since: 2.19
-     * Maven coordinates: org.apache.camel:camel-digitalocean
-     * 
-     * @return the dsl builder
-     */
-    static DigitaloceanComponentBuilderFactory.DigitaloceanComponentBuilder digitalocean() {
-        return DigitaloceanComponentBuilderFactory.digitalocean();
-    }
-    /**
      * Direct (camel-direct)
      * Call another endpoint from the same Camel Context synchronously.
      * 
