@@ -128,13 +128,6 @@ final class ZooKeeperClusterView extends AbstractCamelClusterView {
         }
     }
 
-    @Override
-    protected void doShutdown() throws Exception {
-        if (leaderSelector != null) {
-            leaderSelector.close();
-        }
-    }
-
     private String getFullPath() {
         return configuration.getBasePath() + "/" + getNamespace();
     }

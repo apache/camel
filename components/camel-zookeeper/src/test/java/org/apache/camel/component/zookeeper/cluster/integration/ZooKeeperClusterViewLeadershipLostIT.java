@@ -31,8 +31,8 @@ import org.junit.jupiter.api.extension.RegisterExtension;
 import org.testcontainers.containers.GenericContainer;
 
 import static org.awaitility.Awaitility.await;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assumptions.assumeTrue;
 
 class ZooKeeperClusterViewLeadershipLostIT {
 
@@ -44,7 +44,7 @@ class ZooKeeperClusterViewLeadershipLostIT {
 
     @Test
     void leadershipIsReleasedAndReacquiredAroundAZooKeeperOutage() throws Exception {
-        GenericContainer<?> zooKeeper = ((ContainerService<?>) service).getContainer();
+        GenericContainer<?> zooKeeper = zooKeeperContainer();
 
         try (DefaultCamelContext context = new DefaultCamelContext()) {
             ZooKeeperClusterService clusterService = new ZooKeeperClusterService();
@@ -72,8 +72,11 @@ class ZooKeeperClusterViewLeadershipLostIT {
 
             await().atMost(1, TimeUnit.MINUTES)
                     .untilAsserted(() -> {
-                        assertTrue(view.getLocalMember().isLeader(), "the only node of the cluster must be the leader");
-                        assertTrue(context.getRouteController().getRouteStatus(ROUTE_ID).isStarted(),
+                        assertEquals(true,
+                                view.getLocalMember().isLeader(),
+                                "the only node of the cluster must be the leader");
+                        assertEquals(true,
+                                context.getRouteController().getRouteStatus(ROUTE_ID).isStarted(),
                                 "the leader must have started the clustered route");
                     });
 
@@ -82,9 +85,11 @@ class ZooKeeperClusterViewLeadershipLostIT {
             try {
                 await().atMost(1, TimeUnit.MINUTES)
                         .untilAsserted(() -> {
-                            assertFalse(view.getLocalMember().isLeader(),
+                            assertEquals(false,
+                                    view.getLocalMember().isLeader(),
                                     "the leadership must be given up once ZooKeeper is no longer reachable");
-                            assertTrue(context.getRouteController().getRouteStatus(ROUTE_ID).isStopped(),
+                            assertEquals(false,
+                                    context.getRouteController().getRouteStatus(ROUTE_ID).isStarted(),
                                     "the clustered route must be stopped once the leadership is lost");
                         });
             } finally {
@@ -93,11 +98,20 @@ class ZooKeeperClusterViewLeadershipLostIT {
 
             await().atMost(1, TimeUnit.MINUTES)
                     .untilAsserted(() -> {
-                        assertTrue(view.getLocalMember().isLeader(),
+                        assertEquals(true,
+                                view.getLocalMember().isLeader(),
                                 "the node must re-enter the election once ZooKeeper is reachable again");
-                        assertTrue(context.getRouteController().getRouteStatus(ROUTE_ID).isStarted(),
+                        assertEquals(true,
+                                context.getRouteController().getRouteStatus(ROUTE_ID).isStarted(),
                                 "the clustered route must be restarted once the leadership is taken back");
                     });
         }
+    }
+
+    private static GenericContainer<?> zooKeeperContainer() {
+        assumeTrue(service instanceof ContainerService<?>,
+                "This test requires the local ZooKeeper container infra service");
+
+        return ((ContainerService<?>) service).getContainer();
     }
 }
