@@ -20,7 +20,6 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
 import org.junit.jupiter.api.Test;
 
-import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
@@ -51,28 +50,12 @@ class ExchangeHelperNullTypeConverterTest {
     }
 
     @Test
-    void convertToMandatoryType_nullTypeConverter_throwsIllegalStateException() {
+    void convertToType_nullValue_nullTypeConverter_throwsIllegalStateException() {
         Exchange exchange = mockExchangeWithNullTypeConverter();
 
-        assertThatThrownBy(() -> ExchangeHelper.convertToMandatoryType(exchange, Boolean.class, "true"))
+        assertThatThrownBy(() -> ExchangeHelper.convertToType(exchange, Boolean.class, null))
                 .isInstanceOf(IllegalStateException.class)
-                .hasMessageContaining("CamelContext type converter is not available")
-                .hasMessageContaining("java.lang.Boolean");
-    }
-
-    @Test
-    void convertToType_nullValue_returnsNull() throws Exception {
-        Exchange exchange = mockExchangeWithNullTypeConverter();
-
-        assertThat(ExchangeHelper.convertToType(exchange, Boolean.class, null)).isNull();
-    }
-
-    @Test
-    void convertToType_alreadyCorrectType_returnsValueWithoutConverter() throws Exception {
-        Exchange exchange = mockExchangeWithNullTypeConverter();
-
-        assertThat(ExchangeHelper.convertToType(exchange, Boolean.class, Boolean.TRUE))
-                .isEqualTo(Boolean.TRUE);
+                .hasMessageContaining("CamelContext type converter is not available");
     }
 
     @Test
@@ -80,6 +63,16 @@ class ExchangeHelperNullTypeConverterTest {
         assertThatThrownBy(() -> ExchangeHelper.convertToType(null, Boolean.class, "true"))
                 .isInstanceOf(IllegalStateException.class)
                 .hasMessageContaining("CamelContext type converter is not available");
+    }
+
+    @Test
+    void convertToMandatoryType_nullTypeConverter_throwsIllegalStateException() {
+        Exchange exchange = mockExchangeWithNullTypeConverter();
+
+        assertThatThrownBy(() -> ExchangeHelper.convertToMandatoryType(exchange, Boolean.class, "true"))
+                .isInstanceOf(IllegalStateException.class)
+                .hasMessageContaining("CamelContext type converter is not available")
+                .hasMessageContaining("java.lang.Boolean");
     }
 
     private static Exchange mockExchangeWithNullTypeConverter() {

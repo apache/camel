@@ -280,17 +280,11 @@ public final class ExchangeHelper {
      * @throws org.apache.camel.TypeConversionException is thrown if error during type conversion
      */
     public static <T> T convertToType(Exchange exchange, Class<T> type, Object value) throws TypeConversionException {
-        if (value == null) {
-            return null;
-        }
-        if (type != null && type.isInstance(value)) {
-            return type.cast(value);
-        }
         CamelContext ctx = exchange != null ? exchange.getContext() : null;
         TypeConverter converter = ctx != null ? ctx.getTypeConverter() : null;
         if (converter == null) {
             throw new IllegalStateException(
-                    "Cannot convert from " + value.getClass().getName()
+                    "Cannot convert from " + (value != null ? value.getClass().getName() : "null")
                                             + " to " + (type != null ? type.getName() : "null")
                                             + " because CamelContext type converter is not available"
                                             + " (context not started, stopped, or not initialized)");
