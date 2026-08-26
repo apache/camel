@@ -22,7 +22,7 @@ import java.nio.charset.StandardCharsets;
 import org.apache.camel.TypeConversionException;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 /**
  * Verifies that {@link XmlConverter#toDOMDocument(byte[], org.apache.camel.Exchange)} and
@@ -40,24 +40,28 @@ class XmlConverterPrologTest {
     @Test
     void toDOMDocument_emptyByteArrayThrowsTypeConversionException() {
         XmlConverter converter = new XmlConverter();
-        assertThrows(TypeConversionException.class,
-                () -> converter.toDOMDocument(new byte[0], null));
+        assertThatThrownBy(() -> converter.toDOMDocument(new byte[0], null))
+                .isInstanceOf(TypeConversionException.class)
+                .hasMessageContaining("not valid XML");
     }
 
     @Test
     void toDOMDocument_jsonBodyThrowsTypeConversionException() {
         XmlConverter converter = new XmlConverter();
         byte[] json = "{\"status\":\"error\"}".getBytes(StandardCharsets.UTF_8);
-        assertThrows(TypeConversionException.class,
-                () -> converter.toDOMDocument(json, null));
+        assertThatThrownBy(() -> converter.toDOMDocument(json, null))
+                .isInstanceOf(TypeConversionException.class)
+                .hasMessageContaining("not valid XML")
+                .hasMessageContaining("possible causes");
     }
 
     @Test
     void toDOMDocument_plainTextThrowsTypeConversionException() {
         XmlConverter converter = new XmlConverter();
         byte[] text = "HTTP/1.1 503 Service Unavailable".getBytes(StandardCharsets.UTF_8);
-        assertThrows(TypeConversionException.class,
-                () -> converter.toDOMDocument(text, null));
+        assertThatThrownBy(() -> converter.toDOMDocument(text, null))
+                .isInstanceOf(TypeConversionException.class)
+                .hasMessageContaining("not valid XML");
     }
 
     // ---- InputStream overload (same code path as StreamCache) ----
@@ -66,15 +70,18 @@ class XmlConverterPrologTest {
     void toDOMDocument_inputStreamJsonBodyThrowsTypeConversionException() {
         XmlConverter converter = new XmlConverter();
         byte[] json = "{\"status\":\"error\"}".getBytes(StandardCharsets.UTF_8);
-        assertThrows(TypeConversionException.class,
-                () -> converter.toDOMDocument(new ByteArrayInputStream(json), null));
+        assertThatThrownBy(() -> converter.toDOMDocument(new ByteArrayInputStream(json), null))
+                .isInstanceOf(TypeConversionException.class)
+                .hasMessageContaining("not valid XML")
+                .hasMessageContaining("possible causes");
     }
 
     @Test
     void toDOMDocument_inputStreamPlainTextThrowsTypeConversionException() {
         XmlConverter converter = new XmlConverter();
         byte[] text = "HTTP/1.1 503 Service Unavailable".getBytes(StandardCharsets.UTF_8);
-        assertThrows(TypeConversionException.class,
-                () -> converter.toDOMDocument(new ByteArrayInputStream(text), null));
+        assertThatThrownBy(() -> converter.toDOMDocument(new ByteArrayInputStream(text), null))
+                .isInstanceOf(TypeConversionException.class)
+                .hasMessageContaining("not valid XML");
     }
 }
