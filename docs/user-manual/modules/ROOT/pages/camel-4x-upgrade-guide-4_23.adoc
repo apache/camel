@@ -15,6 +15,13 @@ See the xref:camel-upgrade-recipes-tool.adoc[documentation] page for details.
 
 === Components removal
 
+==== camel-headersmap
+
+The component camel-headersmap was deprecated in 4.21. The default `CaseInsensitiveMap` in camel-core
+uses a custom O(1) hash table with zero-allocation lookups and header key deduplication, making the external
+cedarsoftware `java-util` dependency unnecessary. Simply remove the `camel-headersmap` dependency from your
+project — the core implementation now provides equivalent or better performance.
+
 ==== camel-iec60870
 
 `camel-iec60870` was deprecated in 4.21. The library used to implement it NeoScada is no more maintained since

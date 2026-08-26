@@ -160,7 +160,6 @@
         <module>camel-gson</module>
         <module>camel-hashicorp-vault</module>
         <module>camel-hazelcast</module>
-        <module>camel-headersmap</module>
         <module>camel-hl7</module>
         <module>camel-huawei</module>
         <module>camel-ibm</module>

@@ -33,7 +33,6 @@
 *** xref:kamelet-main-support.adoc[Kamelet Main Support]
 *** xref:java-xml-io-dsl.adoc[XML Io Dsl]
 *** xref:yaml-dsl.adoc[YAML DSL]
-** xref:headersmap.adoc[Headersmap]
 ** xref:ibm-watsonx-ai-examples.adoc[IBM watsonx.ai - Examples]
 ** xref:jandex.adoc[Jandex]
 ** xref:jasypt.adoc[Jasypt]
