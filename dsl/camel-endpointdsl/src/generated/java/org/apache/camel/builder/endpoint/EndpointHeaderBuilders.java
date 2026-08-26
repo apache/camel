@@ -2100,21 +2100,6 @@ public class EndpointHeaderBuilders {
         return IrcEndpointBuilderFactory.IrcHeaderNameBuilder.INSTANCE;
     }
     /**
-     * IronMQ (camel-ironmq)
-     * Send and receive messages to/from IronMQ an elastic and durable hosted
-     * message queue as a service.
-     * 
-     * Category: cloud,messaging
-     * Since: 2.17
-     * Maven coordinates: org.apache.camel:camel-ironmq
-     * 
-     * @return the dsl builder for the headers' name.
-     */
-    @Deprecated
-    public static IronMQEndpointBuilderFactory.IronMQHeaderNameBuilder ironmq() {
-        return IronMQEndpointBuilderFactory.IronMQHeaderNameBuilder.INSTANCE;
-    }
-    /**
      * JCache (camel-jcache)
      * Perform caching operations against JSR107/JCache.
      * 

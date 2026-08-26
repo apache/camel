@@ -8849,50 +8849,6 @@ public class StaticEndpointBuilders {
         return IrcEndpointBuilderFactory.endpointBuilder(componentName, path);
     }
     /**
-     * IronMQ (camel-ironmq)
-     * Send and receive messages to/from IronMQ an elastic and durable hosted
-     * message queue as a service.
-     * 
-     * Category: cloud,messaging
-     * Since: 2.17
-     * Maven coordinates: org.apache.camel:camel-ironmq
-     * 
-     * Syntax: <code>ironmq:queueName</code>
-     * 
-     * Path parameter: queueName (required)
-     * The name of the IronMQ queue
-     * 
-     * @param path queueName
-     * @return the dsl builder
-     */
-    @Deprecated
-    public static IronMQEndpointBuilderFactory.IronMQEndpointBuilder ironmq(String path) {
-        return ironmq("ironmq", path);
-    }
-    /**
-     * IronMQ (camel-ironmq)
-     * Send and receive messages to/from IronMQ an elastic and durable hosted
-     * message queue as a service.
-     * 
-     * Category: cloud,messaging
-     * Since: 2.17
-     * Maven coordinates: org.apache.camel:camel-ironmq
-     * 
-     * Syntax: <code>ironmq:queueName</code>
-     * 
-     * Path parameter: queueName (required)
-     * The name of the IronMQ queue
-     * 
-     * @param componentName to use a custom component name for the endpoint
-     * instead of the default name
-     * @param path queueName
-     * @return the dsl builder
-     */
-    @Deprecated
-    public static IronMQEndpointBuilderFactory.IronMQEndpointBuilder ironmq(String componentName, String path) {
-        return IronMQEndpointBuilderFactory.endpointBuilder(componentName, path);
-    }
-    /**
      * JCache (camel-jcache)
      * Perform caching operations against JSR107/JCache.
      * 
