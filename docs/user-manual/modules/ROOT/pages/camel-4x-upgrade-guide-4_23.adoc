@@ -206,6 +206,25 @@ Routes that relied on steps after these processors running for unauthenticated r
 restructured. The authenticated paths are unchanged: a successfully authenticated request continues
 through the rest of the route exactly as before, and `OAuthLogoutProcessor` is unchanged.
 
+=== camel-core - XmlConverter SAX parser factory
+
+`XmlConverter.createSAXParserFactory()` now also disables external parameter entities and external
+DTD loading:
+
+* `http://xml.org/sax/features/external-parameter-entities` = `false`
+* `http://apache.org/xml/features/nonvalidating/load-external-dtd` = `false`
+
+It previously set only `FEATURE_SECURE_PROCESSING` and `external-general-entities=false`, while
+`createDocumentBuilderFactory()` in the same class already blocked external resource resolution more
+thoroughly. Both factories are reachable from a converted message body — `toSAXSource` is a
+registered converter, and the SAXSource route is tried first for bodies reaching camel-xslt — so the
+two should not disagree.
+
+Documents carrying an internal DTD subset still parse: `disallow-doctype-decl` is deliberately not
+set here, because that would reject input that parses today. Routes that genuinely need to resolve
+an external DTD or parameter entity through this converter must supply their own
+`SAXParserFactory`.
+
 === camel-netty-http
 
 The security-constraint lookup now strips the endpoint context-path from the request target
