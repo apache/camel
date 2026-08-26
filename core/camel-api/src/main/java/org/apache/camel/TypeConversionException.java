@@ -75,9 +75,21 @@ public class TypeConversionException extends RuntimeCamelException {
     public static String createMessage(@Nullable Object value, Class<?> type, Throwable cause) {
         Objects.requireNonNull(type, "type");
         Objects.requireNonNull(cause, "cause");
-        return "Error during type conversion from type: " + (value != null ? value.getClass().getCanonicalName() : null)
-               + " to the required type: " + type.getCanonicalName() + " with value " + value + " due to "
+        return "Error during type conversion from type: " + typeName(value != null ? value.getClass() : null)
+               + " to the required type: " + typeName(type) + " with value " + value + " due to "
                + cause.getClass().getName() + ": " + cause.getMessage();
+    }
+
+    /**
+     * Returns the class name, preferring canonical name but falling back to {@link Class#getName()} for anonymous or
+     * local classes whose canonical name is {@code null}.
+     */
+    private static String typeName(Class<?> clazz) {
+        if (clazz == null) {
+            return "null";
+        }
+        String name = clazz.getCanonicalName();
+        return name != null ? name : clazz.getName();
     }
 
 }
