@@ -32,6 +32,7 @@ import org.apache.camel.Processor;
 import org.apache.camel.component.file.GenericFile;
 import org.apache.camel.component.file.GenericFileConsumer;
 import org.apache.camel.component.file.GenericFileEndpoint;
+import org.apache.camel.component.file.GenericFileHelper;
 import org.apache.camel.component.file.GenericFileOperationFailedException;
 import org.apache.camel.component.file.GenericFileOperations;
 import org.apache.camel.component.file.GenericFileProcessStrategy;
@@ -46,6 +47,11 @@ import org.slf4j.LoggerFactory;
 public class SmbConsumer extends GenericFileConsumer<FileIdBothDirectoryInformation> {
 
     private static final Logger LOG = LoggerFactory.getLogger(SmbConsumer.class);
+
+    /**
+     * Remote paths always use {@code /}, regardless of the platform Camel runs on.
+     */
+    private static final char REMOTE_PATH_SEPARATOR = '/';
 
     private final SmbEndpoint endpoint;
     private final SmbConfiguration configuration;
@@ -69,6 +75,21 @@ public class SmbConsumer extends GenericFileConsumer<FileIdBothDirectoryInformat
     @SuppressWarnings("unchecked")
     public GenericFileEndpoint<FileIdBothDirectoryInformation> getEndpoint() {
         return (GenericFileEndpoint<FileIdBothDirectoryInformation>) super.getEndpoint();
+    }
+
+    /**
+     * The file name comes from the directory listing returned by the remote share and is not guaranteed to be a single
+     * path segment, so the path resolved from it is compacted and checked to still be inside the directory being polled
+     * before the file is accepted for retrieval, deletion or renaming.
+     */
+    @Override
+    protected boolean isWithinStartingDirectory(String absoluteFilePath) {
+        if (absoluteFilePath == null) {
+            return false;
+        }
+        return GenericFileHelper.isWithinDirectory(
+                FileUtil.compactPath(absoluteFilePath, REMOTE_PATH_SEPARATOR),
+                FileUtil.compactPath(endpointPath, REMOTE_PATH_SEPARATOR), REMOTE_PATH_SEPARATOR);
     }
 
     @Override
