@@ -110,6 +110,10 @@ public class DefaultSimpleFunctionRegistry extends ServiceSupport implements Sim
                 removeFunction(name);
                 addFunction(sf);
                 exp = functions.get(name);
+            } else if (dev) {
+                // fallback to an already registered function (eg from a simple language init block)
+                // that is not backed by a SimpleFunction bean in the registry
+                exp = functions.get(name);
             }
         }
         return exp;
