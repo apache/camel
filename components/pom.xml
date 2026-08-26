@@ -165,7 +165,6 @@
         <module>camel-huawei</module>
         <module>camel-ibm</module>
         <module>camel-ical</module>
-        <module>camel-iec60870</module>
         <module>camel-ignite</module>
         <module>camel-iggy</module>
         <module>camel-infinispan</module>

@@ -1940,36 +1940,6 @@ public class EndpointHeaderBuilders {
         return WatsonxDataEndpointBuilderFactory.WatsonxDataHeaderNameBuilder.INSTANCE;
     }
     /**
-     * IEC 60870 Client (camel-iec60870)
-     * IEC 60870 supervisory control and data acquisition (SCADA) client using
-     * NeoSCADA implementation.
-     * 
-     * Category: iot
-     * Since: 2.20
-     * Maven coordinates: org.apache.camel:camel-iec60870
-     * 
-     * @return the dsl builder for the headers' name.
-     */
-    @Deprecated
-    public static ClientEndpointBuilderFactory.ClientHeaderNameBuilder iec60870Client() {
-        return ClientEndpointBuilderFactory.ClientHeaderNameBuilder.INSTANCE;
-    }
-    /**
-     * IEC 60870 Server (camel-iec60870)
-     * IEC 60870 supervisory control and data acquisition (SCADA) server using
-     * NeoSCADA implementation.
-     * 
-     * Category: iot
-     * Since: 2.20
-     * Maven coordinates: org.apache.camel:camel-iec60870
-     * 
-     * @return the dsl builder for the headers' name.
-     */
-    @Deprecated
-    public static ServerEndpointBuilderFactory.ServerHeaderNameBuilder iec60870Server() {
-        return ServerEndpointBuilderFactory.ServerHeaderNameBuilder.INSTANCE;
-    }
-    /**
      * Ignite Cache (camel-ignite)
      * Perform cache operations on an Ignite cache or consume changes from a
      * continuous query.

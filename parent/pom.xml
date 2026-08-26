@@ -406,7 +406,6 @@
         <mvel-version>2.5.2.Final</mvel-version>
         <mybatis-version>3.5.19</mybatis-version>
         <narayana-version>7.3.4.Final</narayana-version>
-        <neoscada-version>0.4.0</neoscada-version>
         <neo4j-version>6.2.1</neo4j-version>
         <netty-version>4.2.16.Final</netty-version>
         <networknt-json-schema-validator-version>2.0.1</networknt-json-schema-validator-version>
@@ -1780,11 +1779,6 @@
             <dependency>
                 <groupId>org.apache.camel</groupId>
                 <artifactId>camel-ical</artifactId>
-                <version>${project.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.apache.camel</groupId>
-                <artifactId>camel-iec60870</artifactId>
                 <version>${project.version}</version>
             </dependency>
             <dependency>

@@ -2549,34 +2549,6 @@ public interface ComponentsBuilderFactory {
         return IbmWatsonxDataComponentBuilderFactory.ibmWatsonxData();
     }
     /**
-     * IEC 60870 Client (camel-iec60870)
-     * IEC 60870 supervisory control and data acquisition (SCADA) client using
-     * NeoSCADA implementation.
-     * 
-     * Category: iot
-     * Since: 2.20
-     * Maven coordinates: org.apache.camel:camel-iec60870
-     * 
-     * @return the dsl builder
-     */
-    static Iec60870ClientComponentBuilderFactory.Iec60870ClientComponentBuilder iec60870Client() {
-        return Iec60870ClientComponentBuilderFactory.iec60870Client();
-    }
-    /**
-     * IEC 60870 Server (camel-iec60870)
-     * IEC 60870 supervisory control and data acquisition (SCADA) server using
-     * NeoSCADA implementation.
-     * 
-     * Category: iot
-     * Since: 2.20
-     * Maven coordinates: org.apache.camel:camel-iec60870
-     * 
-     * @return the dsl builder
-     */
-    static Iec60870ServerComponentBuilderFactory.Iec60870ServerComponentBuilder iec60870Server() {
-        return Iec60870ServerComponentBuilderFactory.iec60870Server();
-    }
-    /**
      * Iggy (camel-iggy)
      * Send and receive message to Apache Iggy streaming platform.
      * 

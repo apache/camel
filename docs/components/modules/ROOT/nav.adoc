@@ -215,8 +215,6 @@
 *** xref:ibm-watson-text-to-speech-component.adoc[IBM Watson Text to Speech]
 *** xref:ibm-watsonx-ai-component.adoc[IBM watsonx.ai]
 *** xref:ibm-watsonx-data-component.adoc[IBM watsonx.data]
-** xref:iec60870-client-component.adoc[IEC 60870 Client]
-** xref:iec60870-server-component.adoc[IEC 60870 Server]
 ** xref:iggy-component.adoc[Iggy]
 ** xref:ignite-summary.adoc[Ignite]
 *** xref:ignite-cache-component.adoc[Ignite Cache]
