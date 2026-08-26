@@ -32,9 +32,7 @@ import org.apache.camel.support.DefaultEndpoint;
 import org.apache.camel.support.DefaultProducer;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 /**
  * Verifies that {@link InternalRouteStartupManager} wraps consumer startup failures in a
@@ -42,21 +40,15 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
  * (e.g. a bare {@link NullPointerException}).
  *
  * <p>
- * Before the fix, the two {@code throw e} sites in {@code doStartOrResumeRouteConsumers()} re-threw the raw exception
- * without any wrapping, causing a bare NPE to escape directly to the caller instead of a proper
+ * Before the fix, the two catch sites in {@code doStartOrResumeRouteConsumers()} re-threw the raw exception without any
+ * wrapping, causing a bare NPE to escape directly to the caller instead of a proper
  * {@link FailedToStartRouteException}.
- *
- * <p>
- * Reproducer: use a consumer whose {@code start()} throws a message-less {@link NullPointerException}, matching the
- * real-world scenario where e.g. {@code FileConsumer.doStart()} throws NPE and it propagates through
- * {@code BaseService.start()} to {@code InternalRouteStartupManager.doStartOrResumeRouteConsumers()} line 429.
  */
 class InternalRouteStartupManagerConsumerStartTest {
 
     /**
-     * A bare {@link NullPointerException} (no message) thrown when the consumer's {@code start()} is called by
-     * {@link InternalRouteStartupManager} must be wrapped in a {@link FailedToStartRouteException} with a non-null
-     * message, not re-thrown as a raw NPE.
+     * A bare {@link NullPointerException} (no message) thrown from the consumer's {@code start()} must be wrapped in a
+     * {@link FailedToStartRouteException} with a non-null message containing the route id.
      */
     @Test
     void testConsumerStartNullMessageProducesFailedToStartRouteException() throws Exception {
@@ -69,26 +61,12 @@ class InternalRouteStartupManagerConsumerStartTest {
             }
         });
 
-        FailedToStartRouteException caught = null;
-        try {
-            context.start();
-        } catch (FailedToStartRouteException e) {
-            caught = e;
-        } finally {
-            try {
-                context.stop();
-            } catch (Exception ignored) {
-            }
-        }
+        assertThatThrownBy(() -> context.start())
+                .isInstanceOf(FailedToStartRouteException.class)
+                .hasMessageContaining("consumer-start-route")
+                .hasMessageNotContaining("because: null");
 
-        assertNotNull(caught, "Expected FailedToStartRouteException from InternalRouteStartupManager — "
-                              + "raw NPE must not escape unwrapped");
-        String message = caught.getMessage();
-        assertNotNull(message, "FailedToStartRouteException message must not be null");
-        assertFalse(message.contains("because: null"),
-                "Message must not contain 'because: null' - was: " + message);
-        assertTrue(message.contains("consumer-start-route"),
-                "Message must contain the route id - was: " + message);
+        context.stop();
     }
 
     /**
@@ -109,29 +87,41 @@ class InternalRouteStartupManagerConsumerStartTest {
             }
         });
 
-        FailedToStartRouteException caught = null;
-        try {
-            context.start();
-        } catch (FailedToStartRouteException e) {
-            caught = e;
-        } finally {
-            try {
-                context.stop();
-            } catch (Exception ignored) {
-            }
-        }
+        assertThatThrownBy(() -> context.start())
+                .isInstanceOf(FailedToStartRouteException.class)
+                .hasMessageContaining(expectedFragment);
 
-        assertNotNull(caught, "Expected FailedToStartRouteException");
-        assertTrue(caught.getMessage().contains(expectedFragment),
-                "Message should surface cause-chain message - was: " + caught.getMessage());
+        context.stop();
+    }
+
+    /**
+     * A bare {@link NullPointerException} thrown from {@code routeService.start()} (second catch site) must also be
+     * wrapped in a {@link FailedToStartRouteException} with a non-null message.
+     */
+    @Test
+    void testRouteServiceStartNullMessageProducesFailedToStartRouteException() throws Exception {
+        DefaultCamelContext context = new DefaultCamelContext();
+        context.addComponent("failstart", new RouteServiceStartFailComponent(new NullPointerException()));
+        context.addRoutes(new RouteBuilder() {
+            @Override
+            public void configure() {
+                from("failstart:trigger").routeId("route-service-start-route").to("direct:out");
+            }
+        });
+
+        assertThatThrownBy(() -> context.start())
+                .isInstanceOf(FailedToStartRouteException.class)
+                .hasMessageContaining("route-service-start-route")
+                .hasMessageNotContaining("because: null");
+
+        context.stop();
     }
 
     // ---- helpers ----
 
     /**
-     * Component whose consumer throws the given {@link RuntimeException} from {@link Consumer#start()}, simulating a
-     * consumer that fails during startup (e.g. FileConsumer throwing NPE from doStart which propagates through
-     * BaseService.start to InternalRouteStartupManager line 429).
+     * Component whose consumer throws from {@link Consumer#start()}, exercising the first catch site in
+     * {@code doStartOrResumeRouteConsumers()}.
      */
     private static class ConsumerStartFailComponent extends DefaultComponent {
         private final RuntimeException toThrow;
@@ -158,10 +148,56 @@ class InternalRouteStartupManagerConsumerStartTest {
                 return new DefaultConsumer(this, processor) {
                     @Override
                     public void start() {
-                        // Override start() directly (not doStart()) so the exception is not swallowed
-                        // by BaseService's catch-and-fail mechanism. This matches the real-world scenario
-                        // where an exception propagates through BaseService.start() to
-                        // InternalRouteStartupManager.doStartOrResumeRouteConsumers() line 429.
+                        throw toThrow;
+                    }
+                };
+            }
+
+            @Override
+            public Producer createProducer() {
+                return new DefaultProducer(this) {
+                    @Override
+                    public void process(Exchange exchange) {
+                    }
+                };
+            }
+
+            @Override
+            public boolean isSingleton() {
+                return true;
+            }
+        }
+    }
+
+    /**
+     * Component whose endpoint throws from {@link org.apache.camel.support.service.BaseService#doStart()}, exercising
+     * the second catch site in {@code doStartOrResumeRouteConsumers()} via {@code routeService.start()}.
+     */
+    private static class RouteServiceStartFailComponent extends DefaultComponent {
+        private final RuntimeException toThrow;
+
+        RouteServiceStartFailComponent(RuntimeException toThrow) {
+            this.toThrow = toThrow;
+        }
+
+        @Override
+        protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) {
+            return new FailStartEndpoint(uri, this, toThrow);
+        }
+
+        private static class FailStartEndpoint extends DefaultEndpoint {
+            private final RuntimeException toThrow;
+
+            FailStartEndpoint(String uri, RouteServiceStartFailComponent component, RuntimeException toThrow) {
+                super(uri, component);
+                this.toThrow = toThrow;
+            }
+
+            @Override
+            public Consumer createConsumer(Processor processor) {
+                return new DefaultConsumer(this, processor) {
+                    @Override
+                    protected void doStart() {
                         throw toThrow;
                     }
                 };
