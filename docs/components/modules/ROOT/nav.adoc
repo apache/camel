@@ -133,7 +133,6 @@
 *** xref:debezium-sqlserver-component.adoc[Debezium SQL Server Connector]
 ** xref:dfdl-component.adoc[DFDL]
 ** xref:dhis2-component.adoc[DHIS2]
-** xref:digitalocean-component.adoc[DigitalOcean]
 ** xref:direct-component.adoc[Direct]
 ** xref:disruptor-component.adoc[Disruptor]
 ** xref:disruptor-vm-component.adoc[Disruptor VM]
