@@ -160,7 +160,7 @@ public class IBMCOSConsumer extends ScheduledBatchPollingConsumer {
             }
 
             if (getEndpoint().getInProgressRepository() != null
-                    && getEndpoint().getInProgressRepository().contains(s3ObjectSummary.getKey())) {
+                    && !getEndpoint().getInProgressRepository().add(s3ObjectSummary.getKey())) {
                 LOG.trace("Object {} is already in progress", s3ObjectSummary.getKey());
                 continue;
             }
@@ -246,11 +246,20 @@ public class IBMCOSConsumer extends ScheduledBatchPollingConsumer {
             }
         } catch (Exception e) {
             LOG.warn("Error during post processing of object {} from bucket {}: {}", key, bucketName, e.getMessage());
+        } finally {
+            removeInProgress(key);
         }
     }
 
     protected void processRollback(String key) {
         LOG.trace("Processing failed for object with key {}", key);
+        removeInProgress(key);
+    }
+
+    private void removeInProgress(String key) {
+        if (getEndpoint().getInProgressRepository() != null) {
+            getEndpoint().getInProgressRepository().remove(key);
+        }
     }
 
     private void copyObject(String bucketName, String key) {
