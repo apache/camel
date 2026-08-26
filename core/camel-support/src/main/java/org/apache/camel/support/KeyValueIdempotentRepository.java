@@ -35,6 +35,12 @@ import org.apache.camel.util.ObjectHelper;
  */
 public class KeyValueIdempotentRepository extends ServiceSupport implements IdempotentRepository {
 
+    /**
+     * Prefix used to namespace idempotent entries, preventing key collisions when this adapter shares the same
+     * {@link KeyValueRepository} with other adapters (e.g. {@link KeyValueAggregationRepository}).
+     */
+    private static final String IDEMPOTENT_PREFIX = "idempotent:";
+
     private final KeyValueRepository repository;
 
     /**
@@ -60,17 +66,17 @@ public class KeyValueIdempotentRepository extends ServiceSupport implements Idem
     @Override
     public boolean add(String key) {
         // putIfAbsent returns null if the key was successfully added (not already present)
-        return repository.putIfAbsent(key, Boolean.TRUE, 0) == null;
+        return repository.putIfAbsent(IDEMPOTENT_PREFIX + key, Boolean.TRUE, 0) == null;
     }
 
     @Override
     public boolean contains(String key) {
-        return repository.contains(key);
+        return repository.contains(IDEMPOTENT_PREFIX + key);
     }
 
     @Override
     public boolean remove(String key) {
-        return repository.delete(key) != null;
+        return repository.delete(IDEMPOTENT_PREFIX + key) != null;
     }
 
     @Override
@@ -81,7 +87,12 @@ public class KeyValueIdempotentRepository extends ServiceSupport implements Idem
 
     @Override
     public void clear() {
-        repository.clear();
+        // Only clear entries with our prefix to avoid affecting other adapters sharing the repository
+        for (String key : repository.keys()) {
+            if (key.startsWith(IDEMPOTENT_PREFIX)) {
+                repository.delete(key);
+            }
+        }
     }
 
     /**

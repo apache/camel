@@ -50,6 +50,12 @@ public class KeyValueAggregationRepository extends ServiceSupport
     private static final Logger LOG = LoggerFactory.getLogger(KeyValueAggregationRepository.class);
 
     /**
+     * Prefix used to namespace active aggregate entries, preventing key collisions when this adapter shares the same
+     * {@link KeyValueRepository} with other adapters (e.g. {@link KeyValueIdempotentRepository}).
+     */
+    private static final String AGGREGATE_PREFIX = "aggregate:";
+
+    /**
      * Prefix used to separate completed (pending confirmation) entries from active aggregates in the underlying store.
      */
     private static final String COMPLETED_PREFIX = "completed:";
@@ -86,20 +92,19 @@ public class KeyValueAggregationRepository extends ServiceSupport
     public Exchange add(CamelContext camelContext, String key, Exchange exchange) {
         LOG.trace("Adding an Exchange with ID {} for key {}", exchange.getExchangeId(), key);
         DefaultExchangeHolder newHolder = DefaultExchangeHolder.marshal(exchange, true, allowSerializedHeaders);
-        DefaultExchangeHolder oldHolder = (DefaultExchangeHolder) repository.get(key);
-        repository.put(key, newHolder, 0);
+        DefaultExchangeHolder oldHolder = (DefaultExchangeHolder) repository.put(AGGREGATE_PREFIX + key, newHolder, 0);
         return unmarshallExchange(camelContext, oldHolder);
     }
 
     @Override
     public Exchange get(CamelContext camelContext, String key) {
-        return unmarshallExchange(camelContext, (DefaultExchangeHolder) repository.get(key));
+        return unmarshallExchange(camelContext, (DefaultExchangeHolder) repository.get(AGGREGATE_PREFIX + key));
     }
 
     @Override
     public void remove(CamelContext camelContext, String key, Exchange exchange) {
         LOG.trace("Removing an Exchange with ID {} for key {}", exchange.getExchangeId(), key);
-        DefaultExchangeHolder holder = (DefaultExchangeHolder) repository.delete(key);
+        DefaultExchangeHolder holder = (DefaultExchangeHolder) repository.delete(AGGREGATE_PREFIX + key);
         if (useRecovery && holder != null) {
             // Store under the exchangeId for potential recovery
             LOG.trace("Moving Exchange with ID {} to completed (pending confirmation)", exchange.getExchangeId());
@@ -117,7 +122,8 @@ public class KeyValueAggregationRepository extends ServiceSupport
     public Set<String> getKeys() {
         return Collections.unmodifiableSet(
                 repository.keys().stream()
-                        .filter(k -> !k.startsWith(COMPLETED_PREFIX))
+                        .filter(k -> k.startsWith(AGGREGATE_PREFIX))
+                        .map(k -> k.substring(AGGREGATE_PREFIX.length()))
                         .collect(Collectors.toSet()));
     }
 
