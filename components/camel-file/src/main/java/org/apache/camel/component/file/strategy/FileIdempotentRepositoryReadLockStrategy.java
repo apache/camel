@@ -88,6 +88,9 @@ public class FileIdempotentRepositoryReadLockStrategy extends ServiceSupport
             // another node is processing the file so skip
             CamelLogger.log(LOG, readLockLoggingLevel, "Cannot acquire read lock. Will skip the file: " + file);
         }
+        // remember whether we added the key ourselves, so releaseExclusiveReadLockOnAbort knows
+        // whether it is safe to remove it if begin() later fails for an unrelated reason
+        exchange.setProperty(asReadLockKey(file, Exchange.FILE_LOCK_IDEMPOTENT_ACQUIRED), answer);
         return answer;
     }
 
@@ -95,8 +98,16 @@ public class FileIdempotentRepositoryReadLockStrategy extends ServiceSupport
     public void releaseExclusiveReadLockOnAbort(
             GenericFileOperations<File> operations, GenericFile<File> file, Exchange exchange)
             throws Exception {
-        String key = asKey(exchange, file);
-        idempotentRepository.remove(exchange, key);
+        // only remove the key if we added it during acquireExclusiveReadLock. If the key already
+        // existed (owned by a previous run or another node) it must not be touched here. If we did
+        // add it, acquireExclusiveReadLock succeeded and something later in begin() must have
+        // failed, so the key is ours to clean up
+        boolean acquired
+                = exchange.getProperty(asReadLockKey(file, Exchange.FILE_LOCK_IDEMPOTENT_ACQUIRED), false, Boolean.class);
+        if (acquired) {
+            String key = asKey(exchange, file);
+            idempotentRepository.remove(exchange, key);
+        }
     }
 
     @Override
@@ -288,6 +299,15 @@ public class FileIdempotentRepositoryReadLockStrategy extends ServiceSupport
             key = endpoint.getIdempotentKey().evaluate(dummy, String.class);
         }
         return key;
+    }
+
+    private static String asReadLockKey(GenericFile<File> file, String key) {
+        // use the copy from absolute path as that was the original path of the
+        // file when the lock was acquired; e.g. if the file consumer uses preMove
+        // then the file is moved and would otherwise no longer match
+        String path = file.getCopyFromAbsoluteFilePath() != null
+                ? file.getCopyFromAbsoluteFilePath() : file.getAbsoluteFilePath();
+        return path + "-" + key;
     }
 
     @Override
