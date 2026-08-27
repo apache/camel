@@ -2072,20 +2072,6 @@ public class EndpointHeaderBuilders {
         return InfluxDb2EndpointBuilderFactory.InfluxDb2HeaderNameBuilder.INSTANCE;
     }
     /**
-     * IRC (camel-irc)
-     * Send and receive messages to/from an IRC chat.
-     * 
-     * Category: chat
-     * Since: 1.1
-     * Maven coordinates: org.apache.camel:camel-irc
-     * 
-     * @return the dsl builder for the headers' name.
-     */
-    @Deprecated
-    public static IrcEndpointBuilderFactory.IrcHeaderNameBuilder irc() {
-        return IrcEndpointBuilderFactory.IrcHeaderNameBuilder.INSTANCE;
-    }
-    /**
      * JCache (camel-jcache)
      * Perform caching operations against JSR107/JCache.
      * 

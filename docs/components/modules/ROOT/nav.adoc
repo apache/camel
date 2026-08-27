@@ -227,7 +227,6 @@
 ** xref:infinispan-embedded-component.adoc[Infinispan Embedded]
 ** xref:influxdb-component.adoc[InfluxDB]
 ** xref:influxdb2-component.adoc[InfluxDB2]
-** xref:irc-component.adoc[IRC]
 ** xref:jcache-component.adoc[JCache]
 ** xref:jcr-component.adoc[JCR]
 ** xref:jdbc-component.adoc[JDBC]

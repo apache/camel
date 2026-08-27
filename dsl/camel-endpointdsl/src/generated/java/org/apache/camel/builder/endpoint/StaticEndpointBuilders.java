@@ -8743,56 +8743,6 @@ public class StaticEndpointBuilders {
         return InfluxDb2EndpointBuilderFactory.endpointBuilder(componentName, path);
     }
     /**
-     * IRC (camel-irc)
-     * Send and receive messages to/from an IRC chat.
-     * 
-     * Category: chat
-     * Since: 1.1
-     * Maven coordinates: org.apache.camel:camel-irc
-     * 
-     * Syntax: <code>irc:hostname:port</code>
-     * 
-     * Path parameter: hostname (required)
-     * Hostname for the IRC chat server
-     * 
-     * Path parameter: port
-     * Port number for the IRC chat server. If no port is configured then a
-     * default port of either 6667, 6668 or 6669 is used.
-     * 
-     * @param path hostname:port
-     * @return the dsl builder
-     */
-    @Deprecated
-    public static IrcEndpointBuilderFactory.IrcEndpointBuilder irc(String path) {
-        return irc("irc", path);
-    }
-    /**
-     * IRC (camel-irc)
-     * Send and receive messages to/from an IRC chat.
-     * 
-     * Category: chat
-     * Since: 1.1
-     * Maven coordinates: org.apache.camel:camel-irc
-     * 
-     * Syntax: <code>irc:hostname:port</code>
-     * 
-     * Path parameter: hostname (required)
-     * Hostname for the IRC chat server
-     * 
-     * Path parameter: port
-     * Port number for the IRC chat server. If no port is configured then a
-     * default port of either 6667, 6668 or 6669 is used.
-     * 
-     * @param componentName to use a custom component name for the endpoint
-     * instead of the default name
-     * @param path hostname:port
-     * @return the dsl builder
-     */
-    @Deprecated
-    public static IrcEndpointBuilderFactory.IrcEndpointBuilder irc(String componentName, String path) {
-        return IrcEndpointBuilderFactory.endpointBuilder(componentName, path);
-    }
-    /**
      * JCache (camel-jcache)
      * Perform caching operations against JSR107/JCache.
      * 

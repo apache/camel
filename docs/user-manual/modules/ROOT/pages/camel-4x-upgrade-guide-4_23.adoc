@@ -31,6 +31,10 @@ project — the core implementation now provides equivalent or better performanc
 `camel-iec60870` was deprecated in 4.21. The library used to implement it NeoScada is no more maintained since
 2021. There are no alternatives in Java with compatible license.
 
+==== camel-irc
+
+The component camel-irc was deprecated in 4.21. The library used had no stable release since 2007. There is no Java library very active for this protocol.
+
 ==== camel-ironmq
 
 The component camel-ironmq was deprecated in 4.21. The official library used has been unmaintained since 2017
