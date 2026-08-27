@@ -15,6 +15,10 @@ See the xref:camel-upgrade-recipes-tool.adoc[documentation] page for details.
 
 === Components removal
 
+==== camel-archetype-spring
+
+The Maven archetype `camel-archetype-spring` was deprecated in 4.17. Use spring boot instead.
+
 ==== camel-catalog-lucene
 
 The maven plugin was deprecated in 4.12. `camel-catalog-suggest` is replacing it.
