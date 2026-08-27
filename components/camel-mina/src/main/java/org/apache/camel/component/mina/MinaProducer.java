@@ -186,9 +186,9 @@ public class MinaProducer extends DefaultProducer {
             } else {
                 // set the result on either IN or OUT on the original exchange depending on its pattern
                 if (ExchangeHelper.isOutCapable(exchange)) {
-                    MinaPayloadHelper.setOut(exchange, handler.getMessage());
+                    MinaPayloadHelper.setOut(getEndpoint(), exchange, handler.getMessage());
                 } else {
-                    MinaPayloadHelper.setIn(exchange, handler.getMessage());
+                    MinaPayloadHelper.setIn(getEndpoint(), exchange, handler.getMessage());
                 }
             }
         }
