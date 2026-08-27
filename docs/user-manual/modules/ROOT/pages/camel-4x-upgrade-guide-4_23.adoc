@@ -143,6 +143,65 @@ The component camel-threadpoolfactory-vertx was deprecated in 4.21. The componen
 
 `camel-zeebe` component was deprecated in 4.19 and has a straightforward replacement with `camel-camunda`. It is removed in 4.23.
 
+=== camel-core - endpoint URI normalization is now order-independent
+
+`URISupport.normalizeUri()` computes the endpoint registry cache key so that two logically identical
+endpoint URIs (differing only in query parameter order) resolve to a single shared `Endpoint`. A fast-path
+optimization only re-encoded query parameter values when the parameter keys were *not* already in
+alphabetical order, so two semantically identical URIs could normalize to two different strings whenever a
+value needed encoding (for example a colon in a `host:port` value) - depending purely on whether the
+original, incidental parameter order happened to already be sorted. `CamelContext.getEndpoint()` would then
+silently create a duplicate `Endpoint` (and duplicate producers/consumers, connections, threads) instead of
+reusing the cached one, with no error or log warning.
+
+Normalization is now always order-independent. As part of the fix, the encoding applied when rebuilding the
+query string is also less aggressive: characters that are legal unescaped in a URI query per RFC 3986
+(`:`, `/`, `,`, `'`, etc. - for example a MIME type such as `produces=application/json`, or a `host:port`
+value) are no longer percent-encoded, while `&` and `=` remain escaped inside a value since they are
+structurally significant in Camel's own `key=value&key=value` query syntax.
+
+Code that asserts a literal, fully-normalized endpoint URI string containing one of those characters in a
+query value may need to update the expected string to the (now consistently) unencoded form.
+
+=== camel-core - property placeholders in pollEnrich
+
+Camel 4.22 stopped resolving property placeholders (`{{...}}`) on the _per-message evaluated_
+recipient for `toD` and `enrich`, and said that aligning `pollEnrich` was deferred to a follow-up.
+This is that follow-up: a `{{...}}` token that appears only in the value produced at runtime by the
+`pollEnrich` expression is now treated as a literal part of the endpoint URI instead of being
+expanded.
+
+Like `toD` and `enrich`, `pollEnrich` resolves its static endpoint URI at build time, so a
+placeholder belongs there:
+
+[source,java]
+----
+.pollEnrich("file:{{inbox}}", 5000)
+----
+
+`recipientList`, `routingSlip` and `dynamicRouter` are unchanged. Their recipient is supplied
+entirely at runtime and may legitimately carry a placeholder that comes from configuration, so they
+continue to resolve `{{...}}` in the computed recipient.
+
+=== camel-core - XmlConverter SAX parser factory
+
+`XmlConverter.createSAXParserFactory()` now also disables external parameter entities and external
+DTD loading:
+
+* `http://xml.org/sax/features/external-parameter-entities` = `false`
+* `http://apache.org/xml/features/nonvalidating/load-external-dtd` = `false`
+
+It previously set only `FEATURE_SECURE_PROCESSING` and `external-general-entities=false`, while
+`createDocumentBuilderFactory()` in the same class already blocked external resource resolution more
+thoroughly. Both factories are reachable from a converted message body — `toSAXSource` is a
+registered converter, and the SAXSource route is tried first for bodies reaching camel-xslt — so the
+two should not disagree.
+
+Documents carrying an internal DTD subset still parse: `disallow-doctype-decl` is deliberately not
+set here, because that would reject input that parses today. Routes that genuinely need to resolve
+an external DTD or parameter entity through this converter must supply their own
+`SAXParserFactory`.
+
 === camel-a2a - webhook URL address classification
 
 Push notification webhook URLs are now classified by the address the host resolves to, using the
@@ -233,25 +292,6 @@ The `CamelAzureEventGridDataVersion` header (`EventGridConstants.DATA_VERSION`) 
 component publishes events in the CloudEvents schema, which has no `dataVersion` attribute (that field
 belongs to the legacy Event Grid event schema), so the header was read but never applied to the
 published event. Remove any use of that header; there is no CloudEvents equivalent.
-=== camel-core - property placeholders in pollEnrich
-
-Camel 4.22 stopped resolving property placeholders (`{{...}}`) on the _per-message evaluated_
-recipient for `toD` and `enrich`, and said that aligning `pollEnrich` was deferred to a follow-up.
-This is that follow-up: a `{{...}}` token that appears only in the value produced at runtime by the
-`pollEnrich` expression is now treated as a literal part of the endpoint URI instead of being
-expanded.
-
-Like `toD` and `enrich`, `pollEnrich` resolves its static endpoint URI at build time, so a
-placeholder belongs there:
-
-[source,java]
-----
-.pollEnrich("file:{{inbox}}", 5000)
-----
-
-`recipientList`, `routingSlip` and `dynamicRouter` are unchanged. Their recipient is supplied
-entirely at runtime and may legitimately carry a placeholder that comes from configuration, so they
-continue to resolve `{{...}}` in the computed recipient.
 
 === camel-hazelcast
 
@@ -359,25 +399,6 @@ now also stops the route.
 Routes that relied on steps after these processors running for unauthenticated requests must be
 restructured. The authenticated paths are unchanged: a successfully authenticated request continues
 through the rest of the route exactly as before, and `OAuthLogoutProcessor` is unchanged.
-
-=== camel-core - XmlConverter SAX parser factory
-
-`XmlConverter.createSAXParserFactory()` now also disables external parameter entities and external
-DTD loading:
-
-* `http://xml.org/sax/features/external-parameter-entities` = `false`
-* `http://apache.org/xml/features/nonvalidating/load-external-dtd` = `false`
-
-It previously set only `FEATURE_SECURE_PROCESSING` and `external-general-entities=false`, while
-`createDocumentBuilderFactory()` in the same class already blocked external resource resolution more
-thoroughly. Both factories are reachable from a converted message body — `toSAXSource` is a
-registered converter, and the SAXSource route is tried first for bodies reaching camel-xslt — so the
-two should not disagree.
-
-Documents carrying an internal DTD subset still parse: `disallow-doctype-decl` is deliberately not
-set here, because that would reject input that parses today. Routes that genuinely need to resolve
-an external DTD or parameter entity through this converter must supply their own
-`SAXParserFactory`.
 
 === camel-netty-http
 
