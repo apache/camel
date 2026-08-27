@@ -491,3 +491,22 @@ is truncated rather than recreated and would otherwise keep its original permiss
 
 Deployments where another account legitimately reads these files — a sidecar or a backup agent running as
 a different user — need to run as the owner, or use a group-aware key store instead.
+=== camel-grpc
+
+The gRPC consumer no longer returns the route exception's message to the client.
+
+When an exchange failed, `GrpcMethodHandler` built the error status with
+`Status.INTERNAL.withDescription(exchange.getException().getMessage())`. The description is transmitted
+to the client — unlike the cause attached alongside it, which stays local — so any remote-triggerable
+failure handed the caller internal detail.
+
+A new `muteException` consumer option controls this, and it defaults to `true`, the same default the HTTP
+consumers carry. The status code is unchanged; only the description is replaced, with
+`Exchange processing failed`.
+
+A route that relies on the exception message reaching the client must opt back in explicitly:
+
+[source,text]
+----
+grpc://localhost:8080/org.example.MyService?muteException=false
+----
