@@ -13,7 +13,11 @@ See the xref:camel-upgrade-recipes-tool.adoc[documentation] page for details.
 
 == Upgrading Camel 4.22 to 4.23
 
-=== Components removal
+=== Components and Language removal
+
+==== camel-csimple, camel-csimple-joor and csimple-maven-plugin
+
+The `csimple` (compiled simple) language was deprecated in 4.19. Use the `simple` language instead.
 
 ==== camel-archetype-spring
 

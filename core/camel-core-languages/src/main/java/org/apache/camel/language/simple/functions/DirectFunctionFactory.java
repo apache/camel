@@ -77,43 +77,4 @@ public final class DirectFunctionFactory implements SimpleLanguageFunctionFactor
 
         return null;
     }
-
-    @Override
-    public String createCode(CamelContext camelContext, String function, int index) {
-        if (ObjectHelper.equal(function, "id")) {
-            return "message.getMessageId()";
-        } else if (ObjectHelper.equal(function, "messageTimestamp")) {
-            return "message.getMessageTimestamp()";
-        } else if (ObjectHelper.equal(function, "exchangeId")) {
-            return "exchange.getExchangeId()";
-        } else if (ObjectHelper.equal(function, "exchange")) {
-            return "exchange";
-        } else if (ObjectHelper.equal(function, "logExchange")) {
-            return "logExchange(exchange)";
-        } else if (ObjectHelper.equal(function, "exception")) {
-            return "exception(exchange)";
-        } else if (ObjectHelper.equal(function, "exception.message")) {
-            return "exceptionMessage(exchange)";
-        } else if (ObjectHelper.equal(function, "exception.stacktrace")) {
-            return "exceptionStacktrace(exchange)";
-        } else if (ObjectHelper.equal(function, "threadId")) {
-            return "threadId()";
-        } else if (ObjectHelper.equal(function, "threadName")) {
-            return "threadName()";
-        } else if (ObjectHelper.equal(function, "hostname")) {
-            return "hostName()";
-        } else if (ObjectHelper.equal(function, "camelId")) {
-            return "context.getName()";
-        } else if (ObjectHelper.equal(function, "fromRouteId")) {
-            return "fromRouteId(exchange)";
-        } else if (ObjectHelper.equal(function, "routeId")) {
-            return "routeId(exchange)";
-        } else if (ObjectHelper.equal(function, "stepId")) {
-            return "stepId(exchange)";
-        } else if (ObjectHelper.equal(function, "null")) {
-            return "null";
-        }
-
-        return null;
-    }
 }
