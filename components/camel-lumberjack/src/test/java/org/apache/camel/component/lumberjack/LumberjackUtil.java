@@ -97,7 +97,12 @@ final class LumberjackUtil {
             // send 5 frame windows, without pausing
             windows.stream().forEach(window -> channel.writeAndFlush(readSample(String.format("io/window%s.bin", window))));
             if (waitForResult) {
-                Awaitility.await().atMost(30, TimeUnit.SECONDS).until(() -> windows.size() == responses.size());
+                // This bound was previously 30s (raised from Awaitility's 10s default in 5df5b4719ac1
+                // to fix CI flakiness) but LumberjackComponentTest.shouldListenToMessages still
+                // occasionally timed out on loaded CI runners, so it is widened again here. Callers
+                // that also wait on a completion signal (e.g. LumberjackMultiThreadIT's latch) must
+                // wait at least this long, with margin.
+                Awaitility.await().atMost(60, TimeUnit.SECONDS).until(() -> windows.size() == responses.size());
             }
 
             channel.close().sync();
