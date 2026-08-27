@@ -605,7 +605,7 @@ public class SedaEndpoint extends DefaultEndpoint implements AsyncEndpoint, Brow
 
     void onStarted(SedaProducer producer) {
         producers.add(producer);
-        if (getComponent() != null) {
+        if (getComponent() != null && (ref == null || queue == null)) {
             // re-register queue reference when producer restarts after queue was released on stop
             Integer size = (getSize() == Integer.MAX_VALUE || getSize() == SedaConstants.QUEUE_SIZE) ? null : getSize();
             ref = getComponent().getOrCreateQueue(this, size, isMultipleConsumers(), queueFactory);
@@ -616,6 +616,7 @@ public class SedaEndpoint extends DefaultEndpoint implements AsyncEndpoint, Brow
     void onStopped(SedaProducer producer) {
         producers.remove(producer);
         if (getConsumers().isEmpty() && getProducers().isEmpty() && getComponent() != null) {
+            // may also be invoked from shutdown(); onShutdownEndpoint is idempotent
             getComponent().onShutdownEndpoint(this);
         }
     }
@@ -673,7 +674,7 @@ public class SedaEndpoint extends DefaultEndpoint implements AsyncEndpoint, Brow
             super.stop();
             ref = null;
         } else {
-            LOG.debug("There is still active consumers or producers.");
+            LOG.debug("There are still active consumers or producers.");
         }
     }
 
@@ -684,7 +685,7 @@ public class SedaEndpoint extends DefaultEndpoint implements AsyncEndpoint, Brow
             return;
         }
 
-        // notify component we are shutting down this endpoint
+        // notify component we are shutting down this endpoint (onStopped may invoke this too; safe to call twice)
         if (getComponent() != null) {
             getComponent().onShutdownEndpoint(this);
         }
@@ -692,7 +693,7 @@ public class SedaEndpoint extends DefaultEndpoint implements AsyncEndpoint, Brow
         if (getConsumers().isEmpty() && getProducers().isEmpty()) {
             super.shutdown();
         } else {
-            LOG.debug("There is still active consumers or producers.");
+            LOG.debug("There are still active consumers or producers.");
         }
     }
 
