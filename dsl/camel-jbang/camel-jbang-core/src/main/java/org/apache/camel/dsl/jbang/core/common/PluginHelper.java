@@ -477,12 +477,17 @@ public final class PluginHelper {
     }
 
     static void versionCheck(CamelJBangMain main, String version, String firstVersion, String command) {
-        // compare versions without SNAPSHOT
+        // compare versions without SNAPSHOT (on both sides) so a SNAPSHOT build is not
+        // rejected against a plugin whose firstVersion is the same SNAPSHOT release
         String source = version;
-        if (source.endsWith("-SNAPSHOT")) {
+        if (source != null && source.endsWith("-SNAPSHOT")) {
             source = source.replace("-SNAPSHOT", "");
         }
-        boolean accept = VersionHelper.isGE(source, firstVersion);
+        String first = firstVersion;
+        if (first != null && first.endsWith("-SNAPSHOT")) {
+            first = first.replace("-SNAPSHOT", "");
+        }
+        boolean accept = VersionHelper.isGE(source, first);
         if (!accept) {
             main.getOut().println("Cannot load plugin camel-jbang-plugin-" + command + " with version: " + version
                                   + " because plugin has first version: " + firstVersion + ". Exit");

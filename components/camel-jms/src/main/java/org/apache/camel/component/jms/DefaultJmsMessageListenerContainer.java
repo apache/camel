@@ -161,4 +161,15 @@ public class DefaultJmsMessageListenerContainer extends DefaultMessageListenerCo
         }
         super.stopSharedConnection();
     }
+
+    /**
+     * Forces the listener container to refresh its connection and recreate consumers, which will re-resolve the
+     * temporary reply destination. Used when a pending reply-destination refresh must be consumed but cached consumers
+     * would otherwise never call the destination resolver again.
+     */
+    public void recoverReplyDestinationAfterRefresh() {
+        if (isRunning() && !isRecovering()) {
+            recoverAfterListenerSetupFailure();
+        }
+    }
 }

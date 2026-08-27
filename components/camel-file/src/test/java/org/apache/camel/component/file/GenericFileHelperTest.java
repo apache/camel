@@ -71,4 +71,31 @@ public class GenericFileHelperTest {
         // an empty directory imposes no boundary
         assertTrue(GenericFileHelper.isWithinDirectory("anything.txt", ""));
     }
+
+    @Test
+    public void isWithinDirectoryUsesTheGivenSeparator() {
+        // remote paths always use '/', regardless of the platform Camel runs on
+        assertTrue(GenericFileHelper.isWithinDirectory("poll/file.txt", "poll", '/'));
+        assertTrue(GenericFileHelper.isWithinDirectory("poll/sub/file.txt", "poll", '/'));
+        assertTrue(GenericFileHelper.isWithinDirectory("poll", "poll", '/'));
+        assertTrue(GenericFileHelper.isWithinDirectory("/poll/file.txt", "/poll", '/'));
+
+        // a trailing separator on the directory is tolerated
+        assertTrue(GenericFileHelper.isWithinDirectory("poll/file.txt", "poll/", '/'));
+
+        // a sibling whose name merely extends the directory name is NOT contained
+        assertFalse(GenericFileHelper.isWithinDirectory("pollute/file.txt", "poll", '/'));
+    }
+
+    @Test
+    public void isWithinDirectoryRejectsPathsResolvingOutsideTheDirectory() {
+        // the compacted result of a listing name that navigates above the polled directory
+        assertFalse(GenericFileHelper.isWithinDirectory("../secret.txt", "poll", '/'));
+        assertFalse(GenericFileHelper.isWithinDirectory("../../etc/shadow", "poll", '/'));
+        assertFalse(GenericFileHelper.isWithinDirectory("/secret.txt", "/poll", '/'));
+
+        // a target that still resolves upwards escapes even when no directory boundary is configured
+        assertFalse(GenericFileHelper.isWithinDirectory("..", "", '/'));
+        assertFalse(GenericFileHelper.isWithinDirectory("../secret.txt", "", '/'));
+    }
 }

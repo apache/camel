@@ -57,6 +57,7 @@ public class AS2EndpointConfigurer extends PropertyConfigurerSupport implements 
         map.put("ExpectContinue", boolean.class);
         map.put("LazyStartProducer", boolean.class);
         map.put("AccessToken", java.lang.String.class);
+        map.put("AsyncMdnAllowedHosts", java.lang.String.class);
         map.put("DecryptingPrivateKey", java.security.PrivateKey.class);
         map.put("EncryptingAlgorithm", org.apache.camel.component.as2.api.AS2EncryptionAlgorithm.class);
         map.put("EncryptingCertificateChain", java.security.cert.Certificate[].class);
@@ -90,6 +91,8 @@ public class AS2EndpointConfigurer extends PropertyConfigurerSupport implements 
         case "as2To": target.getConfiguration().setAs2To(property(camelContext, java.lang.String.class, value)); return true;
         case "as2version":
         case "as2Version": target.getConfiguration().setAs2Version(property(camelContext, java.lang.String.class, value)); return true;
+        case "asyncmdnallowedhosts":
+        case "asyncMdnAllowedHosts": target.getConfiguration().setAsyncMdnAllowedHosts(property(camelContext, java.lang.String.class, value)); return true;
         case "asyncmdnportnumber":
         case "asyncMdnPortNumber": target.getConfiguration().setAsyncMdnPortNumber(property(camelContext, java.lang.Integer.class, value)); return true;
         case "attachedfilename":
@@ -196,6 +199,8 @@ public class AS2EndpointConfigurer extends PropertyConfigurerSupport implements 
         case "as2To": return java.lang.String.class;
         case "as2version":
         case "as2Version": return java.lang.String.class;
+        case "asyncmdnallowedhosts":
+        case "asyncMdnAllowedHosts": return java.lang.String.class;
         case "asyncmdnportnumber":
         case "asyncMdnPortNumber": return java.lang.Integer.class;
         case "attachedfilename":
@@ -298,6 +303,8 @@ public class AS2EndpointConfigurer extends PropertyConfigurerSupport implements 
         case "as2To": return target.getConfiguration().getAs2To();
         case "as2version":
         case "as2Version": return target.getConfiguration().getAs2Version();
+        case "asyncmdnallowedhosts":
+        case "asyncMdnAllowedHosts": return target.getConfiguration().getAsyncMdnAllowedHosts();
         case "asyncmdnportnumber":
         case "asyncMdnPortNumber": return target.getConfiguration().getAsyncMdnPortNumber();
         case "attachedfilename":

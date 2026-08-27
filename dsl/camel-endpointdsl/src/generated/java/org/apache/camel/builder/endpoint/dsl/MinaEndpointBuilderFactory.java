@@ -418,7 +418,12 @@ public interface MinaEndpointBuilderFactory {
         /**
          * Accept the wildcard specified classes for Object deserialization,
          * unless they are otherwise rejected. Multiple patterns can be
-         * separated by comma.
+         * separated by comma. This widens the codec's deserialization
+         * allow-list, so keep it as narrow as the route actually needs. Avoid :
+         * it accepts every class the classpath can load from an untrusted peer,
+         * including Camel's own org.apache.camel types. Leaving the option
+         * unset is the safest choice - the codec then accepts only the small
+         * built-in set and refuses anything else.
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
@@ -1185,7 +1190,12 @@ public interface MinaEndpointBuilderFactory {
         /**
          * Accept the wildcard specified classes for Object deserialization,
          * unless they are otherwise rejected. Multiple patterns can be
-         * separated by comma.
+         * separated by comma. This widens the codec's deserialization
+         * allow-list, so keep it as narrow as the route actually needs. Avoid :
+         * it accepts every class the classpath can load from an untrusted peer,
+         * including Camel's own org.apache.camel types. Leaving the option
+         * unset is the safest choice - the codec then accepts only the small
+         * built-in set and refuses anything else.
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
@@ -1912,7 +1922,12 @@ public interface MinaEndpointBuilderFactory {
         /**
          * Accept the wildcard specified classes for Object deserialization,
          * unless they are otherwise rejected. Multiple patterns can be
-         * separated by comma.
+         * separated by comma. This widens the codec's deserialization
+         * allow-list, so keep it as narrow as the route actually needs. Avoid :
+         * it accepts every class the classpath can load from an untrusted peer,
+         * including Camel's own org.apache.camel types. Leaving the option
+         * unset is the safest choice - the codec then accepts only the small
+         * built-in set and refuses anything else.
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 

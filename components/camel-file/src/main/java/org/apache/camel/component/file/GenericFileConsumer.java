@@ -284,7 +284,8 @@ public abstract class GenericFileConsumer<T> extends ScheduledBatchPollingConsum
             String key = file.getAbsoluteFilePath();
             endpoint.getInProgressRepository().remove(key);
             // if we added eager to idempotent then we need to remove this
-            if (endpoint.isIdempotentEager() && endpoint.getIdempotentRepository() != null) {
+            if (Boolean.TRUE.equals(endpoint.isIdempotent()) && endpoint.isIdempotentEager()
+                    && endpoint.getIdempotentRepository() != null) {
                 removeExcessiveIdempotentFile(file, null);
             }
             releaseExchange(exchange, true);
@@ -311,7 +312,8 @@ public abstract class GenericFileConsumer<T> extends ScheduledBatchPollingConsum
         for (GenericFile file : files) {
             String key = file.getAbsoluteFilePath();
             endpoint.getInProgressRepository().remove(key);
-            if (endpoint.isIdempotentEager() && endpoint.getIdempotentRepository() != null) {
+            if (Boolean.TRUE.equals(endpoint.isIdempotent()) && endpoint.isIdempotentEager()
+                    && endpoint.getIdempotentRepository() != null) {
                 removeExcessiveIdempotentFile(file, null);
             }
         }
@@ -630,6 +632,13 @@ public abstract class GenericFileConsumer<T> extends ScheduledBatchPollingConsum
             return false;
         }
 
+        // the resolved path must stay within the starting directory, as the name it was built from is
+        // reported by the remote server and is not necessarily a single path segment
+        if (endpoint.isJailStartingDirectory() && !isWithinStartingDirectory(absoluteFilePath)) {
+            LOG.warn("Skipping file as it resolves outside the starting directory: {}", absoluteFilePath);
+            return false;
+        }
+
         // directory is always valid
         if (isDirectory) {
             return true;
@@ -677,6 +686,22 @@ public abstract class GenericFileConsumer<T> extends ScheduledBatchPollingConsum
             }
         }
         return answer;
+    }
+
+    /**
+     * Strategy to determine whether the resolved path of a listed file stays within the configured starting directory.
+     * <p/>
+     * Consumers that build the path from a name supplied by a remote server must override this, as such a name is not
+     * guaranteed to be a single path segment and can otherwise navigate outside the directory being polled. The check
+     * is only consulted when {@link GenericFileEndpoint#isJailStartingDirectory()} is enabled.
+     *
+     * @param  absoluteFilePath the resolved absolute path of the listed file
+     * @return                  {@code true} if the path stays within the starting directory
+     */
+    protected boolean isWithinStartingDirectory(String absoluteFilePath) {
+        // names obtained from a local directory listing are always single path segments, so there is no
+        // boundary to enforce here
+        return true;
     }
 
     /**

@@ -1,1 +1,0 @@
-../../../../../components/camel-ironmq/src/main/docs/ironmq-component.adoc

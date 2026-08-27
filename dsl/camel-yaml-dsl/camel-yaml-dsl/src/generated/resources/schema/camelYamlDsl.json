@@ -1200,6 +1200,8 @@
               }, {
                 "required" : [ "python" ]
               }, {
+                "required" : [ "python3" ]
+              }, {
                 "required" : [ "ref" ]
               }, {
                 "required" : [ "simple" ]
@@ -1288,6 +1290,7 @@
           "mvel" : { },
           "ognl" : { },
           "python" : { },
+          "python3" : { },
           "ref" : { },
           "simple" : { },
           "spel" : { },
@@ -1348,6 +1351,8 @@
                 "required" : [ "ognl" ]
               }, {
                 "required" : [ "python" ]
+              }, {
+                "required" : [ "python3" ]
               }, {
                 "required" : [ "ref" ]
               }, {
@@ -1442,6 +1447,7 @@
           "mvel" : { },
           "ognl" : { },
           "python" : { },
+          "python3" : { },
           "ref" : { },
           "simple" : { },
           "spel" : { },
@@ -1502,6 +1508,8 @@
                 "required" : [ "ognl" ]
               }, {
                 "required" : [ "python" ]
+              }, {
+                "required" : [ "python3" ]
               }, {
                 "required" : [ "ref" ]
               }, {
@@ -1639,6 +1647,7 @@
           "mvel" : { },
           "ognl" : { },
           "python" : { },
+          "python3" : { },
           "ref" : { },
           "simple" : { },
           "spel" : { },
@@ -1787,6 +1796,8 @@
                 "required" : [ "ognl" ]
               }, {
                 "required" : [ "python" ]
+              }, {
+                "required" : [ "python3" ]
               }, {
                 "required" : [ "ref" ]
               }, {
@@ -1945,6 +1956,14 @@
             }
           }, {
             "type" : "object",
+            "required" : [ "python3" ],
+            "properties" : {
+              "python3" : {
+                "$ref" : "#/items/definitions/org.apache.camel.model.language.Python3Expression"
+              }
+            }
+          }, {
+            "type" : "object",
             "required" : [ "ref" ],
             "properties" : {
               "ref" : {
@@ -2036,6 +2055,7 @@
           "mvel" : { },
           "ognl" : { },
           "python" : { },
+          "python3" : { },
           "ref" : { },
           "simple" : { },
           "spel" : { },
@@ -2173,6 +2193,8 @@
               }, {
                 "required" : [ "python" ]
               }, {
+                "required" : [ "python3" ]
+              }, {
                 "required" : [ "ref" ]
               }, {
                 "required" : [ "simple" ]
@@ -2255,6 +2277,7 @@
           "mvel" : { },
           "ognl" : { },
           "python" : { },
+          "python3" : { },
           "ref" : { },
           "simple" : { },
           "spel" : { },
@@ -2417,6 +2440,8 @@
               }, {
                 "required" : [ "python" ]
               }, {
+                "required" : [ "python3" ]
+              }, {
                 "required" : [ "ref" ]
               }, {
                 "required" : [ "simple" ]
@@ -2523,6 +2548,7 @@
           "mvel" : { },
           "ognl" : { },
           "python" : { },
+          "python3" : { },
           "ref" : { },
           "simple" : { },
           "spel" : { },
@@ -2984,6 +3010,8 @@
               }, {
                 "required" : [ "python" ]
               }, {
+                "required" : [ "python3" ]
+              }, {
                 "required" : [ "ref" ]
               }, {
                 "required" : [ "simple" ]
@@ -3084,6 +3112,7 @@
           "mvel" : { },
           "ognl" : { },
           "python" : { },
+          "python3" : { },
           "ref" : { },
           "simple" : { },
           "spel" : { },
@@ -3194,6 +3223,8 @@
                 "required" : [ "tarFile" ]
               }, {
                 "required" : [ "thrift" ]
+              }, {
+                "required" : [ "toon" ]
               }, {
                 "required" : [ "ubl" ]
               }, {
@@ -3534,6 +3565,14 @@
             }
           }, {
             "type" : "object",
+            "required" : [ "toon" ],
+            "properties" : {
+              "toon" : {
+                "$ref" : "#/items/definitions/org.apache.camel.model.dataformat.ToonDataFormat"
+              }
+            }
+          }, {
+            "type" : "object",
             "required" : [ "ubl" ],
             "properties" : {
               "ubl" : {
@@ -3671,6 +3710,7 @@
           "syslog" : { },
           "tarFile" : { },
           "thrift" : { },
+          "toon" : { },
           "ubl" : { },
           "univocityCsv" : { },
           "univocityFixed" : { },
@@ -4041,6 +4081,8 @@
               }, {
                 "required" : [ "python" ]
               }, {
+                "required" : [ "python3" ]
+              }, {
                 "required" : [ "ref" ]
               }, {
                 "required" : [ "simple" ]
@@ -4106,6 +4148,7 @@
           "mvel" : { },
           "ognl" : { },
           "python" : { },
+          "python3" : { },
           "ref" : { },
           "simple" : { },
           "spel" : { },
@@ -4499,6 +4542,8 @@
               }, {
                 "required" : [ "python" ]
               }, {
+                "required" : [ "python3" ]
+              }, {
                 "required" : [ "ref" ]
               }, {
                 "required" : [ "simple" ]
@@ -4630,6 +4675,7 @@
           "mvel" : { },
           "ognl" : { },
           "python" : { },
+          "python3" : { },
           "ref" : { },
           "simple" : { },
           "spel" : { },
@@ -4743,6 +4789,8 @@
               }, {
                 "required" : [ "python" ]
               }, {
+                "required" : [ "python3" ]
+              }, {
                 "required" : [ "ref" ]
               }, {
                 "required" : [ "simple" ]
@@ -4798,6 +4846,7 @@
           "mvel" : { },
           "ognl" : { },
           "python" : { },
+          "python3" : { },
           "ref" : { },
           "simple" : { },
           "spel" : { },
@@ -4859,6 +4908,8 @@
                 "required" : [ "ognl" ]
               }, {
                 "required" : [ "python" ]
+              }, {
+                "required" : [ "python3" ]
               }, {
                 "required" : [ "ref" ]
               }, {
@@ -5022,6 +5073,7 @@
           "mvel" : { },
           "ognl" : { },
           "python" : { },
+          "python3" : { },
           "ref" : { },
           "simple" : { },
           "spel" : { },
@@ -5442,6 +5494,8 @@
               }, {
                 "required" : [ "python" ]
               }, {
+                "required" : [ "python3" ]
+              }, {
                 "required" : [ "ref" ]
               }, {
                 "required" : [ "simple" ]
@@ -5545,6 +5599,7 @@
           "mvel" : { },
           "ognl" : { },
           "python" : { },
+          "python3" : { },
           "ref" : { },
           "simple" : { },
           "spel" : { },
@@ -6185,6 +6240,8 @@
                 }, {
                   "required" : [ "python" ]
                 }, {
+                  "required" : [ "python3" ]
+                }, {
                   "required" : [ "ref" ]
                 }, {
                   "required" : [ "simple" ]
@@ -6278,6 +6335,7 @@
             "mvel" : { },
             "ognl" : { },
             "python" : { },
+            "python3" : { },
             "ref" : { },
             "simple" : { },
             "spel" : { },
@@ -6461,6 +6519,8 @@
               }, {
                 "required" : [ "python" ]
               }, {
+                "required" : [ "python3" ]
+              }, {
                 "required" : [ "ref" ]
               }, {
                 "required" : [ "simple" ]
@@ -6532,6 +6592,7 @@
           "mvel" : { },
           "ognl" : { },
           "python" : { },
+          "python3" : { },
           "ref" : { },
           "simple" : { },
           "spel" : { },
@@ -6592,6 +6653,8 @@
                 "required" : [ "ognl" ]
               }, {
                 "required" : [ "python" ]
+              }, {
+                "required" : [ "python3" ]
               }, {
                 "required" : [ "ref" ]
               }, {
@@ -6664,6 +6727,7 @@
           "mvel" : { },
           "ognl" : { },
           "python" : { },
+          "python3" : { },
           "ref" : { },
           "simple" : { },
           "spel" : { },
@@ -6765,6 +6829,8 @@
               }, {
                 "required" : [ "python" ]
               }, {
+                "required" : [ "python3" ]
+              }, {
                 "required" : [ "ref" ]
               }, {
                 "required" : [ "simple" ]
@@ -6841,6 +6907,7 @@
           "mvel" : { },
           "ognl" : { },
           "python" : { },
+          "python3" : { },
           "ref" : { },
           "simple" : { },
           "spel" : { },
@@ -6940,6 +7007,8 @@
               }, {
                 "required" : [ "python" ]
               }, {
+                "required" : [ "python3" ]
+              }, {
                 "required" : [ "ref" ]
               }, {
                 "required" : [ "simple" ]
@@ -7016,6 +7085,7 @@
           "mvel" : { },
           "ognl" : { },
           "python" : { },
+          "python3" : { },
           "ref" : { },
           "simple" : { },
           "spel" : { },
@@ -7077,6 +7147,8 @@
                 "required" : [ "ognl" ]
               }, {
                 "required" : [ "python" ]
+              }, {
+                "required" : [ "python3" ]
               }, {
                 "required" : [ "ref" ]
               }, {
@@ -7154,6 +7226,7 @@
           "mvel" : { },
           "ognl" : { },
           "python" : { },
+          "python3" : { },
           "ref" : { },
           "simple" : { },
           "spel" : { },
@@ -7253,6 +7326,8 @@
               }, {
                 "required" : [ "python" ]
               }, {
+                "required" : [ "python3" ]
+              }, {
                 "required" : [ "ref" ]
               }, {
                 "required" : [ "simple" ]
@@ -7329,6 +7404,7 @@
           "mvel" : { },
           "ognl" : { },
           "python" : { },
+          "python3" : { },
           "ref" : { },
           "simple" : { },
           "spel" : { },
@@ -7389,6 +7465,8 @@
                 "required" : [ "ognl" ]
               }, {
                 "required" : [ "python" ]
+              }, {
+                "required" : [ "python3" ]
               }, {
                 "required" : [ "ref" ]
               }, {
@@ -7572,6 +7650,7 @@
           "mvel" : { },
           "ognl" : { },
           "python" : { },
+          "python3" : { },
           "ref" : { },
           "simple" : { },
           "spel" : { },
@@ -7898,6 +7977,8 @@
               }, {
                 "required" : [ "python" ]
               }, {
+                "required" : [ "python3" ]
+              }, {
                 "required" : [ "ref" ]
               }, {
                 "required" : [ "simple" ]
@@ -8010,6 +8091,7 @@
           "mvel" : { },
           "ognl" : { },
           "python" : { },
+          "python3" : { },
           "ref" : { },
           "simple" : { },
           "spel" : { },
@@ -8439,6 +8521,8 @@
               }, {
                 "required" : [ "python" ]
               }, {
+                "required" : [ "python3" ]
+              }, {
                 "required" : [ "ref" ]
               }, {
                 "required" : [ "simple" ]
@@ -8510,6 +8594,7 @@
           "mvel" : { },
           "ognl" : { },
           "python" : { },
+          "python3" : { },
           "ref" : { },
           "simple" : { },
           "spel" : { },
@@ -8654,6 +8739,7 @@
           "syslog" : { },
           "tarFile" : { },
           "thrift" : { },
+          "toon" : { },
           "ubl" : { },
           "univocityCsv" : { },
           "univocityFixed" : { },
@@ -8994,6 +9080,14 @@
             }
           }, {
             "type" : "object",
+            "required" : [ "toon" ],
+            "properties" : {
+              "toon" : {
+                "$ref" : "#/items/definitions/org.apache.camel.model.dataformat.ToonDataFormat"
+              }
+            }
+          }, {
+            "type" : "object",
             "required" : [ "ubl" ],
             "properties" : {
               "ubl" : {
@@ -9108,6 +9202,8 @@
               }, {
                 "required" : [ "python" ]
               }, {
+                "required" : [ "python3" ]
+              }, {
                 "required" : [ "ref" ]
               }, {
                 "required" : [ "simple" ]
@@ -9184,6 +9280,7 @@
           "mvel" : { },
           "ognl" : { },
           "python" : { },
+          "python3" : { },
           "ref" : { },
           "simple" : { },
           "spel" : { },
@@ -9262,6 +9359,8 @@
               }, {
                 "required" : [ "python" ]
               }, {
+                "required" : [ "python3" ]
+              }, {
                 "required" : [ "ref" ]
               }, {
                 "required" : [ "simple" ]
@@ -9339,6 +9438,7 @@
           "mvel" : { },
           "ognl" : { },
           "python" : { },
+          "python3" : { },
           "ref" : { },
           "simple" : { },
           "spel" : { },
@@ -10463,6 +10563,9 @@
           },
           "thrift" : {
             "$ref" : "#/items/definitions/org.apache.camel.model.dataformat.ThriftDataFormat"
+          },
+          "toon" : {
+            "$ref" : "#/items/definitions/org.apache.camel.model.dataformat.ToonDataFormat"
           },
           "ubl" : {
             "$ref" : "#/items/definitions/org.apache.camel.model.dataformat.UblDataFormat"
@@ -12049,6 +12152,50 @@
           }
         } ]
       },
+      "org.apache.camel.model.dataformat.ToonDataFormat" : {
+        "title" : "TOON",
+        "description" : "Marshal JSON-compatible Java values to TOON (Token-Oriented Object Notation) and unmarshal TOON back to Java objects.",
+        "type" : "object",
+        "additionalProperties" : false,
+        "properties" : {
+          "contentTypeHeader" : {
+            "type" : "boolean",
+            "title" : "Content Type Header",
+            "description" : "Whether the data format should set the Content-Type header to text/toon when marshalling.",
+            "default" : true
+          },
+          "delimiter" : {
+            "type" : "string",
+            "title" : "Delimiter",
+            "description" : "Delimiter used for tabular array rows and inline primitive arrays.",
+            "default" : "COMMA",
+            "enum" : [ "COMMA", "TAB", "PIPE" ]
+          },
+          "id" : {
+            "type" : "string",
+            "title" : "Id",
+            "description" : "The id of this node"
+          },
+          "indent" : {
+            "type" : "number",
+            "title" : "Indent",
+            "description" : "Number of spaces per indentation level.",
+            "default" : 2
+          },
+          "lengthMarker" : {
+            "type" : "boolean",
+            "title" : "Length Marker",
+            "description" : "Whether to prefix array lengths with a hash marker so arrays render as hash-prefixed lengths instead of plain lengths.",
+            "default" : false
+          },
+          "strict" : {
+            "type" : "boolean",
+            "title" : "Strict",
+            "description" : "Whether to enable strict validation when unmarshalling TOON. When false, JToon uses best-effort parsing.",
+            "default" : true
+          }
+        }
+      },
       "org.apache.camel.model.dataformat.UblDataFormat" : {
         "title" : "UBL",
         "description" : "Marshal and unmarshal UBL 2.1 (Universal Business Language) documents.",
@@ -13322,6 +13469,14 @@
             }
           }, {
             "type" : "object",
+            "required" : [ "python3" ],
+            "properties" : {
+              "python3" : {
+                "$ref" : "#/items/definitions/org.apache.camel.model.language.Python3Expression"
+              }
+            }
+          }, {
+            "type" : "object",
             "required" : [ "ref" ],
             "properties" : {
               "ref" : {
@@ -13413,6 +13568,7 @@
           "mvel" : { },
           "ognl" : { },
           "python" : { },
+          "python3" : { },
           "ref" : { },
           "simple" : { },
           "spel" : { },
@@ -13925,6 +14081,40 @@
         "title" : "OGNL",
         "description" : "Evaluates an OGNL expression (Apache Commons OGNL)",
         "deprecated" : true,
+        "oneOf" : [ {
+          "type" : "string"
+        }, {
+          "type" : "object",
+          "additionalProperties" : false,
+          "properties" : {
+            "expression" : {
+              "type" : "string",
+              "title" : "Expression",
+              "description" : "The expression value in your chosen language syntax."
+            },
+            "id" : {
+              "type" : "string",
+              "title" : "Id",
+              "description" : "The id of this node."
+            },
+            "resultType" : {
+              "type" : "string",
+              "title" : "Result Type",
+              "description" : "The class of the result type (type from output)."
+            },
+            "trim" : {
+              "type" : "boolean",
+              "title" : "Trim",
+              "description" : "Whether to trim the source code to remove leading and trailing whitespaces and line breaks.",
+              "default" : true
+            }
+          }
+        } ],
+        "required" : [ "expression" ]
+      },
+      "org.apache.camel.model.language.Python3Expression" : {
+        "title" : "Python 3",
+        "description" : "Evaluates a Python 3 expression",
         "oneOf" : [ {
           "type" : "string"
         }, {
@@ -16754,6 +16944,8 @@
               }, {
                 "required" : [ "thrift" ]
               }, {
+                "required" : [ "toon" ]
+              }, {
                 "required" : [ "ubl" ]
               }, {
                 "required" : [ "univocityCsv" ]
@@ -17093,6 +17285,14 @@
             }
           }, {
             "type" : "object",
+            "required" : [ "toon" ],
+            "properties" : {
+              "toon" : {
+                "$ref" : "#/items/definitions/org.apache.camel.model.dataformat.ToonDataFormat"
+              }
+            }
+          }, {
+            "type" : "object",
             "required" : [ "ubl" ],
             "properties" : {
               "ubl" : {
@@ -17219,6 +17419,7 @@
           "syslog" : { },
           "tarFile" : { },
           "thrift" : { },
+          "toon" : { },
           "ubl" : { },
           "univocityCsv" : { },
           "univocityFixed" : { },

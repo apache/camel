@@ -44,6 +44,8 @@ public class OpenAIMock implements BeforeEachCallback, AfterEachCallback {
     private final List<AudioTranscriptionExpectation> audioTranslationExpectations;
     private final List<SpeechExpectation> speechExpectations;
     private final List<ModerationExpectation> moderationExpectations;
+    private final List<ImageExpectation> imageGenerationExpectations;
+    private final List<ImageExpectation> imageEditExpectations;
     private final OpenAIMockBuilder builder;
     private final ObjectMapper objectMapper;
     private ExecutorService executor;
@@ -55,11 +57,14 @@ public class OpenAIMock implements BeforeEachCallback, AfterEachCallback {
         this.audioTranslationExpectations = new ArrayList<>();
         this.speechExpectations = new ArrayList<>();
         this.moderationExpectations = new ArrayList<>();
+        this.imageGenerationExpectations = new ArrayList<>();
+        this.imageEditExpectations = new ArrayList<>();
         this.objectMapper = new ObjectMapper();
         this.builder = new OpenAIMockBuilder(
                 this, this.expectations, this.embeddingExpectations,
                 this.audioTranscriptionExpectations, this.audioTranslationExpectations,
-                this.speechExpectations, this.moderationExpectations);
+                this.speechExpectations, this.moderationExpectations,
+                this.imageGenerationExpectations, this.imageEditExpectations);
     }
 
     public OpenAIMockBuilder builder() {
@@ -80,7 +85,8 @@ public class OpenAIMock implements BeforeEachCallback, AfterEachCallback {
                 new OpenAIMockServerHandler(
                         new OpenAIMockExpectations(
                                 expectations, embeddingExpectations, audioTranscriptionExpectations,
-                                audioTranslationExpectations, speechExpectations, moderationExpectations),
+                                audioTranslationExpectations, speechExpectations, moderationExpectations,
+                                imageGenerationExpectations, imageEditExpectations),
                         objectMapper));
 
         executor = Executors.newSingleThreadExecutor();

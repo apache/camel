@@ -118,6 +118,11 @@ camel.server.enabled = true
 camel.server.mcp-enabled = true
 camel.server.mcp-tags = crm,notify
 camel.server.mcp-server-name = my-integration-app
+camel.server.mcp-server-title = My Integration MCP
+camel.server.mcp-server-description = Tools for customer operations
+camel.server.mcp-server-website-url = https://example.com/docs
+camel.server.mcp-instructions = Use these tools to operate the integration.
+camel.server.mcp-server-icons = [{"src":"https://example.com/icon.png","mimeType":"image/png","sizes":["48x48"],"theme":"light"}]
 ----
 
 Tag patterns support wildcards: use `*` to expose all tagged tools, or a
@@ -130,6 +135,12 @@ On other runtimes, or when wiring programmatically, add the
 ----
 McpServerConfiguration configuration = new McpServerConfiguration();
 configuration.setTags("crm,notify");
+configuration.setServerName("my-integration-app");
+configuration.setServerTitle("My Integration MCP");
+configuration.setServerDescription("Tools for customer operations");
+configuration.setServerWebsiteUrl("https://example.com/docs");
+configuration.setInstructions("Use these tools to operate the integration.");
+configuration.setServerIcons(List.of(new McpServerIcon("https://example.com/icon.png", "image/png", List.of("48x48"), "light")));
 camelContext.addService(new McpServerBridge(configuration));
 ----
 
@@ -173,6 +184,17 @@ JBang (see the xref:main.adoc[camel-main] options) or on
   `/mcp` | engine
 | `camel.server.mcp-server-name` | MCP server name advertised to clients. |
   CamelContext name | engine
+| `camel.server.mcp-server-title` | MCP server display title advertised to clients in
+  `serverInfo.title`. |  | engine
+| `camel.server.mcp-server-description` | MCP server description advertised to clients in
+  `serverInfo.description`. |  | engine
+| `camel.server.mcp-server-website-url` | MCP server website URL advertised to clients in
+  `serverInfo.websiteUrl`. |  | engine
+| `camel.server.mcp-instructions` | Top-level MCP instructions returned to clients on
+  initialize (not part of `serverInfo`). |  | engine
+| `camel.server.mcp-server-icons` | JSON array of MCP server icons advertised to clients in
+  `serverInfo.icons`. Each entry must include a `src` URL and may include
+  `mimeType`, `sizes` and `theme`. |  | engine
 | `camel.server.mcp-session-keep-alive-interval` | Keep-alive ping interval in
   milliseconds for MCP sessions on the Vert.x streamable transport. Dead sessions
   are evicted after consecutive ping failures. `0` disables keep-alive

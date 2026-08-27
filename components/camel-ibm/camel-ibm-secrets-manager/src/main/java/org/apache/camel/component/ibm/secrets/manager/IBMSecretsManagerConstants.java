@@ -27,7 +27,7 @@ public final class IBMSecretsManagerConstants {
     public static final String OPERATION = HEADER_PREFIX + "ProducerOperation";
 
     // headers set by the producer only
-    @Metadata(label = "producer", description = "Set the desired secret path as header.",
+    @Metadata(label = "producer", description = "Set the desired secret name as header.",
               javaType = "String")
     public static final String SECRET_NAME = HEADER_PREFIX + "SecretName";
 
@@ -37,7 +37,7 @@ public final class IBMSecretsManagerConstants {
     public static final String SECRET_VERSION = HEADER_PREFIX + "SecretVersion";
 
     // headers set by the producer only
-    @Metadata(label = "producer", description = "Set the desired secret version as header.",
+    @Metadata(label = "producer", description = "Set the desired secret ID as header.",
               javaType = "String")
     public static final String SECRET_ID = HEADER_PREFIX + "SecretId";
 

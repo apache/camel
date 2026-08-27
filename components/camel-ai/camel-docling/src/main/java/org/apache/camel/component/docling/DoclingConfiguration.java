@@ -68,6 +68,29 @@ public class DoclingConfiguration implements Cloneable {
     @Metadata(description = "Maximum file size in bytes for processing", defaultValue = "52428800")
     private long maxFileSize = 50 * 1024 * 1024; // 50MB
 
+    @UriParam(label = "security", security = "insecure:dev")
+    @Metadata(description = "Whether a String message body that starts with http:// or https:// is interpreted as a"
+                            + " remote URL for Docling to fetch. When disabled, such a body is rejected instead of"
+                            + " being fetched. This does not affect the CamelDoclingInputFilePath header, nor bodies"
+                            + " of any other type.",
+              defaultValue = "false")
+    private boolean allowUrlSource;
+
+    @UriParam(label = "security", security = "insecure:dev")
+    @Metadata(description = "Whether a String message body that starts with / or contains \\ is interpreted as a"
+                            + " local filesystem path to read. When disabled, such a body is rejected instead of"
+                            + " being read. This does not affect the CamelDoclingInputFilePath header, nor File,"
+                            + " byte[] or explicit path collection bodies used by the batch operations.",
+              defaultValue = "false")
+    private boolean allowFilePathSource;
+
+    @UriParam(label = "security")
+    @Metadata(description = "When set, every local input file path must resolve inside this directory once"
+                            + " normalized. Applies to the CamelDoclingInputFilePath header, to file path message"
+                            + " bodies, and to the paths used by the batch operations. When empty, no directory"
+                            + " restriction is applied.")
+    private String inputBaseDirectory;
+
     @UriParam
     @Metadata(description = "Include the content of the output file in the exchange body and delete the output file",
               defaultValue = "false")
@@ -313,6 +336,30 @@ public class DoclingConfiguration implements Cloneable {
 
     public void setMaxFileSize(long maxFileSize) {
         this.maxFileSize = maxFileSize;
+    }
+
+    public boolean isAllowUrlSource() {
+        return allowUrlSource;
+    }
+
+    public void setAllowUrlSource(boolean allowUrlSource) {
+        this.allowUrlSource = allowUrlSource;
+    }
+
+    public boolean isAllowFilePathSource() {
+        return allowFilePathSource;
+    }
+
+    public void setAllowFilePathSource(boolean allowFilePathSource) {
+        this.allowFilePathSource = allowFilePathSource;
+    }
+
+    public String getInputBaseDirectory() {
+        return inputBaseDirectory;
+    }
+
+    public void setInputBaseDirectory(String inputBaseDirectory) {
+        this.inputBaseDirectory = inputBaseDirectory;
     }
 
     public boolean isContentInBody() {

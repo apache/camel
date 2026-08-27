@@ -261,7 +261,11 @@ public final class DefaultAttachmentMessage implements AttachmentMessage {
 
     @Override
     public boolean hasAttachments() {
-        return delegate.hasTrait(MessageTrait.ATTACHMENTS);
+        if (!delegate.hasTrait(MessageTrait.ATTACHMENTS)) {
+            return false;
+        }
+        Map<String, Object> attachments = (Map<String, Object>) delegate.getPayloadForTrait(MessageTrait.ATTACHMENTS);
+        return attachments != null && !attachments.isEmpty();
     }
 
     @Override

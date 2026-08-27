@@ -17,6 +17,7 @@
 package org.apache.camel.test.infra.openai.mock;
 
 import java.util.ArrayList;
+import java.util.Base64;
 import java.util.List;
 import java.util.function.BiFunction;
 import java.util.function.Consumer;
@@ -38,19 +39,25 @@ public class OpenAIMockBuilder {
     private final List<AudioTranscriptionExpectation> audioTranslationExpectations;
     private final List<SpeechExpectation> speechExpectations;
     private final List<ModerationExpectation> moderationExpectations;
+    private final List<ImageExpectation> imageGenerationExpectations;
+    private final List<ImageExpectation> imageEditExpectations;
     private MockExpectation currentExpectation;
     private EmbeddingExpectation currentEmbeddingExpectation;
     private AudioTranscriptionExpectation currentAudioTranscriptionExpectation;
     private AudioTranscriptionExpectation currentAudioTranslationExpectation;
     private SpeechExpectation currentSpeechExpectation;
     private ModerationExpectation currentModerationExpectation;
+    private ImageExpectation currentImageGenerationExpectation;
+    private ImageExpectation currentImageEditExpectation;
 
     public OpenAIMockBuilder(OpenAIMock mock, List<MockExpectation> expectations,
                              List<EmbeddingExpectation> embeddingExpectations,
                              List<AudioTranscriptionExpectation> audioTranscriptionExpectations,
                              List<AudioTranscriptionExpectation> audioTranslationExpectations,
                              List<SpeechExpectation> speechExpectations,
-                             List<ModerationExpectation> moderationExpectations) {
+                             List<ModerationExpectation> moderationExpectations,
+                             List<ImageExpectation> imageGenerationExpectations,
+                             List<ImageExpectation> imageEditExpectations) {
         this.mock = mock;
         this.expectations = expectations;
         this.embeddingExpectations = embeddingExpectations;
@@ -58,6 +65,8 @@ public class OpenAIMockBuilder {
         this.audioTranslationExpectations = audioTranslationExpectations;
         this.speechExpectations = speechExpectations;
         this.moderationExpectations = moderationExpectations;
+        this.imageGenerationExpectations = imageGenerationExpectations;
+        this.imageEditExpectations = imageEditExpectations;
     }
 
     public OpenAIMockBuilder when(String expectedInput) {
@@ -319,6 +328,101 @@ public class OpenAIMockBuilder {
         return this;
     }
 
+    // Image Generation/Edit API methods
+
+    /**
+     * Sets up an image generation expectation that matches any prompt.
+     */
+    public OpenAIMockBuilder whenImageGeneration() {
+        return whenImageGeneration(null);
+    }
+
+    /**
+     * Sets up an image generation expectation that only matches the given prompt.
+     */
+    public OpenAIMockBuilder whenImageGeneration(String expectedPrompt) {
+        log.debug("Setting up image generation expectation for prompt: {}", expectedPrompt);
+        currentImageGenerationExpectation = new ImageExpectation();
+        currentImageGenerationExpectation.setExpectedPrompt(expectedPrompt);
+        return this;
+    }
+
+    /**
+     * Sets up an image edit expectation. Image edit requests are multipart and are not parsed by the mock, so
+     * expectations are matched in the order they were declared.
+     */
+    public OpenAIMockBuilder whenImageEdit() {
+        log.debug("Setting up image edit expectation");
+        currentImageEditExpectation = new ImageExpectation();
+        return this;
+    }
+
+    /**
+     * Adds an image to the reply, served as a base64 payload. Call more than once to reply with several images.
+     */
+    public OpenAIMockBuilder replyWithImage(byte[] imageData) {
+        ImageExpectation expectation = validateCurrentImageExpectation("replyWithImage()");
+        log.debug("Setting image data of size: {}", imageData.length);
+        expectation.addBase64Image(Base64.getEncoder().encodeToString(imageData));
+        return this;
+    }
+
+    /**
+     * Adds an image to the reply, served as a URL. Call more than once to reply with several images.
+     */
+    public OpenAIMockBuilder replyWithImageUrl(String url) {
+        ImageExpectation expectation = validateCurrentImageExpectation("replyWithImageUrl()");
+        log.debug("Setting image url: {}", url);
+        expectation.addImageUrl(url);
+        return this;
+    }
+
+    /**
+     * Adds a revised prompt for the image at the same position in the reply.
+     */
+    public OpenAIMockBuilder withRevisedPrompt(String revisedPrompt) {
+        ImageExpectation expectation = validateCurrentImageExpectation("withRevisedPrompt()");
+        expectation.addRevisedPrompt(revisedPrompt);
+        return this;
+    }
+
+    /**
+     * Sets the output format reported by the reply, which drives the content type set on the exchange.
+     */
+    public OpenAIMockBuilder withImageOutputFormat(String outputFormat) {
+        ImageExpectation expectation = validateCurrentImageExpectation("withImageOutputFormat()");
+        expectation.setOutputFormat(outputFormat);
+        return this;
+    }
+
+    /**
+     * Sets the image size reported by the reply.
+     */
+    public OpenAIMockBuilder withImageSize(String size) {
+        ImageExpectation expectation = validateCurrentImageExpectation("withImageSize()");
+        expectation.setSize(size);
+        return this;
+    }
+
+    /**
+     * Asserts on the raw image request body. Image edit requests are multipart, so the body is exposed as raw bytes
+     * rather than as parsed fields.
+     */
+    public OpenAIMockBuilder assertImageRequest(Consumer<byte[]> requestAssertion) {
+        ImageExpectation expectation = validateCurrentImageExpectation("assertImageRequest()");
+        expectation.setRequestAssertion(requestAssertion);
+        return this;
+    }
+
+    /**
+     * Sets the token usage reported by the reply, as the GPT image models do.
+     */
+    public OpenAIMockBuilder withImageUsage(int inputTokens, int outputTokens) {
+        ImageExpectation expectation = validateCurrentImageExpectation("withImageUsage()");
+        expectation.setUsage(inputTokens, outputTokens);
+        return this;
+    }
+
     public OpenAIMockBuilder end() {
         if (currentExpectation != null) {
             log.debug("Finalizing expectation for input: {}", currentExpectation.getExpectedInput());
@@ -344,10 +448,19 @@ public class OpenAIMockBuilder {
             log.debug("Finalizing moderation expectation for input: {}", currentModerationExpectation.getExpectedInput());
             moderationExpectations.add(currentModerationExpectation);
             currentModerationExpectation = null;
+        } else if (currentImageGenerationExpectation != null) {
+            log.debug("Finalizing image generation expectation");
+            imageGenerationExpectations.add(currentImageGenerationExpectation);
+            currentImageGenerationExpectation = null;
+        } else if (currentImageEditExpectation != null) {
+            log.debug("Finalizing image edit expectation");
+            imageEditExpectations.add(currentImageEditExpectation);
+            currentImageEditExpectation = null;
         } else {
             throw new IllegalStateException(
                     "Call when(), whenEmbedding(), whenTranscription(), whenTranslation(), whenSpeech(), "
-                                            + "or whenModeration() before end()");
+                                            + "whenModeration(), whenImageGeneration(), or whenImageEdit() "
+                                            + "before end()");
         }
         return this;
     }
@@ -383,11 +496,32 @@ public class OpenAIMockBuilder {
             moderationExpectations.add(currentModerationExpectation);
             currentModerationExpectation = null;
         }
+        if (currentImageGenerationExpectation != null) {
+            log.debug("Auto-finalizing current image generation expectation during build");
+            imageGenerationExpectations.add(currentImageGenerationExpectation);
+            currentImageGenerationExpectation = null;
+        }
+        if (currentImageEditExpectation != null) {
+            log.debug("Auto-finalizing current image edit expectation during build");
+            imageEditExpectations.add(currentImageEditExpectation);
+            currentImageEditExpectation = null;
+        }
         log.info("Built OpenAIMock with {} chat, {} embedding, {} transcription, {} translation, "
-                 + "{} speech, and {} moderation expectations",
+                 + "{} speech, {} moderation, {} image generation, and {} image edit expectations",
                 expectations.size(), embeddingExpectations.size(), audioTranscriptionExpectations.size(),
-                audioTranslationExpectations.size(), speechExpectations.size(), moderationExpectations.size());
+                audioTranslationExpectations.size(), speechExpectations.size(), moderationExpectations.size(),
+                imageGenerationExpectations.size(), imageEditExpectations.size());
         return mock;
+    }
+
+    private ImageExpectation validateCurrentImageExpectation(String methodName) {
+        if (currentImageGenerationExpectation != null) {
+            return currentImageGenerationExpectation;
+        }
+        if (currentImageEditExpectation != null) {
+            return currentImageEditExpectation;
+        }
+        throw new IllegalStateException("Call whenImageGeneration() or whenImageEdit() before " + methodName);
     }
 
     private void validateCurrentExpectation(String methodName) {

@@ -13,6 +13,80 @@ See the xref:camel-upgrade-recipes-tool.adoc[documentation] page for details.
 
 == Upgrading Camel 4.22 to 4.23
 
+=== Components removal
+
+==== camel-digitalocean
+
+The component camel-digitalocean was deprecated in 4.21. The java library used has been unmaintained for several years and there is no replacement.
+
+==== camel-headersmap
+
+The component camel-headersmap was deprecated in 4.21. The default `CaseInsensitiveMap` in camel-core
+uses a custom O(1) hash table with zero-allocation lookups and header key deduplication, making the external
+cedarsoftware `java-util` dependency unnecessary. Simply remove the `camel-headersmap` dependency from your
+project — the core implementation now provides equivalent or better performance.
+
+==== camel-iec60870
+
+`camel-iec60870` was deprecated in 4.21. The library used to implement it NeoScada is no more maintained since
+2021. There are no alternatives in Java with compatible license.
+
+==== camel-ironmq
+
+The component camel-ironmq was deprecated in 4.21. The official library used has been unmaintained since 2017
+All the other client libraries (in other languages) are unmaintained since the same amount of time.
+The whole iron-io GitHub organization has almost no activity.
+
+==== camel-json-patch
+
+The `camel-json-patch` was deprecated in 4.19. The library it uses is not actively maintained and this module does not work with Jackson 3.
+
+==== camel-leveldb
+
+`camel-leveldb` was deprecated in 4.18. `leveldb` library is no more maintained and it exists several alternatives for file-based database nowadays.
+
+==== camel-reactive-executor-tomcat
+
+The `camel-reactive-executor-tomcat` component has been deprecated in 4.22. It is now removed.
+
+Its cross-thread `ThreadLocal`
+cleanup relied on reflective access to the private `Thread.threadLocals` field, which is denied by
+the JDK module system since JDK 17 and is incompatible with virtual threads. Without that cleanup,
+this executor is functionally identical to the built-in `DefaultReactiveExecutor`.
+
+To migrate, remove the `camel-reactive-executor-tomcat` dependency from your project. Camel will
+automatically use the default reactive executor.
+
+==== camel-splunk
+
+The `camel-splunk` component was deprecated in 4.19. The Splunk Java SDK it depends on is no longer actively maintained.
+
+Users who only need to **send events to Splunk** can migrate to `camel-splunk-hec`, which uses the
+Splunk HTTP Event Collector (HEC) over standard HTTPS with no dependency on the Splunk Java SDK.
+
+However, `camel-splunk-hec` is a **producer-only** component. The following `camel-splunk` capabilities
+have no equivalent in `camel-splunk-hec`:
+
+* **Consumer (search)**: normal searches, real-time searches, and saved-search execution are not supported.
+* **TCP streaming**: the `tcp` producer publish type (raw socket streaming to a Splunk TCP input) is not available.
+* **SUBMIT and STREAM publish types**: only HEC-based ingestion is supported.
+
+If your routes only produce events to Splunk (using the `submit` or `stream` publish types), switching
+to `camel-splunk-hec` is straightforward — configure the HEC token, index, sourceType, and source on
+the endpoint. If your routes consume (search) data from Splunk, there is currently no direct replacement
+within Apache Camel, and you will need to use the Splunk REST API directly or keep using `camel-splunk`
+until it is removed.
+
+NOTE: `camel-splunk-hec` is NOT deprecated and remains actively maintained.
+
+==== camel-threadpoolfactory-vertx
+
+The component camel-threadpoolfactory-vertx was deprecated in 4.21. The component has been in an experimental state for a long time and no user feedback has been received to justify continued maintenance.
+
+==== camel-zeebe
+
+`camel-zeebe` component was deprecated in 4.19 and has a straightforward replacement with `camel-camunda`. It is removed in 4.23.
+
 === camel-a2a - webhook URL address classification
 
 Push notification webhook URLs are now classified by the address the host resolves to, using the
@@ -65,6 +139,61 @@ an `AGENTS.md` file with guidance for AI coding assistants, pointing at the Apac
 The `camel-archetype-api-component` archetype also generates its readme again: the file was declared
 in the wrong file set and was therefore silently skipped.
 
+=== camel-docling
+
+A `String` message body is no longer interpreted as a location by default. Previously the producer
+inspected the body and, when it started with `http://` or `https://`, handed it to Docling as a remote
+URL to fetch; when it started with `/` or contained `\`, it read it from the local filesystem; otherwise
+it converted it as document content.
+
+The two location readings must now be enabled explicitly:
+
+* `allowUrlSource` (default `false`) - interpret a body starting with `http://` or `https://` as a URL.
+* `allowFilePathSource` (default `false`) - interpret a body starting with `/`, or containing `\`, as a
+  local file path. This also covers the single directory-or-file `String` body accepted by the batch
+  operations.
+
+A route that passes the document itself in the body is unaffected. A route that passes a URL or a path in
+the body must set the matching option, otherwise the exchange fails with an `IllegalArgumentException`
+naming the option to enable.
+
+The `CamelDoclingInputFilePath` header is unchanged and still accepts a path without any opt-in, as are
+`File`, `byte[]` and `InputStream` bodies and the explicit path collections (`List<String>`, `String[]`,
+`List<File>`, `File[]`) used by the batch operations.
+
+A new `inputBaseDirectory` option is also available. When set, every local input path - from the header,
+from a file path body, and from the batch operations - must resolve inside that directory once normalized.
+It is unset by default, which keeps the previous behaviour of accepting any path.
+
+Additionally, a local input path that does not exist is now reported as a `File not found` `IOException`
+before Docling is invoked. Previously the size check silently skipped a path that resolved to nothing and
+the failure surfaced later, from the Docling process or API call.
+=== camel-azure-eventgrid
+
+The `CamelAzureEventGridDataVersion` header (`EventGridConstants.DATA_VERSION`) has been removed. The
+component publishes events in the CloudEvents schema, which has no `dataVersion` attribute (that field
+belongs to the legacy Event Grid event schema), so the header was read but never applied to the
+published event. Remove any use of that header; there is no CloudEvents equivalent.
+=== camel-core - property placeholders in pollEnrich
+
+Camel 4.22 stopped resolving property placeholders (`{{...}}`) on the _per-message evaluated_
+recipient for `toD` and `enrich`, and said that aligning `pollEnrich` was deferred to a follow-up.
+This is that follow-up: a `{{...}}` token that appears only in the value produced at runtime by the
+`pollEnrich` expression is now treated as a literal part of the endpoint URI instead of being
+expanded.
+
+Like `toD` and `enrich`, `pollEnrich` resolves its static endpoint URI at build time, so a
+placeholder belongs there:
+
+[source,java]
+----
+.pollEnrich("file:{{inbox}}", 5000)
+----
+
+`recipientList`, `routingSlip` and `dynamicRouter` are unchanged. Their recipient is supplied
+entirely at runtime and may legitimately carry a placeholder that comes from configuration, so they
+continue to resolve `{{...}}` in the computed recipient.
+
 === camel-hazelcast
 
 `ReplicatedHazelcastAggregationRepository` now applies the same default
@@ -84,6 +213,13 @@ without supplying their own `hazelcastInstance` must now provide a `Config` with
 The same default is now also applied to the `ClientConfig` that Camel builds for `hazelcastMode=client`
 endpoints, when neither a referenced `ClientConfig` nor `hazelcastConfigUri` is supplied. Client mode
 previously behaved differently from node mode for an otherwise identical endpoint configuration.
+
+=== camel-jbang (TUI)
+
+`camel tui --record` is now rejected when combined with `--web`. The recording configuration applies
+to the whole process, so a browser session served by `--web` would be recorded into the same `.cast`
+file as the local session. Previously the combination was accepted, but recording never produced any
+output, so run the two modes in separate processes instead.
 
 === camel-mail
 
@@ -134,6 +270,25 @@ Routes that relied on steps after these processors running for unauthenticated r
 restructured. The authenticated paths are unchanged: a successfully authenticated request continues
 through the rest of the route exactly as before, and `OAuthLogoutProcessor` is unchanged.
 
+=== camel-core - XmlConverter SAX parser factory
+
+`XmlConverter.createSAXParserFactory()` now also disables external parameter entities and external
+DTD loading:
+
+* `http://xml.org/sax/features/external-parameter-entities` = `false`
+* `http://apache.org/xml/features/nonvalidating/load-external-dtd` = `false`
+
+It previously set only `FEATURE_SECURE_PROCESSING` and `external-general-entities=false`, while
+`createDocumentBuilderFactory()` in the same class already blocked external resource resolution more
+thoroughly. Both factories are reachable from a converted message body — `toSAXSource` is a
+registered converter, and the SAXSource route is tried first for bodies reaching camel-xslt — so the
+two should not disagree.
+
+Documents carrying an internal DTD subset still parse: `disallow-doctype-decl` is deliberately not
+set here, because that would reject input that parses today. Routes that genuinely need to resolve
+an external DTD or parameter entity through this converter must supply their own
+`SAXParserFactory`.
+
 === camel-netty-http
 
 The security-constraint lookup now strips the endpoint context-path from the request target
@@ -149,3 +304,84 @@ being dispatched to the route.
 Requests that differ from the configured context-path only by case are therefore now subject to the
 same constraint as the exact-case form. Deployments that relied on the previous behaviour to reach a
 route without a challenge will now receive `401`.
+
+=== camel-spring-redis - the default serializer applies a deserialization filter
+
+The default serializer, `JdkSerializationRedisSerializer`, now installs a JEP-290
+`java.io.ObjectInputFilter` while reading Redis payloads, resolved through
+`DeserializationFilterHelper`. Previously no filter was applied at all. This affects both the
+consumer, which deserializes the payload of every message published to the subscribed channels,
+and the producer read commands, which deserialize the values stored in Redis.
+
+When no explicit pattern is configured, the JVM-wide `jdk.serialFilter` is honoured if set,
+otherwise the shared Camel default allow-list is applied (it permits standard Java and Apache Camel
+types, denies `java.net.**`, and enforces JEP-290 graph-shape limits). Routes that exchange classes
+outside that allow-list must widen it through the new `deserializationFilter` endpoint option, for
+example:
+
+[source,java]
+----
+from("spring-redis://localhost:6379?command=SUBSCRIBE&channels=myChannel"
+     + "&deserializationFilter=com.example.model.**;java.**;!*")
+----
+
+Setting the `serializer` option to a custom `RedisSerializer` bypasses the filter entirely, since
+Camel then no longer controls how the payload is read.
+=== camel-langchain4j
+
+The legacy `sse` `transportType` has been removed. It follows the support removal in 
+https://github.com/langchain4j/langchain4j/commit/7f4e99fd637137ab9d3bf116eb62047ac757a818[langchain4j-core 1.19.0].
+
+=== camel-ftp, camel-sftp, camel-ftps, camel-mina-sftp, camel-azure-files, camel-smb
+
+The remote-file consumers now ensure the path resolved for a polled file stays within the directory being
+polled. The file name that path is built from is reported by the remote server in its directory listing and is
+not guaranteed to be a single path segment, so a listing entry containing `../` sequences could previously
+resolve to a path outside the configured directory and be used as the operand for retrieving, deleting or
+renaming a file.
+
+The containment check honours the existing `jailStartingDirectory` option (default `true`), consistent with the
+file producer and with the `localWorkDirectory` download path; set `jailStartingDirectory=false` to disable it.
+A file that resolves outside the configured directory is now skipped, and a warning is logged.
+
+Ordinary listings are unaffected, as a listed name is normally a single path segment, and a `../` that still
+resolves back inside the polled directory remains accepted. Two configurations can newly see files skipped: a
+server that reports names navigating above the polled directory, and a `fileName` expression (used when
+`useList=false`) that navigates above it. Set `jailStartingDirectory=false` if such a path is intended.
+=== camel-as2
+
+The AS2 server no longer attaches the configured `mdnUserName` / `mdnPassword` / `mdnAccessToken`
+credentials to an asynchronous MDN unless the delivery address names a host the operator has
+authorised.
+
+The delivery address comes from the `Receipt-Delivery-Option` header of the received AS2 message, so
+it is chosen by the sender. A new option lists the hosts an asynchronous MDN may be delivered to:
+
+[source,text]
+----
+as2://server/listen?asyncMdnAllowedHosts=partner.example,partner2.example
+----
+
+* When `asyncMdnAllowedHosts` is set, an asynchronous MDN whose delivery address names a host outside
+the list is refused, and the credentials are attached only for a host on the list.
+* When it is not set, the MDN is still delivered to the sender-supplied address, as before, but **no
+credentials are attached** and a warning naming the option is logged.
+
+Deployments that rely on authenticating to a partner's asynchronous MDN endpoint must add that
+partner's host to `asyncMdnAllowedHosts`.
+
+Two further checks are applied to the delivery address regardless of the option: the scheme must be
+`http`, and an address with no explicit port now uses 80 rather than being passed to the socket as `-1`.
+
+`https` is refused. `AS2AsynchronousMDNManager` delivers over a plain socket and has no TLS support, so an
+`https` address was never actually delivered over TLS — the request was written in cleartext to the TLS
+port and the peer reset the connection. Such an address is now refused outright rather than attempted, and
+TLS delivery of asynchronous MDNs remains unsupported.
+
+=== camel-ibm-cos
+
+The `CACHE_CONTROL` header constant's value has been corrected from the misspelled `CamelIBMCOSContentControl`
+to `CamelIBMCOSCacheControl`, so the header name matches the Cache-Control metadata it carries. This is a
+breaking change for routes that reference the header by its literal string name: they must switch to
+`CamelIBMCOSCacheControl`, although the change is trivial to adapt. Routes using the
+`IBMCOSConstants.CACHE_CONTROL` constant are unaffected.

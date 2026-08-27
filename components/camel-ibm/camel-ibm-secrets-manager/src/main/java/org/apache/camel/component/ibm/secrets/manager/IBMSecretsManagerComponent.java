@@ -49,7 +49,7 @@ public class IBMSecretsManagerComponent extends DefaultComponent {
         setProperties(endpoint, parameters);
 
         if (epConfiguration.getServiceUrl() == null
-                && epConfiguration.getToken() == null) {
+                || epConfiguration.getToken() == null) {
             throw new IllegalArgumentException(
                     "Service URL and Token must be specified");
         }

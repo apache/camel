@@ -40,12 +40,12 @@ public class NatsJetstreamConsumerAckPolicyNoneIT extends NatsITSupport {
     @Test
     public void testConsumer() throws Exception {
         mockResultEndpoint.expectedBodiesReceived("Hello World 3");
-        mockResultEndpoint.expectedHeaderReceived(NatsConstants.NATS_SUBJECT, "mytopic2");
+        mockResultEndpoint.expectedHeaderReceived(NatsConstants.NATS_SUBJECT, "mytopic2-ackpolicynone");
         mockResultEndpoint.expectedHeaderReceived("counter", 3);
         mockResultEndpoint.expectedHeaderReceived(NatsConstants.NATS_DELIVERY_COUNTER, 1);
 
         mockInputEndpoint.expectedBodiesReceived("Hello World 1", "Hello World 2", "Hello World 3");
-        mockInputEndpoint.expectedHeaderReceived(NatsConstants.NATS_SUBJECT, "mytopic2");
+        mockInputEndpoint.expectedHeaderReceived(NatsConstants.NATS_SUBJECT, "mytopic2-ackpolicynone");
         mockInputEndpoint.message(0).header(NatsConstants.NATS_DELIVERY_COUNTER).isEqualTo(1);
         mockInputEndpoint.message(1).header(NatsConstants.NATS_DELIVERY_COUNTER).isEqualTo(1);
         mockInputEndpoint.message(2).header(NatsConstants.NATS_DELIVERY_COUNTER).isEqualTo(1);
@@ -65,7 +65,7 @@ public class NatsJetstreamConsumerAckPolicyNoneIT extends NatsITSupport {
             @Override
             public void configure() {
                 String uri
-                        = "nats:mytopic2?jetstreamEnabled=true&jetstreamName=mystream2&jetstreamAsync=false&durableName=camel2&pullSubscription=false&ackPolicy=none";
+                        = "nats:mytopic2-ackpolicynone?jetstreamEnabled=true&jetstreamName=mystream2-ackpolicynone&jetstreamAsync=false&durableName=camel2-ackpolicynone&pullSubscription=false&ackPolicy=none";
 
                 from("direct:send")
                         // when running full test suite then send can fail due to nats server setup/teardown

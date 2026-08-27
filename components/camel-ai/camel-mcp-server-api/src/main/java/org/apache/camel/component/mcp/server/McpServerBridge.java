@@ -121,7 +121,10 @@ public class McpServerBridge extends ServiceSupport implements CamelContextAware
         }
         engine.initialize(new McpServerInfo(
                 serverName, version, configuration.getPath(),
-                configuration.getSessionKeepAliveInterval(), configuration.getSessionIdleTtl()));
+                configuration.getSessionKeepAliveInterval(), configuration.getSessionIdleTtl(),
+                configuration.getServerTitle(), configuration.getServerDescription(),
+                configuration.getServerWebsiteUrl(), configuration.getInstructions(),
+                configuration.getServerIcons()));
 
         if (!engine.consumesServingConfiguration()) {
             if (!McpServerConstants.DEFAULT_PATH.equals(configuration.getPath())) {
@@ -129,9 +132,9 @@ public class McpServerBridge extends ServiceSupport implements CamelContextAware
                          + "decides the endpoint path",
                         engine.getClass().getSimpleName());
             }
-            if (configuration.getServerName() != null) {
-                LOG.warn("The MCP serverName option may be ignored by engine {}: the runtime's native MCP server "
-                         + "configuration decides the server identity",
+            if (hasServerMetadataConfiguration()) {
+                LOG.warn("The MCP server metadata options may be ignored by engine {}: the runtime's native MCP "
+                         + "server configuration decides the server identity and initialize metadata",
                         engine.getClass().getSimpleName());
             }
         }
@@ -170,6 +173,19 @@ public class McpServerBridge extends ServiceSupport implements CamelContextAware
             camelContext.getExecutorServiceManager().shutdownGraceful(executor);
             executor = null;
         }
+    }
+
+    private boolean hasServerMetadataConfiguration() {
+        return isSet(configuration.getServerName())
+                || isSet(configuration.getServerTitle())
+                || isSet(configuration.getServerDescription())
+                || isSet(configuration.getServerWebsiteUrl())
+                || isSet(configuration.getInstructions())
+                || (configuration.getServerIcons() != null && !configuration.getServerIcons().isEmpty());
+    }
+
+    private static boolean isSet(String value) {
+        return value != null && !value.isBlank();
     }
 
     private McpServerEngine resolveEngine() {

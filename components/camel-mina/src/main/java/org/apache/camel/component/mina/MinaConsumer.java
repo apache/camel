@@ -385,7 +385,7 @@ public class MinaConsumer extends DefaultConsumer {
         exchange.getIn().setHeader(MinaConstants.MINA_IOSESSION, session);
         exchange.getIn().setHeader(MinaConstants.MINA_LOCAL_ADDRESS, session.getLocalAddress());
         exchange.getIn().setHeader(MinaConstants.MINA_REMOTE_ADDRESS, session.getRemoteAddress());
-        MinaPayloadHelper.setIn(exchange, payload);
+        MinaPayloadHelper.setIn(getEndpoint(), exchange, payload);
         return exchange;
     }
 
