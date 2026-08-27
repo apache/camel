@@ -163,23 +163,24 @@ AggregationRepository repo = new MemoryAggregationRepository();
 AggregationRepository repo = new KeyValueAggregationRepository(new MemoryKeyValueRepository());
 ----
 
-==== Spring XML / Blueprint
+==== XML DSL
 
-If you define the repository as a Spring or Blueprint bean, replace the single bean with two beans
-— a `MemoryKeyValueRepository` backing store and the appropriate adapter:
+If you define the repository as a bean in XML, replace the single bean with two beans — a
+`MemoryKeyValueRepository` backing store and the appropriate adapter:
 
 For idempotent consumers:
 
 [source,xml]
 ----
 <!-- Before -->
-<bean id="myRepo"
-      class="org.apache.camel.support.processor.idempotent.MemoryIdempotentRepository"/>
+<bean name="myRepo" type="org.apache.camel.support.processor.idempotent.MemoryIdempotentRepository"/>
 
 <!-- After -->
-<bean id="kvStore" class="org.apache.camel.support.MemoryKeyValueRepository"/>
-<bean id="myRepo" class="org.apache.camel.support.KeyValueIdempotentRepository">
-    <constructor-arg ref="kvStore"/>
+<bean name="kvStore" type="org.apache.camel.support.MemoryKeyValueRepository"/>
+<bean name="myRepo" type="org.apache.camel.support.KeyValueIdempotentRepository">
+    <constructors>
+        <constructor value="#kvStore"/>
+    </constructors>
 </bean>
 ----
 
@@ -188,18 +189,19 @@ For aggregation repositories:
 [source,xml]
 ----
 <!-- Before -->
-<bean id="myRepo"
-      class="org.apache.camel.processor.aggregate.MemoryAggregationRepository"/>
+<bean name="myRepo" type="org.apache.camel.processor.aggregate.MemoryAggregationRepository"/>
 
 <!-- After -->
-<bean id="kvStore" class="org.apache.camel.support.MemoryKeyValueRepository"/>
-<bean id="myRepo" class="org.apache.camel.support.KeyValueAggregationRepository">
-    <constructor-arg ref="kvStore"/>
+<bean name="kvStore" type="org.apache.camel.support.MemoryKeyValueRepository"/>
+<bean name="myRepo" type="org.apache.camel.support.KeyValueAggregationRepository">
+    <constructors>
+        <constructor value="#kvStore"/>
+    </constructors>
 </bean>
 ----
 
 The `idempotentRepository` and `aggregationRepository` attributes in the route DSL remain
-unchanged — they still reference the bean by its `id`.
+unchanged — they still reference the bean by its name.
 
 The deprecated classes continue to work but will be removed in a future release.
 
