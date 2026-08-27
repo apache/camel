@@ -3008,12 +3008,16 @@ public class ModelWriter extends BaseWriter {
         doWriteValue(def.getExpression());
         endElement(name);
     }
+    protected void doWriteNamespaceAwareExpressionAttributes(NamespaceAwareExpression def) throws IOException {
+        doWriteSingleInputTypedExpressionDefinitionAttributes(def);
+        doWriteAttribute("namespacesRef", def.getNamespacesRef(), null);
+    }
     protected void doWriteNamespaceAwareExpressionElements(NamespaceAwareExpression def) throws IOException {
         doWriteList(null, "namespace", def.getNamespace(), this::doWritePropertyDefinition);
     }
     protected void doWriteNamespaceAwareExpression(String name, NamespaceAwareExpression def) throws IOException {
         startElement(name);
-        doWriteSingleInputTypedExpressionDefinitionAttributes(def);
+        doWriteNamespaceAwareExpressionAttributes(def);
         doWriteValue(def.getExpression());
         doWriteNamespaceAwareExpressionElements(def);
         endElement(name);
@@ -3107,7 +3111,7 @@ public class ModelWriter extends BaseWriter {
     }
     protected void doWriteXMLTokenizerExpression(String name, XMLTokenizerExpression def) throws IOException {
         startElement(name);
-        doWriteSingleInputTypedExpressionDefinitionAttributes(def);
+        doWriteNamespaceAwareExpressionAttributes(def);
         doWriteAttribute("mode", def.getMode(), "i");
         doWriteAttribute("group", def.getGroup(), null);
         doWriteValue(def.getExpression());
@@ -3116,7 +3120,7 @@ public class ModelWriter extends BaseWriter {
     }
     protected void doWriteXPathExpression(String name, XPathExpression def) throws IOException {
         startElement(name);
-        doWriteSingleInputTypedExpressionDefinitionAttributes(def);
+        doWriteNamespaceAwareExpressionAttributes(def);
         doWriteAttribute("documentType", def.getDocumentTypeName(), null);
         doWriteAttribute("resultQName", def.getResultQName(), "NODESET");
         doWriteAttribute("saxon", def.getSaxon(), null);
@@ -3131,7 +3135,7 @@ public class ModelWriter extends BaseWriter {
     }
     protected void doWriteXQueryExpression(String name, XQueryExpression def) throws IOException {
         startElement(name);
-        doWriteSingleInputTypedExpressionDefinitionAttributes(def);
+        doWriteNamespaceAwareExpressionAttributes(def);
         doWriteAttribute("configurationRef", def.getConfigurationRef(), null);
         doWriteValue(def.getExpression());
         doWriteNamespaceAwareExpressionElements(def);

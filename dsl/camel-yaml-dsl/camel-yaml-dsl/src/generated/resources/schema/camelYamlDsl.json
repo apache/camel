@@ -14490,6 +14490,11 @@
                 "$ref" : "#/items/definitions/org.apache.camel.model.PropertyDefinition"
               }
             },
+            "namespacesRef" : {
+              "type" : "string",
+              "title" : "Namespaces Ref",
+              "description" : "Reference to a org.apache.camel.support.builder.Namespaces bean in the registry to use for the XML Namespaces of prefix to uri mappings."
+            },
             "resultType" : {
               "type" : "string",
               "title" : "Result Type",
@@ -14552,6 +14557,11 @@
               "items" : {
                 "$ref" : "#/items/definitions/org.apache.camel.model.PropertyDefinition"
               }
+            },
+            "namespacesRef" : {
+              "type" : "string",
+              "title" : "Namespaces Ref",
+              "description" : "Reference to a org.apache.camel.support.builder.Namespaces bean in the registry to use for the XML Namespaces of prefix to uri mappings."
             },
             "objectModel" : {
               "type" : "string",
@@ -14634,6 +14644,11 @@
               "items" : {
                 "$ref" : "#/items/definitions/org.apache.camel.model.PropertyDefinition"
               }
+            },
+            "namespacesRef" : {
+              "type" : "string",
+              "title" : "Namespaces Ref",
+              "description" : "Reference to a org.apache.camel.support.builder.Namespaces bean in the registry to use for the XML Namespaces of prefix to uri mappings."
             },
             "resultType" : {
               "type" : "string",

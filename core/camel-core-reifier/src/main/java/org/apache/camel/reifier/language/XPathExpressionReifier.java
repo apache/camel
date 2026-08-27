@@ -16,17 +16,17 @@
  */
 package org.apache.camel.reifier.language;
 
+import java.util.Map;
+
 import javax.xml.xpath.XPathConstants;
 import javax.xml.xpath.XPathFactory;
 
 import org.apache.camel.CamelContext;
-import org.apache.camel.Expression;
-import org.apache.camel.Predicate;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.model.language.ExpressionDefinition;
 import org.apache.camel.model.language.XPathExpression;
 import org.apache.camel.spi.Language;
-import org.apache.camel.spi.NamespaceAware;
+import org.apache.camel.support.builder.Namespaces;
 
 public class XPathExpressionReifier extends SingleInputTypedExpressionReifier<XPathExpression> {
 
@@ -34,20 +34,14 @@ public class XPathExpressionReifier extends SingleInputTypedExpressionReifier<XP
         super(camelContext, definition);
     }
 
-    @Override
-    protected void configurePredicate(Predicate predicate) {
-        configureNamespaceAware(predicate);
-    }
-
-    @Override
-    protected void configureExpression(Expression expression) {
-        configureNamespaceAware(expression);
-    }
-
-    protected void configureNamespaceAware(Object builder) {
-        if (definition.getNamespaces() != null && builder instanceof NamespaceAware namespaceAware) {
-            namespaceAware.setNamespaces(parseMap(definition.getNamespaces()));
+    private Map<String, String> resolveNamespaces() {
+        if (definition.getNamespaces() != null && !definition.getNamespaces().isEmpty()) {
+            return parseMap(definition.getNamespaces());
         }
+        if (definition.getNamespacesRef() != null) {
+            return parseMap(mandatoryLookup(definition.getNamespacesRef(), Namespaces.class).getNamespaces());
+        }
+        return null;
     }
 
     protected Object[] createProperties() {
@@ -62,7 +56,7 @@ public class XPathExpressionReifier extends SingleInputTypedExpressionReifier<XP
         properties[7] = parseBoolean(definition.getThreadSafety());
         properties[8] = parseBoolean(definition.getPreCompile());
         properties[9] = parseBoolean(definition.getLogNamespaces());
-        properties[10] = definition.getNamespaces();
+        properties[10] = resolveNamespaces();
         return properties;
     }
 

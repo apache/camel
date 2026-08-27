@@ -3550,11 +3550,15 @@ public class JavaDslModelWriter extends JavaDslModelWriterSupport {
         doWriteTypedExpressionDefinitionAttributes(sb, def);
         doWriteValue(sb, def.getExpression());
     }
+    protected void doWriteNamespaceAwareExpressionAttributes(StringBuilder sb, NamespaceAwareExpression def) {
+        doWriteSingleInputTypedExpressionDefinitionAttributes(sb, def);
+        doWriteAttribute(sb, "namespacesRef", def.getNamespacesRef(), null);
+    }
     protected void doWriteNamespaceAwareExpressionElements(StringBuilder sb, NamespaceAwareExpression def) {
         doWriteChildList(sb, "namespace", def.getNamespace(), this::doWritePropertyDefinition);
     }
     protected void doWriteNamespaceAwareExpression(StringBuilder sb, NamespaceAwareExpression def) {
-        doWriteSingleInputTypedExpressionDefinitionAttributes(sb, def);
+        doWriteNamespaceAwareExpressionAttributes(sb, def);
         doWriteValue(sb, def.getExpression());
         doWriteNamespaceAwareExpressionElements(sb, def);
     }
@@ -3624,14 +3628,14 @@ public class JavaDslModelWriter extends JavaDslModelWriterSupport {
         doWriteValue(sb, def.getExpression());
     }
     protected void doWriteXMLTokenizerExpression(StringBuilder sb, XMLTokenizerExpression def) {
-        doWriteSingleInputTypedExpressionDefinitionAttributes(sb, def);
+        doWriteNamespaceAwareExpressionAttributes(sb, def);
         doWriteAttribute(sb, "mode", def.getMode(), "i");
         doWriteAttribute(sb, "group", def.getGroup(), null);
         doWriteValue(sb, def.getExpression());
         doWriteNamespaceAwareExpressionElements(sb, def);
     }
     protected void doWriteXPathExpression(StringBuilder sb, XPathExpression def) {
-        doWriteSingleInputTypedExpressionDefinitionAttributes(sb, def);
+        doWriteNamespaceAwareExpressionAttributes(sb, def);
         doWriteAttribute(sb, "documentType", def.getDocumentTypeName(), null);
         doWriteAttribute(sb, "resultQName", def.getResultQName(), "NODESET");
         doWriteAttribute(sb, "saxon", def.getSaxon(), null);
@@ -3644,7 +3648,7 @@ public class JavaDslModelWriter extends JavaDslModelWriterSupport {
         doWriteNamespaceAwareExpressionElements(sb, def);
     }
     protected void doWriteXQueryExpression(StringBuilder sb, XQueryExpression def) {
-        doWriteSingleInputTypedExpressionDefinitionAttributes(sb, def);
+        doWriteNamespaceAwareExpressionAttributes(sb, def);
         doWriteAttribute(sb, "configurationRef", def.getConfigurationRef(), null);
         doWriteValue(sb, def.getExpression());
         doWriteNamespaceAwareExpressionElements(sb, def);

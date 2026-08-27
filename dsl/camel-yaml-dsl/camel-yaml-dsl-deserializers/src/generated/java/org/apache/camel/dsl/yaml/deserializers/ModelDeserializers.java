@@ -21032,6 +21032,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     @YamlProperty(name = "id", type = "string", description = "The id of this node.", displayName = "Id"),
                     @YamlProperty(name = "mode", type = "enum:i,w,u,t", defaultValue = "i", description = "The extraction mode. The available extraction modes are: i - injecting the contextual namespace bindings into the extracted token (default), w - wrapping the extracted token in its ancestor context, u - unwrapping the extracted token to its child content, t - extracting the text content of the specified element.", displayName = "Mode"),
                     @YamlProperty(name = "namespace", type = "array:org.apache.camel.model.PropertyDefinition", description = "Injects the XML Namespaces of prefix to uri mappings.", displayName = "Namespace"),
+                    @YamlProperty(name = "namespacesRef", type = "string", description = "Reference to a org.apache.camel.support.builder.Namespaces bean in the registry to use for the XML Namespaces of prefix to uri mappings.", displayName = "Namespaces Ref"),
                     @YamlProperty(name = "resultType", type = "string", description = "The class of the result type (type from output).", displayName = "Result Type"),
                     @YamlProperty(name = "source", type = "string", description = "Source to use, instead of message body. You can prefix with variable:, header:, or property: to specify kind of source. Otherwise, the source is assumed to be a variable. Use empty or null to use default source, which is the message body.", displayName = "Source"),
                     @YamlProperty(name = "trim", type = "boolean", defaultValue = "true", description = "Whether to trim the source code to remove leading and trailing whitespaces and line breaks.", displayName = "Trim")
@@ -21082,6 +21083,11 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     target.setNamespace(val);
                     break;
                 }
+                case "namespacesRef": {
+                    String val = asText(node);
+                    target.setNamespacesRef(val);
+                    break;
+                }
                 case "resultType": {
                     String val = asText(node);
                     target.setResultTypeName(val);
@@ -21129,6 +21135,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     @YamlProperty(name = "id", type = "string", description = "The id of this node.", displayName = "Id"),
                     @YamlProperty(name = "logNamespaces", type = "boolean", defaultValue = "false", description = "Whether to log namespaces which can assist during troubleshooting.", displayName = "Log Namespaces"),
                     @YamlProperty(name = "namespace", type = "array:org.apache.camel.model.PropertyDefinition", description = "Injects the XML Namespaces of prefix to uri mappings.", displayName = "Namespace"),
+                    @YamlProperty(name = "namespacesRef", type = "string", description = "Reference to a org.apache.camel.support.builder.Namespaces bean in the registry to use for the XML Namespaces of prefix to uri mappings.", displayName = "Namespaces Ref"),
                     @YamlProperty(name = "objectModel", type = "string", description = "The XPath object model to use.", displayName = "Object Model"),
                     @YamlProperty(name = "preCompile", type = "boolean", defaultValue = "true", description = "Whether to enable pre-compiling the xpath expression during initialization phase. pre-compile is enabled by default.", displayName = "Pre Compile"),
                     @YamlProperty(name = "resultQName", type = "enum:NUMBER,STRING,BOOLEAN,NODESET,NODE", defaultValue = "NODESET", description = "Sets the output type supported by XPath.", displayName = "Result QName"),
@@ -21187,6 +21194,11 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                 case "namespace": {
                     java.util.List<org.apache.camel.model.PropertyDefinition> val = asFlatList(node, org.apache.camel.model.PropertyDefinition.class);
                     target.setNamespace(val);
+                    break;
+                }
+                case "namespacesRef": {
+                    String val = asText(node);
+                    target.setNamespacesRef(val);
                     break;
                 }
                 case "objectModel": {
@@ -21259,6 +21271,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     @YamlProperty(name = "expression", type = "string", required = true, description = "The expression value in your chosen language syntax.", displayName = "Expression"),
                     @YamlProperty(name = "id", type = "string", description = "The id of this node.", displayName = "Id"),
                     @YamlProperty(name = "namespace", type = "array:org.apache.camel.model.PropertyDefinition", description = "Injects the XML Namespaces of prefix to uri mappings.", displayName = "Namespace"),
+                    @YamlProperty(name = "namespacesRef", type = "string", description = "Reference to a org.apache.camel.support.builder.Namespaces bean in the registry to use for the XML Namespaces of prefix to uri mappings.", displayName = "Namespaces Ref"),
                     @YamlProperty(name = "resultType", type = "string", description = "The class of the result type (type from output).", displayName = "Result Type"),
                     @YamlProperty(name = "source", type = "string", description = "Source to use, instead of message body. You can prefix with variable:, header:, or property: to specify kind of source. Otherwise, the source is assumed to be a variable. Use empty or null to use default source, which is the message body.", displayName = "Source"),
                     @YamlProperty(name = "trim", type = "boolean", defaultValue = "true", description = "Whether to trim the source code to remove leading and trailing whitespaces and line breaks.", displayName = "Trim")
@@ -21302,6 +21315,11 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                 case "namespace": {
                     java.util.List<org.apache.camel.model.PropertyDefinition> val = asFlatList(node, org.apache.camel.model.PropertyDefinition.class);
                     target.setNamespace(val);
+                    break;
+                }
+                case "namespacesRef": {
+                    String val = asText(node);
+                    target.setNamespacesRef(val);
                     break;
                 }
                 case "resultType": {

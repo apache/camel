@@ -3006,12 +3006,16 @@ public class YamlModelWriter extends YamlModelWriterSupport {
         doWriteValue(jo, def.getExpression());
         return jo;
     }
+    protected void doWriteNamespaceAwareExpressionAttributes(JsonObject jo, NamespaceAwareExpression def) {
+        doWriteSingleInputTypedExpressionDefinitionAttributes(jo, def);
+        doWriteAttribute(jo, "namespacesRef", def.getNamespacesRef(), null);
+    }
     protected void doWriteNamespaceAwareExpressionElements(JsonObject jo, NamespaceAwareExpression def) {
         doWriteChildList(jo, null, "namespace", def.getNamespace(), this::doWritePropertyDefinition);
     }
     protected JsonObject doWriteNamespaceAwareExpression(NamespaceAwareExpression def) {
         JsonObject jo = new JsonObject();
-        doWriteSingleInputTypedExpressionDefinitionAttributes(jo, def);
+        doWriteNamespaceAwareExpressionAttributes(jo, def);
         doWriteValue(jo, def.getExpression());
         doWriteNamespaceAwareExpressionElements(jo, def);
         return jo;
@@ -3105,7 +3109,7 @@ public class YamlModelWriter extends YamlModelWriterSupport {
     }
     protected JsonObject doWriteXMLTokenizerExpression(XMLTokenizerExpression def) {
         JsonObject jo = new JsonObject();
-        doWriteSingleInputTypedExpressionDefinitionAttributes(jo, def);
+        doWriteNamespaceAwareExpressionAttributes(jo, def);
         doWriteAttribute(jo, "mode", def.getMode(), "i");
         doWriteAttribute(jo, "group", def.getGroup(), null);
         doWriteValue(jo, def.getExpression());
@@ -3114,7 +3118,7 @@ public class YamlModelWriter extends YamlModelWriterSupport {
     }
     protected JsonObject doWriteXPathExpression(XPathExpression def) {
         JsonObject jo = new JsonObject();
-        doWriteSingleInputTypedExpressionDefinitionAttributes(jo, def);
+        doWriteNamespaceAwareExpressionAttributes(jo, def);
         doWriteAttribute(jo, "documentType", def.getDocumentTypeName(), null);
         doWriteAttribute(jo, "resultQName", def.getResultQName(), "NODESET");
         doWriteAttribute(jo, "saxon", def.getSaxon(), null);
@@ -3129,7 +3133,7 @@ public class YamlModelWriter extends YamlModelWriterSupport {
     }
     protected JsonObject doWriteXQueryExpression(XQueryExpression def) {
         JsonObject jo = new JsonObject();
-        doWriteSingleInputTypedExpressionDefinitionAttributes(jo, def);
+        doWriteNamespaceAwareExpressionAttributes(jo, def);
         doWriteAttribute(jo, "configurationRef", def.getConfigurationRef(), null);
         doWriteValue(jo, def.getExpression());
         doWriteNamespaceAwareExpressionElements(jo, def);
