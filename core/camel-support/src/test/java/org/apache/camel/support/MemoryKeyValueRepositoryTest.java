@@ -17,12 +17,14 @@
 package org.apache.camel.support;
 
 import java.util.Set;
+import java.util.concurrent.TimeUnit;
 
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.awaitility.Awaitility.await;
 
 class MemoryKeyValueRepositoryTest {
 
@@ -143,7 +145,7 @@ class MemoryKeyValueRepositoryTest {
     }
 
     @Test
-    void testTtlExpiration() throws Exception {
+    void testTtlExpiration() {
         // Use a very short TTL
         repository.put("key1", "value1", 50);
 
@@ -151,44 +153,47 @@ class MemoryKeyValueRepositoryTest {
         assertThat(repository.contains("key1")).isTrue();
 
         // Wait for the entry to expire
-        Thread.sleep(100);
-
-        assertThat(repository.get("key1")).isNull();
-        assertThat(repository.contains("key1")).isFalse();
+        await().atMost(500, TimeUnit.MILLISECONDS)
+                .untilAsserted(() -> {
+                    assertThat(repository.get("key1")).isNull();
+                    assertThat(repository.contains("key1")).isFalse();
+                });
     }
 
     @Test
-    void testTtlExpirationOnKeys() throws Exception {
+    void testTtlExpirationOnKeys() {
         repository.put("key1", "value1", 50);
         repository.put("key2", "value2", 0); // no expiration
 
-        Thread.sleep(100);
-
-        assertThat(repository.keys()).containsExactly("key2");
-        assertThat(repository.size()).isEqualTo(1);
+        await().atMost(500, TimeUnit.MILLISECONDS)
+                .untilAsserted(() -> {
+                    assertThat(repository.keys()).containsExactly("key2");
+                    assertThat(repository.size()).isEqualTo(1);
+                });
     }
 
     @Test
-    void testTtlExpirationOnDelete() throws Exception {
+    void testTtlExpirationOnDelete() {
         repository.put("key1", "value1", 50);
 
-        Thread.sleep(100);
-
-        // Deleting an expired entry should return null
-        assertThat(repository.delete("key1")).isNull();
+        await().atMost(500, TimeUnit.MILLISECONDS)
+                .untilAsserted(() -> {
+                    // Deleting an expired entry should return null
+                    assertThat(repository.delete("key1")).isNull();
+                });
     }
 
     @Test
-    void testPutIfAbsentWithExpiredEntry() throws Exception {
+    void testPutIfAbsentWithExpiredEntry() {
         repository.put("key1", "value1", 50);
 
-        Thread.sleep(100);
-
-        // The entry has expired, so putIfAbsent should succeed
-        Object result = repository.putIfAbsent("key1", "value2", 0);
-
-        assertThat(result).isNull();
-        assertThat(repository.get("key1")).isEqualTo("value2");
+        await().atMost(500, TimeUnit.MILLISECONDS)
+                .untilAsserted(() -> {
+                    // The entry has expired, so putIfAbsent should succeed
+                    Object result = repository.putIfAbsent("key1", "value2", 0);
+                    assertThat(result).isNull();
+                    assertThat(repository.get("key1")).isEqualTo("value2");
+                });
     }
 
     @Test

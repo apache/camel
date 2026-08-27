@@ -80,7 +80,11 @@ public class LumberjackMultiThreadIT extends CamelTestSupport {
         mock.expectedMessageCount(25 * CONCURRENCY_LEVEL);
         mock.allMessages().body().isInstanceOf(Map.class);
 
-        final boolean await = latch.await(5, TimeUnit.SECONDS);
+        // LumberjackUtil.sendMessages() waits up to 30 seconds internally for ACKs before a thread
+        // counts down the latch (that 30s bound was itself raised from Awaitility's 10s default in
+        // 5df5b4719ac1 to fix flakiness on loaded CI runners). This wait must exceed 30s with margin,
+        // or a thread that legitimately takes close to the internal max would trip this latch first.
+        final boolean await = latch.await(35, TimeUnit.SECONDS);
         assertTrue(await, "All threads should have sent their messages by now");
 
         // Then we should have the messages we're expecting

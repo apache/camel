@@ -11,7 +11,6 @@ A number of Camel components support this (such as but not limited to):
 
 * xref:components::cometd-component.adoc[Cometd]
 * xref:components::http-component.adoc[HTTP]
-* xref:components::irc-component.adoc[IRC]
 * xref:components::jetty-component.adoc[Jetty]
 * xref:components::netty-component.adoc[Netty]
 * xref:components::mail-component.adoc[Mail]

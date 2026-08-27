@@ -1980,6 +1980,15 @@ Tokenizes the message body for AI processing, splitting text into chunks suitabl
       </xs:documentation>
     </xs:annotation>
   </xs:element>
+  <xs:element name="toon" type="tns:toonDataFormat">
+    <xs:annotation>
+      <xs:documentation xml:lang="en">
+<![CDATA[
+Marshal JSON-compatible Java values to TOON (Token-Oriented Object Notation) and unmarshal TOON back to Java objects.
+]]>
+      </xs:documentation>
+    </xs:annotation>
+  </xs:element>
   <xs:element name="topicLoadBalancer" type="tns:topicLoadBalancerDefinition">
     <xs:annotation>
       <xs:documentation xml:lang="en">
@@ -6406,6 +6415,7 @@ custom logic needed before the looping executes.
             <xs:element ref="tns:swiftMx"/>
             <xs:element ref="tns:syslog"/>
             <xs:element ref="tns:tarFile"/>
+            <xs:element ref="tns:toon"/>
             <xs:element ref="tns:ubl"/>
             <xs:element ref="tns:thrift"/>
             <xs:element ref="tns:univocityCsv"/>
@@ -9301,6 +9311,60 @@ Whether to preserve path elements when the file name contains path elements in t
 <![CDATA[
 The maximum decompressed size of a tar file (in bytes). An IOException is thrown if the decompressed size exceeds this
 amount. Set to -1 to disable. Default value: 1073741824
+]]>
+            </xs:documentation>
+          </xs:annotation>
+        </xs:attribute>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+  <xs:complexType name="toonDataFormat">
+    <xs:complexContent>
+      <xs:extension base="tns:dataFormat">
+        <xs:sequence/>
+        <xs:attribute name="indent" type="xs:string">
+          <xs:annotation>
+            <xs:documentation xml:lang="en">
+<![CDATA[
+Number of spaces per indentation level. Default value: 2
+]]>
+            </xs:documentation>
+          </xs:annotation>
+        </xs:attribute>
+        <xs:attribute name="delimiter" type="xs:string">
+          <xs:annotation>
+            <xs:documentation xml:lang="en">
+<![CDATA[
+Delimiter used for tabular array rows and inline primitive arrays. Default value: COMMA
+]]>
+            </xs:documentation>
+          </xs:annotation>
+        </xs:attribute>
+        <xs:attribute name="lengthMarker" type="xs:string">
+          <xs:annotation>
+            <xs:documentation xml:lang="en">
+<![CDATA[
+Whether to prefix array lengths with a hash marker so arrays render as hash-prefixed lengths instead of plain lengths.
+Default value: false
+]]>
+            </xs:documentation>
+          </xs:annotation>
+        </xs:attribute>
+        <xs:attribute name="strict" type="xs:string">
+          <xs:annotation>
+            <xs:documentation xml:lang="en">
+<![CDATA[
+Whether to enable strict validation when unmarshalling TOON. When false, JToon uses best-effort parsing. Default value:
+true
+]]>
+            </xs:documentation>
+          </xs:annotation>
+        </xs:attribute>
+        <xs:attribute name="contentTypeHeader" type="xs:string">
+          <xs:annotation>
+            <xs:documentation xml:lang="en">
+<![CDATA[
+Whether the data format should set the Content-Type header to text/toon when marshalling. Default value: true
 ]]>
             </xs:documentation>
           </xs:annotation>
@@ -13838,6 +13902,7 @@ into.
             <xs:element ref="tns:swiftMx"/>
             <xs:element ref="tns:syslog"/>
             <xs:element ref="tns:tarFile"/>
+            <xs:element ref="tns:toon"/>
             <xs:element ref="tns:ubl"/>
             <xs:element ref="tns:thrift"/>
             <xs:element ref="tns:univocityCsv"/>
@@ -15268,6 +15333,7 @@ An example value of this response header.
         <xs:element ref="tns:swiftMx"/>
         <xs:element ref="tns:syslog"/>
         <xs:element ref="tns:tarFile"/>
+        <xs:element ref="tns:toon"/>
         <xs:element ref="tns:ubl"/>
         <xs:element ref="tns:thrift"/>
         <xs:element ref="tns:univocityCsv"/>
@@ -16157,6 +16223,7 @@ matches. If you specify just 'json', it matches all json destination types.
             <xs:element ref="tns:swiftMx"/>
             <xs:element ref="tns:syslog"/>
             <xs:element ref="tns:tarFile"/>
+            <xs:element ref="tns:toon"/>
             <xs:element ref="tns:ubl"/>
             <xs:element ref="tns:thrift"/>
             <xs:element ref="tns:univocityCsv"/>

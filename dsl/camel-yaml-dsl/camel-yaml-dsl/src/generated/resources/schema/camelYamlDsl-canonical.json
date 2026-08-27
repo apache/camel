@@ -2301,6 +2301,9 @@
           "thrift" : {
             "$ref" : "#/items/definitions/org.apache.camel.model.dataformat.ThriftDataFormat"
           },
+          "toon" : {
+            "$ref" : "#/items/definitions/org.apache.camel.model.dataformat.ToonDataFormat"
+          },
           "ubl" : {
             "$ref" : "#/items/definitions/org.apache.camel.model.dataformat.UblDataFormat"
           },
@@ -5784,6 +5787,9 @@
           "thrift" : {
             "$ref" : "#/items/definitions/org.apache.camel.model.dataformat.ThriftDataFormat"
           },
+          "toon" : {
+            "$ref" : "#/items/definitions/org.apache.camel.model.dataformat.ToonDataFormat"
+          },
           "ubl" : {
             "$ref" : "#/items/definitions/org.apache.camel.model.dataformat.UblDataFormat"
           },
@@ -5819,7 +5825,7 @@
             "$ref" : "#/items/definitions/org.apache.camel.model.dataformat.ZipFileDataFormat"
           }
         },
-        "required" : [ "asn1", "avro", "barcode", "base64", "beanio", "bindy", "cbor", "crypto", "csv", "custom", "dfdl", "fhirJson", "fhirXml", "flatpack", "fory", "grok", "groovyJson", "groovyXml", "gzipDeflater", "hl7", "ical", "iso8583", "jacksonXml", "jaxb", "json", "jsonApi", "lzf", "mimeMultipart", "ocsf", "parquetAvro", "pgp", "pqc", "protobuf", "rss", "smooks", "soap", "swiftMt", "swiftMx", "syslog", "tarFile", "thrift", "ubl", "univocityCsv", "univocityFixed", "univocityTsv", "xmlSecurity", "yaml", "zipDeflater", "zipFile" ]
+        "required" : [ "asn1", "avro", "barcode", "base64", "beanio", "bindy", "cbor", "crypto", "csv", "custom", "dfdl", "fhirJson", "fhirXml", "flatpack", "fory", "grok", "groovyJson", "groovyXml", "gzipDeflater", "hl7", "ical", "iso8583", "jacksonXml", "jaxb", "json", "jsonApi", "lzf", "mimeMultipart", "ocsf", "parquetAvro", "pgp", "pqc", "protobuf", "rss", "smooks", "soap", "swiftMt", "swiftMx", "syslog", "tarFile", "thrift", "toon", "ubl", "univocityCsv", "univocityFixed", "univocityTsv", "xmlSecurity", "yaml", "zipDeflater", "zipFile" ]
       },
       "org.apache.camel.model.ValidateDefinition" : {
         "title" : "Validate",
@@ -7009,6 +7015,9 @@
           },
           "thrift" : {
             "$ref" : "#/items/definitions/org.apache.camel.model.dataformat.ThriftDataFormat"
+          },
+          "toon" : {
+            "$ref" : "#/items/definitions/org.apache.camel.model.dataformat.ToonDataFormat"
           },
           "ubl" : {
             "$ref" : "#/items/definitions/org.apache.camel.model.dataformat.UblDataFormat"
@@ -8568,6 +8577,50 @@
             "type" : "string",
             "title" : "Instance Class",
             "description" : "Name of class to use when unmarshalling."
+          }
+        }
+      },
+      "org.apache.camel.model.dataformat.ToonDataFormat" : {
+        "title" : "TOON",
+        "description" : "Marshal JSON-compatible Java values to TOON (Token-Oriented Object Notation) and unmarshal TOON back to Java objects.",
+        "type" : "object",
+        "additionalProperties" : false,
+        "properties" : {
+          "contentTypeHeader" : {
+            "type" : "boolean",
+            "title" : "Content Type Header",
+            "description" : "Whether the data format should set the Content-Type header to text/toon when marshalling.",
+            "default" : true
+          },
+          "delimiter" : {
+            "type" : "string",
+            "title" : "Delimiter",
+            "description" : "Delimiter used for tabular array rows and inline primitive arrays.",
+            "default" : "COMMA",
+            "enum" : [ "COMMA", "TAB", "PIPE" ]
+          },
+          "id" : {
+            "type" : "string",
+            "title" : "Id",
+            "description" : "The id of this node"
+          },
+          "indent" : {
+            "type" : "number",
+            "title" : "Indent",
+            "description" : "Number of spaces per indentation level.",
+            "default" : 2
+          },
+          "lengthMarker" : {
+            "type" : "boolean",
+            "title" : "Length Marker",
+            "description" : "Whether to prefix array lengths with a hash marker so arrays render as hash-prefixed lengths instead of plain lengths.",
+            "default" : false
+          },
+          "strict" : {
+            "type" : "boolean",
+            "title" : "Strict",
+            "description" : "Whether to enable strict validation when unmarshalling TOON. When false, JToon uses best-effort parsing.",
+            "default" : true
           }
         }
       },
@@ -13082,6 +13135,9 @@
             "type" : "string",
             "title" : "To Type",
             "description" : "The destination (to) data type name. If you specify 'json:XYZ', the transformer is picked up when destination type matches. If you specify just 'json', it matches all json destination types."
+          },
+          "toon" : {
+            "$ref" : "#/items/definitions/org.apache.camel.model.dataformat.ToonDataFormat"
           },
           "ubl" : {
             "$ref" : "#/items/definitions/org.apache.camel.model.dataformat.UblDataFormat"

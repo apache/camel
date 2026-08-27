@@ -58,11 +58,6 @@ public class FinallyProcessor extends BaseDelegateProcessorSupport
                 exchange.setProperty(ExchangePropertyKey.FAILURE_ENDPOINT,
                         exchange.getProperty(ExchangePropertyKey.TO_ENDPOINT));
             }
-            // and store the route id so we know in which route we failed
-            String routeId = ExchangeHelper.getAtRouteId(exchange);
-            if (routeId != null) {
-                exchange.setProperty(ExchangePropertyKey.FAILURE_ROUTE_ID, routeId);
-            }
         }
 
         // continue processing
@@ -132,6 +127,8 @@ public class FinallyProcessor extends BaseDelegateProcessorSupport
                 if (exception == null) {
                     exchange.removeProperty(ExchangePropertyKey.FAILURE_ENDPOINT);
                     exchange.removeProperty(ExchangePropertyKey.FAILURE_ROUTE_ID);
+                    exchange.removeProperty(ExchangePropertyKey.FAILURE_NODE_ID);
+                    exchange.removeProperty(ExchangePropertyKey.FAILURE_LOCATION);
                 } else {
                     // set exception back on exchange
                     exchange.setException(exception);

@@ -52,8 +52,8 @@ public final class MinaPayloadHelper {
         }
     }
 
-    public static void setIn(Exchange exchange, Object payload) {
-        if (payload instanceof DefaultExchangeHolder) {
+    public static void setIn(MinaEndpoint endpoint, Exchange exchange, Object payload) {
+        if (isExchangeTransfer(endpoint, payload)) {
             DefaultExchangeHolder.unmarshal(exchange, (DefaultExchangeHolder) payload);
         } else {
             // normal transfer using the body only
@@ -61,13 +61,48 @@ public final class MinaPayloadHelper {
         }
     }
 
-    public static void setOut(Exchange exchange, Object payload) {
-        if (payload instanceof DefaultExchangeHolder) {
+    public static void setOut(MinaEndpoint endpoint, Exchange exchange, Object payload) {
+        if (isExchangeTransfer(endpoint, payload)) {
             DefaultExchangeHolder.unmarshal(exchange, (DefaultExchangeHolder) payload);
         } else {
             // normal transfer using the body only and preserve the headers
             exchange.getOut().setHeaders(exchange.getIn().getHeaders());
             exchange.getOut().setBody(payload);
         }
+    }
+
+    /**
+     * A decoded {@link DefaultExchangeHolder} rebuilds the entire Exchange - id, body, headers, out message and every
+     * property - so it is only honoured when the endpoint asked for exchange transfer in the first place. Without that
+     * check any peer able to reach an endpoint using the object codec, which is the default when {@code textline} is
+     * not set, could hand the route a whole Exchange of its choosing; the holder lives in the allow-listed
+     * {@code org.apache.camel} namespace, so {@code objectCodecPattern} does not constrain it. This mirrors
+     * {@code JmsBinding}, which likewise unmarshals a holder only on the opted-in path.
+     */
+    private static boolean isExchangeTransfer(MinaEndpoint endpoint, Object payload) {
+        return payload instanceof DefaultExchangeHolder
+                && endpoint != null && endpoint.getConfiguration().isTransferExchange();
+    }
+
+    /**
+     * @deprecated          use {@link #setIn(MinaEndpoint, Exchange, Object)}. This overload has no endpoint and so
+     *                      cannot check {@code transferExchange} before unmarshalling a {@link DefaultExchangeHolder}.
+     * @param      exchange the exchange
+     * @param      payload  the decoded payload
+     */
+    @Deprecated
+    public static void setIn(Exchange exchange, Object payload) {
+        setIn(null, exchange, payload);
+    }
+
+    /**
+     * @deprecated          use {@link #setOut(MinaEndpoint, Exchange, Object)}. This overload has no endpoint and so
+     *                      cannot check {@code transferExchange} before unmarshalling a {@link DefaultExchangeHolder}.
+     * @param      exchange the exchange
+     * @param      payload  the decoded payload
+     */
+    @Deprecated
+    public static void setOut(Exchange exchange, Object payload) {
+        setOut(null, exchange, payload);
     }
 }

@@ -430,6 +430,8 @@ public final class ModelDeserializersResolver implements YamlDeserializerResolve
             case "tokenize": return new ModelDeserializers.TokenizerExpressionDeserializer();
             case "org.apache.camel.model.language.TokenizerExpression": return new ModelDeserializers.TokenizerExpressionDeserializer();
             case "org.apache.camel.model.TokenizerImplementationDefinition": return new ModelDeserializers.TokenizerImplementationDefinitionDeserializer();
+            case "toon": return new ModelDeserializers.ToonDataFormatDeserializer();
+            case "org.apache.camel.model.dataformat.ToonDataFormat": return new ModelDeserializers.ToonDataFormatDeserializer();
             case "topicLoadBalancer": return new ModelDeserializers.TopicLoadBalancerDefinitionDeserializer();
             case "org.apache.camel.model.loadbalancer.TopicLoadBalancerDefinition": return new ModelDeserializers.TopicLoadBalancerDefinitionDeserializer();
             case "transacted": return new ModelDeserializers.TransactedDefinitionDeserializer();

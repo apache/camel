@@ -15,9 +15,117 @@ See the xref:camel-upgrade-recipes-tool.adoc[documentation] page for details.
 
 === Components removal
 
+==== camel-catalog-lucene
+
+The maven plugin was deprecated in 4.12. `camel-catalog-suggest` is replacing it.
+
+==== camel-digitalocean
+
+The component camel-digitalocean was deprecated in 4.21. The java library used has been unmaintained for several years and there is no replacement.
+
+==== camel-headersmap
+
+The component camel-headersmap was deprecated in 4.21. The default `CaseInsensitiveMap` in camel-core
+uses a custom O(1) hash table with zero-allocation lookups and header key deduplication, making the external
+cedarsoftware `java-util` dependency unnecessary. Simply remove the `camel-headersmap` dependency from your
+project — the core implementation now provides equivalent or better performance.
+
+==== camel-iec60870
+
+`camel-iec60870` was deprecated in 4.21. The library used to implement it NeoScada is no more maintained since
+2021. There are no alternatives in Java with compatible license.
+
+==== camel-irc
+
+The component camel-irc was deprecated in 4.21. The library used had no stable release since 2007. There is no Java library very active for this protocol.
+
+==== camel-ironmq
+
+The component camel-ironmq was deprecated in 4.21. The official library used has been unmaintained since 2017
+All the other client libraries (in other languages) are unmaintained since the same amount of time.
+The whole iron-io GitHub organization has almost no activity.
+
+==== camel-json-patch
+
+The `camel-json-patch` was deprecated in 4.19. The library it uses is not actively maintained and this module does not work with Jackson 3.
+
+==== camel-langchain4j-tools 
+
+The `camel-langchain4j-tools` component was deprecated in 4.19. Use `camel-ai-tool` to define tools
+and `camel-langchain4j-agent` for tool-calling with LangChain4j models.
+
+Migrate your tool definition routes from `langchain4j-tools:` to `ai-tool:`:
+
+[source,java]
+----
+// Before
+from("langchain4j-tools:weather?tags=weather&description=Get weather&parameter.city=string")
+    .setBody(constant("{\"city\": \"Paris\", \"temp\": \"22C\"}"));
+
+// After
+from("ai-tool:weather?tags=weather&description=Get weather&parameter.city=string")
+    .setBody(constant("{\"city\": \"Paris\", \"temp\": \"22C\"}"));
+----
+
+Use `langchain4j-agent` with matching tags to invoke tools:
+
+[source,java]
+----
+from("direct:chat")
+    .to("langchain4j-agent:assistant?agent=#myAgent&tags=weather");
+----
+
+Add the `camel-ai-tool` dependency to your project:
+
+[source,xml]
+----
+<dependency>
+    <groupId>org.apache.camel</groupId>
+    <artifactId>camel-ai-tool</artifactId>
+</dependency>
+----
+
 ==== camel-leveldb
 
 `camel-leveldb` was deprecated in 4.18. `leveldb` library is no more maintained and it exists several alternatives for file-based database nowadays.
+
+==== camel-reactive-executor-tomcat
+
+The `camel-reactive-executor-tomcat` component has been deprecated in 4.22. It is now removed.
+
+Its cross-thread `ThreadLocal`
+cleanup relied on reflective access to the private `Thread.threadLocals` field, which is denied by
+the JDK module system since JDK 17 and is incompatible with virtual threads. Without that cleanup,
+this executor is functionally identical to the built-in `DefaultReactiveExecutor`.
+
+To migrate, remove the `camel-reactive-executor-tomcat` dependency from your project. Camel will
+automatically use the default reactive executor.
+
+==== camel-splunk
+
+The `camel-splunk` component was deprecated in 4.19. The Splunk Java SDK it depends on is no longer actively maintained.
+
+Users who only need to **send events to Splunk** can migrate to `camel-splunk-hec`, which uses the
+Splunk HTTP Event Collector (HEC) over standard HTTPS with no dependency on the Splunk Java SDK.
+
+However, `camel-splunk-hec` is a **producer-only** component. The following `camel-splunk` capabilities
+have no equivalent in `camel-splunk-hec`:
+
+* **Consumer (search)**: normal searches, real-time searches, and saved-search execution are not supported.
+* **TCP streaming**: the `tcp` producer publish type (raw socket streaming to a Splunk TCP input) is not available.
+* **SUBMIT and STREAM publish types**: only HEC-based ingestion is supported.
+
+If your routes only produce events to Splunk (using the `submit` or `stream` publish types), switching
+to `camel-splunk-hec` is straightforward — configure the HEC token, index, sourceType, and source on
+the endpoint. If your routes consume (search) data from Splunk, there is currently no direct replacement
+within Apache Camel, and you will need to use the Splunk REST API directly or keep using `camel-splunk`
+until it is removed.
+
+NOTE: `camel-splunk-hec` is NOT deprecated and remains actively maintained.
+
+==== camel-threadpoolfactory-vertx
+
+The component camel-threadpoolfactory-vertx was deprecated in 4.21. The component has been in an experimental state for a long time and no user feedback has been received to justify continued maintenance.
 
 ==== camel-zeebe
 
@@ -215,6 +323,25 @@ Routes that relied on steps after these processors running for unauthenticated r
 restructured. The authenticated paths are unchanged: a successfully authenticated request continues
 through the rest of the route exactly as before, and `OAuthLogoutProcessor` is unchanged.
 
+=== camel-core - XmlConverter SAX parser factory
+
+`XmlConverter.createSAXParserFactory()` now also disables external parameter entities and external
+DTD loading:
+
+* `http://xml.org/sax/features/external-parameter-entities` = `false`
+* `http://apache.org/xml/features/nonvalidating/load-external-dtd` = `false`
+
+It previously set only `FEATURE_SECURE_PROCESSING` and `external-general-entities=false`, while
+`createDocumentBuilderFactory()` in the same class already blocked external resource resolution more
+thoroughly. Both factories are reachable from a converted message body — `toSAXSource` is a
+registered converter, and the SAXSource route is tried first for bodies reaching camel-xslt — so the
+two should not disagree.
+
+Documents carrying an internal DTD subset still parse: `disallow-doctype-decl` is deliberately not
+set here, because that would reject input that parses today. Routes that genuinely need to resolve
+an external DTD or parameter entity through this converter must supply their own
+`SAXParserFactory`.
+
 === camel-netty-http
 
 The security-constraint lookup now strips the endpoint context-path from the request target
@@ -274,3 +401,63 @@ Ordinary listings are unaffected, as a listed name is normally a single path seg
 resolves back inside the polled directory remains accepted. Two configurations can newly see files skipped: a
 server that reports names navigating above the polled directory, and a `fileName` expression (used when
 `useList=false`) that navigates above it. Set `jailStartingDirectory=false` if such a path is intended.
+=== camel-as2
+
+The AS2 server no longer attaches the configured `mdnUserName` / `mdnPassword` / `mdnAccessToken`
+credentials to an asynchronous MDN unless the delivery address names a host the operator has
+authorised.
+
+The delivery address comes from the `Receipt-Delivery-Option` header of the received AS2 message, so
+it is chosen by the sender. A new option lists the hosts an asynchronous MDN may be delivered to:
+
+[source,text]
+----
+as2://server/listen?asyncMdnAllowedHosts=partner.example,partner2.example
+----
+
+* When `asyncMdnAllowedHosts` is set, an asynchronous MDN whose delivery address names a host outside
+the list is refused, and the credentials are attached only for a host on the list.
+* When it is not set, the MDN is still delivered to the sender-supplied address, as before, but **no
+credentials are attached** and a warning naming the option is logged.
+
+Deployments that rely on authenticating to a partner's asynchronous MDN endpoint must add that
+partner's host to `asyncMdnAllowedHosts`.
+
+Two further checks are applied to the delivery address regardless of the option: the scheme must be
+`http`, and an address with no explicit port now uses 80 rather than being passed to the socket as `-1`.
+
+`https` is refused. `AS2AsynchronousMDNManager` delivers over a plain socket and has no TLS support, so an
+`https` address was never actually delivered over TLS — the request was written in cleartext to the TLS
+port and the peer reset the connection. Such an address is now refused outright rather than attempted, and
+TLS delivery of asynchronous MDNs remains unsupported.
+
+=== camel-ibm-cos
+
+The `CACHE_CONTROL` header constant's value has been corrected from the misspelled `CamelIBMCOSContentControl`
+to `CamelIBMCOSCacheControl`, so the header name matches the Cache-Control metadata it carries. This is a
+breaking change for routes that reference the header by its literal string name: they must switch to
+`CamelIBMCOSCacheControl`, although the change is trivial to adapt. Routes using the
+`IBMCOSConstants.CACHE_CONTROL` constant are unaffected.
+=== camel-knative
+
+The Knative HTTP consumer no longer returns the stack trace of a failed exchange to the caller.
+
+When a route consuming from `knative:endpoint/...` or `knative:event/...` failed, the response body was
+the exception's full stack trace, sent as `text/plain`. A new `muteException` consumer option controls
+this, and it defaults to `true` — the same default the HTTP consumers carry
+(`camel-http-common` and therefore `camel-servlet` and `camel-jetty`, plus `camel-http`,
+`camel-platform-http`, and `camel-netty-http` and `camel-undertow` since 4.21.0).
+
+The response status is unchanged: a failed exchange still returns 500 (or whatever
+`CamelHttpResponseCode` the route set), only the body is now empty.
+
+A route that relies on the stack trace reaching the caller must opt back in explicitly:
+
+[source,text]
+----
+knative:endpoint/myEndpoint?muteException=false
+----
+
+`org.apache.camel.component.knative.spi.KnativeTransportConfiguration` gains a fourth constructor
+argument for the flag. The three-argument constructor is retained and mutes the exception, so existing
+code compiles unchanged and picks up the new default.

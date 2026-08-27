@@ -124,8 +124,8 @@ class KeyValueIdempotentRepositoryTest {
     void testStoresMarkerValueInUnderlyingRepository() {
         idempotentRepository.add("msg-001");
 
-        // The underlying KV repository should have the key with Boolean.TRUE as value
-        assertThat(kvRepository.get("msg-001")).isEqualTo(Boolean.TRUE);
+        // The underlying KV repository should have the prefixed key with Boolean.TRUE as value
+        assertThat(kvRepository.get("idempotent:msg-001")).isEqualTo(Boolean.TRUE);
     }
 
     @Test
@@ -140,5 +140,39 @@ class KeyValueIdempotentRepositoryTest {
 
         assertThat(created).isNotNull();
         assertThat(created.getRepository()).isSameAs(kvRepository);
+    }
+
+    @Test
+    void testClearDoesNotAffectOtherPrefixes() {
+        // Simulate another adapter storing entries under a different prefix
+        kvRepository.put("aggregate:order-1", "exchange-holder", 0);
+
+        // Add idempotent entries and clear them
+        idempotentRepository.add("msg-001");
+        idempotentRepository.add("msg-002");
+        idempotentRepository.clear();
+
+        // Idempotent entries should be gone
+        assertThat(idempotentRepository.contains("msg-001")).isFalse();
+        assertThat(idempotentRepository.contains("msg-002")).isFalse();
+
+        // But the aggregate entry should still be there
+        assertThat(kvRepository.get("aggregate:order-1")).isEqualTo("exchange-holder");
+    }
+
+    @Test
+    void testKeyIsolationFromOtherAdapters() {
+        // Store an idempotent entry with key "order-1"
+        idempotentRepository.add("order-1");
+
+        // A different adapter storing under its own prefix should not collide
+        kvRepository.put("aggregate:order-1", "exchange-data", 0);
+
+        // The idempotent entry should still resolve correctly
+        assertThat(idempotentRepository.contains("order-1")).isTrue();
+
+        // And the underlying store has both entries under distinct prefixed keys
+        assertThat(kvRepository.get("idempotent:order-1")).isEqualTo(Boolean.TRUE);
+        assertThat(kvRepository.get("aggregate:order-1")).isEqualTo("exchange-data");
     }
 }

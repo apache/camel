@@ -52,11 +52,13 @@ public interface KeyValueRepository extends Service {
     /**
      * Stores a value under the given key with an optional time-to-live.
      *
-     * @param key       the key
-     * @param value     the value to store
-     * @param ttlMillis the time-to-live in milliseconds; {@code 0} or negative means no expiration
+     * @param  key       the key
+     * @param  value     the value to store
+     * @param  ttlMillis the time-to-live in milliseconds; {@code 0} or negative means no expiration
+     * @return           the previous value associated with the key, or {@code null} if there was no mapping
      */
-    void put(String key, Object value, long ttlMillis);
+    @Nullable
+    Object put(String key, Object value, long ttlMillis);
 
     /**
      * Removes the entry for the given key.

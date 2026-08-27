@@ -515,6 +515,9 @@ public class ModelWriter extends BaseWriter {
     public void writeThriftDataFormat(ThriftDataFormat def) throws IOException {
         doWriteThriftDataFormat("thrift", def);
     }
+    public void writeToonDataFormat(ToonDataFormat def) throws IOException {
+        doWriteToonDataFormat("toon", def);
+    }
     public void writeUblDataFormat(UblDataFormat def) throws IOException {
         doWriteUblDataFormat("ubl", def);
     }
@@ -1230,6 +1233,7 @@ public class ModelWriter extends BaseWriter {
                 case "SwiftMxDataFormat" -> doWriteSwiftMxDataFormat("swiftMx", (SwiftMxDataFormat) v);
                 case "SyslogDataFormat" -> doWriteSyslogDataFormat("syslog", (SyslogDataFormat) v);
                 case "TarFileDataFormat" -> doWriteTarFileDataFormat("tarFile", (TarFileDataFormat) v);
+                case "ToonDataFormat" -> doWriteToonDataFormat("toon", (ToonDataFormat) v);
                 case "UblDataFormat" -> doWriteUblDataFormat("ubl", (UblDataFormat) v);
                 case "ThriftDataFormat" -> doWriteThriftDataFormat("thrift", (ThriftDataFormat) v);
                 case "UniVocityCsvDataFormat" -> doWriteUniVocityCsvDataFormat("univocityCsv", (UniVocityCsvDataFormat) v);
@@ -2008,6 +2012,7 @@ public class ModelWriter extends BaseWriter {
                 case "SwiftMxDataFormat" -> doWriteSwiftMxDataFormat("swiftMx", (SwiftMxDataFormat) v);
                 case "SyslogDataFormat" -> doWriteSyslogDataFormat("syslog", (SyslogDataFormat) v);
                 case "TarFileDataFormat" -> doWriteTarFileDataFormat("tarFile", (TarFileDataFormat) v);
+                case "ToonDataFormat" -> doWriteToonDataFormat("toon", (ToonDataFormat) v);
                 case "UblDataFormat" -> doWriteUblDataFormat("ubl", (UblDataFormat) v);
                 case "ThriftDataFormat" -> doWriteThriftDataFormat("thrift", (ThriftDataFormat) v);
                 case "UniVocityCsvDataFormat" -> doWriteUniVocityCsvDataFormat("univocityCsv", (UniVocityCsvDataFormat) v);
@@ -2338,6 +2343,7 @@ public class ModelWriter extends BaseWriter {
                 case "SwiftMxDataFormat" -> doWriteSwiftMxDataFormat("swiftMx", (SwiftMxDataFormat) v);
                 case "SyslogDataFormat" -> doWriteSyslogDataFormat("syslog", (SyslogDataFormat) v);
                 case "TarFileDataFormat" -> doWriteTarFileDataFormat("tarFile", (TarFileDataFormat) v);
+                case "ToonDataFormat" -> doWriteToonDataFormat("toon", (ToonDataFormat) v);
                 case "UblDataFormat" -> doWriteUblDataFormat("ubl", (UblDataFormat) v);
                 case "ThriftDataFormat" -> doWriteThriftDataFormat("thrift", (ThriftDataFormat) v);
                 case "UniVocityCsvDataFormat" -> doWriteUniVocityCsvDataFormat("univocityCsv", (UniVocityCsvDataFormat) v);
@@ -2697,6 +2703,16 @@ public class ModelWriter extends BaseWriter {
         doWriteIdentifiedTypeAttributes(def);
         doWriteAttribute("instanceClass", def.getInstanceClass(), null);
         doWriteAttribute("contentTypeFormat", def.getContentTypeFormat(), "binary");
+        doWriteAttribute("contentTypeHeader", def.getContentTypeHeader(), "true");
+        endElement(name);
+    }
+    protected void doWriteToonDataFormat(String name, ToonDataFormat def) throws IOException {
+        startElement(name);
+        doWriteIdentifiedTypeAttributes(def);
+        doWriteAttribute("indent", def.getIndent(), "2");
+        doWriteAttribute("delimiter", def.getDelimiter(), "COMMA");
+        doWriteAttribute("lengthMarker", def.getLengthMarker(), "false");
+        doWriteAttribute("strict", def.getStrict(), "true");
         doWriteAttribute("contentTypeHeader", def.getContentTypeHeader(), "true");
         endElement(name);
     }
@@ -3536,6 +3552,7 @@ public class ModelWriter extends BaseWriter {
                 case "SwiftMxDataFormat" -> doWriteSwiftMxDataFormat("swiftMx", (SwiftMxDataFormat) v);
                 case "SyslogDataFormat" -> doWriteSyslogDataFormat("syslog", (SyslogDataFormat) v);
                 case "TarFileDataFormat" -> doWriteTarFileDataFormat("tarFile", (TarFileDataFormat) v);
+                case "ToonDataFormat" -> doWriteToonDataFormat("toon", (ToonDataFormat) v);
                 case "UblDataFormat" -> doWriteUblDataFormat("ubl", (UblDataFormat) v);
                 case "ThriftDataFormat" -> doWriteThriftDataFormat("thrift", (ThriftDataFormat) v);
                 case "UniVocityCsvDataFormat" -> doWriteUniVocityCsvDataFormat("univocityCsv", (UniVocityCsvDataFormat) v);

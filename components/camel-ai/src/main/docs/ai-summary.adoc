@@ -28,10 +28,6 @@ Camel offers two main paths for integrating Large Language Models (LLMs) into ro
 | No (OpenAI-compatible only)
 | Yes
 
-| MCP tool calling / agentic loops
-| Yes
-| No (use xref:langchain4j-tools-component.adoc[langchain4j-tools] instead)
-
 | Streaming responses
 | Yes
 | Manual (via `StreamingChatLanguageModel`)

@@ -431,6 +431,94 @@ public class StaticEndpointBuilders {
         return OSSEndpointBuilderFactory.endpointBuilder(componentName, path);
     }
     /**
+     * Alibaba Tablestore (OTS) (camel-alibaba-ots)
+     * Perform row operations on Alibaba Cloud Tablestore (OTS).
+     * 
+     * Category: cloud,database
+     * Since: 4.23
+     * Maven coordinates: org.apache.camel:camel-alibaba-ots
+     * 
+     * Syntax: <code>alibaba-ots:operation</code>
+     * 
+     * Path parameter: operation (required)
+     * Operation to perform
+     * There are 5 enums and the value can be one of: putRow, getRow, updateRow,
+     * deleteRow, listTables
+     * 
+     * @param path operation
+     * @return the dsl builder
+     */
+    public static AlibabaOtsEndpointBuilderFactory.AlibabaOtsEndpointBuilder alibabaOts(String path) {
+        return alibabaOts("alibaba-ots", path);
+    }
+    /**
+     * Alibaba Tablestore (OTS) (camel-alibaba-ots)
+     * Perform row operations on Alibaba Cloud Tablestore (OTS).
+     * 
+     * Category: cloud,database
+     * Since: 4.23
+     * Maven coordinates: org.apache.camel:camel-alibaba-ots
+     * 
+     * Syntax: <code>alibaba-ots:operation</code>
+     * 
+     * Path parameter: operation (required)
+     * Operation to perform
+     * There are 5 enums and the value can be one of: putRow, getRow, updateRow,
+     * deleteRow, listTables
+     * 
+     * @param componentName to use a custom component name for the endpoint
+     * instead of the default name
+     * @param path operation
+     * @return the dsl builder
+     */
+    public static AlibabaOtsEndpointBuilderFactory.AlibabaOtsEndpointBuilder alibabaOts(String componentName, String path) {
+        return AlibabaOtsEndpointBuilderFactory.endpointBuilder(componentName, path);
+    }
+    /**
+     * Alibaba Simple Log Service (SLS) (camel-alibaba-sls)
+     * Manage logs on Alibaba Cloud Simple Log Service (SLS).
+     * 
+     * Category: cloud,monitoring
+     * Since: 4.23
+     * Maven coordinates: org.apache.camel:camel-alibaba-sls
+     * 
+     * Syntax: <code>alibaba-sls:operation</code>
+     * 
+     * Path parameter: operation (required)
+     * Operation to perform
+     * There are 3 enums and the value can be one of: putLogs, getLogs,
+     * listLogStores
+     * 
+     * @param path operation
+     * @return the dsl builder
+     */
+    public static AlibabaSlsEndpointBuilderFactory.AlibabaSlsEndpointBuilder alibabaSls(String path) {
+        return alibabaSls("alibaba-sls", path);
+    }
+    /**
+     * Alibaba Simple Log Service (SLS) (camel-alibaba-sls)
+     * Manage logs on Alibaba Cloud Simple Log Service (SLS).
+     * 
+     * Category: cloud,monitoring
+     * Since: 4.23
+     * Maven coordinates: org.apache.camel:camel-alibaba-sls
+     * 
+     * Syntax: <code>alibaba-sls:operation</code>
+     * 
+     * Path parameter: operation (required)
+     * Operation to perform
+     * There are 3 enums and the value can be one of: putLogs, getLogs,
+     * listLogStores
+     * 
+     * @param componentName to use a custom component name for the endpoint
+     * instead of the default name
+     * @param path operation
+     * @return the dsl builder
+     */
+    public static AlibabaSlsEndpointBuilderFactory.AlibabaSlsEndpointBuilder alibabaSls(String componentName, String path) {
+        return AlibabaSlsEndpointBuilderFactory.endpointBuilder(componentName, path);
+    }
+    /**
      * Alibaba Short Message Service (SMS) (camel-alibaba-sms)
      * Send SMS messages using Alibaba Cloud Short Message Service (SMS).
      * 
@@ -4632,62 +4720,6 @@ public class StaticEndpointBuilders {
         return Dhis2EndpointBuilderFactory.endpointBuilder(componentName, path);
     }
     /**
-     * DigitalOcean (camel-digitalocean)
-     * Manage Droplets and resources within the DigitalOcean cloud.
-     * 
-     * Category: cloud,management
-     * Since: 2.19
-     * Maven coordinates: org.apache.camel:camel-digitalocean
-     * 
-     * Syntax: <code>digitalocean:operation</code>
-     * 
-     * Path parameter: operation
-     * The operation to perform to the given resource.
-     * There are 36 enums and the value can be one of: create, update, delete,
-     * list, ownList, get, listBackups, listActions, listNeighbors,
-     * listSnapshots, listKernels, listAllNeighbors, enableBackups,
-     * disableBackups, reboot, powerCycle, shutdown, powerOn, powerOff, restore,
-     * resetPassword, resize, rebuild, rename, changeKernel, enableIpv6,
-     * enablePrivateNetworking, takeSnapshot, transfer, convert, attach, detach,
-     * assign, unassign, tag, untag
-     * 
-     * @param path operation
-     * @return the dsl builder
-     */
-    @Deprecated
-    public static DigitalOceanEndpointBuilderFactory.DigitalOceanEndpointBuilder digitalocean(String path) {
-        return digitalocean("digitalocean", path);
-    }
-    /**
-     * DigitalOcean (camel-digitalocean)
-     * Manage Droplets and resources within the DigitalOcean cloud.
-     * 
-     * Category: cloud,management
-     * Since: 2.19
-     * Maven coordinates: org.apache.camel:camel-digitalocean
-     * 
-     * Syntax: <code>digitalocean:operation</code>
-     * 
-     * Path parameter: operation
-     * The operation to perform to the given resource.
-     * There are 36 enums and the value can be one of: create, update, delete,
-     * list, ownList, get, listBackups, listActions, listNeighbors,
-     * listSnapshots, listKernels, listAllNeighbors, enableBackups,
-     * disableBackups, reboot, powerCycle, shutdown, powerOn, powerOff, restore,
-     * resetPassword, resize, rebuild, rename, changeKernel, enableIpv6,
-     * enablePrivateNetworking, takeSnapshot, transfer, convert, attach, detach,
-     * assign, unassign, tag, untag
-     * 
-     * @param componentName to use a custom component name for the endpoint
-     * instead of the default name
-     * @param path operation
-     * @return the dsl builder
-     */
-    @Deprecated
-    public static DigitalOceanEndpointBuilderFactory.DigitalOceanEndpointBuilder digitalocean(String componentName, String path) {
-        return DigitalOceanEndpointBuilderFactory.endpointBuilder(componentName, path);
-    }
-    /**
      * Direct (camel-direct)
      * Call another endpoint from the same Camel Context synchronously.
      * 
@@ -8235,94 +8267,6 @@ public class StaticEndpointBuilders {
         return WatsonxDataEndpointBuilderFactory.endpointBuilder(componentName, path);
     }
     /**
-     * IEC 60870 Client (camel-iec60870)
-     * IEC 60870 supervisory control and data acquisition (SCADA) client using
-     * NeoSCADA implementation.
-     * 
-     * Category: iot
-     * Since: 2.20
-     * Maven coordinates: org.apache.camel:camel-iec60870
-     * 
-     * Syntax: <code>iec60870-client:uriPath</code>
-     * 
-     * Path parameter: uriPath (required)
-     * The object information address
-     * 
-     * @param path uriPath
-     * @return the dsl builder
-     */
-    @Deprecated
-    public static ClientEndpointBuilderFactory.ClientEndpointBuilder iec60870Client(String path) {
-        return iec60870Client("iec60870-client", path);
-    }
-    /**
-     * IEC 60870 Client (camel-iec60870)
-     * IEC 60870 supervisory control and data acquisition (SCADA) client using
-     * NeoSCADA implementation.
-     * 
-     * Category: iot
-     * Since: 2.20
-     * Maven coordinates: org.apache.camel:camel-iec60870
-     * 
-     * Syntax: <code>iec60870-client:uriPath</code>
-     * 
-     * Path parameter: uriPath (required)
-     * The object information address
-     * 
-     * @param componentName to use a custom component name for the endpoint
-     * instead of the default name
-     * @param path uriPath
-     * @return the dsl builder
-     */
-    @Deprecated
-    public static ClientEndpointBuilderFactory.ClientEndpointBuilder iec60870Client(String componentName, String path) {
-        return ClientEndpointBuilderFactory.endpointBuilder(componentName, path);
-    }
-    /**
-     * IEC 60870 Server (camel-iec60870)
-     * IEC 60870 supervisory control and data acquisition (SCADA) server using
-     * NeoSCADA implementation.
-     * 
-     * Category: iot
-     * Since: 2.20
-     * Maven coordinates: org.apache.camel:camel-iec60870
-     * 
-     * Syntax: <code>iec60870-server:uriPath</code>
-     * 
-     * Path parameter: uriPath (required)
-     * The object information address
-     * 
-     * @param path uriPath
-     * @return the dsl builder
-     */
-    @Deprecated
-    public static ServerEndpointBuilderFactory.ServerEndpointBuilder iec60870Server(String path) {
-        return iec60870Server("iec60870-server", path);
-    }
-    /**
-     * IEC 60870 Server (camel-iec60870)
-     * IEC 60870 supervisory control and data acquisition (SCADA) server using
-     * NeoSCADA implementation.
-     * 
-     * Category: iot
-     * Since: 2.20
-     * Maven coordinates: org.apache.camel:camel-iec60870
-     * 
-     * Syntax: <code>iec60870-server:uriPath</code>
-     * 
-     * Path parameter: uriPath (required)
-     * The object information address
-     * 
-     * @param componentName to use a custom component name for the endpoint
-     * instead of the default name
-     * @param path uriPath
-     * @return the dsl builder
-     */
-    @Deprecated
-    public static ServerEndpointBuilderFactory.ServerEndpointBuilder iec60870Server(String componentName, String path) {
-        return ServerEndpointBuilderFactory.endpointBuilder(componentName, path);
-    }
-    /**
      * Iggy (camel-iggy)
      * Send and receive message to Apache Iggy streaming platform.
      * 
@@ -8885,100 +8829,6 @@ public class StaticEndpointBuilders {
      */
     public static InfluxDb2EndpointBuilderFactory.InfluxDb2EndpointBuilder influxdb2(String componentName, String path) {
         return InfluxDb2EndpointBuilderFactory.endpointBuilder(componentName, path);
-    }
-    /**
-     * IRC (camel-irc)
-     * Send and receive messages to/from an IRC chat.
-     * 
-     * Category: chat
-     * Since: 1.1
-     * Maven coordinates: org.apache.camel:camel-irc
-     * 
-     * Syntax: <code>irc:hostname:port</code>
-     * 
-     * Path parameter: hostname (required)
-     * Hostname for the IRC chat server
-     * 
-     * Path parameter: port
-     * Port number for the IRC chat server. If no port is configured then a
-     * default port of either 6667, 6668 or 6669 is used.
-     * 
-     * @param path hostname:port
-     * @return the dsl builder
-     */
-    @Deprecated
-    public static IrcEndpointBuilderFactory.IrcEndpointBuilder irc(String path) {
-        return irc("irc", path);
-    }
-    /**
-     * IRC (camel-irc)
-     * Send and receive messages to/from an IRC chat.
-     * 
-     * Category: chat
-     * Since: 1.1
-     * Maven coordinates: org.apache.camel:camel-irc
-     * 
-     * Syntax: <code>irc:hostname:port</code>
-     * 
-     * Path parameter: hostname (required)
-     * Hostname for the IRC chat server
-     * 
-     * Path parameter: port
-     * Port number for the IRC chat server. If no port is configured then a
-     * default port of either 6667, 6668 or 6669 is used.
-     * 
-     * @param componentName to use a custom component name for the endpoint
-     * instead of the default name
-     * @param path hostname:port
-     * @return the dsl builder
-     */
-    @Deprecated
-    public static IrcEndpointBuilderFactory.IrcEndpointBuilder irc(String componentName, String path) {
-        return IrcEndpointBuilderFactory.endpointBuilder(componentName, path);
-    }
-    /**
-     * IronMQ (camel-ironmq)
-     * Send and receive messages to/from IronMQ an elastic and durable hosted
-     * message queue as a service.
-     * 
-     * Category: cloud,messaging
-     * Since: 2.17
-     * Maven coordinates: org.apache.camel:camel-ironmq
-     * 
-     * Syntax: <code>ironmq:queueName</code>
-     * 
-     * Path parameter: queueName (required)
-     * The name of the IronMQ queue
-     * 
-     * @param path queueName
-     * @return the dsl builder
-     */
-    @Deprecated
-    public static IronMQEndpointBuilderFactory.IronMQEndpointBuilder ironmq(String path) {
-        return ironmq("ironmq", path);
-    }
-    /**
-     * IronMQ (camel-ironmq)
-     * Send and receive messages to/from IronMQ an elastic and durable hosted
-     * message queue as a service.
-     * 
-     * Category: cloud,messaging
-     * Since: 2.17
-     * Maven coordinates: org.apache.camel:camel-ironmq
-     * 
-     * Syntax: <code>ironmq:queueName</code>
-     * 
-     * Path parameter: queueName (required)
-     * The name of the IronMQ queue
-     * 
-     * @param componentName to use a custom component name for the endpoint
-     * instead of the default name
-     * @param path queueName
-     * @return the dsl builder
-     */
-    @Deprecated
-    public static IronMQEndpointBuilderFactory.IronMQEndpointBuilder ironmq(String componentName, String path) {
-        return IronMQEndpointBuilderFactory.endpointBuilder(componentName, path);
     }
     /**
      * JCache (camel-jcache)
@@ -9565,60 +9415,6 @@ public class StaticEndpointBuilders {
      */
     public static JsltEndpointBuilderFactory.JsltEndpointBuilder jslt(String componentName, String path) {
         return JsltEndpointBuilderFactory.endpointBuilder(componentName, path);
-    }
-    /**
-     * JsonPatch (camel-json-patch)
-     * Transforms JSON using JSON patch (RFC 6902).
-     * 
-     * Category: transformation
-     * Since: 3.12
-     * Maven coordinates: org.apache.camel:camel-json-patch
-     * 
-     * Syntax: <code>json-patch:resourceUri</code>
-     * 
-     * Path parameter: resourceUri (required)
-     * Path to the resource. You can prefix with: classpath, file, http, ref, or
-     * bean. classpath, file and http loads the resource using these protocols
-     * (classpath is default). ref will lookup the resource in the registry.
-     * bean will call a method on a bean to be used as the resource. For bean
-     * you can specify the method name after dot, eg bean:myBean.myMethod.
-     * This option can also be loaded from an existing file, by prefixing with
-     * file: or classpath: followed by the location of the file.
-     * 
-     * @param path resourceUri
-     * @return the dsl builder
-     */
-    @Deprecated
-    public static JsonPatchEndpointBuilderFactory.JsonPatchEndpointBuilder jsonPatch(String path) {
-        return jsonPatch("json-patch", path);
-    }
-    /**
-     * JsonPatch (camel-json-patch)
-     * Transforms JSON using JSON patch (RFC 6902).
-     * 
-     * Category: transformation
-     * Since: 3.12
-     * Maven coordinates: org.apache.camel:camel-json-patch
-     * 
-     * Syntax: <code>json-patch:resourceUri</code>
-     * 
-     * Path parameter: resourceUri (required)
-     * Path to the resource. You can prefix with: classpath, file, http, ref, or
-     * bean. classpath, file and http loads the resource using these protocols
-     * (classpath is default). ref will lookup the resource in the registry.
-     * bean will call a method on a bean to be used as the resource. For bean
-     * you can specify the method name after dot, eg bean:myBean.myMethod.
-     * This option can also be loaded from an existing file, by prefixing with
-     * file: or classpath: followed by the location of the file.
-     * 
-     * @param componentName to use a custom component name for the endpoint
-     * instead of the default name
-     * @param path resourceUri
-     * @return the dsl builder
-     */
-    @Deprecated
-    public static JsonPatchEndpointBuilderFactory.JsonPatchEndpointBuilder jsonPatch(String componentName, String path) {
-        return JsonPatchEndpointBuilderFactory.endpointBuilder(componentName, path);
     }
     /**
      * JSON Schema Validator (camel-json-validator)
@@ -11157,48 +10953,6 @@ public class StaticEndpointBuilders {
      */
     public static LangChain4jEmbeddingStoreEndpointBuilderFactory.LangChain4jEmbeddingStoreEndpointBuilder langchain4jEmbeddingstore(String componentName, String path) {
         return LangChain4jEmbeddingStoreEndpointBuilderFactory.endpointBuilder(componentName, path);
-    }
-    /**
-     * LangChain4j Tools (camel-langchain4j-tools)
-     * LangChain4j Tools and Function Calling Features
-     * 
-     * Category: ai
-     * Since: 4.8
-     * Maven coordinates: org.apache.camel:camel-langchain4j-tools
-     * 
-     * Syntax: <code>langchain4j-tools:toolId</code>
-     * 
-     * Path parameter: toolId (required)
-     * The tool id
-     * 
-     * @param path toolId
-     * @return the dsl builder
-     */
-    @Deprecated
-    public static LangChain4jToolsEndpointBuilderFactory.LangChain4jToolsEndpointBuilder langchain4jTools(String path) {
-        return langchain4jTools("langchain4j-tools", path);
-    }
-    /**
-     * LangChain4j Tools (camel-langchain4j-tools)
-     * LangChain4j Tools and Function Calling Features
-     * 
-     * Category: ai
-     * Since: 4.8
-     * Maven coordinates: org.apache.camel:camel-langchain4j-tools
-     * 
-     * Syntax: <code>langchain4j-tools:toolId</code>
-     * 
-     * Path parameter: toolId (required)
-     * The tool id
-     * 
-     * @param componentName to use a custom component name for the endpoint
-     * instead of the default name
-     * @param path toolId
-     * @return the dsl builder
-     */
-    @Deprecated
-    public static LangChain4jToolsEndpointBuilderFactory.LangChain4jToolsEndpointBuilder langchain4jTools(String componentName, String path) {
-        return LangChain4jToolsEndpointBuilderFactory.endpointBuilder(componentName, path);
     }
     /**
      * LangChain4j Web Search (camel-langchain4j-web-search)
@@ -15632,46 +15386,46 @@ public class StaticEndpointBuilders {
         return SolrEndpointBuilderFactory.endpointBuilder(componentName, path);
     }
     /**
-     * Splunk (camel-splunk)
-     * Publish or search for events in Splunk.
+     * SPIFFE (camel-spiffe)
+     * Fetch and validate SPIFFE workload identity (X.509-SVID and JWT-SVID)
+     * from the SPIFFE Workload API.
      * 
-     * Category: iot,monitoring
-     * Since: 2.13
-     * Maven coordinates: org.apache.camel:camel-splunk
+     * Category: security
+     * Since: 4.23
+     * Maven coordinates: org.apache.camel:camel-spiffe
      * 
-     * Syntax: <code>splunk:name</code>
+     * Syntax: <code>spiffe:label</code>
      * 
-     * Path parameter: name (required)
-     * Name has no purpose
+     * Path parameter: label
+     * Logical name of the endpoint
      * 
-     * @param path name
+     * @param path label
      * @return the dsl builder
      */
-    @Deprecated
-    public static SplunkEndpointBuilderFactory.SplunkEndpointBuilder splunk(String path) {
-        return splunk("splunk", path);
+    public static SpiffeEndpointBuilderFactory.SpiffeEndpointBuilder spiffe(String path) {
+        return spiffe("spiffe", path);
     }
     /**
-     * Splunk (camel-splunk)
-     * Publish or search for events in Splunk.
+     * SPIFFE (camel-spiffe)
+     * Fetch and validate SPIFFE workload identity (X.509-SVID and JWT-SVID)
+     * from the SPIFFE Workload API.
      * 
-     * Category: iot,monitoring
-     * Since: 2.13
-     * Maven coordinates: org.apache.camel:camel-splunk
+     * Category: security
+     * Since: 4.23
+     * Maven coordinates: org.apache.camel:camel-spiffe
      * 
-     * Syntax: <code>splunk:name</code>
+     * Syntax: <code>spiffe:label</code>
      * 
-     * Path parameter: name (required)
-     * Name has no purpose
+     * Path parameter: label
+     * Logical name of the endpoint
      * 
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
-     * @param path name
+     * @param path label
      * @return the dsl builder
      */
-    @Deprecated
-    public static SplunkEndpointBuilderFactory.SplunkEndpointBuilder splunk(String componentName, String path) {
-        return SplunkEndpointBuilderFactory.endpointBuilder(componentName, path);
+    public static SpiffeEndpointBuilderFactory.SpiffeEndpointBuilder spiffe(String componentName, String path) {
+        return SpiffeEndpointBuilderFactory.endpointBuilder(componentName, path);
     }
     /**
      * Splunk HEC (camel-splunk-hec)

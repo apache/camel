@@ -32,18 +32,9 @@ Use State Store when:
 
 * You need a *simple key-value API* and want to switch backends without changing route logic.
 * You are *migrating from MuleSoft* and want an Object Store equivalent.
-* You want *backend portability* — develop with in-memory, deploy with Redis or Infinispan.
-* Your use case is limited to *put, putIfAbsent, get, delete, contains, keys, size, clear* operations.
+* You want *backend portability* — develop with in-memory, deploy with any `KeyValueRepository`.
+* Your use case is limited to *put, get, delete, contains, keys* operations.
 * You want a *single backend* to serve state store, idempotent consumer, and aggregation patterns.
-
-[width="100%",cols="1,2,1",options="header"]
-|===
-| Backend | Module | Description
-| In-Memory | `camel-state-store` | Default. Uses `ConcurrentHashMap` with lazy TTL expiry. No external dependencies.
-| Caffeine | `camel-state-store-caffeine` | High-performance local cache with proper eviction and per-entry TTL.
-| Redis | `camel-state-store-redis` | Distributed store via Redisson. Supports per-entry TTL natively.
-| Infinispan | `camel-state-store-infinispan` | Distributed cache via Hot Rod client. Supports per-entry TTL via lifespan.
-|===
 
 == URI Format
 
@@ -193,8 +184,8 @@ public class MyCustomBackend extends ServiceSupport implements KeyValueRepositor
     }
 
     @Override
-    public void put(String key, Object value, long ttlMillis) {
-        // store the value
+    public Object put(String key, Object value, long ttlMillis) {
+        // store the value; return the previous value or null
     }
 
     @Override

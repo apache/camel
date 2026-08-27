@@ -73,9 +73,16 @@ public class MemoryKeyValueRepository extends ServiceSupport implements KeyValue
 
     @Override
     @ManagedOperation(description = "Put a key-value pair with optional TTL")
-    public void put(String key, Object value, long ttlMillis) {
+    public Object put(String key, Object value, long ttlMillis) {
         long expiresAt = ttlMillis > 0 ? System.currentTimeMillis() + ttlMillis : Long.MAX_VALUE;
-        store.put(key, new Entry(value, expiresAt));
+        Entry previous = store.put(key, new Entry(value, expiresAt));
+        if (previous == null) {
+            return null;
+        }
+        if (previous.isExpired()) {
+            return null;
+        }
+        return previous.value();
     }
 
     @Override
