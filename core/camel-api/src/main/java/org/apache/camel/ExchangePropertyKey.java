@@ -62,6 +62,8 @@ public enum ExchangePropertyKey {
     FAILURE_ENDPOINT(Exchange.FAILURE_ENDPOINT),
     FAILURE_HANDLED(Exchange.FAILURE_HANDLED),
     FAILURE_ROUTE_ID(Exchange.FAILURE_ROUTE_ID),
+    FAILURE_NODE_ID(Exchange.FAILURE_NODE_ID),
+    FAILURE_LOCATION(Exchange.FAILURE_LOCATION),
     FATAL_FALLBACK_ERROR_HANDLER(Exchange.FATAL_FALLBACK_ERROR_HANDLER),
     FILE_EXCHANGE_FILE(Exchange.FILE_EXCHANGE_FILE),
     GROUPED_EXCHANGE(Exchange.GROUPED_EXCHANGE),
@@ -175,6 +177,10 @@ public enum ExchangePropertyKey {
                 return FAILURE_ENDPOINT;
             case Exchange.FAILURE_ROUTE_ID:
                 return FAILURE_ROUTE_ID;
+            case Exchange.FAILURE_NODE_ID:
+                return FAILURE_NODE_ID;
+            case Exchange.FAILURE_LOCATION:
+                return FAILURE_LOCATION;
             case Exchange.FATAL_FALLBACK_ERROR_HANDLER:
                 return FATAL_FALLBACK_ERROR_HANDLER;
             case Exchange.FILE_EXCHANGE_FILE:

@@ -126,6 +126,14 @@ public final class ShareUnitOfWorkAggregationStrategy extends ServiceSupport imp
                 answer.setProperty(ExchangePropertyKey.FAILURE_ROUTE_ID,
                         newExchange.getProperty(ExchangePropertyKey.FAILURE_ROUTE_ID));
             }
+            if (newExchange.getProperty(ExchangePropertyKey.FAILURE_NODE_ID) != null) {
+                answer.setProperty(ExchangePropertyKey.FAILURE_NODE_ID,
+                        newExchange.getProperty(ExchangePropertyKey.FAILURE_NODE_ID));
+            }
+            if (newExchange.getProperty(ExchangePropertyKey.FAILURE_LOCATION) != null) {
+                answer.setProperty(ExchangePropertyKey.FAILURE_LOCATION,
+                        newExchange.getProperty(ExchangePropertyKey.FAILURE_LOCATION));
+            }
             if (newExchange.getExchangeExtension().getErrorHandlerHandled() != null) {
                 answer.getExchangeExtension()
                         .setErrorHandlerHandled(newExchange.getExchangeExtension().getErrorHandlerHandled());

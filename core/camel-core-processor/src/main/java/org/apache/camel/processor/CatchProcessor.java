@@ -154,11 +154,6 @@ public class CatchProcessor extends BaseDelegateProcessorSupport
         if (exchange.getProperty(ExchangePropertyKey.FAILURE_ENDPOINT) == null) {
             exchange.setProperty(ExchangePropertyKey.FAILURE_ENDPOINT, exchange.getProperty(ExchangePropertyKey.TO_ENDPOINT));
         }
-        // and store the route id so we know in which route we failed
-        String routeId = ExchangeHelper.getAtRouteId(exchange);
-        if (routeId != null) {
-            exchange.setProperty(ExchangePropertyKey.FAILURE_ROUTE_ID, routeId);
-        }
         // give the rest of the pipeline another chance
         exchange.setProperty(ExchangePropertyKey.EXCEPTION_HANDLED, true);
         exchange.setProperty(ExchangePropertyKey.EXCEPTION_CAUGHT, e);
