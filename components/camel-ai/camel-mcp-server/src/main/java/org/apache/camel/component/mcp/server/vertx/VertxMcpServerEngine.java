@@ -16,6 +16,7 @@
  */
 package org.apache.camel.component.mcp.server.vertx;
 
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -29,6 +30,7 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.component.ai.tool.AiToolAnnotations;
 import org.apache.camel.component.mcp.server.McpServerConstants;
 import org.apache.camel.component.mcp.server.McpServerEngine;
+import org.apache.camel.component.mcp.server.McpServerIcon;
 import org.apache.camel.component.mcp.server.McpServerInfo;
 import org.apache.camel.component.mcp.server.McpServerTool;
 import org.apache.camel.component.mcp.server.McpToolCallResult;
@@ -107,11 +109,14 @@ public class VertxMcpServerEngine extends ServiceSupport implements McpServerEng
         transport = new VertxMcpStreamableServerTransportProvider(
                 jsonMapper, info.path(),
                 info.sessionKeepAliveIntervalMs(), info.sessionIdleTtlMs());
-        server = McpServer.sync(transport)
-                .serverInfo(info.serverName(), info.version())
+        McpServer.SyncSpecification<?> specification = McpServer.sync(transport)
+                .serverInfo(buildServerInfo(info))
                 .capabilities(McpSchema.ServerCapabilities.builder().tools(true).build())
-                .immediateExecution(true)
-                .build();
+                .immediateExecution(true);
+        if (info.instructions() != null && !info.instructions().isBlank()) {
+            specification.instructions(info.instructions());
+        }
+        server = specification.build();
         // register routes only once the server has set the session factory on the transport
         transport.registerRoutes(router);
 
@@ -212,9 +217,49 @@ public class VertxMcpServerEngine extends ServiceSupport implements McpServerEng
             hintBuilder.openWorldHint(annotations.openWorldHint());
             hasHints = true;
         }
+        if (annotations.returnDirect() != null) {
+            hintBuilder.returnDirect(annotations.returnDirect());
+            hasHints = true;
+        }
         if (hasHints) {
             builder.annotations(hintBuilder.build());
         }
+    }
+
+    private static McpSchema.Implementation buildServerInfo(McpServerInfo info) {
+        McpSchema.Implementation.Builder builder
+                = McpSchema.Implementation.builder(info.serverName(), info.version());
+        if (info.title() != null && !info.title().isBlank()) {
+            builder.title(info.title());
+        }
+        if (info.description() != null && !info.description().isBlank()) {
+            builder.description(info.description());
+        }
+        if (info.websiteUrl() != null && !info.websiteUrl().isBlank()) {
+            builder.websiteUrl(info.websiteUrl());
+        }
+        if (info.icons() != null && !info.icons().isEmpty()) {
+            builder.icons(mapIcons(info.icons()));
+        }
+        return builder.build();
+    }
+
+    private static List<McpSchema.Icon> mapIcons(List<McpServerIcon> icons) {
+        return icons.stream().map(VertxMcpServerEngine::mapIcon).toList();
+    }
+
+    private static McpSchema.Icon mapIcon(McpServerIcon icon) {
+        McpSchema.Icon.Builder builder = McpSchema.Icon.builder(icon.src());
+        if (icon.mimeType() != null && !icon.mimeType().isBlank()) {
+            builder.mimeType(icon.mimeType());
+        }
+        if (icon.sizes() != null && !icon.sizes().isEmpty()) {
+            builder.sizes(icon.sizes());
+        }
+        if (icon.theme() != null && !icon.theme().isBlank()) {
+            builder.theme(icon.theme());
+        }
+        return builder.build();
     }
 
     private VertxPlatformHttpRouter lookupRouter() {

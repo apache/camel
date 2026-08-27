@@ -512,6 +512,9 @@ public class ModelWriter extends BaseWriter {
     public void writeThriftDataFormat(ThriftDataFormat def) throws IOException {
         doWriteThriftDataFormat("thrift", def);
     }
+    public void writeToonDataFormat(ToonDataFormat def) throws IOException {
+        doWriteToonDataFormat("toon", def);
+    }
     public void writeUblDataFormat(UblDataFormat def) throws IOException {
         doWriteUblDataFormat("ubl", def);
     }
@@ -610,6 +613,9 @@ public class ModelWriter extends BaseWriter {
     }
     public void writeOgnlExpression(OgnlExpression def) throws IOException {
         doWriteOgnlExpression("ognl", def);
+    }
+    public void writePython3Expression(Python3Expression def) throws IOException {
+        doWritePython3Expression("python3", def);
     }
     public void writePythonExpression(PythonExpression def) throws IOException {
         doWritePythonExpression("python", def);
@@ -1215,6 +1221,7 @@ public class ModelWriter extends BaseWriter {
                 case "SwiftMxDataFormat" -> doWriteSwiftMxDataFormat("swiftMx", (SwiftMxDataFormat) v);
                 case "SyslogDataFormat" -> doWriteSyslogDataFormat("syslog", (SyslogDataFormat) v);
                 case "TarFileDataFormat" -> doWriteTarFileDataFormat("tarFile", (TarFileDataFormat) v);
+                case "ToonDataFormat" -> doWriteToonDataFormat("toon", (ToonDataFormat) v);
                 case "UblDataFormat" -> doWriteUblDataFormat("ubl", (UblDataFormat) v);
                 case "ThriftDataFormat" -> doWriteThriftDataFormat("thrift", (ThriftDataFormat) v);
                 case "UniVocityCsvDataFormat" -> doWriteUniVocityCsvDataFormat("univocityCsv", (UniVocityCsvDataFormat) v);
@@ -1993,6 +2000,7 @@ public class ModelWriter extends BaseWriter {
                 case "SwiftMxDataFormat" -> doWriteSwiftMxDataFormat("swiftMx", (SwiftMxDataFormat) v);
                 case "SyslogDataFormat" -> doWriteSyslogDataFormat("syslog", (SyslogDataFormat) v);
                 case "TarFileDataFormat" -> doWriteTarFileDataFormat("tarFile", (TarFileDataFormat) v);
+                case "ToonDataFormat" -> doWriteToonDataFormat("toon", (ToonDataFormat) v);
                 case "UblDataFormat" -> doWriteUblDataFormat("ubl", (UblDataFormat) v);
                 case "ThriftDataFormat" -> doWriteThriftDataFormat("thrift", (ThriftDataFormat) v);
                 case "UniVocityCsvDataFormat" -> doWriteUniVocityCsvDataFormat("univocityCsv", (UniVocityCsvDataFormat) v);
@@ -2323,6 +2331,7 @@ public class ModelWriter extends BaseWriter {
                 case "SwiftMxDataFormat" -> doWriteSwiftMxDataFormat("swiftMx", (SwiftMxDataFormat) v);
                 case "SyslogDataFormat" -> doWriteSyslogDataFormat("syslog", (SyslogDataFormat) v);
                 case "TarFileDataFormat" -> doWriteTarFileDataFormat("tarFile", (TarFileDataFormat) v);
+                case "ToonDataFormat" -> doWriteToonDataFormat("toon", (ToonDataFormat) v);
                 case "UblDataFormat" -> doWriteUblDataFormat("ubl", (UblDataFormat) v);
                 case "ThriftDataFormat" -> doWriteThriftDataFormat("thrift", (ThriftDataFormat) v);
                 case "UniVocityCsvDataFormat" -> doWriteUniVocityCsvDataFormat("univocityCsv", (UniVocityCsvDataFormat) v);
@@ -2685,6 +2694,16 @@ public class ModelWriter extends BaseWriter {
         doWriteAttribute("contentTypeHeader", def.getContentTypeHeader(), "true");
         endElement(name);
     }
+    protected void doWriteToonDataFormat(String name, ToonDataFormat def) throws IOException {
+        startElement(name);
+        doWriteIdentifiedTypeAttributes(def);
+        doWriteAttribute("indent", def.getIndent(), "2");
+        doWriteAttribute("delimiter", def.getDelimiter(), "COMMA");
+        doWriteAttribute("lengthMarker", def.getLengthMarker(), "false");
+        doWriteAttribute("strict", def.getStrict(), "true");
+        doWriteAttribute("contentTypeHeader", def.getContentTypeHeader(), "true");
+        endElement(name);
+    }
     protected void doWriteUblDataFormat(String name, UblDataFormat def) throws IOException {
         startElement(name);
         doWriteIdentifiedTypeAttributes(def);
@@ -3000,6 +3019,12 @@ public class ModelWriter extends BaseWriter {
         endElement(name);
     }
     protected void doWriteOgnlExpression(String name, OgnlExpression def) throws IOException {
+        startElement(name);
+        doWriteTypedExpressionDefinitionAttributes(def);
+        doWriteValue(def.getExpression());
+        endElement(name);
+    }
+    protected void doWritePython3Expression(String name, Python3Expression def) throws IOException {
         startElement(name);
         doWriteTypedExpressionDefinitionAttributes(def);
         doWriteValue(def.getExpression());
@@ -3515,6 +3540,7 @@ public class ModelWriter extends BaseWriter {
                 case "SwiftMxDataFormat" -> doWriteSwiftMxDataFormat("swiftMx", (SwiftMxDataFormat) v);
                 case "SyslogDataFormat" -> doWriteSyslogDataFormat("syslog", (SyslogDataFormat) v);
                 case "TarFileDataFormat" -> doWriteTarFileDataFormat("tarFile", (TarFileDataFormat) v);
+                case "ToonDataFormat" -> doWriteToonDataFormat("toon", (ToonDataFormat) v);
                 case "UblDataFormat" -> doWriteUblDataFormat("ubl", (UblDataFormat) v);
                 case "ThriftDataFormat" -> doWriteThriftDataFormat("thrift", (ThriftDataFormat) v);
                 case "UniVocityCsvDataFormat" -> doWriteUniVocityCsvDataFormat("univocityCsv", (UniVocityCsvDataFormat) v);
@@ -3881,6 +3907,7 @@ public class ModelWriter extends BaseWriter {
                 case "MethodCallExpression" -> doWriteMethodCallExpression("method", (MethodCallExpression) v);
                 case "MvelExpression" -> doWriteMvelExpression("mvel", (MvelExpression) v);
                 case "OgnlExpression" -> doWriteOgnlExpression("ognl", (OgnlExpression) v);
+                case "Python3Expression" -> doWritePython3Expression("python3", (Python3Expression) v);
                 case "PythonExpression" -> doWritePythonExpression("python", (PythonExpression) v);
                 case "RefExpression" -> doWriteRefExpression("ref", (RefExpression) v);
                 case "SimpleExpression" -> doWriteSimpleExpression("simple", (SimpleExpression) v);

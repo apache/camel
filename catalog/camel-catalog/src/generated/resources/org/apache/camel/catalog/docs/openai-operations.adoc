@@ -1,4 +1,4 @@
-= OpenAI - Embeddings, Moderation and Audio Operations
+= OpenAI - Embeddings, Moderation, Audio and Image Operations
 :tabs-sync-option:
 
 xref:ROOT:openai-component.adoc[Back to OpenAI Component]
@@ -580,4 +580,148 @@ The message body is the generated audio as a `byte[]`. The `Content-Type` header
 [NOTE]
 ====
 The generated audio is fully buffered into a `byte[]` in memory. This is fine for typical short text-to-speech responses, but be mindful of heap usage when synthesizing very large inputs (e.g., book-length narration).
+====
+
+== Image Generation and Edit Operations
+
+The `image-generation` operation creates images from a text prompt using OpenAI's `POST /v1/images/generations` endpoint. The message body is the prompt, and the produced body is the generated image as a `byte[]` together with a `Content-Type` header, so the result chains straight into `file:`, object storage, or messaging endpoints.
+
+=== Basic Image Generation
+
+[tabs]
+====
+Java::
++
+[source,java]
+----
+from("direct:product-image")
+    .setBody(simple("Studio photo of ${header.productName} on a white background"))
+    .to("openai:image-generation?imageModel=gpt-image-1&imageSize=1024x1024")
+    .to("file:target/images?fileName=${header.productName}.png");
+----
+
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="direct:product-image"/>
+  <to uri="openai:image-generation?imageModel=gpt-image-1&amp;imageSize=1024x1024"/>
+  <to uri="file:target/images?fileName=${header.productName}.png"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:product-image
+      steps:
+        - to:
+            uri: openai:image-generation
+            parameters:
+              imageModel: gpt-image-1
+              imageSize: 1024x1024
+        - to:
+            uri: file:target/images?fileName=${header.productName}.png
+----
+====
+
+The prompt can also come from the `imagePrompt` endpoint option or the `CamelOpenAIImagePrompt` header, which take precedence over the message body. That is useful when the body is already carrying something else, or when the prompt is a fixed part of the route.
+
+=== Image Generation Parameters
+
+[cols="1,1,3"]
+|===
+| Parameter | Type | Description
+
+| `imageModel` | String | The model to use (e.g., `gpt-image-1`, `gpt-image-1-mini`, `gpt-image-1.5`, `gpt-image-2`). Required. The DALL-E models are no longer offered by OpenAI, but remain valid values for compatible providers.
+| `imagePrompt` | String | The prompt, when it does not come from the message body.
+| `imageSize` | String | Image size such as `1024x1024`, `1536x1024`, `1024x1536` or `auto`. The accepted values depend on the model.
+| `imageQuality` | String | `auto`, `high`, `medium`, `low` for the GPT image models; `hd` and `standard` are DALL-E values kept for compatible providers.
+| `imageResponseFormat` | String | `url` or `b64_json`. Rejected by the OpenAI images endpoint, see the note below.
+| `imageCount` | Integer | Number of images to generate, from 1 to 10. `dall-e-3` only supports 1.
+| `imageBackground` | String | `transparent`, `opaque` or `auto`. GPT image models only, and `transparent` requires the `png` or `webp` output format.
+| `imageOutputFormat` | String | `png`, `jpeg` or `webp`. GPT image models only, which default to `png`.
+| `imageOutputCompression` | Integer | Compression from 0 to 100 for the `webp` and `jpeg` output formats. GPT image models only.
+| `imageStyle` | String | `vivid` or `natural`. A `dall-e-3` option, so only useful with compatible providers.
+| `imageModeration` | String | `low` or `auto`. GPT image models only.
+|===
+
+[IMPORTANT]
+====
+Leave `imageResponseFormat` unset against OpenAI. The GPT image models always return base64 and reject the parameter, and as of August 2026 the OpenAI images endpoint rejects it for every model with `Unknown parameter: 'response_format'` — the DALL-E models that used to accept it are no longer offered. The option is only sent when you set it explicitly, so routes are unaffected by default; it remains available for OpenAI-compatible providers that still implement the older images API, where `url` is often the default.
+====
+
+=== Image Edit
+
+The `image-edit` operation edits an existing image using OpenAI's `POST /v1/images/edits` endpoint. The message body carries the image, so the prompt must come from the `imagePrompt` endpoint option or the `CamelOpenAIImagePrompt` header.
+
+[source,java]
+----
+from("aws2-s3:marketing-assets")
+    .setHeader(OpenAIConstants.IMAGE_PROMPT, constant("Add a red SALE banner in the top-right corner"))
+    .to("openai:image-edit?imageModel=gpt-image-1")
+    .to("aws2-s3:marketing-assets-processed");
+----
+
+The body may be a `File`, `Path`, `InputStream`, `byte[]`, or a `List` of those. A list is sent as several reference images, which the GPT image models accept up to 16 of, each under 50 MB.
+
+An optional mask can be supplied through the `CamelOpenAIImageMask` header, using the same body types. The fully transparent areas of the mask mark where the image should be edited:
+
+[source,java]
+----
+from("direct:edit")
+    .setHeader(OpenAIConstants.IMAGE_MASK, constant(maskBytes))
+    .setHeader(OpenAIConstants.IMAGE_PROMPT, constant("Replace the masked area with a blue sky"))
+    .to("openai:image-edit?imageModel=gpt-image-1&imageInputFidelity=high");
+----
+
+The image-edit operation accepts the same parameters as image-generation, except for `imageStyle` and `imageModeration`, and adds one of its own:
+
+[cols="1,1,3"]
+|===
+| Parameter | Type | Description
+
+| `imageInputFidelity` | String | `high` or `low`, controlling how closely the edit preserves the style and features of the input image. Supported by `gpt-image-1` and `gpt-image-1.5`.
+|===
+
+=== Image Input Handling
+
+The API validates the upload on the content type of the multipart part and accepts only `image/png`, `image/jpeg` and `image/webp`. That content type is resolved in this order:
+
+1. the MIME type detected as described in xref:ROOT:openai-component.adoc[the component MIME type detection] — the `CamelOpenAIMediaType` header, then the content type headers set by the object storage components, then `Content-Type`, then `CamelFileContentType`, then the file name;
+2. the extension of the body, when the body is a `File` or `Path`;
+3. `image/png`.
+
+Anything that resolves to a type the API does not accept, such as the `text/plain` that a bare `byte[]` body would otherwise be sent as, falls back to `image/png` rather than being passed through.
+
+The multipart file name is kept consistent with that content type: the `CamelFileNameOnly` header when it has an extension, otherwise the name of a `File` or `Path` body, otherwise `image.<ext>`.
+
+That means an image arriving from `file:` or from an object storage component needs no extra configuration. A `byte[]` body of a JPEG or WebP image needs either `CamelFileNameOnly`, `Content-Type` or the `CamelOpenAIMediaType` header, or it will be uploaded as PNG.
+
+=== Image Output
+
+A single image becomes the message body directly, and several images become a `List`, so the common case does not force routes to unwrap a one-element list. Images returned as base64 are decoded into `byte[]`, and images returned as URLs stay as `String`.
+
+[cols="1,1,3"]
+|===
+| Header | Type | Description
+
+| `CamelOpenAIImageResultCount` | Integer | The number of images returned.
+| `CamelOpenAIImageRevisedPrompt` | String | The prompt as revised by the model, when a single image is returned (`dall-e-3`).
+| `CamelOpenAIImageRevisedPrompts` | List<String> | The revised prompts, one entry per returned image.
+| `CamelOpenAIImageInputTokens` | Long | Input tokens billed. GPT image models only.
+| `CamelOpenAIImageOutputTokens` | Long | Output tokens billed. GPT image models only.
+| `CamelOpenAIImageTotalTokens` | Long | Total tokens billed. GPT image models only.
+| `Content-Type` | String | Set only when the body is binary, from the output format reported by the response, falling back to the requested `imageOutputFormat` and then to `image/png`.
+|===
+
+Set `storeFullResponse=true` to keep the complete SDK response in the `CamelOpenAIImageResponse` exchange property.
+
+[NOTE]
+====
+Generated images are fully buffered into memory as `byte[]`. Requesting several large, high-quality images in a single exchange multiplies that cost, so prefer the `url` response format on `dall-e-2` and `dall-e-3` when the route only needs to pass a reference along.
 ====

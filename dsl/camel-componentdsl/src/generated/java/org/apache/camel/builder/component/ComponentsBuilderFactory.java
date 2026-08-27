@@ -2549,34 +2549,6 @@ public interface ComponentsBuilderFactory {
         return IbmWatsonxDataComponentBuilderFactory.ibmWatsonxData();
     }
     /**
-     * IEC 60870 Client (camel-iec60870)
-     * IEC 60870 supervisory control and data acquisition (SCADA) client using
-     * NeoSCADA implementation.
-     * 
-     * Category: iot
-     * Since: 2.20
-     * Maven coordinates: org.apache.camel:camel-iec60870
-     * 
-     * @return the dsl builder
-     */
-    static Iec60870ClientComponentBuilderFactory.Iec60870ClientComponentBuilder iec60870Client() {
-        return Iec60870ClientComponentBuilderFactory.iec60870Client();
-    }
-    /**
-     * IEC 60870 Server (camel-iec60870)
-     * IEC 60870 supervisory control and data acquisition (SCADA) server using
-     * NeoSCADA implementation.
-     * 
-     * Category: iot
-     * Since: 2.20
-     * Maven coordinates: org.apache.camel:camel-iec60870
-     * 
-     * @return the dsl builder
-     */
-    static Iec60870ServerComponentBuilderFactory.Iec60870ServerComponentBuilder iec60870Server() {
-        return Iec60870ServerComponentBuilderFactory.iec60870Server();
-    }
-    /**
      * Iggy (camel-iggy)
      * Send and receive message to Apache Iggy streaming platform.
      * 
@@ -2773,20 +2745,6 @@ public interface ComponentsBuilderFactory {
      */
     static IrcComponentBuilderFactory.IrcComponentBuilder irc() {
         return IrcComponentBuilderFactory.irc();
-    }
-    /**
-     * IronMQ (camel-ironmq)
-     * Send and receive messages to/from IronMQ an elastic and durable hosted
-     * message queue as a service.
-     * 
-     * Category: cloud,messaging
-     * Since: 2.17
-     * Maven coordinates: org.apache.camel:camel-ironmq
-     * 
-     * @return the dsl builder
-     */
-    static IronmqComponentBuilderFactory.IronmqComponentBuilder ironmq() {
-        return IronmqComponentBuilderFactory.ironmq();
     }
     /**
      * JCache (camel-jcache)
@@ -4886,6 +4844,19 @@ public interface ComponentsBuilderFactory {
         return SshComponentBuilderFactory.ssh();
     }
     /**
+     * State Store (camel-state-store)
+     * Perform key-value operations against a pluggable state store backend.
+     * 
+     * Category: cache
+     * Since: 4.23
+     * Maven coordinates: org.apache.camel:camel-state-store
+     * 
+     * @return the dsl builder
+     */
+    static StateStoreComponentBuilderFactory.StateStoreComponentBuilder stateStore() {
+        return StateStoreComponentBuilderFactory.stateStore();
+    }
+    /**
      * StAX (camel-stax)
      * Process XML payloads by a SAX ContentHandler.
      * 
@@ -5410,20 +5381,6 @@ public interface ComponentsBuilderFactory {
      */
     static XsltSaxonComponentBuilderFactory.XsltSaxonComponentBuilder xsltSaxon() {
         return XsltSaxonComponentBuilderFactory.xsltSaxon();
-    }
-    /**
-     * Zeebe (camel-zeebe)
-     * Zeebe component which integrates with Camunda Zeebe to interact with the
-     * API.
-     * 
-     * Category: workflow,saas
-     * Since: 3.21
-     * Maven coordinates: org.apache.camel:camel-zeebe
-     * 
-     * @return the dsl builder
-     */
-    static ZeebeComponentBuilderFactory.ZeebeComponentBuilder zeebe() {
-        return ZeebeComponentBuilderFactory.zeebe();
     }
     /**
      * Zendesk (camel-zendesk)

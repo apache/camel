@@ -59,6 +59,21 @@ public class TuiCommand extends CamelCommand {
                         arity = "0..1")
     String record;
 
+    @CommandLine.Option(names = { "--record-size" },
+                        description = "Size of the recorded terminal for --record, as <cols>x<rows> (default: ${DEFAULT-VALUE})",
+                        defaultValue = "200x50")
+    String recordSize = "200x50";
+
+    @CommandLine.Option(names = { "--record-fps" },
+                        description = "Frames per second captured by --record (default: ${DEFAULT-VALUE})",
+                        defaultValue = "10")
+    int recordFps = 10;
+
+    @CommandLine.Option(names = { "--record-duration" },
+                        description = "Maximum duration in milliseconds captured by --record (default: ${DEFAULT-VALUE})",
+                        defaultValue = "120000")
+    int recordDuration = 120000;
+
     @CommandLine.Option(names = { "--theme" },
                         description = "Color theme: dark or light (overrides persisted preference for this session)",
                         completionCandidates = ThemeModeCompletionCandidates.class)
@@ -71,6 +86,17 @@ public class TuiCommand extends CamelCommand {
 
     @Override
     public Integer doCall() throws Exception {
+        CamelMonitor cmd = new CamelMonitor(getMain(), classLoader);
+        return new CommandLine(cmd).execute(buildArgs().toArray(String[]::new));
+    }
+
+    /**
+     * Builds the {@link CamelMonitor} command line this command delegates to.
+     * <p>
+     * Every option declared here must be forwarded, otherwise the option is silently accepted and then ignored. Only
+     * non-default values are passed on, so the delegate keeps applying its own defaults.
+     */
+    List<String> buildArgs() {
         List<String> args = new ArrayList<>();
         if (name != null) {
             args.add(name);
@@ -97,11 +123,22 @@ public class TuiCommand extends CamelCommand {
             args.add("--record");
             args.add(record);
         }
+        if (!"200x50".equals(recordSize)) {
+            args.add("--record-size");
+            args.add(recordSize);
+        }
+        if (recordFps != 10) {
+            args.add("--record-fps");
+            args.add(String.valueOf(recordFps));
+        }
+        if (recordDuration != 120000) {
+            args.add("--record-duration");
+            args.add(String.valueOf(recordDuration));
+        }
         if (theme != null) {
             args.add("--theme");
             args.add(theme);
         }
-        CamelMonitor cmd = new CamelMonitor(getMain(), classLoader);
-        return new CommandLine(cmd).execute(args.toArray(String[]::new));
+        return args;
     }
 }

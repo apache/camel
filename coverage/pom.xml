@@ -1059,11 +1059,6 @@
         </dependency>
         <dependency>
             <groupId>org.apache.camel</groupId>
-            <artifactId>camel-headersmap</artifactId>
-            <version>${project.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.camel</groupId>
             <artifactId>camel-hl7</artifactId>
             <version>${project.version}</version>
         </dependency>
@@ -1164,11 +1159,6 @@
         </dependency>
         <dependency>
             <groupId>org.apache.camel</groupId>
-            <artifactId>camel-iec60870</artifactId>
-            <version>${project.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.camel</groupId>
             <artifactId>camel-iggy</artifactId>
             <version>${project.version}</version>
         </dependency>
@@ -1205,11 +1195,6 @@
         <dependency>
             <groupId>org.apache.camel</groupId>
             <artifactId>camel-irc</artifactId>
-            <version>${project.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.camel</groupId>
-            <artifactId>camel-ironmq</artifactId>
             <version>${project.version}</version>
         </dependency>
         <dependency>
@@ -1500,11 +1485,6 @@
         <dependency>
             <groupId>org.apache.camel</groupId>
             <artifactId>camel-ldif</artifactId>
-            <version>${project.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.camel</groupId>
-            <artifactId>camel-leveldb</artifactId>
             <version>${project.version}</version>
         </dependency>
         <dependency>
@@ -1859,6 +1839,11 @@
         </dependency>
         <dependency>
             <groupId>org.apache.camel</groupId>
+            <artifactId>camel-python3</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.camel</groupId>
             <artifactId>camel-qdrant</artifactId>
             <version>${project.version}</version>
         </dependency>
@@ -1870,11 +1855,6 @@
         <dependency>
             <groupId>org.apache.camel</groupId>
             <artifactId>camel-quickfix</artifactId>
-            <version>${project.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.camel</groupId>
-            <artifactId>camel-reactive-executor-tomcat</artifactId>
             <version>${project.version}</version>
         </dependency>
         <dependency>
@@ -2245,11 +2225,6 @@
         </dependency>
         <dependency>
             <groupId>org.apache.camel</groupId>
-            <artifactId>camel-threadpoolfactory-vertx</artifactId>
-            <version>${project.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.camel</groupId>
             <artifactId>camel-thrift</artifactId>
             <version>${project.version}</version>
         </dependency>
@@ -2406,11 +2381,6 @@
         <dependency>
             <groupId>org.apache.camel</groupId>
             <artifactId>camel-xslt-saxon</artifactId>
-            <version>${project.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.camel</groupId>
-            <artifactId>camel-zeebe</artifactId>
             <version>${project.version}</version>
         </dependency>
         <dependency>

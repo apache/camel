@@ -26,10 +26,9 @@ import org.apache.camel.Message;
  * The factory is discovered via the service key {@link #FACTORY}. The default implementation
  * ({@code DefaultHeadersMapFactory} in {@code camel-base-engine}) returns a case-insensitive linked hash map, which is
  * important for HTTP-style protocols where header names such as {@code content-type} and {@code Content-Type} must be
- * treated as equal. An alternative implementation ({@code FastHeadersMapFactory} in {@code camel-headersmap}) provides
- * higher-throughput concurrent access. Custom implementations must correctly implement
- * {@link #isInstanceOf(java.util.Map)} (so Camel can detect whether a given map was created by this factory) and
- * {@link #newMap(java.util.Map)} (defensive copy semantics for {@link Message#setHeaders}).
+ * treated as equal. Custom implementations must correctly implement {@link #isInstanceOf(java.util.Map)} (so Camel can
+ * detect whether a given map was created by this factory) and {@link #newMap(java.util.Map)} (defensive copy semantics
+ * for {@link Message#setHeaders}).
  * <p/>
  * See <a href="https://camel.apache.org/manual/exchange.html">Exchange</a> in the Camel user manual.
  *

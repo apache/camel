@@ -40,6 +40,7 @@ import org.apache.camel.spi.EndpointUtilizationStatistics;
 import org.apache.camel.spi.ExceptionHandler;
 import org.apache.camel.spi.HeadersMapFactory;
 import org.apache.camel.spi.IdAware;
+import org.apache.camel.spi.NormalizedEndpointUri;
 import org.apache.camel.spi.OptimisedComponentResolver;
 import org.apache.camel.spi.PollDynamicAware;
 import org.apache.camel.spi.RouteIdAware;
@@ -49,6 +50,7 @@ import org.apache.camel.support.DefaultConsumer;
 import org.apache.camel.support.EndpointHelper;
 import org.apache.camel.support.EventDrivenPollingConsumer;
 import org.apache.camel.support.ExchangeHelper;
+import org.apache.camel.support.NormalizedUri;
 import org.apache.camel.support.cache.DefaultConsumerCache;
 import org.apache.camel.support.cache.EmptyConsumerCache;
 import org.apache.camel.support.service.ServiceHelper;
@@ -491,7 +493,27 @@ public class PollEnricher extends BaseProcessorSupport implements IdAware, Route
     }
 
     protected static Object prepareRecipient(Exchange exchange, Object recipient) throws NoTypeConversionAvailableException {
-        return ProcessorHelper.prepareRecipient(exchange, recipient);
+        if (recipient instanceof Endpoint || recipient instanceof NormalizedEndpointUri) {
+            return recipient;
+        } else if (recipient instanceof String string) {
+            // trim strings as end users might have added spaces between separators
+            recipient = string.trim();
+        }
+        if (recipient != null) {
+            CamelContext ecc = exchange.getContext();
+            String uri;
+            if (recipient instanceof String string) {
+                uri = string;
+            } else {
+                // convert to a string type we can work with
+                uri = ecc.getTypeConverter().mandatoryConvertTo(String.class, exchange, recipient);
+            }
+            // optimize and normalize endpoint without re-resolving property placeholders on the
+            // per-message evaluated recipient, matching toD and enrich (CAMEL-24282 / CAMEL-24414).
+            // pollEnrich resolves its static uri at build time, so the placeholder belongs there.
+            return NormalizedUri.newNormalizedUri(uri, false);
+        }
+        return null;
     }
 
     protected static Endpoint getExistingEndpoint(Exchange exchange, Object recipient) {

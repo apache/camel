@@ -58,8 +58,28 @@ public final class GenericFileHelper {
      * @param  compactTarget the compacted target path (see {@link FileUtil#compactPath(String)})
      * @param  compactDir    the compacted directory the target must stay within
      * @return               {@code true} if the target is the directory itself or a path inside it
+     * @see                  #isWithinDirectory(String, String, char)
      */
     public static boolean isWithinDirectory(String compactTarget, String compactDir) {
+        return isWithinDirectory(compactTarget, compactDir, File.separatorChar);
+    }
+
+    /**
+     * Determines whether a compacted target path is contained within a compacted directory path, using the given path
+     * separator. Remote file paths always use {@code /} regardless of the platform Camel runs on, so remote callers
+     * must pass {@code '/'} rather than relying on {@link File#separatorChar}.
+     *
+     * @param  compactTarget the compacted target path (see {@link FileUtil#compactPath(String, char)})
+     * @param  compactDir    the compacted directory the target must stay within
+     * @param  separator     the path separator both paths are expressed with
+     * @return               {@code true} if the target is the directory itself or a path inside it
+     */
+    public static boolean isWithinDirectory(String compactTarget, String compactDir, char separator) {
+        // a target that still resolves upwards after compaction escapes any root, even when no boundary is
+        // configured, so it is never contained
+        if (compactTarget.equals("..") || compactTarget.startsWith(".." + separator)) {
+            return false;
+        }
         if (compactDir.isEmpty()) {
             // no directory boundary configured
             return true;
@@ -67,10 +87,10 @@ public final class GenericFileHelper {
         // drop a trailing separator (if any) so the boundary comparison is exact, regardless of whether the
         // directory path was supplied with or without one
         String dir = compactDir;
-        if (dir.charAt(dir.length() - 1) == File.separatorChar) {
+        if (dir.charAt(dir.length() - 1) == separator) {
             dir = dir.substring(0, dir.length() - 1);
         }
-        return compactTarget.equals(dir) || compactTarget.startsWith(dir + File.separator);
+        return compactTarget.equals(dir) || compactTarget.startsWith(dir + separator);
     }
 
     public static String asExclusiveReadLockKey(GenericFile file, String key) {

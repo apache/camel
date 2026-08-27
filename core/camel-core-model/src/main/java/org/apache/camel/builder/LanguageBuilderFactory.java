@@ -33,6 +33,7 @@ import org.apache.camel.model.language.LanguageExpression;
 import org.apache.camel.model.language.MethodCallExpression;
 import org.apache.camel.model.language.MvelExpression;
 import org.apache.camel.model.language.OgnlExpression;
+import org.apache.camel.model.language.Python3Expression;
 import org.apache.camel.model.language.PythonExpression;
 import org.apache.camel.model.language.RefExpression;
 import org.apache.camel.model.language.SimpleExpression;
@@ -351,6 +352,22 @@ public final class LanguageBuilderFactory {
      */
     public PythonExpression.Builder python(String expression) {
         var builder = python();
+        builder.expression(expression);
+        return builder;
+    }
+
+    /**
+     * Uses the Python 3 language
+     */
+    public Python3Expression.Builder python3() {
+        return new Python3Expression.Builder();
+    }
+
+    /**
+     * Uses the Python 3 language
+     */
+    public Python3Expression.Builder python3(String expression) {
+        var builder = python3();
         builder.expression(expression);
         return builder;
     }

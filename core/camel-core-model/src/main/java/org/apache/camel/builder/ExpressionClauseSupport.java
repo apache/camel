@@ -42,6 +42,7 @@ import org.apache.camel.model.language.LanguageExpression;
 import org.apache.camel.model.language.MethodCallExpression;
 import org.apache.camel.model.language.MvelExpression;
 import org.apache.camel.model.language.OgnlExpression;
+import org.apache.camel.model.language.Python3Expression;
 import org.apache.camel.model.language.PythonExpression;
 import org.apache.camel.model.language.RefExpression;
 import org.apache.camel.model.language.SimpleExpression;
@@ -710,6 +711,29 @@ public class ExpressionClauseSupport<T> implements ExpressionFactoryAware, Predi
      */
     public T python(String text, Class<?> resultType) {
         PythonExpression exp = new PythonExpression(text);
+        exp.setResultType(resultType);
+        return expression(exp);
+    }
+
+    /**
+     * Evaluates a Python 3 expression.
+     *
+     * @param  text the expression to be evaluated
+     * @return      the builder to continue processing the DSL
+     */
+    public T python3(String text) {
+        return expression(new Python3Expression(text));
+    }
+
+    /**
+     * Evaluates a Python 3 expression
+     *
+     * @param  text       the expression to be evaluated
+     * @param  resultType the return type expected by the expression
+     * @return            the builder to continue processing the DSL
+     */
+    public T python3(String text, Class<?> resultType) {
+        Python3Expression exp = new Python3Expression(text);
         exp.setResultType(resultType);
         return expression(exp);
     }

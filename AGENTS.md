@@ -75,6 +75,30 @@ marked ready for review.
 - For cross-cutting changes (core, API), include committers with broader project knowledge.
 - Request review from **at least 2 relevant committers** using `gh pr edit --add-reviewer`.
 - When all comments on the Pull Request are addressed (by providing a fix or providing more explanation) and the PR checks are green, re-request review on existing reviewers so that they are aware that the new changeset is ready to be reviewed.
+- **Exception — backport PRs:** do not request reviewers on a PR that is a straight backport
+  (cherry-pick) of a PR already reviewed and merged on `main`. See "Backport PRs" below.
+
+### Backport PRs
+
+A backport PR that cherry-picks a commit from a PR already reviewed and merged on `main` onto an
+older LTS maintenance branch (e.g. `camel-4.14.x`, `camel-4.18.x`) does not need a fresh review —
+the code change already went through human review on the PR it was backported from.
+
+- A backport PR MUST NOT be assigned any reviewers.
+- A backport PR MAY be merged as-is, once CI is green, without waiting for a new human approval.
+  This is the one exception to the "at least one human approval" rule in "Merge Requirements" below.
+- This exception applies only to straight cherry-picks. If a backport required manual conflict
+  resolution that changed the code beyond a mechanical port, treat it as a normal PR and request
+  review.
+- **Verifying a straight cherry-pick:** diff the backport PR against the original PR it was
+  cherry-picked from — an empty (or whitespace/context-only) diff confirms a mechanical port.
+  ```bash
+  gh pr diff <backport-pr> --repo apache/camel > /tmp/backport.diff
+  gh pr diff <original-pr> --repo apache/camel > /tmp/original.diff
+  diff /tmp/backport.diff /tmp/original.diff
+  ```
+  Any semantic difference means the backport diverged from the original — treat it as a normal
+  PR and request review.
 
 ### Doing a review
 
@@ -87,7 +111,8 @@ When an AI agent is doing a review:
 ### Merge Requirements
 
 - An agent MUST NOT merge a PR if there are any **unresolved review conversations**.
-- An agent MUST NOT merge a PR without at least **one human approval**.
+- An agent MUST NOT merge a PR without at least **one human approval**
+  (exception: backport PRs — see "Backport PRs" above).
 - An agent MUST NOT approve its own PRs — human review is always required.
 
 ### Merge Procedure
@@ -125,6 +150,8 @@ When merging a PR, an agent MUST perform the following steps **in order**:
 
 5. **Merge the PR**:
    - Verify all merge requirements above are satisfied (human approval, no unresolved conversations).
+     Exception: a straight-cherry-pick backport PR (see "Backport PRs" above) may be merged without
+     a new human approval once CI is green.
    - If any commit in the PR was AI-assisted, the squash-merge commit message MUST include the
      AI co-authorship trailer (e.g., `Co-authored-by: Claude Opus 4.6 <noreply@anthropic.com>`).
    - Merge the PR: `gh pr merge <PR> --squash` (or `--merge` / `--rebase` as appropriate).
@@ -250,57 +277,6 @@ await().atMost(10, TimeUnit.SECONDS).until(() -> mock.getReceivedCounter() >= 2)
 - Always set an explicit `atMost` timeout to avoid hanging builds.
 - Use `untilAsserted` or `until` with a clear predicate — do not replace a sleep with a
   busy-wait loop.
-
-### Test Visibility: Drop `public` From Test Classes and Methods
-
-JUnit 5 does **not** require test classes or test methods to be `public` — package-private
-(the default, no modifier) is sufficient and preferred. Removing the unnecessary `public`
-qualifier reduces visual noise and follows modern JUnit 5 conventions.
-
-**Examples:**
-
-```java
-// Preferred — package-private (no modifier):
-class MyComponentTest extends CamelTestSupport {
-    @Test
-    void testSendMessage() { ... }
-
-    @Override
-    protected RoutesBuilder createRouteBuilder() throws Exception {
-        return new RouteBuilder() {
-            @Override
-            public void configure() {   // stays public — overrides RouteBuilder.configure()
-                from("direct:start").to("mock:result");
-            }
-        };
-    }
-}
-
-// Avoid — unnecessary public:
-public class MyComponentTest extends CamelTestSupport {
-    @Test
-    public void testSendMessage() { ... }
-}
-```
-
-**Rules:**
-
-- New test classes and test methods MUST NOT use the `public` modifier.
-- When modifying an existing test file, remove the `public` modifier from the class declaration
-  and from any test methods you touch. Do NOT sweep the entire file — only change what you are
-  already modifying.
-- `@BeforeAll`, `@AfterAll`, `@BeforeEach` and `@AfterEach` methods follow the same rule: drop
-  `public` when adding or modifying them.
-- **Exception — methods that override or implement a supertype method keep the supertype's
-  visibility.** Java forbids reducing visibility on an override (JLS 8.4.8.3), so
-  `public void configure()` in a `RouteBuilder`, and any override of a public method from
-  `CamelTestSupport` or an implemented interface, MUST stay `public`.
-- **Exception — base and support classes stay `public`** when they are extended from another
-  package or module (a package-private class cannot be), and anything under
-  `components/camel-test/**` or `test-infra/**` stays `public` because those are released
-  artifacts consumed by downstream projects and by users' own tests.
-- Do NOT create a standalone PR solely to remove `public` from test files in bulk — apply the
-  convention incrementally as part of other work.
 
 ### Issue Investigation (Before Implementation)
 

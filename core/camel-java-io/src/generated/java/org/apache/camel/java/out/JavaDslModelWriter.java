@@ -1111,6 +1111,13 @@ public class JavaDslModelWriter extends JavaDslModelWriterSupport {
         doWriteThriftDataFormat(sb, def);
         return sb.toString();
     }
+    public String writeToonDataFormat(ToonDataFormat def) {
+        resetState();
+        StringBuilder sb = new StringBuilder();
+        beginStep(sb, "toon", def);
+        doWriteToonDataFormat(sb, def);
+        return sb.toString();
+    }
     public String writeUblDataFormat(UblDataFormat def) {
         resetState();
         StringBuilder sb = new StringBuilder();
@@ -1340,6 +1347,13 @@ public class JavaDslModelWriter extends JavaDslModelWriterSupport {
         StringBuilder sb = new StringBuilder();
         beginStep(sb, "ognl", def);
         doWriteOgnlExpression(sb, def);
+        return sb.toString();
+    }
+    public String writePython3Expression(Python3Expression def) {
+        resetState();
+        StringBuilder sb = new StringBuilder();
+        beginStep(sb, "python3", def);
+        doWritePython3Expression(sb, def);
         return sb.toString();
     }
     public String writePythonExpression(PythonExpression def) {
@@ -2088,6 +2102,7 @@ public class JavaDslModelWriter extends JavaDslModelWriterSupport {
                 case "SwiftMxDataFormat" -> doWriteChildElement(sb, "swiftMx", (SwiftMxDataFormat) def.getDataFormatType(), this::doWriteSwiftMxDataFormat);
                 case "SyslogDataFormat" -> doWriteChildElement(sb, "syslog", (SyslogDataFormat) def.getDataFormatType(), this::doWriteSyslogDataFormat);
                 case "TarFileDataFormat" -> doWriteChildElement(sb, "tarFile", (TarFileDataFormat) def.getDataFormatType(), this::doWriteTarFileDataFormat);
+                case "ToonDataFormat" -> doWriteChildElement(sb, "toon", (ToonDataFormat) def.getDataFormatType(), this::doWriteToonDataFormat);
                 case "UblDataFormat" -> doWriteChildElement(sb, "ubl", (UblDataFormat) def.getDataFormatType(), this::doWriteUblDataFormat);
                 case "ThriftDataFormat" -> doWriteChildElement(sb, "thrift", (ThriftDataFormat) def.getDataFormatType(), this::doWriteThriftDataFormat);
                 case "UniVocityCsvDataFormat" -> doWriteChildElement(sb, "univocityCsv", (UniVocityCsvDataFormat) def.getDataFormatType(), this::doWriteUniVocityCsvDataFormat);
@@ -2712,6 +2727,7 @@ public class JavaDslModelWriter extends JavaDslModelWriterSupport {
                 case "SwiftMxDataFormat" -> doWriteChildElement(sb, "swiftMx", (SwiftMxDataFormat) def.getDataFormatType(), this::doWriteSwiftMxDataFormat);
                 case "SyslogDataFormat" -> doWriteChildElement(sb, "syslog", (SyslogDataFormat) def.getDataFormatType(), this::doWriteSyslogDataFormat);
                 case "TarFileDataFormat" -> doWriteChildElement(sb, "tarFile", (TarFileDataFormat) def.getDataFormatType(), this::doWriteTarFileDataFormat);
+                case "ToonDataFormat" -> doWriteChildElement(sb, "toon", (ToonDataFormat) def.getDataFormatType(), this::doWriteToonDataFormat);
                 case "UblDataFormat" -> doWriteChildElement(sb, "ubl", (UblDataFormat) def.getDataFormatType(), this::doWriteUblDataFormat);
                 case "ThriftDataFormat" -> doWriteChildElement(sb, "thrift", (ThriftDataFormat) def.getDataFormatType(), this::doWriteThriftDataFormat);
                 case "UniVocityCsvDataFormat" -> doWriteChildElement(sb, "univocityCsv", (UniVocityCsvDataFormat) def.getDataFormatType(), this::doWriteUniVocityCsvDataFormat);
@@ -2991,6 +3007,7 @@ public class JavaDslModelWriter extends JavaDslModelWriterSupport {
                     case "SwiftMxDataFormat" -> doWriteChildElement(sb, "swiftMx", (SwiftMxDataFormat) item, this::doWriteSwiftMxDataFormat);
                     case "SyslogDataFormat" -> doWriteChildElement(sb, "syslog", (SyslogDataFormat) item, this::doWriteSyslogDataFormat);
                     case "TarFileDataFormat" -> doWriteChildElement(sb, "tarFile", (TarFileDataFormat) item, this::doWriteTarFileDataFormat);
+                    case "ToonDataFormat" -> doWriteChildElement(sb, "toon", (ToonDataFormat) item, this::doWriteToonDataFormat);
                     case "UblDataFormat" -> doWriteChildElement(sb, "ubl", (UblDataFormat) item, this::doWriteUblDataFormat);
                     case "ThriftDataFormat" -> doWriteChildElement(sb, "thrift", (ThriftDataFormat) item, this::doWriteThriftDataFormat);
                     case "UniVocityCsvDataFormat" -> doWriteChildElement(sb, "univocityCsv", (UniVocityCsvDataFormat) item, this::doWriteUniVocityCsvDataFormat);
@@ -3289,6 +3306,14 @@ public class JavaDslModelWriter extends JavaDslModelWriterSupport {
         doWriteAttribute(sb, "contentTypeFormat", def.getContentTypeFormat(), "binary");
         doWriteAttribute(sb, "contentTypeHeader", def.getContentTypeHeader(), "true");
     }
+    protected void doWriteToonDataFormat(StringBuilder sb, ToonDataFormat def) {
+        doWriteIdentifiedTypeAttributes(sb, def);
+        doWriteAttribute(sb, "indent", def.getIndent(), "2");
+        doWriteAttribute(sb, "delimiter", def.getDelimiter(), "COMMA");
+        doWriteAttribute(sb, "lengthMarker", def.getLengthMarker(), "false");
+        doWriteAttribute(sb, "strict", def.getStrict(), "true");
+        doWriteAttribute(sb, "contentTypeHeader", def.getContentTypeHeader(), "true");
+    }
     protected void doWriteUblDataFormat(StringBuilder sb, UblDataFormat def) {
         doWriteIdentifiedTypeAttributes(sb, def);
         doWriteAttribute(sb, "prettyPrint", def.getPrettyPrint(), "false");
@@ -3534,6 +3559,10 @@ public class JavaDslModelWriter extends JavaDslModelWriterSupport {
         doWriteNamespaceAwareExpressionElements(sb, def);
     }
     protected void doWriteOgnlExpression(StringBuilder sb, OgnlExpression def) {
+        doWriteTypedExpressionDefinitionAttributes(sb, def);
+        doWriteValue(sb, def.getExpression());
+    }
+    protected void doWritePython3Expression(StringBuilder sb, Python3Expression def) {
         doWriteTypedExpressionDefinitionAttributes(sb, def);
         doWriteValue(sb, def.getExpression());
     }
@@ -3946,6 +3975,7 @@ public class JavaDslModelWriter extends JavaDslModelWriterSupport {
                 case "SwiftMxDataFormat" -> doWriteChildElement(sb, "swiftMx", (SwiftMxDataFormat) def.getDataFormatType(), this::doWriteSwiftMxDataFormat);
                 case "SyslogDataFormat" -> doWriteChildElement(sb, "syslog", (SyslogDataFormat) def.getDataFormatType(), this::doWriteSyslogDataFormat);
                 case "TarFileDataFormat" -> doWriteChildElement(sb, "tarFile", (TarFileDataFormat) def.getDataFormatType(), this::doWriteTarFileDataFormat);
+                case "ToonDataFormat" -> doWriteChildElement(sb, "toon", (ToonDataFormat) def.getDataFormatType(), this::doWriteToonDataFormat);
                 case "UblDataFormat" -> doWriteChildElement(sb, "ubl", (UblDataFormat) def.getDataFormatType(), this::doWriteUblDataFormat);
                 case "ThriftDataFormat" -> doWriteChildElement(sb, "thrift", (ThriftDataFormat) def.getDataFormatType(), this::doWriteThriftDataFormat);
                 case "UniVocityCsvDataFormat" -> doWriteChildElement(sb, "univocityCsv", (UniVocityCsvDataFormat) def.getDataFormatType(), this::doWriteUniVocityCsvDataFormat);
@@ -6318,6 +6348,11 @@ public class JavaDslModelWriter extends JavaDslModelWriterSupport {
                     beginStep(sb, "ognl", v);
                     doWriteOgnlExpression(sb, (OgnlExpression) v);
                     endStep(sb, "ognl", v);
+                }
+                case "Python3Expression" -> {
+                    beginStep(sb, "python3", v);
+                    doWritePython3Expression(sb, (Python3Expression) v);
+                    endStep(sb, "python3", v);
                 }
                 case "PythonExpression" -> {
                     beginStep(sb, "python", v);

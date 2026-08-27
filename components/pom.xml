@@ -160,19 +160,16 @@
         <module>camel-gson</module>
         <module>camel-hashicorp-vault</module>
         <module>camel-hazelcast</module>
-        <module>camel-headersmap</module>
         <module>camel-hl7</module>
         <module>camel-huawei</module>
         <module>camel-ibm</module>
         <module>camel-ical</module>
-        <module>camel-iec60870</module>
         <module>camel-ignite</module>
         <module>camel-iggy</module>
         <module>camel-infinispan</module>
         <module>camel-influxdb</module>
         <module>camel-influxdb2</module>
         <module>camel-irc</module>
-        <module>camel-ironmq</module>
         <module>camel-iso8583</module>
         <module>camel-jackson</module>
         <module>camel-jackson-avro</module>
@@ -219,7 +216,6 @@
         <module>camel-kudu</module>
         <module>camel-ldap</module>
         <module>camel-ldif</module>
-        <module>camel-leveldb</module>
         <module>camel-lra</module>
         <module>camel-lucene</module>
         <module>camel-lumberjack</module>
@@ -274,9 +270,9 @@
         <module>camel-pulsar</module>
         <module>camel-pqc</module>
         <module>camel-python</module>
+        <module>camel-python3</module>
         <module>camel-quartz</module>
         <module>camel-quickfix</module>
-        <module>camel-reactive-executor-tomcat</module>
         <module>camel-reactive-executor-vertx</module>
         <module>camel-reactive-streams</module>
         <module>camel-reactor</module>
@@ -312,6 +308,7 @@
         <module>camel-splunk-hec</module>
         <module>camel-sql</module>
         <module>camel-ssh</module>
+        <module>camel-state-store</module>
         <module>camel-stax</module>
         <module>camel-stream</module>
         <module>camel-stringtemplate</module>
@@ -327,10 +324,10 @@
         <module>camel-tarfile</module>
         <module>camel-telegram</module>
         <module>camel-telemetry-dev</module>
-        <module>camel-threadpoolfactory-vertx</module>
         <module>camel-thrift</module>
         <module>camel-thymeleaf</module>
         <module>camel-tika</module>
+        <module>camel-toon</module>
         <module>camel-twilio</module>
         <module>camel-twitter</module>
         <module>camel-ubl</module>
@@ -350,7 +347,6 @@
         <module>camel-xmlsecurity</module>
         <module>camel-xmpp</module>
         <module>camel-xslt-saxon</module>
-        <module>camel-zeebe</module>
         <module>camel-zendesk</module>
         <module>camel-zip-deflater</module>
         <module>camel-zipfile</module>

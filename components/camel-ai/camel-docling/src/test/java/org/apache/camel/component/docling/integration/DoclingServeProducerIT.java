@@ -345,16 +345,16 @@ class DoclingServeProducerIT extends DoclingITestSupport {
             public void configure() throws Exception {
                 // Synchronous conversion routes
                 from("direct:convert-markdown-serve")
-                        .to("docling:convert?operation=CONVERT_TO_MARKDOWN&contentInBody=true");
+                        .to("docling:convert?allowFilePathSource=true&operation=CONVERT_TO_MARKDOWN&contentInBody=true");
 
                 from("direct:convert-html-serve")
-                        .to("docling:convert?operation=CONVERT_TO_HTML&contentInBody=true");
+                        .to("docling:convert?allowFilePathSource=true&operation=CONVERT_TO_HTML&contentInBody=true");
 
                 from("direct:convert-json-serve")
-                        .to("docling:convert?operation=CONVERT_TO_JSON&contentInBody=true");
+                        .to("docling:convert?allowFilePathSource=true&operation=CONVERT_TO_JSON&contentInBody=true");
 
                 from("direct:convert-url-serve")
-                        .to("docling:convert?operation=CONVERT_TO_MARKDOWN&contentInBody=true");
+                        .to("docling:convert?allowUrlSource=true&operation=CONVERT_TO_MARKDOWN&contentInBody=true");
 
                 from("direct:convert-and-write")
                         .to("docling:convert?operation=CONVERT_TO_MARKDOWN&contentInBody=true")
@@ -362,23 +362,23 @@ class DoclingServeProducerIT extends DoclingITestSupport {
 
                 // Asynchronous conversion routes
                 from("direct:convert-async-markdown")
-                        .to("docling:convert?operation=CONVERT_TO_MARKDOWN&contentInBody=true&useAsyncMode=true&asyncPollInterval=1000&asyncTimeout=120000");
+                        .to("docling:convert?allowFilePathSource=true&operation=CONVERT_TO_MARKDOWN&contentInBody=true&useAsyncMode=true&asyncPollInterval=1000&asyncTimeout=120000");
 
                 from("direct:convert-async-html")
-                        .to("docling:convert?operation=CONVERT_TO_HTML&contentInBody=true&useAsyncMode=true&asyncPollInterval=1000&asyncTimeout=120000");
+                        .to("docling:convert?allowFilePathSource=true&operation=CONVERT_TO_HTML&contentInBody=true&useAsyncMode=true&asyncPollInterval=1000&asyncTimeout=120000");
 
                 from("direct:convert-async-json")
-                        .to("docling:convert?operation=CONVERT_TO_JSON&contentInBody=true&useAsyncMode=true&asyncPollInterval=1000&asyncTimeout=120000");
+                        .to("docling:convert?allowFilePathSource=true&operation=CONVERT_TO_JSON&contentInBody=true&useAsyncMode=true&asyncPollInterval=1000&asyncTimeout=120000");
 
                 from("direct:convert-async-url")
-                        .to("docling:convert?operation=CONVERT_TO_MARKDOWN&contentInBody=true&useAsyncMode=true&asyncPollInterval=1000&asyncTimeout=120000");
+                        .to("docling:convert?allowUrlSource=true&operation=CONVERT_TO_MARKDOWN&contentInBody=true&useAsyncMode=true&asyncPollInterval=1000&asyncTimeout=120000");
 
                 from("direct:convert-async-custom-timeout")
-                        .to("docling:convert?operation=CONVERT_TO_MARKDOWN&contentInBody=true&useAsyncMode=true&asyncPollInterval=500&asyncTimeout=300000");
+                        .to("docling:convert?allowFilePathSource=true&operation=CONVERT_TO_MARKDOWN&contentInBody=true&useAsyncMode=true&asyncPollInterval=500&asyncTimeout=300000");
 
                 // Custom async workflow routes
                 from("direct:submit-async")
-                        .to("docling:convert?operation=SUBMIT_ASYNC_CONVERSION");
+                        .to("docling:convert?allowFilePathSource=true&operation=SUBMIT_ASYNC_CONVERSION");
 
                 from("direct:check-status")
                         .to("docling:convert?operation=CHECK_CONVERSION_STATUS");
@@ -387,7 +387,7 @@ class DoclingServeProducerIT extends DoclingITestSupport {
                 // This uses built-in async mode instead of manual polling to avoid complexity
                 from("direct:custom-polling-workflow")
                         .log("Starting custom polling workflow for file: ${header.CamelDoclingInputFilePath}")
-                        .to("docling:convert?operation=CONVERT_TO_MARKDOWN&contentInBody=true&" +
+                        .to("docling:convert?allowFilePathSource=true&operation=CONVERT_TO_MARKDOWN&contentInBody=true&" +
                             "useAsyncMode=true&asyncPollInterval=1000&asyncTimeout=120000");
 
             }

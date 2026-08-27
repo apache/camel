@@ -8235,94 +8235,6 @@ public class StaticEndpointBuilders {
         return WatsonxDataEndpointBuilderFactory.endpointBuilder(componentName, path);
     }
     /**
-     * IEC 60870 Client (camel-iec60870)
-     * IEC 60870 supervisory control and data acquisition (SCADA) client using
-     * NeoSCADA implementation.
-     * 
-     * Category: iot
-     * Since: 2.20
-     * Maven coordinates: org.apache.camel:camel-iec60870
-     * 
-     * Syntax: <code>iec60870-client:uriPath</code>
-     * 
-     * Path parameter: uriPath (required)
-     * The object information address
-     * 
-     * @param path uriPath
-     * @return the dsl builder
-     */
-    @Deprecated
-    public static ClientEndpointBuilderFactory.ClientEndpointBuilder iec60870Client(String path) {
-        return iec60870Client("iec60870-client", path);
-    }
-    /**
-     * IEC 60870 Client (camel-iec60870)
-     * IEC 60870 supervisory control and data acquisition (SCADA) client using
-     * NeoSCADA implementation.
-     * 
-     * Category: iot
-     * Since: 2.20
-     * Maven coordinates: org.apache.camel:camel-iec60870
-     * 
-     * Syntax: <code>iec60870-client:uriPath</code>
-     * 
-     * Path parameter: uriPath (required)
-     * The object information address
-     * 
-     * @param componentName to use a custom component name for the endpoint
-     * instead of the default name
-     * @param path uriPath
-     * @return the dsl builder
-     */
-    @Deprecated
-    public static ClientEndpointBuilderFactory.ClientEndpointBuilder iec60870Client(String componentName, String path) {
-        return ClientEndpointBuilderFactory.endpointBuilder(componentName, path);
-    }
-    /**
-     * IEC 60870 Server (camel-iec60870)
-     * IEC 60870 supervisory control and data acquisition (SCADA) server using
-     * NeoSCADA implementation.
-     * 
-     * Category: iot
-     * Since: 2.20
-     * Maven coordinates: org.apache.camel:camel-iec60870
-     * 
-     * Syntax: <code>iec60870-server:uriPath</code>
-     * 
-     * Path parameter: uriPath (required)
-     * The object information address
-     * 
-     * @param path uriPath
-     * @return the dsl builder
-     */
-    @Deprecated
-    public static ServerEndpointBuilderFactory.ServerEndpointBuilder iec60870Server(String path) {
-        return iec60870Server("iec60870-server", path);
-    }
-    /**
-     * IEC 60870 Server (camel-iec60870)
-     * IEC 60870 supervisory control and data acquisition (SCADA) server using
-     * NeoSCADA implementation.
-     * 
-     * Category: iot
-     * Since: 2.20
-     * Maven coordinates: org.apache.camel:camel-iec60870
-     * 
-     * Syntax: <code>iec60870-server:uriPath</code>
-     * 
-     * Path parameter: uriPath (required)
-     * The object information address
-     * 
-     * @param componentName to use a custom component name for the endpoint
-     * instead of the default name
-     * @param path uriPath
-     * @return the dsl builder
-     */
-    @Deprecated
-    public static ServerEndpointBuilderFactory.ServerEndpointBuilder iec60870Server(String componentName, String path) {
-        return ServerEndpointBuilderFactory.endpointBuilder(componentName, path);
-    }
-    /**
      * Iggy (camel-iggy)
      * Send and receive message to Apache Iggy streaming platform.
      * 
@@ -8935,50 +8847,6 @@ public class StaticEndpointBuilders {
     @Deprecated
     public static IrcEndpointBuilderFactory.IrcEndpointBuilder irc(String componentName, String path) {
         return IrcEndpointBuilderFactory.endpointBuilder(componentName, path);
-    }
-    /**
-     * IronMQ (camel-ironmq)
-     * Send and receive messages to/from IronMQ an elastic and durable hosted
-     * message queue as a service.
-     * 
-     * Category: cloud,messaging
-     * Since: 2.17
-     * Maven coordinates: org.apache.camel:camel-ironmq
-     * 
-     * Syntax: <code>ironmq:queueName</code>
-     * 
-     * Path parameter: queueName (required)
-     * The name of the IronMQ queue
-     * 
-     * @param path queueName
-     * @return the dsl builder
-     */
-    @Deprecated
-    public static IronMQEndpointBuilderFactory.IronMQEndpointBuilder ironmq(String path) {
-        return ironmq("ironmq", path);
-    }
-    /**
-     * IronMQ (camel-ironmq)
-     * Send and receive messages to/from IronMQ an elastic and durable hosted
-     * message queue as a service.
-     * 
-     * Category: cloud,messaging
-     * Since: 2.17
-     * Maven coordinates: org.apache.camel:camel-ironmq
-     * 
-     * Syntax: <code>ironmq:queueName</code>
-     * 
-     * Path parameter: queueName (required)
-     * The name of the IronMQ queue
-     * 
-     * @param componentName to use a custom component name for the endpoint
-     * instead of the default name
-     * @param path queueName
-     * @return the dsl builder
-     */
-    @Deprecated
-    public static IronMQEndpointBuilderFactory.IronMQEndpointBuilder ironmq(String componentName, String path) {
-        return IronMQEndpointBuilderFactory.endpointBuilder(componentName, path);
     }
     /**
      * JCache (camel-jcache)
@@ -11252,10 +11120,10 @@ public class StaticEndpointBuilders {
      * 
      * Path parameter: languageName (required)
      * Sets the name of the language to use
-     * There are 26 enums and the value can be one of: bean, constant, csimple,
+     * There are 27 enums and the value can be one of: bean, constant, csimple,
      * datasonnet, exchangeProperty, file, groovy, header, hl7terser, java,
-     * joor, jq, js, jsonpath, mvel, ognl, python, ref, simple, spel, tokenize,
-     * variable, wasm, xpath, xquery, xtokenize
+     * joor, jq, js, jsonpath, mvel, ognl, python, python3, ref, simple, spel,
+     * tokenize, variable, wasm, xpath, xquery, xtokenize
      * 
      * Path parameter: resourceUri
      * Path to the resource, or a reference to lookup a bean in the Registry to
@@ -11281,10 +11149,10 @@ public class StaticEndpointBuilders {
      * 
      * Path parameter: languageName (required)
      * Sets the name of the language to use
-     * There are 26 enums and the value can be one of: bean, constant, csimple,
+     * There are 27 enums and the value can be one of: bean, constant, csimple,
      * datasonnet, exchangeProperty, file, groovy, header, hl7terser, java,
-     * joor, jq, js, jsonpath, mvel, ognl, python, ref, simple, spel, tokenize,
-     * variable, wasm, xpath, xquery, xtokenize
+     * joor, jq, js, jsonpath, mvel, ognl, python, python3, ref, simple, spel,
+     * tokenize, variable, wasm, xpath, xquery, xtokenize
      * 
      * Path parameter: resourceUri
      * Path to the resource, or a reference to lookup a bean in the Registry to
@@ -12854,10 +12722,10 @@ public class StaticEndpointBuilders {
      * Path parameter: operation (required)
      * The operation to perform: 'chat-completion', 'responses', 'embeddings',
      * 'tool-execution', 'audio-transcription', 'audio-translation',
-     * 'audio-speech', or 'moderation'
-     * There are 8 enums and the value can be one of: chat-completion,
+     * 'audio-speech', 'moderation', 'image-generation', or 'image-edit'
+     * There are 10 enums and the value can be one of: chat-completion,
      * responses, embeddings, tool-execution, audio-transcription,
-     * audio-translation, audio-speech, moderation
+     * audio-translation, audio-speech, moderation, image-generation, image-edit
      * 
      * @param path operation
      * @return the dsl builder
@@ -12879,10 +12747,10 @@ public class StaticEndpointBuilders {
      * Path parameter: operation (required)
      * The operation to perform: 'chat-completion', 'responses', 'embeddings',
      * 'tool-execution', 'audio-transcription', 'audio-translation',
-     * 'audio-speech', or 'moderation'
-     * There are 8 enums and the value can be one of: chat-completion,
+     * 'audio-speech', 'moderation', 'image-generation', or 'image-edit'
+     * There are 10 enums and the value can be one of: chat-completion,
      * responses, embeddings, tool-execution, audio-transcription,
-     * audio-translation, audio-speech, moderation
+     * audio-translation, audio-speech, moderation, image-generation, image-edit
      * 
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
@@ -16354,6 +16222,46 @@ public class StaticEndpointBuilders {
         return SshEndpointBuilderFactory.endpointBuilder(componentName, path);
     }
     /**
+     * State Store (camel-state-store)
+     * Perform key-value operations against a pluggable state store backend.
+     * 
+     * Category: cache
+     * Since: 4.23
+     * Maven coordinates: org.apache.camel:camel-state-store
+     * 
+     * Syntax: <code>state-store:storeName</code>
+     * 
+     * Path parameter: storeName (required)
+     * The name of the state store
+     * 
+     * @param path storeName
+     * @return the dsl builder
+     */
+    public static StateStoreEndpointBuilderFactory.StateStoreEndpointBuilder stateStore(String path) {
+        return stateStore("state-store", path);
+    }
+    /**
+     * State Store (camel-state-store)
+     * Perform key-value operations against a pluggable state store backend.
+     * 
+     * Category: cache
+     * Since: 4.23
+     * Maven coordinates: org.apache.camel:camel-state-store
+     * 
+     * Syntax: <code>state-store:storeName</code>
+     * 
+     * Path parameter: storeName (required)
+     * The name of the state store
+     * 
+     * @param componentName to use a custom component name for the endpoint
+     * instead of the default name
+     * @param path storeName
+     * @return the dsl builder
+     */
+    public static StateStoreEndpointBuilderFactory.StateStoreEndpointBuilder stateStore(String componentName, String path) {
+        return StateStoreEndpointBuilderFactory.endpointBuilder(componentName, path);
+    }
+    /**
      * StAX (camel-stax)
      * Process XML payloads by a SAX ContentHandler.
      * 
@@ -18202,56 +18110,6 @@ public class StaticEndpointBuilders {
      */
     public static XsltSaxonEndpointBuilderFactory.XsltSaxonEndpointBuilder xsltSaxon(String componentName, String path) {
         return XsltSaxonEndpointBuilderFactory.endpointBuilder(componentName, path);
-    }
-    /**
-     * Zeebe (camel-zeebe)
-     * Zeebe component which integrates with Camunda Zeebe to interact with the
-     * API.
-     * 
-     * Category: workflow,saas
-     * Since: 3.21
-     * Maven coordinates: org.apache.camel:camel-zeebe
-     * 
-     * Syntax: <code>zeebe:operationName</code>
-     * 
-     * Path parameter: operationName (required)
-     * The operation to use
-     * There are 9 enums and the value can be one of: startProcess,
-     * cancelProcess, publishMessage, completeJob, failJob, updateJobRetries,
-     * worker, throwError, deployResource
-     * 
-     * @param path operationName
-     * @return the dsl builder
-     */
-    @Deprecated
-    public static ZeebeEndpointBuilderFactory.ZeebeEndpointBuilder zeebe(String path) {
-        return zeebe("zeebe", path);
-    }
-    /**
-     * Zeebe (camel-zeebe)
-     * Zeebe component which integrates with Camunda Zeebe to interact with the
-     * API.
-     * 
-     * Category: workflow,saas
-     * Since: 3.21
-     * Maven coordinates: org.apache.camel:camel-zeebe
-     * 
-     * Syntax: <code>zeebe:operationName</code>
-     * 
-     * Path parameter: operationName (required)
-     * The operation to use
-     * There are 9 enums and the value can be one of: startProcess,
-     * cancelProcess, publishMessage, completeJob, failJob, updateJobRetries,
-     * worker, throwError, deployResource
-     * 
-     * @param componentName to use a custom component name for the endpoint
-     * instead of the default name
-     * @param path operationName
-     * @return the dsl builder
-     */
-    @Deprecated
-    public static ZeebeEndpointBuilderFactory.ZeebeEndpointBuilder zeebe(String componentName, String path) {
-        return ZeebeEndpointBuilderFactory.endpointBuilder(componentName, path);
     }
     /**
      * Zendesk (camel-zendesk)

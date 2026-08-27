@@ -160,6 +160,7 @@ import org.apache.camel.model.dataformat.SwiftMxDataFormat;
 import org.apache.camel.model.dataformat.SyslogDataFormat;
 import org.apache.camel.model.dataformat.TarFileDataFormat;
 import org.apache.camel.model.dataformat.ThriftDataFormat;
+import org.apache.camel.model.dataformat.ToonDataFormat;
 import org.apache.camel.model.dataformat.UblDataFormat;
 import org.apache.camel.model.dataformat.UniVocityCsvDataFormat;
 import org.apache.camel.model.dataformat.UniVocityFixedDataFormat;
@@ -193,6 +194,7 @@ import org.apache.camel.model.language.LanguageExpression;
 import org.apache.camel.model.language.MethodCallExpression;
 import org.apache.camel.model.language.MvelExpression;
 import org.apache.camel.model.language.OgnlExpression;
+import org.apache.camel.model.language.Python3Expression;
 import org.apache.camel.model.language.PythonExpression;
 import org.apache.camel.model.language.RefExpression;
 import org.apache.camel.model.language.SimpleExpression;
@@ -3205,6 +3207,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     @YamlProperty(name = "tarFile", type = "object:org.apache.camel.model.dataformat.TarFileDataFormat", oneOf = "dataFormatType"),
                     @YamlProperty(name = "thrift", type = "object:org.apache.camel.model.dataformat.ThriftDataFormat", oneOf = "dataFormatType"),
                     @YamlProperty(name = "toType", type = "string", description = "The destination (to) data type name. If you specify 'json:XYZ', the transformer is picked up when destination type matches. If you specify just 'json', it matches all json destination types.", displayName = "To Type"),
+                    @YamlProperty(name = "toon", type = "object:org.apache.camel.model.dataformat.ToonDataFormat", oneOf = "dataFormatType"),
                     @YamlProperty(name = "ubl", type = "object:org.apache.camel.model.dataformat.UblDataFormat", oneOf = "dataFormatType"),
                     @YamlProperty(name = "univocityCsv", type = "object:org.apache.camel.model.dataformat.UniVocityCsvDataFormat", oneOf = "dataFormatType"),
                     @YamlProperty(name = "univocityFixed", type = "object:org.apache.camel.model.dataformat.UniVocityFixedDataFormat", oneOf = "dataFormatType"),
@@ -3435,6 +3438,11 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     target.setDataFormatType(val);
                     break;
                 }
+                case "toon": {
+                    org.apache.camel.model.dataformat.ToonDataFormat val = asType(node, org.apache.camel.model.dataformat.ToonDataFormat.class);
+                    target.setDataFormatType(val);
+                    break;
+                }
                 case "ubl": {
                     org.apache.camel.model.dataformat.UblDataFormat val = asType(node, org.apache.camel.model.dataformat.UblDataFormat.class);
                     target.setDataFormatType(val);
@@ -3557,6 +3565,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     @YamlProperty(name = "syslog", type = "object:org.apache.camel.model.dataformat.SyslogDataFormat"),
                     @YamlProperty(name = "tarFile", type = "object:org.apache.camel.model.dataformat.TarFileDataFormat"),
                     @YamlProperty(name = "thrift", type = "object:org.apache.camel.model.dataformat.ThriftDataFormat"),
+                    @YamlProperty(name = "toon", type = "object:org.apache.camel.model.dataformat.ToonDataFormat"),
                     @YamlProperty(name = "ubl", type = "object:org.apache.camel.model.dataformat.UblDataFormat"),
                     @YamlProperty(name = "univocityCsv", type = "object:org.apache.camel.model.dataformat.UniVocityCsvDataFormat"),
                     @YamlProperty(name = "univocityFixed", type = "object:org.apache.camel.model.dataformat.UniVocityFixedDataFormat"),
@@ -3979,6 +3988,16 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                 }
                 case "tarFile": {
                     org.apache.camel.model.dataformat.TarFileDataFormat val = asType(node, org.apache.camel.model.dataformat.TarFileDataFormat.class);
+                    java.util.List<org.apache.camel.model.DataFormatDefinition> existing = target.getDataFormats();
+                    if (existing == null) {
+                        existing = new java.util.ArrayList<>();
+                    }
+                    existing.add(val);
+                    target.setDataFormats(existing);
+                    break;
+                }
+                case "toon": {
+                    org.apache.camel.model.dataformat.ToonDataFormat val = asType(node, org.apache.camel.model.dataformat.ToonDataFormat.class);
                     java.util.List<org.apache.camel.model.DataFormatDefinition> existing = target.getDataFormats();
                     if (existing == null) {
                         existing = new java.util.ArrayList<>();
@@ -9486,6 +9505,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     @YamlProperty(name = "syslog", type = "object:org.apache.camel.model.dataformat.SyslogDataFormat", oneOf = "dataFormatType"),
                     @YamlProperty(name = "tarFile", type = "object:org.apache.camel.model.dataformat.TarFileDataFormat", oneOf = "dataFormatType"),
                     @YamlProperty(name = "thrift", type = "object:org.apache.camel.model.dataformat.ThriftDataFormat", oneOf = "dataFormatType"),
+                    @YamlProperty(name = "toon", type = "object:org.apache.camel.model.dataformat.ToonDataFormat", oneOf = "dataFormatType"),
                     @YamlProperty(name = "ubl", type = "object:org.apache.camel.model.dataformat.UblDataFormat", oneOf = "dataFormatType"),
                     @YamlProperty(name = "univocityCsv", type = "object:org.apache.camel.model.dataformat.UniVocityCsvDataFormat", oneOf = "dataFormatType"),
                     @YamlProperty(name = "univocityFixed", type = "object:org.apache.camel.model.dataformat.UniVocityFixedDataFormat", oneOf = "dataFormatType"),
@@ -9715,6 +9735,11 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                 }
                 case "tarFile": {
                     org.apache.camel.model.dataformat.TarFileDataFormat val = asType(node, org.apache.camel.model.dataformat.TarFileDataFormat.class);
+                    target.setDataFormatType(val);
+                    break;
+                }
+                case "toon": {
+                    org.apache.camel.model.dataformat.ToonDataFormat val = asType(node, org.apache.camel.model.dataformat.ToonDataFormat.class);
                     target.setDataFormatType(val);
                     break;
                 }
@@ -12949,6 +12974,78 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                 }
                 default: {
                     return false;
+                }
+            }
+            return true;
+        }
+    }
+
+    @YamlType(
+            nodes = "python3",
+            inline = true,
+            types = org.apache.camel.model.language.Python3Expression.class,
+            order = org.apache.camel.dsl.yaml.common.YamlDeserializerResolver.ORDER_LOWEST - 1,
+            displayName = "Python 3",
+            description = "Evaluates a Python 3 expression",
+            deprecated = false,
+            properties = {
+                    @YamlProperty(name = "expression", type = "string", required = true, description = "The expression value in your chosen language syntax.", displayName = "Expression"),
+                    @YamlProperty(name = "id", type = "string", description = "The id of this node.", displayName = "Id"),
+                    @YamlProperty(name = "resultType", type = "string", description = "The class of the result type (type from output).", displayName = "Result Type"),
+                    @YamlProperty(name = "trim", type = "boolean", defaultValue = "true", description = "Whether to trim the source code to remove leading and trailing whitespaces and line breaks.", displayName = "Trim")
+            }
+    )
+    public static class Python3ExpressionDeserializer extends YamlDeserializerBase<Python3Expression> {
+        public Python3ExpressionDeserializer() {
+            super(Python3Expression.class);
+        }
+
+        @Override
+        protected Python3Expression newInstance() {
+            return new Python3Expression();
+        }
+
+        @Override
+        protected Python3Expression newInstance(String value) {
+            return new Python3Expression(value);
+        }
+
+        @Override
+        protected boolean setProperty(Python3Expression target, String propertyKey,
+                String propertyName, Node node) {
+            propertyKey = org.apache.camel.util.StringHelper.dashToCamelCase(propertyKey);
+            switch(propertyKey) {
+                case "expression": {
+                    String val = asText(node);
+                    target.setExpression(val);
+                    break;
+                }
+                case "id": {
+                    String val = asText(node);
+                    target.setId(val);
+                    break;
+                }
+                case "resultType": {
+                    String val = asText(node);
+                    target.setResultTypeName(val);
+                    break;
+                }
+                case "trim": {
+                    String val = asText(node);
+                    target.setTrim(val);
+                    break;
+                }
+                default: {
+                    ExpressionDefinition ed = target.getExpressionType();
+                    if (ed != null) {
+                        throw new org.apache.camel.dsl.yaml.common.exception.DuplicateFieldException(node, propertyName, "as an expression");
+                    }
+                    ed = ExpressionDeserializers.constructExpressionType(propertyKey, node);
+                    if (ed != null) {
+                        target.setExpressionType(ed);
+                    } else {
+                        return false;
+                    }
                 }
             }
             return true;
@@ -18836,6 +18933,75 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
     }
 
     @YamlType(
+            nodes = "toon",
+            types = org.apache.camel.model.dataformat.ToonDataFormat.class,
+            order = org.apache.camel.dsl.yaml.common.YamlDeserializerResolver.ORDER_LOWEST - 1,
+            displayName = "TOON",
+            description = "Marshal JSON-compatible Java values to TOON (Token-Oriented Object Notation) and unmarshal TOON back to Java objects.",
+            deprecated = false,
+            properties = {
+                    @YamlProperty(name = "contentTypeHeader", type = "boolean", defaultValue = "true", description = "Whether the data format should set the Content-Type header to text/toon when marshalling.", displayName = "Content Type Header"),
+                    @YamlProperty(name = "delimiter", type = "enum:COMMA,TAB,PIPE", defaultValue = "COMMA", description = "Delimiter used for tabular array rows and inline primitive arrays.", displayName = "Delimiter"),
+                    @YamlProperty(name = "id", type = "string", description = "The id of this node", displayName = "Id"),
+                    @YamlProperty(name = "indent", type = "number", defaultValue = "2", description = "Number of spaces per indentation level.", displayName = "Indent"),
+                    @YamlProperty(name = "lengthMarker", type = "boolean", defaultValue = "false", description = "Whether to prefix array lengths with a hash marker so arrays render as hash-prefixed lengths instead of plain lengths.", displayName = "Length Marker"),
+                    @YamlProperty(name = "strict", type = "boolean", defaultValue = "true", description = "Whether to enable strict validation when unmarshalling TOON. When false, JToon uses best-effort parsing.", displayName = "Strict")
+            }
+    )
+    public static class ToonDataFormatDeserializer extends YamlDeserializerBase<ToonDataFormat> {
+        public ToonDataFormatDeserializer() {
+            super(ToonDataFormat.class);
+        }
+
+        @Override
+        protected ToonDataFormat newInstance() {
+            return new ToonDataFormat();
+        }
+
+        @Override
+        protected boolean setProperty(ToonDataFormat target, String propertyKey,
+                String propertyName, Node node) {
+            propertyKey = org.apache.camel.util.StringHelper.dashToCamelCase(propertyKey);
+            switch(propertyKey) {
+                case "contentTypeHeader": {
+                    String val = asText(node);
+                    target.setContentTypeHeader(val);
+                    break;
+                }
+                case "delimiter": {
+                    String val = asText(node);
+                    target.setDelimiter(val);
+                    break;
+                }
+                case "id": {
+                    String val = asText(node);
+                    target.setId(val);
+                    break;
+                }
+                case "indent": {
+                    String val = asText(node);
+                    target.setIndent(val);
+                    break;
+                }
+                case "lengthMarker": {
+                    String val = asText(node);
+                    target.setLengthMarker(val);
+                    break;
+                }
+                case "strict": {
+                    String val = asText(node);
+                    target.setStrict(val);
+                    break;
+                }
+                default: {
+                    return false;
+                }
+            }
+            return true;
+        }
+    }
+
+    @YamlType(
             nodes = "topicLoadBalancer",
             types = org.apache.camel.model.loadbalancer.TopicLoadBalancerDefinition.class,
             order = org.apache.camel.dsl.yaml.common.YamlDeserializerResolver.ORDER_LOWEST - 1,
@@ -19800,6 +19966,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     @YamlProperty(name = "syslog", type = "object:org.apache.camel.model.dataformat.SyslogDataFormat", required = true, oneOf = "dataFormatType"),
                     @YamlProperty(name = "tarFile", type = "object:org.apache.camel.model.dataformat.TarFileDataFormat", required = true, oneOf = "dataFormatType"),
                     @YamlProperty(name = "thrift", type = "object:org.apache.camel.model.dataformat.ThriftDataFormat", required = true, oneOf = "dataFormatType"),
+                    @YamlProperty(name = "toon", type = "object:org.apache.camel.model.dataformat.ToonDataFormat", required = true, oneOf = "dataFormatType"),
                     @YamlProperty(name = "ubl", type = "object:org.apache.camel.model.dataformat.UblDataFormat", required = true, oneOf = "dataFormatType"),
                     @YamlProperty(name = "univocityCsv", type = "object:org.apache.camel.model.dataformat.UniVocityCsvDataFormat", required = true, oneOf = "dataFormatType"),
                     @YamlProperty(name = "univocityFixed", type = "object:org.apache.camel.model.dataformat.UniVocityFixedDataFormat", required = true, oneOf = "dataFormatType"),
@@ -20034,6 +20201,11 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                 }
                 case "tarFile": {
                     org.apache.camel.model.dataformat.TarFileDataFormat val = asType(node, org.apache.camel.model.dataformat.TarFileDataFormat.class);
+                    target.setDataFormatType(val);
+                    break;
+                }
+                case "toon": {
+                    org.apache.camel.model.dataformat.ToonDataFormat val = asType(node, org.apache.camel.model.dataformat.ToonDataFormat.class);
                     target.setDataFormatType(val);
                     break;
                 }

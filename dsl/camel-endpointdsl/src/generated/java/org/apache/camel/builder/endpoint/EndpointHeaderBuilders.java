@@ -1940,36 +1940,6 @@ public class EndpointHeaderBuilders {
         return WatsonxDataEndpointBuilderFactory.WatsonxDataHeaderNameBuilder.INSTANCE;
     }
     /**
-     * IEC 60870 Client (camel-iec60870)
-     * IEC 60870 supervisory control and data acquisition (SCADA) client using
-     * NeoSCADA implementation.
-     * 
-     * Category: iot
-     * Since: 2.20
-     * Maven coordinates: org.apache.camel:camel-iec60870
-     * 
-     * @return the dsl builder for the headers' name.
-     */
-    @Deprecated
-    public static ClientEndpointBuilderFactory.ClientHeaderNameBuilder iec60870Client() {
-        return ClientEndpointBuilderFactory.ClientHeaderNameBuilder.INSTANCE;
-    }
-    /**
-     * IEC 60870 Server (camel-iec60870)
-     * IEC 60870 supervisory control and data acquisition (SCADA) server using
-     * NeoSCADA implementation.
-     * 
-     * Category: iot
-     * Since: 2.20
-     * Maven coordinates: org.apache.camel:camel-iec60870
-     * 
-     * @return the dsl builder for the headers' name.
-     */
-    @Deprecated
-    public static ServerEndpointBuilderFactory.ServerHeaderNameBuilder iec60870Server() {
-        return ServerEndpointBuilderFactory.ServerHeaderNameBuilder.INSTANCE;
-    }
-    /**
      * Ignite Cache (camel-ignite)
      * Perform cache operations on an Ignite cache or consume changes from a
      * continuous query.
@@ -2128,21 +2098,6 @@ public class EndpointHeaderBuilders {
     @Deprecated
     public static IrcEndpointBuilderFactory.IrcHeaderNameBuilder irc() {
         return IrcEndpointBuilderFactory.IrcHeaderNameBuilder.INSTANCE;
-    }
-    /**
-     * IronMQ (camel-ironmq)
-     * Send and receive messages to/from IronMQ an elastic and durable hosted
-     * message queue as a service.
-     * 
-     * Category: cloud,messaging
-     * Since: 2.17
-     * Maven coordinates: org.apache.camel:camel-ironmq
-     * 
-     * @return the dsl builder for the headers' name.
-     */
-    @Deprecated
-    public static IronMQEndpointBuilderFactory.IronMQHeaderNameBuilder ironmq() {
-        return IronMQEndpointBuilderFactory.IronMQHeaderNameBuilder.INSTANCE;
     }
     /**
      * JCache (camel-jcache)
@@ -3756,6 +3711,19 @@ public class EndpointHeaderBuilders {
         return SshEndpointBuilderFactory.SshHeaderNameBuilder.INSTANCE;
     }
     /**
+     * State Store (camel-state-store)
+     * Perform key-value operations against a pluggable state store backend.
+     * 
+     * Category: cache
+     * Since: 4.23
+     * Maven coordinates: org.apache.camel:camel-state-store
+     * 
+     * @return the dsl builder for the headers' name.
+     */
+    public static StateStoreEndpointBuilderFactory.StateStoreHeaderNameBuilder stateStore() {
+        return StateStoreEndpointBuilderFactory.StateStoreHeaderNameBuilder.INSTANCE;
+    }
+    /**
      * Stitch (camel-stitch)
      * Stitch is a cloud ETL service that integrates various data sources into a
      * central data warehouse through various integrations.
@@ -4149,21 +4117,6 @@ public class EndpointHeaderBuilders {
      */
     public static XsltSaxonEndpointBuilderFactory.XsltSaxonHeaderNameBuilder xsltSaxon() {
         return XsltSaxonEndpointBuilderFactory.XsltSaxonHeaderNameBuilder.INSTANCE;
-    }
-    /**
-     * Zeebe (camel-zeebe)
-     * Zeebe component which integrates with Camunda Zeebe to interact with the
-     * API.
-     * 
-     * Category: workflow,saas
-     * Since: 3.21
-     * Maven coordinates: org.apache.camel:camel-zeebe
-     * 
-     * @return the dsl builder for the headers' name.
-     */
-    @Deprecated
-    public static ZeebeEndpointBuilderFactory.ZeebeHeaderNameBuilder zeebe() {
-        return ZeebeEndpointBuilderFactory.ZeebeHeaderNameBuilder.INSTANCE;
     }
     /**
      * ZooKeeper (camel-zookeeper)

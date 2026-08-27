@@ -104,6 +104,9 @@ public final class OpenAIConstants {
     @Metadata(description = "The complete OpenAI moderation response object",
               javaType = "com.openai.models.moderations.ModerationCreateResponse")
     public static final String MODERATION_RESPONSE = "CamelOpenAIModerationResponse";
+    @Metadata(description = "The complete OpenAI image generation or edit response object",
+              javaType = "com.openai.models.images.ImagesResponse")
+    public static final String IMAGE_RESPONSE = "CamelOpenAIImageResponse";
 
     // Embeddings Input Headers
     @Metadata(description = "The model to use for embeddings", javaType = "String")
@@ -198,6 +201,76 @@ public final class OpenAIConstants {
                             + "(does not work with tts-1 or tts-1-hd)",
               javaType = "String")
     public static final String SPEECH_INSTRUCTIONS = "CamelOpenAISpeechInstructions";
+
+    // Image Generation/Edit Input Headers
+    @Metadata(description = "The model to use for image generation or editing (e.g., gpt-image-1, dall-e-3, dall-e-2)",
+              javaType = "String")
+    public static final String IMAGE_MODEL = "CamelOpenAIImageModel";
+    @Metadata(description = "The prompt describing the image to generate, or the edit to apply. Takes precedence over "
+                            + "the imagePrompt endpoint option and, for image-generation, over the message body",
+              javaType = "String")
+    public static final String IMAGE_PROMPT = "CamelOpenAIImagePrompt";
+    @Metadata(description = "The size of the generated image (e.g., 1024x1024, 1536x1024, auto)", javaType = "String")
+    public static final String IMAGE_SIZE = "CamelOpenAIImageSize";
+    @Metadata(description = "The quality of the generated image (auto, high, medium, low for GPT image models; "
+                            + "hd, standard for dall-e-3; standard for dall-e-2)",
+              javaType = "String")
+    public static final String IMAGE_QUALITY = "CamelOpenAIImageQuality";
+    @Metadata(description = "The response format of the generated image (url or b64_json). Only supported by "
+                            + "dall-e-2 and dall-e-3; GPT image models always return base64",
+              javaType = "String")
+    public static final String IMAGE_RESPONSE_FORMAT = "CamelOpenAIImageResponseFormat";
+    @Metadata(description = "The number of images to generate", javaType = "Integer")
+    public static final String IMAGE_COUNT = "CamelOpenAIImageCount";
+    @Metadata(description = "The background of the generated image (transparent, opaque, auto). "
+                            + "Only supported by GPT image models",
+              javaType = "String")
+    public static final String IMAGE_BACKGROUND = "CamelOpenAIImageBackground";
+    @Metadata(description = "The output format of the generated image (png, jpeg, webp). "
+                            + "Only supported by GPT image models",
+              javaType = "String")
+    public static final String IMAGE_OUTPUT_FORMAT = "CamelOpenAIImageOutputFormat";
+    @Metadata(description = "The compression level (0-100) for the webp or jpeg output formats. "
+                            + "Only supported by GPT image models",
+              javaType = "Integer")
+    public static final String IMAGE_OUTPUT_COMPRESSION = "CamelOpenAIImageOutputCompression";
+    @Metadata(description = "The style of the generated image (vivid or natural). Only supported by dall-e-3",
+              javaType = "String")
+    public static final String IMAGE_STYLE = "CamelOpenAIImageStyle";
+    @Metadata(description = "The content moderation level for image generation (low or auto). "
+                            + "Only supported by GPT image models",
+              javaType = "String")
+    public static final String IMAGE_MODERATION = "CamelOpenAIImageModeration";
+    @Metadata(description = "How closely the edit must match the style and features of the input image (high or low). "
+                            + "Only supported by the image-edit operation on gpt-image-1 and gpt-image-1.5",
+              javaType = "String")
+    public static final String IMAGE_INPUT_FIDELITY = "CamelOpenAIImageInputFidelity";
+    @Metadata(description = "An optional PNG mask for the image-edit operation, where the fully transparent areas "
+                            + "indicate where the image should be edited",
+              javaType = "byte[], java.io.File, java.nio.file.Path or java.io.InputStream")
+    public static final String IMAGE_MASK = "CamelOpenAIImageMask";
+
+    // Image Generation/Edit Output Headers
+    @Metadata(description = "The number of images returned in the response", javaType = "Integer")
+    public static final String IMAGE_RESULT_COUNT = "CamelOpenAIImageResultCount";
+    @Metadata(description = "The prompt as revised by the model, when a single image is returned (dall-e-3)",
+              javaType = "String")
+    public static final String IMAGE_REVISED_PROMPT = "CamelOpenAIImageRevisedPrompt";
+    @Metadata(description = "The prompts as revised by the model, one entry per returned image (dall-e-3)",
+              javaType = "java.util.List<String>")
+    public static final String IMAGE_REVISED_PROMPTS = "CamelOpenAIImageRevisedPrompts";
+    @Metadata(description = "The number of input tokens billed for the image request. "
+                            + "Only reported by GPT image models",
+              javaType = "Long")
+    public static final String IMAGE_INPUT_TOKENS = "CamelOpenAIImageInputTokens";
+    @Metadata(description = "The number of output tokens billed for the image request. "
+                            + "Only reported by GPT image models",
+              javaType = "Long")
+    public static final String IMAGE_OUTPUT_TOKENS = "CamelOpenAIImageOutputTokens";
+    @Metadata(description = "The total number of tokens billed for the image request. "
+                            + "Only reported by GPT image models",
+              javaType = "Long")
+    public static final String IMAGE_TOTAL_TOKENS = "CamelOpenAIImageTotalTokens";
 
     private OpenAIConstants() {
         // Utility class

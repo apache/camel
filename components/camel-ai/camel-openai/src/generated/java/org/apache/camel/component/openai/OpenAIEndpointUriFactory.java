@@ -24,7 +24,7 @@ public class OpenAIEndpointUriFactory extends org.apache.camel.support.component
     private static final Set<String> ENDPOINT_IDENTITY_PROPERTY_NAMES;
     private static final Map<String, String> MULTI_VALUE_PREFIXES;
     static {
-        Set<String> props = new HashSet<>(69);
+        Set<String> props = new HashSet<>(82);
         props.add("additionalBodyProperty");
         props.add("additionalHeader");
         props.add("additionalResponseHeader");
@@ -47,6 +47,18 @@ public class OpenAIEndpointUriFactory extends org.apache.camel.support.component
         props.add("fileSearchVectorStoreIds");
         props.add("hallucinatedToolNameStrategy");
         props.add("hostedMcpTools");
+        props.add("imageBackground");
+        props.add("imageCount");
+        props.add("imageInputFidelity");
+        props.add("imageModel");
+        props.add("imageModeration");
+        props.add("imageOutputCompression");
+        props.add("imageOutputFormat");
+        props.add("imagePrompt");
+        props.add("imageQuality");
+        props.add("imageResponseFormat");
+        props.add("imageSize");
+        props.add("imageStyle");
         props.add("jsonSchema");
         props.add("lazyStartProducer");
         props.add("maxAgenticTokens");
@@ -90,6 +102,7 @@ public class OpenAIEndpointUriFactory extends org.apache.camel.support.component
         props.add("streaming");
         props.add("stripThinking");
         props.add("systemMessage");
+        props.add("tags");
         props.add("temperature");
         props.add("toolExecutionErrorStrategy");
         props.add("topP");

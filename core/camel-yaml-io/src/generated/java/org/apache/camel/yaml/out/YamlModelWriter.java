@@ -505,6 +505,9 @@ public class YamlModelWriter extends YamlModelWriterSupport {
     public JsonObject writeThriftDataFormat(ThriftDataFormat def) {
         return wrapNode("thrift", doWriteThriftDataFormat(def));
     }
+    public JsonObject writeToonDataFormat(ToonDataFormat def) {
+        return wrapNode("toon", doWriteToonDataFormat(def));
+    }
     public JsonObject writeUblDataFormat(UblDataFormat def) {
         return wrapNode("ubl", doWriteUblDataFormat(def));
     }
@@ -603,6 +606,9 @@ public class YamlModelWriter extends YamlModelWriterSupport {
     }
     public JsonObject writeOgnlExpression(OgnlExpression def) {
         return wrapNode("ognl", doWriteOgnlExpression(def));
+    }
+    public JsonObject writePython3Expression(Python3Expression def) {
+        return wrapNode("python3", doWritePython3Expression(def));
     }
     public JsonObject writePythonExpression(PythonExpression def) {
         return wrapNode("python", doWritePythonExpression(def));
@@ -1210,6 +1216,7 @@ public class YamlModelWriter extends YamlModelWriterSupport {
                 case "SwiftMxDataFormat" -> doWriteChildElement(jo, "swiftMx", (SwiftMxDataFormat) def.getDataFormatType(), this::doWriteSwiftMxDataFormat);
                 case "SyslogDataFormat" -> doWriteChildElement(jo, "syslog", (SyslogDataFormat) def.getDataFormatType(), this::doWriteSyslogDataFormat);
                 case "TarFileDataFormat" -> doWriteChildElement(jo, "tarFile", (TarFileDataFormat) def.getDataFormatType(), this::doWriteTarFileDataFormat);
+                case "ToonDataFormat" -> doWriteChildElement(jo, "toon", (ToonDataFormat) def.getDataFormatType(), this::doWriteToonDataFormat);
                 case "UblDataFormat" -> doWriteChildElement(jo, "ubl", (UblDataFormat) def.getDataFormatType(), this::doWriteUblDataFormat);
                 case "ThriftDataFormat" -> doWriteChildElement(jo, "thrift", (ThriftDataFormat) def.getDataFormatType(), this::doWriteThriftDataFormat);
                 case "UniVocityCsvDataFormat" -> doWriteChildElement(jo, "univocityCsv", (UniVocityCsvDataFormat) def.getDataFormatType(), this::doWriteUniVocityCsvDataFormat);
@@ -1989,6 +1996,7 @@ public class YamlModelWriter extends YamlModelWriterSupport {
                 case "SwiftMxDataFormat" -> doWriteChildElement(jo, "swiftMx", (SwiftMxDataFormat) def.getDataFormatType(), this::doWriteSwiftMxDataFormat);
                 case "SyslogDataFormat" -> doWriteChildElement(jo, "syslog", (SyslogDataFormat) def.getDataFormatType(), this::doWriteSyslogDataFormat);
                 case "TarFileDataFormat" -> doWriteChildElement(jo, "tarFile", (TarFileDataFormat) def.getDataFormatType(), this::doWriteTarFileDataFormat);
+                case "ToonDataFormat" -> doWriteChildElement(jo, "toon", (ToonDataFormat) def.getDataFormatType(), this::doWriteToonDataFormat);
                 case "UblDataFormat" -> doWriteChildElement(jo, "ubl", (UblDataFormat) def.getDataFormatType(), this::doWriteUblDataFormat);
                 case "ThriftDataFormat" -> doWriteChildElement(jo, "thrift", (ThriftDataFormat) def.getDataFormatType(), this::doWriteThriftDataFormat);
                 case "UniVocityCsvDataFormat" -> doWriteChildElement(jo, "univocityCsv", (UniVocityCsvDataFormat) def.getDataFormatType(), this::doWriteUniVocityCsvDataFormat);
@@ -2320,6 +2328,7 @@ public class YamlModelWriter extends YamlModelWriterSupport {
                     case "SwiftMxDataFormat" -> doWriteChildElement(jo, "swiftMx", (SwiftMxDataFormat) item, this::doWriteSwiftMxDataFormat);
                     case "SyslogDataFormat" -> doWriteChildElement(jo, "syslog", (SyslogDataFormat) item, this::doWriteSyslogDataFormat);
                     case "TarFileDataFormat" -> doWriteChildElement(jo, "tarFile", (TarFileDataFormat) item, this::doWriteTarFileDataFormat);
+                    case "ToonDataFormat" -> doWriteChildElement(jo, "toon", (ToonDataFormat) item, this::doWriteToonDataFormat);
                     case "UblDataFormat" -> doWriteChildElement(jo, "ubl", (UblDataFormat) item, this::doWriteUblDataFormat);
                     case "ThriftDataFormat" -> doWriteChildElement(jo, "thrift", (ThriftDataFormat) item, this::doWriteThriftDataFormat);
                     case "UniVocityCsvDataFormat" -> doWriteChildElement(jo, "univocityCsv", (UniVocityCsvDataFormat) item, this::doWriteUniVocityCsvDataFormat);
@@ -2683,6 +2692,16 @@ public class YamlModelWriter extends YamlModelWriterSupport {
         doWriteAttribute(jo, "contentTypeHeader", def.getContentTypeHeader(), "true");
         return jo;
     }
+    protected JsonObject doWriteToonDataFormat(ToonDataFormat def) {
+        JsonObject jo = new JsonObject();
+        doWriteIdentifiedTypeAttributes(jo, def);
+        doWriteAttribute(jo, "indent", def.getIndent(), "2");
+        doWriteAttribute(jo, "delimiter", def.getDelimiter(), "COMMA");
+        doWriteAttribute(jo, "lengthMarker", def.getLengthMarker(), "false");
+        doWriteAttribute(jo, "strict", def.getStrict(), "true");
+        doWriteAttribute(jo, "contentTypeHeader", def.getContentTypeHeader(), "true");
+        return jo;
+    }
     protected JsonObject doWriteUblDataFormat(UblDataFormat def) {
         JsonObject jo = new JsonObject();
         doWriteIdentifiedTypeAttributes(jo, def);
@@ -2998,6 +3017,12 @@ public class YamlModelWriter extends YamlModelWriterSupport {
         return jo;
     }
     protected JsonObject doWriteOgnlExpression(OgnlExpression def) {
+        JsonObject jo = new JsonObject();
+        doWriteTypedExpressionDefinitionAttributes(jo, def);
+        doWriteValue(jo, def.getExpression());
+        return jo;
+    }
+    protected JsonObject doWritePython3Expression(Python3Expression def) {
         JsonObject jo = new JsonObject();
         doWriteTypedExpressionDefinitionAttributes(jo, def);
         doWriteValue(jo, def.getExpression());
@@ -3515,6 +3540,7 @@ public class YamlModelWriter extends YamlModelWriterSupport {
                 case "SwiftMxDataFormat" -> doWriteChildElement(jo, "swiftMx", (SwiftMxDataFormat) def.getDataFormatType(), this::doWriteSwiftMxDataFormat);
                 case "SyslogDataFormat" -> doWriteChildElement(jo, "syslog", (SyslogDataFormat) def.getDataFormatType(), this::doWriteSyslogDataFormat);
                 case "TarFileDataFormat" -> doWriteChildElement(jo, "tarFile", (TarFileDataFormat) def.getDataFormatType(), this::doWriteTarFileDataFormat);
+                case "ToonDataFormat" -> doWriteChildElement(jo, "toon", (ToonDataFormat) def.getDataFormatType(), this::doWriteToonDataFormat);
                 case "UblDataFormat" -> doWriteChildElement(jo, "ubl", (UblDataFormat) def.getDataFormatType(), this::doWriteUblDataFormat);
                 case "ThriftDataFormat" -> doWriteChildElement(jo, "thrift", (ThriftDataFormat) def.getDataFormatType(), this::doWriteThriftDataFormat);
                 case "UniVocityCsvDataFormat" -> doWriteChildElement(jo, "univocityCsv", (UniVocityCsvDataFormat) def.getDataFormatType(), this::doWriteUniVocityCsvDataFormat);
@@ -3911,6 +3937,7 @@ public class YamlModelWriter extends YamlModelWriterSupport {
                 case "MethodCallExpression" -> wrapNode("method", doWriteMethodCallExpression((MethodCallExpression) v));
                 case "MvelExpression" -> wrapNode("mvel", doWriteMvelExpression((MvelExpression) v));
                 case "OgnlExpression" -> wrapNode("ognl", doWriteOgnlExpression((OgnlExpression) v));
+                case "Python3Expression" -> wrapNode("python3", doWritePython3Expression((Python3Expression) v));
                 case "PythonExpression" -> wrapNode("python", doWritePythonExpression((PythonExpression) v));
                 case "RefExpression" -> wrapNode("ref", doWriteRefExpression((RefExpression) v));
                 case "SimpleExpression" -> wrapNode("simple", doWriteSimpleExpression((SimpleExpression) v));

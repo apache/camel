@@ -268,6 +268,26 @@ public interface AiToolComponentBuilderFactory {
             return this;
         }
     
+        
+        /**
+         * When true, AI producers that support agentic tool loops (such as
+         * camel-openai) return this tool's result directly to the caller
+         * without sending it back to the model. Also published as an MCP tool
+         * annotation when the tool is exposed via camel-mcp-server.
+         * 
+         * The option is a: &lt;code&gt;java.lang.Boolean&lt;/code&gt; type.
+         * 
+         * Default: false
+         * Group: consumer
+         * 
+         * @param returnDirect the value to set
+         * @return the dsl builder
+         */
+        default AiToolComponentBuilder returnDirect(java.lang.Boolean returnDirect) {
+            doSetProperty("returnDirect", returnDirect);
+            return this;
+        }
+    
         /**
          * Comma-separated list of tags used to group tools. Producers filter
          * the registry by these tags to select which tools to expose to the
@@ -355,6 +375,7 @@ public interface AiToolComponentBuilderFactory {
             case "outputSchema": getOrCreateConfiguration((AiToolComponent) component).setOutputSchema((java.lang.String) value); return true;
             case "parameters": getOrCreateConfiguration((AiToolComponent) component).setParameters((java.util.Map) value); return true;
             case "readOnlyHint": getOrCreateConfiguration((AiToolComponent) component).setReadOnlyHint((java.lang.Boolean) value); return true;
+            case "returnDirect": getOrCreateConfiguration((AiToolComponent) component).setReturnDirect((java.lang.Boolean) value); return true;
             case "tags": getOrCreateConfiguration((AiToolComponent) component).setTags((java.lang.String) value); return true;
             case "title": getOrCreateConfiguration((AiToolComponent) component).setTitle((java.lang.String) value); return true;
             case "autowiredEnabled": ((AiToolComponent) component).setAutowiredEnabled((boolean) value); return true;
