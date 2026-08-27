@@ -37,7 +37,7 @@ public class ExecComponent extends DefaultComponent {
 
     @Metadata
     private String workingDir;
-    @Metadata(label = "advanced")
+    @Metadata(label = "advanced", security = "insecure:dev")
     private boolean allowControlHeaders;
     @Metadata(label = "advanced")
     private ExecCommandExecutor commandExecutor;

@@ -61,7 +61,7 @@ public class ExecEndpoint extends DefaultEndpoint {
     private boolean useStderrOnEmptyStdout;
     @UriParam(defaultValue = "DEBUG")
     private LoggingLevel commandLogLevel = LoggingLevel.DEBUG;
-    @UriParam(label = "advanced")
+    @UriParam(label = "advanced", security = "insecure:dev")
     private boolean allowControlHeaders;
 
     public ExecEndpoint(String uri, ExecComponent component) {

@@ -26,35 +26,69 @@ import org.apache.camel.test.junit6.CamelTestSupport;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
 
-public class DefaultExecBindingTest extends CamelTestSupport {
+class DefaultExecBindingTest extends CamelTestSupport {
 
     @Test
-    public void testReadInput() throws Exception {
-        ExecCommand command = readInput("exec:test", Collections.EMPTY_LIST);
-        assertEquals(Collections.EMPTY_LIST, command.getArgs(), "Get a wrong args.");
+    void shouldReadArgsFromHeaderWhenControlHeadersEnabled() throws Exception {
         List<String> args = Arrays.asList("arg1", "arg2");
-        command = readInput("exec:test", args);
-        assertEquals(args, command.getArgs(), "Get a wrong args.");
+        ExecCommand command = readInput("exec:test", args, true);
+        assertEquals(args, command.getArgs());
 
-        command = readInput("exec:test", "arg1 arg2");
-        assertEquals(args, command.getArgs(), "Get a wrong args.");
+        command = readInput("exec:test", "arg1 arg2", true);
+        assertEquals(args, command.getArgs());
 
-        command = readInput("exec:test?args=arg1 arg2", null);
-        assertEquals(args, command.getArgs(), "Get a wrong args.");
+        command = readInput("exec:test?args=arg1 arg2", null, true);
+        assertEquals(args, command.getArgs());
+
+        command = readInput("exec:test", Collections.emptyList(), true);
+        assertEquals(Collections.emptyList(), command.getArgs());
     }
 
-    private ExecCommand readInput(String execEndpointUri, Object args) throws Exception {
+    @Test
+    void shouldIgnoreControlHeadersByDefault() throws Exception {
         DefaultExecBinding binding = new DefaultExecBinding();
-        ExecEndpoint execEndpoint = createExecEndpoint(execEndpointUri);
+        ExecEndpoint execEndpoint = createExecEndpoint("exec:hostname", false);
+        Exchange exchange = execEndpoint.createExchange();
+        exchange.getIn().setHeader(ExecBinding.EXEC_COMMAND_EXECUTABLE, "whoami");
+        exchange.getIn().setHeader(ExecBinding.EXEC_COMMAND_ARGS, "ARGS-WORK");
+
+        ExecCommand command = binding.readInput(exchange, execEndpoint);
+
+        assertEquals("hostname", command.getExecutable());
+        assertEquals(Collections.emptyList(), command.getArgs());
+        assertEquals("whoami", exchange.getIn().getHeader(ExecBinding.EXEC_COMMAND_EXECUTABLE));
+        assertEquals("ARGS-WORK", exchange.getIn().getHeader(ExecBinding.EXEC_COMMAND_ARGS));
+    }
+
+    @Test
+    void shouldApplyControlHeadersWhenEnabled() throws Exception {
+        DefaultExecBinding binding = new DefaultExecBinding();
+        ExecEndpoint execEndpoint = createExecEndpoint("exec:hostname", true);
+        Exchange exchange = execEndpoint.createExchange();
+        exchange.getIn().setHeader(ExecBinding.EXEC_COMMAND_EXECUTABLE, "whoami");
+        exchange.getIn().setHeader(ExecBinding.EXEC_COMMAND_ARGS, "ARGS-WORK");
+
+        ExecCommand command = binding.readInput(exchange, execEndpoint);
+
+        assertEquals("whoami", command.getExecutable());
+        assertEquals(List.of("ARGS-WORK"), command.getArgs());
+        assertNull(exchange.getIn().getHeader(ExecBinding.EXEC_COMMAND_EXECUTABLE));
+        assertNull(exchange.getIn().getHeader(ExecBinding.EXEC_COMMAND_ARGS));
+    }
+
+    private ExecCommand readInput(String execEndpointUri, Object args, boolean allowControlHeaders) throws Exception {
+        DefaultExecBinding binding = new DefaultExecBinding();
+        ExecEndpoint execEndpoint = createExecEndpoint(execEndpointUri, allowControlHeaders);
         Exchange exchange = execEndpoint.createExchange();
         exchange.getIn().setHeader(ExecBinding.EXEC_COMMAND_ARGS, args);
         return binding.readInput(exchange, execEndpoint);
     }
 
-    private ExecEndpoint createExecEndpoint(String uri) throws Exception {
+    private ExecEndpoint createExecEndpoint(String uri, boolean allowControlHeaders) throws Exception {
         ExecComponent component = context.getComponent("exec", ExecComponent.class);
-        component.setAllowControlHeaders(true);
+        component.setAllowControlHeaders(allowControlHeaders);
         return (ExecEndpoint) component.createEndpoint(uri);
     }
 

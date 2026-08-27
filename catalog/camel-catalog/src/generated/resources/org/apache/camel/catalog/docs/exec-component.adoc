@@ -48,6 +48,47 @@ include::partial$component-endpoint-headers.adoc[]
 
 == Usage
 
+=== Control headers
+
+Since Camel 4.20, the `CamelExecCommand*` headers that override URI options are
+disabled by default. This prevents untrusted message sources from redirecting
+command execution. To use dynamic executable, arguments, working directory, or
+other command settings from headers, enable the opt-in flag on the endpoint or
+component:
+
+[tabs]
+====
+Java::
++
+[source,java]
+----
+from("direct:run")
+    .setHeader("CamelExecCommandArgs", constant("ARGS-WORK"))
+    .to("exec:echo?allowControlHeaders=true");
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:run
+      steps:
+        - setHeader:
+            name: CamelExecCommandArgs
+            constant: "ARGS-WORK"
+        - to:
+            uri: exec:echo
+            parameters:
+              allowControlHeaders: true
+----
+====
+
+When `allowControlHeaders` is `false` (the default), any `CamelExecCommand*`
+headers on the exchange are ignored and a WARN is logged. URI parameters such
+as `args` continue to work as before.
+
 === Message body
 
 If the component receives an `in` message body that is

@@ -18,6 +18,7 @@ package org.apache.camel.component.exec.impl;
 
 import java.io.File;
 import java.io.InputStream;
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -45,12 +46,24 @@ public class DefaultExecBinding implements ExecBinding {
 
     private static final Logger LOG = LoggerFactory.getLogger(DefaultExecBinding.class);
 
+    private static final String[] CONTROL_HEADERS = {
+            EXEC_COMMAND_EXECUTABLE,
+            EXEC_COMMAND_ARGS,
+            EXEC_COMMAND_OUT_FILE,
+            EXEC_COMMAND_WORKING_DIR,
+            EXEC_COMMAND_TIMEOUT,
+            EXEC_COMMAND_EXIT_VALUES,
+            EXEC_USE_STDERR_ON_EMPTY_STDOUT,
+            EXEC_COMMAND_LOG_LEVEL
+    };
+
     @Override
     @SuppressWarnings("unchecked")
     public ExecCommand readInput(Exchange exchange, ExecEndpoint endpoint) {
         ObjectHelper.notNull(exchange, "exchange");
         ObjectHelper.notNull(endpoint, "endpoint");
 
+        warnIgnoredControlHeaders(exchange, endpoint);
         // do not convert args as we do that manually later
         Object args = endpoint.isAllowControlHeaders() ? exchange.getIn().removeHeader(EXEC_COMMAND_ARGS) : null;
         String cmd = getAndRemoveHeader(endpoint, exchange.getIn(), EXEC_COMMAND_EXECUTABLE, endpoint.getExecutable(),
@@ -152,5 +165,24 @@ public class DefaultExecBinding implements ExecBinding {
             message.removeHeader(headerName);
         }
         return h;
+    }
+
+    private void warnIgnoredControlHeaders(Exchange exchange, ExecEndpoint endpoint) {
+        if (endpoint.isAllowControlHeaders()) {
+            return;
+        }
+        Message in = exchange.getIn();
+        List<String> ignored = new ArrayList<>();
+        for (String headerName : CONTROL_HEADERS) {
+            if (in.getHeader(headerName) != null) {
+                ignored.add(headerName);
+            }
+        }
+        if (!ignored.isEmpty()) {
+            LOG.warn(
+                    "Control header(s) {} are set but ignored because allowControlHeaders=false on {}. "
+                     + "Set allowControlHeaders=true on the exec endpoint or component to enable dynamic command configuration.",
+                    ignored, endpoint);
+        }
     }
 }
