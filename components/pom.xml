@@ -304,7 +304,6 @@
         <module>camel-snmp</module>
         <module>camel-soap</module>
         <module>camel-solr</module>
-        <module>camel-splunk</module>
         <module>camel-splunk-hec</module>
         <module>camel-sql</module>
         <module>camel-ssh</module>
