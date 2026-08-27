@@ -30,6 +30,27 @@ resolves back inside the polled directory remains accepted. Two configurations c
 server that reports names navigating above the polled directory, and a `fileName` expression (used when
 `useList=false`) that navigates above it. Set `jailStartingDirectory=false` if such a path is intended.
 
+=== camel-spring-redis - the default serializer applies a deserialization filter
+
+The default serializer, `JdkSerializationRedisSerializer`, now installs a
+`java.io.ObjectInputFilter` while reading Redis payloads. Previously no filter was applied at all.
+This affects both the consumer, which deserializes the payload of every message published to the
+subscribed channels, and the producer read commands, which deserialize the values stored in Redis.
+
+When no explicit pattern is configured, the JVM-wide `jdk.serialFilter` is honoured if set,
+otherwise a conservative default allow-list is applied (it permits standard Java and Apache Camel
+types and denies `java.net.**`). Routes that exchange classes outside that allow-list must widen it
+through the new `deserializationFilter` endpoint option, for example:
+
+[source,java]
+----
+from("spring-redis://localhost:6379?command=SUBSCRIBE&channels=myChannel"
+     + "&deserializationFilter=com.example.model.**;java.**;!*")
+----
+
+Setting the `serializer` option to a custom `RedisSerializer` bypasses the filter entirely, since
+Camel then no longer controls how the payload is read.
+
 == Upgrading from 4.18.3 to 4.18.4
 
 === camel-core - Multicast EIP honors UseOriginalAggregationStrategy
