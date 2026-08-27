@@ -1,0 +1,87 @@
+= Alibaba Simple Log Service (SLS) Component
+:doctitle: Alibaba Simple Log Service (SLS)
+:shortname: alibaba-sls
+:artifactid: camel-alibaba-sls
+:description: Manage logs on Alibaba Cloud Simple Log Service (SLS).
+:since: 4.23
+:supportlevel: Preview
+:tabs-sync-option:
+:component-header: Only producer is supported
+//Manually maintained attributes
+:group: Alibaba Cloud
+
+*Since Camel {since}*
+
+*{component-header}*
+
+The Alibaba Cloud Simple Log Service (SLS) component allows you to write logs, query logs and list log stores.
+
+Maven users will need to add the following dependency to their `pom.xml`
+for this component:
+
+[source,xml]
+----
+<dependency>
+    <groupId>org.apache.camel</groupId>
+    <artifactId>camel-alibaba-sls</artifactId>
+    <version>x.x.x</version>
+    <!-- use the same version as your Camel core version -->
+</dependency>
+----
+
+== URI format
+
+[source]
+----
+alibaba-sls:operation[?options]
+----
+
+// component options: START
+include::partial$component-configure-options.adoc[]
+include::partial$component-endpoint-options.adoc[]
+include::partial$component-endpoint-headers.adoc[]
+// component options: END
+
+== Usage
+
+=== Operations
+
+The component supports the following operations:
+
+* `putLogs` - write a log group to a log store (producer)
+* `getLogs` - query logs from a log store (producer)
+* `listLogStores` - list log stores in a project (producer)
+
+=== Producer examples
+
+Put logs:
+
+[source,java]
+----
+from("direct:start")
+    .setBody(simple("${body}"))
+    .to("alibaba-sls:putLogs?project=my-project&logStoreName=my-logstore&region=cn-hangzhou&endpoint=cn-hangzhou.log.aliyuncs.com&accessKey=RAW(accessKey)&secretKey=RAW(secretKey)");
+----
+
+Query logs:
+
+[source,java]
+----
+from("direct:start")
+    .setHeader("CamelAlibabaSlsQuery", constant("*"))
+    .setHeader("CamelAlibabaSlsFrom", constant(1700000000))
+    .setHeader("CamelAlibabaSlsTo", constant(1700003600))
+    .to("alibaba-sls:getLogs?project=my-project&logStoreName=my-logstore&region=cn-hangzhou&accessKey=RAW(accessKey)&secretKey=RAW(secretKey)");
+----
+
+List log stores:
+
+[source,java]
+----
+from("direct:start")
+    .to("alibaba-sls:listLogStores?project=my-project&region=cn-hangzhou&accessKey=RAW(accessKey)&secretKey=RAW(secretKey)");
+----
+
+== Examples
+
+For more examples, see the unit tests in the `camel-alibaba-sls` module.

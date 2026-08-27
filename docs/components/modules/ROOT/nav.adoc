@@ -36,6 +36,8 @@
 *** xref:alibaba-mns-component.adoc[Alibaba Message Service (MNS)]
 *** xref:alibaba-oss-component.adoc[Alibaba Object Storage Service (OSS)]
 *** xref:alibaba-sms-component.adoc[Alibaba Short Message Service (SMS)]
+*** xref:alibaba-sls-component.adoc[Alibaba Simple Log Service (SLS)]
+*** xref:alibaba-ots-component.adoc[Alibaba Tablestore (OTS)]
 ** xref:amqp-component.adoc[AMQP]
 ** xref:arangodb-component.adoc[ArangoDb]
 ** xref:as2-component.adoc[AS2]
