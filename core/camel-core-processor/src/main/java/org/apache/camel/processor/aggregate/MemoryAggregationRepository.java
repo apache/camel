@@ -32,7 +32,12 @@ import org.apache.camel.support.service.ServiceSupport;
  * A memory based {@link org.apache.camel.spi.AggregationRepository} which stores {@link Exchange}s in memory only.
  *
  * Supports both optimistic locking and non-optimistic locking modes. Defaults to non-optimistic locking mode.
+ *
+ * @deprecated since 4.23.0. Use {@link org.apache.camel.support.KeyValueAggregationRepository} wrapping a
+ *             {@link org.apache.camel.support.MemoryKeyValueRepository} instead. For example:
+ *             {@code new KeyValueAggregationRepository(new MemoryKeyValueRepository())}
  */
+@Deprecated(since = "4.23.0")
 @Metadata(label = "bean",
           description = "A memory based AggregationRepository which stores Exchange in memory only.",
           annotations = { "interfaceName=org.apache.camel.spi.AggregationRepository" })

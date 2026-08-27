@@ -37,7 +37,12 @@ import org.apache.camel.support.service.ServiceSupport;
  * algorithm.
  * <p/>
  * Care should be taken to use a suitable underlying {@link Map} to avoid this class being a memory leak.
+ *
+ * @deprecated since 4.23.0. Use {@link org.apache.camel.support.KeyValueIdempotentRepository} wrapping a
+ *             {@link org.apache.camel.support.MemoryKeyValueRepository} instead. For example:
+ *             {@code new KeyValueIdempotentRepository(new MemoryKeyValueRepository())}
  */
+@Deprecated(since = "4.23.0")
 @Metadata(label = "bean",
           description = "A memory based IdempotentRepository.",
           annotations = { "interfaceName=org.apache.camel.spi.IdempotentRepository" })
