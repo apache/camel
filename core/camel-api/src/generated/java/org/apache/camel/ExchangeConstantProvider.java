@@ -17,7 +17,7 @@ public class ExchangeConstantProvider {
 
     private static final Map<String, String> MAP;
     static {
-        Map<String, String> map = new HashMap<>(155);
+        Map<String, String> map = new HashMap<>(156);
         map.put("ACTIVITY_SPAN_TAGS", "CamelActivitySpanTags");
         map.put("AGGREGATED_COLLECTION_GUARD", "CamelAggregatedCollectionGuard");
         map.put("AGGREGATED_COMPLETED_BY", "CamelAggregatedCompletedBy");
@@ -73,6 +73,7 @@ public class ExchangeConstantProvider {
         map.put("FILE_LOCK_EXCLUSIVE_LOCK", "CamelFileLockExclusiveLock");
         map.put("FILE_LOCK_FILE_ACQUIRED", "CamelFileLockFileAcquired");
         map.put("FILE_LOCK_FILE_NAME", "CamelFileLockFileName");
+        map.put("FILE_LOCK_IDEMPOTENT_ACQUIRED", "CamelFileLockIdempotentAcquired");
         map.put("FILE_LOCK_RANDOM_ACCESS_FILE", "CamelFileLockRandomAccessFile");
         map.put("FILE_NAME", "CamelFileName");
         map.put("FILE_NAME_CONSUMED", "CamelFileNameConsumed");
