@@ -125,5 +125,8 @@ public class AS2ServerBearerAuthHeaderTest extends AbstractAS2ITSupport {
     @Override
     protected void customizeConfiguration(AS2Configuration configuration) {
         configuration.setServerPortNumber(targetPort.getPort());
+        // The MDN credentials are only attached to a delivery host the operator has authorised, and the
+        // delivery address here comes from the receiptDeliveryOption header, so localhost has to be listed.
+        configuration.setAsyncMdnAllowedHosts("localhost");
     }
 }
