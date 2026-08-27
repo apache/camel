@@ -2721,19 +2721,6 @@ public interface ComponentsBuilderFactory {
         return Influxdb2ComponentBuilderFactory.influxdb2();
     }
     /**
-     * IRC (camel-irc)
-     * Send and receive messages to/from an IRC chat.
-     * 
-     * Category: chat
-     * Since: 1.1
-     * Maven coordinates: org.apache.camel:camel-irc
-     * 
-     * @return the dsl builder
-     */
-    static IrcComponentBuilderFactory.IrcComponentBuilder irc() {
-        return IrcComponentBuilderFactory.irc();
-    }
-    /**
      * JCache (camel-jcache)
      * Perform caching operations against JSR107/JCache.
      * 

@@ -168,7 +168,6 @@
         <module>camel-infinispan</module>
         <module>camel-influxdb</module>
         <module>camel-influxdb2</module>
-        <module>camel-irc</module>
         <module>camel-iso8583</module>
         <module>camel-jackson</module>
         <module>camel-jackson-avro</module>
