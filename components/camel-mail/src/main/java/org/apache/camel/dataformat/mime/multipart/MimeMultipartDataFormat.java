@@ -50,10 +50,10 @@ import org.apache.camel.NoTypeConversionAvailableException;
 import org.apache.camel.attachment.Attachment;
 import org.apache.camel.attachment.AttachmentMessage;
 import org.apache.camel.attachment.DefaultAttachment;
+import org.apache.camel.component.mail.MailHeaderFilterStrategy;
 import org.apache.camel.spi.HeaderFilterStrategy;
 import org.apache.camel.spi.annotations.Dataformat;
 import org.apache.camel.support.DefaultDataFormat;
-import org.apache.camel.support.DefaultHeaderFilterStrategy;
 import org.apache.camel.support.ExchangeHelper;
 import org.apache.camel.support.MessageHelper;
 import org.apache.camel.util.IOHelper;
@@ -74,7 +74,7 @@ public class MimeMultipartDataFormat extends DefaultDataFormat {
     private String includeHeaders;
     private Pattern includeHeadersPattern;
     private boolean binaryContent;
-    private final HeaderFilterStrategy headerFilterStrategy = new DefaultHeaderFilterStrategy();
+    private final HeaderFilterStrategy headerFilterStrategy = new MailHeaderFilterStrategy();
 
     public String getMultipartSubType() {
         return multipartSubType;
