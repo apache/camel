@@ -190,26 +190,6 @@ public abstract class BuilderSupport implements CamelContextAware {
     }
 
     /**
-     * Returns a compiled simple expression value builder
-     *
-     * @deprecated use {@link #simple(String)} instead
-     */
-    @Deprecated(since = "4.19")
-    public ValueBuilder csimple(String value) {
-        return Builder.csimple(value);
-    }
-
-    /**
-     * Returns a compiled simple expression value builder
-     *
-     * @deprecated use {@link #simple(String, Class)} instead
-     */
-    @Deprecated(since = "4.19")
-    public ValueBuilder csimple(String value, Class<?> resultType) {
-        return Builder.csimple(value, resultType);
-    }
-
-    /**
      * Returns a datasonnet expression value builder
      */
     public ValueBuilder datasonnet(String value) {

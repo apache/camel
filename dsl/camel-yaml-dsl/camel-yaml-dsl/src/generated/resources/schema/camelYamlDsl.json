@@ -1167,8 +1167,6 @@
               }, {
                 "required" : [ "constant" ]
               }, {
-                "required" : [ "csimple" ]
-              }, {
                 "required" : [ "datasonnet" ]
               }, {
                 "required" : [ "exchangeProperty" ]
@@ -1276,7 +1274,6 @@
             "description" : "The note for this node"
           },
           "constant" : { },
-          "csimple" : { },
           "datasonnet" : { },
           "exchangeProperty" : { },
           "groovy" : { },
@@ -1321,8 +1318,6 @@
                 "required" : [ "expression" ]
               }, {
                 "required" : [ "constant" ]
-              }, {
-                "required" : [ "csimple" ]
               }, {
                 "required" : [ "datasonnet" ]
               }, {
@@ -1436,7 +1431,6 @@
             "default" : ","
           },
           "constant" : { },
-          "csimple" : { },
           "datasonnet" : { },
           "exchangeProperty" : { },
           "groovy" : { },
@@ -1481,8 +1475,6 @@
                 "required" : [ "expression" ]
               }, {
                 "required" : [ "constant" ]
-              }, {
-                "required" : [ "csimple" ]
               }, {
                 "required" : [ "datasonnet" ]
               }, {
@@ -1639,7 +1631,6 @@
             "description" : "To use a variable as the source for the message body to send. When using send variable then the message body is taken from this variable instead of the current message, however the headers from the message will still be used as well."
           },
           "constant" : { },
-          "csimple" : { },
           "datasonnet" : { },
           "exchangeProperty" : { },
           "groovy" : { },
@@ -1773,8 +1764,6 @@
               "anyOf" : [ {
                 "required" : [ "constant" ]
               }, {
-                "required" : [ "csimple" ]
-              }, {
                 "required" : [ "datasonnet" ]
               }, {
                 "required" : [ "exchangeProperty" ]
@@ -1829,14 +1818,6 @@
               }, {
                 "required" : [ "xtokenize" ]
               } ]
-            }
-          }, {
-            "type" : "object",
-            "required" : [ "csimple" ],
-            "properties" : {
-              "csimple" : {
-                "$ref" : "#/items/definitions/org.apache.camel.model.language.CSimpleExpression"
-              }
             }
           }, {
             "type" : "object",
@@ -2058,7 +2039,6 @@
         } ],
         "properties" : {
           "constant" : { },
-          "csimple" : { },
           "datasonnet" : { },
           "exchangeProperty" : { },
           "groovy" : { },
@@ -2180,8 +2160,6 @@
               }, {
                 "required" : [ "constant" ]
               }, {
-                "required" : [ "csimple" ]
-              }, {
                 "required" : [ "datasonnet" ]
               }, {
                 "required" : [ "exchangeProperty" ]
@@ -2283,7 +2261,6 @@
             }
           },
           "constant" : { },
-          "csimple" : { },
           "datasonnet" : { },
           "exchangeProperty" : { },
           "groovy" : { },
@@ -2430,8 +2407,6 @@
               }, {
                 "required" : [ "constant" ]
               }, {
-                "required" : [ "csimple" ]
-              }, {
                 "required" : [ "datasonnet" ]
               }, {
                 "required" : [ "exchangeProperty" ]
@@ -2557,7 +2532,6 @@
             }
           },
           "constant" : { },
-          "csimple" : { },
           "datasonnet" : { },
           "exchangeProperty" : { },
           "groovy" : { },
@@ -3003,8 +2977,6 @@
               }, {
                 "required" : [ "constant" ]
               }, {
-                "required" : [ "csimple" ]
-              }, {
                 "required" : [ "datasonnet" ]
               }, {
                 "required" : [ "exchangeProperty" ]
@@ -3124,7 +3096,6 @@
             }
           },
           "constant" : { },
-          "csimple" : { },
           "datasonnet" : { },
           "exchangeProperty" : { },
           "groovy" : { },
@@ -3973,8 +3944,6 @@
               }, {
                 "required" : [ "constant" ]
               }, {
-                "required" : [ "csimple" ]
-              }, {
                 "required" : [ "datasonnet" ]
               }, {
                 "required" : [ "exchangeProperty" ]
@@ -4059,7 +4028,6 @@
             "description" : "The note for this node"
           },
           "constant" : { },
-          "csimple" : { },
           "datasonnet" : { },
           "exchangeProperty" : { },
           "groovy" : { },
@@ -4437,8 +4405,6 @@
               }, {
                 "required" : [ "constant" ]
               }, {
-                "required" : [ "csimple" ]
-              }, {
                 "required" : [ "datasonnet" ]
               }, {
                 "required" : [ "exchangeProperty" ]
@@ -4589,7 +4555,6 @@
             "description" : "To use a variable to store the received message body (only body, not headers). This makes it handy to use variables for user data and to easily control what data to use for sending and receiving."
           },
           "constant" : { },
-          "csimple" : { },
           "datasonnet" : { },
           "exchangeProperty" : { },
           "groovy" : { },
@@ -4687,8 +4652,6 @@
               "anyOf" : [ {
                 "required" : [ "constant" ]
               }, {
-                "required" : [ "csimple" ]
-              }, {
                 "required" : [ "datasonnet" ]
               }, {
                 "required" : [ "exchangeProperty" ]
@@ -4763,7 +4726,6 @@
             "description" : "The property key."
           },
           "constant" : { },
-          "csimple" : { },
           "datasonnet" : { },
           "exchangeProperty" : { },
           "groovy" : { },
@@ -4809,8 +4771,6 @@
                 "required" : [ "expression" ]
               }, {
                 "required" : [ "constant" ]
-              }, {
-                "required" : [ "csimple" ]
               }, {
                 "required" : [ "datasonnet" ]
               }, {
@@ -4993,7 +4953,6 @@
             "default" : "0"
           },
           "constant" : { },
-          "csimple" : { },
           "datasonnet" : { },
           "exchangeProperty" : { },
           "groovy" : { },
@@ -5398,8 +5357,6 @@
               "anyOf" : [ {
                 "required" : [ "constant" ]
               }, {
-                "required" : [ "csimple" ]
-              }, {
                 "required" : [ "datasonnet" ]
               }, {
                 "required" : [ "exchangeProperty" ]
@@ -5522,7 +5479,6 @@
             }
           },
           "constant" : { },
-          "csimple" : { },
           "datasonnet" : { },
           "exchangeProperty" : { },
           "groovy" : { },
@@ -6147,8 +6103,6 @@
                 }, {
                   "required" : [ "constant" ]
                 }, {
-                  "required" : [ "csimple" ]
-                }, {
                   "required" : [ "datasonnet" ]
                 }, {
                   "required" : [ "exchangeProperty" ]
@@ -6261,7 +6215,6 @@
               "default" : ","
             },
             "constant" : { },
-            "csimple" : { },
             "datasonnet" : { },
             "exchangeProperty" : { },
             "groovy" : { },
@@ -6429,8 +6382,6 @@
               }, {
                 "required" : [ "constant" ]
               }, {
-                "required" : [ "csimple" ]
-              }, {
                 "required" : [ "datasonnet" ]
               }, {
                 "required" : [ "exchangeProperty" ]
@@ -6521,7 +6472,6 @@
             "description" : "The note for this node"
           },
           "constant" : { },
-          "csimple" : { },
           "datasonnet" : { },
           "exchangeProperty" : { },
           "groovy" : { },
@@ -6566,8 +6516,6 @@
                 "required" : [ "expression" ]
               }, {
                 "required" : [ "constant" ]
-              }, {
-                "required" : [ "csimple" ]
               }, {
                 "required" : [ "datasonnet" ]
               }, {
@@ -6659,7 +6607,6 @@
             "description" : "The note for this node"
           },
           "constant" : { },
-          "csimple" : { },
           "datasonnet" : { },
           "exchangeProperty" : { },
           "groovy" : { },
@@ -6744,8 +6691,6 @@
                 "required" : [ "expression" ]
               }, {
                 "required" : [ "constant" ]
-              }, {
-                "required" : [ "csimple" ]
               }, {
                 "required" : [ "datasonnet" ]
               }, {
@@ -6842,7 +6787,6 @@
             "description" : "The note for this node"
           },
           "constant" : { },
-          "csimple" : { },
           "datasonnet" : { },
           "exchangeProperty" : { },
           "groovy" : { },
@@ -6925,8 +6869,6 @@
                 "required" : [ "expression" ]
               }, {
                 "required" : [ "constant" ]
-              }, {
-                "required" : [ "csimple" ]
               }, {
                 "required" : [ "datasonnet" ]
               }, {
@@ -7023,7 +6965,6 @@
             "description" : "The note for this node"
           },
           "constant" : { },
-          "csimple" : { },
           "datasonnet" : { },
           "exchangeProperty" : { },
           "groovy" : { },
@@ -7069,8 +7010,6 @@
                 "required" : [ "expression" ]
               }, {
                 "required" : [ "constant" ]
-              }, {
-                "required" : [ "csimple" ]
               }, {
                 "required" : [ "datasonnet" ]
               }, {
@@ -7167,7 +7106,6 @@
             "description" : "The note for this node"
           },
           "constant" : { },
-          "csimple" : { },
           "datasonnet" : { },
           "exchangeProperty" : { },
           "groovy" : { },
@@ -7250,8 +7188,6 @@
                 "required" : [ "expression" ]
               }, {
                 "required" : [ "constant" ]
-              }, {
-                "required" : [ "csimple" ]
               }, {
                 "required" : [ "datasonnet" ]
               }, {
@@ -7348,7 +7284,6 @@
             "description" : "The note for this node"
           },
           "constant" : { },
-          "csimple" : { },
           "datasonnet" : { },
           "exchangeProperty" : { },
           "groovy" : { },
@@ -7393,8 +7328,6 @@
                 "required" : [ "expression" ]
               }, {
                 "required" : [ "constant" ]
-              }, {
-                "required" : [ "csimple" ]
               }, {
                 "required" : [ "datasonnet" ]
               }, {
@@ -7597,7 +7530,6 @@
             "description" : "Sets the key to use in the watermark store."
           },
           "constant" : { },
-          "csimple" : { },
           "datasonnet" : { },
           "exchangeProperty" : { },
           "groovy" : { },
@@ -7908,8 +7840,6 @@
               }, {
                 "required" : [ "constant" ]
               }, {
-                "required" : [ "csimple" ]
-              }, {
                 "required" : [ "datasonnet" ]
               }, {
                 "required" : [ "exchangeProperty" ]
@@ -8041,7 +7971,6 @@
             "default" : "1000"
           },
           "constant" : { },
-          "csimple" : { },
           "datasonnet" : { },
           "exchangeProperty" : { },
           "groovy" : { },
@@ -8455,8 +8384,6 @@
               }, {
                 "required" : [ "constant" ]
               }, {
-                "required" : [ "csimple" ]
-              }, {
                 "required" : [ "datasonnet" ]
               }, {
                 "required" : [ "exchangeProperty" ]
@@ -8547,7 +8474,6 @@
             "description" : "The note for this node"
           },
           "constant" : { },
-          "csimple" : { },
           "datasonnet" : { },
           "exchangeProperty" : { },
           "groovy" : { },
@@ -9139,8 +9065,6 @@
               }, {
                 "required" : [ "constant" ]
               }, {
-                "required" : [ "csimple" ]
-              }, {
                 "required" : [ "datasonnet" ]
               }, {
                 "required" : [ "exchangeProperty" ]
@@ -9236,7 +9160,6 @@
             "description" : "Reference to a custom PredicateExceptionFactory for creating the exception when validation fails."
           },
           "constant" : { },
-          "csimple" : { },
           "datasonnet" : { },
           "exchangeProperty" : { },
           "groovy" : { },
@@ -9298,8 +9221,6 @@
                 "required" : [ "expression" ]
               }, {
                 "required" : [ "constant" ]
-              }, {
-                "required" : [ "csimple" ]
               }, {
                 "required" : [ "datasonnet" ]
               }, {
@@ -9397,7 +9318,6 @@
             }
           },
           "constant" : { },
-          "csimple" : { },
           "datasonnet" : { },
           "exchangeProperty" : { },
           "groovy" : { },
@@ -13138,53 +13058,6 @@
           }
         }
       },
-      "org.apache.camel.model.language.CSimpleExpression" : {
-        "title" : "CSimple",
-        "description" : "Evaluate a compiled simple expression",
-        "deprecated" : true,
-        "oneOf" : [ {
-          "type" : "string"
-        }, {
-          "type" : "object",
-          "additionalProperties" : false,
-          "properties" : {
-            "expression" : {
-              "type" : "string",
-              "title" : "Expression",
-              "description" : "The expression value in your chosen language syntax."
-            },
-            "id" : {
-              "type" : "string",
-              "title" : "Id",
-              "description" : "The id of this node."
-            },
-            "pretty" : {
-              "type" : "boolean",
-              "title" : "Pretty",
-              "description" : "To pretty format the output (only JSon or XML supported).",
-              "default" : false
-            },
-            "resultType" : {
-              "type" : "string",
-              "title" : "Result Type",
-              "description" : "The class of the result type (type from output)."
-            },
-            "trim" : {
-              "type" : "boolean",
-              "title" : "Trim",
-              "description" : "Whether to trim the source code to remove leading and trailing whitespaces and line breaks.",
-              "default" : true
-            },
-            "trimResult" : {
-              "type" : "boolean",
-              "title" : "Trim Result",
-              "description" : "Whether to trim the returned values when this language is in use.",
-              "default" : false
-            }
-          }
-        } ],
-        "required" : [ "expression" ]
-      },
       "org.apache.camel.model.language.ConstantExpression" : {
         "title" : "Constant",
         "description" : "A fixed value set only once during the route startup",
@@ -13307,14 +13180,6 @@
             "properties" : {
               "constant" : {
                 "$ref" : "#/items/definitions/org.apache.camel.model.language.ConstantExpression"
-              }
-            }
-          }, {
-            "type" : "object",
-            "required" : [ "csimple" ],
-            "properties" : {
-              "csimple" : {
-                "$ref" : "#/items/definitions/org.apache.camel.model.language.CSimpleExpression"
               }
             }
           }, {
@@ -13537,7 +13402,6 @@
         } ],
         "properties" : {
           "constant" : { },
-          "csimple" : { },
           "datasonnet" : { },
           "exchangeProperty" : { },
           "groovy" : { },

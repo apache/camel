@@ -1223,13 +1223,6 @@ public class JavaDslModelWriter extends JavaDslModelWriterSupport {
         doWriteSpringTransactionErrorHandlerDefinition(sb, def);
         return sb.toString();
     }
-    public String writeCSimpleExpression(CSimpleExpression def) {
-        resetState();
-        StringBuilder sb = new StringBuilder();
-        beginStep(sb, "csimple", def);
-        doWriteCSimpleExpression(sb, def);
-        return sb.toString();
-    }
     public String writeConstantExpression(ConstantExpression def) {
         resetState();
         StringBuilder sb = new StringBuilder();
@@ -3464,12 +3457,6 @@ public class JavaDslModelWriter extends JavaDslModelWriterSupport {
     protected void doWriteTransactionErrorHandlerDefinition(StringBuilder sb, TransactionErrorHandlerDefinition def) {
         doWriteTransactionErrorHandlerDefinitionAttributes(sb, def);
         doWriteDefaultErrorHandlerDefinitionElements(sb, def);
-    }
-    protected void doWriteCSimpleExpression(StringBuilder sb, CSimpleExpression def) {
-        doWriteTypedExpressionDefinitionAttributes(sb, def);
-        doWriteAttribute(sb, "trimResult", def.getTrimResult(), "false");
-        doWriteAttribute(sb, "pretty", def.getPretty(), "false");
-        doWriteValue(sb, def.getExpression());
     }
     protected void doWriteConstantExpression(StringBuilder sb, ConstantExpression def) {
         doWriteTypedExpressionDefinitionAttributes(sb, def);
@@ -6270,11 +6257,6 @@ public class JavaDslModelWriter extends JavaDslModelWriterSupport {
     protected void doWriteExpressionDefinitionRef(StringBuilder sb, ExpressionDefinition v) {
         if (v != null) {
             switch (v.getClass().getSimpleName()) {
-                case "CSimpleExpression" -> {
-                    beginStep(sb, "csimple", v);
-                    doWriteCSimpleExpression(sb, (CSimpleExpression) v);
-                    endStep(sb, "csimple", v);
-                }
                 case "ConstantExpression" -> {
                     beginStep(sb, "constant", v);
                     doWriteConstantExpression(sb, (ConstantExpression) v);

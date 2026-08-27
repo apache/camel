@@ -20,8 +20,6 @@ import org.apache.camel.ExchangeTestSupport;
 import org.apache.camel.Expression;
 import org.apache.camel.spi.SimpleLanguageFunctionFactory;
 
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-
 public abstract class AbstractSimpleFunctionFactoryTestSupport extends ExchangeTestSupport {
 
     protected abstract SimpleLanguageFunctionFactory createFactory();
@@ -34,12 +32,5 @@ public abstract class AbstractSimpleFunctionFactoryTestSupport extends ExchangeT
         Expression expression = context.resolveLanguage("simple").createExpression("${" + function + "}");
         expression.init(context);
         return expression.evaluate(exchange, type);
-    }
-
-    @SuppressWarnings("deprecation")
-    protected String createCode(String function) {
-        String code = createFactory().createCode(context, function, 0);
-        assertNotNull(code, "No code could be created for function: " + function);
-        return code;
     }
 }
