@@ -31,13 +31,16 @@ import java.util.function.Supplier;
 import org.apache.camel.CamelContextAware;
 import org.apache.camel.Endpoint;
 import org.apache.camel.ErrorHandlerFactory;
+import org.apache.camel.Exchange;
 import org.apache.camel.ExchangeConstantProvider;
 import org.apache.camel.ExtendedCamelContext;
+import org.apache.camel.NoTypeConversionAvailableException;
 import org.apache.camel.Processor;
 import org.apache.camel.ResolveEndpointFailedException;
 import org.apache.camel.Route;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.Service;
+import org.apache.camel.TypeConversionException;
 import org.apache.camel.TypeConverter;
 import org.apache.camel.spi.AutoMockInterceptStrategy;
 import org.apache.camel.spi.BootstrapCloseable;
@@ -1050,7 +1053,7 @@ class DefaultCamelContextExtension implements ExtendedCamelContext {
     }
 
     void resetTypeConverter() {
-        typeConverter = null;
+        typeConverter = StoppedTypeConverter.INSTANCE;
     }
 
     TypeConverter getTypeConverter() {
@@ -1254,4 +1257,59 @@ class DefaultCamelContextExtension implements ExtendedCamelContext {
     private static Logger logger() {
         return Holder.LOG;
     }
+
+    /**
+     * Sentinel {@link TypeConverter} installed by {@link #resetTypeConverter()} when the CamelContext stops. Every
+     * method throws {@link IllegalStateException} so that any call site that invokes
+     * {@code getTypeConverter().convertTo(…)} after shutdown gets a clear, actionable error instead of a bare
+     * {@link NullPointerException}.
+     */
+    private static final class StoppedTypeConverter implements TypeConverter {
+
+        static final StoppedTypeConverter INSTANCE = new StoppedTypeConverter();
+
+        private static IllegalStateException stopped() {
+            return new IllegalStateException(
+                    "TypeConverter is not available because the CamelContext has been stopped"
+                                             + " (context not started, stopped, or not initialized)");
+        }
+
+        @Override
+        public boolean allowNull() {
+            return false;
+        }
+
+        @Override
+        public <T> T convertTo(Class<T> type, Object value) throws TypeConversionException {
+            throw stopped();
+        }
+
+        @Override
+        public <T> T convertTo(Class<T> type, Exchange exchange, Object value) throws TypeConversionException {
+            throw stopped();
+        }
+
+        @Override
+        public <T> T mandatoryConvertTo(Class<T> type, Object value)
+                throws TypeConversionException, NoTypeConversionAvailableException {
+            throw stopped();
+        }
+
+        @Override
+        public <T> T mandatoryConvertTo(Class<T> type, Exchange exchange, Object value)
+                throws TypeConversionException, NoTypeConversionAvailableException {
+            throw stopped();
+        }
+
+        @Override
+        public <T> T tryConvertTo(Class<T> type, Object value) {
+            throw stopped();
+        }
+
+        @Override
+        public <T> T tryConvertTo(Class<T> type, Exchange exchange, Object value) {
+            throw stopped();
+        }
+    }
+
 }
