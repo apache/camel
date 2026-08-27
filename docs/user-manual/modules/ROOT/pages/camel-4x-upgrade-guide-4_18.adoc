@@ -1642,24 +1642,3 @@ that resolve outside the configured directory are rejected.
 
 If `downloadFileName` is configured with an expression (i.e. it contains `$`), the local
 path is built by that expression as before and is not subject to this check.
-
-=== camel-spring-redis - the default serializer applies a deserialization filter
-
-The default serializer, `JdkSerializationRedisSerializer`, now installs a
-`java.io.ObjectInputFilter` while reading Redis payloads. Previously no filter was applied at all.
-This affects both the consumer, which deserializes the payload of every message published to the
-subscribed channels, and the producer read commands, which deserialize the values stored in Redis.
-
-When no explicit pattern is configured, the JVM-wide `jdk.serialFilter` is honoured if set,
-otherwise a conservative default allow-list is applied (it permits standard Java and Apache Camel
-types and denies `java.net.**`). Routes that exchange classes outside that allow-list must widen it
-through the new `deserializationFilter` endpoint option, for example:
-
-[source,java]
-----
-from("spring-redis://localhost:6379?command=SUBSCRIBE&channels=myChannel"
-     + "&deserializationFilter=com.example.model.**;java.**;!*")
-----
-
-Setting the `serializer` option to a custom `RedisSerializer` bypasses the filter entirely, since
-Camel then no longer controls how the payload is read.
