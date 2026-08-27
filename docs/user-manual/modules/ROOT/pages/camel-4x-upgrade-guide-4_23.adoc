@@ -456,3 +456,24 @@ knative:endpoint/myEndpoint?muteException=false
 `org.apache.camel.component.knative.spi.KnativeTransportConfiguration` gains a fourth constructor
 argument for the flag. The three-argument constructor is retained and mutes the exception, so existing
 code compiles unchanged and picks up the new default.
+
+=== camel-paho-mqtt5
+
+When `automaticReconnect=true` and the MQTT broker reconnects, the consumer now restarts the route
+if the post-reconnect `subscribe()` call fails. Previously a failed resubscription (for example,
+when the broker does not send a SUBACK and the Paho keepAlive timer triggers `MqttException 32000`)
+was only logged at ERROR level with no recovery action, leaving the route in `Started` state while
+silently consuming no messages (zombie state).
+
+If the resubscribe fails and the consumer owns the MQTT client (the default), it automatically stops
+and restarts the route to force a clean reconnect. If the restart also fails (for example, the broker
+is still unavailable), the route is left in `Stopped` state. Routes using a user-provided client are
+not affected by this change. Configuring Camel's `SupervisingRouteController` allows the framework to
+keep retrying with exponential backoff until the broker recovers:
+
+[source,properties]
+----
+camel.routeController.enabled = true
+camel.routeController.backOffDelay = 2000
+camel.routeController.backOffMaxDelay = 60000
+----
