@@ -2234,11 +2234,6 @@
       </dependency>
       <dependency>
         <groupId>org.apache.camel</groupId>
-        <artifactId>camel-splunk</artifactId>
-        <version>4.23.0-SNAPSHOT</version>
-      </dependency>
-      <dependency>
-        <groupId>org.apache.camel</groupId>
         <artifactId>camel-splunk-hec</artifactId>
         <version>4.23.0-SNAPSHOT</version>
       </dependency>

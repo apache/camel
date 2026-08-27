@@ -20,7 +20,6 @@ A range of Camel components support batching such as:
 * xref:components::minio-component.adoc[Minio]
 * xref:components::mybatis-component.adoc[MyBatis]
 * xref:components::slack-component.adoc[Slack]
-* xref:components::splunk-component.adoc[Splunk]
 * xref:components::sql-component.adoc[SQL]
 
 == Options

@@ -4609,19 +4609,6 @@ public interface ComponentsBuilderFactory {
         return SolrComponentBuilderFactory.solr();
     }
     /**
-     * Splunk (camel-splunk)
-     * Publish or search for events in Splunk.
-     * 
-     * Category: iot,monitoring
-     * Since: 2.13
-     * Maven coordinates: org.apache.camel:camel-splunk
-     * 
-     * @return the dsl builder
-     */
-    static SplunkComponentBuilderFactory.SplunkComponentBuilder splunk() {
-        return SplunkComponentBuilderFactory.splunk();
-    }
-    /**
      * Splunk HEC (camel-splunk-hec)
      * The splunk component allows publishing events in Splunk using the HTTP
      * Event Collector.
