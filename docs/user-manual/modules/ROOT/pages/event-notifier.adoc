@@ -151,7 +151,7 @@ context.getManagementStrategy().getEventFactory().setTimestampEnabled(true);
 == Event JSON serialization
 
 Since Camel 4.23, every `CamelEvent` can be serialized to structured JSON using `asJSon()` and `toJSon(int indent)`.
-This provides the same kind of structured metadata access as xref:components::others/backlog-tracer.adoc[Backlog Tracer] and the Error Registry backlog messages, but for live EventNotifier events.
+This provides the same kind of structured metadata access as xref:backlog-tracer.adoc[Backlog Tracer] and the Error Registry backlog messages, but for live EventNotifier events.
 
 [source,java]
 ----
