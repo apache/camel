@@ -21,6 +21,7 @@
 ** xref:ognl-language.adoc[OGNL]
 ** xref:python-language.adoc[Python]
 ** xref:python3-language.adoc[Python 3]
+** xref:quickjs-language.adoc[QuickJS]
 ** xref:ref-language.adoc[Ref]
 ** xref:simple-language.adoc[Simple]
 ** xref:simple-advanced.adoc[Simple - Advanced Features]

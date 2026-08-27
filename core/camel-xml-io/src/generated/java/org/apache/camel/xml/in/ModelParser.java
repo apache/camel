@@ -2341,6 +2341,9 @@ public class ModelParser extends BaseParser {
     protected PythonExpression doParsePythonExpression() throws IOException, XmlPullParserException {
         return doParse(new PythonExpression(), typedExpressionDefinitionAttributeHandler(), noElementHandler(), expressionDefinitionValueHandler());
     }
+    protected QuickjsExpression doParseQuickjsExpression() throws IOException, XmlPullParserException {
+        return doParse(new QuickjsExpression(), typedExpressionDefinitionAttributeHandler(), noElementHandler(), expressionDefinitionValueHandler());
+    }
     protected RefExpression doParseRefExpression() throws IOException, XmlPullParserException {
         return doParse(new RefExpression(), typedExpressionDefinitionAttributeHandler(), noElementHandler(), expressionDefinitionValueHandler());
     }
@@ -2921,6 +2924,7 @@ public class ModelParser extends BaseParser {
             case "ognl": return doParseOgnlExpression();
             case "python3": return doParsePython3Expression();
             case "python": return doParsePythonExpression();
+            case "quickjs": return doParseQuickjsExpression();
             case "ref": return doParseRefExpression();
             case "simple": return doParseSimpleExpression();
             case "spel": return doParseSpELExpression();

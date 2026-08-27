@@ -35,6 +35,7 @@ import org.apache.camel.model.language.MvelExpression;
 import org.apache.camel.model.language.OgnlExpression;
 import org.apache.camel.model.language.Python3Expression;
 import org.apache.camel.model.language.PythonExpression;
+import org.apache.camel.model.language.QuickjsExpression;
 import org.apache.camel.model.language.RefExpression;
 import org.apache.camel.model.language.SimpleExpression;
 import org.apache.camel.model.language.SpELExpression;
@@ -368,6 +369,22 @@ public final class LanguageBuilderFactory {
      */
     public Python3Expression.Builder python3(String expression) {
         var builder = python3();
+        builder.expression(expression);
+        return builder;
+    }
+
+    /**
+     * Uses the QuickJS language
+     */
+    public QuickjsExpression.Builder quickjs() {
+        return new QuickjsExpression.Builder();
+    }
+
+    /**
+     * Uses the QuickJS language
+     */
+    public QuickjsExpression.Builder quickjs(String expression) {
+        var builder = quickjs();
         builder.expression(expression);
         return builder;
     }

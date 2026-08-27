@@ -13,6 +13,6 @@
   },
   "properties": {
     "key": { "index": 0, "kind": "attribute", "displayName": "Key", "group": "common", "required": true, "type": "string", "javaType": "java.lang.String", "deprecated": false, "autowired": false, "secret": false, "description": "The property key." },
-    "expression": { "index": 1, "kind": "expression", "displayName": "Expression", "group": "common", "required": true, "type": "object", "javaType": "org.apache.camel.model.language.ExpressionDefinition", "oneOf": [ "constant", "csimple", "datasonnet", "exchangeProperty", "groovy", "header", "hl7terser", "jactl", "java", "joor", "jq", "js", "jsonpath", "language", "method", "mvel", "ognl", "python", "python3", "ref", "simple", "spel", "tokenize", "variable", "wasm", "xpath", "xquery", "xtokenize" ], "deprecated": false, "autowired": false, "secret": false, "description": "The property value as an expression." }
+    "expression": { "index": 1, "kind": "expression", "displayName": "Expression", "group": "common", "required": true, "type": "object", "javaType": "org.apache.camel.model.language.ExpressionDefinition", "oneOf": [ "constant", "csimple", "datasonnet", "exchangeProperty", "groovy", "header", "hl7terser", "jactl", "java", "joor", "jq", "js", "jsonpath", "language", "method", "mvel", "ognl", "python", "python3", "quickjs", "ref", "simple", "spel", "tokenize", "variable", "wasm", "xpath", "xquery", "xtokenize" ], "deprecated": false, "autowired": false, "secret": false, "description": "The property value as an expression." }
   }
 }

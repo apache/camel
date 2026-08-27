@@ -1363,6 +1363,13 @@ public class JavaDslModelWriter extends JavaDslModelWriterSupport {
         doWritePythonExpression(sb, def);
         return sb.toString();
     }
+    public String writeQuickjsExpression(QuickjsExpression def) {
+        resetState();
+        StringBuilder sb = new StringBuilder();
+        beginStep(sb, "quickjs", def);
+        doWriteQuickjsExpression(sb, def);
+        return sb.toString();
+    }
     public String writeRefExpression(RefExpression def) {
         resetState();
         StringBuilder sb = new StringBuilder();
@@ -3567,6 +3574,10 @@ public class JavaDslModelWriter extends JavaDslModelWriterSupport {
         doWriteValue(sb, def.getExpression());
     }
     protected void doWritePythonExpression(StringBuilder sb, PythonExpression def) {
+        doWriteTypedExpressionDefinitionAttributes(sb, def);
+        doWriteValue(sb, def.getExpression());
+    }
+    protected void doWriteQuickjsExpression(StringBuilder sb, QuickjsExpression def) {
         doWriteTypedExpressionDefinitionAttributes(sb, def);
         doWriteValue(sb, def.getExpression());
     }
@@ -6358,6 +6369,11 @@ public class JavaDslModelWriter extends JavaDslModelWriterSupport {
                     beginStep(sb, "python", v);
                     doWritePythonExpression(sb, (PythonExpression) v);
                     endStep(sb, "python", v);
+                }
+                case "QuickjsExpression" -> {
+                    beginStep(sb, "quickjs", v);
+                    doWriteQuickjsExpression(sb, (QuickjsExpression) v);
+                    endStep(sb, "quickjs", v);
                 }
                 case "RefExpression" -> {
                     beginStep(sb, "ref", v);
