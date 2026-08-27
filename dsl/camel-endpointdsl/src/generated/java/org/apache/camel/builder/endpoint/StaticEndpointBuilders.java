@@ -9435,60 +9435,6 @@ public class StaticEndpointBuilders {
         return JsltEndpointBuilderFactory.endpointBuilder(componentName, path);
     }
     /**
-     * JsonPatch (camel-json-patch)
-     * Transforms JSON using JSON patch (RFC 6902).
-     * 
-     * Category: transformation
-     * Since: 3.12
-     * Maven coordinates: org.apache.camel:camel-json-patch
-     * 
-     * Syntax: <code>json-patch:resourceUri</code>
-     * 
-     * Path parameter: resourceUri (required)
-     * Path to the resource. You can prefix with: classpath, file, http, ref, or
-     * bean. classpath, file and http loads the resource using these protocols
-     * (classpath is default). ref will lookup the resource in the registry.
-     * bean will call a method on a bean to be used as the resource. For bean
-     * you can specify the method name after dot, eg bean:myBean.myMethod.
-     * This option can also be loaded from an existing file, by prefixing with
-     * file: or classpath: followed by the location of the file.
-     * 
-     * @param path resourceUri
-     * @return the dsl builder
-     */
-    @Deprecated
-    public static JsonPatchEndpointBuilderFactory.JsonPatchEndpointBuilder jsonPatch(String path) {
-        return jsonPatch("json-patch", path);
-    }
-    /**
-     * JsonPatch (camel-json-patch)
-     * Transforms JSON using JSON patch (RFC 6902).
-     * 
-     * Category: transformation
-     * Since: 3.12
-     * Maven coordinates: org.apache.camel:camel-json-patch
-     * 
-     * Syntax: <code>json-patch:resourceUri</code>
-     * 
-     * Path parameter: resourceUri (required)
-     * Path to the resource. You can prefix with: classpath, file, http, ref, or
-     * bean. classpath, file and http loads the resource using these protocols
-     * (classpath is default). ref will lookup the resource in the registry.
-     * bean will call a method on a bean to be used as the resource. For bean
-     * you can specify the method name after dot, eg bean:myBean.myMethod.
-     * This option can also be loaded from an existing file, by prefixing with
-     * file: or classpath: followed by the location of the file.
-     * 
-     * @param componentName to use a custom component name for the endpoint
-     * instead of the default name
-     * @param path resourceUri
-     * @return the dsl builder
-     */
-    @Deprecated
-    public static JsonPatchEndpointBuilderFactory.JsonPatchEndpointBuilder jsonPatch(String componentName, String path) {
-        return JsonPatchEndpointBuilderFactory.endpointBuilder(componentName, path);
-    }
-    /**
      * JSON Schema Validator (camel-json-validator)
      * Validate JSON payloads using NetworkNT JSON Schema.
      * 

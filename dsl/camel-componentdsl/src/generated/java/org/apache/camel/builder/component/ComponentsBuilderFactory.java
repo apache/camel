@@ -2917,19 +2917,6 @@ public interface ComponentsBuilderFactory {
         return JsltComponentBuilderFactory.jslt();
     }
     /**
-     * JsonPatch (camel-json-patch)
-     * Transforms JSON using JSON patch (RFC 6902).
-     * 
-     * Category: transformation
-     * Since: 3.12
-     * Maven coordinates: org.apache.camel:camel-json-patch
-     * 
-     * @return the dsl builder
-     */
-    static JsonPatchComponentBuilderFactory.JsonPatchComponentBuilder jsonPatch() {
-        return JsonPatchComponentBuilderFactory.jsonPatch();
-    }
-    /**
      * JSON Schema Validator (camel-json-validator)
      * Validate JSON payloads using NetworkNT JSON Schema.
      * 

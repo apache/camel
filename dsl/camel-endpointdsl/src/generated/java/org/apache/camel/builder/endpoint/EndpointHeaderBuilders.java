@@ -2257,20 +2257,6 @@ public class EndpointHeaderBuilders {
         return JsltEndpointBuilderFactory.JsltHeaderNameBuilder.INSTANCE;
     }
     /**
-     * JsonPatch (camel-json-patch)
-     * Transforms JSON using JSON patch (RFC 6902).
-     * 
-     * Category: transformation
-     * Since: 3.12
-     * Maven coordinates: org.apache.camel:camel-json-patch
-     * 
-     * @return the dsl builder for the headers' name.
-     */
-    @Deprecated
-    public static JsonPatchEndpointBuilderFactory.JsonPatchHeaderNameBuilder jsonPatch() {
-        return JsonPatchEndpointBuilderFactory.JsonPatchHeaderNameBuilder.INSTANCE;
-    }
-    /**
      * JT400 (camel-jt400)
      * Exchanges messages with an IBM i system using data queues, message
      * queues, or program call. IBM i is the replacement for AS/400 and iSeries
