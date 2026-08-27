@@ -272,6 +272,24 @@ public interface KnativeComponentBuilderFactory {
     
         
         /**
+         * If enabled and an Exchange failed processing on the consumer side the
+         * response's body won't contain the exception's stack trace.
+         * 
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * 
+         * Default: true
+         * Group: consumer
+         * 
+         * @param muteException the value to set
+         * @return the dsl builder
+         */
+        default KnativeComponentBuilder muteException(boolean muteException) {
+            doSetProperty("muteException", muteException);
+            return this;
+        }
+    
+        
+        /**
          * Transforms the reply into a cloud event that will be processed by the
          * caller. When listening to events from a Knative Broker, if this flag
          * is enabled, replies will be published to the same Broker where the
@@ -473,6 +491,7 @@ public interface KnativeComponentBuilderFactory {
             case "transportOptions": getOrCreateConfiguration((KnativeComponent) component).setTransportOptions((java.util.Map) value); return true;
             case "typeId": getOrCreateConfiguration((KnativeComponent) component).setTypeId((java.lang.String) value); return true;
             case "bridgeErrorHandler": ((KnativeComponent) component).setBridgeErrorHandler((boolean) value); return true;
+            case "muteException": getOrCreateConfiguration((KnativeComponent) component).setMuteException((boolean) value); return true;
             case "replyWithCloudEvent": getOrCreateConfiguration((KnativeComponent) component).setReplyWithCloudEvent((boolean) value); return true;
             case "reply": getOrCreateConfiguration((KnativeComponent) component).setReply((java.lang.Boolean) value); return true;
             case "lazyStartProducer": ((KnativeComponent) component).setLazyStartProducer((boolean) value); return true;
