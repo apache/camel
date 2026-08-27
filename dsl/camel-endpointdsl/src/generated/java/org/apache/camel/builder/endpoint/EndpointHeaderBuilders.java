@@ -3511,6 +3511,20 @@ public class EndpointHeaderBuilders {
         return SolrEndpointBuilderFactory.SolrHeaderNameBuilder.INSTANCE;
     }
     /**
+     * SPIFFE (camel-spiffe)
+     * Fetch and validate SPIFFE workload identity (X.509-SVID and JWT-SVID)
+     * from the SPIFFE Workload API.
+     * 
+     * Category: security
+     * Since: 4.23
+     * Maven coordinates: org.apache.camel:camel-spiffe
+     * 
+     * @return the dsl builder for the headers' name.
+     */
+    public static SpiffeEndpointBuilderFactory.SpiffeHeaderNameBuilder spiffe() {
+        return SpiffeEndpointBuilderFactory.SpiffeHeaderNameBuilder.INSTANCE;
+    }
+    /**
      * Splunk HEC (camel-splunk-hec)
      * The splunk component allows publishing events in Splunk using the HTTP
      * Event Collector.

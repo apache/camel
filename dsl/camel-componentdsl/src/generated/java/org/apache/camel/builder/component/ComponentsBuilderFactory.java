@@ -4609,6 +4609,20 @@ public interface ComponentsBuilderFactory {
         return SolrComponentBuilderFactory.solr();
     }
     /**
+     * SPIFFE (camel-spiffe)
+     * Fetch and validate SPIFFE workload identity (X.509-SVID and JWT-SVID)
+     * from the SPIFFE Workload API.
+     * 
+     * Category: security
+     * Since: 4.23
+     * Maven coordinates: org.apache.camel:camel-spiffe
+     * 
+     * @return the dsl builder
+     */
+    static SpiffeComponentBuilderFactory.SpiffeComponentBuilder spiffe() {
+        return SpiffeComponentBuilderFactory.spiffe();
+    }
+    /**
      * Splunk HEC (camel-splunk-hec)
      * The splunk component allows publishing events in Splunk using the HTTP
      * Event Collector.

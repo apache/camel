@@ -1,0 +1,89 @@
+= SPIFFE Component
+:doctitle: SPIFFE
+:shortname: spiffe
+:artifactid: camel-spiffe
+:description: Fetch and validate SPIFFE workload identity (X.509-SVID and JWT-SVID) from the SPIFFE Workload API.
+:since: 4.23
+:supportlevel: Preview
+:tabs-sync-option:
+:component-header: Only producer is supported
+
+*Since Camel {since}*
+
+*{component-header}*
+
+The SPIFFE component integrates with the https://spiffe.io/[SPIFFE] (Secure Production Identity Framework
+For Everyone) Workload API to provide cryptographic workload identity to Camel routes. It talks to a local
+SPIFFE Workload API endpoint — for example the one exposed by a https://spiffe.io/docs/latest/spire-about/[SPIRE]
+agent — to fetch and validate SVIDs (SPIFFE Verifiable Identity Documents):
+
+* *X.509-SVID*: an X.509 certificate whose SPIFFE ID is encoded as a URI SAN, used for mutual TLS.
+* *JWT-SVID*: a JWT whose subject is the SPIFFE ID, used as a bearer token for workload-to-workload authentication.
+
+Maven users will need to add the following dependency to their `pom.xml`.
+
+[source,xml]
+------------------------------------------------------------
+<dependency>
+    <groupId>org.apache.camel</groupId>
+    <artifactId>camel-spiffe</artifactId>
+    <version>x.x.x</version>
+    <!-- use the same version as your Camel core version -->
+</dependency>
+------------------------------------------------------------
+
+== URI Format
+
+------------------------------------------------------------
+spiffe:label[?options]
+------------------------------------------------------------
+
+Where `label` is a logical name for the endpoint.
+
+// component options: START
+include::partial$component-configure-options.adoc[]
+include::partial$component-endpoint-options.adoc[]
+include::partial$component-endpoint-headers.adoc[]
+// component options: END
+
+== Workload API endpoint
+
+The address of the SPIFFE Workload API is taken from the `spiffeSocketPath` option, or, when that is not set, from
+the standard `SPIFFE_ENDPOINT_SOCKET` environment variable — for example `unix:///tmp/spire-agent/public/api.sock`.
+For advanced scenarios an already-configured `io.spiffe.workloadapi.WorkloadApiClient` can be supplied through the
+`workloadApiClient` option; in that case the component neither creates nor closes the client.
+
+== Operations
+
+The component supports the following producer operations:
+
+* `fetchX509Svid` — fetches the default X.509-SVID from the Workload API. The message body is set to the
+`io.spiffe.svid.x509svid.X509Svid` (certificate chain, private key and SPIFFE ID) and the `CamelSpiffeSpiffeId`
+header to its SPIFFE ID.
+* `fetchJwtSvid` — fetches a JWT-SVID for the configured `audience` (or the `CamelSpiffeAudience` header). The
+message body is set to the JWT token string, with the `CamelSpiffeSpiffeId` and `CamelSpiffeExpiry` headers.
+* `validateJwtSvid` — validates the JWT-SVID passed in the `CamelSpiffeToken` header (or the body) against the
+`audience`. The message body is set to the validated `io.spiffe.svid.jwtsvid.JwtSvid`.
+
+[NOTE]
+====
+The `fetchX509Svid` and `fetchJwtSvid` operations place sensitive key material on the message: the `X509Svid`
+carries the workload's private key, and the JWT-SVID is a bearer token. Route authors are trusted with Exchange
+contents, but you should avoid logging or tracing the message body for these operations — for example via the
+`log`/`trace` components or the message-history / breadcrumb EIPs — to prevent accidental disclosure of the key
+or token.
+====
+
+== Example
+
+Fetch a JWT-SVID for an outbound call:
+
+[source,java]
+------------------------------------------------------------
+from("direct:start")
+    .to("spiffe:identity?operation=fetchJwtSvid&audience=spiffe://example.org/backend")
+    .setHeader("Authorization", simple("Bearer ${body}"))
+    .to("http://backend.example.org/api");
+------------------------------------------------------------
+
+include::spring-boot:partial$starter.adoc[]
