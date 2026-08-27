@@ -50,8 +50,8 @@ include::partial$component-endpoint-headers.adoc[]
 
 === Control headers
 
-Since Camel 4.20, the `CamelExecCommand*` headers that override URI options are
-disabled by default. This prevents untrusted message sources from redirecting
+Since Camel 4.20, the exec in-headers that override URI options (`CamelExecCommand*`,
+`CamelExecExitValues`, and `CamelExecUseStderrOnEmptyStdout`) are disabled by default. This prevents untrusted message sources from redirecting
 command execution. To use dynamic executable, arguments, working directory, or
 other command settings from headers, enable the opt-in flag on the endpoint or
 component:
@@ -85,9 +85,9 @@ YAML::
 ----
 ====
 
-When `allowControlHeaders` is `false` (the default), any `CamelExecCommand*`
-headers on the exchange are ignored and a WARN is logged. URI parameters such
-as `args` continue to work as before.
+When `allowControlHeaders` is `false` (the default), those in-headers on the exchange
+are ignored (they are not removed), and a WARN is logged once per binding instance.
+URI parameters such as `args` continue to work as before.
 
 === Message body
 

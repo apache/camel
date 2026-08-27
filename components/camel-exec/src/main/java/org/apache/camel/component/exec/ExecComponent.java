@@ -102,9 +102,11 @@ public class ExecComponent extends DefaultComponent {
     }
 
     /**
-     * Whether to allow to use Camel headers or not (default false). Enabling this allows to specify dynamic command
-     * line arguments via message header. However this can be seen as a potential security vulnerability if the header
-     * is coming from a malicious user, so use this with care.
+     * Whether {@code CamelExec*} in-headers may override URI options (default {@code false} since Camel 4.20). When
+     * {@code false}, {@code CamelExecCommandExecutable}, {@code CamelExecCommandArgs}, {@code CamelExecCommandOutFile},
+     * {@code CamelExecCommandWorkingDir}, {@code CamelExecCommandTimeout}, {@code CamelExecExitValues},
+     * {@code CamelExecUseStderrOnEmptyStdout}, and {@code CamelExecCommandLogLevel} are ignored. Enable only when those
+     * headers come from a trusted route, not from an untrusted consumer.
      */
     public void setAllowControlHeaders(boolean allowControlHeaders) {
         this.allowControlHeaders = allowControlHeaders;

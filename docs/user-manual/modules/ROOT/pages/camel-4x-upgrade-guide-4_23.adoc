@@ -13,6 +13,18 @@ See the xref:camel-upgrade-recipes-tool.adoc[documentation] page for details.
 
 == Upgrading Camel 4.22 to 4.23
 
+=== camel-exec
+
+`allowControlHeaders` is now annotated `security = "insecure:dev"`.
+With `camel.main.profile = prod` the default policy for that category is `fail`,
+so an endpoint or component that sets `allowControlHeaders=true` will not start
+unless you relax `camel.security.insecureDevPolicy`.
+
+When the flag is `false` (the default), any remaining `CamelExecCommand*`,
+`CamelExecExitValues`, or `CamelExecUseStderrOnEmptyStdout` headers are ignored
+and a WARN is logged once per binding instance. Those headers never overrode the
+URI without the flag; they were just silent before.
+
 === Components removal
 
 ==== camel-archetype-spring

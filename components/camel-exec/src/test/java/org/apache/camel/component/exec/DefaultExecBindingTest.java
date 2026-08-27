@@ -78,6 +78,29 @@ class DefaultExecBindingTest extends CamelTestSupport {
         assertNull(exchange.getIn().getHeader(ExecBinding.EXEC_COMMAND_ARGS));
     }
 
+    @Test
+    void shouldKeepUriArgsWhenControlHeadersDisabled() throws Exception {
+        ExecCommand command = readInput("exec:echo?args=URIARGS-WORK", "ARGS-WORK", false);
+
+        assertEquals(List.of("URIARGS-WORK"), command.getArgs());
+        assertEquals("echo", command.getExecutable());
+    }
+
+    @Test
+    void shouldApplyControlHeadersFromEndpointOption() throws Exception {
+        DefaultExecBinding binding = new DefaultExecBinding();
+        ExecComponent component = context.getComponent("exec", ExecComponent.class);
+        component.setAllowControlHeaders(false);
+        ExecEndpoint execEndpoint = (ExecEndpoint) component.createEndpoint("exec:hostname?allowControlHeaders=true");
+        Exchange exchange = execEndpoint.createExchange();
+        exchange.getIn().setHeader(ExecBinding.EXEC_COMMAND_EXECUTABLE, "whoami");
+
+        ExecCommand command = binding.readInput(exchange, execEndpoint);
+
+        assertEquals("whoami", command.getExecutable());
+        assertNull(exchange.getIn().getHeader(ExecBinding.EXEC_COMMAND_EXECUTABLE));
+    }
+
     private ExecCommand readInput(String execEndpointUri, Object args, boolean allowControlHeaders) throws Exception {
         DefaultExecBinding binding = new DefaultExecBinding();
         ExecEndpoint execEndpoint = createExecEndpoint(execEndpointUri, allowControlHeaders);
