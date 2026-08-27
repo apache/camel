@@ -54,7 +54,9 @@ final class LumberjackUtil {
     static List<Integer> sendMessages(
             int port, SSLContextParameters sslContextParameters, List<Integer> windows, boolean waitForResult)
             throws InterruptedException {
-        NioEventLoopGroup eventLoopGroup = new NioEventLoopGroup();
+        // A single thread is enough for one client connection; avoids oversubscribing CPU when
+        // multiple client threads each spin up their own group (default is 2x available processors).
+        NioEventLoopGroup eventLoopGroup = new NioEventLoopGroup(1);
         try {
             // This list will hold the acknowledgment response sequence numbers
             List<Integer> responses = new ArrayList<>();
