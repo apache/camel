@@ -797,36 +797,21 @@ public final class URISupport {
     }
 
     private static String buildReorderingParameters(String scheme, String path, String query) throws URISyntaxException {
-        Map<String, Object> parameters = null;
-        if (query.indexOf('&') != -1) {
-            // only parse if there are parameters
-            parameters = URISupport.parseQuery(query, false, false);
-        }
+        Map<String, Object> parameters = URISupport.parseQuery(query, false, false);
 
-        if (parameters != null && parameters.size() != 1) {
-            final Set<String> entries = parameters.keySet();
-
+        if (parameters.size() > 1) {
             // reorder parameters a..z
-            // optimize and only build new query if the keys was resorted
-            boolean sort = false;
-            String prev = null;
-            for (String key : entries) {
-                if (prev != null) {
-                    int comp = key.compareTo(prev);
-                    if (comp < 0) {
-                        sort = true;
-                        break;
-                    }
-                }
-                prev = key;
-            }
-            if (sort) {
-                final String[] array = entries.toArray(new String[0]);
-                Arrays.sort(array);
+            // always rebuild (and thereby re-encode) the query, even if the keys were already in
+            // order, as rebuilding is the only place where parameter values get URL-encoded; skipping
+            // it would make the encoded output depend on the incidental original parameter order
+            final String[] array = parameters.keySet().toArray(new String[0]);
+            Arrays.sort(array);
 
-                query = URISupport.createQueryString(array, parameters, true);
-            }
-
+            query = URISupport.createQueryString(array, parameters, true);
+        } else {
+            // 0 or 1 parameter: order is not ambiguous, but still rebuild so the value is
+            // consistently encoded the same way as the multi-parameter case above
+            query = URISupport.createQueryString(parameters);
         }
         return buildUri(scheme, path, query);
     }
