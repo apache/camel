@@ -90,6 +90,7 @@ public class AS2ServerConnection {
     private final String userName;
     private final String password;
     private final String accessToken;
+    private final String asyncMdnAllowedHosts;
 
     /**
      * Stores the configuration for each consumer endpoint path (e.g., "/consumerA"). Uses LinkedHashMap to preserve
@@ -496,7 +497,8 @@ public class AS2ServerConnection {
                                 config.getSigningPrivateKey(),
                                 AS2ServerConnection.this.userName,
                                 AS2ServerConnection.this.password,
-                                AS2ServerConnection.this.accessToken);
+                                AS2ServerConnection.this.accessToken,
+                                AS2ServerConnection.this.asyncMdnAllowedHosts);
 
                         HttpRequest request = coreContext.getAttribute(HttpCoreContext.HTTP_REQUEST, HttpRequest.class);
                         AS2SignedDataGenerator gen = ResponseMDN.createSigningGenerator(
@@ -556,6 +558,28 @@ public class AS2ServerConnection {
                                String password,
                                String accessToken)
                                                    throws IOException {
+        this(as2Version, originServer, serverFqdn, serverPortNumber, signingAlgorithm, signingCertificateChain,
+             signingPrivateKey, decryptingPrivateKey, mdnMessageTemplate, validateSigningCertificateChain, sslContext,
+             userName, password, accessToken, null);
+    }
+
+    public AS2ServerConnection(String as2Version,
+                               String originServer,
+                               String serverFqdn,
+                               Integer serverPortNumber,
+                               AS2SignatureAlgorithm signingAlgorithm,
+                               Certificate[] signingCertificateChain,
+                               PrivateKey signingPrivateKey,
+                               PrivateKey decryptingPrivateKey,
+                               String mdnMessageTemplate,
+                               Certificate[] validateSigningCertificateChain,
+                               SSLContext sslContext,
+                               String userName,
+                               String password,
+                               String accessToken,
+                               String asyncMdnAllowedHosts)
+                                                            throws IOException {
+        this.asyncMdnAllowedHosts = asyncMdnAllowedHosts;
         this.as2Version = ObjectHelper.notNull(as2Version, "as2Version");
         this.originServer = ObjectHelper.notNull(originServer, "userAgent");
         this.serverFqdn = ObjectHelper.notNull(serverFqdn, "serverFqdn");
