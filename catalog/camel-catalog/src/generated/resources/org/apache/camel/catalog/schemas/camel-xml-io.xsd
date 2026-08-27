@@ -1278,6 +1278,15 @@ Evaluates a Python 3 expression
       </xs:documentation>
     </xs:annotation>
   </xs:element>
+  <xs:element name="quickjs" type="tns:quickjsExpression">
+    <xs:annotation>
+      <xs:documentation xml:lang="en">
+<![CDATA[
+Evaluates a JavaScript expression using QuickJS4J
+]]>
+      </xs:documentation>
+    </xs:annotation>
+  </xs:element>
   <xs:element name="randomLoadBalancer" type="tns:randomLoadBalancerDefinition">
     <xs:annotation>
       <xs:documentation xml:lang="en">
@@ -2757,6 +2766,7 @@ ensuring the aggregation repository is empty before shutdown. Default value: fal
       <xs:element ref="tns:ognl"/>
       <xs:element ref="tns:python3"/>
       <xs:element ref="tns:python"/>
+      <xs:element ref="tns:quickjs"/>
       <xs:element ref="tns:ref"/>
       <xs:element ref="tns:simple"/>
       <xs:element ref="tns:spel"/>
@@ -3157,6 +3167,7 @@ The exception class names (fully qualified) to catch.
           <xs:element ref="tns:ognl"/>
           <xs:element ref="tns:python3"/>
           <xs:element ref="tns:python"/>
+          <xs:element ref="tns:quickjs"/>
           <xs:element ref="tns:ref"/>
           <xs:element ref="tns:simple"/>
           <xs:element ref="tns:spel"/>
@@ -3215,6 +3226,7 @@ placeholders or simple expressions using only property placeholders are supporte
             <xs:element ref="tns:ognl"/>
             <xs:element ref="tns:python3"/>
             <xs:element ref="tns:python"/>
+            <xs:element ref="tns:quickjs"/>
             <xs:element ref="tns:ref"/>
             <xs:element ref="tns:simple"/>
             <xs:element ref="tns:spel"/>
@@ -4269,6 +4281,7 @@ To use a specific charset when converting.
           <xs:element ref="tns:ognl"/>
           <xs:element ref="tns:python3"/>
           <xs:element ref="tns:python"/>
+          <xs:element ref="tns:quickjs"/>
           <xs:element ref="tns:ref"/>
           <xs:element ref="tns:simple"/>
           <xs:element ref="tns:spel"/>
@@ -4333,6 +4346,7 @@ To use a custom thread pool if asyncDelay has been enabled.
           <xs:element ref="tns:ognl"/>
           <xs:element ref="tns:python3"/>
           <xs:element ref="tns:python"/>
+          <xs:element ref="tns:quickjs"/>
           <xs:element ref="tns:ref"/>
           <xs:element ref="tns:simple"/>
           <xs:element ref="tns:spel"/>
@@ -4410,6 +4424,7 @@ restriction, useful for low-code / Kamelet deployments; by default (unset) any s
           <xs:element ref="tns:ognl"/>
           <xs:element ref="tns:python3"/>
           <xs:element ref="tns:python"/>
+          <xs:element ref="tns:quickjs"/>
           <xs:element ref="tns:ref"/>
           <xs:element ref="tns:simple"/>
           <xs:element ref="tns:spel"/>
@@ -5033,6 +5048,7 @@ The logging level to use for logging transactional rollback. Default is WARN. De
             <xs:element ref="tns:ognl"/>
             <xs:element ref="tns:python3"/>
             <xs:element ref="tns:python"/>
+            <xs:element ref="tns:quickjs"/>
             <xs:element ref="tns:ref"/>
             <xs:element ref="tns:simple"/>
             <xs:element ref="tns:spel"/>
@@ -5287,6 +5303,7 @@ Global option value.
             <xs:element ref="tns:ognl"/>
             <xs:element ref="tns:python3"/>
             <xs:element ref="tns:python"/>
+            <xs:element ref="tns:quickjs"/>
             <xs:element ref="tns:ref"/>
             <xs:element ref="tns:simple"/>
             <xs:element ref="tns:spel"/>
@@ -6078,6 +6095,7 @@ The language to use for evaluating the log message, such as simple, groovy, or o
             <xs:element ref="tns:ognl"/>
             <xs:element ref="tns:python3"/>
             <xs:element ref="tns:python"/>
+            <xs:element ref="tns:quickjs"/>
             <xs:element ref="tns:ref"/>
             <xs:element ref="tns:simple"/>
             <xs:element ref="tns:spel"/>
@@ -10636,6 +10654,7 @@ Timeout in millis when polling from the external service. The default value is 2
           <xs:element ref="tns:ognl"/>
           <xs:element ref="tns:python3"/>
           <xs:element ref="tns:python"/>
+          <xs:element ref="tns:quickjs"/>
           <xs:element ref="tns:ref"/>
           <xs:element ref="tns:simple"/>
           <xs:element ref="tns:spel"/>
@@ -10823,6 +10842,7 @@ The property value.
       <xs:element ref="tns:ognl"/>
       <xs:element ref="tns:python3"/>
       <xs:element ref="tns:python"/>
+      <xs:element ref="tns:quickjs"/>
       <xs:element ref="tns:ref"/>
       <xs:element ref="tns:simple"/>
       <xs:element ref="tns:spel"/>
@@ -10867,6 +10887,7 @@ The property key.
           <xs:element ref="tns:ognl"/>
           <xs:element ref="tns:python3"/>
           <xs:element ref="tns:python"/>
+          <xs:element ref="tns:quickjs"/>
           <xs:element ref="tns:ref"/>
           <xs:element ref="tns:simple"/>
           <xs:element ref="tns:spel"/>
@@ -11171,6 +11192,7 @@ Name of the variable to remove.
             <xs:element ref="tns:ognl"/>
             <xs:element ref="tns:python3"/>
             <xs:element ref="tns:python"/>
+            <xs:element ref="tns:quickjs"/>
             <xs:element ref="tns:ref"/>
             <xs:element ref="tns:simple"/>
             <xs:element ref="tns:spel"/>
@@ -11871,6 +11893,7 @@ Description of the template parameter for documentation purposes.
           <xs:element ref="tns:ognl"/>
           <xs:element ref="tns:python3"/>
           <xs:element ref="tns:python"/>
+          <xs:element ref="tns:quickjs"/>
           <xs:element ref="tns:ref"/>
           <xs:element ref="tns:simple"/>
           <xs:element ref="tns:spel"/>
@@ -12126,6 +12149,7 @@ The frequency of samples as a message count, using a message-frequency approach.
           <xs:element ref="tns:ognl"/>
           <xs:element ref="tns:python3"/>
           <xs:element ref="tns:python"/>
+          <xs:element ref="tns:quickjs"/>
           <xs:element ref="tns:ref"/>
           <xs:element ref="tns:simple"/>
           <xs:element ref="tns:spel"/>
@@ -12179,6 +12203,7 @@ The uri of the endpoint to send to.
           <xs:element ref="tns:ognl"/>
           <xs:element ref="tns:python3"/>
           <xs:element ref="tns:python"/>
+          <xs:element ref="tns:quickjs"/>
           <xs:element ref="tns:ref"/>
           <xs:element ref="tns:simple"/>
           <xs:element ref="tns:spel"/>
@@ -12232,6 +12257,7 @@ The new exchange pattern to use from this point forward.
           <xs:element ref="tns:ognl"/>
           <xs:element ref="tns:python3"/>
           <xs:element ref="tns:python"/>
+          <xs:element ref="tns:quickjs"/>
           <xs:element ref="tns:ref"/>
           <xs:element ref="tns:simple"/>
           <xs:element ref="tns:spel"/>
@@ -12288,6 +12314,7 @@ Otherwise a constant name will be used.
           <xs:element ref="tns:ognl"/>
           <xs:element ref="tns:python3"/>
           <xs:element ref="tns:python"/>
+          <xs:element ref="tns:quickjs"/>
           <xs:element ref="tns:ref"/>
           <xs:element ref="tns:simple"/>
           <xs:element ref="tns:spel"/>
@@ -12335,6 +12362,7 @@ name. Otherwise a constant name will be used.
           <xs:element ref="tns:ognl"/>
           <xs:element ref="tns:python3"/>
           <xs:element ref="tns:python"/>
+          <xs:element ref="tns:quickjs"/>
           <xs:element ref="tns:ref"/>
           <xs:element ref="tns:simple"/>
           <xs:element ref="tns:spel"/>
@@ -12391,6 +12419,7 @@ Otherwise a constant name will be used.
           <xs:element ref="tns:ognl"/>
           <xs:element ref="tns:python3"/>
           <xs:element ref="tns:python"/>
+          <xs:element ref="tns:quickjs"/>
           <xs:element ref="tns:ref"/>
           <xs:element ref="tns:simple"/>
           <xs:element ref="tns:spel"/>
@@ -12438,6 +12467,7 @@ Sets a reference to lookup for the comparator to use for sorting.
             <xs:element ref="tns:ognl"/>
             <xs:element ref="tns:python3"/>
             <xs:element ref="tns:python"/>
+            <xs:element ref="tns:quickjs"/>
             <xs:element ref="tns:ref"/>
             <xs:element ref="tns:simple"/>
             <xs:element ref="tns:spel"/>
@@ -13100,6 +13130,7 @@ handler. Default value: true
             <xs:element ref="tns:ognl"/>
             <xs:element ref="tns:python3"/>
             <xs:element ref="tns:python"/>
+            <xs:element ref="tns:quickjs"/>
             <xs:element ref="tns:ref"/>
             <xs:element ref="tns:simple"/>
             <xs:element ref="tns:spel"/>
@@ -13584,6 +13615,7 @@ into.
           <xs:element ref="tns:ognl"/>
           <xs:element ref="tns:python3"/>
           <xs:element ref="tns:python"/>
+          <xs:element ref="tns:quickjs"/>
           <xs:element ref="tns:ref"/>
           <xs:element ref="tns:simple"/>
           <xs:element ref="tns:spel"/>
@@ -13791,6 +13823,7 @@ Indicates whether null is allowed as value of a body to unmarshall. Default valu
           <xs:element ref="tns:ognl"/>
           <xs:element ref="tns:python3"/>
           <xs:element ref="tns:python"/>
+          <xs:element ref="tns:quickjs"/>
           <xs:element ref="tns:ref"/>
           <xs:element ref="tns:simple"/>
           <xs:element ref="tns:spel"/>
@@ -15491,6 +15524,11 @@ Whether to validate the bean has the configured method. Default value: true
       <xs:extension base="tns:typedExpressionDefinition"/>
     </xs:simpleContent>
   </xs:complexType>
+  <xs:complexType name="quickjsExpression">
+    <xs:simpleContent>
+      <xs:extension base="tns:typedExpressionDefinition"/>
+    </xs:simpleContent>
+  </xs:complexType>
   <xs:complexType name="refExpression">
     <xs:simpleContent>
       <xs:extension base="tns:typedExpressionDefinition"/>
@@ -16206,6 +16244,7 @@ URI of the Endpoint used for validation.
           <xs:element ref="tns:ognl"/>
           <xs:element ref="tns:python3"/>
           <xs:element ref="tns:python"/>
+          <xs:element ref="tns:quickjs"/>
           <xs:element ref="tns:ref"/>
           <xs:element ref="tns:simple"/>
           <xs:element ref="tns:spel"/>

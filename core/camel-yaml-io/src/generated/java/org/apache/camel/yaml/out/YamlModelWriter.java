@@ -613,6 +613,9 @@ public class YamlModelWriter extends YamlModelWriterSupport {
     public JsonObject writePythonExpression(PythonExpression def) {
         return wrapNode("python", doWritePythonExpression(def));
     }
+    public JsonObject writeQuickjsExpression(QuickjsExpression def) {
+        return wrapNode("quickjs", doWriteQuickjsExpression(def));
+    }
     public JsonObject writeRefExpression(RefExpression def) {
         return wrapNode("ref", doWriteRefExpression(def));
     }
@@ -3034,6 +3037,12 @@ public class YamlModelWriter extends YamlModelWriterSupport {
         doWriteValue(jo, def.getExpression());
         return jo;
     }
+    protected JsonObject doWriteQuickjsExpression(QuickjsExpression def) {
+        JsonObject jo = new JsonObject();
+        doWriteTypedExpressionDefinitionAttributes(jo, def);
+        doWriteValue(jo, def.getExpression());
+        return jo;
+    }
     protected JsonObject doWriteRefExpression(RefExpression def) {
         JsonObject jo = new JsonObject();
         doWriteTypedExpressionDefinitionAttributes(jo, def);
@@ -3939,6 +3948,7 @@ public class YamlModelWriter extends YamlModelWriterSupport {
                 case "OgnlExpression" -> wrapNode("ognl", doWriteOgnlExpression((OgnlExpression) v));
                 case "Python3Expression" -> wrapNode("python3", doWritePython3Expression((Python3Expression) v));
                 case "PythonExpression" -> wrapNode("python", doWritePythonExpression((PythonExpression) v));
+                case "QuickjsExpression" -> wrapNode("quickjs", doWriteQuickjsExpression((QuickjsExpression) v));
                 case "RefExpression" -> wrapNode("ref", doWriteRefExpression((RefExpression) v));
                 case "SimpleExpression" -> wrapNode("simple", doWriteSimpleExpression((SimpleExpression) v));
                 case "SpELExpression" -> wrapNode("spel", doWriteSpELExpression((SpELExpression) v));

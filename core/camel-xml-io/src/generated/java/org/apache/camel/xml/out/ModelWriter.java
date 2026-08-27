@@ -620,6 +620,9 @@ public class ModelWriter extends BaseWriter {
     public void writePythonExpression(PythonExpression def) throws IOException {
         doWritePythonExpression("python", def);
     }
+    public void writeQuickjsExpression(QuickjsExpression def) throws IOException {
+        doWriteQuickjsExpression("quickjs", def);
+    }
     public void writeRefExpression(RefExpression def) throws IOException {
         doWriteRefExpression("ref", def);
     }
@@ -3036,6 +3039,12 @@ public class ModelWriter extends BaseWriter {
         doWriteValue(def.getExpression());
         endElement(name);
     }
+    protected void doWriteQuickjsExpression(String name, QuickjsExpression def) throws IOException {
+        startElement(name);
+        doWriteTypedExpressionDefinitionAttributes(def);
+        doWriteValue(def.getExpression());
+        endElement(name);
+    }
     protected void doWriteRefExpression(String name, RefExpression def) throws IOException {
         startElement(name);
         doWriteTypedExpressionDefinitionAttributes(def);
@@ -3909,6 +3918,7 @@ public class ModelWriter extends BaseWriter {
                 case "OgnlExpression" -> doWriteOgnlExpression("ognl", (OgnlExpression) v);
                 case "Python3Expression" -> doWritePython3Expression("python3", (Python3Expression) v);
                 case "PythonExpression" -> doWritePythonExpression("python", (PythonExpression) v);
+                case "QuickjsExpression" -> doWriteQuickjsExpression("quickjs", (QuickjsExpression) v);
                 case "RefExpression" -> doWriteRefExpression("ref", (RefExpression) v);
                 case "SimpleExpression" -> doWriteSimpleExpression("simple", (SimpleExpression) v);
                 case "SpELExpression" -> doWriteSpELExpression("spel", (SpELExpression) v);

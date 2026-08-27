@@ -1386,6 +1386,9 @@
           "python3" : {
             "$ref" : "#/items/definitions/org.apache.camel.model.language.Python3Expression"
           },
+          "quickjs" : {
+            "$ref" : "#/items/definitions/org.apache.camel.model.language.QuickjsExpression"
+          },
           "ref" : {
             "$ref" : "#/items/definitions/org.apache.camel.model.language.RefExpression"
           },
@@ -9729,6 +9732,9 @@
           "python3" : {
             "$ref" : "#/items/definitions/org.apache.camel.model.language.Python3Expression"
           },
+          "quickjs" : {
+            "$ref" : "#/items/definitions/org.apache.camel.model.language.QuickjsExpression"
+          },
           "ref" : {
             "$ref" : "#/items/definitions/org.apache.camel.model.language.RefExpression"
           },
@@ -10275,6 +10281,36 @@
       "org.apache.camel.model.language.PythonExpression" : {
         "title" : "Python",
         "description" : "Evaluates a Python expression",
+        "type" : "object",
+        "additionalProperties" : false,
+        "properties" : {
+          "expression" : {
+            "type" : "string",
+            "title" : "Expression",
+            "description" : "The expression value in your chosen language syntax."
+          },
+          "id" : {
+            "type" : "string",
+            "title" : "Id",
+            "description" : "The id of this node."
+          },
+          "resultType" : {
+            "type" : "string",
+            "title" : "Result Type",
+            "description" : "The class of the result type (type from output)."
+          },
+          "trim" : {
+            "type" : "boolean",
+            "title" : "Trim",
+            "description" : "Whether to trim the source code to remove leading and trailing whitespaces and line breaks.",
+            "default" : true
+          }
+        },
+        "required" : [ "expression" ]
+      },
+      "org.apache.camel.model.language.QuickjsExpression" : {
+        "title" : "QuickJS",
+        "description" : "Evaluates a JavaScript expression using QuickJS4J",
         "type" : "object",
         "additionalProperties" : false,
         "properties" : {

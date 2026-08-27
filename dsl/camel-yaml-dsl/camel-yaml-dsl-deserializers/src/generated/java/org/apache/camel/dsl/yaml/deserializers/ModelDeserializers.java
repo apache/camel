@@ -196,6 +196,7 @@ import org.apache.camel.model.language.MvelExpression;
 import org.apache.camel.model.language.OgnlExpression;
 import org.apache.camel.model.language.Python3Expression;
 import org.apache.camel.model.language.PythonExpression;
+import org.apache.camel.model.language.QuickjsExpression;
 import org.apache.camel.model.language.RefExpression;
 import org.apache.camel.model.language.SimpleExpression;
 import org.apache.camel.model.language.SpELExpression;
@@ -13084,6 +13085,78 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
 
         @Override
         protected boolean setProperty(PythonExpression target, String propertyKey,
+                String propertyName, Node node) {
+            propertyKey = org.apache.camel.util.StringHelper.dashToCamelCase(propertyKey);
+            switch(propertyKey) {
+                case "expression": {
+                    String val = asText(node);
+                    target.setExpression(val);
+                    break;
+                }
+                case "id": {
+                    String val = asText(node);
+                    target.setId(val);
+                    break;
+                }
+                case "resultType": {
+                    String val = asText(node);
+                    target.setResultTypeName(val);
+                    break;
+                }
+                case "trim": {
+                    String val = asText(node);
+                    target.setTrim(val);
+                    break;
+                }
+                default: {
+                    ExpressionDefinition ed = target.getExpressionType();
+                    if (ed != null) {
+                        throw new org.apache.camel.dsl.yaml.common.exception.DuplicateFieldException(node, propertyName, "as an expression");
+                    }
+                    ed = ExpressionDeserializers.constructExpressionType(propertyKey, node);
+                    if (ed != null) {
+                        target.setExpressionType(ed);
+                    } else {
+                        return false;
+                    }
+                }
+            }
+            return true;
+        }
+    }
+
+    @YamlType(
+            nodes = "quickjs",
+            inline = true,
+            types = org.apache.camel.model.language.QuickjsExpression.class,
+            order = org.apache.camel.dsl.yaml.common.YamlDeserializerResolver.ORDER_LOWEST - 1,
+            displayName = "QuickJS",
+            description = "Evaluates a JavaScript expression using QuickJS4J",
+            deprecated = false,
+            properties = {
+                    @YamlProperty(name = "expression", type = "string", required = true, description = "The expression value in your chosen language syntax.", displayName = "Expression"),
+                    @YamlProperty(name = "id", type = "string", description = "The id of this node.", displayName = "Id"),
+                    @YamlProperty(name = "resultType", type = "string", description = "The class of the result type (type from output).", displayName = "Result Type"),
+                    @YamlProperty(name = "trim", type = "boolean", defaultValue = "true", description = "Whether to trim the source code to remove leading and trailing whitespaces and line breaks.", displayName = "Trim")
+            }
+    )
+    public static class QuickjsExpressionDeserializer extends YamlDeserializerBase<QuickjsExpression> {
+        public QuickjsExpressionDeserializer() {
+            super(QuickjsExpression.class);
+        }
+
+        @Override
+        protected QuickjsExpression newInstance() {
+            return new QuickjsExpression();
+        }
+
+        @Override
+        protected QuickjsExpression newInstance(String value) {
+            return new QuickjsExpression(value);
+        }
+
+        @Override
+        protected boolean setProperty(QuickjsExpression target, String propertyKey,
                 String propertyName, Node node) {
             propertyKey = org.apache.camel.util.StringHelper.dashToCamelCase(propertyKey);
             switch(propertyKey) {

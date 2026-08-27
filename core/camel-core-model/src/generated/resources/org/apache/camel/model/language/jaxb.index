@@ -19,6 +19,7 @@ MvelExpression
 OgnlExpression
 Python3Expression
 PythonExpression
+QuickjsExpression
 RefExpression
 SimpleExpression
 SpELExpression
