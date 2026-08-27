@@ -16,34 +16,73 @@
  */
 package org.apache.camel.component.kafka;
 
-import org.apache.kafka.clients.consumer.Consumer;
-import org.apache.kafka.clients.producer.Producer;
+import java.util.Properties;
+
+import org.apache.kafka.clients.consumer.ConsumerConfig;
+import org.apache.kafka.clients.consumer.KafkaConsumer;
+import org.apache.kafka.clients.producer.KafkaProducer;
+import org.apache.kafka.clients.producer.ProducerConfig;
+import org.apache.kafka.common.serialization.StringDeserializer;
+import org.apache.kafka.common.serialization.StringSerializer;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.mock;
 
 class KafkaNetworkHealthHelperTest {
 
     @Test
-    void consumerHasReadyNodesShouldFailClosedForNullConsumer() {
-        assertFalse(KafkaNetworkHealthHelper.consumerHasReadyNodes(null));
+    void consumerHasReadyNodesShouldFailOpenForCustomConsumer() {
+        assertTrue(KafkaNetworkHealthHelper.consumerHasReadyNodes(mock(org.apache.kafka.clients.consumer.Consumer.class)));
     }
 
     @Test
-    void consumerHasReadyNodesShouldFailClosedForNonKafkaConsumer() {
-        Consumer<Object, Object> other = mock(Consumer.class);
-        assertFalse(KafkaNetworkHealthHelper.consumerHasReadyNodes(other));
+    void consumerHasReadyNodesShouldFailOpenForNullConsumer() {
+        assertTrue(KafkaNetworkHealthHelper.consumerHasReadyNodes(null));
     }
 
     @Test
-    void producerHasReadyNodesShouldFailClosedForNullProducer() {
-        assertFalse(KafkaNetworkHealthHelper.producerHasReadyNodes(null));
+    void producerHasReadyNodesShouldFailOpenForCustomProducer() {
+        assertTrue(KafkaNetworkHealthHelper.producerHasReadyNodes(mock(org.apache.kafka.clients.producer.Producer.class)));
     }
 
     @Test
-    void producerHasReadyNodesShouldFailClosedForNonKafkaProducer() {
-        Producer<Object, Object> other = mock(Producer.class);
-        assertFalse(KafkaNetworkHealthHelper.producerHasReadyNodes(other));
+    void producerHasReadyNodesShouldFailOpenForNullProducer() {
+        assertTrue(KafkaNetworkHealthHelper.producerHasReadyNodes(null));
+    }
+
+    @Test
+    void consumerHasReadyNodesShouldResolveClassicAndAsyncLayoutsWithoutException() {
+        Properties classicProps = consumerProps("classic");
+        Properties asyncProps = consumerProps("consumer");
+
+        try (KafkaConsumer<String, String> classic = new KafkaConsumer<>(classicProps);
+             KafkaConsumer<String, String> async = new KafkaConsumer<>(asyncProps)) {
+            assertDoesNotThrow(() -> KafkaNetworkHealthHelper.consumerHasReadyNodes(classic));
+            assertDoesNotThrow(() -> KafkaNetworkHealthHelper.consumerHasReadyNodes(async));
+        }
+    }
+
+    @Test
+    void producerHasReadyNodesShouldResolveLayoutWithoutException() {
+        Properties props = new Properties();
+        props.put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, "localhost:1");
+        props.put(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, StringSerializer.class.getName());
+        props.put(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, StringSerializer.class.getName());
+
+        try (KafkaProducer<String, String> producer = new KafkaProducer<>(props)) {
+            assertDoesNotThrow(() -> KafkaNetworkHealthHelper.producerHasReadyNodes(producer));
+        }
+    }
+
+    private static Properties consumerProps(String groupProtocol) {
+        Properties props = new Properties();
+        props.put(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, "localhost:1");
+        props.put(ConsumerConfig.GROUP_ID_CONFIG, "health-check-test");
+        props.put(ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG, StringDeserializer.class.getName());
+        props.put(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, StringDeserializer.class.getName());
+        props.put(ConsumerConfig.GROUP_PROTOCOL_CONFIG, groupProtocol);
+        return props;
     }
 }

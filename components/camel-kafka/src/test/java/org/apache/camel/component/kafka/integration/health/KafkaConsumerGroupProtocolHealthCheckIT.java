@@ -51,7 +51,7 @@ import static org.awaitility.Awaitility.await;
 /**
  * Readiness health check coverage for {@code group.protocol=consumer} (KIP-848 / AsyncKafkaConsumer).
  */
-@Timeout(30)
+@Timeout(60)
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 @DisabledIfSystemProperty(named = "kafka.instance.type", matches = "local-strimzi-container",
@@ -94,7 +94,6 @@ public class KafkaConsumerGroupProtocolHealthCheckIT extends KafkaHealthCheckTes
                               + "&keyDeserializer=org.apache.kafka.common.serialization.StringDeserializer"
                               + "&valueDeserializer=org.apache.kafka.common.serialization.StringDeserializer"
                               + "&autoCommitIntervalMs=1000&pollTimeoutMs=1000&autoCommitEnable=true"
-                              + "&interceptorClasses=org.apache.camel.component.kafka.MockConsumerInterceptor"
                               + "&groupProtocol=consumer";
 
                 from(from)

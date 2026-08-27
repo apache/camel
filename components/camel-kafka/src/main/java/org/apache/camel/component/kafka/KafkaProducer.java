@@ -109,11 +109,7 @@ public class KafkaProducer extends DefaultAsyncProducer implements RouteIdAware 
     }
 
     public boolean isReady() {
-        if (!(kafkaProducer instanceof org.apache.kafka.clients.producer.KafkaProducer)) {
-            return false;
-        }
-        return KafkaNetworkHealthHelper.producerHasReadyNodes(
-                (org.apache.kafka.clients.producer.KafkaProducer<?, ?>) kafkaProducer);
+        return KafkaNetworkHealthHelper.producerHasReadyNodes(kafkaProducer);
     }
 
     @SuppressWarnings("rawtypes")
