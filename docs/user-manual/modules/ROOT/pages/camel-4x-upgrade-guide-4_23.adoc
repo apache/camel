@@ -105,6 +105,10 @@ this executor is functionally identical to the built-in `DefaultReactiveExecutor
 To migrate, remove the `camel-reactive-executor-tomcat` dependency from your project. Camel will
 automatically use the default reactive executor.
 
+==== camel-reactive-executor-vertx
+
+The `camel-reactive-executor-vertx` component was deprecated in 4.21. The component has been in an experimental state for a long time and no user feedback has been received to justify continued maintenance.
+
 ==== camel-splunk
 
 The `camel-splunk` component was deprecated in 4.19. The Splunk Java SDK it depends on is no longer actively maintained.
