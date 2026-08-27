@@ -348,6 +348,7 @@ public class IBMCOSProducer extends DefaultProducer {
 
         Message message = getMessageForResponse(exchange);
         message.setBody(exists);
+        message.setHeader(IBMCOSConstants.BUCKET_EXISTS, exists);
     }
 
     private String determineBucketName(Exchange exchange) {
