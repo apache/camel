@@ -27,6 +27,7 @@ import org.apache.camel.spi.ErrorRegistry;
 import org.apache.camel.spi.ErrorRegistryView;
 import org.junit.jupiter.api.Test;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -170,6 +171,36 @@ public class ErrorRegistryTest extends ContextTestSupport {
     }
 
     @Test
+    public void testErrorRegistryHandledErrorReportsOriginNode() throws Exception {
+        getMockEndpoint("mock:handlerStep").expectedMessageCount(1);
+
+        template.sendBody("direct:handledWithSteps", "Hello World");
+
+        assertMockEndpointsSatisfied();
+
+        BacklogErrorEventMessage entry = context.getErrorRegistry().browse().iterator().next();
+        assertThat(entry.isHandled()).isTrue();
+        assertThat(entry.getToNode())
+                .as("toNode should point to the node that actually failed, not a node touched by the onException handler")
+                .isEqualTo("throwOrigin");
+    }
+
+    @Test
+    public void testErrorRegistryDoCatchReportsOriginNode() throws Exception {
+        getMockEndpoint("mock:catchStep").expectedMessageCount(1);
+
+        template.sendBody("direct:doCatchWithSteps", "Hello World");
+
+        assertMockEndpointsSatisfied();
+
+        BacklogErrorEventMessage entry = context.getErrorRegistry().browse().iterator().next();
+        assertThat(entry.isHandled()).isTrue();
+        assertThat(entry.getToNode())
+                .as("toNode should point to the node that actually failed, not a node touched by the doCatch block")
+                .isEqualTo("throwInTry");
+    }
+
+    @Test
     public void testErrorRegistryCapturesEndpointUri() throws Exception {
         getMockEndpoint("mock:dead").expectedMessageCount(1);
         template.sendBody("direct:withEndpoint", "Hello World");
@@ -298,6 +329,19 @@ public class ErrorRegistryTest extends ContextTestSupport {
                         .setProperty("myProp", constant("propValue"))
                         .setHeader("myHeader", constant("headerValue"))
                         .throwException(new IllegalArgumentException("Data error"));
+
+                from("direct:handledWithSteps").routeId("handledWithSteps")
+                        .onException(IllegalArgumentException.class).handled(true).to("mock:handlerStep").end()
+                        .to("mock:before")
+                        .throwException(new IllegalArgumentException("Handled with steps")).id("throwOrigin");
+
+                from("direct:doCatchWithSteps").routeId("doCatchWithSteps")
+                        .doTry()
+                            .to("mock:before")
+                            .throwException(new IllegalArgumentException("Handled in doCatch")).id("throwInTry")
+                        .doCatch(IllegalArgumentException.class)
+                            .to("mock:catchStep")
+                        .end();
             }
         };
     }

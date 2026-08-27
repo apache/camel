@@ -92,6 +92,7 @@ public class TryProcessor extends BaseProcessorSupport
         final AsyncCallback callback;
         final Iterator<Processor> processors;
         final Object lastHandled;
+        boolean failureOriginCaptured;
 
         public TryState(Exchange exchange, AsyncCallback callback) {
             this.exchange = exchange;
@@ -104,6 +105,14 @@ public class TryProcessor extends BaseProcessorSupport
         @Override
         public void run() {
             if (continueRouting(processors, exchange)) {
+                // capture where the exchange failed as soon as the exception appears, before handing off to a
+                // doCatch/doFinally clause which is itself a channeled node and would otherwise add its own
+                // entry to the message history, hiding the node that actually failed
+                if (!failureOriginCaptured && exchange.getException() != null) {
+                    failureOriginCaptured = true;
+                    ExchangeHelper.captureFailureOrigin(exchange);
+                }
+
                 exchange.setProperty(ExchangePropertyKey.TRY_ROUTE_BLOCK, true);
                 ExchangeHelper.prepareOutToIn(exchange);
 
