@@ -93,6 +93,40 @@ class GenAiModelResolverTest extends ExchangeTestSupport {
                 .isEqualTo("gcp.vertex_ai");
     }
 
+    @Test
+    void shouldReturnUnknownForUnrecognizedLangChain4jProvider() {
+        assertThat(GenAiModelResolver.resolveSystem(classResolver, new FakeUnknownProviderChatModel())).isEqualTo("unknown");
+    }
+
+    @Test
+    void shouldMapAnthropicProviderFromChatModel() {
+        assertThat(GenAiModelResolver.resolveSystem(classResolver, new FakeAnthropicChatModel())).isEqualTo("anthropic");
+    }
+
+    static class FakeAnthropicChatModel implements ChatModel {
+        @Override
+        public ModelProvider provider() {
+            return ModelProvider.ANTHROPIC;
+        }
+
+        @Override
+        public ChatRequestParameters defaultRequestParameters() {
+            return DefaultChatRequestParameters.builder().modelName("claude-3").build();
+        }
+    }
+
+    static class FakeUnknownProviderChatModel implements ChatModel {
+        @Override
+        public ModelProvider provider() {
+            return ModelProvider.OTHER;
+        }
+
+        @Override
+        public ChatRequestParameters defaultRequestParameters() {
+            return DefaultChatRequestParameters.builder().modelName("custom").build();
+        }
+    }
+
     static class FakeOpenAiChatModel implements ChatModel {
         @Override
         public ModelProvider provider() {

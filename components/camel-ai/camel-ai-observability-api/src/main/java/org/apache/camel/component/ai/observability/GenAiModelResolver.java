@@ -16,6 +16,7 @@
  */
 package org.apache.camel.component.ai.observability;
 
+import java.lang.ref.SoftReference;
 import java.lang.reflect.Method;
 import java.util.HashSet;
 import java.util.Objects;
@@ -30,6 +31,9 @@ import org.apache.camel.spi.ClassResolver;
  * <p/>
  * LangChain4j types are resolved reflectively so callers such as {@code camel-spring-ai-chat} do not require
  * {@code langchain4j-core} on the classpath.
+ * <p/>
+ * Reflective {@link Method} lookups are cached with {@link SoftReference} values keyed by declaring class name and
+ * method name (not {@link Class} instances) so recycled classloaders are not pinned by the cache keys.
  */
 public final class GenAiModelResolver {
 
@@ -40,7 +44,21 @@ public final class GenAiModelResolver {
     private static final String LANGCHAIN4J_EMBEDDING_MODEL = "dev.langchain4j.model.embedding.EmbeddingModel";
     private static final String LANGCHAIN4J_CHAT_RESPONSE = "dev.langchain4j.model.chat.response.ChatResponse";
 
-    private static final ConcurrentMap<MethodKey, Method> METHOD_CACHE = new ConcurrentHashMap<>();
+    /**
+     * LangChain4j {@code ModelProvider} enum constant names matched reflectively (no langchain4j dependency).
+     */
+    private static final String LC4J_PROVIDER_OPEN_AI = "OPEN_AI";
+    private static final String LC4J_PROVIDER_ANTHROPIC = "ANTHROPIC";
+    private static final String LC4J_PROVIDER_OLLAMA = "OLLAMA";
+    private static final String LC4J_PROVIDER_AZURE_OPEN_AI = "AZURE_OPEN_AI";
+    private static final String LC4J_PROVIDER_GOOGLE_VERTEX_AI_GEMINI = "GOOGLE_VERTEX_AI_GEMINI";
+    private static final String LC4J_PROVIDER_GOOGLE_VERTEX_AI_ANTHROPIC = "GOOGLE_VERTEX_AI_ANTHROPIC";
+    private static final String LC4J_PROVIDER_GOOGLE_AI_GEMINI = "GOOGLE_AI_GEMINI";
+    private static final String LC4J_PROVIDER_GOOGLE_GENAI = "GOOGLE_GENAI";
+    private static final String LC4J_PROVIDER_MISTRAL_AI = "MISTRAL_AI";
+    private static final String LC4J_PROVIDER_AMAZON_BEDROCK = "AMAZON_BEDROCK";
+
+    private static final ConcurrentMap<MethodKey, SoftReference<Method>> METHOD_CACHE = new ConcurrentHashMap<>();
 
     private GenAiModelResolver() {
     }
@@ -298,14 +316,15 @@ public final class GenAiModelResolver {
     }
 
     private static Method resolveMethod(Class<?> clazz, String methodName) {
-        MethodKey key = new MethodKey(clazz, methodName);
-        Method cached = METHOD_CACHE.get(key);
-        if (cached != null) {
+        MethodKey key = new MethodKey(clazz.getName(), methodName);
+        SoftReference<Method> ref = METHOD_CACHE.get(key);
+        Method cached = ref != null ? ref.get() : null;
+        if (cached != null && cached.getDeclaringClass() == clazz) {
             return cached;
         }
         try {
             Method method = clazz.getMethod(methodName);
-            METHOD_CACHE.putIfAbsent(key, method);
+            METHOD_CACHE.put(key, new SoftReference<>(method));
             return method;
         } catch (NoSuchMethodException e) {
             return null;
@@ -317,14 +336,14 @@ public final class GenAiModelResolver {
             return UNKNOWN;
         }
         return switch (provider) {
-            case "OPEN_AI" -> "openai";
-            case "ANTHROPIC" -> "anthropic";
-            case "OLLAMA" -> "ollama";
-            case "AZURE_OPEN_AI" -> "azure.ai.openai";
-            case "GOOGLE_VERTEX_AI_GEMINI", "GOOGLE_VERTEX_AI_ANTHROPIC" -> "gcp.vertex_ai";
-            case "GOOGLE_AI_GEMINI", "GOOGLE_GENAI" -> "google";
-            case "MISTRAL_AI" -> "mistral_ai";
-            case "AMAZON_BEDROCK" -> "aws.bedrock";
+            case LC4J_PROVIDER_OPEN_AI -> "openai";
+            case LC4J_PROVIDER_ANTHROPIC -> "anthropic";
+            case LC4J_PROVIDER_OLLAMA -> "ollama";
+            case LC4J_PROVIDER_AZURE_OPEN_AI -> "azure.ai.openai";
+            case LC4J_PROVIDER_GOOGLE_VERTEX_AI_GEMINI, LC4J_PROVIDER_GOOGLE_VERTEX_AI_ANTHROPIC -> "gcp.vertex_ai";
+            case LC4J_PROVIDER_GOOGLE_AI_GEMINI, LC4J_PROVIDER_GOOGLE_GENAI -> "google";
+            case LC4J_PROVIDER_MISTRAL_AI -> "mistral_ai";
+            case LC4J_PROVIDER_AMAZON_BEDROCK -> "aws.bedrock";
             default -> UNKNOWN;
         };
     }
@@ -397,9 +416,9 @@ public final class GenAiModelResolver {
         return UNKNOWN;
     }
 
-    private record MethodKey(Class<?> clazz, String methodName) {
+    private record MethodKey(String className, String methodName) {
         private MethodKey {
-            Objects.requireNonNull(clazz, "clazz");
+            Objects.requireNonNull(className, "className");
             Objects.requireNonNull(methodName, "methodName");
         }
     }

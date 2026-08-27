@@ -114,6 +114,7 @@ public class SpringAiChatProducer extends DefaultProducer {
                 this.observabilityChatModel = configuredChatModel;
             } else {
                 this.observabilityChatModel = extractChatModelFromClient(configuredClient);
+                warnWhenObservabilityNeedsExplicitChatModel();
             }
         } else {
             // Create ChatClient from ChatModel
@@ -1290,6 +1291,11 @@ public class SpringAiChatProducer extends DefaultProducer {
         return chatClient;
     }
 
+    /**
+     * Attempts to read the backing {@link ChatModel} from Spring AI's internal {@code ChatClientRequestSpec}
+     * implementation. This relies on a private {@code chatModel} field that is not part of the public Spring AI API and
+     * may change between Spring AI releases.
+     */
     private ChatModel extractChatModelFromClient(ChatClient client) {
         try {
             ChatClient.ChatClientRequestSpec requestSpec = client.prompt();
@@ -1297,15 +1303,24 @@ public class SpringAiChatProducer extends DefaultProducer {
             field.setAccessible(true);
             return (ChatModel) field.get(requestSpec);
         } catch (ReflectiveOperationException e) {
-            if (!chatModelExtractionWarnLogged) {
-                chatModelExtractionWarnLogged = true;
-                LOG.warn(
-                        "Could not extract ChatModel from ChatClient for observability; model metadata may be incomplete: {}",
-                        e.getMessage());
-            } else if (LOG.isDebugEnabled()) {
+            if (LOG.isDebugEnabled()) {
                 LOG.debug("Could not extract ChatModel from ChatClient for observability: {}", e.getMessage());
             }
             return null;
+        }
+    }
+
+    private void warnWhenObservabilityNeedsExplicitChatModel() {
+        if (observabilityChatModel != null || !GenAiObservability.isEnabled(getEndpoint().getCamelContext())) {
+            return;
+        }
+        if (!chatModelExtractionWarnLogged) {
+            chatModelExtractionWarnLogged = true;
+            LOG.warn(
+                    "GenAI observability is enabled but ChatModel could not be resolved from the configured ChatClient. "
+                     + "Spring AI does not expose the backing ChatModel publicly, so Camel reads a private field "
+                     + "that may change between releases. Configure chatModel explicitly on the endpoint URI or "
+                     + "component so gen_ai.system and gen_ai.request.model span attributes are populated.");
         }
     }
 

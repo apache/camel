@@ -1381,6 +1381,23 @@ is on the classpath.
 Refer to the https://docs.spring.io/spring-ai/reference/observability/index.html[Spring AI Observability documentation]
 for details on available metrics, tracing, and prompt/completion logging configuration.
 
+==== Camel GenAI observability
+
+When `camel-ai-observability` and a tracing backend (for example `camel-opentelemetry2`) are on the classpath, the
+producer emits OpenTelemetry spans with `gen_ai.*` attributes per chat call. Enable or disable globally with
+`camel.aiObservability.enabled` (see xref:ai-observability.adoc[AI Observability]).
+
+If the endpoint is configured with `chatClient` only (no `chatModel`), Camel tries to resolve the backing `ChatModel`
+for span metadata by reading a private field on Spring AI's internal `ChatClientRequestSpec` implementation. That is not
+public Spring AI API and may break on Spring AI upgrades. When GenAI observability is enabled, configure `chatModel`
+explicitly alongside `chatClient` so `gen_ai.system` and `gen_ai.request.model` attributes are reliably populated:
+
+[source,java]
+----
+from("direct:start")
+    .to("spring-ai-chat:chat?chatClient=#chatClient&chatModel=#chatModel");
+----
+
 === Request/Response Logging
 
 The component automatically adds Spring AI's `SimpleLoggerAdvisor` to log requests and responses for debugging. Enable it by setting the logger `org.springframework.ai.chat.client.advisor` to DEBUG level:
