@@ -151,7 +151,7 @@ final class ZooKeeperClusterView extends AbstractCamelClusterView {
                 task.run(getCamelContext(), () -> !isRunAllowed());
             } finally {
                 leader = false;
-                if (isStoppingOrStopped()) {
+                if (!isStoppingOrStopped()) {
                     fireLeadershipChangedEvent((CamelClusterMember) null);
                 }
             }
