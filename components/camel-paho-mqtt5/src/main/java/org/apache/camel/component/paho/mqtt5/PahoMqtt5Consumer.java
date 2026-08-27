@@ -16,6 +16,9 @@
  */
 package org.apache.camel.component.paho.mqtt5;
 
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.atomic.AtomicBoolean;
+
 import org.apache.camel.AsyncCallback;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
@@ -41,6 +44,7 @@ public class PahoMqtt5Consumer extends DefaultConsumer {
     private volatile String clientId;
     private volatile boolean stopClient;
     private volatile MqttConnectionOptions connectionOptions;
+    private final AtomicBoolean restarting = new AtomicBoolean(false);
 
     public PahoMqtt5Consumer(Endpoint endpoint, Processor processor) {
         super(endpoint, processor);
@@ -66,10 +70,7 @@ public class PahoMqtt5Consumer extends DefaultConsumer {
                 clientId = PahoMqtt5Endpoint.generateClientId();
             }
             stopClient = true;
-            client = new MqttClient(
-                    getEndpoint().getConfiguration().getBrokerUrl(),
-                    clientId,
-                    PahoMqtt5Endpoint.createMqttClientPersistence(getEndpoint().getConfiguration()));
+            client = createClient();
             LOG.debug("Connecting client: {} to broker: {}", clientId, getEndpoint().getConfiguration().getBrokerUrl());
             if (getEndpoint().getConfiguration().isManualAcksEnabled()) {
                 client.setManualAcks(true);
@@ -86,7 +87,16 @@ public class PahoMqtt5Consumer extends DefaultConsumer {
                     try {
                         client.subscribe(getEndpoint().getTopic(), getEndpoint().getConfiguration().getQos());
                     } catch (MqttException e) {
-                        LOG.error("MQTT resubscribe failed {}", e.getMessage(), e);
+                        if (stopClient) {
+                            LOG.warn("MQTT resubscribe failed on reconnect, restarting route for recovery: {}",
+                                    e.getMessage(), e);
+                            restartRouteAsync();
+                        } else {
+                            LOG.error(
+                                    "MQTT resubscribe failed on reconnect with externally provided client,"
+                                      + " route will not be auto-restarted: {}",
+                                    e.getMessage(), e);
+                        }
                     }
                 }
             }
@@ -126,6 +136,31 @@ public class PahoMqtt5Consumer extends DefaultConsumer {
         client.subscribe(getEndpoint().getTopic(), getEndpoint().getConfiguration().getQos());
     }
 
+    private void restartRouteAsync() {
+        if (!restarting.compareAndSet(false, true)) {
+            LOG.debug("Route restart already in progress, skipping duplicate restart");
+            return;
+        }
+        String threadName = "PahoMqtt5-RestartRoute-" + getRouteId();
+        ExecutorService executor
+                = getEndpoint().getCamelContext().getExecutorServiceManager().newSingleThreadExecutor(this, threadName);
+        executor.submit(() -> {
+            try {
+                String routeId = getRouteId();
+                LOG.info("Stopping route {} for restart after resubscribe failure", routeId);
+                getEndpoint().getCamelContext().getRouteController().stopRoute(routeId);
+                LOG.info("Restarting route {}", routeId);
+                getEndpoint().getCamelContext().getRouteController().startRoute(routeId);
+            } catch (Exception e) {
+                getExceptionHandler().handleException(
+                        "Failed to restart route after resubscribe failure", e);
+            } finally {
+                restarting.set(false);
+                getEndpoint().getCamelContext().getExecutorServiceManager().shutdownNow(executor);
+            }
+        });
+    }
+
     @Override
     protected void doStop() throws Exception {
         super.doStop();
@@ -143,6 +178,13 @@ public class PahoMqtt5Consumer extends DefaultConsumer {
             client.disconnect();
         }
         client = null;
+    }
+
+    MqttClient createClient() throws MqttException {
+        return new MqttClient(
+                getEndpoint().getConfiguration().getBrokerUrl(),
+                clientId,
+                PahoMqtt5Endpoint.createMqttClientPersistence(getEndpoint().getConfiguration()));
     }
 
     @Override
