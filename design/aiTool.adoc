@@ -16,7 +16,7 @@ superseded-by: []
 
 == Summary
 
-Camel's AI components (`camel-langchain4j-tools`, `camel-spring-ai-tools`,
+Camel's AI components (`camel-spring-ai-tools`,
 `camel-langchain4j-agent`) each implement their own mechanism for exposing Camel routes as
 LLM-callable tools, while `camel-openai` lacks this capability entirely. This document
 proposes a shared tool abstraction (`camel-ai-tool`) that all AI components discover
@@ -27,7 +27,7 @@ tools from.
 As users of `camel-langchain4j`, `camel-spring-ai`, or `camel-openai`, we expect the
 same behavior and workflow when implementing tools. Today that is not the case:
 
-* **`camel-langchain4j-tools`**, **`camel-spring-ai-tools`**, and **`camel-langchain4j-agent`**
+* **`camel-spring-ai-tools`**, and **`camel-langchain4j-agent`**
   each independently implement the same pattern (consumer endpoint, registry, spec classes)
   for exposing Camel routes as LLM-callable tools, with duplicated code tightly coupled to
   their respective framework types.
@@ -63,15 +63,6 @@ and bug fixes must be applied in multiple places.
 Each AI module independently implements the same three-layer pattern:
 
 ```
-┌─────────────────────────────────────────────────────────────────┐
-│                     camel-langchain4j-tools                     │
-│  ┌──────────────────┐  ┌────────────────────┐  ┌────────────┐   │
-│  │ L4j Tools        │  │ CamelToolExecutor  │  │ L4j Tools  │   │
-│  │ Consumer         │→ │ Cache (singleton)  │← │ Producer   │   │
-│  │ registers tool   │  │ tags → specs       │  │ dispatches │   │
-│  └──────────────────┘  └────────────────────┘  └────────────┘   │
-└─────────────────────────────────────────────────────────────────┘
-
 ┌─────────────────────────────────────────────────────────────────┐
 │                     camel-spring-ai-tools                       │
 │  ┌──────────────────┐  ┌────────────────────┐                   │
