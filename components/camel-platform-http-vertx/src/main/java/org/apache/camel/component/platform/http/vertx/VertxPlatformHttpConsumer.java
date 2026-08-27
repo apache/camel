@@ -286,7 +286,7 @@ public class VertxPlatformHttpConsumer extends DefaultConsumer
 
     static String buildNormalizedEndpoint(RestService restService) {
         String base = restService.getBasePath();
-        if (base != null && base.endsWith("/")) {
+        if (base.endsWith("/")) {
             base = base.substring(0, base.length() - 1);
         }
         String u = base + restService.getBaseUrl();
