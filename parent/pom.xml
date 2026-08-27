@@ -213,7 +213,7 @@
         <google-cloud-texttospeech-version>2.96.0</google-cloud-texttospeech-version>
         <google-genai-version>1.67.0</google-genai-version>
         <graalvm-version>25.2.4</graalvm-version>
-        <graphql-java-version>26.0</graphql-java-version>
+        <graphql-java-version>26.1</graphql-java-version>
         <greenmail-version>2.1.12</greenmail-version>
         <groovy-version>5.1.0</groovy-version>
         <grpc-version>1.83.1</grpc-version>
