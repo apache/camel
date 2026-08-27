@@ -113,10 +113,57 @@ include::partial$component-endpoint-headers.adoc[]
 
 The component accepts the following input types in the message body:
 
-- `String` - File path or document content
+- `String` - Document content. It is only read as a location when the endpoint opts in - see <<_input_sources>> below
 - `byte[]` - Binary document content
 - `File` - File object
 - `InputStream` - Input stream containing document data
+
+For the batch operations the body may also be a `List<String>` or `String[]` of file paths, a `List<File>`
+or `File[]`, or a single directory path `String`.
+
+[#_input_sources]
+=== Input Sources
+
+A `String` body is ambiguous: it could be the document itself, a URL to fetch, or a path to read. By default
+the component treats it as the document, and the two location readings must be enabled explicitly:
+
+[cols="1,1,3", options="header"]
+|===
+| Option | Default | Effect when enabled
+
+| `allowUrlSource`
+| `false`
+| A body starting with `http://` or `https://` is handed to Docling as a remote URL to fetch.
+
+| `allowFilePathSource`
+| `false`
+| A body starting with `/`, or containing `\`, is read from the local filesystem. This also covers the single
+directory-or-file `String` body accepted by the batch operations.
+
+| `inputBaseDirectory`
+| _(none)_
+| When set, every local input path must resolve inside this directory once normalized. Applies to the
+`CamelDoclingInputFilePath` header, to file path bodies, and to the paths used by the batch operations.
+|===
+
+With both options left at their defaults, a body that is neither a URL nor a path is written to a temporary
+file and converted as document content, exactly as before.
+
+The `CamelDoclingInputFilePath` header is an explicit "the document lives here" signal from the route, so it
+keeps working without `allowFilePathSource`. It is still subject to `inputBaseDirectory` when one is set.
+Typed bodies - `File`, `byte[]`, `InputStream`, and the explicit path collections used by the batch
+operations - are unambiguous and are likewise unaffected.
+
+[source,java]
+----
+// the body is the document itself - no opt-in needed
+from("direct:content")
+    .to("docling:convert?operation=CONVERT_TO_MARKDOWN");
+
+// the body is a path, confined to /var/docs
+from("direct:paths")
+    .to("docling:convert?operation=CONVERT_TO_MARKDOWN&allowFilePathSource=true&inputBaseDirectory=/var/docs");
+----
 
 === Output Behavior
 

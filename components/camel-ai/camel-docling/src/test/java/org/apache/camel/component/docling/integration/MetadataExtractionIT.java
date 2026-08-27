@@ -252,29 +252,29 @@ class MetadataExtractionIT extends DoclingITestSupport {
             public void configure() throws Exception {
                 // Basic metadata extraction
                 from("direct:extract-metadata")
-                        .to("docling:extract?operation=EXTRACT_METADATA");
+                        .to("docling:extract?allowFilePathSource=true&operation=EXTRACT_METADATA");
 
                 // Metadata extraction with headers enabled (default)
                 from("direct:extract-metadata-with-headers")
-                        .to("docling:extract?operation=EXTRACT_METADATA")
+                        .to("docling:extract?allowFilePathSource=true&operation=EXTRACT_METADATA")
                         .to("mock:afterMetadataExtraction");
 
                 // Metadata extraction without headers
                 from("direct:extract-metadata-no-headers")
-                        .to("docling:extract?operation=EXTRACT_METADATA&includeMetadataInHeaders=false")
+                        .to("docling:extract?allowFilePathSource=true&operation=EXTRACT_METADATA&includeMetadataInHeaders=false")
                         .to("mock:afterMetadataExtraction");
 
                 // Metadata extraction with raw metadata
                 from("direct:extract-metadata-with-raw")
-                        .to("docling:extract?operation=EXTRACT_METADATA&includeRawMetadata=true");
+                        .to("docling:extract?allowFilePathSource=true&operation=EXTRACT_METADATA&includeRawMetadata=true");
 
                 // Metadata extraction from URL
                 from("direct:extract-metadata-url")
-                        .to("docling:extract?operation=EXTRACT_METADATA");
+                        .to("docling:extract?allowUrlSource=true&operation=EXTRACT_METADATA");
 
                 // Metadata extraction to verify headers are populated
                 from("direct:extract-metadata-verify-headers")
-                        .to("docling:extract?operation=EXTRACT_METADATA&includeMetadataInHeaders=true")
+                        .to("docling:extract?allowFilePathSource=true&operation=EXTRACT_METADATA&includeMetadataInHeaders=true")
                         .log("Headers should contain metadata fields")
                         .to("mock:afterMetadataExtraction");
             }
