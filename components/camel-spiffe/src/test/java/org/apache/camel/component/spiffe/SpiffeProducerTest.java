@@ -122,11 +122,11 @@ class SpiffeProducerTest extends CamelTestSupport {
         when(svid.getToken()).thenReturn("multi-tok");
         when(svid.getSpiffeId()).thenReturn(id);
         // the additional audiences are passed as varargs after the first one; the comma-separated
-        // header value is split and trimmed by the producer
+        // header value is split and trimmed by the producer, and blank entries (the ", ," below) are dropped
         when(client.fetchJwtSvid("aud1", "aud2", "aud3")).thenReturn(svid);
 
         Exchange out = template.request("spiffe:test?workloadApiClient=#client&operation=fetchJwtSvid",
-                e -> e.getIn().setHeader(SpiffeConstants.AUDIENCE, "aud1, aud2, aud3"));
+                e -> e.getIn().setHeader(SpiffeConstants.AUDIENCE, "aud1, , aud2, aud3"));
 
         assertThat(out.getMessage().getBody(String.class)).isEqualTo("multi-tok");
     }

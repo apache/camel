@@ -18,6 +18,7 @@ package org.apache.camel.component.spiffe;
 
 import io.spiffe.workloadapi.WorkloadApiClient;
 import org.apache.camel.RuntimeCamelException;
+import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriParams;
 
@@ -33,8 +34,10 @@ public class SpiffeConfiguration implements Cloneable {
     @UriParam
     private String audience;
 
-    @UriParam(label = "advanced", description = "An existing WorkloadApiClient to use. When set, the component does not"
-                                                + " create or close its own client and spiffeSocketPath is ignored.")
+    @UriParam(label = "advanced",
+              description = "An existing WorkloadApiClient to use. When set, the component does not"
+                            + " create or close its own client and spiffeSocketPath is ignored.")
+    @Metadata(autowired = true)
     private WorkloadApiClient workloadApiClient;
 
     /**
@@ -62,7 +65,9 @@ public class SpiffeConfiguration implements Cloneable {
 
     /**
      * The comma-separated audience(s) to request for a JWT-SVID (fetchJwtSvid) or to validate against
-     * (validateJwtSvid). Can be overridden per-message with the {@code CamelSpiffeAudience} header.
+     * (validateJwtSvid). Can be overridden per-message with the {@code CamelSpiffeAudience} header. Note that
+     * validateJwtSvid validates against a single audience, so when several comma-separated audiences are given only the
+     * first one is used for validation; fetchJwtSvid requests all of them.
      */
     public String getAudience() {
         return audience;

@@ -46,6 +46,11 @@ public class SpiffeComponentConfigurer extends PropertyConfigurerSupport impleme
     }
 
     @Override
+    public String[] getAutowiredNames() {
+        return new String[]{"workloadApiClient"};
+    }
+
+    @Override
     public Class<?> getOptionType(String name, boolean ignoreCase) {
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "audience": return java.lang.String.class;

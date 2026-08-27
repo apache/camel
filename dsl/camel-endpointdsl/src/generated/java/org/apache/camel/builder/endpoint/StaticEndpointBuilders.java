@@ -15390,6 +15390,48 @@ public class StaticEndpointBuilders {
         return SolrEndpointBuilderFactory.endpointBuilder(componentName, path);
     }
     /**
+     * SPIFFE (camel-spiffe)
+     * Fetch and validate SPIFFE workload identity (X.509-SVID and JWT-SVID)
+     * from the SPIFFE Workload API.
+     * 
+     * Category: security
+     * Since: 4.23
+     * Maven coordinates: org.apache.camel:camel-spiffe
+     * 
+     * Syntax: <code>spiffe:label</code>
+     * 
+     * Path parameter: label
+     * Logical name of the endpoint
+     * 
+     * @param path label
+     * @return the dsl builder
+     */
+    public static SpiffeEndpointBuilderFactory.SpiffeEndpointBuilder spiffe(String path) {
+        return spiffe("spiffe", path);
+    }
+    /**
+     * SPIFFE (camel-spiffe)
+     * Fetch and validate SPIFFE workload identity (X.509-SVID and JWT-SVID)
+     * from the SPIFFE Workload API.
+     * 
+     * Category: security
+     * Since: 4.23
+     * Maven coordinates: org.apache.camel:camel-spiffe
+     * 
+     * Syntax: <code>spiffe:label</code>
+     * 
+     * Path parameter: label
+     * Logical name of the endpoint
+     * 
+     * @param componentName to use a custom component name for the endpoint
+     * instead of the default name
+     * @param path label
+     * @return the dsl builder
+     */
+    public static SpiffeEndpointBuilderFactory.SpiffeEndpointBuilder spiffe(String componentName, String path) {
+        return SpiffeEndpointBuilderFactory.endpointBuilder(componentName, path);
+    }
+    /**
      * Splunk HEC (camel-splunk-hec)
      * The splunk component allows publishing events in Splunk using the HTTP
      * Event Collector.

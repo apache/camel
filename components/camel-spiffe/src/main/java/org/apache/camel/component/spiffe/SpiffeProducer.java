@@ -97,9 +97,13 @@ public class SpiffeProducer extends DefaultProducer {
             throw new IllegalArgumentException(
                     "At least one audience is required (set the audience option or the CamelSpiffeAudience header)");
         }
-        String[] parts = audience.split(",");
-        for (int i = 0; i < parts.length; i++) {
-            parts[i] = parts[i].trim();
+        String[] parts = Arrays.stream(audience.split(","))
+                .map(String::trim)
+                .filter(s -> !s.isEmpty())
+                .toArray(String[]::new);
+        if (parts.length == 0) {
+            throw new IllegalArgumentException(
+                    "At least one non-blank audience is required (set the audience option or the CamelSpiffeAudience header)");
         }
         return parts;
     }
