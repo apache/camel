@@ -28,6 +28,12 @@ and `openai`.
 
 Phase 3 coverage: `spring-ai-chat`.
 
+When using `spring-ai-chat` with only a pre-built `chatClient` (no `chatModel` on the endpoint), Camel attempts to read
+the backing Spring AI `ChatModel` via a private field on Spring AI's internal `ChatClientRequestSpec` implementation.
+That field is not public API and may change between Spring AI releases. If extraction fails, `gen_ai.system` and
+`gen_ai.request.model` span attributes may report `unknown`. Configure `chatModel` explicitly on the endpoint URI or
+component when GenAI observability is enabled so model metadata is always populated.
+
 New exchange headers for model identification on langchain4j components:
 
 * `CamelLangChain4jChatRequestModel` / `CamelLangChain4jChatResponseModel`
