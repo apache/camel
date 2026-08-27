@@ -38,6 +38,7 @@ public class GoogleVertexAIProducer extends DefaultProducer {
 
     private static final Logger LOG = LoggerFactory.getLogger(GoogleVertexAIProducer.class);
     private static final ObjectMapper OBJECT_MAPPER = new ObjectMapper();
+    private static final String JSON_MIME_TYPE = "application/json";
 
     private final GoogleVertexAIEndpoint endpoint;
 
@@ -260,7 +261,8 @@ public class GoogleVertexAIProducer extends DefaultProducer {
         }
 
         throw new IllegalArgumentException(
-                "Request body must be a JSON String, Map, or plain text prompt. Got: " + body.getClass().getName());
+                "Request body must be a JSON String, Map, or plain text prompt. Got: "
+                                           + (body == null ? "no body" : body.getClass().getName()));
     }
 
     /**
@@ -355,7 +357,7 @@ public class GoogleVertexAIProducer extends DefaultProducer {
         return prompt;
     }
 
-    private GenerateContentConfig buildConfig(Exchange exchange) {
+    GenerateContentConfig buildConfig(Exchange exchange) {
         GoogleVertexAIConfiguration config = endpoint.getConfiguration();
 
         GenerateContentConfig.Builder configBuilder = GenerateContentConfig.builder();
@@ -399,6 +401,10 @@ public class GoogleVertexAIProducer extends DefaultProducer {
         }
         if (candidateCount != null) {
             configBuilder.candidateCount(candidateCount);
+        }
+
+        if (config.isJsonMode()) {
+            configBuilder.responseMimeType(JSON_MIME_TYPE);
         }
 
         return configBuilder.build();
