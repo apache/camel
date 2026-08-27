@@ -208,8 +208,8 @@ public final class CxfPayloadConverter {
         }
         final TypeConverter documentTc = registry.lookup(Document.class, value.getClass());
         if (documentTc != null) {
-            Document document = documentTc.convertTo(Document.class, exchange, value);
-            if (document != null) {
+            Object result = documentTc.convertTo(Document.class, exchange, value);
+            if (result instanceof Document document) {
                 return (T) documentToCxfPayload(document, exchange);
             }
         }
