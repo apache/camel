@@ -30,7 +30,8 @@ public enum GoogleVertexAIOperations {
     generateText,
 
     /**
-     * Generate chat response using Gemini models with conversation history.
+     * Generate a chat response using Gemini models. Alias of {@link #generateText}: the request is built from the same
+     * prompt and configuration, the operation name only documents the intent of the route.
      */
     generateChat,
 
@@ -50,7 +51,8 @@ public enum GoogleVertexAIOperations {
     generateEmbeddings,
 
     /**
-     * Generate code using Gemini or code-specialized models.
+     * Generate code using Gemini or code-specialized models. Alias of {@link #generateText}: the model is selected with
+     * the modelId option, the operation name only documents the intent of the route.
      */
     generateCode,
 
