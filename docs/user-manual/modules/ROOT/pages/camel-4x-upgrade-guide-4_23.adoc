@@ -45,6 +45,42 @@ The whole iron-io GitHub organization has almost no activity.
 
 The `camel-json-patch` was deprecated in 4.19. The library it uses is not actively maintained and this module does not work with Jackson 3.
 
+==== camel-langchain4j-tools 
+
+The `camel-langchain4j-tools` component was deprecated in 4.19. Use `camel-ai-tool` to define tools
+and `camel-langchain4j-agent` for tool-calling with LangChain4j models.
+
+Migrate your tool definition routes from `langchain4j-tools:` to `ai-tool:`:
+
+[source,java]
+----
+// Before
+from("langchain4j-tools:weather?tags=weather&description=Get weather&parameter.city=string")
+    .setBody(constant("{\"city\": \"Paris\", \"temp\": \"22C\"}"));
+
+// After
+from("ai-tool:weather?tags=weather&description=Get weather&parameter.city=string")
+    .setBody(constant("{\"city\": \"Paris\", \"temp\": \"22C\"}"));
+----
+
+Use `langchain4j-agent` with matching tags to invoke tools:
+
+[source,java]
+----
+from("direct:chat")
+    .to("langchain4j-agent:assistant?agent=#myAgent&tags=weather");
+----
+
+Add the `camel-ai-tool` dependency to your project:
+
+[source,xml]
+----
+<dependency>
+    <groupId>org.apache.camel</groupId>
+    <artifactId>camel-ai-tool</artifactId>
+</dependency>
+----
+
 ==== camel-leveldb
 
 `camel-leveldb` was deprecated in 4.18. `leveldb` library is no more maintained and it exists several alternatives for file-based database nowadays.

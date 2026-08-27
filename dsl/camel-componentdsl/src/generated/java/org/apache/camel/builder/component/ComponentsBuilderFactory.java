@@ -3308,19 +3308,6 @@ public interface ComponentsBuilderFactory {
         return Langchain4jEmbeddingstoreComponentBuilderFactory.langchain4jEmbeddingstore();
     }
     /**
-     * LangChain4j Tools (camel-langchain4j-tools)
-     * LangChain4j Tools and Function Calling Features
-     * 
-     * Category: ai
-     * Since: 4.8
-     * Maven coordinates: org.apache.camel:camel-langchain4j-tools
-     * 
-     * @return the dsl builder
-     */
-    static Langchain4jToolsComponentBuilderFactory.Langchain4jToolsComponentBuilder langchain4jTools() {
-        return Langchain4jToolsComponentBuilderFactory.langchain4jTools();
-    }
-    /**
      * LangChain4j Web Search (camel-langchain4j-web-search)
      * LangChain4j Web Search Engine
      * 
