@@ -16109,7 +16109,8 @@ public class StaticEndpointBuilders {
     }
     /**
      * State Store (camel-state-store)
-     * Perform key-value operations against a pluggable state store backend.
+     * Perform key-value operations against a pluggable KeyValueRepository
+     * backend.
      * 
      * Category: cache
      * Since: 4.23
@@ -16128,7 +16129,8 @@ public class StaticEndpointBuilders {
     }
     /**
      * State Store (camel-state-store)
-     * Perform key-value operations against a pluggable state store backend.
+     * Perform key-value operations against a pluggable KeyValueRepository
+     * backend.
      * 
      * Category: cache
      * Since: 4.23

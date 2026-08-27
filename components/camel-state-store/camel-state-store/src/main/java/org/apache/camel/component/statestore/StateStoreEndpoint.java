@@ -20,6 +20,7 @@ import org.apache.camel.Category;
 import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
+import org.apache.camel.spi.KeyValueRepository;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
@@ -27,7 +28,7 @@ import org.apache.camel.spi.UriPath;
 import org.apache.camel.support.DefaultEndpoint;
 
 /**
- * Perform key-value operations against a pluggable state store backend.
+ * Perform key-value operations against a pluggable {@link KeyValueRepository} backend.
  *
  * @since 4.23
  */
@@ -44,9 +45,9 @@ public class StateStoreEndpoint extends DefaultEndpoint {
     @UriParam(description = "The default operation to perform", enums = "put,putIfAbsent,get,delete,contains,keys,size,clear")
     private StateStoreOperations operation;
 
-    @UriParam(description = "The backend to use. If not set, auto-discovers a single StateStoreBackend from the registry, or falls back to an in-memory store.",
+    @UriParam(description = "The backend to use. If not set, auto-discovers a single KeyValueRepository from the registry, or falls back to an in-memory store.",
               label = "advanced")
-    private StateStoreBackend backend;
+    private KeyValueRepository backend;
 
     @UriParam(description = "Time-to-live in milliseconds for entries. 0 means no expiry.", defaultValue = "0")
     private long ttl;
@@ -88,11 +89,11 @@ public class StateStoreEndpoint extends DefaultEndpoint {
         this.operation = operation;
     }
 
-    public StateStoreBackend getBackend() {
+    public KeyValueRepository getBackend() {
         return backend;
     }
 
-    public void setBackend(StateStoreBackend backend) {
+    public void setBackend(KeyValueRepository backend) {
         this.backend = backend;
     }
 
