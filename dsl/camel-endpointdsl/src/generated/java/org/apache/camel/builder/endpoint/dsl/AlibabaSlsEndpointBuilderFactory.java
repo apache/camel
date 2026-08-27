@@ -492,6 +492,18 @@ public interface AlibabaSlsEndpointBuilderFactory {
         public static final AlibabaSlsHeaderNameBuilder INSTANCE = new AlibabaSlsHeaderNameBuilder();
 
         /**
+         * Operation override.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code AlibabaSlsOperation}.
+         */
+        public String alibabaSlsOperation() {
+            return "CamelAlibabaSlsOperation";
+        }
+        /**
          * SLS project name override.
          * 
          * The option is a: {@code String} type.
