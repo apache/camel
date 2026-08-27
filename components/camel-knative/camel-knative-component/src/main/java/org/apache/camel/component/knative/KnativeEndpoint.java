@@ -247,7 +247,8 @@ public class KnativeEndpoint extends DefaultEndpoint {
         return new KnativeTransportConfiguration(
                 this.cloudEventProcessor.cloudEvent(),
                 !this.configuration.isReplyWithCloudEvent(),
-                ObjectHelper.supplyIfEmpty(this.configuration.getReply(), definition::getReply));
+                ObjectHelper.supplyIfEmpty(this.configuration.getReply(), definition::getReply),
+                this.configuration.isMuteException());
     }
 
     private Stream<KnativeResource> servicesDefinitions() {
