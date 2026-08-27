@@ -1385,7 +1385,7 @@ for details on available metrics, tracing, and prompt/completion logging configu
 
 When `camel-ai-observability` and a tracing backend (for example `camel-opentelemetry2`) are on the classpath, the
 producer emits OpenTelemetry spans with `gen_ai.*` attributes per chat call. Enable or disable globally with
-`camel.aiObservability.enabled` (see xref:ai-observability.adoc[AI Observability]).
+`camel.aiObservability.enabled` (see xref:others:ai-observability.adoc[AI Observability]).
 
 If the endpoint is configured with `chatClient` only (no `chatModel`), Camel tries to resolve the backing `ChatModel`
 for span metadata by reading a private field on Spring AI's internal `ChatClientRequestSpec` implementation. That is not
