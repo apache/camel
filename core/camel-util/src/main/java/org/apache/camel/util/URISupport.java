@@ -799,21 +799,71 @@ public final class URISupport {
     private static String buildReorderingParameters(String scheme, String path, String query) throws URISyntaxException {
         Map<String, Object> parameters = URISupport.parseQuery(query, false, false);
 
-        if (parameters.size() > 1) {
+        final String[] keys = parameters.keySet().toArray(new String[0]);
+        if (keys.length > 1) {
             // reorder parameters a..z
-            // always rebuild (and thereby re-encode) the query, even if the keys were already in
-            // order, as rebuilding is the only place where parameter values get URL-encoded; skipping
-            // it would make the encoded output depend on the incidental original parameter order
-            final String[] array = parameters.keySet().toArray(new String[0]);
-            Arrays.sort(array);
-
-            query = URISupport.createQueryString(array, parameters, true);
-        } else {
-            // 0 or 1 parameter: order is not ambiguous, but still rebuild so the value is
-            // consistently encoded the same way as the multi-parameter case above
-            query = URISupport.createQueryString(parameters);
+            Arrays.sort(keys);
         }
+        // always rebuild the query, even if the keys were already in order, so the output does not
+        // depend on the incidental original parameter order. Escape only the characters that are
+        // genuinely unsafe in a URI (as UnsafeUriCharactersEncoder does elsewhere in Camel) rather than
+        // the much more aggressive application/x-www-form-urlencoded encoding used by
+        // createQueryString()/URLEncoder, which would needlessly percent-encode characters that are
+        // legal unescaped in a URI query, such as ':' (eg host:port) or '/' (eg produces=application/json)
+        query = buildSafeQueryString(keys, parameters);
         return buildUri(scheme, path, query);
+    }
+
+    private static String buildSafeQueryString(String[] sortedKeys, Map<String, Object> parameters) {
+        if (parameters.isEmpty()) {
+            return EMPTY_QUERY_STRING;
+        }
+
+        StringBuilder sb = new StringBuilder(128);
+        boolean first = true;
+        for (String key : sortedKeys) {
+            if (first) {
+                first = false;
+            } else {
+                sb.append('&');
+            }
+
+            Object value = parameters.get(key);
+            if (value instanceof List) {
+                List<String> list = (List<String>) value;
+                for (Iterator<String> it = list.iterator(); it.hasNext();) {
+                    appendSafeQueryStringParameter(key, it.next(), sb);
+                    if (it.hasNext()) {
+                        sb.append('&');
+                    }
+                }
+            } else {
+                String s = value != null ? value.toString() : null;
+                appendSafeQueryStringParameter(key, s, sb);
+            }
+        }
+        return sb.toString();
+    }
+
+    private static void appendSafeQueryStringParameter(String key, String value, StringBuilder sb) {
+        sb.append(key);
+        if (value == null) {
+            return;
+        }
+        sb.append('=');
+        String raw = URIScanner.resolveRaw(value);
+        if (raw != null) {
+            // do not encode RAW parameters unless it has %
+            // need to replace % with %25 to avoid losing "%" when decoding
+            sb.append(URIScanner.replacePercent(value));
+        } else {
+            // '&' and '=' are structurally significant in Camel's key=value&key=value query syntax
+            // and must stay escaped inside a value even though they are otherwise legal, unescaped
+            // characters in a URI query per RFC 3986 - UnsafeUriCharactersEncoder does not escape them
+            // as it is also used outside of this query-value context
+            String encoded = UnsafeUriCharactersEncoder.encode(value).replace("&", "%26").replace("=", "%3D");
+            sb.append(encoded);
+        }
     }
 
     private static String buildUri(String scheme, String path, String query) {
