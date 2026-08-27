@@ -56,6 +56,7 @@ import org.apache.camel.component.platform.http.spi.PlatformHttpConsumer;
 import org.apache.camel.component.platform.http.spi.PlatformHttpSecurityHandler;
 import org.apache.camel.spi.HeaderFilterStrategy;
 import org.apache.camel.spi.RestRegistry;
+import org.apache.camel.spi.RestRegistry.RestService;
 import org.apache.camel.support.DefaultConsumer;
 import org.apache.camel.support.PluginHelper;
 import org.apache.camel.util.FileUtil;
@@ -221,7 +222,7 @@ public class VertxPlatformHttpConsumer extends DefaultConsumer
             }
             if (r.isContractFirst() && target.equals(r.getBasePath())) {
                 matched = true;
-                String u = r.getBasePath() + r.getBaseUrl();
+                String u = buildNormalizedEndpoint(r);
                 u = configureEndpointPath(u); // in vertx-web we should replace path parameters from {xxx} to :xxx syntax
                 String v = r.getMethod();
                 String c = r.getConsumes();
@@ -258,7 +259,7 @@ public class VertxPlatformHttpConsumer extends DefaultConsumer
                 target = target.substring(0, target.length() - 1);
             }
             if (r.isSpecification() && target.equals(r.getBasePath())) {
-                String u = r.getBasePath() + r.getBaseUrl();
+                String u = buildNormalizedEndpoint(r);
                 String v = r.getMethod();
                 String p = r.getProduces();
 
@@ -281,6 +282,15 @@ public class VertxPlatformHttpConsumer extends DefaultConsumer
             }
         }
         return matched;
+    }
+
+    static String buildNormalizedEndpoint(RestService restService) {
+        String base = restService.getBasePath();
+        if (base.endsWith("/")) {
+            base = base.substring(0, base.length() - 1);
+        }
+        String u = base + restService.getBaseUrl();
+        return u;
     }
 
     private String configureEndpointPath(PlatformHttpEndpoint endpoint) {
