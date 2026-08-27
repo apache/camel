@@ -41,7 +41,6 @@
         <!-- catalog -->
         <module>camel-catalog</module>
         <module>camel-catalog-console</module>
-        <module>camel-catalog-lucene</module>
         <module>camel-catalog-maven</module>
         <module>camel-catalog-suggest</module>
         <!-- tooling that depends on catalog -->
