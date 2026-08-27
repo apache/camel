@@ -79,6 +79,10 @@ public class KafkaFetchRecords implements Runnable {
     }
 
     private static final Logger LOG = LoggerFactory.getLogger(KafkaFetchRecords.class);
+    // class name checked via getName() rather than instanceof so a future Kafka client release that
+    // renames/removes this internal class fails this branch at runtime instead of failing compilation
+    private static final String ASYNC_KAFKA_CONSUMER_CLASS_NAME
+            = "org.apache.kafka.clients.consumer.internals.AsyncKafkaConsumer";
 
     // There are a few of volatile fields here because they are usually read from other threads,
     // like from the health check thread. They are usually only read on those contexts.
@@ -585,9 +589,33 @@ public class KafkaFetchRecords implements Runnable {
                             "Health-Check calling org.apache.kafka.clients.consumer.internals.ConsumerNetworkClient.hasReadyNode");
                     ready = nc.hasReadyNodes(System.currentTimeMillis());
                 }
+            } else if (consumer.getClass().getName().equals(ASYNC_KAFKA_CONSUMER_CLASS_NAME)) {
+                // group.protocol=consumer uses the new AsyncKafkaConsumer, which has no ConsumerNetworkClient.
+                // Walk the equivalent internal chain to reach the real KafkaClient and ask it directly.
+                Object appEventHandler
+                        = ReflectionHelper.getField(consumer.getClass().getDeclaredField("applicationEventHandler"),
+                                consumer);
+                Object networkThread = appEventHandler == null
+                        ? null
+                        : ReflectionHelper.getField(appEventHandler.getClass().getDeclaredField("networkThread"),
+                                appEventHandler);
+                Object networkClientDelegate = networkThread == null
+                        ? null
+                        : ReflectionHelper.getField(networkThread.getClass().getDeclaredField("networkClientDelegate"),
+                                networkThread);
+                Object client = networkClientDelegate == null
+                        ? null
+                        : ReflectionHelper.getField(networkClientDelegate.getClass().getDeclaredField("client"),
+                                networkClientDelegate);
+                if (client instanceof org.apache.kafka.clients.KafkaClient) {
+                    LOG.trace(
+                            "Health-Check calling org.apache.kafka.clients.consumer.internals.NetworkClientDelegate.client.hasReadyNode");
+                    ready = ((org.apache.kafka.clients.KafkaClient) client).hasReadyNodes(System.currentTimeMillis());
+                }
+                // else: consumer background thread has not finished initializing networkClientDelegate yet
+                // (it is set once, non-volatile, on the consumer's background thread) -> not yet ready
             } else {
-                // fail-closed: unknown consumer type (e.g. AsyncKafkaConsumer with group.protocol=consumer) -> not ready
-                // alternative would be to reflectively check AsyncKafkaConsumer.applicationEventHandler
+                // fail-closed: unrecognized consumer type -> not ready
                 ready = false;
             }
         } catch (Exception e) {
