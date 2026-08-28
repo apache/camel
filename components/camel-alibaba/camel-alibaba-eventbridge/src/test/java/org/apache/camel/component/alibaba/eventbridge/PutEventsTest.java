@@ -20,6 +20,7 @@ import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import com.aliyun.eventbridge.EventBridgeClient;
 import com.aliyun.eventbridge.models.CloudEvent;
@@ -30,6 +31,8 @@ import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.alibaba.eventbridge.constants.AlibabaEventBridgeConstants;
 import org.apache.camel.component.alibaba.eventbridge.constants.AlibabaEventBridgeHeaders;
+import org.apache.camel.component.alibaba.eventbridge.models.AllowedEventBus;
+import org.apache.camel.component.alibaba.eventbridge.models.AllowedEventSource;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.junit6.CamelTestSupport;
 import org.junit.jupiter.api.Test;
@@ -63,6 +66,16 @@ class PutEventsTest extends CamelTestSupport {
                             + "&secretKey=" + testConfiguration.getProperty("secretKey")
                             + "&eventBridgeClient=#eventBridgeClient")
                         .to("mock:result");
+
+                from("direct:putValidatedEndpoint")
+                        .to("alibaba-eventbridge:putEvents"
+                            + "?eventBusName=" + testConfiguration.getProperty("eventBusName")
+                            + "&allowedEventSources=RAW(acs:oss:cn-hangzhou:12345:bucket -> oss:ObjectCreated:PutObject; app.orders -> order:created:v1)"
+                            + "&region=" + testConfiguration.getProperty("region")
+                            + "&accessKey=" + testConfiguration.getProperty("accessKey")
+                            + "&secretKey=" + testConfiguration.getProperty("secretKey")
+                            + "&eventBridgeClient=#eventBridgeClient")
+                        .to("mock:resultValidated");
             }
         };
     }
@@ -202,5 +215,55 @@ class PutEventsTest extends CamelTestSupport {
                     && "camel.source.one".equals(ce1.getSource().toString())
                     && "camel.source.two".equals(ce2.getSource().toString());
         }));
+    }
+
+    @Test
+    void testPutEventsWithEndpointValidatedDsl() throws Exception {
+        PutEventsResponse response = new PutEventsResponse();
+        response.setRequestId("req-eb-validated");
+        response.setFailedEntryCount(0);
+
+        when(eventBridgeClient.putEvents(anyList())).thenReturn(response);
+
+        MockEndpoint mock = getMockEndpoint("mock:resultValidated");
+        mock.expectedMinimumMessageCount(1);
+
+        Map<String, Object> event = new HashMap<>();
+        event.put(AlibabaEventBridgeConstants.EVENT_BUS_NAME, testConfiguration.getProperty("eventBusName"));
+        event.put(AlibabaEventBridgeConstants.EVENT_SOURCE, "acs:oss:cn-hangzhou:12345:bucket");
+        event.put(AlibabaEventBridgeConstants.EVENT_TYPE, "oss:ObjectCreated:PutObject");
+        event.put(AlibabaEventBridgeConstants.EVENT_DATA, Map.of("key", "val"));
+
+        template.sendBody("direct:putValidatedEndpoint", event);
+
+        mock.assertIsSatisfied();
+    }
+
+    @Test
+    void testPutEventsWithHeaderAndPropertyOverride() throws Exception {
+        PutEventsResponse response = new PutEventsResponse();
+        response.setRequestId("req-eb-override");
+        response.setFailedEntryCount(0);
+
+        when(eventBridgeClient.putEvents(anyList())).thenReturn(response);
+
+        MockEndpoint mock = getMockEndpoint("mock:result");
+        mock.expectedMinimumMessageCount(1);
+
+        AllowedEventSource sourceDef = new AllowedEventSource("dynamic.source", Set.of("dynamic:event:v1"));
+        AllowedEventBus busDef = new AllowedEventBus("dynamic-bus", Map.of("dynamic.source", sourceDef));
+
+        Map<String, Object> event = new HashMap<>();
+        event.put(AlibabaEventBridgeConstants.EVENT_BUS_NAME, "dynamic-bus");
+        event.put(AlibabaEventBridgeConstants.EVENT_SOURCE, "dynamic.source");
+        event.put(AlibabaEventBridgeConstants.EVENT_TYPE, "dynamic:event:v1");
+        event.put(AlibabaEventBridgeConstants.EVENT_DATA, Map.of("id", 101));
+
+        Map<String, Object> headers = Map.of(
+                AlibabaEventBridgeHeaders.ALLOWED_EVENT_SOURCES, Map.of("dynamic-bus", busDef));
+
+        template.sendBodyAndHeaders("direct:put", event, headers);
+
+        mock.assertIsSatisfied();
     }
 }

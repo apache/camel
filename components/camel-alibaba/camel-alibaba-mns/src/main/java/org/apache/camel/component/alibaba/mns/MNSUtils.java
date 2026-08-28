@@ -62,15 +62,14 @@ public final class MNSUtils {
     }
 
     public static ClientConfigurations createClientConfigurations(MNSEndpoint endpoint, Exchange exchange) {
-        ClientConfigurations configuration = new ClientConfigurations();
-        configuration.setOperation(resolveOperation(endpoint, exchange));
-        configuration.setAccessKey(resolveAccessKey(endpoint));
-        configuration.setSecretKey(resolveSecretKey(endpoint));
-        configuration.setRegion(endpoint.getRegion());
-        configuration.setAccountEndpoint(endpoint.getAccountEndpoint());
-        configuration.setQueueName(resolveQueueName(endpoint, exchange));
-        configuration.setTopicName(resolveTopicName(endpoint, exchange));
-        return configuration;
+        return new ClientConfigurations(
+                resolveOperation(endpoint, exchange),
+                resolveAccessKey(endpoint),
+                resolveSecretKey(endpoint),
+                endpoint.getRegion(),
+                endpoint.getAccountEndpoint(),
+                resolveQueueName(endpoint, exchange),
+                resolveTopicName(endpoint, exchange));
     }
 
     public static String resolveOperation(MNSEndpoint endpoint, Exchange exchange) {
@@ -127,8 +126,8 @@ public final class MNSUtils {
             return endpoint.getAccessKey();
         }
         ServiceKeys serviceKeys = endpoint.getServiceKeys();
-        if (serviceKeys != null && ObjectHelper.isNotEmpty(serviceKeys.getAccessKey())) {
-            return serviceKeys.getAccessKey();
+        if (serviceKeys != null && ObjectHelper.isNotEmpty(serviceKeys.accessKey())) {
+            return serviceKeys.accessKey();
         }
         throw new IllegalArgumentException("authentication parameter 'access key (AK)' not found");
     }
@@ -138,8 +137,8 @@ public final class MNSUtils {
             return endpoint.getSecretKey();
         }
         ServiceKeys serviceKeys = endpoint.getServiceKeys();
-        if (serviceKeys != null && ObjectHelper.isNotEmpty(serviceKeys.getSecretKey())) {
-            return serviceKeys.getSecretKey();
+        if (serviceKeys != null && ObjectHelper.isNotEmpty(serviceKeys.secretKey())) {
+            return serviceKeys.secretKey();
         }
         throw new IllegalArgumentException("authentication parameter 'secret key (SK)' not found");
     }

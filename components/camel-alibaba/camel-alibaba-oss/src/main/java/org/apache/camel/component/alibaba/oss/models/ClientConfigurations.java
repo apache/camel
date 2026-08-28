@@ -17,73 +17,14 @@
 package org.apache.camel.component.alibaba.oss.models;
 
 /**
- * Class to combine parameters which can be passed through exchange properties and endpoint parameters
+ * Record to combine parameters which can be passed through exchange properties and endpoint parameters
  */
-public class ClientConfigurations {
-    private String operation;
-    private String bucketName;
-    private String objectName;
-    private String sourceBucketName;
-    private String sourceObjectName;
-    private String prefix;
-    private Integer maxKeys;
-
-    public ClientConfigurations() {
-    }
-
-    public String getOperation() {
-        return operation;
-    }
-
-    public void setOperation(String operation) {
-        this.operation = operation;
-    }
-
-    public String getBucketName() {
-        return bucketName;
-    }
-
-    public void setBucketName(String bucketName) {
-        this.bucketName = bucketName;
-    }
-
-    public String getObjectName() {
-        return objectName;
-    }
-
-    public void setObjectName(String objectName) {
-        this.objectName = objectName;
-    }
-
-    public String getSourceBucketName() {
-        return sourceBucketName;
-    }
-
-    public void setSourceBucketName(String sourceBucketName) {
-        this.sourceBucketName = sourceBucketName;
-    }
-
-    public String getSourceObjectName() {
-        return sourceObjectName;
-    }
-
-    public void setSourceObjectName(String sourceObjectName) {
-        this.sourceObjectName = sourceObjectName;
-    }
-
-    public String getPrefix() {
-        return prefix;
-    }
-
-    public void setPrefix(String prefix) {
-        this.prefix = prefix;
-    }
-
-    public Integer getMaxKeys() {
-        return maxKeys;
-    }
-
-    public void setMaxKeys(Integer maxKeys) {
-        this.maxKeys = maxKeys;
-    }
+public record ClientConfigurations(
+        String operation,
+        String bucketName,
+        String objectName,
+        String sourceBucketName,
+        String sourceObjectName,
+        String prefix,
+        Integer maxKeys) {
 }

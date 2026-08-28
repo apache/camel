@@ -16,60 +16,11 @@
  */
 package org.apache.camel.component.alibaba.kms.models;
 
-public class ClientConfigurations {
-
-    private String operation;
-    private String keyId;
-    private String plaintext;
-    private String ciphertextBlob;
-    private String keySpec;
-    private Integer numberOfBytes;
-
-    public String getOperation() {
-        return operation;
-    }
-
-    public void setOperation(String operation) {
-        this.operation = operation;
-    }
-
-    public String getKeyId() {
-        return keyId;
-    }
-
-    public void setKeyId(String keyId) {
-        this.keyId = keyId;
-    }
-
-    public String getPlaintext() {
-        return plaintext;
-    }
-
-    public void setPlaintext(String plaintext) {
-        this.plaintext = plaintext;
-    }
-
-    public String getCiphertextBlob() {
-        return ciphertextBlob;
-    }
-
-    public void setCiphertextBlob(String ciphertextBlob) {
-        this.ciphertextBlob = ciphertextBlob;
-    }
-
-    public String getKeySpec() {
-        return keySpec;
-    }
-
-    public void setKeySpec(String keySpec) {
-        this.keySpec = keySpec;
-    }
-
-    public Integer getNumberOfBytes() {
-        return numberOfBytes;
-    }
-
-    public void setNumberOfBytes(Integer numberOfBytes) {
-        this.numberOfBytes = numberOfBytes;
-    }
+public record ClientConfigurations(
+        String operation,
+        String keyId,
+        String plaintext,
+        String ciphertextBlob,
+        String keySpec,
+        Integer numberOfBytes) {
 }

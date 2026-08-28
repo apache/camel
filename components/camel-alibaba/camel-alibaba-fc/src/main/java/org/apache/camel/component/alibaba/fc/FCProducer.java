@@ -41,7 +41,7 @@ public class FCProducer extends DefaultProducer {
         FCEndpoint endpoint = getEndpoint();
         ClientConfigurations configuration = FCUtils.createClientConfigurations(endpoint, exchange);
 
-        if (ObjectHelper.isEmpty(configuration.getOperation())) {
+        if (ObjectHelper.isEmpty(configuration.operation())) {
             throw new IllegalArgumentException("Operation name not found");
         }
 
@@ -49,10 +49,10 @@ public class FCProducer extends DefaultProducer {
             fcClient = endpoint.initClient();
         }
 
-        switch (configuration.getOperation()) {
+        switch (configuration.operation()) {
             case FCOperations.INVOKE_FUNCTION -> invokeFunction(exchange, configuration);
             case FCOperations.GET_FUNCTION -> getFunction(exchange, configuration);
-            default -> throw new UnsupportedOperationException("Unsupported operation: " + configuration.getOperation());
+            default -> throw new UnsupportedOperationException("Unsupported operation: " + configuration.operation());
         }
     }
 
@@ -61,13 +61,13 @@ public class FCProducer extends DefaultProducer {
 
         InvokeFunctionRequest request = new InvokeFunctionRequest()
                 .setBody(FCUtils.resolvePayload(exchange));
-        if (ObjectHelper.isNotEmpty(configuration.getQualifier())) {
-            request.setQualifier(configuration.getQualifier());
+        if (ObjectHelper.isNotEmpty(configuration.qualifier())) {
+            request.setQualifier(configuration.qualifier());
         }
 
         InvokeFunctionResponse response = fcClient.invokeFunction(
-                configuration.getServiceName(),
-                configuration.getFunctionName(),
+                configuration.serviceName(),
+                configuration.functionName(),
                 request);
 
         exchange.getMessage().setBody(FCUtils.toInvokeFunctionMap(response));
@@ -83,13 +83,13 @@ public class FCProducer extends DefaultProducer {
         validateServiceAndFunction(configuration);
 
         GetFunctionRequest request = new GetFunctionRequest();
-        if (ObjectHelper.isNotEmpty(configuration.getQualifier())) {
-            request.setQualifier(configuration.getQualifier());
+        if (ObjectHelper.isNotEmpty(configuration.qualifier())) {
+            request.setQualifier(configuration.qualifier());
         }
 
         GetFunctionResponse response = fcClient.getFunction(
-                configuration.getServiceName(),
-                configuration.getFunctionName(),
+                configuration.serviceName(),
+                configuration.functionName(),
                 request);
 
         exchange.getMessage().setBody(FCUtils.toGetFunctionMap(response.getBody()));
@@ -99,7 +99,7 @@ public class FCProducer extends DefaultProducer {
     }
 
     private void validateServiceAndFunction(ClientConfigurations configuration) {
-        if (ObjectHelper.isEmpty(configuration.getServiceName()) || ObjectHelper.isEmpty(configuration.getFunctionName())) {
+        if (ObjectHelper.isEmpty(configuration.serviceName()) || ObjectHelper.isEmpty(configuration.functionName())) {
             throw new IllegalArgumentException("Service name and function name are required");
         }
     }

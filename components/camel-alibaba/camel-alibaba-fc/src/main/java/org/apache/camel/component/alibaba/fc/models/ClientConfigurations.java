@@ -16,42 +16,9 @@
  */
 package org.apache.camel.component.alibaba.fc.models;
 
-public class ClientConfigurations {
-
-    private String operation;
-    private String serviceName;
-    private String functionName;
-    private String qualifier;
-
-    public String getOperation() {
-        return operation;
-    }
-
-    public void setOperation(String operation) {
-        this.operation = operation;
-    }
-
-    public String getServiceName() {
-        return serviceName;
-    }
-
-    public void setServiceName(String serviceName) {
-        this.serviceName = serviceName;
-    }
-
-    public String getFunctionName() {
-        return functionName;
-    }
-
-    public void setFunctionName(String functionName) {
-        this.functionName = functionName;
-    }
-
-    public String getQualifier() {
-        return qualifier;
-    }
-
-    public void setQualifier(String qualifier) {
-        this.qualifier = qualifier;
-    }
+public record ClientConfigurations(
+        String operation,
+        String serviceName,
+        String functionName,
+        String qualifier) {
 }

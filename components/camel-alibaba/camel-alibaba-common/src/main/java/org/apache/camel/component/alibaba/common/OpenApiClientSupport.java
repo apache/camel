@@ -29,8 +29,8 @@ public final class OpenApiClientSupport {
         if (ObjectHelper.isNotEmpty(accessKey)) {
             return accessKey;
         }
-        if (serviceKeys != null && ObjectHelper.isNotEmpty(serviceKeys.getAccessKey())) {
-            return serviceKeys.getAccessKey();
+        if (serviceKeys != null && ObjectHelper.isNotEmpty(serviceKeys.accessKey())) {
+            return serviceKeys.accessKey();
         }
         throw new IllegalArgumentException("Authentication parameter 'access key (AK)' not found");
     }
@@ -39,8 +39,8 @@ public final class OpenApiClientSupport {
         if (ObjectHelper.isNotEmpty(secretKey)) {
             return secretKey;
         }
-        if (serviceKeys != null && ObjectHelper.isNotEmpty(serviceKeys.getSecretKey())) {
-            return serviceKeys.getSecretKey();
+        if (serviceKeys != null && ObjectHelper.isNotEmpty(serviceKeys.secretKey())) {
+            return serviceKeys.secretKey();
         }
         throw new IllegalArgumentException("Authentication parameter 'secret key (SK)' not found");
     }
@@ -60,6 +60,28 @@ public final class OpenApiClientSupport {
         Integer value = exchange.getIn().getHeader(name, Integer.class);
         if (value == null) {
             value = exchange.getProperty(name, Integer.class);
+        }
+        if (value == null) {
+            value = endpointValue;
+        }
+        return value;
+    }
+
+    public static Boolean resolveBoolean(Exchange exchange, String name, Boolean endpointValue) {
+        Boolean value = exchange.getIn().getHeader(name, Boolean.class);
+        if (value == null) {
+            value = exchange.getProperty(name, Boolean.class);
+        }
+        if (value == null) {
+            value = endpointValue;
+        }
+        return value != null ? value : false;
+    }
+
+    public static Long resolveLong(Exchange exchange, String name, Long endpointValue) {
+        Long value = exchange.getIn().getHeader(name, Long.class);
+        if (value == null) {
+            value = exchange.getProperty(name, Long.class);
         }
         if (value == null) {
             value = endpointValue;

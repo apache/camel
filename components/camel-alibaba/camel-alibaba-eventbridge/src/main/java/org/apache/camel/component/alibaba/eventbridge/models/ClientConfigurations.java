@@ -16,51 +16,69 @@
  */
 package org.apache.camel.component.alibaba.eventbridge.models;
 
-public class ClientConfigurations {
+import java.util.Collections;
+import java.util.Map;
 
-    private String operation;
-    private String eventBusName;
-    private String eventSource;
-    private String eventType;
-    private String eventSubject;
+/**
+ * Java 16 record holding resolved client configurations for Alibaba Cloud EventBridge.
+ */
+public record ClientConfigurations(
+        String operation,
+        String eventBusName,
+        String eventSource,
+        String eventType,
+        String eventSubject,
+        boolean validateEventSource,
+        boolean validateEventType,
+        boolean validateEventSpec,
+        Map<String, AllowedEventBus> allowedEventBuses,
+        long eventSourceCacheTtl) {
 
-    public String getOperation() {
-        return operation;
+    public ClientConfigurations {
+        if (allowedEventBuses == null) {
+            allowedEventBuses = Collections.emptyMap();
+        } else {
+            allowedEventBuses = Collections.unmodifiableMap(allowedEventBuses);
+        }
     }
 
-    public void setOperation(String operation) {
-        this.operation = operation;
+    public ClientConfigurations() {
+        this(null, null, null, null, null, false, false, true, Collections.emptyMap(), 300000L);
     }
 
-    public String getEventBusName() {
-        return eventBusName;
+    public ClientConfigurations(
+                                String operation,
+                                String eventBusName,
+                                String eventSource,
+                                String eventType,
+                                String eventSubject) {
+        this(operation, eventBusName, eventSource, eventType, eventSubject, false, false, true, Collections.emptyMap(),
+             300000L);
     }
 
-    public void setEventBusName(String eventBusName) {
-        this.eventBusName = eventBusName;
+    public ClientConfigurations(
+                                String operation,
+                                String eventBusName,
+                                String eventSource,
+                                String eventType,
+                                String eventSubject,
+                                boolean validateEventSource,
+                                boolean validateEventSpec) {
+        this(operation, eventBusName, eventSource, eventType, eventSubject, validateEventSource, false, validateEventSpec,
+             Collections.emptyMap(), 300000L);
     }
 
-    public String getEventSource() {
-        return eventSource;
-    }
-
-    public void setEventSource(String eventSource) {
-        this.eventSource = eventSource;
-    }
-
-    public String getEventType() {
-        return eventType;
-    }
-
-    public void setEventType(String eventType) {
-        this.eventType = eventType;
-    }
-
-    public String getEventSubject() {
-        return eventSubject;
-    }
-
-    public void setEventSubject(String eventSubject) {
-        this.eventSubject = eventSubject;
+    public ClientConfigurations(
+                                String operation,
+                                String eventBusName,
+                                String eventSource,
+                                String eventType,
+                                String eventSubject,
+                                boolean validateEventSource,
+                                boolean validateEventType,
+                                boolean validateEventSpec,
+                                Map<String, AllowedEventBus> allowedEventBuses) {
+        this(operation, eventBusName, eventSource, eventType, eventSubject, validateEventSource, validateEventType,
+             validateEventSpec, allowedEventBuses, 300000L);
     }
 }

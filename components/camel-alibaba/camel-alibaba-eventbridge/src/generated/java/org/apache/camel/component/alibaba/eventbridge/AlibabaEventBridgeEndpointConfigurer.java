@@ -25,6 +25,8 @@ public class AlibabaEventBridgeEndpointConfigurer extends PropertyConfigurerSupp
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "accesskey":
         case "accessKey": target.setAccessKey(property(camelContext, java.lang.String.class, value)); return true;
+        case "allowedeventsources":
+        case "allowedEventSources": target.setAllowedEventSources(property(camelContext, java.lang.String.class, value)); return true;
         case "endpoint": target.setEndpoint(property(camelContext, java.lang.String.class, value)); return true;
         case "eventbridgeclient":
         case "eventBridgeClient": target.setEventBridgeClient(property(camelContext, com.aliyun.eventbridge.EventBridgeClient.class, value)); return true;
@@ -32,6 +34,8 @@ public class AlibabaEventBridgeEndpointConfigurer extends PropertyConfigurerSupp
         case "eventBusName": target.setEventBusName(property(camelContext, java.lang.String.class, value)); return true;
         case "eventsource":
         case "eventSource": target.setEventSource(property(camelContext, java.lang.String.class, value)); return true;
+        case "eventsourcecachettl":
+        case "eventSourceCacheTtl": target.setEventSourceCacheTtl(property(camelContext, long.class, value)); return true;
         case "eventsubject":
         case "eventSubject": target.setEventSubject(property(camelContext, java.lang.String.class, value)); return true;
         case "eventtype":
@@ -43,6 +47,12 @@ public class AlibabaEventBridgeEndpointConfigurer extends PropertyConfigurerSupp
         case "secretKey": target.setSecretKey(property(camelContext, java.lang.String.class, value)); return true;
         case "servicekeys":
         case "serviceKeys": target.setServiceKeys(property(camelContext, org.apache.camel.component.alibaba.common.models.ServiceKeys.class, value)); return true;
+        case "validateeventsource":
+        case "validateEventSource": target.setValidateEventSource(property(camelContext, boolean.class, value)); return true;
+        case "validateeventspec":
+        case "validateEventSpec": target.setValidateEventSpec(property(camelContext, boolean.class, value)); return true;
+        case "validateeventtype":
+        case "validateEventType": target.setValidateEventType(property(camelContext, boolean.class, value)); return true;
         default: return false;
         }
     }
@@ -57,6 +67,8 @@ public class AlibabaEventBridgeEndpointConfigurer extends PropertyConfigurerSupp
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "accesskey":
         case "accessKey": return java.lang.String.class;
+        case "allowedeventsources":
+        case "allowedEventSources": return java.lang.String.class;
         case "endpoint": return java.lang.String.class;
         case "eventbridgeclient":
         case "eventBridgeClient": return com.aliyun.eventbridge.EventBridgeClient.class;
@@ -64,6 +76,8 @@ public class AlibabaEventBridgeEndpointConfigurer extends PropertyConfigurerSupp
         case "eventBusName": return java.lang.String.class;
         case "eventsource":
         case "eventSource": return java.lang.String.class;
+        case "eventsourcecachettl":
+        case "eventSourceCacheTtl": return long.class;
         case "eventsubject":
         case "eventSubject": return java.lang.String.class;
         case "eventtype":
@@ -75,6 +89,12 @@ public class AlibabaEventBridgeEndpointConfigurer extends PropertyConfigurerSupp
         case "secretKey": return java.lang.String.class;
         case "servicekeys":
         case "serviceKeys": return org.apache.camel.component.alibaba.common.models.ServiceKeys.class;
+        case "validateeventsource":
+        case "validateEventSource": return boolean.class;
+        case "validateeventspec":
+        case "validateEventSpec": return boolean.class;
+        case "validateeventtype":
+        case "validateEventType": return boolean.class;
         default: return null;
         }
     }
@@ -85,6 +105,8 @@ public class AlibabaEventBridgeEndpointConfigurer extends PropertyConfigurerSupp
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "accesskey":
         case "accessKey": return target.getAccessKey();
+        case "allowedeventsources":
+        case "allowedEventSources": return target.getAllowedEventSources();
         case "endpoint": return target.getEndpoint();
         case "eventbridgeclient":
         case "eventBridgeClient": return target.getEventBridgeClient();
@@ -92,6 +114,8 @@ public class AlibabaEventBridgeEndpointConfigurer extends PropertyConfigurerSupp
         case "eventBusName": return target.getEventBusName();
         case "eventsource":
         case "eventSource": return target.getEventSource();
+        case "eventsourcecachettl":
+        case "eventSourceCacheTtl": return target.getEventSourceCacheTtl();
         case "eventsubject":
         case "eventSubject": return target.getEventSubject();
         case "eventtype":
@@ -103,6 +127,12 @@ public class AlibabaEventBridgeEndpointConfigurer extends PropertyConfigurerSupp
         case "secretKey": return target.getSecretKey();
         case "servicekeys":
         case "serviceKeys": return target.getServiceKeys();
+        case "validateeventsource":
+        case "validateEventSource": return target.isValidateEventSource();
+        case "validateeventspec":
+        case "validateEventSpec": return target.isValidateEventSpec();
+        case "validateeventtype":
+        case "validateEventType": return target.isValidateEventType();
         default: return null;
         }
     }
