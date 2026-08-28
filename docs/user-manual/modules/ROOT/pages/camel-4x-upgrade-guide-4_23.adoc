@@ -544,6 +544,23 @@ is truncated rather than recreated and would otherwise keep its original permiss
 Deployments where another account legitimately reads these files — a sidecar or a backup agent running as
 a different user — need to run as the owner, or use a group-aware key store instead.
 
+=== camel-mllp
+
+`logPhi` now defaults to `false`. It previously defaulted to `true`, so message content — which for MLLP
+is patient data by definition — reached the log at the default INFO/WARN levels with no configuration at
+all. Set `logPhi=true` on the component to restore the previous behaviour.
+
+Payload-bearing log paths that ignored the flag no longer do, including:
+`MllpSocketBuffer.readFrom` (the partial-payload warning, which logs the content of a legitimate
+in-flight message from a slow sender, not only unexpected bytes) and
+`MllpSocketBuffer.readSocketInputStream` (the bytes-before-START_OF_BLOCK warning), the invalid and partial-payload
+warnings in `TcpSocketConsumerRunnable`, and acknowledgement debug logging. Where content is suppressed the log now
+shows `<PHI suppressed>`.
+
+The suppression is applied at the log statements, through a new `Hl7Util.convertToLoggableString`, rather
+than inside `convertToPrintFriendlyString`: that method is not a logging helper — it also extracts the
+MSH-9 field when an acknowledgement is generated, so redacting inside it would corrupt acknowledgements.
+
 === camel-platform-http
 
 `PlatformHttpEndpoint.isHttpProxy()` selected proxy mode with `path.startsWith("proxy")` rather than an
