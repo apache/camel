@@ -175,13 +175,15 @@ class OcrExtractionIT extends CamelTestSupport {
         boolean foundFirst = resultLower.contains("first");
         boolean foundSecond = resultLower.contains("second");
 
-        assertTrue(foundFirst && foundSecond,
-                "OCR should extract at least some of the expected text. Got: " + result);
+        assertThat(foundFirst && foundSecond)
+                .as("OCR should extract at least some of the expected text. Got: %s", result)
+                .isTrue();
 
-        // Since docling v1.30.0, page furniture (headers/footers) is included in the default body export.
+        // Docling recognizes the footer but classifies it as page furniture, which the default body export excludes.
         boolean foundFooter = resultLower.contains("footer");
-        assertTrue(foundFooter,
-                "Footer text (page furniture) should be included in the docling body export since v1.30.0. Got: " + result);
+        assertThat(foundFooter)
+                .as("Footer text should be excluded from the default body export. Got: %s", result)
+                .isFalse();
 
         LOG.info("OCR extraction with multiple text blocks result:\n{}", result);
         LOG.info("Successfully extracted text from image with multiple text blocks");
