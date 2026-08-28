@@ -33,7 +33,6 @@ import jakarta.servlet.http.HttpServletRequest;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
-import org.apache.camel.RuntimeExchangeException;
 import org.apache.camel.converter.stream.CachedOutputStream;
 import org.apache.camel.support.CamelObjectInputStream;
 import org.apache.camel.support.DeserializationFilterHelper;
@@ -211,12 +210,9 @@ public final class HttpHelper {
             uri = endpoint.getHttpUri().toASCIIString();
         }
 
-        // resolve placeholders in uri
-        try {
-            uri = exchange.getContext().resolvePropertyPlaceholders(uri);
-        } catch (Exception e) {
-            throw new RuntimeExchangeException("Cannot resolve property placeholders with uri: " + uri, exchange, e);
-        }
+        // NOTE: no placeholder resolution here. When uri came from the endpoint it was already resolved at
+        // build time, and when it came from the CamelHttpUri header it carries message content
+        // (see CAMEL-24282 / CAMEL-24418)
 
         // append HTTP_PATH to HTTP_URI if it is provided in the header
         String path = exchange.getIn().getHeader(Exchange.HTTP_PATH, String.class);
@@ -331,12 +327,8 @@ public final class HttpHelper {
         String queryString = exchange.getIn().getHeader(Exchange.HTTP_QUERY, String.class);
         // We need also check the HTTP_URI header query part
         String uriString = exchange.getIn().getHeader(Exchange.HTTP_URI, String.class);
-        // resolve placeholders in uriString
-        try {
-            uriString = exchange.getContext().resolvePropertyPlaceholders(uriString);
-        } catch (Exception e) {
-            throw new RuntimeExchangeException("Cannot resolve property placeholders with uri: " + uriString, exchange, e);
-        }
+        // NOTE: property placeholders are resolved at build time on the endpoint uri written in the route,
+        // never on this header value, which carries message content (see CAMEL-24282 / CAMEL-24418)
         if (uriString != null) {
             // in case the URI string contains unsafe characters
             uriString = UnsafeUriCharactersEncoder.encodeHttpURI(uriString);

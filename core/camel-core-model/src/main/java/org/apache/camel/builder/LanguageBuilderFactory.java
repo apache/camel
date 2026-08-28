@@ -16,7 +16,6 @@
  */
 package org.apache.camel.builder;
 
-import org.apache.camel.model.language.CSimpleExpression;
 import org.apache.camel.model.language.ConstantExpression;
 import org.apache.camel.model.language.DatasonnetExpression;
 import org.apache.camel.model.language.ExchangePropertyExpression;
@@ -64,28 +63,6 @@ public final class LanguageBuilderFactory {
     public ConstantExpression.Builder constant(Object value) {
         var builder = constant();
         builder.value(value);
-        return builder;
-    }
-
-    /**
-     * Uses the CSimple language
-     *
-     * @deprecated use simple instead
-     */
-    @Deprecated(since = "4.19")
-    public CSimpleExpression.Builder csimple() {
-        return new CSimpleExpression.Builder();
-    }
-
-    /**
-     * Uses the CSimple language
-     *
-     * @deprecated use simple instead
-     */
-    @Deprecated(since = "4.19")
-    public CSimpleExpression.Builder csimple(String expression) {
-        var builder = csimple();
-        builder.expression(expression);
         return builder;
     }
 

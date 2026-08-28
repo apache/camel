@@ -116,7 +116,6 @@
         <module>camel-couchdb</module>
         <module>camel-crypto</module>
         <module>camel-crypto-pgp</module>
-        <module>camel-csimple-joor</module>
         <module>camel-csv</module>
         <module>camel-cyberark-vault</module>
         <module>camel-dapr</module>

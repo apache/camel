@@ -24,7 +24,6 @@ import org.apache.camel.Expression;
 import org.apache.camel.ExpressionFactory;
 import org.apache.camel.PredicateFactory;
 import org.apache.camel.model.ExpressionNodeHelper;
-import org.apache.camel.model.language.CSimpleExpression;
 import org.apache.camel.model.language.ConstantExpression;
 import org.apache.camel.model.language.DatasonnetExpression;
 import org.apache.camel.model.language.ExchangePropertyExpression;
@@ -791,33 +790,6 @@ public class ExpressionClauseSupport<T> implements ExpressionFactoryAware, Predi
      */
     public T spel(String text) {
         return expression(new SpELExpression(text));
-    }
-
-    /**
-     * Evaluates a compiled simple expression
-     *
-     * @param      text the expression to be evaluated
-     * @return          the builder to continue processing the DSL
-     * @deprecated      use {@link #simple(String)} instead
-     */
-    @Deprecated(since = "4.19")
-    public T csimple(String text) {
-        return expression(new CSimpleExpression(text));
-    }
-
-    /**
-     * Evaluates a compiled simple expression
-     *
-     * @param      text       the expression to be evaluated
-     * @param      resultType the return type expected by the expression
-     * @return                the builder to continue processing the DSL
-     * @deprecated            use {@link #simple(String, Class)} instead
-     */
-    @Deprecated(since = "4.19")
-    public T csimple(String text, Class<?> resultType) {
-        CSimpleExpression exp = new CSimpleExpression(text);
-        exp.setResultType(resultType);
-        return expression(exp);
     }
 
     /**
