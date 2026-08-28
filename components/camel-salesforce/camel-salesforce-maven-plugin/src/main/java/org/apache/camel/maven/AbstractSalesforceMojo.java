@@ -150,7 +150,7 @@ public abstract class AbstractSalesforceMojo extends AbstractMojo {
 
     /**
      * Salesforce authentication type. If not specified, auto-detected from provided credentials. Supported values:
-     * USERNAME_PASSWORD, REFRESH_TOKEN, JWT, CLIENT_CREDENTIALS.
+     * USERNAME_PASSWORD, JWT, CLIENT_CREDENTIALS.
      */
     @Parameter(property = "camelSalesforce.authenticationType")
     AuthenticationType authenticationType;
