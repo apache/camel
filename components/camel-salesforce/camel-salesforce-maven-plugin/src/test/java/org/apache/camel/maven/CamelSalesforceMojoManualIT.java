@@ -34,7 +34,7 @@ import org.apache.camel.component.salesforce.SalesforceEndpointConfig;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
 
-import static org.apache.camel.maven.AbstractSalesforceMojoTest.setup;
+import static org.apache.camel.maven.AbstractSalesforceMojoTest.setupUsernamePassword;
 import static org.assertj.core.api.Assertions.assertThat;
 
 public class CamelSalesforceMojoManualIT {
@@ -71,7 +71,7 @@ public class CamelSalesforceMojoManualIT {
         final GenerateMojo mojo = new GenerateMojo();
 
         // set login properties
-        setup(mojo);
+        setupUsernamePassword(mojo);
 
         // set defaults
         mojo.version = SalesforceEndpointConfig.DEFAULT_VERSION;

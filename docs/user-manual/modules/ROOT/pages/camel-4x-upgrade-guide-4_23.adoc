@@ -512,6 +512,16 @@ Ordinary listings are unaffected, as a listed name is normally a single path seg
 resolves back inside the polled directory remains accepted. Two configurations can newly see files skipped: a
 server that reports names navigating above the polled directory, and a `fileName` expression (used when
 `useList=false`) that navigates above it. Set `jailStartingDirectory=false` if such a path is intended.
+=== camel-salesforce
+
+The `camel-salesforce-maven-plugin` now supports JWT and Client Credentials authentication in addition to
+the existing Username-Password flow.
+
+A new `authenticationType` configuration property allows explicitly selecting the authentication type.
+When not set, the plugin auto-detects the type from the provided credentials, matching the behavior of the
+Salesforce component. The `userName` property is no longer required, as it is not needed for the Client Credentials flow.
+
+See the plugin's `README.md` for the required properties per authentication type.
 
 === camel-as2
 
