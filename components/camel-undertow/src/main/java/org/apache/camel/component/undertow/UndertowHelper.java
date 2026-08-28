@@ -23,7 +23,6 @@ import java.util.Map;
 import io.undertow.util.HttpString;
 import io.undertow.util.Methods;
 import org.apache.camel.Exchange;
-import org.apache.camel.RuntimeExchangeException;
 import org.apache.camel.util.CollectionHelper;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.URISupport;
@@ -51,12 +50,8 @@ public final class UndertowHelper {
             uri = endpoint.getHttpURI().toASCIIString();
         }
 
-        // resolve placeholders in uri
-        try {
-            uri = exchange.getContext().resolvePropertyPlaceholders(uri);
-        } catch (Exception e) {
-            throw new RuntimeExchangeException("Cannot resolve property placeholders with uri: " + uri, exchange, e);
-        }
+        // NOTE: property placeholders are resolved at build time on the endpoint uri written in the route,
+        // never on the message-supplied override headers (see CAMEL-24282 / CAMEL-24418)
 
         // append HTTP_PATH to HTTP_URI if it is provided in the header
         String path = exchange.getIn().getHeader(UndertowConstants.HTTP_PATH, String.class);
@@ -126,12 +121,8 @@ public final class UndertowHelper {
         String queryString = exchange.getIn().getHeader(UndertowConstants.HTTP_QUERY, String.class);
         // We need also check the HTTP_URI header query part
         String uriString = exchange.getIn().getHeader(UndertowConstants.HTTP_URI, String.class);
-        // resolve placeholders in uriString
-        try {
-            uriString = exchange.getContext().resolvePropertyPlaceholders(uriString);
-        } catch (Exception e) {
-            throw new RuntimeExchangeException("Cannot resolve property placeholders with uri: " + uriString, exchange, e);
-        }
+        // NOTE: property placeholders are resolved at build time on the endpoint uri written in the route,
+        // never on this header value, which carries message content (see CAMEL-24282 / CAMEL-24418)
         if (uriString != null) {
             URI uri = new URI(uriString);
             queryString = uri.getQuery();

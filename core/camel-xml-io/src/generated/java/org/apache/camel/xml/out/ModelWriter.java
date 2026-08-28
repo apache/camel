@@ -560,9 +560,6 @@ public class ModelWriter extends BaseWriter {
     public void writeSpringTransactionErrorHandlerDefinition(SpringTransactionErrorHandlerDefinition def) throws IOException {
         doWriteSpringTransactionErrorHandlerDefinition("springTransactionErrorHandler", def);
     }
-    public void writeCSimpleExpression(CSimpleExpression def) throws IOException {
-        doWriteCSimpleExpression("csimple", def);
-    }
     public void writeConstantExpression(ConstantExpression def) throws IOException {
         doWriteConstantExpression("constant", def);
     }
@@ -2885,14 +2882,6 @@ public class ModelWriter extends BaseWriter {
         doWriteDefaultErrorHandlerDefinitionElements(def);
         endElement(name);
     }
-    protected void doWriteCSimpleExpression(String name, CSimpleExpression def) throws IOException {
-        startElement(name);
-        doWriteTypedExpressionDefinitionAttributes(def);
-        doWriteAttribute("trimResult", def.getTrimResult(), "false");
-        doWriteAttribute("pretty", def.getPretty(), "false");
-        doWriteValue(def.getExpression());
-        endElement(name);
-    }
     protected void doWriteConstantExpression(String name, ConstantExpression def) throws IOException {
         startElement(name);
         doWriteTypedExpressionDefinitionAttributes(def);
@@ -3898,7 +3887,6 @@ public class ModelWriter extends BaseWriter {
     protected void doWriteExpressionDefinitionRef(String n, ExpressionDefinition v) throws IOException {
         if (v != null) {
             switch (v.getClass().getSimpleName()) {
-                case "CSimpleExpression" -> doWriteCSimpleExpression("csimple", (CSimpleExpression) v);
                 case "ConstantExpression" -> doWriteConstantExpression("constant", (ConstantExpression) v);
                 case "DatasonnetExpression" -> doWriteDatasonnetExpression("datasonnet", (DatasonnetExpression) v);
                 case "ExchangePropertyExpression" -> doWriteExchangePropertyExpression("exchangeProperty", (ExchangePropertyExpression) v);

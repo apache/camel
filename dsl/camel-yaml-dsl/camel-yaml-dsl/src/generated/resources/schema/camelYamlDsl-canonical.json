@@ -1332,9 +1332,6 @@
           "constant" : {
             "$ref" : "#/items/definitions/org.apache.camel.model.language.ConstantExpression"
           },
-          "csimple" : {
-            "$ref" : "#/items/definitions/org.apache.camel.model.language.CSimpleExpression"
-          },
           "datasonnet" : {
             "$ref" : "#/items/definitions/org.apache.camel.model.language.DatasonnetExpression"
           },
@@ -3115,7 +3112,7 @@
             "description" : "The property key."
           }
         },
-        "required" : [ "expression", "key" ]
+        "required" : [ "key" ]
       },
       "org.apache.camel.model.RecipientListDefinition" : {
         "title" : "Recipient List",
@@ -3627,8 +3624,7 @@
           "streamConfig" : {
             "$ref" : "#/items/definitions/org.apache.camel.model.config.StreamResequencerConfig"
           }
-        },
-        "required" : [ "expression" ]
+        }
       },
       "org.apache.camel.model.Resilience4jConfigurationDefinition" : {
         "title" : "Resilience4j Configuration",
@@ -5767,8 +5763,7 @@
           "zipFile" : {
             "$ref" : "#/items/definitions/org.apache.camel.model.dataformat.ZipFileDataFormat"
           }
-        },
-        "required" : [ "asn1", "avro", "barcode", "base64", "beanio", "bindy", "cbor", "crypto", "csv", "custom", "dfdl", "fhirJson", "fhirXml", "flatpack", "fory", "grok", "groovyJson", "groovyXml", "gzipDeflater", "hl7", "ical", "iso8583", "jacksonXml", "jaxb", "json", "jsonApi", "lzf", "mimeMultipart", "ocsf", "parquetAvro", "pgp", "pqc", "protobuf", "rss", "smooks", "soap", "swiftMt", "swiftMx", "syslog", "tarFile", "thrift", "toon", "ubl", "univocityCsv", "univocityFixed", "univocityTsv", "xmlSecurity", "yaml", "zipDeflater", "zipFile" ]
+        }
       },
       "org.apache.camel.model.ValidateDefinition" : {
         "title" : "Validate",
@@ -9528,49 +9523,6 @@
           }
         }
       },
-      "org.apache.camel.model.language.CSimpleExpression" : {
-        "title" : "CSimple",
-        "description" : "Evaluate a compiled simple expression",
-        "deprecated" : true,
-        "type" : "object",
-        "additionalProperties" : false,
-        "properties" : {
-          "expression" : {
-            "type" : "string",
-            "title" : "Expression",
-            "description" : "The expression value in your chosen language syntax."
-          },
-          "id" : {
-            "type" : "string",
-            "title" : "Id",
-            "description" : "The id of this node."
-          },
-          "pretty" : {
-            "type" : "boolean",
-            "title" : "Pretty",
-            "description" : "To pretty format the output (only JSon or XML supported).",
-            "default" : false
-          },
-          "resultType" : {
-            "type" : "string",
-            "title" : "Result Type",
-            "description" : "The class of the result type (type from output)."
-          },
-          "trim" : {
-            "type" : "boolean",
-            "title" : "Trim",
-            "description" : "Whether to trim the source code to remove leading and trailing whitespaces and line breaks.",
-            "default" : true
-          },
-          "trimResult" : {
-            "type" : "boolean",
-            "title" : "Trim Result",
-            "description" : "Whether to trim the returned values when this language is in use.",
-            "default" : false
-          }
-        },
-        "required" : [ "expression" ]
-      },
       "org.apache.camel.model.language.ConstantExpression" : {
         "title" : "Constant",
         "description" : "A fixed value set only once during the route startup",
@@ -9677,9 +9629,6 @@
         "properties" : {
           "constant" : {
             "$ref" : "#/items/definitions/org.apache.camel.model.language.ConstantExpression"
-          },
-          "csimple" : {
-            "$ref" : "#/items/definitions/org.apache.camel.model.language.CSimpleExpression"
           },
           "datasonnet" : {
             "$ref" : "#/items/definitions/org.apache.camel.model.language.DatasonnetExpression"
