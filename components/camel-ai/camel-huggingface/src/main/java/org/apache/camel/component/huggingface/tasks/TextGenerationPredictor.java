@@ -21,6 +21,7 @@ import java.nio.charset.StandardCharsets;
 import ai.djl.modality.Input;
 import ai.djl.modality.Output;
 import org.apache.camel.Exchange;
+import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.component.huggingface.HuggingFaceConstants;
 import org.apache.camel.component.huggingface.HuggingFaceEndpoint;
 
@@ -103,6 +104,9 @@ public class TextGenerationPredictor extends AbstractTaskPredictor {
     @Override
     protected void processOutput(Exchange exchange, Output output) {
         String result = output.getAsString("data");
+        if (result.contains("\"error\"")) {
+            throw new RuntimeCamelException("Python inference failed: " + result);
+        }
         exchange.getMessage().setBody(result);
         exchange.getMessage().setHeader(HuggingFaceConstants.OUTPUT, result);
     }
