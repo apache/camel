@@ -157,46 +157,47 @@ public interface TikaEndpointBuilderFactory {
             return this;
         }
         /**
-         * Tika Config.
-         * 
-         * The option is a: <code>org.apache.tika.config.TikaConfig</code> type.
-         * 
-         * Group: advanced
-         * 
-         * @param tikaConfig the value to set
-         * @return the dsl builder
-         */
-        default AdvancedTikaEndpointBuilder tikaConfig(org.apache.tika.config.TikaConfig tikaConfig) {
-            doSetProperty("tikaConfig", tikaConfig);
-            return this;
-        }
-        /**
-         * Tika Config.
-         * 
-         * The option will be converted to a
-         * <code>org.apache.tika.config.TikaConfig</code> type.
-         * 
-         * Group: advanced
-         * 
-         * @param tikaConfig the value to set
-         * @return the dsl builder
-         */
-        default AdvancedTikaEndpointBuilder tikaConfig(String tikaConfig) {
-            doSetProperty("tikaConfig", tikaConfig);
-            return this;
-        }
-        /**
-         * Tika Config Url.
+         * Path to a Tika JSON configuration file.
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: advanced
          * 
-         * @param tikaConfigUri the value to set
+         * @param tikaConfigFile the value to set
          * @return the dsl builder
          */
-        default AdvancedTikaEndpointBuilder tikaConfigUri(String tikaConfigUri) {
-            doSetProperty("tikaConfigUri", tikaConfigUri);
+        default AdvancedTikaEndpointBuilder tikaConfigFile(String tikaConfigFile) {
+            doSetProperty("tikaConfigFile", tikaConfigFile);
+            return this;
+        }
+        /**
+         * Tika loader used to configure parsers and detectors.
+         * 
+         * The option is a:
+         * <code>org.apache.tika.config.loader.TikaLoader</code> type.
+         * 
+         * Group: advanced
+         * 
+         * @param tikaLoader the value to set
+         * @return the dsl builder
+         */
+        default AdvancedTikaEndpointBuilder tikaLoader(org.apache.tika.config.loader.TikaLoader tikaLoader) {
+            doSetProperty("tikaLoader", tikaLoader);
+            return this;
+        }
+        /**
+         * Tika loader used to configure parsers and detectors.
+         * 
+         * The option will be converted to a
+         * <code>org.apache.tika.config.loader.TikaLoader</code> type.
+         * 
+         * Group: advanced
+         * 
+         * @param tikaLoader the value to set
+         * @return the dsl builder
+         */
+        default AdvancedTikaEndpointBuilder tikaLoader(String tikaLoader) {
+            doSetProperty("tikaLoader", tikaLoader);
             return this;
         }
     }

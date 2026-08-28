@@ -201,6 +201,15 @@ Documents carrying an internal DTD subset still parse: `disallow-doctype-decl` i
 set here, because that would reject input that parses today. Routes that genuinely need to resolve
 an external DTD or parameter entity through this converter must supply their own
 `SAXParserFactory`.
+=== camel-tika
+
+The Tika dependency has been upgraded from 3.x to 4.x. Tika 4 removed the `TikaConfig` class and XML
+configuration support in favor of `TikaLoader` and JSON configuration. Consequently, the deprecated
+`tikaConfig` and `tikaConfigUri` options have been removed. Use `tikaLoader` to provide an
+`org.apache.tika.config.loader.TikaLoader`, or `tikaConfigFile` to load a JSON configuration file.
+Applications using either removed option must migrate their Tika configuration; see the
+https://tika.apache.org/docs/4.0.x/migration-to-4x/migrating-to-4x.html[Tika 4 migration guide] for
+the configuration and metadata-key changes.
 
 === camel-a2a - webhook URL address classification
 
