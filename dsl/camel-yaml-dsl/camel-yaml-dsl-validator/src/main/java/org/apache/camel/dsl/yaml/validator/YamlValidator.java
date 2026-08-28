@@ -20,6 +20,8 @@ import java.io.File;
 import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Comparator;
+import java.util.HashMap;
+import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
@@ -40,6 +42,11 @@ import com.networknt.schema.SpecificationVersion;
 import com.networknt.schema.dialect.Dialect;
 import com.networknt.schema.dialect.Dialects;
 import com.networknt.schema.keyword.NonValidationKeyword;
+import com.networknt.schema.path.NodePath;
+import com.networknt.schema.path.PathType;
+import org.apache.camel.catalog.CamelCatalog;
+import org.apache.camel.catalog.DefaultCamelCatalog;
+import org.apache.camel.tooling.model.EipModel;
 
 /**
  * YAML DSL validator that tooling can use to validate Camel source files if they can be parsed and are valid according
@@ -50,9 +57,27 @@ public class YamlValidator {
     private static final String LOCATION = "/schema/camelYamlDsl.json";
     private static final String LOCATION_CANONICAL = "/schema/camelYamlDsl-canonical.json";
 
+    /**
+     * A handful of "pick exactly one" EIP option groups (see {@link EipModel.EipOptionModel#getOneOfs()}) flatten their
+     * alternatives directly onto a specific host node instead of appearing under a wrapper key named after the option
+     * itself (that's how "expression" works). The canonical schema cannot express this "exactly one of" cardinality (it
+     * has no oneOf/anyOf constructs), so {@link #checkOneOfCardinality} re-checks it here, driven by the same catalog
+     * metadata the classic schema is generated from.
+     */
+    private static final Map<String, Set<String>> FLATTENED_HOSTS = Map.of(
+            "dataFormatType", Set.of("marshal", "unmarshal"),
+            "errorHandlerType", Set.of("errorHandler"),
+            "tokenizerImplementation", Set.of("tokenizer"),
+            "resequencerConfig", Set.of("resequence"),
+            "loadBalancerType", Set.of("loadBalance"));
+
     private final ObjectMapper mapper = new ObjectMapper(new YAMLFactory());
     private final boolean canonical;
     private Schema schema;
+    private Map<String, OneOfGroup> oneOfGroups;
+
+    private record OneOfGroup(Set<String> alternatives, boolean required) {
+    }
 
     public YamlValidator() {
         this(false);
@@ -72,7 +97,7 @@ public class YamlValidator {
         }
         try {
             var target = mapper.readTree(file);
-            return filterOneOfNoise(new ArrayList<>(schema.validate(target)));
+            return validate(target);
         } catch (Exception e) {
             return List.of(parseError(e));
         }
@@ -84,10 +109,18 @@ public class YamlValidator {
         }
         try {
             var target = mapper.readTree(content);
-            return filterOneOfNoise(new ArrayList<>(schema.validate(target)));
+            return validate(target);
         } catch (Exception e) {
             return List.of(parseError(e));
         }
+    }
+
+    private List<Error> validate(JsonNode target) {
+        var errors = filterOneOfNoise(new ArrayList<>(schema.validate(target)));
+        if (canonical) {
+            checkOneOfCardinality(target, new NodePath(PathType.JSON_POINTER), errors);
+        }
+        return errors;
     }
 
     /**
@@ -221,6 +254,88 @@ public class YamlValidator {
                         || "maxItems".equals(keyword));
     }
 
+    /**
+     * Recursively walks the parsed YAML tree looking for the host nodes/wrapper keys of a "pick exactly one" option
+     * group, and reports a synthetic error when zero (for a required group) or more than one alternative is present.
+     */
+    private void checkOneOfCardinality(JsonNode node, NodePath path, List<Error> errors) {
+        if (node.isObject()) {
+            Iterator<Map.Entry<String, JsonNode>> it = node.fields();
+            while (it.hasNext()) {
+                Map.Entry<String, JsonNode> entry = it.next();
+                String key = entry.getKey();
+                JsonNode value = entry.getValue();
+                NodePath childPath = path.append(key);
+                if (value.isObject()) {
+                    for (Map.Entry<String, Set<String>> hostEntry : FLATTENED_HOSTS.entrySet()) {
+                        if (hostEntry.getValue().contains(key)) {
+                            reportIfInvalidCardinality(value, oneOfGroups.get(hostEntry.getKey()), childPath, errors);
+                        }
+                    }
+                    if (!FLATTENED_HOSTS.containsKey(key)) {
+                        reportIfInvalidCardinality(value, oneOfGroups.get(key), childPath, errors);
+                    }
+                }
+                checkOneOfCardinality(value, childPath, errors);
+            }
+        } else if (node.isArray()) {
+            for (int i = 0; i < node.size(); i++) {
+                checkOneOfCardinality(node.get(i), path.append(i), errors);
+            }
+        }
+    }
+
+    private static void reportIfInvalidCardinality(JsonNode container, OneOfGroup group, NodePath path, List<Error> errors) {
+        if (group == null) {
+            return;
+        }
+        List<String> found = new ArrayList<>();
+        Iterator<String> names = container.fieldNames();
+        while (names.hasNext()) {
+            String name = names.next();
+            if (group.alternatives().contains(name)) {
+                found.add(name);
+            }
+        }
+        if (found.isEmpty() && group.required()) {
+            errors.add(Error.builder()
+                    .keyword("oneOf")
+                    .instanceLocation(path)
+                    .message("must have exactly one of " + group.alternatives() + " but found none")
+                    .build());
+        } else if (found.size() > 1) {
+            errors.add(Error.builder()
+                    .keyword("oneOf")
+                    .instanceLocation(path)
+                    .message("must have exactly one of " + group.alternatives() + " but found: " + found)
+                    .build());
+        }
+    }
+
+    /**
+     * Builds the "pick exactly one" option groups from the Camel catalog's EIP model metadata - the same metadata the
+     * classic (non-canonical) schema's oneOf groups are generated from. Only object-typed options are considered;
+     * array-typed options (e.g. "outputs") use "oneOf" to mean "each element is one of these types", not "exactly one
+     * of these sibling keys must be present".
+     */
+    private static Map<String, OneOfGroup> loadOneOfGroups() {
+        Map<String, OneOfGroup> groups = new HashMap<>();
+        CamelCatalog catalog = new DefaultCamelCatalog();
+        for (String name : catalog.findModelNames()) {
+            EipModel model = catalog.eipModel(name);
+            if (model == null) {
+                continue;
+            }
+            for (EipModel.EipOptionModel option : model.getOptions()) {
+                List<String> oneOfs = option.getOneOfs();
+                if (oneOfs != null && !oneOfs.isEmpty() && "object".equals(option.getType())) {
+                    groups.putIfAbsent(option.getName(), new OneOfGroup(new LinkedHashSet<>(oneOfs), option.isRequired()));
+                }
+            }
+        }
+        return groups;
+    }
+
     private static Error parseError(Exception e) {
         String msg = e.getClass().getName() + ": " + e.getMessage();
         return Error.builder()
@@ -248,6 +363,10 @@ public class YamlValidator {
         // Use a proper URI for the schema location to ensure $ref resolution works
         var schemaLocation = SchemaLocation.of(location);
         schema = schemaRegistry.getSchema(schemaLocation, model);
+
+        if (canonical) {
+            oneOfGroups = loadOneOfGroups();
+        }
     }
 
     private static Dialect getBaseDialect(SpecificationVersion version) {
