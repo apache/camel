@@ -22,7 +22,8 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 /**
  * Verifies {@link TypeConversionException#createMessage} handles anonymous and local classes whose
- * {@link Class#getCanonicalName()} returns {@code null}.
+ * {@link Class#getCanonicalName()} returns {@code null}, and that the message never calls {@code toString()} on the
+ * value (which could OOM for huge payloads).
  *
  * <p>
  * Real-world trigger: SFTP stream body is an anonymous inner class ({@code ChannelSftp$2}); its canonical name is
@@ -65,5 +66,24 @@ class TypeConversionExceptionMessageTest {
         assertThat(msg)
                 .contains("from type: null")
                 .contains("to the required type: java.lang.String");
+    }
+
+    @Test
+    void createMessage_doesNotCallToStringOnValue() {
+        // Fails immediately if exception construction invokes body.toString()
+        Object body = new Object() {
+            @Override
+            public String toString() {
+                throw new AssertionError("TypeConversionException must not call toString() on the body value");
+            }
+        };
+
+        TypeConversionException exception = new TypeConversionException(body, String.class, new RuntimeException("cause"));
+
+        assertThat(exception.getValue()).isSameAs(body);
+        assertThat(exception.getMessage())
+                .contains(body.getClass().getName())
+                .contains("cause")
+                .doesNotContain("with value");
     }
 }
