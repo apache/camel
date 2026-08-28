@@ -39,6 +39,10 @@ import org.bouncycastle.jcajce.spec.KEMGenerateSpec;
 public class PQCProducer extends DefaultProducer {
 
     private Signature signer;
+    // Set only when this producer created the Signature itself, so it knows how to create another one.
+    // Left null when the user configured an instance, which then has to be shared and locked instead.
+    private String signerAlgorithm;
+    private String signerProvider;
     private KeyGenerator keyGenerator;
     private KeyPair keyPair;
 
@@ -96,7 +100,9 @@ public class PQCProducer extends DefaultProducer {
 
             if (ObjectHelper.isEmpty(signer)) {
                 PQCSignatureAlgorithms sigAlg = PQCSignatureAlgorithms.valueOf(getConfiguration().getSignatureAlgorithm());
-                signer = Signature.getInstance(sigAlg.getAlgorithm(), sigAlg.getBcProvider());
+                signerAlgorithm = sigAlg.getAlgorithm();
+                signerProvider = sigAlg.getBcProvider();
+                signer = Signature.getInstance(signerAlgorithm, signerProvider);
             }
         }
 
@@ -126,27 +132,45 @@ public class PQCProducer extends DefaultProducer {
     }
 
     private void signature(Exchange exchange)
-            throws InvalidPayloadException, InvalidKeyException, SignatureException {
+            throws InvalidPayloadException, InvalidKeyException, SignatureException, NoSuchAlgorithmException,
+            NoSuchProviderException {
         String payload = exchange.getMessage().getMandatoryBody(String.class);
 
-        signer.initSign(keyPair.getPrivate());
-        signer.update(payload.getBytes(StandardCharsets.UTF_8));
-
-        byte[] signature = signer.sign();
+        Signature signerForExchange = signerForExchange();
+        byte[] signature;
+        synchronized (signerForExchange) {
+            signerForExchange.initSign(keyPair.getPrivate());
+            signerForExchange.update(payload.getBytes(StandardCharsets.UTF_8));
+            signature = signerForExchange.sign();
+        }
         exchange.getMessage().setHeader(PQCConstants.SIGNATURE, signature);
     }
 
+    /**
+     * java.security.Signature is stateful and not thread safe, so a single instance cannot serve concurrent exchanges.
+     * A signer this producer created is rebuilt per exchange; one the user configured cannot be recreated, so it is
+     * shared and the caller locks on it.
+     */
+    private Signature signerForExchange() throws NoSuchAlgorithmException, NoSuchProviderException {
+        if (signerAlgorithm == null) {
+            return signer;
+        }
+        return Signature.getInstance(signerAlgorithm, signerProvider);
+    }
+
     private void verification(Exchange exchange)
-            throws InvalidPayloadException, InvalidKeyException, SignatureException {
+            throws InvalidPayloadException, InvalidKeyException, SignatureException, NoSuchAlgorithmException,
+            NoSuchProviderException {
         String payload = exchange.getMessage().getMandatoryBody(String.class);
 
-        signer.initVerify(keyPair.getPublic());
-        signer.update(payload.getBytes(StandardCharsets.UTF_8));
-        if (signer.verify(exchange.getMessage().getHeader(PQCConstants.SIGNATURE, byte[].class))) {
-            exchange.getMessage().setHeader(PQCConstants.VERIFY, true);
-        } else {
-            exchange.getMessage().setHeader(PQCConstants.VERIFY, false);
+        Signature signerForExchange = signerForExchange();
+        boolean verified;
+        synchronized (signerForExchange) {
+            signerForExchange.initVerify(keyPair.getPublic());
+            signerForExchange.update(payload.getBytes(StandardCharsets.UTF_8));
+            verified = signerForExchange.verify(exchange.getMessage().getHeader(PQCConstants.SIGNATURE, byte[].class));
         }
+        exchange.getMessage().setHeader(PQCConstants.VERIFY, verified);
     }
 
     private void generateEncapsulation(Exchange exchange)
