@@ -170,8 +170,8 @@ public class LangChain4jAgentProducer extends DefaultProducer {
         Object chatModel = resolveChatModel(agent);
         GenAiObservationContext observationContext = GenAiObservationContext.builder()
                 .operationName(GenAiOperationName.GENERATE_CONTENT)
-                .system(GenAiModelResolver.resolveSystem(chatModel))
-                .requestModel(GenAiModelResolver.resolveModelName(chatModel))
+                .system(GenAiModelResolver.resolveSystem(exchange.getContext().getClassResolver(), chatModel))
+                .requestModel(GenAiModelResolver.resolveModelName(exchange.getContext().getClassResolver(), chatModel))
                 .componentScheme("langchain4j-agent")
                 .build();
         GenAiObservation observation = GenAiObservability.start(exchange, observationContext);
