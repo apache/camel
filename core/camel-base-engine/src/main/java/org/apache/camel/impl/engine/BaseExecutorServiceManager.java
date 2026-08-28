@@ -137,7 +137,7 @@ public class BaseExecutorServiceManager extends ServiceSupport implements Execut
 
     @Override
     public String getThreadNamePattern() {
-        return threadNamePattern;
+        return resolveThreadNamePattern();
     }
 
     @Override
@@ -611,6 +611,9 @@ public class BaseExecutorServiceManager extends ServiceSupport implements Execut
     }
 
     protected String resolveThreadNamePattern() {
+        if (threadNamePattern == null) {
+            return null;
+        }
         return StringHelper.replaceFirst(threadNamePattern, "#camelId#", camelContext.getName());
     }
 
