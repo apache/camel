@@ -24,12 +24,15 @@ import org.apache.camel.Exchange;
 import org.apache.camel.FailedToStartRouteException;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
+import org.apache.camel.Route;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.impl.DefaultCamelContext;
+import org.apache.camel.spi.RoutePolicy;
 import org.apache.camel.support.DefaultComponent;
 import org.apache.camel.support.DefaultConsumer;
 import org.apache.camel.support.DefaultEndpoint;
 import org.apache.camel.support.DefaultProducer;
+import org.apache.camel.support.RoutePolicySupport;
 import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
@@ -112,6 +115,39 @@ class InternalRouteStartupManagerConsumerStartTest {
         assertThatThrownBy(() -> context.start())
                 .isInstanceOf(FailedToStartRouteException.class)
                 .hasMessageContaining("route-service-start-route")
+                .hasMessageNotContaining("because: null");
+
+        context.stop();
+    }
+
+    /**
+     * A {@link RoutePolicy#onStart} failure exercises the second catch site in {@code doStartOrResumeRouteConsumers()}
+     * via {@code routeService.start()}, which calls {@code DefaultRoute.doStart()} →
+     * {@code routePolicyCallback(RoutePolicy::onStart)}. The consumer starts successfully; only the route-level policy
+     * callback throws, so this cannot be caught by the first catch site.
+     */
+    @Test
+    void testRoutePolicyOnStartProducesFailedToStartRouteException() throws Exception {
+        RuntimeException cause = new NullPointerException();
+
+        DefaultCamelContext context = new DefaultCamelContext();
+        context.addRoutes(new RouteBuilder() {
+            @Override
+            public void configure() {
+                from("direct:trigger").routeId("policy-fail-route")
+                        .routePolicy(new RoutePolicySupport() {
+                            @Override
+                            public void onStart(Route route) {
+                                throw cause;
+                            }
+                        })
+                        .to("mock:out");
+            }
+        });
+
+        assertThatThrownBy(() -> context.start())
+                .isInstanceOf(FailedToStartRouteException.class)
+                .hasMessageContaining("policy-fail-route")
                 .hasMessageNotContaining("because: null");
 
         context.stop();
