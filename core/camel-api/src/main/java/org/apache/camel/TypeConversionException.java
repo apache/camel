@@ -16,8 +16,6 @@
  */
 package org.apache.camel;
 
-import java.nio.ByteBuffer;
-import java.nio.file.Path;
 import java.util.Objects;
 
 import org.jspecify.annotations.Nullable;
@@ -72,46 +70,16 @@ public class TypeConversionException extends RuntimeCamelException {
     }
 
     /**
-     * Returns an error message for type conversion failed.
+     * Returns an error message for type conversion failed. The value itself is intentionally omitted from the message
+     * to avoid calling {@code toString()} on potentially huge or sensitive message bodies; the value remains accessible
+     * via {@link #getValue()}.
      */
     public static String createMessage(@Nullable Object value, Class<?> type, Throwable cause) {
         Objects.requireNonNull(type, "type");
         Objects.requireNonNull(cause, "cause");
         return "Error during type conversion from type: " + typeName(value != null ? value.getClass() : null)
-               + " to the required type: " + typeName(type) + " with value " + safeValueDescription(value)
+               + " to the required type: " + typeName(type)
                + " due to " + cause.getClass().getName() + ": " + cause.getMessage();
-    }
-
-    /**
-     * Returns a safe description of the value that never calls {@code toString()} on unknown types (which could
-     * allocate the full body string and cause OutOfMemoryError for huge payloads). For known safe types a short preview
-     * is returned; for everything else only the type name and identity hash code are shown.
-     */
-    static String safeValueDescription(@Nullable Object value) {
-        if (value == null) {
-            return "null";
-        }
-        if (value instanceof CharSequence cs) {
-            int len = cs.length();
-            if (len <= 64) {
-                return cs.toString();
-            }
-            return cs.subSequence(0, 64) + "... (length=" + len + ")";
-        }
-        if (value instanceof byte[] bytes) {
-            return "byte[" + bytes.length + "]";
-        }
-        if (value instanceof java.io.File f) {
-            return "File[" + f.getPath() + "]";
-        }
-        if (value instanceof java.nio.file.Path p) {
-            return "Path[" + p + "]";
-        }
-        if (value instanceof java.nio.ByteBuffer bb) {
-            return "ByteBuffer[remaining=" + bb.remaining() + "]";
-        }
-        // never call toString() on unknown types — it may dump the entire body
-        return value.getClass().getName() + "@" + Integer.toHexString(System.identityHashCode(value));
     }
 
     /**
