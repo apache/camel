@@ -721,3 +721,20 @@ cannot serve one origin's response to another.
 
 Deployments that relied on credentialed cross-origin requests must list the permitted origins in
 `camel.server.cors.origins`.
+
+=== camel-tika
+
+The `tika:parse` producer copies the metadata of the parsed document onto the Camel message. Those
+names come out of the document itself, so a document could ask for any header name at all, including
+names in the Camel-internal namespace — an HTML `<meta name="CamelFileName" content="..."/>`, for
+example, reached the message as `CamelFileName` and would then be picked up by a later `file:`
+producer.
+
+Parsed metadata names are now filtered the same way a consumer filters names supplied by an external
+sender: a name that starts with `Camel`, `camel` or `org.apache.camel.` (matched case-insensitively)
+is skipped and logged at `DEBUG` instead of being set as a header. Metadata outside that namespace is
+mapped exactly as before.
+
+Routes that deliberately read a `Camel`-prefixed header produced by the Tika parse must set it
+themselves after the `tika:parse` step, for example with a `setHeader` reading the corresponding
+non-prefixed metadata name.
