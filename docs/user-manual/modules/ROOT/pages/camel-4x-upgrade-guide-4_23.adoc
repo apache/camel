@@ -109,6 +109,10 @@ this executor is functionally identical to the built-in `DefaultReactiveExecutor
 To migrate, remove the `camel-reactive-executor-tomcat` dependency from your project. Camel will
 automatically use the default reactive executor.
 
+==== camel-reactive-executor-vertx
+
+The `camel-reactive-executor-vertx` component was deprecated in 4.21. The component has been in an experimental state for a long time and no user feedback has been received to justify continued maintenance.
+
 ==== camel-splunk
 
 The `camel-splunk` component was deprecated in 4.19. The Splunk Java SDK it depends on is no longer actively maintained.
@@ -434,6 +438,7 @@ Ordinary listings are unaffected, as a listed name is normally a single path seg
 resolves back inside the polled directory remains accepted. Two configurations can newly see files skipped: a
 server that reports names navigating above the polled directory, and a `fileName` expression (used when
 `useList=false`) that navigates above it. Set `jailStartingDirectory=false` if such a path is intended.
+
 === camel-as2
 
 The AS2 server no longer attaches the configured `mdnUserName` / `mdnPassword` / `mdnAccessToken`
@@ -471,6 +476,7 @@ to `CamelIBMCOSCacheControl`, so the header name matches the Cache-Control metad
 breaking change for routes that reference the header by its literal string name: they must switch to
 `CamelIBMCOSCacheControl`, although the change is trivial to adapt. Routes using the
 `IBMCOSConstants.CACHE_CONTROL` constant are unaffected.
+
 === camel-knative
 
 The Knative HTTP consumer no longer returns the stack trace of a failed exchange to the caller.
@@ -494,6 +500,20 @@ knative:endpoint/myEndpoint?muteException=false
 `org.apache.camel.component.knative.spi.KnativeTransportConfiguration` gains a fourth constructor
 argument for the flag. The three-argument constructor is retained and mutes the exception, so existing
 code compiles unchanged and picks up the new default.
+
+Setting `camel.knative.client.ssl.enabled=true` without also configuring
+`camel.knative.client.ssl.truststore.path` or `camel.knative.client.ssl.trust.cert.path` used to install
+a trust manager that accepts every certificate, so enabling TLS was what disabled certificate
+validation. No option named `trustAll` was involved.
+
+The client now leaves the trust options unset in that case, which means the JVM default trust anchors
+apply — the same fallback `SSLContextParameters` and the rest of Camel use. Accepting any certificate is
+still available, but has to be asked for with the new
+`camel.knative.client.ssl.trust.all=true` property.
+
+Deployments that relied on the previous behaviour — a development cluster with a self-signed
+certificate, for example — must either configure a truststore or set `camel.knative.client.ssl.trust.all`
+explicitly. `KnativeOidcClientOptions` extends this class and is affected the same way.
 
 === camel-paho-mqtt5
 
@@ -564,6 +584,31 @@ explicitly, which continues to take precedence and preserves the previous any-po
 
 `HttpComponent.createHttpClientConfigurer(Map, boolean)` remains the protected customization point and is still invoked
 when an endpoint is created, so existing subclasses continue to behave as before.
+
+=== camel-jetty
+
+`enableCORS=true` added `new CrossOriginFilter()` with no init parameters, so Jetty's own defaults
+applied: `allowedOrigins=*` together with `allowCredentials=true`. Since the filter reflects the request's
+origin rather than sending `*`, that is the credentialed any-origin configuration the fetch specification
+refuses to express — reflecting the origin being the usual way around that rule. An option named "enable
+CORS" should not mean "every origin, with credentials".
+
+`allowCredentials` now defaults to `false` when CORS is enabled. The origin is still reflected, so
+enabling CORS keeps working for requests that carry no credentials.
+
+Deployments that need credentialed cross-origin requests must ask for them explicitly:
+
+[source,text]
+----
+jetty://http://0.0.0.0:8080/api?enableCORS=true
+    &filterInit.allowedOrigins=https://app.example
+    &filterInit.allowCredentials=true
+----
+
+Setting `filterInit.allowCredentials=true` while leaving `filterInit.allowedOrigins` unset or `*` is
+logged as a warning at startup, because that combination lets any origin make credentialed requests.
+
+The same change was made to camel-platform-http-vertx.
 
 === camel-mllp
 
