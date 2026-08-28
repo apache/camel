@@ -97,9 +97,13 @@ public class VertxOAuth extends OAuth {
         if (params.getScopes() == null) {
             params.setScope("openid");
         }
-        return oauth2.authorizeURL(new OAuth2AuthorizationURL()
+        var url = new OAuth2AuthorizationURL()
                 .setRedirectUri(params.getRedirectUri())
-                .setScopes(params.getScopes()));
+                .setScopes(params.getScopes());
+        if (params.getState() != null) {
+            url.setState(params.getState());
+        }
+        return oauth2.authorizeURL(url);
     }
 
     @Override

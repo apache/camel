@@ -27,7 +27,6 @@ import io.netty.handler.codec.http.FullHttpResponse;
 import io.netty.handler.codec.http.HttpMethod;
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
-import org.apache.camel.RuntimeExchangeException;
 import org.apache.camel.support.DeserializationFilterHelper;
 import org.apache.camel.util.CollectionHelper;
 import org.apache.camel.util.IOHelper;
@@ -165,12 +164,8 @@ public final class NettyHttpHelper {
             uri = endpoint.getEndpointUri();
         }
 
-        // resolve placeholders in uri
-        try {
-            uri = exchange.getContext().resolvePropertyPlaceholders(uri);
-        } catch (Exception e) {
-            throw new RuntimeExchangeException("Cannot resolve property placeholders with uri: " + uri, exchange, e);
-        }
+        // NOTE: property placeholders are resolved at build time on the endpoint uri written in the route,
+        // never on the message-supplied override headers (see CAMEL-24282 / CAMEL-24418)
 
         // append HTTP_PATH to HTTP_URI if it is provided in the header
         String path = exchange.getIn().getHeader(NettyHttpConstants.HTTP_PATH, String.class);

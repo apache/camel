@@ -25,6 +25,7 @@ import io.qdrant.client.PointIdFactory;
 import io.qdrant.client.ValueFactory;
 import io.qdrant.client.VectorsFactory;
 import io.qdrant.client.grpc.Common;
+import io.qdrant.client.grpc.JsonWithInt.Value;
 import io.qdrant.client.grpc.Points;
 import org.apache.camel.Message;
 import org.apache.camel.ai.CamelLangchain4jAttributes;
@@ -55,10 +56,31 @@ public class QdrantEmbeddingsDataTypeTransformer extends Transformer {
             builder.putPayload("text_segment", ValueFactory.value(text.text()));
             Metadata metadata = text.metadata();
             metadata.toMap()
-                    .forEach((key, value) -> builder.putPayload(key, ValueFactory.value((String) value)));
+                    .forEach((key, value) -> builder.putPayload(key, toValue(value)));
 
         }
 
         message.setBody(builder.build());
+    }
+
+    /**
+     * Converts a LangChain4j metadata value to a Qdrant payload value. Metadata is not always a String - document
+     * splitters routinely add numeric entries such as the chunk index or page number - so the value type must be
+     * honoured instead of being blindly cast to String.
+     */
+    private static Value toValue(Object value) {
+        if (value == null) {
+            return ValueFactory.nullValue();
+        }
+        if (value instanceof Boolean booleanValue) {
+            return ValueFactory.value(booleanValue);
+        }
+        if (value instanceof Integer || value instanceof Long) {
+            return ValueFactory.value(((Number) value).longValue());
+        }
+        if (value instanceof Number number) {
+            return ValueFactory.value(number.doubleValue());
+        }
+        return ValueFactory.value(String.valueOf(value));
     }
 }

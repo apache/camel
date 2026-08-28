@@ -495,7 +495,7 @@ public interface MllpComponentBuilderFactory {
          * 
          * The option is a: &lt;code&gt;java.lang.Boolean&lt;/code&gt; type.
          * 
-         * Default: true
+         * Default: false
          * Group: advanced
          * 
          * @param logPhi the value to set

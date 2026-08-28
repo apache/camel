@@ -145,10 +145,4 @@ public class CollateFunctionFactoryTest extends AbstractSimpleFunctionFactoryTes
         assertFalse(chunk instanceof Iterator, "chunk must be a List of elements, not a nested iterator");
         assertEquals(List.of("A", "B"), chunk);
     }
-
-    @Test
-    public void testCreateCode() {
-        assertEquals("collate(exchange, 10)", createCode("collate(10)"));
-        assertEquals("collate(exchange, ${header.max})", createCode("collate(${header.max})"));
-    }
 }

@@ -31,6 +31,7 @@ public class PGPDataFormatConfigurer extends org.apache.camel.support.component.
         map.put("KeyUserid", java.lang.String.class);
         map.put("Password", java.lang.String.class);
         map.put("Provider", java.lang.String.class);
+        map.put("RequireIntegrityProtection", boolean.class);
         map.put("SignatureKeyFileName", java.lang.String.class);
         map.put("SignatureKeyRing", byte[].class);
         map.put("SignatureKeyUserid", java.lang.String.class);
@@ -56,6 +57,8 @@ public class PGPDataFormatConfigurer extends org.apache.camel.support.component.
         case "keyUserid": target.setKeyUserid(property(camelContext, java.lang.String.class, value)); return true;
         case "password": target.setPassword(property(camelContext, java.lang.String.class, value)); return true;
         case "provider": target.setProvider(property(camelContext, java.lang.String.class, value)); return true;
+        case "requireintegrityprotection":
+        case "requireIntegrityProtection": target.setRequireIntegrityProtection(property(camelContext, boolean.class, value)); return true;
         case "signaturekeyfilename":
         case "signatureKeyFileName": target.setSignatureKeyFileName(property(camelContext, java.lang.String.class, value)); return true;
         case "signaturekeyring":
@@ -91,6 +94,8 @@ public class PGPDataFormatConfigurer extends org.apache.camel.support.component.
         case "keyUserid": return java.lang.String.class;
         case "password": return java.lang.String.class;
         case "provider": return java.lang.String.class;
+        case "requireintegrityprotection":
+        case "requireIntegrityProtection": return boolean.class;
         case "signaturekeyfilename":
         case "signatureKeyFileName": return java.lang.String.class;
         case "signaturekeyring":
@@ -122,6 +127,8 @@ public class PGPDataFormatConfigurer extends org.apache.camel.support.component.
         case "keyUserid": return target.getKeyUserid();
         case "password": return target.getPassword();
         case "provider": return target.getProvider();
+        case "requireintegrityprotection":
+        case "requireIntegrityProtection": return target.isRequireIntegrityProtection();
         case "signaturekeyfilename":
         case "signatureKeyFileName": return target.getSignatureKeyFileName();
         case "signaturekeyring":

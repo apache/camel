@@ -74,42 +74,10 @@ public class BeanFunctionFactoryTest extends AbstractSimpleFunctionFactoryTestSu
         assertEquals("Hello World", evaluate("bean:myBean?method=hello", String.class));
     }
 
-    // --- createCode ---
-
-    @Test
-    public void testCreateCodeRefOnly() {
-        assertEquals("bean(exchange, bean, \"myBean\", null, null)", createCode("bean:myBean"));
-    }
-
-    @Test
-    public void testCreateCodeDotMethod() {
-        assertEquals("bean(exchange, bean, \"myBean\", \"hello\", null)", createCode("bean:myBean.hello"));
-    }
-
-    @Test
-    public void testCreateCodeDoubleColon() {
-        assertEquals("bean(exchange, bean, \"myBean\", \"hello\", null)", createCode("bean:myBean::hello"));
-    }
-
-    @Test
-    public void testCreateCodeQueryMethodAndScope() {
-        assertEquals(
-                "bean(exchange, bean, \"myBean\", \"hello\", \"Singleton\")",
-                createCode("bean:myBean?method=hello&scope=Singleton"));
-    }
-
-    @Test
-    public void testCreateCodeScopeOnly() {
-        assertEquals(
-                "bean(exchange, bean, \"myBean\", null, \"Singleton\")",
-                createCode("bean:myBean?scope=Singleton"));
-    }
-
     // --- unrecognized ---
 
     @Test
     public void testUnrecognizedFunction() {
         assertNull(createFactory().createFunction(context, "unknown", 0));
-        assertNull(createFactory().createCode(context, "unknown", 0));
     }
 }

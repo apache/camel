@@ -553,9 +553,6 @@ public class YamlModelWriter extends YamlModelWriterSupport {
     public JsonObject writeSpringTransactionErrorHandlerDefinition(SpringTransactionErrorHandlerDefinition def) {
         return wrapNode("springTransactionErrorHandler", doWriteSpringTransactionErrorHandlerDefinition(def));
     }
-    public JsonObject writeCSimpleExpression(CSimpleExpression def) {
-        return wrapNode("csimple", doWriteCSimpleExpression(def));
-    }
     public JsonObject writeConstantExpression(ConstantExpression def) {
         return wrapNode("constant", doWriteConstantExpression(def));
     }
@@ -2588,6 +2585,7 @@ public class YamlModelWriter extends YamlModelWriterSupport {
         doWriteAttribute(jo, "compressionAlgorithm", def.getCompressionAlgorithm(), null);
         doWriteAttribute(jo, "hashAlgorithm", def.getHashAlgorithm(), null);
         doWriteAttribute(jo, "signatureVerificationOption", def.getSignatureVerificationOption(), null);
+        doWriteAttribute(jo, "requireIntegrityProtection", def.getRequireIntegrityProtection(), "true");
         return jo;
     }
     protected JsonObject doWritePQCDataFormat(PQCDataFormat def) {
@@ -2881,14 +2879,6 @@ public class YamlModelWriter extends YamlModelWriterSupport {
         JsonObject jo = new JsonObject();
         doWriteTransactionErrorHandlerDefinitionAttributes(jo, def);
         doWriteDefaultErrorHandlerDefinitionElements(jo, def);
-        return jo;
-    }
-    protected JsonObject doWriteCSimpleExpression(CSimpleExpression def) {
-        JsonObject jo = new JsonObject();
-        doWriteTypedExpressionDefinitionAttributes(jo, def);
-        doWriteAttribute(jo, "trimResult", def.getTrimResult(), "false");
-        doWriteAttribute(jo, "pretty", def.getPretty(), "false");
-        doWriteValue(jo, def.getExpression());
         return jo;
     }
     protected JsonObject doWriteConstantExpression(ConstantExpression def) {
@@ -3928,7 +3918,6 @@ public class YamlModelWriter extends YamlModelWriterSupport {
     protected JsonObject doWriteExpressionDefinitionRef(ExpressionDefinition v) {
         if (v != null) {
             return switch (v.getClass().getSimpleName()) {
-                case "CSimpleExpression" -> wrapNode("csimple", doWriteCSimpleExpression((CSimpleExpression) v));
                 case "ConstantExpression" -> wrapNode("constant", doWriteConstantExpression((ConstantExpression) v));
                 case "DatasonnetExpression" -> wrapNode("datasonnet", doWriteDatasonnetExpression((DatasonnetExpression) v));
                 case "ExchangePropertyExpression" -> wrapNode("exchangeProperty", doWriteExchangePropertyExpression((ExchangePropertyExpression) v));
