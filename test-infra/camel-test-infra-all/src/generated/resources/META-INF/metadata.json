@@ -293,7 +293,7 @@
   "groupId" : "org.apache.camel",
   "artifactId" : "camel-test-infra-ibmmq",
   "version" : "4.23.0-SNAPSHOT",
-  "serviceVersion" : "10.0.0.0-r2",
+  "serviceVersion" : "10.0.0.0-r3",
   "uiSupported" : true
 }, {
   "service" : "org.apache.camel.test.infra.aws.common.services.AWSInfraService",
