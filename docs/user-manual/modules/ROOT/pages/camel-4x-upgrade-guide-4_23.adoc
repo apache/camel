@@ -269,6 +269,37 @@ The same default is now also applied to the `ClientConfig` that Camel builds for
 endpoints, when neither a referenced `ClientConfig` nor `hazelcastConfigUri` is supplied. Client mode
 previously behaved differently from node mode for an otherwise identical endpoint configuration.
 
+=== camel-http, camel-http-common, camel-netty-http, camel-undertow, camel-vertx-http - property placeholders in HTTP URI override headers
+
+The HTTP producers no longer resolve property placeholders (`{{...}}`) in the message-supplied
+endpoint-URI override headers `CamelHttpUri` and `CamelRestHttpUri`. Those headers carry message
+content, while property placeholders are a route and configuration authoring feature resolved at
+build time on the endpoint URI written in the route. This is the same alignment 4.22 applied to
+`toD` and `enrich`.
+
+Placeholders written in the route's endpoint URI continue to be resolved exactly as before:
+
+[source,java]
+----
+.to("http://localhost/{{basePath}}")
+.to("netty-http:http://localhost/{{basePath}}")
+----
+
+A `{{...}}` token arriving in `CamelHttpUri` or `CamelRestHttpUri` is now treated as a literal part
+of the URI rather than being expanded. Routes that relied on that expansion must resolve the value
+before it reaches the header, or keep the placeholder in the route.
+
+The affected sites, all of which resolved a header-derived or endpoint-derived value per message:
+
+* `camel-http` - `HttpMethodHelper.createMethod`
+* `camel-http-common` - `HttpHelper.createURL`, `HttpHelper.createMethod`
+* `camel-netty-http` - `NettyHttpHelper.createURL`
+* `camel-undertow` - `UndertowHelper.createURL`, `UndertowHelper.createMethod`
+* `camel-vertx-http` - `VertxHttpHelper.resolveHttpURI`
+
+Where the value came from the endpoint rather than a header it was already resolved at build time,
+so removing the per-message resolution does not change those routes.
+
 === camel-jbang (TUI)
 
 `camel tui --record` is now rejected when combined with `--web`. The recording configuration applies
