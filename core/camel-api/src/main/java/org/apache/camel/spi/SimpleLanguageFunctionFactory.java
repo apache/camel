@@ -46,19 +46,4 @@ public interface SimpleLanguageFunctionFactory {
     @Nullable
     Expression createFunction(CamelContext camelContext, String function, int index);
 
-    /**
-     * Creates the Java source code that performs the function (for csimple).
-     *
-     * @param      camelContext the camel context
-     * @param      function     the function
-     * @param      index        index of the function in the literal input
-     * @return                  the source code or <tt>null</tt> if not supported by this factory.
-     * @deprecated              will be removed along with csimple
-     */
-    @Nullable
-    @Deprecated(since = "4.21")
-    default String createCode(CamelContext camelContext, String function, int index) {
-        return null;
-    }
-
 }

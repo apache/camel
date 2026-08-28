@@ -16,18 +16,14 @@
  */
 package org.apache.camel.language.simple.functions;
 
-import java.util.StringJoiner;
-
 import org.apache.camel.CamelContext;
 import org.apache.camel.Expression;
 import org.apache.camel.language.simple.MathExpressionBuilder;
-import org.apache.camel.language.simple.types.SimpleParserException;
 import org.apache.camel.spi.SimpleLanguageFunctionFactory;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.StringHelper;
 import org.apache.camel.util.StringQuoteHelper;
 
-import static org.apache.camel.language.simple.SimpleFunctionHelper.codeSplitSafe;
 import static org.apache.camel.language.simple.SimpleFunctionHelper.ifStartsWithReturnRemainder;
 
 /**
@@ -78,42 +74,6 @@ public final class MathFunctionFactory implements SimpleLanguageFunctionFactory 
         return null;
     }
 
-    @Override
-    public String createCode(CamelContext camelContext, String function, int index) {
-        String remainder;
-
-        remainder = ifStartsWithReturnRemainder("sum(", function);
-        if (remainder != null) {
-            return codeVariadic("sum", remainder);
-        }
-        remainder = ifStartsWithReturnRemainder("abs(", function);
-        if (remainder != null) {
-            return codeUnary("abs", remainder, function, index);
-        }
-        remainder = ifStartsWithReturnRemainder("floor(", function);
-        if (remainder != null) {
-            return codeUnary("floor", remainder, function, index);
-        }
-        remainder = ifStartsWithReturnRemainder("ceil(", function);
-        if (remainder != null) {
-            return codeUnary("ceil", remainder, function, index);
-        }
-        remainder = ifStartsWithReturnRemainder("max(", function);
-        if (remainder != null) {
-            return codeVariadic("max", remainder);
-        }
-        remainder = ifStartsWithReturnRemainder("min(", function);
-        if (remainder != null) {
-            return codeVariadic("min", remainder);
-        }
-        remainder = ifStartsWithReturnRemainder("average(", function);
-        if (remainder != null) {
-            return codeVariadic("average", remainder);
-        }
-
-        return null;
-    }
-
     private static String[] parseVariadicTokens(String remainder) {
         String values = StringHelper.beforeLast(remainder, ")");
         if (ObjectHelper.isNotEmpty(values)) {
@@ -122,43 +82,4 @@ public final class MathFunctionFactory implements SimpleLanguageFunctionFactory 
         return null;
     }
 
-    private static String codeUnary(String name, String remainder, String function, int index) {
-        String exp = null;
-        String values = StringHelper.beforeLast(remainder, ")");
-        if (ObjectHelper.isNotEmpty(values)) {
-            String[] tokens = codeSplitSafe(values, ',', true, true);
-            if (tokens.length != 1) {
-                throw new SimpleParserException("Valid syntax: ${" + name + "(exp)} was: " + function, index);
-            }
-            String s = tokens[0];
-            if (StringHelper.isSingleQuoted(s)) {
-                s = StringHelper.removeLeadingAndEndingQuotes(s);
-                s = StringQuoteHelper.doubleQuote(s);
-            }
-            exp = s;
-        }
-        if (ObjectHelper.isEmpty(exp)) {
-            exp = "null";
-        }
-        return "Object o = " + exp + ";\n        return " + name + "(exchange, o);";
-    }
-
-    private static String codeVariadic(String name, String remainder) {
-        String values = StringHelper.beforeLast(remainder, ")");
-        String[] tokens = null;
-        if (ObjectHelper.isNotEmpty(values)) {
-            tokens = codeSplitSafe(values, ',', true, true);
-        }
-        StringJoiner sj = new StringJoiner(", ");
-        for (int i = 0; tokens != null && i < tokens.length; i++) {
-            String s = tokens[i];
-            if (StringHelper.isSingleQuoted(s)) {
-                s = StringHelper.removeLeadingAndEndingQuotes(s);
-                s = StringQuoteHelper.doubleQuote(s);
-            }
-            sj.add(s);
-        }
-        String p = sj.length() > 0 ? sj.toString() : "null";
-        return name + "(exchange, " + p + ")";
-    }
 }

@@ -47,9 +47,6 @@ public final class ExpressionDeserializers extends YamlDeserializerSupport {
             case "constant": {
                 return asType(node, org.apache.camel.model.language.ConstantExpression.class);
             }
-            case "csimple": {
-                return asType(node, org.apache.camel.model.language.CSimpleExpression.class);
-            }
             case "datasonnet": {
                 return asType(node, org.apache.camel.model.language.DatasonnetExpression.class);
             }
@@ -149,7 +146,6 @@ public final class ExpressionDeserializers extends YamlDeserializerSupport {
             order = org.apache.camel.dsl.yaml.common.YamlDeserializerResolver.ORDER_LOWEST - 1,
             properties = {
                     @YamlProperty(name = "constant", type = "object:org.apache.camel.model.language.ConstantExpression", oneOf = "expression"),
-                    @YamlProperty(name = "csimple", type = "object:org.apache.camel.model.language.CSimpleExpression", oneOf = "expression"),
                     @YamlProperty(name = "datasonnet", type = "object:org.apache.camel.model.language.DatasonnetExpression", oneOf = "expression"),
                     @YamlProperty(name = "exchangeProperty", type = "object:org.apache.camel.model.language.ExchangePropertyExpression", oneOf = "expression"),
                     @YamlProperty(name = "groovy", type = "object:org.apache.camel.model.language.GroovyExpression", oneOf = "expression"),
@@ -191,7 +187,6 @@ public final class ExpressionDeserializers extends YamlDeserializerSupport {
             order = org.apache.camel.dsl.yaml.common.YamlDeserializerResolver.ORDER_LOWEST - 1,
             properties = {
                     @YamlProperty(name = "constant", type = "object:org.apache.camel.model.language.ConstantExpression", oneOf = "expression"),
-                    @YamlProperty(name = "csimple", type = "object:org.apache.camel.model.language.CSimpleExpression", oneOf = "expression"),
                     @YamlProperty(name = "datasonnet", type = "object:org.apache.camel.model.language.DatasonnetExpression", oneOf = "expression"),
                     @YamlProperty(name = "exchangeProperty", type = "object:org.apache.camel.model.language.ExchangePropertyExpression", oneOf = "expression"),
                     @YamlProperty(name = "groovy", type = "object:org.apache.camel.model.language.GroovyExpression", oneOf = "expression"),

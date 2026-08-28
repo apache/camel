@@ -22,7 +22,6 @@ import org.apache.camel.spi.SimpleLanguageFunctionFactory;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class TypeFunctionFactoryTest extends AbstractSimpleFunctionFactoryTestSupport {
@@ -52,22 +51,5 @@ public class TypeFunctionFactoryTest extends AbstractSimpleFunctionFactoryTestSu
     public void testTypeConstantInnerClass() {
         assertEquals(123, evaluate("type:org.apache.camel.language.simple.Constants$MyInnerStuff.FOO", Integer.class));
         assertEquals(456, evaluate("type:org.apache.camel.language.simple.Constants.BAR", Integer.class));
-    }
-
-    @Test
-    public void testCreateCodeTypeWithField() {
-        assertEquals("type(exchange, java.lang.Integer.class, \"MAX_VALUE\")",
-                createCode("type:java.lang.Integer.MAX_VALUE"));
-    }
-
-    @Test
-    public void testCreateCodeTypeNoField() {
-        // no dots in the remainder -> field is null, only class emitted
-        assertEquals("type(exchange, String.class)", createCode("type:String"));
-    }
-
-    @Test
-    public void testCreateCodeUnknown() {
-        assertNull(createFactory().createCode(context, "unknown", 0));
     }
 }
