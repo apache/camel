@@ -36,4 +36,10 @@ public class DJLProducer extends DefaultProducer {
     public void process(Exchange exchange) throws Exception {
         this.predictor.process(exchange);
     }
+
+    @Override
+    protected void doStop() throws Exception {
+        super.doStop();
+        this.predictor.close();
+    }
 }
