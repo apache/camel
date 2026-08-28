@@ -20,6 +20,7 @@ import java.util.Properties;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.http.common.HttpHelper;
+import org.apache.camel.http.common.HttpMethods;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.support.DefaultExchange;
 import org.junit.jupiter.api.Test;
@@ -49,6 +50,39 @@ class HttpUriHeaderPlaceholderTest {
             assertThat(HttpHelper.createURL(exchange, endpoint))
                     .isEqualTo("http://localhost/api?k=%7B%7BsecretValue%7D%7D")
                     .doesNotContain("s3cr3t");
+        }
+    }
+
+    @Test
+    void placeholderInHttpUriHeaderQueryIsNotResolvedByCreateMethod() throws Exception {
+        try (DefaultCamelContext context = new DefaultCamelContext()) {
+            context.start();
+
+            HttpEndpoint endpoint = context.getEndpoint("http://localhost/base", HttpEndpoint.class);
+            Exchange exchange = new DefaultExchange(context);
+            // createMethod parses the query out of this header too, and bridgeEndpoint does not bound it the
+            // way it bounds createURL. The key is deliberately NOT a defined property: had the header been run
+            // through the placeholder resolver, an unknown key would fail fast rather than survive as a literal.
+            exchange.getIn().setHeader(Exchange.HTTP_URI, "http://localhost/api?k={{noSuchProperty}}");
+
+            // a query string is present, so GET is selected, and the token never reaches the resolver
+            assertThat(HttpHelper.createMethod(exchange, endpoint, false)).isEqualTo(HttpMethods.GET);
+        }
+    }
+
+    @Test
+    void placeholderInHttpUriHeaderIsNotResolvedByCreateUrlEither() throws Exception {
+        try (DefaultCamelContext context = new DefaultCamelContext()) {
+            context.start();
+
+            HttpEndpoint endpoint = context.getEndpoint("http://localhost/base", HttpEndpoint.class);
+            Exchange exchange = new DefaultExchange(context);
+            exchange.getIn().setHeader(Exchange.HTTP_URI, "http://localhost/api?k={{noSuchProperty}}");
+
+            // same guarantee on the createURL path, again with an undefined key so that any future
+            // resolution of this header would surface as a failure rather than silently expanding
+            assertThat(HttpHelper.createURL(exchange, endpoint))
+                    .isEqualTo("http://localhost/api?k=%7B%7BnoSuchProperty%7D%7D");
         }
     }
 
