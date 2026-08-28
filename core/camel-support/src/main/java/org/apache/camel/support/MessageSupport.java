@@ -16,6 +16,10 @@
  */
 package org.apache.camel.support;
 
+import java.io.File;
+import java.nio.ByteBuffer;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.EnumMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -117,27 +121,28 @@ public abstract class MessageSupport implements Message, CamelContextAware, Data
 
     @Override
     public <T> T getMandatoryBody(Class<T> type) throws InvalidPayloadException {
+        // eager same instance type test to avoid the overhead of invoking the type converter
+        // if already same type
+        if (type.isInstance(body)) {
+            return (T) body;
+        }
+
         Exchange e = getExchange();
         Object raw = getBody();
 
-        // check oversized guard before the eager same-instance test so a huge String body
-        // that is already the right type is still refused rather than returned as-is
-        if (e != null && isOversizedInMemoryConversion(raw, type)) {
+        // guard: refuse only when a conversion would actually allocate a huge bulk type
+        // (same-instance case already returned above — no extra allocation occurs there)
+        if (wouldMaterializeHugeBulk(raw, type, e)) {
             throw new InvalidPayloadException(
                     e, type, this,
                     new IllegalStateException(
                             "Refusing to convert body of type "
                                               + (raw != null ? raw.getClass().getName() : "null")
-                                              + knownSizeSuffix(raw)
+                                              + knownSizeSuffix(raw, e)
                                               + " to " + type.getName()
-                                              + " because it exceeds the in-memory conversion size limit."
+                                              + " because it exceeds the in-memory conversion limit ("
+                                              + maxConvertBytes(e) + " bytes)."
                                               + " Use streaming split/tokenize or process body as InputStream/StreamCache."));
-        }
-
-        // eager same instance type test to avoid the overhead of invoking the type converter
-        // if already same type
-        if (type.isInstance(raw)) {
-            return (T) raw;
         }
 
         if (e != null) {
@@ -151,37 +156,137 @@ public abstract class MessageSupport implements Message, CamelContextAware, Data
         throw new InvalidPayloadException(e, type, this);
     }
 
-    private static boolean isOversizedInMemoryConversion(Object raw, Class<?> type) {
+    /**
+     * Returns {@code true} only when converting {@code raw} to {@code type} would allocate a new bulk object (String,
+     * byte[], CharSequence) larger than the configured cap. If {@code raw} is already an instance of {@code type}, no
+     * allocation occurs so the guard does not fire.
+     */
+    private static boolean wouldMaterializeHugeBulk(Object raw, Class<?> type, Exchange e) {
         if (raw == null || type == null) {
             return false;
         }
-        if (type != String.class && type != byte[].class && !CharSequence.class.isAssignableFrom(type)) {
+        if (!isBulkTarget(type)) {
             return false;
         }
-        long len = knownLength(raw);
-        if (len < 0) {
+        // already the right type — heap cost already paid, no conversion needed
+        if (type.isInstance(raw)) {
             return false;
         }
-        // default cap: 256 MiB — overridable via system property camel.message.max-in-memory-body
-        long cap = Long.getLong("camel.message.max-in-memory-body", 256L * 1024 * 1024);
-        return len > cap;
+        long len = knownLength(raw, e);
+        return len >= 0 && len > maxConvertBytes(e);
     }
 
-    private static long knownLength(Object raw) {
+    private static boolean isBulkTarget(Class<?> type) {
+        return type == String.class
+                || type == byte[].class
+                || type == StringBuilder.class
+                || type == StringBuffer.class
+                || CharSequence.class.isAssignableFrom(type);
+    }
+
+    private static long knownLength(Object raw, Exchange e) {
         if (raw instanceof CharSequence cs) {
             return cs.length();
         }
         if (raw instanceof byte[] bytes) {
             return bytes.length;
         }
+        if (raw instanceof ByteBuffer bb) {
+            return bb.remaining();
+        }
         if (raw instanceof StreamCache sc) {
             return sc.length();
+        }
+        if (raw instanceof File f) {
+            return f.length();
+        }
+        if (raw instanceof Path p) {
+            try {
+                return Files.size(p);
+            } catch (Exception ex) {
+                return -1;
+            }
+        }
+        // check exchange headers for file/http length
+        long fromHeader = headerLength(e);
+        if (fromHeader >= 0) {
+            return fromHeader;
+        }
+        // GenericFile lives outside camel-support — duck-type getFileLength()
+        return duckTypeFileLength(raw);
+    }
+
+    private static long headerLength(Exchange e) {
+        if (e == null) {
+            return -1;
+        }
+        Message msg = e.getMessage();
+        String[] keys = { Exchange.FILE_LENGTH, "Content-Length" };
+        for (String key : keys) {
+            Object v = msg != null ? msg.getHeader(key) : null;
+            if (v == null) {
+                v = e.getProperty(key);
+            }
+            long n = toLongValue(v);
+            if (n >= 0) {
+                return n;
+            }
         }
         return -1;
     }
 
-    private static String knownSizeSuffix(Object raw) {
-        long n = knownLength(raw);
+    private static long duckTypeFileLength(Object raw) {
+        try {
+            java.lang.reflect.Method m = raw.getClass().getMethod("getFileLength");
+            return toLongValue(m.invoke(raw));
+        } catch (Exception ignored) {
+            return -1;
+        }
+    }
+
+    private static long toLongValue(Object v) {
+        if (v instanceof Number n) {
+            return n.longValue();
+        }
+        if (v instanceof String s) {
+            try {
+                return Long.parseLong(s);
+            } catch (NumberFormatException ignored) {
+                return -1;
+            }
+        }
+        return -1;
+    }
+
+    /**
+     * Cap lookup order: exchange property {@code CamelConvertMaxBytes} → context global option
+     * {@code CamelConvertMaxBytes} → system property {@code camel.convert.max-bytes} → 16 MiB default.
+     */
+    private static long maxConvertBytes(Exchange e) {
+        if (e != null) {
+            Long p = e.getProperty("CamelConvertMaxBytes", Long.class);
+            if (p != null && p > 0) {
+                return p;
+            }
+            CamelContext ctx = e.getContext();
+            if (ctx != null) {
+                String g = ctx.getGlobalOption("CamelConvertMaxBytes");
+                if (g == null) {
+                    g = ctx.getGlobalOption("camel.convert.max-bytes");
+                }
+                long n = toLongValue(g);
+                if (n > 0) {
+                    return n;
+                }
+            }
+        }
+        String sys = System.getProperty("camel.convert.max-bytes");
+        long n = toLongValue(sys);
+        return n > 0 ? n : 16L * 1024 * 1024;
+    }
+
+    private static String knownSizeSuffix(Object raw, Exchange e) {
+        long n = knownLength(raw, e);
         return n >= 0 ? " (size=" + n + ")" : "";
     }
 
