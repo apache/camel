@@ -270,7 +270,6 @@
         <module>camel-quartz</module>
         <module>camel-quickfix</module>
         <module>camel-quickjs</module>
-        <module>camel-reactive-executor-vertx</module>
         <module>camel-reactive-streams</module>
         <module>camel-reactor</module>
         <module>camel-redis</module>
