@@ -718,3 +718,62 @@ keep subjects long-lived — the skip was reachable.
 `login()` is now called for every exchange with the credentials that exchange presented. Deployments
 using `alwaysReauthenticate=false` will see one realm lookup per exchange where previously matching
 usernames reused the bound subject; correctness aside, that is the same cost the default already pays.
+
+=== camel-oauth
+
+The authorization code flow now sends a `state` parameter and requires it back on the callback.
+
+`OAuthCodeFlowProcessor` generates a random `state`, stores it in the OAuth session and includes it in
+the authorization request. `OAuthCodeFlowCallback` then accepts an authorization code only when the
+callback carries the same value, consuming it so it cannot be replayed. Previously no `state` was sent and
+the callback redeemed whatever `code` arrived, binding the resulting profile to the caller's session with
+nothing tying the callback to a flow that session had started — the login CSRF that RFC 6749 section
+10.12 and OpenID Connect Core require this binding to prevent.
+
+Two callbacks that used to succeed are now answered with `400` and stop the route:
+
+* no authorization code flow is in progress for the session — `No authorization code flow in progress`
+* the `state` is absent or does not match — `Authorization state mismatch`
+
+Deployments where the session is not sticky across the redirect will see the second case, because the
+session holding the `state` has to be the one that returns. Sessions must survive the round trip to the
+identity provider.
+
+Note that `nonce` and PKCE (`code_challenge`) are still not sent, and the session cookie is still
+`SameSite=None; Secure`.
+
+=== camel-platform-http-vertx
+
+The CORS handler used to send `Access-Control-Allow-Credentials: true` on every response to a request
+carrying an `Origin` header — including responses to origins it had just decided not to allow, because
+the header was set outside the origin check. Combined with an unset `camel.server.cors.origins`, which
+makes the handler echo back whatever origin the caller sent, that produced the credentialed
+any-origin configuration the fetch specification forbids expressing as `*`.
+
+Two changes:
+
+* `Access-Control-Allow-Credentials` is now sent only when the request origin matched an origin the
+operator explicitly configured. With `camel.server.cors.origins` unset, the origin is still reflected
+back as before, but credentials are not granted.
+* A `Vary: Origin` response header is now added whenever the origin is reflected, so a shared cache
+cannot serve one origin's response to another.
+
+Deployments that relied on credentialed cross-origin requests must list the permitted origins in
+`camel.server.cors.origins`.
+
+=== camel-tika
+
+The `tika:parse` producer copies the metadata of the parsed document onto the Camel message. Those
+names come out of the document itself, so a document could ask for any header name at all, including
+names in the Camel-internal namespace — an HTML `<meta name="CamelFileName" content="..."/>`, for
+example, reached the message as `CamelFileName` and would then be picked up by a later `file:`
+producer.
+
+Parsed metadata names are now filtered the same way a consumer filters names supplied by an external
+sender: a name that starts with `Camel`, `camel` or `org.apache.camel.` (matched case-insensitively)
+is skipped and logged at `DEBUG` instead of being set as a header. Metadata outside that namespace is
+mapped exactly as before.
+
+Routes that deliberately read a `Camel`-prefixed header produced by the Tika parse must set it
+themselves after the `tika:parse` step, for example with a `setHeader` reading the corresponding
+non-prefixed metadata name.

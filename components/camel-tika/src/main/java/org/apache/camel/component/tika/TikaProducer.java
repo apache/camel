@@ -35,6 +35,8 @@ import org.xml.sax.ContentHandler;
 import org.xml.sax.SAXException;
 
 import org.apache.camel.Exchange;
+import org.apache.camel.spi.HeaderFilterStrategy;
+import org.apache.camel.support.DefaultHeaderFilterStrategy;
 import org.apache.camel.support.DefaultProducer;
 import org.apache.tika.config.TikaConfig;
 import org.apache.tika.detect.Detector;
@@ -52,6 +54,8 @@ import org.slf4j.LoggerFactory;
 public class TikaProducer extends DefaultProducer {
 
     private static final Logger LOG = LoggerFactory.getLogger(TikaProducer.class);
+
+    private static final HeaderFilterStrategy HEADER_FILTER_STRATEGY = createHeaderFilterStrategy();
 
     private final TikaConfiguration tikaConfiguration;
 
@@ -127,11 +131,15 @@ public class TikaProducer extends DefaultProducer {
         if (metadata != null) {
             for (String metaname : metadata.names()) {
                 String[] values = metadata.getValues(metaname);
-                if (values.length == 1) {
-                    exchange.getIn().setHeader(metaname, values[0]);
-                } else {
-                    exchange.getIn().setHeader(metaname, values);
+                Object value = values.length == 1 ? values[0] : values;
+                // The names come out of the parsed document, so they are chosen by whoever produced it.
+                // Filter them the same way a consumer filters names supplied by an external sender, so a
+                // document cannot declare a metadata name that lands in the Camel-internal namespace.
+                if (HEADER_FILTER_STRATEGY.applyFilterToExternalHeaders(metaname, value, exchange)) {
+                    LOG.debug("Skipping parsed metadata {} as the name is in the Camel-internal namespace", metaname);
+                    continue;
                 }
+                exchange.getIn().setHeader(metaname, value);
             }
         }
     }
@@ -178,4 +186,13 @@ public class TikaProducer extends DefaultProducer {
 
         return handler;
     }
+
+    private static HeaderFilterStrategy createHeaderFilterStrategy() {
+        DefaultHeaderFilterStrategy strategy = new DefaultHeaderFilterStrategy();
+        // Match case-insensitively, and cover the fully qualified form as well as the Camel prefix
+        strategy.setLowerCase(true);
+        strategy.setInFilterStartsWith("Camel", "camel", "org.apache.camel.");
+        return strategy;
+    }
+
 }
