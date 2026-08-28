@@ -92,7 +92,7 @@ public class KeyValueAggregationRepository extends ServiceSupport
     public Exchange add(CamelContext camelContext, String key, Exchange exchange) {
         LOG.trace("Adding an Exchange with ID {} for key {}", exchange.getExchangeId(), key);
         DefaultExchangeHolder newHolder = DefaultExchangeHolder.marshal(exchange, true, allowSerializedHeaders);
-        DefaultExchangeHolder oldHolder = (DefaultExchangeHolder) repository.put(AGGREGATE_PREFIX + key, newHolder, 0);
+        DefaultExchangeHolder oldHolder = (DefaultExchangeHolder) repository.put(AGGREGATE_PREFIX + key, newHolder, null);
         return unmarshallExchange(camelContext, oldHolder);
     }
 
@@ -108,7 +108,7 @@ public class KeyValueAggregationRepository extends ServiceSupport
         if (useRecovery && holder != null) {
             // Store under the exchangeId for potential recovery
             LOG.trace("Moving Exchange with ID {} to completed (pending confirmation)", exchange.getExchangeId());
-            repository.put(COMPLETED_PREFIX + exchange.getExchangeId(), holder, 0);
+            repository.put(COMPLETED_PREFIX + exchange.getExchangeId(), holder, null);
         }
     }
 
