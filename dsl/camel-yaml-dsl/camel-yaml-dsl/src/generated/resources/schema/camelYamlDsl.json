@@ -17551,14 +17551,6 @@
             }
           }, {
             "type" : "object",
-            "required" : [ "csimple" ],
-            "properties" : {
-              "csimple" : {
-                "$ref" : "#/items/definitions/org.apache.camel.model.language.CSimpleExpression"
-              }
-            }
-          }, {
-            "type" : "object",
             "required" : [ "datasonnet" ],
             "properties" : {
               "datasonnet" : {
@@ -17777,7 +17769,6 @@
         } ],
         "properties" : {
           "constant" : { },
-          "csimple" : { },
           "datasonnet" : { },
           "exchangeProperty" : { },
           "groovy" : { },
