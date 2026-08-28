@@ -885,6 +885,19 @@ be closed as `not a vulnerability`.
   but the CVE itself is closed against the upstream project. See
   https://github.com/apache/camel/blob/main/SECURITY.md[`SECURITY.md`] and the
   upstream project for the actual CVE.
+* *Features whose documented purpose is prototyping and development.* Some
+  conveniences exist to make a local run or a demo easy, and their contract is
+  breadth rather than confinement. `camel.server.staticEnabled` serves static
+  content by resolving the request against the process working directory and
+  then the class path, so that an `html`/`js` file dropped next to the route,
+  or packaged in the jar, is simply served: loading resources from the class
+  path is the point of the option, not an oversight. Running such a feature on
+  an untrusted network is a deployment decision, and the surface it exposes
+  there is operator responsibility. A report is in scope only if the feature
+  behaves outside its own stated contract - for example serving a path outside
+  a directory the operator explicitly configured. Where a component or option
+  is documented as development-oriented, treat that documentation as the
+  contract when triaging.
 * *Self-XSS by an authenticated user* of a UI built on top of Camel.
 * *Reports from automated scanners that do not demonstrate a concrete
   trust-boundary breach.* "Component X uses class Y that has historically had
