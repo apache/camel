@@ -605,10 +605,20 @@ public class SedaEndpoint extends DefaultEndpoint implements AsyncEndpoint, Brow
 
     void onStarted(SedaProducer producer) {
         producers.add(producer);
+        if (getComponent() != null && (ref == null || queue == null)) {
+            // re-register queue reference when producer restarts after queue was released on stop
+            Integer size = (getSize() == Integer.MAX_VALUE || getSize() == SedaConstants.QUEUE_SIZE) ? null : getSize();
+            ref = getComponent().getOrCreateQueue(this, size, isMultipleConsumers(), queueFactory);
+            queue = ref.getQueue();
+        }
     }
 
     void onStopped(SedaProducer producer) {
         producers.remove(producer);
+        if (getConsumers().isEmpty() && getProducers().isEmpty() && getComponent() != null) {
+            // may also be invoked from shutdown(); onShutdownEndpoint is idempotent
+            getComponent().onShutdownEndpoint(this);
+        }
     }
 
     void onStarted(SedaConsumer consumer) throws Exception {
@@ -660,13 +670,12 @@ public class SedaEndpoint extends DefaultEndpoint implements AsyncEndpoint, Brow
 
     @Override
     public void stop() {
-        if (getConsumers().isEmpty()) {
+        if (getConsumers().isEmpty() && getProducers().isEmpty()) {
             super.stop();
+            ref = null;
         } else {
-            LOG.debug("There is still active consumers.");
+            LOG.debug("There are still active consumers or producers.");
         }
-
-        ref = null;
     }
 
     @Override
@@ -676,15 +685,15 @@ public class SedaEndpoint extends DefaultEndpoint implements AsyncEndpoint, Brow
             return;
         }
 
-        // notify component we are shutting down this endpoint
+        // notify component we are shutting down this endpoint (onStopped may invoke this too; safe to call twice)
         if (getComponent() != null) {
             getComponent().onShutdownEndpoint(this);
         }
 
-        if (getConsumers().isEmpty()) {
+        if (getConsumers().isEmpty() && getProducers().isEmpty()) {
             super.shutdown();
         } else {
-            LOG.debug("There is still active consumers.");
+            LOG.debug("There are still active consumers or producers.");
         }
     }
 

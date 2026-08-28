@@ -27,9 +27,6 @@ project for Camel routes using Java DSL.
 |camel-archetype-main |This archetype is used to create a new Maven
 project for Camel routes running Camel standalone (camel-main).
 
-|camel-archetype-spring |This archetype is used to
-create a new Maven project for XML DSL routes using Spring.
-
 |camel-archetype-spring-boot |This archetype is used to
 create a new Maven project for Camel routes using Spring Boot.
 

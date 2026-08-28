@@ -16,6 +16,7 @@
  */
 package org.apache.camel.component.ibm.cos;
 
+import java.io.File;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
@@ -33,10 +34,14 @@ import com.ibm.cloud.objectstorage.services.s3.model.ObjectMetadata;
 import com.ibm.cloud.objectstorage.services.s3.model.PutObjectRequest;
 import com.ibm.cloud.objectstorage.services.s3.model.PutObjectResult;
 import com.ibm.cloud.objectstorage.services.s3.model.S3Object;
+import com.ibm.cloud.objectstorage.services.s3.transfer.TransferManager;
+import com.ibm.cloud.objectstorage.services.s3.transfer.TransferManagerBuilder;
+import com.ibm.cloud.objectstorage.services.s3.transfer.model.UploadResult;
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.apache.camel.WrappedFile;
 import org.apache.camel.support.DefaultProducer;
+import org.apache.camel.util.FileUtil;
 import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -154,12 +159,52 @@ public class IBMCOSProducer extends DefaultProducer {
 
         PutObjectRequest putObjectRequest = new PutObjectRequest(bucketName, key, inputStream, metadata);
 
+        String storageClass = getConfiguration().getStorageClass();
+        if (ObjectHelper.isNotEmpty(storageClass)) {
+            putObjectRequest.withStorageClass(storageClass);
+        }
+
         LOG.trace("Putting object [{}] into bucket [{}]...", key, bucketName);
-        PutObjectResult putObjectResult = cosClient.putObject(putObjectRequest);
+
+        String eTag;
+        String versionId;
+        if (getConfiguration().isMultiPartUpload()) {
+            // Upload via the TransferManager so large payloads are sent as a multipart upload with the configured part size
+            TransferManager transferManager = TransferManagerBuilder.standard()
+                    .withS3Client(cosClient)
+                    .withMinimumUploadPartSize(getConfiguration().getPartSize())
+                    .withMultipartUploadThreshold(getConfiguration().getPartSize())
+                    .build();
+            try {
+                UploadResult uploadResult = transferManager.upload(putObjectRequest).waitForUploadResult();
+                eTag = uploadResult.getETag();
+                versionId = uploadResult.getVersionId();
+            } finally {
+                // shut down the TransferManager's own thread pool but keep the shared COS client open
+                transferManager.shutdownNow(false);
+            }
+        } else {
+            PutObjectResult putObjectResult = cosClient.putObject(putObjectRequest);
+            eTag = putObjectResult.getETag();
+            versionId = putObjectResult.getVersionId();
+        }
 
         Message message = getMessageForResponse(exchange);
-        message.setHeader(IBMCOSConstants.E_TAG, putObjectResult.getETag());
-        message.setHeader(IBMCOSConstants.VERSION_ID, putObjectResult.getVersionId());
+        message.setHeader(IBMCOSConstants.E_TAG, eTag);
+        message.setHeader(IBMCOSConstants.VERSION_ID, versionId);
+
+        if (getConfiguration().isDeleteAfterWrite()) {
+            File filePayload = null;
+            if (body instanceof File file) {
+                filePayload = file;
+            } else if (body instanceof WrappedFile<?> wrapped && wrapped.getFile() instanceof File file) {
+                filePayload = file;
+            }
+            if (filePayload != null) {
+                LOG.trace("Deleting file payload [{}] after write", filePayload);
+                FileUtil.deleteFile(filePayload);
+            }
+        }
     }
 
     private void getObject(AmazonS3 cosClient, Exchange exchange) {
@@ -303,6 +348,7 @@ public class IBMCOSProducer extends DefaultProducer {
 
         Message message = getMessageForResponse(exchange);
         message.setBody(exists);
+        message.setHeader(IBMCOSConstants.BUCKET_EXISTS, exists);
     }
 
     private String determineBucketName(Exchange exchange) {

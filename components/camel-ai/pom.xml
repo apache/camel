@@ -51,7 +51,6 @@
         <module>camel-langchain4j-embeddingstore-api</module>
         <module>camel-langchain4j-embeddingstore</module>
         <module>camel-langchain4j-tokenizer</module>
-        <module>camel-langchain4j-tools</module>
         <module>camel-langchain4j-web-search</module>
         <module>camel-mcp-server-api</module>
         <module>camel-mcp-server</module>

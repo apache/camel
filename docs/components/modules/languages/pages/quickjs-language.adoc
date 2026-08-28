@@ -1,0 +1,1 @@
+../../../../../components/camel-quickjs/src/main/docs/quickjs-language.adoc

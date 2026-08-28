@@ -1,0 +1,45 @@
+/*
+ * Licensed to the Apache Software Foundation (ASF) under one or more
+ * contributor license agreements.  See the NOTICE file distributed with
+ * this work for additional information regarding copyright ownership.
+ * The ASF licenses this file to You under the Apache License, Version 2.0
+ * (the "License"); you may not use this file except in compliance with
+ * the License.  You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+package org.apache.camel.component.spiffe;
+
+import org.apache.camel.spi.Metadata;
+
+public final class SpiffeConstants {
+    private static final String HEADER_PREFIX = "CamelSpiffe";
+
+    @Metadata(label = "producer", description = "Overrides the operation to be used by the producer.",
+              javaType = "org.apache.camel.component.spiffe.SpiffeOperation or String")
+    public static final String OPERATION = HEADER_PREFIX + "Operation";
+
+    @Metadata(label = "producer",
+              description = "The comma-separated audience(s) for the fetchJwtSvid and validateJwtSvid operations.",
+              javaType = "String")
+    public static final String AUDIENCE = HEADER_PREFIX + "Audience";
+
+    @Metadata(label = "producer", description = "The JWT-SVID token to validate, for the validateJwtSvid operation.",
+              javaType = "String")
+    public static final String TOKEN = HEADER_PREFIX + "Token";
+
+    @Metadata(label = "producer", description = "The SPIFFE ID of the returned SVID.", javaType = "String")
+    public static final String SPIFFE_ID = HEADER_PREFIX + "SpiffeId";
+
+    @Metadata(label = "producer", description = "The expiry of the returned JWT-SVID.", javaType = "java.util.Date")
+    public static final String EXPIRY = HEADER_PREFIX + "Expiry";
+
+    private SpiffeConstants() {
+    }
+}

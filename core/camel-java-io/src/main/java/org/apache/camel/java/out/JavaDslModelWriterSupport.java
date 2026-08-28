@@ -46,7 +46,6 @@ import org.apache.camel.model.ValueDefinition;
 import org.apache.camel.model.config.BatchResequencerConfig;
 import org.apache.camel.model.errorhandler.DeadLetterChannelDefinition;
 import org.apache.camel.model.errorhandler.DefaultErrorHandlerDefinition;
-import org.apache.camel.model.language.CSimpleExpression;
 import org.apache.camel.model.language.ConstantExpression;
 import org.apache.camel.model.language.DatasonnetExpression;
 import org.apache.camel.model.language.ExpressionDefinition;
@@ -969,9 +968,6 @@ public abstract class JavaDslModelWriterSupport {
         if (expr instanceof JoorExpression) {
             return "joor(" + quotedValue + ")";
         }
-        if (expr instanceof CSimpleExpression) {
-            return "csimple(" + quotedValue + ")";
-        }
         if (expr instanceof DatasonnetExpression) {
             return "datasonnet(" + quotedValue + ")";
         }
@@ -1024,9 +1020,6 @@ public abstract class JavaDslModelWriterSupport {
         }
         if (expr instanceof JoorExpression) {
             return "joor";
-        }
-        if (expr instanceof CSimpleExpression) {
-            return "csimple";
         }
         if (expr instanceof DatasonnetExpression) {
             return "datasonnet";

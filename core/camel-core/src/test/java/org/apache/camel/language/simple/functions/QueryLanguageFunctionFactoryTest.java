@@ -97,16 +97,6 @@ public class QueryLanguageFunctionFactoryTest extends AbstractSimpleFunctionFact
                 () -> createFactory().createFunction(context, "simpleJsonpath('unclosed", 0));
     }
 
-    // --- createCode returns null (no CSimple support) ---
-
-    @Test
-    public void testCreateCodeReturnsNull() {
-        assertNull(createFactory().createCode(context, "jq('.name')", 0));
-        assertNull(createFactory().createCode(context, "jsonpath('$.name')", 0));
-        assertNull(createFactory().createCode(context, "xpath('/root')", 0));
-        assertNull(createFactory().createCode(context, "simpleJsonpath('$.name')", 0));
-    }
-
     // --- unrecognized ---
 
     @Test

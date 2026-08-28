@@ -14,14 +14,12 @@ A range of Camel components support batching such as:
 * xref:components::aws2-sqs-component.adoc[AWS2 SQS]
 * xref:components::file-component.adoc[File]
 * xref:components::ftp-component.adoc[FTP]
-* xref:components::ironmq-component.adoc[IronMQ]
 * xref:components::jooq-component.adoc[Jooq]
 * xref:components::jpa-component.adoc[JPA]
 * xref:components::mail-component.adoc[Mail]
 * xref:components::minio-component.adoc[Minio]
 * xref:components::mybatis-component.adoc[MyBatis]
 * xref:components::slack-component.adoc[Slack]
-* xref:components::splunk-component.adoc[Splunk]
 * xref:components::sql-component.adoc[SQL]
 
 == Options

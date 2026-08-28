@@ -75,6 +75,30 @@ marked ready for review.
 - For cross-cutting changes (core, API), include committers with broader project knowledge.
 - Request review from **at least 2 relevant committers** using `gh pr edit --add-reviewer`.
 - When all comments on the Pull Request are addressed (by providing a fix or providing more explanation) and the PR checks are green, re-request review on existing reviewers so that they are aware that the new changeset is ready to be reviewed.
+- **Exception — backport PRs:** do not request reviewers on a PR that is a straight backport
+  (cherry-pick) of a PR already reviewed and merged on `main`. See "Backport PRs" below.
+
+### Backport PRs
+
+A backport PR that cherry-picks a commit from a PR already reviewed and merged on `main` onto an
+older LTS maintenance branch (e.g. `camel-4.14.x`, `camel-4.18.x`) does not need a fresh review —
+the code change already went through human review on the PR it was backported from.
+
+- A backport PR MUST NOT be assigned any reviewers.
+- A backport PR MAY be merged as-is, once CI is green, without waiting for a new human approval.
+  This is the one exception to the "at least one human approval" rule in "Merge Requirements" below.
+- This exception applies only to straight cherry-picks. If a backport required manual conflict
+  resolution that changed the code beyond a mechanical port, treat it as a normal PR and request
+  review.
+- **Verifying a straight cherry-pick:** diff the backport PR against the original PR it was
+  cherry-picked from — an empty (or whitespace/context-only) diff confirms a mechanical port.
+  ```bash
+  gh pr diff <backport-pr> --repo apache/camel > /tmp/backport.diff
+  gh pr diff <original-pr> --repo apache/camel > /tmp/original.diff
+  diff /tmp/backport.diff /tmp/original.diff
+  ```
+  Any semantic difference means the backport diverged from the original — treat it as a normal
+  PR and request review.
 
 ### Doing a review
 
@@ -87,7 +111,8 @@ When an AI agent is doing a review:
 ### Merge Requirements
 
 - An agent MUST NOT merge a PR if there are any **unresolved review conversations**.
-- An agent MUST NOT merge a PR without at least **one human approval**.
+- An agent MUST NOT merge a PR without at least **one human approval**
+  (exception: backport PRs — see "Backport PRs" above).
 - An agent MUST NOT approve its own PRs — human review is always required.
 
 ### Merge Procedure
@@ -125,6 +150,8 @@ When merging a PR, an agent MUST perform the following steps **in order**:
 
 5. **Merge the PR**:
    - Verify all merge requirements above are satisfied (human approval, no unresolved conversations).
+     Exception: a straight-cherry-pick backport PR (see "Backport PRs" above) may be merged without
+     a new human approval once CI is green.
    - If any commit in the PR was AI-assisted, the squash-merge commit message MUST include the
      AI co-authorship trailer (e.g., `Co-authored-by: Claude Opus 4.6 <noreply@anthropic.com>`).
    - Merge the PR: `gh pr merge <PR> --squash` (or `--merge` / `--rebase` as appropriate).

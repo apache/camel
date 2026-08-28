@@ -188,6 +188,25 @@ public interface MinaComponentBuilderFactory {
     
         
         /**
+         * If enabled and an Exchange failed processing on the consumer side the
+         * response written back to the remote peer won't contain the
+         * exception's class, message or stack trace.
+         * 
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * 
+         * Default: true
+         * Group: consumer
+         * 
+         * @param muteException the value to set
+         * @return the dsl builder
+         */
+        default MinaComponentBuilder muteException(boolean muteException) {
+            doSetProperty("muteException", muteException);
+            return this;
+        }
+    
+        
+        /**
          * If sync is enabled this option dictates MinaConsumer which logging
          * level to use when logging a there is no reply to send back.
          * 
@@ -491,7 +510,12 @@ public interface MinaComponentBuilderFactory {
         /**
          * Accept the wildcard specified classes for Object deserialization,
          * unless they are otherwise rejected. Multiple patterns can be
-         * separated by comma.
+         * separated by comma. This widens the codec's deserialization
+         * allow-list, so keep it as narrow as the route actually needs. Avoid :
+         * it accepts every class the classpath can load from an untrusted peer,
+         * including Camel's own org.apache.camel types. Leaving the option
+         * unset is the safest choice - the codec then accepts only the small
+         * built-in set and refuses anything else.
          * 
          * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
@@ -602,6 +626,7 @@ public interface MinaComponentBuilderFactory {
             case "writeTimeout": getOrCreateConfiguration((MinaComponent) component).setWriteTimeout((long) value); return true;
             case "bridgeErrorHandler": ((MinaComponent) component).setBridgeErrorHandler((boolean) value); return true;
             case "clientMode": getOrCreateConfiguration((MinaComponent) component).setClientMode((boolean) value); return true;
+            case "muteException": getOrCreateConfiguration((MinaComponent) component).setMuteException((boolean) value); return true;
             case "noReplyLogLevel": getOrCreateConfiguration((MinaComponent) component).setNoReplyLogLevel((org.apache.camel.LoggingLevel) value); return true;
             case "lazyStartProducer": ((MinaComponent) component).setLazyStartProducer((boolean) value); return true;
             case "cachedAddress": getOrCreateConfiguration((MinaComponent) component).setCachedAddress((boolean) value); return true;

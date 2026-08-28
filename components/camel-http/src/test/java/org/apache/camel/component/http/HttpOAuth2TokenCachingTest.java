@@ -63,6 +63,52 @@ public class HttpOAuth2TokenCachingTest extends BaseHttpTest {
         }
     }
 
+    /**
+     * The cache is a static map shared by every configurer instance and every CamelContext in the JVM, so its key has
+     * to name every field that shapes the token request. When the scope was left out, a route asking for a narrow scope
+     * was served whatever token another route had cached for the same target and credentials.
+     * <p>
+     * Uses the same trick as the tests around it: close the token endpoint, then make the second request. A cache hit
+     * succeeds; a miss has to mint a token and cannot.
+     */
+    @Test
+    public void aDifferentScopeDoesNotReuseACachedToken() throws Exception {
+        try (var localServer = createLocalServer(); var localOAuth2Server = createLocalOAuth2Server()) {
+            String tokenEndpoint = "http://localhost:" + localOAuth2Server.getLocalPort() + "/token";
+            String base = "http://localhost:" + localServer.getLocalPort() + "/post?httpMethod=POST&oauth2ClientId="
+                          + clientId + "&oauth2ClientSecret=" + clientSecret + "&oauth2TokenEndpoint=" + tokenEndpoint
+                          + "&oauth2CacheTokens=true&oauth2Scope=";
+
+            // caches a token for the narrow scope
+            template.request(base + "read", exchange -> {
+            });
+            localOAuth2Server.close();
+
+            // same target and credentials, different scope: the narrow-scope token must not be handed out
+            Exchange exchange = template.request(base + "read+write", exchange1 -> {
+            });
+            assertExceptionExchange(exchange);
+        }
+    }
+
+    @Test
+    public void theSameScopeStillReusesTheCachedToken() throws Exception {
+        try (var localServer = createLocalServer(); var localOAuth2Server = createLocalOAuth2Server()) {
+            String tokenEndpoint = "http://localhost:" + localOAuth2Server.getLocalPort() + "/token";
+            String requestUrl = "http://localhost:" + localServer.getLocalPort() + "/post?httpMethod=POST&oauth2ClientId="
+                                + clientId + "&oauth2ClientSecret=" + clientSecret + "&oauth2TokenEndpoint=" + tokenEndpoint
+                                + "&oauth2CacheTokens=true&oauth2Scope=read";
+
+            template.request(requestUrl, exchange -> {
+            });
+            localOAuth2Server.close();
+
+            Exchange exchange = template.request(requestUrl, exchange1 -> {
+            });
+            assertExchange(exchange);
+        }
+    }
+
     @Test
     public void tokenIsNotCachedWhenCacheTokensIsFalse() throws Exception {
         try (var localServer = createLocalServer(); var localOAuth2Server = createLocalOAuth2Server()) {

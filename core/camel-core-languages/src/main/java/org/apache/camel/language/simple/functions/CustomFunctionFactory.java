@@ -63,9 +63,4 @@ public final class CustomFunctionFactory implements SimpleLanguageFunctionFactor
         }
         return MiscExpressionBuilder.customFunction(key, param);
     }
-
-    @Override
-    public String createCode(CamelContext camelContext, String function, int index) {
-        return null;
-    }
 }

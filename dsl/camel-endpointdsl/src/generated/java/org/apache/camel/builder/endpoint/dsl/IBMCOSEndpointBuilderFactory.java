@@ -1754,10 +1754,10 @@ public interface IBMCOSEndpointBuilderFactory {
          * 
          * Group: common
          * 
-         * @return the name of the header {@code IBMCOSContentControl}.
+         * @return the name of the header {@code IBMCOSCacheControl}.
          */
-        public String iBMCOSContentControl() {
-            return "CamelIBMCOSContentControl";
+        public String iBMCOSCacheControl() {
+            return "CamelIBMCOSCacheControl";
         }
         /**
          * The optional Content-Disposition HTTP header, which specifies

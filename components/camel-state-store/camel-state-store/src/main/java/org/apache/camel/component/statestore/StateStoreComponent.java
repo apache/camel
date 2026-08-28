@@ -21,13 +21,16 @@ import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
 import org.apache.camel.Endpoint;
+import org.apache.camel.spi.KeyValueRepository;
 import org.apache.camel.spi.annotations.Component;
 import org.apache.camel.support.DefaultComponent;
+import org.apache.camel.support.MemoryKeyValueRepository;
+import org.apache.camel.support.service.ServiceHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * The State Store component provides a simple, unified key-value store API with pluggable backends.
+ * The State Store component provides a simple, unified key-value store API backed by a {@link KeyValueRepository}.
  *
  * @since 4.23
  */
@@ -36,7 +39,7 @@ public class StateStoreComponent extends DefaultComponent {
 
     private static final Logger LOG = LoggerFactory.getLogger(StateStoreComponent.class);
 
-    private final ConcurrentHashMap<String, StateStoreBackend> backends = new ConcurrentHashMap<>();
+    private final ConcurrentHashMap<String, KeyValueRepository> backends = new ConcurrentHashMap<>();
 
     @Override
     protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
@@ -51,9 +54,9 @@ public class StateStoreComponent extends DefaultComponent {
      * already exists for this store name, subsequent calls return the existing one regardless of the explicit backend
      * passed.
      */
-    StateStoreBackend getOrCreateBackend(String storeName, StateStoreBackend explicitBackend) {
+    KeyValueRepository getOrCreateBackend(String storeName, KeyValueRepository explicitBackend) {
         if (explicitBackend != null) {
-            StateStoreBackend existing = backends.putIfAbsent(storeName, explicitBackend);
+            KeyValueRepository existing = backends.putIfAbsent(storeName, explicitBackend);
             if (existing != null) {
                 if (existing != explicitBackend) {
                     LOG.warn("Store '{}' already has a backend ({}). Ignoring explicit backend=# reference ({}).",
@@ -61,31 +64,31 @@ public class StateStoreComponent extends DefaultComponent {
                 }
                 return existing;
             }
-            explicitBackend.start();
+            ServiceHelper.startService(explicitBackend);
             return explicitBackend;
         }
         return backends.computeIfAbsent(storeName, k -> {
-            // Auto-discover a StateStoreBackend from the registry
-            Set<StateStoreBackend> found = getCamelContext().getRegistry().findByType(StateStoreBackend.class);
-            StateStoreBackend backend;
+            // Auto-discover a KeyValueRepository from the registry
+            Set<KeyValueRepository> found = getCamelContext().getRegistry().findByType(KeyValueRepository.class);
+            KeyValueRepository backend;
             if (found.size() == 1) {
                 backend = found.iterator().next();
-                LOG.debug("Auto-discovered StateStoreBackend '{}' for store '{}'",
+                LOG.debug("Auto-discovered KeyValueRepository '{}' for store '{}'",
                         backend.getClass().getSimpleName(), storeName);
             } else {
                 if (found.size() > 1) {
                     LOG.warn(
-                            "Found {} StateStoreBackend instances in the registry for store '{}'. "
-                             + "Cannot auto-select — falling back to InMemoryStateStoreBackend. "
+                            "Found {} KeyValueRepository instances in the registry for store '{}'. "
+                             + "Cannot auto-select — falling back to MemoryKeyValueRepository. "
                              + "Use an explicit backend=# reference to choose one.",
                             found.size(), storeName);
                 } else {
-                    LOG.info("No StateStoreBackend found in the registry for store '{}'. Using InMemoryStateStoreBackend.",
+                    LOG.info("No KeyValueRepository found in the registry for store '{}'. Using MemoryKeyValueRepository.",
                             storeName);
                 }
-                backend = new InMemoryStateStoreBackend();
+                backend = new MemoryKeyValueRepository();
             }
-            backend.start();
+            ServiceHelper.startService(backend);
             return backend;
         });
     }
@@ -93,9 +96,9 @@ public class StateStoreComponent extends DefaultComponent {
     @Override
     protected void doStop() throws Exception {
         Exception firstException = null;
-        for (StateStoreBackend backend : backends.values()) {
+        for (KeyValueRepository backend : backends.values()) {
             try {
-                backend.stop();
+                ServiceHelper.stopService(backend);
             } catch (Exception e) {
                 LOG.warn("Error stopping backend: {}", e.getMessage(), e);
                 if (firstException == null) {

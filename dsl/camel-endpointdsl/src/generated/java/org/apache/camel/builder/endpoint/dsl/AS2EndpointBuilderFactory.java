@@ -623,6 +623,27 @@ public interface AS2EndpointBuilderFactory {
             return this;
         }
         /**
+         * Comma separated list of host names an asynchronous MDN may be
+         * delivered to. The delivery address is chosen by the sender of the AS2
+         * message, so this is the list of hosts the operator vouches for. When
+         * set, an asynchronous MDN whose delivery address names a host outside
+         * the list is refused, and the configured
+         * mdnUserName/mdnPassword/mdnAccessToken are attached only to a host on
+         * the list. When not set, the MDN is still delivered to the
+         * sender-supplied address but no credentials are attached.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: security
+         * 
+         * @param asyncMdnAllowedHosts the value to set
+         * @return the dsl builder
+         */
+        default AS2EndpointConsumerBuilder asyncMdnAllowedHosts(String asyncMdnAllowedHosts) {
+            doSetProperty("asyncMdnAllowedHosts", asyncMdnAllowedHosts);
+            return this;
+        }
+        /**
          * The key used to encrypt the EDI message.
          * 
          * The option is a: <code>java.security.PrivateKey</code> type.
@@ -1738,6 +1759,27 @@ public interface AS2EndpointBuilderFactory {
             return this;
         }
         /**
+         * Comma separated list of host names an asynchronous MDN may be
+         * delivered to. The delivery address is chosen by the sender of the AS2
+         * message, so this is the list of hosts the operator vouches for. When
+         * set, an asynchronous MDN whose delivery address names a host outside
+         * the list is refused, and the configured
+         * mdnUserName/mdnPassword/mdnAccessToken are attached only to a host on
+         * the list. When not set, the MDN is still delivered to the
+         * sender-supplied address but no credentials are attached.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: security
+         * 
+         * @param asyncMdnAllowedHosts the value to set
+         * @return the dsl builder
+         */
+        default AS2EndpointProducerBuilder asyncMdnAllowedHosts(String asyncMdnAllowedHosts) {
+            doSetProperty("asyncMdnAllowedHosts", asyncMdnAllowedHosts);
+            return this;
+        }
+        /**
          * The key used to encrypt the EDI message.
          * 
          * The option is a: <code>java.security.PrivateKey</code> type.
@@ -2791,6 +2833,27 @@ public interface AS2EndpointBuilderFactory {
          */
         default AS2EndpointBuilder accessToken(String accessToken) {
             doSetProperty("accessToken", accessToken);
+            return this;
+        }
+        /**
+         * Comma separated list of host names an asynchronous MDN may be
+         * delivered to. The delivery address is chosen by the sender of the AS2
+         * message, so this is the list of hosts the operator vouches for. When
+         * set, an asynchronous MDN whose delivery address names a host outside
+         * the list is refused, and the configured
+         * mdnUserName/mdnPassword/mdnAccessToken are attached only to a host on
+         * the list. When not set, the MDN is still delivered to the
+         * sender-supplied address but no credentials are attached.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: security
+         * 
+         * @param asyncMdnAllowedHosts the value to set
+         * @return the dsl builder
+         */
+        default AS2EndpointBuilder asyncMdnAllowedHosts(String asyncMdnAllowedHosts) {
+            doSetProperty("asyncMdnAllowedHosts", asyncMdnAllowedHosts);
             return this;
         }
         /**

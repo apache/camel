@@ -60,7 +60,7 @@
         <!-- dependency versions -->
         <activemq-version>5.19.10</activemq-version>
         <activemq6-version>6.3.1</activemq6-version>
-        <activemq-artemis-version>2.55.0</activemq-artemis-version>
+        <activemq-artemis-version>2.56.0</activemq-artemis-version>
         <aesh-terminal-version>3.16.4</aesh-terminal-version>
         <agroal-version>3.2.1</agroal-version>
         <allegro-converter-version>0.3.0</allegro-converter-version>
@@ -68,9 +68,11 @@
         <aliyun-sdk-mns-version>2.0.0</aliyun-sdk-mns-version>
         <aliyun-fc-open-version>2.1.0</aliyun-fc-open-version>
         <aliyun-dysmsapi-version>4.6.0</aliyun-dysmsapi-version>
-        <aliyun-kms-version>2.2.0</aliyun-kms-version>
+        <aliyun-kms-version>2.3.0</aliyun-kms-version>
+        <aliyun-sls-version>5.16.0</aliyun-sls-version>
         <aliyun-eventbridge-version>7.3.0</aliyun-eventbridge-version>
         <aliyun-eventbridge-client-version>1.3.14</aliyun-eventbridge-client-version>
+        <aliyun-tablestore-version>5.17.11</aliyun-tablestore-version>
         <tea-openapi-version>0.3.15</tea-openapi-version>
         <amazon-kinesis-client-version>3.5.1</amazon-kinesis-client-version>
         <angus-mail-version>2.0.5</angus-mail-version>
@@ -88,7 +90,7 @@
         <avro-ipc-jetty-version>1.12.1</avro-ipc-jetty-version>
         <avro-ipc-netty-version>1.12.1</avro-ipc-netty-version>
         <awaitility-version>4.3.0</awaitility-version>
-        <aws-java-sdk2-version>2.54.2</aws-java-sdk2-version>
+        <aws-java-sdk2-version>2.54.3</aws-java-sdk2-version>
         <azure-sdk-bom-version>1.3.3</azure-sdk-bom-version>
         <azure-storage-blob-changefeed-version>12.0.0-beta.39</azure-storage-blob-changefeed-version>
         <beanio-version>3.2.1</beanio-version>
@@ -103,7 +105,7 @@
         <californium-scandium-version>3.14.0</californium-scandium-version>
         <!-- jbang edit command which uses embedded kamelets catalog -->
         <camel-lsp-version>1.34.0</camel-lsp-version>
-        <camel-kamelets-catalog-version>4.21.0</camel-kamelets-catalog-version>
+        <camel-kamelets-catalog-version>4.22.0</camel-kamelets-catalog-version>
         <camunda-version>7.24.0</camunda-version>
         <camunda-client-java-version>8.9.17</camunda-client-java-version>
         <cassandra-driver-version>4.19.3</cassandra-driver-version>
@@ -147,7 +149,6 @@
         <debezium-version>3.6.1.Final</debezium-version>
         <debezium-mysql-connector-version>26.7.0</debezium-mysql-connector-version>
         <dhis2-version>3.0.2</dhis2-version>
-        <digitalocean-api-client-version>2.17</digitalocean-api-client-version>
         <directory-api-version>2.1.8</directory-api-version>
         <directory-watcher-version>0.19.1</directory-watcher-version>
         <disruptor-version>3.4.4</disruptor-version>
@@ -176,10 +177,11 @@
         <formatter-maven-plugin-version>2.29.0</formatter-maven-plugin-version>
         <rewrite-maven-plugin-version>6.46.1</rewrite-maven-plugin-version>
         <ftpserver-version>1.2.1</ftpserver-version>
-        <freemarker-version>2.3.34</freemarker-version>
+        <freemarker-version>2.3.35</freemarker-version>
         <fory-version>1.6.1</fory-version>
         <ph-ubl-version>10.2.0</ph-ubl-version>
         <j8583-version>3.0.1</j8583-version>
+        <jtoon-version>2.0.2</jtoon-version>
         <jakarta-jms-api-version>3.1.0</jakarta-jms-api-version>
         <jakarta-persistence-api-version>3.2.0</jakarta-persistence-api-version>
         <jakarta-json-api-version>2.1.3</jakarta-json-api-version>
@@ -199,23 +201,23 @@
         <google-api-services-sheets-version>v4-rev20251110-2.0.0</google-api-services-sheets-version>
         <google-api-services-mail-version>v1-rev20251201-2.0.0</google-api-services-mail-version>
         <google-oauth-client-version>1.39.0</google-oauth-client-version>
-        <google-cloud-bigquery-version>2.69.0</google-cloud-bigquery-version>
-        <google-cloud-core-version>2.73.0</google-cloud-core-version>
-        <google-cloud-firestore-version>3.45.0</google-cloud-firestore-version>
+        <google-cloud-bigquery-version>2.70.0</google-cloud-bigquery-version>
+        <google-cloud-core-version>2.74.0</google-cloud-core-version>
+        <google-cloud-firestore-version>3.46.0</google-cloud-firestore-version>
         <google-cloud-functions-version>2.83.0</google-cloud-functions-version>
         <google-cloud-http-client-version>2.2.0</google-cloud-http-client-version>
-        <google-cloud-pubsub-version>1.153.0</google-cloud-pubsub-version>
-        <google-cloud-secretmanager-version>2.95.0</google-cloud-secretmanager-version>
-        <google-cloud-storage-version>2.71.0</google-cloud-storage-version>
-        <google-cloud-aiplatform-version>3.96.0</google-cloud-aiplatform-version>
-        <google-cloud-vision-version>3.93.0</google-cloud-vision-version>
-        <google-cloud-speech-version>4.90.0</google-cloud-speech-version>
-        <google-cloud-texttospeech-version>2.96.0</google-cloud-texttospeech-version>
+        <google-cloud-pubsub-version>1.154.0</google-cloud-pubsub-version>
+        <google-cloud-secretmanager-version>2.96.0</google-cloud-secretmanager-version>
+        <google-cloud-storage-version>2.72.0</google-cloud-storage-version>
+        <google-cloud-aiplatform-version>3.97.0</google-cloud-aiplatform-version>
+        <google-cloud-vision-version>3.94.0</google-cloud-vision-version>
+        <google-cloud-speech-version>4.91.0</google-cloud-speech-version>
+        <google-cloud-texttospeech-version>2.97.0</google-cloud-texttospeech-version>
         <google-genai-version>1.67.0</google-genai-version>
         <graalvm-version>25.2.4</graalvm-version>
-        <graphql-java-version>26.0</graphql-java-version>
-        <greenmail-version>2.1.12</greenmail-version>
-        <groovy-version>5.1.0</groovy-version>
+        <graphql-java-version>26.1</graphql-java-version>
+        <greenmail-version>2.1.13</greenmail-version>
+        <groovy-version>5.1.1</groovy-version>
         <grpc-version>1.83.1</grpc-version>
         <grpc-java-jwt-version>4.6.0</grpc-java-jwt-version>
         <gson-version>2.14.0</gson-version>
@@ -234,7 +236,7 @@
         <hazelcast-version>5.4.0</hazelcast-version>
         <hdrhistrogram-version>2.2.2</hdrhistrogram-version>
         <hibernate-validator-version>9.1.3.Final</hibernate-validator-version>
-        <hibernate-version>7.4.5.Final</hibernate-version>
+        <hibernate-version>7.4.6.Final</hibernate-version>
         <hsqldb-version>2.7.4</hsqldb-version>
         <mariadb-version>3.5.10</mariadb-version>
         <mariadb4j-version>3.3.1</mariadb4j-version>
@@ -259,8 +261,6 @@
         <infinispan-protostream-version>6.0.7</infinispan-protostream-version>
         <influx-java-driver-version>2.25</influx-java-driver-version>
         <influx-client-java-driver-version>8.0.0</influx-client-java-driver-version>
-        <irclib-version>1.10</irclib-version>
-        <ironmq-version>3.0.5</ironmq-version>
         <jackson-databind-nullable-version>0.2.9</jackson-databind-nullable-version>
         <jackson-jq-version>1.6.2</jackson-jq-version>
         <jackson2-version>2.22.2</jackson2-version>
@@ -273,11 +273,12 @@
         <jactl-version>2.9.2</jactl-version>
         <jasypt-version>1.9.3</jasypt-version>
         <java-grok-version>0.2.1</java-grok-version>
+        <java-spiffe-version>0.8.17</java-spiffe-version>
         <java-util-version>4.110.0</java-util-version>
         <jnats-version>2.26.2</jnats-version>
         <javacc-maven-plugin-version>3.2.0</javacc-maven-plugin-version>
         <javapoet-version>0.19.0</javapoet-version>
-        <javassist-version>3.32.0-GA</javassist-version>
+        <javassist-version>3.33.0-GA</javassist-version>
         <jakarta-el-api-version>6.0.1</jakarta-el-api-version>
         <jakarta-el-expressly-version>6.0.0</jakarta-el-expressly-version>
         <jakarta-activation-version>2.1.4</jakarta-activation-version>
@@ -325,7 +326,6 @@
         <jsonschema-generator-version>4.38.0</jsonschema-generator-version>
         <jsonassert-version>1.5.3</jsonassert-version>
         <json-path-version>3.0.0</json-path-version>
-        <json-patch-version>1.13</json-patch-version>
         <json-smart-version>2.6.0</json-smart-version>
         <jsonata-version>0.9.10</jsonata-version>
         <json-unit-version>6.2.0</json-unit-version>
@@ -405,17 +405,16 @@
         <mvel-version>2.5.2.Final</mvel-version>
         <mybatis-version>3.5.19</mybatis-version>
         <narayana-version>7.3.4.Final</narayana-version>
-        <neoscada-version>0.4.0</neoscada-version>
         <neo4j-version>6.2.1</neo4j-version>
         <netty-version>4.2.16.Final</netty-version>
         <networknt-json-schema-validator-version>2.0.1</networknt-json-schema-validator-version>
         <nimbus-jose-jwt>10.9.1</nimbus-jose-jwt>
         <olingo2-version>2.0.13</olingo2-version>
         <olingo4-version>5.0.0</olingo4-version>
-        <ognl-version>3.4.11</ognl-version>
+        <ognl-version>3.4.12</ognl-version>
         <mcp-java-sdk-version>2.0.1</mcp-java-sdk-version>
         <openai-java-version>4.52.0</openai-java-version>
-        <openapi-generator-version>7.24.0</openapi-generator-version>
+        <openapi-generator-version>7.25.0</openapi-generator-version>
         <openjpa-version>4.1.1</openjpa-version>
         <opensearch-rest-client-version>3.8.0</opensearch-rest-client-version>
         <opensearch-java-client-version>3.9.0</opensearch-java-client-version>
@@ -424,7 +423,7 @@
         <opentelemetry-version>1.65.0</opentelemetry-version>
         <opentelemetry-alpha-version>1.65.0-alpha</opentelemetry-alpha-version>
         <opentelemetry-proto-version>1.11.0-alpha</opentelemetry-proto-version>
-        <opentelemetry-log4j2-version>2.31.0-alpha</opentelemetry-log4j2-version>
+        <opentelemetry-log4j2-version>2.31.1-alpha</opentelemetry-log4j2-version>
         <opentelemetry-incubator-version>1.43.0-alpha</opentelemetry-incubator-version>
         <opentelemetry-semconv-version>1.30.1-alpha</opentelemetry-semconv-version>
         <optaplanner-version>10.2.0</optaplanner-version>
@@ -439,7 +438,7 @@
         <picocli-version>4.7.7</picocli-version>
         <pinecone-client-version>3.1.0</pinecone-client-version>
         <plc4x-version>0.13.1</plc4x-version>
-        <plexus-archiver-version>4.13.0</plexus-archiver-version>
+        <plexus-archiver-version>4.14.0</plexus-archiver-version>
         <plexus-build-api-version>1.2.0</plexus-build-api-version>
         <plexus-container-default-version>2.1.1</plexus-container-default-version>
         <plexus-utils-version>4.1.0</plexus-utils-version>
@@ -461,6 +460,7 @@
         <quarkus-version>3.38.3</quarkus-version>
         <quartz-version>2.5.2</quartz-version>
         <quickfixj-version>3.0.2</quickfixj-version>
+        <quickjs4j-version>0.1.0</quickjs4j-version>
         <reactive-streams-version>1.0.4</reactive-streams-version>
         <reactor-version>3.8.7</reactor-version>
         <reactor-netty-version>1.3.7</reactor-netty-version>
@@ -738,8 +738,18 @@
             </dependency>
             <dependency>
                 <groupId>com.aliyun</groupId>
+                <artifactId>sls20201230</artifactId>
+                <version>${aliyun-sls-version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.aliyun</groupId>
                 <artifactId>tea-openapi</artifactId>
                 <version>${tea-openapi-version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.aliyun.openservices</groupId>
+                <artifactId>tablestore</artifactId>
+                <version>${aliyun-tablestore-version}</version>
             </dependency>
             <dependency>
                 <groupId>org.apache.camel</groupId>
@@ -799,6 +809,16 @@
             <dependency>
                 <groupId>org.apache.camel</groupId>
                 <artifactId>camel-alibaba-oss</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.camel</groupId>
+                <artifactId>camel-alibaba-ots</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.camel</groupId>
+                <artifactId>camel-alibaba-sls</artifactId>
                 <version>${project.version}</version>
             </dependency>
             <dependency>
@@ -1258,11 +1278,6 @@
             </dependency>
             <dependency>
                 <groupId>org.apache.camel</groupId>
-                <artifactId>camel-csimple-joor</artifactId>
-                <version>${project.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.apache.camel</groupId>
                 <artifactId>camel-csv</artifactId>
                 <version>${project.version}</version>
             </dependency>
@@ -1394,11 +1409,6 @@
             <dependency>
                 <groupId>org.apache.camel</groupId>
                 <artifactId>camel-diagram</artifactId>
-                <version>${project.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.apache.camel</groupId>
-                <artifactId>camel-digitalocean</artifactId>
                 <version>${project.version}</version>
             </dependency>
             <dependency>
@@ -1668,11 +1678,6 @@
             </dependency>
             <dependency>
                 <groupId>org.apache.camel</groupId>
-                <artifactId>camel-headersmap</artifactId>
-                <version>${project.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.apache.camel</groupId>
                 <artifactId>camel-hl7</artifactId>
                 <version>${project.version}</version>
             </dependency>
@@ -1783,11 +1788,6 @@
             </dependency>
             <dependency>
                 <groupId>org.apache.camel</groupId>
-                <artifactId>camel-iec60870</artifactId>
-                <version>${project.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.apache.camel</groupId>
                 <artifactId>camel-iggy</artifactId>
                 <version>${project.version}</version>
             </dependency>
@@ -1819,16 +1819,6 @@
             <dependency>
                 <groupId>org.apache.camel</groupId>
                 <artifactId>camel-influxdb2</artifactId>
-                <version>${project.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.apache.camel</groupId>
-                <artifactId>camel-irc</artifactId>
-                <version>${project.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.apache.camel</groupId>
-                <artifactId>camel-ironmq</artifactId>
                 <version>${project.version}</version>
             </dependency>
             <dependency>
@@ -1993,11 +1983,6 @@
             </dependency>
             <dependency>
                 <groupId>org.apache.camel</groupId>
-                <artifactId>camel-json-patch</artifactId>
-                <version>${project.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.apache.camel</groupId>
                 <artifactId>camel-json-validator</artifactId>
                 <version>${project.version}</version>
             </dependency>
@@ -2124,11 +2109,6 @@
             <dependency>
                 <groupId>org.apache.camel</groupId>
                 <artifactId>camel-langchain4j-tokenizer</artifactId>
-                <version>${project.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.apache.camel</groupId>
-                <artifactId>camel-langchain4j-tools</artifactId>
                 <version>${project.version}</version>
             </dependency>
             <dependency>
@@ -2543,12 +2523,7 @@
             </dependency>
             <dependency>
                 <groupId>org.apache.camel</groupId>
-                <artifactId>camel-reactive-executor-tomcat</artifactId>
-                <version>${project.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.apache.camel</groupId>
-                <artifactId>camel-reactive-executor-vertx</artifactId>
+                <artifactId>camel-quickjs</artifactId>
                 <version>${project.version}</version>
             </dependency>
             <dependency>
@@ -2733,7 +2708,7 @@
             </dependency>
             <dependency>
                 <groupId>org.apache.camel</groupId>
-                <artifactId>camel-splunk</artifactId>
+                <artifactId>camel-spiffe</artifactId>
                 <version>${project.version}</version>
             </dependency>
             <dependency>
@@ -2829,21 +2804,6 @@
             <dependency>
                 <groupId>org.apache.camel</groupId>
                 <artifactId>camel-state-store</artifactId>
-                <version>${project.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.apache.camel</groupId>
-                <artifactId>camel-state-store-caffeine</artifactId>
-                <version>${project.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.apache.camel</groupId>
-                <artifactId>camel-state-store-infinispan</artifactId>
-                <version>${project.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.apache.camel</groupId>
-                <artifactId>camel-state-store-redis</artifactId>
                 <version>${project.version}</version>
             </dependency>
             <dependency>
@@ -2948,11 +2908,6 @@
             </dependency>
             <dependency>
                 <groupId>org.apache.camel</groupId>
-                <artifactId>camel-threadpoolfactory-vertx</artifactId>
-                <version>${project.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.apache.camel</groupId>
                 <artifactId>camel-thrift</artifactId>
                 <version>${project.version}</version>
             </dependency>
@@ -2969,6 +2924,11 @@
             <dependency>
                 <groupId>org.apache.camel</groupId>
                 <artifactId>camel-timer</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.camel</groupId>
+                <artifactId>camel-toon</artifactId>
                 <version>${project.version}</version>
             </dependency>
             <dependency>
@@ -3300,11 +3260,6 @@
             </dependency>
             <dependency>
                 <groupId>org.apache.camel</groupId>
-                <artifactId>camel-catalog-lucene</artifactId>
-                <version>${project.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.apache.camel</groupId>
                 <artifactId>camel-catalog-maven</artifactId>
                 <version>${project.version}</version>
             </dependency>
@@ -3316,11 +3271,6 @@
             <dependency>
                 <groupId>org.apache.camel</groupId>
                 <artifactId>camel-route-parser</artifactId>
-                <version>${project.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.apache.camel</groupId>
-                <artifactId>camel-csimple-maven-plugin</artifactId>
                 <version>${project.version}</version>
             </dependency>
             <dependency>
