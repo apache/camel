@@ -194,8 +194,4 @@ public class SimpleFunctionExpression extends LiteralExpression {
         return SimpleFunctionHelper.ifStartsWithReturnRemainder(prefix, text);
     }
 
-    @Deprecated(since = "4.21")
-    public static String ognlCodeMethods(String remainder, String type) {
-        return SimpleFunctionHelper.ognlCodeMethods(remainder, type);
-    }
 }
