@@ -16,6 +16,8 @@
  */
 package org.apache.camel.component.shiro.security;
 
+import java.nio.charset.StandardCharsets;
+
 import org.apache.camel.EndpointInject;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
@@ -34,17 +36,13 @@ import org.junit.jupiter.api.Test;
  */
 class ShiroAuthenticationCredentialAlwaysCheckedTest extends CamelTestSupport {
 
+    private static final byte[] TEST_KEY = "0123456789abcdef".getBytes(StandardCharsets.US_ASCII);
+
     @EndpointInject("mock:success")
     protected MockEndpoint successEndpoint;
 
     @EndpointInject("mock:authenticationException")
     protected MockEndpoint failureEndpoint;
-
-    private final byte[] passPhrase = {
-            (byte) 0x08, (byte) 0x09, (byte) 0x0A, (byte) 0x0B,
-            (byte) 0x0C, (byte) 0x0D, (byte) 0x0E, (byte) 0x0F,
-            (byte) 0x10, (byte) 0x11, (byte) 0x12, (byte) 0x13,
-            (byte) 0x14, (byte) 0x15, (byte) 0x16, (byte) 0x17 };
 
     @Test
     void aWrongPasswordIsRejectedEvenAfterTheSameUserAuthenticated() throws Exception {
@@ -61,13 +59,13 @@ class ShiroAuthenticationCredentialAlwaysCheckedTest extends CamelTestSupport {
     }
 
     private TestShiroSecurityTokenInjector injector(String user, String password) {
-        return new TestShiroSecurityTokenInjector(new ShiroSecurityToken(user, password), passPhrase);
+        return new TestShiroSecurityTokenInjector(new ShiroSecurityToken(user, password), TEST_KEY);
     }
 
     @Override
     protected RouteBuilder createRouteBuilder() {
         final ShiroSecurityPolicy securityPolicy
-                = new ShiroSecurityPolicy("./src/test/resources/securityconfig.ini", passPhrase, false);
+                = new ShiroSecurityPolicy("./src/test/resources/securityconfig.ini", TEST_KEY, false);
 
         return new RouteBuilder() {
             @Override

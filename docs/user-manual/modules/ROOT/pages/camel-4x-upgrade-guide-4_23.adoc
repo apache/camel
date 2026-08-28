@@ -535,6 +535,7 @@ camel.routeController.enabled = true
 camel.routeController.backOffDelay = 2000
 camel.routeController.backOffMaxDelay = 60000
 ----
+
 === camel-http
 
 The OAuth2 client-credentials token cache was keyed on the request URI, the client id and the client
