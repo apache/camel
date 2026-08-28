@@ -16,6 +16,7 @@
  */
 package org.apache.camel.oauth;
 
+import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.support.DefaultExchange;
@@ -66,5 +67,89 @@ class OAuthProcessorFailClosedTest {
             assertThat(exchange.getMessage().getHeader(Exchange.HTTP_RESPONSE_CODE)).isEqualTo(400);
             assertThat(exchange.isRouteStop()).isTrue();
         }
+    }
+
+    /**
+     * The state check runs before the authorization code is redeemed, so these paths are reachable without an identity
+     * provider. Without the check, an authorization code obtained in any browser could be redeemed at this callback and
+     * bound to whichever session presented it.
+     */
+    @Test
+    void aCallbackWithNoFlowInProgressStopsTheRoute() throws Exception {
+        try (DefaultCamelContext context = new DefaultCamelContext()) {
+            Exchange exchange = new DefaultExchange(context);
+            exchange.getMessage().setHeader("code", "an-authorization-code");
+            exchange.getMessage().setHeader("state", "a-state-we-never-issued");
+
+            bindTestOAuth(context);
+            new OAuthCodeFlowCallback().process(exchange);
+
+            assertThat(exchange.getMessage().getHeader(Exchange.HTTP_RESPONSE_CODE)).isEqualTo(400);
+            assertThat(exchange.getMessage().getBody()).isEqualTo("No authorization code flow in progress");
+            assertThat(exchange.isRouteStop()).isTrue();
+        }
+    }
+
+    @Test
+    void aCallbackWithTheWrongStateStopsTheRoute() throws Exception {
+        try (DefaultCamelContext context = new DefaultCamelContext()) {
+            Exchange exchange = new DefaultExchange(context);
+            exchange.getMessage().setHeader("code", "an-authorization-code");
+            exchange.getMessage().setHeader("state", "not-the-issued-state");
+
+            OAuth oauth = bindTestOAuth(context);
+            oauth.getOrCreateSession(exchange).putValue(OAuthSession.OAUTH_STATE, "the-issued-state");
+            new OAuthCodeFlowCallback().process(exchange);
+
+            assertThat(exchange.getMessage().getHeader(Exchange.HTTP_RESPONSE_CODE)).isEqualTo(400);
+            assertThat(exchange.getMessage().getBody()).isEqualTo("Authorization state mismatch");
+            assertThat(exchange.isRouteStop()).isTrue();
+        }
+    }
+
+    @Test
+    void aCallbackWithNoStateAtAllStopsTheRoute() throws Exception {
+        try (DefaultCamelContext context = new DefaultCamelContext()) {
+            Exchange exchange = new DefaultExchange(context);
+            exchange.getMessage().setHeader("code", "an-authorization-code");
+
+            OAuth oauth = bindTestOAuth(context);
+            oauth.getOrCreateSession(exchange).putValue(OAuthSession.OAUTH_STATE, "the-issued-state");
+            new OAuthCodeFlowCallback().process(exchange);
+
+            assertThat(exchange.getMessage().getHeader(Exchange.HTTP_RESPONSE_CODE)).isEqualTo(400);
+            assertThat(exchange.getMessage().getBody()).isEqualTo("Authorization state mismatch");
+            assertThat(exchange.isRouteStop()).isTrue();
+        }
+    }
+
+    /**
+     * The state check runs before the authorization code is redeemed, so none of the abstract operations are reached -
+     * which is part of what these tests assert.
+     */
+    private static OAuth bindTestOAuth(DefaultCamelContext context) {
+        OAuth oauth = new OAuth() {
+            @Override
+            public void discoverOAuthConfig(CamelContext ctx) {
+                throw new UnsupportedOperationException();
+            }
+
+            @Override
+            public UserProfile authenticate(Credentials creds) {
+                throw new UnsupportedOperationException("the authorization code must not be redeemed");
+            }
+
+            @Override
+            public String buildLogoutRequestUrl(OAuthLogoutParams params) {
+                throw new UnsupportedOperationException();
+            }
+
+            @Override
+            public String buildCodeFlowAuthRequestUrl(OAuthCodeFlowParams params) {
+                throw new UnsupportedOperationException();
+            }
+        };
+        context.getRegistry().bind(OAuth.class.getName(), oauth);
+        return oauth;
     }
 }

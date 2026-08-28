@@ -21,7 +21,6 @@ import java.util.List;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Expression;
-import org.apache.camel.language.simple.types.SimpleParserException;
 import org.apache.camel.language.simple.types.SimpleToken;
 import org.apache.camel.support.builder.ExpressionBuilder;
 
@@ -65,24 +64,6 @@ public class CompositeNodes extends BaseSimpleNode {
                 answer.add(child.createExpression(camelContext, expression));
             }
             return ExpressionBuilder.concatExpression(answer);
-        }
-    }
-
-    @Override
-    public String createCode(CamelContext camelContext, String expression) throws SimpleParserException {
-        if (children.isEmpty()) {
-            return null;
-        } else if (children.size() == 1) {
-            return children.get(0).createCode(camelContext, expression);
-        } else {
-            StringBuilder sb = new StringBuilder(256);
-            for (SimpleNode child : children) {
-                String code = child.createCode(camelContext, expression);
-                if (code != null) {
-                    sb.append(code);
-                }
-            }
-            return sb.toString();
         }
     }
 }

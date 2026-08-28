@@ -4,7 +4,6 @@
 * xref:languages:index.adoc[Languages]
 ** xref:bean-language.adoc[Bean Method]
 ** xref:constant-language.adoc[Constant]
-** xref:csimple-language.adoc[CSimple]
 ** xref:datasonnet-language.adoc[DataSonnet]
 ** xref:exchangeProperty-language.adoc[ExchangeProperty]
 ** xref:file-language.adoc[File]

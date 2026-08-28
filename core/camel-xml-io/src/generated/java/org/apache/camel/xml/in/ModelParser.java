@@ -2239,21 +2239,14 @@ public class ModelParser extends BaseParser {
     protected SpringTransactionErrorHandlerDefinition doParseSpringTransactionErrorHandlerDefinition() throws IOException, XmlPullParserException {
         return doParse(new SpringTransactionErrorHandlerDefinition(), transactionErrorHandlerDefinitionAttributeHandler(), defaultErrorHandlerDefinitionElementHandler(), noValueHandler());
     }
-    protected CSimpleExpression doParseCSimpleExpression() throws IOException, XmlPullParserException {
-        return doParse(new CSimpleExpression(), (def, key, val) -> switch (key) {
-                case "pretty": def.setPretty(val); yield true;
-                case "trimResult": def.setTrimResult(val); yield true;
-                default: yield typedExpressionDefinitionAttributeHandler().accept(def, key, val);
-            }, noElementHandler(), expressionDefinitionValueHandler());
+    protected ConstantExpression doParseConstantExpression() throws IOException, XmlPullParserException {
+        return doParse(new ConstantExpression(), typedExpressionDefinitionAttributeHandler(), noElementHandler(), expressionDefinitionValueHandler());
     }
     protected <T extends TypedExpressionDefinition> AttributeHandler<T> typedExpressionDefinitionAttributeHandler() {
         return (def, key, val) -> switch (key) {
             case "resultType": def.setResultTypeName(val); yield true;
             default: yield expressionDefinitionAttributeHandler().accept(def, key, val);
         };
-    }
-    protected ConstantExpression doParseConstantExpression() throws IOException, XmlPullParserException {
-        return doParse(new ConstantExpression(), typedExpressionDefinitionAttributeHandler(), noElementHandler(), expressionDefinitionValueHandler());
     }
     protected DatasonnetExpression doParseDatasonnetExpression() throws IOException, XmlPullParserException {
         return doParse(new DatasonnetExpression(), (def, key, val) -> switch (key) {
@@ -2906,7 +2899,6 @@ public class ModelParser extends BaseParser {
     protected ExpressionDefinition doParseExpressionDefinitionRef(String key) throws IOException, XmlPullParserException {
         switch (key) {
             case "expressionDefinition": return doParseExpressionDefinition();
-            case "csimple": return doParseCSimpleExpression();
             case "constant": return doParseConstantExpression();
             case "datasonnet": return doParseDatasonnetExpression();
             case "exchangeProperty": return doParseExchangePropertyExpression();

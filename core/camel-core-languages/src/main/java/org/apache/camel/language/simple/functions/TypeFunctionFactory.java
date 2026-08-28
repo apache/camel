@@ -21,7 +21,6 @@ import org.apache.camel.Expression;
 import org.apache.camel.language.simple.MiscExpressionBuilder;
 import org.apache.camel.spi.SimpleLanguageFunctionFactory;
 
-import static org.apache.camel.language.simple.SimpleFunctionHelper.appendClass;
 import static org.apache.camel.language.simple.SimpleFunctionHelper.ifStartsWithReturnRemainder;
 
 /**
@@ -39,25 +38,6 @@ public final class TypeFunctionFactory implements SimpleLanguageFunctionFactory 
             Expression exp = MiscExpressionBuilder.typeExpression(remainder);
             exp.init(camelContext);
             return MiscExpressionBuilder.cacheExpression(exp);
-        }
-        return null;
-    }
-
-    @Override
-    @SuppressWarnings("deprecation")
-    public String createCode(CamelContext camelContext, String function, int index) {
-        String remainder = ifStartsWithReturnRemainder("type:", function);
-        if (remainder != null) {
-            int pos = remainder.lastIndexOf('.');
-            String type = pos != -1 ? remainder.substring(0, pos) : remainder;
-            String field = pos != -1 ? remainder.substring(pos + 1) : null;
-            type = appendClass(type);
-            type = type.replace('$', '.');
-            if (field != null) {
-                return "type(exchange, " + type + ", \"" + field + "\")";
-            } else {
-                return "type(exchange, " + type + ")";
-            }
         }
         return null;
     }

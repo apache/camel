@@ -1332,9 +1332,6 @@
           "constant" : {
             "$ref" : "#/items/definitions/org.apache.camel.model.language.ConstantExpression"
           },
-          "csimple" : {
-            "$ref" : "#/items/definitions/org.apache.camel.model.language.CSimpleExpression"
-          },
           "datasonnet" : {
             "$ref" : "#/items/definitions/org.apache.camel.model.language.DatasonnetExpression"
           },
@@ -9532,49 +9529,6 @@
           }
         }
       },
-      "org.apache.camel.model.language.CSimpleExpression" : {
-        "title" : "CSimple",
-        "description" : "Evaluate a compiled simple expression",
-        "deprecated" : true,
-        "type" : "object",
-        "additionalProperties" : false,
-        "properties" : {
-          "expression" : {
-            "type" : "string",
-            "title" : "Expression",
-            "description" : "The expression value in your chosen language syntax."
-          },
-          "id" : {
-            "type" : "string",
-            "title" : "Id",
-            "description" : "The id of this node."
-          },
-          "pretty" : {
-            "type" : "boolean",
-            "title" : "Pretty",
-            "description" : "To pretty format the output (only JSon or XML supported).",
-            "default" : false
-          },
-          "resultType" : {
-            "type" : "string",
-            "title" : "Result Type",
-            "description" : "The class of the result type (type from output)."
-          },
-          "trim" : {
-            "type" : "boolean",
-            "title" : "Trim",
-            "description" : "Whether to trim the source code to remove leading and trailing whitespaces and line breaks.",
-            "default" : true
-          },
-          "trimResult" : {
-            "type" : "boolean",
-            "title" : "Trim Result",
-            "description" : "Whether to trim the returned values when this language is in use.",
-            "default" : false
-          }
-        },
-        "required" : [ "expression" ]
-      },
       "org.apache.camel.model.language.ConstantExpression" : {
         "title" : "Constant",
         "description" : "A fixed value set only once during the route startup",
@@ -9681,9 +9635,6 @@
         "properties" : {
           "constant" : {
             "$ref" : "#/items/definitions/org.apache.camel.model.language.ConstantExpression"
-          },
-          "csimple" : {
-            "$ref" : "#/items/definitions/org.apache.camel.model.language.CSimpleExpression"
           },
           "datasonnet" : {
             "$ref" : "#/items/definitions/org.apache.camel.model.language.DatasonnetExpression"
