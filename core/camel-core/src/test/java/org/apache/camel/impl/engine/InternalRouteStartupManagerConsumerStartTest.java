@@ -98,8 +98,10 @@ class InternalRouteStartupManagerConsumerStartTest {
     }
 
     /**
-     * A bare {@link NullPointerException} thrown from {@code routeService.start()} (second catch site) must also be
-     * wrapped in a {@link FailedToStartRouteException} with a non-null message.
+     * A bare {@link NullPointerException} thrown from the consumer's {@code doStart()} (as opposed to {@code start()})
+     * must also be wrapped in a {@link FailedToStartRouteException}. This exercises the first catch site via
+     * {@code camelContext.startService(consumer)}, reaching the consumer through {@code BaseService.start()} →
+     * {@code doStart()}.
      */
     @Test
     void testRouteServiceStartNullMessageProducesFailedToStartRouteException() throws Exception {
@@ -206,8 +208,11 @@ class InternalRouteStartupManagerConsumerStartTest {
     }
 
     /**
-     * Component whose endpoint throws from {@link org.apache.camel.support.service.BaseService#doStart()}, exercising
-     * the second catch site in {@code doStartOrResumeRouteConsumers()} via {@code routeService.start()}.
+     * Component whose consumer throws from {@link org.apache.camel.support.service.BaseService#doStart()}, still
+     * exercising the first catch site in {@code doStartOrResumeRouteConsumers()} via
+     * {@code camelContext.startService(consumer)} → {@code BaseService.start()} → {@code doStart()}. Covers the
+     * {@code doStart()} override path as distinct from the {@code start()} override in
+     * {@link ConsumerStartFailComponent}.
      */
     private static class RouteServiceStartFailComponent extends DefaultComponent {
         private final RuntimeException toThrow;
