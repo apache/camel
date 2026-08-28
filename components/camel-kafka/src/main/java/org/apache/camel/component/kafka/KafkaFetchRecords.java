@@ -56,7 +56,6 @@ import org.apache.kafka.clients.consumer.Consumer;
 import org.apache.kafka.clients.consumer.ConsumerRebalanceListener;
 import org.apache.kafka.clients.consumer.ConsumerRecords;
 import org.apache.kafka.clients.consumer.OffsetAndMetadata;
-import org.apache.kafka.clients.consumer.internals.ConsumerNetworkClient;
 import org.apache.kafka.common.TopicPartition;
 import org.apache.kafka.common.errors.InterruptException;
 import org.apache.kafka.common.errors.WakeupException;
@@ -569,30 +568,7 @@ public class KafkaFetchRecords implements Runnable {
         if (!connected) {
             return false;
         }
-
-        boolean ready = true;
-        try {
-            if (consumer instanceof org.apache.kafka.clients.consumer.KafkaConsumer) {
-                // need to use reflection to access the network client which has API to check if the client has ready
-                // connections
-                org.apache.kafka.clients.consumer.KafkaConsumer kc = (org.apache.kafka.clients.consumer.KafkaConsumer) consumer;
-                Object client = ReflectionHelper.getField(kc.getClass().getDeclaredField("delegate"), kc);
-                if (client != null) {
-                    ConsumerNetworkClient nc
-                            = (ConsumerNetworkClient) ReflectionHelper.getField(client.getClass().getDeclaredField("client"),
-                                    client);
-                    LOG.trace(
-                            "Health-Check calling org.apache.kafka.clients.consumer.internals.ConsumerNetworkClient.hasReadyNode");
-                    ready = nc.hasReadyNodes(System.currentTimeMillis());
-                }
-            }
-        } catch (Exception e) {
-            // ignore
-            LOG.debug("Cannot check hasReadyNodes on KafkaConsumer client (ConsumerNetworkClient) due to: "
-                      + e.getMessage() + ". This exception is ignored.",
-                    e);
-        }
-        return ready;
+        return KafkaNetworkHealthHelper.consumerHasReadyNodes(consumer);
     }
 
     private Properties getKafkaProps() {

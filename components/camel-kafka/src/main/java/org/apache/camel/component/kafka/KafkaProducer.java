@@ -50,12 +50,10 @@ import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.ReflectionHelper;
 import org.apache.camel.util.URISupport;
 import org.apache.kafka.clients.CommonClientConfigs;
-import org.apache.kafka.clients.NetworkClient;
 import org.apache.kafka.clients.producer.Producer;
 import org.apache.kafka.clients.producer.ProducerConfig;
 import org.apache.kafka.clients.producer.ProducerRecord;
 import org.apache.kafka.clients.producer.RecordMetadata;
-import org.apache.kafka.clients.producer.internals.Sender;
 import org.apache.kafka.common.header.Header;
 import org.apache.kafka.common.header.internals.RecordHeader;
 import org.slf4j.Logger;
@@ -111,29 +109,7 @@ public class KafkaProducer extends DefaultAsyncProducer implements RouteIdAware 
     }
 
     public boolean isReady() {
-        boolean ready = true;
-        try {
-            if (kafkaProducer instanceof org.apache.kafka.clients.producer.KafkaProducer) {
-                // need to use reflection to access the network client which has API to check if the client has ready
-                // connections
-                org.apache.kafka.clients.producer.KafkaProducer kp
-                        = (org.apache.kafka.clients.producer.KafkaProducer) kafkaProducer;
-                Sender sender
-                        = (Sender) ReflectionHelper
-                                .getField(kp.getClass().getDeclaredField("sender"), kp);
-                NetworkClient nc
-                        = (NetworkClient) ReflectionHelper.getField(sender.getClass().getDeclaredField("client"), sender);
-                LOG.trace(
-                        "Health-Check calling org.apache.kafka.clients.NetworkClient.hasReadyNode");
-                ready = nc.hasReadyNodes(System.currentTimeMillis());
-            }
-        } catch (Exception e) {
-            // ignore
-            LOG.debug("Cannot check hasReadyNodes on KafkaProducer client (NetworkClient) due to "
-                      + e.getMessage() + ". This exception is ignored.",
-                    e);
-        }
-        return ready;
+        return KafkaNetworkHealthHelper.producerHasReadyNodes(kafkaProducer);
     }
 
     @SuppressWarnings("rawtypes")
