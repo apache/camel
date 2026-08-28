@@ -345,7 +345,12 @@ public class GenerateYamlSchemaMojo extends GenerateYamlSupportMojo {
                     propertyWrapItem,
                     additionalProperties);
 
-            if (propertyRequired) {
+            // A property that belongs to a oneOf group (e.g. the data formats of marshal/unmarshal, or the
+            // languages of an expression) is only required as part of choosing one of the alternatives, not
+            // unconditionally. In canonical mode the oneOf grouping itself is dropped (isInOneOf is always
+            // false), so without this guard every alternative would end up in the flat "required" list,
+            // demanding all of them at once instead of exactly one.
+            if (propertyRequired && StringUtils.isEmpty(propertyOneOf)) {
                 definition.withArray("required").add(propertyName);
             }
         }
