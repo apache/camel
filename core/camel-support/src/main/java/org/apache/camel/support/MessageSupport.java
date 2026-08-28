@@ -25,6 +25,7 @@ import org.apache.camel.CamelContextAware;
 import org.apache.camel.Exchange;
 import org.apache.camel.InvalidPayloadException;
 import org.apache.camel.Message;
+import org.apache.camel.StreamCache;
 import org.apache.camel.TypeConverter;
 import org.apache.camel.spi.DataType;
 import org.apache.camel.spi.DataTypeAware;
@@ -116,22 +117,72 @@ public abstract class MessageSupport implements Message, CamelContextAware, Data
 
     @Override
     public <T> T getMandatoryBody(Class<T> type) throws InvalidPayloadException {
-        // eager same instance type test to avoid the overhead of invoking the type converter
-        // if already same type
-        if (type.isInstance(body)) {
-            return (T) body;
+        Exchange e = getExchange();
+        Object raw = getBody();
+
+        // check oversized guard before the eager same-instance test so a huge String body
+        // that is already the right type is still refused rather than returned as-is
+        if (e != null && isOversizedInMemoryConversion(raw, type)) {
+            throw new InvalidPayloadException(
+                    e, type, this,
+                    new IllegalStateException(
+                            "Refusing to convert body of type "
+                                              + (raw != null ? raw.getClass().getName() : "null")
+                                              + knownSizeSuffix(raw)
+                                              + " to " + type.getName()
+                                              + " because it exceeds the in-memory conversion size limit."
+                                              + " Use streaming split/tokenize or process body as InputStream/StreamCache."));
         }
 
-        Exchange e = getExchange();
+        // eager same instance type test to avoid the overhead of invoking the type converter
+        // if already same type
+        if (type.isInstance(raw)) {
+            return (T) raw;
+        }
+
         if (e != null) {
             try {
-                return typeConverter.mandatoryConvertTo(type, e, getBody());
+                return typeConverter.mandatoryConvertTo(type, e, raw);
             } catch (Exception cause) {
                 throw new InvalidPayloadException(e, type, this, cause);
             }
         }
         // TODO Null value in e. Is it expected?
         throw new InvalidPayloadException(e, type, this);
+    }
+
+    private static boolean isOversizedInMemoryConversion(Object raw, Class<?> type) {
+        if (raw == null || type == null) {
+            return false;
+        }
+        if (type != String.class && type != byte[].class && !CharSequence.class.isAssignableFrom(type)) {
+            return false;
+        }
+        long len = knownLength(raw);
+        if (len < 0) {
+            return false;
+        }
+        // default cap: 256 MiB — overridable via system property camel.message.max-in-memory-body
+        long cap = Long.getLong("camel.message.max-in-memory-body", 256L * 1024 * 1024);
+        return len > cap;
+    }
+
+    private static long knownLength(Object raw) {
+        if (raw instanceof CharSequence cs) {
+            return cs.length();
+        }
+        if (raw instanceof byte[] bytes) {
+            return bytes.length;
+        }
+        if (raw instanceof StreamCache sc) {
+            return sc.length();
+        }
+        return -1;
+    }
+
+    private static String knownSizeSuffix(Object raw) {
+        long n = knownLength(raw);
+        return n >= 0 ? " (size=" + n + ")" : "";
     }
 
     @Override
