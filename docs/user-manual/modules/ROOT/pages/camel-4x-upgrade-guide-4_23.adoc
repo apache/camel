@@ -703,6 +703,22 @@ inherit values set on `defaultInstance`, and `defaultInstance` itself remains un
 Routes that compared unmarshalled bodies by identity, or that mutated one body expecting the change to
 be visible on another, must be updated.
 
+=== camel-shiro
+
+`ShiroSecurityProcessor` used to skip the Shiro `login()` call — and therefore the credential check —
+when the thread-bound subject was already authenticated for the same username as the incoming
+`ShiroSecurityToken`. The check conflated "same principal name" with "same credentials", so once a user
+had authenticated on a worker thread, a later exchange presenting that username with any password was
+accepted for as long as the subject stayed bound.
+
+The default `alwaysReauthenticate=true` masked this, because the processor calls `logout()` after each
+exchange. With `alwaysReauthenticate=false` — a documented option, which also sets `rememberMe(true)` to
+keep subjects long-lived — the skip was reachable.
+
+`login()` is now called for every exchange with the credentials that exchange presented. Deployments
+using `alwaysReauthenticate=false` will see one realm lookup per exchange where previously matching
+usernames reused the bound subject; correctness aside, that is the same cost the default already pays.
+
 === camel-oauth
 
 The authorization code flow now sends a `state` parameter and requires it back on the callback.
