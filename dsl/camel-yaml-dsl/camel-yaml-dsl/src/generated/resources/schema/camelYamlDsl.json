@@ -11576,6 +11576,12 @@
             "title" : "Provider",
             "description" : "Java Cryptography Extension (JCE) provider, default is Bouncy Castle (BC). Alternatively you can use, for example, the IAIK JCE provider."
           },
+          "requireIntegrityProtection" : {
+            "type" : "boolean",
+            "title" : "Require Integrity Protection",
+            "description" : "Whether a message must be integrity protected in order to be decrypted. The legacy symmetrically encrypted data packet carries no modification detection code, and the packet type is chosen by whoever produced the message, so accepting it lets the sender decide whether the integrity check applies. Set to false only to interoperate with a sender that still emits the legacy packet.",
+            "default" : true
+          },
           "signatureKeyFileName" : {
             "type" : "string",
             "title" : "Signature Key File Name",

@@ -11188,6 +11188,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     @YamlProperty(name = "keyUserid", type = "string", description = "The user ID of the key in the PGP keyring used during encryption. Can also be only a part of a user ID.", displayName = "Key Userid"),
                     @YamlProperty(name = "password", type = "string", description = "Password used when opening the private key (not used for encryption).", displayName = "Password"),
                     @YamlProperty(name = "provider", type = "string", description = "Java Cryptography Extension (JCE) provider, default is Bouncy Castle (BC). Alternatively you can use, for example, the IAIK JCE provider.", displayName = "Provider"),
+                    @YamlProperty(name = "requireIntegrityProtection", type = "boolean", defaultValue = "true", description = "Whether a message must be integrity protected in order to be decrypted. The legacy symmetrically encrypted data packet carries no modification detection code, and the packet type is chosen by whoever produced the message, so accepting it lets the sender decide whether the integrity check applies. Set to false only to interoperate with a sender that still emits the legacy packet.", displayName = "Require Integrity Protection"),
                     @YamlProperty(name = "signatureKeyFileName", type = "string", description = "Filename of the keyring to use for signing (during encryption) or for signature verification (during decryption); must be accessible as a classpath resource (but you can specify a location in the file system by using the file: prefix).", displayName = "Signature Key File Name"),
                     @YamlProperty(name = "signatureKeyRing", type = "string", description = "Keyring used for signing/verifying as byte array. You cannot set the signatureKeyFileName and signatureKeyRing at the same time.", displayName = "Signature Key Ring"),
                     @YamlProperty(name = "signatureKeyUserid", type = "string", description = "User ID of the key in the PGP keyring used for signing (during encryption) or signature verification (during decryption).", displayName = "Signature Key Userid"),
@@ -11258,6 +11259,11 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                 case "provider": {
                     String val = asText(node);
                     target.setProvider(val);
+                    break;
+                }
+                case "requireIntegrityProtection": {
+                    String val = asText(node);
+                    target.setRequireIntegrityProtection(val);
                     break;
                 }
                 case "signatureKeyFileName": {

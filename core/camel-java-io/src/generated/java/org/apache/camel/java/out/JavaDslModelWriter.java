@@ -3222,6 +3222,7 @@ public class JavaDslModelWriter extends JavaDslModelWriterSupport {
         doWriteAttribute(sb, "compressionAlgorithm", def.getCompressionAlgorithm(), null);
         doWriteAttribute(sb, "hashAlgorithm", def.getHashAlgorithm(), null);
         doWriteAttribute(sb, "signatureVerificationOption", def.getSignatureVerificationOption(), null);
+        doWriteAttribute(sb, "requireIntegrityProtection", def.getRequireIntegrityProtection(), "true");
     }
     protected void doWritePQCDataFormat(StringBuilder sb, PQCDataFormat def) {
         doWriteIdentifiedTypeAttributes(sb, def);

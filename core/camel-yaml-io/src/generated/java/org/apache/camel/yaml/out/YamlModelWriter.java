@@ -2585,6 +2585,7 @@ public class YamlModelWriter extends YamlModelWriterSupport {
         doWriteAttribute(jo, "compressionAlgorithm", def.getCompressionAlgorithm(), null);
         doWriteAttribute(jo, "hashAlgorithm", def.getHashAlgorithm(), null);
         doWriteAttribute(jo, "signatureVerificationOption", def.getSignatureVerificationOption(), null);
+        doWriteAttribute(jo, "requireIntegrityProtection", def.getRequireIntegrityProtection(), "true");
         return jo;
     }
     protected JsonObject doWritePQCDataFormat(PQCDataFormat def) {
