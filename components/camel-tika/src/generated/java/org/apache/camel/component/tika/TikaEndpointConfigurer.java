@@ -25,10 +25,10 @@ public class TikaEndpointConfigurer extends PropertyConfigurerSupport implements
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "lazystartproducer":
         case "lazyStartProducer": target.setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
-        case "tikaconfig":
-        case "tikaConfig": target.getTikaConfiguration().setTikaConfig(property(camelContext, org.apache.tika.config.TikaConfig.class, value)); return true;
-        case "tikaconfiguri":
-        case "tikaConfigUri": target.getTikaConfiguration().setTikaConfigUri(property(camelContext, java.lang.String.class, value)); return true;
+        case "tikaconfigfile":
+        case "tikaConfigFile": target.getTikaConfiguration().setTikaConfigFile(property(camelContext, java.lang.String.class, value)); return true;
+        case "tikaloader":
+        case "tikaLoader": target.getTikaConfiguration().setTikaLoader(property(camelContext, org.apache.tika.config.loader.TikaLoader.class, value)); return true;
         case "tikaparseoutputencoding":
         case "tikaParseOutputEncoding": target.getTikaConfiguration().setTikaParseOutputEncoding(property(camelContext, java.lang.String.class, value)); return true;
         case "tikaparseoutputformat":
@@ -42,10 +42,10 @@ public class TikaEndpointConfigurer extends PropertyConfigurerSupport implements
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "lazystartproducer":
         case "lazyStartProducer": return boolean.class;
-        case "tikaconfig":
-        case "tikaConfig": return org.apache.tika.config.TikaConfig.class;
-        case "tikaconfiguri":
-        case "tikaConfigUri": return java.lang.String.class;
+        case "tikaconfigfile":
+        case "tikaConfigFile": return java.lang.String.class;
+        case "tikaloader":
+        case "tikaLoader": return org.apache.tika.config.loader.TikaLoader.class;
         case "tikaparseoutputencoding":
         case "tikaParseOutputEncoding": return java.lang.String.class;
         case "tikaparseoutputformat":
@@ -60,10 +60,10 @@ public class TikaEndpointConfigurer extends PropertyConfigurerSupport implements
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "lazystartproducer":
         case "lazyStartProducer": return target.isLazyStartProducer();
-        case "tikaconfig":
-        case "tikaConfig": return target.getTikaConfiguration().getTikaConfig();
-        case "tikaconfiguri":
-        case "tikaConfigUri": return target.getTikaConfiguration().getTikaConfigUri();
+        case "tikaconfigfile":
+        case "tikaConfigFile": return target.getTikaConfiguration().getTikaConfigFile();
+        case "tikaloader":
+        case "tikaLoader": return target.getTikaConfiguration().getTikaLoader();
         case "tikaparseoutputencoding":
         case "tikaParseOutputEncoding": return target.getTikaConfiguration().getTikaParseOutputEncoding();
         case "tikaparseoutputformat":

@@ -58,7 +58,7 @@ class TikaMetadataHeaderFilterTest extends CamelTestSupport {
         assertThat(exchange.getIn().getHeader("org.apache.camel.internal")).isNull();
 
         // metadata outside the internal namespace is still mapped, so the filter has not simply dropped everything
-        assertThat(exchange.getIn().getHeader("author")).isEqualTo("kept");
+        assertThat(exchange.getIn().getHeader("dc:creator")).isEqualTo("kept");
         assertThat(exchange.getIn().getHeader("dc:title")).isEqualTo("t");
     }
 

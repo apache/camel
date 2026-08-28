@@ -55,6 +55,14 @@ Camel then no longer controls how the payload is read.
 
 == Upgrading Camel 4.21 to 4.22
 
+=== camel-tika
+
+The `tikaConfig` and `tikaConfigUri` component options are deprecated for removal in Camel 4.23.
+Apache Tika 4 removes the `TikaConfig` class and XML configuration support; Camel 4.23 provides the
+replacement `tikaLoader` and `tikaConfigFile` options based on Tika's `TikaLoader` and JSON configuration.
+See the https://tika.apache.org/docs/4.0.x/migration-to-4x/migrating-to-4x.html[Tika 4 migration guide]
+for migration details.
+
 === camel-reactive-executor-tomcat
 
 The `camel-reactive-executor-tomcat` component has been deprecated. Its cross-thread `ThreadLocal`
