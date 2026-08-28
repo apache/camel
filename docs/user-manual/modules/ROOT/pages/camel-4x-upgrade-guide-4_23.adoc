@@ -725,3 +725,39 @@ identity provider.
 
 Note that `nonce` and PKCE (`code_challenge`) are still not sent, and the session cookie is still
 `SameSite=None; Secure`.
+
+=== camel-platform-http-vertx
+
+The CORS handler used to send `Access-Control-Allow-Credentials: true` on every response to a request
+carrying an `Origin` header — including responses to origins it had just decided not to allow, because
+the header was set outside the origin check. Combined with an unset `camel.server.cors.origins`, which
+makes the handler echo back whatever origin the caller sent, that produced the credentialed
+any-origin configuration the fetch specification forbids expressing as `*`.
+
+Two changes:
+
+* `Access-Control-Allow-Credentials` is now sent only when the request origin matched an origin the
+operator explicitly configured. With `camel.server.cors.origins` unset, the origin is still reflected
+back as before, but credentials are not granted.
+* A `Vary: Origin` response header is now added whenever the origin is reflected, so a shared cache
+cannot serve one origin's response to another.
+
+Deployments that relied on credentialed cross-origin requests must list the permitted origins in
+`camel.server.cors.origins`.
+
+=== camel-tika
+
+The `tika:parse` producer copies the metadata of the parsed document onto the Camel message. Those
+names come out of the document itself, so a document could ask for any header name at all, including
+names in the Camel-internal namespace — an HTML `<meta name="CamelFileName" content="..."/>`, for
+example, reached the message as `CamelFileName` and would then be picked up by a later `file:`
+producer.
+
+Parsed metadata names are now filtered the same way a consumer filters names supplied by an external
+sender: a name that starts with `Camel`, `camel` or `org.apache.camel.` (matched case-insensitively)
+is skipped and logged at `DEBUG` instead of being set as a header. Metadata outside that namespace is
+mapped exactly as before.
+
+Routes that deliberately read a `Camel`-prefixed header produced by the Tika parse must set it
+themselves after the `tika:parse` step, for example with a `setHeader` reading the corresponding
+non-prefixed metadata name.
