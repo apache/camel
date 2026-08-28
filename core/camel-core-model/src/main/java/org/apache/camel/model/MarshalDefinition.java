@@ -132,7 +132,8 @@ public class MarshalDefinition extends NoOutputDefinition<MarshalDefinition> imp
             @XmlElement(name = "yaml", type = YAMLDataFormat.class),
             @XmlElement(name = "zipDeflater", type = ZipDeflaterDataFormat.class),
             @XmlElement(name = "zipFile", type = ZipFileDataFormat.class) })
-    @Metadata(description = "The data format to use for marshalling the message body into a specific format such as JSON, XML, CSV, Avro, Protobuf, etc.")
+    @Metadata(required = true,
+              description = "The data format to use for marshalling the message body into a specific format such as JSON, XML, CSV, Avro, Protobuf, etc.")
     private DataFormatDefinition dataFormatType;
     @XmlAttribute
     @Metadata(description = "To use a variable as the source for the message body to send. This makes it handy to use variables for user data and to easily control what data to use for sending and receiving.")
