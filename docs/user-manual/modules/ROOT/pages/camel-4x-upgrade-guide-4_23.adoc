@@ -688,3 +688,17 @@ Audience validation already behaved this way; the two are now consistent.
 Deployments whose introspection endpoint omits `iss` must either have it include the claim, or turn
 `validateIssuer` off. The locally verified JWT path is unaffected — it uses Keycloak's own
 `TokenVerifier.RealmUrlCheck`.
+
+=== camel-thrift
+
+The `thrift` data format used to deserialize into its own `defaultInstance` and return that object to
+every exchange. Because Thrift's `TBase.read()` assigns only the fields present in the incoming bytes,
+a message that omitted an optional field kept the value left there by the previous message, concurrent
+unmarshals interleaved into the same object, and all in-flight bodies were the same reference.
+
+`unmarshal` now creates a copy of `defaultInstance`, clears it to the generated type's default-constructor
+state, and deserializes into that copy. Each exchange therefore gets its own object, omitted fields do not
+inherit values set on `defaultInstance`, and `defaultInstance` itself remains untouched.
+
+Routes that compared unmarshalled bodies by identity, or that mutated one body expecting the change to
+be visible on another, must be updated.
