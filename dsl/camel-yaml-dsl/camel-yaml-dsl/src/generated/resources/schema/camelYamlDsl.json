@@ -17550,22 +17550,6 @@
             }
           }, {
             "type" : "object",
-            "required" : [ "python3" ],
-            "properties" : {
-              "python3" : {
-                "$ref" : "#/items/definitions/org.apache.camel.model.language.Python3Expression"
-              }
-            }
-          }, {
-            "type" : "object",
-            "required" : [ "quickjs" ],
-            "properties" : {
-              "quickjs" : {
-                "$ref" : "#/items/definitions/org.apache.camel.model.language.QuickjsExpression"
-              }
-            }
-          }, {
-            "type" : "object",
             "required" : [ "ref" ],
             "properties" : {
               "ref" : {
@@ -17657,8 +17641,6 @@
           "mvel" : { },
           "ognl" : { },
           "python" : { },
-          "python3" : { },
-          "quickjs" : { },
           "ref" : { },
           "simple" : { },
           "spel" : { },
