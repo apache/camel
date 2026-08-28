@@ -17,7 +17,7 @@ public class ExchangeConstantProvider {
 
     private static final Map<String, String> MAP;
     static {
-        Map<String, String> map = new HashMap<>(156);
+        Map<String, String> map = new HashMap<>(158);
         map.put("ACTIVITY_SPAN_TAGS", "CamelActivitySpanTags");
         map.put("AGGREGATED_COLLECTION_GUARD", "CamelAggregatedCollectionGuard");
         map.put("AGGREGATED_COMPLETED_BY", "CamelAggregatedCompletedBy");
@@ -61,6 +61,8 @@ public class ExchangeConstantProvider {
         map.put("EXCEPTION_HANDLED", "CamelExceptionHandled");
         map.put("FAILURE_ENDPOINT", "CamelFailureEndpoint");
         map.put("FAILURE_HANDLED", "CamelFailureHandled");
+        map.put("FAILURE_LOCATION", "CamelFailureLocation");
+        map.put("FAILURE_NODE_ID", "CamelFailureNodeId");
         map.put("FAILURE_ROUTE_ID", "CamelFailureRouteId");
         map.put("FATAL_FALLBACK_ERROR_HANDLER", "CamelFatalFallbackErrorHandler");
         map.put("FILE_CONTENT_TYPE", "CamelFileContentType");
