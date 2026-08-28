@@ -553,9 +553,6 @@ public class YamlModelWriter extends YamlModelWriterSupport {
     public JsonObject writeSpringTransactionErrorHandlerDefinition(SpringTransactionErrorHandlerDefinition def) {
         return wrapNode("springTransactionErrorHandler", doWriteSpringTransactionErrorHandlerDefinition(def));
     }
-    public JsonObject writeCSimpleExpression(CSimpleExpression def) {
-        return wrapNode("csimple", doWriteCSimpleExpression(def));
-    }
     public JsonObject writeConstantExpression(ConstantExpression def) {
         return wrapNode("constant", doWriteConstantExpression(def));
     }
@@ -612,6 +609,9 @@ public class YamlModelWriter extends YamlModelWriterSupport {
     }
     public JsonObject writePythonExpression(PythonExpression def) {
         return wrapNode("python", doWritePythonExpression(def));
+    }
+    public JsonObject writeQuickjsExpression(QuickjsExpression def) {
+        return wrapNode("quickjs", doWriteQuickjsExpression(def));
     }
     public JsonObject writeRefExpression(RefExpression def) {
         return wrapNode("ref", doWriteRefExpression(def));
@@ -2880,14 +2880,6 @@ public class YamlModelWriter extends YamlModelWriterSupport {
         doWriteDefaultErrorHandlerDefinitionElements(jo, def);
         return jo;
     }
-    protected JsonObject doWriteCSimpleExpression(CSimpleExpression def) {
-        JsonObject jo = new JsonObject();
-        doWriteTypedExpressionDefinitionAttributes(jo, def);
-        doWriteAttribute(jo, "trimResult", def.getTrimResult(), "false");
-        doWriteAttribute(jo, "pretty", def.getPretty(), "false");
-        doWriteValue(jo, def.getExpression());
-        return jo;
-    }
     protected JsonObject doWriteConstantExpression(ConstantExpression def) {
         JsonObject jo = new JsonObject();
         doWriteTypedExpressionDefinitionAttributes(jo, def);
@@ -3029,6 +3021,12 @@ public class YamlModelWriter extends YamlModelWriterSupport {
         return jo;
     }
     protected JsonObject doWritePythonExpression(PythonExpression def) {
+        JsonObject jo = new JsonObject();
+        doWriteTypedExpressionDefinitionAttributes(jo, def);
+        doWriteValue(jo, def.getExpression());
+        return jo;
+    }
+    protected JsonObject doWriteQuickjsExpression(QuickjsExpression def) {
         JsonObject jo = new JsonObject();
         doWriteTypedExpressionDefinitionAttributes(jo, def);
         doWriteValue(jo, def.getExpression());
@@ -3919,7 +3917,6 @@ public class YamlModelWriter extends YamlModelWriterSupport {
     protected JsonObject doWriteExpressionDefinitionRef(ExpressionDefinition v) {
         if (v != null) {
             return switch (v.getClass().getSimpleName()) {
-                case "CSimpleExpression" -> wrapNode("csimple", doWriteCSimpleExpression((CSimpleExpression) v));
                 case "ConstantExpression" -> wrapNode("constant", doWriteConstantExpression((ConstantExpression) v));
                 case "DatasonnetExpression" -> wrapNode("datasonnet", doWriteDatasonnetExpression((DatasonnetExpression) v));
                 case "ExchangePropertyExpression" -> wrapNode("exchangeProperty", doWriteExchangePropertyExpression((ExchangePropertyExpression) v));
@@ -3939,6 +3936,7 @@ public class YamlModelWriter extends YamlModelWriterSupport {
                 case "OgnlExpression" -> wrapNode("ognl", doWriteOgnlExpression((OgnlExpression) v));
                 case "Python3Expression" -> wrapNode("python3", doWritePython3Expression((Python3Expression) v));
                 case "PythonExpression" -> wrapNode("python", doWritePythonExpression((PythonExpression) v));
+                case "QuickjsExpression" -> wrapNode("quickjs", doWriteQuickjsExpression((QuickjsExpression) v));
                 case "RefExpression" -> wrapNode("ref", doWriteRefExpression((RefExpression) v));
                 case "SimpleExpression" -> wrapNode("simple", doWriteSimpleExpression((SimpleExpression) v));
                 case "SpELExpression" -> wrapNode("spel", doWriteSpELExpression((SpELExpression) v));

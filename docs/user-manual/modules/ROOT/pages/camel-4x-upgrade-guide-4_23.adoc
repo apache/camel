@@ -13,7 +13,11 @@ See the xref:camel-upgrade-recipes-tool.adoc[documentation] page for details.
 
 == Upgrading Camel 4.22 to 4.23
 
-=== Components removal
+=== Components and Language removal
+
+==== camel-csimple, camel-csimple-joor and csimple-maven-plugin
+
+The `csimple` (compiled simple) language was deprecated in 4.19. Use the `simple` language instead.
 
 ==== camel-archetype-spring
 
@@ -166,7 +170,10 @@ unchanged and still does not permit any of the ranges above.
 
 LangChain4j and OpenAI producers now emit GenAI observability data (OpenTelemetry span attributes and
 Micrometer metrics) when `camel-opentelemetry2` and/or `camel-micrometer` is on the classpath.
-Disable globally with `camel.ai.observability.enabled=false` (default is enabled).
+Disable globally with `camel.aiObservability.enabled=false` (default is enabled). Camel Main also
+exposes the same setting via `main.configure().aiObservability().withEnabled(false)`.
+
+Spring AI chat (`spring-ai-chat`) producers emit the same GenAI spans and metrics in Phase 3.
 
 OpenAI streaming chat sets `stream_options.include_usage=true` only when GenAI observability is enabled,
 adding a final chunk with token usage for span/metric recording.
@@ -477,6 +484,7 @@ camel.routeController.enabled = true
 camel.routeController.backOffDelay = 2000
 camel.routeController.backOffMaxDelay = 60000
 ----
+
 === camel-http
 
 The OAuth2 client-credentials token cache was keyed on the request URI, the client id and the client
@@ -489,3 +497,33 @@ scoping the operator configured, and making the audit trail misleading.
 All three are now part of the key. Deployments that were unknowingly sharing a token across differing
 scopes, token endpoints or resource indicators will now request one token per distinct combination, so
 the token endpoint sees more requests than before.
+=== camel-pqc
+
+`FileBasedKeyLifecycleManager` stores private keys unencrypted, as Base64 PKCS#8 inside a JSON file, and
+used to create both the key directory and those files with whatever the process umask allowed — commonly
+`rw-r--r--` and `rwxr-xr-x` under the usual `022`, leaving private keys readable by every account on the
+host.
+
+The key directory is now created as `rwx------` and each `<keyId>.private.json` as `rw-------`, on file
+systems that support POSIX permissions; elsewhere the equivalent owner-only flags are applied. A private
+key file left behind by an earlier version is tightened the next time that key is stored, because the file
+is truncated rather than recreated and would otherwise keep its original permissions.
+
+Deployments where another account legitimately reads these files — a sidecar or a backup agent running as
+a different user — need to run as the owner, or use a group-aware key store instead.
+
+=== camel-keycloak
+
+When `validateIssuer` is enabled and the token is checked by introspection, an introspection response
+carrying no `iss` claim used to log a warning and pass. It is now rejected with
+`Token issuer missing: expected '<issuer>' but the introspection result carries no issuer`.
+
+Issuer validation is opt-in, so an operator who enabled it is asking for tokens from other issuers to be
+refused, and a response with no issuer is not evidence that the token came from the expected one. RFC 7662
+makes `iss` optional in an introspection response, so this is reachable wherever the introspection
+endpoint is a broker, a gateway, or a minimal implementation rather than the realm that issued the token.
+Audience validation already behaved this way; the two are now consistent.
+
+Deployments whose introspection endpoint omits `iss` must either have it include the claim, or turn
+`validateIssuer` off. The locally verified JWT path is unaffected — it uses Keycloak's own
+`TokenVerifier.RealmUrlCheck`.
