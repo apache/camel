@@ -21,6 +21,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.Reader;
+import java.io.UncheckedIOException;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -76,6 +77,23 @@ abstract class CsvUnmarshaller {
      */
     public abstract Object unmarshal(Exchange exchange, Object body) throws Exception;
 
+    private static IOException wrapCsvParseError(IOException e) {
+        String msg = e.getMessage();
+        if (msg != null && msg.toLowerCase().contains("encapsulated token")) {
+            return new IOException(
+                    "CSV parse failed: " + msg
+                                   + ". A quoted field has extra characters after the closing quote"
+                                   + " and before the delimiter (example: \"abc\"x,def)."
+                                   + " Check delimiter, quote character, and escaped quotes (\"\").",
+                    e);
+        }
+        return new IOException("CSV parse failed: " + msg, e);
+    }
+
+    private static IOException wrapCsvParseRuntimeError(UncheckedIOException e) {
+        return wrapCsvParseError(e.getCause());
+    }
+
     private static CsvRecordConverter<?> extractConverter(CsvDataFormat dataFormat) {
         if (dataFormat.getRecordConverter() != null) {
             return dataFormat.getRecordConverter();
@@ -106,12 +124,17 @@ abstract class CsvUnmarshaller {
                 InputStream is = exchange.getContext().getTypeConverter().mandatoryConvertTo(InputStream.class, exchange, body);
                 reader = new InputStreamReader(is, ExchangeHelper.getCharsetName(exchange));
             }
-            CSVParser parser = CSVParser.builder().setReader(reader).setFormat(format).get();
+            CSVParser parser = null;
             try {
+                parser = CSVParser.builder().setReader(reader).setFormat(format).get();
                 if (dataFormat.isCaptureHeaderRecord()) {
                     exchange.getMessage().setHeader(CsvConstants.HEADER_RECORD, parser.getHeaderNames());
                 }
                 return asList(parser.iterator(), converter);
+            } catch (IOException e) {
+                throw wrapCsvParseError(e);
+            } catch (UncheckedIOException e) {
+                throw wrapCsvParseRuntimeError(e);
             } finally {
                 IOHelper.close(parser);
             }
@@ -149,6 +172,9 @@ abstract class CsvUnmarshaller {
                 // add to UoW, so we can close the iterator, so it can release any resources
                 exchange.getExchangeExtension().addOnCompletion(new CsvUnmarshalOnCompletion(answer));
                 return answer;
+            } catch (IOException e) {
+                IOHelper.close(reader);
+                throw wrapCsvParseError(e);
             } catch (Exception e) {
                 IOHelper.close(reader);
                 throw e;
