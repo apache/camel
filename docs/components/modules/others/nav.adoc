@@ -18,7 +18,6 @@
 ** xref:cli-connector.adoc[CLI Connector]
 ** xref:cli-debug.adoc[CLI Debug]
 ** xref:cloudevents.adoc[Cloudevents]
-** xref:csimple-joor.adoc[CSimple jOOR]
 ** xref:cxf-transport.adoc[CXF Transport]
 ** xref:debug.adoc[Debug]
 ** xref:diagram.adoc[Diagram]

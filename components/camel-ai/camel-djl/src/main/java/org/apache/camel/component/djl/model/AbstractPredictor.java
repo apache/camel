@@ -29,6 +29,15 @@ public abstract class AbstractPredictor {
 
     public abstract void process(Exchange exchange) throws Exception;
 
+    /**
+     * Releases any resources held by this predictor, such as a model loaded from the DJL model zoo. Called when the
+     * owning producer is stopped. The default implementation does nothing; predictors that keep a long-lived model
+     * override this method to close it.
+     */
+    public void close() {
+        // no-op by default
+    }
+
     protected DJLEndpoint getEndpoint() {
         return endpoint;
     }
