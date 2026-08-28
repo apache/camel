@@ -166,6 +166,7 @@ public interface TikaEndpointBuilderFactory {
          * @param tikaConfig the value to set
          * @return the dsl builder
          */
+        @Deprecated
         default AdvancedTikaEndpointBuilder tikaConfig(org.apache.tika.config.TikaConfig tikaConfig) {
             doSetProperty("tikaConfig", tikaConfig);
             return this;
@@ -181,6 +182,7 @@ public interface TikaEndpointBuilderFactory {
          * @param tikaConfig the value to set
          * @return the dsl builder
          */
+        @Deprecated
         default AdvancedTikaEndpointBuilder tikaConfig(String tikaConfig) {
             doSetProperty("tikaConfig", tikaConfig);
             return this;
@@ -195,6 +197,7 @@ public interface TikaEndpointBuilderFactory {
          * @param tikaConfigUri the value to set
          * @return the dsl builder
          */
+        @Deprecated
         default AdvancedTikaEndpointBuilder tikaConfigUri(String tikaConfigUri) {
             doSetProperty("tikaConfigUri", tikaConfigUri);
             return this;

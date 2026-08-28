@@ -36,8 +36,10 @@ public class TikaConfiguration {
     @UriParam(description = "Tika Parse Output Encoding")
     private String tikaParseOutputEncoding = Charset.defaultCharset().name();
     @UriParam(label = "advanced", description = "Tika Config")
+    @Deprecated(since = "4.22.1", forRemoval = true)
     private TikaConfig tikaConfig = TikaConfig.getDefaultConfig();
     @UriParam(label = "advanced", description = "Tika Config Url")
+    @Deprecated(since = "4.22.1", forRemoval = true)
     private String tikaConfigUri;
 
     public TikaOperation getOperation() {
@@ -85,24 +87,40 @@ public class TikaConfiguration {
         this.tikaParseOutputEncoding = tikaParseOutputEncoding;
     }
 
+    /**
+     * @deprecated Tika 4 removes {@link TikaConfig}; use the replacement Tika 4 configuration options in Camel 4.23.
+     */
+    @Deprecated(since = "4.22.1", forRemoval = true)
     public TikaConfig getTikaConfig() {
         return tikaConfig;
     }
 
     /**
      * To use a custom Tika config.
+     *
+     * @deprecated Tika 4 removes {@link TikaConfig}; use the replacement Tika 4 configuration options in Camel 4.23.
      */
+    @Deprecated(since = "4.22.1", forRemoval = true)
+    @Metadata(deprecationNote = "Tika 4 removes TikaConfig; use the replacement Tika 4 configuration options in Camel 4.23")
     public void setTikaConfig(TikaConfig tikaConfig) {
         this.tikaConfig = tikaConfig;
     }
 
+    /**
+     * @deprecated Tika 4 removes XML configuration; use the JSON configuration option provided in Camel 4.23.
+     */
+    @Deprecated(since = "4.22.1", forRemoval = true)
     public String getTikaConfigUri() {
         return tikaConfigUri;
     }
 
     /**
      * Tika Config Uri: The URI of tika-config.xml file to use.
+     *
+     * @deprecated Tika 4 removes XML configuration; use the JSON configuration option provided in Camel 4.23.
      */
+    @Deprecated(since = "4.22.1", forRemoval = true)
+    @Metadata(deprecationNote = "Tika 4 removes XML configuration; use the JSON configuration option provided in Camel 4.23")
     public void setTikaConfigUri(String tikaConfigUri) {
         this.tikaConfigUri = tikaConfigUri;
         try {
