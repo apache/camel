@@ -18,6 +18,7 @@ package org.apache.camel.component.ai.tool;
 
 import java.util.Set;
 
+import org.apache.camel.FailedToStartRouteException;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.test.junit6.CamelTestSupport;
 import org.junit.jupiter.api.Test;
@@ -352,7 +353,8 @@ public class AiToolEndpointLifecycleTest extends CamelTestSupport {
                      + "&argSchema={\"type\":\"object\"}")
                         .setBody(constant("invalid"));
             }
-        })).isInstanceOf(IllegalArgumentException.class)
+        })).isInstanceOf(FailedToStartRouteException.class)
+                .cause().isInstanceOf(IllegalArgumentException.class)
                 .hasMessageContaining("mutually exclusive");
     }
 
@@ -432,7 +434,8 @@ public class AiToolEndpointLifecycleTest extends CamelTestSupport {
                      + "&outputSchema={\"type\":\"object\"}")
                         .setBody(constant("invalid"));
             }
-        })).isInstanceOf(IllegalArgumentException.class)
+        })).isInstanceOf(FailedToStartRouteException.class)
+                .cause().isInstanceOf(IllegalArgumentException.class)
                 .hasMessageContaining("mutually exclusive");
     }
 
