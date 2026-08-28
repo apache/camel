@@ -21,6 +21,7 @@ import jakarta.jms.ConnectionFactory;
 import org.apache.activemq.artemis.jms.client.ActiveMQConnectionFactory;
 import org.apache.camel.CamelContext;
 import org.apache.camel.FailedToCreateProducerException;
+import org.apache.camel.FailedToStartRouteException;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.test.junit6.CamelTestSupport;
 import org.junit.jupiter.api.Test;
@@ -46,10 +47,11 @@ public class JmsTestConnectionOnStartupTest extends CamelTestSupport {
             context.start();
             fail("Should have thrown an exception");
         } catch (Exception e) {
+            assertIsInstanceOf(FailedToStartRouteException.class, e);
             assertEquals(
                     "Failed to create Consumer for endpoint: activemq://queue:JmsTestConnectionOnStartupTest?testConnectionOnStartup=true. "
                          + "Reason: Cannot get JMS Connection on startup for destination JmsTestConnectionOnStartupTest",
-                    e.getMessage());
+                    e.getCause().getMessage());
         }
     }
 
