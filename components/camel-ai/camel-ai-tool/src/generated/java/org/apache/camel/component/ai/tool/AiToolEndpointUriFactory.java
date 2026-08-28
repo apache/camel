@@ -24,7 +24,7 @@ public class AiToolEndpointUriFactory extends org.apache.camel.support.component
     private static final Set<String> ENDPOINT_IDENTITY_PROPERTY_NAMES;
     private static final Map<String, String> MULTI_VALUE_PREFIXES;
     static {
-        Set<String> props = new HashSet<>(15);
+        Set<String> props = new HashSet<>(16);
         props.add("argSchema");
         props.add("bridgeErrorHandler");
         props.add("description");
@@ -37,6 +37,7 @@ public class AiToolEndpointUriFactory extends org.apache.camel.support.component
         props.add("outputSchema");
         props.add("parameters");
         props.add("readOnlyHint");
+        props.add("returnDirect");
         props.add("tags");
         props.add("title");
         props.add("toolName");

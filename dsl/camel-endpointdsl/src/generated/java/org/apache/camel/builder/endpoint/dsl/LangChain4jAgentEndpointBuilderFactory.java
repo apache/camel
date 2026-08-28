@@ -143,6 +143,82 @@ public interface LangChain4jAgentEndpointBuilderFactory {
             return this;
         }
         /**
+         * Whether LangChain4j should compensate when a tool execution fails.
+         * Only supported in inline agent creation mode (agentConfiguration
+         * without agent or agentFactory). URI value overrides the same option
+         * on the agentConfiguration bean.
+         * 
+         * The option is a: <code>java.lang.Boolean</code> type.
+         * 
+         * Default: false
+         * Group: producer
+         * 
+         * @param compensateOnToolErrors the value to set
+         * @return the dsl builder
+         */
+        default LangChain4jAgentEndpointBuilder compensateOnToolErrors(Boolean compensateOnToolErrors) {
+            doSetProperty("compensateOnToolErrors", compensateOnToolErrors);
+            return this;
+        }
+        /**
+         * Whether LangChain4j should compensate when a tool execution fails.
+         * Only supported in inline agent creation mode (agentConfiguration
+         * without agent or agentFactory). URI value overrides the same option
+         * on the agentConfiguration bean.
+         * 
+         * The option will be converted to a <code>java.lang.Boolean</code>
+         * type.
+         * 
+         * Default: false
+         * Group: producer
+         * 
+         * @param compensateOnToolErrors the value to set
+         * @return the dsl builder
+         */
+        default LangChain4jAgentEndpointBuilder compensateOnToolErrors(String compensateOnToolErrors) {
+            doSetProperty("compensateOnToolErrors", compensateOnToolErrors);
+            return this;
+        }
+        /**
+         * Whether multiple tools requested in a single LLM turn are executed
+         * concurrently. Camel route tools run on isolated exchange copies. Only
+         * supported in inline agent creation mode (agentConfiguration without
+         * agent or agentFactory). URI value overrides the same option on the
+         * agentConfiguration bean.
+         * 
+         * The option is a: <code>java.lang.Boolean</code> type.
+         * 
+         * Default: false
+         * Group: producer
+         * 
+         * @param executeToolsConcurrently the value to set
+         * @return the dsl builder
+         */
+        default LangChain4jAgentEndpointBuilder executeToolsConcurrently(Boolean executeToolsConcurrently) {
+            doSetProperty("executeToolsConcurrently", executeToolsConcurrently);
+            return this;
+        }
+        /**
+         * Whether multiple tools requested in a single LLM turn are executed
+         * concurrently. Camel route tools run on isolated exchange copies. Only
+         * supported in inline agent creation mode (agentConfiguration without
+         * agent or agentFactory). URI value overrides the same option on the
+         * agentConfiguration bean.
+         * 
+         * The option will be converted to a <code>java.lang.Boolean</code>
+         * type.
+         * 
+         * Default: false
+         * Group: producer
+         * 
+         * @param executeToolsConcurrently the value to set
+         * @return the dsl builder
+         */
+        default LangChain4jAgentEndpointBuilder executeToolsConcurrently(String executeToolsConcurrently) {
+            doSetProperty("executeToolsConcurrently", executeToolsConcurrently);
+            return this;
+        }
+        /**
          * JSON schema for structured output validation. Only supported in
          * inline agent creation mode: agentConfiguration must be set and
          * neither agent nor agentFactory may be configured. Mutually exclusive
@@ -160,6 +236,46 @@ public interface LangChain4jAgentEndpointBuilderFactory {
          */
         default LangChain4jAgentEndpointBuilder jsonSchema(String jsonSchema) {
             doSetProperty("jsonSchema", jsonSchema);
+            return this;
+        }
+        /**
+         * Maximum number of tool-calling round trips allowed per request. Each
+         * round trip is one LLM call plus execution of the tools requested in
+         * that call. Set to 0 to leave unset and use the LangChain4j default.
+         * Only supported in inline agent creation mode (agentConfiguration
+         * without agent or agentFactory). URI value overrides the same option
+         * on the agentConfiguration bean.
+         * 
+         * The option is a: <code>int</code> type.
+         * 
+         * Default: 0
+         * Group: producer
+         * 
+         * @param maxToolCallingRoundTrips the value to set
+         * @return the dsl builder
+         */
+        default LangChain4jAgentEndpointBuilder maxToolCallingRoundTrips(int maxToolCallingRoundTrips) {
+            doSetProperty("maxToolCallingRoundTrips", maxToolCallingRoundTrips);
+            return this;
+        }
+        /**
+         * Maximum number of tool-calling round trips allowed per request. Each
+         * round trip is one LLM call plus execution of the tools requested in
+         * that call. Set to 0 to leave unset and use the LangChain4j default.
+         * Only supported in inline agent creation mode (agentConfiguration
+         * without agent or agentFactory). URI value overrides the same option
+         * on the agentConfiguration bean.
+         * 
+         * The option will be converted to a <code>int</code> type.
+         * 
+         * Default: 0
+         * Group: producer
+         * 
+         * @param maxToolCallingRoundTrips the value to set
+         * @return the dsl builder
+         */
+        default LangChain4jAgentEndpointBuilder maxToolCallingRoundTrips(String maxToolCallingRoundTrips) {
+            doSetProperty("maxToolCallingRoundTrips", maxToolCallingRoundTrips);
             return this;
         }
         /**

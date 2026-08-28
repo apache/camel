@@ -65,30 +65,6 @@ class SimpleInitBlockParser extends SimpleExpressionParser {
         return doParseInitExpression();
     }
 
-    @Override
-    public String parseCode() {
-        throw new UnsupportedOperationException("Using init blocks with csimple is not supported");
-    }
-
-    /**
-     * Second step parsing into code
-     */
-    @Override
-    protected String doParseCode() {
-        StringBuilder sb = new StringBuilder(256);
-        for (SimpleNode node : nodes) {
-            String exp = node.createCode(camelContext, expression);
-            if (exp != null) {
-                parseLiteralNode(sb, node, exp);
-            }
-        }
-
-        String code = sb.toString();
-        code = code.replace(BaseSimpleParser.CODE_START, "");
-        code = code.replace(BaseSimpleParser.CODE_END, "");
-        return code;
-    }
-
     protected List<SimpleNode> parseInitTokens() {
         clear();
         initKeys.clear();

@@ -1,0 +1,1 @@
+../../../../../components/camel-spiffe/src/main/docs/spiffe-component.adoc

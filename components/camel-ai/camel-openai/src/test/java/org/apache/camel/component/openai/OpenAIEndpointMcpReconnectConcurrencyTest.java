@@ -99,7 +99,7 @@ class OpenAIEndpointMcpReconnectConcurrencyTest {
                 McpToolConverter.convert(mockTools()),
                 clientMap,
                 toolToServer,
-                ConcurrentHashMap.newKeySet()));
+                ConcurrentHashMap.newKeySet(), Map.of()));
 
         Map<String, Map<String, String>> serverConfigs = new ConcurrentHashMap<>();
         serverConfigs.put(SERVER, Map.of("transportType", "stdio"));

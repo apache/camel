@@ -71,6 +71,8 @@ import static org.hamcrest.Matchers.is;
 
 public class KnativeHttpTest {
 
+    private static final String FAILING_CONSUMER_DETAIL = "the-internal-detail-a-caller-must-not-see";
+
     private CamelContext context;
     private ProducerTemplate template;
     @RegisterExtension
@@ -984,6 +986,64 @@ public class KnativeHttpTest {
         assertThat(exchange.getException()).isInstanceOf(CamelException.class);
         assertThat(exchange.getException()).hasMessageStartingWith("HTTP operation failed invoking");
         assertThat(exchange.getException()).hasMessageContaining("with statusCode: 500, statusMessage: Internal Server Error");
+    }
+
+    /**
+     * The consumer used to return {@code ExceptionHelper.stackTraceToString(exception)} as the response body, so a
+     * route failure handed the caller the stack trace. {@code muteException} defaults to true, matching the http
+     * consumers aligned by CAMEL-23651. The status must still be the 500 the failure produced, not a 204.
+     */
+    @ParameterizedTest
+    @EnumSource(CloudEvents.class)
+    void aFailedExchangeDoesNotReturnTheStackTraceByDefault(CloudEvent ce) throws Exception {
+        Exchange exchange = invokeFailingConsumer(ce, "knative:endpoint/from");
+
+        assertThat(exchange.isFailed()).isTrue();
+        assertThat(exchange.getMessage().getHeader(Exchange.HTTP_RESPONSE_CODE)).isEqualTo(500);
+        assertThat(exchange.getMessage().getBody(String.class))
+                .as("the response body must not carry the route's exception")
+                .isNullOrEmpty();
+    }
+
+    @ParameterizedTest
+    @EnumSource(CloudEvents.class)
+    void muteExceptionFalseRestoresTheStackTraceInTheResponse(CloudEvent ce) throws Exception {
+        Exchange exchange = invokeFailingConsumer(ce, "knative:endpoint/from?muteException=false");
+
+        assertThat(exchange.isFailed()).isTrue();
+        assertThat(exchange.getMessage().getHeader(Exchange.HTTP_RESPONSE_CODE)).isEqualTo(500);
+        assertThat(exchange.getMessage().getBody(String.class)).contains(FAILING_CONSUMER_DETAIL);
+    }
+
+    private Exchange invokeFailingConsumer(CloudEvent ce, String consumerUri) throws Exception {
+        configureKnativeComponent(
+                context,
+                ce,
+                sourceEndpoint(
+                        "from",
+                        Map.of(
+                                Knative.KNATIVE_CLOUD_EVENT_TYPE, "org.apache.camel.event.from",
+                                Knative.CONTENT_TYPE, "text/plain")),
+                endpoint(
+                        Knative.EndpointKind.sink,
+                        "to",
+                        String.format("http://%s:%d", platformHttpHost, platformHttpPort),
+                        Map.of(
+                                Knative.KNATIVE_CLOUD_EVENT_TYPE, "org.apache.camel.event.to",
+                                Knative.CONTENT_TYPE, "text/plain")));
+
+        RouteBuilder.addRoutes(context, b -> {
+            b.from(consumerUri)
+                    .process(e -> {
+                        throw new RuntimeException(FAILING_CONSUMER_DETAIL);
+                    });
+            b.from("direct:source")
+                    .to("knative://endpoint/to");
+        });
+
+        context.start();
+
+        return template.request("direct:source", e -> e.getMessage().setBody(""));
     }
 
     @ParameterizedTest
@@ -2197,6 +2257,9 @@ public class KnativeHttpTest {
         context.getPropertiesComponent().addInitialProperty("camel.knative.client.ssl.verify.hostname", "false");
         context.getPropertiesComponent().addInitialProperty("camel.knative.client.ssl.key.path", "keystore/client.pem");
         context.getPropertiesComponent().addInitialProperty("camel.knative.client.ssl.key.cert.path", "keystore/client.crt");
+        // The test server presents a self-signed certificate. Enabling SSL no longer implies trusting every
+        // certificate, so the trust decision has to be made here.
+        context.getPropertiesComponent().addInitialProperty("camel.knative.client.ssl.trust.all", "true");
 
         KnativeComponent component = configureKnativeComponent(
                 context,

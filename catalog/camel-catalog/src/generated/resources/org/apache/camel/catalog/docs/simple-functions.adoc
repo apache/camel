@@ -228,7 +228,7 @@ in arrays or lists.
 |`collate(size)` | `Iterator<List>` | The collate function iterates the message body and groups the data into sub lists of specified size. This can be used with the Splitter EIP to split a message body and group/batch the split sub message into a group of N sub lists. This method works similar to the collate method in Groovy.
 |`distinct(val1,val2,...)` | `Set` | Returns a set of all the values with duplicates removed
 |`empty(kind)` | `<T>` | *Deprecated* Use `createEmpty` instead.
-|`forEach(exp,fun)` | `<List>` | Returns a List containing the values returned by the function when applied to each value from the input expression. This function is not supported when using csimple.
+|`forEach(exp,fun)` | `<List>` | Returns a List containing the values returned by the function when applied to each value from the input expression.
 |`list(val1,val2,...)` | `List` | The list function creates an `java.util.ArrayList` with the given set of values.
 |`listAdd(fun)` | `List` | Adds the result of the function to the message body as a list object.
 |`listAdd(source,fun)` | `List` | Adds the result of the function to the source expression as a list object.
@@ -240,7 +240,7 @@ in arrays or lists.
 |`mapRemove(key)` | `List` | Removes the key from the message body as a map object.
 |`mapRemove(source,key)` | `List` | Removes the key from the source expression as a map object.
 |`createEmpty(kind)` | `<T>` | Creates a new empty object of the given kind. The `string` kind creates an empty `String` object. The `list` creates an empty `ArrayList`, and `map` creates an empty `LinkedHashMap` object. Use `set` to create an empty `java.util.LinkedHashSet`.
-|`filter(exp,fun)` | `List` | Returns a List containing only the values from the input expression for which the function evaluates to true. This function is not supported when using csimple.
+|`filter(exp,fun)` | `List` | Returns a List containing only the values from the input expression for which the function evaluates to true.
 |`reverse(val1,val2,...)` | `List` | Returns a list of all the values, but in reverse order.
 |`shuffle(val1,val2,...)` | `List` | Returns a list of all the values shuffled in random order.
 |`size()` | `int` | Returns the number of elements in collection or array based message body. If the value is null then 0 is returned, otherwise 1.
@@ -325,7 +325,7 @@ The condition functions is small functions that mostly evaluates to a `boolean` 
 [width="100%",cols="10%,10%,80%",options="header",]
 |====
 |Function |Response Type |Description
-|`assert(exp,msg)` | `null` | Evaluates the expression and throws an exception with the message if the condition is false. This function is not supported when using csimple.
+|`assert(exp,msg)` | `null` | Evaluates the expression and throws an exception with the message if the condition is false.
 |`contains(text)` | `boolean` | Returns true if the message body contains part of the text (ignore case)
 |`contains(exp,text)` | `boolean` | Returns true if the expression contains part of the text (ignore case)
 |`iif(predicate,trueExp,falseExp)` | `Object` | The inlined if function evaluates the predicate expression and returns the value of _trueExp_ if the predicate is `true`, otherwise the value of `falseExp` is returned. This function is similar to the ternary operator in Java.

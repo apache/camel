@@ -236,6 +236,40 @@ public interface MinaEndpointBuilderFactory {
             return this;
         }
         /**
+         * If enabled and an Exchange failed processing on the consumer side the
+         * response written back to the remote peer won't contain the
+         * exception's class, message or stack trace.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: true
+         * Group: consumer
+         * 
+         * @param muteException the value to set
+         * @return the dsl builder
+         */
+        default MinaEndpointConsumerBuilder muteException(boolean muteException) {
+            doSetProperty("muteException", muteException);
+            return this;
+        }
+        /**
+         * If enabled and an Exchange failed processing on the consumer side the
+         * response written back to the remote peer won't contain the
+         * exception's class, message or stack trace.
+         * 
+         * The option will be converted to a <code>boolean</code> type.
+         * 
+         * Default: true
+         * Group: consumer
+         * 
+         * @param muteException the value to set
+         * @return the dsl builder
+         */
+        default MinaEndpointConsumerBuilder muteException(String muteException) {
+            doSetProperty("muteException", muteException);
+            return this;
+        }
+        /**
          * The mina component installs a default codec if both, codec is null
          * and textline is false. Setting allowDefaultCodec to false prevents
          * the mina component from installing a default codec as the first
@@ -418,7 +452,12 @@ public interface MinaEndpointBuilderFactory {
         /**
          * Accept the wildcard specified classes for Object deserialization,
          * unless they are otherwise rejected. Multiple patterns can be
-         * separated by comma.
+         * separated by comma. This widens the codec's deserialization
+         * allow-list, so keep it as narrow as the route actually needs. Avoid :
+         * it accepts every class the classpath can load from an untrusted peer,
+         * including Camel's own org.apache.camel types. Leaving the option
+         * unset is the safest choice - the codec then accepts only the small
+         * built-in set and refuses anything else.
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
@@ -1185,7 +1224,12 @@ public interface MinaEndpointBuilderFactory {
         /**
          * Accept the wildcard specified classes for Object deserialization,
          * unless they are otherwise rejected. Multiple patterns can be
-         * separated by comma.
+         * separated by comma. This widens the codec's deserialization
+         * allow-list, so keep it as narrow as the route actually needs. Avoid :
+         * it accepts every class the classpath can load from an untrusted peer,
+         * including Camel's own org.apache.camel types. Leaving the option
+         * unset is the safest choice - the codec then accepts only the small
+         * built-in set and refuses anything else.
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
@@ -1912,7 +1956,12 @@ public interface MinaEndpointBuilderFactory {
         /**
          * Accept the wildcard specified classes for Object deserialization,
          * unless they are otherwise rejected. Multiple patterns can be
-         * separated by comma.
+         * separated by comma. This widens the codec's deserialization
+         * allow-list, so keep it as narrow as the route actually needs. Avoid :
+         * it accepts every class the classpath can load from an untrusted peer,
+         * including Camel's own org.apache.camel types. Leaving the option
+         * unset is the safest choice - the codec then accepts only the small
+         * built-in set and refuses anything else.
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 

@@ -80,6 +80,30 @@ public class LangChain4jAgentConfiguration implements Cloneable {
               prefix = "mcpServer.", multiValue = true, label = "advanced")
     private Map<String, Object> mcpServer;
 
+    @UriParam
+    @Metadata(label = "producer", defaultValue = "0",
+              description = "Maximum number of tool-calling round trips allowed per request."
+                            + " Each round trip is one LLM call plus execution of the tools requested in that call."
+                            + " Set to 0 to leave unset and use the LangChain4j default."
+                            + " Only supported in inline agent creation mode (agentConfiguration without agent or agentFactory)."
+                            + " URI value overrides the same option on the agentConfiguration bean.")
+    private int maxToolCallingRoundTrips;
+
+    @UriParam
+    @Metadata(label = "producer",
+              description = "Whether LangChain4j should compensate when a tool execution fails."
+                            + " Only supported in inline agent creation mode (agentConfiguration without agent or agentFactory)."
+                            + " URI value overrides the same option on the agentConfiguration bean.")
+    private Boolean compensateOnToolErrors;
+
+    @UriParam
+    @Metadata(label = "producer",
+              description = "Whether multiple tools requested in a single LLM turn are executed concurrently."
+                            + " Camel route tools run on isolated exchange copies."
+                            + " Only supported in inline agent creation mode (agentConfiguration without agent or agentFactory)."
+                            + " URI value overrides the same option on the agentConfiguration bean.")
+    private Boolean executeToolsConcurrently;
+
     public LangChain4jAgentConfiguration() {
     }
 
@@ -201,5 +225,42 @@ public class LangChain4jAgentConfiguration implements Cloneable {
 
     public void setOutputClass(Class<?> outputClass) {
         this.outputClass = outputClass;
+    }
+
+    /**
+     * Maximum number of tool-calling round trips allowed per request.
+     */
+    public int getMaxToolCallingRoundTrips() {
+        return maxToolCallingRoundTrips;
+    }
+
+    public void setMaxToolCallingRoundTrips(int maxToolCallingRoundTrips) {
+        if (maxToolCallingRoundTrips < 0) {
+            throw new IllegalArgumentException(
+                    "maxToolCallingRoundTrips must be zero (unset) or positive, but was: " + maxToolCallingRoundTrips);
+        }
+        this.maxToolCallingRoundTrips = maxToolCallingRoundTrips;
+    }
+
+    /**
+     * Whether LangChain4j should compensate when a tool execution fails.
+     */
+    public Boolean getCompensateOnToolErrors() {
+        return compensateOnToolErrors;
+    }
+
+    public void setCompensateOnToolErrors(Boolean compensateOnToolErrors) {
+        this.compensateOnToolErrors = compensateOnToolErrors;
+    }
+
+    /**
+     * Whether multiple tools requested in a single LLM turn are executed concurrently.
+     */
+    public Boolean getExecuteToolsConcurrently() {
+        return executeToolsConcurrently;
+    }
+
+    public void setExecuteToolsConcurrently(Boolean executeToolsConcurrently) {
+        this.executeToolsConcurrently = executeToolsConcurrently;
     }
 }

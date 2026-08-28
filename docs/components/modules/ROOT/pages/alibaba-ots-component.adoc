@@ -1,0 +1,1 @@
+../../../../../components/camel-alibaba/camel-alibaba-ots/src/main/docs/alibaba-ots-component.adoc

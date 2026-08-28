@@ -1090,6 +1090,35 @@ public final class ExchangeHelper {
     }
 
     /**
+     * Captures where the Exchange failed - the route id, node id, and source location - as the
+     * {@link Exchange#FAILURE_ROUTE_ID}, {@link Exchange#FAILURE_NODE_ID} and {@link Exchange#FAILURE_LOCATION}
+     * properties, based on the current route and the last entry in the message history.
+     * <p/>
+     * This must be called as soon as the exception is caught (handled or not), before any exception handler
+     * (onException, doCatch, dead letter channel, ...) has a chance to run any of its own processing steps - otherwise
+     * those steps would also be recorded in the message history, and the last entry would no longer point to the node
+     * that actually failed.
+     *
+     * @param exchange the exchange that failed
+     */
+    @SuppressWarnings("unchecked")
+    public static void captureFailureOrigin(Exchange exchange) {
+        Route rc = getRoute(exchange);
+        if (rc != null) {
+            exchange.setProperty(ExchangePropertyKey.FAILURE_ROUTE_ID, rc.getRouteId());
+        }
+        List<MessageHistory> history = exchange.getProperty(ExchangePropertyKey.MESSAGE_HISTORY, List.class);
+        if (history != null && !history.isEmpty()) {
+            MessageHistory last = history.get(history.size() - 1);
+            if (last.getNode() != null) {
+                exchange.setProperty(ExchangePropertyKey.FAILURE_NODE_ID, last.getNode().getId());
+                exchange.setProperty(ExchangePropertyKey.FAILURE_LOCATION,
+                        LoggerHelper.getLineNumberLoggerName(last.getNode()));
+            }
+        }
+    }
+
+    /**
      * Sets the body in message in the exchange taking the exchange pattern into consideration. If the pattern is out
      * capable, then the body is set outbound message. Otherwise it is set on the inbound message.
      *

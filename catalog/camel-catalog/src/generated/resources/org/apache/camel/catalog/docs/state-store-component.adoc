@@ -1,0 +1,243 @@
+= State Store Component
+:doctitle: State Store
+:shortname: state-store
+:artifactid: camel-state-store
+:description: Perform key-value operations against a pluggable KeyValueRepository backend.
+:since: 4.23
+:supportlevel: Preview
+:tabs-sync-option:
+:component-header: Only producer is supported
+
+*Since Camel {since}*
+
+*{component-header}*
+
+The State Store component provides a simple, unified key-value store API backed by the
+`KeyValueRepository` SPI from `camel-api`. It is useful for caching, session state, and
+scenarios where you need a simple object store (similar to MuleSoft's Object Store).
+
+By default, an in-memory backend is used (`MemoryKeyValueRepository` from `camel-support`),
+but you can plug in any `KeyValueRepository` implementation. The same `KeyValueRepository`
+can also be used as the backend for the Idempotent Consumer and Aggregator EIPs via the
+`KeyValueIdempotentRepository` and `KeyValueAggregationRepository` adapters.
+
+== When to use State Store vs individual components
+
+Camel also provides dedicated components for xref:infinispan-component.adoc[Infinispan],
+xref:spring-redis-component.adoc[Redis], and xref:caffeine-cache-component.adoc[Caffeine].
+Use the dedicated component when you need the full feature set of a specific technology
+(e.g., Infinispan queries, Redis pub/sub, Caffeine statistics).
+
+Use State Store when:
+
+* You need a *simple key-value API* and want to switch backends without changing route logic.
+* You are *migrating from MuleSoft* and want an Object Store equivalent.
+* You want *backend portability* — develop with in-memory, deploy with any `KeyValueRepository`.
+* Your use case is limited to *put, get, delete, contains, keys* operations.
+* You want a *single backend* to serve state store, idempotent consumer, and aggregation patterns.
+
+== URI Format
+
+----
+state-store:storeName[?options]
+----
+
+Where `storeName` is a logical name for the store. Endpoints with the same `storeName`
+share the same backend instance within the same `CamelContext`.
+
+// component-configure options: START
+// component-configure options: END
+
+// component options: START
+include::partial$component-configure-options.adoc[]
+include::partial$component-endpoint-options.adoc[]
+include::partial$component-endpoint-headers.adoc[]
+// component options: END
+
+// endpoint options: START
+// endpoint options: END
+
+== Operations
+
+The operation to perform is set via the URI option `operation` or the header `CamelStateStoreOperation`.
+
+[width="100%",cols="1,2,2,2",options="header"]
+|===
+| Operation | Description | Body (input) | Result (body output)
+| `put` | Store a value | The value to store | The previous value (or null)
+| `putIfAbsent` | Store only if key absent | The value to store | The existing value (or null if stored)
+| `get` | Retrieve a value | ignored | The stored value (or null)
+| `delete` | Remove a value | ignored | The removed value (or null)
+| `contains` | Check if key exists | ignored | Boolean
+| `keys` | List all keys | ignored | Set<String>
+| `size` | Count entries | ignored | Integer
+| `clear` | Remove all entries | ignored | null
+|===
+
+The key is specified via the header `CamelStateStoreKey` (required for `put`, `putIfAbsent`, `get`, `delete`, `contains`).
+
+== TTL (Time-to-Live)
+
+You can set a TTL (in milliseconds) for entries in two ways:
+
+* *Endpoint option*: applies to all `put`/`putIfAbsent` operations on that endpoint.
++
+----
+state-store:myStore?operation=put&ttl=60000
+----
+
+* *Per-message header*: the header `CamelStateStoreTtl` (Long) overrides the endpoint TTL for that message.
++
+[source,java]
+----
+from("direct:store")
+    .setHeader("CamelStateStoreKey", constant("myKey"))
+    .setHeader("CamelStateStoreTtl", constant(30000L))
+    .to("state-store:myStore?operation=put");
+----
+
+A TTL of `0` (default) means no expiry.
+
+== Examples
+
+=== Java DSL
+
+[tabs]
+====
+Put and Get::
++
+[source,java]
+----
+from("direct:store")
+    .setHeader("CamelStateStoreKey", constant("myKey"))
+    .to("state-store:myStore?operation=put");
+
+from("direct:retrieve")
+    .setHeader("CamelStateStoreKey", constant("myKey"))
+    .to("state-store:myStore?operation=get");
+----
+
+Dynamic operation via header::
++
+[source,java]
+----
+from("direct:dynamic")
+    .setHeader("CamelStateStoreOperation", constant("put"))
+    .setHeader("CamelStateStoreKey", constant("myKey"))
+    .to("state-store:myStore");
+----
+
+Put if absent::
++
+[source,java]
+----
+from("direct:init")
+    .setHeader("CamelStateStoreKey", constant("counter"))
+    .to("state-store:myStore?operation=putIfAbsent");
+----
+====
+
+=== YAML DSL
+
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:store
+    steps:
+      - setHeader:
+          name: CamelStateStoreKey
+          constant: myKey
+      - to:
+          uri: state-store:myStore?operation=put
+----
+
+== Backends
+
+=== Backend auto-discovery
+
+If no `backend` option is specified on the endpoint, the component automatically looks up a
+`KeyValueRepository` bean from the Camel registry. If exactly one is found, it is used for all
+endpoints. If none is found, the default in-memory backend (`MemoryKeyValueRepository`) is used.
+
+This means you can configure a backend once (via Java or properties) and all `state-store`
+endpoints will use it without needing `backend=#beanName` on each endpoint URI.
+
+=== In-Memory (default)
+
+The default backend (`MemoryKeyValueRepository`) stores entries in a `ConcurrentHashMap`. TTL
+expiry is lazy -- entries are checked and removed on access rather than by a background thread.
+
+No additional dependency is needed beyond `camel-state-store`.
+
+== Custom Backend
+
+Implement the `KeyValueRepository` interface (from `org.apache.camel.spi`) to create your own backend:
+
+[source,java]
+----
+public class MyCustomBackend extends ServiceSupport implements KeyValueRepository {
+
+    @Override
+    public Object get(String key) {
+        // retrieve the value
+    }
+
+    @Override
+    public Object put(String key, Object value, long ttlMillis) {
+        // store the value; return the previous value or null
+    }
+
+    @Override
+    public Object delete(String key) {
+        // remove and return the value
+    }
+
+    @Override
+    public boolean contains(String key) {
+        // check existence
+    }
+
+    @Override
+    public Set<String> keys() {
+        // return all keys
+    }
+
+    @Override
+    public void clear() {
+        // remove all entries
+    }
+}
+----
+
+The `putIfAbsent` and `size` methods have default implementations but can be overridden
+for better performance with backends that support these operations natively.
+
+Then reference it via bean or let auto-discovery find it:
+
+[source,java]
+----
+from("direct:store")
+    .to("state-store:myStore?operation=put&backend=#myCustomBackend");
+----
+
+=== Sharing a backend across patterns
+
+Because `KeyValueRepository` is the unified SPI, the same implementation can be reused as the
+backend for the Idempotent Consumer and Aggregator EIPs:
+
+[source,java]
+----
+@BindToRegistry("kvRepo")
+public KeyValueRepository kvRepo() {
+    return new MemoryKeyValueRepository();
+}
+----
+
+With a single `KeyValueRepository` in the registry:
+
+* The State Store component auto-discovers and uses it.
+* The Idempotent Consumer EIP auto-discovers and wraps it in a `KeyValueIdempotentRepository`.
+* The Aggregator EIP auto-discovers and wraps it in a `KeyValueAggregationRepository`.
+
+No explicit wiring is needed — all three patterns share the same backend.

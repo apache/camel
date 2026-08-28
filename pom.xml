@@ -133,7 +133,7 @@
         <cyclonedx-maven-plugin-version>2.9.3</cyclonedx-maven-plugin-version>
         <flatten-maven-plugin-version>1.8.0</flatten-maven-plugin-version>
         <jacoco-version>0.8.15</jacoco-version>
-        <license-maven-plugin-version>5.1.1</license-maven-plugin-version>
+        <license-maven-plugin-version>5.1.2</license-maven-plugin-version>
         <maven-assembly-plugin-version>3.8.0</maven-assembly-plugin-version>
         <maven-compiler-plugin-version>3.15.0</maven-compiler-plugin-version>
         <maven-dependency-plugin-version>3.11.0</maven-dependency-plugin-version>
@@ -360,7 +360,6 @@
                                     <exclude>**/javamail.default.*</exclude>
                                     <exclude>**/kafka*.config</exclude>
                                     <exclude>**/known_hosts*</exclude>
-                                    <exclude>**/leveldb.dat/**</exclude>
                                     <exclude>**/mosquitto.conf</exclude>
                                     <exclude>**/myjaas.config</exclude>
                                     <exclude>**/node_modules/**</exclude>

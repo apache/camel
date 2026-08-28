@@ -605,6 +605,27 @@ public class ExpressionClause<T> implements Expression, Predicate {
     }
 
     /**
+     * Evaluates a QuickJS expression.
+     *
+     * @param  text the expression to be evaluated
+     * @return      the builder to continue processing the DSL
+     */
+    public T quickjs(String text) {
+        return delegate.quickjs(text);
+    }
+
+    /**
+     * Evaluates a QuickJS expression.
+     *
+     * @param  text       the expression to be evaluated
+     * @param  resultType the return type expected by the expression
+     * @return            the builder to continue processing the DSL
+     */
+    public T quickjs(String text, Class<?> resultType) {
+        return delegate.quickjs(text, resultType);
+    }
+
+    /**
      * Evaluates a <a href="http://camel.apache.org/mvel.html">MVEL expression</a>
      *
      * @param  text the expression to be evaluated
@@ -632,26 +653,6 @@ public class ExpressionClause<T> implements Expression, Predicate {
      */
     public T spel(String text) {
         return delegate.spel(text);
-    }
-
-    /**
-     * Returns a compiled simple expression value builder
-     *
-     * @deprecated use {@link #simple(String)} instead
-     */
-    @Deprecated(since = "4.19")
-    public T csimple(String value) {
-        return delegate.csimple(value);
-    }
-
-    /**
-     * Returns a compile simple expression value builder
-     *
-     * @deprecated use {@link #simple(String, Class)} instead
-     */
-    @Deprecated(since = "4.19")
-    public T csimple(String value, Class<?> resultType) {
-        return delegate.csimple(value, resultType);
     }
 
     /**

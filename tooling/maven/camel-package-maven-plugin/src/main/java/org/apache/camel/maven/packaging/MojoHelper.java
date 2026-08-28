@@ -74,6 +74,9 @@ public final class MojoHelper {
                 return Collections.singletonList(dir.resolve("camel-fhir-component"));
             case "camel-infinispan":
                 return Arrays.asList(dir.resolve("camel-infinispan"), dir.resolve("camel-infinispan-embedded"));
+            case "camel-state-store":
+                return Arrays.asList(dir.resolve("camel-state-store"), dir.resolve("camel-state-store-caffeine"),
+                        dir.resolve("camel-state-store-redis"), dir.resolve("camel-state-store-infinispan"));
             case "camel-azure":
                 return Arrays.asList(dir.resolve("camel-azure-eventhubs"), dir.resolve("camel-azure-storage-blob"),
                         dir.resolve("camel-azure-storage-datalake"), dir.resolve("camel-azure-cosmosdb"),
@@ -149,7 +152,9 @@ public final class MojoHelper {
                         dir.resolve("camel-alibaba-fc"),
                         dir.resolve("camel-alibaba-sms"),
                         dir.resolve("camel-alibaba-kms"),
-                        dir.resolve("camel-alibaba-eventbridge"));
+                        dir.resolve("camel-alibaba-eventbridge"),
+                        dir.resolve("camel-alibaba-sls"),
+                        dir.resolve("camel-alibaba-ots"));
             case "camel-huawei":
                 return Arrays.asList(dir.resolve("camel-huaweicloud-frs"),
                         dir.resolve("camel-huaweicloud-dms"),

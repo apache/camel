@@ -13,6 +13,136 @@ See the xref:camel-upgrade-recipes-tool.adoc[documentation] page for details.
 
 == Upgrading Camel 4.22 to 4.23
 
+=== Components and Language removal
+
+==== camel-csimple, camel-csimple-joor and csimple-maven-plugin
+
+The `csimple` (compiled simple) language was deprecated in 4.19. Use the `simple` language instead.
+
+==== camel-archetype-spring
+
+The Maven archetype `camel-archetype-spring` was deprecated in 4.17. Use spring boot instead.
+
+==== camel-catalog-lucene
+
+The maven plugin was deprecated in 4.12. `camel-catalog-suggest` is replacing it.
+
+==== camel-digitalocean
+
+The component camel-digitalocean was deprecated in 4.21. The java library used has been unmaintained for several years and there is no replacement.
+
+==== camel-headersmap
+
+The component camel-headersmap was deprecated in 4.21. The default `CaseInsensitiveMap` in camel-core
+uses a custom O(1) hash table with zero-allocation lookups and header key deduplication, making the external
+cedarsoftware `java-util` dependency unnecessary. Simply remove the `camel-headersmap` dependency from your
+project — the core implementation now provides equivalent or better performance.
+
+==== camel-iec60870
+
+`camel-iec60870` was deprecated in 4.21. The library used to implement it NeoScada is no more maintained since
+2021. There are no alternatives in Java with compatible license.
+
+==== camel-irc
+
+The component camel-irc was deprecated in 4.21. The library used had no stable release since 2007. There is no Java library very active for this protocol.
+
+==== camel-ironmq
+
+The component camel-ironmq was deprecated in 4.21. The official library used has been unmaintained since 2017
+All the other client libraries (in other languages) are unmaintained since the same amount of time.
+The whole iron-io GitHub organization has almost no activity.
+
+==== camel-json-patch
+
+The `camel-json-patch` was deprecated in 4.19. The library it uses is not actively maintained and this module does not work with Jackson 3.
+
+==== camel-langchain4j-tools 
+
+The `camel-langchain4j-tools` component was deprecated in 4.19. Use `camel-ai-tool` to define tools
+and `camel-langchain4j-agent` for tool-calling with LangChain4j models.
+
+Migrate your tool definition routes from `langchain4j-tools:` to `ai-tool:`:
+
+[source,java]
+----
+// Before
+from("langchain4j-tools:weather?tags=weather&description=Get weather&parameter.city=string")
+    .setBody(constant("{\"city\": \"Paris\", \"temp\": \"22C\"}"));
+
+// After
+from("ai-tool:weather?tags=weather&description=Get weather&parameter.city=string")
+    .setBody(constant("{\"city\": \"Paris\", \"temp\": \"22C\"}"));
+----
+
+Use `langchain4j-agent` with matching tags to invoke tools:
+
+[source,java]
+----
+from("direct:chat")
+    .to("langchain4j-agent:assistant?agent=#myAgent&tags=weather");
+----
+
+Add the `camel-ai-tool` dependency to your project:
+
+[source,xml]
+----
+<dependency>
+    <groupId>org.apache.camel</groupId>
+    <artifactId>camel-ai-tool</artifactId>
+</dependency>
+----
+
+==== camel-leveldb
+
+`camel-leveldb` was deprecated in 4.18. `leveldb` library is no more maintained and it exists several alternatives for file-based database nowadays.
+
+==== camel-reactive-executor-tomcat
+
+The `camel-reactive-executor-tomcat` component has been deprecated in 4.22. It is now removed.
+
+Its cross-thread `ThreadLocal`
+cleanup relied on reflective access to the private `Thread.threadLocals` field, which is denied by
+the JDK module system since JDK 17 and is incompatible with virtual threads. Without that cleanup,
+this executor is functionally identical to the built-in `DefaultReactiveExecutor`.
+
+To migrate, remove the `camel-reactive-executor-tomcat` dependency from your project. Camel will
+automatically use the default reactive executor.
+
+==== camel-reactive-executor-vertx
+
+The `camel-reactive-executor-vertx` component was deprecated in 4.21. The component has been in an experimental state for a long time and no user feedback has been received to justify continued maintenance.
+
+==== camel-splunk
+
+The `camel-splunk` component was deprecated in 4.19. The Splunk Java SDK it depends on is no longer actively maintained.
+
+Users who only need to **send events to Splunk** can migrate to `camel-splunk-hec`, which uses the
+Splunk HTTP Event Collector (HEC) over standard HTTPS with no dependency on the Splunk Java SDK.
+
+However, `camel-splunk-hec` is a **producer-only** component. The following `camel-splunk` capabilities
+have no equivalent in `camel-splunk-hec`:
+
+* **Consumer (search)**: normal searches, real-time searches, and saved-search execution are not supported.
+* **TCP streaming**: the `tcp` producer publish type (raw socket streaming to a Splunk TCP input) is not available.
+* **SUBMIT and STREAM publish types**: only HEC-based ingestion is supported.
+
+If your routes only produce events to Splunk (using the `submit` or `stream` publish types), switching
+to `camel-splunk-hec` is straightforward — configure the HEC token, index, sourceType, and source on
+the endpoint. If your routes consume (search) data from Splunk, there is currently no direct replacement
+within Apache Camel, and you will need to use the Splunk REST API directly or keep using `camel-splunk`
+until it is removed.
+
+NOTE: `camel-splunk-hec` is NOT deprecated and remains actively maintained.
+
+==== camel-threadpoolfactory-vertx
+
+The component camel-threadpoolfactory-vertx was deprecated in 4.21. The component has been in an experimental state for a long time and no user feedback has been received to justify continued maintenance.
+
+==== camel-zeebe
+
+`camel-zeebe` component was deprecated in 4.19 and has a straightforward replacement with `camel-camunda`. It is removed in 4.23.
+
 === camel-a2a - webhook URL address classification
 
 Push notification webhook URLs are now classified by the address the host resolves to, using the
@@ -44,7 +174,10 @@ unchanged and still does not permit any of the ranges above.
 
 LangChain4j and OpenAI producers now emit GenAI observability data (OpenTelemetry span attributes and
 Micrometer metrics) when `camel-opentelemetry2` and/or `camel-micrometer` is on the classpath.
-Disable globally with `camel.ai.observability.enabled=false` (default is enabled).
+Disable globally with `camel.aiObservability.enabled=false` (default is enabled). Camel Main also
+exposes the same setting via `main.configure().aiObservability().withEnabled(false)`.
+
+Spring AI chat (`spring-ai-chat`) producers emit the same GenAI spans and metrics in Phase 3.
 
 OpenAI streaming chat sets `stream_options.include_usage=true` only when GenAI observability is enabled,
 adding a final chunk with token usage for span/metric recording.
@@ -140,6 +273,37 @@ The same default is now also applied to the `ClientConfig` that Camel builds for
 endpoints, when neither a referenced `ClientConfig` nor `hazelcastConfigUri` is supplied. Client mode
 previously behaved differently from node mode for an otherwise identical endpoint configuration.
 
+=== camel-http, camel-http-common, camel-netty-http, camel-undertow, camel-vertx-http - property placeholders in HTTP URI override headers
+
+The HTTP producers no longer resolve property placeholders (`{{...}}`) in the message-supplied
+endpoint-URI override headers `CamelHttpUri` and `CamelRestHttpUri`. Those headers carry message
+content, while property placeholders are a route and configuration authoring feature resolved at
+build time on the endpoint URI written in the route. This is the same alignment 4.22 applied to
+`toD` and `enrich`.
+
+Placeholders written in the route's endpoint URI continue to be resolved exactly as before:
+
+[source,java]
+----
+.to("http://localhost/{{basePath}}")
+.to("netty-http:http://localhost/{{basePath}}")
+----
+
+A `{{...}}` token arriving in `CamelHttpUri` or `CamelRestHttpUri` is now treated as a literal part
+of the URI rather than being expanded. Routes that relied on that expansion must resolve the value
+before it reaches the header, or keep the placeholder in the route.
+
+The affected sites, all of which resolved a header-derived or endpoint-derived value per message:
+
+* `camel-http` - `HttpMethodHelper.createMethod`
+* `camel-http-common` - `HttpHelper.createURL`, `HttpHelper.createMethod`
+* `camel-netty-http` - `NettyHttpHelper.createURL`
+* `camel-undertow` - `UndertowHelper.createURL`, `UndertowHelper.createMethod`
+* `camel-vertx-http` - `VertxHttpHelper.resolveHttpURI`
+
+Where the value came from the endpoint rather than a header it was already resolved at build time,
+so removing the per-message resolution does not change those routes.
+
 === camel-jbang (TUI)
 
 `camel tui --record` is now rejected when combined with `--web`. The recording configuration applies
@@ -196,6 +360,25 @@ Routes that relied on steps after these processors running for unauthenticated r
 restructured. The authenticated paths are unchanged: a successfully authenticated request continues
 through the rest of the route exactly as before, and `OAuthLogoutProcessor` is unchanged.
 
+=== camel-core - XmlConverter SAX parser factory
+
+`XmlConverter.createSAXParserFactory()` now also disables external parameter entities and external
+DTD loading:
+
+* `http://xml.org/sax/features/external-parameter-entities` = `false`
+* `http://apache.org/xml/features/nonvalidating/load-external-dtd` = `false`
+
+It previously set only `FEATURE_SECURE_PROCESSING` and `external-general-entities=false`, while
+`createDocumentBuilderFactory()` in the same class already blocked external resource resolution more
+thoroughly. Both factories are reachable from a converted message body — `toSAXSource` is a
+registered converter, and the SAXSource route is tried first for bodies reaching camel-xslt — so the
+two should not disagree.
+
+Documents carrying an internal DTD subset still parse: `disallow-doctype-decl` is deliberately not
+set here, because that would reject input that parses today. Routes that genuinely need to resolve
+an external DTD or parameter entity through this converter must supply their own
+`SAXParserFactory`.
+
 === camel-netty-http
 
 The security-constraint lookup now strips the endpoint context-path from the request target
@@ -238,3 +421,470 @@ Camel then no longer controls how the payload is read.
 
 The legacy `sse` `transportType` has been removed. It follows the support removal in 
 https://github.com/langchain4j/langchain4j/commit/7f4e99fd637137ab9d3bf116eb62047ac757a818[langchain4j-core 1.19.0].
+
+=== camel-ftp, camel-sftp, camel-ftps, camel-mina-sftp, camel-azure-files, camel-smb
+
+The remote-file consumers now ensure the path resolved for a polled file stays within the directory being
+polled. The file name that path is built from is reported by the remote server in its directory listing and is
+not guaranteed to be a single path segment, so a listing entry containing `../` sequences could previously
+resolve to a path outside the configured directory and be used as the operand for retrieving, deleting or
+renaming a file.
+
+The containment check honours the existing `jailStartingDirectory` option (default `true`), consistent with the
+file producer and with the `localWorkDirectory` download path; set `jailStartingDirectory=false` to disable it.
+A file that resolves outside the configured directory is now skipped, and a warning is logged.
+
+Ordinary listings are unaffected, as a listed name is normally a single path segment, and a `../` that still
+resolves back inside the polled directory remains accepted. Two configurations can newly see files skipped: a
+server that reports names navigating above the polled directory, and a `fileName` expression (used when
+`useList=false`) that navigates above it. Set `jailStartingDirectory=false` if such a path is intended.
+
+=== camel-as2
+
+The AS2 server no longer attaches the configured `mdnUserName` / `mdnPassword` / `mdnAccessToken`
+credentials to an asynchronous MDN unless the delivery address names a host the operator has
+authorised.
+
+The delivery address comes from the `Receipt-Delivery-Option` header of the received AS2 message, so
+it is chosen by the sender. A new option lists the hosts an asynchronous MDN may be delivered to:
+
+[source,text]
+----
+as2://server/listen?asyncMdnAllowedHosts=partner.example,partner2.example
+----
+
+* When `asyncMdnAllowedHosts` is set, an asynchronous MDN whose delivery address names a host outside
+the list is refused, and the credentials are attached only for a host on the list.
+* When it is not set, the MDN is still delivered to the sender-supplied address, as before, but **no
+credentials are attached** and a warning naming the option is logged.
+
+Deployments that rely on authenticating to a partner's asynchronous MDN endpoint must add that
+partner's host to `asyncMdnAllowedHosts`.
+
+Two further checks are applied to the delivery address regardless of the option: the scheme must be
+`http`, and an address with no explicit port now uses 80 rather than being passed to the socket as `-1`.
+
+`https` is refused. `AS2AsynchronousMDNManager` delivers over a plain socket and has no TLS support, so an
+`https` address was never actually delivered over TLS — the request was written in cleartext to the TLS
+port and the peer reset the connection. Such an address is now refused outright rather than attempted, and
+TLS delivery of asynchronous MDNs remains unsupported.
+
+=== camel-ibm-cos
+
+The `CACHE_CONTROL` header constant's value has been corrected from the misspelled `CamelIBMCOSContentControl`
+to `CamelIBMCOSCacheControl`, so the header name matches the Cache-Control metadata it carries. This is a
+breaking change for routes that reference the header by its literal string name: they must switch to
+`CamelIBMCOSCacheControl`, although the change is trivial to adapt. Routes using the
+`IBMCOSConstants.CACHE_CONTROL` constant are unaffected.
+
+=== camel-knative
+
+The Knative HTTP consumer no longer returns the stack trace of a failed exchange to the caller.
+
+When a route consuming from `knative:endpoint/...` or `knative:event/...` failed, the response body was
+the exception's full stack trace, sent as `text/plain`. A new `muteException` consumer option controls
+this, and it defaults to `true` — the same default the HTTP consumers carry
+(`camel-http-common` and therefore `camel-servlet` and `camel-jetty`, plus `camel-http`,
+`camel-platform-http`, and `camel-netty-http` and `camel-undertow` since 4.21.0).
+
+The response status is unchanged: a failed exchange still returns 500 (or whatever
+`CamelHttpResponseCode` the route set), only the body is now empty.
+
+A route that relies on the stack trace reaching the caller must opt back in explicitly:
+
+[source,text]
+----
+knative:endpoint/myEndpoint?muteException=false
+----
+
+`org.apache.camel.component.knative.spi.KnativeTransportConfiguration` gains a fourth constructor
+argument for the flag. The three-argument constructor is retained and mutes the exception, so existing
+code compiles unchanged and picks up the new default.
+
+Setting `camel.knative.client.ssl.enabled=true` without also configuring
+`camel.knative.client.ssl.truststore.path` or `camel.knative.client.ssl.trust.cert.path` used to install
+a trust manager that accepts every certificate, so enabling TLS was what disabled certificate
+validation. No option named `trustAll` was involved.
+
+The client now leaves the trust options unset in that case, which means the JVM default trust anchors
+apply — the same fallback `SSLContextParameters` and the rest of Camel use. Accepting any certificate is
+still available, but has to be asked for with the new
+`camel.knative.client.ssl.trust.all=true` property.
+
+Deployments that relied on the previous behaviour — a development cluster with a self-signed
+certificate, for example — must either configure a truststore or set `camel.knative.client.ssl.trust.all`
+explicitly. `KnativeOidcClientOptions` extends this class and is affected the same way.
+
+=== camel-paho-mqtt5
+
+When `automaticReconnect=true` and the MQTT broker reconnects, the consumer now restarts the route
+if the post-reconnect `subscribe()` call fails. Previously a failed resubscription (for example,
+when the broker does not send a SUBACK and the Paho keepAlive timer triggers `MqttException 32000`)
+was only logged at ERROR level with no recovery action, leaving the route in `Started` state while
+silently consuming no messages (zombie state).
+
+If the resubscribe fails and the consumer owns the MQTT client (the default), it automatically stops
+and restarts the route to force a clean reconnect. If the restart also fails (for example, the broker
+is still unavailable), the route is left in `Stopped` state. Routes using a user-provided client are
+not affected by this change. Configuring Camel's `SupervisingRouteController` allows the framework to
+keep retrying with exponential backoff until the broker recovers:
+
+[source,properties]
+----
+camel.routeController.enabled = true
+camel.routeController.backOffDelay = 2000
+camel.routeController.backOffMaxDelay = 60000
+----
+
+=== camel-http
+
+The OAuth2 client-credentials token cache was keyed on the request URI, the client id and the client
+secret only. `oauth2Scope`, `oauth2TokenEndpoint` and `oauth2ResourceIndicator` all shape the token that
+gets minted, but none of them was part of the key, and the cache is a static map shared by every endpoint
+and every `CamelContext` in the JVM. A route configured with a narrow scope could therefore be handed a
+broad-scope token that another route had cached first for the same target and credentials — defeating the
+scoping the operator configured, and making the audit trail misleading.
+
+All three are now part of the key. Deployments that were unknowingly sharing a token across differing
+scopes, token endpoints or resource indicators will now request one token per distinct combination, so
+the token endpoint sees more requests than before.
+
+=== camel-pqc
+
+`FileBasedKeyLifecycleManager` stores private keys unencrypted, as Base64 PKCS#8 inside a JSON file, and
+used to create both the key directory and those files with whatever the process umask allowed — commonly
+`rw-r--r--` and `rwxr-xr-x` under the usual `022`, leaving private keys readable by every account on the
+host.
+
+The key directory is now created as `rwx------` and each `<keyId>.private.json` as `rw-------`, on file
+systems that support POSIX permissions; elsewhere the equivalent owner-only flags are applied. A private
+key file left behind by an earlier version is tightened the next time that key is stored, because the file
+is truncated rather than recreated and would otherwise keep its original permissions.
+
+Deployments where another account legitimately reads these files — a sidecar or a backup agent running as
+a different user — need to run as the owner, or use a group-aware key store instead.
+
+=== camel-crypto-pgp
+
+The `pgp` data format verifies a message's modification detection code only when the message is an
+OpenPGP symmetrically encrypted *integrity protected* data packet:
+
+[source,java]
+----
+if (pbe.isIntegrityProtected()) {
+    if (!pbe.verify()) {
+        throw new PGPException("Message failed integrity check");
+    }
+}
+----
+
+The older symmetrically encrypted data packet carries no such code, so a message using it skipped the
+check entirely. Because the packet type is chosen by whoever produced the message, that left the sender
+— or anyone able to rewrite the message in transit — deciding whether the check applied. The existing
+`integrity` option governs marshalling only and has no decrypt-side counterpart.
+
+A new `requireIntegrityProtection` option, **defaulting to `true`**, now rejects a message that is not
+integrity protected. Routes that must interoperate with a sender still emitting the legacy packet have to
+set `requireIntegrityProtection=false` explicitly.
+
+Note that `signatureVerificationOption` still defaults to `optional`, which accepts a message carrying no
+signature at all. Set it to `required` where the sender is expected to sign; the two options together are
+what give a decrypted message authenticity as well as confidentiality.
+
+=== camel-http
+
+Credentials are no longer sent to an authority the endpoint was not configured with. Two paths reached that
+outcome once `followRedirects=true`, since a redirect target is chosen by the remote server rather than
+by the route:
+
+* The OAuth2 interceptor is registered with `addRequestInterceptorFirst`, and HttpClient runs
+protocol-level request interceptors inside `ProtocolExec`, which sits below `RedirectExec` — so it ran
+again for every redirect hop and re-attached `Authorization: Bearer <token>` to whatever authority the
+`Location` header named. The token is now attached only for the endpoint's own scheme, host and effective port.
+* `authHost` is optional and unset in the common basic-auth configuration, which made the credentials
+scope `new AuthScope(null, -1)` — any host, any port, any scheme — so HttpClient offered the credentials
+to whichever host issued a `401` challenge. The scope now falls back to the endpoint's host when
+`authHost` is not set and is restricted to the endpoint's scheme and effective port.
+
+Routes that relied on credentials following a redirect to a different authority must set `authHost`
+explicitly, which continues to take precedence and preserves the previous any-port behaviour.
+
+`HttpComponent.createHttpClientConfigurer(Map, boolean)` remains the protected customization point and is still invoked
+when an endpoint is created, so existing subclasses continue to behave as before.
+
+=== camel-jetty
+
+`enableCORS=true` added `new CrossOriginFilter()` with no init parameters, so Jetty's own defaults
+applied: `allowedOrigins=*` together with `allowCredentials=true`. Since the filter reflects the request's
+origin rather than sending `*`, that is the credentialed any-origin configuration the fetch specification
+refuses to express — reflecting the origin being the usual way around that rule. An option named "enable
+CORS" should not mean "every origin, with credentials".
+
+`allowCredentials` now defaults to `false` when CORS is enabled. The origin is still reflected, so
+enabling CORS keeps working for requests that carry no credentials.
+
+Deployments that need credentialed cross-origin requests must ask for them explicitly:
+
+[source,text]
+----
+jetty://http://0.0.0.0:8080/api?enableCORS=true
+    &filterInit.allowedOrigins=https://app.example
+    &filterInit.allowCredentials=true
+----
+
+Setting `filterInit.allowCredentials=true` while leaving `filterInit.allowedOrigins` unset or `*` is
+logged as a warning at startup, because that combination lets any origin make credentialed requests.
+
+The same change was made to camel-platform-http-vertx.
+
+=== camel-mllp
+
+`logPhi` now defaults to `false`. It previously defaulted to `true`, so message content — which for MLLP
+is patient data by definition — reached the log at the default INFO/WARN levels with no configuration at
+all. Set `logPhi=true` on the component to restore the previous behaviour.
+
+Payload-bearing log paths that ignored the flag no longer do, including:
+`MllpSocketBuffer.readFrom` (the partial-payload warning, which logs the content of a legitimate
+in-flight message from a slow sender, not only unexpected bytes) and
+`MllpSocketBuffer.readSocketInputStream` (the bytes-before-START_OF_BLOCK warning), the invalid and partial-payload
+warnings in `TcpSocketConsumerRunnable`, and acknowledgement debug logging. Where content is suppressed the log now
+shows `<PHI suppressed>`.
+
+The suppression is applied at the log statements, through a new `Hl7Util.convertToLoggableString`, rather
+than inside `convertToPrintFriendlyString`: that method is not a logging helper — it also extracts the
+MSH-9 field when an acknowledgement is generated, so redacting inside it would corrupt acknowledgements.
+
+=== camel-platform-http
+
+`PlatformHttpEndpoint.isHttpProxy()` selected proxy mode with `path.startsWith("proxy")` rather than an
+equality check, so any endpoint whose path merely began with those five characters — `proxyStats`,
+`proxy-health`, `proxying` — was treated as the documented `platform-http:proxy` endpoint. That has
+consequences beyond the name: `getPath()` returns `/` for such an endpoint, making it a catch-all, and
+`VertxPlatformHttpConsumer.handleProxy()` sets `Exchange.HTTP_HOST` from the request's own `Host` header
+so a bridging producer forwards there. A route author naming an endpoint `proxyStats` therefore got a
+catch-all whose forward target came from the caller.
+
+Proxy mode is now selected only by the exact path `proxy`. The check is deliberately strict:
+`platform-http:/proxy`, with a leading slash, did not select proxy mode before and still does not, so
+this can never turn an endpoint into a proxy that was not already one.
+
+Routes relying on the prefix match must be renamed to the exact path `proxy`.
+
+`PlatformHttpEndpoint` wraps the endpoint's `HeaderFilterStrategy` so that common request headers —
+`Authorization`, `Cookie`, `Proxy-Authorization` and the rest of `COMMON_HTTP_REQUEST_HEADERS` — are not
+echoed back on the response. The lookup compared names exactly against that canonically capitalised set,
+while exchange headers keep the casing of the inbound request. HTTP/2 requires field names to be lower
+case, so on an HTTP/2 request the names are `authorization`, `cookie` and so on, none of which matched:
+the suppression never fired for HTTP/2 traffic, or for any client that varied the casing.
+
+Names are now compared case-insensitively. Responses that previously echoed these headers back on HTTP/2
+requests no longer do.
+
+=== camel-grpc
+
+The gRPC consumer no longer returns the route exception's message to the client.
+
+When an exchange failed, `GrpcMethodHandler` built the error status with
+`Status.INTERNAL.withDescription(exchange.getException().getMessage())`. The description is transmitted
+to the client — unlike the cause attached alongside it, which stays local — so any remote-triggerable
+failure handed the caller internal detail.
+
+A new `muteException` consumer option controls this, and it defaults to `true`, the same default the HTTP
+consumers carry. The status code is unchanged; only the description is replaced, with
+`Exchange processing failed`.
+
+A route that relies on the exception message reaching the client must opt back in explicitly:
+
+[source,text]
+----
+grpc://localhost:8080/org.example.MyService?muteException=false
+----
+
+=== camel-keycloak
+
+When `validateIssuer` is enabled and the token is checked by introspection, an introspection response
+carrying no `iss` claim used to log a warning and pass. It is now rejected with
+`Token issuer missing: expected '<issuer>' but the introspection result carries no issuer`.
+
+Issuer validation is opt-in, so an operator who enabled it is asking for tokens from other issuers to be
+refused, and a response with no issuer is not evidence that the token came from the expected one. RFC 7662
+makes `iss` optional in an introspection response, so this is reachable wherever the introspection
+endpoint is a broker, a gateway, or a minimal implementation rather than the realm that issued the token.
+Audience validation already behaved this way; the two are now consistent.
+
+Deployments whose introspection endpoint omits `iss` must either have it include the claim, or turn
+`validateIssuer` off. The locally verified JWT path is unaffected — it uses Keycloak's own
+`TokenVerifier.RealmUrlCheck`.
+
+=== camel-mina
+
+The Mina consumer no longer writes the route's exception back to the remote peer.
+
+When an exchange failed and `transferExchange` was not enabled, the consumer wrote
+`exchange.getException()` — the `Throwable` itself — over the socket. With a textline codec the peer
+received its class and message; with the object codec it received the serialised exception, cause chain
+and stack trace included.
+
+A new `muteException` consumer option controls this, and it defaults to `true` — the same default the
+HTTP consumers carry (`camel-http-common` and therefore `camel-servlet` and `camel-jetty`, plus
+`camel-http`, `camel-platform-http`, and `camel-netty-http` and `camel-undertow` since 4.21.0).
+
+A reply is still written, so a synchronous peer is not left waiting: it is a `java.lang.Exception` with
+a fixed message and no stack trace, in place of the route's own exception. A route that relies on the
+original exception reaching the peer must opt back in explicitly:
+
+[source,text]
+----
+mina:tcp://localhost:9000?sync=true&muteException=false
+----
+
+`transferExchange=true` is unaffected — that option serialises the whole Exchange by design, and is
+already marked as an insecure-serialization flag.
+
+=== camel-cxf
+
+The CXF consumer no longer describes an undeclared route failure in the SOAP fault returned to the caller.
+
+When a route consuming from `cxf:` failed with an exception the service contract does not declare, the
+exception's message — or its class name, when it had no message — became the SOAP `faultstring`. A new
+`muteException` consumer option controls this, and it defaults to `true`, the same default the HTTP
+consumers carry (`camel-http-common` and therefore `camel-servlet` and `camel-jetty`, plus `camel-http`,
+`camel-platform-http`, and `camel-netty-http` and `camel-undertow` since 4.21.0).
+
+Muting applies **only to undeclared failures**. Faults the route raises deliberately are part of the
+service contract and are still returned in full:
+
+* a CXF `Fault` or `SoapFault` thrown by the route,
+* an exception annotated `@WebFault` (a fault the WSDL declares),
+* a `Throwable` or a `CxfPayload` carrying a `<soap:Fault>` set as the message body.
+
+Only an exception that reaches `Exchange.getException()` without a `@WebFault` annotation is replaced,
+by a fault reading `Exchange processing failed`.
+
+Note that this includes framework failures, not just route exceptions. In particular, a `continuationTimeout`
+expiry previously returned `The OUT message was not received within: 5000 millis.` to the caller and now
+returns the generic fault; set `muteException=false` on that endpoint if the timeout detail is relied upon
+for diagnostics.
+
+A route that relies on an undeclared exception's message reaching the caller must opt back in explicitly:
+
+[source,text]
+----
+cxf://http://localhost:8080/service?serviceClass=com.example.MyService&muteException=false
+----
+
+=== camel-thrift
+
+The `thrift` data format used to deserialize into its own `defaultInstance` and return that object to
+every exchange. Because Thrift's `TBase.read()` assigns only the fields present in the incoming bytes,
+a message that omitted an optional field kept the value left there by the previous message, concurrent
+unmarshals interleaved into the same object, and all in-flight bodies were the same reference.
+
+`unmarshal` now creates a copy of `defaultInstance`, clears it to the generated type's default-constructor
+state, and deserializes into that copy. Each exchange therefore gets its own object, omitted fields do not
+inherit values set on `defaultInstance`, and `defaultInstance` itself remains untouched.
+
+Routes that compared unmarshalled bodies by identity, or that mutated one body expecting the change to
+be visible on another, must be updated.
+
+=== camel-shiro
+
+`ShiroSecurityProcessor` used to skip the Shiro `login()` call — and therefore the credential check —
+when the thread-bound subject was already authenticated for the same username as the incoming
+`ShiroSecurityToken`. The check conflated "same principal name" with "same credentials", so once a user
+had authenticated on a worker thread, a later exchange presenting that username with any password was
+accepted for as long as the subject stayed bound.
+
+The default `alwaysReauthenticate=true` masked this, because the processor calls `logout()` after each
+exchange. With `alwaysReauthenticate=false` — a documented option, which also sets `rememberMe(true)` to
+keep subjects long-lived — the skip was reachable.
+
+`login()` is now called for every exchange with the credentials that exchange presented. Deployments
+using `alwaysReauthenticate=false` will see one realm lookup per exchange where previously matching
+usernames reused the bound subject; correctness aside, that is the same cost the default already pays.
+
+=== camel-oauth
+
+The authorization code flow now sends a `state` parameter and requires it back on the callback.
+
+`OAuthCodeFlowProcessor` generates a random `state`, stores it in the OAuth session and includes it in
+the authorization request. `OAuthCodeFlowCallback` then accepts an authorization code only when the
+callback carries the same value, consuming it so it cannot be replayed. Previously no `state` was sent and
+the callback redeemed whatever `code` arrived, binding the resulting profile to the caller's session with
+nothing tying the callback to a flow that session had started — the login CSRF that RFC 6749 section
+10.12 and OpenID Connect Core require this binding to prevent.
+
+Two callbacks that used to succeed are now answered with `400` and stop the route:
+
+* no authorization code flow is in progress for the session — `No authorization code flow in progress`
+* the `state` is absent or does not match — `Authorization state mismatch`
+
+Deployments where the session is not sticky across the redirect will see the second case, because the
+session holding the `state` has to be the one that returns. Sessions must survive the round trip to the
+identity provider.
+
+Note that `nonce` and PKCE (`code_challenge`) are still not sent, and the session cookie is still
+`SameSite=None; Secure`.
+
+=== camel-platform-http-vertx
+
+The CORS handler used to send `Access-Control-Allow-Credentials: true` on every response to a request
+carrying an `Origin` header — including responses to origins it had just decided not to allow, because
+the header was set outside the origin check. Combined with an unset `camel.server.cors.origins`, which
+makes the handler echo back whatever origin the caller sent, that produced the credentialed
+any-origin configuration the fetch specification forbids expressing as `*`.
+
+Two changes:
+
+* `Access-Control-Allow-Credentials` is now sent only when the request origin matched an origin the
+operator explicitly configured. With `camel.server.cors.origins` unset, the origin is still reflected
+back as before, but credentials are not granted.
+* A `Vary: Origin` response header is now added whenever the origin is reflected, so a shared cache
+cannot serve one origin's response to another.
+
+Deployments that relied on credentialed cross-origin requests must list the permitted origins in
+`camel.server.cors.origins`.
+
+=== camel-tika
+
+The `tika:parse` producer copies the metadata of the parsed document onto the Camel message. Those
+names come out of the document itself, so a document could ask for any header name at all, including
+names in the Camel-internal namespace — an HTML `<meta name="CamelFileName" content="..."/>`, for
+example, reached the message as `CamelFileName` and would then be picked up by a later `file:`
+producer.
+
+Parsed metadata names are now filtered the same way a consumer filters names supplied by an external
+sender: a name that starts with `Camel`, `camel` or `org.apache.camel.` (matched case-insensitively)
+is skipped and logged at `DEBUG` instead of being set as a header. Metadata outside that namespace is
+mapped exactly as before.
+
+Routes that deliberately read a `Camel`-prefixed header produced by the Tika parse must set it
+themselves after the `tika:parse` step, for example with a `setHeader` reading the corresponding
+non-prefixed metadata name.
+
+=== camel-xpath
+
+The XPath language now parses the message with the same hardened XML parser for every `documentType`.
+
+With the default `documentType` of `org.w3c.dom.Document` the payload was already converted to a DOM
+through Camel's `DocumentBuilderFactory`, which disallows a `DOCTYPE` declaration and does not resolve
+external entities. When `documentType` was set to `org.xml.sax.InputSource` (or `javax.xml.transform.sax.SAXSource`)
+the payload was instead handed straight to `javax.xml.xpath.XPathExpression`, which builds a
+`DocumentBuilder` of its own using the JDK defaults — so a `DOCTYPE` was accepted and external entities
+were resolved on that path only.
+
+Those document types now go through the same conversion as `Document`. A message carrying a `DOCTYPE`
+declaration that previously evaluated is now rejected with a `SAXParseException`, matching the behaviour
+the default `documentType` has always had.
+
+A deployment that genuinely needs to parse documents with a `DOCTYPE` can relax the parser as before,
+through the `org.apache.camel.xmlconverter.documentBuilderFactory.feature:` system properties, for
+example:
+
+[source,text]
+----
+-Dorg.apache.camel.xmlconverter.documentBuilderFactory.feature:http://apache.org/xml/features/disallow-doctype-decl=false
+----
+
+This is not a functional change for messages without a `DOCTYPE`, and it does not add a document parse:
+`XPathExpression.evaluate(InputSource)` already built a full DOM internally.

@@ -39,9 +39,17 @@ public final class HttpCredentialsHelper {
 
     public CredentialsProvider getCredentialsProvider(
             String host, Integer port, Credentials credentials) {
+        return getCredentialsProvider(null, host, port, credentials);
+    }
+
+    CredentialsProvider getCredentialsProvider(
+            String scheme, String host, Integer port, Credentials credentials) {
         this.credentialsProvider.setCredentials(new AuthScope(
+                scheme,
                 host,
-                Objects.requireNonNullElse(port, -1)), credentials);
+                Objects.requireNonNullElse(port, -1),
+                null,
+                null), credentials);
         return credentialsProvider;
     }
 

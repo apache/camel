@@ -142,6 +142,14 @@ public interface Exchange extends VariableAware {
               description = "Route ID where the Exchange failed during processing",
               javaType = "String")
     String FAILURE_ROUTE_ID = "CamelFailureRouteId";
+    @Metadata(label = "doCatch,doFinally,errorHandler,onException",
+              description = "Node ID where the Exchange failed during processing",
+              javaType = "String")
+    String FAILURE_NODE_ID = "CamelFailureNodeId";
+    @Metadata(label = "doCatch,doFinally,errorHandler,onException",
+              description = "Source code location where the Exchange failed during processing",
+              javaType = "String")
+    String FAILURE_LOCATION = "CamelFailureLocation";
     String FATAL_FALLBACK_ERROR_HANDLER = "CamelFatalFallbackErrorHandler";
     String FILE_CONTENT_TYPE = "CamelFileContentType";
     String FILE_LOCAL_WORK_PATH = "CamelFileLocalWorkPath";
@@ -156,6 +164,7 @@ public interface Exchange extends VariableAware {
     String FILE_LENGTH = "CamelFileLength";
     String FILE_LOCK_FILE_ACQUIRED = "CamelFileLockFileAcquired";
     String FILE_LOCK_FILE_NAME = "CamelFileLockFileName";
+    String FILE_LOCK_IDEMPOTENT_ACQUIRED = "CamelFileLockIdempotentAcquired";
     String FILE_LOCK_EXCLUSIVE_LOCK = "CamelFileLockExclusiveLock";
     String FILE_LOCK_RANDOM_ACCESS_FILE = "CamelFileLockRandomAccessFile";
     String FILE_LOCK_CHANNEL_FILE = "CamelFileLockChannelFile";

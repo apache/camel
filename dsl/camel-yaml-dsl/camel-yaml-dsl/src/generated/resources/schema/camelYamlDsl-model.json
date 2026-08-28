@@ -599,14 +599,6 @@
         "description" : "A fixed value set only once during the route startup",
         "label" : "language,core"
       }, {
-        "name" : "csimple",
-        "type" : "object",
-        "ref" : "cSimple",
-        "title" : "CSimple",
-        "description" : "Evaluate a compiled simple expression",
-        "label" : "language,java",
-        "deprecated" : true
-      }, {
         "name" : "datasonnet",
         "type" : "object",
         "ref" : "datasonnet",
@@ -724,6 +716,13 @@
         "title" : "Python 3",
         "description" : "Evaluates a Python 3 expression",
         "label" : "language,python"
+      }, {
+        "name" : "quickjs",
+        "type" : "object",
+        "ref" : "quickjs",
+        "title" : "QuickJS",
+        "description" : "Evaluates a JavaScript expression using QuickJS4J",
+        "label" : "language,javascript"
       }, {
         "name" : "ref",
         "type" : "object",
@@ -2592,10 +2591,6 @@
         "type" : "object",
         "ref" : "constant"
       }, {
-        "name" : "csimple",
-        "type" : "object",
-        "ref" : "cSimple"
-      }, {
         "name" : "datasonnet",
         "type" : "object",
         "ref" : "datasonnet"
@@ -2663,6 +2658,10 @@
         "name" : "python3",
         "type" : "object",
         "ref" : "python3"
+      }, {
+        "name" : "quickjs",
+        "type" : "object",
+        "ref" : "quickjs"
       }, {
         "name" : "ref",
         "type" : "object",
@@ -3943,6 +3942,10 @@
         "name" : "thrift",
         "type" : "object",
         "ref" : "thrift"
+      }, {
+        "name" : "toon",
+        "type" : "object",
+        "ref" : "toon"
       }, {
         "name" : "ubl",
         "type" : "object",
@@ -5286,11 +5289,11 @@
         "ref" : "expression",
         "description" : "The property value as an expression.",
         "title" : "Expression",
-        "required" : true,
         "displayName" : "Expression",
         "kind" : "expression",
         "index" : 1,
-        "group" : "common"
+        "group" : "common",
+        "required" : true
       } ]
     },
     "recipientList" : {
@@ -6139,11 +6142,11 @@
         "ref" : "expression",
         "description" : "Expression to use for re-ordering the messages, such as a header with a sequence number.",
         "title" : "Expression",
-        "required" : true,
         "displayName" : "Expression",
         "kind" : "expression",
         "index" : 4,
-        "group" : "common"
+        "group" : "common",
+        "required" : true
       }, {
         "name" : "batchConfig",
         "type" : "object",
@@ -9386,248 +9389,203 @@
       }, {
         "name" : "asn1",
         "type" : "object",
-        "ref" : "aSN1",
-        "required" : true
+        "ref" : "aSN1"
       }, {
         "name" : "avro",
         "type" : "object",
-        "ref" : "avro",
-        "required" : true
+        "ref" : "avro"
       }, {
         "name" : "barcode",
         "type" : "object",
-        "ref" : "barcode",
-        "required" : true
+        "ref" : "barcode"
       }, {
         "name" : "base64",
         "type" : "object",
-        "ref" : "base64",
-        "required" : true
+        "ref" : "base64"
       }, {
         "name" : "beanio",
         "type" : "object",
-        "ref" : "beanio",
-        "required" : true
+        "ref" : "beanio"
       }, {
         "name" : "bindy",
         "type" : "object",
-        "ref" : "bindy",
-        "required" : true
+        "ref" : "bindy"
       }, {
         "name" : "cbor",
         "type" : "object",
-        "ref" : "cBOR",
-        "required" : true
+        "ref" : "cBOR"
       }, {
         "name" : "crypto",
         "type" : "object",
-        "ref" : "crypto",
-        "required" : true
+        "ref" : "crypto"
       }, {
         "name" : "csv",
         "type" : "object",
-        "ref" : "csv",
-        "required" : true
+        "ref" : "csv"
       }, {
         "name" : "custom",
         "type" : "object",
-        "ref" : "custom",
-        "required" : true
+        "ref" : "custom"
       }, {
         "name" : "dfdl",
         "type" : "object",
-        "ref" : "dfdl",
-        "required" : true
+        "ref" : "dfdl"
       }, {
         "name" : "fhirJson",
         "type" : "object",
-        "ref" : "fhirJson",
-        "required" : true
+        "ref" : "fhirJson"
       }, {
         "name" : "fhirXml",
         "type" : "object",
-        "ref" : "fhirXml",
-        "required" : true
+        "ref" : "fhirXml"
       }, {
         "name" : "flatpack",
         "type" : "object",
-        "ref" : "flatpack",
-        "required" : true
+        "ref" : "flatpack"
       }, {
         "name" : "fory",
         "type" : "object",
-        "ref" : "fory",
-        "required" : true
+        "ref" : "fory"
       }, {
         "name" : "grok",
         "type" : "object",
-        "ref" : "grok",
-        "required" : true
+        "ref" : "grok"
       }, {
         "name" : "groovyJson",
         "type" : "object",
-        "ref" : "groovyJSon",
-        "required" : true
+        "ref" : "groovyJSon"
       }, {
         "name" : "groovyXml",
         "type" : "object",
-        "ref" : "groovyXml",
-        "required" : true
+        "ref" : "groovyXml"
       }, {
         "name" : "gzipDeflater",
         "type" : "object",
-        "ref" : "gzipDeflater",
-        "required" : true
+        "ref" : "gzipDeflater"
       }, {
         "name" : "hl7",
         "type" : "object",
-        "ref" : "hL7",
-        "required" : true
+        "ref" : "hL7"
       }, {
         "name" : "ical",
         "type" : "object",
-        "ref" : "ical",
-        "required" : true
+        "ref" : "ical"
       }, {
         "name" : "iso8583",
         "type" : "object",
-        "ref" : "iso8583",
-        "required" : true
+        "ref" : "iso8583"
       }, {
         "name" : "jacksonXml",
         "type" : "object",
-        "ref" : "jacksonXML",
-        "required" : true
+        "ref" : "jacksonXML"
       }, {
         "name" : "jaxb",
         "type" : "object",
-        "ref" : "jaxb",
-        "required" : true
+        "ref" : "jaxb"
       }, {
         "name" : "json",
         "type" : "object",
-        "ref" : "json",
-        "required" : true
+        "ref" : "json"
       }, {
         "name" : "jsonApi",
         "type" : "object",
-        "ref" : "jsonApi",
-        "required" : true
+        "ref" : "jsonApi"
       }, {
         "name" : "lzf",
         "type" : "object",
-        "ref" : "lZF",
-        "required" : true
+        "ref" : "lZF"
       }, {
         "name" : "mimeMultipart",
         "type" : "object",
-        "ref" : "mimeMultipart",
-        "required" : true
+        "ref" : "mimeMultipart"
       }, {
         "name" : "ocsf",
         "type" : "object",
-        "ref" : "ocsf",
-        "required" : true
+        "ref" : "ocsf"
       }, {
         "name" : "parquetAvro",
         "type" : "object",
-        "ref" : "parquetAvro",
-        "required" : true
+        "ref" : "parquetAvro"
       }, {
         "name" : "pgp",
         "type" : "object",
-        "ref" : "pGP",
-        "required" : true
+        "ref" : "pGP"
       }, {
         "name" : "pqc",
         "type" : "object",
-        "ref" : "pQC",
-        "required" : true
+        "ref" : "pQC"
       }, {
         "name" : "protobuf",
         "type" : "object",
-        "ref" : "protobuf",
-        "required" : true
+        "ref" : "protobuf"
       }, {
         "name" : "rss",
         "type" : "object",
-        "ref" : "rss",
-        "required" : true
+        "ref" : "rss"
       }, {
         "name" : "smooks",
         "type" : "object",
-        "ref" : "smooks",
-        "required" : true
+        "ref" : "smooks"
       }, {
         "name" : "soap",
         "type" : "object",
-        "ref" : "soap",
-        "required" : true
+        "ref" : "soap"
       }, {
         "name" : "swiftMt",
         "type" : "object",
-        "ref" : "swiftMt",
-        "required" : true
+        "ref" : "swiftMt"
       }, {
         "name" : "swiftMx",
         "type" : "object",
-        "ref" : "swiftMx",
-        "required" : true
+        "ref" : "swiftMx"
       }, {
         "name" : "syslog",
         "type" : "object",
-        "ref" : "syslog",
-        "required" : true
+        "ref" : "syslog"
       }, {
         "name" : "tarFile",
         "type" : "object",
-        "ref" : "tarFile",
-        "required" : true
+        "ref" : "tarFile"
       }, {
         "name" : "thrift",
         "type" : "object",
-        "ref" : "thrift",
-        "required" : true
+        "ref" : "thrift"
+      }, {
+        "name" : "toon",
+        "type" : "object",
+        "ref" : "toon"
       }, {
         "name" : "ubl",
         "type" : "object",
-        "ref" : "ubl",
-        "required" : true
+        "ref" : "ubl"
       }, {
         "name" : "univocityCsv",
         "type" : "object",
-        "ref" : "uniVocityCsv",
-        "required" : true
+        "ref" : "uniVocityCsv"
       }, {
         "name" : "univocityFixed",
         "type" : "object",
-        "ref" : "uniVocityFixed",
-        "required" : true
+        "ref" : "uniVocityFixed"
       }, {
         "name" : "univocityTsv",
         "type" : "object",
-        "ref" : "uniVocityTsv",
-        "required" : true
+        "ref" : "uniVocityTsv"
       }, {
         "name" : "xmlSecurity",
         "type" : "object",
-        "ref" : "xMLSecurity",
-        "required" : true
+        "ref" : "xMLSecurity"
       }, {
         "name" : "yaml",
         "type" : "object",
-        "ref" : "yAML",
-        "required" : true
+        "ref" : "yAML"
       }, {
         "name" : "zipDeflater",
         "type" : "object",
-        "ref" : "zipDeflater",
-        "required" : true
+        "ref" : "zipDeflater"
       }, {
         "name" : "zipFile",
         "type" : "object",
-        "ref" : "zipFile",
-        "required" : true
+        "ref" : "zipFile"
       } ]
     },
     "validate" : {
@@ -12785,6 +12743,12 @@
         "description" : "Java Cryptography Extension (JCE) provider, default is Bouncy Castle (BC). Alternatively you can use, for example, the IAIK JCE provider.",
         "title" : "Provider"
       }, {
+        "name" : "requireIntegrityProtection",
+        "type" : "boolean",
+        "description" : "Whether a message must be integrity protected in order to be decrypted. The legacy symmetrically encrypted data packet carries no modification detection code, and the packet type is chosen by whoever produced the message, so accepting it lets the sender decide whether the integrity check applies. Set to false only to interoperate with a sender that still emits the legacy packet.",
+        "title" : "Require Integrity Protection",
+        "default" : "true"
+      }, {
         "name" : "signatureKeyFileName",
         "type" : "string",
         "description" : "Filename of the keyring to use for signing (during encryption) or for signature verification (during decryption); must be accessible as a classpath resource (but you can specify a location in the file system by using the file: prefix).",
@@ -13442,6 +13406,72 @@
         "displayName" : "Content Type Header",
         "kind" : "attribute",
         "index" : 3,
+        "group" : "common"
+      } ]
+    },
+    "toon" : {
+      "title" : "TOON",
+      "description" : "Marshal JSON-compatible Java values to TOON (Token-Oriented Object Notation) and unmarshal TOON back to Java objects.",
+      "label" : "dataformat,transformation,json",
+      "children" : [ {
+        "name" : "id",
+        "type" : "string",
+        "description" : "The id of this node",
+        "title" : "Id",
+        "displayName" : "Id",
+        "kind" : "attribute",
+        "index" : 0,
+        "group" : "common"
+      }, {
+        "name" : "indent",
+        "type" : "number",
+        "description" : "Number of spaces per indentation level.",
+        "title" : "Indent",
+        "default" : "2",
+        "displayName" : "Indent",
+        "kind" : "attribute",
+        "index" : 1,
+        "group" : "common"
+      }, {
+        "name" : "delimiter",
+        "type" : "enum",
+        "enum" : [ "COMMA", "TAB", "PIPE" ],
+        "description" : "Delimiter used for tabular array rows and inline primitive arrays.",
+        "title" : "Delimiter",
+        "default" : "COMMA",
+        "displayName" : "Delimiter",
+        "kind" : "attribute",
+        "index" : 2,
+        "group" : "common"
+      }, {
+        "name" : "lengthMarker",
+        "type" : "boolean",
+        "description" : "Whether to prefix array lengths with a hash marker so arrays render as hash-prefixed lengths instead of plain lengths.",
+        "title" : "Length Marker",
+        "default" : "false",
+        "displayName" : "Length Marker",
+        "kind" : "attribute",
+        "index" : 3,
+        "group" : "common"
+      }, {
+        "name" : "strict",
+        "type" : "boolean",
+        "description" : "Whether to enable strict validation when unmarshalling TOON. When false, JToon uses best-effort parsing.",
+        "title" : "Strict",
+        "default" : "true",
+        "displayName" : "Strict",
+        "kind" : "attribute",
+        "index" : 4,
+        "group" : "common"
+      }, {
+        "name" : "contentTypeHeader",
+        "type" : "boolean",
+        "description" : "Whether the data format should set the Content-Type header to text/toon when marshalling.",
+        "title" : "Content Type Header",
+        "default" : "true",
+        "displayName" : "Content Type Header",
+        "kind" : "attribute",
+        "index" : 5,
         "group" : "common"
       } ]
     },
@@ -14685,46 +14715,6 @@
         "label" : "advanced"
       } ]
     },
-    "cSimple" : {
-      "title" : "CSimple",
-      "description" : "Evaluate a compiled simple expression",
-      "deprecated" : true,
-      "children" : [ {
-        "name" : "expression",
-        "type" : "string",
-        "description" : "The expression value in your chosen language syntax.",
-        "title" : "Expression",
-        "required" : true
-      }, {
-        "name" : "id",
-        "type" : "string",
-        "description" : "The id of this node.",
-        "title" : "Id"
-      }, {
-        "name" : "pretty",
-        "type" : "boolean",
-        "description" : "To pretty format the output (only JSon or XML supported).",
-        "title" : "Pretty",
-        "default" : "false"
-      }, {
-        "name" : "resultType",
-        "type" : "string",
-        "description" : "The class of the result type (type from output).",
-        "title" : "Result Type"
-      }, {
-        "name" : "trim",
-        "type" : "boolean",
-        "description" : "Whether to trim the source code to remove leading and trailing whitespaces and line breaks.",
-        "title" : "Trim",
-        "default" : "true"
-      }, {
-        "name" : "trimResult",
-        "type" : "boolean",
-        "description" : "Whether to trim the returned values when this language is in use.",
-        "title" : "Trim Result",
-        "default" : "false"
-      } ]
-    },
     "constant" : {
       "title" : "Constant",
       "description" : "A fixed value set only once during the route startup",
@@ -15555,6 +15545,51 @@
       "title" : "Python",
       "description" : "Evaluates a Python expression",
       "label" : "language,python",
+      "children" : [ {
+        "name" : "id",
+        "type" : "string",
+        "description" : "The id of this node.",
+        "title" : "Id",
+        "displayName" : "Id",
+        "kind" : "attribute",
+        "index" : 0,
+        "group" : "common"
+      }, {
+        "name" : "expression",
+        "type" : "string",
+        "description" : "The expression value in your chosen language syntax.",
+        "title" : "Expression",
+        "required" : true,
+        "displayName" : "Expression",
+        "kind" : "value",
+        "index" : 1,
+        "group" : "common"
+      }, {
+        "name" : "resultType",
+        "type" : "string",
+        "description" : "The class of the result type (type from output).",
+        "title" : "Result Type",
+        "displayName" : "Result Type",
+        "kind" : "attribute",
+        "index" : 2,
+        "group" : "common"
+      }, {
+        "name" : "trim",
+        "type" : "boolean",
+        "description" : "Whether to trim the source code to remove leading and trailing whitespaces and line breaks.",
+        "title" : "Trim",
+        "default" : "true",
+        "displayName" : "Trim",
+        "kind" : "attribute",
+        "index" : 3,
+        "group" : "advanced",
+        "label" : "advanced"
+      } ]
+    },
+    "quickjs" : {
+      "title" : "QuickJS",
+      "description" : "Evaluates a JavaScript expression using QuickJS4J",
+      "label" : "language,javascript",
       "children" : [ {
         "name" : "id",
         "type" : "string",
@@ -19706,6 +19741,10 @@
         "name" : "thrift",
         "type" : "object",
         "ref" : "thrift"
+      }, {
+        "name" : "toon",
+        "type" : "object",
+        "ref" : "toon"
       }, {
         "name" : "ubl",
         "type" : "object",

@@ -120,10 +120,30 @@ public class LangChain4jAgentProducer extends DefaultProducer {
             }
         }
 
+        if (hasToolCallingEndpointOptions(endpoint.getConfiguration())) {
+            if (endpoint.getConfiguration().getAgentConfiguration() == null) {
+                throw new IllegalArgumentException(
+                        "maxToolCallingRoundTrips, compensateOnToolErrors, and executeToolsConcurrently require "
+                                                   + "agentConfiguration to be set (inline agent creation mode). "
+                                                   + "They cannot be used with a user-provided agent bean or agentFactory.");
+            }
+            if (endpoint.getConfiguration().getAgent() != null) {
+                throw new IllegalArgumentException(
+                        "Tool-calling endpoint options cannot be combined with a user-provided agent bean. "
+                                                   + "They only work in inline agent creation mode (agentConfiguration without agent or agentFactory).");
+            }
+            if (endpoint.getConfiguration().getAgentFactory() != null) {
+                throw new IllegalArgumentException(
+                        "Tool-calling endpoint options cannot be combined with agentFactory. "
+                                                   + "They only work in inline agent creation mode (agentConfiguration without agent or agentFactory).");
+            }
+        }
+
         if (endpoint.getConfiguration().getAgent() != null) {
             agent = endpoint.getConfiguration().getAgent();
         } else if (endpoint.getConfiguration().getAgentConfiguration() != null) {
             AgentConfiguration agentConfiguration = endpoint.getConfiguration().getAgentConfiguration().duplicate();
+            applyEndpointToolCallingOptions(agentConfiguration, endpoint.getConfiguration());
             resolveExecuteToolsConcurrentlyExecutor(agentConfiguration);
             agent = agentConfiguration.getChatMemoryProvider() != null
                     ? new AgentWithMemory(agentConfiguration)
@@ -150,8 +170,8 @@ public class LangChain4jAgentProducer extends DefaultProducer {
         Object chatModel = resolveChatModel(agent);
         GenAiObservationContext observationContext = GenAiObservationContext.builder()
                 .operationName(GenAiOperationName.GENERATE_CONTENT)
-                .system(GenAiModelResolver.resolveSystem(chatModel))
-                .requestModel(GenAiModelResolver.resolveModelName(chatModel))
+                .system(GenAiModelResolver.resolveSystem(exchange.getContext().getClassResolver(), chatModel))
+                .requestModel(GenAiModelResolver.resolveModelName(exchange.getContext().getClassResolver(), chatModel))
                 .componentScheme("langchain4j-agent")
                 .build();
         GenAiObservation observation = GenAiObservability.start(exchange, observationContext);
@@ -224,6 +244,25 @@ public class LangChain4jAgentProducer extends DefaultProducer {
                 .newThreadPool(this, "LangChain4jAgentToolExecution", profile);
         agentConfiguration.withExecuteToolsConcurrently(managedToolExecutionExecutor);
         LOG.debug("Registered Camel-managed executor for concurrent LangChain4j tool execution");
+    }
+
+    private static boolean hasToolCallingEndpointOptions(LangChain4jAgentConfiguration configuration) {
+        return configuration.getMaxToolCallingRoundTrips() > 0
+                || configuration.getCompensateOnToolErrors() != null
+                || configuration.getExecuteToolsConcurrently() != null;
+    }
+
+    private static void applyEndpointToolCallingOptions(
+            AgentConfiguration agentConfiguration, LangChain4jAgentConfiguration endpointConfiguration) {
+        if (endpointConfiguration.getMaxToolCallingRoundTrips() > 0) {
+            agentConfiguration.withMaxToolCallingRoundTrips(endpointConfiguration.getMaxToolCallingRoundTrips());
+        }
+        if (endpointConfiguration.getCompensateOnToolErrors() != null) {
+            agentConfiguration.withCompensateOnToolErrors(endpointConfiguration.getCompensateOnToolErrors());
+        }
+        if (endpointConfiguration.getExecuteToolsConcurrently() != null) {
+            agentConfiguration.withExecuteToolsConcurrentlyEnabled(endpointConfiguration.getExecuteToolsConcurrently());
+        }
     }
 
     /**

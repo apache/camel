@@ -552,6 +552,231 @@ public interface OpenAIEndpointBuilderFactory {
             return this;
         }
         /**
+         * The background of the generated image. Only supported by the GPT
+         * image models, and a transparent background requires the png or webp
+         * output format.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: producer
+         * 
+         * @param imageBackground the value to set
+         * @return the dsl builder
+         */
+        default OpenAIEndpointBuilder imageBackground(String imageBackground) {
+            doSetProperty("imageBackground", imageBackground);
+            return this;
+        }
+        /**
+         * The number of images to generate, between 1 and 10. dall-e-3 only
+         * supports 1.
+         * 
+         * The option is a: <code>java.lang.Integer</code> type.
+         * 
+         * Group: producer
+         * 
+         * @param imageCount the value to set
+         * @return the dsl builder
+         */
+        default OpenAIEndpointBuilder imageCount(Integer imageCount) {
+            doSetProperty("imageCount", imageCount);
+            return this;
+        }
+        /**
+         * The number of images to generate, between 1 and 10. dall-e-3 only
+         * supports 1.
+         * 
+         * The option will be converted to a <code>java.lang.Integer</code>
+         * type.
+         * 
+         * Group: producer
+         * 
+         * @param imageCount the value to set
+         * @return the dsl builder
+         */
+        default OpenAIEndpointBuilder imageCount(String imageCount) {
+            doSetProperty("imageCount", imageCount);
+            return this;
+        }
+        /**
+         * How closely the edit must match the style and features of the input
+         * image. Only supported by the image-edit operation on gpt-image-1 and
+         * gpt-image-1.5.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: producer
+         * 
+         * @param imageInputFidelity the value to set
+         * @return the dsl builder
+         */
+        default OpenAIEndpointBuilder imageInputFidelity(String imageInputFidelity) {
+            doSetProperty("imageInputFidelity", imageInputFidelity);
+            return this;
+        }
+        /**
+         * The model to use for image generation or editing (e.g., gpt-image-1,
+         * gpt-image-1-mini, gpt-image-1.5, gpt-image-2). Required for the
+         * image-generation and image-edit operations, because the model
+         * determines which of the other image options are accepted. The DALL-E
+         * models are no longer offered by OpenAI, but remain valid values for
+         * OpenAI-compatible providers.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: producer
+         * 
+         * @param imageModel the value to set
+         * @return the dsl builder
+         */
+        default OpenAIEndpointBuilder imageModel(String imageModel) {
+            doSetProperty("imageModel", imageModel);
+            return this;
+        }
+        /**
+         * The content moderation level applied to image generation. Only
+         * supported by the GPT image models.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: producer
+         * 
+         * @param imageModeration the value to set
+         * @return the dsl builder
+         */
+        default OpenAIEndpointBuilder imageModeration(String imageModeration) {
+            doSetProperty("imageModeration", imageModeration);
+            return this;
+        }
+        /**
+         * The compression level from 0 to 100 for the webp and jpeg output
+         * formats. Only supported by the GPT image models.
+         * 
+         * The option is a: <code>java.lang.Integer</code> type.
+         * 
+         * Group: producer
+         * 
+         * @param imageOutputCompression the value to set
+         * @return the dsl builder
+         */
+        default OpenAIEndpointBuilder imageOutputCompression(Integer imageOutputCompression) {
+            doSetProperty("imageOutputCompression", imageOutputCompression);
+            return this;
+        }
+        /**
+         * The compression level from 0 to 100 for the webp and jpeg output
+         * formats. Only supported by the GPT image models.
+         * 
+         * The option will be converted to a <code>java.lang.Integer</code>
+         * type.
+         * 
+         * Group: producer
+         * 
+         * @param imageOutputCompression the value to set
+         * @return the dsl builder
+         */
+        default OpenAIEndpointBuilder imageOutputCompression(String imageOutputCompression) {
+            doSetProperty("imageOutputCompression", imageOutputCompression);
+            return this;
+        }
+        /**
+         * The output format of the generated image. Only supported by the GPT
+         * image models, which default to png.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: producer
+         * 
+         * @param imageOutputFormat the value to set
+         * @return the dsl builder
+         */
+        default OpenAIEndpointBuilder imageOutputFormat(String imageOutputFormat) {
+            doSetProperty("imageOutputFormat", imageOutputFormat);
+            return this;
+        }
+        /**
+         * The prompt describing the image to generate, or the edit to apply.
+         * For image-generation the message body is used when this is not set;
+         * for image-edit the body carries the input image, so the prompt must
+         * come from this option or from the CamelOpenAIImagePrompt header.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: producer
+         * 
+         * @param imagePrompt the value to set
+         * @return the dsl builder
+         */
+        default OpenAIEndpointBuilder imagePrompt(String imagePrompt) {
+            doSetProperty("imagePrompt", imagePrompt);
+            return this;
+        }
+        /**
+         * The quality of the generated image. GPT image models accept auto,
+         * high, medium and low; hd and standard are DALL-E values kept for
+         * OpenAI-compatible providers.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: producer
+         * 
+         * @param imageQuality the value to set
+         * @return the dsl builder
+         */
+        default OpenAIEndpointBuilder imageQuality(String imageQuality) {
+            doSetProperty("imageQuality", imageQuality);
+            return this;
+        }
+        /**
+         * The response format of the generated image. The OpenAI images
+         * endpoint rejects this option: the GPT image models always return
+         * base64, and the DALL-E models that used to accept it are no longer
+         * offered. It is only sent when explicitly set, and is kept for
+         * OpenAI-compatible providers that still implement the older images
+         * API.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: producer
+         * 
+         * @param imageResponseFormat the value to set
+         * @return the dsl builder
+         */
+        default OpenAIEndpointBuilder imageResponseFormat(String imageResponseFormat) {
+            doSetProperty("imageResponseFormat", imageResponseFormat);
+            return this;
+        }
+        /**
+         * The size of the generated image (e.g., 1024x1024, 1536x1024,
+         * 1024x1536, auto). The accepted values depend on the model.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: producer
+         * 
+         * @param imageSize the value to set
+         * @return the dsl builder
+         */
+        default OpenAIEndpointBuilder imageSize(String imageSize) {
+            doSetProperty("imageSize", imageSize);
+            return this;
+        }
+        /**
+         * The style of the generated image. A dall-e-3 option, so only useful
+         * with OpenAI-compatible providers.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: producer
+         * 
+         * @param imageStyle the value to set
+         * @return the dsl builder
+         */
+        default OpenAIEndpointBuilder imageStyle(String imageStyle) {
+            doSetProperty("imageStyle", imageStyle);
+            return this;
+        }
+        /**
          * JSON schema for structured output validation.
          * 
          * This option can also be loaded from an existing file, by prefixing
@@ -1226,7 +1451,8 @@ public interface OpenAIEndpointBuilderFactory {
          * Store the full SDK response in non-streaming mode: chat-completion
          * uses exchange property 'CamelOpenAIResponse'; responses uses
          * 'CamelOpenAIResponsesResponse'; moderation uses
-         * 'CamelOpenAIModerationResponse'.
+         * 'CamelOpenAIModerationResponse'; image-generation and image-edit use
+         * 'CamelOpenAIImageResponse'.
          * 
          * The option is a: <code>boolean</code> type.
          * 
@@ -1244,7 +1470,8 @@ public interface OpenAIEndpointBuilderFactory {
          * Store the full SDK response in non-streaming mode: chat-completion
          * uses exchange property 'CamelOpenAIResponse'; responses uses
          * 'CamelOpenAIResponsesResponse'; moderation uses
-         * 'CamelOpenAIModerationResponse'.
+         * 'CamelOpenAIModerationResponse'; image-generation and image-edit use
+         * 'CamelOpenAIImageResponse'.
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
@@ -1335,6 +1562,22 @@ public interface OpenAIEndpointBuilderFactory {
          */
         default OpenAIEndpointBuilder systemMessage(String systemMessage) {
             doSetProperty("systemMessage", systemMessage);
+            return this;
+        }
+        /**
+         * Comma-separated tags for discovering route-based tools registered via
+         * the ai-tool component. When set, matching tools from the shared
+         * AiToolRegistry are exposed to the model alongside MCP tools.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: producer
+         * 
+         * @param tags the value to set
+         * @return the dsl builder
+         */
+        default OpenAIEndpointBuilder tags(String tags) {
+            doSetProperty("tags", tags);
             return this;
         }
         /**
@@ -1763,10 +2006,12 @@ public interface OpenAIEndpointBuilderFactory {
          * Path parameter: operation (required)
          * The operation to perform: 'chat-completion', 'responses',
          * 'embeddings', 'tool-execution', 'audio-transcription',
-         * 'audio-translation', 'audio-speech', or 'moderation'
-         * There are 8 enums and the value can be one of: chat-completion,
+         * 'audio-translation', 'audio-speech', 'moderation',
+         * 'image-generation', or 'image-edit'
+         * There are 10 enums and the value can be one of: chat-completion,
          * responses, embeddings, tool-execution, audio-transcription,
-         * audio-translation, audio-speech, moderation
+         * audio-translation, audio-speech, moderation, image-generation,
+         * image-edit
          * 
          * @param path operation
          * @return the dsl builder
@@ -1788,10 +2033,12 @@ public interface OpenAIEndpointBuilderFactory {
          * Path parameter: operation (required)
          * The operation to perform: 'chat-completion', 'responses',
          * 'embeddings', 'tool-execution', 'audio-transcription',
-         * 'audio-translation', 'audio-speech', or 'moderation'
-         * There are 8 enums and the value can be one of: chat-completion,
+         * 'audio-translation', 'audio-speech', 'moderation',
+         * 'image-generation', or 'image-edit'
+         * There are 10 enums and the value can be one of: chat-completion,
          * responses, embeddings, tool-execution, audio-transcription,
-         * audio-translation, audio-speech, moderation
+         * audio-translation, audio-speech, moderation, image-generation,
+         * image-edit
          * 
          * @param componentName to use a custom component name for the endpoint
          * instead of the default name
@@ -2190,6 +2437,19 @@ public interface OpenAIEndpointBuilderFactory {
             return "CamelOpenAIModerationResponse";
         }
         /**
+         * The complete OpenAI image generation or edit response object.
+         * 
+         * The option is a: {@code com.openai.models.images.ImagesResponse}
+         * type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code OpenAIImageResponse}.
+         */
+        public String openAIImageResponse() {
+            return "CamelOpenAIImageResponse";
+        }
+        /**
          * The model to use for embeddings.
          * 
          * The option is a: {@code String} type.
@@ -2531,6 +2791,254 @@ public interface OpenAIEndpointBuilderFactory {
          */
         public String openAISpeechInstructions() {
             return "CamelOpenAISpeechInstructions";
+        }
+        /**
+         * The model to use for image generation or editing (e.g., gpt-image-1,
+         * dall-e-3, dall-e-2).
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code OpenAIImageModel}.
+         */
+        public String openAIImageModel() {
+            return "CamelOpenAIImageModel";
+        }
+        /**
+         * The prompt describing the image to generate, or the edit to apply.
+         * Takes precedence over the imagePrompt endpoint option and, for
+         * image-generation, over the message body.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code OpenAIImagePrompt}.
+         */
+        public String openAIImagePrompt() {
+            return "CamelOpenAIImagePrompt";
+        }
+        /**
+         * The size of the generated image (e.g., 1024x1024, 1536x1024, auto).
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code OpenAIImageSize}.
+         */
+        public String openAIImageSize() {
+            return "CamelOpenAIImageSize";
+        }
+        /**
+         * The quality of the generated image (auto, high, medium, low for GPT
+         * image models; hd, standard for dall-e-3; standard for dall-e-2).
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code OpenAIImageQuality}.
+         */
+        public String openAIImageQuality() {
+            return "CamelOpenAIImageQuality";
+        }
+        /**
+         * The response format of the generated image (url or b64_json). Only
+         * supported by dall-e-2 and dall-e-3; GPT image models always return
+         * base64.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code OpenAIImageResponseFormat}.
+         */
+        public String openAIImageResponseFormat() {
+            return "CamelOpenAIImageResponseFormat";
+        }
+        /**
+         * The number of images to generate.
+         * 
+         * The option is a: {@code Integer} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code OpenAIImageCount}.
+         */
+        public String openAIImageCount() {
+            return "CamelOpenAIImageCount";
+        }
+        /**
+         * The background of the generated image (transparent, opaque, auto).
+         * Only supported by GPT image models.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code OpenAIImageBackground}.
+         */
+        public String openAIImageBackground() {
+            return "CamelOpenAIImageBackground";
+        }
+        /**
+         * The output format of the generated image (png, jpeg, webp). Only
+         * supported by GPT image models.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code OpenAIImageOutputFormat}.
+         */
+        public String openAIImageOutputFormat() {
+            return "CamelOpenAIImageOutputFormat";
+        }
+        /**
+         * The compression level (0-100) for the webp or jpeg output formats.
+         * Only supported by GPT image models.
+         * 
+         * The option is a: {@code Integer} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code OpenAIImageOutputCompression}.
+         */
+        public String openAIImageOutputCompression() {
+            return "CamelOpenAIImageOutputCompression";
+        }
+        /**
+         * The style of the generated image (vivid or natural). Only supported
+         * by dall-e-3.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code OpenAIImageStyle}.
+         */
+        public String openAIImageStyle() {
+            return "CamelOpenAIImageStyle";
+        }
+        /**
+         * The content moderation level for image generation (low or auto). Only
+         * supported by GPT image models.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code OpenAIImageModeration}.
+         */
+        public String openAIImageModeration() {
+            return "CamelOpenAIImageModeration";
+        }
+        /**
+         * How closely the edit must match the style and features of the input
+         * image (high or low). Only supported by the image-edit operation on
+         * gpt-image-1 and gpt-image-1.5.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code OpenAIImageInputFidelity}.
+         */
+        public String openAIImageInputFidelity() {
+            return "CamelOpenAIImageInputFidelity";
+        }
+        /**
+         * An optional PNG mask for the image-edit operation, where the fully
+         * transparent areas indicate where the image should be edited.
+         * 
+         * The option is a: {@code byte[], java.io.File, java.nio.file.Path or
+         * java.io.InputStream} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code OpenAIImageMask}.
+         */
+        public String openAIImageMask() {
+            return "CamelOpenAIImageMask";
+        }
+        /**
+         * The number of images returned in the response.
+         * 
+         * The option is a: {@code Integer} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code OpenAIImageResultCount}.
+         */
+        public String openAIImageResultCount() {
+            return "CamelOpenAIImageResultCount";
+        }
+        /**
+         * The prompt as revised by the model, when a single image is returned
+         * (dall-e-3).
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code OpenAIImageRevisedPrompt}.
+         */
+        public String openAIImageRevisedPrompt() {
+            return "CamelOpenAIImageRevisedPrompt";
+        }
+        /**
+         * The prompts as revised by the model, one entry per returned image
+         * (dall-e-3).
+         * 
+         * The option is a: {@code java.util.List<String>} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code OpenAIImageRevisedPrompts}.
+         */
+        public String openAIImageRevisedPrompts() {
+            return "CamelOpenAIImageRevisedPrompts";
+        }
+        /**
+         * The number of input tokens billed for the image request. Only
+         * reported by GPT image models.
+         * 
+         * The option is a: {@code Long} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code OpenAIImageInputTokens}.
+         */
+        public String openAIImageInputTokens() {
+            return "CamelOpenAIImageInputTokens";
+        }
+        /**
+         * The number of output tokens billed for the image request. Only
+         * reported by GPT image models.
+         * 
+         * The option is a: {@code Long} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code OpenAIImageOutputTokens}.
+         */
+        public String openAIImageOutputTokens() {
+            return "CamelOpenAIImageOutputTokens";
+        }
+        /**
+         * The total number of tokens billed for the image request. Only
+         * reported by GPT image models.
+         * 
+         * The option is a: {@code Long} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code OpenAIImageTotalTokens}.
+         */
+        public String openAIImageTotalTokens() {
+            return "CamelOpenAIImageTotalTokens";
         }
     }
     static OpenAIEndpointBuilder endpointBuilder(String componentName, String path) {

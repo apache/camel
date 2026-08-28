@@ -16,6 +16,9 @@
  */
 package org.apache.camel.component.paho.mqtt5;
 
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.atomic.AtomicBoolean;
+
 import org.apache.camel.AsyncCallback;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
@@ -41,6 +44,7 @@ public class PahoMqtt5Consumer extends DefaultConsumer {
     private volatile String clientId;
     private volatile boolean stopClient;
     private volatile MqttConnectionOptions connectionOptions;
+    private final AtomicBoolean restarting = new AtomicBoolean(false);
 
     public PahoMqtt5Consumer(Endpoint endpoint, Processor processor) {
         super(endpoint, processor);
@@ -58,91 +62,172 @@ public class PahoMqtt5Consumer extends DefaultConsumer {
     protected void doStart() throws Exception {
         super.doStart();
 
-        connectionOptions = getEndpoint().createMqttConnectionOptions();
+        stopClient = client == null;
+        try {
+            connectionOptions = getEndpoint().createMqttConnectionOptions();
 
-        if (client == null) {
-            clientId = getEndpoint().getConfiguration().getClientId();
-            if (clientId == null) {
-                clientId = PahoMqtt5Endpoint.generateClientId();
+            if (stopClient) {
+                clientId = getEndpoint().getConfiguration().getClientId();
+                if (clientId == null) {
+                    clientId = PahoMqtt5Endpoint.generateClientId();
+                }
+                client = createClient();
+                LOG.debug("Connecting client: {} to broker: {}", clientId, getEndpoint().getConfiguration().getBrokerUrl());
+                if (getEndpoint().getConfiguration().isManualAcksEnabled()) {
+                    client.setManualAcks(true);
+                }
+                client.connect(connectionOptions);
             }
-            stopClient = true;
-            client = new MqttClient(
-                    getEndpoint().getConfiguration().getBrokerUrl(),
-                    clientId,
-                    PahoMqtt5Endpoint.createMqttClientPersistence(getEndpoint().getConfiguration()));
-            LOG.debug("Connecting client: {} to broker: {}", clientId, getEndpoint().getConfiguration().getBrokerUrl());
-            if (getEndpoint().getConfiguration().isManualAcksEnabled()) {
-                client.setManualAcks(true);
 
-            }
-            client.connect(connectionOptions);
-        }
+            client.setCallback(new MqttCallback() {
 
-        client.setCallback(new MqttCallback() {
-
-            @Override
-            public void connectComplete(boolean reconnect, String serverURI) {
-                if (reconnect) {
-                    try {
-                        client.subscribe(getEndpoint().getTopic(), getEndpoint().getConfiguration().getQos());
-                    } catch (MqttException e) {
-                        LOG.error("MQTT resubscribe failed {}", e.getMessage(), e);
+                @Override
+                public void connectComplete(boolean reconnect, String serverURI) {
+                    if (reconnect) {
+                        try {
+                            client.subscribe(getEndpoint().getTopic(), getEndpoint().getConfiguration().getQos());
+                        } catch (MqttException e) {
+                            if (stopClient) {
+                                LOG.warn("MQTT resubscribe failed on reconnect, restarting route for recovery: {}",
+                                        e.getMessage(), e);
+                                restartRouteAsync();
+                            } else {
+                                LOG.error(
+                                        "MQTT resubscribe failed on reconnect with externally provided client,"
+                                          + " route will not be auto-restarted: {}",
+                                        e.getMessage(), e);
+                            }
+                        }
                     }
                 }
+
+                @Override
+                public void authPacketArrived(int reasonCode, MqttProperties properties) {
+                    LOG.debug("Auth packet arrived {} {}", reasonCode, properties);
+                }
+
+                @Override
+                public void disconnected(MqttDisconnectResponse response) {
+                    LOG.debug("MQTT broker disconnected due {}", response.getReasonString(), response.getException());
+                }
+
+                @Override
+                public void mqttErrorOccurred(MqttException exception) {
+                    LOG.debug("Error occurred {}", exception.getMessage(), exception);
+                }
+
+                @Override
+                public void messageArrived(String topic, MqttMessage message) throws Exception {
+                    LOG.debug("Message arrived on topic: {} -> {}", topic, message);
+                    Exchange exchange = createExchange(message, topic);
+
+                    // use default consumer callback
+                    AsyncCallback cb = defaultConsumerCallback(exchange, true);
+                    getAsyncProcessor().process(exchange, cb);
+                }
+
+                @Override
+                public void deliveryComplete(IMqttToken token) {
+                    LOG.debug("Delivery complete. Token: {}", token);
+                }
+            });
+
+            LOG.debug("Subscribing client: {} to topic: {}", clientId, getEndpoint().getTopic());
+            client.subscribe(getEndpoint().getTopic(), getEndpoint().getConfiguration().getQos());
+        } catch (Exception startException) {
+            MqttClient ownedClient = stopClient ? client : null;
+            if (ownedClient != null) {
+                client = null;
+                stopClient = false;
+                if (ownedClient.isConnected()) {
+                    try {
+                        ownedClient.disconnect();
+                    } catch (Exception disconnectException) {
+                        startException.addSuppressed(disconnectException);
+                    }
+                }
+                closeOwnedClient(ownedClient, startException);
             }
+            throw startException;
+        }
+    }
 
-            @Override
-            public void authPacketArrived(int reasonCode, MqttProperties properties) {
-                LOG.debug("Auth packet arrived {} {}", reasonCode, properties);
-            }
-
-            @Override
-            public void disconnected(MqttDisconnectResponse response) {
-                LOG.debug("MQTT broker disconnected due {}", response.getReasonString(), response.getException());
-            }
-
-            @Override
-            public void mqttErrorOccurred(MqttException exception) {
-                LOG.debug("Error occurred {}", exception.getMessage(), exception);
-            }
-
-            @Override
-            public void messageArrived(String topic, MqttMessage message) throws Exception {
-                LOG.debug("Message arrived on topic: {} -> {}", topic, message);
-                Exchange exchange = createExchange(message, topic);
-
-                // use default consumer callback
-                AsyncCallback cb = defaultConsumerCallback(exchange, true);
-                getAsyncProcessor().process(exchange, cb);
-            }
-
-            @Override
-            public void deliveryComplete(IMqttToken token) {
-                LOG.debug("Delivery complete. Token: {}", token);
+    private void restartRouteAsync() {
+        if (!restarting.compareAndSet(false, true)) {
+            LOG.debug("Route restart already in progress, skipping duplicate restart");
+            return;
+        }
+        String threadName = "PahoMqtt5-RestartRoute-" + getRouteId();
+        ExecutorService executor
+                = getEndpoint().getCamelContext().getExecutorServiceManager().newSingleThreadExecutor(this, threadName);
+        executor.submit(() -> {
+            try {
+                String routeId = getRouteId();
+                LOG.info("Stopping route {} for restart after resubscribe failure", routeId);
+                getEndpoint().getCamelContext().getRouteController().stopRoute(routeId);
+                LOG.info("Restarting route {}", routeId);
+                getEndpoint().getCamelContext().getRouteController().startRoute(routeId);
+            } catch (Exception e) {
+                getExceptionHandler().handleException(
+                        "Failed to restart route after resubscribe failure", e);
+            } finally {
+                restarting.set(false);
+                getEndpoint().getCamelContext().getExecutorServiceManager().shutdownNow(executor);
             }
         });
-
-        LOG.debug("Subscribing client: {} to topic: {}", clientId, getEndpoint().getTopic());
-        client.subscribe(getEndpoint().getTopic(), getEndpoint().getConfiguration().getQos());
     }
 
     @Override
     protected void doStop() throws Exception {
-        super.doStop();
+        MqttClient ownedClient = stopClient ? client : null;
+        Exception stopException = null;
+        try {
+            super.doStop();
 
-        if (stopClient && client != null && client.isConnected()) {
-            String topic = getEndpoint().getTopic();
-            // only unsubscribe if we are not durable
-            if (getEndpoint().getConfiguration().isCleanStart()) {
-                LOG.debug("Unsubscribing client: {} from topic: {}", clientId, topic);
-                client.unsubscribe(topic);
-            } else {
-                LOG.debug("Client: {} is durable so will not unsubscribe from topic: {}", clientId, topic);
+            if (ownedClient != null && ownedClient.isConnected()) {
+                String topic = getEndpoint().getTopic();
+                // only unsubscribe if we are not durable
+                if (getEndpoint().getConfiguration().isCleanStart()) {
+                    LOG.debug("Unsubscribing client: {} from topic: {}", clientId, topic);
+                    ownedClient.unsubscribe(topic);
+                } else {
+                    LOG.debug("Client: {} is durable so will not unsubscribe from topic: {}", clientId, topic);
+                }
+                LOG.debug("Disconnecting client: {} from broker: {}", clientId,
+                        getEndpoint().getConfiguration().getBrokerUrl());
+                ownedClient.disconnect();
             }
-            LOG.debug("Disconnecting client: {} from broker: {}", clientId, getEndpoint().getConfiguration().getBrokerUrl());
-            client.disconnect();
+        } catch (Exception e) {
+            stopException = e;
+        } finally {
+            client = null;
+            stopClient = false;
+            if (ownedClient != null) {
+                stopException = closeOwnedClient(ownedClient, stopException);
+            }
         }
-        client = null;
+        if (stopException != null) {
+            throw stopException;
+        }
+    }
+
+    MqttClient createClient() throws MqttException {
+        return new MqttClient(
+                getEndpoint().getConfiguration().getBrokerUrl(),
+                clientId,
+                PahoMqtt5Endpoint.createMqttClientPersistence(getEndpoint().getConfiguration()));
+    }
+
+    private Exception closeOwnedClient(MqttClient ownedClient, Exception primaryException) {
+        try {
+            ownedClient.close(true);
+        } catch (Exception closeException) {
+            if (primaryException == null) {
+                return closeException;
+            }
+            primaryException.addSuppressed(closeException);
+        }
+        return primaryException;
     }
 
     @Override

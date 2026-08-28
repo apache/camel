@@ -1,0 +1,23 @@
+{
+  "model": {
+    "kind": "model",
+    "name": "toon",
+    "title": "TOON",
+    "description": "Marshal JSON-compatible Java values to TOON (Token-Oriented Object Notation) and unmarshal TOON back to Java objects.",
+    "deprecated": false,
+    "firstVersion": "4.23.0",
+    "label": "dataformat,transformation,json",
+    "javaType": "org.apache.camel.model.dataformat.ToonDataFormat",
+    "abstract": false,
+    "input": false,
+    "output": false
+  },
+  "properties": {
+    "id": { "index": 0, "kind": "attribute", "displayName": "Id", "group": "common", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "autowired": false, "secret": false, "description": "The id of this node" },
+    "indent": { "index": 1, "kind": "attribute", "displayName": "Indent", "group": "common", "required": false, "type": "integer", "javaType": "java.lang.Integer", "deprecated": false, "autowired": false, "secret": false, "defaultValue": 2, "description": "Number of spaces per indentation level." },
+    "delimiter": { "index": 2, "kind": "attribute", "displayName": "Delimiter", "group": "common", "required": false, "type": "enum", "javaType": "java.lang.String", "enum": [ "COMMA", "TAB", "PIPE" ], "deprecated": false, "autowired": false, "secret": false, "defaultValue": "COMMA", "description": "Delimiter used for tabular array rows and inline primitive arrays." },
+    "lengthMarker": { "index": 3, "kind": "attribute", "displayName": "Length Marker", "group": "common", "required": false, "type": "boolean", "javaType": "java.lang.Boolean", "deprecated": false, "autowired": false, "secret": false, "defaultValue": false, "description": "Whether to prefix array lengths with a hash marker so arrays render as hash-prefixed lengths instead of plain lengths." },
+    "strict": { "index": 4, "kind": "attribute", "displayName": "Strict", "group": "common", "required": false, "type": "boolean", "javaType": "java.lang.Boolean", "deprecated": false, "autowired": false, "secret": false, "defaultValue": true, "description": "Whether to enable strict validation when unmarshalling TOON. When false, JToon uses best-effort parsing." },
+    "contentTypeHeader": { "index": 5, "kind": "attribute", "displayName": "Content Type Header", "group": "common", "required": false, "type": "boolean", "javaType": "java.lang.Boolean", "deprecated": false, "autowired": false, "secret": false, "defaultValue": true, "description": "Whether the data format should set the Content-Type header to text\/toon when marshalling." }
+  }
+}

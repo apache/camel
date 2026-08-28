@@ -17,6 +17,7 @@
 package org.apache.camel.component.pqc.lifecycle;
 
 import java.io.BufferedInputStream;
+import java.io.File;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.nio.charset.StandardCharsets;
@@ -24,6 +25,8 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardOpenOption;
+import java.nio.file.attribute.PosixFileAttributeView;
+import java.nio.file.attribute.PosixFilePermissions;
 import java.security.KeyFactory;
 import java.security.KeyPair;
 import java.security.PrivateKey;
@@ -68,6 +71,7 @@ public class FileBasedKeyLifecycleManager implements KeyLifecycleManager {
         this.objectMapper = new ObjectMapper();
         this.objectMapper.enable(SerializationFeature.INDENT_OUTPUT);
         Files.createDirectories(keyDirectory);
+        restrictToOwner(keyDirectory);
         LOG.info("Initialized FileBasedKeyLifecycleManager with directory: {}", keyDirectory);
         loadExistingKeys();
     }
@@ -150,9 +154,7 @@ public class FileBasedKeyLifecycleManager implements KeyLifecycleManager {
         byte[] privateKeyBytes = keyPair.getPrivate().getEncoded();
         String privateKeyBase64 = Base64.getEncoder().encodeToString(privateKeyBytes);
         KeyFileData privateData = new KeyFileData(privateKeyBase64, "PKCS8", metadata.getAlgorithm());
-        Files.writeString(privateKeyFile, objectMapper.writeValueAsString(privateData),
-                StandardCharsets.UTF_8,
-                StandardOpenOption.CREATE, StandardOpenOption.TRUNCATE_EXISTING);
+        writePrivateKeyFile(privateKeyFile, objectMapper.writeValueAsString(privateData));
 
         // Store public key in X.509 format
         Path publicKeyFile = getPublicKeyFile(keyId);
@@ -395,6 +397,47 @@ public class FileBasedKeyLifecycleManager implements KeyLifecycleManager {
                     });
         } catch (IOException e) {
             LOG.warn("Failed to list existing keys", e);
+        }
+    }
+
+    /**
+     * Writes the private key, restricting the file to its owner first so the content is never briefly readable by
+     * everyone. A file left behind by an earlier version is tightened here too, since it is opened for truncation
+     * rather than recreated and would otherwise keep whatever permissions the umask gave it.
+     */
+    private void writePrivateKeyFile(Path file, String content) throws IOException {
+        if (!Files.exists(file)) {
+            Files.createFile(file);
+        }
+        restrictToOwner(file);
+        Files.writeString(file, content, StandardCharsets.UTF_8,
+                StandardOpenOption.CREATE, StandardOpenOption.TRUNCATE_EXISTING);
+    }
+
+    /**
+     * Restricts a path to its owner. Private keys are stored unencrypted, so the common 022 umask - which leaves them
+     * world readable - is not an acceptable default for them.
+     */
+    private static void restrictToOwner(Path path) {
+        boolean directory = Files.isDirectory(path);
+        try {
+            if (Files.getFileAttributeView(path, PosixFileAttributeView.class) != null) {
+                Files.setPosixFilePermissions(path,
+                        PosixFilePermissions.fromString(directory ? "rwx------" : "rw-------"));
+                return;
+            }
+            // Not a POSIX file system: fall back to the java.io.File flags, which do the same job less precisely
+            File file = path.toFile();
+            file.setReadable(false, false);
+            file.setWritable(false, false);
+            file.setReadable(true, true);
+            file.setWritable(true, true);
+            if (directory) {
+                file.setExecutable(false, false);
+                file.setExecutable(true, true);
+            }
+        } catch (IOException | UnsupportedOperationException e) {
+            LOG.warn("Cannot restrict permissions on {}; it may be readable by other users on this host", path, e);
         }
     }
 
