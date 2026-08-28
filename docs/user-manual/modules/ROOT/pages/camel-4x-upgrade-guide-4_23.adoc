@@ -834,3 +834,30 @@ mapped exactly as before.
 Routes that deliberately read a `Camel`-prefixed header produced by the Tika parse must set it
 themselves after the `tika:parse` step, for example with a `setHeader` reading the corresponding
 non-prefixed metadata name.
+
+=== camel-xpath
+
+The XPath language now parses the message with the same hardened XML parser for every `documentType`.
+
+With the default `documentType` of `org.w3c.dom.Document` the payload was already converted to a DOM
+through Camel's `DocumentBuilderFactory`, which disallows a `DOCTYPE` declaration and does not resolve
+external entities. When `documentType` was set to `org.xml.sax.InputSource` (or `javax.xml.transform.sax.SAXSource`)
+the payload was instead handed straight to `javax.xml.xpath.XPathExpression`, which builds a
+`DocumentBuilder` of its own using the JDK defaults — so a `DOCTYPE` was accepted and external entities
+were resolved on that path only.
+
+Those document types now go through the same conversion as `Document`. A message carrying a `DOCTYPE`
+declaration that previously evaluated is now rejected with a `SAXParseException`, matching the behaviour
+the default `documentType` has always had.
+
+A deployment that genuinely needs to parse documents with a `DOCTYPE` can relax the parser as before,
+through the `org.apache.camel.xmlconverter.documentBuilderFactory.feature:` system properties, for
+example:
+
+[source,text]
+----
+-Dorg.apache.camel.xmlconverter.documentBuilderFactory.feature:http://apache.org/xml/features/disallow-doctype-decl=false
+----
+
+This is not a functional change for messages without a `DOCTYPE`, and it does not add a document parse:
+`XPathExpression.evaluate(InputSource)` already built a full DOM internally.
