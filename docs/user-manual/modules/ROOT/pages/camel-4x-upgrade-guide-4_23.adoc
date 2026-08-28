@@ -564,6 +564,27 @@ is truncated rather than recreated and would otherwise keep its original permiss
 Deployments where another account legitimately reads these files — a sidecar or a backup agent running as
 a different user — need to run as the owner, or use a group-aware key store instead.
 
+=== camel-http
+
+Credentials are no longer sent to an authority the endpoint was not configured with. Two paths reached that
+outcome once `followRedirects=true`, since a redirect target is chosen by the remote server rather than
+by the route:
+
+* The OAuth2 interceptor is registered with `addRequestInterceptorFirst`, and HttpClient runs
+protocol-level request interceptors inside `ProtocolExec`, which sits below `RedirectExec` — so it ran
+again for every redirect hop and re-attached `Authorization: Bearer <token>` to whatever authority the
+`Location` header named. The token is now attached only for the endpoint's own scheme, host and effective port.
+* `authHost` is optional and unset in the common basic-auth configuration, which made the credentials
+scope `new AuthScope(null, -1)` — any host, any port, any scheme — so HttpClient offered the credentials
+to whichever host issued a `401` challenge. The scope now falls back to the endpoint's host when
+`authHost` is not set and is restricted to the endpoint's scheme and effective port.
+
+Routes that relied on credentials following a redirect to a different authority must set `authHost`
+explicitly, which continues to take precedence and preserves the previous any-port behaviour.
+
+`HttpComponent.createHttpClientConfigurer(Map, boolean)` remains the protected customization point and is still invoked
+when an endpoint is created, so existing subclasses continue to behave as before.
+
 === camel-jetty
 
 `enableCORS=true` added `new CrossOriginFilter()` with no init parameters, so Jetty's own defaults
