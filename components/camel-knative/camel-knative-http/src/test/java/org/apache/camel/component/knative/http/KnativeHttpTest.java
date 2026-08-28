@@ -2257,6 +2257,9 @@ public class KnativeHttpTest {
         context.getPropertiesComponent().addInitialProperty("camel.knative.client.ssl.verify.hostname", "false");
         context.getPropertiesComponent().addInitialProperty("camel.knative.client.ssl.key.path", "keystore/client.pem");
         context.getPropertiesComponent().addInitialProperty("camel.knative.client.ssl.key.cert.path", "keystore/client.crt");
+        // The test server presents a self-signed certificate. Enabling SSL no longer implies trusting every
+        // certificate, so the trust decision has to be made here.
+        context.getPropertiesComponent().addInitialProperty("camel.knative.client.ssl.trust.all", "true");
 
         KnativeComponent component = configureKnativeComponent(
                 context,
