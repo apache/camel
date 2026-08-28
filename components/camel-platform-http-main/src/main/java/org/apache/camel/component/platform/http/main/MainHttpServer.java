@@ -237,20 +237,19 @@ public class MainHttpServer extends ServiceSupport implements CamelContextAware,
      * it. Vert.x has already normalised the path, so this is belt-and-braces against a name that still escapes once the
      * file system has had its say (a symlink, or a platform-specific separator).
      */
-    private static File containedIn(String dir, String path) {
-        File root = new File(dir);
-        File candidate = new File(root, path);
+    static File containedIn(String dir, String path) {
         try {
-            String rootPath = root.getCanonicalPath();
-            String candidatePath = candidate.getCanonicalPath();
-            if (!candidatePath.equals(rootPath) && !candidatePath.startsWith(rootPath + File.separator)) {
+            File root = new File(dir).getCanonicalFile();
+            File candidate = new File(root, path).getCanonicalFile();
+            if (!candidate.toPath().startsWith(root.toPath())) {
                 LOG.debug("Refusing to serve {}: resolves outside staticSourceDir {}", path, dir);
                 return null;
             }
+            return candidate;
         } catch (IOException e) {
+            LOG.debug("Unable to resolve {} inside staticSourceDir {}", path, dir, e);
             return null;
         }
-        return candidate;
     }
 
     protected void setupStatic() {
@@ -296,7 +295,7 @@ public class MainHttpServer extends ServiceSupport implements CamelContextAware,
                     }
                 }
                 if (is != null) {
-                    String mime = MimeMapping.getMimeTypeForFilename(f.getName());
+                    String mime = MimeMapping.getMimeTypeForFilename(u);
                     if (mime != null) {
                         ctx.response().putHeader("content-type", mime);
                     }

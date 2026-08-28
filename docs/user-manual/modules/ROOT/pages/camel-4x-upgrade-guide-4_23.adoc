@@ -211,6 +211,16 @@ Applications using either removed option must migrate their Tika configuration; 
 https://tika.apache.org/docs/4.0.x/migration-to-4x/migrating-to-4x.html[Tika 4 migration guide] for
 the configuration and metadata-key changes.
 
+=== camel-main / camel-platform-http-main
+
+When `camel.server.staticSourceDir` is configured, static files from the file system are now resolved relative to that
+directory instead of first checking the process working directory. The configured directory is authoritative, and a
+path that resolves outside it is rejected. Classpath lookup remains unchanged.
+
+Applications that relied on a file in the process working directory taking precedence over the configured
+`staticSourceDir` should move that file into the configured directory. Applications without a configured
+`staticSourceDir` are unaffected.
+
 === camel-a2a - webhook URL address classification
 
 Push notification webhook URLs are now classified by the address the host resolves to, using the
