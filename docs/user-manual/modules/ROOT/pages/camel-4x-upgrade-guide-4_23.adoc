@@ -515,6 +515,20 @@ camel.routeController.enabled = true
 camel.routeController.backOffDelay = 2000
 camel.routeController.backOffMaxDelay = 60000
 ----
+
+=== camel-http
+
+The OAuth2 client-credentials token cache was keyed on the request URI, the client id and the client
+secret only. `oauth2Scope`, `oauth2TokenEndpoint` and `oauth2ResourceIndicator` all shape the token that
+gets minted, but none of them was part of the key, and the cache is a static map shared by every endpoint
+and every `CamelContext` in the JVM. A route configured with a narrow scope could therefore be handed a
+broad-scope token that another route had cached first for the same target and credentials — defeating the
+scoping the operator configured, and making the audit trail misleading.
+
+All three are now part of the key. Deployments that were unknowingly sharing a token across differing
+scopes, token endpoints or resource indicators will now request one token per distinct combination, so
+the token endpoint sees more requests than before.
+
 === camel-pqc
 
 `FileBasedKeyLifecycleManager` stores private keys unencrypted, as Base64 PKCS#8 inside a JSON file, and
@@ -529,6 +543,7 @@ is truncated rather than recreated and would otherwise keep its original permiss
 
 Deployments where another account legitimately reads these files — a sidecar or a backup agent running as
 a different user — need to run as the owner, or use a group-aware key store instead.
+
 === camel-grpc
 
 The gRPC consumer no longer returns the route exception's message to the client.
