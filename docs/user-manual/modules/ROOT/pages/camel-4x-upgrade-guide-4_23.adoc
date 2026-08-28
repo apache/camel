@@ -166,7 +166,10 @@ unchanged and still does not permit any of the ranges above.
 
 LangChain4j and OpenAI producers now emit GenAI observability data (OpenTelemetry span attributes and
 Micrometer metrics) when `camel-opentelemetry2` and/or `camel-micrometer` is on the classpath.
-Disable globally with `camel.ai.observability.enabled=false` (default is enabled).
+Disable globally with `camel.aiObservability.enabled=false` (default is enabled). Camel Main also
+exposes the same setting via `main.configure().aiObservability().withEnabled(false)`.
+
+Spring AI chat (`spring-ai-chat`) producers emit the same GenAI spans and metrics in Phase 3.
 
 OpenAI streaming chat sets `stream_options.include_usage=true` only when GenAI observability is enabled,
 adding a final chunk with token usage for span/metric recording.
@@ -491,6 +494,7 @@ is truncated rather than recreated and would otherwise keep its original permiss
 
 Deployments where another account legitimately reads these files — a sidecar or a backup agent running as
 a different user — need to run as the owner, or use a group-aware key store instead.
+
 === camel-crypto-pgp
 
 The `pgp` data format verifies a message's modification detection code only when the message is an
@@ -517,3 +521,19 @@ set `requireIntegrityProtection=false` explicitly.
 Note that `signatureVerificationOption` still defaults to `optional`, which accepts a message carrying no
 signature at all. Set it to `required` where the sender is expected to sign; the two options together are
 what give a decrypted message authenticity as well as confidentiality.
+
+=== camel-keycloak
+
+When `validateIssuer` is enabled and the token is checked by introspection, an introspection response
+carrying no `iss` claim used to log a warning and pass. It is now rejected with
+`Token issuer missing: expected '<issuer>' but the introspection result carries no issuer`.
+
+Issuer validation is opt-in, so an operator who enabled it is asking for tokens from other issuers to be
+refused, and a response with no issuer is not evidence that the token came from the expected one. RFC 7662
+makes `iss` optional in an introspection response, so this is reachable wherever the introspection
+endpoint is a broker, a gateway, or a minimal implementation rather than the realm that issued the token.
+Audience validation already behaved this way; the two are now consistent.
+
+Deployments whose introspection endpoint omits `iss` must either have it include the claim, or turn
+`validateIssuer` off. The locally verified JWT path is unaffected — it uses Keycloak's own
+`TokenVerifier.RealmUrlCheck`.

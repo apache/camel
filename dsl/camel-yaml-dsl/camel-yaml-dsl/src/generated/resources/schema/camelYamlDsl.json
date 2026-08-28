@@ -307,6 +307,7 @@
       },
       "org.apache.camel.dsl.yaml.deserializers.OutputAwareFromDefinition" : {
         "type" : "object",
+        "additionalProperties" : false,
         "properties" : {
           "description" : {
             "type" : "string"
@@ -1158,7 +1159,7 @@
         "additionalProperties" : false,
         "anyOf" : [ {
           "oneOf" : [ {
-            "$ref" : "#/items/definitions/org.apache.camel.model.language.ExpressionDefinition"
+            "$ref" : "#/items/definitions/org.apache.camel.model.language.ExpressionDefinition$Inline"
           }, {
             "not" : {
               "anyOf" : [ {
@@ -1313,7 +1314,7 @@
         "additionalProperties" : false,
         "anyOf" : [ {
           "oneOf" : [ {
-            "$ref" : "#/items/definitions/org.apache.camel.model.language.ExpressionDefinition"
+            "$ref" : "#/items/definitions/org.apache.camel.model.language.ExpressionDefinition$Inline"
           }, {
             "not" : {
               "anyOf" : [ {
@@ -1473,7 +1474,7 @@
         "additionalProperties" : false,
         "anyOf" : [ {
           "oneOf" : [ {
-            "$ref" : "#/items/definitions/org.apache.camel.model.language.ExpressionDefinition"
+            "$ref" : "#/items/definitions/org.apache.camel.model.language.ExpressionDefinition$Inline"
           }, {
             "not" : {
               "anyOf" : [ {
@@ -2171,7 +2172,7 @@
         "additionalProperties" : false,
         "anyOf" : [ {
           "oneOf" : [ {
-            "$ref" : "#/items/definitions/org.apache.camel.model.language.ExpressionDefinition"
+            "$ref" : "#/items/definitions/org.apache.camel.model.language.ExpressionDefinition$Inline"
           }, {
             "not" : {
               "anyOf" : [ {
@@ -2421,7 +2422,7 @@
         "additionalProperties" : false,
         "anyOf" : [ {
           "oneOf" : [ {
-            "$ref" : "#/items/definitions/org.apache.camel.model.language.ExpressionDefinition"
+            "$ref" : "#/items/definitions/org.apache.camel.model.language.ExpressionDefinition$Inline"
           }, {
             "not" : {
               "anyOf" : [ {
@@ -2994,7 +2995,7 @@
         "additionalProperties" : false,
         "anyOf" : [ {
           "oneOf" : [ {
-            "$ref" : "#/items/definitions/org.apache.camel.model.language.ExpressionDefinition"
+            "$ref" : "#/items/definitions/org.apache.camel.model.language.ExpressionDefinition$Inline"
           }, {
             "not" : {
               "anyOf" : [ {
@@ -3167,110 +3168,6 @@
               "asn1" : {
                 "$ref" : "#/items/definitions/org.apache.camel.model.dataformat.ASN1DataFormat"
               }
-            }
-          }, {
-            "not" : {
-              "anyOf" : [ {
-                "required" : [ "asn1" ]
-              }, {
-                "required" : [ "avro" ]
-              }, {
-                "required" : [ "barcode" ]
-              }, {
-                "required" : [ "base64" ]
-              }, {
-                "required" : [ "beanio" ]
-              }, {
-                "required" : [ "bindy" ]
-              }, {
-                "required" : [ "cbor" ]
-              }, {
-                "required" : [ "crypto" ]
-              }, {
-                "required" : [ "csv" ]
-              }, {
-                "required" : [ "custom" ]
-              }, {
-                "required" : [ "dfdl" ]
-              }, {
-                "required" : [ "fhirJson" ]
-              }, {
-                "required" : [ "fhirXml" ]
-              }, {
-                "required" : [ "flatpack" ]
-              }, {
-                "required" : [ "fory" ]
-              }, {
-                "required" : [ "grok" ]
-              }, {
-                "required" : [ "groovyJson" ]
-              }, {
-                "required" : [ "groovyXml" ]
-              }, {
-                "required" : [ "gzipDeflater" ]
-              }, {
-                "required" : [ "hl7" ]
-              }, {
-                "required" : [ "ical" ]
-              }, {
-                "required" : [ "iso8583" ]
-              }, {
-                "required" : [ "jacksonXml" ]
-              }, {
-                "required" : [ "jaxb" ]
-              }, {
-                "required" : [ "json" ]
-              }, {
-                "required" : [ "jsonApi" ]
-              }, {
-                "required" : [ "lzf" ]
-              }, {
-                "required" : [ "mimeMultipart" ]
-              }, {
-                "required" : [ "ocsf" ]
-              }, {
-                "required" : [ "parquetAvro" ]
-              }, {
-                "required" : [ "pgp" ]
-              }, {
-                "required" : [ "pqc" ]
-              }, {
-                "required" : [ "protobuf" ]
-              }, {
-                "required" : [ "rss" ]
-              }, {
-                "required" : [ "smooks" ]
-              }, {
-                "required" : [ "soap" ]
-              }, {
-                "required" : [ "swiftMt" ]
-              }, {
-                "required" : [ "swiftMx" ]
-              }, {
-                "required" : [ "syslog" ]
-              }, {
-                "required" : [ "tarFile" ]
-              }, {
-                "required" : [ "thrift" ]
-              }, {
-                "required" : [ "toon" ]
-              }, {
-                "required" : [ "ubl" ]
-              }, {
-                "required" : [ "univocityCsv" ]
-              }, {
-                "required" : [ "univocityFixed" ]
-              }, {
-                "required" : [ "univocityTsv" ]
-              }, {
-                "required" : [ "xmlSecurity" ]
-              }, {
-                "required" : [ "yaml" ]
-              }, {
-                "required" : [ "zipDeflater" ]
-              }, {
-                "required" : [ "zipFile" ]
-              } ]
             }
           }, {
             "type" : "object",
@@ -4068,7 +3965,7 @@
         "additionalProperties" : false,
         "anyOf" : [ {
           "oneOf" : [ {
-            "$ref" : "#/items/definitions/org.apache.camel.model.language.ExpressionDefinition"
+            "$ref" : "#/items/definitions/org.apache.camel.model.language.ExpressionDefinition$Inline"
           }, {
             "not" : {
               "anyOf" : [ {
@@ -4532,7 +4429,7 @@
         "additionalProperties" : false,
         "anyOf" : [ {
           "oneOf" : [ {
-            "$ref" : "#/items/definitions/org.apache.camel.model.language.ExpressionDefinition"
+            "$ref" : "#/items/definitions/org.apache.camel.model.language.ExpressionDefinition$Inline"
           }, {
             "not" : {
               "anyOf" : [ {
@@ -4784,7 +4681,7 @@
         "additionalProperties" : false,
         "anyOf" : [ {
           "oneOf" : [ {
-            "$ref" : "#/items/definitions/org.apache.camel.model.language.ExpressionDefinition"
+            "$ref" : "#/items/definitions/org.apache.camel.model.language.ExpressionDefinition$Inline"
           }, {
             "not" : {
               "anyOf" : [ {
@@ -4905,7 +4802,7 @@
         "additionalProperties" : false,
         "anyOf" : [ {
           "oneOf" : [ {
-            "$ref" : "#/items/definitions/org.apache.camel.model.language.ExpressionDefinition"
+            "$ref" : "#/items/definitions/org.apache.camel.model.language.ExpressionDefinition$Inline"
           }, {
             "not" : {
               "anyOf" : [ {
@@ -5495,7 +5392,7 @@
         "additionalProperties" : false,
         "anyOf" : [ {
           "oneOf" : [ {
-            "$ref" : "#/items/definitions/org.apache.camel.model.language.ExpressionDefinition"
+            "$ref" : "#/items/definitions/org.apache.camel.model.language.ExpressionDefinition$Inline"
           }, {
             "not" : {
               "anyOf" : [ {
@@ -6242,7 +6139,7 @@
           "additionalProperties" : false,
           "anyOf" : [ {
             "oneOf" : [ {
-              "$ref" : "#/items/definitions/org.apache.camel.model.language.ExpressionDefinition"
+              "$ref" : "#/items/definitions/org.apache.camel.model.language.ExpressionDefinition$Inline"
             }, {
               "not" : {
                 "anyOf" : [ {
@@ -6524,7 +6421,7 @@
         "additionalProperties" : false,
         "anyOf" : [ {
           "oneOf" : [ {
-            "$ref" : "#/items/definitions/org.apache.camel.model.language.ExpressionDefinition"
+            "$ref" : "#/items/definitions/org.apache.camel.model.language.ExpressionDefinition$Inline"
           }, {
             "not" : {
               "anyOf" : [ {
@@ -6662,7 +6559,7 @@
         "additionalProperties" : false,
         "anyOf" : [ {
           "oneOf" : [ {
-            "$ref" : "#/items/definitions/org.apache.camel.model.language.ExpressionDefinition"
+            "$ref" : "#/items/definitions/org.apache.camel.model.language.ExpressionDefinition$Inline"
           }, {
             "not" : {
               "anyOf" : [ {
@@ -6840,7 +6737,7 @@
         "additionalProperties" : false,
         "anyOf" : [ {
           "oneOf" : [ {
-            "$ref" : "#/items/definitions/org.apache.camel.model.language.ExpressionDefinition"
+            "$ref" : "#/items/definitions/org.apache.camel.model.language.ExpressionDefinition$Inline"
           }, {
             "not" : {
               "anyOf" : [ {
@@ -7021,7 +6918,7 @@
         "additionalProperties" : false,
         "anyOf" : [ {
           "oneOf" : [ {
-            "$ref" : "#/items/definitions/org.apache.camel.model.language.ExpressionDefinition"
+            "$ref" : "#/items/definitions/org.apache.camel.model.language.ExpressionDefinition$Inline"
           }, {
             "not" : {
               "anyOf" : [ {
@@ -7165,7 +7062,7 @@
         "additionalProperties" : false,
         "anyOf" : [ {
           "oneOf" : [ {
-            "$ref" : "#/items/definitions/org.apache.camel.model.language.ExpressionDefinition"
+            "$ref" : "#/items/definitions/org.apache.camel.model.language.ExpressionDefinition$Inline"
           }, {
             "not" : {
               "anyOf" : [ {
@@ -7346,7 +7243,7 @@
         "additionalProperties" : false,
         "anyOf" : [ {
           "oneOf" : [ {
-            "$ref" : "#/items/definitions/org.apache.camel.model.language.ExpressionDefinition"
+            "$ref" : "#/items/definitions/org.apache.camel.model.language.ExpressionDefinition$Inline"
           }, {
             "not" : {
               "anyOf" : [ {
@@ -7489,7 +7386,7 @@
         "additionalProperties" : false,
         "anyOf" : [ {
           "oneOf" : [ {
-            "$ref" : "#/items/definitions/org.apache.camel.model.language.ExpressionDefinition"
+            "$ref" : "#/items/definitions/org.apache.camel.model.language.ExpressionDefinition$Inline"
           }, {
             "not" : {
               "anyOf" : [ {
@@ -8003,7 +7900,7 @@
         "additionalProperties" : false,
         "anyOf" : [ {
           "oneOf" : [ {
-            "$ref" : "#/items/definitions/org.apache.camel.model.language.ExpressionDefinition"
+            "$ref" : "#/items/definitions/org.apache.camel.model.language.ExpressionDefinition$Inline"
           }, {
             "not" : {
               "anyOf" : [ {
@@ -8550,7 +8447,7 @@
         "additionalProperties" : false,
         "anyOf" : [ {
           "oneOf" : [ {
-            "$ref" : "#/items/definitions/org.apache.camel.model.language.ExpressionDefinition"
+            "$ref" : "#/items/definitions/org.apache.camel.model.language.ExpressionDefinition$Inline"
           }, {
             "not" : {
               "anyOf" : [ {
@@ -9234,7 +9131,7 @@
         "additionalProperties" : false,
         "anyOf" : [ {
           "oneOf" : [ {
-            "$ref" : "#/items/definitions/org.apache.camel.model.language.ExpressionDefinition"
+            "$ref" : "#/items/definitions/org.apache.camel.model.language.ExpressionDefinition$Inline"
           }, {
             "not" : {
               "anyOf" : [ {
@@ -9394,7 +9291,7 @@
         "additionalProperties" : false,
         "anyOf" : [ {
           "oneOf" : [ {
-            "$ref" : "#/items/definitions/org.apache.camel.model.language.ExpressionDefinition"
+            "$ref" : "#/items/definitions/org.apache.camel.model.language.ExpressionDefinition$Inline"
           }, {
             "not" : {
               "anyOf" : [ {
@@ -13408,6 +13305,7 @@
       },
       "org.apache.camel.model.language.ExpressionDefinition" : {
         "type" : "object",
+        "additionalProperties" : false,
         "anyOf" : [ {
           "oneOf" : [ {
             "type" : "object",
@@ -17750,6 +17648,305 @@
           "predicateValidator" : {
             "$ref" : "#/items/definitions/org.apache.camel.model.validator.PredicateValidatorDefinition"
           }
+        }
+      },
+      "org.apache.camel.dsl.yaml.deserializers.OutputAwareFromDefinition$Inline" : {
+        "type" : "object",
+        "properties" : {
+          "description" : {
+            "type" : "string"
+          },
+          "id" : {
+            "type" : "string"
+          },
+          "note" : {
+            "type" : "string"
+          },
+          "parameters" : {
+            "type" : "object"
+          },
+          "steps" : {
+            "type" : "array",
+            "items" : {
+              "$ref" : "#/items/definitions/org.apache.camel.model.ProcessorDefinition"
+            }
+          },
+          "uri" : {
+            "type" : "string"
+          },
+          "variableReceive" : {
+            "type" : "string"
+          }
+        },
+        "required" : [ "steps", "uri" ]
+      },
+      "org.apache.camel.model.language.ExpressionDefinition$Inline" : {
+        "type" : "object",
+        "anyOf" : [ {
+          "oneOf" : [ {
+            "type" : "object",
+            "required" : [ "constant" ],
+            "properties" : {
+              "constant" : {
+                "$ref" : "#/items/definitions/org.apache.camel.model.language.ConstantExpression"
+              }
+            }
+          }, {
+            "type" : "object",
+            "required" : [ "csimple" ],
+            "properties" : {
+              "csimple" : {
+                "$ref" : "#/items/definitions/org.apache.camel.model.language.CSimpleExpression"
+              }
+            }
+          }, {
+            "type" : "object",
+            "required" : [ "datasonnet" ],
+            "properties" : {
+              "datasonnet" : {
+                "$ref" : "#/items/definitions/org.apache.camel.model.language.DatasonnetExpression"
+              }
+            }
+          }, {
+            "type" : "object",
+            "required" : [ "exchangeProperty" ],
+            "properties" : {
+              "exchangeProperty" : {
+                "$ref" : "#/items/definitions/org.apache.camel.model.language.ExchangePropertyExpression"
+              }
+            }
+          }, {
+            "type" : "object",
+            "required" : [ "groovy" ],
+            "properties" : {
+              "groovy" : {
+                "$ref" : "#/items/definitions/org.apache.camel.model.language.GroovyExpression"
+              }
+            }
+          }, {
+            "type" : "object",
+            "required" : [ "header" ],
+            "properties" : {
+              "header" : {
+                "$ref" : "#/items/definitions/org.apache.camel.model.language.HeaderExpression"
+              }
+            }
+          }, {
+            "type" : "object",
+            "required" : [ "hl7terser" ],
+            "properties" : {
+              "hl7terser" : {
+                "$ref" : "#/items/definitions/org.apache.camel.model.language.Hl7TerserExpression"
+              }
+            }
+          }, {
+            "type" : "object",
+            "required" : [ "jactl" ],
+            "properties" : {
+              "jactl" : {
+                "$ref" : "#/items/definitions/org.apache.camel.model.language.JactlExpression"
+              }
+            }
+          }, {
+            "type" : "object",
+            "required" : [ "java" ],
+            "properties" : {
+              "java" : {
+                "$ref" : "#/items/definitions/org.apache.camel.model.language.JavaExpression"
+              }
+            }
+          }, {
+            "type" : "object",
+            "required" : [ "joor" ],
+            "properties" : {
+              "joor" : {
+                "$ref" : "#/items/definitions/org.apache.camel.model.language.JoorExpression"
+              }
+            }
+          }, {
+            "type" : "object",
+            "required" : [ "jq" ],
+            "properties" : {
+              "jq" : {
+                "$ref" : "#/items/definitions/org.apache.camel.model.language.JqExpression"
+              }
+            }
+          }, {
+            "type" : "object",
+            "required" : [ "js" ],
+            "properties" : {
+              "js" : {
+                "$ref" : "#/items/definitions/org.apache.camel.model.language.JavaScriptExpression"
+              }
+            }
+          }, {
+            "type" : "object",
+            "required" : [ "jsonpath" ],
+            "properties" : {
+              "jsonpath" : {
+                "$ref" : "#/items/definitions/org.apache.camel.model.language.JsonPathExpression"
+              }
+            }
+          }, {
+            "type" : "object",
+            "required" : [ "language" ],
+            "properties" : {
+              "language" : {
+                "$ref" : "#/items/definitions/org.apache.camel.model.language.LanguageExpression"
+              }
+            }
+          }, {
+            "type" : "object",
+            "required" : [ "method" ],
+            "properties" : {
+              "method" : {
+                "$ref" : "#/items/definitions/org.apache.camel.model.language.MethodCallExpression"
+              }
+            }
+          }, {
+            "type" : "object",
+            "required" : [ "mvel" ],
+            "properties" : {
+              "mvel" : {
+                "$ref" : "#/items/definitions/org.apache.camel.model.language.MvelExpression"
+              }
+            }
+          }, {
+            "type" : "object",
+            "required" : [ "ognl" ],
+            "properties" : {
+              "ognl" : {
+                "$ref" : "#/items/definitions/org.apache.camel.model.language.OgnlExpression"
+              }
+            }
+          }, {
+            "type" : "object",
+            "required" : [ "python" ],
+            "properties" : {
+              "python" : {
+                "$ref" : "#/items/definitions/org.apache.camel.model.language.PythonExpression"
+              }
+            }
+          }, {
+            "type" : "object",
+            "required" : [ "python3" ],
+            "properties" : {
+              "python3" : {
+                "$ref" : "#/items/definitions/org.apache.camel.model.language.Python3Expression"
+              }
+            }
+          }, {
+            "type" : "object",
+            "required" : [ "quickjs" ],
+            "properties" : {
+              "quickjs" : {
+                "$ref" : "#/items/definitions/org.apache.camel.model.language.QuickjsExpression"
+              }
+            }
+          }, {
+            "type" : "object",
+            "required" : [ "ref" ],
+            "properties" : {
+              "ref" : {
+                "$ref" : "#/items/definitions/org.apache.camel.model.language.RefExpression"
+              }
+            }
+          }, {
+            "type" : "object",
+            "required" : [ "simple" ],
+            "properties" : {
+              "simple" : {
+                "$ref" : "#/items/definitions/org.apache.camel.model.language.SimpleExpression"
+              }
+            }
+          }, {
+            "type" : "object",
+            "required" : [ "spel" ],
+            "properties" : {
+              "spel" : {
+                "$ref" : "#/items/definitions/org.apache.camel.model.language.SpELExpression"
+              }
+            }
+          }, {
+            "type" : "object",
+            "required" : [ "tokenize" ],
+            "properties" : {
+              "tokenize" : {
+                "$ref" : "#/items/definitions/org.apache.camel.model.language.TokenizerExpression"
+              }
+            }
+          }, {
+            "type" : "object",
+            "required" : [ "variable" ],
+            "properties" : {
+              "variable" : {
+                "$ref" : "#/items/definitions/org.apache.camel.model.language.VariableExpression"
+              }
+            }
+          }, {
+            "type" : "object",
+            "required" : [ "wasm" ],
+            "properties" : {
+              "wasm" : {
+                "$ref" : "#/items/definitions/org.apache.camel.model.language.WasmExpression"
+              }
+            }
+          }, {
+            "type" : "object",
+            "required" : [ "xpath" ],
+            "properties" : {
+              "xpath" : {
+                "$ref" : "#/items/definitions/org.apache.camel.model.language.XPathExpression"
+              }
+            }
+          }, {
+            "type" : "object",
+            "required" : [ "xquery" ],
+            "properties" : {
+              "xquery" : {
+                "$ref" : "#/items/definitions/org.apache.camel.model.language.XQueryExpression"
+              }
+            }
+          }, {
+            "type" : "object",
+            "required" : [ "xtokenize" ],
+            "properties" : {
+              "xtokenize" : {
+                "$ref" : "#/items/definitions/org.apache.camel.model.language.XMLTokenizerExpression"
+              }
+            }
+          } ]
+        } ],
+        "properties" : {
+          "constant" : { },
+          "csimple" : { },
+          "datasonnet" : { },
+          "exchangeProperty" : { },
+          "groovy" : { },
+          "header" : { },
+          "hl7terser" : { },
+          "jactl" : { },
+          "java" : { },
+          "joor" : { },
+          "jq" : { },
+          "js" : { },
+          "jsonpath" : { },
+          "language" : { },
+          "method" : { },
+          "mvel" : { },
+          "ognl" : { },
+          "python" : { },
+          "python3" : { },
+          "quickjs" : { },
+          "ref" : { },
+          "simple" : { },
+          "spel" : { },
+          "tokenize" : { },
+          "variable" : { },
+          "wasm" : { },
+          "xpath" : { },
+          "xquery" : { },
+          "xtokenize" : { }
         }
       }
     },

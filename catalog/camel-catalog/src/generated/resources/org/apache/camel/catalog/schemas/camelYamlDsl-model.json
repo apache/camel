@@ -5301,11 +5301,11 @@
         "ref" : "expression",
         "description" : "The property value as an expression.",
         "title" : "Expression",
-        "required" : true,
         "displayName" : "Expression",
         "kind" : "expression",
         "index" : 1,
-        "group" : "common"
+        "group" : "common",
+        "required" : true
       } ]
     },
     "recipientList" : {
@@ -6154,11 +6154,11 @@
         "ref" : "expression",
         "description" : "Expression to use for re-ordering the messages, such as a header with a sequence number.",
         "title" : "Expression",
-        "required" : true,
         "displayName" : "Expression",
         "kind" : "expression",
         "index" : 4,
-        "group" : "common"
+        "group" : "common",
+        "required" : true
       }, {
         "name" : "batchConfig",
         "type" : "object",
@@ -9401,253 +9401,203 @@
       }, {
         "name" : "asn1",
         "type" : "object",
-        "ref" : "aSN1",
-        "required" : true
+        "ref" : "aSN1"
       }, {
         "name" : "avro",
         "type" : "object",
-        "ref" : "avro",
-        "required" : true
+        "ref" : "avro"
       }, {
         "name" : "barcode",
         "type" : "object",
-        "ref" : "barcode",
-        "required" : true
+        "ref" : "barcode"
       }, {
         "name" : "base64",
         "type" : "object",
-        "ref" : "base64",
-        "required" : true
+        "ref" : "base64"
       }, {
         "name" : "beanio",
         "type" : "object",
-        "ref" : "beanio",
-        "required" : true
+        "ref" : "beanio"
       }, {
         "name" : "bindy",
         "type" : "object",
-        "ref" : "bindy",
-        "required" : true
+        "ref" : "bindy"
       }, {
         "name" : "cbor",
         "type" : "object",
-        "ref" : "cBOR",
-        "required" : true
+        "ref" : "cBOR"
       }, {
         "name" : "crypto",
         "type" : "object",
-        "ref" : "crypto",
-        "required" : true
+        "ref" : "crypto"
       }, {
         "name" : "csv",
         "type" : "object",
-        "ref" : "csv",
-        "required" : true
+        "ref" : "csv"
       }, {
         "name" : "custom",
         "type" : "object",
-        "ref" : "custom",
-        "required" : true
+        "ref" : "custom"
       }, {
         "name" : "dfdl",
         "type" : "object",
-        "ref" : "dfdl",
-        "required" : true
+        "ref" : "dfdl"
       }, {
         "name" : "fhirJson",
         "type" : "object",
-        "ref" : "fhirJson",
-        "required" : true
+        "ref" : "fhirJson"
       }, {
         "name" : "fhirXml",
         "type" : "object",
-        "ref" : "fhirXml",
-        "required" : true
+        "ref" : "fhirXml"
       }, {
         "name" : "flatpack",
         "type" : "object",
-        "ref" : "flatpack",
-        "required" : true
+        "ref" : "flatpack"
       }, {
         "name" : "fory",
         "type" : "object",
-        "ref" : "fory",
-        "required" : true
+        "ref" : "fory"
       }, {
         "name" : "grok",
         "type" : "object",
-        "ref" : "grok",
-        "required" : true
+        "ref" : "grok"
       }, {
         "name" : "groovyJson",
         "type" : "object",
-        "ref" : "groovyJSon",
-        "required" : true
+        "ref" : "groovyJSon"
       }, {
         "name" : "groovyXml",
         "type" : "object",
-        "ref" : "groovyXml",
-        "required" : true
+        "ref" : "groovyXml"
       }, {
         "name" : "gzipDeflater",
         "type" : "object",
-        "ref" : "gzipDeflater",
-        "required" : true
+        "ref" : "gzipDeflater"
       }, {
         "name" : "hl7",
         "type" : "object",
-        "ref" : "hL7",
-        "required" : true
+        "ref" : "hL7"
       }, {
         "name" : "ical",
         "type" : "object",
-        "ref" : "ical",
-        "required" : true
+        "ref" : "ical"
       }, {
         "name" : "iso8583",
         "type" : "object",
-        "ref" : "iso8583",
-        "required" : true
+        "ref" : "iso8583"
       }, {
         "name" : "jacksonXml",
         "type" : "object",
-        "ref" : "jacksonXML",
-        "required" : true
+        "ref" : "jacksonXML"
       }, {
         "name" : "jaxb",
         "type" : "object",
-        "ref" : "jaxb",
-        "required" : true
+        "ref" : "jaxb"
       }, {
         "name" : "json",
         "type" : "object",
-        "ref" : "json",
-        "required" : true
+        "ref" : "json"
       }, {
         "name" : "jsonApi",
         "type" : "object",
-        "ref" : "jsonApi",
-        "required" : true
+        "ref" : "jsonApi"
       }, {
         "name" : "lzf",
         "type" : "object",
-        "ref" : "lZF",
-        "required" : true
+        "ref" : "lZF"
       }, {
         "name" : "mimeMultipart",
         "type" : "object",
-        "ref" : "mimeMultipart",
-        "required" : true
+        "ref" : "mimeMultipart"
       }, {
         "name" : "ocsf",
         "type" : "object",
-        "ref" : "ocsf",
-        "required" : true
+        "ref" : "ocsf"
       }, {
         "name" : "parquetAvro",
         "type" : "object",
-        "ref" : "parquetAvro",
-        "required" : true
+        "ref" : "parquetAvro"
       }, {
         "name" : "pgp",
         "type" : "object",
-        "ref" : "pGP",
-        "required" : true
+        "ref" : "pGP"
       }, {
         "name" : "pqc",
         "type" : "object",
-        "ref" : "pQC",
-        "required" : true
+        "ref" : "pQC"
       }, {
         "name" : "protobuf",
         "type" : "object",
-        "ref" : "protobuf",
-        "required" : true
+        "ref" : "protobuf"
       }, {
         "name" : "rss",
         "type" : "object",
-        "ref" : "rss",
-        "required" : true
+        "ref" : "rss"
       }, {
         "name" : "smooks",
         "type" : "object",
-        "ref" : "smooks",
-        "required" : true
+        "ref" : "smooks"
       }, {
         "name" : "soap",
         "type" : "object",
-        "ref" : "soap",
-        "required" : true
+        "ref" : "soap"
       }, {
         "name" : "swiftMt",
         "type" : "object",
-        "ref" : "swiftMt",
-        "required" : true
+        "ref" : "swiftMt"
       }, {
         "name" : "swiftMx",
         "type" : "object",
-        "ref" : "swiftMx",
-        "required" : true
+        "ref" : "swiftMx"
       }, {
         "name" : "syslog",
         "type" : "object",
-        "ref" : "syslog",
-        "required" : true
+        "ref" : "syslog"
       }, {
         "name" : "tarFile",
         "type" : "object",
-        "ref" : "tarFile",
-        "required" : true
+        "ref" : "tarFile"
       }, {
         "name" : "thrift",
         "type" : "object",
-        "ref" : "thrift",
-        "required" : true
+        "ref" : "thrift"
       }, {
         "name" : "toon",
         "type" : "object",
-        "ref" : "toon",
-        "required" : true
+        "ref" : "toon"
       }, {
         "name" : "ubl",
         "type" : "object",
-        "ref" : "ubl",
-        "required" : true
+        "ref" : "ubl"
       }, {
         "name" : "univocityCsv",
         "type" : "object",
-        "ref" : "uniVocityCsv",
-        "required" : true
+        "ref" : "uniVocityCsv"
       }, {
         "name" : "univocityFixed",
         "type" : "object",
-        "ref" : "uniVocityFixed",
-        "required" : true
+        "ref" : "uniVocityFixed"
       }, {
         "name" : "univocityTsv",
         "type" : "object",
-        "ref" : "uniVocityTsv",
-        "required" : true
+        "ref" : "uniVocityTsv"
       }, {
         "name" : "xmlSecurity",
         "type" : "object",
-        "ref" : "xMLSecurity",
-        "required" : true
+        "ref" : "xMLSecurity"
       }, {
         "name" : "yaml",
         "type" : "object",
-        "ref" : "yAML",
-        "required" : true
+        "ref" : "yAML"
       }, {
         "name" : "zipDeflater",
         "type" : "object",
-        "ref" : "zipDeflater",
-        "required" : true
+        "ref" : "zipDeflater"
       }, {
         "name" : "zipFile",
         "type" : "object",
-        "ref" : "zipFile",
-        "required" : true
+        "ref" : "zipFile"
       } ]
     },
     "validate" : {

@@ -3115,7 +3115,7 @@
             "description" : "The property key."
           }
         },
-        "required" : [ "expression", "key" ]
+        "required" : [ "key" ]
       },
       "org.apache.camel.model.RecipientListDefinition" : {
         "title" : "Recipient List",
@@ -3627,8 +3627,7 @@
           "streamConfig" : {
             "$ref" : "#/items/definitions/org.apache.camel.model.config.StreamResequencerConfig"
           }
-        },
-        "required" : [ "expression" ]
+        }
       },
       "org.apache.camel.model.Resilience4jConfigurationDefinition" : {
         "title" : "Resilience4j Configuration",
@@ -5767,8 +5766,7 @@
           "zipFile" : {
             "$ref" : "#/items/definitions/org.apache.camel.model.dataformat.ZipFileDataFormat"
           }
-        },
-        "required" : [ "asn1", "avro", "barcode", "base64", "beanio", "bindy", "cbor", "crypto", "csv", "custom", "dfdl", "fhirJson", "fhirXml", "flatpack", "fory", "grok", "groovyJson", "groovyXml", "gzipDeflater", "hl7", "ical", "iso8583", "jacksonXml", "jaxb", "json", "jsonApi", "lzf", "mimeMultipart", "ocsf", "parquetAvro", "pgp", "pqc", "protobuf", "rss", "smooks", "soap", "swiftMt", "swiftMx", "syslog", "tarFile", "thrift", "toon", "ubl", "univocityCsv", "univocityFixed", "univocityTsv", "xmlSecurity", "yaml", "zipDeflater", "zipFile" ]
+        }
       },
       "org.apache.camel.model.ValidateDefinition" : {
         "title" : "Validate",
