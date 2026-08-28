@@ -165,9 +165,10 @@ public class ThriftDataFormat extends ServiceSupport
 
         // The data format is shared by every exchange on the route and TBase.read() only assigns the
         // fields present in the incoming bytes, so deserializing into defaultInstance would let one
-        // message read or overwrite another's fields. Deserialize into a copy instead, which also keeps
-        // defaultInstance usable as the template its name promises.
+        // message read or overwrite another's fields. Deserialize into a copy instead, clearing it first
+        // so values set on defaultInstance are not inherited when they are absent from the input.
         TBase instance = defaultInstance.deepCopy();
+        instance.clear();
 
         if (contentTypeFormat.equals(CONTENT_TYPE_FORMAT_JSON)) {
             deserializer = new TDeserializer(new TJSONProtocol.Factory());

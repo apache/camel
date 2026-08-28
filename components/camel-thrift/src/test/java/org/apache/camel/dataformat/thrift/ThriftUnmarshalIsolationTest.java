@@ -56,14 +56,33 @@ class ThriftUnmarshalIsolationTest extends CamelTestSupport {
         assertThat(first).isNotSameAs(second);
     }
 
+    @Test
+    void anOmittedOptionalFieldDoesNotInheritTheDefaultInstanceValue() {
+        Work withoutComment = new Work();
+        withoutComment.num1 = 3;
+        withoutComment.num2 = 4;
+        withoutComment.op = Operation.SUBTRACT;
+
+        Object bytes = template.requestBody("direct:marshal", withoutComment);
+
+        Work result = (Work) template.requestBody("direct:unmarshal-populated-default", bytes);
+
+        assertThat(result.getComment()).isNull();
+        assertThat(result.getNum1()).isEqualTo(3);
+    }
+
     @Override
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
             public void configure() {
                 ThriftDataFormat format = new ThriftDataFormat(new Work());
+                Work populatedDefault = new Work();
+                populatedDefault.comment = "default value";
+                ThriftDataFormat populatedDefaultFormat = new ThriftDataFormat(populatedDefault);
                 from("direct:marshal").marshal(format);
                 from("direct:unmarshal").unmarshal(format);
+                from("direct:unmarshal-populated-default").unmarshal(populatedDefaultFormat);
             }
         };
     }

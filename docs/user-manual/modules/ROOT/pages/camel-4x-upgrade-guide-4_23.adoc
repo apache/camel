@@ -563,6 +563,7 @@ is truncated rather than recreated and would otherwise keep its original permiss
 
 Deployments where another account legitimately reads these files — a sidecar or a backup agent running as
 a different user — need to run as the owner, or use a group-aware key store instead.
+
 === camel-jetty
 
 `enableCORS=true` added `new CrossOriginFilter()` with no init parameters, so Jetty's own defaults
@@ -674,10 +675,9 @@ every exchange. Because Thrift's `TBase.read()` assigns only the fields present 
 a message that omitted an optional field kept the value left there by the previous message, concurrent
 unmarshals interleaved into the same object, and all in-flight bodies were the same reference.
 
-`unmarshal` now deserializes into a copy of `defaultInstance` and returns that, so each exchange gets
-its own object. `defaultInstance` is left untouched and therefore keeps working as a template: values
-preset on it are now visible on every unmarshalled message, where previously they were overwritten by
-the first message and lost.
+`unmarshal` now creates a copy of `defaultInstance`, clears it to the generated type's default-constructor
+state, and deserializes into that copy. Each exchange therefore gets its own object, omitted fields do not
+inherit values set on `defaultInstance`, and `defaultInstance` itself remains untouched.
 
 Routes that compared unmarshalled bodies by identity, or that mutated one body expecting the change to
 be visible on another, must be updated.
