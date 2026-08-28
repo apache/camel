@@ -16318,7 +16318,18 @@ Whether to validate the bean has the configured method. Default value: true
   </xs:complexType>
   <xs:complexType abstract="true" name="namespaceAwareExpression">
     <xs:simpleContent>
-      <xs:extension base="tns:singleInputTypedExpressionDefinition"/>
+      <xs:extension base="tns:singleInputTypedExpressionDefinition">
+        <xs:attribute name="namespacesRef" type="xs:string">
+          <xs:annotation>
+            <xs:documentation xml:lang="en">
+<![CDATA[
+Reference to a org.apache.camel.support.builder.Namespaces bean in the registry to use for the XML Namespaces of prefix
+to uri mappings.
+]]>
+            </xs:documentation>
+          </xs:annotation>
+        </xs:attribute>
+      </xs:extension>
     </xs:simpleContent>
   </xs:complexType>
   <xs:complexType name="ognlExpression">
