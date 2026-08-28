@@ -1,1 +1,0 @@
-../../../../../components/camel-csimple-joor/src/main/docs/csimple-joor.adoc

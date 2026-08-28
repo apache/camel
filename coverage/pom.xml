@@ -703,11 +703,6 @@
         </dependency>
         <dependency>
             <groupId>org.apache.camel</groupId>
-            <artifactId>camel-csimple-joor</artifactId>
-            <version>${project.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.camel</groupId>
             <artifactId>camel-csv</artifactId>
             <version>${project.version}</version>
         </dependency>
@@ -2552,11 +2547,6 @@
         <dependency>
             <groupId>org.apache.camel</groupId>
             <artifactId>camel-route-parser</artifactId>
-            <version>${project.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.camel</groupId>
-            <artifactId>camel-csimple-maven-plugin</artifactId>
             <version>${project.version}</version>
         </dependency>
         <dependency>

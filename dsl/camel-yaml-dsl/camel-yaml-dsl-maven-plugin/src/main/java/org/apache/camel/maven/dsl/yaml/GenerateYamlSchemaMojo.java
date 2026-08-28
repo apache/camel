@@ -345,7 +345,12 @@ public class GenerateYamlSchemaMojo extends GenerateYamlSupportMojo {
                     propertyWrapItem,
                     additionalProperties);
 
-            if (propertyRequired) {
+            // A property that belongs to a oneOf group (e.g. the data formats of marshal/unmarshal, or the
+            // languages of an expression) is only required as part of choosing one of the alternatives, not
+            // unconditionally. In canonical mode the oneOf grouping itself is dropped (isInOneOf is always
+            // false), so without this guard every alternative would end up in the flat "required" list,
+            // demanding all of them at once instead of exactly one.
+            if (propertyRequired && StringUtils.isEmpty(propertyOneOf)) {
                 definition.withArray("required").add(propertyName);
             }
         }
@@ -610,11 +615,25 @@ public class GenerateYamlSchemaMojo extends GenerateYamlSupportMojo {
      * @param inlineDefinitions    The name of the definitions that has inline option enabled
      */
     private void postProcessInheritance(Set<String> inheritedDefinitions, Set<String> inlineDefinitions) {
-        // additionalProperties=false prevents inheritance with allOf/anyOf/oneOf
-        // Remove it to be true by default
+        // additionalProperties=false prevents inheritance with allOf/anyOf/oneOf, so it needs to be removed
+        // to allow a type such as ExpressionDefinition to be inlined directly onto a host's own closed schema
+        // (e.g. filter: { simple: "...", steps: [...] } merges ExpressionDefinition's properties onto
+        // FilterDefinition). But the very same type is also used standalone, referenced by its own named
+        // property (e.g. the explicit filter: { expression: { simple: "..." } } form) - if additionalProperties
+        // is removed from the shared definition itself, that explicit, non-inlined usage loses its closedness
+        // too and silently accepts unknown/duplicate properties (CAMEL-24479).
+        //
+        // Clone the definition instead of mutating it in place: the open clone is only substituted into the
+        // bare $ref oneOf/anyOf branches used for inlining, while the original definition - referenced by
+        // every named property - stays closed.
+        Map<String, String> inlineClones = new HashMap<>();
         for (String inherited : inheritedDefinitions) {
-            ObjectNode node = definitions.withObject("/" + inherited);
-            node.remove("additionalProperties");
+            ObjectNode original = definitions.withObject("/" + inherited);
+            String cloneName = inherited + "$Inline";
+            ObjectNode clone = original.deepCopy();
+            clone.remove("additionalProperties");
+            definitions.set(cloneName, clone);
+            inlineClones.put(inherited, cloneName);
         }
 
         // Redeclare the inherited properties
@@ -630,9 +649,9 @@ public class GenerateYamlSchemaMojo extends GenerateYamlSupportMojo {
             if (temp.has("anyOf")) {
                 final var definition = temp;
                 StreamSupport.stream(temp.withArray("anyOf").spliterator(), false)
-                        .forEach(group -> postProcessComposition(name, definition, group, inheritedDefinitions));
+                        .forEach(group -> postProcessComposition(name, definition, group, inheritedDefinitions, inlineClones));
             } else {
-                postProcessComposition(name, temp, temp, inheritedDefinitions);
+                postProcessComposition(name, temp, temp, inheritedDefinitions, inlineClones);
             }
         });
     }
@@ -650,7 +669,8 @@ public class GenerateYamlSchemaMojo extends GenerateYamlSupportMojo {
     }
 
     private void postProcessComposition(
-            String name, JsonNode definition, JsonNode inherited, Set<String> inheritedDefinitions) {
+            String name, JsonNode definition, JsonNode inherited, Set<String> inheritedDefinitions,
+            Map<String, String> inlineClones) {
         ArrayNode composition = extractComposition(inherited);
         if (composition == null) {
             return;
@@ -674,7 +694,7 @@ public class GenerateYamlSchemaMojo extends GenerateYamlSupportMojo {
                         .filter(prop -> !definition.withObject("/properties").has(prop.getKey()))
                         .forEach(prop -> definition.withObject("/properties").putObject(prop.getKey()));
             }
-            postProcessComposition(name, definition, compositionEntry, inheritedDefinitions);
+            postProcessComposition(name, definition, compositionEntry, inheritedDefinitions, inlineClones);
 
             if (!compositionEntry.has("$ref")) {
                 continue;
@@ -683,8 +703,13 @@ public class GenerateYamlSchemaMojo extends GenerateYamlSupportMojo {
             if (!inheritedDefinitions.contains(parentName)) {
                 continue;
             }
-            JsonNode parent = definitions.withObject("/" + parentName);
-            postProcessComposition(parentName, definition, parent, inheritedDefinitions);
+            // This is a bare $ref composition branch (no wrapping "properties"), i.e. the type is being
+            // inlined directly onto the host's own schema - repoint it to the open clone so the host's
+            // sibling properties aren't rejected, without touching the original (still closed) definition.
+            String cloneName = inlineClones.get(parentName);
+            ((ObjectNode) compositionEntry).put("$ref", "#/items/definitions/" + cloneName);
+            JsonNode parent = definitions.withObject("/" + cloneName);
+            postProcessComposition(parentName, definition, parent, inheritedDefinitions, inlineClones);
             parent
                     .withObject("/properties")
                     .properties()

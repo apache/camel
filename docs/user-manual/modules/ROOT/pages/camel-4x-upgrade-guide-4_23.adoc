@@ -13,7 +13,11 @@ See the xref:camel-upgrade-recipes-tool.adoc[documentation] page for details.
 
 == Upgrading Camel 4.22 to 4.23
 
-=== Components removal
+=== Components and Language removal
+
+==== camel-csimple, camel-csimple-joor and csimple-maven-plugin
+
+The `csimple` (compiled simple) language was deprecated in 4.19. Use the `simple` language instead.
 
 ==== camel-archetype-spring
 
@@ -166,7 +170,10 @@ unchanged and still does not permit any of the ranges above.
 
 LangChain4j and OpenAI producers now emit GenAI observability data (OpenTelemetry span attributes and
 Micrometer metrics) when `camel-opentelemetry2` and/or `camel-micrometer` is on the classpath.
-Disable globally with `camel.ai.observability.enabled=false` (default is enabled).
+Disable globally with `camel.aiObservability.enabled=false` (default is enabled). Camel Main also
+exposes the same setting via `main.configure().aiObservability().withEnabled(false)`.
+
+Spring AI chat (`spring-ai-chat`) producers emit the same GenAI spans and metrics in Phase 3.
 
 OpenAI streaming chat sets `stream_options.include_usage=true` only when GenAI observability is enabled,
 adding a final chunk with token usage for span/metric recording.
@@ -261,6 +268,37 @@ without supplying their own `hazelcastInstance` must now provide a `Config` with
 The same default is now also applied to the `ClientConfig` that Camel builds for `hazelcastMode=client`
 endpoints, when neither a referenced `ClientConfig` nor `hazelcastConfigUri` is supplied. Client mode
 previously behaved differently from node mode for an otherwise identical endpoint configuration.
+
+=== camel-http, camel-http-common, camel-netty-http, camel-undertow, camel-vertx-http - property placeholders in HTTP URI override headers
+
+The HTTP producers no longer resolve property placeholders (`{{...}}`) in the message-supplied
+endpoint-URI override headers `CamelHttpUri` and `CamelRestHttpUri`. Those headers carry message
+content, while property placeholders are a route and configuration authoring feature resolved at
+build time on the endpoint URI written in the route. This is the same alignment 4.22 applied to
+`toD` and `enrich`.
+
+Placeholders written in the route's endpoint URI continue to be resolved exactly as before:
+
+[source,java]
+----
+.to("http://localhost/{{basePath}}")
+.to("netty-http:http://localhost/{{basePath}}")
+----
+
+A `{{...}}` token arriving in `CamelHttpUri` or `CamelRestHttpUri` is now treated as a literal part
+of the URI rather than being expanded. Routes that relied on that expansion must resolve the value
+before it reaches the header, or keep the placeholder in the route.
+
+The affected sites, all of which resolved a header-derived or endpoint-derived value per message:
+
+* `camel-http` - `HttpMethodHelper.createMethod`
+* `camel-http-common` - `HttpHelper.createURL`, `HttpHelper.createMethod`
+* `camel-netty-http` - `NettyHttpHelper.createURL`
+* `camel-undertow` - `UndertowHelper.createURL`, `UndertowHelper.createMethod`
+* `camel-vertx-http` - `VertxHttpHelper.resolveHttpURI`
+
+Where the value came from the endpoint rather than a header it was already resolved at build time,
+so removing the per-message resolution does not change those routes.
 
 === camel-jbang (TUI)
 
@@ -477,6 +515,20 @@ camel.routeController.enabled = true
 camel.routeController.backOffDelay = 2000
 camel.routeController.backOffMaxDelay = 60000
 ----
+
+=== camel-http
+
+The OAuth2 client-credentials token cache was keyed on the request URI, the client id and the client
+secret only. `oauth2Scope`, `oauth2TokenEndpoint` and `oauth2ResourceIndicator` all shape the token that
+gets minted, but none of them was part of the key, and the cache is a static map shared by every endpoint
+and every `CamelContext` in the JVM. A route configured with a narrow scope could therefore be handed a
+broad-scope token that another route had cached first for the same target and credentials — defeating the
+scoping the operator configured, and making the audit trail misleading.
+
+All three are now part of the key. Deployments that were unknowingly sharing a token across differing
+scopes, token endpoints or resource indicators will now request one token per distinct combination, so
+the token endpoint sees more requests than before.
+
 === camel-pqc
 
 `FileBasedKeyLifecycleManager` stores private keys unencrypted, as Base64 PKCS#8 inside a JSON file, and
@@ -491,24 +543,103 @@ is truncated rather than recreated and would otherwise keep its original permiss
 
 Deployments where another account legitimately reads these files — a sidecar or a backup agent running as
 a different user — need to run as the owner, or use a group-aware key store instead.
+
 === camel-http
 
-Credentials are no longer sent to a host the endpoint was not configured with. Two paths reached that
+Credentials are no longer sent to an authority the endpoint was not configured with. Two paths reached that
 outcome once `followRedirects=true`, since a redirect target is chosen by the remote server rather than
 by the route:
 
 * The OAuth2 interceptor is registered with `addRequestInterceptorFirst`, and HttpClient runs
 protocol-level request interceptors inside `ProtocolExec`, which sits below `RedirectExec` — so it ran
-again for every redirect hop and re-attached `Authorization: Bearer <token>` to whatever host the
-`Location` header named. The token is now attached only for the endpoint's own host.
+again for every redirect hop and re-attached `Authorization: Bearer <token>` to whatever authority the
+`Location` header named. The token is now attached only for the endpoint's own scheme, host and effective port.
 * `authHost` is optional and unset in the common basic-auth configuration, which made the credentials
 scope `new AuthScope(null, -1)` — any host, any port, any scheme — so HttpClient offered the credentials
 to whichever host issued a `401` challenge. The scope now falls back to the endpoint's host when
-`authHost` is not set.
+`authHost` is not set and is restricted to the endpoint's scheme and effective port.
 
-Routes that relied on credentials following a redirect to a different host must set `authHost`
-explicitly, which continues to take precedence.
+Routes that relied on credentials following a redirect to a different authority must set `authHost`
+explicitly, which continues to take precedence and preserves the previous any-port behaviour.
 
-`HttpComponent.createHttpClientConfigurer(Map, boolean)` is unchanged and still behaves as before; a new
-`createHttpClientConfigurer(Map, boolean, URI)` overload carries the endpoint's target URI, and the
-two-argument form delegates to it with a null URI.
+`HttpComponent.createHttpClientConfigurer(Map, boolean)` remains the protected customization point and is still invoked
+when an endpoint is created, so existing subclasses continue to behave as before.
+
+=== camel-mllp
+
+`logPhi` now defaults to `false`. It previously defaulted to `true`, so message content — which for MLLP
+is patient data by definition — reached the log at the default INFO/WARN levels with no configuration at
+all. Set `logPhi=true` on the component to restore the previous behaviour.
+
+Payload-bearing log paths that ignored the flag no longer do, including:
+`MllpSocketBuffer.readFrom` (the partial-payload warning, which logs the content of a legitimate
+in-flight message from a slow sender, not only unexpected bytes) and
+`MllpSocketBuffer.readSocketInputStream` (the bytes-before-START_OF_BLOCK warning), the invalid and partial-payload
+warnings in `TcpSocketConsumerRunnable`, and acknowledgement debug logging. Where content is suppressed the log now
+shows `<PHI suppressed>`.
+
+The suppression is applied at the log statements, through a new `Hl7Util.convertToLoggableString`, rather
+than inside `convertToPrintFriendlyString`: that method is not a logging helper — it also extracts the
+MSH-9 field when an acknowledgement is generated, so redacting inside it would corrupt acknowledgements.
+
+=== camel-platform-http
+
+`PlatformHttpEndpoint.isHttpProxy()` selected proxy mode with `path.startsWith("proxy")` rather than an
+equality check, so any endpoint whose path merely began with those five characters — `proxyStats`,
+`proxy-health`, `proxying` — was treated as the documented `platform-http:proxy` endpoint. That has
+consequences beyond the name: `getPath()` returns `/` for such an endpoint, making it a catch-all, and
+`VertxPlatformHttpConsumer.handleProxy()` sets `Exchange.HTTP_HOST` from the request's own `Host` header
+so a bridging producer forwards there. A route author naming an endpoint `proxyStats` therefore got a
+catch-all whose forward target came from the caller.
+
+Proxy mode is now selected only by the exact path `proxy`. The check is deliberately strict:
+`platform-http:/proxy`, with a leading slash, did not select proxy mode before and still does not, so
+this can never turn an endpoint into a proxy that was not already one.
+
+Routes relying on the prefix match must be renamed to the exact path `proxy`.
+
+`PlatformHttpEndpoint` wraps the endpoint's `HeaderFilterStrategy` so that common request headers —
+`Authorization`, `Cookie`, `Proxy-Authorization` and the rest of `COMMON_HTTP_REQUEST_HEADERS` — are not
+echoed back on the response. The lookup compared names exactly against that canonically capitalised set,
+while exchange headers keep the casing of the inbound request. HTTP/2 requires field names to be lower
+case, so on an HTTP/2 request the names are `authorization`, `cookie` and so on, none of which matched:
+the suppression never fired for HTTP/2 traffic, or for any client that varied the casing.
+
+Names are now compared case-insensitively. Responses that previously echoed these headers back on HTTP/2
+requests no longer do.
+
+=== camel-grpc
+
+The gRPC consumer no longer returns the route exception's message to the client.
+
+When an exchange failed, `GrpcMethodHandler` built the error status with
+`Status.INTERNAL.withDescription(exchange.getException().getMessage())`. The description is transmitted
+to the client — unlike the cause attached alongside it, which stays local — so any remote-triggerable
+failure handed the caller internal detail.
+
+A new `muteException` consumer option controls this, and it defaults to `true`, the same default the HTTP
+consumers carry. The status code is unchanged; only the description is replaced, with
+`Exchange processing failed`.
+
+A route that relies on the exception message reaching the client must opt back in explicitly:
+
+[source,text]
+----
+grpc://localhost:8080/org.example.MyService?muteException=false
+----
+
+=== camel-keycloak
+
+When `validateIssuer` is enabled and the token is checked by introspection, an introspection response
+carrying no `iss` claim used to log a warning and pass. It is now rejected with
+`Token issuer missing: expected '<issuer>' but the introspection result carries no issuer`.
+
+Issuer validation is opt-in, so an operator who enabled it is asking for tokens from other issuers to be
+refused, and a response with no issuer is not evidence that the token came from the expected one. RFC 7662
+makes `iss` optional in an introspection response, so this is reachable wherever the introspection
+endpoint is a broker, a gateway, or a minimal implementation rather than the realm that issued the token.
+Audience validation already behaved this way; the two are now consistent.
+
+Deployments whose introspection endpoint omits `iss` must either have it include the claim, or turn
+`validateIssuer` off. The locally verified JWT path is unaffected — it uses Keycloak's own
+`TokenVerifier.RealmUrlCheck`.

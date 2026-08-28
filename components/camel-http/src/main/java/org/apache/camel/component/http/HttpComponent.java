@@ -84,6 +84,7 @@ import org.slf4j.LoggerFactory;
 public class HttpComponent extends HttpCommonComponent implements RestProducerFactory, SSLContextParametersAware {
 
     private static final Logger LOG = LoggerFactory.getLogger(HttpComponent.class);
+    private static final String TARGET_URI_PARAMETER = HttpComponent.class.getName() + ".targetUri";
 
     @Metadata(label = "advanced",
               description = "To use the custom HttpClientConfigurer to perform configuration of the HttpClient that will be used.")
@@ -247,17 +248,11 @@ public class HttpComponent extends HttpCommonComponent implements RestProducerFa
      * @throws Exception  is thrown if error creating configurer
      */
     protected HttpClientConfigurer createHttpClientConfigurer(Map<String, Object> parameters, boolean secure) throws Exception {
-        return createHttpClientConfigurer(parameters, secure, null);
+        URI targetUri = (URI) parameters.remove(TARGET_URI_PARAMETER);
+        return createHttpClientConfigurer(parameters, secure, targetUri);
     }
 
-    /**
-     * As {@link #createHttpClientConfigurer(Map, boolean)}, but told which host the endpoint actually addresses.
-     *
-     * @param targetUri the endpoint's target URI, used to keep credentials from being offered to a host the endpoint
-     *                  was never configured with. May be null, in which case the previous unrestricted behaviour
-     *                  applies.
-     */
-    protected HttpClientConfigurer createHttpClientConfigurer(Map<String, Object> parameters, boolean secure, URI targetUri)
+    private HttpClientConfigurer createHttpClientConfigurer(Map<String, Object> parameters, boolean secure, URI targetUri)
             throws Exception {
         // prefer to use endpoint configured over component configured
         HttpClientConfigurer configurer
@@ -315,7 +310,7 @@ public class HttpComponent extends HttpCommonComponent implements RestProducerFa
                             cachedTokensDefaultExpirySeconds,
                             cachedTokensExpirationMarginSeconds,
                             useBodyAuthentication,
-                            targetUri != null ? targetUri.getHost() : null));
+                            targetUri));
         }
         return configurer;
     }
@@ -332,7 +327,8 @@ public class HttpComponent extends HttpCommonComponent implements RestProducerFa
 
             return CompositeHttpConfigurer.combineConfigurers(configurer,
                     new DefaultAuthenticationHttpClientConfigurer(
-                            authUsername, authPassword, authDomain, authScopeHost(authHost, targetUri), null,
+                            authUsername, authPassword, authDomain, authScopeScheme(authHost, targetUri),
+                            authScopeHost(authHost, targetUri), authScopePort(authHost, targetUri), null,
                             credentialsProvider));
         } else if (this.httpConfiguration != null) {
             if ("basic".equalsIgnoreCase(this.httpConfiguration.getAuthMethod())
@@ -341,7 +337,9 @@ public class HttpComponent extends HttpCommonComponent implements RestProducerFa
                         new DefaultAuthenticationHttpClientConfigurer(
                                 this.httpConfiguration.getAuthUsername(),
                                 this.httpConfiguration.getAuthPassword(), this.httpConfiguration.getAuthDomain(),
+                                authScopeScheme(this.httpConfiguration.getAuthHost(), targetUri),
                                 authScopeHost(this.httpConfiguration.getAuthHost(), targetUri),
+                                authScopePort(this.httpConfiguration.getAuthHost(), targetUri),
                                 this.httpConfiguration.getAuthBearerToken(),
                                 credentialsProvider));
             }
@@ -356,13 +354,27 @@ public class HttpComponent extends HttpCommonComponent implements RestProducerFa
      * {@code authHost} is optional and is unset in the common basic-auth configuration, which made the scope
      * {@code new AuthScope(null, -1)} - matching any host, any port, any scheme. HttpClient then offers the credentials
      * to whichever host issues a 401 challenge, so with {@code followRedirects=true} a redirect chosen by the remote
-     * server could collect them. Fall back to the host the endpoint actually addresses.
+     * server could collect them. Fall back to the authority the endpoint actually addresses.
      */
     private static String authScopeHost(String authHost, URI targetUri) {
         if (authHost != null) {
             return authHost;
         }
         return targetUri != null ? targetUri.getHost() : null;
+    }
+
+    private static String authScopeScheme(String authHost, URI targetUri) {
+        return authHost == null && targetUri != null ? targetUri.getScheme() : null;
+    }
+
+    private static Integer authScopePort(String authHost, URI targetUri) {
+        if (authHost != null || targetUri == null) {
+            return null;
+        }
+        if (targetUri.getPort() >= 0) {
+            return targetUri.getPort();
+        }
+        return "https".equalsIgnoreCase(targetUri.getScheme()) ? 443 : 80;
     }
 
     private HttpClientConfigurer configureHttpProxy(
@@ -480,8 +492,14 @@ public class HttpComponent extends HttpCommonComponent implements RestProducerFa
         // uri part should be without protocol as that was how this component was originally created
         uri = org.apache.camel.component.http.HttpUtil.removeHttpOrHttpsProtocol(uri);
 
-        // create the configurer to use for this endpoint
-        HttpClientConfigurer configurer = createHttpClientConfigurer(parameters, secure, uriHttpUriAddress);
+        // Keep dispatching through the existing protected method so subclasses overriding it continue to be invoked.
+        HttpClientConfigurer configurer;
+        parameters.put(TARGET_URI_PARAMETER, uriHttpUriAddress);
+        try {
+            configurer = createHttpClientConfigurer(parameters, secure);
+        } finally {
+            parameters.remove(TARGET_URI_PARAMETER);
+        }
         URI endpointUri = URISupport.createRemainingURI(uriHttpUriAddress, httpClientParameters);
 
         endpointUri = URISupport.createRemainingURI(

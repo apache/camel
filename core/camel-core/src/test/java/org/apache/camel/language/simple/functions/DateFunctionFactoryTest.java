@@ -27,7 +27,6 @@ import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class DateFunctionFactoryTest extends AbstractSimpleFunctionFactoryTestSupport {
@@ -126,33 +125,5 @@ public class DateFunctionFactoryTest extends AbstractSimpleFunctionFactoryTestSu
     public void testDateExchangeCreated() {
         Object out = evaluate("date:exchangeCreated:hh:mm:ss a", String.class);
         assertNotNull(out);
-    }
-
-    // --- date-with-timezone: code generation ---
-
-    @Test
-    public void testCreateCodeDateMillis() {
-        assertEquals("System.currentTimeMillis()", createCode("date:millis"));
-    }
-
-    @Test
-    public void testCreateCodeDateNoPattern() {
-        assertEquals("date(exchange, \"now\")", createCode("date:now"));
-    }
-
-    @Test
-    public void testCreateCodeDateWithPattern() {
-        assertEquals("date(exchange, \"now\", null, \"yyyy-MM-dd\")", createCode("date:now:yyyy-MM-dd"));
-    }
-
-    @Test
-    public void testCreateCodeDateWithTimezone() {
-        assertEquals("date(exchange, \"now\", \"UTC\", \"yyyy-MM-dd\")",
-                createCode("date-with-timezone:now:UTC:yyyy-MM-dd"));
-    }
-
-    @Test
-    public void testCreateCodeUnknown() {
-        assertNull(createFactory().createCode(context, "unknown", 0));
     }
 }

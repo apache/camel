@@ -58,7 +58,7 @@ public class OAuth2ClientConfigurer extends ServiceSupport implements HttpClient
     private final static ConcurrentMap<OAuth2URIAndCredentials, TokenCache> tokenCache = new ConcurrentHashMap<>();
     private final boolean useBodyAuthentication;
     private final String resourceIndicator;
-    private final String targetHost;
+    private final URI targetUri;
     private HttpClient httpClient;
 
     public OAuth2ClientConfigurer(String clientId, String clientSecret, String tokenEndpoint, String resourceIndicator,
@@ -70,15 +70,15 @@ public class OAuth2ClientConfigurer extends ServiceSupport implements HttpClient
     }
 
     /**
-     * @param targetHost the host the endpoint addresses. The bearer token is only attached to requests for that host,
-     *                   so that a redirect chosen by the remote server cannot collect it. Null keeps the previous
-     *                   behaviour of attaching it to whatever host the request names.
+     * @param targetUri the URI the endpoint addresses. The bearer token is only attached to requests for the same
+     *                  authority, so that a redirect chosen by the remote server cannot collect it. Null keeps the
+     *                  previous behaviour of attaching it to whatever authority the request names.
      */
-    public OAuth2ClientConfigurer(String clientId, String clientSecret, String tokenEndpoint, String resourceIndicator,
-                                  String scope, boolean cacheTokens,
-                                  long cachedTokensDefaultExpirySeconds, long cachedTokensExpirationMarginSeconds,
-                                  boolean useBodyAuthentication, String targetHost) {
-        this.targetHost = targetHost;
+    OAuth2ClientConfigurer(String clientId, String clientSecret, String tokenEndpoint, String resourceIndicator,
+                           String scope, boolean cacheTokens,
+                           long cachedTokensDefaultExpirySeconds, long cachedTokensExpirationMarginSeconds,
+                           boolean useBodyAuthentication, URI targetUri) {
+        this.targetUri = targetUri;
         this.clientId = clientId;
         this.clientSecret = clientSecret;
         this.tokenEndpoint = tokenEndpoint;
@@ -97,15 +97,16 @@ public class OAuth2ClientConfigurer extends ServiceSupport implements HttpClient
 
         clientBuilder.addRequestInterceptorFirst((HttpRequest request, EntityDetails entity, HttpContext context) -> {
             URI requestUri = getUriFromRequest(request);
-            if (!isTargetHost(requestUri)) {
+            if (!isTargetAuthority(requestUri)) {
                 // HttpClient runs protocol-level request interceptors inside ProtocolExec, which sits below
                 // RedirectExec, so this runs again for every redirect hop. Without this check the bearer token is
-                // re-attached to whichever host the Location header named.
-                LOG.debug("Not attaching the OAuth2 bearer token to {}, which is not the endpoint's host {}",
-                        requestUri, targetHost);
+                // re-attached to whichever authority the Location header named.
+                LOG.debug("Not attaching the OAuth2 bearer token to {}, which is not the endpoint's authority {}",
+                        requestUri, targetUri);
                 return;
             }
-            OAuth2URIAndCredentials uriAndCredentials = new OAuth2URIAndCredentials(requestUri, clientId, clientSecret);
+            OAuth2URIAndCredentials uriAndCredentials = new OAuth2URIAndCredentials(
+                    requestUri, clientId, clientSecret, tokenEndpoint, scope, resourceIndicator);
             if (cacheTokens) {
                 if (tokenCache.containsKey(uriAndCredentials)
                         && !tokenCache.get(uriAndCredentials).isExpiredWithMargin(cachedTokensExpirationMarginSeconds)) {
@@ -129,11 +130,30 @@ public class OAuth2ClientConfigurer extends ServiceSupport implements HttpClient
         });
     }
 
-    private boolean isTargetHost(URI requestUri) {
-        if (targetHost == null || requestUri == null || requestUri.getHost() == null) {
+    private boolean isTargetAuthority(URI requestUri) {
+        if (targetUri == null) {
             return true;
         }
-        return targetHost.equalsIgnoreCase(requestUri.getHost());
+        if (targetUri.getScheme() == null || targetUri.getHost() == null
+                || requestUri == null || requestUri.getScheme() == null || requestUri.getHost() == null) {
+            return false;
+        }
+        return targetUri.getScheme().equalsIgnoreCase(requestUri.getScheme())
+                && targetUri.getHost().equalsIgnoreCase(requestUri.getHost())
+                && effectivePort(targetUri) == effectivePort(requestUri);
+    }
+
+    private static int effectivePort(URI uri) {
+        if (uri.getPort() >= 0) {
+            return uri.getPort();
+        }
+        if ("http".equalsIgnoreCase(uri.getScheme())) {
+            return 80;
+        }
+        if ("https".equalsIgnoreCase(uri.getScheme())) {
+            return 443;
+        }
+        return -1;
     }
 
     private JsonObject getAccessTokenResponse(HttpClient httpClient) throws IOException {
@@ -211,7 +231,16 @@ public class OAuth2ClientConfigurer extends ServiceSupport implements HttpClient
         }
     }
 
-    private record OAuth2URIAndCredentials(URI uri, String clientId, String clientSecret) {
+    /**
+     * Cache key for a minted token.
+     * <p>
+     * Every field that shapes the token request has to be part of it. The map is static, so it is shared by every
+     * configurer instance and every CamelContext in the JVM; a key that left out the scope, the token endpoint or the
+     * resource indicator would let a route configured for a narrow scope be served a broad-scope token that another
+     * route cached first, which defeats the scoping the operator asked for and makes the audit trail misleading.
+     */
+    private record OAuth2URIAndCredentials(URI uri, String clientId, String clientSecret, String tokenEndpoint,
+            String scope, String resourceIndicator) {
     }
 
     @Override
