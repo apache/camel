@@ -24,7 +24,7 @@ public final class GenAiObservabilityProperties {
     /**
      * Global property to enable or disable GenAI observability across all AI components. Default is {@code true}.
      */
-    public static final String ENABLED = "camel.ai.observability.enabled";
+    public static final String ENABLED = "camel.aiObservability.enabled";
 
     private GenAiObservabilityProperties() {
     }

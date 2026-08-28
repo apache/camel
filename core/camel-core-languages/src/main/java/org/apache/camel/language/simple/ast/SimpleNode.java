@@ -43,14 +43,4 @@ public interface SimpleNode {
      */
     Expression createExpression(CamelContext camelContext, String expression) throws SimpleParserException;
 
-    /**
-     * Creates Java code based on this model.
-     *
-     * @param  camelContext                                                 the camel context
-     * @param  expression                                                   the input string
-     * @return                                                              the created Java code
-     * @throws org.apache.camel.language.simple.types.SimpleParserException should be thrown if error parsing the model
-     */
-    String createCode(CamelContext camelContext, String expression) throws SimpleParserException;
-
 }

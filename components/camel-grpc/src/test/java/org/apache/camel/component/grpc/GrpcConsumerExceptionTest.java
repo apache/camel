@@ -49,18 +49,18 @@ public class GrpcConsumerExceptionTest extends GrpcTestSupport {
     private ManagedChannel unmutedChannel;
     private PingPongGrpc.PingPongBlockingStub unmutedStub;
     private PingPongGrpc.PingPongBlockingStub blockingStub;
-    private PingPongGrpc.PingPongStub nonBlockingStub;
+    private PingPongGrpc.PingPongStub unmutedNonBlockingStub;
 
     @BeforeEach
     public void startGrpcChannels() {
         int port = getRoutePort("grpc-exception");
         syncRequestChannel = ManagedChannelBuilder.forAddress("localhost", port).usePlaintext().build();
         blockingStub = PingPongGrpc.newBlockingStub(syncRequestChannel);
-        nonBlockingStub = PingPongGrpc.newStub(syncRequestChannel);
 
         int unmutedPort = getRoutePort("grpc-exception-unmuted");
         unmutedChannel = ManagedChannelBuilder.forAddress("localhost", unmutedPort).usePlaintext().build();
         unmutedStub = PingPongGrpc.newBlockingStub(unmutedChannel);
+        unmutedNonBlockingStub = PingPongGrpc.newStub(unmutedChannel);
     }
 
     @AfterEach
@@ -121,7 +121,7 @@ public class GrpcConsumerExceptionTest extends GrpcTestSupport {
                 = PingRequest.newBuilder().setPingName(GRPC_TEST_PING_VALUE).setPingId(GRPC_TEST_PING_ID).build();
         PongResponseStreamObserver responseObserver = new PongResponseStreamObserver(latch);
 
-        nonBlockingStub.pingSyncSync(pingRequest, responseObserver);
+        unmutedNonBlockingStub.pingSyncSync(pingRequest, responseObserver);
         assertTrue(latch.await(5, TimeUnit.SECONDS));
     }
 

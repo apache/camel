@@ -44,16 +44,6 @@ public class StringFunctionFactoryTest extends AbstractSimpleFunctionFactoryTest
         assertEquals("foo-bar", evaluate("replace( ,-,${header.msg})", String.class));
     }
 
-    @Test
-    public void testCreateCodeReplace() {
-        assertEquals("replace(exchange, \"a\", \"b\")", createCode("replace(a,b)"));
-    }
-
-    @Test
-    public void testCreateCodeReplaceEmpty() {
-        assertEquals("replace(exchange, \"a\", \"\")", createCode("replace(a,&empty;)"));
-    }
-
     // --- substring ---
 
     @Test
@@ -79,12 +69,6 @@ public class StringFunctionFactoryTest extends AbstractSimpleFunctionFactoryTest
         assertEquals("World", evaluate("substring(6,0,'Hello World')", String.class));
     }
 
-    @Test
-    public void testCreateCodeSubstring() {
-        assertEquals("substring(exchange, 2, 0)", createCode("substring(2)"));
-        assertEquals("substring(exchange, 1, 5)", createCode("substring(1, 5)"));
-    }
-
     // --- substringBefore / substringAfter / substringBetween ---
 
     @Test
@@ -105,20 +89,6 @@ public class StringFunctionFactoryTest extends AbstractSimpleFunctionFactoryTest
         assertEquals("Hello World", evaluate("substringBetween([,])", String.class));
     }
 
-    @Test
-    public void testCreateCodeSubstringBefore() {
-        assertEquals(
-                "Object value = body;\n        Object before = \" \";\n        return substringBefore(exchange, value, before);",
-                createCode("substringBefore(' ')"));
-    }
-
-    @Test
-    public void testCreateCodeSubstringAfterWithExp() {
-        assertEquals(
-                "Object value = body;\n        Object after = \" \";\n        return substringAfter(exchange, value, after);",
-                createCode("substringAfter(' ')"));
-    }
-
     // --- contains ---
 
     @Test
@@ -134,25 +104,12 @@ public class StringFunctionFactoryTest extends AbstractSimpleFunctionFactoryTest
         assertEquals(true, evaluate("contains(${header.greeting}, World)", Boolean.class));
     }
 
-    @Test
-    public void testCreateCodeContains() {
-        assertEquals(
-                "Object value = body;\n        return containsIgnoreCase(exchange, value, \"World\");",
-                createCode("contains(World)"));
-    }
-
     // --- trim ---
 
     @Test
     public void testTrim() {
         exchange.getIn().setBody("  hello  ");
         assertEquals("hello", evaluate("trim()", String.class));
-    }
-
-    @Test
-    public void testCreateCodeTrim() {
-        assertEquals("Object o = null;\n        return trim(exchange, o);", createCode("trim()"));
-        assertEquals("Object o = body;\n        return trim(exchange, o);", createCode("trim(body)"));
     }
 
     // --- val ---
@@ -163,22 +120,12 @@ public class StringFunctionFactoryTest extends AbstractSimpleFunctionFactoryTest
         assertEquals("hello", evaluate("val(${body})", String.class));
     }
 
-    @Test
-    public void testCreateCodeVal() {
-        assertEquals("Object o = \"hello\";\n        return o;", createCode("val('hello')"));
-    }
-
     // --- capitalize ---
 
     @Test
     public void testCapitalize() {
         exchange.getIn().setBody("hello world");
         assertEquals("Hello World", evaluate("capitalize()", String.class));
-    }
-
-    @Test
-    public void testCreateCodeCapitalize() {
-        assertEquals("Object o = null;\n        return capitalize(exchange, o);", createCode("capitalize()"));
     }
 
     // --- pad ---
@@ -189,26 +136,12 @@ public class StringFunctionFactoryTest extends AbstractSimpleFunctionFactoryTest
         assertEquals("hi   ", evaluate("pad(${body}, 5)", String.class));
     }
 
-    @Test
-    public void testCreateCodePad() {
-        assertEquals(
-                "Object value = body;\n        Object width = 10;\n        String separator = null;\n        return pad(exchange, value, width, separator);",
-                createCode("pad(body, 10)"));
-    }
-
     // --- concat ---
 
     @Test
     public void testConcat() {
         exchange.getIn().setBody("Hello");
         assertEquals("Hello World", evaluate("concat(${body}, World, ' ')", String.class));
-    }
-
-    @Test
-    public void testCreateCodeConcat() {
-        assertEquals(
-                "Object right = \"World\";\n        Object left = body;\n        Object separator = null;\n        return concat(exchange, left, right, separator);",
-                createCode("concat('World')"));
     }
 
     // --- quote / safeQuote / unquote ---
@@ -231,21 +164,6 @@ public class StringFunctionFactoryTest extends AbstractSimpleFunctionFactoryTest
         assertEquals("hello", evaluate("unquote()", String.class));
     }
 
-    @Test
-    public void testCreateCodeQuote() {
-        assertEquals("Object o = null;\n        return quote(exchange, o);", createCode("quote()"));
-    }
-
-    @Test
-    public void testCreateCodeSafeQuote() {
-        assertEquals("Object o = body;\n        return safeQuote(exchange, o);", createCode("safeQuote()"));
-    }
-
-    @Test
-    public void testCreateCodeUnquote() {
-        assertEquals("Object o = null;\n        return unquote(exchange, o);", createCode("unquote()"));
-    }
-
     // --- uppercase / lowercase ---
 
     @Test
@@ -258,16 +176,6 @@ public class StringFunctionFactoryTest extends AbstractSimpleFunctionFactoryTest
     public void testLowercase() {
         exchange.getIn().setBody("HELLO");
         assertEquals("hello", evaluate("lowercase()", String.class));
-    }
-
-    @Test
-    public void testCreateCodeUppercase() {
-        assertEquals("Object o = null;\n        return uppercase(exchange, o);", createCode("uppercase()"));
-    }
-
-    @Test
-    public void testCreateCodeLowercase() {
-        assertEquals("Object o = null;\n        return lowercase(exchange, o);", createCode("lowercase()"));
     }
 
     // --- length / size ---
@@ -284,27 +192,11 @@ public class StringFunctionFactoryTest extends AbstractSimpleFunctionFactoryTest
         assertEquals(3, evaluate("size()", Integer.class));
     }
 
-    @Test
-    public void testCreateCodeLength() {
-        assertEquals("Object o = body;\n        return length(exchange, o);", createCode("length()"));
-    }
-
-    @Test
-    public void testCreateCodeSize() {
-        assertEquals("Object o = body;\n        return size(exchange, o);", createCode("size()"));
-    }
-
     // --- normalizeWhitespace ---
 
     @Test
     public void testNormalizeWhitespace() {
         exchange.getIn().setBody("  hello   world  ");
         assertEquals("hello world", evaluate("normalizeWhitespace()", String.class));
-    }
-
-    @Test
-    public void testCreateCodeNormalizeWhitespace() {
-        assertEquals("Object o = null;\n        return normalizeWhitespace(exchange, o);",
-                createCode("normalizeWhitespace()"));
     }
 }

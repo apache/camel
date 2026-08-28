@@ -46,8 +46,8 @@ public class LangChain4jEmbeddingsProducer extends DefaultProducer {
         final EmbeddingModel model = getEndpoint().getConfiguration().getEmbeddingModel();
         GenAiObservationContext observationContext = GenAiObservationContext.builder()
                 .operationName(GenAiOperationName.EMBEDDINGS)
-                .system(GenAiModelResolver.resolveSystem(model))
-                .requestModel(GenAiModelResolver.resolveModelName(model))
+                .system(GenAiModelResolver.resolveSystem(exchange.getContext().getClassResolver(), model))
+                .requestModel(GenAiModelResolver.resolveModelName(exchange.getContext().getClassResolver(), model))
                 .componentScheme("langchain4j-embeddings")
                 .build();
         GenAiObservation observation = GenAiObservability.start(exchange, observationContext);

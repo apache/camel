@@ -86,4 +86,26 @@ public class YamlValidatorTest {
         Assertions.assertFalse(report.isEmpty());
         Assertions.assertTrue(report.stream().anyMatch(error -> error.getMessage().contains("parserStep")));
     }
+
+    @Test
+    public void testInlineExpressionObjectFormStillValidates() throws Exception {
+        // Guards the fix for CAMEL-24479: restoring additionalProperties:false on ExpressionDefinition
+        // must not break the inline shorthand merge (filter: { groovy: {...} } without an "expression:"
+        // wrapper), which relies on ExpressionDefinition's properties being redeclared onto FilterDefinition.
+        var report = validator.validate(new File("src/test/resources/inline-expression-object.yaml"));
+        Assertions.assertTrue(report.isEmpty(), "Inline expression object form should still pass validation but got: "
+                                                + report.stream().map(e -> e.getMessage()).toList());
+    }
+
+    @Test
+    public void testUnknownPropertyInExpressionBlockFailsValidation() throws Exception {
+        // CAMEL-24479: an explicit "expression: {...}" wrapper block with an unknown property (hello) must
+        // be rejected. Before the fix, ExpressionDefinition's schema had lost its additionalProperties:false
+        // as a side effect of also supporting inline expression shorthands (e.g. filter: { simple: "..." }),
+        // so unknown/duplicate properties were silently accepted whenever any single valid language was present.
+        var report = validator.validate(new File("src/test/resources/CAMEL-24479.yaml"));
+        Assertions.assertFalse(report.isEmpty(), "Unknown property 'hello' in the expression block should be reported");
+        Assertions.assertTrue(report.stream().anyMatch(e -> e.getMessage().contains("hello")),
+                "Should identify the unknown property 'hello', got: " + report.stream().map(e -> e.getMessage()).toList());
+    }
 }

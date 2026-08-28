@@ -13,7 +13,11 @@ See the xref:camel-upgrade-recipes-tool.adoc[documentation] page for details.
 
 == Upgrading Camel 4.22 to 4.23
 
-=== Components removal
+=== Components and Language removal
+
+==== camel-csimple, camel-csimple-joor and csimple-maven-plugin
+
+The `csimple` (compiled simple) language was deprecated in 4.19. Use the `simple` language instead.
 
 ==== camel-archetype-spring
 
@@ -166,7 +170,10 @@ unchanged and still does not permit any of the ranges above.
 
 LangChain4j and OpenAI producers now emit GenAI observability data (OpenTelemetry span attributes and
 Micrometer metrics) when `camel-opentelemetry2` and/or `camel-micrometer` is on the classpath.
-Disable globally with `camel.ai.observability.enabled=false` (default is enabled).
+Disable globally with `camel.aiObservability.enabled=false` (default is enabled). Camel Main also
+exposes the same setting via `main.configure().aiObservability().withEnabled(false)`.
+
+Spring AI chat (`spring-ai-chat`) producers emit the same GenAI spans and metrics in Phase 3.
 
 OpenAI streaming chat sets `stream_options.include_usage=true` only when GenAI observability is enabled,
 adding a final chunk with token usage for span/metric recording.
@@ -510,3 +517,19 @@ A route that relies on the exception message reaching the client must opt back i
 ----
 grpc://localhost:8080/org.example.MyService?muteException=false
 ----
+
+=== camel-keycloak
+
+When `validateIssuer` is enabled and the token is checked by introspection, an introspection response
+carrying no `iss` claim used to log a warning and pass. It is now rejected with
+`Token issuer missing: expected '<issuer>' but the introspection result carries no issuer`.
+
+Issuer validation is opt-in, so an operator who enabled it is asking for tokens from other issuers to be
+refused, and a response with no issuer is not evidence that the token came from the expected one. RFC 7662
+makes `iss` optional in an introspection response, so this is reachable wherever the introspection
+endpoint is a broker, a gateway, or a minimal implementation rather than the realm that issued the token.
+Audience validation already behaved this way; the two are now consistent.
+
+Deployments whose introspection endpoint omits `iss` must either have it include the claim, or turn
+`validateIssuer` off. The locally verified JWT path is unaffected — it uses Keycloak's own
+`TokenVerifier.RealmUrlCheck`.
