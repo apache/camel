@@ -21,6 +21,7 @@ import java.util.concurrent.TimeUnit;
 
 import org.apache.camel.Consumer;
 import org.apache.camel.Endpoint;
+import org.apache.camel.FailedToStartRouteException;
 import org.apache.camel.Processor;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.component.seda.SedaComponent;
@@ -33,8 +34,8 @@ import org.springframework.context.support.AbstractXmlApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class SpringSupervisingRouteControllerTest extends SpringTestSupport {
 
@@ -69,8 +70,9 @@ public class SpringSupervisingRouteControllerTest extends SpringTestSupport {
 
         Throwable e = src.getRestartException("cake");
         assertNotNull(e);
-        assertEquals("Cannot start", e.getMessage());
-        assertTrue(e instanceof IllegalArgumentException);
+        assertInstanceOf(FailedToStartRouteException.class, e);
+        assertInstanceOf(IllegalArgumentException.class, e.getCause());
+        assertEquals("Cannot start", e.getCause().getMessage());
 
         // bar is no auto startup
         assertEquals("Stopped", context.getRouteController().getRouteStatus("bar").toString());
