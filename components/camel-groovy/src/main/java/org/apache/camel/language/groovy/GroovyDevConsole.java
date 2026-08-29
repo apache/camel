@@ -16,16 +16,34 @@
  */
 package org.apache.camel.language.groovy;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 
+import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.annotations.DevConsole;
 import org.apache.camel.support.console.AbstractDevConsole;
 import org.apache.camel.util.TimeUtils;
-import org.apache.camel.util.json.JsonArray;
-import org.apache.camel.util.json.JsonObject;
+import org.apache.camel.util.json.JsonRecordSupport;
 
 @DevConsole(name = "groovy", displayName = "Groovy", description = "Groovy Language")
 public class GroovyDevConsole extends AbstractDevConsole {
+
+    public record CompilerInfo(
+            @Metadata(description = "The script file name pattern") String scriptPattern,
+            @Metadata(description = "Number of scripts compiled") int compiledCounter,
+            @Metadata(description = "Number of scripts pre-loaded") int preloadedCounter,
+            @Metadata(description = "Number of compiled classes") int classesSize,
+            @Metadata(description = "Total compile time in milliseconds") long compiledTime,
+            @Metadata(description = "Whether re-compilation is enabled") boolean recompileEnabled,
+            @Metadata(description = "Epoch time in milliseconds of the last compilation") long lastCompilationTimestamp,
+            @Metadata(description = "The work directory (only present when configured)") String workDir,
+            @Metadata(description = "The compiled class names (only present when there are any)") List<String> classes) {
+    }
+
+    public record Response(
+            @Metadata(description = "The Groovy compiler information (only present when the compiler is active)") CompilerInfo compiler) {
+    }
 
     public GroovyDevConsole() {
         super("camel", "groovy", "Groovy", "Groovy Language");
@@ -61,28 +79,18 @@ public class GroovyDevConsole extends AbstractDevConsole {
 
     @Override
     protected Map<String, Object> doCallJson(Map<String, Object> options) {
-        JsonObject root = new JsonObject();
+        CompilerInfo compilerInfo = null;
 
         DefaultGroovyScriptCompiler compiler = getCamelContext().hasService(DefaultGroovyScriptCompiler.class);
         if (compiler != null) {
-            JsonObject jo = new JsonObject();
-            jo.put("scriptPattern", compiler.getScriptPattern());
-            jo.put("compiledCounter", compiler.getCompileCounter());
-            jo.put("preloadedCounter", compiler.getPreloadedCounter());
-            jo.put("classesSize", compiler.getClassesSize());
-            jo.put("compiledTime", compiler.getCompileTime());
-            jo.put("recompileEnabled", compiler.isRecompileEnabled());
-            jo.put("lastCompilationTimestamp", compiler.getLastCompilationTimestamp());
-            if (compiler.getWorkDir() != null) {
-                jo.put("workDir", compiler.getWorkDir());
-            }
-            JsonArray arr = new JsonArray(compiler.compiledClassNames());
-            if (!arr.isEmpty()) {
-                jo.put("classes", arr);
-            }
-            root.put("compiler", jo);
+            List<String> classes = new ArrayList<>(compiler.compiledClassNames());
+            compilerInfo = new CompilerInfo(
+                    compiler.getScriptPattern(), compiler.getCompileCounter(), compiler.getPreloadedCounter(),
+                    compiler.getClassesSize(), compiler.getCompileTime(), compiler.isRecompileEnabled(),
+                    compiler.getLastCompilationTimestamp(), compiler.getWorkDir(), classes.isEmpty() ? null : classes);
         }
 
-        return root;
+        Response response = new Response(compilerInfo);
+        return JsonRecordSupport.toJsonObject(response);
     }
 }
