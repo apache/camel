@@ -17,16 +17,20 @@
 package org.apache.camel.component.ai.observability;
 
 /**
- * Optional Micrometer metrics backend for GenAI observations.
+ * Optional Micrometer Observation backend for GenAI operations. Implementations must not expose Micrometer Observation
+ * types on this interface so {@link GenAiObservabilityImpl} can load without micrometer-observation on the classpath.
  */
-interface GenAiMetricsBackend {
+interface GenAiMicrometerObservationBackend {
 
     boolean isAvailable();
 
-    void recordMetrics(GenAiObservationContext context, GenAiUsage usage, Throwable error, long startNanos);
-
     /**
-     * Records token usage counters only. Used when Micrometer Observation already records the operation timer.
+     * Starts a Micrometer Observation for the GenAI client call. Returns {@code null} when the registry produces a
+     * no-op Observation.
      */
-    void recordTokenUsage(GenAiObservationContext context, GenAiUsage usage, Throwable error);
+    Handle start(GenAiObservationContext context);
+
+    interface Handle {
+        void stop(Throwable error);
+    }
 }

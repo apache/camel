@@ -58,11 +58,16 @@ final class GenAiMicrometerSupport implements GenAiMetricsBackend {
                 .tags(baseTags)
                 .register(meterRegistry)
                 .record(System.nanoTime() - startNanos, TimeUnit.NANOSECONDS);
+        recordTokenUsage(context, usage, error);
+    }
 
-        if (usage != null) {
-            recordTokenCounter(usage.inputTokens(), GenAiMetrics.TOKEN_TYPE_INPUT, context, error);
-            recordTokenCounter(usage.outputTokens(), GenAiMetrics.TOKEN_TYPE_OUTPUT, context, error);
+    @Override
+    public void recordTokenUsage(GenAiObservationContext context, GenAiUsage usage, Throwable error) {
+        if (meterRegistry == null || usage == null) {
+            return;
         }
+        recordTokenCounter(usage.inputTokens(), GenAiMetrics.TOKEN_TYPE_INPUT, context, error);
+        recordTokenCounter(usage.outputTokens(), GenAiMetrics.TOKEN_TYPE_OUTPUT, context, error);
     }
 
     private void recordTokenCounter(
