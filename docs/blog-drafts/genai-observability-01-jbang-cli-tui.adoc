@@ -101,7 +101,7 @@ The bundled example ships with Camel 4.23:
 
 `dsl/camel-jbang/camel-jbang-core/src/main/resources/examples/ai/genai-observability/`
 
-Or from GitHub after merge: https://github.com/apache/camel/tree/main/dsl/camel-jbang/camel-jbang-core/src/main/resources/examples/ai/genai-observability
+Or from GitHub: https://github.com/apache/camel/pull/25891/files[JBang example PR files] (merges to `main` with PR #25891)
 
 Files:
 
@@ -453,8 +453,8 @@ Prometheus + VictoriaTraces + Perses — the same `gen_ai.*` signals at producti
 
 == Links
 
-* https://camel.apache.org/components/next/ai-observability.html[AI Observability component]
+* https://github.com/apache/camel/blob/main/components/camel-ai/camel-ai-observability/src/main/docs/ai-observability.adoc[AI Observability component (4.23+, source doc)]
 * https://camel.apache.org/manual/camel-jbang-tui.html[Camel TUI manual]
-* https://camel.apache.org/manual/camel-jbang-commands.html#_ask[camel ask command]
-* https://camel.apache.org/components/next/group.html?_group=AI[Camel AI components]
+* https://camel.apache.org/manual/jbang-commands/camel-jbang-ask.html[camel ask command]
+* https://camel.apache.org/components/next/ai-summary.html[Camel AI components]
 * Example PR: https://github.com/apache/camel/pull/25891[JBang genai-observability example]

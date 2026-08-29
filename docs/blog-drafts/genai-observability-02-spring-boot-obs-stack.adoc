@@ -63,7 +63,7 @@ spring-boot/genai-observability/
         └── camel/genai-route.camel.yaml
 ----
 
-Clone: https://github.com/apache/camel-examples/tree/main/spring-boot/genai-observability
+Clone: https://github.com/apache/camel-examples/pull/255/files[PR #255 files] until merged to `main` (`spring-boot/genai-observability`)
 
 == Step 1 — Prerequisites
 
@@ -208,7 +208,7 @@ Each span should carry:
 [TIP]
 ====
 Correlate traces with logs by passing the trace ID from MDC if you enable log correlation
-in your logging config — see xref:manual::camel-jbang-tui.adoc#_opentelemetry_spans[OpenTelemetry docs].
+in your logging config — see https://camel.apache.org/manual/camel-jbang-tui.html#_opentelemetry_spans[OpenTelemetry docs].
 ====
 
 == Step 6 — Optional: Camel TUI against Spring Boot
@@ -494,7 +494,7 @@ trace branches in VictoriaTraces.
 
 == Documentation
 
-* https://camel.apache.org/components/next/ai-observability.html[AI Observability]
-* https://camel.apache.org/components/next/observability-services.html[Observability Services]
+* https://github.com/apache/camel/blob/main/components/camel-ai/camel-ai-observability/src/main/docs/ai-observability.adoc[AI Observability (4.23+, source doc)]
+* https://camel.apache.org/components/others/observability-services.html[Observability Services]
 * https://camel.apache.org/manual/langchain4j-spring-boot-integration.html[LangChain4j Spring Boot Integration]
-* https://camel.apache.org/components/next/group.html?_group=AI[All Camel AI components]
+* https://camel.apache.org/components/next/ai-summary.html[All Camel AI components]
