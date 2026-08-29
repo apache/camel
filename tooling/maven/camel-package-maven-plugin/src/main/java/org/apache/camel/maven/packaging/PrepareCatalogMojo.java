@@ -409,6 +409,8 @@ public class PrepareCatalogMojo extends AbstractMojo {
                                         }
                                         om.setVersion(project.getVersion());
                                     }
+                                }
+                                if (m != null) {
                                     allModels.put(p, m);
                                 }
                             }
