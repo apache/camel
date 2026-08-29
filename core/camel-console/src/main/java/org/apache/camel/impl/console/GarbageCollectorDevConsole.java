@@ -18,19 +18,30 @@ package org.apache.camel.impl.console;
 
 import java.lang.management.GarbageCollectorMXBean;
 import java.lang.management.ManagementFactory;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
 import org.apache.camel.spi.Configurer;
+import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.annotations.DevConsole;
 import org.apache.camel.support.console.AbstractDevConsole;
-import org.apache.camel.util.json.JsonArray;
-import org.apache.camel.util.json.JsonObject;
+import org.apache.camel.util.json.JsonRecordSupport;
 
 @DevConsole(name = "gc", displayName = "Garbage Collector", description = "Displays Garbage Collector information")
 @Configurer(extended = true)
 public class GarbageCollectorDevConsole extends AbstractDevConsole {
+
+    public record CollectorEntry(
+            @Metadata(description = "The garbage collector name") String name,
+            @Metadata(description = "Number of collections") long collectionCount,
+            @Metadata(description = "Total collection time in milliseconds") long collectionTime,
+            @Metadata(description = "Comma separated list of memory pool names managed by this collector") String memoryPoolNames) {
+    }
+
+    public record Response(@Metadata(description = "The garbage collectors") List<CollectorEntry> garbageCollectors) {
+    }
 
     public GarbageCollectorDevConsole() {
         super("jvm", "gc", "Garbage Collector", "Displays Garbage Collector information");
@@ -51,22 +62,19 @@ public class GarbageCollectorDevConsole extends AbstractDevConsole {
     }
 
     @Override
-    protected JsonObject doCallJson(Map<String, Object> options) {
-        JsonObject root = new JsonObject();
-        JsonArray arr = new JsonArray();
-        root.put("garbageCollectors", arr);
+    protected Map<String, Object> doCallJson(Map<String, Object> options) {
+        List<CollectorEntry> entries = new ArrayList<>();
 
         List<GarbageCollectorMXBean> gcs = ManagementFactory.getGarbageCollectorMXBeans();
         if (gcs != null && !gcs.isEmpty()) {
             for (GarbageCollectorMXBean gc : gcs) {
-                JsonObject jo = new JsonObject();
-                arr.add(jo);
-                jo.put("name", gc.getName());
-                jo.put("collectionCount", gc.getCollectionCount());
-                jo.put("collectionTime", gc.getCollectionTime());
-                jo.put("memoryPoolNames", String.join(",", Arrays.asList(gc.getMemoryPoolNames())));
+                entries.add(new CollectorEntry(
+                        gc.getName(), gc.getCollectionCount(), gc.getCollectionTime(),
+                        String.join(",", Arrays.asList(gc.getMemoryPoolNames()))));
             }
         }
-        return root;
+
+        Response response = new Response(entries);
+        return JsonRecordSupport.toJsonObject(response);
     }
 }
