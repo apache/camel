@@ -30,8 +30,7 @@ import org.apache.camel.spi.annotations.DevConsole;
 import org.apache.camel.support.console.AbstractDevConsole;
 import org.apache.camel.util.StopWatch;
 import org.apache.camel.util.TimeUtils;
-import org.apache.camel.util.json.JsonArray;
-import org.apache.camel.util.json.JsonObject;
+import org.apache.camel.util.json.JsonRecordSupport;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -45,6 +44,36 @@ public class KafkaDevConsole extends AbstractDevConsole {
     @Metadata(label = "query", description = "Whether to include committed offset (sync operation to Kafka broker)",
               defaultValue = "false", javaType = "java.lang.Boolean")
     public static final String COMMITTED = "committed";
+
+    public record CommittedEntry(
+            @Metadata(description = "The topic") String topic,
+            @Metadata(description = "The partition") int partition,
+            @Metadata(description = "The committed offset") long offset,
+            @Metadata(description = "The epoch") int epoch) {
+    }
+
+    public record WorkerEntry(
+            @Metadata(description = "The worker thread id") String threadId,
+            @Metadata(description = "The worker state") String state,
+            @Metadata(description = "The worker last error (only present when not ready)") String lastError,
+            @Metadata(description = "The consumer group id (only present when known)") String groupId,
+            @Metadata(description = "The consumer group instance id (only present when known)") String groupInstanceId,
+            @Metadata(description = "The consumer member id (only present when known)") String memberId,
+            @Metadata(description = "The consumer generation id (only present when known)") Integer generationId,
+            @Metadata(description = "The last consumed topic (only present when known)") String lastTopic,
+            @Metadata(description = "The last consumed partition (only present when known)") Integer lastPartition,
+            @Metadata(description = "The last consumed offset (only present when known)") Long lastOffset,
+            @Metadata(description = "The committed offsets (only present when requested and there are any)") List<CommittedEntry> committed) {
+    }
+
+    public record ConsumerEntry(
+            @Metadata(description = "The route id") String routeId,
+            @Metadata(description = "The endpoint URI") String uri,
+            @Metadata(description = "The consumer worker threads") List<WorkerEntry> workers) {
+    }
+
+    public record Response(@Metadata(description = "The Kafka consumers") List<ConsumerEntry> kafkaConsumers) {
+    }
 
     public KafkaDevConsole() {
         super("camel", "kafka", "Kafka", "Apache Kafka");
@@ -123,65 +152,61 @@ public class KafkaDevConsole extends AbstractDevConsole {
     protected Map<String, Object> doCallJson(Map<String, Object> options) {
         final boolean committed = optionBoolean(options, COMMITTED, false);
 
-        JsonObject root = new JsonObject();
-
-        List<JsonObject> list = new ArrayList<>();
-        root.put("kafkaConsumers", list);
+        List<ConsumerEntry> list = new ArrayList<>();
 
         for (Route route : getCamelContext().getRoutes()) {
             if (route.getConsumer() instanceof KafkaConsumer kc) {
-                JsonObject jo = new JsonObject();
-                jo.put("routeId", route.getRouteId());
-                jo.put("uri", route.getEndpoint().getEndpointUri());
-
-                JsonArray arr = new JsonArray();
-                jo.put("workers", arr);
+                List<WorkerEntry> workers = new ArrayList<>();
 
                 for (KafkaFetchRecords t : kc.tasks()) {
                     final DevConsoleMetricsCollector metricsCollector = t.getMetricsCollector();
 
-                    JsonObject wo = new JsonObject();
-                    arr.add(wo);
-                    wo.put("threadId", metricsCollector.getThreadId());
-                    wo.put("state", t.getState());
+                    String lastError = null;
                     TaskHealthState hs = t.healthState();
                     if (!hs.isReady()) {
-                        wo.put("lastError", hs.buildStateMessage());
+                        lastError = hs.buildStateMessage();
                     }
+                    String groupId = null;
+                    String groupInstanceId = null;
+                    String memberId = null;
+                    Integer generationId = null;
                     DefaultMetricsCollector.GroupMetadata meta = metricsCollector.getGroupMetadata();
                     if (meta != null) {
-                        wo.put("groupId", meta.groupId());
-                        wo.put("groupInstanceId", meta.groupInstanceId());
-                        wo.put("memberId", meta.memberId());
-                        wo.put("generationId", meta.generationId());
+                        groupId = meta.groupId();
+                        groupInstanceId = meta.groupInstanceId();
+                        memberId = meta.memberId();
+                        generationId = meta.generationId();
                     }
+                    String lastTopic = null;
+                    Integer lastPartition = null;
+                    Long lastOffset = null;
                     if (metricsCollector.getLastRecord() != null) {
-                        wo.put("lastTopic", metricsCollector.getLastRecord().topic());
-                        wo.put("lastPartition", metricsCollector.getLastRecord().partition());
-                        wo.put("lastOffset", metricsCollector.getLastRecord().offset());
+                        lastTopic = metricsCollector.getLastRecord().topic();
+                        lastPartition = metricsCollector.getLastRecord().partition();
+                        lastOffset = metricsCollector.getLastRecord().offset();
                     }
+                    List<CommittedEntry> committedList = null;
                     if (committed) {
                         List<DefaultMetricsCollector.KafkaTopicPosition> l = fetchCommitOffsets(kc, metricsCollector);
                         if (l != null) {
-                            JsonArray ca = new JsonArray();
+                            List<CommittedEntry> ca = new ArrayList<>();
                             for (DefaultMetricsCollector.KafkaTopicPosition r : l) {
-                                JsonObject cr = new JsonObject();
-                                cr.put("topic", r.topic());
-                                cr.put("partition", r.partition());
-                                cr.put("offset", r.offset());
-                                cr.put("epoch", r.epoch());
-                                ca.add(cr);
+                                ca.add(new CommittedEntry(r.topic(), r.partition(), r.offset(), r.epoch()));
                             }
-                            if (!ca.isEmpty()) {
-                                wo.put("committed", ca);
-                            }
+                            committedList = ca.isEmpty() ? null : ca;
                         }
                     }
+
+                    workers.add(new WorkerEntry(
+                            metricsCollector.getThreadId(), t.getState(), lastError, groupId, groupInstanceId,
+                            memberId, generationId, lastTopic, lastPartition, lastOffset, committedList));
                 }
-                list.add(jo);
+                list.add(new ConsumerEntry(route.getRouteId(), route.getEndpoint().getEndpointUri(), workers));
             }
         }
-        return root;
+
+        Response response = new Response(list);
+        return JsonRecordSupport.toJsonObject(response);
     }
 
 }
