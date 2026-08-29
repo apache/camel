@@ -74,6 +74,31 @@
         ]
     },
     {
+        "name": "ai/genai-observability",
+        "title": "GenAI Observability",
+        "description": "Observe LangChain4j LLM calls with OpenTelemetry gen_ai spans, Micrometer metrics, and the Camel TUI",
+        "level": "intermediate",
+        "tags": [
+            "ai",
+            "observability",
+            "langchain4j",
+            "opentelemetry",
+            "genai",
+            "tui"
+        ],
+        "bundled": true,
+        "requiresDocker": false,
+        "hasCitrusTests": false,
+        "files": [
+            "README.md",
+            "application.properties",
+            "GenAiObservabilityRoute.java"
+        ],
+        "infraServices": [
+            "ollama"
+        ]
+    },
+    {
         "name": "ai/smart-log-analyzer",
         "title": "Smart Log Analyzer",
         "description": "Intelligent observability correlating OpenTelemetry logs and traces with LLM analysis",
