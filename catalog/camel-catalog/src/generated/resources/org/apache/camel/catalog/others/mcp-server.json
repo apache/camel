@@ -3,7 +3,7 @@
     "kind": "other",
     "name": "mcp-server",
     "title": "MCP Server",
-    "description": "Expose ai-tool routes as MCP tools over streamable HTTP",
+    "description": "Expose ai-tool routes as MCP tools and ai-resource routes as MCP resources over streamable HTTP",
     "deprecated": false,
     "firstVersion": "4.22.0",
     "label": "ai",

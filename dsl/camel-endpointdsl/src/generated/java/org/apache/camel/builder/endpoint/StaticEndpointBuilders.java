@@ -177,6 +177,50 @@ public class StaticEndpointBuilders {
         return ActiveMQ6EndpointBuilderFactory.endpointBuilder(componentName, path);
     }
     /**
+     * AI Resource (camel-ai-resource)
+     * Framework-agnostic consumer endpoint that registers a Camel route as a
+     * read-only AI resource in the shared AiResourceRegistry.
+     * 
+     * Category: ai
+     * Since: 4.23
+     * Maven coordinates: org.apache.camel:camel-ai-resource
+     * 
+     * Syntax: <code>ai-resource:resourceName</code>
+     * 
+     * Path parameter: resourceName (required)
+     * The resource name. This is the human-readable label clients see in
+     * resource listings.
+     * 
+     * @param path resourceName
+     * @return the dsl builder
+     */
+    public static AiResourceEndpointBuilderFactory.AiResourceEndpointBuilder aiResource(String path) {
+        return aiResource("ai-resource", path);
+    }
+    /**
+     * AI Resource (camel-ai-resource)
+     * Framework-agnostic consumer endpoint that registers a Camel route as a
+     * read-only AI resource in the shared AiResourceRegistry.
+     * 
+     * Category: ai
+     * Since: 4.23
+     * Maven coordinates: org.apache.camel:camel-ai-resource
+     * 
+     * Syntax: <code>ai-resource:resourceName</code>
+     * 
+     * Path parameter: resourceName (required)
+     * The resource name. This is the human-readable label clients see in
+     * resource listings.
+     * 
+     * @param componentName to use a custom component name for the endpoint
+     * instead of the default name
+     * @param path resourceName
+     * @return the dsl builder
+     */
+    public static AiResourceEndpointBuilderFactory.AiResourceEndpointBuilder aiResource(String componentName, String path) {
+        return AiResourceEndpointBuilderFactory.endpointBuilder(componentName, path);
+    }
+    /**
      * AI Tool (camel-ai-tool)
      * Framework-agnostic consumer endpoint that registers a Camel route as an
      * LLM tool in the shared AiToolRegistry.

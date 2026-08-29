@@ -40,6 +40,7 @@ public class HttpServerConfigurationPropertiesConfigurer extends org.apache.came
         map.put("McpEnabled", boolean.class);
         map.put("McpInstructions", java.lang.String.class);
         map.put("McpPath", java.lang.String.class);
+        map.put("McpResourceTimeout", long.class);
         map.put("McpServerDescription", java.lang.String.class);
         map.put("McpServerIcons", java.lang.String.class);
         map.put("McpServerName", java.lang.String.class);
@@ -96,6 +97,8 @@ public class HttpServerConfigurationPropertiesConfigurer extends org.apache.came
         case "mcpInstructions": target.setMcpInstructions(property(camelContext, java.lang.String.class, value)); return true;
         case "mcppath":
         case "mcpPath": target.setMcpPath(property(camelContext, java.lang.String.class, value)); return true;
+        case "mcpresourcetimeout":
+        case "mcpResourceTimeout": target.setMcpResourceTimeout(property(camelContext, long.class, value)); return true;
         case "mcpserverdescription":
         case "mcpServerDescription": target.setMcpServerDescription(property(camelContext, java.lang.String.class, value)); return true;
         case "mcpservericons":
@@ -170,6 +173,8 @@ public class HttpServerConfigurationPropertiesConfigurer extends org.apache.came
         case "mcpInstructions": return java.lang.String.class;
         case "mcppath":
         case "mcpPath": return java.lang.String.class;
+        case "mcpresourcetimeout":
+        case "mcpResourceTimeout": return long.class;
         case "mcpserverdescription":
         case "mcpServerDescription": return java.lang.String.class;
         case "mcpservericons":
@@ -240,6 +245,8 @@ public class HttpServerConfigurationPropertiesConfigurer extends org.apache.came
         case "mcpInstructions": return target.getMcpInstructions();
         case "mcppath":
         case "mcpPath": return target.getMcpPath();
+        case "mcpresourcetimeout":
+        case "mcpResourceTimeout": return target.getMcpResourceTimeout();
         case "mcpserverdescription":
         case "mcpServerDescription": return target.getMcpServerDescription();
         case "mcpservericons":

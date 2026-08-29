@@ -25,12 +25,24 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.support.service.ServiceSupport;
 
 /**
- * Mock {@link McpServerEngine} recording the tools published by the bridge, for engine-less bridge tests.
+ * Mock {@link McpServerEngine} recording the tools and resources published by the bridge, for engine-less bridge tests.
  */
 public class RecordingMcpServerEngine extends ServiceSupport implements McpServerEngine {
 
     private final Map<String, McpServerTool> tools = new ConcurrentHashMap<>();
+    private final Map<String, McpServerResource> resources = new ConcurrentHashMap<>();
     private final List<String> removed = new CopyOnWriteArrayList<>();
+    private final List<String> removedResources = new CopyOnWriteArrayList<>();
+    private final boolean resourcesSupported;
+
+    public RecordingMcpServerEngine() {
+        this(true);
+    }
+
+    public RecordingMcpServerEngine(boolean resourcesSupported) {
+        this.resourcesSupported = resourcesSupported;
+    }
+
     private CamelContext camelContext;
     private McpServerInfo info;
 
@@ -60,8 +72,32 @@ public class RecordingMcpServerEngine extends ServiceSupport implements McpServe
         removed.add(toolName);
     }
 
+    @Override
+    public void resourceAdded(McpServerResource resource) {
+        resources.put(resource.uri(), resource);
+    }
+
+    @Override
+    public void resourceRemoved(String resourceUri) {
+        resources.remove(resourceUri);
+        removedResources.add(resourceUri);
+    }
+
+    @Override
+    public boolean supportsResources() {
+        return resourcesSupported;
+    }
+
     public Map<String, McpServerTool> tools() {
         return tools;
+    }
+
+    public Map<String, McpServerResource> resources() {
+        return resources;
+    }
+
+    public List<String> removedResources() {
+        return removedResources;
     }
 
     public List<String> removed() {

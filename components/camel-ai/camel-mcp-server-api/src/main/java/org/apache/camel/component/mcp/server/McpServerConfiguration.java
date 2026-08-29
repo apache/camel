@@ -32,6 +32,7 @@ public class McpServerConfiguration {
 
     private String tags;
     private long toolTimeout = McpServerConstants.DEFAULT_TOOL_TIMEOUT;
+    private long resourceTimeout = McpServerConstants.DEFAULT_RESOURCE_TIMEOUT;
     private String path = McpServerConstants.DEFAULT_PATH;
     private String serverName;
     private String serverTitle;
@@ -65,6 +66,18 @@ public class McpServerConfiguration {
 
     public void setToolTimeout(long toolTimeout) {
         this.toolTimeout = toolTimeout;
+    }
+
+    /**
+     * Per-read resource execution timeout in milliseconds. A read exceeding the timeout returns an error to the MCP
+     * client; the underlying route keeps running until it completes on its own.
+     */
+    public long getResourceTimeout() {
+        return resourceTimeout;
+    }
+
+    public void setResourceTimeout(long resourceTimeout) {
+        this.resourceTimeout = resourceTimeout;
     }
 
     /**

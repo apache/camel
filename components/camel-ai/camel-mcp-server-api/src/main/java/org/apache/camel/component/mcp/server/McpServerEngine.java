@@ -32,6 +32,11 @@ import org.apache.camel.Service;
  * {@link #toolAdded(McpServerTool)} for the initial tool set and for every later change (driven by route
  * start/stop/suspend/resume of {@code ai-tool} routes). Engines with a {@code listChanged} capability should emit
  * {@code notifications/tools/list_changed} on add/remove.
+ * <p>
+ * Resources follow the same lifecycle through {@link #resourceAdded(McpServerResource)} and
+ * {@link #resourceRemoved(String)}, driven by {@code ai-resource} routes. Both default to no-ops so an engine that
+ * serves tools only keeps working unchanged; such an engine reports {@link #supportsResources()} as false and the
+ * bridge then warns when resources are configured but cannot be served.
  *
  * @since 4.22
  */
@@ -52,6 +57,35 @@ public interface McpServerEngine extends Service, CamelContextAware {
      * Removes a tool by name. Called whenever a matching {@code ai-tool} route stops or suspends.
      */
     void toolRemoved(String toolName);
+
+    /**
+     * Publishes a resource. Called for the initial set and whenever a matching {@code ai-resource} route starts or
+     * resumes. Defaults to a no-op for engines that serve tools only.
+     *
+     * @since 4.23
+     */
+    default void resourceAdded(McpServerResource resource) {
+    }
+
+    /**
+     * Removes a resource by uri. Called whenever a matching {@code ai-resource} route stops or suspends. Defaults to a
+     * no-op for engines that serve tools only.
+     *
+     * @since 4.23
+     */
+    default void resourceRemoved(String resourceUri) {
+    }
+
+    /**
+     * Whether this engine serves MCP resources. Engines returning false ignore
+     * {@link #resourceAdded(McpServerResource)} and {@link #resourceRemoved(String)}, and the bridge warns once when
+     * {@code ai-resource} routes match the configured tags but cannot be served.
+     *
+     * @since 4.23
+     */
+    default boolean supportsResources() {
+        return false;
+    }
 
     /**
      * Whether this engine consumes the Camel-owned serving configuration ({@code path}, {@code serverName}). Engines
