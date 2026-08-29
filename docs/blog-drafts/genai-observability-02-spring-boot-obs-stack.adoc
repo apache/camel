@@ -1,5 +1,5 @@
 = GenAI Observability with Spring Boot and the Camel Observability Stack (Blog 2)
-:author: Apache Camel community
+:author: Omar Atie
 :doctitle: GenAI Observability with Spring Boot and the Camel Observability Stack
 :doctype: article
 :toc:

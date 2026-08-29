@@ -1,5 +1,5 @@
 = Observe Your Camel AI Routes with GenAI OpenTelemetry (Blog 1)
-:author: Apache Camel community
+:author: Omar Atie
 :doctitle: Observe Your Camel AI Routes with GenAI OpenTelemetry
 :doctype: article
 :toc:
