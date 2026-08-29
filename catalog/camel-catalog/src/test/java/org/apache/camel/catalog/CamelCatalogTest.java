@@ -1795,6 +1795,20 @@ public class CamelCatalogTest {
         JsonObject post = route.getJsonObject("post");
         Assertions.assertNotNull(post);
         Assertions.assertNotNull(post.getJsonObject("requestBody"));
+
+        // a console migrated to an authoritative typed Response record has a real response schema
+        JsonObject circuitBreaker = paths.getJsonObject("/q/dev/circuit-breaker");
+        JsonObject cbSchema = circuitBreaker.getJsonObject("get").getJsonObject("responses").getJsonObject("200")
+                .getJsonObject("content").getJsonObject("application/json").getJsonObject("schema");
+        Assertions.assertNotNull(cbSchema);
+        Assertions.assertEquals("object", cbSchema.getString("type"));
+        Assertions.assertNotNull(cbSchema.getJsonObject("properties").getJsonObject("circuitBreakers"));
+
+        // a console not yet migrated still has the empty placeholder
+        JsonObject jvm = paths.getJsonObject("/q/dev/jvm");
+        JsonObject jvmContent = jvm.getJsonObject("get").getJsonObject("responses").getJsonObject("200")
+                .getJsonObject("content").getJsonObject("application/json");
+        Assertions.assertTrue(jvmContent.isEmpty());
     }
 
     @Test

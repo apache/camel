@@ -101,6 +101,40 @@ class DevConsoleOpenApiHelperTest {
     }
 
     @Test
+    void consoleWithResponseSchemaPopulatesResponseContent() {
+        DevConsoleModel model = new DevConsoleModel();
+        model.setName("circuit-breaker");
+        model.setTitle("Circuit Breaker");
+        model.setDescription("Circuit breaker information");
+        model.setReadOnly(true);
+
+        JsonObject schema = new JsonObject();
+        schema.put("type", "object");
+        model.setResponseSchema(schema);
+
+        JsonObject pathItem = DevConsoleOpenApiHelper.buildPathItem(model);
+        JsonObject content = pathItem.getJsonObject("get").getJsonObject("responses").getJsonObject("200")
+                .getJsonObject("content").getJsonObject("application/json");
+
+        assertEquals(schema, content.getJsonObject("schema"));
+    }
+
+    @Test
+    void consoleWithoutResponseSchemaHasEmptyResponseContent() {
+        DevConsoleModel model = new DevConsoleModel();
+        model.setName("context");
+        model.setTitle("CamelContext");
+        model.setDescription("Overall information about the CamelContext");
+        model.setReadOnly(true);
+
+        JsonObject pathItem = DevConsoleOpenApiHelper.buildPathItem(model);
+        JsonObject content = pathItem.getJsonObject("get").getJsonObject("responses").getJsonObject("200")
+                .getJsonObject("content").getJsonObject("application/json");
+
+        assertTrue(content.isEmpty());
+    }
+
+    @Test
     void openApiDocumentContainsOnePathPerConsoleSortedByName() {
         DevConsoleModel context = new DevConsoleModel();
         context.setName("context");

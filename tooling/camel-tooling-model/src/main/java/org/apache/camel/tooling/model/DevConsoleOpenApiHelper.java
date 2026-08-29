@@ -79,8 +79,12 @@ public final class DevConsoleOpenApiHelper {
         JsonObject responses = new JsonObject();
         JsonObject ok = new JsonObject();
         ok.put("description", model.getTitle() + " output");
+        JsonObject mediaType = new JsonObject();
+        if (model.getResponseSchema() != null) {
+            mediaType.put("schema", model.getResponseSchema());
+        }
         JsonObject responseContent = new JsonObject();
-        responseContent.put("application/json", new JsonObject());
+        responseContent.put("application/json", mediaType);
         ok.put("content", responseContent);
         responses.put("200", ok);
         operation.put("responses", responses);
