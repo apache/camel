@@ -17,7 +17,9 @@
 package org.apache.camel.impl.console;
 
 import java.io.LineNumberReader;
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 import java.util.Map;
 
 import org.apache.camel.Route;
@@ -32,6 +34,7 @@ import org.apache.camel.util.IOHelper;
 import org.apache.camel.util.StringHelper;
 import org.apache.camel.util.json.JsonArray;
 import org.apache.camel.util.json.JsonObject;
+import org.apache.camel.util.json.JsonRecordSupport;
 import org.apache.camel.util.json.Jsoner;
 
 @DevConsole(name = "message-history", displayName = "Message History", description = "History of latest completed exchange")
@@ -41,6 +44,11 @@ public class MessageHistoryDevConsole extends AbstractDevConsole {
     @Metadata(label = "query", description = "Number of source code lines around the location to include",
               javaType = "java.lang.Integer", defaultValue = "5")
     public static final String CODE_LIMIT = "codeLimit";
+
+    public record Response(
+            @Metadata(description = "The CamelContext name (only present when a backlog tracer is available)") String name,
+            @Metadata(description = "The latest completed message trace entries, as opaque JSON objects (only present when a backlog tracer is available)") List<Map<String, Object>> traces) {
+    }
 
     public MessageHistoryDevConsole() {
         super("camel", "message-history", "Message History", "History of latest completed exchange");
@@ -61,14 +69,15 @@ public class MessageHistoryDevConsole extends AbstractDevConsole {
         return sb.toString();
     }
 
-    protected JsonObject doCallJson(Map<String, Object> options) {
-        JsonObject root = new JsonObject();
-
+    protected Map<String, Object> doCallJson(Map<String, Object> options) {
         int codeLimit = optionInt(options, CODE_LIMIT, 5);
+
+        String name = null;
+        List<Map<String, Object>> traces = null;
 
         BacklogTracer tracer = getCamelContext().getCamelContextExtension().getContextPlugin(BacklogTracer.class);
         if (tracer != null) {
-            JsonArray arr = new JsonArray();
+            traces = new ArrayList<>();
 
             Collection<BacklogTracerEventMessage> queue = tracer.getLatestMessageHistory();
             for (BacklogTracerEventMessage t : queue) {
@@ -87,13 +96,13 @@ public class MessageHistoryDevConsole extends AbstractDevConsole {
                     }
                 }
 
-                arr.add(to);
+                traces.add(to);
             }
-            root.put("name", getCamelContext().getName());
-            root.put("traces", arr);
+            name = getCamelContext().getName();
         }
 
-        return root;
+        Response response = new Response(name, traces);
+        return JsonRecordSupport.toJsonObject(response);
     }
 
     private JsonArray enrichSourceCode(String routeId, String location, int lines) {

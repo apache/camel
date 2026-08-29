@@ -41,6 +41,56 @@
       "secret": false,
       "description": "Limits the number of entries displayed"
     }
+  },
+  "response": {
+    "type": "object",
+    "properties": {
+      "routes": {
+        "type": "array",
+        "items": {
+          "type": "object",
+          "properties": {
+            "routeId": {
+              "type": "string",
+              "description": "The route ID"
+            },
+            "from": {
+              "type": "string",
+              "description": "The route's endpoint URI"
+            },
+            "source": {
+              "type": "string",
+              "description": "The source location (only present when known)"
+            },
+            "code": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "line": {
+                    "type": "integer",
+                    "description": "The line number"
+                  },
+                  "code": {
+                    "type": "string",
+                    "description": "The source code line"
+                  },
+                  "match": {
+                    "type": "boolean",
+                    "description": "Whether this is the matched line (only present when true)"
+                  }
+                },
+                "required": [
+                  "line"
+                ]
+              },
+              "description": "The source code around the route (only present when resolvable)"
+            }
+          }
+        },
+        "description": "The routes"
+      }
+    }
   }
 }
 

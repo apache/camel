@@ -1804,11 +1804,12 @@ public class CamelCatalogTest {
         Assertions.assertEquals("object", cbSchema.getString("type"));
         Assertions.assertNotNull(cbSchema.getJsonObject("properties").getJsonObject("circuitBreakers"));
 
-        // a console not yet migrated still has the empty placeholder
-        JsonObject log = paths.getJsonObject("/q/dev/log");
-        JsonObject logContent = log.getJsonObject("get").getJsonObject("responses").getJsonObject("200")
+        // variables is intentionally never migrated - it puts each repository ID as a dynamic top-level
+        // JSON key, which doesn't fit a fixed-field record, so it's a stable example of the empty placeholder
+        JsonObject variables = paths.getJsonObject("/q/dev/variables");
+        JsonObject variablesContent = variables.getJsonObject("get").getJsonObject("responses").getJsonObject("200")
                 .getJsonObject("content").getJsonObject("application/json");
-        Assertions.assertTrue(logContent.isEmpty());
+        Assertions.assertTrue(variablesContent.isEmpty());
     }
 
     @Test

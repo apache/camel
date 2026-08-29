@@ -28,6 +28,23 @@
       "defaultValue": 5,
       "description": "Number of source code lines around the location to include"
     }
+  },
+  "response": {
+    "type": "object",
+    "properties": {
+      "name": {
+        "type": "string",
+        "description": "The CamelContext name (only present when a backlog tracer is available)"
+      },
+      "traces": {
+        "type": "array",
+        "items": {
+          "type": "object",
+          "additionalProperties": true
+        },
+        "description": "The latest completed message trace entries, as opaque JSON objects (only present when a backlog tracer is available)"
+      }
+    }
   }
 }
 
