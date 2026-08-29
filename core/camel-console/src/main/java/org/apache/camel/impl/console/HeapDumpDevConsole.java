@@ -52,6 +52,11 @@ public class HeapDumpDevConsole extends AbstractDevConsole {
     }
 
     @Override
+    public boolean isReadOnly() {
+        return false;
+    }
+
+    @Override
     protected String doCallText(Map<String, Object> options) {
         JsonObject json = doCallJson(options);
         String error = json.getString("error");

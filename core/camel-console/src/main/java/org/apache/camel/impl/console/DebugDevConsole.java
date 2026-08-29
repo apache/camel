@@ -62,6 +62,11 @@ public class DebugDevConsole extends AbstractDevConsole {
     }
 
     @Override
+    public boolean isReadOnly() {
+        return false;
+    }
+
+    @Override
     protected String doCallText(Map<String, Object> options) {
         String command = optionString(options, COMMAND);
         String breakpoint = optionString(options, BREAKPOINT);

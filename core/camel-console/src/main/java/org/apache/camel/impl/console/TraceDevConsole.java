@@ -51,6 +51,11 @@ public class TraceDevConsole extends AbstractDevConsole {
         super("camel", "trace", "Camel Tracing", "Trace routed messages");
     }
 
+    @Override
+    public boolean isReadOnly() {
+        return false;
+    }
+
     public int getCapacity() {
         return capacity;
     }

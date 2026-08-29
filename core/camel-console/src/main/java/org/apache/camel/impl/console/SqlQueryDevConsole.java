@@ -88,6 +88,11 @@ public class SqlQueryDevConsole extends AbstractDevConsole {
         super("camel", "sql-query", "SQL Query", "Execute SQL queries on DataSource beans");
     }
 
+    @Override
+    public boolean isReadOnly() {
+        return false;
+    }
+
     public int getDefaultMaxRows() {
         return defaultMaxRows;
     }

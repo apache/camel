@@ -83,6 +83,11 @@ public class CamelJfrDevConsole extends AbstractDevConsole {
               "Status and live control of camel-jfr runtime instrumentation");
     }
 
+    @Override
+    public boolean isReadOnly() {
+        return false;
+    }
+
     private boolean isInstrumentationRegistered() {
         CamelContext ctx = getCamelContext();
         if (ctx == null) {

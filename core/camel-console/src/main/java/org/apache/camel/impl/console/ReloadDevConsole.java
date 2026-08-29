@@ -49,6 +49,11 @@ public class ReloadDevConsole extends AbstractDevConsole {
         super("camel", "reload", "Reload", "Console for reloading running Camel");
     }
 
+    @Override
+    public boolean isReadOnly() {
+        return false;
+    }
+
     protected String doCallText(Map<String, Object> options) {
         boolean trigger = optionBoolean(options, RELOAD, false);
         boolean wait = optionBoolean(options, RELOAD_WAIT, false);

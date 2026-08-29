@@ -65,6 +65,11 @@ public class ProcessorDevConsole extends AbstractDevConsole {
     }
 
     @Override
+    public boolean isReadOnly() {
+        return false;
+    }
+
+    @Override
     protected String doCallText(Map<String, Object> options) {
         String action = optionString(options, ACTION);
         String filter = optionString(options, FILTER);

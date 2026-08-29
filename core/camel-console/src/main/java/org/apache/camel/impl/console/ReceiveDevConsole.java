@@ -85,6 +85,11 @@ public class ReceiveDevConsole extends AbstractDevConsole {
         super("camel", "receive", "Camel Receive", "Consume messages from endpoints");
     }
 
+    @Override
+    public boolean isReadOnly() {
+        return false;
+    }
+
     public int getCapacity() {
         return capacity;
     }

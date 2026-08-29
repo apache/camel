@@ -100,6 +100,11 @@ public class JfrMemoryLeakDevConsole extends AbstractDevConsole {
     }
 
     @Override
+    public boolean isReadOnly() {
+        return false;
+    }
+
+    @Override
     protected String doCallText(Map<String, Object> options) {
         JsonObject json = doCallJson(options);
         return json.toJson();

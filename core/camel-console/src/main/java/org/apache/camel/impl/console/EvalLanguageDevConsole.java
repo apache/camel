@@ -56,6 +56,11 @@ public class EvalLanguageDevConsole extends AbstractDevConsole {
     }
 
     @Override
+    public boolean isReadOnly() {
+        return false;
+    }
+
+    @Override
     protected String doCallText(Map<String, Object> options) {
         StringBuilder sb = new StringBuilder();
 

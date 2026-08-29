@@ -88,6 +88,11 @@ public class SendDevConsole extends AbstractDevConsole {
     }
 
     @Override
+    public boolean isReadOnly() {
+        return false;
+    }
+
+    @Override
     protected void doInit() throws Exception {
         super.doInit();
         consumer = getCamelContext().createConsumerTemplate();
