@@ -149,7 +149,56 @@
 						"description": "AWS S3 output",
 						"content": {
 							"application\/json": {
-								
+								"schema": {
+									"type": "object",
+									"properties": {
+										"consumers": {
+											"type": "array",
+											"items": {
+												"type": "object",
+												"properties": {
+													"bucket": {
+														"type": "string",
+														"description": "The S3 bucket name"
+													},
+													"accessKeys": {
+														"type": "boolean",
+														"description": "Whether static access keys are used"
+													},
+													"defaultCredentialsProvider": {
+														"type": "boolean",
+														"description": "Whether the default credentials provider is used"
+													},
+													"profileCredentialsProvider": {
+														"type": "boolean",
+														"description": "Whether the profile credentials provider is used"
+													},
+													"maxMessages": {
+														"type": "integer",
+														"description": "Maximum number of messages per poll"
+													},
+													"moveAfterRead": {
+														"type": "boolean",
+														"description": "Whether the object is moved after being read"
+													},
+													"deleteAfterRead": {
+														"type": "boolean",
+														"description": "Whether the object is deleted after being read"
+													}
+												},
+												"required": [
+													"accessKeys",
+													"defaultCredentialsProvider",
+													"profileCredentialsProvider",
+													"maxMessages",
+													"moveAfterRead",
+													"deleteAfterRead"
+												]
+											},
+											"description": "The AWS S3 consumers (only present when there are any)"
+										}
+									}
+								}
 							}
 						}
 					}
@@ -1679,7 +1728,99 @@
 						"description": "MicroProfile Circuit Breaker output",
 						"content": {
 							"application\/json": {
-								
+								"schema": {
+									"type": "object",
+									"properties": {
+										"circuitBreakers": {
+											"type": "array",
+											"items": {
+												"type": "object",
+												"properties": {
+													"id": {
+														"type": "string",
+														"description": "The circuit breaker ID"
+													},
+													"routeId": {
+														"type": "string",
+														"description": "The route ID"
+													},
+													"state": {
+														"type": "string",
+														"description": "The circuit breaker state"
+													},
+													"successfulCalls": {
+														"type": "integer",
+														"description": "Number of successful calls"
+													},
+													"failedCalls": {
+														"type": "integer",
+														"description": "Number of failed calls"
+													},
+													"notPermittedCalls": {
+														"type": "integer",
+														"description": "Number of not-permitted calls"
+													},
+													"configuration": {
+														"type": "object",
+														"properties": {
+															"delay": {
+																"type": "integer",
+																"description": "The delay in milliseconds"
+															},
+															"failureRatio": {
+																"type": "number",
+																"description": "The failure ratio"
+															},
+															"requestVolumeThreshold": {
+																"type": "integer",
+																"description": "The request volume threshold"
+															},
+															"successThreshold": {
+																"type": "integer",
+																"description": "The success threshold"
+															},
+															"bulkheadEnabled": {
+																"type": "boolean",
+																"description": "Whether the bulkhead is enabled"
+															},
+															"bulkheadMaxConcurrentCalls": {
+																"type": "integer",
+																"description": "The bulkhead maximum concurrent calls (only present when the bulkhead is enabled)"
+															},
+															"bulkheadWaitingTaskQueue": {
+																"type": "integer",
+																"description": "The bulkhead waiting task queue size (only present when the bulkhead is enabled)"
+															},
+															"timeoutEnabled": {
+																"type": "boolean",
+																"description": "Whether the timeout is enabled"
+															},
+															"timeoutDuration": {
+																"type": "integer",
+																"description": "The timeout duration in milliseconds (only present when the timeout is enabled)"
+															}
+														},
+														"required": [
+															"delay",
+															"failureRatio",
+															"requestVolumeThreshold",
+															"successThreshold",
+															"bulkheadEnabled",
+															"timeoutEnabled"
+														],
+														"description": "The circuit breaker configuration"
+													}
+												},
+												"required": [
+													"successfulCalls",
+													"failedCalls",
+													"notPermittedCalls"
+												]
+											},
+											"description": "The circuit breakers"
+										}
+									}
+								}
 							}
 						}
 					}
@@ -1763,7 +1904,64 @@
 						"description": "Groovy output",
 						"content": {
 							"application\/json": {
-								
+								"schema": {
+									"type": "object",
+									"properties": {
+										"compiler": {
+											"type": "object",
+											"properties": {
+												"scriptPattern": {
+													"type": "string",
+													"description": "The script file name pattern"
+												},
+												"compiledCounter": {
+													"type": "integer",
+													"description": "Number of scripts compiled"
+												},
+												"preloadedCounter": {
+													"type": "integer",
+													"description": "Number of scripts pre-loaded"
+												},
+												"classesSize": {
+													"type": "integer",
+													"description": "Number of compiled classes"
+												},
+												"compiledTime": {
+													"type": "integer",
+													"description": "Total compile time in milliseconds"
+												},
+												"recompileEnabled": {
+													"type": "boolean",
+													"description": "Whether re-compilation is enabled"
+												},
+												"lastCompilationTimestamp": {
+													"type": "integer",
+													"description": "Epoch time in milliseconds of the last compilation"
+												},
+												"workDir": {
+													"type": "string",
+													"description": "The work directory (only present when configured)"
+												},
+												"classes": {
+													"type": "array",
+													"items": {
+														"type": "string"
+													},
+													"description": "The compiled class names (only present when there are any)"
+												}
+											},
+											"required": [
+												"compiledCounter",
+												"preloadedCounter",
+												"classesSize",
+												"compiledTime",
+												"recompileEnabled",
+												"lastCompilationTimestamp"
+											],
+											"description": "The Groovy compiler information (only present when the compiler is active)"
+										}
+									}
+								}
 							}
 						}
 					}
@@ -2555,7 +2753,40 @@
 						"description": "Kubernetes Config Maps output",
 						"content": {
 							"application\/json": {
-								
+								"schema": {
+									"type": "object",
+									"properties": {
+										"masterUrl": {
+											"type": "string",
+											"description": "The Kubernetes master URL (only present when known)"
+										},
+										"login": {
+											"type": "string",
+											"description": "The login method (only present when known)"
+										},
+										"refreshEnabled": {
+											"type": "boolean",
+											"description": "Whether refreshing is enabled (only present when known)"
+										},
+										"startCheckTimestamp": {
+											"type": "integer",
+											"description": "Epoch time in milliseconds the refresh check started (only present when known)"
+										},
+										"configmaps": {
+											"type": "array",
+											"items": {
+												"type": "object",
+												"properties": {
+													"name": {
+														"type": "string",
+														"description": "The config map (secret) name"
+													}
+												}
+											},
+											"description": "The config maps in use"
+										}
+									}
+								}
 							}
 						}
 					}
