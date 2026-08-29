@@ -6,6 +6,7 @@
     "title": "DataSource",
     "description": "Displays DataSource connection pool metrics",
     "deprecated": false,
+    "readOnly": true,
     "javaType": "org.apache.camel.impl.console.DataSourceDevConsole",
     "groupId": "org.apache.camel",
     "artifactId": "camel-console",

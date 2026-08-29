@@ -45,7 +45,7 @@ import org.apache.camel.util.json.JsonObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-@DevConsole(name = "route", description = "Route information")
+@DevConsole(name = "route", description = "Route information", readOnly = false)
 public class RouteDevConsole extends AbstractDevConsole {
 
     private static final Logger LOG = LoggerFactory.getLogger(RouteDevConsole.class);
@@ -68,11 +68,6 @@ public class RouteDevConsole extends AbstractDevConsole {
 
     public RouteDevConsole() {
         super("camel", "route", "Route", "Route information");
-    }
-
-    @Override
-    public boolean isReadOnly() {
-        return false;
     }
 
     @Override

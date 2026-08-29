@@ -6,6 +6,7 @@
     "title": "Top Routes",
     "description": "Display the top routes",
     "deprecated": false,
+    "readOnly": true,
     "javaType": "org.apache.camel.impl.console.TopDevConsole",
     "groupId": "org.apache.camel",
     "artifactId": "camel-console",

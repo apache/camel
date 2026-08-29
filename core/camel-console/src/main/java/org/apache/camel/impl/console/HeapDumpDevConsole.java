@@ -33,7 +33,7 @@ import org.apache.camel.support.console.AbstractDevConsole;
 import org.apache.camel.util.json.JsonObject;
 
 @DevConsole(name = "heap-dump", displayName = "Heap Dump",
-            description = "Write a heap dump (.hprof) file for deep memory analysis")
+            description = "Write a heap dump (.hprof) file for deep memory analysis", readOnly = false)
 @Configurer(extended = true)
 public class HeapDumpDevConsole extends AbstractDevConsole {
 
@@ -49,11 +49,6 @@ public class HeapDumpDevConsole extends AbstractDevConsole {
 
     public HeapDumpDevConsole() {
         super("jvm", "heap-dump", "Heap Dump", "Write a heap dump (.hprof) file for deep memory analysis");
-    }
-
-    @Override
-    public boolean isReadOnly() {
-        return false;
     }
 
     @Override

@@ -31,7 +31,7 @@ import org.apache.camel.support.console.AbstractDevConsole;
 import org.apache.camel.util.json.JsonArray;
 import org.apache.camel.util.json.JsonObject;
 
-@DevConsole(name = "reload", description = "Console for reloading running Camel")
+@DevConsole(name = "reload", description = "Console for reloading running Camel", readOnly = false)
 public class ReloadDevConsole extends AbstractDevConsole {
 
     @Metadata(label = "query", description = "Option to trigger reloading", javaType = "java.lang.Boolean",
@@ -47,11 +47,6 @@ public class ReloadDevConsole extends AbstractDevConsole {
 
     public ReloadDevConsole() {
         super("camel", "reload", "Reload", "Console for reloading running Camel");
-    }
-
-    @Override
-    public boolean isReadOnly() {
-        return false;
     }
 
     protected String doCallText(Map<String, Object> options) {

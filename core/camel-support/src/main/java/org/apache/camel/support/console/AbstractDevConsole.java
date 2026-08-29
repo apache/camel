@@ -62,6 +62,13 @@ public abstract class AbstractDevConsole extends ServiceSupport implements DevCo
     }
 
     @Override
+    public boolean isReadOnly() {
+        org.apache.camel.spi.annotations.DevConsole ann
+                = getClass().getAnnotation(org.apache.camel.spi.annotations.DevConsole.class);
+        return ann == null || ann.readOnly();
+    }
+
+    @Override
     public String getGroup() {
         return group;
     }

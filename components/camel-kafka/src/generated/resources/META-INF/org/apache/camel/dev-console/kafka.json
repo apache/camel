@@ -6,6 +6,7 @@
     "title": "Kafka",
     "description": "Apache Kafka",
     "deprecated": false,
+    "readOnly": true,
     "javaType": "org.apache.camel.component.kafka.KafkaDevConsole",
     "groupId": "org.apache.camel",
     "artifactId": "camel-kafka",

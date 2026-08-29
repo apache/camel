@@ -42,7 +42,7 @@ import org.apache.camel.util.json.Jsoner;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-@DevConsole(name = "processor", description = "Processor information")
+@DevConsole(name = "processor", description = "Processor information", readOnly = false)
 public class ProcessorDevConsole extends AbstractDevConsole {
 
     private static final Logger LOG = LoggerFactory.getLogger(ProcessorDevConsole.class);
@@ -62,11 +62,6 @@ public class ProcessorDevConsole extends AbstractDevConsole {
 
     public ProcessorDevConsole() {
         super("camel", "processor", "Processor", "Processor information");
-    }
-
-    @Override
-    public boolean isReadOnly() {
-        return false;
     }
 
     @Override

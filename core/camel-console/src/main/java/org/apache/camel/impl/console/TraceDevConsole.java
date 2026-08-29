@@ -29,7 +29,7 @@ import org.apache.camel.support.console.AbstractDevConsole;
 import org.apache.camel.util.json.JsonArray;
 import org.apache.camel.util.json.JsonObject;
 
-@DevConsole(name = "trace", displayName = "Camel Tracing", description = "Trace routed messages")
+@DevConsole(name = "trace", displayName = "Camel Tracing", description = "Trace routed messages", readOnly = false)
 @Configurer(extended = true)
 public class TraceDevConsole extends AbstractDevConsole {
 
@@ -49,11 +49,6 @@ public class TraceDevConsole extends AbstractDevConsole {
 
     public TraceDevConsole() {
         super("camel", "trace", "Camel Tracing", "Trace routed messages");
-    }
-
-    @Override
-    public boolean isReadOnly() {
-        return false;
     }
 
     public int getCapacity() {

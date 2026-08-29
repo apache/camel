@@ -6,6 +6,7 @@
     "title": "OpenTelemetry Spans",
     "description": "OpenTelemetry span data captured in dev mode",
     "deprecated": false,
+    "readOnly": true,
     "javaType": "org.apache.camel.opentelemetry2.OpenTelemetryDevConsole",
     "groupId": "org.apache.camel",
     "artifactId": "camel-opentelemetry2",

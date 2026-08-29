@@ -6,6 +6,7 @@
     "title": "Main Configuration",
     "description": "Display Camel startup configuration",
     "deprecated": false,
+    "readOnly": true,
     "javaType": "org.apache.camel.main.MainConfigurationDevConsole",
     "groupId": "org.apache.camel",
     "artifactId": "camel-main",

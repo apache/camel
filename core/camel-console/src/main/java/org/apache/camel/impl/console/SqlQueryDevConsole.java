@@ -40,7 +40,8 @@ import org.apache.camel.util.json.JsonArray;
 import org.apache.camel.util.json.JsonObject;
 import org.apache.camel.util.json.Jsoner;
 
-@DevConsole(name = "sql-query", displayName = "SQL Query", description = "Execute SQL queries on DataSource beans")
+@DevConsole(name = "sql-query", displayName = "SQL Query", description = "Execute SQL queries on DataSource beans",
+            readOnly = false)
 @Configurer(extended = true)
 public class SqlQueryDevConsole extends AbstractDevConsole {
 
@@ -86,11 +87,6 @@ public class SqlQueryDevConsole extends AbstractDevConsole {
 
     public SqlQueryDevConsole() {
         super("camel", "sql-query", "SQL Query", "Execute SQL queries on DataSource beans");
-    }
-
-    @Override
-    public boolean isReadOnly() {
-        return false;
     }
 
     public int getDefaultMaxRows() {

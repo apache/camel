@@ -6,6 +6,7 @@
     "title": "Type Converters",
     "description": "Camel Type Converter information",
     "deprecated": false,
+    "readOnly": true,
     "javaType": "org.apache.camel.impl.console.TypeConverterConsole",
     "groupId": "org.apache.camel",
     "artifactId": "camel-console",
