@@ -1966,7 +1966,69 @@
 						"description": "Internal Tasks output",
 						"content": {
 							"application\/json": {
-								
+								"schema": {
+									"type": "object",
+									"properties": {
+										"tasks": {
+											"type": "array",
+											"items": {
+												"type": "object",
+												"properties": {
+													"name": {
+														"type": "string",
+														"description": "The task name"
+													},
+													"status": {
+														"type": "string",
+														"description": "The task status"
+													},
+													"attempting": {
+														"type": "boolean",
+														"description": "Whether the task is currently attempting"
+													},
+													"attempts": {
+														"type": "integer",
+														"description": "The current number of iterations"
+													},
+													"delay": {
+														"type": "integer",
+														"description": "The current computed delay"
+													},
+													"elapsed": {
+														"type": "integer",
+														"description": "The current elapsed time"
+													},
+													"firstTime": {
+														"type": "integer",
+														"description": "The time the first attempt was performed"
+													},
+													"lastTime": {
+														"type": "integer",
+														"description": "The time the last attempt was performed"
+													},
+													"nextTime": {
+														"type": "integer",
+														"description": "The time the next attempt will be made"
+													},
+													"error": {
+														"type": "string",
+														"description": "The failure message (only present when known)"
+													}
+												},
+												"required": [
+													"attempting",
+													"attempts",
+													"delay",
+													"elapsed",
+													"firstTime",
+													"lastTime",
+													"nextTime"
+												]
+											},
+											"description": "The internal tasks"
+										}
+									}
+								}
 							}
 						}
 					}
@@ -3515,7 +3577,145 @@
 						"description": "Route Group output",
 						"content": {
 							"application\/json": {
-								
+								"schema": {
+									"type": "object",
+									"properties": {
+										"routeGroups": {
+											"type": "array",
+											"items": {
+												"type": "object",
+												"properties": {
+													"group": {
+														"type": "string",
+														"description": "The route group ID"
+													},
+													"size": {
+														"type": "integer",
+														"description": "Number of routes in this group"
+													},
+													"state": {
+														"type": "string",
+														"description": "The route group state"
+													},
+													"uptime": {
+														"type": "string",
+														"description": "Route uptime, human readable text"
+													},
+													"routeIds": {
+														"type": "array",
+														"items": {
+															"type": "string"
+														},
+														"description": "The route IDs within this group"
+													},
+													"statistics": {
+														"type": "object",
+														"properties": {
+															"coverage": {
+																"type": "string",
+																"description": "Route coverage (only present when computable)"
+															},
+															"load01": {
+																"type": "string",
+																"description": "1 minute load average (only present when available)"
+															},
+															"load05": {
+																"type": "string",
+																"description": "5 minute load average (only present when available)"
+															},
+															"load15": {
+																"type": "string",
+																"description": "15 minute load average (only present when available)"
+															},
+															"exchangesThroughput": {
+																"type": "string",
+																"description": "Messages per second throughput (only present when available)"
+															},
+															"idleSince": {
+																"type": "integer",
+																"description": "Epoch time in milliseconds since the route group has been idle"
+															},
+															"exchangesTotal": {
+																"type": "integer",
+																"description": "Total number of exchanges"
+															},
+															"exchangesFailed": {
+																"type": "integer",
+																"description": "Number of failed exchanges"
+															},
+															"exchangesInflight": {
+																"type": "integer",
+																"description": "Number of inflight exchanges"
+															},
+															"meanProcessingTime": {
+																"type": "integer",
+																"description": "Mean processing time in milliseconds"
+															},
+															"maxProcessingTime": {
+																"type": "integer",
+																"description": "Max processing time in milliseconds"
+															},
+															"minProcessingTime": {
+																"type": "integer",
+																"description": "Min processing time in milliseconds"
+															},
+															"p50ProcessingTime": {
+																"type": "integer",
+																"description": "50th percentile processing time in milliseconds (only present when available)"
+															},
+															"p95ProcessingTime": {
+																"type": "integer",
+																"description": "95th percentile processing time in milliseconds (only present when available)"
+															},
+															"p99ProcessingTime": {
+																"type": "integer",
+																"description": "99th percentile processing time in milliseconds (only present when available)"
+															},
+															"lastProcessingTime": {
+																"type": "integer",
+																"description": "Processing time in milliseconds of the last exchange (only present once an exchange has completed)"
+															},
+															"deltaProcessingTime": {
+																"type": "integer",
+																"description": "Difference in processing time in milliseconds since the previous exchange (only present once an exchange has completed)"
+															},
+															"lastCreatedExchangeTimestamp": {
+																"type": "integer",
+																"description": "Epoch time in milliseconds the last exchange was created (only present once an exchange has been created)"
+															},
+															"lastCompletedExchangeTimestamp": {
+																"type": "integer",
+																"description": "Epoch time in milliseconds the last exchange completed (only present once an exchange has completed)"
+															},
+															"lastFailureHandledExchangeTimestamp": {
+																"type": "integer",
+																"description": "Epoch time in milliseconds the last exchange failure was handled (only present once one has occurred)"
+															},
+															"lastFailedExchangeTimestamp": {
+																"type": "integer",
+																"description": "Epoch time in milliseconds the last exchange failed (only present once one has occurred)"
+															}
+														},
+														"required": [
+															"idleSince",
+															"exchangesTotal",
+															"exchangesFailed",
+															"exchangesInflight",
+															"meanProcessingTime",
+															"maxProcessingTime",
+															"minProcessingTime"
+														],
+														"description": "Runtime statistics"
+													}
+												},
+												"required": [
+													"size"
+												]
+											},
+											"description": "The route groups (only present when no action was requested)"
+										}
+									}
+								}
 							}
 						}
 					}
@@ -3572,7 +3772,90 @@
 						"description": "Route Structure output",
 						"content": {
 							"application\/json": {
-								
+								"schema": {
+									"type": "object",
+									"properties": {
+										"routes": {
+											"type": "array",
+											"items": {
+												"type": "object",
+												"properties": {
+													"routeId": {
+														"type": "string",
+														"description": "The route ID"
+													},
+													"from": {
+														"type": "string",
+														"description": "The route's endpoint URI"
+													},
+													"source": {
+														"type": "string",
+														"description": "The source location (only present when known)"
+													},
+													"line": {
+														"type": "integer",
+														"description": "The source line number (only present when known)"
+													},
+													"description": {
+														"type": "string",
+														"description": "The route description (only present when configured)"
+													},
+													"code": {
+														"type": "array",
+														"items": {
+															"type": "object",
+															"properties": {
+																"line": {
+																	"type": "integer",
+																	"description": "The source line number, or a sequential counter when not known"
+																},
+																"type": {
+																	"type": "string",
+																	"description": "The processor type"
+																},
+																"id": {
+																	"type": "string",
+																	"description": "The processor ID"
+																},
+																"level": {
+																	"type": "integer",
+																	"description": "The nesting level"
+																},
+																"description": {
+																	"type": "string",
+																	"description": "The description (only present when known)"
+																},
+																"code": {
+																	"type": "string",
+																	"description": "The code representation of this processor"
+																},
+																"uri": {
+																	"type": "string",
+																	"description": "The endpoint URI (only present when this processor references an endpoint)"
+																},
+																"remote": {
+																	"type": "boolean",
+																	"description": "Whether the endpoint is remote (only present when true)"
+																},
+																"statistics": {
+																	"type": "object",
+																	"additionalProperties": true,
+																	"description": "Runtime statistics for this route or processor, as an opaque JSON object (only present when metrics were requested)"
+																}
+															},
+															"required": [
+																"line",
+																"level"
+															]
+														},
+														"description": "The route's structure, one entry per processor (only present when the dump succeeded)"
+													}
+												}
+											},
+											"description": "The routes"
+										}
+									}
+								}
 							}
 						}
 					}
@@ -3621,7 +3904,118 @@
 						"description": "Route Topology output",
 						"content": {
 							"application\/json": {
-								
+								"schema": {
+									"type": "object",
+									"properties": {
+										"nodes": {
+											"type": "array",
+											"items": {
+												"type": "object",
+												"properties": {
+													"routeId": {
+														"type": "string",
+														"description": "The route ID"
+													},
+													"description": {
+														"type": "string",
+														"description": "The route description (only present when configured)"
+													},
+													"from": {
+														"type": "string",
+														"description": "The route's endpoint URI"
+													},
+													"fromScheme": {
+														"type": "string",
+														"description": "The route's endpoint scheme"
+													},
+													"nodeType": {
+														"type": "string",
+														"description": "The node type"
+													},
+													"exchangesTotal": {
+														"type": "integer",
+														"description": "Total number of exchanges (only present when metrics were requested and available)"
+													},
+													"exchangesFailed": {
+														"type": "integer",
+														"description": "Number of failed exchanges (only present when metrics were requested and available)"
+													}
+												}
+											},
+											"description": "The topology nodes (only present when a route topology dumper is available)"
+										},
+										"edges": {
+											"type": "array",
+											"items": {
+												"type": "object",
+												"properties": {
+													"fromRouteId": {
+														"type": "string",
+														"description": "The source route ID"
+													},
+													"toRouteId": {
+														"type": "string",
+														"description": "The target route ID"
+													},
+													"endpoint": {
+														"type": "string",
+														"description": "The endpoint URI connecting the two routes"
+													},
+													"connectionType": {
+														"type": "string",
+														"description": "The connection type"
+													}
+												}
+											},
+											"description": "The connections between nodes (only present when a route topology dumper is available)"
+										},
+										"externalEndpoints": {
+											"type": "array",
+											"items": {
+												"type": "object",
+												"properties": {
+													"id": {
+														"type": "string",
+														"description": "The endpoint ID"
+													},
+													"uri": {
+														"type": "string",
+														"description": "The endpoint URI"
+													},
+													"scheme": {
+														"type": "string",
+														"description": "The endpoint scheme"
+													},
+													"direction": {
+														"type": "string",
+														"description": "The direction (in or out)"
+													},
+													"routeId": {
+														"type": "string",
+														"description": "The route ID"
+													},
+													"exchangesTotal": {
+														"type": "integer",
+														"description": "Total number of exchanges (only present when metrics were requested and available)"
+													},
+													"exchangesFailed": {
+														"type": "integer",
+														"description": "Number of failed exchanges (only present when metrics were requested and available)"
+													}
+												}
+											},
+											"description": "External systems the routes connect to (only present when requested and there are any)"
+										},
+										"routes": {
+											"type": "array",
+											"items": {
+												"type": "object",
+												"additionalProperties": true
+											},
+											"description": "Route structure data, as opaque JSON objects (only present when requested)"
+										}
+									}
+								}
 							}
 						}
 					}

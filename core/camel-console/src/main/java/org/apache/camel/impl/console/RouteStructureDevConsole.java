@@ -16,6 +16,7 @@
  */
 package org.apache.camel.impl.console;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Function;
@@ -35,8 +36,8 @@ import org.apache.camel.support.PatternHelper;
 import org.apache.camel.support.PluginHelper;
 import org.apache.camel.support.console.AbstractDevConsole;
 import org.apache.camel.util.StringHelper;
-import org.apache.camel.util.json.JsonArray;
 import org.apache.camel.util.json.JsonObject;
+import org.apache.camel.util.json.JsonRecordSupport;
 import org.apache.camel.util.json.Jsoner;
 
 import static org.apache.camel.impl.console.ConsoleHelper.extractSourceLocationLineNumber;
@@ -44,6 +45,30 @@ import static org.apache.camel.impl.console.ConsoleHelper.extractSourceLocationN
 
 @DevConsole(name = "route-structure", description = "Dump route structure")
 public class RouteStructureDevConsole extends AbstractDevConsole {
+
+    public record CodeEntry(
+            @Metadata(description = "The source line number, or a sequential counter when not known") int line,
+            @Metadata(description = "The processor type") String type,
+            @Metadata(description = "The processor ID") String id,
+            @Metadata(description = "The nesting level") int level,
+            @Metadata(description = "The description (only present when known)") String description,
+            @Metadata(description = "The code representation of this processor") String code,
+            @Metadata(description = "The endpoint URI (only present when this processor references an endpoint)") String uri,
+            @Metadata(description = "Whether the endpoint is remote (only present when true)") Boolean remote,
+            @Metadata(description = "Runtime statistics for this route or processor, as an opaque JSON object (only present when metrics were requested)") Map<String, Object> statistics) {
+    }
+
+    public record RouteEntry(
+            @Metadata(description = "The route ID") String routeId,
+            @Metadata(description = "The route's endpoint URI") String from,
+            @Metadata(description = "The source location (only present when known)") String source,
+            @Metadata(description = "The source line number (only present when known)") Integer line,
+            @Metadata(description = "The route description (only present when configured)") String description,
+            @Metadata(description = "The route's structure, one entry per processor (only present when the dump succeeded)") List<CodeEntry> code) {
+    }
+
+    public record Response(@Metadata(description = "The routes") List<RouteEntry> routes) {
+    }
 
     @Metadata(label = "query", description = "Filters the routes matching by route id, route uri, and source location",
               javaType = "java.lang.String")
@@ -105,45 +130,37 @@ public class RouteStructureDevConsole extends AbstractDevConsole {
     }
 
     @Override
-    protected JsonObject doCallJson(Map<String, Object> options) {
+    protected Map<String, Object> doCallJson(Map<String, Object> options) {
         final boolean brief = optionBoolean(options, BRIEF, false);
         final boolean metric = optionBoolean(options, METRIC, false);
 
-        final JsonObject root = new JsonObject();
-        final JsonArray list = new JsonArray();
+        final List<RouteEntry> list = new ArrayList<>();
 
-        final boolean stats = metric;
         Function<NamedRoute, Object> task = def -> {
-            JsonObject jo = new JsonObject();
-            list.add(jo);
-
-            jo.put("routeId", def.getRouteId());
-            jo.put("from", def.getEndpointUrl());
+            String source = null;
+            Integer line = null;
             if (def.getResource() != null) {
-                jo.put("source", extractSourceLocationNoLineNumber(def.getResource().getLocation()));
-                Integer line = extractSourceLocationLineNumber(def.getResource().getLocation());
-                if (line != null) {
-                    jo.put("line", line);
-                }
-            }
-            if (def.getDescription() != null) {
-                jo.put("description", def.getDescription());
+                source = extractSourceLocationNoLineNumber(def.getResource().getLocation());
+                line = extractSourceLocationLineNumber(def.getResource().getLocation());
             }
 
+            List<CodeEntry> code = null;
             try {
                 ModelToStructureDumper dumper = PluginHelper.getModelToStructureDumper(getCamelContext());
                 List<ModelDumpLine> lines
                         = dumper.dumpStructure(getCamelContext(), def.getRouteId(), brief);
-                JsonArray code = dumpAsJSon(getCamelContext(), lines, stats);
-                jo.put("code", code);
+                code = buildCodeEntries(getCamelContext(), lines, metric);
             } catch (Exception e) {
                 // ignore
             }
+
+            list.add(new RouteEntry(def.getRouteId(), def.getEndpointUrl(), source, line, def.getDescription(), code));
             return null;
         };
         doCall(options, task);
-        root.put("routes", list);
-        return root;
+
+        Response response = new Response(list);
+        return JsonRecordSupport.toJsonObject(response);
     }
 
     protected void doCall(Map<String, Object> options, Function<NamedRoute, Object> task) {
@@ -179,33 +196,21 @@ public class RouteStructureDevConsole extends AbstractDevConsole {
                 || PatternHelper.matchPattern(onlyName, filter);
     }
 
-    private JsonArray dumpAsJSon(CamelContext camelContext, List<ModelDumpLine> lines, boolean metric) {
+    private List<CodeEntry> buildCodeEntries(CamelContext camelContext, List<ModelDumpLine> lines, boolean metric) {
         ManagedCamelContext mcc = getCamelContext().getCamelContextExtension().getContextPlugin(ManagedCamelContext.class);
 
-        JsonArray code = new JsonArray();
+        List<CodeEntry> code = new ArrayList<>();
         int counter = 0;
         for (var line : lines) {
             counter++;
-            JsonObject c = new JsonObject();
             Integer idx = extractSourceLocationLineNumber(line.location());
             if (idx == null) {
                 idx = counter;
             }
-            c.put("line", idx);
-            c.put("type", line.type());
-            c.put("id", line.id());
-            c.put("level", line.level());
-            if (line.description() != null) {
-                c.put("description", line.description());
-            }
-            c.put("code", Jsoner.escape(line.code()));
-            if (line.uri() != null) {
-                c.put("uri", Jsoner.escape(line.uri()));
-                if (line.remote()) {
-                    c.put("remote", true);
-                }
-            }
+            String uri = line.uri() != null ? Jsoner.escape(line.uri()) : null;
+            Boolean remote = line.uri() != null && line.remote() ? true : null;
 
+            Map<String, Object> statistics = null;
             if (metric && mcc != null) {
                 if (counter <= 2) {
                     ManagedRouteMBean mrb = mcc.getManagedRoute(line.id());
@@ -218,17 +223,19 @@ public class RouteStructureDevConsole extends AbstractDevConsole {
                             stats.remove("load05");
                             stats.remove("load15");
                         }
-                        c.put("statistics", stats);
+                        statistics = stats;
                     }
                 } else {
                     ManagedProcessorMBean mp = mcc.getManagedProcessor(line.id());
                     if (mp != null) {
-                        JsonObject stats = ProcessorDevConsole.gatherProcessorStats(mp);
-                        c.put("statistics", stats);
+                        statistics = ProcessorDevConsole.gatherProcessorStats(mp);
                     }
                 }
             }
-            code.add(c);
+
+            code.add(new CodeEntry(
+                    idx, line.type(), line.id(), line.level(), line.description(), Jsoner.escape(line.code()), uri,
+                    remote, statistics));
         }
         return code;
     }
