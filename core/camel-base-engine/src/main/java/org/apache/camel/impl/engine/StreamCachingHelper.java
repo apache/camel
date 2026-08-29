@@ -21,13 +21,18 @@ import org.apache.camel.ExchangePropertyKey;
 import org.apache.camel.Message;
 import org.apache.camel.StreamCache;
 import org.apache.camel.StreamCacheException;
+import org.apache.camel.WrappedFile;
 import org.apache.camel.spi.StreamCachingStrategy;
 import org.apache.camel.util.ObjectHelper;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Helper for {@link org.apache.camel.StreamCache} in Camel route engine.
  */
 final class StreamCachingHelper {
+
+    private static final Logger LOG = LoggerFactory.getLogger(StreamCachingHelper.class);
 
     private StreamCachingHelper() {
     }
@@ -67,6 +72,17 @@ final class StreamCachingHelper {
                 StreamCache sc = strategy.cache(exchange);
                 if (sc != null) {
                     inMessage.setBody(sc);
+                } else {
+                    // warn if a WrappedFile (e.g. RemoteFile) had a null embedded body —
+                    // this means the remote content was never retrieved before stream caching ran
+                    Object body = inMessage.getBody();
+                    if (body instanceof WrappedFile<?> wf && wf.getBody() == null) {
+                        LOG.warn(
+                                "Stream caching skipped: the body is a WrappedFile ({}) whose content has not been loaded."
+                                 + " The remote file was not retrieved before stream caching."
+                                 + " Check your consumer configuration (e.g. localWorkDirectory or streamDownload for FTP/SFTP).",
+                                body.getClass().getSimpleName());
+                    }
                 }
                 return sc;
             } catch (Exception e) {
