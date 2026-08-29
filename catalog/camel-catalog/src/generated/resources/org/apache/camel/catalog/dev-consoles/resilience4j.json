@@ -11,6 +11,109 @@
     "groupId": "org.apache.camel",
     "artifactId": "camel-resilience4j",
     "version": "4.23.0-SNAPSHOT"
+  },
+  "response": {
+    "type": "object",
+    "properties": {
+      "circuitBreakers": {
+        "type": "array",
+        "items": {
+          "type": "object",
+          "properties": {
+            "id": {
+              "type": "string"
+            },
+            "routeId": {
+              "type": "string"
+            },
+            "state": {
+              "type": "string"
+            },
+            "bufferedCalls": {
+              "type": "integer"
+            },
+            "successfulCalls": {
+              "type": "integer"
+            },
+            "failedCalls": {
+              "type": "integer"
+            },
+            "notPermittedCalls": {
+              "type": "integer"
+            },
+            "failureRate": {
+              "type": "number"
+            },
+            "configuration": {
+              "type": "object",
+              "properties": {
+                "failureRateThreshold": {
+                  "type": "number"
+                },
+                "slowCallRateThreshold": {
+                  "type": "number"
+                },
+                "minimumNumberOfCalls": {
+                  "type": "integer"
+                },
+                "permittedNumberOfCallsInHalfOpenState": {
+                  "type": "integer"
+                },
+                "slidingWindowSize": {
+                  "type": "integer"
+                },
+                "slidingWindowType": {
+                  "type": "string"
+                },
+                "waitDurationInOpenState": {
+                  "type": "integer"
+                },
+                "automaticTransitionFromOpenToHalfOpen": {
+                  "type": "boolean"
+                },
+                "bulkheadEnabled": {
+                  "type": "boolean"
+                },
+                "bulkheadMaxConcurrentCalls": {
+                  "type": "integer",
+                  "description": "Only present when bulkheadEnabled is true"
+                },
+                "bulkheadMaxWaitDuration": {
+                  "type": "integer",
+                  "description": "Only present when bulkheadEnabled is true"
+                },
+                "timeoutEnabled": {
+                  "type": "boolean"
+                },
+                "timeoutDuration": {
+                  "type": "integer",
+                  "description": "Only present when timeoutEnabled is true"
+                }
+              },
+              "required": [
+                "failureRateThreshold",
+                "slowCallRateThreshold",
+                "minimumNumberOfCalls",
+                "permittedNumberOfCallsInHalfOpenState",
+                "slidingWindowSize",
+                "waitDurationInOpenState",
+                "automaticTransitionFromOpenToHalfOpen",
+                "bulkheadEnabled",
+                "timeoutEnabled"
+              ]
+            }
+          },
+          "required": [
+            "bufferedCalls",
+            "successfulCalls",
+            "failedCalls",
+            "notPermittedCalls",
+            "failureRate"
+          ]
+        },
+        "description": "The circuit breakers"
+      }
+    }
   }
 }
 

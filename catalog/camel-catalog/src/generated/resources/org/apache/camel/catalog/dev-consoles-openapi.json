@@ -2988,7 +2988,107 @@
 						"description": "Kafka output",
 						"content": {
 							"application\/json": {
-								
+								"schema": {
+									"type": "object",
+									"properties": {
+										"kafkaConsumers": {
+											"type": "array",
+											"items": {
+												"type": "object",
+												"properties": {
+													"routeId": {
+														"type": "string",
+														"description": "The route id"
+													},
+													"uri": {
+														"type": "string",
+														"description": "The endpoint URI"
+													},
+													"workers": {
+														"type": "array",
+														"items": {
+															"type": "object",
+															"properties": {
+																"threadId": {
+																	"type": "string",
+																	"description": "The worker thread id"
+																},
+																"state": {
+																	"type": "string",
+																	"description": "The worker state"
+																},
+																"lastError": {
+																	"type": "string",
+																	"description": "The worker last error (only present when not ready)"
+																},
+																"groupId": {
+																	"type": "string",
+																	"description": "The consumer group id (only present when known)"
+																},
+																"groupInstanceId": {
+																	"type": "string",
+																	"description": "The consumer group instance id (only present when known)"
+																},
+																"memberId": {
+																	"type": "string",
+																	"description": "The consumer member id (only present when known)"
+																},
+																"generationId": {
+																	"type": "integer",
+																	"description": "The consumer generation id (only present when known)"
+																},
+																"lastTopic": {
+																	"type": "string",
+																	"description": "The last consumed topic (only present when known)"
+																},
+																"lastPartition": {
+																	"type": "integer",
+																	"description": "The last consumed partition (only present when known)"
+																},
+																"lastOffset": {
+																	"type": "integer",
+																	"description": "The last consumed offset (only present when known)"
+																},
+																"committed": {
+																	"type": "array",
+																	"items": {
+																		"type": "object",
+																		"properties": {
+																			"topic": {
+																				"type": "string",
+																				"description": "The topic"
+																			},
+																			"partition": {
+																				"type": "integer",
+																				"description": "The partition"
+																			},
+																			"offset": {
+																				"type": "integer",
+																				"description": "The committed offset"
+																			},
+																			"epoch": {
+																				"type": "integer",
+																				"description": "The epoch"
+																			}
+																		},
+																		"required": [
+																			"partition",
+																			"offset",
+																			"epoch"
+																		]
+																	},
+																	"description": "The committed offsets (only present when requested and there are any)"
+																}
+															}
+														},
+														"description": "The consumer worker threads"
+													}
+												}
+											},
+											"description": "The Kafka consumers"
+										}
+									}
+								}
 							}
 						}
 					}
@@ -3055,7 +3155,40 @@
 						"description": "Kubernetes Secrets output",
 						"content": {
 							"application\/json": {
-								
+								"schema": {
+									"type": "object",
+									"properties": {
+										"masterUrl": {
+											"type": "string",
+											"description": "The Kubernetes master URL (only present when configured)"
+										},
+										"login": {
+											"type": "string",
+											"description": "The login method (only present when configured)"
+										},
+										"refreshEnabled": {
+											"type": "boolean",
+											"description": "Whether secret refresh is enabled (only present when configured)"
+										},
+										"startCheckTimestamp": {
+											"type": "integer",
+											"description": "Epoch time in milliseconds the refresh task started (only present when known)"
+										},
+										"secrets": {
+											"type": "array",
+											"items": {
+												"type": "object",
+												"properties": {
+													"name": {
+														"type": "string",
+														"description": "The secret name"
+													}
+												}
+											},
+											"description": "The secrets in use"
+										}
+									}
+								}
 							}
 						}
 					}
@@ -3347,7 +3480,222 @@
 						"description": "Micrometer output",
 						"content": {
 							"application\/json": {
-								
+								"schema": {
+									"type": "object",
+									"properties": {
+										"meterRegistryClass": {
+											"type": "string"
+										},
+										"counters": {
+											"type": "array",
+											"items": {
+												"type": "object",
+												"properties": {
+													"name": {
+														"type": "string"
+													},
+													"description": {
+														"type": "string"
+													},
+													"tags": {
+														"type": "array",
+														"items": {
+															"type": "object",
+															"properties": {
+																"key": {
+																	"type": "string"
+																},
+																"value": {
+																	"type": "string"
+																}
+															}
+														}
+													},
+													"count": {
+														"description": "The counter value (integer when whole, decimal otherwise)"
+													}
+												}
+											},
+											"description": "Only present when there are any counters"
+										},
+										"gauges": {
+											"type": "array",
+											"items": {
+												"type": "object",
+												"properties": {
+													"name": {
+														"type": "string"
+													},
+													"description": {
+														"type": "string"
+													},
+													"tags": {
+														"type": "array",
+														"items": {
+															"type": "object",
+															"properties": {
+																"key": {
+																	"type": "string"
+																},
+																"value": {
+																	"type": "string"
+																}
+															}
+														}
+													},
+													"value": {
+														"type": "number"
+													}
+												},
+												"required": [
+													"value"
+												]
+											},
+											"description": "Only present when there are any gauges"
+										},
+										"timers": {
+											"type": "array",
+											"items": {
+												"type": "object",
+												"properties": {
+													"name": {
+														"type": "string"
+													},
+													"description": {
+														"type": "string"
+													},
+													"tags": {
+														"type": "array",
+														"items": {
+															"type": "object",
+															"properties": {
+																"key": {
+																	"type": "string"
+																},
+																"value": {
+																	"type": "string"
+																}
+															}
+														}
+													},
+													"count": {
+														"type": "integer"
+													},
+													"mean": {
+														"type": "integer"
+													},
+													"max": {
+														"type": "integer"
+													},
+													"total": {
+														"type": "integer"
+													}
+												},
+												"required": [
+													"count",
+													"mean",
+													"max",
+													"total"
+												]
+											},
+											"description": "Only present when there are any timers"
+										},
+										"longTaskTimers": {
+											"type": "array",
+											"items": {
+												"type": "object",
+												"properties": {
+													"name": {
+														"type": "string"
+													},
+													"description": {
+														"type": "string"
+													},
+													"tags": {
+														"type": "array",
+														"items": {
+															"type": "object",
+															"properties": {
+																"key": {
+																	"type": "string"
+																},
+																"value": {
+																	"type": "string"
+																}
+															}
+														}
+													},
+													"activeTasks": {
+														"type": "integer"
+													},
+													"mean": {
+														"type": "integer"
+													},
+													"max": {
+														"type": "integer"
+													},
+													"duration": {
+														"type": "integer"
+													}
+												},
+												"required": [
+													"activeTasks",
+													"mean",
+													"max",
+													"duration"
+												]
+											},
+											"description": "Only present when there are any long task timers"
+										},
+										"distribution": {
+											"type": "array",
+											"items": {
+												"type": "object",
+												"properties": {
+													"name": {
+														"type": "string"
+													},
+													"description": {
+														"type": "string"
+													},
+													"tags": {
+														"type": "array",
+														"items": {
+															"type": "object",
+															"properties": {
+																"key": {
+																	"type": "string"
+																},
+																"value": {
+																	"type": "string"
+																}
+															}
+														}
+													},
+													"count": {
+														"type": "integer"
+													},
+													"mean": {
+														"type": "number"
+													},
+													"max": {
+														"type": "number"
+													},
+													"totalAmount": {
+														"type": "number"
+													}
+												},
+												"required": [
+													"count",
+													"mean",
+													"max",
+													"totalAmount"
+												]
+											},
+											"description": "Only present when there are any distribution summaries"
+										}
+									}
+								}
 							}
 						}
 					}
@@ -3389,7 +3737,93 @@
 						"description": "OpenTelemetry Spans output",
 						"content": {
 							"application\/json": {
-								
+								"schema": {
+									"type": "object",
+									"properties": {
+										"enabled": {
+											"type": "boolean",
+											"description": "Whether the OpenTelemetry in-memory exporter is enabled"
+										},
+										"spanCount": {
+											"type": "integer",
+											"description": "The number of finished spans held (only present when not dumping spans)"
+										},
+										"capacity": {
+											"type": "integer",
+											"description": "The maximum number of spans held (only present when not dumping spans)"
+										},
+										"spans": {
+											"type": "array",
+											"items": {
+												"type": "object",
+												"properties": {
+													"traceId": {
+														"type": "string",
+														"description": "The trace id"
+													},
+													"spanId": {
+														"type": "string",
+														"description": "The span id"
+													},
+													"parentSpanId": {
+														"type": "string",
+														"description": "The parent span id (only present when known)"
+													},
+													"name": {
+														"type": "string",
+														"description": "The span name"
+													},
+													"kind": {
+														"type": "string",
+														"description": "The span kind"
+													},
+													"status": {
+														"type": "string",
+														"description": "The span status"
+													},
+													"startEpochNanos": {
+														"type": "integer",
+														"description": "Epoch time in nanoseconds when the span started"
+													},
+													"endEpochNanos": {
+														"type": "integer",
+														"description": "Epoch time in nanoseconds when the span ended"
+													},
+													"durationMs": {
+														"type": "integer",
+														"description": "The span duration in milliseconds"
+													},
+													"scopeName": {
+														"type": "string",
+														"description": "The instrumentation scope name (only present when known)"
+													},
+													"attributes": {
+														"type": "object",
+														"additionalProperties": true,
+														"description": "The span attributes (only present when there are any)"
+													},
+													"routeId": {
+														"type": "string",
+														"description": "The route id this span belongs to (only present when known)"
+													},
+													"processorId": {
+														"type": "string",
+														"description": "The processor id this span belongs to (only present for processor spans)"
+													}
+												},
+												"required": [
+													"startEpochNanos",
+													"endEpochNanos",
+													"durationMs"
+												]
+											},
+											"description": "The dumped spans (only present when dumping spans)"
+										}
+									},
+									"required": [
+										"enabled"
+									]
+								}
 							}
 						}
 					}
@@ -3406,7 +3840,73 @@
 						"description": "Platform HTTP output",
 						"content": {
 							"application\/json": {
-								
+								"schema": {
+									"type": "object",
+									"properties": {
+										"server": {
+											"type": "string",
+											"description": "The server base URL (only present when the platform-http component is active)"
+										},
+										"endpoints": {
+											"type": "array",
+											"items": {
+												"type": "object",
+												"properties": {
+													"url": {
+														"type": "string",
+														"description": "The full endpoint URL"
+													},
+													"path": {
+														"type": "string",
+														"description": "The endpoint path"
+													},
+													"verbs": {
+														"type": "string",
+														"description": "The HTTP verbs (only present when configured)"
+													},
+													"consumes": {
+														"type": "string",
+														"description": "The consumed media types (only present when configured)"
+													},
+													"produces": {
+														"type": "string",
+														"description": "The produced media types (only present when configured)"
+													}
+												}
+											},
+											"description": "The registered HTTP endpoints (only present when there are any)"
+										},
+										"managementEndpoints": {
+											"type": "array",
+											"items": {
+												"type": "object",
+												"properties": {
+													"url": {
+														"type": "string",
+														"description": "The full endpoint URL"
+													},
+													"path": {
+														"type": "string",
+														"description": "The endpoint path"
+													},
+													"verbs": {
+														"type": "string",
+														"description": "The HTTP verbs (only present when configured)"
+													},
+													"consumes": {
+														"type": "string",
+														"description": "The consumed media types (only present when configured)"
+													},
+													"produces": {
+														"type": "string",
+														"description": "The produced media types (only present when configured)"
+													}
+												}
+											},
+											"description": "The registered HTTP management endpoints (only present when there are any)"
+										}
+									}
+								}
 							}
 						}
 					}
@@ -4093,7 +4593,109 @@
 						"description": "Resilience Circuit Breaker output",
 						"content": {
 							"application\/json": {
-								
+								"schema": {
+									"type": "object",
+									"properties": {
+										"circuitBreakers": {
+											"type": "array",
+											"items": {
+												"type": "object",
+												"properties": {
+													"id": {
+														"type": "string"
+													},
+													"routeId": {
+														"type": "string"
+													},
+													"state": {
+														"type": "string"
+													},
+													"bufferedCalls": {
+														"type": "integer"
+													},
+													"successfulCalls": {
+														"type": "integer"
+													},
+													"failedCalls": {
+														"type": "integer"
+													},
+													"notPermittedCalls": {
+														"type": "integer"
+													},
+													"failureRate": {
+														"type": "number"
+													},
+													"configuration": {
+														"type": "object",
+														"properties": {
+															"failureRateThreshold": {
+																"type": "number"
+															},
+															"slowCallRateThreshold": {
+																"type": "number"
+															},
+															"minimumNumberOfCalls": {
+																"type": "integer"
+															},
+															"permittedNumberOfCallsInHalfOpenState": {
+																"type": "integer"
+															},
+															"slidingWindowSize": {
+																"type": "integer"
+															},
+															"slidingWindowType": {
+																"type": "string"
+															},
+															"waitDurationInOpenState": {
+																"type": "integer"
+															},
+															"automaticTransitionFromOpenToHalfOpen": {
+																"type": "boolean"
+															},
+															"bulkheadEnabled": {
+																"type": "boolean"
+															},
+															"bulkheadMaxConcurrentCalls": {
+																"type": "integer",
+																"description": "Only present when bulkheadEnabled is true"
+															},
+															"bulkheadMaxWaitDuration": {
+																"type": "integer",
+																"description": "Only present when bulkheadEnabled is true"
+															},
+															"timeoutEnabled": {
+																"type": "boolean"
+															},
+															"timeoutDuration": {
+																"type": "integer",
+																"description": "Only present when timeoutEnabled is true"
+															}
+														},
+														"required": [
+															"failureRateThreshold",
+															"slowCallRateThreshold",
+															"minimumNumberOfCalls",
+															"permittedNumberOfCallsInHalfOpenState",
+															"slidingWindowSize",
+															"waitDurationInOpenState",
+															"automaticTransitionFromOpenToHalfOpen",
+															"bulkheadEnabled",
+															"timeoutEnabled"
+														]
+													}
+												},
+												"required": [
+													"bufferedCalls",
+													"successfulCalls",
+													"failedCalls",
+													"notPermittedCalls",
+													"failureRate"
+												]
+											},
+											"description": "The circuit breakers"
+										}
+									}
+								}
 							}
 						}
 					}
@@ -5909,7 +6511,47 @@
 						"description": "Source Directory output",
 						"content": {
 							"application\/json": {
-								
+								"schema": {
+									"type": "object",
+									"properties": {
+										"dir": {
+											"type": "string",
+											"description": "The source directory (only present when a reload strategy is active)"
+										},
+										"files": {
+											"type": "array",
+											"items": {
+												"type": "object",
+												"properties": {
+													"name": {
+														"type": "string",
+														"description": "The file name"
+													},
+													"size": {
+														"type": "integer",
+														"description": "The file size in bytes"
+													},
+													"lastModified": {
+														"type": "integer",
+														"description": "Epoch time in milliseconds of the last modification"
+													},
+													"code": {
+														"type": "array",
+														"items": {
+															
+														},
+														"description": "The source code lines (only present when requested and available)"
+													}
+												},
+												"required": [
+													"size",
+													"lastModified"
+												]
+											},
+											"description": "The files in the source directory (only present when the directory is not empty)"
+										}
+									}
+								}
 							}
 						}
 					}
