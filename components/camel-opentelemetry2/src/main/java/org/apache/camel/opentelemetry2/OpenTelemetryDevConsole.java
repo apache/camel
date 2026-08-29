@@ -16,7 +16,9 @@
  */
 package org.apache.camel.opentelemetry2;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -27,8 +29,7 @@ import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.annotations.DevConsole;
 import org.apache.camel.support.CamelContextHelper;
 import org.apache.camel.support.console.AbstractDevConsole;
-import org.apache.camel.util.json.JsonArray;
-import org.apache.camel.util.json.JsonObject;
+import org.apache.camel.util.json.JsonRecordSupport;
 
 @DevConsole(name = "opentelemetry", displayName = "OpenTelemetry Spans",
             description = "OpenTelemetry span data captured in dev mode")
@@ -41,6 +42,29 @@ public class OpenTelemetryDevConsole extends AbstractDevConsole {
     @Metadata(label = "query", description = "Limits the number of spans dumped", defaultValue = "100",
               javaType = "java.lang.Integer")
     public static final String LIMIT = "limit";
+
+    public record SpanEntry(
+            @Metadata(description = "The trace id") String traceId,
+            @Metadata(description = "The span id") String spanId,
+            @Metadata(description = "The parent span id (only present when known)") String parentSpanId,
+            @Metadata(description = "The span name") String name,
+            @Metadata(description = "The span kind") String kind,
+            @Metadata(description = "The span status") String status,
+            @Metadata(description = "Epoch time in nanoseconds when the span started") long startEpochNanos,
+            @Metadata(description = "Epoch time in nanoseconds when the span ended") long endEpochNanos,
+            @Metadata(description = "The span duration in milliseconds") long durationMs,
+            @Metadata(description = "The instrumentation scope name (only present when known)") String scopeName,
+            @Metadata(description = "The span attributes (only present when there are any)") Map<String, Object> attributes,
+            @Metadata(description = "The route id this span belongs to (only present when known)") String routeId,
+            @Metadata(description = "The processor id this span belongs to (only present for processor spans)") String processorId) {
+    }
+
+    public record Response(
+            @Metadata(description = "Whether the OpenTelemetry in-memory exporter is enabled") boolean enabled,
+            @Metadata(description = "The number of finished spans held (only present when not dumping spans)") Integer spanCount,
+            @Metadata(description = "The maximum number of spans held (only present when not dumping spans)") Integer capacity,
+            @Metadata(description = "The dumped spans (only present when dumping spans)") List<SpanEntry> spans) {
+    }
 
     public OpenTelemetryDevConsole() {
         super("camel", "opentelemetry", "OpenTelemetry Spans",
@@ -78,63 +102,57 @@ public class OpenTelemetryDevConsole extends AbstractDevConsole {
     }
 
     @Override
-    protected JsonObject doCallJson(Map<String, Object> options) {
-        JsonObject root = new JsonObject();
-
+    protected Map<String, Object> doCallJson(Map<String, Object> options) {
         DevSpanExporter exporter = findExporter();
-        if (exporter == null) {
-            root.put("enabled", false);
-            return root;
-        }
+        boolean enabled = exporter != null;
+        Integer spanCount = null;
+        Integer capacity = null;
+        List<SpanEntry> spanEntries = null;
 
-        root.put("enabled", true);
+        if (exporter != null) {
+            String dump = optionString(options, DUMP);
+            if (dump != null) {
+                int limit = optionInt(options, LIMIT, 100);
+                List<SpanData> spans = exporter.getFinishedSpans();
+                int start = Math.max(0, spans.size() - limit);
+                List<SpanData> selected = spans.subList(start, spans.size());
 
-        String dump = optionString(options, DUMP);
-        if (dump != null) {
-            int limit = optionInt(options, LIMIT, 100);
-            List<SpanData> spans = exporter.getFinishedSpans();
-            int start = Math.max(0, spans.size() - limit);
+                // Build lookup map for enriching spans with route context
+                Map<String, String> endpointToRouteId = new HashMap<>();
+                buildEnrichmentMaps(endpointToRouteId);
 
-            // Build lookup map for enriching spans with route context
-            Map<String, String> endpointToRouteId = new HashMap<>();
-            buildEnrichmentMaps(endpointToRouteId);
-
-            // First pass: convert spans to JSON and resolve routeIds for endpoint spans
-            JsonArray arr = new JsonArray();
-            Map<String, String> spanIdToRouteId = new HashMap<>();
-            Map<String, String> spanIdToParent = new HashMap<>();
-            for (int i = start; i < spans.size(); i++) {
-                SpanData sd = spans.get(i);
-                JsonObject jo = spanToJson(sd, endpointToRouteId);
-                arr.add(jo);
-                // Track routeId and parent relationships for propagation
-                if (jo.containsKey("routeId")) {
-                    spanIdToRouteId.put(sd.getSpanId(), jo.getString("routeId"));
-                }
-                String pid = sd.getParentSpanId();
-                if (pid != null && !pid.isEmpty() && !"0000000000000000".equals(pid)) {
-                    spanIdToParent.put(sd.getSpanId(), pid);
-                }
-            }
-
-            // Second pass: propagate routeId to processor spans by walking parent chain
-            for (int i = 0; i < arr.size(); i++) {
-                JsonObject jo = (JsonObject) arr.get(i);
-                if (!jo.containsKey("routeId")) {
-                    String spanId = jo.getString("spanId");
-                    String inheritedRouteId = findAncestorRouteId(spanId, spanIdToRouteId, spanIdToParent);
-                    if (inheritedRouteId != null) {
-                        jo.put("routeId", inheritedRouteId);
+                // First pass: resolve direct routeIds for endpoint spans, and track parent relationships
+                Map<String, String> directRouteIdBySpanId = new HashMap<>();
+                Map<String, String> spanIdToParent = new HashMap<>();
+                for (SpanData sd : selected) {
+                    String uri = sd.getAttributes().get(AttributeKey.stringKey("camel.uri"));
+                    String directRouteId = uri != null ? endpointToRouteId.get(uri) : null;
+                    if (directRouteId != null) {
+                        directRouteIdBySpanId.put(sd.getSpanId(), directRouteId);
+                    }
+                    String pid = sd.getParentSpanId();
+                    if (pid != null && !pid.isEmpty() && !"0000000000000000".equals(pid)) {
+                        spanIdToParent.put(sd.getSpanId(), pid);
                     }
                 }
+
+                // Second pass: propagate routeId to processor spans by walking parent chain
+                spanEntries = new ArrayList<>();
+                for (SpanData sd : selected) {
+                    String routeId = directRouteIdBySpanId.get(sd.getSpanId());
+                    if (routeId == null) {
+                        routeId = findAncestorRouteId(sd.getSpanId(), directRouteIdBySpanId, spanIdToParent);
+                    }
+                    spanEntries.add(buildSpanEntry(sd, routeId));
+                }
+            } else {
+                spanCount = exporter.getSpanCount();
+                capacity = exporter.getCapacity();
             }
-            root.put("spans", arr);
-        } else {
-            root.put("spanCount", exporter.getSpanCount());
-            root.put("capacity", exporter.getCapacity());
         }
 
-        return root;
+        Response response = new Response(enabled, spanCount, capacity, spanEntries);
+        return JsonRecordSupport.toJsonObject(response);
     }
 
     private DevSpanExporter findExporter() {
@@ -155,53 +173,37 @@ public class OpenTelemetryDevConsole extends AbstractDevConsole {
     }
 
     @SuppressWarnings("unchecked")
-    private static JsonObject spanToJson(SpanData span, Map<String, String> endpointToRouteId) {
-        JsonObject jo = new JsonObject();
-        jo.put("traceId", span.getTraceId());
-        jo.put("spanId", span.getSpanId());
+    private static SpanEntry buildSpanEntry(SpanData span, String routeId) {
         String parentSpanId = span.getParentSpanId();
-        if (parentSpanId != null && !parentSpanId.isEmpty()
-                && !"0000000000000000".equals(parentSpanId)) {
-            jo.put("parentSpanId", parentSpanId);
+        if (parentSpanId != null && (parentSpanId.isEmpty() || "0000000000000000".equals(parentSpanId))) {
+            parentSpanId = null;
         }
-        jo.put("name", span.getName());
-        jo.put("kind", span.getKind().name());
-        jo.put("status", span.getStatus().getStatusCode().name());
-        jo.put("startEpochNanos", span.getStartEpochNanos());
-        jo.put("endEpochNanos", span.getEndEpochNanos());
-        jo.put("durationMs", (span.getEndEpochNanos() - span.getStartEpochNanos()) / 1_000_000);
 
         String scopeName = span.getInstrumentationScopeInfo().getName();
-        if (scopeName != null && !scopeName.isEmpty()) {
-            jo.put("scopeName", scopeName);
+        if (scopeName != null && scopeName.isEmpty()) {
+            scopeName = null;
         }
 
-        JsonObject attrs = new JsonObject();
+        Map<String, Object> attrs = new LinkedHashMap<>();
         span.getAttributes().forEach((key, value) -> attrs.put(key.getKey(), value));
-        if (!attrs.isEmpty()) {
-            jo.put("attributes", attrs);
-        }
-
-        // Enrich with route context from endpoint URI
-        String uri = span.getAttributes().get(AttributeKey.stringKey("camel.uri"));
-        if (uri != null) {
-            String routeId = endpointToRouteId.get(uri);
-            if (routeId != null) {
-                jo.put("routeId", routeId);
-            }
-        }
+        Map<String, Object> attributes = attrs.isEmpty() ? null : attrs;
 
         // Enrich processor spans with processorId extracted from span name (format: id-shortName)
+        String processorId = null;
         String op = span.getAttributes().get(AttributeKey.stringKey("op"));
         if ("EVENT_PROCESS".equals(op)) {
             String name = span.getName();
             int dash = name.lastIndexOf('-');
             if (dash > 0) {
-                jo.put("processorId", name.substring(0, dash));
+                processorId = name.substring(0, dash);
             }
         }
 
-        return jo;
+        return new SpanEntry(
+                span.getTraceId(), span.getSpanId(), parentSpanId, span.getName(), span.getKind().name(),
+                span.getStatus().getStatusCode().name(), span.getStartEpochNanos(), span.getEndEpochNanos(),
+                (span.getEndEpochNanos() - span.getStartEpochNanos()) / 1_000_000, scopeName, attributes, routeId,
+                processorId);
     }
 
     private static String findAncestorRouteId(
