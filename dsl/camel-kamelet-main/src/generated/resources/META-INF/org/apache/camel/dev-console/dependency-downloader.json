@@ -11,6 +11,64 @@
     "groupId": "org.apache.camel",
     "artifactId": "camel-kamelet-main",
     "version": "4.23.0-SNAPSHOT"
+  },
+  "response": {
+    "type": "object",
+    "properties": {
+      "dependencies": {
+        "type": "array",
+        "items": {
+          "type": "string"
+        },
+        "description": "The downloaded dependency class-path entries (only present when the application classloader manages downloads)"
+      },
+      "offline": {
+        "type": "boolean",
+        "description": "Whether downloading is disabled (only present when a downloader is active)"
+      },
+      "fresh": {
+        "type": "boolean",
+        "description": "Whether fresh downloads are forced (only present when a downloader is active)"
+      },
+      "verbose": {
+        "type": "boolean",
+        "description": "Whether verbose logging is enabled (only present when a downloader is active)"
+      },
+      "repos": {
+        "type": "string",
+        "description": "The extra Maven repositories (only present when a downloader is active)"
+      },
+      "downloads": {
+        "type": "array",
+        "items": {
+          "type": "object",
+          "properties": {
+            "groupId": {
+              "type": "string"
+            },
+            "artifactId": {
+              "type": "string"
+            },
+            "version": {
+              "type": "string"
+            },
+            "repoId": {
+              "type": "string"
+            },
+            "repoUrl": {
+              "type": "string"
+            },
+            "elapsed": {
+              "type": "integer"
+            }
+          },
+          "required": [
+            "elapsed"
+          ]
+        },
+        "description": "The downloaded artifacts (only present when a downloader is active)"
+      }
+    }
   }
 }
 
