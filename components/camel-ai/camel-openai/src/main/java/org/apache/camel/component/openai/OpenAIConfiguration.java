@@ -48,9 +48,27 @@ public class OpenAIConfiguration implements Cloneable {
     private String baseUrl = ClientOptions.PRODUCTION_URL;
 
     @UriParam(defaultValue = "0")
-    @Metadata(description = "HTTP request timeout in milliseconds for the OpenAI SDK client. "
-                            + "When 0 or negative, the SDK default (10 minutes) is used.")
+    @Metadata(description = "Overall HTTP request timeout in milliseconds for the OpenAI SDK client. "
+                            + "When 0 or negative, the SDK default (10 minutes) is used. "
+                            + "Acts as the fallback for readTimeout and writeTimeout when those are not set.")
     private long requestTimeout;
+
+    @UriParam(defaultValue = "0")
+    @Metadata(description = "Timeout in milliseconds for establishing the TCP connection to the API. "
+                            + "A connect timeout means the endpoint was unreachable, so the request never ran and is "
+                            + "safe to retry. When 0 or negative, the SDK default (1 minute) is used.")
+    private long connectTimeout;
+
+    @UriParam(defaultValue = "0")
+    @Metadata(description = "Timeout in milliseconds for reading the response. A read timeout means the model was slow "
+                            + "mid-generation, so the request may have been processed. "
+                            + "When 0 or negative, requestTimeout applies.")
+    private long readTimeout;
+
+    @UriParam(defaultValue = "0")
+    @Metadata(description = "Timeout in milliseconds for writing the request body, which matters for large payloads "
+                            + "such as audio and image uploads. When 0 or negative, requestTimeout applies.")
+    private long writeTimeout;
 
     @UriParam(defaultValue = "2")
     @Metadata(description = "Maximum number of times the OpenAI SDK client retries failed requests. "
@@ -480,6 +498,30 @@ public class OpenAIConfiguration implements Cloneable {
 
     public void setRequestTimeout(long requestTimeout) {
         this.requestTimeout = requestTimeout;
+    }
+
+    public long getConnectTimeout() {
+        return connectTimeout;
+    }
+
+    public void setConnectTimeout(long connectTimeout) {
+        this.connectTimeout = connectTimeout;
+    }
+
+    public long getReadTimeout() {
+        return readTimeout;
+    }
+
+    public void setReadTimeout(long readTimeout) {
+        this.readTimeout = readTimeout;
+    }
+
+    public long getWriteTimeout() {
+        return writeTimeout;
+    }
+
+    public void setWriteTimeout(long writeTimeout) {
+        this.writeTimeout = writeTimeout;
     }
 
     public int getMaxRetries() {
