@@ -33,6 +33,7 @@ import org.apache.camel.Exchange;
 import org.apache.camel.InvalidPayloadException;
 import org.apache.camel.NoSuchHeaderException;
 import org.apache.camel.WrappedFile;
+import org.apache.camel.component.ai.observability.GenAiErrorSupport;
 import org.apache.camel.component.ai.observability.GenAiModelResolver;
 import org.apache.camel.component.ai.observability.GenAiObservability;
 import org.apache.camel.component.ai.observability.GenAiObservation;
@@ -881,6 +882,7 @@ public class SpringAiChatProducer extends DefaultProducer {
             exchange.getMessage().setBody(entity);
             LOG.debug("Converted response to entity of type: {}", entityClass.getName());
         } catch (RuntimeException e) {
+            GenAiErrorSupport.apply(exchange, e);
             observation.recordError(e);
             throw e;
         } finally {
@@ -1240,6 +1242,7 @@ public class SpringAiChatProducer extends DefaultProducer {
             recordObservationSuccess(observation, response, observationContext.requestModel());
             return response;
         } catch (RuntimeException e) {
+            GenAiErrorSupport.apply(exchange, e);
             observation.recordError(e);
             throw e;
         } finally {

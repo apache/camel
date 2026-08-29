@@ -58,6 +58,7 @@ import org.apache.camel.CamelExchangeException;
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.apache.camel.WrappedFile;
+import org.apache.camel.component.ai.observability.GenAiErrorSupport;
 import org.apache.camel.component.ai.observability.GenAiObservability;
 import org.apache.camel.component.ai.observability.GenAiObservation;
 import org.apache.camel.component.ai.observability.GenAiObservationContext;
@@ -668,6 +669,7 @@ public class OpenAIProducer extends DefaultAsyncProducer {
             @Override
             public void onFailure(Exchange e) {
                 if (e.getException() != null) {
+                    GenAiErrorSupport.apply(e, e.getException());
                     observation.recordError(e.getException());
                 }
                 observation.close();
@@ -730,6 +732,7 @@ public class OpenAIProducer extends DefaultAsyncProducer {
                     response.model()));
             return response;
         } catch (RuntimeException e) {
+            GenAiErrorSupport.apply(exchange, e);
             observation.recordError(e);
             throw e;
         } finally {
