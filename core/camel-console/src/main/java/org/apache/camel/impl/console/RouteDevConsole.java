@@ -42,6 +42,7 @@ import org.apache.camel.util.StringHelper;
 import org.apache.camel.util.TimeUtils;
 import org.apache.camel.util.json.JsonArray;
 import org.apache.camel.util.json.JsonObject;
+import org.apache.camel.util.json.JsonRecordSupport;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -300,7 +301,11 @@ public class RouteDevConsole extends AbstractDevConsole {
                 .sorted(Comparator.comparingInt(ManagedProcessorMBean::getIndex))
                 .toList();
 
-        ProcessorDevConsole.includeProcessorsJSon(getCamelContext(), arr, Integer.MAX_VALUE, mps);
+        List<ProcessorDevConsole.ProcessorEntry> entries = new ArrayList<>();
+        ProcessorDevConsole.includeProcessorsJSon(getCamelContext(), entries, Integer.MAX_VALUE, mps);
+        for (ProcessorDevConsole.ProcessorEntry entry : entries) {
+            arr.add(JsonRecordSupport.toJsonObject(entry));
+        }
     }
 
     protected void doCall(Map<String, Object> options, Function<ManagedRouteMBean, Object> task) {
