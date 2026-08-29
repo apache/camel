@@ -6,6 +6,7 @@
     "title": "Heap Histogram",
     "description": "Displays class-level heap memory usage",
     "deprecated": false,
+    "readOnly": true,
     "javaType": "org.apache.camel.impl.console.HeapHistogramDevConsole",
     "groupId": "org.apache.camel",
     "artifactId": "camel-console",

@@ -6,6 +6,7 @@
     "title": "Consumers",
     "description": "Display information about Camel consumers",
     "deprecated": false,
+    "readOnly": true,
     "javaType": "org.apache.camel.impl.console.ConsumerDevConsole",
     "groupId": "org.apache.camel",
     "artifactId": "camel-console",

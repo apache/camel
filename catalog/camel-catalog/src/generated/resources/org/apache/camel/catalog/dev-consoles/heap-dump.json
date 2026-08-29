@@ -6,6 +6,7 @@
     "title": "Heap Dump",
     "description": "Write a heap dump (.hprof) file for deep memory analysis",
     "deprecated": false,
+    "readOnly": false,
     "javaType": "org.apache.camel.impl.console.HeapDumpDevConsole",
     "groupId": "org.apache.camel",
     "artifactId": "camel-console",

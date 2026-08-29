@@ -6,6 +6,7 @@
     "title": "SQL Query",
     "description": "Execute SQL queries on DataSource beans",
     "deprecated": false,
+    "readOnly": false,
     "javaType": "org.apache.camel.impl.console.SqlQueryDevConsole",
     "groupId": "org.apache.camel",
     "artifactId": "camel-console",

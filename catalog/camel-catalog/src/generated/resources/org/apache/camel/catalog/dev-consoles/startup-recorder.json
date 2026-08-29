@@ -6,6 +6,7 @@
     "title": "Startup Recorder",
     "description": "Starting recording information",
     "deprecated": false,
+    "readOnly": true,
     "javaType": "org.apache.camel.impl.console.StartupRecorderDevConsole",
     "groupId": "org.apache.camel",
     "artifactId": "camel-console",
