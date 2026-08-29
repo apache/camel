@@ -74,6 +74,48 @@
       "secret": false,
       "description": "Limits the number of messages dumped"
     }
+  },
+  "response": {
+    "type": "object",
+    "properties": {
+      "queues": {
+        "type": "array",
+        "items": {
+          "type": "object",
+          "properties": {
+            "name": {
+              "type": "string",
+              "description": "The queue name"
+            },
+            "endpointUri": {
+              "type": "string",
+              "description": "The endpoint URI"
+            },
+            "max": {
+              "type": "integer",
+              "description": "The maximum queue size"
+            },
+            "size": {
+              "type": "integer",
+              "description": "The current queue size"
+            },
+            "messages": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "additionalProperties": true
+              },
+              "description": "The browsed messages (only present when browsing is enabled and there are any)"
+            }
+          },
+          "required": [
+            "max",
+            "size"
+          ]
+        },
+        "description": "The stub queues"
+      }
+    }
   }
 }
 

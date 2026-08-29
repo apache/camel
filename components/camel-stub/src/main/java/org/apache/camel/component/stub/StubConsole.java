@@ -29,11 +29,22 @@ import org.apache.camel.spi.annotations.DevConsole;
 import org.apache.camel.support.MessageHelper;
 import org.apache.camel.support.PatternHelper;
 import org.apache.camel.support.console.AbstractDevConsole;
-import org.apache.camel.util.json.JsonArray;
 import org.apache.camel.util.json.JsonObject;
+import org.apache.camel.util.json.JsonRecordSupport;
 
 @DevConsole(name = "stub", description = "Browse messages on stub endpoints")
 public class StubConsole extends AbstractDevConsole {
+
+    public record QueueEntry(
+            @Metadata(description = "The queue name") String name,
+            @Metadata(description = "The endpoint URI") String endpointUri,
+            @Metadata(description = "The maximum queue size") int max,
+            @Metadata(description = "The current queue size") int size,
+            @Metadata(description = "The browsed messages (only present when browsing is enabled and there are any)") List<Map<String, Object>> messages) {
+    }
+
+    public record Response(@Metadata(description = "The stub queues") List<QueueEntry> queues) {
+    }
 
     @Metadata(label = "query", description = "Filters the routes matching by queue name",
               javaType = "java.lang.String")
@@ -114,13 +125,12 @@ public class StubConsole extends AbstractDevConsole {
     }
 
     @Override
-    protected JsonObject doCallJson(Map<String, Object> options) {
+    protected Map<String, Object> doCallJson(Map<String, Object> options) {
         String filter = optionString(options, FILTER);
         final int max = optionInt(options, LIMIT, Integer.MAX_VALUE);
         final boolean dump = optionBoolean(options, BROWSE, false);
 
-        JsonObject root = new JsonObject();
-        JsonArray queues = new JsonArray();
+        List<QueueEntry> queues = new ArrayList<>();
 
         List<StubEndpoint> list = getCamelContext().getEndpoints()
                 .stream().filter(e -> e instanceof StubEndpoint)
@@ -138,15 +148,10 @@ public class StubConsole extends AbstractDevConsole {
                 names.add(name);
             }
 
-            JsonObject jo = new JsonObject();
-            jo.put("name", name);
-            jo.put("endpointUri", se.getEndpointUri());
-            jo.put("max", se.getSize());
-            jo.put("size", se.getCurrentQueueSize());
-
             // browse messages
+            List<Map<String, Object>> messages = null;
             if (dump) {
-                List<JsonObject> arr = new ArrayList<>();
+                List<Map<String, Object>> arr = new ArrayList<>();
 
                 Queue<Exchange> q = se.getQueue();
                 List<Exchange> copy = new ArrayList<>(q);
@@ -165,15 +170,13 @@ public class StubConsole extends AbstractDevConsole {
                         // ignore
                     }
                 }
-                if (!arr.isEmpty()) {
-                    jo.put("messages", arr);
-                }
+                messages = arr.isEmpty() ? null : arr;
             }
-            queues.add(jo);
+            queues.add(new QueueEntry(name, se.getEndpointUri(), se.getSize(), se.getCurrentQueueSize(), messages));
         }
 
-        root.put("queues", queues);
-        return root;
+        Response response = new Response(queues);
+        return JsonRecordSupport.toJsonObject(response);
     }
 
     private static boolean accept(String name, String filter) {
