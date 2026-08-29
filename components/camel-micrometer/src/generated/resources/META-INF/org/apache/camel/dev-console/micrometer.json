@@ -42,6 +42,222 @@
       "defaultValue": true,
       "description": "Whether to include tags"
     }
+  },
+  "response": {
+    "type": "object",
+    "properties": {
+      "meterRegistryClass": {
+        "type": "string"
+      },
+      "counters": {
+        "type": "array",
+        "items": {
+          "type": "object",
+          "properties": {
+            "name": {
+              "type": "string"
+            },
+            "description": {
+              "type": "string"
+            },
+            "tags": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "key": {
+                    "type": "string"
+                  },
+                  "value": {
+                    "type": "string"
+                  }
+                }
+              }
+            },
+            "count": {
+              "description": "The counter value (integer when whole, decimal otherwise)"
+            }
+          }
+        },
+        "description": "Only present when there are any counters"
+      },
+      "gauges": {
+        "type": "array",
+        "items": {
+          "type": "object",
+          "properties": {
+            "name": {
+              "type": "string"
+            },
+            "description": {
+              "type": "string"
+            },
+            "tags": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "key": {
+                    "type": "string"
+                  },
+                  "value": {
+                    "type": "string"
+                  }
+                }
+              }
+            },
+            "value": {
+              "type": "number"
+            }
+          },
+          "required": [
+            "value"
+          ]
+        },
+        "description": "Only present when there are any gauges"
+      },
+      "timers": {
+        "type": "array",
+        "items": {
+          "type": "object",
+          "properties": {
+            "name": {
+              "type": "string"
+            },
+            "description": {
+              "type": "string"
+            },
+            "tags": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "key": {
+                    "type": "string"
+                  },
+                  "value": {
+                    "type": "string"
+                  }
+                }
+              }
+            },
+            "count": {
+              "type": "integer"
+            },
+            "mean": {
+              "type": "integer"
+            },
+            "max": {
+              "type": "integer"
+            },
+            "total": {
+              "type": "integer"
+            }
+          },
+          "required": [
+            "count",
+            "mean",
+            "max",
+            "total"
+          ]
+        },
+        "description": "Only present when there are any timers"
+      },
+      "longTaskTimers": {
+        "type": "array",
+        "items": {
+          "type": "object",
+          "properties": {
+            "name": {
+              "type": "string"
+            },
+            "description": {
+              "type": "string"
+            },
+            "tags": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "key": {
+                    "type": "string"
+                  },
+                  "value": {
+                    "type": "string"
+                  }
+                }
+              }
+            },
+            "activeTasks": {
+              "type": "integer"
+            },
+            "mean": {
+              "type": "integer"
+            },
+            "max": {
+              "type": "integer"
+            },
+            "duration": {
+              "type": "integer"
+            }
+          },
+          "required": [
+            "activeTasks",
+            "mean",
+            "max",
+            "duration"
+          ]
+        },
+        "description": "Only present when there are any long task timers"
+      },
+      "distribution": {
+        "type": "array",
+        "items": {
+          "type": "object",
+          "properties": {
+            "name": {
+              "type": "string"
+            },
+            "description": {
+              "type": "string"
+            },
+            "tags": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "key": {
+                    "type": "string"
+                  },
+                  "value": {
+                    "type": "string"
+                  }
+                }
+              }
+            },
+            "count": {
+              "type": "integer"
+            },
+            "mean": {
+              "type": "number"
+            },
+            "max": {
+              "type": "number"
+            },
+            "totalAmount": {
+              "type": "number"
+            }
+          },
+          "required": [
+            "count",
+            "mean",
+            "max",
+            "totalAmount"
+          ]
+        },
+        "description": "Only present when there are any distribution summaries"
+      }
+    }
   }
 }
 
