@@ -19,6 +19,7 @@ package org.apache.camel.impl.console;
 import java.io.LineNumberReader;
 import java.io.Reader;
 import java.io.StringReader;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -37,12 +38,27 @@ import org.apache.camel.support.PatternHelper;
 import org.apache.camel.support.console.AbstractDevConsole;
 import org.apache.camel.util.IOHelper;
 import org.apache.camel.util.StringHelper;
-import org.apache.camel.util.json.JsonArray;
-import org.apache.camel.util.json.JsonObject;
+import org.apache.camel.util.json.JsonRecordSupport;
 import org.apache.camel.util.json.Jsoner;
 
 @DevConsole(name = "route-dump", description = "Dump route in XML, YAML, or Java DSL format")
 public class RouteDumpDevConsole extends AbstractDevConsole {
+
+    public record CodeLine(
+            @Metadata(description = "The source line number, or -1 when not known") int line,
+            @Metadata(description = "The source code line") String code) {
+    }
+
+    public record RouteEntry(
+            @Metadata(description = "The route ID") String routeId,
+            @Metadata(description = "The route's endpoint URI") String from,
+            @Metadata(description = "The source location (only present when known)") String source,
+            @Metadata(description = "The dump format, xml/yaml/java (only present when the dump succeeded)") String format,
+            @Metadata(description = "The dumped route source code (only present when the dump succeeded)") List<CodeLine> code) {
+    }
+
+    public record Response(@Metadata(description = "The routes") List<RouteEntry> routes) {
+    }
 
     private static final Pattern XML_SOURCE_LOCATION_PATTERN = Pattern.compile("(\\ssourceLocation=\"(.*?)\")");
     private static final Pattern XML_SOURCE_LINE_PATTERN = Pattern.compile("(\\ssourceLineNumber=\"(.*?)\")");
@@ -105,54 +121,46 @@ public class RouteDumpDevConsole extends AbstractDevConsole {
     }
 
     @Override
-    protected JsonObject doCallJson(Map<String, Object> options) {
+    protected Map<String, Object> doCallJson(Map<String, Object> options) {
         final boolean uriAsParameters = optionBoolean(options, URI_AS_PARAMETERS, false);
 
-        final JsonObject root = new JsonObject();
-        final JsonArray list = new JsonArray();
+        final List<RouteEntry> list = new ArrayList<>();
 
         Function<ManagedRouteMBean, Object> task = mrb -> {
-            JsonObject jo = new JsonObject();
-            list.add(jo);
-
-            jo.put("routeId", mrb.getRouteId());
-            jo.put("from", mrb.getEndpointUri());
-            if (mrb.getSourceLocation() != null) {
-                jo.put("source", mrb.getSourceLocation());
-            }
+            String format = null;
+            List<CodeLine> code = null;
 
             try {
                 String dump = null;
-                String format = optionString(options, FORMAT);
-                if (format == null || "xml".equals(format)) {
-                    jo.put("format", "xml");
+                String requestedFormat = optionString(options, FORMAT);
+                if (requestedFormat == null || "xml".equals(requestedFormat)) {
+                    format = "xml";
                     dump = mrb.dumpRouteAsXml(true, false, true);
-                } else if ("yaml".equals(format)) {
-                    jo.put("format", "yaml");
+                } else if ("yaml".equals(requestedFormat)) {
+                    format = "yaml";
                     dump = mrb.dumpRouteAsYaml(true, uriAsParameters, false, true);
-                } else if ("java".equals(format)) {
-                    jo.put("format", "java");
+                } else if ("java".equals(requestedFormat)) {
+                    format = "java";
                     dump = mrb.dumpRouteAsJava(true, false, true);
                 }
                 if (dump != null) {
-                    JsonArray code;
-                    if (format == null || "xml".equals(format)) {
+                    if (requestedFormat == null || "xml".equals(requestedFormat)) {
                         code = xmlLoadSourceAsJson(new StringReader(dump));
                     } else {
                         code = javaOrYamlLoadSourceAsJson(new StringReader(dump));
-                    }
-                    if (code != null) {
-                        jo.put("code", code);
                     }
                 }
             } catch (Exception e) {
                 // ignore
             }
+
+            list.add(new RouteEntry(mrb.getRouteId(), mrb.getEndpointUri(), mrb.getSourceLocation(), format, code));
             return null;
         };
         doCall(options, task);
-        root.put("routes", list);
-        return root;
+
+        Response response = new Response(list);
+        return JsonRecordSupport.toJsonObject(response);
     }
 
     protected void doCall(Map<String, Object> options, Function<ManagedRouteMBean, Object> task) {
@@ -193,8 +201,8 @@ public class RouteDumpDevConsole extends AbstractDevConsole {
         return o1.getRouteId().compareTo(o2.getRouteId());
     }
 
-    private static JsonArray xmlLoadSourceAsJson(Reader reader) {
-        JsonArray code = new JsonArray();
+    private static List<CodeLine> xmlLoadSourceAsJson(Reader reader) {
+        List<CodeLine> code = new ArrayList<>();
         try {
             LineNumberReader lnr = new LineNumberReader(reader);
             String t;
@@ -212,10 +220,7 @@ public class RouteDumpDevConsole extends AbstractDevConsole {
                         idx = m.group(2);
                         t = m.replaceFirst("");
                     }
-                    JsonObject c = new JsonObject();
-                    c.put("line", idx != null ? Integer.parseInt(idx) : -1);
-                    c.put("code", Jsoner.escape(t));
-                    code.add(c);
+                    code.add(new CodeLine(idx != null ? Integer.parseInt(idx) : -1, Jsoner.escape(t)));
                 }
             } while (t != null);
             IOHelper.close(lnr);
@@ -226,8 +231,8 @@ public class RouteDumpDevConsole extends AbstractDevConsole {
         return code.isEmpty() ? null : code;
     }
 
-    private static JsonArray javaOrYamlLoadSourceAsJson(Reader reader) {
-        JsonArray code = new JsonArray();
+    private static List<CodeLine> javaOrYamlLoadSourceAsJson(Reader reader) {
+        List<CodeLine> code = new ArrayList<>();
         try {
             LineNumberReader lnr = new LineNumberReader(reader);
             String t;
@@ -241,18 +246,15 @@ public class RouteDumpDevConsole extends AbstractDevConsole {
                         String idx = StringHelper.after(t, "sourceLineNumber: ").trim();
                         if (!code.isEmpty()) {
                             // assign line number to previous code line
-                            JsonObject c = (JsonObject) code.get(code.size() - 1);
+                            CodeLine prev = code.get(code.size() - 1);
                             try {
-                                c.put("line", Integer.parseInt(idx));
+                                code.set(code.size() - 1, new CodeLine(Integer.parseInt(idx), prev.code()));
                             } catch (NumberFormatException e) {
                                 // ignore
                             }
                         }
                     } else {
-                        JsonObject c = new JsonObject();
-                        c.put("code", Jsoner.escape(t));
-                        c.put("line", -1);
-                        code.add(c);
+                        code.add(new CodeLine(-1, Jsoner.escape(t)));
                     }
                 }
             } while (t != null);
@@ -263,12 +265,12 @@ public class RouteDumpDevConsole extends AbstractDevConsole {
 
         // merge trailing ; with previous code line (sourceLineNumber comments may have separated them)
         if (code.size() > 1) {
-            JsonObject last = (JsonObject) code.get(code.size() - 1);
-            String lastCode = Jsoner.unescape(last.getString("code")).trim();
+            CodeLine last = code.get(code.size() - 1);
+            String lastCode = Jsoner.unescape(last.code()).trim();
             if (";".equals(lastCode)) {
                 code.remove(code.size() - 1);
-                JsonObject prev = (JsonObject) code.get(code.size() - 1);
-                prev.put("code", prev.getString("code") + ";");
+                CodeLine prev = code.get(code.size() - 1);
+                code.set(code.size() - 1, new CodeLine(prev.line(), prev.code() + ";"));
             }
         }
 

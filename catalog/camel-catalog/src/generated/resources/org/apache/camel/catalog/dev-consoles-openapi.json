@@ -3422,7 +3422,56 @@
 						"description": "Route Dump output",
 						"content": {
 							"application\/json": {
-								
+								"schema": {
+									"type": "object",
+									"properties": {
+										"routes": {
+											"type": "array",
+											"items": {
+												"type": "object",
+												"properties": {
+													"routeId": {
+														"type": "string",
+														"description": "The route ID"
+													},
+													"from": {
+														"type": "string",
+														"description": "The route's endpoint URI"
+													},
+													"source": {
+														"type": "string",
+														"description": "The source location (only present when known)"
+													},
+													"format": {
+														"type": "string",
+														"description": "The dump format, xml\/yaml\/java (only present when the dump succeeded)"
+													},
+													"code": {
+														"type": "array",
+														"items": {
+															"type": "object",
+															"properties": {
+																"line": {
+																	"type": "integer",
+																	"description": "The source line number, or -1 when not known"
+																},
+																"code": {
+																	"type": "string",
+																	"description": "The source code line"
+																}
+															},
+															"required": [
+																"line"
+															]
+														},
+														"description": "The dumped route source code (only present when the dump succeeded)"
+													}
+												}
+											},
+											"description": "The routes"
+										}
+									}
+								}
 							}
 						}
 					}
@@ -3737,7 +3786,37 @@
 						"description": "Simple Language output",
 						"content": {
 							"application\/json": {
-								
+								"schema": {
+									"type": "object",
+									"properties": {
+										"coreSize": {
+											"type": "integer",
+											"description": "Number of core simple functions"
+										},
+										"customSize": {
+											"type": "integer",
+											"description": "Number of custom simple functions"
+										},
+										"coreFunctions": {
+											"type": "array",
+											"items": {
+												"type": "string"
+											},
+											"description": "The core function names (only present when there are any)"
+										},
+										"customFunctions": {
+											"type": "array",
+											"items": {
+												"type": "string"
+											},
+											"description": "The custom function names (only present when there are any)"
+										}
+									},
+									"required": [
+										"coreSize",
+										"customSize"
+									]
+								}
 							}
 						}
 					}
@@ -3907,7 +3986,126 @@
 						"description": "SQL Trace output",
 						"content": {
 							"application\/json": {
-								
+								"schema": {
+									"type": "object",
+									"properties": {
+										"statements": {
+											"type": "array",
+											"items": {
+												"type": "object",
+												"properties": {
+													"timestamp": {
+														"type": "integer",
+														"description": "Epoch time in milliseconds when the statement was executed"
+													},
+													"exchangeId": {
+														"type": "string",
+														"description": "The exchange ID"
+													},
+													"routeId": {
+														"type": "string",
+														"description": "The route ID (only present when known)"
+													},
+													"nodeId": {
+														"type": "string",
+														"description": "The processor node ID (only present when known)"
+													},
+													"location": {
+														"type": "string",
+														"description": "The source location of the processor (only present when known)"
+													},
+													"endpoint": {
+														"type": "string",
+														"description": "The endpoint URI"
+													},
+													"query": {
+														"type": "string",
+														"description": "The SQL query (or the endpoint URI when the query could not be determined)"
+													},
+													"category": {
+														"type": "string",
+														"description": "The SQL statement category"
+													},
+													"duration": {
+														"type": "integer",
+														"description": "Duration in milliseconds"
+													},
+													"failed": {
+														"type": "boolean",
+														"description": "Whether the exchange failed"
+													},
+													"rowCount": {
+														"type": "integer",
+														"description": "Number of rows returned (only present when known)"
+													},
+													"updateCount": {
+														"type": "integer",
+														"description": "Number of rows updated (only present when known)"
+													}
+												},
+												"required": [
+													"timestamp",
+													"duration",
+													"failed"
+												]
+											},
+											"description": "The traced SQL statements, most recent first (only present when statements have been traced)"
+										},
+										"summary": {
+											"type": "object",
+											"properties": {
+												"totalQueries": {
+													"type": "integer",
+													"description": "Total number of queries"
+												},
+												"avgTime": {
+													"type": "integer",
+													"description": "Average duration in milliseconds"
+												},
+												"slowestTime": {
+													"type": "integer",
+													"description": "Slowest duration in milliseconds"
+												},
+												"slowCount": {
+													"type": "integer",
+													"description": "Number of queries considered slow (duration >= 100 ms)"
+												},
+												"failedCount": {
+													"type": "integer",
+													"description": "Number of failed queries"
+												},
+												"selectCount": {
+													"type": "integer",
+													"description": "Number of SELECT statements"
+												},
+												"insertCount": {
+													"type": "integer",
+													"description": "Number of INSERT statements"
+												},
+												"updateCount": {
+													"type": "integer",
+													"description": "Number of UPDATE statements"
+												},
+												"deleteCount": {
+													"type": "integer",
+													"description": "Number of DELETE statements"
+												}
+											},
+											"required": [
+												"totalQueries",
+												"avgTime",
+												"slowestTime",
+												"slowCount",
+												"failedCount",
+												"selectCount",
+												"insertCount",
+												"updateCount",
+												"deleteCount"
+											],
+											"description": "Summary statistics across the traced statements (only present when statements have been traced)"
+										}
+									}
+								}
 							}
 						}
 					}
@@ -3924,7 +4122,59 @@
 						"description": "Startup Recorder output",
 						"content": {
 							"application\/json": {
-								
+								"schema": {
+									"type": "object",
+									"properties": {
+										"steps": {
+											"type": "array",
+											"items": {
+												"type": "object",
+												"properties": {
+													"id": {
+														"type": "integer",
+														"description": "The id of the step"
+													},
+													"parentId": {
+														"type": "integer",
+														"description": "The id of the parent step"
+													},
+													"level": {
+														"type": "integer",
+														"description": "The step level (sub step of previous steps)"
+													},
+													"name": {
+														"type": "string",
+														"description": "Name of the step (only present when known)"
+													},
+													"type": {
+														"type": "string",
+														"description": "The source class type of the step"
+													},
+													"description": {
+														"type": "string",
+														"description": "Description of the step"
+													},
+													"beginTime": {
+														"type": "integer",
+														"description": "The begin time (epoch milliseconds)"
+													},
+													"duration": {
+														"type": "integer",
+														"description": "The duration the step took, in milliseconds"
+													}
+												},
+												"required": [
+													"id",
+													"parentId",
+													"level",
+													"beginTime",
+													"duration"
+												]
+											},
+											"description": "The startup steps (only present when there are any)"
+										}
+									}
+								}
 							}
 						}
 					}
@@ -4217,7 +4467,54 @@
 						"description": "Data Type Transformers output",
 						"content": {
 							"application\/json": {
-								
+								"schema": {
+									"type": "object",
+									"properties": {
+										"size": {
+											"type": "integer",
+											"description": "Total number of transformers"
+										},
+										"dynamicSize": {
+											"type": "integer",
+											"description": "Number of transformers in the dynamic registry"
+										},
+										"staticSize": {
+											"type": "integer",
+											"description": "Number of transformers in the static registry"
+										},
+										"maximumCacheSize": {
+											"type": "integer",
+											"description": "Maximum number of entries to store in the dynamic registry"
+										},
+										"transformers": {
+											"type": "array",
+											"items": {
+												"type": "object",
+												"properties": {
+													"name": {
+														"type": "string",
+														"description": "The transformer name"
+													},
+													"from": {
+														"type": "string",
+														"description": "The from data type (only present when not any-type)"
+													},
+													"to": {
+														"type": "string",
+														"description": "The to data type (only present when not any-type)"
+													}
+												}
+											},
+											"description": "The transformers (only present when there are any)"
+										}
+									},
+									"required": [
+										"size",
+										"dynamicSize",
+										"staticSize",
+										"maximumCacheSize"
+									]
+								}
 							}
 						}
 					}
