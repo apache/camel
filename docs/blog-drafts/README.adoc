@@ -2,12 +2,27 @@
 
 Prototype articles for the https://camel.apache.org/community/articles/[Camel community articles] page.
 
-These drafts follow the three-phase Gen AI story (Connect → Act → Operate) and are intended
-to pair with runnable examples:
+== Two-part series
 
-* *Blog 1* — JBang / CLI / TUI prototype (bundled example: `ai/genai-observability`)
-* *Blog 2* — Spring Boot + observability stack (sample for https://github.com/apache/camel-examples[camel-examples])
+[cols="1,3,2",options="header"]
+|===
+| Part | File | Companion example
 
-Sample code for camel-examples: `camel-examples-spring-boot-genai-observability/`
+| Blog 1
+| xref:genai-observability-01-jbang-cli-tui.adoc[JBang / CLI / TUI]
+| https://github.com/apache/camel/pull/25891[JBang example PR]
 
-Acknowledgment: developed with guidance from Claus Ibsen and with the help of AI agents.
+| Blog 2
+| xref:genai-observability-02-spring-boot-obs-stack.adoc[Spring Boot + obs stack]
+| https://github.com/apache/camel-examples/pull/255[camel-examples PR]
+|===
+
+== Three-phase narrative
+
+* *Phase 1 Connect* — LLMs in routes
+* *Phase 2 Act* — tools, agents, MCP
+* *Phase 3 Operate* — GenAI observability (this series)
+
+Developed with guidance from Claus Ibsen and with the help of AI agents.
+
+Open PR: https://github.com/apache/camel/pull/25890

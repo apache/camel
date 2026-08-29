@@ -1,78 +1,500 @@
-= GenAI Observability with Spring Boot and the Camel Observability Stack (Blog 2 — prototype)
+= GenAI Observability with Spring Boot and the Camel Observability Stack (Blog 2)
 :author: Apache Camel community
+:doctitle: GenAI Observability with Spring Boot and the Camel Observability Stack
 :doctype: article
 :toc:
+:toclevels: 3
 :icons: font
 
 == Summary
 
-In *Blog 1* we prototyped GenAI observability with Camel JBang and the TUI.
-This follow-up shows how the same `gen_ai.*` signals appear in a *Spring Boot* application
-connected to the observability stack used in Camel's test-infra:
-Prometheus, VictoriaTraces, and Perses.
+In https://github.com/apache/camel/pull/25890[Blog 1] we prototyped GenAI observability with Camel JBang and the TUI.
+This follow-up — *Phase 3 (Operate)* — shows the same `gen_ai.*` telemetry in a *Spring Boot* application
+wired to the observability stack Camel uses in test-infra: **Prometheus**, **VictoriaTraces**, and **Perses**.
 
 Special thanks to *Claus Ibsen* for guidance on this series.
-Sample code is provided for contribution to https://github.com/apache/camel-examples[camel-examples].
+The runnable sample lives in https://github.com/apache/camel-examples/pull/255[`spring-boot/genai-observability`].
+
+== Who is this for?
+
+* Spring Boot teams running Camel AI in production
+* SREs who need Prometheus alerts on token burn rate
+* Architects comparing dev-time TUI observability (Blog 1) vs. ops-time dashboards (this post)
+* Contributors adding "how-to" examples for AI coding assistants
+
+== What you'll build
+
+[source,text]
+----
+┌─────────────────┐     scrape      ┌──────────────┐
+│  Spring Boot    │ ──────────────► │  Prometheus  │
+│  Camel + LLM    │                 │  :9090       │
+│  :8080          │                 └──────┬───────┘
+└────────┬────────┘                        │
+         │ OTLP traces                     ▼
+         ▼                          ┌──────────────┐
+┌─────────────────┐                 │   Perses     │
+│ VictoriaTraces  │ ◄── dashboards  │   :8088      │
+│ :9428           │                 └──────────────┘
+└─────────────────┘
+
+Optional: camel tui ──► Spring Boot via cli-connector
+----
+
+For every LLM call in the YAML route:
+
+* Actuator `/actuator/prometheus` exposes `gen_ai_client_*` metrics
+* OTLP export sends spans with token attributes to VictoriaTraces
+* You query traces by `gen_ai.operation.name="chat"`
 
 == Sample project
 
-Copy from: `docs/blog-drafts/camel-examples-spring-boot-genai-observability/`
+[source,text]
+----
+spring-boot/genai-observability/
+├── pom.xml
+├── README.adoc
+├── docker-compose.yml          # Prometheus + VictoriaTraces + Perses
+├── prometheus.yml            # scrapes localhost:8080/actuator/prometheus
+└── src/main/
+    ├── java/.../GenAiObservabilityApplication.java
+    └── resources/
+        ├── application.properties
+        └── camel/genai-route.camel.yaml
+----
 
-Target in camel-examples: `spring-boot/genai-observability/`
+Clone: https://github.com/apache/camel-examples/tree/main/spring-boot/genai-observability
 
-== Step 1 — Start Ollama
+== Step 1 — Prerequisites
 
 [source,shell]
 ----
+java -version    # 17+
+mvn -version     # 3.9+
+docker --version # for observability stack
 ollama pull llama3.2
 ollama serve
 ----
 
 == Step 2 — Start the observability stack
 
+From the example directory:
+
 [source,shell]
 ----
+cd spring-boot/genai-observability
 docker compose up -d
 ----
 
-Starts Prometheus, VictoriaTraces, and Perses (images aligned with `camel-test-infra-observability`).
+Services (images aligned with `camel-test-infra-observability`):
 
-== Step 3 — Run Spring Boot
+[cols="1,1,3",options="header"]
+|===
+| Service | Port | Role
+
+| Prometheus
+| 9090
+| Scrapes Spring Boot Actuator Prometheus endpoint
+
+| VictoriaTraces
+| 9428
+| Stores OTLP traces; UI at `/select/vmui`
+
+| Perses
+| 8088
+| Metrics dashboards (optional visualization)
+|===
+
+`prometheus.yml` targets `host.docker.internal:8080` — on Linux you may need
+`extra_hosts: host.docker.internal:host-gateway` in compose (already common pattern).
+
+== Step 3 — Build and run Spring Boot
 
 [source,shell]
 ----
 mvn spring-boot:run
 ----
 
-== Step 4 — Verify GenAI metrics
+Wait for:
+
+[source,text]
+----
+Started GenAiObservabilityApplication
+LLM reply: Apache Camel is an integration framework...
+Models: req=llama3.2 resp=llama3.2
+----
+
+== Step 4 — Verify GenAI metrics via Actuator
 
 [source,shell]
 ----
 curl -s http://localhost:8080/actuator/prometheus | grep gen_ai
 ----
 
-Prometheus UI: `http://localhost:9090` — query `gen_ai_client_token_usage`.
+Filter only token counters:
 
-== Step 5 — Explore traces
+[source,shell]
+----
+curl -s http://localhost:8080/actuator/prometheus \
+  | grep 'gen_ai_client_token_usage'
+----
 
-VictoriaTraces UI: `http://localhost:9428/select/vmui` — filter `gen_ai.operation.name=chat`.
+Expected Micrometer names:
 
-== Step 6 — Optional TUI
+* `gen_ai_client_operation` — timer/summary of LLM call duration
+* `gen_ai_client_token_usage` — counter with tag `gen_ai_token_type=input|output`
+
+=== Prometheus queries
+
+Open http://localhost:9090 and try:
+
+[source,promql]
+----
+# Total output tokens over time
+increase(gen_ai_client_token_usage_total{gen_ai_token_type="output"}[1h])
+
+# LLM call rate
+rate(gen_ai_client_operation_count[5m])
+
+# By Camel component
+sum by (camel_component) (gen_ai_client_operation_count)
+----
+
+=== Example alert rule (sketch)
+
+[source,yaml]
+----
+groups:
+  - name: camel-genai
+    rules:
+      - alert: HighGenAITokenBurn
+        expr: rate(gen_ai_client_token_usage_total[15m]) > 1000
+        for: 10m
+        labels:
+          severity: warning
+        annotations:
+          summary: "High GenAI token usage on {{ $labels.job }}"
+----
+
+== Step 5 — Explore traces in VictoriaTraces
+
+Open http://localhost:9428/select/vmui
+
+Useful trace search filters:
+
+* `gen_ai.operation.name="chat"`
+* `gen_ai.request.model="llama3.2"`
+* `camel.component="langchain4j-chat"`
+
+Each span should carry:
+
+[cols="2,3",options="header"]
+|===
+| Field | Example
+
+| `gen_ai.usage.input_tokens`
+| `28`
+
+| `gen_ai.usage.output_tokens`
+| `15`
+
+| `gen_ai.response.finish_reasons`
+| `["stop"]`
+
+| `gen_ai.system`
+| `langchain4j`
+|===
+
+[TIP]
+====
+Correlate traces with logs by passing the trace ID from MDC if you enable log correlation
+in your logging config — see xref:manual::camel-jbang-tui.adoc#_opentelemetry_spans[OpenTelemetry docs].
+====
+
+== Step 6 — Optional: Camel TUI against Spring Boot
+
+Uncomment in `pom.xml`:
+
+[source,xml]
+----
+<dependency>
+    <groupId>org.apache.camel.springboot</groupId>
+    <artifactId>camel-cli-connector-starter</artifactId>
+</dependency>
+----
+
+And in `application.properties`:
+
+[source,properties]
+----
+camel.cli.enabled=true
+----
+
+Then:
 
 [source,shell]
 ----
 camel tui
 ----
 
-Connect to the Spring Boot app when `camel-cli-connector-starter` is enabled.
+Select the remote Spring Boot integration — you get the same *Spans* tab and *Ctrl+U* AI Usage
+view as Blog 1, but against a production-style runtime.
+
+== Full configuration walkthrough
+
+=== Maven dependencies (key excerpts)
+
+[source,xml]
+----
+<dependency>
+    <groupId>org.apache.camel.springboot</groupId>
+    <artifactId>camel-spring-boot-starter</artifactId>
+</dependency>
+<dependency>
+    <groupId>org.apache.camel.springboot</groupId>
+    <artifactId>camel-observability-services-starter</artifactId>
+</dependency>
+<dependency>
+    <groupId>org.apache.camel.springboot</groupId>
+    <artifactId>camel-langchain4j-chat-starter</artifactId>
+</dependency>
+<dependency>
+    <groupId>org.apache.camel</groupId>
+    <artifactId>camel-ai-observability</artifactId>
+</dependency>
+<dependency>
+    <groupId>dev.langchain4j</groupId>
+    <artifactId>langchain4j-ollama-spring-boot-starter</artifactId>
+</dependency>
+<dependency>
+    <groupId>org.springframework.boot</groupId>
+    <artifactId>spring-boot-starter-actuator</artifactId>
+</dependency>
+<dependency>
+    <groupId>io.micrometer</groupId>
+    <artifactId>micrometer-registry-prometheus</artifactId>
+</dependency>
+----
+
+=== application.properties (explained)
+
+[source,properties]
+----
+# --- LangChain4j / Ollama (auto-configures chatLanguageModel bean) ---
+langchain4j.ollama.chat-model.base-url=http://localhost:11434
+langchain4j.ollama.chat-model.model-name=llama3.2
+langchain4j.ollama.chat-model.temperature=0.2
+langchain4j.ollama.chat-model.timeout=PT120S
+
+# --- Camel YAML routes ---
+camel.main.routes-include-pattern=camel/*
+
+# --- GenAI observability ---
+camel.ai.observability.enabled=true
+camel.opentelemetry2.enabled=true
+
+# --- Spring Actuator (Prometheus scrape target) ---
+management.endpoints.web.exposure.include=health,prometheus,info
+management.prometheus.metrics.export.enabled=true
+
+# --- OTLP export to VictoriaTraces ---
+camel.opentelemetry2.export-target=jaeger
+otel.exporter.otlp.endpoint=http://localhost:9428/insert/opentelemetry/v1/traces
+otel.exporter.otlp.protocol=http/protobuf
+----
+
+Property notes:
+
+* `camel.ai.observability.enabled` — master switch for GenAI spans/metrics (default `true`)
+* `camel.opentelemetry2.export-target=jaeger` — use external OTLP collector (VictoriaTraces)
+* LangChain4j starter creates `#chatLanguageModel` — referenced in YAML route
+
+== The Camel route (YAML)
+
+[source,yaml]
+----
+- route:
+    id: genai-chat
+    from:
+      uri: timer:genai
+      parameters:
+        period: "15000"
+      steps:
+        - setBody:
+            constant: "In one sentence, what is Apache Camel integration?"
+        - to:
+            uri: langchain4j-chat:demo
+            parameters:
+              chatModel: "#chatLanguageModel"
+        - log:
+            message: "LLM reply: ${body}"
+        - log:
+            message: "Models: req=${header.CamelLangChain4jChatRequestModel} resp=${header.CamelLangChain4jChatResponseModel}"
+----
+
+=== Java RouteBuilder alternative
+
+[source,java]
+----
+@Component
+public class GenAiRoute extends RouteBuilder {
+    @Override
+    public void configure() {
+        from("timer:genai?period=15000")
+            .routeId("genai-chat")
+            .setBody(constant("Explain EIP in one sentence."))
+            .to("langchain4j-chat:demo?chatModel=#chatLanguageModel")
+            .log("Reply: ${body}");
+    }
+}
+----
+
+== docker-compose.yml (excerpt)
+
+[source,yaml]
+----
+services:
+  prometheus:
+    image: quay.io/prometheus/prometheus:v3.13.2
+    ports: ["9090:9090"]
+    volumes: ["./prometheus.yml:/etc/prometheus/prometheus.yml:ro"]
+
+  victoriatraces:
+    image: mirror.gcr.io/victoriametrics/victoria-traces:v0.10.0
+    ports: ["9428:9428"]
+
+  perses:
+    image: mirror.gcr.io/persesdev/perses:v0.54.0
+    ports: ["8088:8080"]
+----
+
+These versions match `camel-test-infra-observability` so CI and blog readers use the same stack.
+
+== JBang vs Spring Boot — when to use which
+
+[cols="2,3,3",options="header"]
+|===
+| Concern | Blog 1 (JBang) | Blog 2 (Spring Boot)
+
+| Time to first span
+| Minutes (`camel run --observe`)
+| Minutes + docker compose
+
+| Metrics endpoint
+| `/observe/metrics` on port 9876
+| `/actuator/prometheus` on port 8080
+
+| Trace UI (dev)
+| TUI Spans tab (built-in)
+| VictoriaTraces VMUI
+
+| Production fit
+| Prototyping, CI demos
+| Standard Spring ops (Actuator, K8s probes)
+
+| AI assistant ergonomics
+| `camel ask`, MCP on TUI
+| `AGENTS.md`, `/llms.txt`, cli-connector
+|===
+
+Most teams: **prototype in JBang**, **deploy observability pattern in Spring Boot**.
+
+== Production checklist
+
+. Set `camel.ai.observability.enabled=true` explicitly in all environments
+. Scrape `/actuator/prometheus` (or `/observe/metrics` for Camel Main)
+. Export OTLP to your org's collector (Jaeger, Tempo, VictoriaTraces, etc.)
+. Alert on `gen_ai_client_token_usage` rate and `gen_ai_client_operation` p99
+. Use route IDs (`genai-chat`) in dashboards to attribute cost per integration
+. Document LLM routes in `AGENTS.md` for AI coding assistants (generated by `camel export` since 4.21)
+. Review <<disable>> if running load tests without LLM overhead
+
+[[disable]]
+== Disabling GenAI observability
+
+[source,properties]
+----
+camel.ai.observability.enabled=false
+----
+
+OpenAI streaming only sets `stream_options.include_usage=true` when observability is enabled —
+disabling avoids the extra API parameter on compatible endpoints.
+
+== Extend — multi-route example
+
+Add a second route that enriches before calling the LLM:
+
+[source,yaml]
+----
+- route:
+    id: enrich-and-chat
+    from:
+      uri: timer:enrich
+      parameters:
+        period: "30000"
+      steps:
+        - setBody:
+            constant: "orders"
+        - setHeader:
+            name: context
+            constant: "User asked about integration patterns"
+        - setBody:
+            simple: "${header.context}: What is the claim check EIP?"
+        - to:
+            uri: langchain4j-chat:demo
+            parameters:
+              chatModel: "#chatLanguageModel"
+        - log:
+            message: "Enriched reply: ${body}"
+----
+
+Both routes appear separately in Prometheus (`routeId` tags via Camel metrics) and as distinct
+trace branches in VictoriaTraces.
 
 == Three phases recap
 
-* *Phase 1 Connect* — LLMs in routes (Blog 1)
-* *Phase 2 Act* — tools, agents, MCP
-* *Phase 3 Operate* — observability (this post)
+* *Phase 1 Connect* — LLMs in routes → https://github.com/apache/camel/pull/25890[Blog 1]
+* *Phase 2 Act* — `ai-tool:`, `langchain4j-agent`, https://camel.apache.org/manual/camel-jbang-mcp.html[MCP server]
+* *Phase 3 Operate* — this post: metrics, traces, dashboards, alerts
 
-== Links
+== Troubleshooting
+
+[cols="2,4",options="header"]
+|===
+| Issue | Resolution
+
+| Prometheus empty targets
+| Spring Boot must be running on 8080; check `host.docker.internal` on Linux
+
+| No traces in VictoriaTraces
+| Verify `otel.exporter.otlp.endpoint`; check app logs for OTLP export errors
+
+| `chatLanguageModel` not found
+| Confirm `langchain4j-ollama-spring-boot-starter` and Ollama properties
+
+| No `gen_ai` metrics
+| Add `camel-ai-observability` + `camel-observability-services-starter`
+
+| Build fails on SNAPSHOT
+| Use camel-examples tag matching your Camel release (see root README)
+|===
+
+== Business outcomes
+
+* *FinOps* — chargeback LLM usage by route/team using token counters
+* *Reliability* — alert when LLM latency degrades independently of HTTP latency
+* *Compliance* — trace attributes document which model answered which integration flow
+* *Knowledge base* — camel-examples + blog = training material for human and AI readers
+
+== Series links
+
+* https://github.com/apache/camel/pull/25890[Blog 1 drafts PR]
+* https://github.com/apache/camel/pull/25891[JBang example PR]
+* https://github.com/apache/camel-examples/pull/255[Spring Boot example PR]
+
+== Documentation
 
 * https://camel.apache.org/components/next/ai-observability.html[AI Observability]
-* https://github.com/apache/camel-examples[camel-examples]
+* https://camel.apache.org/components/next/observability-services.html[Observability Services]
+* https://camel.apache.org/manual/langchain4j-spring-boot-integration.html[LangChain4j Spring Boot Integration]
+* https://camel.apache.org/components/next/group.html?_group=AI[All Camel AI components]

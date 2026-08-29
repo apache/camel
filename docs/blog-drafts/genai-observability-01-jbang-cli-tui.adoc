@@ -1,118 +1,460 @@
-= Observe Your Camel AI Routes with GenAI OpenTelemetry (Blog 1 — prototype)
+= Observe Your Camel AI Routes with GenAI OpenTelemetry (Blog 1)
 :author: Apache Camel community
+:doctitle: Observe Your Camel AI Routes with GenAI OpenTelemetry
 :doctype: article
 :toc:
+:toclevels: 3
 :icons: font
 
 == Summary
 
 Apache Camel 4.23 introduces *GenAI observability*: OpenTelemetry spans and Micrometer metrics
-for LLM producers, following the OpenTelemetry GenAI semantic conventions.
+for LLM producers, following the https://opentelemetry.io/docs/specs/semconv/gen-ai/[OpenTelemetry GenAI semantic conventions].
 
-This post shows a **zero-Spring prototype** using Camel JBang, a LangChain4j chat route,
-Ollama, and the Camel CLI/TUI — the fastest path from `camel run` to visible `gen_ai.*` spans.
+This post is **Blog 1** in a two-part series. We start with the fastest path to visible AI telemetry:
+Camel JBang, a LangChain4j chat route, Ollama, and the Camel CLI/TUI — no Spring Boot required.
 
 Special thanks to *Claus Ibsen* for guidance on shaping this material.
 This article and its example were developed with the help of AI agents.
 
+== The three phases of Camel Gen AI
+
+Before diving in, it helps to see where observability fits:
+
+[cols="1,2,4",options="header"]
+|===
+| Phase | Name | What you do
+
+| 1
+| *Connect*
+| Wire LLMs into routes (`langchain4j-chat`, `openai`, Spring AI)
+
+| 2
+| *Act*
+| Give AI tools via `ai-tool:`, agents, MCP server, A2A
+
+| 3
+| *Operate*
+| Run in production with guardrails, RAG, and *GenAI observability* (this series)
+|===
+
+*Blog 1* covers Phase 1 + the first observability prototype.
+*Blog 2* moves to Spring Boot and a full observability stack (Prometheus, VictoriaTraces, Perses).
+
 == Who is this for?
 
 * Integration developers trying Camel AI for the first time
-* Teams in *Phase 1 (Connect)* — wiring LLMs into routes
-* Anyone who wants observability before moving to Spring Boot production stacks
+* Platform engineers who need token/latency visibility before production
+* Teams evaluating Camel vs. standalone agent frameworks
+* Anyone who wants to use `camel ask` and the TUI against live LLM routes
 
 == What you'll build
 
-A single route that asks Ollama a question every 15 seconds, with:
+A timer-driven route that calls Ollama every 15 seconds. For each LLM invocation you get:
 
-* `gen_ai.client.operation` Micrometer timer
-* `gen_ai.client.token.usage` counter
-* OpenTelemetry spans with model names and token counts
-* TUI Spans tab + AI usage view (Ctrl+U)
+* Micrometer timer: `gen_ai.client.operation`
+* Micrometer counter: `gen_ai.client.token.usage` (tags `input` / `output`)
+* OpenTelemetry child spans with `gen_ai.request.model`, token counts, finish reason
+* Exchange headers: `CamelLangChain4jChatRequestModel`, `CamelLangChain4jChatResponseModel`
+* TUI *Spans* tab visualization + AI Usage view (*Ctrl+U*)
+
+== Architecture
+
+[source,text]
+----
+timer:genai (every 15s)
+  └─ langchain4j-chat (Ollama ChatModel)
+       ├─ camel-ai-observability-api  → start GenAI span + record metrics
+       ├─ camel-opentelemetry2          → export span attributes
+       └─ camel-micrometer            → gen_ai.client.* metrics
+
+camel run --observe
+  └─ camel-observability-services
+       ├─ /observe/health
+       ├─ /observe/metrics  (Prometheus format)
+       └─ TUI Spans collector (embedded OTLP for dev)
+
+camel tui
+  ├─ Spans tab (shortcut: o)
+  └─ AI panel + Ctrl+U (CLI ask + route GenAI usage combined)
+----
 
 == Prerequisites
 
-* Camel JBang 4.23+
-* https://ollama.com/[Ollama] installed
+* Camel JBang **4.23+** (`camel version`)
+* https://ollama.com/[Ollama] installed and running
+* Optional: OpenAI API key if you prefer `openai:` instead of Ollama (see <<openai-variant>>)
 
 [source,shell]
 ----
+# Install or upgrade Camel CLI
+curl -sL https://www.apache.org/dyn/closer.lua/camel/distribution/ | sh
+
+# Local LLM
 ollama pull llama3.2
 ollama serve
 ----
 
-== Step 1 — Run the bundled example
+== Step 1 — Get the example
 
-The example lives in the Camel source tree at
-`dsl/camel-jbang/camel-jbang-core/src/main/resources/examples/ai/genai-observability/`.
+The bundled example ships with Camel 4.23:
+
+`dsl/camel-jbang/camel-jbang-core/src/main/resources/examples/ai/genai-observability/`
+
+Or from GitHub after merge: https://github.com/apache/camel/tree/main/dsl/camel-jbang/camel-jbang-core/src/main/resources/examples/ai/genai-observability
+
+Files:
+
+* `GenAiObservabilityRoute.java` — route + Ollama `ChatModel` bean
+* `application.properties` — Ollama URL, model name, observability toggle
+* `README.md` — run instructions
+
+== Step 2 — Run with observability enabled
 
 [source,shell]
 ----
 cd ai/genai-observability
-camel run GenAiObservabilityRoute.java application.properties --observe \
+
+camel run GenAiObservabilityRoute.java application.properties \
+  --observe \
   --dependency=camel-langchain4j-chat \
   --dependency=camel-ai-observability \
   --dependency=langchain4j-ollama
 ----
 
-The `--observe` flag adds `camel-observability-services` and enables health, metrics,
-and lightweight tracing for the TUI Spans tab.
+What `--observe` does:
 
-== Step 2 — Inspect metrics
+* Adds `camel-observability-services` to the classpath
+* Enables health checks, Micrometer metrics, and OpenTelemetry tracing
+* Exposes endpoints on the management port (default `9876`)
+* Powers the TUI *Spans* tab for live trace inspection
+
+[TIP]
+====
+You can also pass dependencies explicitly without `--observe` and configure observability manually
+(see <<manual-config>>), but `--observe` is the recommended developer experience.
+====
+
+Wait for log lines like:
+
+[source,text]
+----
+LLM reply: Apache Camel is an open source integration framework...
+Request model: llama3.2
+Response model: llama3.2
+----
+
+== Step 3 — Inspect Prometheus metrics
 
 [source,shell]
 ----
 curl -s http://127.0.0.1:9876/observe/metrics | grep gen_ai
 ----
 
-You should see metrics such as `gen_ai_client_operation` and `gen_ai_client_token_usage`.
+Example output (abbreviated):
 
-== Step 3 — Open the TUI
+[source,text]
+----
+# HELP gen_ai_client_operation GenAI client operation duration
+# TYPE gen_ai_client_operation summary
+gen_ai_client_operation_count{gen_ai_operation_name="chat",gen_ai_system="langchain4j",...} 3.0
+
+# HELP gen_ai_client_token_usage GenAI token usage
+# TYPE gen_ai_client_token_usage counter
+gen_ai_client_token_usage_total{gen_ai_token_type="input",...} 42.0
+gen_ai_client_token_usage_total{gen_ai_token_type="output",...} 18.0
+----
+
+Useful PromQL-style filters when you later connect Prometheus (Blog 2):
+
+* `gen_ai_client_token_usage_total`
+* `rate(gen_ai_client_operation_count[5m])`
+
+== Step 4 — Explore OpenTelemetry spans in the TUI
+
+Open a second terminal:
 
 [source,shell]
 ----
 camel tui
 ----
 
-. Select the running integration
-. Open the *Spans* tab — each LLM call appears as a child span
-. Open the AI panel and press *Ctrl+U* for the combined AI usage view (CLI + route spans)
+. Select the running integration (`genai-observability` or similar)
+. Press *o* or navigate to *More → Spans*
+. Trigger another timer tick (wait ~15s) and watch a new span appear
 
-== Step 4 — Ask Camel about your integration
+Each LLM call produces a child span. Key attributes (from `GenAiAttributes`):
+
+[cols="2,3",options="header"]
+|===
+| Attribute | Meaning
+
+| `gen_ai.operation.name`
+| e.g. `chat`, `embeddings`
+
+| `gen_ai.system`
+| Provider abstraction (e.g. `langchain4j`)
+
+| `gen_ai.request.model`
+| Model requested
+
+| `gen_ai.response.model`
+| Model that served the response
+
+| `gen_ai.usage.input_tokens`
+| Prompt tokens
+
+| `gen_ai.usage.output_tokens`
+| Completion tokens
+
+| `gen_ai.response.finish_reasons`
+| e.g. `stop`
+
+| `camel.component`
+| e.g. `langchain4j-chat`
+|===
+
+== Step 5 — AI Usage view (Phase 2 TUI integration)
+
+With the AI panel open in the TUI:
+
+. Press *Ctrl+U* to toggle the *AI Usage* view
+. You see token consumption from:
+** *TUI ask* — questions you type in the embedded AI prompt
+** *Route LLM calls* — extracted from exported `gen_ai.*` spans
+
+This is especially useful when debugging: you can ask the AI about your routes *and* see how
+much the routes themselves consume — in one screen.
+
+== Step 6 — Ask Camel about your integration
+
+The CLI `camel ask` command inspects live integrations (routes, health, traces):
 
 [source,shell]
 ----
-camel ask "Which routes call an LLM?"
+# General
+camel ask "List all routes and their IDs"
+
+# GenAI-focused
+camel ask "Which routes call an LLM? What model headers do they set?"
+
+# Troubleshooting
+camel ask "Why is route genai-chat slow?"
 ----
 
-== The route (excerpt)
+`camel ask` auto-detects providers (OpenAI, Azure, Gemini, Ollama) when configured.
+
+== Full example route
 
 [source,java]
 ----
-from("timer:genai?period=15000")
-    .setBody(constant("In one sentence, what is Apache Camel integration?"))
-    .to("langchain4j-chat:demo?chatModel=#chatModel")
-    .log("LLM reply: ${body}");
+import dev.langchain4j.model.chat.ChatModel;
+import dev.langchain4j.model.ollama.OllamaChatModel;
+import org.apache.camel.builder.RouteBuilder;
+
+import static java.time.Duration.ofSeconds;
+
+public class GenAiObservabilityRoute extends RouteBuilder {
+
+    @Override
+    public void configure() {
+        ChatModel chatModel = OllamaChatModel.builder()
+                .baseUrl("{{ollama.baseUrl:http://localhost:11434}}")
+                .modelName("{{ollama.model:llama3.2}}")
+                .temperature(0.2)
+                .timeout(ofSeconds(120))
+                .build();
+        getContext().getRegistry().bind("chatModel", chatModel);
+
+        from("timer:genai?period={{genai.period:15000}}")
+                .routeId("genai-chat")
+                .setBody(constant("In one sentence, what is Apache Camel integration?"))
+                .to("langchain4j-chat:demo?chatModel=#chatModel")
+                .log("LLM reply: ${body}")
+                .log("Request model: ${header.CamelLangChain4jChatRequestModel}")
+                .log("Response model: ${header.CamelLangChain4jChatResponseModel}");
+    }
+}
 ----
 
-== Configuration
+=== YAML equivalent
+
+If you prefer YAML DSL, bind the model in Java (or Spring) and use:
+
+[source,yaml]
+----
+- route:
+    id: genai-chat
+    from:
+      uri: timer:genai
+      parameters:
+        period: "15000"
+      steps:
+        - setBody:
+            constant: "In one sentence, what is Apache Camel integration?"
+        - to:
+            uri: langchain4j-chat:demo
+            parameters:
+              chatModel: "#chatModel"
+        - log:
+            message: "LLM reply: ${body}"
+----
+
+[[openai-variant]]
+== Example variant — OpenAI instead of Ollama
+
+GenAI observability also covers `openai:`. Minimal Java route:
+
+[source,java]
+----
+from("timer:openai?period=30000")
+    .setBody(constant("Summarize Apache Camel in 20 words."))
+    .to("openai:chat?apiKey=RAW({{openai.apiKey}})&model=gpt-4o-mini")
+    .log("Reply: ${body}");
+----
+
+Run with:
+
+[source,shell]
+----
+export OPENAI_API_KEY=sk-...
+camel run openai-route.yaml --observe \
+  --dependency=camel-openai \
+  --dependency=camel-ai-observability
+----
+
+Spans will include the same `gen_ai.*` attributes; the `gen_ai.system` value reflects the OpenAI client.
+
+== Configuration reference
+
+=== application.properties (example)
 
 [source,properties]
 ----
+ollama.baseUrl=http://localhost:11434
+ollama.model=llama3.2
+genai.period=15000
+
+# GenAI observability — enabled by default when backends present
 camel.ai.observability.enabled=true
 ----
 
-== What's covered today (Phase 1)
+[[manual-config]]
+=== Manual observability (without --observe)
 
-GenAI observability currently instruments `langchain4j-chat`, `langchain4j-tools`,
-`langchain4j-agent`, `langchain4j-embeddings`, and `openai`.
+[source,properties]
+----
+camel.management.enabled=true
+camel.metrics.enabled=true
+camel.metrics.path=/observe/metrics
+camel.opentelemetry2.enabled=true
+camel.ai.observability.enabled=true
+----
+
+Add `--dependency=camel:observability-services` when running with `camel run`.
+
+=== Disable GenAI observability globally
+
+[source,properties]
+----
+camel.ai.observability.enabled=false
+----
+
+Useful for A/B testing overhead or when only Camel route metrics are needed.
+
+== What's instrumented today (Phase 1)
+
+|===
+| Component | Operations observed
+
+| `langchain4j-chat`
+| Chat completions
+
+| `langchain4j-tools`
+| Tool-augmented LLM calls
+
+| `langchain4j-agent`
+| AI Service agent loops
+
+| `langchain4j-embeddings`
+| Embedding generation
+
+| `openai`
+| Chat, embeddings, Responses API, etc.
+|===
+
+*Not yet covered:* `spring-ai-chat` (use Camel metrics + Spring AI actuator separately for now).
+
+== Extend the example — Phase 2 preview
+
+Once observability works, add tools without losing visibility:
+
+[source,yaml]
+----
+# Define a tool route
+- route:
+    id: lookup-order
+    from:
+      uri: "ai-tool:lookupOrder?description=Look up an order by ID"
+    steps:
+      - log: "Tool called with ${body}"
+      - setBody:
+          simple: "Order ${body} status: SHIPPED"
+
+# Agent route calling the tool (observability spans nest under agent + tool calls)
+- route:
+    from:
+      uri: direct:agent
+    steps:
+      - setBody:
+          constant: "What is the status of order 12345?"
+      - to:
+          uri: langchain4j-agent:assistant
+          parameters:
+            agent: "#myAgent"
+----
+
+Each nested LLM and tool invocation produces its own span — you can trace the full agent loop in the TUI.
+
+== Troubleshooting
+
+[cols="2,4",options="header"]
+|===
+| Symptom | Fix
+
+| No `gen_ai` metrics
+| Confirm `--observe` or manual observability config; check `camel-ai-observability` on classpath
+
+| Empty Spans tab
+| Wait for at least one LLM call; verify `camel.opentelemetry2.enabled=true`
+
+| Ollama connection refused
+| Run `ollama serve`; check `ollama.baseUrl`
+
+| Metrics port unreachable
+| Default management port is `9876`; look for `Management service available` in logs
+
+| Token headers missing
+| LangChain4j agent/embeddings omit response model when provider doesn't expose it — chat producer sets both
+|===
+
+== Business value (why this matters)
+
+* *Cost control* — count tokens per route before scaling LLM usage
+* *Latency SLOs* — `gen_ai.client.operation` duration per model
+* *Audit trail* — tie AI decisions to Camel route IDs and exchange IDs via trace context
+* *Developer speed* — `camel ask` + TUI spans reduce time-to-diagnose for AI routes
+* *AI training data* — runnable examples + blog posts become high-quality context for coding assistants
 
 == Next up — Blog 2
 
-Spring Boot, `camel-observability-services-starter`, and the test-infra observability stack
-(Prometheus + VictoriaTraces + Perses).
+https://github.com/apache/camel-examples/pull/255[Spring Boot genai-observability example] +
+Prometheus + VictoriaTraces + Perses — the same `gen_ai.*` signals at production scale.
 
 == Links
 
-* https://camel.apache.org/components/next/ai-observability.html[AI Observability]
-* https://camel.apache.org/manual/camel-jbang-tui.html[Camel TUI]
+* https://camel.apache.org/components/next/ai-observability.html[AI Observability component]
+* https://camel.apache.org/manual/camel-jbang-tui.html[Camel TUI manual]
+* https://camel.apache.org/manual/camel-jbang-commands.html#_ask[camel ask command]
+* https://camel.apache.org/components/next/group.html?_group=AI[Camel AI components]
+* Example PR: https://github.com/apache/camel/pull/25891[JBang genai-observability example]
