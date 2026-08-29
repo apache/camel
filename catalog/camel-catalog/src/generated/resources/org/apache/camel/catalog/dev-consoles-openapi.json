@@ -215,7 +215,60 @@
 						"description": "Azure Key Vault Secrets output",
 						"content": {
 							"application\/json": {
-								
+								"schema": {
+									"type": "object",
+									"properties": {
+										"login": {
+											"type": "string",
+											"description": "The login method (only present when the Azure Key Vault properties function is active)"
+										},
+										"refreshEnabled": {
+											"type": "boolean",
+											"description": "Whether secret refresh is enabled (only present when configured)"
+										},
+										"refreshPeriod": {
+											"type": "integer",
+											"description": "The refresh period in milliseconds (only present when configured)"
+										},
+										"lastCheckTimestamp": {
+											"type": "integer",
+											"description": "Epoch time in milliseconds of the last check (only present when known)"
+										},
+										"lastCheckAge": {
+											"type": "string",
+											"description": "Relative age of the last check (only present when known)"
+										},
+										"lastReloadTimestamp": {
+											"type": "integer",
+											"description": "Epoch time in milliseconds of the last reload (only present when known)"
+										},
+										"lastReloadAge": {
+											"type": "string",
+											"description": "Relative age of the last reload (only present when known)"
+										},
+										"secrets": {
+											"type": "array",
+											"items": {
+												"type": "object",
+												"properties": {
+													"name": {
+														"type": "string",
+														"description": "The secret name"
+													},
+													"timestamp": {
+														"type": "integer",
+														"description": "Epoch time in milliseconds of the last update (only present when known)"
+													},
+													"age": {
+														"type": "string",
+														"description": "Relative age of the last update (only present when known)"
+													}
+												}
+											},
+											"description": "The secrets in use (only present when the Azure Key Vault properties function is active)"
+										}
+									}
+								}
 							}
 						}
 					}
@@ -362,7 +415,92 @@
 						"description": "Bean Model output",
 						"content": {
 							"application\/json": {
-								
+								"schema": {
+									"type": "object",
+									"properties": {
+										"beans": {
+											"type": "object",
+											"additionalProperties": {
+												"type": "object",
+												"properties": {
+													"name": {
+														"type": "string",
+														"description": "The bean name"
+													},
+													"type": {
+														"type": "string",
+														"description": "The bean type"
+													},
+													"initMethod": {
+														"type": "string",
+														"description": "The init method name (only present when configured)"
+													},
+													"destroyMethod": {
+														"type": "string",
+														"description": "The destroy method name (only present when configured)"
+													},
+													"builderClass": {
+														"type": "string",
+														"description": "The builder class name (only present when configured)"
+													},
+													"builderMethod": {
+														"type": "string",
+														"description": "The builder method name (only present when configured)"
+													},
+													"factoryBean": {
+														"type": "string",
+														"description": "The factory bean name (only present when configured)"
+													},
+													"factoryMethod": {
+														"type": "string",
+														"description": "The factory method name (only present when configured)"
+													},
+													"modelProperties": {
+														"type": "array",
+														"items": {
+															"type": "object",
+															"properties": {
+																"name": {
+																	"type": "string",
+																	"description": "The property name"
+																},
+																"type": {
+																	"type": "string",
+																	"description": "The property value type (only present when the value is known)"
+																},
+																"value": {
+																	"description": "The property value"
+																}
+															}
+														},
+														"description": "The bean properties as declared in the DSL model (only present when there are any)"
+													},
+													"properties": {
+														"type": "array",
+														"items": {
+															"type": "object",
+															"properties": {
+																"name": {
+																	"type": "string",
+																	"description": "The property name"
+																},
+																"type": {
+																	"type": "string",
+																	"description": "The property value type (only present when the value is known)"
+																},
+																"value": {
+																	"description": "The property value"
+																}
+															}
+														},
+														"description": "The bean properties resolved from the running bean instance (only present when there are any)"
+													}
+												}
+											},
+											"description": "The beans keyed by bean name"
+										}
+									}
+								}
 							}
 						}
 					}
@@ -1887,7 +2025,60 @@
 						"description": "GCP Secrets output",
 						"content": {
 							"application\/json": {
-								
+								"schema": {
+									"type": "object",
+									"properties": {
+										"login": {
+											"type": "string",
+											"description": "The login method (only present when the GCP Secret Manager properties function is active)"
+										},
+										"refreshEnabled": {
+											"type": "boolean",
+											"description": "Whether secret refresh is enabled (only present when configured)"
+										},
+										"refreshPeriod": {
+											"type": "integer",
+											"description": "The refresh period in milliseconds (only present when configured)"
+										},
+										"lastCheckTimestamp": {
+											"type": "integer",
+											"description": "Epoch time in milliseconds of the last check (only present when known)"
+										},
+										"lastCheckAge": {
+											"type": "string",
+											"description": "Relative age of the last check (only present when known)"
+										},
+										"lastReloadTimestamp": {
+											"type": "integer",
+											"description": "Epoch time in milliseconds of the last reload (only present when known)"
+										},
+										"lastReloadAge": {
+											"type": "string",
+											"description": "Relative age of the last reload (only present when known)"
+										},
+										"secrets": {
+											"type": "array",
+											"items": {
+												"type": "object",
+												"properties": {
+													"name": {
+														"type": "string",
+														"description": "The secret name"
+													},
+													"timestamp": {
+														"type": "integer",
+														"description": "Epoch time in milliseconds of the last update (only present when known)"
+													},
+													"age": {
+														"type": "string",
+														"description": "Relative age of the last update (only present when known)"
+													}
+												}
+											},
+											"description": "The secrets in use (only present when the GCP Secret Manager properties function is active)"
+										}
+									}
+								}
 							}
 						}
 					}
@@ -2259,7 +2450,68 @@
 						"description": "IBM Secrets output",
 						"content": {
 							"application\/json": {
-								
+								"schema": {
+									"type": "object",
+									"properties": {
+										"serviceUrl": {
+											"type": "string",
+											"description": "The IBM Secrets Manager service URL (only present when configured)"
+										},
+										"login": {
+											"type": "string",
+											"description": "The login method (only present when configured)"
+										},
+										"refreshEnabled": {
+											"type": "boolean",
+											"description": "Whether secret refresh is enabled (only present when configured)"
+										},
+										"eventStreamTopic": {
+											"type": "string",
+											"description": "The event stream topic (only present when refresh is enabled)"
+										},
+										"eventStreamBootstrapServers": {
+											"type": "string",
+											"description": "The event stream bootstrap servers (only present when refresh is enabled)"
+										},
+										"lastCheckTimestamp": {
+											"type": "integer",
+											"description": "Epoch time in milliseconds of the last check (only present when known)"
+										},
+										"lastCheckAge": {
+											"type": "string",
+											"description": "Relative age of the last check (only present when known)"
+										},
+										"lastReloadTimestamp": {
+											"type": "integer",
+											"description": "Epoch time in milliseconds of the last reload (only present when known)"
+										},
+										"lastReloadAge": {
+											"type": "string",
+											"description": "Relative age of the last reload (only present when known)"
+										},
+										"secrets": {
+											"type": "array",
+											"items": {
+												"type": "object",
+												"properties": {
+													"name": {
+														"type": "string",
+														"description": "The secret name"
+													},
+													"timestamp": {
+														"type": "integer",
+														"description": "Epoch time in milliseconds of the last update (only present when known)"
+													},
+													"age": {
+														"type": "string",
+														"description": "Relative age of the last update (only present when known)"
+													}
+												}
+											},
+											"description": "The secrets in use (only present when there are any)"
+										}
+									}
+								}
 							}
 						}
 					}
@@ -4697,7 +4949,19 @@
 						"description": "Route Diagram output",
 						"content": {
 							"application\/json": {
-								
+								"schema": {
+									"type": "object",
+									"properties": {
+										"text": {
+											"type": "string",
+											"description": "The rendered ASCII\/Unicode art diagram (only present for a text theme)"
+										},
+										"image": {
+											"type": "string",
+											"description": "The rendered diagram as a base64-encoded PNG image (only present for a non-text theme)"
+										}
+									}
+								}
 							}
 						}
 					}
@@ -6060,7 +6324,48 @@
 						"description": "Stub output",
 						"content": {
 							"application\/json": {
-								
+								"schema": {
+									"type": "object",
+									"properties": {
+										"queues": {
+											"type": "array",
+											"items": {
+												"type": "object",
+												"properties": {
+													"name": {
+														"type": "string",
+														"description": "The queue name"
+													},
+													"endpointUri": {
+														"type": "string",
+														"description": "The endpoint URI"
+													},
+													"max": {
+														"type": "integer",
+														"description": "The maximum queue size"
+													},
+													"size": {
+														"type": "integer",
+														"description": "The current queue size"
+													},
+													"messages": {
+														"type": "array",
+														"items": {
+															"type": "object",
+															"additionalProperties": true
+														},
+														"description": "The browsed messages (only present when browsing is enabled and there are any)"
+													}
+												},
+												"required": [
+													"max",
+													"size"
+												]
+											},
+											"description": "The stub queues"
+										}
+									}
+								}
 							}
 						}
 					}
@@ -6768,7 +7073,73 @@
 						"description": "Vert.x WebSocket output",
 						"content": {
 							"application\/json": {
-								
+								"schema": {
+									"type": "object",
+									"properties": {
+										"hosts": {
+											"type": "array",
+											"items": {
+												"type": "object",
+												"properties": {
+													"host": {
+														"type": "string",
+														"description": "The host"
+													},
+													"paths": {
+														"type": "array",
+														"items": {
+															"type": "object",
+															"properties": {
+																"path": {
+																	"type": "string",
+																	"description": "The websocket path"
+																},
+																"peers": {
+																	"type": "array",
+																	"items": {
+																		"type": "object",
+																		"properties": {
+																			"id": {
+																				"type": "string",
+																				"description": "The peer connection id"
+																			},
+																			"path": {
+																				"type": "string",
+																				"description": "The websocket path"
+																			},
+																			"rawPath": {
+																				"type": "string",
+																				"description": "The raw websocket path"
+																			},
+																			"hostAddress": {
+																				"type": "string",
+																				"description": "The local host address"
+																			},
+																			"subProtocol": {
+																				"type": "string",
+																				"description": "The negotiated sub protocol (only present when known)"
+																			},
+																			"headers": {
+																				"type": "object",
+																				"additionalProperties": {
+																					"type": "string"
+																				},
+																				"description": "The connection headers (only present when includeHeaders is enabled)"
+																			}
+																		}
+																	},
+																	"description": "The connected peers"
+																}
+															}
+														},
+														"description": "The websocket paths served on this host"
+													}
+												}
+											},
+											"description": "The Vert.x WebSocket consumer hosts"
+										}
+									}
+								}
 							}
 						}
 					}
