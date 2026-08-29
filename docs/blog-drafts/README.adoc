@@ -1,0 +1,13 @@
+= Blog drafts: GenAI Observability
+
+Prototype articles for the https://camel.apache.org/community/articles/[Camel community articles] page.
+
+These drafts follow the three-phase Gen AI story (Connect → Act → Operate) and are intended
+to pair with runnable examples:
+
+* *Blog 1* — JBang / CLI / TUI prototype (bundled example: `ai/genai-observability`)
+* *Blog 2* — Spring Boot + observability stack (sample for https://github.com/apache/camel-examples[camel-examples])
+
+Sample code for camel-examples: `camel-examples-spring-boot-genai-observability/`
+
+Acknowledgment: developed with guidance from Claus Ibsen and with the help of AI agents.

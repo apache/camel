@@ -1,0 +1,78 @@
+= GenAI Observability with Spring Boot and the Camel Observability Stack (Blog 2 — prototype)
+:author: Apache Camel community
+:doctype: article
+:toc:
+:icons: font
+
+== Summary
+
+In *Blog 1* we prototyped GenAI observability with Camel JBang and the TUI.
+This follow-up shows how the same `gen_ai.*` signals appear in a *Spring Boot* application
+connected to the observability stack used in Camel's test-infra:
+Prometheus, VictoriaTraces, and Perses.
+
+Special thanks to *Claus Ibsen* for guidance on this series.
+Sample code is provided for contribution to https://github.com/apache/camel-examples[camel-examples].
+
+== Sample project
+
+Copy from: `docs/blog-drafts/camel-examples-spring-boot-genai-observability/`
+
+Target in camel-examples: `spring-boot/genai-observability/`
+
+== Step 1 — Start Ollama
+
+[source,shell]
+----
+ollama pull llama3.2
+ollama serve
+----
+
+== Step 2 — Start the observability stack
+
+[source,shell]
+----
+docker compose up -d
+----
+
+Starts Prometheus, VictoriaTraces, and Perses (images aligned with `camel-test-infra-observability`).
+
+== Step 3 — Run Spring Boot
+
+[source,shell]
+----
+mvn spring-boot:run
+----
+
+== Step 4 — Verify GenAI metrics
+
+[source,shell]
+----
+curl -s http://localhost:8080/actuator/prometheus | grep gen_ai
+----
+
+Prometheus UI: `http://localhost:9090` — query `gen_ai_client_token_usage`.
+
+== Step 5 — Explore traces
+
+VictoriaTraces UI: `http://localhost:9428/select/vmui` — filter `gen_ai.operation.name=chat`.
+
+== Step 6 — Optional TUI
+
+[source,shell]
+----
+camel tui
+----
+
+Connect to the Spring Boot app when `camel-cli-connector-starter` is enabled.
+
+== Three phases recap
+
+* *Phase 1 Connect* — LLMs in routes (Blog 1)
+* *Phase 2 Act* — tools, agents, MCP
+* *Phase 3 Operate* — observability (this post)
+
+== Links
+
+* https://camel.apache.org/components/next/ai-observability.html[AI Observability]
+* https://github.com/apache/camel-examples[camel-examples]
