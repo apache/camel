@@ -23,14 +23,14 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.camel.component.ibm.secrets.manager.vault.IBMEventStreamReloadTriggerTask;
+import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.PeriodTaskScheduler;
 import org.apache.camel.spi.PropertiesFunction;
 import org.apache.camel.spi.annotations.DevConsole;
 import org.apache.camel.support.PluginHelper;
 import org.apache.camel.support.console.AbstractDevConsole;
 import org.apache.camel.util.TimeUtils;
-import org.apache.camel.util.json.JsonArray;
-import org.apache.camel.util.json.JsonObject;
+import org.apache.camel.util.json.JsonRecordSupport;
 import org.apache.camel.vault.IBMSecretsManagerVaultConfiguration;
 
 @DevConsole(name = "ibm-secrets", displayName = "IBM Secrets", description = "IBM Secrets Manager")
@@ -38,6 +38,25 @@ public class SecretsDevConsole extends AbstractDevConsole {
 
     private IBMSecretsManagerPropertiesFunction propertiesFunction;
     private IBMEventStreamReloadTriggerTask secretsRefreshTask;
+
+    public record SecretEntry(
+            @Metadata(description = "The secret name") String name,
+            @Metadata(description = "Epoch time in milliseconds of the last update (only present when known)") Long timestamp,
+            @Metadata(description = "Relative age of the last update (only present when known)") String age) {
+    }
+
+    public record Response(
+            @Metadata(description = "The IBM Secrets Manager service URL (only present when configured)") String serviceUrl,
+            @Metadata(description = "The login method (only present when configured)") String login,
+            @Metadata(description = "Whether secret refresh is enabled (only present when configured)") Boolean refreshEnabled,
+            @Metadata(description = "The event stream topic (only present when refresh is enabled)") String eventStreamTopic,
+            @Metadata(description = "The event stream bootstrap servers (only present when refresh is enabled)") String eventStreamBootstrapServers,
+            @Metadata(description = "Epoch time in milliseconds of the last check (only present when known)") Long lastCheckTimestamp,
+            @Metadata(description = "Relative age of the last check (only present when known)") String lastCheckAge,
+            @Metadata(description = "Epoch time in milliseconds of the last reload (only present when known)") Long lastReloadTimestamp,
+            @Metadata(description = "Relative age of the last reload (only present when known)") String lastReloadAge,
+            @Metadata(description = "The secrets in use (only present when there are any)") List<SecretEntry> secrets) {
+    }
 
     public SecretsDevConsole() {
         super("camel", "ibm-secrets", "IBM Secrets", "IBM Secrets Manager");
@@ -107,53 +126,63 @@ public class SecretsDevConsole extends AbstractDevConsole {
     }
 
     @Override
-    protected JsonObject doCallJson(Map<String, Object> options) {
-        JsonObject root = new JsonObject();
+    protected Map<String, Object> doCallJson(Map<String, Object> options) {
+        String serviceUrl = null;
+        String login = null;
+        Boolean refreshEnabled = null;
+        String eventStreamTopic = null;
+        String eventStreamBootstrapServers = null;
+        Long lastCheckTimestamp = null;
+        String lastCheckAge = null;
+        Long lastReloadTimestamp = null;
+        String lastReloadAge = null;
+        List<SecretEntry> secrets = null;
 
         if (propertiesFunction != null) {
             IBMSecretsManagerVaultConfiguration ibm
                     = getCamelContext().getVaultConfiguration().getIBMSecretsManagerVaultConfiguration();
             if (ibm != null) {
-                root.put("serviceUrl", ibm.getServiceUrl());
-                root.put("login", "IAM Token");
-                root.put("refreshEnabled", ibm.isRefreshEnabled());
+                serviceUrl = ibm.getServiceUrl();
+                login = "IAM Token";
+                refreshEnabled = ibm.isRefreshEnabled();
                 if (ibm.isRefreshEnabled()) {
-                    root.put("eventStreamTopic", ibm.getEventStreamTopic());
-                    root.put("eventStreamBootstrapServers", ibm.getEventStreamBootstrapServers());
+                    eventStreamTopic = ibm.getEventStreamTopic();
+                    eventStreamBootstrapServers = ibm.getEventStreamBootstrapServers();
                 }
             }
             if (secretsRefreshTask != null) {
                 Instant last = secretsRefreshTask.getLastCheckTime();
                 if (last != null) {
-                    root.put("lastCheckTimestamp", last.toEpochMilli());
-                    root.put("lastCheckAge", TimeUtils.printSince(last.toEpochMilli()));
+                    lastCheckTimestamp = last.toEpochMilli();
+                    lastCheckAge = TimeUtils.printSince(lastCheckTimestamp);
                 }
                 last = secretsRefreshTask.getLastReloadTime();
                 if (last != null) {
-                    root.put("lastReloadTimestamp", last.toEpochMilli());
-                    root.put("lastReloadAge", TimeUtils.printSince(last.toEpochMilli()));
+                    lastReloadTimestamp = last.toEpochMilli();
+                    lastReloadAge = TimeUtils.printSince(lastReloadTimestamp);
                 }
             }
 
-            JsonArray arr = new JsonArray();
             List<String> sorted = new ArrayList<>(propertiesFunction.getSecrets());
             Collections.sort(sorted);
 
+            List<SecretEntry> arr = new ArrayList<>();
             for (String sec : sorted) {
-                JsonObject jo = new JsonObject();
-                jo.put("name", sec);
+                Long timestamp = null;
+                String age = null;
                 Instant last = secretsRefreshTask != null ? secretsRefreshTask.getUpdates().get(sec) : null;
                 if (last != null) {
-                    jo.put("timestamp", last.toEpochMilli());
-                    jo.put("age", TimeUtils.printSince(last.toEpochMilli()));
+                    timestamp = last.toEpochMilli();
+                    age = TimeUtils.printSince(timestamp);
                 }
-                arr.add(jo);
+                arr.add(new SecretEntry(sec, timestamp, age));
             }
-            if (!arr.isEmpty()) {
-                root.put("secrets", arr);
-            }
+            secrets = arr.isEmpty() ? null : arr;
         }
 
-        return root;
+        Response response = new Response(
+                serviceUrl, login, refreshEnabled, eventStreamTopic, eventStreamBootstrapServers, lastCheckTimestamp,
+                lastCheckAge, lastReloadTimestamp, lastReloadAge, secrets);
+        return JsonRecordSupport.toJsonObject(response);
     }
 }
