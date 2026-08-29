@@ -18,10 +18,13 @@ package org.apache.camel.component.ai.observability;
 
 import java.lang.reflect.Method;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 
 import org.apache.camel.Exchange;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Populates exchange properties with structured AI error metadata before an exception propagates.
@@ -33,14 +36,19 @@ import org.apache.camel.Exchange;
  */
 public final class GenAiErrorSupport {
 
+    private static final Logger LOG = LoggerFactory.getLogger(GenAiErrorSupport.class);
+
     private static final Map<String, GenAiErrorCategory> LANGCHAIN4J_EXCEPTION_CATEGORIES = Map.ofEntries(
             Map.entry("dev.langchain4j.exception.RateLimitException", GenAiErrorCategory.RATE_LIMIT),
             Map.entry("dev.langchain4j.exception.InternalServerException", GenAiErrorCategory.SERVER_ERROR),
             Map.entry("dev.langchain4j.exception.TimeoutException", GenAiErrorCategory.SERVER_ERROR),
+            Map.entry("dev.langchain4j.exception.UnresolvedModelServerException", GenAiErrorCategory.SERVER_ERROR),
+            Map.entry("dev.langchain4j.exception.RetriableException", GenAiErrorCategory.SERVER_ERROR),
             Map.entry("dev.langchain4j.exception.AuthenticationException", GenAiErrorCategory.AUTH),
             Map.entry("dev.langchain4j.exception.InvalidRequestException", GenAiErrorCategory.VALIDATION),
             Map.entry("dev.langchain4j.exception.ContentFilteredException", GenAiErrorCategory.VALIDATION),
-            Map.entry("dev.langchain4j.exception.ModelNotFoundException", GenAiErrorCategory.VALIDATION));
+            Map.entry("dev.langchain4j.exception.ModelNotFoundException", GenAiErrorCategory.VALIDATION),
+            Map.entry("dev.langchain4j.exception.ToolArgumentsException", GenAiErrorCategory.VALIDATION));
 
     private static final Map<String, GenAiErrorCategory> OPENAI_EXCEPTION_CATEGORIES = Map.ofEntries(
             Map.entry("com.openai.errors.RateLimitException", GenAiErrorCategory.RATE_LIMIT),
@@ -49,12 +57,16 @@ public final class GenAiErrorSupport {
             Map.entry("com.openai.errors.UnprocessableEntityException", GenAiErrorCategory.VALIDATION),
             Map.entry("com.openai.errors.NotFoundException", GenAiErrorCategory.VALIDATION),
             Map.entry("com.openai.errors.UnauthorizedException", GenAiErrorCategory.AUTH),
-            Map.entry("com.openai.errors.PermissionDeniedException", GenAiErrorCategory.AUTH));
+            Map.entry("com.openai.errors.PermissionDeniedException", GenAiErrorCategory.AUTH),
+            Map.entry("com.openai.errors.OpenAIRetryableException", GenAiErrorCategory.SERVER_ERROR),
+            Map.entry("com.openai.errors.OpenAIIoException", GenAiErrorCategory.SERVER_ERROR),
+            Map.entry("com.openai.errors.OpenAIInvalidDataException", GenAiErrorCategory.VALIDATION));
 
     private static final Map<String, GenAiErrorCategory> SPRING_AI_EXCEPTION_CATEGORIES = Map.of(
             "org.springframework.ai.retry.TransientAiException", GenAiErrorCategory.SERVER_ERROR,
             "org.springframework.ai.retry.NonTransientAiException", GenAiErrorCategory.VALIDATION);
 
+    private static final Set<String> RETRY_AFTER_MS_HEADER_NAMES = Set.of("Retry-After-Ms", "retry-after-ms");
     private static final Set<String> RETRY_AFTER_HEADER_NAMES = Set.of("Retry-After", "retry-after");
 
     private GenAiErrorSupport() {
@@ -68,11 +80,17 @@ public final class GenAiErrorSupport {
         if (exchange == null || error == null) {
             return;
         }
-        GenAiErrorCategory category = classify(error);
-        exchange.setProperty(GenAiErrorProperties.ERROR_CATEGORY, category.name());
-        Long retryAfterMillis = extractRetryAfterMillis(error);
-        if (retryAfterMillis != null) {
-            exchange.setProperty(GenAiErrorProperties.RETRY_AFTER_MILLIS, retryAfterMillis);
+        try {
+            GenAiErrorCategory category = classify(error);
+            exchange.setProperty(GenAiErrorProperties.ERROR_CATEGORY, category.name());
+            Long retryAfterMillis = extractRetryAfterMillis(error);
+            if (retryAfterMillis != null) {
+                exchange.setProperty(GenAiErrorProperties.RETRY_AFTER_MILLIS, retryAfterMillis);
+            }
+        } catch (Exception e) {
+            if (LOG.isDebugEnabled()) {
+                LOG.debug("Unable to populate GenAI error metadata on exchange", e);
+            }
         }
     }
 
@@ -80,15 +98,11 @@ public final class GenAiErrorSupport {
      * Classifies an AI provider failure, walking the exception cause chain.
      */
     public static GenAiErrorCategory classify(Throwable error) {
-        Throwable current = error;
-        while (current != null) {
-            GenAiErrorCategory category = classifySingle(current);
-            if (category != GenAiErrorCategory.UNKNOWN) {
-                return category;
-            }
-            current = current.getCause();
+        GenAiErrorCategory category = classifyChain(error, false);
+        if (category != GenAiErrorCategory.UNKNOWN) {
+            return category;
         }
-        return GenAiErrorCategory.UNKNOWN;
+        return classifyChain(error, true);
     }
 
     /**
@@ -107,30 +121,54 @@ public final class GenAiErrorSupport {
         return null;
     }
 
-    private static GenAiErrorCategory classifySingle(Throwable error) {
-        String className = error.getClass().getName();
+    private static GenAiErrorCategory classifyChain(Throwable error, boolean allowSpringAiGeneric) {
+        Throwable current = error;
+        while (current != null) {
+            GenAiErrorCategory category = classifySingle(current, allowSpringAiGeneric);
+            if (category != GenAiErrorCategory.UNKNOWN) {
+                return category;
+            }
+            current = current.getCause();
+        }
+        return GenAiErrorCategory.UNKNOWN;
+    }
 
-        GenAiErrorCategory langChain4jCategory = LANGCHAIN4J_EXCEPTION_CATEGORIES.get(className);
-        if (langChain4jCategory != null) {
+    private static GenAiErrorCategory classifySingle(Throwable error, boolean allowSpringAiGeneric) {
+        GenAiErrorCategory langChain4jCategory = classifyByHierarchy(error, LANGCHAIN4J_EXCEPTION_CATEGORIES);
+        if (langChain4jCategory != GenAiErrorCategory.UNKNOWN) {
             return langChain4jCategory;
         }
-        if ("dev.langchain4j.exception.HttpException".equals(className)) {
+        if ("dev.langchain4j.exception.HttpException".equals(error.getClass().getName())) {
             return fromHttpStatus(invokeIntMethod(error, "statusCode"));
         }
 
-        GenAiErrorCategory openAiCategory = OPENAI_EXCEPTION_CATEGORIES.get(className);
-        if (openAiCategory != null) {
+        GenAiErrorCategory openAiCategory = classifyByHierarchy(error, OPENAI_EXCEPTION_CATEGORIES);
+        if (openAiCategory != GenAiErrorCategory.UNKNOWN) {
             return openAiCategory;
         }
-        if (className.startsWith("com.openai.errors.")) {
+        if (error.getClass().getName().startsWith("com.openai.errors.")) {
             return fromHttpStatus(invokeIntMethod(error, "statusCode"));
         }
 
-        GenAiErrorCategory springAiCategory = SPRING_AI_EXCEPTION_CATEGORIES.get(className);
-        if (springAiCategory != null) {
-            return springAiCategory;
+        if (allowSpringAiGeneric) {
+            GenAiErrorCategory springAiCategory = classifyByHierarchy(error, SPRING_AI_EXCEPTION_CATEGORIES);
+            if (springAiCategory != GenAiErrorCategory.UNKNOWN) {
+                return springAiCategory;
+            }
         }
 
+        return GenAiErrorCategory.UNKNOWN;
+    }
+
+    private static GenAiErrorCategory classifyByHierarchy(Throwable error, Map<String, GenAiErrorCategory> categories) {
+        Class<?> type = error.getClass();
+        while (type != null && Throwable.class.isAssignableFrom(type)) {
+            GenAiErrorCategory category = categories.get(type.getName());
+            if (category != null) {
+                return category;
+            }
+            type = type.getSuperclass();
+        }
         return GenAiErrorCategory.UNKNOWN;
     }
 
@@ -141,7 +179,7 @@ public final class GenAiErrorSupport {
         if (statusCode == 401 || statusCode == 403) {
             return GenAiErrorCategory.AUTH;
         }
-        if (statusCode >= 500) {
+        if (statusCode == 408 || statusCode >= 500) {
             return GenAiErrorCategory.SERVER_ERROR;
         }
         if (statusCode >= 400) {
@@ -160,24 +198,115 @@ public final class GenAiErrorSupport {
             if (headers == null) {
                 return null;
             }
-            Method valuesMethod = headers.getClass().getMethod("values", String.class);
-            for (String headerName : RETRY_AFTER_HEADER_NAMES) {
-                Object valuesObject = valuesMethod.invoke(headers, headerName);
-                if (!(valuesObject instanceof List<?> values) || values.isEmpty()) {
-                    continue;
-                }
-                Long parsed = parseRetryAfterHeader(values.get(0));
-                if (parsed != null) {
-                    return parsed;
-                }
+            Long retryAfterMs = readRetryAfterMillisHeader(headers);
+            if (retryAfterMs != null) {
+                return retryAfterMs;
             }
+            return readRetryAfterSecondsHeader(headers);
         } catch (ReflectiveOperationException ignored) {
             // OpenAI SDK not present or API changed
         }
         return null;
     }
 
-    private static Long parseRetryAfterHeader(Object headerValue) {
+    private static Long readRetryAfterMillisHeader(Object headers) throws ReflectiveOperationException {
+        Method valuesMethod = headers.getClass().getMethod("values", String.class);
+        Method namesMethod = headers.getClass().getMethod("names");
+        Object namesObject = namesMethod.invoke(headers);
+        if (!(namesObject instanceof Set<?> names)) {
+            return readNamedHeaderValues(valuesMethod, headers, RETRY_AFTER_MS_HEADER_NAMES);
+        }
+        for (Object nameObject : names) {
+            if (nameObject == null) {
+                continue;
+            }
+            String name = nameObject.toString();
+            if (!isRetryAfterMsHeader(name)) {
+                continue;
+            }
+            Long parsed = readFirstHeaderValue(valuesMethod, headers, name);
+            if (parsed != null) {
+                return parsed;
+            }
+        }
+        return readNamedHeaderValues(valuesMethod, headers, RETRY_AFTER_MS_HEADER_NAMES);
+    }
+
+    private static Long readRetryAfterSecondsHeader(Object headers) throws ReflectiveOperationException {
+        Method valuesMethod = headers.getClass().getMethod("values", String.class);
+        Method namesMethod = headers.getClass().getMethod("names");
+        Object namesObject = namesMethod.invoke(headers);
+        if (namesObject instanceof Set<?> names) {
+            for (Object nameObject : names) {
+                if (nameObject == null) {
+                    continue;
+                }
+                String name = nameObject.toString();
+                if (!isRetryAfterHeader(name)) {
+                    continue;
+                }
+                Long parsed = parseRetryAfterSeconds(readRawHeaderValue(valuesMethod, headers, name));
+                if (parsed != null) {
+                    return parsed;
+                }
+            }
+        }
+        return readNamedHeaderValues(valuesMethod, headers, RETRY_AFTER_HEADER_NAMES);
+    }
+
+    private static Long readNamedHeaderValues(Method valuesMethod, Object headers, Set<String> headerNames)
+            throws ReflectiveOperationException {
+        for (String headerName : headerNames) {
+            Long parsed = readFirstHeaderValue(valuesMethod, headers, headerName);
+            if (parsed != null) {
+                return parsed;
+            }
+        }
+        return null;
+    }
+
+    private static Long readFirstHeaderValue(Method valuesMethod, Object headers, String headerName)
+            throws ReflectiveOperationException {
+        if (isRetryAfterMsHeader(headerName)) {
+            return parseRetryAfterMillis(readRawHeaderValue(valuesMethod, headers, headerName));
+        }
+        return parseRetryAfterSeconds(readRawHeaderValue(valuesMethod, headers, headerName));
+    }
+
+    private static Object readRawHeaderValue(Method valuesMethod, Object headers, String headerName)
+            throws ReflectiveOperationException {
+        Object valuesObject = valuesMethod.invoke(headers, headerName);
+        if (!(valuesObject instanceof List<?> values) || values.isEmpty()) {
+            return null;
+        }
+        return values.get(0);
+    }
+
+    private static boolean isRetryAfterMsHeader(String headerName) {
+        return "retry-after-ms".equals(headerName.toLowerCase(Locale.ROOT));
+    }
+
+    private static boolean isRetryAfterHeader(String headerName) {
+        return "retry-after".equals(headerName.toLowerCase(Locale.ROOT));
+    }
+
+    private static Long parseRetryAfterMillis(Object headerValue) {
+        if (headerValue == null) {
+            return null;
+        }
+        String value = headerValue.toString().trim();
+        if (value.isEmpty()) {
+            return null;
+        }
+        try {
+            long millis = Long.parseLong(value);
+            return millis < 0 ? null : millis;
+        } catch (NumberFormatException ignored) {
+            return null;
+        }
+    }
+
+    private static Long parseRetryAfterSeconds(Object headerValue) {
         if (headerValue == null) {
             return null;
         }
@@ -189,6 +318,9 @@ public final class GenAiErrorSupport {
             long seconds = Long.parseLong(value);
             if (seconds < 0) {
                 return null;
+            }
+            if (seconds > Long.MAX_VALUE / 1000L) {
+                return Long.MAX_VALUE;
             }
             return seconds * 1000L;
         } catch (NumberFormatException ignored) {

@@ -55,6 +55,8 @@ class GenAiErrorSupportTest extends CamelTestSupport {
                 .isEqualTo(GenAiErrorCategory.AUTH);
         assertThat(GenAiErrorSupport.classify(new HttpException(503, "unavailable")))
                 .isEqualTo(GenAiErrorCategory.SERVER_ERROR);
+        assertThat(GenAiErrorSupport.classify(new HttpException(408, "timeout")))
+                .isEqualTo(GenAiErrorCategory.SERVER_ERROR);
         assertThat(GenAiErrorSupport.classify(new HttpException(400, "bad request")))
                 .isEqualTo(GenAiErrorCategory.VALIDATION);
     }
@@ -77,6 +79,13 @@ class GenAiErrorSupportTest extends CamelTestSupport {
                 .isEqualTo(GenAiErrorCategory.SERVER_ERROR);
         assertThat(GenAiErrorSupport.classify(new org.springframework.ai.retry.NonTransientAiException("fail")))
                 .isEqualTo(GenAiErrorCategory.VALIDATION);
+    }
+
+    @Test
+    void shouldPreferSpecificCauseOverSpringAiWrapper() {
+        assertThat(GenAiErrorSupport.classify(
+                new org.springframework.ai.retry.TransientAiException("retry", new RateLimitException("429"))))
+                .isEqualTo(GenAiErrorCategory.RATE_LIMIT);
     }
 
     @Test

@@ -33,10 +33,19 @@ class OpenAIErrorMetadataTest extends CamelTestSupport {
     @Test
     void shouldClassifyOpenAiRateLimitException() {
         RateLimitException error = RateLimitException.builder()
-                .headers(Headers.builder().put("Retry-After", "12").build())
+                .headers(Headers.builder().put("Retry-After-Ms", "1500").build())
                 .build();
 
         assertThat(GenAiErrorSupport.classify(error)).isEqualTo(GenAiErrorCategory.RATE_LIMIT);
+        assertThat(GenAiErrorSupport.extractRetryAfterMillis(error)).isEqualTo(1500L);
+    }
+
+    @Test
+    void shouldParseRetryAfterSecondsHeader() {
+        RateLimitException error = RateLimitException.builder()
+                .headers(Headers.builder().put("Retry-After", "12").build())
+                .build();
+
         assertThat(GenAiErrorSupport.extractRetryAfterMillis(error)).isEqualTo(12_000L);
     }
 
