@@ -1805,10 +1805,10 @@ public class CamelCatalogTest {
         Assertions.assertNotNull(cbSchema.getJsonObject("properties").getJsonObject("circuitBreakers"));
 
         // a console not yet migrated still has the empty placeholder
-        JsonObject jvm = paths.getJsonObject("/q/dev/jvm");
-        JsonObject jvmContent = jvm.getJsonObject("get").getJsonObject("responses").getJsonObject("200")
+        JsonObject log = paths.getJsonObject("/q/dev/log");
+        JsonObject logContent = log.getJsonObject("get").getJsonObject("responses").getJsonObject("200")
                 .getJsonObject("content").getJsonObject("application/json");
-        Assertions.assertTrue(jvmContent.isEmpty());
+        Assertions.assertTrue(logContent.isEmpty());
     }
 
     @Test

@@ -16,6 +16,7 @@
  */
 package org.apache.camel.impl.console;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Comparator;
 import java.util.List;
@@ -30,11 +31,23 @@ import org.apache.camel.spi.annotations.DevConsole;
 import org.apache.camel.support.MessageHelper;
 import org.apache.camel.support.PatternHelper;
 import org.apache.camel.support.console.AbstractDevConsole;
-import org.apache.camel.util.json.JsonArray;
-import org.apache.camel.util.json.JsonObject;
+import org.apache.camel.util.json.JsonRecordSupport;
 
 @DevConsole(name = "browse", description = "Browse pending messages on Camel components")
 public class BrowseDevConsole extends AbstractDevConsole {
+
+    public record BrowseEntry(
+            @Metadata(description = "The endpoint URI") String endpointUri,
+            @Metadata(description = "Number of messages currently in the queue") int queueSize,
+            @Metadata(description = "The maximum number of messages returned (only present when messages were dumped)") Integer limit,
+            @Metadata(description = "The starting position of the returned messages (only present when messages were dumped)") Integer position,
+            @Metadata(description = "Epoch time in milliseconds of the first returned message (only present when available)") Long firstTimestamp,
+            @Metadata(description = "Epoch time in milliseconds of the last returned message (only present when available)") Long lastTimestamp,
+            @Metadata(description = "The dumped messages, as opaque JSON objects (only present when messages were dumped and found)") List<Map<String, Object>> messages) {
+    }
+
+    public record Response(@Metadata(description = "The browsed endpoints") List<BrowseEntry> browse) {
+    }
 
     public BrowseDevConsole() {
         super("camel", "browse", "Browse", "Browse pending messages on Camel components");
@@ -141,9 +154,8 @@ public class BrowseDevConsole extends AbstractDevConsole {
     }
 
     @Override
-    protected JsonObject doCallJson(Map<String, Object> options) {
-        JsonObject root = new JsonObject();
-        JsonArray arr = new JsonArray();
+    protected Map<String, Object> doCallJson(Map<String, Object> options) {
+        List<BrowseEntry> arr = new ArrayList<>();
 
         String filter = optionString(options, FILTER);
         final int pos = optionInt(options, TAIL, 0);
@@ -167,54 +179,42 @@ public class BrowseDevConsole extends AbstractDevConsole {
                         list = list.subList(begin, list.size());
                     }
                     if (list != null) {
-                        JsonObject jo = new JsonObject();
-                        jo.put("endpointUri", endpoint.getEndpointUri());
-                        jo.put("queueSize", queueSize);
-                        jo.put("limit", max);
-                        jo.put("position", begin);
+                        Long firstTimestamp = null;
+                        Long lastTimestamp = null;
                         if (!list.isEmpty()) {
                             long ts = list.get(0).getMessage().getHeader(Exchange.MESSAGE_TIMESTAMP, 0L, long.class);
                             if (ts > 0) {
-                                jo.put("firstTimestamp", ts);
+                                firstTimestamp = ts;
                             }
                             if (list.size() > 1) {
                                 ts = list.get(list.size() - 1).getMessage().getHeader(Exchange.MESSAGE_TIMESTAMP, 0L,
                                         long.class);
                                 if (ts > 0) {
-                                    jo.put("lastTimestamp", ts);
+                                    lastTimestamp = ts;
                                 }
                             }
                         }
-                        arr.add(jo);
-                        JsonArray arr2 = new JsonArray();
+                        List<Map<String, Object>> messages = new ArrayList<>();
                         for (Exchange e : list) {
-                            arr2.add(MessageHelper.dumpAsJSonObject(e.getMessage(), false, false, includeBody, true, true, true,
-                                    maxChars));
+                            messages.add(MessageHelper.dumpAsJSonObject(e.getMessage(), false, false, includeBody, true, true,
+                                    true, maxChars));
                         }
-                        if (!arr2.isEmpty()) {
-                            jo.put("messages", arr2);
-                        }
+                        arr.add(new BrowseEntry(
+                                endpoint.getEndpointUri(), queueSize, max, begin, firstTimestamp, lastTimestamp,
+                                messages.isEmpty() ? null : messages));
                     }
                 } else {
                     BrowsableEndpoint.BrowseStatus status = be.getBrowseStatus(Integer.MAX_VALUE);
-                    JsonObject jo = new JsonObject();
-                    jo.put("endpointUri", endpoint.getEndpointUri());
-                    jo.put("queueSize", status.size());
-                    if (status.firstTimestamp() > 0) {
-                        jo.put("firstTimestamp", status.firstTimestamp());
-                    }
-                    if (status.lastTimestamp() > 0) {
-                        jo.put("lastTimestamp", status.lastTimestamp());
-                    }
-                    arr.add(jo);
+                    Long firstTimestamp = status.firstTimestamp() > 0 ? status.firstTimestamp() : null;
+                    Long lastTimestamp = status.lastTimestamp() > 0 ? status.lastTimestamp() : null;
+                    arr.add(new BrowseEntry(
+                            endpoint.getEndpointUri(), status.size(), null, null, firstTimestamp, lastTimestamp, null));
                 }
             }
         }
-        if (!arr.isEmpty()) {
-            root.put("browse", arr);
-        }
 
-        return root;
+        Response response = new Response(arr.isEmpty() ? null : arr);
+        return JsonRecordSupport.toJsonObject(response);
     }
 
 }

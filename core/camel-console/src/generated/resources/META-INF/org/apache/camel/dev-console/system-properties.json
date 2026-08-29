@@ -19,7 +19,9 @@
         "type": "array",
         "items": {
           "type": "object",
-          "additionalProperties": true
+          "additionalProperties": {
+            "type": "string"
+          }
         },
         "description": "The system properties, one single-entry map per property"
       }

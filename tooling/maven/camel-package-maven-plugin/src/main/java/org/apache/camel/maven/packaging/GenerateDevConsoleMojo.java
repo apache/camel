@@ -408,7 +408,9 @@ public class GenerateDevConsoleMojo extends AbstractGeneratorMojo {
             if (Map.class.isAssignableFrom(rawType)) {
                 JsonObject schema = new JsonObject();
                 schema.put("type", "object");
-                schema.put("additionalProperties", true);
+                Type valueType = pt.getActualTypeArguments()[1];
+                // Object means "any shape", so a plain true is more honest than a misleading {"type":"object"}
+                schema.put("additionalProperties", valueType == Object.class ? true : buildTypeSchema(valueType));
                 return schema;
             }
         }
@@ -416,6 +418,10 @@ public class GenerateDevConsoleMojo extends AbstractGeneratorMojo {
         Class<?> clazz = (Class<?>) type;
         if (clazz.isRecord()) {
             return buildRecordSchema(clazz);
+        }
+        if (clazz == Object.class) {
+            // no type constraint means "any JSON value", which is more honest than a misleading "type":"object"
+            return new JsonObject();
         }
         JsonObject schema = new JsonObject();
         schema.put("type", javaTypeToType(clazz.getName()));

@@ -43,7 +43,9 @@ public class GenerateDevConsoleMojoResponseSchemaTest {
                 @Metadata(description = "An optional label") String label,
                 Row row,
                 List<Row> rows,
-                Map<String, String> details) {
+                Map<String, String> details,
+                Map<String, Object> opaque,
+                Object anyValue) {
         }
     }
 
@@ -106,13 +108,32 @@ public class GenerateDevConsoleMojoResponseSchemaTest {
     }
 
     @Test
-    void mapFieldBuildsOpenObjectSchema() {
+    void mapWithTypedValueBuildsAdditionalPropertiesSchema() {
         JsonObject schema = GenerateDevConsoleMojo.buildResponseSchema(SampleConsole.class);
         JsonObject properties = schema.getJsonObject("properties");
 
         JsonObject details = properties.getJsonObject("details");
         assertEquals("object", details.getString("type"));
-        assertEquals(true, details.get("additionalProperties"));
+        assertEquals("string", details.getJsonObject("additionalProperties").getString("type"));
         assertNull(details.get("properties"));
+    }
+
+    @Test
+    void mapWithObjectValueBuildsFullyOpenSchema() {
+        JsonObject schema = GenerateDevConsoleMojo.buildResponseSchema(SampleConsole.class);
+        JsonObject properties = schema.getJsonObject("properties");
+
+        JsonObject opaque = properties.getJsonObject("opaque");
+        assertEquals("object", opaque.getString("type"));
+        assertEquals(true, opaque.get("additionalProperties"));
+    }
+
+    @Test
+    void bareObjectFieldBuildsUnconstrainedSchema() {
+        JsonObject schema = GenerateDevConsoleMojo.buildResponseSchema(SampleConsole.class);
+        JsonObject properties = schema.getJsonObject("properties");
+
+        JsonObject anyValue = properties.getJsonObject("anyValue");
+        assertTrue(anyValue.isEmpty());
     }
 }

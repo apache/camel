@@ -95,7 +95,9 @@
             },
             "details": {
               "type": "object",
-              "additionalProperties": true,
+              "additionalProperties": {
+                "type": "string"
+              },
               "description": "Additional health check specific details (only present when available)"
             }
           },
