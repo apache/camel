@@ -1,0 +1,25 @@
+{
+  "console": {
+    "kind": "console",
+    "group": "camel-jbang",
+    "name": "jbang",
+    "title": "Camel CLI",
+    "description": "Information about Camel CLI",
+    "deprecated": false,
+    "readOnly": true,
+    "javaType": "org.apache.camel.jbang.console.JBangDevConsole",
+    "groupId": "org.apache.camel",
+    "artifactId": "camel-jbang-console",
+    "version": "4.23.0-SNAPSHOT"
+  },
+  "response": {
+    "type": "object",
+    "properties": {
+      "version": {
+        "type": "string",
+        "description": "The JBang version (only present when known)"
+      }
+    }
+  }
+}
+
