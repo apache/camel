@@ -1130,7 +1130,87 @@
 						"description": "Debug output",
 						"content": {
 							"application\/json": {
-								
+								"schema": {
+									"type": "object",
+									"properties": {
+										"version": {
+											"type": "string",
+											"description": "The Camel version (only present when a backlog debugger is available)"
+										},
+										"enabled": {
+											"type": "boolean",
+											"description": "Whether the debugger is enabled (only present when a backlog debugger is available)"
+										},
+										"standby": {
+											"type": "boolean",
+											"description": "Whether the debugger is in standby mode (only present when a backlog debugger is available)"
+										},
+										"suspendedMode": {
+											"type": "boolean",
+											"description": "Whether suspended mode is active (only present when a backlog debugger is available)"
+										},
+										"fallbackTimeout": {
+											"type": "integer",
+											"description": "Fallback timeout in seconds (only present when a backlog debugger is available)"
+										},
+										"loggingLevel": {
+											"type": "string",
+											"description": "The logging level (only present when a backlog debugger is available)"
+										},
+										"includeExchangeProperties": {
+											"type": "boolean",
+											"description": "Whether exchange properties are included (only present when a backlog debugger is available)"
+										},
+										"includeFiles": {
+											"type": "boolean",
+											"description": "Whether file-based message bodies are included (only present when a backlog debugger is available)"
+										},
+										"includeStreams": {
+											"type": "boolean",
+											"description": "Whether streaming message bodies are included (only present when a backlog debugger is available)"
+										},
+										"maxChars": {
+											"type": "integer",
+											"description": "Maximum size of the message body to include (only present when a backlog debugger is available)"
+										},
+										"debugCounter": {
+											"type": "integer",
+											"description": "Total number of times a breakpoint has been hit (only present when a backlog debugger is available)"
+										},
+										"singleStepMode": {
+											"type": "boolean",
+											"description": "Whether single-step mode is active (only present when a backlog debugger is available)"
+										},
+										"breakpoints": {
+											"type": "array",
+											"items": {
+												"type": "object",
+												"properties": {
+													"nodeId": {
+														"type": "string",
+														"description": "The breakpoint node ID"
+													},
+													"suspended": {
+														"type": "boolean",
+														"description": "Whether the breakpoint is currently suspended"
+													}
+												},
+												"required": [
+													"suspended"
+												]
+											},
+											"description": "The configured breakpoints (only present when there are any)"
+										},
+										"suspended": {
+											"type": "array",
+											"items": {
+												"type": "object",
+												"additionalProperties": true
+											},
+											"description": "The suspended breakpoint messages, as opaque JSON objects enriched with source code and message history (only present when there are any)"
+										}
+									}
+								}
 							}
 						}
 					}
@@ -1779,7 +1859,23 @@
 						"description": "Heap Dump output",
 						"content": {
 							"application\/json": {
-								
+								"schema": {
+									"type": "object",
+									"properties": {
+										"file": {
+											"type": "string",
+											"description": "The absolute path of the written heap dump file (only present on success)"
+										},
+										"size": {
+											"type": "integer",
+											"description": "The size in bytes of the written heap dump file (only present on success)"
+										},
+										"error": {
+											"type": "string",
+											"description": "The error message (only present on failure)"
+										}
+									}
+								}
 							}
 						}
 					}
@@ -3157,7 +3253,70 @@
 						"description": "Camel Receive output",
 						"content": {
 							"application\/json": {
-								
+								"schema": {
+									"type": "object",
+									"properties": {
+										"messages": {
+											"type": "array",
+											"items": {
+												"type": "object",
+												"additionalProperties": true
+											},
+											"description": "The dumped received messages, as opaque JSON objects (only present when dumping)"
+										},
+										"enabled": {
+											"type": "boolean",
+											"description": "Whether receiving is enabled (only present when not dumping)"
+										},
+										"total": {
+											"type": "integer",
+											"description": "Total number of messages received so far (only present when not dumping)"
+										},
+										"firstTimestamp": {
+											"type": "integer",
+											"description": "Epoch time in milliseconds of the first message in the last dump (only present when not dumping)"
+										},
+										"lastTimestamp": {
+											"type": "integer",
+											"description": "Epoch time in milliseconds of the last message in the last dump (only present when not dumping)"
+										},
+										"url": {
+											"type": "string",
+											"description": "The endpoint URI that receiving was started for (only present on success)"
+										},
+										"error": {
+											"type": "string",
+											"description": "The error message (only present on failure to start receiving)"
+										},
+										"stackTrace": {
+											"type": "array",
+											"items": {
+												"type": "string"
+											},
+											"description": "The error stack trace, one entry per line (only present on failure to start receiving)"
+										},
+										"endpoints": {
+											"type": "array",
+											"items": {
+												"type": "object",
+												"properties": {
+													"uri": {
+														"type": "string",
+														"description": "The endpoint URI"
+													},
+													"remote": {
+														"type": "boolean",
+														"description": "Whether the endpoint is remote"
+													}
+												},
+												"required": [
+													"remote"
+												]
+											},
+											"description": "The active consumer endpoints (only present when not dumping and there are any)"
+										}
+									}
+								}
 							}
 						}
 					}
@@ -3279,7 +3438,80 @@
 						"description": "Rest output",
 						"content": {
 							"application\/json": {
-								
+								"schema": {
+									"type": "object",
+									"properties": {
+										"rests": {
+											"type": "array",
+											"items": {
+												"type": "object",
+												"properties": {
+													"url": {
+														"type": "string",
+														"description": "The absolute URL to the REST service"
+													},
+													"method": {
+														"type": "string",
+														"description": "The HTTP method"
+													},
+													"contractFirst": {
+														"type": "boolean",
+														"description": "Whether the REST service is contract-first"
+													},
+													"specification": {
+														"type": "boolean",
+														"description": "Whether this is the API contract specification (i.e. api-doc)"
+													},
+													"state": {
+														"type": "string",
+														"description": "The REST service state"
+													},
+													"routeId": {
+														"type": "string",
+														"description": "The route ID (only present when known)"
+													},
+													"operationId": {
+														"type": "string",
+														"description": "The OpenAPI operation ID (only present for contract-first routes)"
+													},
+													"specificationUri": {
+														"type": "string",
+														"description": "The OpenAPI specification URI (only present for contract-first routes)"
+													},
+													"consumes": {
+														"type": "string",
+														"description": "The accepted media types (only present when known)"
+													},
+													"produces": {
+														"type": "string",
+														"description": "The returned media types (only present when known)"
+													},
+													"inType": {
+														"type": "string",
+														"description": "The input binding class name (only present when known)"
+													},
+													"outType": {
+														"type": "string",
+														"description": "The output binding class name (only present when known)"
+													},
+													"description": {
+														"type": "string",
+														"description": "The REST service description (only present when configured)"
+													},
+													"hits": {
+														"type": "integer",
+														"description": "Usage of the REST service (only present when greater than zero)"
+													}
+												},
+												"required": [
+													"contractFirst",
+													"specification"
+												]
+											},
+											"description": "The REST services (only present when a REST registry is available)"
+										}
+									}
+								}
 							}
 						}
 					}
@@ -3307,7 +3539,32 @@
 						"description": "Rest Spec output",
 						"content": {
 							"application\/json": {
-								
+								"schema": {
+									"type": "object",
+									"properties": {
+										"specs": {
+											"type": "array",
+											"items": {
+												"type": "object",
+												"properties": {
+													"specificationUri": {
+														"type": "string",
+														"description": "The OpenAPI specification URI"
+													},
+													"routeId": {
+														"type": "string",
+														"description": "The route ID (only present when known)"
+													},
+													"content": {
+														"type": "string",
+														"description": "The specification content (only present when it could be loaded)"
+													}
+												}
+											},
+											"description": "The OpenAPI specifications"
+										}
+									}
+								}
 							}
 						}
 					}
@@ -3358,7 +3615,369 @@
 						"description": "Route output",
 						"content": {
 							"application\/json": {
-								
+								"schema": {
+									"type": "object",
+									"properties": {
+										"routes": {
+											"type": "array",
+											"items": {
+												"type": "object",
+												"properties": {
+													"routeId": {
+														"type": "string",
+														"description": "The route ID"
+													},
+													"group": {
+														"type": "string",
+														"description": "The route group (only present when known)"
+													},
+													"nodePrefixId": {
+														"type": "string",
+														"description": "The node prefix ID (only present when known)"
+													},
+													"description": {
+														"type": "string",
+														"description": "The route description (only present when configured)"
+													},
+													"note": {
+														"type": "string",
+														"description": "The route note (only present when configured)"
+													},
+													"createdByKamelet": {
+														"type": "boolean",
+														"description": "Whether the route was created by a Kamelet"
+													},
+													"createdByRouteTemplate": {
+														"type": "boolean",
+														"description": "Whether the route was created by a route template"
+													},
+													"from": {
+														"type": "string",
+														"description": "The route's endpoint URI"
+													},
+													"remote": {
+														"type": "boolean",
+														"description": "Whether the endpoint is remote"
+													},
+													"source": {
+														"type": "string",
+														"description": "The source location (only present when known)"
+													},
+													"state": {
+														"type": "string",
+														"description": "The route state"
+													},
+													"supportsSuspension": {
+														"type": "boolean",
+														"description": "Whether the route supports suspension"
+													},
+													"uptime": {
+														"type": "string",
+														"description": "Route uptime, human readable text"
+													},
+													"lastError": {
+														"type": "object",
+														"properties": {
+															"phase": {
+																"type": "string",
+																"description": "The error phase"
+															},
+															"timestamp": {
+																"type": "integer",
+																"description": "Epoch time in milliseconds when the error happened"
+															},
+															"message": {
+																"type": "string",
+																"description": "The error message (only present when known)"
+															},
+															"stackTrace": {
+																"type": "array",
+																"items": {
+																	"type": "string"
+																},
+																"description": "The error stack trace, one entry per line (only present when known)"
+															}
+														},
+														"required": [
+															"timestamp"
+														],
+														"description": "The last lifecycle error (only present when one has occurred)"
+													},
+													"statistics": {
+														"type": "object",
+														"properties": {
+															"coverage": {
+																"type": "string",
+																"description": "Route coverage (only present when computable)"
+															},
+															"load01": {
+																"type": "string",
+																"description": "1 minute load average (only present when available)"
+															},
+															"load05": {
+																"type": "string",
+																"description": "5 minute load average (only present when available)"
+															},
+															"load15": {
+																"type": "string",
+																"description": "15 minute load average (only present when available)"
+															},
+															"exchangesThroughput": {
+																"type": "string",
+																"description": "Messages per second throughput (only present when available)"
+															},
+															"idleSince": {
+																"type": "integer",
+																"description": "Epoch time in milliseconds since the route has been idle"
+															},
+															"exchangesTotal": {
+																"type": "integer",
+																"description": "Total number of exchanges"
+															},
+															"exchangesFailed": {
+																"type": "integer",
+																"description": "Number of failed exchanges"
+															},
+															"exchangesInflight": {
+																"type": "integer",
+																"description": "Number of inflight exchanges"
+															},
+															"meanProcessingTime": {
+																"type": "integer",
+																"description": "Mean processing time in milliseconds"
+															},
+															"maxProcessingTime": {
+																"type": "integer",
+																"description": "Max processing time in milliseconds"
+															},
+															"minProcessingTime": {
+																"type": "integer",
+																"description": "Min processing time in milliseconds"
+															},
+															"p50ProcessingTime": {
+																"type": "integer",
+																"description": "50th percentile processing time in milliseconds (only present when available)"
+															},
+															"p95ProcessingTime": {
+																"type": "integer",
+																"description": "95th percentile processing time in milliseconds (only present when available)"
+															},
+															"p99ProcessingTime": {
+																"type": "integer",
+																"description": "99th percentile processing time in milliseconds (only present when available)"
+															},
+															"lastProcessingTime": {
+																"type": "integer",
+																"description": "Processing time in milliseconds of the last exchange (only present once an exchange has completed)"
+															},
+															"deltaProcessingTime": {
+																"type": "integer",
+																"description": "Difference in processing time in milliseconds since the previous exchange (only present once an exchange has completed)"
+															},
+															"lastCreatedExchangeTimestamp": {
+																"type": "integer",
+																"description": "Epoch time in milliseconds the last exchange was created (only present once an exchange has been created)"
+															},
+															"lastCompletedExchangeTimestamp": {
+																"type": "integer",
+																"description": "Epoch time in milliseconds the last exchange completed (only present once an exchange has completed)"
+															},
+															"lastFailureHandledExchangeTimestamp": {
+																"type": "integer",
+																"description": "Epoch time in milliseconds the last exchange failure was handled (only present once one has occurred)"
+															},
+															"lastFailedExchangeTimestamp": {
+																"type": "integer",
+																"description": "Epoch time in milliseconds the last exchange failed (only present once one has occurred)"
+															}
+														},
+														"required": [
+															"idleSince",
+															"exchangesTotal",
+															"exchangesFailed",
+															"exchangesInflight",
+															"meanProcessingTime",
+															"maxProcessingTime",
+															"minProcessingTime"
+														],
+														"description": "Runtime statistics"
+													},
+													"processors": {
+														"type": "array",
+														"items": {
+															"type": "object",
+															"properties": {
+																"routeId": {
+																	"type": "string",
+																	"description": "The route ID"
+																},
+																"id": {
+																	"type": "string",
+																	"description": "The processor ID"
+																},
+																"nodePrefixId": {
+																	"type": "string",
+																	"description": "The node prefix ID (only present when known)"
+																},
+																"description": {
+																	"type": "string",
+																	"description": "The processor description (only present when configured)"
+																},
+																"note": {
+																	"type": "string",
+																	"description": "The processor note (only present when configured)"
+																},
+																"source": {
+																	"type": "string",
+																	"description": "The source location, optionally with a line number suffix (only present when known)"
+																},
+																"state": {
+																	"type": "string",
+																	"description": "The processor state"
+																},
+																"disabled": {
+																	"type": "boolean",
+																	"description": "Whether the processor is disabled (only present when known)"
+																},
+																"stepId": {
+																	"type": "string",
+																	"description": "The step ID (only present when known)"
+																},
+																"code": {
+																	"type": "array",
+																	"items": {
+																		"type": "object",
+																		"properties": {
+																			"line": {
+																				"type": "integer",
+																				"description": "The source line number (only present when known)"
+																			},
+																			"code": {
+																				"type": "string",
+																				"description": "The source code line"
+																			},
+																			"match": {
+																				"type": "boolean",
+																				"description": "Whether this is the matched line (only present when true)"
+																			}
+																		}
+																	},
+																	"description": "A snippet of source code around the processor (only present when known)"
+																},
+																"processor": {
+																	"type": "string",
+																	"description": "The processor name"
+																},
+																"level": {
+																	"type": "integer",
+																	"description": "The processor level in the route tree"
+																},
+																"uri": {
+																	"type": "string",
+																	"description": "The destination URI, for processors that send to a destination (only present when applicable)"
+																},
+																"statistics": {
+																	"type": "object",
+																	"properties": {
+																		"idleSince": {
+																			"type": "integer",
+																			"description": "Epoch time in milliseconds since the processor has been idle"
+																		},
+																		"exchangesTotal": {
+																			"type": "integer",
+																			"description": "Total number of exchanges"
+																		},
+																		"exchangesFailed": {
+																			"type": "integer",
+																			"description": "Number of failed exchanges"
+																		},
+																		"exchangesInflight": {
+																			"type": "integer",
+																			"description": "Number of inflight exchanges"
+																		},
+																		"exchangesThroughput": {
+																			"type": "string",
+																			"description": "Messages per second throughput (only present when available)"
+																		},
+																		"meanProcessingTime": {
+																			"type": "integer",
+																			"description": "Mean processing time in milliseconds"
+																		},
+																		"maxProcessingTime": {
+																			"type": "integer",
+																			"description": "Max processing time in milliseconds"
+																		},
+																		"minProcessingTime": {
+																			"type": "integer",
+																			"description": "Min processing time in milliseconds"
+																		},
+																		"p50ProcessingTime": {
+																			"type": "integer",
+																			"description": "50th percentile processing time in milliseconds (only present when available)"
+																		},
+																		"p95ProcessingTime": {
+																			"type": "integer",
+																			"description": "95th percentile processing time in milliseconds (only present when available)"
+																		},
+																		"p99ProcessingTime": {
+																			"type": "integer",
+																			"description": "99th percentile processing time in milliseconds (only present when available)"
+																		},
+																		"lastProcessingTime": {
+																			"type": "integer",
+																			"description": "Processing time in milliseconds of the last exchange (only present once an exchange has completed)"
+																		},
+																		"deltaProcessingTime": {
+																			"type": "integer",
+																			"description": "Difference in processing time in milliseconds since the previous exchange (only present once an exchange has completed)"
+																		},
+																		"lastCreatedExchangeTimestamp": {
+																			"type": "integer",
+																			"description": "Epoch time in milliseconds the last exchange was created (only present once an exchange has been created)"
+																		},
+																		"lastCompletedExchangeTimestamp": {
+																			"type": "integer",
+																			"description": "Epoch time in milliseconds the last exchange completed (only present once an exchange has completed)"
+																		},
+																		"lastFailureHandledExchangeTimestamp": {
+																			"type": "integer",
+																			"description": "Epoch time in milliseconds the last exchange failure was handled (only present once one has occurred)"
+																		},
+																		"lastFailedExchangeTimestamp": {
+																			"type": "integer",
+																			"description": "Epoch time in milliseconds the last exchange failed (only present once one has occurred)"
+																		}
+																	},
+																	"required": [
+																		"idleSince",
+																		"exchangesTotal",
+																		"exchangesFailed",
+																		"exchangesInflight",
+																		"meanProcessingTime",
+																		"maxProcessingTime",
+																		"minProcessingTime"
+																	],
+																	"description": "Runtime statistics"
+																}
+															},
+															"required": [
+																"level"
+															]
+														},
+														"description": "The route's processors (only present when requested)"
+													}
+												},
+												"required": [
+													"createdByKamelet",
+													"createdByRouteTemplate",
+													"remote",
+													"supportsSuspension"
+												]
+											},
+											"description": "The routes (only present when no action was requested)"
+										}
+									}
+								}
 							}
 						}
 					}
@@ -5156,7 +5775,223 @@
 						"description": "Top Routes output",
 						"content": {
 							"application\/json": {
-								
+								"schema": {
+									"type": "object",
+									"properties": {
+										"routes": {
+											"type": "array",
+											"items": {
+												"type": "object",
+												"properties": {
+													"routeId": {
+														"type": "string",
+														"description": "The route ID"
+													},
+													"from": {
+														"type": "string",
+														"description": "The route's endpoint URI"
+													},
+													"source": {
+														"type": "string",
+														"description": "The source location (only present when known)"
+													},
+													"state": {
+														"type": "string",
+														"description": "The route state"
+													},
+													"uptime": {
+														"type": "string",
+														"description": "Route uptime, human readable text"
+													},
+													"statistics": {
+														"type": "object",
+														"properties": {
+															"exchangesTotal": {
+																"type": "integer",
+																"description": "Total number of exchanges"
+															},
+															"exchangesFailed": {
+																"type": "integer",
+																"description": "Number of failed exchanges"
+															},
+															"exchangesInflight": {
+																"type": "integer",
+																"description": "Number of inflight exchanges"
+															},
+															"meanProcessingTime": {
+																"type": "integer",
+																"description": "Mean processing time in milliseconds"
+															},
+															"maxProcessingTime": {
+																"type": "integer",
+																"description": "Max processing time in milliseconds"
+															},
+															"minProcessingTime": {
+																"type": "integer",
+																"description": "Min processing time in milliseconds"
+															},
+															"lastProcessingTime": {
+																"type": "integer",
+																"description": "Processing time in milliseconds of the last exchange"
+															},
+															"deltaProcessingTime": {
+																"type": "integer",
+																"description": "Difference in processing time in milliseconds since the previous exchange"
+															},
+															"totalProcessingTime": {
+																"type": "integer",
+																"description": "Total accumulated processing time in milliseconds"
+															},
+															"exchangesThroughput": {
+																"type": "string",
+																"description": "Messages per second throughput (only present when available)"
+															},
+															"p50ProcessingTime": {
+																"type": "integer",
+																"description": "50th percentile processing time in milliseconds (only present when available)"
+															},
+															"p95ProcessingTime": {
+																"type": "integer",
+																"description": "95th percentile processing time in milliseconds (only present when available)"
+															},
+															"p99ProcessingTime": {
+																"type": "integer",
+																"description": "99th percentile processing time in milliseconds (only present when available)"
+															}
+														},
+														"required": [
+															"exchangesTotal",
+															"exchangesFailed",
+															"exchangesInflight",
+															"meanProcessingTime",
+															"maxProcessingTime",
+															"minProcessingTime",
+															"lastProcessingTime",
+															"deltaProcessingTime",
+															"totalProcessingTime"
+														],
+														"description": "Runtime statistics"
+													}
+												}
+											},
+											"description": "The top routes (only present when no processor path was requested)"
+										},
+										"processors": {
+											"type": "array",
+											"items": {
+												"type": "object",
+												"properties": {
+													"routeId": {
+														"type": "string",
+														"description": "The route ID"
+													},
+													"processorId": {
+														"type": "string",
+														"description": "The processor ID"
+													},
+													"location": {
+														"type": "string",
+														"description": "The source location, optionally with a line number suffix (only present when known)"
+													},
+													"code": {
+														"type": "array",
+														"items": {
+															"type": "object",
+															"properties": {
+																"line": {
+																	"type": "integer",
+																	"description": "The source line number"
+																},
+																"match": {
+																	"type": "boolean",
+																	"description": "Whether this is the matched line (only present when true)"
+																},
+																"code": {
+																	"type": "string",
+																	"description": "The source code line"
+																}
+															},
+															"required": [
+																"line"
+															]
+														},
+														"description": "A snippet of source code around the processor (only present when known)"
+													},
+													"statistics": {
+														"type": "object",
+														"properties": {
+															"exchangesTotal": {
+																"type": "integer",
+																"description": "Total number of exchanges"
+															},
+															"exchangesFailed": {
+																"type": "integer",
+																"description": "Number of failed exchanges"
+															},
+															"exchangesInflight": {
+																"type": "integer",
+																"description": "Number of inflight exchanges"
+															},
+															"meanProcessingTime": {
+																"type": "integer",
+																"description": "Mean processing time in milliseconds"
+															},
+															"maxProcessingTime": {
+																"type": "integer",
+																"description": "Max processing time in milliseconds"
+															},
+															"minProcessingTime": {
+																"type": "integer",
+																"description": "Min processing time in milliseconds"
+															},
+															"lastProcessingTime": {
+																"type": "integer",
+																"description": "Processing time in milliseconds of the last exchange"
+															},
+															"deltaProcessingTime": {
+																"type": "integer",
+																"description": "Difference in processing time in milliseconds since the previous exchange"
+															},
+															"totalProcessingTime": {
+																"type": "integer",
+																"description": "Total accumulated processing time in milliseconds"
+															},
+															"exchangesThroughput": {
+																"type": "string",
+																"description": "Messages per second throughput (only present when available)"
+															},
+															"p50ProcessingTime": {
+																"type": "integer",
+																"description": "50th percentile processing time in milliseconds (only present when available)"
+															},
+															"p95ProcessingTime": {
+																"type": "integer",
+																"description": "95th percentile processing time in milliseconds (only present when available)"
+															},
+															"p99ProcessingTime": {
+																"type": "integer",
+																"description": "99th percentile processing time in milliseconds (only present when available)"
+															}
+														},
+														"required": [
+															"exchangesTotal",
+															"exchangesFailed",
+															"exchangesInflight",
+															"meanProcessingTime",
+															"maxProcessingTime",
+															"minProcessingTime",
+															"lastProcessingTime",
+															"deltaProcessingTime",
+															"totalProcessingTime"
+														],
+														"description": "Runtime statistics"
+													}
+												}
+											},
+											"description": "The top processors of a route (only present when a processor path was requested)"
+										}
+									}
+								}
 							}
 						}
 					}
@@ -5200,7 +6035,83 @@
 						"description": "Camel Tracing output",
 						"content": {
 							"application\/json": {
-								
+								"schema": {
+									"type": "object",
+									"properties": {
+										"enabled": {
+											"type": "boolean",
+											"description": "Whether tracing is enabled (only present when a backlog tracer is available)"
+										},
+										"traces": {
+											"type": "array",
+											"items": {
+												"type": "object",
+												"additionalProperties": true
+											},
+											"description": "The traced messages, as opaque JSON objects (only present when dumping)"
+										},
+										"standby": {
+											"type": "boolean",
+											"description": "Whether the tracer is in standby mode (only present when not dumping)"
+										},
+										"counter": {
+											"type": "integer",
+											"description": "Total number of traced messages (only present when not dumping)"
+										},
+										"backlogSize": {
+											"type": "integer",
+											"description": "The current backlog size (only present when not dumping)"
+										},
+										"queueSize": {
+											"type": "integer",
+											"description": "The current queue size (only present when not dumping)"
+										},
+										"removeOnDump": {
+											"type": "boolean",
+											"description": "Whether messages are removed from the backlog when dumped (only present when not dumping)"
+										},
+										"traceFilter": {
+											"type": "string",
+											"description": "The trace filter (only present when configured)"
+										},
+										"tracePattern": {
+											"type": "string",
+											"description": "The trace pattern (only present when configured)"
+										},
+										"traceRests": {
+											"type": "boolean",
+											"description": "Whether rests are traced (only present when not dumping)"
+										},
+										"traceTemplates": {
+											"type": "boolean",
+											"description": "Whether route templates\/Kamelets are traced (only present when not dumping)"
+										},
+										"bodyMaxChars": {
+											"type": "integer",
+											"description": "Maximum size of the message body to include (only present when not dumping)"
+										},
+										"bodyIncludeFiles": {
+											"type": "boolean",
+											"description": "Whether file-based message bodies are included (only present when not dumping)"
+										},
+										"bodyIncludeStreams": {
+											"type": "boolean",
+											"description": "Whether streaming message bodies are included (only present when not dumping)"
+										},
+										"includeExchangeProperties": {
+											"type": "boolean",
+											"description": "Whether exchange properties are included (only present when not dumping)"
+										},
+										"includeExchangeVariables": {
+											"type": "boolean",
+											"description": "Whether exchange variables are included (only present when not dumping)"
+										},
+										"includeException": {
+											"type": "boolean",
+											"description": "Whether exceptions are included (only present when not dumping)"
+										}
+									}
+								}
 							}
 						}
 					}
