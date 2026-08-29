@@ -83,6 +83,7 @@ public class GenerateDevConsoleMojo extends AbstractGeneratorMojo {
         private String displayName;
         private String description;
         private boolean deprecated;
+        private boolean readOnly = true;
         private final List<DevConsoleOptionModel> options = new ArrayList<>();
 
         public String getClassName() {
@@ -133,6 +134,14 @@ public class GenerateDevConsoleMojo extends AbstractGeneratorMojo {
             this.deprecated = deprecated;
         }
 
+        public boolean isReadOnly() {
+            return readOnly;
+        }
+
+        public void setReadOnly(boolean readOnly) {
+            this.readOnly = readOnly;
+        }
+
         public List<DevConsoleOptionModel> getOptions() {
             return options;
         }
@@ -169,6 +178,7 @@ public class GenerateDevConsoleMojo extends AbstractGeneratorMojo {
             model.setName(annotationValue(a, "name"));
             model.setDisplayName(annotationValue(a, "displayName"));
             model.setDescription(annotationValue(a, "description"));
+            model.setReadOnly(!"false".equals(annotationValue(a, "readOnly")));
             // skip default registry
             boolean skip = "default-registry".equals(model.getName());
             if (!skip) {
@@ -228,6 +238,7 @@ public class GenerateDevConsoleMojo extends AbstractGeneratorMojo {
         }
         jo.put("description", model.getDescription());
         jo.put("deprecated", model.isDeprecated());
+        jo.put("readOnly", model.isReadOnly());
         jo.put("javaType", model.getClassName());
         jo.put("groupId", project.getGroupId());
         jo.put("artifactId", project.getArtifactId());

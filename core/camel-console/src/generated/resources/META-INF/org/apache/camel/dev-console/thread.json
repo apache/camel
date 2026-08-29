@@ -6,6 +6,7 @@
     "title": "Thread",
     "description": "Displays JVM Threads information",
     "deprecated": false,
+    "readOnly": true,
     "javaType": "org.apache.camel.impl.console.ThreadDevConsole",
     "groupId": "org.apache.camel",
     "artifactId": "camel-console",

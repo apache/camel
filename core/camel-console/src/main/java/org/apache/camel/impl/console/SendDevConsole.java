@@ -43,7 +43,7 @@ import org.apache.camel.util.StopWatch;
 import org.apache.camel.util.TimeUtils;
 import org.apache.camel.util.json.JsonObject;
 
-@DevConsole(name = "send", displayName = "Camel Send", description = "Send messages to endpoints")
+@DevConsole(name = "send", displayName = "Camel Send", description = "Send messages to endpoints", readOnly = false)
 @Configurer(extended = true)
 public class SendDevConsole extends AbstractDevConsole {
 

@@ -6,6 +6,7 @@
     "title": "Processor Detail",
     "description": "Show configured options for all processors in a route",
     "deprecated": false,
+    "readOnly": true,
     "javaType": "org.apache.camel.impl.console.ProcessorDetailDevConsole",
     "groupId": "org.apache.camel",
     "artifactId": "camel-console",

@@ -47,7 +47,8 @@ import org.apache.camel.util.json.JsonArray;
 import org.apache.camel.util.json.JsonObject;
 import org.apache.camel.util.json.Jsoner;
 
-@DevConsole(name = "receive", displayName = "Camel Receive", description = "Consume messages from endpoints")
+@DevConsole(name = "receive", displayName = "Camel Receive", description = "Consume messages from endpoints",
+            readOnly = false)
 @Configurer(extended = true)
 public class ReceiveDevConsole extends AbstractDevConsole {
 

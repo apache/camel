@@ -28,7 +28,8 @@ import org.apache.camel.support.MessageHelper;
 import org.apache.camel.support.console.AbstractDevConsole;
 import org.apache.camel.util.json.JsonObject;
 
-@DevConsole(name = "eval-language", displayName = "Evaluate Language", description = "Evaluate Language and display result")
+@DevConsole(name = "eval-language", displayName = "Evaluate Language", description = "Evaluate Language and display result",
+            readOnly = false)
 public class EvalLanguageDevConsole extends AbstractDevConsole {
 
     @Metadata(label = "query", description = "The language to use", javaType = "java.lang.String", defaultValue = "simple")

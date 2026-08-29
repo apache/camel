@@ -6,6 +6,7 @@
     "title": "JFR Runtime Instrumentation",
     "description": "Status and live control of camel-jfr runtime instrumentation",
     "deprecated": false,
+    "readOnly": false,
     "javaType": "org.apache.camel.runtime.jfr.CamelJfrDevConsole",
     "groupId": "org.apache.camel",
     "artifactId": "camel-jfr",

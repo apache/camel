@@ -49,7 +49,7 @@ import org.apache.camel.util.json.JsonObject;
  * @since 4.22
  */
 @DevConsole(name = "jfr", displayName = "JFR Runtime Instrumentation",
-            description = "Status and live control of camel-jfr runtime instrumentation")
+            description = "Status and live control of camel-jfr runtime instrumentation", readOnly = false)
 public class CamelJfrDevConsole extends AbstractDevConsole {
 
     @Metadata(label = "query", description = "Command to perform", javaType = "java.lang.String",

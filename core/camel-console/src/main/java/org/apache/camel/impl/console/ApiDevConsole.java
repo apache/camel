@@ -82,15 +82,24 @@ public class ApiDevConsole extends AbstractDevConsole {
 
             for (org.apache.camel.console.DevConsole console : consoles) {
                 String id = console.getId();
-                JsonObject pathItem = new JsonObject();
-                JsonObject post = new JsonObject();
-                post.put("summary", console.getDisplayName());
-                post.put("description", console.getDescription());
-                post.put("operationId", id);
+                boolean readOnly = console.isReadOnly();
 
-                JsonObject requestBody = buildConsoleRequestBody(id);
-                if (requestBody != null) {
-                    post.put("requestBody", requestBody);
+                JsonObject pathItem = new JsonObject();
+                JsonObject operation = new JsonObject();
+                operation.put("summary", console.getDisplayName());
+                operation.put("description", console.getDescription());
+                operation.put("operationId", id);
+
+                if (readOnly) {
+                    JsonArray parameters = buildConsoleParameters(id);
+                    if (parameters != null) {
+                        operation.put("parameters", parameters);
+                    }
+                } else {
+                    JsonObject requestBody = buildConsoleRequestBody(id);
+                    if (requestBody != null) {
+                        operation.put("requestBody", requestBody);
+                    }
                 }
 
                 JsonObject responses = new JsonObject();
@@ -100,9 +109,9 @@ public class ApiDevConsole extends AbstractDevConsole {
                 responseContent.put("application/json", new JsonObject());
                 ok.put("content", responseContent);
                 responses.put("200", ok);
-                post.put("responses", responses);
+                operation.put("responses", responses);
 
-                pathItem.put("post", post);
+                pathItem.put(readOnly ? "get" : "post", operation);
                 paths.put("/q/dev/" + id, pathItem);
             }
         }
@@ -111,7 +120,12 @@ public class ApiDevConsole extends AbstractDevConsole {
         return Jsoner.prettyPrint(root.toJson());
     }
 
-    private JsonObject buildConsoleRequestBody(String consoleId) {
+    /**
+     * Loads and parses the option schema for the given console.
+     *
+     * @return the parsed options, or null if the console has no options or the schema could not be loaded
+     */
+    private JsonObject loadConsoleOptions(String consoleId) {
         try {
             String json = ((CatalogCamelContext) getCamelContext())
                     .getDevConsoleParameterJsonSchema(consoleId);
@@ -126,56 +140,106 @@ public class ApiDevConsole extends AbstractDevConsole {
             if (!(optionsObj instanceof JsonObject opts) || opts.isEmpty()) {
                 return null;
             }
-
-            JsonObject properties = new JsonObject();
-            JsonArray required = new JsonArray();
-            for (Map.Entry<String, Object> entry : opts.entrySet()) {
-                String name = entry.getKey();
-                if (!(entry.getValue() instanceof JsonObject opt)) {
-                    continue;
-                }
-                JsonObject prop = new JsonObject();
-                String type = opt.getString("type");
-                if (type != null) {
-                    prop.put("type", type);
-                }
-                String description = opt.getString("description");
-                if (description != null) {
-                    prop.put("description", description);
-                }
-                Object defaultValue = opt.get("defaultValue");
-                if (defaultValue != null) {
-                    prop.put("default", defaultValue);
-                }
-                Object enumValues = opt.get("enum");
-                if (enumValues instanceof JsonArray ea && !ea.isEmpty()) {
-                    prop.put("enum", enumValues);
-                }
-                properties.put(name, prop);
-
-                Boolean req = opt.getBoolean("required");
-                if (req != null && req) {
-                    required.add(name);
-                }
-            }
-
-            JsonObject schema = new JsonObject();
-            schema.put("type", "object");
-            schema.put("properties", properties);
-            if (!required.isEmpty()) {
-                schema.put("required", required);
-            }
-
-            JsonObject mediaType = new JsonObject();
-            mediaType.put("schema", schema);
-            JsonObject content = new JsonObject();
-            content.put("application/json", mediaType);
-            JsonObject requestBody = new JsonObject();
-            requestBody.put("content", content);
-            return requestBody;
+            return opts;
         } catch (Exception e) {
             // ignore
             return null;
         }
+    }
+
+    private JsonObject buildConsoleRequestBody(String consoleId) {
+        JsonObject opts = loadConsoleOptions(consoleId);
+        if (opts == null) {
+            return null;
+        }
+
+        JsonObject properties = new JsonObject();
+        JsonArray required = new JsonArray();
+        for (Map.Entry<String, Object> entry : opts.entrySet()) {
+            String name = entry.getKey();
+            if (!(entry.getValue() instanceof JsonObject opt)) {
+                continue;
+            }
+            JsonObject prop = new JsonObject();
+            String type = opt.getString("type");
+            if (type != null) {
+                prop.put("type", type);
+            }
+            String description = opt.getString("description");
+            if (description != null) {
+                prop.put("description", description);
+            }
+            Object defaultValue = opt.get("defaultValue");
+            if (defaultValue != null) {
+                prop.put("default", defaultValue);
+            }
+            Object enumValues = opt.get("enum");
+            if (enumValues instanceof JsonArray ea && !ea.isEmpty()) {
+                prop.put("enum", enumValues);
+            }
+            properties.put(name, prop);
+
+            Boolean req = opt.getBoolean("required");
+            if (req != null && req) {
+                required.add(name);
+            }
+        }
+
+        JsonObject schema = new JsonObject();
+        schema.put("type", "object");
+        schema.put("properties", properties);
+        if (!required.isEmpty()) {
+            schema.put("required", required);
+        }
+
+        JsonObject mediaType = new JsonObject();
+        mediaType.put("schema", schema);
+        JsonObject content = new JsonObject();
+        content.put("application/json", mediaType);
+        JsonObject requestBody = new JsonObject();
+        requestBody.put("content", content);
+        return requestBody;
+    }
+
+    private JsonArray buildConsoleParameters(String consoleId) {
+        JsonObject opts = loadConsoleOptions(consoleId);
+        if (opts == null) {
+            return null;
+        }
+
+        JsonArray parameters = new JsonArray();
+        for (Map.Entry<String, Object> entry : opts.entrySet()) {
+            String name = entry.getKey();
+            if (!(entry.getValue() instanceof JsonObject opt)) {
+                continue;
+            }
+            JsonObject param = new JsonObject();
+            param.put("name", name);
+            param.put("in", "query");
+            String description = opt.getString("description");
+            if (description != null) {
+                param.put("description", description);
+            }
+            Boolean req = opt.getBoolean("required");
+            param.put("required", req != null && req);
+
+            JsonObject schema = new JsonObject();
+            String type = opt.getString("type");
+            if (type != null) {
+                schema.put("type", type);
+            }
+            Object defaultValue = opt.get("defaultValue");
+            if (defaultValue != null) {
+                schema.put("default", defaultValue);
+            }
+            Object enumValues = opt.get("enum");
+            if (enumValues instanceof JsonArray ea && !ea.isEmpty()) {
+                schema.put("enum", enumValues);
+            }
+            param.put("schema", schema);
+
+            parameters.add(param);
+        }
+        return parameters.isEmpty() ? null : parameters;
     }
 }

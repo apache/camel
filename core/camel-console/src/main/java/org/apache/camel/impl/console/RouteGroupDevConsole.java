@@ -43,7 +43,7 @@ import org.apache.camel.util.json.JsonObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-@DevConsole(name = "route-group", description = "Route Group information")
+@DevConsole(name = "route-group", description = "Route Group information", readOnly = false)
 public class RouteGroupDevConsole extends AbstractDevConsole {
 
     private static final Logger LOG = LoggerFactory.getLogger(RouteGroupDevConsole.class);
