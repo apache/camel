@@ -19,6 +19,7 @@ package org.apache.camel.tooling.model;
 public class DevConsoleModel extends ArtifactModel<DevConsoleModel.DevConsoleOptionModel> {
 
     protected String group;
+    protected boolean readOnly = true;
 
     public DevConsoleModel() {
     }
@@ -29,6 +30,14 @@ public class DevConsoleModel extends ArtifactModel<DevConsoleModel.DevConsoleOpt
 
     public void setGroup(String group) {
         this.group = group;
+    }
+
+    public boolean isReadOnly() {
+        return readOnly;
+    }
+
+    public void setReadOnly(boolean readOnly) {
+        this.readOnly = readOnly;
     }
 
     @Override

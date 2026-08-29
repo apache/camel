@@ -38,6 +38,7 @@ import org.apache.camel.tooling.model.LanguageModel;
 import org.apache.camel.tooling.model.PojoBeanModel;
 import org.apache.camel.tooling.model.ReleaseModel;
 import org.apache.camel.tooling.model.SecurityAdvisoryModel;
+import org.apache.camel.util.json.JsonObject;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
@@ -1770,6 +1771,30 @@ public class CamelCatalogTest {
         Assertions.assertTrue(advisory.getFixed().contains("4.10.2"));
         Assertions.assertEquals("https://camel.apache.org/security/CVE-2025-27636.html", advisory.getUrl());
         Assertions.assertTrue(advisory.getComponents().contains("camel-bean"));
+    }
+
+    @Test
+    public void devConsolesOpenApiSpec() {
+        String json = catalog.devConsolesOpenApiSpec();
+        Assertions.assertNotNull(json);
+
+        JsonObject doc = JsonMapper.deserialize(json);
+        Assertions.assertEquals("3.0.3", doc.getString("openapi"));
+
+        JsonObject paths = doc.getJsonObject("paths");
+        Assertions.assertNotNull(paths);
+
+        JsonObject context = paths.getJsonObject("/q/dev/context");
+        Assertions.assertNotNull(context);
+        Assertions.assertNotNull(context.getJsonObject("get"));
+        Assertions.assertNull(context.get("post"));
+
+        JsonObject route = paths.getJsonObject("/q/dev/route");
+        Assertions.assertNotNull(route);
+        Assertions.assertNull(route.get("get"));
+        JsonObject post = route.getJsonObject("post");
+        Assertions.assertNotNull(post);
+        Assertions.assertNotNull(post.getJsonObject("requestBody"));
     }
 
     @Test

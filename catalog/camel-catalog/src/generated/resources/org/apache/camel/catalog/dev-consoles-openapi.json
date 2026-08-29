@@ -1,0 +1,2489 @@
+{
+	"openapi": "3.0.3",
+	"info": {
+		"title": "Camel Dev Console API",
+		"version": "4.23.0-SNAPSHOT"
+	},
+	"paths": {
+		"\/q\/dev\/activity": {
+			"get": {
+				"summary": "Camel Activity",
+				"description": "Recent completed exchange activity",
+				"operationId": "activity",
+				"responses": {
+					"200": {
+						"description": "Camel Activity output",
+						"content": {
+							"application\/json": {
+								
+							}
+						}
+					}
+				}
+			}
+		},
+		"\/q\/dev\/api": {
+			"get": {
+				"summary": "API",
+				"description": "OpenAPI specification for the dev console API",
+				"operationId": "api",
+				"responses": {
+					"200": {
+						"description": "API output",
+						"content": {
+							"application\/json": {
+								
+							}
+						}
+					}
+				}
+			}
+		},
+		"\/q\/dev\/aws-secrets": {
+			"get": {
+				"summary": "AWS Secrets",
+				"description": "AWS Secrets Manager",
+				"operationId": "aws-secrets",
+				"responses": {
+					"200": {
+						"description": "AWS Secrets output",
+						"content": {
+							"application\/json": {
+								
+							}
+						}
+					}
+				}
+			}
+		},
+		"\/q\/dev\/aws2-s3": {
+			"get": {
+				"summary": "AWS S3",
+				"description": "AWS S3 Consumer",
+				"operationId": "aws2-s3",
+				"responses": {
+					"200": {
+						"description": "AWS S3 output",
+						"content": {
+							"application\/json": {
+								
+							}
+						}
+					}
+				}
+			}
+		},
+		"\/q\/dev\/azure-secrets": {
+			"get": {
+				"summary": "Azure Key Vault Secrets",
+				"description": "Azure Key Vault Secret Manager",
+				"operationId": "azure-secrets",
+				"responses": {
+					"200": {
+						"description": "Azure Key Vault Secrets output",
+						"content": {
+							"application\/json": {
+								
+							}
+						}
+					}
+				}
+			}
+		},
+		"\/q\/dev\/bean": {
+			"get": {
+				"summary": "Bean",
+				"description": "Displays Java beans from the registry",
+				"operationId": "bean",
+				"parameters": [
+					{
+						"name": "filter",
+						"in": "query",
+						"description": "Filters the beans matching by name",
+						"required": false,
+						"schema": {
+							"type": "string"
+						}
+					},
+					{
+						"name": "internal",
+						"in": "query",
+						"description": "Whether to include internal Camel beans",
+						"required": false,
+						"schema": {
+							"type": "boolean",
+							"default": true
+						}
+					},
+					{
+						"name": "nulls",
+						"in": "query",
+						"description": "Whether to include null values",
+						"required": false,
+						"schema": {
+							"type": "boolean",
+							"default": true
+						}
+					},
+					{
+						"name": "properties",
+						"in": "query",
+						"description": "Whether to include bean properties",
+						"required": false,
+						"schema": {
+							"type": "boolean",
+							"default": true
+						}
+					}
+				],
+				"responses": {
+					"200": {
+						"description": "Bean output",
+						"content": {
+							"application\/json": {
+								
+							}
+						}
+					}
+				}
+			}
+		},
+		"\/q\/dev\/bean-model": {
+			"get": {
+				"summary": "Bean Model",
+				"description": "Displays beans from the DSL model",
+				"operationId": "bean-model",
+				"parameters": [
+					{
+						"name": "filter",
+						"in": "query",
+						"description": "Filters the beans matching by name",
+						"required": false,
+						"schema": {
+							"type": "string"
+						}
+					},
+					{
+						"name": "nulls",
+						"in": "query",
+						"description": "Whether to include null values",
+						"required": false,
+						"schema": {
+							"type": "boolean",
+							"default": true
+						}
+					},
+					{
+						"name": "properties",
+						"in": "query",
+						"description": "Whether to include bean properties",
+						"required": false,
+						"schema": {
+							"type": "boolean",
+							"default": true
+						}
+					}
+				],
+				"responses": {
+					"200": {
+						"description": "Bean Model output",
+						"content": {
+							"application\/json": {
+								
+							}
+						}
+					}
+				}
+			}
+		},
+		"\/q\/dev\/blocked": {
+			"get": {
+				"summary": "Blocked Exchanges",
+				"description": "Display blocked exchanges",
+				"operationId": "blocked",
+				"responses": {
+					"200": {
+						"description": "Blocked Exchanges output",
+						"content": {
+							"application\/json": {
+								
+							}
+						}
+					}
+				}
+			}
+		},
+		"\/q\/dev\/browse": {
+			"get": {
+				"summary": "Browse",
+				"description": "Browse pending messages on Camel components",
+				"operationId": "browse",
+				"parameters": [
+					{
+						"name": "bodyMaxChars",
+						"in": "query",
+						"description": "Maximum size of the message body to include in the dump",
+						"required": false,
+						"schema": {
+							"type": "integer",
+							"default": 32768
+						}
+					},
+					{
+						"name": "dump",
+						"in": "query",
+						"description": "Whether to include message dumps",
+						"required": false,
+						"schema": {
+							"type": "boolean",
+							"default": true
+						}
+					},
+					{
+						"name": "filter",
+						"in": "query",
+						"description": "Filters the endpoints matching by route id, endpoint url",
+						"required": false,
+						"schema": {
+							"type": "string"
+						}
+					},
+					{
+						"name": "freshSize",
+						"in": "query",
+						"description": "Whether to calculate fresh queue size (can cause performance overhead)",
+						"required": false,
+						"schema": {
+							"type": "boolean",
+							"default": false
+						}
+					},
+					{
+						"name": "includeBody",
+						"in": "query",
+						"description": "Whether to include message body in dumps",
+						"required": false,
+						"schema": {
+							"type": "boolean",
+							"default": true
+						}
+					},
+					{
+						"name": "limit",
+						"in": "query",
+						"description": "Limits the number of entries per endpoint",
+						"required": false,
+						"schema": {
+							"type": "integer",
+							"default": 100
+						}
+					},
+					{
+						"name": "tail",
+						"in": "query",
+						"description": "To receive N last messages from the tail",
+						"required": false,
+						"schema": {
+							"type": "integer"
+						}
+					}
+				],
+				"responses": {
+					"200": {
+						"description": "Browse output",
+						"content": {
+							"application\/json": {
+								
+							}
+						}
+					}
+				}
+			}
+		},
+		"\/q\/dev\/circuit-breaker": {
+			"get": {
+				"summary": "Circuit Breaker",
+				"description": "Display circuit breaker information",
+				"operationId": "circuit-breaker",
+				"responses": {
+					"200": {
+						"description": "Circuit Breaker output",
+						"content": {
+							"application\/json": {
+								
+							}
+						}
+					}
+				}
+			}
+		},
+		"\/q\/dev\/consumer": {
+			"get": {
+				"summary": "Consumers",
+				"description": "Display information about Camel consumers",
+				"operationId": "consumer",
+				"responses": {
+					"200": {
+						"description": "Consumers output",
+						"content": {
+							"application\/json": {
+								
+							}
+						}
+					}
+				}
+			}
+		},
+		"\/q\/dev\/context": {
+			"get": {
+				"summary": "CamelContext",
+				"description": "Overall information about the CamelContext",
+				"operationId": "context",
+				"responses": {
+					"200": {
+						"description": "CamelContext output",
+						"content": {
+							"application\/json": {
+								
+							}
+						}
+					}
+				}
+			}
+		},
+		"\/q\/dev\/datasource": {
+			"get": {
+				"summary": "DataSource",
+				"description": "Displays DataSource connection pool metrics",
+				"operationId": "datasource",
+				"responses": {
+					"200": {
+						"description": "DataSource output",
+						"content": {
+							"application\/json": {
+								
+							}
+						}
+					}
+				}
+			}
+		},
+		"\/q\/dev\/debug": {
+			"post": {
+				"summary": "Debug",
+				"description": "Camel route debugger",
+				"operationId": "debug",
+				"requestBody": {
+					"content": {
+						"application\/json": {
+							"schema": {
+								"type": "object",
+								"properties": {
+									"breakpoint": {
+										"type": "string",
+										"description": "The breakpoint node id"
+									},
+									"codeLimit": {
+										"type": "integer",
+										"default": 5,
+										"description": "Number of source code lines around the breakpoint to include"
+									},
+									"command": {
+										"type": "string",
+										"description": "Action command to execute on the debugger"
+									},
+									"history": {
+										"type": "boolean",
+										"default": true,
+										"description": "Whether to include message history"
+									},
+									"position": {
+										"type": "integer",
+										"description": "The position to step to"
+									}
+								}
+							}
+						}
+					}
+				},
+				"responses": {
+					"200": {
+						"description": "Debug output",
+						"content": {
+							"application\/json": {
+								
+							}
+						}
+					}
+				}
+			}
+		},
+		"\/q\/dev\/endpoint": {
+			"get": {
+				"summary": "Endpoints",
+				"description": "Endpoint Registry information",
+				"operationId": "endpoint",
+				"responses": {
+					"200": {
+						"description": "Endpoints output",
+						"content": {
+							"application\/json": {
+								
+							}
+						}
+					}
+				}
+			}
+		},
+		"\/q\/dev\/errors": {
+			"get": {
+				"summary": "Error Registry",
+				"description": "Display captured routing errors",
+				"operationId": "errors",
+				"parameters": [
+					{
+						"name": "ago",
+						"in": "query",
+						"description": "Filter by time window as duration string (e.g. 60s, 5m, 1h). Only entries within this window are included.",
+						"required": false,
+						"schema": {
+							"type": "string"
+						}
+					},
+					{
+						"name": "exception",
+						"in": "query",
+						"description": "Filter by exception type (case-insensitive substring match)",
+						"required": false,
+						"schema": {
+							"type": "string"
+						}
+					},
+					{
+						"name": "handled",
+						"in": "query",
+						"description": "Filter by handled status",
+						"required": false,
+						"schema": {
+							"type": "boolean"
+						}
+					},
+					{
+						"name": "limit",
+						"in": "query",
+						"description": "Limits the number of entries displayed",
+						"required": false,
+						"schema": {
+							"type": "integer"
+						}
+					},
+					{
+						"name": "routeId",
+						"in": "query",
+						"description": "Filter by route id",
+						"required": false,
+						"schema": {
+							"type": "string"
+						}
+					},
+					{
+						"name": "stackTrace",
+						"in": "query",
+						"description": "Whether to include stack traces",
+						"required": false,
+						"schema": {
+							"type": "boolean",
+							"default": false
+						}
+					}
+				],
+				"responses": {
+					"200": {
+						"description": "Error Registry output",
+						"content": {
+							"application\/json": {
+								
+							}
+						}
+					}
+				}
+			}
+		},
+		"\/q\/dev\/eval-language": {
+			"post": {
+				"summary": "Evaluate Language",
+				"description": "Evaluate Language and display result",
+				"operationId": "eval-language",
+				"requestBody": {
+					"content": {
+						"application\/json": {
+							"schema": {
+								"type": "object",
+								"properties": {
+									"body": {
+										"type": "string",
+										"description": "Optional message body"
+									},
+									"headers": {
+										"type": "string",
+										"description": "Optional message headers"
+									},
+									"language": {
+										"type": "string",
+										"default": "simple",
+										"description": "The language to use"
+									},
+									"predicate": {
+										"type": "boolean",
+										"default": false,
+										"description": "Whether to execute as predicate (use expression by default)"
+									},
+									"template": {
+										"type": "string",
+										"description": "Template to use for executing simple language function"
+									},
+									"variables": {
+										"type": "string",
+										"description": "Optional exchange variables"
+									}
+								}
+							}
+						}
+					}
+				},
+				"responses": {
+					"200": {
+						"description": "Evaluate Language output",
+						"content": {
+							"application\/json": {
+								
+							}
+						}
+					}
+				}
+			}
+		},
+		"\/q\/dev\/event": {
+			"get": {
+				"summary": "Camel Events",
+				"description": "The most recent Camel events",
+				"operationId": "event",
+				"responses": {
+					"200": {
+						"description": "Camel Events output",
+						"content": {
+							"application\/json": {
+								
+							}
+						}
+					}
+				}
+			}
+		},
+		"\/q\/dev\/fault-tolerance": {
+			"get": {
+				"summary": "MicroProfile Circuit Breaker",
+				"description": "Display circuit breaker information",
+				"operationId": "fault-tolerance",
+				"responses": {
+					"200": {
+						"description": "MicroProfile Circuit Breaker output",
+						"content": {
+							"application\/json": {
+								
+							}
+						}
+					}
+				}
+			}
+		},
+		"\/q\/dev\/gc": {
+			"get": {
+				"summary": "Garbage Collector",
+				"description": "Displays Garbage Collector information",
+				"operationId": "gc",
+				"responses": {
+					"200": {
+						"description": "Garbage Collector output",
+						"content": {
+							"application\/json": {
+								
+							}
+						}
+					}
+				}
+			}
+		},
+		"\/q\/dev\/gcp-secrets": {
+			"get": {
+				"summary": "GCP Secrets",
+				"description": "GCP Secret Manager",
+				"operationId": "gcp-secrets",
+				"responses": {
+					"200": {
+						"description": "GCP Secrets output",
+						"content": {
+							"application\/json": {
+								
+							}
+						}
+					}
+				}
+			}
+		},
+		"\/q\/dev\/groovy": {
+			"get": {
+				"summary": "Groovy",
+				"description": "Groovy Language",
+				"operationId": "groovy",
+				"responses": {
+					"200": {
+						"description": "Groovy output",
+						"content": {
+							"application\/json": {
+								
+							}
+						}
+					}
+				}
+			}
+		},
+		"\/q\/dev\/hashicorp-secrets": {
+			"get": {
+				"summary": "HashiCorp Secrets",
+				"description": "HashiCorp Vault Secrets",
+				"operationId": "hashicorp-secrets",
+				"responses": {
+					"200": {
+						"description": "HashiCorp Secrets output",
+						"content": {
+							"application\/json": {
+								
+							}
+						}
+					}
+				}
+			}
+		},
+		"\/q\/dev\/health": {
+			"get": {
+				"summary": "Health Check",
+				"description": "Health Check Status",
+				"operationId": "health",
+				"parameters": [
+					{
+						"name": "exposureLevel",
+						"in": "query",
+						"description": "Exposure level for health check details",
+						"required": false,
+						"schema": {
+							"type": "string",
+							"default": "default",
+							"enum": [
+								"default",
+								"oneline",
+								"full"
+							]
+						}
+					}
+				],
+				"responses": {
+					"200": {
+						"description": "Health Check output",
+						"content": {
+							"application\/json": {
+								
+							}
+						}
+					}
+				}
+			}
+		},
+		"\/q\/dev\/heap-dump": {
+			"post": {
+				"summary": "Heap Dump",
+				"description": "Write a heap dump (.hprof) file for deep memory analysis",
+				"operationId": "heap-dump",
+				"requestBody": {
+					"content": {
+						"application\/json": {
+							"schema": {
+								"type": "object",
+								"properties": {
+									"live": {
+										"type": "boolean",
+										"default": true,
+										"description": "Whether to dump only live objects (default true)"
+									},
+									"name": {
+										"type": "string",
+										"description": "File name for the heap dump (without .hprof extension)"
+									}
+								}
+							}
+						}
+					}
+				},
+				"responses": {
+					"200": {
+						"description": "Heap Dump output",
+						"content": {
+							"application\/json": {
+								
+							}
+						}
+					}
+				}
+			}
+		},
+		"\/q\/dev\/heap-histogram": {
+			"get": {
+				"summary": "Heap Histogram",
+				"description": "Displays class-level heap memory usage",
+				"operationId": "heap-histogram",
+				"parameters": [
+					{
+						"name": "limit",
+						"in": "query",
+						"description": "Limits the number of classes displayed",
+						"required": false,
+						"schema": {
+							"type": "integer",
+							"default": 100
+						}
+					}
+				],
+				"responses": {
+					"200": {
+						"description": "Heap Histogram output",
+						"content": {
+							"application\/json": {
+								
+							}
+						}
+					}
+				}
+			}
+		},
+		"\/q\/dev\/ibm-secrets": {
+			"get": {
+				"summary": "IBM Secrets",
+				"description": "IBM Secrets Manager",
+				"operationId": "ibm-secrets",
+				"responses": {
+					"200": {
+						"description": "IBM Secrets output",
+						"content": {
+							"application\/json": {
+								
+							}
+						}
+					}
+				}
+			}
+		},
+		"\/q\/dev\/inflight": {
+			"get": {
+				"summary": "Inflight Exchanges",
+				"description": "Display inflight exchanges",
+				"operationId": "inflight",
+				"parameters": [
+					{
+						"name": "filter",
+						"in": "query",
+						"description": "Filters the routes matching by route id, route uri",
+						"required": false,
+						"schema": {
+							"type": "string"
+						}
+					},
+					{
+						"name": "limit",
+						"in": "query",
+						"description": "Limits the number of entries displayed",
+						"required": false,
+						"schema": {
+							"type": "integer"
+						}
+					}
+				],
+				"responses": {
+					"200": {
+						"description": "Inflight Exchanges output",
+						"content": {
+							"application\/json": {
+								
+							}
+						}
+					}
+				}
+			}
+		},
+		"\/q\/dev\/internal-tasks": {
+			"get": {
+				"summary": "Internal Tasks",
+				"description": "Display information about internal tasks",
+				"operationId": "internal-tasks",
+				"responses": {
+					"200": {
+						"description": "Internal Tasks output",
+						"content": {
+							"application\/json": {
+								
+							}
+						}
+					}
+				}
+			}
+		},
+		"\/q\/dev\/java-security": {
+			"get": {
+				"summary": "Java Security",
+				"description": "Displays Java Security (JSSE) information",
+				"operationId": "java-security",
+				"responses": {
+					"200": {
+						"description": "Java Security output",
+						"content": {
+							"application\/json": {
+								
+							}
+						}
+					}
+				}
+			}
+		},
+		"\/q\/dev\/jfr": {
+			"post": {
+				"summary": "JFR Runtime Instrumentation",
+				"description": "Status and live control of camel-jfr runtime instrumentation",
+				"operationId": "jfr",
+				"requestBody": {
+					"content": {
+						"application\/json": {
+							"schema": {
+								"type": "object",
+								"properties": {
+									"command": {
+										"type": "string",
+										"default": "status",
+										"enum": [
+											"status",
+											"enable",
+											"disable",
+											"jfc",
+											"snapshot"
+										],
+										"description": "Command to perform"
+									},
+									"disable": {
+										"type": "string",
+										"description": "Comma separated list of events to disable in the generated jfc settings overlay"
+									},
+									"event": {
+										"type": "string",
+										"default": "all",
+										"enum": [
+											"all",
+											"route",
+											"processor",
+											"exchange",
+											"send",
+											"failed",
+											"redelivery"
+										],
+										"description": "The runtime event to enable or disable, or all for every event"
+									},
+									"limit": {
+										"type": "integer",
+										"default": 50,
+										"description": "Maximum number of failure and redelivery entries to return in a snapshot"
+									},
+									"routeId": {
+										"type": "string",
+										"description": "Filter snapshot results to the given route id"
+									}
+								}
+							}
+						}
+					}
+				},
+				"responses": {
+					"200": {
+						"description": "JFR Runtime Instrumentation output",
+						"content": {
+							"application\/json": {
+								
+							}
+						}
+					}
+				}
+			}
+		},
+		"\/q\/dev\/jfr-memory-leak": {
+			"post": {
+				"summary": "JFR Memory Leak",
+				"description": "JFR-based old object sampling for memory leak diagnosis",
+				"operationId": "jfr-memory-leak",
+				"requestBody": {
+					"content": {
+						"application\/json": {
+							"schema": {
+								"type": "object",
+								"properties": {
+									"command": {
+										"type": "string",
+										"default": "status",
+										"enum": [
+											"start",
+											"stop",
+											"status",
+											"query",
+											"compare"
+										],
+										"description": "Command to execute"
+									},
+									"duration": {
+										"type": "integer",
+										"default": 0,
+										"description": "Recording duration in seconds (0 means manual stop)"
+									},
+									"limit": {
+										"type": "integer",
+										"default": 100,
+										"description": "Limits the number of entries displayed"
+									},
+									"minSize": {
+										"type": "integer",
+										"default": 0,
+										"description": "Minimum object size in bytes to include in results"
+									},
+									"stacktrace": {
+										"type": "boolean",
+										"default": false,
+										"description": "Whether to include stack traces in the output"
+									}
+								}
+							}
+						}
+					}
+				},
+				"responses": {
+					"200": {
+						"description": "JFR Memory Leak output",
+						"content": {
+							"application\/json": {
+								
+							}
+						}
+					}
+				}
+			}
+		},
+		"\/q\/dev\/jvm": {
+			"get": {
+				"summary": "JVM",
+				"description": "Displays JVM information",
+				"operationId": "jvm",
+				"responses": {
+					"200": {
+						"description": "JVM output",
+						"content": {
+							"application\/json": {
+								
+							}
+						}
+					}
+				}
+			}
+		},
+		"\/q\/dev\/kafka": {
+			"get": {
+				"summary": "Kafka",
+				"description": "Apache Kafka",
+				"operationId": "kafka",
+				"parameters": [
+					{
+						"name": "committed",
+						"in": "query",
+						"description": "Whether to include committed offset (sync operation to Kafka broker)",
+						"required": false,
+						"schema": {
+							"type": "boolean",
+							"default": false
+						}
+					}
+				],
+				"responses": {
+					"200": {
+						"description": "Kafka output",
+						"content": {
+							"application\/json": {
+								
+							}
+						}
+					}
+				}
+			}
+		},
+		"\/q\/dev\/kubernetes-configmaps": {
+			"get": {
+				"summary": "Kubernetes Config Maps",
+				"description": "Kubernetes Cluster Config Maps",
+				"operationId": "kubernetes-configmaps",
+				"responses": {
+					"200": {
+						"description": "Kubernetes Config Maps output",
+						"content": {
+							"application\/json": {
+								
+							}
+						}
+					}
+				}
+			}
+		},
+		"\/q\/dev\/kubernetes-secrets": {
+			"get": {
+				"summary": "Kubernetes Secrets",
+				"description": "Kubernetes Cluster Secrets",
+				"operationId": "kubernetes-secrets",
+				"responses": {
+					"200": {
+						"description": "Kubernetes Secrets output",
+						"content": {
+							"application\/json": {
+								
+							}
+						}
+					}
+				}
+			}
+		},
+		"\/q\/dev\/log": {
+			"get": {
+				"summary": "Log",
+				"description": "Logging framework",
+				"operationId": "log",
+				"responses": {
+					"200": {
+						"description": "Log output",
+						"content": {
+							"application\/json": {
+								
+							}
+						}
+					}
+				}
+			}
+		},
+		"\/q\/dev\/main-configuration": {
+			"get": {
+				"summary": "Main Configuration",
+				"description": "Display Camel startup configuration",
+				"operationId": "main-configuration",
+				"responses": {
+					"200": {
+						"description": "Main Configuration output",
+						"content": {
+							"application\/json": {
+								
+							}
+						}
+					}
+				}
+			}
+		},
+		"\/q\/dev\/main-http-server": {
+			"get": {
+				"summary": "Main HTTP Server",
+				"description": "Camel Main HTTP Server",
+				"operationId": "main-http-server",
+				"responses": {
+					"200": {
+						"description": "Main HTTP Server output",
+						"content": {
+							"application\/json": {
+								
+							}
+						}
+					}
+				}
+			}
+		},
+		"\/q\/dev\/memory": {
+			"get": {
+				"summary": "JVM Memory",
+				"description": "Displays JVM memory information",
+				"operationId": "memory",
+				"responses": {
+					"200": {
+						"description": "JVM Memory output",
+						"content": {
+							"application\/json": {
+								
+							}
+						}
+					}
+				}
+			}
+		},
+		"\/q\/dev\/message-history": {
+			"get": {
+				"summary": "Message History",
+				"description": "History of latest completed exchange",
+				"operationId": "message-history",
+				"parameters": [
+					{
+						"name": "codeLimit",
+						"in": "query",
+						"description": "Number of source code lines around the location to include",
+						"required": false,
+						"schema": {
+							"type": "integer",
+							"default": 5
+						}
+					}
+				],
+				"responses": {
+					"200": {
+						"description": "Message History output",
+						"content": {
+							"application\/json": {
+								
+							}
+						}
+					}
+				}
+			}
+		},
+		"\/q\/dev\/micrometer": {
+			"get": {
+				"summary": "Micrometer",
+				"description": "Display runtime metrics",
+				"operationId": "micrometer",
+				"parameters": [
+					{
+						"name": "filter",
+						"in": "query",
+						"description": "Filters matching metrics by name",
+						"required": false,
+						"schema": {
+							"type": "string"
+						}
+					},
+					{
+						"name": "tags",
+						"in": "query",
+						"description": "Whether to include tags",
+						"required": false,
+						"schema": {
+							"type": "boolean",
+							"default": true
+						}
+					}
+				],
+				"responses": {
+					"200": {
+						"description": "Micrometer output",
+						"content": {
+							"application\/json": {
+								
+							}
+						}
+					}
+				}
+			}
+		},
+		"\/q\/dev\/opentelemetry": {
+			"get": {
+				"summary": "OpenTelemetry Spans",
+				"description": "OpenTelemetry span data captured in dev mode",
+				"operationId": "opentelemetry",
+				"parameters": [
+					{
+						"name": "dump",
+						"in": "query",
+						"description": "Whether to dump span data",
+						"required": false,
+						"schema": {
+							"type": "string",
+							"enum": [
+								"true",
+								"false"
+							]
+						}
+					},
+					{
+						"name": "limit",
+						"in": "query",
+						"description": "Limits the number of spans dumped",
+						"required": false,
+						"schema": {
+							"type": "integer",
+							"default": 100
+						}
+					}
+				],
+				"responses": {
+					"200": {
+						"description": "OpenTelemetry Spans output",
+						"content": {
+							"application\/json": {
+								
+							}
+						}
+					}
+				}
+			}
+		},
+		"\/q\/dev\/platform-http": {
+			"get": {
+				"summary": "Platform HTTP",
+				"description": "Embedded HTTP Server",
+				"operationId": "platform-http",
+				"responses": {
+					"200": {
+						"description": "Platform HTTP output",
+						"content": {
+							"application\/json": {
+								
+							}
+						}
+					}
+				}
+			}
+		},
+		"\/q\/dev\/processor": {
+			"post": {
+				"summary": "Processor",
+				"description": "Processor information",
+				"operationId": "processor",
+				"requestBody": {
+					"content": {
+						"application\/json": {
+							"schema": {
+								"type": "object",
+								"properties": {
+									"action": {
+										"type": "string",
+										"enum": [
+											"start",
+											"stop",
+											"enable",
+											"disable"
+										],
+										"description": "Action to perform such as start,stop,enable,disable on one or more processors"
+									},
+									"filter": {
+										"type": "string",
+										"description": "Filters the processors matching by processor id, route id, or route group, and source location"
+									},
+									"limit": {
+										"type": "integer",
+										"description": "Limits the number of entries displayed"
+									}
+								}
+							}
+						}
+					}
+				},
+				"responses": {
+					"200": {
+						"description": "Processor output",
+						"content": {
+							"application\/json": {
+								
+							}
+						}
+					}
+				}
+			}
+		},
+		"\/q\/dev\/processor-detail": {
+			"get": {
+				"summary": "Processor Detail",
+				"description": "Show configured options for all processors in a route",
+				"operationId": "processor-detail",
+				"parameters": [
+					{
+						"name": "routeId",
+						"in": "query",
+						"description": "The route id to get processor details for (use * for all routes)",
+						"required": false,
+						"schema": {
+							"type": "string"
+						}
+					}
+				],
+				"responses": {
+					"200": {
+						"description": "Processor Detail output",
+						"content": {
+							"application\/json": {
+								
+							}
+						}
+					}
+				}
+			}
+		},
+		"\/q\/dev\/producer": {
+			"get": {
+				"summary": "Producers",
+				"description": "Display information about Camel producers",
+				"operationId": "producer",
+				"responses": {
+					"200": {
+						"description": "Producers output",
+						"content": {
+							"application\/json": {
+								
+							}
+						}
+					}
+				}
+			}
+		},
+		"\/q\/dev\/properties": {
+			"get": {
+				"summary": "Properties",
+				"description": "Displays the properties loaded by Camel",
+				"operationId": "properties",
+				"responses": {
+					"200": {
+						"description": "Properties output",
+						"content": {
+							"application\/json": {
+								
+							}
+						}
+					}
+				}
+			}
+		},
+		"\/q\/dev\/quartz": {
+			"get": {
+				"summary": "Quartz",
+				"description": "Quartz Scheduler",
+				"operationId": "quartz",
+				"responses": {
+					"200": {
+						"description": "Quartz output",
+						"content": {
+							"application\/json": {
+								
+							}
+						}
+					}
+				}
+			}
+		},
+		"\/q\/dev\/receive": {
+			"post": {
+				"summary": "Camel Receive",
+				"description": "Consume messages from endpoints",
+				"operationId": "receive",
+				"requestBody": {
+					"content": {
+						"application\/json": {
+							"schema": {
+								"type": "object",
+								"properties": {
+									"dump": {
+										"type": "string",
+										"enum": [
+											"true",
+											"false"
+										],
+										"description": "Whether to dump received messages"
+									},
+									"enabled": {
+										"type": "string",
+										"enum": [
+											"true",
+											"false"
+										],
+										"description": "Whether to enable or disable receive mode"
+									},
+									"endpoint": {
+										"type": "string",
+										"description": "Endpoint for where to receive messages (can also refer to a route id, endpoint pattern)"
+									}
+								}
+							}
+						}
+					}
+				},
+				"responses": {
+					"200": {
+						"description": "Camel Receive output",
+						"content": {
+							"application\/json": {
+								
+							}
+						}
+					}
+				}
+			}
+		},
+		"\/q\/dev\/reload": {
+			"post": {
+				"summary": "Reload",
+				"description": "Console for reloading running Camel",
+				"operationId": "reload",
+				"requestBody": {
+					"content": {
+						"application\/json": {
+							"schema": {
+								"type": "object",
+								"properties": {
+									"reload": {
+										"type": "boolean",
+										"default": false,
+										"description": "Option to trigger reloading"
+									},
+									"wait": {
+										"type": "boolean",
+										"default": false,
+										"description": "Option to wait for reloading to complete"
+									}
+								}
+							}
+						}
+					}
+				},
+				"responses": {
+					"200": {
+						"description": "Reload output",
+						"content": {
+							"application\/json": {
+								
+							}
+						}
+					}
+				}
+			}
+		},
+		"\/q\/dev\/resilience4j": {
+			"get": {
+				"summary": "Resilience Circuit Breaker",
+				"description": "Display circuit breaker information",
+				"operationId": "resilience4j",
+				"responses": {
+					"200": {
+						"description": "Resilience Circuit Breaker output",
+						"content": {
+							"application\/json": {
+								
+							}
+						}
+					}
+				}
+			}
+		},
+		"\/q\/dev\/rest": {
+			"get": {
+				"summary": "Rest",
+				"description": "Rest DSL Registry information",
+				"operationId": "rest",
+				"responses": {
+					"200": {
+						"description": "Rest output",
+						"content": {
+							"application\/json": {
+								
+							}
+						}
+					}
+				}
+			}
+		},
+		"\/q\/dev\/rest-spec": {
+			"get": {
+				"summary": "Rest Spec",
+				"description": "OpenAPI specification content for contract-first REST services",
+				"operationId": "rest-spec",
+				"parameters": [
+					{
+						"name": "filter",
+						"in": "query",
+						"description": "Filters specifications matching the given URI pattern",
+						"required": false,
+						"schema": {
+							"type": "string"
+						}
+					}
+				],
+				"responses": {
+					"200": {
+						"description": "Rest Spec output",
+						"content": {
+							"application\/json": {
+								
+							}
+						}
+					}
+				}
+			}
+		},
+		"\/q\/dev\/route": {
+			"post": {
+				"summary": "Route",
+				"description": "Route information",
+				"operationId": "route",
+				"requestBody": {
+					"content": {
+						"application\/json": {
+							"schema": {
+								"type": "object",
+								"properties": {
+									"action": {
+										"type": "string",
+										"enum": [
+											"start",
+											"stop",
+											"suspend",
+											"resume"
+										],
+										"description": "Action to perform such as start,stop,suspend,resume on one or more routes"
+									},
+									"filter": {
+										"type": "string",
+										"description": "Filters the routes matching by route id, route uri, or route group, and source location"
+									},
+									"limit": {
+										"type": "integer",
+										"description": "Limits the number of entries displayed"
+									},
+									"processors": {
+										"type": "boolean",
+										"default": false,
+										"description": "Whether to include processors"
+									}
+								}
+							}
+						}
+					}
+				},
+				"responses": {
+					"200": {
+						"description": "Route output",
+						"content": {
+							"application\/json": {
+								
+							}
+						}
+					}
+				}
+			}
+		},
+		"\/q\/dev\/route-controller": {
+			"get": {
+				"summary": "Route Controller",
+				"description": "Route controller information",
+				"operationId": "route-controller",
+				"parameters": [
+					{
+						"name": "error",
+						"in": "query",
+						"description": "Whether to include error details",
+						"required": false,
+						"schema": {
+							"type": "boolean",
+							"default": true
+						}
+					},
+					{
+						"name": "stacktrace",
+						"in": "query",
+						"description": "Whether to include stack traces",
+						"required": false,
+						"schema": {
+							"type": "boolean",
+							"default": true
+						}
+					}
+				],
+				"responses": {
+					"200": {
+						"description": "Route Controller output",
+						"content": {
+							"application\/json": {
+								
+							}
+						}
+					}
+				}
+			}
+		},
+		"\/q\/dev\/route-diagram": {
+			"get": {
+				"summary": "Route Diagram",
+				"description": "Visual route diagrams",
+				"operationId": "route-diagram",
+				"parameters": [
+					{
+						"name": "autoRefresh",
+						"in": "query",
+						"description": "Whether to auto-refresh page every 5 seconds",
+						"required": false,
+						"schema": {
+							"type": "boolean",
+							"default": true
+						}
+					},
+					{
+						"name": "external",
+						"in": "query",
+						"description": "Whether to include external systems (kafka, http, etc.) in topology mode",
+						"required": false,
+						"schema": {
+							"type": "boolean",
+							"default": true
+						}
+					},
+					{
+						"name": "filter",
+						"in": "query",
+						"description": "Filters the routes matching by route id, route uri, and source location",
+						"required": false,
+						"schema": {
+							"type": "string",
+							"default": "*"
+						}
+					},
+					{
+						"name": "fontSize",
+						"in": "query",
+						"description": "The size of the font",
+						"required": false,
+						"schema": {
+							"type": "integer",
+							"default": 12
+						}
+					},
+					{
+						"name": "format",
+						"in": "query",
+						"description": "Output format: html (interactive web component), png (inline image), text or ascii (ASCII art), unicode (box-drawing characters)",
+						"required": false,
+						"schema": {
+							"type": "string",
+							"default": "html",
+							"enum": [
+								"html",
+								"png",
+								"text",
+								"ascii",
+								"unicode"
+							]
+						}
+					},
+					{
+						"name": "metric",
+						"in": "query",
+						"description": "Whether to include live metric counters",
+						"required": false,
+						"schema": {
+							"type": "boolean",
+							"default": true
+						}
+					},
+					{
+						"name": "mode",
+						"in": "query",
+						"description": "Diagram mode: route or topology",
+						"required": false,
+						"schema": {
+							"type": "string",
+							"default": "route",
+							"enum": [
+								"route",
+								"topology"
+							]
+						}
+					},
+					{
+						"name": "nodeLabel",
+						"in": "query",
+						"description": "Node label mode",
+						"required": false,
+						"schema": {
+							"type": "string",
+							"default": "code",
+							"enum": [
+								"code",
+								"description",
+								"both"
+							]
+						}
+					},
+					{
+						"name": "nodeWidth",
+						"in": "query",
+						"description": "The node width in pixels",
+						"required": false,
+						"schema": {
+							"type": "integer",
+							"default": 180
+						}
+					},
+					{
+						"name": "theme",
+						"in": "query",
+						"description": "Theme to use: dark, light, transparent, ascii, or unicode",
+						"required": false,
+						"schema": {
+							"type": "string",
+							"default": "transparent",
+							"enum": [
+								"dark",
+								"light",
+								"transparent",
+								"ascii",
+								"unicode"
+							]
+						}
+					}
+				],
+				"responses": {
+					"200": {
+						"description": "Route Diagram output",
+						"content": {
+							"application\/json": {
+								
+							}
+						}
+					}
+				}
+			}
+		},
+		"\/q\/dev\/route-dump": {
+			"get": {
+				"summary": "Route Dump",
+				"description": "Dump route in XML, YAML, or Java DSL format",
+				"operationId": "route-dump",
+				"parameters": [
+					{
+						"name": "filter",
+						"in": "query",
+						"description": "Filters the routes matching by route id, route uri, and source location",
+						"required": false,
+						"schema": {
+							"type": "string"
+						}
+					},
+					{
+						"name": "format",
+						"in": "query",
+						"description": "To output in either xml, yaml, or java format",
+						"required": false,
+						"schema": {
+							"type": "string",
+							"enum": [
+								"xml",
+								"yaml",
+								"java"
+							]
+						}
+					},
+					{
+						"name": "limit",
+						"in": "query",
+						"description": "Limits the number of entries displayed",
+						"required": false,
+						"schema": {
+							"type": "integer"
+						}
+					},
+					{
+						"name": "uriAsParameters",
+						"in": "query",
+						"description": "Whether to expand URIs into separated key\/value parameters",
+						"required": false,
+						"schema": {
+							"type": "boolean",
+							"default": false
+						}
+					}
+				],
+				"responses": {
+					"200": {
+						"description": "Route Dump output",
+						"content": {
+							"application\/json": {
+								
+							}
+						}
+					}
+				}
+			}
+		},
+		"\/q\/dev\/route-group": {
+			"post": {
+				"summary": "Route Group",
+				"description": "Route Group information",
+				"operationId": "route-group",
+				"requestBody": {
+					"content": {
+						"application\/json": {
+							"schema": {
+								"type": "object",
+								"properties": {
+									"action": {
+										"type": "string",
+										"enum": [
+											"start",
+											"stop"
+										],
+										"description": "Action to perform such as start or stop"
+									},
+									"filter": {
+										"type": "string",
+										"description": "Filters the route groups matching by group id"
+									},
+									"limit": {
+										"type": "integer",
+										"description": "Limits the number of entries displayed"
+									}
+								}
+							}
+						}
+					}
+				},
+				"responses": {
+					"200": {
+						"description": "Route Group output",
+						"content": {
+							"application\/json": {
+								
+							}
+						}
+					}
+				}
+			}
+		},
+		"\/q\/dev\/route-structure": {
+			"get": {
+				"summary": "Route Structure",
+				"description": "Dump route structure",
+				"operationId": "route-structure",
+				"parameters": [
+					{
+						"name": "brief",
+						"in": "query",
+						"description": "Whether to dump in brief mode (only overall structure, and no detailed options or expressions)",
+						"required": false,
+						"schema": {
+							"type": "boolean",
+							"default": false
+						}
+					},
+					{
+						"name": "filter",
+						"in": "query",
+						"description": "Filters the routes matching by route id, route uri, and source location",
+						"required": false,
+						"schema": {
+							"type": "string"
+						}
+					},
+					{
+						"name": "limit",
+						"in": "query",
+						"description": "Limits the number of entries displayed",
+						"required": false,
+						"schema": {
+							"type": "integer"
+						}
+					},
+					{
+						"name": "metric",
+						"in": "query",
+						"description": "Whether to include metrics such as number of messages processed (from JMX)",
+						"required": false,
+						"schema": {
+							"type": "boolean",
+							"default": false
+						}
+					}
+				],
+				"responses": {
+					"200": {
+						"description": "Route Structure output",
+						"content": {
+							"application\/json": {
+								
+							}
+						}
+					}
+				}
+			}
+		},
+		"\/q\/dev\/route-topology": {
+			"get": {
+				"summary": "Route Topology",
+				"description": "Route topology showing inter-route connections",
+				"operationId": "route-topology",
+				"parameters": [
+					{
+						"name": "external",
+						"in": "query",
+						"description": "Whether to include external systems (databases, messaging brokers, etc.) as nodes",
+						"required": false,
+						"schema": {
+							"type": "boolean",
+							"default": false
+						}
+					},
+					{
+						"name": "metric",
+						"in": "query",
+						"description": "Whether to include live metrics (message counts) on nodes and edges",
+						"required": false,
+						"schema": {
+							"type": "boolean",
+							"default": false
+						}
+					},
+					{
+						"name": "routes",
+						"in": "query",
+						"description": "Whether to include route structure data in the response",
+						"required": false,
+						"schema": {
+							"type": "boolean",
+							"default": false
+						}
+					}
+				],
+				"responses": {
+					"200": {
+						"description": "Route Topology output",
+						"content": {
+							"application\/json": {
+								
+							}
+						}
+					}
+				}
+			}
+		},
+		"\/q\/dev\/send": {
+			"post": {
+				"summary": "Camel Send",
+				"description": "Send messages to endpoints",
+				"operationId": "send",
+				"requestBody": {
+					"content": {
+						"application\/json": {
+							"schema": {
+								"type": "object",
+								"properties": {
+									"body": {
+										"type": "string",
+										"description": "The message body to send. Can refer to files using file: prefix"
+									},
+									"bodyMaxChars": {
+										"type": "integer",
+										"default": 32768,
+										"description": "Maximum size of the message body to include in the dump"
+									},
+									"endpoint": {
+										"type": "string",
+										"description": "Endpoint for where to send messages (can also refer to a route id, endpoint pattern)"
+									},
+									"exchangePattern": {
+										"type": "string",
+										"enum": [
+											"InOnly",
+											"InOut"
+										],
+										"description": "Exchange pattern when sending"
+									},
+									"poll": {
+										"type": "boolean",
+										"description": "Whether to poll message from the endpoint instead of sending"
+									},
+									"pollTimeout": {
+										"type": "integer",
+										"default": 20000,
+										"description": "Timeout when using poll mode"
+									}
+								}
+							}
+						}
+					}
+				},
+				"responses": {
+					"200": {
+						"description": "Camel Send output",
+						"content": {
+							"application\/json": {
+								
+							}
+						}
+					}
+				}
+			}
+		},
+		"\/q\/dev\/service": {
+			"get": {
+				"summary": "Services",
+				"description": "Services used for network communication with clients",
+				"operationId": "service",
+				"responses": {
+					"200": {
+						"description": "Services output",
+						"content": {
+							"application\/json": {
+								
+							}
+						}
+					}
+				}
+			}
+		},
+		"\/q\/dev\/sftp": {
+			"get": {
+				"summary": "SFTP",
+				"description": "Secure FTP using JSCH",
+				"operationId": "sftp",
+				"responses": {
+					"200": {
+						"description": "SFTP output",
+						"content": {
+							"application\/json": {
+								
+							}
+						}
+					}
+				}
+			}
+		},
+		"\/q\/dev\/simple-language": {
+			"get": {
+				"summary": "Simple Language",
+				"description": "Display simple language details",
+				"operationId": "simple-language",
+				"responses": {
+					"200": {
+						"description": "Simple Language output",
+						"content": {
+							"application\/json": {
+								
+							}
+						}
+					}
+				}
+			}
+		},
+		"\/q\/dev\/source": {
+			"get": {
+				"summary": "Source",
+				"description": "Dump route source code",
+				"operationId": "source",
+				"parameters": [
+					{
+						"name": "filter",
+						"in": "query",
+						"description": "Filters the routes matching by route id, route uri, and source location",
+						"required": false,
+						"schema": {
+							"type": "string"
+						}
+					},
+					{
+						"name": "limit",
+						"in": "query",
+						"description": "Limits the number of entries displayed",
+						"required": false,
+						"schema": {
+							"type": "integer"
+						}
+					}
+				],
+				"responses": {
+					"200": {
+						"description": "Source output",
+						"content": {
+							"application\/json": {
+								
+							}
+						}
+					}
+				}
+			}
+		},
+		"\/q\/dev\/sql-query": {
+			"post": {
+				"summary": "SQL Query",
+				"description": "Execute SQL queries on DataSource beans",
+				"operationId": "sql-query",
+				"requestBody": {
+					"content": {
+						"application\/json": {
+							"schema": {
+								"type": "object",
+								"properties": {
+									"actionType": {
+										"type": "string",
+										"default": "query",
+										"enum": [
+											"query",
+											"update-row"
+										],
+										"description": "Action type: query (default) or update-row"
+									},
+									"columnValues": {
+										"type": "string",
+										"description": "Changed column-value pairs as JSON string for update-row action"
+									},
+									"datasource": {
+										"type": "string",
+										"description": "Name of the DataSource bean in the registry (auto-detected if only one exists)"
+									},
+									"maxRows": {
+										"type": "integer",
+										"default": 100,
+										"description": "Maximum number of rows to return"
+									},
+									"primaryKeyValues": {
+										"type": "string",
+										"description": "Primary key column-value pairs as JSON string for update-row action"
+									},
+									"queryTimeout": {
+										"type": "integer",
+										"default": 30,
+										"description": "Query timeout in seconds"
+									},
+									"sql": {
+										"type": "string",
+										"description": "The SQL query to execute"
+									},
+									"table": {
+										"type": "string",
+										"description": "Table name for update-row action"
+									}
+								}
+							}
+						}
+					}
+				},
+				"responses": {
+					"200": {
+						"description": "SQL Query output",
+						"content": {
+							"application\/json": {
+								
+							}
+						}
+					}
+				}
+			}
+		},
+		"\/q\/dev\/sql-trace": {
+			"get": {
+				"summary": "SQL Trace",
+				"description": "Trace SQL query executions",
+				"operationId": "sql-trace",
+				"responses": {
+					"200": {
+						"description": "SQL Trace output",
+						"content": {
+							"application\/json": {
+								
+							}
+						}
+					}
+				}
+			}
+		},
+		"\/q\/dev\/startup-recorder": {
+			"get": {
+				"summary": "Startup Recorder",
+				"description": "Starting recording information",
+				"operationId": "startup-recorder",
+				"responses": {
+					"200": {
+						"description": "Startup Recorder output",
+						"content": {
+							"application\/json": {
+								
+							}
+						}
+					}
+				}
+			}
+		},
+		"\/q\/dev\/stub": {
+			"get": {
+				"summary": "Stub",
+				"description": "Browse messages on stub endpoints",
+				"operationId": "stub",
+				"parameters": [
+					{
+						"name": "browse",
+						"in": "query",
+						"description": "Whether to browse messages",
+						"required": false,
+						"schema": {
+							"type": "boolean",
+							"default": false
+						}
+					},
+					{
+						"name": "filter",
+						"in": "query",
+						"description": "Filters the routes matching by queue name",
+						"required": false,
+						"schema": {
+							"type": "string"
+						}
+					},
+					{
+						"name": "format",
+						"in": "query",
+						"description": "To use either xml or json output format",
+						"required": false,
+						"schema": {
+							"type": "string",
+							"enum": [
+								"xml",
+								"json"
+							]
+						}
+					},
+					{
+						"name": "limit",
+						"in": "query",
+						"description": "Limits the number of messages dumped",
+						"required": false,
+						"schema": {
+							"type": "integer"
+						}
+					}
+				],
+				"responses": {
+					"200": {
+						"description": "Stub output",
+						"content": {
+							"application\/json": {
+								
+							}
+						}
+					}
+				}
+			}
+		},
+		"\/q\/dev\/system-properties": {
+			"get": {
+				"summary": "System Properties",
+				"description": "Displays Java System Properties",
+				"operationId": "system-properties",
+				"responses": {
+					"200": {
+						"description": "System Properties output",
+						"content": {
+							"application\/json": {
+								
+							}
+						}
+					}
+				}
+			}
+		},
+		"\/q\/dev\/thread": {
+			"get": {
+				"summary": "Thread",
+				"description": "Displays JVM Threads information",
+				"operationId": "thread",
+				"parameters": [
+					{
+						"name": "stackTrace",
+						"in": "query",
+						"description": "Whether to include thread stack traces",
+						"required": false,
+						"schema": {
+							"type": "boolean",
+							"default": false
+						}
+					}
+				],
+				"responses": {
+					"200": {
+						"description": "Thread output",
+						"content": {
+							"application\/json": {
+								
+							}
+						}
+					}
+				}
+			}
+		},
+		"\/q\/dev\/top": {
+			"get": {
+				"summary": "Top Routes",
+				"description": "Display the top routes",
+				"operationId": "top",
+				"parameters": [
+					{
+						"name": "filter",
+						"in": "query",
+						"description": "Filters the routes and processors matching by route id, route uri, processor id, and source location",
+						"required": false,
+						"schema": {
+							"type": "string"
+						}
+					},
+					{
+						"name": "limit",
+						"in": "query",
+						"description": "Limits the number of entries displayed",
+						"required": false,
+						"schema": {
+							"type": "integer"
+						}
+					}
+				],
+				"responses": {
+					"200": {
+						"description": "Top Routes output",
+						"content": {
+							"application\/json": {
+								
+							}
+						}
+					}
+				}
+			}
+		},
+		"\/q\/dev\/trace": {
+			"post": {
+				"summary": "Camel Tracing",
+				"description": "Trace routed messages",
+				"operationId": "trace",
+				"requestBody": {
+					"content": {
+						"application\/json": {
+							"schema": {
+								"type": "object",
+								"properties": {
+									"dump": {
+										"type": "string",
+										"enum": [
+											"true",
+											"false"
+										],
+										"description": "Whether to dump trace messages"
+									},
+									"enabled": {
+										"type": "string",
+										"enum": [
+											"true",
+											"false"
+										],
+										"description": "Whether to enable or disable tracing"
+									}
+								}
+							}
+						}
+					}
+				},
+				"responses": {
+					"200": {
+						"description": "Camel Tracing output",
+						"content": {
+							"application\/json": {
+								
+							}
+						}
+					}
+				}
+			}
+		},
+		"\/q\/dev\/transformers": {
+			"get": {
+				"summary": "Data Type Transformers",
+				"description": "Data-type transformer information",
+				"operationId": "transformers",
+				"responses": {
+					"200": {
+						"description": "Data Type Transformers output",
+						"content": {
+							"application\/json": {
+								
+							}
+						}
+					}
+				}
+			}
+		},
+		"\/q\/dev\/type-converters": {
+			"get": {
+				"summary": "Type Converters",
+				"description": "Camel Type Converter information",
+				"operationId": "type-converters",
+				"responses": {
+					"200": {
+						"description": "Type Converters output",
+						"content": {
+							"application\/json": {
+								
+							}
+						}
+					}
+				}
+			}
+		},
+		"\/q\/dev\/variables": {
+			"get": {
+				"summary": "Variables",
+				"description": "Displays variables",
+				"operationId": "variables",
+				"responses": {
+					"200": {
+						"description": "Variables output",
+						"content": {
+							"application\/json": {
+								
+							}
+						}
+					}
+				}
+			}
+		},
+		"\/q\/dev\/vertx-websocket": {
+			"get": {
+				"summary": "Vert.x WebSocket",
+				"description": "Vert.x WebSocket consumer details",
+				"operationId": "vertx-websocket",
+				"parameters": [
+					{
+						"name": "includeHeaders",
+						"in": "query",
+						"description": "Whether to include WebSocket peer connection header details in the output",
+						"required": false,
+						"schema": {
+							"type": "boolean",
+							"default": true
+						}
+					}
+				],
+				"responses": {
+					"200": {
+						"description": "Vert.x WebSocket output",
+						"content": {
+							"application\/json": {
+								
+							}
+						}
+					}
+				}
+			}
+		}
+	}
+}
+
