@@ -70,17 +70,16 @@ class ZooKeeperClusterViewLeadershipLostIT {
                 }
             });
 
-            CamelClusterView view = clusterService.getView(NAMESPACE);
-            view.addEventListener((CamelClusterEventListener.Leadership) (
-                    view1, leader) -> numberOfLeadershipChangedPushed.incrementAndGet()
-            );
+            CamelClusterView clusterView = clusterService.getView(NAMESPACE);
+            clusterView.addEventListener((CamelClusterEventListener.Leadership) (
+                    view, leader) -> numberOfLeadershipChangedPushed.incrementAndGet());
 
             context.start();
 
             await().atMost(1, TimeUnit.MINUTES)
                     .untilAsserted(() -> {
                         assertEquals(true,
-                                view.getLocalMember().isLeader(),
+                                clusterView.getLocalMember().isLeader(),
                                 "the only node of the cluster must be the leader");
                         assertEquals(true,
                                 context.getRouteController().getRouteStatus(ROUTE_ID).isStarted(),
@@ -93,7 +92,7 @@ class ZooKeeperClusterViewLeadershipLostIT {
                 await().atMost(1, TimeUnit.MINUTES)
                         .untilAsserted(() -> {
                             assertEquals(false,
-                                    view.getLocalMember().isLeader(),
+                                    clusterView.getLocalMember().isLeader(),
                                     "the leadership must be given up once ZooKeeper is no longer reachable");
                             assertEquals(false,
                                     context.getRouteController().getRouteStatus(ROUTE_ID).isStarted(),
@@ -106,13 +105,13 @@ class ZooKeeperClusterViewLeadershipLostIT {
             await().atMost(1, TimeUnit.MINUTES)
                     .untilAsserted(() -> {
                         assertEquals(true,
-                                view.getLocalMember().isLeader(),
+                                clusterView.getLocalMember().isLeader(),
                                 "the node must re-enter the election once ZooKeeper is reachable again");
                         assertEquals(true,
                                 context.getRouteController().getRouteStatus(ROUTE_ID).isStarted(),
                                 "the clustered route must be restarted once the leadership is taken back");
                     });
-            view.stop();
+            clusterView.stop();
 
             /*
             Give some time so the event can be consumed
@@ -120,15 +119,15 @@ class ZooKeeperClusterViewLeadershipLostIT {
             this is just a safeguard so that if an event is pushed it has some time to be consumed
             */
             await()
-                .pollDelay(1, TimeUnit.SECONDS)
-                .atLeast(1, TimeUnit.SECONDS)
-                .atMost(2, TimeUnit.SECONDS)
-                .until(() -> true);
+                    .pollDelay(1, TimeUnit.SECONDS)
+                    .atLeast(1, TimeUnit.SECONDS)
+                    .atMost(2, TimeUnit.SECONDS)
+                    .until(() -> true);
 
             assertEquals(EXPECTED_PUSHED_EVENTS_NUM,
                     numberOfLeadershipChangedPushed.get(),
-                    "the pushed Leadership Changed event must be %d otherwise a push happened on stop view".formatted(EXPECTED_PUSHED_EVENTS_NUM)
-            );
+                    "the pushed Leadership Changed event must be %d otherwise a push happened on stop view"
+                            .formatted(EXPECTED_PUSHED_EVENTS_NUM));
         }
     }
 
