@@ -275,6 +275,7 @@ public class SubscriptionHelperManualIT {
     void shouldResubscribeOnDisconnectMessage() {
         var consumer = createConsumer("Opportunity");
         subscription.subscribe(consumer);
+        var resubscribeAttempts = new AtomicInteger();
 
         messages.add("""
                 [
@@ -306,29 +307,31 @@ public class SubscriptionHelperManualIT {
                 (MessageListener) (clientSessionChannel, message) -> {
                     var channel = (String) message.get("subscription");
                     if (channel != null && channel.contains("Opportunity")) {
-                        messages.add("""
-                                [
-                                  {
-                                    "data": {
-                                      "event": {
-                                        "createdDate": "2020-12-11T13:44:57.891Z",
-                                        "replayId": 2,
-                                        "type": "created"
+                        if (resubscribeAttempts.incrementAndGet() == 1) {
+                            messages.add("""
+                                    [
+                                      {
+                                        "data": {
+                                          "event": {
+                                            "createdDate": "2020-12-11T13:44:57.891Z",
+                                            "replayId": 2,
+                                            "type": "created"
+                                          },
+                                          "sobject": {
+                                            "Id": "0061n00002XWMgVAAX",
+                                            "Name": "shouldResubscribeOnDisconnectMessage 2"
+                                          }
+                                        },
+                                        "channel": "/topic/Opportunity"
                                       },
-                                      "sobject": {
-                                        "Id": "0061n00002XWMgVAAX",
-                                        "Name": "shouldResubscribeOnDisconnectMessage 2"
+                                      {
+                                        "clientId": "5ra4927ikfky6cb12juthkpofeu8",
+                                        "channel": "/meta/connect",
+                                        "id": "$id",
+                                        "successful": true
                                       }
-                                    },
-                                    "channel": "/topic/Opportunity"
-                                  },
-                                  {
-                                    "clientId": "5ra4927ikfky6cb12juthkpofeu8",
-                                    "channel": "/meta/connect",
-                                    "id": "$id",
-                                    "successful": true
-                                  }
-                                ]""");
+                                    ]""");
+                        }
                     }
                 });
         messages.add("""
@@ -341,6 +344,7 @@ public class SubscriptionHelperManualIT {
 
         verify(consumer, timeout(20000)).processMessage(any(ClientSessionChannel.class),
                 messageWithName("shouldResubscribeOnDisconnectMessage 2"));
+        await().during(1, SECONDS).atMost(2, SECONDS).until(() -> resubscribeAttempts.get() == 1);
 
         verify(consumer, atLeastOnce()).getEndpoint();
         verify(consumer, atLeastOnce()).getTopicName();

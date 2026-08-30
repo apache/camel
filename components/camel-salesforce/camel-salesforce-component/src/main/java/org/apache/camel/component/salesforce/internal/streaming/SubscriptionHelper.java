@@ -30,6 +30,7 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.RejectedExecutionException;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeoutException;
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -94,9 +95,9 @@ public class SubscriptionHelper extends ServiceSupport {
     private static final String DENIED_BY_SEC_POLICY = "403:denied_by_security_policy";
     private static final String AUTHORIZATION_ERROR = "403::";
 
-    BayeuxClient client;
+    volatile BayeuxClient client;
 
-    private ScheduledExecutorService taskExecutor;
+    private volatile ScheduledExecutorService taskExecutor;
     private final SalesforceComponent component;
     private SalesforceSession session;
 
@@ -248,67 +249,58 @@ public class SubscriptionHelper extends ServiceSupport {
     }
 
     private MessageListener createDisconnectListener() {
-        return (channel, message) -> component
-                .getHttpClient()
-                .getWorkerPool()
-                .execute(
-                        () -> {
-                            LOG.debug("[CHANNEL:META_DISCONNECT]: {}", message);
+        return (channel, message) -> {
+            LOG.debug("[CHANNEL:META_DISCONNECT]: {}", message);
 
-                            if (isStoppingOrStopped()) {
-                                LOG.debug("Ignoring disconnect message while stopping");
-                                return;
-                            }
-
-                            LOG.info("Server disconnect received, reconnecting to Streaming API");
-                            attemptReconnectUntilSuccessful();
-                        });
-    }
-
-    private void attemptReconnectUntilSuccessful() {
-        if (isStoppingOrStopped()) {
-            return;
-        }
-        if (!reconnecting.compareAndSet(false, true)) {
-            LOG.debug("Reconnect already in progress");
-            return;
-        }
-
-        try {
-            if (!channelToConsumers.isEmpty()) {
-                channelsToSubscribe.clear();
-                channelsToSubscribe.addAll(channelToConsumers.keySet());
-                LOG.info("Channels to resubscribe after reconnect: {}", channelsToSubscribe);
+            if (isStoppingOrStopped()) {
+                LOG.debug("Ignoring disconnect message while stopping");
+                return;
+            }
+            if (!reconnecting.compareAndSet(false, true)) {
+                LOG.debug("Reconnect already in progress");
+                return;
             }
 
-            long backoff = 0;
-            while (!isStoppingOrStopped()) {
-                handshakeError = null;
-                handshakeException = null;
-                connectError = null;
-                connectException = null;
+            final ScheduledExecutorService executor = taskExecutor;
+            if (executor == null) {
+                reconnecting.set(false);
+                return;
+            }
 
-                client.handshake();
-                final long waitMs = MILLISECONDS.convert(HANDSHAKE_TIMEOUT_SEC, SECONDS);
-                if (client.waitFor(waitMs, BayeuxClient.State.CONNECTED)) {
-                    LOG.info("Reconnect successful");
-                    handshakeBackoff.set(0);
-                    return;
+            try {
+                executor.execute(this::reconnectAfterDisconnect);
+            } catch (RejectedExecutionException e) {
+                reconnecting.set(false);
+                if (!isStoppingOrStopped()) {
+                    LOG.warn("Unable to schedule reconnect after server disconnect", e);
                 }
+            }
+        };
+    }
 
-                LOG.warn("Reconnect attempt failed, retrying...");
-                backoff = backoff + backoffIncrement;
-                if (backoff > maxBackoff) {
-                    backoff = maxBackoff;
+    private void reconnectAfterDisconnect() {
+        final BayeuxClient disconnectedClient = client;
+        try {
+            if (disconnectedClient == null || isStoppingOrStopped()) {
+                return;
+            }
+
+            final long waitMs = MILLISECONDS.convert(HANDSHAKE_TIMEOUT_SEC, SECONDS);
+            if (!disconnectedClient.waitFor(waitMs, BayeuxClient.State.DISCONNECTED)) {
+                if (!isStoppingOrStopped()) {
+                    LOG.warn("Timed out waiting for the Streaming API client to disconnect");
                 }
-                try {
-                    LOG.debug("Pausing for {} msecs before reconnect attempt", backoff);
-                    Thread.sleep(backoff);
-                } catch (InterruptedException e) {
-                    LOG.warn("Aborting reconnect on interrupt!", e);
-                    Thread.currentThread().interrupt();
-                    return;
-                }
+                return;
+            }
+            if (isStoppingOrStopped() || client != disconnectedClient) {
+                return;
+            }
+
+            LOG.info("Server disconnect received, reconnecting to Streaming API");
+            disconnectedClient.handshake();
+        } catch (IllegalStateException e) {
+            if (!isStoppingOrStopped()) {
+                LOG.debug("Streaming API reconnect was superseded by another state transition", e);
             }
         } finally {
             reconnecting.set(false);
