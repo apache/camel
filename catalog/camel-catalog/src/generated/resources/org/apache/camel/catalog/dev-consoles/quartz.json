@@ -11,6 +11,125 @@
     "groupId": "org.apache.camel",
     "artifactId": "camel-quartz",
     "version": "4.23.0-SNAPSHOT"
+  },
+  "response": {
+    "type": "object",
+    "properties": {
+      "schedulerName": {
+        "type": "string"
+      },
+      "schedulerInstanceId": {
+        "type": "string"
+      },
+      "quartzVersion": {
+        "type": "string"
+      },
+      "runningSince": {
+        "type": "integer"
+      },
+      "totalCounter": {
+        "type": "integer"
+      },
+      "started": {
+        "type": "boolean"
+      },
+      "shutdown": {
+        "type": "boolean"
+      },
+      "inStandbyMode": {
+        "type": "boolean"
+      },
+      "threadPoolClass": {
+        "type": "string"
+      },
+      "threadPoolSize": {
+        "type": "integer"
+      },
+      "jpbStoreClass": {
+        "type": "string",
+        "description": "The job store class name (field kept as jpbStoreClass for backwards compatibility)"
+      },
+      "jpbStoreClustered": {
+        "type": "boolean"
+      },
+      "jpbStoreSupportsPersistence": {
+        "type": "boolean"
+      },
+      "currentExecutingJobs": {
+        "type": "integer"
+      },
+      "jobs": {
+        "type": "array",
+        "items": {
+          "type": "object",
+          "properties": {
+            "jobId": {
+              "type": "string"
+            },
+            "triggerType": {
+              "type": "string"
+            },
+            "cron": {
+              "type": "string"
+            },
+            "routeId": {
+              "type": "string"
+            },
+            "uri": {
+              "type": "string"
+            },
+            "prevFireTime": {
+              "type": "integer"
+            },
+            "fireTime": {
+              "type": "integer"
+            },
+            "nextFireTime": {
+              "type": "integer"
+            },
+            "finalFireTime": {
+              "type": "integer"
+            },
+            "recovering": {
+              "type": "boolean"
+            },
+            "refireCount": {
+              "type": "integer"
+            },
+            "misfireInstruction": {
+              "type": "integer"
+            }
+          },
+          "required": [
+            "recovering",
+            "refireCount",
+            "misfireInstruction"
+          ]
+        },
+        "description": "Only present when there are any currently executing jobs"
+      },
+      "triggers": {
+        "type": "array",
+        "items": {
+          "type": "object",
+          "properties": {
+            "routeId": {
+              "type": "string"
+            },
+            "triggerType": {
+              "type": "string"
+            },
+            "cron": {
+              "type": "string"
+            },
+            "repeatInterval": {
+              "type": "string"
+            }
+          }
+        },
+        "description": "Only present when there are any scheduled triggers"
+      }
+    }
   }
 }
 

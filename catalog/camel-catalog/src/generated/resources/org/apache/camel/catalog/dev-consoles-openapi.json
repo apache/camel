@@ -132,7 +132,64 @@
 						"description": "AWS Secrets output",
 						"content": {
 							"application\/json": {
-								
+								"schema": {
+									"type": "object",
+									"properties": {
+										"region": {
+											"type": "string",
+											"description": "The AWS region (only present when the AWS Secrets Manager properties function is active)"
+										},
+										"login": {
+											"type": "string",
+											"description": "The login method (only present when the AWS Secrets Manager properties function is active)"
+										},
+										"refreshEnabled": {
+											"type": "boolean",
+											"description": "Whether secret refresh is enabled (only present when configured)"
+										},
+										"refreshPeriod": {
+											"type": "integer",
+											"description": "The refresh period in milliseconds (only present when configured)"
+										},
+										"lastCheckTimestamp": {
+											"type": "integer",
+											"description": "Epoch time in milliseconds of the last check (only present when known)"
+										},
+										"lastCheckAge": {
+											"type": "string",
+											"description": "Relative age of the last check (only present when known)"
+										},
+										"lastReloadTimestamp": {
+											"type": "integer",
+											"description": "Epoch time in milliseconds of the last reload (only present when known)"
+										},
+										"lastReloadAge": {
+											"type": "string",
+											"description": "Relative age of the last reload (only present when known)"
+										},
+										"secrets": {
+											"type": "array",
+											"items": {
+												"type": "object",
+												"properties": {
+													"name": {
+														"type": "string",
+														"description": "The secret name"
+													},
+													"timestamp": {
+														"type": "integer",
+														"description": "Epoch time in milliseconds of the last update (only present when known)"
+													},
+													"age": {
+														"type": "string",
+														"description": "Relative age of the last update (only present when known)"
+													}
+												}
+											},
+											"description": "The secrets in use (only present when the AWS Secrets Manager properties function is active)"
+										}
+									}
+								}
 							}
 						}
 					}
@@ -2840,7 +2897,228 @@
 						"description": "JFR Runtime Instrumentation output",
 						"content": {
 							"application\/json": {
-								
+								"schema": {
+									"type": "object",
+									"properties": {
+										"runtimeEvents": {
+											"type": "boolean",
+											"description": "Whether camel-jfr runtime instrumentation is registered (status command)"
+										},
+										"recordings": {
+											"type": "array",
+											"items": {
+												"type": "object",
+												"properties": {
+													"name": {
+														"type": "string"
+													},
+													"state": {
+														"type": "string"
+													},
+													"destination": {
+														"type": "string"
+													}
+												}
+											},
+											"description": "The active JFR recordings (status command)"
+										},
+										"events": {
+											"type": "object",
+											"additionalProperties": {
+												"type": "boolean"
+											},
+											"description": "Whether each runtime event is enabled, keyed by short name (status command)"
+										},
+										"success": {
+											"type": "boolean",
+											"description": "Whether the toggle succeeded (enable\/disable command)"
+										},
+										"result": {
+											"type": "string",
+											"description": "The toggle result message (enable\/disable command)"
+										},
+										"jfc": {
+											"type": "string",
+											"description": "The generated jfc settings overlay (jfc command)"
+										},
+										"error": {
+											"type": "string",
+											"description": "An error message (jfc, snapshot, or unknown command)"
+										},
+										"snapshot": {
+											"type": "boolean",
+											"description": "Whether this is a snapshot response (snapshot command)"
+										},
+										"snapshotTimestamp": {
+											"type": "integer",
+											"description": "Epoch time in milliseconds the snapshot was taken (snapshot command)"
+										},
+										"eventCount": {
+											"type": "integer",
+											"description": "The number of matched events in the snapshot (snapshot command)"
+										},
+										"routes": {
+											"type": "array",
+											"items": {
+												"type": "object",
+												"properties": {
+													"total": {
+														"type": "integer"
+													},
+													"failed": {
+														"type": "integer"
+													},
+													"minMs": {
+														"type": "number"
+													},
+													"meanMs": {
+														"type": "number"
+													},
+													"maxMs": {
+														"type": "number"
+													},
+													"routeId": {
+														"type": "string"
+													}
+												},
+												"required": [
+													"total",
+													"failed",
+													"minMs",
+													"meanMs",
+													"maxMs"
+												]
+											},
+											"description": "Per-route duration statistics (snapshot command)"
+										},
+										"processors": {
+											"type": "array",
+											"items": {
+												"type": "object",
+												"properties": {
+													"total": {
+														"type": "integer"
+													},
+													"failed": {
+														"type": "integer"
+													},
+													"minMs": {
+														"type": "number"
+													},
+													"meanMs": {
+														"type": "number"
+													},
+													"maxMs": {
+														"type": "number"
+													},
+													"processorId": {
+														"type": "string"
+													},
+													"processorType": {
+														"type": "string"
+													},
+													"routeId": {
+														"type": "string"
+													}
+												},
+												"required": [
+													"total",
+													"failed",
+													"minMs",
+													"meanMs",
+													"maxMs"
+												]
+											},
+											"description": "Per-processor duration statistics (snapshot command)"
+										},
+										"endpoints": {
+											"type": "array",
+											"items": {
+												"type": "object",
+												"properties": {
+													"total": {
+														"type": "integer"
+													},
+													"failed": {
+														"type": "integer"
+													},
+													"minMs": {
+														"type": "number"
+													},
+													"meanMs": {
+														"type": "number"
+													},
+													"maxMs": {
+														"type": "number"
+													},
+													"endpointUri": {
+														"type": "string"
+													}
+												},
+												"required": [
+													"total",
+													"failed",
+													"minMs",
+													"meanMs",
+													"maxMs"
+												]
+											},
+											"description": "Per-endpoint duration statistics (snapshot command)"
+										},
+										"failures": {
+											"type": "array",
+											"items": {
+												"type": "object",
+												"properties": {
+													"timestamp": {
+														"type": "string"
+													},
+													"exchangeId": {
+														"type": "string"
+													},
+													"routeId": {
+														"type": "string"
+													},
+													"exceptionType": {
+														"type": "string"
+													},
+													"exceptionMessage": {
+														"type": "string"
+													}
+												}
+											},
+											"description": "The most recent failures, newest first (snapshot command)"
+										},
+										"redeliveries": {
+											"type": "array",
+											"items": {
+												"type": "object",
+												"properties": {
+													"timestamp": {
+														"type": "string"
+													},
+													"exchangeId": {
+														"type": "string"
+													},
+													"routeId": {
+														"type": "string"
+													},
+													"attempt": {
+														"type": "integer"
+													},
+													"maxAttempts": {
+														"type": "integer"
+													}
+												},
+												"required": [
+													"attempt",
+													"maxAttempts"
+												]
+											},
+											"description": "The most recent redeliveries, newest first (snapshot command)"
+										}
+									}
+								}
 							}
 						}
 					}
@@ -4377,7 +4655,125 @@
 						"description": "Quartz output",
 						"content": {
 							"application\/json": {
-								
+								"schema": {
+									"type": "object",
+									"properties": {
+										"schedulerName": {
+											"type": "string"
+										},
+										"schedulerInstanceId": {
+											"type": "string"
+										},
+										"quartzVersion": {
+											"type": "string"
+										},
+										"runningSince": {
+											"type": "integer"
+										},
+										"totalCounter": {
+											"type": "integer"
+										},
+										"started": {
+											"type": "boolean"
+										},
+										"shutdown": {
+											"type": "boolean"
+										},
+										"inStandbyMode": {
+											"type": "boolean"
+										},
+										"threadPoolClass": {
+											"type": "string"
+										},
+										"threadPoolSize": {
+											"type": "integer"
+										},
+										"jpbStoreClass": {
+											"type": "string",
+											"description": "The job store class name (field kept as jpbStoreClass for backwards compatibility)"
+										},
+										"jpbStoreClustered": {
+											"type": "boolean"
+										},
+										"jpbStoreSupportsPersistence": {
+											"type": "boolean"
+										},
+										"currentExecutingJobs": {
+											"type": "integer"
+										},
+										"jobs": {
+											"type": "array",
+											"items": {
+												"type": "object",
+												"properties": {
+													"jobId": {
+														"type": "string"
+													},
+													"triggerType": {
+														"type": "string"
+													},
+													"cron": {
+														"type": "string"
+													},
+													"routeId": {
+														"type": "string"
+													},
+													"uri": {
+														"type": "string"
+													},
+													"prevFireTime": {
+														"type": "integer"
+													},
+													"fireTime": {
+														"type": "integer"
+													},
+													"nextFireTime": {
+														"type": "integer"
+													},
+													"finalFireTime": {
+														"type": "integer"
+													},
+													"recovering": {
+														"type": "boolean"
+													},
+													"refireCount": {
+														"type": "integer"
+													},
+													"misfireInstruction": {
+														"type": "integer"
+													}
+												},
+												"required": [
+													"recovering",
+													"refireCount",
+													"misfireInstruction"
+												]
+											},
+											"description": "Only present when there are any currently executing jobs"
+										},
+										"triggers": {
+											"type": "array",
+											"items": {
+												"type": "object",
+												"properties": {
+													"routeId": {
+														"type": "string"
+													},
+													"triggerType": {
+														"type": "string"
+													},
+													"cron": {
+														"type": "string"
+													},
+													"repeatInterval": {
+														"type": "string"
+													}
+												}
+											},
+											"description": "Only present when there are any scheduled triggers"
+										}
+									}
+								}
 							}
 						}
 					}
