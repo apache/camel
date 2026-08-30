@@ -154,6 +154,9 @@ public class OpenAIProducer extends DefaultAsyncProducer {
 
         // Resolve parameters from headers or configuration
         String model = resolveParameter(in, OpenAIConstants.MODEL, config.getModel(), String.class);
+        if (model == null) {
+            throw new IllegalArgumentException("Model must be specified via model parameter or CamelOpenAIModel header");
+        }
         Double temperature = resolveParameter(in, OpenAIConstants.TEMPERATURE, config.getTemperature(), Double.class);
         Double topP = resolveParameter(in, OpenAIConstants.TOP_P, config.getTopP(), Double.class);
         Integer maxTokens = resolveParameter(in, OpenAIConstants.MAX_TOKENS, config.getMaxTokens(), Integer.class);
