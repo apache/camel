@@ -368,7 +368,7 @@ onException(RetriableException.class, RateLimitException.class)
     .redeliveryDelay(2000);
 ----
 
-For OpenAI-specific detail see xref:openai-component.adoc#_structured_error_exchange_properties[OpenAI structured error properties]. For LangChain4j chat see xref:langchain4j-chat-component.adoc#_structured_error_exchange_properties[LangChain4j Chat structured error properties].
+For OpenAI-specific detail see xref:openai-component.adoc#_structured_error_exchange_properties[OpenAI structured error properties]. For LangChain4j chat see xref:langchain4j-chat-component.adoc#_structured_error_exchange_properties[LangChain4j Chat structured error properties]. For LangChain4j agent and embeddings see xref:langchain4j-agent-component.adoc#_structured_error_exchange_properties[LangChain4j Agent structured error properties] and xref:langchain4j-embeddings-component.adoc#_structured_error_exchange_properties[LangChain4j Embeddings structured error properties]. For Spring AI chat see xref:spring-ai-chat-component.adoc#_structured_error_exchange_properties[Spring AI Chat structured error properties].
 
 For the per-component detail see xref:openai-component.adoc#_targeting_sdk_exceptions_with_onexception[OpenAI error handling] and xref:langchain4j-chat-component.adoc#_error_handling[LangChain4j Chat error handling].
 

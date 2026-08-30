@@ -1178,6 +1178,37 @@ You can also define the `ResponseFormat` at the `ChatModel` level. See the https
 * The same schema file can be shared across `camel-openai` and `camel-langchain4j-agent` components
 ====
 
+[[structured_error_exchange_properties]]
+=== Structured error exchange properties
+
+When a LangChain4j agent call fails, Camel sets structured metadata on the exchange **before** the model exception propagates. This works even when GenAI observability is disabled.
+
+[cols="2,3"]
+|===
+| Exchange property | Meaning
+
+| `CamelAiErrorCategory` | Coarse category derived from the LangChain4j exception: `RATE_LIMIT`, `SERVER_ERROR`, `VALIDATION`, `AUTH`, or `UNKNOWN`
+| `CamelAiRetryAfterMillis` | Not populated for LangChain4j providers (OpenAI-only today)
+|===
+
+Category-based handling complements matching on LangChain4j exception types in xref:langchain4j-chat-component.adoc#_error_handling[LangChain4j Chat error handling]:
+
+[source, java]
+----
+onException(Exception.class)
+    .process(exchange -> {
+        String category = exchange.getProperty("CamelAiErrorCategory", String.class);
+        if ("RATE_LIMIT".equals(category)) {
+            exchange.getIn().setHeader("RateLimited", true);
+        }
+    })
+    .maximumRedeliveries(3)
+    .handled(true)
+    .to("direct:rate-limited");
+----
+
+See xref:ai-llm-integration-guide.adoc#_structured_error_exchange_properties[AI LLM integration guide] for a cross-component overview.
+
 == Sub-Pages
 
 For more details on specific features, see:

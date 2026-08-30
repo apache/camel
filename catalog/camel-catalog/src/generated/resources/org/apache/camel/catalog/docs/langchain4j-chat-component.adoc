@@ -367,6 +367,35 @@ from("direct:chat")
     .to("langchain4j-chat:my-chat");
 ----
 
+=== Structured error exchange properties
+
+When a LangChain4j chat call fails, Camel sets structured metadata on the exchange **before** the model exception propagates. This works even when GenAI observability is disabled.
+
+[cols="2,3"]
+|===
+| Exchange property | Meaning
+
+| `CamelAiErrorCategory` | Coarse category derived from the LangChain4j exception: `RATE_LIMIT`, `SERVER_ERROR`, `VALIDATION`, `AUTH`, or `UNKNOWN`
+| `CamelAiRetryAfterMillis` | Not populated for LangChain4j providers (OpenAI-only today)
+|===
+
+Category-based handling complements matching on `RetriableException` / `NonRetriableException` above:
+
+[source, java]
+----
+onException(Exception.class)
+    .process(exchange -> {
+        String category = exchange.getProperty("CamelAiErrorCategory", String.class);
+        if ("VALIDATION".equals(category)) {
+            exchange.getIn().setHeader("Rejected", true);
+        }
+    })
+    .handled(true)
+    .to("direct:rejected");
+----
+
+The same properties are set by xref:langchain4j-agent-component.adoc[LangChain4j Agent] and xref:langchain4j-embeddings-component.adoc[LangChain4j Embeddings] on their failure paths. See xref:ai-llm-integration-guide.adoc#_structured_error_exchange_properties[AI LLM integration guide] for a cross-component overview.
+
 IMPORTANT: The mapping is performed by the LangChain4j model implementation, not by Camel. `OpenAiChatModel` and `OllamaChatModel` route their calls through LangChain4j's exception mapper, but a model that does not will propagate the raw exception of its own HTTP client instead. Verify what your provider throws before relying on the type.
 
 === Model retries vs Camel redelivery
