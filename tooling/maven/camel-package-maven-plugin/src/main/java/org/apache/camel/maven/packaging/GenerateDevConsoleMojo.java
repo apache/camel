@@ -415,7 +415,10 @@ public class GenerateDevConsoleMojo extends AbstractGeneratorMojo {
             }
         }
 
-        Class<?> clazz = (Class<?>) type;
+        if (!(type instanceof Class<?> clazz)) {
+            // a TypeVariable, WildcardType or GenericArrayType has no fixed JSON shape to describe
+            return new JsonObject();
+        }
         if (clazz.isRecord()) {
             return buildRecordSchema(clazz);
         }

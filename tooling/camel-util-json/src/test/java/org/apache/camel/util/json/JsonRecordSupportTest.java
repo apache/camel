@@ -43,6 +43,14 @@ public class JsonRecordSupportTest {
     record MapRecord(String id, Map<String, String> details) {
     }
 
+    enum Status {
+        ACTIVE,
+        INACTIVE
+    }
+
+    record EnumRecord(String id, Status status) {
+    }
+
     @Test
     void flatRecordConvertsAllFields() {
         JsonObject json = JsonRecordSupport.toJsonObject(new FlatRecord("foo", 3, true));
@@ -90,5 +98,13 @@ public class JsonRecordSupportTest {
         JsonObject detailsJson = json.getJsonObject("details");
         assertEquals("timeout", detailsJson.getString("cause"));
         assertEquals("true", detailsJson.getString("retryable"));
+    }
+
+    @Test
+    void enumFieldConvertsToItsName() {
+        JsonObject json = JsonRecordSupport.toJsonObject(new EnumRecord("check1", Status.ACTIVE));
+
+        assertEquals("check1", json.getString("id"));
+        assertEquals("ACTIVE", json.getString("status"));
     }
 }

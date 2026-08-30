@@ -49,6 +49,13 @@ public class GenerateDevConsoleMojoResponseSchemaTest {
         }
     }
 
+    static class GenericFieldConsole<T> {
+
+        // a type parameter has no resolvable Class, exercising the TypeVariable fallback
+        public record Response<T>(T value) {
+        }
+    }
+
     @Test
     void consoleWithoutResponseRecordReturnsNull() {
         JsonObject schema = GenerateDevConsoleMojo.buildResponseSchema(NoResponseConsole.class);
@@ -135,5 +142,14 @@ public class GenerateDevConsoleMojoResponseSchemaTest {
 
         JsonObject anyValue = properties.getJsonObject("anyValue");
         assertTrue(anyValue.isEmpty());
+    }
+
+    @Test
+    void typeVariableFieldBuildsUnconstrainedSchemaInsteadOfThrowing() {
+        JsonObject schema = GenerateDevConsoleMojo.buildResponseSchema(GenericFieldConsole.class);
+        JsonObject properties = schema.getJsonObject("properties");
+
+        JsonObject value = properties.getJsonObject("value");
+        assertTrue(value.isEmpty());
     }
 }
