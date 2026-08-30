@@ -247,6 +247,13 @@ exposes the same setting via `main.configure().aiObservability().withEnabled(fal
 
 Spring AI chat (`spring-ai-chat`) producers emit the same GenAI spans and metrics in Phase 3.
 
+When a non-NOOP `ObservationRegistry` is bound in the Camel registry, GenAI client calls are recorded
+as Micrometer Observations (`gen_ai.client.operation`). Camel then skips the `camel-telemetry` CLIENT
+span and the direct `gen_ai.client.operation` timer. Traces and the operation timer appear only if
+the registry has tracing and meter handlers respectively. Token usage counters still use
+`MeterRegistry`. Applications without an `ObservationRegistry` bean keep the previous OpenTelemetry
+and MeterRegistry behavior. `camel-micrometer-observability` is not required.
+
 OpenAI streaming chat sets `stream_options.include_usage=true` only when GenAI observability is enabled,
 adding a final chunk with token usage for span/metric recording.
 
