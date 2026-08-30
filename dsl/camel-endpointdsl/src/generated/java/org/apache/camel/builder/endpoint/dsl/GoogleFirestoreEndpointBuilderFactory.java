@@ -770,6 +770,48 @@ public interface GoogleFirestoreEndpointBuilderFactory {
             return this;
         }
         /**
+         * Maximum number of realtime document changes buffered between two
+         * polls. The changes reported by the snapshot listener are buffered
+         * until the next poll picks them up, so a collection changing faster
+         * than the route consumes it makes that buffer grow. When the buffer is
+         * full the oldest buffered change is discarded and a warning is logged.
+         * Use 0 for an unbounded buffer. Only used when realtimeUpdates is
+         * enabled.
+         * 
+         * The option is a: <code>int</code> type.
+         * 
+         * Default: 0
+         * Group: consumer (advanced)
+         * 
+         * @param maxPendingChanges the value to set
+         * @return the dsl builder
+         */
+        default AdvancedGoogleFirestoreEndpointConsumerBuilder maxPendingChanges(int maxPendingChanges) {
+            doSetProperty("maxPendingChanges", maxPendingChanges);
+            return this;
+        }
+        /**
+         * Maximum number of realtime document changes buffered between two
+         * polls. The changes reported by the snapshot listener are buffered
+         * until the next poll picks them up, so a collection changing faster
+         * than the route consumes it makes that buffer grow. When the buffer is
+         * full the oldest buffered change is discarded and a warning is logged.
+         * Use 0 for an unbounded buffer. Only used when realtimeUpdates is
+         * enabled.
+         * 
+         * The option will be converted to a <code>int</code> type.
+         * 
+         * Default: 0
+         * Group: consumer (advanced)
+         * 
+         * @param maxPendingChanges the value to set
+         * @return the dsl builder
+         */
+        default AdvancedGoogleFirestoreEndpointConsumerBuilder maxPendingChanges(String maxPendingChanges) {
+            doSetProperty("maxPendingChanges", maxPendingChanges);
+            return this;
+        }
+        /**
          * A pluggable org.apache.camel.PollingConsumerPollingStrategy allowing
          * you to provide your custom implementation to control error handling
          * usually occurred during the poll operation before an Exchange have
