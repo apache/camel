@@ -19,10 +19,17 @@ package org.apache.camel.component.exec;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.component.exec.impl.DefaultExecBinding;
 import org.apache.camel.test.junit6.CamelTestSupport;
+import org.apache.logging.log4j.Level;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.core.LogEvent;
+import org.apache.logging.log4j.core.Logger;
+import org.apache.logging.log4j.core.appender.AbstractAppender;
+import org.apache.logging.log4j.core.config.Property;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -84,6 +91,48 @@ class DefaultExecBindingTest extends CamelTestSupport {
 
         assertEquals(List.of("URIARGS-WORK"), command.getArgs());
         assertEquals("echo", command.getExecutable());
+    }
+
+    @Test
+    void shouldWarnOncePerEndpointWhenControlHeadersIgnored() throws Exception {
+        List<String> warnings = new CopyOnWriteArrayList<>();
+        AbstractAppender appender = new AbstractAppender("CaptureWarn", null, null, true, Property.EMPTY_ARRAY) {
+            @Override
+            public void append(LogEvent event) {
+                if (event.getLevel() == Level.WARN
+                        && event.getMessage().getFormattedMessage().contains("Control header")) {
+                    warnings.add(event.getMessage().getFormattedMessage());
+                }
+            }
+        };
+        appender.start();
+        Logger logger = (Logger) LogManager.getLogger(DefaultExecBinding.class);
+        logger.addAppender(appender);
+
+        try {
+            DefaultExecBinding binding = new DefaultExecBinding();
+            ExecComponent component = context.getComponent("exec", ExecComponent.class);
+            component.setAllowControlHeaders(false);
+            component.setBinding(binding);
+
+            ExecEndpoint endpoint1 = (ExecEndpoint) component.createEndpoint("exec:hostname");
+            ExecEndpoint endpoint2 = (ExecEndpoint) component.createEndpoint("exec:echo");
+
+            Exchange exchange1 = endpoint1.createExchange();
+            exchange1.getIn().setHeader(ExecBinding.EXEC_COMMAND_EXECUTABLE, "whoami");
+            binding.readInput(exchange1, endpoint1);
+
+            Exchange exchange2 = endpoint2.createExchange();
+            exchange2.getIn().setHeader(ExecBinding.EXEC_COMMAND_EXECUTABLE, "whoami");
+            binding.readInput(exchange2, endpoint2);
+
+            binding.readInput(endpoint1.createExchange(), endpoint1);
+
+            assertEquals(2, warnings.size(), "Expected one warning per distinct exec endpoint");
+        } finally {
+            logger.removeAppender(appender);
+            appender.stop();
+        }
     }
 
     @Test

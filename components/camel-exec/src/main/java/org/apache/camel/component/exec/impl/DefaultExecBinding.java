@@ -22,7 +22,7 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.ConcurrentHashMap;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.LoggingLevel;
@@ -58,7 +58,7 @@ public class DefaultExecBinding implements ExecBinding {
             EXEC_COMMAND_LOG_LEVEL
     };
 
-    private final AtomicBoolean ignoredControlHeadersWarned = new AtomicBoolean();
+    private final Set<String> ignoredControlHeadersWarnedEndpoints = ConcurrentHashMap.newKeySet();
 
     @Override
     @SuppressWarnings("unchecked")
@@ -181,11 +181,11 @@ public class DefaultExecBinding implements ExecBinding {
                 ignored.add(headerName);
             }
         }
-        if (!ignored.isEmpty() && ignoredControlHeadersWarned.compareAndSet(false, true)) {
+        if (!ignored.isEmpty() && ignoredControlHeadersWarnedEndpoints.add(endpoint.getEndpointUri())) {
             LOG.warn(
                     "Control header(s) {} are set but ignored because allowControlHeaders=false on {}. "
                      + "Set allowControlHeaders=true on the exec endpoint or component to enable dynamic command configuration. "
-                     + "This warning is logged only once per binding instance.",
+                     + "This warning is logged only once per exec endpoint.",
                     ignored, endpoint);
         }
     }
