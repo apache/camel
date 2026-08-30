@@ -1086,6 +1086,33 @@ NOTE: This maps fields from the response message's additional properties (fields
 
 This section covers practical advice for production routes. For component selection, streaming to browsers, and prompt management at scale, see the xref:ai-llm-integration-guide.adoc[LLM Integration Guide].
 
+=== Timeouts
+
+Four options bound the HTTP call to the API, all in milliseconds and all unset by default so the SDK defaults apply. Which phase times out tells you whether a retry is safe:
+
+[cols="1,1,3"]
+|===
+| Option | SDK default | Bounds
+
+| `connectTimeout` | 1 minute | Establishing the TCP connection. Hitting this means the request never reached the model, so retrying is safe
+| `readTimeout` | falls back to `requestTimeout` | Reading the response. Hitting this means the model may have processed the request already, so a retry can duplicate work and cost
+| `writeTimeout` | falls back to `requestTimeout` | Writing the request body, which is what bites on large audio and image uploads
+| `requestTimeout` | 10 minutes | The request as a whole, and the fallback for the read and write phases
+|===
+
+Setting only `requestTimeout` behaves exactly as it did before the per-phase options existed.
+
+[source,java]
+----
+from("direct:ask")
+    .to("openai:chat-completion?model=gpt-4o-mini"
+        + "&connectTimeout=5000&readTimeout=120000&requestTimeout=180000");
+----
+
+A short `connectTimeout` with a long `readTimeout` is the usual shape for chat: fail fast when the endpoint is unreachable, but leave the model room to generate. Reasoning models need the read budget in particular, because a long thinking phase produces no bytes on the wire.
+
+NOTE: These timeouts bound a single HTTP request, not the exchange. The SDK retries internally, so one exchange can span several of them. See `maxRetries`.
+
 === Temperature and Model Parameters
 
 The `temperature` endpoint option controls how deterministic the model's output is. Lower values produce more consistent, predictable responses; higher values produce more varied, creative output.

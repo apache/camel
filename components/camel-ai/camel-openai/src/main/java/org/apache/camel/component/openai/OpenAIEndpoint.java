@@ -41,6 +41,7 @@ import javax.net.ssl.X509TrustManager;
 
 import com.openai.client.OpenAIClient;
 import com.openai.client.okhttp.OpenAIOkHttpClient;
+import com.openai.core.Timeout;
 import com.openai.models.chat.completions.ChatCompletionFunctionTool;
 import io.modelcontextprotocol.client.McpClient;
 import io.modelcontextprotocol.client.McpSyncClient;
@@ -755,8 +756,9 @@ public class OpenAIEndpoint extends DefaultEndpoint {
     }
 
     private void configureHttpClient(OpenAIOkHttpClient.Builder builder) {
-        if (configuration.getRequestTimeout() > 0) {
-            builder.timeout(Duration.ofMillis(configuration.getRequestTimeout()));
+        Timeout timeout = buildTimeout();
+        if (timeout != null) {
+            builder.timeout(timeout);
         }
         builder.maxRetries(configuration.getMaxRetries());
         Map<String, Object> additionalHeaders = configuration.getAdditionalHeader();
@@ -767,6 +769,35 @@ public class OpenAIEndpoint extends DefaultEndpoint {
                 }
             });
         }
+    }
+
+    /**
+     * Builds the SDK timeout from the configured phases, or null when none is set so the SDK defaults apply. Setting
+     * only requestTimeout produces the same result as the single-duration builder method it replaces.
+     */
+    private Timeout buildTimeout() {
+        long request = configuration.getRequestTimeout();
+        long connect = configuration.getConnectTimeout();
+        long read = configuration.getReadTimeout();
+        long write = configuration.getWriteTimeout();
+        if (request <= 0 && connect <= 0 && read <= 0 && write <= 0) {
+            return null;
+        }
+
+        Timeout.Builder timeout = Timeout.builder();
+        if (request > 0) {
+            timeout.request(Duration.ofMillis(request));
+        }
+        if (connect > 0) {
+            timeout.connect(Duration.ofMillis(connect));
+        }
+        if (read > 0) {
+            timeout.read(Duration.ofMillis(read));
+        }
+        if (write > 0) {
+            timeout.write(Duration.ofMillis(write));
+        }
+        return timeout.build();
     }
 
     private void configureSsl(OpenAIOkHttpClient.Builder builder) throws Exception {
