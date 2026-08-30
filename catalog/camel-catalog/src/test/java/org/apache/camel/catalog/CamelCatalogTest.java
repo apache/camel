@@ -1804,12 +1804,13 @@ public class CamelCatalogTest {
         Assertions.assertEquals("object", cbSchema.getString("type"));
         Assertions.assertNotNull(cbSchema.getJsonObject("properties").getJsonObject("circuitBreakers"));
 
-        // variables is intentionally never migrated - it puts each repository ID as a dynamic top-level
-        // JSON key, which doesn't fit a fixed-field record, so it's a stable example of the empty placeholder
-        JsonObject variables = paths.getJsonObject("/q/dev/variables");
-        JsonObject variablesContent = variables.getJsonObject("get").getJsonObject("responses").getJsonObject("200")
+        // api is intentionally never migrated - its response IS a full OpenAPI document dynamically
+        // assembled from every registered console's model, not a fixed shape to describe, so it's a
+        // stable example of the empty placeholder
+        JsonObject api = paths.getJsonObject("/q/dev/api");
+        JsonObject apiContent = api.getJsonObject("get").getJsonObject("responses").getJsonObject("200")
                 .getJsonObject("content").getJsonObject("application/json");
-        Assertions.assertTrue(variablesContent.isEmpty());
+        Assertions.assertTrue(apiContent.isEmpty());
     }
 
     @Test
