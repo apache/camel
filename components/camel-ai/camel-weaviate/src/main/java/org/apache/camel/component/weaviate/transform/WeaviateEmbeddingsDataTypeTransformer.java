@@ -58,7 +58,8 @@ public class WeaviateEmbeddingsDataTypeTransformer extends Transformer {
             case QUERY ->
                 queryEmbeddingOperation(message, embedding, vectorFieldName, textFieldName, text, collectionName, keyValue,
                         keyName);
-            default -> throw new IllegalStateException("The only operations supported are create and updatebyid");
+            default ->
+                throw new IllegalStateException("The only operations supported are create, updatebyid and query");
         }
     }
 
@@ -66,22 +67,31 @@ public class WeaviateEmbeddingsDataTypeTransformer extends Transformer {
             Message message, Embedding embedding, String vectorFieldName, String textFieldName, TextSegment text,
             String collectionName, Object keyValue, String keyName) {
         message.setBody(embedding.vectorAsList(), List.class);
-
-        if (ObjectHelper.isNotEmpty(keyValue) && ObjectHelper.isNotEmpty(keyName)) {
-            HashMap<String, Object> maps = new HashMap<String, Object>();
-            maps.put(keyName, keyValue);
-            message.setHeader(WeaviateVectorDbHeaders.PROPERTIES, maps);
-        }
+        setProperties(message, textFieldName, text, keyValue, keyName);
     }
 
     private static void updateEmbeddingOperation(
             Message message, Embedding embedding, String vectorFieldName, String textFieldName, TextSegment text,
             String collectionName, Object keyValue, String keyName) {
         message.setBody(embedding.vectorAsList(), List.class);
+        setProperties(message, textFieldName, text, keyValue, keyName);
+    }
 
+    /**
+     * Writes the object properties for a CREATE / UPDATE_BY_ID operation. The embedded text is stored under
+     * textFieldName so that the source passage can be retrieved later; without it only the vector (and optional id) was
+     * persisted and the original text was lost. Mirrors the Milvus transformer.
+     */
+    private static void setProperties(
+            Message message, String textFieldName, TextSegment text, Object keyValue, String keyName) {
+        HashMap<String, Object> maps = new HashMap<>();
+        if (text != null && text.text() != null) {
+            maps.put(textFieldName, text.text());
+        }
         if (ObjectHelper.isNotEmpty(keyValue) && ObjectHelper.isNotEmpty(keyName)) {
-            HashMap<String, Object> maps = new HashMap<String, Object>();
             maps.put(keyName, keyValue);
+        }
+        if (!maps.isEmpty()) {
             message.setHeader(WeaviateVectorDbHeaders.PROPERTIES, maps);
         }
     }
