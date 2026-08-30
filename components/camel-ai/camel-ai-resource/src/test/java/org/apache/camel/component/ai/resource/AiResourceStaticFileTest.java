@@ -53,11 +53,11 @@ public class AiResourceStaticFileTest extends CamelTestSupport {
                 // stands in for ftp:; same GenericFile polling consumer family
                 from("ai-resource:app_config?resourceUri=file:///config/app.json&tags=test"
                      + "&mimeType=application/json")
-                        .pollEnrich("file:" + DIR + "?fileName=app.json&noop=true&idempotent=false");
+                        .pollEnrich("file:" + DIR + "?fileName=app.json&noop=true&idempotent=false", 5000);
 
                 from("ai-resource:report?resourceUri=file:///reports/report.pdf&tags=test"
                      + "&mimeType=application/pdf")
-                        .pollEnrich("file:" + DIR + "?fileName=report.pdf&noop=true&idempotent=false");
+                        .pollEnrich("file:" + DIR + "?fileName=report.pdf&noop=true&idempotent=false", 5000);
 
                 // stands in for aws2-s3 getObject, which yields a stream body
                 from("ai-resource:s3_object?resourceUri=s3://reports/latest.pdf&tags=test"

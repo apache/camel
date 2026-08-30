@@ -56,6 +56,12 @@ content returned to the client. Retrieval therefore uses whatever Camel already 
 producer with a read operation (`aws2-s3` with `operation=getObject`), or `pollEnrich` for the polling components
 (`file`, `ftp`, `sftp`), whose producers write rather than read.
 
+Always give `pollEnrich` an explicit `timeout` - it is a parameter of the EIP, not an endpoint option. It
+defaults to `-1`, which waits until a message is available and
+parks the route thread for good when the file is not there. The client is still answered - the read returns a
+timeout error after `camel.server.mcp-resource-timeout` - but the route stays blocked. Note also that `noop=true`
+implies `idempotent=true`, so `idempotent=false` is what keeps the same file readable on every request.
+
 === Textual resource
 
 [tabs]
@@ -69,7 +75,7 @@ from("ai-resource:app_config"
     + "&tags=crm"
     + "&description=Current application configuration"
     + "&mimeType=application/json")
-    .pollEnrich("file:config?fileName=app.json&noop=true&idempotent=false");
+    .pollEnrich("file:config?fileName=app.json&noop=true&idempotent=false", 5000);
 ----
 
 XML::
@@ -78,7 +84,7 @@ XML::
 ----
 <route>
   <from uri="ai-resource:app_config?resourceUri=camel:///config/app.json&amp;tags=crm&amp;description=Current application configuration&amp;mimeType=application/json"/>
-  <pollEnrich uri="file:config?fileName=app.json&amp;noop=true&amp;idempotent=false"/>
+  <pollEnrich uri="file:config?fileName=app.json&amp;noop=true&amp;idempotent=false" timeout="5000"/>
 </route>
 ----
 
@@ -97,6 +103,7 @@ YAML::
       steps:
         - poll-enrich:
             uri: "file:config?fileName=app.json&noop=true&idempotent=false"
+            timeout: 5000
 ----
 ====
 
