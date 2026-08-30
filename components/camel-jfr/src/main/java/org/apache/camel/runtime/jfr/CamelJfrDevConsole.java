@@ -77,26 +77,55 @@ public class CamelJfrDevConsole extends AbstractDevConsole {
     private static final String ALL = "all";
     private static final int DEFAULT_LIMIT = 50;
 
-    public record RecordingEntry(String name, String state, String destination) {
+    public record RecordingEntry(
+            @Metadata(description = "The recording name") String name,
+            @Metadata(description = "The recording state") String state,
+            @Metadata(description = "The recording destination file (only present when configured)") String destination) {
     }
 
-    public record RouteStatEntry(long total, long failed, double minMs, double meanMs, double maxMs, String routeId) {
+    public record RouteStatEntry(
+            @Metadata(description = "The number of spans") long total,
+            @Metadata(description = "The number of failed spans") long failed,
+            @Metadata(description = "The minimum duration in milliseconds") double minMs,
+            @Metadata(description = "The mean duration in milliseconds") double meanMs,
+            @Metadata(description = "The maximum duration in milliseconds") double maxMs,
+            @Metadata(description = "The route id") String routeId) {
     }
 
     public record ProcessorStatEntry(
-            long total, long failed, double minMs, double meanMs, double maxMs, String processorId,
-            String processorType, String routeId) {
+            @Metadata(description = "The number of spans") long total,
+            @Metadata(description = "The number of failed spans") long failed,
+            @Metadata(description = "The minimum duration in milliseconds") double minMs,
+            @Metadata(description = "The mean duration in milliseconds") double meanMs,
+            @Metadata(description = "The maximum duration in milliseconds") double maxMs,
+            @Metadata(description = "The processor id") String processorId,
+            @Metadata(description = "The processor type") String processorType,
+            @Metadata(description = "The route id") String routeId) {
     }
 
     public record EndpointStatEntry(
-            long total, long failed, double minMs, double meanMs, double maxMs, String endpointUri) {
+            @Metadata(description = "The number of spans") long total,
+            @Metadata(description = "The number of failed spans") long failed,
+            @Metadata(description = "The minimum duration in milliseconds") double minMs,
+            @Metadata(description = "The mean duration in milliseconds") double meanMs,
+            @Metadata(description = "The maximum duration in milliseconds") double maxMs,
+            @Metadata(description = "The endpoint URI") String endpointUri) {
     }
 
     public record FailureEntry(
-            String timestamp, String exchangeId, String routeId, String exceptionType, String exceptionMessage) {
+            @Metadata(description = "The failure timestamp") String timestamp,
+            @Metadata(description = "The exchange id") String exchangeId,
+            @Metadata(description = "The route id") String routeId,
+            @Metadata(description = "The exception type") String exceptionType,
+            @Metadata(description = "The exception message") String exceptionMessage) {
     }
 
-    public record RedeliveryEntry(String timestamp, String exchangeId, String routeId, int attempt, int maxAttempts) {
+    public record RedeliveryEntry(
+            @Metadata(description = "The redelivery timestamp") String timestamp,
+            @Metadata(description = "The exchange id") String exchangeId,
+            @Metadata(description = "The route id") String routeId,
+            @Metadata(description = "The redelivery attempt number") int attempt,
+            @Metadata(description = "The maximum number of redelivery attempts") int maxAttempts) {
     }
 
     public record Response(

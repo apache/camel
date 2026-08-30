@@ -116,13 +116,16 @@
           "type": "object",
           "properties": {
             "name": {
-              "type": "string"
+              "type": "string",
+              "description": "The recording name"
             },
             "state": {
-              "type": "string"
+              "type": "string",
+              "description": "The recording state"
             },
             "destination": {
-              "type": "string"
+              "type": "string",
+              "description": "The recording destination file (only present when configured)"
             }
           }
         },
@@ -169,22 +172,28 @@
           "type": "object",
           "properties": {
             "total": {
-              "type": "integer"
+              "type": "integer",
+              "description": "The number of spans"
             },
             "failed": {
-              "type": "integer"
+              "type": "integer",
+              "description": "The number of failed spans"
             },
             "minMs": {
-              "type": "number"
+              "type": "number",
+              "description": "The minimum duration in milliseconds"
             },
             "meanMs": {
-              "type": "number"
+              "type": "number",
+              "description": "The mean duration in milliseconds"
             },
             "maxMs": {
-              "type": "number"
+              "type": "number",
+              "description": "The maximum duration in milliseconds"
             },
             "routeId": {
-              "type": "string"
+              "type": "string",
+              "description": "The route id"
             }
           },
           "required": [
@@ -203,28 +212,36 @@
           "type": "object",
           "properties": {
             "total": {
-              "type": "integer"
+              "type": "integer",
+              "description": "The number of spans"
             },
             "failed": {
-              "type": "integer"
+              "type": "integer",
+              "description": "The number of failed spans"
             },
             "minMs": {
-              "type": "number"
+              "type": "number",
+              "description": "The minimum duration in milliseconds"
             },
             "meanMs": {
-              "type": "number"
+              "type": "number",
+              "description": "The mean duration in milliseconds"
             },
             "maxMs": {
-              "type": "number"
+              "type": "number",
+              "description": "The maximum duration in milliseconds"
             },
             "processorId": {
-              "type": "string"
+              "type": "string",
+              "description": "The processor id"
             },
             "processorType": {
-              "type": "string"
+              "type": "string",
+              "description": "The processor type"
             },
             "routeId": {
-              "type": "string"
+              "type": "string",
+              "description": "The route id"
             }
           },
           "required": [
@@ -243,22 +260,28 @@
           "type": "object",
           "properties": {
             "total": {
-              "type": "integer"
+              "type": "integer",
+              "description": "The number of spans"
             },
             "failed": {
-              "type": "integer"
+              "type": "integer",
+              "description": "The number of failed spans"
             },
             "minMs": {
-              "type": "number"
+              "type": "number",
+              "description": "The minimum duration in milliseconds"
             },
             "meanMs": {
-              "type": "number"
+              "type": "number",
+              "description": "The mean duration in milliseconds"
             },
             "maxMs": {
-              "type": "number"
+              "type": "number",
+              "description": "The maximum duration in milliseconds"
             },
             "endpointUri": {
-              "type": "string"
+              "type": "string",
+              "description": "The endpoint URI"
             }
           },
           "required": [
@@ -277,19 +300,24 @@
           "type": "object",
           "properties": {
             "timestamp": {
-              "type": "string"
+              "type": "string",
+              "description": "The failure timestamp"
             },
             "exchangeId": {
-              "type": "string"
+              "type": "string",
+              "description": "The exchange id"
             },
             "routeId": {
-              "type": "string"
+              "type": "string",
+              "description": "The route id"
             },
             "exceptionType": {
-              "type": "string"
+              "type": "string",
+              "description": "The exception type"
             },
             "exceptionMessage": {
-              "type": "string"
+              "type": "string",
+              "description": "The exception message"
             }
           }
         },
@@ -301,19 +329,24 @@
           "type": "object",
           "properties": {
             "timestamp": {
-              "type": "string"
+              "type": "string",
+              "description": "The redelivery timestamp"
             },
             "exchangeId": {
-              "type": "string"
+              "type": "string",
+              "description": "The exchange id"
             },
             "routeId": {
-              "type": "string"
+              "type": "string",
+              "description": "The route id"
             },
             "attempt": {
-              "type": "integer"
+              "type": "integer",
+              "description": "The redelivery attempt number"
             },
             "maxAttempts": {
-              "type": "integer"
+              "type": "integer",
+              "description": "The maximum number of redelivery attempts"
             }
           },
           "required": [
