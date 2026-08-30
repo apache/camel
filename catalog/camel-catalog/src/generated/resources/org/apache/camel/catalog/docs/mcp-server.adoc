@@ -123,7 +123,7 @@ from("ai-resource:app_config"
     + "&tags=crm"
     + "&description=Current application configuration"
     + "&mimeType=application/json")
-    .to("file:config?fileName=app.json&noop=true");
+    .pollEnrich("file:config?fileName=app.json&noop=true&idempotent=false");
 ----
 
 An MCP client then sees the resource in `resources/list` and fetches it with

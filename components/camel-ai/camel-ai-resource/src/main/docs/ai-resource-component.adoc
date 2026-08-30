@@ -52,7 +52,9 @@ include::partial$component-endpoint-headers.adoc[]
 == Usage
 
 A resource read carries no arguments: the route is invoked with an empty exchange and its message body is the
-content returned to the client.
+content returned to the client. Retrieval therefore uses whatever Camel already offers for reading on demand: a
+producer with a read operation (`aws2-s3` with `operation=getObject`), or `pollEnrich` for the polling components
+(`file`, `ftp`, `sftp`), whose producers write rather than read.
 
 === Textual resource
 
@@ -67,7 +69,7 @@ from("ai-resource:app_config"
     + "&tags=crm"
     + "&description=Current application configuration"
     + "&mimeType=application/json")
-    .to("file:config?fileName=app.json&noop=true");
+    .pollEnrich("file:config?fileName=app.json&noop=true&idempotent=false");
 ----
 
 XML::
@@ -76,7 +78,7 @@ XML::
 ----
 <route>
   <from uri="ai-resource:app_config?resourceUri=camel:///config/app.json&amp;tags=crm&amp;description=Current application configuration&amp;mimeType=application/json"/>
-  <to uri="file:config?fileName=app.json&amp;noop=true"/>
+  <pollEnrich uri="file:config?fileName=app.json&amp;noop=true&amp;idempotent=false"/>
 </route>
 ----
 
@@ -93,8 +95,8 @@ YAML::
         description: "Current application configuration"
         mimeType: application/json
       steps:
-        - to:
-            uri: "file:config?fileName=app.json&noop=true"
+        - poll-enrich:
+            uri: "file:config?fileName=app.json&noop=true&idempotent=false"
 ----
 ====
 
