@@ -13,7 +13,8 @@ This follow-up — *Phase 3 (Operate)* — shows the same `gen_ai.*` telemetry i
 wired to the observability stack Camel uses in test-infra: **Prometheus**, **VictoriaTraces**, and **Perses**.
 
 Special thanks to *Claus Ibsen* for guidance on this series.
-The runnable sample lives in https://github.com/apache/camel-examples/pull/255[`spring-boot/genai-observability`].
+The runnable sample lives in https://github.com/apache/camel-spring-boot-examples/tree/main/genai-observability[`genai-observability`]
+in the https://github.com/apache/camel-spring-boot-examples[camel-spring-boot-examples] repository.
 
 == Who is this for?
 
@@ -51,7 +52,7 @@ For every LLM call in the YAML route:
 
 [source,text]
 ----
-spring-boot/genai-observability/
+genai-observability/
 ├── pom.xml
 ├── README.adoc
 ├── docker-compose.yml          # Prometheus + VictoriaTraces + Perses
@@ -63,7 +64,13 @@ spring-boot/genai-observability/
         └── camel/genai-route.camel.yaml
 ----
 
-Clone: https://github.com/apache/camel-examples/pull/255/files[PR #255 files] until merged to `main` (`spring-boot/genai-observability`)
+Clone:
+
+[source,shell]
+----
+git clone https://github.com/apache/camel-spring-boot-examples.git
+cd camel-spring-boot-examples/genai-observability
+----
 
 == Step 1 — Prerequisites
 
@@ -82,7 +89,7 @@ From the example directory:
 
 [source,shell]
 ----
-cd spring-boot/genai-observability
+cd genai-observability
 docker compose up -d
 ----
 
@@ -476,7 +483,7 @@ trace branches in VictoriaTraces.
 | Add `camel-ai-observability` + `camel-observability-services-starter`
 
 | Build fails on SNAPSHOT
-| Use camel-examples tag matching your Camel release (see root README)
+| Use camel-spring-boot-examples tag matching your Camel release (see root README.adoc)
 |===
 
 == Business outcomes
@@ -484,13 +491,13 @@ trace branches in VictoriaTraces.
 * *FinOps* — chargeback LLM usage by route/team using token counters
 * *Reliability* — alert when LLM latency degrades independently of HTTP latency
 * *Compliance* — trace attributes document which model answered which integration flow
-* *Knowledge base* — camel-examples + blog = training material for human and AI readers
+* *Knowledge base* — camel-spring-boot-examples + blog = training material for human and AI readers
 
 == Series links
 
 * https://github.com/apache/camel/pull/25890[Blog 1 drafts PR]
-* https://github.com/apache/camel/pull/25891[JBang example PR]
-* https://github.com/apache/camel-examples/pull/255[Spring Boot example PR]
+* https://github.com/apache/camel-jbang-examples/tree/main/ai/genai-observability[JBang example]
+* https://github.com/apache/camel-spring-boot-examples/tree/main/genai-observability[Spring Boot example]
 
 == Documentation
 

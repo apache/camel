@@ -10,11 +10,11 @@ Prototype articles for the https://camel.apache.org/community/articles/[Camel co
 
 | Blog 1
 | xref:genai-observability-01-jbang-cli-tui.adoc[JBang / CLI / TUI]
-| https://github.com/apache/camel/pull/25891[JBang example PR]
+| https://github.com/apache/camel-jbang-examples/tree/main/ai/genai-observability[JBang example]
 
 | Blog 2
 | xref:genai-observability-02-spring-boot-obs-stack.adoc[Spring Boot + obs stack]
-| https://github.com/apache/camel-examples/pull/255[camel-examples PR]
+| https://github.com/apache/camel-spring-boot-examples/tree/main/genai-observability[Spring Boot example]
 |===
 
 == Three-phase narrative

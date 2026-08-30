@@ -97,17 +97,23 @@ ollama serve
 
 == Step 1 — Get the example
 
-The bundled example ships with Camel 4.23:
+The example lives in the https://github.com/apache/camel-jbang-examples[camel-jbang-examples] repository:
 
-`dsl/camel-jbang/camel-jbang-core/src/main/resources/examples/ai/genai-observability/`
-
-Or from GitHub: https://github.com/apache/camel/pull/25891/files[JBang example PR files] (merges to `main` with PR #25891)
+https://github.com/apache/camel-jbang-examples/tree/main/ai/genai-observability[`ai/genai-observability`]
 
 Files:
 
 * `GenAiObservabilityRoute.java` — route + Ollama `ChatModel` bean
 * `application.properties` — Ollama URL, model name, observability toggle
 * `README.md` — run instructions
+
+Clone or run directly from GitHub:
+
+[source,shell]
+----
+git clone https://github.com/apache/camel-jbang-examples.git
+cd camel-jbang-examples/ai/genai-observability
+----
 
 == Step 2 — Run with observability enabled
 
@@ -448,7 +454,7 @@ Each nested LLM and tool invocation produces its own span — you can trace the 
 
 == Next up — Blog 2
 
-https://github.com/apache/camel-examples/pull/255[Spring Boot genai-observability example] +
+https://github.com/apache/camel-spring-boot-examples/tree/main/genai-observability[Spring Boot genai-observability example] +
 Prometheus + VictoriaTraces + Perses — the same `gen_ai.*` signals at production scale.
 
 == Links
@@ -457,4 +463,4 @@ Prometheus + VictoriaTraces + Perses — the same `gen_ai.*` signals at producti
 * https://camel.apache.org/manual/camel-jbang-tui.html[Camel TUI manual]
 * https://camel.apache.org/manual/jbang-commands/camel-jbang-ask.html[camel ask command]
 * https://camel.apache.org/components/next/ai-summary.html[Camel AI components]
-* Example PR: https://github.com/apache/camel/pull/25891[JBang genai-observability example]
+* Example: https://github.com/apache/camel-jbang-examples/tree/main/ai/genai-observability[JBang genai-observability example]
