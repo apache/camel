@@ -49,33 +49,57 @@ public class MicrometerConsole extends AbstractDevConsole {
               javaType = "java.lang.String")
     public static final String FILTER = "filter";
 
-    public record TagEntry(String key, String value) {
+    public record TagEntry(
+            @Metadata(description = "The tag key") String key,
+            @Metadata(description = "The tag value") String value) {
     }
 
     public record CounterEntry(
-            String name, String description, List<TagEntry> tags,
+            @Metadata(description = "The counter name") String name,
+            @Metadata(description = "The counter description (only present when configured)") String description,
+            @Metadata(description = "The counter tags (only present when requested)") List<TagEntry> tags,
             @Metadata(description = "The counter value (integer when whole, decimal otherwise)") Object count) {
     }
 
-    public record GaugeEntry(String name, String description, List<TagEntry> tags, double value) {
+    public record GaugeEntry(
+            @Metadata(description = "The gauge name") String name,
+            @Metadata(description = "The gauge description (only present when configured)") String description,
+            @Metadata(description = "The gauge tags (only present when requested)") List<TagEntry> tags,
+            @Metadata(description = "The gauge value") double value) {
     }
 
     public record TimerEntry(
-            String name, String description, List<TagEntry> tags, long count, long mean, long max, long total) {
+            @Metadata(description = "The timer name") String name,
+            @Metadata(description = "The timer description (only present when configured)") String description,
+            @Metadata(description = "The timer tags (only present when requested)") List<TagEntry> tags,
+            @Metadata(description = "The number of recorded events") long count,
+            @Metadata(description = "The mean duration in milliseconds") long mean,
+            @Metadata(description = "The maximum duration in milliseconds") long max,
+            @Metadata(description = "The total duration in milliseconds") long total) {
     }
 
     public record LongTaskTimerEntry(
-            String name, String description, List<TagEntry> tags, int activeTasks, long mean, long max,
-            long duration) {
+            @Metadata(description = "The long task timer name") String name,
+            @Metadata(description = "The long task timer description (only present when configured)") String description,
+            @Metadata(description = "The long task timer tags (only present when requested)") List<TagEntry> tags,
+            @Metadata(description = "The number of currently active tasks") int activeTasks,
+            @Metadata(description = "The mean duration in milliseconds") long mean,
+            @Metadata(description = "The maximum duration in milliseconds") long max,
+            @Metadata(description = "The total duration of active tasks in milliseconds") long duration) {
     }
 
     public record DistributionEntry(
-            String name, String description, List<TagEntry> tags, long count, double mean, double max,
-            double totalAmount) {
+            @Metadata(description = "The distribution summary name") String name,
+            @Metadata(description = "The distribution summary description (only present when configured)") String description,
+            @Metadata(description = "The distribution summary tags (only present when requested)") List<TagEntry> tags,
+            @Metadata(description = "The number of recorded events") long count,
+            @Metadata(description = "The mean amount") double mean,
+            @Metadata(description = "The maximum amount") double max,
+            @Metadata(description = "The total amount") double totalAmount) {
     }
 
     public record Response(
-            String meterRegistryClass,
+            @Metadata(description = "The MeterRegistry implementation class name") String meterRegistryClass,
             @Metadata(description = "Only present when there are any counters") List<CounterEntry> counters,
             @Metadata(description = "Only present when there are any gauges") List<GaugeEntry> gauges,
             @Metadata(description = "Only present when there are any timers") List<TimerEntry> timers,
