@@ -29,17 +29,17 @@ public class StaticEndpointBuilders {
     /**
      * A2A (camel-a2a)
      * A2A endpoint for agent-to-agent communication.
-     * 
+     *
      * Category: ai
      * Since: 4.21
      * Maven coordinates: org.apache.camel:camel-a2a
-     * 
+     *
      * Syntax: <code>a2a:agentCardSource</code>
-     * 
+     *
      * Path parameter: agentCardSource (required)
      * The agent card source (classpath:, file:, http://, https://, or plain
      * name)
-     * 
+     *
      * @param path agentCardSource
      * @return the dsl builder
      */
@@ -49,17 +49,17 @@ public class StaticEndpointBuilders {
     /**
      * A2A (camel-a2a)
      * A2A endpoint for agent-to-agent communication.
-     * 
+     *
      * Category: ai
      * Since: 4.21
      * Maven coordinates: org.apache.camel:camel-a2a
-     * 
+     *
      * Syntax: <code>a2a:agentCardSource</code>
-     * 
+     *
      * Path parameter: agentCardSource (required)
      * The agent card source (classpath:, file:, http://, https://, or plain
      * name)
-     * 
+     *
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
      * @param path agentCardSource
@@ -72,22 +72,22 @@ public class StaticEndpointBuilders {
      * ActiveMQ 5.x (camel-activemq)
      * Send messages to (or consume from) Apache ActiveMQ 5.x. This component
      * extends the Camel JMS component.
-     * 
+     *
      * Category: messaging
      * Since: 1.0
      * Maven coordinates: org.apache.camel:camel-activemq
-     * 
+     *
      * Syntax: <code>activemq:destinationType:destinationName</code>
-     * 
+     *
      * Path parameter: destinationType
      * The kind of destination to use
      * Default value: queue
      * There are 4 enums and the value can be one of: queue, topic, temp-queue,
      * temp-topic
-     * 
+     *
      * Path parameter: destinationName (required)
      * Name of the queue or topic to use as destination
-     * 
+     *
      * @param path destinationType:destinationName
      * @return the dsl builder
      */
@@ -98,22 +98,22 @@ public class StaticEndpointBuilders {
      * ActiveMQ 5.x (camel-activemq)
      * Send messages to (or consume from) Apache ActiveMQ 5.x. This component
      * extends the Camel JMS component.
-     * 
+     *
      * Category: messaging
      * Since: 1.0
      * Maven coordinates: org.apache.camel:camel-activemq
-     * 
+     *
      * Syntax: <code>activemq:destinationType:destinationName</code>
-     * 
+     *
      * Path parameter: destinationType
      * The kind of destination to use
      * Default value: queue
      * There are 4 enums and the value can be one of: queue, topic, temp-queue,
      * temp-topic
-     * 
+     *
      * Path parameter: destinationName (required)
      * Name of the queue or topic to use as destination
-     * 
+     *
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
      * @param path destinationType:destinationName
@@ -126,22 +126,22 @@ public class StaticEndpointBuilders {
      * ActiveMQ 6.x (camel-activemq6)
      * Send messages to (or consume from) Apache ActiveMQ 6.x. This component
      * extends the Camel JMS component.
-     * 
+     *
      * Category: messaging
      * Since: 4.7
      * Maven coordinates: org.apache.camel:camel-activemq6
-     * 
+     *
      * Syntax: <code>activemq6:destinationType:destinationName</code>
-     * 
+     *
      * Path parameter: destinationType
      * The kind of destination to use
      * Default value: queue
      * There are 4 enums and the value can be one of: queue, topic, temp-queue,
      * temp-topic
-     * 
+     *
      * Path parameter: destinationName (required)
      * Name of the queue or topic to use as destination
-     * 
+     *
      * @param path destinationType:destinationName
      * @return the dsl builder
      */
@@ -152,22 +152,22 @@ public class StaticEndpointBuilders {
      * ActiveMQ 6.x (camel-activemq6)
      * Send messages to (or consume from) Apache ActiveMQ 6.x. This component
      * extends the Camel JMS component.
-     * 
+     *
      * Category: messaging
      * Since: 4.7
      * Maven coordinates: org.apache.camel:camel-activemq6
-     * 
+     *
      * Syntax: <code>activemq6:destinationType:destinationName</code>
-     * 
+     *
      * Path parameter: destinationType
      * The kind of destination to use
      * Default value: queue
      * There are 4 enums and the value can be one of: queue, topic, temp-queue,
      * temp-topic
-     * 
+     *
      * Path parameter: destinationName (required)
      * Name of the queue or topic to use as destination
-     * 
+     *
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
      * @param path destinationType:destinationName
@@ -180,16 +180,16 @@ public class StaticEndpointBuilders {
      * AI Tool (camel-ai-tool)
      * Framework-agnostic consumer endpoint that registers a Camel route as an
      * LLM tool in the shared AiToolRegistry.
-     * 
+     *
      * Category: ai
      * Since: 4.22
      * Maven coordinates: org.apache.camel:camel-ai-tool
-     * 
+     *
      * Syntax: <code>ai-tool:toolName</code>
-     * 
+     *
      * Path parameter: toolName (required)
      * The tool name. This is the name the LLM sees and uses to invoke the tool.
-     * 
+     *
      * @param path toolName
      * @return the dsl builder
      */
@@ -200,16 +200,16 @@ public class StaticEndpointBuilders {
      * AI Tool (camel-ai-tool)
      * Framework-agnostic consumer endpoint that registers a Camel route as an
      * LLM tool in the shared AiToolRegistry.
-     * 
+     *
      * Category: ai
      * Since: 4.22
      * Maven coordinates: org.apache.camel:camel-ai-tool
-     * 
+     *
      * Syntax: <code>ai-tool:toolName</code>
-     * 
+     *
      * Path parameter: toolName (required)
      * The tool name. This is the name the LLM sees and uses to invoke the tool.
-     * 
+     *
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
      * @param path toolName
@@ -221,17 +221,17 @@ public class StaticEndpointBuilders {
     /**
      * Alibaba EventBridge (camel-alibaba-eventbridge)
      * Publish events to Alibaba Cloud EventBridge.
-     * 
+     *
      * Category: cloud,messaging
      * Since: 4.23
      * Maven coordinates: org.apache.camel:camel-alibaba-eventbridge
-     * 
+     *
      * Syntax: <code>alibaba-eventbridge:operation</code>
-     * 
+     *
      * Path parameter: operation (required)
      * Operation to perform
      * There are 1 enums and the value can be one of: putEvents
-     * 
+     *
      * @param path operation
      * @return the dsl builder
      */
@@ -241,17 +241,17 @@ public class StaticEndpointBuilders {
     /**
      * Alibaba EventBridge (camel-alibaba-eventbridge)
      * Publish events to Alibaba Cloud EventBridge.
-     * 
+     *
      * Category: cloud,messaging
      * Since: 4.23
      * Maven coordinates: org.apache.camel:camel-alibaba-eventbridge
-     * 
+     *
      * Syntax: <code>alibaba-eventbridge:operation</code>
-     * 
+     *
      * Path parameter: operation (required)
      * Operation to perform
      * There are 1 enums and the value can be one of: putEvents
-     * 
+     *
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
      * @param path operation
@@ -263,18 +263,18 @@ public class StaticEndpointBuilders {
     /**
      * Alibaba Function Compute (FC) (camel-alibaba-fc)
      * Invoke serverless functions on Alibaba Cloud Function Compute (FC).
-     * 
+     *
      * Category: cloud,serverless
      * Since: 4.23
      * Maven coordinates: org.apache.camel:camel-alibaba-fc
-     * 
+     *
      * Syntax: <code>alibaba-fc:operation</code>
-     * 
+     *
      * Path parameter: operation (required)
      * Operation to perform
      * There are 2 enums and the value can be one of: invokeFunction,
      * getFunction
-     * 
+     *
      * @param path operation
      * @return the dsl builder
      */
@@ -284,18 +284,18 @@ public class StaticEndpointBuilders {
     /**
      * Alibaba Function Compute (FC) (camel-alibaba-fc)
      * Invoke serverless functions on Alibaba Cloud Function Compute (FC).
-     * 
+     *
      * Category: cloud,serverless
      * Since: 4.23
      * Maven coordinates: org.apache.camel:camel-alibaba-fc
-     * 
+     *
      * Syntax: <code>alibaba-fc:operation</code>
-     * 
+     *
      * Path parameter: operation (required)
      * Operation to perform
      * There are 2 enums and the value can be one of: invokeFunction,
      * getFunction
-     * 
+     *
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
      * @param path operation
@@ -308,18 +308,18 @@ public class StaticEndpointBuilders {
      * Alibaba Key Management Service (KMS) (camel-alibaba-kms)
      * Encrypt and decrypt data using Alibaba Cloud Key Management Service
      * (KMS).
-     * 
+     *
      * Category: cloud
      * Since: 4.23
      * Maven coordinates: org.apache.camel:camel-alibaba-kms
-     * 
+     *
      * Syntax: <code>alibaba-kms:operation</code>
-     * 
+     *
      * Path parameter: operation (required)
      * Operation to perform
      * There are 3 enums and the value can be one of: encrypt, decrypt,
      * generateDataKey
-     * 
+     *
      * @param path operation
      * @return the dsl builder
      */
@@ -330,18 +330,18 @@ public class StaticEndpointBuilders {
      * Alibaba Key Management Service (KMS) (camel-alibaba-kms)
      * Encrypt and decrypt data using Alibaba Cloud Key Management Service
      * (KMS).
-     * 
+     *
      * Category: cloud
      * Since: 4.23
      * Maven coordinates: org.apache.camel:camel-alibaba-kms
-     * 
+     *
      * Syntax: <code>alibaba-kms:operation</code>
-     * 
+     *
      * Path parameter: operation (required)
      * Operation to perform
      * There are 3 enums and the value can be one of: encrypt, decrypt,
      * generateDataKey
-     * 
+     *
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
      * @param path operation
@@ -353,16 +353,16 @@ public class StaticEndpointBuilders {
     /**
      * Alibaba Message Service (MNS) (camel-alibaba-mns)
      * Send and receive messages to/from Alibaba Cloud Message Service (MNS).
-     * 
+     *
      * Category: cloud,messaging
      * Since: 4.23
      * Maven coordinates: org.apache.camel:camel-alibaba-mns
-     * 
+     *
      * Syntax: <code>alibaba-mns:queueName</code>
-     * 
+     *
      * Path parameter: queueName (required)
      * Queue name, or topic name when using the topic URI syntax
-     * 
+     *
      * @param path queueName
      * @return the dsl builder
      */
@@ -372,16 +372,16 @@ public class StaticEndpointBuilders {
     /**
      * Alibaba Message Service (MNS) (camel-alibaba-mns)
      * Send and receive messages to/from Alibaba Cloud Message Service (MNS).
-     * 
+     *
      * Category: cloud,messaging
      * Since: 4.23
      * Maven coordinates: org.apache.camel:camel-alibaba-mns
-     * 
+     *
      * Syntax: <code>alibaba-mns:queueName</code>
-     * 
+     *
      * Path parameter: queueName (required)
      * Queue name, or topic name when using the topic URI syntax
-     * 
+     *
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
      * @param path queueName
@@ -393,16 +393,16 @@ public class StaticEndpointBuilders {
     /**
      * Alibaba Object Storage Service (OSS) (camel-alibaba-oss)
      * Alibaba Cloud Object Storage Service (OSS) component
-     * 
+     *
      * Category: cloud
      * Since: 4.23
      * Maven coordinates: org.apache.camel:camel-alibaba-oss
-     * 
+     *
      * Syntax: <code>alibaba-oss:bucketName</code>
-     * 
+     *
      * Path parameter: bucketName
      * Name of bucket to perform operation on
-     * 
+     *
      * @param path bucketName
      * @return the dsl builder
      */
@@ -412,16 +412,16 @@ public class StaticEndpointBuilders {
     /**
      * Alibaba Object Storage Service (OSS) (camel-alibaba-oss)
      * Alibaba Cloud Object Storage Service (OSS) component
-     * 
+     *
      * Category: cloud
      * Since: 4.23
      * Maven coordinates: org.apache.camel:camel-alibaba-oss
-     * 
+     *
      * Syntax: <code>alibaba-oss:bucketName</code>
-     * 
+     *
      * Path parameter: bucketName
      * Name of bucket to perform operation on
-     * 
+     *
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
      * @param path bucketName
@@ -433,18 +433,18 @@ public class StaticEndpointBuilders {
     /**
      * Alibaba Tablestore (OTS) (camel-alibaba-ots)
      * Perform row operations on Alibaba Cloud Tablestore (OTS).
-     * 
+     *
      * Category: cloud,database
      * Since: 4.23
      * Maven coordinates: org.apache.camel:camel-alibaba-ots
-     * 
+     *
      * Syntax: <code>alibaba-ots:operation</code>
-     * 
+     *
      * Path parameter: operation (required)
      * Operation to perform
      * There are 5 enums and the value can be one of: putRow, getRow, updateRow,
      * deleteRow, listTables
-     * 
+     *
      * @param path operation
      * @return the dsl builder
      */
@@ -454,18 +454,18 @@ public class StaticEndpointBuilders {
     /**
      * Alibaba Tablestore (OTS) (camel-alibaba-ots)
      * Perform row operations on Alibaba Cloud Tablestore (OTS).
-     * 
+     *
      * Category: cloud,database
      * Since: 4.23
      * Maven coordinates: org.apache.camel:camel-alibaba-ots
-     * 
+     *
      * Syntax: <code>alibaba-ots:operation</code>
-     * 
+     *
      * Path parameter: operation (required)
      * Operation to perform
      * There are 5 enums and the value can be one of: putRow, getRow, updateRow,
      * deleteRow, listTables
-     * 
+     *
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
      * @param path operation
@@ -477,18 +477,18 @@ public class StaticEndpointBuilders {
     /**
      * Alibaba Simple Log Service (SLS) (camel-alibaba-sls)
      * Manage logs on Alibaba Cloud Simple Log Service (SLS).
-     * 
+     *
      * Category: cloud,monitoring
      * Since: 4.23
      * Maven coordinates: org.apache.camel:camel-alibaba-sls
-     * 
+     *
      * Syntax: <code>alibaba-sls:operation</code>
-     * 
+     *
      * Path parameter: operation (required)
      * Operation to perform
      * There are 3 enums and the value can be one of: putLogs, getLogs,
      * listLogStores
-     * 
+     *
      * @param path operation
      * @return the dsl builder
      */
@@ -498,18 +498,18 @@ public class StaticEndpointBuilders {
     /**
      * Alibaba Simple Log Service (SLS) (camel-alibaba-sls)
      * Manage logs on Alibaba Cloud Simple Log Service (SLS).
-     * 
+     *
      * Category: cloud,monitoring
      * Since: 4.23
      * Maven coordinates: org.apache.camel:camel-alibaba-sls
-     * 
+     *
      * Syntax: <code>alibaba-sls:operation</code>
-     * 
+     *
      * Path parameter: operation (required)
      * Operation to perform
      * There are 3 enums and the value can be one of: putLogs, getLogs,
      * listLogStores
-     * 
+     *
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
      * @param path operation
@@ -521,17 +521,17 @@ public class StaticEndpointBuilders {
     /**
      * Alibaba Short Message Service (SMS) (camel-alibaba-sms)
      * Send SMS messages using Alibaba Cloud Short Message Service (SMS).
-     * 
+     *
      * Category: cloud,messaging
      * Since: 4.23
      * Maven coordinates: org.apache.camel:camel-alibaba-sms
-     * 
+     *
      * Syntax: <code>alibaba-sms:operation</code>
-     * 
+     *
      * Path parameter: operation (required)
      * Operation to perform
      * There are 1 enums and the value can be one of: sendSms
-     * 
+     *
      * @param path operation
      * @return the dsl builder
      */
@@ -541,17 +541,17 @@ public class StaticEndpointBuilders {
     /**
      * Alibaba Short Message Service (SMS) (camel-alibaba-sms)
      * Send SMS messages using Alibaba Cloud Short Message Service (SMS).
-     * 
+     *
      * Category: cloud,messaging
      * Since: 4.23
      * Maven coordinates: org.apache.camel:camel-alibaba-sms
-     * 
+     *
      * Syntax: <code>alibaba-sms:operation</code>
-     * 
+     *
      * Path parameter: operation (required)
      * Operation to perform
      * There are 1 enums and the value can be one of: sendSms
-     * 
+     *
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
      * @param path operation
@@ -563,22 +563,22 @@ public class StaticEndpointBuilders {
     /**
      * AMQP (camel-amqp)
      * Messaging with AMQP protocol using Apache Qpid Client.
-     * 
+     *
      * Category: messaging
      * Since: 1.2
      * Maven coordinates: org.apache.camel:camel-amqp
-     * 
+     *
      * Syntax: <code>amqp:destinationType:destinationName</code>
-     * 
+     *
      * Path parameter: destinationType
      * The kind of destination to use
      * Default value: queue
      * There are 4 enums and the value can be one of: queue, topic, temp-queue,
      * temp-topic
-     * 
+     *
      * Path parameter: destinationName (required)
      * Name of the queue or topic to use as destination
-     * 
+     *
      * @param path destinationType:destinationName
      * @return the dsl builder
      */
@@ -588,22 +588,22 @@ public class StaticEndpointBuilders {
     /**
      * AMQP (camel-amqp)
      * Messaging with AMQP protocol using Apache Qpid Client.
-     * 
+     *
      * Category: messaging
      * Since: 1.2
      * Maven coordinates: org.apache.camel:camel-amqp
-     * 
+     *
      * Syntax: <code>amqp:destinationType:destinationName</code>
-     * 
+     *
      * Path parameter: destinationType
      * The kind of destination to use
      * Default value: queue
      * There are 4 enums and the value can be one of: queue, topic, temp-queue,
      * temp-topic
-     * 
+     *
      * Path parameter: destinationName (required)
      * Name of the queue or topic to use as destination
-     * 
+     *
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
      * @param path destinationType:destinationName
@@ -616,16 +616,16 @@ public class StaticEndpointBuilders {
      * ArangoDb (camel-arangodb)
      * Perform operations on ArangoDb when used as a Document Database, or as a
      * Graph Database
-     * 
+     *
      * Category: database
      * Since: 3.5
      * Maven coordinates: org.apache.camel:camel-arangodb
-     * 
+     *
      * Syntax: <code>arangodb:database</code>
-     * 
+     *
      * Path parameter: database (required)
      * database name
-     * 
+     *
      * @param path database
      * @return the dsl builder
      */
@@ -636,16 +636,16 @@ public class StaticEndpointBuilders {
      * ArangoDb (camel-arangodb)
      * Perform operations on ArangoDb when used as a Document Database, or as a
      * Graph Database
-     * 
+     *
      * Category: database
      * Since: 3.5
      * Maven coordinates: org.apache.camel:camel-arangodb
-     * 
+     *
      * Syntax: <code>arangodb:database</code>
-     * 
+     *
      * Path parameter: database (required)
      * database name
-     * 
+     *
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
      * @param path database
@@ -657,20 +657,20 @@ public class StaticEndpointBuilders {
     /**
      * AS2 (camel-as2)
      * Transfer data securely and reliably using the AS2 protocol (RFC4130).
-     * 
+     *
      * Category: file
      * Since: 2.22
      * Maven coordinates: org.apache.camel:camel-as2
-     * 
+     *
      * Syntax: <code>as2:apiName/methodName</code>
-     * 
+     *
      * Path parameter: apiName (required)
      * What kind of operation to perform
      * There are 3 enums and the value can be one of: CLIENT, SERVER, RECEIPT
-     * 
+     *
      * Path parameter: methodName (required)
      * What sub operation to use for the selected operation
-     * 
+     *
      * @param path apiName/methodName
      * @return the dsl builder
      */
@@ -680,20 +680,20 @@ public class StaticEndpointBuilders {
     /**
      * AS2 (camel-as2)
      * Transfer data securely and reliably using the AS2 protocol (RFC4130).
-     * 
+     *
      * Category: file
      * Since: 2.22
      * Maven coordinates: org.apache.camel:camel-as2
-     * 
+     *
      * Syntax: <code>as2:apiName/methodName</code>
-     * 
+     *
      * Path parameter: apiName (required)
      * What kind of operation to perform
      * There are 3 enums and the value can be one of: CLIENT, SERVER, RECEIPT
-     * 
+     *
      * Path parameter: methodName (required)
      * What sub operation to use for the selected operation
-     * 
+     *
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
      * @param path apiName/methodName
@@ -705,16 +705,16 @@ public class StaticEndpointBuilders {
     /**
      * Asterisk (camel-asterisk)
      * Interact with Asterisk PBX Server (VoIP).
-     * 
+     *
      * Category: mobile
      * Since: 2.18
      * Maven coordinates: org.apache.camel:camel-asterisk
-     * 
+     *
      * Syntax: <code>asterisk:name</code>
-     * 
+     *
      * Path parameter: name (required)
      * Name of component
-     * 
+     *
      * @param path name
      * @return the dsl builder
      */
@@ -724,16 +724,16 @@ public class StaticEndpointBuilders {
     /**
      * Asterisk (camel-asterisk)
      * Interact with Asterisk PBX Server (VoIP).
-     * 
+     *
      * Category: mobile
      * Since: 2.18
      * Maven coordinates: org.apache.camel:camel-asterisk
-     * 
+     *
      * Syntax: <code>asterisk:name</code>
-     * 
+     *
      * Path parameter: name (required)
      * Name of component
-     * 
+     *
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
      * @param path name
@@ -745,16 +745,16 @@ public class StaticEndpointBuilders {
     /**
      * Atmosphere Websocket (camel-atmosphere-websocket)
      * Expose WebSocket endpoints using the Atmosphere framework.
-     * 
+     *
      * Category: http,networking
      * Since: 2.14
      * Maven coordinates: org.apache.camel:camel-atmosphere-websocket
-     * 
+     *
      * Syntax: <code>atmosphere-websocket:servicePath</code>
-     * 
+     *
      * Path parameter: servicePath (required)
      * Name of websocket endpoint
-     * 
+     *
      * @param path servicePath
      * @return the dsl builder
      */
@@ -764,16 +764,16 @@ public class StaticEndpointBuilders {
     /**
      * Atmosphere Websocket (camel-atmosphere-websocket)
      * Expose WebSocket endpoints using the Atmosphere framework.
-     * 
+     *
      * Category: http,networking
      * Since: 2.14
      * Maven coordinates: org.apache.camel:camel-atmosphere-websocket
-     * 
+     *
      * Syntax: <code>atmosphere-websocket:servicePath</code>
-     * 
+     *
      * Path parameter: servicePath (required)
      * Name of websocket endpoint
-     * 
+     *
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
      * @param path servicePath
@@ -785,16 +785,16 @@ public class StaticEndpointBuilders {
     /**
      * Atom (camel-atom)
      * Poll Atom RSS feeds.
-     * 
+     *
      * Category: document
      * Since: 1.2
      * Maven coordinates: org.apache.camel:camel-atom
-     * 
+     *
      * Syntax: <code>atom:feedUri</code>
-     * 
+     *
      * Path parameter: feedUri (required)
      * The URI to the feed to poll.
-     * 
+     *
      * @param path feedUri
      * @return the dsl builder
      */
@@ -804,16 +804,16 @@ public class StaticEndpointBuilders {
     /**
      * Atom (camel-atom)
      * Poll Atom RSS feeds.
-     * 
+     *
      * Category: document
      * Since: 1.2
      * Maven coordinates: org.apache.camel:camel-atom
-     * 
+     *
      * Syntax: <code>atom:feedUri</code>
-     * 
+     *
      * Path parameter: feedUri (required)
      * The URI to the feed to poll.
-     * 
+     *
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
      * @param path feedUri
@@ -825,26 +825,26 @@ public class StaticEndpointBuilders {
     /**
      * Avro RPC (camel-avro-rpc)
      * Produce or consume Apache Avro RPC services.
-     * 
+     *
      * Category: rpc
      * Since: 2.10
      * Maven coordinates: org.apache.camel:camel-avro-rpc
-     * 
+     *
      * Syntax: <code>avro:transport:host:port/messageName</code>
-     * 
+     *
      * Path parameter: transport (required)
      * Transport to use, can be either http or netty
      * There are 2 enums and the value can be one of: http, netty
-     * 
+     *
      * Path parameter: port (required)
      * Port number to use
-     * 
+     *
      * Path parameter: host (required)
      * Hostname to use
-     * 
+     *
      * Path parameter: messageName
      * The name of the message to send.
-     * 
+     *
      * @param path transport:host:port/messageName
      * @return the dsl builder
      */
@@ -854,26 +854,26 @@ public class StaticEndpointBuilders {
     /**
      * Avro RPC (camel-avro-rpc)
      * Produce or consume Apache Avro RPC services.
-     * 
+     *
      * Category: rpc
      * Since: 2.10
      * Maven coordinates: org.apache.camel:camel-avro-rpc
-     * 
+     *
      * Syntax: <code>avro:transport:host:port/messageName</code>
-     * 
+     *
      * Path parameter: transport (required)
      * Transport to use, can be either http or netty
      * There are 2 enums and the value can be one of: http, netty
-     * 
+     *
      * Path parameter: port (required)
      * Port number to use
-     * 
+     *
      * Path parameter: host (required)
      * Hostname to use
-     * 
+     *
      * Path parameter: messageName
      * The name of the message to send.
-     * 
+     *
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
      * @param path transport:host:port/messageName
@@ -885,16 +885,16 @@ public class StaticEndpointBuilders {
     /**
      * AWS Bedrock (camel-aws-bedrock)
      * Invoke Model of AWS Bedrock service.
-     * 
+     *
      * Category: ai,cloud
      * Since: 4.5
      * Maven coordinates: org.apache.camel:camel-aws-bedrock
-     * 
+     *
      * Syntax: <code>aws-bedrock:label</code>
-     * 
+     *
      * Path parameter: label (required)
      * Logical name
-     * 
+     *
      * @param path label
      * @return the dsl builder
      */
@@ -904,16 +904,16 @@ public class StaticEndpointBuilders {
     /**
      * AWS Bedrock (camel-aws-bedrock)
      * Invoke Model of AWS Bedrock service.
-     * 
+     *
      * Category: ai,cloud
      * Since: 4.5
      * Maven coordinates: org.apache.camel:camel-aws-bedrock
-     * 
+     *
      * Syntax: <code>aws-bedrock:label</code>
-     * 
+     *
      * Path parameter: label (required)
      * Logical name
-     * 
+     *
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
      * @param path label
@@ -925,16 +925,16 @@ public class StaticEndpointBuilders {
     /**
      * AWS Bedrock Agent (camel-aws-bedrock)
      * Operate on AWS Bedrock through its Agent.
-     * 
+     *
      * Category: ai,cloud
      * Since: 4.5
      * Maven coordinates: org.apache.camel:camel-aws-bedrock
-     * 
+     *
      * Syntax: <code>aws-bedrock-agent:label</code>
-     * 
+     *
      * Path parameter: label (required)
      * Logical name
-     * 
+     *
      * @param path label
      * @return the dsl builder
      */
@@ -944,16 +944,16 @@ public class StaticEndpointBuilders {
     /**
      * AWS Bedrock Agent (camel-aws-bedrock)
      * Operate on AWS Bedrock through its Agent.
-     * 
+     *
      * Category: ai,cloud
      * Since: 4.5
      * Maven coordinates: org.apache.camel:camel-aws-bedrock
-     * 
+     *
      * Syntax: <code>aws-bedrock-agent:label</code>
-     * 
+     *
      * Path parameter: label (required)
      * Logical name
-     * 
+     *
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
      * @param path label
@@ -965,16 +965,16 @@ public class StaticEndpointBuilders {
     /**
      * AWS Bedrock Agent Runtime (camel-aws-bedrock)
      * Invoke Model of AWS Bedrock Agent Runtime service.
-     * 
+     *
      * Category: ai,cloud
      * Since: 4.5
      * Maven coordinates: org.apache.camel:camel-aws-bedrock
-     * 
+     *
      * Syntax: <code>aws-bedrock-agent-runtime:label</code>
-     * 
+     *
      * Path parameter: label (required)
      * Logical name
-     * 
+     *
      * @param path label
      * @return the dsl builder
      */
@@ -984,16 +984,16 @@ public class StaticEndpointBuilders {
     /**
      * AWS Bedrock Agent Runtime (camel-aws-bedrock)
      * Invoke Model of AWS Bedrock Agent Runtime service.
-     * 
+     *
      * Category: ai,cloud
      * Since: 4.5
      * Maven coordinates: org.apache.camel:camel-aws-bedrock
-     * 
+     *
      * Syntax: <code>aws-bedrock-agent-runtime:label</code>
-     * 
+     *
      * Path parameter: label (required)
      * Logical name
-     * 
+     *
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
      * @param path label
@@ -1005,16 +1005,16 @@ public class StaticEndpointBuilders {
     /**
      * AWS CloudTrail (camel-aws-cloudtrail)
      * Consume events from Amazon CloudTrail using AWS SDK version 2.x.
-     * 
+     *
      * Category: cloud,management,monitoring
      * Since: 3.19
      * Maven coordinates: org.apache.camel:camel-aws-cloudtrail
-     * 
+     *
      * Syntax: <code>aws-cloudtrail:label</code>
-     * 
+     *
      * Path parameter: label (required)
      * A label for indexing cloudtrail endpoints
-     * 
+     *
      * @param path label
      * @return the dsl builder
      */
@@ -1024,16 +1024,16 @@ public class StaticEndpointBuilders {
     /**
      * AWS CloudTrail (camel-aws-cloudtrail)
      * Consume events from Amazon CloudTrail using AWS SDK version 2.x.
-     * 
+     *
      * Category: cloud,management,monitoring
      * Since: 3.19
      * Maven coordinates: org.apache.camel:camel-aws-cloudtrail
-     * 
+     *
      * Syntax: <code>aws-cloudtrail:label</code>
-     * 
+     *
      * Path parameter: label (required)
      * A label for indexing cloudtrail endpoints
-     * 
+     *
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
      * @param path label
@@ -1045,16 +1045,16 @@ public class StaticEndpointBuilders {
     /**
      * AWS Config Service (camel-aws-config)
      * Manage AWS Config service.
-     * 
+     *
      * Category: cloud,management
      * Since: 4.3
      * Maven coordinates: org.apache.camel:camel-aws-config
-     * 
+     *
      * Syntax: <code>aws-config:label</code>
-     * 
+     *
      * Path parameter: label (required)
      * Logical name
-     * 
+     *
      * @param path label
      * @return the dsl builder
      */
@@ -1064,16 +1064,16 @@ public class StaticEndpointBuilders {
     /**
      * AWS Config Service (camel-aws-config)
      * Manage AWS Config service.
-     * 
+     *
      * Category: cloud,management
      * Since: 4.3
      * Maven coordinates: org.apache.camel:camel-aws-config
-     * 
+     *
      * Syntax: <code>aws-config:label</code>
-     * 
+     *
      * Path parameter: label (required)
      * Logical name
-     * 
+     *
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
      * @param path label
@@ -1085,16 +1085,16 @@ public class StaticEndpointBuilders {
     /**
      * AWS Secrets Manager (camel-aws-secrets-manager)
      * Manage secrets using AWS Secrets Manager.
-     * 
+     *
      * Category: cloud,management
      * Since: 3.9
      * Maven coordinates: org.apache.camel:camel-aws-secrets-manager
-     * 
+     *
      * Syntax: <code>aws-secrets-manager:label</code>
-     * 
+     *
      * Path parameter: label (required)
      * Logical name
-     * 
+     *
      * @param path label
      * @return the dsl builder
      */
@@ -1104,16 +1104,16 @@ public class StaticEndpointBuilders {
     /**
      * AWS Secrets Manager (camel-aws-secrets-manager)
      * Manage secrets using AWS Secrets Manager.
-     * 
+     *
      * Category: cloud,management
      * Since: 3.9
      * Maven coordinates: org.apache.camel:camel-aws-secrets-manager
-     * 
+     *
      * Syntax: <code>aws-secrets-manager:label</code>
-     * 
+     *
      * Path parameter: label (required)
      * Logical name
-     * 
+     *
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
      * @param path label
@@ -1125,16 +1125,16 @@ public class StaticEndpointBuilders {
     /**
      * AWS Security Hub (camel-aws-security-hub)
      * Manage and interact with AWS Security Hub for security findings.
-     * 
+     *
      * Category: cloud,security
      * Since: 4.18
      * Maven coordinates: org.apache.camel:camel-aws-security-hub
-     * 
+     *
      * Syntax: <code>aws-security-hub:label</code>
-     * 
+     *
      * Path parameter: label (required)
      * Logical name
-     * 
+     *
      * @param path label
      * @return the dsl builder
      */
@@ -1144,16 +1144,16 @@ public class StaticEndpointBuilders {
     /**
      * AWS Security Hub (camel-aws-security-hub)
      * Manage and interact with AWS Security Hub for security findings.
-     * 
+     *
      * Category: cloud,security
      * Since: 4.18
      * Maven coordinates: org.apache.camel:camel-aws-security-hub
-     * 
+     *
      * Syntax: <code>aws-security-hub:label</code>
-     * 
+     *
      * Path parameter: label (required)
      * Logical name
-     * 
+     *
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
      * @param path label
@@ -1165,16 +1165,16 @@ public class StaticEndpointBuilders {
     /**
      * AWS Athena (camel-aws2-athena)
      * Access AWS Athena.
-     * 
+     *
      * Category: cloud,database
      * Since: 3.4
      * Maven coordinates: org.apache.camel:camel-aws2-athena
-     * 
+     *
      * Syntax: <code>aws2-athena:label</code>
-     * 
+     *
      * Path parameter: label (required)
      * Logical name
-     * 
+     *
      * @param path label
      * @return the dsl builder
      */
@@ -1184,16 +1184,16 @@ public class StaticEndpointBuilders {
     /**
      * AWS Athena (camel-aws2-athena)
      * Access AWS Athena.
-     * 
+     *
      * Category: cloud,database
      * Since: 3.4
      * Maven coordinates: org.apache.camel:camel-aws2-athena
-     * 
+     *
      * Syntax: <code>aws2-athena:label</code>
-     * 
+     *
      * Path parameter: label (required)
      * Logical name
-     * 
+     *
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
      * @param path label
@@ -1206,16 +1206,16 @@ public class StaticEndpointBuilders {
      * AWS Comprehend (camel-aws2-comprehend)
      * Perform natural language processing using AWS Comprehend and AWS SDK
      * version 2.x.
-     * 
+     *
      * Category: cloud,ai
      * Since: 4.18
      * Maven coordinates: org.apache.camel:camel-aws2-comprehend
-     * 
+     *
      * Syntax: <code>aws2-comprehend:label</code>
-     * 
+     *
      * Path parameter: label (required)
      * Logical name
-     * 
+     *
      * @param path label
      * @return the dsl builder
      */
@@ -1226,16 +1226,16 @@ public class StaticEndpointBuilders {
      * AWS Comprehend (camel-aws2-comprehend)
      * Perform natural language processing using AWS Comprehend and AWS SDK
      * version 2.x.
-     * 
+     *
      * Category: cloud,ai
      * Since: 4.18
      * Maven coordinates: org.apache.camel:camel-aws2-comprehend
-     * 
+     *
      * Syntax: <code>aws2-comprehend:label</code>
-     * 
+     *
      * Path parameter: label (required)
      * Logical name
-     * 
+     *
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
      * @param path label
@@ -1247,16 +1247,16 @@ public class StaticEndpointBuilders {
     /**
      * AWS CloudWatch (camel-aws2-cw)
      * Sending metrics to AWS CloudWatch.
-     * 
+     *
      * Category: cloud,monitoring
      * Since: 3.1
      * Maven coordinates: org.apache.camel:camel-aws2-cw
-     * 
+     *
      * Syntax: <code>aws2-cw:namespace</code>
-     * 
+     *
      * Path parameter: namespace (required)
      * The metric namespace
-     * 
+     *
      * @param path namespace
      * @return the dsl builder
      */
@@ -1266,16 +1266,16 @@ public class StaticEndpointBuilders {
     /**
      * AWS CloudWatch (camel-aws2-cw)
      * Sending metrics to AWS CloudWatch.
-     * 
+     *
      * Category: cloud,monitoring
      * Since: 3.1
      * Maven coordinates: org.apache.camel:camel-aws2-cw
-     * 
+     *
      * Syntax: <code>aws2-cw:namespace</code>
-     * 
+     *
      * Path parameter: namespace (required)
      * The metric namespace
-     * 
+     *
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
      * @param path namespace
@@ -1287,16 +1287,16 @@ public class StaticEndpointBuilders {
     /**
      * AWS DynamoDB (camel-aws2-ddb)
      * Store and retrieve data from AWS DynamoDB.
-     * 
+     *
      * Category: cloud,database
      * Since: 3.1
      * Maven coordinates: org.apache.camel:camel-aws2-ddb
-     * 
+     *
      * Syntax: <code>aws2-ddb:tableName</code>
-     * 
+     *
      * Path parameter: tableName (required)
      * The name of the table currently worked with.
-     * 
+     *
      * @param path tableName
      * @return the dsl builder
      */
@@ -1306,16 +1306,16 @@ public class StaticEndpointBuilders {
     /**
      * AWS DynamoDB (camel-aws2-ddb)
      * Store and retrieve data from AWS DynamoDB.
-     * 
+     *
      * Category: cloud,database
      * Since: 3.1
      * Maven coordinates: org.apache.camel:camel-aws2-ddb
-     * 
+     *
      * Syntax: <code>aws2-ddb:tableName</code>
-     * 
+     *
      * Path parameter: tableName (required)
      * The name of the table currently worked with.
-     * 
+     *
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
      * @param path tableName
@@ -1327,16 +1327,16 @@ public class StaticEndpointBuilders {
     /**
      * AWS DynamoDB Streams (camel-aws2-ddb)
      * Receive messages from AWS DynamoDB Stream.
-     * 
+     *
      * Category: cloud,messaging
      * Since: 3.1
      * Maven coordinates: org.apache.camel:camel-aws2-ddb
-     * 
+     *
      * Syntax: <code>aws2-ddbstream:tableName</code>
-     * 
+     *
      * Path parameter: tableName (required)
      * Name of the dynamodb table
-     * 
+     *
      * @param path tableName
      * @return the dsl builder
      */
@@ -1346,16 +1346,16 @@ public class StaticEndpointBuilders {
     /**
      * AWS DynamoDB Streams (camel-aws2-ddb)
      * Receive messages from AWS DynamoDB Stream.
-     * 
+     *
      * Category: cloud,messaging
      * Since: 3.1
      * Maven coordinates: org.apache.camel:camel-aws2-ddb
-     * 
+     *
      * Syntax: <code>aws2-ddbstream:tableName</code>
-     * 
+     *
      * Path parameter: tableName (required)
      * Name of the dynamodb table
-     * 
+     *
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
      * @param path tableName
@@ -1367,16 +1367,16 @@ public class StaticEndpointBuilders {
     /**
      * AWS Elastic Compute Cloud (EC2) (camel-aws2-ec2)
      * Manage AWS EC2 instances.
-     * 
+     *
      * Category: cloud,management
      * Since: 3.1
      * Maven coordinates: org.apache.camel:camel-aws2-ec2
-     * 
+     *
      * Syntax: <code>aws2-ec2:label</code>
-     * 
+     *
      * Path parameter: label (required)
      * Logical name
-     * 
+     *
      * @param path label
      * @return the dsl builder
      */
@@ -1386,16 +1386,16 @@ public class StaticEndpointBuilders {
     /**
      * AWS Elastic Compute Cloud (EC2) (camel-aws2-ec2)
      * Manage AWS EC2 instances.
-     * 
+     *
      * Category: cloud,management
      * Since: 3.1
      * Maven coordinates: org.apache.camel:camel-aws2-ec2
-     * 
+     *
      * Syntax: <code>aws2-ec2:label</code>
-     * 
+     *
      * Path parameter: label (required)
      * Logical name
-     * 
+     *
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
      * @param path label
@@ -1407,16 +1407,16 @@ public class StaticEndpointBuilders {
     /**
      * AWS Elastic Container Service (ECS) (camel-aws2-ecs)
      * Manage AWS ECS cluster instances.
-     * 
+     *
      * Category: cloud,management
      * Since: 3.1
      * Maven coordinates: org.apache.camel:camel-aws2-ecs
-     * 
+     *
      * Syntax: <code>aws2-ecs:label</code>
-     * 
+     *
      * Path parameter: label (required)
      * Logical name
-     * 
+     *
      * @param path label
      * @return the dsl builder
      */
@@ -1426,16 +1426,16 @@ public class StaticEndpointBuilders {
     /**
      * AWS Elastic Container Service (ECS) (camel-aws2-ecs)
      * Manage AWS ECS cluster instances.
-     * 
+     *
      * Category: cloud,management
      * Since: 3.1
      * Maven coordinates: org.apache.camel:camel-aws2-ecs
-     * 
+     *
      * Syntax: <code>aws2-ecs:label</code>
-     * 
+     *
      * Path parameter: label (required)
      * Logical name
-     * 
+     *
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
      * @param path label
@@ -1447,16 +1447,16 @@ public class StaticEndpointBuilders {
     /**
      * AWS Elastic Kubernetes Service (EKS) (camel-aws2-eks)
      * Manage AWS EKS cluster instances.
-     * 
+     *
      * Category: cloud,management
      * Since: 3.1
      * Maven coordinates: org.apache.camel:camel-aws2-eks
-     * 
+     *
      * Syntax: <code>aws2-eks:label</code>
-     * 
+     *
      * Path parameter: label (required)
      * Logical name
-     * 
+     *
      * @param path label
      * @return the dsl builder
      */
@@ -1466,16 +1466,16 @@ public class StaticEndpointBuilders {
     /**
      * AWS Elastic Kubernetes Service (EKS) (camel-aws2-eks)
      * Manage AWS EKS cluster instances.
-     * 
+     *
      * Category: cloud,management
      * Since: 3.1
      * Maven coordinates: org.apache.camel:camel-aws2-eks
-     * 
+     *
      * Syntax: <code>aws2-eks:label</code>
-     * 
+     *
      * Path parameter: label (required)
      * Logical name
-     * 
+     *
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
      * @param path label
@@ -1488,16 +1488,16 @@ public class StaticEndpointBuilders {
      * AWS Eventbridge (camel-aws2-eventbridge)
      * Manage AWS EventBridge cluster instances and consume events via
      * SQS-backed polling.
-     * 
+     *
      * Category: cloud,management
      * Since: 3.6
      * Maven coordinates: org.apache.camel:camel-aws2-eventbridge
-     * 
+     *
      * Syntax: <code>aws2-eventbridge://eventbusNameOrArn</code>
-     * 
+     *
      * Path parameter: eventbusNameOrArn (required)
      * Event bus name or ARN
-     * 
+     *
      * @param path eventbusNameOrArn
      * @return the dsl builder
      */
@@ -1508,16 +1508,16 @@ public class StaticEndpointBuilders {
      * AWS Eventbridge (camel-aws2-eventbridge)
      * Manage AWS EventBridge cluster instances and consume events via
      * SQS-backed polling.
-     * 
+     *
      * Category: cloud,management
      * Since: 3.6
      * Maven coordinates: org.apache.camel:camel-aws2-eventbridge
-     * 
+     *
      * Syntax: <code>aws2-eventbridge://eventbusNameOrArn</code>
-     * 
+     *
      * Path parameter: eventbusNameOrArn (required)
      * Event bus name or ARN
-     * 
+     *
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
      * @param path eventbusNameOrArn
@@ -1529,16 +1529,16 @@ public class StaticEndpointBuilders {
     /**
      * AWS Identity and Access Management (IAM) (camel-aws2-iam)
      * Manage AWS IAM instances.
-     * 
+     *
      * Category: cloud,management
      * Since: 3.1
      * Maven coordinates: org.apache.camel:camel-aws2-iam
-     * 
+     *
      * Syntax: <code>aws2-iam:label</code>
-     * 
+     *
      * Path parameter: label (required)
      * Logical name
-     * 
+     *
      * @param path label
      * @return the dsl builder
      */
@@ -1548,16 +1548,16 @@ public class StaticEndpointBuilders {
     /**
      * AWS Identity and Access Management (IAM) (camel-aws2-iam)
      * Manage AWS IAM instances.
-     * 
+     *
      * Category: cloud,management
      * Since: 3.1
      * Maven coordinates: org.apache.camel:camel-aws2-iam
-     * 
+     *
      * Syntax: <code>aws2-iam:label</code>
-     * 
+     *
      * Path parameter: label (required)
      * Logical name
-     * 
+     *
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
      * @param path label
@@ -1569,16 +1569,16 @@ public class StaticEndpointBuilders {
     /**
      * AWS Kinesis (camel-aws2-kinesis)
      * Consume and produce records from and to AWS Kinesis Streams.
-     * 
+     *
      * Category: cloud,messaging
      * Since: 3.2
      * Maven coordinates: org.apache.camel:camel-aws2-kinesis
-     * 
+     *
      * Syntax: <code>aws2-kinesis:streamName</code>
-     * 
+     *
      * Path parameter: streamName (required)
      * Name of the stream
-     * 
+     *
      * @param path streamName
      * @return the dsl builder
      */
@@ -1588,16 +1588,16 @@ public class StaticEndpointBuilders {
     /**
      * AWS Kinesis (camel-aws2-kinesis)
      * Consume and produce records from and to AWS Kinesis Streams.
-     * 
+     *
      * Category: cloud,messaging
      * Since: 3.2
      * Maven coordinates: org.apache.camel:camel-aws2-kinesis
-     * 
+     *
      * Syntax: <code>aws2-kinesis:streamName</code>
-     * 
+     *
      * Path parameter: streamName (required)
      * Name of the stream
-     * 
+     *
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
      * @param path streamName
@@ -1609,16 +1609,16 @@ public class StaticEndpointBuilders {
     /**
      * AWS Kinesis Firehose (camel-aws2-kinesis)
      * Produce data to AWS Kinesis Firehose streams.
-     * 
+     *
      * Category: cloud,messaging
      * Since: 3.2
      * Maven coordinates: org.apache.camel:camel-aws2-kinesis
-     * 
+     *
      * Syntax: <code>aws2-kinesis-firehose:streamName</code>
-     * 
+     *
      * Path parameter: streamName (required)
      * Name of the stream
-     * 
+     *
      * @param path streamName
      * @return the dsl builder
      */
@@ -1628,16 +1628,16 @@ public class StaticEndpointBuilders {
     /**
      * AWS Kinesis Firehose (camel-aws2-kinesis)
      * Produce data to AWS Kinesis Firehose streams.
-     * 
+     *
      * Category: cloud,messaging
      * Since: 3.2
      * Maven coordinates: org.apache.camel:camel-aws2-kinesis
-     * 
+     *
      * Syntax: <code>aws2-kinesis-firehose:streamName</code>
-     * 
+     *
      * Path parameter: streamName (required)
      * Name of the stream
-     * 
+     *
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
      * @param path streamName
@@ -1649,16 +1649,16 @@ public class StaticEndpointBuilders {
     /**
      * AWS Key Management Service (KMS) (camel-aws2-kms)
      * Manage keys stored in AWS KMS instances.
-     * 
+     *
      * Category: cloud,management
      * Since: 3.1
      * Maven coordinates: org.apache.camel:camel-aws2-kms
-     * 
+     *
      * Syntax: <code>aws2-kms:label</code>
-     * 
+     *
      * Path parameter: label (required)
      * Logical name
-     * 
+     *
      * @param path label
      * @return the dsl builder
      */
@@ -1668,16 +1668,16 @@ public class StaticEndpointBuilders {
     /**
      * AWS Key Management Service (KMS) (camel-aws2-kms)
      * Manage keys stored in AWS KMS instances.
-     * 
+     *
      * Category: cloud,management
      * Since: 3.1
      * Maven coordinates: org.apache.camel:camel-aws2-kms
-     * 
+     *
      * Syntax: <code>aws2-kms:label</code>
-     * 
+     *
      * Path parameter: label (required)
      * Logical name
-     * 
+     *
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
      * @param path label
@@ -1689,16 +1689,16 @@ public class StaticEndpointBuilders {
     /**
      * AWS Lambda (camel-aws2-lambda)
      * Manage and invoke AWS Lambda functions.
-     * 
+     *
      * Category: cloud,serverless
      * Since: 3.2
      * Maven coordinates: org.apache.camel:camel-aws2-lambda
-     * 
+     *
      * Syntax: <code>aws2-lambda:function</code>
-     * 
+     *
      * Path parameter: function (required)
      * Name of the Lambda function.
-     * 
+     *
      * @param path function
      * @return the dsl builder
      */
@@ -1708,16 +1708,16 @@ public class StaticEndpointBuilders {
     /**
      * AWS Lambda (camel-aws2-lambda)
      * Manage and invoke AWS Lambda functions.
-     * 
+     *
      * Category: cloud,serverless
      * Since: 3.2
      * Maven coordinates: org.apache.camel:camel-aws2-lambda
-     * 
+     *
      * Syntax: <code>aws2-lambda:function</code>
-     * 
+     *
      * Path parameter: function (required)
      * Name of the Lambda function.
-     * 
+     *
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
      * @param path function
@@ -1729,16 +1729,16 @@ public class StaticEndpointBuilders {
     /**
      * AWS MQ (camel-aws2-mq)
      * Send messages to AWS MQ.
-     * 
+     *
      * Category: cloud,messaging
      * Since: 3.1
      * Maven coordinates: org.apache.camel:camel-aws2-mq
-     * 
+     *
      * Syntax: <code>aws2-mq:label</code>
-     * 
+     *
      * Path parameter: label (required)
      * Logical name
-     * 
+     *
      * @param path label
      * @return the dsl builder
      */
@@ -1748,16 +1748,16 @@ public class StaticEndpointBuilders {
     /**
      * AWS MQ (camel-aws2-mq)
      * Send messages to AWS MQ.
-     * 
+     *
      * Category: cloud,messaging
      * Since: 3.1
      * Maven coordinates: org.apache.camel:camel-aws2-mq
-     * 
+     *
      * Syntax: <code>aws2-mq:label</code>
-     * 
+     *
      * Path parameter: label (required)
      * Logical name
-     * 
+     *
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
      * @param path label
@@ -1769,16 +1769,16 @@ public class StaticEndpointBuilders {
     /**
      * AWS Managed Streaming for Apache Kafka (MSK) (camel-aws2-msk)
      * Manage AWS MSK instances.
-     * 
+     *
      * Category: cloud,management
      * Since: 3.1
      * Maven coordinates: org.apache.camel:camel-aws2-msk
-     * 
+     *
      * Syntax: <code>aws2-msk:label</code>
-     * 
+     *
      * Path parameter: label (required)
      * Logical name
-     * 
+     *
      * @param path label
      * @return the dsl builder
      */
@@ -1788,16 +1788,16 @@ public class StaticEndpointBuilders {
     /**
      * AWS Managed Streaming for Apache Kafka (MSK) (camel-aws2-msk)
      * Manage AWS MSK instances.
-     * 
+     *
      * Category: cloud,management
      * Since: 3.1
      * Maven coordinates: org.apache.camel:camel-aws2-msk
-     * 
+     *
      * Syntax: <code>aws2-msk:label</code>
-     * 
+     *
      * Path parameter: label (required)
      * Logical name
-     * 
+     *
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
      * @param path label
@@ -1809,16 +1809,16 @@ public class StaticEndpointBuilders {
     /**
      * AWS Polly (camel-aws2-polly)
      * Synthesize speech using AWS Polly and AWS SDK version 2.x.
-     * 
+     *
      * Category: cloud,ai
      * Since: 4.18
      * Maven coordinates: org.apache.camel:camel-aws2-polly
-     * 
+     *
      * Syntax: <code>aws2-polly:label</code>
-     * 
+     *
      * Path parameter: label (required)
      * Logical name
-     * 
+     *
      * @param path label
      * @return the dsl builder
      */
@@ -1828,16 +1828,16 @@ public class StaticEndpointBuilders {
     /**
      * AWS Polly (camel-aws2-polly)
      * Synthesize speech using AWS Polly and AWS SDK version 2.x.
-     * 
+     *
      * Category: cloud,ai
      * Since: 4.18
      * Maven coordinates: org.apache.camel:camel-aws2-polly
-     * 
+     *
      * Syntax: <code>aws2-polly:label</code>
-     * 
+     *
      * Path parameter: label (required)
      * Logical name
-     * 
+     *
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
      * @param path label
@@ -1849,16 +1849,16 @@ public class StaticEndpointBuilders {
     /**
      * AWS RedshiftData (camel-aws2-redshift)
      * Perform operations on AWS Redshift using Redshift Data API.
-     * 
+     *
      * Category: cloud,serverless,database,bigdata
      * Since: 4.1
      * Maven coordinates: org.apache.camel:camel-aws2-redshift
-     * 
+     *
      * Syntax: <code>aws2-redshift-data:label</code>
-     * 
+     *
      * Path parameter: label (required)
      * Logical name
-     * 
+     *
      * @param path label
      * @return the dsl builder
      */
@@ -1868,16 +1868,16 @@ public class StaticEndpointBuilders {
     /**
      * AWS RedshiftData (camel-aws2-redshift)
      * Perform operations on AWS Redshift using Redshift Data API.
-     * 
+     *
      * Category: cloud,serverless,database,bigdata
      * Since: 4.1
      * Maven coordinates: org.apache.camel:camel-aws2-redshift
-     * 
+     *
      * Syntax: <code>aws2-redshift-data:label</code>
-     * 
+     *
      * Path parameter: label (required)
      * Logical name
-     * 
+     *
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
      * @param path label
@@ -1889,16 +1889,16 @@ public class StaticEndpointBuilders {
     /**
      * AWS Rekognition (camel-aws2-rekognition)
      * Manage and invoke AWS Rekognition.
-     * 
+     *
      * Category: cloud,ai
      * Since: 4.17
      * Maven coordinates: org.apache.camel:camel-aws2-rekognition
-     * 
+     *
      * Syntax: <code>aws2-rekognition:label</code>
-     * 
+     *
      * Path parameter: label (required)
      * Logical name
-     * 
+     *
      * @param path label
      * @return the dsl builder
      */
@@ -1908,16 +1908,16 @@ public class StaticEndpointBuilders {
     /**
      * AWS Rekognition (camel-aws2-rekognition)
      * Manage and invoke AWS Rekognition.
-     * 
+     *
      * Category: cloud,ai
      * Since: 4.17
      * Maven coordinates: org.apache.camel:camel-aws2-rekognition
-     * 
+     *
      * Syntax: <code>aws2-rekognition:label</code>
-     * 
+     *
      * Path parameter: label (required)
      * Logical name
-     * 
+     *
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
      * @param path label
@@ -1929,16 +1929,16 @@ public class StaticEndpointBuilders {
     /**
      * AWS S3 Storage Service (camel-aws2-s3)
      * Store and retrieve objects from AWS S3 Storage Service.
-     * 
+     *
      * Category: cloud,file
      * Since: 3.2
      * Maven coordinates: org.apache.camel:camel-aws2-s3
-     * 
+     *
      * Syntax: <code>aws2-s3://bucketNameOrArn</code>
-     * 
+     *
      * Path parameter: bucketNameOrArn (required)
      * Bucket name or ARN
-     * 
+     *
      * @param path bucketNameOrArn
      * @return the dsl builder
      */
@@ -1948,16 +1948,16 @@ public class StaticEndpointBuilders {
     /**
      * AWS S3 Storage Service (camel-aws2-s3)
      * Store and retrieve objects from AWS S3 Storage Service.
-     * 
+     *
      * Category: cloud,file
      * Since: 3.2
      * Maven coordinates: org.apache.camel:camel-aws2-s3
-     * 
+     *
      * Syntax: <code>aws2-s3://bucketNameOrArn</code>
-     * 
+     *
      * Path parameter: bucketNameOrArn (required)
      * Bucket name or ARN
-     * 
+     *
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
      * @param path bucketNameOrArn
@@ -1970,16 +1970,16 @@ public class StaticEndpointBuilders {
      * AWS S3 Vectors (camel-aws2-s3-vectors)
      * Store and query vector embeddings using AWS S3 Vectors with similarity
      * search.
-     * 
+     *
      * Category: cloud,ai
      * Since: 4.17
      * Maven coordinates: org.apache.camel:camel-aws2-s3-vectors
-     * 
+     *
      * Syntax: <code>aws2-s3-vectors://vectorBucketName</code>
-     * 
+     *
      * Path parameter: vectorBucketName (required)
      * Vector bucket name or ARN
-     * 
+     *
      * @param path vectorBucketName
      * @return the dsl builder
      */
@@ -1990,16 +1990,16 @@ public class StaticEndpointBuilders {
      * AWS S3 Vectors (camel-aws2-s3-vectors)
      * Store and query vector embeddings using AWS S3 Vectors with similarity
      * search.
-     * 
+     *
      * Category: cloud,ai
      * Since: 4.17
      * Maven coordinates: org.apache.camel:camel-aws2-s3-vectors
-     * 
+     *
      * Syntax: <code>aws2-s3-vectors://vectorBucketName</code>
-     * 
+     *
      * Path parameter: vectorBucketName (required)
      * Vector bucket name or ARN
-     * 
+     *
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
      * @param path vectorBucketName
@@ -2011,16 +2011,16 @@ public class StaticEndpointBuilders {
     /**
      * AWS Simple Email Service (SES) (camel-aws2-ses)
      * Send e-mails through AWS SES service.
-     * 
+     *
      * Category: cloud,mail
      * Since: 3.1
      * Maven coordinates: org.apache.camel:camel-aws2-ses
-     * 
+     *
      * Syntax: <code>aws2-ses:from</code>
-     * 
+     *
      * Path parameter: from (required)
      * The sender's email address.
-     * 
+     *
      * @param path from
      * @return the dsl builder
      */
@@ -2030,16 +2030,16 @@ public class StaticEndpointBuilders {
     /**
      * AWS Simple Email Service (SES) (camel-aws2-ses)
      * Send e-mails through AWS SES service.
-     * 
+     *
      * Category: cloud,mail
      * Since: 3.1
      * Maven coordinates: org.apache.camel:camel-aws2-ses
-     * 
+     *
      * Syntax: <code>aws2-ses:from</code>
-     * 
+     *
      * Path parameter: from (required)
      * The sender's email address.
-     * 
+     *
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
      * @param path from
@@ -2051,16 +2051,16 @@ public class StaticEndpointBuilders {
     /**
      * AWS Simple Notification System (SNS) (camel-aws2-sns)
      * Send messages to AWS Simple Notification Topic.
-     * 
+     *
      * Category: cloud,messaging,mobile
      * Since: 3.1
      * Maven coordinates: org.apache.camel:camel-aws2-sns
-     * 
+     *
      * Syntax: <code>aws2-sns:topicNameOrArn</code>
-     * 
+     *
      * Path parameter: topicNameOrArn (required)
      * Topic name or ARN
-     * 
+     *
      * @param path topicNameOrArn
      * @return the dsl builder
      */
@@ -2070,16 +2070,16 @@ public class StaticEndpointBuilders {
     /**
      * AWS Simple Notification System (SNS) (camel-aws2-sns)
      * Send messages to AWS Simple Notification Topic.
-     * 
+     *
      * Category: cloud,messaging,mobile
      * Since: 3.1
      * Maven coordinates: org.apache.camel:camel-aws2-sns
-     * 
+     *
      * Syntax: <code>aws2-sns:topicNameOrArn</code>
-     * 
+     *
      * Path parameter: topicNameOrArn (required)
      * Topic name or ARN
-     * 
+     *
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
      * @param path topicNameOrArn
@@ -2091,16 +2091,16 @@ public class StaticEndpointBuilders {
     /**
      * AWS Simple Queue Service (SQS) (camel-aws2-sqs)
      * Send and receive messages to/from AWS SQS.
-     * 
+     *
      * Category: cloud,messaging
      * Since: 3.1
      * Maven coordinates: org.apache.camel:camel-aws2-sqs
-     * 
+     *
      * Syntax: <code>aws2-sqs:queueNameOrArn</code>
-     * 
+     *
      * Path parameter: queueNameOrArn (required)
      * Queue name or ARN
-     * 
+     *
      * @param path queueNameOrArn
      * @return the dsl builder
      */
@@ -2110,16 +2110,16 @@ public class StaticEndpointBuilders {
     /**
      * AWS Simple Queue Service (SQS) (camel-aws2-sqs)
      * Send and receive messages to/from AWS SQS.
-     * 
+     *
      * Category: cloud,messaging
      * Since: 3.1
      * Maven coordinates: org.apache.camel:camel-aws2-sqs
-     * 
+     *
      * Syntax: <code>aws2-sqs:queueNameOrArn</code>
-     * 
+     *
      * Path parameter: queueNameOrArn (required)
      * Queue name or ARN
-     * 
+     *
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
      * @param path queueNameOrArn
@@ -2131,16 +2131,16 @@ public class StaticEndpointBuilders {
     /**
      * AWS StepFunctions (camel-aws2-step-functions)
      * Manage and invoke AWS Step functions.
-     * 
+     *
      * Category: cloud,serverless
      * Since: 4.0
      * Maven coordinates: org.apache.camel:camel-aws2-step-functions
-     * 
+     *
      * Syntax: <code>aws2-step-functions:label</code>
-     * 
+     *
      * Path parameter: label (required)
      * Logical name
-     * 
+     *
      * @param path label
      * @return the dsl builder
      */
@@ -2150,16 +2150,16 @@ public class StaticEndpointBuilders {
     /**
      * AWS StepFunctions (camel-aws2-step-functions)
      * Manage and invoke AWS Step functions.
-     * 
+     *
      * Category: cloud,serverless
      * Since: 4.0
      * Maven coordinates: org.apache.camel:camel-aws2-step-functions
-     * 
+     *
      * Syntax: <code>aws2-step-functions:label</code>
-     * 
+     *
      * Path parameter: label (required)
      * Logical name
-     * 
+     *
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
      * @param path label
@@ -2171,16 +2171,16 @@ public class StaticEndpointBuilders {
     /**
      * AWS Security Token Service (STS) (camel-aws2-sts)
      * Manage AWS STS cluster instances.
-     * 
+     *
      * Category: cloud,management
      * Since: 3.5
      * Maven coordinates: org.apache.camel:camel-aws2-sts
-     * 
+     *
      * Syntax: <code>aws2-sts:label</code>
-     * 
+     *
      * Path parameter: label (required)
      * Logical name
-     * 
+     *
      * @param path label
      * @return the dsl builder
      */
@@ -2190,16 +2190,16 @@ public class StaticEndpointBuilders {
     /**
      * AWS Security Token Service (STS) (camel-aws2-sts)
      * Manage AWS STS cluster instances.
-     * 
+     *
      * Category: cloud,management
      * Since: 3.5
      * Maven coordinates: org.apache.camel:camel-aws2-sts
-     * 
+     *
      * Syntax: <code>aws2-sts:label</code>
-     * 
+     *
      * Path parameter: label (required)
      * Logical name
-     * 
+     *
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
      * @param path label
@@ -2212,16 +2212,16 @@ public class StaticEndpointBuilders {
      * AWS Textract (camel-aws2-textract)
      * Extract text and data from documents using AWS Textract and AWS SDK
      * version 2.x.
-     * 
+     *
      * Category: cloud,document
      * Since: 4.15
      * Maven coordinates: org.apache.camel:camel-aws2-textract
-     * 
+     *
      * Syntax: <code>aws2-textract:label</code>
-     * 
+     *
      * Path parameter: label (required)
      * Logical name
-     * 
+     *
      * @param path label
      * @return the dsl builder
      */
@@ -2232,16 +2232,16 @@ public class StaticEndpointBuilders {
      * AWS Textract (camel-aws2-textract)
      * Extract text and data from documents using AWS Textract and AWS SDK
      * version 2.x.
-     * 
+     *
      * Category: cloud,document
      * Since: 4.15
      * Maven coordinates: org.apache.camel:camel-aws2-textract
-     * 
+     *
      * Syntax: <code>aws2-textract:label</code>
-     * 
+     *
      * Path parameter: label (required)
      * Logical name
-     * 
+     *
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
      * @param path label
@@ -2253,20 +2253,20 @@ public class StaticEndpointBuilders {
     /**
      * AWS Timestream (camel-aws2-timestream)
      * Write records and execute queries on AWS time-series database
-     * 
+     *
      * Category: cloud,database
      * Since: 4.1
      * Maven coordinates: org.apache.camel:camel-aws2-timestream
-     * 
+     *
      * Syntax: <code>aws2-timestream:clientType:label</code>
-     * 
+     *
      * Path parameter: clientType (required)
      * Type of client - write/query
      * There are 2 enums and the value can be one of: write, query
-     * 
+     *
      * Path parameter: label (required)
      * Logical name
-     * 
+     *
      * @param path clientType:label
      * @return the dsl builder
      */
@@ -2276,20 +2276,20 @@ public class StaticEndpointBuilders {
     /**
      * AWS Timestream (camel-aws2-timestream)
      * Write records and execute queries on AWS time-series database
-     * 
+     *
      * Category: cloud,database
      * Since: 4.1
      * Maven coordinates: org.apache.camel:camel-aws2-timestream
-     * 
+     *
      * Syntax: <code>aws2-timestream:clientType:label</code>
-     * 
+     *
      * Path parameter: clientType (required)
      * Type of client - write/query
      * There are 2 enums and the value can be one of: write, query
-     * 
+     *
      * Path parameter: label (required)
      * Logical name
-     * 
+     *
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
      * @param path clientType:label
@@ -2301,16 +2301,16 @@ public class StaticEndpointBuilders {
     /**
      * AWS Transcribe (camel-aws2-transcribe)
      * Automatically convert speech to text using AWS Transcribe service
-     * 
+     *
      * Category: cloud,messaging
      * Since: 4.15
      * Maven coordinates: org.apache.camel:camel-aws2-transcribe
-     * 
+     *
      * Syntax: <code>aws2-transcribe:label</code>
-     * 
+     *
      * Path parameter: label (required)
      * Logical name
-     * 
+     *
      * @param path label
      * @return the dsl builder
      */
@@ -2320,16 +2320,16 @@ public class StaticEndpointBuilders {
     /**
      * AWS Transcribe (camel-aws2-transcribe)
      * Automatically convert speech to text using AWS Transcribe service
-     * 
+     *
      * Category: cloud,messaging
      * Since: 4.15
      * Maven coordinates: org.apache.camel:camel-aws2-transcribe
-     * 
+     *
      * Syntax: <code>aws2-transcribe:label</code>
-     * 
+     *
      * Path parameter: label (required)
      * Logical name
-     * 
+     *
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
      * @param path label
@@ -2341,16 +2341,16 @@ public class StaticEndpointBuilders {
     /**
      * AWS Translate (camel-aws2-translate)
      * Translate texts using AWS Translate and AWS SDK version 2.x.
-     * 
+     *
      * Category: cloud,management
      * Since: 3.1
      * Maven coordinates: org.apache.camel:camel-aws2-translate
-     * 
+     *
      * Syntax: <code>aws2-translate:label</code>
-     * 
+     *
      * Path parameter: label (required)
      * Logical name
-     * 
+     *
      * @param path label
      * @return the dsl builder
      */
@@ -2360,16 +2360,16 @@ public class StaticEndpointBuilders {
     /**
      * AWS Translate (camel-aws2-translate)
      * Translate texts using AWS Translate and AWS SDK version 2.x.
-     * 
+     *
      * Category: cloud,management
      * Since: 3.1
      * Maven coordinates: org.apache.camel:camel-aws2-translate
-     * 
+     *
      * Syntax: <code>aws2-translate:label</code>
-     * 
+     *
      * Path parameter: label (required)
      * Logical name
-     * 
+     *
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
      * @param path label
@@ -2382,23 +2382,23 @@ public class StaticEndpointBuilders {
      * Azure CosmosDB (camel-azure-cosmosdb)
      * To read and write records to the CosmosDB database on Azure cloud
      * platform.
-     * 
+     *
      * Category: cloud,database
      * Since: 3.10
      * Maven coordinates: org.apache.camel:camel-azure-cosmosdb
-     * 
+     *
      * Syntax: <code>azure-cosmosdb:databaseName/containerName</code>
-     * 
+     *
      * Path parameter: databaseName
      * The name of the Cosmos database that component should connect to. In case
      * you are producing data and have createDatabaseIfNotExists=true, the
      * component will automatically auto create a Cosmos database.
-     * 
+     *
      * Path parameter: containerName
      * The name of the Cosmos container that component should connect to. In
      * case you are producing data and have createContainerIfNotExists=true, the
      * component will automatically auto create a Cosmos container.
-     * 
+     *
      * @param path databaseName/containerName
      * @return the dsl builder
      */
@@ -2409,23 +2409,23 @@ public class StaticEndpointBuilders {
      * Azure CosmosDB (camel-azure-cosmosdb)
      * To read and write records to the CosmosDB database on Azure cloud
      * platform.
-     * 
+     *
      * Category: cloud,database
      * Since: 3.10
      * Maven coordinates: org.apache.camel:camel-azure-cosmosdb
-     * 
+     *
      * Syntax: <code>azure-cosmosdb:databaseName/containerName</code>
-     * 
+     *
      * Path parameter: databaseName
      * The name of the Cosmos database that component should connect to. In case
      * you are producing data and have createDatabaseIfNotExists=true, the
      * component will automatically auto create a Cosmos database.
-     * 
+     *
      * Path parameter: containerName
      * The name of the Cosmos container that component should connect to. In
      * case you are producing data and have createContainerIfNotExists=true, the
      * component will automatically auto create a Cosmos container.
-     * 
+     *
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
      * @param path databaseName/containerName
@@ -2437,19 +2437,19 @@ public class StaticEndpointBuilders {
     /**
      * Azure Event Hubs (camel-azure-eventhubs)
      * Send and receive events to/from Azure Event Hubs using AMQP protocol.
-     * 
+     *
      * Category: cloud,messaging
      * Since: 3.5
      * Maven coordinates: org.apache.camel:camel-azure-eventhubs
-     * 
+     *
      * Syntax: <code>azure-eventhubs:namespace/eventHubName</code>
-     * 
+     *
      * Path parameter: namespace
      * EventHubs namespace created in Azure Portal.
-     * 
+     *
      * Path parameter: eventHubName
      * EventHubs name under a specific namespace.
-     * 
+     *
      * @param path namespace/eventHubName
      * @return the dsl builder
      */
@@ -2459,19 +2459,19 @@ public class StaticEndpointBuilders {
     /**
      * Azure Event Hubs (camel-azure-eventhubs)
      * Send and receive events to/from Azure Event Hubs using AMQP protocol.
-     * 
+     *
      * Category: cloud,messaging
      * Since: 3.5
      * Maven coordinates: org.apache.camel:camel-azure-eventhubs
-     * 
+     *
      * Syntax: <code>azure-eventhubs:namespace/eventHubName</code>
-     * 
+     *
      * Path parameter: namespace
      * EventHubs namespace created in Azure Portal.
-     * 
+     *
      * Path parameter: eventHubName
      * EventHubs name under a specific namespace.
-     * 
+     *
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
      * @param path namespace/eventHubName
@@ -2483,25 +2483,25 @@ public class StaticEndpointBuilders {
     /**
      * Azure Files (camel-azure-files)
      * Send and receive files to Azure storage file share
-     * 
+     *
      * Category: cloud,file
      * Since: 3.22
      * Maven coordinates: org.apache.camel:camel-azure-files
-     * 
+     *
      * Syntax: <code>azure-files:account/share</code>
-     * 
+     *
      * Path parameter: account (required)
      * The account to use
-     * 
+     *
      * Path parameter: share (required)
      * The share to use
-     * 
+     *
      * Path parameter: port
      * Port of the FTP server
-     * 
+     *
      * Path parameter: directoryName
      * The starting directory
-     * 
+     *
      * @param path account/share
      * @return the dsl builder
      */
@@ -2511,25 +2511,25 @@ public class StaticEndpointBuilders {
     /**
      * Azure Files (camel-azure-files)
      * Send and receive files to Azure storage file share
-     * 
+     *
      * Category: cloud,file
      * Since: 3.22
      * Maven coordinates: org.apache.camel:camel-azure-files
-     * 
+     *
      * Syntax: <code>azure-files:account/share</code>
-     * 
+     *
      * Path parameter: account (required)
      * The account to use
-     * 
+     *
      * Path parameter: share (required)
      * The share to use
-     * 
+     *
      * Path parameter: port
      * Port of the FTP server
-     * 
+     *
      * Path parameter: directoryName
      * The starting directory
-     * 
+     *
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
      * @param path account/share
@@ -2541,19 +2541,19 @@ public class StaticEndpointBuilders {
     /**
      * Azure Functions (camel-azure-functions)
      * Invoke and manage Azure Functions.
-     * 
+     *
      * Category: cloud,serverless
      * Since: 4.19
      * Maven coordinates: org.apache.camel:camel-azure-functions
-     * 
+     *
      * Syntax: <code>azure-functions:functionApp/functionName</code>
-     * 
+     *
      * Path parameter: functionApp (required)
      * The Azure Function App name
-     * 
+     *
      * Path parameter: functionName
      * The function name within the app (required for invokeFunction operation)
-     * 
+     *
      * @param path functionApp/functionName
      * @return the dsl builder
      */
@@ -2563,19 +2563,19 @@ public class StaticEndpointBuilders {
     /**
      * Azure Functions (camel-azure-functions)
      * Invoke and manage Azure Functions.
-     * 
+     *
      * Category: cloud,serverless
      * Since: 4.19
      * Maven coordinates: org.apache.camel:camel-azure-functions
-     * 
+     *
      * Syntax: <code>azure-functions:functionApp/functionName</code>
-     * 
+     *
      * Path parameter: functionApp (required)
      * The Azure Function App name
-     * 
+     *
      * Path parameter: functionName
      * The function name within the app (required for invokeFunction operation)
-     * 
+     *
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
      * @param path functionApp/functionName
@@ -2587,16 +2587,16 @@ public class StaticEndpointBuilders {
     /**
      * Azure Key Vault (camel-azure-key-vault)
      * Manage secrets and keys in Azure Key Vault Service
-     * 
+     *
      * Category: cloud,cloud
      * Since: 3.17
      * Maven coordinates: org.apache.camel:camel-azure-key-vault
-     * 
+     *
      * Syntax: <code>azure-key-vault:vaultName</code>
-     * 
+     *
      * Path parameter: vaultName
      * Vault Name to be used
-     * 
+     *
      * @param path vaultName
      * @return the dsl builder
      */
@@ -2606,16 +2606,16 @@ public class StaticEndpointBuilders {
     /**
      * Azure Key Vault (camel-azure-key-vault)
      * Manage secrets and keys in Azure Key Vault Service
-     * 
+     *
      * Category: cloud,cloud
      * Since: 3.17
      * Maven coordinates: org.apache.camel:camel-azure-key-vault
-     * 
+     *
      * Syntax: <code>azure-key-vault:vaultName</code>
-     * 
+     *
      * Path parameter: vaultName
      * Vault Name to be used
-     * 
+     *
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
      * @param path vaultName
@@ -2627,19 +2627,19 @@ public class StaticEndpointBuilders {
     /**
      * Azure ServiceBus (camel-azure-servicebus)
      * Send and receive messages to/from Azure Service Bus.
-     * 
+     *
      * Category: cloud,messaging
      * Since: 3.12
      * Maven coordinates: org.apache.camel:camel-azure-servicebus
-     * 
+     *
      * Syntax: <code>azure-servicebus:topicOrQueueName</code>
-     * 
+     *
      * Path parameter: topicOrQueueName
      * Selected topic name or the queue name, that is depending on
      * serviceBusType config. For example if serviceBusType=queue, then this
      * will be the queue name and if serviceBusType=topic, this will be the
      * topic name.
-     * 
+     *
      * @param path topicOrQueueName
      * @return the dsl builder
      */
@@ -2649,19 +2649,19 @@ public class StaticEndpointBuilders {
     /**
      * Azure ServiceBus (camel-azure-servicebus)
      * Send and receive messages to/from Azure Service Bus.
-     * 
+     *
      * Category: cloud,messaging
      * Since: 3.12
      * Maven coordinates: org.apache.camel:camel-azure-servicebus
-     * 
+     *
      * Syntax: <code>azure-servicebus:topicOrQueueName</code>
-     * 
+     *
      * Path parameter: topicOrQueueName
      * Selected topic name or the queue name, that is depending on
      * serviceBusType config. For example if serviceBusType=queue, then this
      * will be the queue name and if serviceBusType=topic, this will be the
      * topic name.
-     * 
+     *
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
      * @param path topicOrQueueName
@@ -2673,19 +2673,19 @@ public class StaticEndpointBuilders {
     /**
      * Azure Storage Blob Service (camel-azure-storage-blob)
      * Store and retrieve blobs from Azure Storage Blob Service.
-     * 
+     *
      * Category: cloud,file
      * Since: 3.3
      * Maven coordinates: org.apache.camel:camel-azure-storage-blob
-     * 
+     *
      * Syntax: <code>azure-storage-blob:accountName/containerName</code>
-     * 
+     *
      * Path parameter: accountName
      * Azure account name to be used for authentication with azure blob services
-     * 
+     *
      * Path parameter: containerName
      * The blob container name
-     * 
+     *
      * @param path accountName/containerName
      * @return the dsl builder
      */
@@ -2695,19 +2695,19 @@ public class StaticEndpointBuilders {
     /**
      * Azure Storage Blob Service (camel-azure-storage-blob)
      * Store and retrieve blobs from Azure Storage Blob Service.
-     * 
+     *
      * Category: cloud,file
      * Since: 3.3
      * Maven coordinates: org.apache.camel:camel-azure-storage-blob
-     * 
+     *
      * Syntax: <code>azure-storage-blob:accountName/containerName</code>
-     * 
+     *
      * Path parameter: accountName
      * Azure account name to be used for authentication with azure blob services
-     * 
+     *
      * Path parameter: containerName
      * The blob container name
-     * 
+     *
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
      * @param path accountName/containerName
@@ -2719,19 +2719,19 @@ public class StaticEndpointBuilders {
     /**
      * Azure Storage Data Lake Service (camel-azure-storage-datalake)
      * Sends and receives files to/from Azure Data Lake Storage.
-     * 
+     *
      * Category: cloud,file,bigdata
      * Since: 3.8
      * Maven coordinates: org.apache.camel:camel-azure-storage-datalake
-     * 
+     *
      * Syntax: <code>azure-storage-datalake:accountName/fileSystemName</code>
-     * 
+     *
      * Path parameter: accountName
      * name of the azure account
-     * 
+     *
      * Path parameter: fileSystemName
      * name of filesystem to be used
-     * 
+     *
      * @param path accountName/fileSystemName
      * @return the dsl builder
      */
@@ -2741,19 +2741,19 @@ public class StaticEndpointBuilders {
     /**
      * Azure Storage Data Lake Service (camel-azure-storage-datalake)
      * Sends and receives files to/from Azure Data Lake Storage.
-     * 
+     *
      * Category: cloud,file,bigdata
      * Since: 3.8
      * Maven coordinates: org.apache.camel:camel-azure-storage-datalake
-     * 
+     *
      * Syntax: <code>azure-storage-datalake:accountName/fileSystemName</code>
-     * 
+     *
      * Path parameter: accountName
      * name of the azure account
-     * 
+     *
      * Path parameter: fileSystemName
      * name of filesystem to be used
-     * 
+     *
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
      * @param path accountName/fileSystemName
@@ -2765,20 +2765,20 @@ public class StaticEndpointBuilders {
     /**
      * Azure Storage Queue Service (camel-azure-storage-queue)
      * Stores and retrieves messages to/from Azure Storage Queue.
-     * 
+     *
      * Category: cloud,messaging
      * Since: 3.3
      * Maven coordinates: org.apache.camel:camel-azure-storage-queue
-     * 
+     *
      * Syntax: <code>azure-storage-queue:accountName/queueName</code>
-     * 
+     *
      * Path parameter: accountName
      * Azure account name to be used for authentication with azure queue
      * services
-     * 
+     *
      * Path parameter: queueName
      * The queue resource name
-     * 
+     *
      * @param path accountName/queueName
      * @return the dsl builder
      */
@@ -2788,20 +2788,20 @@ public class StaticEndpointBuilders {
     /**
      * Azure Storage Queue Service (camel-azure-storage-queue)
      * Stores and retrieves messages to/from Azure Storage Queue.
-     * 
+     *
      * Category: cloud,messaging
      * Since: 3.3
      * Maven coordinates: org.apache.camel:camel-azure-storage-queue
-     * 
+     *
      * Syntax: <code>azure-storage-queue:accountName/queueName</code>
-     * 
+     *
      * Path parameter: accountName
      * Azure account name to be used for authentication with azure queue
      * services
-     * 
+     *
      * Path parameter: queueName
      * The queue resource name
-     * 
+     *
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
      * @param path accountName/queueName
@@ -2813,16 +2813,16 @@ public class StaticEndpointBuilders {
     /**
      * Bean (camel-bean)
      * Invoke methods of Java beans stored in Camel registry.
-     * 
+     *
      * Category: core,script
      * Since: 1.0
      * Maven coordinates: org.apache.camel:camel-bean
-     * 
+     *
      * Syntax: <code>bean:beanName</code>
-     * 
+     *
      * Path parameter: beanName (required)
      * Sets the name of the bean to invoke
-     * 
+     *
      * @param path beanName
      * @return the dsl builder
      */
@@ -2832,16 +2832,16 @@ public class StaticEndpointBuilders {
     /**
      * Bean (camel-bean)
      * Invoke methods of Java beans stored in Camel registry.
-     * 
+     *
      * Category: core,script
      * Since: 1.0
      * Maven coordinates: org.apache.camel:camel-bean
-     * 
+     *
      * Syntax: <code>bean:beanName</code>
-     * 
+     *
      * Path parameter: beanName (required)
      * Sets the name of the bean to invoke
-     * 
+     *
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
      * @param path beanName
@@ -2853,16 +2853,16 @@ public class StaticEndpointBuilders {
     /**
      * Bean Validator (camel-bean-validator)
      * Validate the message body using the Java Bean Validation API.
-     * 
+     *
      * Category: validation
      * Since: 2.3
      * Maven coordinates: org.apache.camel:camel-bean-validator
-     * 
+     *
      * Syntax: <code>bean-validator:label</code>
-     * 
+     *
      * Path parameter: label (required)
      * Where label is an arbitrary text value describing the endpoint
-     * 
+     *
      * @param path label
      * @return the dsl builder
      */
@@ -2872,16 +2872,16 @@ public class StaticEndpointBuilders {
     /**
      * Bean Validator (camel-bean-validator)
      * Validate the message body using the Java Bean Validation API.
-     * 
+     *
      * Category: validation
      * Since: 2.3
      * Maven coordinates: org.apache.camel:camel-bean-validator
-     * 
+     *
      * Syntax: <code>bean-validator:label</code>
-     * 
+     *
      * Path parameter: label (required)
      * Where label is an arbitrary text value describing the endpoint
-     * 
+     *
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
      * @param path label
@@ -2893,17 +2893,17 @@ public class StaticEndpointBuilders {
     /**
      * Bonita (camel-bonita)
      * Communicate with a remote Bonita BPM process engine.
-     * 
+     *
      * Category: workflow
      * Since: 2.19
      * Maven coordinates: org.apache.camel:camel-bonita
-     * 
+     *
      * Syntax: <code>bonita:operation</code>
-     * 
+     *
      * Path parameter: operation (required)
      * Operation to use
      * There are 1 enums and the value can be one of: startCase
-     * 
+     *
      * @param path operation
      * @return the dsl builder
      */
@@ -2913,17 +2913,17 @@ public class StaticEndpointBuilders {
     /**
      * Bonita (camel-bonita)
      * Communicate with a remote Bonita BPM process engine.
-     * 
+     *
      * Category: workflow
      * Since: 2.19
      * Maven coordinates: org.apache.camel:camel-bonita
-     * 
+     *
      * Syntax: <code>bonita:operation</code>
-     * 
+     *
      * Path parameter: operation (required)
      * Operation to use
      * There are 1 enums and the value can be one of: startCase
-     * 
+     *
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
      * @param path operation
@@ -2936,21 +2936,21 @@ public class StaticEndpointBuilders {
      * Box (camel-box)
      * Upload, download and manage files, folders, groups, collaborations, etc.
      * on box.com.
-     * 
+     *
      * Category: cloud,file,api
      * Since: 2.14
      * Maven coordinates: org.apache.camel:camel-box
-     * 
+     *
      * Syntax: <code>box:apiName/methodName</code>
-     * 
+     *
      * Path parameter: apiName (required)
      * What kind of operation to perform
      * There are 10 enums and the value can be one of: COLLABORATIONS, COMMENTS,
      * EVENT_LOGS, FILES, FOLDERS, GROUPS, EVENTS, SEARCH, TASKS, USERS
-     * 
+     *
      * Path parameter: methodName (required)
      * What sub operation to use for the selected operation
-     * 
+     *
      * @param path apiName/methodName
      * @return the dsl builder
      */
@@ -2961,21 +2961,21 @@ public class StaticEndpointBuilders {
      * Box (camel-box)
      * Upload, download and manage files, folders, groups, collaborations, etc.
      * on box.com.
-     * 
+     *
      * Category: cloud,file,api
      * Since: 2.14
      * Maven coordinates: org.apache.camel:camel-box
-     * 
+     *
      * Syntax: <code>box:apiName/methodName</code>
-     * 
+     *
      * Path parameter: apiName (required)
      * What kind of operation to perform
      * There are 10 enums and the value can be one of: COLLABORATIONS, COMMENTS,
      * EVENT_LOGS, FILES, FOLDERS, GROUPS, EVENTS, SEARCH, TASKS, USERS
-     * 
+     *
      * Path parameter: methodName (required)
      * What sub operation to use for the selected operation
-     * 
+     *
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
      * @param path apiName/methodName
@@ -2987,13 +2987,13 @@ public class StaticEndpointBuilders {
     /**
      * Braintree (camel-braintree)
      * Process payments using Braintree Payments.
-     * 
+     *
      * Category: saas,finance
      * Since: 2.17
      * Maven coordinates: org.apache.camel:camel-braintree
-     * 
+     *
      * Syntax: <code>braintree:apiName/methodName</code>
-     * 
+     *
      * Path parameter: apiName (required)
      * What kind of operation to perform
      * There are 19 enums and the value can be one of: ADD_ON, ADDRESS,
@@ -3001,7 +3001,7 @@ public class StaticEndpointBuilders {
      * DOCUMENT_UPLOAD, MERCHANT_ACCOUNT, PAYMENT_METHOD, PAYMENT_METHOD_NONCE,
      * OAUTH, PLAN, REPORT, SETTLEMENT_BATCH_SUMMARY, SUBSCRIPTION, TRANSACTION,
      * US_BANK_ACCOUNT, WEBHOOK_NOTIFICATION
-     * 
+     *
      * Path parameter: methodName (required)
      * What sub operation to use for the selected operation
      * There are 31 enums and the value can be one of: accept, addFileEvidence,
@@ -3011,7 +3011,7 @@ public class StaticEndpointBuilders {
      * removeEvidence, retryCharge, revoke, sale, search,
      * submitForPartialSettlement, submitForSettlement, transactionLevelFees,
      * update, updateDetails, verify, voidTransaction
-     * 
+     *
      * @param path apiName/methodName
      * @return the dsl builder
      */
@@ -3021,13 +3021,13 @@ public class StaticEndpointBuilders {
     /**
      * Braintree (camel-braintree)
      * Process payments using Braintree Payments.
-     * 
+     *
      * Category: saas,finance
      * Since: 2.17
      * Maven coordinates: org.apache.camel:camel-braintree
-     * 
+     *
      * Syntax: <code>braintree:apiName/methodName</code>
-     * 
+     *
      * Path parameter: apiName (required)
      * What kind of operation to perform
      * There are 19 enums and the value can be one of: ADD_ON, ADDRESS,
@@ -3035,7 +3035,7 @@ public class StaticEndpointBuilders {
      * DOCUMENT_UPLOAD, MERCHANT_ACCOUNT, PAYMENT_METHOD, PAYMENT_METHOD_NONCE,
      * OAUTH, PLAN, REPORT, SETTLEMENT_BATCH_SUMMARY, SUBSCRIPTION, TRANSACTION,
      * US_BANK_ACCOUNT, WEBHOOK_NOTIFICATION
-     * 
+     *
      * Path parameter: methodName (required)
      * What sub operation to use for the selected operation
      * There are 31 enums and the value can be one of: accept, addFileEvidence,
@@ -3045,7 +3045,7 @@ public class StaticEndpointBuilders {
      * removeEvidence, retryCharge, revoke, sale, search,
      * submitForPartialSettlement, submitForSettlement, transactionLevelFees,
      * update, updateDetails, verify, voidTransaction
-     * 
+     *
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
      * @param path apiName/methodName
@@ -3057,16 +3057,16 @@ public class StaticEndpointBuilders {
     /**
      * Browse (camel-browse)
      * Inspect the messages received on endpoints supporting BrowsableEndpoint.
-     * 
+     *
      * Category: core,monitoring
      * Since: 1.3
      * Maven coordinates: org.apache.camel:camel-browse
-     * 
+     *
      * Syntax: <code>browse:name</code>
-     * 
+     *
      * Path parameter: name (required)
      * A name which can be any string to uniquely identify the endpoint
-     * 
+     *
      * @param path name
      * @return the dsl builder
      */
@@ -3076,16 +3076,16 @@ public class StaticEndpointBuilders {
     /**
      * Browse (camel-browse)
      * Inspect the messages received on endpoints supporting BrowsableEndpoint.
-     * 
+     *
      * Category: core,monitoring
      * Since: 1.3
      * Maven coordinates: org.apache.camel:camel-browse
-     * 
+     *
      * Syntax: <code>browse:name</code>
-     * 
+     *
      * Path parameter: name (required)
      * A name which can be any string to uniquely identify the endpoint
-     * 
+     *
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
      * @param path name
@@ -3097,16 +3097,16 @@ public class StaticEndpointBuilders {
     /**
      * Caffeine Cache (camel-caffeine)
      * Perform caching operations using Caffeine Cache.
-     * 
+     *
      * Category: cache,clustering
      * Since: 2.20
      * Maven coordinates: org.apache.camel:camel-caffeine
-     * 
+     *
      * Syntax: <code>caffeine-cache:cacheName</code>
-     * 
+     *
      * Path parameter: cacheName (required)
      * Cache name
-     * 
+     *
      * @param path cacheName
      * @return the dsl builder
      */
@@ -3116,16 +3116,16 @@ public class StaticEndpointBuilders {
     /**
      * Caffeine Cache (camel-caffeine)
      * Perform caching operations using Caffeine Cache.
-     * 
+     *
      * Category: cache,clustering
      * Since: 2.20
      * Maven coordinates: org.apache.camel:camel-caffeine
-     * 
+     *
      * Syntax: <code>caffeine-cache:cacheName</code>
-     * 
+     *
      * Path parameter: cacheName (required)
      * Cache name
-     * 
+     *
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
      * @param path cacheName
@@ -3138,16 +3138,16 @@ public class StaticEndpointBuilders {
      * Caffeine LoadCache (camel-caffeine)
      * Perform caching operations using Caffeine Cache with an attached
      * CacheLoader.
-     * 
+     *
      * Category: cache,clustering
      * Since: 2.20
      * Maven coordinates: org.apache.camel:camel-caffeine
-     * 
+     *
      * Syntax: <code>caffeine-loadcache:cacheName</code>
-     * 
+     *
      * Path parameter: cacheName (required)
      * the cache name
-     * 
+     *
      * @param path cacheName
      * @return the dsl builder
      */
@@ -3158,16 +3158,16 @@ public class StaticEndpointBuilders {
      * Caffeine LoadCache (camel-caffeine)
      * Perform caching operations using Caffeine Cache with an attached
      * CacheLoader.
-     * 
+     *
      * Category: cache,clustering
      * Since: 2.20
      * Maven coordinates: org.apache.camel:camel-caffeine
-     * 
+     *
      * Syntax: <code>caffeine-loadcache:cacheName</code>
-     * 
+     *
      * Path parameter: cacheName (required)
      * the cache name
-     * 
+     *
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
      * @param path cacheName
@@ -3180,19 +3180,19 @@ public class StaticEndpointBuilders {
      * Camunda (camel-camunda)
      * Interact with Camunda 8 Orchestration Clusters using the Camunda Java
      * Client.
-     * 
+     *
      * Category: workflow,saas
      * Since: 4.19
      * Maven coordinates: org.apache.camel:camel-camunda
-     * 
+     *
      * Syntax: <code>camunda:operationName</code>
-     * 
+     *
      * Path parameter: operationName (required)
      * The operation to use
      * There are 9 enums and the value can be one of: startProcess,
      * cancelProcess, publishMessage, completeJob, failJob, updateJobRetries,
      * worker, throwError, deployResource
-     * 
+     *
      * @param path operationName
      * @return the dsl builder
      */
@@ -3203,19 +3203,19 @@ public class StaticEndpointBuilders {
      * Camunda (camel-camunda)
      * Interact with Camunda 8 Orchestration Clusters using the Camunda Java
      * Client.
-     * 
+     *
      * Category: workflow,saas
      * Since: 4.19
      * Maven coordinates: org.apache.camel:camel-camunda
-     * 
+     *
      * Syntax: <code>camunda:operationName</code>
-     * 
+     *
      * Path parameter: operationName (required)
      * The operation to use
      * There are 9 enums and the value can be one of: startProcess,
      * cancelProcess, publishMessage, completeJob, failJob, updateJobRetries,
      * worker, throwError, deployResource
-     * 
+     *
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
      * @param path operationName
@@ -3227,23 +3227,23 @@ public class StaticEndpointBuilders {
     /**
      * ChatScript (camel-chatscript)
      * Chat with a ChatScript Server.
-     * 
+     *
      * Category: ai,chat
      * Since: 3.0
      * Maven coordinates: org.apache.camel:camel-chatscript
-     * 
+     *
      * Syntax: <code>chatscript:host:port/botName</code>
-     * 
+     *
      * Path parameter: host (required)
      * Hostname or IP of the server on which CS server is running
-     * 
+     *
      * Path parameter: port
      * Port on which ChatScript is listening to
      * Default value: 1024
-     * 
+     *
      * Path parameter: botName (required)
      * Name of the Bot in CS to converse with
-     * 
+     *
      * @param path host:port/botName
      * @return the dsl builder
      */
@@ -3253,23 +3253,23 @@ public class StaticEndpointBuilders {
     /**
      * ChatScript (camel-chatscript)
      * Chat with a ChatScript Server.
-     * 
+     *
      * Category: ai,chat
      * Since: 3.0
      * Maven coordinates: org.apache.camel:camel-chatscript
-     * 
+     *
      * Syntax: <code>chatscript:host:port/botName</code>
-     * 
+     *
      * Path parameter: host (required)
      * Hostname or IP of the server on which CS server is running
-     * 
+     *
      * Path parameter: port
      * Port on which ChatScript is listening to
      * Default value: 1024
-     * 
+     *
      * Path parameter: botName (required)
      * Name of the Bot in CS to converse with
-     * 
+     *
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
      * @param path host:port/botName
@@ -3281,13 +3281,13 @@ public class StaticEndpointBuilders {
     /**
      * Chunk (camel-chunk)
      * Transform messages using Chunk templating engine.
-     * 
+     *
      * Category: transformation
      * Since: 2.15
      * Maven coordinates: org.apache.camel:camel-chunk
-     * 
+     *
      * Syntax: <code>chunk:resourceUri</code>
-     * 
+     *
      * Path parameter: resourceUri (required)
      * Path to the resource. You can prefix with: classpath, file, http, ref, or
      * bean. classpath, file and http loads the resource using these protocols
@@ -3296,7 +3296,7 @@ public class StaticEndpointBuilders {
      * you can specify the method name after dot, eg bean:myBean.myMethod.
      * This option can also be loaded from an existing file, by prefixing with
      * file: or classpath: followed by the location of the file.
-     * 
+     *
      * @param path resourceUri
      * @return the dsl builder
      */
@@ -3306,13 +3306,13 @@ public class StaticEndpointBuilders {
     /**
      * Chunk (camel-chunk)
      * Transform messages using Chunk templating engine.
-     * 
+     *
      * Category: transformation
      * Since: 2.15
      * Maven coordinates: org.apache.camel:camel-chunk
-     * 
+     *
      * Syntax: <code>chunk:resourceUri</code>
-     * 
+     *
      * Path parameter: resourceUri (required)
      * Path to the resource. You can prefix with: classpath, file, http, ref, or
      * bean. classpath, file and http loads the resource using these protocols
@@ -3321,7 +3321,7 @@ public class StaticEndpointBuilders {
      * you can specify the method name after dot, eg bean:myBean.myMethod.
      * This option can also be loaded from an existing file, by prefixing with
      * file: or classpath: followed by the location of the file.
-     * 
+     *
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
      * @param path resourceUri
@@ -3333,16 +3333,16 @@ public class StaticEndpointBuilders {
     /**
      * Class (camel-bean)
      * Invoke methods of Java beans specified by class name.
-     * 
+     *
      * Category: core,script
      * Since: 2.4
      * Maven coordinates: org.apache.camel:camel-bean
-     * 
+     *
      * Syntax: <code>class:beanName</code>
-     * 
+     *
      * Path parameter: beanName (required)
      * Sets the name of the bean to invoke
-     * 
+     *
      * @param path beanName
      * @return the dsl builder
      */
@@ -3352,16 +3352,16 @@ public class StaticEndpointBuilders {
     /**
      * Class (camel-bean)
      * Invoke methods of Java beans specified by class name.
-     * 
+     *
      * Category: core,script
      * Since: 2.4
      * Maven coordinates: org.apache.camel:camel-bean
-     * 
+     *
      * Syntax: <code>class:beanName</code>
-     * 
+     *
      * Path parameter: beanName (required)
      * Sets the name of the bean to invoke
-     * 
+     *
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
      * @param path beanName
@@ -3374,17 +3374,17 @@ public class StaticEndpointBuilders {
      * ClickHouse (camel-clickhouse)
      * Interact with ClickHouse, the high-performance columnar OLAP database,
      * for high-throughput ingestion and OLAP queries.
-     * 
+     *
      * Category: database,bigdata
      * Since: 4.22
      * Maven coordinates: org.apache.camel:camel-clickhouse
-     * 
+     *
      * Syntax: <code>clickhouse:database</code>
-     * 
+     *
      * Path parameter: database (required)
      * The ClickHouse database. A table may also be provided using the
      * database.table syntax.
-     * 
+     *
      * @param path database
      * @return the dsl builder
      */
@@ -3395,17 +3395,17 @@ public class StaticEndpointBuilders {
      * ClickHouse (camel-clickhouse)
      * Interact with ClickHouse, the high-performance columnar OLAP database,
      * for high-throughput ingestion and OLAP queries.
-     * 
+     *
      * Category: database,bigdata
      * Since: 4.22
      * Maven coordinates: org.apache.camel:camel-clickhouse
-     * 
+     *
      * Syntax: <code>clickhouse:database</code>
-     * 
+     *
      * Path parameter: database (required)
      * The ClickHouse database. A table may also be provided using the
      * database.table syntax.
-     * 
+     *
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
      * @param path database
@@ -3417,16 +3417,16 @@ public class StaticEndpointBuilders {
     /**
      * ClickUp (camel-clickup)
      * Receives events from ClickUp
-     * 
+     *
      * Category: cloud
      * Since: 4.9
      * Maven coordinates: org.apache.camel:camel-clickup
-     * 
+     *
      * Syntax: <code>clickup:workspaceId</code>
-     * 
+     *
      * Path parameter: workspaceId (required)
      * The WorkspaceID.
-     * 
+     *
      * @param path workspaceId
      * @return the dsl builder
      */
@@ -3436,16 +3436,16 @@ public class StaticEndpointBuilders {
     /**
      * ClickUp (camel-clickup)
      * Receives events from ClickUp
-     * 
+     *
      * Category: cloud
      * Since: 4.9
      * Maven coordinates: org.apache.camel:camel-clickup
-     * 
+     *
      * Syntax: <code>clickup:workspaceId</code>
-     * 
+     *
      * Path parameter: workspaceId (required)
      * The WorkspaceID.
-     * 
+     *
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
      * @param path workspaceId
@@ -3457,16 +3457,16 @@ public class StaticEndpointBuilders {
     /**
      * CM SMS Gateway (camel-cm-sms)
      * Send SMS messages via CM SMS Gateway.
-     * 
+     *
      * Category: mobile
      * Since: 2.18
      * Maven coordinates: org.apache.camel:camel-cm-sms
-     * 
+     *
      * Syntax: <code>cm-sms:host</code>
-     * 
+     *
      * Path parameter: host (required)
      * SMS Provider HOST with scheme
-     * 
+     *
      * @param path host
      * @return the dsl builder
      */
@@ -3476,16 +3476,16 @@ public class StaticEndpointBuilders {
     /**
      * CM SMS Gateway (camel-cm-sms)
      * Send SMS messages via CM SMS Gateway.
-     * 
+     *
      * Category: mobile
      * Since: 2.18
      * Maven coordinates: org.apache.camel:camel-cm-sms
-     * 
+     *
      * Syntax: <code>cm-sms:host</code>
-     * 
+     *
      * Path parameter: host (required)
      * SMS Provider HOST with scheme
-     * 
+     *
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
      * @param path host
@@ -3498,16 +3498,16 @@ public class StaticEndpointBuilders {
      * CoAP (camel-coap)
      * Send and receive messages to/from CoAP (Constrained Application Protocol)
      * capable devices.
-     * 
+     *
      * Category: iot
      * Since: 2.16
      * Maven coordinates: org.apache.camel:camel-coap
-     * 
+     *
      * Syntax: <code>coap:uri</code>
-     * 
+     *
      * Path parameter: uri
      * The URI for the CoAP endpoint
-     * 
+     *
      * @param path uri
      * @return the dsl builder
      */
@@ -3518,16 +3518,16 @@ public class StaticEndpointBuilders {
      * CoAP (camel-coap)
      * Send and receive messages to/from CoAP (Constrained Application Protocol)
      * capable devices.
-     * 
+     *
      * Category: iot
      * Since: 2.16
      * Maven coordinates: org.apache.camel:camel-coap
-     * 
+     *
      * Syntax: <code>coap:uri</code>
-     * 
+     *
      * Path parameter: uri
      * The URI for the CoAP endpoint
-     * 
+     *
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
      * @param path uri
@@ -3540,16 +3540,16 @@ public class StaticEndpointBuilders {
      * CoAP (camel-coap)
      * Send and receive messages to/from CoAP (Constrained Application Protocol)
      * capable devices.
-     * 
+     *
      * Category: iot
      * Since: 2.16
      * Maven coordinates: org.apache.camel:camel-coap
-     * 
+     *
      * Syntax: <code>coap+tcp:uri</code>
-     * 
+     *
      * Path parameter: uri
      * The URI for the CoAP endpoint
-     * 
+     *
      * @param path uri
      * @return the dsl builder
      */
@@ -3560,16 +3560,16 @@ public class StaticEndpointBuilders {
      * CoAP (Secure) (camel-coap)
      * Send and receive messages to/from CoAP (Constrained Application Protocol)
      * capable devices.
-     * 
+     *
      * Category: iot
      * Since: 2.16
      * Maven coordinates: org.apache.camel:camel-coap
-     * 
+     *
      * Syntax: <code>coaps:uri</code>
-     * 
+     *
      * Path parameter: uri
      * The URI for the CoAP endpoint
-     * 
+     *
      * @param path uri
      * @return the dsl builder
      */
@@ -3580,16 +3580,16 @@ public class StaticEndpointBuilders {
      * CoAP (camel-coap)
      * Send and receive messages to/from CoAP (Constrained Application Protocol)
      * capable devices.
-     * 
+     *
      * Category: iot
      * Since: 2.16
      * Maven coordinates: org.apache.camel:camel-coap
-     * 
+     *
      * Syntax: <code>coaps+tcp:uri</code>
-     * 
+     *
      * Path parameter: uri
      * The URI for the CoAP endpoint
-     * 
+     *
      * @param path uri
      * @return the dsl builder
      */
@@ -3600,23 +3600,23 @@ public class StaticEndpointBuilders {
      * CometD (camel-cometd)
      * Offers publish/subscribe, peer-to-peer (via a server), and RPC style
      * messaging using the CometD/Bayeux protocol.
-     * 
+     *
      * Category: networking,messaging
      * Since: 2.0
      * Maven coordinates: org.apache.camel:camel-cometd
-     * 
+     *
      * Syntax: <code>cometd:host:port/channelName</code>
-     * 
+     *
      * Path parameter: host (required)
      * Hostname
-     * 
+     *
      * Path parameter: port (required)
      * Host port number
-     * 
+     *
      * Path parameter: channelName (required)
      * The channelName represents a topic that can be subscribed to by the Camel
      * endpoints.
-     * 
+     *
      * @param path host:port/channelName
      * @return the dsl builder
      */
@@ -3627,23 +3627,23 @@ public class StaticEndpointBuilders {
      * CometD (camel-cometd)
      * Offers publish/subscribe, peer-to-peer (via a server), and RPC style
      * messaging using the CometD/Bayeux protocol.
-     * 
+     *
      * Category: networking,messaging
      * Since: 2.0
      * Maven coordinates: org.apache.camel:camel-cometd
-     * 
+     *
      * Syntax: <code>cometd:host:port/channelName</code>
-     * 
+     *
      * Path parameter: host (required)
      * Hostname
-     * 
+     *
      * Path parameter: port (required)
      * Host port number
-     * 
+     *
      * Path parameter: channelName (required)
      * The channelName represents a topic that can be subscribed to by the Camel
      * endpoints.
-     * 
+     *
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
      * @param path host:port/channelName
@@ -3656,23 +3656,23 @@ public class StaticEndpointBuilders {
      * CometD (Secure) (camel-cometd)
      * Offers publish/subscribe, peer-to-peer (via a server), and RPC style
      * messaging using the CometD/Bayeux protocol.
-     * 
+     *
      * Category: networking,messaging
      * Since: 2.0
      * Maven coordinates: org.apache.camel:camel-cometd
-     * 
+     *
      * Syntax: <code>cometds:host:port/channelName</code>
-     * 
+     *
      * Path parameter: host (required)
      * Hostname
-     * 
+     *
      * Path parameter: port (required)
      * Host port number
-     * 
+     *
      * Path parameter: channelName (required)
      * The channelName represents a topic that can be subscribed to by the Camel
      * endpoints.
-     * 
+     *
      * @param path host:port/channelName
      * @return the dsl builder
      */
@@ -3682,16 +3682,16 @@ public class StaticEndpointBuilders {
     /**
      * Consul (camel-consul)
      * Integrate with Consul service discovery and configuration store.
-     * 
+     *
      * Category: cloud,api
      * Since: 2.18
      * Maven coordinates: org.apache.camel:camel-consul
-     * 
+     *
      * Syntax: <code>consul:apiEndpoint</code>
-     * 
+     *
      * Path parameter: apiEndpoint (required)
      * The API endpoint
-     * 
+     *
      * @param path apiEndpoint
      * @return the dsl builder
      */
@@ -3701,16 +3701,16 @@ public class StaticEndpointBuilders {
     /**
      * Consul (camel-consul)
      * Integrate with Consul service discovery and configuration store.
-     * 
+     *
      * Category: cloud,api
      * Since: 2.18
      * Maven coordinates: org.apache.camel:camel-consul
-     * 
+     *
      * Syntax: <code>consul:apiEndpoint</code>
-     * 
+     *
      * Path parameter: apiEndpoint (required)
      * The API endpoint
-     * 
+     *
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
      * @param path apiEndpoint
@@ -3722,17 +3722,17 @@ public class StaticEndpointBuilders {
     /**
      * Control Bus (camel-controlbus)
      * Manage and monitor Camel routes.
-     * 
+     *
      * Category: core,monitoring
      * Since: 2.11
      * Maven coordinates: org.apache.camel:camel-controlbus
-     * 
+     *
      * Syntax: <code>controlbus:command:language</code>
-     * 
+     *
      * Path parameter: command (required)
      * Command can be either route or language
      * There are 2 enums and the value can be one of: route, language
-     * 
+     *
      * Path parameter: language
      * Allows you to specify the name of a Language to use for evaluating the
      * message body. If there is any result from the evaluation, then the result
@@ -3741,7 +3741,7 @@ public class StaticEndpointBuilders {
      * datasonnet, exchangeProperty, file, groovy, header, hl7terser, java,
      * joor, jq, jsonpath, mvel, ognl, python, ref, simple, spel, tokenize,
      * xpath, xquery, xtokenize
-     * 
+     *
      * @param path command:language
      * @return the dsl builder
      */
@@ -3751,17 +3751,17 @@ public class StaticEndpointBuilders {
     /**
      * Control Bus (camel-controlbus)
      * Manage and monitor Camel routes.
-     * 
+     *
      * Category: core,monitoring
      * Since: 2.11
      * Maven coordinates: org.apache.camel:camel-controlbus
-     * 
+     *
      * Syntax: <code>controlbus:command:language</code>
-     * 
+     *
      * Path parameter: command (required)
      * Command can be either route or language
      * There are 2 enums and the value can be one of: route, language
-     * 
+     *
      * Path parameter: language
      * Allows you to specify the name of a Language to use for evaluating the
      * message body. If there is any result from the evaluation, then the result
@@ -3770,7 +3770,7 @@ public class StaticEndpointBuilders {
      * datasonnet, exchangeProperty, file, groovy, header, hl7terser, java,
      * joor, jq, jsonpath, mvel, ognl, python, ref, simple, spel, tokenize,
      * xpath, xquery, xtokenize
-     * 
+     *
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
      * @param path command:language
@@ -3784,23 +3784,23 @@ public class StaticEndpointBuilders {
      * Query Couchbase databases using SQL (N1QL) queries or MapReduce Views
      * with a poll strategy and/or perform various operations against Couchbase
      * databases.
-     * 
+     *
      * Category: database
      * Since: 2.19
      * Maven coordinates: org.apache.camel:camel-couchbase
-     * 
+     *
      * Syntax: <code>couchbase:protocol://hostname:port</code>
-     * 
+     *
      * Path parameter: protocol (required)
      * The protocol to use
-     * 
+     *
      * Path parameter: hostname (required)
      * The hostname to use
-     * 
+     *
      * Path parameter: port
      * The port number to use
      * Default value: 8091
-     * 
+     *
      * @param path protocol://hostname:port
      * @return the dsl builder
      */
@@ -3812,23 +3812,23 @@ public class StaticEndpointBuilders {
      * Query Couchbase databases using SQL (N1QL) queries or MapReduce Views
      * with a poll strategy and/or perform various operations against Couchbase
      * databases.
-     * 
+     *
      * Category: database
      * Since: 2.19
      * Maven coordinates: org.apache.camel:camel-couchbase
-     * 
+     *
      * Syntax: <code>couchbase:protocol://hostname:port</code>
-     * 
+     *
      * Path parameter: protocol (required)
      * The protocol to use
-     * 
+     *
      * Path parameter: hostname (required)
      * The hostname to use
-     * 
+     *
      * Path parameter: port
      * The port number to use
      * Default value: 8091
-     * 
+     *
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
      * @param path protocol://hostname:port
@@ -3842,27 +3842,27 @@ public class StaticEndpointBuilders {
      * Consume changesets for inserts, updates and deletes in a CouchDB
      * database, as well as get, save, update and delete documents from a
      * CouchDB database.
-     * 
+     *
      * Category: database
      * Since: 2.11
      * Maven coordinates: org.apache.camel:camel-couchdb
-     * 
+     *
      * Syntax: <code>couchdb:protocol:hostname:port/database</code>
-     * 
+     *
      * Path parameter: protocol (required)
      * The protocol to use for communicating with the database.
      * There are 2 enums and the value can be one of: http, https
-     * 
+     *
      * Path parameter: hostname (required)
      * Hostname of the running couchdb instance
-     * 
+     *
      * Path parameter: port
      * Port number for the running couchdb instance
      * Default value: 5984
-     * 
+     *
      * Path parameter: database (required)
      * Name of the database to use
-     * 
+     *
      * @param path protocol:hostname:port/database
      * @return the dsl builder
      */
@@ -3874,27 +3874,27 @@ public class StaticEndpointBuilders {
      * Consume changesets for inserts, updates and deletes in a CouchDB
      * database, as well as get, save, update and delete documents from a
      * CouchDB database.
-     * 
+     *
      * Category: database
      * Since: 2.11
      * Maven coordinates: org.apache.camel:camel-couchdb
-     * 
+     *
      * Syntax: <code>couchdb:protocol:hostname:port/database</code>
-     * 
+     *
      * Path parameter: protocol (required)
      * The protocol to use for communicating with the database.
      * There are 2 enums and the value can be one of: http, https
-     * 
+     *
      * Path parameter: hostname (required)
      * Hostname of the running couchdb instance
-     * 
+     *
      * Path parameter: port
      * Port number for the running couchdb instance
      * Default value: 5984
-     * 
+     *
      * Path parameter: database (required)
      * Name of the database to use
-     * 
+     *
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
      * @param path protocol:hostname:port/database
@@ -3907,26 +3907,26 @@ public class StaticEndpointBuilders {
      * Cassandra CQL (camel-cassandraql)
      * Integrate with Cassandra 2.0 using the CQL3 API (not the Thrift API).
      * Based on Cassandra Java Driver provided by DataStax.
-     * 
+     *
      * Category: database,bigdata
      * Since: 2.15
      * Maven coordinates: org.apache.camel:camel-cassandraql
-     * 
+     *
      * Syntax: <code>cql:beanRef:hosts:port/keyspace</code>
-     * 
+     *
      * Path parameter: beanRef
      * beanRef is defined using bean:id
-     * 
+     *
      * Path parameter: hosts
      * Hostname(s) Cassandra server(s). Multiple hosts can be separated by
      * comma.
-     * 
+     *
      * Path parameter: port
      * Port number of Cassandra server(s)
-     * 
+     *
      * Path parameter: keyspace
      * Keyspace to use
-     * 
+     *
      * @param path beanRef:hosts:port/keyspace
      * @return the dsl builder
      */
@@ -3937,26 +3937,26 @@ public class StaticEndpointBuilders {
      * Cassandra CQL (camel-cassandraql)
      * Integrate with Cassandra 2.0 using the CQL3 API (not the Thrift API).
      * Based on Cassandra Java Driver provided by DataStax.
-     * 
+     *
      * Category: database,bigdata
      * Since: 2.15
      * Maven coordinates: org.apache.camel:camel-cassandraql
-     * 
+     *
      * Syntax: <code>cql:beanRef:hosts:port/keyspace</code>
-     * 
+     *
      * Path parameter: beanRef
      * beanRef is defined using bean:id
-     * 
+     *
      * Path parameter: hosts
      * Hostname(s) Cassandra server(s). Multiple hosts can be separated by
      * comma.
-     * 
+     *
      * Path parameter: port
      * Port number of Cassandra server(s)
-     * 
+     *
      * Path parameter: keyspace
      * Keyspace to use
-     * 
+     *
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
      * @param path beanRef:hosts:port/keyspace
@@ -3969,16 +3969,16 @@ public class StaticEndpointBuilders {
      * Cron (camel-cron)
      * A generic interface for triggering events at times specified through the
      * Unix cron syntax.
-     * 
+     *
      * Category: scheduling
      * Since: 3.1
      * Maven coordinates: org.apache.camel:camel-cron
-     * 
+     *
      * Syntax: <code>cron:name</code>
-     * 
+     *
      * Path parameter: name (required)
      * The name of the cron trigger
-     * 
+     *
      * @param path name
      * @return the dsl builder
      */
@@ -3989,16 +3989,16 @@ public class StaticEndpointBuilders {
      * Cron (camel-cron)
      * A generic interface for triggering events at times specified through the
      * Unix cron syntax.
-     * 
+     *
      * Category: scheduling
      * Since: 3.1
      * Maven coordinates: org.apache.camel:camel-cron
-     * 
+     *
      * Syntax: <code>cron:name</code>
-     * 
+     *
      * Path parameter: name (required)
      * The name of the cron trigger
-     * 
+     *
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
      * @param path name
@@ -4011,21 +4011,21 @@ public class StaticEndpointBuilders {
      * Crypto (JCE) (camel-crypto)
      * Sign and verify exchanges using the Signature Service of the Java
      * Cryptographic Extension (JCE).
-     * 
+     *
      * Category: security,transformation
      * Since: 2.3
      * Maven coordinates: org.apache.camel:camel-crypto
-     * 
+     *
      * Syntax: <code>crypto:cryptoOperation:name</code>
-     * 
+     *
      * Path parameter: cryptoOperation (required)
      * Set the Crypto operation from that supplied after the crypto scheme in
      * the endpoint uri e.g. crypto:sign sets sign as the operation.
      * There are 2 enums and the value can be one of: sign, verify
-     * 
+     *
      * Path parameter: name (required)
      * The logical name of this operation.
-     * 
+     *
      * @param path cryptoOperation:name
      * @return the dsl builder
      */
@@ -4036,21 +4036,21 @@ public class StaticEndpointBuilders {
      * Crypto (JCE) (camel-crypto)
      * Sign and verify exchanges using the Signature Service of the Java
      * Cryptographic Extension (JCE).
-     * 
+     *
      * Category: security,transformation
      * Since: 2.3
      * Maven coordinates: org.apache.camel:camel-crypto
-     * 
+     *
      * Syntax: <code>crypto:cryptoOperation:name</code>
-     * 
+     *
      * Path parameter: cryptoOperation (required)
      * Set the Crypto operation from that supplied after the crypto scheme in
      * the endpoint uri e.g. crypto:sign sets sign as the operation.
      * There are 2 enums and the value can be one of: sign, verify
-     * 
+     *
      * Path parameter: name (required)
      * The logical name of this operation.
-     * 
+     *
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
      * @param path cryptoOperation:name
@@ -4063,19 +4063,19 @@ public class StaticEndpointBuilders {
      * CXF (camel-cxf-soap)
      * Expose SOAP WebServices using Apache CXF or connect to external
      * WebServices using CXF WS client.
-     * 
+     *
      * Category: http,webservice
      * Since: 1.0
      * Maven coordinates: org.apache.camel:camel-cxf-soap
-     * 
+     *
      * Syntax: <code>cxf:beanId:address</code>
-     * 
+     *
      * Path parameter: beanId
      * To lookup an existing configured CxfEndpoint. Must used bean: as prefix.
-     * 
+     *
      * Path parameter: address
      * The service publish address.
-     * 
+     *
      * @param path beanId:address
      * @return the dsl builder
      */
@@ -4086,19 +4086,19 @@ public class StaticEndpointBuilders {
      * CXF (camel-cxf-soap)
      * Expose SOAP WebServices using Apache CXF or connect to external
      * WebServices using CXF WS client.
-     * 
+     *
      * Category: http,webservice
      * Since: 1.0
      * Maven coordinates: org.apache.camel:camel-cxf-soap
-     * 
+     *
      * Syntax: <code>cxf:beanId:address</code>
-     * 
+     *
      * Path parameter: beanId
      * To lookup an existing configured CxfEndpoint. Must used bean: as prefix.
-     * 
+     *
      * Path parameter: address
      * The service publish address.
-     * 
+     *
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
      * @param path beanId:address
@@ -4111,20 +4111,20 @@ public class StaticEndpointBuilders {
      * CXF-RS (camel-cxf-rest)
      * Expose JAX-RS REST services using Apache CXF or connect to external REST
      * services using CXF REST client.
-     * 
+     *
      * Category: rest
      * Since: 2.0
      * Maven coordinates: org.apache.camel:camel-cxf-rest
-     * 
+     *
      * Syntax: <code>cxfrs:beanId:address</code>
-     * 
+     *
      * Path parameter: beanId
      * To lookup an existing configured CxfRsEndpoint. Must used bean: as
      * prefix.
-     * 
+     *
      * Path parameter: address
      * The service publish address.
-     * 
+     *
      * @param path beanId:address
      * @return the dsl builder
      */
@@ -4135,20 +4135,20 @@ public class StaticEndpointBuilders {
      * CXF-RS (camel-cxf-rest)
      * Expose JAX-RS REST services using Apache CXF or connect to external REST
      * services using CXF REST client.
-     * 
+     *
      * Category: rest
      * Since: 2.0
      * Maven coordinates: org.apache.camel:camel-cxf-rest
-     * 
+     *
      * Syntax: <code>cxfrs:beanId:address</code>
-     * 
+     *
      * Path parameter: beanId
      * To lookup an existing configured CxfRsEndpoint. Must used bean: as
      * prefix.
-     * 
+     *
      * Path parameter: address
      * The service publish address.
-     * 
+     *
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
      * @param path beanId:address
@@ -4160,16 +4160,16 @@ public class StaticEndpointBuilders {
     /**
      * CyberArk Vault (camel-cyberark-vault)
      * Retrieve secrets from CyberArk Conjur Vault.
-     * 
+     *
      * Category: cloud,security
      * Since: 4.17
      * Maven coordinates: org.apache.camel:camel-cyberark-vault
-     * 
+     *
      * Syntax: <code>cyberark-vault:label</code>
-     * 
+     *
      * Path parameter: label (required)
      * Logical name
-     * 
+     *
      * @param path label
      * @return the dsl builder
      */
@@ -4179,16 +4179,16 @@ public class StaticEndpointBuilders {
     /**
      * CyberArk Vault (camel-cyberark-vault)
      * Retrieve secrets from CyberArk Conjur Vault.
-     * 
+     *
      * Category: cloud,security
      * Since: 4.17
      * Maven coordinates: org.apache.camel:camel-cyberark-vault
-     * 
+     *
      * Syntax: <code>cyberark-vault:label</code>
-     * 
+     *
      * Path parameter: label (required)
      * Logical name
-     * 
+     *
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
      * @param path label
@@ -4200,18 +4200,18 @@ public class StaticEndpointBuilders {
     /**
      * Dapr (camel-dapr)
      * Dapr component which interfaces with Dapr Building Blocks.
-     * 
+     *
      * Category: cloud,saas
      * Since: 4.12
      * Maven coordinates: org.apache.camel:camel-dapr
-     * 
+     *
      * Syntax: <code>dapr:operation</code>
-     * 
+     *
      * Path parameter: operation (required)
      * The Dapr building block operation to perform with this component
      * There are 8 enums and the value can be one of: invokeService, state,
      * pubSub, invokeBinding, secret, configuration, lock, workflow
-     * 
+     *
      * @param path operation
      * @return the dsl builder
      */
@@ -4221,18 +4221,18 @@ public class StaticEndpointBuilders {
     /**
      * Dapr (camel-dapr)
      * Dapr component which interfaces with Dapr Building Blocks.
-     * 
+     *
      * Category: cloud,saas
      * Since: 4.12
      * Maven coordinates: org.apache.camel:camel-dapr
-     * 
+     *
      * Syntax: <code>dapr:operation</code>
-     * 
+     *
      * Path parameter: operation (required)
      * The Dapr building block operation to perform with this component
      * There are 8 enums and the value can be one of: invokeService, state,
      * pubSub, invokeBinding, secret, configuration, lock, workflow
-     * 
+     *
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
      * @param path operation
@@ -4244,20 +4244,20 @@ public class StaticEndpointBuilders {
     /**
      * Data Format (camel-dataformat)
      * Use a Camel Data Format as a regular Camel Component.
-     * 
+     *
      * Category: core,transformation
      * Since: 2.12
      * Maven coordinates: org.apache.camel:camel-dataformat
-     * 
+     *
      * Syntax: <code>dataformat:name:operation</code>
-     * 
+     *
      * Path parameter: name (required)
      * Name of data format
-     * 
+     *
      * Path parameter: operation (required)
      * Operation to use either marshal or unmarshal
      * There are 2 enums and the value can be one of: marshal, unmarshal
-     * 
+     *
      * @param path name:operation
      * @return the dsl builder
      */
@@ -4267,20 +4267,20 @@ public class StaticEndpointBuilders {
     /**
      * Data Format (camel-dataformat)
      * Use a Camel Data Format as a regular Camel Component.
-     * 
+     *
      * Category: core,transformation
      * Since: 2.12
      * Maven coordinates: org.apache.camel:camel-dataformat
-     * 
+     *
      * Syntax: <code>dataformat:name:operation</code>
-     * 
+     *
      * Path parameter: name (required)
      * Name of data format
-     * 
+     *
      * Path parameter: operation (required)
      * Operation to use either marshal or unmarshal
      * There are 2 enums and the value can be one of: marshal, unmarshal
-     * 
+     *
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
      * @param path name:operation
@@ -4292,16 +4292,16 @@ public class StaticEndpointBuilders {
     /**
      * Dataset (camel-dataset)
      * Provide data for load and soak testing of your Camel application.
-     * 
+     *
      * Category: core,testing
      * Since: 1.3
      * Maven coordinates: org.apache.camel:camel-dataset
-     * 
+     *
      * Syntax: <code>dataset:name</code>
-     * 
+     *
      * Path parameter: name (required)
      * Name of DataSet to lookup in the registry
-     * 
+     *
      * @param path name
      * @return the dsl builder
      */
@@ -4311,16 +4311,16 @@ public class StaticEndpointBuilders {
     /**
      * Dataset (camel-dataset)
      * Provide data for load and soak testing of your Camel application.
-     * 
+     *
      * Category: core,testing
      * Since: 1.3
      * Maven coordinates: org.apache.camel:camel-dataset
-     * 
+     *
      * Syntax: <code>dataset:name</code>
-     * 
+     *
      * Path parameter: name (required)
      * Name of DataSet to lookup in the registry
-     * 
+     *
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
      * @param path name
@@ -4333,17 +4333,17 @@ public class StaticEndpointBuilders {
      * DataSet Test (camel-dataset)
      * Extends the mock component by pulling messages from another endpoint on
      * startup to set the expected message bodies.
-     * 
+     *
      * Category: core,testing
      * Since: 1.3
      * Maven coordinates: org.apache.camel:camel-dataset
-     * 
+     *
      * Syntax: <code>dataset-test:name</code>
-     * 
+     *
      * Path parameter: name (required)
      * Name of endpoint to lookup in the registry to use for polling messages
      * used for testing
-     * 
+     *
      * @param path name
      * @return the dsl builder
      */
@@ -4354,17 +4354,17 @@ public class StaticEndpointBuilders {
      * DataSet Test (camel-dataset)
      * Extends the mock component by pulling messages from another endpoint on
      * startup to set the expected message bodies.
-     * 
+     *
      * Category: core,testing
      * Since: 1.3
      * Maven coordinates: org.apache.camel:camel-dataset
-     * 
+     *
      * Syntax: <code>dataset-test:name</code>
-     * 
+     *
      * Path parameter: name (required)
      * Name of endpoint to lookup in the registry to use for polling messages
      * used for testing
-     * 
+     *
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
      * @param path name
@@ -4376,17 +4376,17 @@ public class StaticEndpointBuilders {
     /**
      * Debezium DB2 Connector (camel-debezium-db2)
      * Capture changes from a DB2 database.
-     * 
+     *
      * Category: database
      * Since: 3.17
      * Maven coordinates: org.apache.camel:camel-debezium-db2
-     * 
+     *
      * Syntax: <code>debezium-db2:name</code>
-     * 
+     *
      * Path parameter: name (required)
      * Unique name for the connector. Attempting to register again with the same
      * name will fail.
-     * 
+     *
      * @param path name
      * @return the dsl builder
      */
@@ -4396,17 +4396,17 @@ public class StaticEndpointBuilders {
     /**
      * Debezium DB2 Connector (camel-debezium-db2)
      * Capture changes from a DB2 database.
-     * 
+     *
      * Category: database
      * Since: 3.17
      * Maven coordinates: org.apache.camel:camel-debezium-db2
-     * 
+     *
      * Syntax: <code>debezium-db2:name</code>
-     * 
+     *
      * Path parameter: name (required)
      * Unique name for the connector. Attempting to register again with the same
      * name will fail.
-     * 
+     *
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
      * @param path name
@@ -4418,17 +4418,17 @@ public class StaticEndpointBuilders {
     /**
      * Debezium MongoDB Connector (camel-debezium-mongodb)
      * Capture changes from a MongoDB database.
-     * 
+     *
      * Category: database
      * Since: 3.0
      * Maven coordinates: org.apache.camel:camel-debezium-mongodb
-     * 
+     *
      * Syntax: <code>debezium-mongodb:name</code>
-     * 
+     *
      * Path parameter: name (required)
      * Unique name for the connector. Attempting to register again with the same
      * name will fail.
-     * 
+     *
      * @param path name
      * @return the dsl builder
      */
@@ -4438,17 +4438,17 @@ public class StaticEndpointBuilders {
     /**
      * Debezium MongoDB Connector (camel-debezium-mongodb)
      * Capture changes from a MongoDB database.
-     * 
+     *
      * Category: database
      * Since: 3.0
      * Maven coordinates: org.apache.camel:camel-debezium-mongodb
-     * 
+     *
      * Syntax: <code>debezium-mongodb:name</code>
-     * 
+     *
      * Path parameter: name (required)
      * Unique name for the connector. Attempting to register again with the same
      * name will fail.
-     * 
+     *
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
      * @param path name
@@ -4460,17 +4460,17 @@ public class StaticEndpointBuilders {
     /**
      * Debezium MySQL Connector (camel-debezium-mysql)
      * Capture changes from a MySQL database.
-     * 
+     *
      * Category: database
      * Since: 3.0
      * Maven coordinates: org.apache.camel:camel-debezium-mysql
-     * 
+     *
      * Syntax: <code>debezium-mysql:name</code>
-     * 
+     *
      * Path parameter: name (required)
      * Unique name for the connector. Attempting to register again with the same
      * name will fail.
-     * 
+     *
      * @param path name
      * @return the dsl builder
      */
@@ -4480,17 +4480,17 @@ public class StaticEndpointBuilders {
     /**
      * Debezium MySQL Connector (camel-debezium-mysql)
      * Capture changes from a MySQL database.
-     * 
+     *
      * Category: database
      * Since: 3.0
      * Maven coordinates: org.apache.camel:camel-debezium-mysql
-     * 
+     *
      * Syntax: <code>debezium-mysql:name</code>
-     * 
+     *
      * Path parameter: name (required)
      * Unique name for the connector. Attempting to register again with the same
      * name will fail.
-     * 
+     *
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
      * @param path name
@@ -4502,17 +4502,17 @@ public class StaticEndpointBuilders {
     /**
      * Debezium Oracle Connector (camel-debezium-oracle)
      * Capture changes from an Oracle database.
-     * 
+     *
      * Category: database
      * Since: 3.17
      * Maven coordinates: org.apache.camel:camel-debezium-oracle
-     * 
+     *
      * Syntax: <code>debezium-oracle:name</code>
-     * 
+     *
      * Path parameter: name (required)
      * Unique name for the connector. Attempting to register again with the same
      * name will fail.
-     * 
+     *
      * @param path name
      * @return the dsl builder
      */
@@ -4522,17 +4522,17 @@ public class StaticEndpointBuilders {
     /**
      * Debezium Oracle Connector (camel-debezium-oracle)
      * Capture changes from an Oracle database.
-     * 
+     *
      * Category: database
      * Since: 3.17
      * Maven coordinates: org.apache.camel:camel-debezium-oracle
-     * 
+     *
      * Syntax: <code>debezium-oracle:name</code>
-     * 
+     *
      * Path parameter: name (required)
      * Unique name for the connector. Attempting to register again with the same
      * name will fail.
-     * 
+     *
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
      * @param path name
@@ -4544,17 +4544,17 @@ public class StaticEndpointBuilders {
     /**
      * Debezium PostgreSQL Connector (camel-debezium-postgres)
      * Capture changes from a PostgreSQL database.
-     * 
+     *
      * Category: database
      * Since: 3.0
      * Maven coordinates: org.apache.camel:camel-debezium-postgres
-     * 
+     *
      * Syntax: <code>debezium-postgres:name</code>
-     * 
+     *
      * Path parameter: name (required)
      * Unique name for the connector. Attempting to register again with the same
      * name will fail.
-     * 
+     *
      * @param path name
      * @return the dsl builder
      */
@@ -4564,17 +4564,17 @@ public class StaticEndpointBuilders {
     /**
      * Debezium PostgreSQL Connector (camel-debezium-postgres)
      * Capture changes from a PostgreSQL database.
-     * 
+     *
      * Category: database
      * Since: 3.0
      * Maven coordinates: org.apache.camel:camel-debezium-postgres
-     * 
+     *
      * Syntax: <code>debezium-postgres:name</code>
-     * 
+     *
      * Path parameter: name (required)
      * Unique name for the connector. Attempting to register again with the same
      * name will fail.
-     * 
+     *
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
      * @param path name
@@ -4586,17 +4586,17 @@ public class StaticEndpointBuilders {
     /**
      * Debezium SQL Server Connector (camel-debezium-sqlserver)
      * Capture changes from an SQL Server database.
-     * 
+     *
      * Category: database
      * Since: 3.0
      * Maven coordinates: org.apache.camel:camel-debezium-sqlserver
-     * 
+     *
      * Syntax: <code>debezium-sqlserver:name</code>
-     * 
+     *
      * Path parameter: name (required)
      * Unique name for the connector. Attempting to register again with the same
      * name will fail.
-     * 
+     *
      * @param path name
      * @return the dsl builder
      */
@@ -4606,17 +4606,17 @@ public class StaticEndpointBuilders {
     /**
      * Debezium SQL Server Connector (camel-debezium-sqlserver)
      * Capture changes from an SQL Server database.
-     * 
+     *
      * Category: database
      * Since: 3.0
      * Maven coordinates: org.apache.camel:camel-debezium-sqlserver
-     * 
+     *
      * Syntax: <code>debezium-sqlserver:name</code>
-     * 
+     *
      * Path parameter: name (required)
      * Unique name for the connector. Attempting to register again with the same
      * name will fail.
-     * 
+     *
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
      * @param path name
@@ -4629,16 +4629,16 @@ public class StaticEndpointBuilders {
      * DFDL (camel-dfdl)
      * Transforms fixed format data such as EDI message from/to XML using a Data
      * Format Description Language (DFDL).
-     * 
+     *
      * Category: transformation
      * Since: 4.11
      * Maven coordinates: org.apache.camel:camel-dfdl
-     * 
+     *
      * Syntax: <code>dfdl:schemaUri</code>
-     * 
+     *
      * Path parameter: schemaUri (required)
      * The path to the DFDL schema file.
-     * 
+     *
      * @param path schemaUri
      * @return the dsl builder
      */
@@ -4649,16 +4649,16 @@ public class StaticEndpointBuilders {
      * DFDL (camel-dfdl)
      * Transforms fixed format data such as EDI message from/to XML using a Data
      * Format Description Language (DFDL).
-     * 
+     *
      * Category: transformation
      * Since: 4.11
      * Maven coordinates: org.apache.camel:camel-dfdl
-     * 
+     *
      * Syntax: <code>dfdl:schemaUri</code>
-     * 
+     *
      * Path parameter: schemaUri (required)
      * The path to the DFDL schema file.
-     * 
+     *
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
      * @param path schemaUri
@@ -4671,21 +4671,21 @@ public class StaticEndpointBuilders {
      * DHIS2 (camel-dhis2)
      * Leverages the DHIS2 Java SDK to integrate Apache Camel with the DHIS2 Web
      * API.
-     * 
+     *
      * Category: api
      * Since: 4.0
      * Maven coordinates: org.apache.camel:camel-dhis2
-     * 
+     *
      * Syntax: <code>dhis2:apiName/methodName</code>
-     * 
+     *
      * Path parameter: apiName (required)
      * API operation (e.g., get)
      * There are 5 enums and the value can be one of: POST, RESOURCE_TABLES,
      * GET, DELETE, PUT
-     * 
+     *
      * Path parameter: methodName (required)
      * Subject of the API operation (e.g., resource)
-     * 
+     *
      * @param path apiName/methodName
      * @return the dsl builder
      */
@@ -4696,21 +4696,21 @@ public class StaticEndpointBuilders {
      * DHIS2 (camel-dhis2)
      * Leverages the DHIS2 Java SDK to integrate Apache Camel with the DHIS2 Web
      * API.
-     * 
+     *
      * Category: api
      * Since: 4.0
      * Maven coordinates: org.apache.camel:camel-dhis2
-     * 
+     *
      * Syntax: <code>dhis2:apiName/methodName</code>
-     * 
+     *
      * Path parameter: apiName (required)
      * API operation (e.g., get)
      * There are 5 enums and the value can be one of: POST, RESOURCE_TABLES,
      * GET, DELETE, PUT
-     * 
+     *
      * Path parameter: methodName (required)
      * Subject of the API operation (e.g., resource)
-     * 
+     *
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
      * @param path apiName/methodName
@@ -4722,16 +4722,16 @@ public class StaticEndpointBuilders {
     /**
      * Direct (camel-direct)
      * Call another endpoint from the same Camel Context synchronously.
-     * 
+     *
      * Category: core,messaging
      * Since: 1.0
      * Maven coordinates: org.apache.camel:camel-direct
-     * 
+     *
      * Syntax: <code>direct:name</code>
-     * 
+     *
      * Path parameter: name (required)
      * Name of direct endpoint
-     * 
+     *
      * @param path name
      * @return the dsl builder
      */
@@ -4741,16 +4741,16 @@ public class StaticEndpointBuilders {
     /**
      * Direct (camel-direct)
      * Call another endpoint from the same Camel Context synchronously.
-     * 
+     *
      * Category: core,messaging
      * Since: 1.0
      * Maven coordinates: org.apache.camel:camel-direct
-     * 
+     *
      * Syntax: <code>direct:name</code>
-     * 
+     *
      * Path parameter: name (required)
      * Name of direct endpoint
-     * 
+     *
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
      * @param path name
@@ -4762,16 +4762,16 @@ public class StaticEndpointBuilders {
     /**
      * Disruptor (camel-disruptor)
      * Provides asynchronous SEDA behavior using LMAX Disruptor.
-     * 
+     *
      * Category: messaging
      * Since: 2.12
      * Maven coordinates: org.apache.camel:camel-disruptor
-     * 
+     *
      * Syntax: <code>disruptor:name</code>
-     * 
+     *
      * Path parameter: name (required)
      * Name of queue
-     * 
+     *
      * @param path name
      * @return the dsl builder
      */
@@ -4781,16 +4781,16 @@ public class StaticEndpointBuilders {
     /**
      * Disruptor (camel-disruptor)
      * Provides asynchronous SEDA behavior using LMAX Disruptor.
-     * 
+     *
      * Category: messaging
      * Since: 2.12
      * Maven coordinates: org.apache.camel:camel-disruptor
-     * 
+     *
      * Syntax: <code>disruptor:name</code>
-     * 
+     *
      * Path parameter: name (required)
      * Name of queue
-     * 
+     *
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
      * @param path name
@@ -4802,16 +4802,16 @@ public class StaticEndpointBuilders {
     /**
      * Disruptor VM (camel-disruptor)
      * Provides asynchronous SEDA behavior using LMAX Disruptor.
-     * 
+     *
      * Category: messaging
      * Since: 2.12
      * Maven coordinates: org.apache.camel:camel-disruptor
-     * 
+     *
      * Syntax: <code>disruptor-vm:name</code>
-     * 
+     *
      * Path parameter: name (required)
      * Name of queue
-     * 
+     *
      * @param path name
      * @return the dsl builder
      */
@@ -4821,16 +4821,16 @@ public class StaticEndpointBuilders {
     /**
      * Disruptor VM (camel-disruptor)
      * Provides asynchronous SEDA behavior using LMAX Disruptor.
-     * 
+     *
      * Category: messaging
      * Since: 2.12
      * Maven coordinates: org.apache.camel:camel-disruptor
-     * 
+     *
      * Syntax: <code>disruptor-vm:name</code>
-     * 
+     *
      * Path parameter: name (required)
      * Name of queue
-     * 
+     *
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
      * @param path name
@@ -4843,16 +4843,16 @@ public class StaticEndpointBuilders {
      * Deep Java Library (camel-djl)
      * Infer Deep Learning models from message exchanges data using Deep Java
      * Library (DJL).
-     * 
+     *
      * Category: ai
      * Since: 3.3
      * Maven coordinates: org.apache.camel:camel-djl
-     * 
+     *
      * Syntax: <code>djl:application</code>
-     * 
+     *
      * Path parameter: application (required)
      * Application name
-     * 
+     *
      * @param path application
      * @return the dsl builder
      */
@@ -4863,16 +4863,16 @@ public class StaticEndpointBuilders {
      * Deep Java Library (camel-djl)
      * Infer Deep Learning models from message exchanges data using Deep Java
      * Library (DJL).
-     * 
+     *
      * Category: ai
      * Since: 3.3
      * Maven coordinates: org.apache.camel:camel-djl
-     * 
+     *
      * Syntax: <code>djl:application</code>
-     * 
+     *
      * Path parameter: application (required)
      * Application name
-     * 
+     *
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
      * @param path application
@@ -4884,17 +4884,17 @@ public class StaticEndpointBuilders {
     /**
      * DNS (camel-dns)
      * Perform DNS queries using DNSJava.
-     * 
+     *
      * Category: networking
      * Since: 2.7
      * Maven coordinates: org.apache.camel:camel-dns
-     * 
+     *
      * Syntax: <code>dns:dnsType</code>
-     * 
+     *
      * Path parameter: dnsType (required)
      * The type of the lookup.
      * There are 4 enums and the value can be one of: dig, ip, lookup, wikipedia
-     * 
+     *
      * @param path dnsType
      * @return the dsl builder
      */
@@ -4904,17 +4904,17 @@ public class StaticEndpointBuilders {
     /**
      * DNS (camel-dns)
      * Perform DNS queries using DNSJava.
-     * 
+     *
      * Category: networking
      * Since: 2.7
      * Maven coordinates: org.apache.camel:camel-dns
-     * 
+     *
      * Syntax: <code>dns:dnsType</code>
-     * 
+     *
      * Path parameter: dnsType (required)
      * The type of the lookup.
      * There are 4 enums and the value can be one of: dig, ip, lookup, wikipedia
-     * 
+     *
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
      * @param path dnsType
@@ -4926,13 +4926,13 @@ public class StaticEndpointBuilders {
     /**
      * Docker (camel-docker)
      * Manage Docker containers.
-     * 
+     *
      * Category: cloud,container
      * Since: 2.15
      * Maven coordinates: org.apache.camel:camel-docker
-     * 
+     *
      * Syntax: <code>docker:operation</code>
-     * 
+     *
      * Path parameter: operation (required)
      * Which operation to use
      * There are 37 enums and the value can be one of: events, stats, auth,
@@ -4944,7 +4944,7 @@ public class StaticEndpointBuilders {
      * containerstart, containerstop, containertop, containerunpause,
      * containerwait, execcreate, execstart, networkconnect, networkcreate,
      * networkremove
-     * 
+     *
      * @param path operation
      * @return the dsl builder
      */
@@ -4954,13 +4954,13 @@ public class StaticEndpointBuilders {
     /**
      * Docker (camel-docker)
      * Manage Docker containers.
-     * 
+     *
      * Category: cloud,container
      * Since: 2.15
      * Maven coordinates: org.apache.camel:camel-docker
-     * 
+     *
      * Syntax: <code>docker:operation</code>
-     * 
+     *
      * Path parameter: operation (required)
      * Which operation to use
      * There are 37 enums and the value can be one of: events, stats, auth,
@@ -4972,7 +4972,7 @@ public class StaticEndpointBuilders {
      * containerstart, containerstop, containertop, containerunpause,
      * containerwait, execcreate, execstart, networkconnect, networkcreate,
      * networkremove
-     * 
+     *
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
      * @param path operation
@@ -4984,16 +4984,16 @@ public class StaticEndpointBuilders {
     /**
      * Docling (camel-docling)
      * Process documents using Docling library for parsing and conversion.
-     * 
+     *
      * Category: transformation,ai
      * Since: 4.15
      * Maven coordinates: org.apache.camel:camel-docling
-     * 
+     *
      * Syntax: <code>docling:operationId</code>
-     * 
+     *
      * Path parameter: operationId (required)
      * The operation identifier
-     * 
+     *
      * @param path operationId
      * @return the dsl builder
      */
@@ -5003,16 +5003,16 @@ public class StaticEndpointBuilders {
     /**
      * Docling (camel-docling)
      * Process documents using Docling library for parsing and conversion.
-     * 
+     *
      * Category: transformation,ai
      * Since: 4.15
      * Maven coordinates: org.apache.camel:camel-docling
-     * 
+     *
      * Syntax: <code>docling:operationId</code>
-     * 
+     *
      * Path parameter: operationId (required)
      * The operation identifier
-     * 
+     *
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
      * @param path operationId
@@ -5024,16 +5024,16 @@ public class StaticEndpointBuilders {
     /**
      * Drill (camel-drill)
      * Perform queries against an Apache Drill cluster.
-     * 
+     *
      * Category: database,bigdata
      * Since: 2.19
      * Maven coordinates: org.apache.camel:camel-drill
-     * 
+     *
      * Syntax: <code>drill:host</code>
-     * 
+     *
      * Path parameter: host (required)
      * Host name or IP address
-     * 
+     *
      * @param path host
      * @return the dsl builder
      */
@@ -5043,16 +5043,16 @@ public class StaticEndpointBuilders {
     /**
      * Drill (camel-drill)
      * Perform queries against an Apache Drill cluster.
-     * 
+     *
      * Category: database,bigdata
      * Since: 2.19
      * Maven coordinates: org.apache.camel:camel-drill
-     * 
+     *
      * Syntax: <code>drill:host</code>
-     * 
+     *
      * Path parameter: host (required)
      * Host name or IP address
-     * 
+     *
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
      * @param path host
@@ -5065,19 +5065,19 @@ public class StaticEndpointBuilders {
      * Dropbox (camel-dropbox)
      * Upload, download and manage files, folders, groups, collaborations, etc
      * on Dropbox.
-     * 
+     *
      * Category: cloud,file,api
      * Since: 2.14
      * Maven coordinates: org.apache.camel:camel-dropbox
-     * 
+     *
      * Syntax: <code>dropbox:operation</code>
-     * 
+     *
      * Path parameter: operation (required)
      * The specific action (typically is a CRUD action) to perform on Dropbox
      * remote folder.
      * There are 5 enums and the value can be one of: put, del, search, get,
      * move
-     * 
+     *
      * @param path operation
      * @return the dsl builder
      */
@@ -5088,19 +5088,19 @@ public class StaticEndpointBuilders {
      * Dropbox (camel-dropbox)
      * Upload, download and manage files, folders, groups, collaborations, etc
      * on Dropbox.
-     * 
+     *
      * Category: cloud,file,api
      * Since: 2.14
      * Maven coordinates: org.apache.camel:camel-dropbox
-     * 
+     *
      * Syntax: <code>dropbox:operation</code>
-     * 
+     *
      * Path parameter: operation (required)
      * The specific action (typically is a CRUD action) to perform on Dropbox
      * remote folder.
      * There are 5 enums and the value can be one of: put, del, search, get,
      * move
-     * 
+     *
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
      * @param path operation
@@ -5113,16 +5113,16 @@ public class StaticEndpointBuilders {
      * DuckDB (camel-duckdb)
      * Interact with DuckDB, the in-process analytical SQL database, for
      * embedded analytics workloads.
-     * 
+     *
      * Category: database,bigdata
      * Since: 4.22
      * Maven coordinates: org.apache.camel:camel-duckdb
-     * 
+     *
      * Syntax: <code>duckdb:databasePath</code>
-     * 
+     *
      * Path parameter: databasePath
      * Database path, either :memory: or a relative or absolute file path.
-     * 
+     *
      * @param path databasePath
      * @return the dsl builder
      */
@@ -5133,16 +5133,16 @@ public class StaticEndpointBuilders {
      * DuckDB (camel-duckdb)
      * Interact with DuckDB, the in-process analytical SQL database, for
      * embedded analytics workloads.
-     * 
+     *
      * Category: database,bigdata
      * Since: 4.22
      * Maven coordinates: org.apache.camel:camel-duckdb
-     * 
+     *
      * Syntax: <code>duckdb:databasePath</code>
-     * 
+     *
      * Path parameter: databasePath
      * Database path, either :memory: or a relative or absolute file path.
-     * 
+     *
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
      * @param path databasePath
@@ -5155,20 +5155,20 @@ public class StaticEndpointBuilders {
      * Dynamic Router (camel-dynamic-router)
      * The Dynamic Router component routes exchanges to recipients, and the
      * recipients (and their rules) may change at runtime.
-     * 
+     *
      * Category: messaging,core
      * Since: 3.15
      * Maven coordinates: org.apache.camel:camel-dynamic-router
-     * 
+     *
      * Syntax: <code>dynamic-router:channel</code>
-     * 
+     *
      * Path parameter: channel
      * Channel for the Dynamic Router. For example, if the Dynamic Router URI is
      * dynamic-router://test, then the channel is test. Channels are a way of
      * keeping routing participants, their rules, and exchanges logically
      * separate from the participants, rules, and exchanges on other channels.
      * This can be seen as analogous to VLANs in networking.
-     * 
+     *
      * @param path channel
      * @return the dsl builder
      */
@@ -5179,20 +5179,20 @@ public class StaticEndpointBuilders {
      * Dynamic Router (camel-dynamic-router)
      * The Dynamic Router component routes exchanges to recipients, and the
      * recipients (and their rules) may change at runtime.
-     * 
+     *
      * Category: messaging,core
      * Since: 3.15
      * Maven coordinates: org.apache.camel:camel-dynamic-router
-     * 
+     *
      * Syntax: <code>dynamic-router:channel</code>
-     * 
+     *
      * Path parameter: channel
      * Channel for the Dynamic Router. For example, if the Dynamic Router URI is
      * dynamic-router://test, then the channel is test. Channels are a way of
      * keeping routing participants, their rules, and exchanges logically
      * separate from the participants, rules, and exchanges on other channels.
      * This can be seen as analogous to VLANs in networking.
-     * 
+     *
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
      * @param path channel
@@ -5206,18 +5206,18 @@ public class StaticEndpointBuilders {
      * The Dynamic Router control endpoint for operations that allow routing
      * participants to subscribe or unsubscribe to participate in dynamic
      * message routing.
-     * 
+     *
      * Category: messaging
      * Since: 4.4
      * Maven coordinates: org.apache.camel:camel-dynamic-router
-     * 
+     *
      * Syntax: <code>dynamic-router-control:controlAction</code>
-     * 
+     *
      * Path parameter: controlAction (required)
      * Control action
      * There are 5 enums and the value can be one of: subscribe, unsubscribe,
      * update, list, statistics
-     * 
+     *
      * @param path controlAction
      * @return the dsl builder
      */
@@ -5229,18 +5229,18 @@ public class StaticEndpointBuilders {
      * The Dynamic Router control endpoint for operations that allow routing
      * participants to subscribe or unsubscribe to participate in dynamic
      * message routing.
-     * 
+     *
      * Category: messaging
      * Since: 4.4
      * Maven coordinates: org.apache.camel:camel-dynamic-router
-     * 
+     *
      * Syntax: <code>dynamic-router-control:controlAction</code>
-     * 
+     *
      * Path parameter: controlAction (required)
      * Control action
      * There are 5 enums and the value can be one of: subscribe, unsubscribe,
      * update, list, statistics
-     * 
+     *
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
      * @param path controlAction
@@ -5252,16 +5252,16 @@ public class StaticEndpointBuilders {
     /**
      * Ehcache (camel-ehcache)
      * Perform caching operations using Ehcache.
-     * 
+     *
      * Category: cache,clustering
      * Since: 2.18
      * Maven coordinates: org.apache.camel:camel-ehcache
-     * 
+     *
      * Syntax: <code>ehcache:cacheName</code>
-     * 
+     *
      * Path parameter: cacheName (required)
      * the cache name
-     * 
+     *
      * @param path cacheName
      * @return the dsl builder
      */
@@ -5271,16 +5271,16 @@ public class StaticEndpointBuilders {
     /**
      * Ehcache (camel-ehcache)
      * Perform caching operations using Ehcache.
-     * 
+     *
      * Category: cache,clustering
      * Since: 2.18
      * Maven coordinates: org.apache.camel:camel-ehcache
-     * 
+     *
      * Syntax: <code>ehcache:cacheName</code>
-     * 
+     *
      * Path parameter: cacheName (required)
      * the cache name
-     * 
+     *
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
      * @param path cacheName
@@ -5292,16 +5292,16 @@ public class StaticEndpointBuilders {
     /**
      * Elasticsearch (camel-elasticsearch)
      * Send requests to Elasticsearch via Java Client API.
-     * 
+     *
      * Category: search,monitoring
      * Since: 3.19
      * Maven coordinates: org.apache.camel:camel-elasticsearch
-     * 
+     *
      * Syntax: <code>elasticsearch:clusterName</code>
-     * 
+     *
      * Path parameter: clusterName (required)
      * Name of the cluster
-     * 
+     *
      * @param path clusterName
      * @return the dsl builder
      */
@@ -5311,16 +5311,16 @@ public class StaticEndpointBuilders {
     /**
      * Elasticsearch (camel-elasticsearch)
      * Send requests to Elasticsearch via Java Client API.
-     * 
+     *
      * Category: search,monitoring
      * Since: 3.19
      * Maven coordinates: org.apache.camel:camel-elasticsearch
-     * 
+     *
      * Syntax: <code>elasticsearch:clusterName</code>
-     * 
+     *
      * Path parameter: clusterName (required)
      * Name of the cluster
-     * 
+     *
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
      * @param path clusterName
@@ -5333,16 +5333,16 @@ public class StaticEndpointBuilders {
      * Elasticsearch Low level Rest Client (camel-elasticsearch-rest-client)
      * Perform queries and other operations on Elasticsearch or OpenSearch (uses
      * low-level client).
-     * 
+     *
      * Category: search
      * Since: 4.3
      * Maven coordinates: org.apache.camel:camel-elasticsearch-rest-client
-     * 
+     *
      * Syntax: <code>elasticsearch-rest-client:clusterName</code>
-     * 
+     *
      * Path parameter: clusterName (required)
      * Cluster Name
-     * 
+     *
      * @param path clusterName
      * @return the dsl builder
      */
@@ -5353,16 +5353,16 @@ public class StaticEndpointBuilders {
      * Elasticsearch Low level Rest Client (camel-elasticsearch-rest-client)
      * Perform queries and other operations on Elasticsearch or OpenSearch (uses
      * low-level client).
-     * 
+     *
      * Category: search
      * Since: 4.3
      * Maven coordinates: org.apache.camel:camel-elasticsearch-rest-client
-     * 
+     *
      * Syntax: <code>elasticsearch-rest-client:clusterName</code>
-     * 
+     *
      * Path parameter: clusterName (required)
      * Cluster Name
-     * 
+     *
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
      * @param path clusterName
@@ -5375,13 +5375,13 @@ public class StaticEndpointBuilders {
      * Event (camel-event)
      * Subscribe to Camel internal events such as route started/stopped and
      * exchange completed/failed.
-     * 
+     *
      * Category: core,monitoring
      * Since: 4.19
      * Maven coordinates: org.apache.camel:camel-event
-     * 
+     *
      * Syntax: <code>event:events</code>
-     * 
+     *
      * Path parameter: events (required)
      * Comma-separated list of event types to subscribe to. Event types
      * correspond to CamelEvent.Type enum values (case-insensitive), for
@@ -5389,7 +5389,7 @@ public class StaticEndpointBuilders {
      * Wildcard patterns are supported using a suffix, for example: Route
      * matches all route events, Exchange matches all exchange events, and
      * matches all events.
-     * 
+     *
      * @param path events
      * @return the dsl builder
      */
@@ -5400,13 +5400,13 @@ public class StaticEndpointBuilders {
      * Event (camel-event)
      * Subscribe to Camel internal events such as route started/stopped and
      * exchange completed/failed.
-     * 
+     *
      * Category: core,monitoring
      * Since: 4.19
      * Maven coordinates: org.apache.camel:camel-event
-     * 
+     *
      * Syntax: <code>event:events</code>
-     * 
+     *
      * Path parameter: events (required)
      * Comma-separated list of event types to subscribe to. Event types
      * correspond to CamelEvent.Type enum values (case-insensitive), for
@@ -5414,7 +5414,7 @@ public class StaticEndpointBuilders {
      * Wildcard patterns are supported using a suffix, for example: Route
      * matches all route events, Exchange matches all exchange events, and
      * matches all events.
-     * 
+     *
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
      * @param path events
@@ -5426,17 +5426,17 @@ public class StaticEndpointBuilders {
     /**
      * Exec (camel-exec)
      * Execute commands on the underlying operating system.
-     * 
+     *
      * Category: core
      * Since: 2.3
      * Maven coordinates: org.apache.camel:camel-exec
-     * 
+     *
      * Syntax: <code>exec:executable</code>
-     * 
+     *
      * Path parameter: executable (required)
      * Sets the executable to be executed. The executable must not be empty or
      * null.
-     * 
+     *
      * @param path executable
      * @return the dsl builder
      */
@@ -5446,17 +5446,17 @@ public class StaticEndpointBuilders {
     /**
      * Exec (camel-exec)
      * Execute commands on the underlying operating system.
-     * 
+     *
      * Category: core
      * Since: 2.3
      * Maven coordinates: org.apache.camel:camel-exec
-     * 
+     *
      * Syntax: <code>exec:executable</code>
-     * 
+     *
      * Path parameter: executable (required)
      * Sets the executable to be executed. The executable must not be empty or
      * null.
-     * 
+     *
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
      * @param path executable
@@ -5469,22 +5469,22 @@ public class StaticEndpointBuilders {
      * FHIR (camel-fhir)
      * Exchange information in the healthcare domain using the FHIR (Fast
      * Healthcare Interoperability Resources) standard.
-     * 
+     *
      * Category: api
      * Since: 2.23
      * Maven coordinates: org.apache.camel:camel-fhir
-     * 
+     *
      * Syntax: <code>fhir:apiName/methodName</code>
-     * 
+     *
      * Path parameter: apiName (required)
      * What kind of operation to perform
      * There are 13 enums and the value can be one of: CAPABILITIES, CREATE,
      * DELETE, HISTORY, LOAD_PAGE, META, OPERATION, PATCH, READ, SEARCH,
      * TRANSACTION, UPDATE, VALIDATE
-     * 
+     *
      * Path parameter: methodName (required)
      * What sub operation to use for the selected operation
-     * 
+     *
      * @param path apiName/methodName
      * @return the dsl builder
      */
@@ -5495,22 +5495,22 @@ public class StaticEndpointBuilders {
      * FHIR (camel-fhir)
      * Exchange information in the healthcare domain using the FHIR (Fast
      * Healthcare Interoperability Resources) standard.
-     * 
+     *
      * Category: api
      * Since: 2.23
      * Maven coordinates: org.apache.camel:camel-fhir
-     * 
+     *
      * Syntax: <code>fhir:apiName/methodName</code>
-     * 
+     *
      * Path parameter: apiName (required)
      * What kind of operation to perform
      * There are 13 enums and the value can be one of: CAPABILITIES, CREATE,
      * DELETE, HISTORY, LOAD_PAGE, META, OPERATION, PATCH, READ, SEARCH,
      * TRANSACTION, UPDATE, VALIDATE
-     * 
+     *
      * Path parameter: methodName (required)
      * What sub operation to use for the selected operation
-     * 
+     *
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
      * @param path apiName/methodName
@@ -5522,16 +5522,16 @@ public class StaticEndpointBuilders {
     /**
      * File (camel-file)
      * Read and write files.
-     * 
+     *
      * Category: file,core
      * Since: 1.0
      * Maven coordinates: org.apache.camel:camel-file
-     * 
+     *
      * Syntax: <code>file:directoryName</code>
-     * 
+     *
      * Path parameter: directoryName (required)
      * The starting directory
-     * 
+     *
      * @param path directoryName
      * @return the dsl builder
      */
@@ -5541,16 +5541,16 @@ public class StaticEndpointBuilders {
     /**
      * File (camel-file)
      * Read and write files.
-     * 
+     *
      * Category: file,core
      * Since: 1.0
      * Maven coordinates: org.apache.camel:camel-file
-     * 
+     *
      * Syntax: <code>file:directoryName</code>
-     * 
+     *
      * Path parameter: directoryName (required)
      * The starting directory
-     * 
+     *
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
      * @param path directoryName
@@ -5563,16 +5563,16 @@ public class StaticEndpointBuilders {
      * File Watch (camel-file-watch)
      * Get notified about file events in a directory using
      * java.nio.file.WatchService.
-     * 
+     *
      * Category: file
      * Since: 3.0
      * Maven coordinates: org.apache.camel:camel-file-watch
-     * 
+     *
      * Syntax: <code>file-watch:path</code>
-     * 
+     *
      * Path parameter: path (required)
      * Path of directory to consume events from.
-     * 
+     *
      * @param path path
      * @return the dsl builder
      */
@@ -5583,16 +5583,16 @@ public class StaticEndpointBuilders {
      * File Watch (camel-file-watch)
      * Get notified about file events in a directory using
      * java.nio.file.WatchService.
-     * 
+     *
      * Category: file
      * Since: 3.0
      * Maven coordinates: org.apache.camel:camel-file-watch
-     * 
+     *
      * Syntax: <code>file-watch:path</code>
-     * 
+     *
      * Path parameter: path (required)
      * Path of directory to consume events from.
-     * 
+     *
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
      * @param path path
@@ -5604,23 +5604,23 @@ public class StaticEndpointBuilders {
     /**
      * Flatpack (camel-flatpack)
      * Parse fixed width and delimited files using the FlatPack library.
-     * 
+     *
      * Category: transformation
      * Since: 1.4
      * Maven coordinates: org.apache.camel:camel-flatpack
-     * 
+     *
      * Syntax: <code>flatpack:type:resourceUri</code>
-     * 
+     *
      * Path parameter: type
      * Whether to use fixed or delimiter
      * Default value: delim
      * There are 2 enums and the value can be one of: fixed, delim
-     * 
+     *
      * Path parameter: resourceUri (required)
      * URL for loading the flatpack mapping file from classpath or file system
      * This option can also be loaded from an existing file, by prefixing with
      * file: or classpath: followed by the location of the file.
-     * 
+     *
      * @param path type:resourceUri
      * @return the dsl builder
      */
@@ -5630,23 +5630,23 @@ public class StaticEndpointBuilders {
     /**
      * Flatpack (camel-flatpack)
      * Parse fixed width and delimited files using the FlatPack library.
-     * 
+     *
      * Category: transformation
      * Since: 1.4
      * Maven coordinates: org.apache.camel:camel-flatpack
-     * 
+     *
      * Syntax: <code>flatpack:type:resourceUri</code>
-     * 
+     *
      * Path parameter: type
      * Whether to use fixed or delimiter
      * Default value: delim
      * There are 2 enums and the value can be one of: fixed, delim
-     * 
+     *
      * Path parameter: resourceUri (required)
      * URL for loading the flatpack mapping file from classpath or file system
      * This option can also be loaded from an existing file, by prefixing with
      * file: or classpath: followed by the location of the file.
-     * 
+     *
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
      * @param path type:resourceUri
@@ -5658,17 +5658,17 @@ public class StaticEndpointBuilders {
     /**
      * Flink (camel-flink)
      * Send DataSet jobs to an Apache Flink cluster.
-     * 
+     *
      * Category: transformation,bigdata
      * Since: 2.18
      * Maven coordinates: org.apache.camel:camel-flink
-     * 
+     *
      * Syntax: <code>flink:endpointType</code>
-     * 
+     *
      * Path parameter: endpointType (required)
      * Type of the endpoint (dataset, datastream).
      * There are 2 enums and the value can be one of: dataset, datastream
-     * 
+     *
      * @param path endpointType
      * @return the dsl builder
      */
@@ -5678,17 +5678,17 @@ public class StaticEndpointBuilders {
     /**
      * Flink (camel-flink)
      * Send DataSet jobs to an Apache Flink cluster.
-     * 
+     *
      * Category: transformation,bigdata
      * Since: 2.18
      * Maven coordinates: org.apache.camel:camel-flink
-     * 
+     *
      * Syntax: <code>flink:endpointType</code>
-     * 
+     *
      * Path parameter: endpointType (required)
      * Type of the endpoint (dataset, datastream).
      * There are 2 enums and the value can be one of: dataset, datastream
-     * 
+     *
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
      * @param path endpointType
@@ -5700,16 +5700,16 @@ public class StaticEndpointBuilders {
     /**
      * Flowable (camel-flowable)
      * Send and receive messages from the Flowable BPMN and CMMN engines.
-     * 
+     *
      * Category: workflow
      * Since: 4.9
      * Maven coordinates: org.apache.camel:camel-flowable
-     * 
+     *
      * Syntax: <code>flowable:channelKey</code>
-     * 
+     *
      * Path parameter: channelKey (required)
      * The channel key
-     * 
+     *
      * @param path channelKey
      * @return the dsl builder
      */
@@ -5719,16 +5719,16 @@ public class StaticEndpointBuilders {
     /**
      * Flowable (camel-flowable)
      * Send and receive messages from the Flowable BPMN and CMMN engines.
-     * 
+     *
      * Category: workflow
      * Since: 4.9
      * Maven coordinates: org.apache.camel:camel-flowable
-     * 
+     *
      * Syntax: <code>flowable:channelKey</code>
-     * 
+     *
      * Path parameter: channelKey (required)
      * The channel key
-     * 
+     *
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
      * @param path channelKey
@@ -5741,19 +5741,19 @@ public class StaticEndpointBuilders {
      * FOP (camel-fop)
      * Render messages into PDF and other output formats supported by Apache
      * FOP.
-     * 
+     *
      * Category: file,transformation
      * Since: 2.10
      * Maven coordinates: org.apache.camel:camel-fop
-     * 
+     *
      * Syntax: <code>fop:outputType</code>
-     * 
+     *
      * Path parameter: outputType (required)
      * The primary output format is PDF but other output formats are also
      * supported.
      * There are 10 enums and the value can be one of: pdf, ps, pcl, png, jpeg,
      * svg, xml, mif, rtf, txt
-     * 
+     *
      * @param path outputType
      * @return the dsl builder
      */
@@ -5764,19 +5764,19 @@ public class StaticEndpointBuilders {
      * FOP (camel-fop)
      * Render messages into PDF and other output formats supported by Apache
      * FOP.
-     * 
+     *
      * Category: file,transformation
      * Since: 2.10
      * Maven coordinates: org.apache.camel:camel-fop
-     * 
+     *
      * Syntax: <code>fop:outputType</code>
-     * 
+     *
      * Path parameter: outputType (required)
      * The primary output format is PDF but other output formats are also
      * supported.
      * There are 10 enums and the value can be one of: pdf, ps, pcl, png, jpeg,
      * svg, xml, mif, rtf, txt
-     * 
+     *
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
      * @param path outputType
@@ -5788,13 +5788,13 @@ public class StaticEndpointBuilders {
     /**
      * Freemarker (camel-freemarker)
      * Transform messages using FreeMarker templates.
-     * 
+     *
      * Category: transformation
      * Since: 2.10
      * Maven coordinates: org.apache.camel:camel-freemarker
-     * 
+     *
      * Syntax: <code>freemarker:resourceUri</code>
-     * 
+     *
      * Path parameter: resourceUri (required)
      * Path to the resource. You can prefix with: classpath, file, http, ref, or
      * bean. classpath, file and http loads the resource using these protocols
@@ -5803,7 +5803,7 @@ public class StaticEndpointBuilders {
      * you can specify the method name after dot, eg bean:myBean.myMethod.
      * This option can also be loaded from an existing file, by prefixing with
      * file: or classpath: followed by the location of the file.
-     * 
+     *
      * @param path resourceUri
      * @return the dsl builder
      */
@@ -5813,13 +5813,13 @@ public class StaticEndpointBuilders {
     /**
      * Freemarker (camel-freemarker)
      * Transform messages using FreeMarker templates.
-     * 
+     *
      * Category: transformation
      * Since: 2.10
      * Maven coordinates: org.apache.camel:camel-freemarker
-     * 
+     *
      * Syntax: <code>freemarker:resourceUri</code>
-     * 
+     *
      * Path parameter: resourceUri (required)
      * Path to the resource. You can prefix with: classpath, file, http, ref, or
      * bean. classpath, file and http loads the resource using these protocols
@@ -5828,7 +5828,7 @@ public class StaticEndpointBuilders {
      * you can specify the method name after dot, eg bean:myBean.myMethod.
      * This option can also be loaded from an existing file, by prefixing with
      * file: or classpath: followed by the location of the file.
-     * 
+     *
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
      * @param path resourceUri
@@ -5840,22 +5840,22 @@ public class StaticEndpointBuilders {
     /**
      * FTP (camel-ftp)
      * Upload and download files to/from FTP servers.
-     * 
+     *
      * Category: file
      * Since: 1.1
      * Maven coordinates: org.apache.camel:camel-ftp
-     * 
+     *
      * Syntax: <code>ftp:host:port/directoryName</code>
-     * 
+     *
      * Path parameter: host (required)
      * Hostname of the FTP server
-     * 
+     *
      * Path parameter: port
      * Port of the FTP server
-     * 
+     *
      * Path parameter: directoryName
      * The starting directory
-     * 
+     *
      * @param path host:port/directoryName
      * @return the dsl builder
      */
@@ -5865,22 +5865,22 @@ public class StaticEndpointBuilders {
     /**
      * FTP (camel-ftp)
      * Upload and download files to/from FTP servers.
-     * 
+     *
      * Category: file
      * Since: 1.1
      * Maven coordinates: org.apache.camel:camel-ftp
-     * 
+     *
      * Syntax: <code>ftp:host:port/directoryName</code>
-     * 
+     *
      * Path parameter: host (required)
      * Hostname of the FTP server
-     * 
+     *
      * Path parameter: port
      * Port of the FTP server
-     * 
+     *
      * Path parameter: directoryName
      * The starting directory
-     * 
+     *
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
      * @param path host:port/directoryName
@@ -5893,22 +5893,22 @@ public class StaticEndpointBuilders {
      * FTPS (camel-ftp)
      * Upload and download files to/from FTP servers supporting the FTPS
      * protocol.
-     * 
+     *
      * Category: file
      * Since: 2.2
      * Maven coordinates: org.apache.camel:camel-ftp
-     * 
+     *
      * Syntax: <code>ftps:host:port/directoryName</code>
-     * 
+     *
      * Path parameter: host (required)
      * Hostname of the FTP server
-     * 
+     *
      * Path parameter: port
      * Port of the FTP server
-     * 
+     *
      * Path parameter: directoryName
      * The starting directory
-     * 
+     *
      * @param path host:port/directoryName
      * @return the dsl builder
      */
@@ -5919,22 +5919,22 @@ public class StaticEndpointBuilders {
      * FTPS (camel-ftp)
      * Upload and download files to/from FTP servers supporting the FTPS
      * protocol.
-     * 
+     *
      * Category: file
      * Since: 2.2
      * Maven coordinates: org.apache.camel:camel-ftp
-     * 
+     *
      * Syntax: <code>ftps:host:port/directoryName</code>
-     * 
+     *
      * Path parameter: host (required)
      * Hostname of the FTP server
-     * 
+     *
      * Path parameter: port
      * Port of the FTP server
-     * 
+     *
      * Path parameter: directoryName
      * The starting directory
-     * 
+     *
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
      * @param path host:port/directoryName
@@ -5947,19 +5947,19 @@ public class StaticEndpointBuilders {
      * Geocoder (camel-geocoder)
      * Find geocodes (latitude and longitude) for a given address or the other
      * way round.
-     * 
+     *
      * Category: api,search
      * Since: 2.12
      * Maven coordinates: org.apache.camel:camel-geocoder
-     * 
+     *
      * Syntax: <code>geocoder:address:latlng</code>
-     * 
+     *
      * Path parameter: address
      * The geo address which should be prefixed with address:
-     * 
+     *
      * Path parameter: latlng
      * The geo latitude and longitude which should be prefixed with latlng:
-     * 
+     *
      * @param path address:latlng
      * @return the dsl builder
      */
@@ -5970,19 +5970,19 @@ public class StaticEndpointBuilders {
      * Geocoder (camel-geocoder)
      * Find geocodes (latitude and longitude) for a given address or the other
      * way round.
-     * 
+     *
      * Category: api,search
      * Since: 2.12
      * Maven coordinates: org.apache.camel:camel-geocoder
-     * 
+     *
      * Syntax: <code>geocoder:address:latlng</code>
-     * 
+     *
      * Path parameter: address
      * The geo address which should be prefixed with address:
-     * 
+     *
      * Path parameter: latlng
      * The geo latitude and longitude which should be prefixed with latlng:
-     * 
+     *
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
      * @param path address:latlng
@@ -5994,16 +5994,16 @@ public class StaticEndpointBuilders {
     /**
      * Git (camel-git)
      * Perform operations on git repositories.
-     * 
+     *
      * Category: file
      * Since: 2.16
      * Maven coordinates: org.apache.camel:camel-git
-     * 
+     *
      * Syntax: <code>git:localPath</code>
-     * 
+     *
      * Path parameter: localPath (required)
      * Local repository path
-     * 
+     *
      * @param path localPath
      * @return the dsl builder
      */
@@ -6013,16 +6013,16 @@ public class StaticEndpointBuilders {
     /**
      * Git (camel-git)
      * Perform operations on git repositories.
-     * 
+     *
      * Category: file
      * Since: 2.16
      * Maven coordinates: org.apache.camel:camel-git
-     * 
+     *
      * Syntax: <code>git:localPath</code>
-     * 
+     *
      * Path parameter: localPath (required)
      * Local repository path
-     * 
+     *
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
      * @param path localPath
@@ -6034,22 +6034,22 @@ public class StaticEndpointBuilders {
     /**
      * GitHub2 (camel-github2)
      * Interact with the GitHub API.
-     * 
+     *
      * Category: file,cloud,api
      * Since: 4.18
      * Maven coordinates: org.apache.camel:camel-github2
-     * 
+     *
      * Syntax: <code>github2:type/branchName</code>
-     * 
+     *
      * Path parameter: type (required)
      * What git operation to execute
      * There are 10 enums and the value can be one of: CLOSEPULLREQUEST,
      * PULLREQUESTCOMMENT, COMMIT, PULLREQUEST, TAG, PULLREQUESTSTATE,
      * PULLREQUESTFILES, GETCOMMITFILE, CREATEISSUE, EVENT
-     * 
+     *
      * Path parameter: branchName
      * Name of branch
-     * 
+     *
      * @param path type/branchName
      * @return the dsl builder
      */
@@ -6059,22 +6059,22 @@ public class StaticEndpointBuilders {
     /**
      * GitHub2 (camel-github2)
      * Interact with the GitHub API.
-     * 
+     *
      * Category: file,cloud,api
      * Since: 4.18
      * Maven coordinates: org.apache.camel:camel-github2
-     * 
+     *
      * Syntax: <code>github2:type/branchName</code>
-     * 
+     *
      * Path parameter: type (required)
      * What git operation to execute
      * There are 10 enums and the value can be one of: CLOSEPULLREQUEST,
      * PULLREQUESTCOMMENT, COMMIT, PULLREQUEST, TAG, PULLREQUESTSTATE,
      * PULLREQUESTFILES, GETCOMMITFILE, CREATEISSUE, EVENT
-     * 
+     *
      * Path parameter: branchName
      * Name of branch
-     * 
+     *
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
      * @param path type/branchName
@@ -6086,22 +6086,22 @@ public class StaticEndpointBuilders {
     /**
      * Google BigQuery (camel-google-bigquery)
      * Google BigQuery data warehouse for analytics.
-     * 
+     *
      * Category: cloud,bigdata
      * Since: 2.20
      * Maven coordinates: org.apache.camel:camel-google-bigquery
-     * 
+     *
      * Syntax: <code>google-bigquery:projectId:datasetId:tableId</code>
-     * 
+     *
      * Path parameter: projectId (required)
      * Google Cloud Project Id
-     * 
+     *
      * Path parameter: datasetId (required)
      * BigQuery Dataset Id
-     * 
+     *
      * Path parameter: tableId
      * BigQuery table id
-     * 
+     *
      * @param path projectId:datasetId:tableId
      * @return the dsl builder
      */
@@ -6111,22 +6111,22 @@ public class StaticEndpointBuilders {
     /**
      * Google BigQuery (camel-google-bigquery)
      * Google BigQuery data warehouse for analytics.
-     * 
+     *
      * Category: cloud,bigdata
      * Since: 2.20
      * Maven coordinates: org.apache.camel:camel-google-bigquery
-     * 
+     *
      * Syntax: <code>google-bigquery:projectId:datasetId:tableId</code>
-     * 
+     *
      * Path parameter: projectId (required)
      * Google Cloud Project Id
-     * 
+     *
      * Path parameter: datasetId (required)
      * BigQuery Dataset Id
-     * 
+     *
      * Path parameter: tableId
      * BigQuery table id
-     * 
+     *
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
      * @param path projectId:datasetId:tableId
@@ -6138,21 +6138,21 @@ public class StaticEndpointBuilders {
     /**
      * Google BigQuery Standard SQL (camel-google-bigquery)
      * Access Google Cloud BigQuery service using SQL queries.
-     * 
+     *
      * Category: cloud,messaging
      * Since: 2.23
      * Maven coordinates: org.apache.camel:camel-google-bigquery
-     * 
+     *
      * Syntax: <code>google-bigquery-sql:projectId:queryString</code>
-     * 
+     *
      * Path parameter: projectId (required)
      * Google Cloud Project Id
-     * 
+     *
      * Path parameter: queryString (required)
      * BigQuery standard SQL query
      * This option can also be loaded from an existing file, by prefixing with
      * file: or classpath: followed by the location of the file.
-     * 
+     *
      * @param path projectId:queryString
      * @return the dsl builder
      */
@@ -6162,21 +6162,21 @@ public class StaticEndpointBuilders {
     /**
      * Google BigQuery Standard SQL (camel-google-bigquery)
      * Access Google Cloud BigQuery service using SQL queries.
-     * 
+     *
      * Category: cloud,messaging
      * Since: 2.23
      * Maven coordinates: org.apache.camel:camel-google-bigquery
-     * 
+     *
      * Syntax: <code>google-bigquery-sql:projectId:queryString</code>
-     * 
+     *
      * Path parameter: projectId (required)
      * Google Cloud Project Id
-     * 
+     *
      * Path parameter: queryString (required)
      * BigQuery standard SQL query
      * This option can also be loaded from an existing file, by prefixing with
      * file: or classpath: followed by the location of the file.
-     * 
+     *
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
      * @param path projectId:queryString
@@ -6188,24 +6188,24 @@ public class StaticEndpointBuilders {
     /**
      * Google Calendar (camel-google-calendar)
      * Perform various operations on a Google Calendar.
-     * 
+     *
      * Category: api,cloud
      * Since: 2.15
      * Maven coordinates: org.apache.camel:camel-google-calendar
-     * 
+     *
      * Syntax: <code>google-calendar:apiName/methodName</code>
-     * 
+     *
      * Path parameter: apiName (required)
      * What kind of operation to perform
      * There are 8 enums and the value can be one of: ACL, LIST, CALENDARS,
      * CHANNELS, COLORS, FREEBUSY, EVENTS, SETTINGS
-     * 
+     *
      * Path parameter: methodName (required)
      * What sub operation to use for the selected operation
      * There are 14 enums and the value can be one of: calendarImport, clear,
      * delete, get, insert, instances, list, move, patch, query, quickAdd, stop,
      * update, watch
-     * 
+     *
      * @param path apiName/methodName
      * @return the dsl builder
      */
@@ -6215,24 +6215,24 @@ public class StaticEndpointBuilders {
     /**
      * Google Calendar (camel-google-calendar)
      * Perform various operations on a Google Calendar.
-     * 
+     *
      * Category: api,cloud
      * Since: 2.15
      * Maven coordinates: org.apache.camel:camel-google-calendar
-     * 
+     *
      * Syntax: <code>google-calendar:apiName/methodName</code>
-     * 
+     *
      * Path parameter: apiName (required)
      * What kind of operation to perform
      * There are 8 enums and the value can be one of: ACL, LIST, CALENDARS,
      * CHANNELS, COLORS, FREEBUSY, EVENTS, SETTINGS
-     * 
+     *
      * Path parameter: methodName (required)
      * What sub operation to use for the selected operation
      * There are 14 enums and the value can be one of: calendarImport, clear,
      * delete, get, insert, instances, list, move, patch, query, quickAdd, stop,
      * update, watch
-     * 
+     *
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
      * @param path apiName/methodName
@@ -6244,16 +6244,16 @@ public class StaticEndpointBuilders {
     /**
      * Google Calendar Stream (camel-google-calendar)
      * Poll for changes in a Google Calendar.
-     * 
+     *
      * Category: cloud
      * Since: 2.23
      * Maven coordinates: org.apache.camel:camel-google-calendar
-     * 
+     *
      * Syntax: <code>google-calendar-stream:index</code>
-     * 
+     *
      * Path parameter: index (required)
      * Specifies an index for the endpoint
-     * 
+     *
      * @param path index
      * @return the dsl builder
      */
@@ -6263,16 +6263,16 @@ public class StaticEndpointBuilders {
     /**
      * Google Calendar Stream (camel-google-calendar)
      * Poll for changes in a Google Calendar.
-     * 
+     *
      * Category: cloud
      * Since: 2.23
      * Maven coordinates: org.apache.camel:camel-google-calendar
-     * 
+     *
      * Syntax: <code>google-calendar-stream:index</code>
-     * 
+     *
      * Path parameter: index (required)
      * Specifies an index for the endpoint
-     * 
+     *
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
      * @param path index
@@ -6284,25 +6284,25 @@ public class StaticEndpointBuilders {
     /**
      * Google Drive (camel-google-drive)
      * Manage files in Google Drive.
-     * 
+     *
      * Category: file,cloud,api
      * Since: 2.14
      * Maven coordinates: org.apache.camel:camel-google-drive
-     * 
+     *
      * Syntax: <code>google-drive:apiName/methodName</code>
-     * 
+     *
      * Path parameter: apiName (required)
      * What kind of operation to perform
      * There are 10 enums and the value can be one of: DRIVE_ABOUT,
      * DRIVE_CHANGES, DRIVE_CHANNELS, DRIVE_COMMENTS, DRIVE_DRIVES, DRIVE_FILES,
      * DRIVE_PERMISSIONS, DRIVE_REPLIES, DRIVE_REVISIONS, DRIVE_TEAMDRIVES
-     * 
+     *
      * Path parameter: methodName (required)
      * What sub operation to use for the selected operation
      * There are 13 enums and the value can be one of: copy, delete, get,
      * getIdForEmail, insert, list, patch, stop, touch, trash, untrash, update,
      * watch
-     * 
+     *
      * @param path apiName/methodName
      * @return the dsl builder
      */
@@ -6312,25 +6312,25 @@ public class StaticEndpointBuilders {
     /**
      * Google Drive (camel-google-drive)
      * Manage files in Google Drive.
-     * 
+     *
      * Category: file,cloud,api
      * Since: 2.14
      * Maven coordinates: org.apache.camel:camel-google-drive
-     * 
+     *
      * Syntax: <code>google-drive:apiName/methodName</code>
-     * 
+     *
      * Path parameter: apiName (required)
      * What kind of operation to perform
      * There are 10 enums and the value can be one of: DRIVE_ABOUT,
      * DRIVE_CHANGES, DRIVE_CHANNELS, DRIVE_COMMENTS, DRIVE_DRIVES, DRIVE_FILES,
      * DRIVE_PERMISSIONS, DRIVE_REPLIES, DRIVE_REVISIONS, DRIVE_TEAMDRIVES
-     * 
+     *
      * Path parameter: methodName (required)
      * What sub operation to use for the selected operation
      * There are 13 enums and the value can be one of: copy, delete, get,
      * getIdForEmail, insert, list, patch, stop, touch, trash, untrash, update,
      * watch
-     * 
+     *
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
      * @param path apiName/methodName
@@ -6342,16 +6342,16 @@ public class StaticEndpointBuilders {
     /**
      * Google Firestore (camel-google-firestore)
      * Store and retrieve data from Google Cloud Firestore NoSQL database.
-     * 
+     *
      * Category: cloud,database
      * Since: 4.19
      * Maven coordinates: org.apache.camel:camel-google-firestore
-     * 
+     *
      * Syntax: <code>google-firestore:collectionName</code>
-     * 
+     *
      * Path parameter: collectionName (required)
      * The collection name to use
-     * 
+     *
      * @param path collectionName
      * @return the dsl builder
      */
@@ -6361,16 +6361,16 @@ public class StaticEndpointBuilders {
     /**
      * Google Firestore (camel-google-firestore)
      * Store and retrieve data from Google Cloud Firestore NoSQL database.
-     * 
+     *
      * Category: cloud,database
      * Since: 4.19
      * Maven coordinates: org.apache.camel:camel-google-firestore
-     * 
+     *
      * Syntax: <code>google-firestore:collectionName</code>
-     * 
+     *
      * Path parameter: collectionName (required)
      * The collection name to use
-     * 
+     *
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
      * @param path collectionName
@@ -6382,16 +6382,16 @@ public class StaticEndpointBuilders {
     /**
      * Google Cloud Functions (camel-google-functions)
      * Manage and invoke Google Cloud Functions
-     * 
+     *
      * Category: cloud
      * Since: 3.9
      * Maven coordinates: org.apache.camel:camel-google-functions
-     * 
+     *
      * Syntax: <code>google-functions:functionName</code>
-     * 
+     *
      * Path parameter: functionName (required)
      * The user-defined name of the function
-     * 
+     *
      * @param path functionName
      * @return the dsl builder
      */
@@ -6401,16 +6401,16 @@ public class StaticEndpointBuilders {
     /**
      * Google Cloud Functions (camel-google-functions)
      * Manage and invoke Google Cloud Functions
-     * 
+     *
      * Category: cloud
      * Since: 3.9
      * Maven coordinates: org.apache.camel:camel-google-functions
-     * 
+     *
      * Syntax: <code>google-functions:functionName</code>
-     * 
+     *
      * Path parameter: functionName (required)
      * The user-defined name of the function
-     * 
+     *
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
      * @param path functionName
@@ -6422,24 +6422,24 @@ public class StaticEndpointBuilders {
     /**
      * Google Mail (camel-google-mail)
      * Manage messages in Google Mail.
-     * 
+     *
      * Category: cloud,api,mail
      * Since: 2.15
      * Maven coordinates: org.apache.camel:camel-google-mail
-     * 
+     *
      * Syntax: <code>google-mail:apiName/methodName</code>
-     * 
+     *
      * Path parameter: apiName (required)
      * What kind of operation to perform
      * There are 7 enums and the value can be one of: THREADS, MESSAGES,
      * ATTACHMENTS, LABELS, HISTORY, DRAFTS, USERS
-     * 
+     *
      * Path parameter: methodName (required)
      * What sub operation to use for the selected operation
      * There are 16 enums and the value can be one of: attachments, create,
      * delete, get, getProfile, gmailImport, insert, list, modify, patch, send,
      * stop, trash, untrash, update, watch
-     * 
+     *
      * @param path apiName/methodName
      * @return the dsl builder
      */
@@ -6449,24 +6449,24 @@ public class StaticEndpointBuilders {
     /**
      * Google Mail (camel-google-mail)
      * Manage messages in Google Mail.
-     * 
+     *
      * Category: cloud,api,mail
      * Since: 2.15
      * Maven coordinates: org.apache.camel:camel-google-mail
-     * 
+     *
      * Syntax: <code>google-mail:apiName/methodName</code>
-     * 
+     *
      * Path parameter: apiName (required)
      * What kind of operation to perform
      * There are 7 enums and the value can be one of: THREADS, MESSAGES,
      * ATTACHMENTS, LABELS, HISTORY, DRAFTS, USERS
-     * 
+     *
      * Path parameter: methodName (required)
      * What sub operation to use for the selected operation
      * There are 16 enums and the value can be one of: attachments, create,
      * delete, get, getProfile, gmailImport, insert, list, modify, patch, send,
      * stop, trash, untrash, update, watch
-     * 
+     *
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
      * @param path apiName/methodName
@@ -6478,16 +6478,16 @@ public class StaticEndpointBuilders {
     /**
      * Google Mail Stream (camel-google-mail)
      * Poll for incoming messages in Google Mail.
-     * 
+     *
      * Category: cloud,mail
      * Since: 2.22
      * Maven coordinates: org.apache.camel:camel-google-mail
-     * 
+     *
      * Syntax: <code>google-mail-stream:index</code>
-     * 
+     *
      * Path parameter: index (required)
      * Currently not in use
-     * 
+     *
      * @param path index
      * @return the dsl builder
      */
@@ -6497,16 +6497,16 @@ public class StaticEndpointBuilders {
     /**
      * Google Mail Stream (camel-google-mail)
      * Poll for incoming messages in Google Mail.
-     * 
+     *
      * Category: cloud,mail
      * Since: 2.22
      * Maven coordinates: org.apache.camel:camel-google-mail
-     * 
+     *
      * Syntax: <code>google-mail-stream:index</code>
-     * 
+     *
      * Path parameter: index (required)
      * Currently not in use
-     * 
+     *
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
      * @param path index
@@ -6518,20 +6518,20 @@ public class StaticEndpointBuilders {
     /**
      * Google Pubsub (camel-google-pubsub)
      * Send and receive messages to/from Google Cloud Platform PubSub Service.
-     * 
+     *
      * Category: cloud,messaging
      * Since: 2.19
      * Maven coordinates: org.apache.camel:camel-google-pubsub
-     * 
+     *
      * Syntax: <code>google-pubsub:projectId:destinationName</code>
-     * 
+     *
      * Path parameter: projectId (required)
      * The Google Cloud PubSub Project Id
-     * 
+     *
      * Path parameter: destinationName (required)
      * The Destination Name. For the consumer this will be the subscription
      * name, while for the producer this will be the topic name.
-     * 
+     *
      * @param path projectId:destinationName
      * @return the dsl builder
      */
@@ -6541,20 +6541,20 @@ public class StaticEndpointBuilders {
     /**
      * Google Pubsub (camel-google-pubsub)
      * Send and receive messages to/from Google Cloud Platform PubSub Service.
-     * 
+     *
      * Category: cloud,messaging
      * Since: 2.19
      * Maven coordinates: org.apache.camel:camel-google-pubsub
-     * 
+     *
      * Syntax: <code>google-pubsub:projectId:destinationName</code>
-     * 
+     *
      * Path parameter: projectId (required)
      * The Google Cloud PubSub Project Id
-     * 
+     *
      * Path parameter: destinationName (required)
      * The Destination Name. For the consumer this will be the subscription
      * name, while for the producer this will be the topic name.
-     * 
+     *
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
      * @param path projectId:destinationName
@@ -6566,16 +6566,16 @@ public class StaticEndpointBuilders {
     /**
      * Google Secret Manager (camel-google-secret-manager)
      * Manage Google Secret Manager Secrets
-     * 
+     *
      * Category: cloud
      * Since: 3.16
      * Maven coordinates: org.apache.camel:camel-google-secret-manager
-     * 
+     *
      * Syntax: <code>google-secret-manager:project</code>
-     * 
+     *
      * Path parameter: project (required)
      * The Google Cloud Project Id name related to the Secret Manager
-     * 
+     *
      * @param path project
      * @return the dsl builder
      */
@@ -6585,16 +6585,16 @@ public class StaticEndpointBuilders {
     /**
      * Google Secret Manager (camel-google-secret-manager)
      * Manage Google Secret Manager Secrets
-     * 
+     *
      * Category: cloud
      * Since: 3.16
      * Maven coordinates: org.apache.camel:camel-google-secret-manager
-     * 
+     *
      * Syntax: <code>google-secret-manager:project</code>
-     * 
+     *
      * Path parameter: project (required)
      * The Google Cloud Project Id name related to the Secret Manager
-     * 
+     *
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
      * @param path project
@@ -6606,22 +6606,22 @@ public class StaticEndpointBuilders {
     /**
      * Google Sheets (camel-google-sheets)
      * Manage spreadsheets in Google Sheets.
-     * 
+     *
      * Category: cloud,document
      * Since: 2.23
      * Maven coordinates: org.apache.camel:camel-google-sheets
-     * 
+     *
      * Syntax: <code>google-sheets:apiName/methodName</code>
-     * 
+     *
      * Path parameter: apiName (required)
      * What kind of operation to perform
      * There are 2 enums and the value can be one of: SPREADSHEETS, DATA
-     * 
+     *
      * Path parameter: methodName (required)
      * What sub operation to use for the selected operation
      * There are 6 enums and the value can be one of: create, get, update,
      * append, batchUpdate, clear
-     * 
+     *
      * @param path apiName/methodName
      * @return the dsl builder
      */
@@ -6631,22 +6631,22 @@ public class StaticEndpointBuilders {
     /**
      * Google Sheets (camel-google-sheets)
      * Manage spreadsheets in Google Sheets.
-     * 
+     *
      * Category: cloud,document
      * Since: 2.23
      * Maven coordinates: org.apache.camel:camel-google-sheets
-     * 
+     *
      * Syntax: <code>google-sheets:apiName/methodName</code>
-     * 
+     *
      * Path parameter: apiName (required)
      * What kind of operation to perform
      * There are 2 enums and the value can be one of: SPREADSHEETS, DATA
-     * 
+     *
      * Path parameter: methodName (required)
      * What sub operation to use for the selected operation
      * There are 6 enums and the value can be one of: create, get, update,
      * append, batchUpdate, clear
-     * 
+     *
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
      * @param path apiName/methodName
@@ -6658,17 +6658,17 @@ public class StaticEndpointBuilders {
     /**
      * Google Sheets Stream (camel-google-sheets)
      * Poll for changes in Google Sheets.
-     * 
+     *
      * Category: cloud,document
      * Since: 2.23
      * Maven coordinates: org.apache.camel:camel-google-sheets
-     * 
+     *
      * Syntax: <code>google-sheets-stream:spreadsheetId</code>
-     * 
+     *
      * Path parameter: spreadsheetId (required)
      * Specifies the spreadsheet identifier that is used to identify the target
      * to obtain.
-     * 
+     *
      * @param path spreadsheetId
      * @return the dsl builder
      */
@@ -6678,17 +6678,17 @@ public class StaticEndpointBuilders {
     /**
      * Google Sheets Stream (camel-google-sheets)
      * Poll for changes in Google Sheets.
-     * 
+     *
      * Category: cloud,document
      * Since: 2.23
      * Maven coordinates: org.apache.camel:camel-google-sheets
-     * 
+     *
      * Syntax: <code>google-sheets-stream:spreadsheetId</code>
-     * 
+     *
      * Path parameter: spreadsheetId (required)
      * Specifies the spreadsheet identifier that is used to identify the target
      * to obtain.
-     * 
+     *
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
      * @param path spreadsheetId
@@ -6700,16 +6700,16 @@ public class StaticEndpointBuilders {
     /**
      * Google Cloud Speech To Text (camel-google-speech-to-text)
      * Transcribe audio to text using Google Cloud Speech-to-Text API
-     * 
+     *
      * Category: cloud,ai
      * Since: 4.19
      * Maven coordinates: org.apache.camel:camel-google-speech-to-text
-     * 
+     *
      * Syntax: <code>google-speech-to-text:operation</code>
-     * 
+     *
      * Path parameter: operation (required)
      * The operation name
-     * 
+     *
      * @param path operation
      * @return the dsl builder
      */
@@ -6719,16 +6719,16 @@ public class StaticEndpointBuilders {
     /**
      * Google Cloud Speech To Text (camel-google-speech-to-text)
      * Transcribe audio to text using Google Cloud Speech-to-Text API
-     * 
+     *
      * Category: cloud,ai
      * Since: 4.19
      * Maven coordinates: org.apache.camel:camel-google-speech-to-text
-     * 
+     *
      * Syntax: <code>google-speech-to-text:operation</code>
-     * 
+     *
      * Path parameter: operation (required)
      * The operation name
-     * 
+     *
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
      * @param path operation
@@ -6741,16 +6741,16 @@ public class StaticEndpointBuilders {
      * Google Storage (camel-google-storage)
      * Store and retrieve objects from Google Cloud Storage Service using the
      * google-cloud-storage library.
-     * 
+     *
      * Category: cloud
      * Since: 3.9
      * Maven coordinates: org.apache.camel:camel-google-storage
-     * 
+     *
      * Syntax: <code>google-storage:bucketName</code>
-     * 
+     *
      * Path parameter: bucketName (required)
      * Bucket name or ARN
-     * 
+     *
      * @param path bucketName
      * @return the dsl builder
      */
@@ -6761,16 +6761,16 @@ public class StaticEndpointBuilders {
      * Google Storage (camel-google-storage)
      * Store and retrieve objects from Google Cloud Storage Service using the
      * google-cloud-storage library.
-     * 
+     *
      * Category: cloud
      * Since: 3.9
      * Maven coordinates: org.apache.camel:camel-google-storage
-     * 
+     *
      * Syntax: <code>google-storage:bucketName</code>
-     * 
+     *
      * Path parameter: bucketName (required)
      * Bucket name or ARN
-     * 
+     *
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
      * @param path bucketName
@@ -6782,16 +6782,16 @@ public class StaticEndpointBuilders {
     /**
      * Google Cloud Text To Speech (camel-google-text-to-speech)
      * Synthesize speech from text using the Google Cloud Text-to-Speech API
-     * 
+     *
      * Category: cloud,ai
      * Since: 4.19
      * Maven coordinates: org.apache.camel:camel-google-text-to-speech
-     * 
+     *
      * Syntax: <code>google-text-to-speech:operation</code>
-     * 
+     *
      * Path parameter: operation (required)
      * The operation name
-     * 
+     *
      * @param path operation
      * @return the dsl builder
      */
@@ -6801,16 +6801,16 @@ public class StaticEndpointBuilders {
     /**
      * Google Cloud Text To Speech (camel-google-text-to-speech)
      * Synthesize speech from text using the Google Cloud Text-to-Speech API
-     * 
+     *
      * Category: cloud,ai
      * Since: 4.19
      * Maven coordinates: org.apache.camel:camel-google-text-to-speech
-     * 
+     *
      * Syntax: <code>google-text-to-speech:operation</code>
-     * 
+     *
      * Path parameter: operation (required)
      * The operation name
-     * 
+     *
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
      * @param path operation
@@ -6822,22 +6822,22 @@ public class StaticEndpointBuilders {
     /**
      * Google Vertex AI (camel-google-vertexai)
      * Interact with Google Cloud Vertex AI generative models.
-     * 
+     *
      * Category: ai,cloud
      * Since: 4.17
      * Maven coordinates: org.apache.camel:camel-google-vertexai
-     * 
+     *
      * Syntax: <code>google-vertexai:projectId:location:modelId</code>
-     * 
+     *
      * Path parameter: projectId (required)
      * Google Cloud Project ID
-     * 
+     *
      * Path parameter: location (required)
      * Google Cloud location/region (e.g., us-central1)
-     * 
+     *
      * Path parameter: modelId (required)
      * Model ID to use for predictions
-     * 
+     *
      * @param path projectId:location:modelId
      * @return the dsl builder
      */
@@ -6847,22 +6847,22 @@ public class StaticEndpointBuilders {
     /**
      * Google Vertex AI (camel-google-vertexai)
      * Interact with Google Cloud Vertex AI generative models.
-     * 
+     *
      * Category: ai,cloud
      * Since: 4.17
      * Maven coordinates: org.apache.camel:camel-google-vertexai
-     * 
+     *
      * Syntax: <code>google-vertexai:projectId:location:modelId</code>
-     * 
+     *
      * Path parameter: projectId (required)
      * Google Cloud Project ID
-     * 
+     *
      * Path parameter: location (required)
      * Google Cloud location/region (e.g., us-central1)
-     * 
+     *
      * Path parameter: modelId (required)
      * Model ID to use for predictions
-     * 
+     *
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
      * @param path projectId:location:modelId
@@ -6875,16 +6875,16 @@ public class StaticEndpointBuilders {
      * Google Cloud Vision (camel-google-vision)
      * Detect labels, text, faces, logos and more on images through Google Cloud
      * Vision API
-     * 
+     *
      * Category: cloud,ai
      * Since: 4.19
      * Maven coordinates: org.apache.camel:camel-google-vision
-     * 
+     *
      * Syntax: <code>google-vision:operation</code>
-     * 
+     *
      * Path parameter: operation (required)
      * The operation name
-     * 
+     *
      * @param path operation
      * @return the dsl builder
      */
@@ -6895,16 +6895,16 @@ public class StaticEndpointBuilders {
      * Google Cloud Vision (camel-google-vision)
      * Detect labels, text, faces, logos and more on images through Google Cloud
      * Vision API
-     * 
+     *
      * Category: cloud,ai
      * Since: 4.19
      * Maven coordinates: org.apache.camel:camel-google-vision
-     * 
+     *
      * Syntax: <code>google-vision:operation</code>
-     * 
+     *
      * Path parameter: operation (required)
      * The operation name
-     * 
+     *
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
      * @param path operation
@@ -6916,16 +6916,16 @@ public class StaticEndpointBuilders {
     /**
      * GraphQL (camel-graphql)
      * Send GraphQL queries and mutations to external systems.
-     * 
+     *
      * Category: api
      * Since: 3.0
      * Maven coordinates: org.apache.camel:camel-graphql
-     * 
+     *
      * Syntax: <code>graphql:httpUri</code>
-     * 
+     *
      * Path parameter: httpUri (required)
      * The GraphQL server URI.
-     * 
+     *
      * @param path httpUri
      * @return the dsl builder
      */
@@ -6935,16 +6935,16 @@ public class StaticEndpointBuilders {
     /**
      * GraphQL (camel-graphql)
      * Send GraphQL queries and mutations to external systems.
-     * 
+     *
      * Category: api
      * Since: 3.0
      * Maven coordinates: org.apache.camel:camel-graphql
-     * 
+     *
      * Syntax: <code>graphql:httpUri</code>
-     * 
+     *
      * Path parameter: httpUri (required)
      * The GraphQL server URI.
-     * 
+     *
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
      * @param path httpUri
@@ -6956,24 +6956,24 @@ public class StaticEndpointBuilders {
     /**
      * gRPC (camel-grpc)
      * Expose gRPC endpoints and access external gRPC endpoints.
-     * 
+     *
      * Category: rpc
      * Since: 2.19
      * Maven coordinates: org.apache.camel:camel-grpc
-     * 
+     *
      * Syntax: <code>grpc:host:port/service</code>
-     * 
+     *
      * Path parameter: host (required)
      * The gRPC server host name. This is localhost or 0.0.0.0 when being a
      * consumer or remote server host name when using producer.
-     * 
+     *
      * Path parameter: port (required)
      * The gRPC local or remote server port
-     * 
+     *
      * Path parameter: service (required)
      * Fully qualified service name from the protocol buffer descriptor file
      * (package dot service definition name)
-     * 
+     *
      * @param path host:port/service
      * @return the dsl builder
      */
@@ -6983,24 +6983,24 @@ public class StaticEndpointBuilders {
     /**
      * gRPC (camel-grpc)
      * Expose gRPC endpoints and access external gRPC endpoints.
-     * 
+     *
      * Category: rpc
      * Since: 2.19
      * Maven coordinates: org.apache.camel:camel-grpc
-     * 
+     *
      * Syntax: <code>grpc:host:port/service</code>
-     * 
+     *
      * Path parameter: host (required)
      * The gRPC server host name. This is localhost or 0.0.0.0 when being a
      * consumer or remote server host name when using producer.
-     * 
+     *
      * Path parameter: port (required)
      * The gRPC local or remote server port
-     * 
+     *
      * Path parameter: service (required)
      * Fully qualified service name from the protocol buffer descriptor file
      * (package dot service definition name)
-     * 
+     *
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
      * @param path host:port/service
@@ -7012,16 +7012,16 @@ public class StaticEndpointBuilders {
     /**
      * HashiCorp Vault (camel-hashicorp-vault)
      * Manage secrets in HashiCorp Vault Service
-     * 
+     *
      * Category: cloud,cloud
      * Since: 3.18
      * Maven coordinates: org.apache.camel:camel-hashicorp-vault
-     * 
+     *
      * Syntax: <code>hashicorp-vault:secretsEngine</code>
-     * 
+     *
      * Path parameter: secretsEngine
      * Vault Name to be used
-     * 
+     *
      * @param path secretsEngine
      * @return the dsl builder
      */
@@ -7031,16 +7031,16 @@ public class StaticEndpointBuilders {
     /**
      * HashiCorp Vault (camel-hashicorp-vault)
      * Manage secrets in HashiCorp Vault Service
-     * 
+     *
      * Category: cloud,cloud
      * Since: 3.18
      * Maven coordinates: org.apache.camel:camel-hashicorp-vault
-     * 
+     *
      * Syntax: <code>hashicorp-vault:secretsEngine</code>
-     * 
+     *
      * Path parameter: secretsEngine
      * Vault Name to be used
-     * 
+     *
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
      * @param path secretsEngine
@@ -7053,16 +7053,16 @@ public class StaticEndpointBuilders {
      * Hazelcast Atomic Number (camel-hazelcast)
      * Increment, decrement, set, etc. Hazelcast atomic number (a grid wide
      * number).
-     * 
+     *
      * Category: cache,clustering
      * Since: 2.7
      * Maven coordinates: org.apache.camel:camel-hazelcast
-     * 
+     *
      * Syntax: <code>hazelcast-atomicvalue:cacheName</code>
-     * 
+     *
      * Path parameter: cacheName (required)
      * The name of the cache
-     * 
+     *
      * @param path cacheName
      * @return the dsl builder
      */
@@ -7074,16 +7074,16 @@ public class StaticEndpointBuilders {
      * Hazelcast Atomic Number (camel-hazelcast)
      * Increment, decrement, set, etc. Hazelcast atomic number (a grid wide
      * number).
-     * 
+     *
      * Category: cache,clustering
      * Since: 2.7
      * Maven coordinates: org.apache.camel:camel-hazelcast
-     * 
+     *
      * Syntax: <code>hazelcast-atomicvalue:cacheName</code>
-     * 
+     *
      * Path parameter: cacheName (required)
      * The name of the cache
-     * 
+     *
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
      * @param path cacheName
@@ -7096,16 +7096,16 @@ public class StaticEndpointBuilders {
     /**
      * Hazelcast Instance (camel-hazelcast)
      * Consume join/leave events of a cache instance in a Hazelcast cluster.
-     * 
+     *
      * Category: cache,clustering
      * Since: 2.7
      * Maven coordinates: org.apache.camel:camel-hazelcast
-     * 
+     *
      * Syntax: <code>hazelcast-instance:cacheName</code>
-     * 
+     *
      * Path parameter: cacheName (required)
      * The name of the cache
-     * 
+     *
      * @param path cacheName
      * @return the dsl builder
      */
@@ -7115,16 +7115,16 @@ public class StaticEndpointBuilders {
     /**
      * Hazelcast Instance (camel-hazelcast)
      * Consume join/leave events of a cache instance in a Hazelcast cluster.
-     * 
+     *
      * Category: cache,clustering
      * Since: 2.7
      * Maven coordinates: org.apache.camel:camel-hazelcast
-     * 
+     *
      * Syntax: <code>hazelcast-instance:cacheName</code>
-     * 
+     *
      * Path parameter: cacheName (required)
      * The name of the cache
-     * 
+     *
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
      * @param path cacheName
@@ -7136,16 +7136,16 @@ public class StaticEndpointBuilders {
     /**
      * Hazelcast List (camel-hazelcast)
      * Perform operations on Hazelcast distributed list.
-     * 
+     *
      * Category: cache,clustering
      * Since: 2.7
      * Maven coordinates: org.apache.camel:camel-hazelcast
-     * 
+     *
      * Syntax: <code>hazelcast-list:cacheName</code>
-     * 
+     *
      * Path parameter: cacheName (required)
      * The name of the cache
-     * 
+     *
      * @param path cacheName
      * @return the dsl builder
      */
@@ -7155,16 +7155,16 @@ public class StaticEndpointBuilders {
     /**
      * Hazelcast List (camel-hazelcast)
      * Perform operations on Hazelcast distributed list.
-     * 
+     *
      * Category: cache,clustering
      * Since: 2.7
      * Maven coordinates: org.apache.camel:camel-hazelcast
-     * 
+     *
      * Syntax: <code>hazelcast-list:cacheName</code>
-     * 
+     *
      * Path parameter: cacheName (required)
      * The name of the cache
-     * 
+     *
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
      * @param path cacheName
@@ -7176,16 +7176,16 @@ public class StaticEndpointBuilders {
     /**
      * Hazelcast Map (camel-hazelcast)
      * Perform operations on Hazelcast distributed map.
-     * 
+     *
      * Category: cache,clustering
      * Since: 2.7
      * Maven coordinates: org.apache.camel:camel-hazelcast
-     * 
+     *
      * Syntax: <code>hazelcast-map:cacheName</code>
-     * 
+     *
      * Path parameter: cacheName (required)
      * The name of the cache
-     * 
+     *
      * @param path cacheName
      * @return the dsl builder
      */
@@ -7195,16 +7195,16 @@ public class StaticEndpointBuilders {
     /**
      * Hazelcast Map (camel-hazelcast)
      * Perform operations on Hazelcast distributed map.
-     * 
+     *
      * Category: cache,clustering
      * Since: 2.7
      * Maven coordinates: org.apache.camel:camel-hazelcast
-     * 
+     *
      * Syntax: <code>hazelcast-map:cacheName</code>
-     * 
+     *
      * Path parameter: cacheName (required)
      * The name of the cache
-     * 
+     *
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
      * @param path cacheName
@@ -7216,16 +7216,16 @@ public class StaticEndpointBuilders {
     /**
      * Hazelcast Multimap (camel-hazelcast)
      * Perform operations on Hazelcast distributed multimap.
-     * 
+     *
      * Category: cache,clustering
      * Since: 2.7
      * Maven coordinates: org.apache.camel:camel-hazelcast
-     * 
+     *
      * Syntax: <code>hazelcast-multimap:cacheName</code>
-     * 
+     *
      * Path parameter: cacheName (required)
      * The name of the cache
-     * 
+     *
      * @param path cacheName
      * @return the dsl builder
      */
@@ -7235,16 +7235,16 @@ public class StaticEndpointBuilders {
     /**
      * Hazelcast Multimap (camel-hazelcast)
      * Perform operations on Hazelcast distributed multimap.
-     * 
+     *
      * Category: cache,clustering
      * Since: 2.7
      * Maven coordinates: org.apache.camel:camel-hazelcast
-     * 
+     *
      * Syntax: <code>hazelcast-multimap:cacheName</code>
-     * 
+     *
      * Path parameter: cacheName (required)
      * The name of the cache
-     * 
+     *
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
      * @param path cacheName
@@ -7257,16 +7257,16 @@ public class StaticEndpointBuilders {
      * Hazelcast PN Counter (camel-hazelcast)
      * Increment, decrement, get, etc. operations on a Hazelcast PN Counter
      * (CRDT counter).
-     * 
+     *
      * Category: cache,clustering
      * Since: 4.19
      * Maven coordinates: org.apache.camel:camel-hazelcast
-     * 
+     *
      * Syntax: <code>hazelcast-pncounter:cacheName</code>
-     * 
+     *
      * Path parameter: cacheName (required)
      * The name of the cache
-     * 
+     *
      * @param path cacheName
      * @return the dsl builder
      */
@@ -7277,16 +7277,16 @@ public class StaticEndpointBuilders {
      * Hazelcast PN Counter (camel-hazelcast)
      * Increment, decrement, get, etc. operations on a Hazelcast PN Counter
      * (CRDT counter).
-     * 
+     *
      * Category: cache,clustering
      * Since: 4.19
      * Maven coordinates: org.apache.camel:camel-hazelcast
-     * 
+     *
      * Syntax: <code>hazelcast-pncounter:cacheName</code>
-     * 
+     *
      * Path parameter: cacheName (required)
      * The name of the cache
-     * 
+     *
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
      * @param path cacheName
@@ -7298,16 +7298,16 @@ public class StaticEndpointBuilders {
     /**
      * Hazelcast Queue (camel-hazelcast)
      * Perform operations on Hazelcast distributed queue.
-     * 
+     *
      * Category: cache,clustering,messaging
      * Since: 2.7
      * Maven coordinates: org.apache.camel:camel-hazelcast
-     * 
+     *
      * Syntax: <code>hazelcast-queue:cacheName</code>
-     * 
+     *
      * Path parameter: cacheName (required)
      * The name of the cache
-     * 
+     *
      * @param path cacheName
      * @return the dsl builder
      */
@@ -7317,16 +7317,16 @@ public class StaticEndpointBuilders {
     /**
      * Hazelcast Queue (camel-hazelcast)
      * Perform operations on Hazelcast distributed queue.
-     * 
+     *
      * Category: cache,clustering,messaging
      * Since: 2.7
      * Maven coordinates: org.apache.camel:camel-hazelcast
-     * 
+     *
      * Syntax: <code>hazelcast-queue:cacheName</code>
-     * 
+     *
      * Path parameter: cacheName (required)
      * The name of the cache
-     * 
+     *
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
      * @param path cacheName
@@ -7338,16 +7338,16 @@ public class StaticEndpointBuilders {
     /**
      * Hazelcast Replicated Map (camel-hazelcast)
      * Perform operations on Hazelcast replicated map.
-     * 
+     *
      * Category: cache,clustering
      * Since: 2.16
      * Maven coordinates: org.apache.camel:camel-hazelcast
-     * 
+     *
      * Syntax: <code>hazelcast-replicatedmap:cacheName</code>
-     * 
+     *
      * Path parameter: cacheName (required)
      * The name of the cache
-     * 
+     *
      * @param path cacheName
      * @return the dsl builder
      */
@@ -7357,16 +7357,16 @@ public class StaticEndpointBuilders {
     /**
      * Hazelcast Replicated Map (camel-hazelcast)
      * Perform operations on Hazelcast replicated map.
-     * 
+     *
      * Category: cache,clustering
      * Since: 2.16
      * Maven coordinates: org.apache.camel:camel-hazelcast
-     * 
+     *
      * Syntax: <code>hazelcast-replicatedmap:cacheName</code>
-     * 
+     *
      * Path parameter: cacheName (required)
      * The name of the cache
-     * 
+     *
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
      * @param path cacheName
@@ -7378,16 +7378,16 @@ public class StaticEndpointBuilders {
     /**
      * Hazelcast Ringbuffer (camel-hazelcast)
      * Perform operations on Hazelcast distributed ringbuffer.
-     * 
+     *
      * Category: cache,clustering
      * Since: 2.16
      * Maven coordinates: org.apache.camel:camel-hazelcast
-     * 
+     *
      * Syntax: <code>hazelcast-ringbuffer:cacheName</code>
-     * 
+     *
      * Path parameter: cacheName (required)
      * The name of the cache
-     * 
+     *
      * @param path cacheName
      * @return the dsl builder
      */
@@ -7397,16 +7397,16 @@ public class StaticEndpointBuilders {
     /**
      * Hazelcast Ringbuffer (camel-hazelcast)
      * Perform operations on Hazelcast distributed ringbuffer.
-     * 
+     *
      * Category: cache,clustering
      * Since: 2.16
      * Maven coordinates: org.apache.camel:camel-hazelcast
-     * 
+     *
      * Syntax: <code>hazelcast-ringbuffer:cacheName</code>
-     * 
+     *
      * Path parameter: cacheName (required)
      * The name of the cache
-     * 
+     *
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
      * @param path cacheName
@@ -7419,16 +7419,16 @@ public class StaticEndpointBuilders {
      * Hazelcast SEDA (camel-hazelcast)
      * Asynchronously send/receive Exchanges between Camel routes running on
      * potentially distinct JVMs/hosts backed by Hazelcast BlockingQueue.
-     * 
+     *
      * Category: cache,clustering
      * Since: 2.7
      * Maven coordinates: org.apache.camel:camel-hazelcast
-     * 
+     *
      * Syntax: <code>hazelcast-seda:cacheName</code>
-     * 
+     *
      * Path parameter: cacheName (required)
      * The name of the cache
-     * 
+     *
      * @param path cacheName
      * @return the dsl builder
      */
@@ -7439,16 +7439,16 @@ public class StaticEndpointBuilders {
      * Hazelcast SEDA (camel-hazelcast)
      * Asynchronously send/receive Exchanges between Camel routes running on
      * potentially distinct JVMs/hosts backed by Hazelcast BlockingQueue.
-     * 
+     *
      * Category: cache,clustering
      * Since: 2.7
      * Maven coordinates: org.apache.camel:camel-hazelcast
-     * 
+     *
      * Syntax: <code>hazelcast-seda:cacheName</code>
-     * 
+     *
      * Path parameter: cacheName (required)
      * The name of the cache
-     * 
+     *
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
      * @param path cacheName
@@ -7460,16 +7460,16 @@ public class StaticEndpointBuilders {
     /**
      * Hazelcast Set (camel-hazelcast)
      * Perform operations on Hazelcast distributed set.
-     * 
+     *
      * Category: cache,clustering
      * Since: 2.7
      * Maven coordinates: org.apache.camel:camel-hazelcast
-     * 
+     *
      * Syntax: <code>hazelcast-set:cacheName</code>
-     * 
+     *
      * Path parameter: cacheName (required)
      * The name of the cache
-     * 
+     *
      * @param path cacheName
      * @return the dsl builder
      */
@@ -7479,16 +7479,16 @@ public class StaticEndpointBuilders {
     /**
      * Hazelcast Set (camel-hazelcast)
      * Perform operations on Hazelcast distributed set.
-     * 
+     *
      * Category: cache,clustering
      * Since: 2.7
      * Maven coordinates: org.apache.camel:camel-hazelcast
-     * 
+     *
      * Syntax: <code>hazelcast-set:cacheName</code>
-     * 
+     *
      * Path parameter: cacheName (required)
      * The name of the cache
-     * 
+     *
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
      * @param path cacheName
@@ -7500,16 +7500,16 @@ public class StaticEndpointBuilders {
     /**
      * Hazelcast Topic (camel-hazelcast)
      * Send and receive messages to/from Hazelcast distributed topic.
-     * 
+     *
      * Category: cache,clustering
      * Since: 2.15
      * Maven coordinates: org.apache.camel:camel-hazelcast
-     * 
+     *
      * Syntax: <code>hazelcast-topic:cacheName</code>
-     * 
+     *
      * Path parameter: cacheName (required)
      * The name of the cache
-     * 
+     *
      * @param path cacheName
      * @return the dsl builder
      */
@@ -7519,16 +7519,16 @@ public class StaticEndpointBuilders {
     /**
      * Hazelcast Topic (camel-hazelcast)
      * Send and receive messages to/from Hazelcast distributed topic.
-     * 
+     *
      * Category: cache,clustering
      * Since: 2.15
      * Maven coordinates: org.apache.camel:camel-hazelcast
-     * 
+     *
      * Syntax: <code>hazelcast-topic:cacheName</code>
-     * 
+     *
      * Path parameter: cacheName (required)
      * The name of the cache
-     * 
+     *
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
      * @param path cacheName
@@ -7538,18 +7538,58 @@ public class StaticEndpointBuilders {
         return HazelcastTopicEndpointBuilderFactory.endpointBuilder(componentName, path);
     }
     /**
+     * HiveMQ (camel-hivemq)
+     * Camel HiveMQ MQTT Client support
+     *
+     * Category: messaging,iot
+     * Since: 4.23
+     * Maven coordinates: org.apache.camel:camel-hivemq
+     *
+     * Syntax: <code>hivemq:topic</code>
+     *
+     * Path parameter: topic (required)
+     * The MQTT topic name or pattern to subscribe to or publish on.
+     *
+     * @param path topic
+     * @return the dsl builder
+     */
+    public static HiveMQEndpointBuilderFactory.HiveMQEndpointBuilder hivemq(String path) {
+        return hivemq("hivemq", path);
+    }
+    /**
+     * HiveMQ (camel-hivemq)
+     * Camel HiveMQ MQTT Client support
+     *
+     * Category: messaging,iot
+     * Since: 4.23
+     * Maven coordinates: org.apache.camel:camel-hivemq
+     *
+     * Syntax: <code>hivemq:topic</code>
+     *
+     * Path parameter: topic (required)
+     * The MQTT topic name or pattern to subscribe to or publish on.
+     *
+     * @param componentName to use a custom component name for the endpoint
+     * instead of the default name
+     * @param path topic
+     * @return the dsl builder
+     */
+    public static HiveMQEndpointBuilderFactory.HiveMQEndpointBuilder hivemq(String componentName, String path) {
+        return HiveMQEndpointBuilderFactory.endpointBuilder(componentName, path);
+    }
+    /**
      * HTTP (camel-http)
      * Send requests to external HTTP servers using Apache HTTP Client 5.x.
-     * 
+     *
      * Category: http
      * Since: 2.3
      * Maven coordinates: org.apache.camel:camel-http
-     * 
+     *
      * Syntax: <code>http://httpUri</code>
-     * 
+     *
      * Path parameter: httpUri (required)
      * The url of the HTTP endpoint to call.
-     * 
+     *
      * @param path httpUri
      * @return the dsl builder
      */
@@ -7559,16 +7599,16 @@ public class StaticEndpointBuilders {
     /**
      * HTTP (camel-http)
      * Send requests to external HTTP servers using Apache HTTP Client 5.x.
-     * 
+     *
      * Category: http
      * Since: 2.3
      * Maven coordinates: org.apache.camel:camel-http
-     * 
+     *
      * Syntax: <code>http://httpUri</code>
-     * 
+     *
      * Path parameter: httpUri (required)
      * The url of the HTTP endpoint to call.
-     * 
+     *
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
      * @param path httpUri
@@ -7580,16 +7620,16 @@ public class StaticEndpointBuilders {
     /**
      * HTTPS (Secure) (camel-http)
      * Send requests to external HTTP servers using Apache HTTP Client 5.x.
-     * 
+     *
      * Category: http
      * Since: 2.3
      * Maven coordinates: org.apache.camel:camel-http
-     * 
+     *
      * Syntax: <code>https://httpUri</code>
-     * 
+     *
      * Path parameter: httpUri (required)
      * The url of the HTTP endpoint to call.
-     * 
+     *
      * @param path httpUri
      * @return the dsl builder
      */
@@ -7600,20 +7640,20 @@ public class StaticEndpointBuilders {
      * Hugging Face (camel-huggingface)
      * Integration with Hugging Face's Model Hub by using the Deep Java Library
      * (DJL) Python bridge
-     * 
+     *
      * Category: ai
      * Since: 4.19
      * Maven coordinates: org.apache.camel:camel-huggingface
-     * 
+     *
      * Syntax: <code>huggingface:task</code>
-     * 
+     *
      * Path parameter: task (required)
      * The Hugging Face task to perform (e.g., TEXT_CLASSIFICATION)
      * There are 10 enums and the value can be one of: TEXT_CLASSIFICATION,
      * TEXT_GENERATION, QUESTION_ANSWERING, SUMMARIZATION,
      * ZERO_SHOT_CLASSIFICATION, SENTENCE_EMBEDDINGS, TEXT_TO_IMAGE,
      * AUTOMATIC_SPEECH_RECOGNITION, TEXT_TO_SPEECH, CHAT
-     * 
+     *
      * @param path task
      * @return the dsl builder
      */
@@ -7624,20 +7664,20 @@ public class StaticEndpointBuilders {
      * Hugging Face (camel-huggingface)
      * Integration with Hugging Face's Model Hub by using the Deep Java Library
      * (DJL) Python bridge
-     * 
+     *
      * Category: ai
      * Since: 4.19
      * Maven coordinates: org.apache.camel:camel-huggingface
-     * 
+     *
      * Syntax: <code>huggingface:task</code>
-     * 
+     *
      * Path parameter: task (required)
      * The Hugging Face task to perform (e.g., TEXT_CLASSIFICATION)
      * There are 10 enums and the value can be one of: TEXT_CLASSIFICATION,
      * TEXT_GENERATION, QUESTION_ANSWERING, SUMMARIZATION,
      * ZERO_SHOT_CLASSIFICATION, SENTENCE_EMBEDDINGS, TEXT_TO_IMAGE,
      * AUTOMATIC_SPEECH_RECOGNITION, TEXT_TO_SPEECH, CHAT
-     * 
+     *
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
      * @param path task
@@ -7650,16 +7690,16 @@ public class StaticEndpointBuilders {
      * Huawei Distributed Message Service (DMS) (camel-huaweicloud-dms)
      * To integrate with a fully managed, high-performance message queuing
      * service on Huawei Cloud
-     * 
+     *
      * Category: cloud
      * Since: 3.12
      * Maven coordinates: org.apache.camel:camel-huaweicloud-dms
-     * 
+     *
      * Syntax: <code>hwcloud-dms:operation</code>
-     * 
+     *
      * Path parameter: operation (required)
      * Operation to be performed
-     * 
+     *
      * @param path operation
      * @return the dsl builder
      */
@@ -7670,16 +7710,16 @@ public class StaticEndpointBuilders {
      * Huawei Distributed Message Service (DMS) (camel-huaweicloud-dms)
      * To integrate with a fully managed, high-performance message queuing
      * service on Huawei Cloud
-     * 
+     *
      * Category: cloud
      * Since: 3.12
      * Maven coordinates: org.apache.camel:camel-huaweicloud-dms
-     * 
+     *
      * Syntax: <code>hwcloud-dms:operation</code>
-     * 
+     *
      * Path parameter: operation (required)
      * Operation to be performed
-     * 
+     *
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
      * @param path operation
@@ -7693,17 +7733,17 @@ public class StaticEndpointBuilders {
      * Face Recognition Service (FRS) is an intelligent service that uses
      * computers to process, analyze, and understand facial images based on
      * human facial features.
-     * 
+     *
      * Category: cloud,messaging
      * Since: 3.15
      * Maven coordinates: org.apache.camel:camel-huaweicloud-frs
-     * 
+     *
      * Syntax: <code>hwcloud-frs:operation</code>
-     * 
+     *
      * Path parameter: operation (required)
      * Name of Face Recognition operation to perform, including faceDetection,
      * faceVerification and faceLiveDetection
-     * 
+     *
      * @param path operation
      * @return the dsl builder
      */
@@ -7715,17 +7755,17 @@ public class StaticEndpointBuilders {
      * Face Recognition Service (FRS) is an intelligent service that uses
      * computers to process, analyze, and understand facial images based on
      * human facial features.
-     * 
+     *
      * Category: cloud,messaging
      * Since: 3.15
      * Maven coordinates: org.apache.camel:camel-huaweicloud-frs
-     * 
+     *
      * Syntax: <code>hwcloud-frs:operation</code>
-     * 
+     *
      * Path parameter: operation (required)
      * Name of Face Recognition operation to perform, including faceDetection,
      * faceVerification and faceLiveDetection
-     * 
+     *
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
      * @param path operation
@@ -7737,16 +7777,16 @@ public class StaticEndpointBuilders {
     /**
      * Huawei FunctionGraph (camel-huaweicloud-functiongraph)
      * To call serverless functions on Huawei Cloud
-     * 
+     *
      * Category: cloud,serverless
      * Since: 3.11
      * Maven coordinates: org.apache.camel:camel-huaweicloud-functiongraph
-     * 
+     *
      * Syntax: <code>hwcloud-functiongraph:operation</code>
-     * 
+     *
      * Path parameter: operation (required)
      * Operation to be performed
-     * 
+     *
      * @param path operation
      * @return the dsl builder
      */
@@ -7756,16 +7796,16 @@ public class StaticEndpointBuilders {
     /**
      * Huawei FunctionGraph (camel-huaweicloud-functiongraph)
      * To call serverless functions on Huawei Cloud
-     * 
+     *
      * Category: cloud,serverless
      * Since: 3.11
      * Maven coordinates: org.apache.camel:camel-huaweicloud-functiongraph
-     * 
+     *
      * Syntax: <code>hwcloud-functiongraph:operation</code>
-     * 
+     *
      * Path parameter: operation (required)
      * Operation to be performed
-     * 
+     *
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
      * @param path operation
@@ -7777,16 +7817,16 @@ public class StaticEndpointBuilders {
     /**
      * Huawei Identity and Access Management (IAM) (camel-huaweicloud-iam)
      * To securely manage users on Huawei Cloud
-     * 
+     *
      * Category: cloud
      * Since: 3.11
      * Maven coordinates: org.apache.camel:camel-huaweicloud-iam
-     * 
+     *
      * Syntax: <code>hwcloud-iam:operation</code>
-     * 
+     *
      * Path parameter: operation (required)
      * Operation to be performed
-     * 
+     *
      * @param path operation
      * @return the dsl builder
      */
@@ -7796,16 +7836,16 @@ public class StaticEndpointBuilders {
     /**
      * Huawei Identity and Access Management (IAM) (camel-huaweicloud-iam)
      * To securely manage users on Huawei Cloud
-     * 
+     *
      * Category: cloud
      * Since: 3.11
      * Maven coordinates: org.apache.camel:camel-huaweicloud-iam
-     * 
+     *
      * Syntax: <code>hwcloud-iam:operation</code>
-     * 
+     *
      * Path parameter: operation (required)
      * Operation to be performed
-     * 
+     *
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
      * @param path operation
@@ -7817,17 +7857,17 @@ public class StaticEndpointBuilders {
     /**
      * Huawei Cloud Image Recognition (camel-huaweicloud-imagerecognition)
      * To identify objects, scenes, and concepts in images on Huawei Cloud
-     * 
+     *
      * Category: cloud,messaging
      * Since: 3.12
      * Maven coordinates: org.apache.camel:camel-huaweicloud-imagerecognition
-     * 
+     *
      * Syntax: <code>hwcloud-imagerecognition:operation</code>
-     * 
+     *
      * Path parameter: operation (required)
      * Name of Image Recognition operation to perform, including
      * celebrityRecognition and tagRecognition
-     * 
+     *
      * @param path operation
      * @return the dsl builder
      */
@@ -7837,17 +7877,17 @@ public class StaticEndpointBuilders {
     /**
      * Huawei Cloud Image Recognition (camel-huaweicloud-imagerecognition)
      * To identify objects, scenes, and concepts in images on Huawei Cloud
-     * 
+     *
      * Category: cloud,messaging
      * Since: 3.12
      * Maven coordinates: org.apache.camel:camel-huaweicloud-imagerecognition
-     * 
+     *
      * Syntax: <code>hwcloud-imagerecognition:operation</code>
-     * 
+     *
      * Path parameter: operation (required)
      * Name of Image Recognition operation to perform, including
      * celebrityRecognition and tagRecognition
-     * 
+     *
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
      * @param path operation
@@ -7860,16 +7900,16 @@ public class StaticEndpointBuilders {
      * Huawei Object Storage Service (OBS) (camel-huaweicloud-obs)
      * To provide stable, secure, efficient, and easy-to-use cloud storage
      * service on Huawei Cloud
-     * 
+     *
      * Category: cloud
      * Since: 3.12
      * Maven coordinates: org.apache.camel:camel-huaweicloud-obs
-     * 
+     *
      * Syntax: <code>hwcloud-obs:operation</code>
-     * 
+     *
      * Path parameter: operation (required)
      * Operation to be performed
-     * 
+     *
      * @param path operation
      * @return the dsl builder
      */
@@ -7880,16 +7920,16 @@ public class StaticEndpointBuilders {
      * Huawei Object Storage Service (OBS) (camel-huaweicloud-obs)
      * To provide stable, secure, efficient, and easy-to-use cloud storage
      * service on Huawei Cloud
-     * 
+     *
      * Category: cloud
      * Since: 3.12
      * Maven coordinates: org.apache.camel:camel-huaweicloud-obs
-     * 
+     *
      * Syntax: <code>hwcloud-obs:operation</code>
-     * 
+     *
      * Path parameter: operation (required)
      * Operation to be performed
-     * 
+     *
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
      * @param path operation
@@ -7902,16 +7942,16 @@ public class StaticEndpointBuilders {
      * Huawei Simple Message Notification (SMN) (camel-huaweicloud-smn)
      * To broadcast messages and connect cloud services through notifications on
      * Huawei Cloud
-     * 
+     *
      * Category: cloud,messaging
      * Since: 3.8
      * Maven coordinates: org.apache.camel:camel-huaweicloud-smn
-     * 
+     *
      * Syntax: <code>hwcloud-smn:smnService</code>
-     * 
+     *
      * Path parameter: smnService (required)
      * Name of SMN service to invoke
-     * 
+     *
      * @param path smnService
      * @return the dsl builder
      */
@@ -7922,16 +7962,16 @@ public class StaticEndpointBuilders {
      * Huawei Simple Message Notification (SMN) (camel-huaweicloud-smn)
      * To broadcast messages and connect cloud services through notifications on
      * Huawei Cloud
-     * 
+     *
      * Category: cloud,messaging
      * Since: 3.8
      * Maven coordinates: org.apache.camel:camel-huaweicloud-smn
-     * 
+     *
      * Syntax: <code>hwcloud-smn:smnService</code>
-     * 
+     *
      * Path parameter: smnService (required)
      * Name of SMN service to invoke
-     * 
+     *
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
      * @param path smnService
@@ -7943,16 +7983,16 @@ public class StaticEndpointBuilders {
     /**
      * IBM Cloud Object Storage (camel-ibm-cos)
      * Store and retrieve objects from IBM Cloud Object Storage.
-     * 
+     *
      * Category: cloud,file
      * Since: 4.16
      * Maven coordinates: org.apache.camel:camel-ibm-cos
-     * 
+     *
      * Syntax: <code>ibm-cos:bucketName</code>
-     * 
+     *
      * Path parameter: bucketName (required)
      * Bucket name
-     * 
+     *
      * @param path bucketName
      * @return the dsl builder
      */
@@ -7962,16 +8002,16 @@ public class StaticEndpointBuilders {
     /**
      * IBM Cloud Object Storage (camel-ibm-cos)
      * Store and retrieve objects from IBM Cloud Object Storage.
-     * 
+     *
      * Category: cloud,file
      * Since: 4.16
      * Maven coordinates: org.apache.camel:camel-ibm-cos
-     * 
+     *
      * Syntax: <code>ibm-cos:bucketName</code>
-     * 
+     *
      * Path parameter: bucketName (required)
      * Bucket name
-     * 
+     *
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
      * @param path bucketName
@@ -7983,16 +8023,16 @@ public class StaticEndpointBuilders {
     /**
      * IBM Secrets Manager (camel-ibm-secrets-manager)
      * Manage secrets in IBM Secrets Manager Service
-     * 
+     *
      * Category: cloud,cloud
      * Since: 4.11
      * Maven coordinates: org.apache.camel:camel-ibm-secrets-manager
-     * 
+     *
      * Syntax: <code>ibm-secrets-manager:label</code>
-     * 
+     *
      * Path parameter: label (required)
      * Logical name
-     * 
+     *
      * @param path label
      * @return the dsl builder
      */
@@ -8002,16 +8042,16 @@ public class StaticEndpointBuilders {
     /**
      * IBM Secrets Manager (camel-ibm-secrets-manager)
      * Manage secrets in IBM Secrets Manager Service
-     * 
+     *
      * Category: cloud,cloud
      * Since: 4.11
      * Maven coordinates: org.apache.camel:camel-ibm-secrets-manager
-     * 
+     *
      * Syntax: <code>ibm-secrets-manager:label</code>
-     * 
+     *
      * Path parameter: label (required)
      * Logical name
-     * 
+     *
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
      * @param path label
@@ -8023,16 +8063,16 @@ public class StaticEndpointBuilders {
     /**
      * IBM Watson Discovery (camel-ibm-watson-discovery)
      * Perform document understanding and search using IBM Watson Discovery
-     * 
+     *
      * Category: ai,cloud
      * Since: 4.16
      * Maven coordinates: org.apache.camel:camel-ibm-watson-discovery
-     * 
+     *
      * Syntax: <code>ibm-watson-discovery:label</code>
-     * 
+     *
      * Path parameter: label (required)
      * Logical name
-     * 
+     *
      * @param path label
      * @return the dsl builder
      */
@@ -8042,16 +8082,16 @@ public class StaticEndpointBuilders {
     /**
      * IBM Watson Discovery (camel-ibm-watson-discovery)
      * Perform document understanding and search using IBM Watson Discovery
-     * 
+     *
      * Category: ai,cloud
      * Since: 4.16
      * Maven coordinates: org.apache.camel:camel-ibm-watson-discovery
-     * 
+     *
      * Syntax: <code>ibm-watson-discovery:label</code>
-     * 
+     *
      * Path parameter: label (required)
      * Logical name
-     * 
+     *
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
      * @param path label
@@ -8064,16 +8104,16 @@ public class StaticEndpointBuilders {
      * IBM Watson Language (camel-ibm-watson-language)
      * Perform natural language processing using IBM Watson Natural Language
      * Understanding
-     * 
+     *
      * Category: ai,cloud
      * Since: 4.16
      * Maven coordinates: org.apache.camel:camel-ibm-watson-language
-     * 
+     *
      * Syntax: <code>ibm-watson-language:label</code>
-     * 
+     *
      * Path parameter: label (required)
      * Logical name
-     * 
+     *
      * @param path label
      * @return the dsl builder
      */
@@ -8084,16 +8124,16 @@ public class StaticEndpointBuilders {
      * IBM Watson Language (camel-ibm-watson-language)
      * Perform natural language processing using IBM Watson Natural Language
      * Understanding
-     * 
+     *
      * Category: ai,cloud
      * Since: 4.16
      * Maven coordinates: org.apache.camel:camel-ibm-watson-language
-     * 
+     *
      * Syntax: <code>ibm-watson-language:label</code>
-     * 
+     *
      * Path parameter: label (required)
      * Logical name
-     * 
+     *
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
      * @param path label
@@ -8105,16 +8145,16 @@ public class StaticEndpointBuilders {
     /**
      * IBM Watson Speech to Text (camel-ibm-watson-speech-to-text)
      * Convert speech audio to text using IBM Watson Speech to Text
-     * 
+     *
      * Category: ai,cloud
      * Since: 4.17
      * Maven coordinates: org.apache.camel:camel-ibm-watson-speech-to-text
-     * 
+     *
      * Syntax: <code>ibm-watson-speech-to-text:label</code>
-     * 
+     *
      * Path parameter: label (required)
      * Logical name
-     * 
+     *
      * @param path label
      * @return the dsl builder
      */
@@ -8124,16 +8164,16 @@ public class StaticEndpointBuilders {
     /**
      * IBM Watson Speech to Text (camel-ibm-watson-speech-to-text)
      * Convert speech audio to text using IBM Watson Speech to Text
-     * 
+     *
      * Category: ai,cloud
      * Since: 4.17
      * Maven coordinates: org.apache.camel:camel-ibm-watson-speech-to-text
-     * 
+     *
      * Syntax: <code>ibm-watson-speech-to-text:label</code>
-     * 
+     *
      * Path parameter: label (required)
      * Logical name
-     * 
+     *
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
      * @param path label
@@ -8145,16 +8185,16 @@ public class StaticEndpointBuilders {
     /**
      * IBM Watson Text to Speech (camel-ibm-watson-text-to-speech)
      * Convert text to natural-sounding speech using IBM Watson Text to Speech
-     * 
+     *
      * Category: ai,cloud
      * Since: 4.17
      * Maven coordinates: org.apache.camel:camel-ibm-watson-text-to-speech
-     * 
+     *
      * Syntax: <code>ibm-watson-text-to-speech:label</code>
-     * 
+     *
      * Path parameter: label (required)
      * Logical name
-     * 
+     *
      * @param path label
      * @return the dsl builder
      */
@@ -8164,16 +8204,16 @@ public class StaticEndpointBuilders {
     /**
      * IBM Watson Text to Speech (camel-ibm-watson-text-to-speech)
      * Convert text to natural-sounding speech using IBM Watson Text to Speech
-     * 
+     *
      * Category: ai,cloud
      * Since: 4.17
      * Maven coordinates: org.apache.camel:camel-ibm-watson-text-to-speech
-     * 
+     *
      * Syntax: <code>ibm-watson-text-to-speech:label</code>
-     * 
+     *
      * Path parameter: label (required)
      * Logical name
-     * 
+     *
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
      * @param path label
@@ -8186,16 +8226,16 @@ public class StaticEndpointBuilders {
      * IBM watsonx.ai (camel-ibm-watsonx-ai)
      * Interact with IBM watsonx.ai foundation models for text generation, chat,
      * embeddings, and more.
-     * 
+     *
      * Category: ai,cloud
      * Since: 4.18
      * Maven coordinates: org.apache.camel:camel-ibm-watsonx-ai
-     * 
+     *
      * Syntax: <code>ibm-watsonx-ai:label</code>
-     * 
+     *
      * Path parameter: label (required)
      * Logical name for the endpoint
-     * 
+     *
      * @param path label
      * @return the dsl builder
      */
@@ -8206,16 +8246,16 @@ public class StaticEndpointBuilders {
      * IBM watsonx.ai (camel-ibm-watsonx-ai)
      * Interact with IBM watsonx.ai foundation models for text generation, chat,
      * embeddings, and more.
-     * 
+     *
      * Category: ai,cloud
      * Since: 4.18
      * Maven coordinates: org.apache.camel:camel-ibm-watsonx-ai
-     * 
+     *
      * Syntax: <code>ibm-watsonx-ai:label</code>
-     * 
+     *
      * Path parameter: label (required)
      * Logical name for the endpoint
-     * 
+     *
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
      * @param path label
@@ -8228,16 +8268,16 @@ public class StaticEndpointBuilders {
      * IBM watsonx.data (camel-ibm-watsonx-data)
      * Interact with IBM watsonx.data lakehouse for catalog, schema, table, and
      * engine management.
-     * 
+     *
      * Category: cloud,database
      * Since: 4.19
      * Maven coordinates: org.apache.camel:camel-ibm-watsonx-data
-     * 
+     *
      * Syntax: <code>ibm-watsonx-data:label</code>
-     * 
+     *
      * Path parameter: label (required)
      * Logical name for the endpoint
-     * 
+     *
      * @param path label
      * @return the dsl builder
      */
@@ -8248,16 +8288,16 @@ public class StaticEndpointBuilders {
      * IBM watsonx.data (camel-ibm-watsonx-data)
      * Interact with IBM watsonx.data lakehouse for catalog, schema, table, and
      * engine management.
-     * 
+     *
      * Category: cloud,database
      * Since: 4.19
      * Maven coordinates: org.apache.camel:camel-ibm-watsonx-data
-     * 
+     *
      * Syntax: <code>ibm-watsonx-data:label</code>
-     * 
+     *
      * Path parameter: label (required)
      * Logical name for the endpoint
-     * 
+     *
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
      * @param path label
@@ -8269,16 +8309,16 @@ public class StaticEndpointBuilders {
     /**
      * Iggy (camel-iggy)
      * Send and receive message to Apache Iggy streaming platform.
-     * 
+     *
      * Category: messaging
      * Since: 4.17
      * Maven coordinates: org.apache.camel:camel-iggy
-     * 
+     *
      * Syntax: <code>iggy:topicName</code>
-     * 
+     *
      * Path parameter: topicName (required)
      * Name of the topic
-     * 
+     *
      * @param path topicName
      * @return the dsl builder
      */
@@ -8288,16 +8328,16 @@ public class StaticEndpointBuilders {
     /**
      * Iggy (camel-iggy)
      * Send and receive message to Apache Iggy streaming platform.
-     * 
+     *
      * Category: messaging
      * Since: 4.17
      * Maven coordinates: org.apache.camel:camel-iggy
-     * 
+     *
      * Syntax: <code>iggy:topicName</code>
-     * 
+     *
      * Path parameter: topicName (required)
      * Name of the topic
-     * 
+     *
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
      * @param path topicName
@@ -8310,16 +8350,16 @@ public class StaticEndpointBuilders {
      * Ignite Cache (camel-ignite)
      * Perform cache operations on an Ignite cache or consume changes from a
      * continuous query.
-     * 
+     *
      * Category: cache,clustering
      * Since: 2.17
      * Maven coordinates: org.apache.camel:camel-ignite
-     * 
+     *
      * Syntax: <code>ignite-cache:cacheName</code>
-     * 
+     *
      * Path parameter: cacheName (required)
      * The cache name.
-     * 
+     *
      * @param path cacheName
      * @return the dsl builder
      */
@@ -8330,16 +8370,16 @@ public class StaticEndpointBuilders {
      * Ignite Cache (camel-ignite)
      * Perform cache operations on an Ignite cache or consume changes from a
      * continuous query.
-     * 
+     *
      * Category: cache,clustering
      * Since: 2.17
      * Maven coordinates: org.apache.camel:camel-ignite
-     * 
+     *
      * Syntax: <code>ignite-cache:cacheName</code>
-     * 
+     *
      * Path parameter: cacheName (required)
      * The cache name.
-     * 
+     *
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
      * @param path cacheName
@@ -8351,16 +8391,16 @@ public class StaticEndpointBuilders {
     /**
      * Ignite Compute (camel-ignite)
      * Run compute operations on an Ignite cluster.
-     * 
+     *
      * Category: cache,clustering
      * Since: 2.17
      * Maven coordinates: org.apache.camel:camel-ignite
-     * 
+     *
      * Syntax: <code>ignite-compute:endpointId</code>
-     * 
+     *
      * Path parameter: endpointId (required)
      * The endpoint ID (not used).
-     * 
+     *
      * @param path endpointId
      * @return the dsl builder
      */
@@ -8370,16 +8410,16 @@ public class StaticEndpointBuilders {
     /**
      * Ignite Compute (camel-ignite)
      * Run compute operations on an Ignite cluster.
-     * 
+     *
      * Category: cache,clustering
      * Since: 2.17
      * Maven coordinates: org.apache.camel:camel-ignite
-     * 
+     *
      * Syntax: <code>ignite-compute:endpointId</code>
-     * 
+     *
      * Path parameter: endpointId (required)
      * The endpoint ID (not used).
-     * 
+     *
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
      * @param path endpointId
@@ -8391,16 +8431,16 @@ public class StaticEndpointBuilders {
     /**
      * Ignite Events (camel-ignite)
      * Receive events from an Ignite cluster by creating a local event listener.
-     * 
+     *
      * Category: messaging,cache,clustering
      * Since: 2.17
      * Maven coordinates: org.apache.camel:camel-ignite
-     * 
+     *
      * Syntax: <code>ignite-events:endpointId</code>
-     * 
+     *
      * Path parameter: endpointId
      * The endpoint ID (not used).
-     * 
+     *
      * @param path endpointId
      * @return the dsl builder
      */
@@ -8410,16 +8450,16 @@ public class StaticEndpointBuilders {
     /**
      * Ignite Events (camel-ignite)
      * Receive events from an Ignite cluster by creating a local event listener.
-     * 
+     *
      * Category: messaging,cache,clustering
      * Since: 2.17
      * Maven coordinates: org.apache.camel:camel-ignite
-     * 
+     *
      * Syntax: <code>ignite-events:endpointId</code>
-     * 
+     *
      * Path parameter: endpointId
      * The endpoint ID (not used).
-     * 
+     *
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
      * @param path endpointId
@@ -8431,16 +8471,16 @@ public class StaticEndpointBuilders {
     /**
      * Ignite ID Generator (camel-ignite)
      * Interact with Ignite Atomic Sequences and ID Generators .
-     * 
+     *
      * Category: cache,clustering
      * Since: 2.17
      * Maven coordinates: org.apache.camel:camel-ignite
-     * 
+     *
      * Syntax: <code>ignite-idgen:name</code>
-     * 
+     *
      * Path parameter: name (required)
      * The sequence name.
-     * 
+     *
      * @param path name
      * @return the dsl builder
      */
@@ -8450,16 +8490,16 @@ public class StaticEndpointBuilders {
     /**
      * Ignite ID Generator (camel-ignite)
      * Interact with Ignite Atomic Sequences and ID Generators .
-     * 
+     *
      * Category: cache,clustering
      * Since: 2.17
      * Maven coordinates: org.apache.camel:camel-ignite
-     * 
+     *
      * Syntax: <code>ignite-idgen:name</code>
-     * 
+     *
      * Path parameter: name (required)
      * The sequence name.
-     * 
+     *
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
      * @param path name
@@ -8471,16 +8511,16 @@ public class StaticEndpointBuilders {
     /**
      * Ignite Messaging (camel-ignite)
      * Send and receive messages from an Ignite topic.
-     * 
+     *
      * Category: messaging
      * Since: 2.17
      * Maven coordinates: org.apache.camel:camel-ignite
-     * 
+     *
      * Syntax: <code>ignite-messaging:topic</code>
-     * 
+     *
      * Path parameter: topic (required)
      * The topic name.
-     * 
+     *
      * @param path topic
      * @return the dsl builder
      */
@@ -8490,16 +8530,16 @@ public class StaticEndpointBuilders {
     /**
      * Ignite Messaging (camel-ignite)
      * Send and receive messages from an Ignite topic.
-     * 
+     *
      * Category: messaging
      * Since: 2.17
      * Maven coordinates: org.apache.camel:camel-ignite
-     * 
+     *
      * Syntax: <code>ignite-messaging:topic</code>
-     * 
+     *
      * Path parameter: topic (required)
      * The topic name.
-     * 
+     *
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
      * @param path topic
@@ -8511,16 +8551,16 @@ public class StaticEndpointBuilders {
     /**
      * Ignite Queues (camel-ignite)
      * Interact with Ignite Queue data structures.
-     * 
+     *
      * Category: cache,clustering,messaging
      * Since: 2.17
      * Maven coordinates: org.apache.camel:camel-ignite
-     * 
+     *
      * Syntax: <code>ignite-queue:name</code>
-     * 
+     *
      * Path parameter: name (required)
      * The queue name.
-     * 
+     *
      * @param path name
      * @return the dsl builder
      */
@@ -8530,16 +8570,16 @@ public class StaticEndpointBuilders {
     /**
      * Ignite Queues (camel-ignite)
      * Interact with Ignite Queue data structures.
-     * 
+     *
      * Category: cache,clustering,messaging
      * Since: 2.17
      * Maven coordinates: org.apache.camel:camel-ignite
-     * 
+     *
      * Syntax: <code>ignite-queue:name</code>
-     * 
+     *
      * Path parameter: name (required)
      * The queue name.
-     * 
+     *
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
      * @param path name
@@ -8551,16 +8591,16 @@ public class StaticEndpointBuilders {
     /**
      * Ignite Sets (camel-ignite)
      * Interact with Ignite Set data structures.
-     * 
+     *
      * Category: cache,clustering
      * Since: 2.17
      * Maven coordinates: org.apache.camel:camel-ignite
-     * 
+     *
      * Syntax: <code>ignite-set:name</code>
-     * 
+     *
      * Path parameter: name (required)
      * The set name.
-     * 
+     *
      * @param path name
      * @return the dsl builder
      */
@@ -8570,16 +8610,16 @@ public class StaticEndpointBuilders {
     /**
      * Ignite Sets (camel-ignite)
      * Interact with Ignite Set data structures.
-     * 
+     *
      * Category: cache,clustering
      * Since: 2.17
      * Maven coordinates: org.apache.camel:camel-ignite
-     * 
+     *
      * Syntax: <code>ignite-set:name</code>
-     * 
+     *
      * Path parameter: name (required)
      * The set name.
-     * 
+     *
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
      * @param path name
@@ -8591,19 +8631,19 @@ public class StaticEndpointBuilders {
     /**
      * IMAP (camel-mail)
      * Send and receive emails using imap, pop3 and smtp protocols.
-     * 
+     *
      * Category: mail
      * Since: 1.0
      * Maven coordinates: org.apache.camel:camel-mail
-     * 
+     *
      * Syntax: <code>imap:host:port</code>
-     * 
+     *
      * Path parameter: host (required)
      * The mail server host name
-     * 
+     *
      * Path parameter: port
      * The port number of the mail server
-     * 
+     *
      * @param path host:port
      * @return the dsl builder
      */
@@ -8613,19 +8653,19 @@ public class StaticEndpointBuilders {
     /**
      * IMAP (camel-mail)
      * Send and receive emails using imap, pop3 and smtp protocols.
-     * 
+     *
      * Category: mail
      * Since: 1.0
      * Maven coordinates: org.apache.camel:camel-mail
-     * 
+     *
      * Syntax: <code>imap:host:port</code>
-     * 
+     *
      * Path parameter: host (required)
      * The mail server host name
-     * 
+     *
      * Path parameter: port
      * The port number of the mail server
-     * 
+     *
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
      * @param path host:port
@@ -8637,19 +8677,19 @@ public class StaticEndpointBuilders {
     /**
      * IMAPS (Secure) (camel-mail)
      * Send and receive emails using imap, pop3 and smtp protocols.
-     * 
+     *
      * Category: mail
      * Since: 1.0
      * Maven coordinates: org.apache.camel:camel-mail
-     * 
+     *
      * Syntax: <code>imaps:host:port</code>
-     * 
+     *
      * Path parameter: host (required)
      * The mail server host name
-     * 
+     *
      * Path parameter: port
      * The port number of the mail server
-     * 
+     *
      * @param path host:port
      * @return the dsl builder
      */
@@ -8660,18 +8700,18 @@ public class StaticEndpointBuilders {
      * Infinispan (camel-infinispan)
      * Read and write from/to Infinispan distributed key/value store and data
      * grid.
-     * 
+     *
      * Category: cache,clustering
      * Since: 2.13
      * Maven coordinates: org.apache.camel:camel-infinispan
-     * 
+     *
      * Syntax: <code>infinispan:cacheName</code>
-     * 
+     *
      * Path parameter: cacheName (required)
      * The name of the cache to use. Use current to use the existing cache name
      * from the currently configured cached manager. Or use default for the
      * default cache manager name.
-     * 
+     *
      * @param path cacheName
      * @return the dsl builder
      */
@@ -8682,18 +8722,18 @@ public class StaticEndpointBuilders {
      * Infinispan (camel-infinispan)
      * Read and write from/to Infinispan distributed key/value store and data
      * grid.
-     * 
+     *
      * Category: cache,clustering
      * Since: 2.13
      * Maven coordinates: org.apache.camel:camel-infinispan
-     * 
+     *
      * Syntax: <code>infinispan:cacheName</code>
-     * 
+     *
      * Path parameter: cacheName (required)
      * The name of the cache to use. Use current to use the existing cache name
      * from the currently configured cached manager. Or use default for the
      * default cache manager name.
-     * 
+     *
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
      * @param path cacheName
@@ -8706,18 +8746,18 @@ public class StaticEndpointBuilders {
      * Infinispan Embedded (camel-infinispan-embedded)
      * Read and write from/to Infinispan distributed key/value store and data
      * grid.
-     * 
+     *
      * Category: cache,clustering
      * Since: 2.13
      * Maven coordinates: org.apache.camel:camel-infinispan-embedded
-     * 
+     *
      * Syntax: <code>infinispan-embedded:cacheName</code>
-     * 
+     *
      * Path parameter: cacheName (required)
      * The name of the cache to use. Use current to use the existing cache name
      * from the currently configured cached manager. Or use default for the
      * default cache manager name.
-     * 
+     *
      * @param path cacheName
      * @return the dsl builder
      */
@@ -8728,18 +8768,18 @@ public class StaticEndpointBuilders {
      * Infinispan Embedded (camel-infinispan-embedded)
      * Read and write from/to Infinispan distributed key/value store and data
      * grid.
-     * 
+     *
      * Category: cache,clustering
      * Since: 2.13
      * Maven coordinates: org.apache.camel:camel-infinispan-embedded
-     * 
+     *
      * Syntax: <code>infinispan-embedded:cacheName</code>
-     * 
+     *
      * Path parameter: cacheName (required)
      * The name of the cache to use. Use current to use the existing cache name
      * from the currently configured cached manager. Or use default for the
      * default cache manager name.
-     * 
+     *
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
      * @param path cacheName
@@ -8751,16 +8791,16 @@ public class StaticEndpointBuilders {
     /**
      * InfluxDB (camel-influxdb)
      * Interact with InfluxDB v1, a time series database.
-     * 
+     *
      * Category: database
      * Since: 2.18
      * Maven coordinates: org.apache.camel:camel-influxdb
-     * 
+     *
      * Syntax: <code>influxdb:connectionBean</code>
-     * 
+     *
      * Path parameter: connectionBean (required)
      * Connection to the influx database, of class InfluxDB.class
-     * 
+     *
      * @param path connectionBean
      * @return the dsl builder
      */
@@ -8770,16 +8810,16 @@ public class StaticEndpointBuilders {
     /**
      * InfluxDB (camel-influxdb)
      * Interact with InfluxDB v1, a time series database.
-     * 
+     *
      * Category: database
      * Since: 2.18
      * Maven coordinates: org.apache.camel:camel-influxdb
-     * 
+     *
      * Syntax: <code>influxdb:connectionBean</code>
-     * 
+     *
      * Path parameter: connectionBean (required)
      * Connection to the influx database, of class InfluxDB.class
-     * 
+     *
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
      * @param path connectionBean
@@ -8791,17 +8831,17 @@ public class StaticEndpointBuilders {
     /**
      * InfluxDB2 (camel-influxdb2)
      * Interact with InfluxDB v2, a time series database.
-     * 
+     *
      * Category: database
      * Since: 3.20
      * Maven coordinates: org.apache.camel:camel-influxdb2
-     * 
+     *
      * Syntax: <code>influxdb2:connectionBean</code>
-     * 
+     *
      * Path parameter: connectionBean (required)
      * Connection to the Influx database, of class
      * com.influxdb.client.InfluxDBClient.class.
-     * 
+     *
      * @param path connectionBean
      * @return the dsl builder
      */
@@ -8811,17 +8851,17 @@ public class StaticEndpointBuilders {
     /**
      * InfluxDB2 (camel-influxdb2)
      * Interact with InfluxDB v2, a time series database.
-     * 
+     *
      * Category: database
      * Since: 3.20
      * Maven coordinates: org.apache.camel:camel-influxdb2
-     * 
+     *
      * Syntax: <code>influxdb2:connectionBean</code>
-     * 
+     *
      * Path parameter: connectionBean (required)
      * Connection to the Influx database, of class
      * com.influxdb.client.InfluxDBClient.class.
-     * 
+     *
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
      * @param path connectionBean
@@ -8833,16 +8873,16 @@ public class StaticEndpointBuilders {
     /**
      * JCache (camel-jcache)
      * Perform caching operations against JSR107/JCache.
-     * 
+     *
      * Category: cache,clustering
      * Since: 2.17
      * Maven coordinates: org.apache.camel:camel-jcache
-     * 
+     *
      * Syntax: <code>jcache:cacheName</code>
-     * 
+     *
      * Path parameter: cacheName (required)
      * The name of the cache
-     * 
+     *
      * @param path cacheName
      * @return the dsl builder
      */
@@ -8852,16 +8892,16 @@ public class StaticEndpointBuilders {
     /**
      * JCache (camel-jcache)
      * Perform caching operations against JSR107/JCache.
-     * 
+     *
      * Category: cache,clustering
      * Since: 2.17
      * Maven coordinates: org.apache.camel:camel-jcache
-     * 
+     *
      * Syntax: <code>jcache:cacheName</code>
-     * 
+     *
      * Path parameter: cacheName (required)
      * The name of the cache
-     * 
+     *
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
      * @param path cacheName
@@ -8873,20 +8913,20 @@ public class StaticEndpointBuilders {
     /**
      * JCR (camel-jcr)
      * Read and write nodes to/from a JCR compliant content repository.
-     * 
+     *
      * Category: database,cms
      * Since: 1.3
      * Maven coordinates: org.apache.camel:camel-jcr
-     * 
+     *
      * Syntax: <code>jcr:host/base</code>
-     * 
+     *
      * Path parameter: host (required)
      * Name of the javax.jcr.Repository to lookup from the Camel registry to be
      * used.
-     * 
+     *
      * Path parameter: base
      * Get the base node when accessing the repository
-     * 
+     *
      * @param path host/base
      * @return the dsl builder
      */
@@ -8896,20 +8936,20 @@ public class StaticEndpointBuilders {
     /**
      * JCR (camel-jcr)
      * Read and write nodes to/from a JCR compliant content repository.
-     * 
+     *
      * Category: database,cms
      * Since: 1.3
      * Maven coordinates: org.apache.camel:camel-jcr
-     * 
+     *
      * Syntax: <code>jcr:host/base</code>
-     * 
+     *
      * Path parameter: host (required)
      * Name of the javax.jcr.Repository to lookup from the Camel registry to be
      * used.
-     * 
+     *
      * Path parameter: base
      * Get the base node when accessing the repository
-     * 
+     *
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
      * @param path host/base
@@ -8921,19 +8961,19 @@ public class StaticEndpointBuilders {
     /**
      * JDBC (camel-jdbc)
      * Access databases through SQL and JDBC.
-     * 
+     *
      * Category: database
      * Since: 1.2
      * Maven coordinates: org.apache.camel:camel-jdbc
-     * 
+     *
      * Syntax: <code>jdbc:dataSourceName</code>
-     * 
+     *
      * Path parameter: dataSourceName (required)
      * Name of DataSource to lookup in the Registry. If the name is dataSource
      * or default, then Camel will attempt to lookup a default DataSource from
      * the registry, meaning if there is a only one instance of DataSource
      * found, then this DataSource will be used.
-     * 
+     *
      * @param path dataSourceName
      * @return the dsl builder
      */
@@ -8943,19 +8983,19 @@ public class StaticEndpointBuilders {
     /**
      * JDBC (camel-jdbc)
      * Access databases through SQL and JDBC.
-     * 
+     *
      * Category: database
      * Since: 1.2
      * Maven coordinates: org.apache.camel:camel-jdbc
-     * 
+     *
      * Syntax: <code>jdbc:dataSourceName</code>
-     * 
+     *
      * Path parameter: dataSourceName (required)
      * Name of DataSource to lookup in the Registry. If the name is dataSource
      * or default, then Camel will attempt to lookup a default DataSource from
      * the registry, meaning if there is a only one instance of DataSource
      * found, then this DataSource will be used.
-     * 
+     *
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
      * @param path dataSourceName
@@ -8967,16 +9007,16 @@ public class StaticEndpointBuilders {
     /**
      * Jetty (camel-jetty)
      * Expose HTTP endpoints using Jetty 12.
-     * 
+     *
      * Category: http
      * Since: 1.2
      * Maven coordinates: org.apache.camel:camel-jetty
-     * 
+     *
      * Syntax: <code>jetty:httpUri</code>
-     * 
+     *
      * Path parameter: httpUri (required)
      * The url of the HTTP endpoint to call.
-     * 
+     *
      * @param path httpUri
      * @return the dsl builder
      */
@@ -8986,16 +9026,16 @@ public class StaticEndpointBuilders {
     /**
      * Jetty (camel-jetty)
      * Expose HTTP endpoints using Jetty 12.
-     * 
+     *
      * Category: http
      * Since: 1.2
      * Maven coordinates: org.apache.camel:camel-jetty
-     * 
+     *
      * Syntax: <code>jetty:httpUri</code>
-     * 
+     *
      * Path parameter: httpUri (required)
      * The url of the HTTP endpoint to call.
-     * 
+     *
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
      * @param path httpUri
@@ -9007,16 +9047,16 @@ public class StaticEndpointBuilders {
     /**
      * JGroups (camel-jgroups)
      * Exchange messages with JGroups clusters.
-     * 
+     *
      * Category: clustering,messaging
      * Since: 2.13
      * Maven coordinates: org.apache.camel:camel-jgroups
-     * 
+     *
      * Syntax: <code>jgroups:clusterName</code>
-     * 
+     *
      * Path parameter: clusterName (required)
      * The name of the JGroups cluster the component should connect to.
-     * 
+     *
      * @param path clusterName
      * @return the dsl builder
      */
@@ -9026,16 +9066,16 @@ public class StaticEndpointBuilders {
     /**
      * JGroups (camel-jgroups)
      * Exchange messages with JGroups clusters.
-     * 
+     *
      * Category: clustering,messaging
      * Since: 2.13
      * Maven coordinates: org.apache.camel:camel-jgroups
-     * 
+     *
      * Syntax: <code>jgroups:clusterName</code>
-     * 
+     *
      * Path parameter: clusterName (required)
      * The name of the JGroups cluster the component should connect to.
-     * 
+     *
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
      * @param path clusterName
@@ -9047,16 +9087,16 @@ public class StaticEndpointBuilders {
     /**
      * JGroups raft (camel-jgroups-raft)
      * Exchange messages with JGroups-raft clusters.
-     * 
+     *
      * Category: clustering,messaging
      * Since: 2.24
      * Maven coordinates: org.apache.camel:camel-jgroups-raft
-     * 
+     *
      * Syntax: <code>jgroups-raft:clusterName</code>
-     * 
+     *
      * Path parameter: clusterName (required)
      * The name of the JGroupsraft cluster the component should connect to.
-     * 
+     *
      * @param path clusterName
      * @return the dsl builder
      */
@@ -9066,16 +9106,16 @@ public class StaticEndpointBuilders {
     /**
      * JGroups raft (camel-jgroups-raft)
      * Exchange messages with JGroups-raft clusters.
-     * 
+     *
      * Category: clustering,messaging
      * Since: 2.24
      * Maven coordinates: org.apache.camel:camel-jgroups-raft
-     * 
+     *
      * Syntax: <code>jgroups-raft:clusterName</code>
-     * 
+     *
      * Path parameter: clusterName (required)
      * The name of the JGroupsraft cluster the component should connect to.
-     * 
+     *
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
      * @param path clusterName
@@ -9087,13 +9127,13 @@ public class StaticEndpointBuilders {
     /**
      * Jira (camel-jira)
      * Interact with JIRA issue tracker.
-     * 
+     *
      * Category: document
      * Since: 3.0
      * Maven coordinates: org.apache.camel:camel-jira
-     * 
+     *
      * Syntax: <code>jira:type</code>
-     * 
+     *
      * Path parameter: type (required)
      * Operation to perform. Consumers: NewIssues, NewComments. Producers:
      * AddIssue, AttachFile, DeleteIssue, TransitionIssue, UpdateIssue,
@@ -9102,7 +9142,7 @@ public class StaticEndpointBuilders {
      * ATTACH, DELETEISSUE, NEWISSUES, NEWCOMMENTS, WATCHUPDATES, UPDATEISSUE,
      * TRANSITIONISSUE, WATCHERS, ADDISSUELINK, ADDWORKLOG, FETCHISSUE,
      * FETCHCOMMENTS
-     * 
+     *
      * @param path type
      * @return the dsl builder
      */
@@ -9112,13 +9152,13 @@ public class StaticEndpointBuilders {
     /**
      * Jira (camel-jira)
      * Interact with JIRA issue tracker.
-     * 
+     *
      * Category: document
      * Since: 3.0
      * Maven coordinates: org.apache.camel:camel-jira
-     * 
+     *
      * Syntax: <code>jira:type</code>
-     * 
+     *
      * Path parameter: type (required)
      * Operation to perform. Consumers: NewIssues, NewComments. Producers:
      * AddIssue, AttachFile, DeleteIssue, TransitionIssue, UpdateIssue,
@@ -9127,7 +9167,7 @@ public class StaticEndpointBuilders {
      * ATTACH, DELETEISSUE, NEWISSUES, NEWCOMMENTS, WATCHUPDATES, UPDATEISSUE,
      * TRANSITIONISSUE, WATCHERS, ADDISSUELINK, ADDWORKLOG, FETCHISSUE,
      * FETCHCOMMENTS
-     * 
+     *
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
      * @param path type
@@ -9139,22 +9179,22 @@ public class StaticEndpointBuilders {
     /**
      * JMS (camel-jms)
      * Send and receive messages to/from JMS message brokers.
-     * 
+     *
      * Category: messaging
      * Since: 1.0
      * Maven coordinates: org.apache.camel:camel-jms
-     * 
+     *
      * Syntax: <code>jms:destinationType:destinationName</code>
-     * 
+     *
      * Path parameter: destinationType
      * The kind of destination to use
      * Default value: queue
      * There are 4 enums and the value can be one of: queue, topic, temp-queue,
      * temp-topic
-     * 
+     *
      * Path parameter: destinationName (required)
      * Name of the queue or topic to use as destination
-     * 
+     *
      * @param path destinationType:destinationName
      * @return the dsl builder
      */
@@ -9164,22 +9204,22 @@ public class StaticEndpointBuilders {
     /**
      * JMS (camel-jms)
      * Send and receive messages to/from JMS message brokers.
-     * 
+     *
      * Category: messaging
      * Since: 1.0
      * Maven coordinates: org.apache.camel:camel-jms
-     * 
+     *
      * Syntax: <code>jms:destinationType:destinationName</code>
-     * 
+     *
      * Path parameter: destinationType
      * The kind of destination to use
      * Default value: queue
      * There are 4 enums and the value can be one of: queue, topic, temp-queue,
      * temp-topic
-     * 
+     *
      * Path parameter: destinationName (required)
      * Name of the queue or topic to use as destination
-     * 
+     *
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
      * @param path destinationType:destinationName
@@ -9191,17 +9231,17 @@ public class StaticEndpointBuilders {
     /**
      * JMX (camel-jmx)
      * Receive JMX notifications.
-     * 
+     *
      * Category: monitoring
      * Since: 2.6
      * Maven coordinates: org.apache.camel:camel-jmx
-     * 
+     *
      * Syntax: <code>jmx:serverURL</code>
-     * 
+     *
      * Path parameter: serverURL
      * Server url comes from the remaining endpoint. Use platform to connect to
      * local JVM.
-     * 
+     *
      * @param path serverURL
      * @return the dsl builder
      */
@@ -9211,17 +9251,17 @@ public class StaticEndpointBuilders {
     /**
      * JMX (camel-jmx)
      * Receive JMX notifications.
-     * 
+     *
      * Category: monitoring
      * Since: 2.6
      * Maven coordinates: org.apache.camel:camel-jmx
-     * 
+     *
      * Syntax: <code>jmx:serverURL</code>
-     * 
+     *
      * Path parameter: serverURL
      * Server url comes from the remaining endpoint. Use platform to connect to
      * local JVM.
-     * 
+     *
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
      * @param path serverURL
@@ -9233,13 +9273,13 @@ public class StaticEndpointBuilders {
     /**
      * JOLT (camel-jolt)
      * JSON to JSON transformation using JOLT.
-     * 
+     *
      * Category: transformation
      * Since: 2.16
      * Maven coordinates: org.apache.camel:camel-jolt
-     * 
+     *
      * Syntax: <code>jolt:resourceUri</code>
-     * 
+     *
      * Path parameter: resourceUri (required)
      * Path to the resource. You can prefix with: classpath, file, http, ref, or
      * bean. classpath, file and http loads the resource using these protocols
@@ -9248,7 +9288,7 @@ public class StaticEndpointBuilders {
      * you can specify the method name after dot, eg bean:myBean.myMethod.
      * This option can also be loaded from an existing file, by prefixing with
      * file: or classpath: followed by the location of the file.
-     * 
+     *
      * @param path resourceUri
      * @return the dsl builder
      */
@@ -9258,13 +9298,13 @@ public class StaticEndpointBuilders {
     /**
      * JOLT (camel-jolt)
      * JSON to JSON transformation using JOLT.
-     * 
+     *
      * Category: transformation
      * Since: 2.16
      * Maven coordinates: org.apache.camel:camel-jolt
-     * 
+     *
      * Syntax: <code>jolt:resourceUri</code>
-     * 
+     *
      * Path parameter: resourceUri (required)
      * Path to the resource. You can prefix with: classpath, file, http, ref, or
      * bean. classpath, file and http loads the resource using these protocols
@@ -9273,7 +9313,7 @@ public class StaticEndpointBuilders {
      * you can specify the method name after dot, eg bean:myBean.myMethod.
      * This option can also be loaded from an existing file, by prefixing with
      * file: or classpath: followed by the location of the file.
-     * 
+     *
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
      * @param path resourceUri
@@ -9285,16 +9325,16 @@ public class StaticEndpointBuilders {
     /**
      * JOOQ (camel-jooq)
      * Store and retrieve Java objects from an SQL database using JOOQ.
-     * 
+     *
      * Category: database
      * Since: 3.0
      * Maven coordinates: org.apache.camel:camel-jooq
-     * 
+     *
      * Syntax: <code>jooq:entityType</code>
-     * 
+     *
      * Path parameter: entityType
      * JOOQ entity class
-     * 
+     *
      * @param path entityType
      * @return the dsl builder
      */
@@ -9304,16 +9344,16 @@ public class StaticEndpointBuilders {
     /**
      * JOOQ (camel-jooq)
      * Store and retrieve Java objects from an SQL database using JOOQ.
-     * 
+     *
      * Category: database
      * Since: 3.0
      * Maven coordinates: org.apache.camel:camel-jooq
-     * 
+     *
      * Syntax: <code>jooq:entityType</code>
-     * 
+     *
      * Path parameter: entityType
      * JOOQ entity class
-     * 
+     *
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
      * @param path entityType
@@ -9326,16 +9366,16 @@ public class StaticEndpointBuilders {
      * JPA (camel-jpa)
      * Store and retrieve Java objects from databases using Java Persistence API
      * (JPA).
-     * 
+     *
      * Category: database
      * Since: 1.0
      * Maven coordinates: org.apache.camel:camel-jpa
-     * 
+     *
      * Syntax: <code>jpa:entityType</code>
-     * 
+     *
      * Path parameter: entityType (required)
      * Entity class name
-     * 
+     *
      * @param path entityType
      * @return the dsl builder
      */
@@ -9346,16 +9386,16 @@ public class StaticEndpointBuilders {
      * JPA (camel-jpa)
      * Store and retrieve Java objects from databases using Java Persistence API
      * (JPA).
-     * 
+     *
      * Category: database
      * Since: 1.0
      * Maven coordinates: org.apache.camel:camel-jpa
-     * 
+     *
      * Syntax: <code>jpa:entityType</code>
-     * 
+     *
      * Path parameter: entityType (required)
      * Entity class name
-     * 
+     *
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
      * @param path entityType
@@ -9367,13 +9407,13 @@ public class StaticEndpointBuilders {
     /**
      * JSLT (camel-jslt)
      * Query or transform JSON payloads using JSLT.
-     * 
+     *
      * Category: transformation
      * Since: 3.1
      * Maven coordinates: org.apache.camel:camel-jslt
-     * 
+     *
      * Syntax: <code>jslt:resourceUri</code>
-     * 
+     *
      * Path parameter: resourceUri (required)
      * Path to the resource. You can prefix with: classpath, file, http, ref, or
      * bean. classpath, file and http loads the resource using these protocols
@@ -9382,7 +9422,7 @@ public class StaticEndpointBuilders {
      * you can specify the method name after dot, eg bean:myBean.myMethod.
      * This option can also be loaded from an existing file, by prefixing with
      * file: or classpath: followed by the location of the file.
-     * 
+     *
      * @param path resourceUri
      * @return the dsl builder
      */
@@ -9392,13 +9432,13 @@ public class StaticEndpointBuilders {
     /**
      * JSLT (camel-jslt)
      * Query or transform JSON payloads using JSLT.
-     * 
+     *
      * Category: transformation
      * Since: 3.1
      * Maven coordinates: org.apache.camel:camel-jslt
-     * 
+     *
      * Syntax: <code>jslt:resourceUri</code>
-     * 
+     *
      * Path parameter: resourceUri (required)
      * Path to the resource. You can prefix with: classpath, file, http, ref, or
      * bean. classpath, file and http loads the resource using these protocols
@@ -9407,7 +9447,7 @@ public class StaticEndpointBuilders {
      * you can specify the method name after dot, eg bean:myBean.myMethod.
      * This option can also be loaded from an existing file, by prefixing with
      * file: or classpath: followed by the location of the file.
-     * 
+     *
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
      * @param path resourceUri
@@ -9419,13 +9459,13 @@ public class StaticEndpointBuilders {
     /**
      * JSON Schema Validator (camel-json-validator)
      * Validate JSON payloads using NetworkNT JSON Schema.
-     * 
+     *
      * Category: validation
      * Since: 2.20
      * Maven coordinates: org.apache.camel:camel-json-validator
-     * 
+     *
      * Syntax: <code>json-validator:resourceUri</code>
-     * 
+     *
      * Path parameter: resourceUri (required)
      * Path to the resource. You can prefix with: classpath, file, http, ref, or
      * bean. classpath, file and http loads the resource using these protocols
@@ -9434,7 +9474,7 @@ public class StaticEndpointBuilders {
      * you can specify the method name after dot, eg bean:myBean.myMethod.
      * This option can also be loaded from an existing file, by prefixing with
      * file: or classpath: followed by the location of the file.
-     * 
+     *
      * @param path resourceUri
      * @return the dsl builder
      */
@@ -9444,13 +9484,13 @@ public class StaticEndpointBuilders {
     /**
      * JSON Schema Validator (camel-json-validator)
      * Validate JSON payloads using NetworkNT JSON Schema.
-     * 
+     *
      * Category: validation
      * Since: 2.20
      * Maven coordinates: org.apache.camel:camel-json-validator
-     * 
+     *
      * Syntax: <code>json-validator:resourceUri</code>
-     * 
+     *
      * Path parameter: resourceUri (required)
      * Path to the resource. You can prefix with: classpath, file, http, ref, or
      * bean. classpath, file and http loads the resource using these protocols
@@ -9459,7 +9499,7 @@ public class StaticEndpointBuilders {
      * you can specify the method name after dot, eg bean:myBean.myMethod.
      * This option can also be loaded from an existing file, by prefixing with
      * file: or classpath: followed by the location of the file.
-     * 
+     *
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
      * @param path resourceUri
@@ -9471,13 +9511,13 @@ public class StaticEndpointBuilders {
     /**
      * JSONata (camel-jsonata)
      * Transforms JSON payload using JSONata transformation.
-     * 
+     *
      * Category: transformation
      * Since: 3.5
      * Maven coordinates: org.apache.camel:camel-jsonata
-     * 
+     *
      * Syntax: <code>jsonata:resourceUri</code>
-     * 
+     *
      * Path parameter: resourceUri (required)
      * Path to the resource. You can prefix with: classpath, file, http, ref, or
      * bean. classpath, file and http loads the resource using these protocols
@@ -9486,7 +9526,7 @@ public class StaticEndpointBuilders {
      * you can specify the method name after dot, eg bean:myBean.myMethod.
      * This option can also be loaded from an existing file, by prefixing with
      * file: or classpath: followed by the location of the file.
-     * 
+     *
      * @param path resourceUri
      * @return the dsl builder
      */
@@ -9496,13 +9536,13 @@ public class StaticEndpointBuilders {
     /**
      * JSONata (camel-jsonata)
      * Transforms JSON payload using JSONata transformation.
-     * 
+     *
      * Category: transformation
      * Since: 3.5
      * Maven coordinates: org.apache.camel:camel-jsonata
-     * 
+     *
      * Syntax: <code>jsonata:resourceUri</code>
-     * 
+     *
      * Path parameter: resourceUri (required)
      * Path to the resource. You can prefix with: classpath, file, http, ref, or
      * bean. classpath, file and http loads the resource using these protocols
@@ -9511,7 +9551,7 @@ public class StaticEndpointBuilders {
      * you can specify the method name after dot, eg bean:myBean.myMethod.
      * This option can also be loaded from an existing file, by prefixing with
      * file: or classpath: followed by the location of the file.
-     * 
+     *
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
      * @param path resourceUri
@@ -9525,31 +9565,31 @@ public class StaticEndpointBuilders {
      * Exchanges messages with an IBM i system using data queues, message
      * queues, or program call. IBM i is the replacement for AS/400 and iSeries
      * servers.
-     * 
+     *
      * Category: messaging
      * Since: 1.5
      * Maven coordinates: org.apache.camel:camel-jt400
-     * 
+     *
      * Syntax:
      * <code>jt400:userID:password@systemName/QSYS.LIB/objectPath.type</code>
-     * 
+     *
      * Path parameter: userID (required)
      * Returns the ID of the IBM i user.
-     * 
+     *
      * Path parameter: password (required)
      * Returns the password of the IBM i user.
-     * 
+     *
      * Path parameter: systemName (required)
      * Returns the name of the IBM i system.
-     * 
+     *
      * Path parameter: objectPath (required)
      * Returns the fully qualified integrated file system path name of the
      * target object of this endpoint.
-     * 
+     *
      * Path parameter: type (required)
      * Whether to work with data queues or remote program call
      * There are 4 enums and the value can be one of: DTAQ, PGM, SRVPGM, MSGQ
-     * 
+     *
      * @param path userID:password@systemName/QSYS.LIB/objectPath.type
      * @return the dsl builder
      */
@@ -9561,31 +9601,31 @@ public class StaticEndpointBuilders {
      * Exchanges messages with an IBM i system using data queues, message
      * queues, or program call. IBM i is the replacement for AS/400 and iSeries
      * servers.
-     * 
+     *
      * Category: messaging
      * Since: 1.5
      * Maven coordinates: org.apache.camel:camel-jt400
-     * 
+     *
      * Syntax:
      * <code>jt400:userID:password@systemName/QSYS.LIB/objectPath.type</code>
-     * 
+     *
      * Path parameter: userID (required)
      * Returns the ID of the IBM i user.
-     * 
+     *
      * Path parameter: password (required)
      * Returns the password of the IBM i user.
-     * 
+     *
      * Path parameter: systemName (required)
      * Returns the name of the IBM i system.
-     * 
+     *
      * Path parameter: objectPath (required)
      * Returns the fully qualified integrated file system path name of the
      * target object of this endpoint.
-     * 
+     *
      * Path parameter: type (required)
      * Whether to work with data queues or remote program call
      * There are 4 enums and the value can be one of: DTAQ, PGM, SRVPGM, MSGQ
-     * 
+     *
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
      * @param path userID:password@systemName/QSYS.LIB/objectPath.type
@@ -9597,13 +9637,13 @@ public class StaticEndpointBuilders {
     /**
      * JTE (camel-jte)
      * Transform messages using a Java based template engine (JTE).
-     * 
+     *
      * Category: transformation
      * Since: 4.4
      * Maven coordinates: org.apache.camel:camel-jte
-     * 
+     *
      * Syntax: <code>jte:resourceUri</code>
-     * 
+     *
      * Path parameter: resourceUri (required)
      * Path to the resource. You can prefix with: classpath, file, http, ref, or
      * bean. classpath, file and http loads the resource using these protocols
@@ -9612,7 +9652,7 @@ public class StaticEndpointBuilders {
      * you can specify the method name after dot, eg bean:myBean.myMethod.
      * This option can also be loaded from an existing file, by prefixing with
      * file: or classpath: followed by the location of the file.
-     * 
+     *
      * @param path resourceUri
      * @return the dsl builder
      */
@@ -9622,13 +9662,13 @@ public class StaticEndpointBuilders {
     /**
      * JTE (camel-jte)
      * Transform messages using a Java based template engine (JTE).
-     * 
+     *
      * Category: transformation
      * Since: 4.4
      * Maven coordinates: org.apache.camel:camel-jte
-     * 
+     *
      * Syntax: <code>jte:resourceUri</code>
-     * 
+     *
      * Path parameter: resourceUri (required)
      * Path to the resource. You can prefix with: classpath, file, http, ref, or
      * bean. classpath, file and http loads the resource using these protocols
@@ -9637,7 +9677,7 @@ public class StaticEndpointBuilders {
      * you can specify the method name after dot, eg bean:myBean.myMethod.
      * This option can also be loaded from an existing file, by prefixing with
      * file: or classpath: followed by the location of the file.
-     * 
+     *
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
      * @param path resourceUri
@@ -9649,17 +9689,17 @@ public class StaticEndpointBuilders {
     /**
      * Kafka (camel-kafka)
      * Send and receive messages to/from an Apache Kafka broker.
-     * 
+     *
      * Category: messaging
      * Since: 2.13
      * Maven coordinates: org.apache.camel:camel-kafka
-     * 
+     *
      * Syntax: <code>kafka:topic</code>
-     * 
+     *
      * Path parameter: topic (required)
      * Name of the topic to use. On the consumer you can use comma to separate
      * multiple topics. A producer can only send a message to a single topic.
-     * 
+     *
      * @param path topic
      * @return the dsl builder
      */
@@ -9669,17 +9709,17 @@ public class StaticEndpointBuilders {
     /**
      * Kafka (camel-kafka)
      * Send and receive messages to/from an Apache Kafka broker.
-     * 
+     *
      * Category: messaging
      * Since: 2.13
      * Maven coordinates: org.apache.camel:camel-kafka
-     * 
+     *
      * Syntax: <code>kafka:topic</code>
-     * 
+     *
      * Path parameter: topic (required)
      * Name of the topic to use. On the consumer you can use comma to separate
      * multiple topics. A producer can only send a message to a single topic.
-     * 
+     *
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
      * @param path topic
@@ -9691,20 +9731,20 @@ public class StaticEndpointBuilders {
     /**
      * Kamelet (camel-kamelet)
      * To call Kamelets
-     * 
+     *
      * Category: core
      * Since: 3.8
      * Maven coordinates: org.apache.camel:camel-kamelet
-     * 
+     *
      * Syntax: <code>kamelet:templateId/routeId</code>
-     * 
+     *
      * Path parameter: templateId (required)
      * The Route Template ID
-     * 
+     *
      * Path parameter: routeId
      * The Route ID. Default value notice: The ID will be auto-generated if not
      * provided
-     * 
+     *
      * @param path templateId/routeId
      * @return the dsl builder
      */
@@ -9714,20 +9754,20 @@ public class StaticEndpointBuilders {
     /**
      * Kamelet (camel-kamelet)
      * To call Kamelets
-     * 
+     *
      * Category: core
      * Since: 3.8
      * Maven coordinates: org.apache.camel:camel-kamelet
-     * 
+     *
      * Syntax: <code>kamelet:templateId/routeId</code>
-     * 
+     *
      * Path parameter: templateId (required)
      * The Route Template ID
-     * 
+     *
      * Path parameter: routeId
      * The Route ID. Default value notice: The ID will be auto-generated if not
      * provided
-     * 
+     *
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
      * @param path templateId/routeId
@@ -9739,16 +9779,16 @@ public class StaticEndpointBuilders {
     /**
      * Keycloak (camel-keycloak)
      * Manage Keycloak instances via Admin API.
-     * 
+     *
      * Category: security,management
      * Since: 4.15
      * Maven coordinates: org.apache.camel:camel-keycloak
-     * 
+     *
      * Syntax: <code>keycloak:label</code>
-     * 
+     *
      * Path parameter: label (required)
      * Logical name
-     * 
+     *
      * @param path label
      * @return the dsl builder
      */
@@ -9758,16 +9798,16 @@ public class StaticEndpointBuilders {
     /**
      * Keycloak (camel-keycloak)
      * Manage Keycloak instances via Admin API.
-     * 
+     *
      * Category: security,management
      * Since: 4.15
      * Maven coordinates: org.apache.camel:camel-keycloak
-     * 
+     *
      * Syntax: <code>keycloak:label</code>
-     * 
+     *
      * Path parameter: label (required)
      * Logical name
-     * 
+     *
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
      * @param path label
@@ -9779,20 +9819,20 @@ public class StaticEndpointBuilders {
     /**
      * Knative (camel-knative)
      * Send and receive events from Knative.
-     * 
+     *
      * Category: cloud
      * Since: 3.15
      * Maven coordinates: org.apache.camel:camel-knative
-     * 
+     *
      * Syntax: <code>knative:type/typeId</code>
-     * 
+     *
      * Path parameter: type
      * The Knative resource type
      * There are 3 enums and the value can be one of: endpoint, channel, event
-     * 
+     *
      * Path parameter: typeId
      * The identifier of the Knative resource
-     * 
+     *
      * @param path type/typeId
      * @return the dsl builder
      */
@@ -9802,20 +9842,20 @@ public class StaticEndpointBuilders {
     /**
      * Knative (camel-knative)
      * Send and receive events from Knative.
-     * 
+     *
      * Category: cloud
      * Since: 3.15
      * Maven coordinates: org.apache.camel:camel-knative
-     * 
+     *
      * Syntax: <code>knative:type/typeId</code>
-     * 
+     *
      * Path parameter: type
      * The Knative resource type
      * There are 3 enums and the value can be one of: endpoint, channel, event
-     * 
+     *
      * Path parameter: typeId
      * The identifier of the Knative resource
-     * 
+     *
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
      * @param path type/typeId
@@ -9828,18 +9868,18 @@ public class StaticEndpointBuilders {
      * KServe (camel-kserve)
      * Provide access to AI model servers with the KServe standard to run
      * inference with remote models
-     * 
+     *
      * Category: ai
      * Since: 4.10
      * Maven coordinates: org.apache.camel:camel-kserve
-     * 
+     *
      * Syntax: <code>kserve:api</code>
-     * 
+     *
      * Path parameter: api (required)
      * The KServe API
      * There are 6 enums and the value can be one of: infer, model/ready,
      * model/metadata, server/ready, server/live, server/metadata
-     * 
+     *
      * @param path api
      * @return the dsl builder
      */
@@ -9850,18 +9890,18 @@ public class StaticEndpointBuilders {
      * KServe (camel-kserve)
      * Provide access to AI model servers with the KServe standard to run
      * inference with remote models
-     * 
+     *
      * Category: ai
      * Since: 4.10
      * Maven coordinates: org.apache.camel:camel-kserve
-     * 
+     *
      * Syntax: <code>kserve:api</code>
-     * 
+     *
      * Path parameter: api (required)
      * The KServe API
      * There are 6 enums and the value can be one of: infer, model/ready,
      * model/metadata, server/ready, server/live, server/metadata
-     * 
+     *
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
      * @param path api
@@ -9874,13 +9914,13 @@ public class StaticEndpointBuilders {
      * Kubernetes ConfigMap (camel-kubernetes)
      * Perform operations on Kubernetes ConfigMaps and get notified on
      * ConfigMaps changes.
-     * 
+     *
      * Category: container,cloud
      * Since: 2.17
      * Maven coordinates: org.apache.camel:camel-kubernetes
-     * 
+     *
      * Syntax: <code>kubernetes-config-maps:masterUrl</code>
-     * 
+     *
      * Path parameter: masterUrl (required)
      * URL to a remote Kubernetes API server. This should only be used when your
      * Camel application is connecting from outside Kubernetes. If you run your
@@ -9888,7 +9928,7 @@ public class StaticEndpointBuilders {
      * the URL to tell Camel to run in local mode. If you connect remotely to
      * Kubernetes, then you may also need some of the many other configuration
      * options for secured connection with certificates, etc.
-     * 
+     *
      * @param path masterUrl
      * @return the dsl builder
      */
@@ -9899,13 +9939,13 @@ public class StaticEndpointBuilders {
      * Kubernetes ConfigMap (camel-kubernetes)
      * Perform operations on Kubernetes ConfigMaps and get notified on
      * ConfigMaps changes.
-     * 
+     *
      * Category: container,cloud
      * Since: 2.17
      * Maven coordinates: org.apache.camel:camel-kubernetes
-     * 
+     *
      * Syntax: <code>kubernetes-config-maps:masterUrl</code>
-     * 
+     *
      * Path parameter: masterUrl (required)
      * URL to a remote Kubernetes API server. This should only be used when your
      * Camel application is connecting from outside Kubernetes. If you run your
@@ -9913,7 +9953,7 @@ public class StaticEndpointBuilders {
      * the URL to tell Camel to run in local mode. If you connect remotely to
      * Kubernetes, then you may also need some of the many other configuration
      * options for secured connection with certificates, etc.
-     * 
+     *
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
      * @param path masterUrl
@@ -9925,13 +9965,13 @@ public class StaticEndpointBuilders {
     /**
      * Kubernetes Cronjob (camel-kubernetes)
      * Perform operations on Kubernetes CronJob.
-     * 
+     *
      * Category: container,cloud
      * Since: 4.3
      * Maven coordinates: org.apache.camel:camel-kubernetes
-     * 
+     *
      * Syntax: <code>kubernetes-cronjob:masterUrl</code>
-     * 
+     *
      * Path parameter: masterUrl (required)
      * URL to a remote Kubernetes API server. This should only be used when your
      * Camel application is connecting from outside Kubernetes. If you run your
@@ -9939,7 +9979,7 @@ public class StaticEndpointBuilders {
      * the URL to tell Camel to run in local mode. If you connect remotely to
      * Kubernetes, then you may also need some of the many other configuration
      * options for secured connection with certificates, etc.
-     * 
+     *
      * @param path masterUrl
      * @return the dsl builder
      */
@@ -9949,13 +9989,13 @@ public class StaticEndpointBuilders {
     /**
      * Kubernetes Cronjob (camel-kubernetes)
      * Perform operations on Kubernetes CronJob.
-     * 
+     *
      * Category: container,cloud
      * Since: 4.3
      * Maven coordinates: org.apache.camel:camel-kubernetes
-     * 
+     *
      * Syntax: <code>kubernetes-cronjob:masterUrl</code>
-     * 
+     *
      * Path parameter: masterUrl (required)
      * URL to a remote Kubernetes API server. This should only be used when your
      * Camel application is connecting from outside Kubernetes. If you run your
@@ -9963,7 +10003,7 @@ public class StaticEndpointBuilders {
      * the URL to tell Camel to run in local mode. If you connect remotely to
      * Kubernetes, then you may also need some of the many other configuration
      * options for secured connection with certificates, etc.
-     * 
+     *
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
      * @param path masterUrl
@@ -9976,13 +10016,13 @@ public class StaticEndpointBuilders {
      * Kubernetes Custom Resources (camel-kubernetes)
      * Perform operations on Kubernetes Custom Resources and get notified on
      * Deployment changes.
-     * 
+     *
      * Category: container,cloud
      * Since: 3.7
      * Maven coordinates: org.apache.camel:camel-kubernetes
-     * 
+     *
      * Syntax: <code>kubernetes-custom-resources:masterUrl</code>
-     * 
+     *
      * Path parameter: masterUrl (required)
      * URL to a remote Kubernetes API server. This should only be used when your
      * Camel application is connecting from outside Kubernetes. If you run your
@@ -9990,7 +10030,7 @@ public class StaticEndpointBuilders {
      * the URL to tell Camel to run in local mode. If you connect remotely to
      * Kubernetes, then you may also need some of the many other configuration
      * options for secured connection with certificates, etc.
-     * 
+     *
      * @param path masterUrl
      * @return the dsl builder
      */
@@ -10001,13 +10041,13 @@ public class StaticEndpointBuilders {
      * Kubernetes Custom Resources (camel-kubernetes)
      * Perform operations on Kubernetes Custom Resources and get notified on
      * Deployment changes.
-     * 
+     *
      * Category: container,cloud
      * Since: 3.7
      * Maven coordinates: org.apache.camel:camel-kubernetes
-     * 
+     *
      * Syntax: <code>kubernetes-custom-resources:masterUrl</code>
-     * 
+     *
      * Path parameter: masterUrl (required)
      * URL to a remote Kubernetes API server. This should only be used when your
      * Camel application is connecting from outside Kubernetes. If you run your
@@ -10015,7 +10055,7 @@ public class StaticEndpointBuilders {
      * the URL to tell Camel to run in local mode. If you connect remotely to
      * Kubernetes, then you may also need some of the many other configuration
      * options for secured connection with certificates, etc.
-     * 
+     *
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
      * @param path masterUrl
@@ -10028,13 +10068,13 @@ public class StaticEndpointBuilders {
      * Kubernetes Deployments (camel-kubernetes)
      * Perform operations on Kubernetes Deployments and get notified on
      * Deployment changes.
-     * 
+     *
      * Category: container,cloud
      * Since: 2.20
      * Maven coordinates: org.apache.camel:camel-kubernetes
-     * 
+     *
      * Syntax: <code>kubernetes-deployments:masterUrl</code>
-     * 
+     *
      * Path parameter: masterUrl (required)
      * URL to a remote Kubernetes API server. This should only be used when your
      * Camel application is connecting from outside Kubernetes. If you run your
@@ -10042,7 +10082,7 @@ public class StaticEndpointBuilders {
      * the URL to tell Camel to run in local mode. If you connect remotely to
      * Kubernetes, then you may also need some of the many other configuration
      * options for secured connection with certificates, etc.
-     * 
+     *
      * @param path masterUrl
      * @return the dsl builder
      */
@@ -10053,13 +10093,13 @@ public class StaticEndpointBuilders {
      * Kubernetes Deployments (camel-kubernetes)
      * Perform operations on Kubernetes Deployments and get notified on
      * Deployment changes.
-     * 
+     *
      * Category: container,cloud
      * Since: 2.20
      * Maven coordinates: org.apache.camel:camel-kubernetes
-     * 
+     *
      * Syntax: <code>kubernetes-deployments:masterUrl</code>
-     * 
+     *
      * Path parameter: masterUrl (required)
      * URL to a remote Kubernetes API server. This should only be used when your
      * Camel application is connecting from outside Kubernetes. If you run your
@@ -10067,7 +10107,7 @@ public class StaticEndpointBuilders {
      * the URL to tell Camel to run in local mode. If you connect remotely to
      * Kubernetes, then you may also need some of the many other configuration
      * options for secured connection with certificates, etc.
-     * 
+     *
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
      * @param path masterUrl
@@ -10080,13 +10120,13 @@ public class StaticEndpointBuilders {
      * Kubernetes Event (camel-kubernetes)
      * Perform operations on Kubernetes Events and get notified on Events
      * changes.
-     * 
+     *
      * Category: container,cloud
      * Since: 3.20
      * Maven coordinates: org.apache.camel:camel-kubernetes
-     * 
+     *
      * Syntax: <code>kubernetes-events:masterUrl</code>
-     * 
+     *
      * Path parameter: masterUrl (required)
      * URL to a remote Kubernetes API server. This should only be used when your
      * Camel application is connecting from outside Kubernetes. If you run your
@@ -10094,7 +10134,7 @@ public class StaticEndpointBuilders {
      * the URL to tell Camel to run in local mode. If you connect remotely to
      * Kubernetes, then you may also need some of the many other configuration
      * options for secured connection with certificates, etc.
-     * 
+     *
      * @param path masterUrl
      * @return the dsl builder
      */
@@ -10105,13 +10145,13 @@ public class StaticEndpointBuilders {
      * Kubernetes Event (camel-kubernetes)
      * Perform operations on Kubernetes Events and get notified on Events
      * changes.
-     * 
+     *
      * Category: container,cloud
      * Since: 3.20
      * Maven coordinates: org.apache.camel:camel-kubernetes
-     * 
+     *
      * Syntax: <code>kubernetes-events:masterUrl</code>
-     * 
+     *
      * Path parameter: masterUrl (required)
      * URL to a remote Kubernetes API server. This should only be used when your
      * Camel application is connecting from outside Kubernetes. If you run your
@@ -10119,7 +10159,7 @@ public class StaticEndpointBuilders {
      * the URL to tell Camel to run in local mode. If you connect remotely to
      * Kubernetes, then you may also need some of the many other configuration
      * options for secured connection with certificates, etc.
-     * 
+     *
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
      * @param path masterUrl
@@ -10132,13 +10172,13 @@ public class StaticEndpointBuilders {
      * Kubernetes HPA (camel-kubernetes)
      * Perform operations on Kubernetes Horizontal Pod Autoscalers (HPA) and get
      * notified on HPA changes.
-     * 
+     *
      * Category: container,cloud
      * Since: 2.23
      * Maven coordinates: org.apache.camel:camel-kubernetes
-     * 
+     *
      * Syntax: <code>kubernetes-hpa:masterUrl</code>
-     * 
+     *
      * Path parameter: masterUrl (required)
      * URL to a remote Kubernetes API server. This should only be used when your
      * Camel application is connecting from outside Kubernetes. If you run your
@@ -10146,7 +10186,7 @@ public class StaticEndpointBuilders {
      * the URL to tell Camel to run in local mode. If you connect remotely to
      * Kubernetes, then you may also need some of the many other configuration
      * options for secured connection with certificates, etc.
-     * 
+     *
      * @param path masterUrl
      * @return the dsl builder
      */
@@ -10157,13 +10197,13 @@ public class StaticEndpointBuilders {
      * Kubernetes HPA (camel-kubernetes)
      * Perform operations on Kubernetes Horizontal Pod Autoscalers (HPA) and get
      * notified on HPA changes.
-     * 
+     *
      * Category: container,cloud
      * Since: 2.23
      * Maven coordinates: org.apache.camel:camel-kubernetes
-     * 
+     *
      * Syntax: <code>kubernetes-hpa:masterUrl</code>
-     * 
+     *
      * Path parameter: masterUrl (required)
      * URL to a remote Kubernetes API server. This should only be used when your
      * Camel application is connecting from outside Kubernetes. If you run your
@@ -10171,7 +10211,7 @@ public class StaticEndpointBuilders {
      * the URL to tell Camel to run in local mode. If you connect remotely to
      * Kubernetes, then you may also need some of the many other configuration
      * options for secured connection with certificates, etc.
-     * 
+     *
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
      * @param path masterUrl
@@ -10183,13 +10223,13 @@ public class StaticEndpointBuilders {
     /**
      * Kubernetes Job (camel-kubernetes)
      * Perform operations on Kubernetes Jobs.
-     * 
+     *
      * Category: container,cloud
      * Since: 2.23
      * Maven coordinates: org.apache.camel:camel-kubernetes
-     * 
+     *
      * Syntax: <code>kubernetes-job:masterUrl</code>
-     * 
+     *
      * Path parameter: masterUrl (required)
      * URL to a remote Kubernetes API server. This should only be used when your
      * Camel application is connecting from outside Kubernetes. If you run your
@@ -10197,7 +10237,7 @@ public class StaticEndpointBuilders {
      * the URL to tell Camel to run in local mode. If you connect remotely to
      * Kubernetes, then you may also need some of the many other configuration
      * options for secured connection with certificates, etc.
-     * 
+     *
      * @param path masterUrl
      * @return the dsl builder
      */
@@ -10207,13 +10247,13 @@ public class StaticEndpointBuilders {
     /**
      * Kubernetes Job (camel-kubernetes)
      * Perform operations on Kubernetes Jobs.
-     * 
+     *
      * Category: container,cloud
      * Since: 2.23
      * Maven coordinates: org.apache.camel:camel-kubernetes
-     * 
+     *
      * Syntax: <code>kubernetes-job:masterUrl</code>
-     * 
+     *
      * Path parameter: masterUrl (required)
      * URL to a remote Kubernetes API server. This should only be used when your
      * Camel application is connecting from outside Kubernetes. If you run your
@@ -10221,7 +10261,7 @@ public class StaticEndpointBuilders {
      * the URL to tell Camel to run in local mode. If you connect remotely to
      * Kubernetes, then you may also need some of the many other configuration
      * options for secured connection with certificates, etc.
-     * 
+     *
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
      * @param path masterUrl
@@ -10234,13 +10274,13 @@ public class StaticEndpointBuilders {
      * Kubernetes Namespaces (camel-kubernetes)
      * Perform operations on Kubernetes Namespaces and get notified on Namespace
      * changes.
-     * 
+     *
      * Category: container,cloud
      * Since: 2.17
      * Maven coordinates: org.apache.camel:camel-kubernetes
-     * 
+     *
      * Syntax: <code>kubernetes-namespaces:masterUrl</code>
-     * 
+     *
      * Path parameter: masterUrl (required)
      * URL to a remote Kubernetes API server. This should only be used when your
      * Camel application is connecting from outside Kubernetes. If you run your
@@ -10248,7 +10288,7 @@ public class StaticEndpointBuilders {
      * the URL to tell Camel to run in local mode. If you connect remotely to
      * Kubernetes, then you may also need some of the many other configuration
      * options for secured connection with certificates, etc.
-     * 
+     *
      * @param path masterUrl
      * @return the dsl builder
      */
@@ -10259,13 +10299,13 @@ public class StaticEndpointBuilders {
      * Kubernetes Namespaces (camel-kubernetes)
      * Perform operations on Kubernetes Namespaces and get notified on Namespace
      * changes.
-     * 
+     *
      * Category: container,cloud
      * Since: 2.17
      * Maven coordinates: org.apache.camel:camel-kubernetes
-     * 
+     *
      * Syntax: <code>kubernetes-namespaces:masterUrl</code>
-     * 
+     *
      * Path parameter: masterUrl (required)
      * URL to a remote Kubernetes API server. This should only be used when your
      * Camel application is connecting from outside Kubernetes. If you run your
@@ -10273,7 +10313,7 @@ public class StaticEndpointBuilders {
      * the URL to tell Camel to run in local mode. If you connect remotely to
      * Kubernetes, then you may also need some of the many other configuration
      * options for secured connection with certificates, etc.
-     * 
+     *
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
      * @param path masterUrl
@@ -10285,13 +10325,13 @@ public class StaticEndpointBuilders {
     /**
      * Kubernetes Nodes (camel-kubernetes)
      * Perform operations on Kubernetes Nodes and get notified on Node changes.
-     * 
+     *
      * Category: container,cloud
      * Since: 2.17
      * Maven coordinates: org.apache.camel:camel-kubernetes
-     * 
+     *
      * Syntax: <code>kubernetes-nodes:masterUrl</code>
-     * 
+     *
      * Path parameter: masterUrl (required)
      * URL to a remote Kubernetes API server. This should only be used when your
      * Camel application is connecting from outside Kubernetes. If you run your
@@ -10299,7 +10339,7 @@ public class StaticEndpointBuilders {
      * the URL to tell Camel to run in local mode. If you connect remotely to
      * Kubernetes, then you may also need some of the many other configuration
      * options for secured connection with certificates, etc.
-     * 
+     *
      * @param path masterUrl
      * @return the dsl builder
      */
@@ -10309,13 +10349,13 @@ public class StaticEndpointBuilders {
     /**
      * Kubernetes Nodes (camel-kubernetes)
      * Perform operations on Kubernetes Nodes and get notified on Node changes.
-     * 
+     *
      * Category: container,cloud
      * Since: 2.17
      * Maven coordinates: org.apache.camel:camel-kubernetes
-     * 
+     *
      * Syntax: <code>kubernetes-nodes:masterUrl</code>
-     * 
+     *
      * Path parameter: masterUrl (required)
      * URL to a remote Kubernetes API server. This should only be used when your
      * Camel application is connecting from outside Kubernetes. If you run your
@@ -10323,7 +10363,7 @@ public class StaticEndpointBuilders {
      * the URL to tell Camel to run in local mode. If you connect remotely to
      * Kubernetes, then you may also need some of the many other configuration
      * options for secured connection with certificates, etc.
-     * 
+     *
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
      * @param path masterUrl
@@ -10336,13 +10376,13 @@ public class StaticEndpointBuilders {
      * Kubernetes Persistent Volume (camel-kubernetes)
      * Perform operations on Kubernetes Persistent Volumes and get notified on
      * Persistent Volume changes.
-     * 
+     *
      * Category: container,cloud
      * Since: 2.17
      * Maven coordinates: org.apache.camel:camel-kubernetes
-     * 
+     *
      * Syntax: <code>kubernetes-persistent-volumes:masterUrl</code>
-     * 
+     *
      * Path parameter: masterUrl (required)
      * URL to a remote Kubernetes API server. This should only be used when your
      * Camel application is connecting from outside Kubernetes. If you run your
@@ -10350,7 +10390,7 @@ public class StaticEndpointBuilders {
      * the URL to tell Camel to run in local mode. If you connect remotely to
      * Kubernetes, then you may also need some of the many other configuration
      * options for secured connection with certificates, etc.
-     * 
+     *
      * @param path masterUrl
      * @return the dsl builder
      */
@@ -10361,13 +10401,13 @@ public class StaticEndpointBuilders {
      * Kubernetes Persistent Volume (camel-kubernetes)
      * Perform operations on Kubernetes Persistent Volumes and get notified on
      * Persistent Volume changes.
-     * 
+     *
      * Category: container,cloud
      * Since: 2.17
      * Maven coordinates: org.apache.camel:camel-kubernetes
-     * 
+     *
      * Syntax: <code>kubernetes-persistent-volumes:masterUrl</code>
-     * 
+     *
      * Path parameter: masterUrl (required)
      * URL to a remote Kubernetes API server. This should only be used when your
      * Camel application is connecting from outside Kubernetes. If you run your
@@ -10375,7 +10415,7 @@ public class StaticEndpointBuilders {
      * the URL to tell Camel to run in local mode. If you connect remotely to
      * Kubernetes, then you may also need some of the many other configuration
      * options for secured connection with certificates, etc.
-     * 
+     *
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
      * @param path masterUrl
@@ -10388,13 +10428,13 @@ public class StaticEndpointBuilders {
      * Kubernetes Persistent Volume Claim (camel-kubernetes)
      * Perform operations on Kubernetes Persistent Volumes Claims and get
      * notified on Persistent Volumes Claim changes.
-     * 
+     *
      * Category: container,cloud
      * Since: 2.17
      * Maven coordinates: org.apache.camel:camel-kubernetes
-     * 
+     *
      * Syntax: <code>kubernetes-persistent-volumes-claims:masterUrl</code>
-     * 
+     *
      * Path parameter: masterUrl (required)
      * URL to a remote Kubernetes API server. This should only be used when your
      * Camel application is connecting from outside Kubernetes. If you run your
@@ -10402,7 +10442,7 @@ public class StaticEndpointBuilders {
      * the URL to tell Camel to run in local mode. If you connect remotely to
      * Kubernetes, then you may also need some of the many other configuration
      * options for secured connection with certificates, etc.
-     * 
+     *
      * @param path masterUrl
      * @return the dsl builder
      */
@@ -10413,13 +10453,13 @@ public class StaticEndpointBuilders {
      * Kubernetes Persistent Volume Claim (camel-kubernetes)
      * Perform operations on Kubernetes Persistent Volumes Claims and get
      * notified on Persistent Volumes Claim changes.
-     * 
+     *
      * Category: container,cloud
      * Since: 2.17
      * Maven coordinates: org.apache.camel:camel-kubernetes
-     * 
+     *
      * Syntax: <code>kubernetes-persistent-volumes-claims:masterUrl</code>
-     * 
+     *
      * Path parameter: masterUrl (required)
      * URL to a remote Kubernetes API server. This should only be used when your
      * Camel application is connecting from outside Kubernetes. If you run your
@@ -10427,7 +10467,7 @@ public class StaticEndpointBuilders {
      * the URL to tell Camel to run in local mode. If you connect remotely to
      * Kubernetes, then you may also need some of the many other configuration
      * options for secured connection with certificates, etc.
-     * 
+     *
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
      * @param path masterUrl
@@ -10439,13 +10479,13 @@ public class StaticEndpointBuilders {
     /**
      * Kubernetes Pods (camel-kubernetes)
      * Perform operations on Kubernetes Pods and get notified on Pod changes.
-     * 
+     *
      * Category: container,cloud
      * Since: 2.17
      * Maven coordinates: org.apache.camel:camel-kubernetes
-     * 
+     *
      * Syntax: <code>kubernetes-pods:masterUrl</code>
-     * 
+     *
      * Path parameter: masterUrl (required)
      * URL to a remote Kubernetes API server. This should only be used when your
      * Camel application is connecting from outside Kubernetes. If you run your
@@ -10453,7 +10493,7 @@ public class StaticEndpointBuilders {
      * the URL to tell Camel to run in local mode. If you connect remotely to
      * Kubernetes, then you may also need some of the many other configuration
      * options for secured connection with certificates, etc.
-     * 
+     *
      * @param path masterUrl
      * @return the dsl builder
      */
@@ -10463,13 +10503,13 @@ public class StaticEndpointBuilders {
     /**
      * Kubernetes Pods (camel-kubernetes)
      * Perform operations on Kubernetes Pods and get notified on Pod changes.
-     * 
+     *
      * Category: container,cloud
      * Since: 2.17
      * Maven coordinates: org.apache.camel:camel-kubernetes
-     * 
+     *
      * Syntax: <code>kubernetes-pods:masterUrl</code>
-     * 
+     *
      * Path parameter: masterUrl (required)
      * URL to a remote Kubernetes API server. This should only be used when your
      * Camel application is connecting from outside Kubernetes. If you run your
@@ -10477,7 +10517,7 @@ public class StaticEndpointBuilders {
      * the URL to tell Camel to run in local mode. If you connect remotely to
      * Kubernetes, then you may also need some of the many other configuration
      * options for secured connection with certificates, etc.
-     * 
+     *
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
      * @param path masterUrl
@@ -10490,13 +10530,13 @@ public class StaticEndpointBuilders {
      * Kubernetes Replication Controller (camel-kubernetes)
      * Perform operations on Kubernetes Replication Controllers and get notified
      * on Replication Controllers changes.
-     * 
+     *
      * Category: container,cloud
      * Since: 2.17
      * Maven coordinates: org.apache.camel:camel-kubernetes
-     * 
+     *
      * Syntax: <code>kubernetes-replication-controllers:masterUrl</code>
-     * 
+     *
      * Path parameter: masterUrl (required)
      * URL to a remote Kubernetes API server. This should only be used when your
      * Camel application is connecting from outside Kubernetes. If you run your
@@ -10504,7 +10544,7 @@ public class StaticEndpointBuilders {
      * the URL to tell Camel to run in local mode. If you connect remotely to
      * Kubernetes, then you may also need some of the many other configuration
      * options for secured connection with certificates, etc.
-     * 
+     *
      * @param path masterUrl
      * @return the dsl builder
      */
@@ -10515,13 +10555,13 @@ public class StaticEndpointBuilders {
      * Kubernetes Replication Controller (camel-kubernetes)
      * Perform operations on Kubernetes Replication Controllers and get notified
      * on Replication Controllers changes.
-     * 
+     *
      * Category: container,cloud
      * Since: 2.17
      * Maven coordinates: org.apache.camel:camel-kubernetes
-     * 
+     *
      * Syntax: <code>kubernetes-replication-controllers:masterUrl</code>
-     * 
+     *
      * Path parameter: masterUrl (required)
      * URL to a remote Kubernetes API server. This should only be used when your
      * Camel application is connecting from outside Kubernetes. If you run your
@@ -10529,7 +10569,7 @@ public class StaticEndpointBuilders {
      * the URL to tell Camel to run in local mode. If you connect remotely to
      * Kubernetes, then you may also need some of the many other configuration
      * options for secured connection with certificates, etc.
-     * 
+     *
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
      * @param path masterUrl
@@ -10541,13 +10581,13 @@ public class StaticEndpointBuilders {
     /**
      * Kubernetes Resources Quota (camel-kubernetes)
      * Perform operations on Kubernetes Resources Quotas.
-     * 
+     *
      * Category: container,cloud
      * Since: 2.17
      * Maven coordinates: org.apache.camel:camel-kubernetes
-     * 
+     *
      * Syntax: <code>kubernetes-resources-quota:masterUrl</code>
-     * 
+     *
      * Path parameter: masterUrl (required)
      * URL to a remote Kubernetes API server. This should only be used when your
      * Camel application is connecting from outside Kubernetes. If you run your
@@ -10555,7 +10595,7 @@ public class StaticEndpointBuilders {
      * the URL to tell Camel to run in local mode. If you connect remotely to
      * Kubernetes, then you may also need some of the many other configuration
      * options for secured connection with certificates, etc.
-     * 
+     *
      * @param path masterUrl
      * @return the dsl builder
      */
@@ -10565,13 +10605,13 @@ public class StaticEndpointBuilders {
     /**
      * Kubernetes Resources Quota (camel-kubernetes)
      * Perform operations on Kubernetes Resources Quotas.
-     * 
+     *
      * Category: container,cloud
      * Since: 2.17
      * Maven coordinates: org.apache.camel:camel-kubernetes
-     * 
+     *
      * Syntax: <code>kubernetes-resources-quota:masterUrl</code>
-     * 
+     *
      * Path parameter: masterUrl (required)
      * URL to a remote Kubernetes API server. This should only be used when your
      * Camel application is connecting from outside Kubernetes. If you run your
@@ -10579,7 +10619,7 @@ public class StaticEndpointBuilders {
      * the URL to tell Camel to run in local mode. If you connect remotely to
      * Kubernetes, then you may also need some of the many other configuration
      * options for secured connection with certificates, etc.
-     * 
+     *
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
      * @param path masterUrl
@@ -10591,13 +10631,13 @@ public class StaticEndpointBuilders {
     /**
      * Kubernetes Secrets (camel-kubernetes)
      * Perform operations on Kubernetes Secrets.
-     * 
+     *
      * Category: container,cloud
      * Since: 2.17
      * Maven coordinates: org.apache.camel:camel-kubernetes
-     * 
+     *
      * Syntax: <code>kubernetes-secrets:masterUrl</code>
-     * 
+     *
      * Path parameter: masterUrl (required)
      * URL to a remote Kubernetes API server. This should only be used when your
      * Camel application is connecting from outside Kubernetes. If you run your
@@ -10605,7 +10645,7 @@ public class StaticEndpointBuilders {
      * the URL to tell Camel to run in local mode. If you connect remotely to
      * Kubernetes, then you may also need some of the many other configuration
      * options for secured connection with certificates, etc.
-     * 
+     *
      * @param path masterUrl
      * @return the dsl builder
      */
@@ -10615,13 +10655,13 @@ public class StaticEndpointBuilders {
     /**
      * Kubernetes Secrets (camel-kubernetes)
      * Perform operations on Kubernetes Secrets.
-     * 
+     *
      * Category: container,cloud
      * Since: 2.17
      * Maven coordinates: org.apache.camel:camel-kubernetes
-     * 
+     *
      * Syntax: <code>kubernetes-secrets:masterUrl</code>
-     * 
+     *
      * Path parameter: masterUrl (required)
      * URL to a remote Kubernetes API server. This should only be used when your
      * Camel application is connecting from outside Kubernetes. If you run your
@@ -10629,7 +10669,7 @@ public class StaticEndpointBuilders {
      * the URL to tell Camel to run in local mode. If you connect remotely to
      * Kubernetes, then you may also need some of the many other configuration
      * options for secured connection with certificates, etc.
-     * 
+     *
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
      * @param path masterUrl
@@ -10641,13 +10681,13 @@ public class StaticEndpointBuilders {
     /**
      * Kubernetes Service Account (camel-kubernetes)
      * Perform operations on Kubernetes Service Accounts.
-     * 
+     *
      * Category: container,cloud
      * Since: 2.17
      * Maven coordinates: org.apache.camel:camel-kubernetes
-     * 
+     *
      * Syntax: <code>kubernetes-service-accounts:masterUrl</code>
-     * 
+     *
      * Path parameter: masterUrl (required)
      * URL to a remote Kubernetes API server. This should only be used when your
      * Camel application is connecting from outside Kubernetes. If you run your
@@ -10655,7 +10695,7 @@ public class StaticEndpointBuilders {
      * the URL to tell Camel to run in local mode. If you connect remotely to
      * Kubernetes, then you may also need some of the many other configuration
      * options for secured connection with certificates, etc.
-     * 
+     *
      * @param path masterUrl
      * @return the dsl builder
      */
@@ -10665,13 +10705,13 @@ public class StaticEndpointBuilders {
     /**
      * Kubernetes Service Account (camel-kubernetes)
      * Perform operations on Kubernetes Service Accounts.
-     * 
+     *
      * Category: container,cloud
      * Since: 2.17
      * Maven coordinates: org.apache.camel:camel-kubernetes
-     * 
+     *
      * Syntax: <code>kubernetes-service-accounts:masterUrl</code>
-     * 
+     *
      * Path parameter: masterUrl (required)
      * URL to a remote Kubernetes API server. This should only be used when your
      * Camel application is connecting from outside Kubernetes. If you run your
@@ -10679,7 +10719,7 @@ public class StaticEndpointBuilders {
      * the URL to tell Camel to run in local mode. If you connect remotely to
      * Kubernetes, then you may also need some of the many other configuration
      * options for secured connection with certificates, etc.
-     * 
+     *
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
      * @param path masterUrl
@@ -10692,13 +10732,13 @@ public class StaticEndpointBuilders {
      * Kubernetes Services (camel-kubernetes)
      * Perform operations on Kubernetes Services and get notified on Service
      * changes.
-     * 
+     *
      * Category: container,cloud
      * Since: 2.17
      * Maven coordinates: org.apache.camel:camel-kubernetes
-     * 
+     *
      * Syntax: <code>kubernetes-services:masterUrl</code>
-     * 
+     *
      * Path parameter: masterUrl (required)
      * URL to a remote Kubernetes API server. This should only be used when your
      * Camel application is connecting from outside Kubernetes. If you run your
@@ -10706,7 +10746,7 @@ public class StaticEndpointBuilders {
      * the URL to tell Camel to run in local mode. If you connect remotely to
      * Kubernetes, then you may also need some of the many other configuration
      * options for secured connection with certificates, etc.
-     * 
+     *
      * @param path masterUrl
      * @return the dsl builder
      */
@@ -10717,13 +10757,13 @@ public class StaticEndpointBuilders {
      * Kubernetes Services (camel-kubernetes)
      * Perform operations on Kubernetes Services and get notified on Service
      * changes.
-     * 
+     *
      * Category: container,cloud
      * Since: 2.17
      * Maven coordinates: org.apache.camel:camel-kubernetes
-     * 
+     *
      * Syntax: <code>kubernetes-services:masterUrl</code>
-     * 
+     *
      * Path parameter: masterUrl (required)
      * URL to a remote Kubernetes API server. This should only be used when your
      * Camel application is connecting from outside Kubernetes. If you run your
@@ -10731,7 +10771,7 @@ public class StaticEndpointBuilders {
      * the URL to tell Camel to run in local mode. If you connect remotely to
      * Kubernetes, then you may also need some of the many other configuration
      * options for secured connection with certificates, etc.
-     * 
+     *
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
      * @param path masterUrl
@@ -10744,22 +10784,22 @@ public class StaticEndpointBuilders {
      * Kudu (camel-kudu)
      * Interact with Apache Kudu, a free and open source column-oriented data
      * store of the Apache Hadoop ecosystem.
-     * 
+     *
      * Category: database,iot,cloud
      * Since: 3.0
      * Maven coordinates: org.apache.camel:camel-kudu
-     * 
+     *
      * Syntax: <code>kudu:host:port/tableName</code>
-     * 
+     *
      * Path parameter: host (required)
      * Host of the server to connect to
-     * 
+     *
      * Path parameter: port (required)
      * Port of the server to connect to
-     * 
+     *
      * Path parameter: tableName
      * Table to connect to
-     * 
+     *
      * @param path host:port/tableName
      * @return the dsl builder
      */
@@ -10770,22 +10810,22 @@ public class StaticEndpointBuilders {
      * Kudu (camel-kudu)
      * Interact with Apache Kudu, a free and open source column-oriented data
      * store of the Apache Hadoop ecosystem.
-     * 
+     *
      * Category: database,iot,cloud
      * Since: 3.0
      * Maven coordinates: org.apache.camel:camel-kudu
-     * 
+     *
      * Syntax: <code>kudu:host:port/tableName</code>
-     * 
+     *
      * Path parameter: host (required)
      * Host of the server to connect to
-     * 
+     *
      * Path parameter: port (required)
      * Port of the server to connect to
-     * 
+     *
      * Path parameter: tableName
      * Table to connect to
-     * 
+     *
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
      * @param path host:port/tableName
@@ -10797,16 +10837,16 @@ public class StaticEndpointBuilders {
     /**
      * LangChain4j Agent (camel-langchain4j-agent)
      * LangChain4j Agent component
-     * 
+     *
      * Category: ai
      * Since: 4.14
      * Maven coordinates: org.apache.camel:camel-langchain4j-agent
-     * 
+     *
      * Syntax: <code>langchain4j-agent:agentId</code>
-     * 
+     *
      * Path parameter: agentId (required)
      * The Agent id
-     * 
+     *
      * @param path agentId
      * @return the dsl builder
      */
@@ -10816,16 +10856,16 @@ public class StaticEndpointBuilders {
     /**
      * LangChain4j Agent (camel-langchain4j-agent)
      * LangChain4j Agent component
-     * 
+     *
      * Category: ai
      * Since: 4.14
      * Maven coordinates: org.apache.camel:camel-langchain4j-agent
-     * 
+     *
      * Syntax: <code>langchain4j-agent:agentId</code>
-     * 
+     *
      * Path parameter: agentId (required)
      * The Agent id
-     * 
+     *
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
      * @param path agentId
@@ -10837,16 +10877,16 @@ public class StaticEndpointBuilders {
     /**
      * LangChain4j Chat (camel-langchain4j-chat)
      * LangChain4j Chat component
-     * 
+     *
      * Category: ai
      * Since: 4.5
      * Maven coordinates: org.apache.camel:camel-langchain4j-chat
-     * 
+     *
      * Syntax: <code>langchain4j-chat:chatId</code>
-     * 
+     *
      * Path parameter: chatId (required)
      * The id
-     * 
+     *
      * @param path chatId
      * @return the dsl builder
      */
@@ -10856,16 +10896,16 @@ public class StaticEndpointBuilders {
     /**
      * LangChain4j Chat (camel-langchain4j-chat)
      * LangChain4j Chat component
-     * 
+     *
      * Category: ai
      * Since: 4.5
      * Maven coordinates: org.apache.camel:camel-langchain4j-chat
-     * 
+     *
      * Syntax: <code>langchain4j-chat:chatId</code>
-     * 
+     *
      * Path parameter: chatId (required)
      * The id
-     * 
+     *
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
      * @param path chatId
@@ -10877,16 +10917,16 @@ public class StaticEndpointBuilders {
     /**
      * LangChain4j Embeddings (camel-langchain4j-embeddings)
      * LangChain4j Embeddings
-     * 
+     *
      * Category: ai
      * Since: 4.5
      * Maven coordinates: org.apache.camel:camel-langchain4j-embeddings
-     * 
+     *
      * Syntax: <code>langchain4j-embeddings:embeddingId</code>
-     * 
+     *
      * Path parameter: embeddingId (required)
      * The id
-     * 
+     *
      * @param path embeddingId
      * @return the dsl builder
      */
@@ -10896,16 +10936,16 @@ public class StaticEndpointBuilders {
     /**
      * LangChain4j Embeddings (camel-langchain4j-embeddings)
      * LangChain4j Embeddings
-     * 
+     *
      * Category: ai
      * Since: 4.5
      * Maven coordinates: org.apache.camel:camel-langchain4j-embeddings
-     * 
+     *
      * Syntax: <code>langchain4j-embeddings:embeddingId</code>
-     * 
+     *
      * Path parameter: embeddingId (required)
      * The id
-     * 
+     *
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
      * @param path embeddingId
@@ -10917,16 +10957,16 @@ public class StaticEndpointBuilders {
     /**
      * LangChain4j Embedding Store (camel-langchain4j-embeddingstore)
      * Perform operations on the LangChain4jEmbeddingStores.
-     * 
+     *
      * Category: database,ai
      * Since: 4.14
      * Maven coordinates: org.apache.camel:camel-langchain4j-embeddingstore
-     * 
+     *
      * Syntax: <code>langchain4j-embeddingstore:embeddingStoreId</code>
-     * 
+     *
      * Path parameter: embeddingStoreId (required)
      * The id of the embedding store
-     * 
+     *
      * @param path embeddingStoreId
      * @return the dsl builder
      */
@@ -10936,16 +10976,16 @@ public class StaticEndpointBuilders {
     /**
      * LangChain4j Embedding Store (camel-langchain4j-embeddingstore)
      * Perform operations on the LangChain4jEmbeddingStores.
-     * 
+     *
      * Category: database,ai
      * Since: 4.14
      * Maven coordinates: org.apache.camel:camel-langchain4j-embeddingstore
-     * 
+     *
      * Syntax: <code>langchain4j-embeddingstore:embeddingStoreId</code>
-     * 
+     *
      * Path parameter: embeddingStoreId (required)
      * The id of the embedding store
-     * 
+     *
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
      * @param path embeddingStoreId
@@ -10957,16 +10997,16 @@ public class StaticEndpointBuilders {
     /**
      * LangChain4j Web Search (camel-langchain4j-web-search)
      * LangChain4j Web Search Engine
-     * 
+     *
      * Category: ai
      * Since: 4.8
      * Maven coordinates: org.apache.camel:camel-langchain4j-web-search
-     * 
+     *
      * Syntax: <code>langchain4j-web-search:searchId</code>
-     * 
+     *
      * Path parameter: searchId (required)
      * The id
-     * 
+     *
      * @param path searchId
      * @return the dsl builder
      */
@@ -10976,16 +11016,16 @@ public class StaticEndpointBuilders {
     /**
      * LangChain4j Web Search (camel-langchain4j-web-search)
      * LangChain4j Web Search Engine
-     * 
+     *
      * Category: ai
      * Since: 4.8
      * Maven coordinates: org.apache.camel:camel-langchain4j-web-search
-     * 
+     *
      * Syntax: <code>langchain4j-web-search:searchId</code>
-     * 
+     *
      * Path parameter: searchId (required)
      * The id
-     * 
+     *
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
      * @param path searchId
@@ -10997,26 +11037,26 @@ public class StaticEndpointBuilders {
     /**
      * Language (camel-language)
      * Execute scripts in any of the languages supported by Camel.
-     * 
+     *
      * Category: core,script
      * Since: 2.5
      * Maven coordinates: org.apache.camel:camel-language
-     * 
+     *
      * Syntax: <code>language:languageName:resourceUri</code>
-     * 
+     *
      * Path parameter: languageName (required)
      * Sets the name of the language to use
      * There are 27 enums and the value can be one of: bean, constant,
      * datasonnet, exchangeProperty, file, groovy, header, hl7terser, java,
      * joor, jq, js, jsonpath, mvel, ognl, python, python3, quickjs, ref,
      * simple, spel, tokenize, variable, wasm, xpath, xquery, xtokenize
-     * 
+     *
      * Path parameter: resourceUri
      * Path to the resource, or a reference to lookup a bean in the Registry to
      * use as the resource
      * This option can also be loaded from an existing file, by prefixing with
      * file: or classpath: followed by the location of the file.
-     * 
+     *
      * @param path languageName:resourceUri
      * @return the dsl builder
      */
@@ -11026,26 +11066,26 @@ public class StaticEndpointBuilders {
     /**
      * Language (camel-language)
      * Execute scripts in any of the languages supported by Camel.
-     * 
+     *
      * Category: core,script
      * Since: 2.5
      * Maven coordinates: org.apache.camel:camel-language
-     * 
+     *
      * Syntax: <code>language:languageName:resourceUri</code>
-     * 
+     *
      * Path parameter: languageName (required)
      * Sets the name of the language to use
      * There are 27 enums and the value can be one of: bean, constant,
      * datasonnet, exchangeProperty, file, groovy, header, hl7terser, java,
      * joor, jq, js, jsonpath, mvel, ognl, python, python3, quickjs, ref,
      * simple, spel, tokenize, variable, wasm, xpath, xquery, xtokenize
-     * 
+     *
      * Path parameter: resourceUri
      * Path to the resource, or a reference to lookup a bean in the Registry to
      * use as the resource
      * This option can also be loaded from an existing file, by prefixing with
      * file: or classpath: followed by the location of the file.
-     * 
+     *
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
      * @param path languageName:resourceUri
@@ -11057,13 +11097,13 @@ public class StaticEndpointBuilders {
     /**
      * LDAP (camel-ldap)
      * Perform searches on LDAP servers.
-     * 
+     *
      * Category: database,security
      * Since: 1.5
      * Maven coordinates: org.apache.camel:camel-ldap
-     * 
+     *
      * Syntax: <code>ldap:dirContextName</code>
-     * 
+     *
      * Path parameter: dirContextName (required)
      * Name of either a javax.naming.directory.DirContext, or
      * java.util.Hashtable, or Map bean to lookup in the registry. If the bean
@@ -11073,7 +11113,7 @@ public class StaticEndpointBuilders {
      * latter may not be possible in all situations where the
      * javax.naming.directory.DirContext must not be shared, and in those
      * situations it can be better to use java.util.Hashtable or Map instead.
-     * 
+     *
      * @param path dirContextName
      * @return the dsl builder
      */
@@ -11083,13 +11123,13 @@ public class StaticEndpointBuilders {
     /**
      * LDAP (camel-ldap)
      * Perform searches on LDAP servers.
-     * 
+     *
      * Category: database,security
      * Since: 1.5
      * Maven coordinates: org.apache.camel:camel-ldap
-     * 
+     *
      * Syntax: <code>ldap:dirContextName</code>
-     * 
+     *
      * Path parameter: dirContextName (required)
      * Name of either a javax.naming.directory.DirContext, or
      * java.util.Hashtable, or Map bean to lookup in the registry. If the bean
@@ -11099,7 +11139,7 @@ public class StaticEndpointBuilders {
      * latter may not be possible in all situations where the
      * javax.naming.directory.DirContext must not be shared, and in those
      * situations it can be better to use java.util.Hashtable or Map instead.
-     * 
+     *
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
      * @param path dirContextName
@@ -11111,18 +11151,18 @@ public class StaticEndpointBuilders {
     /**
      * LDIF (camel-ldif)
      * Perform updates on an LDAP server from an LDIF body content.
-     * 
+     *
      * Category: database,security
      * Since: 2.20
      * Maven coordinates: org.apache.camel:camel-ldif
-     * 
+     *
      * Syntax: <code>ldif:ldapConnectionName</code>
-     * 
+     *
      * Path parameter: ldapConnectionName (required)
      * The name of the LdapConnection bean to pull from the registry. Note that
      * this must be of scope prototype to avoid it being shared among threads or
      * using a connection that has timed out.
-     * 
+     *
      * @param path ldapConnectionName
      * @return the dsl builder
      */
@@ -11132,18 +11172,18 @@ public class StaticEndpointBuilders {
     /**
      * LDIF (camel-ldif)
      * Perform updates on an LDAP server from an LDIF body content.
-     * 
+     *
      * Category: database,security
      * Since: 2.20
      * Maven coordinates: org.apache.camel:camel-ldif
-     * 
+     *
      * Syntax: <code>ldif:ldapConnectionName</code>
-     * 
+     *
      * Path parameter: ldapConnectionName (required)
      * The name of the LdapConnection bean to pull from the registry. Note that
      * this must be of scope prototype to avoid it being shared among threads or
      * using a connection that has timed out.
-     * 
+     *
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
      * @param path ldapConnectionName
@@ -11156,16 +11196,16 @@ public class StaticEndpointBuilders {
      * Log Data (camel-log)
      * Prints data from the routed message (such as body and headers) to the
      * logger.
-     * 
+     *
      * Category: core,monitoring
      * Since: 1.1
      * Maven coordinates: org.apache.camel:camel-log
-     * 
+     *
      * Syntax: <code>log:loggerName</code>
-     * 
+     *
      * Path parameter: loggerName (required)
      * Name of the logging category to use
-     * 
+     *
      * @param path loggerName
      * @return the dsl builder
      */
@@ -11176,16 +11216,16 @@ public class StaticEndpointBuilders {
      * Log Data (camel-log)
      * Prints data from the routed message (such as body and headers) to the
      * logger.
-     * 
+     *
      * Category: core,monitoring
      * Since: 1.1
      * Maven coordinates: org.apache.camel:camel-log
-     * 
+     *
      * Syntax: <code>log:loggerName</code>
-     * 
+     *
      * Path parameter: loggerName (required)
      * Name of the logging category to use
-     * 
+     *
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
      * @param path loggerName
@@ -11197,22 +11237,22 @@ public class StaticEndpointBuilders {
     /**
      * Printer (camel-printer)
      * Send print jobs to printers.
-     * 
+     *
      * Category: document
      * Since: 2.1
      * Maven coordinates: org.apache.camel:camel-printer
-     * 
+     *
      * Syntax: <code>lpr:hostname:port/printername</code>
-     * 
+     *
      * Path parameter: hostname (required)
      * Hostname of the printer
-     * 
+     *
      * Path parameter: port
      * Port number of the printer
-     * 
+     *
      * Path parameter: printername
      * Name of the printer
-     * 
+     *
      * @param path hostname:port/printername
      * @return the dsl builder
      */
@@ -11222,22 +11262,22 @@ public class StaticEndpointBuilders {
     /**
      * Printer (camel-printer)
      * Send print jobs to printers.
-     * 
+     *
      * Category: document
      * Since: 2.1
      * Maven coordinates: org.apache.camel:camel-printer
-     * 
+     *
      * Syntax: <code>lpr:hostname:port/printername</code>
-     * 
+     *
      * Path parameter: hostname (required)
      * Hostname of the printer
-     * 
+     *
      * Path parameter: port
      * Port number of the printer
-     * 
+     *
      * Path parameter: printername
      * Name of the printer
-     * 
+     *
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
      * @param path hostname:port/printername
@@ -11249,20 +11289,20 @@ public class StaticEndpointBuilders {
     /**
      * Lucene (camel-lucene)
      * Perform inserts or queries against Apache Lucene databases.
-     * 
+     *
      * Category: database,search
      * Since: 2.2
      * Maven coordinates: org.apache.camel:camel-lucene
-     * 
+     *
      * Syntax: <code>lucene:host:operation</code>
-     * 
+     *
      * Path parameter: host (required)
      * The URL to the lucene server
-     * 
+     *
      * Path parameter: operation (required)
      * Operation to do such as insert or query.
      * There are 2 enums and the value can be one of: insert, query
-     * 
+     *
      * @param path host:operation
      * @return the dsl builder
      */
@@ -11272,20 +11312,20 @@ public class StaticEndpointBuilders {
     /**
      * Lucene (camel-lucene)
      * Perform inserts or queries against Apache Lucene databases.
-     * 
+     *
      * Category: database,search
      * Since: 2.2
      * Maven coordinates: org.apache.camel:camel-lucene
-     * 
+     *
      * Syntax: <code>lucene:host:operation</code>
-     * 
+     *
      * Path parameter: host (required)
      * The URL to the lucene server
-     * 
+     *
      * Path parameter: operation (required)
      * Operation to do such as insert or query.
      * There are 2 enums and the value can be one of: insert, query
-     * 
+     *
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
      * @param path host:operation
@@ -11297,20 +11337,20 @@ public class StaticEndpointBuilders {
     /**
      * Lumberjack (camel-lumberjack)
      * Receive logs messages using the Lumberjack protocol.
-     * 
+     *
      * Category: monitoring
      * Since: 2.18
      * Maven coordinates: org.apache.camel:camel-lumberjack
-     * 
+     *
      * Syntax: <code>lumberjack:host:port</code>
-     * 
+     *
      * Path parameter: host (required)
      * Network interface on which to listen for Lumberjack
-     * 
+     *
      * Path parameter: port
      * Network port on which to listen for Lumberjack
      * Default value: 5044
-     * 
+     *
      * @param path host:port
      * @return the dsl builder
      */
@@ -11320,20 +11360,20 @@ public class StaticEndpointBuilders {
     /**
      * Lumberjack (camel-lumberjack)
      * Receive logs messages using the Lumberjack protocol.
-     * 
+     *
      * Category: monitoring
      * Since: 2.18
      * Maven coordinates: org.apache.camel:camel-lumberjack
-     * 
+     *
      * Syntax: <code>lumberjack:host:port</code>
-     * 
+     *
      * Path parameter: host (required)
      * Network interface on which to listen for Lumberjack
-     * 
+     *
      * Path parameter: port
      * Network port on which to listen for Lumberjack
      * Default value: 5044
-     * 
+     *
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
      * @param path host:port
@@ -11345,17 +11385,17 @@ public class StaticEndpointBuilders {
     /**
      * MapStruct (camel-mapstruct)
      * Type Conversion using MapStruct
-     * 
+     *
      * Category: transformation
      * Since: 3.19
      * Maven coordinates: org.apache.camel:camel-mapstruct
-     * 
+     *
      * Syntax: <code>mapstruct:className</code>
-     * 
+     *
      * Path parameter: className (required)
      * The fully qualified class name of the POJO that mapstruct should convert
      * to (target)
-     * 
+     *
      * @param path className
      * @return the dsl builder
      */
@@ -11365,17 +11405,17 @@ public class StaticEndpointBuilders {
     /**
      * MapStruct (camel-mapstruct)
      * Type Conversion using MapStruct
-     * 
+     *
      * Category: transformation
      * Since: 3.19
      * Maven coordinates: org.apache.camel:camel-mapstruct
-     * 
+     *
      * Syntax: <code>mapstruct:className</code>
-     * 
+     *
      * Path parameter: className (required)
      * The fully qualified class name of the POJO that mapstruct should convert
      * to (target)
-     * 
+     *
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
      * @param path className
@@ -11388,19 +11428,19 @@ public class StaticEndpointBuilders {
      * Master (camel-master)
      * Have only a single consumer in a cluster consuming from a given endpoint;
      * with automatic failover if the JVM dies.
-     * 
+     *
      * Category: clustering
      * Since: 2.20
      * Maven coordinates: org.apache.camel:camel-master
-     * 
+     *
      * Syntax: <code>master:namespace:delegateUri</code>
-     * 
+     *
      * Path parameter: namespace (required)
      * The name of the cluster namespace to use
-     * 
+     *
      * Path parameter: delegateUri (required)
      * The endpoint uri to use in master/slave mode
-     * 
+     *
      * @param path namespace:delegateUri
      * @return the dsl builder
      */
@@ -11411,19 +11451,19 @@ public class StaticEndpointBuilders {
      * Master (camel-master)
      * Have only a single consumer in a cluster consuming from a given endpoint;
      * with automatic failover if the JVM dies.
-     * 
+     *
      * Category: clustering
      * Since: 2.20
      * Maven coordinates: org.apache.camel:camel-master
-     * 
+     *
      * Syntax: <code>master:namespace:delegateUri</code>
-     * 
+     *
      * Path parameter: namespace (required)
      * The name of the cluster namespace to use
-     * 
+     *
      * Path parameter: delegateUri (required)
      * The endpoint uri to use in master/slave mode
-     * 
+     *
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
      * @param path namespace:delegateUri
@@ -11436,21 +11476,21 @@ public class StaticEndpointBuilders {
      * Metrics (camel-metrics)
      * Collect various metrics directly from Camel routes using the DropWizard
      * metrics library.
-     * 
+     *
      * Category: monitoring
      * Since: 2.14
      * Maven coordinates: org.apache.camel:camel-metrics
-     * 
+     *
      * Syntax: <code>metrics:metricsType:metricsName</code>
-     * 
+     *
      * Path parameter: metricsType (required)
      * Type of metrics
      * There are 5 enums and the value can be one of: gauge, counter, histogram,
      * meter, timer
-     * 
+     *
      * Path parameter: metricsName (required)
      * Name of metrics
-     * 
+     *
      * @param path metricsType:metricsName
      * @return the dsl builder
      */
@@ -11461,21 +11501,21 @@ public class StaticEndpointBuilders {
      * Metrics (camel-metrics)
      * Collect various metrics directly from Camel routes using the DropWizard
      * metrics library.
-     * 
+     *
      * Category: monitoring
      * Since: 2.14
      * Maven coordinates: org.apache.camel:camel-metrics
-     * 
+     *
      * Syntax: <code>metrics:metricsType:metricsName</code>
-     * 
+     *
      * Path parameter: metricsType (required)
      * Type of metrics
      * There are 5 enums and the value can be one of: gauge, counter, histogram,
      * meter, timer
-     * 
+     *
      * Path parameter: metricsName (required)
      * Name of metrics
-     * 
+     *
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
      * @param path metricsType:metricsName
@@ -11488,20 +11528,20 @@ public class StaticEndpointBuilders {
      * Micrometer (camel-micrometer)
      * Collect various metrics directly from Camel routes using the Micrometer
      * library.
-     * 
+     *
      * Category: monitoring
      * Since: 2.22
      * Maven coordinates: org.apache.camel:camel-micrometer
-     * 
+     *
      * Syntax: <code>micrometer:metricsType:metricsName</code>
-     * 
+     *
      * Path parameter: metricsType (required)
      * Type of metrics
      * There are 3 enums and the value can be one of: counter, summary, timer
-     * 
+     *
      * Path parameter: metricsName (required)
      * Name of metrics
-     * 
+     *
      * @param path metricsType:metricsName
      * @return the dsl builder
      */
@@ -11512,20 +11552,20 @@ public class StaticEndpointBuilders {
      * Micrometer (camel-micrometer)
      * Collect various metrics directly from Camel routes using the Micrometer
      * library.
-     * 
+     *
      * Category: monitoring
      * Since: 2.22
      * Maven coordinates: org.apache.camel:camel-micrometer
-     * 
+     *
      * Syntax: <code>micrometer:metricsType:metricsName</code>
-     * 
+     *
      * Path parameter: metricsType (required)
      * Type of metrics
      * There are 3 enums and the value can be one of: counter, summary, timer
-     * 
+     *
      * Path parameter: metricsName (required)
      * Name of metrics
-     * 
+     *
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
      * @param path metricsType:metricsName
@@ -11538,16 +11578,16 @@ public class StaticEndpointBuilders {
      * OPC UA Browser (camel-milo)
      * Connect to OPC UA servers using the binary protocol for browsing the node
      * tree.
-     * 
+     *
      * Category: iot
      * Since: 3.15
      * Maven coordinates: org.apache.camel:camel-milo
-     * 
+     *
      * Syntax: <code>milo-browse:endpointUri</code>
-     * 
+     *
      * Path parameter: endpointUri (required)
      * The OPC UA server endpoint
-     * 
+     *
      * @param path endpointUri
      * @return the dsl builder
      */
@@ -11558,16 +11598,16 @@ public class StaticEndpointBuilders {
      * OPC UA Browser (camel-milo)
      * Connect to OPC UA servers using the binary protocol for browsing the node
      * tree.
-     * 
+     *
      * Category: iot
      * Since: 3.15
      * Maven coordinates: org.apache.camel:camel-milo
-     * 
+     *
      * Syntax: <code>milo-browse:endpointUri</code>
-     * 
+     *
      * Path parameter: endpointUri (required)
      * The OPC UA server endpoint
-     * 
+     *
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
      * @param path endpointUri
@@ -11580,16 +11620,16 @@ public class StaticEndpointBuilders {
      * OPC UA Client (camel-milo)
      * Connect to OPC UA servers using the binary protocol for acquiring
      * telemetry data.
-     * 
+     *
      * Category: iot
      * Since: 2.19
      * Maven coordinates: org.apache.camel:camel-milo
-     * 
+     *
      * Syntax: <code>milo-client:endpointUri</code>
-     * 
+     *
      * Path parameter: endpointUri (required)
      * The OPC UA server endpoint
-     * 
+     *
      * @param path endpointUri
      * @return the dsl builder
      */
@@ -11600,16 +11640,16 @@ public class StaticEndpointBuilders {
      * OPC UA Client (camel-milo)
      * Connect to OPC UA servers using the binary protocol for acquiring
      * telemetry data.
-     * 
+     *
      * Category: iot
      * Since: 2.19
      * Maven coordinates: org.apache.camel:camel-milo
-     * 
+     *
      * Syntax: <code>milo-client:endpointUri</code>
-     * 
+     *
      * Path parameter: endpointUri (required)
      * The OPC UA server endpoint
-     * 
+     *
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
      * @param path endpointUri
@@ -11621,16 +11661,16 @@ public class StaticEndpointBuilders {
     /**
      * OPC UA Server (camel-milo)
      * Make telemetry data available as an OPC UA server.
-     * 
+     *
      * Category: iot
      * Since: 2.19
      * Maven coordinates: org.apache.camel:camel-milo
-     * 
+     *
      * Syntax: <code>milo-server:itemId</code>
-     * 
+     *
      * Path parameter: itemId (required)
      * ID of the item
-     * 
+     *
      * @param path itemId
      * @return the dsl builder
      */
@@ -11640,16 +11680,16 @@ public class StaticEndpointBuilders {
     /**
      * OPC UA Server (camel-milo)
      * Make telemetry data available as an OPC UA server.
-     * 
+     *
      * Category: iot
      * Since: 2.19
      * Maven coordinates: org.apache.camel:camel-milo
-     * 
+     *
      * Syntax: <code>milo-server:itemId</code>
-     * 
+     *
      * Path parameter: itemId (required)
      * ID of the item
-     * 
+     *
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
      * @param path itemId
@@ -11661,16 +11701,16 @@ public class StaticEndpointBuilders {
     /**
      * Milvus (camel-milvus)
      * Perform operations on the Milvus Vector Database.
-     * 
+     *
      * Category: database,ai
      * Since: 4.5
      * Maven coordinates: org.apache.camel:camel-milvus
-     * 
+     *
      * Syntax: <code>milvus:collection</code>
-     * 
+     *
      * Path parameter: collection (required)
      * The collection Name
-     * 
+     *
      * @param path collection
      * @return the dsl builder
      */
@@ -11680,16 +11720,16 @@ public class StaticEndpointBuilders {
     /**
      * Milvus (camel-milvus)
      * Perform operations on the Milvus Vector Database.
-     * 
+     *
      * Category: database,ai
      * Since: 4.5
      * Maven coordinates: org.apache.camel:camel-milvus
-     * 
+     *
      * Syntax: <code>milvus:collection</code>
-     * 
+     *
      * Path parameter: collection (required)
      * The collection Name
-     * 
+     *
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
      * @param path collection
@@ -11701,23 +11741,23 @@ public class StaticEndpointBuilders {
     /**
      * Mina (camel-mina)
      * Socket level networking using TCP or UDP with Apache Mina 2.x.
-     * 
+     *
      * Category: networking
      * Since: 2.10
      * Maven coordinates: org.apache.camel:camel-mina
-     * 
+     *
      * Syntax: <code>mina:protocol:host:port</code>
-     * 
+     *
      * Path parameter: protocol (required)
      * Protocol to use
-     * 
+     *
      * Path parameter: host (required)
      * Hostname to use. Use localhost or 0.0.0.0 for local server as consumer.
      * For producer use the hostname or ip address of the remote server.
-     * 
+     *
      * Path parameter: port (required)
      * Port number
-     * 
+     *
      * @param path protocol:host:port
      * @return the dsl builder
      */
@@ -11727,23 +11767,23 @@ public class StaticEndpointBuilders {
     /**
      * Mina (camel-mina)
      * Socket level networking using TCP or UDP with Apache Mina 2.x.
-     * 
+     *
      * Category: networking
      * Since: 2.10
      * Maven coordinates: org.apache.camel:camel-mina
-     * 
+     *
      * Syntax: <code>mina:protocol:host:port</code>
-     * 
+     *
      * Path parameter: protocol (required)
      * Protocol to use
-     * 
+     *
      * Path parameter: host (required)
      * Hostname to use. Use localhost or 0.0.0.0 for local server as consumer.
      * For producer use the hostname or ip address of the remote server.
-     * 
+     *
      * Path parameter: port (required)
      * Port number
-     * 
+     *
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
      * @param path protocol:host:port
@@ -11755,22 +11795,22 @@ public class StaticEndpointBuilders {
     /**
      * MINA SFTP (camel-mina-sftp)
      * Upload and download files to/from SFTP servers using Apache MINA SSHD.
-     * 
+     *
      * Category: file
      * Since: 4.18
      * Maven coordinates: org.apache.camel:camel-mina-sftp
-     * 
+     *
      * Syntax: <code>mina-sftp:host:port/directoryName</code>
-     * 
+     *
      * Path parameter: host (required)
      * Hostname of the FTP server
-     * 
+     *
      * Path parameter: port
      * Port of the FTP server
-     * 
+     *
      * Path parameter: directoryName
      * The starting directory
-     * 
+     *
      * @param path host:port/directoryName
      * @return the dsl builder
      */
@@ -11780,22 +11820,22 @@ public class StaticEndpointBuilders {
     /**
      * MINA SFTP (camel-mina-sftp)
      * Upload and download files to/from SFTP servers using Apache MINA SSHD.
-     * 
+     *
      * Category: file
      * Since: 4.18
      * Maven coordinates: org.apache.camel:camel-mina-sftp
-     * 
+     *
      * Syntax: <code>mina-sftp:host:port/directoryName</code>
-     * 
+     *
      * Path parameter: host (required)
      * Hostname of the FTP server
-     * 
+     *
      * Path parameter: port
      * Port of the FTP server
-     * 
+     *
      * Path parameter: directoryName
      * The starting directory
-     * 
+     *
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
      * @param path host:port/directoryName
@@ -11807,16 +11847,16 @@ public class StaticEndpointBuilders {
     /**
      * Minio (camel-minio)
      * Store and retrieve objects from Minio Storage Service using Minio SDK.
-     * 
+     *
      * Category: cloud,file
      * Since: 3.5
      * Maven coordinates: org.apache.camel:camel-minio
-     * 
+     *
      * Syntax: <code>minio:bucketName</code>
-     * 
+     *
      * Path parameter: bucketName (required)
      * Bucket name
-     * 
+     *
      * @param path bucketName
      * @return the dsl builder
      */
@@ -11826,16 +11866,16 @@ public class StaticEndpointBuilders {
     /**
      * Minio (camel-minio)
      * Store and retrieve objects from Minio Storage Service using Minio SDK.
-     * 
+     *
      * Category: cloud,file
      * Since: 3.5
      * Maven coordinates: org.apache.camel:camel-minio
-     * 
+     *
      * Syntax: <code>minio:bucketName</code>
-     * 
+     *
      * Path parameter: bucketName (required)
      * Bucket name
-     * 
+     *
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
      * @param path bucketName
@@ -11847,20 +11887,20 @@ public class StaticEndpointBuilders {
     /**
      * MLLP (camel-mllp)
      * Communicate with external systems using the MLLP protocol.
-     * 
+     *
      * Category: health
      * Since: 2.17
      * Maven coordinates: org.apache.camel:camel-mllp
-     * 
+     *
      * Syntax: <code>mllp:hostname:port</code>
-     * 
+     *
      * Path parameter: hostname (required)
      * Hostname or IP for connection for the TCP connection. The default value
      * is null, which means any local IP address
-     * 
+     *
      * Path parameter: port (required)
      * Port number for the TCP connection
-     * 
+     *
      * @param path hostname:port
      * @return the dsl builder
      */
@@ -11870,20 +11910,20 @@ public class StaticEndpointBuilders {
     /**
      * MLLP (camel-mllp)
      * Communicate with external systems using the MLLP protocol.
-     * 
+     *
      * Category: health
      * Since: 2.17
      * Maven coordinates: org.apache.camel:camel-mllp
-     * 
+     *
      * Syntax: <code>mllp:hostname:port</code>
-     * 
+     *
      * Path parameter: hostname (required)
      * Hostname or IP for connection for the TCP connection. The default value
      * is null, which means any local IP address
-     * 
+     *
      * Path parameter: port (required)
      * Port number for the TCP connection
-     * 
+     *
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
      * @param path hostname:port
@@ -11895,16 +11935,16 @@ public class StaticEndpointBuilders {
     /**
      * Mock (camel-mock)
      * Test routes and mediation rules using mocks.
-     * 
+     *
      * Category: core,testing
      * Since: 1.0
      * Maven coordinates: org.apache.camel:camel-mock
-     * 
+     *
      * Syntax: <code>mock:name</code>
-     * 
+     *
      * Path parameter: name (required)
      * Name of mock endpoint
-     * 
+     *
      * @param path name
      * @return the dsl builder
      */
@@ -11914,16 +11954,16 @@ public class StaticEndpointBuilders {
     /**
      * Mock (camel-mock)
      * Test routes and mediation rules using mocks.
-     * 
+     *
      * Category: core,testing
      * Since: 1.0
      * Maven coordinates: org.apache.camel:camel-mock
-     * 
+     *
      * Syntax: <code>mock:name</code>
-     * 
+     *
      * Path parameter: name (required)
      * Name of mock endpoint
-     * 
+     *
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
      * @param path name
@@ -11935,17 +11975,17 @@ public class StaticEndpointBuilders {
     /**
      * MongoDB (camel-mongodb)
      * Perform operations on MongoDB documents and collections.
-     * 
+     *
      * Category: database
      * Since: 2.19
      * Maven coordinates: org.apache.camel:camel-mongodb
-     * 
+     *
      * Syntax: <code>mongodb:connectionBean</code>
-     * 
+     *
      * Path parameter: connectionBean (required)
      * Sets the connection bean reference used to lookup a client for connecting
      * to a database if no hosts parameter is present.
-     * 
+     *
      * @param path connectionBean
      * @return the dsl builder
      */
@@ -11955,17 +11995,17 @@ public class StaticEndpointBuilders {
     /**
      * MongoDB (camel-mongodb)
      * Perform operations on MongoDB documents and collections.
-     * 
+     *
      * Category: database
      * Since: 2.19
      * Maven coordinates: org.apache.camel:camel-mongodb
-     * 
+     *
      * Syntax: <code>mongodb:connectionBean</code>
-     * 
+     *
      * Path parameter: connectionBean (required)
      * Sets the connection bean reference used to lookup a client for connecting
      * to a database if no hosts parameter is present.
-     * 
+     *
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
      * @param path connectionBean
@@ -11977,16 +12017,16 @@ public class StaticEndpointBuilders {
     /**
      * MongoDB GridFS (camel-mongodb-gridfs)
      * Interact with MongoDB GridFS.
-     * 
+     *
      * Category: database,file
      * Since: 2.18
      * Maven coordinates: org.apache.camel:camel-mongodb-gridfs
-     * 
+     *
      * Syntax: <code>mongodb-gridfs:connectionBean</code>
-     * 
+     *
      * Path parameter: connectionBean (required)
      * Name of com.mongodb.client.MongoClient to use.
-     * 
+     *
      * @param path connectionBean
      * @return the dsl builder
      */
@@ -11996,16 +12036,16 @@ public class StaticEndpointBuilders {
     /**
      * MongoDB GridFS (camel-mongodb-gridfs)
      * Interact with MongoDB GridFS.
-     * 
+     *
      * Category: database,file
      * Since: 2.18
      * Maven coordinates: org.apache.camel:camel-mongodb-gridfs
-     * 
+     *
      * Syntax: <code>mongodb-gridfs:connectionBean</code>
-     * 
+     *
      * Path parameter: connectionBean (required)
      * Name of com.mongodb.client.MongoClient to use.
-     * 
+     *
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
      * @param path connectionBean
@@ -12017,13 +12057,13 @@ public class StaticEndpointBuilders {
     /**
      * Mustache (camel-mustache)
      * Transform messages using a Mustache template.
-     * 
+     *
      * Category: transformation
      * Since: 2.12
      * Maven coordinates: org.apache.camel:camel-mustache
-     * 
+     *
      * Syntax: <code>mustache:resourceUri</code>
-     * 
+     *
      * Path parameter: resourceUri (required)
      * Path to the resource. You can prefix with: classpath, file, http, ref, or
      * bean. classpath, file and http loads the resource using these protocols
@@ -12032,7 +12072,7 @@ public class StaticEndpointBuilders {
      * you can specify the method name after dot, eg bean:myBean.myMethod.
      * This option can also be loaded from an existing file, by prefixing with
      * file: or classpath: followed by the location of the file.
-     * 
+     *
      * @param path resourceUri
      * @return the dsl builder
      */
@@ -12042,13 +12082,13 @@ public class StaticEndpointBuilders {
     /**
      * Mustache (camel-mustache)
      * Transform messages using a Mustache template.
-     * 
+     *
      * Category: transformation
      * Since: 2.12
      * Maven coordinates: org.apache.camel:camel-mustache
-     * 
+     *
      * Syntax: <code>mustache:resourceUri</code>
-     * 
+     *
      * Path parameter: resourceUri (required)
      * Path to the resource. You can prefix with: classpath, file, http, ref, or
      * bean. classpath, file and http loads the resource using these protocols
@@ -12057,7 +12097,7 @@ public class StaticEndpointBuilders {
      * you can specify the method name after dot, eg bean:myBean.myMethod.
      * This option can also be loaded from an existing file, by prefixing with
      * file: or classpath: followed by the location of the file.
-     * 
+     *
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
      * @param path resourceUri
@@ -12069,13 +12109,13 @@ public class StaticEndpointBuilders {
     /**
      * MVEL (camel-mvel)
      * Transform messages using an MVEL template.
-     * 
+     *
      * Category: transformation,script
      * Since: 2.12
      * Maven coordinates: org.apache.camel:camel-mvel
-     * 
+     *
      * Syntax: <code>mvel:resourceUri</code>
-     * 
+     *
      * Path parameter: resourceUri (required)
      * Path to the resource. You can prefix with: classpath, file, http, ref, or
      * bean. classpath, file and http loads the resource using these protocols
@@ -12084,7 +12124,7 @@ public class StaticEndpointBuilders {
      * you can specify the method name after dot, eg bean:myBean.myMethod.
      * This option can also be loaded from an existing file, by prefixing with
      * file: or classpath: followed by the location of the file.
-     * 
+     *
      * @param path resourceUri
      * @return the dsl builder
      */
@@ -12094,13 +12134,13 @@ public class StaticEndpointBuilders {
     /**
      * MVEL (camel-mvel)
      * Transform messages using an MVEL template.
-     * 
+     *
      * Category: transformation,script
      * Since: 2.12
      * Maven coordinates: org.apache.camel:camel-mvel
-     * 
+     *
      * Syntax: <code>mvel:resourceUri</code>
-     * 
+     *
      * Path parameter: resourceUri (required)
      * Path to the resource. You can prefix with: classpath, file, http, ref, or
      * bean. classpath, file and http loads the resource using these protocols
@@ -12109,7 +12149,7 @@ public class StaticEndpointBuilders {
      * you can specify the method name after dot, eg bean:myBean.myMethod.
      * This option can also be loaded from an existing file, by prefixing with
      * file: or classpath: followed by the location of the file.
-     * 
+     *
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
      * @param path resourceUri
@@ -12122,17 +12162,17 @@ public class StaticEndpointBuilders {
      * MyBatis (camel-mybatis)
      * Performs a query, poll, insert, update or delete in a relational database
      * using MyBatis.
-     * 
+     *
      * Category: database
      * Since: 2.7
      * Maven coordinates: org.apache.camel:camel-mybatis
-     * 
+     *
      * Syntax: <code>mybatis:statement</code>
-     * 
+     *
      * Path parameter: statement (required)
      * The statement name in the MyBatis XML mapping file which maps to the
      * query, insert, update or delete operation you wish to evaluate.
-     * 
+     *
      * @param path statement
      * @return the dsl builder
      */
@@ -12143,17 +12183,17 @@ public class StaticEndpointBuilders {
      * MyBatis (camel-mybatis)
      * Performs a query, poll, insert, update or delete in a relational database
      * using MyBatis.
-     * 
+     *
      * Category: database
      * Since: 2.7
      * Maven coordinates: org.apache.camel:camel-mybatis
-     * 
+     *
      * Syntax: <code>mybatis:statement</code>
-     * 
+     *
      * Path parameter: statement (required)
      * The statement name in the MyBatis XML mapping file which maps to the
      * query, insert, update or delete operation you wish to evaluate.
-     * 
+     *
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
      * @param path statement
@@ -12166,20 +12206,20 @@ public class StaticEndpointBuilders {
      * MyBatis Bean (camel-mybatis)
      * Perform queries, inserts, updates or deletes in a relational database
      * using MyBatis.
-     * 
+     *
      * Category: database
      * Since: 2.22
      * Maven coordinates: org.apache.camel:camel-mybatis
-     * 
+     *
      * Syntax: <code>mybatis-bean:beanName:methodName</code>
-     * 
+     *
      * Path parameter: beanName (required)
      * Name of the bean with the MyBatis annotations. This can either by a type
      * alias or a FQN class name.
-     * 
+     *
      * Path parameter: methodName (required)
      * Name of the method on the bean that has the SQL query to be executed.
-     * 
+     *
      * @param path beanName:methodName
      * @return the dsl builder
      */
@@ -12190,20 +12230,20 @@ public class StaticEndpointBuilders {
      * MyBatis Bean (camel-mybatis)
      * Perform queries, inserts, updates or deletes in a relational database
      * using MyBatis.
-     * 
+     *
      * Category: database
      * Since: 2.22
      * Maven coordinates: org.apache.camel:camel-mybatis
-     * 
+     *
      * Syntax: <code>mybatis-bean:beanName:methodName</code>
-     * 
+     *
      * Path parameter: beanName (required)
      * Name of the bean with the MyBatis annotations. This can either by a type
      * alias or a FQN class name.
-     * 
+     *
      * Path parameter: methodName (required)
      * Name of the method on the bean that has the SQL query to be executed.
-     * 
+     *
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
      * @param path beanName:methodName
@@ -12215,16 +12255,16 @@ public class StaticEndpointBuilders {
     /**
      * Nats (camel-nats)
      * Send and receive messages from NATS messaging system.
-     * 
+     *
      * Category: messaging
      * Since: 2.17
      * Maven coordinates: org.apache.camel:camel-nats
-     * 
+     *
      * Syntax: <code>nats:topic</code>
-     * 
+     *
      * Path parameter: topic (required)
      * The name of topic we want to use
-     * 
+     *
      * @param path topic
      * @return the dsl builder
      */
@@ -12234,16 +12274,16 @@ public class StaticEndpointBuilders {
     /**
      * Nats (camel-nats)
      * Send and receive messages from NATS messaging system.
-     * 
+     *
      * Category: messaging
      * Since: 2.17
      * Maven coordinates: org.apache.camel:camel-nats
-     * 
+     *
      * Syntax: <code>nats:topic</code>
-     * 
+     *
      * Path parameter: topic (required)
      * The name of topic we want to use
-     * 
+     *
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
      * @param path topic
@@ -12255,16 +12295,16 @@ public class StaticEndpointBuilders {
     /**
      * Neo4j (camel-neo4j)
      * Perform operations on the Neo4j Graph Database
-     * 
+     *
      * Category: database,ai
      * Since: 4.10
      * Maven coordinates: org.apache.camel:camel-neo4j
-     * 
+     *
      * Syntax: <code>neo4j:name</code>
-     * 
+     *
      * Path parameter: name (required)
      * The database name
-     * 
+     *
      * @param path name
      * @return the dsl builder
      */
@@ -12274,16 +12314,16 @@ public class StaticEndpointBuilders {
     /**
      * Neo4j (camel-neo4j)
      * Perform operations on the Neo4j Graph Database
-     * 
+     *
      * Category: database,ai
      * Since: 4.10
      * Maven coordinates: org.apache.camel:camel-neo4j
-     * 
+     *
      * Syntax: <code>neo4j:name</code>
-     * 
+     *
      * Path parameter: name (required)
      * The database name
-     * 
+     *
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
      * @param path name
@@ -12295,24 +12335,24 @@ public class StaticEndpointBuilders {
     /**
      * Netty (camel-netty)
      * Socket level networking using TCP or UDP with Netty 4.x.
-     * 
+     *
      * Category: networking
      * Since: 2.14
      * Maven coordinates: org.apache.camel:camel-netty
-     * 
+     *
      * Syntax: <code>netty:protocol://host:port</code>
-     * 
+     *
      * Path parameter: protocol (required)
      * The protocol to use which can be tcp or udp
      * There are 2 enums and the value can be one of: tcp, udp
-     * 
+     *
      * Path parameter: host (required)
      * The hostname. For the consumer the hostname is localhost or 0.0.0.0. For
      * the producer the hostname is the remote host to connect to.
-     * 
+     *
      * Path parameter: port (required)
      * The host port number
-     * 
+     *
      * @param path protocol://host:port
      * @return the dsl builder
      */
@@ -12322,24 +12362,24 @@ public class StaticEndpointBuilders {
     /**
      * Netty (camel-netty)
      * Socket level networking using TCP or UDP with Netty 4.x.
-     * 
+     *
      * Category: networking
      * Since: 2.14
      * Maven coordinates: org.apache.camel:camel-netty
-     * 
+     *
      * Syntax: <code>netty:protocol://host:port</code>
-     * 
+     *
      * Path parameter: protocol (required)
      * The protocol to use which can be tcp or udp
      * There are 2 enums and the value can be one of: tcp, udp
-     * 
+     *
      * Path parameter: host (required)
      * The hostname. For the consumer the hostname is localhost or 0.0.0.0. For
      * the producer the hostname is the remote host to connect to.
-     * 
+     *
      * Path parameter: port (required)
      * The host port number
-     * 
+     *
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
      * @param path protocol://host:port
@@ -12351,27 +12391,27 @@ public class StaticEndpointBuilders {
     /**
      * Netty HTTP (camel-netty-http)
      * Netty HTTP server and client using the Netty 4.x.
-     * 
+     *
      * Category: networking,http
      * Since: 2.14
      * Maven coordinates: org.apache.camel:camel-netty-http
-     * 
+     *
      * Syntax: <code>netty-http:protocol://host:port/path</code>
-     * 
+     *
      * Path parameter: protocol (required)
      * The protocol to use which is either http, https or proxy (consumer only).
      * There are 3 enums and the value can be one of: http, https, proxy
-     * 
+     *
      * Path parameter: host (required)
      * The local hostname such as localhost, or 0.0.0.0 when being a consumer.
      * The remote HTTP server hostname when using producer.
-     * 
+     *
      * Path parameter: port
      * The host port number
-     * 
+     *
      * Path parameter: path
      * Resource path
-     * 
+     *
      * @param path protocol://host:port/path
      * @return the dsl builder
      */
@@ -12381,27 +12421,27 @@ public class StaticEndpointBuilders {
     /**
      * Netty HTTP (camel-netty-http)
      * Netty HTTP server and client using the Netty 4.x.
-     * 
+     *
      * Category: networking,http
      * Since: 2.14
      * Maven coordinates: org.apache.camel:camel-netty-http
-     * 
+     *
      * Syntax: <code>netty-http:protocol://host:port/path</code>
-     * 
+     *
      * Path parameter: protocol (required)
      * The protocol to use which is either http, https or proxy (consumer only).
      * There are 3 enums and the value can be one of: http, https, proxy
-     * 
+     *
      * Path parameter: host (required)
      * The local hostname such as localhost, or 0.0.0.0 when being a consumer.
      * The remote HTTP server hostname when using producer.
-     * 
+     *
      * Path parameter: port
      * The host port number
-     * 
+     *
      * Path parameter: path
      * Resource path
-     * 
+     *
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
      * @param path protocol://host:port/path
@@ -12413,17 +12453,17 @@ public class StaticEndpointBuilders {
     /**
      * OAI-PMH (camel-oaipmh)
      * Harvest metadata using OAI-PMH protocol
-     * 
+     *
      * Category: search
      * Since: 3.5
      * Maven coordinates: org.apache.camel:camel-oaipmh
-     * 
+     *
      * Syntax: <code>oaipmh:baseUrl</code>
-     * 
+     *
      * Path parameter: baseUrl (required)
      * Base URL of the repository to which the request is made through the
      * OAI-PMH protocol
-     * 
+     *
      * @param path baseUrl
      * @return the dsl builder
      */
@@ -12433,17 +12473,17 @@ public class StaticEndpointBuilders {
     /**
      * OAI-PMH (camel-oaipmh)
      * Harvest metadata using OAI-PMH protocol
-     * 
+     *
      * Category: search
      * Since: 3.5
      * Maven coordinates: org.apache.camel:camel-oaipmh
-     * 
+     *
      * Syntax: <code>oaipmh:baseUrl</code>
-     * 
+     *
      * Path parameter: baseUrl (required)
      * Base URL of the repository to which the request is made through the
      * OAI-PMH protocol
-     * 
+     *
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
      * @param path baseUrl
@@ -12455,20 +12495,20 @@ public class StaticEndpointBuilders {
     /**
      * Olingo2 (camel-olingo2)
      * Communicate with OData 2.0 services using Apache Olingo.
-     * 
+     *
      * Category: cloud
      * Since: 2.14
      * Maven coordinates: org.apache.camel:camel-olingo2
-     * 
+     *
      * Syntax: <code>olingo2:apiName/methodName</code>
-     * 
+     *
      * Path parameter: apiName (required)
      * What kind of operation to perform
      * There are 1 enums and the value can be one of: DEFAULT
-     * 
+     *
      * Path parameter: methodName (required)
      * What sub operation to use for the selected operation
-     * 
+     *
      * @param path apiName/methodName
      * @return the dsl builder
      */
@@ -12479,20 +12519,20 @@ public class StaticEndpointBuilders {
     /**
      * Olingo2 (camel-olingo2)
      * Communicate with OData 2.0 services using Apache Olingo.
-     * 
+     *
      * Category: cloud
      * Since: 2.14
      * Maven coordinates: org.apache.camel:camel-olingo2
-     * 
+     *
      * Syntax: <code>olingo2:apiName/methodName</code>
-     * 
+     *
      * Path parameter: apiName (required)
      * What kind of operation to perform
      * There are 1 enums and the value can be one of: DEFAULT
-     * 
+     *
      * Path parameter: methodName (required)
      * What sub operation to use for the selected operation
-     * 
+     *
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
      * @param path apiName/methodName
@@ -12505,20 +12545,20 @@ public class StaticEndpointBuilders {
     /**
      * Olingo4 (camel-olingo4)
      * Communicate with OData 4.0 services using Apache Olingo OData API.
-     * 
+     *
      * Category: cloud
      * Since: 2.19
      * Maven coordinates: org.apache.camel:camel-olingo4
-     * 
+     *
      * Syntax: <code>olingo4:apiName/methodName</code>
-     * 
+     *
      * Path parameter: apiName (required)
      * What kind of operation to perform
      * There are 1 enums and the value can be one of: DEFAULT
-     * 
+     *
      * Path parameter: methodName (required)
      * What sub operation to use for the selected operation
-     * 
+     *
      * @param path apiName/methodName
      * @return the dsl builder
      */
@@ -12529,20 +12569,20 @@ public class StaticEndpointBuilders {
     /**
      * Olingo4 (camel-olingo4)
      * Communicate with OData 4.0 services using Apache Olingo OData API.
-     * 
+     *
      * Category: cloud
      * Since: 2.19
      * Maven coordinates: org.apache.camel:camel-olingo4
-     * 
+     *
      * Syntax: <code>olingo4:apiName/methodName</code>
-     * 
+     *
      * Path parameter: apiName (required)
      * What kind of operation to perform
      * There are 1 enums and the value can be one of: DEFAULT
-     * 
+     *
      * Path parameter: methodName (required)
      * What sub operation to use for the selected operation
-     * 
+     *
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
      * @param path apiName/methodName
@@ -12556,16 +12596,16 @@ public class StaticEndpointBuilders {
      * Once (camel-once)
      * Trigger a single message only once at startup (useful for development and
      * testing purposes).
-     * 
+     *
      * Category: core,scheduling
      * Since: 4.17
      * Maven coordinates: org.apache.camel:camel-once
-     * 
+     *
      * Syntax: <code>once:name</code>
-     * 
+     *
      * Path parameter: name (required)
      * The logical name
-     * 
+     *
      * @param path name
      * @return the dsl builder
      */
@@ -12576,16 +12616,16 @@ public class StaticEndpointBuilders {
      * Once (camel-once)
      * Trigger a single message only once at startup (useful for development and
      * testing purposes).
-     * 
+     *
      * Category: core,scheduling
      * Since: 4.17
      * Maven coordinates: org.apache.camel:camel-once
-     * 
+     *
      * Syntax: <code>once:name</code>
-     * 
+     *
      * Path parameter: name (required)
      * The logical name
-     * 
+     *
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
      * @param path name
@@ -12598,13 +12638,13 @@ public class StaticEndpointBuilders {
      * OpenAI (camel-openai)
      * OpenAI endpoint for chat completion, Responses API, embeddings, audio
      * transcription, audio translation, and text-to-speech.
-     * 
+     *
      * Category: ai
      * Since: 4.17
      * Maven coordinates: org.apache.camel:camel-openai
-     * 
+     *
      * Syntax: <code>openai:operation</code>
-     * 
+     *
      * Path parameter: operation (required)
      * The operation to perform: 'chat-completion', 'responses', 'embeddings',
      * 'tool-execution', 'audio-transcription', 'audio-translation',
@@ -12612,7 +12652,7 @@ public class StaticEndpointBuilders {
      * There are 10 enums and the value can be one of: chat-completion,
      * responses, embeddings, tool-execution, audio-transcription,
      * audio-translation, audio-speech, moderation, image-generation, image-edit
-     * 
+     *
      * @param path operation
      * @return the dsl builder
      */
@@ -12623,13 +12663,13 @@ public class StaticEndpointBuilders {
      * OpenAI (camel-openai)
      * OpenAI endpoint for chat completion, Responses API, embeddings, audio
      * transcription, audio translation, and text-to-speech.
-     * 
+     *
      * Category: ai
      * Since: 4.17
      * Maven coordinates: org.apache.camel:camel-openai
-     * 
+     *
      * Syntax: <code>openai:operation</code>
-     * 
+     *
      * Path parameter: operation (required)
      * The operation to perform: 'chat-completion', 'responses', 'embeddings',
      * 'tool-execution', 'audio-transcription', 'audio-translation',
@@ -12637,7 +12677,7 @@ public class StaticEndpointBuilders {
      * There are 10 enums and the value can be one of: chat-completion,
      * responses, embeddings, tool-execution, audio-transcription,
      * audio-translation, audio-speech, moderation, image-generation, image-edit
-     * 
+     *
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
      * @param path operation
@@ -12649,16 +12689,16 @@ public class StaticEndpointBuilders {
     /**
      * OpenSearch (camel-opensearch)
      * Send requests to OpenSearch via Java Client API.
-     * 
+     *
      * Category: search,monitoring
      * Since: 4.0
      * Maven coordinates: org.apache.camel:camel-opensearch
-     * 
+     *
      * Syntax: <code>opensearch:clusterName</code>
-     * 
+     *
      * Path parameter: clusterName (required)
      * Name of the cluster
-     * 
+     *
      * @param path clusterName
      * @return the dsl builder
      */
@@ -12668,16 +12708,16 @@ public class StaticEndpointBuilders {
     /**
      * OpenSearch (camel-opensearch)
      * Send requests to OpenSearch via Java Client API.
-     * 
+     *
      * Category: search,monitoring
      * Since: 4.0
      * Maven coordinates: org.apache.camel:camel-opensearch
-     * 
+     *
      * Syntax: <code>opensearch:clusterName</code>
-     * 
+     *
      * Path parameter: clusterName (required)
      * Name of the cluster
-     * 
+     *
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
      * @param path clusterName
@@ -12689,13 +12729,13 @@ public class StaticEndpointBuilders {
     /**
      * OpenShift Build Config (camel-kubernetes)
      * Perform operations on OpenShift Build Configs.
-     * 
+     *
      * Category: container,cloud
      * Since: 2.17
      * Maven coordinates: org.apache.camel:camel-kubernetes
-     * 
+     *
      * Syntax: <code>openshift-build-configs:masterUrl</code>
-     * 
+     *
      * Path parameter: masterUrl (required)
      * URL to a remote Kubernetes API server. This should only be used when your
      * Camel application is connecting from outside Kubernetes. If you run your
@@ -12703,7 +12743,7 @@ public class StaticEndpointBuilders {
      * the URL to tell Camel to run in local mode. If you connect remotely to
      * Kubernetes, then you may also need some of the many other configuration
      * options for secured connection with certificates, etc.
-     * 
+     *
      * @param path masterUrl
      * @return the dsl builder
      */
@@ -12713,13 +12753,13 @@ public class StaticEndpointBuilders {
     /**
      * OpenShift Build Config (camel-kubernetes)
      * Perform operations on OpenShift Build Configs.
-     * 
+     *
      * Category: container,cloud
      * Since: 2.17
      * Maven coordinates: org.apache.camel:camel-kubernetes
-     * 
+     *
      * Syntax: <code>openshift-build-configs:masterUrl</code>
-     * 
+     *
      * Path parameter: masterUrl (required)
      * URL to a remote Kubernetes API server. This should only be used when your
      * Camel application is connecting from outside Kubernetes. If you run your
@@ -12727,7 +12767,7 @@ public class StaticEndpointBuilders {
      * the URL to tell Camel to run in local mode. If you connect remotely to
      * Kubernetes, then you may also need some of the many other configuration
      * options for secured connection with certificates, etc.
-     * 
+     *
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
      * @param path masterUrl
@@ -12739,13 +12779,13 @@ public class StaticEndpointBuilders {
     /**
      * OpenShift Builds (camel-kubernetes)
      * Perform operations on OpenShift Builds.
-     * 
+     *
      * Category: container,cloud
      * Since: 2.17
      * Maven coordinates: org.apache.camel:camel-kubernetes
-     * 
+     *
      * Syntax: <code>openshift-builds:masterUrl</code>
-     * 
+     *
      * Path parameter: masterUrl (required)
      * URL to a remote Kubernetes API server. This should only be used when your
      * Camel application is connecting from outside Kubernetes. If you run your
@@ -12753,7 +12793,7 @@ public class StaticEndpointBuilders {
      * the URL to tell Camel to run in local mode. If you connect remotely to
      * Kubernetes, then you may also need some of the many other configuration
      * options for secured connection with certificates, etc.
-     * 
+     *
      * @param path masterUrl
      * @return the dsl builder
      */
@@ -12763,13 +12803,13 @@ public class StaticEndpointBuilders {
     /**
      * OpenShift Builds (camel-kubernetes)
      * Perform operations on OpenShift Builds.
-     * 
+     *
      * Category: container,cloud
      * Since: 2.17
      * Maven coordinates: org.apache.camel:camel-kubernetes
-     * 
+     *
      * Syntax: <code>openshift-builds:masterUrl</code>
-     * 
+     *
      * Path parameter: masterUrl (required)
      * URL to a remote Kubernetes API server. This should only be used when your
      * Camel application is connecting from outside Kubernetes. If you run your
@@ -12777,7 +12817,7 @@ public class StaticEndpointBuilders {
      * the URL to tell Camel to run in local mode. If you connect remotely to
      * Kubernetes, then you may also need some of the many other configuration
      * options for secured connection with certificates, etc.
-     * 
+     *
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
      * @param path masterUrl
@@ -12790,13 +12830,13 @@ public class StaticEndpointBuilders {
      * OpenShift Deployment Configs (camel-kubernetes)
      * Perform operations on OpenShift Deployment Configs and get notified on
      * Deployment Config changes.
-     * 
+     *
      * Category: container,cloud
      * Since: 3.18
      * Maven coordinates: org.apache.camel:camel-kubernetes
-     * 
+     *
      * Syntax: <code>openshift-deploymentconfigs:masterUrl</code>
-     * 
+     *
      * Path parameter: masterUrl (required)
      * URL to a remote Kubernetes API server. This should only be used when your
      * Camel application is connecting from outside Kubernetes. If you run your
@@ -12804,7 +12844,7 @@ public class StaticEndpointBuilders {
      * the URL to tell Camel to run in local mode. If you connect remotely to
      * Kubernetes, then you may also need some of the many other configuration
      * options for secured connection with certificates, etc.
-     * 
+     *
      * @param path masterUrl
      * @return the dsl builder
      */
@@ -12815,13 +12855,13 @@ public class StaticEndpointBuilders {
      * OpenShift Deployment Configs (camel-kubernetes)
      * Perform operations on OpenShift Deployment Configs and get notified on
      * Deployment Config changes.
-     * 
+     *
      * Category: container,cloud
      * Since: 3.18
      * Maven coordinates: org.apache.camel:camel-kubernetes
-     * 
+     *
      * Syntax: <code>openshift-deploymentconfigs:masterUrl</code>
-     * 
+     *
      * Path parameter: masterUrl (required)
      * URL to a remote Kubernetes API server. This should only be used when your
      * Camel application is connecting from outside Kubernetes. If you run your
@@ -12829,7 +12869,7 @@ public class StaticEndpointBuilders {
      * the URL to tell Camel to run in local mode. If you connect remotely to
      * Kubernetes, then you may also need some of the many other configuration
      * options for secured connection with certificates, etc.
-     * 
+     *
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
      * @param path masterUrl
@@ -12841,16 +12881,16 @@ public class StaticEndpointBuilders {
     /**
      * OpenStack Cinder (camel-openstack)
      * Access data in OpenStack Cinder block storage.
-     * 
+     *
      * Category: container
      * Since: 2.19
      * Maven coordinates: org.apache.camel:camel-openstack
-     * 
+     *
      * Syntax: <code>openstack-cinder:host</code>
-     * 
+     *
      * Path parameter: host (required)
      * OpenStack host url
-     * 
+     *
      * @param path host
      * @return the dsl builder
      */
@@ -12860,16 +12900,16 @@ public class StaticEndpointBuilders {
     /**
      * OpenStack Cinder (camel-openstack)
      * Access data in OpenStack Cinder block storage.
-     * 
+     *
      * Category: container
      * Since: 2.19
      * Maven coordinates: org.apache.camel:camel-openstack
-     * 
+     *
      * Syntax: <code>openstack-cinder:host</code>
-     * 
+     *
      * Path parameter: host (required)
      * OpenStack host url
-     * 
+     *
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
      * @param path host
@@ -12881,16 +12921,16 @@ public class StaticEndpointBuilders {
     /**
      * OpenStack Glance (camel-openstack)
      * Manage VM images and metadata definitions in OpenStack Glance.
-     * 
+     *
      * Category: container
      * Since: 2.19
      * Maven coordinates: org.apache.camel:camel-openstack
-     * 
+     *
      * Syntax: <code>openstack-glance:host</code>
-     * 
+     *
      * Path parameter: host (required)
      * OpenStack host url
-     * 
+     *
      * @param path host
      * @return the dsl builder
      */
@@ -12900,16 +12940,16 @@ public class StaticEndpointBuilders {
     /**
      * OpenStack Glance (camel-openstack)
      * Manage VM images and metadata definitions in OpenStack Glance.
-     * 
+     *
      * Category: container
      * Since: 2.19
      * Maven coordinates: org.apache.camel:camel-openstack
-     * 
+     *
      * Syntax: <code>openstack-glance:host</code>
-     * 
+     *
      * Path parameter: host (required)
      * OpenStack host url
-     * 
+     *
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
      * @param path host
@@ -12922,16 +12962,16 @@ public class StaticEndpointBuilders {
      * OpenStack Keystone (camel-openstack)
      * Access OpenStack Keystone for API client authentication, service
      * discovery and distributed multi-tenant authorization.
-     * 
+     *
      * Category: container
      * Since: 2.19
      * Maven coordinates: org.apache.camel:camel-openstack
-     * 
+     *
      * Syntax: <code>openstack-keystone:host</code>
-     * 
+     *
      * Path parameter: host (required)
      * OpenStack host url
-     * 
+     *
      * @param path host
      * @return the dsl builder
      */
@@ -12942,16 +12982,16 @@ public class StaticEndpointBuilders {
      * OpenStack Keystone (camel-openstack)
      * Access OpenStack Keystone for API client authentication, service
      * discovery and distributed multi-tenant authorization.
-     * 
+     *
      * Category: container
      * Since: 2.19
      * Maven coordinates: org.apache.camel:camel-openstack
-     * 
+     *
      * Syntax: <code>openstack-keystone:host</code>
-     * 
+     *
      * Path parameter: host (required)
      * OpenStack host url
-     * 
+     *
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
      * @param path host
@@ -12963,16 +13003,16 @@ public class StaticEndpointBuilders {
     /**
      * OpenStack Neutron (camel-openstack)
      * Access OpenStack Neutron for network services.
-     * 
+     *
      * Category: container
      * Since: 2.19
      * Maven coordinates: org.apache.camel:camel-openstack
-     * 
+     *
      * Syntax: <code>openstack-neutron:host</code>
-     * 
+     *
      * Path parameter: host (required)
      * OpenStack host url
-     * 
+     *
      * @param path host
      * @return the dsl builder
      */
@@ -12982,16 +13022,16 @@ public class StaticEndpointBuilders {
     /**
      * OpenStack Neutron (camel-openstack)
      * Access OpenStack Neutron for network services.
-     * 
+     *
      * Category: container
      * Since: 2.19
      * Maven coordinates: org.apache.camel:camel-openstack
-     * 
+     *
      * Syntax: <code>openstack-neutron:host</code>
-     * 
+     *
      * Path parameter: host (required)
      * OpenStack host url
-     * 
+     *
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
      * @param path host
@@ -13003,16 +13043,16 @@ public class StaticEndpointBuilders {
     /**
      * OpenStack Nova (camel-openstack)
      * Access OpenStack to manage compute resources.
-     * 
+     *
      * Category: container
      * Since: 2.19
      * Maven coordinates: org.apache.camel:camel-openstack
-     * 
+     *
      * Syntax: <code>openstack-nova:host</code>
-     * 
+     *
      * Path parameter: host (required)
      * OpenStack host url
-     * 
+     *
      * @param path host
      * @return the dsl builder
      */
@@ -13022,16 +13062,16 @@ public class StaticEndpointBuilders {
     /**
      * OpenStack Nova (camel-openstack)
      * Access OpenStack to manage compute resources.
-     * 
+     *
      * Category: container
      * Since: 2.19
      * Maven coordinates: org.apache.camel:camel-openstack
-     * 
+     *
      * Syntax: <code>openstack-nova:host</code>
-     * 
+     *
      * Path parameter: host (required)
      * OpenStack host url
-     * 
+     *
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
      * @param path host
@@ -13043,16 +13083,16 @@ public class StaticEndpointBuilders {
     /**
      * OpenStack Swift (camel-openstack)
      * Access OpenStack Swift object/blob store.
-     * 
+     *
      * Category: container
      * Since: 2.19
      * Maven coordinates: org.apache.camel:camel-openstack
-     * 
+     *
      * Syntax: <code>openstack-swift:host</code>
-     * 
+     *
      * Path parameter: host (required)
      * OpenStack host url
-     * 
+     *
      * @param path host
      * @return the dsl builder
      */
@@ -13062,16 +13102,16 @@ public class StaticEndpointBuilders {
     /**
      * OpenStack Swift (camel-openstack)
      * Access OpenStack Swift object/blob store.
-     * 
+     *
      * Category: container
      * Since: 2.19
      * Maven coordinates: org.apache.camel:camel-openstack
-     * 
+     *
      * Syntax: <code>openstack-swift:host</code>
-     * 
+     *
      * Path parameter: host (required)
      * OpenStack host url
-     * 
+     *
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
      * @param path host
@@ -13083,20 +13123,20 @@ public class StaticEndpointBuilders {
     /**
      * OpenTelemetry Metrics (camel-opentelemetry-metrics)
      * Camel metrics based on the Camel Telemetry spec
-     * 
+     *
      * Category: monitoring
      * Since: 4.17
      * Maven coordinates: org.apache.camel:camel-opentelemetry-metrics
-     * 
+     *
      * Syntax: <code>opentelemetry-metrics:metricType:metricName</code>
-     * 
+     *
      * Path parameter: metricType (required)
      * Type of metrics
      * There are 3 enums and the value can be one of: counter, summary, timer
-     * 
+     *
      * Path parameter: metricName (required)
      * Name of metric
-     * 
+     *
      * @param path metricType:metricName
      * @return the dsl builder
      */
@@ -13106,20 +13146,20 @@ public class StaticEndpointBuilders {
     /**
      * OpenTelemetry Metrics (camel-opentelemetry-metrics)
      * Camel metrics based on the Camel Telemetry spec
-     * 
+     *
      * Category: monitoring
      * Since: 4.17
      * Maven coordinates: org.apache.camel:camel-opentelemetry-metrics
-     * 
+     *
      * Syntax: <code>opentelemetry-metrics:metricType:metricName</code>
-     * 
+     *
      * Path parameter: metricType (required)
      * Type of metrics
      * There are 3 enums and the value can be one of: counter, summary, timer
-     * 
+     *
      * Path parameter: metricName (required)
      * Name of metric
-     * 
+     *
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
      * @param path metricType:metricName
@@ -13131,16 +13171,16 @@ public class StaticEndpointBuilders {
     /**
      * OptaPlanner (camel-optaplanner)
      * Solve planning problems with OptaPlanner.
-     * 
+     *
      * Category: workflow
      * Since: 2.13
      * Maven coordinates: org.apache.camel:camel-optaplanner
-     * 
+     *
      * Syntax: <code>optaplanner:problemName</code>
-     * 
+     *
      * Path parameter: problemName (required)
      * Problem name
-     * 
+     *
      * @param path problemName
      * @return the dsl builder
      */
@@ -13150,16 +13190,16 @@ public class StaticEndpointBuilders {
     /**
      * OptaPlanner (camel-optaplanner)
      * Solve planning problems with OptaPlanner.
-     * 
+     *
      * Category: workflow
      * Since: 2.13
      * Maven coordinates: org.apache.camel:camel-optaplanner
-     * 
+     *
      * Syntax: <code>optaplanner:problemName</code>
-     * 
+     *
      * Path parameter: problemName (required)
      * Problem name
-     * 
+     *
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
      * @param path problemName
@@ -13171,16 +13211,16 @@ public class StaticEndpointBuilders {
     /**
      * Paho (camel-paho)
      * Communicate with MQTT message brokers using Eclipse Paho MQTT Client.
-     * 
+     *
      * Category: messaging,iot
      * Since: 2.16
      * Maven coordinates: org.apache.camel:camel-paho
-     * 
+     *
      * Syntax: <code>paho:topic</code>
-     * 
+     *
      * Path parameter: topic (required)
      * Name of the topic
-     * 
+     *
      * @param path topic
      * @return the dsl builder
      */
@@ -13191,16 +13231,16 @@ public class StaticEndpointBuilders {
     /**
      * Paho (camel-paho)
      * Communicate with MQTT message brokers using Eclipse Paho MQTT Client.
-     * 
+     *
      * Category: messaging,iot
      * Since: 2.16
      * Maven coordinates: org.apache.camel:camel-paho
-     * 
+     *
      * Syntax: <code>paho:topic</code>
-     * 
+     *
      * Path parameter: topic (required)
      * Name of the topic
-     * 
+     *
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
      * @param path topic
@@ -13213,16 +13253,16 @@ public class StaticEndpointBuilders {
     /**
      * Paho MQTT 5 (camel-paho-mqtt5)
      * Communicate with MQTT message brokers using Eclipse Paho MQTT v5 Client.
-     * 
+     *
      * Category: messaging,iot
      * Since: 3.8
      * Maven coordinates: org.apache.camel:camel-paho-mqtt5
-     * 
+     *
      * Syntax: <code>paho-mqtt5:topic</code>
-     * 
+     *
      * Path parameter: topic (required)
      * Name of the topic
-     * 
+     *
      * @param path topic
      * @return the dsl builder
      */
@@ -13232,16 +13272,16 @@ public class StaticEndpointBuilders {
     /**
      * Paho MQTT 5 (camel-paho-mqtt5)
      * Communicate with MQTT message brokers using Eclipse Paho MQTT v5 Client.
-     * 
+     *
      * Category: messaging,iot
      * Since: 3.8
      * Maven coordinates: org.apache.camel:camel-paho-mqtt5
-     * 
+     *
      * Syntax: <code>paho-mqtt5:topic</code>
-     * 
+     *
      * Path parameter: topic (required)
      * Name of the topic
-     * 
+     *
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
      * @param path topic
@@ -13253,18 +13293,18 @@ public class StaticEndpointBuilders {
     /**
      * PDF (camel-pdf)
      * Create, modify or extract content from PDF documents.
-     * 
+     *
      * Category: document,transformation
      * Since: 2.16
      * Maven coordinates: org.apache.camel:camel-pdf
-     * 
+     *
      * Syntax: <code>pdf:operation</code>
-     * 
+     *
      * Path parameter: operation (required)
      * Operation type
      * There are 4 enums and the value can be one of: create, append,
      * extractText, merge
-     * 
+     *
      * @param path operation
      * @return the dsl builder
      */
@@ -13274,18 +13314,18 @@ public class StaticEndpointBuilders {
     /**
      * PDF (camel-pdf)
      * Create, modify or extract content from PDF documents.
-     * 
+     *
      * Category: document,transformation
      * Since: 2.16
      * Maven coordinates: org.apache.camel:camel-pdf
-     * 
+     *
      * Syntax: <code>pdf:operation</code>
-     * 
+     *
      * Path parameter: operation (required)
      * Operation type
      * There are 4 enums and the value can be one of: create, append,
      * extractText, merge
-     * 
+     *
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
      * @param path operation
@@ -13298,31 +13338,31 @@ public class StaticEndpointBuilders {
      * PostgreSQL Replication Slot (camel-pg-replication-slot)
      * Poll for PostgreSQL Write-Ahead Log (WAL) records using Streaming
      * Replication Slots.
-     * 
+     *
      * Category: database
      * Since: 3.0
      * Maven coordinates: org.apache.camel:camel-pg-replication-slot
-     * 
+     *
      * Syntax:
      * <code>pg-replication-slot:host:port/database/slot:outputPlugin</code>
-     * 
+     *
      * Path parameter: slot (required)
      * Replication Slot name
-     * 
+     *
      * Path parameter: host
      * Postgres host
      * Default value: localhost
-     * 
+     *
      * Path parameter: port
      * Postgres port
      * Default value: 5432
-     * 
+     *
      * Path parameter: database (required)
      * Postgres database name
-     * 
+     *
      * Path parameter: outputPlugin (required)
      * Output plugin name
-     * 
+     *
      * @param path host:port/database/slot:outputPlugin
      * @return the dsl builder
      */
@@ -13333,31 +13373,31 @@ public class StaticEndpointBuilders {
      * PostgreSQL Replication Slot (camel-pg-replication-slot)
      * Poll for PostgreSQL Write-Ahead Log (WAL) records using Streaming
      * Replication Slots.
-     * 
+     *
      * Category: database
      * Since: 3.0
      * Maven coordinates: org.apache.camel:camel-pg-replication-slot
-     * 
+     *
      * Syntax:
      * <code>pg-replication-slot:host:port/database/slot:outputPlugin</code>
-     * 
+     *
      * Path parameter: slot (required)
      * Replication Slot name
-     * 
+     *
      * Path parameter: host
      * Postgres host
      * Default value: localhost
-     * 
+     *
      * Path parameter: port
      * Postgres port
      * Default value: 5432
-     * 
+     *
      * Path parameter: database (required)
      * Postgres database name
-     * 
+     *
      * Path parameter: outputPlugin (required)
      * Output plugin name
-     * 
+     *
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
      * @param path host:port/database/slot:outputPlugin
@@ -13369,29 +13409,29 @@ public class StaticEndpointBuilders {
     /**
      * PostgreSQL Event (camel-pgevent)
      * Send and receive PostgreSQL events via LISTEN and NOTIFY commands.
-     * 
+     *
      * Category: database
      * Since: 2.15
      * Maven coordinates: org.apache.camel:camel-pgevent
-     * 
+     *
      * Syntax: <code>pgevent:host:port/database/channel</code>
-     * 
+     *
      * Path parameter: host
      * To connect using hostname and port to the database.
      * Default value: localhost
-     * 
+     *
      * Path parameter: port
      * To connect using hostname and port to the database.
      * Default value: 5432
-     * 
+     *
      * Path parameter: database (required)
      * The database name. The database name can take any characters because it
      * is sent as a quoted identifier. It is part of the endpoint URI, so
      * diacritical marks and non-Latin letters have to be URL encoded.
-     * 
+     *
      * Path parameter: channel (required)
      * The channel name
-     * 
+     *
      * @param path host:port/database/channel
      * @return the dsl builder
      */
@@ -13401,29 +13441,29 @@ public class StaticEndpointBuilders {
     /**
      * PostgreSQL Event (camel-pgevent)
      * Send and receive PostgreSQL events via LISTEN and NOTIFY commands.
-     * 
+     *
      * Category: database
      * Since: 2.15
      * Maven coordinates: org.apache.camel:camel-pgevent
-     * 
+     *
      * Syntax: <code>pgevent:host:port/database/channel</code>
-     * 
+     *
      * Path parameter: host
      * To connect using hostname and port to the database.
      * Default value: localhost
-     * 
+     *
      * Path parameter: port
      * To connect using hostname and port to the database.
      * Default value: 5432
-     * 
+     *
      * Path parameter: database (required)
      * The database name. The database name can take any characters because it
      * is sent as a quoted identifier. It is part of the endpoint URI, so
      * diacritical marks and non-Latin letters have to be URL encoded.
-     * 
+     *
      * Path parameter: channel (required)
      * The channel name
-     * 
+     *
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
      * @param path host:port/database/channel
@@ -13435,16 +13475,16 @@ public class StaticEndpointBuilders {
     /**
      * PGVector (camel-pgvector)
      * Perform operations on the PostgreSQL pgvector Vector Database.
-     * 
+     *
      * Category: database,ai
      * Since: 4.19
      * Maven coordinates: org.apache.camel:camel-pgvector
-     * 
+     *
      * Syntax: <code>pgvector:collection</code>
-     * 
+     *
      * Path parameter: collection (required)
      * The collection (table) name
-     * 
+     *
      * @param path collection
      * @return the dsl builder
      */
@@ -13454,16 +13494,16 @@ public class StaticEndpointBuilders {
     /**
      * PGVector (camel-pgvector)
      * Perform operations on the PostgreSQL pgvector Vector Database.
-     * 
+     *
      * Category: database,ai
      * Since: 4.19
      * Maven coordinates: org.apache.camel:camel-pgvector
-     * 
+     *
      * Syntax: <code>pgvector:collection</code>
-     * 
+     *
      * Path parameter: collection (required)
      * The collection (table) name
-     * 
+     *
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
      * @param path collection
@@ -13475,16 +13515,16 @@ public class StaticEndpointBuilders {
     /**
      * Pinecone (camel-pinecone)
      * Perform operations on the Pinecone Vector Database.
-     * 
+     *
      * Category: database,ai
      * Since: 4.6
      * Maven coordinates: org.apache.camel:camel-pinecone
-     * 
+     *
      * Syntax: <code>pinecone:collection</code>
-     * 
+     *
      * Path parameter: collection (required)
      * The collection Name. (Only used by some actions)
-     * 
+     *
      * @param path collection
      * @return the dsl builder
      */
@@ -13494,16 +13534,16 @@ public class StaticEndpointBuilders {
     /**
      * Pinecone (camel-pinecone)
      * Perform operations on the Pinecone Vector Database.
-     * 
+     *
      * Category: database,ai
      * Since: 4.6
      * Maven coordinates: org.apache.camel:camel-pinecone
-     * 
+     *
      * Syntax: <code>pinecone:collection</code>
-     * 
+     *
      * Path parameter: collection (required)
      * The collection Name. (Only used by some actions)
-     * 
+     *
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
      * @param path collection
@@ -13516,17 +13556,17 @@ public class StaticEndpointBuilders {
      * Platform HTTP (camel-platform-http)
      * Expose HTTP endpoints using the HTTP server available in the current
      * platform.
-     * 
+     *
      * Category: http
      * Since: 3.0
      * Maven coordinates: org.apache.camel:camel-platform-http
-     * 
+     *
      * Syntax: <code>platform-http:path</code>
-     * 
+     *
      * Path parameter: path (required)
      * The path under which this endpoint serves the HTTP requests, for proxy
      * use 'proxy'
-     * 
+     *
      * @param path path
      * @return the dsl builder
      */
@@ -13537,17 +13577,17 @@ public class StaticEndpointBuilders {
      * Platform HTTP (camel-platform-http)
      * Expose HTTP endpoints using the HTTP server available in the current
      * platform.
-     * 
+     *
      * Category: http
      * Since: 3.0
      * Maven coordinates: org.apache.camel:camel-platform-http
-     * 
+     *
      * Syntax: <code>platform-http:path</code>
-     * 
+     *
      * Path parameter: path (required)
      * The path under which this endpoint serves the HTTP requests, for proxy
      * use 'proxy'
-     * 
+     *
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
      * @param path path
@@ -13559,16 +13599,16 @@ public class StaticEndpointBuilders {
     /**
      * PLC4X (camel-plc4x)
      * Read and write to PLC devices
-     * 
+     *
      * Category: iot
      * Since: 3.20
      * Maven coordinates: org.apache.camel:camel-plc4x
-     * 
+     *
      * Syntax: <code>plc4x:driver</code>
-     * 
+     *
      * Path parameter: driver (required)
      * PLC4X connection string for the connection to the target
-     * 
+     *
      * @param path driver
      * @return the dsl builder
      */
@@ -13578,16 +13618,16 @@ public class StaticEndpointBuilders {
     /**
      * PLC4X (camel-plc4x)
      * Read and write to PLC devices
-     * 
+     *
      * Category: iot
      * Since: 3.20
      * Maven coordinates: org.apache.camel:camel-plc4x
-     * 
+     *
      * Syntax: <code>plc4x:driver</code>
-     * 
+     *
      * Path parameter: driver (required)
      * PLC4X connection string for the connection to the target
-     * 
+     *
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
      * @param path driver
@@ -13599,19 +13639,19 @@ public class StaticEndpointBuilders {
     /**
      * POP3 (camel-mail)
      * Send and receive emails using imap, pop3 and smtp protocols.
-     * 
+     *
      * Category: mail
      * Since: 1.0
      * Maven coordinates: org.apache.camel:camel-mail
-     * 
+     *
      * Syntax: <code>pop3:host:port</code>
-     * 
+     *
      * Path parameter: host (required)
      * The mail server host name
-     * 
+     *
      * Path parameter: port
      * The port number of the mail server
-     * 
+     *
      * @param path host:port
      * @return the dsl builder
      */
@@ -13621,19 +13661,19 @@ public class StaticEndpointBuilders {
     /**
      * POP3S (camel-mail)
      * Send and receive emails using imap, pop3 and smtp protocols.
-     * 
+     *
      * Category: mail
      * Since: 1.0
      * Maven coordinates: org.apache.camel:camel-mail
-     * 
+     *
      * Syntax: <code>pop3s:host:port</code>
-     * 
+     *
      * Path parameter: host (required)
      * The mail server host name
-     * 
+     *
      * Path parameter: port
      * The port number of the mail server
-     * 
+     *
      * @param path host:port
      * @return the dsl builder
      */
@@ -13643,16 +13683,16 @@ public class StaticEndpointBuilders {
     /**
      * PQC Algorithms (camel-pqc)
      * Post Quantum Cryptography Signature and Verification component.
-     * 
+     *
      * Category: security
      * Since: 4.12
      * Maven coordinates: org.apache.camel:camel-pqc
-     * 
+     *
      * Syntax: <code>pqc:label</code>
-     * 
+     *
      * Path parameter: label (required)
      * Logical name
-     * 
+     *
      * @param path label
      * @return the dsl builder
      */
@@ -13662,16 +13702,16 @@ public class StaticEndpointBuilders {
     /**
      * PQC Algorithms (camel-pqc)
      * Post Quantum Cryptography Signature and Verification component.
-     * 
+     *
      * Category: security
      * Since: 4.12
      * Maven coordinates: org.apache.camel:camel-pqc
-     * 
+     *
      * Syntax: <code>pqc:label</code>
-     * 
+     *
      * Path parameter: label (required)
      * Logical name
-     * 
+     *
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
      * @param path label
@@ -13684,16 +13724,16 @@ public class StaticEndpointBuilders {
      * PubNub (camel-pubnub)
      * Send and receive messages to/from PubNub data stream network for
      * connected devices.
-     * 
+     *
      * Category: cloud,iot,messaging
      * Since: 2.19
      * Maven coordinates: org.apache.camel:camel-pubnub
-     * 
+     *
      * Syntax: <code>pubnub:channel</code>
-     * 
+     *
      * Path parameter: channel (required)
      * The channel used for subscribing/publishing events
-     * 
+     *
      * @param path channel
      * @return the dsl builder
      */
@@ -13704,16 +13744,16 @@ public class StaticEndpointBuilders {
      * PubNub (camel-pubnub)
      * Send and receive messages to/from PubNub data stream network for
      * connected devices.
-     * 
+     *
      * Category: cloud,iot,messaging
      * Since: 2.19
      * Maven coordinates: org.apache.camel:camel-pubnub
-     * 
+     *
      * Syntax: <code>pubnub:channel</code>
-     * 
+     *
      * Path parameter: channel (required)
      * The channel used for subscribing/publishing events
-     * 
+     *
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
      * @param path channel
@@ -13725,26 +13765,26 @@ public class StaticEndpointBuilders {
     /**
      * Pulsar (camel-pulsar)
      * Send and receive messages from/to Apache Pulsar messaging system.
-     * 
+     *
      * Category: messaging
      * Since: 2.24
      * Maven coordinates: org.apache.camel:camel-pulsar
-     * 
+     *
      * Syntax: <code>pulsar:persistence://tenant/namespace/topic</code>
-     * 
+     *
      * Path parameter: persistence (required)
      * Whether the topic is persistent or non-persistent
      * There are 2 enums and the value can be one of: persistent, non-persistent
-     * 
+     *
      * Path parameter: tenant (required)
      * The tenant
-     * 
+     *
      * Path parameter: namespace (required)
      * The namespace
-     * 
+     *
      * Path parameter: topic (required)
      * The topic
-     * 
+     *
      * @param path persistence://tenant/namespace/topic
      * @return the dsl builder
      */
@@ -13754,26 +13794,26 @@ public class StaticEndpointBuilders {
     /**
      * Pulsar (camel-pulsar)
      * Send and receive messages from/to Apache Pulsar messaging system.
-     * 
+     *
      * Category: messaging
      * Since: 2.24
      * Maven coordinates: org.apache.camel:camel-pulsar
-     * 
+     *
      * Syntax: <code>pulsar:persistence://tenant/namespace/topic</code>
-     * 
+     *
      * Path parameter: persistence (required)
      * Whether the topic is persistent or non-persistent
      * There are 2 enums and the value can be one of: persistent, non-persistent
-     * 
+     *
      * Path parameter: tenant (required)
      * The tenant
-     * 
+     *
      * Path parameter: namespace (required)
      * The namespace
-     * 
+     *
      * Path parameter: topic (required)
      * The topic
-     * 
+     *
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
      * @param path persistence://tenant/namespace/topic
@@ -13785,16 +13825,16 @@ public class StaticEndpointBuilders {
     /**
      * Qdrant (camel-qdrant)
      * Perform operations on the Qdrant Vector Database.
-     * 
+     *
      * Category: database,ai
      * Since: 4.5
      * Maven coordinates: org.apache.camel:camel-qdrant
-     * 
+     *
      * Syntax: <code>qdrant:collection</code>
-     * 
+     *
      * Path parameter: collection (required)
      * The collection Name
-     * 
+     *
      * @param path collection
      * @return the dsl builder
      */
@@ -13804,16 +13844,16 @@ public class StaticEndpointBuilders {
     /**
      * Qdrant (camel-qdrant)
      * Perform operations on the Qdrant Vector Database.
-     * 
+     *
      * Category: database,ai
      * Since: 4.5
      * Maven coordinates: org.apache.camel:camel-qdrant
-     * 
+     *
      * Syntax: <code>qdrant:collection</code>
-     * 
+     *
      * Path parameter: collection (required)
      * The collection Name
-     * 
+     *
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
      * @param path collection
@@ -13825,22 +13865,22 @@ public class StaticEndpointBuilders {
     /**
      * Quartz (camel-quartz)
      * Schedule sending of messages using the Quartz 2.x scheduler.
-     * 
+     *
      * Category: scheduling
      * Since: 2.12
      * Maven coordinates: org.apache.camel:camel-quartz
-     * 
+     *
      * Syntax: <code>quartz:groupName/triggerName</code>
-     * 
+     *
      * Path parameter: groupName
      * The quartz group name to use. The combination of group name and trigger
      * name should be unique.
      * Default value: Camel
-     * 
+     *
      * Path parameter: triggerName (required)
      * The quartz trigger name to use. The combination of group name and trigger
      * name should be unique.
-     * 
+     *
      * @param path groupName/triggerName
      * @return the dsl builder
      */
@@ -13850,22 +13890,22 @@ public class StaticEndpointBuilders {
     /**
      * Quartz (camel-quartz)
      * Schedule sending of messages using the Quartz 2.x scheduler.
-     * 
+     *
      * Category: scheduling
      * Since: 2.12
      * Maven coordinates: org.apache.camel:camel-quartz
-     * 
+     *
      * Syntax: <code>quartz:groupName/triggerName</code>
-     * 
+     *
      * Path parameter: groupName
      * The quartz group name to use. The combination of group name and trigger
      * name should be unique.
      * Default value: Camel
-     * 
+     *
      * Path parameter: triggerName (required)
      * The quartz trigger name to use. The combination of group name and trigger
      * name should be unique.
-     * 
+     *
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
      * @param path groupName/triggerName
@@ -13878,13 +13918,13 @@ public class StaticEndpointBuilders {
      * QuickFix (camel-quickfix)
      * Open a Financial Interchange (FIX) session using an embedded QuickFix/J
      * engine.
-     * 
+     *
      * Category: messaging
      * Since: 2.1
      * Maven coordinates: org.apache.camel:camel-quickfix
-     * 
+     *
      * Syntax: <code>quickfix:configurationName</code>
-     * 
+     *
      * Path parameter: configurationName (required)
      * Path to the quickfix configuration file. You can prefix with: classpath,
      * file, http, ref, or bean. classpath, file and http loads the
@@ -13894,7 +13934,7 @@ public class StaticEndpointBuilders {
      * method name after dot, eg bean:myBean.myMethod
      * This option can also be loaded from an existing file, by prefixing with
      * file: or classpath: followed by the location of the file.
-     * 
+     *
      * @param path configurationName
      * @return the dsl builder
      */
@@ -13905,13 +13945,13 @@ public class StaticEndpointBuilders {
      * QuickFix (camel-quickfix)
      * Open a Financial Interchange (FIX) session using an embedded QuickFix/J
      * engine.
-     * 
+     *
      * Category: messaging
      * Since: 2.1
      * Maven coordinates: org.apache.camel:camel-quickfix
-     * 
+     *
      * Syntax: <code>quickfix:configurationName</code>
-     * 
+     *
      * Path parameter: configurationName (required)
      * Path to the quickfix configuration file. You can prefix with: classpath,
      * file, http, ref, or bean. classpath, file and http loads the
@@ -13921,7 +13961,7 @@ public class StaticEndpointBuilders {
      * method name after dot, eg bean:myBean.myMethod
      * This option can also be loaded from an existing file, by prefixing with
      * file: or classpath: followed by the location of the file.
-     * 
+     *
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
      * @param path configurationName
@@ -13934,16 +13974,16 @@ public class StaticEndpointBuilders {
      * Reactive Streams (camel-reactive-streams)
      * Exchange messages with reactive stream processing libraries compatible
      * with the reactive streams standard.
-     * 
+     *
      * Category: messaging
      * Since: 2.19
      * Maven coordinates: org.apache.camel:camel-reactive-streams
-     * 
+     *
      * Syntax: <code>reactive-streams:stream</code>
-     * 
+     *
      * Path parameter: stream
      * Name of the stream channel used by the endpoint to exchange messages.
-     * 
+     *
      * @param path stream
      * @return the dsl builder
      */
@@ -13954,16 +13994,16 @@ public class StaticEndpointBuilders {
      * Reactive Streams (camel-reactive-streams)
      * Exchange messages with reactive stream processing libraries compatible
      * with the reactive streams standard.
-     * 
+     *
      * Category: messaging
      * Since: 2.19
      * Maven coordinates: org.apache.camel:camel-reactive-streams
-     * 
+     *
      * Syntax: <code>reactive-streams:stream</code>
-     * 
+     *
      * Path parameter: stream
      * Name of the stream channel used by the endpoint to exchange messages.
-     * 
+     *
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
      * @param path stream
@@ -13976,16 +14016,16 @@ public class StaticEndpointBuilders {
      * Ref (camel-ref)
      * Route messages to an endpoint looked up dynamically by name in the Camel
      * Registry.
-     * 
+     *
      * Category: core
      * Since: 1.2
      * Maven coordinates: org.apache.camel:camel-ref
-     * 
+     *
      * Syntax: <code>ref:name</code>
-     * 
+     *
      * Path parameter: name (required)
      * Name of endpoint to lookup in the registry.
-     * 
+     *
      * @param path name
      * @return the dsl builder
      */
@@ -13996,16 +14036,16 @@ public class StaticEndpointBuilders {
      * Ref (camel-ref)
      * Route messages to an endpoint looked up dynamically by name in the Camel
      * Registry.
-     * 
+     *
      * Category: core
      * Since: 1.2
      * Maven coordinates: org.apache.camel:camel-ref
-     * 
+     *
      * Syntax: <code>ref:name</code>
-     * 
+     *
      * Path parameter: name (required)
      * Name of endpoint to lookup in the registry.
-     * 
+     *
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
      * @param path name
@@ -14017,25 +14057,25 @@ public class StaticEndpointBuilders {
     /**
      * REST (camel-rest)
      * Expose REST services or call external REST services.
-     * 
+     *
      * Category: core,rest
      * Since: 2.14
      * Maven coordinates: org.apache.camel:camel-rest
-     * 
+     *
      * Syntax: <code>rest:method:path:uriTemplate</code>
-     * 
+     *
      * Path parameter: method (required)
      * HTTP method to use.
      * There are 9 enums and the value can be one of: get, post, put, delete,
      * patch, head, trace, connect, options
-     * 
+     *
      * Path parameter: path (required)
      * The base path, can use &#42; as path suffix to support wildcard HTTP
      * route matching.
-     * 
+     *
      * Path parameter: uriTemplate
      * The uri template
-     * 
+     *
      * @param path method:path:uriTemplate
      * @return the dsl builder
      */
@@ -14045,25 +14085,25 @@ public class StaticEndpointBuilders {
     /**
      * REST (camel-rest)
      * Expose REST services or call external REST services.
-     * 
+     *
      * Category: core,rest
      * Since: 2.14
      * Maven coordinates: org.apache.camel:camel-rest
-     * 
+     *
      * Syntax: <code>rest:method:path:uriTemplate</code>
-     * 
+     *
      * Path parameter: method (required)
      * HTTP method to use.
      * There are 9 enums and the value can be one of: get, post, put, delete,
      * patch, head, trace, connect, options
-     * 
+     *
      * Path parameter: path (required)
      * The base path, can use &#42; as path suffix to support wildcard HTTP
      * route matching.
-     * 
+     *
      * Path parameter: uriTemplate
      * The uri template
-     * 
+     *
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
      * @param path method:path:uriTemplate
@@ -14076,16 +14116,16 @@ public class StaticEndpointBuilders {
      * REST API (camel-rest)
      * Expose OpenAPI Specification of the REST services defined using Camel
      * REST DSL.
-     * 
+     *
      * Category: core,rest
      * Since: 2.16
      * Maven coordinates: org.apache.camel:camel-rest
-     * 
+     *
      * Syntax: <code>rest-api:path</code>
-     * 
+     *
      * Path parameter: path (required)
      * The base path
-     * 
+     *
      * @param path path
      * @return the dsl builder
      */
@@ -14096,16 +14136,16 @@ public class StaticEndpointBuilders {
      * REST API (camel-rest)
      * Expose OpenAPI Specification of the REST services defined using Camel
      * REST DSL.
-     * 
+     *
      * Category: core,rest
      * Since: 2.16
      * Maven coordinates: org.apache.camel:camel-rest
-     * 
+     *
      * Syntax: <code>rest-api:path</code>
-     * 
+     *
      * Path parameter: path (required)
      * The base path
-     * 
+     *
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
      * @param path path
@@ -14117,13 +14157,13 @@ public class StaticEndpointBuilders {
     /**
      * REST OpenApi (camel-rest-openapi)
      * To call and expose REST services using OpenAPI specification as contract.
-     * 
+     *
      * Category: rest,api
      * Since: 3.1
      * Maven coordinates: org.apache.camel:camel-rest-openapi
-     * 
+     *
      * Syntax: <code>rest-openapi:specificationUri#operationId</code>
-     * 
+     *
      * Path parameter: specificationUri
      * Path to the OpenApi specification file. The scheme, host base path are
      * taken from this specification, but these can be overridden with
@@ -14140,11 +14180,11 @@ public class StaticEndpointBuilders {
      * the JDK documentation for UrlHandler. Default value notice: By default
      * loads openapi.json file
      * Default value: openapi.json
-     * 
+     *
      * Path parameter: operationId
      * ID of the operation from the OpenApi specification. This is required when
      * using producer
-     * 
+     *
      * @param path specificationUri#operationId
      * @return the dsl builder
      */
@@ -14154,13 +14194,13 @@ public class StaticEndpointBuilders {
     /**
      * REST OpenApi (camel-rest-openapi)
      * To call and expose REST services using OpenAPI specification as contract.
-     * 
+     *
      * Category: rest,api
      * Since: 3.1
      * Maven coordinates: org.apache.camel:camel-rest-openapi
-     * 
+     *
      * Syntax: <code>rest-openapi:specificationUri#operationId</code>
-     * 
+     *
      * Path parameter: specificationUri
      * Path to the OpenApi specification file. The scheme, host base path are
      * taken from this specification, but these can be overridden with
@@ -14177,11 +14217,11 @@ public class StaticEndpointBuilders {
      * the JDK documentation for UrlHandler. Default value notice: By default
      * loads openapi.json file
      * Default value: openapi.json
-     * 
+     *
      * Path parameter: operationId
      * ID of the operation from the OpenApi specification. This is required when
      * using producer
-     * 
+     *
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
      * @param path specificationUri#operationId
@@ -14193,27 +14233,27 @@ public class StaticEndpointBuilders {
     /**
      * REST Postman (camel-rest-postman)
      * To call and expose REST services using a Postman Collection as contract.
-     * 
+     *
      * Category: rest,api
      * Since: 4.23
      * Maven coordinates: org.apache.camel:camel-rest-postman
-     * 
+     *
      * Syntax: <code>rest-postman:collectionSource#requestId</code>
-     * 
+     *
      * Path parameter: collectionSource
      * The Postman Collection to use. Either a resource URI of a Collection v2.1
      * JSON document (classpath:, file: or http:), or the uid of a collection to
      * fetch from the Postman cloud, which requires postmanApiKey. Default value
      * notice: By default loads the postman-collection.json file
      * Default value: postman-collection.json
-     * 
+     *
      * Path parameter: requestId
      * The request to invoke, identified by its id in the collection or by its
      * slugified name, for example getUserById. Use a folder id to run every
      * request in that folder, and leave it out to run the whole collection.
      * Append a slash to force a folder match when a request and a folder share
      * a name.
-     * 
+     *
      * @param path collectionSource#requestId
      * @return the dsl builder
      */
@@ -14223,27 +14263,27 @@ public class StaticEndpointBuilders {
     /**
      * REST Postman (camel-rest-postman)
      * To call and expose REST services using a Postman Collection as contract.
-     * 
+     *
      * Category: rest,api
      * Since: 4.23
      * Maven coordinates: org.apache.camel:camel-rest-postman
-     * 
+     *
      * Syntax: <code>rest-postman:collectionSource#requestId</code>
-     * 
+     *
      * Path parameter: collectionSource
      * The Postman Collection to use. Either a resource URI of a Collection v2.1
      * JSON document (classpath:, file: or http:), or the uid of a collection to
      * fetch from the Postman cloud, which requires postmanApiKey. Default value
      * notice: By default loads the postman-collection.json file
      * Default value: postman-collection.json
-     * 
+     *
      * Path parameter: requestId
      * The request to invoke, identified by its id in the collection or by its
      * slugified name, for example getUserById. Use a folder id to run every
      * request in that folder, and leave it out to run the whole collection.
      * Append a slash to force a folder match when a request and a folder share
      * a name.
-     * 
+     *
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
      * @param path collectionSource#requestId
@@ -14255,13 +14295,13 @@ public class StaticEndpointBuilders {
     /**
      * Robot Framework (camel-robotframework)
      * Pass camel exchanges to acceptance test written in Robot DSL.
-     * 
+     *
      * Category: testing
      * Since: 3.0
      * Maven coordinates: org.apache.camel:camel-robotframework
-     * 
+     *
      * Syntax: <code>robotframework:resourceUri</code>
-     * 
+     *
      * Path parameter: resourceUri (required)
      * Path to the resource. You can prefix with: classpath, file, http, ref, or
      * bean. classpath, file and http loads the resource using these protocols
@@ -14270,7 +14310,7 @@ public class StaticEndpointBuilders {
      * you can specify the method name after dot, eg bean:myBean.myMethod.
      * This option can also be loaded from an existing file, by prefixing with
      * file: or classpath: followed by the location of the file.
-     * 
+     *
      * @param path resourceUri
      * @return the dsl builder
      */
@@ -14280,13 +14320,13 @@ public class StaticEndpointBuilders {
     /**
      * Robot Framework (camel-robotframework)
      * Pass camel exchanges to acceptance test written in Robot DSL.
-     * 
+     *
      * Category: testing
      * Since: 3.0
      * Maven coordinates: org.apache.camel:camel-robotframework
-     * 
+     *
      * Syntax: <code>robotframework:resourceUri</code>
-     * 
+     *
      * Path parameter: resourceUri (required)
      * Path to the resource. You can prefix with: classpath, file, http, ref, or
      * bean. classpath, file and http loads the resource using these protocols
@@ -14295,7 +14335,7 @@ public class StaticEndpointBuilders {
      * you can specify the method name after dot, eg bean:myBean.myMethod.
      * This option can also be loaded from an existing file, by prefixing with
      * file: or classpath: followed by the location of the file.
-     * 
+     *
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
      * @param path resourceUri
@@ -14307,16 +14347,16 @@ public class StaticEndpointBuilders {
     /**
      * RocketMQ (camel-rocketmq)
      * Send and receive messages from RocketMQ cluster.
-     * 
+     *
      * Category: messaging
      * Since: 3.20
      * Maven coordinates: org.apache.camel:camel-rocketmq
-     * 
+     *
      * Syntax: <code>rocketmq:topicName</code>
-     * 
+     *
      * Path parameter: topicName (required)
      * Topic name of this endpoint.
-     * 
+     *
      * @param path topicName
      * @return the dsl builder
      */
@@ -14326,16 +14366,16 @@ public class StaticEndpointBuilders {
     /**
      * RocketMQ (camel-rocketmq)
      * Send and receive messages from RocketMQ cluster.
-     * 
+     *
      * Category: messaging
      * Since: 3.20
      * Maven coordinates: org.apache.camel:camel-rocketmq
-     * 
+     *
      * Syntax: <code>rocketmq:topicName</code>
-     * 
+     *
      * Path parameter: topicName (required)
      * Topic name of this endpoint.
-     * 
+     *
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
      * @param path topicName
@@ -14347,16 +14387,16 @@ public class StaticEndpointBuilders {
     /**
      * RSS (camel-rss)
      * Poll RSS feeds.
-     * 
+     *
      * Category: document
      * Since: 2.0
      * Maven coordinates: org.apache.camel:camel-rss
-     * 
+     *
      * Syntax: <code>rss:feedUri</code>
-     * 
+     *
      * Path parameter: feedUri (required)
      * The URI to the feed to poll.
-     * 
+     *
      * @param path feedUri
      * @return the dsl builder
      */
@@ -14366,16 +14406,16 @@ public class StaticEndpointBuilders {
     /**
      * RSS (camel-rss)
      * Poll RSS feeds.
-     * 
+     *
      * Category: document
      * Since: 2.0
      * Maven coordinates: org.apache.camel:camel-rss
-     * 
+     *
      * Syntax: <code>rss:feedUri</code>
-     * 
+     *
      * Path parameter: feedUri (required)
      * The URI to the feed to poll.
-     * 
+     *
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
      * @param path feedUri
@@ -14387,17 +14427,17 @@ public class StaticEndpointBuilders {
     /**
      * Saga (camel-saga)
      * Execute custom actions within a route using the Saga EIP.
-     * 
+     *
      * Category: clustering
      * Since: 2.21
      * Maven coordinates: org.apache.camel:camel-saga
-     * 
+     *
      * Syntax: <code>saga:action</code>
-     * 
+     *
      * Path parameter: action (required)
      * Action to execute (complete or compensate)
      * There are 2 enums and the value can be one of: COMPLETE, COMPENSATE
-     * 
+     *
      * @param path action
      * @return the dsl builder
      */
@@ -14407,17 +14447,17 @@ public class StaticEndpointBuilders {
     /**
      * Saga (camel-saga)
      * Execute custom actions within a route using the Saga EIP.
-     * 
+     *
      * Category: clustering
      * Since: 2.21
      * Maven coordinates: org.apache.camel:camel-saga
-     * 
+     *
      * Syntax: <code>saga:action</code>
-     * 
+     *
      * Path parameter: action (required)
      * Action to execute (complete or compensate)
      * There are 2 enums and the value can be one of: COMPLETE, COMPENSATE
-     * 
+     *
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
      * @param path action
@@ -14429,13 +14469,13 @@ public class StaticEndpointBuilders {
     /**
      * Salesforce (camel-salesforce)
      * Communicate with Salesforce using Java DTOs.
-     * 
+     *
      * Category: cloud,saas
      * Since: 2.12
      * Maven coordinates: org.apache.camel:camel-salesforce
-     * 
+     *
      * Syntax: <code>salesforce:operationName:topicName</code>
-     * 
+     *
      * Path parameter: operationName (required)
      * The operation to use
      * There are 69 enums and the value can be one of: getVersions,
@@ -14456,10 +14496,10 @@ public class StaticEndpointBuilders {
      * bulk2GetUnprocessedRecords, bulk2CreateQueryJob, bulk2GetQueryJob,
      * bulk2GetAllQueryJobs, bulk2GetQueryJobResults, bulk2AbortQueryJob,
      * bulk2DeleteQueryJob, raw, subscribe, pubSubSubscribe, pubSubPublish
-     * 
+     *
      * Path parameter: topicName
      * The name of the topic/channel to use
-     * 
+     *
      * @param path operationName:topicName
      * @return the dsl builder
      */
@@ -14469,13 +14509,13 @@ public class StaticEndpointBuilders {
     /**
      * Salesforce (camel-salesforce)
      * Communicate with Salesforce using Java DTOs.
-     * 
+     *
      * Category: cloud,saas
      * Since: 2.12
      * Maven coordinates: org.apache.camel:camel-salesforce
-     * 
+     *
      * Syntax: <code>salesforce:operationName:topicName</code>
-     * 
+     *
      * Path parameter: operationName (required)
      * The operation to use
      * There are 69 enums and the value can be one of: getVersions,
@@ -14496,10 +14536,10 @@ public class StaticEndpointBuilders {
      * bulk2GetUnprocessedRecords, bulk2CreateQueryJob, bulk2GetQueryJob,
      * bulk2GetAllQueryJobs, bulk2GetQueryJobResults, bulk2AbortQueryJob,
      * bulk2DeleteQueryJob, raw, subscribe, pubSubSubscribe, pubSubPublish
-     * 
+     *
      * Path parameter: topicName
      * The name of the topic/channel to use
-     * 
+     *
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
      * @param path operationName:topicName
@@ -14511,16 +14551,16 @@ public class StaticEndpointBuilders {
     /**
      * SAP NetWeaver (camel-sap-netweaver)
      * Send requests to SAP NetWeaver Gateway using HTTP.
-     * 
+     *
      * Category: saas
      * Since: 2.12
      * Maven coordinates: org.apache.camel:camel-sap-netweaver
-     * 
+     *
      * Syntax: <code>sap-netweaver:url</code>
-     * 
+     *
      * Path parameter: url (required)
      * Url to the SAP net-weaver gateway server.
-     * 
+     *
      * @param path url
      * @return the dsl builder
      */
@@ -14530,16 +14570,16 @@ public class StaticEndpointBuilders {
     /**
      * SAP NetWeaver (camel-sap-netweaver)
      * Send requests to SAP NetWeaver Gateway using HTTP.
-     * 
+     *
      * Category: saas
      * Since: 2.12
      * Maven coordinates: org.apache.camel:camel-sap-netweaver
-     * 
+     *
      * Syntax: <code>sap-netweaver:url</code>
-     * 
+     *
      * Path parameter: url (required)
      * Url to the SAP net-weaver gateway server.
-     * 
+     *
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
      * @param path url
@@ -14552,16 +14592,16 @@ public class StaticEndpointBuilders {
      * Scheduler (camel-scheduler)
      * Generate messages in specified intervals using
      * java.util.concurrent.ScheduledExecutorService.
-     * 
+     *
      * Category: core,scheduling
      * Since: 2.15
      * Maven coordinates: org.apache.camel:camel-scheduler
-     * 
+     *
      * Syntax: <code>scheduler:name</code>
-     * 
+     *
      * Path parameter: name (required)
      * The name of the scheduler
-     * 
+     *
      * @param path name
      * @return the dsl builder
      */
@@ -14572,16 +14612,16 @@ public class StaticEndpointBuilders {
      * Scheduler (camel-scheduler)
      * Generate messages in specified intervals using
      * java.util.concurrent.ScheduledExecutorService.
-     * 
+     *
      * Category: core,scheduling
      * Since: 2.15
      * Maven coordinates: org.apache.camel:camel-scheduler
-     * 
+     *
      * Syntax: <code>scheduler:name</code>
-     * 
+     *
      * Path parameter: name (required)
      * The name of the scheduler
-     * 
+     *
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
      * @param path name
@@ -14593,19 +14633,19 @@ public class StaticEndpointBuilders {
     /**
      * Schematron (camel-schematron)
      * Validate XML payload using the Schematron Library.
-     * 
+     *
      * Category: validation
      * Since: 2.15
      * Maven coordinates: org.apache.camel:camel-schematron
-     * 
+     *
      * Syntax: <code>schematron:path</code>
-     * 
+     *
      * Path parameter: path (required)
      * The path to the schematron rules file. Can either be in class path or
      * location in the file system.
      * This option can also be loaded from an existing file, by prefixing with
      * file: or classpath: followed by the location of the file.
-     * 
+     *
      * @param path path
      * @return the dsl builder
      */
@@ -14615,19 +14655,19 @@ public class StaticEndpointBuilders {
     /**
      * Schematron (camel-schematron)
      * Validate XML payload using the Schematron Library.
-     * 
+     *
      * Category: validation
      * Since: 2.15
      * Maven coordinates: org.apache.camel:camel-schematron
-     * 
+     *
      * Syntax: <code>schematron:path</code>
-     * 
+     *
      * Path parameter: path (required)
      * The path to the schematron rules file. Can either be in class path or
      * location in the file system.
      * This option can also be loaded from an existing file, by prefixing with
      * file: or classpath: followed by the location of the file.
-     * 
+     *
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
      * @param path path
@@ -14639,22 +14679,22 @@ public class StaticEndpointBuilders {
     /**
      * SCP (camel-jsch)
      * Copy files to/from remote hosts using the secure copy protocol (SCP).
-     * 
+     *
      * Category: file
      * Since: 2.10
      * Maven coordinates: org.apache.camel:camel-jsch
-     * 
+     *
      * Syntax: <code>scp:host:port/directoryName</code>
-     * 
+     *
      * Path parameter: host (required)
      * Hostname of the FTP server
-     * 
+     *
      * Path parameter: port
      * Port of the FTP server
-     * 
+     *
      * Path parameter: directoryName
      * The starting directory
-     * 
+     *
      * @param path host:port/directoryName
      * @return the dsl builder
      */
@@ -14664,22 +14704,22 @@ public class StaticEndpointBuilders {
     /**
      * SCP (camel-jsch)
      * Copy files to/from remote hosts using the secure copy protocol (SCP).
-     * 
+     *
      * Category: file
      * Since: 2.10
      * Maven coordinates: org.apache.camel:camel-jsch
-     * 
+     *
      * Syntax: <code>scp:host:port/directoryName</code>
-     * 
+     *
      * Path parameter: host (required)
      * Hostname of the FTP server
-     * 
+     *
      * Path parameter: port
      * Port of the FTP server
-     * 
+     *
      * Path parameter: directoryName
      * The starting directory
-     * 
+     *
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
      * @param path host:port/directoryName
@@ -14692,16 +14732,16 @@ public class StaticEndpointBuilders {
      * SEDA (camel-seda)
      * Asynchronously call another endpoint from any Camel Context in the same
      * JVM.
-     * 
+     *
      * Category: core,messaging
      * Since: 1.1
      * Maven coordinates: org.apache.camel:camel-seda
-     * 
+     *
      * Syntax: <code>seda:name</code>
-     * 
+     *
      * Path parameter: name (required)
      * Name of queue
-     * 
+     *
      * @param path name
      * @return the dsl builder
      */
@@ -14712,16 +14752,16 @@ public class StaticEndpointBuilders {
      * SEDA (camel-seda)
      * Asynchronously call another endpoint from any Camel Context in the same
      * JVM.
-     * 
+     *
      * Category: core,messaging
      * Since: 1.1
      * Maven coordinates: org.apache.camel:camel-seda
-     * 
+     *
      * Syntax: <code>seda:name</code>
-     * 
+     *
      * Path parameter: name (required)
      * Name of queue
-     * 
+     *
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
      * @param path name
@@ -14733,16 +14773,16 @@ public class StaticEndpointBuilders {
     /**
      * ServiceNow (camel-servicenow)
      * Interact with ServiceNow via its REST API.
-     * 
+     *
      * Category: api,cloud,management
      * Since: 2.18
      * Maven coordinates: org.apache.camel:camel-servicenow
-     * 
+     *
      * Syntax: <code>servicenow:instanceName</code>
-     * 
+     *
      * Path parameter: instanceName (required)
      * The ServiceNow instance name
-     * 
+     *
      * @param path instanceName
      * @return the dsl builder
      */
@@ -14752,16 +14792,16 @@ public class StaticEndpointBuilders {
     /**
      * ServiceNow (camel-servicenow)
      * Interact with ServiceNow via its REST API.
-     * 
+     *
      * Category: api,cloud,management
      * Since: 2.18
      * Maven coordinates: org.apache.camel:camel-servicenow
-     * 
+     *
      * Syntax: <code>servicenow:instanceName</code>
-     * 
+     *
      * Path parameter: instanceName (required)
      * The ServiceNow instance name
-     * 
+     *
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
      * @param path instanceName
@@ -14773,16 +14813,16 @@ public class StaticEndpointBuilders {
     /**
      * Servlet (camel-servlet)
      * Serve HTTP requests by a Servlet.
-     * 
+     *
      * Category: http
      * Since: 2.0
      * Maven coordinates: org.apache.camel:camel-servlet
-     * 
+     *
      * Syntax: <code>servlet:contextPath</code>
-     * 
+     *
      * Path parameter: contextPath (required)
      * The context-path to use
-     * 
+     *
      * @param path contextPath
      * @return the dsl builder
      */
@@ -14792,16 +14832,16 @@ public class StaticEndpointBuilders {
     /**
      * Servlet (camel-servlet)
      * Serve HTTP requests by a Servlet.
-     * 
+     *
      * Category: http
      * Since: 2.0
      * Maven coordinates: org.apache.camel:camel-servlet
-     * 
+     *
      * Syntax: <code>servlet:contextPath</code>
-     * 
+     *
      * Path parameter: contextPath (required)
      * The context-path to use
-     * 
+     *
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
      * @param path contextPath
@@ -14813,22 +14853,22 @@ public class StaticEndpointBuilders {
     /**
      * SFTP (camel-ftp)
      * Upload and download files to/from SFTP servers.
-     * 
+     *
      * Category: file
      * Since: 1.1
      * Maven coordinates: org.apache.camel:camel-ftp
-     * 
+     *
      * Syntax: <code>sftp:host:port/directoryName</code>
-     * 
+     *
      * Path parameter: host (required)
      * Hostname of the FTP server
-     * 
+     *
      * Path parameter: port
      * Port of the FTP server
-     * 
+     *
      * Path parameter: directoryName
      * The starting directory
-     * 
+     *
      * @param path host:port/directoryName
      * @return the dsl builder
      */
@@ -14838,22 +14878,22 @@ public class StaticEndpointBuilders {
     /**
      * SFTP (camel-ftp)
      * Upload and download files to/from SFTP servers.
-     * 
+     *
      * Category: file
      * Since: 1.1
      * Maven coordinates: org.apache.camel:camel-ftp
-     * 
+     *
      * Syntax: <code>sftp:host:port/directoryName</code>
-     * 
+     *
      * Path parameter: host (required)
      * Hostname of the FTP server
-     * 
+     *
      * Path parameter: port
      * Port of the FTP server
-     * 
+     *
      * Path parameter: directoryName
      * The starting directory
-     * 
+     *
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
      * @param path host:port/directoryName
@@ -14865,16 +14905,16 @@ public class StaticEndpointBuilders {
     /**
      * Shell (camel-shell)
      * Camel Shell component
-     * 
+     *
      * Category: api
      * Since: 4.21
      * Maven coordinates: org.apache.camel:camel-shell
-     * 
+     *
      * Syntax: <code>shell:prompt</code>
-     * 
+     *
      * Path parameter: prompt (required)
      * Shell prompt
-     * 
+     *
      * @param path prompt
      * @return the dsl builder
      */
@@ -14884,16 +14924,16 @@ public class StaticEndpointBuilders {
     /**
      * Shell (camel-shell)
      * Camel Shell component
-     * 
+     *
      * Category: api
      * Since: 4.21
      * Maven coordinates: org.apache.camel:camel-shell
-     * 
+     *
      * Syntax: <code>shell:prompt</code>
-     * 
+     *
      * Path parameter: prompt (required)
      * Shell prompt
-     * 
+     *
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
      * @param path prompt
@@ -14906,22 +14946,22 @@ public class StaticEndpointBuilders {
      * Simple JMS (camel-sjms)
      * Send and receive messages to/from a JMS Queue or Topic using plain JMS
      * 1.x API.
-     * 
+     *
      * Category: messaging
      * Since: 2.11
      * Maven coordinates: org.apache.camel:camel-sjms
-     * 
+     *
      * Syntax: <code>sjms:destinationType:destinationName</code>
-     * 
+     *
      * Path parameter: destinationType
      * The kind of destination to use
      * Default value: queue
      * There are 2 enums and the value can be one of: queue, topic
-     * 
+     *
      * Path parameter: destinationName (required)
      * DestinationName is a JMS queue or topic name. By default, the
      * destinationName is interpreted as a queue name.
-     * 
+     *
      * @param path destinationType:destinationName
      * @return the dsl builder
      */
@@ -14932,22 +14972,22 @@ public class StaticEndpointBuilders {
      * Simple JMS (camel-sjms)
      * Send and receive messages to/from a JMS Queue or Topic using plain JMS
      * 1.x API.
-     * 
+     *
      * Category: messaging
      * Since: 2.11
      * Maven coordinates: org.apache.camel:camel-sjms
-     * 
+     *
      * Syntax: <code>sjms:destinationType:destinationName</code>
-     * 
+     *
      * Path parameter: destinationType
      * The kind of destination to use
      * Default value: queue
      * There are 2 enums and the value can be one of: queue, topic
-     * 
+     *
      * Path parameter: destinationName (required)
      * DestinationName is a JMS queue or topic name. By default, the
      * destinationName is interpreted as a queue name.
-     * 
+     *
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
      * @param path destinationType:destinationName
@@ -14960,22 +15000,22 @@ public class StaticEndpointBuilders {
      * Simple JMS2 (camel-sjms2)
      * Send and receive messages to/from a JMS Queue or Topic using plain JMS
      * 2.x API.
-     * 
+     *
      * Category: messaging
      * Since: 2.19
      * Maven coordinates: org.apache.camel:camel-sjms2
-     * 
+     *
      * Syntax: <code>sjms2:destinationType:destinationName</code>
-     * 
+     *
      * Path parameter: destinationType
      * The kind of destination to use
      * Default value: queue
      * There are 2 enums and the value can be one of: queue, topic
-     * 
+     *
      * Path parameter: destinationName (required)
      * DestinationName is a JMS queue or topic name. By default, the
      * destinationName is interpreted as a queue name.
-     * 
+     *
      * @param path destinationType:destinationName
      * @return the dsl builder
      */
@@ -14986,22 +15026,22 @@ public class StaticEndpointBuilders {
      * Simple JMS2 (camel-sjms2)
      * Send and receive messages to/from a JMS Queue or Topic using plain JMS
      * 2.x API.
-     * 
+     *
      * Category: messaging
      * Since: 2.19
      * Maven coordinates: org.apache.camel:camel-sjms2
-     * 
+     *
      * Syntax: <code>sjms2:destinationType:destinationName</code>
-     * 
+     *
      * Path parameter: destinationType
      * The kind of destination to use
      * Default value: queue
      * There are 2 enums and the value can be one of: queue, topic
-     * 
+     *
      * Path parameter: destinationName (required)
      * DestinationName is a JMS queue or topic name. By default, the
      * destinationName is interpreted as a queue name.
-     * 
+     *
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
      * @param path destinationType:destinationName
@@ -15013,17 +15053,17 @@ public class StaticEndpointBuilders {
     /**
      * Slack (camel-slack)
      * Send and receive messages to/from Slack.
-     * 
+     *
      * Category: social
      * Since: 2.16
      * Maven coordinates: org.apache.camel:camel-slack
-     * 
+     *
      * Syntax: <code>slack:channel</code>
-     * 
+     *
      * Path parameter: channel (required)
      * The channel name (syntax #name) or slack user (syntax userName) to send a
      * message directly to an user.
-     * 
+     *
      * @param path channel
      * @return the dsl builder
      */
@@ -15033,17 +15073,17 @@ public class StaticEndpointBuilders {
     /**
      * Slack (camel-slack)
      * Send and receive messages to/from Slack.
-     * 
+     *
      * Category: social
      * Since: 2.16
      * Maven coordinates: org.apache.camel:camel-slack
-     * 
+     *
      * Syntax: <code>slack:channel</code>
-     * 
+     *
      * Path parameter: channel (required)
      * The channel name (syntax #name) or slack user (syntax userName) to send a
      * message directly to an user.
-     * 
+     *
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
      * @param path channel
@@ -15055,26 +15095,26 @@ public class StaticEndpointBuilders {
     /**
      * SMB (camel-smb)
      * Read and write files to Server Message Block (SMB) file shares.
-     * 
+     *
      * Category: file
      * Since: 4.3
      * Maven coordinates: org.apache.camel:camel-smb
-     * 
+     *
      * Syntax: <code>smb:hostname:port/shareName/path</code>
-     * 
+     *
      * Path parameter: hostname (required)
      * The share hostname or IP address
-     * 
+     *
      * Path parameter: port
      * The share port number
      * Default value: 445
-     * 
+     *
      * Path parameter: shareName (required)
      * The name of the share directory
-     * 
+     *
      * Path parameter: path
      * The base directory within the share
-     * 
+     *
      * @param path hostname:port/shareName/path
      * @return the dsl builder
      */
@@ -15084,26 +15124,26 @@ public class StaticEndpointBuilders {
     /**
      * SMB (camel-smb)
      * Read and write files to Server Message Block (SMB) file shares.
-     * 
+     *
      * Category: file
      * Since: 4.3
      * Maven coordinates: org.apache.camel:camel-smb
-     * 
+     *
      * Syntax: <code>smb:hostname:port/shareName/path</code>
-     * 
+     *
      * Path parameter: hostname (required)
      * The share hostname or IP address
-     * 
+     *
      * Path parameter: port
      * The share port number
      * Default value: 445
-     * 
+     *
      * Path parameter: shareName (required)
      * The name of the share directory
-     * 
+     *
      * Path parameter: path
      * The base directory within the share
-     * 
+     *
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
      * @param path hostname:port/shareName/path
@@ -15116,18 +15156,18 @@ public class StaticEndpointBuilders {
      * Smooks (camel-smooks)
      * Use Smooks to transform, route, and bind both XML and non-XML data,
      * including EDI, CSV, JSON, and YAML.
-     * 
+     *
      * Category: transformation
      * Since: 4.7
      * Maven coordinates: org.apache.camel:camel-smooks
-     * 
+     *
      * Syntax: <code>smooks:smooksConfig</code>
-     * 
+     *
      * Path parameter: smooksConfig (required)
      * Path to the Smooks configuration file
      * This option can also be loaded from an existing file, by prefixing with
      * file: or classpath: followed by the location of the file.
-     * 
+     *
      * @param path smooksConfig
      * @return the dsl builder
      */
@@ -15138,18 +15178,18 @@ public class StaticEndpointBuilders {
      * Smooks (camel-smooks)
      * Use Smooks to transform, route, and bind both XML and non-XML data,
      * including EDI, CSV, JSON, and YAML.
-     * 
+     *
      * Category: transformation
      * Since: 4.7
      * Maven coordinates: org.apache.camel:camel-smooks
-     * 
+     *
      * Syntax: <code>smooks:smooksConfig</code>
-     * 
+     *
      * Path parameter: smooksConfig (required)
      * Path to the Smooks configuration file
      * This option can also be loaded from an existing file, by prefixing with
      * file: or classpath: followed by the location of the file.
-     * 
+     *
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
      * @param path smooksConfig
@@ -15162,21 +15202,21 @@ public class StaticEndpointBuilders {
      * SMPP (camel-smpp)
      * Send and receive SMS messages using a SMSC (Short Message Service
      * Center).
-     * 
+     *
      * Category: mobile
      * Since: 2.2
      * Maven coordinates: org.apache.camel:camel-smpp
-     * 
+     *
      * Syntax: <code>smpp:host:port</code>
-     * 
+     *
      * Path parameter: host
      * Hostname for the SMSC server to use.
      * Default value: localhost
-     * 
+     *
      * Path parameter: port
      * Port number for the SMSC server to use.
      * Default value: 2775
-     * 
+     *
      * @param path host:port
      * @return the dsl builder
      */
@@ -15187,21 +15227,21 @@ public class StaticEndpointBuilders {
      * SMPP (camel-smpp)
      * Send and receive SMS messages using a SMSC (Short Message Service
      * Center).
-     * 
+     *
      * Category: mobile
      * Since: 2.2
      * Maven coordinates: org.apache.camel:camel-smpp
-     * 
+     *
      * Syntax: <code>smpp:host:port</code>
-     * 
+     *
      * Path parameter: host
      * Hostname for the SMSC server to use.
      * Default value: localhost
-     * 
+     *
      * Path parameter: port
      * Port number for the SMSC server to use.
      * Default value: 2775
-     * 
+     *
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
      * @param path host:port
@@ -15214,21 +15254,21 @@ public class StaticEndpointBuilders {
      * SMPP (Secure) (camel-smpp)
      * Send and receive SMS messages using a SMSC (Short Message Service
      * Center).
-     * 
+     *
      * Category: mobile
      * Since: 2.2
      * Maven coordinates: org.apache.camel:camel-smpp
-     * 
+     *
      * Syntax: <code>smpps:host:port</code>
-     * 
+     *
      * Path parameter: host
      * Hostname for the SMSC server to use.
      * Default value: localhost
-     * 
+     *
      * Path parameter: port
      * Port number for the SMSC server to use.
      * Default value: 2775
-     * 
+     *
      * @param path host:port
      * @return the dsl builder
      */
@@ -15238,19 +15278,19 @@ public class StaticEndpointBuilders {
     /**
      * SMTP (camel-mail)
      * Send and receive emails using imap, pop3 and smtp protocols.
-     * 
+     *
      * Category: mail
      * Since: 1.0
      * Maven coordinates: org.apache.camel:camel-mail
-     * 
+     *
      * Syntax: <code>smtp:host:port</code>
-     * 
+     *
      * Path parameter: host (required)
      * The mail server host name
-     * 
+     *
      * Path parameter: port
      * The port number of the mail server
-     * 
+     *
      * @param path host:port
      * @return the dsl builder
      */
@@ -15260,19 +15300,19 @@ public class StaticEndpointBuilders {
     /**
      * SMTPS (camel-mail)
      * Send and receive emails using imap, pop3 and smtp protocols.
-     * 
+     *
      * Category: mail
      * Since: 1.0
      * Maven coordinates: org.apache.camel:camel-mail
-     * 
+     *
      * Syntax: <code>smtps:host:port</code>
-     * 
+     *
      * Path parameter: host (required)
      * The mail server host name
-     * 
+     *
      * Path parameter: port
      * The port number of the mail server
-     * 
+     *
      * @param path host:port
      * @return the dsl builder
      */
@@ -15283,19 +15323,19 @@ public class StaticEndpointBuilders {
      * SNMP (camel-snmp)
      * Receive traps and poll SNMP (Simple Network Management Protocol) capable
      * devices.
-     * 
+     *
      * Category: monitoring
      * Since: 2.1
      * Maven coordinates: org.apache.camel:camel-snmp
-     * 
+     *
      * Syntax: <code>snmp:host:port</code>
-     * 
+     *
      * Path parameter: host (required)
      * Hostname of the SNMP enabled device
-     * 
+     *
      * Path parameter: port (required)
      * Port number of the SNMP enabled device
-     * 
+     *
      * @param path host:port
      * @return the dsl builder
      */
@@ -15306,19 +15346,19 @@ public class StaticEndpointBuilders {
      * SNMP (camel-snmp)
      * Receive traps and poll SNMP (Simple Network Management Protocol) capable
      * devices.
-     * 
+     *
      * Category: monitoring
      * Since: 2.1
      * Maven coordinates: org.apache.camel:camel-snmp
-     * 
+     *
      * Syntax: <code>snmp:host:port</code>
-     * 
+     *
      * Path parameter: host (required)
      * Hostname of the SNMP enabled device
-     * 
+     *
      * Path parameter: port (required)
      * Port number of the SNMP enabled device
-     * 
+     *
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
      * @param path host:port
@@ -15330,25 +15370,25 @@ public class StaticEndpointBuilders {
     /**
      * Solr (camel-solr)
      * Perform operations against Apache Lucene Solr.
-     * 
+     *
      * Category: search,monitoring
      * Since: 4.8
      * Maven coordinates: org.apache.camel:camel-solr
-     * 
+     *
      * Syntax: <code>solr:host:port/basePath</code>
-     * 
+     *
      * Path parameter: host (required)
      * The solr instance host name (set to 'default' to use the host name
      * defined on component level)
-     * 
+     *
      * Path parameter: port
      * The solr instance port number
      * Default value: 8983
-     * 
+     *
      * Path parameter: basePath
      * The solr instance base path (usually /solr)
      * Default value: /solr
-     * 
+     *
      * @param path host:port/basePath
      * @return the dsl builder
      */
@@ -15358,25 +15398,25 @@ public class StaticEndpointBuilders {
     /**
      * Solr (camel-solr)
      * Perform operations against Apache Lucene Solr.
-     * 
+     *
      * Category: search,monitoring
      * Since: 4.8
      * Maven coordinates: org.apache.camel:camel-solr
-     * 
+     *
      * Syntax: <code>solr:host:port/basePath</code>
-     * 
+     *
      * Path parameter: host (required)
      * The solr instance host name (set to 'default' to use the host name
      * defined on component level)
-     * 
+     *
      * Path parameter: port
      * The solr instance port number
      * Default value: 8983
-     * 
+     *
      * Path parameter: basePath
      * The solr instance base path (usually /solr)
      * Default value: /solr
-     * 
+     *
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
      * @param path host:port/basePath
@@ -15389,16 +15429,16 @@ public class StaticEndpointBuilders {
      * SPIFFE (camel-spiffe)
      * Fetch and validate SPIFFE workload identity (X.509-SVID and JWT-SVID)
      * from the SPIFFE Workload API.
-     * 
+     *
      * Category: security
      * Since: 4.23
      * Maven coordinates: org.apache.camel:camel-spiffe
-     * 
+     *
      * Syntax: <code>spiffe:label</code>
-     * 
+     *
      * Path parameter: label
      * Logical name of the endpoint
-     * 
+     *
      * @param path label
      * @return the dsl builder
      */
@@ -15409,16 +15449,16 @@ public class StaticEndpointBuilders {
      * SPIFFE (camel-spiffe)
      * Fetch and validate SPIFFE workload identity (X.509-SVID and JWT-SVID)
      * from the SPIFFE Workload API.
-     * 
+     *
      * Category: security
      * Since: 4.23
      * Maven coordinates: org.apache.camel:camel-spiffe
-     * 
+     *
      * Syntax: <code>spiffe:label</code>
-     * 
+     *
      * Path parameter: label
      * Logical name of the endpoint
-     * 
+     *
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
      * @param path label
@@ -15431,16 +15471,16 @@ public class StaticEndpointBuilders {
      * Splunk HEC (camel-splunk-hec)
      * The splunk component allows publishing events in Splunk using the HTTP
      * Event Collector.
-     * 
+     *
      * Category: monitoring
      * Since: 3.3
      * Maven coordinates: org.apache.camel:camel-splunk-hec
-     * 
+     *
      * Syntax: <code>splunk-hec:splunkURL</code>
-     * 
+     *
      * Path parameter: splunkURL (required)
      * Splunk Host and Port (example: my_splunk_server:8089)
-     * 
+     *
      * @param path splunkURL
      * @return the dsl builder
      */
@@ -15451,16 +15491,16 @@ public class StaticEndpointBuilders {
      * Splunk HEC (camel-splunk-hec)
      * The splunk component allows publishing events in Splunk using the HTTP
      * Event Collector.
-     * 
+     *
      * Category: monitoring
      * Since: 3.3
      * Maven coordinates: org.apache.camel:camel-splunk-hec
-     * 
+     *
      * Syntax: <code>splunk-hec:splunkURL</code>
-     * 
+     *
      * Path parameter: splunkURL (required)
      * Splunk Host and Port (example: my_splunk_server:8089)
-     * 
+     *
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
      * @param path splunkURL
@@ -15472,16 +15512,16 @@ public class StaticEndpointBuilders {
     /**
      * Spring AI Chat (camel-spring-ai-chat)
      * Perform chat operations using Spring AI.
-     * 
+     *
      * Category: ai
      * Since: 4.17
      * Maven coordinates: org.apache.camel:camel-spring-ai-chat
-     * 
+     *
      * Syntax: <code>spring-ai-chat:chatId</code>
-     * 
+     *
      * Path parameter: chatId
      * The ID of the chat endpoint
-     * 
+     *
      * @param path chatId
      * @return the dsl builder
      */
@@ -15491,16 +15531,16 @@ public class StaticEndpointBuilders {
     /**
      * Spring AI Chat (camel-spring-ai-chat)
      * Perform chat operations using Spring AI.
-     * 
+     *
      * Category: ai
      * Since: 4.17
      * Maven coordinates: org.apache.camel:camel-spring-ai-chat
-     * 
+     *
      * Syntax: <code>spring-ai-chat:chatId</code>
-     * 
+     *
      * Path parameter: chatId
      * The ID of the chat endpoint
-     * 
+     *
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
      * @param path chatId
@@ -15512,16 +15552,16 @@ public class StaticEndpointBuilders {
     /**
      * Spring AI Embeddings (camel-spring-ai-embeddings)
      * Spring AI Embeddings
-     * 
+     *
      * Category: ai
      * Since: 4.17
      * Maven coordinates: org.apache.camel:camel-spring-ai-embeddings
-     * 
+     *
      * Syntax: <code>spring-ai-embeddings:embeddingId</code>
-     * 
+     *
      * Path parameter: embeddingId (required)
      * The id
-     * 
+     *
      * @param path embeddingId
      * @return the dsl builder
      */
@@ -15531,16 +15571,16 @@ public class StaticEndpointBuilders {
     /**
      * Spring AI Embeddings (camel-spring-ai-embeddings)
      * Spring AI Embeddings
-     * 
+     *
      * Category: ai
      * Since: 4.17
      * Maven coordinates: org.apache.camel:camel-spring-ai-embeddings
-     * 
+     *
      * Syntax: <code>spring-ai-embeddings:embeddingId</code>
-     * 
+     *
      * Path parameter: embeddingId (required)
      * The id
-     * 
+     *
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
      * @param path embeddingId
@@ -15552,16 +15592,16 @@ public class StaticEndpointBuilders {
     /**
      * Spring AI Image (camel-spring-ai-image)
      * Spring AI Image Generation
-     * 
+     *
      * Category: ai
      * Since: 4.19
      * Maven coordinates: org.apache.camel:camel-spring-ai-image
-     * 
+     *
      * Syntax: <code>spring-ai-image:imageId</code>
-     * 
+     *
      * Path parameter: imageId (required)
      * The id
-     * 
+     *
      * @param path imageId
      * @return the dsl builder
      */
@@ -15571,16 +15611,16 @@ public class StaticEndpointBuilders {
     /**
      * Spring AI Image (camel-spring-ai-image)
      * Spring AI Image Generation
-     * 
+     *
      * Category: ai
      * Since: 4.19
      * Maven coordinates: org.apache.camel:camel-spring-ai-image
-     * 
+     *
      * Syntax: <code>spring-ai-image:imageId</code>
-     * 
+     *
      * Path parameter: imageId (required)
      * The id
-     * 
+     *
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
      * @param path imageId
@@ -15592,16 +15632,16 @@ public class StaticEndpointBuilders {
     /**
      * Spring AI Vector Store (camel-spring-ai-vector-store)
      * Spring AI Vector Store
-     * 
+     *
      * Category: ai
      * Since: 4.17
      * Maven coordinates: org.apache.camel:camel-spring-ai-vector-store
-     * 
+     *
      * Syntax: <code>spring-ai-vector-store:storeId</code>
-     * 
+     *
      * Path parameter: storeId (required)
      * The id
-     * 
+     *
      * @param path storeId
      * @return the dsl builder
      */
@@ -15611,16 +15651,16 @@ public class StaticEndpointBuilders {
     /**
      * Spring AI Vector Store (camel-spring-ai-vector-store)
      * Spring AI Vector Store
-     * 
+     *
      * Category: ai
      * Since: 4.17
      * Maven coordinates: org.apache.camel:camel-spring-ai-vector-store
-     * 
+     *
      * Syntax: <code>spring-ai-vector-store:storeId</code>
-     * 
+     *
      * Path parameter: storeId (required)
      * The id
-     * 
+     *
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
      * @param path storeId
@@ -15632,16 +15672,16 @@ public class StaticEndpointBuilders {
     /**
      * Spring Batch (camel-spring-batch)
      * Send messages to Spring Batch for further processing.
-     * 
+     *
      * Category: workflow
      * Since: 2.10
      * Maven coordinates: org.apache.camel:camel-spring-batch
-     * 
+     *
      * Syntax: <code>spring-batch:jobName</code>
-     * 
+     *
      * Path parameter: jobName (required)
      * The name of the Spring Batch job located in the registry.
-     * 
+     *
      * @param path jobName
      * @return the dsl builder
      */
@@ -15651,16 +15691,16 @@ public class StaticEndpointBuilders {
     /**
      * Spring Batch (camel-spring-batch)
      * Send messages to Spring Batch for further processing.
-     * 
+     *
      * Category: workflow
      * Since: 2.10
      * Maven coordinates: org.apache.camel:camel-spring-batch
-     * 
+     *
      * Syntax: <code>spring-batch:jobName</code>
-     * 
+     *
      * Path parameter: jobName (required)
      * The name of the Spring Batch job located in the registry.
-     * 
+     *
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
      * @param path jobName
@@ -15672,16 +15712,16 @@ public class StaticEndpointBuilders {
     /**
      * Spring Event (camel-spring)
      * Listen for Spring Application Events.
-     * 
+     *
      * Category: messaging
      * Since: 1.4
      * Maven coordinates: org.apache.camel:camel-spring
-     * 
+     *
      * Syntax: <code>spring-event:name</code>
-     * 
+     *
      * Path parameter: name
      * Name of endpoint
-     * 
+     *
      * @param path name
      * @return the dsl builder
      */
@@ -15691,16 +15731,16 @@ public class StaticEndpointBuilders {
     /**
      * Spring Event (camel-spring)
      * Listen for Spring Application Events.
-     * 
+     *
      * Category: messaging
      * Since: 1.4
      * Maven coordinates: org.apache.camel:camel-spring
-     * 
+     *
      * Syntax: <code>spring-event:name</code>
-     * 
+     *
      * Path parameter: name
      * Name of endpoint
-     * 
+     *
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
      * @param path name
@@ -15712,19 +15752,19 @@ public class StaticEndpointBuilders {
     /**
      * Spring JDBC (camel-spring-jdbc)
      * Access databases through SQL and JDBC with Spring Transaction support.
-     * 
+     *
      * Category: database
      * Since: 3.10
      * Maven coordinates: org.apache.camel:camel-spring-jdbc
-     * 
+     *
      * Syntax: <code>spring-jdbc:dataSourceName</code>
-     * 
+     *
      * Path parameter: dataSourceName (required)
      * Name of DataSource to lookup in the Registry. If the name is dataSource
      * or default, then Camel will attempt to lookup a default DataSource from
      * the registry, meaning if there is a only one instance of DataSource
      * found, then this DataSource will be used.
-     * 
+     *
      * @param path dataSourceName
      * @return the dsl builder
      */
@@ -15734,19 +15774,19 @@ public class StaticEndpointBuilders {
     /**
      * Spring JDBC (camel-spring-jdbc)
      * Access databases through SQL and JDBC with Spring Transaction support.
-     * 
+     *
      * Category: database
      * Since: 3.10
      * Maven coordinates: org.apache.camel:camel-spring-jdbc
-     * 
+     *
      * Syntax: <code>spring-jdbc:dataSourceName</code>
-     * 
+     *
      * Path parameter: dataSourceName (required)
      * Name of DataSource to lookup in the Registry. If the name is dataSource
      * or default, then Camel will attempt to lookup a default DataSource from
      * the registry, meaning if there is a only one instance of DataSource
      * found, then this DataSource will be used.
-     * 
+     *
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
      * @param path dataSourceName
@@ -15758,16 +15798,16 @@ public class StaticEndpointBuilders {
     /**
      * Spring LDAP (camel-spring-ldap)
      * Perform searches in LDAP servers using filters as the message payload.
-     * 
+     *
      * Category: security
      * Since: 2.11
      * Maven coordinates: org.apache.camel:camel-spring-ldap
-     * 
+     *
      * Syntax: <code>spring-ldap:templateName</code>
-     * 
+     *
      * Path parameter: templateName (required)
      * Name of the Spring LDAP Template bean
-     * 
+     *
      * @param path templateName
      * @return the dsl builder
      */
@@ -15777,16 +15817,16 @@ public class StaticEndpointBuilders {
     /**
      * Spring LDAP (camel-spring-ldap)
      * Perform searches in LDAP servers using filters as the message payload.
-     * 
+     *
      * Category: security
      * Since: 2.11
      * Maven coordinates: org.apache.camel:camel-spring-ldap
-     * 
+     *
      * Syntax: <code>spring-ldap:templateName</code>
-     * 
+     *
      * Path parameter: templateName (required)
      * Name of the Spring LDAP Template bean
-     * 
+     *
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
      * @param path templateName
@@ -15798,19 +15838,19 @@ public class StaticEndpointBuilders {
     /**
      * Spring RabbitMQ (camel-spring-rabbitmq)
      * Send and receive messages from RabbitMQ using the Spring RabbitMQ client.
-     * 
+     *
      * Category: messaging
      * Since: 3.8
      * Maven coordinates: org.apache.camel:camel-spring-rabbitmq
-     * 
+     *
      * Syntax: <code>spring-rabbitmq:exchangeName</code>
-     * 
+     *
      * Path parameter: exchangeName (required)
      * The exchange name determines the exchange to which the produced messages
      * will be sent to. In the case of consumers, the exchange name determines
      * the exchange the queue will be bound to. Note: to use default exchange
      * then do not use empty name, but use default instead.
-     * 
+     *
      * @param path exchangeName
      * @return the dsl builder
      */
@@ -15820,19 +15860,19 @@ public class StaticEndpointBuilders {
     /**
      * Spring RabbitMQ (camel-spring-rabbitmq)
      * Send and receive messages from RabbitMQ using the Spring RabbitMQ client.
-     * 
+     *
      * Category: messaging
      * Since: 3.8
      * Maven coordinates: org.apache.camel:camel-spring-rabbitmq
-     * 
+     *
      * Syntax: <code>spring-rabbitmq:exchangeName</code>
-     * 
+     *
      * Path parameter: exchangeName (required)
      * The exchange name determines the exchange to which the produced messages
      * will be sent to. In the case of consumers, the exchange name determines
      * the exchange the queue will be bound to. Note: to use default exchange
      * then do not use empty name, but use default instead.
-     * 
+     *
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
      * @param path exchangeName
@@ -15844,19 +15884,19 @@ public class StaticEndpointBuilders {
     /**
      * Spring Redis (camel-spring-redis)
      * Send and receive messages from Redis.
-     * 
+     *
      * Category: cache
      * Since: 2.11
      * Maven coordinates: org.apache.camel:camel-spring-redis
-     * 
+     *
      * Syntax: <code>spring-redis:host:port</code>
-     * 
+     *
      * Path parameter: host (required)
      * The host where Redis server is running.
-     * 
+     *
      * Path parameter: port (required)
      * Redis server port number
-     * 
+     *
      * @param path host:port
      * @return the dsl builder
      */
@@ -15866,19 +15906,19 @@ public class StaticEndpointBuilders {
     /**
      * Spring Redis (camel-spring-redis)
      * Send and receive messages from Redis.
-     * 
+     *
      * Category: cache
      * Since: 2.11
      * Maven coordinates: org.apache.camel:camel-spring-redis
-     * 
+     *
      * Syntax: <code>spring-redis:host:port</code>
-     * 
+     *
      * Path parameter: host (required)
      * The host where Redis server is running.
-     * 
+     *
      * Path parameter: port (required)
      * Redis server port number
-     * 
+     *
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
      * @param path host:port
@@ -15890,13 +15930,13 @@ public class StaticEndpointBuilders {
     /**
      * Spring WebService (camel-spring-ws)
      * Access external web services as a client or expose your own web services.
-     * 
+     *
      * Category: webservice
      * Since: 2.6
      * Maven coordinates: org.apache.camel:camel-spring-ws
-     * 
+     *
      * Syntax: <code>spring-ws:type:lookupKey:webServiceEndpointUri</code>
-     * 
+     *
      * Path parameter: type
      * Endpoint mapping type if endpoint mapping is used. rootqname - Offers the
      * option to map web service requests based on the qualified name of the
@@ -15912,13 +15952,13 @@ public class StaticEndpointBuilders {
      * PayloadRootQNameEndpointMapping, SoapActionEndpointMapping, etc
      * There are 8 enums and the value can be one of: ROOT_QNAME, ACTION, TO,
      * SOAP_ACTION, XPATHRESULT, URI, URI_PATH, BEANNAME
-     * 
+     *
      * Path parameter: lookupKey
      * Endpoint mapping key if endpoint mapping is used
-     * 
+     *
      * Path parameter: webServiceEndpointUri
      * The default Web Service endpoint uri to use for the producer.
-     * 
+     *
      * @param path type:lookupKey:webServiceEndpointUri
      * @return the dsl builder
      */
@@ -15928,13 +15968,13 @@ public class StaticEndpointBuilders {
     /**
      * Spring WebService (camel-spring-ws)
      * Access external web services as a client or expose your own web services.
-     * 
+     *
      * Category: webservice
      * Since: 2.6
      * Maven coordinates: org.apache.camel:camel-spring-ws
-     * 
+     *
      * Syntax: <code>spring-ws:type:lookupKey:webServiceEndpointUri</code>
-     * 
+     *
      * Path parameter: type
      * Endpoint mapping type if endpoint mapping is used. rootqname - Offers the
      * option to map web service requests based on the qualified name of the
@@ -15950,13 +15990,13 @@ public class StaticEndpointBuilders {
      * PayloadRootQNameEndpointMapping, SoapActionEndpointMapping, etc
      * There are 8 enums and the value can be one of: ROOT_QNAME, ACTION, TO,
      * SOAP_ACTION, XPATHRESULT, URI, URI_PATH, BEANNAME
-     * 
+     *
      * Path parameter: lookupKey
      * Endpoint mapping key if endpoint mapping is used
-     * 
+     *
      * Path parameter: webServiceEndpointUri
      * The default Web Service endpoint uri to use for the producer.
-     * 
+     *
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
      * @param path type:lookupKey:webServiceEndpointUri
@@ -15968,19 +16008,19 @@ public class StaticEndpointBuilders {
     /**
      * SQL (camel-sql)
      * Perform SQL queries using Spring JDBC.
-     * 
+     *
      * Category: database
      * Since: 1.4
      * Maven coordinates: org.apache.camel:camel-sql
-     * 
+     *
      * Syntax: <code>sql:query</code>
-     * 
+     *
      * Path parameter: query (required)
      * Sets the SQL query to perform. You can externalize the query by using
      * file: or classpath: as prefix and specify the location of the file.
      * This option can also be loaded from an existing file, by prefixing with
      * file: or classpath: followed by the location of the file.
-     * 
+     *
      * @param path query
      * @return the dsl builder
      */
@@ -15990,19 +16030,19 @@ public class StaticEndpointBuilders {
     /**
      * SQL (camel-sql)
      * Perform SQL queries using Spring JDBC.
-     * 
+     *
      * Category: database
      * Since: 1.4
      * Maven coordinates: org.apache.camel:camel-sql
-     * 
+     *
      * Syntax: <code>sql:query</code>
-     * 
+     *
      * Path parameter: query (required)
      * Sets the SQL query to perform. You can externalize the query by using
      * file: or classpath: as prefix and specify the location of the file.
      * This option can also be loaded from an existing file, by prefixing with
      * file: or classpath: followed by the location of the file.
-     * 
+     *
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
      * @param path query
@@ -16014,20 +16054,20 @@ public class StaticEndpointBuilders {
     /**
      * SQL Stored Procedure (camel-sql)
      * Perform SQL queries as a JDBC Stored Procedures using Spring JDBC.
-     * 
+     *
      * Category: database
      * Since: 2.17
      * Maven coordinates: org.apache.camel:camel-sql
-     * 
+     *
      * Syntax: <code>sql-stored:template</code>
-     * 
+     *
      * Path parameter: template (required)
      * Sets the stored procedure template to perform. You can externalize the
      * template by using file: or classpath: as prefix and specify the location
      * of the file.
      * This option can also be loaded from an existing file, by prefixing with
      * file: or classpath: followed by the location of the file.
-     * 
+     *
      * @param path template
      * @return the dsl builder
      */
@@ -16037,20 +16077,20 @@ public class StaticEndpointBuilders {
     /**
      * SQL Stored Procedure (camel-sql)
      * Perform SQL queries as a JDBC Stored Procedures using Spring JDBC.
-     * 
+     *
      * Category: database
      * Since: 2.17
      * Maven coordinates: org.apache.camel:camel-sql
-     * 
+     *
      * Syntax: <code>sql-stored:template</code>
-     * 
+     *
      * Path parameter: template (required)
      * Sets the stored procedure template to perform. You can externalize the
      * template by using file: or classpath: as prefix and specify the location
      * of the file.
      * This option can also be loaded from an existing file, by prefixing with
      * file: or classpath: followed by the location of the file.
-     * 
+     *
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
      * @param path template
@@ -16062,20 +16102,20 @@ public class StaticEndpointBuilders {
     /**
      * SSH (camel-ssh)
      * Execute commands on remote hosts using SSH.
-     * 
+     *
      * Category: file
      * Since: 2.10
      * Maven coordinates: org.apache.camel:camel-ssh
-     * 
+     *
      * Syntax: <code>ssh:host:port</code>
-     * 
+     *
      * Path parameter: host (required)
      * Sets the hostname of the remote SSH server.
-     * 
+     *
      * Path parameter: port
      * Sets the port number for the remote SSH server.
      * Default value: 22
-     * 
+     *
      * @param path host:port
      * @return the dsl builder
      */
@@ -16085,20 +16125,20 @@ public class StaticEndpointBuilders {
     /**
      * SSH (camel-ssh)
      * Execute commands on remote hosts using SSH.
-     * 
+     *
      * Category: file
      * Since: 2.10
      * Maven coordinates: org.apache.camel:camel-ssh
-     * 
+     *
      * Syntax: <code>ssh:host:port</code>
-     * 
+     *
      * Path parameter: host (required)
      * Sets the hostname of the remote SSH server.
-     * 
+     *
      * Path parameter: port
      * Sets the port number for the remote SSH server.
      * Default value: 22
-     * 
+     *
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
      * @param path host:port
@@ -16111,16 +16151,16 @@ public class StaticEndpointBuilders {
      * State Store (camel-state-store)
      * Perform key-value operations against a pluggable KeyValueRepository
      * backend.
-     * 
+     *
      * Category: cache
      * Since: 4.23
      * Maven coordinates: org.apache.camel:camel-state-store
-     * 
+     *
      * Syntax: <code>state-store:storeName</code>
-     * 
+     *
      * Path parameter: storeName (required)
      * The name of the state store
-     * 
+     *
      * @param path storeName
      * @return the dsl builder
      */
@@ -16131,16 +16171,16 @@ public class StaticEndpointBuilders {
      * State Store (camel-state-store)
      * Perform key-value operations against a pluggable KeyValueRepository
      * backend.
-     * 
+     *
      * Category: cache
      * Since: 4.23
      * Maven coordinates: org.apache.camel:camel-state-store
-     * 
+     *
      * Syntax: <code>state-store:storeName</code>
-     * 
+     *
      * Path parameter: storeName (required)
      * The name of the state store
-     * 
+     *
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
      * @param path storeName
@@ -16152,16 +16192,16 @@ public class StaticEndpointBuilders {
     /**
      * StAX (camel-stax)
      * Process XML payloads by a SAX ContentHandler.
-     * 
+     *
      * Category: transformation
      * Since: 2.9
      * Maven coordinates: org.apache.camel:camel-stax
-     * 
+     *
      * Syntax: <code>stax:contentHandlerClass</code>
-     * 
+     *
      * Path parameter: contentHandlerClass (required)
      * The FQN class name for the ContentHandler implementation to use.
-     * 
+     *
      * @param path contentHandlerClass
      * @return the dsl builder
      */
@@ -16171,16 +16211,16 @@ public class StaticEndpointBuilders {
     /**
      * StAX (camel-stax)
      * Process XML payloads by a SAX ContentHandler.
-     * 
+     *
      * Category: transformation
      * Since: 2.9
      * Maven coordinates: org.apache.camel:camel-stax
-     * 
+     *
      * Syntax: <code>stax:contentHandlerClass</code>
-     * 
+     *
      * Path parameter: contentHandlerClass (required)
      * The FQN class name for the ContentHandler implementation to use.
-     * 
+     *
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
      * @param path contentHandlerClass
@@ -16193,19 +16233,19 @@ public class StaticEndpointBuilders {
      * Stitch (camel-stitch)
      * Stitch is a cloud ETL service that integrates various data sources into a
      * central data warehouse through various integrations.
-     * 
+     *
      * Category: cloud,api,saas,bigdata
      * Since: 3.8
      * Maven coordinates: org.apache.camel:camel-stitch
-     * 
+     *
      * Syntax: <code>stitch:tableName</code>
-     * 
+     *
      * Path parameter: tableName
      * The name of the destination table the data is being pushed to. Table
      * names must be unique in each destination schema, or loading issues will
      * occur. Note: The number of characters in the table name should be within
      * the destination's allowed limits or data will rejected.
-     * 
+     *
      * @param path tableName
      * @return the dsl builder
      */
@@ -16216,19 +16256,19 @@ public class StaticEndpointBuilders {
      * Stitch (camel-stitch)
      * Stitch is a cloud ETL service that integrates various data sources into a
      * central data warehouse through various integrations.
-     * 
+     *
      * Category: cloud,api,saas,bigdata
      * Since: 3.8
      * Maven coordinates: org.apache.camel:camel-stitch
-     * 
+     *
      * Syntax: <code>stitch:tableName</code>
-     * 
+     *
      * Path parameter: tableName
      * The name of the destination table the data is being pushed to. Table
      * names must be unique in each destination schema, or loading issues will
      * occur. Note: The number of characters in the table name should be within
      * the destination's allowed limits or data will rejected.
-     * 
+     *
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
      * @param path tableName
@@ -16240,19 +16280,19 @@ public class StaticEndpointBuilders {
     /**
      * Stream (camel-stream)
      * Read from system-in and write to system-out and system-err streams.
-     * 
+     *
      * Category: file,core
      * Since: 1.3
      * Maven coordinates: org.apache.camel:camel-stream
-     * 
+     *
      * Syntax: <code>stream:kind</code>
-     * 
+     *
      * Path parameter: kind (required)
      * Kind of stream to use such as System.in, System.out, a file, or a http
      * url.
      * There are 6 enums and the value can be one of: in, out, err, header,
      * file, http
-     * 
+     *
      * @param path kind
      * @return the dsl builder
      */
@@ -16262,19 +16302,19 @@ public class StaticEndpointBuilders {
     /**
      * Stream (camel-stream)
      * Read from system-in and write to system-out and system-err streams.
-     * 
+     *
      * Category: file,core
      * Since: 1.3
      * Maven coordinates: org.apache.camel:camel-stream
-     * 
+     *
      * Syntax: <code>stream:kind</code>
-     * 
+     *
      * Path parameter: kind (required)
      * Kind of stream to use such as System.in, System.out, a file, or a http
      * url.
      * There are 6 enums and the value can be one of: in, out, err, header,
      * file, http
-     * 
+     *
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
      * @param path kind
@@ -16286,13 +16326,13 @@ public class StaticEndpointBuilders {
     /**
      * String Template (camel-stringtemplate)
      * Transform messages using StringTemplate engine.
-     * 
+     *
      * Category: transformation,script
      * Since: 1.2
      * Maven coordinates: org.apache.camel:camel-stringtemplate
-     * 
+     *
      * Syntax: <code>string-template:resourceUri</code>
-     * 
+     *
      * Path parameter: resourceUri (required)
      * Path to the resource. You can prefix with: classpath, file, http, ref, or
      * bean. classpath, file and http loads the resource using these protocols
@@ -16301,7 +16341,7 @@ public class StaticEndpointBuilders {
      * you can specify the method name after dot, eg bean:myBean.myMethod.
      * This option can also be loaded from an existing file, by prefixing with
      * file: or classpath: followed by the location of the file.
-     * 
+     *
      * @param path resourceUri
      * @return the dsl builder
      */
@@ -16311,13 +16351,13 @@ public class StaticEndpointBuilders {
     /**
      * String Template (camel-stringtemplate)
      * Transform messages using StringTemplate engine.
-     * 
+     *
      * Category: transformation,script
      * Since: 1.2
      * Maven coordinates: org.apache.camel:camel-stringtemplate
-     * 
+     *
      * Syntax: <code>string-template:resourceUri</code>
-     * 
+     *
      * Path parameter: resourceUri (required)
      * Path to the resource. You can prefix with: classpath, file, http, ref, or
      * bean. classpath, file and http loads the resource using these protocols
@@ -16326,7 +16366,7 @@ public class StaticEndpointBuilders {
      * you can specify the method name after dot, eg bean:myBean.myMethod.
      * This option can also be loaded from an existing file, by prefixing with
      * file: or classpath: followed by the location of the file.
-     * 
+     *
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
      * @param path resourceUri
@@ -16338,19 +16378,19 @@ public class StaticEndpointBuilders {
     /**
      * Stripe (camel-stripe)
      * Interact with the Stripe payment platform.
-     * 
+     *
      * Category: saas,finance
      * Since: 4.17
      * Maven coordinates: org.apache.camel:camel-stripe
-     * 
+     *
      * Syntax: <code>stripe:operation</code>
-     * 
+     *
      * Path parameter: operation (required)
      * The Stripe operation to perform
      * There are 10 enums and the value can be one of: charges, customers,
      * paymentIntents, paymentMethods, refunds, subscriptions, invoices,
      * products, prices, balanceTransactions
-     * 
+     *
      * @param path operation
      * @return the dsl builder
      */
@@ -16360,19 +16400,19 @@ public class StaticEndpointBuilders {
     /**
      * Stripe (camel-stripe)
      * Interact with the Stripe payment platform.
-     * 
+     *
      * Category: saas,finance
      * Since: 4.17
      * Maven coordinates: org.apache.camel:camel-stripe
-     * 
+     *
      * Syntax: <code>stripe:operation</code>
-     * 
+     *
      * Path parameter: operation (required)
      * The Stripe operation to perform
      * There are 10 enums and the value can be one of: charges, customers,
      * paymentIntents, paymentMethods, refunds, subscriptions, invoices,
      * products, prices, balanceTransactions
-     * 
+     *
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
      * @param path operation
@@ -16384,16 +16424,16 @@ public class StaticEndpointBuilders {
     /**
      * Stub (camel-stub)
      * Stub out any physical endpoints while in development or testing.
-     * 
+     *
      * Category: core,testing
      * Since: 2.10
      * Maven coordinates: org.apache.camel:camel-stub
-     * 
+     *
      * Syntax: <code>stub:name</code>
-     * 
+     *
      * Path parameter: name (required)
      * Name of queue
-     * 
+     *
      * @param path name
      * @return the dsl builder
      */
@@ -16403,16 +16443,16 @@ public class StaticEndpointBuilders {
     /**
      * Stub (camel-stub)
      * Stub out any physical endpoints while in development or testing.
-     * 
+     *
      * Category: core,testing
      * Since: 2.10
      * Maven coordinates: org.apache.camel:camel-stub
-     * 
+     *
      * Syntax: <code>stub:name</code>
-     * 
+     *
      * Path parameter: name (required)
      * Name of queue
-     * 
+     *
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
      * @param path name
@@ -16424,22 +16464,22 @@ public class StaticEndpointBuilders {
     /**
      * Tahu Edge Node / Device (camel-tahu)
      * Sparkplug B Edge Node and Device support over MQTT using Eclipse Tahu
-     * 
+     *
      * Category: messaging,iot,monitoring
      * Since: 4.8
      * Maven coordinates: org.apache.camel:camel-tahu
-     * 
+     *
      * Syntax: <code>tahu-edge:groupId/edgeNode</code>
-     * 
+     *
      * Path parameter: groupId (required)
      * ID of the group
-     * 
+     *
      * Path parameter: edgeNode (required)
      * ID of the edge node
-     * 
+     *
      * Path parameter: deviceId
      * ID of this edge node device
-     * 
+     *
      * @param path groupId/edgeNode
      * @return the dsl builder
      */
@@ -16449,22 +16489,22 @@ public class StaticEndpointBuilders {
     /**
      * Tahu Edge Node / Device (camel-tahu)
      * Sparkplug B Edge Node and Device support over MQTT using Eclipse Tahu
-     * 
+     *
      * Category: messaging,iot,monitoring
      * Since: 4.8
      * Maven coordinates: org.apache.camel:camel-tahu
-     * 
+     *
      * Syntax: <code>tahu-edge:groupId/edgeNode</code>
-     * 
+     *
      * Path parameter: groupId (required)
      * ID of the group
-     * 
+     *
      * Path parameter: edgeNode (required)
      * ID of the edge node
-     * 
+     *
      * Path parameter: deviceId
      * ID of this edge node device
-     * 
+     *
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
      * @param path groupId/edgeNode
@@ -16476,16 +16516,16 @@ public class StaticEndpointBuilders {
     /**
      * Tahu Host Application (camel-tahu)
      * Sparkplug B Host Application support over MQTT using Eclipse Tahu
-     * 
+     *
      * Category: messaging,iot,monitoring
      * Since: 4.8
      * Maven coordinates: org.apache.camel:camel-tahu
-     * 
+     *
      * Syntax: <code>tahu-host:hostId</code>
-     * 
+     *
      * Path parameter: hostId (required)
      * ID for the host application
-     * 
+     *
      * @param path hostId
      * @return the dsl builder
      */
@@ -16495,16 +16535,16 @@ public class StaticEndpointBuilders {
     /**
      * Tahu Host Application (camel-tahu)
      * Sparkplug B Host Application support over MQTT using Eclipse Tahu
-     * 
+     *
      * Category: messaging,iot,monitoring
      * Since: 4.8
      * Maven coordinates: org.apache.camel:camel-tahu
-     * 
+     *
      * Syntax: <code>tahu-host:hostId</code>
-     * 
+     *
      * Path parameter: hostId (required)
      * ID for the host application
-     * 
+     *
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
      * @param path hostId
@@ -16516,17 +16556,17 @@ public class StaticEndpointBuilders {
     /**
      * Telegram (camel-telegram)
      * Send and receive messages using the Telegram Bot API.
-     * 
+     *
      * Category: cloud,api,chat
      * Since: 2.18
      * Maven coordinates: org.apache.camel:camel-telegram
-     * 
+     *
      * Syntax: <code>telegram:type</code>
-     * 
+     *
      * Path parameter: type (required)
      * The endpoint type. Currently, only the 'bots' type is supported.
      * There are 1 enums and the value can be one of: bots
-     * 
+     *
      * @param path type
      * @return the dsl builder
      */
@@ -16536,17 +16576,17 @@ public class StaticEndpointBuilders {
     /**
      * Telegram (camel-telegram)
      * Send and receive messages using the Telegram Bot API.
-     * 
+     *
      * Category: cloud,api,chat
      * Since: 2.18
      * Maven coordinates: org.apache.camel:camel-telegram
-     * 
+     *
      * Syntax: <code>telegram:type</code>
-     * 
+     *
      * Path parameter: type (required)
      * The endpoint type. Currently, only the 'bots' type is supported.
      * There are 1 enums and the value can be one of: bots
-     * 
+     *
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
      * @param path type
@@ -16559,18 +16599,18 @@ public class StaticEndpointBuilders {
      * TensorFlow Serving (camel-tensorflow-serving)
      * Provide access to TensorFlow Serving model servers to run inference with
      * TensorFlow saved models remotely
-     * 
+     *
      * Category: ai
      * Since: 4.10
      * Maven coordinates: org.apache.camel:camel-tensorflow-serving
-     * 
+     *
      * Syntax: <code>tensorflow-serving:api</code>
-     * 
+     *
      * Path parameter: api (required)
      * The TensorFlow Serving API
      * There are 5 enums and the value can be one of: model-status,
      * model-metadata, classify, regress, predict
-     * 
+     *
      * @param path api
      * @return the dsl builder
      */
@@ -16581,18 +16621,18 @@ public class StaticEndpointBuilders {
      * TensorFlow Serving (camel-tensorflow-serving)
      * Provide access to TensorFlow Serving model servers to run inference with
      * TensorFlow saved models remotely
-     * 
+     *
      * Category: ai
      * Since: 4.10
      * Maven coordinates: org.apache.camel:camel-tensorflow-serving
-     * 
+     *
      * Syntax: <code>tensorflow-serving:api</code>
-     * 
+     *
      * Path parameter: api (required)
      * The TensorFlow Serving API
      * There are 5 enums and the value can be one of: model-status,
      * model-metadata, classify, regress, predict
-     * 
+     *
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
      * @param path api
@@ -16605,25 +16645,25 @@ public class StaticEndpointBuilders {
      * Thrift (camel-thrift)
      * Call and expose remote procedures (RPC) with Apache Thrift data format
      * and serialization mechanism.
-     * 
+     *
      * Category: rpc,transformation
      * Since: 2.20
      * Maven coordinates: org.apache.camel:camel-thrift
-     * 
+     *
      * Syntax: <code>thrift:host:port/service</code>
-     * 
+     *
      * Path parameter: host (required)
      * The Thrift server host name. This is localhost or 0.0.0.0 (if not
      * defined) when being a consumer or remote server host name when using
      * producer.
-     * 
+     *
      * Path parameter: port (required)
      * The Thrift server port
-     * 
+     *
      * Path parameter: service (required)
      * Fully qualified service name from the thrift descriptor file (package dot
      * service definition name)
-     * 
+     *
      * @param path host:port/service
      * @return the dsl builder
      */
@@ -16634,25 +16674,25 @@ public class StaticEndpointBuilders {
      * Thrift (camel-thrift)
      * Call and expose remote procedures (RPC) with Apache Thrift data format
      * and serialization mechanism.
-     * 
+     *
      * Category: rpc,transformation
      * Since: 2.20
      * Maven coordinates: org.apache.camel:camel-thrift
-     * 
+     *
      * Syntax: <code>thrift:host:port/service</code>
-     * 
+     *
      * Path parameter: host (required)
      * The Thrift server host name. This is localhost or 0.0.0.0 (if not
      * defined) when being a consumer or remote server host name when using
      * producer.
-     * 
+     *
      * Path parameter: port (required)
      * The Thrift server port
-     * 
+     *
      * Path parameter: service (required)
      * Fully qualified service name from the thrift descriptor file (package dot
      * service definition name)
-     * 
+     *
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
      * @param path host:port/service
@@ -16664,13 +16704,13 @@ public class StaticEndpointBuilders {
     /**
      * Thymeleaf (camel-thymeleaf)
      * Transform messages using a Thymeleaf template.
-     * 
+     *
      * Category: transformation
      * Since: 4.1
      * Maven coordinates: org.apache.camel:camel-thymeleaf
-     * 
+     *
      * Syntax: <code>thymeleaf:resourceUri</code>
-     * 
+     *
      * Path parameter: resourceUri (required)
      * Path to the resource. You can prefix with: classpath, file, http, ref, or
      * bean. classpath, file and http loads the resource using these protocols
@@ -16679,7 +16719,7 @@ public class StaticEndpointBuilders {
      * you can specify the method name after dot, eg bean:myBean.myMethod.
      * This option can also be loaded from an existing file, by prefixing with
      * file: or classpath: followed by the location of the file.
-     * 
+     *
      * @param path resourceUri
      * @return the dsl builder
      */
@@ -16689,13 +16729,13 @@ public class StaticEndpointBuilders {
     /**
      * Thymeleaf (camel-thymeleaf)
      * Transform messages using a Thymeleaf template.
-     * 
+     *
      * Category: transformation
      * Since: 4.1
      * Maven coordinates: org.apache.camel:camel-thymeleaf
-     * 
+     *
      * Syntax: <code>thymeleaf:resourceUri</code>
-     * 
+     *
      * Path parameter: resourceUri (required)
      * Path to the resource. You can prefix with: classpath, file, http, ref, or
      * bean. classpath, file and http loads the resource using these protocols
@@ -16704,7 +16744,7 @@ public class StaticEndpointBuilders {
      * you can specify the method name after dot, eg bean:myBean.myMethod.
      * This option can also be loaded from an existing file, by prefixing with
      * file: or classpath: followed by the location of the file.
-     * 
+     *
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
      * @param path resourceUri
@@ -16716,17 +16756,17 @@ public class StaticEndpointBuilders {
     /**
      * Tika (camel-tika)
      * Parse documents and extract metadata and text using Apache Tika.
-     * 
+     *
      * Category: document,transformation
      * Since: 2.19
      * Maven coordinates: org.apache.camel:camel-tika
-     * 
+     *
      * Syntax: <code>tika:operation</code>
-     * 
+     *
      * Path parameter: operation (required)
      * Operation type
      * There are 2 enums and the value can be one of: parse, detect
-     * 
+     *
      * @param path operation
      * @return the dsl builder
      */
@@ -16736,17 +16776,17 @@ public class StaticEndpointBuilders {
     /**
      * Tika (camel-tika)
      * Parse documents and extract metadata and text using Apache Tika.
-     * 
+     *
      * Category: document,transformation
      * Since: 2.19
      * Maven coordinates: org.apache.camel:camel-tika
-     * 
+     *
      * Syntax: <code>tika:operation</code>
-     * 
+     *
      * Path parameter: operation (required)
      * Operation type
      * There are 2 enums and the value can be one of: parse, detect
-     * 
+     *
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
      * @param path operation
@@ -16758,16 +16798,16 @@ public class StaticEndpointBuilders {
     /**
      * Timer (camel-timer)
      * Generate messages in specified intervals using java.util.Timer.
-     * 
+     *
      * Category: core,scheduling
      * Since: 1.0
      * Maven coordinates: org.apache.camel:camel-timer
-     * 
+     *
      * Syntax: <code>timer:timerName</code>
-     * 
+     *
      * Path parameter: timerName (required)
      * The name of the timer
-     * 
+     *
      * @param path timerName
      * @return the dsl builder
      */
@@ -16777,16 +16817,16 @@ public class StaticEndpointBuilders {
     /**
      * Timer (camel-timer)
      * Generate messages in specified intervals using java.util.Timer.
-     * 
+     *
      * Category: core,scheduling
      * Since: 1.0
      * Maven coordinates: org.apache.camel:camel-timer
-     * 
+     *
      * Syntax: <code>timer:timerName</code>
-     * 
+     *
      * Path parameter: timerName (required)
      * The name of the timer
-     * 
+     *
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
      * @param path timerName
@@ -16798,13 +16838,13 @@ public class StaticEndpointBuilders {
     /**
      * Twilio (camel-twilio)
      * Interact with Twilio REST APIs using Twilio Java SDK.
-     * 
+     *
      * Category: api,messaging,cloud
      * Since: 2.20
      * Maven coordinates: org.apache.camel:camel-twilio
-     * 
+     *
      * Syntax: <code>twilio:apiName/methodName</code>
-     * 
+     *
      * Path parameter: apiName (required)
      * What kind of operation to perform
      * There are 54 enums and the value can be one of: ACCOUNT, ADDRESS,
@@ -16826,12 +16866,12 @@ public class StaticEndpointBuilders {
      * USAGE_RECORD_ALL_TIME, USAGE_RECORD_DAILY, USAGE_RECORD_LAST_MONTH,
      * USAGE_RECORD_MONTHLY, USAGE_RECORD_THIS_MONTH, USAGE_RECORD_TODAY,
      * USAGE_RECORD_YEARLY, USAGE_RECORD_YESTERDAY
-     * 
+     *
      * Path parameter: methodName (required)
      * What sub operation to use for the selected operation
      * There are 5 enums and the value can be one of: create, delete, fetch,
      * read, update
-     * 
+     *
      * @param path apiName/methodName
      * @return the dsl builder
      */
@@ -16841,13 +16881,13 @@ public class StaticEndpointBuilders {
     /**
      * Twilio (camel-twilio)
      * Interact with Twilio REST APIs using Twilio Java SDK.
-     * 
+     *
      * Category: api,messaging,cloud
      * Since: 2.20
      * Maven coordinates: org.apache.camel:camel-twilio
-     * 
+     *
      * Syntax: <code>twilio:apiName/methodName</code>
-     * 
+     *
      * Path parameter: apiName (required)
      * What kind of operation to perform
      * There are 54 enums and the value can be one of: ACCOUNT, ADDRESS,
@@ -16869,12 +16909,12 @@ public class StaticEndpointBuilders {
      * USAGE_RECORD_ALL_TIME, USAGE_RECORD_DAILY, USAGE_RECORD_LAST_MONTH,
      * USAGE_RECORD_MONTHLY, USAGE_RECORD_THIS_MONTH, USAGE_RECORD_TODAY,
      * USAGE_RECORD_YEARLY, USAGE_RECORD_YESTERDAY
-     * 
+     *
      * Path parameter: methodName (required)
      * What sub operation to use for the selected operation
      * There are 5 enums and the value can be one of: create, delete, fetch,
      * read, update
-     * 
+     *
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
      * @param path apiName/methodName
@@ -16886,17 +16926,17 @@ public class StaticEndpointBuilders {
     /**
      * Twitter Direct Message (camel-twitter)
      * Send and receive Twitter direct messages.
-     * 
+     *
      * Category: saas,social
      * Since: 2.10
      * Maven coordinates: org.apache.camel:camel-twitter
-     * 
+     *
      * Syntax: <code>twitter-directmessage:user</code>
-     * 
+     *
      * Path parameter: user (required)
      * The user name to send a direct message. This will be ignored for
      * consumer.
-     * 
+     *
      * @param path user
      * @return the dsl builder
      */
@@ -16906,17 +16946,17 @@ public class StaticEndpointBuilders {
     /**
      * Twitter Direct Message (camel-twitter)
      * Send and receive Twitter direct messages.
-     * 
+     *
      * Category: saas,social
      * Since: 2.10
      * Maven coordinates: org.apache.camel:camel-twitter
-     * 
+     *
      * Syntax: <code>twitter-directmessage:user</code>
-     * 
+     *
      * Path parameter: user (required)
      * The user name to send a direct message. This will be ignored for
      * consumer.
-     * 
+     *
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
      * @param path user
@@ -16928,17 +16968,17 @@ public class StaticEndpointBuilders {
     /**
      * Twitter Search (camel-twitter)
      * Access Twitter Search.
-     * 
+     *
      * Category: saas,social
      * Since: 2.10
      * Maven coordinates: org.apache.camel:camel-twitter
-     * 
+     *
      * Syntax: <code>twitter-search:keywords</code>
-     * 
+     *
      * Path parameter: keywords (required)
      * The search query, use the keywords AND, OR, - and () to narrow the search
      * results.
-     * 
+     *
      * @param path keywords
      * @return the dsl builder
      */
@@ -16948,17 +16988,17 @@ public class StaticEndpointBuilders {
     /**
      * Twitter Search (camel-twitter)
      * Access Twitter Search.
-     * 
+     *
      * Category: saas,social
      * Since: 2.10
      * Maven coordinates: org.apache.camel:camel-twitter
-     * 
+     *
      * Syntax: <code>twitter-search:keywords</code>
-     * 
+     *
      * Path parameter: keywords (required)
      * The search query, use the keywords AND, OR, - and () to narrow the search
      * results.
-     * 
+     *
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
      * @param path keywords
@@ -16970,18 +17010,18 @@ public class StaticEndpointBuilders {
     /**
      * Twitter Timeline (camel-twitter)
      * Send tweets and receive tweets from user's timeline.
-     * 
+     *
      * Category: saas,social
      * Since: 2.10
      * Maven coordinates: org.apache.camel:camel-twitter
-     * 
+     *
      * Syntax: <code>twitter-timeline:timelineType</code>
-     * 
+     *
      * Path parameter: timelineType (required)
      * The timeline type to produce/consume.
      * There are 6 enums and the value can be one of: PUBLIC, HOME, USER,
      * MENTIONS, LIST, UNKNOWN
-     * 
+     *
      * @param path timelineType
      * @return the dsl builder
      */
@@ -16991,18 +17031,18 @@ public class StaticEndpointBuilders {
     /**
      * Twitter Timeline (camel-twitter)
      * Send tweets and receive tweets from user's timeline.
-     * 
+     *
      * Category: saas,social
      * Since: 2.10
      * Maven coordinates: org.apache.camel:camel-twitter
-     * 
+     *
      * Syntax: <code>twitter-timeline:timelineType</code>
-     * 
+     *
      * Path parameter: timelineType (required)
      * The timeline type to produce/consume.
      * There are 6 enums and the value can be one of: PUBLIC, HOME, USER,
      * MENTIONS, LIST, UNKNOWN
-     * 
+     *
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
      * @param path timelineType
@@ -17015,16 +17055,16 @@ public class StaticEndpointBuilders {
      * Undertow (camel-undertow)
      * Expose HTTP and WebSocket endpoints and access external HTTP/WebSocket
      * servers.
-     * 
+     *
      * Category: http,networking
      * Since: 2.16
      * Maven coordinates: org.apache.camel:camel-undertow
-     * 
+     *
      * Syntax: <code>undertow:httpURI</code>
-     * 
+     *
      * Path parameter: httpURI (required)
      * The url of the HTTP endpoint to use.
-     * 
+     *
      * @param path httpURI
      * @return the dsl builder
      */
@@ -17035,16 +17075,16 @@ public class StaticEndpointBuilders {
      * Undertow (camel-undertow)
      * Expose HTTP and WebSocket endpoints and access external HTTP/WebSocket
      * servers.
-     * 
+     *
      * Category: http,networking
      * Since: 2.16
      * Maven coordinates: org.apache.camel:camel-undertow
-     * 
+     *
      * Syntax: <code>undertow:httpURI</code>
-     * 
+     *
      * Path parameter: httpURI (required)
      * The url of the HTTP endpoint to use.
-     * 
+     *
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
      * @param path httpURI
@@ -17056,20 +17096,20 @@ public class StaticEndpointBuilders {
     /**
      * Validator (camel-validator)
      * Validate the payload using XML Schema and JAXP Validation.
-     * 
+     *
      * Category: core,validation
      * Since: 1.1
      * Maven coordinates: org.apache.camel:camel-validator
-     * 
+     *
      * Syntax: <code>validator:resourceUri</code>
-     * 
+     *
      * Path parameter: resourceUri (required)
      * URL to a local resource on the classpath, or a reference to lookup a bean
      * in the Registry, or a full URL to a remote resource or resource on the
      * file system which contains the XSD to validate against.
      * This option can also be loaded from an existing file, by prefixing with
      * file: or classpath: followed by the location of the file.
-     * 
+     *
      * @param path resourceUri
      * @return the dsl builder
      */
@@ -17079,20 +17119,20 @@ public class StaticEndpointBuilders {
     /**
      * Validator (camel-validator)
      * Validate the payload using XML Schema and JAXP Validation.
-     * 
+     *
      * Category: core,validation
      * Since: 1.1
      * Maven coordinates: org.apache.camel:camel-validator
-     * 
+     *
      * Syntax: <code>validator:resourceUri</code>
-     * 
+     *
      * Path parameter: resourceUri (required)
      * URL to a local resource on the classpath, or a reference to lookup a bean
      * in the Registry, or a full URL to a remote resource or resource on the
      * file system which contains the XSD to validate against.
      * This option can also be loaded from an existing file, by prefixing with
      * file: or classpath: followed by the location of the file.
-     * 
+     *
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
      * @param path resourceUri
@@ -17104,13 +17144,13 @@ public class StaticEndpointBuilders {
     /**
      * Velocity (camel-velocity)
      * Transform messages using a Velocity template.
-     * 
+     *
      * Category: transformation
      * Since: 1.2
      * Maven coordinates: org.apache.camel:camel-velocity
-     * 
+     *
      * Syntax: <code>velocity:resourceUri</code>
-     * 
+     *
      * Path parameter: resourceUri (required)
      * Path to the resource. You can prefix with: classpath, file, http, ref, or
      * bean. classpath, file and http loads the resource using these protocols
@@ -17119,7 +17159,7 @@ public class StaticEndpointBuilders {
      * you can specify the method name after dot, eg bean:myBean.myMethod.
      * This option can also be loaded from an existing file, by prefixing with
      * file: or classpath: followed by the location of the file.
-     * 
+     *
      * @param path resourceUri
      * @return the dsl builder
      */
@@ -17129,13 +17169,13 @@ public class StaticEndpointBuilders {
     /**
      * Velocity (camel-velocity)
      * Transform messages using a Velocity template.
-     * 
+     *
      * Category: transformation
      * Since: 1.2
      * Maven coordinates: org.apache.camel:camel-velocity
-     * 
+     *
      * Syntax: <code>velocity:resourceUri</code>
-     * 
+     *
      * Path parameter: resourceUri (required)
      * Path to the resource. You can prefix with: classpath, file, http, ref, or
      * bean. classpath, file and http loads the resource using these protocols
@@ -17144,7 +17184,7 @@ public class StaticEndpointBuilders {
      * you can specify the method name after dot, eg bean:myBean.myMethod.
      * This option can also be loaded from an existing file, by prefixing with
      * file: or classpath: followed by the location of the file.
-     * 
+     *
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
      * @param path resourceUri
@@ -17156,16 +17196,16 @@ public class StaticEndpointBuilders {
     /**
      * Vert.x (camel-vertx)
      * Send and receive messages to/from Vert.x Event Bus.
-     * 
+     *
      * Category: messaging
      * Since: 2.12
      * Maven coordinates: org.apache.camel:camel-vertx
-     * 
+     *
      * Syntax: <code>vertx:address</code>
-     * 
+     *
      * Path parameter: address (required)
      * Sets the event bus address used to communicate
-     * 
+     *
      * @param path address
      * @return the dsl builder
      */
@@ -17175,16 +17215,16 @@ public class StaticEndpointBuilders {
     /**
      * Vert.x (camel-vertx)
      * Send and receive messages to/from Vert.x Event Bus.
-     * 
+     *
      * Category: messaging
      * Since: 2.12
      * Maven coordinates: org.apache.camel:camel-vertx
-     * 
+     *
      * Syntax: <code>vertx:address</code>
-     * 
+     *
      * Path parameter: address (required)
      * Sets the event bus address used to communicate
-     * 
+     *
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
      * @param path address
@@ -17196,16 +17236,16 @@ public class StaticEndpointBuilders {
     /**
      * Vert.x HTTP Client (camel-vertx-http)
      * Send requests to external HTTP servers using Vert.x
-     * 
+     *
      * Category: http
      * Since: 3.5
      * Maven coordinates: org.apache.camel:camel-vertx-http
-     * 
+     *
      * Syntax: <code>vertx-http:httpUri</code>
-     * 
+     *
      * Path parameter: httpUri (required)
      * The HTTP URI to connect to
-     * 
+     *
      * @param path httpUri
      * @return the dsl builder
      */
@@ -17215,16 +17255,16 @@ public class StaticEndpointBuilders {
     /**
      * Vert.x HTTP Client (camel-vertx-http)
      * Send requests to external HTTP servers using Vert.x
-     * 
+     *
      * Category: http
      * Since: 3.5
      * Maven coordinates: org.apache.camel:camel-vertx-http
-     * 
+     *
      * Syntax: <code>vertx-http:httpUri</code>
-     * 
+     *
      * Path parameter: httpUri (required)
      * The HTTP URI to connect to
-     * 
+     *
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
      * @param path httpUri
@@ -17237,23 +17277,23 @@ public class StaticEndpointBuilders {
      * Vert.x WebSocket (camel-vertx-websocket)
      * Expose WebSocket endpoints and connect to remote WebSocket servers using
      * Vert.x
-     * 
+     *
      * Category: http,networking
      * Since: 3.5
      * Maven coordinates: org.apache.camel:camel-vertx-websocket
-     * 
+     *
      * Syntax: <code>vertx-websocket:host:port/path</code>
-     * 
+     *
      * Path parameter: host (required)
      * WebSocket hostname, such as localhost or a remote host when in client
      * mode.
-     * 
+     *
      * Path parameter: port (required)
      * WebSocket port number to use.
-     * 
+     *
      * Path parameter: path
      * WebSocket path to use.
-     * 
+     *
      * @param path host:port/path
      * @return the dsl builder
      */
@@ -17264,23 +17304,23 @@ public class StaticEndpointBuilders {
      * Vert.x WebSocket (camel-vertx-websocket)
      * Expose WebSocket endpoints and connect to remote WebSocket servers using
      * Vert.x
-     * 
+     *
      * Category: http,networking
      * Since: 3.5
      * Maven coordinates: org.apache.camel:camel-vertx-websocket
-     * 
+     *
      * Syntax: <code>vertx-websocket:host:port/path</code>
-     * 
+     *
      * Path parameter: host (required)
      * WebSocket hostname, such as localhost or a remote host when in client
      * mode.
-     * 
+     *
      * Path parameter: port (required)
      * WebSocket port number to use.
-     * 
+     *
      * Path parameter: path
      * WebSocket path to use.
-     * 
+     *
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
      * @param path host:port/path
@@ -17292,16 +17332,16 @@ public class StaticEndpointBuilders {
     /**
      * Wasm (camel-wasm)
      * Invoke Wasm functions.
-     * 
+     *
      * Category: core,script
      * Since: 4.4
      * Maven coordinates: org.apache.camel:camel-wasm
-     * 
+     *
      * Syntax: <code>wasm:functionName</code>
-     * 
+     *
      * Path parameter: functionName (required)
      * The Function Name
-     * 
+     *
      * @param path functionName
      * @return the dsl builder
      */
@@ -17311,16 +17351,16 @@ public class StaticEndpointBuilders {
     /**
      * Wasm (camel-wasm)
      * Invoke Wasm functions.
-     * 
+     *
      * Category: core,script
      * Since: 4.4
      * Maven coordinates: org.apache.camel:camel-wasm
-     * 
+     *
      * Syntax: <code>wasm:functionName</code>
-     * 
+     *
      * Path parameter: functionName (required)
      * The Function Name
-     * 
+     *
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
      * @param path functionName
@@ -17332,16 +17372,16 @@ public class StaticEndpointBuilders {
     /**
      * Weather (camel-weather)
      * Poll the weather information from Open Weather Map.
-     * 
+     *
      * Category: api
      * Since: 2.12
      * Maven coordinates: org.apache.camel:camel-weather
-     * 
+     *
      * Syntax: <code>weather:name</code>
-     * 
+     *
      * Path parameter: name (required)
      * The name value is not used.
-     * 
+     *
      * @param path name
      * @return the dsl builder
      */
@@ -17351,16 +17391,16 @@ public class StaticEndpointBuilders {
     /**
      * Weather (camel-weather)
      * Poll the weather information from Open Weather Map.
-     * 
+     *
      * Category: api
      * Since: 2.12
      * Maven coordinates: org.apache.camel:camel-weather
-     * 
+     *
      * Syntax: <code>weather:name</code>
-     * 
+     *
      * Path parameter: name (required)
      * The name value is not used.
-     * 
+     *
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
      * @param path name
@@ -17372,16 +17412,16 @@ public class StaticEndpointBuilders {
     /**
      * weaviate (camel-weaviate)
      * Perform operations on the Weaviate Vector Database.
-     * 
+     *
      * Category: database,ai
      * Since: 4.12
      * Maven coordinates: org.apache.camel:camel-weaviate
-     * 
+     *
      * Syntax: <code>weaviate:collection</code>
-     * 
+     *
      * Path parameter: collection (required)
      * The collection Name
-     * 
+     *
      * @param path collection
      * @return the dsl builder
      */
@@ -17391,16 +17431,16 @@ public class StaticEndpointBuilders {
     /**
      * weaviate (camel-weaviate)
      * Perform operations on the Weaviate Vector Database.
-     * 
+     *
      * Category: database,ai
      * Since: 4.12
      * Maven coordinates: org.apache.camel:camel-weaviate
-     * 
+     *
      * Syntax: <code>weaviate:collection</code>
-     * 
+     *
      * Path parameter: collection (required)
      * The collection Name
-     * 
+     *
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
      * @param path collection
@@ -17412,16 +17452,16 @@ public class StaticEndpointBuilders {
     /**
      * Web3j Ethereum Blockchain (camel-web3j)
      * Interact with Ethereum nodes using web3j client API.
-     * 
+     *
      * Category: blockchain
      * Since: 2.22
      * Maven coordinates: org.apache.camel:camel-web3j
-     * 
+     *
      * Syntax: <code>web3j:nodeAddress</code>
-     * 
+     *
      * Path parameter: nodeAddress (required)
      * Sets the node address used to communicate
-     * 
+     *
      * @param path nodeAddress
      * @return the dsl builder
      */
@@ -17431,16 +17471,16 @@ public class StaticEndpointBuilders {
     /**
      * Web3j Ethereum Blockchain (camel-web3j)
      * Interact with Ethereum nodes using web3j client API.
-     * 
+     *
      * Category: blockchain
      * Since: 2.22
      * Maven coordinates: org.apache.camel:camel-web3j
-     * 
+     *
      * Syntax: <code>web3j:nodeAddress</code>
-     * 
+     *
      * Path parameter: nodeAddress (required)
      * Sets the node address used to communicate
-     * 
+     *
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
      * @param path nodeAddress
@@ -17453,16 +17493,16 @@ public class StaticEndpointBuilders {
      * Webhook (camel-webhook)
      * Expose webhook endpoints to receive push notifications for other Camel
      * components.
-     * 
+     *
      * Category: cloud
      * Since: 3.0
      * Maven coordinates: org.apache.camel:camel-webhook
-     * 
+     *
      * Syntax: <code>webhook:endpointUri</code>
-     * 
+     *
      * Path parameter: endpointUri (required)
      * The delegate uri. Must belong to a component that supports webhooks.
-     * 
+     *
      * @param path endpointUri
      * @return the dsl builder
      */
@@ -17473,16 +17513,16 @@ public class StaticEndpointBuilders {
      * Webhook (camel-webhook)
      * Expose webhook endpoints to receive push notifications for other Camel
      * components.
-     * 
+     *
      * Category: cloud
      * Since: 3.0
      * Maven coordinates: org.apache.camel:camel-webhook
-     * 
+     *
      * Syntax: <code>webhook:endpointUri</code>
-     * 
+     *
      * Path parameter: endpointUri (required)
      * The delegate uri. Must belong to a component that supports webhooks.
-     * 
+     *
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
      * @param path endpointUri
@@ -17494,16 +17534,16 @@ public class StaticEndpointBuilders {
     /**
      * WhatsApp (camel-whatsapp)
      * Send messages to WhatsApp.
-     * 
+     *
      * Category: cloud,api,chat
      * Since: 3.19
      * Maven coordinates: org.apache.camel:camel-whatsapp
-     * 
+     *
      * Syntax: <code>whatsapp:phoneNumberId</code>
-     * 
+     *
      * Path parameter: phoneNumberId (required)
      * The phone number ID taken from whatsapp-business dashboard.
-     * 
+     *
      * @param path phoneNumberId
      * @return the dsl builder
      */
@@ -17513,16 +17553,16 @@ public class StaticEndpointBuilders {
     /**
      * WhatsApp (camel-whatsapp)
      * Send messages to WhatsApp.
-     * 
+     *
      * Category: cloud,api,chat
      * Since: 3.19
      * Maven coordinates: org.apache.camel:camel-whatsapp
-     * 
+     *
      * Syntax: <code>whatsapp:phoneNumberId</code>
-     * 
+     *
      * Path parameter: phoneNumberId (required)
      * The phone number ID taken from whatsapp-business dashboard.
-     * 
+     *
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
      * @param path phoneNumberId
@@ -17534,22 +17574,22 @@ public class StaticEndpointBuilders {
     /**
      * WordPress (camel-wordpress)
      * Manage posts and users using the WordPress API.
-     * 
+     *
      * Category: cloud,api,cms
      * Since: 2.21
      * Maven coordinates: org.apache.camel:camel-wordpress
-     * 
+     *
      * Syntax: <code>wordpress:operation</code>
-     * 
+     *
      * Path parameter: operation (required)
      * The endpoint operation.
      * There are 2 enums and the value can be one of: post, user
-     * 
+     *
      * Path parameter: operationDetail
      * The second part of an endpoint operation. Needed only when endpoint
      * semantic is not enough, like wordpress:post:delete
      * There are 1 enums and the value can be one of: delete
-     * 
+     *
      * @param path operation
      * @return the dsl builder
      */
@@ -17559,22 +17599,22 @@ public class StaticEndpointBuilders {
     /**
      * WordPress (camel-wordpress)
      * Manage posts and users using the WordPress API.
-     * 
+     *
      * Category: cloud,api,cms
      * Since: 2.21
      * Maven coordinates: org.apache.camel:camel-wordpress
-     * 
+     *
      * Syntax: <code>wordpress:operation</code>
-     * 
+     *
      * Path parameter: operation (required)
      * The endpoint operation.
      * There are 2 enums and the value can be one of: post, user
-     * 
+     *
      * Path parameter: operationDetail
      * The second part of an endpoint operation. Needed only when endpoint
      * semantic is not enough, like wordpress:post:delete
      * There are 1 enums and the value can be one of: delete
-     * 
+     *
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
      * @param path operation
@@ -17586,20 +17626,20 @@ public class StaticEndpointBuilders {
     /**
      * Workday (camel-workday)
      * Detect and parse documents using Workday.
-     * 
+     *
      * Category: cloud,api,saas
      * Since: 3.1
      * Maven coordinates: org.apache.camel:camel-workday
-     * 
+     *
      * Syntax: <code>workday:entity:path</code>
-     * 
+     *
      * Path parameter: entity (required)
      * The entity to be requested or subscribed via API.
      * There are 2 enums and the value can be one of: report, commonAPI
-     * 
+     *
      * Path parameter: path (required)
      * The API path to access an entity structure.
-     * 
+     *
      * @param path entity:path
      * @return the dsl builder
      */
@@ -17609,20 +17649,20 @@ public class StaticEndpointBuilders {
     /**
      * Workday (camel-workday)
      * Detect and parse documents using Workday.
-     * 
+     *
      * Category: cloud,api,saas
      * Since: 3.1
      * Maven coordinates: org.apache.camel:camel-workday
-     * 
+     *
      * Syntax: <code>workday:entity:path</code>
-     * 
+     *
      * Path parameter: entity (required)
      * The entity to be requested or subscribed via API.
      * There are 2 enums and the value can be one of: report, commonAPI
-     * 
+     *
      * Path parameter: path (required)
      * The API path to access an entity structure.
-     * 
+     *
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
      * @param path entity:path
@@ -17634,16 +17674,16 @@ public class StaticEndpointBuilders {
     /**
      * XChange (camel-xchange)
      * Access market data and trade on Bitcoin and Altcoin exchanges.
-     * 
+     *
      * Category: blockchain
      * Since: 2.21
      * Maven coordinates: org.apache.camel:camel-xchange
-     * 
+     *
      * Syntax: <code>xchange:name</code>
-     * 
+     *
      * Path parameter: name (required)
      * The exchange to connect to
-     * 
+     *
      * @param path name
      * @return the dsl builder
      */
@@ -17653,16 +17693,16 @@ public class StaticEndpointBuilders {
     /**
      * XChange (camel-xchange)
      * Access market data and trade on Bitcoin and Altcoin exchanges.
-     * 
+     *
      * Category: blockchain
      * Since: 2.21
      * Maven coordinates: org.apache.camel:camel-xchange
-     * 
+     *
      * Syntax: <code>xchange:name</code>
-     * 
+     *
      * Path parameter: name (required)
      * The exchange to connect to
-     * 
+     *
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
      * @param path name
@@ -17674,13 +17714,13 @@ public class StaticEndpointBuilders {
     /**
      * XJ (camel-xj)
      * Transform JSON and XML message using a XSLT.
-     * 
+     *
      * Category: transformation
      * Since: 3.0
      * Maven coordinates: org.apache.camel:camel-xj
-     * 
+     *
      * Syntax: <code>xj:resourceUri</code>
-     * 
+     *
      * Path parameter: resourceUri (required)
      * Path to the template. The following is supported by the default
      * URIResolver. You can prefix with: classpath, file, http, ref, or bean.
@@ -17688,7 +17728,7 @@ public class StaticEndpointBuilders {
      * (classpath is default). ref will lookup the resource in the registry.
      * bean will call a method on a bean to be used as the resource. For bean
      * you can specify the method name after dot, eg bean:myBean.myMethod
-     * 
+     *
      * @param path resourceUri
      * @return the dsl builder
      */
@@ -17698,13 +17738,13 @@ public class StaticEndpointBuilders {
     /**
      * XJ (camel-xj)
      * Transform JSON and XML message using a XSLT.
-     * 
+     *
      * Category: transformation
      * Since: 3.0
      * Maven coordinates: org.apache.camel:camel-xj
-     * 
+     *
      * Syntax: <code>xj:resourceUri</code>
-     * 
+     *
      * Path parameter: resourceUri (required)
      * Path to the template. The following is supported by the default
      * URIResolver. You can prefix with: classpath, file, http, ref, or bean.
@@ -17712,7 +17752,7 @@ public class StaticEndpointBuilders {
      * (classpath is default). ref will lookup the resource in the registry.
      * bean will call a method on a bean to be used as the resource. For bean
      * you can specify the method name after dot, eg bean:myBean.myMethod
-     * 
+     *
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
      * @param path resourceUri
@@ -17724,17 +17764,17 @@ public class StaticEndpointBuilders {
     /**
      * XML Security Sign (camel-xmlsecurity)
      * Sign XML payloads using the XML signature specification.
-     * 
+     *
      * Category: security,transformation
      * Since: 2.12
      * Maven coordinates: org.apache.camel:camel-xmlsecurity
-     * 
+     *
      * Syntax: <code>xmlsecurity-sign:name</code>
-     * 
+     *
      * Path parameter: name (required)
      * The name part in the URI can be chosen by the user to distinguish between
      * different signer endpoints within the camel context.
-     * 
+     *
      * @param path name
      * @return the dsl builder
      */
@@ -17744,17 +17784,17 @@ public class StaticEndpointBuilders {
     /**
      * XML Security Sign (camel-xmlsecurity)
      * Sign XML payloads using the XML signature specification.
-     * 
+     *
      * Category: security,transformation
      * Since: 2.12
      * Maven coordinates: org.apache.camel:camel-xmlsecurity
-     * 
+     *
      * Syntax: <code>xmlsecurity-sign:name</code>
-     * 
+     *
      * Path parameter: name (required)
      * The name part in the URI can be chosen by the user to distinguish between
      * different signer endpoints within the camel context.
-     * 
+     *
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
      * @param path name
@@ -17766,17 +17806,17 @@ public class StaticEndpointBuilders {
     /**
      * XML Security Verify (camel-xmlsecurity)
      * Verify XML payloads using the XML signature specification.
-     * 
+     *
      * Category: security,transformation
      * Since: 2.12
      * Maven coordinates: org.apache.camel:camel-xmlsecurity
-     * 
+     *
      * Syntax: <code>xmlsecurity-verify:name</code>
-     * 
+     *
      * Path parameter: name (required)
      * The name part in the URI can be chosen by the user to distinguish between
      * different verify endpoints within the camel context.
-     * 
+     *
      * @param path name
      * @return the dsl builder
      */
@@ -17786,17 +17826,17 @@ public class StaticEndpointBuilders {
     /**
      * XML Security Verify (camel-xmlsecurity)
      * Verify XML payloads using the XML signature specification.
-     * 
+     *
      * Category: security,transformation
      * Since: 2.12
      * Maven coordinates: org.apache.camel:camel-xmlsecurity
-     * 
+     *
      * Syntax: <code>xmlsecurity-verify:name</code>
-     * 
+     *
      * Path parameter: name (required)
      * The name part in the URI can be chosen by the user to distinguish between
      * different verify endpoints within the camel context.
-     * 
+     *
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
      * @param path name
@@ -17808,23 +17848,23 @@ public class StaticEndpointBuilders {
     /**
      * XMPP (camel-xmpp)
      * Send and receive messages to/from an XMPP chat server.
-     * 
+     *
      * Category: chat,messaging
      * Since: 1.0
      * Maven coordinates: org.apache.camel:camel-xmpp
-     * 
+     *
      * Syntax: <code>xmpp:host:port/participant</code>
-     * 
+     *
      * Path parameter: host (required)
      * Hostname for the chat server
-     * 
+     *
      * Path parameter: port (required)
      * Port number for the chat server
-     * 
+     *
      * Path parameter: participant
      * JID (Jabber ID) of person to receive messages. room parameter has
      * precedence over participant.
-     * 
+     *
      * @param path host:port/participant
      * @return the dsl builder
      */
@@ -17834,23 +17874,23 @@ public class StaticEndpointBuilders {
     /**
      * XMPP (camel-xmpp)
      * Send and receive messages to/from an XMPP chat server.
-     * 
+     *
      * Category: chat,messaging
      * Since: 1.0
      * Maven coordinates: org.apache.camel:camel-xmpp
-     * 
+     *
      * Syntax: <code>xmpp:host:port/participant</code>
-     * 
+     *
      * Path parameter: host (required)
      * Hostname for the chat server
-     * 
+     *
      * Path parameter: port (required)
      * Port number for the chat server
-     * 
+     *
      * Path parameter: participant
      * JID (Jabber ID) of person to receive messages. room parameter has
      * precedence over participant.
-     * 
+     *
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
      * @param path host:port/participant
@@ -17862,16 +17902,16 @@ public class StaticEndpointBuilders {
     /**
      * XQuery (camel-saxon)
      * Query and/or transform XML payloads using XQuery and Saxon.
-     * 
+     *
      * Category: transformation
      * Since: 1.0
      * Maven coordinates: org.apache.camel:camel-saxon
-     * 
+     *
      * Syntax: <code>xquery:resourceUri</code>
-     * 
+     *
      * Path parameter: resourceUri (required)
      * The name of the template to load from classpath or file system
-     * 
+     *
      * @param path resourceUri
      * @return the dsl builder
      */
@@ -17881,16 +17921,16 @@ public class StaticEndpointBuilders {
     /**
      * XQuery (camel-saxon)
      * Query and/or transform XML payloads using XQuery and Saxon.
-     * 
+     *
      * Category: transformation
      * Since: 1.0
      * Maven coordinates: org.apache.camel:camel-saxon
-     * 
+     *
      * Syntax: <code>xquery:resourceUri</code>
-     * 
+     *
      * Path parameter: resourceUri (required)
      * The name of the template to load from classpath or file system
-     * 
+     *
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
      * @param path resourceUri
@@ -17902,13 +17942,13 @@ public class StaticEndpointBuilders {
     /**
      * XSLT (camel-xslt)
      * Transforms XML payload using an XSLT template.
-     * 
+     *
      * Category: core,transformation
      * Since: 1.3
      * Maven coordinates: org.apache.camel:camel-xslt
-     * 
+     *
      * Syntax: <code>xslt:resourceUri</code>
-     * 
+     *
      * Path parameter: resourceUri (required)
      * Path to the template. The following is supported by the default
      * URIResolver. You can prefix with: classpath, file, http, ref, or bean.
@@ -17916,7 +17956,7 @@ public class StaticEndpointBuilders {
      * (classpath is default). ref will lookup the resource in the registry.
      * bean will call a method on a bean to be used as the resource. For bean
      * you can specify the method name after dot, eg bean:myBean.myMethod
-     * 
+     *
      * @param path resourceUri
      * @return the dsl builder
      */
@@ -17926,13 +17966,13 @@ public class StaticEndpointBuilders {
     /**
      * XSLT (camel-xslt)
      * Transforms XML payload using an XSLT template.
-     * 
+     *
      * Category: core,transformation
      * Since: 1.3
      * Maven coordinates: org.apache.camel:camel-xslt
-     * 
+     *
      * Syntax: <code>xslt:resourceUri</code>
-     * 
+     *
      * Path parameter: resourceUri (required)
      * Path to the template. The following is supported by the default
      * URIResolver. You can prefix with: classpath, file, http, ref, or bean.
@@ -17940,7 +17980,7 @@ public class StaticEndpointBuilders {
      * (classpath is default). ref will lookup the resource in the registry.
      * bean will call a method on a bean to be used as the resource. For bean
      * you can specify the method name after dot, eg bean:myBean.myMethod
-     * 
+     *
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
      * @param path resourceUri
@@ -17952,13 +17992,13 @@ public class StaticEndpointBuilders {
     /**
      * XSLT Saxon (camel-xslt-saxon)
      * Transform XML payloads using an XSLT template using Saxon.
-     * 
+     *
      * Category: core,transformation
      * Since: 3.0
      * Maven coordinates: org.apache.camel:camel-xslt-saxon
-     * 
+     *
      * Syntax: <code>xslt-saxon:resourceUri</code>
-     * 
+     *
      * Path parameter: resourceUri (required)
      * Path to the template. The following is supported by the default
      * URIResolver. You can prefix with: classpath, file, http, ref, or bean.
@@ -17966,7 +18006,7 @@ public class StaticEndpointBuilders {
      * (classpath is default). ref will lookup the resource in the registry.
      * bean will call a method on a bean to be used as the resource. For bean
      * you can specify the method name after dot, eg bean:myBean.myMethod
-     * 
+     *
      * @param path resourceUri
      * @return the dsl builder
      */
@@ -17976,13 +18016,13 @@ public class StaticEndpointBuilders {
     /**
      * XSLT Saxon (camel-xslt-saxon)
      * Transform XML payloads using an XSLT template using Saxon.
-     * 
+     *
      * Category: core,transformation
      * Since: 3.0
      * Maven coordinates: org.apache.camel:camel-xslt-saxon
-     * 
+     *
      * Syntax: <code>xslt-saxon:resourceUri</code>
-     * 
+     *
      * Path parameter: resourceUri (required)
      * Path to the template. The following is supported by the default
      * URIResolver. You can prefix with: classpath, file, http, ref, or bean.
@@ -17990,7 +18030,7 @@ public class StaticEndpointBuilders {
      * (classpath is default). ref will lookup the resource in the registry.
      * bean will call a method on a bean to be used as the resource. For bean
      * you can specify the method name after dot, eg bean:myBean.myMethod
-     * 
+     *
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
      * @param path resourceUri
@@ -18002,13 +18042,13 @@ public class StaticEndpointBuilders {
     /**
      * Zendesk (camel-zendesk)
      * Manage Zendesk tickets, users, organizations, etc.
-     * 
+     *
      * Category: cloud,api,saas
      * Since: 2.19
      * Maven coordinates: org.apache.camel:camel-zendesk
-     * 
+     *
      * Syntax: <code>zendesk:methodName</code>
-     * 
+     *
      * Path parameter: methodName (required)
      * What operation to use
      * There are 382 enums and the value can be one of:
@@ -18148,7 +18188,7 @@ public class StaticEndpointBuilders {
      * UPDATE_USER, UPDATE_USER_IDENTITY, UPDATE_USER_IDENTITY_1,
      * UPDATE_USER_SEGMENT, UPDATE_USERS, UPDATE_USERS_1, UPDATE_USERS_ASYNC,
      * VERIFY_USER_IDENTITY, VERIFY_USER_IDENTITY_1, VERIFY_USER_IDENTITY_2
-     * 
+     *
      * @param path methodName
      * @return the dsl builder
      */
@@ -18158,13 +18198,13 @@ public class StaticEndpointBuilders {
     /**
      * Zendesk (camel-zendesk)
      * Manage Zendesk tickets, users, organizations, etc.
-     * 
+     *
      * Category: cloud,api,saas
      * Since: 2.19
      * Maven coordinates: org.apache.camel:camel-zendesk
-     * 
+     *
      * Syntax: <code>zendesk:methodName</code>
-     * 
+     *
      * Path parameter: methodName (required)
      * What operation to use
      * There are 382 enums and the value can be one of:
@@ -18304,7 +18344,7 @@ public class StaticEndpointBuilders {
      * UPDATE_USER, UPDATE_USER_IDENTITY, UPDATE_USER_IDENTITY_1,
      * UPDATE_USER_SEGMENT, UPDATE_USERS, UPDATE_USERS_1, UPDATE_USERS_ASYNC,
      * VERIFY_USER_IDENTITY, VERIFY_USER_IDENTITY_1, VERIFY_USER_IDENTITY_2
-     * 
+     *
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
      * @param path methodName
@@ -18316,19 +18356,19 @@ public class StaticEndpointBuilders {
     /**
      * ZooKeeper (camel-zookeeper)
      * Manage ZooKeeper clusters.
-     * 
+     *
      * Category: clustering,management,bigdata
      * Since: 2.9
      * Maven coordinates: org.apache.camel:camel-zookeeper
-     * 
+     *
      * Syntax: <code>zookeeper:serverUrls/path</code>
-     * 
+     *
      * Path parameter: serverUrls (required)
      * The zookeeper server hosts (multiple servers can be separated by comma)
-     * 
+     *
      * Path parameter: path (required)
      * The node in the ZooKeeper server (aka znode)
-     * 
+     *
      * @param path serverUrls/path
      * @return the dsl builder
      */
@@ -18338,19 +18378,19 @@ public class StaticEndpointBuilders {
     /**
      * ZooKeeper (camel-zookeeper)
      * Manage ZooKeeper clusters.
-     * 
+     *
      * Category: clustering,management,bigdata
      * Since: 2.9
      * Maven coordinates: org.apache.camel:camel-zookeeper
-     * 
+     *
      * Syntax: <code>zookeeper:serverUrls/path</code>
-     * 
+     *
      * Path parameter: serverUrls (required)
      * The zookeeper server hosts (multiple servers can be separated by comma)
-     * 
+     *
      * Path parameter: path (required)
      * The node in the ZooKeeper server (aka znode)
-     * 
+     *
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
      * @param path serverUrls/path
@@ -18363,19 +18403,19 @@ public class StaticEndpointBuilders {
      * ZooKeeper Master (camel-zookeeper-master)
      * Have only a single consumer in a cluster consuming from a given endpoint;
      * with automatic failover if the JVM dies.
-     * 
+     *
      * Category: clustering,management,bigdata
      * Since: 2.19
      * Maven coordinates: org.apache.camel:camel-zookeeper-master
-     * 
+     *
      * Syntax: <code>zookeeper-master:groupName:consumerEndpointUri</code>
-     * 
+     *
      * Path parameter: groupName (required)
      * The name of the cluster group to use
-     * 
+     *
      * Path parameter: consumerEndpointUri (required)
      * The consumer endpoint to use in master/slave mode
-     * 
+     *
      * @param path groupName:consumerEndpointUri
      * @return the dsl builder
      */
@@ -18386,19 +18426,19 @@ public class StaticEndpointBuilders {
      * ZooKeeper Master (camel-zookeeper-master)
      * Have only a single consumer in a cluster consuming from a given endpoint;
      * with automatic failover if the JVM dies.
-     * 
+     *
      * Category: clustering,management,bigdata
      * Since: 2.19
      * Maven coordinates: org.apache.camel:camel-zookeeper-master
-     * 
+     *
      * Syntax: <code>zookeeper-master:groupName:consumerEndpointUri</code>
-     * 
+     *
      * Path parameter: groupName (required)
      * The name of the cluster group to use
-     * 
+     *
      * Path parameter: consumerEndpointUri (required)
      * The consumer endpoint to use in master/slave mode
-     * 
+     *
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
      * @param path groupName:consumerEndpointUri

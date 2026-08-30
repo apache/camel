@@ -41,11 +41,11 @@ public class EndpointHeaderBuilders {
     /**
      * A2A (camel-a2a)
      * A2A endpoint for agent-to-agent communication.
-     * 
+     *
      * Category: ai
      * Since: 4.21
      * Maven coordinates: org.apache.camel:camel-a2a
-     * 
+     *
      * @return the dsl builder for the headers' name.
      */
     public static A2AEndpointBuilderFactory.A2AHeaderNameBuilder a2a() {
@@ -55,11 +55,11 @@ public class EndpointHeaderBuilders {
      * ActiveMQ 5.x (camel-activemq)
      * Send messages to (or consume from) Apache ActiveMQ 5.x. This component
      * extends the Camel JMS component.
-     * 
+     *
      * Category: messaging
      * Since: 1.0
      * Maven coordinates: org.apache.camel:camel-activemq
-     * 
+     *
      * @return the dsl builder for the headers' name.
      */
     public static ActiveMQEndpointBuilderFactory.ActiveMQHeaderNameBuilder activemq() {
@@ -69,11 +69,11 @@ public class EndpointHeaderBuilders {
      * ActiveMQ 6.x (camel-activemq6)
      * Send messages to (or consume from) Apache ActiveMQ 6.x. This component
      * extends the Camel JMS component.
-     * 
+     *
      * Category: messaging
      * Since: 4.7
      * Maven coordinates: org.apache.camel:camel-activemq6
-     * 
+     *
      * @return the dsl builder for the headers' name.
      */
     public static ActiveMQ6EndpointBuilderFactory.ActiveMQ6HeaderNameBuilder activemq6() {
@@ -82,11 +82,11 @@ public class EndpointHeaderBuilders {
     /**
      * Alibaba EventBridge (camel-alibaba-eventbridge)
      * Publish events to Alibaba Cloud EventBridge.
-     * 
+     *
      * Category: cloud,messaging
      * Since: 4.23
      * Maven coordinates: org.apache.camel:camel-alibaba-eventbridge
-     * 
+     *
      * @return the dsl builder for the headers' name.
      */
     public static AlibabaEventBridgeEndpointBuilderFactory.AlibabaEventBridgeHeaderNameBuilder alibabaEventbridge() {
@@ -95,11 +95,11 @@ public class EndpointHeaderBuilders {
     /**
      * Alibaba Function Compute (FC) (camel-alibaba-fc)
      * Invoke serverless functions on Alibaba Cloud Function Compute (FC).
-     * 
+     *
      * Category: cloud,serverless
      * Since: 4.23
      * Maven coordinates: org.apache.camel:camel-alibaba-fc
-     * 
+     *
      * @return the dsl builder for the headers' name.
      */
     public static FCEndpointBuilderFactory.FCHeaderNameBuilder alibabaFc() {
@@ -109,11 +109,11 @@ public class EndpointHeaderBuilders {
      * Alibaba Key Management Service (KMS) (camel-alibaba-kms)
      * Encrypt and decrypt data using Alibaba Cloud Key Management Service
      * (KMS).
-     * 
+     *
      * Category: cloud
      * Since: 4.23
      * Maven coordinates: org.apache.camel:camel-alibaba-kms
-     * 
+     *
      * @return the dsl builder for the headers' name.
      */
     public static KMSEndpointBuilderFactory.KMSHeaderNameBuilder alibabaKms() {
@@ -122,11 +122,11 @@ public class EndpointHeaderBuilders {
     /**
      * Alibaba Message Service (MNS) (camel-alibaba-mns)
      * Send and receive messages to/from Alibaba Cloud Message Service (MNS).
-     * 
+     *
      * Category: cloud,messaging
      * Since: 4.23
      * Maven coordinates: org.apache.camel:camel-alibaba-mns
-     * 
+     *
      * @return the dsl builder for the headers' name.
      */
     public static MNSEndpointBuilderFactory.MNSHeaderNameBuilder alibabaMns() {
@@ -135,11 +135,11 @@ public class EndpointHeaderBuilders {
     /**
      * Alibaba Object Storage Service (OSS) (camel-alibaba-oss)
      * Alibaba Cloud Object Storage Service (OSS) component
-     * 
+     *
      * Category: cloud
      * Since: 4.23
      * Maven coordinates: org.apache.camel:camel-alibaba-oss
-     * 
+     *
      * @return the dsl builder for the headers' name.
      */
     public static OSSEndpointBuilderFactory.OSSHeaderNameBuilder alibabaOss() {
@@ -148,11 +148,11 @@ public class EndpointHeaderBuilders {
     /**
      * Alibaba Tablestore (OTS) (camel-alibaba-ots)
      * Perform row operations on Alibaba Cloud Tablestore (OTS).
-     * 
+     *
      * Category: cloud,database
      * Since: 4.23
      * Maven coordinates: org.apache.camel:camel-alibaba-ots
-     * 
+     *
      * @return the dsl builder for the headers' name.
      */
     public static AlibabaOtsEndpointBuilderFactory.AlibabaOtsHeaderNameBuilder alibabaOts() {
@@ -161,11 +161,11 @@ public class EndpointHeaderBuilders {
     /**
      * Alibaba Simple Log Service (SLS) (camel-alibaba-sls)
      * Manage logs on Alibaba Cloud Simple Log Service (SLS).
-     * 
+     *
      * Category: cloud,monitoring
      * Since: 4.23
      * Maven coordinates: org.apache.camel:camel-alibaba-sls
-     * 
+     *
      * @return the dsl builder for the headers' name.
      */
     public static AlibabaSlsEndpointBuilderFactory.AlibabaSlsHeaderNameBuilder alibabaSls() {
@@ -174,11 +174,11 @@ public class EndpointHeaderBuilders {
     /**
      * Alibaba Short Message Service (SMS) (camel-alibaba-sms)
      * Send SMS messages using Alibaba Cloud Short Message Service (SMS).
-     * 
+     *
      * Category: cloud,messaging
      * Since: 4.23
      * Maven coordinates: org.apache.camel:camel-alibaba-sms
-     * 
+     *
      * @return the dsl builder for the headers' name.
      */
     public static SMSEndpointBuilderFactory.SMSHeaderNameBuilder alibabaSms() {
@@ -187,11 +187,11 @@ public class EndpointHeaderBuilders {
     /**
      * AMQP (camel-amqp)
      * Messaging with AMQP protocol using Apache Qpid Client.
-     * 
+     *
      * Category: messaging
      * Since: 1.2
      * Maven coordinates: org.apache.camel:camel-amqp
-     * 
+     *
      * @return the dsl builder for the headers' name.
      */
     public static AMQPEndpointBuilderFactory.AMQPHeaderNameBuilder amqp() {
@@ -201,11 +201,11 @@ public class EndpointHeaderBuilders {
      * ArangoDb (camel-arangodb)
      * Perform operations on ArangoDb when used as a Document Database, or as a
      * Graph Database
-     * 
+     *
      * Category: database
      * Since: 3.5
      * Maven coordinates: org.apache.camel:camel-arangodb
-     * 
+     *
      * @return the dsl builder for the headers' name.
      */
     public static ArangoDbEndpointBuilderFactory.ArangoDbHeaderNameBuilder arangodb() {
@@ -214,11 +214,11 @@ public class EndpointHeaderBuilders {
     /**
      * Asterisk (camel-asterisk)
      * Interact with Asterisk PBX Server (VoIP).
-     * 
+     *
      * Category: mobile
      * Since: 2.18
      * Maven coordinates: org.apache.camel:camel-asterisk
-     * 
+     *
      * @return the dsl builder for the headers' name.
      */
     public static AsteriskEndpointBuilderFactory.AsteriskHeaderNameBuilder asterisk() {
@@ -227,11 +227,11 @@ public class EndpointHeaderBuilders {
     /**
      * Atmosphere Websocket (camel-atmosphere-websocket)
      * Expose WebSocket endpoints using the Atmosphere framework.
-     * 
+     *
      * Category: http,networking
      * Since: 2.14
      * Maven coordinates: org.apache.camel:camel-atmosphere-websocket
-     * 
+     *
      * @return the dsl builder for the headers' name.
      */
     public static AtmosphereWebsocketEndpointBuilderFactory.AtmosphereWebsocketHeaderNameBuilder atmosphereWebsocket() {
@@ -240,11 +240,11 @@ public class EndpointHeaderBuilders {
     /**
      * Atom (camel-atom)
      * Poll Atom RSS feeds.
-     * 
+     *
      * Category: document
      * Since: 1.2
      * Maven coordinates: org.apache.camel:camel-atom
-     * 
+     *
      * @return the dsl builder for the headers' name.
      */
     public static AtomEndpointBuilderFactory.AtomHeaderNameBuilder atom() {
@@ -253,11 +253,11 @@ public class EndpointHeaderBuilders {
     /**
      * Avro RPC (camel-avro-rpc)
      * Produce or consume Apache Avro RPC services.
-     * 
+     *
      * Category: rpc
      * Since: 2.10
      * Maven coordinates: org.apache.camel:camel-avro-rpc
-     * 
+     *
      * @return the dsl builder for the headers' name.
      */
     public static AvroEndpointBuilderFactory.AvroHeaderNameBuilder avro() {
@@ -266,11 +266,11 @@ public class EndpointHeaderBuilders {
     /**
      * AWS Bedrock (camel-aws-bedrock)
      * Invoke Model of AWS Bedrock service.
-     * 
+     *
      * Category: ai,cloud
      * Since: 4.5
      * Maven coordinates: org.apache.camel:camel-aws-bedrock
-     * 
+     *
      * @return the dsl builder for the headers' name.
      */
     public static BedrockEndpointBuilderFactory.BedrockHeaderNameBuilder awsBedrock() {
@@ -279,11 +279,11 @@ public class EndpointHeaderBuilders {
     /**
      * AWS Bedrock Agent (camel-aws-bedrock)
      * Operate on AWS Bedrock through its Agent.
-     * 
+     *
      * Category: ai,cloud
      * Since: 4.5
      * Maven coordinates: org.apache.camel:camel-aws-bedrock
-     * 
+     *
      * @return the dsl builder for the headers' name.
      */
     public static BedrockAgentEndpointBuilderFactory.BedrockAgentHeaderNameBuilder awsBedrockAgent() {
@@ -292,11 +292,11 @@ public class EndpointHeaderBuilders {
     /**
      * AWS Bedrock Agent Runtime (camel-aws-bedrock)
      * Invoke Model of AWS Bedrock Agent Runtime service.
-     * 
+     *
      * Category: ai,cloud
      * Since: 4.5
      * Maven coordinates: org.apache.camel:camel-aws-bedrock
-     * 
+     *
      * @return the dsl builder for the headers' name.
      */
     public static BedrockAgentRuntimeEndpointBuilderFactory.BedrockAgentRuntimeHeaderNameBuilder awsBedrockAgentRuntime() {
@@ -305,11 +305,11 @@ public class EndpointHeaderBuilders {
     /**
      * AWS CloudTrail (camel-aws-cloudtrail)
      * Consume events from Amazon CloudTrail using AWS SDK version 2.x.
-     * 
+     *
      * Category: cloud,management,monitoring
      * Since: 3.19
      * Maven coordinates: org.apache.camel:camel-aws-cloudtrail
-     * 
+     *
      * @return the dsl builder for the headers' name.
      */
     public static CloudtrailEndpointBuilderFactory.CloudtrailHeaderNameBuilder awsCloudtrail() {
@@ -318,11 +318,11 @@ public class EndpointHeaderBuilders {
     /**
      * AWS Config Service (camel-aws-config)
      * Manage AWS Config service.
-     * 
+     *
      * Category: cloud,management
      * Since: 4.3
      * Maven coordinates: org.apache.camel:camel-aws-config
-     * 
+     *
      * @return the dsl builder for the headers' name.
      */
     public static AWSConfigEndpointBuilderFactory.AWSConfigHeaderNameBuilder awsConfig() {
@@ -331,11 +331,11 @@ public class EndpointHeaderBuilders {
     /**
      * AWS Secrets Manager (camel-aws-secrets-manager)
      * Manage secrets using AWS Secrets Manager.
-     * 
+     *
      * Category: cloud,management
      * Since: 3.9
      * Maven coordinates: org.apache.camel:camel-aws-secrets-manager
-     * 
+     *
      * @return the dsl builder for the headers' name.
      */
     public static SecretsManagerEndpointBuilderFactory.SecretsManagerHeaderNameBuilder awsSecretsManager() {
@@ -344,11 +344,11 @@ public class EndpointHeaderBuilders {
     /**
      * AWS Security Hub (camel-aws-security-hub)
      * Manage and interact with AWS Security Hub for security findings.
-     * 
+     *
      * Category: cloud,security
      * Since: 4.18
      * Maven coordinates: org.apache.camel:camel-aws-security-hub
-     * 
+     *
      * @return the dsl builder for the headers' name.
      */
     public static SecurityHubEndpointBuilderFactory.SecurityHubHeaderNameBuilder awsSecurityHub() {
@@ -357,11 +357,11 @@ public class EndpointHeaderBuilders {
     /**
      * AWS Athena (camel-aws2-athena)
      * Access AWS Athena.
-     * 
+     *
      * Category: cloud,database
      * Since: 3.4
      * Maven coordinates: org.apache.camel:camel-aws2-athena
-     * 
+     *
      * @return the dsl builder for the headers' name.
      */
     public static Athena2EndpointBuilderFactory.Athena2HeaderNameBuilder aws2Athena() {
@@ -371,11 +371,11 @@ public class EndpointHeaderBuilders {
      * AWS Comprehend (camel-aws2-comprehend)
      * Perform natural language processing using AWS Comprehend and AWS SDK
      * version 2.x.
-     * 
+     *
      * Category: cloud,ai
      * Since: 4.18
      * Maven coordinates: org.apache.camel:camel-aws2-comprehend
-     * 
+     *
      * @return the dsl builder for the headers' name.
      */
     public static Comprehend2EndpointBuilderFactory.Comprehend2HeaderNameBuilder aws2Comprehend() {
@@ -384,11 +384,11 @@ public class EndpointHeaderBuilders {
     /**
      * AWS CloudWatch (camel-aws2-cw)
      * Sending metrics to AWS CloudWatch.
-     * 
+     *
      * Category: cloud,monitoring
      * Since: 3.1
      * Maven coordinates: org.apache.camel:camel-aws2-cw
-     * 
+     *
      * @return the dsl builder for the headers' name.
      */
     public static Cw2EndpointBuilderFactory.Cw2HeaderNameBuilder aws2Cw() {
@@ -397,11 +397,11 @@ public class EndpointHeaderBuilders {
     /**
      * AWS DynamoDB (camel-aws2-ddb)
      * Store and retrieve data from AWS DynamoDB.
-     * 
+     *
      * Category: cloud,database
      * Since: 3.1
      * Maven coordinates: org.apache.camel:camel-aws2-ddb
-     * 
+     *
      * @return the dsl builder for the headers' name.
      */
     public static Ddb2EndpointBuilderFactory.Ddb2HeaderNameBuilder aws2Ddb() {
@@ -410,11 +410,11 @@ public class EndpointHeaderBuilders {
     /**
      * AWS Elastic Compute Cloud (EC2) (camel-aws2-ec2)
      * Manage AWS EC2 instances.
-     * 
+     *
      * Category: cloud,management
      * Since: 3.1
      * Maven coordinates: org.apache.camel:camel-aws2-ec2
-     * 
+     *
      * @return the dsl builder for the headers' name.
      */
     public static AWS2EC2EndpointBuilderFactory.AWS2EC2HeaderNameBuilder aws2Ec2() {
@@ -423,11 +423,11 @@ public class EndpointHeaderBuilders {
     /**
      * AWS Elastic Container Service (ECS) (camel-aws2-ecs)
      * Manage AWS ECS cluster instances.
-     * 
+     *
      * Category: cloud,management
      * Since: 3.1
      * Maven coordinates: org.apache.camel:camel-aws2-ecs
-     * 
+     *
      * @return the dsl builder for the headers' name.
      */
     public static ECS2EndpointBuilderFactory.ECS2HeaderNameBuilder aws2Ecs() {
@@ -436,11 +436,11 @@ public class EndpointHeaderBuilders {
     /**
      * AWS Elastic Kubernetes Service (EKS) (camel-aws2-eks)
      * Manage AWS EKS cluster instances.
-     * 
+     *
      * Category: cloud,management
      * Since: 3.1
      * Maven coordinates: org.apache.camel:camel-aws2-eks
-     * 
+     *
      * @return the dsl builder for the headers' name.
      */
     public static EKS2EndpointBuilderFactory.EKS2HeaderNameBuilder aws2Eks() {
@@ -450,11 +450,11 @@ public class EndpointHeaderBuilders {
      * AWS Eventbridge (camel-aws2-eventbridge)
      * Manage AWS EventBridge cluster instances and consume events via
      * SQS-backed polling.
-     * 
+     *
      * Category: cloud,management
      * Since: 3.6
      * Maven coordinates: org.apache.camel:camel-aws2-eventbridge
-     * 
+     *
      * @return the dsl builder for the headers' name.
      */
     public static EventbridgeEndpointBuilderFactory.EventbridgeHeaderNameBuilder aws2Eventbridge() {
@@ -463,11 +463,11 @@ public class EndpointHeaderBuilders {
     /**
      * AWS Identity and Access Management (IAM) (camel-aws2-iam)
      * Manage AWS IAM instances.
-     * 
+     *
      * Category: cloud,management
      * Since: 3.1
      * Maven coordinates: org.apache.camel:camel-aws2-iam
-     * 
+     *
      * @return the dsl builder for the headers' name.
      */
     public static IAM2EndpointBuilderFactory.IAM2HeaderNameBuilder aws2Iam() {
@@ -476,11 +476,11 @@ public class EndpointHeaderBuilders {
     /**
      * AWS Kinesis (camel-aws2-kinesis)
      * Consume and produce records from and to AWS Kinesis Streams.
-     * 
+     *
      * Category: cloud,messaging
      * Since: 3.2
      * Maven coordinates: org.apache.camel:camel-aws2-kinesis
-     * 
+     *
      * @return the dsl builder for the headers' name.
      */
     public static Kinesis2EndpointBuilderFactory.Kinesis2HeaderNameBuilder aws2Kinesis() {
@@ -489,11 +489,11 @@ public class EndpointHeaderBuilders {
     /**
      * AWS Kinesis Firehose (camel-aws2-kinesis)
      * Produce data to AWS Kinesis Firehose streams.
-     * 
+     *
      * Category: cloud,messaging
      * Since: 3.2
      * Maven coordinates: org.apache.camel:camel-aws2-kinesis
-     * 
+     *
      * @return the dsl builder for the headers' name.
      */
     public static KinesisFirehose2EndpointBuilderFactory.KinesisFirehose2HeaderNameBuilder aws2KinesisFirehose() {
@@ -502,11 +502,11 @@ public class EndpointHeaderBuilders {
     /**
      * AWS Key Management Service (KMS) (camel-aws2-kms)
      * Manage keys stored in AWS KMS instances.
-     * 
+     *
      * Category: cloud,management
      * Since: 3.1
      * Maven coordinates: org.apache.camel:camel-aws2-kms
-     * 
+     *
      * @return the dsl builder for the headers' name.
      */
     public static KMS2EndpointBuilderFactory.KMS2HeaderNameBuilder aws2Kms() {
@@ -515,11 +515,11 @@ public class EndpointHeaderBuilders {
     /**
      * AWS Lambda (camel-aws2-lambda)
      * Manage and invoke AWS Lambda functions.
-     * 
+     *
      * Category: cloud,serverless
      * Since: 3.2
      * Maven coordinates: org.apache.camel:camel-aws2-lambda
-     * 
+     *
      * @return the dsl builder for the headers' name.
      */
     public static Lambda2EndpointBuilderFactory.Lambda2HeaderNameBuilder aws2Lambda() {
@@ -528,11 +528,11 @@ public class EndpointHeaderBuilders {
     /**
      * AWS MQ (camel-aws2-mq)
      * Send messages to AWS MQ.
-     * 
+     *
      * Category: cloud,messaging
      * Since: 3.1
      * Maven coordinates: org.apache.camel:camel-aws2-mq
-     * 
+     *
      * @return the dsl builder for the headers' name.
      */
     public static MQ2EndpointBuilderFactory.MQ2HeaderNameBuilder aws2Mq() {
@@ -541,11 +541,11 @@ public class EndpointHeaderBuilders {
     /**
      * AWS Managed Streaming for Apache Kafka (MSK) (camel-aws2-msk)
      * Manage AWS MSK instances.
-     * 
+     *
      * Category: cloud,management
      * Since: 3.1
      * Maven coordinates: org.apache.camel:camel-aws2-msk
-     * 
+     *
      * @return the dsl builder for the headers' name.
      */
     public static MSK2EndpointBuilderFactory.MSK2HeaderNameBuilder aws2Msk() {
@@ -554,11 +554,11 @@ public class EndpointHeaderBuilders {
     /**
      * AWS Polly (camel-aws2-polly)
      * Synthesize speech using AWS Polly and AWS SDK version 2.x.
-     * 
+     *
      * Category: cloud,ai
      * Since: 4.18
      * Maven coordinates: org.apache.camel:camel-aws2-polly
-     * 
+     *
      * @return the dsl builder for the headers' name.
      */
     public static Polly2EndpointBuilderFactory.Polly2HeaderNameBuilder aws2Polly() {
@@ -567,11 +567,11 @@ public class EndpointHeaderBuilders {
     /**
      * AWS RedshiftData (camel-aws2-redshift)
      * Perform operations on AWS Redshift using Redshift Data API.
-     * 
+     *
      * Category: cloud,serverless,database,bigdata
      * Since: 4.1
      * Maven coordinates: org.apache.camel:camel-aws2-redshift
-     * 
+     *
      * @return the dsl builder for the headers' name.
      */
     public static RedshiftData2EndpointBuilderFactory.RedshiftData2HeaderNameBuilder aws2RedshiftData() {
@@ -580,11 +580,11 @@ public class EndpointHeaderBuilders {
     /**
      * AWS Rekognition (camel-aws2-rekognition)
      * Manage and invoke AWS Rekognition.
-     * 
+     *
      * Category: cloud,ai
      * Since: 4.17
      * Maven coordinates: org.apache.camel:camel-aws2-rekognition
-     * 
+     *
      * @return the dsl builder for the headers' name.
      */
     public static Rekognition2EndpointBuilderFactory.Rekognition2HeaderNameBuilder aws2Rekognition() {
@@ -593,11 +593,11 @@ public class EndpointHeaderBuilders {
     /**
      * AWS S3 Storage Service (camel-aws2-s3)
      * Store and retrieve objects from AWS S3 Storage Service.
-     * 
+     *
      * Category: cloud,file
      * Since: 3.2
      * Maven coordinates: org.apache.camel:camel-aws2-s3
-     * 
+     *
      * @return the dsl builder for the headers' name.
      */
     public static AWS2S3EndpointBuilderFactory.AWS2S3HeaderNameBuilder aws2S3() {
@@ -607,11 +607,11 @@ public class EndpointHeaderBuilders {
      * AWS S3 Vectors (camel-aws2-s3-vectors)
      * Store and query vector embeddings using AWS S3 Vectors with similarity
      * search.
-     * 
+     *
      * Category: cloud,ai
      * Since: 4.17
      * Maven coordinates: org.apache.camel:camel-aws2-s3-vectors
-     * 
+     *
      * @return the dsl builder for the headers' name.
      */
     public static AWS2S3VectorsEndpointBuilderFactory.AWS2S3VectorsHeaderNameBuilder aws2S3Vectors() {
@@ -620,11 +620,11 @@ public class EndpointHeaderBuilders {
     /**
      * AWS Simple Email Service (SES) (camel-aws2-ses)
      * Send e-mails through AWS SES service.
-     * 
+     *
      * Category: cloud,mail
      * Since: 3.1
      * Maven coordinates: org.apache.camel:camel-aws2-ses
-     * 
+     *
      * @return the dsl builder for the headers' name.
      */
     public static Ses2EndpointBuilderFactory.Ses2HeaderNameBuilder aws2Ses() {
@@ -633,11 +633,11 @@ public class EndpointHeaderBuilders {
     /**
      * AWS Simple Notification System (SNS) (camel-aws2-sns)
      * Send messages to AWS Simple Notification Topic.
-     * 
+     *
      * Category: cloud,messaging,mobile
      * Since: 3.1
      * Maven coordinates: org.apache.camel:camel-aws2-sns
-     * 
+     *
      * @return the dsl builder for the headers' name.
      */
     public static Sns2EndpointBuilderFactory.Sns2HeaderNameBuilder aws2Sns() {
@@ -646,11 +646,11 @@ public class EndpointHeaderBuilders {
     /**
      * AWS Simple Queue Service (SQS) (camel-aws2-sqs)
      * Send and receive messages to/from AWS SQS.
-     * 
+     *
      * Category: cloud,messaging
      * Since: 3.1
      * Maven coordinates: org.apache.camel:camel-aws2-sqs
-     * 
+     *
      * @return the dsl builder for the headers' name.
      */
     public static Sqs2EndpointBuilderFactory.Sqs2HeaderNameBuilder aws2Sqs() {
@@ -659,11 +659,11 @@ public class EndpointHeaderBuilders {
     /**
      * AWS StepFunctions (camel-aws2-step-functions)
      * Manage and invoke AWS Step functions.
-     * 
+     *
      * Category: cloud,serverless
      * Since: 4.0
      * Maven coordinates: org.apache.camel:camel-aws2-step-functions
-     * 
+     *
      * @return the dsl builder for the headers' name.
      */
     public static StepFunctions2EndpointBuilderFactory.StepFunctions2HeaderNameBuilder aws2StepFunctions() {
@@ -672,11 +672,11 @@ public class EndpointHeaderBuilders {
     /**
      * AWS Security Token Service (STS) (camel-aws2-sts)
      * Manage AWS STS cluster instances.
-     * 
+     *
      * Category: cloud,management
      * Since: 3.5
      * Maven coordinates: org.apache.camel:camel-aws2-sts
-     * 
+     *
      * @return the dsl builder for the headers' name.
      */
     public static STS2EndpointBuilderFactory.STS2HeaderNameBuilder aws2Sts() {
@@ -686,11 +686,11 @@ public class EndpointHeaderBuilders {
      * AWS Textract (camel-aws2-textract)
      * Extract text and data from documents using AWS Textract and AWS SDK
      * version 2.x.
-     * 
+     *
      * Category: cloud,document
      * Since: 4.15
      * Maven coordinates: org.apache.camel:camel-aws2-textract
-     * 
+     *
      * @return the dsl builder for the headers' name.
      */
     public static Textract2EndpointBuilderFactory.Textract2HeaderNameBuilder aws2Textract() {
@@ -699,11 +699,11 @@ public class EndpointHeaderBuilders {
     /**
      * AWS Timestream (camel-aws2-timestream)
      * Write records and execute queries on AWS time-series database
-     * 
+     *
      * Category: cloud,database
      * Since: 4.1
      * Maven coordinates: org.apache.camel:camel-aws2-timestream
-     * 
+     *
      * @return the dsl builder for the headers' name.
      */
     public static Timestream2EndpointBuilderFactory.Timestream2HeaderNameBuilder aws2Timestream() {
@@ -712,11 +712,11 @@ public class EndpointHeaderBuilders {
     /**
      * AWS Transcribe (camel-aws2-transcribe)
      * Automatically convert speech to text using AWS Transcribe service
-     * 
+     *
      * Category: cloud,messaging
      * Since: 4.15
      * Maven coordinates: org.apache.camel:camel-aws2-transcribe
-     * 
+     *
      * @return the dsl builder for the headers' name.
      */
     public static Transcribe2EndpointBuilderFactory.Transcribe2HeaderNameBuilder aws2Transcribe() {
@@ -725,11 +725,11 @@ public class EndpointHeaderBuilders {
     /**
      * AWS Translate (camel-aws2-translate)
      * Translate texts using AWS Translate and AWS SDK version 2.x.
-     * 
+     *
      * Category: cloud,management
      * Since: 3.1
      * Maven coordinates: org.apache.camel:camel-aws2-translate
-     * 
+     *
      * @return the dsl builder for the headers' name.
      */
     public static Translate2EndpointBuilderFactory.Translate2HeaderNameBuilder aws2Translate() {
@@ -738,11 +738,11 @@ public class EndpointHeaderBuilders {
     /**
      * Azure Event Hubs (camel-azure-eventhubs)
      * Send and receive events to/from Azure Event Hubs using AMQP protocol.
-     * 
+     *
      * Category: cloud,messaging
      * Since: 3.5
      * Maven coordinates: org.apache.camel:camel-azure-eventhubs
-     * 
+     *
      * @return the dsl builder for the headers' name.
      */
     public static EventHubsEndpointBuilderFactory.EventHubsHeaderNameBuilder azureEventhubs() {
@@ -751,11 +751,11 @@ public class EndpointHeaderBuilders {
     /**
      * Azure Files (camel-azure-files)
      * Send and receive files to Azure storage file share
-     * 
+     *
      * Category: cloud,file
      * Since: 3.22
      * Maven coordinates: org.apache.camel:camel-azure-files
-     * 
+     *
      * @return the dsl builder for the headers' name.
      */
     public static FilesEndpointBuilderFactory.FilesHeaderNameBuilder azureFiles() {
@@ -764,11 +764,11 @@ public class EndpointHeaderBuilders {
     /**
      * Azure Functions (camel-azure-functions)
      * Invoke and manage Azure Functions.
-     * 
+     *
      * Category: cloud,serverless
      * Since: 4.19
      * Maven coordinates: org.apache.camel:camel-azure-functions
-     * 
+     *
      * @return the dsl builder for the headers' name.
      */
     public static FunctionsEndpointBuilderFactory.FunctionsHeaderNameBuilder azureFunctions() {
@@ -777,11 +777,11 @@ public class EndpointHeaderBuilders {
     /**
      * Azure Key Vault (camel-azure-key-vault)
      * Manage secrets and keys in Azure Key Vault Service
-     * 
+     *
      * Category: cloud,cloud
      * Since: 3.17
      * Maven coordinates: org.apache.camel:camel-azure-key-vault
-     * 
+     *
      * @return the dsl builder for the headers' name.
      */
     public static KeyVaultEndpointBuilderFactory.KeyVaultHeaderNameBuilder azureKeyVault() {
@@ -790,11 +790,11 @@ public class EndpointHeaderBuilders {
     /**
      * Azure ServiceBus (camel-azure-servicebus)
      * Send and receive messages to/from Azure Service Bus.
-     * 
+     *
      * Category: cloud,messaging
      * Since: 3.12
      * Maven coordinates: org.apache.camel:camel-azure-servicebus
-     * 
+     *
      * @return the dsl builder for the headers' name.
      */
     public static ServiceBusEndpointBuilderFactory.ServiceBusHeaderNameBuilder azureServicebus() {
@@ -803,11 +803,11 @@ public class EndpointHeaderBuilders {
     /**
      * Azure Storage Blob Service (camel-azure-storage-blob)
      * Store and retrieve blobs from Azure Storage Blob Service.
-     * 
+     *
      * Category: cloud,file
      * Since: 3.3
      * Maven coordinates: org.apache.camel:camel-azure-storage-blob
-     * 
+     *
      * @return the dsl builder for the headers' name.
      */
     public static BlobEndpointBuilderFactory.BlobHeaderNameBuilder azureStorageBlob() {
@@ -816,11 +816,11 @@ public class EndpointHeaderBuilders {
     /**
      * Azure Storage Data Lake Service (camel-azure-storage-datalake)
      * Sends and receives files to/from Azure Data Lake Storage.
-     * 
+     *
      * Category: cloud,file,bigdata
      * Since: 3.8
      * Maven coordinates: org.apache.camel:camel-azure-storage-datalake
-     * 
+     *
      * @return the dsl builder for the headers' name.
      */
     public static DataLakeEndpointBuilderFactory.DataLakeHeaderNameBuilder azureStorageDatalake() {
@@ -829,11 +829,11 @@ public class EndpointHeaderBuilders {
     /**
      * Azure Storage Queue Service (camel-azure-storage-queue)
      * Stores and retrieves messages to/from Azure Storage Queue.
-     * 
+     *
      * Category: cloud,messaging
      * Since: 3.3
      * Maven coordinates: org.apache.camel:camel-azure-storage-queue
-     * 
+     *
      * @return the dsl builder for the headers' name.
      */
     public static QueueEndpointBuilderFactory.QueueHeaderNameBuilder azureStorageQueue() {
@@ -842,11 +842,11 @@ public class EndpointHeaderBuilders {
     /**
      * Caffeine Cache (camel-caffeine)
      * Perform caching operations using Caffeine Cache.
-     * 
+     *
      * Category: cache,clustering
      * Since: 2.20
      * Maven coordinates: org.apache.camel:camel-caffeine
-     * 
+     *
      * @return the dsl builder for the headers' name.
      */
     public static CaffeineCacheEndpointBuilderFactory.CaffeineCacheHeaderNameBuilder caffeineCache() {
@@ -856,11 +856,11 @@ public class EndpointHeaderBuilders {
      * Caffeine LoadCache (camel-caffeine)
      * Perform caching operations using Caffeine Cache with an attached
      * CacheLoader.
-     * 
+     *
      * Category: cache,clustering
      * Since: 2.20
      * Maven coordinates: org.apache.camel:camel-caffeine
-     * 
+     *
      * @return the dsl builder for the headers' name.
      */
     public static CaffeineLoadCacheEndpointBuilderFactory.CaffeineLoadCacheHeaderNameBuilder caffeineLoadcache() {
@@ -870,11 +870,11 @@ public class EndpointHeaderBuilders {
      * Camunda (camel-camunda)
      * Interact with Camunda 8 Orchestration Clusters using the Camunda Java
      * Client.
-     * 
+     *
      * Category: workflow,saas
      * Since: 4.19
      * Maven coordinates: org.apache.camel:camel-camunda
-     * 
+     *
      * @return the dsl builder for the headers' name.
      */
     public static CamundaEndpointBuilderFactory.CamundaHeaderNameBuilder camunda() {
@@ -883,11 +883,11 @@ public class EndpointHeaderBuilders {
     /**
      * Chunk (camel-chunk)
      * Transform messages using Chunk templating engine.
-     * 
+     *
      * Category: transformation
      * Since: 2.15
      * Maven coordinates: org.apache.camel:camel-chunk
-     * 
+     *
      * @return the dsl builder for the headers' name.
      */
     public static ChunkEndpointBuilderFactory.ChunkHeaderNameBuilder chunk() {
@@ -897,11 +897,11 @@ public class EndpointHeaderBuilders {
      * ClickHouse (camel-clickhouse)
      * Interact with ClickHouse, the high-performance columnar OLAP database,
      * for high-throughput ingestion and OLAP queries.
-     * 
+     *
      * Category: database,bigdata
      * Since: 4.22
      * Maven coordinates: org.apache.camel:camel-clickhouse
-     * 
+     *
      * @return the dsl builder for the headers' name.
      */
     public static ClickHouseEndpointBuilderFactory.ClickHouseHeaderNameBuilder clickhouse() {
@@ -911,11 +911,11 @@ public class EndpointHeaderBuilders {
      * CoAP (camel-coap)
      * Send and receive messages to/from CoAP (Constrained Application Protocol)
      * capable devices.
-     * 
+     *
      * Category: iot
      * Since: 2.16
      * Maven coordinates: org.apache.camel:camel-coap
-     * 
+     *
      * @return the dsl builder for the headers' name.
      */
     public static CoAPEndpointBuilderFactory.CoAPHeaderNameBuilder coap() {
@@ -925,11 +925,11 @@ public class EndpointHeaderBuilders {
      * CometD (camel-cometd)
      * Offers publish/subscribe, peer-to-peer (via a server), and RPC style
      * messaging using the CometD/Bayeux protocol.
-     * 
+     *
      * Category: networking,messaging
      * Since: 2.0
      * Maven coordinates: org.apache.camel:camel-cometd
-     * 
+     *
      * @return the dsl builder for the headers' name.
      */
     public static CometdEndpointBuilderFactory.CometdHeaderNameBuilder cometd() {
@@ -938,11 +938,11 @@ public class EndpointHeaderBuilders {
     /**
      * Consul (camel-consul)
      * Integrate with Consul service discovery and configuration store.
-     * 
+     *
      * Category: cloud,api
      * Since: 2.18
      * Maven coordinates: org.apache.camel:camel-consul
-     * 
+     *
      * @return the dsl builder for the headers' name.
      */
     public static ConsulEndpointBuilderFactory.ConsulHeaderNameBuilder consul() {
@@ -953,11 +953,11 @@ public class EndpointHeaderBuilders {
      * Query Couchbase databases using SQL (N1QL) queries or MapReduce Views
      * with a poll strategy and/or perform various operations against Couchbase
      * databases.
-     * 
+     *
      * Category: database
      * Since: 2.19
      * Maven coordinates: org.apache.camel:camel-couchbase
-     * 
+     *
      * @return the dsl builder for the headers' name.
      */
     public static CouchbaseEndpointBuilderFactory.CouchbaseHeaderNameBuilder couchbase() {
@@ -968,11 +968,11 @@ public class EndpointHeaderBuilders {
      * Consume changesets for inserts, updates and deletes in a CouchDB
      * database, as well as get, save, update and delete documents from a
      * CouchDB database.
-     * 
+     *
      * Category: database
      * Since: 2.11
      * Maven coordinates: org.apache.camel:camel-couchdb
-     * 
+     *
      * @return the dsl builder for the headers' name.
      */
     public static CouchDbEndpointBuilderFactory.CouchDbHeaderNameBuilder couchdb() {
@@ -982,11 +982,11 @@ public class EndpointHeaderBuilders {
      * Cassandra CQL (camel-cassandraql)
      * Integrate with Cassandra 2.0 using the CQL3 API (not the Thrift API).
      * Based on Cassandra Java Driver provided by DataStax.
-     * 
+     *
      * Category: database,bigdata
      * Since: 2.15
      * Maven coordinates: org.apache.camel:camel-cassandraql
-     * 
+     *
      * @return the dsl builder for the headers' name.
      */
     public static CassandraEndpointBuilderFactory.CassandraHeaderNameBuilder cql() {
@@ -996,11 +996,11 @@ public class EndpointHeaderBuilders {
      * Crypto (JCE) (camel-crypto)
      * Sign and verify exchanges using the Signature Service of the Java
      * Cryptographic Extension (JCE).
-     * 
+     *
      * Category: security,transformation
      * Since: 2.3
      * Maven coordinates: org.apache.camel:camel-crypto
-     * 
+     *
      * @return the dsl builder for the headers' name.
      */
     public static DigitalSignatureEndpointBuilderFactory.DigitalSignatureHeaderNameBuilder crypto() {
@@ -1010,11 +1010,11 @@ public class EndpointHeaderBuilders {
      * CXF (camel-cxf-soap)
      * Expose SOAP WebServices using Apache CXF or connect to external
      * WebServices using CXF WS client.
-     * 
+     *
      * Category: http,webservice
      * Since: 1.0
      * Maven coordinates: org.apache.camel:camel-cxf-soap
-     * 
+     *
      * @return the dsl builder for the headers' name.
      */
     public static CxfEndpointBuilderFactory.CxfHeaderNameBuilder cxf() {
@@ -1024,11 +1024,11 @@ public class EndpointHeaderBuilders {
      * CXF-RS (camel-cxf-rest)
      * Expose JAX-RS REST services using Apache CXF or connect to external REST
      * services using CXF REST client.
-     * 
+     *
      * Category: rest
      * Since: 2.0
      * Maven coordinates: org.apache.camel:camel-cxf-rest
-     * 
+     *
      * @return the dsl builder for the headers' name.
      */
     public static CxfRsEndpointBuilderFactory.CxfRsHeaderNameBuilder cxfrs() {
@@ -1037,11 +1037,11 @@ public class EndpointHeaderBuilders {
     /**
      * Dapr (camel-dapr)
      * Dapr component which interfaces with Dapr Building Blocks.
-     * 
+     *
      * Category: cloud,saas
      * Since: 4.12
      * Maven coordinates: org.apache.camel:camel-dapr
-     * 
+     *
      * @return the dsl builder for the headers' name.
      */
     public static DaprEndpointBuilderFactory.DaprHeaderNameBuilder dapr() {
@@ -1050,11 +1050,11 @@ public class EndpointHeaderBuilders {
     /**
      * Dataset (camel-dataset)
      * Provide data for load and soak testing of your Camel application.
-     * 
+     *
      * Category: core,testing
      * Since: 1.3
      * Maven coordinates: org.apache.camel:camel-dataset
-     * 
+     *
      * @return the dsl builder for the headers' name.
      */
     public static DataSetEndpointBuilderFactory.DataSetHeaderNameBuilder dataset() {
@@ -1063,11 +1063,11 @@ public class EndpointHeaderBuilders {
     /**
      * Debezium DB2 Connector (camel-debezium-db2)
      * Capture changes from a DB2 database.
-     * 
+     *
      * Category: database
      * Since: 3.17
      * Maven coordinates: org.apache.camel:camel-debezium-db2
-     * 
+     *
      * @return the dsl builder for the headers' name.
      */
     public static DebeziumDb2EndpointBuilderFactory.DebeziumDb2HeaderNameBuilder debeziumDb2() {
@@ -1076,11 +1076,11 @@ public class EndpointHeaderBuilders {
     /**
      * Debezium MongoDB Connector (camel-debezium-mongodb)
      * Capture changes from a MongoDB database.
-     * 
+     *
      * Category: database
      * Since: 3.0
      * Maven coordinates: org.apache.camel:camel-debezium-mongodb
-     * 
+     *
      * @return the dsl builder for the headers' name.
      */
     public static DebeziumMongodbEndpointBuilderFactory.DebeziumMongodbHeaderNameBuilder debeziumMongodb() {
@@ -1089,11 +1089,11 @@ public class EndpointHeaderBuilders {
     /**
      * Debezium MySQL Connector (camel-debezium-mysql)
      * Capture changes from a MySQL database.
-     * 
+     *
      * Category: database
      * Since: 3.0
      * Maven coordinates: org.apache.camel:camel-debezium-mysql
-     * 
+     *
      * @return the dsl builder for the headers' name.
      */
     public static DebeziumMySqlEndpointBuilderFactory.DebeziumMySqlHeaderNameBuilder debeziumMysql() {
@@ -1102,11 +1102,11 @@ public class EndpointHeaderBuilders {
     /**
      * Debezium Oracle Connector (camel-debezium-oracle)
      * Capture changes from an Oracle database.
-     * 
+     *
      * Category: database
      * Since: 3.17
      * Maven coordinates: org.apache.camel:camel-debezium-oracle
-     * 
+     *
      * @return the dsl builder for the headers' name.
      */
     public static DebeziumOracleEndpointBuilderFactory.DebeziumOracleHeaderNameBuilder debeziumOracle() {
@@ -1115,11 +1115,11 @@ public class EndpointHeaderBuilders {
     /**
      * Debezium PostgreSQL Connector (camel-debezium-postgres)
      * Capture changes from a PostgreSQL database.
-     * 
+     *
      * Category: database
      * Since: 3.0
      * Maven coordinates: org.apache.camel:camel-debezium-postgres
-     * 
+     *
      * @return the dsl builder for the headers' name.
      */
     public static DebeziumPostgresEndpointBuilderFactory.DebeziumPostgresHeaderNameBuilder debeziumPostgres() {
@@ -1128,11 +1128,11 @@ public class EndpointHeaderBuilders {
     /**
      * Debezium SQL Server Connector (camel-debezium-sqlserver)
      * Capture changes from an SQL Server database.
-     * 
+     *
      * Category: database
      * Since: 3.0
      * Maven coordinates: org.apache.camel:camel-debezium-sqlserver
-     * 
+     *
      * @return the dsl builder for the headers' name.
      */
     public static DebeziumSqlserverEndpointBuilderFactory.DebeziumSqlserverHeaderNameBuilder debeziumSqlserver() {
@@ -1142,11 +1142,11 @@ public class EndpointHeaderBuilders {
      * Deep Java Library (camel-djl)
      * Infer Deep Learning models from message exchanges data using Deep Java
      * Library (DJL).
-     * 
+     *
      * Category: ai
      * Since: 3.3
      * Maven coordinates: org.apache.camel:camel-djl
-     * 
+     *
      * @return the dsl builder for the headers' name.
      */
     public static DJLEndpointBuilderFactory.DJLHeaderNameBuilder djl() {
@@ -1155,11 +1155,11 @@ public class EndpointHeaderBuilders {
     /**
      * DNS (camel-dns)
      * Perform DNS queries using DNSJava.
-     * 
+     *
      * Category: networking
      * Since: 2.7
      * Maven coordinates: org.apache.camel:camel-dns
-     * 
+     *
      * @return the dsl builder for the headers' name.
      */
     public static DnsEndpointBuilderFactory.DnsHeaderNameBuilder dns() {
@@ -1168,11 +1168,11 @@ public class EndpointHeaderBuilders {
     /**
      * Docker (camel-docker)
      * Manage Docker containers.
-     * 
+     *
      * Category: cloud,container
      * Since: 2.15
      * Maven coordinates: org.apache.camel:camel-docker
-     * 
+     *
      * @return the dsl builder for the headers' name.
      */
     public static DockerEndpointBuilderFactory.DockerHeaderNameBuilder docker() {
@@ -1181,11 +1181,11 @@ public class EndpointHeaderBuilders {
     /**
      * Docling (camel-docling)
      * Process documents using Docling library for parsing and conversion.
-     * 
+     *
      * Category: transformation,ai
      * Since: 4.15
      * Maven coordinates: org.apache.camel:camel-docling
-     * 
+     *
      * @return the dsl builder for the headers' name.
      */
     public static DoclingEndpointBuilderFactory.DoclingHeaderNameBuilder docling() {
@@ -1194,11 +1194,11 @@ public class EndpointHeaderBuilders {
     /**
      * Drill (camel-drill)
      * Perform queries against an Apache Drill cluster.
-     * 
+     *
      * Category: database,bigdata
      * Since: 2.19
      * Maven coordinates: org.apache.camel:camel-drill
-     * 
+     *
      * @return the dsl builder for the headers' name.
      */
     public static DrillEndpointBuilderFactory.DrillHeaderNameBuilder drill() {
@@ -1208,11 +1208,11 @@ public class EndpointHeaderBuilders {
      * Dropbox (camel-dropbox)
      * Upload, download and manage files, folders, groups, collaborations, etc
      * on Dropbox.
-     * 
+     *
      * Category: cloud,file,api
      * Since: 2.14
      * Maven coordinates: org.apache.camel:camel-dropbox
-     * 
+     *
      * @return the dsl builder for the headers' name.
      */
     public static DropboxEndpointBuilderFactory.DropboxHeaderNameBuilder dropbox() {
@@ -1222,11 +1222,11 @@ public class EndpointHeaderBuilders {
      * DuckDB (camel-duckdb)
      * Interact with DuckDB, the in-process analytical SQL database, for
      * embedded analytics workloads.
-     * 
+     *
      * Category: database,bigdata
      * Since: 4.22
      * Maven coordinates: org.apache.camel:camel-duckdb
-     * 
+     *
      * @return the dsl builder for the headers' name.
      */
     public static DuckDbEndpointBuilderFactory.DuckDbHeaderNameBuilder duckdb() {
@@ -1237,11 +1237,11 @@ public class EndpointHeaderBuilders {
      * The Dynamic Router control endpoint for operations that allow routing
      * participants to subscribe or unsubscribe to participate in dynamic
      * message routing.
-     * 
+     *
      * Category: messaging
      * Since: 4.4
      * Maven coordinates: org.apache.camel:camel-dynamic-router
-     * 
+     *
      * @return the dsl builder for the headers' name.
      */
     public static DynamicRouterControlEndpointBuilderFactory.DynamicRouterControlHeaderNameBuilder dynamicRouterControl() {
@@ -1250,11 +1250,11 @@ public class EndpointHeaderBuilders {
     /**
      * Ehcache (camel-ehcache)
      * Perform caching operations using Ehcache.
-     * 
+     *
      * Category: cache,clustering
      * Since: 2.18
      * Maven coordinates: org.apache.camel:camel-ehcache
-     * 
+     *
      * @return the dsl builder for the headers' name.
      */
     public static EhcacheEndpointBuilderFactory.EhcacheHeaderNameBuilder ehcache() {
@@ -1263,11 +1263,11 @@ public class EndpointHeaderBuilders {
     /**
      * Elasticsearch (camel-elasticsearch)
      * Send requests to Elasticsearch via Java Client API.
-     * 
+     *
      * Category: search,monitoring
      * Since: 3.19
      * Maven coordinates: org.apache.camel:camel-elasticsearch
-     * 
+     *
      * @return the dsl builder for the headers' name.
      */
     public static ElasticsearchEndpointBuilderFactory.ElasticsearchHeaderNameBuilder elasticsearch() {
@@ -1277,11 +1277,11 @@ public class EndpointHeaderBuilders {
      * Elasticsearch Low level Rest Client (camel-elasticsearch-rest-client)
      * Perform queries and other operations on Elasticsearch or OpenSearch (uses
      * low-level client).
-     * 
+     *
      * Category: search
      * Since: 4.3
      * Maven coordinates: org.apache.camel:camel-elasticsearch-rest-client
-     * 
+     *
      * @return the dsl builder for the headers' name.
      */
     public static ElasticsearchRestClientEndpointBuilderFactory.ElasticsearchRestClientHeaderNameBuilder elasticsearchRestClient() {
@@ -1291,11 +1291,11 @@ public class EndpointHeaderBuilders {
      * Event (camel-event)
      * Subscribe to Camel internal events such as route started/stopped and
      * exchange completed/failed.
-     * 
+     *
      * Category: core,monitoring
      * Since: 4.19
      * Maven coordinates: org.apache.camel:camel-event
-     * 
+     *
      * @return the dsl builder for the headers' name.
      */
     public static CamelEventEndpointBuilderFactory.CamelEventHeaderNameBuilder event() {
@@ -1304,11 +1304,11 @@ public class EndpointHeaderBuilders {
     /**
      * Exec (camel-exec)
      * Execute commands on the underlying operating system.
-     * 
+     *
      * Category: core
      * Since: 2.3
      * Maven coordinates: org.apache.camel:camel-exec
-     * 
+     *
      * @return the dsl builder for the headers' name.
      */
     public static ExecEndpointBuilderFactory.ExecHeaderNameBuilder exec() {
@@ -1317,11 +1317,11 @@ public class EndpointHeaderBuilders {
     /**
      * File (camel-file)
      * Read and write files.
-     * 
+     *
      * Category: file,core
      * Since: 1.0
      * Maven coordinates: org.apache.camel:camel-file
-     * 
+     *
      * @return the dsl builder for the headers' name.
      */
     public static FileEndpointBuilderFactory.FileHeaderNameBuilder file() {
@@ -1331,11 +1331,11 @@ public class EndpointHeaderBuilders {
      * File Watch (camel-file-watch)
      * Get notified about file events in a directory using
      * java.nio.file.WatchService.
-     * 
+     *
      * Category: file
      * Since: 3.0
      * Maven coordinates: org.apache.camel:camel-file-watch
-     * 
+     *
      * @return the dsl builder for the headers' name.
      */
     public static FileWatchEndpointBuilderFactory.FileWatchHeaderNameBuilder fileWatch() {
@@ -1344,11 +1344,11 @@ public class EndpointHeaderBuilders {
     /**
      * Flatpack (camel-flatpack)
      * Parse fixed width and delimited files using the FlatPack library.
-     * 
+     *
      * Category: transformation
      * Since: 1.4
      * Maven coordinates: org.apache.camel:camel-flatpack
-     * 
+     *
      * @return the dsl builder for the headers' name.
      */
     public static FlatpackEndpointBuilderFactory.FlatpackHeaderNameBuilder flatpack() {
@@ -1357,11 +1357,11 @@ public class EndpointHeaderBuilders {
     /**
      * Flink (camel-flink)
      * Send DataSet jobs to an Apache Flink cluster.
-     * 
+     *
      * Category: transformation,bigdata
      * Since: 2.18
      * Maven coordinates: org.apache.camel:camel-flink
-     * 
+     *
      * @return the dsl builder for the headers' name.
      */
     public static FlinkEndpointBuilderFactory.FlinkHeaderNameBuilder flink() {
@@ -1371,11 +1371,11 @@ public class EndpointHeaderBuilders {
      * FOP (camel-fop)
      * Render messages into PDF and other output formats supported by Apache
      * FOP.
-     * 
+     *
      * Category: file,transformation
      * Since: 2.10
      * Maven coordinates: org.apache.camel:camel-fop
-     * 
+     *
      * @return the dsl builder for the headers' name.
      */
     public static FopEndpointBuilderFactory.FopHeaderNameBuilder fop() {
@@ -1384,11 +1384,11 @@ public class EndpointHeaderBuilders {
     /**
      * Freemarker (camel-freemarker)
      * Transform messages using FreeMarker templates.
-     * 
+     *
      * Category: transformation
      * Since: 2.10
      * Maven coordinates: org.apache.camel:camel-freemarker
-     * 
+     *
      * @return the dsl builder for the headers' name.
      */
     public static FreemarkerEndpointBuilderFactory.FreemarkerHeaderNameBuilder freemarker() {
@@ -1397,11 +1397,11 @@ public class EndpointHeaderBuilders {
     /**
      * FTP (camel-ftp)
      * Upload and download files to/from FTP servers.
-     * 
+     *
      * Category: file
      * Since: 1.1
      * Maven coordinates: org.apache.camel:camel-ftp
-     * 
+     *
      * @return the dsl builder for the headers' name.
      */
     public static FtpEndpointBuilderFactory.FtpHeaderNameBuilder ftp() {
@@ -1411,11 +1411,11 @@ public class EndpointHeaderBuilders {
      * FTPS (camel-ftp)
      * Upload and download files to/from FTP servers supporting the FTPS
      * protocol.
-     * 
+     *
      * Category: file
      * Since: 2.2
      * Maven coordinates: org.apache.camel:camel-ftp
-     * 
+     *
      * @return the dsl builder for the headers' name.
      */
     public static FtpsEndpointBuilderFactory.FtpsHeaderNameBuilder ftps() {
@@ -1425,11 +1425,11 @@ public class EndpointHeaderBuilders {
      * Geocoder (camel-geocoder)
      * Find geocodes (latitude and longitude) for a given address or the other
      * way round.
-     * 
+     *
      * Category: api,search
      * Since: 2.12
      * Maven coordinates: org.apache.camel:camel-geocoder
-     * 
+     *
      * @return the dsl builder for the headers' name.
      */
     public static GeoCoderEndpointBuilderFactory.GeoCoderHeaderNameBuilder geocoder() {
@@ -1438,11 +1438,11 @@ public class EndpointHeaderBuilders {
     /**
      * Git (camel-git)
      * Perform operations on git repositories.
-     * 
+     *
      * Category: file
      * Since: 2.16
      * Maven coordinates: org.apache.camel:camel-git
-     * 
+     *
      * @return the dsl builder for the headers' name.
      */
     public static GitEndpointBuilderFactory.GitHeaderNameBuilder git() {
@@ -1451,11 +1451,11 @@ public class EndpointHeaderBuilders {
     /**
      * GitHub2 (camel-github2)
      * Interact with the GitHub API.
-     * 
+     *
      * Category: file,cloud,api
      * Since: 4.18
      * Maven coordinates: org.apache.camel:camel-github2
-     * 
+     *
      * @return the dsl builder for the headers' name.
      */
     public static GitHub2EndpointBuilderFactory.GitHub2HeaderNameBuilder github2() {
@@ -1464,11 +1464,11 @@ public class EndpointHeaderBuilders {
     /**
      * Google BigQuery (camel-google-bigquery)
      * Google BigQuery data warehouse for analytics.
-     * 
+     *
      * Category: cloud,bigdata
      * Since: 2.20
      * Maven coordinates: org.apache.camel:camel-google-bigquery
-     * 
+     *
      * @return the dsl builder for the headers' name.
      */
     public static GoogleBigQueryEndpointBuilderFactory.GoogleBigQueryHeaderNameBuilder googleBigquery() {
@@ -1477,11 +1477,11 @@ public class EndpointHeaderBuilders {
     /**
      * Google BigQuery Standard SQL (camel-google-bigquery)
      * Access Google Cloud BigQuery service using SQL queries.
-     * 
+     *
      * Category: cloud,messaging
      * Since: 2.23
      * Maven coordinates: org.apache.camel:camel-google-bigquery
-     * 
+     *
      * @return the dsl builder for the headers' name.
      */
     public static GoogleBigQuerySQLEndpointBuilderFactory.GoogleBigQuerySQLHeaderNameBuilder googleBigquerySql() {
@@ -1490,11 +1490,11 @@ public class EndpointHeaderBuilders {
     /**
      * Google Calendar Stream (camel-google-calendar)
      * Poll for changes in a Google Calendar.
-     * 
+     *
      * Category: cloud
      * Since: 2.23
      * Maven coordinates: org.apache.camel:camel-google-calendar
-     * 
+     *
      * @return the dsl builder for the headers' name.
      */
     public static GoogleCalendarStreamEndpointBuilderFactory.GoogleCalendarStreamHeaderNameBuilder googleCalendarStream() {
@@ -1503,11 +1503,11 @@ public class EndpointHeaderBuilders {
     /**
      * Google Firestore (camel-google-firestore)
      * Store and retrieve data from Google Cloud Firestore NoSQL database.
-     * 
+     *
      * Category: cloud,database
      * Since: 4.19
      * Maven coordinates: org.apache.camel:camel-google-firestore
-     * 
+     *
      * @return the dsl builder for the headers' name.
      */
     public static GoogleFirestoreEndpointBuilderFactory.GoogleFirestoreHeaderNameBuilder googleFirestore() {
@@ -1516,11 +1516,11 @@ public class EndpointHeaderBuilders {
     /**
      * Google Cloud Functions (camel-google-functions)
      * Manage and invoke Google Cloud Functions
-     * 
+     *
      * Category: cloud
      * Since: 3.9
      * Maven coordinates: org.apache.camel:camel-google-functions
-     * 
+     *
      * @return the dsl builder for the headers' name.
      */
     public static GoogleCloudFunctionsEndpointBuilderFactory.GoogleCloudFunctionsHeaderNameBuilder googleFunctions() {
@@ -1529,11 +1529,11 @@ public class EndpointHeaderBuilders {
     /**
      * Google Mail Stream (camel-google-mail)
      * Poll for incoming messages in Google Mail.
-     * 
+     *
      * Category: cloud,mail
      * Since: 2.22
      * Maven coordinates: org.apache.camel:camel-google-mail
-     * 
+     *
      * @return the dsl builder for the headers' name.
      */
     public static GoogleMailStreamEndpointBuilderFactory.GoogleMailStreamHeaderNameBuilder googleMailStream() {
@@ -1542,11 +1542,11 @@ public class EndpointHeaderBuilders {
     /**
      * Google Pubsub (camel-google-pubsub)
      * Send and receive messages to/from Google Cloud Platform PubSub Service.
-     * 
+     *
      * Category: cloud,messaging
      * Since: 2.19
      * Maven coordinates: org.apache.camel:camel-google-pubsub
-     * 
+     *
      * @return the dsl builder for the headers' name.
      */
     public static GooglePubsubEndpointBuilderFactory.GooglePubsubHeaderNameBuilder googlePubsub() {
@@ -1555,11 +1555,11 @@ public class EndpointHeaderBuilders {
     /**
      * Google Secret Manager (camel-google-secret-manager)
      * Manage Google Secret Manager Secrets
-     * 
+     *
      * Category: cloud
      * Since: 3.16
      * Maven coordinates: org.apache.camel:camel-google-secret-manager
-     * 
+     *
      * @return the dsl builder for the headers' name.
      */
     public static GoogleSecretManagerEndpointBuilderFactory.GoogleSecretManagerHeaderNameBuilder googleSecretManager() {
@@ -1568,11 +1568,11 @@ public class EndpointHeaderBuilders {
     /**
      * Google Sheets Stream (camel-google-sheets)
      * Poll for changes in Google Sheets.
-     * 
+     *
      * Category: cloud,document
      * Since: 2.23
      * Maven coordinates: org.apache.camel:camel-google-sheets
-     * 
+     *
      * @return the dsl builder for the headers' name.
      */
     public static GoogleSheetsStreamEndpointBuilderFactory.GoogleSheetsStreamHeaderNameBuilder googleSheetsStream() {
@@ -1581,11 +1581,11 @@ public class EndpointHeaderBuilders {
     /**
      * Google Cloud Speech To Text (camel-google-speech-to-text)
      * Transcribe audio to text using Google Cloud Speech-to-Text API
-     * 
+     *
      * Category: cloud,ai
      * Since: 4.19
      * Maven coordinates: org.apache.camel:camel-google-speech-to-text
-     * 
+     *
      * @return the dsl builder for the headers' name.
      */
     public static GoogleCloudSpeechToTextEndpointBuilderFactory.GoogleCloudSpeechToTextHeaderNameBuilder googleSpeechToText() {
@@ -1595,11 +1595,11 @@ public class EndpointHeaderBuilders {
      * Google Storage (camel-google-storage)
      * Store and retrieve objects from Google Cloud Storage Service using the
      * google-cloud-storage library.
-     * 
+     *
      * Category: cloud
      * Since: 3.9
      * Maven coordinates: org.apache.camel:camel-google-storage
-     * 
+     *
      * @return the dsl builder for the headers' name.
      */
     public static GoogleCloudStorageEndpointBuilderFactory.GoogleCloudStorageHeaderNameBuilder googleStorage() {
@@ -1608,11 +1608,11 @@ public class EndpointHeaderBuilders {
     /**
      * Google Cloud Text To Speech (camel-google-text-to-speech)
      * Synthesize speech from text using the Google Cloud Text-to-Speech API
-     * 
+     *
      * Category: cloud,ai
      * Since: 4.19
      * Maven coordinates: org.apache.camel:camel-google-text-to-speech
-     * 
+     *
      * @return the dsl builder for the headers' name.
      */
     public static GoogleCloudTextToSpeechEndpointBuilderFactory.GoogleCloudTextToSpeechHeaderNameBuilder googleTextToSpeech() {
@@ -1621,11 +1621,11 @@ public class EndpointHeaderBuilders {
     /**
      * Google Vertex AI (camel-google-vertexai)
      * Interact with Google Cloud Vertex AI generative models.
-     * 
+     *
      * Category: ai,cloud
      * Since: 4.17
      * Maven coordinates: org.apache.camel:camel-google-vertexai
-     * 
+     *
      * @return the dsl builder for the headers' name.
      */
     public static GoogleVertexAIEndpointBuilderFactory.GoogleVertexAIHeaderNameBuilder googleVertexai() {
@@ -1635,11 +1635,11 @@ public class EndpointHeaderBuilders {
      * Google Cloud Vision (camel-google-vision)
      * Detect labels, text, faces, logos and more on images through Google Cloud
      * Vision API
-     * 
+     *
      * Category: cloud,ai
      * Since: 4.19
      * Maven coordinates: org.apache.camel:camel-google-vision
-     * 
+     *
      * @return the dsl builder for the headers' name.
      */
     public static GoogleCloudVisionEndpointBuilderFactory.GoogleCloudVisionHeaderNameBuilder googleVision() {
@@ -1648,11 +1648,11 @@ public class EndpointHeaderBuilders {
     /**
      * gRPC (camel-grpc)
      * Expose gRPC endpoints and access external gRPC endpoints.
-     * 
+     *
      * Category: rpc
      * Since: 2.19
      * Maven coordinates: org.apache.camel:camel-grpc
-     * 
+     *
      * @return the dsl builder for the headers' name.
      */
     public static GrpcEndpointBuilderFactory.GrpcHeaderNameBuilder grpc() {
@@ -1661,11 +1661,11 @@ public class EndpointHeaderBuilders {
     /**
      * HashiCorp Vault (camel-hashicorp-vault)
      * Manage secrets in HashiCorp Vault Service
-     * 
+     *
      * Category: cloud,cloud
      * Since: 3.18
      * Maven coordinates: org.apache.camel:camel-hashicorp-vault
-     * 
+     *
      * @return the dsl builder for the headers' name.
      */
     public static HashicorpVaultEndpointBuilderFactory.HashicorpVaultHeaderNameBuilder hashicorpVault() {
@@ -1675,11 +1675,11 @@ public class EndpointHeaderBuilders {
      * Hazelcast Atomic Number (camel-hazelcast)
      * Increment, decrement, set, etc. Hazelcast atomic number (a grid wide
      * number).
-     * 
+     *
      * Category: cache,clustering
      * Since: 2.7
      * Maven coordinates: org.apache.camel:camel-hazelcast
-     * 
+     *
      * @return the dsl builder for the headers' name.
      */
     @Deprecated
@@ -1689,11 +1689,11 @@ public class EndpointHeaderBuilders {
     /**
      * Hazelcast Instance (camel-hazelcast)
      * Consume join/leave events of a cache instance in a Hazelcast cluster.
-     * 
+     *
      * Category: cache,clustering
      * Since: 2.7
      * Maven coordinates: org.apache.camel:camel-hazelcast
-     * 
+     *
      * @return the dsl builder for the headers' name.
      */
     public static HazelcastInstanceEndpointBuilderFactory.HazelcastInstanceHeaderNameBuilder hazelcastInstance() {
@@ -1702,11 +1702,11 @@ public class EndpointHeaderBuilders {
     /**
      * Hazelcast List (camel-hazelcast)
      * Perform operations on Hazelcast distributed list.
-     * 
+     *
      * Category: cache,clustering
      * Since: 2.7
      * Maven coordinates: org.apache.camel:camel-hazelcast
-     * 
+     *
      * @return the dsl builder for the headers' name.
      */
     public static HazelcastListEndpointBuilderFactory.HazelcastListHeaderNameBuilder hazelcastList() {
@@ -1715,11 +1715,11 @@ public class EndpointHeaderBuilders {
     /**
      * Hazelcast Map (camel-hazelcast)
      * Perform operations on Hazelcast distributed map.
-     * 
+     *
      * Category: cache,clustering
      * Since: 2.7
      * Maven coordinates: org.apache.camel:camel-hazelcast
-     * 
+     *
      * @return the dsl builder for the headers' name.
      */
     public static HazelcastMapEndpointBuilderFactory.HazelcastMapHeaderNameBuilder hazelcastMap() {
@@ -1728,11 +1728,11 @@ public class EndpointHeaderBuilders {
     /**
      * Hazelcast Multimap (camel-hazelcast)
      * Perform operations on Hazelcast distributed multimap.
-     * 
+     *
      * Category: cache,clustering
      * Since: 2.7
      * Maven coordinates: org.apache.camel:camel-hazelcast
-     * 
+     *
      * @return the dsl builder for the headers' name.
      */
     public static HazelcastMultimapEndpointBuilderFactory.HazelcastMultimapHeaderNameBuilder hazelcastMultimap() {
@@ -1741,11 +1741,11 @@ public class EndpointHeaderBuilders {
     /**
      * Hazelcast Queue (camel-hazelcast)
      * Perform operations on Hazelcast distributed queue.
-     * 
+     *
      * Category: cache,clustering,messaging
      * Since: 2.7
      * Maven coordinates: org.apache.camel:camel-hazelcast
-     * 
+     *
      * @return the dsl builder for the headers' name.
      */
     public static HazelcastQueueEndpointBuilderFactory.HazelcastQueueHeaderNameBuilder hazelcastQueue() {
@@ -1754,11 +1754,11 @@ public class EndpointHeaderBuilders {
     /**
      * Hazelcast Replicated Map (camel-hazelcast)
      * Perform operations on Hazelcast replicated map.
-     * 
+     *
      * Category: cache,clustering
      * Since: 2.16
      * Maven coordinates: org.apache.camel:camel-hazelcast
-     * 
+     *
      * @return the dsl builder for the headers' name.
      */
     public static HazelcastReplicatedmapEndpointBuilderFactory.HazelcastReplicatedmapHeaderNameBuilder hazelcastReplicatedmap() {
@@ -1767,11 +1767,11 @@ public class EndpointHeaderBuilders {
     /**
      * Hazelcast Ringbuffer (camel-hazelcast)
      * Perform operations on Hazelcast distributed ringbuffer.
-     * 
+     *
      * Category: cache,clustering
      * Since: 2.16
      * Maven coordinates: org.apache.camel:camel-hazelcast
-     * 
+     *
      * @return the dsl builder for the headers' name.
      */
     public static HazelcastRingbufferEndpointBuilderFactory.HazelcastRingbufferHeaderNameBuilder hazelcastRingbuffer() {
@@ -1780,11 +1780,11 @@ public class EndpointHeaderBuilders {
     /**
      * Hazelcast Set (camel-hazelcast)
      * Perform operations on Hazelcast distributed set.
-     * 
+     *
      * Category: cache,clustering
      * Since: 2.7
      * Maven coordinates: org.apache.camel:camel-hazelcast
-     * 
+     *
      * @return the dsl builder for the headers' name.
      */
     public static HazelcastSetEndpointBuilderFactory.HazelcastSetHeaderNameBuilder hazelcastSet() {
@@ -1793,24 +1793,37 @@ public class EndpointHeaderBuilders {
     /**
      * Hazelcast Topic (camel-hazelcast)
      * Send and receive messages to/from Hazelcast distributed topic.
-     * 
+     *
      * Category: cache,clustering
      * Since: 2.15
      * Maven coordinates: org.apache.camel:camel-hazelcast
-     * 
+     *
      * @return the dsl builder for the headers' name.
      */
     public static HazelcastTopicEndpointBuilderFactory.HazelcastTopicHeaderNameBuilder hazelcastTopic() {
         return HazelcastTopicEndpointBuilderFactory.HazelcastTopicHeaderNameBuilder.INSTANCE;
     }
     /**
+     * HiveMQ (camel-hivemq)
+     * Camel HiveMQ MQTT Client support
+     *
+     * Category: messaging,iot
+     * Since: 4.23
+     * Maven coordinates: org.apache.camel:camel-hivemq
+     *
+     * @return the dsl builder for the headers' name.
+     */
+    public static HiveMQEndpointBuilderFactory.HiveMQHeaderNameBuilder hivemq() {
+        return HiveMQEndpointBuilderFactory.HiveMQHeaderNameBuilder.INSTANCE;
+    }
+    /**
      * HTTP (camel-http)
      * Send requests to external HTTP servers using Apache HTTP Client 5.x.
-     * 
+     *
      * Category: http
      * Since: 2.3
      * Maven coordinates: org.apache.camel:camel-http
-     * 
+     *
      * @return the dsl builder for the headers' name.
      */
     public static HttpEndpointBuilderFactory.HttpHeaderNameBuilder http() {
@@ -1820,11 +1833,11 @@ public class EndpointHeaderBuilders {
      * Hugging Face (camel-huggingface)
      * Integration with Hugging Face's Model Hub by using the Deep Java Library
      * (DJL) Python bridge
-     * 
+     *
      * Category: ai
      * Since: 4.19
      * Maven coordinates: org.apache.camel:camel-huggingface
-     * 
+     *
      * @return the dsl builder for the headers' name.
      */
     public static HuggingFaceEndpointBuilderFactory.HuggingFaceHeaderNameBuilder huggingface() {
@@ -1834,11 +1847,11 @@ public class EndpointHeaderBuilders {
      * Huawei Object Storage Service (OBS) (camel-huaweicloud-obs)
      * To provide stable, secure, efficient, and easy-to-use cloud storage
      * service on Huawei Cloud
-     * 
+     *
      * Category: cloud
      * Since: 3.12
      * Maven coordinates: org.apache.camel:camel-huaweicloud-obs
-     * 
+     *
      * @return the dsl builder for the headers' name.
      */
     public static OBSEndpointBuilderFactory.OBSHeaderNameBuilder hwcloudObs() {
@@ -1847,11 +1860,11 @@ public class EndpointHeaderBuilders {
     /**
      * IBM Cloud Object Storage (camel-ibm-cos)
      * Store and retrieve objects from IBM Cloud Object Storage.
-     * 
+     *
      * Category: cloud,file
      * Since: 4.16
      * Maven coordinates: org.apache.camel:camel-ibm-cos
-     * 
+     *
      * @return the dsl builder for the headers' name.
      */
     public static IBMCOSEndpointBuilderFactory.IBMCOSHeaderNameBuilder ibmCos() {
@@ -1860,11 +1873,11 @@ public class EndpointHeaderBuilders {
     /**
      * IBM Secrets Manager (camel-ibm-secrets-manager)
      * Manage secrets in IBM Secrets Manager Service
-     * 
+     *
      * Category: cloud,cloud
      * Since: 4.11
      * Maven coordinates: org.apache.camel:camel-ibm-secrets-manager
-     * 
+     *
      * @return the dsl builder for the headers' name.
      */
     public static IBMSecretsManagerEndpointBuilderFactory.IBMSecretsManagerHeaderNameBuilder ibmSecretsManager() {
@@ -1873,11 +1886,11 @@ public class EndpointHeaderBuilders {
     /**
      * IBM Watson Discovery (camel-ibm-watson-discovery)
      * Perform document understanding and search using IBM Watson Discovery
-     * 
+     *
      * Category: ai,cloud
      * Since: 4.16
      * Maven coordinates: org.apache.camel:camel-ibm-watson-discovery
-     * 
+     *
      * @return the dsl builder for the headers' name.
      */
     public static WatsonDiscoveryEndpointBuilderFactory.WatsonDiscoveryHeaderNameBuilder ibmWatsonDiscovery() {
@@ -1887,11 +1900,11 @@ public class EndpointHeaderBuilders {
      * IBM Watson Language (camel-ibm-watson-language)
      * Perform natural language processing using IBM Watson Natural Language
      * Understanding
-     * 
+     *
      * Category: ai,cloud
      * Since: 4.16
      * Maven coordinates: org.apache.camel:camel-ibm-watson-language
-     * 
+     *
      * @return the dsl builder for the headers' name.
      */
     public static WatsonLanguageEndpointBuilderFactory.WatsonLanguageHeaderNameBuilder ibmWatsonLanguage() {
@@ -1900,11 +1913,11 @@ public class EndpointHeaderBuilders {
     /**
      * IBM Watson Speech to Text (camel-ibm-watson-speech-to-text)
      * Convert speech audio to text using IBM Watson Speech to Text
-     * 
+     *
      * Category: ai,cloud
      * Since: 4.17
      * Maven coordinates: org.apache.camel:camel-ibm-watson-speech-to-text
-     * 
+     *
      * @return the dsl builder for the headers' name.
      */
     public static WatsonSpeechToTextEndpointBuilderFactory.WatsonSpeechToTextHeaderNameBuilder ibmWatsonSpeechToText() {
@@ -1913,11 +1926,11 @@ public class EndpointHeaderBuilders {
     /**
      * IBM Watson Text to Speech (camel-ibm-watson-text-to-speech)
      * Convert text to natural-sounding speech using IBM Watson Text to Speech
-     * 
+     *
      * Category: ai,cloud
      * Since: 4.17
      * Maven coordinates: org.apache.camel:camel-ibm-watson-text-to-speech
-     * 
+     *
      * @return the dsl builder for the headers' name.
      */
     public static WatsonTextToSpeechEndpointBuilderFactory.WatsonTextToSpeechHeaderNameBuilder ibmWatsonTextToSpeech() {
@@ -1927,11 +1940,11 @@ public class EndpointHeaderBuilders {
      * IBM watsonx.ai (camel-ibm-watsonx-ai)
      * Interact with IBM watsonx.ai foundation models for text generation, chat,
      * embeddings, and more.
-     * 
+     *
      * Category: ai,cloud
      * Since: 4.18
      * Maven coordinates: org.apache.camel:camel-ibm-watsonx-ai
-     * 
+     *
      * @return the dsl builder for the headers' name.
      */
     public static WatsonxAiEndpointBuilderFactory.WatsonxAiHeaderNameBuilder ibmWatsonxAi() {
@@ -1941,11 +1954,11 @@ public class EndpointHeaderBuilders {
      * IBM watsonx.data (camel-ibm-watsonx-data)
      * Interact with IBM watsonx.data lakehouse for catalog, schema, table, and
      * engine management.
-     * 
+     *
      * Category: cloud,database
      * Since: 4.19
      * Maven coordinates: org.apache.camel:camel-ibm-watsonx-data
-     * 
+     *
      * @return the dsl builder for the headers' name.
      */
     public static WatsonxDataEndpointBuilderFactory.WatsonxDataHeaderNameBuilder ibmWatsonxData() {
@@ -1955,11 +1968,11 @@ public class EndpointHeaderBuilders {
      * Ignite Cache (camel-ignite)
      * Perform cache operations on an Ignite cache or consume changes from a
      * continuous query.
-     * 
+     *
      * Category: cache,clustering
      * Since: 2.17
      * Maven coordinates: org.apache.camel:camel-ignite
-     * 
+     *
      * @return the dsl builder for the headers' name.
      */
     public static IgniteCacheEndpointBuilderFactory.IgniteCacheHeaderNameBuilder igniteCache() {
@@ -1968,11 +1981,11 @@ public class EndpointHeaderBuilders {
     /**
      * Ignite Compute (camel-ignite)
      * Run compute operations on an Ignite cluster.
-     * 
+     *
      * Category: cache,clustering
      * Since: 2.17
      * Maven coordinates: org.apache.camel:camel-ignite
-     * 
+     *
      * @return the dsl builder for the headers' name.
      */
     public static IgniteComputeEndpointBuilderFactory.IgniteComputeHeaderNameBuilder igniteCompute() {
@@ -1981,11 +1994,11 @@ public class EndpointHeaderBuilders {
     /**
      * Ignite ID Generator (camel-ignite)
      * Interact with Ignite Atomic Sequences and ID Generators .
-     * 
+     *
      * Category: cache,clustering
      * Since: 2.17
      * Maven coordinates: org.apache.camel:camel-ignite
-     * 
+     *
      * @return the dsl builder for the headers' name.
      */
     public static IgniteIdGenEndpointBuilderFactory.IgniteIdGenHeaderNameBuilder igniteIdgen() {
@@ -1994,11 +2007,11 @@ public class EndpointHeaderBuilders {
     /**
      * Ignite Messaging (camel-ignite)
      * Send and receive messages from an Ignite topic.
-     * 
+     *
      * Category: messaging
      * Since: 2.17
      * Maven coordinates: org.apache.camel:camel-ignite
-     * 
+     *
      * @return the dsl builder for the headers' name.
      */
     public static IgniteMessagingEndpointBuilderFactory.IgniteMessagingHeaderNameBuilder igniteMessaging() {
@@ -2007,11 +2020,11 @@ public class EndpointHeaderBuilders {
     /**
      * Ignite Queues (camel-ignite)
      * Interact with Ignite Queue data structures.
-     * 
+     *
      * Category: cache,clustering,messaging
      * Since: 2.17
      * Maven coordinates: org.apache.camel:camel-ignite
-     * 
+     *
      * @return the dsl builder for the headers' name.
      */
     public static IgniteQueueEndpointBuilderFactory.IgniteQueueHeaderNameBuilder igniteQueue() {
@@ -2020,11 +2033,11 @@ public class EndpointHeaderBuilders {
     /**
      * Ignite Sets (camel-ignite)
      * Interact with Ignite Set data structures.
-     * 
+     *
      * Category: cache,clustering
      * Since: 2.17
      * Maven coordinates: org.apache.camel:camel-ignite
-     * 
+     *
      * @return the dsl builder for the headers' name.
      */
     public static IgniteSetEndpointBuilderFactory.IgniteSetHeaderNameBuilder igniteSet() {
@@ -2033,11 +2046,11 @@ public class EndpointHeaderBuilders {
     /**
      * IMAP (camel-mail)
      * Send and receive emails using imap, pop3 and smtp protocols.
-     * 
+     *
      * Category: mail
      * Since: 1.0
      * Maven coordinates: org.apache.camel:camel-mail
-     * 
+     *
      * @return the dsl builder for the headers' name.
      */
     public static MailEndpointBuilderFactory.MailHeaderNameBuilder imap() {
@@ -2047,11 +2060,11 @@ public class EndpointHeaderBuilders {
      * Infinispan (camel-infinispan)
      * Read and write from/to Infinispan distributed key/value store and data
      * grid.
-     * 
+     *
      * Category: cache,clustering
      * Since: 2.13
      * Maven coordinates: org.apache.camel:camel-infinispan
-     * 
+     *
      * @return the dsl builder for the headers' name.
      */
     public static InfinispanRemoteEndpointBuilderFactory.InfinispanRemoteHeaderNameBuilder infinispan() {
@@ -2061,11 +2074,11 @@ public class EndpointHeaderBuilders {
      * Infinispan Embedded (camel-infinispan-embedded)
      * Read and write from/to Infinispan distributed key/value store and data
      * grid.
-     * 
+     *
      * Category: cache,clustering
      * Since: 2.13
      * Maven coordinates: org.apache.camel:camel-infinispan-embedded
-     * 
+     *
      * @return the dsl builder for the headers' name.
      */
     public static InfinispanEmbeddedEndpointBuilderFactory.InfinispanEmbeddedHeaderNameBuilder infinispanEmbedded() {
@@ -2074,11 +2087,11 @@ public class EndpointHeaderBuilders {
     /**
      * InfluxDB (camel-influxdb)
      * Interact with InfluxDB v1, a time series database.
-     * 
+     *
      * Category: database
      * Since: 2.18
      * Maven coordinates: org.apache.camel:camel-influxdb
-     * 
+     *
      * @return the dsl builder for the headers' name.
      */
     public static InfluxDbEndpointBuilderFactory.InfluxDbHeaderNameBuilder influxdb() {
@@ -2087,11 +2100,11 @@ public class EndpointHeaderBuilders {
     /**
      * InfluxDB2 (camel-influxdb2)
      * Interact with InfluxDB v2, a time series database.
-     * 
+     *
      * Category: database
      * Since: 3.20
      * Maven coordinates: org.apache.camel:camel-influxdb2
-     * 
+     *
      * @return the dsl builder for the headers' name.
      */
     public static InfluxDb2EndpointBuilderFactory.InfluxDb2HeaderNameBuilder influxdb2() {
@@ -2100,11 +2113,11 @@ public class EndpointHeaderBuilders {
     /**
      * JCache (camel-jcache)
      * Perform caching operations against JSR107/JCache.
-     * 
+     *
      * Category: cache,clustering
      * Since: 2.17
      * Maven coordinates: org.apache.camel:camel-jcache
-     * 
+     *
      * @return the dsl builder for the headers' name.
      */
     public static JCacheEndpointBuilderFactory.JCacheHeaderNameBuilder jcache() {
@@ -2113,11 +2126,11 @@ public class EndpointHeaderBuilders {
     /**
      * JCR (camel-jcr)
      * Read and write nodes to/from a JCR compliant content repository.
-     * 
+     *
      * Category: database,cms
      * Since: 1.3
      * Maven coordinates: org.apache.camel:camel-jcr
-     * 
+     *
      * @return the dsl builder for the headers' name.
      */
     public static JcrEndpointBuilderFactory.JcrHeaderNameBuilder jcr() {
@@ -2126,11 +2139,11 @@ public class EndpointHeaderBuilders {
     /**
      * JDBC (camel-jdbc)
      * Access databases through SQL and JDBC.
-     * 
+     *
      * Category: database
      * Since: 1.2
      * Maven coordinates: org.apache.camel:camel-jdbc
-     * 
+     *
      * @return the dsl builder for the headers' name.
      */
     public static JdbcEndpointBuilderFactory.JdbcHeaderNameBuilder jdbc() {
@@ -2139,11 +2152,11 @@ public class EndpointHeaderBuilders {
     /**
      * Jetty (camel-jetty)
      * Expose HTTP endpoints using Jetty 12.
-     * 
+     *
      * Category: http
      * Since: 1.2
      * Maven coordinates: org.apache.camel:camel-jetty
-     * 
+     *
      * @return the dsl builder for the headers' name.
      */
     public static JettyHttp12EndpointBuilderFactory.JettyHttp12HeaderNameBuilder jetty() {
@@ -2152,11 +2165,11 @@ public class EndpointHeaderBuilders {
     /**
      * JGroups (camel-jgroups)
      * Exchange messages with JGroups clusters.
-     * 
+     *
      * Category: clustering,messaging
      * Since: 2.13
      * Maven coordinates: org.apache.camel:camel-jgroups
-     * 
+     *
      * @return the dsl builder for the headers' name.
      */
     public static JGroupsEndpointBuilderFactory.JGroupsHeaderNameBuilder jgroups() {
@@ -2165,11 +2178,11 @@ public class EndpointHeaderBuilders {
     /**
      * JGroups raft (camel-jgroups-raft)
      * Exchange messages with JGroups-raft clusters.
-     * 
+     *
      * Category: clustering,messaging
      * Since: 2.24
      * Maven coordinates: org.apache.camel:camel-jgroups-raft
-     * 
+     *
      * @return the dsl builder for the headers' name.
      */
     public static JGroupsRaftEndpointBuilderFactory.JGroupsRaftHeaderNameBuilder jgroupsRaft() {
@@ -2178,11 +2191,11 @@ public class EndpointHeaderBuilders {
     /**
      * Jira (camel-jira)
      * Interact with JIRA issue tracker.
-     * 
+     *
      * Category: document
      * Since: 3.0
      * Maven coordinates: org.apache.camel:camel-jira
-     * 
+     *
      * @return the dsl builder for the headers' name.
      */
     public static JiraEndpointBuilderFactory.JiraHeaderNameBuilder jira() {
@@ -2191,11 +2204,11 @@ public class EndpointHeaderBuilders {
     /**
      * JMS (camel-jms)
      * Send and receive messages to/from JMS message brokers.
-     * 
+     *
      * Category: messaging
      * Since: 1.0
      * Maven coordinates: org.apache.camel:camel-jms
-     * 
+     *
      * @return the dsl builder for the headers' name.
      */
     public static JmsEndpointBuilderFactory.JmsHeaderNameBuilder jms() {
@@ -2204,11 +2217,11 @@ public class EndpointHeaderBuilders {
     /**
      * JMX (camel-jmx)
      * Receive JMX notifications.
-     * 
+     *
      * Category: monitoring
      * Since: 2.6
      * Maven coordinates: org.apache.camel:camel-jmx
-     * 
+     *
      * @return the dsl builder for the headers' name.
      */
     public static JMXEndpointBuilderFactory.JMXHeaderNameBuilder jmx() {
@@ -2217,11 +2230,11 @@ public class EndpointHeaderBuilders {
     /**
      * JOLT (camel-jolt)
      * JSON to JSON transformation using JOLT.
-     * 
+     *
      * Category: transformation
      * Since: 2.16
      * Maven coordinates: org.apache.camel:camel-jolt
-     * 
+     *
      * @return the dsl builder for the headers' name.
      */
     public static JoltEndpointBuilderFactory.JoltHeaderNameBuilder jolt() {
@@ -2231,11 +2244,11 @@ public class EndpointHeaderBuilders {
      * JPA (camel-jpa)
      * Store and retrieve Java objects from databases using Java Persistence API
      * (JPA).
-     * 
+     *
      * Category: database
      * Since: 1.0
      * Maven coordinates: org.apache.camel:camel-jpa
-     * 
+     *
      * @return the dsl builder for the headers' name.
      */
     public static JpaEndpointBuilderFactory.JpaHeaderNameBuilder jpa() {
@@ -2244,11 +2257,11 @@ public class EndpointHeaderBuilders {
     /**
      * JSLT (camel-jslt)
      * Query or transform JSON payloads using JSLT.
-     * 
+     *
      * Category: transformation
      * Since: 3.1
      * Maven coordinates: org.apache.camel:camel-jslt
-     * 
+     *
      * @return the dsl builder for the headers' name.
      */
     public static JsltEndpointBuilderFactory.JsltHeaderNameBuilder jslt() {
@@ -2259,11 +2272,11 @@ public class EndpointHeaderBuilders {
      * Exchanges messages with an IBM i system using data queues, message
      * queues, or program call. IBM i is the replacement for AS/400 and iSeries
      * servers.
-     * 
+     *
      * Category: messaging
      * Since: 1.5
      * Maven coordinates: org.apache.camel:camel-jt400
-     * 
+     *
      * @return the dsl builder for the headers' name.
      */
     public static Jt400EndpointBuilderFactory.Jt400HeaderNameBuilder jt400() {
@@ -2272,11 +2285,11 @@ public class EndpointHeaderBuilders {
     /**
      * JTE (camel-jte)
      * Transform messages using a Java based template engine (JTE).
-     * 
+     *
      * Category: transformation
      * Since: 4.4
      * Maven coordinates: org.apache.camel:camel-jte
-     * 
+     *
      * @return the dsl builder for the headers' name.
      */
     public static JteEndpointBuilderFactory.JteHeaderNameBuilder jte() {
@@ -2285,11 +2298,11 @@ public class EndpointHeaderBuilders {
     /**
      * Kafka (camel-kafka)
      * Send and receive messages to/from an Apache Kafka broker.
-     * 
+     *
      * Category: messaging
      * Since: 2.13
      * Maven coordinates: org.apache.camel:camel-kafka
-     * 
+     *
      * @return the dsl builder for the headers' name.
      */
     public static KafkaEndpointBuilderFactory.KafkaHeaderNameBuilder kafka() {
@@ -2298,11 +2311,11 @@ public class EndpointHeaderBuilders {
     /**
      * Keycloak (camel-keycloak)
      * Manage Keycloak instances via Admin API.
-     * 
+     *
      * Category: security,management
      * Since: 4.15
      * Maven coordinates: org.apache.camel:camel-keycloak
-     * 
+     *
      * @return the dsl builder for the headers' name.
      */
     public static KeycloakEndpointBuilderFactory.KeycloakHeaderNameBuilder keycloak() {
@@ -2312,11 +2325,11 @@ public class EndpointHeaderBuilders {
      * KServe (camel-kserve)
      * Provide access to AI model servers with the KServe standard to run
      * inference with remote models
-     * 
+     *
      * Category: ai
      * Since: 4.10
      * Maven coordinates: org.apache.camel:camel-kserve
-     * 
+     *
      * @return the dsl builder for the headers' name.
      */
     public static KServeEndpointBuilderFactory.KServeHeaderNameBuilder kserve() {
@@ -2326,11 +2339,11 @@ public class EndpointHeaderBuilders {
      * Kubernetes ConfigMap (camel-kubernetes)
      * Perform operations on Kubernetes ConfigMaps and get notified on
      * ConfigMaps changes.
-     * 
+     *
      * Category: container,cloud
      * Since: 2.17
      * Maven coordinates: org.apache.camel:camel-kubernetes
-     * 
+     *
      * @return the dsl builder for the headers' name.
      */
     public static KubernetesConfigMapsEndpointBuilderFactory.KubernetesConfigMapsHeaderNameBuilder kubernetesConfigMaps() {
@@ -2339,11 +2352,11 @@ public class EndpointHeaderBuilders {
     /**
      * Kubernetes Cronjob (camel-kubernetes)
      * Perform operations on Kubernetes CronJob.
-     * 
+     *
      * Category: container,cloud
      * Since: 4.3
      * Maven coordinates: org.apache.camel:camel-kubernetes
-     * 
+     *
      * @return the dsl builder for the headers' name.
      */
     public static KubernetesCronJobEndpointBuilderFactory.KubernetesCronJobHeaderNameBuilder kubernetesCronjob() {
@@ -2353,11 +2366,11 @@ public class EndpointHeaderBuilders {
      * Kubernetes Custom Resources (camel-kubernetes)
      * Perform operations on Kubernetes Custom Resources and get notified on
      * Deployment changes.
-     * 
+     *
      * Category: container,cloud
      * Since: 3.7
      * Maven coordinates: org.apache.camel:camel-kubernetes
-     * 
+     *
      * @return the dsl builder for the headers' name.
      */
     public static KubernetesCustomResourcesEndpointBuilderFactory.KubernetesCustomResourcesHeaderNameBuilder kubernetesCustomResources() {
@@ -2367,11 +2380,11 @@ public class EndpointHeaderBuilders {
      * Kubernetes Deployments (camel-kubernetes)
      * Perform operations on Kubernetes Deployments and get notified on
      * Deployment changes.
-     * 
+     *
      * Category: container,cloud
      * Since: 2.20
      * Maven coordinates: org.apache.camel:camel-kubernetes
-     * 
+     *
      * @return the dsl builder for the headers' name.
      */
     public static KubernetesDeploymentsEndpointBuilderFactory.KubernetesDeploymentsHeaderNameBuilder kubernetesDeployments() {
@@ -2381,11 +2394,11 @@ public class EndpointHeaderBuilders {
      * Kubernetes Event (camel-kubernetes)
      * Perform operations on Kubernetes Events and get notified on Events
      * changes.
-     * 
+     *
      * Category: container,cloud
      * Since: 3.20
      * Maven coordinates: org.apache.camel:camel-kubernetes
-     * 
+     *
      * @return the dsl builder for the headers' name.
      */
     public static KubernetesEventsEndpointBuilderFactory.KubernetesEventsHeaderNameBuilder kubernetesEvents() {
@@ -2395,11 +2408,11 @@ public class EndpointHeaderBuilders {
      * Kubernetes HPA (camel-kubernetes)
      * Perform operations on Kubernetes Horizontal Pod Autoscalers (HPA) and get
      * notified on HPA changes.
-     * 
+     *
      * Category: container,cloud
      * Since: 2.23
      * Maven coordinates: org.apache.camel:camel-kubernetes
-     * 
+     *
      * @return the dsl builder for the headers' name.
      */
     public static KubernetesHPAEndpointBuilderFactory.KubernetesHPAHeaderNameBuilder kubernetesHpa() {
@@ -2408,11 +2421,11 @@ public class EndpointHeaderBuilders {
     /**
      * Kubernetes Job (camel-kubernetes)
      * Perform operations on Kubernetes Jobs.
-     * 
+     *
      * Category: container,cloud
      * Since: 2.23
      * Maven coordinates: org.apache.camel:camel-kubernetes
-     * 
+     *
      * @return the dsl builder for the headers' name.
      */
     public static KubernetesJobEndpointBuilderFactory.KubernetesJobHeaderNameBuilder kubernetesJob() {
@@ -2422,11 +2435,11 @@ public class EndpointHeaderBuilders {
      * Kubernetes Namespaces (camel-kubernetes)
      * Perform operations on Kubernetes Namespaces and get notified on Namespace
      * changes.
-     * 
+     *
      * Category: container,cloud
      * Since: 2.17
      * Maven coordinates: org.apache.camel:camel-kubernetes
-     * 
+     *
      * @return the dsl builder for the headers' name.
      */
     public static KubernetesNamespacesEndpointBuilderFactory.KubernetesNamespacesHeaderNameBuilder kubernetesNamespaces() {
@@ -2435,11 +2448,11 @@ public class EndpointHeaderBuilders {
     /**
      * Kubernetes Nodes (camel-kubernetes)
      * Perform operations on Kubernetes Nodes and get notified on Node changes.
-     * 
+     *
      * Category: container,cloud
      * Since: 2.17
      * Maven coordinates: org.apache.camel:camel-kubernetes
-     * 
+     *
      * @return the dsl builder for the headers' name.
      */
     public static KubernetesNodesEndpointBuilderFactory.KubernetesNodesHeaderNameBuilder kubernetesNodes() {
@@ -2449,11 +2462,11 @@ public class EndpointHeaderBuilders {
      * Kubernetes Persistent Volume (camel-kubernetes)
      * Perform operations on Kubernetes Persistent Volumes and get notified on
      * Persistent Volume changes.
-     * 
+     *
      * Category: container,cloud
      * Since: 2.17
      * Maven coordinates: org.apache.camel:camel-kubernetes
-     * 
+     *
      * @return the dsl builder for the headers' name.
      */
     public static KubernetesPersistentVolumesEndpointBuilderFactory.KubernetesPersistentVolumesHeaderNameBuilder kubernetesPersistentVolumes() {
@@ -2463,11 +2476,11 @@ public class EndpointHeaderBuilders {
      * Kubernetes Persistent Volume Claim (camel-kubernetes)
      * Perform operations on Kubernetes Persistent Volumes Claims and get
      * notified on Persistent Volumes Claim changes.
-     * 
+     *
      * Category: container,cloud
      * Since: 2.17
      * Maven coordinates: org.apache.camel:camel-kubernetes
-     * 
+     *
      * @return the dsl builder for the headers' name.
      */
     public static KubernetesPersistentVolumesClaimsEndpointBuilderFactory.KubernetesPersistentVolumesClaimsHeaderNameBuilder kubernetesPersistentVolumesClaims() {
@@ -2476,11 +2489,11 @@ public class EndpointHeaderBuilders {
     /**
      * Kubernetes Pods (camel-kubernetes)
      * Perform operations on Kubernetes Pods and get notified on Pod changes.
-     * 
+     *
      * Category: container,cloud
      * Since: 2.17
      * Maven coordinates: org.apache.camel:camel-kubernetes
-     * 
+     *
      * @return the dsl builder for the headers' name.
      */
     public static KubernetesPodsEndpointBuilderFactory.KubernetesPodsHeaderNameBuilder kubernetesPods() {
@@ -2490,11 +2503,11 @@ public class EndpointHeaderBuilders {
      * Kubernetes Replication Controller (camel-kubernetes)
      * Perform operations on Kubernetes Replication Controllers and get notified
      * on Replication Controllers changes.
-     * 
+     *
      * Category: container,cloud
      * Since: 2.17
      * Maven coordinates: org.apache.camel:camel-kubernetes
-     * 
+     *
      * @return the dsl builder for the headers' name.
      */
     public static KubernetesReplicationControllersEndpointBuilderFactory.KubernetesReplicationControllersHeaderNameBuilder kubernetesReplicationControllers() {
@@ -2503,11 +2516,11 @@ public class EndpointHeaderBuilders {
     /**
      * Kubernetes Resources Quota (camel-kubernetes)
      * Perform operations on Kubernetes Resources Quotas.
-     * 
+     *
      * Category: container,cloud
      * Since: 2.17
      * Maven coordinates: org.apache.camel:camel-kubernetes
-     * 
+     *
      * @return the dsl builder for the headers' name.
      */
     public static KubernetesResourcesQuotaEndpointBuilderFactory.KubernetesResourcesQuotaHeaderNameBuilder kubernetesResourcesQuota() {
@@ -2516,11 +2529,11 @@ public class EndpointHeaderBuilders {
     /**
      * Kubernetes Secrets (camel-kubernetes)
      * Perform operations on Kubernetes Secrets.
-     * 
+     *
      * Category: container,cloud
      * Since: 2.17
      * Maven coordinates: org.apache.camel:camel-kubernetes
-     * 
+     *
      * @return the dsl builder for the headers' name.
      */
     public static KubernetesSecretsEndpointBuilderFactory.KubernetesSecretsHeaderNameBuilder kubernetesSecrets() {
@@ -2529,11 +2542,11 @@ public class EndpointHeaderBuilders {
     /**
      * Kubernetes Service Account (camel-kubernetes)
      * Perform operations on Kubernetes Service Accounts.
-     * 
+     *
      * Category: container,cloud
      * Since: 2.17
      * Maven coordinates: org.apache.camel:camel-kubernetes
-     * 
+     *
      * @return the dsl builder for the headers' name.
      */
     public static KubernetesServiceAccountsEndpointBuilderFactory.KubernetesServiceAccountsHeaderNameBuilder kubernetesServiceAccounts() {
@@ -2543,11 +2556,11 @@ public class EndpointHeaderBuilders {
      * Kubernetes Services (camel-kubernetes)
      * Perform operations on Kubernetes Services and get notified on Service
      * changes.
-     * 
+     *
      * Category: container,cloud
      * Since: 2.17
      * Maven coordinates: org.apache.camel:camel-kubernetes
-     * 
+     *
      * @return the dsl builder for the headers' name.
      */
     public static KubernetesServicesEndpointBuilderFactory.KubernetesServicesHeaderNameBuilder kubernetesServices() {
@@ -2557,11 +2570,11 @@ public class EndpointHeaderBuilders {
      * Kudu (camel-kudu)
      * Interact with Apache Kudu, a free and open source column-oriented data
      * store of the Apache Hadoop ecosystem.
-     * 
+     *
      * Category: database,iot,cloud
      * Since: 3.0
      * Maven coordinates: org.apache.camel:camel-kudu
-     * 
+     *
      * @return the dsl builder for the headers' name.
      */
     public static KuduEndpointBuilderFactory.KuduHeaderNameBuilder kudu() {
@@ -2570,11 +2583,11 @@ public class EndpointHeaderBuilders {
     /**
      * LangChain4j Agent (camel-langchain4j-agent)
      * LangChain4j Agent component
-     * 
+     *
      * Category: ai
      * Since: 4.14
      * Maven coordinates: org.apache.camel:camel-langchain4j-agent
-     * 
+     *
      * @return the dsl builder for the headers' name.
      */
     public static LangChain4jAgentEndpointBuilderFactory.LangChain4jAgentHeaderNameBuilder langchain4jAgent() {
@@ -2583,11 +2596,11 @@ public class EndpointHeaderBuilders {
     /**
      * LangChain4j Chat (camel-langchain4j-chat)
      * LangChain4j Chat component
-     * 
+     *
      * Category: ai
      * Since: 4.5
      * Maven coordinates: org.apache.camel:camel-langchain4j-chat
-     * 
+     *
      * @return the dsl builder for the headers' name.
      */
     public static LangChain4jChatEndpointBuilderFactory.LangChain4jChatHeaderNameBuilder langchain4jChat() {
@@ -2596,11 +2609,11 @@ public class EndpointHeaderBuilders {
     /**
      * LangChain4j Embeddings (camel-langchain4j-embeddings)
      * LangChain4j Embeddings
-     * 
+     *
      * Category: ai
      * Since: 4.5
      * Maven coordinates: org.apache.camel:camel-langchain4j-embeddings
-     * 
+     *
      * @return the dsl builder for the headers' name.
      */
     public static LangChain4jEmbeddingsEndpointBuilderFactory.LangChain4jEmbeddingsHeaderNameBuilder langchain4jEmbeddings() {
@@ -2609,11 +2622,11 @@ public class EndpointHeaderBuilders {
     /**
      * LangChain4j Embedding Store (camel-langchain4j-embeddingstore)
      * Perform operations on the LangChain4jEmbeddingStores.
-     * 
+     *
      * Category: database,ai
      * Since: 4.14
      * Maven coordinates: org.apache.camel:camel-langchain4j-embeddingstore
-     * 
+     *
      * @return the dsl builder for the headers' name.
      */
     public static LangChain4jEmbeddingStoreEndpointBuilderFactory.LangChain4jEmbeddingStoreHeaderNameBuilder langchain4jEmbeddingstore() {
@@ -2622,11 +2635,11 @@ public class EndpointHeaderBuilders {
     /**
      * Language (camel-language)
      * Execute scripts in any of the languages supported by Camel.
-     * 
+     *
      * Category: core,script
      * Since: 2.5
      * Maven coordinates: org.apache.camel:camel-language
-     * 
+     *
      * @return the dsl builder for the headers' name.
      */
     public static LanguageEndpointBuilderFactory.LanguageHeaderNameBuilder language() {
@@ -2635,11 +2648,11 @@ public class EndpointHeaderBuilders {
     /**
      * Printer (camel-printer)
      * Send print jobs to printers.
-     * 
+     *
      * Category: document
      * Since: 2.1
      * Maven coordinates: org.apache.camel:camel-printer
-     * 
+     *
      * @return the dsl builder for the headers' name.
      */
     public static PrinterEndpointBuilderFactory.PrinterHeaderNameBuilder lpr() {
@@ -2648,11 +2661,11 @@ public class EndpointHeaderBuilders {
     /**
      * Lucene (camel-lucene)
      * Perform inserts or queries against Apache Lucene databases.
-     * 
+     *
      * Category: database,search
      * Since: 2.2
      * Maven coordinates: org.apache.camel:camel-lucene
-     * 
+     *
      * @return the dsl builder for the headers' name.
      */
     public static LuceneEndpointBuilderFactory.LuceneHeaderNameBuilder lucene() {
@@ -2662,11 +2675,11 @@ public class EndpointHeaderBuilders {
      * Metrics (camel-metrics)
      * Collect various metrics directly from Camel routes using the DropWizard
      * metrics library.
-     * 
+     *
      * Category: monitoring
      * Since: 2.14
      * Maven coordinates: org.apache.camel:camel-metrics
-     * 
+     *
      * @return the dsl builder for the headers' name.
      */
     public static MetricsEndpointBuilderFactory.MetricsHeaderNameBuilder metrics() {
@@ -2676,11 +2689,11 @@ public class EndpointHeaderBuilders {
      * Micrometer (camel-micrometer)
      * Collect various metrics directly from Camel routes using the Micrometer
      * library.
-     * 
+     *
      * Category: monitoring
      * Since: 2.22
      * Maven coordinates: org.apache.camel:camel-micrometer
-     * 
+     *
      * @return the dsl builder for the headers' name.
      */
     public static MicrometerEndpointBuilderFactory.MicrometerHeaderNameBuilder micrometer() {
@@ -2690,11 +2703,11 @@ public class EndpointHeaderBuilders {
      * OPC UA Browser (camel-milo)
      * Connect to OPC UA servers using the binary protocol for browsing the node
      * tree.
-     * 
+     *
      * Category: iot
      * Since: 3.15
      * Maven coordinates: org.apache.camel:camel-milo
-     * 
+     *
      * @return the dsl builder for the headers' name.
      */
     public static MiloBrowseEndpointBuilderFactory.MiloBrowseHeaderNameBuilder miloBrowse() {
@@ -2704,11 +2717,11 @@ public class EndpointHeaderBuilders {
      * OPC UA Client (camel-milo)
      * Connect to OPC UA servers using the binary protocol for acquiring
      * telemetry data.
-     * 
+     *
      * Category: iot
      * Since: 2.19
      * Maven coordinates: org.apache.camel:camel-milo
-     * 
+     *
      * @return the dsl builder for the headers' name.
      */
     public static MiloClientEndpointBuilderFactory.MiloClientHeaderNameBuilder miloClient() {
@@ -2717,11 +2730,11 @@ public class EndpointHeaderBuilders {
     /**
      * Milvus (camel-milvus)
      * Perform operations on the Milvus Vector Database.
-     * 
+     *
      * Category: database,ai
      * Since: 4.5
      * Maven coordinates: org.apache.camel:camel-milvus
-     * 
+     *
      * @return the dsl builder for the headers' name.
      */
     public static MilvusEndpointBuilderFactory.MilvusHeaderNameBuilder milvus() {
@@ -2730,11 +2743,11 @@ public class EndpointHeaderBuilders {
     /**
      * Mina (camel-mina)
      * Socket level networking using TCP or UDP with Apache Mina 2.x.
-     * 
+     *
      * Category: networking
      * Since: 2.10
      * Maven coordinates: org.apache.camel:camel-mina
-     * 
+     *
      * @return the dsl builder for the headers' name.
      */
     public static MinaEndpointBuilderFactory.MinaHeaderNameBuilder mina() {
@@ -2743,11 +2756,11 @@ public class EndpointHeaderBuilders {
     /**
      * MINA SFTP (camel-mina-sftp)
      * Upload and download files to/from SFTP servers using Apache MINA SSHD.
-     * 
+     *
      * Category: file
      * Since: 4.18
      * Maven coordinates: org.apache.camel:camel-mina-sftp
-     * 
+     *
      * @return the dsl builder for the headers' name.
      */
     public static MinaSftpEndpointBuilderFactory.MinaSftpHeaderNameBuilder minaSftp() {
@@ -2756,11 +2769,11 @@ public class EndpointHeaderBuilders {
     /**
      * Minio (camel-minio)
      * Store and retrieve objects from Minio Storage Service using Minio SDK.
-     * 
+     *
      * Category: cloud,file
      * Since: 3.5
      * Maven coordinates: org.apache.camel:camel-minio
-     * 
+     *
      * @return the dsl builder for the headers' name.
      */
     public static MinioEndpointBuilderFactory.MinioHeaderNameBuilder minio() {
@@ -2769,11 +2782,11 @@ public class EndpointHeaderBuilders {
     /**
      * MLLP (camel-mllp)
      * Communicate with external systems using the MLLP protocol.
-     * 
+     *
      * Category: health
      * Since: 2.17
      * Maven coordinates: org.apache.camel:camel-mllp
-     * 
+     *
      * @return the dsl builder for the headers' name.
      */
     public static MllpEndpointBuilderFactory.MllpHeaderNameBuilder mllp() {
@@ -2782,11 +2795,11 @@ public class EndpointHeaderBuilders {
     /**
      * MongoDB (camel-mongodb)
      * Perform operations on MongoDB documents and collections.
-     * 
+     *
      * Category: database
      * Since: 2.19
      * Maven coordinates: org.apache.camel:camel-mongodb
-     * 
+     *
      * @return the dsl builder for the headers' name.
      */
     public static MongoDbEndpointBuilderFactory.MongoDbHeaderNameBuilder mongodb() {
@@ -2795,11 +2808,11 @@ public class EndpointHeaderBuilders {
     /**
      * MongoDB GridFS (camel-mongodb-gridfs)
      * Interact with MongoDB GridFS.
-     * 
+     *
      * Category: database,file
      * Since: 2.18
      * Maven coordinates: org.apache.camel:camel-mongodb-gridfs
-     * 
+     *
      * @return the dsl builder for the headers' name.
      */
     public static GridFsEndpointBuilderFactory.GridFsHeaderNameBuilder mongodbGridfs() {
@@ -2808,11 +2821,11 @@ public class EndpointHeaderBuilders {
     /**
      * Mustache (camel-mustache)
      * Transform messages using a Mustache template.
-     * 
+     *
      * Category: transformation
      * Since: 2.12
      * Maven coordinates: org.apache.camel:camel-mustache
-     * 
+     *
      * @return the dsl builder for the headers' name.
      */
     public static MustacheEndpointBuilderFactory.MustacheHeaderNameBuilder mustache() {
@@ -2821,11 +2834,11 @@ public class EndpointHeaderBuilders {
     /**
      * MVEL (camel-mvel)
      * Transform messages using an MVEL template.
-     * 
+     *
      * Category: transformation,script
      * Since: 2.12
      * Maven coordinates: org.apache.camel:camel-mvel
-     * 
+     *
      * @return the dsl builder for the headers' name.
      */
     public static MvelEndpointBuilderFactory.MvelHeaderNameBuilder mvel() {
@@ -2835,11 +2848,11 @@ public class EndpointHeaderBuilders {
      * MyBatis (camel-mybatis)
      * Performs a query, poll, insert, update or delete in a relational database
      * using MyBatis.
-     * 
+     *
      * Category: database
      * Since: 2.7
      * Maven coordinates: org.apache.camel:camel-mybatis
-     * 
+     *
      * @return the dsl builder for the headers' name.
      */
     public static MyBatisEndpointBuilderFactory.MyBatisHeaderNameBuilder mybatis() {
@@ -2849,11 +2862,11 @@ public class EndpointHeaderBuilders {
      * MyBatis Bean (camel-mybatis)
      * Perform queries, inserts, updates or deletes in a relational database
      * using MyBatis.
-     * 
+     *
      * Category: database
      * Since: 2.22
      * Maven coordinates: org.apache.camel:camel-mybatis
-     * 
+     *
      * @return the dsl builder for the headers' name.
      */
     public static MyBatisBeanEndpointBuilderFactory.MyBatisBeanHeaderNameBuilder mybatisBean() {
@@ -2862,11 +2875,11 @@ public class EndpointHeaderBuilders {
     /**
      * Nats (camel-nats)
      * Send and receive messages from NATS messaging system.
-     * 
+     *
      * Category: messaging
      * Since: 2.17
      * Maven coordinates: org.apache.camel:camel-nats
-     * 
+     *
      * @return the dsl builder for the headers' name.
      */
     public static NatsEndpointBuilderFactory.NatsHeaderNameBuilder nats() {
@@ -2875,11 +2888,11 @@ public class EndpointHeaderBuilders {
     /**
      * Neo4j (camel-neo4j)
      * Perform operations on the Neo4j Graph Database
-     * 
+     *
      * Category: database,ai
      * Since: 4.10
      * Maven coordinates: org.apache.camel:camel-neo4j
-     * 
+     *
      * @return the dsl builder for the headers' name.
      */
     public static Neo4jEndpointBuilderFactory.Neo4jHeaderNameBuilder neo4j() {
@@ -2888,11 +2901,11 @@ public class EndpointHeaderBuilders {
     /**
      * Netty (camel-netty)
      * Socket level networking using TCP or UDP with Netty 4.x.
-     * 
+     *
      * Category: networking
      * Since: 2.14
      * Maven coordinates: org.apache.camel:camel-netty
-     * 
+     *
      * @return the dsl builder for the headers' name.
      */
     public static NettyEndpointBuilderFactory.NettyHeaderNameBuilder netty() {
@@ -2901,11 +2914,11 @@ public class EndpointHeaderBuilders {
     /**
      * Netty HTTP (camel-netty-http)
      * Netty HTTP server and client using the Netty 4.x.
-     * 
+     *
      * Category: networking,http
      * Since: 2.14
      * Maven coordinates: org.apache.camel:camel-netty-http
-     * 
+     *
      * @return the dsl builder for the headers' name.
      */
     public static NettyHttpEndpointBuilderFactory.NettyHttpHeaderNameBuilder nettyHttp() {
@@ -2914,11 +2927,11 @@ public class EndpointHeaderBuilders {
     /**
      * OAI-PMH (camel-oaipmh)
      * Harvest metadata using OAI-PMH protocol
-     * 
+     *
      * Category: search
      * Since: 3.5
      * Maven coordinates: org.apache.camel:camel-oaipmh
-     * 
+     *
      * @return the dsl builder for the headers' name.
      */
     public static OAIPMHEndpointBuilderFactory.OAIPMHHeaderNameBuilder oaipmh() {
@@ -2927,11 +2940,11 @@ public class EndpointHeaderBuilders {
     /**
      * Olingo2 (camel-olingo2)
      * Communicate with OData 2.0 services using Apache Olingo.
-     * 
+     *
      * Category: cloud
      * Since: 2.14
      * Maven coordinates: org.apache.camel:camel-olingo2
-     * 
+     *
      * @return the dsl builder for the headers' name.
      */
     @Deprecated
@@ -2941,11 +2954,11 @@ public class EndpointHeaderBuilders {
     /**
      * Olingo4 (camel-olingo4)
      * Communicate with OData 4.0 services using Apache Olingo OData API.
-     * 
+     *
      * Category: cloud
      * Since: 2.19
      * Maven coordinates: org.apache.camel:camel-olingo4
-     * 
+     *
      * @return the dsl builder for the headers' name.
      */
     @Deprecated
@@ -2956,11 +2969,11 @@ public class EndpointHeaderBuilders {
      * OpenAI (camel-openai)
      * OpenAI endpoint for chat completion, Responses API, embeddings, audio
      * transcription, audio translation, and text-to-speech.
-     * 
+     *
      * Category: ai
      * Since: 4.17
      * Maven coordinates: org.apache.camel:camel-openai
-     * 
+     *
      * @return the dsl builder for the headers' name.
      */
     public static OpenAIEndpointBuilderFactory.OpenAIHeaderNameBuilder openai() {
@@ -2969,11 +2982,11 @@ public class EndpointHeaderBuilders {
     /**
      * OpenSearch (camel-opensearch)
      * Send requests to OpenSearch via Java Client API.
-     * 
+     *
      * Category: search,monitoring
      * Since: 4.0
      * Maven coordinates: org.apache.camel:camel-opensearch
-     * 
+     *
      * @return the dsl builder for the headers' name.
      */
     public static OpensearchEndpointBuilderFactory.OpensearchHeaderNameBuilder opensearch() {
@@ -2982,11 +2995,11 @@ public class EndpointHeaderBuilders {
     /**
      * OpenShift Build Config (camel-kubernetes)
      * Perform operations on OpenShift Build Configs.
-     * 
+     *
      * Category: container,cloud
      * Since: 2.17
      * Maven coordinates: org.apache.camel:camel-kubernetes
-     * 
+     *
      * @return the dsl builder for the headers' name.
      */
     public static OpenshiftBuildConfigsEndpointBuilderFactory.OpenshiftBuildConfigsHeaderNameBuilder openshiftBuildConfigs() {
@@ -2995,11 +3008,11 @@ public class EndpointHeaderBuilders {
     /**
      * OpenShift Builds (camel-kubernetes)
      * Perform operations on OpenShift Builds.
-     * 
+     *
      * Category: container,cloud
      * Since: 2.17
      * Maven coordinates: org.apache.camel:camel-kubernetes
-     * 
+     *
      * @return the dsl builder for the headers' name.
      */
     public static OpenshiftBuildsEndpointBuilderFactory.OpenshiftBuildsHeaderNameBuilder openshiftBuilds() {
@@ -3009,11 +3022,11 @@ public class EndpointHeaderBuilders {
      * OpenShift Deployment Configs (camel-kubernetes)
      * Perform operations on OpenShift Deployment Configs and get notified on
      * Deployment Config changes.
-     * 
+     *
      * Category: container,cloud
      * Since: 3.18
      * Maven coordinates: org.apache.camel:camel-kubernetes
-     * 
+     *
      * @return the dsl builder for the headers' name.
      */
     public static OpenshiftDeploymentConfigsEndpointBuilderFactory.OpenshiftDeploymentConfigsHeaderNameBuilder openshiftDeploymentconfigs() {
@@ -3022,11 +3035,11 @@ public class EndpointHeaderBuilders {
     /**
      * OpenStack Cinder (camel-openstack)
      * Access data in OpenStack Cinder block storage.
-     * 
+     *
      * Category: container
      * Since: 2.19
      * Maven coordinates: org.apache.camel:camel-openstack
-     * 
+     *
      * @return the dsl builder for the headers' name.
      */
     public static CinderEndpointBuilderFactory.CinderHeaderNameBuilder openstackCinder() {
@@ -3035,11 +3048,11 @@ public class EndpointHeaderBuilders {
     /**
      * OpenStack Glance (camel-openstack)
      * Manage VM images and metadata definitions in OpenStack Glance.
-     * 
+     *
      * Category: container
      * Since: 2.19
      * Maven coordinates: org.apache.camel:camel-openstack
-     * 
+     *
      * @return the dsl builder for the headers' name.
      */
     public static GlanceEndpointBuilderFactory.GlanceHeaderNameBuilder openstackGlance() {
@@ -3049,11 +3062,11 @@ public class EndpointHeaderBuilders {
      * OpenStack Keystone (camel-openstack)
      * Access OpenStack Keystone for API client authentication, service
      * discovery and distributed multi-tenant authorization.
-     * 
+     *
      * Category: container
      * Since: 2.19
      * Maven coordinates: org.apache.camel:camel-openstack
-     * 
+     *
      * @return the dsl builder for the headers' name.
      */
     public static KeystoneEndpointBuilderFactory.KeystoneHeaderNameBuilder openstackKeystone() {
@@ -3062,11 +3075,11 @@ public class EndpointHeaderBuilders {
     /**
      * OpenStack Neutron (camel-openstack)
      * Access OpenStack Neutron for network services.
-     * 
+     *
      * Category: container
      * Since: 2.19
      * Maven coordinates: org.apache.camel:camel-openstack
-     * 
+     *
      * @return the dsl builder for the headers' name.
      */
     public static NeutronEndpointBuilderFactory.NeutronHeaderNameBuilder openstackNeutron() {
@@ -3075,11 +3088,11 @@ public class EndpointHeaderBuilders {
     /**
      * OpenStack Nova (camel-openstack)
      * Access OpenStack to manage compute resources.
-     * 
+     *
      * Category: container
      * Since: 2.19
      * Maven coordinates: org.apache.camel:camel-openstack
-     * 
+     *
      * @return the dsl builder for the headers' name.
      */
     public static NovaEndpointBuilderFactory.NovaHeaderNameBuilder openstackNova() {
@@ -3088,11 +3101,11 @@ public class EndpointHeaderBuilders {
     /**
      * OpenStack Swift (camel-openstack)
      * Access OpenStack Swift object/blob store.
-     * 
+     *
      * Category: container
      * Since: 2.19
      * Maven coordinates: org.apache.camel:camel-openstack
-     * 
+     *
      * @return the dsl builder for the headers' name.
      */
     public static SwiftEndpointBuilderFactory.SwiftHeaderNameBuilder openstackSwift() {
@@ -3101,11 +3114,11 @@ public class EndpointHeaderBuilders {
     /**
      * OpenTelemetry Metrics (camel-opentelemetry-metrics)
      * Camel metrics based on the Camel Telemetry spec
-     * 
+     *
      * Category: monitoring
      * Since: 4.17
      * Maven coordinates: org.apache.camel:camel-opentelemetry-metrics
-     * 
+     *
      * @return the dsl builder for the headers' name.
      */
     public static OpenTelemetryEndpointBuilderFactory.OpenTelemetryHeaderNameBuilder opentelemetryMetrics() {
@@ -3114,11 +3127,11 @@ public class EndpointHeaderBuilders {
     /**
      * OptaPlanner (camel-optaplanner)
      * Solve planning problems with OptaPlanner.
-     * 
+     *
      * Category: workflow
      * Since: 2.13
      * Maven coordinates: org.apache.camel:camel-optaplanner
-     * 
+     *
      * @return the dsl builder for the headers' name.
      */
     public static OptaPlannerEndpointBuilderFactory.OptaPlannerHeaderNameBuilder optaplanner() {
@@ -3127,11 +3140,11 @@ public class EndpointHeaderBuilders {
     /**
      * Paho (camel-paho)
      * Communicate with MQTT message brokers using Eclipse Paho MQTT Client.
-     * 
+     *
      * Category: messaging,iot
      * Since: 2.16
      * Maven coordinates: org.apache.camel:camel-paho
-     * 
+     *
      * @return the dsl builder for the headers' name.
      */
     @Deprecated
@@ -3141,11 +3154,11 @@ public class EndpointHeaderBuilders {
     /**
      * Paho MQTT 5 (camel-paho-mqtt5)
      * Communicate with MQTT message brokers using Eclipse Paho MQTT v5 Client.
-     * 
+     *
      * Category: messaging,iot
      * Since: 3.8
      * Maven coordinates: org.apache.camel:camel-paho-mqtt5
-     * 
+     *
      * @return the dsl builder for the headers' name.
      */
     public static PahoMqtt5EndpointBuilderFactory.PahoMqtt5HeaderNameBuilder pahoMqtt5() {
@@ -3154,11 +3167,11 @@ public class EndpointHeaderBuilders {
     /**
      * PDF (camel-pdf)
      * Create, modify or extract content from PDF documents.
-     * 
+     *
      * Category: document,transformation
      * Since: 2.16
      * Maven coordinates: org.apache.camel:camel-pdf
-     * 
+     *
      * @return the dsl builder for the headers' name.
      */
     public static PdfEndpointBuilderFactory.PdfHeaderNameBuilder pdf() {
@@ -3167,11 +3180,11 @@ public class EndpointHeaderBuilders {
     /**
      * PostgreSQL Event (camel-pgevent)
      * Send and receive PostgreSQL events via LISTEN and NOTIFY commands.
-     * 
+     *
      * Category: database
      * Since: 2.15
      * Maven coordinates: org.apache.camel:camel-pgevent
-     * 
+     *
      * @return the dsl builder for the headers' name.
      */
     public static PgEventEndpointBuilderFactory.PgEventHeaderNameBuilder pgevent() {
@@ -3180,11 +3193,11 @@ public class EndpointHeaderBuilders {
     /**
      * PGVector (camel-pgvector)
      * Perform operations on the PostgreSQL pgvector Vector Database.
-     * 
+     *
      * Category: database,ai
      * Since: 4.19
      * Maven coordinates: org.apache.camel:camel-pgvector
-     * 
+     *
      * @return the dsl builder for the headers' name.
      */
     public static PgVectorEndpointBuilderFactory.PgVectorHeaderNameBuilder pgvector() {
@@ -3193,11 +3206,11 @@ public class EndpointHeaderBuilders {
     /**
      * Pinecone (camel-pinecone)
      * Perform operations on the Pinecone Vector Database.
-     * 
+     *
      * Category: database,ai
      * Since: 4.6
      * Maven coordinates: org.apache.camel:camel-pinecone
-     * 
+     *
      * @return the dsl builder for the headers' name.
      */
     public static PineconeVectorDbEndpointBuilderFactory.PineconeVectorDbHeaderNameBuilder pinecone() {
@@ -3206,11 +3219,11 @@ public class EndpointHeaderBuilders {
     /**
      * PQC Algorithms (camel-pqc)
      * Post Quantum Cryptography Signature and Verification component.
-     * 
+     *
      * Category: security
      * Since: 4.12
      * Maven coordinates: org.apache.camel:camel-pqc
-     * 
+     *
      * @return the dsl builder for the headers' name.
      */
     public static PQCEndpointBuilderFactory.PQCHeaderNameBuilder pqc() {
@@ -3220,11 +3233,11 @@ public class EndpointHeaderBuilders {
      * PubNub (camel-pubnub)
      * Send and receive messages to/from PubNub data stream network for
      * connected devices.
-     * 
+     *
      * Category: cloud,iot,messaging
      * Since: 2.19
      * Maven coordinates: org.apache.camel:camel-pubnub
-     * 
+     *
      * @return the dsl builder for the headers' name.
      */
     public static PubNubEndpointBuilderFactory.PubNubHeaderNameBuilder pubnub() {
@@ -3233,11 +3246,11 @@ public class EndpointHeaderBuilders {
     /**
      * Pulsar (camel-pulsar)
      * Send and receive messages from/to Apache Pulsar messaging system.
-     * 
+     *
      * Category: messaging
      * Since: 2.24
      * Maven coordinates: org.apache.camel:camel-pulsar
-     * 
+     *
      * @return the dsl builder for the headers' name.
      */
     public static PulsarEndpointBuilderFactory.PulsarHeaderNameBuilder pulsar() {
@@ -3246,11 +3259,11 @@ public class EndpointHeaderBuilders {
     /**
      * Qdrant (camel-qdrant)
      * Perform operations on the Qdrant Vector Database.
-     * 
+     *
      * Category: database,ai
      * Since: 4.5
      * Maven coordinates: org.apache.camel:camel-qdrant
-     * 
+     *
      * @return the dsl builder for the headers' name.
      */
     public static QdrantEndpointBuilderFactory.QdrantHeaderNameBuilder qdrant() {
@@ -3260,11 +3273,11 @@ public class EndpointHeaderBuilders {
      * QuickFix (camel-quickfix)
      * Open a Financial Interchange (FIX) session using an embedded QuickFix/J
      * engine.
-     * 
+     *
      * Category: messaging
      * Since: 2.1
      * Maven coordinates: org.apache.camel:camel-quickfix
-     * 
+     *
      * @return the dsl builder for the headers' name.
      */
     public static QuickfixjEndpointBuilderFactory.QuickfixjHeaderNameBuilder quickfix() {
@@ -3274,11 +3287,11 @@ public class EndpointHeaderBuilders {
      * Reactive Streams (camel-reactive-streams)
      * Exchange messages with reactive stream processing libraries compatible
      * with the reactive streams standard.
-     * 
+     *
      * Category: messaging
      * Since: 2.19
      * Maven coordinates: org.apache.camel:camel-reactive-streams
-     * 
+     *
      * @return the dsl builder for the headers' name.
      */
     public static ReactiveStreamsEndpointBuilderFactory.ReactiveStreamsHeaderNameBuilder reactiveStreams() {
@@ -3287,11 +3300,11 @@ public class EndpointHeaderBuilders {
     /**
      * REST (camel-rest)
      * Expose REST services or call external REST services.
-     * 
+     *
      * Category: core,rest
      * Since: 2.14
      * Maven coordinates: org.apache.camel:camel-rest
-     * 
+     *
      * @return the dsl builder for the headers' name.
      */
     public static RestEndpointBuilderFactory.RestHeaderNameBuilder restEndpoint() {
@@ -3300,11 +3313,11 @@ public class EndpointHeaderBuilders {
     /**
      * REST Postman (camel-rest-postman)
      * To call and expose REST services using a Postman Collection as contract.
-     * 
+     *
      * Category: rest,api
      * Since: 4.23
      * Maven coordinates: org.apache.camel:camel-rest-postman
-     * 
+     *
      * @return the dsl builder for the headers' name.
      */
     public static RestPostmanEndpointBuilderFactory.RestPostmanHeaderNameBuilder restPostman() {
@@ -3313,11 +3326,11 @@ public class EndpointHeaderBuilders {
     /**
      * Robot Framework (camel-robotframework)
      * Pass camel exchanges to acceptance test written in Robot DSL.
-     * 
+     *
      * Category: testing
      * Since: 3.0
      * Maven coordinates: org.apache.camel:camel-robotframework
-     * 
+     *
      * @return the dsl builder for the headers' name.
      */
     public static RobotFrameworkEndpointBuilderFactory.RobotFrameworkHeaderNameBuilder robotframework() {
@@ -3326,11 +3339,11 @@ public class EndpointHeaderBuilders {
     /**
      * RocketMQ (camel-rocketmq)
      * Send and receive messages from RocketMQ cluster.
-     * 
+     *
      * Category: messaging
      * Since: 3.20
      * Maven coordinates: org.apache.camel:camel-rocketmq
-     * 
+     *
      * @return the dsl builder for the headers' name.
      */
     public static RocketMQEndpointBuilderFactory.RocketMQHeaderNameBuilder rocketmq() {
@@ -3339,11 +3352,11 @@ public class EndpointHeaderBuilders {
     /**
      * RSS (camel-rss)
      * Poll RSS feeds.
-     * 
+     *
      * Category: document
      * Since: 2.0
      * Maven coordinates: org.apache.camel:camel-rss
-     * 
+     *
      * @return the dsl builder for the headers' name.
      */
     public static RssEndpointBuilderFactory.RssHeaderNameBuilder rss() {
@@ -3352,11 +3365,11 @@ public class EndpointHeaderBuilders {
     /**
      * Saga (camel-saga)
      * Execute custom actions within a route using the Saga EIP.
-     * 
+     *
      * Category: clustering
      * Since: 2.21
      * Maven coordinates: org.apache.camel:camel-saga
-     * 
+     *
      * @return the dsl builder for the headers' name.
      */
     public static SagaEndpointBuilderFactory.SagaHeaderNameBuilder saga() {
@@ -3365,11 +3378,11 @@ public class EndpointHeaderBuilders {
     /**
      * Salesforce (camel-salesforce)
      * Communicate with Salesforce using Java DTOs.
-     * 
+     *
      * Category: cloud,saas
      * Since: 2.12
      * Maven coordinates: org.apache.camel:camel-salesforce
-     * 
+     *
      * @return the dsl builder for the headers' name.
      */
     public static SalesforceEndpointBuilderFactory.SalesforceHeaderNameBuilder salesforce() {
@@ -3378,11 +3391,11 @@ public class EndpointHeaderBuilders {
     /**
      * SAP NetWeaver (camel-sap-netweaver)
      * Send requests to SAP NetWeaver Gateway using HTTP.
-     * 
+     *
      * Category: saas
      * Since: 2.12
      * Maven coordinates: org.apache.camel:camel-sap-netweaver
-     * 
+     *
      * @return the dsl builder for the headers' name.
      */
     public static NetWeaverEndpointBuilderFactory.NetWeaverHeaderNameBuilder sapNetweaver() {
@@ -3392,11 +3405,11 @@ public class EndpointHeaderBuilders {
      * Scheduler (camel-scheduler)
      * Generate messages in specified intervals using
      * java.util.concurrent.ScheduledExecutorService.
-     * 
+     *
      * Category: core,scheduling
      * Since: 2.15
      * Maven coordinates: org.apache.camel:camel-scheduler
-     * 
+     *
      * @return the dsl builder for the headers' name.
      */
     public static SchedulerEndpointBuilderFactory.SchedulerHeaderNameBuilder scheduler() {
@@ -3405,11 +3418,11 @@ public class EndpointHeaderBuilders {
     /**
      * ServiceNow (camel-servicenow)
      * Interact with ServiceNow via its REST API.
-     * 
+     *
      * Category: api,cloud,management
      * Since: 2.18
      * Maven coordinates: org.apache.camel:camel-servicenow
-     * 
+     *
      * @return the dsl builder for the headers' name.
      */
     public static ServiceNowEndpointBuilderFactory.ServiceNowHeaderNameBuilder servicenow() {
@@ -3418,11 +3431,11 @@ public class EndpointHeaderBuilders {
     /**
      * SFTP (camel-ftp)
      * Upload and download files to/from SFTP servers.
-     * 
+     *
      * Category: file
      * Since: 1.1
      * Maven coordinates: org.apache.camel:camel-ftp
-     * 
+     *
      * @return the dsl builder for the headers' name.
      */
     public static SftpEndpointBuilderFactory.SftpHeaderNameBuilder sftp() {
@@ -3432,11 +3445,11 @@ public class EndpointHeaderBuilders {
      * Simple JMS (camel-sjms)
      * Send and receive messages to/from a JMS Queue or Topic using plain JMS
      * 1.x API.
-     * 
+     *
      * Category: messaging
      * Since: 2.11
      * Maven coordinates: org.apache.camel:camel-sjms
-     * 
+     *
      * @return the dsl builder for the headers' name.
      */
     public static SjmsEndpointBuilderFactory.SjmsHeaderNameBuilder sjms() {
@@ -3446,11 +3459,11 @@ public class EndpointHeaderBuilders {
      * Simple JMS2 (camel-sjms2)
      * Send and receive messages to/from a JMS Queue or Topic using plain JMS
      * 2.x API.
-     * 
+     *
      * Category: messaging
      * Since: 2.19
      * Maven coordinates: org.apache.camel:camel-sjms2
-     * 
+     *
      * @return the dsl builder for the headers' name.
      */
     public static Sjms2EndpointBuilderFactory.Sjms2HeaderNameBuilder sjms2() {
@@ -3459,11 +3472,11 @@ public class EndpointHeaderBuilders {
     /**
      * SMB (camel-smb)
      * Read and write files to Server Message Block (SMB) file shares.
-     * 
+     *
      * Category: file
      * Since: 4.3
      * Maven coordinates: org.apache.camel:camel-smb
-     * 
+     *
      * @return the dsl builder for the headers' name.
      */
     public static SmbEndpointBuilderFactory.SmbHeaderNameBuilder smb() {
@@ -3473,11 +3486,11 @@ public class EndpointHeaderBuilders {
      * Smooks (camel-smooks)
      * Use Smooks to transform, route, and bind both XML and non-XML data,
      * including EDI, CSV, JSON, and YAML.
-     * 
+     *
      * Category: transformation
      * Since: 4.7
      * Maven coordinates: org.apache.camel:camel-smooks
-     * 
+     *
      * @return the dsl builder for the headers' name.
      */
     public static SmooksEndpointBuilderFactory.SmooksHeaderNameBuilder smooks() {
@@ -3487,11 +3500,11 @@ public class EndpointHeaderBuilders {
      * SMPP (camel-smpp)
      * Send and receive SMS messages using a SMSC (Short Message Service
      * Center).
-     * 
+     *
      * Category: mobile
      * Since: 2.2
      * Maven coordinates: org.apache.camel:camel-smpp
-     * 
+     *
      * @return the dsl builder for the headers' name.
      */
     public static SmppEndpointBuilderFactory.SmppHeaderNameBuilder smpp() {
@@ -3500,11 +3513,11 @@ public class EndpointHeaderBuilders {
     /**
      * Solr (camel-solr)
      * Perform operations against Apache Lucene Solr.
-     * 
+     *
      * Category: search,monitoring
      * Since: 4.8
      * Maven coordinates: org.apache.camel:camel-solr
-     * 
+     *
      * @return the dsl builder for the headers' name.
      */
     public static SolrEndpointBuilderFactory.SolrHeaderNameBuilder solr() {
@@ -3514,11 +3527,11 @@ public class EndpointHeaderBuilders {
      * SPIFFE (camel-spiffe)
      * Fetch and validate SPIFFE workload identity (X.509-SVID and JWT-SVID)
      * from the SPIFFE Workload API.
-     * 
+     *
      * Category: security
      * Since: 4.23
      * Maven coordinates: org.apache.camel:camel-spiffe
-     * 
+     *
      * @return the dsl builder for the headers' name.
      */
     public static SpiffeEndpointBuilderFactory.SpiffeHeaderNameBuilder spiffe() {
@@ -3528,11 +3541,11 @@ public class EndpointHeaderBuilders {
      * Splunk HEC (camel-splunk-hec)
      * The splunk component allows publishing events in Splunk using the HTTP
      * Event Collector.
-     * 
+     *
      * Category: monitoring
      * Since: 3.3
      * Maven coordinates: org.apache.camel:camel-splunk-hec
-     * 
+     *
      * @return the dsl builder for the headers' name.
      */
     public static SplunkHECEndpointBuilderFactory.SplunkHECHeaderNameBuilder splunkHec() {
@@ -3541,11 +3554,11 @@ public class EndpointHeaderBuilders {
     /**
      * Spring AI Chat (camel-spring-ai-chat)
      * Perform chat operations using Spring AI.
-     * 
+     *
      * Category: ai
      * Since: 4.17
      * Maven coordinates: org.apache.camel:camel-spring-ai-chat
-     * 
+     *
      * @return the dsl builder for the headers' name.
      */
     public static SpringAiChatEndpointBuilderFactory.SpringAiChatHeaderNameBuilder springAiChat() {
@@ -3554,11 +3567,11 @@ public class EndpointHeaderBuilders {
     /**
      * Spring AI Embeddings (camel-spring-ai-embeddings)
      * Spring AI Embeddings
-     * 
+     *
      * Category: ai
      * Since: 4.17
      * Maven coordinates: org.apache.camel:camel-spring-ai-embeddings
-     * 
+     *
      * @return the dsl builder for the headers' name.
      */
     public static SpringAiEmbeddingsEndpointBuilderFactory.SpringAiEmbeddingsHeaderNameBuilder springAiEmbeddings() {
@@ -3567,11 +3580,11 @@ public class EndpointHeaderBuilders {
     /**
      * Spring AI Image (camel-spring-ai-image)
      * Spring AI Image Generation
-     * 
+     *
      * Category: ai
      * Since: 4.19
      * Maven coordinates: org.apache.camel:camel-spring-ai-image
-     * 
+     *
      * @return the dsl builder for the headers' name.
      */
     public static SpringAiImageEndpointBuilderFactory.SpringAiImageHeaderNameBuilder springAiImage() {
@@ -3580,11 +3593,11 @@ public class EndpointHeaderBuilders {
     /**
      * Spring AI Vector Store (camel-spring-ai-vector-store)
      * Spring AI Vector Store
-     * 
+     *
      * Category: ai
      * Since: 4.17
      * Maven coordinates: org.apache.camel:camel-spring-ai-vector-store
-     * 
+     *
      * @return the dsl builder for the headers' name.
      */
     public static SpringAiVectorStoreEndpointBuilderFactory.SpringAiVectorStoreHeaderNameBuilder springAiVectorStore() {
@@ -3593,11 +3606,11 @@ public class EndpointHeaderBuilders {
     /**
      * Spring Batch (camel-spring-batch)
      * Send messages to Spring Batch for further processing.
-     * 
+     *
      * Category: workflow
      * Since: 2.10
      * Maven coordinates: org.apache.camel:camel-spring-batch
-     * 
+     *
      * @return the dsl builder for the headers' name.
      */
     public static SpringBatchEndpointBuilderFactory.SpringBatchHeaderNameBuilder springBatch() {
@@ -3606,11 +3619,11 @@ public class EndpointHeaderBuilders {
     /**
      * Spring JDBC (camel-spring-jdbc)
      * Access databases through SQL and JDBC with Spring Transaction support.
-     * 
+     *
      * Category: database
      * Since: 3.10
      * Maven coordinates: org.apache.camel:camel-spring-jdbc
-     * 
+     *
      * @return the dsl builder for the headers' name.
      */
     public static SpringJdbcEndpointBuilderFactory.SpringJdbcHeaderNameBuilder springJdbc() {
@@ -3619,11 +3632,11 @@ public class EndpointHeaderBuilders {
     /**
      * Spring RabbitMQ (camel-spring-rabbitmq)
      * Send and receive messages from RabbitMQ using the Spring RabbitMQ client.
-     * 
+     *
      * Category: messaging
      * Since: 3.8
      * Maven coordinates: org.apache.camel:camel-spring-rabbitmq
-     * 
+     *
      * @return the dsl builder for the headers' name.
      */
     public static SpringRabbitMQEndpointBuilderFactory.SpringRabbitMQHeaderNameBuilder springRabbitmq() {
@@ -3632,11 +3645,11 @@ public class EndpointHeaderBuilders {
     /**
      * Spring Redis (camel-spring-redis)
      * Send and receive messages from Redis.
-     * 
+     *
      * Category: cache
      * Since: 2.11
      * Maven coordinates: org.apache.camel:camel-spring-redis
-     * 
+     *
      * @return the dsl builder for the headers' name.
      */
     public static RedisEndpointBuilderFactory.RedisHeaderNameBuilder springRedis() {
@@ -3645,11 +3658,11 @@ public class EndpointHeaderBuilders {
     /**
      * Spring WebService (camel-spring-ws)
      * Access external web services as a client or expose your own web services.
-     * 
+     *
      * Category: webservice
      * Since: 2.6
      * Maven coordinates: org.apache.camel:camel-spring-ws
-     * 
+     *
      * @return the dsl builder for the headers' name.
      */
     public static SpringWebserviceEndpointBuilderFactory.SpringWebserviceHeaderNameBuilder springWs() {
@@ -3658,11 +3671,11 @@ public class EndpointHeaderBuilders {
     /**
      * SQL (camel-sql)
      * Perform SQL queries using Spring JDBC.
-     * 
+     *
      * Category: database
      * Since: 1.4
      * Maven coordinates: org.apache.camel:camel-sql
-     * 
+     *
      * @return the dsl builder for the headers' name.
      */
     public static SqlEndpointBuilderFactory.SqlHeaderNameBuilder sql() {
@@ -3671,11 +3684,11 @@ public class EndpointHeaderBuilders {
     /**
      * SQL Stored Procedure (camel-sql)
      * Perform SQL queries as a JDBC Stored Procedures using Spring JDBC.
-     * 
+     *
      * Category: database
      * Since: 2.17
      * Maven coordinates: org.apache.camel:camel-sql
-     * 
+     *
      * @return the dsl builder for the headers' name.
      */
     public static SqlStoredEndpointBuilderFactory.SqlStoredHeaderNameBuilder sqlStored() {
@@ -3684,11 +3697,11 @@ public class EndpointHeaderBuilders {
     /**
      * SSH (camel-ssh)
      * Execute commands on remote hosts using SSH.
-     * 
+     *
      * Category: file
      * Since: 2.10
      * Maven coordinates: org.apache.camel:camel-ssh
-     * 
+     *
      * @return the dsl builder for the headers' name.
      */
     public static SshEndpointBuilderFactory.SshHeaderNameBuilder ssh() {
@@ -3698,11 +3711,11 @@ public class EndpointHeaderBuilders {
      * State Store (camel-state-store)
      * Perform key-value operations against a pluggable KeyValueRepository
      * backend.
-     * 
+     *
      * Category: cache
      * Since: 4.23
      * Maven coordinates: org.apache.camel:camel-state-store
-     * 
+     *
      * @return the dsl builder for the headers' name.
      */
     public static StateStoreEndpointBuilderFactory.StateStoreHeaderNameBuilder stateStore() {
@@ -3712,11 +3725,11 @@ public class EndpointHeaderBuilders {
      * Stitch (camel-stitch)
      * Stitch is a cloud ETL service that integrates various data sources into a
      * central data warehouse through various integrations.
-     * 
+     *
      * Category: cloud,api,saas,bigdata
      * Since: 3.8
      * Maven coordinates: org.apache.camel:camel-stitch
-     * 
+     *
      * @return the dsl builder for the headers' name.
      */
     public static StitchEndpointBuilderFactory.StitchHeaderNameBuilder stitch() {
@@ -3725,11 +3738,11 @@ public class EndpointHeaderBuilders {
     /**
      * Stream (camel-stream)
      * Read from system-in and write to system-out and system-err streams.
-     * 
+     *
      * Category: file,core
      * Since: 1.3
      * Maven coordinates: org.apache.camel:camel-stream
-     * 
+     *
      * @return the dsl builder for the headers' name.
      */
     public static StreamEndpointBuilderFactory.StreamHeaderNameBuilder stream() {
@@ -3738,11 +3751,11 @@ public class EndpointHeaderBuilders {
     /**
      * String Template (camel-stringtemplate)
      * Transform messages using StringTemplate engine.
-     * 
+     *
      * Category: transformation,script
      * Since: 1.2
      * Maven coordinates: org.apache.camel:camel-stringtemplate
-     * 
+     *
      * @return the dsl builder for the headers' name.
      */
     public static StringTemplateEndpointBuilderFactory.StringTemplateHeaderNameBuilder stringTemplate() {
@@ -3751,11 +3764,11 @@ public class EndpointHeaderBuilders {
     /**
      * Stripe (camel-stripe)
      * Interact with the Stripe payment platform.
-     * 
+     *
      * Category: saas,finance
      * Since: 4.17
      * Maven coordinates: org.apache.camel:camel-stripe
-     * 
+     *
      * @return the dsl builder for the headers' name.
      */
     public static StripeEndpointBuilderFactory.StripeHeaderNameBuilder stripe() {
@@ -3764,11 +3777,11 @@ public class EndpointHeaderBuilders {
     /**
      * Tahu Edge Node / Device (camel-tahu)
      * Sparkplug B Edge Node and Device support over MQTT using Eclipse Tahu
-     * 
+     *
      * Category: messaging,iot,monitoring
      * Since: 4.8
      * Maven coordinates: org.apache.camel:camel-tahu
-     * 
+     *
      * @return the dsl builder for the headers' name.
      */
     public static TahuEdgeEndpointBuilderFactory.TahuEdgeHeaderNameBuilder tahuEdge() {
@@ -3777,11 +3790,11 @@ public class EndpointHeaderBuilders {
     /**
      * Tahu Host Application (camel-tahu)
      * Sparkplug B Host Application support over MQTT using Eclipse Tahu
-     * 
+     *
      * Category: messaging,iot,monitoring
      * Since: 4.8
      * Maven coordinates: org.apache.camel:camel-tahu
-     * 
+     *
      * @return the dsl builder for the headers' name.
      */
     public static TahuHostEndpointBuilderFactory.TahuHostHeaderNameBuilder tahuHost() {
@@ -3790,11 +3803,11 @@ public class EndpointHeaderBuilders {
     /**
      * Telegram (camel-telegram)
      * Send and receive messages using the Telegram Bot API.
-     * 
+     *
      * Category: cloud,api,chat
      * Since: 2.18
      * Maven coordinates: org.apache.camel:camel-telegram
-     * 
+     *
      * @return the dsl builder for the headers' name.
      */
     public static TelegramEndpointBuilderFactory.TelegramHeaderNameBuilder telegram() {
@@ -3804,11 +3817,11 @@ public class EndpointHeaderBuilders {
      * TensorFlow Serving (camel-tensorflow-serving)
      * Provide access to TensorFlow Serving model servers to run inference with
      * TensorFlow saved models remotely
-     * 
+     *
      * Category: ai
      * Since: 4.10
      * Maven coordinates: org.apache.camel:camel-tensorflow-serving
-     * 
+     *
      * @return the dsl builder for the headers' name.
      */
     public static TensorFlowServingEndpointBuilderFactory.TensorFlowServingHeaderNameBuilder tensorflowServing() {
@@ -3818,11 +3831,11 @@ public class EndpointHeaderBuilders {
      * Thrift (camel-thrift)
      * Call and expose remote procedures (RPC) with Apache Thrift data format
      * and serialization mechanism.
-     * 
+     *
      * Category: rpc,transformation
      * Since: 2.20
      * Maven coordinates: org.apache.camel:camel-thrift
-     * 
+     *
      * @return the dsl builder for the headers' name.
      */
     public static ThriftEndpointBuilderFactory.ThriftHeaderNameBuilder thrift() {
@@ -3831,11 +3844,11 @@ public class EndpointHeaderBuilders {
     /**
      * Thymeleaf (camel-thymeleaf)
      * Transform messages using a Thymeleaf template.
-     * 
+     *
      * Category: transformation
      * Since: 4.1
      * Maven coordinates: org.apache.camel:camel-thymeleaf
-     * 
+     *
      * @return the dsl builder for the headers' name.
      */
     public static ThymeleafEndpointBuilderFactory.ThymeleafHeaderNameBuilder thymeleaf() {
@@ -3844,11 +3857,11 @@ public class EndpointHeaderBuilders {
     /**
      * Timer (camel-timer)
      * Generate messages in specified intervals using java.util.Timer.
-     * 
+     *
      * Category: core,scheduling
      * Since: 1.0
      * Maven coordinates: org.apache.camel:camel-timer
-     * 
+     *
      * @return the dsl builder for the headers' name.
      */
     public static TimerEndpointBuilderFactory.TimerHeaderNameBuilder timer() {
@@ -3857,11 +3870,11 @@ public class EndpointHeaderBuilders {
     /**
      * Twitter Direct Message (camel-twitter)
      * Send and receive Twitter direct messages.
-     * 
+     *
      * Category: saas,social
      * Since: 2.10
      * Maven coordinates: org.apache.camel:camel-twitter
-     * 
+     *
      * @return the dsl builder for the headers' name.
      */
     public static TwitterDirectMessageEndpointBuilderFactory.TwitterDirectMessageHeaderNameBuilder twitterDirectmessage() {
@@ -3870,11 +3883,11 @@ public class EndpointHeaderBuilders {
     /**
      * Twitter Search (camel-twitter)
      * Access Twitter Search.
-     * 
+     *
      * Category: saas,social
      * Since: 2.10
      * Maven coordinates: org.apache.camel:camel-twitter
-     * 
+     *
      * @return the dsl builder for the headers' name.
      */
     public static TwitterSearchEndpointBuilderFactory.TwitterSearchHeaderNameBuilder twitterSearch() {
@@ -3883,11 +3896,11 @@ public class EndpointHeaderBuilders {
     /**
      * Twitter Timeline (camel-twitter)
      * Send tweets and receive tweets from user's timeline.
-     * 
+     *
      * Category: saas,social
      * Since: 2.10
      * Maven coordinates: org.apache.camel:camel-twitter
-     * 
+     *
      * @return the dsl builder for the headers' name.
      */
     public static TwitterTimelineEndpointBuilderFactory.TwitterTimelineHeaderNameBuilder twitterTimeline() {
@@ -3897,11 +3910,11 @@ public class EndpointHeaderBuilders {
      * Undertow (camel-undertow)
      * Expose HTTP and WebSocket endpoints and access external HTTP/WebSocket
      * servers.
-     * 
+     *
      * Category: http,networking
      * Since: 2.16
      * Maven coordinates: org.apache.camel:camel-undertow
-     * 
+     *
      * @return the dsl builder for the headers' name.
      */
     public static UndertowEndpointBuilderFactory.UndertowHeaderNameBuilder undertow() {
@@ -3910,11 +3923,11 @@ public class EndpointHeaderBuilders {
     /**
      * Velocity (camel-velocity)
      * Transform messages using a Velocity template.
-     * 
+     *
      * Category: transformation
      * Since: 1.2
      * Maven coordinates: org.apache.camel:camel-velocity
-     * 
+     *
      * @return the dsl builder for the headers' name.
      */
     public static VelocityEndpointBuilderFactory.VelocityHeaderNameBuilder velocity() {
@@ -3923,11 +3936,11 @@ public class EndpointHeaderBuilders {
     /**
      * Vert.x HTTP Client (camel-vertx-http)
      * Send requests to external HTTP servers using Vert.x
-     * 
+     *
      * Category: http
      * Since: 3.5
      * Maven coordinates: org.apache.camel:camel-vertx-http
-     * 
+     *
      * @return the dsl builder for the headers' name.
      */
     public static VertxHttpEndpointBuilderFactory.VertxHttpHeaderNameBuilder vertxHttp() {
@@ -3937,11 +3950,11 @@ public class EndpointHeaderBuilders {
      * Vert.x WebSocket (camel-vertx-websocket)
      * Expose WebSocket endpoints and connect to remote WebSocket servers using
      * Vert.x
-     * 
+     *
      * Category: http,networking
      * Since: 3.5
      * Maven coordinates: org.apache.camel:camel-vertx-websocket
-     * 
+     *
      * @return the dsl builder for the headers' name.
      */
     public static VertxWebsocketEndpointBuilderFactory.VertxWebsocketHeaderNameBuilder vertxWebsocket() {
@@ -3950,11 +3963,11 @@ public class EndpointHeaderBuilders {
     /**
      * Weather (camel-weather)
      * Poll the weather information from Open Weather Map.
-     * 
+     *
      * Category: api
      * Since: 2.12
      * Maven coordinates: org.apache.camel:camel-weather
-     * 
+     *
      * @return the dsl builder for the headers' name.
      */
     public static WeatherEndpointBuilderFactory.WeatherHeaderNameBuilder weather() {
@@ -3963,11 +3976,11 @@ public class EndpointHeaderBuilders {
     /**
      * weaviate (camel-weaviate)
      * Perform operations on the Weaviate Vector Database.
-     * 
+     *
      * Category: database,ai
      * Since: 4.12
      * Maven coordinates: org.apache.camel:camel-weaviate
-     * 
+     *
      * @return the dsl builder for the headers' name.
      */
     public static WeaviateVectorDbEndpointBuilderFactory.WeaviateVectorDbHeaderNameBuilder weaviate() {
@@ -3976,11 +3989,11 @@ public class EndpointHeaderBuilders {
     /**
      * Web3j Ethereum Blockchain (camel-web3j)
      * Interact with Ethereum nodes using web3j client API.
-     * 
+     *
      * Category: blockchain
      * Since: 2.22
      * Maven coordinates: org.apache.camel:camel-web3j
-     * 
+     *
      * @return the dsl builder for the headers' name.
      */
     public static Web3jEndpointBuilderFactory.Web3jHeaderNameBuilder web3j() {
@@ -3989,11 +4002,11 @@ public class EndpointHeaderBuilders {
     /**
      * WhatsApp (camel-whatsapp)
      * Send messages to WhatsApp.
-     * 
+     *
      * Category: cloud,api,chat
      * Since: 3.19
      * Maven coordinates: org.apache.camel:camel-whatsapp
-     * 
+     *
      * @return the dsl builder for the headers' name.
      */
     public static WhatsAppEndpointBuilderFactory.WhatsAppHeaderNameBuilder whatsapp() {
@@ -4002,11 +4015,11 @@ public class EndpointHeaderBuilders {
     /**
      * Workday (camel-workday)
      * Detect and parse documents using Workday.
-     * 
+     *
      * Category: cloud,api,saas
      * Since: 3.1
      * Maven coordinates: org.apache.camel:camel-workday
-     * 
+     *
      * @return the dsl builder for the headers' name.
      */
     public static WorkdayEndpointBuilderFactory.WorkdayHeaderNameBuilder workday() {
@@ -4015,11 +4028,11 @@ public class EndpointHeaderBuilders {
     /**
      * XChange (camel-xchange)
      * Access market data and trade on Bitcoin and Altcoin exchanges.
-     * 
+     *
      * Category: blockchain
      * Since: 2.21
      * Maven coordinates: org.apache.camel:camel-xchange
-     * 
+     *
      * @return the dsl builder for the headers' name.
      */
     public static XChangeEndpointBuilderFactory.XChangeHeaderNameBuilder xchange() {
@@ -4028,11 +4041,11 @@ public class EndpointHeaderBuilders {
     /**
      * XJ (camel-xj)
      * Transform JSON and XML message using a XSLT.
-     * 
+     *
      * Category: transformation
      * Since: 3.0
      * Maven coordinates: org.apache.camel:camel-xj
-     * 
+     *
      * @return the dsl builder for the headers' name.
      */
     public static XJEndpointBuilderFactory.XJHeaderNameBuilder xj() {
@@ -4041,11 +4054,11 @@ public class EndpointHeaderBuilders {
     /**
      * XML Security Sign (camel-xmlsecurity)
      * Sign XML payloads using the XML signature specification.
-     * 
+     *
      * Category: security,transformation
      * Since: 2.12
      * Maven coordinates: org.apache.camel:camel-xmlsecurity
-     * 
+     *
      * @return the dsl builder for the headers' name.
      */
     public static XmlSignerEndpointBuilderFactory.XmlSignerHeaderNameBuilder xmlsecuritySign() {
@@ -4054,11 +4067,11 @@ public class EndpointHeaderBuilders {
     /**
      * XML Security Verify (camel-xmlsecurity)
      * Verify XML payloads using the XML signature specification.
-     * 
+     *
      * Category: security,transformation
      * Since: 2.12
      * Maven coordinates: org.apache.camel:camel-xmlsecurity
-     * 
+     *
      * @return the dsl builder for the headers' name.
      */
     public static XmlVerifierEndpointBuilderFactory.XmlVerifierHeaderNameBuilder xmlsecurityVerify() {
@@ -4067,11 +4080,11 @@ public class EndpointHeaderBuilders {
     /**
      * XMPP (camel-xmpp)
      * Send and receive messages to/from an XMPP chat server.
-     * 
+     *
      * Category: chat,messaging
      * Since: 1.0
      * Maven coordinates: org.apache.camel:camel-xmpp
-     * 
+     *
      * @return the dsl builder for the headers' name.
      */
     public static XmppEndpointBuilderFactory.XmppHeaderNameBuilder xmpp() {
@@ -4080,11 +4093,11 @@ public class EndpointHeaderBuilders {
     /**
      * XSLT (camel-xslt)
      * Transforms XML payload using an XSLT template.
-     * 
+     *
      * Category: core,transformation
      * Since: 1.3
      * Maven coordinates: org.apache.camel:camel-xslt
-     * 
+     *
      * @return the dsl builder for the headers' name.
      */
     public static XsltEndpointBuilderFactory.XsltHeaderNameBuilder xslt() {
@@ -4093,11 +4106,11 @@ public class EndpointHeaderBuilders {
     /**
      * XSLT Saxon (camel-xslt-saxon)
      * Transform XML payloads using an XSLT template using Saxon.
-     * 
+     *
      * Category: core,transformation
      * Since: 3.0
      * Maven coordinates: org.apache.camel:camel-xslt-saxon
-     * 
+     *
      * @return the dsl builder for the headers' name.
      */
     public static XsltSaxonEndpointBuilderFactory.XsltSaxonHeaderNameBuilder xsltSaxon() {
@@ -4106,11 +4119,11 @@ public class EndpointHeaderBuilders {
     /**
      * ZooKeeper (camel-zookeeper)
      * Manage ZooKeeper clusters.
-     * 
+     *
      * Category: clustering,management,bigdata
      * Since: 2.9
      * Maven coordinates: org.apache.camel:camel-zookeeper
-     * 
+     *
      * @return the dsl builder for the headers' name.
      */
     public static ZooKeeperEndpointBuilderFactory.ZooKeeperHeaderNameBuilder zookeeper() {
