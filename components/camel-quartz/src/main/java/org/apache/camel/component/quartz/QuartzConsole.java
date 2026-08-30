@@ -38,20 +38,42 @@ import org.quartz.impl.matchers.GroupMatcher;
 public class QuartzConsole extends AbstractDevConsole {
 
     public record JobEntry(
-            String jobId, String triggerType, String cron, String routeId, String uri, Long prevFireTime,
-            Long fireTime, Long nextFireTime, Long finalFireTime, boolean recovering, int refireCount,
-            int misfireInstruction) {
+            @Metadata(description = "The job fire instance id") String jobId,
+            @Metadata(description = "The trigger type: cron or simple") String triggerType,
+            @Metadata(description = "The cron expression (only present for a cron trigger)") String cron,
+            @Metadata(description = "The route id (only present when known)") String routeId,
+            @Metadata(description = "The endpoint URI (only present when a cron expression is set)") String uri,
+            @Metadata(description = "Epoch time in milliseconds of the previous fire time (only present when known)") Long prevFireTime,
+            @Metadata(description = "Epoch time in milliseconds of the fire time (only present when known)") Long fireTime,
+            @Metadata(description = "Epoch time in milliseconds of the next fire time (only present when known)") Long nextFireTime,
+            @Metadata(description = "Epoch time in milliseconds of the final fire time (only present when known)") Long finalFireTime,
+            @Metadata(description = "Whether the job is recovering") boolean recovering,
+            @Metadata(description = "The number of times the job has been refired") int refireCount,
+            @Metadata(description = "The trigger's misfire instruction") int misfireInstruction) {
     }
 
-    public record TriggerEntry(String routeId, String triggerType, String cron, String repeatInterval) {
+    public record TriggerEntry(
+            @Metadata(description = "The route id (only present when known)") String routeId,
+            @Metadata(description = "The trigger type: cron or simple (only present when known)") String triggerType,
+            @Metadata(description = "The cron expression (only present when known)") String cron,
+            @Metadata(description = "The simple trigger repeat interval (only present when known)") String repeatInterval) {
     }
 
     public record Response(
-            String schedulerName, String schedulerInstanceId, String quartzVersion, Long runningSince,
-            Integer totalCounter, Boolean started, Boolean shutdown, Boolean inStandbyMode, String threadPoolClass,
-            Integer threadPoolSize,
-            @Metadata(description = "The job store class name (field kept as jpbStoreClass for backwards compatibility)") String jpbStoreClass,
-            Boolean jpbStoreClustered, Boolean jpbStoreSupportsPersistence, Integer currentExecutingJobs,
+            @Metadata(description = "The scheduler name") String schedulerName,
+            @Metadata(description = "The scheduler instance id") String schedulerInstanceId,
+            @Metadata(description = "The Quartz version (only present when known)") String quartzVersion,
+            @Metadata(description = "Epoch time in milliseconds the scheduler started running (only present when known)") Long runningSince,
+            @Metadata(description = "The total number of jobs executed (only present when known)") Integer totalCounter,
+            @Metadata(description = "Whether the scheduler is started (only present when known)") Boolean started,
+            @Metadata(description = "Whether the scheduler is shutdown (only present when known)") Boolean shutdown,
+            @Metadata(description = "Whether the scheduler is in standby mode (only present when known)") Boolean inStandbyMode,
+            @Metadata(description = "The thread pool class name (only present when known)") String threadPoolClass,
+            @Metadata(description = "The thread pool size (only present when known)") Integer threadPoolSize,
+            @Metadata(description = "The job store class name (field kept as jpbStoreClass for backwards compatibility, only present when known)") String jpbStoreClass,
+            @Metadata(description = "Whether the job store is clustered (field kept as jpbStoreClustered for backwards compatibility, only present when known)") Boolean jpbStoreClustered,
+            @Metadata(description = "Whether the job store supports persistence (field kept as jpbStoreSupportsPersistence for backwards compatibility, only present when known)") Boolean jpbStoreSupportsPersistence,
+            @Metadata(description = "The number of currently executing jobs") Integer currentExecutingJobs,
             @Metadata(description = "Only present when there are any currently executing jobs") List<JobEntry> jobs,
             @Metadata(description = "Only present when there are any scheduled triggers") List<TriggerEntry> triggers) {
     }
