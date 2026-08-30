@@ -215,8 +215,13 @@ assertTrue(list.contains("a"));
 
 - New test code is preferred to use AssertJ assertions (`assertThat(...)`) instead of JUnit assertions
   (`assertEquals`, `assertTrue`, `assertFalse`, `assertNotNull`, etc.).
+- Do NOT mix styles within a project/module. Check the assertion style already used by the other
+  test classes in the component/module being touched: if they are predominantly JUnit assertions,
+  write new tests in that same JUnit style rather than introducing AssertJ as an outlier. Only
+  default to AssertJ when the module has no established convention either way.
 - When modifying existing test code that uses JUnit assertions, migrate touched assertions to
-  AssertJ where it improves readability. No need to migrate the entire file.
+  AssertJ where it improves readability and the surrounding module isn't predominantly JUnit.
+  No need to migrate the entire file.
 - Do NOT mix AssertJ and JUnit assertions in the same test method — pick one style per method.
 - `MockEndpoint.assertIsSatisfied()` and other Camel-specific assertion methods are NOT JUnit
   assertions — keep using them as-is.
