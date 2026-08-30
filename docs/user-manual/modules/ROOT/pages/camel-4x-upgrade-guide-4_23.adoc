@@ -25,8 +25,6 @@ When the flag is `false` (the default), any remaining `CamelExecCommand*`,
 and a WARN is logged once per binding instance. Those headers never overrode the
 URI without the flag; they were just silent before.
 
-=== Components removal
-
 === Components and Language removal
 
 ==== camel-csimple, camel-csimple-joor and csimple-maven-plugin
