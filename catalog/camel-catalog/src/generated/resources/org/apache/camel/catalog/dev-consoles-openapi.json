@@ -1503,22 +1503,28 @@
 												"type": "object",
 												"properties": {
 													"groupId": {
-														"type": "string"
+														"type": "string",
+														"description": "The Maven group id"
 													},
 													"artifactId": {
-														"type": "string"
+														"type": "string",
+														"description": "The Maven artifact id"
 													},
 													"version": {
-														"type": "string"
+														"type": "string",
+														"description": "The Maven version"
 													},
 													"repoId": {
-														"type": "string"
+														"type": "string",
+														"description": "The Maven repository id the artifact was downloaded from"
 													},
 													"repoUrl": {
-														"type": "string"
+														"type": "string",
+														"description": "The Maven repository URL the artifact was downloaded from"
 													},
 													"elapsed": {
-														"type": "integer"
+														"type": "integer",
+														"description": "The download time in milliseconds"
 													}
 												},
 												"required": [
@@ -2910,13 +2916,16 @@
 												"type": "object",
 												"properties": {
 													"name": {
-														"type": "string"
+														"type": "string",
+														"description": "The recording name"
 													},
 													"state": {
-														"type": "string"
+														"type": "string",
+														"description": "The recording state"
 													},
 													"destination": {
-														"type": "string"
+														"type": "string",
+														"description": "The recording destination file (only present when configured)"
 													}
 												}
 											},
@@ -2963,22 +2972,28 @@
 												"type": "object",
 												"properties": {
 													"total": {
-														"type": "integer"
+														"type": "integer",
+														"description": "The number of spans"
 													},
 													"failed": {
-														"type": "integer"
+														"type": "integer",
+														"description": "The number of failed spans"
 													},
 													"minMs": {
-														"type": "number"
+														"type": "number",
+														"description": "The minimum duration in milliseconds"
 													},
 													"meanMs": {
-														"type": "number"
+														"type": "number",
+														"description": "The mean duration in milliseconds"
 													},
 													"maxMs": {
-														"type": "number"
+														"type": "number",
+														"description": "The maximum duration in milliseconds"
 													},
 													"routeId": {
-														"type": "string"
+														"type": "string",
+														"description": "The route id"
 													}
 												},
 												"required": [
@@ -2997,28 +3012,36 @@
 												"type": "object",
 												"properties": {
 													"total": {
-														"type": "integer"
+														"type": "integer",
+														"description": "The number of spans"
 													},
 													"failed": {
-														"type": "integer"
+														"type": "integer",
+														"description": "The number of failed spans"
 													},
 													"minMs": {
-														"type": "number"
+														"type": "number",
+														"description": "The minimum duration in milliseconds"
 													},
 													"meanMs": {
-														"type": "number"
+														"type": "number",
+														"description": "The mean duration in milliseconds"
 													},
 													"maxMs": {
-														"type": "number"
+														"type": "number",
+														"description": "The maximum duration in milliseconds"
 													},
 													"processorId": {
-														"type": "string"
+														"type": "string",
+														"description": "The processor id"
 													},
 													"processorType": {
-														"type": "string"
+														"type": "string",
+														"description": "The processor type"
 													},
 													"routeId": {
-														"type": "string"
+														"type": "string",
+														"description": "The route id"
 													}
 												},
 												"required": [
@@ -3037,22 +3060,28 @@
 												"type": "object",
 												"properties": {
 													"total": {
-														"type": "integer"
+														"type": "integer",
+														"description": "The number of spans"
 													},
 													"failed": {
-														"type": "integer"
+														"type": "integer",
+														"description": "The number of failed spans"
 													},
 													"minMs": {
-														"type": "number"
+														"type": "number",
+														"description": "The minimum duration in milliseconds"
 													},
 													"meanMs": {
-														"type": "number"
+														"type": "number",
+														"description": "The mean duration in milliseconds"
 													},
 													"maxMs": {
-														"type": "number"
+														"type": "number",
+														"description": "The maximum duration in milliseconds"
 													},
 													"endpointUri": {
-														"type": "string"
+														"type": "string",
+														"description": "The endpoint URI"
 													}
 												},
 												"required": [
@@ -3071,19 +3100,24 @@
 												"type": "object",
 												"properties": {
 													"timestamp": {
-														"type": "string"
+														"type": "string",
+														"description": "The failure timestamp"
 													},
 													"exchangeId": {
-														"type": "string"
+														"type": "string",
+														"description": "The exchange id"
 													},
 													"routeId": {
-														"type": "string"
+														"type": "string",
+														"description": "The route id"
 													},
 													"exceptionType": {
-														"type": "string"
+														"type": "string",
+														"description": "The exception type"
 													},
 													"exceptionMessage": {
-														"type": "string"
+														"type": "string",
+														"description": "The exception message"
 													}
 												}
 											},
@@ -3095,19 +3129,24 @@
 												"type": "object",
 												"properties": {
 													"timestamp": {
-														"type": "string"
+														"type": "string",
+														"description": "The redelivery timestamp"
 													},
 													"exchangeId": {
-														"type": "string"
+														"type": "string",
+														"description": "The exchange id"
 													},
 													"routeId": {
-														"type": "string"
+														"type": "string",
+														"description": "The route id"
 													},
 													"attempt": {
-														"type": "integer"
+														"type": "integer",
+														"description": "The redelivery attempt number"
 													},
 													"maxAttempts": {
-														"type": "integer"
+														"type": "integer",
+														"description": "The maximum number of redelivery attempts"
 													}
 												},
 												"required": [
@@ -4049,7 +4088,8 @@
 									"type": "object",
 									"properties": {
 										"meterRegistryClass": {
-											"type": "string"
+											"type": "string",
+											"description": "The MeterRegistry implementation class name"
 										},
 										"counters": {
 											"type": "array",
@@ -4057,10 +4097,12 @@
 												"type": "object",
 												"properties": {
 													"name": {
-														"type": "string"
+														"type": "string",
+														"description": "The counter name"
 													},
 													"description": {
-														"type": "string"
+														"type": "string",
+														"description": "The counter description (only present when configured)"
 													},
 													"tags": {
 														"type": "array",
@@ -4068,13 +4110,16 @@
 															"type": "object",
 															"properties": {
 																"key": {
-																	"type": "string"
+																	"type": "string",
+																	"description": "The tag key"
 																},
 																"value": {
-																	"type": "string"
+																	"type": "string",
+																	"description": "The tag value"
 																}
 															}
-														}
+														},
+														"description": "The counter tags (only present when requested)"
 													},
 													"count": {
 														"description": "The counter value (integer when whole, decimal otherwise)"
@@ -4089,10 +4134,12 @@
 												"type": "object",
 												"properties": {
 													"name": {
-														"type": "string"
+														"type": "string",
+														"description": "The gauge name"
 													},
 													"description": {
-														"type": "string"
+														"type": "string",
+														"description": "The gauge description (only present when configured)"
 													},
 													"tags": {
 														"type": "array",
@@ -4100,16 +4147,20 @@
 															"type": "object",
 															"properties": {
 																"key": {
-																	"type": "string"
+																	"type": "string",
+																	"description": "The tag key"
 																},
 																"value": {
-																	"type": "string"
+																	"type": "string",
+																	"description": "The tag value"
 																}
 															}
-														}
+														},
+														"description": "The gauge tags (only present when requested)"
 													},
 													"value": {
-														"type": "number"
+														"type": "number",
+														"description": "The gauge value"
 													}
 												},
 												"required": [
@@ -4124,10 +4175,12 @@
 												"type": "object",
 												"properties": {
 													"name": {
-														"type": "string"
+														"type": "string",
+														"description": "The timer name"
 													},
 													"description": {
-														"type": "string"
+														"type": "string",
+														"description": "The timer description (only present when configured)"
 													},
 													"tags": {
 														"type": "array",
@@ -4135,25 +4188,32 @@
 															"type": "object",
 															"properties": {
 																"key": {
-																	"type": "string"
+																	"type": "string",
+																	"description": "The tag key"
 																},
 																"value": {
-																	"type": "string"
+																	"type": "string",
+																	"description": "The tag value"
 																}
 															}
-														}
+														},
+														"description": "The timer tags (only present when requested)"
 													},
 													"count": {
-														"type": "integer"
+														"type": "integer",
+														"description": "The number of recorded events"
 													},
 													"mean": {
-														"type": "integer"
+														"type": "integer",
+														"description": "The mean duration in milliseconds"
 													},
 													"max": {
-														"type": "integer"
+														"type": "integer",
+														"description": "The maximum duration in milliseconds"
 													},
 													"total": {
-														"type": "integer"
+														"type": "integer",
+														"description": "The total duration in milliseconds"
 													}
 												},
 												"required": [
@@ -4171,10 +4231,12 @@
 												"type": "object",
 												"properties": {
 													"name": {
-														"type": "string"
+														"type": "string",
+														"description": "The long task timer name"
 													},
 													"description": {
-														"type": "string"
+														"type": "string",
+														"description": "The long task timer description (only present when configured)"
 													},
 													"tags": {
 														"type": "array",
@@ -4182,25 +4244,32 @@
 															"type": "object",
 															"properties": {
 																"key": {
-																	"type": "string"
+																	"type": "string",
+																	"description": "The tag key"
 																},
 																"value": {
-																	"type": "string"
+																	"type": "string",
+																	"description": "The tag value"
 																}
 															}
-														}
+														},
+														"description": "The long task timer tags (only present when requested)"
 													},
 													"activeTasks": {
-														"type": "integer"
+														"type": "integer",
+														"description": "The number of currently active tasks"
 													},
 													"mean": {
-														"type": "integer"
+														"type": "integer",
+														"description": "The mean duration in milliseconds"
 													},
 													"max": {
-														"type": "integer"
+														"type": "integer",
+														"description": "The maximum duration in milliseconds"
 													},
 													"duration": {
-														"type": "integer"
+														"type": "integer",
+														"description": "The total duration of active tasks in milliseconds"
 													}
 												},
 												"required": [
@@ -4218,10 +4287,12 @@
 												"type": "object",
 												"properties": {
 													"name": {
-														"type": "string"
+														"type": "string",
+														"description": "The distribution summary name"
 													},
 													"description": {
-														"type": "string"
+														"type": "string",
+														"description": "The distribution summary description (only present when configured)"
 													},
 													"tags": {
 														"type": "array",
@@ -4229,25 +4300,32 @@
 															"type": "object",
 															"properties": {
 																"key": {
-																	"type": "string"
+																	"type": "string",
+																	"description": "The tag key"
 																},
 																"value": {
-																	"type": "string"
+																	"type": "string",
+																	"description": "The tag value"
 																}
 															}
-														}
+														},
+														"description": "The distribution summary tags (only present when requested)"
 													},
 													"count": {
-														"type": "integer"
+														"type": "integer",
+														"description": "The number of recorded events"
 													},
 													"mean": {
-														"type": "number"
+														"type": "number",
+														"description": "The mean amount"
 													},
 													"max": {
-														"type": "number"
+														"type": "number",
+														"description": "The maximum amount"
 													},
 													"totalAmount": {
-														"type": "number"
+														"type": "number",
+														"description": "The total amount"
 													}
 												},
 												"required": [
@@ -4946,47 +5024,60 @@
 									"type": "object",
 									"properties": {
 										"schedulerName": {
-											"type": "string"
+											"type": "string",
+											"description": "The scheduler name"
 										},
 										"schedulerInstanceId": {
-											"type": "string"
+											"type": "string",
+											"description": "The scheduler instance id"
 										},
 										"quartzVersion": {
-											"type": "string"
+											"type": "string",
+											"description": "The Quartz version (only present when known)"
 										},
 										"runningSince": {
-											"type": "integer"
+											"type": "integer",
+											"description": "Epoch time in milliseconds the scheduler started running (only present when known)"
 										},
 										"totalCounter": {
-											"type": "integer"
+											"type": "integer",
+											"description": "The total number of jobs executed (only present when known)"
 										},
 										"started": {
-											"type": "boolean"
+											"type": "boolean",
+											"description": "Whether the scheduler is started (only present when known)"
 										},
 										"shutdown": {
-											"type": "boolean"
+											"type": "boolean",
+											"description": "Whether the scheduler is shutdown (only present when known)"
 										},
 										"inStandbyMode": {
-											"type": "boolean"
+											"type": "boolean",
+											"description": "Whether the scheduler is in standby mode (only present when known)"
 										},
 										"threadPoolClass": {
-											"type": "string"
+											"type": "string",
+											"description": "The thread pool class name (only present when known)"
 										},
 										"threadPoolSize": {
-											"type": "integer"
+											"type": "integer",
+											"description": "The thread pool size (only present when known)"
 										},
 										"jpbStoreClass": {
 											"type": "string",
-											"description": "The job store class name (field kept as jpbStoreClass for backwards compatibility)"
+											"description": "The job store class name (field kept as jpbStoreClass for backwards compatibility, only present when known)"
 										},
 										"jpbStoreClustered": {
-											"type": "boolean"
+											"type": "boolean",
+											"description": "Whether the job store is clustered (field kept as jpbStoreClustered for backwards compatibility, only present when known)"
 										},
 										"jpbStoreSupportsPersistence": {
-											"type": "boolean"
+											"type": "boolean",
+											"description": "Whether the job store supports persistence (field kept as jpbStoreSupportsPersistence for backwards compatibility, only present when known)"
 										},
 										"currentExecutingJobs": {
-											"type": "integer"
+											"type": "integer",
+											"description": "The number of currently executing jobs"
 										},
 										"jobs": {
 											"type": "array",
@@ -4994,40 +5085,52 @@
 												"type": "object",
 												"properties": {
 													"jobId": {
-														"type": "string"
+														"type": "string",
+														"description": "The job fire instance id"
 													},
 													"triggerType": {
-														"type": "string"
+														"type": "string",
+														"description": "The trigger type: cron or simple"
 													},
 													"cron": {
-														"type": "string"
+														"type": "string",
+														"description": "The cron expression (only present for a cron trigger)"
 													},
 													"routeId": {
-														"type": "string"
+														"type": "string",
+														"description": "The route id (only present when known)"
 													},
 													"uri": {
-														"type": "string"
+														"type": "string",
+														"description": "The endpoint URI (only present when a cron expression is set)"
 													},
 													"prevFireTime": {
-														"type": "integer"
+														"type": "integer",
+														"description": "Epoch time in milliseconds of the previous fire time (only present when known)"
 													},
 													"fireTime": {
-														"type": "integer"
+														"type": "integer",
+														"description": "Epoch time in milliseconds of the fire time (only present when known)"
 													},
 													"nextFireTime": {
-														"type": "integer"
+														"type": "integer",
+														"description": "Epoch time in milliseconds of the next fire time (only present when known)"
 													},
 													"finalFireTime": {
-														"type": "integer"
+														"type": "integer",
+														"description": "Epoch time in milliseconds of the final fire time (only present when known)"
 													},
 													"recovering": {
-														"type": "boolean"
+														"type": "boolean",
+														"description": "Whether the job is recovering"
 													},
 													"refireCount": {
-														"type": "integer"
+														"type": "integer",
+														"description": "The number of times the job has been refired"
 													},
 													"misfireInstruction": {
-														"type": "integer"
+														"type": "integer",
+														"description": "The trigger's misfire instruction"
 													}
 												},
 												"required": [
@@ -5044,16 +5147,20 @@
 												"type": "object",
 												"properties": {
 													"routeId": {
-														"type": "string"
+														"type": "string",
+														"description": "The route id (only present when known)"
 													},
 													"triggerType": {
-														"type": "string"
+														"type": "string",
+														"description": "The trigger type: cron or simple (only present when known)"
 													},
 													"cron": {
-														"type": "string"
+														"type": "string",
+														"description": "The cron expression (only present when known)"
 													},
 													"repeatInterval": {
-														"type": "string"
+														"type": "string",
+														"description": "The simple trigger repeat interval (only present when known)"
 													}
 												}
 											},
@@ -5285,73 +5392,91 @@
 												"type": "object",
 												"properties": {
 													"id": {
-														"type": "string"
+														"type": "string",
+														"description": "The circuit breaker id"
 													},
 													"routeId": {
-														"type": "string"
+														"type": "string",
+														"description": "The route id"
 													},
 													"state": {
-														"type": "string"
+														"type": "string",
+														"description": "The circuit breaker state"
 													},
 													"bufferedCalls": {
-														"type": "integer"
+														"type": "integer",
+														"description": "The number of buffered calls"
 													},
 													"successfulCalls": {
-														"type": "integer"
+														"type": "integer",
+														"description": "The number of successful calls"
 													},
 													"failedCalls": {
-														"type": "integer"
+														"type": "integer",
+														"description": "The number of failed calls"
 													},
 													"notPermittedCalls": {
-														"type": "integer"
+														"type": "integer",
+														"description": "The number of not permitted calls"
 													},
 													"failureRate": {
-														"type": "number"
+														"type": "number",
+														"description": "The failure rate in percentage"
 													},
 													"configuration": {
 														"type": "object",
 														"properties": {
 															"failureRateThreshold": {
-																"type": "number"
+																"type": "number",
+																"description": "The failure rate threshold in percentage"
 															},
 															"slowCallRateThreshold": {
-																"type": "number"
+																"type": "number",
+																"description": "The slow call rate threshold in percentage"
 															},
 															"minimumNumberOfCalls": {
-																"type": "integer"
+																"type": "integer",
+																"description": "The minimum number of calls before the failure rate is calculated"
 															},
 															"permittedNumberOfCallsInHalfOpenState": {
-																"type": "integer"
+																"type": "integer",
+																"description": "The number of permitted calls when the circuit breaker is half open"
 															},
 															"slidingWindowSize": {
-																"type": "integer"
+																"type": "integer",
+																"description": "The sliding window size"
 															},
 															"slidingWindowType": {
-																"type": "string"
+																"type": "string",
+																"description": "The sliding window type"
 															},
 															"waitDurationInOpenState": {
-																"type": "integer"
+																"type": "integer",
+																"description": "The wait duration in the open state, in milliseconds"
 															},
 															"automaticTransitionFromOpenToHalfOpen": {
-																"type": "boolean"
+																"type": "boolean",
+																"description": "Whether the circuit breaker automatically transitions from open to half-open"
 															},
 															"bulkheadEnabled": {
-																"type": "boolean"
+																"type": "boolean",
+																"description": "Whether the bulkhead is enabled"
 															},
 															"bulkheadMaxConcurrentCalls": {
 																"type": "integer",
-																"description": "Only present when bulkheadEnabled is true"
+																"description": "The maximum concurrent calls allowed by the bulkhead (only present when bulkheadEnabled is true)"
 															},
 															"bulkheadMaxWaitDuration": {
 																"type": "integer",
-																"description": "Only present when bulkheadEnabled is true"
+																"description": "The maximum wait duration for the bulkhead in milliseconds (only present when bulkheadEnabled is true)"
 															},
 															"timeoutEnabled": {
-																"type": "boolean"
+																"type": "boolean",
+																"description": "Whether the timeout is enabled"
 															},
 															"timeoutDuration": {
 																"type": "integer",
-																"description": "Only present when timeoutEnabled is true"
+																"description": "The timeout duration in milliseconds (only present when timeoutEnabled is true)"
 															}
 														},
 														"required": [
@@ -5364,7 +5489,8 @@
 															"automaticTransitionFromOpenToHalfOpen",
 															"bulkheadEnabled",
 															"timeoutEnabled"
-														]
+														],
+														"description": "The circuit breaker configuration"
 													}
 												},
 												"required": [

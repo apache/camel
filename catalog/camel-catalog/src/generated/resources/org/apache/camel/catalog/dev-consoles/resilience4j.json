@@ -21,73 +21,91 @@
           "type": "object",
           "properties": {
             "id": {
-              "type": "string"
+              "type": "string",
+              "description": "The circuit breaker id"
             },
             "routeId": {
-              "type": "string"
+              "type": "string",
+              "description": "The route id"
             },
             "state": {
-              "type": "string"
+              "type": "string",
+              "description": "The circuit breaker state"
             },
             "bufferedCalls": {
-              "type": "integer"
+              "type": "integer",
+              "description": "The number of buffered calls"
             },
             "successfulCalls": {
-              "type": "integer"
+              "type": "integer",
+              "description": "The number of successful calls"
             },
             "failedCalls": {
-              "type": "integer"
+              "type": "integer",
+              "description": "The number of failed calls"
             },
             "notPermittedCalls": {
-              "type": "integer"
+              "type": "integer",
+              "description": "The number of not permitted calls"
             },
             "failureRate": {
-              "type": "number"
+              "type": "number",
+              "description": "The failure rate in percentage"
             },
             "configuration": {
               "type": "object",
               "properties": {
                 "failureRateThreshold": {
-                  "type": "number"
+                  "type": "number",
+                  "description": "The failure rate threshold in percentage"
                 },
                 "slowCallRateThreshold": {
-                  "type": "number"
+                  "type": "number",
+                  "description": "The slow call rate threshold in percentage"
                 },
                 "minimumNumberOfCalls": {
-                  "type": "integer"
+                  "type": "integer",
+                  "description": "The minimum number of calls before the failure rate is calculated"
                 },
                 "permittedNumberOfCallsInHalfOpenState": {
-                  "type": "integer"
+                  "type": "integer",
+                  "description": "The number of permitted calls when the circuit breaker is half open"
                 },
                 "slidingWindowSize": {
-                  "type": "integer"
+                  "type": "integer",
+                  "description": "The sliding window size"
                 },
                 "slidingWindowType": {
-                  "type": "string"
+                  "type": "string",
+                  "description": "The sliding window type"
                 },
                 "waitDurationInOpenState": {
-                  "type": "integer"
+                  "type": "integer",
+                  "description": "The wait duration in the open state, in milliseconds"
                 },
                 "automaticTransitionFromOpenToHalfOpen": {
-                  "type": "boolean"
+                  "type": "boolean",
+                  "description": "Whether the circuit breaker automatically transitions from open to half-open"
                 },
                 "bulkheadEnabled": {
-                  "type": "boolean"
+                  "type": "boolean",
+                  "description": "Whether the bulkhead is enabled"
                 },
                 "bulkheadMaxConcurrentCalls": {
                   "type": "integer",
-                  "description": "Only present when bulkheadEnabled is true"
+                  "description": "The maximum concurrent calls allowed by the bulkhead (only present when bulkheadEnabled is true)"
                 },
                 "bulkheadMaxWaitDuration": {
                   "type": "integer",
-                  "description": "Only present when bulkheadEnabled is true"
+                  "description": "The maximum wait duration for the bulkhead in milliseconds (only present when bulkheadEnabled is true)"
                 },
                 "timeoutEnabled": {
-                  "type": "boolean"
+                  "type": "boolean",
+                  "description": "Whether the timeout is enabled"
                 },
                 "timeoutDuration": {
                   "type": "integer",
-                  "description": "Only present when timeoutEnabled is true"
+                  "description": "The timeout duration in milliseconds (only present when timeoutEnabled is true)"
                 }
               },
               "required": [
@@ -100,7 +118,8 @@
                 "automaticTransitionFromOpenToHalfOpen",
                 "bulkheadEnabled",
                 "timeoutEnabled"
-              ]
+              ],
+              "description": "The circuit breaker configuration"
             }
           },
           "required": [

@@ -47,7 +47,8 @@
     "type": "object",
     "properties": {
       "meterRegistryClass": {
-        "type": "string"
+        "type": "string",
+        "description": "The MeterRegistry implementation class name"
       },
       "counters": {
         "type": "array",
@@ -55,10 +56,12 @@
           "type": "object",
           "properties": {
             "name": {
-              "type": "string"
+              "type": "string",
+              "description": "The counter name"
             },
             "description": {
-              "type": "string"
+              "type": "string",
+              "description": "The counter description (only present when configured)"
             },
             "tags": {
               "type": "array",
@@ -66,13 +69,16 @@
                 "type": "object",
                 "properties": {
                   "key": {
-                    "type": "string"
+                    "type": "string",
+                    "description": "The tag key"
                   },
                   "value": {
-                    "type": "string"
+                    "type": "string",
+                    "description": "The tag value"
                   }
                 }
-              }
+              },
+              "description": "The counter tags (only present when requested)"
             },
             "count": {
               "description": "The counter value (integer when whole, decimal otherwise)"
@@ -87,10 +93,12 @@
           "type": "object",
           "properties": {
             "name": {
-              "type": "string"
+              "type": "string",
+              "description": "The gauge name"
             },
             "description": {
-              "type": "string"
+              "type": "string",
+              "description": "The gauge description (only present when configured)"
             },
             "tags": {
               "type": "array",
@@ -98,16 +106,20 @@
                 "type": "object",
                 "properties": {
                   "key": {
-                    "type": "string"
+                    "type": "string",
+                    "description": "The tag key"
                   },
                   "value": {
-                    "type": "string"
+                    "type": "string",
+                    "description": "The tag value"
                   }
                 }
-              }
+              },
+              "description": "The gauge tags (only present when requested)"
             },
             "value": {
-              "type": "number"
+              "type": "number",
+              "description": "The gauge value"
             }
           },
           "required": [
@@ -122,10 +134,12 @@
           "type": "object",
           "properties": {
             "name": {
-              "type": "string"
+              "type": "string",
+              "description": "The timer name"
             },
             "description": {
-              "type": "string"
+              "type": "string",
+              "description": "The timer description (only present when configured)"
             },
             "tags": {
               "type": "array",
@@ -133,25 +147,32 @@
                 "type": "object",
                 "properties": {
                   "key": {
-                    "type": "string"
+                    "type": "string",
+                    "description": "The tag key"
                   },
                   "value": {
-                    "type": "string"
+                    "type": "string",
+                    "description": "The tag value"
                   }
                 }
-              }
+              },
+              "description": "The timer tags (only present when requested)"
             },
             "count": {
-              "type": "integer"
+              "type": "integer",
+              "description": "The number of recorded events"
             },
             "mean": {
-              "type": "integer"
+              "type": "integer",
+              "description": "The mean duration in milliseconds"
             },
             "max": {
-              "type": "integer"
+              "type": "integer",
+              "description": "The maximum duration in milliseconds"
             },
             "total": {
-              "type": "integer"
+              "type": "integer",
+              "description": "The total duration in milliseconds"
             }
           },
           "required": [
@@ -169,10 +190,12 @@
           "type": "object",
           "properties": {
             "name": {
-              "type": "string"
+              "type": "string",
+              "description": "The long task timer name"
             },
             "description": {
-              "type": "string"
+              "type": "string",
+              "description": "The long task timer description (only present when configured)"
             },
             "tags": {
               "type": "array",
@@ -180,25 +203,32 @@
                 "type": "object",
                 "properties": {
                   "key": {
-                    "type": "string"
+                    "type": "string",
+                    "description": "The tag key"
                   },
                   "value": {
-                    "type": "string"
+                    "type": "string",
+                    "description": "The tag value"
                   }
                 }
-              }
+              },
+              "description": "The long task timer tags (only present when requested)"
             },
             "activeTasks": {
-              "type": "integer"
+              "type": "integer",
+              "description": "The number of currently active tasks"
             },
             "mean": {
-              "type": "integer"
+              "type": "integer",
+              "description": "The mean duration in milliseconds"
             },
             "max": {
-              "type": "integer"
+              "type": "integer",
+              "description": "The maximum duration in milliseconds"
             },
             "duration": {
-              "type": "integer"
+              "type": "integer",
+              "description": "The total duration of active tasks in milliseconds"
             }
           },
           "required": [
@@ -216,10 +246,12 @@
           "type": "object",
           "properties": {
             "name": {
-              "type": "string"
+              "type": "string",
+              "description": "The distribution summary name"
             },
             "description": {
-              "type": "string"
+              "type": "string",
+              "description": "The distribution summary description (only present when configured)"
             },
             "tags": {
               "type": "array",
@@ -227,25 +259,32 @@
                 "type": "object",
                 "properties": {
                   "key": {
-                    "type": "string"
+                    "type": "string",
+                    "description": "The tag key"
                   },
                   "value": {
-                    "type": "string"
+                    "type": "string",
+                    "description": "The tag value"
                   }
                 }
-              }
+              },
+              "description": "The distribution summary tags (only present when requested)"
             },
             "count": {
-              "type": "integer"
+              "type": "integer",
+              "description": "The number of recorded events"
             },
             "mean": {
-              "type": "number"
+              "type": "number",
+              "description": "The mean amount"
             },
             "max": {
-              "type": "number"
+              "type": "number",
+              "description": "The maximum amount"
             },
             "totalAmount": {
-              "type": "number"
+              "type": "number",
+              "description": "The total amount"
             }
           },
           "required": [
