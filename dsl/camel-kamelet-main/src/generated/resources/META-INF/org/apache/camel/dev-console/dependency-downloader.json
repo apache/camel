@@ -44,22 +44,28 @@
           "type": "object",
           "properties": {
             "groupId": {
-              "type": "string"
+              "type": "string",
+              "description": "The Maven group id"
             },
             "artifactId": {
-              "type": "string"
+              "type": "string",
+              "description": "The Maven artifact id"
             },
             "version": {
-              "type": "string"
+              "type": "string",
+              "description": "The Maven version"
             },
             "repoId": {
-              "type": "string"
+              "type": "string",
+              "description": "The Maven repository id the artifact was downloaded from"
             },
             "repoUrl": {
-              "type": "string"
+              "type": "string",
+              "description": "The Maven repository URL the artifact was downloaded from"
             },
             "elapsed": {
-              "type": "integer"
+              "type": "integer",
+              "description": "The download time in milliseconds"
             }
           },
           "required": [
