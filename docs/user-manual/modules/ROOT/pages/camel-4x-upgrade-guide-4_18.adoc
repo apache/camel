@@ -51,6 +51,24 @@ from("spring-redis://localhost:6379?command=SUBSCRIBE&channels=myChannel"
 Setting the `serializer` option to a custom `RedisSerializer` bypasses the filter entirely, since
 Camel then no longer controls how the payload is read.
 
+=== camel-google-mail - the raw option now returns the message
+
+The `google-mail-stream` consumer always asked the Gmail API for the `FULL` message format, but the
+`raw` field is only populated for the `RAW` format, so `raw=true` produced a `null` body. The consumer
+now requests the format that matches the option.
+
+Because the Gmail API does not return the parsed `payload` for the `RAW` format, a route running with
+`raw=true` no longer receives the `CamelGoogleMailStreamSubject`, `...From`, `...To`, `...Cc`, `...Bcc`
+and `...MessageId` headers — those values are part of the RFC 2822 content that is now in the body.
+`CamelGoogleMailStreamId`, `...ThreadId` and `...LabelIds` are still set. Routes that need the parsed
+headers should keep the default `raw=false`.
+
+=== camel-google-vertexai - the jsonMode option is now applied
+
+The option was declared and documented but never read, so it had no effect. `jsonMode=true` now sets
+the response MIME type of the request to `application/json`, so the model is asked to answer with
+JSON. The default `false` leaves the request untouched.
+
 == Upgrading from 4.18.3 to 4.18.4
 
 === camel-core - Multicast EIP honors UseOriginalAggregationStrategy
