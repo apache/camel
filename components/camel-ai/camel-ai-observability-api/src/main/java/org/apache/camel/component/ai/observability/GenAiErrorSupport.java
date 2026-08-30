@@ -96,6 +96,11 @@ public final class GenAiErrorSupport {
 
     /**
      * Classifies an AI provider failure, walking the exception cause chain.
+     * <p/>
+     * Classification runs in two passes over the cause chain: first with provider-specific mappings (LangChain4j,
+     * OpenAI, and HTTP status codes), then with generic Spring AI retry wrappers. That ordering ensures a
+     * {@code TransientAiException} wrapping a {@code RateLimitException} is classified as {@code RATE_LIMIT} from the
+     * specific cause rather than {@code SERVER_ERROR} from the coarse Spring AI wrapper.
      */
     public static GenAiErrorCategory classify(Throwable error) {
         GenAiErrorCategory category = classifyChain(error, false);
