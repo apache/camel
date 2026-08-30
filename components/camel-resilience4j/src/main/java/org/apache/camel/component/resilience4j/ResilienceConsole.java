@@ -33,18 +33,31 @@ import org.apache.camel.util.json.JsonRecordSupport;
 public class ResilienceConsole extends AbstractDevConsole {
 
     public record Configuration(
-            float failureRateThreshold, float slowCallRateThreshold, int minimumNumberOfCalls,
-            int permittedNumberOfCallsInHalfOpenState, int slidingWindowSize, String slidingWindowType,
-            long waitDurationInOpenState, boolean automaticTransitionFromOpenToHalfOpen, boolean bulkheadEnabled,
-            @Metadata(description = "Only present when bulkheadEnabled is true") Integer bulkheadMaxConcurrentCalls,
-            @Metadata(description = "Only present when bulkheadEnabled is true") Long bulkheadMaxWaitDuration,
-            boolean timeoutEnabled,
-            @Metadata(description = "Only present when timeoutEnabled is true") Long timeoutDuration) {
+            @Metadata(description = "The failure rate threshold in percentage") float failureRateThreshold,
+            @Metadata(description = "The slow call rate threshold in percentage") float slowCallRateThreshold,
+            @Metadata(description = "The minimum number of calls before the failure rate is calculated") int minimumNumberOfCalls,
+            @Metadata(description = "The number of permitted calls when the circuit breaker is half open") int permittedNumberOfCallsInHalfOpenState,
+            @Metadata(description = "The sliding window size") int slidingWindowSize,
+            @Metadata(description = "The sliding window type") String slidingWindowType,
+            @Metadata(description = "The wait duration in the open state, in milliseconds") long waitDurationInOpenState,
+            @Metadata(description = "Whether the circuit breaker automatically transitions from open to half-open") boolean automaticTransitionFromOpenToHalfOpen,
+            @Metadata(description = "Whether the bulkhead is enabled") boolean bulkheadEnabled,
+            @Metadata(description = "The maximum concurrent calls allowed by the bulkhead (only present when bulkheadEnabled is true)") Integer bulkheadMaxConcurrentCalls,
+            @Metadata(description = "The maximum wait duration for the bulkhead in milliseconds (only present when bulkheadEnabled is true)") Long bulkheadMaxWaitDuration,
+            @Metadata(description = "Whether the timeout is enabled") boolean timeoutEnabled,
+            @Metadata(description = "The timeout duration in milliseconds (only present when timeoutEnabled is true)") Long timeoutDuration) {
     }
 
     public record CircuitBreakerEntry(
-            String id, String routeId, String state, int bufferedCalls, int successfulCalls, int failedCalls,
-            long notPermittedCalls, float failureRate, Configuration configuration) {
+            @Metadata(description = "The circuit breaker id") String id,
+            @Metadata(description = "The route id") String routeId,
+            @Metadata(description = "The circuit breaker state") String state,
+            @Metadata(description = "The number of buffered calls") int bufferedCalls,
+            @Metadata(description = "The number of successful calls") int successfulCalls,
+            @Metadata(description = "The number of failed calls") int failedCalls,
+            @Metadata(description = "The number of not permitted calls") long notPermittedCalls,
+            @Metadata(description = "The failure rate in percentage") float failureRate,
+            @Metadata(description = "The circuit breaker configuration") Configuration configuration) {
     }
 
     public record Response(@Metadata(description = "The circuit breakers") List<CircuitBreakerEntry> circuitBreakers) {
