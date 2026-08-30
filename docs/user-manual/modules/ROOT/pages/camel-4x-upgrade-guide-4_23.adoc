@@ -353,6 +353,35 @@ The affected sites, all of which resolved a header-derived or endpoint-derived v
 Where the value came from the endpoint rather than a header it was already resolved at build time,
 so removing the per-message resolution does not change those routes.
 
+=== camel-console - variables dev console JSON response shape
+
+The `variables` dev console (`/q/dev/variables`) no longer returns a JSON object keyed by each
+variable repository's id. It now returns a fixed shape, so the response has a documented,
+authoritative OpenAPI schema like the other dev consoles (see the `/q/dev/api` OpenAPI document):
+
+Before:
+[source,json]
+----
+{
+  "global": [ { "key": "foo", "type": "java.lang.String", "value": "bar" } ]
+}
+----
+
+After:
+[source,json]
+----
+{
+  "repositories": [
+    { "id": "global", "variables": [ { "key": "foo", "type": "java.lang.String", "value": "bar" } ] }
+  ]
+}
+----
+
+Each repository is now an entry in the `repositories` array carrying its own `id`, rather than the
+id being a dynamic top-level JSON key. Anything that parses this console's raw JSON directly
+(custom tooling, or scripts calling the dev console HTTP endpoint) must be updated to the new
+shape. The `camel get variable` CLI command has already been updated accordingly.
+
 === camel-jbang (TUI)
 
 `camel tui --record` is now rejected when combined with `--web`. The recording configuration applies
