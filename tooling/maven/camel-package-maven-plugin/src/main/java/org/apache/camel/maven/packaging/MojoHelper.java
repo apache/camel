@@ -39,7 +39,7 @@ public final class MojoHelper {
         switch (dir.getFileName().toString()) {
             case "camel-ai":
                 return Arrays.asList(dir.resolve("camel-a2a"), dir.resolve("camel-ai-observability"),
-                        dir.resolve("camel-ai-tool"),
+                        dir.resolve("camel-ai-resource"), dir.resolve("camel-ai-tool"),
                         dir.resolve("camel-chatscript"), dir.resolve("camel-djl"),
                         dir.resolve("camel-huggingface"),
                         dir.resolve("camel-langchain4j-agent"), dir.resolve("camel-langchain4j-chat"),
