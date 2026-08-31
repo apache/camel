@@ -23,7 +23,7 @@ Global toggle: set `camel.aiObservability.enabled=false` (default is `true` when
 via `camel.aiObservability.enabled` in application.properties or programmatically with
 `main.configure().aiObservability().withEnabled(false)`.
 
-Phase 1 coverage: `langchain4j-chat`, `langchain4j-tools`, `langchain4j-agent`, `langchain4j-embeddings`,
+Phase 1 coverage: `langchain4j-chat`, `langchain4j-agent`, `langchain4j-embeddings`,
 and `openai`.
 
 Phase 3 coverage: `spring-ai-chat`.
@@ -37,7 +37,6 @@ component when GenAI observability is enabled so model metadata is always popula
 New exchange headers for model identification on langchain4j components:
 
 * `CamelLangChain4jChatRequestModel` / `CamelLangChain4jChatResponseModel`
-* `CamelLangChain4jToolsRequestModel` / `CamelLangChain4jToolsResponseModel`
 * `CamelLangChain4jAgentRequestModel` / `CamelLangChain4jAgentResponseModel`
 * `CamelLangChain4jEmbeddingsRequestModel` / `CamelLangChain4jEmbeddingsResponseModel`
 
