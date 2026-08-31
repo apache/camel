@@ -73,8 +73,10 @@ import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.Matchers.emptyOrNullString;
 import static org.hamcrest.Matchers.emptyString;
 import static org.hamcrest.Matchers.equalTo;
+import static org.hamcrest.Matchers.equalToIgnoringCase;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.notNullValue;
+import static org.hamcrest.Matchers.nullValue;
 import static org.hamcrest.Matchers.startsWith;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
@@ -420,6 +422,82 @@ public class VertxPlatformHttpEngineTest {
                     .header("Access-Control-Allow-Origin", origin)
                     .header("Access-Control-Allow-Methods", methods)
                     .header("Access-Control-Allow-Headers", headers);
+        } finally {
+            context.stop();
+        }
+    }
+
+    @Test
+    public void testEngineCORSNoOriginListDoesNotAllowCredentials() throws Exception {
+        // With no origins configured the request origin is reflected back. Reflection plus
+        // Access-Control-Allow-Credentials is exactly what the fetch spec forbids expressing as "*",
+        // so credentials must not be granted to an origin the operator never named.
+        final CamelContext context = createCamelContextForTest(configuration -> {
+            configuration.getCors().setEnabled(true);
+            configuration.getCors().setMethods(Arrays.asList("GET", "POST"));
+        });
+
+        try {
+            context.addRoutes(new RouteBuilder() {
+                @Override
+                public void configure() {
+                    from("platform-http:/").transform().constant("cors");
+                }
+            });
+            context.start();
+
+            final String origin = "http://attacker.example";
+
+            given()
+                    .header("Origin", origin)
+                    .when()
+                    .get("/")
+                    .then()
+                    .statusCode(200)
+                    .header("Access-Control-Allow-Origin", origin)
+                    .header("Vary", equalToIgnoringCase("origin"))
+                    .header("Access-Control-Allow-Credentials", nullValue());
+        } finally {
+            context.stop();
+        }
+    }
+
+    @Test
+    public void testEngineCORSAllowsCredentialsOnlyForAConfiguredOrigin() throws Exception {
+        final String allowed = "https://app.example";
+        final CamelContext context = createCamelContextForTest(configuration -> {
+            configuration.getCors().setEnabled(true);
+            configuration.getCors().setOrigins(Arrays.asList(allowed));
+            configuration.getCors().setMethods(Arrays.asList("GET", "POST"));
+        });
+
+        try {
+            context.addRoutes(new RouteBuilder() {
+                @Override
+                public void configure() {
+                    from("platform-http:/").transform().constant("cors");
+                }
+            });
+            context.start();
+
+            given()
+                    .header("Origin", allowed)
+                    .when()
+                    .get("/")
+                    .then()
+                    .statusCode(200)
+                    .header("Access-Control-Allow-Origin", allowed)
+                    .header("Access-Control-Allow-Credentials", "true");
+
+            // An origin outside the configured list gets neither header
+            given()
+                    .header("Origin", "https://other.example")
+                    .when()
+                    .get("/")
+                    .then()
+                    .statusCode(200)
+                    .header("Access-Control-Allow-Origin", nullValue())
+                    .header("Access-Control-Allow-Credentials", nullValue());
         } finally {
             context.stop();
         }
