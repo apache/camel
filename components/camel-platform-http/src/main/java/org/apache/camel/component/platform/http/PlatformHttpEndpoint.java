@@ -16,7 +16,10 @@
  */
 package org.apache.camel.component.platform.http;
 
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.Set;
+import java.util.TreeSet;
 
 import org.apache.camel.AsyncEndpoint;
 import org.apache.camel.Category;
@@ -49,7 +52,12 @@ public class PlatformHttpEndpoint extends DefaultEndpoint
 
     private static final String PROXY_PATH = "proxy";
 
-    private static final Set<String> COMMON_HTTP_REQUEST_HEADERS = Set.of(
+    /**
+     * Request headers that must not be echoed back on the response. Compared without regard to case: exchange headers
+     * keep the casing of the inbound request, and HTTP/2 requires field names to be lower case, so an exact-case lookup
+     * against these canonical spellings never matches an HTTP/2 request.
+     */
+    private static final Set<String> COMMON_HTTP_REQUEST_HEADERS = caseInsensitiveSet(
             "A-IM",
             "Accept",
             "Accept-Charset",
@@ -78,6 +86,12 @@ public class PlatformHttpEndpoint extends DefaultEndpoint
             "Referer",
             "TE",
             "User-Agent");
+
+    private static Set<String> caseInsensitiveSet(String... names) {
+        Set<String> set = new TreeSet<>(String.CASE_INSENSITIVE_ORDER);
+        set.addAll(Arrays.asList(names));
+        return Collections.unmodifiableSet(set);
+    }
 
     @UriPath(description = "The path under which this endpoint serves the HTTP requests, for proxy use 'proxy'")
     @Metadata(required = true)
