@@ -19,6 +19,7 @@ package org.apache.camel.component.weaviate.transform;
 
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import dev.langchain4j.data.embedding.Embedding;
 import dev.langchain4j.data.segment.TextSegment;
@@ -80,11 +81,13 @@ public class WeaviateEmbeddingsDataTypeTransformer extends Transformer {
     /**
      * Writes the object properties for a CREATE / UPDATE_BY_ID operation. The embedded text is stored under
      * textFieldName so that the source passage can be retrieved later; without it only the vector (and optional id) was
-     * persisted and the original text was lost. Mirrors the Milvus transformer.
+     * persisted and the original text was lost. Mirrors the Milvus transformer. Any PROPERTIES header the caller
+     * already set is preserved: the text (and optional id) are merged into a copy of it rather than replacing it.
      */
     private static void setProperties(
             Message message, String textFieldName, TextSegment text, Object keyValue, String keyName) {
-        HashMap<String, Object> maps = new HashMap<>();
+        Map<String, Object> existing = message.getHeader(WeaviateVectorDbHeaders.PROPERTIES, Map.class);
+        HashMap<String, Object> maps = existing != null ? new HashMap<>(existing) : new HashMap<>();
         if (text != null && text.text() != null) {
             maps.put(textFieldName, text.text());
         }

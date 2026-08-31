@@ -16,6 +16,7 @@
  */
 package org.apache.camel.component.weaviate.transform;
 
+import java.util.HashMap;
 import java.util.Map;
 
 import dev.langchain4j.data.embedding.Embedding;
@@ -69,5 +70,33 @@ class WeaviateEmbeddingsDataTypeTransformerTest {
                 .isNotNull()
                 .containsEntry("text", "the source passage")
                 .containsEntry("id", "doc-1");
+    }
+
+    @Test
+    @SuppressWarnings("unchecked")
+    void createMergesTextIntoAnExistingPropertiesHeader() throws Exception {
+        Embedding embedding = new Embedding(new float[] { 0.1f, 0.2f, 0.3f });
+        TextSegment segment = TextSegment.from("the source passage");
+
+        try (DefaultCamelContext context = new DefaultCamelContext()) {
+            context.start();
+            Message in = new DefaultExchange(context).getMessage();
+            in.setHeader(CamelLangchain4jAttributes.CAMEL_LANGCHAIN4J_EMBEDDING_VECTOR, embedding);
+            in.setHeader(WeaviateVectorDbHeaders.ACTION, WeaviateVectorDbAction.CREATE);
+            // Properties the caller populated before the transformer runs must survive.
+            Map<String, Object> callerProperties = new HashMap<>();
+            callerProperties.put("sky", "blue");
+            callerProperties.put("age", "34");
+            in.setHeader(WeaviateVectorDbHeaders.PROPERTIES, callerProperties);
+            in.setBody(segment);
+
+            new WeaviateEmbeddingsDataTypeTransformer().transform(in, DataType.ANY, DataType.ANY);
+
+            Map<String, Object> props = in.getHeader(WeaviateVectorDbHeaders.PROPERTIES, Map.class);
+            assertThat(props)
+                    .containsEntry("sky", "blue")
+                    .containsEntry("age", "34")
+                    .containsEntry("text", "the source passage");
+        }
     }
 }
