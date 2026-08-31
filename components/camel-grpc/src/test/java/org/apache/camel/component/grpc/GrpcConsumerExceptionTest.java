@@ -35,6 +35,7 @@ import org.slf4j.LoggerFactory;
 
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -43,18 +44,25 @@ public class GrpcConsumerExceptionTest extends CamelTestSupport {
     private static final Logger LOG = LoggerFactory.getLogger(GrpcConsumerExceptionTest.class);
 
     private static final int GRPC_SYNC_REQUEST_TEST_PORT = AvailablePortFinder.getNextAvailable();
+    private static final int GRPC_UNMUTED_TEST_PORT = AvailablePortFinder.getNextAvailable();
     private static final int GRPC_TEST_PING_ID = 1;
     private static final String GRPC_TEST_PING_VALUE = "PING";
+    private static final String ROUTE_EXCEPTION_MESSAGE = "GRPC Camel exception message";
 
     private ManagedChannel syncRequestChannel;
+    private ManagedChannel unmutedChannel;
+    private PingPongGrpc.PingPongBlockingStub unmutedStub;
     private PingPongGrpc.PingPongBlockingStub blockingStub;
-    private PingPongGrpc.PingPongStub nonBlockingStub;
+    private PingPongGrpc.PingPongStub unmutedNonBlockingStub;
 
     @BeforeEach
     public void startGrpcChannels() {
         syncRequestChannel = ManagedChannelBuilder.forAddress("localhost", GRPC_SYNC_REQUEST_TEST_PORT).usePlaintext().build();
         blockingStub = PingPongGrpc.newBlockingStub(syncRequestChannel);
-        nonBlockingStub = PingPongGrpc.newStub(syncRequestChannel);
+
+        unmutedChannel = ManagedChannelBuilder.forAddress("localhost", GRPC_UNMUTED_TEST_PORT).usePlaintext().build();
+        unmutedStub = PingPongGrpc.newBlockingStub(unmutedChannel);
+        unmutedNonBlockingStub = PingPongGrpc.newStub(unmutedChannel);
     }
 
     @AfterEach
@@ -62,6 +70,37 @@ public class GrpcConsumerExceptionTest extends CamelTestSupport {
         if (syncRequestChannel != null) {
             syncRequestChannel.shutdown().shutdownNow();
         }
+        if (unmutedChannel != null) {
+            unmutedChannel.shutdown().shutdownNow();
+        }
+    }
+
+    /**
+     * The Status description is transmitted to the client - unlike the cause, which stays local - so by default it must
+     * not carry the route exception's message.
+     */
+    @Test
+    public void theStatusDescriptionDoesNotCarryTheRouteExceptionByDefault() {
+        PingRequest pingRequest
+                = PingRequest.newBuilder().setPingName(GRPC_TEST_PING_VALUE).setPingId(GRPC_TEST_PING_ID).build();
+
+        StatusRuntimeException e
+                = assertThrows(StatusRuntimeException.class, () -> blockingStub.pingSyncSync(pingRequest));
+
+        assertFalse(e.getStatus().getDescription().contains(ROUTE_EXCEPTION_MESSAGE),
+                "the status description must not carry the route exception's message: " + e.getStatus());
+    }
+
+    @Test
+    public void muteExceptionFalseCarriesTheRouteExceptionAsBefore() {
+        PingRequest pingRequest
+                = PingRequest.newBuilder().setPingName(GRPC_TEST_PING_VALUE).setPingId(GRPC_TEST_PING_ID).build();
+
+        StatusRuntimeException e
+                = assertThrows(StatusRuntimeException.class, () -> unmutedStub.pingSyncSync(pingRequest));
+
+        assertTrue(e.getStatus().getDescription().contains(ROUTE_EXCEPTION_MESSAGE),
+                "expected the route exception message with muteException=false: " + e.getStatus());
     }
 
     @Test
@@ -84,7 +123,7 @@ public class GrpcConsumerExceptionTest extends CamelTestSupport {
                 = PingRequest.newBuilder().setPingName(GRPC_TEST_PING_VALUE).setPingId(GRPC_TEST_PING_ID).build();
         PongResponseStreamObserver responseObserver = new PongResponseStreamObserver(latch);
 
-        nonBlockingStub.pingSyncSync(pingRequest, responseObserver);
+        unmutedNonBlockingStub.pingSyncSync(pingRequest, responseObserver);
         assertTrue(latch.await(5, TimeUnit.SECONDS));
     }
 
@@ -95,8 +134,11 @@ public class GrpcConsumerExceptionTest extends CamelTestSupport {
             public void configure() {
                 from("grpc://localhost:" + GRPC_SYNC_REQUEST_TEST_PORT
                      + "/org.apache.camel.component.grpc.PingPong?synchronous=true")
-                        .throwException(CamelException.class, "GRPC Camel exception message");
+                        .throwException(CamelException.class, ROUTE_EXCEPTION_MESSAGE);
 
+                from("grpc://localhost:" + GRPC_UNMUTED_TEST_PORT
+                     + "/org.apache.camel.component.grpc.PingPong?synchronous=true&muteException=false")
+                        .throwException(CamelException.class, ROUTE_EXCEPTION_MESSAGE);
             }
         };
     }
