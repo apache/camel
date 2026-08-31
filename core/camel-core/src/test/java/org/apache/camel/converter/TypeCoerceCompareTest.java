@@ -42,6 +42,27 @@ public class TypeCoerceCompareTest extends ContextTestSupport {
     }
 
     @Test
+    public void testCompareStringStringTooBigForLong() {
+        TypeConverter tc = context.getTypeConverter();
+        // numbers such as bank account numbers have more digits than a long can hold
+        assertEquals(0, ObjectHelper.typeCoerceCompare(tc, "12345678901234567890", "12345678901234567890"));
+        assertTrue(ObjectHelper.typeCoerceCompare(tc, "12345678901234567891", "12345678901234567890") > 0);
+        assertTrue(ObjectHelper.typeCoerceCompare(tc, "12345678901234567890", "12345678901234567891") < 0);
+        assertTrue(ObjectHelper.typeCoerceCompare(tc, "12345678901234567890", "7") > 0);
+        assertTrue(ObjectHelper.typeCoerceCompare(tc, "7", "12345678901234567890") < 0);
+    }
+
+    @Test
+    public void testCompareStringNumberTooBigForLong() {
+        TypeConverter tc = context.getTypeConverter();
+        assertTrue(ObjectHelper.typeCoerceCompare(tc, "12345678901234567890", 7L) > 0);
+        assertTrue(ObjectHelper.typeCoerceCompare(tc, 7L, "12345678901234567890") < 0);
+        // does not fit in an int, but still fits in a long
+        assertTrue(ObjectHelper.typeCoerceCompare(tc, "99999999999", 7) > 0);
+        assertTrue(ObjectHelper.typeCoerceCompare(tc, 7, "99999999999") < 0);
+    }
+
+    @Test
     public void testCompareStringInteger() {
         TypeConverter tc = context.getTypeConverter();
         assertTrue(ObjectHelper.typeCoerceCompare(tc, "40", 7) > 0);

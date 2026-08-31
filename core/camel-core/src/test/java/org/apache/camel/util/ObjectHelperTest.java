@@ -176,6 +176,28 @@ public class ObjectHelperTest {
     }
 
     @Test
+    void testEqualsNumberTooBigForLong() throws Exception {
+        try (CamelContext context = new DefaultCamelContext()) {
+            context.start();
+            TypeConverter tc = context.getTypeConverter();
+
+            // numbers such as bank account numbers have more digits than a long can hold
+            assertTrue(ObjectHelper.typeCoerceEquals(tc, "12345678901234567890", "12345678901234567890"));
+            assertFalse(ObjectHelper.typeCoerceEquals(tc, "12345678901234567890", "12345678901234567891"));
+            assertFalse(ObjectHelper.typeCoerceEquals(tc, "12345678901234567890", "7"));
+
+            // such a number cannot be equal to an int or long
+            assertFalse(ObjectHelper.typeCoerceEquals(tc, "12345678901234567890", 7L));
+            assertFalse(ObjectHelper.typeCoerceEquals(tc, 7L, "12345678901234567890"));
+
+            // does not fit in an int, but still fits in a long
+            assertFalse(ObjectHelper.typeCoerceEquals(tc, "99999999999", 7));
+            assertFalse(ObjectHelper.typeCoerceEquals(tc, 7, "99999999999"));
+            assertTrue(ObjectHelper.typeCoerceEquals(tc, "99999999999", 99999999999L));
+        }
+    }
+
+    @Test
     void testContainsStringBuilder() throws Exception {
         try (CamelContext context = new DefaultCamelContext()) {
             context.start();
