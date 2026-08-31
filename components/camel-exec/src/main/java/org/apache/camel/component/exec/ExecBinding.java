@@ -36,7 +36,8 @@ public interface ExecBinding {
      */
     @Metadata(label = "in", description = """
             The name of the system command that will be executed. Overrides
-            `executable` in the URI.""",
+            `executable` in the URI. Requires `allowControlHeaders=true` on the exec
+            endpoint or component (default is `false` since Camel 4.20).""",
               javaType = "String")
     String EXEC_COMMAND_EXECUTABLE = "CamelExecCommandExecutable";
 
@@ -49,7 +50,8 @@ public interface ExecBinding {
     @Metadata(label = "in", description = """
             Command-line argument(s) to pass to the executed process. The argument(s)
             is/are used literally - no quoting is applied. Overrides any existing
-            `args` in the URI.""",
+            `args` in the URI. Requires `allowControlHeaders=true` on the exec endpoint
+            or component (default is `false` since Camel 4.20).""",
               javaType = "java.util.List<String> or String")
     String EXEC_COMMAND_ARGS = "CamelExecCommandArgs";
 
@@ -61,7 +63,9 @@ public interface ExecBinding {
      */
     @Metadata(label = "in", description = """
             The name of a file, created by the executable, that should be considered
-            as its output. Overrides any existing `outFile` in the URI.""",
+            as its output. Overrides any existing `outFile` in the URI. Requires
+            `allowControlHeaders=true` on the exec endpoint or component (default is
+            `false` since Camel 4.20).""",
               javaType = "String")
     String EXEC_COMMAND_OUT_FILE = "CamelExecCommandOutFile";
 
@@ -72,7 +76,8 @@ public interface ExecBinding {
      */
     @Metadata(label = "in", description = """
             The directory in which the command should be executed. Overrides any
-            existing `workingDir` in the URI.""",
+            existing `workingDir` in the URI. Requires `allowControlHeaders=true` on
+            the exec endpoint or component (default is `false` since Camel 4.20).""",
               javaType = "String")
     String EXEC_COMMAND_WORKING_DIR = "CamelExecCommandWorkingDir";
 
@@ -82,7 +87,9 @@ public interface ExecBinding {
      */
     @Metadata(label = "in", description = """
             The timeout, in milliseconds, after which the executable should be
-            terminated. Overrides any existing `timeout` in the URI.""",
+            terminated. Overrides any existing `timeout` in the URI. Requires
+            `allowControlHeaders=true` on the exec endpoint or component (default is
+            `false` since Camel 4.20).""",
               javaType = "long")
     String EXEC_COMMAND_TIMEOUT = "CamelExecCommandTimeout";
 
@@ -93,7 +100,9 @@ public interface ExecBinding {
      */
     @Metadata(label = "in", description = """
             The exit values for successful execution of the process.
-            Overrides any existing `exitValues` in the URI.""",
+            Overrides any existing `exitValues` in the URI. Requires
+            `allowControlHeaders=true` on the exec endpoint or component (default is
+            `false` since Camel 4.20).""",
               javaType = "String")
     String EXEC_COMMAND_EXIT_VALUES = "CamelExecExitValues";
 
@@ -124,7 +133,8 @@ public interface ExecBinding {
     @Metadata(label = "in", description = """
             Indicates that when `stdout` is empty, this component will populate the
             Camel Message Body with `stderr`. This behavior is disabled (`false`) by
-            default.""",
+            default. Requires `allowControlHeaders=true` on the exec endpoint or
+            component (default is `false` since Camel 4.20).""",
               javaType = "boolean")
     String EXEC_USE_STDERR_ON_EMPTY_STDOUT = "CamelExecUseStderrOnEmptyStdout";
 
@@ -135,7 +145,9 @@ public interface ExecBinding {
     @Metadata(label = "in",
               description = """
                       Logging level to be used for commands during execution. The default value is DEBUG.
-                      Possible values are TRACE, DEBUG, INFO, WARN, ERROR or OFF (Values of LoggingLevel enum)""",
+                      Possible values are TRACE, DEBUG, INFO, WARN, ERROR or OFF (Values of LoggingLevel enum).
+                      Requires `allowControlHeaders=true` on the exec endpoint or component (default is `false`
+                      since Camel 4.20).""",
               javaType = "String")
     String EXEC_COMMAND_LOG_LEVEL = "CamelExecCommandLogLevel";
 
