@@ -120,7 +120,7 @@ public abstract class AbstractTaskPredictor implements TaskPredictor {
         if (authToken == null || authToken.isEmpty()) {
             return pythonScript;
         }
-        return "import os\nos.environ['HF_TOKEN'] = '" + authToken + "'\n\n" + pythonScript;
+        return "import os\nos.environ['HF_TOKEN'] = '" + authToken.replace("'", "\\'") + "'\n\n" + pythonScript;
     }
 
     protected String loadPythonScript(String resourcePath, Object... args) {

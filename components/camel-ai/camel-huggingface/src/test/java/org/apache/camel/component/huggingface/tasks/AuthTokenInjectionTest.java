@@ -46,5 +46,13 @@ class AuthTokenInjectionTest {
     @Test
     void noAuthTokenLeavesTheScriptUnchanged() {
         assertEquals("PIPELINE", predictorWithToken(null).withAuthToken("PIPELINE"));
+        assertEquals("PIPELINE", predictorWithToken("").withAuthToken("PIPELINE"));
+    }
+
+    @Test
+    void authTokenWithASingleQuoteIsEscaped() {
+        String result = predictorWithToken("ab'cd").withAuthToken("PIPELINE");
+        assertTrue(result.contains("os.environ['HF_TOKEN'] = 'ab\\'cd'"),
+                "a single quote in the token must be escaped so it cannot break the Python string literal");
     }
 }
