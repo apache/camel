@@ -91,6 +91,8 @@ public class MinaConfiguration implements Cloneable {
     private boolean cachedAddress = true;
     @UriParam(label = "consumer")
     private boolean clientMode;
+    @UriParam(label = "consumer", defaultValue = "true")
+    private boolean muteException = true;
 
     /**
      * Returns a copy of this configuration
@@ -422,6 +424,18 @@ public class MinaConfiguration implements Cloneable {
 
     public boolean isClientMode() {
         return clientMode;
+    }
+
+    /**
+     * If enabled and an Exchange failed processing on the consumer side the response written back to the remote peer
+     * won't contain the exception's class, message or stack trace.
+     */
+    public void setMuteException(boolean muteException) {
+        this.muteException = muteException;
+    }
+
+    public boolean isMuteException() {
+        return muteException;
     }
 
     // here we just shows the option setting of host, port, protocol

@@ -598,6 +598,40 @@ public interface GrpcEndpointBuilderFactory {
             return this;
         }
         /**
+         * If enabled and an Exchange failed processing on the consumer side the
+         * status description returned to the client won't contain the
+         * exception's message.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: true
+         * Group: consumer
+         * 
+         * @param muteException the value to set
+         * @return the dsl builder
+         */
+        default GrpcEndpointConsumerBuilder muteException(boolean muteException) {
+            doSetProperty("muteException", muteException);
+            return this;
+        }
+        /**
+         * If enabled and an Exchange failed processing on the consumer side the
+         * status description returned to the client won't contain the
+         * exception's message.
+         * 
+         * The option will be converted to a <code>boolean</code> type.
+         * 
+         * Default: true
+         * Group: consumer
+         * 
+         * @param muteException the value to set
+         * @return the dsl builder
+         */
+        default GrpcEndpointConsumerBuilder muteException(String muteException) {
+            doSetProperty("muteException", muteException);
+            return this;
+        }
+        /**
          * Sets the most aggressive keep-alive time in milliseconds that clients
          * are permitted to configure. The server will try to detect clients
          * exceeding this rate and will forcefully close the connection.
