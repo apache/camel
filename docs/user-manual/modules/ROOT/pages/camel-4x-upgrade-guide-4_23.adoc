@@ -160,7 +160,10 @@ To migrate from `MemoryIdempotentRepository`:
 // Before
 IdempotentRepository repo = MemoryIdempotentRepository.memoryIdempotentRepository();
 
-// After
+// After (simple — defaults to in-memory)
+IdempotentRepository repo = new KeyValueIdempotentRepository();
+
+// After (explicit — useful when sharing a store or using a custom KeyValueRepository)
 IdempotentRepository repo = new KeyValueIdempotentRepository(new MemoryKeyValueRepository());
 ----
 
@@ -171,14 +174,17 @@ To migrate from `MemoryAggregationRepository`:
 // Before
 AggregationRepository repo = new MemoryAggregationRepository();
 
-// After
+// After (simple — defaults to in-memory)
+AggregationRepository repo = new KeyValueAggregationRepository();
+
+// After (explicit — useful when sharing a store or using a custom KeyValueRepository)
 AggregationRepository repo = new KeyValueAggregationRepository(new MemoryKeyValueRepository());
 ----
 
 ==== XML DSL
 
-If you define the repository as a bean in XML, replace the single bean with two beans — a
-`MemoryKeyValueRepository` backing store and the appropriate adapter:
+If you define the repository as a bean in XML, a simple one-to-one replacement is sufficient since
+the adapters default to an in-memory backing store:
 
 For idempotent consumers:
 
@@ -188,12 +194,7 @@ For idempotent consumers:
 <bean name="myRepo" type="org.apache.camel.support.processor.idempotent.MemoryIdempotentRepository"/>
 
 <!-- After -->
-<bean name="kvStore" type="org.apache.camel.support.MemoryKeyValueRepository"/>
-<bean name="myRepo" type="org.apache.camel.support.KeyValueIdempotentRepository">
-    <constructors>
-        <constructor value="#kvStore"/>
-    </constructors>
-</bean>
+<bean name="myRepo" type="org.apache.camel.support.KeyValueIdempotentRepository"/>
 ----
 
 For aggregation repositories:
@@ -204,8 +205,15 @@ For aggregation repositories:
 <bean name="myRepo" type="org.apache.camel.processor.aggregate.MemoryAggregationRepository"/>
 
 <!-- After -->
+<bean name="myRepo" type="org.apache.camel.support.KeyValueAggregationRepository"/>
+----
+
+To use a custom `KeyValueRepository` (e.g. a shared store), define the backing store separately:
+
+[source,xml]
+----
 <bean name="kvStore" type="org.apache.camel.support.MemoryKeyValueRepository"/>
-<bean name="myRepo" type="org.apache.camel.support.KeyValueAggregationRepository">
+<bean name="myRepo" type="org.apache.camel.support.KeyValueIdempotentRepository">
     <constructors>
         <constructor value="#kvStore"/>
     </constructors>

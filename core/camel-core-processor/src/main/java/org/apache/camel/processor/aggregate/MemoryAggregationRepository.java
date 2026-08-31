@@ -33,9 +33,8 @@ import org.apache.camel.support.service.ServiceSupport;
  *
  * Supports both optimistic locking and non-optimistic locking modes. Defaults to non-optimistic locking mode.
  *
- * @deprecated since 4.23.0. Use {@link org.apache.camel.support.KeyValueAggregationRepository} wrapping a
- *             {@link org.apache.camel.support.MemoryKeyValueRepository} instead. For example:
- *             {@code new KeyValueAggregationRepository(new MemoryKeyValueRepository())}
+ * @deprecated since 4.23.0. Use {@link org.apache.camel.support.KeyValueAggregationRepository} instead. The no-arg
+ *             constructor defaults to an in-memory store: {@code new KeyValueAggregationRepository()}
  */
 @Deprecated(since = "4.23.0")
 @Metadata(label = "bean",
