@@ -22,6 +22,7 @@ import ai.djl.modality.Input;
 import ai.djl.modality.Output;
 import org.apache.camel.Exchange;
 import org.apache.camel.RuntimeCamelException;
+import org.apache.camel.component.huggingface.HuggingFaceConstants;
 import org.apache.camel.component.huggingface.HuggingFaceEndpoint;
 
 /**
@@ -92,7 +93,7 @@ public class TextToImagePredictor extends AbstractTaskPredictor {
 
     @Override
     protected String getPythonScript() {
-        return loadPythonScript("text_to_image.py", config.getModelId(), config.getDevice());
+        return loadPythonScript("text_to_image.py", config.getModelId(), config.getRevision(), config.getDevice());
     }
 
     @Override
@@ -117,5 +118,6 @@ public class TextToImagePredictor extends AbstractTaskPredictor {
         }
         exchange.getMessage().setBody(imageBytes);
         exchange.getMessage().setHeader("Content-Type", "image/png");
+        exchange.getMessage().setHeader(HuggingFaceConstants.OUTPUT, imageBytes);
     }
 }
