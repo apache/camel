@@ -17,8 +17,10 @@
 package org.apache.camel.component.zookeeper.cluster.integration;
 
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.cluster.CamelClusterEventListener;
 import org.apache.camel.cluster.CamelClusterView;
 import org.apache.camel.component.zookeeper.cluster.ZooKeeperClusterService;
 import org.apache.camel.impl.DefaultCamelContext;
@@ -38,12 +40,14 @@ class ZooKeeperClusterViewLeadershipLostIT {
 
     private static final String NAMESPACE = "my-ns";
     private static final String ROUTE_ID = "clustered-route";
+    private static final int EXPECTED_PUSHED_EVENTS_NUM = 3;
 
     @RegisterExtension
     static ZooKeeperService service = ZooKeeperServiceFactory.createService();
 
     @Test
     void leadershipIsReleasedAndReacquiredAroundAZooKeeperOutage() throws Exception {
+        AtomicInteger numberOfLeadershipChangedPushed = new AtomicInteger();
         GenericContainer<?> zooKeeper = zooKeeperContainer();
 
         try (DefaultCamelContext context = new DefaultCamelContext()) {
@@ -66,14 +70,16 @@ class ZooKeeperClusterViewLeadershipLostIT {
                 }
             });
 
-            context.start();
+            CamelClusterView clusterView = clusterService.getView(NAMESPACE);
+            clusterView.addEventListener((CamelClusterEventListener.Leadership) (
+                    view, leader) -> numberOfLeadershipChangedPushed.incrementAndGet());
 
-            CamelClusterView view = clusterService.getView(NAMESPACE);
+            context.start();
 
             await().atMost(1, TimeUnit.MINUTES)
                     .untilAsserted(() -> {
                         assertEquals(true,
-                                view.getLocalMember().isLeader(),
+                                clusterView.getLocalMember().isLeader(),
                                 "the only node of the cluster must be the leader");
                         assertEquals(true,
                                 context.getRouteController().getRouteStatus(ROUTE_ID).isStarted(),
@@ -86,7 +92,7 @@ class ZooKeeperClusterViewLeadershipLostIT {
                 await().atMost(1, TimeUnit.MINUTES)
                         .untilAsserted(() -> {
                             assertEquals(false,
-                                    view.getLocalMember().isLeader(),
+                                    clusterView.getLocalMember().isLeader(),
                                     "the leadership must be given up once ZooKeeper is no longer reachable");
                             assertEquals(false,
                                     context.getRouteController().getRouteStatus(ROUTE_ID).isStarted(),
@@ -99,12 +105,29 @@ class ZooKeeperClusterViewLeadershipLostIT {
             await().atMost(1, TimeUnit.MINUTES)
                     .untilAsserted(() -> {
                         assertEquals(true,
-                                view.getLocalMember().isLeader(),
+                                clusterView.getLocalMember().isLeader(),
                                 "the node must re-enter the election once ZooKeeper is reachable again");
                         assertEquals(true,
                                 context.getRouteController().getRouteStatus(ROUTE_ID).isStarted(),
                                 "the clustered route must be restarted once the leadership is taken back");
                     });
+            clusterView.stop();
+
+            /*
+            Give some time so the event can be consumed
+            (the correct behavior is that an event shouldn't be pushed)
+            this is just a safeguard so that if an event is pushed it has some time to be consumed
+            */
+            await()
+                    .pollDelay(1, TimeUnit.SECONDS)
+                    .atLeast(1, TimeUnit.SECONDS)
+                    .atMost(2, TimeUnit.SECONDS)
+                    .until(() -> true);
+
+            assertEquals(EXPECTED_PUSHED_EVENTS_NUM,
+                    numberOfLeadershipChangedPushed.get(),
+                    "the pushed Leadership Changed event must be %d otherwise a push happened on stop view"
+                            .formatted(EXPECTED_PUSHED_EVENTS_NUM));
         }
     }
 
