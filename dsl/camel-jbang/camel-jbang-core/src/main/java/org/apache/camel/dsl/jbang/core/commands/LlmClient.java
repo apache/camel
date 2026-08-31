@@ -1226,9 +1226,13 @@ public class LlmClient {
     private String resolveAnthropicUrl() {
         if (isVertexAi()) {
             String vertexModel = resolveVertexModel(model);
+            // The "global" location uses the global host with no region prefix;
+            // regional locations (e.g. us-east5) prefix the host with the region.
+            String host
+                    = "global".equals(vertexRegion) ? "aiplatform.googleapis.com" : vertexRegion + "-aiplatform.googleapis.com";
             return String.format(
-                    "https://%s-aiplatform.googleapis.com/v1/projects/%s/locations/%s/publishers/anthropic/models/%s:rawPredict",
-                    vertexRegion, vertexProjectId, vertexRegion, vertexModel);
+                    "https://%s/v1/projects/%s/locations/%s/publishers/anthropic/models/%s:rawPredict",
+                    host, vertexProjectId, vertexRegion, vertexModel);
         }
         String base = url != null ? url : DEFAULT_ANTHROPIC_URL;
         if (base.endsWith("/")) {
