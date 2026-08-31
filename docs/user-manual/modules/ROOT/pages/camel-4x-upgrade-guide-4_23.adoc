@@ -250,12 +250,10 @@ unchanged and still does not permit any of the ranges above.
 
 === camel-ai-observability (GenAI observability)
 
-LangChain4j and OpenAI producers now emit GenAI observability data (OpenTelemetry span attributes and
+LangChain4j, OpenAI, and Spring AI chat (`spring-ai-chat`) producers now emit GenAI observability data (OpenTelemetry span attributes and
 Micrometer metrics) when `camel-opentelemetry2` and/or `camel-micrometer` is on the classpath.
 Disable globally with `camel.aiObservability.enabled=false` (default is enabled). Camel Main also
 exposes the same setting via `main.configure().aiObservability().withEnabled(false)`.
-
-Spring AI chat (`spring-ai-chat`) producers emit the same GenAI spans and metrics in Phase 3.
 
 When a non-NOOP `ObservationRegistry` is bound in the Camel registry, GenAI client calls are recorded
 as Micrometer Observations (`gen_ai.client.operation`). Camel then skips the `camel-telemetry` CLIENT
