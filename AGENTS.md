@@ -353,6 +353,17 @@ When writing or modifying `.adoc` documentation:
   version-aware reference.
 - **When reviewing doc PRs**, check that all `xref:` links and anchors resolve correctly, especially
   cross-component references that may span versions.
+- **Avoid explicit `[[anchor]]` blocks before a heading.** AsciiDoc already auto-generates an id from
+  the heading text (prefixed with `_`, e.g. `=== Structured error exchange properties` becomes
+  `#_structured_error_exchange_properties`). An explicit `[[structured_error_exchange_properties]]`
+  anchor sets the id *without* that prefix, so it silently diverges from the id every other `xref:`
+  in the codebase expects and breaks the website link checker. Only add an explicit anchor when a
+  stable id is needed that must survive a heading rename — never as a matter of habit.
+- **Component doc changes require regenerating the catalog.** Editing a component's
+  `src/main/docs/*.adoc` also requires regenerating and committing the mirrored copy under
+  `catalog/camel-catalog/src/generated/resources/org/apache/camel/catalog/docs/`. CI's
+  "uncommitted changes" check fails otherwise — this applies even to small doc-only edits like
+  removing an anchor, not just code-driven metadata changes.
 
 ## Security Model
 
