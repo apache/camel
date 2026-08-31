@@ -26,7 +26,7 @@ import org.apache.camel.component.salesforce.api.utils.JsonUtils;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
 
-import static org.apache.camel.maven.AbstractSalesforceMojoTest.setup;
+import static org.apache.camel.maven.AbstractSalesforceMojoTest.setupUsernamePassword;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class SchemaMojoManualIT {
@@ -37,7 +37,7 @@ public class SchemaMojoManualIT {
     @Test
     public void testExecuteJsonSchema() throws Exception {
         final SchemaMojo mojo = new SchemaMojo();
-        setup(mojo);
+        setupUsernamePassword(mojo);
 
         mojo.includes = new String[] { "Account" };
         mojo.outputDirectory = temp.toFile();

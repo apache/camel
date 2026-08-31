@@ -24,6 +24,7 @@ import java.security.KeyStore;
 import java.util.Map;
 import java.util.Set;
 
+import org.apache.camel.component.salesforce.AuthenticationType;
 import org.apache.camel.component.salesforce.SalesforceEndpointConfig;
 import org.apache.camel.component.salesforce.SalesforceLoginConfig;
 import org.apache.camel.component.salesforce.codegen.AbstractSalesforceExecution;
@@ -142,10 +143,17 @@ public abstract class AbstractSalesforceMojo extends AbstractMojo {
     final SSLContextParameters sslContextParameters = new SSLContextParameters();
 
     /**
-     * Salesforce username.
+     * Salesforce username. Required for USERNAME_PASSWORD and JWT authentication types.
      */
-    @Parameter(property = "camelSalesforce.userName", required = true)
+    @Parameter(property = "camelSalesforce.userName")
     String userName;
+
+    /**
+     * Salesforce authentication type. If not specified, auto-detected from provided credentials. Supported values:
+     * USERNAME_PASSWORD, JWT, CLIENT_CREDENTIALS.
+     */
+    @Parameter(property = "camelSalesforce.authenticationType")
+    AuthenticationType authenticationType;
 
     /**
      * Salesforce JWT Audience.
@@ -213,6 +221,7 @@ public abstract class AbstractSalesforceMojo extends AbstractMojo {
         execution.setLoginUrl(loginUrl);
         execution.setUserName(userName);
         execution.setPassword(password);
+        execution.setAuthenticationType(authenticationType);
         execution.setVersion(version);
         execution.setSslContextParameters(sslContextParameters);
         execution.setJwtAudience(jwtAudience);
@@ -225,15 +234,7 @@ public abstract class AbstractSalesforceMojo extends AbstractMojo {
                     "Either property: clientSecret or property: keystoreResource must be provided.");
         } else if (clientSecret != null && keystoreResource != null) {
             throw new MojoExecutionException(
-                    "Property: clientSecret or property: keystoreResource must be provided.");
-        }
-
-        if (clientSecret != null) {
-            if (password == null) {
-                throw new MojoExecutionException(
-                        // NOTE: a text error message to clarify the problem
-                        "Property 'password' must be provided when property 'clientSecret' was provided."); // NOSONAR
-            }
+                    "Only one of clientSecret or keystoreResource may be provided, not both.");
         }
 
         if (keystoreResource != null) {
@@ -242,6 +243,15 @@ public abstract class AbstractSalesforceMojo extends AbstractMojo {
                         // NOTE: a text error message to clarify the problem
                         "Property 'keystorePassword' must be provided when property 'keystoreResource' was provided."); // NOSONAR
             }
+        }
+
+        if (authenticationType == null && clientSecret != null && userName != null && password == null
+                && keystoreResource == null) {
+            throw new MojoExecutionException(
+                    "Ambiguous authentication configuration: 'userName' and 'clientSecret' are set but 'password' is missing. "
+                                             + "For Username-Password authentication, provide the 'password' property. "
+                                             + "For Client Credentials authentication, remove the 'userName' property "
+                                             + "or set 'authenticationType' to CLIENT_CREDENTIALS explicitly.");
         }
     }
 
