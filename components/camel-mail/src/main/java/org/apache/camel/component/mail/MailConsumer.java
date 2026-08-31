@@ -195,7 +195,7 @@ public class MailConsumer extends ScheduledBatchPollingConsumer {
                 } catch (Exception e) {
                     // some mail servers will lock the folder so we ignore in this case (CAMEL-1263)
                     LOG.debug("Could not close mailbox folder: {}. This exception is ignored.",
-                            currentFolder != null ? currentFolder.getName() : "null", e);
+                            currentFolder.getName(), e);
                 }
             }
         }

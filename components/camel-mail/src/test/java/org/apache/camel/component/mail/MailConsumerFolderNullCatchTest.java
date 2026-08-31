@@ -17,6 +17,7 @@
 package org.apache.camel.component.mail;
 
 import java.lang.reflect.Field;
+import java.util.Properties;
 
 import jakarta.mail.Folder;
 import jakarta.mail.MessagingException;
@@ -26,7 +27,6 @@ import jakarta.mail.Store;
 import org.apache.camel.CamelContext;
 import org.apache.camel.ExtendedCamelContext;
 import org.apache.camel.Processor;
-import org.apache.camel.component.mail.Mailbox.Protocol;
 import org.apache.camel.spi.ExchangeFactory;
 import org.junit.jupiter.api.Test;
 
@@ -38,11 +38,17 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 /**
- * Verifies that {@link MailConsumer#poll()} handles a null {@code currentFolder} local variable safely in the
- * {@code finally} catch block. Before the fix, the block used the instance field directly without a null guard; the fix
- * uses a local variable captured before the try block, providing consistency throughout the poll. CAMEL-24567.
+ * Verifies that {@link MailConsumer#poll()} does not throw {@link NullPointerException} in the {@code finally} catch
+ * block when {@code folder.close()} throws and the {@code folder} instance field is concurrently set to null.
+ *
+ * <p>
+ * The fix captures {@code folder} into a {@code final} local variable ({@code currentFolder}) before the try block so
+ * that all accesses within the block — including the catch log — use the same snapshot. CAMEL-24567.
  */
 class MailConsumerFolderNullCatchTest {
+
+    private static final String FIELD_FOLDER = "folder";
+    private static final String FIELD_STORE = "store";
 
     @Test
     void testFolderCloseThrowsAndFolderBecomesNullDoesNotNPE() throws Exception {
@@ -51,7 +57,9 @@ class MailConsumerFolderNullCatchTest {
         CamelContext camelContext = mock(CamelContext.class);
         ExtendedCamelContext ecc = mock(ExtendedCamelContext.class);
         ExchangeFactory ef = mock(ExchangeFactory.class);
-        Session session = Session.getInstance(Mailbox.getSessionProperties(Protocol.imap));
+
+        // use plain Session — no GreenMail static initializer needed
+        Session session = Session.getInstance(new Properties());
 
         when(sender.getSession()).thenReturn(session);
         when(camelContext.getCamelContextExtension()).thenReturn(ecc);
@@ -61,30 +69,27 @@ class MailConsumerFolderNullCatchTest {
         MailEndpoint endpoint = new MailEndpoint();
         endpoint.setCamelContext(camelContext);
         MailConfiguration config = new MailConfiguration();
-        config.configureProtocol(Protocol.imap.name());
-        config.setPort(Mailbox.getPort(Protocol.imap));
+        config.configureProtocol("imap");
+        config.setPort(3143); // arbitrary port; no real connection is made
         config.setFolderName("INBOX");
         config.setCloseFolder(true); // ensures the finally close path runs
         endpoint.setConfiguration(config);
 
         MailConsumer consumer = new MailConsumer(endpoint, processor, sender);
 
-        Field folderField = MailConsumer.class.getDeclaredField("folder");
+        Field folderField = MailConsumer.class.getDeclaredField(FIELD_FOLDER);
         folderField.setAccessible(true);
-        Field storeField = MailConsumer.class.getDeclaredField("store");
+        Field storeField = MailConsumer.class.getDeclaredField(FIELD_STORE);
         storeField.setAccessible(true);
 
-        // set up a folder that:
-        // 1. isOpen() returns true — so close() will be called
-        // 2. getMessageCount() returns 0 — poll completes without processing messages
-        // 3. close() throws MessagingException — triggers the catch block
-        //    The test verifies the catch block handles gracefully even when the
-        //    instance field is null (simulating the local-variable capture being null)
+        // folder.isOpen() → true so close() will be attempted
+        // folder.getMessageCount() → 0 so poll completes without processing messages
+        // folder.close() throws MessagingException AND nulls the instance field,
+        //   simulating a concurrent disconnect() that could race with poll()
         Folder folder = mock(Folder.class);
         when(folder.isOpen()).thenReturn(true);
         when(folder.getMessageCount()).thenReturn(0);
         doAnswer(inv -> {
-            // null the instance field to exercise the null-safe name lookup in the catch block
             folderField.set(consumer, null);
             throw new MessagingException("server locked the folder");
         }).when(folder).close(anyBoolean());
@@ -95,8 +100,8 @@ class MailConsumerFolderNullCatchTest {
         folderField.set(consumer, folder);
         storeField.set(consumer, store);
 
-        // must not throw NullPointerException in the catch block — CAMEL-24567
+        // must not throw NullPointerException — CAMEL-24567
         assertDoesNotThrow(() -> consumer.poll(),
-                "poll() must not throw NPE when folder becomes null inside folder.close() catch block");
+                "poll() must not throw NPE when folder is nulled while folder.close() throws");
     }
 }
