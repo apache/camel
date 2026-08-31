@@ -31,6 +31,7 @@ def handle(inputs: Input):
             logging.debug("Initializing pipeline")
             pipe = StableDiffusionPipeline.from_pretrained(
                 '%s',
+                revision='%s',
                 torch_dtype=torch.float32,  # CPU-safe
                 safety_checker=None
             )
