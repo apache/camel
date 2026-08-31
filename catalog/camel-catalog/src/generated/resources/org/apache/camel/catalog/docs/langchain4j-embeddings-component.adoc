@@ -395,7 +395,6 @@ YAML::
 ----
 ====
 
-[[structured_error_exchange_properties]]
 === Structured error exchange properties
 
 When a LangChain4j embeddings call fails, Camel sets structured metadata on the exchange **before** the model exception propagates. This works even when GenAI observability is disabled.

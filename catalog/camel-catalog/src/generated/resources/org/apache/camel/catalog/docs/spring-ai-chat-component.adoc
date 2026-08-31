@@ -1407,7 +1407,6 @@ The component automatically adds Spring AI's `SimpleLoggerAdvisor` to log reques
 logging.level.org.springframework.ai.chat.client.advisor=DEBUG
 ----
 
-[[structured_error_exchange_properties]]
 === Structured error exchange properties
 
 When a Spring AI chat call fails, Camel sets structured metadata on the exchange **before** the Spring AI exception propagates. This works even when GenAI observability is disabled.

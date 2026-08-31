@@ -1178,7 +1178,6 @@ You can also define the `ResponseFormat` at the `ChatModel` level. See the https
 * The same schema file can be shared across `camel-openai` and `camel-langchain4j-agent` components
 ====
 
-[[structured_error_exchange_properties]]
 === Structured error exchange properties
 
 When a LangChain4j agent call fails, Camel sets structured metadata on the exchange **before** the model exception propagates. This works even when GenAI observability is disabled.
