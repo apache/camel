@@ -114,6 +114,48 @@ public interface CxfEndpointBuilderFactory {
             return this;
         }
         /**
+         * If enabled and an Exchange failed processing on the consumer side,
+         * and the exception is not a SOAP fault the service contract declares,
+         * the SOAP fault returned to the caller won't contain the exception's
+         * class or message. Faults the route raises deliberately - a CXF Fault,
+         * an exception annotated {code WebFault}, or a Throwable set as the
+         * message body - are part of the contract and are always returned in
+         * full.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: true
+         * Group: consumer
+         * 
+         * @param muteException the value to set
+         * @return the dsl builder
+         */
+        default CxfEndpointConsumerBuilder muteException(boolean muteException) {
+            doSetProperty("muteException", muteException);
+            return this;
+        }
+        /**
+         * If enabled and an Exchange failed processing on the consumer side,
+         * and the exception is not a SOAP fault the service contract declares,
+         * the SOAP fault returned to the caller won't contain the exception's
+         * class or message. Faults the route raises deliberately - a CXF Fault,
+         * an exception annotated {code WebFault}, or a Throwable set as the
+         * message body - are part of the contract and are always returned in
+         * full.
+         * 
+         * The option will be converted to a <code>boolean</code> type.
+         * 
+         * Default: true
+         * Group: consumer
+         * 
+         * @param muteException the value to set
+         * @return the dsl builder
+         */
+        default CxfEndpointConsumerBuilder muteException(String muteException) {
+            doSetProperty("muteException", muteException);
+            return this;
+        }
+        /**
          * This option enables CXF Logging Feature which writes inbound and
          * outbound SOAP messages to log.
          * 
