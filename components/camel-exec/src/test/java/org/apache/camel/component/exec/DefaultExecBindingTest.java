@@ -126,7 +126,9 @@ class DefaultExecBindingTest extends CamelTestSupport {
             exchange2.getIn().setHeader(ExecBinding.EXEC_COMMAND_EXECUTABLE, "whoami");
             binding.readInput(exchange2, endpoint2);
 
-            binding.readInput(endpoint1.createExchange(), endpoint1);
+            Exchange exchange3 = endpoint1.createExchange();
+            exchange3.getIn().setHeader(ExecBinding.EXEC_COMMAND_EXECUTABLE, "whoami");
+            binding.readInput(exchange3, endpoint1);
 
             assertEquals(2, warnings.size(), "Expected one warning per distinct exec endpoint");
         } finally {

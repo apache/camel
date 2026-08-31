@@ -22,7 +22,7 @@ unless you relax `camel.security.insecureDevPolicy`.
 
 When the flag is `false` (the default), any remaining `CamelExecCommand*`,
 `CamelExecExitValues`, or `CamelExecUseStderrOnEmptyStdout` headers are ignored
-and a WARN is logged once per binding instance. Those headers never overrode the
+and a WARN is logged once per exec endpoint. Those headers never overrode the
 URI without the flag; they were just silent before.
 
 === Components and Language removal
