@@ -42,8 +42,14 @@ public final class GenAiObservabilityImpl {
     private static final String METER_REGISTRY_CLASS = "io.micrometer.core.instrument.MeterRegistry";
     private static final String MICROMETER_SUPPORT_CLASS
             = "org.apache.camel.component.ai.observability.GenAiMicrometerSupport";
+    private static final String OBSERVATION_REGISTRY_CLASS = "io.micrometer.observation.ObservationRegistry";
+    private static final String OBSERVATION_SUPPORT_CLASS
+            = "org.apache.camel.component.ai.observability.GenAiMicrometerObservationSupport";
     private static final GenAiMetricsBackend NO_METRICS_BACKEND = new NoMetricsBackend();
+    private static final GenAiMicrometerObservationBackend NO_OBSERVATION_BACKEND = new NoObservationBackend();
     private static final ConcurrentMap<CamelContext, GenAiMetricsBackend> METRICS_BACKENDS = new ConcurrentHashMap<>();
+    private static final ConcurrentMap<CamelContext, GenAiMicrometerObservationBackend> OBSERVATION_BACKENDS
+            = new ConcurrentHashMap<>();
 
     private GenAiObservabilityImpl() {
     }
@@ -52,12 +58,14 @@ public final class GenAiObservabilityImpl {
      * Starts a GenAI observation for a single LLM client call. Returns a no-op when no backend is available.
      */
     public static GenAiObservation start(Exchange exchange, GenAiObservationContext context) {
-        Tracer tracer = exchange.getContext().hasService(Tracer.class);
-        GenAiMetricsBackend metricsBackend = resolveMetricsBackend(exchange.getContext());
-        if (tracer == null && !metricsBackend.isAvailable()) {
+        CamelContext camelContext = exchange.getContext();
+        GenAiMicrometerObservationBackend observationBackend = resolveObservationBackend(camelContext);
+        Tracer tracer = camelContext.hasService(Tracer.class);
+        GenAiMetricsBackend metricsBackend = resolveMetricsBackend(camelContext);
+        if (!observationBackend.isAvailable() && tracer == null && !metricsBackend.isAvailable()) {
             return NOOP;
         }
-        return new DefaultGenAiObservation(exchange, context, tracer, metricsBackend);
+        return new DefaultGenAiObservation(exchange, context, tracer, metricsBackend, observationBackend);
     }
 
     private static GenAiMetricsBackend resolveMetricsBackend(CamelContext camelContext) {
@@ -78,12 +86,31 @@ public final class GenAiObservabilityImpl {
         }
     }
 
+    private static GenAiMicrometerObservationBackend resolveObservationBackend(CamelContext camelContext) {
+        return OBSERVATION_BACKENDS.computeIfAbsent(camelContext, GenAiObservabilityImpl::createObservationBackend);
+    }
+
+    private static GenAiMicrometerObservationBackend createObservationBackend(CamelContext camelContext) {
+        try {
+            Class.forName(OBSERVATION_REGISTRY_CLASS);
+            Class<?> supportClass = Class.forName(OBSERVATION_SUPPORT_CLASS);
+            Constructor<?> constructor = supportClass.getDeclaredConstructor(CamelContext.class);
+            return (GenAiMicrometerObservationBackend) constructor.newInstance(camelContext);
+        } catch (ReflectiveOperationException | LinkageError e) {
+            if (LOG.isDebugEnabled()) {
+                LOG.debug("Micrometer Observation backend unavailable for GenAI observability", e);
+            }
+            return NO_OBSERVATION_BACKEND;
+        }
+    }
+
     private static final class DefaultGenAiObservation implements GenAiObservation {
 
         private final Exchange exchange;
         private final GenAiObservationContext context;
         private final Tracer tracer;
         private final GenAiMetricsBackend metricsBackend;
+        private final GenAiMicrometerObservationBackend.Handle micrometerObservation;
         private final long startNanos;
         private Span span;
         private GenAiUsage usage;
@@ -92,13 +119,17 @@ public final class GenAiObservabilityImpl {
 
         private DefaultGenAiObservation(
                                         Exchange exchange, GenAiObservationContext context, Tracer tracer,
-                                        GenAiMetricsBackend metricsBackend) {
+                                        GenAiMetricsBackend metricsBackend,
+                                        GenAiMicrometerObservationBackend observationBackend) {
             this.exchange = exchange;
             this.context = context;
             this.tracer = tracer;
             this.metricsBackend = metricsBackend;
             this.startNanos = System.nanoTime();
-            startSpan();
+            this.micrometerObservation = observationBackend.isAvailable() ? observationBackend.start(context) : null;
+            if (this.micrometerObservation == null) {
+                startSpan();
+            }
         }
 
         private void startSpan() {
@@ -130,7 +161,11 @@ public final class GenAiObservabilityImpl {
                 return;
             }
             closed = true;
-            closeSpan();
+            if (micrometerObservation != null) {
+                micrometerObservation.stop(error);
+            } else {
+                closeSpan();
+            }
             recordMetrics();
         }
 
@@ -155,7 +190,11 @@ public final class GenAiObservabilityImpl {
             if (!metricsBackend.isAvailable()) {
                 return;
             }
-            metricsBackend.recordMetrics(context, usage, error, startNanos);
+            if (micrometerObservation != null) {
+                metricsBackend.recordTokenUsage(context, usage, error);
+            } else {
+                metricsBackend.recordMetrics(context, usage, error, startNanos);
+            }
         }
 
         private static void applyContextAttributes(
@@ -213,6 +252,23 @@ public final class GenAiObservabilityImpl {
         @Override
         public void recordMetrics(GenAiObservationContext context, GenAiUsage usage, Throwable error, long startNanos) {
             // noop
+        }
+
+        @Override
+        public void recordTokenUsage(GenAiObservationContext context, GenAiUsage usage, Throwable error) {
+            // noop
+        }
+    }
+
+    private static final class NoObservationBackend implements GenAiMicrometerObservationBackend {
+        @Override
+        public boolean isAvailable() {
+            return false;
+        }
+
+        @Override
+        public Handle start(GenAiObservationContext context) {
+            return null;
         }
     }
 }

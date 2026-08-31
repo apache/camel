@@ -211,6 +211,16 @@ Applications using either removed option must migrate their Tika configuration; 
 https://tika.apache.org/docs/4.0.x/migration-to-4x/migrating-to-4x.html[Tika 4 migration guide] for
 the configuration and metadata-key changes.
 
+=== camel-main / camel-platform-http-main
+
+When `camel.server.staticSourceDir` is configured, static files from the file system are now resolved relative to that
+directory instead of first checking the process working directory. The configured directory is authoritative, and a
+path that resolves outside it is rejected. Classpath lookup remains unchanged.
+
+Applications that relied on a file in the process working directory taking precedence over the configured
+`staticSourceDir` should move that file into the configured directory. Applications without a configured
+`staticSourceDir` are unaffected.
+
 === camel-a2a - webhook URL address classification
 
 Push notification webhook URLs are now classified by the address the host resolves to, using the
@@ -240,12 +250,17 @@ unchanged and still does not permit any of the ranges above.
 
 === camel-ai-observability (GenAI observability)
 
-LangChain4j and OpenAI producers now emit GenAI observability data (OpenTelemetry span attributes and
+LangChain4j, OpenAI, and Spring AI chat (`spring-ai-chat`) producers now emit GenAI observability data (OpenTelemetry span attributes and
 Micrometer metrics) when `camel-opentelemetry2` and/or `camel-micrometer` is on the classpath.
 Disable globally with `camel.aiObservability.enabled=false` (default is enabled). Camel Main also
 exposes the same setting via `main.configure().aiObservability().withEnabled(false)`.
 
-Spring AI chat (`spring-ai-chat`) producers emit the same GenAI spans and metrics in Phase 3.
+When a non-NOOP `ObservationRegistry` is bound in the Camel registry, GenAI client calls are recorded
+as Micrometer Observations (`gen_ai.client.operation`). Camel then skips the `camel-telemetry` CLIENT
+span and the direct `gen_ai.client.operation` timer. Traces and the operation timer appear only if
+the registry has tracing and meter handlers respectively. Token usage counters still use
+`MeterRegistry`. Applications without an `ObservationRegistry` bean keep the previous OpenTelemetry
+and MeterRegistry behavior. `camel-micrometer-observability` is not required.
 
 OpenAI streaming chat sets `stream_options.include_usage=true` only when GenAI observability is enabled,
 adding a final chunk with token usage for span/metric recording.
@@ -918,3 +933,21 @@ example:
 
 This is not a functional change for messages without a `DOCTYPE`, and it does not add a document parse:
 `XPathExpression.evaluate(InputSource)` already built a full DOM internally.
+
+=== camel-core, camel-lra
+
+The saga id normally travels in the exchange's internal state, which survives `removeHeaders("*")`.
+`SagaProcessor` also read it from the `Long-Running-Action` message header when that state was absent, so
+that a coordinator started elsewhere could be joined — the LRA protocol carries the id that way.
+
+That fallback applied to every saga service, including the default `InMemorySagaService` where no external
+coordinator exists. The header sits outside the `Camel` namespace consumers filter, and the id is written
+back onto responses, so a message could name a saga and have its exchange joined to it.
+
+`CamelSagaService` gains `isLongRunningActionHeaderSupported()`, defaulting to `false`. The header is
+consulted only when the configured service says it takes part in such a protocol; `LRASagaService`
+overrides it to `true`, so LRA interoperability is unchanged.
+
+A custom `CamelSagaService` that relies on the header to join sagas started by another participant must
+override the new method. Everything else is unaffected: the header is still set on the exchange, and
+routes reading it continue to work.

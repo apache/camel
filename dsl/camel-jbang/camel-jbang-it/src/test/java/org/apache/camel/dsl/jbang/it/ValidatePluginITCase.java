@@ -19,9 +19,15 @@ package org.apache.camel.dsl.jbang.it;
 import java.io.IOException;
 
 import org.apache.camel.dsl.jbang.it.support.JBangTestSupport;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 
 public class ValidatePluginITCase extends JBangTestSupport {
+
+    @AfterEach
+    public void removeValidatePlugin() {
+        execute("plugin delete validate", false, true);
+    }
 
     @Test
     public void testValidateOK() throws IOException {

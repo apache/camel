@@ -24,4 +24,9 @@ interface GenAiMetricsBackend {
     boolean isAvailable();
 
     void recordMetrics(GenAiObservationContext context, GenAiUsage usage, Throwable error, long startNanos);
+
+    /**
+     * Records token usage counters only. Used when Micrometer Observation already records the operation timer.
+     */
+    void recordTokenUsage(GenAiObservationContext context, GenAiUsage usage, Throwable error);
 }

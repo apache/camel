@@ -47,6 +47,8 @@ public class GoogleFirestoreEndpointConfigurer extends PropertyConfigurerSupport
         case "initialDelay": target.setInitialDelay(property(camelContext, long.class, value)); return true;
         case "lazystartproducer":
         case "lazyStartProducer": target.setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
+        case "maxpendingchanges":
+        case "maxPendingChanges": target.getConfiguration().setMaxPendingChanges(property(camelContext, int.class, value)); return true;
         case "operation": target.getConfiguration().setOperation(property(camelContext, org.apache.camel.component.google.firestore.GoogleFirestoreOperations.class, value)); return true;
         case "pollstrategy":
         case "pollStrategy": target.setPollStrategy(property(camelContext, org.apache.camel.spi.PollingConsumerPollStrategy.class, value)); return true;
@@ -109,6 +111,8 @@ public class GoogleFirestoreEndpointConfigurer extends PropertyConfigurerSupport
         case "initialDelay": return long.class;
         case "lazystartproducer":
         case "lazyStartProducer": return boolean.class;
+        case "maxpendingchanges":
+        case "maxPendingChanges": return int.class;
         case "operation": return org.apache.camel.component.google.firestore.GoogleFirestoreOperations.class;
         case "pollstrategy":
         case "pollStrategy": return org.apache.camel.spi.PollingConsumerPollStrategy.class;
@@ -167,6 +171,8 @@ public class GoogleFirestoreEndpointConfigurer extends PropertyConfigurerSupport
         case "initialDelay": return target.getInitialDelay();
         case "lazystartproducer":
         case "lazyStartProducer": return target.isLazyStartProducer();
+        case "maxpendingchanges":
+        case "maxPendingChanges": return target.getConfiguration().getMaxPendingChanges();
         case "operation": return target.getConfiguration().getOperation();
         case "pollstrategy":
         case "pollStrategy": return target.getPollStrategy();

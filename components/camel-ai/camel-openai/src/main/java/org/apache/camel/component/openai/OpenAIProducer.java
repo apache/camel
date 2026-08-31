@@ -58,6 +58,7 @@ import org.apache.camel.CamelExchangeException;
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.apache.camel.WrappedFile;
+import org.apache.camel.component.ai.observability.GenAiErrorSupport;
 import org.apache.camel.component.ai.observability.GenAiObservability;
 import org.apache.camel.component.ai.observability.GenAiObservation;
 import org.apache.camel.component.ai.observability.GenAiObservationContext;
@@ -142,6 +143,7 @@ public class OpenAIProducer extends DefaultAsyncProducer {
             callback.done(true);
             return true;
         } catch (Exception e) {
+            GenAiErrorSupport.apply(exchange, e);
             exchange.setException(e);
             callback.done(true);
             return true;
@@ -154,6 +156,9 @@ public class OpenAIProducer extends DefaultAsyncProducer {
 
         // Resolve parameters from headers or configuration
         String model = resolveParameter(in, OpenAIConstants.MODEL, config.getModel(), String.class);
+        if (model == null) {
+            throw new IllegalArgumentException("Model must be specified via model parameter or CamelOpenAIModel header");
+        }
         Double temperature = resolveParameter(in, OpenAIConstants.TEMPERATURE, config.getTemperature(), Double.class);
         Double topP = resolveParameter(in, OpenAIConstants.TOP_P, config.getTopP(), Double.class);
         Integer maxTokens = resolveParameter(in, OpenAIConstants.MAX_TOKENS, config.getMaxTokens(), Integer.class);
@@ -623,9 +628,17 @@ public class OpenAIProducer extends DefaultAsyncProducer {
                 .build();
         GenAiObservation observation = GenAiObservability.start(exchange, observationContext);
 
-        // NOTE: the stream is going to be closed after the exchange completes.
-        StreamResponse<ChatCompletionChunk> streamResponse = getEndpoint().getClient().chat().completions() // NOSONAR
-                .createStreaming(streamingParams);
+        StreamResponse<ChatCompletionChunk> streamResponse;
+        try {
+            // NOTE: the stream is going to be closed after the exchange completes.
+            streamResponse = getEndpoint().getClient().chat().completions() // NOSONAR
+                    .createStreaming(streamingParams);
+        } catch (RuntimeException e) {
+            GenAiErrorSupport.apply(exchange, e);
+            observation.recordError(e);
+            observation.close();
+            throw e;
+        }
 
         AtomicReference<CompletionUsage> usageRef = new AtomicReference<>();
         AtomicReference<String> responseModelRef = new AtomicReference<>();
@@ -633,17 +646,27 @@ public class OpenAIProducer extends DefaultAsyncProducer {
         Iterator<ChatCompletionChunk> it = new Iterator<>() {
             @Override
             public boolean hasNext() {
-                return delegate.hasNext();
+                try {
+                    return delegate.hasNext();
+                } catch (RuntimeException e) {
+                    GenAiErrorSupport.apply(exchange, e);
+                    throw e;
+                }
             }
 
             @Override
             public ChatCompletionChunk next() {
-                ChatCompletionChunk chunk = delegate.next();
-                chunk.usage().ifPresent(usageRef::set);
-                if (chunk.model() != null && !chunk.model().isBlank()) {
-                    responseModelRef.set(chunk.model());
+                try {
+                    ChatCompletionChunk chunk = delegate.next();
+                    chunk.usage().ifPresent(usageRef::set);
+                    if (chunk.model() != null && !chunk.model().isBlank()) {
+                        responseModelRef.set(chunk.model());
+                    }
+                    return chunk;
+                } catch (RuntimeException e) {
+                    GenAiErrorSupport.apply(exchange, e);
+                    throw e;
                 }
-                return chunk;
             }
         };
 
@@ -668,6 +691,7 @@ public class OpenAIProducer extends DefaultAsyncProducer {
             @Override
             public void onFailure(Exchange e) {
                 if (e.getException() != null) {
+                    GenAiErrorSupport.apply(e, e.getException());
                     observation.recordError(e.getException());
                 }
                 observation.close();
@@ -730,6 +754,7 @@ public class OpenAIProducer extends DefaultAsyncProducer {
                     response.model()));
             return response;
         } catch (RuntimeException e) {
+            GenAiErrorSupport.apply(exchange, e);
             observation.recordError(e);
             throw e;
         } finally {

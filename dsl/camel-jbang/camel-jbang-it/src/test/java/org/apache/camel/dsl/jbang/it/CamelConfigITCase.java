@@ -17,9 +17,17 @@
 package org.apache.camel.dsl.jbang.it;
 
 import org.apache.camel.dsl.jbang.it.support.JBangTestSupport;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 
 public class CamelConfigITCase extends JBangTestSupport {
+
+    @AfterEach
+    public void resetConfig() {
+        execute("config unset runtime");
+        execute("config unset gav");
+        execute("config unset directory");
+    }
 
     @Test
     public void testCamelSetAndGetConfig() {

@@ -49,6 +49,8 @@ public class OpenAIEndpointConfigurer extends PropertyConfigurerSupport implemen
         case "baseUrl": target.getConfiguration().setBaseUrl(property(camelContext, java.lang.String.class, value)); return true;
         case "builtintools":
         case "builtinTools": target.getConfiguration().setBuiltinTools(property(camelContext, java.lang.String.class, value)); return true;
+        case "connecttimeout":
+        case "connectTimeout": target.getConfiguration().setConnectTimeout(property(camelContext, long.class, value)); return true;
         case "conversationhistoryproperty":
         case "conversationHistoryProperty": target.getConfiguration().setConversationHistoryProperty(property(camelContext, java.lang.String.class, value)); return true;
         case "conversationmemory":
@@ -129,6 +131,8 @@ public class OpenAIEndpointConfigurer extends PropertyConfigurerSupport implemen
         case "parallelToolTimeout": target.getConfiguration().setParallelToolTimeout(property(camelContext, long.class, value)); return true;
         case "previousresponseid":
         case "previousResponseId": target.getConfiguration().setPreviousResponseId(property(camelContext, java.lang.String.class, value)); return true;
+        case "readtimeout":
+        case "readTimeout": target.getConfiguration().setReadTimeout(property(camelContext, long.class, value)); return true;
         case "requesttimeout":
         case "requestTimeout": target.getConfiguration().setRequestTimeout(property(camelContext, long.class, value)); return true;
         case "speechinstructions":
@@ -180,6 +184,8 @@ public class OpenAIEndpointConfigurer extends PropertyConfigurerSupport implemen
         case "topP": target.getConfiguration().setTopP(property(camelContext, java.lang.Double.class, value)); return true;
         case "usermessage":
         case "userMessage": target.getConfiguration().setUserMessage(property(camelContext, java.lang.String.class, value)); return true;
+        case "writetimeout":
+        case "writeTimeout": target.getConfiguration().setWriteTimeout(property(camelContext, long.class, value)); return true;
         default: return false;
         }
     }
@@ -213,6 +219,8 @@ public class OpenAIEndpointConfigurer extends PropertyConfigurerSupport implemen
         case "baseUrl": return java.lang.String.class;
         case "builtintools":
         case "builtinTools": return java.lang.String.class;
+        case "connecttimeout":
+        case "connectTimeout": return long.class;
         case "conversationhistoryproperty":
         case "conversationHistoryProperty": return java.lang.String.class;
         case "conversationmemory":
@@ -293,6 +301,8 @@ public class OpenAIEndpointConfigurer extends PropertyConfigurerSupport implemen
         case "parallelToolTimeout": return long.class;
         case "previousresponseid":
         case "previousResponseId": return java.lang.String.class;
+        case "readtimeout":
+        case "readTimeout": return long.class;
         case "requesttimeout":
         case "requestTimeout": return long.class;
         case "speechinstructions":
@@ -344,6 +354,8 @@ public class OpenAIEndpointConfigurer extends PropertyConfigurerSupport implemen
         case "topP": return java.lang.Double.class;
         case "usermessage":
         case "userMessage": return java.lang.String.class;
+        case "writetimeout":
+        case "writeTimeout": return long.class;
         default: return null;
         }
     }
@@ -378,6 +390,8 @@ public class OpenAIEndpointConfigurer extends PropertyConfigurerSupport implemen
         case "baseUrl": return target.getConfiguration().getBaseUrl();
         case "builtintools":
         case "builtinTools": return target.getConfiguration().getBuiltinTools();
+        case "connecttimeout":
+        case "connectTimeout": return target.getConfiguration().getConnectTimeout();
         case "conversationhistoryproperty":
         case "conversationHistoryProperty": return target.getConfiguration().getConversationHistoryProperty();
         case "conversationmemory":
@@ -458,6 +472,8 @@ public class OpenAIEndpointConfigurer extends PropertyConfigurerSupport implemen
         case "parallelToolTimeout": return target.getConfiguration().getParallelToolTimeout();
         case "previousresponseid":
         case "previousResponseId": return target.getConfiguration().getPreviousResponseId();
+        case "readtimeout":
+        case "readTimeout": return target.getConfiguration().getReadTimeout();
         case "requesttimeout":
         case "requestTimeout": return target.getConfiguration().getRequestTimeout();
         case "speechinstructions":
@@ -509,6 +525,8 @@ public class OpenAIEndpointConfigurer extends PropertyConfigurerSupport implemen
         case "topP": return target.getConfiguration().getTopP();
         case "usermessage":
         case "userMessage": return target.getConfiguration().getUserMessage();
+        case "writetimeout":
+        case "writeTimeout": return target.getConfiguration().getWriteTimeout();
         default: return null;
         }
     }
