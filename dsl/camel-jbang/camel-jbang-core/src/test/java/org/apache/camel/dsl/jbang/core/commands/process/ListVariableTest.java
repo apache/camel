@@ -116,8 +116,13 @@ class ListVariableTest extends ProcessCommandTestSupport {
     private static JsonObject variablesObj(JsonObject... entries) {
         JsonArray arr = new JsonArray();
         Collections.addAll(arr, entries);
+        JsonObject repo = new JsonObject();
+        repo.put("id", "global");
+        repo.put("variables", arr);
+        JsonArray repositories = new JsonArray();
+        repositories.add(repo);
         JsonObject vars = new JsonObject();
-        vars.put("global", arr);
+        vars.put("repositories", repositories);
         return vars;
     }
 

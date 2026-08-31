@@ -505,6 +505,7 @@ public final class JsonMapper {
                 model.addOption(option);
             }
         }
+        model.setResponseSchema((JsonObject) obj.get("response"));
         return model;
     }
 
@@ -524,6 +525,9 @@ public final class JsonMapper {
         wrapper.put("console", obj);
         if (!model.getOptions().isEmpty()) {
             wrapper.put("options", asJsonObject(model.getOptions()));
+        }
+        if (model.getResponseSchema() != null) {
+            wrapper.put("response", model.getResponseSchema());
         }
         return wrapper;
     }

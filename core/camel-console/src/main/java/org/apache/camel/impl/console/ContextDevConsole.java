@@ -16,8 +16,9 @@
  */
 package org.apache.camel.impl.console;
 
-import java.util.Collections;
+import java.util.Arrays;
 import java.util.Date;
+import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
@@ -26,6 +27,7 @@ import org.apache.camel.ContextEvents;
 import org.apache.camel.api.management.ManagedCamelContext;
 import org.apache.camel.api.management.mbean.ManagedCamelContextMBean;
 import org.apache.camel.clock.Clock;
+import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.ReloadStrategy;
 import org.apache.camel.spi.ResourceReloadStrategy;
 import org.apache.camel.spi.annotations.DevConsole;
@@ -33,11 +35,63 @@ import org.apache.camel.support.CamelContextHelper;
 import org.apache.camel.support.ExceptionHelper;
 import org.apache.camel.support.console.AbstractDevConsole;
 import org.apache.camel.util.TimeUtils;
-import org.apache.camel.util.json.JsonArray;
-import org.apache.camel.util.json.JsonObject;
+import org.apache.camel.util.json.JsonRecordSupport;
 
 @DevConsole(name = "context", displayName = "CamelContext", description = "Overall information about the CamelContext")
 public class ContextDevConsole extends AbstractDevConsole {
+
+    public record LastError(
+            @Metadata(description = "The error message") String message,
+            @Metadata(description = "The error stack trace, one entry per line") List<String> stackTrace) {
+    }
+
+    public record Reload(
+            @Metadata(description = "Number of successful reloads") int reloaded,
+            @Metadata(description = "Number of failed reloads") int failed,
+            @Metadata(description = "The last reload error (only present when a reload has failed)") LastError lastError) {
+    }
+
+    public record Statistics(
+            @Metadata(description = "Total number of routes") int routesTotal,
+            @Metadata(description = "Number of started routes") int routesStarted,
+            @Metadata(description = "1 minute load average (only present when available)") String load01,
+            @Metadata(description = "5 minute load average (only present when available)") String load05,
+            @Metadata(description = "15 minute load average (only present when available)") String load15,
+            @Metadata(description = "Messages per second throughput (only present when available)") String exchangesThroughput,
+            @Metadata(description = "Epoch time in milliseconds since the context has been idle") long idleSince,
+            @Metadata(description = "Total number of exchanges") long exchangesTotal,
+            @Metadata(description = "Number of failed exchanges") long exchangesFailed,
+            @Metadata(description = "Number of inflight exchanges") long exchangesInflight,
+            @Metadata(description = "Total number of remote exchanges") long remoteExchangesTotal,
+            @Metadata(description = "Number of failed remote exchanges") long remoteExchangesFailed,
+            @Metadata(description = "Number of inflight remote exchanges") long remoteExchangesInflight,
+            @Metadata(description = "Mean processing time in milliseconds") long meanProcessingTime,
+            @Metadata(description = "Max processing time in milliseconds") long maxProcessingTime,
+            @Metadata(description = "Min processing time in milliseconds") long minProcessingTime,
+            @Metadata(description = "50th percentile processing time in milliseconds (only present when available)") Long p50ProcessingTime,
+            @Metadata(description = "95th percentile processing time in milliseconds (only present when available)") Long p95ProcessingTime,
+            @Metadata(description = "99th percentile processing time in milliseconds (only present when available)") Long p99ProcessingTime,
+            @Metadata(description = "Processing time in milliseconds of the last exchange (only present once an exchange has completed)") Long lastProcessingTime,
+            @Metadata(description = "Difference in processing time in milliseconds since the previous exchange (only present once an exchange has completed)") Long deltaProcessingTime,
+            @Metadata(description = "Epoch time in milliseconds the last exchange was created (only present once an exchange has been created)") Long lastCreatedExchangeTimestamp,
+            @Metadata(description = "Epoch time in milliseconds the last exchange completed (only present once an exchange has completed)") Long lastCompletedExchangeTimestamp,
+            @Metadata(description = "Epoch time in milliseconds the last exchange failure was handled (only present once one has occurred)") Long lastFailureHandledExchangeTimestamp,
+            @Metadata(description = "Epoch time in milliseconds the last exchange failed (only present once one has occurred)") Long lastFailedExchangeTimestamp,
+            @Metadata(description = "Reload statistics") Reload reload) {
+    }
+
+    public record Response(
+            @Metadata(description = "The CamelContext name") String name,
+            @Metadata(description = "The CamelContext description (only present when configured)") String description,
+            @Metadata(description = "The active profile (only present when configured)") String profile,
+            @Metadata(description = "The Camel version") String version,
+            @Metadata(description = "The CamelContext state") String state,
+            @Metadata(description = "The CamelContext lifecycle phase") int phase,
+            @Metadata(description = "Epoch time in milliseconds the CamelContext was started (only present once started)") Long startTimestamp,
+            @Metadata(description = "Uptime in milliseconds") long uptime,
+            @Metadata(description = "Whether dev mode (live reload) is active") boolean devMode,
+            @Metadata(description = "Runtime statistics (only present when management is enabled)") Statistics statistics) {
+    }
 
     public ContextDevConsole() {
         super("camel", "context", "CamelContext", "Overall information about the CamelContext");
@@ -134,115 +188,91 @@ public class ContextDevConsole extends AbstractDevConsole {
         return sb.toString();
     }
 
-    protected JsonObject doCallJson(Map<String, Object> options) {
-        JsonObject root = new JsonObject();
-        root.put("name", getCamelContext().getName());
-        if (getCamelContext().getDescription() != null) {
-            root.put("description", getCamelContext().getDescription());
-        }
-        if (getCamelContext().getCamelContextExtension().getProfile() != null) {
-            root.put("profile", getCamelContext().getCamelContextExtension().getProfile());
-        }
-        root.put("version", getCamelContext().getVersion());
-        root.put("state", getCamelContext().getStatus().name());
-        root.put("phase", getCamelContext().getCamelContextExtension().getStatusPhase());
+    protected Map<String, Object> doCallJson(Map<String, Object> options) {
+        String description = getCamelContext().getDescription();
+        String profile = getCamelContext().getCamelContextExtension().getProfile();
         long uptimeMillis = getCamelContext().getUptime().toMillis();
         Clock startClock = getCamelContext().getClock().get(ContextEvents.START);
-        if (startClock != null) {
-            root.put("startTimestamp", startClock.getCreated());
-        }
-        root.put("uptime", uptimeMillis);
-        root.put("devMode", getCamelContext().hasService(ResourceReloadStrategy.class) != null);
+        Long startTimestamp = startClock != null ? startClock.getCreated() : null;
+        int phase = getCamelContext().getCamelContextExtension().getStatusPhase();
+        boolean devMode = getCamelContext().hasService(ResourceReloadStrategy.class) != null;
 
+        Statistics stats = null;
         ManagedCamelContext mcc = getCamelContext().getCamelContextExtension().getContextPlugin(ManagedCamelContext.class);
         if (mcc != null) {
             ManagedCamelContextMBean mb = mcc.getManagedCamelContext();
             if (mb != null) {
-                JsonObject stats = new JsonObject();
-
-                int total = mb.getTotalRoutes();
-                int started = mb.getStartedRoutes();
-                stats.put("routesTotal", total);
-                stats.put("routesStarted", started);
-
-                String load1 = getLoad1(mb);
-                String load5 = getLoad5(mb);
-                String load15 = getLoad15(mb);
-                if (!load1.isEmpty() || !load5.isEmpty() || !load15.isEmpty()) {
-                    stats.put("load01", load1);
-                    stats.put("load05", load5);
-                    stats.put("load15", load15);
-                }
-                String thp = getThroughput(mb);
-                if (!thp.isEmpty()) {
-                    stats.put("exchangesThroughput", thp);
-                }
-                stats.put("idleSince", mb.getIdleSince());
-                stats.put("exchangesTotal", mb.getExchangesTotal());
-                stats.put("exchangesFailed", mb.getExchangesFailed());
-                stats.put("exchangesInflight", mb.getExchangesInflight());
-                stats.put("remoteExchangesTotal", mb.getRemoteExchangesTotal());
-                stats.put("remoteExchangesFailed", mb.getRemoteExchangesFailed());
-                stats.put("remoteExchangesInflight", mb.getRemoteExchangesInflight());
-                stats.put("meanProcessingTime", mb.getMeanProcessingTime());
-                stats.put("maxProcessingTime", mb.getMaxProcessingTime());
-                stats.put("minProcessingTime", mb.getMinProcessingTime());
-                if (mb.getProcessingTimeP50() >= 0) {
-                    stats.put("p50ProcessingTime", mb.getProcessingTimeP50());
-                    stats.put("p95ProcessingTime", mb.getProcessingTimeP95());
-                    stats.put("p99ProcessingTime", mb.getProcessingTimeP99());
-                }
-                if (mb.getExchangesTotal() > 0) {
-                    stats.put("lastProcessingTime", mb.getLastProcessingTime());
-                    stats.put("deltaProcessingTime", mb.getDeltaProcessingTime());
-                }
-                Date last = mb.getLastExchangeCreatedTimestamp();
-                if (last != null) {
-                    stats.put("lastCreatedExchangeTimestamp", last.getTime());
-                }
-                last = mb.getLastExchangeCompletedTimestamp();
-                if (last != null) {
-                    stats.put("lastCompletedExchangeTimestamp", last.getTime());
-                }
-                last = mb.getLastExchangeFailureHandledTimestamp();
-                if (last != null) {
-                    stats.put("lastFailureHandledExchangeTimestamp", last.getTime());
-                }
-                last = mb.getLastExchangeFailureTimestamp();
-                if (last != null) {
-                    stats.put("lastFailedExchangeTimestamp", last.getTime());
-                }
-                // reload stats
-                int reloaded = 0;
-                int reloadedFailed = 0;
-                Exception reloadCause = null;
-                Set<ReloadStrategy> rs = getCamelContext().hasServices(ReloadStrategy.class);
-                for (ReloadStrategy r : rs) {
-                    reloaded += r.getReloadCounter();
-                    reloadedFailed += r.getFailedCounter();
-                    if (reloadCause == null) {
-                        reloadCause = r.getLastError();
-                    }
-                }
-                JsonObject ro = new JsonObject();
-                ro.put("reloaded", reloaded);
-                ro.put("failed", reloadedFailed);
-                if (reloadCause != null) {
-                    JsonObject eo = new JsonObject();
-                    eo.put("message", reloadCause.getMessage());
-                    JsonArray arr2 = new JsonArray();
-                    final String trace = ExceptionHelper.stackTraceToString(reloadCause);
-                    eo.put("stackTrace", arr2);
-                    Collections.addAll(arr2, trace.split("\n"));
-                    ro.put("lastError", eo);
-                }
-                stats.put("reload", ro);
-
-                root.put("statistics", stats);
+                stats = buildStatistics(mb);
             }
         }
 
-        return root;
+        Response response = new Response(
+                getCamelContext().getName(), description, profile, getCamelContext().getVersion(),
+                getCamelContext().getStatus().name(), phase, startTimestamp, uptimeMillis, devMode, stats);
+        return JsonRecordSupport.toJsonObject(response);
+    }
+
+    private Statistics buildStatistics(ManagedCamelContextMBean mb) {
+        String load1 = getLoad1(mb);
+        String load5 = getLoad5(mb);
+        String load15 = getLoad15(mb);
+        boolean hasLoad = !load1.isEmpty() || !load5.isEmpty() || !load15.isEmpty();
+
+        String thp = getThroughput(mb);
+
+        Long p50 = null;
+        Long p95 = null;
+        Long p99 = null;
+        if (mb.getProcessingTimeP50() >= 0) {
+            p50 = mb.getProcessingTimeP50();
+            p95 = mb.getProcessingTimeP95();
+            p99 = mb.getProcessingTimeP99();
+        }
+
+        Long lastProcessingTime = null;
+        Long deltaProcessingTime = null;
+        if (mb.getExchangesTotal() > 0) {
+            lastProcessingTime = mb.getLastProcessingTime();
+            deltaProcessingTime = mb.getDeltaProcessingTime();
+        }
+
+        Long lastCreated = timestampOf(mb.getLastExchangeCreatedTimestamp());
+        Long lastCompleted = timestampOf(mb.getLastExchangeCompletedTimestamp());
+        Long lastFailureHandled = timestampOf(mb.getLastExchangeFailureHandledTimestamp());
+        Long lastFailed = timestampOf(mb.getLastExchangeFailureTimestamp());
+
+        // reload stats
+        int reloaded = 0;
+        int reloadedFailed = 0;
+        Exception reloadCause = null;
+        Set<ReloadStrategy> rs = getCamelContext().hasServices(ReloadStrategy.class);
+        for (ReloadStrategy r : rs) {
+            reloaded += r.getReloadCounter();
+            reloadedFailed += r.getFailedCounter();
+            if (reloadCause == null) {
+                reloadCause = r.getLastError();
+            }
+        }
+        LastError lastError = null;
+        if (reloadCause != null) {
+            final String trace = ExceptionHelper.stackTraceToString(reloadCause);
+            lastError = new LastError(reloadCause.getMessage(), Arrays.asList(trace.split("\n")));
+        }
+        Reload reload = new Reload(reloaded, reloadedFailed, lastError);
+
+        return new Statistics(
+                mb.getTotalRoutes(), mb.getStartedRoutes(),
+                hasLoad ? load1 : null, hasLoad ? load5 : null, hasLoad ? load15 : null,
+                thp.isEmpty() ? null : thp,
+                mb.getIdleSince(), mb.getExchangesTotal(), mb.getExchangesFailed(), mb.getExchangesInflight(),
+                mb.getRemoteExchangesTotal(), mb.getRemoteExchangesFailed(), mb.getRemoteExchangesInflight(),
+                mb.getMeanProcessingTime(), mb.getMaxProcessingTime(), mb.getMinProcessingTime(),
+                p50, p95, p99, lastProcessingTime, deltaProcessingTime,
+                lastCreated, lastCompleted, lastFailureHandled, lastFailed, reload);
+    }
+
+    private static Long timestampOf(Date date) {
+        return date != null ? date.getTime() : null;
     }
 
     private String getLoad1(ManagedCamelContextMBean mb) {

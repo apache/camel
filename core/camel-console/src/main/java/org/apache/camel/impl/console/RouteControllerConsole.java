@@ -16,8 +16,10 @@
  */
 package org.apache.camel.impl.console;
 
-import java.util.Collections;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Comparator;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
@@ -32,8 +34,7 @@ import org.apache.camel.support.console.AbstractDevConsole;
 import org.apache.camel.util.TimeUtils;
 import org.apache.camel.util.URISupport;
 import org.apache.camel.util.backoff.BackOffTimer;
-import org.apache.camel.util.json.JsonArray;
-import org.apache.camel.util.json.JsonObject;
+import org.apache.camel.util.json.JsonRecordSupport;
 import org.apache.camel.util.json.Jsoner;
 
 @DevConsole(name = "route-controller", description = "Route controller information")
@@ -45,6 +46,38 @@ public class RouteControllerConsole extends AbstractDevConsole {
     @Metadata(label = "query", description = "Whether to include error details", javaType = "java.lang.Boolean",
               defaultValue = "true")
     public static final String ERROR = "error";
+
+    public record RouteEntry(
+            @Metadata(description = "The route ID") String routeId,
+            @Metadata(description = "The route status") String status,
+            @Metadata(description = "The route endpoint URI (sanitized)") String uri,
+            @Metadata(description = "Number of restart attempts (supervising controller only)") Long attempts,
+            @Metadata(description = "Epoch time in milliseconds of the last restart attempt (supervising controller only)") Long lastAttempt,
+            @Metadata(description = "Epoch time in milliseconds of the next restart attempt (supervising controller only)") Long nextAttempt,
+            @Metadata(description = "Elapsed time in milliseconds of the current restart attempt (supervising controller only)") Long elapsed,
+            @Metadata(description = "The supervising status (supervising controller only)") String supervising,
+            @Metadata(description = "The restart error message (only present when the route is failing)") String error,
+            @Metadata(description = "The restart error stack trace, one entry per line (only present when the route is failing and stack traces are requested)") List<String> stackTrace) {
+    }
+
+    public record Response(
+            @Metadata(description = "The route controller implementation: SupervisingRouteController or DefaultRouteController") String controller,
+            @Metadata(description = "Whether routes are still starting (supervising controller only)") Boolean startingRoutes,
+            @Metadata(description = "Whether any route is unhealthy (supervising controller only)") Boolean unhealthyRoutes,
+            @Metadata(description = "Total number of routes") int totalRoutes,
+            @Metadata(description = "Number of started routes (supervising controller only)") Long startedRoutes,
+            @Metadata(description = "Number of restarting routes (supervising controller only)") Integer restartingRoutes,
+            @Metadata(description = "Number of exhausted routes (supervising controller only)") Integer exhaustedRoutes,
+            @Metadata(description = "Initial delay in milliseconds before restarting (supervising controller only)") Long initialDelay,
+            @Metadata(description = "Backoff delay in milliseconds (supervising controller only)") Long backoffDelay,
+            @Metadata(description = "Maximum backoff delay in milliseconds (supervising controller only)") Long backoffMaxDelay,
+            @Metadata(description = "Maximum elapsed time in milliseconds before giving up (supervising controller only)") Long backoffMaxElapsedTime,
+            @Metadata(description = "Maximum number of restart attempts (supervising controller only)") Long backoffMaxAttempts,
+            @Metadata(description = "The size of the restart thread pool (supervising controller only)") Integer threadPoolSize,
+            @Metadata(description = "Whether a restarting route is considered unhealthy (supervising controller only)") Boolean unhealthyOnRestarting,
+            @Metadata(description = "Whether an exhausted route is considered unhealthy (supervising controller only)") Boolean unhealthyOnExhausted,
+            @Metadata(description = "The routes") List<RouteEntry> routes) {
+    }
 
     public RouteControllerConsole() {
         super("camel", "route-controller", "Route Controller", "Route controller information");
@@ -158,14 +191,12 @@ public class RouteControllerConsole extends AbstractDevConsole {
     }
 
     @Override
-    protected JsonObject doCallJson(Map<String, Object> options) {
+    protected Map<String, Object> doCallJson(Map<String, Object> options) {
         boolean includeError = optionBoolean(options, ERROR, true);
         boolean includeStacktrace = optionBoolean(options, STACKTRACE, true);
 
-        JsonObject root = new JsonObject();
-        final JsonArray list = new JsonArray();
-
         RouteController rc = getCamelContext().getRouteController();
+        Response response;
         if (rc instanceof SupervisingRouteController src) {
             Set<Route> routes = new TreeSet<>(Comparator.comparing(Route::getId));
             routes.addAll(rc.getControlledRoutes());
@@ -174,64 +205,44 @@ public class RouteControllerConsole extends AbstractDevConsole {
             long started = routes.stream().filter(r -> src.getRouteStatus(r.getRouteId()).isStarted())
                     .count();
 
-            root.put("controller", "SupervisingRouteController");
-            root.put("startingRoutes", src.isStartingRoutes());
-            root.put("unhealthyRoutes", src.hasUnhealthyRoutes());
-            root.put("totalRoutes", routes.size());
-            root.put("startedRoutes", started);
-            root.put("restartingRoutes", src.getRestartingRoutes().size());
-            root.put("exhaustedRoutes", src.getExhaustedRoutes().size());
-            root.put("initialDelay", src.getInitialDelay());
-            root.put("backoffDelay", src.getBackOffDelay());
-            root.put("backoffMaxDelay", src.getBackOffMaxDelay());
-            root.put("backoffMaxElapsedTime", src.getBackOffMaxElapsedTime());
-            root.put("backoffMaxAttempts", src.getBackOffMaxAttempts());
-            root.put("threadPoolSize", src.getThreadPoolSize());
-            root.put("unhealthyOnRestarting", src.isUnhealthyOnRestarting());
-            root.put("unhealthyOnExhausted", src.isUnhealthyOnExhausted());
-            root.put("routes", list);
-
+            List<RouteEntry> list = new ArrayList<>();
             for (Route route : routes) {
                 String routeId = route.getRouteId();
                 String status = rc.getRouteStatus(routeId).name();
-                String uri = route.getEndpoint().getEndpointBaseUri();
-                uri = URISupport.sanitizeUri(uri);
+                String uri = URISupport.sanitizeUri(route.getEndpoint().getEndpointBaseUri());
 
                 BackOffTimer.Task state = src.getRestartingRouteState(routeId);
                 String supervising = state != null ? state.getStatus().name() : null;
                 long attempts = state != null ? state.getCurrentAttempts() : 0;
-                long elapsed;
-                long last;
-                long next;
                 // we can only track elapsed/time for active supervised routes
-                elapsed = state != null && BackOffTimer.Task.Status.Active == state.getStatus()
-                        ? state.getCurrentElapsedTime() : 0;
-                last = state != null && BackOffTimer.Task.Status.Active == state.getStatus() ? state.getLastAttemptTime() : 0;
-                next = state != null && BackOffTimer.Task.Status.Active == state.getStatus() ? state.getNextAttemptTime() : 0;
-                JsonObject jo = new JsonObject();
-                list.add(jo);
-                jo.put("routeId", routeId);
-                jo.put("status", status);
-                jo.put("uri", uri);
-                jo.put("attempts", attempts);
-                jo.put("lastAttempt", last);
-                jo.put("nextAttempt", next);
-                jo.put("elapsed", elapsed);
+                boolean active = state != null && BackOffTimer.Task.Status.Active == state.getStatus();
+                long elapsed = active ? state.getCurrentElapsedTime() : 0;
+                long last = active ? state.getLastAttemptTime() : 0;
+                long next = active ? state.getNextAttemptTime() : 0;
+
+                String error = null;
+                List<String> stackTrace = null;
                 if (supervising != null) {
-                    jo.put("supervising", supervising);
                     Throwable cause = src.getRestartException(routeId);
                     if (includeError && cause != null) {
-                        String error = cause.getMessage();
-                        jo.put("error", Jsoner.escape(error));
+                        error = Jsoner.escape(cause.getMessage());
                         if (includeStacktrace) {
-                            JsonArray arr2 = new JsonArray();
                             final String trace = ExceptionHelper.stackTraceToString(cause);
-                            jo.put("stackTrace", arr2);
-                            Collections.addAll(arr2, trace.split("\n"));
+                            stackTrace = Arrays.asList(trace.split("\n"));
                         }
                     }
                 }
+
+                list.add(new RouteEntry(
+                        routeId, status, uri, attempts, last, next, elapsed, supervising, error, stackTrace));
             }
+
+            response = new Response(
+                    "SupervisingRouteController", src.isStartingRoutes(), src.hasUnhealthyRoutes(), routes.size(), started,
+                    src.getRestartingRoutes().size(), src.getExhaustedRoutes().size(), src.getInitialDelay(),
+                    src.getBackOffDelay(), src.getBackOffMaxDelay(), src.getBackOffMaxElapsedTime(),
+                    src.getBackOffMaxAttempts(), src.getThreadPoolSize(), src.isUnhealthyOnRestarting(),
+                    src.isUnhealthyOnExhausted(), list);
         } else {
             Set<Route> routes = new TreeSet<>(Comparator.comparing(Route::getId));
             routes.addAll(rc.getControlledRoutes());
@@ -241,24 +252,20 @@ public class RouteControllerConsole extends AbstractDevConsole {
                 routes.addAll(getCamelContext().getRoutes());
             }
 
-            root.put("controller", "DefaultRouteController");
-            root.put("totalRoutes", routes.size());
-            root.put("routes", list);
+            List<RouteEntry> list = new ArrayList<>();
             for (Route route : routes) {
                 String routeId = route.getRouteId();
                 String status = rc.getRouteStatus(routeId).name();
-                String uri = route.getEndpoint().getEndpointBaseUri();
-                uri = URISupport.sanitizeUri(uri);
-
-                JsonObject jo = new JsonObject();
-                list.add(jo);
-                jo.put("routeId", routeId);
-                jo.put("status", status);
-                jo.put("uri", uri);
+                String uri = URISupport.sanitizeUri(route.getEndpoint().getEndpointBaseUri());
+                list.add(new RouteEntry(routeId, status, uri, null, null, null, null, null, null, null));
             }
+
+            response = new Response(
+                    "DefaultRouteController", null, null, routes.size(), null, null, null, null, null, null, null, null,
+                    null, null, null, list);
         }
 
-        return root;
+        return JsonRecordSupport.toJsonObject(response);
     }
 
 }

@@ -16,6 +16,8 @@
  */
 package org.apache.camel.impl.console;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -24,13 +26,26 @@ import javax.management.ObjectName;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.api.management.mbean.ManagedProducerMBean;
+import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.annotations.DevConsole;
 import org.apache.camel.support.console.AbstractDevConsole;
-import org.apache.camel.util.json.JsonArray;
-import org.apache.camel.util.json.JsonObject;
+import org.apache.camel.util.json.JsonRecordSupport;
 
 @DevConsole(name = "producer", displayName = "Producers", description = "Display information about Camel producers")
 public class ProducerDevConsole extends AbstractDevConsole {
+
+    public record ProducerEntry(
+            @Metadata(description = "The endpoint URI") String uri,
+            @Metadata(description = "The producer state") String state,
+            @Metadata(description = "The producer service type") String clazz,
+            @Metadata(description = "Whether the endpoint is remote") boolean remote,
+            @Metadata(description = "Whether the producer is a singleton") boolean singleton,
+            @Metadata(description = "The route ID (only present when known)") String routeId,
+            @Metadata(description = "The step ID (only present when known)") String stepId) {
+    }
+
+    public record Response(@Metadata(description = "The producers") List<ProducerEntry> producers) {
+    }
 
     public ProducerDevConsole() {
         super("camel", "producer", "Producers", "Display information about Camel producers");
@@ -77,10 +92,8 @@ public class ProducerDevConsole extends AbstractDevConsole {
     }
 
     @Override
-    protected JsonObject doCallJson(Map<String, Object> options) {
-        final JsonObject root = new JsonObject();
-        final JsonArray list = new JsonArray();
-        root.put("producers", list);
+    protected Map<String, Object> doCallJson(Map<String, Object> options) {
+        final List<ProducerEntry> list = new ArrayList<>();
 
         MBeanServer mbeanServer = getCamelContext().getManagementStrategy().getManagementAgent().getMBeanServer();
         if (mbeanServer != null) {
@@ -95,26 +108,18 @@ public class ProducerDevConsole extends AbstractDevConsole {
                 if (set != null && !set.isEmpty()) {
                     for (ObjectName on : set) {
                         ManagedProducerMBean mp = getManagedProducer(getCamelContext(), on);
-                        JsonObject jo = new JsonObject();
-                        jo.put("uri", mp.getEndpointUri());
-                        jo.put("state", mp.getState());
-                        jo.put("class", mp.getServiceType());
-                        jo.put("remote", mp.isRemoteEndpoint());
-                        jo.put("singleton", mp.isSingleton());
-                        if (mp.getRouteId() != null) {
-                            jo.put("routeId", mp.getRouteId());
-                        }
-                        if (mp.getStepId() != null) {
-                            jo.put("stepId", mp.getStepId());
-                        }
-                        list.add(jo);
+                        list.add(new ProducerEntry(
+                                mp.getEndpointUri(), mp.getState(), mp.getServiceType(), mp.isRemoteEndpoint(),
+                                mp.isSingleton(), mp.getRouteId(), mp.getStepId()));
                     }
                 }
             } catch (Exception e) {
                 // ignore
             }
         }
-        return root;
+
+        Response response = new Response(list);
+        return JsonRecordSupport.toJsonObject(response);
     }
 
     private static ManagedProducerMBean getManagedProducer(CamelContext camelContext, ObjectName on) {

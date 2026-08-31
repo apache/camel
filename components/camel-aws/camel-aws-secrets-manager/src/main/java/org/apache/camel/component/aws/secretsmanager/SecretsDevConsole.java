@@ -23,14 +23,14 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.camel.component.aws.secretsmanager.vault.CloudTrailReloadTriggerTask;
+import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.PeriodTaskScheduler;
 import org.apache.camel.spi.PropertiesFunction;
 import org.apache.camel.spi.annotations.DevConsole;
 import org.apache.camel.support.PluginHelper;
 import org.apache.camel.support.console.AbstractDevConsole;
 import org.apache.camel.util.TimeUtils;
-import org.apache.camel.util.json.JsonArray;
-import org.apache.camel.util.json.JsonObject;
+import org.apache.camel.util.json.JsonRecordSupport;
 import org.apache.camel.vault.AwsVaultConfiguration;
 
 @DevConsole(name = "aws-secrets", displayName = "AWS Secrets", description = "AWS Secrets Manager")
@@ -38,6 +38,24 @@ public class SecretsDevConsole extends AbstractDevConsole {
 
     private SecretsManagerPropertiesFunction propertiesFunction;
     private CloudTrailReloadTriggerTask secretsRefreshTask;
+
+    public record SecretEntry(
+            @Metadata(description = "The secret name") String name,
+            @Metadata(description = "Epoch time in milliseconds of the last update (only present when known)") Long timestamp,
+            @Metadata(description = "Relative age of the last update (only present when known)") String age) {
+    }
+
+    public record Response(
+            @Metadata(description = "The AWS region (only present when the AWS Secrets Manager properties function is active)") String region,
+            @Metadata(description = "The login method (only present when the AWS Secrets Manager properties function is active)") String login,
+            @Metadata(description = "Whether secret refresh is enabled (only present when configured)") Boolean refreshEnabled,
+            @Metadata(description = "The refresh period in milliseconds (only present when configured)") Long refreshPeriod,
+            @Metadata(description = "Epoch time in milliseconds of the last check (only present when known)") Long lastCheckTimestamp,
+            @Metadata(description = "Relative age of the last check (only present when known)") String lastCheckAge,
+            @Metadata(description = "Epoch time in milliseconds of the last reload (only present when known)") Long lastReloadTimestamp,
+            @Metadata(description = "Relative age of the last reload (only present when known)") String lastReloadAge,
+            @Metadata(description = "The secrets in use (only present when the AWS Secrets Manager properties function is active)") List<SecretEntry> secrets) {
+    }
 
     public SecretsDevConsole() {
         super("camel", "aws-secrets", "AWS Secrets", "AWS Secrets Manager");
@@ -107,54 +125,64 @@ public class SecretsDevConsole extends AbstractDevConsole {
     }
 
     @Override
-    protected JsonObject doCallJson(Map<String, Object> options) {
-        JsonObject root = new JsonObject();
+    protected Map<String, Object> doCallJson(Map<String, Object> options) {
+        String region = null;
+        String login = null;
+        Boolean refreshEnabled = null;
+        Long refreshPeriod = null;
+        Long lastCheckTimestamp = null;
+        String lastCheckAge = null;
+        Long lastReloadTimestamp = null;
+        String lastReloadAge = null;
+        List<SecretEntry> secrets = null;
+
         if (propertiesFunction != null) {
-            root.put("region", propertiesFunction.getRegion());
+            region = propertiesFunction.getRegion();
             if (propertiesFunction.isDefaultCredentialsProvider()) {
-                root.put("login", "DefaultCredentialsProvider");
+                login = "DefaultCredentialsProvider";
             } else if (propertiesFunction.isProfleCredentialsProvider()) {
-                root.put("login", "ProfileCredentialsProvider");
+                login = "ProfileCredentialsProvider";
             } else {
-                root.put("login", "Access and Secret Keys");
+                login = "Access and Secret Keys";
             }
             AwsVaultConfiguration aws = getCamelContext().getVaultConfiguration().getAwsVaultConfiguration();
             if (aws != null) {
-                root.put("refreshEnabled", aws.isRefreshEnabled());
-                root.put("refreshPeriod", aws.getRefreshPeriod());
+                refreshEnabled = aws.isRefreshEnabled();
+                refreshPeriod = aws.getRefreshPeriod();
             }
             if (secretsRefreshTask != null) {
                 Instant last = secretsRefreshTask.getLastCheckTime();
                 if (last != null) {
-                    long timestamp = last.toEpochMilli();
-                    root.put("lastCheckTimestamp", timestamp);
-                    root.put("lastCheckAge", TimeUtils.printSince(timestamp));
+                    lastCheckTimestamp = last.toEpochMilli();
+                    lastCheckAge = TimeUtils.printSince(lastCheckTimestamp);
                 }
                 last = secretsRefreshTask.getLastReloadTime();
                 if (last != null) {
-                    long timestamp = last.toEpochMilli();
-                    root.put("lastReloadTimestamp", timestamp);
-                    root.put("lastReloadAge", TimeUtils.printSince(timestamp));
+                    lastReloadTimestamp = last.toEpochMilli();
+                    lastReloadAge = TimeUtils.printSince(lastReloadTimestamp);
                 }
             }
-            JsonArray arr = new JsonArray();
-            root.put("secrets", arr);
 
             List<String> sorted = new ArrayList<>(propertiesFunction.getSecrets());
             Collections.sort(sorted);
 
+            List<SecretEntry> arr = new ArrayList<>();
             for (String sec : sorted) {
-                JsonObject jo = new JsonObject();
-                jo.put("name", sec);
+                Long timestamp = null;
+                String age = null;
                 Instant last = secretsRefreshTask != null ? secretsRefreshTask.getUpdates().get(sec) : null;
                 if (last != null) {
-                    long timestamp = last.toEpochMilli();
-                    jo.put("timestamp", timestamp);
-                    jo.put("age", TimeUtils.printSince(timestamp));
+                    timestamp = last.toEpochMilli();
+                    age = TimeUtils.printSince(timestamp);
                 }
-                arr.add(jo);
+                arr.add(new SecretEntry(sec, timestamp, age));
             }
+            secrets = arr;
         }
-        return root;
+
+        Response response = new Response(
+                region, login, refreshEnabled, refreshPeriod, lastCheckTimestamp, lastCheckAge, lastReloadTimestamp,
+                lastReloadAge, secrets);
+        return JsonRecordSupport.toJsonObject(response);
     }
 }

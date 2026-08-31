@@ -20,6 +20,7 @@ import java.util.Properties;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.console.DevConsole;
+import org.apache.camel.util.json.JsonArray;
 import org.apache.camel.util.json.JsonObject;
 import org.junit.jupiter.api.Test;
 
@@ -50,5 +51,17 @@ public class PropertiesDevConsoleTest extends AbstractDevConsoleTest {
 
         JsonObject jsonOut = callJson(console);
         assertNotNull(jsonOut.get("locations"));
+
+        JsonArray properties = jsonOut.getJsonArray("properties");
+        assertNotNull(properties);
+        boolean found = false;
+        for (Object o : properties) {
+            JsonObject prop = (JsonObject) o;
+            if ("myProp".equals(prop.getString("key"))) {
+                found = true;
+                assertNotNull(prop.getString("value"));
+            }
+        }
+        assertTrue(found, "myProp should be present in the properties list");
     }
 }

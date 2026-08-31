@@ -17,6 +17,7 @@
 package org.apache.camel.component.micrometer;
 
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 import java.util.StringJoiner;
@@ -35,7 +36,7 @@ import org.apache.camel.spi.annotations.DevConsole;
 import org.apache.camel.support.PatternHelper;
 import org.apache.camel.support.console.AbstractDevConsole;
 import org.apache.camel.util.ObjectHelper;
-import org.apache.camel.util.json.JsonObject;
+import org.apache.camel.util.json.JsonRecordSupport;
 
 @DevConsole(name = "micrometer", description = "Display runtime metrics")
 public class MicrometerConsole extends AbstractDevConsole {
@@ -47,6 +48,64 @@ public class MicrometerConsole extends AbstractDevConsole {
     @Metadata(label = "query", description = "Filters matching metrics by name",
               javaType = "java.lang.String")
     public static final String FILTER = "filter";
+
+    public record TagEntry(
+            @Metadata(description = "The tag key") String key,
+            @Metadata(description = "The tag value") String value) {
+    }
+
+    public record CounterEntry(
+            @Metadata(description = "The counter name") String name,
+            @Metadata(description = "The counter description (only present when configured)") String description,
+            @Metadata(description = "The counter tags (only present when requested)") List<TagEntry> tags,
+            @Metadata(description = "The counter value (integer when whole, decimal otherwise)") Object count) {
+    }
+
+    public record GaugeEntry(
+            @Metadata(description = "The gauge name") String name,
+            @Metadata(description = "The gauge description (only present when configured)") String description,
+            @Metadata(description = "The gauge tags (only present when requested)") List<TagEntry> tags,
+            @Metadata(description = "The gauge value") double value) {
+    }
+
+    public record TimerEntry(
+            @Metadata(description = "The timer name") String name,
+            @Metadata(description = "The timer description (only present when configured)") String description,
+            @Metadata(description = "The timer tags (only present when requested)") List<TagEntry> tags,
+            @Metadata(description = "The number of recorded events") long count,
+            @Metadata(description = "The mean duration in milliseconds") long mean,
+            @Metadata(description = "The maximum duration in milliseconds") long max,
+            @Metadata(description = "The total duration in milliseconds") long total) {
+    }
+
+    public record LongTaskTimerEntry(
+            @Metadata(description = "The long task timer name") String name,
+            @Metadata(description = "The long task timer description (only present when configured)") String description,
+            @Metadata(description = "The long task timer tags (only present when requested)") List<TagEntry> tags,
+            @Metadata(description = "The number of currently active tasks") int activeTasks,
+            @Metadata(description = "The mean duration in milliseconds") long mean,
+            @Metadata(description = "The maximum duration in milliseconds") long max,
+            @Metadata(description = "The total duration of active tasks in milliseconds") long duration) {
+    }
+
+    public record DistributionEntry(
+            @Metadata(description = "The distribution summary name") String name,
+            @Metadata(description = "The distribution summary description (only present when configured)") String description,
+            @Metadata(description = "The distribution summary tags (only present when requested)") List<TagEntry> tags,
+            @Metadata(description = "The number of recorded events") long count,
+            @Metadata(description = "The mean amount") double mean,
+            @Metadata(description = "The maximum amount") double max,
+            @Metadata(description = "The total amount") double totalAmount) {
+    }
+
+    public record Response(
+            @Metadata(description = "The MeterRegistry implementation class name") String meterRegistryClass,
+            @Metadata(description = "Only present when there are any counters") List<CounterEntry> counters,
+            @Metadata(description = "Only present when there are any gauges") List<GaugeEntry> gauges,
+            @Metadata(description = "Only present when there are any timers") List<TimerEntry> timers,
+            @Metadata(description = "Only present when there are any long task timers") List<LongTaskTimerEntry> longTaskTimers,
+            @Metadata(description = "Only present when there are any distribution summaries") List<DistributionEntry> distribution) {
+    }
 
     public MicrometerConsole() {
         super("camel", "micrometer", "Micrometer", "Display runtime metrics");
@@ -176,170 +235,95 @@ public class MicrometerConsole extends AbstractDevConsole {
     }
 
     @Override
-    protected JsonObject doCallJson(Map<String, Object> options) {
+    protected Map<String, Object> doCallJson(Map<String, Object> options) {
         final boolean tags = optionBoolean(options, TAGS, true);
         final String filter = optionString(options, FILTER);
 
-        JsonObject root = new JsonObject();
-
         MeterRegistry mr = lookupMeterRegistry();
-        root.put("meterRegistryClass", mr.getClass().getName());
 
         List<Meter> meters = mr.getMeters()
                 .stream()
                 .filter(meter -> accept(meter.getId().getName(), filter))
                 .toList();
 
-        int i = 0;
-        List<JsonObject> list = new ArrayList<>();
+        List<CounterEntry> counters = new ArrayList<>();
         for (Meter m : meters) {
-            if (m instanceof Counter) {
-                Counter c = (Counter) m;
-                if (i == 0) {
-                    root.put("counters", list);
-                }
-                i++;
-                JsonObject jo = new JsonObject();
-                jo.put("name", c.getId().getName());
-                if (c.getId().getDescription() != null) {
-                    jo.put("description", c.getId().getDescription());
-                }
-                if (tags) {
-                    addTags(m, jo);
-                }
+            if (m instanceof Counter c) {
                 // strip decimal if counter is integer based
                 String cnt = String.valueOf(c.count());
+                Object count;
                 if (cnt.endsWith(".0") || cnt.endsWith(",0")) {
-                    cnt = cnt.substring(0, cnt.length() - 2);
-                    jo.put("count", Long.valueOf(cnt));
+                    count = Long.valueOf(cnt.substring(0, cnt.length() - 2));
                 } else {
                     // it has decimals so store as-is
-                    jo.put("count", c.count());
+                    count = c.count();
                 }
-                list.add(jo);
+                counters.add(new CounterEntry(
+                        c.getId().getName(), c.getId().getDescription(), buildTags(tags, m), count));
             }
         }
-        list.sort(this::sortByName);
-        i = 0;
-        list = new ArrayList<>();
+        counters.sort(Comparator.comparing(CounterEntry::name, String.CASE_INSENSITIVE_ORDER));
+
+        List<GaugeEntry> gauges = new ArrayList<>();
         for (Meter m : meters) {
-            if (m instanceof Gauge) {
-                Gauge g = (Gauge) m;
-                if (i == 0) {
-                    root.put("gauges", list);
-                }
-                i++;
-                JsonObject jo = new JsonObject();
-                jo.put("name", g.getId().getName());
-                if (g.getId().getDescription() != null) {
-                    jo.put("description", g.getId().getDescription());
-                }
-                if (tags) {
-                    addTags(m, jo);
-                }
-                jo.put("value", g.value());
-                list.add(jo);
+            if (m instanceof Gauge g) {
+                gauges.add(new GaugeEntry(g.getId().getName(), g.getId().getDescription(), buildTags(tags, m), g.value()));
             }
         }
-        list.sort(this::sortByName);
-        i = 0;
-        list = new ArrayList<>();
+        gauges.sort(Comparator.comparing(GaugeEntry::name, String.CASE_INSENSITIVE_ORDER));
+
+        List<TimerEntry> timers = new ArrayList<>();
         for (Meter m : meters) {
-            if (m instanceof Timer) {
-                Timer t = (Timer) m;
-                if (i == 0) {
-                    root.put("timers", list);
-                }
-                i++;
-                JsonObject jo = new JsonObject();
-                jo.put("name", t.getId().getName());
-                if (t.getId().getDescription() != null) {
-                    jo.put("description", t.getId().getDescription());
-                }
-                if (tags) {
-                    addTags(m, jo);
-                }
-                jo.put("count", t.count());
-                jo.put("mean", Math.round(t.mean(TimeUnit.MILLISECONDS)));
-                jo.put("max", Math.round(t.max(TimeUnit.MILLISECONDS)));
-                jo.put("total", Math.round(t.totalTime(TimeUnit.MILLISECONDS)));
-                list.add(jo);
+            if (m instanceof Timer t) {
+                timers.add(new TimerEntry(
+                        t.getId().getName(), t.getId().getDescription(), buildTags(tags, m), t.count(),
+                        Math.round(t.mean(TimeUnit.MILLISECONDS)), Math.round(t.max(TimeUnit.MILLISECONDS)),
+                        Math.round(t.totalTime(TimeUnit.MILLISECONDS))));
             }
         }
-        list.sort(this::sortByName);
-        i = 0;
-        list = new ArrayList<>();
+        timers.sort(Comparator.comparing(TimerEntry::name, String.CASE_INSENSITIVE_ORDER));
+
+        List<LongTaskTimerEntry> longTaskTimers = new ArrayList<>();
         for (Meter m : meters) {
-            if (m instanceof LongTaskTimer) {
-                LongTaskTimer t = (LongTaskTimer) m;
-                if (i == 0) {
-                    root.put("longTaskTimers", list);
-                }
-                i++;
-                JsonObject jo = new JsonObject();
-                jo.put("name", t.getId().getName());
-                if (t.getId().getDescription() != null) {
-                    jo.put("description", t.getId().getDescription());
-                }
-                if (tags) {
-                    addTags(m, jo);
-                }
-                jo.put("activeTasks", t.activeTasks());
-                jo.put("mean", Math.round(t.mean(TimeUnit.MILLISECONDS)));
-                jo.put("max", Math.round(t.max(TimeUnit.MILLISECONDS)));
-                jo.put("duration", Math.round(t.duration(TimeUnit.MILLISECONDS)));
-                list.add(jo);
+            if (m instanceof LongTaskTimer t) {
+                longTaskTimers.add(new LongTaskTimerEntry(
+                        t.getId().getName(), t.getId().getDescription(), buildTags(tags, m), t.activeTasks(),
+                        Math.round(t.mean(TimeUnit.MILLISECONDS)), Math.round(t.max(TimeUnit.MILLISECONDS)),
+                        Math.round(t.duration(TimeUnit.MILLISECONDS))));
             }
         }
-        list.sort(this::sortByName);
-        i = 0;
-        list = new ArrayList<>();
+        longTaskTimers.sort(Comparator.comparing(LongTaskTimerEntry::name, String.CASE_INSENSITIVE_ORDER));
+
+        List<DistributionEntry> distribution = new ArrayList<>();
         for (Meter m : meters) {
-            if (m instanceof DistributionSummary) {
-                DistributionSummary d = (DistributionSummary) m;
-                if (i == 0) {
-                    root.put("distribution", list);
-                }
-                i++;
-                JsonObject jo = new JsonObject();
-                jo.put("name", d.getId().getName());
-                if (d.getId().getDescription() != null) {
-                    jo.put("description", d.getId().getDescription());
-                }
-                if (tags) {
-                    addTags(m, jo);
-                }
-                jo.put("count", d.count());
-                jo.put("mean", d.mean());
-                jo.put("max", d.max());
-                jo.put("totalAmount", d.totalAmount());
-                list.add(jo);
+            if (m instanceof DistributionSummary d) {
+                distribution.add(new DistributionEntry(
+                        d.getId().getName(), d.getId().getDescription(), buildTags(tags, m), d.count(), d.mean(),
+                        d.max(), d.totalAmount()));
             }
         }
 
-        return root;
+        Response response = new Response(
+                mr.getClass().getName(), counters.isEmpty() ? null : counters, gauges.isEmpty() ? null : gauges,
+                timers.isEmpty() ? null : timers, longTaskTimers.isEmpty() ? null : longTaskTimers,
+                distribution.isEmpty() ? null : distribution);
+        return JsonRecordSupport.toJsonObject(response);
     }
 
-    private void addTags(Meter m, JsonObject root) {
-        List<JsonObject> list = new ArrayList<>();
+    private static List<TagEntry> buildTags(boolean tags, Meter m) {
+        if (!tags) {
+            return null;
+        }
+        List<TagEntry> list = new ArrayList<>();
         for (Tag t : m.getId().getTags()) {
-            JsonObject jo = new JsonObject();
-            jo.put("key", t.getKey());
-            jo.put("value", t.getValue());
-            list.add(jo);
+            list.add(new TagEntry(t.getKey(), t.getValue()));
         }
-        if (!list.isEmpty()) {
-            root.put("tags", list);
-        }
+        return list.isEmpty() ? null : list;
     }
 
     private MeterRegistry lookupMeterRegistry() {
         return MicrometerUtils.getOrCreateMeterRegistry(getCamelContext().getRegistry(),
                 MicrometerConstants.METRICS_REGISTRY_NAME);
-    }
-
-    private int sortByName(JsonObject o1, JsonObject o2) {
-        return o1.getString("name").compareToIgnoreCase(o2.getString("name"));
     }
 
     private static boolean accept(String name, String filter) {

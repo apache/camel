@@ -17,6 +17,8 @@
 package org.apache.camel.impl.console;
 
 import java.io.StringReader;
+import java.util.ArrayList;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -39,8 +41,7 @@ import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.annotations.DevConsole;
 import org.apache.camel.support.console.AbstractDevConsole;
 import org.apache.camel.util.StringHelper;
-import org.apache.camel.util.json.JsonArray;
-import org.apache.camel.util.json.JsonObject;
+import org.apache.camel.util.json.JsonRecordSupport;
 
 @DevConsole(name = "processor-detail", description = "Show configured options for all processors in a route")
 public class ProcessorDetailDevConsole extends AbstractDevConsole {
@@ -50,38 +51,53 @@ public class ProcessorDetailDevConsole extends AbstractDevConsole {
               javaType = "java.lang.String")
     public static final String ROUTE_ID = "routeId";
 
+    public record ProcessorEntry(
+            @Metadata(description = "The processor ID") String id,
+            @Metadata(description = "The processor type (the XML element name, or 'from' for the route input)") String type,
+            @Metadata(description = "The endpoint URI (only present for the route input entry)") String endpointUri,
+            @Metadata(description = "The source line number (only present when known)") Integer line,
+            @Metadata(description = "The processor's configured options, as attribute/child-element name to string value") Map<String, String> options) {
+    }
+
+    public record RouteDetail(
+            @Metadata(description = "The route ID") String routeId,
+            @Metadata(description = "The route's processors, starting with the route input") List<ProcessorEntry> processors) {
+    }
+
+    public record Response(
+            @Metadata(description = "The route ID (only present when a specific route was requested)") String routeId,
+            @Metadata(description = "The route's processors (only present when a specific route was requested)") List<ProcessorEntry> processors,
+            @Metadata(description = "The route details for all routes (only present when routeId is * or omitted)") List<RouteDetail> routes) {
+    }
+
     public ProcessorDetailDevConsole() {
         super("camel", "processor-detail", "Processor Detail", "Show configured options for all processors in a route");
     }
 
     @Override
     protected String doCallText(Map<String, Object> options) {
-        JsonObject json = doCallJson(options);
+        Response response = doCallResponse(options);
         StringBuilder sb = new StringBuilder();
 
-        JsonArray routes = (JsonArray) json.get("routes");
-        if (routes != null) {
-            for (Object routeObj : routes) {
-                appendRouteText(sb, (JsonObject) routeObj);
+        if (response.routes() != null) {
+            for (RouteDetail route : response.routes()) {
+                appendRouteText(sb, route.routeId(), route.processors());
             }
         } else {
-            appendRouteText(sb, json);
+            appendRouteText(sb, response.routeId(), response.processors());
         }
         return sb.toString();
     }
 
-    private static void appendRouteText(StringBuilder sb, JsonObject routeJson) {
-        String routeId = routeJson.getString("routeId");
+    private static void appendRouteText(StringBuilder sb, String routeId, List<ProcessorEntry> processors) {
         if (routeId != null) {
             sb.append(String.format("Route: %s%n", routeId));
-            JsonArray processors = (JsonArray) routeJson.get("processors");
             if (processors != null) {
-                for (Object obj : processors) {
-                    JsonObject p = (JsonObject) obj;
-                    sb.append(String.format("  %s (%s)%n", p.getString("id"), p.getString("type")));
-                    JsonObject opts = p.getMap("options");
+                for (ProcessorEntry p : processors) {
+                    sb.append(String.format("  %s (%s)%n", p.id(), p.type()));
+                    Map<String, String> opts = p.options();
                     if (opts != null) {
-                        for (Map.Entry<String, Object> e : opts.entrySet()) {
+                        for (Map.Entry<String, String> e : opts.entrySet()) {
                             sb.append(String.format("    %s = %s%n", e.getKey(), e.getValue()));
                         }
                     }
@@ -91,7 +107,11 @@ public class ProcessorDetailDevConsole extends AbstractDevConsole {
     }
 
     @Override
-    protected JsonObject doCallJson(Map<String, Object> options) {
+    protected Map<String, Object> doCallJson(Map<String, Object> options) {
+        return JsonRecordSupport.toJsonObject(doCallResponse(options));
+    }
+
+    private Response doCallResponse(Map<String, Object> options) {
         String path = (String) options.get(Exchange.HTTP_PATH);
         String subPath = path != null ? StringHelper.after(path, "/") : null;
         String routeId = optionString(options, ROUTE_ID);
@@ -103,49 +123,40 @@ public class ProcessorDetailDevConsole extends AbstractDevConsole {
             routeId = "*";
         }
 
-        JsonObject root = new JsonObject();
-
         ManagedCamelContext mcc
                 = getCamelContext().getCamelContextExtension().getContextPlugin(ManagedCamelContext.class);
         if (mcc == null) {
-            return root;
+            return new Response(null, null, null);
         }
 
         if ("*".equals(routeId)) {
             List<ManagedRouteMBean> managedRoutes = mcc.getManagedRoutes();
             if (managedRoutes == null || managedRoutes.isEmpty()) {
-                return root;
+                return new Response(null, null, null);
             }
-            JsonArray routes = new JsonArray();
+            List<RouteDetail> routes = new ArrayList<>();
             for (ManagedRouteMBean mr : managedRoutes) {
-                JsonObject routeJson = buildRouteDetail(mr);
-                if (routeJson != null) {
-                    routes.add(routeJson);
+                RouteDetail routeDetail = buildRouteDetail(mr);
+                if (routeDetail != null) {
+                    routes.add(routeDetail);
                 }
             }
-            root.put("routes", routes);
-            return root;
+            return new Response(null, null, routes);
         }
 
         ManagedRouteMBean mr = mcc.getManagedRoute(routeId);
         if (mr == null) {
-            return root;
+            return new Response(null, null, null);
         }
-        return buildRouteDetail(mr);
+        RouteDetail routeDetail = buildRouteDetail(mr);
+        return new Response(routeDetail.routeId(), routeDetail.processors(), null);
     }
 
-    private static JsonObject buildRouteDetail(ManagedRouteMBean mr) {
+    private static RouteDetail buildRouteDetail(ManagedRouteMBean mr) {
         String routeId = mr.getRouteId();
-        JsonObject root = new JsonObject();
-        root.put("routeId", routeId);
-        JsonArray processors = new JsonArray();
+        List<ProcessorEntry> processors = new ArrayList<>();
 
-        JsonObject fromEntry = new JsonObject();
-        fromEntry.put("id", routeId);
-        fromEntry.put("type", "from");
-        fromEntry.put("endpointUri", mr.getEndpointUri());
-        fromEntry.put("options", new JsonObject());
-        processors.add(fromEntry);
+        Integer fromLine = null;
 
         try {
             String xml = mr.dumpRouteAsXml(false, true, true);
@@ -161,7 +172,7 @@ public class ProcessorDetailDevConsole extends AbstractDevConsole {
                 // extract source line number for the from entry from the <from> child element
                 NodeList fromNodes = routeElement.getElementsByTagName("from");
                 if (fromNodes.getLength() > 0) {
-                    extractSourceLineNumber((Element) fromNodes.item(0), fromEntry);
+                    fromLine = extractSourceLineNumber((Element) fromNodes.item(0));
                 }
 
                 collectProcessors(routeElement, processors);
@@ -170,11 +181,13 @@ public class ProcessorDetailDevConsole extends AbstractDevConsole {
             // ignore
         }
 
-        root.put("processors", processors);
-        return root;
+        ProcessorEntry fromEntry = new ProcessorEntry(routeId, "from", mr.getEndpointUri(), fromLine, new LinkedHashMap<>());
+        processors.add(0, fromEntry);
+
+        return new RouteDetail(routeId, processors);
     }
 
-    private static void collectProcessors(Element parent, JsonArray processors) {
+    private static void collectProcessors(Element parent, List<ProcessorEntry> processors) {
         NodeList children = parent.getChildNodes();
         for (int i = 0; i < children.getLength(); i++) {
             Node node = children.item(i);
@@ -194,13 +207,10 @@ public class ProcessorDetailDevConsole extends AbstractDevConsole {
             if ("from".equals(type)) {
                 continue;
             }
-            JsonObject entry = new JsonObject();
-            entry.put("id", id);
-            entry.put("type", type);
 
-            extractSourceLineNumber(elem, entry);
+            Integer line = extractSourceLineNumber(elem);
 
-            JsonObject opts = new JsonObject();
+            Map<String, String> opts = new LinkedHashMap<>();
             NamedNodeMap attrs = elem.getAttributes();
             for (int j = 0; j < attrs.getLength(); j++) {
                 Attr attr = (Attr) attrs.item(j);
@@ -215,15 +225,14 @@ public class ProcessorDetailDevConsole extends AbstractDevConsole {
             // <correlationExpression>, <completionPredicate>, etc.)
             collectExpressionChildren(elem, opts);
 
-            entry.put("options", opts);
-            processors.add(entry);
+            processors.add(new ProcessorEntry(id, type, null, line, opts));
 
             // recurse into child elements (nested EIPs like split > to, choice > when > to)
             collectProcessors(elem, processors);
         }
     }
 
-    private static void collectExpressionChildren(Element parent, JsonObject opts) {
+    private static void collectExpressionChildren(Element parent, Map<String, String> opts) {
         NodeList children = parent.getChildNodes();
         for (int i = 0; i < children.getLength(); i++) {
             Node node = children.item(i);
@@ -286,14 +295,15 @@ public class ProcessorDetailDevConsole extends AbstractDevConsole {
         return null;
     }
 
-    private static void extractSourceLineNumber(Element elem, JsonObject entry) {
+    private static Integer extractSourceLineNumber(Element elem) {
         String lineStr = elem.getAttribute("sourceLineNumber");
         if (lineStr != null && !lineStr.isEmpty()) {
             try {
-                entry.put("line", Integer.parseInt(lineStr));
+                return Integer.parseInt(lineStr);
             } catch (NumberFormatException e) {
                 // ignore
             }
         }
+        return null;
     }
 }

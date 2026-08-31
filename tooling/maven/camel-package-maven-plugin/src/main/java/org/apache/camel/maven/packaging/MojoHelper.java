@@ -176,6 +176,8 @@ public final class MojoHelper {
                 return Collections.singletonList(dir.resolve("camel-knative-component"));
             case "camel-yaml-dsl":
                 return Collections.singletonList(dir.resolve("camel-yaml-dsl"));
+            case "camel-jbang":
+                return Collections.singletonList(dir.resolve("camel-jbang-console"));
             default:
                 return Collections.singletonList(dir);
         }

@@ -16,6 +16,9 @@
  */
 package org.apache.camel.model.console;
 
+import java.util.ArrayList;
+import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
 
@@ -27,8 +30,7 @@ import org.apache.camel.spi.annotations.DevConsole;
 import org.apache.camel.support.PatternHelper;
 import org.apache.camel.support.PluginHelper;
 import org.apache.camel.support.console.AbstractDevConsole;
-import org.apache.camel.util.json.JsonArray;
-import org.apache.camel.util.json.JsonObject;
+import org.apache.camel.util.json.JsonRecordSupport;
 import org.apache.camel.util.json.Jsoner;
 
 @DevConsole(name = "bean-model", description = "Displays beans from the DSL model")
@@ -45,6 +47,28 @@ public class BeanModelDevConsole extends AbstractDevConsole {
     @Metadata(label = "query", description = "Whether to include null values", defaultValue = "true",
               javaType = "java.lang.Boolean")
     public static final String NULLS = "nulls";
+
+    public record PropertyEntry(
+            @Metadata(description = "The property name") String name,
+            @Metadata(description = "The property value type (only present when the value is known)") String type,
+            @Metadata(description = "The property value") Object value) {
+    }
+
+    public record BeanEntry(
+            @Metadata(description = "The bean name") String name,
+            @Metadata(description = "The bean type") String type,
+            @Metadata(description = "The init method name (only present when configured)") String initMethod,
+            @Metadata(description = "The destroy method name (only present when configured)") String destroyMethod,
+            @Metadata(description = "The builder class name (only present when configured)") String builderClass,
+            @Metadata(description = "The builder method name (only present when configured)") String builderMethod,
+            @Metadata(description = "The factory bean name (only present when configured)") String factoryBean,
+            @Metadata(description = "The factory method name (only present when configured)") String factoryMethod,
+            @Metadata(description = "The bean properties as declared in the DSL model (only present when there are any)") List<PropertyEntry> modelProperties,
+            @Metadata(description = "The bean properties resolved from the running bean instance (only present when there are any)") List<PropertyEntry> properties) {
+    }
+
+    public record Response(@Metadata(description = "The beans keyed by bean name") Map<String, BeanEntry> beans) {
+    }
 
     public BeanModelDevConsole() {
         super("camel", "bean-model", "Bean Model", "Displays beans from the DSL model");
@@ -100,15 +124,12 @@ public class BeanModelDevConsole extends AbstractDevConsole {
     }
 
     @Override
-    protected JsonObject doCallJson(Map<String, Object> options) {
+    protected Map<String, Object> doCallJson(Map<String, Object> options) {
         String filter = optionString(options, FILTER);
         boolean properties = optionBoolean(options, PROPERTIES, true);
         boolean nulls = optionBoolean(options, NULLS, true);
 
-        JsonObject root = new JsonObject();
-
-        JsonObject jo = new JsonObject();
-        root.put("beans", jo);
+        Map<String, BeanEntry> beans = new LinkedHashMap<>();
 
         BeanIntrospection bi = PluginHelper.getBeanIntrospection(getCamelContext());
         Model model = getCamelContext().getCamelContextExtension().getContextPlugin(Model.class);
@@ -128,48 +149,22 @@ public class BeanModelDevConsole extends AbstractDevConsole {
                         // ignore
                     }
                 }
-                JsonObject jb = new JsonObject();
-                jo.put(b.getName(), jb);
-                jb.put("name", b.getName());
-                jb.put("type", b.getType());
-                if (b.getInitMethod() != null) {
-                    jb.put("initMethod", b.getInitMethod());
-                }
-                if (b.getDestroyMethod() != null) {
-                    jb.put("destroyMethod", b.getDestroyMethod());
-                }
-                if (b.getBuilderClass() != null) {
-                    jb.put("builderClass", b.getBuilderClass());
-                }
-                if (b.getBuilderMethod() != null) {
-                    jb.put("builderMethod", b.getBuilderMethod());
-                }
-                if (b.getFactoryBean() != null) {
-                    jb.put("factoryBean", b.getFactoryBean());
-                }
-                if (b.getFactoryMethod() != null) {
-                    jb.put("factoryMethod", b.getFactoryMethod());
-                }
+
+                List<PropertyEntry> modelProperties = null;
+                List<PropertyEntry> resolvedProperties = null;
                 if (b.getProperties() != null) {
-                    JsonArray arr = new JsonArray();
+                    List<PropertyEntry> arr = new ArrayList<>();
                     b.getProperties().forEach((k, v) -> {
                         Object rv = values.get(k);
                         String type = rv != null ? rv.getClass().getName() : null;
-                        JsonObject jp = new JsonObject();
-                        jp.put("name", k);
-                        if (type != null) {
-                            jp.put("type", type);
-                        }
-                        jp.put("value", v);
                         boolean accept = v != null || nulls;
                         if (accept) {
-                            arr.add(jp);
+                            arr.add(new PropertyEntry(k, type, v));
                         }
                     });
-                    if (!arr.isEmpty()) {
-                        jb.put("modelProperties", arr);
-                    }
-                    JsonArray arr2 = new JsonArray();
+                    modelProperties = arr.isEmpty() ? null : arr;
+
+                    List<PropertyEntry> arr2 = new ArrayList<>();
                     b.getProperties().forEach((k, v) -> {
                         Object rv = values.get(k);
                         Object value = rv;
@@ -184,24 +179,23 @@ public class BeanModelDevConsole extends AbstractDevConsole {
                                 value = rv;
                             }
                         }
-                        JsonObject jp = new JsonObject();
-                        jp.put("name", k);
-                        if (type != null) {
-                            jp.put("type", type);
-                        }
-                        jp.put("value", value);
                         boolean accept = value != null || nulls;
                         if (accept) {
-                            arr2.add(jp);
+                            arr2.add(new PropertyEntry(k, type, value));
                         }
                     });
-                    if (!arr2.isEmpty()) {
-                        jb.put("properties", arr2);
-                    }
+                    resolvedProperties = arr2.isEmpty() ? null : arr2;
                 }
+
+                beans.put(b.getName(), new BeanEntry(
+                        b.getName(), b.getType(), b.getInitMethod(), b.getDestroyMethod(), b.getBuilderClass(),
+                        b.getBuilderMethod(), b.getFactoryBean(), b.getFactoryMethod(), modelProperties,
+                        resolvedProperties));
             }
         }
-        return root;
+
+        Response response = new Response(beans);
+        return JsonRecordSupport.toJsonObject(response);
     }
 
     private static boolean accept(String name, String filter) {

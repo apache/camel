@@ -16,20 +16,31 @@
  */
 package org.apache.camel.main.console;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 
 import org.apache.camel.main.download.DependencyDownloaderClassLoader;
 import org.apache.camel.main.download.DownloadRecord;
 import org.apache.camel.main.download.MavenDependencyDownloader;
+import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.annotations.DevConsole;
 import org.apache.camel.support.console.AbstractDevConsole;
 import org.apache.camel.util.TimeUtils;
-import org.apache.camel.util.json.JsonArray;
-import org.apache.camel.util.json.JsonObject;
+import org.apache.camel.util.json.JsonRecordSupport;
 
 @DevConsole(name = "dependency-downloader", group = "camel-jbang", displayName = "Maven Dependency Downloader",
             description = "Displays information about dependencies downloaded at runtime")
 public class DependencyDownloaderConsole extends AbstractDevConsole {
+
+    public record Response(
+            @Metadata(description = "The downloaded dependency class-path entries (only present when the application classloader manages downloads)") List<String> dependencies,
+            @Metadata(description = "Whether downloading is disabled (only present when a downloader is active)") Boolean offline,
+            @Metadata(description = "Whether fresh downloads are forced (only present when a downloader is active)") Boolean fresh,
+            @Metadata(description = "Whether verbose logging is enabled (only present when a downloader is active)") Boolean verbose,
+            @Metadata(description = "The extra Maven repositories (only present when a downloader is active)") String repos,
+            @Metadata(description = "The downloaded artifacts (only present when a downloader is active)") List<DownloadRecord> downloads) {
+    }
 
     public DependencyDownloaderConsole() {
         super("camel-jbang", "dependency-downloader", "Maven Dependency Downloader",
@@ -68,38 +79,32 @@ public class DependencyDownloaderConsole extends AbstractDevConsole {
     }
 
     @Override
-    protected JsonObject doCallJson(Map<String, Object> options) {
-        JsonObject root = new JsonObject();
-
+    protected Map<String, Object> doCallJson(Map<String, Object> options) {
+        List<String> dependencies = null;
         ClassLoader cl = getCamelContext().getApplicationContextClassLoader();
         if (cl instanceof DependencyDownloaderClassLoader) {
             @SuppressWarnings("resource")
             // The resource should not be closed as it belongs to the CamelContext and may be reused.
             DependencyDownloaderClassLoader ddcl = (DependencyDownloaderClassLoader) cl;
-            String[] cp = ddcl.getDownloaded().toArray(new String[0]);
-            root.put("dependencies", cp);
+            dependencies = new ArrayList<>(ddcl.getDownloaded());
         }
+
+        Boolean offline = null;
+        Boolean fresh = null;
+        Boolean verbose = null;
+        String repos = null;
+        List<DownloadRecord> downloads = null;
 
         MavenDependencyDownloader downloader = getCamelContext().hasService(MavenDependencyDownloader.class);
         if (downloader != null) {
-            JsonArray arr = new JsonArray();
-            root.put("offline", !downloader.isDownload());
-            root.put("fresh", downloader.isFresh());
-            root.put("verbose", downloader.isVerbose());
-            root.put("repos", downloader.getRepositories());
-            root.put("downloads", arr);
-            for (DownloadRecord r : downloader.downloadRecords()) {
-                JsonObject jo = new JsonObject();
-                arr.add(jo);
-                jo.put("groupId", r.groupId());
-                jo.put("artifactId", r.artifactId());
-                jo.put("version", r.version());
-                jo.put("elapsed", r.elapsed());
-                jo.put("repoId", r.repoId());
-                jo.put("repoUrl", r.repoUrl());
-            }
+            offline = !downloader.isDownload();
+            fresh = downloader.isFresh();
+            verbose = downloader.isVerbose();
+            repos = downloader.getRepositories();
+            downloads = new ArrayList<>(downloader.downloadRecords());
         }
 
-        return root;
+        Response response = new Response(dependencies, offline, fresh, verbose, repos, downloads);
+        return JsonRecordSupport.toJsonObject(response);
     }
 }

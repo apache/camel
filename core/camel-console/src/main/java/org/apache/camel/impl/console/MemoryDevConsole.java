@@ -24,15 +24,33 @@ import java.util.Locale;
 import java.util.Map;
 
 import org.apache.camel.spi.Configurer;
+import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.annotations.DevConsole;
 import org.apache.camel.support.console.AbstractDevConsole;
-import org.apache.camel.util.json.JsonObject;
+import org.apache.camel.util.json.JsonRecordSupport;
 
 import static org.apache.camel.util.UnitUtils.printUnitFromBytesDot;
 
 @DevConsole(name = "memory", displayName = "JVM Memory", description = "Displays JVM memory information")
 @Configurer(extended = true)
 public class MemoryDevConsole extends AbstractDevConsole {
+
+    public record Response(
+            @Metadata(description = "Heap memory initial size") String heapMemoryInit,
+            @Metadata(description = "Heap memory max size") String heapMemoryMax,
+            @Metadata(description = "Heap memory used") String heapMemoryUsed,
+            @Metadata(description = "Heap memory committed") String heapMemoryCommitted,
+            @Metadata(description = "Non-heap memory initial size") String nonHeapMemoryInit,
+            @Metadata(description = "Non-heap memory max size") String nonHeapMemoryMax,
+            @Metadata(description = "Non-heap memory used") String nonHeapMemoryUsed,
+            @Metadata(description = "Non-heap memory committed") String nonHeapMemoryCommitted,
+            @Metadata(description = "Old generation memory pool used (only present when such a pool exists)") String oldGenUsed,
+            @Metadata(description = "Old generation memory pool committed (only present when such a pool exists)") String oldGenCommitted,
+            @Metadata(description = "Old generation memory pool max (only present when such a pool exists)") String oldGenMax,
+            @Metadata(description = "Metaspace memory pool used (only present when such a pool exists)") String metaspaceUsed,
+            @Metadata(description = "Metaspace memory pool committed (only present when such a pool exists)") String metaspaceCommitted,
+            @Metadata(description = "Metaspace memory pool max (only present when such a pool exists)") String metaspaceMax) {
+    }
 
     public MemoryDevConsole() {
         super("jvm", "memory", "JVM Memory", "Displays JVM memory information");
@@ -74,36 +92,54 @@ public class MemoryDevConsole extends AbstractDevConsole {
     }
 
     @Override
-    protected JsonObject doCallJson(Map<String, Object> options) {
-        JsonObject root = new JsonObject();
+    protected Map<String, Object> doCallJson(Map<String, Object> options) {
+        String heapMemoryInit = null;
+        String heapMemoryMax = null;
+        String heapMemoryUsed = null;
+        String heapMemoryCommitted = null;
+        String nonHeapMemoryInit = null;
+        String nonHeapMemoryMax = null;
+        String nonHeapMemoryUsed = null;
+        String nonHeapMemoryCommitted = null;
 
         MemoryMXBean mb = ManagementFactory.getMemoryMXBean();
         if (mb != null) {
-            root.put("heapMemoryInit", printUnitFromBytesDot(mb.getHeapMemoryUsage().getInit()));
-            root.put("heapMemoryMax", printUnitFromBytesDot(mb.getHeapMemoryUsage().getMax()));
-            root.put("heapMemoryUsed", printUnitFromBytesDot(mb.getHeapMemoryUsage().getUsed()));
-            root.put("heapMemoryCommitted", printUnitFromBytesDot(mb.getHeapMemoryUsage().getCommitted()));
-            root.put("nonHeapMemoryInit", printUnitFromBytesDot(mb.getNonHeapMemoryUsage().getInit()));
-            root.put("nonHeapMemoryMax", printUnitFromBytesDot(mb.getNonHeapMemoryUsage().getMax()));
-            root.put("nonHeapMemoryUsed", printUnitFromBytesDot(mb.getNonHeapMemoryUsage().getUsed()));
-            root.put("nonHeapMemoryCommitted", printUnitFromBytesDot(mb.getNonHeapMemoryUsage().getCommitted()));
+            heapMemoryInit = printUnitFromBytesDot(mb.getHeapMemoryUsage().getInit());
+            heapMemoryMax = printUnitFromBytesDot(mb.getHeapMemoryUsage().getMax());
+            heapMemoryUsed = printUnitFromBytesDot(mb.getHeapMemoryUsage().getUsed());
+            heapMemoryCommitted = printUnitFromBytesDot(mb.getHeapMemoryUsage().getCommitted());
+            nonHeapMemoryInit = printUnitFromBytesDot(mb.getNonHeapMemoryUsage().getInit());
+            nonHeapMemoryMax = printUnitFromBytesDot(mb.getNonHeapMemoryUsage().getMax());
+            nonHeapMemoryUsed = printUnitFromBytesDot(mb.getNonHeapMemoryUsage().getUsed());
+            nonHeapMemoryCommitted = printUnitFromBytesDot(mb.getNonHeapMemoryUsage().getCommitted());
         }
+
+        String oldGenUsed = null;
+        String oldGenCommitted = null;
+        String oldGenMax = null;
+        String metaspaceUsed = null;
+        String metaspaceCommitted = null;
+        String metaspaceMax = null;
 
         for (MemoryPoolMXBean pool : ManagementFactory.getMemoryPoolMXBeans()) {
             String name = pool.getName().toLowerCase(Locale.ROOT);
             if (pool.getType() == MemoryType.HEAP && (name.contains("old") || name.contains("tenured"))) {
-                root.put("oldGenUsed", printUnitFromBytesDot(pool.getUsage().getUsed()));
-                root.put("oldGenCommitted", printUnitFromBytesDot(pool.getUsage().getCommitted()));
+                oldGenUsed = printUnitFromBytesDot(pool.getUsage().getUsed());
+                oldGenCommitted = printUnitFromBytesDot(pool.getUsage().getCommitted());
                 long max = pool.getUsage().getMax();
-                root.put("oldGenMax", max > 0 ? printUnitFromBytesDot(max) : "-");
+                oldGenMax = max > 0 ? printUnitFromBytesDot(max) : "-";
             } else if (name.contains("metaspace")) {
-                root.put("metaspaceUsed", printUnitFromBytesDot(pool.getUsage().getUsed()));
-                root.put("metaspaceCommitted", printUnitFromBytesDot(pool.getUsage().getCommitted()));
+                metaspaceUsed = printUnitFromBytesDot(pool.getUsage().getUsed());
+                metaspaceCommitted = printUnitFromBytesDot(pool.getUsage().getCommitted());
                 long max = pool.getUsage().getMax();
-                root.put("metaspaceMax", max > 0 ? printUnitFromBytesDot(max) : "-");
+                metaspaceMax = max > 0 ? printUnitFromBytesDot(max) : "-";
             }
         }
 
-        return root;
+        Response response = new Response(
+                heapMemoryInit, heapMemoryMax, heapMemoryUsed, heapMemoryCommitted, nonHeapMemoryInit, nonHeapMemoryMax,
+                nonHeapMemoryUsed, nonHeapMemoryCommitted, oldGenUsed, oldGenCommitted, oldGenMax, metaspaceUsed,
+                metaspaceCommitted, metaspaceMax);
+        return JsonRecordSupport.toJsonObject(response);
     }
 }
