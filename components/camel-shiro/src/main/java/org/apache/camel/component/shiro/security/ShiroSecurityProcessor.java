@@ -130,24 +130,21 @@ public class ShiroSecurityProcessor extends DelegateAsyncProcessor {
     }
 
     private void authenticateUser(Subject currentUser, ShiroSecurityToken securityToken) {
-        boolean authenticated = currentUser.isAuthenticated();
-        boolean sameUser = securityToken.getUsername().equals(currentUser.getPrincipal());
-        LOG.trace("Authenticated: {}, same Username: {}", authenticated, sameUser);
+        // The login is not skipped when the thread-bound subject already carries the same principal name.
+        // A matching username says nothing about the password presented with this exchange, and with
+        // alwaysReauthenticate=false the subject is deliberately long-lived on a shared worker thread, so
+        // skipping would let a wrong password through for as long as that subject stays bound.
+        LOG.trace("Authenticating {} (subject currently authenticated: {})",
+                securityToken.getUsername(), currentUser.isAuthenticated());
 
-        if (!authenticated || !sameUser) {
-            UsernamePasswordToken token = new UsernamePasswordToken(securityToken.getUsername(), securityToken.getPassword());
-            if (policy.isAlwaysReauthenticate()) {
-                token.setRememberMe(false);
-            } else {
-                token.setRememberMe(true);
-            }
+        UsernamePasswordToken token = new UsernamePasswordToken(securityToken.getUsername(), securityToken.getPassword());
+        token.setRememberMe(!policy.isAlwaysReauthenticate());
 
-            try {
-                currentUser.login(token);
-                LOG.debug("Current user {} successfully authenticated", currentUser.getPrincipal());
-            } catch (AuthenticationException ae) {
-                throw new AuthenticationException("Authentication Failed.", ae.getCause());
-            }
+        try {
+            currentUser.login(token);
+            LOG.debug("Current user {} successfully authenticated", currentUser.getPrincipal());
+        } catch (AuthenticationException ae) {
+            throw new AuthenticationException("Authentication Failed.", ae.getCause());
         }
     }
 

@@ -20,6 +20,12 @@ import java.util.Optional;
 
 public interface OAuthSession {
 
+    /**
+     * Session key holding the {@code state} value of an in-flight authorization code flow. The callback accepts a code
+     * only when the request carries the same value, which is what ties the callback to a flow this session started.
+     */
+    String OAUTH_STATE = "OAuthState";
+
     String getSessionId();
 
     <T> Optional<T> getValue(String key, Class<T> clazz);
