@@ -119,3 +119,125 @@ jobs:
             } catch (error) {
               core.warning(`Failed to post CI test summary comment: ${error.message}`);
             }
+      - name: Download regen patch artifact
+        uses: actions/github-script@3a2844b7e9c422d3c10d287c895573f7108da1b3 # v9.0.0
+        with:
+          script: |
+            const artifacts = await github.rest.actions.listWorkflowRunArtifacts({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              run_id: ${{ github.event.workflow_run.id }},
+            });
+            const match = artifacts.data.artifacts.find(a => a.name === 'regen-patch');
+            if (!match) {
+              core.info('No regen-patch artifact found, skipping');
+              return;
+            }
+            const download = await github.rest.actions.downloadArtifact({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              artifact_id: match.id,
+              archive_format: 'zip',
+            });
+            const fs = require('fs');
+            fs.writeFileSync('${{ github.workspace }}/regen-patch.zip', Buffer.from(download.data));
+      - name: Extract regen patch artifact
+        run: |
+          if [ -f regen-patch.zip ]; then
+            unzip -o regen-patch.zip -d regen-patch-artifact
+          fi
+      - name: Post or update regen patch comment
+        if: always()
+        uses: actions/github-script@3a2844b7e9c422d3c10d287c895573f7108da1b3 # v9.0.0
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          script: |
+            const fs = require('fs');
+
+            const regenPatchFile = 'regen-patch-artifact/regen.patch';
+            const regenPrFile = 'regen-patch-artifact/pr-number';
+            const ciPrFile = 'ci-comment-artifact/pr-number';
+
+            const regenNeeded = fs.existsSync(regenPatchFile);
+
+            // The regen artifact carries its own PR number (the ci-comment
+            // artifact is not produced when the build fails at the regen
+            // check); on clean runs fall back to the ci-comment artifact so an
+            // earlier warning comment can be marked resolved.
+            let prNumber = 0;
+            if (fs.existsSync(regenPrFile)) {
+              prNumber = parseInt(fs.readFileSync(regenPrFile, 'utf8').trim(), 10);
+            } else if (fs.existsSync(ciPrFile)) {
+              prNumber = parseInt(fs.readFileSync(ciPrFile, 'utf8').trim(), 10);
+            }
+            if (!prNumber) {
+              core.info('No PR number available, skipping regen patch comment');
+              return;
+            }
+
+            const marker = '<!-- regen-patch -->';
+            const runId = ${{ github.event.workflow_run.id }};
+            const runUrl = `${{ github.server_url }}/${{ github.repository }}/actions/runs/${runId}`;
+            const repoSlug = `${context.repo.owner}/${context.repo.repo}`;
+
+            let body;
+            if (regenNeeded) {
+              body = [
+                marker,
+                '### :warning: Generated files are out of date',
+                '',
+                `The [CI build](${runUrl}) regenerated files that are not committed on this PR.`,
+                'The missing changes are available as the `regen-patch` artifact of that run.',
+                '',
+                'Anyone with push access to this branch (the PR author, or a committer when',
+                '*Allow edits from maintainers* is enabled) can apply and push them:',
+                '',
+                '```bash',
+                `gh pr checkout ${prNumber} --repo ${repoSlug}`,
+                `gh run download ${runId} --repo ${repoSlug} -n regen-patch`,
+                'git apply --index regen.patch && rm regen.patch pr-number',
+                'git commit -m "Regen" && git push',
+                '```',
+                '',
+                'Alternatively, run `./etc/scripts/regen.sh` locally and commit the resulting changes.',
+                'If the patch does not apply cleanly, update the branch from the base branch first —',
+                'the patch was generated against the merge with the base branch.',
+              ].join('\n');
+            } else {
+              body = [
+                marker,
+                '### :white_check_mark: Generated files are up to date',
+                '',
+                `An earlier CI run reported uncommitted generated changes; the [latest run](${runUrl}) no longer does.`,
+              ].join('\n');
+            }
+
+            try {
+              const { data: comments } = await github.rest.issues.listComments({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                issue_number: prNumber,
+              });
+              const existing = comments.find(c => c.body && c.body.includes(marker));
+
+              if (existing) {
+                if (!regenNeeded && existing.body.includes(':white_check_mark:')) {
+                  return; // already marked resolved
+                }
+                await github.rest.issues.updateComment({
+                  owner: context.repo.owner,
+                  repo: context.repo.repo,
+                  comment_id: existing.id,
+                  body: body,
+                });
+              } else if (regenNeeded) {
+                await github.rest.issues.createComment({
+                  owner: context.repo.owner,
+                  repo: context.repo.repo,
+                  issue_number: prNumber,
+                  body: body,
+                });
+              }
+            } catch (error) {
+              core.warning(`Failed to post regen patch comment: ${error.message}`);
+            }
