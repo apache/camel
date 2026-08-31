@@ -2820,6 +2820,7 @@ public class ModelWriter extends BaseWriter {
         doWriteAttribute("signatureKeyRing", def.getSignatureKeyRing(), null);
         doWriteAttribute("signatureVerificationOption", def.getSignatureVerificationOption(), null);
         doWriteAttribute("keyFileName", def.getKeyFileName(), null);
+        doWriteAttribute("requireIntegrityProtection", def.getRequireIntegrityProtection(), "true");
         doWriteAttribute("signatureKeyUserid", def.getSignatureKeyUserid(), null);
         doWriteAttribute("integrity", def.getIntegrity(), "true");
         doWriteAttribute("password", def.getPassword(), null);

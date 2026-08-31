@@ -163,6 +163,8 @@ public class PGPKeyAccessDataFormat extends ServiceSupport implements DataFormat
 
     private String signatureVerificationOption = "optional";
 
+    private boolean requireIntegrityProtection = true;
+
     /*
      * The default value "_CONSOLE" marks the file as For Your Eyes Only... may
      * cause problems for the receiver if they use an automated process to
@@ -418,6 +420,14 @@ public class PGPKeyAccessDataFormat extends ServiceSupport implements DataFormat
                 if (!pbe.verify()) {
                     throw new PGPException("Message failed integrity check");
                 }
+            } else if (requireIntegrityProtection) {
+                // Without a modification detection code the ciphertext is malleable, and whether the check runs
+                // would otherwise be decided by the packet type the sender chose - so a sender or an intermediary
+                // could drop the protection simply by sending the legacy packet.
+                throw new PGPException(
+                        "PGP message is not integrity protected. Either send an integrity protected message, or set"
+                                       + " requireIntegrityProtection=false on the PGP decryptor to accept the legacy"
+                                       + " symmetrically encrypted data packet.");
             }
         } finally {
             IOHelper.close(osb, litData, uncompressedData, encData, in, encryptedStream);
@@ -688,6 +698,25 @@ public class PGPKeyAccessDataFormat extends ServiceSupport implements DataFormat
 
     public void setSecretKeyAccessor(PGPSecretKeyAccessor secretKeyAccessor) {
         this.secretKeyAccessor = secretKeyAccessor;
+    }
+
+    public boolean isRequireIntegrityProtection() {
+        return requireIntegrityProtection;
+    }
+
+    /**
+     * Whether a message must be integrity protected in order to be decrypted.
+     * <p>
+     * An OpenPGP symmetrically encrypted integrity protected data packet carries a modification detection code, which
+     * {@code unmarshal} verifies. The older symmetrically encrypted data packet carries none, and OpenPGP's CFB mode is
+     * malleable without it, so accepting such a message means accepting ciphertext that may have been altered. Since
+     * the packet type is chosen by whoever produced the message, leaving this off lets the sender - or anyone who can
+     * rewrite the message in transit - decide whether the check applies at all.
+     * <p>
+     * Defaults to true. Set it to false only to interoperate with a sender that still emits the legacy packet.
+     */
+    public void setRequireIntegrityProtection(boolean requireIntegrityProtection) {
+        this.requireIntegrityProtection = requireIntegrityProtection;
     }
 
     public String getSignatureVerificationOption() {

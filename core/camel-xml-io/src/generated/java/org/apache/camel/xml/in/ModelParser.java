@@ -2106,6 +2106,7 @@ public class ModelParser extends BaseParser {
                 case "keyUserid": def.setKeyUserid(val); yield true;
                 case "password": def.setPassword(val); yield true;
                 case "provider": def.setProvider(val); yield true;
+                case "requireIntegrityProtection": def.setRequireIntegrityProtection(val); yield true;
                 case "signatureKeyFileName": def.setSignatureKeyFileName(val); yield true;
                 case "signatureKeyRing": def.setSignatureKeyRing(val); yield true;
                 case "signatureKeyUserid": def.setSignatureKeyUserid(val); yield true;

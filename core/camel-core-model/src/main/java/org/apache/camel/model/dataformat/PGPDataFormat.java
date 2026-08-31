@@ -67,6 +67,14 @@ public class PGPDataFormat extends DataFormatDefinition {
     private String hashAlgorithm;
     @XmlAttribute
     private String signatureVerificationOption;
+    @XmlAttribute
+    @Metadata(javaType = "java.lang.Boolean", defaultValue = "true",
+              description = "Whether a message must be integrity protected in order to be decrypted. The legacy"
+                            + " symmetrically encrypted data packet carries no modification detection code, and the"
+                            + " packet type is chosen by whoever produced the message, so accepting it lets the sender"
+                            + " decide whether the integrity check applies. Set to false only to interoperate with a"
+                            + " sender that still emits the legacy packet.")
+    private String requireIntegrityProtection;
 
     public PGPDataFormat() {
         super("pgp");
@@ -88,6 +96,7 @@ public class PGPDataFormat extends DataFormatDefinition {
         this.compressionAlgorithm = source.compressionAlgorithm;
         this.hashAlgorithm = source.hashAlgorithm;
         this.signatureVerificationOption = source.signatureVerificationOption;
+        this.requireIntegrityProtection = source.requireIntegrityProtection;
     }
 
     private PGPDataFormat(Builder builder) {
@@ -106,6 +115,7 @@ public class PGPDataFormat extends DataFormatDefinition {
         this.compressionAlgorithm = builder.compressionAlgorithm;
         this.hashAlgorithm = builder.hashAlgorithm;
         this.signatureVerificationOption = builder.signatureVerificationOption;
+        this.requireIntegrityProtection = builder.requireIntegrityProtection;
     }
 
     @Override
@@ -291,6 +301,17 @@ public class PGPDataFormat extends DataFormatDefinition {
         this.signatureVerificationOption = signatureVerificationOption;
     }
 
+    public String getRequireIntegrityProtection() {
+        return requireIntegrityProtection;
+    }
+
+    /**
+     * Whether a message must be integrity protected in order to be decrypted. Defaults to true.
+     */
+    public void setRequireIntegrityProtection(String requireIntegrityProtection) {
+        this.requireIntegrityProtection = requireIntegrityProtection;
+    }
+
     /**
      * {@code Builder} is a specific builder for {@link PGPDataFormat}.
      */
@@ -311,6 +332,7 @@ public class PGPDataFormat extends DataFormatDefinition {
         private String compressionAlgorithm;
         private String hashAlgorithm;
         private String signatureVerificationOption;
+        private String requireIntegrityProtection;
 
         /**
          * User ID of the key in the PGP keyring used for signing (during encryption) or signature verification (during
@@ -492,6 +514,22 @@ public class PGPDataFormat extends DataFormatDefinition {
          */
         public Builder signatureVerificationOption(String signatureVerificationOption) {
             this.signatureVerificationOption = signatureVerificationOption;
+            return this;
+        }
+
+        /**
+         * Whether a message must be integrity protected in order to be decrypted. Defaults to true.
+         */
+        public Builder requireIntegrityProtection(String requireIntegrityProtection) {
+            this.requireIntegrityProtection = requireIntegrityProtection;
+            return this;
+        }
+
+        /**
+         * Whether a message must be integrity protected in order to be decrypted. Defaults to true.
+         */
+        public Builder requireIntegrityProtection(boolean requireIntegrityProtection) {
+            this.requireIntegrityProtection = Boolean.toString(requireIntegrityProtection);
             return this;
         }
 

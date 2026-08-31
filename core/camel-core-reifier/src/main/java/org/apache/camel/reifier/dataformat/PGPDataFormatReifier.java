@@ -44,6 +44,7 @@ public class PGPDataFormatReifier extends DataFormatReifier<PGPDataFormat> {
         properties.put("compressionAlgorithm", definition.getCompressionAlgorithm());
         properties.put("hashAlgorithm", definition.getHashAlgorithm());
         properties.put("signatureVerificationOption", definition.getSignatureVerificationOption());
+        properties.put("requireIntegrityProtection", definition.getRequireIntegrityProtection());
     }
 
 }
