@@ -633,7 +633,7 @@ public class MllpTcpServerConsumer extends DefaultConsumer {
                 log.debug("sendAcknowledgement(originalHl7MessageBytes[{}], Exchange[{}], {}) - Sending Acknowledgement: {}",
                         originalHl7MessageBytes == null ? -1 : originalHl7MessageBytes.length, exchange.getExchangeId(),
                         consumerRunnable.getSocket(),
-                        consumerRunnable.getMllpBuffer().toPrintFriendlyHl7String());
+                        hl7Util.convertToLoggableString(consumerRunnable.getMllpBuffer().toMllpPayload()));
             }
 
             try {
@@ -657,7 +657,7 @@ public class MllpTcpServerConsumer extends DefaultConsumer {
                 log.debug("sendAcknowledgement(originalHl7MessageBytes[{}], Exchange[{}], {}) - Sending Acknowledgement: {}",
                         originalHl7MessageBytes == null ? -1 : originalHl7MessageBytes.length, exchange.getExchangeId(),
                         consumerRunnable.getSocket(),
-                        hl7Util.convertToPrintFriendlyString(acknowledgementMessageBytes));
+                        hl7Util.convertToLoggableString(acknowledgementMessageBytes));
             }
 
             try {

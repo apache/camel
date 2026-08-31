@@ -209,7 +209,7 @@ public class MllpSocketBuffer {
                 if (size() > 0 && !hasCompleteEnvelope()) {
                     if (!hasEndOfData() && hasEndOfBlock() && endOfBlockIndex < size() - 1) {
                         LOG.warn("readFrom({}, {}, {}) - exiting with partial payload {}", socket, receiveTimeout, readTimeout,
-                                hl7Util.convertToPrintFriendlyString(buffer, 0, size() - 1));
+                                hl7Util.convertToLoggableString(buffer, 0, size() - 1));
                     }
                 }
             }
@@ -321,6 +321,18 @@ public class MllpSocketBuffer {
 
     public String toPrintFriendlyStringAndReset() {
         String answer = toPrintFriendlyString();
+
+        reset();
+
+        return answer;
+    }
+
+    /**
+     * The buffer content for a log statement, honouring the component's {@code logPhi} setting, and resetting the
+     * buffer either way so the caller's behaviour does not depend on whether logging is enabled.
+     */
+    public synchronized String toLoggableStringAndReset() {
+        String answer = hl7Util.isLogPhi() ? toPrintFriendlyString() : Hl7Util.PHI_SUPPRESSED_REPLACEMENT_VALUE;
 
         reset();
 
@@ -562,7 +574,7 @@ public class MllpSocketBuffer {
                 } else {
                     LOG.warn(
                             "readSocketInputStream(socketInputStream, {}) - ignoring {} bytes received before START_OF_BLOCK: {}",
-                            socket, size(), toPrintFriendlyStringAndReset());
+                            socket, size(), toLoggableStringAndReset());
                 }
             }
         } catch (SocketTimeoutException timeoutEx) {
