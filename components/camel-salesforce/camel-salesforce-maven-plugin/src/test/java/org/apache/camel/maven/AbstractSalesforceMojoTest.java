@@ -20,88 +20,18 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
 import java.util.Properties;
 
+import org.apache.camel.component.salesforce.AuthenticationType;
 import org.apache.camel.component.salesforce.SalesforceEndpointConfig;
-import org.apache.camel.component.salesforce.codegen.AbstractSalesforceExecution;
-import org.apache.maven.plugin.MojoExecutionException;
-import org.apache.maven.plugin.MojoFailureException;
-import org.junit.jupiter.api.Test;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
-import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assumptions.assumeTrue;
 
 public abstract class AbstractSalesforceMojoTest {
 
-    private static final Map<String, List<String>> NO_HEADERS = Collections.emptyMap();
+    static final String TEST_LOGIN_PROPERTIES = "../test-salesforce-login.properties";
 
-    private static final String TEST_LOGIN_PROPERTIES = "../test-salesforce-login.properties";
-
-    @Test
-    public void shouldLoginAndProvideRestClient() throws IOException, MojoExecutionException, MojoFailureException {
-        final AbstractSalesforceMojo mojo = new AbstractSalesforceMojo() {
-            final Logger logger = LoggerFactory.getLogger(AbstractSalesforceExecution.class.getName());
-
-            @Override
-            protected AbstractSalesforceExecution getSalesforceExecution() {
-                return new AbstractSalesforceExecution() {
-                    @Override
-                    protected void executeWithClient() {
-                        assertThat(getRestClient()).isNotNull();
-
-                        getRestClient().getGlobalObjects(NO_HEADERS, (response, headers, exception) -> {
-                            assertThat(exception).isNull();
-                        });
-                    }
-
-                    @Override
-                    protected Logger getLog() {
-                        return logger;
-                    }
-                };
-            }
-        };
-
-        setup(mojo);
-
-        mojo.execute();
-    }
-
-    @Test
-    public void shouldLoginWithJwtAndProvideRestClient() throws IOException, MojoExecutionException, MojoFailureException {
-        final AbstractSalesforceMojo mojo = new AbstractSalesforceMojo() {
-            final Logger logger = LoggerFactory.getLogger(AbstractSalesforceExecution.class.getName());
-
-            @Override
-            protected AbstractSalesforceExecution getSalesforceExecution() {
-                return new AbstractSalesforceExecution() {
-                    @Override
-                    protected void executeWithClient() {
-                        assertThat(getRestClient()).isNotNull();
-
-                        getRestClient().getGlobalObjects(NO_HEADERS, (response, headers, exception) -> {
-                            assertThat(exception).isNull();
-                        });
-                    }
-
-                    @Override
-                    protected Logger getLog() {
-                        return logger;
-                    }
-                };
-            }
-        };
-
-        setupJwt(mojo);
-
-        mojo.execute();
-    }
-
-    static void setup(final AbstractSalesforceMojo mojo) throws IOException {
+    static void setupUsernamePassword(final AbstractSalesforceMojo mojo) throws IOException {
         // load test-salesforce-login properties
         try (final InputStream stream = new FileInputStream(TEST_LOGIN_PROPERTIES)) {
             final Properties properties = new Properties();
@@ -110,6 +40,9 @@ public abstract class AbstractSalesforceMojoTest {
             mojo.clientSecret = properties.getProperty("salesforce.client.secret");
             mojo.userName = properties.getProperty("salesforce.username");
             mojo.password = properties.getProperty("salesforce.password");
+            assumeTrue(mojo.password != null && !mojo.password.isEmpty(),
+                    "Property 'salesforce.password' must be set in " + TEST_LOGIN_PROPERTIES
+                                                                          + " for USERNAME_PASSWORD authentication test");
             mojo.loginUrl = properties.getProperty("salesforce.login.url");
             mojo.version = SalesforceEndpointConfig.DEFAULT_VERSION;
         } catch (final FileNotFoundException e) {
@@ -142,6 +75,28 @@ public abstract class AbstractSalesforceMojoTest {
                             "Create a properties file named " + TEST_LOGIN_PROPERTIES
                                                 + " with clientId, userName, keyStoreResource, keyStorePassword, keyStoreType"
                                                 + " for a Salesforce account with Merchandise and Invoice objects from Salesforce Guides.");
+            exception.initCause(e);
+
+            throw exception;
+        }
+    }
+
+    static void setupClientCredentials(final AbstractSalesforceMojo mojo) throws IOException {
+        // load test-salesforce-login properties
+        try (final InputStream stream = new FileInputStream(TEST_LOGIN_PROPERTIES)) {
+            final Properties properties = new Properties();
+            properties.load(stream);
+            mojo.clientId = properties.getProperty("salesforce.client.id");
+            mojo.clientSecret = properties.getProperty("salesforce.client.secret");
+            mojo.authenticationType = AuthenticationType.CLIENT_CREDENTIALS;
+            mojo.loginUrl = properties.getProperty("salesforce.login.url");
+            mojo.version = SalesforceEndpointConfig.DEFAULT_VERSION;
+        } catch (final FileNotFoundException e) {
+            final FileNotFoundException exception
+                    = new FileNotFoundException(
+                            "Create a properties file named " + TEST_LOGIN_PROPERTIES
+                                                + " with clientId, clientSecret"
+                                                + " for a Salesforce connected app configured for Client Credentials flow.");
             exception.initCause(e);
 
             throw exception;
