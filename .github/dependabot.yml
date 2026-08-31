@@ -38,7 +38,7 @@ updates:
       - dependency-name: "com.google.protobuf:*"
     groups:
       Aliyun:
-        patterns: ["com.aliyun:*"]
+        patterns: ["com.aliyun:*","com.aliyun.openservices:*","com.aliyun.mns:*"]
       Micrometer:
         patterns: ["io.micrometer:*"]
       Opentelemetry:
