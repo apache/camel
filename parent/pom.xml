@@ -402,7 +402,7 @@
         <mongo-java-driver-version>5.10.0</mongo-java-driver-version>
         <msal4j-version>1.26.0</msal4j-version>
         <mustache-java-version>0.9.14</mustache-java-version>
-        <mvel-version>2.5.2.Final</mvel-version>
+        <mvel-version>2.5.3.Final</mvel-version>
         <mybatis-version>3.5.19</mybatis-version>
         <narayana-version>7.3.4.Final</narayana-version>
         <neo4j-version>6.2.1</neo4j-version>
