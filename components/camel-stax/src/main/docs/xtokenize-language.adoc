@@ -108,7 +108,8 @@ YAML::
               xtokenize:
                 expression: '//shop:order'
                 namespace:
-                  ns1: 'urn:shop'
+                  - key: shop
+                    value: 'urn:shop'
             steps:
               - to:
                   uri: 'mock:order'
