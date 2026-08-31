@@ -21,6 +21,7 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Expression;
 import org.apache.camel.language.simple.types.SimpleParserException;
 import org.apache.camel.language.simple.types.SimpleToken;
+import org.apache.camel.support.ObjectHelper;
 
 /**
  * Represents a numeric value.
@@ -45,6 +46,17 @@ public class NumericExpression extends BaseSimpleNode {
                 number = lon;
             }
         }
+    }
+
+    /**
+     * Whether the text can be represented as a numeric value. Numbers with more digits than a long can hold, such as
+     * bank account numbers, are kept as literal text instead, so they can be compared as big integers.
+     */
+    public static boolean isNumericValue(String text) {
+        if (text.indexOf('.') != -1) {
+            return ObjectHelper.isFloatingNumber(text);
+        }
+        return ObjectHelper.isLongNumber(text);
     }
 
     public Object getNumber() {
