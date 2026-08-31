@@ -72,13 +72,15 @@ public abstract class AbstractTaskPredictor implements TaskPredictor {
             tmpDir = Files.createTempDirectory("hf_model");
         }
         Path handlerPath = tmpDir.resolve("handler.py");
-        String pythonScript = withAuthToken(getPythonScript());
-        Files.writeString(handlerPath, pythonScript);
-        Path reqPath = tmpDir.resolve("requirements.txt");
-        Files.writeString(reqPath, getRequirements());
+        String pythonScript = getPythonScript();
+        // logged before the token is prepended: withAuthToken writes the configured token into the
+        // script, and this now runs for every task rather than only chat
         if (LOG.isDebugEnabled()) {
             LOG.debug("Generated Python script for task {}:\n{}", config.getTask(), pythonScript);
         }
+        Files.writeString(handlerPath, withAuthToken(pythonScript));
+        Path reqPath = tmpDir.resolve("requirements.txt");
+        Files.writeString(reqPath, getRequirements());
         String modelUrl = "file://" + tmpDir.toAbsolutePath();
         Criteria.Builder<Input, Output> criteriaBuilder = Criteria.builder()
                 .setTypes(Input.class, Output.class)
