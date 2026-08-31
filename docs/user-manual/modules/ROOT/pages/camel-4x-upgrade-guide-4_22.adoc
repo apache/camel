@@ -13,6 +13,18 @@ See the xref:camel-upgrade-recipes-tool.adoc[documentation] page for details.
 
 == Upgrading from 4.22.0 to 4.22.1
 
+=== camel-exec
+
+`allowControlHeaders` is now annotated `security = "insecure:dev"`.
+With `camel.main.profile = prod` the default policy for that category is `fail`,
+so an endpoint or component that sets `allowControlHeaders=true` will not start
+unless you relax `camel.security.insecureDevPolicy`.
+
+When the flag is `false` (the default), any remaining `CamelExecCommand*`,
+`CamelExecExitValues`, or `CamelExecUseStderrOnEmptyStdout` headers are ignored
+and a WARN is logged once per exec endpoint. Those headers never overrode the
+URI without the flag; they were just silent before.
+
 === camel-ftp, camel-sftp, camel-ftps, camel-mina-sftp, camel-azure-files, camel-smb
 
 The remote-file consumers now ensure the path resolved for a polled file stays within the directory being
