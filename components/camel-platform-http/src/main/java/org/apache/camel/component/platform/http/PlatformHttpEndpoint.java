@@ -301,8 +301,16 @@ public class PlatformHttpEndpoint extends DefaultEndpoint
                 : getComponent().getOrCreateEngine();
     }
 
+    /**
+     * Whether this endpoint is the documented {@code platform-http:proxy} endpoint.
+     * <p>
+     * Compared for equality rather than as a prefix. Proxy mode makes {@link #getPath()} return {@code "/"}, turning
+     * the endpoint into a catch-all, and the consumer then takes the forward target from the request's own {@code Host}
+     * header - so a path that merely begins with "proxy", such as {@code proxyStats}, would become a forwarding proxy
+     * its author never asked for.
+     */
     public boolean isHttpProxy() {
-        return this.path.startsWith(PROXY_PATH);
+        return PROXY_PATH.equals(this.path);
     }
 
     public boolean isReturnHttpRequestHeaders() {
