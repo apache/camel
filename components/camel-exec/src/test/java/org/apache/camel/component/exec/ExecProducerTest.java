@@ -69,6 +69,25 @@ public class ExecProducerTest {
 
     @Test
     @DirtiesContext
+    public void testIgnoreControlHeadersByDefault() {
+        final String command = "java";
+
+        producerTemplate.send(new Processor() {
+
+            public void process(Exchange exchange) {
+                exchange.getIn().setBody("noinput");
+                exchange.getIn().setHeader(EXEC_COMMAND_EXECUTABLE, command);
+                exchange.getIn().setHeader(EXEC_COMMAND_ARGS, Arrays.asList("-version"));
+            }
+        });
+
+        assertEquals("mockedByCommandExecutorMock.exe",
+                execCommandExecutorMock.lastCommandResult.getCommand().getExecutable());
+        assertTrue(execCommandExecutorMock.lastCommandResult.getCommand().getArgs().isEmpty());
+    }
+
+    @Test
+    @DirtiesContext
     public void testOverrideExecutable() {
         final String command = "java";
 
