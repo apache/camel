@@ -87,7 +87,8 @@ YAML::
 
 When `allowControlHeaders` is `false` (the default), those in-headers on the exchange
 are ignored (they are not removed), and a WARN is logged once per binding instance.
-URI parameters such as `args` continue to work as before.
+When `allowControlHeaders` is `false` (the default), those in-headers on the exchange
+are ignored (they are not removed), and a WARN is logged once per exec endpoint.
 
 === Message body
 
