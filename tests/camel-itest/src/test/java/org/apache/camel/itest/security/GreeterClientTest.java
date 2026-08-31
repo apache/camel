@@ -118,12 +118,9 @@ public class GreeterClientTest {
             fail("should fail");
         } catch (Exception ex) {
             assertTrue(ex instanceof SOAPFaultException, "Get a wrong type exception.");
-            assertTrue(ex.getMessage().startsWith("Cannot access the processor which has been protected."),
-                    "Get a wrong exception message");
-            assertTrue(
-                    ex.getMessage().endsWith(
-                            "Caused by: [org.springframework.security.authorization.AuthorizationDeniedException - Access Denied]"),
-                    "Get a wrong exception message");
+            // CxfEndpoint's muteException consumer option defaults to true (CAMEL-24477): an undeclared
+            // route failure - such as this authorization denial - no longer leaks its message to the caller.
+            assertEquals("Exchange processing failed", ex.getMessage(), "Get a wrong exception message");
         }
     }
 
