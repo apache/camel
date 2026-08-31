@@ -973,6 +973,23 @@ public class SimpleOperatorTest extends LanguageTestSupport {
         assertExpression("${trim()} ~> ${replace('Hello','Hi',$param)} ~> ${split($param,' ')} ~> ${size($param)}", 5);
     }
 
+    @Test
+    public void testDigitalStringTooBigForLong() {
+        // CAMEL-24407: numbers such as bank account numbers have more digits than a long can hold
+        exchange.getIn().setHeader("Account1", "12345678901234567890");
+        exchange.getIn().setHeader("Account2", "12345678901234567890");
+        exchange.getIn().setHeader("Account3", "12345678901234567891");
+
+        assertPredicate("${header.Account1} == ${header.Account2}", true);
+        assertPredicate("${header.Account1} == ${header.Account3}", false);
+        assertPredicate("${header.Account1} != ${header.Account3}", true);
+        assertPredicate("${header.Account1} < ${header.Account3}", true);
+        assertPredicate("${header.Account3} > ${header.Account1}", true);
+        assertPredicate("${header.Account1} == 12345678901234567890", true);
+        assertPredicate("${header.Account1} == '12345678901234567890'", true);
+        assertPredicate("${header.Account1} > 7", true);
+    }
+
     @Override
     protected String getLanguageName() {
         return "simple";
