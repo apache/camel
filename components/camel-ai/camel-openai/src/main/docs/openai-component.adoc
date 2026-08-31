@@ -1366,6 +1366,38 @@ onException(OpenAIServiceException.class)
 
 `headers()` on the same exception exposes the response headers, including `Retry-After` on a 429.
 
+=== Structured error exchange properties
+
+When an OpenAI producer call fails, Camel sets structured metadata on the exchange **before** the SDK exception propagates. This works even when GenAI observability is disabled.
+
+[cols="2,3"]
+|===
+| Exchange property | Meaning
+
+| `CamelAiErrorCategory` | Coarse category: `RATE_LIMIT`, `SERVER_ERROR`, `VALIDATION`, `AUTH`, or `UNKNOWN`
+| `CamelAiRetryAfterMillis` | Suggested retry delay in milliseconds when the OpenAI SDK exposes `Retry-After` or `Retry-After-Ms` on a 429; absent for other providers and error types
+|===
+
+Use these when a route should branch on category without matching every SDK type, or when you want a single `onException` policy across OpenAI, LangChain4j, and Spring AI producers:
+
+[source,java]
+----
+onException(Exception.class)
+    .process(exchange -> {
+        String category = exchange.getProperty("CamelAiErrorCategory", String.class);
+        Long retryAfter = exchange.getProperty("CamelAiRetryAfterMillis", Long.class);
+        if ("RATE_LIMIT".equals(category)) {
+            long delay = retryAfter != null ? retryAfter : 2000L;
+            exchange.getIn().setHeader("RetryDelay", delay);
+        }
+    })
+    .maximumRedeliveries(3)
+    .handled(true)
+    .to("direct:rate-limited");
+----
+
+The SDK exception is still available as `Exchange.EXCEPTION_CAUGHT`, so you can combine coarse categories with the fine-grained types in <<_targeting_sdk_exceptions_with_onexception>>.
+
 === SDK Retry vs Camel Redelivery
 
 The SDK client retries on its own before the exception ever reaches Camel. The `maxRetries` option controls this and defaults to `2`, so one exchange already issues up to three HTTP requests. The SDK retries 408, 409, 429 and 5xx responses as well as connection failures, backing off exponentially and honoring the `Retry-After` and `Retry-After-Ms` response headers.
