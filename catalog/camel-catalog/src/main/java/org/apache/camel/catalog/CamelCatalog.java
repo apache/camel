@@ -600,6 +600,11 @@ public interface CamelCatalog {
     String listDevConsolesAsJson();
 
     /**
+     * The OpenAPI 3.0 specification describing every dev console endpoint, aggregated across all dev consoles.
+     */
+    String devConsolesOpenApiSpec();
+
+    /**
      * Lists all the models (EIPs) summary details in JSon
      */
     String listModelsAsJson();

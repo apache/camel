@@ -21,12 +21,13 @@ import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.junit.jupiter.api.Test;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 /**
  *
  */
-public class HttpEndpointUriEncodingIssueTest extends BaseJettyTest {
+class HttpEndpointUriEncodingIssueTest extends BaseJettyTest {
 
     @Test
     public void testEndpointUriEncodingIssue() {
@@ -45,11 +46,13 @@ public class HttpEndpointUriEncodingIssueTest extends BaseJettyTest {
     }
 
     @Test
-    public void testEndpointHeaderUriEncodingIssue() {
-        String uri = "http://localhost:{{port}}/myapp/mytest?columns=totalsens,upsens&username=apiuser";
+    void testEndpointHeaderUriEncodingIssue() {
+        // the uri is supplied via the CamelHttpUri header, which is message content and therefore not
+        // subject to property placeholder resolution, so the port must be resolved up-front here
+        String uri = "http://localhost:" + getPort() + "/myapp/mytest?columns=totalsens,upsens&username=apiuser";
         String out = template.requestBodyAndHeader("http://localhost/dummy", null, Exchange.HTTP_URI, uri, String.class);
 
-        assertEquals("We got totalsens,upsens columns", out);
+        assertThat(out).isEqualTo("We got totalsens,upsens columns");
     }
 
     @Override

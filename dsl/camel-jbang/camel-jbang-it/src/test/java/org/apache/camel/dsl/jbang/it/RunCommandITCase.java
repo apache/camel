@@ -30,6 +30,7 @@ import org.apache.camel.dsl.jbang.it.support.JiraIssue;
 import org.apache.camel.test.infra.cli.common.CliProperties;
 import org.assertj.core.api.Assertions;
 import org.awaitility.Awaitility;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Assumptions;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
@@ -42,6 +43,14 @@ import org.junit.jupiter.params.provider.ValueSource;
 import static org.junit.jupiter.api.condition.OS.WINDOWS;
 
 public class RunCommandITCase extends JBangTestSupport {
+
+    @AfterEach
+    public void cleanupContainerFiles() {
+        // files downloaded by runDownloadedFromGithubTest into DEFAULT_ROUTE_FOLDER
+        execInContainer(String.format("rm -f %1$s/Echo.java %1$s/Hello.java %1$s/README.adoc", DEFAULT_ROUTE_FOLDER));
+        // directories created by runRoutesFromMultipleFilesUsingWildcardTest
+        execInContainer("rm -rf /tmp/one /tmp/two");
+    }
 
     @Test
     @JiraIssue("CAMEL-21082")

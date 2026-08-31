@@ -333,10 +333,20 @@ public final class CamelXmlJaxpBulkConverterLoader implements TypeConverterLoade
                 return getXmlConverter().toDOMDocument((org.w3c.dom.Node) value);
             }
             if (value instanceof byte[]) {
-                return getXmlConverter().toDOMDocument((byte[]) value, exchange);
+                Object obj = getXmlConverter().toDOMDocument((byte[]) value, exchange);
+                if (obj == null) {
+                    return Void.class;
+                } else {
+                    return obj;
+                }
             }
             if (value instanceof org.apache.camel.StreamCache) {
-                return getXmlConverter().toDOMDocument((org.apache.camel.StreamCache) value, exchange);
+                Object obj = getXmlConverter().toDOMDocument((org.apache.camel.StreamCache) value, exchange);
+                if (obj == null) {
+                    return Void.class;
+                } else {
+                    return obj;
+                }
             }
             if (value instanceof java.io.InputStream) {
                 return getXmlConverter().toDOMDocument((java.io.InputStream) value, exchange);

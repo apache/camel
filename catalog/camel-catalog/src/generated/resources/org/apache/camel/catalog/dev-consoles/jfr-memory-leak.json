@@ -6,6 +6,7 @@
     "title": "JFR Memory Leak",
     "description": "JFR-based old object sampling for memory leak diagnosis",
     "deprecated": false,
+    "readOnly": false,
     "javaType": "org.apache.camel.impl.console.JfrMemoryLeakDevConsole",
     "groupId": "org.apache.camel",
     "artifactId": "camel-console",

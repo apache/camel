@@ -6,6 +6,7 @@
     "title": "Route Group",
     "description": "Route Group information",
     "deprecated": false,
+    "readOnly": false,
     "javaType": "org.apache.camel.impl.console.RouteGroupDevConsole",
     "groupId": "org.apache.camel",
     "artifactId": "camel-console",

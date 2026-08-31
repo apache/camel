@@ -27,8 +27,8 @@ public class TikaEndpointUriFactory extends org.apache.camel.support.component.E
         Set<String> props = new HashSet<>(6);
         props.add("lazyStartProducer");
         props.add("operation");
-        props.add("tikaConfig");
-        props.add("tikaConfigUri");
+        props.add("tikaConfigFile");
+        props.add("tikaLoader");
         props.add("tikaParseOutputEncoding");
         props.add("tikaParseOutputFormat");
         PROPERTY_NAMES = Collections.unmodifiableSet(props);

@@ -6,6 +6,7 @@
     "title": "Route Topology",
     "description": "Route topology showing inter-route connections",
     "deprecated": false,
+    "readOnly": true,
     "javaType": "org.apache.camel.impl.console.RouteTopologyDevConsole",
     "groupId": "org.apache.camel",
     "artifactId": "camel-console",

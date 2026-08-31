@@ -325,3 +325,90 @@ List<Content> contents = List.of(augmentedContent);
 
 String response = template.requestBodyAndHeader("direct:send-multiple", messages, LangChain4jChatHeaders.AUGMENTED_DATA, contents, String.class);
 ----
+
+== Error Handling
+
+The component does not wrap what the chat model throws. LangChain4j maps provider HTTP errors onto its own hierarchy in `dev.langchain4j.exception`, and that exception reaches the exchange unchanged, so `onException` can match it by type.
+
+The hierarchy already splits along the axis that matters for retries:
+
+[cols="2,3"]
+|===
+| Exception | Meaning
+
+| `RetriableException` | Base type for failures worth another attempt
+| `RateLimitException` | Provider rejected the call with a rate limit
+| `InternalServerException` | Provider-side failure
+| `TimeoutException` | The call did not complete within the model's timeout
+| `NonRetriableException` | Base type for failures that will fail the same way again
+| `InvalidRequestException` | Malformed request, including context-length errors
+| `ContentFilteredException` | Content rejected by the provider's moderation, a subclass of `InvalidRequestException`
+| `AuthenticationException` | Bad or missing API key
+| `ModelNotFoundException` | Unknown model name
+| `UnresolvedModelServerException` | The model server address could not be resolved
+|===
+
+Because the two base classes carry the decision, a route rarely has to enumerate the concrete types:
+
+[source, java]
+----
+onException(RetriableException.class)
+    .maximumRedeliveries(3)
+    .redeliveryDelay(2000)
+    .backOffMultiplier(2)
+    .useExponentialBackOff();
+
+onException(NonRetriableException.class)
+    .maximumRedeliveries(0)
+    .handled(true)
+    .to("direct:rejected");
+
+from("direct:chat")
+    .to("langchain4j-chat:my-chat");
+----
+
+=== Structured error exchange properties
+
+When a LangChain4j chat call fails, Camel sets structured metadata on the exchange **before** the model exception propagates. This works even when GenAI observability is disabled.
+
+[cols="2,3"]
+|===
+| Exchange property | Meaning
+
+| `CamelAiErrorCategory` | Coarse category derived from the LangChain4j exception: `RATE_LIMIT`, `SERVER_ERROR`, `VALIDATION`, `AUTH`, or `UNKNOWN`
+| `CamelAiRetryAfterMillis` | Not populated for LangChain4j providers (OpenAI-only today)
+|===
+
+Category-based handling complements matching on `RetriableException` / `NonRetriableException` above:
+
+[source, java]
+----
+onException(Exception.class)
+    .process(exchange -> {
+        String category = exchange.getProperty("CamelAiErrorCategory", String.class);
+        if ("VALIDATION".equals(category)) {
+            exchange.getIn().setHeader("Rejected", true);
+        }
+    })
+    .handled(true)
+    .to("direct:rejected");
+----
+
+The same properties are set by xref:langchain4j-agent-component.adoc[LangChain4j Agent] and xref:langchain4j-embeddings-component.adoc[LangChain4j Embeddings] on their failure paths. See xref:ai-llm-integration-guide.adoc#_structured_error_exchange_properties[AI LLM integration guide] for a cross-component overview.
+
+IMPORTANT: The mapping is performed by the LangChain4j model implementation, not by Camel. `OpenAiChatModel` and `OllamaChatModel` route their calls through LangChain4j's exception mapper, but a model that does not will propagate the raw exception of its own HTTP client instead. Verify what your provider throws before relying on the type.
+
+=== Model retries vs Camel redelivery
+
+Most LangChain4j builders expose `maxRetries`, defaulting to `2`, which means one call already makes up to three attempts before any exception reaches Camel. Adding `maximumRedeliveries(3)` on top of that multiplies out to twelve attempts against a provider that is already rate limiting you.
+
+Configure one layer. Either leave the model retries alone and skip Camel redelivery, or build the model with `maxRetries(0)` and drive retries from `onException` so they are visible to the Camel error handler:
+
+[source, java]
+----
+ChatModel model = OpenAiChatModel.builder()
+        .apiKey(System.getenv("OPENAI_API_KEY"))
+        .modelName("gpt-4o-mini")
+        .maxRetries(0)
+        .build();
+----

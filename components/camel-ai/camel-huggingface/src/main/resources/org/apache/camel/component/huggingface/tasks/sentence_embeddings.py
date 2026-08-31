@@ -31,7 +31,7 @@ def handle(inputs: Input):
             device = '%s'
             if device == 'auto':
                 device = 'cuda' if torch.cuda.is_available() else 'cpu'
-            model = SentenceTransformer('%s', device=device)
+            model = SentenceTransformer('%s', device=device, revision='%s')
             logging.debug("Model initialized")
 
         if inputs.content.size() == 0:

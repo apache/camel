@@ -52,7 +52,7 @@ import org.slf4j.LoggerFactory;
  * chains back to GC roots, enabling memory leak diagnosis.
  */
 @DevConsole(name = "jfr-memory-leak", displayName = "JFR Memory Leak",
-            description = "JFR-based old object sampling for memory leak diagnosis")
+            description = "JFR-based old object sampling for memory leak diagnosis", readOnly = false)
 @Configurer(extended = true)
 public class JfrMemoryLeakDevConsole extends AbstractDevConsole {
 

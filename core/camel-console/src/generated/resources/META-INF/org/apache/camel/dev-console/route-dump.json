@@ -6,6 +6,7 @@
     "title": "Route Dump",
     "description": "Dump route in XML, YAML, or Java DSL format",
     "deprecated": false,
+    "readOnly": true,
     "javaType": "org.apache.camel.impl.console.RouteDumpDevConsole",
     "groupId": "org.apache.camel",
     "artifactId": "camel-console",

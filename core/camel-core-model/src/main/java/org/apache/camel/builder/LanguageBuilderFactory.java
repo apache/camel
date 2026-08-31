@@ -16,7 +16,6 @@
  */
 package org.apache.camel.builder;
 
-import org.apache.camel.model.language.CSimpleExpression;
 import org.apache.camel.model.language.ConstantExpression;
 import org.apache.camel.model.language.DatasonnetExpression;
 import org.apache.camel.model.language.ExchangePropertyExpression;
@@ -35,6 +34,7 @@ import org.apache.camel.model.language.MvelExpression;
 import org.apache.camel.model.language.OgnlExpression;
 import org.apache.camel.model.language.Python3Expression;
 import org.apache.camel.model.language.PythonExpression;
+import org.apache.camel.model.language.QuickjsExpression;
 import org.apache.camel.model.language.RefExpression;
 import org.apache.camel.model.language.SimpleExpression;
 import org.apache.camel.model.language.SpELExpression;
@@ -63,28 +63,6 @@ public final class LanguageBuilderFactory {
     public ConstantExpression.Builder constant(Object value) {
         var builder = constant();
         builder.value(value);
-        return builder;
-    }
-
-    /**
-     * Uses the CSimple language
-     *
-     * @deprecated use simple instead
-     */
-    @Deprecated(since = "4.19")
-    public CSimpleExpression.Builder csimple() {
-        return new CSimpleExpression.Builder();
-    }
-
-    /**
-     * Uses the CSimple language
-     *
-     * @deprecated use simple instead
-     */
-    @Deprecated(since = "4.19")
-    public CSimpleExpression.Builder csimple(String expression) {
-        var builder = csimple();
-        builder.expression(expression);
         return builder;
     }
 
@@ -368,6 +346,22 @@ public final class LanguageBuilderFactory {
      */
     public Python3Expression.Builder python3(String expression) {
         var builder = python3();
+        builder.expression(expression);
+        return builder;
+    }
+
+    /**
+     * Uses the QuickJS language
+     */
+    public QuickjsExpression.Builder quickjs() {
+        return new QuickjsExpression.Builder();
+    }
+
+    /**
+     * Uses the QuickJS language
+     */
+    public QuickjsExpression.Builder quickjs(String expression) {
+        var builder = quickjs();
         builder.expression(expression);
         return builder;
     }

@@ -20,11 +20,9 @@ import java.util.Map;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Expression;
-import org.apache.camel.language.simple.BaseSimpleParser;
 import org.apache.camel.language.simple.FileExpressionBuilder;
 import org.apache.camel.language.simple.SimpleFunctionDispatcher;
 import org.apache.camel.language.simple.SimpleFunctionHelper;
-import org.apache.camel.language.simple.SimplePredicateParser;
 import org.apache.camel.language.simple.functions.DirectFunctionFactory;
 import org.apache.camel.language.simple.types.SimpleParserException;
 import org.apache.camel.language.simple.types.SimpleToken;
@@ -194,101 +192,6 @@ public class SimpleFunctionExpression extends LiteralExpression {
     @Deprecated(since = "4.21")
     public static String ifStartsWithReturnRemainder(String prefix, String text) {
         return SimpleFunctionHelper.ifStartsWithReturnRemainder(prefix, text);
-    }
-
-    @Override
-    public String createCode(CamelContext camelContext, String expression) throws SimpleParserException {
-        return BaseSimpleParser.CODE_START + doCreateCode(camelContext, expression) + BaseSimpleParser.CODE_END;
-    }
-
-    private String doCreateCode(CamelContext camelContext, String expression) throws SimpleParserException {
-        String function = getText();
-
-        // return the function directly if we can create function without analyzing the prefix
-        String answer = DIRECT_FACTORY.createCode(camelContext, function, token.getIndex());
-        if (answer != null) {
-            return answer;
-        }
-
-        // file: prefix
-        String remainder = ifStartsWithReturnRemainder("file:", function);
-        if (remainder != null) {
-            return createCodeFileExpression(remainder);
-        }
-
-        // miscellaneous and other built-in functions
-        String builtIn = SimpleFunctionDispatcher.tryCreateCodeBuiltIn(camelContext, function, token.getIndex());
-        if (builtIn != null) {
-            return builtIn;
-        }
-
-        // not() code-gen requires skipFileFunctions from the parser context and cannot be in MiscFunctionFactory
-        String notRemainder = ifStartsWithReturnRemainder("not(", function);
-        if (notRemainder != null) {
-            String exp = "body";
-            String values = StringHelper.beforeLast(notRemainder, ")");
-            if (ObjectHelper.isNotEmpty(values)) {
-                String[] tokens = codeSplitSafe(values, ',', true, true);
-                if (tokens.length != 1) {
-                    throw new SimpleParserException("Valid syntax: ${not(exp)} was: " + function, token.getIndex());
-                }
-                SimplePredicateParser predicateParser
-                        = new SimplePredicateParser(camelContext, tokens[0], true, skipFileFunctions, null);
-                exp = predicateParser.parseCode();
-            }
-            return "Object o = " + exp + ";\n        return isNot(exchange, o);";
-        }
-
-        // code from external components (attachments, base64, ...)
-        String external = SimpleFunctionDispatcher.tryCreateCodeExternal(camelContext, function, token.getIndex());
-        if (external != null) {
-            return external;
-        }
-
-        throw new SimpleParserException("Unknown function: " + function, token.getIndex());
-    }
-
-    private String createCodeFileExpression(String remainder) {
-        if (ObjectHelper.equal(remainder, "name")) {
-            return "fileName(message)";
-        } else if (ObjectHelper.equal(remainder, "name.noext")) {
-            return "fileNameNoExt(message)";
-        } else if (ObjectHelper.equal(remainder, "name.noext.single")) {
-            return "fileNameNoExtSingle(message)";
-        } else if (ObjectHelper.equal(remainder, "name.ext") || ObjectHelper.equal(remainder, "ext")) {
-            return "fileNameExt(message)";
-        } else if (ObjectHelper.equal(remainder, "name.ext.single")) {
-            return "fileNameExtSingle(message)";
-        } else if (ObjectHelper.equal(remainder, "onlyname")) {
-            return "fileOnlyName(message)";
-        } else if (ObjectHelper.equal(remainder, "onlyname.noext")) {
-            return "fileOnlyNameNoExt(message)";
-        } else if (ObjectHelper.equal(remainder, "onlyname.noext.single")) {
-            return "fileOnlyNameNoExtSingle(message)";
-        } else if (ObjectHelper.equal(remainder, "parent")) {
-            return "fileParent(message)";
-        } else if (ObjectHelper.equal(remainder, "path")) {
-            return "filePath(message)";
-        } else if (ObjectHelper.equal(remainder, "absolute")) {
-            return "fileAbsolute(message)";
-        } else if (ObjectHelper.equal(remainder, "absolute.path")) {
-            return "fileAbsolutePath(message)";
-        } else if (ObjectHelper.equal(remainder, "length") || ObjectHelper.equal(remainder, "size")) {
-            return "fileSize(message)";
-        } else if (ObjectHelper.equal(remainder, "modified")) {
-            return "fileModified(message)";
-        }
-        throw new SimpleParserException("Unknown file language syntax: " + remainder, token.getIndex());
-    }
-
-    @Deprecated(since = "4.21")
-    public static String ognlCodeMethods(String remainder, String type) {
-        return SimpleFunctionHelper.ognlCodeMethods(remainder, type);
-    }
-
-    @Deprecated(since = "4.21")
-    public static String[] codeSplitSafe(String input, char separator, boolean trim, boolean keepQuotes) {
-        return SimpleFunctionHelper.codeSplitSafe(input, separator, trim, keepQuotes);
     }
 
 }

@@ -201,6 +201,10 @@ public abstract class JettyHttpComponent extends HttpCommonComponent
 
         // extract filterInit. parameters
         Map filterInitParameters = PropertiesHelper.extractProperties(parameters, "filterInit.");
+        if (Boolean.TRUE.equals(enableCors)) {
+            // has to happen before the map is handed to the endpoint below, which is skipped when it is empty
+            applyCorsDefaults(filterInitParameters);
+        }
 
         URI addressUri = new URI(UnsafeUriCharactersEncoder.encodeHttpURI(remaining));
         URI endpointUri = URISupport.createRemainingURI(addressUri, parameters);
@@ -424,6 +428,36 @@ public abstract class JettyHttpComponent extends HttpCommonComponent
             } else {
                 context.setSessionHandler(sessionHandler);
             }
+        }
+    }
+
+    /**
+     * Supplies the CORS defaults Camel wants, for the init parameters the operator did not set.
+     * <p>
+     * {@code new CrossOriginFilter()} with no init parameters takes Jetty's own defaults, which are
+     * {@code allowedOrigins=*} together with {@code allowCredentials=true}. Since the filter reflects the request's
+     * origin rather than sending {@code *}, that is the credentialed any-origin configuration the fetch specification
+     * refuses to express - reflection being the usual way around that rule. An option named "enable CORS" should not
+     * mean "every origin, with credentials".
+     * <p>
+     * Credentials therefore default to off. Reflection of the origin is left as it was, so enabling CORS keeps working
+     * for requests that carry no credentials; an operator who needs credentialed cross-origin requests sets
+     * {@code filterInit.allowCredentials=true} and is expected to name the origins in {@code filterInit.allowedOrigins}
+     * at the same time, which is warned about here if they do not.
+     */
+    @SuppressWarnings("unchecked")
+    private void applyCorsDefaults(Map<String, Object> filterInitParameters) {
+        Object configuredCredentials = filterInitParameters.get(CrossOriginFilter.ALLOW_CREDENTIALS_PARAM);
+        if (configuredCredentials == null) {
+            filterInitParameters.put(CrossOriginFilter.ALLOW_CREDENTIALS_PARAM, "false");
+            return;
+        }
+        Object configuredOrigins = filterInitParameters.get(CrossOriginFilter.ALLOWED_ORIGINS_PARAM);
+        if (Boolean.parseBoolean(configuredCredentials.toString())
+                && (configuredOrigins == null || "*".equals(configuredOrigins.toString().trim()))) {
+            LOG.warn("enableCORS is configured with {}=true and no specific {}."
+                     + " Every origin will be able to make credentialed cross-origin requests to this endpoint.",
+                    CrossOriginFilter.ALLOW_CREDENTIALS_PARAM, CrossOriginFilter.ALLOWED_ORIGINS_PARAM);
         }
     }
 

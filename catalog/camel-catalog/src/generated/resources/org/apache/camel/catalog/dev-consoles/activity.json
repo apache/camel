@@ -6,6 +6,7 @@
     "title": "Camel Activity",
     "description": "Recent completed exchange activity",
     "deprecated": false,
+    "readOnly": true,
     "javaType": "org.apache.camel.impl.console.ActivityDevConsole",
     "groupId": "org.apache.camel",
     "artifactId": "camel-console",

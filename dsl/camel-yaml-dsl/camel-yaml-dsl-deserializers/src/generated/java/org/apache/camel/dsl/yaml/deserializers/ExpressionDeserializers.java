@@ -47,9 +47,6 @@ public final class ExpressionDeserializers extends YamlDeserializerSupport {
             case "constant": {
                 return asType(node, org.apache.camel.model.language.ConstantExpression.class);
             }
-            case "csimple": {
-                return asType(node, org.apache.camel.model.language.CSimpleExpression.class);
-            }
             case "datasonnet": {
                 return asType(node, org.apache.camel.model.language.DatasonnetExpression.class);
             }
@@ -101,6 +98,9 @@ public final class ExpressionDeserializers extends YamlDeserializerSupport {
             case "python3": {
                 return asType(node, org.apache.camel.model.language.Python3Expression.class);
             }
+            case "quickjs": {
+                return asType(node, org.apache.camel.model.language.QuickjsExpression.class);
+            }
             case "ref": {
                 return asType(node, org.apache.camel.model.language.RefExpression.class);
             }
@@ -146,7 +146,6 @@ public final class ExpressionDeserializers extends YamlDeserializerSupport {
             order = org.apache.camel.dsl.yaml.common.YamlDeserializerResolver.ORDER_LOWEST - 1,
             properties = {
                     @YamlProperty(name = "constant", type = "object:org.apache.camel.model.language.ConstantExpression", oneOf = "expression"),
-                    @YamlProperty(name = "csimple", type = "object:org.apache.camel.model.language.CSimpleExpression", oneOf = "expression"),
                     @YamlProperty(name = "datasonnet", type = "object:org.apache.camel.model.language.DatasonnetExpression", oneOf = "expression"),
                     @YamlProperty(name = "exchangeProperty", type = "object:org.apache.camel.model.language.ExchangePropertyExpression", oneOf = "expression"),
                     @YamlProperty(name = "groovy", type = "object:org.apache.camel.model.language.GroovyExpression", oneOf = "expression"),
@@ -164,6 +163,7 @@ public final class ExpressionDeserializers extends YamlDeserializerSupport {
                     @YamlProperty(name = "ognl", type = "object:org.apache.camel.model.language.OgnlExpression", oneOf = "expression"),
                     @YamlProperty(name = "python", type = "object:org.apache.camel.model.language.PythonExpression", oneOf = "expression"),
                     @YamlProperty(name = "python3", type = "object:org.apache.camel.model.language.Python3Expression", oneOf = "expression"),
+                    @YamlProperty(name = "quickjs", type = "object:org.apache.camel.model.language.QuickjsExpression", oneOf = "expression"),
                     @YamlProperty(name = "ref", type = "object:org.apache.camel.model.language.RefExpression", oneOf = "expression"),
                     @YamlProperty(name = "simple", type = "object:org.apache.camel.model.language.SimpleExpression", oneOf = "expression"),
                     @YamlProperty(name = "spel", type = "object:org.apache.camel.model.language.SpELExpression", oneOf = "expression"),
@@ -187,7 +187,6 @@ public final class ExpressionDeserializers extends YamlDeserializerSupport {
             order = org.apache.camel.dsl.yaml.common.YamlDeserializerResolver.ORDER_LOWEST - 1,
             properties = {
                     @YamlProperty(name = "constant", type = "object:org.apache.camel.model.language.ConstantExpression", oneOf = "expression"),
-                    @YamlProperty(name = "csimple", type = "object:org.apache.camel.model.language.CSimpleExpression", oneOf = "expression"),
                     @YamlProperty(name = "datasonnet", type = "object:org.apache.camel.model.language.DatasonnetExpression", oneOf = "expression"),
                     @YamlProperty(name = "exchangeProperty", type = "object:org.apache.camel.model.language.ExchangePropertyExpression", oneOf = "expression"),
                     @YamlProperty(name = "groovy", type = "object:org.apache.camel.model.language.GroovyExpression", oneOf = "expression"),
@@ -205,6 +204,7 @@ public final class ExpressionDeserializers extends YamlDeserializerSupport {
                     @YamlProperty(name = "ognl", type = "object:org.apache.camel.model.language.OgnlExpression", oneOf = "expression"),
                     @YamlProperty(name = "python", type = "object:org.apache.camel.model.language.PythonExpression", oneOf = "expression"),
                     @YamlProperty(name = "python3", type = "object:org.apache.camel.model.language.Python3Expression", oneOf = "expression"),
+                    @YamlProperty(name = "quickjs", type = "object:org.apache.camel.model.language.QuickjsExpression", oneOf = "expression"),
                     @YamlProperty(name = "ref", type = "object:org.apache.camel.model.language.RefExpression", oneOf = "expression"),
                     @YamlProperty(name = "simple", type = "object:org.apache.camel.model.language.SimpleExpression", oneOf = "expression"),
                     @YamlProperty(name = "spel", type = "object:org.apache.camel.model.language.SpELExpression", oneOf = "expression"),

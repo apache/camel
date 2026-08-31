@@ -22,6 +22,7 @@ import dev.langchain4j.model.embedding.EmbeddingModel;
 import dev.langchain4j.model.output.Response;
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
+import org.apache.camel.component.ai.observability.GenAiErrorSupport;
 import org.apache.camel.component.ai.observability.GenAiModelResolver;
 import org.apache.camel.component.ai.observability.GenAiObservability;
 import org.apache.camel.component.ai.observability.GenAiObservation;
@@ -46,8 +47,8 @@ public class LangChain4jEmbeddingsProducer extends DefaultProducer {
         final EmbeddingModel model = getEndpoint().getConfiguration().getEmbeddingModel();
         GenAiObservationContext observationContext = GenAiObservationContext.builder()
                 .operationName(GenAiOperationName.EMBEDDINGS)
-                .system(GenAiModelResolver.resolveSystem(model))
-                .requestModel(GenAiModelResolver.resolveModelName(model))
+                .system(GenAiModelResolver.resolveSystem(exchange.getContext().getClassResolver(), model))
+                .requestModel(GenAiModelResolver.resolveModelName(exchange.getContext().getClassResolver(), model))
                 .componentScheme("langchain4j-embeddings")
                 .build();
         GenAiObservation observation = GenAiObservability.start(exchange, observationContext);
@@ -60,6 +61,7 @@ public class LangChain4jEmbeddingsProducer extends DefaultProducer {
                     result.finishReason(),
                     null));
         } catch (RuntimeException e) {
+            GenAiErrorSupport.apply(exchange, e);
             observation.recordError(e);
             throw e;
         } finally {

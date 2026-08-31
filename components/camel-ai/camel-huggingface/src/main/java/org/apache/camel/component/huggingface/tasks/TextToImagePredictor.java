@@ -21,6 +21,8 @@ import java.nio.charset.StandardCharsets;
 import ai.djl.modality.Input;
 import ai.djl.modality.Output;
 import org.apache.camel.Exchange;
+import org.apache.camel.RuntimeCamelException;
+import org.apache.camel.component.huggingface.HuggingFaceConstants;
 import org.apache.camel.component.huggingface.HuggingFaceEndpoint;
 
 /**
@@ -91,7 +93,7 @@ public class TextToImagePredictor extends AbstractTaskPredictor {
 
     @Override
     protected String getPythonScript() {
-        return loadPythonScript("text_to_image.py", config.getModelId(), config.getDevice());
+        return loadPythonScript("text_to_image.py", config.getModelId(), config.getRevision(), config.getDevice());
     }
 
     @Override
@@ -108,7 +110,14 @@ public class TextToImagePredictor extends AbstractTaskPredictor {
     @Override
     protected void processOutput(Exchange exchange, Output output) throws Exception {
         byte[] imageBytes = output.getAsBytes("data");
+        // A failed Python inference returns a JSON error payload instead of image bytes; surface it as
+        // an error rather than serving the error text as an image.
+        String resultJson = new String(imageBytes, StandardCharsets.UTF_8);
+        if (resultJson.contains("\"error\"")) {
+            throw new RuntimeCamelException("Python inference failed: " + resultJson);
+        }
         exchange.getMessage().setBody(imageBytes);
         exchange.getMessage().setHeader("Content-Type", "image/png");
+        exchange.getMessage().setHeader(HuggingFaceConstants.OUTPUT, imageBytes);
     }
 }

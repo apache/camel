@@ -22,13 +22,23 @@ import java.time.Duration;
 import org.apache.camel.dsl.jbang.it.support.JBangTestSupport;
 import org.assertj.core.api.Assertions;
 import org.awaitility.Awaitility;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.DisabledOnOs;
 
 import static org.junit.jupiter.api.condition.OS.WINDOWS;
 
 @DisabledOnOs(WINDOWS)
+@Tag("container-only")
 public class JolokiaITCase extends JBangTestSupport {
+
+    @AfterEach
+    public void stopJolokiaAndHawtio() {
+        execute("jolokia FromDirectoryRoute --stop", false, true);
+        execInContainer("pkill -f 'hawtio FromDirectoryRoute' 2>/dev/null || true");
+        execute("stop FromDirectoryRoute", false, true);
+    }
 
     @Test
     public void testAttachJolokia() throws IOException {

@@ -6,6 +6,7 @@
     "title": "Error Registry",
     "description": "Display captured routing errors",
     "deprecated": false,
+    "readOnly": true,
     "javaType": "org.apache.camel.impl.console.ErrorRegistryConsole",
     "groupId": "org.apache.camel",
     "artifactId": "camel-console",

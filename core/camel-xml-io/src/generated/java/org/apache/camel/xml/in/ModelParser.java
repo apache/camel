@@ -1956,6 +1956,7 @@ public class ModelParser extends BaseParser {
                 case "keyUserid": def.setKeyUserid(val); yield true;
                 case "password": def.setPassword(val); yield true;
                 case "provider": def.setProvider(val); yield true;
+                case "requireIntegrityProtection": def.setRequireIntegrityProtection(val); yield true;
                 case "signatureKeyFileName": def.setSignatureKeyFileName(val); yield true;
                 case "signatureKeyRing": def.setSignatureKeyRing(val); yield true;
                 case "signatureKeyUserid": def.setSignatureKeyUserid(val); yield true;
@@ -2238,21 +2239,14 @@ public class ModelParser extends BaseParser {
     protected SpringTransactionErrorHandlerDefinition doParseSpringTransactionErrorHandlerDefinition() throws IOException, XmlPullParserException {
         return doParse(new SpringTransactionErrorHandlerDefinition(), transactionErrorHandlerDefinitionAttributeHandler(), defaultErrorHandlerDefinitionElementHandler(), noValueHandler());
     }
-    protected CSimpleExpression doParseCSimpleExpression() throws IOException, XmlPullParserException {
-        return doParse(new CSimpleExpression(), (def, key, val) -> switch (key) {
-                case "pretty": def.setPretty(val); yield true;
-                case "trimResult": def.setTrimResult(val); yield true;
-                default: yield typedExpressionDefinitionAttributeHandler().accept(def, key, val);
-            }, noElementHandler(), expressionDefinitionValueHandler());
+    protected ConstantExpression doParseConstantExpression() throws IOException, XmlPullParserException {
+        return doParse(new ConstantExpression(), typedExpressionDefinitionAttributeHandler(), noElementHandler(), expressionDefinitionValueHandler());
     }
     protected <T extends TypedExpressionDefinition> AttributeHandler<T> typedExpressionDefinitionAttributeHandler() {
         return (def, key, val) -> switch (key) {
             case "resultType": def.setResultTypeName(val); yield true;
             default: yield expressionDefinitionAttributeHandler().accept(def, key, val);
         };
-    }
-    protected ConstantExpression doParseConstantExpression() throws IOException, XmlPullParserException {
-        return doParse(new ConstantExpression(), typedExpressionDefinitionAttributeHandler(), noElementHandler(), expressionDefinitionValueHandler());
     }
     protected DatasonnetExpression doParseDatasonnetExpression() throws IOException, XmlPullParserException {
         return doParse(new DatasonnetExpression(), (def, key, val) -> switch (key) {
@@ -2341,6 +2335,9 @@ public class ModelParser extends BaseParser {
     protected PythonExpression doParsePythonExpression() throws IOException, XmlPullParserException {
         return doParse(new PythonExpression(), typedExpressionDefinitionAttributeHandler(), noElementHandler(), expressionDefinitionValueHandler());
     }
+    protected QuickjsExpression doParseQuickjsExpression() throws IOException, XmlPullParserException {
+        return doParse(new QuickjsExpression(), typedExpressionDefinitionAttributeHandler(), noElementHandler(), expressionDefinitionValueHandler());
+    }
     protected RefExpression doParseRefExpression() throws IOException, XmlPullParserException {
         return doParse(new RefExpression(), typedExpressionDefinitionAttributeHandler(), noElementHandler(), expressionDefinitionValueHandler());
     }
@@ -2382,8 +2379,14 @@ public class ModelParser extends BaseParser {
         return doParse(new XMLTokenizerExpression(), (def, key, val) -> switch (key) {
                 case "group": def.setGroup(val); yield true;
                 case "mode": def.setMode(val); yield true;
-                default: yield singleInputTypedExpressionDefinitionAttributeHandler().accept(def, key, val);
+                default: yield namespaceAwareExpressionAttributeHandler().accept(def, key, val);
             }, namespaceAwareExpressionElementHandler(), expressionDefinitionValueHandler());
+    }
+    protected <T extends NamespaceAwareExpression> AttributeHandler<T> namespaceAwareExpressionAttributeHandler() {
+        return (def, key, val) -> switch (key) {
+            case "namespacesRef": def.setNamespacesRef(val); yield true;
+            default: yield singleInputTypedExpressionDefinitionAttributeHandler().accept(def, key, val);
+        };
     }
     protected <T extends NamespaceAwareExpression> ElementHandler<T> namespaceAwareExpressionElementHandler() {
         return (def, key) -> switch (key) {
@@ -2401,13 +2404,13 @@ public class ModelParser extends BaseParser {
                 case "resultQName": def.setResultQName(val); yield true;
                 case "saxon": def.setSaxon(val); yield true;
                 case "threadSafety": def.setThreadSafety(val); yield true;
-                default: yield singleInputTypedExpressionDefinitionAttributeHandler().accept(def, key, val);
+                default: yield namespaceAwareExpressionAttributeHandler().accept(def, key, val);
             }, namespaceAwareExpressionElementHandler(), expressionDefinitionValueHandler());
     }
     protected XQueryExpression doParseXQueryExpression() throws IOException, XmlPullParserException {
         return doParse(new XQueryExpression(), (def, key, val) -> switch (key) {
                 case "configurationRef": def.setConfigurationRef(val); yield true;
-                default: yield singleInputTypedExpressionDefinitionAttributeHandler().accept(def, key, val);
+                default: yield namespaceAwareExpressionAttributeHandler().accept(def, key, val);
             }, namespaceAwareExpressionElementHandler(), expressionDefinitionValueHandler());
     }
     protected CustomLoadBalancerDefinition doParseCustomLoadBalancerDefinition() throws IOException, XmlPullParserException {
@@ -2902,7 +2905,6 @@ public class ModelParser extends BaseParser {
     protected ExpressionDefinition doParseExpressionDefinitionRef(String key) throws IOException, XmlPullParserException {
         switch (key) {
             case "expressionDefinition": return doParseExpressionDefinition();
-            case "csimple": return doParseCSimpleExpression();
             case "constant": return doParseConstantExpression();
             case "datasonnet": return doParseDatasonnetExpression();
             case "exchangeProperty": return doParseExchangePropertyExpression();
@@ -2921,6 +2923,7 @@ public class ModelParser extends BaseParser {
             case "ognl": return doParseOgnlExpression();
             case "python3": return doParsePython3Expression();
             case "python": return doParsePythonExpression();
+            case "quickjs": return doParseQuickjsExpression();
             case "ref": return doParseRefExpression();
             case "simple": return doParseSimpleExpression();
             case "spel": return doParseSpELExpression();

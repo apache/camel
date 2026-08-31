@@ -18,7 +18,6 @@ package org.apache.camel.builder;
 
 import org.apache.camel.Expression;
 import org.apache.camel.model.ExpressionNodeHelper;
-import org.apache.camel.model.language.CSimpleExpression;
 import org.apache.camel.model.language.ConstantExpression;
 import org.apache.camel.model.language.ExchangePropertyExpression;
 import org.apache.camel.model.language.HeaderExpression;
@@ -143,29 +142,6 @@ public final class Builder {
      */
     public static ValueBuilder language(String language, String expression) {
         Expression exp = new LanguageExpression(language, expression);
-        return new ValueBuilder(exp);
-    }
-
-    /**
-     * Returns a csimple expression
-     *
-     * @deprecated use {@link #simple(String)} instead
-     */
-    @Deprecated(since = "4.19")
-    public static ValueBuilder csimple(String value) {
-        Expression exp = new CSimpleExpression(value);
-        return new ValueBuilder(exp);
-    }
-
-    /**
-     * Returns a csimple expression
-     *
-     * @deprecated use {@link #simple(String, Class)} instead
-     */
-    @Deprecated(since = "4.19")
-    public static ValueBuilder csimple(String value, Class<?> resultType) {
-        CSimpleExpression exp = new CSimpleExpression(value);
-        exp.setResultType(resultType);
         return new ValueBuilder(exp);
     }
 

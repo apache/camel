@@ -6,6 +6,7 @@
     "title": "Camel Tracing",
     "description": "Trace routed messages",
     "deprecated": false,
+    "readOnly": false,
     "javaType": "org.apache.camel.impl.console.TraceDevConsole",
     "groupId": "org.apache.camel",
     "artifactId": "camel-console",

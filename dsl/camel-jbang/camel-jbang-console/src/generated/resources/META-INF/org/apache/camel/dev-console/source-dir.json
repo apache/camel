@@ -6,6 +6,7 @@
     "title": "Source Directory",
     "description": "Information about Camel CLI source files",
     "deprecated": false,
+    "readOnly": true,
     "javaType": "org.apache.camel.jbang.console.SourceDirDevConsole",
     "groupId": "org.apache.camel",
     "artifactId": "camel-jbang-console",

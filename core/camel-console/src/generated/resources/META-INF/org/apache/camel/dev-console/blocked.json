@@ -6,6 +6,7 @@
     "title": "Blocked Exchanges",
     "description": "Display blocked exchanges",
     "deprecated": false,
+    "readOnly": true,
     "javaType": "org.apache.camel.impl.console.BlockedConsole",
     "groupId": "org.apache.camel",
     "artifactId": "camel-console",

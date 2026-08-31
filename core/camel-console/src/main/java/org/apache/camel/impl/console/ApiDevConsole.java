@@ -16,6 +16,7 @@
  */
 package org.apache.camel.impl.console;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -24,7 +25,9 @@ import org.apache.camel.console.DevConsoleRegistry;
 import org.apache.camel.spi.Configurer;
 import org.apache.camel.spi.annotations.DevConsole;
 import org.apache.camel.support.console.AbstractDevConsole;
-import org.apache.camel.util.json.JsonArray;
+import org.apache.camel.tooling.model.DevConsoleModel;
+import org.apache.camel.tooling.model.DevConsoleOpenApiHelper;
+import org.apache.camel.tooling.model.JsonMapper;
 import org.apache.camel.util.json.JsonObject;
 import org.apache.camel.util.json.Jsoner;
 
@@ -63,119 +66,37 @@ public class ApiDevConsole extends AbstractDevConsole {
     }
 
     private String buildOpenApi() {
-        JsonObject root = new JsonObject();
-        root.put("openapi", "3.0.3");
-
-        JsonObject info = new JsonObject();
-        info.put("title", "Camel Dev Console API");
-        info.put("version", getCamelContext().getVersion());
-        root.put("info", info);
-
-        JsonObject paths = new JsonObject();
+        List<DevConsoleModel> models = new ArrayList<>();
 
         DevConsoleRegistry dcr = getCamelContext().getCamelContextExtension()
                 .getContextPlugin(DevConsoleRegistry.class);
         if (dcr != null && dcr.isEnabled()) {
-            List<org.apache.camel.console.DevConsole> consoles = dcr.stream()
-                    .sorted((a, b) -> a.getId().compareToIgnoreCase(b.getId()))
-                    .toList();
-
-            for (org.apache.camel.console.DevConsole console : consoles) {
-                String id = console.getId();
-                JsonObject pathItem = new JsonObject();
-                JsonObject post = new JsonObject();
-                post.put("summary", console.getDisplayName());
-                post.put("description", console.getDescription());
-                post.put("operationId", id);
-
-                JsonObject requestBody = buildConsoleRequestBody(id);
-                if (requestBody != null) {
-                    post.put("requestBody", requestBody);
-                }
-
-                JsonObject responses = new JsonObject();
-                JsonObject ok = new JsonObject();
-                ok.put("description", console.getDisplayName() + " output");
-                JsonObject responseContent = new JsonObject();
-                responseContent.put("application/json", new JsonObject());
-                ok.put("content", responseContent);
-                responses.put("200", ok);
-                post.put("responses", responses);
-
-                pathItem.put("post", post);
-                paths.put("/q/dev/" + id, pathItem);
+            for (org.apache.camel.console.DevConsole console : dcr.stream().toList()) {
+                models.add(buildConsoleModel(console));
             }
         }
 
-        root.put("paths", paths);
+        JsonObject root = DevConsoleOpenApiHelper.buildOpenApiDocument(models, getCamelContext().getVersion());
         return Jsoner.prettyPrint(root.toJson());
     }
 
-    private JsonObject buildConsoleRequestBody(String consoleId) {
+    /**
+     * Builds the {@link DevConsoleModel} for the given live console: its options are loaded from the console's
+     * generated catalog schema, while id/displayName/description/readOnly come from the live instance.
+     */
+    private DevConsoleModel buildConsoleModel(org.apache.camel.console.DevConsole console) {
+        DevConsoleModel model;
         try {
             String json = ((CatalogCamelContext) getCamelContext())
-                    .getDevConsoleParameterJsonSchema(consoleId);
-            if (json == null) {
-                return null;
-            }
-            Object parsed = Jsoner.deserialize(json);
-            if (!(parsed instanceof JsonObject jo)) {
-                return null;
-            }
-            Object optionsObj = jo.get("options");
-            if (!(optionsObj instanceof JsonObject opts) || opts.isEmpty()) {
-                return null;
-            }
-
-            JsonObject properties = new JsonObject();
-            JsonArray required = new JsonArray();
-            for (Map.Entry<String, Object> entry : opts.entrySet()) {
-                String name = entry.getKey();
-                if (!(entry.getValue() instanceof JsonObject opt)) {
-                    continue;
-                }
-                JsonObject prop = new JsonObject();
-                String type = opt.getString("type");
-                if (type != null) {
-                    prop.put("type", type);
-                }
-                String description = opt.getString("description");
-                if (description != null) {
-                    prop.put("description", description);
-                }
-                Object defaultValue = opt.get("defaultValue");
-                if (defaultValue != null) {
-                    prop.put("default", defaultValue);
-                }
-                Object enumValues = opt.get("enum");
-                if (enumValues instanceof JsonArray ea && !ea.isEmpty()) {
-                    prop.put("enum", enumValues);
-                }
-                properties.put(name, prop);
-
-                Boolean req = opt.getBoolean("required");
-                if (req != null && req) {
-                    required.add(name);
-                }
-            }
-
-            JsonObject schema = new JsonObject();
-            schema.put("type", "object");
-            schema.put("properties", properties);
-            if (!required.isEmpty()) {
-                schema.put("required", required);
-            }
-
-            JsonObject mediaType = new JsonObject();
-            mediaType.put("schema", schema);
-            JsonObject content = new JsonObject();
-            content.put("application/json", mediaType);
-            JsonObject requestBody = new JsonObject();
-            requestBody.put("content", content);
-            return requestBody;
+                    .getDevConsoleParameterJsonSchema(console.getId());
+            model = json != null ? JsonMapper.generateDevConsoleModel(json) : new DevConsoleModel();
         } catch (Exception e) {
-            // ignore
-            return null;
+            model = new DevConsoleModel();
         }
+        model.setName(console.getId());
+        model.setTitle(console.getDisplayName());
+        model.setDescription(console.getDescription());
+        model.setReadOnly(console.isReadOnly());
+        return model;
     }
 }

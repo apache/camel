@@ -41,7 +41,7 @@ import org.apache.camel.util.json.JsonArray;
 import org.apache.camel.util.json.JsonObject;
 import org.apache.camel.util.json.Jsoner;
 
-@DevConsole(name = "debug", description = "Camel route debugger")
+@DevConsole(name = "debug", description = "Camel route debugger", readOnly = false)
 public class DebugDevConsole extends AbstractDevConsole {
 
     @Metadata(label = "query", description = "Action command to execute on the debugger", javaType = "java.lang.String")

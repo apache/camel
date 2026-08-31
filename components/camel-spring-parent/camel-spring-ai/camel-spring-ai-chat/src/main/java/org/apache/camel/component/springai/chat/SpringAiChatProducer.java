@@ -33,6 +33,13 @@ import org.apache.camel.Exchange;
 import org.apache.camel.InvalidPayloadException;
 import org.apache.camel.NoSuchHeaderException;
 import org.apache.camel.WrappedFile;
+import org.apache.camel.component.ai.observability.GenAiErrorSupport;
+import org.apache.camel.component.ai.observability.GenAiModelResolver;
+import org.apache.camel.component.ai.observability.GenAiObservability;
+import org.apache.camel.component.ai.observability.GenAiObservation;
+import org.apache.camel.component.ai.observability.GenAiObservationContext;
+import org.apache.camel.component.ai.observability.GenAiOperationName;
+import org.apache.camel.component.ai.observability.GenAiUsage;
 import org.apache.camel.component.ai.tool.AiToolParameterHelper;
 import org.apache.camel.component.ai.tool.AiToolRegistry;
 import org.apache.camel.component.ai.tool.AiToolSpec;
@@ -41,6 +48,7 @@ import org.apache.camel.support.DefaultProducer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.ai.chat.client.ChatClient;
+import org.springframework.ai.chat.client.ResponseEntity;
 import org.springframework.ai.chat.client.advisor.MessageChatMemoryAdvisor;
 import org.springframework.ai.chat.client.advisor.SafeGuardAdvisor;
 import org.springframework.ai.chat.client.advisor.SimpleLoggerAdvisor;
@@ -77,8 +85,10 @@ import org.springframework.util.MimeType;
 public class SpringAiChatProducer extends DefaultProducer {
 
     private static final Logger LOG = LoggerFactory.getLogger(SpringAiChatProducer.class);
+    private static volatile boolean chatModelExtractionWarnLogged;
 
     private ChatClient chatClient;
+    private ChatModel observabilityChatModel;
     private SpringAiChatMcpManager mcpManager;
     private Advisor chatMemoryAdvisor;
 
@@ -97,16 +107,24 @@ public class SpringAiChatProducer extends DefaultProducer {
 
         // Initialize ChatClient
         ChatClient configuredClient = getEndpoint().getConfiguration().getChatClient();
+        ChatModel configuredChatModel = getEndpoint().getConfiguration().getChatModel();
         if (configuredClient != null) {
             // Use the provided ChatClient
             this.chatClient = configuredClient;
+            if (configuredChatModel != null) {
+                this.observabilityChatModel = configuredChatModel;
+            } else {
+                this.observabilityChatModel = extractChatModelFromClient(configuredClient);
+                warnWhenObservabilityNeedsExplicitChatModel();
+            }
         } else {
             // Create ChatClient from ChatModel
-            ChatModel chatModel = getEndpoint().getConfiguration().getChatModel();
+            ChatModel chatModel = configuredChatModel;
             if (chatModel == null) {
                 throw new IllegalArgumentException(
                         "Either ChatClient or ChatModel must be configured");
             }
+            this.observabilityChatModel = chatModel;
 
             ChatClient.Builder builder = ChatClient.builder(chatModel);
 
@@ -852,13 +870,24 @@ public class SpringAiChatProducer extends DefaultProducer {
      */
     private <T> void processEntityRequest(
             ChatClient.ChatClientRequestSpec request, Exchange exchange, Class<T> entityClass) {
-        // Execute the request and convert to entity
-        T entity = request.call().entity(entityClass);
-
-        // Set the entity as the body
-        exchange.getMessage().setBody(entity);
-
-        LOG.debug("Converted response to entity of type: {}", entityClass.getName());
+        GenAiObservationContext observationContext = buildObservationContext();
+        GenAiObservation observation = GenAiObservability.start(exchange, observationContext);
+        try {
+            ResponseEntity<ChatResponse, T> responseEntity = request.call().responseEntity(entityClass);
+            ChatResponse chatResponse = responseEntity.response();
+            T entity = responseEntity.entity();
+            recordObservationSuccess(observation, chatResponse, observationContext.requestModel());
+            populateTokenUsage(chatResponse, exchange);
+            populateResponseMetadata(chatResponse, exchange);
+            exchange.getMessage().setBody(entity);
+            LOG.debug("Converted response to entity of type: {}", entityClass.getName());
+        } catch (RuntimeException e) {
+            GenAiErrorSupport.apply(exchange, e);
+            observation.recordError(e);
+            throw e;
+        } finally {
+            observation.close();
+        }
     }
 
     private StructuredOutputConverter<?> getStructuredOutputConverter(Exchange exchange) {
@@ -950,8 +979,8 @@ public class SpringAiChatProducer extends DefaultProducer {
         // Append format instructions to the request
         request.user(u -> u.text(format));
 
-        // Execute the request
-        ChatResponse response = request.call().chatResponse();
+        ChatResponse response = callWithObservability(request, exchange);
+        populateTokenUsage(response, exchange);
 
         // Get the raw response text
         String responseText = response.getResult().getOutput().getText();
@@ -965,8 +994,6 @@ public class SpringAiChatProducer extends DefaultProducer {
         // Also set headers
         exchange.getMessage().setHeader(SpringAiChatConstants.CHAT_RESPONSE, responseText);
         exchange.getMessage().setHeader(SpringAiChatConstants.STRUCTURED_OUTPUT, structuredOutput);
-
-        populateTokenUsage(response, exchange);
     }
 
     /**
@@ -1202,8 +1229,101 @@ public class SpringAiChatProducer extends DefaultProducer {
         } else if (converter != null) {
             processStructuredOutputRequest(request, exchange, converter);
         } else {
-            ChatResponse response = request.call().chatResponse();
+            ChatResponse response = callWithObservability(request, exchange);
             populateResponse(response, exchange);
+        }
+    }
+
+    private ChatResponse callWithObservability(ChatClient.ChatClientRequestSpec request, Exchange exchange) {
+        GenAiObservationContext observationContext = buildObservationContext();
+        GenAiObservation observation = GenAiObservability.start(exchange, observationContext);
+        try {
+            ChatResponse response = request.call().chatResponse();
+            recordObservationSuccess(observation, response, observationContext.requestModel());
+            return response;
+        } catch (RuntimeException e) {
+            GenAiErrorSupport.apply(exchange, e);
+            observation.recordError(e);
+            throw e;
+        } finally {
+            observation.close();
+        }
+    }
+
+    private void recordObservationSuccess(GenAiObservation observation, ChatResponse response, String requestModel) {
+        Integer inputTokens = null;
+        Integer outputTokens = null;
+        String finishReason = null;
+        String responseModel = requestModel;
+        if (response.getMetadata() != null) {
+            if (response.getMetadata().getUsage() != null) {
+                var usage = response.getMetadata().getUsage();
+                inputTokens = usage.getPromptTokens();
+                outputTokens = usage.getCompletionTokens();
+            }
+            if (response.getMetadata().getModel() != null) {
+                responseModel = response.getMetadata().getModel();
+            }
+        }
+        if (response.getResult() != null && response.getResult().getMetadata() != null) {
+            finishReason = response.getResult().getMetadata().getFinishReason();
+        }
+        observation.recordSuccess(GenAiUsage.of(inputTokens, outputTokens, finishReason, responseModel));
+    }
+
+    private GenAiObservationContext buildObservationContext() {
+        Object modelSource = resolveObservabilityModelSource();
+        String requestModel = GenAiModelResolver.resolveModelName(
+                getEndpoint().getCamelContext().getClassResolver(), modelSource);
+        return GenAiObservationContext.builder()
+                .operationName(GenAiOperationName.CHAT)
+                .system(GenAiModelResolver.resolveSystem(getEndpoint().getCamelContext().getClassResolver(), modelSource))
+                .requestModel(requestModel)
+                .componentScheme("spring-ai-chat")
+                .build();
+    }
+
+    private Object resolveObservabilityModelSource() {
+        if (observabilityChatModel != null) {
+            return observabilityChatModel;
+        }
+        ChatModel chatModel = getEndpoint().getConfiguration().getChatModel();
+        if (chatModel != null) {
+            return chatModel;
+        }
+        return chatClient;
+    }
+
+    /**
+     * Attempts to read the backing {@link ChatModel} from Spring AI's internal {@code ChatClientRequestSpec}
+     * implementation. This relies on a private {@code chatModel} field that is not part of the public Spring AI API and
+     * may change between Spring AI releases.
+     */
+    private ChatModel extractChatModelFromClient(ChatClient client) {
+        try {
+            ChatClient.ChatClientRequestSpec requestSpec = client.prompt();
+            var field = requestSpec.getClass().getDeclaredField("chatModel");
+            field.setAccessible(true);
+            return (ChatModel) field.get(requestSpec);
+        } catch (ReflectiveOperationException e) {
+            if (LOG.isDebugEnabled()) {
+                LOG.debug("Could not extract ChatModel from ChatClient for observability: {}", e.getMessage());
+            }
+            return null;
+        }
+    }
+
+    private void warnWhenObservabilityNeedsExplicitChatModel() {
+        if (observabilityChatModel != null || !GenAiObservability.isEnabled(getEndpoint().getCamelContext())) {
+            return;
+        }
+        if (!chatModelExtractionWarnLogged) {
+            chatModelExtractionWarnLogged = true;
+            LOG.warn(
+                    "GenAI observability is enabled but ChatModel could not be resolved from the configured ChatClient. "
+                     + "Spring AI does not expose the backing ChatModel publicly, so Camel reads a private field "
+                     + "that may change between releases. Configure chatModel explicitly on the endpoint URI or "
+                     + "component so gen_ai.system and gen_ai.request.model span attributes are populated.");
         }
     }
 

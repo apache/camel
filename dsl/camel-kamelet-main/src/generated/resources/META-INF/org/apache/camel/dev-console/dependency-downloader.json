@@ -6,6 +6,7 @@
     "title": "Maven Dependency Downloader",
     "description": "Displays information about dependencies downloaded at runtime",
     "deprecated": false,
+    "readOnly": true,
     "javaType": "org.apache.camel.main.console.DependencyDownloaderConsole",
     "groupId": "org.apache.camel",
     "artifactId": "camel-kamelet-main",

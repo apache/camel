@@ -6,6 +6,7 @@
     "title": "SQL Trace",
     "description": "Trace SQL query executions",
     "deprecated": false,
+    "readOnly": true,
     "javaType": "org.apache.camel.impl.console.SqlTraceDevConsole",
     "groupId": "org.apache.camel",
     "artifactId": "camel-console",

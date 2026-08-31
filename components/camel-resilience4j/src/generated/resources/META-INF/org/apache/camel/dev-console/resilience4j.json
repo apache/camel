@@ -6,6 +6,7 @@
     "title": "Resilience Circuit Breaker",
     "description": "Display circuit breaker information",
     "deprecated": false,
+    "readOnly": true,
     "javaType": "org.apache.camel.component.resilience4j.ResilienceConsole",
     "groupId": "org.apache.camel",
     "artifactId": "camel-resilience4j",

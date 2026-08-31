@@ -6,6 +6,7 @@
     "title": "Stub",
     "description": "Browse messages on stub endpoints",
     "deprecated": false,
+    "readOnly": true,
     "javaType": "org.apache.camel.component.stub.StubConsole",
     "groupId": "org.apache.camel",
     "artifactId": "camel-stub",

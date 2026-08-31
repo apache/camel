@@ -215,8 +215,13 @@ assertTrue(list.contains("a"));
 
 - New test code is preferred to use AssertJ assertions (`assertThat(...)`) instead of JUnit assertions
   (`assertEquals`, `assertTrue`, `assertFalse`, `assertNotNull`, etc.).
+- Do NOT mix styles within a project/module. Check the assertion style already used by the other
+  test classes in the component/module being touched: if they are predominantly JUnit assertions,
+  write new tests in that same JUnit style rather than introducing AssertJ as an outlier. Only
+  default to AssertJ when the module has no established convention either way.
 - When modifying existing test code that uses JUnit assertions, migrate touched assertions to
-  AssertJ where it improves readability. No need to migrate the entire file.
+  AssertJ where it improves readability and the surrounding module isn't predominantly JUnit.
+  No need to migrate the entire file.
 - Do NOT mix AssertJ and JUnit assertions in the same test method — pick one style per method.
 - `MockEndpoint.assertIsSatisfied()` and other Camel-specific assertion methods are NOT JUnit
   assertions — keep using them as-is.
@@ -348,6 +353,17 @@ When writing or modifying `.adoc` documentation:
   version-aware reference.
 - **When reviewing doc PRs**, check that all `xref:` links and anchors resolve correctly, especially
   cross-component references that may span versions.
+- **Avoid explicit `[[anchor]]` blocks before a heading.** AsciiDoc already auto-generates an id from
+  the heading text (prefixed with `_`, e.g. `=== Structured error exchange properties` becomes
+  `#_structured_error_exchange_properties`). An explicit `[[structured_error_exchange_properties]]`
+  anchor sets the id *without* that prefix, so it silently diverges from the id every other `xref:`
+  in the codebase expects and breaks the website link checker. Only add an explicit anchor when a
+  stable id is needed that must survive a heading rename — never as a matter of habit.
+- **Component doc changes require regenerating the catalog.** Editing a component's
+  `src/main/docs/*.adoc` also requires regenerating and committing the mirrored copy under
+  `catalog/camel-catalog/src/generated/resources/org/apache/camel/catalog/docs/`. CI's
+  "uncommitted changes" check fails otherwise — this applies even to small doc-only edits like
+  removing an anchor, not just code-driven metadata changes.
 
 ## Security Model
 
