@@ -82,6 +82,7 @@ public class SubscriptionHelper extends ServiceSupport {
     private static final Logger LOG = LoggerFactory.getLogger(SubscriptionHelper.class);
 
     private static final int HANDSHAKE_TIMEOUT_SEC = 120;
+    private static final int DISCONNECT_TIMEOUT_SEC = 10;
 
     private static final String FAILURE_FIELD = "failure";
     private static final String EXCEPTION_FIELD = "exception";
@@ -261,14 +262,8 @@ public class SubscriptionHelper extends ServiceSupport {
                 return;
             }
 
-            final ScheduledExecutorService executor = taskExecutor;
-            if (executor == null) {
-                reconnecting.set(false);
-                return;
-            }
-
             try {
-                executor.execute(this::reconnectAfterDisconnect);
+                component.getHttpClient().getWorkerPool().execute(this::reconnectAfterDisconnect);
             } catch (RejectedExecutionException e) {
                 reconnecting.set(false);
                 if (!isStoppingOrStopped()) {
@@ -285,10 +280,11 @@ public class SubscriptionHelper extends ServiceSupport {
                 return;
             }
 
-            final long waitMs = MILLISECONDS.convert(HANDSHAKE_TIMEOUT_SEC, SECONDS);
+            final long waitMs = MILLISECONDS.convert(DISCONNECT_TIMEOUT_SEC, SECONDS);
             if (!disconnectedClient.waitFor(waitMs, BayeuxClient.State.DISCONNECTED)) {
                 if (!isStoppingOrStopped()) {
-                    LOG.warn("Timed out waiting for the Streaming API client to disconnect");
+                    LOG.warn("Timed out after {} seconds waiting for the Streaming API client to disconnect",
+                            DISCONNECT_TIMEOUT_SEC);
                 }
                 return;
             }
