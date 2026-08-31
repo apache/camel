@@ -162,18 +162,22 @@ public class MailConsumer extends ScheduledBatchPollingConsumer {
         // okay consumer is connected to the mail server
         forceConsumerAsReady();
 
+        // capture folder into a local variable so any later field change (e.g. on stop)
+        // does not affect the in-progress poll
+        final Folder currentFolder = folder;
+
         try {
-            int count = folder.getMessageCount();
+            int count = currentFolder.getMessageCount();
             if (count > 0) {
                 Queue<Exchange> messages = retrieveMessages();
                 polledMessages = processBatch(CastUtils.cast(messages));
 
                 final MailBoxPostProcessAction postProcessor = getEndpoint().getPostProcessAction();
                 if (postProcessor != null) {
-                    postProcessor.process(folder);
+                    postProcessor.process(currentFolder);
                 }
             } else if (count == -1) {
-                throw new MessagingException("Folder: " + folder.getFullName() + " is closed");
+                throw new MessagingException("Folder: " + currentFolder.getFullName() + " is closed");
             }
         } catch (Exception e) {
             handleException(e);
@@ -181,17 +185,17 @@ public class MailConsumer extends ScheduledBatchPollingConsumer {
             // need to ensure we release resources, but only if closeFolder or disconnect = true
             if (getEndpoint().getConfiguration().isCloseFolder() || getEndpoint().getConfiguration().isDisconnect()) {
                 try {
-                    if (folder != null && folder.isOpen()) {
+                    if (currentFolder != null && currentFolder.isOpen()) {
                         if (LOG.isDebugEnabled()) {
-                            LOG.debug("Close mailbox folder {} from {}", folder.getName(),
+                            LOG.debug("Close mailbox folder {} from {}", currentFolder.getName(),
                                     getEndpoint().getConfiguration().getMailStoreLogInformation());
                         }
-                        folder.close(true);
+                        currentFolder.close(true);
                     }
                 } catch (Exception e) {
                     // some mail servers will lock the folder so we ignore in this case (CAMEL-1263)
                     LOG.debug("Could not close mailbox folder: {}. This exception is ignored.",
-                            folder != null ? folder.getName() : "null", e);
+                            currentFolder != null ? currentFolder.getName() : "null", e);
                 }
             }
         }

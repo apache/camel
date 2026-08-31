@@ -38,13 +38,9 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 /**
- * Verifies that {@link MailConsumer#poll()} does not throw {@link NullPointerException} in the {@code finally} catch
- * block when {@code folder.close()} throws and the folder field is null at the time the catch block runs.
- *
- * <p>
- * Before the fix, the catch block logged {@code folder.getName()} without a null check — if a concurrent
- * {@code disconnect()} nulled the field between the {@code if (folder != null)} guard and the catch body, an NPE would
- * be thrown instead of the intended debug log. CAMEL-24565.
+ * Verifies that {@link MailConsumer#poll()} handles a null {@code currentFolder} local variable safely in the
+ * {@code finally} catch block. Before the fix, the block used the instance field directly without a null guard; the fix
+ * uses a local variable captured before the try block, providing consistency throughout the poll. CAMEL-24567.
  */
 class MailConsumerFolderNullCatchTest {
 
@@ -80,14 +76,15 @@ class MailConsumerFolderNullCatchTest {
 
         // set up a folder that:
         // 1. isOpen() returns true — so close() will be called
-        // 2. getMessageCount() returns 0 — so poll returns immediately after
+        // 2. getMessageCount() returns 0 — poll completes without processing messages
         // 3. close() throws MessagingException — triggers the catch block
-        //    AND sets folder field to null to simulate concurrent disconnect()
+        //    The test verifies the catch block handles gracefully even when the
+        //    instance field is null (simulating the local-variable capture being null)
         Folder folder = mock(Folder.class);
         when(folder.isOpen()).thenReturn(true);
         when(folder.getMessageCount()).thenReturn(0);
         doAnswer(inv -> {
-            // simulate concurrent disconnect() nulling the field while close() runs
+            // null the instance field to exercise the null-safe name lookup in the catch block
             folderField.set(consumer, null);
             throw new MessagingException("server locked the folder");
         }).when(folder).close(anyBoolean());
@@ -98,7 +95,7 @@ class MailConsumerFolderNullCatchTest {
         folderField.set(consumer, folder);
         storeField.set(consumer, store);
 
-        // must not throw NullPointerException in the catch block — CAMEL-24565
+        // must not throw NullPointerException in the catch block — CAMEL-24567
         assertDoesNotThrow(() -> consumer.poll(),
                 "poll() must not throw NPE when folder becomes null inside folder.close() catch block");
     }
