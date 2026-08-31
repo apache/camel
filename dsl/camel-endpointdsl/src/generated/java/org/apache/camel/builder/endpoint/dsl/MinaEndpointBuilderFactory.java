@@ -236,6 +236,40 @@ public interface MinaEndpointBuilderFactory {
             return this;
         }
         /**
+         * If enabled and an Exchange failed processing on the consumer side the
+         * response written back to the remote peer won't contain the
+         * exception's class, message or stack trace.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: true
+         * Group: consumer
+         * 
+         * @param muteException the value to set
+         * @return the dsl builder
+         */
+        default MinaEndpointConsumerBuilder muteException(boolean muteException) {
+            doSetProperty("muteException", muteException);
+            return this;
+        }
+        /**
+         * If enabled and an Exchange failed processing on the consumer side the
+         * response written back to the remote peer won't contain the
+         * exception's class, message or stack trace.
+         * 
+         * The option will be converted to a <code>boolean</code> type.
+         * 
+         * Default: true
+         * Group: consumer
+         * 
+         * @param muteException the value to set
+         * @return the dsl builder
+         */
+        default MinaEndpointConsumerBuilder muteException(String muteException) {
+            doSetProperty("muteException", muteException);
+            return this;
+        }
+        /**
          * The mina component installs a default codec if both, codec is null
          * and textline is false. Setting allowDefaultCodec to false prevents
          * the mina component from installing a default codec as the first
