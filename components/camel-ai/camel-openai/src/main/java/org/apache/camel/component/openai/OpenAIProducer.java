@@ -251,11 +251,11 @@ public class OpenAIProducer extends DefaultAsyncProducer {
 
         String systemPrompt = in.getHeader(OpenAIConstants.SYSTEM_MESSAGE, String.class);
         String developerPrompt = in.getHeader(OpenAIConstants.DEVELOPER_MESSAGE, String.class);
-        if (systemPrompt == null || systemPrompt.isEmpty() && ObjectHelper.isNotEmpty(config.getSystemMessage())) {
+        if ((systemPrompt == null || systemPrompt.isEmpty()) && ObjectHelper.isNotEmpty(config.getSystemMessage())) {
             systemPrompt = config.getSystemMessage();
         }
-        if (developerPrompt == null
-                || developerPrompt.isEmpty() && ObjectHelper.isNotEmpty(config.getDeveloperMessage())) {
+        if ((developerPrompt == null || developerPrompt.isEmpty())
+                && ObjectHelper.isNotEmpty(config.getDeveloperMessage())) {
             developerPrompt = config.getDeveloperMessage();
         }
 
@@ -308,7 +308,7 @@ public class OpenAIProducer extends DefaultAsyncProducer {
     private ChatCompletionMessageParam buildUserMessage(Message in, OpenAIConfiguration config) throws Exception {
         Object body = in.getBody();
         String userPrompt = in.getHeader(OpenAIConstants.USER_MESSAGE, String.class);
-        if (userPrompt == null || userPrompt.isEmpty() && ObjectHelper.isNotEmpty(config.getUserMessage())) {
+        if ((userPrompt == null || userPrompt.isEmpty()) && ObjectHelper.isNotEmpty(config.getUserMessage())) {
             userPrompt = config.getUserMessage();
         }
 
