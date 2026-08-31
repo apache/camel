@@ -980,3 +980,98 @@ overrides it to `true`, so LRA interoperability is unchanged.
 A custom `CamelSagaService` that relies on the header to join sagas started by another participant must
 override the new method. Everything else is unaffected: the header is still set on the exchange, and
 routes reading it continue to work.
+
+=== camel-spring-boot
+
+A set of starter defaults changed in this release. Each is a deliberate change to what an application gets
+when it configures nothing, so an existing deployment that relied on the previous default has to opt back in.
+
+==== camel-jolokia-starter binds to loopback
+
+The Jolokia agent's bind address now defaults to `127.0.0.1` instead of `0.0.0.0`, matching the default of the
+Jolokia JVM agent this starter is an alternative to. The starter ships no authenticator, and TLS is configured
+only when the Kubernetes service-account CA file is present, so the previous default put an unauthenticated
+management endpoint on every interface as soon as the starter was on the classpath.
+
+Deployments that reach the agent from outside the host — including Kubernetes deployments scraping it over the
+pod network — must set the bind address explicitly:
+
+[source,properties]
+----
+camel.component.jolokia.server-config.host = 0.0.0.0
+----
+
+Doing so should be paired with authentication or a network policy in front of the endpoint.
+
+`CamelRestrictor` also now rejects cross-origin browser requests, where before it inherited
+`AllowAllRestrictor`'s behaviour of accepting every origin. Requests that carry no `Origin` or `Referer`
+header are unaffected, so `curl`, Hawtio and the Jolokia CLI keep working. A browser-based client that drove
+the agent cross-origin needs a custom `camel.component.jolokia.server-config.restrictorClass`.
+
+Operations on the allowed MBean domains are still permitted: managing Camel through Jolokia is what the
+starter is for, and that capability is the reason the agent now binds to loopback.
+
+==== Vault and secrets starters fail closed on early property resolution
+
+The early-resolution parsers used by the `aws-secrets-manager`, `azure-key-vault`, `cyberark-vault`,
+`google-secret-manager`, `hashicorp-vault`, `ibm-secrets-manager` and `spring-cloud-config` starters used to
+swallow a per-property lookup failure at `DEBUG` and leave the placeholder in place. The literal
+`{{aws:...}}` text then became the effective value of whatever it configured — a password, a token, a URL —
+with nothing visible at the default log level.
+
+A placeholder that matched a vault prefix but could not be resolved now aborts startup. To restore the
+previous tolerance:
+
+[source,properties]
+----
+camel.vault.ignore-resolution-failures = true
+----
+
+The failure is then logged at `WARN` rather than `DEBUG`, so it is visible at the default log level.
+
+==== camel-undertow-spring-security-starter validates the token issuer and audience
+
+The JWT decoder was built with only a claim-set converter, so signature and timestamps were checked but the
+`iss` claim was not, and the configured `clientId` was never bound to the token. Every client of a realm
+shares the signing key, so a token minted for a different client of the same realm was accepted.
+
+The decoder now installs an issuer validator for the configured realm and requires the token to carry the
+configured `clientId` in its `aud` claim. A deployment that presents tokens minted for a different client
+must either have that client added to the token's audience, or opt out:
+
+[source,properties]
+----
+camel.security.undertow.keycloak.validate-audience = false
+----
+
+==== camel-platform-http-starter enforces fileNameExtWhitelist
+
+`fileNameExtWhitelist` was evaluated against the multipart field name rather than the submitted file name, so
+it accepted uploads it was configured to reject. It now checks the submitted file name, treats a name with no
+extension as not accepted while a whitelist is configured, and matches whole comma-separated extension tokens
+instead of testing for a substring.
+
+Uploads that previously slipped through — a part whose field name carried no extension, or an extension that
+was merely a substring of an allowed one — are now rejected. This is the control behaving as documented; a
+deployment that depended on the previous behaviour should widen the whitelist explicitly.
+
+==== The security policy check sees properties set as environment variables
+
+`camel.security` evaluated only properties whose name a source reported with the `camel.` prefix, which
+excluded every option set as an environment variable, since those are reported as `CAMEL_COMPONENT_FOO_BAR`.
+Names are now canonicalized before the check.
+
+Applications running with `camel.security.policy=fail` that configure Camel through the environment may now
+see startup fail on a violation that was previously invisible. That violation was always present; only the
+reporting changed.
+
+==== String conversions to file-backed types are blocked
+
+`SpringTypeConverter` already refused to convert a `String` into an `InputStream`, because Spring's
+`ObjectToObjectConverter` finds the `FileInputStream(String)` constructor and opens the value as a path
+rather than treating it as content. `FileReader`, `Writer` and `ZipFile` targets are now refused for the
+same reason — notably `FileWriter(String)`, where the conversion previously succeeded and created the named
+file. Converting a `String` to `Reader` itself, or to a non-file-backed subclass such as `StringReader`, is
+unaffected.
+
+`String` to `java.io.File` is unchanged: there the `String` genuinely is a path.
