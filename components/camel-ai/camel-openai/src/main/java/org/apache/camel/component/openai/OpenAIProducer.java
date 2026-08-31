@@ -254,8 +254,8 @@ public class OpenAIProducer extends DefaultAsyncProducer {
         if ((systemPrompt == null || systemPrompt.isEmpty()) && ObjectHelper.isNotEmpty(config.getSystemMessage())) {
             systemPrompt = config.getSystemMessage();
         }
-        if (developerPrompt == null
-                || developerPrompt.isEmpty() && ObjectHelper.isNotEmpty(config.getDeveloperMessage())) {
+        if ((developerPrompt == null || developerPrompt.isEmpty())
+                && ObjectHelper.isNotEmpty(config.getDeveloperMessage())) {
             developerPrompt = config.getDeveloperMessage();
         }
 
