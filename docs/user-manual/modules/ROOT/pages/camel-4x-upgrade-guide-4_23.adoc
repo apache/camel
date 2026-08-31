@@ -1007,8 +1007,8 @@ The JWT decoder was built with only a claim-set converter, so signature and time
 shares the signing key, so a token minted for a different client of the same realm was accepted.
 
 The decoder now installs an issuer validator for the configured realm and requires the token to carry the
-configured `clientId` in its `aud` or `azp` claim. A deployment that presents tokens minted for a different
-client must either have that client added to the token's audience, or opt out:
+configured `clientId` in its `aud` claim. A deployment that presents tokens minted for a different client
+must either have that client added to the token's audience, or opt out:
 
 [source,properties]
 ----
@@ -1040,7 +1040,9 @@ reporting changed.
 
 `SpringTypeConverter` already refused to convert a `String` into an `InputStream`, because Spring's
 `ObjectToObjectConverter` finds the `FileInputStream(String)` constructor and opens the value as a path
-rather than treating it as content. `Reader`, `Writer` and `ZipFile` targets are now refused for the same
-reason — notably `FileWriter(String)`, where the conversion previously succeeded and created the named file.
+rather than treating it as content. `FileReader`, `Writer` and `ZipFile` targets are now refused for the
+same reason — notably `FileWriter(String)`, where the conversion previously succeeded and created the named
+file. Converting a `String` to `Reader` itself, or to a non-file-backed subclass such as `StringReader`, is
+unaffected.
 
 `String` to `java.io.File` is unchanged: there the `String` genuinely is a path.
