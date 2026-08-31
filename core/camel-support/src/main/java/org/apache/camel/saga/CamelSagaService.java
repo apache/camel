@@ -33,4 +33,22 @@ public interface CamelSagaService extends Service, CamelContextAware {
 
     void registerStep(CamelSagaStep step);
 
+    /**
+     * Whether a saga coordinator may be selected from the {@code Long-Running-Action} message header.
+     * <p>
+     * The saga id normally travels in the exchange's internal state, which survives {@code removeHeaders("*")}. The
+     * header is consulted as well so that a coordinator started elsewhere can be joined - the LRA protocol carries the
+     * id that way. That only makes sense for a service which actually participates in such a protocol: the header sits
+     * outside the {@code Camel} namespace that consumers filter, and the id is written back onto responses, so where no
+     * external coordinator exists it lets a message choose which saga its exchange joins.
+     * <p>
+     * Defaults to false. A service that takes part in a distributed saga protocol overrides it.
+     *
+     * @return true if the {@code Long-Running-Action} header may select a coordinator
+     * @since  4.23
+     */
+    default boolean isLongRunningActionHeaderSupported() {
+        return false;
+    }
+
 }
