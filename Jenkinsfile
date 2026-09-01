@@ -70,7 +70,7 @@ pipeline {
                 axes {
                     axis {
                         name 'JDK_NAME'
-                        values 'jdk_17_latest', 'jdk_21_latest', 'jdk_25_latest'
+                        values 'jdk_17_latest', 'jdk_21_latest'
                     }
                     axis {
                         name 'PLATFORM'
