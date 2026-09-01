@@ -989,6 +989,28 @@ class ExportTest {
                 System.getProperty(CamelJBangConstants.QUARKUS_VERSION));
     }
 
+    @Test
+    @SetSystemProperty(key = CamelJBangConstants.CAMEL_VERSION, value = RELEASED_CAMEL_VERSION)
+    public void shouldOverrideCamelVersionFromSystemProperty() throws Exception {
+        LOG.info("shouldOverrideCamelVersionFromSystemProperty");
+
+        Export command = createCommand(RuntimeType.main, new String[] { "classpath:route.yaml" },
+                "--gav=examples:route:1.0.0", "--dir=" + workingDir, "--quiet");
+        int exit = command.doCall();
+
+        Assertions.assertEquals(0, exit);
+
+        Model model = readMavenModel();
+        assertThat(model.getDependencyManagement().getDependencies())
+                .as("Expected camel-bom to use the version from the %s system property",
+                        CamelJBangConstants.CAMEL_VERSION)
+                .anySatisfy(dep -> {
+                    assertThat(dep.getGroupId()).isEqualTo("org.apache.camel");
+                    assertThat(dep.getArtifactId()).isEqualTo("camel-bom");
+                    assertThat(dep.getVersion()).isEqualTo(RELEASED_CAMEL_VERSION);
+                });
+    }
+
     @ParameterizedTest
     @MethodSource("runtimeProvider")
     public void shouldExportHawtio(RuntimeType rt) throws Exception {

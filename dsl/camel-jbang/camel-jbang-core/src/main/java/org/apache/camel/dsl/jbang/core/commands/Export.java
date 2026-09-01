@@ -223,6 +223,7 @@ public class Export extends ExportBaseCommand {
      */
     private void overrideFromSystemProperties() {
         this.quarkusPlatform = QuarkusPlatformMixin.of(System.getProperties(), this.quarkusPlatform);
+        this.camelVersion = PropertyResolver.fromSystemProperty(CAMEL_VERSION, () -> this.camelVersion);
         this.camelSpringBootVersion
                 = PropertyResolver.fromSystemProperty(CAMEL_SPRING_BOOT_VERSION, () -> this.camelSpringBootVersion);
     }
