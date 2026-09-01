@@ -16,6 +16,7 @@
  */
 package org.apache.camel.processor.keyvalue.jpa;
 
+import java.time.Duration;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
@@ -69,7 +70,7 @@ class JpaKeyValueRepositoryTest {
 
     @Test
     void testPutAndGet() {
-        repository.put("key1", "value1", 0);
+        repository.put("key1", "value1", null);
         assertEquals("value1", repository.get("key1"));
     }
 
@@ -80,20 +81,20 @@ class JpaKeyValueRepositoryTest {
 
     @Test
     void testPutOverwritesExistingValue() {
-        repository.put("key1", "value1", 0);
-        repository.put("key1", "value2", 0);
+        repository.put("key1", "value1", null);
+        repository.put("key1", "value2", null);
         assertEquals("value2", repository.get("key1"));
     }
 
     @Test
     void testPutReturnsPreviousValue() {
-        assertNull(repository.put("key1", "value1", 0));
-        assertEquals("value1", repository.put("key1", "value2", 0));
+        assertNull(repository.put("key1", "value1", null));
+        assertEquals("value1", repository.put("key1", "value2", null));
     }
 
     @Test
     void testDelete() {
-        repository.put("key1", "value1", 0);
+        repository.put("key1", "value1", null);
         Object deleted = repository.delete("key1");
         assertEquals("value1", deleted);
         assertNull(repository.get("key1"));
@@ -106,16 +107,16 @@ class JpaKeyValueRepositoryTest {
 
     @Test
     void testContains() {
-        repository.put("key1", "value1", 0);
+        repository.put("key1", "value1", null);
         assertTrue(repository.contains("key1"));
         assertFalse(repository.contains("nonexistent"));
     }
 
     @Test
     void testKeys() {
-        repository.put("key1", "value1", 0);
-        repository.put("key2", "value2", 0);
-        repository.put("key3", "value3", 0);
+        repository.put("key1", "value1", null);
+        repository.put("key2", "value2", null);
+        repository.put("key3", "value3", null);
 
         Set<String> keys = repository.keys();
         assertEquals(3, keys.size());
@@ -126,8 +127,8 @@ class JpaKeyValueRepositoryTest {
 
     @Test
     void testClear() {
-        repository.put("key1", "value1", 0);
-        repository.put("key2", "value2", 0);
+        repository.put("key1", "value1", null);
+        repository.put("key2", "value2", null);
         repository.clear();
         assertEquals(0, repository.size());
         assertNull(repository.get("key1"));
@@ -136,30 +137,74 @@ class JpaKeyValueRepositoryTest {
     @Test
     void testSize() {
         assertEquals(0, repository.size());
-        repository.put("key1", "value1", 0);
+        repository.put("key1", "value1", null);
         assertEquals(1, repository.size());
-        repository.put("key2", "value2", 0);
+        repository.put("key2", "value2", null);
         assertEquals(2, repository.size());
     }
 
     @Test
     void testPutIfAbsentWhenKeyDoesNotExist() {
-        Object result = repository.putIfAbsent("key1", "value1", 0);
+        Object result = repository.putIfAbsent("key1", "value1", null);
         assertNull(result);
         assertEquals("value1", repository.get("key1"));
     }
 
     @Test
     void testPutIfAbsentWhenKeyExists() {
-        repository.put("key1", "value1", 0);
-        Object result = repository.putIfAbsent("key1", "value2", 0);
+        repository.put("key1", "value1", null);
+        Object result = repository.putIfAbsent("key1", "value2", null);
         assertEquals("value1", result);
         assertEquals("value1", repository.get("key1"));
     }
 
     @Test
+    void testReplaceMatchingOldValue() {
+        repository.put("key1", "value1", null);
+        boolean replaced = repository.replace("key1", "value1", "value2", null);
+        assertTrue(replaced);
+        assertEquals("value2", repository.get("key1"));
+    }
+
+    @Test
+    void testReplaceNonMatchingOldValue() {
+        repository.put("key1", "value1", null);
+        boolean replaced = repository.replace("key1", "wrong", "value2", null);
+        assertFalse(replaced);
+        assertEquals("value1", repository.get("key1"));
+    }
+
+    @Test
+    void testReplaceMissingKey() {
+        boolean replaced = repository.replace("nonexistent", "value1", "value2", null);
+        assertFalse(replaced);
+    }
+
+    @Test
+    void testDeleteWithExpectedValueMatching() {
+        repository.put("key1", "value1", null);
+        boolean deleted = repository.delete("key1", "value1");
+        assertTrue(deleted);
+        assertNull(repository.get("key1"));
+    }
+
+    @Test
+    void testDeleteWithExpectedValueNotMatching() {
+        repository.put("key1", "value1", null);
+        boolean deleted = repository.delete("key1", "wrong");
+        assertFalse(deleted);
+        assertEquals("value1", repository.get("key1"));
+    }
+
+    @Test
+    void testDeleteWithExpectedValueMissingKey() {
+        boolean deleted = repository.delete("nonexistent", "value1");
+        assertFalse(deleted);
+    }
+
+    @Test
     void testTtlExpiration() {
-        repository.put("key1", "value1", 500);
+        repository.put("key1", "value1", Duration.ofMillis(500));
         assertEquals("value1", repository.get("key1"));
 
         await().atMost(5, TimeUnit.SECONDS)
@@ -168,8 +213,8 @@ class JpaKeyValueRepositoryTest {
 
     @Test
     void testTtlExpirationDoesNotAffectNonExpiringEntries() {
-        repository.put("key1", "value1", 500);
-        repository.put("key2", "value2", 0);
+        repository.put("key1", "value1", Duration.ofMillis(500));
+        repository.put("key2", "value2", null);
 
         await().atMost(5, TimeUnit.SECONDS)
                 .untilAsserted(() -> assertNull(repository.get("key1")));
@@ -179,9 +224,9 @@ class JpaKeyValueRepositoryTest {
 
     @Test
     void testDifferentValueTypes() {
-        repository.put("string", "hello", 0);
-        repository.put("integer", 42, 0);
-        repository.put("boolean", Boolean.TRUE, 0);
+        repository.put("string", "hello", null);
+        repository.put("integer", 42, null);
+        repository.put("boolean", Boolean.TRUE, null);
 
         assertEquals("hello", repository.get("string"));
         assertEquals(42, repository.get("integer"));

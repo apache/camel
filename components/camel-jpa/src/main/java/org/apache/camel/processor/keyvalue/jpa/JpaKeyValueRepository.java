@@ -21,6 +21,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
+import java.time.Duration;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
@@ -140,7 +141,7 @@ public class JpaKeyValueRepository extends ServiceSupport implements KeyValueRep
 
     @Override
     @ManagedOperation(description = "Put a key-value pair with optional TTL")
-    public Object put(String key, Object value, long ttlMillis) {
+    public Object put(String key, Object value, Duration ttl) {
         final Object[] rc = new Object[1];
         final EntityManager entityManager
                 = getTargetEntityManager(null, entityManagerFactory, false, sharedEntityManager, true);
@@ -150,7 +151,7 @@ public class JpaKeyValueRepository extends ServiceSupport implements KeyValueRep
                 entityManager.joinTransaction();
             }
             try {
-                long expiresAt = ttlMillis > 0 ? System.currentTimeMillis() + ttlMillis : 0;
+                long expiresAt = toExpiresAt(ttl);
                 byte[] serializedValue = serialize(value);
 
                 KeyValueEntry entry = findByKey(entityManager, key);
@@ -310,7 +311,7 @@ public class JpaKeyValueRepository extends ServiceSupport implements KeyValueRep
     }
 
     @Override
-    public Object putIfAbsent(String key, Object value, long ttlMillis) {
+    public Object putIfAbsent(String key, Object value, Duration ttl) {
         final Object[] rc = new Object[1];
         final EntityManager entityManager
                 = getTargetEntityManager(null, entityManagerFactory, false, sharedEntityManager, true);
@@ -320,7 +321,7 @@ public class JpaKeyValueRepository extends ServiceSupport implements KeyValueRep
                 entityManager.joinTransaction();
             }
             try {
-                long expiresAt = ttlMillis > 0 ? System.currentTimeMillis() + ttlMillis : 0;
+                long expiresAt = toExpiresAt(ttl);
                 byte[] serializedValue = serialize(value);
 
                 KeyValueEntry entry = findByKey(entityManager, key);
@@ -480,6 +481,13 @@ public class JpaKeyValueRepository extends ServiceSupport implements KeyValueRep
             return null;
         }
         return (KeyValueEntry) list.get(0);
+    }
+
+    private static long toExpiresAt(Duration ttl) {
+        if (ttl == null || ttl.isZero() || ttl.isNegative()) {
+            return 0;
+        }
+        return System.currentTimeMillis() + ttl.toMillis();
     }
 
     private static byte[] serialize(Object value) {

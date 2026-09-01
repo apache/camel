@@ -22,6 +22,7 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.nio.ByteBuffer;
+import java.time.Duration;
 import java.util.Collections;
 import java.util.LinkedHashSet;
 import java.util.Set;
@@ -280,12 +281,12 @@ public class CassandraKeyValueRepository extends ServiceSupport implements KeyVa
 
     @Override
     @ManagedOperation(description = "Put a key-value pair with optional TTL")
-    public Object put(String key, Object value, long ttlMillis) {
-        LOGGER.debug("Putting key {} with TTL {} ms", key, ttlMillis);
+    public Object put(String key, Object value, Duration ttl) {
+        LOGGER.debug("Putting key {} with TTL {}", key, ttl);
         // Read the previous value before upserting
         Object oldValue = get(key);
         ByteBuffer serializedValue = serialize(value);
-        int ttlSeconds = (int) (ttlMillis / 1000);
+        int ttlSeconds = toTtlSeconds(ttl);
         if (ttlSeconds > 0) {
             getSession().execute(insertWithTtlStatement.bind(key, serializedValue, ttlSeconds));
         } else {
@@ -334,17 +335,17 @@ public class CassandraKeyValueRepository extends ServiceSupport implements KeyVa
      * Atomically stores the value under the given key only if no mapping already exists, using Cassandra's lightweight
      * transaction ({@code INSERT ... IF NOT EXISTS}).
      *
-     * @param  key       the key
-     * @param  value     the value to store
-     * @param  ttlMillis the time-to-live in milliseconds; {@code 0} or negative means no expiration
-     * @return           the existing value if the key was already present, or {@code null} if the put succeeded
+     * @param  key   the key
+     * @param  value the value to store
+     * @param  ttl   the time-to-live; {@code null}, zero, or negative means no expiration
+     * @return       the existing value if the key was already present, or {@code null} if the put succeeded
      */
     @Override
-    public Object putIfAbsent(String key, Object value, long ttlMillis) {
-        LOGGER.debug("Putting key {} if absent with TTL {} ms", key, ttlMillis);
+    public Object putIfAbsent(String key, Object value, Duration ttl) {
+        LOGGER.debug("Putting key {} if absent with TTL {}", key, ttl);
         ByteBuffer serializedValue = serialize(value);
         ResultSet rs;
-        int ttlSeconds = (int) (ttlMillis / 1000);
+        int ttlSeconds = toTtlSeconds(ttl);
         if (ttlSeconds > 0) {
             rs = getSession().execute(insertIfNotExistsWithTtlStatement.bind(key, serializedValue, ttlSeconds));
         } else {
@@ -363,6 +364,13 @@ public class CassandraKeyValueRepository extends ServiceSupport implements KeyVa
     @ManagedAttribute(description = "The number of entries in the repository")
     public int size() {
         return keys().size();
+    }
+
+    private static int toTtlSeconds(Duration ttl) {
+        if (ttl == null || ttl.isZero() || ttl.isNegative()) {
+            return 0;
+        }
+        return (int) ttl.toSeconds();
     }
 
     // -------------------------------------------------------------------------

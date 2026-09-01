@@ -21,6 +21,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
+import java.time.Duration;
 import java.util.Collections;
 import java.util.LinkedHashSet;
 import java.util.List;
@@ -222,13 +223,13 @@ public class JdbcKeyValueRepository extends ServiceSupport implements KeyValueRe
 
     @Override
     @ManagedOperation(description = "Put a key-value pair with optional TTL")
-    public Object put(String key, Object value, long ttlMillis) {
+    public Object put(String key, Object value, Duration ttl) {
         return transactionTemplate.execute(status -> {
             Object oldValue = doGet(key);
             // delete any existing row (whether expired or not)
             jdbcTemplate.update(getDeleteString(), key);
             // insert the new row
-            long expiresAt = ttlMillis > 0 ? System.currentTimeMillis() + ttlMillis : 0;
+            long expiresAt = toExpiresAt(ttl);
             jdbcTemplate.update(getInsertString(), key, serialize(value), expiresAt);
             return oldValue;
         });
@@ -270,7 +271,7 @@ public class JdbcKeyValueRepository extends ServiceSupport implements KeyValueRe
     }
 
     @Override
-    public Object putIfAbsent(String key, Object value, long ttlMillis) {
+    public Object putIfAbsent(String key, Object value, Duration ttl) {
         return transactionTemplate.execute(status -> {
             // check if a non-expired entry already exists
             Object existing = doGet(key);
@@ -278,7 +279,7 @@ public class JdbcKeyValueRepository extends ServiceSupport implements KeyValueRe
                 return existing;
             }
             // attempt to insert
-            long expiresAt = ttlMillis > 0 ? System.currentTimeMillis() + ttlMillis : 0;
+            long expiresAt = toExpiresAt(ttl);
             try {
                 jdbcTemplate.update(getInsertString(), key, serialize(value), expiresAt);
                 return null;
@@ -321,6 +322,13 @@ public class JdbcKeyValueRepository extends ServiceSupport implements KeyValueRe
         } catch (EmptyResultDataAccessException e) {
             return null;
         }
+    }
+
+    private static long toExpiresAt(Duration ttl) {
+        if (ttl == null || ttl.isZero() || ttl.isNegative()) {
+            return 0;
+        }
+        return System.currentTimeMillis() + ttl.toMillis();
     }
 
     /**

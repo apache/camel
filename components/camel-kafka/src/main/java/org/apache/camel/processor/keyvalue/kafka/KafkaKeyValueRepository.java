@@ -170,8 +170,8 @@ public class KafkaKeyValueRepository extends ServiceSupport implements KeyValueR
 
     @Override
     @ManagedOperation(description = "Put a key-value pair with optional TTL")
-    public Object put(String key, Object value, long ttlMillis) {
-        long expiresAt = ttlMillis > 0 ? System.currentTimeMillis() + ttlMillis : 0;
+    public Object put(String key, Object value, Duration ttl) {
+        long expiresAt = toExpiresAt(ttl);
         CacheEntry oldEntry = cache.put(key, new CacheEntry(value, expiresAt));
         Object oldValue = (oldEntry != null && !oldEntry.isExpired()) ? oldEntry.value : null;
         try {
@@ -228,7 +228,7 @@ public class KafkaKeyValueRepository extends ServiceSupport implements KeyValueR
     }
 
     @Override
-    public Object putIfAbsent(String key, Object value, long ttlMillis) {
+    public Object putIfAbsent(String key, Object value, Duration ttl) {
         CacheEntry existing = cache.get(key);
         if (existing != null && !existing.isExpired()) {
             return existing.value;
@@ -237,7 +237,7 @@ public class KafkaKeyValueRepository extends ServiceSupport implements KeyValueR
         if (existing != null) {
             cache.remove(key, existing);
         }
-        long expiresAt = ttlMillis > 0 ? System.currentTimeMillis() + ttlMillis : 0;
+        long expiresAt = toExpiresAt(ttl);
         CacheEntry newEntry = new CacheEntry(value, expiresAt);
         CacheEntry prev = cache.putIfAbsent(key, newEntry);
         if (prev != null) {
@@ -386,6 +386,13 @@ public class KafkaKeyValueRepository extends ServiceSupport implements KeyValueR
                 addToCache(consumerRecord);
             }
         }
+    }
+
+    private static long toExpiresAt(Duration ttl) {
+        if (ttl == null || ttl.isZero() || ttl.isNegative()) {
+            return 0;
+        }
+        return System.currentTimeMillis() + ttl.toMillis();
     }
 
     private void evictExpired() {
