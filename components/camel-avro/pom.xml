@@ -32,6 +32,8 @@
     <description>Camel Avro data format</description>
 
     <properties>
+        <!-- Avro 1.12.2 requires application model packages to be explicitly trusted. -->
+        <camel.surefire.fork.additional-vmargs>-Dorg.apache.avro.SERIALIZABLE_PACKAGES=org.apache.camel.dataformat.avro.example</camel.surefire.fork.additional-vmargs>
     </properties>
 
     <dependencies>
