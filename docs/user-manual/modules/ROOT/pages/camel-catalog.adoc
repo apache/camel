@@ -51,6 +51,7 @@ org
       ├── components (JSON schema)
       ├── dataformats (JSON schema)
       ├── dev-consoles (JSON schema)
+      ├── dev-consoles-openapi.json (OpenAPI 3.0 specification)
       ├── docs (AsciiDoc documentation)
       ├── jbang (JSON schema)
       ├── languages (JSON schema)
@@ -67,6 +68,14 @@ org
 Each directory contains files with the information. Every Camel component is included
 as JSON schema files in the components directory. For example, the Timer component
 is included in the file timer.json.
+
+The `dev-consoles` directory contains JSON schema files describing every
+xref:camel-console.adoc[Dev Console]'s query options and, since Camel 4.23, an authoritative
+response schema generated directly from the console's typed Java `Response` record. The top-level
+`dev-consoles-openapi.json` file aggregates all of this into a single OpenAPI 3.0 specification
+covering every dev console endpoint, so the same contract used internally to serve the live `api`
+dev console is also available standalone for tooling. A `dev-consoles.properties` index file lists
+all available dev console names.
 
 The `docs` directory contains the AsciiDoc documentation pages for all components, EIPs,
 data formats, languages, and other artifacts. A `docs.properties` index file lists all
@@ -111,4 +120,29 @@ String dataFormatDoc = catalog.dataFormatAsciiDoc("jackson2");   // loads jackso
 String languageDoc = catalog.languageAsciiDoc("simple");         // loads simple-language.adoc
 String modelDoc = catalog.modelAsciiDoc("split-eip");            // loads split-eip.adoc
 String otherDoc = catalog.otherAsciiDoc("yaml-dsl");             // loads yaml-dsl.adoc
+----
+
+=== Dev Console information in the Catalog
+
+The catalog also includes the query options and response schema for every
+xref:camel-console.adoc[Dev Console], so tooling can discover what a console accepts and
+what it returns without having to start a running Camel application first.
+
+The Java API provides the following methods for accessing dev console information:
+
+[source,java]
+----
+CamelCatalog catalog = new DefaultCamelCatalog();
+
+// list all available dev console names
+List<String> consoleNames = catalog.findDevConsoleNames();
+
+// look up a single dev console's model, including its query options and response schema
+DevConsoleModel model = catalog.devConsoleModel("circuit-breaker");
+
+// summary of every dev console in JSon
+String summary = catalog.listDevConsolesAsJson();
+
+// the OpenAPI 3.0 specification aggregated across every dev console endpoint
+String openApiSpec = catalog.devConsolesOpenApiSpec();
 ----

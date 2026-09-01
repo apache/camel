@@ -51,8 +51,6 @@ public final class ModelDeserializersResolver implements YamlDeserializerResolve
             case "org.apache.camel.model.dataformat.BindyDataFormat": return new ModelDeserializers.BindyDataFormatDeserializer();
             case "cbor": return new ModelDeserializers.CBORDataFormatDeserializer();
             case "org.apache.camel.model.dataformat.CBORDataFormat": return new ModelDeserializers.CBORDataFormatDeserializer();
-            case "csimple": return new ModelDeserializers.CSimpleExpressionDeserializer();
-            case "org.apache.camel.model.language.CSimpleExpression": return new ModelDeserializers.CSimpleExpressionDeserializer();
             case "cache": return new ModelDeserializers.CacheDefinitionDeserializer();
             case "org.apache.camel.model.CacheDefinition": return new ModelDeserializers.CacheDefinitionDeserializer();
             case "doCatch": return new ModelDeserializers.CatchDefinitionDeserializer();
@@ -293,6 +291,8 @@ public final class ModelDeserializersResolver implements YamlDeserializerResolve
             case "org.apache.camel.model.language.Python3Expression": return new ModelDeserializers.Python3ExpressionDeserializer();
             case "python": return new ModelDeserializers.PythonExpressionDeserializer();
             case "org.apache.camel.model.language.PythonExpression": return new ModelDeserializers.PythonExpressionDeserializer();
+            case "quickjs": return new ModelDeserializers.QuickjsExpressionDeserializer();
+            case "org.apache.camel.model.language.QuickjsExpression": return new ModelDeserializers.QuickjsExpressionDeserializer();
             case "randomLoadBalancer": return new ModelDeserializers.RandomLoadBalancerDefinitionDeserializer();
             case "org.apache.camel.model.loadbalancer.RandomLoadBalancerDefinition": return new ModelDeserializers.RandomLoadBalancerDefinitionDeserializer();
             case "recipientList": return new ModelDeserializers.RecipientListDefinitionDeserializer();

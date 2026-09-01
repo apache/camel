@@ -6,10 +6,226 @@
     "title": "Consumers",
     "description": "Display information about Camel consumers",
     "deprecated": false,
+    "readOnly": true,
     "javaType": "org.apache.camel.impl.console.ConsumerDevConsole",
     "groupId": "org.apache.camel",
     "artifactId": "camel-console",
     "version": "4.23.0-SNAPSHOT"
+  },
+  "response": {
+    "type": "object",
+    "properties": {
+      "consumers": {
+        "type": "array",
+        "items": {
+          "type": "object",
+          "properties": {
+            "id": {
+              "type": "string",
+              "description": "The route ID"
+            },
+            "uri": {
+              "type": "string",
+              "description": "The endpoint URI"
+            },
+            "state": {
+              "type": "string",
+              "description": "The consumer state"
+            },
+            "clazz": {
+              "type": "string",
+              "description": "The consumer service type"
+            },
+            "remote": {
+              "type": "boolean",
+              "description": "Whether the endpoint is remote"
+            },
+            "hosted": {
+              "type": "boolean",
+              "description": "Whether the consumer is a hosted service"
+            },
+            "inflight": {
+              "type": "integer",
+              "description": "Number of inflight exchanges"
+            },
+            "scheduled": {
+              "type": "boolean",
+              "description": "Whether the consumer is scheduled (a scheduled poll consumer or a timer consumer)"
+            },
+            "polling": {
+              "type": "boolean",
+              "description": "Whether currently polling (only present for scheduled poll consumers)"
+            },
+            "firstPollDone": {
+              "type": "boolean",
+              "description": "Whether the first poll has completed (only present for scheduled poll consumers)"
+            },
+            "schedulerStarted": {
+              "type": "boolean",
+              "description": "Whether the scheduler has started (only present for scheduled poll consumers)"
+            },
+            "schedulerClass": {
+              "type": "string",
+              "description": "The scheduler class name (only present for scheduled poll consumers)"
+            },
+            "repeatCount": {
+              "type": "integer",
+              "description": "The repeat count (only present for scheduled poll consumers)"
+            },
+            "fixedDelay": {
+              "type": "boolean",
+              "description": "Whether a fixed delay is used (only present for scheduled poll consumers)"
+            },
+            "initialDelay": {
+              "type": "integer",
+              "description": "The initial delay (only present for scheduled poll consumers)"
+            },
+            "delay": {
+              "type": "integer",
+              "description": "The delay (only present for scheduled poll consumers)"
+            },
+            "timeUnit": {
+              "type": "string",
+              "description": "The time unit of the delay (only present for scheduled poll consumers)"
+            },
+            "greedy": {
+              "type": "boolean",
+              "description": "Whether greedy scheduling is used (only present for scheduled poll consumers)"
+            },
+            "runningLoggingLevel": {
+              "type": "string",
+              "description": "The running logging level (only present for scheduled poll consumers or timer consumers)"
+            },
+            "totalCounter": {
+              "type": "integer",
+              "description": "Total number of polls (only present for scheduled poll consumers or timer consumers)"
+            },
+            "errorCounter": {
+              "type": "integer",
+              "description": "Number of failed polls (only present for scheduled poll consumers)"
+            },
+            "successCounter": {
+              "type": "integer",
+              "description": "Number of successful polls (only present for scheduled poll consumers)"
+            },
+            "backoffCounter": {
+              "type": "integer",
+              "description": "The backoff counter (only present for scheduled poll consumers)"
+            },
+            "backoffMultiplier": {
+              "type": "integer",
+              "description": "The backoff multiplier (only present for scheduled poll consumers)"
+            },
+            "backoffErrorThreshold": {
+              "type": "integer",
+              "description": "The backoff error threshold (only present for scheduled poll consumers)"
+            },
+            "backoffIdleThreshold": {
+              "type": "integer",
+              "description": "The backoff idle threshold (only present for scheduled poll consumers)"
+            },
+            "timerName": {
+              "type": "string",
+              "description": "The timer name (only present for camel-timer consumers)"
+            },
+            "fixedRate": {
+              "type": "boolean",
+              "description": "Whether a fixed rate is used (only present for camel-timer consumers)"
+            },
+            "period": {
+              "type": "integer",
+              "description": "The period (only present for camel-timer consumers)"
+            },
+            "statistics": {
+              "type": "object",
+              "properties": {
+                "idleSince": {
+                  "type": "integer",
+                  "description": "Epoch time in milliseconds since the route has been idle"
+                },
+                "exchangesTotal": {
+                  "type": "integer",
+                  "description": "Total number of exchanges"
+                },
+                "exchangesFailed": {
+                  "type": "integer",
+                  "description": "Number of failed exchanges"
+                },
+                "exchangesInflight": {
+                  "type": "integer",
+                  "description": "Number of inflight exchanges"
+                },
+                "meanProcessingTime": {
+                  "type": "integer",
+                  "description": "Mean processing time in milliseconds"
+                },
+                "maxProcessingTime": {
+                  "type": "integer",
+                  "description": "Max processing time in milliseconds"
+                },
+                "minProcessingTime": {
+                  "type": "integer",
+                  "description": "Min processing time in milliseconds"
+                },
+                "p50ProcessingTime": {
+                  "type": "integer",
+                  "description": "50th percentile processing time in milliseconds (only present when available)"
+                },
+                "p95ProcessingTime": {
+                  "type": "integer",
+                  "description": "95th percentile processing time in milliseconds (only present when available)"
+                },
+                "p99ProcessingTime": {
+                  "type": "integer",
+                  "description": "99th percentile processing time in milliseconds (only present when available)"
+                },
+                "lastProcessingTime": {
+                  "type": "integer",
+                  "description": "Processing time in milliseconds of the last exchange (only present once an exchange has completed)"
+                },
+                "deltaProcessingTime": {
+                  "type": "integer",
+                  "description": "Difference in processing time in milliseconds since the previous exchange (only present once an exchange has completed)"
+                },
+                "lastCreatedExchangeTimestamp": {
+                  "type": "integer",
+                  "description": "Epoch time in milliseconds the last exchange was created (only present once an exchange has been created)"
+                },
+                "lastCompletedExchangeTimestamp": {
+                  "type": "integer",
+                  "description": "Epoch time in milliseconds the last exchange completed (only present once an exchange has completed)"
+                },
+                "lastFailureHandledExchangeTimestamp": {
+                  "type": "integer",
+                  "description": "Epoch time in milliseconds the last exchange failure was handled (only present once one has occurred)"
+                },
+                "lastFailedExchangeTimestamp": {
+                  "type": "integer",
+                  "description": "Epoch time in milliseconds the last exchange failed (only present once one has occurred)"
+                }
+              },
+              "required": [
+                "idleSince",
+                "exchangesTotal",
+                "exchangesFailed",
+                "exchangesInflight",
+                "meanProcessingTime",
+                "maxProcessingTime",
+                "minProcessingTime"
+              ],
+              "description": "Runtime statistics for the route"
+            }
+          },
+          "required": [
+            "remote",
+            "hosted",
+            "inflight",
+            "scheduled"
+          ]
+        },
+        "description": "The consumers"
+      }
+    }
   }
 }
 

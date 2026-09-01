@@ -6,6 +6,7 @@
     "title": "Vert.x WebSocket",
     "description": "Vert.x WebSocket consumer details",
     "deprecated": false,
+    "readOnly": true,
     "javaType": "org.apache.camel.component.vertx.websocket.VertxWebsocketDevConsole",
     "groupId": "org.apache.camel",
     "artifactId": "camel-vertx-websocket",
@@ -26,6 +27,73 @@
       "secret": false,
       "defaultValue": true,
       "description": "Whether to include WebSocket peer connection header details in the output"
+    }
+  },
+  "response": {
+    "type": "object",
+    "properties": {
+      "hosts": {
+        "type": "array",
+        "items": {
+          "type": "object",
+          "properties": {
+            "host": {
+              "type": "string",
+              "description": "The host"
+            },
+            "paths": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "path": {
+                    "type": "string",
+                    "description": "The websocket path"
+                  },
+                  "peers": {
+                    "type": "array",
+                    "items": {
+                      "type": "object",
+                      "properties": {
+                        "id": {
+                          "type": "string",
+                          "description": "The peer connection id"
+                        },
+                        "path": {
+                          "type": "string",
+                          "description": "The websocket path"
+                        },
+                        "rawPath": {
+                          "type": "string",
+                          "description": "The raw websocket path"
+                        },
+                        "hostAddress": {
+                          "type": "string",
+                          "description": "The local host address"
+                        },
+                        "subProtocol": {
+                          "type": "string",
+                          "description": "The negotiated sub protocol (only present when known)"
+                        },
+                        "headers": {
+                          "type": "object",
+                          "additionalProperties": {
+                            "type": "string"
+                          },
+                          "description": "The connection headers (only present when includeHeaders is enabled)"
+                        }
+                      }
+                    },
+                    "description": "The connected peers"
+                  }
+                }
+              },
+              "description": "The websocket paths served on this host"
+            }
+          }
+        },
+        "description": "The Vert.x WebSocket consumer hosts"
+      }
     }
   }
 }

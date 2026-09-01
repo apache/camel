@@ -6,6 +6,7 @@
     "title": "Processor Detail",
     "description": "Show configured options for all processors in a route",
     "deprecated": false,
+    "readOnly": true,
     "javaType": "org.apache.camel.impl.console.ProcessorDetailDevConsole",
     "groupId": "org.apache.camel",
     "artifactId": "camel-console",
@@ -25,6 +26,92 @@
       "autowired": false,
       "secret": false,
       "description": "The route id to get processor details for (use * for all routes)"
+    }
+  },
+  "response": {
+    "type": "object",
+    "properties": {
+      "routeId": {
+        "type": "string",
+        "description": "The route ID (only present when a specific route was requested)"
+      },
+      "processors": {
+        "type": "array",
+        "items": {
+          "type": "object",
+          "properties": {
+            "id": {
+              "type": "string",
+              "description": "The processor ID"
+            },
+            "type": {
+              "type": "string",
+              "description": "The processor type (the XML element name, or 'from' for the route input)"
+            },
+            "endpointUri": {
+              "type": "string",
+              "description": "The endpoint URI (only present for the route input entry)"
+            },
+            "line": {
+              "type": "integer",
+              "description": "The source line number (only present when known)"
+            },
+            "options": {
+              "type": "object",
+              "additionalProperties": {
+                "type": "string"
+              },
+              "description": "The processor's configured options, as attribute\/child-element name to string value"
+            }
+          }
+        },
+        "description": "The route's processors (only present when a specific route was requested)"
+      },
+      "routes": {
+        "type": "array",
+        "items": {
+          "type": "object",
+          "properties": {
+            "routeId": {
+              "type": "string",
+              "description": "The route ID"
+            },
+            "processors": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "id": {
+                    "type": "string",
+                    "description": "The processor ID"
+                  },
+                  "type": {
+                    "type": "string",
+                    "description": "The processor type (the XML element name, or 'from' for the route input)"
+                  },
+                  "endpointUri": {
+                    "type": "string",
+                    "description": "The endpoint URI (only present for the route input entry)"
+                  },
+                  "line": {
+                    "type": "integer",
+                    "description": "The source line number (only present when known)"
+                  },
+                  "options": {
+                    "type": "object",
+                    "additionalProperties": {
+                      "type": "string"
+                    },
+                    "description": "The processor's configured options, as attribute\/child-element name to string value"
+                  }
+                }
+              },
+              "description": "The route's processors, starting with the route input"
+            }
+          }
+        },
+        "description": "The route details for all routes (only present when routeId is * or omitted)"
+      }
     }
   }
 }

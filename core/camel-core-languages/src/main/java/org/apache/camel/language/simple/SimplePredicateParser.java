@@ -59,9 +59,6 @@ import org.apache.camel.support.ExpressionToPredicateAdapter;
 import org.apache.camel.support.builder.PredicateBuilder;
 import org.apache.camel.util.StringHelper;
 
-import static org.apache.camel.support.ObjectHelper.isFloatingNumber;
-import static org.apache.camel.support.ObjectHelper.isNumber;
-
 /**
  * A parser to parse simple language as a Camel {@link Predicate}
  */
@@ -127,23 +124,8 @@ public class SimplePredicateParser extends BaseSimpleParser {
         }
     }
 
-    public String parseCode() {
-        try {
-            parseTokens();
-            return doParseCode();
-        } catch (SimpleParserException e) {
-            // catch parser exception and turn that into a syntax exceptions
-            throw new SimpleIllegalSyntaxException(expression, e.getIndex(), e.getMessage(), e);
-        } catch (Exception e) {
-            // include exception in rethrown exception
-            throw new SimpleIllegalSyntaxException(expression, -1, e.getMessage(), e);
-        }
-    }
-
     /**
      * First step parsing into a list of nodes.
-     *
-     * This is used as SPI for camel-csimple to do AST transformation and parse into java source code.
      */
     public List<SimpleNode> parseTokens() {
         clear();
@@ -211,21 +193,6 @@ public class SimplePredicateParser extends BaseSimpleParser {
         } else {
             return PredicateBuilder.and(predicates);
         }
-    }
-
-    /**
-     * Second step parsing into code
-     */
-    protected String doParseCode() {
-        StringBuilder sb = new StringBuilder(256);
-        for (SimpleNode node : nodes) {
-            String exp = node.createCode(camelContext, expression);
-            SimpleExpressionParser.parseLiteralNode(sb, node, exp);
-        }
-        String code = sb.toString();
-        code = code.replace(BaseSimpleParser.CODE_START, "");
-        code = code.replace(BaseSimpleParser.CODE_END, "");
-        return code;
     }
 
     /**
@@ -326,7 +293,7 @@ public class SimplePredicateParser extends BaseSimpleParser {
         if (!quoted) {
             // if the text is not in a quoted block (literal text), then lets see if
             // its numeric then we can optimize this
-            numeric = isNumber(text) || isFloatingNumber(text);
+            numeric = NumericExpression.isNumericValue(text);
         }
         if (numeric) {
             nodes.add(new NumericExpression(imageToken.getToken(), text));

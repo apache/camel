@@ -494,6 +494,7 @@ public final class JsonMapper {
         DevConsoleModel model = new DevConsoleModel();
         parseModel(mobj, model);
         model.setGroup(mobj.getString("group"));
+        model.setReadOnly(mobj.getBooleanOrDefault("readOnly", true));
         parseArtifact(mobj, model);
         JsonObject options = (JsonObject) obj.get("options");
         if (options != null) {
@@ -504,6 +505,7 @@ public final class JsonMapper {
                 model.addOption(option);
             }
         }
+        model.setResponseSchema((JsonObject) obj.get("response"));
         return model;
     }
 
@@ -517,11 +519,15 @@ public final class JsonMapper {
         baseToJson(model, obj);
         artifactToJson(model, obj);
         obj.put("group", model.getGroup());
+        obj.put("readOnly", model.isReadOnly());
         obj.entrySet().removeIf(e -> e.getValue() == null);
         JsonObject wrapper = new JsonObject();
         wrapper.put("console", obj);
         if (!model.getOptions().isEmpty()) {
             wrapper.put("options", asJsonObject(model.getOptions()));
+        }
+        if (model.getResponseSchema() != null) {
+            wrapper.put("response", model.getResponseSchema());
         }
         return wrapper;
     }

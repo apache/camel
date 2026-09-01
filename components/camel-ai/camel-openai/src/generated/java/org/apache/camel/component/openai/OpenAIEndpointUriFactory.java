@@ -24,7 +24,7 @@ public class OpenAIEndpointUriFactory extends org.apache.camel.support.component
     private static final Set<String> ENDPOINT_IDENTITY_PROPERTY_NAMES;
     private static final Map<String, String> MULTI_VALUE_PREFIXES;
     static {
-        Set<String> props = new HashSet<>(82);
+        Set<String> props = new HashSet<>(85);
         props.add("additionalBodyProperty");
         props.add("additionalHeader");
         props.add("additionalResponseHeader");
@@ -38,6 +38,7 @@ public class OpenAIEndpointUriFactory extends org.apache.camel.support.component
         props.add("autoToolExecution");
         props.add("baseUrl");
         props.add("builtinTools");
+        props.add("connectTimeout");
         props.add("conversationHistoryProperty");
         props.add("conversationMemory");
         props.add("developerMessage");
@@ -80,6 +81,7 @@ public class OpenAIEndpointUriFactory extends org.apache.camel.support.component
         props.add("parallelToolExecution");
         props.add("parallelToolTimeout");
         props.add("previousResponseId");
+        props.add("readTimeout");
         props.add("requestTimeout");
         props.add("speechInstructions");
         props.add("speechModel");
@@ -107,6 +109,7 @@ public class OpenAIEndpointUriFactory extends org.apache.camel.support.component
         props.add("toolExecutionErrorStrategy");
         props.add("topP");
         props.add("userMessage");
+        props.add("writeTimeout");
         PROPERTY_NAMES = Collections.unmodifiableSet(props);
         Set<String> secretProps = new HashSet<>(5);
         secretProps.add("additionalHeader");

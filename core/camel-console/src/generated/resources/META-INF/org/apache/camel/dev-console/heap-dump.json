@@ -6,6 +6,7 @@
     "title": "Heap Dump",
     "description": "Write a heap dump (.hprof) file for deep memory analysis",
     "deprecated": false,
+    "readOnly": false,
     "javaType": "org.apache.camel.impl.console.HeapDumpDevConsole",
     "groupId": "org.apache.camel",
     "artifactId": "camel-console",
@@ -40,6 +41,23 @@
       "autowired": false,
       "secret": false,
       "description": "File name for the heap dump (without .hprof extension)"
+    }
+  },
+  "response": {
+    "type": "object",
+    "properties": {
+      "file": {
+        "type": "string",
+        "description": "The absolute path of the written heap dump file (only present on success)"
+      },
+      "size": {
+        "type": "integer",
+        "description": "The size in bytes of the written heap dump file (only present on success)"
+      },
+      "error": {
+        "type": "string",
+        "description": "The error message (only present on failure)"
+      }
     }
   }
 }

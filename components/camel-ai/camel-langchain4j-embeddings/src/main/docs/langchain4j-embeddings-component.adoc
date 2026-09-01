@@ -394,3 +394,17 @@ YAML::
             returnTextContent: true
 ----
 ====
+
+=== Structured error exchange properties
+
+When a LangChain4j embeddings call fails, Camel sets structured metadata on the exchange **before** the model exception propagates. This works even when GenAI observability is disabled.
+
+[cols="2,3"]
+|===
+| Exchange property | Meaning
+
+| `CamelAiErrorCategory` | Coarse category derived from the LangChain4j exception: `RATE_LIMIT`, `SERVER_ERROR`, `VALIDATION`, `AUTH`, or `UNKNOWN`
+| `CamelAiRetryAfterMillis` | Not populated for LangChain4j providers (OpenAI-only today)
+|===
+
+Use categories when a route should branch on failure type without matching every LangChain4j exception class. See xref:langchain4j-chat-component.adoc#_structured_error_exchange_properties[LangChain4j Chat structured error properties] and xref:ai-llm-integration-guide.adoc#_structured_error_exchange_properties[AI LLM integration guide] for related detail.

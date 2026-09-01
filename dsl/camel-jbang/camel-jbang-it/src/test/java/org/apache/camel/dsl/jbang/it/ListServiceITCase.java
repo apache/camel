@@ -19,9 +19,16 @@ package org.apache.camel.dsl.jbang.it;
 import java.io.IOException;
 
 import org.apache.camel.dsl.jbang.it.support.JBangTestSupport;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 
 public class ListServiceITCase extends JBangTestSupport {
+
+    @AfterEach
+    void stopAll() {
+        execute("stop");
+    }
+
     @Test
     public void listServicesTest() throws IOException {
         copyResourceInDataFolder(TestResources.SERVER_ROUTE);

@@ -426,7 +426,9 @@ final class InternalRouteStartupManager {
                         route.getProperties().remove("route.start.exception");
                     } catch (Exception e) {
                         route.getProperties().put("route.start.exception", e);
-                        throw e;
+                        throw new FailedToStartRouteException(
+                                routeService.getId(), routeService.getLocation(),
+                                RouteService.extractUsefulMessage(e), e);
                     }
 
                     // use basic endpoint uri to not log verbose details or potential sensitive data
@@ -464,7 +466,9 @@ final class InternalRouteStartupManager {
                     route.getProperties().remove("route.start.exception");
                 } catch (Exception e) {
                     route.getProperties().put("route.start.exception", e);
-                    throw e;
+                    throw new FailedToStartRouteException(
+                            routeService.getId(), routeService.getLocation(),
+                            RouteService.extractUsefulMessage(e), e);
                 }
             }
 

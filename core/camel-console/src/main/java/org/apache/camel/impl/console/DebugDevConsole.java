@@ -39,10 +39,33 @@ import org.apache.camel.util.StopWatch;
 import org.apache.camel.util.StringHelper;
 import org.apache.camel.util.json.JsonArray;
 import org.apache.camel.util.json.JsonObject;
+import org.apache.camel.util.json.JsonRecordSupport;
 import org.apache.camel.util.json.Jsoner;
 
-@DevConsole(name = "debug", description = "Camel route debugger")
+@DevConsole(name = "debug", description = "Camel route debugger", readOnly = false)
 public class DebugDevConsole extends AbstractDevConsole {
+
+    public record BreakpointEntry(
+            @Metadata(description = "The breakpoint node ID") String nodeId,
+            @Metadata(description = "Whether the breakpoint is currently suspended") boolean suspended) {
+    }
+
+    public record Response(
+            @Metadata(description = "The Camel version (only present when a backlog debugger is available)") String version,
+            @Metadata(description = "Whether the debugger is enabled (only present when a backlog debugger is available)") Boolean enabled,
+            @Metadata(description = "Whether the debugger is in standby mode (only present when a backlog debugger is available)") Boolean standby,
+            @Metadata(description = "Whether suspended mode is active (only present when a backlog debugger is available)") Boolean suspendedMode,
+            @Metadata(description = "Fallback timeout in seconds (only present when a backlog debugger is available)") Long fallbackTimeout,
+            @Metadata(description = "The logging level (only present when a backlog debugger is available)") String loggingLevel,
+            @Metadata(description = "Whether exchange properties are included (only present when a backlog debugger is available)") Boolean includeExchangeProperties,
+            @Metadata(description = "Whether file-based message bodies are included (only present when a backlog debugger is available)") Boolean includeFiles,
+            @Metadata(description = "Whether streaming message bodies are included (only present when a backlog debugger is available)") Boolean includeStreams,
+            @Metadata(description = "Maximum size of the message body to include (only present when a backlog debugger is available)") Integer maxChars,
+            @Metadata(description = "Total number of times a breakpoint has been hit (only present when a backlog debugger is available)") Long debugCounter,
+            @Metadata(description = "Whether single-step mode is active (only present when a backlog debugger is available)") Boolean singleStepMode,
+            @Metadata(description = "The configured breakpoints (only present when there are any)") List<BreakpointEntry> breakpoints,
+            @Metadata(description = "The suspended breakpoint messages, as opaque JSON objects enriched with source code and message history (only present when there are any)") List<Map<String, Object>> suspended) {
+    }
 
     @Metadata(label = "query", description = "Action command to execute on the debugger", javaType = "java.lang.String")
     public static final String COMMAND = "command";
@@ -209,8 +232,6 @@ public class DebugDevConsole extends AbstractDevConsole {
 
     @Override
     protected Map<String, Object> doCallJson(Map<String, Object> options) {
-        JsonObject root = new JsonObject();
-
         String command = optionString(options, COMMAND);
         String breakpoint = optionString(options, BREAKPOINT);
         int codeLimit = optionInt(options, CODE_LIMIT, 5);
@@ -219,42 +240,53 @@ public class DebugDevConsole extends AbstractDevConsole {
 
         if (ObjectHelper.isNotEmpty(command)) {
             doCommand(command, breakpoint, num);
-            return root;
+            Response empty = new Response(
+                    null, null, null, null, null, null, null, null, null, null, null, null, null, null);
+            return JsonRecordSupport.toJsonObject(empty);
         }
+
+        String version = null;
+        Boolean enabled = null;
+        Boolean standby = null;
+        Boolean suspendedMode = null;
+        Long fallbackTimeout = null;
+        String loggingLevel = null;
+        Boolean includeExchangeProperties = null;
+        Boolean includeFiles = null;
+        Boolean includeStreams = null;
+        Integer maxChars = null;
+        Long debugCounter = null;
+        Boolean singleStepMode = null;
+        List<BreakpointEntry> breakpoints = null;
+        List<Map<String, Object>> suspended = null;
 
         BacklogDebugger backlog = getCamelContext().hasService(BacklogDebugger.class);
         if (backlog != null) {
-            root.put("version", getCamelContext().getVersion());
-            root.put("enabled", backlog.isEnabled());
-            root.put("standby", backlog.isStandby());
-            root.put("suspendedMode", backlog.isSuspendMode());
-            root.put("fallbackTimeout", backlog.getFallbackTimeout());
-            root.put("loggingLevel", backlog.getLoggingLevel());
-            root.put("includeExchangeProperties", backlog.isIncludeExchangeProperties());
-            root.put("includeFiles", backlog.isBodyIncludeFiles());
-            root.put("includeStreams", backlog.isBodyIncludeStreams());
-            root.put("maxChars", backlog.getBodyMaxChars());
-            root.put("debugCounter", backlog.getDebugCounter());
-            root.put("singleStepMode", backlog.isSingleStepMode());
+            version = getCamelContext().getVersion();
+            enabled = backlog.isEnabled();
+            standby = backlog.isStandby();
+            suspendedMode = backlog.isSuspendMode();
+            fallbackTimeout = backlog.getFallbackTimeout();
+            loggingLevel = backlog.getLoggingLevel();
+            includeExchangeProperties = backlog.isIncludeExchangeProperties();
+            includeFiles = backlog.isBodyIncludeFiles();
+            includeStreams = backlog.isBodyIncludeStreams();
+            maxChars = backlog.getBodyMaxChars();
+            debugCounter = backlog.getDebugCounter();
+            singleStepMode = backlog.isSingleStepMode();
 
-            JsonArray arr = new JsonArray();
+            List<BreakpointEntry> bps = new ArrayList<>();
             for (String n : backlog.getBreakpoints()) {
-                JsonObject jo = new JsonObject();
-                jo.put("nodeId", n);
-                boolean suspended = backlog.getSuspendedBreakpointNodeIds().contains(n);
-                jo.put("suspended", suspended);
-                arr.add(jo);
+                boolean sus = backlog.getSuspendedBreakpointNodeIds().contains(n);
+                bps.add(new BreakpointEntry(n, sus));
             }
-            if (!arr.isEmpty()) {
-                root.put("breakpoints", arr);
-            }
+            breakpoints = bps.isEmpty() ? null : bps;
 
-            arr = new JsonArray();
+            List<Map<String, Object>> susp = new ArrayList<>();
             for (String n : backlog.getSuspendedBreakpointNodeIds()) {
                 BacklogTracerEventMessage t = backlog.getSuspendedBreakpointMessage(n);
                 if (t != null) {
                     JsonObject to = (JsonObject) t.asJSon();
-                    arr.add(to);
 
                     // enrich with source code +/- lines around location
                     int limit = codeLimit;
@@ -275,14 +307,16 @@ public class DebugDevConsole extends AbstractDevConsole {
                             to.put("history", steps);
                         }
                     }
+                    susp.add(to);
                 }
             }
-            if (!arr.isEmpty()) {
-                root.put("suspended", arr);
-            }
+            suspended = susp.isEmpty() ? null : susp;
         }
 
-        return root;
+        Response response = new Response(
+                version, enabled, standby, suspendedMode, fallbackTimeout, loggingLevel, includeExchangeProperties,
+                includeFiles, includeStreams, maxChars, debugCounter, singleStepMode, breakpoints, suspended);
+        return JsonRecordSupport.toJsonObject(response);
     }
 
     private List<JsonObject> enrichHistory(BacklogDebugger backlog, String id) {

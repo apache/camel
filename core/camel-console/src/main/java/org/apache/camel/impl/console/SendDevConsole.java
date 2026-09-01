@@ -41,11 +41,21 @@ import org.apache.camel.support.service.ServiceHelper;
 import org.apache.camel.util.IOHelper;
 import org.apache.camel.util.StopWatch;
 import org.apache.camel.util.TimeUtils;
-import org.apache.camel.util.json.JsonObject;
+import org.apache.camel.util.json.JsonRecordSupport;
 
-@DevConsole(name = "send", displayName = "Camel Send", description = "Send messages to endpoints")
+@DevConsole(name = "send", displayName = "Camel Send", description = "Send messages to endpoints", readOnly = false)
 @Configurer(extended = true)
 public class SendDevConsole extends AbstractDevConsole {
+
+    public record Response(
+            @Metadata(description = "Epoch time in milliseconds when the send was performed") long timestamp,
+            @Metadata(description = "The send status, success/error/timeout") String status,
+            @Metadata(description = "Elapsed time in milliseconds") long elapsed,
+            @Metadata(description = "The endpoint URI (only present when known)") String endpoint,
+            @Metadata(description = "The exception, as an opaque JSON object (only present on error)") Map<String, Object> exception,
+            @Metadata(description = "The exchange ID (only present when a response message is available)") String exchangeId,
+            @Metadata(description = "The response message, as an opaque JSON object (only present when a response message is available)") Map<String, Object> message) {
+    }
 
     private ProducerTemplate producer;
     private ConsumerTemplate consumer;
@@ -183,8 +193,6 @@ public class SendDevConsole extends AbstractDevConsole {
 
     @Override
     protected Map<String, Object> doCallJson(Map<String, Object> options) {
-        JsonObject root = new JsonObject();
-
         StopWatch watch = new StopWatch();
         long timestamp = System.currentTimeMillis();
         String endpoint = optionString(options, ENDPOINT);
@@ -221,27 +229,31 @@ public class SendDevConsole extends AbstractDevConsole {
             status = "timeout";
         }
 
-        root.put("timestamp", timestamp);
-        root.put("status", status);
-        root.put("elapsed", taken);
+        String endpointStr = null;
         if (target != null) {
-            root.put("endpoint", target.toString());
+            endpointStr = target.toString();
         } else if (endpoint != null) {
-            root.put("endpoint", endpoint);
-        }
-        if (cause != null) {
-            // avoid double wrap
-            root.put("exception", MessageHelper.dumpExceptionAsJSonObject(cause).getMap("exception"));
-        }
-        if (out != null && (poll || "InOut".equals(exchangePattern))) {
-            root.put("exchangeId", out.getExchangeId());
-            int maxChars = optionInt(options, BODY_MAX_CHARS, bodyMaxChars);
-            // avoid double wrap
-            root.put("message", MessageHelper.dumpAsJSonObject(out.getMessage(), true, true, true, true, true, true,
-                    maxChars).getMap("message"));
+            endpointStr = endpoint;
         }
 
-        return root;
+        Map<String, Object> exception = null;
+        if (cause != null) {
+            // avoid double wrap
+            exception = MessageHelper.dumpExceptionAsJSonObject(cause).getMap("exception");
+        }
+
+        String exchangeId = null;
+        Map<String, Object> message = null;
+        if (out != null && (poll || "InOut".equals(exchangePattern))) {
+            exchangeId = out.getExchangeId();
+            int maxChars = optionInt(options, BODY_MAX_CHARS, bodyMaxChars);
+            // avoid double wrap
+            message = MessageHelper.dumpAsJSonObject(out.getMessage(), true, true, true, true, true, true, maxChars)
+                    .getMap("message");
+        }
+
+        Response response = new Response(timestamp, status, taken, endpointStr, exception, exchangeId, message);
+        return JsonRecordSupport.toJsonObject(response);
     }
 
     private Exchange findToTarget(

@@ -1,0 +1,137 @@
+= AI Resource Component
+:doctitle: AI Resource
+:shortname: ai-resource
+:artifactid: camel-ai-resource
+:description: Framework-agnostic consumer endpoint that registers a Camel route as a read-only AI resource in the shared AiResourceRegistry.
+:since: 4.23
+:supportlevel: Preview
+:tabs-sync-option:
+:component-header: Only consumer is supported
+//Manually maintained attributes
+:group: AI
+
+*Since Camel {since}*
+
+*{component-header}*
+
+The AI Resource component exposes Camel routes as read-only resources that an AI client can fetch by uri.
+Where xref:ai-tool-component.adoc[AI Tool] models an action the model decides to invoke, a resource models
+content the client reads: a configuration file, a report on S3, a document on an FTP server.
+
+Today the only adapter reading this registry is xref:others:mcp-server.adoc[camel-mcp-server], which publishes the
+selected resources over MCP `resources/list` and `resources/read`.
+
+Maven users will need to add the following dependency to their `pom.xml`
+for this component:
+
+[source,xml]
+----
+<dependency>
+    <groupId>org.apache.camel</groupId>
+    <artifactId>camel-ai-resource</artifactId>
+    <version>x.x.x</version>
+    <!-- use the same version as your Camel core version -->
+</dependency>
+----
+
+== URI format
+
+----
+ai-resource:resourceName?resourceUri=uri[&options]
+----
+
+Where *resourceName* is the human-readable label shown in resource listings, and *resourceUri* is the address
+clients use to read the resource. The uri must be unique within the CamelContext.
+
+// component options: START
+include::partial$component-configure-options.adoc[]
+include::partial$component-endpoint-options.adoc[]
+include::partial$component-endpoint-headers.adoc[]
+// component options: END
+
+== Usage
+
+A resource read carries no arguments: the route is invoked with an empty exchange and its message body is the
+content returned to the client. Retrieval therefore uses whatever Camel already offers for reading on demand: a
+producer with a read operation (`aws2-s3` with `operation=getObject`), or `pollEnrich` for the polling components
+(`file`, `ftp`, `sftp`), whose producers write rather than read.
+
+Always give `pollEnrich` an explicit `timeout` - it is a parameter of the EIP, not an endpoint option. It
+defaults to `-1`, which waits until a message is available and
+parks the route thread for good when the file is not there. The client is still answered - the read returns a
+timeout error after `camel.server.mcp-resource-timeout` - but the route stays blocked. Note also that `noop=true`
+implies `idempotent=true`, so `idempotent=false` is what keeps the same file readable on every request.
+
+=== Textual resource
+
+[tabs]
+====
+Java::
++
+[source,java]
+----
+from("ai-resource:app_config"
+    + "?resourceUri=camel:///config/app.json"
+    + "&tags=crm"
+    + "&description=Current application configuration"
+    + "&mimeType=application/json")
+    .pollEnrich("file:config?fileName=app.json&noop=true&idempotent=false", 5000);
+----
+
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="ai-resource:app_config?resourceUri=camel:///config/app.json&amp;tags=crm&amp;description=Current application configuration&amp;mimeType=application/json"/>
+  <pollEnrich uri="file:config?fileName=app.json&amp;noop=true&amp;idempotent=false" timeout="5000"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: ai-resource:app_config
+      parameters:
+        resourceUri: "camel:///config/app.json"
+        tags: crm
+        description: "Current application configuration"
+        mimeType: application/json
+      steps:
+        - poll-enrich:
+            uri: "file:config?fileName=app.json&noop=true&idempotent=false"
+            timeout: 5000
+----
+====
+
+=== Binary resource
+
+The `mimeType` decides how the route body is read. Types denoting text, such as any `text` subtype,
+`application/json`, and any subtype ending in `json`, `xml` or `yaml`, are converted to a string. Every other
+type is read as `byte[]` and delivered to the client as a binary blob.
+
+[source,java]
+----
+from("ai-resource:latest_report"
+    + "?resourceUri=s3://reports/latest.pdf"
+    + "&tags=crm"
+    + "&description=Latest sales report"
+    + "&mimeType=application/pdf")
+    .to("aws2-s3://reports?fileName=latest.pdf&operation=getObject");
+----
+
+== Tags and exposure
+
+Tags group resources so that an adapter can select which ones to expose. A resource without tags goes into a
+default pool that `camel-mcp-server` never exposes: crossing the boundary to a remote client is an explicit
+per-route opt-in. See the xref:others:mcp-server.adoc[MCP server] documentation for how the tag patterns are
+configured.
+
+== Lifecycle
+
+A resource is registered when its route starts or resumes and deregistered when the route stops or suspends.
+Adapters that support it turn those events into `notifications/resources/list_changed`, so clients see the
+resource list follow the routes.

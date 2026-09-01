@@ -6,6 +6,7 @@
     "title": "Route Structure",
     "description": "Dump route structure",
     "deprecated": false,
+    "readOnly": true,
     "javaType": "org.apache.camel.impl.console.RouteStructureDevConsole",
     "groupId": "org.apache.camel",
     "artifactId": "camel-console",
@@ -69,6 +70,90 @@
       "secret": false,
       "defaultValue": false,
       "description": "Whether to include metrics such as number of messages processed (from JMX)"
+    }
+  },
+  "response": {
+    "type": "object",
+    "properties": {
+      "routes": {
+        "type": "array",
+        "items": {
+          "type": "object",
+          "properties": {
+            "routeId": {
+              "type": "string",
+              "description": "The route ID"
+            },
+            "from": {
+              "type": "string",
+              "description": "The route's endpoint URI"
+            },
+            "source": {
+              "type": "string",
+              "description": "The source location (only present when known)"
+            },
+            "line": {
+              "type": "integer",
+              "description": "The source line number (only present when known)"
+            },
+            "description": {
+              "type": "string",
+              "description": "The route description (only present when configured)"
+            },
+            "code": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "line": {
+                    "type": "integer",
+                    "description": "The source line number, or a sequential counter when not known"
+                  },
+                  "type": {
+                    "type": "string",
+                    "description": "The processor type"
+                  },
+                  "id": {
+                    "type": "string",
+                    "description": "The processor ID"
+                  },
+                  "level": {
+                    "type": "integer",
+                    "description": "The nesting level"
+                  },
+                  "description": {
+                    "type": "string",
+                    "description": "The description (only present when known)"
+                  },
+                  "code": {
+                    "type": "string",
+                    "description": "The code representation of this processor"
+                  },
+                  "uri": {
+                    "type": "string",
+                    "description": "The endpoint URI (only present when this processor references an endpoint)"
+                  },
+                  "remote": {
+                    "type": "boolean",
+                    "description": "Whether the endpoint is remote (only present when true)"
+                  },
+                  "statistics": {
+                    "type": "object",
+                    "additionalProperties": true,
+                    "description": "Runtime statistics for this route or processor, as an opaque JSON object (only present when metrics were requested)"
+                  }
+                },
+                "required": [
+                  "line",
+                  "level"
+                ]
+              },
+              "description": "The route's structure, one entry per processor (only present when the dump succeeded)"
+            }
+          }
+        },
+        "description": "The routes"
+      }
     }
   }
 }

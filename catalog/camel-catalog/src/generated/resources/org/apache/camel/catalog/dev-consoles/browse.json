@@ -6,6 +6,7 @@
     "title": "Browse",
     "description": "Browse pending messages on Camel components",
     "deprecated": false,
+    "readOnly": true,
     "javaType": "org.apache.camel.impl.console.BrowseDevConsole",
     "groupId": "org.apache.camel",
     "artifactId": "camel-console",
@@ -114,6 +115,55 @@
       "autowired": false,
       "secret": false,
       "description": "To receive N last messages from the tail"
+    }
+  },
+  "response": {
+    "type": "object",
+    "properties": {
+      "browse": {
+        "type": "array",
+        "items": {
+          "type": "object",
+          "properties": {
+            "endpointUri": {
+              "type": "string",
+              "description": "The endpoint URI"
+            },
+            "queueSize": {
+              "type": "integer",
+              "description": "Number of messages currently in the queue"
+            },
+            "limit": {
+              "type": "integer",
+              "description": "The maximum number of messages returned (only present when messages were dumped)"
+            },
+            "position": {
+              "type": "integer",
+              "description": "The starting position of the returned messages (only present when messages were dumped)"
+            },
+            "firstTimestamp": {
+              "type": "integer",
+              "description": "Epoch time in milliseconds of the first returned message (only present when available)"
+            },
+            "lastTimestamp": {
+              "type": "integer",
+              "description": "Epoch time in milliseconds of the last returned message (only present when available)"
+            },
+            "messages": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "additionalProperties": true
+              },
+              "description": "The dumped messages, as opaque JSON objects (only present when messages were dumped and found)"
+            }
+          },
+          "required": [
+            "queueSize"
+          ]
+        },
+        "description": "The browsed endpoints"
+      }
     }
   }
 }

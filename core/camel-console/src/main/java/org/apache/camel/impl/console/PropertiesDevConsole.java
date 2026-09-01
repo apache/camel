@@ -16,24 +16,41 @@
  */
 package org.apache.camel.impl.console;
 
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
 
+import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.PropertiesComponent;
 import org.apache.camel.spi.RuntimePropertiesProvider;
 import org.apache.camel.spi.annotations.DevConsole;
 import org.apache.camel.support.console.AbstractDevConsole;
 import org.apache.camel.util.OrderedLocationProperties;
 import org.apache.camel.util.SensitiveUtils;
-import org.apache.camel.util.json.JsonArray;
-import org.apache.camel.util.json.JsonObject;
+import org.apache.camel.util.json.JsonRecordSupport;
 
 import static org.apache.camel.util.LocationHelper.locationSummary;
 
 @DevConsole(name = "properties", description = "Displays the properties loaded by Camel")
 public class PropertiesDevConsole extends AbstractDevConsole {
+
+    public record PropertyEntry(
+            @Metadata(description = "The property key") String key,
+            @Metadata(description = "The property value (masked when sensitive)") String value,
+            @Metadata(description = "The original unresolved value (only present when resolved via a properties function)") String originalValue,
+            @Metadata(description = "The default value (only present when one was used)") String defaultValue,
+            @Metadata(description = "The source that provided the value (only present when known)") String source,
+            @Metadata(description = "The location the value was loaded from (only present when known)") String location,
+            @Metadata(description = "Whether the location is an internal Camel location (only present when location is known)") Boolean internal) {
+    }
+
+    public record Response(
+            @Metadata(description = "The locations properties are loaded from") List<String> locations,
+            @Metadata(description = "The loaded properties (only present when there are any)") List<PropertyEntry> properties) {
+    }
 
     public PropertiesDevConsole() {
         super("camel", "properties", "Properties", "Displays the properties loaded by Camel");
@@ -90,13 +107,10 @@ public class PropertiesDevConsole extends AbstractDevConsole {
     }
 
     @Override
-    protected JsonObject doCallJson(Map<String, Object> options) {
-        JsonObject root = new JsonObject();
-
+    protected Map<String, Object> doCallJson(Map<String, Object> options) {
         PropertiesComponent pc = getCamelContext().getPropertiesComponent();
-        root.put("locations", pc.getLocations());
 
-        JsonArray arr = new JsonArray();
+        List<PropertyEntry> entries = new ArrayList<>();
 
         // when a runtime provider is present (Spring Boot, Quarkus, etc.) it is the
         // authoritative source — skip pc.loadProperties() to avoid noisy duplicates
@@ -109,11 +123,9 @@ public class PropertiesDevConsole extends AbstractDevConsole {
                 if (runtimeProps != null && !runtimeProps.isEmpty()) {
                     for (RuntimePropertiesProvider.Property prop : runtimeProps) {
                         boolean sensitive = SensitiveUtils.containsSensitive(prop.key());
-                        JsonObject jo = new JsonObject();
-                        jo.put("key", prop.key());
-                        jo.put("value", sensitive ? "xxxxxx" : prop.value());
-                        jo.put("source", prop.source());
-                        arr.add(jo);
+                        entries.add(new PropertyEntry(
+                                prop.key(), sensitive ? "xxxxxx" : String.valueOf(prop.value()), null, null, prop.source(),
+                                null, null));
                     }
                 }
             }
@@ -121,18 +133,15 @@ public class PropertiesDevConsole extends AbstractDevConsole {
             Properties p = pc.loadProperties();
             OrderedLocationProperties olp = p instanceof OrderedLocationProperties o ? o : null;
             for (var entry : p.entrySet()) {
-                arr.add(toPropertyJson(pc, olp, entry));
+                entries.add(toPropertyEntry(pc, olp, entry));
             }
         }
 
-        if (!arr.isEmpty()) {
-            root.put("properties", arr);
-        }
-
-        return root;
+        Response response = new Response(pc.getLocations(), entries.isEmpty() ? null : entries);
+        return JsonRecordSupport.toJsonObject(response);
     }
 
-    private static JsonObject toPropertyJson(
+    private static PropertyEntry toPropertyEntry(
             PropertiesComponent pc, OrderedLocationProperties olp, Map.Entry<Object, Object> entry) {
 
         String k = entry.getKey().toString();
@@ -149,23 +158,10 @@ public class PropertiesDevConsole extends AbstractDevConsole {
             v = m.get().value();
         }
         boolean sensitive = SensitiveUtils.containsSensitive(k);
-        JsonObject jo = new JsonObject();
-        jo.put("key", k);
-        jo.put("value", sensitive ? "xxxxxx" : v);
-        if (originalValue != null) {
-            jo.put("originalValue", sensitive ? "xxxxxx" : originalValue);
-        }
-        if (defaultValue != null) {
-            jo.put("defaultValue", defaultValue);
-        }
-        if (source != null) {
-            jo.put("source", source);
-        }
-        if (loc != null) {
-            jo.put("location", loc);
-            jo.put("internal", isInternal(loc));
-        }
-        return jo;
+        String value = sensitive ? "xxxxxx" : String.valueOf(v);
+        String originalValueOut = originalValue != null ? (sensitive ? "xxxxxx" : originalValue) : null;
+        Boolean internal = loc != null ? isInternal(loc) : null;
+        return new PropertyEntry(k, value, originalValueOut, defaultValue, source, loc, internal);
     }
 
     private static boolean isInternal(String loc) {

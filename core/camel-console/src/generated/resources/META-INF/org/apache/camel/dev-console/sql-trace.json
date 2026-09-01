@@ -6,10 +6,131 @@
     "title": "SQL Trace",
     "description": "Trace SQL query executions",
     "deprecated": false,
+    "readOnly": true,
     "javaType": "org.apache.camel.impl.console.SqlTraceDevConsole",
     "groupId": "org.apache.camel",
     "artifactId": "camel-console",
     "version": "4.23.0-SNAPSHOT"
+  },
+  "response": {
+    "type": "object",
+    "properties": {
+      "statements": {
+        "type": "array",
+        "items": {
+          "type": "object",
+          "properties": {
+            "timestamp": {
+              "type": "integer",
+              "description": "Epoch time in milliseconds when the statement was executed"
+            },
+            "exchangeId": {
+              "type": "string",
+              "description": "The exchange ID"
+            },
+            "routeId": {
+              "type": "string",
+              "description": "The route ID (only present when known)"
+            },
+            "nodeId": {
+              "type": "string",
+              "description": "The processor node ID (only present when known)"
+            },
+            "location": {
+              "type": "string",
+              "description": "The source location of the processor (only present when known)"
+            },
+            "endpoint": {
+              "type": "string",
+              "description": "The endpoint URI"
+            },
+            "query": {
+              "type": "string",
+              "description": "The SQL query (or the endpoint URI when the query could not be determined)"
+            },
+            "category": {
+              "type": "string",
+              "description": "The SQL statement category"
+            },
+            "duration": {
+              "type": "integer",
+              "description": "Duration in milliseconds"
+            },
+            "failed": {
+              "type": "boolean",
+              "description": "Whether the exchange failed"
+            },
+            "rowCount": {
+              "type": "integer",
+              "description": "Number of rows returned (only present when known)"
+            },
+            "updateCount": {
+              "type": "integer",
+              "description": "Number of rows updated (only present when known)"
+            }
+          },
+          "required": [
+            "timestamp",
+            "duration",
+            "failed"
+          ]
+        },
+        "description": "The traced SQL statements, most recent first (only present when statements have been traced)"
+      },
+      "summary": {
+        "type": "object",
+        "properties": {
+          "totalQueries": {
+            "type": "integer",
+            "description": "Total number of queries"
+          },
+          "avgTime": {
+            "type": "integer",
+            "description": "Average duration in milliseconds"
+          },
+          "slowestTime": {
+            "type": "integer",
+            "description": "Slowest duration in milliseconds"
+          },
+          "slowCount": {
+            "type": "integer",
+            "description": "Number of queries considered slow (duration >= 100 ms)"
+          },
+          "failedCount": {
+            "type": "integer",
+            "description": "Number of failed queries"
+          },
+          "selectCount": {
+            "type": "integer",
+            "description": "Number of SELECT statements"
+          },
+          "insertCount": {
+            "type": "integer",
+            "description": "Number of INSERT statements"
+          },
+          "updateCount": {
+            "type": "integer",
+            "description": "Number of UPDATE statements"
+          },
+          "deleteCount": {
+            "type": "integer",
+            "description": "Number of DELETE statements"
+          }
+        },
+        "required": [
+          "totalQueries",
+          "avgTime",
+          "slowestTime",
+          "slowCount",
+          "failedCount",
+          "selectCount",
+          "insertCount",
+          "updateCount",
+          "deleteCount"
+        ],
+        "description": "Summary statistics across the traced statements (only present when statements have been traced)"
+      }
+    }
   }
 }
 

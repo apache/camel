@@ -6,6 +6,7 @@
     "title": "JFR Memory Leak",
     "description": "JFR-based old object sampling for memory leak diagnosis",
     "deprecated": false,
+    "readOnly": false,
     "javaType": "org.apache.camel.impl.console.JfrMemoryLeakDevConsole",
     "groupId": "org.apache.camel",
     "artifactId": "camel-console",
@@ -93,6 +94,294 @@
       "secret": false,
       "defaultValue": false,
       "description": "Whether to include stack traces in the output"
+    }
+  },
+  "response": {
+    "type": "object",
+    "properties": {
+      "status": {
+        "type": "string",
+        "description": "The console status: recording, completed, compared, idle, or error"
+      },
+      "error": {
+        "type": "string",
+        "description": "An error message (only present when status is error)"
+      },
+      "note": {
+        "type": "string",
+        "description": "An informational note (only present for an idle query)"
+      },
+      "startTime": {
+        "type": "integer",
+        "description": "Epoch time in milliseconds the recording started (only present while recording)"
+      },
+      "durationSeconds": {
+        "type": "integer",
+        "description": "The requested recording duration in seconds (only present when set)"
+      },
+      "elapsedMs": {
+        "type": "integer",
+        "description": "Elapsed time in milliseconds since the recording started (only present while recording)"
+      },
+      "remainingMs": {
+        "type": "integer",
+        "description": "Remaining time in milliseconds until auto-stop (only present when a duration was requested)"
+      },
+      "hasCachedResults": {
+        "type": "boolean",
+        "description": "Whether cached results are available (only present for a status query)"
+      },
+      "hasComparisonData": {
+        "type": "boolean",
+        "description": "Whether a previous recording is available for comparison (only present for a status query)"
+      },
+      "sampleCount": {
+        "type": "integer",
+        "description": "The number of aggregated samples (only present when results are available)"
+      },
+      "recordingDurationMs": {
+        "type": "integer",
+        "description": "The recording duration in milliseconds (only present when results are available)"
+      },
+      "recordingEndTime": {
+        "type": "integer",
+        "description": "Epoch time in milliseconds the recording ended (only present when results are available)"
+      },
+      "rawSampleCount": {
+        "type": "integer",
+        "description": "The number of raw samples before aggregation (only present when results are available)"
+      },
+      "gcCount": {
+        "type": "integer",
+        "description": "The number of garbage collections observed (only present when results are available)"
+      },
+      "samples": {
+        "type": "array",
+        "items": {
+          "type": "object",
+          "properties": {
+            "allocationClass": {
+              "type": "string",
+              "description": "The allocated class name (only present when known)"
+            },
+            "allocationSize": {
+              "type": "integer",
+              "description": "The allocation size in bytes (only present when known)"
+            },
+            "lastKnownHeapUsage": {
+              "type": "integer",
+              "description": "The last known heap usage in bytes (only present when known)"
+            },
+            "arrayElements": {
+              "type": "integer",
+              "description": "The number of array elements (only present for arrays)"
+            },
+            "objectAge": {
+              "type": "integer",
+              "description": "The object age in milliseconds (only present when known)"
+            },
+            "allocationTime": {
+              "type": "integer",
+              "description": "Epoch time in milliseconds when the object was allocated"
+            },
+            "stackTrace": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "method": {
+                    "type": "string",
+                    "description": "The fully qualified method name"
+                  },
+                  "line": {
+                    "type": "integer",
+                    "description": "The line number"
+                  }
+                },
+                "required": [
+                  "line"
+                ]
+              },
+              "description": "The allocation stack trace (only present when requested)"
+            },
+            "referenceChain": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "type": {
+                    "type": "string",
+                    "description": "The type name (only present when known)"
+                  },
+                  "field": {
+                    "type": "string",
+                    "description": "The field name (only present when known)"
+                  },
+                  "description": {
+                    "type": "string",
+                    "description": "A description of the link (only present when known)"
+                  }
+                }
+              },
+              "description": "The reference chain back to the GC root (only present when there is one)"
+            },
+            "count": {
+              "type": "integer",
+              "description": "The number of samples aggregated into this entry"
+            },
+            "sampledSize": {
+              "type": "integer",
+              "description": "The total sampled size in bytes across the aggregated samples"
+            }
+          },
+          "required": [
+            "allocationTime",
+            "count",
+            "sampledSize"
+          ]
+        },
+        "description": "The aggregated samples (only present when results are available)"
+      },
+      "baseline": {
+        "type": "object",
+        "properties": {
+          "recordingDurationMs": {
+            "type": "integer",
+            "description": "The recording duration in milliseconds"
+          },
+          "sampleCount": {
+            "type": "integer",
+            "description": "The number of aggregated samples"
+          },
+          "gcCount": {
+            "type": "integer",
+            "description": "The number of garbage collections observed"
+          }
+        },
+        "required": [
+          "recordingDurationMs",
+          "sampleCount",
+          "gcCount"
+        ],
+        "description": "The baseline recording info (only present for a comparison)"
+      },
+      "current": {
+        "type": "object",
+        "properties": {
+          "recordingDurationMs": {
+            "type": "integer",
+            "description": "The recording duration in milliseconds"
+          },
+          "sampleCount": {
+            "type": "integer",
+            "description": "The number of aggregated samples"
+          },
+          "gcCount": {
+            "type": "integer",
+            "description": "The number of garbage collections observed"
+          }
+        },
+        "required": [
+          "recordingDurationMs",
+          "sampleCount",
+          "gcCount"
+        ],
+        "description": "The current recording info (only present for a comparison)"
+      },
+      "durationRatio": {
+        "type": "number",
+        "description": "The ratio of the current to the baseline recording duration (only present for a comparison)"
+      },
+      "comparisons": {
+        "type": "array",
+        "items": {
+          "type": "object",
+          "properties": {
+            "allocationClass": {
+              "type": "string",
+              "description": "The allocated class name"
+            },
+            "baselineSampledSize": {
+              "type": "integer",
+              "description": "The baseline sampled size in bytes"
+            },
+            "baselineCount": {
+              "type": "integer",
+              "description": "The baseline sample count"
+            },
+            "currentSampledSize": {
+              "type": "integer",
+              "description": "The current sampled size in bytes"
+            },
+            "currentCount": {
+              "type": "integer",
+              "description": "The current sample count"
+            },
+            "growthRatio": {
+              "type": "number",
+              "description": "The growth ratio between baseline and current sampled size"
+            },
+            "trend": {
+              "type": "string",
+              "description": "The trend: new, gone, growing, suspicious, shrinking, or stable"
+            },
+            "lowConfidence": {
+              "type": "boolean",
+              "description": "Whether the comparison has low statistical confidence"
+            },
+            "referenceChain": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "type": {
+                    "type": "string",
+                    "description": "The type name (only present when known)"
+                  },
+                  "field": {
+                    "type": "string",
+                    "description": "The field name (only present when known)"
+                  },
+                  "description": {
+                    "type": "string",
+                    "description": "A description of the link (only present when known)"
+                  }
+                }
+              },
+              "description": "The reference chain back to the GC root (only present when there is one)"
+            },
+            "stackTrace": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "method": {
+                    "type": "string",
+                    "description": "The fully qualified method name"
+                  },
+                  "line": {
+                    "type": "integer",
+                    "description": "The line number"
+                  }
+                },
+                "required": [
+                  "line"
+                ]
+              },
+              "description": "The allocation stack trace (only present when requested)"
+            }
+          },
+          "required": [
+            "baselineSampledSize",
+            "baselineCount",
+            "currentSampledSize",
+            "currentCount",
+            "growthRatio",
+            "lowConfidence"
+          ]
+        },
+        "description": "The per-class comparisons, sorted by growth ratio descending (only present for a comparison)"
+      }
     }
   }
 }

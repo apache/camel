@@ -16,8 +16,10 @@
  */
 package org.apache.camel.impl.console;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.apache.camel.api.management.ManagedCamelContext;
@@ -36,9 +38,44 @@ import org.apache.camel.support.console.AbstractDevConsole;
 import org.apache.camel.util.URISupport;
 import org.apache.camel.util.json.JsonArray;
 import org.apache.camel.util.json.JsonObject;
+import org.apache.camel.util.json.JsonRecordSupport;
 
 @DevConsole(name = "route-topology", description = "Route topology showing inter-route connections")
 public class RouteTopologyDevConsole extends AbstractDevConsole {
+
+    public record NodeEntry(
+            @Metadata(description = "The route ID") String routeId,
+            @Metadata(description = "The route description (only present when configured)") String description,
+            @Metadata(description = "The route's endpoint URI") String from,
+            @Metadata(description = "The route's endpoint scheme") String fromScheme,
+            @Metadata(description = "The node type") String nodeType,
+            @Metadata(description = "Total number of exchanges (only present when metrics were requested and available)") Long exchangesTotal,
+            @Metadata(description = "Number of failed exchanges (only present when metrics were requested and available)") Long exchangesFailed) {
+    }
+
+    public record EdgeEntry(
+            @Metadata(description = "The source route ID") String fromRouteId,
+            @Metadata(description = "The target route ID") String toRouteId,
+            @Metadata(description = "The endpoint URI connecting the two routes") String endpoint,
+            @Metadata(description = "The connection type") String connectionType) {
+    }
+
+    public record ExternalEndpointEntry(
+            @Metadata(description = "The endpoint ID") String id,
+            @Metadata(description = "The endpoint URI") String uri,
+            @Metadata(description = "The endpoint scheme") String scheme,
+            @Metadata(description = "The direction (in or out)") String direction,
+            @Metadata(description = "The route ID") String routeId,
+            @Metadata(description = "Total number of exchanges (only present when metrics were requested and available)") Long exchangesTotal,
+            @Metadata(description = "Number of failed exchanges (only present when metrics were requested and available)") Long exchangesFailed) {
+    }
+
+    public record Response(
+            @Metadata(description = "The topology nodes (only present when a route topology dumper is available)") List<NodeEntry> nodes,
+            @Metadata(description = "The connections between nodes (only present when a route topology dumper is available)") List<EdgeEntry> edges,
+            @Metadata(description = "External systems the routes connect to (only present when requested and there are any)") List<ExternalEndpointEntry> externalEndpoints,
+            @Metadata(description = "Route structure data, as opaque JSON objects (only present when requested)") List<Map<String, Object>> routes) {
+    }
 
     @Metadata(label = "query", description = "Whether to include live metrics (message counts) on nodes and edges",
               defaultValue = "false", javaType = "java.lang.Boolean")
@@ -93,11 +130,10 @@ public class RouteTopologyDevConsole extends AbstractDevConsole {
     }
 
     @Override
-    protected JsonObject doCallJson(Map<String, Object> options) {
-        JsonObject root = new JsonObject();
+    protected Map<String, Object> doCallJson(Map<String, Object> options) {
         RouteTopologyDumper dumper = PluginHelper.getRouteTopologyDumper(getCamelContext());
         if (dumper == null) {
-            return root;
+            return JsonRecordSupport.toJsonObject(new Response(null, null, null, null));
         }
         TopologyResult result = dumper.dumpTopology(getCamelContext());
 
@@ -107,78 +143,63 @@ public class RouteTopologyDevConsole extends AbstractDevConsole {
                 ? getCamelContext().getCamelContextExtension().getContextPlugin(ManagedCamelContext.class)
                 : null;
 
-        JsonArray nodesArr = new JsonArray();
+        List<NodeEntry> nodes = new ArrayList<>();
         for (TopologyNode node : result.nodes()) {
-            JsonObject jo = new JsonObject();
-            jo.put("routeId", node.routeId());
-            if (node.description() != null) {
-                jo.put("description", node.description());
-            }
-            jo.put("from", node.from());
-            jo.put("fromScheme", node.fromScheme());
-            jo.put("nodeType", node.nodeType());
-
+            Long exchangesTotal = null;
+            Long exchangesFailed = null;
             if (mcc != null) {
                 ManagedRouteMBean mrb = mcc.getManagedRoute(node.routeId());
                 if (mrb != null) {
-                    jo.put("exchangesTotal", mrb.getExchangesTotal());
-                    jo.put("exchangesFailed", mrb.getExchangesFailed());
+                    exchangesTotal = mrb.getExchangesTotal();
+                    exchangesFailed = mrb.getExchangesFailed();
                 }
             }
-
-            nodesArr.add(jo);
+            nodes.add(new NodeEntry(
+                    node.routeId(), node.description(), node.from(), node.fromScheme(), node.nodeType(),
+                    exchangesTotal, exchangesFailed));
         }
-        root.put("nodes", nodesArr);
 
-        JsonArray edgesArr = new JsonArray();
+        List<EdgeEntry> edges = new ArrayList<>();
         for (TopologyEdge edge : result.edges()) {
-            JsonObject jo = new JsonObject();
-            jo.put("fromRouteId", edge.fromRouteId());
-            jo.put("toRouteId", edge.toRouteId());
-            jo.put("endpoint", edge.endpoint());
-            jo.put("connectionType", edge.connectionType());
-            edgesArr.add(jo);
+            edges.add(new EdgeEntry(edge.fromRouteId(), edge.toRouteId(), edge.endpoint(), edge.connectionType()));
         }
-        root.put("edges", edgesArr);
 
+        List<ExternalEndpointEntry> externalEndpoints = null;
         if (external && !result.externalEndpoints().isEmpty()) {
             // Collect per-endpoint metrics for producers (direction=out)
             Map<String, long[]> endpointMetrics = collectEndpointMetrics(mcc, result);
 
-            JsonArray extArr = new JsonArray();
+            externalEndpoints = new ArrayList<>();
             for (TopologyExternalEndpoint ep : result.externalEndpoints()) {
-                JsonObject jo = new JsonObject();
-                jo.put("id", ep.id());
-                jo.put("uri", ep.uri());
-                jo.put("scheme", ep.scheme());
-                jo.put("direction", ep.direction());
-                jo.put("routeId", ep.routeId());
+                Long exchangesTotal = null;
+                Long exchangesFailed = null;
 
                 if (mcc != null) {
                     if ("in".equals(ep.direction())) {
                         // Consumer: use route-level metrics (route has exactly 1 consumer)
                         ManagedRouteMBean mrb = mcc.getManagedRoute(ep.routeId());
                         if (mrb != null) {
-                            jo.put("exchangesTotal", mrb.getExchangesTotal());
-                            jo.put("exchangesFailed", mrb.getExchangesFailed());
+                            exchangesTotal = mrb.getExchangesTotal();
+                            exchangesFailed = mrb.getExchangesFailed();
                         }
                     } else {
                         // Producer: use processor-level metrics
                         String key = ep.routeId() + "|" + ep.uri();
                         long[] stats = endpointMetrics.get(key);
                         if (stats != null) {
-                            jo.put("exchangesTotal", stats[0]);
-                            jo.put("exchangesFailed", stats[1]);
+                            exchangesTotal = stats[0];
+                            exchangesFailed = stats[1];
                         }
                     }
                 }
 
-                extArr.add(jo);
+                externalEndpoints.add(new ExternalEndpointEntry(
+                        ep.id(), ep.uri(), ep.scheme(), ep.direction(), ep.routeId(), exchangesTotal, exchangesFailed));
             }
-            root.put("externalEndpoints", extArr);
         }
 
         // Optionally include route structure data in the same response
+        List<Map<String, Object>> routes = null;
         if (optionBoolean(options, ROUTES, false)) {
             DevConsoleRegistry registry = getCamelContext().getCamelContextExtension()
                     .getContextPlugin(DevConsoleRegistry.class);
@@ -190,13 +211,20 @@ public class RouteTopologyDevConsole extends AbstractDevConsole {
                             org.apache.camel.console.DevConsole.MediaType.JSON,
                             Map.of("filter", "*", "brief", "false", "metric", metricStr));
                     if (structureResult != null) {
-                        root.put("routes", structureResult.get("routes"));
+                        JsonArray routesArr = structureResult.getCollection("routes");
+                        if (routesArr != null) {
+                            routes = new ArrayList<>();
+                            for (Object o : routesArr) {
+                                routes.add((JsonObject) o);
+                            }
+                        }
                     }
                 }
             }
         }
 
-        return root;
+        Response response = new Response(nodes, edges, externalEndpoints, routes);
+        return JsonRecordSupport.toJsonObject(response);
     }
 
     /**

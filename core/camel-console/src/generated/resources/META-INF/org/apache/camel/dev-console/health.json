@@ -6,6 +6,7 @@
     "title": "Health Check",
     "description": "Health Check Status",
     "deprecated": false,
+    "readOnly": true,
     "javaType": "org.apache.camel.impl.console.HealthDevConsole",
     "groupId": "org.apache.camel",
     "artifactId": "camel-console",
@@ -32,6 +33,89 @@
       "defaultValue": "default",
       "description": "Exposure level for health check details"
     }
+  },
+  "response": {
+    "type": "object",
+    "properties": {
+      "up": {
+        "type": "boolean",
+        "description": "Whether the overall health status is up"
+      },
+      "ready": {
+        "type": "boolean",
+        "description": "Whether the readiness checks are up"
+      },
+      "live": {
+        "type": "boolean",
+        "description": "Whether the liveness checks are up"
+      },
+      "checks": {
+        "type": "array",
+        "items": {
+          "type": "object",
+          "properties": {
+            "id": {
+              "type": "string",
+              "description": "The health check ID"
+            },
+            "group": {
+              "type": "string",
+              "description": "The health check group"
+            },
+            "up": {
+              "type": "boolean",
+              "description": "Whether the health check is up"
+            },
+            "state": {
+              "type": "string",
+              "description": "The health check state"
+            },
+            "enabled": {
+              "type": "boolean",
+              "description": "Whether the health check is enabled"
+            },
+            "readiness": {
+              "type": "boolean",
+              "description": "Whether the health check is a readiness check"
+            },
+            "liveness": {
+              "type": "boolean",
+              "description": "Whether the health check is a liveness check"
+            },
+            "message": {
+              "type": "string",
+              "description": "The failure message (only present when not up)"
+            },
+            "stackTrace": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              },
+              "description": "The failure stack trace, one entry per line (only present when not up and an error is available)"
+            },
+            "details": {
+              "type": "object",
+              "additionalProperties": {
+                "type": "string"
+              },
+              "description": "Additional health check specific details (only present when available)"
+            }
+          },
+          "required": [
+            "up",
+            "enabled",
+            "readiness",
+            "liveness"
+          ]
+        },
+        "description": "The individual health checks"
+      }
+    },
+    "required": [
+      "up",
+      "ready",
+      "live"
+    ]
   }
 }
 

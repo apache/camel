@@ -6,10 +6,68 @@
     "title": "Services",
     "description": "Services used for network communication with clients",
     "deprecated": false,
+    "readOnly": true,
     "javaType": "org.apache.camel.impl.console.ServiceDevConsole",
     "groupId": "org.apache.camel",
     "artifactId": "camel-console",
     "version": "4.23.0-SNAPSHOT"
+  },
+  "response": {
+    "type": "object",
+    "properties": {
+      "services": {
+        "type": "array",
+        "items": {
+          "type": "object",
+          "properties": {
+            "component": {
+              "type": "string",
+              "description": "The Camel component"
+            },
+            "direction": {
+              "type": "string",
+              "description": "The direction (in or out)"
+            },
+            "hosted": {
+              "type": "boolean",
+              "description": "Whether the service is hosted in this Camel application"
+            },
+            "protocol": {
+              "type": "string",
+              "description": "The protocol the service is using (only present when known)"
+            },
+            "serviceUrl": {
+              "type": "string",
+              "description": "The remote address of the service (only present when known)"
+            },
+            "endpointUri": {
+              "type": "string",
+              "description": "The endpoint URI"
+            },
+            "routeId": {
+              "type": "string",
+              "description": "The route ID (only present when known)"
+            },
+            "hits": {
+              "type": "integer",
+              "description": "Usage of the endpoint service"
+            },
+            "metadata": {
+              "type": "object",
+              "additionalProperties": {
+                "type": "string"
+              },
+              "description": "Additional metadata relevant to the service (only present when available)"
+            }
+          },
+          "required": [
+            "hosted",
+            "hits"
+          ]
+        },
+        "description": "The services"
+      }
+    }
   }
 }
 

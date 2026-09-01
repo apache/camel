@@ -16,6 +16,8 @@
  */
 package org.apache.camel.reifier;
 
+import java.time.Duration;
+
 import org.apache.camel.Expression;
 import org.apache.camel.Processor;
 import org.apache.camel.Route;
@@ -45,7 +47,8 @@ public class CacheReifier extends ExpressionReifier<CacheDefinition> {
 
         Expression expression = createExpression(definition.getExpression());
 
-        long ttl = parseDuration(definition.getTtl(), -1);
+        long ttlMillis = parseDuration(definition.getTtl(), -1);
+        Duration ttl = ttlMillis > 0 ? Duration.ofMillis(ttlMillis) : null;
         boolean cacheNull = parseBoolean(definition.getCacheNull(), false);
 
         CacheProcessor answer = new CacheProcessor(expression, kvRepository, ttl, cacheNull, childProcessor);

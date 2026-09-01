@@ -17,6 +17,7 @@
 package org.apache.camel.impl.console;
 
 import java.io.LineNumberReader;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -37,6 +38,7 @@ import org.apache.camel.util.IOHelper;
 import org.apache.camel.util.StringHelper;
 import org.apache.camel.util.json.JsonArray;
 import org.apache.camel.util.json.JsonObject;
+import org.apache.camel.util.json.JsonRecordSupport;
 
 @DevConsole(name = "source", description = "Dump route source code")
 public class SourceDevConsole extends AbstractDevConsole {
@@ -48,6 +50,22 @@ public class SourceDevConsole extends AbstractDevConsole {
     @Metadata(label = "query", description = "Limits the number of entries displayed",
               javaType = "java.lang.Integer")
     public static final String LIMIT = "limit";
+
+    public record CodeLine(
+            @Metadata(description = "The line number") int line,
+            @Metadata(description = "The source code line") String code,
+            @Metadata(description = "Whether this is the matched line (only present when true)") Boolean match) {
+    }
+
+    public record SourceEntry(
+            @Metadata(description = "The route ID") String routeId,
+            @Metadata(description = "The route's endpoint URI") String from,
+            @Metadata(description = "The source location (only present when known)") String source,
+            @Metadata(description = "The source code around the route (only present when resolvable)") List<CodeLine> code) {
+    }
+
+    public record Response(@Metadata(description = "The routes") List<SourceEntry> routes) {
+    }
 
     public SourceDevConsole() {
         super("camel", "source", "Source", "Dump route source code");
@@ -101,30 +119,32 @@ public class SourceDevConsole extends AbstractDevConsole {
     }
 
     @Override
-    protected JsonObject doCallJson(Map<String, Object> options) {
-        final JsonObject root = new JsonObject();
-        final JsonArray list = new JsonArray();
+    protected Map<String, Object> doCallJson(Map<String, Object> options) {
+        final List<SourceEntry> list = new ArrayList<>();
 
         Function<ManagedRouteMBean, Object> task = mrb -> {
-            JsonObject jo = new JsonObject();
-            list.add(jo);
-
-            jo.put("routeId", mrb.getRouteId());
-            jo.put("from", mrb.getEndpointUri());
-            if (mrb.getSourceLocation() != null) {
-                jo.put("source", mrb.getSourceLocation());
-            }
-
             String loc = mrb.getSourceLocation();
             JsonArray code = ConsoleHelper.loadSourceAsJson(getCamelContext(), loc);
-            if (code != null) {
-                jo.put("code", code);
-            }
+            list.add(new SourceEntry(mrb.getRouteId(), mrb.getEndpointUri(), loc, toCodeLines(code)));
             return null;
         };
         doCall(options, task);
-        root.put("routes", list);
-        return root;
+
+        Response response = new Response(list);
+        return JsonRecordSupport.toJsonObject(response);
+    }
+
+    private static List<CodeLine> toCodeLines(JsonArray code) {
+        if (code == null) {
+            return null;
+        }
+        List<CodeLine> lines = new ArrayList<>();
+        for (Object o : code) {
+            JsonObject jo = (JsonObject) o;
+            Boolean match = jo.getBoolean("match");
+            lines.add(new CodeLine(jo.getInteger("line"), jo.getString("code"), match));
+        }
+        return lines;
     }
 
     protected void doCall(Map<String, Object> options, Function<ManagedRouteMBean, Object> task) {

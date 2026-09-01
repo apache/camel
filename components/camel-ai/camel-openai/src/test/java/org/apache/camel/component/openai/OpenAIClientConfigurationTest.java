@@ -24,6 +24,7 @@ import java.util.Map;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.openai.client.OpenAIClient;
 import com.openai.core.ClientOptions;
+import com.openai.core.Timeout;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
@@ -63,6 +64,9 @@ class OpenAIClientConfigurationTest extends CamelTestSupport {
         OpenAIConfiguration config = new OpenAIConfiguration();
 
         assertEquals(0, config.getRequestTimeout());
+        assertEquals(0, config.getConnectTimeout());
+        assertEquals(0, config.getReadTimeout());
+        assertEquals(0, config.getWriteTimeout());
         assertEquals(2, config.getMaxRetries());
         assertNull(config.getAdditionalHeader());
     }
@@ -120,6 +124,76 @@ class OpenAIClientConfigurationTest extends CamelTestSupport {
             }
         } finally {
             clientWithDefault.close();
+        }
+    }
+
+    @Test
+    void phaseTimeoutsFromUri() {
+        OpenAIEndpoint endpoint = (OpenAIEndpoint) context().getEndpoint(
+                "openai:chat-completion?apiKey=dummy"
+                                                                         + "&connectTimeout=5000"
+                                                                         + "&readTimeout=120000"
+                                                                         + "&writeTimeout=60000");
+
+        OpenAIConfiguration config = endpoint.getConfiguration();
+
+        assertEquals(5_000, config.getConnectTimeout());
+        assertEquals(120_000, config.getReadTimeout());
+        assertEquals(60_000, config.getWriteTimeout());
+    }
+
+    @Test
+    void createClientAppliesEachTimeoutPhase() throws Exception {
+        OpenAIEndpoint endpoint = createEndpoint();
+        endpoint.getConfiguration().setRequestTimeout(180_000);
+        endpoint.getConfiguration().setConnectTimeout(5_000);
+        endpoint.getConfiguration().setReadTimeout(120_000);
+        endpoint.getConfiguration().setWriteTimeout(60_000);
+
+        OpenAIClient client = endpoint.createClient();
+        try {
+            Timeout timeout = clientOptions(client).timeout();
+            assertEquals(Duration.ofMillis(180_000), timeout.request());
+            assertEquals(Duration.ofMillis(5_000), timeout.connect());
+            assertEquals(Duration.ofMillis(120_000), timeout.read());
+            assertEquals(Duration.ofMillis(60_000), timeout.write());
+        } finally {
+            client.close();
+        }
+    }
+
+    @Test
+    void connectTimeoutAloneLeavesOtherPhasesOnSdkDefaults() throws Exception {
+        OpenAIEndpoint endpoint = createEndpoint();
+        Timeout sdkDefaults = Timeout.builder().build();
+
+        endpoint.getConfiguration().setConnectTimeout(5_000);
+
+        OpenAIClient client = endpoint.createClient();
+        try {
+            Timeout timeout = clientOptions(client).timeout();
+            assertEquals(Duration.ofMillis(5_000), timeout.connect());
+            assertEquals(sdkDefaults.request(), timeout.request());
+            assertEquals(sdkDefaults.read(), timeout.read());
+            assertEquals(sdkDefaults.write(), timeout.write());
+        } finally {
+            client.close();
+        }
+    }
+
+    @Test
+    void readAndWriteFallBackToRequestTimeout() throws Exception {
+        OpenAIEndpoint endpoint = createEndpoint();
+        endpoint.getConfiguration().setRequestTimeout(45_000);
+
+        OpenAIClient client = endpoint.createClient();
+        try {
+            Timeout timeout = clientOptions(client).timeout();
+            assertEquals(Duration.ofMillis(45_000), timeout.request());
+            assertEquals(Duration.ofMillis(45_000), timeout.read());
+            assertEquals(Duration.ofMillis(45_000), timeout.write());
+        } finally {
+            client.close();
         }
     }
 

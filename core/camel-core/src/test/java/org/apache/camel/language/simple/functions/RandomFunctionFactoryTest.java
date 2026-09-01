@@ -69,12 +69,4 @@ public class RandomFunctionFactoryTest extends AbstractSimpleFunctionFactoryTest
         int num = evaluate("random(10,${header.max})", Integer.class);
         assertTrue(num >= 0 && num < 20, "Should be 10..20");
     }
-
-    @Test
-    public void testCreateCode() {
-        assertEquals("random(exchange, 0, 10)", createCode("random(10)"));
-        assertEquals("random(exchange, 10, 20)", createCode("random(10, 20)"));
-        assertEquals("random(exchange, 10, ${header.max})", createCode("random(10, ${header.max})"));
-        assertEquals("random(exchange, ${header.min}, ${header.max})", createCode("random(${header.min}, ${header.max})"));
-    }
 }

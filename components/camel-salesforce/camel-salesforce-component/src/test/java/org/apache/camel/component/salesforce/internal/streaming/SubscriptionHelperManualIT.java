@@ -272,6 +272,86 @@ public class SubscriptionHelperManualIT {
     }
 
     @Test
+    void shouldResubscribeOnDisconnectMessage() {
+        var consumer = createConsumer("Opportunity");
+        subscription.subscribe(consumer);
+        var resubscribeAttempts = new AtomicInteger();
+
+        messages.add("""
+                [
+                  {
+                    "data": {
+                      "event": {
+                        "createdDate": "2020-12-11T13:44:56.891Z",
+                        "replayId": 1,
+                        "type": "created"
+                      },
+                      "sobject": {
+                        "Id": "0061n00002XWMgVAAX",
+                        "Name": "shouldResubscribeOnDisconnectMessage 1"
+                      }
+                    },
+                    "channel": "/topic/Opportunity"
+                  },
+                  {
+                    "clientId": "5ra4927ikfky6cb12juthkpofeu8",
+                    "channel": "/meta/connect",
+                    "id": "$id",
+                    "successful": true
+                  }
+                ]""");
+        verify(consumer, timeout(10000)).processMessage(any(ClientSessionChannel.class),
+                messageWithName("shouldResubscribeOnDisconnectMessage 1"));
+
+        subscription.client.getChannel("/meta/subscribe").addListener(
+                (MessageListener) (clientSessionChannel, message) -> {
+                    var channel = (String) message.get("subscription");
+                    if (channel != null && channel.contains("Opportunity")) {
+                        if (resubscribeAttempts.incrementAndGet() == 1) {
+                            messages.add("""
+                                    [
+                                      {
+                                        "data": {
+                                          "event": {
+                                            "createdDate": "2020-12-11T13:44:57.891Z",
+                                            "replayId": 2,
+                                            "type": "created"
+                                          },
+                                          "sobject": {
+                                            "Id": "0061n00002XWMgVAAX",
+                                            "Name": "shouldResubscribeOnDisconnectMessage 2"
+                                          }
+                                        },
+                                        "channel": "/topic/Opportunity"
+                                      },
+                                      {
+                                        "clientId": "5ra4927ikfky6cb12juthkpofeu8",
+                                        "channel": "/meta/connect",
+                                        "id": "$id",
+                                        "successful": true
+                                      }
+                                    ]""");
+                        }
+                    }
+                });
+        messages.add("""
+                [
+                  {
+                    "channel": "/meta/disconnect",
+                    "clientId": "5ra4927ikfky6cb12juthkpofeu8"
+                  }
+                ]""");
+
+        verify(consumer, timeout(20000)).processMessage(any(ClientSessionChannel.class),
+                messageWithName("shouldResubscribeOnDisconnectMessage 2"));
+        await().during(1, SECONDS).atMost(2, SECONDS).until(() -> resubscribeAttempts.get() == 1);
+
+        verify(consumer, atLeastOnce()).getEndpoint();
+        verify(consumer, atLeastOnce()).getTopicName();
+        verifyNoMoreInteractions(consumer);
+    }
+
+    @Test
     void shouldResubscribeOnSubscriptionFailure() {
         var consumer = createConsumer("Contact");
         var subscribeAttempts = new AtomicInteger(0);

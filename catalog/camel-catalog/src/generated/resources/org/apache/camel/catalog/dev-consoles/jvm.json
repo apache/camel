@@ -6,10 +6,54 @@
     "title": "JVM",
     "description": "Displays JVM information",
     "deprecated": false,
+    "readOnly": true,
     "javaType": "org.apache.camel.impl.console.JvmDevConsole",
     "groupId": "org.apache.camel",
     "artifactId": "camel-console",
     "version": "4.23.0-SNAPSHOT"
+  },
+  "response": {
+    "type": "object",
+    "properties": {
+      "vmName": {
+        "type": "string",
+        "description": "The JVM name"
+      },
+      "vmVersion": {
+        "type": "string",
+        "description": "The JVM version"
+      },
+      "vmVendor": {
+        "type": "string",
+        "description": "The JVM vendor"
+      },
+      "vmUptime": {
+        "type": "string",
+        "description": "The JVM uptime"
+      },
+      "pid": {
+        "type": "integer",
+        "description": "The process ID"
+      },
+      "inputArguments": {
+        "type": "string",
+        "description": "The JVM input arguments (only present when any are set)"
+      },
+      "bootClasspath": {
+        "type": "array",
+        "items": {
+          "type": "string"
+        },
+        "description": "The boot classpath entries (only present when supported)"
+      },
+      "classpath": {
+        "type": "array",
+        "items": {
+          "type": "string"
+        },
+        "description": "The classpath entries"
+      }
+    }
   }
 }
 

@@ -1381,6 +1381,23 @@ is on the classpath.
 Refer to the https://docs.spring.io/spring-ai/reference/observability/index.html[Spring AI Observability documentation]
 for details on available metrics, tracing, and prompt/completion logging configuration.
 
+==== Camel GenAI observability
+
+When `camel-ai-observability` and a tracing backend (for example `camel-opentelemetry2`) are on the classpath, the
+producer emits OpenTelemetry spans with `gen_ai.*` attributes per chat call. Enable or disable globally with
+`camel.aiObservability.enabled` (see xref:others:ai-observability.adoc[AI Observability]).
+
+If the endpoint is configured with `chatClient` only (no `chatModel`), Camel tries to resolve the backing `ChatModel`
+for span metadata by reading a private field on Spring AI's internal `ChatClientRequestSpec` implementation. That is not
+public Spring AI API and may break on Spring AI upgrades. When GenAI observability is enabled, configure `chatModel`
+explicitly alongside `chatClient` so `gen_ai.system` and `gen_ai.request.model` attributes are reliably populated:
+
+[source,java]
+----
+from("direct:start")
+    .to("spring-ai-chat:chat?chatClient=#chatClient&chatModel=#chatModel");
+----
+
 === Request/Response Logging
 
 The component automatically adds Spring AI's `SimpleLoggerAdvisor` to log requests and responses for debugging. Enable it by setting the logger `org.springframework.ai.chat.client.advisor` to DEBUG level:
@@ -1389,6 +1406,36 @@ The component automatically adds Spring AI's `SimpleLoggerAdvisor` to log reques
 ----
 logging.level.org.springframework.ai.chat.client.advisor=DEBUG
 ----
+
+=== Structured error exchange properties
+
+When a Spring AI chat call fails, Camel sets structured metadata on the exchange **before** the Spring AI exception propagates. This works even when GenAI observability is disabled.
+
+[cols="2,3"]
+|===
+| Exchange property | Meaning
+
+| `CamelAiErrorCategory` | Coarse category derived from Spring AI retry exceptions: `SERVER_ERROR` for `TransientAiException`, `VALIDATION` for `NonTransientAiException`, or `UNKNOWN` when no mapping applies
+| `CamelAiRetryAfterMillis` | Not populated for Spring AI providers (OpenAI-only today)
+|===
+
+Category-based handling complements matching on Spring AI exception types directly:
+
+[source,java]
+----
+onException(Exception.class)
+    .process(exchange -> {
+        String category = exchange.getProperty("CamelAiErrorCategory", String.class);
+        if ("SERVER_ERROR".equals(category)) {
+            exchange.getIn().setHeader("Retryable", true);
+        }
+    })
+    .maximumRedeliveries(3)
+    .handled(true)
+    .to("direct:retry");
+----
+
+See xref:ai-llm-integration-guide.adoc#_structured_error_exchange_properties[AI LLM integration guide] for a cross-component overview.
 
 == See Also
 

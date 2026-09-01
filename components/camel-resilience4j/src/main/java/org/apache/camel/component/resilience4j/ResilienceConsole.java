@@ -23,13 +23,45 @@ import java.util.Map;
 
 import org.apache.camel.Processor;
 import org.apache.camel.Route;
+import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.annotations.DevConsole;
 import org.apache.camel.support.console.AbstractDevConsole;
-import org.apache.camel.util.json.JsonObject;
+import org.apache.camel.util.json.JsonRecordSupport;
 
 @DevConsole(name = "resilience4j", displayName = "Resilience Circuit Breaker",
             description = "Display circuit breaker information")
 public class ResilienceConsole extends AbstractDevConsole {
+
+    public record Configuration(
+            @Metadata(description = "The failure rate threshold in percentage") float failureRateThreshold,
+            @Metadata(description = "The slow call rate threshold in percentage") float slowCallRateThreshold,
+            @Metadata(description = "The minimum number of calls before the failure rate is calculated") int minimumNumberOfCalls,
+            @Metadata(description = "The number of permitted calls when the circuit breaker is half open") int permittedNumberOfCallsInHalfOpenState,
+            @Metadata(description = "The sliding window size") int slidingWindowSize,
+            @Metadata(description = "The sliding window type") String slidingWindowType,
+            @Metadata(description = "The wait duration in the open state, in milliseconds") long waitDurationInOpenState,
+            @Metadata(description = "Whether the circuit breaker automatically transitions from open to half-open") boolean automaticTransitionFromOpenToHalfOpen,
+            @Metadata(description = "Whether the bulkhead is enabled") boolean bulkheadEnabled,
+            @Metadata(description = "The maximum concurrent calls allowed by the bulkhead (only present when bulkheadEnabled is true)") Integer bulkheadMaxConcurrentCalls,
+            @Metadata(description = "The maximum wait duration for the bulkhead in milliseconds (only present when bulkheadEnabled is true)") Long bulkheadMaxWaitDuration,
+            @Metadata(description = "Whether the timeout is enabled") boolean timeoutEnabled,
+            @Metadata(description = "The timeout duration in milliseconds (only present when timeoutEnabled is true)") Long timeoutDuration) {
+    }
+
+    public record CircuitBreakerEntry(
+            @Metadata(description = "The circuit breaker id") String id,
+            @Metadata(description = "The route id") String routeId,
+            @Metadata(description = "The circuit breaker state") String state,
+            @Metadata(description = "The number of buffered calls") int bufferedCalls,
+            @Metadata(description = "The number of successful calls") int successfulCalls,
+            @Metadata(description = "The number of failed calls") int failedCalls,
+            @Metadata(description = "The number of not permitted calls") long notPermittedCalls,
+            @Metadata(description = "The failure rate in percentage") float failureRate,
+            @Metadata(description = "The circuit breaker configuration") Configuration configuration) {
+    }
+
+    public record Response(@Metadata(description = "The circuit breakers") List<CircuitBreakerEntry> circuitBreakers) {
+    }
 
     public ResilienceConsole() {
         super("camel", "resilience4j", "Resilience Circuit Breaker", "Display circuit breaker information");
@@ -73,9 +105,7 @@ public class ResilienceConsole extends AbstractDevConsole {
     }
 
     @Override
-    protected JsonObject doCallJson(Map<String, Object> options) {
-        JsonObject root = new JsonObject();
-
+    protected Map<String, Object> doCallJson(Map<String, Object> options) {
         List<ResilienceProcessor> cbs = new ArrayList<>();
         for (Route route : getCamelContext().getRoutes()) {
             List<Processor> list = route.filter("*");
@@ -88,43 +118,25 @@ public class ResilienceConsole extends AbstractDevConsole {
         // sort by ids
         cbs.sort(Comparator.comparing(ResilienceProcessor::getId));
 
-        final List<JsonObject> list = new ArrayList<>();
+        final List<CircuitBreakerEntry> list = new ArrayList<>();
         for (ResilienceProcessor cb : cbs) {
-            JsonObject jo = new JsonObject();
-            jo.put("id", cb.getId());
-            jo.put("routeId", cb.getRouteId());
-            jo.put("state", cb.getCircuitBreakerState());
-            jo.put("bufferedCalls", cb.getNumberOfBufferedCalls());
-            jo.put("successfulCalls", cb.getNumberOfSuccessfulCalls());
-            jo.put("failedCalls", cb.getNumberOfFailedCalls());
-            jo.put("notPermittedCalls", cb.getNumberOfNotPermittedCalls());
-            jo.put("failureRate", cb.getFailureRate());
-            // configuration
-            JsonObject config = new JsonObject();
-            config.put("failureRateThreshold", cb.getCircuitBreakerFailureRateThreshold());
-            config.put("slowCallRateThreshold", cb.getCircuitBreakerSlowCallRateThreshold());
-            config.put("minimumNumberOfCalls", cb.getCircuitBreakerMinimumNumberOfCalls());
-            config.put("permittedNumberOfCallsInHalfOpenState",
-                    cb.getCircuitBreakerPermittedNumberOfCallsInHalfOpenState());
-            config.put("slidingWindowSize", cb.getCircuitBreakerSlidingWindowSize());
-            config.put("slidingWindowType", cb.getCircuitBreakerSlidingWindowType());
-            config.put("waitDurationInOpenState", cb.getCircuitBreakerWaitDurationInOpenState());
-            config.put("automaticTransitionFromOpenToHalfOpen",
-                    cb.isCircuitBreakerTransitionFromOpenToHalfOpenEnabled());
-            config.put("bulkheadEnabled", cb.isBulkheadEnabled());
-            if (cb.isBulkheadEnabled()) {
-                config.put("bulkheadMaxConcurrentCalls", cb.getBulkheadMaxConcurrentCalls());
-                config.put("bulkheadMaxWaitDuration", cb.getBulkheadMaxWaitDuration());
-            }
-            config.put("timeoutEnabled", cb.isTimeoutEnabled());
-            if (cb.isTimeoutEnabled()) {
-                config.put("timeoutDuration", cb.getTimeoutDuration());
-            }
-            jo.put("configuration", config);
-            list.add(jo);
-        }
-        root.put("circuitBreakers", list);
+            Configuration config = new Configuration(
+                    cb.getCircuitBreakerFailureRateThreshold(), cb.getCircuitBreakerSlowCallRateThreshold(),
+                    cb.getCircuitBreakerMinimumNumberOfCalls(), cb.getCircuitBreakerPermittedNumberOfCallsInHalfOpenState(),
+                    cb.getCircuitBreakerSlidingWindowSize(), cb.getCircuitBreakerSlidingWindowType(),
+                    cb.getCircuitBreakerWaitDurationInOpenState(),
+                    cb.isCircuitBreakerTransitionFromOpenToHalfOpenEnabled(), cb.isBulkheadEnabled(),
+                    cb.isBulkheadEnabled() ? cb.getBulkheadMaxConcurrentCalls() : null,
+                    cb.isBulkheadEnabled() ? cb.getBulkheadMaxWaitDuration() : null, cb.isTimeoutEnabled(),
+                    cb.isTimeoutEnabled() ? cb.getTimeoutDuration() : null);
 
-        return root;
+            list.add(new CircuitBreakerEntry(
+                    cb.getId(), cb.getRouteId(), cb.getCircuitBreakerState(), cb.getNumberOfBufferedCalls(),
+                    cb.getNumberOfSuccessfulCalls(), cb.getNumberOfFailedCalls(), cb.getNumberOfNotPermittedCalls(),
+                    cb.getFailureRate(), config));
+        }
+
+        Response response = new Response(list);
+        return JsonRecordSupport.toJsonObject(response);
     }
 }

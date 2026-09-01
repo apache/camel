@@ -6,6 +6,7 @@
     "title": "Inflight Exchanges",
     "description": "Display inflight exchanges",
     "deprecated": false,
+    "readOnly": true,
     "javaType": "org.apache.camel.impl.console.InflightConsole",
     "groupId": "org.apache.camel",
     "artifactId": "camel-console",
@@ -40,6 +41,65 @@
       "secret": false,
       "description": "Limits the number of entries displayed"
     }
+  },
+  "response": {
+    "type": "object",
+    "properties": {
+      "inflight": {
+        "type": "integer",
+        "description": "Number of inflight exchanges"
+      },
+      "inflightBrowseEnabled": {
+        "type": "boolean",
+        "description": "Whether browsing inflight exchanges is enabled"
+      },
+      "exchanges": {
+        "type": "array",
+        "items": {
+          "type": "object",
+          "properties": {
+            "exchangeId": {
+              "type": "string",
+              "description": "The exchange ID"
+            },
+            "fromRouteId": {
+              "type": "string",
+              "description": "The route ID where the exchange originated from"
+            },
+            "fromRemoteEndpoint": {
+              "type": "boolean",
+              "description": "Whether the exchange originated from a remote endpoint"
+            },
+            "atRouteId": {
+              "type": "string",
+              "description": "The route ID where the exchange currently is"
+            },
+            "nodeId": {
+              "type": "string",
+              "description": "The node ID where the exchange currently is"
+            },
+            "elapsed": {
+              "type": "integer",
+              "description": "Elapsed time in milliseconds since the exchange started"
+            },
+            "duration": {
+              "type": "integer",
+              "description": "Duration in milliseconds the exchange has been at the current node"
+            }
+          },
+          "required": [
+            "fromRemoteEndpoint",
+            "elapsed",
+            "duration"
+          ]
+        },
+        "description": "The inflight exchanges (only present when browsing is enabled)"
+      }
+    },
+    "required": [
+      "inflight",
+      "inflightBrowseEnabled"
+    ]
   }
 }
 

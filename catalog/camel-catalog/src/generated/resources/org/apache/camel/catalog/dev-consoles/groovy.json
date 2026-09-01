@@ -6,10 +6,69 @@
     "title": "Groovy",
     "description": "Groovy Language",
     "deprecated": false,
+    "readOnly": true,
     "javaType": "org.apache.camel.language.groovy.GroovyDevConsole",
     "groupId": "org.apache.camel",
     "artifactId": "camel-groovy",
     "version": "4.23.0-SNAPSHOT"
+  },
+  "response": {
+    "type": "object",
+    "properties": {
+      "compiler": {
+        "type": "object",
+        "properties": {
+          "scriptPattern": {
+            "type": "string",
+            "description": "The script file name pattern"
+          },
+          "compiledCounter": {
+            "type": "integer",
+            "description": "Number of scripts compiled"
+          },
+          "preloadedCounter": {
+            "type": "integer",
+            "description": "Number of scripts pre-loaded"
+          },
+          "classesSize": {
+            "type": "integer",
+            "description": "Number of compiled classes"
+          },
+          "compiledTime": {
+            "type": "integer",
+            "description": "Total compile time in milliseconds"
+          },
+          "recompileEnabled": {
+            "type": "boolean",
+            "description": "Whether re-compilation is enabled"
+          },
+          "lastCompilationTimestamp": {
+            "type": "integer",
+            "description": "Epoch time in milliseconds of the last compilation"
+          },
+          "workDir": {
+            "type": "string",
+            "description": "The work directory (only present when configured)"
+          },
+          "classes": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "The compiled class names (only present when there are any)"
+          }
+        },
+        "required": [
+          "compiledCounter",
+          "preloadedCounter",
+          "classesSize",
+          "compiledTime",
+          "recompileEnabled",
+          "lastCompilationTimestamp"
+        ],
+        "description": "The Groovy compiler information (only present when the compiler is active)"
+      }
+    }
   }
 }
 

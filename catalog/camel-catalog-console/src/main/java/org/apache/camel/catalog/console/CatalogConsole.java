@@ -23,15 +23,33 @@ import java.util.function.BiConsumer;
 
 import org.apache.camel.catalog.CamelCatalog;
 import org.apache.camel.catalog.DefaultCamelCatalog;
+import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.annotations.DevConsole;
 import org.apache.camel.support.console.AbstractDevConsole;
 import org.apache.camel.tooling.model.ArtifactModel;
 import org.apache.camel.tooling.model.OtherModel;
-import org.apache.camel.util.json.JsonObject;
+import org.apache.camel.util.json.JsonRecordSupport;
 
 @DevConsole(name = "catalog", description = "Information about used Camel artifacts")
 @SuppressWarnings("java:S2160")
 public class CatalogConsole extends AbstractDevConsole {
+
+    public record ArtifactEntry(
+            @Metadata(description = "The Maven group ID") String groupId,
+            @Metadata(description = "The Maven artifact ID") String artifactId,
+            @Metadata(description = "The Maven version") String version,
+            @Metadata(description = "The support level, optionally suffixed with -deprecated") String level,
+            @Metadata(description = "The first Camel version the artifact was introduced in") String firstVersion,
+            @Metadata(description = "The artifact title") String title,
+            @Metadata(description = "The artifact description") String description) {
+    }
+
+    public record Response(
+            @Metadata(description = "The components in use") List<ArtifactEntry> components,
+            @Metadata(description = "The data formats in use") List<ArtifactEntry> dataformat,
+            @Metadata(description = "The languages in use") List<ArtifactEntry> languages,
+            @Metadata(description = "Other miscellaneous artifacts in use, discovered via the classpath") List<ArtifactEntry> others) {
+    }
 
     private static final String CP = System.getProperty("java.class.path");
     private final CamelCatalog catalog = new DefaultCamelCatalog(true);
@@ -73,16 +91,11 @@ public class CatalogConsole extends AbstractDevConsole {
     }
 
     @Override
-    protected JsonObject doCallJson(Map<String, Object> options) {
-        JsonObject root = new JsonObject();
-        List<JsonObject> components = new ArrayList<>();
-        root.put("components", components);
-        List<JsonObject> dataformat = new ArrayList<>();
-        root.put("dataformat", dataformat);
-        List<JsonObject> languages = new ArrayList<>();
-        root.put("languages", languages);
-        List<JsonObject> others = new ArrayList<>();
-        root.put("others", others);
+    protected Map<String, Object> doCallJson(Map<String, Object> options) {
+        List<ArtifactEntry> components = new ArrayList<>();
+        List<ArtifactEntry> dataformat = new ArrayList<>();
+        List<ArtifactEntry> languages = new ArrayList<>();
+        List<ArtifactEntry> others = new ArrayList<>();
 
         getCamelContext().getComponentNames().forEach(n -> appendModel(catalog.componentModel(n), components));
         getCamelContext().getLanguageNames().forEach(n -> appendModel(catalog.languageModel(n), languages));
@@ -91,7 +104,8 @@ public class CatalogConsole extends AbstractDevConsole {
         // misc is harder to find as we need to find them via classpath
         evalMisc(others, CatalogConsole::appendModel);
 
-        return root;
+        Response response = new Response(components, dataformat, languages, others);
+        return JsonRecordSupport.toJsonObject(response);
     }
 
     private ArtifactModel<?> findOtherModel(String artifactId) {
@@ -116,22 +130,15 @@ public class CatalogConsole extends AbstractDevConsole {
         }
     }
 
-    private static void appendModel(ArtifactModel<?> model, List<JsonObject> list) {
+    private static void appendModel(ArtifactModel<?> model, List<ArtifactEntry> list) {
         if (model != null) {
-            JsonObject jo = new JsonObject();
             String level = model.getSupportLevel().toString();
             if (model.isDeprecated()) {
                 level += "-deprecated";
             }
-            jo.put("groupId", model.getGroupId());
-            jo.put("artifactId", model.getArtifactId());
-            jo.put("version", model.getVersion());
-            jo.put("level", level);
-            jo.put("firstVersion", model.getFirstVersionShort());
-            jo.put("title", model.getTitle());
-            jo.put("description", model.getDescription());
-
-            list.add(jo);
+            list.add(new ArtifactEntry(
+                    model.getGroupId(), model.getArtifactId(), model.getVersion(), level,
+                    model.getFirstVersionShort(), model.getTitle(), model.getDescription()));
         }
     }
 }

@@ -28,7 +28,6 @@ import org.apache.camel.parser.helper.CamelXmlHelper;
 import org.apache.camel.parser.helper.CamelXmlTreeParserHelper;
 import org.apache.camel.parser.helper.ParserCommon;
 import org.apache.camel.parser.helper.XmlLineNumberParser;
-import org.apache.camel.parser.model.CamelCSimpleExpressionDetails;
 import org.apache.camel.parser.model.CamelEndpointDetails;
 import org.apache.camel.parser.model.CamelNodeDetails;
 import org.apache.camel.parser.model.CamelNodeDetailsFactory;
@@ -242,52 +241,6 @@ public final class XmlRouteParser {
             fileName = fileName.substring(baseDir.length() + 1);
         }
         return fileName;
-    }
-
-    /**
-     * Parses the XML source to discover Camel compiled simple language.
-     *
-     * @param xml                    the xml file as input stream
-     * @param baseDir                the base of the source code
-     * @param fullyQualifiedFileName the fully qualified source code file name
-     * @param csimpleExpressions     list to add discovered and parsed compiled simple expressions
-     */
-    public static void parseXmlRouteCSimpleExpressions(
-            InputStream xml, String baseDir, String fullyQualifiedFileName,
-            List<CamelCSimpleExpressionDetails> csimpleExpressions) {
-
-        // find all the simple expressions
-        // try parse it as dom
-        Document dom = getDocument(xml);
-        if (dom != null) {
-            List<Node> nodes = CamelXmlHelper.findAllLanguageExpressions(dom, "csimple");
-            for (Node node : nodes) {
-                String simple = node.getTextContent();
-                String lineNumber = (String) node.getUserData(XmlLineNumberParser.LINE_NUMBER);
-                String lineNumberEnd = (String) node.getUserData(XmlLineNumberParser.LINE_NUMBER_END);
-
-                // we only want the relative dir name from the resource directory, eg META-INF/spring/foo.xml
-                String fileName = getFileName(baseDir, fullyQualifiedFileName);
-
-                CamelCSimpleExpressionDetails detail = new CamelCSimpleExpressionDetails();
-                detail.setFileName(fileName);
-                detail.setLineNumber(lineNumber);
-                detail.setLineNumberEnd(lineNumberEnd);
-                detail.setCsimple(simple);
-
-                String column = (String) node.getUserData(XmlLineNumberParser.COLUMN_NUMBER);
-                if (column != null) {
-                    detail.setLinePosition(Integer.parseInt(column));
-                }
-
-                // is it used as predicate or not
-                boolean asPredicate = isSimplePredicate(node);
-                detail.setPredicate(asPredicate);
-                detail.setExpression(!asPredicate);
-
-                csimpleExpressions.add(detail);
-            }
-        }
     }
 
     /**

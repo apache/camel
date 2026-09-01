@@ -6,6 +6,7 @@
     "title": "Thread",
     "description": "Displays JVM Threads information",
     "deprecated": false,
+    "readOnly": true,
     "javaType": "org.apache.camel.impl.console.ThreadDevConsole",
     "groupId": "org.apache.camel",
     "artifactId": "camel-console",
@@ -26,6 +27,82 @@
       "secret": false,
       "defaultValue": false,
       "description": "Whether to include thread stack traces"
+    }
+  },
+  "response": {
+    "type": "object",
+    "properties": {
+      "threadCount": {
+        "type": "integer",
+        "description": "Number of threads"
+      },
+      "daemonThreadCount": {
+        "type": "integer",
+        "description": "Number of daemon threads"
+      },
+      "totalStartedThreadCount": {
+        "type": "integer",
+        "description": "Total number of threads started since JVM start"
+      },
+      "peakThreadCount": {
+        "type": "integer",
+        "description": "Peak number of threads"
+      },
+      "threads": {
+        "type": "array",
+        "items": {
+          "type": "object",
+          "properties": {
+            "id": {
+              "type": "integer",
+              "description": "The thread ID"
+            },
+            "name": {
+              "type": "string",
+              "description": "The thread name"
+            },
+            "state": {
+              "type": "string",
+              "description": "The thread state"
+            },
+            "blockedCount": {
+              "type": "integer",
+              "description": "Number of times the thread has been blocked"
+            },
+            "blockedTime": {
+              "type": "integer",
+              "description": "Total time in milliseconds the thread has been blocked"
+            },
+            "waitedCount": {
+              "type": "integer",
+              "description": "Number of times the thread has waited"
+            },
+            "waitedTime": {
+              "type": "integer",
+              "description": "Total time in milliseconds the thread has waited"
+            },
+            "lockName": {
+              "type": "string",
+              "description": "The name of the lock the thread is waiting on (only present when applicable)"
+            },
+            "stackTrace": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              },
+              "description": "The thread stack trace, one entry per line (only present when requested via the stackTrace option)"
+            }
+          },
+          "required": [
+            "id",
+            "blockedCount",
+            "blockedTime",
+            "waitedCount",
+            "waitedTime"
+          ]
+        },
+        "description": "The threads"
+      }
     }
   }
 }

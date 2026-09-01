@@ -6,10 +6,49 @@
     "title": "Variables",
     "description": "Displays variables",
     "deprecated": false,
+    "readOnly": true,
     "javaType": "org.apache.camel.impl.console.VariablesDevConsole",
     "groupId": "org.apache.camel",
     "artifactId": "camel-console",
     "version": "4.23.0-SNAPSHOT"
+  },
+  "response": {
+    "type": "object",
+    "properties": {
+      "repositories": {
+        "type": "array",
+        "items": {
+          "type": "object",
+          "properties": {
+            "id": {
+              "type": "string",
+              "description": "The variable repository id"
+            },
+            "variables": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "key": {
+                    "type": "string",
+                    "description": "The variable name"
+                  },
+                  "type": {
+                    "type": "string",
+                    "description": "The variable value type (only present when the value is known)"
+                  },
+                  "value": {
+                    "description": "The variable value (only present when known)"
+                  }
+                }
+              },
+              "description": "The variables in this repository"
+            }
+          }
+        },
+        "description": "The variable repositories (only present when there are any with variables)"
+      }
+    }
   }
 }
 

@@ -6,6 +6,7 @@
     "title": "Kafka",
     "description": "Apache Kafka",
     "deprecated": false,
+    "readOnly": true,
     "javaType": "org.apache.camel.component.kafka.KafkaDevConsole",
     "groupId": "org.apache.camel",
     "artifactId": "camel-kafka",
@@ -26,6 +27,107 @@
       "secret": false,
       "defaultValue": false,
       "description": "Whether to include committed offset (sync operation to Kafka broker)"
+    }
+  },
+  "response": {
+    "type": "object",
+    "properties": {
+      "kafkaConsumers": {
+        "type": "array",
+        "items": {
+          "type": "object",
+          "properties": {
+            "routeId": {
+              "type": "string",
+              "description": "The route id"
+            },
+            "uri": {
+              "type": "string",
+              "description": "The endpoint URI"
+            },
+            "workers": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "threadId": {
+                    "type": "string",
+                    "description": "The worker thread id"
+                  },
+                  "state": {
+                    "type": "string",
+                    "description": "The worker state"
+                  },
+                  "lastError": {
+                    "type": "string",
+                    "description": "The worker last error (only present when not ready)"
+                  },
+                  "groupId": {
+                    "type": "string",
+                    "description": "The consumer group id (only present when known)"
+                  },
+                  "groupInstanceId": {
+                    "type": "string",
+                    "description": "The consumer group instance id (only present when known)"
+                  },
+                  "memberId": {
+                    "type": "string",
+                    "description": "The consumer member id (only present when known)"
+                  },
+                  "generationId": {
+                    "type": "integer",
+                    "description": "The consumer generation id (only present when known)"
+                  },
+                  "lastTopic": {
+                    "type": "string",
+                    "description": "The last consumed topic (only present when known)"
+                  },
+                  "lastPartition": {
+                    "type": "integer",
+                    "description": "The last consumed partition (only present when known)"
+                  },
+                  "lastOffset": {
+                    "type": "integer",
+                    "description": "The last consumed offset (only present when known)"
+                  },
+                  "committed": {
+                    "type": "array",
+                    "items": {
+                      "type": "object",
+                      "properties": {
+                        "topic": {
+                          "type": "string",
+                          "description": "The topic"
+                        },
+                        "partition": {
+                          "type": "integer",
+                          "description": "The partition"
+                        },
+                        "offset": {
+                          "type": "integer",
+                          "description": "The committed offset"
+                        },
+                        "epoch": {
+                          "type": "integer",
+                          "description": "The epoch"
+                        }
+                      },
+                      "required": [
+                        "partition",
+                        "offset",
+                        "epoch"
+                      ]
+                    },
+                    "description": "The committed offsets (only present when requested and there are any)"
+                  }
+                }
+              },
+              "description": "The consumer worker threads"
+            }
+          }
+        },
+        "description": "The Kafka consumers"
+      }
     }
   }
 }

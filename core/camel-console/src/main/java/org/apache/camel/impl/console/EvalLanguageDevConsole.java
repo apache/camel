@@ -26,10 +26,17 @@ import org.apache.camel.spi.annotations.DevConsole;
 import org.apache.camel.support.DefaultExchange;
 import org.apache.camel.support.MessageHelper;
 import org.apache.camel.support.console.AbstractDevConsole;
-import org.apache.camel.util.json.JsonObject;
+import org.apache.camel.util.json.JsonRecordSupport;
 
-@DevConsole(name = "eval-language", displayName = "Evaluate Language", description = "Evaluate Language and display result")
+@DevConsole(name = "eval-language", displayName = "Evaluate Language", description = "Evaluate Language and display result",
+            readOnly = false)
 public class EvalLanguageDevConsole extends AbstractDevConsole {
+
+    public record Response(
+            @Metadata(description = "The evaluation status, success or failed (only present when a template was given)") String status,
+            @Metadata(description = "The evaluation result (only present on success)") String result,
+            @Metadata(description = "The exception, as an opaque JSON object (only present on failure)") Map<String, Object> exception) {
+    }
 
     @Metadata(label = "query", description = "The language to use", javaType = "java.lang.String", defaultValue = "simple")
     public static final String LANGUAGE = "language";
@@ -93,13 +100,16 @@ public class EvalLanguageDevConsole extends AbstractDevConsole {
     }
 
     @Override
-    protected JsonObject doCallJson(Map<String, Object> options) {
-        JsonObject root = new JsonObject();
-
+    protected Map<String, Object> doCallJson(Map<String, Object> options) {
         String language = optionString(options, LANGUAGE);
         if (language == null) {
             language = "simple";
         }
+
+        String status = null;
+        String result = null;
+        Map<String, Object> exception = null;
+
         String template = optionString(options, TEMPLATE);
         if (template != null) {
             Exchange dummy = new DefaultExchange(getCamelContext());
@@ -129,15 +139,15 @@ public class EvalLanguageDevConsole extends AbstractDevConsole {
             }
 
             if (cause != null) {
-                root.put("status", "failed");
-                root.put("exception",
-                        MessageHelper.dumpExceptionAsJSonObject(cause).getMap("exception"));
+                status = "failed";
+                exception = MessageHelper.dumpExceptionAsJSonObject(cause).getMap("exception");
             } else {
-                root.put("status", "success");
-                root.put("result", out);
+                status = "success";
+                result = out;
             }
         }
 
-        return root;
+        Response response = new Response(status, result, exception);
+        return JsonRecordSupport.toJsonObject(response);
     }
 }

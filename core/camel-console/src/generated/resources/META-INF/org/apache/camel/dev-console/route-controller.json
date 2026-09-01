@@ -6,6 +6,7 @@
     "title": "Route Controller",
     "description": "Route controller information",
     "deprecated": false,
+    "readOnly": true,
     "javaType": "org.apache.camel.impl.console.RouteControllerConsole",
     "groupId": "org.apache.camel",
     "artifactId": "camel-console",
@@ -42,6 +43,126 @@
       "defaultValue": true,
       "description": "Whether to include stack traces"
     }
+  },
+  "response": {
+    "type": "object",
+    "properties": {
+      "controller": {
+        "type": "string",
+        "description": "The route controller implementation: SupervisingRouteController or DefaultRouteController"
+      },
+      "startingRoutes": {
+        "type": "boolean",
+        "description": "Whether routes are still starting (supervising controller only)"
+      },
+      "unhealthyRoutes": {
+        "type": "boolean",
+        "description": "Whether any route is unhealthy (supervising controller only)"
+      },
+      "totalRoutes": {
+        "type": "integer",
+        "description": "Total number of routes"
+      },
+      "startedRoutes": {
+        "type": "integer",
+        "description": "Number of started routes (supervising controller only)"
+      },
+      "restartingRoutes": {
+        "type": "integer",
+        "description": "Number of restarting routes (supervising controller only)"
+      },
+      "exhaustedRoutes": {
+        "type": "integer",
+        "description": "Number of exhausted routes (supervising controller only)"
+      },
+      "initialDelay": {
+        "type": "integer",
+        "description": "Initial delay in milliseconds before restarting (supervising controller only)"
+      },
+      "backoffDelay": {
+        "type": "integer",
+        "description": "Backoff delay in milliseconds (supervising controller only)"
+      },
+      "backoffMaxDelay": {
+        "type": "integer",
+        "description": "Maximum backoff delay in milliseconds (supervising controller only)"
+      },
+      "backoffMaxElapsedTime": {
+        "type": "integer",
+        "description": "Maximum elapsed time in milliseconds before giving up (supervising controller only)"
+      },
+      "backoffMaxAttempts": {
+        "type": "integer",
+        "description": "Maximum number of restart attempts (supervising controller only)"
+      },
+      "threadPoolSize": {
+        "type": "integer",
+        "description": "The size of the restart thread pool (supervising controller only)"
+      },
+      "unhealthyOnRestarting": {
+        "type": "boolean",
+        "description": "Whether a restarting route is considered unhealthy (supervising controller only)"
+      },
+      "unhealthyOnExhausted": {
+        "type": "boolean",
+        "description": "Whether an exhausted route is considered unhealthy (supervising controller only)"
+      },
+      "routes": {
+        "type": "array",
+        "items": {
+          "type": "object",
+          "properties": {
+            "routeId": {
+              "type": "string",
+              "description": "The route ID"
+            },
+            "status": {
+              "type": "string",
+              "description": "The route status"
+            },
+            "uri": {
+              "type": "string",
+              "description": "The route endpoint URI (sanitized)"
+            },
+            "attempts": {
+              "type": "integer",
+              "description": "Number of restart attempts (supervising controller only)"
+            },
+            "lastAttempt": {
+              "type": "integer",
+              "description": "Epoch time in milliseconds of the last restart attempt (supervising controller only)"
+            },
+            "nextAttempt": {
+              "type": "integer",
+              "description": "Epoch time in milliseconds of the next restart attempt (supervising controller only)"
+            },
+            "elapsed": {
+              "type": "integer",
+              "description": "Elapsed time in milliseconds of the current restart attempt (supervising controller only)"
+            },
+            "supervising": {
+              "type": "string",
+              "description": "The supervising status (supervising controller only)"
+            },
+            "error": {
+              "type": "string",
+              "description": "The restart error message (only present when the route is failing)"
+            },
+            "stackTrace": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              },
+              "description": "The restart error stack trace, one entry per line (only present when the route is failing and stack traces are requested)"
+            }
+          }
+        },
+        "description": "The routes"
+      }
+    },
+    "required": [
+      "totalRoutes"
+    ]
   }
 }
 

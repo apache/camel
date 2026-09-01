@@ -70,14 +70,16 @@ public class TypeConversionException extends RuntimeCamelException {
     }
 
     /**
-     * Returns an error message for type conversion failed.
+     * Returns an error message for type conversion failed. The value itself is intentionally omitted from the message
+     * to avoid calling {@code toString()} on potentially huge or sensitive message bodies; the value remains accessible
+     * via {@link #getValue()}.
      */
     public static String createMessage(@Nullable Object value, Class<?> type, Throwable cause) {
         Objects.requireNonNull(type, "type");
         Objects.requireNonNull(cause, "cause");
         return "Error during type conversion from type: " + typeName(value != null ? value.getClass() : null)
-               + " to the required type: " + typeName(type) + " with value " + value + " due to "
-               + cause.getClass().getName() + ": " + cause.getMessage();
+               + " to the required type: " + typeName(type)
+               + " due to " + cause.getClass().getName() + ": " + cause.getMessage();
     }
 
     /**

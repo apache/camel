@@ -1392,9 +1392,6 @@
           "constant" : {
             "$ref" : "#/items/definitions/org.apache.camel.model.language.ConstantExpression"
           },
-          "csimple" : {
-            "$ref" : "#/items/definitions/org.apache.camel.model.language.CSimpleExpression"
-          },
           "datasonnet" : {
             "$ref" : "#/items/definitions/org.apache.camel.model.language.DatasonnetExpression"
           },
@@ -1445,6 +1442,9 @@
           },
           "python3" : {
             "$ref" : "#/items/definitions/org.apache.camel.model.language.Python3Expression"
+          },
+          "quickjs" : {
+            "$ref" : "#/items/definitions/org.apache.camel.model.language.QuickjsExpression"
           },
           "ref" : {
             "$ref" : "#/items/definitions/org.apache.camel.model.language.RefExpression"
@@ -3172,7 +3172,7 @@
             "description" : "The property key."
           }
         },
-        "required" : [ "expression", "key" ]
+        "required" : [ "key" ]
       },
       "org.apache.camel.model.RecipientListDefinition" : {
         "title" : "Recipient List",
@@ -3684,8 +3684,7 @@
           "streamConfig" : {
             "$ref" : "#/items/definitions/org.apache.camel.model.config.StreamResequencerConfig"
           }
-        },
-        "required" : [ "expression" ]
+        }
       },
       "org.apache.camel.model.Resilience4jConfigurationDefinition" : {
         "title" : "Resilience4j Configuration",
@@ -5824,8 +5823,7 @@
           "zipFile" : {
             "$ref" : "#/items/definitions/org.apache.camel.model.dataformat.ZipFileDataFormat"
           }
-        },
-        "required" : [ "asn1", "avro", "barcode", "base64", "beanio", "bindy", "cbor", "crypto", "csv", "custom", "dfdl", "fhirJson", "fhirXml", "flatpack", "fory", "grok", "groovyJson", "groovyXml", "gzipDeflater", "hl7", "ical", "iso8583", "jacksonXml", "jaxb", "json", "jsonApi", "lzf", "mimeMultipart", "ocsf", "parquetAvro", "pgp", "pqc", "protobuf", "rss", "smooks", "soap", "swiftMt", "swiftMx", "syslog", "tarFile", "thrift", "toon", "ubl", "univocityCsv", "univocityFixed", "univocityTsv", "xmlSecurity", "yaml", "zipDeflater", "zipFile" ]
+        }
       },
       "org.apache.camel.model.ValidateDefinition" : {
         "title" : "Validate",
@@ -8127,6 +8125,12 @@
             "title" : "Provider",
             "description" : "Java Cryptography Extension (JCE) provider, default is Bouncy Castle (BC). Alternatively you can use, for example, the IAIK JCE provider."
           },
+          "requireIntegrityProtection" : {
+            "type" : "boolean",
+            "title" : "Require Integrity Protection",
+            "description" : "Whether a message must be integrity protected in order to be decrypted. The legacy symmetrically encrypted data packet carries no modification detection code, and the packet type is chosen by whoever produced the message, so accepting it lets the sender decide whether the integrity check applies. Set to false only to interoperate with a sender that still emits the legacy packet.",
+            "default" : true
+          },
           "signatureKeyFileName" : {
             "type" : "string",
             "title" : "Signature Key File Name",
@@ -9585,49 +9589,6 @@
           }
         }
       },
-      "org.apache.camel.model.language.CSimpleExpression" : {
-        "title" : "CSimple",
-        "description" : "Evaluate a compiled simple expression",
-        "deprecated" : true,
-        "type" : "object",
-        "additionalProperties" : false,
-        "properties" : {
-          "expression" : {
-            "type" : "string",
-            "title" : "Expression",
-            "description" : "The expression value in your chosen language syntax."
-          },
-          "id" : {
-            "type" : "string",
-            "title" : "Id",
-            "description" : "The id of this node."
-          },
-          "pretty" : {
-            "type" : "boolean",
-            "title" : "Pretty",
-            "description" : "To pretty format the output (only JSon or XML supported).",
-            "default" : false
-          },
-          "resultType" : {
-            "type" : "string",
-            "title" : "Result Type",
-            "description" : "The class of the result type (type from output)."
-          },
-          "trim" : {
-            "type" : "boolean",
-            "title" : "Trim",
-            "description" : "Whether to trim the source code to remove leading and trailing whitespaces and line breaks.",
-            "default" : true
-          },
-          "trimResult" : {
-            "type" : "boolean",
-            "title" : "Trim Result",
-            "description" : "Whether to trim the returned values when this language is in use.",
-            "default" : false
-          }
-        },
-        "required" : [ "expression" ]
-      },
       "org.apache.camel.model.language.ConstantExpression" : {
         "title" : "Constant",
         "description" : "A fixed value set only once during the route startup",
@@ -9735,9 +9696,6 @@
           "constant" : {
             "$ref" : "#/items/definitions/org.apache.camel.model.language.ConstantExpression"
           },
-          "csimple" : {
-            "$ref" : "#/items/definitions/org.apache.camel.model.language.CSimpleExpression"
-          },
           "datasonnet" : {
             "$ref" : "#/items/definitions/org.apache.camel.model.language.DatasonnetExpression"
           },
@@ -9788,6 +9746,9 @@
           },
           "python3" : {
             "$ref" : "#/items/definitions/org.apache.camel.model.language.Python3Expression"
+          },
+          "quickjs" : {
+            "$ref" : "#/items/definitions/org.apache.camel.model.language.QuickjsExpression"
           },
           "ref" : {
             "$ref" : "#/items/definitions/org.apache.camel.model.language.RefExpression"
@@ -10362,6 +10323,36 @@
         },
         "required" : [ "expression" ]
       },
+      "org.apache.camel.model.language.QuickjsExpression" : {
+        "title" : "QuickJS",
+        "description" : "Evaluates a JavaScript expression using QuickJS4J",
+        "type" : "object",
+        "additionalProperties" : false,
+        "properties" : {
+          "expression" : {
+            "type" : "string",
+            "title" : "Expression",
+            "description" : "The expression value in your chosen language syntax."
+          },
+          "id" : {
+            "type" : "string",
+            "title" : "Id",
+            "description" : "The id of this node."
+          },
+          "resultType" : {
+            "type" : "string",
+            "title" : "Result Type",
+            "description" : "The class of the result type (type from output)."
+          },
+          "trim" : {
+            "type" : "boolean",
+            "title" : "Trim",
+            "description" : "Whether to trim the source code to remove leading and trailing whitespaces and line breaks.",
+            "default" : true
+          }
+        },
+        "required" : [ "expression" ]
+      },
       "org.apache.camel.model.language.RefExpression" : {
         "title" : "Ref",
         "description" : "Uses an existing expression from the registry",
@@ -10645,6 +10636,11 @@
               "$ref" : "#/items/definitions/org.apache.camel.model.PropertyDefinition"
             }
           },
+          "namespacesRef" : {
+            "type" : "string",
+            "title" : "Namespaces Ref",
+            "description" : "Reference to a org.apache.camel.support.builder.Namespaces bean in the registry to use for the XML Namespaces of prefix to uri mappings."
+          },
           "resultType" : {
             "type" : "string",
             "title" : "Result Type",
@@ -10703,6 +10699,11 @@
             "items" : {
               "$ref" : "#/items/definitions/org.apache.camel.model.PropertyDefinition"
             }
+          },
+          "namespacesRef" : {
+            "type" : "string",
+            "title" : "Namespaces Ref",
+            "description" : "Reference to a org.apache.camel.support.builder.Namespaces bean in the registry to use for the XML Namespaces of prefix to uri mappings."
           },
           "objectModel" : {
             "type" : "string",
@@ -10781,6 +10782,11 @@
             "items" : {
               "$ref" : "#/items/definitions/org.apache.camel.model.PropertyDefinition"
             }
+          },
+          "namespacesRef" : {
+            "type" : "string",
+            "title" : "Namespaces Ref",
+            "description" : "Reference to a org.apache.camel.support.builder.Namespaces bean in the registry to use for the XML Namespaces of prefix to uri mappings."
           },
           "resultType" : {
             "type" : "string",

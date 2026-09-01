@@ -22,6 +22,7 @@ import org.apache.camel.dsl.jbang.it.support.JBangTestSupport;
 import org.apache.camel.test.AvailablePortFinder;
 import org.apache.camel.test.infra.mosquitto.services.MosquittoLocalContainerService;
 import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
@@ -44,6 +45,11 @@ public class CmdReceiveITCase extends JBangTestSupport {
     @AfterAll
     public static void end() {
         service.shutdown();
+    }
+
+    @AfterEach
+    void stopAll() {
+        execute("stop");
     }
 
     @Test

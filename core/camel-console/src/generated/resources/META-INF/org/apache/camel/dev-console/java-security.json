@@ -6,10 +6,58 @@
     "title": "Java Security",
     "description": "Displays Java Security (JSSE) information",
     "deprecated": false,
+    "readOnly": true,
     "javaType": "org.apache.camel.impl.console.JavaSecurityDevConsole",
     "groupId": "org.apache.camel",
     "artifactId": "camel-console",
     "version": "4.23.0-SNAPSHOT"
+  },
+  "response": {
+    "type": "object",
+    "properties": {
+      "securityProviders": {
+        "type": "array",
+        "items": {
+          "type": "object",
+          "properties": {
+            "name": {
+              "type": "string",
+              "description": "The provider name"
+            },
+            "version": {
+              "type": "string",
+              "description": "The provider version"
+            },
+            "info": {
+              "type": "string",
+              "description": "The provider info (only present when known)"
+            },
+            "services": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "type": {
+                    "type": "string",
+                    "description": "The service type"
+                  },
+                  "algorithm": {
+                    "type": "string",
+                    "description": "The algorithm"
+                  },
+                  "className": {
+                    "type": "string",
+                    "description": "The implementation class name"
+                  }
+                }
+              },
+              "description": "The services offered by this provider (only present when any)"
+            }
+          }
+        },
+        "description": "The security providers (only present when any are registered)"
+      }
+    }
   }
 }
 

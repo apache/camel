@@ -16,15 +16,17 @@
  */
 package org.apache.camel.main.download;
 
+import org.apache.camel.spi.Metadata;
+
 /**
  * Record for details when an artifact was downloaded from a remote Maven repository.
  */
 public record DownloadRecord(
-        String groupId,
-        String artifactId,
-        String version,
-        String repoId,
-        String repoUrl,
-        long elapsed) {
+        @Metadata(description = "The Maven group id") String groupId,
+        @Metadata(description = "The Maven artifact id") String artifactId,
+        @Metadata(description = "The Maven version") String version,
+        @Metadata(description = "The Maven repository id the artifact was downloaded from") String repoId,
+        @Metadata(description = "The Maven repository URL the artifact was downloaded from") String repoUrl,
+        @Metadata(description = "The download time in milliseconds") long elapsed) {
 
 }

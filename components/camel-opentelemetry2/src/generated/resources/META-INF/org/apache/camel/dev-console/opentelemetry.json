@@ -6,6 +6,7 @@
     "title": "OpenTelemetry Spans",
     "description": "OpenTelemetry span data captured in dev mode",
     "deprecated": false,
+    "readOnly": true,
     "javaType": "org.apache.camel.opentelemetry2.OpenTelemetryDevConsole",
     "groupId": "org.apache.camel",
     "artifactId": "camel-opentelemetry2",
@@ -45,6 +46,93 @@
       "defaultValue": 100,
       "description": "Limits the number of spans dumped"
     }
+  },
+  "response": {
+    "type": "object",
+    "properties": {
+      "enabled": {
+        "type": "boolean",
+        "description": "Whether the OpenTelemetry in-memory exporter is enabled"
+      },
+      "spanCount": {
+        "type": "integer",
+        "description": "The number of finished spans held (only present when not dumping spans)"
+      },
+      "capacity": {
+        "type": "integer",
+        "description": "The maximum number of spans held (only present when not dumping spans)"
+      },
+      "spans": {
+        "type": "array",
+        "items": {
+          "type": "object",
+          "properties": {
+            "traceId": {
+              "type": "string",
+              "description": "The trace id"
+            },
+            "spanId": {
+              "type": "string",
+              "description": "The span id"
+            },
+            "parentSpanId": {
+              "type": "string",
+              "description": "The parent span id (only present when known)"
+            },
+            "name": {
+              "type": "string",
+              "description": "The span name"
+            },
+            "kind": {
+              "type": "string",
+              "description": "The span kind"
+            },
+            "status": {
+              "type": "string",
+              "description": "The span status"
+            },
+            "startEpochNanos": {
+              "type": "integer",
+              "description": "Epoch time in nanoseconds when the span started"
+            },
+            "endEpochNanos": {
+              "type": "integer",
+              "description": "Epoch time in nanoseconds when the span ended"
+            },
+            "durationMs": {
+              "type": "integer",
+              "description": "The span duration in milliseconds"
+            },
+            "scopeName": {
+              "type": "string",
+              "description": "The instrumentation scope name (only present when known)"
+            },
+            "attributes": {
+              "type": "object",
+              "additionalProperties": true,
+              "description": "The span attributes (only present when there are any)"
+            },
+            "routeId": {
+              "type": "string",
+              "description": "The route id this span belongs to (only present when known)"
+            },
+            "processorId": {
+              "type": "string",
+              "description": "The processor id this span belongs to (only present for processor spans)"
+            }
+          },
+          "required": [
+            "startEpochNanos",
+            "endEpochNanos",
+            "durationMs"
+          ]
+        },
+        "description": "The dumped spans (only present when dumping spans)"
+      }
+    },
+    "required": [
+      "enabled"
+    ]
   }
 }
 

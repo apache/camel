@@ -6,10 +6,26 @@
     "title": "System Properties",
     "description": "Displays Java System Properties",
     "deprecated": false,
+    "readOnly": true,
     "javaType": "org.apache.camel.impl.console.SystemPropertiesDevConsole",
     "groupId": "org.apache.camel",
     "artifactId": "camel-console",
     "version": "4.23.0-SNAPSHOT"
+  },
+  "response": {
+    "type": "object",
+    "properties": {
+      "systemProperties": {
+        "type": "array",
+        "items": {
+          "type": "object",
+          "additionalProperties": {
+            "type": "string"
+          }
+        },
+        "description": "The system properties, one single-entry map per property"
+      }
+    }
   }
 }
 

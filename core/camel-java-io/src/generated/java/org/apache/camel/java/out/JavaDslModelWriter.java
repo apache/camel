@@ -1230,13 +1230,6 @@ public class JavaDslModelWriter extends JavaDslModelWriterSupport {
         doWriteSpringTransactionErrorHandlerDefinition(sb, def);
         return sb.toString();
     }
-    public String writeCSimpleExpression(CSimpleExpression def) {
-        resetState();
-        StringBuilder sb = new StringBuilder();
-        beginStep(sb, "csimple", def);
-        doWriteCSimpleExpression(sb, def);
-        return sb.toString();
-    }
     public String writeConstantExpression(ConstantExpression def) {
         resetState();
         StringBuilder sb = new StringBuilder();
@@ -1368,6 +1361,13 @@ public class JavaDslModelWriter extends JavaDslModelWriterSupport {
         StringBuilder sb = new StringBuilder();
         beginStep(sb, "python", def);
         doWritePythonExpression(sb, def);
+        return sb.toString();
+    }
+    public String writeQuickjsExpression(QuickjsExpression def) {
+        resetState();
+        StringBuilder sb = new StringBuilder();
+        beginStep(sb, "quickjs", def);
+        doWriteQuickjsExpression(sb, def);
         return sb.toString();
     }
     public String writeRefExpression(RefExpression def) {
@@ -3236,6 +3236,7 @@ public class JavaDslModelWriter extends JavaDslModelWriterSupport {
         doWriteAttribute(sb, "compressionAlgorithm", def.getCompressionAlgorithm(), null);
         doWriteAttribute(sb, "hashAlgorithm", def.getHashAlgorithm(), null);
         doWriteAttribute(sb, "signatureVerificationOption", def.getSignatureVerificationOption(), null);
+        doWriteAttribute(sb, "requireIntegrityProtection", def.getRequireIntegrityProtection(), "true");
     }
     protected void doWritePQCDataFormat(StringBuilder sb, PQCDataFormat def) {
         doWriteIdentifiedTypeAttributes(sb, def);
@@ -3472,12 +3473,6 @@ public class JavaDslModelWriter extends JavaDslModelWriterSupport {
         doWriteTransactionErrorHandlerDefinitionAttributes(sb, def);
         doWriteDefaultErrorHandlerDefinitionElements(sb, def);
     }
-    protected void doWriteCSimpleExpression(StringBuilder sb, CSimpleExpression def) {
-        doWriteTypedExpressionDefinitionAttributes(sb, def);
-        doWriteAttribute(sb, "trimResult", def.getTrimResult(), "false");
-        doWriteAttribute(sb, "pretty", def.getPretty(), "false");
-        doWriteValue(sb, def.getExpression());
-    }
     protected void doWriteConstantExpression(StringBuilder sb, ConstantExpression def) {
         doWriteTypedExpressionDefinitionAttributes(sb, def);
         doWriteValue(sb, def.getExpression());
@@ -3564,11 +3559,15 @@ public class JavaDslModelWriter extends JavaDslModelWriterSupport {
         doWriteTypedExpressionDefinitionAttributes(sb, def);
         doWriteValue(sb, def.getExpression());
     }
+    protected void doWriteNamespaceAwareExpressionAttributes(StringBuilder sb, NamespaceAwareExpression def) {
+        doWriteSingleInputTypedExpressionDefinitionAttributes(sb, def);
+        doWriteAttribute(sb, "namespacesRef", def.getNamespacesRef(), null);
+    }
     protected void doWriteNamespaceAwareExpressionElements(StringBuilder sb, NamespaceAwareExpression def) {
         doWriteChildList(sb, "namespace", def.getNamespace(), this::doWritePropertyDefinition);
     }
     protected void doWriteNamespaceAwareExpression(StringBuilder sb, NamespaceAwareExpression def) {
-        doWriteSingleInputTypedExpressionDefinitionAttributes(sb, def);
+        doWriteNamespaceAwareExpressionAttributes(sb, def);
         doWriteValue(sb, def.getExpression());
         doWriteNamespaceAwareExpressionElements(sb, def);
     }
@@ -3581,6 +3580,10 @@ public class JavaDslModelWriter extends JavaDslModelWriterSupport {
         doWriteValue(sb, def.getExpression());
     }
     protected void doWritePythonExpression(StringBuilder sb, PythonExpression def) {
+        doWriteTypedExpressionDefinitionAttributes(sb, def);
+        doWriteValue(sb, def.getExpression());
+    }
+    protected void doWriteQuickjsExpression(StringBuilder sb, QuickjsExpression def) {
         doWriteTypedExpressionDefinitionAttributes(sb, def);
         doWriteValue(sb, def.getExpression());
     }
@@ -3638,14 +3641,14 @@ public class JavaDslModelWriter extends JavaDslModelWriterSupport {
         doWriteValue(sb, def.getExpression());
     }
     protected void doWriteXMLTokenizerExpression(StringBuilder sb, XMLTokenizerExpression def) {
-        doWriteSingleInputTypedExpressionDefinitionAttributes(sb, def);
+        doWriteNamespaceAwareExpressionAttributes(sb, def);
         doWriteAttribute(sb, "mode", def.getMode(), "i");
         doWriteAttribute(sb, "group", def.getGroup(), null);
         doWriteValue(sb, def.getExpression());
         doWriteNamespaceAwareExpressionElements(sb, def);
     }
     protected void doWriteXPathExpression(StringBuilder sb, XPathExpression def) {
-        doWriteSingleInputTypedExpressionDefinitionAttributes(sb, def);
+        doWriteNamespaceAwareExpressionAttributes(sb, def);
         doWriteAttribute(sb, "documentType", def.getDocumentTypeName(), null);
         doWriteAttribute(sb, "resultQName", def.getResultQName(), "NODESET");
         doWriteAttribute(sb, "saxon", def.getSaxon(), null);
@@ -3658,7 +3661,7 @@ public class JavaDslModelWriter extends JavaDslModelWriterSupport {
         doWriteNamespaceAwareExpressionElements(sb, def);
     }
     protected void doWriteXQueryExpression(StringBuilder sb, XQueryExpression def) {
-        doWriteSingleInputTypedExpressionDefinitionAttributes(sb, def);
+        doWriteNamespaceAwareExpressionAttributes(sb, def);
         doWriteAttribute(sb, "configurationRef", def.getConfigurationRef(), null);
         doWriteValue(sb, def.getExpression());
         doWriteNamespaceAwareExpressionElements(sb, def);
@@ -6305,11 +6308,6 @@ public class JavaDslModelWriter extends JavaDslModelWriterSupport {
     protected void doWriteExpressionDefinitionRef(StringBuilder sb, ExpressionDefinition v) {
         if (v != null) {
             switch (v.getClass().getSimpleName()) {
-                case "CSimpleExpression" -> {
-                    beginStep(sb, "csimple", v);
-                    doWriteCSimpleExpression(sb, (CSimpleExpression) v);
-                    endStep(sb, "csimple", v);
-                }
                 case "ConstantExpression" -> {
                     beginStep(sb, "constant", v);
                     doWriteConstantExpression(sb, (ConstantExpression) v);
@@ -6404,6 +6402,11 @@ public class JavaDslModelWriter extends JavaDslModelWriterSupport {
                     beginStep(sb, "python", v);
                     doWritePythonExpression(sb, (PythonExpression) v);
                     endStep(sb, "python", v);
+                }
+                case "QuickjsExpression" -> {
+                    beginStep(sb, "quickjs", v);
+                    doWriteQuickjsExpression(sb, (QuickjsExpression) v);
+                    endStep(sb, "quickjs", v);
                 }
                 case "RefExpression" -> {
                     beginStep(sb, "ref", v);

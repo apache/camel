@@ -16,7 +16,9 @@
  */
 package org.apache.camel.impl.console;
 
-import java.util.Collections;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ExecutorService;
@@ -28,11 +30,27 @@ import org.apache.camel.spi.ReloadStrategy;
 import org.apache.camel.spi.annotations.DevConsole;
 import org.apache.camel.support.ExceptionHelper;
 import org.apache.camel.support.console.AbstractDevConsole;
-import org.apache.camel.util.json.JsonArray;
-import org.apache.camel.util.json.JsonObject;
+import org.apache.camel.util.json.JsonRecordSupport;
 
-@DevConsole(name = "reload", description = "Console for reloading running Camel")
+@DevConsole(name = "reload", description = "Console for reloading running Camel", readOnly = false)
 public class ReloadDevConsole extends AbstractDevConsole {
+
+    public record LastError(
+            @Metadata(description = "The error message") String message,
+            @Metadata(description = "The error stack trace, one entry per line") List<String> stackTrace) {
+    }
+
+    public record ReloadEntry(
+            @Metadata(description = "The reload strategy class name") String className,
+            @Metadata(description = "Number of successful reloads") int reloaded,
+            @Metadata(description = "Number of failed reloads") int failed,
+            @Metadata(description = "The last reload error (only present when a reload has failed)") LastError lastError) {
+    }
+
+    public record Response(
+            @Metadata(description = "The reload strategies (only present when not triggering a reload and at least one reload strategy is active)") List<ReloadEntry> reloadStrategies,
+            @Metadata(description = "The reload status, reloading/success/failed (only present when triggering a reload)") String status) {
+    }
 
     @Metadata(label = "query", description = "Option to trigger reloading", javaType = "java.lang.Boolean",
               defaultValue = "false")
@@ -97,12 +115,13 @@ public class ReloadDevConsole extends AbstractDevConsole {
         return sb.toString();
     }
 
-    protected JsonObject doCallJson(Map<String, Object> options) {
+    protected Map<String, Object> doCallJson(Map<String, Object> options) {
         boolean trigger = optionBoolean(options, RELOAD, false);
         boolean wait = optionBoolean(options, RELOAD_WAIT, false);
-        JsonObject root = new JsonObject();
 
-        JsonArray arr = new JsonArray();
+        List<ReloadEntry> reloadStrategies = null;
+        String status = null;
+
         Set<ReloadStrategy> rs = getCamelContext().hasServices(ReloadStrategy.class);
         boolean failed = false;
         for (ReloadStrategy r : rs) {
@@ -118,39 +137,26 @@ public class ReloadDevConsole extends AbstractDevConsole {
                     }
                 }
             } else {
-                if (root.isEmpty()) {
-                    root.put("reloadStrategies", arr);
+                if (reloadStrategies == null) {
+                    reloadStrategies = new ArrayList<>();
                 }
-                JsonObject jo = new JsonObject();
-                arr.add(jo);
-                jo.put("className", r.getClass().getName());
-                jo.put("reloaded", r.getReloadCounter());
-                jo.put("failed", r.getFailedCounter());
+                LastError lastError = null;
                 Throwable cause = r.getLastError();
                 if (cause != null) {
-                    JsonObject eo = new JsonObject();
-                    eo.put("message", cause.getMessage());
-                    JsonArray arr2 = new JsonArray();
                     final String trace = ExceptionHelper.stackTraceToString(cause);
-                    eo.put("stackTrace", arr2);
-                    Collections.addAll(arr2, trace.split("\n"));
-                    jo.put("lastError", eo);
+                    lastError = new LastError(cause.getMessage(), Arrays.asList(trace.split("\n")));
                 }
+                reloadStrategies.add(new ReloadEntry(
+                        r.getClass().getName(), r.getReloadCounter(), r.getFailedCounter(), lastError));
             }
         }
 
         if (trigger) {
-            if (wait) {
-                if (failed) {
-                    root.put("status", "failed");
-                } else {
-                    root.put("status", "success");
-                }
-            } else {
-                root.put("status", "reloading");
-            }
+            status = wait ? (failed ? "failed" : "success") : "reloading";
         }
-        return root;
+
+        Response response = new Response(reloadStrategies, status);
+        return JsonRecordSupport.toJsonObject(response);
     }
 
     protected ExecutorService getOrCreateReloadTask() {

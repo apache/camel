@@ -6,10 +6,61 @@
     "title": "AWS S3",
     "description": "AWS S3 Consumer",
     "deprecated": false,
+    "readOnly": true,
     "javaType": "org.apache.camel.component.aws2.s3.AWS2S3Console",
     "groupId": "org.apache.camel",
     "artifactId": "camel-aws2-s3",
     "version": "4.23.0-SNAPSHOT"
+  },
+  "response": {
+    "type": "object",
+    "properties": {
+      "consumers": {
+        "type": "array",
+        "items": {
+          "type": "object",
+          "properties": {
+            "bucket": {
+              "type": "string",
+              "description": "The S3 bucket name"
+            },
+            "accessKeys": {
+              "type": "boolean",
+              "description": "Whether static access keys are used"
+            },
+            "defaultCredentialsProvider": {
+              "type": "boolean",
+              "description": "Whether the default credentials provider is used"
+            },
+            "profileCredentialsProvider": {
+              "type": "boolean",
+              "description": "Whether the profile credentials provider is used"
+            },
+            "maxMessages": {
+              "type": "integer",
+              "description": "Maximum number of messages per poll"
+            },
+            "moveAfterRead": {
+              "type": "boolean",
+              "description": "Whether the object is moved after being read"
+            },
+            "deleteAfterRead": {
+              "type": "boolean",
+              "description": "Whether the object is deleted after being read"
+            }
+          },
+          "required": [
+            "accessKeys",
+            "defaultCredentialsProvider",
+            "profileCredentialsProvider",
+            "maxMessages",
+            "moveAfterRead",
+            "deleteAfterRead"
+          ]
+        },
+        "description": "The AWS S3 consumers (only present when there are any)"
+      }
+    }
   }
 }
 

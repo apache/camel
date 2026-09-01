@@ -6,10 +6,133 @@
     "title": "Resilience Circuit Breaker",
     "description": "Display circuit breaker information",
     "deprecated": false,
+    "readOnly": true,
     "javaType": "org.apache.camel.component.resilience4j.ResilienceConsole",
     "groupId": "org.apache.camel",
     "artifactId": "camel-resilience4j",
     "version": "4.23.0-SNAPSHOT"
+  },
+  "response": {
+    "type": "object",
+    "properties": {
+      "circuitBreakers": {
+        "type": "array",
+        "items": {
+          "type": "object",
+          "properties": {
+            "id": {
+              "type": "string",
+              "description": "The circuit breaker id"
+            },
+            "routeId": {
+              "type": "string",
+              "description": "The route id"
+            },
+            "state": {
+              "type": "string",
+              "description": "The circuit breaker state"
+            },
+            "bufferedCalls": {
+              "type": "integer",
+              "description": "The number of buffered calls"
+            },
+            "successfulCalls": {
+              "type": "integer",
+              "description": "The number of successful calls"
+            },
+            "failedCalls": {
+              "type": "integer",
+              "description": "The number of failed calls"
+            },
+            "notPermittedCalls": {
+              "type": "integer",
+              "description": "The number of not permitted calls"
+            },
+            "failureRate": {
+              "type": "number",
+              "description": "The failure rate in percentage"
+            },
+            "configuration": {
+              "type": "object",
+              "properties": {
+                "failureRateThreshold": {
+                  "type": "number",
+                  "description": "The failure rate threshold in percentage"
+                },
+                "slowCallRateThreshold": {
+                  "type": "number",
+                  "description": "The slow call rate threshold in percentage"
+                },
+                "minimumNumberOfCalls": {
+                  "type": "integer",
+                  "description": "The minimum number of calls before the failure rate is calculated"
+                },
+                "permittedNumberOfCallsInHalfOpenState": {
+                  "type": "integer",
+                  "description": "The number of permitted calls when the circuit breaker is half open"
+                },
+                "slidingWindowSize": {
+                  "type": "integer",
+                  "description": "The sliding window size"
+                },
+                "slidingWindowType": {
+                  "type": "string",
+                  "description": "The sliding window type"
+                },
+                "waitDurationInOpenState": {
+                  "type": "integer",
+                  "description": "The wait duration in the open state, in milliseconds"
+                },
+                "automaticTransitionFromOpenToHalfOpen": {
+                  "type": "boolean",
+                  "description": "Whether the circuit breaker automatically transitions from open to half-open"
+                },
+                "bulkheadEnabled": {
+                  "type": "boolean",
+                  "description": "Whether the bulkhead is enabled"
+                },
+                "bulkheadMaxConcurrentCalls": {
+                  "type": "integer",
+                  "description": "The maximum concurrent calls allowed by the bulkhead (only present when bulkheadEnabled is true)"
+                },
+                "bulkheadMaxWaitDuration": {
+                  "type": "integer",
+                  "description": "The maximum wait duration for the bulkhead in milliseconds (only present when bulkheadEnabled is true)"
+                },
+                "timeoutEnabled": {
+                  "type": "boolean",
+                  "description": "Whether the timeout is enabled"
+                },
+                "timeoutDuration": {
+                  "type": "integer",
+                  "description": "The timeout duration in milliseconds (only present when timeoutEnabled is true)"
+                }
+              },
+              "required": [
+                "failureRateThreshold",
+                "slowCallRateThreshold",
+                "minimumNumberOfCalls",
+                "permittedNumberOfCallsInHalfOpenState",
+                "slidingWindowSize",
+                "waitDurationInOpenState",
+                "automaticTransitionFromOpenToHalfOpen",
+                "bulkheadEnabled",
+                "timeoutEnabled"
+              ],
+              "description": "The circuit breaker configuration"
+            }
+          },
+          "required": [
+            "bufferedCalls",
+            "successfulCalls",
+            "failedCalls",
+            "notPermittedCalls",
+            "failureRate"
+          ]
+        },
+        "description": "The circuit breakers"
+      }
+    }
   }
 }
 

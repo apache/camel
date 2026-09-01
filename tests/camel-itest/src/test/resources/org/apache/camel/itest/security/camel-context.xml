@@ -31,6 +31,8 @@
     <!-- import the spring security configuration  -->
     <import resource="classpath:org/apache/camel/itest/security/commonSecurity.xml"/>
 
+    <bean class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer"/>
+
     <authorizationPolicy id="admin"
                          authenticationAdapter="myAuthenticationAdapter"
                          authenticationManager="authenticationManager"
@@ -62,7 +64,7 @@
     	endpointName="s:SoapOverHttp"
     	serviceName="s:SOAPService"
     	xmlns:s="http://apache.org/hello_world_soap_http"
-        address="http://localhost:9000/SoapContext/SoapPort">
+        address="http://localhost:${GreeterClientTest.port}/SoapContext/SoapPort">
         <cxf:inInterceptors>
             <ref bean="UsernameToken_Request"/>
             <!-- bean class="org.apache.cxf.binding.soap.saaj.SAAJInInterceptor"/-->

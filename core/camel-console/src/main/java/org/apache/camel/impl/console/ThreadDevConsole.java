@@ -19,15 +19,16 @@ package org.apache.camel.impl.console;
 import java.lang.management.ManagementFactory;
 import java.lang.management.ThreadInfo;
 import java.lang.management.ThreadMXBean;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 import java.util.Map;
 
 import org.apache.camel.spi.Configurer;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.annotations.DevConsole;
 import org.apache.camel.support.console.AbstractDevConsole;
-import org.apache.camel.util.json.JsonArray;
-import org.apache.camel.util.json.JsonObject;
+import org.apache.camel.util.json.JsonRecordSupport;
 
 @DevConsole(name = "thread", description = "Displays JVM Threads information")
 @Configurer(extended = true)
@@ -36,6 +37,26 @@ public class ThreadDevConsole extends AbstractDevConsole {
     @Metadata(label = "query", description = "Whether to include thread stack traces",
               defaultValue = "false", javaType = "java.lang.Boolean")
     public static final String STACK_TRACE = "stackTrace";
+
+    public record ThreadEntry(
+            @Metadata(description = "The thread ID") long id,
+            @Metadata(description = "The thread name") String name,
+            @Metadata(description = "The thread state") String state,
+            @Metadata(description = "Number of times the thread has been blocked") long blockedCount,
+            @Metadata(description = "Total time in milliseconds the thread has been blocked") long blockedTime,
+            @Metadata(description = "Number of times the thread has waited") long waitedCount,
+            @Metadata(description = "Total time in milliseconds the thread has waited") long waitedTime,
+            @Metadata(description = "The name of the lock the thread is waiting on (only present when applicable)") String lockName,
+            @Metadata(description = "The thread stack trace, one entry per line (only present when requested via the stackTrace option)") List<String> stackTrace) {
+    }
+
+    public record Response(
+            @Metadata(description = "Number of threads") Integer threadCount,
+            @Metadata(description = "Number of daemon threads") Integer daemonThreadCount,
+            @Metadata(description = "Total number of threads started since JVM start") Long totalStartedThreadCount,
+            @Metadata(description = "Peak number of threads") Integer peakThreadCount,
+            @Metadata(description = "The threads") List<ThreadEntry> threads) {
+    }
 
     public ThreadDevConsole() {
         super("jvm", "thread", "Thread", "Displays JVM Threads information");
@@ -74,54 +95,42 @@ public class ThreadDevConsole extends AbstractDevConsole {
     }
 
     @Override
-    protected JsonObject doCallJson(Map<String, Object> options) {
-        JsonObject root = new JsonObject();
-
+    protected Map<String, Object> doCallJson(Map<String, Object> options) {
         boolean st = optionBoolean(options, STACK_TRACE, false);
         ThreadMXBean tb = ManagementFactory.getThreadMXBean();
+
+        Response response;
         if (tb != null) {
-            root.put("threadCount", tb.getThreadCount());
-            root.put("daemonThreadCount", tb.getDaemonThreadCount());
-            root.put("totalStartedThreadCount", tb.getTotalStartedThreadCount());
-            root.put("peakThreadCount", tb.getPeakThreadCount());
-
-            JsonArray arr = new JsonArray();
-            root.put("threads", arr);
-
+            List<ThreadEntry> threads = new ArrayList<>();
             long[] ids = tb.getAllThreadIds();
             Arrays.sort(ids);
             for (long id : ids) {
                 ThreadInfo ti = st ? tb.getThreadInfo(id, Integer.MAX_VALUE) : tb.getThreadInfo(id);
                 if (ti != null) {
-                    final JsonObject jo = toJsonObject(ti, st);
-                    arr.add(jo);
+                    threads.add(toThreadEntry(ti, st));
                 }
             }
+            response = new Response(
+                    tb.getThreadCount(), tb.getDaemonThreadCount(), tb.getTotalStartedThreadCount(),
+                    tb.getPeakThreadCount(), threads);
+        } else {
+            response = new Response(null, null, null, null, null);
         }
 
-        return root;
+        return JsonRecordSupport.toJsonObject(response);
     }
 
-    private static JsonObject toJsonObject(ThreadInfo ti, boolean st) {
-        JsonObject jo = new JsonObject();
-        jo.put("id", ti.getThreadId());
-        jo.put("name", ti.getThreadName());
-        jo.put("state", ti.getThreadState().name());
-        jo.put("blockedCount", ti.getBlockedCount());
-        jo.put("blockedTime", ti.getBlockedTime());
-        jo.put("waitedCount", ti.getWaitedCount());
-        jo.put("waitedTime", ti.getWaitedTime());
-        if (ti.getLockName() != null) {
-            jo.put("lockName", ti.getLockName());
-        }
+    private static ThreadEntry toThreadEntry(ThreadInfo ti, boolean st) {
+        List<String> stackTrace = null;
         if (st) {
-            JsonArray arr2 = new JsonArray();
-            jo.put("stackTrace", arr2);
+            stackTrace = new ArrayList<>();
             for (StackTraceElement e : ti.getStackTrace()) {
-                arr2.add(e.toString());
+                stackTrace.add(e.toString());
             }
         }
-        return jo;
+        return new ThreadEntry(
+                ti.getThreadId(), ti.getThreadName(), ti.getThreadState().name(), ti.getBlockedCount(), ti.getBlockedTime(),
+                ti.getWaitedCount(), ti.getWaitedTime(), ti.getLockName(), stackTrace);
     }
 
 }

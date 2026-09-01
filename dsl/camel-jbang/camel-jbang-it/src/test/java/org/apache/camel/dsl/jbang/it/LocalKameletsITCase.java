@@ -19,9 +19,16 @@ package org.apache.camel.dsl.jbang.it;
 import java.io.IOException;
 
 import org.apache.camel.dsl.jbang.it.support.JBangTestSupport;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 
 public class LocalKameletsITCase extends JBangTestSupport {
+
+    @AfterEach
+    void stopAll() {
+        execute("stop");
+    }
+
     @Test
     public void localKameletRunTest() throws IOException {
         copyResourceInDataFolder(TestResources.USER_SOURCE_KAMELET);

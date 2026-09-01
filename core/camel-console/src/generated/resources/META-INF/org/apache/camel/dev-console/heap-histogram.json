@@ -6,6 +6,7 @@
     "title": "Heap Histogram",
     "description": "Displays class-level heap memory usage",
     "deprecated": false,
+    "readOnly": true,
     "javaType": "org.apache.camel.impl.console.HeapHistogramDevConsole",
     "groupId": "org.apache.camel",
     "artifactId": "camel-console",
@@ -27,6 +28,53 @@
       "defaultValue": 100,
       "description": "Limits the number of classes displayed"
     }
+  },
+  "response": {
+    "type": "object",
+    "properties": {
+      "classes": {
+        "type": "array",
+        "items": {
+          "type": "object",
+          "properties": {
+            "num": {
+              "type": "integer",
+              "description": "The class number"
+            },
+            "instances": {
+              "type": "integer",
+              "description": "Number of instances"
+            },
+            "bytes": {
+              "type": "integer",
+              "description": "Number of bytes used"
+            },
+            "className": {
+              "type": "string",
+              "description": "The class name"
+            }
+          },
+          "required": [
+            "num",
+            "instances",
+            "bytes"
+          ]
+        },
+        "description": "The classes in the histogram"
+      },
+      "totalInstances": {
+        "type": "integer",
+        "description": "Total number of instances"
+      },
+      "totalBytes": {
+        "type": "integer",
+        "description": "Total number of bytes"
+      }
+    },
+    "required": [
+      "totalInstances",
+      "totalBytes"
+    ]
   }
 }
 

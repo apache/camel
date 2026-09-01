@@ -6,10 +6,42 @@
     "title": "Simple Language",
     "description": "Display simple language details",
     "deprecated": false,
+    "readOnly": true,
     "javaType": "org.apache.camel.impl.console.SimpleLanguageDevConsole",
     "groupId": "org.apache.camel",
     "artifactId": "camel-console",
     "version": "4.23.0-SNAPSHOT"
+  },
+  "response": {
+    "type": "object",
+    "properties": {
+      "coreSize": {
+        "type": "integer",
+        "description": "Number of core simple functions"
+      },
+      "customSize": {
+        "type": "integer",
+        "description": "Number of custom simple functions"
+      },
+      "coreFunctions": {
+        "type": "array",
+        "items": {
+          "type": "string"
+        },
+        "description": "The core function names (only present when there are any)"
+      },
+      "customFunctions": {
+        "type": "array",
+        "items": {
+          "type": "string"
+        },
+        "description": "The custom function names (only present when there are any)"
+      }
+    },
+    "required": [
+      "coreSize",
+      "customSize"
+    ]
   }
 }
 

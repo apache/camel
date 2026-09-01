@@ -6,10 +6,64 @@
     "title": "Startup Recorder",
     "description": "Starting recording information",
     "deprecated": false,
+    "readOnly": true,
     "javaType": "org.apache.camel.impl.console.StartupRecorderDevConsole",
     "groupId": "org.apache.camel",
     "artifactId": "camel-console",
     "version": "4.23.0-SNAPSHOT"
+  },
+  "response": {
+    "type": "object",
+    "properties": {
+      "steps": {
+        "type": "array",
+        "items": {
+          "type": "object",
+          "properties": {
+            "id": {
+              "type": "integer",
+              "description": "The id of the step"
+            },
+            "parentId": {
+              "type": "integer",
+              "description": "The id of the parent step"
+            },
+            "level": {
+              "type": "integer",
+              "description": "The step level (sub step of previous steps)"
+            },
+            "name": {
+              "type": "string",
+              "description": "Name of the step (only present when known)"
+            },
+            "type": {
+              "type": "string",
+              "description": "The source class type of the step"
+            },
+            "description": {
+              "type": "string",
+              "description": "Description of the step"
+            },
+            "beginTime": {
+              "type": "integer",
+              "description": "The begin time (epoch milliseconds)"
+            },
+            "duration": {
+              "type": "integer",
+              "description": "The duration the step took, in milliseconds"
+            }
+          },
+          "required": [
+            "id",
+            "parentId",
+            "level",
+            "beginTime",
+            "duration"
+          ]
+        },
+        "description": "The startup steps (only present when there are any)"
+      }
+    }
   }
 }
 

@@ -6,6 +6,7 @@
     "title": "Bean",
     "description": "Displays Java beans from the registry",
     "deprecated": false,
+    "readOnly": true,
     "javaType": "org.apache.camel.impl.console.BeanDevConsole",
     "groupId": "org.apache.camel",
     "artifactId": "camel-console",
@@ -70,6 +71,48 @@
       "secret": false,
       "defaultValue": true,
       "description": "Whether to include bean properties"
+    }
+  },
+  "response": {
+    "type": "object",
+    "properties": {
+      "beans": {
+        "type": "object",
+        "additionalProperties": {
+          "type": "object",
+          "properties": {
+            "name": {
+              "type": "string",
+              "description": "The bean name"
+            },
+            "type": {
+              "type": "string",
+              "description": "The bean class type"
+            },
+            "properties": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "name": {
+                    "type": "string",
+                    "description": "The property name"
+                  },
+                  "type": {
+                    "type": "string",
+                    "description": "The property type (only present when the value is not null)"
+                  },
+                  "value": {
+                    "description": "The property value"
+                  }
+                }
+              },
+              "description": "The bean properties (only present when properties were requested and the bean has some)"
+            }
+          }
+        },
+        "description": "The beans, keyed by bean name"
+      }
     }
   }
 }

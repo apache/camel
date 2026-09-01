@@ -6,10 +6,73 @@
     "title": "DataSource",
     "description": "Displays DataSource connection pool metrics",
     "deprecated": false,
+    "readOnly": true,
     "javaType": "org.apache.camel.impl.console.DataSourceDevConsole",
     "groupId": "org.apache.camel",
     "artifactId": "camel-console",
     "version": "4.23.0-SNAPSHOT"
+  },
+  "response": {
+    "type": "object",
+    "properties": {
+      "dataSources": {
+        "type": "array",
+        "items": {
+          "type": "object",
+          "properties": {
+            "name": {
+              "type": "string",
+              "description": "The registry bean name"
+            },
+            "type": {
+              "type": "string",
+              "description": "The DataSource implementation class"
+            },
+            "poolType": {
+              "type": "string",
+              "description": "The detected connection pool type: HikariCP, Agroal, or Unknown"
+            },
+            "poolName": {
+              "type": "string",
+              "description": "The pool name (HikariCP only)"
+            },
+            "maxPoolSize": {
+              "type": "integer",
+              "description": "The maximum pool size (only present once the pool is initialized)"
+            },
+            "active": {
+              "type": "integer",
+              "description": "Number of active connections (only present once the pool is initialized)"
+            },
+            "idle": {
+              "type": "integer",
+              "description": "Number of idle connections (only present once the pool is initialized)"
+            },
+            "total": {
+              "type": "integer",
+              "description": "Total number of connections (only present once the pool is initialized)"
+            },
+            "waiting": {
+              "type": "integer",
+              "description": "Number of threads awaiting a connection (HikariCP only)"
+            },
+            "maxUsed": {
+              "type": "integer",
+              "description": "Maximum number of connections used at once (Agroal only)"
+            },
+            "leakDetection": {
+              "type": "integer",
+              "description": "Number of leak detections (Agroal only)"
+            },
+            "created": {
+              "type": "integer",
+              "description": "Number of connections created (Agroal only)"
+            }
+          }
+        },
+        "description": "The DataSources"
+      }
+    }
   }
 }
 

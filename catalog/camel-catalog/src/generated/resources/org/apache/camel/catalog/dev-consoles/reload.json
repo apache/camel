@@ -6,6 +6,7 @@
     "title": "Reload",
     "description": "Console for reloading running Camel",
     "deprecated": false,
+    "readOnly": false,
     "javaType": "org.apache.camel.impl.console.ReloadDevConsole",
     "groupId": "org.apache.camel",
     "artifactId": "camel-console",
@@ -41,6 +42,57 @@
       "secret": false,
       "defaultValue": false,
       "description": "Option to wait for reloading to complete"
+    }
+  },
+  "response": {
+    "type": "object",
+    "properties": {
+      "reloadStrategies": {
+        "type": "array",
+        "items": {
+          "type": "object",
+          "properties": {
+            "className": {
+              "type": "string",
+              "description": "The reload strategy class name"
+            },
+            "reloaded": {
+              "type": "integer",
+              "description": "Number of successful reloads"
+            },
+            "failed": {
+              "type": "integer",
+              "description": "Number of failed reloads"
+            },
+            "lastError": {
+              "type": "object",
+              "properties": {
+                "message": {
+                  "type": "string",
+                  "description": "The error message"
+                },
+                "stackTrace": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  },
+                  "description": "The error stack trace, one entry per line"
+                }
+              },
+              "description": "The last reload error (only present when a reload has failed)"
+            }
+          },
+          "required": [
+            "reloaded",
+            "failed"
+          ]
+        },
+        "description": "The reload strategies (only present when not triggering a reload and at least one reload strategy is active)"
+      },
+      "status": {
+        "type": "string",
+        "description": "The reload status, reloading\/success\/failed (only present when triggering a reload)"
+      }
     }
   }
 }

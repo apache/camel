@@ -23,13 +23,39 @@ import java.util.Map;
 
 import org.apache.camel.Processor;
 import org.apache.camel.Route;
+import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.annotations.DevConsole;
 import org.apache.camel.support.console.AbstractDevConsole;
-import org.apache.camel.util.json.JsonObject;
+import org.apache.camel.util.json.JsonRecordSupport;
 
 @DevConsole(name = "fault-tolerance", displayName = "MicroProfile Circuit Breaker",
             description = "Display circuit breaker information")
 public class FaultToleranceConsole extends AbstractDevConsole {
+
+    public record Configuration(
+            @Metadata(description = "The delay in milliseconds") long delay,
+            @Metadata(description = "The failure ratio") float failureRatio,
+            @Metadata(description = "The request volume threshold") int requestVolumeThreshold,
+            @Metadata(description = "The success threshold") int successThreshold,
+            @Metadata(description = "Whether the bulkhead is enabled") boolean bulkheadEnabled,
+            @Metadata(description = "The bulkhead maximum concurrent calls (only present when the bulkhead is enabled)") Integer bulkheadMaxConcurrentCalls,
+            @Metadata(description = "The bulkhead waiting task queue size (only present when the bulkhead is enabled)") Integer bulkheadWaitingTaskQueue,
+            @Metadata(description = "Whether the timeout is enabled") boolean timeoutEnabled,
+            @Metadata(description = "The timeout duration in milliseconds (only present when the timeout is enabled)") Long timeoutDuration) {
+    }
+
+    public record CircuitBreakerEntry(
+            @Metadata(description = "The circuit breaker ID") String id,
+            @Metadata(description = "The route ID") String routeId,
+            @Metadata(description = "The circuit breaker state") String state,
+            @Metadata(description = "Number of successful calls") long successfulCalls,
+            @Metadata(description = "Number of failed calls") long failedCalls,
+            @Metadata(description = "Number of not-permitted calls") long notPermittedCalls,
+            @Metadata(description = "The circuit breaker configuration") Configuration configuration) {
+    }
+
+    public record Response(@Metadata(description = "The circuit breakers") List<CircuitBreakerEntry> circuitBreakers) {
+    }
 
     public FaultToleranceConsole() {
         super("camel", "fault-tolerance", "MicroProfile Circuit Breaker",
@@ -67,9 +93,7 @@ public class FaultToleranceConsole extends AbstractDevConsole {
     }
 
     @Override
-    protected JsonObject doCallJson(Map<String, Object> options) {
-        JsonObject root = new JsonObject();
-
+    protected Map<String, Object> doCallJson(Map<String, Object> options) {
         List<FaultToleranceProcessor> cbs = new ArrayList<>();
         for (Route route : getCamelContext().getRoutes()) {
             List<Processor> list = route.filter("*");
@@ -82,35 +106,27 @@ public class FaultToleranceConsole extends AbstractDevConsole {
         // sort by ids
         cbs.sort(Comparator.comparing(FaultToleranceProcessor::getId));
 
-        final List<JsonObject> list = new ArrayList<>();
+        final List<CircuitBreakerEntry> list = new ArrayList<>();
         for (FaultToleranceProcessor cb : cbs) {
-            JsonObject jo = new JsonObject();
-            jo.put("id", cb.getId());
-            jo.put("routeId", cb.getRouteId());
-            jo.put("state", cb.getCircuitBreakerState());
-            jo.put("successfulCalls", cb.getNumberOfSuccessfulCalls());
-            jo.put("failedCalls", cb.getNumberOfFailedCalls());
-            jo.put("notPermittedCalls", cb.getNumberOfNotPermittedCalls());
-            // configuration
-            JsonObject config = new JsonObject();
-            config.put("delay", cb.getDelay());
-            config.put("failureRatio", cb.getFailureRatio());
-            config.put("requestVolumeThreshold", cb.getRequestVolumeThreshold());
-            config.put("successThreshold", cb.getSuccessThreshold());
-            config.put("bulkheadEnabled", cb.isBulkheadEnabled());
+            Integer bulkheadMaxConcurrentCalls = null;
+            Integer bulkheadWaitingTaskQueue = null;
             if (cb.isBulkheadEnabled()) {
-                config.put("bulkheadMaxConcurrentCalls", cb.getBulkheadMaxConcurrentCalls());
-                config.put("bulkheadWaitingTaskQueue", cb.getBulkheadWaitingTaskQueue());
+                bulkheadMaxConcurrentCalls = cb.getBulkheadMaxConcurrentCalls();
+                bulkheadWaitingTaskQueue = cb.getBulkheadWaitingTaskQueue();
             }
-            config.put("timeoutEnabled", cb.isTimeoutEnabled());
-            if (cb.isTimeoutEnabled()) {
-                config.put("timeoutDuration", cb.getTimeoutDuration());
-            }
-            jo.put("configuration", config);
-            list.add(jo);
-        }
-        root.put("circuitBreakers", list);
+            Long timeoutDuration = cb.isTimeoutEnabled() ? cb.getTimeoutDuration() : null;
 
-        return root;
+            Configuration config = new Configuration(
+                    cb.getDelay(), cb.getFailureRatio(), cb.getRequestVolumeThreshold(), cb.getSuccessThreshold(),
+                    cb.isBulkheadEnabled(), bulkheadMaxConcurrentCalls, bulkheadWaitingTaskQueue, cb.isTimeoutEnabled(),
+                    timeoutDuration);
+
+            list.add(new CircuitBreakerEntry(
+                    cb.getId(), cb.getRouteId(), cb.getCircuitBreakerState(), cb.getNumberOfSuccessfulCalls(),
+                    cb.getNumberOfFailedCalls(), cb.getNumberOfNotPermittedCalls(), config));
+        }
+
+        Response response = new Response(list);
+        return JsonRecordSupport.toJsonObject(response);
     }
 }

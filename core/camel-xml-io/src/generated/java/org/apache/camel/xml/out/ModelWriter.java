@@ -563,9 +563,6 @@ public class ModelWriter extends BaseWriter {
     public void writeSpringTransactionErrorHandlerDefinition(SpringTransactionErrorHandlerDefinition def) throws IOException {
         doWriteSpringTransactionErrorHandlerDefinition("springTransactionErrorHandler", def);
     }
-    public void writeCSimpleExpression(CSimpleExpression def) throws IOException {
-        doWriteCSimpleExpression("csimple", def);
-    }
     public void writeConstantExpression(ConstantExpression def) throws IOException {
         doWriteConstantExpression("constant", def);
     }
@@ -622,6 +619,9 @@ public class ModelWriter extends BaseWriter {
     }
     public void writePythonExpression(PythonExpression def) throws IOException {
         doWritePythonExpression("python", def);
+    }
+    public void writeQuickjsExpression(QuickjsExpression def) throws IOException {
+        doWriteQuickjsExpression("quickjs", def);
     }
     public void writeRefExpression(RefExpression def) throws IOException {
         doWriteRefExpression("ref", def);
@@ -2599,6 +2599,7 @@ public class ModelWriter extends BaseWriter {
         doWriteAttribute("compressionAlgorithm", def.getCompressionAlgorithm(), null);
         doWriteAttribute("hashAlgorithm", def.getHashAlgorithm(), null);
         doWriteAttribute("signatureVerificationOption", def.getSignatureVerificationOption(), null);
+        doWriteAttribute("requireIntegrityProtection", def.getRequireIntegrityProtection(), "true");
         endElement(name);
     }
     protected void doWritePQCDataFormat(String name, PQCDataFormat def) throws IOException {
@@ -2894,14 +2895,6 @@ public class ModelWriter extends BaseWriter {
         doWriteDefaultErrorHandlerDefinitionElements(def);
         endElement(name);
     }
-    protected void doWriteCSimpleExpression(String name, CSimpleExpression def) throws IOException {
-        startElement(name);
-        doWriteTypedExpressionDefinitionAttributes(def);
-        doWriteAttribute("trimResult", def.getTrimResult(), "false");
-        doWriteAttribute("pretty", def.getPretty(), "false");
-        doWriteValue(def.getExpression());
-        endElement(name);
-    }
     protected void doWriteConstantExpression(String name, ConstantExpression def) throws IOException {
         startElement(name);
         doWriteTypedExpressionDefinitionAttributes(def);
@@ -3020,12 +3013,16 @@ public class ModelWriter extends BaseWriter {
         doWriteValue(def.getExpression());
         endElement(name);
     }
+    protected void doWriteNamespaceAwareExpressionAttributes(NamespaceAwareExpression def) throws IOException {
+        doWriteSingleInputTypedExpressionDefinitionAttributes(def);
+        doWriteAttribute("namespacesRef", def.getNamespacesRef(), null);
+    }
     protected void doWriteNamespaceAwareExpressionElements(NamespaceAwareExpression def) throws IOException {
         doWriteList(null, "namespace", def.getNamespace(), this::doWritePropertyDefinition);
     }
     protected void doWriteNamespaceAwareExpression(String name, NamespaceAwareExpression def) throws IOException {
         startElement(name);
-        doWriteSingleInputTypedExpressionDefinitionAttributes(def);
+        doWriteNamespaceAwareExpressionAttributes(def);
         doWriteValue(def.getExpression());
         doWriteNamespaceAwareExpressionElements(def);
         endElement(name);
@@ -3043,6 +3040,12 @@ public class ModelWriter extends BaseWriter {
         endElement(name);
     }
     protected void doWritePythonExpression(String name, PythonExpression def) throws IOException {
+        startElement(name);
+        doWriteTypedExpressionDefinitionAttributes(def);
+        doWriteValue(def.getExpression());
+        endElement(name);
+    }
+    protected void doWriteQuickjsExpression(String name, QuickjsExpression def) throws IOException {
         startElement(name);
         doWriteTypedExpressionDefinitionAttributes(def);
         doWriteValue(def.getExpression());
@@ -3119,7 +3122,7 @@ public class ModelWriter extends BaseWriter {
     }
     protected void doWriteXMLTokenizerExpression(String name, XMLTokenizerExpression def) throws IOException {
         startElement(name);
-        doWriteSingleInputTypedExpressionDefinitionAttributes(def);
+        doWriteNamespaceAwareExpressionAttributes(def);
         doWriteAttribute("mode", def.getMode(), "i");
         doWriteAttribute("group", def.getGroup(), null);
         doWriteValue(def.getExpression());
@@ -3128,7 +3131,7 @@ public class ModelWriter extends BaseWriter {
     }
     protected void doWriteXPathExpression(String name, XPathExpression def) throws IOException {
         startElement(name);
-        doWriteSingleInputTypedExpressionDefinitionAttributes(def);
+        doWriteNamespaceAwareExpressionAttributes(def);
         doWriteAttribute("documentType", def.getDocumentTypeName(), null);
         doWriteAttribute("resultQName", def.getResultQName(), "NODESET");
         doWriteAttribute("saxon", def.getSaxon(), null);
@@ -3143,7 +3146,7 @@ public class ModelWriter extends BaseWriter {
     }
     protected void doWriteXQueryExpression(String name, XQueryExpression def) throws IOException {
         startElement(name);
-        doWriteSingleInputTypedExpressionDefinitionAttributes(def);
+        doWriteNamespaceAwareExpressionAttributes(def);
         doWriteAttribute("configurationRef", def.getConfigurationRef(), null);
         doWriteValue(def.getExpression());
         doWriteNamespaceAwareExpressionElements(def);
@@ -3903,7 +3906,6 @@ public class ModelWriter extends BaseWriter {
     protected void doWriteExpressionDefinitionRef(String n, ExpressionDefinition v) throws IOException {
         if (v != null) {
             switch (v.getClass().getSimpleName()) {
-                case "CSimpleExpression" -> doWriteCSimpleExpression("csimple", (CSimpleExpression) v);
                 case "ConstantExpression" -> doWriteConstantExpression("constant", (ConstantExpression) v);
                 case "DatasonnetExpression" -> doWriteDatasonnetExpression("datasonnet", (DatasonnetExpression) v);
                 case "ExchangePropertyExpression" -> doWriteExchangePropertyExpression("exchangeProperty", (ExchangePropertyExpression) v);
@@ -3923,6 +3925,7 @@ public class ModelWriter extends BaseWriter {
                 case "OgnlExpression" -> doWriteOgnlExpression("ognl", (OgnlExpression) v);
                 case "Python3Expression" -> doWritePython3Expression("python3", (Python3Expression) v);
                 case "PythonExpression" -> doWritePythonExpression("python", (PythonExpression) v);
+                case "QuickjsExpression" -> doWriteQuickjsExpression("quickjs", (QuickjsExpression) v);
                 case "RefExpression" -> doWriteRefExpression("ref", (RefExpression) v);
                 case "SimpleExpression" -> doWriteSimpleExpression("simple", (SimpleExpression) v);
                 case "SpELExpression" -> doWriteSpELExpression("spel", (SpELExpression) v);

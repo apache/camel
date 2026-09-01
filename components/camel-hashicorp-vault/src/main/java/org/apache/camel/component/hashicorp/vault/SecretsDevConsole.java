@@ -18,14 +18,22 @@ package org.apache.camel.component.hashicorp.vault;
 
 import java.util.Map;
 
+import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.PropertiesFunction;
 import org.apache.camel.spi.annotations.DevConsole;
 import org.apache.camel.support.console.AbstractDevConsole;
-import org.apache.camel.util.json.JsonObject;
+import org.apache.camel.util.json.JsonRecordSupport;
 import org.apache.camel.vault.HashicorpVaultConfiguration;
 
 @DevConsole(name = "hashicorp-secrets", displayName = "HashiCorp Secrets", description = "HashiCorp Vault Secrets")
 public class SecretsDevConsole extends AbstractDevConsole {
+
+    public record Response(
+            @Metadata(description = "The Vault host (only present when configured)") String host,
+            @Metadata(description = "The Vault port (only present when configured)") String port,
+            @Metadata(description = "The Vault scheme (only present when configured)") String scheme,
+            @Metadata(description = "The login method (only present when configured)") String login) {
+    }
 
     private HashicorpVaultPropertiesFunction propertiesFunction;
 
@@ -62,15 +70,21 @@ public class SecretsDevConsole extends AbstractDevConsole {
     }
 
     @Override
-    protected JsonObject doCallJson(Map<String, Object> options) {
-        JsonObject root = new JsonObject();
+    protected Map<String, Object> doCallJson(Map<String, Object> options) {
+        String host = null;
+        String port = null;
+        String scheme = null;
+        String login = null;
+
         HashicorpVaultConfiguration hashicorp = getCamelContext().getVaultConfiguration().getHashicorpVaultConfiguration();
         if (hashicorp != null) {
-            root.put("host", hashicorp.getHost());
-            root.put("port", hashicorp.getPort());
-            root.put("scheme", hashicorp.getScheme());
-            root.put("login", "OAuth Token");
+            host = hashicorp.getHost();
+            port = hashicorp.getPort();
+            scheme = hashicorp.getScheme();
+            login = "OAuth Token";
         }
-        return root;
+
+        Response response = new Response(host, port, scheme, login);
+        return JsonRecordSupport.toJsonObject(response);
     }
 }

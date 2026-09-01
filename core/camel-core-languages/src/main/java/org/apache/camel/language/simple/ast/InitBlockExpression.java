@@ -19,7 +19,6 @@ package org.apache.camel.language.simple.ast;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
 import org.apache.camel.Expression;
-import org.apache.camel.language.simple.BaseSimpleParser;
 import org.apache.camel.language.simple.types.InitOperatorType;
 import org.apache.camel.language.simple.types.SimpleParserException;
 import org.apache.camel.language.simple.types.SimpleToken;
@@ -120,14 +119,4 @@ public class InitBlockExpression extends BaseSimpleNode {
             }
         };
     }
-
-    @Override
-    public String createCode(CamelContext camelContext, String expression) throws SimpleParserException {
-        return BaseSimpleParser.CODE_START + doCreateCode(camelContext, expression) + BaseSimpleParser.CODE_END;
-    }
-
-    private String doCreateCode(CamelContext camelContext, String expression) throws SimpleParserException {
-        throw new SimpleParserException("Using init blocks with csimple is not supported", token.getIndex());
-    }
-
 }

@@ -16,19 +16,31 @@
  */
 package org.apache.camel.impl.console;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 
 import org.apache.camel.Route;
+import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.RoutePolicy;
 import org.apache.camel.spi.annotations.DevConsole;
 import org.apache.camel.support.console.AbstractDevConsole;
 import org.apache.camel.throttling.ThrottlingExceptionRoutePolicy;
 import org.apache.camel.util.TimeUtils;
-import org.apache.camel.util.json.JsonArray;
-import org.apache.camel.util.json.JsonObject;
+import org.apache.camel.util.json.JsonRecordSupport;
 
 @DevConsole(name = "circuit-breaker", description = "Display circuit breaker information")
 public class CircuitBreakerDevConsole extends AbstractDevConsole {
+
+    public record Entry(
+            @Metadata(description = "The route ID") String routeId,
+            @Metadata(description = "The circuit breaker state") String state,
+            @Metadata(description = "Number of successful calls") int successfulCalls,
+            @Metadata(description = "Number of failed calls") int failedCalls) {
+    }
+
+    public record Response(@Metadata(description = "The circuit breakers") List<Entry> circuitBreakers) {
+    }
 
     public CircuitBreakerDevConsole() {
         super("camel", "circuit-breaker", "Circuit Breaker", "Display circuit breaker information");
@@ -57,23 +69,16 @@ public class CircuitBreakerDevConsole extends AbstractDevConsole {
 
     @Override
     protected Map<String, Object> doCallJson(Map<String, Object> options) {
-        JsonObject root = new JsonObject();
-
-        final JsonArray list = new JsonArray();
+        List<Entry> entries = new ArrayList<>();
         for (Route route : getCamelContext().getRoutes()) {
             for (RoutePolicy rp : route.getRoutePolicyList()) {
                 if (rp instanceof ThrottlingExceptionRoutePolicy cb) {
-                    JsonObject jo = new JsonObject();
-                    jo.put("routeId", route.getRouteId());
-                    jo.put("state", cb.getStateAsString());
-                    jo.put("successfulCalls", cb.getSuccess());
-                    jo.put("failedCalls", cb.getFailures());
-                    list.add(jo);
+                    entries.add(new Entry(route.getRouteId(), cb.getStateAsString(), cb.getSuccess(), cb.getFailures()));
                 }
             }
         }
-        root.put("circuitBreakers", list);
 
-        return root;
+        Response response = new Response(entries);
+        return JsonRecordSupport.toJsonObject(response);
     }
 }

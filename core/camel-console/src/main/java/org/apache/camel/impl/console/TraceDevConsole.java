@@ -16,6 +16,8 @@
  */
 package org.apache.camel.impl.console;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 import java.util.Queue;
 import java.util.concurrent.LinkedBlockingQueue;
@@ -26,12 +28,32 @@ import org.apache.camel.spi.Configurer;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.annotations.DevConsole;
 import org.apache.camel.support.console.AbstractDevConsole;
-import org.apache.camel.util.json.JsonArray;
 import org.apache.camel.util.json.JsonObject;
+import org.apache.camel.util.json.JsonRecordSupport;
 
-@DevConsole(name = "trace", displayName = "Camel Tracing", description = "Trace routed messages")
+@DevConsole(name = "trace", displayName = "Camel Tracing", description = "Trace routed messages", readOnly = false)
 @Configurer(extended = true)
 public class TraceDevConsole extends AbstractDevConsole {
+
+    public record Response(
+            @Metadata(description = "Whether tracing is enabled (only present when a backlog tracer is available)") Boolean enabled,
+            @Metadata(description = "The traced messages, as opaque JSON objects (only present when dumping)") List<Map<String, Object>> traces,
+            @Metadata(description = "Whether the tracer is in standby mode (only present when not dumping)") Boolean standby,
+            @Metadata(description = "Total number of traced messages (only present when not dumping)") Long counter,
+            @Metadata(description = "The current backlog size (only present when not dumping)") Integer backlogSize,
+            @Metadata(description = "The current queue size (only present when not dumping)") Long queueSize,
+            @Metadata(description = "Whether messages are removed from the backlog when dumped (only present when not dumping)") Boolean removeOnDump,
+            @Metadata(description = "The trace filter (only present when configured)") String traceFilter,
+            @Metadata(description = "The trace pattern (only present when configured)") String tracePattern,
+            @Metadata(description = "Whether rests are traced (only present when not dumping)") Boolean traceRests,
+            @Metadata(description = "Whether route templates/Kamelets are traced (only present when not dumping)") Boolean traceTemplates,
+            @Metadata(description = "Maximum size of the message body to include (only present when not dumping)") Integer bodyMaxChars,
+            @Metadata(description = "Whether file-based message bodies are included (only present when not dumping)") Boolean bodyIncludeFiles,
+            @Metadata(description = "Whether streaming message bodies are included (only present when not dumping)") Boolean bodyIncludeStreams,
+            @Metadata(description = "Whether exchange properties are included (only present when not dumping)") Boolean includeExchangeProperties,
+            @Metadata(description = "Whether exchange variables are included (only present when not dumping)") Boolean includeExchangeVariables,
+            @Metadata(description = "Whether exceptions are included (only present when not dumping)") Boolean includeException) {
+    }
 
     @Metadata(defaultValue = "100",
               description = "Maximum capacity of last number of messages to capture (capacity must be between 50 and 1000)")
@@ -125,10 +147,12 @@ public class TraceDevConsole extends AbstractDevConsole {
         queue.add(message);
     }
 
-    protected JsonObject doCallJson(Map<String, Object> options) {
-        JsonObject root = new JsonObject();
+    protected Map<String, Object> doCallJson(Map<String, Object> options) {
         String enabled = optionString(options, ENABLED);
         String dump = optionString(options, DUMP);
+
+        Response response = new Response(
+                null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null);
 
         BacklogTracer tracer = getCamelContext().getCamelContextExtension().getContextPlugin(BacklogTracer.class);
         if (tracer != null) {
@@ -136,43 +160,30 @@ public class TraceDevConsole extends AbstractDevConsole {
                 for (BacklogTracerEventMessage t : tracer.dumpAllTracedMessages()) {
                     addMessage(t);
                 }
-                JsonArray arr = new JsonArray();
-                root.put("enabled", tracer.isEnabled());
-                root.put("traces", arr);
+                List<Map<String, Object>> traces = new ArrayList<>();
                 for (BacklogTracerEventMessage t : queue) {
-                    JsonObject jo = (JsonObject) t.asJSon();
-                    arr.add(jo);
+                    traces.add((JsonObject) t.asJSon());
                 }
+                response = new Response(
+                        tracer.isEnabled(), traces, null, null, null, null, null, null, null, null, null, null, null,
+                        null, null, null, null);
             } else {
                 if ("true".equals(enabled)) {
                     tracer.setEnabled(true);
                 } else if ("false".equals(enabled)) {
                     tracer.setEnabled(false);
                 }
-                root.put("enabled", tracer.isEnabled());
-                root.put("standby", tracer.isStandby());
-                root.put("counter", tracer.getTraceCounter());
-                root.put("backlogSize", tracer.getBacklogSize());
-                root.put("queueSize", tracer.getQueueSize());
-                root.put("removeOnDump", tracer.isRemoveOnDump());
-                if (tracer.getTraceFilter() != null) {
-                    root.put("traceFilter", tracer.getTraceFilter());
-                }
-                if (tracer.getTracePattern() != null) {
-                    root.put("tracePattern", tracer.getTracePattern());
-                }
-                root.put("traceRests", tracer.isTraceRests());
-                root.put("traceTemplates", tracer.isTraceTemplates());
-                root.put("bodyMaxChars", tracer.getBodyMaxChars());
-                root.put("bodyIncludeFiles", tracer.isBodyIncludeFiles());
-                root.put("bodyIncludeStreams", tracer.isBodyIncludeStreams());
-                root.put("includeExchangeProperties", tracer.isIncludeExchangeProperties());
-                root.put("includeExchangeVariables", tracer.isIncludeExchangeVariables());
-                root.put("includeException", tracer.isIncludeException());
+                response = new Response(
+                        tracer.isEnabled(), null, tracer.isStandby(), tracer.getTraceCounter(),
+                        tracer.getBacklogSize(), tracer.getQueueSize(), tracer.isRemoveOnDump(),
+                        tracer.getTraceFilter(), tracer.getTracePattern(), tracer.isTraceRests(),
+                        tracer.isTraceTemplates(), tracer.getBodyMaxChars(), tracer.isBodyIncludeFiles(),
+                        tracer.isBodyIncludeStreams(), tracer.isIncludeExchangeProperties(),
+                        tracer.isIncludeExchangeVariables(), tracer.isIncludeException());
             }
         }
 
-        return root;
+        return JsonRecordSupport.toJsonObject(response);
     }
 
 }

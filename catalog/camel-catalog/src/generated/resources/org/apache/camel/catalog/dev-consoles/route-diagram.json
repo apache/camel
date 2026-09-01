@@ -6,6 +6,7 @@
     "title": "Route Diagram",
     "description": "Visual route diagrams",
     "deprecated": false,
+    "readOnly": true,
     "javaType": "org.apache.camel.diagram.DiagramDevConsole",
     "groupId": "org.apache.camel",
     "artifactId": "camel-diagram",
@@ -184,6 +185,19 @@
       "secret": false,
       "defaultValue": "transparent",
       "description": "Theme to use: dark, light, transparent, ascii, or unicode"
+    }
+  },
+  "response": {
+    "type": "object",
+    "properties": {
+      "text": {
+        "type": "string",
+        "description": "The rendered ASCII\/Unicode art diagram (only present for a text theme)"
+      },
+      "image": {
+        "type": "string",
+        "description": "The rendered diagram as a base64-encoded PNG image (only present for a non-text theme)"
+      }
     }
   }
 }

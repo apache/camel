@@ -6,10 +6,164 @@
     "title": "Catalog",
     "description": "Information about used Camel artifacts",
     "deprecated": false,
+    "readOnly": true,
     "javaType": "org.apache.camel.catalog.console.CatalogConsole",
     "groupId": "org.apache.camel",
     "artifactId": "camel-catalog-console",
     "version": "4.23.0-SNAPSHOT"
+  },
+  "response": {
+    "type": "object",
+    "properties": {
+      "components": {
+        "type": "array",
+        "items": {
+          "type": "object",
+          "properties": {
+            "groupId": {
+              "type": "string",
+              "description": "The Maven group ID"
+            },
+            "artifactId": {
+              "type": "string",
+              "description": "The Maven artifact ID"
+            },
+            "version": {
+              "type": "string",
+              "description": "The Maven version"
+            },
+            "level": {
+              "type": "string",
+              "description": "The support level, optionally suffixed with -deprecated"
+            },
+            "firstVersion": {
+              "type": "string",
+              "description": "The first Camel version the artifact was introduced in"
+            },
+            "title": {
+              "type": "string",
+              "description": "The artifact title"
+            },
+            "description": {
+              "type": "string",
+              "description": "The artifact description"
+            }
+          }
+        },
+        "description": "The components in use"
+      },
+      "dataformat": {
+        "type": "array",
+        "items": {
+          "type": "object",
+          "properties": {
+            "groupId": {
+              "type": "string",
+              "description": "The Maven group ID"
+            },
+            "artifactId": {
+              "type": "string",
+              "description": "The Maven artifact ID"
+            },
+            "version": {
+              "type": "string",
+              "description": "The Maven version"
+            },
+            "level": {
+              "type": "string",
+              "description": "The support level, optionally suffixed with -deprecated"
+            },
+            "firstVersion": {
+              "type": "string",
+              "description": "The first Camel version the artifact was introduced in"
+            },
+            "title": {
+              "type": "string",
+              "description": "The artifact title"
+            },
+            "description": {
+              "type": "string",
+              "description": "The artifact description"
+            }
+          }
+        },
+        "description": "The data formats in use"
+      },
+      "languages": {
+        "type": "array",
+        "items": {
+          "type": "object",
+          "properties": {
+            "groupId": {
+              "type": "string",
+              "description": "The Maven group ID"
+            },
+            "artifactId": {
+              "type": "string",
+              "description": "The Maven artifact ID"
+            },
+            "version": {
+              "type": "string",
+              "description": "The Maven version"
+            },
+            "level": {
+              "type": "string",
+              "description": "The support level, optionally suffixed with -deprecated"
+            },
+            "firstVersion": {
+              "type": "string",
+              "description": "The first Camel version the artifact was introduced in"
+            },
+            "title": {
+              "type": "string",
+              "description": "The artifact title"
+            },
+            "description": {
+              "type": "string",
+              "description": "The artifact description"
+            }
+          }
+        },
+        "description": "The languages in use"
+      },
+      "others": {
+        "type": "array",
+        "items": {
+          "type": "object",
+          "properties": {
+            "groupId": {
+              "type": "string",
+              "description": "The Maven group ID"
+            },
+            "artifactId": {
+              "type": "string",
+              "description": "The Maven artifact ID"
+            },
+            "version": {
+              "type": "string",
+              "description": "The Maven version"
+            },
+            "level": {
+              "type": "string",
+              "description": "The support level, optionally suffixed with -deprecated"
+            },
+            "firstVersion": {
+              "type": "string",
+              "description": "The first Camel version the artifact was introduced in"
+            },
+            "title": {
+              "type": "string",
+              "description": "The artifact title"
+            },
+            "description": {
+              "type": "string",
+              "description": "The artifact description"
+            }
+          }
+        },
+        "description": "Other miscellaneous artifacts in use, discovered via the classpath"
+      }
+    }
   }
 }
 

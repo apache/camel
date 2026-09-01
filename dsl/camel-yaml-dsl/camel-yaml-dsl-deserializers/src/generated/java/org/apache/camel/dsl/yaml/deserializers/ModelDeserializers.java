@@ -177,7 +177,6 @@ import org.apache.camel.model.errorhandler.JtaTransactionErrorHandlerDefinition;
 import org.apache.camel.model.errorhandler.NoErrorHandlerDefinition;
 import org.apache.camel.model.errorhandler.RefErrorHandlerDefinition;
 import org.apache.camel.model.errorhandler.SpringTransactionErrorHandlerDefinition;
-import org.apache.camel.model.language.CSimpleExpression;
 import org.apache.camel.model.language.ConstantExpression;
 import org.apache.camel.model.language.DatasonnetExpression;
 import org.apache.camel.model.language.ExchangePropertyExpression;
@@ -197,6 +196,7 @@ import org.apache.camel.model.language.MvelExpression;
 import org.apache.camel.model.language.OgnlExpression;
 import org.apache.camel.model.language.Python3Expression;
 import org.apache.camel.model.language.PythonExpression;
+import org.apache.camel.model.language.QuickjsExpression;
 import org.apache.camel.model.language.RefExpression;
 import org.apache.camel.model.language.SimpleExpression;
 import org.apache.camel.model.language.SpELExpression;
@@ -1765,90 +1765,6 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                 }
                 default: {
                     return false;
-                }
-            }
-            return true;
-        }
-    }
-
-    @YamlType(
-            nodes = "csimple",
-            inline = true,
-            types = org.apache.camel.model.language.CSimpleExpression.class,
-            order = org.apache.camel.dsl.yaml.common.YamlDeserializerResolver.ORDER_LOWEST - 1,
-            displayName = "CSimple",
-            description = "Evaluate a compiled simple expression",
-            deprecated = true,
-            properties = {
-                    @YamlProperty(name = "expression", type = "string", required = true, description = "The expression value in your chosen language syntax.", displayName = "Expression"),
-                    @YamlProperty(name = "id", type = "string", description = "The id of this node.", displayName = "Id"),
-                    @YamlProperty(name = "pretty", type = "boolean", defaultValue = "false", description = "To pretty format the output (only JSon or XML supported).", displayName = "Pretty"),
-                    @YamlProperty(name = "resultType", type = "string", description = "The class of the result type (type from output).", displayName = "Result Type"),
-                    @YamlProperty(name = "trim", type = "boolean", defaultValue = "true", description = "Whether to trim the source code to remove leading and trailing whitespaces and line breaks.", displayName = "Trim"),
-                    @YamlProperty(name = "trimResult", type = "boolean", defaultValue = "false", description = "Whether to trim the returned values when this language is in use.", displayName = "Trim Result")
-            }
-    )
-    public static class CSimpleExpressionDeserializer extends YamlDeserializerBase<CSimpleExpression> {
-        public CSimpleExpressionDeserializer() {
-            super(CSimpleExpression.class);
-        }
-
-        @Override
-        protected CSimpleExpression newInstance() {
-            return new CSimpleExpression();
-        }
-
-        @Override
-        protected CSimpleExpression newInstance(String value) {
-            return new CSimpleExpression(value);
-        }
-
-        @Override
-        protected boolean setProperty(CSimpleExpression target, String propertyKey,
-                String propertyName, Node node) {
-            propertyKey = org.apache.camel.util.StringHelper.dashToCamelCase(propertyKey);
-            switch(propertyKey) {
-                case "expression": {
-                    String val = asText(node);
-                    target.setExpression(val);
-                    break;
-                }
-                case "id": {
-                    String val = asText(node);
-                    target.setId(val);
-                    break;
-                }
-                case "pretty": {
-                    String val = asText(node);
-                    target.setPretty(val);
-                    break;
-                }
-                case "resultType": {
-                    String val = asText(node);
-                    target.setResultTypeName(val);
-                    break;
-                }
-                case "trim": {
-                    String val = asText(node);
-                    target.setTrim(val);
-                    break;
-                }
-                case "trimResult": {
-                    String val = asText(node);
-                    target.setTrimResult(val);
-                    break;
-                }
-                default: {
-                    ExpressionDefinition ed = target.getExpressionType();
-                    if (ed != null) {
-                        throw new org.apache.camel.dsl.yaml.common.exception.DuplicateFieldException(node, propertyName, "as an expression");
-                    }
-                    ed = ExpressionDeserializers.constructExpressionType(propertyKey, node);
-                    if (ed != null) {
-                        target.setExpressionType(ed);
-                    } else {
-                        return false;
-                    }
                 }
             }
             return true;
@@ -9557,62 +9473,62 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
             description = "Serializes the message body into a specific data format such as JSON, XML, CSV, or Protobuf for transmission or storage",
             deprecated = false,
             properties = {
-                    @YamlProperty(name = "asn1", type = "object:org.apache.camel.model.dataformat.ASN1DataFormat", oneOf = "dataFormatType"),
-                    @YamlProperty(name = "avro", type = "object:org.apache.camel.model.dataformat.AvroDataFormat", oneOf = "dataFormatType"),
-                    @YamlProperty(name = "barcode", type = "object:org.apache.camel.model.dataformat.BarcodeDataFormat", oneOf = "dataFormatType"),
-                    @YamlProperty(name = "base64", type = "object:org.apache.camel.model.dataformat.Base64DataFormat", oneOf = "dataFormatType"),
-                    @YamlProperty(name = "beanio", type = "object:org.apache.camel.model.dataformat.BeanioDataFormat", oneOf = "dataFormatType"),
-                    @YamlProperty(name = "bindy", type = "object:org.apache.camel.model.dataformat.BindyDataFormat", oneOf = "dataFormatType"),
-                    @YamlProperty(name = "cbor", type = "object:org.apache.camel.model.dataformat.CBORDataFormat", oneOf = "dataFormatType"),
-                    @YamlProperty(name = "crypto", type = "object:org.apache.camel.model.dataformat.CryptoDataFormat", oneOf = "dataFormatType"),
-                    @YamlProperty(name = "csv", type = "object:org.apache.camel.model.dataformat.CsvDataFormat", oneOf = "dataFormatType"),
-                    @YamlProperty(name = "custom", type = "object:org.apache.camel.model.dataformat.CustomDataFormat", oneOf = "dataFormatType"),
+                    @YamlProperty(name = "asn1", type = "object:org.apache.camel.model.dataformat.ASN1DataFormat", required = true, oneOf = "dataFormatType"),
+                    @YamlProperty(name = "avro", type = "object:org.apache.camel.model.dataformat.AvroDataFormat", required = true, oneOf = "dataFormatType"),
+                    @YamlProperty(name = "barcode", type = "object:org.apache.camel.model.dataformat.BarcodeDataFormat", required = true, oneOf = "dataFormatType"),
+                    @YamlProperty(name = "base64", type = "object:org.apache.camel.model.dataformat.Base64DataFormat", required = true, oneOf = "dataFormatType"),
+                    @YamlProperty(name = "beanio", type = "object:org.apache.camel.model.dataformat.BeanioDataFormat", required = true, oneOf = "dataFormatType"),
+                    @YamlProperty(name = "bindy", type = "object:org.apache.camel.model.dataformat.BindyDataFormat", required = true, oneOf = "dataFormatType"),
+                    @YamlProperty(name = "cbor", type = "object:org.apache.camel.model.dataformat.CBORDataFormat", required = true, oneOf = "dataFormatType"),
+                    @YamlProperty(name = "crypto", type = "object:org.apache.camel.model.dataformat.CryptoDataFormat", required = true, oneOf = "dataFormatType"),
+                    @YamlProperty(name = "csv", type = "object:org.apache.camel.model.dataformat.CsvDataFormat", required = true, oneOf = "dataFormatType"),
+                    @YamlProperty(name = "custom", type = "object:org.apache.camel.model.dataformat.CustomDataFormat", required = true, oneOf = "dataFormatType"),
                     @YamlProperty(name = "description", type = "string", description = "The description for this node", displayName = "Description"),
-                    @YamlProperty(name = "dfdl", type = "object:org.apache.camel.model.dataformat.DfdlDataFormat", oneOf = "dataFormatType"),
+                    @YamlProperty(name = "dfdl", type = "object:org.apache.camel.model.dataformat.DfdlDataFormat", required = true, oneOf = "dataFormatType"),
                     @YamlProperty(name = "disabled", type = "boolean", defaultValue = "false", description = "Whether to disable this EIP from the route during build time. Once an EIP has been disabled then it cannot be enabled later at runtime.", displayName = "Disabled"),
-                    @YamlProperty(name = "fhirJson", type = "object:org.apache.camel.model.dataformat.FhirJsonDataFormat", oneOf = "dataFormatType"),
-                    @YamlProperty(name = "fhirXml", type = "object:org.apache.camel.model.dataformat.FhirXmlDataFormat", oneOf = "dataFormatType"),
-                    @YamlProperty(name = "flatpack", type = "object:org.apache.camel.model.dataformat.FlatpackDataFormat", oneOf = "dataFormatType"),
-                    @YamlProperty(name = "fory", type = "object:org.apache.camel.model.dataformat.ForyDataFormat", oneOf = "dataFormatType"),
-                    @YamlProperty(name = "grok", type = "object:org.apache.camel.model.dataformat.GrokDataFormat", oneOf = "dataFormatType"),
-                    @YamlProperty(name = "groovyJson", type = "object:org.apache.camel.model.dataformat.GroovyJSonDataFormat", oneOf = "dataFormatType"),
-                    @YamlProperty(name = "groovyXml", type = "object:org.apache.camel.model.dataformat.GroovyXmlDataFormat", oneOf = "dataFormatType"),
-                    @YamlProperty(name = "gzipDeflater", type = "object:org.apache.camel.model.dataformat.GzipDeflaterDataFormat", oneOf = "dataFormatType"),
-                    @YamlProperty(name = "hl7", type = "object:org.apache.camel.model.dataformat.HL7DataFormat", oneOf = "dataFormatType"),
-                    @YamlProperty(name = "ical", type = "object:org.apache.camel.model.dataformat.IcalDataFormat", oneOf = "dataFormatType"),
+                    @YamlProperty(name = "fhirJson", type = "object:org.apache.camel.model.dataformat.FhirJsonDataFormat", required = true, oneOf = "dataFormatType"),
+                    @YamlProperty(name = "fhirXml", type = "object:org.apache.camel.model.dataformat.FhirXmlDataFormat", required = true, oneOf = "dataFormatType"),
+                    @YamlProperty(name = "flatpack", type = "object:org.apache.camel.model.dataformat.FlatpackDataFormat", required = true, oneOf = "dataFormatType"),
+                    @YamlProperty(name = "fory", type = "object:org.apache.camel.model.dataformat.ForyDataFormat", required = true, oneOf = "dataFormatType"),
+                    @YamlProperty(name = "grok", type = "object:org.apache.camel.model.dataformat.GrokDataFormat", required = true, oneOf = "dataFormatType"),
+                    @YamlProperty(name = "groovyJson", type = "object:org.apache.camel.model.dataformat.GroovyJSonDataFormat", required = true, oneOf = "dataFormatType"),
+                    @YamlProperty(name = "groovyXml", type = "object:org.apache.camel.model.dataformat.GroovyXmlDataFormat", required = true, oneOf = "dataFormatType"),
+                    @YamlProperty(name = "gzipDeflater", type = "object:org.apache.camel.model.dataformat.GzipDeflaterDataFormat", required = true, oneOf = "dataFormatType"),
+                    @YamlProperty(name = "hl7", type = "object:org.apache.camel.model.dataformat.HL7DataFormat", required = true, oneOf = "dataFormatType"),
+                    @YamlProperty(name = "ical", type = "object:org.apache.camel.model.dataformat.IcalDataFormat", required = true, oneOf = "dataFormatType"),
                     @YamlProperty(name = "id", type = "string", description = "The id of this node", displayName = "Id"),
-                    @YamlProperty(name = "iso8583", type = "object:org.apache.camel.model.dataformat.Iso8583DataFormat", oneOf = "dataFormatType"),
-                    @YamlProperty(name = "jacksonXml", type = "object:org.apache.camel.model.dataformat.JacksonXMLDataFormat", oneOf = "dataFormatType"),
-                    @YamlProperty(name = "jaxb", type = "object:org.apache.camel.model.dataformat.JaxbDataFormat", oneOf = "dataFormatType"),
-                    @YamlProperty(name = "json", type = "object:org.apache.camel.model.dataformat.JsonDataFormat", oneOf = "dataFormatType"),
-                    @YamlProperty(name = "jsonApi", type = "object:org.apache.camel.model.dataformat.JsonApiDataFormat", oneOf = "dataFormatType"),
-                    @YamlProperty(name = "lzf", type = "object:org.apache.camel.model.dataformat.LZFDataFormat", oneOf = "dataFormatType"),
-                    @YamlProperty(name = "mimeMultipart", type = "object:org.apache.camel.model.dataformat.MimeMultipartDataFormat", oneOf = "dataFormatType"),
+                    @YamlProperty(name = "iso8583", type = "object:org.apache.camel.model.dataformat.Iso8583DataFormat", required = true, oneOf = "dataFormatType"),
+                    @YamlProperty(name = "jacksonXml", type = "object:org.apache.camel.model.dataformat.JacksonXMLDataFormat", required = true, oneOf = "dataFormatType"),
+                    @YamlProperty(name = "jaxb", type = "object:org.apache.camel.model.dataformat.JaxbDataFormat", required = true, oneOf = "dataFormatType"),
+                    @YamlProperty(name = "json", type = "object:org.apache.camel.model.dataformat.JsonDataFormat", required = true, oneOf = "dataFormatType"),
+                    @YamlProperty(name = "jsonApi", type = "object:org.apache.camel.model.dataformat.JsonApiDataFormat", required = true, oneOf = "dataFormatType"),
+                    @YamlProperty(name = "lzf", type = "object:org.apache.camel.model.dataformat.LZFDataFormat", required = true, oneOf = "dataFormatType"),
+                    @YamlProperty(name = "mimeMultipart", type = "object:org.apache.camel.model.dataformat.MimeMultipartDataFormat", required = true, oneOf = "dataFormatType"),
                     @YamlProperty(name = "note", type = "string", description = "The note for this node", displayName = "Note"),
-                    @YamlProperty(name = "ocsf", type = "object:org.apache.camel.model.dataformat.OcsfDataFormat", oneOf = "dataFormatType"),
-                    @YamlProperty(name = "parquetAvro", type = "object:org.apache.camel.model.dataformat.ParquetAvroDataFormat", oneOf = "dataFormatType"),
-                    @YamlProperty(name = "pgp", type = "object:org.apache.camel.model.dataformat.PGPDataFormat", oneOf = "dataFormatType"),
-                    @YamlProperty(name = "pqc", type = "object:org.apache.camel.model.dataformat.PQCDataFormat", oneOf = "dataFormatType"),
-                    @YamlProperty(name = "protobuf", type = "object:org.apache.camel.model.dataformat.ProtobufDataFormat", oneOf = "dataFormatType"),
-                    @YamlProperty(name = "rss", type = "object:org.apache.camel.model.dataformat.RssDataFormat", oneOf = "dataFormatType"),
-                    @YamlProperty(name = "smooks", type = "object:org.apache.camel.model.dataformat.SmooksDataFormat", oneOf = "dataFormatType"),
-                    @YamlProperty(name = "soap", type = "object:org.apache.camel.model.dataformat.SoapDataFormat", oneOf = "dataFormatType"),
-                    @YamlProperty(name = "swiftMt", type = "object:org.apache.camel.model.dataformat.SwiftMtDataFormat", oneOf = "dataFormatType"),
-                    @YamlProperty(name = "swiftMx", type = "object:org.apache.camel.model.dataformat.SwiftMxDataFormat", oneOf = "dataFormatType"),
-                    @YamlProperty(name = "syslog", type = "object:org.apache.camel.model.dataformat.SyslogDataFormat", oneOf = "dataFormatType"),
-                    @YamlProperty(name = "tarFile", type = "object:org.apache.camel.model.dataformat.TarFileDataFormat", oneOf = "dataFormatType"),
-                    @YamlProperty(name = "thrift", type = "object:org.apache.camel.model.dataformat.ThriftDataFormat", oneOf = "dataFormatType"),
-                    @YamlProperty(name = "toon", type = "object:org.apache.camel.model.dataformat.ToonDataFormat", oneOf = "dataFormatType"),
-                    @YamlProperty(name = "ubl", type = "object:org.apache.camel.model.dataformat.UblDataFormat", oneOf = "dataFormatType"),
-                    @YamlProperty(name = "univocityCsv", type = "object:org.apache.camel.model.dataformat.UniVocityCsvDataFormat", oneOf = "dataFormatType"),
-                    @YamlProperty(name = "univocityFixed", type = "object:org.apache.camel.model.dataformat.UniVocityFixedDataFormat", oneOf = "dataFormatType"),
-                    @YamlProperty(name = "univocityTsv", type = "object:org.apache.camel.model.dataformat.UniVocityTsvDataFormat", oneOf = "dataFormatType"),
+                    @YamlProperty(name = "ocsf", type = "object:org.apache.camel.model.dataformat.OcsfDataFormat", required = true, oneOf = "dataFormatType"),
+                    @YamlProperty(name = "parquetAvro", type = "object:org.apache.camel.model.dataformat.ParquetAvroDataFormat", required = true, oneOf = "dataFormatType"),
+                    @YamlProperty(name = "pgp", type = "object:org.apache.camel.model.dataformat.PGPDataFormat", required = true, oneOf = "dataFormatType"),
+                    @YamlProperty(name = "pqc", type = "object:org.apache.camel.model.dataformat.PQCDataFormat", required = true, oneOf = "dataFormatType"),
+                    @YamlProperty(name = "protobuf", type = "object:org.apache.camel.model.dataformat.ProtobufDataFormat", required = true, oneOf = "dataFormatType"),
+                    @YamlProperty(name = "rss", type = "object:org.apache.camel.model.dataformat.RssDataFormat", required = true, oneOf = "dataFormatType"),
+                    @YamlProperty(name = "smooks", type = "object:org.apache.camel.model.dataformat.SmooksDataFormat", required = true, oneOf = "dataFormatType"),
+                    @YamlProperty(name = "soap", type = "object:org.apache.camel.model.dataformat.SoapDataFormat", required = true, oneOf = "dataFormatType"),
+                    @YamlProperty(name = "swiftMt", type = "object:org.apache.camel.model.dataformat.SwiftMtDataFormat", required = true, oneOf = "dataFormatType"),
+                    @YamlProperty(name = "swiftMx", type = "object:org.apache.camel.model.dataformat.SwiftMxDataFormat", required = true, oneOf = "dataFormatType"),
+                    @YamlProperty(name = "syslog", type = "object:org.apache.camel.model.dataformat.SyslogDataFormat", required = true, oneOf = "dataFormatType"),
+                    @YamlProperty(name = "tarFile", type = "object:org.apache.camel.model.dataformat.TarFileDataFormat", required = true, oneOf = "dataFormatType"),
+                    @YamlProperty(name = "thrift", type = "object:org.apache.camel.model.dataformat.ThriftDataFormat", required = true, oneOf = "dataFormatType"),
+                    @YamlProperty(name = "toon", type = "object:org.apache.camel.model.dataformat.ToonDataFormat", required = true, oneOf = "dataFormatType"),
+                    @YamlProperty(name = "ubl", type = "object:org.apache.camel.model.dataformat.UblDataFormat", required = true, oneOf = "dataFormatType"),
+                    @YamlProperty(name = "univocityCsv", type = "object:org.apache.camel.model.dataformat.UniVocityCsvDataFormat", required = true, oneOf = "dataFormatType"),
+                    @YamlProperty(name = "univocityFixed", type = "object:org.apache.camel.model.dataformat.UniVocityFixedDataFormat", required = true, oneOf = "dataFormatType"),
+                    @YamlProperty(name = "univocityTsv", type = "object:org.apache.camel.model.dataformat.UniVocityTsvDataFormat", required = true, oneOf = "dataFormatType"),
                     @YamlProperty(name = "variableReceive", type = "string", description = "To use a variable to store the received message body (only body, not headers). This makes it handy to use variables for user data and to easily control what data to use for sending and receiving.", displayName = "Variable Receive"),
                     @YamlProperty(name = "variableSend", type = "string", description = "To use a variable as the source for the message body to send. This makes it handy to use variables for user data and to easily control what data to use for sending and receiving.", displayName = "Variable Send"),
-                    @YamlProperty(name = "xmlSecurity", type = "object:org.apache.camel.model.dataformat.XMLSecurityDataFormat", oneOf = "dataFormatType"),
-                    @YamlProperty(name = "yaml", type = "object:org.apache.camel.model.dataformat.YAMLDataFormat", oneOf = "dataFormatType"),
-                    @YamlProperty(name = "zipDeflater", type = "object:org.apache.camel.model.dataformat.ZipDeflaterDataFormat", oneOf = "dataFormatType"),
-                    @YamlProperty(name = "zipFile", type = "object:org.apache.camel.model.dataformat.ZipFileDataFormat", oneOf = "dataFormatType")
+                    @YamlProperty(name = "xmlSecurity", type = "object:org.apache.camel.model.dataformat.XMLSecurityDataFormat", required = true, oneOf = "dataFormatType"),
+                    @YamlProperty(name = "yaml", type = "object:org.apache.camel.model.dataformat.YAMLDataFormat", required = true, oneOf = "dataFormatType"),
+                    @YamlProperty(name = "zipDeflater", type = "object:org.apache.camel.model.dataformat.ZipDeflaterDataFormat", required = true, oneOf = "dataFormatType"),
+                    @YamlProperty(name = "zipFile", type = "object:org.apache.camel.model.dataformat.ZipFileDataFormat", required = true, oneOf = "dataFormatType")
             }
     )
     public static class MarshalDefinitionDeserializer extends YamlDeserializerBase<MarshalDefinition> {
@@ -11369,6 +11285,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     @YamlProperty(name = "keyUserid", type = "string", description = "The user ID of the key in the PGP keyring used during encryption. Can also be only a part of a user ID.", displayName = "Key Userid"),
                     @YamlProperty(name = "password", type = "string", description = "Password used when opening the private key (not used for encryption).", displayName = "Password"),
                     @YamlProperty(name = "provider", type = "string", description = "Java Cryptography Extension (JCE) provider, default is Bouncy Castle (BC). Alternatively you can use, for example, the IAIK JCE provider.", displayName = "Provider"),
+                    @YamlProperty(name = "requireIntegrityProtection", type = "boolean", defaultValue = "true", description = "Whether a message must be integrity protected in order to be decrypted. The legacy symmetrically encrypted data packet carries no modification detection code, and the packet type is chosen by whoever produced the message, so accepting it lets the sender decide whether the integrity check applies. Set to false only to interoperate with a sender that still emits the legacy packet.", displayName = "Require Integrity Protection"),
                     @YamlProperty(name = "signatureKeyFileName", type = "string", description = "Filename of the keyring to use for signing (during encryption) or for signature verification (during decryption); must be accessible as a classpath resource (but you can specify a location in the file system by using the file: prefix).", displayName = "Signature Key File Name"),
                     @YamlProperty(name = "signatureKeyRing", type = "string", description = "Keyring used for signing/verifying as byte array. You cannot set the signatureKeyFileName and signatureKeyRing at the same time.", displayName = "Signature Key Ring"),
                     @YamlProperty(name = "signatureKeyUserid", type = "string", description = "User ID of the key in the PGP keyring used for signing (during encryption) or signature verification (during decryption).", displayName = "Signature Key Userid"),
@@ -11439,6 +11356,11 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                 case "provider": {
                     String val = asText(node);
                     target.setProvider(val);
+                    break;
+                }
+                case "requireIntegrityProtection": {
+                    String val = asText(node);
+                    target.setRequireIntegrityProtection(val);
                     break;
                 }
                 case "signatureKeyFileName": {
@@ -13181,6 +13103,78 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
 
         @Override
         protected boolean setProperty(PythonExpression target, String propertyKey,
+                String propertyName, Node node) {
+            propertyKey = org.apache.camel.util.StringHelper.dashToCamelCase(propertyKey);
+            switch(propertyKey) {
+                case "expression": {
+                    String val = asText(node);
+                    target.setExpression(val);
+                    break;
+                }
+                case "id": {
+                    String val = asText(node);
+                    target.setId(val);
+                    break;
+                }
+                case "resultType": {
+                    String val = asText(node);
+                    target.setResultTypeName(val);
+                    break;
+                }
+                case "trim": {
+                    String val = asText(node);
+                    target.setTrim(val);
+                    break;
+                }
+                default: {
+                    ExpressionDefinition ed = target.getExpressionType();
+                    if (ed != null) {
+                        throw new org.apache.camel.dsl.yaml.common.exception.DuplicateFieldException(node, propertyName, "as an expression");
+                    }
+                    ed = ExpressionDeserializers.constructExpressionType(propertyKey, node);
+                    if (ed != null) {
+                        target.setExpressionType(ed);
+                    } else {
+                        return false;
+                    }
+                }
+            }
+            return true;
+        }
+    }
+
+    @YamlType(
+            nodes = "quickjs",
+            inline = true,
+            types = org.apache.camel.model.language.QuickjsExpression.class,
+            order = org.apache.camel.dsl.yaml.common.YamlDeserializerResolver.ORDER_LOWEST - 1,
+            displayName = "QuickJS",
+            description = "Evaluates a JavaScript expression using QuickJS4J",
+            deprecated = false,
+            properties = {
+                    @YamlProperty(name = "expression", type = "string", required = true, description = "The expression value in your chosen language syntax.", displayName = "Expression"),
+                    @YamlProperty(name = "id", type = "string", description = "The id of this node.", displayName = "Id"),
+                    @YamlProperty(name = "resultType", type = "string", description = "The class of the result type (type from output).", displayName = "Result Type"),
+                    @YamlProperty(name = "trim", type = "boolean", defaultValue = "true", description = "Whether to trim the source code to remove leading and trailing whitespaces and line breaks.", displayName = "Trim")
+            }
+    )
+    public static class QuickjsExpressionDeserializer extends YamlDeserializerBase<QuickjsExpression> {
+        public QuickjsExpressionDeserializer() {
+            super(QuickjsExpression.class);
+        }
+
+        @Override
+        protected QuickjsExpression newInstance() {
+            return new QuickjsExpression();
+        }
+
+        @Override
+        protected QuickjsExpression newInstance(String value) {
+            return new QuickjsExpression(value);
+        }
+
+        @Override
+        protected boolean setProperty(QuickjsExpression target, String propertyKey,
                 String propertyName, Node node) {
             propertyKey = org.apache.camel.util.StringHelper.dashToCamelCase(propertyKey);
             switch(propertyKey) {
@@ -21129,6 +21123,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     @YamlProperty(name = "id", type = "string", description = "The id of this node.", displayName = "Id"),
                     @YamlProperty(name = "mode", type = "enum:i,w,u,t", defaultValue = "i", description = "The extraction mode. The available extraction modes are: i - injecting the contextual namespace bindings into the extracted token (default), w - wrapping the extracted token in its ancestor context, u - unwrapping the extracted token to its child content, t - extracting the text content of the specified element.", displayName = "Mode"),
                     @YamlProperty(name = "namespace", type = "array:org.apache.camel.model.PropertyDefinition", description = "Injects the XML Namespaces of prefix to uri mappings.", displayName = "Namespace"),
+                    @YamlProperty(name = "namespacesRef", type = "string", description = "Reference to a org.apache.camel.support.builder.Namespaces bean in the registry to use for the XML Namespaces of prefix to uri mappings.", displayName = "Namespaces Ref"),
                     @YamlProperty(name = "resultType", type = "string", description = "The class of the result type (type from output).", displayName = "Result Type"),
                     @YamlProperty(name = "source", type = "string", description = "Source to use, instead of message body. You can prefix with variable:, header:, or property: to specify kind of source. Otherwise, the source is assumed to be a variable. Use empty or null to use default source, which is the message body.", displayName = "Source"),
                     @YamlProperty(name = "trim", type = "boolean", defaultValue = "true", description = "Whether to trim the source code to remove leading and trailing whitespaces and line breaks.", displayName = "Trim")
@@ -21179,6 +21174,11 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     target.setNamespace(val);
                     break;
                 }
+                case "namespacesRef": {
+                    String val = asText(node);
+                    target.setNamespacesRef(val);
+                    break;
+                }
                 case "resultType": {
                     String val = asText(node);
                     target.setResultTypeName(val);
@@ -21226,6 +21226,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     @YamlProperty(name = "id", type = "string", description = "The id of this node.", displayName = "Id"),
                     @YamlProperty(name = "logNamespaces", type = "boolean", defaultValue = "false", description = "Whether to log namespaces which can assist during troubleshooting.", displayName = "Log Namespaces"),
                     @YamlProperty(name = "namespace", type = "array:org.apache.camel.model.PropertyDefinition", description = "Injects the XML Namespaces of prefix to uri mappings.", displayName = "Namespace"),
+                    @YamlProperty(name = "namespacesRef", type = "string", description = "Reference to a org.apache.camel.support.builder.Namespaces bean in the registry to use for the XML Namespaces of prefix to uri mappings.", displayName = "Namespaces Ref"),
                     @YamlProperty(name = "objectModel", type = "string", description = "The XPath object model to use.", displayName = "Object Model"),
                     @YamlProperty(name = "preCompile", type = "boolean", defaultValue = "true", description = "Whether to enable pre-compiling the xpath expression during initialization phase. pre-compile is enabled by default.", displayName = "Pre Compile"),
                     @YamlProperty(name = "resultQName", type = "enum:NUMBER,STRING,BOOLEAN,NODESET,NODE", defaultValue = "NODESET", description = "Sets the output type supported by XPath.", displayName = "Result QName"),
@@ -21284,6 +21285,11 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                 case "namespace": {
                     java.util.List<org.apache.camel.model.PropertyDefinition> val = asFlatList(node, org.apache.camel.model.PropertyDefinition.class);
                     target.setNamespace(val);
+                    break;
+                }
+                case "namespacesRef": {
+                    String val = asText(node);
+                    target.setNamespacesRef(val);
                     break;
                 }
                 case "objectModel": {
@@ -21356,6 +21362,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     @YamlProperty(name = "expression", type = "string", required = true, description = "The expression value in your chosen language syntax.", displayName = "Expression"),
                     @YamlProperty(name = "id", type = "string", description = "The id of this node.", displayName = "Id"),
                     @YamlProperty(name = "namespace", type = "array:org.apache.camel.model.PropertyDefinition", description = "Injects the XML Namespaces of prefix to uri mappings.", displayName = "Namespace"),
+                    @YamlProperty(name = "namespacesRef", type = "string", description = "Reference to a org.apache.camel.support.builder.Namespaces bean in the registry to use for the XML Namespaces of prefix to uri mappings.", displayName = "Namespaces Ref"),
                     @YamlProperty(name = "resultType", type = "string", description = "The class of the result type (type from output).", displayName = "Result Type"),
                     @YamlProperty(name = "source", type = "string", description = "Source to use, instead of message body. You can prefix with variable:, header:, or property: to specify kind of source. Otherwise, the source is assumed to be a variable. Use empty or null to use default source, which is the message body.", displayName = "Source"),
                     @YamlProperty(name = "trim", type = "boolean", defaultValue = "true", description = "Whether to trim the source code to remove leading and trailing whitespaces and line breaks.", displayName = "Trim")
@@ -21399,6 +21406,11 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                 case "namespace": {
                     java.util.List<org.apache.camel.model.PropertyDefinition> val = asFlatList(node, org.apache.camel.model.PropertyDefinition.class);
                     target.setNamespace(val);
+                    break;
+                }
+                case "namespacesRef": {
+                    String val = asText(node);
+                    target.setNamespacesRef(val);
                     break;
                 }
                 case "resultType": {

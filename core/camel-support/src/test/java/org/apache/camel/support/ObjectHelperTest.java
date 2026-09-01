@@ -63,6 +63,35 @@ class ObjectHelperTest {
     }
 
     @Test
+    @DisplayName("Tests that isLongNumber returns true for integers that fit in a long")
+    void isLongNumberIntegers() {
+        assertTrue(ObjectHelper.isLongNumber("1234"));
+        assertTrue(ObjectHelper.isLongNumber("-1234"));
+        assertTrue(ObjectHelper.isLongNumber("0"));
+        assertTrue(ObjectHelper.isLongNumber("9223372036854775807"));
+        assertTrue(ObjectHelper.isLongNumber("-9223372036854775808"));
+        assertTrue(ObjectHelper.isLongNumber("00000000000000000000001"));
+    }
+
+    @Test
+    @DisplayName("Tests that isLongNumber returns false for integers with too many digits")
+    void isLongNumberTooBig() {
+        assertFalse(ObjectHelper.isLongNumber("9223372036854775808"));
+        assertFalse(ObjectHelper.isLongNumber("-9223372036854775809"));
+        assertFalse(ObjectHelper.isLongNumber("12345678901234567890"));
+    }
+
+    @Test
+    @DisplayName("Tests that isLongNumber returns false for non-integers")
+    void isLongNumberNonIntegers() {
+        assertFalse(ObjectHelper.isLongNumber(""));
+        assertFalse(ObjectHelper.isLongNumber(" "));
+        assertFalse(ObjectHelper.isLongNumber(null));
+        assertFalse(ObjectHelper.isLongNumber("ABC"));
+        assertFalse(ObjectHelper.isLongNumber("12.34"));
+    }
+
+    @Test
     @DisplayName("Tests that isFloatingNumber returns true for empty, space or null")
     void isFloatingNumberEmpty() {
         assertFalse(ObjectHelper.isFloatingNumber(""));

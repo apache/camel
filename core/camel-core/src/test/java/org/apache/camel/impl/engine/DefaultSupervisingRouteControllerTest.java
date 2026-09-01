@@ -26,6 +26,7 @@ import java.util.concurrent.TimeUnit;
 import org.apache.camel.Consumer;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Endpoint;
+import org.apache.camel.FailedToStartRouteException;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
@@ -42,8 +43,8 @@ import org.junit.jupiter.api.condition.DisabledOnOs;
 
 import static org.awaitility.Awaitility.await;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @DisabledOnOs(architectures = { "s390x" },
               disabledReason = "This test does not run reliably on s390x (see CAMEL-21438)")
@@ -106,9 +107,9 @@ public class DefaultSupervisingRouteControllerTest extends ContextTestSupport {
                 .atMost(Duration.ofMillis(src.getInitialDelay() + src.getBackOffDelay() * (src.getBackOffMaxAttempts() + 1)))
                 .untilAsserted(() -> assertNotNull(src.getRestartException("cake")));
         Throwable e = src.getRestartException("cake");
-        assertEquals("Cannot start", e.getMessage());
-        boolean b = e instanceof IllegalArgumentException;
-        assertTrue(b);
+        assertInstanceOf(FailedToStartRouteException.class, e);
+        assertInstanceOf(IllegalArgumentException.class, e.getCause());
+        assertEquals("Cannot start", e.getCause().getMessage());
 
         // bar is no auto startup
         assertEquals("Stopped", context.getRouteController().getRouteStatus("bar").toString());

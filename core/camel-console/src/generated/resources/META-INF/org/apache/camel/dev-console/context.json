@@ -6,10 +6,212 @@
     "title": "CamelContext",
     "description": "Overall information about the CamelContext",
     "deprecated": false,
+    "readOnly": true,
     "javaType": "org.apache.camel.impl.console.ContextDevConsole",
     "groupId": "org.apache.camel",
     "artifactId": "camel-console",
     "version": "4.23.0-SNAPSHOT"
+  },
+  "response": {
+    "type": "object",
+    "properties": {
+      "name": {
+        "type": "string",
+        "description": "The CamelContext name"
+      },
+      "description": {
+        "type": "string",
+        "description": "The CamelContext description (only present when configured)"
+      },
+      "profile": {
+        "type": "string",
+        "description": "The active profile (only present when configured)"
+      },
+      "version": {
+        "type": "string",
+        "description": "The Camel version"
+      },
+      "state": {
+        "type": "string",
+        "description": "The CamelContext state"
+      },
+      "phase": {
+        "type": "integer",
+        "description": "The CamelContext lifecycle phase"
+      },
+      "startTimestamp": {
+        "type": "integer",
+        "description": "Epoch time in milliseconds the CamelContext was started (only present once started)"
+      },
+      "uptime": {
+        "type": "integer",
+        "description": "Uptime in milliseconds"
+      },
+      "devMode": {
+        "type": "boolean",
+        "description": "Whether dev mode (live reload) is active"
+      },
+      "statistics": {
+        "type": "object",
+        "properties": {
+          "routesTotal": {
+            "type": "integer",
+            "description": "Total number of routes"
+          },
+          "routesStarted": {
+            "type": "integer",
+            "description": "Number of started routes"
+          },
+          "load01": {
+            "type": "string",
+            "description": "1 minute load average (only present when available)"
+          },
+          "load05": {
+            "type": "string",
+            "description": "5 minute load average (only present when available)"
+          },
+          "load15": {
+            "type": "string",
+            "description": "15 minute load average (only present when available)"
+          },
+          "exchangesThroughput": {
+            "type": "string",
+            "description": "Messages per second throughput (only present when available)"
+          },
+          "idleSince": {
+            "type": "integer",
+            "description": "Epoch time in milliseconds since the context has been idle"
+          },
+          "exchangesTotal": {
+            "type": "integer",
+            "description": "Total number of exchanges"
+          },
+          "exchangesFailed": {
+            "type": "integer",
+            "description": "Number of failed exchanges"
+          },
+          "exchangesInflight": {
+            "type": "integer",
+            "description": "Number of inflight exchanges"
+          },
+          "remoteExchangesTotal": {
+            "type": "integer",
+            "description": "Total number of remote exchanges"
+          },
+          "remoteExchangesFailed": {
+            "type": "integer",
+            "description": "Number of failed remote exchanges"
+          },
+          "remoteExchangesInflight": {
+            "type": "integer",
+            "description": "Number of inflight remote exchanges"
+          },
+          "meanProcessingTime": {
+            "type": "integer",
+            "description": "Mean processing time in milliseconds"
+          },
+          "maxProcessingTime": {
+            "type": "integer",
+            "description": "Max processing time in milliseconds"
+          },
+          "minProcessingTime": {
+            "type": "integer",
+            "description": "Min processing time in milliseconds"
+          },
+          "p50ProcessingTime": {
+            "type": "integer",
+            "description": "50th percentile processing time in milliseconds (only present when available)"
+          },
+          "p95ProcessingTime": {
+            "type": "integer",
+            "description": "95th percentile processing time in milliseconds (only present when available)"
+          },
+          "p99ProcessingTime": {
+            "type": "integer",
+            "description": "99th percentile processing time in milliseconds (only present when available)"
+          },
+          "lastProcessingTime": {
+            "type": "integer",
+            "description": "Processing time in milliseconds of the last exchange (only present once an exchange has completed)"
+          },
+          "deltaProcessingTime": {
+            "type": "integer",
+            "description": "Difference in processing time in milliseconds since the previous exchange (only present once an exchange has completed)"
+          },
+          "lastCreatedExchangeTimestamp": {
+            "type": "integer",
+            "description": "Epoch time in milliseconds the last exchange was created (only present once an exchange has been created)"
+          },
+          "lastCompletedExchangeTimestamp": {
+            "type": "integer",
+            "description": "Epoch time in milliseconds the last exchange completed (only present once an exchange has completed)"
+          },
+          "lastFailureHandledExchangeTimestamp": {
+            "type": "integer",
+            "description": "Epoch time in milliseconds the last exchange failure was handled (only present once one has occurred)"
+          },
+          "lastFailedExchangeTimestamp": {
+            "type": "integer",
+            "description": "Epoch time in milliseconds the last exchange failed (only present once one has occurred)"
+          },
+          "reload": {
+            "type": "object",
+            "properties": {
+              "reloaded": {
+                "type": "integer",
+                "description": "Number of successful reloads"
+              },
+              "failed": {
+                "type": "integer",
+                "description": "Number of failed reloads"
+              },
+              "lastError": {
+                "type": "object",
+                "properties": {
+                  "message": {
+                    "type": "string",
+                    "description": "The error message"
+                  },
+                  "stackTrace": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    },
+                    "description": "The error stack trace, one entry per line"
+                  }
+                },
+                "description": "The last reload error (only present when a reload has failed)"
+              }
+            },
+            "required": [
+              "reloaded",
+              "failed"
+            ],
+            "description": "Reload statistics"
+          }
+        },
+        "required": [
+          "routesTotal",
+          "routesStarted",
+          "idleSince",
+          "exchangesTotal",
+          "exchangesFailed",
+          "exchangesInflight",
+          "remoteExchangesTotal",
+          "remoteExchangesFailed",
+          "remoteExchangesInflight",
+          "meanProcessingTime",
+          "maxProcessingTime",
+          "minProcessingTime"
+        ],
+        "description": "Runtime statistics (only present when management is enabled)"
+      }
+    },
+    "required": [
+      "phase",
+      "uptime",
+      "devMode"
+    ]
   }
 }
 

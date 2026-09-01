@@ -13,6 +13,18 @@ See the xref:camel-upgrade-recipes-tool.adoc[documentation] page for details.
 
 == Upgrading from 4.22.0 to 4.22.1
 
+=== camel-exec
+
+`allowControlHeaders` is now annotated `security = "insecure:dev"`.
+With `camel.main.profile = prod` the default policy for that category is `fail`,
+so an endpoint or component that sets `allowControlHeaders=true` will not start
+unless you relax `camel.security.insecureDevPolicy`.
+
+When the flag is `false` (the default), any remaining `CamelExecCommand*`,
+`CamelExecExitValues`, or `CamelExecUseStderrOnEmptyStdout` headers are ignored
+and a WARN is logged once per exec endpoint. Those headers never overrode the
+URI without the flag; they were just silent before.
+
 === camel-ftp, camel-sftp, camel-ftps, camel-mina-sftp, camel-azure-files, camel-smb
 
 The remote-file consumers now ensure the path resolved for a polled file stays within the directory being
@@ -54,6 +66,14 @@ Setting the `serializer` option to a custom `RedisSerializer` bypasses the filte
 Camel then no longer controls how the payload is read.
 
 == Upgrading Camel 4.21 to 4.22
+
+=== camel-tika
+
+The `tikaConfig` and `tikaConfigUri` component options are deprecated for removal in Camel 4.23.
+Apache Tika 4 removes the `TikaConfig` class and XML configuration support; Camel 4.23 provides the
+replacement `tikaLoader` and `tikaConfigFile` options based on Tika's `TikaLoader` and JSON configuration.
+See the https://tika.apache.org/docs/4.0.x/migration-to-4x/migrating-to-4x.html[Tika 4 migration guide]
+for migration details.
 
 === camel-reactive-executor-tomcat
 

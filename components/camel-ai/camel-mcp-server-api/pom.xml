@@ -29,7 +29,7 @@
     <artifactId>camel-mcp-server-api</artifactId>
     <packaging>jar</packaging>
     <name>Camel :: AI :: MCP Server API</name>
-    <description>Runtime-agnostic bridge and engine SPI to expose ai-tool routes as MCP tools</description>
+    <description>Runtime-agnostic bridge and engine SPI to expose ai-tool and ai-resource routes over MCP</description>
 
     <properties>
         <firstVersion>4.22.0</firstVersion>
@@ -45,6 +45,10 @@
         <dependency>
             <groupId>org.apache.camel</groupId>
             <artifactId>camel-ai-tool</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.camel</groupId>
+            <artifactId>camel-ai-resource</artifactId>
         </dependency>
 
         <!-- test dependencies -->

@@ -2,7 +2,7 @@
 :doctitle: MCP Server
 :shortname: mcp-server
 :artifactid: camel-mcp-server
-:description: Expose ai-tool routes as MCP tools over streamable HTTP
+:description: Expose ai-tool routes as MCP tools and ai-resource routes as MCP resources over streamable HTTP
 :since: 4.22
 :supportlevel: Preview
 :tabs-sync-option:
@@ -10,12 +10,14 @@
 *Since Camel {since}*
 
 The camel-mcp-server module exposes Camel routes registered via the
-xref:ROOT:ai-tool-component.adoc[ai-tool] component as tools of a
+xref:ROOT:ai-tool-component.adoc[ai-tool] and xref:ROOT:ai-resource-component.adoc[ai-resource]
+components as tools and resources of a
 https://modelcontextprotocol.io[Model Context Protocol] (MCP) server, served
 over MCP streamable HTTP. No route is needed for the server itself: add the
 dependency, configure which tags to expose, and every matching `ai-tool` route
-becomes an MCP tool that any MCP client (another Camel application, an IDE, a
-coding agent) can discover and call.
+becomes an MCP tool and every matching `ai-resource` route an MCP resource,
+discoverable by any MCP client (another Camel application, an IDE, a coding
+agent).
 
 Maven users will need to add the following dependency to their `pom.xml`:
 
@@ -34,10 +36,10 @@ Maven users will need to add the following dependency to their `pom.xml`:
 The module is split in two artifacts:
 
 * `camel-mcp-server-api` — the runtime-agnostic _bridge_ and the small
-  `McpServerEngine` SPI. The bridge owns tool selection (tags), execution via
-  the shared `AiToolExecutor` (per-call timeout, error sanitization) and reacts
-  to `AiToolRegistry` changes when routes start and stop. It has no dependency
-  on the MCP Java SDK.
+  `McpServerEngine` SPI. The bridge owns selection (tags), execution via the
+  shared `AiToolExecutor` and `AiResourceExecutor` (per-call timeout, error
+  sanitization) and reacts to `AiToolRegistry` and `AiResourceRegistry` changes
+  when routes start and stop. It has no dependency on the MCP Java SDK.
 * `camel-mcp-server` — the serving engine for Camel Main and Camel JBang,
   built on the official MCP Java SDK with a Vert.x streamable HTTP transport.
   The MCP endpoint is registered on the Camel main HTTP server's router, so it
@@ -53,6 +55,14 @@ and on Spring Boot the starter serves through the Spring AI MCP server
 (configured via `spring.ai.mcp.server.*`). Bridge behavior — tag selection,
 timeout, sanitization — is identical on every runtime and verified by a shared
 conformance test kit.
+
+Resource support is opt-in on the SPI: `resourceAdded` and `resourceRemoved`
+default to no-ops and an engine declares `supportsResources()` when it serves
+them. An engine that serves tools only keeps working unchanged, and the bridge
+logs a WARN when `ai-resource` routes match the tags but the engine cannot
+serve them. The conformance kit follows the same split: resource assertions
+live in a separate `McpServerResourceConformanceTestSupport` class that an
+engine extends once it supports resources.
 
 == Usage
 
@@ -100,6 +110,31 @@ YAML::
             uri: jdbc:dataSource
 ----
 ====
+
+=== Resources
+
+Read-only content is exposed as MCP resources through `ai-resource` routes,
+selected by the same tags:
+
+[source,java]
+----
+from("ai-resource:app_config"
+    + "?resourceUri=camel:///config/app.json"
+    + "&tags=crm"
+    + "&description=Current application configuration"
+    + "&mimeType=application/json")
+    .pollEnrich("file:config?fileName=app.json&noop=true&idempotent=false", 5000);
+----
+
+An MCP client then sees the resource in `resources/list` and fetches it with
+`resources/read`. A read carries no arguments: the route is invoked with an
+empty exchange and its body is the content. The `mimeType` decides the wire
+format — textual types are sent as text, everything else as a base64 blob —
+see xref:ROOT:ai-resource-component.adoc[ai-resource] for the details.
+
+Unlike `tools/call`, `resources/read` has no in-band error flag, so a failed
+read is returned as a JSON-RPC error with the same sanitized message the
+client would get from a failing tool.
 
 === Tool annotation hints
 
@@ -170,15 +205,19 @@ JBang (see the xref:main.adoc[camel-main] options) or on
 | Option | Description | Default | Owner
 
 | `camel.server.mcp-enabled` | Whether to expose ai-tool routes as MCP tools
-  over streamable HTTP. | `false` | bridge
-| `camel.server.mcp-tags` | Comma-separated list of ai-tool tag patterns to
-  expose as MCP tools. Patterns support exact match, wildcard prefix
-  (`foo*`), and `*` to match all tags. Only tools registered under a matching
-  tag are published; the untagged default pool is never exposed. When not
-  set, no tools are published. |  | bridge
+  and ai-resource routes as MCP resources over streamable HTTP. | `false` | bridge
+| `camel.server.mcp-tags` | Comma-separated list of tag patterns selecting the
+  ai-tool and ai-resource routes to expose. Patterns support exact match,
+  wildcard prefix (`foo*`), and `*` to match all tags. Only routes registered
+  under a matching tag are published; the untagged default pools are never
+  exposed. When not set, nothing is published. |  | bridge
 | `camel.server.mcp-tool-timeout` | Per-call tool execution timeout in
   milliseconds. A call exceeding the timeout returns an error result to the
   MCP client; the underlying route keeps running until it completes on its
+  own. | `20000` | bridge
+| `camel.server.mcp-resource-timeout` | Per-read resource execution timeout in
+  milliseconds. A read exceeding the timeout returns an error to the MCP
+  client; the underlying route keeps running until it completes on its
   own. | `20000` | bridge
 | `camel.server.mcp-path` | HTTP path where the MCP endpoint is served. |
   `/mcp` | engine
@@ -232,8 +271,11 @@ The Vert.x engine implements the MCP streamable HTTP transport:
   `camel.server.mcp-session-keep-alive-interval` and
   `camel.server.mcp-session-idle-ttl` (set either to `0` to disable).
 
-Tools appearing or disappearing (routes starting and stopping) emit
-`notifications/tools/list_changed` to connected clients.
+Tools and resources appearing or disappearing (routes starting and stopping)
+emit `notifications/tools/list_changed` and
+`notifications/resources/list_changed` to connected clients. Per-resource
+subscriptions (`resources/subscribe`) are not offered: the server advertises
+`resources` with `listChanged` only.
 
 == Security
 
@@ -241,18 +283,20 @@ External MCP clients are *untrusted senders* under the
 xref:manual::security-model.adoc[Camel security model]. The module applies the
 following rules:
 
-* *Explicit opt-in per tool*: only tools whose tags match the configured tag
-  patterns are exposed. The untagged default pool is never exposed, even when
-  using the `*` wildcard.
+* *Explicit opt-in per route*: only tools and resources whose tags match the
+  configured tag patterns are exposed. The untagged default pools are never
+  exposed, even when using the `*` wildcard.
 * *Flat namespace protection*: a tool whose name collides with an already
   exposed tool is refused with an ERROR log — never silently replaced.
+  Resources follow the same rule on their uri.
 * *Error sanitization*: route exceptions are mapped to a generic error
   message; the cause is logged server-side and never sent to the client.
   Argument validation messages (missing or invalid parameters) are returned
   as-is.
-* *Bounded execution*: every call is subject to the `toolTimeout`. Note that a
-  timed-out route keeps running server-side until it completes; the timeout
-  bounds the MCP request, not the route.
+* *Bounded execution*: every call is subject to the `toolTimeout` and every
+  read to the `resourceTimeout`. Note that a timed-out route keeps running
+  server-side until it completes; the timeout bounds the MCP request, not the
+  route.
 * *Authentication*: the MCP endpoint is served through the main HTTP server
   router, so platform-http authentication (basic, JWT via
   `camel.server.authentication*` options) applies to it. The MCP

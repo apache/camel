@@ -16,10 +16,11 @@
  */
 package org.apache.camel.component.smb;
 
+import org.apache.camel.FailedToStartRouteException;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.component.file.GenericFileOperationFailedException;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
+
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 public class SmbConsumerStartingDirectoryMustExistIT extends SmbServerTestSupport {
 
@@ -42,12 +43,10 @@ public class SmbConsumerStartingDirectoryMustExistIT extends SmbServerTestSuppor
                 from(getSbmUrl()).to("mock:result");
             }
         });
-        try {
-            context.start();
-            Assertions.fail();
-        } catch (GenericFileOperationFailedException e) {
-            Assertions.assertEquals("Starting directory does not exist: doesnotexist", e.getMessage());
-        }
+
+        assertThatThrownBy(context::start)
+                .isInstanceOf(FailedToStartRouteException.class)
+                .cause().hasMessage("Starting directory does not exist: doesnotexist");
     }
 
 }

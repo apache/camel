@@ -16,6 +16,7 @@
  */
 package org.apache.camel.processor;
 
+import java.time.Duration;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -60,15 +61,15 @@ public class CacheProcessor extends BaseProcessorSupport
     private final Expression keyExpression;
     private final AsyncProcessor processor;
     private final KeyValueRepository keyValueRepository;
-    private final long ttlMillis;
+    private final Duration ttl;
     private final boolean cacheNull;
 
     public CacheProcessor(
                           Expression keyExpression, KeyValueRepository keyValueRepository,
-                          long ttlMillis, boolean cacheNull, Processor processor) {
+                          Duration ttl, boolean cacheNull, Processor processor) {
         this.keyExpression = keyExpression;
         this.keyValueRepository = keyValueRepository;
-        this.ttlMillis = ttlMillis;
+        this.ttl = ttl;
         this.cacheNull = cacheNull;
         this.processor = AsyncProcessorConverterHelper.convert(processor);
     }
@@ -125,7 +126,7 @@ public class CacheProcessor extends BaseProcessorSupport
                     if (!exchange.isFailed() && exchange.getException() == null) {
                         Object result = exchange.getMessage().getBody();
                         if (result != null || cacheNull) {
-                            keyValueRepository.put(key, result, ttlMillis);
+                            keyValueRepository.put(key, result, ttl);
                             LOG.debug("Cached result for key: {}", key);
                         }
                     }
@@ -231,8 +232,8 @@ public class CacheProcessor extends BaseProcessorSupport
         return keyValueRepository;
     }
 
-    public long getTtlMillis() {
-        return ttlMillis;
+    public Duration getTtl() {
+        return ttl;
     }
 
     public boolean isCacheNull() {

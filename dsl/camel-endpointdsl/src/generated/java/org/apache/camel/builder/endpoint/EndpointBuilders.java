@@ -34,6 +34,7 @@ public interface EndpointBuilders
             org.apache.camel.builder.endpoint.dsl.AWSConfigEndpointBuilderFactory,
             org.apache.camel.builder.endpoint.dsl.ActiveMQ6EndpointBuilderFactory,
             org.apache.camel.builder.endpoint.dsl.ActiveMQEndpointBuilderFactory,
+            org.apache.camel.builder.endpoint.dsl.AiResourceEndpointBuilderFactory,
             org.apache.camel.builder.endpoint.dsl.AiToolEndpointBuilderFactory,
             org.apache.camel.builder.endpoint.dsl.AlibabaEventBridgeEndpointBuilderFactory,
             org.apache.camel.builder.endpoint.dsl.AlibabaOtsEndpointBuilderFactory,

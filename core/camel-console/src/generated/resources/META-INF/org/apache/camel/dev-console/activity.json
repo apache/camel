@@ -6,10 +6,95 @@
     "title": "Camel Activity",
     "description": "Recent completed exchange activity",
     "deprecated": false,
+    "readOnly": true,
     "javaType": "org.apache.camel.impl.console.ActivityDevConsole",
     "groupId": "org.apache.camel",
     "artifactId": "camel-console",
     "version": "4.23.0-SNAPSHOT"
+  },
+  "response": {
+    "type": "object",
+    "properties": {
+      "activityEnabled": {
+        "type": "boolean",
+        "description": "Whether activity tracking is enabled"
+      },
+      "activitySize": {
+        "type": "integer",
+        "description": "The maximum number of activity entries retained"
+      },
+      "activity": {
+        "type": "array",
+        "items": {
+          "type": "object",
+          "properties": {
+            "uid": {
+              "type": "integer",
+              "description": "Unique ID of the activity entry"
+            },
+            "exchangeId": {
+              "type": "string",
+              "description": "The exchange ID"
+            },
+            "routeId": {
+              "type": "string",
+              "description": "The route ID (only present when known)"
+            },
+            "fromEndpointUri": {
+              "type": "string",
+              "description": "The from endpoint URI (only present when known)"
+            },
+            "timestamp": {
+              "type": "integer",
+              "description": "Epoch time in milliseconds (only present when known)"
+            },
+            "elapsed": {
+              "type": "integer",
+              "description": "Elapsed time in milliseconds"
+            },
+            "failed": {
+              "type": "boolean",
+              "description": "Whether the exchange failed"
+            },
+            "exception": {
+              "type": "string",
+              "description": "The exception message (only present when the exchange failed)"
+            },
+            "endpointSends": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "endpointUri": {
+                    "type": "string",
+                    "description": "The endpoint URI"
+                  },
+                  "remoteEndpoint": {
+                    "type": "boolean",
+                    "description": "Whether the endpoint is remote"
+                  },
+                  "elapsed": {
+                    "type": "integer",
+                    "description": "Elapsed time in milliseconds"
+                  }
+                },
+                "required": [
+                  "remoteEndpoint",
+                  "elapsed"
+                ]
+              },
+              "description": "The endpoints this exchange was sent to (only present when any)"
+            }
+          },
+          "required": [
+            "uid",
+            "elapsed",
+            "failed"
+          ]
+        },
+        "description": "The recent activity entries"
+      }
+    }
   }
 }
 

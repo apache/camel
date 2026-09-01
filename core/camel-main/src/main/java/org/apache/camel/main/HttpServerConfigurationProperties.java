@@ -77,6 +77,8 @@ public class HttpServerConfigurationProperties implements BootstrapCloseable {
     private String mcpTags;
     @Metadata(defaultValue = "20000")
     private long mcpToolTimeout = 20000;
+    @Metadata(defaultValue = "20000")
+    private long mcpResourceTimeout = 20000;
     @Metadata(defaultValue = "/mcp")
     private String mcpPath = "/mcp";
     @Metadata(defaultValue = "30000")
@@ -356,8 +358,8 @@ public class HttpServerConfigurationProperties implements BootstrapCloseable {
     }
 
     /**
-     * Whether to expose ai-tool routes as MCP tools over streamable HTTP. Requires camel-mcp-server on the classpath.
-     * By default, the MCP server is not enabled.
+     * Whether to expose ai-tool routes as MCP tools and ai-resource routes as MCP resources over streamable HTTP.
+     * Requires camel-mcp-server on the classpath. By default, the MCP server is not enabled.
      */
     public void setMcpEnabled(boolean mcpEnabled) {
         this.mcpEnabled = mcpEnabled;
@@ -368,9 +370,10 @@ public class HttpServerConfigurationProperties implements BootstrapCloseable {
     }
 
     /**
-     * Comma-separated list of ai-tool tag patterns to expose as MCP tools. Matching is case-insensitive and supports
-     * exact match, wildcard prefix ({@code foo*}), and {@code *} to match all tags. Only tools registered under a
-     * matching tag are exposed; the untagged default pool is never exposed. When not set, no tools are exposed.
+     * Comma-separated list of tag patterns selecting the ai-tool routes to expose as MCP tools and the ai-resource
+     * routes to expose as MCP resources. Matching is case-insensitive and supports exact match, wildcard prefix
+     * ({@code foo*}), and {@code *} to match all tags. Only routes registered under a matching tag are exposed; the
+     * untagged default pools are never exposed. When not set, nothing is exposed.
      */
     public void setMcpTags(String mcpTags) {
         this.mcpTags = mcpTags;
@@ -386,6 +389,18 @@ public class HttpServerConfigurationProperties implements BootstrapCloseable {
      */
     public void setMcpToolTimeout(long mcpToolTimeout) {
         this.mcpToolTimeout = mcpToolTimeout;
+    }
+
+    public long getMcpResourceTimeout() {
+        return mcpResourceTimeout;
+    }
+
+    /**
+     * Per-read MCP resource execution timeout in milliseconds. A read exceeding the timeout returns an error to the MCP
+     * client; the underlying route keeps running until it completes on its own.
+     */
+    public void setMcpResourceTimeout(long mcpResourceTimeout) {
+        this.mcpResourceTimeout = mcpResourceTimeout;
     }
 
     public String getMcpPath() {
@@ -671,8 +686,8 @@ public class HttpServerConfigurationProperties implements BootstrapCloseable {
     }
 
     /**
-     * Whether to expose ai-tool routes as MCP tools over streamable HTTP. Requires camel-mcp-server on the classpath.
-     * By default, the MCP server is not enabled.
+     * Whether to expose ai-tool routes as MCP tools and ai-resource routes as MCP resources over streamable HTTP.
+     * Requires camel-mcp-server on the classpath. By default, the MCP server is not enabled.
      */
     public HttpServerConfigurationProperties withMcpEnabled(boolean mcpEnabled) {
         this.mcpEnabled = mcpEnabled;
@@ -680,9 +695,10 @@ public class HttpServerConfigurationProperties implements BootstrapCloseable {
     }
 
     /**
-     * Comma-separated list of ai-tool tag patterns to expose as MCP tools. Matching is case-insensitive and supports
-     * exact match, wildcard prefix ({@code foo*}), and {@code *} to match all tags. Only tools registered under a
-     * matching tag are exposed; the untagged default pool is never exposed. When not set, no tools are exposed.
+     * Comma-separated list of tag patterns selecting the ai-tool routes to expose as MCP tools and the ai-resource
+     * routes to expose as MCP resources. Matching is case-insensitive and supports exact match, wildcard prefix
+     * ({@code foo*}), and {@code *} to match all tags. Only routes registered under a matching tag are exposed; the
+     * untagged default pools are never exposed. When not set, nothing is exposed.
      */
     public HttpServerConfigurationProperties withMcpTags(String mcpTags) {
         this.mcpTags = mcpTags;
@@ -695,6 +711,15 @@ public class HttpServerConfigurationProperties implements BootstrapCloseable {
      */
     public HttpServerConfigurationProperties withMcpToolTimeout(long mcpToolTimeout) {
         this.mcpToolTimeout = mcpToolTimeout;
+        return this;
+    }
+
+    /**
+     * Per-read MCP resource execution timeout in milliseconds. A read exceeding the timeout returns an error to the MCP
+     * client; the underlying route keeps running until it completes on its own.
+     */
+    public HttpServerConfigurationProperties withMcpResourceTimeout(long mcpResourceTimeout) {
+        this.mcpResourceTimeout = mcpResourceTimeout;
         return this;
     }
 

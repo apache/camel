@@ -6,10 +6,104 @@
     "title": "MicroProfile Circuit Breaker",
     "description": "Display circuit breaker information",
     "deprecated": false,
+    "readOnly": true,
     "javaType": "org.apache.camel.component.microprofile.faulttolerance.FaultToleranceConsole",
     "groupId": "org.apache.camel",
     "artifactId": "camel-microprofile-fault-tolerance",
     "version": "4.23.0-SNAPSHOT"
+  },
+  "response": {
+    "type": "object",
+    "properties": {
+      "circuitBreakers": {
+        "type": "array",
+        "items": {
+          "type": "object",
+          "properties": {
+            "id": {
+              "type": "string",
+              "description": "The circuit breaker ID"
+            },
+            "routeId": {
+              "type": "string",
+              "description": "The route ID"
+            },
+            "state": {
+              "type": "string",
+              "description": "The circuit breaker state"
+            },
+            "successfulCalls": {
+              "type": "integer",
+              "description": "Number of successful calls"
+            },
+            "failedCalls": {
+              "type": "integer",
+              "description": "Number of failed calls"
+            },
+            "notPermittedCalls": {
+              "type": "integer",
+              "description": "Number of not-permitted calls"
+            },
+            "configuration": {
+              "type": "object",
+              "properties": {
+                "delay": {
+                  "type": "integer",
+                  "description": "The delay in milliseconds"
+                },
+                "failureRatio": {
+                  "type": "number",
+                  "description": "The failure ratio"
+                },
+                "requestVolumeThreshold": {
+                  "type": "integer",
+                  "description": "The request volume threshold"
+                },
+                "successThreshold": {
+                  "type": "integer",
+                  "description": "The success threshold"
+                },
+                "bulkheadEnabled": {
+                  "type": "boolean",
+                  "description": "Whether the bulkhead is enabled"
+                },
+                "bulkheadMaxConcurrentCalls": {
+                  "type": "integer",
+                  "description": "The bulkhead maximum concurrent calls (only present when the bulkhead is enabled)"
+                },
+                "bulkheadWaitingTaskQueue": {
+                  "type": "integer",
+                  "description": "The bulkhead waiting task queue size (only present when the bulkhead is enabled)"
+                },
+                "timeoutEnabled": {
+                  "type": "boolean",
+                  "description": "Whether the timeout is enabled"
+                },
+                "timeoutDuration": {
+                  "type": "integer",
+                  "description": "The timeout duration in milliseconds (only present when the timeout is enabled)"
+                }
+              },
+              "required": [
+                "delay",
+                "failureRatio",
+                "requestVolumeThreshold",
+                "successThreshold",
+                "bulkheadEnabled",
+                "timeoutEnabled"
+              ],
+              "description": "The circuit breaker configuration"
+            }
+          },
+          "required": [
+            "successfulCalls",
+            "failedCalls",
+            "notPermittedCalls"
+          ]
+        },
+        "description": "The circuit breakers"
+      }
+    }
   }
 }
 

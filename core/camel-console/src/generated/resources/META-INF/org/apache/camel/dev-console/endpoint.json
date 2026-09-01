@@ -6,10 +6,99 @@
     "title": "Endpoints",
     "description": "Endpoint Registry information",
     "deprecated": false,
+    "readOnly": true,
     "javaType": "org.apache.camel.impl.console.EndpointDevConsole",
     "groupId": "org.apache.camel",
     "artifactId": "camel-console",
     "version": "4.23.0-SNAPSHOT"
+  },
+  "response": {
+    "type": "object",
+    "properties": {
+      "size": {
+        "type": "integer",
+        "description": "Total number of endpoints"
+      },
+      "staticSize": {
+        "type": "integer",
+        "description": "Number of endpoints in the static registry"
+      },
+      "dynamicSize": {
+        "type": "integer",
+        "description": "Number of endpoints in the dynamic registry"
+      },
+      "maximumCacheSize": {
+        "type": "integer",
+        "description": "Maximum number of entries to store in the dynamic registry"
+      },
+      "endpoints": {
+        "type": "array",
+        "items": {
+          "type": "object",
+          "properties": {
+            "uri": {
+              "type": "string",
+              "description": "The endpoint URI"
+            },
+            "remote": {
+              "type": "boolean",
+              "description": "Whether the endpoint is remote"
+            },
+            "stub": {
+              "type": "boolean",
+              "description": "Whether the endpoint is a stub endpoint"
+            },
+            "direction": {
+              "type": "string",
+              "description": "Whether the endpoint is used as input or output (in or out) (only present when runtime endpoint registry statistics are available)"
+            },
+            "hits": {
+              "type": "integer",
+              "description": "Usage of the endpoint (only present when runtime endpoint registry statistics are available)"
+            },
+            "routeId": {
+              "type": "string",
+              "description": "The route ID (only present when runtime endpoint registry statistics are available and the endpoint is associated with a route)"
+            },
+            "minBodySize": {
+              "type": "integer",
+              "description": "Minimum message body size in bytes (only present when available)"
+            },
+            "maxBodySize": {
+              "type": "integer",
+              "description": "Maximum message body size in bytes (only present when available)"
+            },
+            "meanBodySize": {
+              "type": "integer",
+              "description": "Mean message body size in bytes (only present when available)"
+            },
+            "minHeadersSize": {
+              "type": "integer",
+              "description": "Minimum message headers size in bytes (only present when available)"
+            },
+            "maxHeadersSize": {
+              "type": "integer",
+              "description": "Maximum message headers size in bytes (only present when available)"
+            },
+            "meanHeadersSize": {
+              "type": "integer",
+              "description": "Mean message headers size in bytes (only present when available)"
+            }
+          },
+          "required": [
+            "remote",
+            "stub"
+          ]
+        },
+        "description": "The endpoints"
+      }
+    },
+    "required": [
+      "size",
+      "staticSize",
+      "dynamicSize",
+      "maximumCacheSize"
+    ]
   }
 }
 

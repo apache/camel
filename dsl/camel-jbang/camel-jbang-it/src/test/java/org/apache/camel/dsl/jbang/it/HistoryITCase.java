@@ -19,9 +19,16 @@ package org.apache.camel.dsl.jbang.it;
 import java.io.IOException;
 
 import org.apache.camel.dsl.jbang.it.support.JBangTestSupport;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 
 public class HistoryITCase extends JBangTestSupport {
+
+    @AfterEach
+    public void cleanupInbox() {
+        execInContainer("rm -rf inbox");
+    }
+
     @Test
     public void testHistory() throws IOException {
         copyResourceInDataFolder(TestResources.HISTORY_ROUTE);

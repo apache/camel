@@ -6,6 +6,7 @@
     "title": "Bean Model",
     "description": "Displays beans from the DSL model",
     "deprecated": false,
+    "readOnly": true,
     "javaType": "org.apache.camel.model.console.BeanModelDevConsole",
     "groupId": "org.apache.camel",
     "artifactId": "camel-core-model",
@@ -55,6 +56,92 @@
       "secret": false,
       "defaultValue": true,
       "description": "Whether to include bean properties"
+    }
+  },
+  "response": {
+    "type": "object",
+    "properties": {
+      "beans": {
+        "type": "object",
+        "additionalProperties": {
+          "type": "object",
+          "properties": {
+            "name": {
+              "type": "string",
+              "description": "The bean name"
+            },
+            "type": {
+              "type": "string",
+              "description": "The bean type"
+            },
+            "initMethod": {
+              "type": "string",
+              "description": "The init method name (only present when configured)"
+            },
+            "destroyMethod": {
+              "type": "string",
+              "description": "The destroy method name (only present when configured)"
+            },
+            "builderClass": {
+              "type": "string",
+              "description": "The builder class name (only present when configured)"
+            },
+            "builderMethod": {
+              "type": "string",
+              "description": "The builder method name (only present when configured)"
+            },
+            "factoryBean": {
+              "type": "string",
+              "description": "The factory bean name (only present when configured)"
+            },
+            "factoryMethod": {
+              "type": "string",
+              "description": "The factory method name (only present when configured)"
+            },
+            "modelProperties": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "name": {
+                    "type": "string",
+                    "description": "The property name"
+                  },
+                  "type": {
+                    "type": "string",
+                    "description": "The property value type (only present when the value is known)"
+                  },
+                  "value": {
+                    "description": "The property value"
+                  }
+                }
+              },
+              "description": "The bean properties as declared in the DSL model (only present when there are any)"
+            },
+            "properties": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "name": {
+                    "type": "string",
+                    "description": "The property name"
+                  },
+                  "type": {
+                    "type": "string",
+                    "description": "The property value type (only present when the value is known)"
+                  },
+                  "value": {
+                    "description": "The property value"
+                  }
+                }
+              },
+              "description": "The bean properties resolved from the running bean instance (only present when there are any)"
+            }
+          }
+        },
+        "description": "The beans keyed by bean name"
+      }
     }
   }
 }

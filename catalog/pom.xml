@@ -45,7 +45,6 @@
         <module>camel-catalog-suggest</module>
         <!-- tooling that depends on catalog -->
         <module>camel-route-parser</module>
-        <module>camel-csimple-maven-plugin</module>
         <module>camel-report-maven-plugin</module>
         <module>camel-catalog-common</module>
     </modules>

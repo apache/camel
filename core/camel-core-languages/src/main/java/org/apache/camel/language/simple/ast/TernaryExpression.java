@@ -20,11 +20,9 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
 import org.apache.camel.Expression;
 import org.apache.camel.Predicate;
-import org.apache.camel.language.simple.BaseSimpleParser;
 import org.apache.camel.language.simple.types.SimpleParserException;
 import org.apache.camel.language.simple.types.SimpleToken;
 import org.apache.camel.support.ExpressionToPredicateAdapter;
-import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.StringHelper;
 
 /**
@@ -141,23 +139,6 @@ public class TernaryExpression extends BaseSimpleNode {
                 return condition + " ? " + trueValue + " : " + falseValue;
             }
         };
-    }
-
-    @Override
-    public String createCode(CamelContext camelContext, String expression) throws SimpleParserException {
-        return BaseSimpleParser.CODE_START + doCreateCode(camelContext, expression) + BaseSimpleParser.CODE_END;
-    }
-
-    private String doCreateCode(CamelContext camelContext, String expression) throws SimpleParserException {
-        ObjectHelper.notNull(condition, "condition node", this);
-        ObjectHelper.notNull(trueValue, "trueValue node", this);
-        ObjectHelper.notNull(falseValue, "falseValue node", this);
-
-        final String conditionCode = condition.createCode(camelContext, expression);
-        final String trueCode = trueValue.createCode(camelContext, expression);
-        final String falseCode = falseValue.createCode(camelContext, expression);
-
-        return "ternary(exchange, " + conditionCode + ", " + trueCode + ", " + falseCode + ")";
     }
 
 }

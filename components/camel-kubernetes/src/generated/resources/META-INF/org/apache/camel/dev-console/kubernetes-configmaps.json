@@ -6,10 +6,45 @@
     "title": "Kubernetes Config Maps",
     "description": "Kubernetes Cluster Config Maps",
     "deprecated": false,
+    "readOnly": true,
     "javaType": "org.apache.camel.component.kubernetes.config_maps.vault.ConfigmapsDevConsole",
     "groupId": "org.apache.camel",
     "artifactId": "camel-kubernetes",
     "version": "4.23.0-SNAPSHOT"
+  },
+  "response": {
+    "type": "object",
+    "properties": {
+      "masterUrl": {
+        "type": "string",
+        "description": "The Kubernetes master URL (only present when known)"
+      },
+      "login": {
+        "type": "string",
+        "description": "The login method (only present when known)"
+      },
+      "refreshEnabled": {
+        "type": "boolean",
+        "description": "Whether refreshing is enabled (only present when known)"
+      },
+      "startCheckTimestamp": {
+        "type": "integer",
+        "description": "Epoch time in milliseconds the refresh check started (only present when known)"
+      },
+      "configmaps": {
+        "type": "array",
+        "items": {
+          "type": "object",
+          "properties": {
+            "name": {
+              "type": "string",
+              "description": "The config map (secret) name"
+            }
+          }
+        },
+        "description": "The config maps in use"
+      }
+    }
   }
 }
 

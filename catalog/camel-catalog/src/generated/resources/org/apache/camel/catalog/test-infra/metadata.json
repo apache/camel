@@ -128,7 +128,7 @@
   "groupId" : "org.apache.camel",
   "artifactId" : "camel-test-infra-kafka",
   "version" : "4.23.0-SNAPSHOT",
-  "serviceVersion" : "8.3.0",
+  "serviceVersion" : "8.3.1",
   "uiSupported" : false
 }, {
   "service" : "org.apache.camel.test.infra.nats.services.NatsInfraService",
@@ -172,7 +172,7 @@
   "groupId" : "org.apache.camel",
   "artifactId" : "camel-test-infra-kafka",
   "version" : "4.23.0-SNAPSHOT",
-  "serviceVersion" : "v26.2.1",
+  "serviceVersion" : "v26.2.2",
   "uiSupported" : false
 }, {
   "service" : "org.apache.camel.test.infra.hashicorp.vault.services.HashicorpVaultInfraService",
@@ -293,7 +293,7 @@
   "groupId" : "org.apache.camel",
   "artifactId" : "camel-test-infra-ibmmq",
   "version" : "4.23.0-SNAPSHOT",
-  "serviceVersion" : "10.0.0.0-r2",
+  "serviceVersion" : "10.0.0.0-r3",
   "uiSupported" : true
 }, {
   "service" : "org.apache.camel.test.infra.aws.common.services.AWSInfraService",
@@ -623,7 +623,7 @@
   "groupId" : "org.apache.camel",
   "artifactId" : "camel-test-infra-azure-storage-queue",
   "version" : "4.23.0-SNAPSHOT",
-  "serviceVersion" : "3.36.0",
+  "serviceVersion" : "3.37.0",
   "uiSupported" : false
 }, {
   "service" : "org.apache.camel.test.infra.ftp.services.FtpInfraService",
@@ -711,7 +711,7 @@
   "groupId" : "org.apache.camel",
   "artifactId" : "camel-test-infra-clickhouse",
   "version" : "4.23.0-SNAPSHOT",
-  "serviceVersion" : "26.7",
+  "serviceVersion" : "26.8",
   "uiSupported" : false
 }, {
   "service" : "org.apache.camel.test.infra.ollama.services.OllamaInfraService",
@@ -722,7 +722,7 @@
   "groupId" : "org.apache.camel",
   "artifactId" : "camel-test-infra-ollama",
   "version" : "4.23.0-SNAPSHOT",
-  "serviceVersion" : "0.32.15",
+  "serviceVersion" : "0.33.2",
   "uiSupported" : false
 }, {
   "service" : "org.apache.camel.test.infra.azure.common.services.AzureInfraService",
@@ -733,7 +733,7 @@
   "groupId" : "org.apache.camel",
   "artifactId" : "camel-test-infra-azure-storage-blob",
   "version" : "4.23.0-SNAPSHOT",
-  "serviceVersion" : "3.36.0",
+  "serviceVersion" : "3.37.0",
   "uiSupported" : false
 }, {
   "service" : "org.apache.camel.test.infra.docling.services.DoclingInfraService",
@@ -744,7 +744,7 @@
   "groupId" : "org.apache.camel",
   "artifactId" : "camel-test-infra-docling",
   "version" : "4.23.0-SNAPSHOT",
-  "serviceVersion" : "v1.30.0",
+  "serviceVersion" : "v1.31.0",
   "uiSupported" : false
 }, {
   "service" : "org.apache.camel.test.infra.aws.common.services.AWSInfraService",

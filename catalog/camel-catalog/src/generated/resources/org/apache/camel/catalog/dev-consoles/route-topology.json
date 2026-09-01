@@ -6,6 +6,7 @@
     "title": "Route Topology",
     "description": "Route topology showing inter-route connections",
     "deprecated": false,
+    "readOnly": true,
     "javaType": "org.apache.camel.impl.console.RouteTopologyDevConsole",
     "groupId": "org.apache.camel",
     "artifactId": "camel-console",
@@ -56,6 +57,118 @@
       "secret": false,
       "defaultValue": false,
       "description": "Whether to include route structure data in the response"
+    }
+  },
+  "response": {
+    "type": "object",
+    "properties": {
+      "nodes": {
+        "type": "array",
+        "items": {
+          "type": "object",
+          "properties": {
+            "routeId": {
+              "type": "string",
+              "description": "The route ID"
+            },
+            "description": {
+              "type": "string",
+              "description": "The route description (only present when configured)"
+            },
+            "from": {
+              "type": "string",
+              "description": "The route's endpoint URI"
+            },
+            "fromScheme": {
+              "type": "string",
+              "description": "The route's endpoint scheme"
+            },
+            "nodeType": {
+              "type": "string",
+              "description": "The node type"
+            },
+            "exchangesTotal": {
+              "type": "integer",
+              "description": "Total number of exchanges (only present when metrics were requested and available)"
+            },
+            "exchangesFailed": {
+              "type": "integer",
+              "description": "Number of failed exchanges (only present when metrics were requested and available)"
+            }
+          }
+        },
+        "description": "The topology nodes (only present when a route topology dumper is available)"
+      },
+      "edges": {
+        "type": "array",
+        "items": {
+          "type": "object",
+          "properties": {
+            "fromRouteId": {
+              "type": "string",
+              "description": "The source route ID"
+            },
+            "toRouteId": {
+              "type": "string",
+              "description": "The target route ID"
+            },
+            "endpoint": {
+              "type": "string",
+              "description": "The endpoint URI connecting the two routes"
+            },
+            "connectionType": {
+              "type": "string",
+              "description": "The connection type"
+            }
+          }
+        },
+        "description": "The connections between nodes (only present when a route topology dumper is available)"
+      },
+      "externalEndpoints": {
+        "type": "array",
+        "items": {
+          "type": "object",
+          "properties": {
+            "id": {
+              "type": "string",
+              "description": "The endpoint ID"
+            },
+            "uri": {
+              "type": "string",
+              "description": "The endpoint URI"
+            },
+            "scheme": {
+              "type": "string",
+              "description": "The endpoint scheme"
+            },
+            "direction": {
+              "type": "string",
+              "description": "The direction (in or out)"
+            },
+            "routeId": {
+              "type": "string",
+              "description": "The route ID"
+            },
+            "exchangesTotal": {
+              "type": "integer",
+              "description": "Total number of exchanges (only present when metrics were requested and available)"
+            },
+            "exchangesFailed": {
+              "type": "integer",
+              "description": "Number of failed exchanges (only present when metrics were requested and available)"
+            }
+          }
+        },
+        "description": "External systems the routes connect to (only present when requested and there are any)"
+      },
+      "routes": {
+        "type": "array",
+        "items": {
+          "type": "object",
+          "additionalProperties": true
+        },
+        "description": "Route structure data, as opaque JSON objects (only present when requested)"
+      }
     }
   }
 }

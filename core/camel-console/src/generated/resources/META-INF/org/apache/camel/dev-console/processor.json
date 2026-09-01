@@ -6,6 +6,7 @@
     "title": "Processor",
     "description": "Processor information",
     "deprecated": false,
+    "readOnly": false,
     "javaType": "org.apache.camel.impl.console.ProcessorDevConsole",
     "groupId": "org.apache.camel",
     "artifactId": "camel-console",
@@ -59,6 +60,175 @@
       "autowired": false,
       "secret": false,
       "description": "Limits the number of entries displayed"
+    }
+  },
+  "response": {
+    "type": "object",
+    "properties": {
+      "processors": {
+        "type": "array",
+        "items": {
+          "type": "object",
+          "properties": {
+            "routeId": {
+              "type": "string",
+              "description": "The route ID"
+            },
+            "id": {
+              "type": "string",
+              "description": "The processor ID"
+            },
+            "nodePrefixId": {
+              "type": "string",
+              "description": "The node prefix ID (only present when known)"
+            },
+            "description": {
+              "type": "string",
+              "description": "The processor description (only present when configured)"
+            },
+            "note": {
+              "type": "string",
+              "description": "The processor note (only present when configured)"
+            },
+            "source": {
+              "type": "string",
+              "description": "The source location, optionally with a line number suffix (only present when known)"
+            },
+            "state": {
+              "type": "string",
+              "description": "The processor state"
+            },
+            "disabled": {
+              "type": "boolean",
+              "description": "Whether the processor is disabled (only present when known)"
+            },
+            "stepId": {
+              "type": "string",
+              "description": "The step ID (only present when known)"
+            },
+            "code": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "line": {
+                    "type": "integer",
+                    "description": "The source line number (only present when known)"
+                  },
+                  "code": {
+                    "type": "string",
+                    "description": "The source code line"
+                  },
+                  "match": {
+                    "type": "boolean",
+                    "description": "Whether this is the matched line (only present when true)"
+                  }
+                }
+              },
+              "description": "A snippet of source code around the processor (only present when known)"
+            },
+            "processor": {
+              "type": "string",
+              "description": "The processor name"
+            },
+            "level": {
+              "type": "integer",
+              "description": "The processor level in the route tree"
+            },
+            "uri": {
+              "type": "string",
+              "description": "The destination URI, for processors that send to a destination (only present when applicable)"
+            },
+            "statistics": {
+              "type": "object",
+              "properties": {
+                "idleSince": {
+                  "type": "integer",
+                  "description": "Epoch time in milliseconds since the processor has been idle"
+                },
+                "exchangesTotal": {
+                  "type": "integer",
+                  "description": "Total number of exchanges"
+                },
+                "exchangesFailed": {
+                  "type": "integer",
+                  "description": "Number of failed exchanges"
+                },
+                "exchangesInflight": {
+                  "type": "integer",
+                  "description": "Number of inflight exchanges"
+                },
+                "exchangesThroughput": {
+                  "type": "string",
+                  "description": "Messages per second throughput (only present when available)"
+                },
+                "meanProcessingTime": {
+                  "type": "integer",
+                  "description": "Mean processing time in milliseconds"
+                },
+                "maxProcessingTime": {
+                  "type": "integer",
+                  "description": "Max processing time in milliseconds"
+                },
+                "minProcessingTime": {
+                  "type": "integer",
+                  "description": "Min processing time in milliseconds"
+                },
+                "p50ProcessingTime": {
+                  "type": "integer",
+                  "description": "50th percentile processing time in milliseconds (only present when available)"
+                },
+                "p95ProcessingTime": {
+                  "type": "integer",
+                  "description": "95th percentile processing time in milliseconds (only present when available)"
+                },
+                "p99ProcessingTime": {
+                  "type": "integer",
+                  "description": "99th percentile processing time in milliseconds (only present when available)"
+                },
+                "lastProcessingTime": {
+                  "type": "integer",
+                  "description": "Processing time in milliseconds of the last exchange (only present once an exchange has completed)"
+                },
+                "deltaProcessingTime": {
+                  "type": "integer",
+                  "description": "Difference in processing time in milliseconds since the previous exchange (only present once an exchange has completed)"
+                },
+                "lastCreatedExchangeTimestamp": {
+                  "type": "integer",
+                  "description": "Epoch time in milliseconds the last exchange was created (only present once an exchange has been created)"
+                },
+                "lastCompletedExchangeTimestamp": {
+                  "type": "integer",
+                  "description": "Epoch time in milliseconds the last exchange completed (only present once an exchange has completed)"
+                },
+                "lastFailureHandledExchangeTimestamp": {
+                  "type": "integer",
+                  "description": "Epoch time in milliseconds the last exchange failure was handled (only present once one has occurred)"
+                },
+                "lastFailedExchangeTimestamp": {
+                  "type": "integer",
+                  "description": "Epoch time in milliseconds the last exchange failed (only present once one has occurred)"
+                }
+              },
+              "required": [
+                "idleSince",
+                "exchangesTotal",
+                "exchangesFailed",
+                "exchangesInflight",
+                "meanProcessingTime",
+                "maxProcessingTime",
+                "minProcessingTime"
+              ],
+              "description": "Runtime statistics"
+            }
+          },
+          "required": [
+            "level"
+          ]
+        },
+        "description": "The processors (only present when no action was requested)"
+      }
     }
   }
 }

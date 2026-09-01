@@ -73,6 +73,11 @@
       </dependency>
       <dependency>
         <groupId>org.apache.camel</groupId>
+        <artifactId>camel-ai-resource</artifactId>
+        <version>4.23.0-SNAPSHOT</version>
+      </dependency>
+      <dependency>
+        <groupId>org.apache.camel</groupId>
         <artifactId>camel-ai-tool</artifactId>
         <version>4.23.0-SNAPSHOT</version>
       </dependency>
@@ -675,16 +680,6 @@
       <dependency>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-crypto-pgp</artifactId>
-        <version>4.23.0-SNAPSHOT</version>
-      </dependency>
-      <dependency>
-        <groupId>org.apache.camel</groupId>
-        <artifactId>camel-csimple-joor</artifactId>
-        <version>4.23.0-SNAPSHOT</version>
-      </dependency>
-      <dependency>
-        <groupId>org.apache.camel</groupId>
-        <artifactId>camel-csimple-maven-plugin</artifactId>
         <version>4.23.0-SNAPSHOT</version>
       </dependency>
       <dependency>
@@ -2034,7 +2029,7 @@
       </dependency>
       <dependency>
         <groupId>org.apache.camel</groupId>
-        <artifactId>camel-reactive-executor-vertx</artifactId>
+        <artifactId>camel-quickjs</artifactId>
         <version>4.23.0-SNAPSHOT</version>
       </dependency>
       <dependency>

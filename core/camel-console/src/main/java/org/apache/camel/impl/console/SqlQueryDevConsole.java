@@ -23,6 +23,7 @@ import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
 import java.sql.Statement;
 import java.util.ArrayList;
+import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
@@ -36,13 +37,40 @@ import org.apache.camel.spi.annotations.DevConsole;
 import org.apache.camel.support.console.AbstractDevConsole;
 import org.apache.camel.util.StopWatch;
 import org.apache.camel.util.TimeUtils;
-import org.apache.camel.util.json.JsonArray;
 import org.apache.camel.util.json.JsonObject;
+import org.apache.camel.util.json.JsonRecordSupport;
 import org.apache.camel.util.json.Jsoner;
 
-@DevConsole(name = "sql-query", displayName = "SQL Query", description = "Execute SQL queries on DataSource beans")
+@DevConsole(name = "sql-query", displayName = "SQL Query", description = "Execute SQL queries on DataSource beans",
+            readOnly = false)
 @Configurer(extended = true)
 public class SqlQueryDevConsole extends AbstractDevConsole {
+
+    public record ColumnEntry(
+            @Metadata(description = "The column name") String name,
+            @Metadata(description = "The column SQL type name") String type,
+            @Metadata(description = "Whether the column is part of the primary key (only present when the query targets a single, editable table)") Boolean primaryKey) {
+    }
+
+    public record Response(
+            @Metadata(description = "The execution status, success or error") String status,
+            @Metadata(description = "The error message (only present on error)") String message,
+            @Metadata(description = "The resolved DataSource bean name (only present once resolved)") String datasource,
+            @Metadata(description = "The available DataSource bean names (only present when multiple exist and none was specified)") List<String> availableDataSources,
+            @Metadata(description = "Elapsed time in milliseconds (only present once a query attempt was made)") Long elapsed,
+            @Metadata(description = "The result set columns (only present for queries returning a result set)") List<ColumnEntry> columns,
+            @Metadata(description = "The result set rows, one opaque JSON object per row (only present for queries returning a result set)") List<Map<String, Object>> rows,
+            @Metadata(description = "Number of rows returned (only present for queries returning a result set)") Integer rowCount,
+            @Metadata(description = "Whether the result set was truncated by maxRows (only present for queries returning a result set)") Boolean truncated,
+            @Metadata(description = "Number of rows affected (only present for queries/updates not returning a result set)") Integer updateCount,
+            @Metadata(description = "The single table the result set maps to (only present when the result is a single, editable table)") String tableName,
+            @Metadata(description = "The primary key column names (only present when the result is a single, editable table)") List<String> primaryKeys,
+            @Metadata(description = "Whether the result set rows can be edited (only present when true)") Boolean editable) {
+    }
+
+    private record ResolvedDataSource(
+            DataSource dataSource, String datasourceName, String status, String message, List<String> availableDataSources) {
+    }
 
     @Metadata(label = "query", description = "The SQL query to execute",
               javaType = "java.lang.String")
@@ -203,33 +231,38 @@ public class SqlQueryDevConsole extends AbstractDevConsole {
     }
 
     @Override
-    protected JsonObject doCallJson(Map<String, Object> options) {
+    protected Map<String, Object> doCallJson(Map<String, Object> options) {
         String actionType = optionString(options, ACTION_TYPE);
-        if ("update-row".equals(actionType)) {
-            return doUpdateRow(options);
-        }
-        return doQuery(options);
+        Response response = "update-row".equals(actionType) ? doUpdateRow(options) : doQuery(options);
+        return JsonRecordSupport.toJsonObject(response);
     }
 
-    private JsonObject doQuery(Map<String, Object> options) {
-        JsonObject root = new JsonObject();
+    private static Response simpleError(String message) {
+        return new Response("error", message, null, null, null, null, null, null, null, null, null, null, null);
+    }
 
+    private static Response dataSourceError(ResolvedDataSource resolved) {
+        return new Response(
+                resolved.status(), resolved.message(), null, resolved.availableDataSources(), null, null, null, null,
+                null, null, null, null, null);
+    }
+
+    private Response doQuery(Map<String, Object> options) {
         String sql = optionString(options, SQL);
         if (sql == null || sql.isBlank()) {
-            root.put("status", "error");
-            root.put("message", "No SQL query provided");
-            return root;
+            return simpleError("No SQL query provided");
         }
 
         String dsName = optionString(options, DATASOURCE);
         int maxRows = optionInt(options, MAX_ROWS, defaultMaxRows);
         int queryTimeout = optionInt(options, QUERY_TIMEOUT, defaultQueryTimeout);
 
-        DataSource ds = resolveDataSource(dsName, root);
-        if (ds == null) {
-            return root;
+        ResolvedDataSource resolved = resolveDataSource(dsName);
+        if (resolved.dataSource() == null) {
+            return dataSourceError(resolved);
         }
-        String resolvedName = root.getString("datasource");
+        DataSource ds = resolved.dataSource();
+        String resolvedName = resolved.datasourceName();
 
         StopWatch watch = new StopWatch();
         try (Connection conn = ds.getConnection();
@@ -241,9 +274,6 @@ public class SqlQueryDevConsole extends AbstractDevConsole {
             boolean hasResultSet = stmt.execute(sql);
             long elapsed = watch.taken();
 
-            root.put("status", "success");
-            root.put("elapsed", elapsed);
-
             if (hasResultSet) {
                 // read all data and metadata from ResultSet first, then close it
                 // before any DatabaseMetaData calls (some drivers only support one
@@ -251,8 +281,9 @@ public class SqlQueryDevConsole extends AbstractDevConsole {
                 String singleTable = null;
                 String catalog = null;
                 String schema = null;
-                JsonArray columns = new JsonArray();
-                JsonArray rows = new JsonArray();
+                List<String> colNames = new ArrayList<>();
+                List<String> colTypes = new ArrayList<>();
+                List<Map<String, Object>> rows = new ArrayList<>();
                 int rowCount = 0;
                 String[] colLabels;
 
@@ -265,6 +296,8 @@ public class SqlQueryDevConsole extends AbstractDevConsole {
                     boolean allSameTable = true;
                     for (int i = 1; i <= colCount; i++) {
                         colLabels[i - 1] = meta.getColumnLabel(i);
+                        colNames.add(colLabels[i - 1]);
+                        colTypes.add(meta.getColumnTypeName(i));
                         String tn = meta.getTableName(i);
                         if (tn == null || tn.isEmpty()) {
                             allSameTable = false;
@@ -280,15 +313,8 @@ public class SqlQueryDevConsole extends AbstractDevConsole {
                         singleTable = null;
                     }
 
-                    for (int i = 1; i <= colCount; i++) {
-                        JsonObject col = new JsonObject();
-                        col.put("name", meta.getColumnLabel(i));
-                        col.put("type", meta.getColumnTypeName(i));
-                        columns.add(col);
-                    }
-
                     while (rs.next()) {
-                        JsonObject row = new JsonObject();
+                        Map<String, Object> row = new LinkedHashMap<>();
                         for (int i = 1; i <= colCount; i++) {
                             Object val = rs.getObject(i);
                             if (val == null) {
@@ -324,53 +350,44 @@ public class SqlQueryDevConsole extends AbstractDevConsole {
                     }
                 }
 
-                // annotate columns with PK info
-                if (singleTable != null && !pkColumns.isEmpty()) {
-                    for (int i = 0; i < columns.size(); i++) {
-                        JsonObject col = (JsonObject) columns.get(i);
-                        col.put("primaryKey", pkColumns.contains(col.getString("name")));
-                    }
-                    root.put("tableName", singleTable);
-                    JsonArray pkArr = new JsonArray();
-                    pkColumns.forEach(pkArr::add);
-                    root.put("primaryKeys", pkArr);
-                    root.put("editable", true);
+                boolean editableTable = singleTable != null && !pkColumns.isEmpty();
+                List<ColumnEntry> columns = new ArrayList<>();
+                for (int i = 0; i < colNames.size(); i++) {
+                    Boolean pk = editableTable ? pkColumns.contains(colNames.get(i)) : null;
+                    columns.add(new ColumnEntry(colNames.get(i), colTypes.get(i), pk));
                 }
 
-                root.put("columns", columns);
-                root.put("rows", rows);
-                root.put("rowCount", rowCount);
-                root.put("truncated", rowCount >= maxRows);
+                String tableName = editableTable ? singleTable : null;
+                List<String> primaryKeys = editableTable ? new ArrayList<>(pkColumns) : null;
+                Boolean editable = editableTable ? true : null;
+
+                return new Response(
+                        "success", null, resolvedName, null, elapsed, columns, rows, rowCount, rowCount >= maxRows,
+                        null, tableName, primaryKeys, editable);
             } else {
                 int updateCount = stmt.getUpdateCount();
-                root.put("updateCount", updateCount);
+                return new Response(
+                        "success", null, resolvedName, null, elapsed, null, null, null, null, updateCount, null, null,
+                        null);
             }
         } catch (Exception e) {
             long elapsed = watch.taken();
-            root.put("status", "error");
-            root.put("elapsed", elapsed);
-            root.put("message", e.getMessage());
+            return new Response(
+                    "error", e.getMessage(), resolvedName, null, elapsed, null, null, null, null, null, null, null,
+                    null);
         }
-
-        return root;
     }
 
-    private JsonObject doUpdateRow(Map<String, Object> options) {
-        JsonObject root = new JsonObject();
-
+    private Response doUpdateRow(Map<String, Object> options) {
         String tableName = optionString(options, TABLE);
         if (tableName == null || tableName.isBlank()) {
-            root.put("status", "error");
-            root.put("message", "No table name provided");
-            return root;
+            return simpleError("No table name provided");
         }
 
         String pkJson = optionString(options, PRIMARY_KEY_VALUES);
         String colJson = optionString(options, COLUMN_VALUES);
         if (pkJson == null || colJson == null) {
-            root.put("status", "error");
-            root.put("message", "Missing primaryKeyValues or columnValues");
-            return root;
+            return simpleError("Missing primaryKeyValues or columnValues");
         }
 
         JsonObject pkValues;
@@ -379,22 +396,20 @@ public class SqlQueryDevConsole extends AbstractDevConsole {
             pkValues = (JsonObject) Jsoner.deserialize(pkJson);
             colValues = (JsonObject) Jsoner.deserialize(colJson);
         } catch (Exception e) {
-            root.put("status", "error");
-            root.put("message", "Invalid JSON: " + e.getMessage());
-            return root;
+            return simpleError("Invalid JSON: " + e.getMessage());
         }
 
         if (colValues.isEmpty()) {
-            root.put("status", "error");
-            root.put("message", "No columns to update");
-            return root;
+            return simpleError("No columns to update");
         }
 
         String dsName = optionString(options, DATASOURCE);
-        DataSource ds = resolveDataSource(dsName, root);
-        if (ds == null) {
-            return root;
+        ResolvedDataSource resolved = resolveDataSource(dsName);
+        if (resolved.dataSource() == null) {
+            return dataSourceError(resolved);
         }
+        DataSource ds = resolved.dataSource();
+        String resolvedName = resolved.datasourceName();
 
         // build UPDATE table SET col1=?, col2=? WHERE pk1=? AND pk2=?
         List<String> setCols = new ArrayList<>(colValues.keySet());
@@ -430,48 +445,38 @@ public class SqlQueryDevConsole extends AbstractDevConsole {
 
             int updateCount = ps.executeUpdate();
             long elapsed = watch.taken();
-            root.put("status", "success");
-            root.put("elapsed", elapsed);
-            root.put("updateCount", updateCount);
+            return new Response(
+                    "success", null, resolvedName, null, elapsed, null, null, null, null, updateCount, null, null,
+                    null);
         } catch (Exception e) {
             long elapsed = watch.taken();
-            root.put("status", "error");
-            root.put("elapsed", elapsed);
-            root.put("message", e.getMessage());
+            return new Response(
+                    "error", e.getMessage(), resolvedName, null, elapsed, null, null, null, null, null, null, null,
+                    null);
         }
-
-        return root;
     }
 
-    private DataSource resolveDataSource(String dsName, JsonObject root) {
+    private ResolvedDataSource resolveDataSource(String dsName) {
         if (dsName != null && !dsName.isBlank()) {
             DataSource ds = getCamelContext().getRegistry().lookupByNameAndType(dsName, DataSource.class);
             if (ds == null) {
-                root.put("status", "error");
-                root.put("message", String.format("DataSource '%s' not found in registry", dsName));
-                return null;
+                return new ResolvedDataSource(
+                        null, null, "error", String.format("DataSource '%s' not found in registry", dsName), null);
             }
-            root.put("datasource", dsName);
-            return ds;
+            return new ResolvedDataSource(ds, dsName, null, null, null);
         }
 
         Map<String, DataSource> all = getCamelContext().getRegistry().findByTypeWithName(DataSource.class);
         if (all.isEmpty()) {
-            root.put("status", "error");
-            root.put("message", "No DataSource found in registry");
-            return null;
+            return new ResolvedDataSource(null, null, "error", "No DataSource found in registry", null);
         }
         if (all.size() > 1) {
-            root.put("status", "error");
-            root.put("message", "Multiple DataSources found, specify one: " + String.join(", ", all.keySet()));
-            JsonArray names = new JsonArray();
-            all.keySet().forEach(names::add);
-            root.put("availableDataSources", names);
-            return null;
+            return new ResolvedDataSource(
+                    null, null, "error", "Multiple DataSources found, specify one: " + String.join(", ", all.keySet()),
+                    new ArrayList<>(all.keySet()));
         }
         Map.Entry<String, DataSource> single = all.entrySet().iterator().next();
-        root.put("datasource", single.getKey());
-        return single.getValue();
+        return new ResolvedDataSource(single.getValue(), single.getKey(), null, null, null);
     }
 
     private static void setParameter(PreparedStatement ps, int index, Object value) throws Exception {

@@ -6,10 +6,60 @@
     "title": "Properties",
     "description": "Displays the properties loaded by Camel",
     "deprecated": false,
+    "readOnly": true,
     "javaType": "org.apache.camel.impl.console.PropertiesDevConsole",
     "groupId": "org.apache.camel",
     "artifactId": "camel-console",
     "version": "4.23.0-SNAPSHOT"
+  },
+  "response": {
+    "type": "object",
+    "properties": {
+      "locations": {
+        "type": "array",
+        "items": {
+          "type": "string"
+        },
+        "description": "The locations properties are loaded from"
+      },
+      "properties": {
+        "type": "array",
+        "items": {
+          "type": "object",
+          "properties": {
+            "key": {
+              "type": "string",
+              "description": "The property key"
+            },
+            "value": {
+              "type": "string",
+              "description": "The property value (masked when sensitive)"
+            },
+            "originalValue": {
+              "type": "string",
+              "description": "The original unresolved value (only present when resolved via a properties function)"
+            },
+            "defaultValue": {
+              "type": "string",
+              "description": "The default value (only present when one was used)"
+            },
+            "source": {
+              "type": "string",
+              "description": "The source that provided the value (only present when known)"
+            },
+            "location": {
+              "type": "string",
+              "description": "The location the value was loaded from (only present when known)"
+            },
+            "internal": {
+              "type": "boolean",
+              "description": "Whether the location is an internal Camel location (only present when location is known)"
+            }
+          }
+        },
+        "description": "The loaded properties (only present when there are any)"
+      }
+    }
   }
 }
 

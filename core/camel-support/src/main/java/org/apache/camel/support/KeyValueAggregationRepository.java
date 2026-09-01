@@ -24,7 +24,9 @@ import java.util.stream.Collectors;
 import org.apache.camel.CamelContext;
 import org.apache.camel.CamelContextAware;
 import org.apache.camel.Exchange;
+import org.apache.camel.spi.Configurer;
 import org.apache.camel.spi.KeyValueRepository;
+import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.RecoverableAggregationRepository;
 import org.apache.camel.support.service.ServiceHelper;
 import org.apache.camel.support.service.ServiceSupport;
@@ -41,9 +43,15 @@ import org.slf4j.LoggerFactory;
  * <p/>
  * This allows any {@link KeyValueRepository} implementation to be used as an aggregation repository without
  * implementing the {@link org.apache.camel.spi.AggregationRepository} interface directly.
+ * <p/>
+ * When created with the no-arg constructor, a {@link MemoryKeyValueRepository} is used by default.
  *
  * @since 4.23
  */
+@Metadata(label = "bean",
+          description = "An AggregationRepository backed by a KeyValueRepository (defaults to in-memory).",
+          annotations = { "interfaceName=org.apache.camel.spi.AggregationRepository" })
+@Configurer(metadataOnly = true)
 public class KeyValueAggregationRepository extends ServiceSupport
         implements RecoverableAggregationRepository, CamelContextAware {
 
@@ -60,13 +68,23 @@ public class KeyValueAggregationRepository extends ServiceSupport
      */
     private static final String COMPLETED_PREFIX = "completed:";
 
-    private final KeyValueRepository repository;
+    private KeyValueRepository repository;
     private CamelContext camelContext;
     private boolean useRecovery = true;
     private String deadLetterUri;
     private long recoveryInterval = 5000;
     private int maximumRedeliveries = 3;
     private boolean allowSerializedHeaders;
+
+    /**
+     * Creates an aggregation repository adapter that defaults to an in-memory {@link MemoryKeyValueRepository}. The
+     * repository is created lazily when the service starts.
+     * <p/>
+     * To use a custom {@link KeyValueRepository}, call {@link #setRepository(KeyValueRepository)} before starting, or
+     * use the {@link #KeyValueAggregationRepository(KeyValueRepository)} constructor.
+     */
+    public KeyValueAggregationRepository() {
+    }
 
     /**
      * Creates an aggregation repository adapter backed by the given key-value repository.
@@ -92,7 +110,7 @@ public class KeyValueAggregationRepository extends ServiceSupport
     public Exchange add(CamelContext camelContext, String key, Exchange exchange) {
         LOG.trace("Adding an Exchange with ID {} for key {}", exchange.getExchangeId(), key);
         DefaultExchangeHolder newHolder = DefaultExchangeHolder.marshal(exchange, true, allowSerializedHeaders);
-        DefaultExchangeHolder oldHolder = (DefaultExchangeHolder) repository.put(AGGREGATE_PREFIX + key, newHolder, 0);
+        DefaultExchangeHolder oldHolder = (DefaultExchangeHolder) repository.put(AGGREGATE_PREFIX + key, newHolder, null);
         return unmarshallExchange(camelContext, oldHolder);
     }
 
@@ -108,7 +126,7 @@ public class KeyValueAggregationRepository extends ServiceSupport
         if (useRecovery && holder != null) {
             // Store under the exchangeId for potential recovery
             LOG.trace("Moving Exchange with ID {} to completed (pending confirmation)", exchange.getExchangeId());
-            repository.put(COMPLETED_PREFIX + exchange.getExchangeId(), holder, 0);
+            repository.put(COMPLETED_PREFIX + exchange.getExchangeId(), holder, null);
         }
     }
 
@@ -207,6 +225,15 @@ public class KeyValueAggregationRepository extends ServiceSupport
         return repository;
     }
 
+    /**
+     * Sets the underlying {@link KeyValueRepository}.
+     *
+     * @param repository the key-value repository to use
+     */
+    public void setRepository(KeyValueRepository repository) {
+        this.repository = repository;
+    }
+
     @Override
     public CamelContext getCamelContext() {
         return camelContext;
@@ -219,6 +246,9 @@ public class KeyValueAggregationRepository extends ServiceSupport
 
     @Override
     protected void doStart() throws Exception {
+        if (repository == null) {
+            repository = new MemoryKeyValueRepository();
+        }
         ServiceHelper.startService(repository);
     }
 

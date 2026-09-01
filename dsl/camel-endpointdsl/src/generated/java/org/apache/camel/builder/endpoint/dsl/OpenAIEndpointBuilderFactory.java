@@ -358,6 +358,42 @@ public interface OpenAIEndpointBuilderFactory {
             return this;
         }
         /**
+         * Timeout in milliseconds for establishing the TCP connection to the
+         * API. A connect timeout means the endpoint was unreachable, so the
+         * request never ran and is safe to retry. When 0 or negative, the SDK
+         * default (1 minute) is used.
+         * 
+         * The option is a: <code>long</code> type.
+         * 
+         * Default: 0
+         * Group: producer
+         * 
+         * @param connectTimeout the value to set
+         * @return the dsl builder
+         */
+        default OpenAIEndpointBuilder connectTimeout(long connectTimeout) {
+            doSetProperty("connectTimeout", connectTimeout);
+            return this;
+        }
+        /**
+         * Timeout in milliseconds for establishing the TCP connection to the
+         * API. A connect timeout means the endpoint was unreachable, so the
+         * request never ran and is safe to retry. When 0 or negative, the SDK
+         * default (1 minute) is used.
+         * 
+         * The option will be converted to a <code>long</code> type.
+         * 
+         * Default: 0
+         * Group: producer
+         * 
+         * @param connectTimeout the value to set
+         * @return the dsl builder
+         */
+        default OpenAIEndpointBuilder connectTimeout(String connectTimeout) {
+            doSetProperty("connectTimeout", connectTimeout);
+            return this;
+        }
+        /**
          * Exchange property name for storing conversation history.
          * 
          * The option is a: <code>java.lang.String</code> type.
@@ -1324,8 +1360,44 @@ public interface OpenAIEndpointBuilderFactory {
             return this;
         }
         /**
-         * HTTP request timeout in milliseconds for the OpenAI SDK client. When
-         * 0 or negative, the SDK default (10 minutes) is used.
+         * Timeout in milliseconds for reading the response. A read timeout
+         * means the model was slow mid-generation, so the request may have been
+         * processed. When 0 or negative, requestTimeout applies.
+         * 
+         * The option is a: <code>long</code> type.
+         * 
+         * Default: 0
+         * Group: producer
+         * 
+         * @param readTimeout the value to set
+         * @return the dsl builder
+         */
+        default OpenAIEndpointBuilder readTimeout(long readTimeout) {
+            doSetProperty("readTimeout", readTimeout);
+            return this;
+        }
+        /**
+         * Timeout in milliseconds for reading the response. A read timeout
+         * means the model was slow mid-generation, so the request may have been
+         * processed. When 0 or negative, requestTimeout applies.
+         * 
+         * The option will be converted to a <code>long</code> type.
+         * 
+         * Default: 0
+         * Group: producer
+         * 
+         * @param readTimeout the value to set
+         * @return the dsl builder
+         */
+        default OpenAIEndpointBuilder readTimeout(String readTimeout) {
+            doSetProperty("readTimeout", readTimeout);
+            return this;
+        }
+        /**
+         * Overall HTTP request timeout in milliseconds for the OpenAI SDK
+         * client. When 0 or negative, the SDK default (10 minutes) is used.
+         * Acts as the fallback for readTimeout and writeTimeout when those are
+         * not set.
          * 
          * The option is a: <code>long</code> type.
          * 
@@ -1340,8 +1412,10 @@ public interface OpenAIEndpointBuilderFactory {
             return this;
         }
         /**
-         * HTTP request timeout in milliseconds for the OpenAI SDK client. When
-         * 0 or negative, the SDK default (10 minutes) is used.
+         * Overall HTTP request timeout in milliseconds for the OpenAI SDK
+         * client. When 0 or negative, the SDK default (10 minutes) is used.
+         * Acts as the fallback for readTimeout and writeTimeout when those are
+         * not set.
          * 
          * The option will be converted to a <code>long</code> type.
          * 
@@ -1696,6 +1770,40 @@ public interface OpenAIEndpointBuilderFactory {
          */
         default OpenAIEndpointBuilder userMessage(String userMessage) {
             doSetProperty("userMessage", userMessage);
+            return this;
+        }
+        /**
+         * Timeout in milliseconds for writing the request body, which matters
+         * for large payloads such as audio and image uploads. When 0 or
+         * negative, requestTimeout applies.
+         * 
+         * The option is a: <code>long</code> type.
+         * 
+         * Default: 0
+         * Group: producer
+         * 
+         * @param writeTimeout the value to set
+         * @return the dsl builder
+         */
+        default OpenAIEndpointBuilder writeTimeout(long writeTimeout) {
+            doSetProperty("writeTimeout", writeTimeout);
+            return this;
+        }
+        /**
+         * Timeout in milliseconds for writing the request body, which matters
+         * for large payloads such as audio and image uploads. When 0 or
+         * negative, requestTimeout applies.
+         * 
+         * The option will be converted to a <code>long</code> type.
+         * 
+         * Default: 0
+         * Group: producer
+         * 
+         * @param writeTimeout the value to set
+         * @return the dsl builder
+         */
+        default OpenAIEndpointBuilder writeTimeout(String writeTimeout) {
+            doSetProperty("writeTimeout", writeTimeout);
             return this;
         }
         /**

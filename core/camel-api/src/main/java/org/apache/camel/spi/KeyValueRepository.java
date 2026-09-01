@@ -16,6 +16,8 @@
  */
 package org.apache.camel.spi;
 
+import java.time.Duration;
+import java.util.Objects;
 import java.util.Set;
 
 import org.apache.camel.Service;
@@ -33,8 +35,8 @@ import org.jspecify.annotations.Nullable;
  * storage technology (Redis, Hazelcast, Infinispan, JDBC, etc.), a single {@code KeyValueRepository} implementation can
  * be wrapped by the appropriate adapter.
  * <p/>
- * Implementations must be thread-safe. Entries may optionally have a time-to-live (TTL); a TTL of {@code 0} or less
- * means the entry does not expire.
+ * Implementations must be thread-safe. Entries may optionally have a time-to-live (TTL); a {@code null}, zero, or
+ * negative TTL means the entry does not expire.
  *
  * @since 4.23
  */
@@ -52,13 +54,13 @@ public interface KeyValueRepository extends Service {
     /**
      * Stores a value under the given key with an optional time-to-live.
      *
-     * @param  key       the key
-     * @param  value     the value to store
-     * @param  ttlMillis the time-to-live in milliseconds; {@code 0} or negative means no expiration
-     * @return           the previous value associated with the key, or {@code null} if there was no mapping
+     * @param  key   the key
+     * @param  value the value to store
+     * @param  ttl   the time-to-live; {@code null}, zero, or negative means no expiration
+     * @return       the previous value associated with the key, or {@code null} if there was no mapping
      */
     @Nullable
-    Object put(String key, Object value, long ttlMillis);
+    Object put(String key, Object value, @Nullable Duration ttl);
 
     /**
      * Removes the entry for the given key.
@@ -95,19 +97,63 @@ public interface KeyValueRepository extends Service {
      * The default implementation is not atomic. Implementations backed by stores that support atomic compare-and-set
      * operations should override this method for better concurrency guarantees.
      *
-     * @param  key       the key
-     * @param  value     the value to store
-     * @param  ttlMillis the time-to-live in milliseconds; {@code 0} or negative means no expiration
-     * @return           the existing value if the key was already present, or {@code null} if the put succeeded
+     * @param  key   the key
+     * @param  value the value to store
+     * @param  ttl   the time-to-live; {@code null}, zero, or negative means no expiration
+     * @return       the existing value if the key was already present, or {@code null} if the put succeeded
      */
     @Nullable
-    default Object putIfAbsent(String key, Object value, long ttlMillis) {
+    default Object putIfAbsent(String key, Object value, @Nullable Duration ttl) {
         Object existing = get(key);
         if (existing != null) {
             return existing;
         }
-        put(key, value, ttlMillis);
+        put(key, value, ttl);
         return null;
+    }
+
+    /**
+     * Atomically replaces the value for the given key only if the current value equals the expected old value
+     * (compare-and-swap).
+     * <p/>
+     * The default implementation is not atomic. Implementations backed by stores that support atomic compare-and-swap
+     * operations (e.g., {@code ConcurrentMap.replace}, Hazelcast {@code IMap.replace}) should override this method for
+     * better concurrency guarantees.
+     *
+     * @param  key              the key
+     * @param  expectedOldValue the value that must currently be associated with the key
+     * @param  newValue         the new value to store
+     * @param  ttl              the time-to-live for the new entry; {@code null}, zero, or negative means no expiration
+     * @return                  {@code true} if the value was replaced, {@code false} if the current value did not match
+     */
+    default boolean replace(String key, Object expectedOldValue, Object newValue, @Nullable Duration ttl) {
+        Object current = get(key);
+        if (current != null && Objects.equals(current, expectedOldValue)) {
+            put(key, newValue, ttl);
+            return true;
+        }
+        return false;
+    }
+
+    /**
+     * Removes the entry for the given key only if the current value equals the expected value (compare-and-swap).
+     * <p/>
+     * The default implementation is not atomic. Implementations backed by stores that support atomic compare-and-remove
+     * operations (e.g., {@code ConcurrentMap.remove(key, value)}, Hazelcast {@code IMap.remove(key, value)}) should
+     * override this method for better concurrency guarantees.
+     *
+     * @param  key           the key to remove
+     * @param  expectedValue the value that must currently be associated with the key
+     * @return               {@code true} if the entry was removed, {@code false} if the current value did not match or
+     *                       the key was not present
+     */
+    default boolean delete(String key, Object expectedValue) {
+        Object current = get(key);
+        if (current != null && Objects.equals(current, expectedValue)) {
+            delete(key);
+            return true;
+        }
+        return false;
     }
 
     /**
