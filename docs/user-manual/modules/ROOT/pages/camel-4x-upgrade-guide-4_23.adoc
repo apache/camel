@@ -402,15 +402,6 @@ any other name.
 Set `allowLocalWebhookUrls=true` to permit loopback targets during local development. That option is
 unchanged and still does not permit any of the ranges above.
 
-=== New Cache EIP
-
-A new Cache EIP has been added that provides a transparent read-through cache for a block of processing steps.
-On cache hit the cached body is returned and the block is skipped; on cache miss the block executes and
-the result body is cached. The Cache EIP uses the `KeyValueRepository` SPI as its backing store, with
-`MemoryKeyValueRepository` auto-created when no explicit store is configured.
-
-See xref:components:eips:cache-eip.adoc[Cache EIP] for details.
-
 === camel-ai-observability (GenAI observability)
 
 LangChain4j, OpenAI, and Spring AI chat (`spring-ai-chat`) producers now emit GenAI observability data (OpenTelemetry span attributes and
