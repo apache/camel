@@ -176,6 +176,48 @@ public interface DynamicRouterControlEndpointBuilderFactory {
             doSetProperty("subscriptionId", subscriptionId);
             return this;
         }
+        /**
+         * Whether the subscription predicate, and the language used to compile
+         * it, may be taken from the incoming control message. When disabled,
+         * the predicate and expressionLanguage configured on this endpoint are
+         * used instead. Enabling this lets the sender of a control message
+         * choose both the expression language and the expression that the
+         * Dynamic Router compiles into a live predicate, so only enable it when
+         * control messages come from a trusted source.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: security
+         * 
+         * @param allowPredicateFromMessage the value to set
+         * @return the dsl builder
+         */
+        default DynamicRouterControlEndpointBuilder allowPredicateFromMessage(boolean allowPredicateFromMessage) {
+            doSetProperty("allowPredicateFromMessage", allowPredicateFromMessage);
+            return this;
+        }
+        /**
+         * Whether the subscription predicate, and the language used to compile
+         * it, may be taken from the incoming control message. When disabled,
+         * the predicate and expressionLanguage configured on this endpoint are
+         * used instead. Enabling this lets the sender of a control message
+         * choose both the expression language and the expression that the
+         * Dynamic Router compiles into a live predicate, so only enable it when
+         * control messages come from a trusted source.
+         * 
+         * The option will be converted to a <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: security
+         * 
+         * @param allowPredicateFromMessage the value to set
+         * @return the dsl builder
+         */
+        default DynamicRouterControlEndpointBuilder allowPredicateFromMessage(String allowPredicateFromMessage) {
+            doSetProperty("allowPredicateFromMessage", allowPredicateFromMessage);
+            return this;
+        }
     }
 
     /**

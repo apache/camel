@@ -42,6 +42,7 @@ import static org.apache.camel.component.dynamicrouter.control.DynamicRouterCont
 import static org.apache.camel.component.dynamicrouter.control.DynamicRouterControlConstants.CONTROL_SUBSCRIBE_CHANNEL;
 import static org.apache.camel.component.dynamicrouter.control.DynamicRouterControlConstants.CONTROL_SUBSCRIPTION_ID;
 import static org.apache.camel.component.dynamicrouter.control.DynamicRouterControlConstants.ERROR_NO_PREDICATE_BEAN_FOUND;
+import static org.apache.camel.component.dynamicrouter.control.DynamicRouterControlConstants.ERROR_PREDICATE_FROM_MESSAGE_NOT_ALLOWED;
 import static org.apache.camel.component.dynamicrouter.control.DynamicRouterControlConstants.SIMPLE_LANGUAGE;
 
 /**
@@ -75,28 +76,56 @@ public class DynamicRouterControlProducer extends HeaderSelectorProducer {
     }
 
     /**
+     * Returns the value to use for a predicate parameter that a control message may try to supply. Unless the endpoint
+     * explicitly allows the predicate to come from the message, a message-supplied value is rejected, and the value
+     * configured on the endpoint is used instead. Without this, the sender of a control message would choose both the
+     * expression language and the expression that the Dynamic Router compiles into a live predicate.
+     *
+     * @param  allowFromMessage whether the endpoint allows the predicate to come from the control message
+     * @param  messageValue     the value found in the control message, if any
+     * @param  configValue      the value configured on the endpoint
+     * @return                  the value to use
+     */
+    static String predicateValueToUse(
+            final boolean allowFromMessage, final String messageValue, final String configValue) {
+        if (allowFromMessage) {
+            return messageValue;
+        }
+        if (ObjectHelper.isNotEmpty(messageValue)) {
+            throw new IllegalArgumentException(ERROR_PREDICATE_FROM_MESSAGE_NOT_ALLOWED);
+        }
+        return configValue;
+    }
+
+    /**
      * Create a filter from parameters in the message body.
      *
      * @param  dynamicRouterControlService the {@link DynamicRouterControlService}
+     * @param  configuration               the configuration for the Dynamic Router Control
      * @param  message                     the message, where the body contains a control message
      * @param  update                      whether to update an existing filter (true) or add a new one (false)
      * @return                             the ID of the added filter
      */
     static String subscribeFromMessage(
             final DynamicRouterControlService dynamicRouterControlService,
+            final DynamicRouterControlConfiguration configuration,
             final Message message, final boolean update) {
         DynamicRouterControlMessage messageBody = message.getBody(DynamicRouterControlMessage.class);
         String subscriptionId = messageBody.getSubscriptionId();
         String subscribeChannel = messageBody.getSubscribeChannel();
         String destinationUri = messageBody.getDestinationUri();
         String priority = String.valueOf(messageBody.getPriority());
-        String predicate = messageBody.getPredicate();
         String predicateBean = messageBody.getPredicateBean();
-        String expressionLanguage = messageBody.getExpressionLanguage();
         if (ObjectHelper.isNotEmpty(predicateBean)) {
             return dynamicRouterControlService.subscribeWithPredicateBean(subscribeChannel, subscriptionId,
                     destinationUri, Integer.parseInt(priority), predicateBean, update);
-        } else if (ObjectHelper.isNotEmpty(predicate) && ObjectHelper.isNotEmpty(expressionLanguage)) {
+        }
+        boolean allowFromMessage = configuration.isAllowPredicateFromMessage();
+        String predicate = predicateValueToUse(allowFromMessage, messageBody.getPredicate(),
+                configuration.getPredicate());
+        String expressionLanguage = predicateValueToUse(allowFromMessage, messageBody.getExpressionLanguage(),
+                configuration.getExpressionLanguage());
+        if (ObjectHelper.isNotEmpty(predicate) && ObjectHelper.isNotEmpty(expressionLanguage)) {
             return dynamicRouterControlService.subscribeWithPredicateExpression(subscribeChannel, subscriptionId,
                     destinationUri, Integer.parseInt(priority), predicate, expressionLanguage, update);
         } else {
@@ -105,29 +134,38 @@ public class DynamicRouterControlProducer extends HeaderSelectorProducer {
     }
 
     /**
-     * Create a filter from parameters in message headers.
+     * Create a filter from parameters in message headers, falling back to the values configured on the endpoint for any
+     * parameter that the message does not carry.
      *
      * @param  dynamicRouterControlService the {@link DynamicRouterControlService}
+     * @param  configuration               the configuration for the Dynamic Router Control
      * @param  message                     the message, where the headers contain subscription params
      * @param  update                      whether to update an existing filter (true) or add a new one (false)
      * @return                             the ID of the added filter
      */
     static String subscribeFromHeaders(
             final DynamicRouterControlService dynamicRouterControlService,
+            final DynamicRouterControlConfiguration configuration,
             final Message message, final boolean update) {
         Map<String, Object> headers = message.getHeaders();
-        String subscriptionId = (String) headers.get(CONTROL_SUBSCRIPTION_ID);
-        String subscribeChannel = (String) headers.get(CONTROL_SUBSCRIBE_CHANNEL);
-        String destinationUri = (String) headers.get(CONTROL_DESTINATION_URI);
-        String priority = String.valueOf(headers.get(CONTROL_PRIORITY));
-        String predicate = (String) headers.get(CONTROL_PREDICATE);
+        String subscriptionId = (String) headers.getOrDefault(CONTROL_SUBSCRIPTION_ID, configuration.getSubscriptionId());
+        String subscribeChannel
+                = (String) headers.getOrDefault(CONTROL_SUBSCRIBE_CHANNEL, configuration.getSubscribeChannel());
+        String destinationUri = (String) headers.getOrDefault(CONTROL_DESTINATION_URI, configuration.getDestinationUri());
+        String priority = String.valueOf(headers.getOrDefault(CONTROL_PRIORITY, configuration.getPriority()));
         String predicateBean = (String) headers.get(CONTROL_PREDICATE_BEAN);
-        String expressionLanguage = Optional.ofNullable((String) headers.get(CONTROL_EXPRESSION_LANGUAGE))
-                .orElse(SIMPLE_LANGUAGE);
         if (ObjectHelper.isNotEmpty(predicateBean)) {
             return dynamicRouterControlService.subscribeWithPredicateBean(subscribeChannel, subscriptionId,
                     destinationUri, Integer.parseInt(priority), predicateBean, update);
-        } else if (ObjectHelper.isNotEmpty(predicate) && ObjectHelper.isNotEmpty(expressionLanguage)) {
+        }
+        boolean allowFromMessage = configuration.isAllowPredicateFromMessage();
+        String predicate = predicateValueToUse(allowFromMessage, (String) headers.get(CONTROL_PREDICATE),
+                configuration.getPredicate());
+        String expressionLanguage = Optional
+                .ofNullable(predicateValueToUse(allowFromMessage, (String) headers.get(CONTROL_EXPRESSION_LANGUAGE),
+                        configuration.getExpressionLanguage()))
+                .orElse(SIMPLE_LANGUAGE);
+        if (ObjectHelper.isNotEmpty(predicate) && ObjectHelper.isNotEmpty(expressionLanguage)) {
             return dynamicRouterControlService.subscribeWithPredicateExpression(subscribeChannel, subscriptionId,
                     destinationUri, Integer.parseInt(priority), predicate, expressionLanguage, update);
         } else {
@@ -147,9 +185,9 @@ public class DynamicRouterControlProducer extends HeaderSelectorProducer {
     public void performSubscribe(final Message message, AsyncCallback callback) {
         String filterId;
         if (message.getBody() instanceof DynamicRouterControlMessage) {
-            filterId = subscribeFromMessage(dynamicRouterControlService, message, false);
+            filterId = subscribeFromMessage(dynamicRouterControlService, configuration, message, false);
         } else {
-            filterId = subscribeFromHeaders(dynamicRouterControlService, message, false);
+            filterId = subscribeFromHeaders(dynamicRouterControlService, configuration, message, false);
         }
         message.setBody(filterId);
         callback.done(false);
@@ -190,9 +228,9 @@ public class DynamicRouterControlProducer extends HeaderSelectorProducer {
     public void performUpdate(final Message message, AsyncCallback callback) {
         String filterId;
         if (message.getBody() instanceof DynamicRouterControlMessage) {
-            filterId = subscribeFromMessage(dynamicRouterControlService, message, true);
+            filterId = subscribeFromMessage(dynamicRouterControlService, configuration, message, true);
         } else {
-            filterId = subscribeFromHeaders(dynamicRouterControlService, message, true);
+            filterId = subscribeFromHeaders(dynamicRouterControlService, configuration, message, true);
         }
         message.setBody(filterId);
         callback.done(false);

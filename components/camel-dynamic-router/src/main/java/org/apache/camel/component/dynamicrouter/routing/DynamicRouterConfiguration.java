@@ -104,6 +104,16 @@ public class DynamicRouterConfiguration {
     private boolean ignoreInvalidEndpoints;
 
     /**
+     * An optional comma-separated allow-list of component schemes that a subscription destination may resolve to.
+     */
+    @UriParam(label = "advanced,security",
+              description = "Sets an optional comma-separated allow-list of component schemes that a subscription"
+                            + " destination may resolve to (e.g. http,https). When set, a subscription whose"
+                            + " destination URI uses a scheme that is not in the list is rejected. By default (unset)"
+                            + " any scheme is allowed.")
+    private String allowedSchemes;
+
+    /**
      * If enabled, then Camel will process replies out-of-order (e.g., in the order they come back). If disabled, Camel
      * will process replies in the same order as defined by the multicast.
      */
@@ -313,6 +323,24 @@ public class DynamicRouterConfiguration {
      */
     public void setIgnoreInvalidEndpoints(boolean ignoreInvalidEndpoints) {
         this.ignoreInvalidEndpoints = ignoreInvalidEndpoints;
+    }
+
+    /**
+     * An optional comma-separated allow-list of component schemes that a subscription destination may resolve to.
+     *
+     * @return the allowed schemes, or null if any scheme is allowed
+     */
+    public String getAllowedSchemes() {
+        return allowedSchemes;
+    }
+
+    /**
+     * An optional comma-separated allow-list of component schemes that a subscription destination may resolve to.
+     *
+     * @param allowedSchemes the allowed schemes
+     */
+    public void setAllowedSchemes(String allowedSchemes) {
+        this.allowedSchemes = allowedSchemes;
     }
 
     /**
