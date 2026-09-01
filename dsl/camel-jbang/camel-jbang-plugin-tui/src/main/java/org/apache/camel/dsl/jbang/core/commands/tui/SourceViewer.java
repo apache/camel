@@ -808,6 +808,10 @@ class SourceViewer {
             editState.deleteForward();
             return true;
         }
+        if (ke.isKey(KeyCode.TAB) && ke.hasShift()) {
+            moveCursorToPreviousIndentStop();
+            return true;
+        }
         if (ke.isKey(KeyCode.TAB) && autocompleteProvider != null) {
             openAutocomplete();
             return true;
@@ -894,33 +898,39 @@ class SourceViewer {
 
     YamlEndpointContext findEnclosingComponent(int fromRow) {
         String cursorLine = editState.getLine(fromRow);
-        int cursorIndent = countLeadingSpaces(cursorLine);
+        // a blank line's own leading whitespace can be stale after a Shift+Tab dedent (see
+        // effectiveBlankIndent) — use the cursor's real column so a cursor dedented back out of
+        // an endpoint's parameters: block isn't mistaken for still being inside it
+        int cursorIndent = cursorLine.isBlank() ? effectiveBlankIndent(fromRow) : countLeadingSpaces(cursorLine);
 
         // list items (- key:) are inside steps, not inside parameters
         if (!cursorLine.isBlank() && cursorLine.trim().startsWith("- ")) {
             return null;
         }
 
-        // blank lines: find the nearest preceding non-blank line for context
+        // blank line positioned as a sibling of a uri: line with no parameters: block yet —
+        // offer to create one. Scan siblings at exactly cursorIndent; a shallower line ends it.
         if (cursorLine.isBlank()) {
             for (int i = fromRow - 1; i >= 0; i--) {
-                String prev = editState.getLine(i);
-                if (!prev.isBlank()) {
-                    String pt = prev.trim();
-                    if (pt.startsWith("parameters:")) {
-                        // blank line right after parameters: — cursor is inside the block
-                        cursorIndent = countLeadingSpaces(prev) + 1;
-                        fromRow = i;
-                    } else if (pt.startsWith("- ") || pt.startsWith("steps:")) {
-                        // inside a steps block or list item — not inside parameters
-                        return null;
-                    } else if (pt.startsWith("uri:") || pt.startsWith("id:")) {
-                        // below uri: or id: — look for uri: sibling to offer component options
-                        return findComponentFromUriSibling(i);
-                    } else {
-                        return findEnclosingComponent(i);
-                    }
+                String line = editState.getLine(i);
+                if (line.isBlank()) {
+                    continue;
+                }
+                int indent = countLeadingSpaces(line);
+                if (indent < cursorIndent) {
                     break;
+                }
+                if (indent == cursorIndent) {
+                    String trimmed = line.trim();
+                    if (trimmed.startsWith("parameters:")) {
+                        // a parameters: block already exists as a sibling here — nothing to
+                        // auto-create, and the cursor isn't inside it either (it's a sibling,
+                        // not a child); fall through to generic EIP-field completion instead
+                        return null;
+                    }
+                    if (trimmed.startsWith("uri:") || trimmed.startsWith("- uri:")) {
+                        return findComponentFromUriSibling(i);
+                    }
                 }
             }
         }
@@ -1240,22 +1250,57 @@ class SourceViewer {
         return 0;
     }
 
+    /**
+     * Shift+Tab: move the cursor left, within the current line's leading whitespace, to the nearest enclosing
+     * structural indent level — the same indent a completion inserted at this position would have used one level up.
+     * Only acts while the cursor sits inside leading whitespace (nothing typed yet on the line); otherwise it is a
+     * no-op.
+     */
+    void moveCursorToPreviousIndentStop() {
+        int row = editState.cursorRow();
+        String line = editState.getLine(row);
+        int col = Math.min(editState.cursorCol(), line.length());
+        if (col <= 0 || !line.substring(0, col).isBlank()) {
+            return;
+        }
+
+        int target = 0;
+        for (int i = row - 1; i >= 0; i--) {
+            String prev = editState.getLine(i);
+            if (prev.isBlank()) {
+                continue;
+            }
+            int indent = countLeadingSpaces(prev);
+            if (indent < col) {
+                target = indent;
+                break;
+            }
+        }
+        SourceEditorNavigation.positionCursor(editState, row, target);
+    }
+
+    /**
+     * Effective indent for a possibly-blank line. On the live cursor row, the line's own leading whitespace can be
+     * stale — Shift+Tab (see {@link #moveCursorToPreviousIndentStop()}) repositions the cursor within existing
+     * whitespace without trimming it — so the cursor's column is the source of truth there. For any other row (e.g.
+     * tests resolving an arbitrary row without moving the live cursor there), trust the row's own real whitespace when
+     * it has any, and only derive from the preceding line when it is truly empty.
+     */
+    private int effectiveBlankIndent(int row) {
+        if (row == editState.cursorRow()) {
+            return editState.cursorCol();
+        }
+        int literal = countLeadingSpaces(editState.getLine(row));
+        return literal > 0 ? literal : deriveBlankLineIndent(row);
+    }
+
     String findParentYamlKey(int fromRow) {
         String cursorLine = editState.getLine(fromRow);
 
-        // on a blank line, use the scope line (the highlighted EIP) as parent
-        if (cursorLine.isBlank()) {
-            int scopeRow = findScopeLineRow(fromRow);
-            if (scopeRow >= 0) {
-                String scopeLine = editState.getLine(scopeRow);
-                String scopeKey = extractEipName(scopeLine.trim());
-                if (scopeKey != null) {
-                    return dashToCamelCase(scopeKey);
-                }
-            }
-        }
-
-        int cursorIndent = countLeadingSpaces(cursorLine);
+        // a blank line has no real indentation yet — derive the intended nesting level so a
+        // cursor nested under e.g. "expression:" resolves to that key, not to the enclosing EIP
+        // (which would otherwise re-offer already-set fields like name/expression)
+        int cursorIndent = cursorLine.isBlank() ? effectiveBlankIndent(fromRow) : countLeadingSpaces(cursorLine);
 
         // walk up to find parent key at lower indent
         for (int i = fromRow; i >= 0; i--) {
@@ -1285,11 +1330,7 @@ class SourceViewer {
 
     YamlEipContext findEnclosingEip(int fromRow) {
         String cursorLine = editState.getLine(fromRow);
-        int cursorIndent = countLeadingSpaces(cursorLine);
-
-        if (cursorLine.isBlank() && cursorIndent == 0) {
-            cursorIndent = deriveBlankLineIndent(fromRow);
-        }
+        int cursorIndent = cursorLine.isBlank() ? effectiveBlankIndent(fromRow) : countLeadingSpaces(cursorLine);
 
         // if cursor is inside a parameters: block, defer to component completion
         for (int i = fromRow; i >= 0; i--) {
@@ -1335,11 +1376,7 @@ class SourceViewer {
     java.util.Set<String> collectExistingSiblingKeys(int fromRow) {
         java.util.Set<String> keys = new java.util.LinkedHashSet<>();
         String cursorLine = editState.getLine(fromRow);
-        int cursorIndent = countLeadingSpaces(cursorLine);
-
-        if (cursorLine.isBlank() && cursorIndent == 0) {
-            cursorIndent = deriveBlankLineIndent(fromRow);
-        }
+        int cursorIndent = cursorLine.isBlank() ? effectiveBlankIndent(fromRow) : countLeadingSpaces(cursorLine);
 
         // scan upward for siblings at same indent
         for (int i = fromRow - 1; i >= 0; i--) {
@@ -1504,10 +1541,10 @@ class SourceViewer {
         }
         List<String> parts = new ArrayList<>();
         String cursorLine = editState.getLine(cursorRow);
-        int cursorIndent = countLeadingSpaces(cursorLine);
-        if (cursorLine.isBlank()) {
-            cursorIndent = Integer.MAX_VALUE;
-        }
+        // a blank line's own leading whitespace can be stale (see effectiveBlankIndent), so use
+        // the cursor's real column rather than assuming the deepest nesting implied by the line
+        // above — otherwise dedenting with Shift+Tab wouldn't be reflected in the breadcrumb
+        int cursorIndent = cursorLine.isBlank() ? effectiveBlankIndent(cursorRow) : countLeadingSpaces(cursorLine);
 
         int prevIndent = cursorIndent;
         for (int i = cursorRow - 1; i >= 0; i--) {
@@ -1782,7 +1819,12 @@ class SourceViewer {
             } else {
                 // auto-insert parameters: block if cursor is below uri: without one
                 if (ctx.needsParameters() && lineText.isBlank()) {
-                    int indent = deriveInsertionIndent(row);
+                    // parameters: must be a sibling of uri:, so use the cursor's real column
+                    // (matching uri:'s indent via Enter-key auto-indent) rather than
+                    // deriveInsertionIndent's EIP-scope heuristic, which resolves the scope to
+                    // the uri: line itself here and then adds a level, nesting parameters: one
+                    // level too deep and breaking findEnclosingComponent's uri-sibling lookup
+                    int indent = effectiveBlankIndent(row);
                     String indentStr = " ".repeat(indent);
                     editState.moveCursorToLineStart();
                     editState.insert(indentStr + "parameters:");
@@ -1889,14 +1931,31 @@ class SourceViewer {
     }
 
     void insertYamlCompletion(AutocompletePopup.CompletionItem item, boolean valueMode, String currentLine) {
-        insertYamlCompletion(item, valueMode, currentLine, false);
+        // no explicit cursor column given (e.g. direct test calls) — assume the cursor sits at
+        // the end of the given line, matching this method's original, column-agnostic behavior
+        insertYamlCompletion(item, valueMode, currentLine, false, currentLine.length());
     }
 
     private void insertYamlCompletion(
             AutocompletePopup.CompletionItem item, boolean valueMode, String currentLine, boolean listItem) {
-        int indent = countLeadingSpaces(currentLine);
-        if (currentLine.isBlank()) {
+        insertYamlCompletion(item, valueMode, currentLine, listItem, editState.cursorCol());
+    }
+
+    /** Package-private (rather than private) so tests can exercise an explicit cursor column. */
+    void insertYamlCompletion(
+            AutocompletePopup.CompletionItem item, boolean valueMode, String currentLine, boolean listItem,
+            int cursorCol) {
+        int indent;
+        if (currentLine.isEmpty()) {
+            // truly empty line (no auto-inserted whitespace yet) — derive from the enclosing EIP
             indent = deriveInsertionIndent(editState.cursorRow());
+        } else if (currentLine.isBlank()) {
+            // whitespace-only line: the cursor's column is the real, intended nesting depth —
+            // Shift+Tab (see moveCursorToPreviousIndentStop()) can dedent it within the existing
+            // whitespace without trimming the line, so the line's own length would be stale here
+            indent = Math.min(cursorCol, currentLine.length());
+        } else {
+            indent = countLeadingSpaces(currentLine);
         }
         String indentStr = " ".repeat(indent);
 
@@ -2096,6 +2155,42 @@ class SourceViewer {
             msgs.addAll(validateProperties(content));
         }
         inlineErrors = msgs.isEmpty() ? Collections.emptyMap() : buildInlineErrors(msgs, content);
+    }
+
+    /**
+     * Inline errors to actually display right now. A line with no value typed yet (e.g. a field just added via
+     * Tab-completion, "key:" with nothing after it) is still being filled in, so its error — which is really just "you
+     * haven't finished this" — is suppressed. This is value-based rather than cursor-based: a genuinely wrong,
+     * non-empty value (e.g. a Simple language typo) still flags immediately, without needing to move the cursor away
+     * first.
+     */
+    private Map<Integer, String> visibleInlineErrors() {
+        if (inlineErrors.isEmpty()) {
+            return inlineErrors;
+        }
+        Map<Integer, String> visible = null;
+        for (Integer line : inlineErrors.keySet()) {
+            if (line >= 0 && line < editState.lineCount() && isEmptyValueLine(editState.getLine(line))) {
+                if (visible == null) {
+                    visible = new java.util.LinkedHashMap<>(inlineErrors);
+                }
+                visible.remove(line);
+            }
+        }
+        return visible != null ? visible : inlineErrors;
+    }
+
+    /** Package-private (rather than private) so tests can exercise it directly. */
+    static boolean isEmptyValueLine(String line) {
+        String trimmed = line.trim();
+        if (trimmed.startsWith("- ")) {
+            trimmed = trimmed.substring(2).trim();
+        }
+        int colon = trimmed.indexOf(':');
+        if (colon < 0) {
+            return trimmed.isEmpty();
+        }
+        return trimmed.substring(colon + 1).trim().isEmpty();
     }
 
     static Map<Integer, String> buildInlineErrors(List<String> errors, String content) {
@@ -2472,6 +2567,7 @@ class SourceViewer {
     }
 
     private void renderEditMode(Frame frame, Rect area) {
+        Map<Integer, String> visibleErrors = visibleInlineErrors();
         Style ts = titleStyle != null ? titleStyle : Style.EMPTY;
         List<Span> titleSpans = new ArrayList<>();
         String info = title != null ? title : "";
@@ -2505,10 +2601,10 @@ class SourceViewer {
             blockBuilder.borders(Borders.ALL)
                     .title(Title.from(Line.from(titleSpans)))
                     .titleBottom(posTitle);
-            if (!inlineErrors.isEmpty()) {
+            if (!visibleErrors.isEmpty()) {
                 Style errorStyle = Style.EMPTY.fg(dev.tamboui.style.Color.rgb(0xFF, 0x66, 0x66));
                 blockBuilder.title(Title.from(Line.from(
-                        Span.styled(" errors: " + inlineErrors.size() + " ", errorStyle))).right());
+                        Span.styled(" errors: " + visibleErrors.size() + " ", errorStyle))).right());
             }
         }
         if (borderStyle != null) {
@@ -2620,11 +2716,11 @@ class SourceViewer {
         }
 
         // error gutter markers — red line number for lines with validation errors
-        if (!inlineErrors.isEmpty() && !plainMode) {
+        if (!visibleErrors.isEmpty() && !plainMode) {
             int gutterWidth = Math.max(2, String.valueOf(editState.lineCount()).length()) + 2;
             for (int r = 0; r < editorArea.height(); r++) {
                 int lineIdx = editState.scrollRow() + r;
-                if (inlineErrors.containsKey(lineIdx)) {
+                if (visibleErrors.containsKey(lineIdx)) {
                     Style errorBg = Style.EMPTY.fg(dev.tamboui.style.Color.WHITE)
                             .bg(dev.tamboui.style.Color.rgb(0x8B, 0x00, 0x00));
                     int screenY = editorArea.top() + r;
@@ -2639,7 +2735,7 @@ class SourceViewer {
 
         // quick doc panel at the bottom — errors take priority over doc
         if (docArea != null) {
-            String cursorError = inlineErrors.get(editState.cursorRow());
+            String cursorError = visibleErrors.get(editState.cursorRow());
             List<Line> docLines = new ArrayList<>();
             String titleText = null;
             if (cursorError != null) {
@@ -2920,6 +3016,7 @@ class SourceViewer {
             if (autocompleteProvider != null) {
                 TuiHelper.hint(spans, "Tab", "complete");
             }
+            TuiHelper.hint(spans, "Shift+Tab", "dedent");
             if (!inlineErrors.isEmpty()) {
                 TuiHelper.hint(spans, "F9", "next error");
             }
