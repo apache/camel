@@ -125,6 +125,15 @@ public final class DynamicRouterControlConstants {
     public static final String ERROR_NO_PREDICATE_BEAN_FOUND = "Predicate bean could not be found";
 
     /**
+     * Error when a control message supplies a predicate expression, or the language to compile it with, but the control
+     * endpoint does not allow those to be taken from a control message.
+     */
+    public static final String ERROR_PREDICATE_FROM_MESSAGE_NOT_ALLOWED
+            = "The subscription predicate expression, and the language used to compile it, cannot be taken from a "
+              + "control message. Configure 'predicate' and 'expressionLanguage' on the dynamic-router-control "
+              + "endpoint, or set 'allowPredicateFromMessage=true' to let the control message supply them.";
+
+    /**
      * The configuration property for the control channel action.
      */
     public static final String CONTROL_ACTION_PROPERTY = "controlAction";
@@ -163,6 +172,13 @@ public final class DynamicRouterControlConstants {
      * The configuration property for the predicate expression language.
      */
     public static final String EXPRESSION_LANGUAGE_PROPERTY = "expressionLanguage";
+
+    /**
+     * The configuration property that controls whether the predicate may be taken from a control message. Unlike the
+     * other properties, this one is deliberately absent from {@link #URI_PARAMS_TO_HEADER_NAMES}: it must stay on the
+     * endpoint, where only the route author can set it, and must never be settable from a message.
+     */
+    public static final String ALLOW_PREDICATE_FROM_MESSAGE_PROPERTY = "allowPredicateFromMessage";
 
     /**
      * Header name for the control action.
