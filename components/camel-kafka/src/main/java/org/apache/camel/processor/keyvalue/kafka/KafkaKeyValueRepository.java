@@ -16,11 +16,8 @@
  */
 package org.apache.camel.processor.keyvalue.kafka;
 
-import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
 import java.nio.ByteBuffer;
 import java.time.Duration;
 import java.util.Collection;
@@ -45,6 +42,7 @@ import org.apache.camel.processor.idempotent.kafka.KafkaConsumerUtil;
 import org.apache.camel.spi.Configurer;
 import org.apache.camel.spi.KeyValueRepository;
 import org.apache.camel.spi.Metadata;
+import org.apache.camel.support.KeyValueRepositoryHelper;
 import org.apache.camel.support.LRUCacheFactory;
 import org.apache.camel.support.service.ServiceHelper;
 import org.apache.camel.support.service.ServiceSupport;
@@ -306,9 +304,7 @@ public class KafkaKeyValueRepository extends ServiceSupport implements KeyValueR
             buf.putLong(expiresAt);
             bos.write(buf.array());
             // Write serialized value
-            ObjectOutputStream oos = new ObjectOutputStream(bos);
-            oos.writeObject(value);
-            oos.flush();
+            bos.write(KeyValueRepositoryHelper.serialize(value));
             return bos.toByteArray();
         } catch (IOException e) {
             throw new RuntimeCamelException("Failed to serialize value for Kafka", e);
@@ -316,14 +312,8 @@ public class KafkaKeyValueRepository extends ServiceSupport implements KeyValueR
     }
 
     private Object deserializeValue(byte[] data) {
-        try {
-            // Value starts at offset 9 (1 byte action + 8 bytes expiresAt)
-            ByteArrayInputStream bis = new ByteArrayInputStream(data, 9, data.length - 9);
-            ObjectInputStream ois = new ObjectInputStream(bis);
-            return ois.readObject();
-        } catch (IOException | ClassNotFoundException e) {
-            throw new RuntimeCamelException("Failed to deserialize value from Kafka", e);
-        }
+        // Value starts at offset 9 (1 byte action + 8 bytes expiresAt)
+        return KeyValueRepositoryHelper.deserialize(data, 9, data.length - 9);
     }
 
     private long deserializeExpiresAt(byte[] data) {

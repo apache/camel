@@ -16,11 +16,6 @@
  */
 package org.apache.camel.processor.keyvalue.jdbc;
 
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
 import java.time.Duration;
 import java.util.Collections;
 import java.util.LinkedHashSet;
@@ -29,13 +24,13 @@ import java.util.Set;
 
 import javax.sql.DataSource;
 
-import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.api.management.ManagedAttribute;
 import org.apache.camel.api.management.ManagedOperation;
 import org.apache.camel.api.management.ManagedResource;
 import org.apache.camel.spi.Configurer;
 import org.apache.camel.spi.KeyValueRepository;
 import org.apache.camel.spi.Metadata;
+import org.apache.camel.support.KeyValueRepositoryHelper;
 import org.apache.camel.support.service.ServiceSupport;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -230,7 +225,7 @@ public class JdbcKeyValueRepository extends ServiceSupport implements KeyValueRe
             jdbcTemplate.update(getDeleteString(), key);
             // insert the new row
             long expiresAt = toExpiresAt(ttl);
-            jdbcTemplate.update(getInsertString(), key, serialize(value), expiresAt);
+            jdbcTemplate.update(getInsertString(), key, KeyValueRepositoryHelper.serialize(value), expiresAt);
             return oldValue;
         });
     }
@@ -281,7 +276,7 @@ public class JdbcKeyValueRepository extends ServiceSupport implements KeyValueRe
             // attempt to insert
             long expiresAt = toExpiresAt(ttl);
             try {
-                jdbcTemplate.update(getInsertString(), key, serialize(value), expiresAt);
+                jdbcTemplate.update(getInsertString(), key, KeyValueRepositoryHelper.serialize(value), expiresAt);
                 return null;
             } catch (DuplicateKeyException e) {
                 // concurrent insert race -- another thread/node won
@@ -317,7 +312,7 @@ public class JdbcKeyValueRepository extends ServiceSupport implements KeyValueRe
                     jdbcTemplate.update(getDeleteString(), key);
                     return null;
                 }
-                return deserialize(bytes);
+                return KeyValueRepositoryHelper.deserialize(bytes);
             }, key);
         } catch (EmptyResultDataAccessException e) {
             return null;
@@ -329,40 +324,6 @@ public class JdbcKeyValueRepository extends ServiceSupport implements KeyValueRe
             return 0;
         }
         return System.currentTimeMillis() + ttl.toMillis();
-    }
-
-    /**
-     * Serializes an object to a byte array using Java object serialization.
-     *
-     * @param  value                 the object to serialize
-     * @return                       the serialized bytes
-     * @throws RuntimeCamelException if serialization fails
-     */
-    private byte[] serialize(Object value) {
-        try (ByteArrayOutputStream bos = new ByteArrayOutputStream();
-             ObjectOutputStream oos = new ObjectOutputStream(bos)) {
-            oos.writeObject(value);
-            oos.flush();
-            return bos.toByteArray();
-        } catch (IOException e) {
-            throw new RuntimeCamelException("Failed to serialize value", e);
-        }
-    }
-
-    /**
-     * Deserializes a byte array back into an object using Java object serialization.
-     *
-     * @param  bytes                 the bytes to deserialize
-     * @return                       the deserialized object
-     * @throws RuntimeCamelException if deserialization fails
-     */
-    private Object deserialize(byte[] bytes) {
-        try (ByteArrayInputStream bis = new ByteArrayInputStream(bytes);
-             ObjectInputStream ois = new ObjectInputStream(bis)) {
-            return ois.readObject();
-        } catch (IOException | ClassNotFoundException e) {
-            throw new RuntimeCamelException("Failed to deserialize value", e);
-        }
     }
 
     // ---- Getters and Setters ----

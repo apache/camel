@@ -16,11 +16,6 @@
  */
 package org.apache.camel.processor.keyvalue.cassandra;
 
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
 import java.nio.ByteBuffer;
 import java.time.Duration;
 import java.util.Collections;
@@ -36,13 +31,13 @@ import com.datastax.oss.driver.api.core.cql.SimpleStatement;
 import com.datastax.oss.driver.api.querybuilder.delete.Delete;
 import com.datastax.oss.driver.api.querybuilder.select.Select;
 import com.datastax.oss.driver.api.querybuilder.truncate.Truncate;
-import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.api.management.ManagedAttribute;
 import org.apache.camel.api.management.ManagedOperation;
 import org.apache.camel.api.management.ManagedResource;
 import org.apache.camel.spi.Configurer;
 import org.apache.camel.spi.KeyValueRepository;
 import org.apache.camel.spi.Metadata;
+import org.apache.camel.support.KeyValueRepositoryHelper;
 import org.apache.camel.support.service.ServiceSupport;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.utils.cassandra.CassandraSessionHolder;
@@ -122,42 +117,6 @@ public class CassandraKeyValueRepository extends ServiceSupport implements KeyVa
     protected final boolean isApplied(ResultSet resultSet) {
         Row row = resultSet.one();
         return row == null || row.getBoolean("[applied]");
-    }
-
-    /**
-     * Serializes an object to a {@link ByteBuffer} using Java serialization.
-     *
-     * @param  value                 the object to serialize (must be {@link java.io.Serializable})
-     * @return                       a ByteBuffer containing the serialized bytes
-     * @throws RuntimeCamelException if serialization fails
-     */
-    private ByteBuffer serialize(Object value) {
-        try (ByteArrayOutputStream baos = new ByteArrayOutputStream();
-             ObjectOutputStream oos = new ObjectOutputStream(baos)) {
-            oos.writeObject(value);
-            oos.flush();
-            return ByteBuffer.wrap(baos.toByteArray());
-        } catch (IOException e) {
-            throw new RuntimeCamelException("Failed to serialize value", e);
-        }
-    }
-
-    /**
-     * Deserializes an object from a {@link ByteBuffer} using Java serialization.
-     *
-     * @param  buffer                the ByteBuffer containing the serialized bytes
-     * @return                       the deserialized object
-     * @throws RuntimeCamelException if deserialization fails
-     */
-    private Object deserialize(ByteBuffer buffer) {
-        byte[] bytes = new byte[buffer.remaining()];
-        buffer.get(bytes);
-        try (ByteArrayInputStream bais = new ByteArrayInputStream(bytes);
-             ObjectInputStream ois = new ObjectInputStream(bais)) {
-            return ois.readObject();
-        } catch (IOException | ClassNotFoundException e) {
-            throw new RuntimeCamelException("Failed to deserialize value", e);
-        }
     }
 
     // -------------------------------------------------------------------------
@@ -276,7 +235,7 @@ public class CassandraKeyValueRepository extends ServiceSupport implements KeyVa
             return null;
         }
         ByteBuffer buffer = row.getByteBuffer(VALUE_COLUMN);
-        return buffer != null ? deserialize(buffer) : null;
+        return buffer != null ? KeyValueRepositoryHelper.deserialize(buffer) : null;
     }
 
     @Override
@@ -285,7 +244,7 @@ public class CassandraKeyValueRepository extends ServiceSupport implements KeyVa
         LOGGER.debug("Putting key {} with TTL {}", key, ttl);
         // Read the previous value before upserting
         Object oldValue = get(key);
-        ByteBuffer serializedValue = serialize(value);
+        ByteBuffer serializedValue = KeyValueRepositoryHelper.serializeToByteBuffer(value);
         int ttlSeconds = toTtlSeconds(ttl);
         if (ttlSeconds > 0) {
             getSession().execute(insertWithTtlStatement.bind(key, serializedValue, ttlSeconds));
@@ -343,7 +302,7 @@ public class CassandraKeyValueRepository extends ServiceSupport implements KeyVa
     @Override
     public Object putIfAbsent(String key, Object value, Duration ttl) {
         LOGGER.debug("Putting key {} if absent with TTL {}", key, ttl);
-        ByteBuffer serializedValue = serialize(value);
+        ByteBuffer serializedValue = KeyValueRepositoryHelper.serializeToByteBuffer(value);
         ResultSet rs;
         int ttlSeconds = toTtlSeconds(ttl);
         if (ttlSeconds > 0) {
@@ -357,7 +316,7 @@ public class CassandraKeyValueRepository extends ServiceSupport implements KeyVa
         }
         // Insert was not applied; return the existing value from the result row
         ByteBuffer existingBuffer = row.getByteBuffer(VALUE_COLUMN);
-        return existingBuffer != null ? deserialize(existingBuffer) : null;
+        return existingBuffer != null ? KeyValueRepositoryHelper.deserialize(existingBuffer) : null;
     }
 
     @Override

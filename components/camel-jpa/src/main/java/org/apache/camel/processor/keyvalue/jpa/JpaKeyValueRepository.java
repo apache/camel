@@ -16,11 +16,6 @@
  */
 package org.apache.camel.processor.keyvalue.jpa;
 
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
 import java.time.Duration;
 import java.util.Iterator;
 import java.util.List;
@@ -31,7 +26,6 @@ import jakarta.persistence.EntityManagerFactory;
 import jakarta.persistence.PersistenceException;
 import jakarta.persistence.Query;
 
-import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.api.management.ManagedAttribute;
 import org.apache.camel.api.management.ManagedOperation;
 import org.apache.camel.api.management.ManagedResource;
@@ -40,6 +34,7 @@ import org.apache.camel.component.jpa.TransactionStrategy;
 import org.apache.camel.spi.Configurer;
 import org.apache.camel.spi.KeyValueRepository;
 import org.apache.camel.spi.Metadata;
+import org.apache.camel.support.KeyValueRepositoryHelper;
 import org.apache.camel.support.service.ServiceSupport;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -125,7 +120,7 @@ public class JpaKeyValueRepository extends ServiceSupport implements KeyValueRep
                     entityManager.flush();
                     rc[0] = null;
                 } else {
-                    rc[0] = deserialize(entry.getItemValue());
+                    rc[0] = KeyValueRepositoryHelper.deserialize(entry.getItemValue());
                 }
             } catch (Exception ex) {
                 String contextInfo = String.format(SOMETHING_WENT_WRONG, ex.getMessage());
@@ -152,12 +147,12 @@ public class JpaKeyValueRepository extends ServiceSupport implements KeyValueRep
             }
             try {
                 long expiresAt = toExpiresAt(ttl);
-                byte[] serializedValue = serialize(value);
+                byte[] serializedValue = KeyValueRepositoryHelper.serialize(value);
 
                 KeyValueEntry entry = findByKey(entityManager, key);
                 if (entry != null) {
                     if (!entry.isExpired()) {
-                        rc[0] = deserialize(entry.getItemValue());
+                        rc[0] = KeyValueRepositoryHelper.deserialize(entry.getItemValue());
                     }
                     entry.setItemValue(serializedValue);
                     entry.setExpiresAt(expiresAt);
@@ -199,7 +194,7 @@ public class JpaKeyValueRepository extends ServiceSupport implements KeyValueRep
                     entityManager.flush();
                     rc[0] = null;
                 } else {
-                    rc[0] = deserialize(entry.getItemValue());
+                    rc[0] = KeyValueRepositoryHelper.deserialize(entry.getItemValue());
                     entityManager.remove(entry);
                     entityManager.flush();
                 }
@@ -322,12 +317,12 @@ public class JpaKeyValueRepository extends ServiceSupport implements KeyValueRep
             }
             try {
                 long expiresAt = toExpiresAt(ttl);
-                byte[] serializedValue = serialize(value);
+                byte[] serializedValue = KeyValueRepositoryHelper.serialize(value);
 
                 KeyValueEntry entry = findByKey(entityManager, key);
                 if (entry != null && !entry.isExpired()) {
                     // key exists and is valid -- return existing value
-                    rc[0] = deserialize(entry.getItemValue());
+                    rc[0] = KeyValueRepositoryHelper.deserialize(entry.getItemValue());
                 } else if (entry != null) {
                     // key exists but expired -- update in place
                     entry.setItemValue(serializedValue);
@@ -349,7 +344,7 @@ public class JpaKeyValueRepository extends ServiceSupport implements KeyValueRep
                     // re-read to return the existing value
                     try {
                         KeyValueEntry existing = findByKey(entityManager, key);
-                        rc[0] = existing != null ? deserialize(existing.getItemValue()) : null;
+                        rc[0] = existing != null ? KeyValueRepositoryHelper.deserialize(existing.getItemValue()) : null;
                     } catch (Exception inner) {
                         // fall through with null
                         rc[0] = null;
@@ -488,26 +483,6 @@ public class JpaKeyValueRepository extends ServiceSupport implements KeyValueRep
             return 0;
         }
         return System.currentTimeMillis() + ttl.toMillis();
-    }
-
-    private static byte[] serialize(Object value) {
-        try (ByteArrayOutputStream bos = new ByteArrayOutputStream();
-             ObjectOutputStream oos = new ObjectOutputStream(bos)) {
-            oos.writeObject(value);
-            oos.flush();
-            return bos.toByteArray();
-        } catch (IOException e) {
-            throw new RuntimeCamelException("Failed to serialize value", e);
-        }
-    }
-
-    private static Object deserialize(byte[] data) {
-        try (ByteArrayInputStream bis = new ByteArrayInputStream(data);
-             ObjectInputStream ois = new ObjectInputStream(bis)) {
-            return ois.readObject();
-        } catch (IOException | ClassNotFoundException e) {
-            throw new RuntimeCamelException("Failed to deserialize value", e);
-        }
     }
 
     private static void closeEntityManager(EntityManager entityManager) {
