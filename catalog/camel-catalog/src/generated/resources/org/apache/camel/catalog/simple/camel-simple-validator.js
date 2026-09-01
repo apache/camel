@@ -182,6 +182,8 @@ const OPERATORS = {
   '!startsWith': { kind: 'binary', description: 'Tests whether the left operand string does not start with the right operand string.' },
   'endsWith': { kind: 'binary', description: 'Tests whether the left operand string ends with the right operand string.' },
   '!endsWith': { kind: 'binary', description: 'Tests whether the left operand string does not end with the right operand string.' },
+  'equals': { kind: 'binary', description: 'Tests whether the left operand string equals the right operand string, compared as text without numeric coercion.' },
+  '!equals': { kind: 'binary', description: 'Tests whether the left operand string does not equal the right operand string, compared as text without numeric coercion.' },
   '++': { kind: 'unary', description: 'Increments the numeric value by one. Must immediately follow a function closing brace.' },
   '--': { kind: 'unary', description: 'Decrements the numeric value by one. Must immediately follow a function closing brace.' },
   '&&': { kind: 'logical', description: 'Logical AND. Both left and right predicates must evaluate to true.' },
