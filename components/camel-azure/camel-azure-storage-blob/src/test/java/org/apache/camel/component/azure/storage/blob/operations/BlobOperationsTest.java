@@ -23,6 +23,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.nio.charset.Charset;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.time.OffsetDateTime;
 import java.util.HashMap;
 import java.util.Map;
@@ -45,6 +47,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.junit.jupiter.api.io.TempDir;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
@@ -135,6 +138,24 @@ class BlobOperationsTest extends CamelTestSupport {
         final Exchange exchange = new DefaultExchange(context);
 
         assertThrows(IllegalArgumentException.class, () -> operations.downloadBlobToFile(exchange));
+    }
+
+    @Test
+    void testDownloadBlobToFileRejectsSymbolicLinkResolvingOutsideDirectory(@TempDir Path parent) throws IOException {
+        Path downloadDir = Files.createDirectory(parent.resolve("downloads"));
+        Path outsideDir = Files.createDirectory(parent.resolve("outside"));
+        Files.createSymbolicLink(downloadDir.resolve("linked"), outsideDir);
+
+        configuration.setFileDir(downloadDir.toString());
+        when(client.getBlobName()).thenReturn("linked/PROOF_PWNED");
+
+        final BlobOperations operations = new BlobOperations(configuration, client);
+        final Exchange exchange = new DefaultExchange(context);
+
+        final IllegalArgumentException exception
+                = assertThrows(IllegalArgumentException.class, () -> operations.downloadBlobToFile(exchange));
+        assertTrue(exception.getMessage().contains("linked/PROOF_PWNED"));
+        assertTrue(exception.getMessage().contains(downloadDir.toString()));
     }
 
     @Test

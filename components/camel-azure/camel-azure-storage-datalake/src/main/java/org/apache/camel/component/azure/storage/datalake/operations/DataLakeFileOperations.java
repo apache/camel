@@ -20,6 +20,8 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.nio.file.Files;
+import java.nio.file.LinkOption;
 import java.nio.file.OpenOption;
 import java.nio.file.Path;
 import java.time.Duration;
@@ -262,10 +264,43 @@ public class DataLakeFileOperations {
         final Path normalizedDir = new File(fileDir).toPath().normalize();
         final Path normalizedTarget = target.toPath().normalize();
         if (!normalizedTarget.startsWith(normalizedDir)) {
+            throw outsideDirectory(name, fileDir);
+        }
+
+        try {
+            final Path resolvedDir = resolveExistingPathSegments(new File(fileDir).toPath());
+            final Path resolvedTarget = resolveExistingPathSegments(target.toPath());
+            if (!resolvedTarget.startsWith(resolvedDir)) {
+                throw outsideDirectory(name, fileDir);
+            }
+        } catch (IOException e) {
             throw new IllegalArgumentException(
-                    "Cannot download to file '" + name
-                                               + "' as it resolves outside the configured fileDir directory: " + fileDir);
+                    "Cannot verify download path for file '" + name + "' within the configured fileDir directory: "
+                                               + fileDir,
+                    e);
         }
         return target;
+    }
+
+    private static Path resolveExistingPathSegments(Path path) throws IOException {
+        // Preserve the raw path segments here. Normalizing before resolving links changes the filesystem meaning of
+        // paths such as link/../file when link points to another directory.
+        final Path absolutePath = path.toAbsolutePath();
+        Path existingPath = absolutePath;
+        while (existingPath != null && !Files.exists(existingPath, LinkOption.NOFOLLOW_LINKS)) {
+            existingPath = existingPath.getParent();
+        }
+        if (existingPath == null) {
+            throw new IOException("No existing ancestor found for " + path);
+        }
+
+        final Path resolvedExistingPath = existingPath.toRealPath();
+        return resolvedExistingPath.resolve(existingPath.relativize(absolutePath)).normalize();
+    }
+
+    private static IllegalArgumentException outsideDirectory(String name, String fileDir) {
+        return new IllegalArgumentException(
+                "Cannot download to file '" + name
+                                            + "' as it resolves outside the configured fileDir directory: " + fileDir);
     }
 }

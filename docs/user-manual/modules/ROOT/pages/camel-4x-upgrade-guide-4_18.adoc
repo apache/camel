@@ -33,6 +33,19 @@ The same default is now also applied to the `ClientConfig` that Camel builds for
 endpoints, when neither a referenced `ClientConfig` nor `hazelcastConfigUri` is supplied. Client mode
 previously behaved differently from node mode for an otherwise identical endpoint configuration.
 
+=== camel-azure-storage-blob and camel-azure-storage-datalake
+
+Local downloads configured with `fileDir` now resolve existing filesystem path segments before checking
+that the destination remains inside the configured directory. Downloads through a symbolic link that
+resolves outside `fileDir` are rejected. Valid nested download paths continue to work.
+
+=== camel-google-storage
+
+Local downloads configured with a plain `downloadFileName` directory now resolve existing filesystem
+path segments before checking that the destination remains inside that directory. Downloads through a
+symbolic link that resolves outside the configured directory are rejected. Valid object names using `/`
+as a pseudo-directory separator continue to work.
+
 == Upgrading from 4.18.3 to 4.18.4
 
 === camel-core - Multicast EIP honors UseOriginalAggregationStrategy
