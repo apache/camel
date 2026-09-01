@@ -13,6 +13,32 @@ See the xref:camel-upgrade-recipes-tool.adoc[documentation] page for details.
 
 == Upgrading Camel 4.22 to 4.23
 
+=== Apache Avro trusted packages
+
+Camel now uses Apache Avro 1.12.2. Avro validates classes resolved from schemas
+and no longer trusts application packages by default. If your routes use Avro
+specific records, reflected POJOs, or schemas with Java class names, configure
+the `org.apache.avro.SERIALIZABLE_PACKAGES` JVM system property with the
+comma-separated packages that contain only your trusted Avro model classes.
+
+For example, if generated records are in `com.example.orders.avro`, add the
+following JVM option:
+
+[source]
+----
+-Dorg.apache.avro.SERIALIZABLE_PACKAGES=com.example.orders.avro
+----
+
+If you use `camel-avro-rpc`, also include `org.apache.avro`, which contains the
+Avro IPC handshake classes:
+
+[source]
+----
+-Dorg.apache.avro.SERIALIZABLE_PACKAGES=org.apache.avro,com.example.orders.avro
+----
+
+Do not use `*`, as it disables Avro's class-loading protection.
+
 === camel-exec
 
 `allowControlHeaders` is now annotated `security = "insecure:dev"`.
