@@ -74,11 +74,11 @@ public class DefaultRestClientRequestValidator implements RestClientRequestValid
         Object body = exchange.getMessage().getBody();
         if (validationContext.requiredBody()) {
             // the body is required, so we need to know if we have a body or not
-            // so force reading the body as a String which we can work with
+            // so force reading the body as a String which we can work with.
+            // extractBodyAsString uses stream caching so the message body stays re-readable,
+            // and the body is deliberately not replaced with the String as that would
+            // corrupt binary payloads such as application/octet-stream
             body = MessageHelper.extractBodyAsString(exchange.getIn());
-            if (ObjectHelper.isNotEmpty(body)) {
-                exchange.getIn().setBody(body);
-            }
             if (ObjectHelper.isEmpty(body)) {
                 // this is a bad request, the client did not include a message body
                 return new ValidationError(400, "The request body is missing.");
