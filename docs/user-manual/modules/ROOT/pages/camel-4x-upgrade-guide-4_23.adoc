@@ -274,13 +274,6 @@ the registry has tracing and meter handlers respectively. Token usage counters s
 `MeterRegistry`. Applications without an `ObservationRegistry` bean keep the previous OpenTelemetry
 and MeterRegistry behavior. `camel-micrometer-observability` is not required.
 
-When GenAI observability is enabled but misconfigured, Camel logs a one-time diagnostic per
-`CamelContext` on the first affected LLM call: INFO by default, WARN when
-`camel.aiObservability.enabled=true` is set explicitly. This covers a missing
-`camel-ai-observability` dependency and an `ObservationRegistry` without a Micrometer tracing
-handler (add `micrometer-tracing-bridge-otel` or remove the registry bean to fall back to
-`camel-opentelemetry2` GenAI CLIENT spans).
-
 OpenAI streaming chat sets `stream_options.include_usage=true` only when GenAI observability is enabled,
 adding a final chunk with token usage for span/metric recording.
 

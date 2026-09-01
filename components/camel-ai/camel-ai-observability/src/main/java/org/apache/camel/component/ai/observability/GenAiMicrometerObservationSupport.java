@@ -16,6 +16,8 @@
  */
 package org.apache.camel.component.ai.observability;
 
+import java.util.concurrent.atomic.AtomicBoolean;
+
 import io.micrometer.observation.Observation;
 import io.micrometer.observation.ObservationRegistry;
 import org.apache.camel.CamelContext;
@@ -36,11 +38,10 @@ final class GenAiMicrometerObservationSupport implements GenAiMicrometerObservat
     private static volatile Class<?> tracingContextClass;
     private static volatile boolean tracingContextClassResolved;
 
-    private final CamelContext camelContext;
     private final ObservationRegistry observationRegistry;
+    private final AtomicBoolean missingTracingReported = new AtomicBoolean();
 
     GenAiMicrometerObservationSupport(CamelContext camelContext) {
-        this.camelContext = camelContext;
         ObservationRegistry registry = CamelContextHelper.findSingleByType(camelContext, ObservationRegistry.class);
         this.observationRegistry = isUsable(registry) ? registry : null;
     }
@@ -67,8 +68,11 @@ final class GenAiMicrometerObservationSupport implements GenAiMicrometerObservat
         if (observation.isNoop()) {
             return null;
         }
-        if (!hasTracingContext(observation)) {
-            GenAiObservabilityDiagnostics.warnObservationWithoutTracingHandler(camelContext);
+        if (!hasTracingContext(observation)
+                && missingTracingReported.compareAndSet(false, true)) {
+            LOG.info(
+                    "No Micrometer tracing context was created for GenAI observations; "
+                     + "configure a tracing handler and exporter");
         }
         try {
             return new ObservationHandle(observation, observation.openScope());

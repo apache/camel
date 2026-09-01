@@ -104,11 +104,6 @@ public final class GenAiObservabilityImpl {
         }
     }
 
-    static void resetBackendsForTesting() {
-        METRICS_BACKENDS.clear();
-        OBSERVATION_BACKENDS.clear();
-    }
-
     private static final class DefaultGenAiObservation implements GenAiObservation {
 
         private final Exchange exchange;

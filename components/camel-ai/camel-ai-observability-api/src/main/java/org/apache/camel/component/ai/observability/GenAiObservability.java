@@ -69,7 +69,6 @@ public final class GenAiObservability {
         CamelContext camelContext = exchange.getContext();
         ImplBridge bridge = BRIDGES.computeIfAbsent(camelContext, GenAiObservability::resolveBridge);
         if (bridge.startMethod == null) {
-            GenAiObservabilityDiagnostics.warnMissingImplementation(camelContext);
             return NOOP;
         }
         try {
@@ -82,13 +81,12 @@ public final class GenAiObservability {
         }
     }
 
-    static void resetBridgeForTesting() {
-        BRIDGES.clear();
-    }
-
     private static ImplBridge resolveBridge(CamelContext camelContext) {
         Class<?> implClass = camelContext.getClassResolver().resolveClass(IMPL_CLASS);
         if (implClass == null) {
+            LOG.info(
+                    "GenAI observability is enabled but camel-ai-observability is not on the classpath; "
+                     + "spans and metrics will not be emitted");
             return UNAVAILABLE_BRIDGE;
         }
         try {
