@@ -34,7 +34,6 @@
 
     <properties>
         <!-- Pulsar container is only available on x86 -->
-        <skipITs.ppc64le>true</skipITs.ppc64le>
         <skipITs.s390x>true</skipITs.s390x>
         <skipITs.aarch64>true</skipITs.aarch64>
         <camel.surefire.fork.additional-vmargs>--add-opens java.base/java.nio=ALL-UNNAMED --add-opens java.base/java.util=ALL-UNNAMED --add-opens java.base/java.lang=ALL-UNNAMED --add-exports=java.base/sun.net=ALL-UNNAMED</camel.surefire.fork.additional-vmargs>

@@ -1,0 +1,240 @@
+= Cache EIP
+:doctitle: Cache
+:shortname: cache
+:description: Caches the result of the nested processing steps. On cache hit, skips the block and sets the body from cache. On cache miss, executes the block and caches the result body.
+:since: 4.23
+:supportlevel: Stable
+:tabs-sync-option:
+
+The Cache EIP provides a transparent read-through cache for a block of processing steps.
+
+On *cache hit* (key found), the cached value is set as the message body and the nested steps are skipped entirely.
+On *cache miss*, the nested steps execute normally and the resulting message body is stored in the cache for subsequent
+requests with the same key.
+
+== Cache EIP vs Cache Components
+
+Camel includes several cache *components* (`camel-caffeine`, `camel-ehcache`, `camel-jcache`, `camel-infinispan`, etc.)
+that provide endpoint-level cache operations (explicit GET/PUT/INVALIDATE). Those are useful for fine-grained cache
+management (bulk ops, invalidation, event listening).
+
+The Cache *EIP* covers the most common use case — _"cache the result of this expensive block by key with a TTL"_ —
+without manual plumbing. It is analogous to `@Cacheable` in Spring:
+
+[source,java]
+----
+// Without Cache EIP: 7+ lines of plumbing, tied to one cache technology
+from("direct:start")
+    .setHeader("CamelCaffeineAction", constant("GET"))
+    .setHeader("CamelCaffeineKey", header("productId"))
+    .to("caffeine-cache:products")
+    .choice()
+        .when(body().isNull())
+            .to("http://expensive-service")
+            .setHeader("CamelCaffeineAction", constant("PUT"))
+            .to("caffeine-cache:products")
+    .end();
+
+// With Cache EIP: 2 lines, backend-agnostic
+from("direct:start")
+    .cache(simple("${header.productId}"))
+        .to("http://expensive-service")
+    .end();
+----
+
+== Options
+
+// eip options: START
+include::partial$eip-options.adoc[]
+// eip options: END
+
+== Error Handling
+
+Cache errors are handled gracefully:
+
+* If the cache read fails, the nested steps execute normally (graceful degradation).
+* If the cache write fails after a successful execution, the error is logged but does *not* propagate to the exchange.
+* Failed exchanges (those with an exception) are *never* cached.
+
+== Examples
+
+=== Java DSL
+
+Cache with an auto-created in-memory store (zero config):
+
+[source,java]
+----
+from("direct:start")
+    .cache(simple("${header.productId}"))
+        .to("http://product-service/api/product")
+        .unmarshal().json()
+    .end()
+    .to("direct:continue");
+----
+
+Cache with TTL and an explicit `KeyValueRepository`:
+
+[source,java]
+----
+from("direct:start")
+    .cache(simple("${header.productId}"))
+        .ttl("10m")
+        .keyValueRepository("myRedisKvr")
+        .to("http://product-service/api/product")
+    .end()
+    .to("direct:continue");
+----
+
+Expression clause form:
+
+[source,java]
+----
+from("direct:start")
+    .cache().simple("${header.productId}")
+        .ttl("5m")
+        .to("http://product-service/api/product")
+    .end()
+    .to("direct:continue");
+----
+
+=== XML DSL
+
+[source,xml]
+----
+<route>
+  <from uri="direct:start"/>
+  <cache keyValueRepository="myCache" ttl="10m">
+    <simple>${header.productId}</simple>
+    <to uri="http://product-service/api/product"/>
+  </cache>
+  <to uri="direct:continue"/>
+</route>
+----
+
+=== YAML DSL
+
+[source,yaml]
+----
+- from:
+    uri: "direct:start"
+    steps:
+      - cache:
+          simple: "${header.productId}"
+          keyValueRepository: "myCache"
+          ttl: "10m"
+          steps:
+            - to: "http://product-service/api/product"
+      - to: "direct:continue"
+----
+
+== Using with KeyValueRepository
+
+The Cache EIP uses the `org.apache.camel.spi.KeyValueRepository` SPI as its backing store.
+If no repository is configured, a `MemoryKeyValueRepository` is auto-created.
+
+Any `KeyValueRepository` implementation can be used — the same SPI that backs the
+xref:idempotentConsumer-eip.adoc[Idempotent Consumer] and
+xref:aggregate-eip.adoc[Aggregator] patterns.
+
+To use a specific store, register a `KeyValueRepository` bean in the Camel registry:
+
+[source,java]
+----
+@BindToRegistry("myCache")
+public KeyValueRepository myCache() {
+    return new MemoryKeyValueRepository();
+}
+----
+
+Then reference it in the route:
+
+[source,java]
+----
+from("direct:start")
+    .cache(simple("${header.key}"))
+        .keyValueRepository("myCache")
+        .to("http://service")
+    .end();
+----
+
+If a single `KeyValueRepository` bean exists in the registry, it is auto-discovered — no explicit reference needed.
+
+NOTE: When no `KeyValueRepository` bean is registered, each `.cache()` block auto-creates its own isolated in-memory
+store — no risk of key collisions. However, if exactly *one* `KeyValueRepository` bean exists in the registry, all
+`.cache()` blocks will auto-discover and share it. In that case, ensure cache keys are unique across blocks
+(e.g. include a domain prefix: `simple("product:${header.productId}")` vs `simple("order:${header.orderId}")`),
+or reference distinct named repositories explicitly via `.keyValueRepository("name")`.
+
+== Cache Invalidation
+
+The Cache EIP uses TTL-based expiration by default — entries expire automatically after the configured `ttl`.
+For scenarios where you need to invalidate a specific cache entry on demand (e.g. when a foreign system notifies you
+that data has changed), you can call `delete(key)` on the underlying `KeyValueRepository` directly.
+
+=== Invalidating from Another Route
+
+Register a named `KeyValueRepository` and share it between the caching route and an invalidation route:
+
+[source,java]
+----
+// Shared cache store
+@BindToRegistry("productCache")
+public KeyValueRepository productCache() {
+    return new MemoryKeyValueRepository();
+}
+----
+
+[source,java]
+----
+// Route that caches product lookups
+from("direct:getProduct")
+    .cache(simple("${header.productId}"))
+        .keyValueRepository("productCache")
+        .ttl("30m")
+        .to("http://product-service/api/product")
+    .end();
+
+// Route that invalidates on external change events
+from("jms:topic:product.changes")
+    .process(exchange -> {
+        String productId = exchange.getIn().getHeader("productId", String.class);
+        KeyValueRepository cache = exchange.getContext().getRegistry()
+            .lookupByNameAndType("productCache", KeyValueRepository.class);
+        cache.delete(productId);
+    })
+    .log("Invalidated cache for product ${header.productId}");
+----
+
+=== XML DSL
+
+[source,xml]
+----
+<route>
+  <from uri="direct:getProduct"/>
+  <cache keyValueRepository="productCache" ttl="30m">
+    <simple>${header.productId}</simple>
+    <to uri="http://product-service/api/product"/>
+  </cache>
+</route>
+
+<!-- Invalidation route -->
+<route>
+  <from uri="jms:topic:product.changes"/>
+  <bean ref="productCache" method="delete(${header.productId})"/>
+  <log message="Invalidated cache for product ${header.productId}"/>
+</route>
+----
+
+=== Clearing the Entire Cache
+
+To clear all entries from a `KeyValueRepository`, call `clear()`:
+
+[source,java]
+----
+from("direct:clearAll")
+    .process(exchange -> {
+        KeyValueRepository cache = exchange.getContext().getRegistry()
+            .lookupByNameAndType("productCache", KeyValueRepository.class);
+        cache.clear();
+    });
+----

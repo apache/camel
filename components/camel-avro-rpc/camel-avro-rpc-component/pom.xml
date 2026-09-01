@@ -31,6 +31,11 @@
     <name>Camel :: Avro RPC</name>
     <description>Camel Avro  RPC component</description>
 
+    <properties>
+        <!-- Avro 1.12.2 requires the IPC and test protocol model packages to be explicitly trusted. -->
+        <camel.surefire.fork.additional-vmargs>-Dorg.apache.avro.SERIALIZABLE_PACKAGES=org.apache.avro,org.apache.camel.avro</camel.surefire.fork.additional-vmargs>
+    </properties>
+
     <dependencies>
         <dependency>
             <groupId>org.apache.camel</groupId>

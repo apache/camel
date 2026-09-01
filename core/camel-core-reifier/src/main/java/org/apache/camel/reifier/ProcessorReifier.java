@@ -38,6 +38,7 @@ import org.apache.camel.model.A2ASubTaskDefinition;
 import org.apache.camel.model.AggregateDefinition;
 import org.apache.camel.model.AggregationStrategyAwareDefinition;
 import org.apache.camel.model.BeanDefinition;
+import org.apache.camel.model.CacheDefinition;
 import org.apache.camel.model.CatchDefinition;
 import org.apache.camel.model.ChoiceDefinition;
 import org.apache.camel.model.CircuitBreakerDefinition;
@@ -212,6 +213,8 @@ public abstract class ProcessorReifier<T extends ProcessorDefinition<?>> extends
             return new AggregateReifier(route, definition);
         } else if (definition instanceof BeanDefinition) {
             return new BeanReifier(route, definition);
+        } else if (definition instanceof CacheDefinition) {
+            return new CacheReifier(route, definition);
         } else if (definition instanceof CatchDefinition) {
             return new CatchReifier(route, definition);
         } else if (definition instanceof ChoiceDefinition) {

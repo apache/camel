@@ -13,6 +13,32 @@ See the xref:camel-upgrade-recipes-tool.adoc[documentation] page for details.
 
 == Upgrading Camel 4.22 to 4.23
 
+=== Apache Avro trusted packages
+
+Camel now uses Apache Avro 1.12.2. Avro validates classes resolved from schemas
+and no longer trusts application packages by default. If your routes use Avro
+specific records, reflected POJOs, or schemas with Java class names, configure
+the `org.apache.avro.SERIALIZABLE_PACKAGES` JVM system property with the
+comma-separated packages that contain only your trusted Avro model classes.
+
+For example, if generated records are in `com.example.orders.avro`, add the
+following JVM option:
+
+[source]
+----
+-Dorg.apache.avro.SERIALIZABLE_PACKAGES=com.example.orders.avro
+----
+
+If you use `camel-avro-rpc`, also include `org.apache.avro`, which contains the
+Avro IPC handshake classes:
+
+[source]
+----
+-Dorg.apache.avro.SERIALIZABLE_PACKAGES=org.apache.avro,com.example.orders.avro
+----
+
+Do not use `*`, as it disables Avro's class-loading protection.
+
 === camel-dynamic-router
 
 The `dynamic-router-control` endpoint no longer takes the subscription `predicate`, or the
@@ -375,6 +401,15 @@ any other name.
 
 Set `allowLocalWebhookUrls=true` to permit loopback targets during local development. That option is
 unchanged and still does not permit any of the ranges above.
+
+=== New Cache EIP
+
+A new Cache EIP has been added that provides a transparent read-through cache for a block of processing steps.
+On cache hit the cached body is returned and the block is skipped; on cache miss the block executes and
+the result body is cached. The Cache EIP uses the `KeyValueRepository` SPI as its backing store, with
+`MemoryKeyValueRepository` auto-created when no explicit store is configured.
+
+See xref:components:eips:cache-eip.adoc[Cache EIP] for details.
 
 === camel-ai-observability (GenAI observability)
 
