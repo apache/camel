@@ -82,6 +82,10 @@ public final class GenAiObservability {
         }
     }
 
+    static void resetBridgeForTesting() {
+        BRIDGES.clear();
+    }
+
     private static ImplBridge resolveBridge(CamelContext camelContext) {
         Class<?> implClass = camelContext.getClassResolver().resolveClass(IMPL_CLASS);
         if (implClass == null) {

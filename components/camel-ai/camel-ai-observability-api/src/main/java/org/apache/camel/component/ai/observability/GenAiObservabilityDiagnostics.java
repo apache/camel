@@ -39,15 +39,16 @@ final class GenAiObservabilityDiagnostics {
     static void warnMissingImplementation(CamelContext camelContext) {
         warnOnce(camelContext, Reason.MISSING_IMPLEMENTATION,
                 "GenAI observability is enabled but camel-ai-observability is not on the classpath - "
-                                                              + "spans and metrics will not be emitted. Add the camel-ai-observability dependency "
-                                                              + "(or camel-ai-observability-starter plus the implementation module) to your application.");
+                                                              + "spans and metrics will not be emitted. Add the org.apache.camel:camel-ai-observability "
+                                                              + "dependency together with a tracing or metrics backend.");
     }
 
     static void warnObservationWithoutTracingHandler(CamelContext camelContext) {
         warnOnce(camelContext, Reason.OBSERVATION_WITHOUT_TRACING_HANDLER,
                 "GenAI observations are recorded on an ObservationRegistry without a tracing handler - "
-                                                                           + "gen_ai spans will not be exported. Add micrometer-tracing with an OpenTelemetry or Brave bridge, "
-                                                                           + "or remove the ObservationRegistry bean so Camel can use camel-opentelemetry2 spans instead.");
+                                                                           + "gen_ai spans will not be exported. Add io.micrometer:micrometer-tracing-bridge-otel "
+                                                                           + "(or the Brave bridge), or remove the ObservationRegistry bean so Camel can use "
+                                                                           + "camel-opentelemetry2 GenAI CLIENT spans instead.");
     }
 
     static boolean isExplicitlyEnabled(CamelContext camelContext) {

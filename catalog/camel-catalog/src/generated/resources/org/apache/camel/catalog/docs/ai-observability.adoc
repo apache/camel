@@ -69,6 +69,14 @@ Observation path produces no operation timer.
 When no `ObservationRegistry` is available, existing OpenTelemetry spans and Micrometer timers
 continue to work as before.
 
+When GenAI observability is enabled but misconfigured, Camel logs a one-time diagnostic:
+
+* Missing `camel-ai-observability` on the classpath (INFO by default, WARN when
+  `camel.aiObservability.enabled=true` is set explicitly).
+* `ObservationRegistry` present without a Micrometer tracing handler (same log levels). In that
+  case add `micrometer-tracing-bridge-otel` (or Brave) so `gen_ai` spans are exported, or remove the
+  registry bean so Camel falls back to `camel-opentelemetry2` GenAI CLIENT spans.
+
 Low-cardinality keys: `gen_ai.operation.name`, `gen_ai.system`, `gen_ai.request.model`,
 `camel.component`, and `error.type` on failure. Prompts, completions, and token counts are not used
 as Observation keys.

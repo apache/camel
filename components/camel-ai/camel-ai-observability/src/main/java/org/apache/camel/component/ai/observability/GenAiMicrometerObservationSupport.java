@@ -16,21 +16,23 @@
  */
 package org.apache.camel.component.ai.observability;
 
-import java.lang.reflect.Method;
-import java.util.List;
-
 import io.micrometer.observation.Observation;
-import io.micrometer.observation.ObservationHandler;
 import io.micrometer.observation.ObservationRegistry;
 import org.apache.camel.CamelContext;
 import org.apache.camel.support.CamelContextHelper;
 import org.apache.camel.util.ObjectHelper;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Micrometer Observation-backed instrumentation. Loaded reflectively only when {@link ObservationRegistry} is on the
  * classpath.
  */
 final class GenAiMicrometerObservationSupport implements GenAiMicrometerObservationBackend {
+
+    private static final Logger LOG = LoggerFactory.getLogger(GenAiMicrometerObservationSupport.class);
+    private static final String TRACING_CONTEXT_CLASS
+            = "io.micrometer.tracing.handler.TracingObservationHandler$TracingContext";
 
     private final CamelContext camelContext;
     private final ObservationRegistry observationRegistry;
@@ -63,7 +65,7 @@ final class GenAiMicrometerObservationSupport implements GenAiMicrometerObservat
         if (observation.isNoop()) {
             return null;
         }
-        if (!hasTracingHandler()) {
+        if (!hasTracingContext(observation)) {
             GenAiObservabilityDiagnostics.warnObservationWithoutTracingHandler(camelContext);
         }
         try {
@@ -78,25 +80,16 @@ final class GenAiMicrometerObservationSupport implements GenAiMicrometerObservat
         return registry != null && registry != ObservationRegistry.NOOP;
     }
 
-    private boolean hasTracingHandler() {
-        if (observationRegistry == null) {
+    private static boolean hasTracingContext(Observation observation) {
+        try {
+            Class<?> tracingContextClass = Class.forName(TRACING_CONTEXT_CLASS);
+            return observation.getContextView().get(tracingContextClass) != null;
+        } catch (ClassNotFoundException e) {
+            if (LOG.isDebugEnabled()) {
+                LOG.debug("Micrometer tracing context unavailable for GenAI observation diagnostics", e);
+            }
             return false;
         }
-        try {
-            Method method = observationRegistry.observationConfig().getClass().getDeclaredMethod("getObservationHandlers");
-            method.setAccessible(true);
-            @SuppressWarnings("unchecked")
-            List<ObservationHandler<?>> handlers
-                    = (List<ObservationHandler<?>>) method.invoke(observationRegistry.observationConfig());
-            for (ObservationHandler<?> handler : handlers) {
-                if (handler.getClass().getName().contains("TracingObservationHandler")) {
-                    return true;
-                }
-            }
-        } catch (ReflectiveOperationException e) {
-            // ignore
-        }
-        return false;
     }
 
     private static String nullToUnknown(String value) {

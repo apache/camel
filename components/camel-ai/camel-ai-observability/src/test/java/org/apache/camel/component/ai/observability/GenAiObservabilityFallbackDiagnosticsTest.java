@@ -16,24 +16,18 @@
  */
 package org.apache.camel.component.ai.observability;
 
-import java.util.List;
 import java.util.Properties;
-import java.util.concurrent.CopyOnWriteArrayList;
 
 import io.micrometer.core.instrument.observation.DefaultMeterObservationHandler;
 import io.micrometer.core.instrument.simple.SimpleMeterRegistry;
 import io.micrometer.observation.Observation;
 import io.micrometer.observation.ObservationHandler;
 import io.micrometer.observation.ObservationRegistry;
+import io.micrometer.tracing.handler.DefaultTracingObservationHandler;
+import io.micrometer.tracing.test.simple.SimpleTracer;
 import org.apache.camel.Exchange;
 import org.apache.camel.support.DefaultExchange;
 import org.apache.camel.test.junit6.ExchangeTestSupport;
-import org.apache.logging.log4j.Level;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.core.LogEvent;
-import org.apache.logging.log4j.core.Logger;
-import org.apache.logging.log4j.core.appender.AbstractAppender;
-import org.apache.logging.log4j.core.config.Property;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -42,35 +36,19 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 class GenAiObservabilityFallbackDiagnosticsTest extends ExchangeTestSupport {
 
-    private AbstractAppender appender;
-    private Logger logger;
-    private final List<String> infoMessages = new CopyOnWriteArrayList<>();
-    private final List<String> warnMessages = new CopyOnWriteArrayList<>();
+    private LogCapture capture;
 
     @BeforeEach
-    void attachLogCapture() {
+    void resetState() {
         GenAiObservabilityDiagnostics.resetForTesting();
         GenAiObservabilityImpl.resetBackendsForTesting();
-        appender = new AbstractAppender("GenAiObservabilityCapture", null, null, true, Property.EMPTY_ARRAY) {
-            @Override
-            public void append(LogEvent event) {
-                if (event.getLevel() == Level.INFO) {
-                    infoMessages.add(event.getMessage().getFormattedMessage());
-                } else if (event.getLevel() == Level.WARN) {
-                    warnMessages.add(event.getMessage().getFormattedMessage());
-                }
-            }
-        };
-        appender.start();
-        logger = (Logger) LogManager.getLogger(GenAiObservabilityDiagnostics.class);
-        logger.addAppender(appender);
+        capture = LogCapture.attach(GenAiObservabilityDiagnostics.class);
     }
 
     @AfterEach
     void detachLogCapture() {
-        if (logger != null && appender != null) {
-            logger.removeAppender(appender);
-            appender.stop();
+        if (capture != null) {
+            capture.close();
         }
         GenAiObservabilityDiagnostics.resetForTesting();
         GenAiObservabilityImpl.resetBackendsForTesting();
@@ -86,9 +64,9 @@ class GenAiObservabilityFallbackDiagnosticsTest extends ExchangeTestSupport {
 
         observeTwice();
 
-        assertThat(infoMessages).hasSize(1);
-        assertThat(infoMessages.get(0)).contains("ObservationRegistry without a tracing handler");
-        assertThat(warnMessages).isEmpty();
+        assertThat(capture.infoMessages()).hasSize(1);
+        assertThat(capture.infoMessages().get(0)).contains("ObservationRegistry without a tracing handler");
+        assertThat(capture.warnMessages()).isEmpty();
     }
 
     @Test
@@ -103,23 +81,37 @@ class GenAiObservabilityFallbackDiagnosticsTest extends ExchangeTestSupport {
 
         observeTwice();
 
-        assertThat(warnMessages).hasSize(1);
-        assertThat(warnMessages.get(0)).contains("ObservationRegistry without a tracing handler");
-        assertThat(infoMessages).isEmpty();
+        assertThat(capture.warnMessages()).hasSize(1);
+        assertThat(capture.warnMessages().get(0)).contains("ObservationRegistry without a tracing handler");
+        assertThat(capture.infoMessages()).isEmpty();
     }
 
     @Test
     void shouldNotLogWhenObservationRegistryHasTracingHandler() {
         ObservationRegistry observationRegistry = ObservationRegistry.create();
         observationRegistry.observationConfig()
-                .observationHandler(new RecordingObservationHandler())
-                .observationHandler(new FakeTracingObservationHandler());
+                .observationHandler(new DefaultTracingObservationHandler(new SimpleTracer()));
         context.getRegistry().bind("observationRegistry", observationRegistry);
 
         observeTwice();
 
-        assertThat(infoMessages).isEmpty();
-        assertThat(warnMessages).isEmpty();
+        assertThat(capture.infoMessages()).isEmpty();
+        assertThat(capture.warnMessages()).isEmpty();
+    }
+
+    @Test
+    void shouldNotLogWhenMeterHandlerIsRegisteredBeforeTracingHandler() {
+        SimpleMeterRegistry meters = new SimpleMeterRegistry();
+        ObservationRegistry observationRegistry = ObservationRegistry.create();
+        observationRegistry.observationConfig()
+                .observationHandler(new DefaultMeterObservationHandler(meters))
+                .observationHandler(new DefaultTracingObservationHandler(new SimpleTracer()));
+        context.getRegistry().bind("observationRegistry", observationRegistry);
+
+        observeTwice();
+
+        assertThat(capture.infoMessages()).isEmpty();
+        assertThat(capture.warnMessages()).isEmpty();
     }
 
     private void observeTwice() {
@@ -135,27 +127,6 @@ class GenAiObservabilityFallbackDiagnosticsTest extends ExchangeTestSupport {
     }
 
     private static final class RecordingObservationHandler implements ObservationHandler<Observation.Context> {
-
-        @Override
-        public void onStart(Observation.Context context) {
-            // noop
-        }
-
-        @Override
-        public void onStop(Observation.Context context) {
-            // noop
-        }
-
-        @Override
-        public boolean supportsContext(Observation.Context context) {
-            return true;
-        }
-    }
-
-    /**
-     * Handler class name matches the TracingObservationHandler detection used in production code.
-     */
-    private static final class FakeTracingObservationHandler implements ObservationHandler<Observation.Context> {
 
         @Override
         public void onStart(Observation.Context context) {

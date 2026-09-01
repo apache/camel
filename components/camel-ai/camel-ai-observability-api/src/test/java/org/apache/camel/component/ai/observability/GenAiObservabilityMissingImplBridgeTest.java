@@ -23,6 +23,7 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
 import org.apache.camel.support.DefaultExchange;
 import org.apache.camel.test.junit6.ExchangeTestSupport;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -33,22 +34,17 @@ import static org.assertj.core.api.Assertions.assertThat;
  */
 class GenAiObservabilityMissingImplBridgeTest extends ExchangeTestSupport {
 
+    @AfterEach
+    void resetBridgeCache() {
+        GenAiObservability.resetBridgeForTesting();
+        GenAiObservabilityDiagnostics.resetForTesting();
+    }
+
     @Test
     void shouldWarnWhenImplementationBridgeIsUnavailable() throws Exception {
         GenAiObservabilityDiagnostics.resetForTesting();
         try (LogCapture capture = LogCapture.attach(GenAiObservabilityDiagnostics.class)) {
-            var bridgesField = GenAiObservability.class.getDeclaredField("BRIDGES");
-            bridgesField.setAccessible(true);
-            @SuppressWarnings("unchecked")
-            ConcurrentMap<CamelContext, Object> bridges
-                    = (ConcurrentMap<CamelContext, Object>) bridgesField.get(null);
-            bridges.clear();
-
-            var resolveBridge
-                    = GenAiObservability.class.getDeclaredMethod("resolveBridge", org.apache.camel.CamelContext.class);
-            resolveBridge.setAccessible(true);
-            var unavailableBridge = resolveBridge.invoke(null, context);
-            bridges.put(context, unavailableBridge);
+            installUnavailableBridge();
 
             Exchange exchange = new DefaultExchange(context);
             GenAiObservation observation = GenAiObservability.start(exchange, GenAiObservationContext.builder()
@@ -59,8 +55,6 @@ class GenAiObservabilityMissingImplBridgeTest extends ExchangeTestSupport {
 
             assertThat(capture.infoMessages())
                     .anyMatch(message -> message.contains("camel-ai-observability is not on the classpath"));
-        } finally {
-            GenAiObservabilityDiagnostics.resetForTesting();
         }
     }
 
@@ -72,17 +66,7 @@ class GenAiObservabilityMissingImplBridgeTest extends ExchangeTestSupport {
 
         GenAiObservabilityDiagnostics.resetForTesting();
         try (LogCapture capture = LogCapture.attach(GenAiObservabilityDiagnostics.class)) {
-            var bridgesField = GenAiObservability.class.getDeclaredField("BRIDGES");
-            bridgesField.setAccessible(true);
-            @SuppressWarnings("unchecked")
-            ConcurrentMap<CamelContext, Object> bridges
-                    = (ConcurrentMap<CamelContext, Object>) bridgesField.get(null);
-            bridges.clear();
-
-            var resolveBridge
-                    = GenAiObservability.class.getDeclaredMethod("resolveBridge", org.apache.camel.CamelContext.class);
-            resolveBridge.setAccessible(true);
-            bridges.put(context, resolveBridge.invoke(null, context));
+            installUnavailableBridge();
 
             Exchange exchange = new DefaultExchange(context);
             GenAiObservability.start(exchange, GenAiObservationContext.builder()
@@ -92,8 +76,20 @@ class GenAiObservabilityMissingImplBridgeTest extends ExchangeTestSupport {
 
             assertThat(capture.infoMessages()).isEmpty();
             assertThat(capture.warnMessages()).isEmpty();
-        } finally {
-            GenAiObservabilityDiagnostics.resetForTesting();
         }
+    }
+
+    private void installUnavailableBridge() throws Exception {
+        var bridgesField = GenAiObservability.class.getDeclaredField("BRIDGES");
+        bridgesField.setAccessible(true);
+        @SuppressWarnings("unchecked")
+        ConcurrentMap<CamelContext, Object> bridges
+                = (ConcurrentMap<CamelContext, Object>) bridgesField.get(null);
+        bridges.clear();
+
+        var resolveBridge
+                = GenAiObservability.class.getDeclaredMethod("resolveBridge", org.apache.camel.CamelContext.class);
+        resolveBridge.setAccessible(true);
+        bridges.put(context, resolveBridge.invoke(null, context));
     }
 }

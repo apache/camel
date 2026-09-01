@@ -16,17 +16,9 @@
  */
 package org.apache.camel.component.ai.observability;
 
-import java.util.List;
 import java.util.Properties;
-import java.util.concurrent.CopyOnWriteArrayList;
 
 import org.apache.camel.test.junit6.ExchangeTestSupport;
-import org.apache.logging.log4j.Level;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.core.LogEvent;
-import org.apache.logging.log4j.core.Logger;
-import org.apache.logging.log4j.core.appender.AbstractAppender;
-import org.apache.logging.log4j.core.config.Property;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -35,34 +27,18 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 class GenAiObservabilityDiagnosticsTest extends ExchangeTestSupport {
 
-    private AbstractAppender appender;
-    private Logger logger;
-    private final List<String> infoMessages = new CopyOnWriteArrayList<>();
-    private final List<String> warnMessages = new CopyOnWriteArrayList<>();
+    private LogCapture capture;
 
     @BeforeEach
-    void attachLogCapture() {
+    void resetDiagnostics() {
         GenAiObservabilityDiagnostics.resetForTesting();
-        appender = new AbstractAppender("GenAiObservabilityCapture", null, null, true, Property.EMPTY_ARRAY) {
-            @Override
-            public void append(LogEvent event) {
-                if (event.getLevel() == Level.INFO) {
-                    infoMessages.add(event.getMessage().getFormattedMessage());
-                } else if (event.getLevel() == Level.WARN) {
-                    warnMessages.add(event.getMessage().getFormattedMessage());
-                }
-            }
-        };
-        appender.start();
-        logger = (Logger) LogManager.getLogger(GenAiObservabilityDiagnostics.class);
-        logger.addAppender(appender);
+        capture = LogCapture.attach(GenAiObservabilityDiagnostics.class);
     }
 
     @AfterEach
     void detachLogCapture() {
-        if (logger != null && appender != null) {
-            logger.removeAppender(appender);
-            appender.stop();
+        if (capture != null) {
+            capture.close();
         }
         GenAiObservabilityDiagnostics.resetForTesting();
     }
@@ -72,9 +48,9 @@ class GenAiObservabilityDiagnosticsTest extends ExchangeTestSupport {
         GenAiObservabilityDiagnostics.warnMissingImplementation(context);
         GenAiObservabilityDiagnostics.warnMissingImplementation(context);
 
-        assertThat(infoMessages).hasSize(1);
-        assertThat(infoMessages.get(0)).contains("camel-ai-observability is not on the classpath");
-        assertThat(warnMessages).isEmpty();
+        assertThat(capture.infoMessages()).hasSize(1);
+        assertThat(capture.infoMessages().get(0)).contains("camel-ai-observability is not on the classpath");
+        assertThat(capture.warnMessages()).isEmpty();
     }
 
     @Test
@@ -86,9 +62,9 @@ class GenAiObservabilityDiagnosticsTest extends ExchangeTestSupport {
         GenAiObservabilityDiagnostics.warnMissingImplementation(context);
         GenAiObservabilityDiagnostics.warnMissingImplementation(context);
 
-        assertThat(warnMessages).hasSize(1);
-        assertThat(warnMessages.get(0)).contains("camel-ai-observability is not on the classpath");
-        assertThat(infoMessages).isEmpty();
+        assertThat(capture.warnMessages()).hasSize(1);
+        assertThat(capture.warnMessages().get(0)).contains("camel-ai-observability is not on the classpath");
+        assertThat(capture.infoMessages()).isEmpty();
     }
 
     @Test
@@ -96,9 +72,9 @@ class GenAiObservabilityDiagnosticsTest extends ExchangeTestSupport {
         GenAiObservabilityDiagnostics.warnObservationWithoutTracingHandler(context);
         GenAiObservabilityDiagnostics.warnObservationWithoutTracingHandler(context);
 
-        assertThat(infoMessages).hasSize(1);
-        assertThat(infoMessages.get(0)).contains("ObservationRegistry without a tracing handler");
-        assertThat(warnMessages).isEmpty();
+        assertThat(capture.infoMessages()).hasSize(1);
+        assertThat(capture.infoMessages().get(0)).contains("ObservationRegistry without a tracing handler");
+        assertThat(capture.warnMessages()).isEmpty();
     }
 
     @Test
