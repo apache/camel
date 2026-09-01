@@ -146,6 +146,60 @@ class MemoryKeyValueRepositoryTest {
     }
 
     @Test
+    void testReplaceMatchingOldValue() {
+        repository.put("key1", "value1", null);
+
+        boolean replaced = repository.replace("key1", "value1", "value2", null);
+
+        assertThat(replaced).isTrue();
+        assertThat(repository.get("key1")).isEqualTo("value2");
+    }
+
+    @Test
+    void testReplaceNonMatchingOldValue() {
+        repository.put("key1", "value1", null);
+
+        boolean replaced = repository.replace("key1", "wrong", "value2", null);
+
+        assertThat(replaced).isFalse();
+        assertThat(repository.get("key1")).isEqualTo("value1");
+    }
+
+    @Test
+    void testReplaceMissingKey() {
+        boolean replaced = repository.replace("nonexistent", "value1", "value2", null);
+
+        assertThat(replaced).isFalse();
+    }
+
+    @Test
+    void testDeleteWithExpectedValueMatching() {
+        repository.put("key1", "value1", null);
+
+        boolean deleted = repository.delete("key1", "value1");
+
+        assertThat(deleted).isTrue();
+        assertThat(repository.get("key1")).isNull();
+    }
+
+    @Test
+    void testDeleteWithExpectedValueNotMatching() {
+        repository.put("key1", "value1", null);
+
+        boolean deleted = repository.delete("key1", "wrong");
+
+        assertThat(deleted).isFalse();
+        assertThat(repository.get("key1")).isEqualTo("value1");
+    }
+
+    @Test
+    void testDeleteWithExpectedValueMissingKey() {
+        boolean deleted = repository.delete("nonexistent", "value1");
+
+        assertThat(deleted).isFalse();
+    }
+
+    @Test
     void testTtlExpiration() {
         // Use a very short TTL
         repository.put("key1", "value1", Duration.ofMillis(50));
