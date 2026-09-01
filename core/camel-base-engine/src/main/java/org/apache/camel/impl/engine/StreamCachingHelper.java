@@ -34,6 +34,9 @@ final class StreamCachingHelper {
 
     private static final Logger LOG = LoggerFactory.getLogger(StreamCachingHelper.class);
 
+    // exchange property used to ensure the WrappedFile null-body WARN fires at most once per exchange
+    private static final String WARNED_WRAPPED_FILE_NULL_BODY = "CamelStreamCacheWarnedWrappedFileNullBody";
+
     private StreamCachingHelper() {
     }
 
@@ -74,9 +77,13 @@ final class StreamCachingHelper {
                     inMessage.setBody(sc);
                 } else {
                     // warn if a WrappedFile (e.g. RemoteFile) had a null embedded body —
-                    // this means the remote content was never retrieved before stream caching ran
+                    // this means the remote content was never retrieved before stream caching ran.
+                    // guard with an exchange property so the WARN fires at most once per exchange,
+                    // not once per route node (StreamCachingAdvice runs before every wrapped node).
                     Object body = inMessage.getBody();
-                    if (body instanceof WrappedFile<?> wf && wf.getBody() == null) {
+                    if (body instanceof WrappedFile<?> wf && wf.getBody() == null
+                            && exchange.getProperty(WARNED_WRAPPED_FILE_NULL_BODY) == null) {
+                        exchange.setProperty(WARNED_WRAPPED_FILE_NULL_BODY, Boolean.TRUE);
                         LOG.warn(
                                 "Stream caching skipped: the body is a WrappedFile ({}) whose content has not been loaded."
                                  + " The remote file was not retrieved before stream caching."

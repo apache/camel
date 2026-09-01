@@ -54,11 +54,6 @@ public final class GenericFileConverter {
             GenericFile<?> file = (GenericFile<?>) value;
             Object body = file.getBody();
             if (body == null) {
-                LOG.warn(
-                        "Cannot convert GenericFile '{}' to {} because the file body has not been loaded."
-                         + " The remote file content was not retrieved before stream caching."
-                         + " Check your SFTP/FTP consumer configuration (localWorkDirectory, streamDownload).",
-                        file.getFileName(), type.getName());
                 return null;
             }
             Class<?> from = body.getClass();

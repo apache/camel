@@ -23,17 +23,14 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.Test;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 /**
  * Verifies that stream caching does not throw {@link NullPointerException} when the message body is a
- * {@link WrappedFile} whose embedded content has not been loaded (body is null), and instead logs a diagnostic WARN.
- *
- * <p>
- * Real-world trigger: a RemoteFile (SFTP/FTP) body is null when stream-caching runs before the consumer has loaded the
- * remote content. In Camel 3.x this caused a bare NPE; Camel 4 guarded the NPE but silently no-oped. CAMEL-24563 adds a
- * targeted WARN in StreamCachingHelper so operators can diagnose the misconfiguration.
+ * {@link WrappedFile} whose embedded content has not been loaded (body is null), and that the per-exchange WARN
+ * deduplication flag is set (preventing duplicate WARNs on multi-node routes). CAMEL-24563.
  */
 public class GenericFileStreamCachingNullBodyTest extends ContextTestSupport {
 
@@ -43,15 +40,18 @@ public class GenericFileStreamCachingNullBodyTest extends ContextTestSupport {
             @Override
             public void configure() {
                 context.setStreamCaching(true);
-                from("direct:start").to("mock:result");
+                // multi-node route: StreamCachingAdvice fires before each node —
+                // without the exchange-property guard the WARN would fire multiple times
+                from("direct:start")
+                        .to("log:step1")
+                        .to("log:step2")
+                        .to("mock:result");
             }
         };
     }
 
-    @Test
-    void testWrappedFileWithNullBodyDoesNotThrowNPE() throws Exception {
-        // Simulate a WrappedFile (e.g. RemoteFile) whose body was never loaded
-        WrappedFile<Object> unloadedFile = new WrappedFile<>() {
+    private WrappedFile<Object> unloadedFile() {
+        return new WrappedFile<>() {
             @Override
             public Object getFile() {
                 return null;
@@ -67,18 +67,38 @@ public class GenericFileStreamCachingNullBodyTest extends ContextTestSupport {
                 return -1;
             }
         };
+    }
 
+    @Test
+    void testWrappedFileWithNullBodyDoesNotThrowNPE() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMessageCount(1);
 
-        // must not throw NullPointerException — CAMEL-24563
-        assertDoesNotThrow(() -> template.sendBody("direct:start", unloadedFile),
+        assertDoesNotThrow(() -> template.sendBody("direct:start", unloadedFile()),
                 "Stream caching must not throw NPE when WrappedFile body is null");
 
         assertMockEndpointsSatisfied();
 
-        // body should remain the original WrappedFile (not cached) since content was not loaded
         Exchange received = mock.getReceivedExchanges().get(0);
-        assertNotNull(received.getIn().getBody(), "Body should still be present even when stream caching is skipped");
+        assertNotNull(received.getIn().getBody(), "Body should still be present when stream caching is skipped");
+    }
+
+    @Test
+    void testWarnDeduplicationFlagSetOnExchange() throws Exception {
+        // When a WrappedFile with null body flows through a multi-node route, the
+        // exchange property CamelStreamCacheWarnedWrappedFileNullBody should be set
+        // after the first node — this prevents duplicate WARNs on subsequent nodes.
+        MockEndpoint mock = getMockEndpoint("mock:result");
+        mock.expectedMessageCount(1);
+
+        template.sendBody("direct:start", unloadedFile());
+
+        assertMockEndpointsSatisfied();
+
+        Exchange received = mock.getReceivedExchanges().get(0);
+        Object flag = received.getProperty("CamelStreamCacheWarnedWrappedFileNullBody");
+        assertThat(flag)
+                .as("Exchange property must be set to prevent duplicate WARN logs per exchange")
+                .isEqualTo(Boolean.TRUE);
     }
 }
