@@ -48,3 +48,9 @@ CREATE TABLE camel_ks.CAMEL_AGGREGATION (
   EXCHANGE blob,
   PRIMARY KEY (KEY)
 );
+
+CREATE TABLE camel_ks.CAMEL_KEYVALUE (
+  KEY varchar,
+  VALUE blob,
+  PRIMARY KEY (KEY)
+);

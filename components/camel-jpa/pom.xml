@@ -173,7 +173,7 @@
                         <configuration>
                             <persistenceXmlFile>${project.basedir}/src/test/resources/META-INF/persistence.xml
                             </persistenceXmlFile>
-                            <includes>org/apache/camel/examples/*.class</includes>
+                            <includes>org/apache/camel/examples/*.class,org/apache/camel/processor/keyvalue/jpa/*.class</includes>
                             <addDefaultConstructor>true</addDefaultConstructor>
                             <enforcePropertyRestrictions>true</enforcePropertyRestrictions>
                         </configuration>

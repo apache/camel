@@ -79,6 +79,18 @@
     </properties>
   </persistence-unit>
 
+  <persistence-unit name="keyvalueDb" transaction-type="RESOURCE_LOCAL">
+    <class>org.apache.camel.processor.keyvalue.jpa.KeyValueEntry</class>
+
+    <properties>
+      <property name="openjpa.ConnectionURL" value="jdbc:h2:./target/keyvalueTest;DB_CLOSE_DELAY=-1"/>
+      <property name="openjpa.ConnectionDriverName" value="org.h2.Driver"/>
+      <property name="openjpa.jdbc.SynchronizeMappings" value="buildSchema"/>
+      <property name="openjpa.Log" value="DefaultLevel=WARN, Tool=INFO"/>
+      <property name="openjpa.Multithreaded" value="true"/>
+    </properties>
+  </persistence-unit>
+
   <!-- START SNIPPET: e1 -->
   <persistence-unit name="idempotentDb" transaction-type="RESOURCE_LOCAL">
     <class>org.apache.camel.processor.idempotent.jpa.MessageProcessed</class>
