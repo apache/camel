@@ -45,6 +45,19 @@ When the flag is `false` (the default), any remaining `CamelExecCommand*`,
 and a WARN is logged once per exec endpoint. Those headers never overrode the
 URI without the flag; they were just silent before.
 
+=== camel-azure-storage-blob and camel-azure-storage-datalake
+
+Local downloads configured with `fileDir` now resolve existing filesystem path segments before checking
+that the destination remains inside the configured directory. Downloads through a symbolic link that
+resolves outside `fileDir` are rejected. Valid nested download paths continue to work.
+
+=== camel-google-storage
+
+Local downloads configured with a plain `downloadFileName` directory now resolve existing filesystem
+path segments before checking that the destination remains inside that directory. Downloads through a
+symbolic link that resolves outside the configured directory are rejected. Valid object names using `/`
+as a pseudo-directory separator continue to work.
+
 == Upgrading Camel 4.21 to 4.22
 
 === camel-tika
