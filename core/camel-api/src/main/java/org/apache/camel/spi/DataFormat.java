@@ -24,6 +24,7 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.apache.camel.Service;
 import org.apache.camel.util.IOHelper;
+import org.jspecify.annotations.Nullable;
 
 /**
  * Pluggable strategy for converting message bodies to and from a serialised byte-stream format, as described in the
@@ -48,11 +49,13 @@ public interface DataFormat extends Service {
      * Marshals the object to the given Stream.
      *
      * @param  exchange  the current exchange
-     * @param  graph     the object to be marshalled
+     * @param  graph     the object to be marshalled, can be <tt>null</tt> if the message body is null (for example on
+     *                   an error route) or if the implementation marshals from the exchange rather than from this
+     *                   parameter
      * @param  stream    the output stream to write the marshalled result to
      * @throws Exception can be thrown
      */
-    void marshal(Exchange exchange, Object graph, OutputStream stream) throws Exception;
+    void marshal(Exchange exchange, @Nullable Object graph, OutputStream stream) throws Exception;
 
     /**
      * Unmarshals the given stream into an object.
