@@ -83,7 +83,7 @@ google-bigquery-sql://project-17248459:delete * from test.table where id=@myId
 google-bigquery-sql://project-17248459:delete * from ${datasetId}.${tableId} where id=@myId
 ----
 The query can contain two kinds of placeholder, `@name` and `$\{name}`. They are not
-interchangeable: see xref:#GoogleBigQuery-QueryPlaceholders[Query Placeholders] below.
+interchangeable: see xref:#_query_placeholders[Query Placeholders] below.
 
 You can externalize your SQL queries to files in the classpath or file system as shown:
 
@@ -102,7 +102,6 @@ include::partial$component-endpoint-headers.adoc[]
 
 Google BigQuery SQL endpoint expects the payload to be either empty or a map of query parameters.
 
-[[GoogleBigQuery-QueryPlaceholders]]
 == Query Placeholders
 
 A query may contain two kinds of placeholder. They cover different positions in a SQL
