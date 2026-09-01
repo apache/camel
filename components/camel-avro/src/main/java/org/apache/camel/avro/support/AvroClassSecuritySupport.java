@@ -17,11 +17,10 @@
 package org.apache.camel.avro.support;
 
 import java.util.Arrays;
-import java.util.LinkedHashSet;
 import java.util.NavigableSet;
 import java.util.Set;
 import java.util.TreeSet;
-import java.util.stream.Collectors;
+import java.util.concurrent.ConcurrentHashMap;
 
 import org.apache.avro.util.ClassSecurityValidator;
 import org.apache.avro.util.ClassSecurityValidator.ClassSecurityPredicate;
@@ -29,41 +28,44 @@ import org.apache.avro.util.ClassSecurityValidator.ClassSecurityPredicate;
 /**
  * Configures Apache Avro {@link ClassSecurityValidator} with Camel trusted packages.
  * <p>
- * Avro 1.12+ validates classes resolved from schemas. Camel automatically trusts the Avro IPC packages and any packages
- * derived from configured protocol or schema classes. Additional packages can be configured through the
- * {@code serializablePackages} endpoint option.
+ * Avro 1.12+ validates classes resolved from schemas. Camel automatically trusts packages derived from configured
+ * protocol or schema classes. Additional packages can be configured through the {@code serializablePackages} endpoint
+ * option.
  */
 public final class AvroClassSecuritySupport {
 
-    /**
-     * Camel-managed trusted packages merged across Avro components and data formats.
-     */
-    public static final String CAMEL_TRUSTED_PACKAGES_PROPERTY = "org.apache.camel.avro.TRUSTED_PACKAGES";
+    private static final Set<String> TRUSTED_PACKAGES = ConcurrentHashMap.newKeySet();
 
-    private static final String AVRO_IPC_PACKAGES = "org.apache.avro";
+    private static final Set<String> TRUSTED_CLASSES = ConcurrentHashMap.newKeySet();
 
-    private static final ClassSecurityPredicate CAMEL_TRUSTED_PACKAGES = AvroClassSecuritySupport::isCamelTrusted;
+    private static final Object LOCK = new Object();
+
+    private static final ClassSecurityPredicate CAMEL_TRUSTED = AvroClassSecuritySupport::isCamelTrusted;
 
     private AvroClassSecuritySupport() {
     }
 
     /**
-     * Ensures Avro IPC classes are trusted. Called once when the Avro component or data format starts.
+     * Trusts Avro IPC classes required for camel-avro-rpc handshake.
      */
     public static void ensureAvroIpcPackagesTrusted() {
-        trustPackages(AVRO_IPC_PACKAGES);
+        trustPackages("org.apache.avro.ipc");
     }
 
     /**
-     * Trusts the package of the given class name.
+     * Trusts the exact class name and its package for schema resolution.
      */
     public static void trustClassName(String className) {
         if (className == null || className.isBlank()) {
             return;
         }
-        int lastDot = className.lastIndexOf('.');
-        if (lastDot > 0) {
-            trustPackages(className.substring(0, lastDot));
+        synchronized (LOCK) {
+            TRUSTED_CLASSES.add(className);
+            int lastDot = className.lastIndexOf('.');
+            if (lastDot > 0) {
+                TRUSTED_PACKAGES.add(normalizePackage(className.substring(0, lastDot)));
+            }
+            refreshGlobal();
         }
     }
 
@@ -84,44 +86,40 @@ public final class AvroClassSecuritySupport {
         if (packages == null || packages.length == 0) {
             return;
         }
-        synchronized (AvroClassSecuritySupport.class) {
-            Set<String> merged = new LinkedHashSet<>(readTrustedPackages());
+        synchronized (LOCK) {
             for (String pkg : packages) {
                 if (pkg != null && !pkg.isBlank()) {
-                    merged.add(normalizePackage(pkg));
+                    TRUSTED_PACKAGES.add(normalizePackage(pkg));
                 }
             }
-            writeTrustedPackages(merged);
-            configureGlobal();
+            refreshGlobal();
         }
     }
 
-    private static void configureGlobal() {
+    /**
+     * Clears Camel-managed trusted classes and packages. Intended for tests.
+     */
+    public static void resetForTesting() {
+        synchronized (LOCK) {
+            TRUSTED_PACKAGES.clear();
+            TRUSTED_CLASSES.clear();
+            ClassSecurityValidator.setGlobal(ClassSecurityValidator.DEFAULT);
+        }
+    }
+
+    private static void refreshGlobal() {
         ClassSecurityValidator.setGlobal(
-                ClassSecurityValidator.composite(ClassSecurityValidator.DEFAULT, CAMEL_TRUSTED_PACKAGES));
+                ClassSecurityValidator.composite(ClassSecurityValidator.DEFAULT, CAMEL_TRUSTED));
     }
 
     private static boolean isCamelTrusted(Class<?> clazz) {
         String className = clazz.getName();
-        NavigableSet<String> packages = normalizedPackages(readTrustedPackages());
+        if (TRUSTED_CLASSES.contains(className)) {
+            return true;
+        }
+        NavigableSet<String> packages = normalizedPackages(TRUSTED_PACKAGES);
         String lower = packages.lower(className);
         return lower != null && className.startsWith(lower);
-    }
-
-    private static Set<String> readTrustedPackages() {
-        String value = System.getProperty(CAMEL_TRUSTED_PACKAGES_PROPERTY);
-        if (value == null || value.isBlank()) {
-            return Set.of();
-        }
-        return parsePackages(value).stream().collect(Collectors.toCollection(LinkedHashSet::new));
-    }
-
-    private static void writeTrustedPackages(Set<String> packages) {
-        if (packages.isEmpty()) {
-            System.clearProperty(CAMEL_TRUSTED_PACKAGES_PROPERTY);
-        } else {
-            System.setProperty(CAMEL_TRUSTED_PACKAGES_PROPERTY, String.join(",", packages));
-        }
     }
 
     private static Set<String> parsePackages(String packages) {
@@ -129,11 +127,15 @@ public final class AvroClassSecuritySupport {
                 .map(String::trim)
                 .filter(s -> !s.isEmpty())
                 .map(AvroClassSecuritySupport::normalizePackage)
-                .collect(Collectors.toCollection(LinkedHashSet::new));
+                .collect(java.util.stream.Collectors.toCollection(java.util.LinkedHashSet::new));
     }
 
     private static String normalizePackage(String pkg) {
         String normalized = pkg.trim();
+        if ("*".equals(normalized)) {
+            throw new IllegalArgumentException(
+                    "Wildcard '*' is not supported in serializablePackages because it disables Avro class-loading protection");
+        }
         if (normalized.endsWith(".")) {
             normalized = normalized.substring(0, normalized.length() - 1);
         }

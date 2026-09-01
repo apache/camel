@@ -40,7 +40,17 @@ avro:netty:localhost:8080?protocolClassName=com.example.orders.avro.OrderProtoco
 
 [source]
 ----
-marshal().avro().serializablePackages("com.example.orders.avro")
+from("kafka:orders")
+    .marshal().avro(AvroLibrary.ApacheAvro, Value.getClassSchema())
+    .to("kafka:orders-avro");
+----
+
+For additional packages not inferred from the schema, configure the data format in Java:
+
+[source,java]
+----
+AvroDataFormat avro = new AvroDataFormat(Value.getClassSchema());
+avro.setSerializablePackages("com.example.orders.avro");
 ----
 
 If you use `camel-avro-rpc`, Camel automatically trusts `org.apache.avro`, which contains the

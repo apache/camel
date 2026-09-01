@@ -56,6 +56,7 @@ public class AvroDataFormat extends ServiceSupport implements DataFormat, DataFo
     private Object schema;
     private transient Schema actualSchema;
     private String instanceClassName;
+    @Metadata(label = "security", security = "insecure:serialization")
     private String serializablePackages;
 
     public AvroDataFormat() {
@@ -84,7 +85,6 @@ public class AvroDataFormat extends ServiceSupport implements DataFormat, DataFo
     protected void doInit() throws Exception {
         super.doInit();
 
-        AvroClassSecuritySupport.ensureAvroIpcPackagesTrusted();
         AvroClassSecuritySupport.trustPackages(serializablePackages);
         AvroClassSecuritySupport.trustClassName(instanceClassName);
 
@@ -158,6 +158,7 @@ public class AvroDataFormat extends ServiceSupport implements DataFormat, DataFo
 
     @Override
     public void marshal(Exchange exchange, Object graph, OutputStream outputStream) throws Exception {
+        AvroClassSecuritySupport.trustClassName(graph.getClass().getName());
         // the schema should be from the graph class name
         Schema useSchema = actualSchema != null ? actualSchema : loadSchema(graph.getClass().getName());
 

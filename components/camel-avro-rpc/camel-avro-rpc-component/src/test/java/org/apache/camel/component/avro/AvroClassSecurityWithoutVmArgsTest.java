@@ -16,22 +16,33 @@
  */
 package org.apache.camel.component.avro;
 
+import org.apache.avro.ipc.HandshakeRequest;
 import org.apache.avro.util.ClassSecurityValidator;
 import org.apache.camel.avro.generated.Key;
 import org.apache.camel.avro.support.AvroClassSecuritySupport;
+import org.apache.camel.avro.test.TestPojo;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.test.junit6.CamelTestSupport;
-import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
+import static org.assertj.core.api.Assertions.assertThatCode;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 class AvroClassSecurityWithoutVmArgsTest extends CamelTestSupport {
 
-    @AfterEach
+    @BeforeEach
     void resetValidator() {
-        System.clearProperty(AvroClassSecuritySupport.CAMEL_TRUSTED_PACKAGES_PROPERTY);
-        ClassSecurityValidator.setGlobal(ClassSecurityValidator.DEFAULT);
+        AvroClassSecuritySupport.resetForTesting();
+    }
+
+    @Test
+    void shouldTrustAvroIpcHandshakeClassesFromComponentInit() throws Exception {
+        context.getEndpoint(
+                "avro:netty:localhost:9999?protocolClassName=org.apache.camel.avro.generated.KeyValueProtocol",
+                AvroEndpoint.class);
+
+        assertThatCode(() -> ClassSecurityValidator.validate(HandshakeRequest.class)).doesNotThrowAnyException();
     }
 
     @Test
@@ -47,7 +58,26 @@ class AvroClassSecurityWithoutVmArgsTest extends CamelTestSupport {
                 "avro:netty:localhost:9999?protocolClassName=org.apache.camel.avro.generated.KeyValueProtocol",
                 AvroEndpoint.class);
 
-        assertDoesNotThrow(() -> ClassSecurityValidator.validate(Key.class));
+        assertThatCode(() -> ClassSecurityValidator.validate(Key.class)).doesNotThrowAnyException();
+    }
+
+    @Test
+    void shouldTrustAdditionalPackagesFromSerializablePackagesOption() throws Exception {
+        context.getEndpoint(
+                "avro:netty:localhost:9999?protocolClassName=org.apache.camel.avro.generated.KeyValueProtocol"
+                            + "&serializablePackages=org.apache.camel.avro.generated",
+                AvroEndpoint.class);
+
+        assertThatCode(() -> ClassSecurityValidator.validate(Key.class)).doesNotThrowAnyException();
+    }
+
+    @Test
+    void shouldRejectClassesOutsideConfiguredProtocolPackages() throws Exception {
+        context.getEndpoint(
+                "avro:netty:localhost:9999?protocolClassName=org.apache.camel.avro.generated.KeyValueProtocol",
+                AvroEndpoint.class);
+
+        assertThatThrownBy(() -> ClassSecurityValidator.validate(TestPojo.class)).isInstanceOf(SecurityException.class);
     }
 
     @Override

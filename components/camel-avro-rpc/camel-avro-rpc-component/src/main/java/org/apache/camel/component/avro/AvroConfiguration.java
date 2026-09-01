@@ -54,7 +54,7 @@ public class AvroConfiguration implements Cloneable {
     private boolean reflectionProtocol;
     @UriParam
     private boolean singleParameter;
-    @UriParam(label = "security")
+    @UriParam(label = "security", security = "insecure:serialization")
     private String serializablePackages;
 
     public AvroConfiguration copy() {
