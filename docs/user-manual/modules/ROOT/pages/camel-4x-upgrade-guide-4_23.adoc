@@ -155,6 +155,19 @@ The component camel-threadpoolfactory-vertx was deprecated in 4.21. The componen
 
 `camel-zeebe` component was deprecated in 4.19 and has a straightforward replacement with `camel-camunda`. It is removed in 4.23.
 
+=== camel-core - DataFormat.marshal graph parameter is now @Nullable
+
+`org.apache.camel.spi.DataFormat#marshal(Exchange, Object, OutputStream)` now declares its `graph`
+parameter `@Nullable`, matching what `MarshalProcessor` actually passes: the message body, which is
+itself `@Nullable` and can be null (for example on an error route, or for a `DataFormat` that
+marshals from `Exchange` state rather than from `graph`).
+
+This is a contract-only correction; `MarshalProcessor`'s runtime behavior is unchanged. Java
+implementations are unaffected. A Kotlin implementation of `DataFormat` previously had to accept a
+non-null `graph`, so the Kotlin compiler emitted a non-null assertion that threw `NullPointerException`
+whenever a null body reached `marshal`. Kotlin implementations can now declare `graph: Any?` directly
+instead of working around the assertion with a Java bridge class.
+
 === camel-core - MemoryIdempotentRepository and MemoryAggregationRepository deprecated
 
 `MemoryIdempotentRepository` and `MemoryAggregationRepository` are deprecated in favor of the new
