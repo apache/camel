@@ -124,6 +124,7 @@ public final class DynamicRouterRecipientListHelper {
         recipientList.setShareUnitOfWork(cfg.isShareUnitOfWork());
         recipientList.setStopOnException(cfg.isStopOnException());
         recipientList.setIgnoreInvalidEndpoints(cfg.isIgnoreInvalidEndpoints());
+        recipientList.setAllowedSchemes(cfg.getAllowedSchemes());
         recipientList.setCacheSize(cfg.getCacheSize());
         if (cfg.getOnPrepare() != null) {
             recipientList.setOnPrepare(mandatoryLookup(camelContext, cfg.getOnPrepare(), Processor.class));

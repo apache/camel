@@ -30,6 +30,37 @@ include::partial$component-endpoint-options.adoc[]
 include::partial$component-endpoint-headers.adoc[]
 // component options: END
 
+== Supplying the subscription predicate
+
+A subscription needs a predicate that decides which exchanges the participant receives. There are three ways to supply
+one, and they differ in who chooses it:
+
+* `predicateBean` -- the name of a `Predicate` bound in the registry. The route author decides which predicates exist,
+and the control message only selects one of them by name.
+* `predicate` and `expressionLanguage` as control endpoint URI parameters -- the route author writes the expression, and
+every subscription made through that endpoint uses it.
+* `predicate` and `expressionLanguage` carried in the control message, in its body or its headers -- the sender of the
+control message chooses both the expression language and the expression.
+
+The third form is disabled by default. The predicate is compiled and then evaluated against every exchange on the
+channel, so letting the control message choose both the language and the expression means the sender of that message
+decides what runs inside the Camel process. Set `allowPredicateFromMessage=true` on the control endpoint to enable it,
+and only do so when control messages can only come from a trusted source:
+
+[source,java]
+----
+from("kafka:subscriptions")
+    .unmarshal().json(DynamicRouterControlMessage.class)
+    .to("dynamic-router-control:subscribe?allowPredicateFromMessage=true");
+----
+
+When `allowPredicateFromMessage` is `false`, which is the default, a control message that supplies a `predicate` or an
+`expressionLanguage` is rejected with an `IllegalArgumentException`. Prefer `predicateBean`, or configure the predicate
+on the endpoint, when control messages arrive from outside the application.
+
+Subscription parameters that the control message does not carry fall back to the values configured on the control
+endpoint, so a participant can send only the parameters that identify it and let the endpoint supply the rest.
+
 == Subscribing
 
 Subscribing can be achieved by using query parameters in the control endpoint URI, or by sending a
