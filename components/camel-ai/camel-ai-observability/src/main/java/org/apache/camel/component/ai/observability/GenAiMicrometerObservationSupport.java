@@ -16,7 +16,11 @@
  */
 package org.apache.camel.component.ai.observability;
 
+import java.lang.reflect.Method;
+import java.util.List;
+
 import io.micrometer.observation.Observation;
+import io.micrometer.observation.ObservationHandler;
 import io.micrometer.observation.ObservationRegistry;
 import org.apache.camel.CamelContext;
 import org.apache.camel.support.CamelContextHelper;
@@ -28,9 +32,11 @@ import org.apache.camel.util.ObjectHelper;
  */
 final class GenAiMicrometerObservationSupport implements GenAiMicrometerObservationBackend {
 
+    private final CamelContext camelContext;
     private final ObservationRegistry observationRegistry;
 
     GenAiMicrometerObservationSupport(CamelContext camelContext) {
+        this.camelContext = camelContext;
         ObservationRegistry registry = CamelContextHelper.findSingleByType(camelContext, ObservationRegistry.class);
         this.observationRegistry = isUsable(registry) ? registry : null;
     }
@@ -57,6 +63,9 @@ final class GenAiMicrometerObservationSupport implements GenAiMicrometerObservat
         if (observation.isNoop()) {
             return null;
         }
+        if (!hasTracingHandler()) {
+            GenAiObservabilityDiagnostics.warnObservationWithoutTracingHandler(camelContext);
+        }
         try {
             return new ObservationHandle(observation, observation.openScope());
         } catch (RuntimeException e) {
@@ -67,6 +76,27 @@ final class GenAiMicrometerObservationSupport implements GenAiMicrometerObservat
 
     private static boolean isUsable(ObservationRegistry registry) {
         return registry != null && registry != ObservationRegistry.NOOP;
+    }
+
+    private boolean hasTracingHandler() {
+        if (observationRegistry == null) {
+            return false;
+        }
+        try {
+            Method method = observationRegistry.observationConfig().getClass().getDeclaredMethod("getObservationHandlers");
+            method.setAccessible(true);
+            @SuppressWarnings("unchecked")
+            List<ObservationHandler<?>> handlers
+                    = (List<ObservationHandler<?>>) method.invoke(observationRegistry.observationConfig());
+            for (ObservationHandler<?> handler : handlers) {
+                if (handler.getClass().getName().contains("TracingObservationHandler")) {
+                    return true;
+                }
+            }
+        } catch (ReflectiveOperationException e) {
+            // ignore
+        }
+        return false;
     }
 
     private static String nullToUnknown(String value) {

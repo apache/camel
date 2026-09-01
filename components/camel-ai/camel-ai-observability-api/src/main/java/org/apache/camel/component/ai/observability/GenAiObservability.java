@@ -69,6 +69,7 @@ public final class GenAiObservability {
         CamelContext camelContext = exchange.getContext();
         ImplBridge bridge = BRIDGES.computeIfAbsent(camelContext, GenAiObservability::resolveBridge);
         if (bridge.startMethod == null) {
+            GenAiObservabilityDiagnostics.warnMissingImplementation(camelContext);
             return NOOP;
         }
         try {
