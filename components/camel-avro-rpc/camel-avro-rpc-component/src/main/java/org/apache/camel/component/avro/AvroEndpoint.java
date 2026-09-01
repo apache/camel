@@ -21,12 +21,14 @@ import java.util.Collections;
 import java.util.Map;
 
 import org.apache.avro.Protocol;
+import org.apache.avro.Schema;
 import org.apache.avro.reflect.ReflectData;
 import org.apache.camel.AsyncEndpoint;
 import org.apache.camel.Category;
 import org.apache.camel.Component;
 import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
+import org.apache.camel.avro.support.AvroClassSecuritySupport;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.support.DefaultEndpoint;
@@ -94,6 +96,8 @@ public abstract class AvroEndpoint extends DefaultEndpoint implements AsyncEndpo
             throw new IllegalArgumentException("Avro configuration does not contain protocol");
         }
 
+        configureClassSecurity(config);
+
         if (config.getMessageName() != null && !config.getProtocol().getMessages().containsKey(config.getMessageName())) {
             throw new IllegalArgumentException("Message " + config.getMessageName() + " is not defined in protocol");
         }
@@ -110,6 +114,23 @@ public abstract class AvroEndpoint extends DefaultEndpoint implements AsyncEndpo
                                                        + message.getName() + " because it has "
                                                        + message.getRequest().getFields().size()
                                                        + " parameters defined");
+                }
+            }
+        }
+    }
+
+    private void configureClassSecurity(AvroConfiguration config) {
+        AvroClassSecuritySupport.ensureAvroIpcPackagesTrusted();
+        AvroClassSecuritySupport.trustPackages(config.getSerializablePackages());
+        AvroClassSecuritySupport.trustClassName(config.getProtocolClassName());
+        if (config.getProtocol() != null) {
+            AvroClassSecuritySupport.trustPackages(config.getProtocol().getNamespace());
+            for (Schema type : config.getProtocol().getTypes()) {
+                if (type.getNamespace() != null) {
+                    AvroClassSecuritySupport.trustPackages(type.getNamespace());
+                }
+                if (type.getFullName() != null) {
+                    AvroClassSecuritySupport.trustClassName(type.getFullName());
                 }
             }
         }

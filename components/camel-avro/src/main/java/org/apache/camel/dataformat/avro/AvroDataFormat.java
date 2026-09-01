@@ -36,6 +36,7 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.CamelContextAware;
 import org.apache.camel.CamelException;
 import org.apache.camel.Exchange;
+import org.apache.camel.avro.support.AvroClassSecuritySupport;
 import org.apache.camel.spi.DataFormat;
 import org.apache.camel.spi.DataFormatName;
 import org.apache.camel.spi.Metadata;
@@ -55,6 +56,7 @@ public class AvroDataFormat extends ServiceSupport implements DataFormat, DataFo
     private Object schema;
     private transient Schema actualSchema;
     private String instanceClassName;
+    private String serializablePackages;
 
     public AvroDataFormat() {
     }
@@ -82,6 +84,10 @@ public class AvroDataFormat extends ServiceSupport implements DataFormat, DataFo
     protected void doInit() throws Exception {
         super.doInit();
 
+        AvroClassSecuritySupport.ensureAvroIpcPackagesTrusted();
+        AvroClassSecuritySupport.trustPackages(serializablePackages);
+        AvroClassSecuritySupport.trustClassName(instanceClassName);
+
         if (schema != null) {
             if (schema instanceof Schema) {
                 actualSchema = (Schema) schema;
@@ -90,6 +96,11 @@ public class AvroDataFormat extends ServiceSupport implements DataFormat, DataFo
             }
         } else if (instanceClassName != null) {
             actualSchema = loadSchema(instanceClassName);
+        }
+
+        if (actualSchema != null) {
+            AvroClassSecuritySupport.trustPackages(actualSchema.getNamespace());
+            AvroClassSecuritySupport.trustClassName(actualSchema.getFullName());
         }
     }
 
@@ -114,6 +125,18 @@ public class AvroDataFormat extends ServiceSupport implements DataFormat, DataFo
 
     public void setInstanceClassName(String className) {
         instanceClassName = className;
+    }
+
+    public String getSerializablePackages() {
+        return serializablePackages;
+    }
+
+    /**
+     * Comma-separated list of additional packages that contain trusted Avro model classes. Avro 1.12+ validates classes
+     * resolved from schemas; Camel automatically trusts packages derived from the configured schema or instance class.
+     */
+    public void setSerializablePackages(String serializablePackages) {
+        this.serializablePackages = serializablePackages;
     }
 
     protected Schema loadSchema(String className) throws CamelException, ClassNotFoundException {
