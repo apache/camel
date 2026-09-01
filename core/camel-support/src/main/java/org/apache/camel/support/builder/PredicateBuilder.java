@@ -505,6 +505,19 @@ public class PredicateBuilder {
         };
     }
 
+    public static Predicate equalsString(final Expression left, final Expression right) {
+        return new BinaryPredicateSupport(left, right) {
+
+            protected boolean matches(Exchange exchange, Object leftValue, Object rightValue) {
+                return LanguageHelper.equalsString(exchange, leftValue, rightValue);
+            }
+
+            protected String getOperationText() {
+                return "equals";
+            }
+        };
+    }
+
     public static Predicate endsWith(final Expression left, final Expression right) {
         return new BinaryPredicateSupport(left, right) {
 
