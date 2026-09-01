@@ -1804,6 +1804,19 @@ public class EndpointHeaderBuilders {
         return HazelcastTopicEndpointBuilderFactory.HazelcastTopicHeaderNameBuilder.INSTANCE;
     }
     /**
+     * HiveMQ (camel-hivemq)
+     * Camel HiveMQ MQTT Client support
+     * 
+     * Category: messaging,iot
+     * Since: 4.23
+     * Maven coordinates: org.apache.camel:camel-hivemq
+     * 
+     * @return the dsl builder for the headers' name.
+     */
+    public static HiveMQEndpointBuilderFactory.HiveMQHeaderNameBuilder hivemq() {
+        return HiveMQEndpointBuilderFactory.HiveMQHeaderNameBuilder.INSTANCE;
+    }
+    /**
      * HTTP (camel-http)
      * Send requests to external HTTP servers using Apache HTTP Client 5.x.
      * 

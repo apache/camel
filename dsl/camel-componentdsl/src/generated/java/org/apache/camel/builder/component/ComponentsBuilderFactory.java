@@ -2333,6 +2333,19 @@ public interface ComponentsBuilderFactory {
         return HazelcastTopicComponentBuilderFactory.hazelcastTopic();
     }
     /**
+     * HiveMQ (camel-hivemq)
+     * Camel HiveMQ MQTT Client support
+     * 
+     * Category: messaging,iot
+     * Since: 4.23
+     * Maven coordinates: org.apache.camel:camel-hivemq
+     * 
+     * @return the dsl builder
+     */
+    static HivemqComponentBuilderFactory.HivemqComponentBuilder hivemq() {
+        return HivemqComponentBuilderFactory.hivemq();
+    }
+    /**
      * HTTP (camel-http)
      * Send requests to external HTTP servers using Apache HTTP Client 5.x.
      * 
