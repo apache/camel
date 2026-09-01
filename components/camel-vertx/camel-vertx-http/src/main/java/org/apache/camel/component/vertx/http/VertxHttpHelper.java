@@ -65,7 +65,8 @@ public final class VertxHttpHelper {
         String uriString = null;
         if (!endpoint.getConfiguration().isBridgeEndpoint()) {
             uriString = message.getHeader(VertxHttpConstants.HTTP_URI, String.class);
-            uriString = exchange.getContext().resolvePropertyPlaceholders(uriString);
+            // NOTE: property placeholders are resolved at build time on the endpoint uri written in the
+            // route, never on the message-supplied override headers (see CAMEL-24282 / CAMEL-24418)
         }
 
         if (ObjectHelper.isNotEmpty(uriString)) {
@@ -92,8 +93,8 @@ public final class VertxHttpHelper {
             uri = endpoint.getConfiguration().getHttpUri().toASCIIString();
         }
 
-        // Resolve property placeholders that may be present in the URI
-        uri = exchange.getContext().resolvePropertyPlaceholders(uri);
+        // NOTE: property placeholders are resolved at build time on the endpoint uri written in the route,
+        // never on the message-supplied override headers (see CAMEL-24282 / CAMEL-24418)
 
         // Append HTTP_PATH header value if is present
         String path = message.getHeader(VertxHttpConstants.HTTP_PATH, String.class);
