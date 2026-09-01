@@ -69,6 +69,17 @@ class DynamicRouterControlChannelSendDynamicAwareTest {
     }
 
     @Test
+    void resolveStaticUriRetainsAllowPredicateFromMessage() throws Exception {
+        String originalUri = "dynamic-router-control:subscribe?subscriptionId=testSub1&allowPredicateFromMessage=true";
+        String uri = "dynamic-router-control://subscribe?subscriptionId=testSub1&allowPredicateFromMessage=true";
+        try (DynamicRouterControlChannelSendDynamicAware testSubject = new DynamicRouterControlChannelSendDynamicAware()) {
+            SendDynamicAware.DynamicAwareEntry entry = testSubject.prepare(exchange, uri, originalUri);
+            String result = testSubject.resolveStaticUri(exchange, entry);
+            assertEquals("dynamic-router-control://subscribe?allowPredicateFromMessage=true", result);
+        }
+    }
+
+    @Test
     void resolveStaticUriShouldNotOptimize() throws Exception {
         String originalUri = "dynamic-router-ctrl:subscribe?subscriptionId=testSub1";
         String uri = "dynamic-router-ctrl://subscribe?subscriptionId=testSub1";
