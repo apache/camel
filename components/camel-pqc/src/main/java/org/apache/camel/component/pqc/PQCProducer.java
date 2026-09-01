@@ -19,6 +19,8 @@ package org.apache.camel.component.pqc;
 import java.nio.charset.StandardCharsets;
 import java.security.*;
 import java.security.cert.Certificate;
+import java.security.spec.PKCS8EncodedKeySpec;
+import java.security.spec.X509EncodedKeySpec;
 
 import javax.crypto.KeyGenerator;
 import javax.crypto.SecretKey;
@@ -32,11 +34,17 @@ import org.apache.camel.util.ObjectHelper;
 import org.bouncycastle.jcajce.SecretKeyWithEncapsulation;
 import org.bouncycastle.jcajce.spec.KEMExtractSpec;
 import org.bouncycastle.jcajce.spec.KEMGenerateSpec;
+import org.bouncycastle.jce.provider.BouncyCastleProvider;
+import org.bouncycastle.pqc.jcajce.provider.BouncyCastlePQCProvider;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * A Producer which sign or verify a payload
  */
 public class PQCProducer extends DefaultProducer {
+
+    private static final Logger LOG = LoggerFactory.getLogger(PQCProducer.class);
 
     private Signature signer;
     // Set only when this producer created the Signature itself, so it knows how to create another one.
@@ -128,6 +136,15 @@ public class PQCProducer extends DefaultProducer {
             keyPair = new KeyPair(publicKey, privateKey);
         } else {
             keyPair = getConfiguration().getKeyPair();
+        }
+
+        // On JDK 25+, a JKS KeyStore (or user-supplied KeyPair) may contain JDK-native PQC keys
+        // (e.g. ML-DSA, ML-KEM) that Bouncy Castle's Signature / KeyGenerator SPI does not recognise,
+        // causing InvalidKeyException at initSign / initVerify time. Re-encoding through BC's KeyFactory
+        // transparently converts JDK-native keys into the BC types the rest of the component expects,
+        // and is a no-op for keys that are already BC instances.
+        if (keyPair != null) {
+            keyPair = ensureBcKeyPair(keyPair);
         }
     }
 
@@ -232,6 +249,58 @@ public class PQCProducer extends DefaultProducer {
             exchange.getMessage().setBody(restoredKey, SecretKey.class);
         } else {
             exchange.getMessage().setHeader(PQCConstants.SECRET_KEY, restoredKey);
+        }
+    }
+
+    /**
+     * Ensures both keys in the pair are Bouncy Castle key instances.
+     * <p>
+     * On JDK 25+, a JKS {@link KeyStore} may deserialise standardised PQC keys (ML-DSA, ML-KEM) into JDK-native key
+     * objects that Bouncy Castle's {@link Signature} / {@link KeyGenerator} SPI does not recognise, causing
+     * {@link InvalidKeyException} at {@code initSign} / {@code initVerify} time.
+     * <p>
+     * Re-encoding through BC's {@link KeyFactory} is a no-op for keys that are already BC instances and transparently
+     * converts JDK-native ones into the BC types the rest of the component expects.
+     */
+    private static KeyPair ensureBcKeyPair(KeyPair kp) {
+        PrivateKey priv = kp.getPrivate();
+        PublicKey pub = kp.getPublic();
+
+        boolean privIsBc = priv == null || priv.getClass().getName().startsWith("org.bouncycastle.");
+        boolean pubIsBc = pub == null || pub.getClass().getName().startsWith("org.bouncycastle.");
+        if (privIsBc && pubIsBc) {
+            return kp;
+        }
+
+        try {
+            String alg = priv != null ? priv.getAlgorithm() : pub.getAlgorithm();
+            KeyFactory kf = getBcKeyFactory(alg);
+
+            if (!privIsBc) {
+                priv = kf.generatePrivate(new PKCS8EncodedKeySpec(priv.getEncoded()));
+            }
+            if (!pubIsBc) {
+                pub = kf.generatePublic(new X509EncodedKeySpec(pub.getEncoded()));
+            }
+            return new KeyPair(pub, priv);
+        } catch (Exception e) {
+            // If conversion fails (e.g. algorithm not known to BC), return the original pair
+            // and let the caller deal with any resulting exception from the crypto operation
+            LOG.debug("Could not convert KeyPair to Bouncy Castle key types: {}", e.getMessage());
+            return kp;
+        }
+    }
+
+    /**
+     * Returns a BC {@link KeyFactory} for the given JCE algorithm name, trying the main BC provider first and falling
+     * back to the BC PQC provider.
+     */
+    private static KeyFactory getBcKeyFactory(String algorithm)
+            throws NoSuchAlgorithmException, NoSuchProviderException {
+        try {
+            return KeyFactory.getInstance(algorithm, BouncyCastleProvider.PROVIDER_NAME);
+        } catch (NoSuchAlgorithmException e) {
+            return KeyFactory.getInstance(algorithm, BouncyCastlePQCProvider.PROVIDER_NAME);
         }
     }
 
