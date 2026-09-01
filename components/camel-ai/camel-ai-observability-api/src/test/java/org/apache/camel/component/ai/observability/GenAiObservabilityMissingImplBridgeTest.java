@@ -47,14 +47,38 @@ class GenAiObservabilityMissingImplBridgeTest extends ExchangeTestSupport {
             installUnavailableBridge();
 
             Exchange exchange = new DefaultExchange(context);
-            GenAiObservation observation = GenAiObservability.start(exchange, GenAiObservationContext.builder()
+            GenAiObservationContext observationContext = GenAiObservationContext.builder()
                     .operationName(GenAiOperationName.CHAT)
                     .requestModel("gpt-4o")
-                    .build());
-            observation.close();
+                    .build();
+            GenAiObservability.start(exchange, observationContext).close();
+            GenAiObservability.start(exchange, observationContext).close();
 
-            assertThat(capture.infoMessages())
-                    .anyMatch(message -> message.contains("camel-ai-observability is not on the classpath"));
+            assertThat(capture.infoMessages()).hasSize(1);
+            assertThat(capture.infoMessages().get(0)).contains("camel-ai-observability is not on the classpath");
+        }
+    }
+
+    @Test
+    void shouldWarnWhenImplementationBridgeIsUnavailableAndExplicitlyEnabled() throws Exception {
+        Properties properties = new Properties();
+        properties.setProperty(GenAiObservabilityProperties.ENABLED, "true");
+        context.getPropertiesComponent().setOverrideProperties(properties);
+
+        try (LogCapture capture = LogCapture.attach(GenAiObservabilityDiagnostics.class)) {
+            installUnavailableBridge();
+
+            Exchange exchange = new DefaultExchange(context);
+            GenAiObservationContext observationContext = GenAiObservationContext.builder()
+                    .operationName(GenAiOperationName.CHAT)
+                    .requestModel("gpt-4o")
+                    .build();
+            GenAiObservability.start(exchange, observationContext).close();
+            GenAiObservability.start(exchange, observationContext).close();
+
+            assertThat(capture.warnMessages()).hasSize(1);
+            assertThat(capture.warnMessages().get(0)).contains("camel-ai-observability is not on the classpath");
+            assertThat(capture.infoMessages()).isEmpty();
         }
     }
 
@@ -87,9 +111,8 @@ class GenAiObservabilityMissingImplBridgeTest extends ExchangeTestSupport {
                 = (ConcurrentMap<CamelContext, Object>) bridgesField.get(null);
         bridges.clear();
 
-        var resolveBridge
-                = GenAiObservability.class.getDeclaredMethod("resolveBridge", org.apache.camel.CamelContext.class);
-        resolveBridge.setAccessible(true);
-        bridges.put(context, resolveBridge.invoke(null, context));
+        var unavailableBridgeField = GenAiObservability.class.getDeclaredField("UNAVAILABLE_BRIDGE");
+        unavailableBridgeField.setAccessible(true);
+        bridges.put(context, unavailableBridgeField.get(null));
     }
 }

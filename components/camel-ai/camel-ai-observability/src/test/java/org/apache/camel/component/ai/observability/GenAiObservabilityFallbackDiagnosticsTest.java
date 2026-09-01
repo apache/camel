@@ -40,6 +40,7 @@ class GenAiObservabilityFallbackDiagnosticsTest extends ExchangeTestSupport {
 
     @BeforeEach
     void resetState() {
+        GenAiObservability.resetBridgeForTesting();
         GenAiObservabilityDiagnostics.resetForTesting();
         GenAiObservabilityImpl.resetBackendsForTesting();
         capture = LogCapture.attach(GenAiObservabilityDiagnostics.class);
@@ -50,6 +51,7 @@ class GenAiObservabilityFallbackDiagnosticsTest extends ExchangeTestSupport {
         if (capture != null) {
             capture.close();
         }
+        GenAiObservability.resetBridgeForTesting();
         GenAiObservabilityDiagnostics.resetForTesting();
         GenAiObservabilityImpl.resetBackendsForTesting();
     }

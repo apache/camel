@@ -31,8 +31,10 @@ import org.slf4j.LoggerFactory;
 final class GenAiMicrometerObservationSupport implements GenAiMicrometerObservationBackend {
 
     private static final Logger LOG = LoggerFactory.getLogger(GenAiMicrometerObservationSupport.class);
-    private static final String TRACING_CONTEXT_CLASS
+    private static final String TRACING_CONTEXT_CLASS_NAME
             = "io.micrometer.tracing.handler.TracingObservationHandler$TracingContext";
+    private static volatile Class<?> tracingContextClass;
+    private static volatile boolean tracingContextClassResolved;
 
     private final CamelContext camelContext;
     private final ObservationRegistry observationRegistry;
@@ -81,15 +83,30 @@ final class GenAiMicrometerObservationSupport implements GenAiMicrometerObservat
     }
 
     private static boolean hasTracingContext(Observation observation) {
-        try {
-            Class<?> tracingContextClass = Class.forName(TRACING_CONTEXT_CLASS);
-            return observation.getContextView().get(tracingContextClass) != null;
-        } catch (ClassNotFoundException e) {
-            if (LOG.isDebugEnabled()) {
-                LOG.debug("Micrometer tracing context unavailable for GenAI observation diagnostics", e);
-            }
+        Class<?> contextClass = resolveTracingContextClass();
+        if (contextClass == null) {
             return false;
         }
+        return observation.getContextView().get(contextClass) != null;
+    }
+
+    private static Class<?> resolveTracingContextClass() {
+        if (!tracingContextClassResolved) {
+            synchronized (GenAiMicrometerObservationSupport.class) {
+                if (!tracingContextClassResolved) {
+                    try {
+                        tracingContextClass = Class.forName(TRACING_CONTEXT_CLASS_NAME);
+                    } catch (ClassNotFoundException e) {
+                        if (LOG.isDebugEnabled()) {
+                            LOG.debug("Micrometer tracing context unavailable for GenAI observation diagnostics", e);
+                        }
+                        tracingContextClass = null;
+                    }
+                    tracingContextClassResolved = true;
+                }
+            }
+        }
+        return tracingContextClass;
     }
 
     private static String nullToUnknown(String value) {
