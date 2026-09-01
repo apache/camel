@@ -13,6 +13,39 @@ See the xref:camel-upgrade-recipes-tool.adoc[documentation] page for details.
 
 == Upgrading from 4.22.0 to 4.22.1
 
+=== camel-dynamic-router
+
+The `dynamic-router-control` endpoint no longer takes the subscription `predicate`, or the
+`expressionLanguage` used to compile it, from the incoming control message. A control message that
+supplies either is now rejected with an `IllegalArgumentException`.
+
+The predicate is compiled and then evaluated against every exchange on the channel, so letting the
+control message choose both the language and the expression means the sender of that message decides
+what runs inside the Camel process. Only enable this when control messages can only come from a
+trusted source:
+
+[source,java]
+----
+from("kafka:subscriptions")
+    .unmarshal().json(DynamicRouterControlMessage.class)
+    .to("dynamic-router-control:subscribe?allowPredicateFromMessage=true");
+----
+
+The option is annotated `security = "insecure:dev"`, so with `camel.main.profile = prod` the default
+policy for that category is `fail`, and an endpoint that sets `allowPredicateFromMessage=true` will
+not start unless you relax `camel.security.insecureDevPolicy`.
+
+Two alternatives avoid the flag entirely. A control message may still name a `predicateBean`, which
+selects a `Predicate` that the route author bound in the registry; that path is unchanged. The
+control endpoint may also carry `predicate` and `expressionLanguage` as URI parameters, in which case
+every subscription made through that endpoint uses the route author's expression. Subscription
+parameters that the control message does not carry now fall back to the values configured on the
+endpoint.
+
+The `dynamic-router` endpoint gained an `allowedSchemes` option, an optional comma-separated
+allow-list of component schemes that a subscription destination may resolve to. It is unset by
+default, which allows any scheme, matching the previous behaviour.
+
 === camel-exec
 
 `allowControlHeaders` is now annotated `security = "insecure:dev"`.
