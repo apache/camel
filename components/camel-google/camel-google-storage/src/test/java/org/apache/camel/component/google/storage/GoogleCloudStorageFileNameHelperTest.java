@@ -16,7 +16,12 @@
  */
 package org.apache.camel.component.google.storage;
 
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.io.TempDir;
 
 import static org.assertj.core.api.Assertions.assertThatCode;
 import static org.assertj.core.api.Assertions.assertThatIllegalArgumentException;
@@ -79,5 +84,31 @@ class GoogleCloudStorageFileNameHelperTest {
         assertThatIllegalArgumentException()
                 .isThrownBy(() -> GoogleCloudStorageFileNameHelper.assertWithinDirectory(DIR,
                         DIR + "-evil/file.txt", "../gcs-download-evil/file.txt"));
+    }
+
+    @Test
+    void symbolicLinkResolvingOutsideDirectoryIsRejected(@TempDir Path parent) throws IOException {
+        Path downloadDir = Files.createDirectory(parent.resolve("downloads"));
+        Path outsideDir = Files.createDirectory(parent.resolve("outside"));
+        Path linkedPath = Files.createSymbolicLink(downloadDir.resolve("linked"), outsideDir);
+
+        assertThatIllegalArgumentException()
+                .isThrownBy(() -> GoogleCloudStorageFileNameHelper.assertWithinDirectory(
+                        downloadDir.toString(), linkedPath.resolve("file.txt").toString(), "linked/file.txt"))
+                .withMessageContaining("linked/file.txt")
+                .withMessageContaining(downloadDir.toString());
+    }
+
+    @Test
+    void parentSegmentAfterSymbolicLinkIsResolvedByFilesystem(@TempDir Path parent) throws IOException {
+        Path downloadDir = Files.createDirectory(parent.resolve("downloads"));
+        Path outsideDir = Files.createDirectories(parent.resolve("outside/child"));
+        Path linkedPath = Files.createSymbolicLink(downloadDir.resolve("linked"), outsideDir);
+
+        assertThatIllegalArgumentException()
+                .isThrownBy(() -> GoogleCloudStorageFileNameHelper.assertWithinDirectory(
+                        downloadDir.toString(), linkedPath.resolve("../file.txt").toString(), "linked/../file.txt"))
+                .withMessageContaining("linked/../file.txt")
+                .withMessageContaining(downloadDir.toString());
     }
 }
