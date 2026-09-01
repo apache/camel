@@ -1,0 +1,16 @@
+{
+  "bean": {
+    "kind": "bean",
+    "name": "CassandraKeyValueRepository",
+    "javaType": "org.apache.camel.processor.keyvalue.cassandra.CassandraKeyValueRepository",
+    "interfaceType": "org.apache.camel.spi.KeyValueRepository",
+    "title": "Cassandra Key Value Repository",
+    "description": "A Cassandra-based KeyValueRepository that uses a Cassandra table to store key-value entries. Advice: use LeveledCompaction for this table and tune read\/write consistency levels.",
+    "deprecated": false,
+    "groupId": "org.apache.camel",
+    "artifactId": "camel-cassandraql",
+    "version": "4.23.0-SNAPSHOT",
+    "properties": { "session": { "index": 0, "kind": "property", "displayName": "Session", "required": true, "type": "object", "javaType": "org.apache.camel.utils.cassandra.CassandraSessionHolder", "deprecated": false, "autowired": false, "secret": false, "description": "Cassandra session" }, "table": { "index": 1, "kind": "property", "displayName": "Table", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "autowired": false, "secret": false, "defaultValue": "CAMEL_KEYVALUE", "description": "The table name for storing the data" }, "writeConsistencyLevel": { "index": 2, "kind": "property", "displayName": "Write Consistency Level", "required": false, "type": "enum", "javaType": "com.datastax.oss.driver.api.core.ConsistencyLevel", "enum": [ "ANY", "ONE", "TWO", "THREE", "QUORUM", "ALL", "LOCAL_ONE", "LOCAL_QUORUM", "EACH_QUORUM", "SERIAL", "LOCAL_SERIAL" ], "deprecated": false, "autowired": false, "secret": false, "description": "Write consistency level" }, "readConsistencyLevel": { "index": 3, "kind": "property", "displayName": "Read Consistency Level", "required": false, "type": "enum", "javaType": "com.datastax.oss.driver.api.core.ConsistencyLevel", "enum": [ "ANY", "ONE", "TWO", "THREE", "QUORUM", "ALL", "LOCAL_ONE", "LOCAL_QUORUM", "EACH_QUORUM", "SERIAL", "LOCAL_SERIAL" ], "deprecated": false, "autowired": false, "secret": false, "description": "Read consistency level" } }
+  }
+}
+

@@ -1,0 +1,16 @@
+{
+  "bean": {
+    "kind": "bean",
+    "name": "KafkaKeyValueRepository",
+    "javaType": "org.apache.camel.processor.keyvalue.kafka.KafkaKeyValueRepository",
+    "interfaceType": "org.apache.camel.spi.KeyValueRepository",
+    "title": "Kafka Key Value Repository",
+    "description": "A Kafka topic-based KeyValueRepository. Uses a local cache backed by a Kafka topic as a changelog. The topic must be unique per logical repository. On startup, the instance consumes the full content of the topic, rebuilding the cache to the latest state.",
+    "deprecated": false,
+    "groupId": "org.apache.camel",
+    "artifactId": "camel-kafka",
+    "version": "4.23.0-SNAPSHOT",
+    "properties": { "consumerConfig": { "index": 0, "kind": "property", "displayName": "Consumer Config", "required": false, "type": "object", "javaType": "java.util.Properties", "deprecated": false, "autowired": false, "secret": false, "description": "Custom properties for the Kafka consumer" }, "producerConfig": { "index": 1, "kind": "property", "displayName": "Producer Config", "required": false, "type": "object", "javaType": "java.util.Properties", "deprecated": false, "autowired": false, "secret": false, "description": "Custom properties for the Kafka producer" }, "topic": { "index": 2, "kind": "property", "displayName": "Topic", "required": true, "type": "string", "javaType": "java.lang.String", "deprecated": false, "autowired": false, "secret": false, "description": "Sets the name of the Kafka topic used by this repository. Each functionally-separate repository should use a different topic." }, "bootstrapServers": { "index": 3, "kind": "property", "displayName": "Bootstrap Servers", "required": true, "type": "string", "javaType": "java.lang.String", "deprecated": false, "autowired": false, "secret": false, "description": "The URL for the kafka brokers to use" }, "groupId": { "index": 4, "kind": "property", "displayName": "Group Id", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "autowired": false, "secret": false, "description": "A string that uniquely identifies the group of consumer processes to which this consumer belongs." }, "maxCacheSize": { "index": 5, "kind": "property", "displayName": "Max Cache Size", "required": false, "type": "integer", "javaType": "int", "deprecated": false, "autowired": false, "secret": false, "defaultValue": 1000, "description": "Sets the maximum size of the local key cache." }, "pollDurationMs": { "index": 6, "kind": "property", "displayName": "Poll Duration Ms", "required": false, "type": "integer", "javaType": "int", "deprecated": false, "autowired": false, "secret": false, "defaultValue": 100, "description": "Sets the poll duration of the Kafka consumer in milliseconds." }, "startupOnly": { "index": 7, "kind": "property", "displayName": "Startup Only", "required": false, "type": "boolean", "javaType": "boolean", "deprecated": false, "autowired": false, "secret": false, "description": "Whether to sync on startup only, or to continue syncing while Camel is running." } }
+  }
+}
+
