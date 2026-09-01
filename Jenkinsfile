@@ -107,6 +107,16 @@ pipeline {
                     exclude {
                         axis {
                             name 'JDK_NAME'
+                            values 'jdk_21_latest'
+                        }
+                        axis {
+                            name 'PLATFORM'
+                            values 'ubuntu-avx'
+                        }
+                    }
+                    exclude {
+                        axis {
+                            name 'JDK_NAME'
                             values 'jdk_25_latest'
                         }
                         axis {
