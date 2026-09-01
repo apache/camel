@@ -155,6 +155,88 @@ The component camel-threadpoolfactory-vertx was deprecated in 4.21. The componen
 
 `camel-zeebe` component was deprecated in 4.19 and has a straightforward replacement with `camel-camunda`. It is removed in 4.23.
 
+=== camel-core - MemoryIdempotentRepository and MemoryAggregationRepository deprecated
+
+`MemoryIdempotentRepository` and `MemoryAggregationRepository` are deprecated in favor of the new
+`KeyValueIdempotentRepository` and `KeyValueAggregationRepository` adapters wrapping a
+`MemoryKeyValueRepository`. The new classes delegate to the `KeyValueRepository` SPI introduced in
+4.23, which provides a uniform key-value abstraction that can be backed by any store (in-memory,
+Redis, JDBC, etc.).
+
+==== Java DSL
+
+To migrate from `MemoryIdempotentRepository`:
+
+[source,java]
+----
+// Before
+IdempotentRepository repo = MemoryIdempotentRepository.memoryIdempotentRepository();
+
+// After (simple — defaults to in-memory)
+IdempotentRepository repo = new KeyValueIdempotentRepository();
+
+// After (explicit — useful when sharing a store or using a custom KeyValueRepository)
+IdempotentRepository repo = new KeyValueIdempotentRepository(new MemoryKeyValueRepository());
+----
+
+To migrate from `MemoryAggregationRepository`:
+
+[source,java]
+----
+// Before
+AggregationRepository repo = new MemoryAggregationRepository();
+
+// After (simple — defaults to in-memory)
+AggregationRepository repo = new KeyValueAggregationRepository();
+
+// After (explicit — useful when sharing a store or using a custom KeyValueRepository)
+AggregationRepository repo = new KeyValueAggregationRepository(new MemoryKeyValueRepository());
+----
+
+==== XML DSL
+
+If you define the repository as a bean in XML, a simple one-to-one replacement is sufficient since
+the adapters default to an in-memory backing store:
+
+For idempotent consumers:
+
+[source,xml]
+----
+<!-- Before -->
+<bean name="myRepo" type="org.apache.camel.support.processor.idempotent.MemoryIdempotentRepository"/>
+
+<!-- After -->
+<bean name="myRepo" type="org.apache.camel.support.KeyValueIdempotentRepository"/>
+----
+
+For aggregation repositories:
+
+[source,xml]
+----
+<!-- Before -->
+<bean name="myRepo" type="org.apache.camel.processor.aggregate.MemoryAggregationRepository"/>
+
+<!-- After -->
+<bean name="myRepo" type="org.apache.camel.support.KeyValueAggregationRepository"/>
+----
+
+To use a custom `KeyValueRepository` (e.g. a shared store), define the backing store separately:
+
+[source,xml]
+----
+<bean name="kvStore" type="org.apache.camel.support.MemoryKeyValueRepository"/>
+<bean name="myRepo" type="org.apache.camel.support.KeyValueIdempotentRepository">
+    <constructors>
+        <constructor value="#kvStore"/>
+    </constructors>
+</bean>
+----
+
+The `idempotentRepository` and `aggregationRepository` attributes in the route DSL remain
+unchanged — they still reference the bean by its name.
+
+The deprecated classes continue to work but will be removed in a future release.
+
 === camel-core - endpoint URI normalization is now order-independent
 
 `URISupport.normalizeUri()` computes the endpoint registry cache key so that two logically identical
@@ -213,6 +295,7 @@ Documents carrying an internal DTD subset still parse: `disallow-doctype-decl` i
 set here, because that would reject input that parses today. Routes that genuinely need to resolve
 an external DTD or parameter entity through this converter must supply their own
 `SAXParserFactory`.
+
 === camel-tika
 
 The Tika dependency has been upgraded from 3.x to 4.x. Tika 4 removed the `TikaConfig` class and XML

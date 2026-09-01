@@ -1,0 +1,15 @@
+{
+  "bean": {
+    "kind": "bean",
+    "name": "KeyValueAggregationRepository",
+    "javaType": "org.apache.camel.support.KeyValueAggregationRepository",
+    "interfaceType": "org.apache.camel.spi.AggregationRepository",
+    "title": "Key Value Aggregation Repository",
+    "description": "An AggregationRepository backed by a KeyValueRepository (defaults to in-memory).",
+    "deprecated": false,
+    "groupId": "org.apache.camel",
+    "artifactId": "camel-support",
+    "version": "4.23.0-SNAPSHOT"
+  }
+}
+

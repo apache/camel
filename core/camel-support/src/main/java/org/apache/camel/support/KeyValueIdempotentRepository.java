@@ -16,8 +16,10 @@
  */
 package org.apache.camel.support;
 
+import org.apache.camel.spi.Configurer;
 import org.apache.camel.spi.IdempotentRepository;
 import org.apache.camel.spi.KeyValueRepository;
+import org.apache.camel.spi.Metadata;
 import org.apache.camel.support.service.ServiceHelper;
 import org.apache.camel.support.service.ServiceSupport;
 import org.apache.camel.util.ObjectHelper;
@@ -30,9 +32,15 @@ import org.apache.camel.util.ObjectHelper;
  * <p/>
  * This allows any {@link KeyValueRepository} implementation (e.g. backed by Redis, Infinispan, JDBC, etc.) to be used
  * as an idempotent repository without implementing the {@link IdempotentRepository} interface directly.
+ * <p/>
+ * When created with the no-arg constructor, a {@link MemoryKeyValueRepository} is used by default.
  *
  * @since 4.23
  */
+@Metadata(label = "bean",
+          description = "An IdempotentRepository backed by a KeyValueRepository (defaults to in-memory).",
+          annotations = { "interfaceName=org.apache.camel.spi.IdempotentRepository" })
+@Configurer(metadataOnly = true)
 public class KeyValueIdempotentRepository extends ServiceSupport implements IdempotentRepository {
 
     /**
@@ -41,7 +49,17 @@ public class KeyValueIdempotentRepository extends ServiceSupport implements Idem
      */
     private static final String IDEMPOTENT_PREFIX = "idempotent:";
 
-    private final KeyValueRepository repository;
+    private KeyValueRepository repository;
+
+    /**
+     * Creates an idempotent repository adapter that defaults to an in-memory {@link MemoryKeyValueRepository}. The
+     * repository is created lazily when the service starts.
+     * <p/>
+     * To use a custom {@link KeyValueRepository}, call {@link #setRepository(KeyValueRepository)} before starting, or
+     * use the {@link #KeyValueIdempotentRepository(KeyValueRepository)} constructor.
+     */
+    public KeyValueIdempotentRepository() {
+    }
 
     /**
      * Creates an idempotent repository adapter backed by the given key-value repository.
@@ -102,8 +120,20 @@ public class KeyValueIdempotentRepository extends ServiceSupport implements Idem
         return repository;
     }
 
+    /**
+     * Sets the underlying {@link KeyValueRepository}.
+     *
+     * @param repository the key-value repository to use
+     */
+    public void setRepository(KeyValueRepository repository) {
+        this.repository = repository;
+    }
+
     @Override
     protected void doStart() throws Exception {
+        if (repository == null) {
+            repository = new MemoryKeyValueRepository();
+        }
         ServiceHelper.startService(repository);
     }
 
