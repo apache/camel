@@ -1252,3 +1252,10 @@ Local downloads configured with a plain `downloadFileName` directory now resolve
 path segments before checking that the destination remains inside that directory. Downloads through a
 symbolic link that resolves outside the configured directory are rejected. Valid object names using `/`
 as a pseudo-directory separator continue to work.
+
+=== camel-core - REST client request validation and binary bodies
+
+When `clientRequestValidation` is enabled and the REST service declares a required body, the incoming
+message body is no longer replaced with a `String` version of itself. That conversion corrupted binary
+payloads such as `application/octet-stream`. The body is still read to check that it is present, using
+stream caching so it stays re-readable, but it now keeps its original type.
