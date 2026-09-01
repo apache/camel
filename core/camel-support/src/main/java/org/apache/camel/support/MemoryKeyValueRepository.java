@@ -18,8 +18,10 @@ package org.apache.camel.support;
 
 import java.io.Serial;
 import java.io.Serializable;
+import java.time.Duration;
 import java.util.Iterator;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
@@ -73,8 +75,8 @@ public class MemoryKeyValueRepository extends ServiceSupport implements KeyValue
 
     @Override
     @ManagedOperation(description = "Put a key-value pair with optional TTL")
-    public Object put(String key, Object value, long ttlMillis) {
-        long expiresAt = ttlMillis > 0 ? System.currentTimeMillis() + ttlMillis : Long.MAX_VALUE;
+    public Object put(String key, Object value, Duration ttl) {
+        long expiresAt = toExpiresAt(ttl);
         Entry previous = store.put(key, new Entry(value, expiresAt));
         if (previous == null) {
             return null;
@@ -130,8 +132,8 @@ public class MemoryKeyValueRepository extends ServiceSupport implements KeyValue
     }
 
     @Override
-    public Object putIfAbsent(String key, Object value, long ttlMillis) {
-        long expiresAt = ttlMillis > 0 ? System.currentTimeMillis() + ttlMillis : Long.MAX_VALUE;
+    public Object putIfAbsent(String key, Object value, Duration ttl) {
+        long expiresAt = toExpiresAt(ttl);
         Entry newEntry = new Entry(value, expiresAt);
         Entry existing = store.putIfAbsent(key, newEntry);
         if (existing == null) {
@@ -150,6 +152,33 @@ public class MemoryKeyValueRepository extends ServiceSupport implements KeyValue
     }
 
     @Override
+    public boolean replace(String key, Object expectedOldValue, Object newValue, Duration ttl) {
+        long expiresAt = toExpiresAt(ttl);
+        boolean[] replaced = { false };
+        store.computeIfPresent(key, (k, current) -> {
+            if (!current.isExpired() && Objects.equals(current.value(), expectedOldValue)) {
+                replaced[0] = true;
+                return new Entry(newValue, expiresAt);
+            }
+            return current;
+        });
+        return replaced[0];
+    }
+
+    @Override
+    public boolean delete(String key, Object expectedValue) {
+        boolean[] removed = { false };
+        store.computeIfPresent(key, (k, current) -> {
+            if (!current.isExpired() && Objects.equals(current.value(), expectedValue)) {
+                removed[0] = true;
+                return null; // returning null removes the entry from the map
+            }
+            return current;
+        });
+        return removed[0];
+    }
+
+    @Override
     @ManagedAttribute(description = "The number of entries in the repository")
     public int size() {
         evictExpired();
@@ -159,6 +188,13 @@ public class MemoryKeyValueRepository extends ServiceSupport implements KeyValue
     @Override
     protected void doStop() throws Exception {
         store.clear();
+    }
+
+    private static long toExpiresAt(Duration ttl) {
+        if (ttl == null || ttl.isZero() || ttl.isNegative()) {
+            return Long.MAX_VALUE;
+        }
+        return System.currentTimeMillis() + ttl.toMillis();
     }
 
     private void evictExpired() {
