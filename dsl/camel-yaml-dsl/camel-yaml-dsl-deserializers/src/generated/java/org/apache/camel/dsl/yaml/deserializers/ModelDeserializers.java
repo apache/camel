@@ -15,6 +15,7 @@ import org.apache.camel.model.A2ASubTaskDefinition;
 import org.apache.camel.model.AggregateDefinition;
 import org.apache.camel.model.BeanDefinition;
 import org.apache.camel.model.BeanFactoryDefinition;
+import org.apache.camel.model.CacheDefinition;
 import org.apache.camel.model.CatchDefinition;
 import org.apache.camel.model.ChoiceDefinition;
 import org.apache.camel.model.CircuitBreakerDefinition;
@@ -1764,6 +1765,102 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                 }
                 default: {
                     return false;
+                }
+            }
+            return true;
+        }
+    }
+
+    @YamlType(
+            nodes = "cache",
+            types = org.apache.camel.model.CacheDefinition.class,
+            order = org.apache.camel.dsl.yaml.common.YamlDeserializerResolver.ORDER_LOWEST - 1,
+            displayName = "Cache",
+            description = "Caches the result of the nested processing steps. On cache hit, skips the block and sets the body from cache. On cache miss, executes the block and caches the result body.",
+            deprecated = false,
+            properties = {
+                    @YamlProperty(name = "__extends", type = "object:org.apache.camel.model.language.ExpressionDefinition", oneOf = "expression"),
+                    @YamlProperty(name = "cacheNull", type = "boolean", defaultValue = "false", description = "Whether to cache null results. By default, null message bodies are not cached.", displayName = "Cache Null"),
+                    @YamlProperty(name = "description", type = "string", description = "The description for this node", displayName = "Description"),
+                    @YamlProperty(name = "disabled", type = "boolean", defaultValue = "false", description = "Whether to disable this EIP from the route during build time. Once an EIP has been disabled then it cannot be enabled later at runtime.", displayName = "Disabled"),
+                    @YamlProperty(name = "expression", type = "object:org.apache.camel.model.language.ExpressionDefinition", description = "Expression to compute the cache key. Messages with the same key share the cached result.", displayName = "Expression", oneOf = "expression"),
+                    @YamlProperty(name = "id", type = "string", description = "The id of this node", displayName = "Id"),
+                    @YamlProperty(name = "keyValueRepository", type = "string", description = "Sets the reference name of the KeyValueRepository to use as the cache backing store. If not set, a MemoryKeyValueRepository is auto-created.", displayName = "Key Value Repository"),
+                    @YamlProperty(name = "note", type = "string", description = "The note for this node", displayName = "Note"),
+                    @YamlProperty(name = "steps", type = "array:org.apache.camel.model.ProcessorDefinition"),
+                    @YamlProperty(name = "ttl", type = "string", defaultValue = "-1", description = "Sets the time-to-live for cached entries. Supports duration syntax (e.g. 10m, 1h) or milliseconds. Default: -1 (no expiration).", displayName = "Ttl")
+            }
+    )
+    public static class CacheDefinitionDeserializer extends YamlDeserializerBase<CacheDefinition> {
+        public CacheDefinitionDeserializer() {
+            super(CacheDefinition.class);
+        }
+
+        @Override
+        protected CacheDefinition newInstance() {
+            return new CacheDefinition();
+        }
+
+        @Override
+        protected boolean setProperty(CacheDefinition target, String propertyKey,
+                String propertyName, Node node) {
+            propertyKey = org.apache.camel.util.StringHelper.dashToCamelCase(propertyKey);
+            switch(propertyKey) {
+                case "cacheNull": {
+                    String val = asText(node);
+                    target.setCacheNull(val);
+                    break;
+                }
+                case "disabled": {
+                    String val = asText(node);
+                    target.setDisabled(val);
+                    break;
+                }
+                case "expression": {
+                    org.apache.camel.model.language.ExpressionDefinition val = asType(node, org.apache.camel.model.language.ExpressionDefinition.class);
+                    target.setExpression(val);
+                    break;
+                }
+                case "keyValueRepository": {
+                    String val = asText(node);
+                    target.setKeyValueRepository(val);
+                    break;
+                }
+                case "ttl": {
+                    String val = asText(node);
+                    target.setTtl(val);
+                    break;
+                }
+                case "id": {
+                    String val = asText(node);
+                    target.setId(val);
+                    break;
+                }
+                case "description": {
+                    String val = asText(node);
+                    target.setDescription(val);
+                    break;
+                }
+                case "note": {
+                    String val = asText(node);
+                    target.setNote(val);
+                    break;
+                }
+                case "steps": {
+                    setSteps(target, node);
+                    break;
+                }
+                default: {
+                    ExpressionDefinition ed = target.getExpressionType();
+                    if (ed != null) {
+                        throw new org.apache.camel.dsl.yaml.common.exception.DuplicateFieldException(node, propertyName, "as an expression");
+                    }
+                    ed = ExpressionDeserializers.constructExpressionType(propertyKey, node);
+                    if (ed != null) {
+                        target.setExpressionType(ed);
+                    } else {
+                        return false;
+                    }
                 }
             }
             return true;

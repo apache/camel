@@ -55,7 +55,9 @@ public class StateStoreProducer extends DefaultProducer {
             case put -> {
                 String key = requireKey(message);
                 Object value = message.getBody();
-                Object previous = backend.put(key, value, ttl);
+                // KeyValueRepository.put() is void; retrieve old value first for backward compat
+                Object previous = backend.get(key);
+                backend.put(key, value, ttl);
                 message.setBody(previous);
             }
             case putIfAbsent -> {
