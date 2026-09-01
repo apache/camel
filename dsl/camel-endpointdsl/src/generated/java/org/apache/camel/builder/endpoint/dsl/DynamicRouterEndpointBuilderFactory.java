@@ -701,6 +701,23 @@ public interface DynamicRouterEndpointBuilderFactory {
             doSetProperty("lazyStartProducer", lazyStartProducer);
             return this;
         }
+        /**
+         * Sets an optional comma-separated allow-list of component schemes that
+         * a subscription destination may resolve to (e.g. http,https). When
+         * set, a subscription whose destination URI uses a scheme that is not
+         * in the list is rejected. By default (unset) any scheme is allowed.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: security
+         * 
+         * @param allowedSchemes the value to set
+         * @return the dsl builder
+         */
+        default AdvancedDynamicRouterEndpointBuilder allowedSchemes(String allowedSchemes) {
+            doSetProperty("allowedSchemes", allowedSchemes);
+            return this;
+        }
     }
 
     public interface DynamicRouterBuilders {
