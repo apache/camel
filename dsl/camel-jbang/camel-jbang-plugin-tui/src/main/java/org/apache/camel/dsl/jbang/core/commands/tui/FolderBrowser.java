@@ -123,6 +123,12 @@ class FolderBrowser {
         dirs.sort(Comparator.comparing(DirEntry::name, String.CASE_INSENSITIVE_ORDER));
         files.sort(Comparator.comparing(DirEntry::name, String.CASE_INSENSITIVE_ORDER));
 
+        // auto-descend through empty middle folders (no files and exactly one sub folder)
+        // when navigating forward (not when restoring position while navigating back)
+        if (selectName == null && files.isEmpty() && dirs.size() == 1) {
+            return loadDirectory(Path.of(dirs.get(0).path()));
+        }
+
         List<DirEntry> found = new ArrayList<>();
         Path parent = dir.getParent();
         if (parent != null) {
@@ -152,11 +158,40 @@ class FolderBrowser {
     }
 
     private void navigateBack() {
-        String childName = currentDir.getFileName().toString();
-        if (loadDirectory(currentDir.getParent(), childName)) {
+        Path child = currentDir;
+        Path parent = currentDir.getParent();
+        // skip back through empty middle folders (parent has no files and only this one sub folder)
+        while (parent != null && parent.getParent() != null && isEmptyMiddleFolder(parent)) {
+            child = parent;
+            parent = parent.getParent();
+        }
+        String childName = child.getFileName().toString();
+        if (loadDirectory(parent, childName)) {
             int savedOffset = offsetStack.isEmpty() ? 0 : offsetStack.pop();
             listState.setOffset(savedOffset);
         }
+    }
+
+    private boolean isEmptyMiddleFolder(Path dir) {
+        int dirCount = 0;
+        try (var stream = Files.list(dir)) {
+            var it = stream.filter(p -> !p.getFileName().toString().startsWith(".")).iterator();
+            while (it.hasNext()) {
+                Path p = it.next();
+                if (Files.isDirectory(p)) {
+                    dirCount++;
+                    if (dirCount > 1) {
+                        return false;
+                    }
+                } else {
+                    // has at least one file
+                    return false;
+                }
+            }
+        } catch (IOException e) {
+            return false;
+        }
+        return dirCount == 1;
     }
 
     boolean handleMouseEvent(MouseEvent me) {
