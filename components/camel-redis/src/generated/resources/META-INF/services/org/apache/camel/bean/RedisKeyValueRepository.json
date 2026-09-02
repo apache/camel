@@ -1,0 +1,16 @@
+{
+  "bean": {
+    "kind": "bean",
+    "name": "RedisKeyValueRepository",
+    "javaType": "org.apache.camel.component.redis.RedisKeyValueRepository",
+    "interfaceType": "org.apache.camel.spi.KeyValueRepository",
+    "title": "Redis Key Value Repository",
+    "description": "A KeyValueRepository backed by Redis (Redisson client).",
+    "deprecated": false,
+    "groupId": "org.apache.camel",
+    "artifactId": "camel-redis",
+    "version": "4.23.0-SNAPSHOT",
+    "properties": { "redisson": { "index": 0, "kind": "property", "displayName": "Redisson", "label": "advanced", "required": false, "type": "object", "javaType": "org.redisson.api.RedissonClient", "deprecated": false, "autowired": false, "secret": false, "description": "To use an existing Redisson client to connect to Redis server" }, "endpoint": { "index": 1, "kind": "property", "displayName": "Endpoint", "required": true, "type": "string", "javaType": "java.lang.String", "deprecated": false, "autowired": false, "secret": false, "description": "URL to remote Redis server (host:port)" }, "keyPrefix": { "index": 2, "kind": "property", "displayName": "Key Prefix", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "autowired": false, "secret": false, "defaultValue": "camel-kvr:", "description": "Key prefix used to namespace entries in Redis" } }
+  }
+}
+
