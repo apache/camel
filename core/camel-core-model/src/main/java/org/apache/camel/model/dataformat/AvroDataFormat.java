@@ -120,6 +120,10 @@ public class AvroDataFormat extends DataFormatDefinition implements ContentTypeH
     @Metadata(label = "advanced", javaType = "java.lang.Boolean", defaultValue = "true",
               description = "When not disabled, the SchemaResolver will be looked up into the registry.")
     private String autoDiscoverSchemaResolver;
+    @XmlAttribute
+    @Metadata(label = "security", security = "insecure:serialization",
+              description = "Comma-separated list of additional packages that contain trusted Avro model classes. Avro 1.12+ validates classes resolved from schemas; Camel automatically trusts packages derived from the configured schema or instance class.")
+    private String serializablePackages;
 
     public AvroDataFormat() {
         super("avro");
@@ -151,6 +155,7 @@ public class AvroDataFormat extends DataFormatDefinition implements ContentTypeH
         this.contentTypeHeader = source.contentTypeHeader;
         this.schemaResolver = source.schemaResolver;
         this.autoDiscoverSchemaResolver = source.autoDiscoverSchemaResolver;
+        this.serializablePackages = source.serializablePackages;
     }
 
     public AvroDataFormat(AvroLibrary library) {
@@ -189,6 +194,7 @@ public class AvroDataFormat extends DataFormatDefinition implements ContentTypeH
         this.contentTypeHeader = builder.contentTypeHeader;
         this.schemaResolver = builder.schemaResolver;
         this.autoDiscoverSchemaResolver = builder.autoDiscoverSchemaResolver;
+        this.serializablePackages = builder.serializablePackages;
     }
 
     @Override
@@ -394,6 +400,14 @@ public class AvroDataFormat extends DataFormatDefinition implements ContentTypeH
         this.autoDiscoverSchemaResolver = autoDiscoverSchemaResolver;
     }
 
+    public String getSerializablePackages() {
+        return serializablePackages;
+    }
+
+    public void setSerializablePackages(String serializablePackages) {
+        this.serializablePackages = serializablePackages;
+    }
+
     //
     // Fluent builders
     //
@@ -524,6 +538,7 @@ public class AvroDataFormat extends DataFormatDefinition implements ContentTypeH
         private String contentTypeHeader;
         private String schemaResolver;
         private String autoDiscoverSchemaResolver;
+        private String serializablePackages;
 
         /**
          * Class name to use for marshal and unmarshalling
@@ -787,6 +802,14 @@ public class AvroDataFormat extends DataFormatDefinition implements ContentTypeH
          */
         public Builder autoDiscoverSchemaResolver(boolean autoDiscoverSchemaResolver) {
             this.autoDiscoverSchemaResolver = Boolean.toString(autoDiscoverSchemaResolver);
+            return this;
+        }
+
+        /**
+         * Comma-separated list of additional packages that contain trusted Avro model classes.
+         */
+        public Builder serializablePackages(String serializablePackages) {
+            this.serializablePackages = serializablePackages;
             return this;
         }
 

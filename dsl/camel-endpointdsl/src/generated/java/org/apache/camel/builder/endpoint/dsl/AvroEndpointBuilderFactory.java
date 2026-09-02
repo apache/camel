@@ -180,6 +180,24 @@ public interface AvroEndpointBuilderFactory {
             doSetProperty("uriAuthority", uriAuthority);
             return this;
         }
+        /**
+         * Comma-separated list of additional packages that contain trusted Avro
+         * model classes. Avro 1.12 validates classes resolved from schemas;
+         * Camel automatically trusts org.apache.avro for IPC and packages
+         * derived from the configured protocol. Use this option for any
+         * additional model packages not inferred from the protocol.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: security
+         * 
+         * @param serializablePackages the value to set
+         * @return the dsl builder
+         */
+        default AvroEndpointConsumerBuilder serializablePackages(String serializablePackages) {
+            doSetProperty("serializablePackages", serializablePackages);
+            return this;
+        }
     }
 
     /**
@@ -457,6 +475,24 @@ public interface AvroEndpointBuilderFactory {
             doSetProperty("uriAuthority", uriAuthority);
             return this;
         }
+        /**
+         * Comma-separated list of additional packages that contain trusted Avro
+         * model classes. Avro 1.12 validates classes resolved from schemas;
+         * Camel automatically trusts org.apache.avro for IPC and packages
+         * derived from the configured protocol. Use this option for any
+         * additional model packages not inferred from the protocol.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: security
+         * 
+         * @param serializablePackages the value to set
+         * @return the dsl builder
+         */
+        default AvroEndpointProducerBuilder serializablePackages(String serializablePackages) {
+            doSetProperty("serializablePackages", serializablePackages);
+            return this;
+        }
     }
 
     /**
@@ -661,6 +697,24 @@ public interface AvroEndpointBuilderFactory {
          */
         default AvroEndpointBuilder uriAuthority(String uriAuthority) {
             doSetProperty("uriAuthority", uriAuthority);
+            return this;
+        }
+        /**
+         * Comma-separated list of additional packages that contain trusted Avro
+         * model classes. Avro 1.12 validates classes resolved from schemas;
+         * Camel automatically trusts org.apache.avro for IPC and packages
+         * derived from the configured protocol. Use this option for any
+         * additional model packages not inferred from the protocol.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: security
+         * 
+         * @param serializablePackages the value to set
+         * @return the dsl builder
+         */
+        default AvroEndpointBuilder serializablePackages(String serializablePackages) {
+            doSetProperty("serializablePackages", serializablePackages);
             return this;
         }
     }

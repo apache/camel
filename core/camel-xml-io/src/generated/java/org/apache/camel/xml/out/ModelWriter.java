@@ -2168,9 +2168,9 @@ public class ModelWriter extends BaseWriter {
     protected void doWriteAvroDataFormat(String name, AvroDataFormat def) throws IOException {
         startElement(name);
         doWriteIdentifiedTypeAttributes(def);
-        doWriteAttribute("unmarshalType", def.getUnmarshalTypeName(), null);
         doWriteAttribute("collectionType", def.getCollectionTypeName(), null);
         doWriteAttribute("jsonView", def.getJsonViewTypeName(), null);
+        doWriteAttribute("unmarshalType", def.getUnmarshalTypeName(), null);
         doWriteAttribute("instanceClassName", def.getInstanceClassName(), null);
         doWriteAttribute("library", toString(def.getLibrary()), "avroJackson");
         doWriteAttribute("objectMapper", def.getObjectMapper(), null);
@@ -2188,6 +2188,7 @@ public class ModelWriter extends BaseWriter {
         doWriteAttribute("contentTypeHeader", def.getContentTypeHeader(), "true");
         doWriteAttribute("schemaResolver", def.getSchemaResolver(), null);
         doWriteAttribute("autoDiscoverSchemaResolver", def.getAutoDiscoverSchemaResolver(), "true");
+        doWriteAttribute("serializablePackages", def.getSerializablePackages(), null);
         endElement(name);
     }
     protected void doWriteBarcodeDataFormat(String name, BarcodeDataFormat def) throws IOException {

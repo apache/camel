@@ -26,8 +26,8 @@ import org.apache.camel.test.junit6.CamelTestSupport;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import static org.assertj.core.api.Assertions.assertThatCode;
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 class AvroClassSecurityWithoutVmArgsTest extends CamelTestSupport {
 
@@ -42,7 +42,7 @@ class AvroClassSecurityWithoutVmArgsTest extends CamelTestSupport {
                 "avro:netty:localhost:9999?protocolClassName=org.apache.camel.avro.generated.KeyValueProtocol",
                 AvroEndpoint.class);
 
-        assertThatCode(() -> ClassSecurityValidator.validate(HandshakeRequest.class)).doesNotThrowAnyException();
+        assertDoesNotThrow(() -> ClassSecurityValidator.validate(HandshakeRequest.class));
     }
 
     @Test
@@ -58,7 +58,7 @@ class AvroClassSecurityWithoutVmArgsTest extends CamelTestSupport {
                 "avro:netty:localhost:9999?protocolClassName=org.apache.camel.avro.generated.KeyValueProtocol",
                 AvroEndpoint.class);
 
-        assertThatCode(() -> ClassSecurityValidator.validate(Key.class)).doesNotThrowAnyException();
+        assertDoesNotThrow(() -> ClassSecurityValidator.validate(Key.class));
     }
 
     @Test
@@ -68,7 +68,7 @@ class AvroClassSecurityWithoutVmArgsTest extends CamelTestSupport {
                             + "&serializablePackages=org.apache.camel.avro.generated",
                 AvroEndpoint.class);
 
-        assertThatCode(() -> ClassSecurityValidator.validate(Key.class)).doesNotThrowAnyException();
+        assertDoesNotThrow(() -> ClassSecurityValidator.validate(Key.class));
     }
 
     @Test
@@ -77,7 +77,7 @@ class AvroClassSecurityWithoutVmArgsTest extends CamelTestSupport {
                 "avro:netty:localhost:9999?protocolClassName=org.apache.camel.avro.generated.KeyValueProtocol",
                 AvroEndpoint.class);
 
-        assertThatThrownBy(() -> ClassSecurityValidator.validate(TestPojo.class)).isInstanceOf(SecurityException.class);
+        assertThrows(SecurityException.class, () -> ClassSecurityValidator.validate(TestPojo.class));
     }
 
     @Override

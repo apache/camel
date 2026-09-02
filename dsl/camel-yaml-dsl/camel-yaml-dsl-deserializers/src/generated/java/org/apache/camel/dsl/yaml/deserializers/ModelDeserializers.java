@@ -741,6 +741,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     @YamlProperty(name = "moduleRefs", type = "string", description = "To use custom Jackson modules referred from the Camel registry. Multiple modules can be separated by comma.", displayName = "Module Refs"),
                     @YamlProperty(name = "objectMapper", type = "string", description = "Lookup and use the existing ObjectMapper with the given id when using Jackson.", displayName = "Object Mapper"),
                     @YamlProperty(name = "schemaResolver", type = "string", description = "Optional schema resolver used to lookup schemas for the data in transit.", displayName = "Schema Resolver"),
+                    @YamlProperty(name = "serializablePackages", type = "string", description = "Comma-separated list of additional packages that contain trusted Avro model classes. Avro 1.12 validates classes resolved from schemas; Camel automatically trusts packages derived from the configured schema or instance class.", displayName = "Serializable Packages"),
                     @YamlProperty(name = "timezone", type = "string", description = "If set then Jackson will use the Timezone when marshalling/unmarshalling.", displayName = "Timezone"),
                     @YamlProperty(name = "unmarshalType", type = "string", description = "Class name of the java type to use when unmarshalling.", displayName = "Unmarshal Type"),
                     @YamlProperty(name = "useDefaultObjectMapper", type = "boolean", defaultValue = "true", description = "Whether to lookup and use default Jackson ObjectMapper from the registry.", displayName = "Use Default Object Mapper"),
@@ -849,6 +850,11 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                 case "schemaResolver": {
                     String val = asText(node);
                     target.setSchemaResolver(val);
+                    break;
+                }
+                case "serializablePackages": {
+                    String val = asText(node);
+                    target.setSerializablePackages(val);
                     break;
                 }
                 case "timezone": {

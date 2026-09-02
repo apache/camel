@@ -158,7 +158,9 @@ public class AvroDataFormat extends ServiceSupport implements DataFormat, DataFo
 
     @Override
     public void marshal(Exchange exchange, Object graph, OutputStream outputStream) throws Exception {
-        AvroClassSecuritySupport.trustClassName(graph.getClass().getName());
+        if (actualSchema == null) {
+            AvroClassSecuritySupport.trustClassName(graph.getClass().getName());
+        }
         // the schema should be from the graph class name
         Schema useSchema = actualSchema != null ? actualSchema : loadSchema(graph.getClass().getName());
 

@@ -31,6 +31,9 @@ import org.apache.avro.util.ClassSecurityValidator.ClassSecurityPredicate;
  * Avro 1.12+ validates classes resolved from schemas. Camel automatically trusts packages derived from configured
  * protocol or schema classes. Additional packages can be configured through the {@code serializablePackages} endpoint
  * option.
+ * <p>
+ * Trusted packages are stored in a JVM-wide registry shared by all Camel contexts in the process. Trust is cumulative
+ * and cannot be revoked in production.
  */
 public final class AvroClassSecuritySupport {
 
@@ -41,6 +44,12 @@ public final class AvroClassSecuritySupport {
     private static final Object LOCK = new Object();
 
     private static final ClassSecurityPredicate CAMEL_TRUSTED = AvroClassSecuritySupport::isCamelTrusted;
+
+    private static volatile ClassSecurityPredicate baseValidator = ClassSecurityValidator.DEFAULT;
+
+    private static volatile ClassSecurityPredicate installedGlobal;
+
+    private static volatile NavigableSet<String> normalizedPackagePrefixes = new TreeSet<>();
 
     private AvroClassSecuritySupport() {
     }
@@ -65,6 +74,7 @@ public final class AvroClassSecuritySupport {
             if (lastDot > 0) {
                 TRUSTED_PACKAGES.add(normalizePackage(className.substring(0, lastDot)));
             }
+            rebuildNormalizedPackagePrefixes();
             refreshGlobal();
         }
     }
@@ -92,6 +102,7 @@ public final class AvroClassSecuritySupport {
                     TRUSTED_PACKAGES.add(normalizePackage(pkg));
                 }
             }
+            rebuildNormalizedPackagePrefixes();
             refreshGlobal();
         }
     }
@@ -103,13 +114,22 @@ public final class AvroClassSecuritySupport {
         synchronized (LOCK) {
             TRUSTED_PACKAGES.clear();
             TRUSTED_CLASSES.clear();
+            normalizedPackagePrefixes = new TreeSet<>();
+            baseValidator = ClassSecurityValidator.DEFAULT;
+            installedGlobal = null;
             ClassSecurityValidator.setGlobal(ClassSecurityValidator.DEFAULT);
         }
     }
 
     private static void refreshGlobal() {
-        ClassSecurityValidator.setGlobal(
-                ClassSecurityValidator.composite(ClassSecurityValidator.DEFAULT, CAMEL_TRUSTED));
+        if (installedGlobal == null) {
+            ClassSecurityPredicate current = ClassSecurityValidator.getGlobal();
+            if (current != null && current != ClassSecurityValidator.DEFAULT) {
+                baseValidator = current;
+            }
+        }
+        installedGlobal = ClassSecurityValidator.composite(baseValidator, CAMEL_TRUSTED);
+        ClassSecurityValidator.setGlobal(installedGlobal);
     }
 
     private static boolean isCamelTrusted(Class<?> clazz) {
@@ -117,9 +137,17 @@ public final class AvroClassSecuritySupport {
         if (TRUSTED_CLASSES.contains(className)) {
             return true;
         }
-        NavigableSet<String> packages = normalizedPackages(TRUSTED_PACKAGES);
+        NavigableSet<String> packages = normalizedPackagePrefixes;
         String lower = packages.lower(className);
         return lower != null && className.startsWith(lower);
+    }
+
+    private static void rebuildNormalizedPackagePrefixes() {
+        NavigableSet<String> normalized = new TreeSet<>();
+        for (String pkg : TRUSTED_PACKAGES) {
+            normalized.add(normalizePackage(pkg) + ".");
+        }
+        normalizedPackagePrefixes = normalized;
     }
 
     private static Set<String> parsePackages(String packages) {
@@ -138,14 +166,6 @@ public final class AvroClassSecuritySupport {
         }
         if (normalized.endsWith(".")) {
             normalized = normalized.substring(0, normalized.length() - 1);
-        }
-        return normalized;
-    }
-
-    private static NavigableSet<String> normalizedPackages(Set<String> packages) {
-        NavigableSet<String> normalized = new TreeSet<>();
-        for (String pkg : packages) {
-            normalized.add(normalizePackage(pkg) + ".");
         }
         return normalized;
     }

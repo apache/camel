@@ -21,8 +21,9 @@ import org.apache.camel.dataformat.avro.example.Value;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import static org.assertj.core.api.Assertions.assertThatCode;
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class AvroClassSecuritySupportTest {
 
@@ -33,23 +34,23 @@ class AvroClassSecuritySupportTest {
 
     @Test
     void shouldRejectUntrustedApplicationClassesByDefault() {
-        assertThatThrownBy(() -> ClassSecurityValidator.validate(Value.class))
-                .isInstanceOf(SecurityException.class)
-                .hasMessageContaining("org.apache.camel.dataformat.avro.example.Value");
+        SecurityException exception = assertThrows(SecurityException.class,
+                () -> ClassSecurityValidator.validate(Value.class));
+        assertTrue(exception.getMessage().contains("org.apache.camel.dataformat.avro.example.Value"));
     }
 
     @Test
     void shouldTrustConfiguredPackages() {
         AvroClassSecuritySupport.trustPackages("org.apache.camel.dataformat.avro.example");
 
-        assertThatCode(() -> ClassSecurityValidator.validate(Value.class)).doesNotThrowAnyException();
+        assertDoesNotThrow(() -> ClassSecurityValidator.validate(Value.class));
     }
 
     @Test
     void shouldTrustClassNamePackage() {
         AvroClassSecuritySupport.trustClassName(Value.class.getName());
 
-        assertThatCode(() -> ClassSecurityValidator.validate(Value.class)).doesNotThrowAnyException();
+        assertDoesNotThrow(() -> ClassSecurityValidator.validate(Value.class));
     }
 
     @Test
@@ -57,13 +58,24 @@ class AvroClassSecuritySupportTest {
         AvroClassSecuritySupport.trustPackages("org.apache.camel.dataformat.avro.example");
         AvroClassSecuritySupport.trustPackages("org.apache.camel.dataformat.avro.example.extra");
 
-        assertThatCode(() -> ClassSecurityValidator.validate(Value.class)).doesNotThrowAnyException();
+        assertDoesNotThrow(() -> ClassSecurityValidator.validate(Value.class));
     }
 
     @Test
     void shouldRejectWildcardPackages() {
-        assertThatThrownBy(() -> AvroClassSecuritySupport.trustPackages("*"))
-                .isInstanceOf(IllegalArgumentException.class)
-                .hasMessageContaining("Wildcard");
+        IllegalArgumentException exception = assertThrows(IllegalArgumentException.class,
+                () -> AvroClassSecuritySupport.trustPackages("*"));
+        assertTrue(exception.getMessage().contains("Wildcard"));
+    }
+
+    @Test
+    void shouldPreserveExistingGlobalValidator() {
+        ClassSecurityValidator.ClassSecurityPredicate custom = clazz -> clazz == String.class;
+        ClassSecurityValidator.setGlobal(custom);
+
+        AvroClassSecuritySupport.trustPackages("org.apache.camel.dataformat.avro.example");
+
+        assertDoesNotThrow(() -> ClassSecurityValidator.validate(String.class));
+        assertDoesNotThrow(() -> ClassSecurityValidator.validate(Value.class));
     }
 }
