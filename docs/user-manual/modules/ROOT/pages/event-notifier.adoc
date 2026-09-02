@@ -163,4 +163,4 @@ public void notify(CamelEvent event) throws Exception {
 ----
 
 The JSON map includes common fields such as `type`, `timestamp`, `message`, and type-specific metadata (for example `exchangeId`, `routeId`, `endpointUri`, `exception`, `stepId`).
-The developer console event page also uses this structured JSON representation.
+The developer console event page exposes this structured JSON in the `details` field of each event entry.
