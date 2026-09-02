@@ -155,6 +155,15 @@ public class RedisKeyValueRepository extends ServiceSupport implements KeyValueR
         return bucket.get();
     }
 
+    /**
+     * Atomically replaces the value for a key if the current value matches the expected one.
+     * <p/>
+     * <b>Note:</b> Redisson does not expose an atomic CAS-and-set-TTL primitive. When a TTL is specified, the
+     * replacement is performed in two steps: {@code compareAndSet} followed by {@code expire}. There is a brief window
+     * between the two calls where the new value exists without its TTL applied. A crash in that window would leave the
+     * entry without expiry. For callers requiring stricter consistency guarantees (e.g. idempotent repositories), be
+     * aware of this non-atomic TTL application.
+     */
     @Override
     public boolean replace(String key, Object expectedOldValue, Object newValue, Duration ttl) {
         RBucket<Object> bucket = redisson.getBucket(toRedisKey(key));
