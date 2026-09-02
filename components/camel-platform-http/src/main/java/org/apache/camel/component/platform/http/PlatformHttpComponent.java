@@ -18,10 +18,10 @@ package org.apache.camel.component.platform.http;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.TreeSet;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.CamelContextAware;
@@ -72,8 +72,8 @@ public class PlatformHttpComponent extends HeaderFilterStrategyComponent
                             + " or all requests must be handled by Camel.")
     private boolean serverRequestValidation = true;
 
-    private final Set<HttpEndpointModel> httpEndpoints = new TreeSet<>();
-    private final Set<HttpEndpointModel> httpManagementEndpoints = new TreeSet<>();
+    private final Set<HttpEndpointModel> httpEndpoints = new LinkedHashSet<>();
+    private final Set<HttpEndpointModel> httpManagementEndpoints = new LinkedHashSet<>();
     private final List<PlatformHttpListener> listeners = new ArrayList<>();
     private volatile boolean localEngine;
 
@@ -171,6 +171,9 @@ public class PlatformHttpComponent extends HeaderFilterStrategyComponent
      * Removes the http endpoint registered for the given consumer.
      */
     public void removeHttpEndpoint(Consumer consumer) {
+        if (consumer == null) {
+            return;
+        }
         this.removeHttpEndpoint(this.httpEndpoints, consumer);
     }
 
@@ -185,6 +188,9 @@ public class PlatformHttpComponent extends HeaderFilterStrategyComponent
      * Removes the http management endpoint registered for the given consumer.
      */
     public void removeHttpManagementEndpoint(Consumer consumer) {
+        if (consumer == null) {
+            return;
+        }
         this.removeHttpEndpoint(this.httpManagementEndpoints, consumer);
     }
 

@@ -40,22 +40,8 @@ class PlatformHttpSharedPathRouteLifecycleTest {
         RecordingPlatformHttpListener listener = new RecordingPlatformHttpListener();
 
         try (DefaultCamelContext context = new DefaultCamelContext()) {
-            PlatformHttpComponent component = new PlatformHttpComponent();
-            component.setEngine(new NoopEngine());
-            component.addPlatformHttpListener(listener);
-            context.addComponent("platform-http", component);
-            context.addRoutes(new RouteBuilder() {
-                @Override
-                public void configure() {
-                    from("platform-http:/shared?httpMethodRestrict=GET")
-                            .routeId("shared-get")
-                            .setBody().constant("shared-get");
-                    from("platform-http:/shared?httpMethodRestrict=POST")
-                            .routeId("shared-post")
-                            .setBody().constant("shared-post");
-                }
-            });
-
+            PlatformHttpComponent component = createComponent(listener, context);
+            context.addRoutes(sharedPathRoutes());
             context.start();
 
             assertEquals(2, component.getHttpEndpoints().size());
@@ -76,22 +62,8 @@ class PlatformHttpSharedPathRouteLifecycleTest {
         RecordingPlatformHttpListener listener = new RecordingPlatformHttpListener();
 
         try (DefaultCamelContext context = new DefaultCamelContext()) {
-            PlatformHttpComponent component = new PlatformHttpComponent();
-            component.setEngine(new NoopEngine());
-            component.addPlatformHttpListener(listener);
-            context.addComponent("platform-http", component);
-            context.addRoutes(new RouteBuilder() {
-                @Override
-                public void configure() {
-                    from("platform-http:/shared?httpMethodRestrict=GET")
-                            .routeId("shared-get")
-                            .setBody().constant("shared-get");
-                    from("platform-http:/shared?httpMethodRestrict=POST")
-                            .routeId("shared-post")
-                            .setBody().constant("shared-post");
-                }
-            });
-
+            PlatformHttpComponent component = createComponent(listener, context);
+            context.addRoutes(sharedPathRoutes());
             context.start();
 
             context.getRouteController().stopRoute("shared-get");
@@ -101,6 +73,24 @@ class PlatformHttpSharedPathRouteLifecycleTest {
             HttpEndpointModel remaining = listener.registered.get(0);
             assertEquals("/shared", remaining.getUri());
             assertEquals("POST", remaining.getVerbs());
+        }
+    }
+
+    @Test
+    void restartRouteAfterStopReRegistersEndpoint() throws Exception {
+        RecordingPlatformHttpListener listener = new RecordingPlatformHttpListener();
+
+        try (DefaultCamelContext context = new DefaultCamelContext()) {
+            PlatformHttpComponent component = createComponent(listener, context);
+            context.addRoutes(sharedPathRoutes());
+            context.start();
+
+            context.getRouteController().stopRoute("shared-post");
+            assertEquals(1, component.getHttpEndpoints().size());
+
+            context.getRouteController().startRoute("shared-post");
+            assertEquals(2, component.getHttpEndpoints().size());
+            assertEquals(2, listener.registered.size());
         }
     }
 
@@ -118,6 +108,41 @@ class PlatformHttpSharedPathRouteLifecycleTest {
         component.removeHttpEndpoint("/shared");
 
         assertTrue(component.getHttpEndpoints().isEmpty());
+    }
+
+    @Test
+    void removeHttpEndpointWithNullConsumerIsIgnored() {
+        PlatformHttpComponent component = new PlatformHttpComponent();
+        Consumer routeConsumer = mock(Consumer.class);
+
+        component.addHttpEndpoint("/static", null, null, null, null);
+        component.addHttpEndpoint("/shared", "GET", null, null, routeConsumer);
+
+        component.removeHttpEndpoint((Consumer) null);
+
+        assertEquals(2, component.getHttpEndpoints().size());
+    }
+
+    private static PlatformHttpComponent createComponent(RecordingPlatformHttpListener listener, DefaultCamelContext context) {
+        PlatformHttpComponent component = new PlatformHttpComponent();
+        component.setEngine(new NoopEngine());
+        component.addPlatformHttpListener(listener);
+        context.addComponent("platform-http", component);
+        return component;
+    }
+
+    private static RouteBuilder sharedPathRoutes() {
+        return new RouteBuilder() {
+            @Override
+            public void configure() {
+                from("platform-http:/shared?httpMethodRestrict=GET")
+                        .routeId("shared-get")
+                        .setBody().constant("shared-get");
+                from("platform-http:/shared?httpMethodRestrict=POST")
+                        .routeId("shared-post")
+                        .setBody().constant("shared-post");
+            }
+        };
     }
 
     private static final class RecordingPlatformHttpListener implements PlatformHttpListener {

@@ -16,28 +16,30 @@
  */
 package org.apache.camel.component.platform.http;
 
-import java.util.TreeSet;
+import java.util.HashSet;
+import java.util.Set;
 
 import org.apache.camel.Consumer;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.mock;
 
 class HttpEndpointModelTest {
 
     @Test
-    void treeSetRetainsMultipleConsumersOnSamePath() {
+    void setRetainsMultipleConsumersOnSamePath() {
         Consumer getConsumer = mock(Consumer.class);
         Consumer postConsumer = mock(Consumer.class);
 
         HttpEndpointModel getModel = new HttpEndpointModel("/shared", "GET", null, null, getConsumer);
         HttpEndpointModel postModel = new HttpEndpointModel("/shared", "POST", null, null, postConsumer);
 
-        TreeSet<HttpEndpointModel> endpoints = new TreeSet<>();
-        assertEquals(true, endpoints.add(getModel));
-        assertEquals(true, endpoints.add(postModel));
+        Set<HttpEndpointModel> endpoints = new HashSet<>();
+        assertTrue(endpoints.add(getModel));
+        assertTrue(endpoints.add(postModel));
         assertEquals(2, endpoints.size());
     }
 
@@ -52,6 +54,6 @@ class HttpEndpointModelTest {
 
         assertNotEquals(firstModel, secondModel);
         assertEquals(firstModel, sameConsumerModel);
-        assertNotEquals(firstModel.hashCode(), secondModel.hashCode());
+        assertEquals(firstModel.hashCode(), sameConsumerModel.hashCode());
     }
 }
