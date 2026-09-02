@@ -29,7 +29,7 @@ with Apache Camel and modern middleware.
 
 == https://www.eadx.com/apachecamel[EADX]
 
-https://www.eadx.com/apachecamel[EADX] offers worldwide services for Apache Camel through service centers in the Europe and Asia, with consulting available in English and German. Services focus on enterprise integration development with Apache Camel, managed service offerings, and commercial maintenance support for the Camel software.
+https://www.eadx.com/apachecamel[EADX] offers worldwide services for Apache Camel through service centers in Europe and Asia, with consulting available in English and German. Services focus on enterprise integration development with Apache Camel, managed service offerings, and commercial maintenance support for Apache Camel.
 
 
 == https://fluxygen.com[Fluxygen]
