@@ -52,6 +52,20 @@ public interface KeyValueRepository extends Service {
     Object get(String key);
 
     /**
+     * Stores a value under the given key with no expiration.
+     * <p/>
+     * Equivalent to {@code put(key, value, null)}.
+     *
+     * @param  key   the key
+     * @param  value the value to store
+     * @return       the previous value associated with the key, or {@code null} if there was no mapping
+     */
+    @Nullable
+    default Object put(String key, Object value) {
+        return put(key, value, null);
+    }
+
+    /**
      * Stores a value under the given key with an optional time-to-live.
      *
      * @param  key   the key
@@ -90,6 +104,20 @@ public interface KeyValueRepository extends Service {
      * Removes all entries from the repository.
      */
     void clear();
+
+    /**
+     * Stores the value under the given key only if no non-expired mapping already exists, with no expiration.
+     * <p/>
+     * Equivalent to {@code putIfAbsent(key, value, null)}.
+     *
+     * @param  key   the key
+     * @param  value the value to store
+     * @return       the existing value if the key was already present, or {@code null} if the put succeeded
+     */
+    @Nullable
+    default Object putIfAbsent(String key, Object value) {
+        return putIfAbsent(key, value, null);
+    }
 
     /**
      * Stores the value under the given key only if no non-expired mapping already exists.

@@ -84,7 +84,7 @@ public class KeyValueIdempotentRepository extends ServiceSupport implements Idem
     @Override
     public boolean add(String key) {
         // putIfAbsent returns null if the key was successfully added (not already present)
-        return repository.putIfAbsent(IDEMPOTENT_PREFIX + key, Boolean.TRUE, null) == null;
+        return repository.putIfAbsent(IDEMPOTENT_PREFIX + key, Boolean.TRUE) == null;
     }
 
     @Override
