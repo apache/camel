@@ -17,6 +17,7 @@
 package org.apache.camel.component.hivemq;
 
 import com.hivemq.client.mqtt.datatypes.MqttQos;
+import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriParams;
@@ -156,7 +157,7 @@ public class HiveMQConfiguration implements Cloneable {
         try {
             return (HiveMQConfiguration) super.clone();
         } catch (CloneNotSupportedException e) {
-            throw new RuntimeException(e);
+            throw new RuntimeCamelException(e);
         }
     }
 }

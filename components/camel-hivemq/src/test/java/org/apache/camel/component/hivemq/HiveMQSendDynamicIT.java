@@ -33,6 +33,7 @@ public class HiveMQSendDynamicIT extends CamelTestSupport {
 
     @Test
     @DisplayName("toD with multiple dynamic topics reuses a single hivemq endpoint")
+    @SuppressWarnings("deprecation")
     public void testToDReusesSingleEndpoint() {
         template.sendBodyAndHeader("direct:start", "Hello bar", "where", "HiveMQSendDynamicIT-bar");
         template.sendBodyAndHeader("direct:start", "Hello beer", "where", "HiveMQSendDynamicIT-beer");
@@ -53,6 +54,7 @@ public class HiveMQSendDynamicIT extends CamelTestSupport {
     }
 
     @Override
+    @SuppressWarnings("deprecation")
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override

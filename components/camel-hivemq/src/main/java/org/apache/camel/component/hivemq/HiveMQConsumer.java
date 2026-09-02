@@ -49,6 +49,7 @@ public class HiveMQConsumer extends DefaultConsumer {
                 .qos(endpoint.getConfiguration().getQos())
                 .callback(this::onMessage)
                 .send()
+                .orTimeout(HiveMQConstants.DEFAULT_CONNECT_TIMEOUT_SECONDS, TimeUnit.SECONDS)
                 .join();
     }
 

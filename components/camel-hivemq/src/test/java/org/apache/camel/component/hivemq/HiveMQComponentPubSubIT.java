@@ -53,6 +53,7 @@ public class HiveMQComponentPubSubIT extends CamelTestSupport {
     }
 
     @Override
+    @SuppressWarnings("deprecation")
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
