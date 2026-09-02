@@ -10438,6 +10438,16 @@
         "index" : 20,
         "group" : "advanced",
         "label" : "advanced"
+      }, {
+        "name" : "serializablePackages",
+        "type" : "string",
+        "description" : "Comma-separated list of additional packages that contain trusted Avro model classes. Avro 1.12 validates classes resolved from schemas; Camel automatically trusts packages derived from the configured schema or instance class.",
+        "title" : "Serializable Packages",
+        "displayName" : "Serializable Packages",
+        "kind" : "attribute",
+        "index" : 21,
+        "group" : "security",
+        "label" : "security"
       } ]
     },
     "barcode" : {

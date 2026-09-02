@@ -9963,6 +9963,11 @@
               "title" : "Schema Resolver",
               "description" : "Optional schema resolver used to lookup schemas for the data in transit."
             },
+            "serializablePackages" : {
+              "type" : "string",
+              "title" : "Serializable Packages",
+              "description" : "Comma-separated list of additional packages that contain trusted Avro model classes. Avro 1.12 validates classes resolved from schemas; Camel automatically trusts packages derived from the configured schema or instance class."
+            },
             "timezone" : {
               "type" : "string",
               "title" : "Timezone",
