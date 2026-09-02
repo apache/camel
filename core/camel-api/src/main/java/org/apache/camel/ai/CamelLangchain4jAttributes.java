@@ -29,14 +29,14 @@ public interface CamelLangchain4jAttributes {
     /**
      * List of embeddings from a batch embedAll operation.
      *
-     * @since 4.22
+     * @since 4.23
      */
     String CAMEL_LANGCHAIN4J_EMBEDDINGS = "CamelLangChain4jEmbeddingsEmbeddings";
 
     /**
      * List of text segments from a batch embedAll operation.
      *
-     * @since 4.22
+     * @since 4.23
      */
     String CAMEL_LANGCHAIN4J_TEXT_SEGMENTS = "CamelLangChain4jEmbeddingsTextSegments";
 }
