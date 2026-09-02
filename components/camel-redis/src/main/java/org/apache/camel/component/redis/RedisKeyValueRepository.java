@@ -26,6 +26,7 @@ import org.apache.camel.api.management.ManagedResource;
 import org.apache.camel.spi.Configurer;
 import org.apache.camel.spi.KeyValueRepository;
 import org.apache.camel.spi.Metadata;
+import org.apache.camel.support.KeyValueRepositoryHelper;
 import org.apache.camel.support.service.ServiceSupport;
 import org.apache.camel.util.StringHelper;
 import org.jspecify.annotations.Nullable;
@@ -34,14 +35,16 @@ import org.redisson.api.RBucket;
 import org.redisson.api.RKeys;
 import org.redisson.api.RedissonClient;
 import org.redisson.api.options.KeysScanOptions;
+import org.redisson.client.codec.ByteArrayCodec;
 import org.redisson.config.Config;
 
 /**
  * A {@link KeyValueRepository} implementation backed by Redis using the Redisson client.
  * <p/>
  * Keys are namespaced under a configurable prefix ({@link #keyPrefix}) to avoid collisions with other data in the same
- * Redis instance. Values are serialized using Redisson's built-in codec (defaults to {@code MarshallingCodec} which
- * uses Java serialization).
+ * Redis instance. Values are serialized through {@link KeyValueRepositoryHelper} (plain Java serialization) and stored
+ * as raw {@code byte[]} using Redisson's {@link ByteArrayCodec}. This ensures a consistent serialization format across
+ * all persistent {@link KeyValueRepository} implementations and avoids coupling to Redisson's built-in codec.
  * <p/>
  * TTL is mapped from milliseconds to Redis native key expiry via
  * {@code RBucket.set(value, ttl, TimeUnit.MILLISECONDS)}. Atomic {@link #putIfAbsent} is supported via
@@ -91,34 +94,37 @@ public class RedisKeyValueRepository extends ServiceSupport implements KeyValueR
     @Override
     @ManagedOperation(description = "Get value by key")
     public @Nullable Object get(String key) {
-        RBucket<Object> bucket = redisson.getBucket(toRedisKey(key));
-        return bucket.get();
+        RBucket<byte[]> bucket = redisson.getBucket(toRedisKey(key), ByteArrayCodec.INSTANCE);
+        byte[] bytes = bucket.get();
+        return bytes != null ? KeyValueRepositoryHelper.deserialize(bytes) : null;
     }
 
     @Override
     @ManagedOperation(description = "Put a key-value pair with optional TTL")
     public @Nullable Object put(String key, Object value, Duration ttl) {
-        RBucket<Object> bucket = redisson.getBucket(toRedisKey(key));
-        Object previous = bucket.get();
+        RBucket<byte[]> bucket = redisson.getBucket(toRedisKey(key), ByteArrayCodec.INSTANCE);
+        byte[] serialized = KeyValueRepositoryHelper.serialize(value);
+        byte[] previous = bucket.get();
         if (hasPositiveTtl(ttl)) {
-            bucket.set(value, ttl);
+            bucket.set(serialized, ttl);
         } else {
-            bucket.set(value);
+            bucket.set(serialized);
         }
-        return previous;
+        return previous != null ? KeyValueRepositoryHelper.deserialize(previous) : null;
     }
 
     @Override
     @ManagedOperation(description = "Delete a key")
     public @Nullable Object delete(String key) {
-        RBucket<Object> bucket = redisson.getBucket(toRedisKey(key));
-        return bucket.getAndDelete();
+        RBucket<byte[]> bucket = redisson.getBucket(toRedisKey(key), ByteArrayCodec.INSTANCE);
+        byte[] bytes = bucket.getAndDelete();
+        return bytes != null ? KeyValueRepositoryHelper.deserialize(bytes) : null;
     }
 
     @Override
     @ManagedOperation(description = "Check if key exists")
     public boolean contains(String key) {
-        RBucket<Object> bucket = redisson.getBucket(toRedisKey(key));
+        RBucket<byte[]> bucket = redisson.getBucket(toRedisKey(key), ByteArrayCodec.INSTANCE);
         return bucket.isExists();
     }
 
@@ -141,18 +147,20 @@ public class RedisKeyValueRepository extends ServiceSupport implements KeyValueR
 
     @Override
     public @Nullable Object putIfAbsent(String key, Object value, Duration ttl) {
-        RBucket<Object> bucket = redisson.getBucket(toRedisKey(key));
+        RBucket<byte[]> bucket = redisson.getBucket(toRedisKey(key), ByteArrayCodec.INSTANCE);
+        byte[] serialized = KeyValueRepositoryHelper.serialize(value);
         boolean wasSet;
         if (hasPositiveTtl(ttl)) {
-            wasSet = bucket.setIfAbsent(value, ttl);
+            wasSet = bucket.setIfAbsent(serialized, ttl);
         } else {
-            wasSet = bucket.setIfAbsent(value);
+            wasSet = bucket.setIfAbsent(serialized);
         }
         if (wasSet) {
             return null;
         }
         // Key already existed; return the current value
-        return bucket.get();
+        byte[] existing = bucket.get();
+        return existing != null ? KeyValueRepositoryHelper.deserialize(existing) : null;
     }
 
     /**
@@ -166,8 +174,10 @@ public class RedisKeyValueRepository extends ServiceSupport implements KeyValueR
      */
     @Override
     public boolean replace(String key, Object expectedOldValue, Object newValue, Duration ttl) {
-        RBucket<Object> bucket = redisson.getBucket(toRedisKey(key));
-        boolean swapped = bucket.compareAndSet(expectedOldValue, newValue);
+        RBucket<byte[]> bucket = redisson.getBucket(toRedisKey(key), ByteArrayCodec.INSTANCE);
+        byte[] expectedBytes = KeyValueRepositoryHelper.serialize(expectedOldValue);
+        byte[] newBytes = KeyValueRepositoryHelper.serialize(newValue);
+        boolean swapped = bucket.compareAndSet(expectedBytes, newBytes);
         if (swapped && hasPositiveTtl(ttl)) {
             bucket.expire(ttl);
         }

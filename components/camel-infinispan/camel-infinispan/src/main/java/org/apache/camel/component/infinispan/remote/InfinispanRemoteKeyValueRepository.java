@@ -17,6 +17,7 @@
 package org.apache.camel.component.infinispan.remote;
 
 import java.time.Duration;
+import java.util.Objects;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
 import java.util.function.Supplier;
@@ -29,11 +30,13 @@ import org.apache.camel.api.management.ManagedResource;
 import org.apache.camel.spi.Configurer;
 import org.apache.camel.spi.KeyValueRepository;
 import org.apache.camel.spi.Metadata;
+import org.apache.camel.support.KeyValueRepositoryHelper;
 import org.apache.camel.support.service.ServiceHelper;
 import org.apache.camel.support.service.ServiceSupport;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.function.Suppliers;
 import org.infinispan.client.hotrod.Flag;
+import org.infinispan.client.hotrod.MetadataValue;
 import org.infinispan.client.hotrod.RemoteCache;
 import org.infinispan.client.hotrod.RemoteCacheManager;
 import org.jspecify.annotations.Nullable;
@@ -48,10 +51,10 @@ import static org.apache.camel.component.infinispan.remote.InfinispanRemoteUtil.
  * {@link Flag#FORCE_RETURN_VALUE} to ensure that {@code put} and {@code remove} operations return previous values as
  * required by the {@link KeyValueRepository} contract.
  * <p/>
- * Serialization is handled by Infinispan's built-in marshaller. By default, the HotRod client uses the
- * {@code ProtoStreamMarshaller} which requires types to be registered via ProtoStream context initializers. For simple
- * Java types (String, Integer, Boolean, etc.), no additional configuration is needed. For complex value types,
- * configure a custom marshaller or register the appropriate ProtoStream schema.
+ * Values are serialized through {@link KeyValueRepositoryHelper} (plain Java serialization) and stored as raw
+ * {@code byte[]} in the cache. This ensures a consistent serialization format across all persistent
+ * {@link KeyValueRepository} implementations, avoids coupling to Infinispan's marshaller configuration, and eliminates
+ * the need for ProtoStream schema registration for complex value types.
  *
  * @since 4.23
  */
@@ -63,7 +66,7 @@ import static org.apache.camel.component.infinispan.remote.InfinispanRemoteUtil.
 public class InfinispanRemoteKeyValueRepository extends ServiceSupport implements KeyValueRepository, CamelContextAware {
 
     private CamelContext camelContext;
-    private Supplier<RemoteCache<String, Object>> cache;
+    private Supplier<RemoteCache<String, byte[]>> cache;
     private InfinispanRemoteManager manager;
 
     @Metadata(description = "Name of cache", required = true)
@@ -86,22 +89,28 @@ public class InfinispanRemoteKeyValueRepository extends ServiceSupport implement
     @Override
     @ManagedOperation(description = "Get value by key")
     public @Nullable Object get(String key) {
-        return cache.get().get(key);
+        byte[] bytes = cache.get().get(key);
+        return bytes != null ? KeyValueRepositoryHelper.deserialize(bytes) : null;
     }
 
     @Override
     @ManagedOperation(description = "Put a key-value pair with optional TTL")
     public @Nullable Object put(String key, Object value, Duration ttl) {
+        byte[] serialized = KeyValueRepositoryHelper.serialize(value);
+        byte[] previous;
         if (hasPositiveTtl(ttl)) {
-            return cache.get().put(key, value, ttl.toMillis(), TimeUnit.MILLISECONDS);
+            previous = cache.get().put(key, serialized, ttl.toMillis(), TimeUnit.MILLISECONDS);
+        } else {
+            previous = cache.get().put(key, serialized);
         }
-        return cache.get().put(key, value);
+        return previous != null ? KeyValueRepositoryHelper.deserialize(previous) : null;
     }
 
     @Override
     @ManagedOperation(description = "Delete a key")
     public @Nullable Object delete(String key) {
-        return cache.get().remove(key);
+        byte[] bytes = cache.get().remove(key);
+        return bytes != null ? KeyValueRepositoryHelper.deserialize(bytes) : null;
     }
 
     @Override
@@ -123,23 +132,59 @@ public class InfinispanRemoteKeyValueRepository extends ServiceSupport implement
 
     @Override
     public @Nullable Object putIfAbsent(String key, Object value, Duration ttl) {
+        byte[] serialized = KeyValueRepositoryHelper.serialize(value);
+        byte[] existing;
         if (hasPositiveTtl(ttl)) {
-            return cache.get().putIfAbsent(key, value, ttl.toMillis(), TimeUnit.MILLISECONDS);
+            existing = cache.get().putIfAbsent(key, serialized, ttl.toMillis(), TimeUnit.MILLISECONDS);
+        } else {
+            existing = cache.get().putIfAbsent(key, serialized);
         }
-        return cache.get().putIfAbsent(key, value);
+        return existing != null ? KeyValueRepositoryHelper.deserialize(existing) : null;
     }
 
+    /**
+     * Atomically replaces the value for the given key using Infinispan's version-based optimistic locking.
+     * <p/>
+     * Because values are stored as serialized {@code byte[]}, Infinispan's value-based {@code replace(K, V, V)} cannot
+     * compare entries reliably through the marshaller. Instead, this method uses {@code getWithMetadata} to read the
+     * current value and its version, compares the deserialized value at the Java object level, and then calls
+     * {@code replaceWithVersion} to perform an atomic swap guarded by the entry version.
+     */
     @Override
     public boolean replace(String key, Object expectedOldValue, Object newValue, Duration ttl) {
-        if (hasPositiveTtl(ttl)) {
-            return cache.get().replace(key, expectedOldValue, newValue, ttl.toMillis(), TimeUnit.MILLISECONDS);
+        MetadataValue<byte[]> metadata = cache.get().getWithMetadata(key);
+        if (metadata == null) {
+            return false;
         }
-        return cache.get().replace(key, expectedOldValue, newValue);
+        Object currentObj = KeyValueRepositoryHelper.deserialize(metadata.getValue());
+        if (!Objects.equals(currentObj, expectedOldValue)) {
+            return false;
+        }
+        byte[] newBytes = KeyValueRepositoryHelper.serialize(newValue);
+        if (hasPositiveTtl(ttl)) {
+            return cache.get().replaceWithVersion(key, newBytes, metadata.getVersion(),
+                    ttl.toMillis(), TimeUnit.MILLISECONDS, -1, TimeUnit.MILLISECONDS);
+        }
+        return cache.get().replaceWithVersion(key, newBytes, metadata.getVersion());
     }
 
+    /**
+     * Atomically removes the entry for the given key using Infinispan's version-based optimistic locking.
+     * <p/>
+     * Similar to {@link #replace}, this uses {@code getWithMetadata} and {@code removeWithVersion} to avoid relying on
+     * marshaller-level value comparison for serialized {@code byte[]} entries.
+     */
     @Override
     public boolean delete(String key, Object expectedValue) {
-        return cache.get().remove(key, expectedValue);
+        MetadataValue<byte[]> metadata = cache.get().getWithMetadata(key);
+        if (metadata == null) {
+            return false;
+        }
+        Object currentObj = KeyValueRepositoryHelper.deserialize(metadata.getValue());
+        if (!Objects.equals(currentObj, expectedValue)) {
+            return false;
+        }
+        return cache.get().removeWithVersion(key, metadata.getVersion());
     }
 
     @Override
