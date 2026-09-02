@@ -42,7 +42,7 @@ public class CassandraKeyValueRepositoryIT extends BaseCassandra {
     @BeforeEach
     protected void doPreSetup() {
         repository = new CassandraKeyValueRepository(getSession());
-        repository.setTable("camel_ks.camel_keyvalue");
+        repository.setTable("camel_keyvalue");
         repository.start();
     }
 
