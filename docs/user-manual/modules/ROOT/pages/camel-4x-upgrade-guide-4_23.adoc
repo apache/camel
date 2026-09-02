@@ -1479,6 +1479,12 @@ unset. Such a value now aborts startup with a message naming the value, the targ
 configuration prefix it was set under. A plain bean id with no `#` prefix — `mySslContextParameters` — is
 resolved rather than discarded, as are `#autowired` and `#type:com.foo.MyType`.
 
+These converters are registered with `@ConfigurationPropertiesBinding` and therefore take part in every
+`@ConfigurationProperties` binding in the application, not only in Camel's own. A binding whose target class
+is neither under `org.apache.camel` nor annotated with `@ConfigurationProperties` for a `camel.` prefix keeps
+the previous behaviour, so adding a starter to the classpath cannot make an unrelated application property
+fail to bind.
+
 The generated customizers copied the whole configuration onto the target with `failIfNotSet=false`, so an
 option with no matching setter on the target was dropped without a log line. An option that the application
 configured itself and that cannot be set now aborts startup. An option that only carries the default the
@@ -1496,6 +1502,14 @@ camel.springboot.lenient-configuration-binding = true
 ----
 
 Such an option is then logged at `WARN` with its name, instead of being dropped silently as before.
+
+This affects hand-written code as well. `CamelPropertiesHelper.setCamelProperties(context, target, properties,
+false)`, and `CamelPropertiesHelper.copyProperties` which calls it, are public API used by hand-written
+customizers and auto-configuration outside the generated starters. They keep ignoring an option that cannot
+be set — that behaviour is unchanged — but each such option is now logged at `WARN` naming the option and the
+target class, where previously nothing was logged at all. Applications with hand-written customizers may
+therefore see new `WARN` lines at startup for options that have never been applied. The generated starters no
+longer use that path; they call `CamelPropertiesHelper.copyConfigurationProperties` instead.
 
 
 === camel-azure-storage-blob and camel-azure-storage-datalake
