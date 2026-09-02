@@ -42,10 +42,14 @@ import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriPath;
 import org.apache.camel.support.DefaultEndpoint;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 @UriEndpoint(firstVersion = "4.23.0", scheme = "hivemq", title = "HiveMQ", syntax = "hivemq:topic",
              category = { Category.MESSAGING, Category.IOT }, headersClass = HiveMQConstants.class)
 public class HiveMQEndpoint extends DefaultEndpoint implements EndpointServiceLocation {
+
+    private static final Logger LOG = LoggerFactory.getLogger(HiveMQEndpoint.class);
 
     /**
      * The MQTT topic name or pattern to subscribe to or publish on.
@@ -164,6 +168,7 @@ public class HiveMQEndpoint extends DefaultEndpoint implements EndpointServiceLo
             }
         } catch (Exception e) {
             // Not connected, already disconnecting, or reconnecting: the disconnected listener cancels reconnect.
+            LOG.debug("Failed to disconnect HiveMQ client during shutdown", e);
         }
     }
 

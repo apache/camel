@@ -25,9 +25,12 @@ import com.hivemq.client.mqtt.mqtt5.message.publish.Mqtt5Publish;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.support.DefaultConsumer;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class HiveMQConsumer extends DefaultConsumer {
 
+    private static final Logger LOG = LoggerFactory.getLogger(HiveMQConsumer.class);
     private final HiveMQEndpoint endpoint;
     private Mqtt5AsyncClient client;
     private ExecutorService executor;
@@ -61,6 +64,7 @@ public class HiveMQConsumer extends DefaultConsumer {
                         .orTimeout(5, TimeUnit.SECONDS).join();
             } catch (Exception e) {
                 // Best-effort unsubscribe before cancelling reconnect / disconnect
+                LOG.debug("Failed to unsubscribe from topic {} during shutdown", endpoint.getTopic(), e);
             }
         }
         endpoint.stopClient(client);
