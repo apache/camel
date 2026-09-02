@@ -1585,29 +1585,64 @@ class SourceViewer {
     }
 
     private String adjustPasteIndent(String text, int cursorRow) {
-        int targetIndent = editState.cursorCol();
-        // when cursor is at col 0, infer indent from the previous non-blank line
-        if (targetIndent == 0) {
-            for (int i = cursorRow - 1; i >= 0; i--) {
-                String l = editState.getLine(i);
-                if (!l.isBlank()) {
-                    targetIndent = countLeadingSpaces(l);
-                    String trimmed = l.trim();
-                    if (trimmed.startsWith("- ")) {
-                        trimmed = trimmed.substring(2).trim();
-                    }
-                    // if previous line is a parent key, indent children deeper
-                    if (trimmed.endsWith(":")) {
-                        targetIndent += 2;
-                    }
-                    break;
-                }
-            }
+        String current = editState.getLine(cursorRow);
+        int targetIndent;
+        if (current == null || current.isBlank()) {
+            // on a blank line (including one carrying ENTER auto-indent whitespace, which handlePaste
+            // strips before inserting): infer the block indent from the context above the cursor and
+            // apply it to every pasted line
+            int fallback = current == null ? 0 : countLeadingSpaces(current);
+            targetIndent = inferBlankLineIndent(text, cursorRow, fallback);
+        } else if (editState.cursorCol() == 0) {
+            // inserting before an existing line: match that line's own indent
+            targetIndent = countLeadingSpaces(current);
+        } else {
+            // pasting into the middle of existing content: keep the cursor column
+            targetIndent = editState.cursorCol();
         }
         return reindentBlock(text, targetIndent);
     }
 
+    private int inferBlankLineIndent(String text, int cursorRow, int fallback) {
+        int prevIndent = -1;
+        boolean prevIsParentKey = false;
+        int listIndent = -1;
+        for (int i = cursorRow - 1; i >= 0; i--) {
+            String l = editState.getLine(i);
+            if (l.isBlank()) {
+                continue;
+            }
+            if (prevIndent < 0) {
+                // nearest non-blank line: its indent, and whether it opens a child block
+                prevIndent = countLeadingSpaces(l);
+                String t = l.trim();
+                if (t.startsWith("- ")) {
+                    t = t.substring(2).trim();
+                }
+                prevIsParentKey = t.endsWith(":");
+            }
+            if (l.trim().startsWith("- ")) {
+                // nearest existing list item — the sibling level for a pasted list item
+                listIndent = countLeadingSpaces(l);
+                break;
+            }
+        }
+        String firstTrimmed = firstNonBlankTrimmed(text);
+        boolean pasteIsListItem = firstTrimmed.startsWith("- ") || firstTrimmed.equals("-");
+        if (pasteIsListItem && listIndent >= 0) {
+            // align a pasted step with the nearest existing sibling step
+            return listIndent;
+        } else if (prevIndent >= 0) {
+            // otherwise follow the previous line, indenting deeper under a parent key
+            return prevIndent + (prevIsParentKey ? 2 : 0);
+        }
+        return fallback;
+    }
+
     static String reindentBlock(String text, int targetIndent) {
+        // normalize line endings: some terminals deliver pasted line breaks as \r\n or bare \r,
+        // which would otherwise collapse a multi-line paste into a single line
+        text = text.replace("\r\n", "\n").replace('\r', '\n');
         text = text.replace("\t", "  ");
         String[] pasteLines = text.split("\n", -1);
         int minIndent = Integer.MAX_VALUE;
@@ -1639,6 +1674,15 @@ class SourceViewer {
             }
         }
         return sb.toString();
+    }
+
+    private static String firstNonBlankTrimmed(String text) {
+        for (String line : text.split("\r\n|\r|\n", -1)) {
+            if (!line.isBlank()) {
+                return line.trim();
+            }
+        }
+        return "";
     }
 
     private static int countLeadingSpaces(String line) {
@@ -2366,7 +2410,19 @@ class SourceViewer {
             }
             if (text != null && !text.isEmpty()) {
                 recordEditChange();
-                editState.insert(text);
+                int row = editState.cursorRow();
+                String current = editState.getLine(row);
+                String adjusted = adjustPasteIndent(text, row);
+                if (current != null && current.isBlank() && !current.isEmpty()) {
+                    // strip the blank line's leading whitespace (e.g. from ENTER auto-indent) so the
+                    // reindented block's own indent is not stacked on top of it
+                    editState.moveCursorToLineStart();
+                    int n = current.length();
+                    for (int i = 0; i < n; i++) {
+                        editState.deleteForward();
+                    }
+                }
+                editState.insert(adjusted);
             }
             return;
         }

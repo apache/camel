@@ -151,6 +151,98 @@ class SourceViewerEditorOpsTest {
         assertThat(footer).contains("Ctrl+K");
     }
 
+    @Test
+    void pasteAutoIndentsToMatchSurroundingBlock() {
+        // place cursor at column 0 of the "log:warn" line; its siblings are indented 8 spaces
+        String[] lines = viewer.editText().split("\n", -1);
+        int row = -1;
+        for (int i = 0; i < lines.length; i++) {
+            if (lines[i].contains("log:warn")) {
+                row = i;
+                break;
+            }
+        }
+        assertThat(row).isGreaterThanOrEqualTo(0);
+        SourceEditorNavigation.positionCursor(viewer.editState(), row, 0);
+
+        // paste an unindented step; it should be reindented to align with the 8-space siblings
+        viewer.handlePaste("- to: log:error\n");
+
+        assertThat(viewer.editText()).contains("        - to: log:error\n");
+    }
+
+    @Test
+    void pasteAlignsWithCurrentLineNotDeeperPredecessor() throws Exception {
+        // a "- log:" step (indent 8) preceded by a far deeper line (indent 16); pasting before it
+        // must align with the step's own indent, not the deeper predecessor
+        Path nested = tempDir.resolve("nested.camel.yaml");
+        Files.writeString(nested, """
+                - route:
+                    from:
+                      uri: timer:tick
+                      steps:
+                        - setBody:
+                            expression:
+                              simple:
+                                expression: "hi"
+                        - log:
+                            message: "x"
+                """, StandardCharsets.UTF_8);
+        viewer.loadFile(nested);
+        viewer.enterEditMode();
+
+        String[] lines = viewer.editText().split("\n", -1);
+        int row = -1;
+        for (int i = 0; i < lines.length; i++) {
+            if (lines[i].contains("- log:")) {
+                row = i;
+                break;
+            }
+        }
+        assertThat(row).isGreaterThanOrEqualTo(0);
+        SourceEditorNavigation.positionCursor(viewer.editState(), row, 0);
+
+        viewer.handlePaste("- to:\n    uri: mock:dead\n");
+
+        assertThat(viewer.editText()).contains("        - to:\n            uri: mock:dead\n        - log:");
+    }
+
+    @Test
+    void pasteListItemOnBlankLineAlignsWithNearestSiblingStep() throws Exception {
+        // last line is a deep leaf (indent 12); pasting a step on a blank line after it must align
+        // with the nearest sibling step (indent 8), not the deeper leaf above it
+        Path nested = tempDir.resolve("nested-append.camel.yaml");
+        Files.writeString(nested, """
+                - route:
+                    from:
+                      uri: timer:tick
+                      steps:
+                        - log:
+                            message: "${body}"
+                """, StandardCharsets.UTF_8);
+        viewer.loadFile(nested);
+        viewer.enterEditMode();
+
+        // place the cursor at the end of the deep leaf line (message:, indent 12) and press ENTER —
+        // the editor auto-indents the new line to col 12; pasting a step must still align it with the
+        // nearest sibling step (indent 8), not the auto-indent column
+        int row = -1;
+        String[] lines = viewer.editText().split("\n", -1);
+        for (int i = 0; i < lines.length; i++) {
+            if (lines[i].contains("message:")) {
+                row = i;
+                break;
+            }
+        }
+        assertThat(row).isGreaterThanOrEqualTo(0);
+        SourceEditorNavigation.positionCursor(viewer.editState(), row, viewer.editState().getLine(row).length());
+        viewer.handleKeyEvent(KeyEvent.ofKey(KeyCode.ENTER, KeyModifiers.NONE));
+
+        viewer.handlePaste("- to:\n    uri: mock:dead\n");
+
+        assertThat(viewer.editText()).contains("        - to:\n            uri: mock:dead");
+    }
+
     private void moveCursorToLineContaining(String needle) {
         String[] lines = viewer.editText().split("\n", -1);
         for (int row = 0; row < lines.length; row++) {
