@@ -134,18 +134,36 @@ When the message body is a `Map` (or `List<Map>` for publishing batch events), t
 The component supports a 3-level hierarchical validation model:
 `EventBus (N) -> EventSources (N specific to that EventBus) -> EventTypes (N specific to that EventSource)`
 
-1. **Cloud Validation with Cache (`validateEventSource` and `validateEventType`)**:
-   - **Validated Cache Update Workflow**: When validation is enabled, the component calls `listEventBuses` and `listRules` on Alibaba Cloud.
-   - Verifies that:
-     1. The target `eventBusName` exists on Alibaba Cloud.
-     2. Each configured `allowedEventSource` is registered for that bus.
-     3. Each configured `allowedEventType` is defined in the rule `filterPattern`s for that source on Alibaba Cloud.
-   - **Only after validation succeeds** is the verified entry cached in `EventSourceCache` for `eventSourceCacheTtl` ms (default: 5 minutes) for fast runtime comparisons.
+*Cloud Validation with Cache (`validateEventSource` and `validateEventType`):*
 
-2. **Whitelist Validation (`allowedEventSources`)**:
-   - Statically validates that the event bus, source URI, and event type in outgoing CloudEvents conform to a configured whitelist.
-   - Restricts publishing to only authorized event sources and event types per event bus.
-   - Supports single-bus shorthand, multi-bus DSL, JSON string format, and Java objects (`Map` / `List`).
+* **Validated Cache Update Workflow**: When validation is enabled, the component queries `listEventBuses` and `listRules` on Alibaba Cloud EventBridge.
+* **Fail-Closed Semantics**: If Alibaba Cloud API calls fail (network errors, permission errors, rate limits) or if target buses/rules are missing, validation fails closed immediately and throws an `IllegalArgumentException` to prevent unvalidated events from being published during outages.
+* **Prefix and Exact Match Rules**: Rule `filterPattern`s are inspected for both exact match strings and prefix patterns (`{"prefix": "..."}`) for both event sources and event types.
+* **Verified Cache Population**: Only after cloud verification succeeds is the verified metadata stored in `EventSourceCache` for the configured TTL (defaults to `eventSourceCacheTtl=300000`, or per-message via `CamelAlibabaEventBridgeEventSourceCacheTtl`).
+
+*Whitelist Validation (`allowedEventSources`):*
+
+* Statically validates that the event bus, source URI, and event type in outgoing CloudEvents conform to a configured whitelist.
+* Restricts publishing to only authorized event sources and event types per event bus.
+* Supports single-bus shorthand, multi-bus DSL, JSON string format, and Java objects (`Map` / `List`).
+
+=== Security Considerations and Untrusted Ingress
+
+[IMPORTANT]
+====
+In Apache Camel's security model, Camel message headers take precedence over endpoint URI options.
+
+When building routes that accept untrusted external ingress (such as HTTP endpoints, webhooks, or public messaging queues), external messages may carry `CamelAlibabaEventBridge*` headers that could override endpoint-level security policies (such as `allowedEventSources` or validation toggles).
+
+To prevent untrusted callers from manipulating security policies, always sanitize or remove Camel headers before forwarding to the Alibaba EventBridge producer:
+
+[source,java]
+----
+from("platform-http:/ingress")
+    .removeHeaders("CamelAlibabaEventBridge*")
+    .to("alibaba-eventbridge:putEvents?eventBusName=orders-bus&allowedEventSources=RAW(app.orders -> order:created:v1)&region=cn-hangzhou");
+----
+====
 
 === Allowed Event Sources Configuration
 
