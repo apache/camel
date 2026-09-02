@@ -182,6 +182,7 @@ source1 -> type1, type2; source2 -> type3
 * Uses `->` or `=` as the mapping operator between source and comma-separated event types.
 * Multiple sources are separated with semicolons (`;`).
 * If event types are omitted (e.g. `source1; source2 -> type3`), any event type is allowed for `source1`.
+* Sources containing scheme colons or port numbers (e.g. `http://example.com:8080/events` or `urn:custom:source`) are supported without conflict because type mapping is performed exclusively via `->` and `=`.
 
 |*Multi-Bus DSL*
 a|Scopes allowed event sources and event types per specific event bus:
@@ -238,7 +239,7 @@ orders-bus[acs:oss:cn-hangzhou:12345:orders -> oss:ObjectCreated:PutObject; app.
 * *Bus Scopes*: Each bus definition is enclosed in square brackets: `busName[...]`.
 * *Bus Separator*: Pipe (`|`) separates multiple bus scope definitions.
 * *Source Separator*: Semicolon (`;`) separates multiple sources within a bus scope.
-* *Event Type Mapping*: Arrow (`->`) or equals (`=`) maps a source to its allowed comma-separated event types.
+* *Event Type Mapping*: Arrow (`->`) or equals (`=`) maps a source to its allowed comma-separated event types. Sources containing colons (such as URI ports or URNs) are supported without conflict.
 * *Wildcard Fallback*: Use `*[...]` to match any event bus not explicitly named.
 * *Omitted Types*: If event types are omitted for a source (e.g. `orders-bus[app.orders]`), any event type is permitted for that source.
 

@@ -169,8 +169,8 @@ public final class OSSUtils {
             return endpoint.getAccessKey();
         }
         ServiceKeys serviceKeys = endpoint.getServiceKeys();
-        if (serviceKeys != null && ObjectHelper.isNotEmpty(serviceKeys.accessKey())) {
-            return serviceKeys.accessKey();
+        if (serviceKeys != null && ObjectHelper.isNotEmpty(serviceKeys.getAccessKey())) {
+            return serviceKeys.getAccessKey();
         }
         throw new IllegalArgumentException("Authentication parameter 'access key (AK)' not found");
     }
@@ -180,8 +180,8 @@ public final class OSSUtils {
             return endpoint.getSecretKey();
         }
         ServiceKeys serviceKeys = endpoint.getServiceKeys();
-        if (serviceKeys != null && ObjectHelper.isNotEmpty(serviceKeys.secretKey())) {
-            return serviceKeys.secretKey();
+        if (serviceKeys != null && ObjectHelper.isNotEmpty(serviceKeys.getSecretKey())) {
+            return serviceKeys.getSecretKey();
         }
         throw new IllegalArgumentException("Authentication parameter 'secret key (SK)' not found");
     }

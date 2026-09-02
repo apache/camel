@@ -344,7 +344,7 @@ public final class AlibabaEventBridgeUtils {
 
     /**
      * Parses a block of event source definitions delimited by {@code ;}. Supports mapping operators {@code ->} and
-     * {@code =}, or colon fallback {@code :}.
+     * {@code =}.
      */
     static Map<String, AllowedEventSource> parseSourcesBlock(String sourcesBlock) {
         Map<String, AllowedEventSource> sources = new HashMap<>();
@@ -371,13 +371,7 @@ public final class AlibabaEventBridgeUtils {
                 source = parts[0].trim();
                 parseCommaSeparatedTypes(parts[1], types);
             } else {
-                int colonIdx = trimmedEntry.lastIndexOf(':');
-                if (colonIdx > 0 && !trimmedEntry.startsWith("acs:")) {
-                    source = trimmedEntry.substring(0, colonIdx).trim();
-                    parseCommaSeparatedTypes(trimmedEntry.substring(colonIdx + 1), types);
-                } else {
-                    source = trimmedEntry;
-                }
+                source = trimmedEntry;
             }
 
             if (!source.isEmpty()) {

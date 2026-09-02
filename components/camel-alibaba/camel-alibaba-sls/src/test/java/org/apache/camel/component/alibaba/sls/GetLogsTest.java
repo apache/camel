@@ -88,7 +88,8 @@ class GetLogsTest extends CamelTestSupport {
         mock.assertIsSatisfied();
 
         Exchange exchange = mock.getExchanges().get(0);
-        assertThat(exchange.getMessage().getBody(Map.class))
+        Map<String, Object> body = exchange.getMessage().getBody(Map.class);
+        assertThat(body)
                 .containsEntry("statusCode", 200)
                 .containsEntry("body", List.of(Map.of("message", "log line")));
         assertThat(exchange.getMessage().getHeader(AlibabaSlsHeaders.STATUS_CODE)).isEqualTo(200);

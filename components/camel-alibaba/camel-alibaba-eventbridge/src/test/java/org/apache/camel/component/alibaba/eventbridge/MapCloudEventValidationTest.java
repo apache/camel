@@ -518,4 +518,41 @@ class MapCloudEventValidationTest extends CamelTestSupport {
                 .isInstanceOf(IllegalArgumentException.class)
                 .hasMessageContaining("Event source 'unauthorized.source' is not in the allowed sources list");
     }
+
+    @Test
+    void testSingleBusDslWithHttpUriAndPort() {
+        String dsl = "http://example.com:8080/events; https://api.service.com:9443/webhooks -> order:created, order:updated";
+        Map<String, AllowedEventBus> buses = AlibabaEventBridgeUtils.parseAllowedBusesFromString(dsl, "default-bus");
+
+        assertThat(buses).containsKey("default-bus");
+        AllowedEventBus bus = buses.get("default-bus");
+        assertThat(bus.allowedSources()).containsKeys("http://example.com:8080/events",
+                "https://api.service.com:9443/webhooks");
+
+        AllowedEventSource httpSource = bus.allowedSources().get("http://example.com:8080/events");
+        assertThat(httpSource.source()).isEqualTo("http://example.com:8080/events");
+        assertThat(httpSource.allowedEventTypes()).isEmpty();
+
+        AllowedEventSource httpsSource = bus.allowedSources().get("https://api.service.com:9443/webhooks");
+        assertThat(httpsSource.source()).isEqualTo("https://api.service.com:9443/webhooks");
+        assertThat(httpsSource.allowedEventTypes()).containsExactlyInAnyOrder("order:created", "order:updated");
+    }
+
+    @Test
+    void testSingleBusDslWithUrnAndEquals() {
+        String dsl = "urn:custom:event:source = event:type:v1, event:type:v2; urn:another:source";
+        Map<String, AllowedEventBus> buses = AlibabaEventBridgeUtils.parseAllowedBusesFromString(dsl, "custom-bus");
+
+        assertThat(buses).containsKey("custom-bus");
+        AllowedEventBus bus = buses.get("custom-bus");
+        assertThat(bus.allowedSources()).containsKeys("urn:custom:event:source", "urn:another:source");
+
+        AllowedEventSource urnSource1 = bus.allowedSources().get("urn:custom:event:source");
+        assertThat(urnSource1.source()).isEqualTo("urn:custom:event:source");
+        assertThat(urnSource1.allowedEventTypes()).containsExactlyInAnyOrder("event:type:v1", "event:type:v2");
+
+        AllowedEventSource urnSource2 = bus.allowedSources().get("urn:another:source");
+        assertThat(urnSource2.source()).isEqualTo("urn:another:source");
+        assertThat(urnSource2.allowedEventTypes()).isEmpty();
+    }
 }
