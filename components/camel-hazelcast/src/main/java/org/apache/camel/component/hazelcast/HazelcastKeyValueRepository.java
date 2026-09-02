@@ -17,8 +17,8 @@
 package org.apache.camel.component.hazelcast;
 
 import java.time.Duration;
+import java.util.Arrays;
 import java.util.Collections;
-import java.util.Objects;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
@@ -33,6 +33,7 @@ import org.apache.camel.api.management.ManagedResource;
 import org.apache.camel.spi.Configurer;
 import org.apache.camel.spi.KeyValueRepository;
 import org.apache.camel.spi.Metadata;
+import org.apache.camel.support.KeyValueRepositoryHelper;
 import org.apache.camel.support.service.ServiceSupport;
 import org.apache.camel.util.ObjectHelper;
 
@@ -42,6 +43,10 @@ import org.apache.camel.util.ObjectHelper;
  * Hazelcast natively supports per-entry TTL via {@link IMap#put(Object, Object, long, TimeUnit)} and
  * {@link IMap#putIfAbsent(Object, Object, long, TimeUnit)}, making it a natural fit for the {@code KeyValueRepository}
  * contract without requiring wrapper objects or lazy eviction.
+ * <p/>
+ * Values are serialized through {@link KeyValueRepositoryHelper} (plain Java serialization) and stored as raw
+ * {@code byte[]} in the Hazelcast map. This ensures a consistent serialization format across all persistent
+ * {@link KeyValueRepository} implementations and avoids coupling to Hazelcast's built-in serialization.
  * <p/>
  * This single implementation can serve as idempotent repository, aggregation repository, and state store via the
  * adapters in {@code camel-support} ({@code KeyValueIdempotentRepository} and {@code KeyValueAggregationRepository}).
@@ -58,7 +63,7 @@ import org.apache.camel.util.ObjectHelper;
 public class HazelcastKeyValueRepository extends ServiceSupport implements KeyValueRepository {
 
     private boolean useLocalHzInstance;
-    private IMap<String, Object> map;
+    private IMap<String, byte[]> map;
 
     @Metadata(description = "Name of the Hazelcast map to use", defaultValue = "HazelcastKeyValueRepository")
     private String mapName = HazelcastKeyValueRepository.class.getSimpleName();
@@ -107,22 +112,28 @@ public class HazelcastKeyValueRepository extends ServiceSupport implements KeyVa
     @Override
     @ManagedOperation(description = "Get value by key")
     public Object get(String key) {
-        return map.get(key);
+        byte[] bytes = map.get(key);
+        return bytes != null ? KeyValueRepositoryHelper.deserialize(bytes) : null;
     }
 
     @Override
     @ManagedOperation(description = "Put a key-value pair with optional TTL")
     public Object put(String key, Object value, Duration ttl) {
+        byte[] serialized = KeyValueRepositoryHelper.serialize(value);
+        byte[] previous;
         if (hasPositiveTtl(ttl)) {
-            return map.put(key, value, ttl.toMillis(), TimeUnit.MILLISECONDS);
+            previous = map.put(key, serialized, ttl.toMillis(), TimeUnit.MILLISECONDS);
+        } else {
+            previous = map.put(key, serialized);
         }
-        return map.put(key, value);
+        return previous != null ? KeyValueRepositoryHelper.deserialize(previous) : null;
     }
 
     @Override
     @ManagedOperation(description = "Delete a key")
     public Object delete(String key) {
-        return map.remove(key);
+        byte[] bytes = map.remove(key);
+        return bytes != null ? KeyValueRepositoryHelper.deserialize(bytes) : null;
     }
 
     @Override
@@ -144,25 +155,31 @@ public class HazelcastKeyValueRepository extends ServiceSupport implements KeyVa
 
     @Override
     public Object putIfAbsent(String key, Object value, Duration ttl) {
+        byte[] serialized = KeyValueRepositoryHelper.serialize(value);
+        byte[] existing;
         if (hasPositiveTtl(ttl)) {
-            return map.putIfAbsent(key, value, ttl.toMillis(), TimeUnit.MILLISECONDS);
+            existing = map.putIfAbsent(key, serialized, ttl.toMillis(), TimeUnit.MILLISECONDS);
+        } else {
+            existing = map.putIfAbsent(key, serialized);
         }
-        return map.putIfAbsent(key, value);
+        return existing != null ? KeyValueRepositoryHelper.deserialize(existing) : null;
     }
 
     @Override
     public boolean replace(String key, Object expectedOldValue, Object newValue, Duration ttl) {
+        byte[] expectedBytes = KeyValueRepositoryHelper.serialize(expectedOldValue);
+        byte[] newBytes = KeyValueRepositoryHelper.serialize(newValue);
         if (!hasPositiveTtl(ttl)) {
-            return map.replace(key, expectedOldValue, newValue);
+            return map.replace(key, expectedBytes, newBytes);
         }
         // IMap.replace(K, V, V) does not support TTL, so use distributed lock for atomicity
         map.lock(key);
         try {
-            Object current = map.get(key);
-            if (!Objects.equals(current, expectedOldValue)) {
+            byte[] current = map.get(key);
+            if (!Arrays.equals(current, expectedBytes)) {
                 return false;
             }
-            map.put(key, newValue, ttl.toMillis(), TimeUnit.MILLISECONDS);
+            map.put(key, newBytes, ttl.toMillis(), TimeUnit.MILLISECONDS);
             return true;
         } finally {
             map.unlock(key);
@@ -171,7 +188,8 @@ public class HazelcastKeyValueRepository extends ServiceSupport implements KeyVa
 
     @Override
     public boolean delete(String key, Object expectedValue) {
-        return map.remove(key, expectedValue);
+        byte[] expectedBytes = KeyValueRepositoryHelper.serialize(expectedValue);
+        return map.remove(key, expectedBytes);
     }
 
     @Override
