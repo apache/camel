@@ -493,12 +493,33 @@ If your code reads tool-related headers from the calling exchange after agent in
 you will need to adjust it. The agent's `Result<String>` (and the new `CamelLangChain4jAgentToolExecutions`
 header) is the intended way to observe tool execution results.
 
+=== camel-langchain4j-embeddings
+
+The `langchain4j-embeddings` component now supports **batch embedding**. When the message body is a `List`
+(of `String` or `TextSegment`), the producer calls `model.embedAll()` instead of `model.embed()`.
+The resulting `List<Embedding>` is set in the `CamelLangChain4jEmbeddingsEmbeddings` header, and the
+original text segments are preserved in the `CamelLangChain4jEmbeddingsTextSegments` header for downstream
+use by the embedding store component.
+
 === camel-langchain4j-embeddingstore
 
 A new `embeddingModel` option has been added. It is autowired, so if an `EmbeddingModel` bean is present
 in the registry it will be automatically picked up. When set, ADD and SEARCH operations can accept plain
 text in the message body instead of requiring a pre-computed embedding in the
 `CamelLangChain4jEmbeddingsEmbedding` header. The header always takes precedence when present.
+
+The ADD operation now supports **batch operations** (via `addAll`) and **caller-supplied IDs**.
+When the `CamelLangChain4jEmbeddingsEmbeddings` header is present with a `List<Embedding>`,
+the component uses batch operations. Caller-supplied IDs are provided via the
+`CamelLangchain4jEmbeddingStoreEmbeddingId` (single) or `CamelLangchain4jEmbeddingStoreEmbeddingIds`
+(batch) headers.
+
+The REMOVE operation now supports **batch removal by collection of IDs** (pass a `Collection<String>`
+as the body) and **filter-based removal** (set a `Filter` in the
+`CamelLangchain4jEmbeddingStoreFilter` header). Previously, passing a null or empty body to REMOVE
+would pass `null` to the underlying store's `remove()` method, which threw an opaque exception
+from langchain4j. It now throws `IllegalArgumentException` with a clear message listing the
+expected inputs.
 
 === camel-langchain4j-chat
 
