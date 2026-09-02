@@ -6669,6 +6669,16 @@ When not disabled, the SchemaResolver will be looked up into the registry. Defau
             </xs:documentation>
           </xs:annotation>
         </xs:attribute>
+        <xs:attribute name="serializablePackages" type="xs:string">
+          <xs:annotation>
+            <xs:documentation xml:lang="en">
+<![CDATA[
+Comma-separated list of additional packages that contain trusted Avro model classes. Avro 1.12 validates classes
+resolved from schemas; Camel automatically trusts packages derived from the configured schema or instance class.
+]]>
+            </xs:documentation>
+          </xs:annotation>
+        </xs:attribute>
       </xs:extension>
     </xs:complexContent>
   </xs:complexType>

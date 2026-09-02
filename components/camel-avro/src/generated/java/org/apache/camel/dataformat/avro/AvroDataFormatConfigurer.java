@@ -23,6 +23,7 @@ public class AvroDataFormatConfigurer extends org.apache.camel.support.component
     static {
         Map<String, Object> map = new CaseInsensitiveMap();
         map.put("InstanceClassName", java.lang.String.class);
+        map.put("SerializablePackages", java.lang.String.class);
         ALL_OPTIONS = map;
     }
 
@@ -32,6 +33,8 @@ public class AvroDataFormatConfigurer extends org.apache.camel.support.component
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "instanceclassname":
         case "instanceClassName": target.setInstanceClassName(property(camelContext, java.lang.String.class, value)); return true;
+        case "serializablepackages":
+        case "serializablePackages": target.setSerializablePackages(property(camelContext, java.lang.String.class, value)); return true;
         default: return false;
         }
     }
@@ -46,6 +49,8 @@ public class AvroDataFormatConfigurer extends org.apache.camel.support.component
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "instanceclassname":
         case "instanceClassName": return java.lang.String.class;
+        case "serializablepackages":
+        case "serializablePackages": return java.lang.String.class;
         default: return null;
         }
     }
@@ -56,6 +61,8 @@ public class AvroDataFormatConfigurer extends org.apache.camel.support.component
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "instanceclassname":
         case "instanceClassName": return target.getInstanceClassName();
+        case "serializablepackages":
+        case "serializablePackages": return target.getSerializablePackages();
         default: return null;
         }
     }

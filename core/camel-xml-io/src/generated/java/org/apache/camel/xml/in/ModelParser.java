@@ -1590,6 +1590,7 @@ public class ModelParser extends BaseParser {
                 case "moduleRefs": def.setModuleRefs(val); yield true;
                 case "objectMapper": def.setObjectMapper(val); yield true;
                 case "schemaResolver": def.setSchemaResolver(val); yield true;
+                case "serializablePackages": def.setSerializablePackages(val); yield true;
                 case "timezone": def.setTimezone(val); yield true;
                 case "unmarshalType": def.setUnmarshalTypeName(val); yield true;
                 case "useDefaultObjectMapper": def.setUseDefaultObjectMapper(val); yield true;

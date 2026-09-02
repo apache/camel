@@ -2164,9 +2164,9 @@ public class YamlModelWriter extends YamlModelWriterSupport {
     protected JsonObject doWriteAvroDataFormat(AvroDataFormat def) {
         JsonObject jo = new JsonObject();
         doWriteIdentifiedTypeAttributes(jo, def);
-        doWriteAttribute(jo, "unmarshalType", def.getUnmarshalTypeName(), null);
         doWriteAttribute(jo, "collectionType", def.getCollectionTypeName(), null);
         doWriteAttribute(jo, "jsonView", def.getJsonViewTypeName(), null);
+        doWriteAttribute(jo, "unmarshalType", def.getUnmarshalTypeName(), null);
         doWriteAttribute(jo, "instanceClassName", def.getInstanceClassName(), null);
         doWriteAttribute(jo, "library", toString(def.getLibrary()), "avroJackson");
         doWriteAttribute(jo, "objectMapper", def.getObjectMapper(), null);
@@ -2184,6 +2184,7 @@ public class YamlModelWriter extends YamlModelWriterSupport {
         doWriteAttribute(jo, "contentTypeHeader", def.getContentTypeHeader(), "true");
         doWriteAttribute(jo, "schemaResolver", def.getSchemaResolver(), null);
         doWriteAttribute(jo, "autoDiscoverSchemaResolver", def.getAutoDiscoverSchemaResolver(), "true");
+        doWriteAttribute(jo, "serializablePackages", def.getSerializablePackages(), null);
         return jo;
     }
     protected JsonObject doWriteBarcodeDataFormat(BarcodeDataFormat def) {

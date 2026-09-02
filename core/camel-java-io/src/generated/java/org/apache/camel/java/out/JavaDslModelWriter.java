@@ -2863,9 +2863,9 @@ public class JavaDslModelWriter extends JavaDslModelWriterSupport {
     }
     protected void doWriteAvroDataFormat(StringBuilder sb, AvroDataFormat def) {
         doWriteIdentifiedTypeAttributes(sb, def);
-        doWriteAttribute(sb, "unmarshalType", def.getUnmarshalTypeName(), null);
         doWriteAttribute(sb, "collectionType", def.getCollectionTypeName(), null);
         doWriteAttribute(sb, "jsonView", def.getJsonViewTypeName(), null);
+        doWriteAttribute(sb, "unmarshalType", def.getUnmarshalTypeName(), null);
         doWriteAttribute(sb, "instanceClassName", def.getInstanceClassName(), null);
         doWriteAttribute(sb, "library", toString(def.getLibrary()), "avroJackson");
         doWriteAttribute(sb, "objectMapper", def.getObjectMapper(), null);
@@ -2883,6 +2883,7 @@ public class JavaDslModelWriter extends JavaDslModelWriterSupport {
         doWriteAttribute(sb, "contentTypeHeader", def.getContentTypeHeader(), "true");
         doWriteAttribute(sb, "schemaResolver", def.getSchemaResolver(), null);
         doWriteAttribute(sb, "autoDiscoverSchemaResolver", def.getAutoDiscoverSchemaResolver(), "true");
+        doWriteAttribute(sb, "serializablePackages", def.getSerializablePackages(), null);
     }
     protected void doWriteBarcodeDataFormat(StringBuilder sb, BarcodeDataFormat def) {
         doWriteIdentifiedTypeAttributes(sb, def);

@@ -38,6 +38,8 @@ public class AvroEndpointConfigurer extends PropertyConfigurerSupport implements
         case "protocolLocation": target.getConfiguration().setProtocolLocation(property(camelContext, java.lang.String.class, value)); return true;
         case "reflectionprotocol":
         case "reflectionProtocol": target.getConfiguration().setReflectionProtocol(property(camelContext, boolean.class, value)); return true;
+        case "serializablepackages":
+        case "serializablePackages": target.getConfiguration().setSerializablePackages(property(camelContext, java.lang.String.class, value)); return true;
         case "singleparameter":
         case "singleParameter": target.getConfiguration().setSingleParameter(property(camelContext, boolean.class, value)); return true;
         case "uriauthority":
@@ -64,6 +66,8 @@ public class AvroEndpointConfigurer extends PropertyConfigurerSupport implements
         case "protocolLocation": return java.lang.String.class;
         case "reflectionprotocol":
         case "reflectionProtocol": return boolean.class;
+        case "serializablepackages":
+        case "serializablePackages": return java.lang.String.class;
         case "singleparameter":
         case "singleParameter": return boolean.class;
         case "uriauthority":
@@ -91,6 +95,8 @@ public class AvroEndpointConfigurer extends PropertyConfigurerSupport implements
         case "protocolLocation": return target.getConfiguration().getProtocolLocation();
         case "reflectionprotocol":
         case "reflectionProtocol": return target.getConfiguration().isReflectionProtocol();
+        case "serializablepackages":
+        case "serializablePackages": return target.getConfiguration().getSerializablePackages();
         case "singleparameter":
         case "singleParameter": return target.getConfiguration().isSingleParameter();
         case "uriauthority":
