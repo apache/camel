@@ -168,10 +168,39 @@ public class PlatformHttpComponent extends HeaderFilterStrategyComponent
     }
 
     /**
+     * Removes the http endpoint registered for the given consumer.
+     */
+    public void removeHttpEndpoint(Consumer consumer) {
+        this.removeHttpEndpoint(this.httpEndpoints, consumer);
+    }
+
+    /**
      * Removes a known http endpoint managed by this component.
      */
     public void removeHttpManagementEndpoint(String uri) {
         this.removeHttpEndpoint(this.httpManagementEndpoints, uri);
+    }
+
+    /**
+     * Removes the http management endpoint registered for the given consumer.
+     */
+    public void removeHttpManagementEndpoint(Consumer consumer) {
+        this.removeHttpEndpoint(this.httpManagementEndpoints, consumer);
+    }
+
+    private void removeHttpEndpoint(Set<HttpEndpointModel> endpoints, Consumer consumer) {
+        List<HttpEndpointModel> toRemove = new ArrayList<>();
+        endpoints.stream().filter(e -> e.getConsumer() == consumer).forEach(model -> {
+            toRemove.add(model);
+            for (PlatformHttpListener listener : listeners) {
+                try {
+                    listener.unregisterHttpEndpoint(model);
+                } catch (Exception e) {
+                    LOG.warn("Error removing listener due to {}. This exception is ignored", e.getMessage(), e);
+                }
+            }
+        });
+        toRemove.forEach(endpoints::remove);
     }
 
     private void removeHttpEndpoint(Set<HttpEndpointModel> endpoints, String uri) {

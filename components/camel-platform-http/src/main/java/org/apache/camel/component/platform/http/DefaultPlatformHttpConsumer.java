@@ -117,7 +117,7 @@ public class DefaultPlatformHttpConsumer extends DefaultConsumer
     protected void doStop() throws Exception {
         super.doStop();
         if (register) {
-            getComponent().removeHttpEndpoint(getEndpoint().getPath());
+            getComponent().removeHttpEndpoint(platformHttpConsumer);
         }
         ServiceHelper.stopAndShutdownServices(platformHttpConsumer);
     }
