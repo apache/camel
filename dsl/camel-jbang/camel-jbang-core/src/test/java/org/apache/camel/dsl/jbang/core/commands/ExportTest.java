@@ -830,6 +830,25 @@ class ExportTest {
         Assertions.assertTrue(f.exists());
     }
 
+    @Test
+    public void shouldExportGenAiRouteWithObservability() throws Exception {
+        Export command = new Export(new CamelJBangMain());
+        CommandLine.populateCommand(command,
+                "--gav=examples:genai:1.0.0",
+                "--dir=" + workingDir,
+                "--quiet",
+                "--runtime=main",
+                "src/test/resources/genai-route.yaml");
+        int exit = command.doCall();
+
+        Assertions.assertEquals(0, exit);
+        Model model = readMavenModel();
+        Assertions.assertTrue(
+                containsDependency(model.getDependencies(), "org.apache.camel", "camel-langchain4j-chat", null));
+        Assertions.assertTrue(
+                containsDependency(model.getDependencies(), "org.apache.camel", "camel-ai-observability", null));
+    }
+
     @ParameterizedTest
     @MethodSource("runtimeProvider")
     public void shouldExportObserve(RuntimeType rt) throws Exception {

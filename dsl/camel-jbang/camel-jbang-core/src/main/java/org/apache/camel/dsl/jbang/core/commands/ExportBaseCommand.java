@@ -51,6 +51,7 @@ import java.util.stream.Stream;
 
 import org.apache.camel.dsl.jbang.core.commands.catalog.KameletCatalogHelper;
 import org.apache.camel.dsl.jbang.core.common.CommandLineHelper;
+import org.apache.camel.dsl.jbang.core.common.GenAiDependencyDiscovery;
 import org.apache.camel.dsl.jbang.core.common.HawtioVersion;
 import org.apache.camel.dsl.jbang.core.common.JavaVersionCompletionCandidates;
 import org.apache.camel.dsl.jbang.core.common.LoggingLevelCompletionCandidates;
@@ -810,6 +811,9 @@ public abstract class ExportBaseCommand extends CamelCommand {
         if (answer.stream().anyMatch(s -> s.contains("camel-jpa") || s.equals("camel:jpa"))) {
             answer.add("mvn:org.hibernate.orm:hibernate-core");
         }
+
+        // auto-discover GenAI component, provider and observability dependencies
+        answer.addAll(GenAiDependencyDiscovery.discoverFromSettings(settings, profile, observe, files));
 
         // remove duplicate versions (keep first) but an explicit --dep version always wins over
         // an auto-detected dependency for the same groupId:artifactId (e.g. a JDBC driver whose
