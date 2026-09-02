@@ -18,14 +18,19 @@ package org.apache.camel.support.task.task;
 
 import java.time.Duration;
 import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
 
 import org.apache.camel.support.task.BackgroundTask;
+import org.apache.camel.support.task.Task;
 import org.apache.camel.support.task.Tasks;
 import org.apache.camel.support.task.budget.Budgets;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.Timeout;
 
+import static org.awaitility.Awaitility.await;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -207,5 +212,60 @@ public class BackgroundTaskTest extends TaskTestSupport {
         assertTrue(duration.getSeconds() >= 4);
         assertTrue(duration.getSeconds() <= 5);
         assertFalse(completed, "The task did not complete because of timeout, the return should be false");
+    }
+
+    @DisplayName("Test that a scheduled task is unscheduled once it has completed")
+    @Test
+    @Timeout(10)
+    void testScheduleStopsWhenCompleted() {
+        ScheduledExecutorService executor = Executors.newSingleThreadScheduledExecutor();
+        try {
+            BackgroundTask task = Tasks.backgroundTask()
+                    .withScheduledExecutor(executor)
+                    .withBudget(Budgets.iterationTimeBudget()
+                            .withInterval(Duration.ofMillis(100))
+                            .withInitialDelay(Duration.ZERO)
+                            .withMaxIterations(maxIterations)
+                            .build())
+                    .build();
+
+            Future<?> future = task.schedule(camelContext, () -> {
+                taskCount.increment();
+                return true;
+            });
+
+            await().atMost(5, TimeUnit.SECONDS).untilAsserted(() -> assertTrue(future.isCancelled(),
+                    "A completed task should not stay scheduled"));
+            assertEquals(1, taskCount.intValue(), "The supplier should have run exactly once");
+            assertEquals(Task.Status.Completed, task.getStatus());
+        } finally {
+            executor.shutdownNow();
+        }
+    }
+
+    @DisplayName("Test that a scheduled task is unscheduled once it runs out of budget")
+    @Test
+    @Timeout(10)
+    void testScheduleStopsWhenExhausted() {
+        ScheduledExecutorService executor = Executors.newSingleThreadScheduledExecutor();
+        try {
+            BackgroundTask task = Tasks.backgroundTask()
+                    .withScheduledExecutor(executor)
+                    .withBudget(Budgets.iterationTimeBudget()
+                            .withInterval(Duration.ofMillis(100))
+                            .withInitialDelay(Duration.ZERO)
+                            .withMaxIterations(maxIterations)
+                            .build())
+                    .build();
+
+            Future<?> future = task.schedule(camelContext, this::booleanSupplier);
+
+            await().atMost(5, TimeUnit.SECONDS).untilAsserted(() -> assertTrue(future.isCancelled(),
+                    "An exhausted task should not stay scheduled"));
+            assertEquals(maxIterations, taskCount.intValue());
+            assertEquals(Task.Status.Exhausted, task.getStatus());
+        } finally {
+            executor.shutdownNow();
+        }
     }
 }
