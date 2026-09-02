@@ -191,7 +191,15 @@ public class KafkaKeyValueRepository extends ServiceSupport implements KeyValueR
     public Object delete(String key) {
         CacheEntry oldEntry = cache.remove(key);
         Object oldValue = (oldEntry != null && !oldEntry.isExpired()) ? oldEntry.value : null;
-        broadcastDelete(key);
+        try {
+            broadcastDelete(key);
+        } catch (Exception e) {
+            // rollback the cache on broadcast failure
+            if (oldEntry != null) {
+                cache.put(key, oldEntry);
+            }
+            throw e;
+        }
         return oldValue;
     }
 
@@ -221,8 +229,17 @@ public class KafkaKeyValueRepository extends ServiceSupport implements KeyValueR
     @Override
     @ManagedOperation(description = "Clear all entries")
     public void clear() {
+        // Snapshot the cache before clearing so we can rollback on broadcast failure.
+        // This is a shallow copy — sufficient for rollback since CacheEntry is immutable.
+        Map<String, CacheEntry> snapshot = Map.copyOf(cache);
         cache.clear();
-        broadcastClear();
+        try {
+            broadcastClear();
+        } catch (Exception e) {
+            // rollback: restore previous cache entries
+            cache.putAll(snapshot);
+            throw e;
+        }
     }
 
     @Override
@@ -404,6 +421,11 @@ public class KafkaKeyValueRepository extends ServiceSupport implements KeyValueR
         ObjectHelper.notNull(camelContext, "camelContext");
         StringHelper.notEmpty(topic, "topic");
 
+        // The local cache is an LRU map: when the number of live keys exceeds maxCacheSize,
+        // the least-recently-used entries are silently evicted from memory. get() and contains()
+        // will report evicted keys as absent even though the value is still in the Kafka topic.
+        // This matches the trade-off used by KafkaIdempotentRepository. Increase maxCacheSize
+        // if you need a larger working set to be visible locally.
         this.cache = LRUCacheFactory.newLRUCache(maxCacheSize);
 
         if (consumerConfig == null) {

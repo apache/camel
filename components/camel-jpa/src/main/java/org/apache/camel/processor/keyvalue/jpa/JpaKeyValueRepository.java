@@ -16,11 +16,13 @@
  */
 package org.apache.camel.processor.keyvalue.jpa;
 
+import java.sql.SQLIntegrityConstraintViolationException;
 import java.time.Duration;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
+import jakarta.persistence.EntityExistsException;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.EntityManagerFactory;
 import jakarta.persistence.PersistenceException;
@@ -498,10 +500,10 @@ public class JpaKeyValueRepository extends ServiceSupport implements KeyValueRep
     private static boolean isConstraintViolation(Exception ex) {
         Throwable cause = ex;
         while (cause != null) {
-            if (cause instanceof java.sql.SQLIntegrityConstraintViolationException) {
+            if (cause instanceof SQLIntegrityConstraintViolationException) {
                 return true;
             }
-            if (cause instanceof jakarta.persistence.EntityExistsException) {
+            if (cause instanceof EntityExistsException) {
                 return true;
             }
             cause = cause.getCause();

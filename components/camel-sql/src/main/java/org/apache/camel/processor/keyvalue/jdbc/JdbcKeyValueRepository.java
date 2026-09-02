@@ -304,16 +304,25 @@ public class JdbcKeyValueRepository extends ServiceSupport implements KeyValueRe
      */
     private Object doGet(String key) {
         try {
-            return jdbcTemplate.queryForObject(getSelectString(), (rs, rowNum) -> {
+            // Use a two-element array as a container: [0] = deserialized value, [1] = expired flag.
+            // The DELETE for expired rows is performed after queryForObject returns so that we
+            // do not execute a statement while the ResultSet for the SELECT is still open (some
+            // JDBC drivers dislike that).
+            final boolean[] expired = { false };
+            Object value = jdbcTemplate.queryForObject(getSelectString(), (rs, rowNum) -> {
                 byte[] bytes = rs.getBytes(1);
                 long expiresAt = rs.getLong(2);
                 if (expiresAt > 0 && System.currentTimeMillis() >= expiresAt) {
-                    // entry has expired -- delete it
-                    jdbcTemplate.update(getDeleteString(), key);
+                    expired[0] = true;
                     return null;
                 }
                 return KeyValueRepositoryHelper.deserialize(bytes);
             }, key);
+            if (expired[0]) {
+                jdbcTemplate.update(getDeleteString(), key);
+                return null;
+            }
+            return value;
         } catch (EmptyResultDataAccessException e) {
             return null;
         }
