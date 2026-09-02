@@ -792,7 +792,8 @@ class SqlQueryTab extends AbstractTab {
                 TextInput input = TextInput.builder()
                         .cursorStyle(cursorStyle)
                         .build();
-                frame.renderStatefulWidget(input, valArea, editInputs[i]);
+                // renderWithCursor (not renderStatefulWidget) so the caret is painted on the focused field
+                input.renderWithCursor(valArea, frame.buffer(), editInputs[i], frame);
             } else {
                 String val = editInputs[i].text();
                 boolean changed = !val.equals(editOriginalValues[i]);

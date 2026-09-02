@@ -929,7 +929,8 @@ class SendMessagePopup {
                     TextInput keyInput = TextInput.builder()
                             .cursorStyle(Style.EMPTY.reversed())
                             .build();
-                    frame.renderStatefulWidget(keyInput, keyArea, he.keyInput());
+                    // renderWithCursor (not renderStatefulWidget) so the caret is painted on the active field
+                    keyInput.renderWithCursor(keyArea, frame.buffer(), he.keyInput(), frame);
                 } else {
                     String keyText = he.keyInput().text();
                     Style keyStyle;
@@ -954,7 +955,8 @@ class SendMessagePopup {
                     TextInput valInput = TextInput.builder()
                             .cursorStyle(Style.EMPTY.reversed())
                             .build();
-                    frame.renderStatefulWidget(valInput, valArea, he.valueInput());
+                    // renderWithCursor (not renderStatefulWidget) so the caret is painted on the active field
+                    valInput.renderWithCursor(valArea, frame.buffer(), he.valueInput(), frame);
                 } else {
                     String valText = he.valueInput().text();
                     Style valStyle;

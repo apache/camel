@@ -2370,6 +2370,9 @@ public class CamelMonitor extends CamelCommand {
         }
         hint(fKeySpans, "F2", "actions");
         hint(fKeySpans, "F10", "run");
+        if (tab != null) {
+            tab.renderFKeyHints(fKeySpans);
+        }
         spans.addAll(insertPos, fKeySpans);
         // Return total F-key span count. The footer drop loop uses this to remove pairs from
         // the tail, stopping before the first pair (F1 help when present).

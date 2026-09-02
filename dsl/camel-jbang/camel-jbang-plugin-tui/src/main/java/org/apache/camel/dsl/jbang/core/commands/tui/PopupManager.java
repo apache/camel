@@ -713,14 +713,14 @@ class PopupManager {
         Rect inner = block.inner(popup);
         frame.renderWidget(
                 Paragraph.builder()
+                        .centered()
                         .text(Text.from(
-                                Line.from(Span.raw("")),
+                                Line.empty(),
                                 Line.from(Span.styled(msg, Theme.error().bold())),
-                                Line.from(Span.raw("")),
+                                Line.empty(),
                                 Line.from(
-                                        Span.raw("  "),
                                         Span.styled("Enter", Style.EMPTY.bold()),
-                                        Span.raw(" confirm  "),
+                                        Span.raw(" confirm    "),
                                         Span.styled("Esc", Style.EMPTY.bold()),
                                         Span.raw(" cancel"))))
                         .build(),
@@ -746,14 +746,14 @@ class PopupManager {
         Rect inner = block.inner(popup);
         frame.renderWidget(
                 Paragraph.builder()
+                        .centered()
                         .text(Text.from(
-                                Line.from(Span.raw("")),
+                                Line.empty(),
                                 Line.from(Span.styled(msg, Theme.warning().bold())),
-                                Line.from(Span.raw("")),
+                                Line.empty(),
                                 Line.from(
-                                        Span.raw("  "),
                                         Span.styled("Enter", Style.EMPTY.bold()),
-                                        Span.raw(" confirm  "),
+                                        Span.raw(" confirm    "),
                                         Span.styled("Esc", Style.EMPTY.bold()),
                                         Span.raw(" cancel"))))
                         .build(),

@@ -1286,24 +1286,7 @@ class AiPanel {
     }
 
     private static void copyToSystemClipboard(String text) throws IOException {
-        String os = System.getProperty("os.name", "").toLowerCase();
-        String[] cmd;
-        if (os.contains("mac")) {
-            cmd = new String[] { "pbcopy" };
-        } else if (os.contains("win")) {
-            cmd = new String[] { "clip" };
-        } else {
-            cmd = new String[] { "xclip", "-selection", "clipboard" };
-        }
-        Process p = new ProcessBuilder(cmd).start();
-        try (java.io.OutputStream out = p.getOutputStream()) {
-            out.write(text.getBytes(java.nio.charset.StandardCharsets.UTF_8));
-        }
-        try {
-            p.waitFor(5, java.util.concurrent.TimeUnit.SECONDS);
-        } catch (InterruptedException e) {
-            Thread.currentThread().interrupt();
-        }
+        TuiHelper.copyToClipboard(text);
     }
 
     private void exportChatToFile() {

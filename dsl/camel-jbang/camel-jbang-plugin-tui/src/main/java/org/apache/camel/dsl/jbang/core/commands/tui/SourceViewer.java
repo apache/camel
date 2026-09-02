@@ -3004,7 +3004,8 @@ class SourceViewer {
     }
 
     private void renderDiscardPopup(Frame frame, Rect area) {
-        int popupW = Math.min(40, area.width() - 4);
+        int popupW = Math.max(40, Math.min(44, area.width() - 4));
+        popupW = Math.min(popupW, area.width() - 2);
         int popupH = 6;
         int x = area.left() + Math.max(0, (area.width() - popupW) / 2);
         int y = area.top() + Math.max(0, (area.height() - popupH) / 2);
@@ -3014,18 +3015,19 @@ class SourceViewer {
 
         Block block = Block.builder()
                 .borderType(BorderType.ROUNDED).borders(Borders.ALL)
+                .borderStyle(Theme.warning())
                 .title(Title.from(Line.from(Span.styled(" Discard Changes? ", Theme.warning().bold()))))
                 .build();
         frame.renderWidget(block, popup);
         Rect inner = block.inner(popup);
 
         frame.renderWidget(
-                Paragraph.builder().text(Text.from(
+                Paragraph.builder().centered().text(Text.from(
                         Line.empty(),
-                        Line.from(Span.raw(" Unsaved changes will be lost.")),
+                        Line.from(Span.raw("Unsaved changes will be lost.")),
                         Line.empty(),
-                        Line.from(Span.raw("  "),
-                                Span.styled("Enter", Style.EMPTY.bold()), Span.raw(" confirm  "),
+                        Line.from(
+                                Span.styled("Enter", Style.EMPTY.bold()), Span.raw(" confirm    "),
                                 Span.styled("Esc", Style.EMPTY.bold()), Span.raw(" cancel"))))
                         .build(),
                 inner);
