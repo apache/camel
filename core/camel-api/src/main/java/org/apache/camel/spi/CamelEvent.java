@@ -16,6 +16,7 @@
  */
 package org.apache.camel.spi;
 
+import java.util.LinkedHashMap;
 import java.util.Map;
 
 import org.apache.camel.CamelContext;
@@ -23,6 +24,7 @@ import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.Route;
+import org.apache.camel.util.StringQuoteHelper;
 import org.jspecify.annotations.Nullable;
 
 /**
@@ -103,14 +105,55 @@ public interface CamelEvent {
      * @return        JSON representation of this event
      * @since         4.23
      */
-    String toJSon(int indent);
+    default String toJSon(int indent) {
+        Map<String, Object> map = asJSon();
+        String indentText = indent > 0 ? " ".repeat(indent) : "";
+        StringBuilder sb = new StringBuilder(128);
+        sb.append('{');
+        boolean first = true;
+        for (Map.Entry<String, Object> entry : map.entrySet()) {
+            if (!first) {
+                sb.append(',');
+            }
+            first = false;
+            if (indent > 0) {
+                sb.append('\n').append(indentText);
+            }
+            sb.append(StringQuoteHelper.doubleQuote(entry.getKey())).append(':');
+            if (indent > 0) {
+                sb.append(' ');
+            }
+            Object value = entry.getValue();
+            if (value instanceof Number || value instanceof Boolean) {
+                sb.append(value);
+            } else {
+                sb.append(StringQuoteHelper.doubleQuote(String.valueOf(value)));
+            }
+        }
+        if (indent > 0) {
+            sb.append('\n');
+        }
+        sb.append('}');
+        return sb.toString();
+    }
 
     /**
      * The full event as a {@link Map} suitable for JSON serialization, containing structured metadata for this event.
      *
+     * The default implementation returns a minimal map with {@code type}, optional {@code timestamp}, and
+     * {@code message}. Camel's built-in event classes override this to provide richer structured metadata.
+     *
      * @since 4.23
      */
-    Map<String, Object> asJSon();
+    default Map<String, Object> asJSon() {
+        Map<String, Object> map = new LinkedHashMap<>();
+        map.put("type", getType().name());
+        if (getTimestamp() > 0) {
+            map.put("timestamp", getTimestamp());
+        }
+        map.put("message", toString());
+        return map;
+    }
 
     /**
      * This interface is implemented by all events that contain an exception and is used to retrieve the exception in a
