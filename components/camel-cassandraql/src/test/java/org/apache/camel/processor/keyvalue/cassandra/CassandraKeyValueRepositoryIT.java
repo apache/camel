@@ -171,6 +171,26 @@ public class CassandraKeyValueRepositoryIT extends BaseCassandra {
     }
 
     @Test
+    public void testReplaceWithTtl() {
+        repository.put("key1", "value1", null);
+        boolean replaced = repository.replace("key1", "value1", "value2", Duration.ofSeconds(2));
+        assertTrue(replaced);
+        assertEquals("value2", repository.get("key1"));
+
+        // The replaced value should expire after the TTL
+        await().atMost(10, TimeUnit.SECONDS)
+                .untilAsserted(() -> assertNull(repository.get("key1")));
+    }
+
+    @Test
+    public void testReplaceWithTtlNonMatchingOldValue() {
+        repository.put("key1", "value1", null);
+        boolean replaced = repository.replace("key1", "wrong", "value2", Duration.ofSeconds(2));
+        assertFalse(replaced);
+        assertEquals("value1", repository.get("key1"));
+    }
+
+    @Test
     public void testDeleteWithExpectedValueMatching() {
         repository.put("key1", "value1", null);
         boolean deleted = repository.delete("key1", "value1");
