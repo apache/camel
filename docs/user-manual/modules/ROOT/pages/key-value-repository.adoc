@@ -1,0 +1,345 @@
+= KeyValueRepository
+:doctitle: KeyValueRepository
+:since: 4.23
+
+*Since Camel {since}*
+
+The `KeyValueRepository` SPI (`org.apache.camel.spi.KeyValueRepository`) provides a unified
+key-value abstraction that can be backed by any storage technology. Instead of implementing
+separate repository interfaces for each storage backend, a single `KeyValueRepository`
+implementation can serve as the backing store for multiple Camel patterns:
+
+* *xref:components:eips:idempotentConsumer-eip.adoc[Idempotent Consumer]* -- via `KeyValueIdempotentRepository`
+* *xref:components:eips:aggregate-eip.adoc[Aggregator]* -- via `KeyValueAggregationRepository`
+* *xref:components:eips:cache-eip.adoc[Cache EIP]* -- uses `KeyValueRepository` directly as cache backend
+* *xref:components:ROOT:state-store-component.adoc[State Store component]* -- key-value operations in routes
+
+This means you can configure a single backend (e.g. Redis) and use it across all four patterns
+without duplicating configuration or managing separate repository instances.
+
+== API
+
+The `KeyValueRepository` interface extends `Service` and defines the following operations:
+
+[cols="1,2"]
+|===
+| Method | Description
+
+| `get(key)` | Retrieve the value for a key (null if absent or expired)
+| `put(key, value, ttl)` | Store a value with optional TTL; returns the previous value
+| `delete(key)` | Remove and return the value for a key
+| `contains(key)` | Check if a non-expired entry exists
+| `keys()` | Return all non-expired keys
+| `clear()` | Remove all entries
+| `size()` | Count non-expired entries
+| `putIfAbsent(key, value, ttl)` | Store only if key is absent; returns existing value or null
+| `replace(key, expected, new, ttl)` | Compare-and-swap: replace if current value matches expected
+| `delete(key, expected)` | Compare-and-swap: delete only if current value matches expected
+|===
+
+TTL is specified as `java.time.Duration`. A `null`, zero, or negative duration means no expiration.
+
+The `putIfAbsent`, `replace`, and `delete(key, expected)` methods have default implementations
+that are **not atomic**. Backends that support native atomic operations override these for
+better concurrency guarantees -- see the atomicity column in the table below.
+
+== Available Backends
+
+Camel provides the following `KeyValueRepository` implementations out of the box:
+
+[cols="1,1,1,1,1"]
+|===
+| Backend | Class | Module | TTL | Atomic CAS
+
+| *Memory* (default)
+| `MemoryKeyValueRepository`
+| `camel-support`
+| Lazy eviction
+| Yes (`computeIfPresent`)
+
+| *JDBC*
+| `JdbcKeyValueRepository`
+| `camel-sql`
+| `expires_at` column
+| No (default)
+
+| *JPA*
+| `JpaKeyValueRepository`
+| `camel-jpa`
+| `expiresAt` field
+| No (default)
+
+| *Cassandra*
+| `CassandraKeyValueRepository`
+| `camel-cassandraql`
+| Native `USING TTL`
+| No (default)
+
+| *Kafka*
+| `KafkaKeyValueRepository`
+| `camel-kafka`
+| Envelope timestamp
+| No (default)
+
+| *Caffeine*
+| `CaffeineKeyValueRepository`
+| `camel-caffeine`
+| Native per-entry `Expiry`
+| Yes (`computeIfPresent`)
+
+| *Ehcache*
+| `EhcacheKeyValueRepository`
+| `camel-ehcache`
+| Lazy eviction
+| No (default)
+
+| *JCache (JSR-107)*
+| `JCacheKeyValueRepository`
+| `camel-jcache`
+| Lazy eviction
+| No (default)
+
+| *Hazelcast*
+| `HazelcastKeyValueRepository`
+| `camel-hazelcast`
+| Native per-entry
+| Yes (`IMap.replace`)
+
+| *Redis*
+| `RedisKeyValueRepository`
+| `camel-redis`
+| Native key expiry
+| Partial (CAS yes, CAS+TTL not atomic)
+
+| *Infinispan*
+| `InfinispanRemoteKeyValueRepository`
+| `camel-infinispan`
+| Native lifespan
+| Yes (fully atomic)
+|===
+
+=== Memory (default)
+
+The default backend stores entries in a `ConcurrentHashMap` with lazy TTL eviction.
+No additional dependency is needed.
+
+[source,java]
+----
+KeyValueRepository repo = new MemoryKeyValueRepository();
+----
+
+=== JDBC
+
+Stores entries in a relational database table via plain JDBC.
+
+[source,java]
+----
+JdbcKeyValueRepository repo = new JdbcKeyValueRepository();
+repo.setDataSource(myDataSource);
+repo.setTableName("camel_kvr");  // optional, defaults to "camel_kvr"
+----
+
+The table is auto-created on startup if it does not exist. TTL is stored as an `expires_at`
+epoch-millis column; expired entries are cleaned lazily on read.
+
+=== JPA
+
+Stores entries using JPA with an `EntityManager`.
+
+[source,java]
+----
+JpaKeyValueRepository repo = new JpaKeyValueRepository();
+repo.setEntityManagerFactory(myEmf);
+----
+
+Uses a `KeyValueEntry` entity mapped to a `camel_kvr` table. Add the entity to your
+`persistence.xml` persistence unit.
+
+=== Cassandra
+
+Stores entries in Apache Cassandra using the DataStax driver.
+
+[source,java]
+----
+CassandraKeyValueRepository repo = new CassandraKeyValueRepository();
+repo.setSession(cassandraSession);
+repo.setTableName("camel_kvr");  // optional
+----
+
+TTL uses Cassandra's native `USING TTL` (converted from `Duration` to seconds).
+The table is auto-created on startup.
+
+=== Kafka
+
+Uses a Kafka compacted topic as a persistent key-value store.
+
+[source,java]
+----
+KafkaKeyValueRepository repo = new KafkaKeyValueRepository();
+repo.setBootstrapServers("localhost:9092");
+repo.setTopic("camel-kvr");  // optional
+----
+
+Entries are replayed from the topic on startup into an in-memory `ConcurrentHashMap` cache.
+TTL is stored as an epoch-millis timestamp in the value envelope.
+
+=== Caffeine
+
+In-process cache with native per-entry TTL via Caffeine's `Expiry` API.
+
+[source,java]
+----
+CaffeineKeyValueRepository repo = new CaffeineKeyValueRepository();
+repo.setMaximumSize(10000);  // optional, defaults to 10,000
+----
+
+Atomic CAS operations via `cache.asMap().computeIfPresent()`.
+
+=== Ehcache
+
+Uses an Ehcache 3 `CacheManager`.
+
+[source,java]
+----
+EhcacheKeyValueRepository repo = new EhcacheKeyValueRepository();
+repo.setCacheManager(myCacheManager);
+repo.setCacheName("camel-kvr");
+----
+
+TTL is managed via a wrapper with lazy eviction on read (Ehcache 3 does not support
+per-entry TTL natively).
+
+=== JCache (JSR-107)
+
+Works with any JCache provider (Hazelcast, Ehcache, etc.).
+
+[source,java]
+----
+JCacheKeyValueRepository repo = new JCacheKeyValueRepository();
+repo.setCachingProvider(myProvider);
+repo.setCacheName("camel-kvr");
+----
+
+=== Hazelcast
+
+Distributed key-value store using Hazelcast `IMap`.
+
+[source,java]
+----
+HazelcastKeyValueRepository repo = new HazelcastKeyValueRepository();
+repo.setHazelcastInstance(myHzInstance);
+repo.setMapName("camel-kvr");  // optional
+----
+
+Supports native per-entry TTL and atomic CAS via `IMap.replace(K, V, V)`.
+
+=== Redis
+
+Backed by the Redisson client.
+
+[source,java]
+----
+RedisKeyValueRepository repo = new RedisKeyValueRepository("localhost:6379");
+repo.setKeyPrefix("camel-kvr:");  // optional, defaults to "camel-kvr:"
+----
+
+Atomic CAS via `RBucket.compareAndSet()`. Note: when using `replace()` with a TTL, the CAS
+and TTL are applied as two separate Redis calls -- there is a brief window where the new value
+exists without its TTL.
+
+=== Infinispan
+
+Backed by Infinispan HotRod `RemoteCacheManager`.
+
+[source,java]
+----
+InfinispanRemoteKeyValueRepository repo = new InfinispanRemoteKeyValueRepository();
+repo.setHost("localhost:11222");
+repo.setCacheName("camel-kvr");  // optional
+----
+
+Fully atomic CAS operations including `replace` with TTL in a single native call.
+
+== Usage with Camel Patterns
+
+=== Single backend, multiple patterns
+
+Register a single `KeyValueRepository` in the Camel registry and all patterns auto-discover it:
+
+[source,java]
+----
+@BindToRegistry("kvRepo")
+public KeyValueRepository kvRepo() {
+    return new RedisKeyValueRepository("localhost:6379");
+}
+----
+
+With this single bean in the registry:
+
+* The *State Store* component auto-discovers and uses it for key-value operations.
+* The *Idempotent Consumer* EIP auto-discovers and wraps it in a `KeyValueIdempotentRepository`.
+* The *Aggregator* EIP auto-discovers and wraps it in a `KeyValueAggregationRepository`.
+* The *Cache EIP* uses it as the cache backend.
+
+No explicit wiring is needed.
+
+=== Explicit wiring
+
+You can also wire the backend explicitly when you need more control:
+
+[source,java]
+----
+// Idempotent Consumer
+KeyValueRepository store = new JdbcKeyValueRepository(myDataSource);
+IdempotentRepository idempotent = new KeyValueIdempotentRepository(store);
+
+// Aggregation Repository
+AggregationRepository aggregation = new KeyValueAggregationRepository(store);
+----
+
+=== XML / YAML DSL
+
+[source,xml]
+----
+<bean name="kvStore" type="org.apache.camel.component.redis.RedisKeyValueRepository">
+    <property name="endpoint" value="localhost:6379"/>
+</bean>
+
+<!-- Idempotent Consumer backed by Redis -->
+<bean name="idempotentRepo" type="org.apache.camel.support.KeyValueIdempotentRepository">
+    <constructors>
+        <constructor value="#kvStore"/>
+    </constructors>
+</bean>
+----
+
+== Writing a Custom Backend
+
+Implement the `KeyValueRepository` interface to create your own backend:
+
+[source,java]
+----
+public class MyCustomRepository extends ServiceSupport implements KeyValueRepository {
+
+    @Override
+    public Object get(String key) { /* ... */ }
+
+    @Override
+    public Object put(String key, Object value, Duration ttl) { /* ... */ }
+
+    @Override
+    public Object delete(String key) { /* ... */ }
+
+    @Override
+    public boolean contains(String key) { /* ... */ }
+
+    @Override
+    public Set<String> keys() { /* ... */ }
+
+    @Override
+    public void clear() { /* ... */ }
+}
+----
+
+Override `putIfAbsent`, `replace`, and `delete(key, expected)` if your store supports
+native atomic operations for better concurrency.

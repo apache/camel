@@ -170,74 +170,11 @@ expiry is lazy -- entries are checked and removed on access rather than by a bac
 
 No additional dependency is needed beyond `camel-state-store`.
 
-== Custom Backend
+=== Other backends
 
-Implement the `KeyValueRepository` interface (from `org.apache.camel.spi`) to create your own backend:
+Camel provides `KeyValueRepository` implementations for JDBC, JPA, Cassandra, Kafka, Caffeine,
+Ehcache, JCache, Hazelcast, Redis, and Infinispan. Any of these can be used as the backend
+for the State Store component, the Idempotent Consumer, the Aggregator, and the Cache EIP.
 
-[source,java]
-----
-public class MyCustomBackend extends ServiceSupport implements KeyValueRepository {
-
-    @Override
-    public Object get(String key) {
-        // retrieve the value
-    }
-
-    @Override
-    public Object put(String key, Object value, long ttlMillis) {
-        // store the value; return the previous value or null
-    }
-
-    @Override
-    public Object delete(String key) {
-        // remove and return the value
-    }
-
-    @Override
-    public boolean contains(String key) {
-        // check existence
-    }
-
-    @Override
-    public Set<String> keys() {
-        // return all keys
-    }
-
-    @Override
-    public void clear() {
-        // remove all entries
-    }
-}
-----
-
-The `putIfAbsent` and `size` methods have default implementations but can be overridden
-for better performance with backends that support these operations natively.
-
-Then reference it via bean or let auto-discovery find it:
-
-[source,java]
-----
-from("direct:store")
-    .to("state-store:myStore?operation=put&backend=#myCustomBackend");
-----
-
-=== Sharing a backend across patterns
-
-Because `KeyValueRepository` is the unified SPI, the same implementation can be reused as the
-backend for the Idempotent Consumer and Aggregator EIPs:
-
-[source,java]
-----
-@BindToRegistry("kvRepo")
-public KeyValueRepository kvRepo() {
-    return new MemoryKeyValueRepository();
-}
-----
-
-With a single `KeyValueRepository` in the registry:
-
-* The State Store component auto-discovers and uses it.
-* The Idempotent Consumer EIP auto-discovers and wraps it in a `KeyValueIdempotentRepository`.
-* The Aggregator EIP auto-discovers and wraps it in a `KeyValueAggregationRepository`.
-
-No explicit wiring is needed — all three patterns share the same backend.
+See xref:manual::key-value-repository.adoc[KeyValueRepository] for the full list of available
+backends, configuration examples, and instructions for writing a custom backend.
