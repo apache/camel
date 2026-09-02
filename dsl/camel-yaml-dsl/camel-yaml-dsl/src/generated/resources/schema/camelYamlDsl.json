@@ -19,6 +19,9 @@
           "bean" : {
             "$ref" : "#/items/definitions/org.apache.camel.model.BeanDefinition"
           },
+          "cache" : {
+            "$ref" : "#/items/definitions/org.apache.camel.model.CacheDefinition"
+          },
           "doCatch" : {
             "$ref" : "#/items/definitions/org.apache.camel.model.CatchDefinition"
           },
@@ -743,6 +746,164 @@
           }
         },
         "required" : [ "name", "type" ]
+      },
+      "org.apache.camel.model.CacheDefinition" : {
+        "title" : "Cache",
+        "description" : "Caches the result of the nested processing steps. On cache hit, skips the block and sets the body from cache. On cache miss, executes the block and caches the result body.",
+        "type" : "object",
+        "additionalProperties" : false,
+        "anyOf" : [ {
+          "oneOf" : [ {
+            "$ref" : "#/items/definitions/org.apache.camel.model.language.ExpressionDefinition$Inline"
+          }, {
+            "not" : {
+              "anyOf" : [ {
+                "required" : [ "expression" ]
+              }, {
+                "required" : [ "constant" ]
+              }, {
+                "required" : [ "datasonnet" ]
+              }, {
+                "required" : [ "exchangeProperty" ]
+              }, {
+                "required" : [ "groovy" ]
+              }, {
+                "required" : [ "header" ]
+              }, {
+                "required" : [ "hl7terser" ]
+              }, {
+                "required" : [ "jactl" ]
+              }, {
+                "required" : [ "java" ]
+              }, {
+                "required" : [ "joor" ]
+              }, {
+                "required" : [ "jq" ]
+              }, {
+                "required" : [ "js" ]
+              }, {
+                "required" : [ "jsonpath" ]
+              }, {
+                "required" : [ "language" ]
+              }, {
+                "required" : [ "method" ]
+              }, {
+                "required" : [ "mvel" ]
+              }, {
+                "required" : [ "ognl" ]
+              }, {
+                "required" : [ "python" ]
+              }, {
+                "required" : [ "python3" ]
+              }, {
+                "required" : [ "quickjs" ]
+              }, {
+                "required" : [ "ref" ]
+              }, {
+                "required" : [ "simple" ]
+              }, {
+                "required" : [ "spel" ]
+              }, {
+                "required" : [ "tokenize" ]
+              }, {
+                "required" : [ "variable" ]
+              }, {
+                "required" : [ "wasm" ]
+              }, {
+                "required" : [ "xpath" ]
+              }, {
+                "required" : [ "xquery" ]
+              }, {
+                "required" : [ "xtokenize" ]
+              } ]
+            }
+          }, {
+            "type" : "object",
+            "required" : [ "expression" ],
+            "properties" : {
+              "expression" : {
+                "title" : "Expression",
+                "description" : "Expression to compute the cache key. Messages with the same key share the cached result.",
+                "$ref" : "#/items/definitions/org.apache.camel.model.language.ExpressionDefinition"
+              }
+            }
+          } ]
+        } ],
+        "properties" : {
+          "cacheNull" : {
+            "type" : "boolean",
+            "title" : "Cache Null",
+            "description" : "Whether to cache null results. By default, null message bodies are not cached.",
+            "default" : false
+          },
+          "description" : {
+            "type" : "string",
+            "title" : "Description",
+            "description" : "The description for this node"
+          },
+          "disabled" : {
+            "type" : "boolean",
+            "title" : "Disabled",
+            "description" : "Whether to disable this EIP from the route during build time. Once an EIP has been disabled then it cannot be enabled later at runtime.",
+            "default" : false
+          },
+          "id" : {
+            "type" : "string",
+            "title" : "Id",
+            "description" : "The id of this node"
+          },
+          "keyValueRepository" : {
+            "type" : "string",
+            "title" : "Key Value Repository",
+            "description" : "Sets the reference name of the KeyValueRepository to use as the cache backing store. If not set, a MemoryKeyValueRepository is auto-created."
+          },
+          "note" : {
+            "type" : "string",
+            "title" : "Note",
+            "description" : "The note for this node"
+          },
+          "steps" : {
+            "type" : "array",
+            "items" : {
+              "$ref" : "#/items/definitions/org.apache.camel.model.ProcessorDefinition"
+            }
+          },
+          "ttl" : {
+            "type" : "string",
+            "title" : "Ttl",
+            "description" : "Sets the time-to-live for cached entries. Supports duration syntax (e.g. 10m, 1h) or milliseconds. Default: -1 (no expiration).",
+            "default" : "-1"
+          },
+          "constant" : { },
+          "datasonnet" : { },
+          "exchangeProperty" : { },
+          "groovy" : { },
+          "header" : { },
+          "hl7terser" : { },
+          "jactl" : { },
+          "java" : { },
+          "joor" : { },
+          "jq" : { },
+          "js" : { },
+          "jsonpath" : { },
+          "language" : { },
+          "method" : { },
+          "mvel" : { },
+          "ognl" : { },
+          "python" : { },
+          "python3" : { },
+          "quickjs" : { },
+          "ref" : { },
+          "simple" : { },
+          "spel" : { },
+          "tokenize" : { },
+          "variable" : { },
+          "wasm" : { },
+          "xpath" : { },
+          "xquery" : { },
+          "xtokenize" : { },
+          "expression" : { }
+        }
       },
       "org.apache.camel.model.CatchDefinition" : {
         "title" : "Do Catch",

@@ -45,6 +45,8 @@ The following comparison operators are supported:
 |`!contains` | For testing if it does not contain in a string-based value
 |`endsWith` | For testing if the left-hand side string ends with the right-hand string.
 |`!endsWith` | For testing if the left-hand side string does not end with the right-hand string.
+|`equals` | For testing if the left-hand side string is equal to the right-hand string, compared as text only.
+|`!equals` | For testing if the left-hand side string is not equal to the right-hand string, compared as text only.
 |`in` | For matching if in a set of values, each element must be separated by comma. If you want to include an empty value, then it must be defined using double comma, e.g. `",,bronze,silver,gold"`, which is a set of four values with an empty value and then the three medals.
 |`!in` | For matching if not in a set of values, each element must be separated by comma. If you want to include an empty value, then it must be defined using double comma, e.g. `",,bronze,silver,gold"`, which is a set of four values with an empty value and then the three medals.
 |`is` | For matching if the left-hand side type is an instance of the value.
@@ -56,6 +58,18 @@ The following comparison operators are supported:
 |`startsWith` | For testing if the left-hand side string starts with the right-hand string.
 |`!startsWith` | For testing if the left-hand side string does not start with the right-hand string.
 |====
+
+When both sides of `==` are strings made up only of digits, they are compared as numbers. That is what makes
+`0001 == 001` true, which is usually what you want for values that happen to be written with padding, such as
+the hour from `${date:now:HH}`. It is not what you want for identifiers like account numbers, where the leading
+zeros carry meaning. Use `equals` for those, as it always compares the two values as text:
+
+[source,java]
+----
+// Account1 is "0001" and Account2 is "001"
+.filter().simple("${header.Account1} == ${header.Account2}")     // true, compared as numbers
+.filter().simple("${header.Account1} equals ${header.Account2}") // false, compared as text
+----
 
 === Numeric Operators
 

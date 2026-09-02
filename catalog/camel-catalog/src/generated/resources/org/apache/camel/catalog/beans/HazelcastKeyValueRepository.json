@@ -1,0 +1,16 @@
+{
+  "bean": {
+    "kind": "bean",
+    "name": "HazelcastKeyValueRepository",
+    "javaType": "org.apache.camel.component.hazelcast.HazelcastKeyValueRepository",
+    "interfaceType": "org.apache.camel.spi.KeyValueRepository",
+    "title": "Hazelcast Key Value Repository",
+    "description": "A Hazelcast-based KeyValueRepository with native per-entry TTL support.",
+    "deprecated": false,
+    "groupId": "org.apache.camel",
+    "artifactId": "camel-hazelcast",
+    "version": "4.23.0-SNAPSHOT",
+    "properties": { "mapName": { "index": 0, "kind": "property", "displayName": "Map Name", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "autowired": false, "secret": false, "defaultValue": "HazelcastKeyValueRepository", "description": "Name of the Hazelcast map to use" }, "hazelcastInstance": { "index": 1, "kind": "property", "displayName": "Hazelcast Instance", "required": false, "type": "object", "javaType": "com.hazelcast.core.HazelcastInstance", "deprecated": false, "autowired": false, "secret": false, "description": "To use an existing Hazelcast instance instead of creating a local one" } }
+  }
+}
+

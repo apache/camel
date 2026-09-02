@@ -81,6 +81,19 @@ public class DynamicRouterControlConfiguration {
     private String expressionLanguage = "simple";
 
     /**
+     * Whether the subscription predicate, and the language used to compile it, may be taken from the incoming control
+     * message.
+     */
+    @UriParam(label = "control,security", defaultValue = "false", security = "insecure:dev", insecureValue = "true",
+              description = "Whether the subscription predicate, and the language used to compile it, may be taken"
+                            + " from the incoming control message. When disabled, the predicate and expressionLanguage"
+                            + " configured on this endpoint are used instead. Enabling this lets the sender of a"
+                            + " control message choose both the expression language and the expression that the"
+                            + " Dynamic Router compiles into a live predicate, so only enable it when control messages"
+                            + " come from a trusted source.")
+    private boolean allowPredicateFromMessage;
+
+    /**
      * The control action (subscribe or unsubscribe).
      *
      * @return the control action
@@ -235,6 +248,26 @@ public class DynamicRouterControlConfiguration {
      */
     public void setExpressionLanguage(final String expressionLanguage) {
         this.expressionLanguage = expressionLanguage;
+    }
+
+    /**
+     * Whether the subscription predicate, and the language used to compile it, may be taken from the incoming control
+     * message.
+     *
+     * @return true if the control message may supply the predicate
+     */
+    public boolean isAllowPredicateFromMessage() {
+        return allowPredicateFromMessage;
+    }
+
+    /**
+     * Whether the subscription predicate, and the language used to compile it, may be taken from the incoming control
+     * message.
+     *
+     * @param allowPredicateFromMessage true if the control message may supply the predicate
+     */
+    public void setAllowPredicateFromMessage(final boolean allowPredicateFromMessage) {
+        this.allowPredicateFromMessage = allowPredicateFromMessage;
     }
 
     public DynamicRouterControlConfiguration() {

@@ -31,6 +31,8 @@ public class DynamicRouterEndpointConfigurer extends PropertyConfigurerSupport i
         case "aggregationStrategyMethodAllowNull": target.getConfiguration().setAggregationStrategyMethodAllowNull(property(camelContext, boolean.class, value)); return true;
         case "aggregationstrategymethodname":
         case "aggregationStrategyMethodName": target.getConfiguration().setAggregationStrategyMethodName(property(camelContext, java.lang.String.class, value)); return true;
+        case "allowedschemes":
+        case "allowedSchemes": target.getConfiguration().setAllowedSchemes(property(camelContext, java.lang.String.class, value)); return true;
         case "cachesize":
         case "cacheSize": target.getConfiguration().setCacheSize(property(camelContext, int.class, value)); return true;
         case "executorservice":
@@ -75,6 +77,8 @@ public class DynamicRouterEndpointConfigurer extends PropertyConfigurerSupport i
         case "aggregationStrategyMethodAllowNull": return boolean.class;
         case "aggregationstrategymethodname":
         case "aggregationStrategyMethodName": return java.lang.String.class;
+        case "allowedschemes":
+        case "allowedSchemes": return java.lang.String.class;
         case "cachesize":
         case "cacheSize": return int.class;
         case "executorservice":
@@ -120,6 +124,8 @@ public class DynamicRouterEndpointConfigurer extends PropertyConfigurerSupport i
         case "aggregationStrategyMethodAllowNull": return target.getConfiguration().isAggregationStrategyMethodAllowNull();
         case "aggregationstrategymethodname":
         case "aggregationStrategyMethodName": return target.getConfiguration().getAggregationStrategyMethodName();
+        case "allowedschemes":
+        case "allowedSchemes": return target.getConfiguration().getAllowedSchemes();
         case "cachesize":
         case "cacheSize": return target.getConfiguration().getCacheSize();
         case "executorservice":

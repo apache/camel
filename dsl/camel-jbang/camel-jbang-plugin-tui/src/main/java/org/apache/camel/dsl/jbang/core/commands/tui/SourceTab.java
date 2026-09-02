@@ -588,6 +588,10 @@ class SourceTab extends AbstractTab {
     }
 
     private boolean loadDirectory(Path dir) {
+        return loadDirectory(dir, null);
+    }
+
+    private boolean loadDirectory(Path dir, String selectName) {
         List<FilesBrowser.FileEntry> dirs = new ArrayList<>();
         List<FilesBrowser.FileEntry> files = new ArrayList<>();
         try (var stream = Files.list(dir)) {
@@ -613,6 +617,12 @@ class SourceTab extends AbstractTab {
         dirs.sort(Comparator.comparing(FilesBrowser.FileEntry::name, String.CASE_INSENSITIVE_ORDER));
         files.sort(Comparator.comparing(FilesBrowser.FileEntry::name, String.CASE_INSENSITIVE_ORDER));
 
+        // auto-descend through empty middle folders (no files and exactly one sub folder)
+        // when navigating forward (not when restoring position while navigating back)
+        if (selectName == null && files.isEmpty() && dirs.size() == 1) {
+            return loadDirectory(Path.of(dirs.get(0).path()));
+        }
+
         List<FilesBrowser.FileEntry> found = new ArrayList<>();
         if (!dir.equals(rootDir)) {
             found.add(new FilesBrowser.FileEntry(TuiIcons.FOLDER, "..", -1, dir.getParent().toString(), true));
@@ -624,10 +634,62 @@ class SourceTab extends AbstractTab {
             return false;
         }
         entries = found;
-        listState.select(0);
+        int sel = 0;
+        if (selectName != null) {
+            for (int i = 0; i < found.size(); i++) {
+                if (found.get(i).name().equals(selectName)) {
+                    sel = i;
+                    break;
+                }
+            }
+        }
+        listState.select(sel);
         currentDir = dir;
         buildRouteIndex();
         return true;
+    }
+
+    private void navigateBack() {
+        if (currentDir == null || currentDir.equals(rootDir)) {
+            return;
+        }
+        Path child = currentDir;
+        Path parent = currentDir.getParent();
+        // skip back through empty middle folders (parent has no files and only this one sub folder),
+        // but never above the root directory
+        while (parent != null && !parent.equals(rootDir) && parent.getParent() != null
+                && isEmptyMiddleFolder(parent)) {
+            child = parent;
+            parent = parent.getParent();
+        }
+        loadDirectory(parent, child.getFileName().toString());
+    }
+
+    private boolean isEmptyMiddleFolder(Path dir) {
+        int dirCount = 0;
+        try (var stream = Files.list(dir)) {
+            var it = stream.iterator();
+            while (it.hasNext()) {
+                Path p = it.next();
+                String name = p.getFileName().toString();
+                if (Files.isDirectory(p)) {
+                    if (name.startsWith(".")) {
+                        // hidden directories are not shown
+                        continue;
+                    }
+                    dirCount++;
+                    if (dirCount > 1) {
+                        return false;
+                    }
+                } else if (Files.isRegularFile(p)) {
+                    // has at least one visible file
+                    return false;
+                }
+            }
+        } catch (IOException e) {
+            return false;
+        }
+        return dirCount == 1;
     }
 
     private boolean handleFileListKey(KeyEvent ke) {
@@ -660,9 +722,7 @@ class SourceTab extends AbstractTab {
             return true;
         }
         if (ke.isDeleteBackward()) {
-            if (currentDir != null && !currentDir.equals(rootDir)) {
-                loadDirectory(currentDir.getParent());
-            }
+            navigateBack();
             return true;
         }
         if (ke.isConfirm()) {
@@ -687,7 +747,11 @@ class SourceTab extends AbstractTab {
         if (sel != null && sel < entries.size()) {
             FilesBrowser.FileEntry entry = entries.get(sel);
             if (entry.directory()) {
-                loadDirectory(Path.of(entry.path()));
+                if ("..".equals(entry.name())) {
+                    navigateBack();
+                } else {
+                    loadDirectory(Path.of(entry.path()));
+                }
             } else {
                 Path filePath = Path.of(entry.path());
                 if (isCamelSourceFile(filePath)) {

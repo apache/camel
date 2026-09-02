@@ -832,6 +832,45 @@ public class SimpleOperatorTest extends LanguageTestSupport {
     }
 
     @Test
+    public void testEquals() {
+        exchange.getIn().setHeader("Account1", "0001");
+        exchange.getIn().setHeader("Account2", "001");
+        // == favours numeric comparison when both sides are all digits
+        assertPredicate("${in.header.Account1} == ${in.header.Account2}", true);
+        // equals compares as text, so the leading zeros are significant
+        assertPredicate("${in.header.Account1} equals ${in.header.Account2}", false);
+        assertPredicate("${in.header.Account1} equals ${in.header.Account1}", true);
+        assertPredicate("${in.header.Account1} equals '0001'", true);
+        assertPredicate("${in.header.Account1} equals '001'", false);
+        assertPredicate("${in.header.Account1} equals 1", false);
+
+        exchange.getIn().setBody("Hello there");
+        assertPredicate("${in.body} equals 'Hello there'", true);
+        assertPredicate("${in.body} equals 'hello there'", false);
+        assertPredicate("${in.body} equals 'Hello'", false);
+    }
+
+    @Test
+    public void testNotEquals() {
+        exchange.getIn().setHeader("Account1", "0001");
+        exchange.getIn().setHeader("Account2", "001");
+        assertPredicate("${in.header.Account1} !equals ${in.header.Account2}", true);
+        assertPredicate("${in.header.Account1} !equals ${in.header.Account1}", false);
+        assertPredicate("${in.header.Account1} !equals '0001'", false);
+
+        exchange.getIn().setBody("Hello there");
+        assertPredicate("${in.body} !equals 'Hello there'", false);
+        assertPredicate("${in.body} !equals 'hello there'", true);
+    }
+
+    @Test
+    public void testEqualsAsLiteralText() {
+        // only parsed as an operator in a predicate, elsewhere it is ordinary text
+        assertExpression("the value equals something", "the value equals something");
+        assertExpression("Logging equals start", "Logging equals start");
+    }
+
+    @Test
     public void testElvis() {
         exchange.getIn().setBody(false);
         assertPredicate("${body} ?: 'true'", true);

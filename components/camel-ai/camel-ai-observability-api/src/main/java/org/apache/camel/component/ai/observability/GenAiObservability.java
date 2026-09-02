@@ -84,6 +84,9 @@ public final class GenAiObservability {
     private static ImplBridge resolveBridge(CamelContext camelContext) {
         Class<?> implClass = camelContext.getClassResolver().resolveClass(IMPL_CLASS);
         if (implClass == null) {
+            LOG.info(
+                    "GenAI observability is enabled but camel-ai-observability is not on the classpath; "
+                     + "spans and metrics will not be emitted");
             return UNAVAILABLE_BRIDGE;
         }
         try {

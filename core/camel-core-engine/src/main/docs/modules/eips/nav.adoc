@@ -7,6 +7,7 @@
 ** xref:aggregate-eip.adoc[Aggregate]
 ** xref:batchConfig-eip.adoc[BatchConfig]
 ** xref:bean-eip.adoc[Bean]
+** xref:cache-eip.adoc[Cache]
 ** xref:change-data-capture.adoc[Change Data Capture]
 ** xref:channel-adapter.adoc[Channel Adapter]
 ** xref:choice-eip.adoc[Choice]

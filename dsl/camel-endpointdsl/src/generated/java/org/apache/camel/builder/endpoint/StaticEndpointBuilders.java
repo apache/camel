@@ -7582,6 +7582,46 @@ public class StaticEndpointBuilders {
         return HazelcastTopicEndpointBuilderFactory.endpointBuilder(componentName, path);
     }
     /**
+     * HiveMQ (camel-hivemq)
+     * Camel HiveMQ MQTT Client support
+     * 
+     * Category: messaging,iot
+     * Since: 4.23
+     * Maven coordinates: org.apache.camel:camel-hivemq
+     * 
+     * Syntax: <code>hivemq:topic</code>
+     * 
+     * Path parameter: topic (required)
+     * The MQTT topic name or pattern to subscribe to or publish on.
+     * 
+     * @param path topic
+     * @return the dsl builder
+     */
+    public static HiveMQEndpointBuilderFactory.HiveMQEndpointBuilder hivemq(String path) {
+        return hivemq("hivemq", path);
+    }
+    /**
+     * HiveMQ (camel-hivemq)
+     * Camel HiveMQ MQTT Client support
+     * 
+     * Category: messaging,iot
+     * Since: 4.23
+     * Maven coordinates: org.apache.camel:camel-hivemq
+     * 
+     * Syntax: <code>hivemq:topic</code>
+     * 
+     * Path parameter: topic (required)
+     * The MQTT topic name or pattern to subscribe to or publish on.
+     * 
+     * @param componentName to use a custom component name for the endpoint
+     * instead of the default name
+     * @param path topic
+     * @return the dsl builder
+     */
+    public static HiveMQEndpointBuilderFactory.HiveMQEndpointBuilder hivemq(String componentName, String path) {
+        return HiveMQEndpointBuilderFactory.endpointBuilder(componentName, path);
+    }
+    /**
      * HTTP (camel-http)
      * Send requests to external HTTP servers using Apache HTTP Client 5.x.
      * 

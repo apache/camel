@@ -51,6 +51,8 @@ public final class ModelDeserializersResolver implements YamlDeserializerResolve
             case "org.apache.camel.model.dataformat.BindyDataFormat": return new ModelDeserializers.BindyDataFormatDeserializer();
             case "cbor": return new ModelDeserializers.CBORDataFormatDeserializer();
             case "org.apache.camel.model.dataformat.CBORDataFormat": return new ModelDeserializers.CBORDataFormatDeserializer();
+            case "cache": return new ModelDeserializers.CacheDefinitionDeserializer();
+            case "org.apache.camel.model.CacheDefinition": return new ModelDeserializers.CacheDefinitionDeserializer();
             case "doCatch": return new ModelDeserializers.CatchDefinitionDeserializer();
             case "org.apache.camel.model.CatchDefinition": return new ModelDeserializers.CatchDefinitionDeserializer();
             case "choice": return new ModelDeserializers.ChoiceDefinitionDeserializer();

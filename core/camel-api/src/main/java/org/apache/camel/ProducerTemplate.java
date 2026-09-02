@@ -190,7 +190,7 @@ public interface ProducerTemplate extends Service {
      * @param  body                    the payload to send
      * @throws CamelExecutionException if the processing of the exchange failed
      */
-    void sendBody(Object body) throws CamelExecutionException;
+    void sendBody(@Nullable Object body) throws CamelExecutionException;
 
     /**
      * Sends the body to the default endpoint with a specified header and header value <br/>
@@ -204,7 +204,7 @@ public interface ProducerTemplate extends Service {
      * @param  headerValue             the header value
      * @throws CamelExecutionException if the processing of the exchange failed
      */
-    void sendBodyAndHeader(Object body, String header, Object headerValue) throws CamelExecutionException;
+    void sendBodyAndHeader(@Nullable Object body, String header, @Nullable Object headerValue) throws CamelExecutionException;
 
     /**
      * Sends the body to the default endpoint with a specified property and property value <br/>
@@ -218,7 +218,8 @@ public interface ProducerTemplate extends Service {
      * @param  propertyValue           the property value
      * @throws CamelExecutionException if the processing of the exchange failed
      */
-    void sendBodyAndProperty(Object body, String property, Object propertyValue) throws CamelExecutionException;
+    void sendBodyAndProperty(@Nullable Object body, String property, @Nullable Object propertyValue)
+            throws CamelExecutionException;
 
     /**
      * Sends the body to the default endpoint with the specified headers and header values <br/>
@@ -231,7 +232,7 @@ public interface ProducerTemplate extends Service {
      * @param  headers                 the headers
      * @throws CamelExecutionException if the processing of the exchange failed
      */
-    void sendBodyAndHeaders(Object body, Map<String, Object> headers) throws CamelExecutionException;
+    void sendBodyAndHeaders(@Nullable Object body, Map<String, Object> headers) throws CamelExecutionException;
 
     // Allow sending to arbitrary endpoints
     // -----------------------------------------------------------------------
@@ -349,7 +350,7 @@ public interface ProducerTemplate extends Service {
      * @param  body                    the payload
      * @throws CamelExecutionException if the processing of the exchange failed
      */
-    void sendBody(Endpoint endpoint, Object body) throws CamelExecutionException;
+    void sendBody(Endpoint endpoint, @Nullable Object body) throws CamelExecutionException;
 
     /**
      * Send the body to an endpoint <br/>
@@ -362,7 +363,7 @@ public interface ProducerTemplate extends Service {
      * @param  body                    the payload
      * @throws CamelExecutionException if the processing of the exchange failed
      */
-    void sendBody(String endpointUri, Object body) throws CamelExecutionException;
+    void sendBody(String endpointUri, @Nullable Object body) throws CamelExecutionException;
 
     /**
      * Send the body to an endpoint with the given {@link ExchangePattern} returning any result output body <br/>
@@ -379,7 +380,7 @@ public interface ProducerTemplate extends Service {
      * @throws CamelExecutionException if the processing of the exchange failed
      */
     @Nullable
-    Object sendBody(Endpoint endpoint, ExchangePattern pattern, Object body) throws CamelExecutionException;
+    Object sendBody(Endpoint endpoint, ExchangePattern pattern, @Nullable Object body) throws CamelExecutionException;
 
     /**
      * Send the body to an endpoint returning any result output body <br/>
@@ -396,7 +397,7 @@ public interface ProducerTemplate extends Service {
      * @throws CamelExecutionException if the processing of the exchange failed
      */
     @Nullable
-    Object sendBody(String endpointUri, ExchangePattern pattern, Object body) throws CamelExecutionException;
+    Object sendBody(String endpointUri, ExchangePattern pattern, @Nullable Object body) throws CamelExecutionException;
 
     /**
      * Sends the body to an endpoint with a specified header and header value <br/>
@@ -411,7 +412,8 @@ public interface ProducerTemplate extends Service {
      * @param  headerValue             the header value
      * @throws CamelExecutionException if the processing of the exchange failed
      */
-    void sendBodyAndHeader(String endpointUri, Object body, String header, Object headerValue) throws CamelExecutionException;
+    void sendBodyAndHeader(String endpointUri, @Nullable Object body, String header, @Nullable Object headerValue)
+            throws CamelExecutionException;
 
     /**
      * Sends the body to an endpoint with a specified header and header value <br/>
@@ -426,7 +428,8 @@ public interface ProducerTemplate extends Service {
      * @param  headerValue             the header value
      * @throws CamelExecutionException if the processing of the exchange failed
      */
-    void sendBodyAndHeader(Endpoint endpoint, Object body, String header, Object headerValue) throws CamelExecutionException;
+    void sendBodyAndHeader(Endpoint endpoint, @Nullable Object body, String header, @Nullable Object headerValue)
+            throws CamelExecutionException;
 
     /**
      * Sends the body to an endpoint with a specified header and header value <br/>
@@ -446,8 +449,8 @@ public interface ProducerTemplate extends Service {
      */
     @Nullable
     Object sendBodyAndHeader(
-            Endpoint endpoint, ExchangePattern pattern, Object body,
-            String header, Object headerValue)
+            Endpoint endpoint, ExchangePattern pattern, @Nullable Object body,
+            String header, @Nullable Object headerValue)
             throws CamelExecutionException;
 
     /**
@@ -468,8 +471,8 @@ public interface ProducerTemplate extends Service {
      */
     @Nullable
     Object sendBodyAndHeader(
-            String endpoint, ExchangePattern pattern, Object body,
-            String header, Object headerValue)
+            String endpoint, ExchangePattern pattern, @Nullable Object body,
+            String header, @Nullable Object headerValue)
             throws CamelExecutionException;
 
     /**
@@ -485,7 +488,7 @@ public interface ProducerTemplate extends Service {
      * @param  propertyValue           the property value
      * @throws CamelExecutionException if the processing of the exchange failed
      */
-    void sendBodyAndProperty(String endpointUri, Object body, String property, Object propertyValue)
+    void sendBodyAndProperty(String endpointUri, @Nullable Object body, String property, @Nullable Object propertyValue)
             throws CamelExecutionException;
 
     /**
@@ -501,7 +504,7 @@ public interface ProducerTemplate extends Service {
      * @param  propertyValue           the property value
      * @throws CamelExecutionException if the processing of the exchange failed
      */
-    void sendBodyAndProperty(Endpoint endpoint, Object body, String property, Object propertyValue)
+    void sendBodyAndProperty(Endpoint endpoint, @Nullable Object body, String property, @Nullable Object propertyValue)
             throws CamelExecutionException;
 
     /**
@@ -522,8 +525,8 @@ public interface ProducerTemplate extends Service {
      */
     @Nullable
     Object sendBodyAndProperty(
-            Endpoint endpoint, ExchangePattern pattern, Object body,
-            String property, Object propertyValue)
+            Endpoint endpoint, ExchangePattern pattern, @Nullable Object body,
+            String property, @Nullable Object propertyValue)
             throws CamelExecutionException;
 
     /**
@@ -544,8 +547,8 @@ public interface ProducerTemplate extends Service {
      */
     @Nullable
     Object sendBodyAndProperty(
-            String endpoint, ExchangePattern pattern, Object body,
-            String property, Object propertyValue)
+            String endpoint, ExchangePattern pattern, @Nullable Object body,
+            String property, @Nullable Object propertyValue)
             throws CamelExecutionException;
 
     /**
@@ -560,7 +563,8 @@ public interface ProducerTemplate extends Service {
      * @param  headers                 headers
      * @throws CamelExecutionException if the processing of the exchange failed
      */
-    void sendBodyAndHeaders(String endpointUri, Object body, Map<String, Object> headers) throws CamelExecutionException;
+    void sendBodyAndHeaders(String endpointUri, @Nullable Object body, Map<String, Object> headers)
+            throws CamelExecutionException;
 
     /**
      * Sends the body to an endpoint with the specified headers and header values <br/>
@@ -574,7 +578,8 @@ public interface ProducerTemplate extends Service {
      * @param  headers                 headers
      * @throws CamelExecutionException if the processing of the exchange failed
      */
-    void sendBodyAndHeaders(Endpoint endpoint, Object body, Map<String, Object> headers) throws CamelExecutionException;
+    void sendBodyAndHeaders(Endpoint endpoint, @Nullable Object body, Map<String, Object> headers)
+            throws CamelExecutionException;
 
     /**
      * Sends the body to an endpoint with the specified headers and header values <br/>
@@ -593,7 +598,7 @@ public interface ProducerTemplate extends Service {
      */
     @Nullable
     Object sendBodyAndHeaders(
-            String endpointUri, ExchangePattern pattern, Object body,
+            String endpointUri, ExchangePattern pattern, @Nullable Object body,
             Map<String, Object> headers)
             throws CamelExecutionException;
 
@@ -614,7 +619,7 @@ public interface ProducerTemplate extends Service {
      */
     @Nullable
     Object sendBodyAndHeaders(
-            Endpoint endpoint, ExchangePattern pattern, Object body,
+            Endpoint endpoint, ExchangePattern pattern, @Nullable Object body,
             Map<String, Object> headers)
             throws CamelExecutionException;
 
@@ -662,7 +667,7 @@ public interface ProducerTemplate extends Service {
      * @throws CamelExecutionException if the processing of the exchange failed
      */
     @Nullable
-    Object requestBody(Object body) throws CamelExecutionException;
+    Object requestBody(@Nullable Object body) throws CamelExecutionException;
 
     /**
      * Sends the body to the default endpoint and returns the result content Uses an {@link ExchangePattern#InOut}
@@ -677,7 +682,7 @@ public interface ProducerTemplate extends Service {
      * @return                         the result (see class javadoc)
      * @throws CamelExecutionException if the processing of the exchange failed
      */
-    <T> @Nullable T requestBody(Object body, Class<T> type) throws CamelExecutionException;
+    <T> @Nullable T requestBody(@Nullable Object body, Class<T> type) throws CamelExecutionException;
 
     /**
      * Send the body to an endpoint returning any result output body. Uses an {@link ExchangePattern#InOut} message
@@ -693,7 +698,7 @@ public interface ProducerTemplate extends Service {
      * @throws CamelExecutionException if the processing of the exchange failed
      */
     @Nullable
-    Object requestBody(Endpoint endpoint, Object body) throws CamelExecutionException;
+    Object requestBody(Endpoint endpoint, @Nullable Object body) throws CamelExecutionException;
 
     /**
      * Send the body to an endpoint returning any result output body. Uses an {@link ExchangePattern#InOut} message
@@ -709,7 +714,7 @@ public interface ProducerTemplate extends Service {
      * @return                         the result (see class javadoc)
      * @throws CamelExecutionException if the processing of the exchange failed
      */
-    <T> @Nullable T requestBody(Endpoint endpoint, Object body, Class<T> type) throws CamelExecutionException;
+    <T> @Nullable T requestBody(Endpoint endpoint, @Nullable Object body, Class<T> type) throws CamelExecutionException;
 
     /**
      * Send the body to an endpoint returning any result output body. Uses an {@link ExchangePattern#InOut} message
@@ -725,7 +730,7 @@ public interface ProducerTemplate extends Service {
      * @throws CamelExecutionException if the processing of the exchange failed
      */
     @Nullable
-    Object requestBody(String endpointUri, Object body) throws CamelExecutionException;
+    Object requestBody(String endpointUri, @Nullable Object body) throws CamelExecutionException;
 
     /**
      * Send the body to an endpoint returning any result output body. Uses an {@link ExchangePattern#InOut} message
@@ -741,7 +746,7 @@ public interface ProducerTemplate extends Service {
      * @return                         the result (see class javadoc)
      * @throws CamelExecutionException if the processing of the exchange failed
      */
-    <T> @Nullable T requestBody(String endpointUri, Object body, Class<T> type) throws CamelExecutionException;
+    <T> @Nullable T requestBody(String endpointUri, @Nullable Object body, Class<T> type) throws CamelExecutionException;
 
     /**
      * Sends the body to the default endpoint and returns the result content Uses an {@link ExchangePattern#InOut}
@@ -758,7 +763,8 @@ public interface ProducerTemplate extends Service {
      * @throws CamelExecutionException if the processing of the exchange failed
      */
     @Nullable
-    Object requestBodyAndHeader(Object body, String header, Object headerValue) throws CamelExecutionException;
+    Object requestBodyAndHeader(@Nullable Object body, String header, @Nullable Object headerValue)
+            throws CamelExecutionException;
 
     /**
      * Send the body to an endpoint returning any result output body. Uses an {@link ExchangePattern#InOut} message
@@ -776,7 +782,7 @@ public interface ProducerTemplate extends Service {
      * @throws CamelExecutionException if the processing of the exchange failed
      */
     @Nullable
-    Object requestBodyAndHeader(Endpoint endpoint, Object body, String header, Object headerValue)
+    Object requestBodyAndHeader(Endpoint endpoint, @Nullable Object body, String header, @Nullable Object headerValue)
             throws CamelExecutionException;
 
     /**
@@ -795,7 +801,8 @@ public interface ProducerTemplate extends Service {
      * @return                         the result (see class javadoc)
      * @throws CamelExecutionException if the processing of the exchange failed
      */
-    <T> @Nullable T requestBodyAndHeader(Endpoint endpoint, Object body, String header, Object headerValue, Class<T> type)
+    <T> @Nullable T requestBodyAndHeader(
+            Endpoint endpoint, @Nullable Object body, String header, @Nullable Object headerValue, Class<T> type)
             throws CamelExecutionException;
 
     /**
@@ -814,7 +821,7 @@ public interface ProducerTemplate extends Service {
      * @throws CamelExecutionException if the processing of the exchange failed
      */
     @Nullable
-    Object requestBodyAndHeader(String endpointUri, Object body, String header, Object headerValue)
+    Object requestBodyAndHeader(String endpointUri, @Nullable Object body, String header, @Nullable Object headerValue)
             throws CamelExecutionException;
 
     /**
@@ -833,7 +840,8 @@ public interface ProducerTemplate extends Service {
      * @return                         the result (see class javadoc)
      * @throws CamelExecutionException if the processing of the exchange failed
      */
-    <T> @Nullable T requestBodyAndHeader(String endpointUri, Object body, String header, Object headerValue, Class<T> type)
+    <T> @Nullable T requestBodyAndHeader(
+            String endpointUri, @Nullable Object body, String header, @Nullable Object headerValue, Class<T> type)
             throws CamelExecutionException;
 
     /**
@@ -851,7 +859,8 @@ public interface ProducerTemplate extends Service {
      * @throws CamelExecutionException if the processing of the exchange failed
      */
     @Nullable
-    Object requestBodyAndHeaders(String endpointUri, Object body, Map<String, Object> headers) throws CamelExecutionException;
+    Object requestBodyAndHeaders(String endpointUri, @Nullable Object body, Map<String, Object> headers)
+            throws CamelExecutionException;
 
     /**
      * Sends the body to an endpoint with the specified headers and header values. Uses an {@link ExchangePattern#InOut}
@@ -868,7 +877,7 @@ public interface ProducerTemplate extends Service {
      * @return                         the result (see class javadoc)
      * @throws CamelExecutionException if the processing of the exchange failed
      */
-    <T> @Nullable T requestBodyAndHeaders(String endpointUri, Object body, Map<String, Object> headers, Class<T> type)
+    <T> @Nullable T requestBodyAndHeaders(String endpointUri, @Nullable Object body, Map<String, Object> headers, Class<T> type)
             throws CamelExecutionException;
 
     /**
@@ -886,7 +895,8 @@ public interface ProducerTemplate extends Service {
      * @throws CamelExecutionException if the processing of the exchange failed
      */
     @Nullable
-    Object requestBodyAndHeaders(Endpoint endpoint, Object body, Map<String, Object> headers) throws CamelExecutionException;
+    Object requestBodyAndHeaders(Endpoint endpoint, @Nullable Object body, Map<String, Object> headers)
+            throws CamelExecutionException;
 
     /**
      * Sends the body to the default endpoint and returns the result content Uses an {@link ExchangePattern#InOut}
@@ -902,7 +912,7 @@ public interface ProducerTemplate extends Service {
      * @throws CamelExecutionException if the processing of the exchange failed
      */
     @Nullable
-    Object requestBodyAndHeaders(Object body, Map<String, Object> headers) throws CamelExecutionException;
+    Object requestBodyAndHeaders(@Nullable Object body, Map<String, Object> headers) throws CamelExecutionException;
 
     /**
      * Sends the body to an endpoint with the specified headers and header values. Uses an {@link ExchangePattern#InOut}
@@ -919,7 +929,7 @@ public interface ProducerTemplate extends Service {
      * @return                         the result (see class javadoc)
      * @throws CamelExecutionException if the processing of the exchange failed
      */
-    <T> @Nullable T requestBodyAndHeaders(Endpoint endpoint, Object body, Map<String, Object> headers, Class<T> type)
+    <T> @Nullable T requestBodyAndHeaders(Endpoint endpoint, @Nullable Object body, Map<String, Object> headers, Class<T> type)
             throws CamelExecutionException;
 
     // Asynchronous methods
@@ -962,7 +972,7 @@ public interface ProducerTemplate extends Service {
      * @param  body        the body to send
      * @return             a handle to be used to get the response in the future
      */
-    CompletableFuture<Object> asyncSendBody(String endpointUri, Object body);
+    CompletableFuture<Object> asyncSendBody(String endpointUri, @Nullable Object body);
 
     /**
      * Sends an asynchronous body to the given endpoint. Uses an {@link ExchangePattern#InOut} message exchange pattern.
@@ -971,7 +981,7 @@ public interface ProducerTemplate extends Service {
      * @param  body        the body to send
      * @return             a handle to be used to get the response in the future
      */
-    CompletableFuture<Object> asyncRequestBody(String endpointUri, Object body);
+    CompletableFuture<Object> asyncRequestBody(String endpointUri, @Nullable Object body);
 
     /**
      * Sends an asynchronous body to the given endpoint. Uses an {@link ExchangePattern#InOut} message exchange pattern.
@@ -982,7 +992,8 @@ public interface ProducerTemplate extends Service {
      * @param  headerValue the header value
      * @return             a handle to be used to get the response in the future
      */
-    CompletableFuture<Object> asyncRequestBodyAndHeader(String endpointUri, Object body, String header, Object headerValue);
+    CompletableFuture<Object> asyncRequestBodyAndHeader(
+            String endpointUri, @Nullable Object body, String header, @Nullable Object headerValue);
 
     /**
      * Sends an asynchronous body to the given endpoint. Uses an {@link ExchangePattern#InOut} message exchange pattern.
@@ -992,7 +1003,8 @@ public interface ProducerTemplate extends Service {
      * @param  headers     headers
      * @return             a handle to be used to get the response in the future
      */
-    CompletableFuture<Object> asyncRequestBodyAndHeaders(String endpointUri, Object body, Map<String, Object> headers);
+    CompletableFuture<Object> asyncRequestBodyAndHeaders(
+            String endpointUri, @Nullable Object body, Map<String, Object> headers);
 
     /**
      * Sends an asynchronous body to the given endpoint. Uses an {@link ExchangePattern#InOut} message exchange pattern.
@@ -1002,7 +1014,7 @@ public interface ProducerTemplate extends Service {
      * @param  type        the expected response type
      * @return             a handle to be used to get the response in the future
      */
-    <T> CompletableFuture<T> asyncRequestBody(String endpointUri, Object body, Class<T> type);
+    <T> CompletableFuture<T> asyncRequestBody(String endpointUri, @Nullable Object body, Class<T> type);
 
     /**
      * Sends an asynchronous body to the given endpoint. Uses an {@link ExchangePattern#InOut} message exchange pattern.
@@ -1015,7 +1027,7 @@ public interface ProducerTemplate extends Service {
      * @return             a handle to be used to get the response in the future
      */
     <T> CompletableFuture<T> asyncRequestBodyAndHeader(
-            String endpointUri, Object body, String header, Object headerValue, Class<T> type);
+            String endpointUri, @Nullable Object body, String header, @Nullable Object headerValue, Class<T> type);
 
     /**
      * Sends an asynchronous body to the given endpoint. Uses an {@link ExchangePattern#InOut} message exchange pattern.
@@ -1027,7 +1039,7 @@ public interface ProducerTemplate extends Service {
      * @return             a handle to be used to get the response in the future
      */
     <T> CompletableFuture<T> asyncRequestBodyAndHeaders(
-            String endpointUri, Object body, Map<String, Object> headers, Class<T> type);
+            String endpointUri, @Nullable Object body, Map<String, Object> headers, Class<T> type);
 
     /**
      * Sends an asynchronous exchange to the given endpoint.
@@ -1059,7 +1071,7 @@ public interface ProducerTemplate extends Service {
      * @param  body     the body to send
      * @return          a handle to be used to get the response in the future
      */
-    CompletableFuture<Object> asyncSendBody(Endpoint endpoint, Object body);
+    CompletableFuture<Object> asyncSendBody(Endpoint endpoint, @Nullable Object body);
 
     /**
      * Sends an asynchronous body to the given endpoint. Uses an {@link ExchangePattern#InOut} message exchange pattern.
@@ -1068,7 +1080,7 @@ public interface ProducerTemplate extends Service {
      * @param  body     the body to send
      * @return          a handle to be used to get the response in the future
      */
-    CompletableFuture<Object> asyncRequestBody(Endpoint endpoint, Object body);
+    CompletableFuture<Object> asyncRequestBody(Endpoint endpoint, @Nullable Object body);
 
     /**
      * Sends an asynchronous body to the given endpoint. Uses an {@link ExchangePattern#InOut} message exchange pattern.
@@ -1079,7 +1091,8 @@ public interface ProducerTemplate extends Service {
      * @param  headerValue the header value
      * @return             a handle to be used to get the response in the future
      */
-    CompletableFuture<Object> asyncRequestBodyAndHeader(Endpoint endpoint, Object body, String header, Object headerValue);
+    CompletableFuture<Object> asyncRequestBodyAndHeader(
+            Endpoint endpoint, @Nullable Object body, String header, @Nullable Object headerValue);
 
     /**
      * Sends an asynchronous body to the given endpoint. Uses an {@link ExchangePattern#InOut} message exchange pattern.
@@ -1089,7 +1102,7 @@ public interface ProducerTemplate extends Service {
      * @param  headers  headers
      * @return          a handle to be used to get the response in the future
      */
-    CompletableFuture<Object> asyncRequestBodyAndHeaders(Endpoint endpoint, Object body, Map<String, Object> headers);
+    CompletableFuture<Object> asyncRequestBodyAndHeaders(Endpoint endpoint, @Nullable Object body, Map<String, Object> headers);
 
     /**
      * Sends an asynchronous body to the given endpoint. Uses an {@link ExchangePattern#InOut} message exchange pattern.
@@ -1099,7 +1112,7 @@ public interface ProducerTemplate extends Service {
      * @param  type     the expected response type
      * @return          a handle to be used to get the response in the future
      */
-    <T> CompletableFuture<T> asyncRequestBody(Endpoint endpoint, Object body, Class<T> type);
+    <T> CompletableFuture<T> asyncRequestBody(Endpoint endpoint, @Nullable Object body, Class<T> type);
 
     /**
      * Sends an asynchronous body to the given endpoint. Uses an {@link ExchangePattern#InOut} message exchange pattern.
@@ -1112,7 +1125,7 @@ public interface ProducerTemplate extends Service {
      * @return             a handle to be used to get the response in the future
      */
     <T> CompletableFuture<T> asyncRequestBodyAndHeader(
-            Endpoint endpoint, Object body, String header, Object headerValue, Class<T> type);
+            Endpoint endpoint, @Nullable Object body, String header, @Nullable Object headerValue, Class<T> type);
 
     /**
      * Sends an asynchronous body to the given endpoint. Uses an {@link ExchangePattern#InOut} message exchange pattern.
@@ -1124,7 +1137,7 @@ public interface ProducerTemplate extends Service {
      * @return          a handle to be used to get the response in the future
      */
     <T> CompletableFuture<T> asyncRequestBodyAndHeaders(
-            Endpoint endpoint, Object body, Map<String, Object> headers, Class<T> type);
+            Endpoint endpoint, @Nullable Object body, Map<String, Object> headers, Class<T> type);
 
     /**
      * Gets the response body from the future handle, will wait until the response is ready.
