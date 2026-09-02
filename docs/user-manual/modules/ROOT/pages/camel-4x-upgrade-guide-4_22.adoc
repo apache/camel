@@ -1799,3 +1799,18 @@ they say:
   `CamelGoogleVertexAIStreamOutputMode` header.
 * `jsonMode=true` sets the response MIME type of the request to `application/json`, so the model is
   asked to answer with JSON. The default `false` leaves the request untouched.
+
+=== camel-support
+
+`BackgroundTask.schedule` now cancels the repeating schedule it created once the task has completed or has
+run out of budget. Previously the returned `Future` stayed armed and the task kept being re-run as a no-op
+for the lifetime of the executor. Callers that inspect the returned `Future` will see `isCancelled()`
+return `true` after the task is done, where it previously stayed live. Callers that already cancel the
+`Future` themselves are unaffected.
+
+=== camel-master
+
+The `backOffMaxAttempts` option now bounds the attempts to start the delegated consumer as documented.
+The retry task previously also carried the default five second duration of its budget, which ended the
+task before the second attempt for any `backOffDelay` at or above the default of five seconds. A delegate
+that fails to start is therefore retried for longer than before, up to `backOffMaxAttempts` times.
