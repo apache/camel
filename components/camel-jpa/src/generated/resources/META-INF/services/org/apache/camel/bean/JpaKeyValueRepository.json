@@ -1,0 +1,16 @@
+{
+  "bean": {
+    "kind": "bean",
+    "name": "JpaKeyValueRepository",
+    "javaType": "org.apache.camel.processor.keyvalue.jpa.JpaKeyValueRepository",
+    "interfaceType": "org.apache.camel.spi.KeyValueRepository",
+    "title": "Jpa Key Value Repository",
+    "description": "A JPA-based KeyValueRepository that stores entries using JPA entities.",
+    "deprecated": false,
+    "groupId": "org.apache.camel",
+    "artifactId": "camel-jpa",
+    "version": "4.23.0-SNAPSHOT",
+    "properties": { "entityManagerFactory": { "index": 0, "kind": "property", "displayName": "Entity Manager Factory", "required": true, "type": "object", "javaType": "jakarta.persistence.EntityManagerFactory", "deprecated": false, "autowired": false, "secret": false, "description": "The JPA EntityManagerFactory to use" }, "transactionStrategy": { "index": 1, "kind": "property", "displayName": "Transaction Strategy", "required": false, "type": "object", "javaType": "org.apache.camel.component.jpa.TransactionStrategy", "deprecated": false, "autowired": false, "secret": false, "description": "The TransactionStrategy to use for transactional operations" }, "joinTransaction": { "index": 2, "kind": "property", "displayName": "Join Transaction", "required": false, "type": "boolean", "javaType": "boolean", "deprecated": false, "autowired": false, "secret": false, "defaultValue": true, "description": "Whether to join an existing transaction" }, "sharedEntityManager": { "index": 3, "kind": "property", "displayName": "Shared Entity Manager", "required": false, "type": "boolean", "javaType": "boolean", "deprecated": false, "autowired": false, "secret": false, "defaultValue": false, "description": "Whether to use a shared EntityManager" } }
+  }
+}
+

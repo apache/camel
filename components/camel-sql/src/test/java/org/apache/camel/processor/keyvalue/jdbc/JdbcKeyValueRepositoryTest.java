@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.support;
+package org.apache.camel.processor.keyvalue.jdbc;
 
 import java.time.Duration;
 import java.util.Set;
@@ -23,66 +23,86 @@ import java.util.concurrent.TimeUnit;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.springframework.jdbc.datasource.embedded.EmbeddedDatabase;
+import org.springframework.jdbc.datasource.embedded.EmbeddedDatabaseBuilder;
+import org.springframework.jdbc.datasource.embedded.EmbeddedDatabaseType;
 
-import static org.assertj.core.api.Assertions.assertThat;
 import static org.awaitility.Awaitility.await;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
-class MemoryKeyValueRepositoryTest {
+class JdbcKeyValueRepositoryTest {
 
-    private MemoryKeyValueRepository repository;
+    private JdbcKeyValueRepository repository;
+    private EmbeddedDatabase dataSource;
 
     @BeforeEach
     void setUp() throws Exception {
-        repository = new MemoryKeyValueRepository();
+        dataSource = new EmbeddedDatabaseBuilder()
+                .setType(EmbeddedDatabaseType.H2)
+                .build();
+        repository = new JdbcKeyValueRepository(dataSource);
+        repository.init();
         repository.start();
     }
 
     @AfterEach
     void tearDown() throws Exception {
         repository.stop();
+        dataSource.shutdown();
     }
 
     @Test
     void testPutAndGet() {
         repository.put("key1", "value1", null);
-
-        assertThat(repository.get("key1")).isEqualTo("value1");
+        assertEquals("value1", repository.get("key1"));
     }
 
     @Test
     void testGetMissingKeyReturnsNull() {
-        assertThat(repository.get("nonexistent")).isNull();
+        assertNull(repository.get("nonexistent"));
     }
 
     @Test
     void testPutOverwritesExistingValue() {
         repository.put("key1", "value1", null);
         repository.put("key1", "value2", null);
+        assertEquals("value2", repository.get("key1"));
+    }
 
-        assertThat(repository.get("key1")).isEqualTo("value2");
+    @Test
+    void testPutReturnsOldValue() {
+        repository.put("key1", "value1", null);
+        Object old = repository.put("key1", "value2", null);
+        assertEquals("value1", old);
+    }
+
+    @Test
+    void testPutReturnsNullForNewKey() {
+        Object old = repository.put("key1", "value1", null);
+        assertNull(old);
     }
 
     @Test
     void testDelete() {
         repository.put("key1", "value1", null);
-
         Object deleted = repository.delete("key1");
-
-        assertThat(deleted).isEqualTo("value1");
-        assertThat(repository.get("key1")).isNull();
+        assertEquals("value1", deleted);
+        assertNull(repository.get("key1"));
     }
 
     @Test
     void testDeleteMissingKeyReturnsNull() {
-        assertThat(repository.delete("nonexistent")).isNull();
+        assertNull(repository.delete("nonexistent"));
     }
 
     @Test
     void testContains() {
         repository.put("key1", "value1", null);
-
-        assertThat(repository.contains("key1")).isTrue();
-        assertThat(repository.contains("nonexistent")).isFalse();
+        assertTrue(repository.contains("key1"));
+        assertFalse(repository.contains("nonexistent"));
     }
 
     @Test
@@ -92,126 +112,107 @@ class MemoryKeyValueRepositoryTest {
         repository.put("key3", "value3", null);
 
         Set<String> keys = repository.keys();
-
-        assertThat(keys).containsExactlyInAnyOrder("key1", "key2", "key3");
+        assertEquals(3, keys.size());
+        assertTrue(keys.contains("key1"));
+        assertTrue(keys.contains("key2"));
+        assertTrue(keys.contains("key3"));
     }
 
     @Test
     void testKeysEmpty() {
-        assertThat(repository.keys()).isEmpty();
+        assertTrue(repository.keys().isEmpty());
     }
 
     @Test
     void testClear() {
         repository.put("key1", "value1", null);
         repository.put("key2", "value2", null);
-
         repository.clear();
-
-        assertThat(repository.size()).isZero();
-        assertThat(repository.get("key1")).isNull();
-        assertThat(repository.get("key2")).isNull();
+        assertEquals(0, repository.size());
+        assertNull(repository.get("key1"));
+        assertNull(repository.get("key2"));
     }
 
     @Test
     void testSize() {
-        assertThat(repository.size()).isZero();
-
+        assertEquals(0, repository.size());
         repository.put("key1", "value1", null);
-        assertThat(repository.size()).isEqualTo(1);
-
+        assertEquals(1, repository.size());
         repository.put("key2", "value2", null);
-        assertThat(repository.size()).isEqualTo(2);
-
+        assertEquals(2, repository.size());
         repository.delete("key1");
-        assertThat(repository.size()).isEqualTo(1);
+        assertEquals(1, repository.size());
     }
 
     @Test
     void testPutIfAbsentNewKey() {
         Object result = repository.putIfAbsent("key1", "value1", null);
-
-        assertThat(result).isNull();
-        assertThat(repository.get("key1")).isEqualTo("value1");
+        assertNull(result);
+        assertEquals("value1", repository.get("key1"));
     }
 
     @Test
     void testPutIfAbsentExistingKey() {
         repository.put("key1", "value1", null);
-
         Object result = repository.putIfAbsent("key1", "value2", null);
-
-        assertThat(result).isEqualTo("value1");
-        assertThat(repository.get("key1")).isEqualTo("value1");
+        assertEquals("value1", result);
+        assertEquals("value1", repository.get("key1"));
     }
 
     @Test
     void testReplaceMatchingOldValue() {
         repository.put("key1", "value1", null);
-
         boolean replaced = repository.replace("key1", "value1", "value2", null);
-
-        assertThat(replaced).isTrue();
-        assertThat(repository.get("key1")).isEqualTo("value2");
+        assertTrue(replaced);
+        assertEquals("value2", repository.get("key1"));
     }
 
     @Test
     void testReplaceNonMatchingOldValue() {
         repository.put("key1", "value1", null);
-
         boolean replaced = repository.replace("key1", "wrong", "value2", null);
-
-        assertThat(replaced).isFalse();
-        assertThat(repository.get("key1")).isEqualTo("value1");
+        assertFalse(replaced);
+        assertEquals("value1", repository.get("key1"));
     }
 
     @Test
     void testReplaceMissingKey() {
         boolean replaced = repository.replace("nonexistent", "value1", "value2", null);
-
-        assertThat(replaced).isFalse();
+        assertFalse(replaced);
     }
 
     @Test
     void testDeleteWithExpectedValueMatching() {
         repository.put("key1", "value1", null);
-
         boolean deleted = repository.delete("key1", "value1");
-
-        assertThat(deleted).isTrue();
-        assertThat(repository.get("key1")).isNull();
+        assertTrue(deleted);
+        assertNull(repository.get("key1"));
     }
 
     @Test
     void testDeleteWithExpectedValueNotMatching() {
         repository.put("key1", "value1", null);
-
         boolean deleted = repository.delete("key1", "wrong");
-
-        assertThat(deleted).isFalse();
-        assertThat(repository.get("key1")).isEqualTo("value1");
+        assertFalse(deleted);
+        assertEquals("value1", repository.get("key1"));
     }
 
     @Test
     void testDeleteWithExpectedValueMissingKey() {
         boolean deleted = repository.delete("nonexistent", "value1");
-
-        assertThat(deleted).isFalse();
+        assertFalse(deleted);
     }
 
     @Test
     void testTtlExpiration() {
-        // Use a very short TTL
         repository.put("key1", "value1", Duration.ofMillis(50));
+        assertEquals("value1", repository.get("key1"));
+        assertTrue(repository.contains("key1"));
 
-        assertThat(repository.get("key1")).isEqualTo("value1");
-        assertThat(repository.contains("key1")).isTrue();
-
-        // Wait for the entry to expire
         await().atMost(500, TimeUnit.MILLISECONDS)
                 .untilAsserted(() -> {
-                    assertThat(repository.get("key1")).isNull();
-                    assertThat(repository.contains("key1")).isFalse();
+                    assertNull(repository.get("key1"));
+                    assertFalse(repository.contains("key1"));
                 });
     }
 
@@ -222,8 +223,9 @@ class MemoryKeyValueRepositoryTest {
 
         await().atMost(500, TimeUnit.MILLISECONDS)
                 .untilAsserted(() -> {
-                    assertThat(repository.keys()).containsExactly("key2");
-                    assertThat(repository.size()).isEqualTo(1);
+                    Set<String> keys = repository.keys();
+                    assertEquals(1, keys.size());
+                    assertTrue(keys.contains("key2"));
                 });
     }
 
@@ -232,10 +234,7 @@ class MemoryKeyValueRepositoryTest {
         repository.put("key1", "value1", Duration.ofMillis(50));
 
         await().atMost(500, TimeUnit.MILLISECONDS)
-                .untilAsserted(() -> {
-                    // Deleting an expired entry should return null
-                    assertThat(repository.delete("key1")).isNull();
-                });
+                .untilAsserted(() -> assertNull(repository.delete("key1")));
     }
 
     @Test
@@ -244,38 +243,31 @@ class MemoryKeyValueRepositoryTest {
 
         await().atMost(500, TimeUnit.MILLISECONDS)
                 .untilAsserted(() -> {
-                    // The entry has expired, so putIfAbsent should succeed
                     Object result = repository.putIfAbsent("key1", "value2", null);
-                    assertThat(result).isNull();
-                    assertThat(repository.get("key1")).isEqualTo("value2");
+                    assertNull(result);
+                    assertEquals("value2", repository.get("key1"));
                 });
     }
 
     @Test
     void testNoTtlWithNull() {
         repository.put("key1", "value1", null);
-
-        // Entry with null TTL should not expire
-        assertThat(repository.get("key1")).isEqualTo("value1");
-        assertThat(repository.contains("key1")).isTrue();
+        assertEquals("value1", repository.get("key1"));
+        assertTrue(repository.contains("key1"));
     }
 
     @Test
     void testNoTtlWithZero() {
         repository.put("key1", "value1", Duration.ZERO);
-
-        // Entry with zero TTL should not expire
-        assertThat(repository.get("key1")).isEqualTo("value1");
-        assertThat(repository.contains("key1")).isTrue();
+        assertEquals("value1", repository.get("key1"));
+        assertTrue(repository.contains("key1"));
     }
 
     @Test
     void testNoTtlWithNegative() {
         repository.put("key1", "value1", Duration.ofMillis(-1));
-
-        // Entry with negative TTL should not expire
-        assertThat(repository.get("key1")).isEqualTo("value1");
-        assertThat(repository.contains("key1")).isTrue();
+        assertEquals("value1", repository.get("key1"));
+        assertTrue(repository.contains("key1"));
     }
 
     @Test
@@ -284,22 +276,20 @@ class MemoryKeyValueRepositoryTest {
         repository.put("integer", 42, null);
         repository.put("boolean", Boolean.TRUE, null);
 
-        assertThat(repository.get("string")).isEqualTo("hello");
-        assertThat(repository.get("integer")).isEqualTo(42);
-        assertThat(repository.get("boolean")).isEqualTo(Boolean.TRUE);
+        assertEquals("hello", repository.get("string"));
+        assertEquals(42, repository.get("integer"));
+        assertEquals(Boolean.TRUE, repository.get("boolean"));
     }
 
     @Test
-    void testReplaceWithTtl() {
+    void testAutoCreateTable() throws Exception {
+        repository.stop();
+        repository = new JdbcKeyValueRepository(dataSource);
+        repository.setTableName("CUSTOM_KV_TABLE");
+        repository.init();
+        repository.start();
+
         repository.put("key1", "value1", null);
-
-        boolean replaced = repository.replace("key1", "value1", "value2", Duration.ofMillis(500));
-
-        assertThat(replaced).isTrue();
-        assertThat(repository.get("key1")).isEqualTo("value2");
-
-        await().atMost(5, TimeUnit.SECONDS)
-                .untilAsserted(() -> assertThat(repository.get("key1")).isNull());
+        assertEquals("value1", repository.get("key1"));
     }
-
 }
