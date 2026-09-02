@@ -40,7 +40,7 @@ public class KMSProducer extends DefaultProducer {
         KMSEndpoint endpoint = getEndpoint();
         ClientConfigurations configuration = KMSUtils.createClientConfigurations(endpoint, exchange);
 
-        if (ObjectHelper.isEmpty(configuration.getOperation())) {
+        if (ObjectHelper.isEmpty(configuration.operation())) {
             throw new IllegalArgumentException("Operation name not found");
         }
 
@@ -48,16 +48,16 @@ public class KMSProducer extends DefaultProducer {
             kmsClient = endpoint.initClient();
         }
 
-        switch (configuration.getOperation()) {
+        switch (configuration.operation()) {
             case KMSOperations.ENCRYPT -> encrypt(exchange, configuration);
             case KMSOperations.DECRYPT -> decrypt(exchange, configuration);
             case KMSOperations.GENERATE_DATA_KEY -> generateDataKey(exchange, configuration);
-            default -> throw new UnsupportedOperationException("Unsupported operation: " + configuration.getOperation());
+            default -> throw new UnsupportedOperationException("Unsupported operation: " + configuration.operation());
         }
     }
 
     private void encrypt(Exchange exchange, ClientConfigurations configuration) throws Exception {
-        if (ObjectHelper.isEmpty(configuration.getKeyId())) {
+        if (ObjectHelper.isEmpty(configuration.keyId())) {
             throw new IllegalArgumentException("Key id is required for encrypt");
         }
 
@@ -67,7 +67,7 @@ public class KMSProducer extends DefaultProducer {
         }
 
         var response = kmsClient.encrypt(new EncryptRequest()
-                .setKeyId(configuration.getKeyId())
+                .setKeyId(configuration.keyId())
                 .setPlaintext(plaintext));
 
         exchange.getMessage().setBody(KMSUtils.toEncryptMap(response));
@@ -75,7 +75,7 @@ public class KMSProducer extends DefaultProducer {
     }
 
     private void decrypt(Exchange exchange, ClientConfigurations configuration) throws Exception {
-        String ciphertextBlob = configuration.getCiphertextBlob();
+        String ciphertextBlob = configuration.ciphertextBlob();
         if (ObjectHelper.isEmpty(ciphertextBlob)) {
             ciphertextBlob = exchange.getMessage().getBody(String.class);
         }
@@ -89,16 +89,16 @@ public class KMSProducer extends DefaultProducer {
     }
 
     private void generateDataKey(Exchange exchange, ClientConfigurations configuration) throws Exception {
-        if (ObjectHelper.isEmpty(configuration.getKeyId())) {
+        if (ObjectHelper.isEmpty(configuration.keyId())) {
             throw new IllegalArgumentException("Key id is required for generateDataKey");
         }
 
-        GenerateDataKeyRequest request = new GenerateDataKeyRequest().setKeyId(configuration.getKeyId());
-        if (ObjectHelper.isNotEmpty(configuration.getKeySpec())) {
-            request.setKeySpec(configuration.getKeySpec());
+        GenerateDataKeyRequest request = new GenerateDataKeyRequest().setKeyId(configuration.keyId());
+        if (ObjectHelper.isNotEmpty(configuration.keySpec())) {
+            request.setKeySpec(configuration.keySpec());
         }
-        if (configuration.getNumberOfBytes() != null) {
-            request.setNumberOfBytes(configuration.getNumberOfBytes());
+        if (configuration.numberOfBytes() != null) {
+            request.setNumberOfBytes(configuration.numberOfBytes());
         }
 
         var response = kmsClient.generateDataKey(request);

@@ -65,16 +65,11 @@ public final class FCUtils {
     }
 
     public static ClientConfigurations createClientConfigurations(FCEndpoint endpoint, Exchange exchange) {
-        ClientConfigurations configuration = new ClientConfigurations();
-        configuration
-                .setOperation(OpenApiClientSupport.resolveString(exchange, FCProperties.OPERATION, endpoint.getOperation()));
-        configuration.setServiceName(
-                OpenApiClientSupport.resolveString(exchange, FCProperties.SERVICE_NAME, endpoint.getServiceName()));
-        configuration.setFunctionName(
-                OpenApiClientSupport.resolveString(exchange, FCProperties.FUNCTION_NAME, endpoint.getFunctionName()));
-        configuration
-                .setQualifier(OpenApiClientSupport.resolveString(exchange, FCProperties.QUALIFIER, endpoint.getQualifier()));
-        return configuration;
+        return new ClientConfigurations(
+                OpenApiClientSupport.resolveString(exchange, FCProperties.OPERATION, endpoint.getOperation()),
+                OpenApiClientSupport.resolveString(exchange, FCProperties.SERVICE_NAME, endpoint.getServiceName()),
+                OpenApiClientSupport.resolveString(exchange, FCProperties.FUNCTION_NAME, endpoint.getFunctionName()),
+                OpenApiClientSupport.resolveString(exchange, FCProperties.QUALIFIER, endpoint.getQualifier()));
     }
 
     public static byte[] resolvePayload(Exchange exchange) throws Exception {

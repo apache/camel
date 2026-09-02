@@ -16,69 +16,12 @@
  */
 package org.apache.camel.component.alibaba.mns.models;
 
-public class ClientConfigurations {
-
-    private String operation;
-    private String accessKey;
-    private String secretKey;
-    private String region;
-    private String accountEndpoint;
-    private String queueName;
-    private String topicName;
-
-    public String getOperation() {
-        return operation;
-    }
-
-    public void setOperation(String operation) {
-        this.operation = operation;
-    }
-
-    public String getAccessKey() {
-        return accessKey;
-    }
-
-    public void setAccessKey(String accessKey) {
-        this.accessKey = accessKey;
-    }
-
-    public String getSecretKey() {
-        return secretKey;
-    }
-
-    public void setSecretKey(String secretKey) {
-        this.secretKey = secretKey;
-    }
-
-    public String getRegion() {
-        return region;
-    }
-
-    public void setRegion(String region) {
-        this.region = region;
-    }
-
-    public String getAccountEndpoint() {
-        return accountEndpoint;
-    }
-
-    public void setAccountEndpoint(String accountEndpoint) {
-        this.accountEndpoint = accountEndpoint;
-    }
-
-    public String getQueueName() {
-        return queueName;
-    }
-
-    public void setQueueName(String queueName) {
-        this.queueName = queueName;
-    }
-
-    public String getTopicName() {
-        return topicName;
-    }
-
-    public void setTopicName(String topicName) {
-        this.topicName = topicName;
-    }
+public record ClientConfigurations(
+        String operation,
+        String accessKey,
+        String secretKey,
+        String region,
+        String accountEndpoint,
+        String queueName,
+        String topicName) {
 }

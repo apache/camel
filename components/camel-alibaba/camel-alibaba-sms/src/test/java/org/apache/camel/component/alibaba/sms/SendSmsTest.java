@@ -84,7 +84,9 @@ class SendSmsTest extends CamelTestSupport {
         mock.assertIsSatisfied();
 
         Exchange exchange = mock.getExchanges().get(0);
-        assertThat(exchange.getMessage().getBody(Map.class))
+        @SuppressWarnings("unchecked")
+        Map<String, Object> responseBody = exchange.getMessage().getBody(Map.class);
+        assertThat(responseBody)
                 .containsEntry("code", "OK")
                 .containsEntry("bizId", "biz-123");
         assertThat(exchange.getMessage().getHeader(SMSHeaders.REQUEST_ID)).isEqualTo("req-456");

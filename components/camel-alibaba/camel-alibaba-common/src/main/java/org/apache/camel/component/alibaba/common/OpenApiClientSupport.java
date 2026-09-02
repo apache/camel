@@ -66,4 +66,26 @@ public final class OpenApiClientSupport {
         }
         return value;
     }
+
+    public static Boolean resolveBoolean(Exchange exchange, String name, Boolean endpointValue) {
+        Boolean value = exchange.getIn().getHeader(name, Boolean.class);
+        if (value == null) {
+            value = exchange.getProperty(name, Boolean.class);
+        }
+        if (value == null) {
+            value = endpointValue;
+        }
+        return value != null ? value : false;
+    }
+
+    public static Long resolveLong(Exchange exchange, String name, Long endpointValue) {
+        Long value = exchange.getIn().getHeader(name, Long.class);
+        if (value == null) {
+            value = exchange.getProperty(name, Long.class);
+        }
+        if (value == null) {
+            value = endpointValue;
+        }
+        return value;
+    }
 }

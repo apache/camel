@@ -39,7 +39,7 @@ public class SMSProducer extends DefaultProducer {
         SMSEndpoint endpoint = getEndpoint();
         ClientConfigurations configuration = SMSUtils.createClientConfigurations(endpoint, exchange);
 
-        if (ObjectHelper.isEmpty(configuration.getOperation())) {
+        if (ObjectHelper.isEmpty(configuration.operation())) {
             throw new IllegalArgumentException("Operation name not found");
         }
 
@@ -47,29 +47,29 @@ public class SMSProducer extends DefaultProducer {
             smsClient = endpoint.initClient();
         }
 
-        switch (configuration.getOperation()) {
+        switch (configuration.operation()) {
             case SMSOperations.SEND_SMS -> sendSms(exchange, configuration);
-            default -> throw new UnsupportedOperationException("Unsupported operation: " + configuration.getOperation());
+            default -> throw new UnsupportedOperationException("Unsupported operation: " + configuration.operation());
         }
     }
 
     private void sendSms(Exchange exchange, ClientConfigurations configuration) throws Exception {
-        if (ObjectHelper.isEmpty(configuration.getPhoneNumbers())
-                || ObjectHelper.isEmpty(configuration.getSignName())
-                || ObjectHelper.isEmpty(configuration.getTemplateCode())) {
+        if (ObjectHelper.isEmpty(configuration.phoneNumbers())
+                || ObjectHelper.isEmpty(configuration.signName())
+                || ObjectHelper.isEmpty(configuration.templateCode())) {
             throw new IllegalArgumentException("Phone numbers, sign name and template code are required for sendSms");
         }
 
         SendSmsRequest request = new SendSmsRequest()
-                .setPhoneNumbers(configuration.getPhoneNumbers())
-                .setSignName(configuration.getSignName())
-                .setTemplateCode(configuration.getTemplateCode());
+                .setPhoneNumbers(configuration.phoneNumbers())
+                .setSignName(configuration.signName())
+                .setTemplateCode(configuration.templateCode());
 
-        if (ObjectHelper.isNotEmpty(configuration.getTemplateParam())) {
-            request.setTemplateParam(configuration.getTemplateParam());
+        if (ObjectHelper.isNotEmpty(configuration.templateParam())) {
+            request.setTemplateParam(configuration.templateParam());
         }
-        if (ObjectHelper.isNotEmpty(configuration.getOutId())) {
-            request.setOutId(configuration.getOutId());
+        if (ObjectHelper.isNotEmpty(configuration.outId())) {
+            request.setOutId(configuration.outId());
         }
 
         SendSmsResponse response = smsClient.sendSms(request);

@@ -24,12 +24,14 @@ public class AlibabaEventBridgeEndpointUriFactory extends org.apache.camel.suppo
     private static final Set<String> ENDPOINT_IDENTITY_PROPERTY_NAMES;
     private static final Map<String, String> MULTI_VALUE_PREFIXES;
     static {
-        Set<String> props = new HashSet<>(12);
+        Set<String> props = new HashSet<>(17);
         props.add("accessKey");
+        props.add("allowedEventSources");
         props.add("endpoint");
         props.add("eventBridgeClient");
         props.add("eventBusName");
         props.add("eventSource");
+        props.add("eventSourceCacheTtl");
         props.add("eventSubject");
         props.add("eventType");
         props.add("lazyStartProducer");
@@ -37,6 +39,9 @@ public class AlibabaEventBridgeEndpointUriFactory extends org.apache.camel.suppo
         props.add("region");
         props.add("secretKey");
         props.add("serviceKeys");
+        props.add("validateEventSource");
+        props.add("validateEventSpec");
+        props.add("validateEventType");
         PROPERTY_NAMES = Collections.unmodifiableSet(props);
         Set<String> secretProps = new HashSet<>(3);
         secretProps.add("accessKey");

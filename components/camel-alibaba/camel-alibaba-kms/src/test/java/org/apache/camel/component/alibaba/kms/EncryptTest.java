@@ -83,7 +83,9 @@ class EncryptTest extends CamelTestSupport {
         mock.assertIsSatisfied();
 
         Exchange exchange = mock.getExchanges().get(0);
-        assertThat(exchange.getMessage().getBody(Map.class))
+        @SuppressWarnings("unchecked")
+        Map<String, Object> responseBody = exchange.getMessage().getBody(Map.class);
+        assertThat(responseBody)
                 .containsEntry("ciphertextBlob", "encrypted-data")
                 .containsEntry("keyId", testConfiguration.getProperty("keyId"));
         assertThat(exchange.getMessage().getHeader(KMSHeaders.REQUEST_ID)).isEqualTo("req-789");

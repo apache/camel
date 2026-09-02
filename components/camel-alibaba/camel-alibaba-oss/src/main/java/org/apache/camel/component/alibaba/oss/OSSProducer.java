@@ -69,7 +69,7 @@ public class OSSProducer extends DefaultProducer {
             this.ossClient = endpoint.initClient();
         }
 
-        switch (clientConfigurations.getOperation()) {
+        switch (clientConfigurations.operation()) {
             case OSSOperations.LIST_BUCKETS:
                 listBuckets(exchange);
                 break;
@@ -93,14 +93,14 @@ public class OSSProducer extends DefaultProducer {
                 break;
             default:
                 throw new UnsupportedOperationException(
-                        String.format("%s is not a supported operation", clientConfigurations.getOperation()));
+                        String.format("%s is not a supported operation", clientConfigurations.operation()));
         }
     }
 
     private void putObject(Exchange exchange, ClientConfigurations clientConfigurations) throws Exception {
         Object body = exchange.getMessage().getBody();
 
-        if (ObjectHelper.isEmpty(clientConfigurations.getBucketName())) {
+        if (ObjectHelper.isEmpty(clientConfigurations.bucketName())) {
             throw new IllegalArgumentException("Bucket name is mandatory to put objects into bucket");
         }
 
@@ -108,46 +108,46 @@ public class OSSProducer extends DefaultProducer {
             body = wf.getFile();
         }
 
-        if (ObjectHelper.isEmpty(clientConfigurations.getObjectName()) && !(body instanceof File)) {
+        if (ObjectHelper.isEmpty(clientConfigurations.objectName()) && !(body instanceof File)) {
             throw new IllegalArgumentException("Object name is mandatory when body is not a file");
         }
 
         PutObjectRequest.Builder requestBuilder = PutObjectRequest.newBuilder()
-                .bucket(clientConfigurations.getBucketName());
+                .bucket(clientConfigurations.bucketName());
 
         if (body instanceof File file) {
-            String objectName = ObjectHelper.isEmpty(clientConfigurations.getObjectName())
+            String objectName = ObjectHelper.isEmpty(clientConfigurations.objectName())
                     ? file.getName()
-                    : clientConfigurations.getObjectName();
+                    : clientConfigurations.objectName();
             requestBuilder.key(objectName);
             PutObjectResult result = ossClient.putObjectFromFile(requestBuilder.build(), file);
             exchange.getMessage()
-                    .setBody(toPutObjectMap(result, clientConfigurations.getBucketName(), objectName));
+                    .setBody(toPutObjectMap(result, clientConfigurations.bucketName(), objectName));
         } else if (body instanceof String stringBody) {
-            requestBuilder.key(clientConfigurations.getObjectName())
+            requestBuilder.key(clientConfigurations.objectName())
                     .body(BinaryData.fromString(stringBody));
             PutObjectResult result = ossClient.putObject(requestBuilder.build());
-            exchange.getMessage().setBody(toPutObjectMap(result, clientConfigurations.getBucketName(),
-                    clientConfigurations.getObjectName()));
+            exchange.getMessage().setBody(toPutObjectMap(result, clientConfigurations.bucketName(),
+                    clientConfigurations.objectName()));
         } else if (body instanceof InputStream inputStream) {
-            requestBuilder.key(clientConfigurations.getObjectName())
+            requestBuilder.key(clientConfigurations.objectName())
                     .body(BinaryData.fromStream(inputStream));
             PutObjectResult result = ossClient.putObject(requestBuilder.build());
-            exchange.getMessage().setBody(toPutObjectMap(result, clientConfigurations.getBucketName(),
-                    clientConfigurations.getObjectName()));
+            exchange.getMessage().setBody(toPutObjectMap(result, clientConfigurations.bucketName(),
+                    clientConfigurations.objectName()));
         } else if (body instanceof byte[] bytes) {
-            requestBuilder.key(clientConfigurations.getObjectName())
+            requestBuilder.key(clientConfigurations.objectName())
                     .body(BinaryData.fromBytes(bytes));
             PutObjectResult result = ossClient.putObject(requestBuilder.build());
-            exchange.getMessage().setBody(toPutObjectMap(result, clientConfigurations.getBucketName(),
-                    clientConfigurations.getObjectName()));
+            exchange.getMessage().setBody(toPutObjectMap(result, clientConfigurations.bucketName(),
+                    clientConfigurations.objectName()));
         } else {
             InputStream is = exchange.getMessage().getMandatoryBody(InputStream.class);
-            requestBuilder.key(clientConfigurations.getObjectName())
+            requestBuilder.key(clientConfigurations.objectName())
                     .body(BinaryData.fromStream(is));
             PutObjectResult result = ossClient.putObject(requestBuilder.build());
-            exchange.getMessage().setBody(toPutObjectMap(result, clientConfigurations.getBucketName(),
-                    clientConfigurations.getObjectName()));
+            exchange.getMessage().setBody(toPutObjectMap(result, clientConfigurations.bucketName(),
+                    clientConfigurations.objectName()));
         }
     }
 
@@ -163,20 +163,20 @@ public class OSSProducer extends DefaultProducer {
     }
 
     private void getObject(Exchange exchange, ClientConfigurations clientConfigurations) throws Exception {
-        if (ObjectHelper.isEmpty(clientConfigurations.getBucketName())
-                || ObjectHelper.isEmpty(clientConfigurations.getObjectName())) {
+        if (ObjectHelper.isEmpty(clientConfigurations.bucketName())
+                || ObjectHelper.isEmpty(clientConfigurations.objectName())) {
             throw new IllegalArgumentException("Bucket and object names are mandatory to get objects");
         }
 
-        LOG.debug("Downloading OSS object {} from bucket {}", clientConfigurations.getObjectName(),
-                clientConfigurations.getBucketName());
+        LOG.debug("Downloading OSS object {} from bucket {}", clientConfigurations.objectName(),
+                clientConfigurations.bucketName());
 
         GetObjectResult result = ossClient.getObject(GetObjectRequest.newBuilder()
-                .bucket(clientConfigurations.getBucketName())
-                .key(clientConfigurations.getObjectName())
+                .bucket(clientConfigurations.bucketName())
+                .key(clientConfigurations.objectName())
                 .build());
 
-        OSSUtils.mapOssObject(exchange, clientConfigurations.getBucketName(), clientConfigurations.getObjectName(), result);
+        OSSUtils.mapOssObject(exchange, clientConfigurations.bucketName(), clientConfigurations.objectName(), result);
     }
 
     private void listBuckets(Exchange exchange) {
@@ -195,25 +195,25 @@ public class OSSProducer extends DefaultProducer {
     }
 
     private void listObjects(Exchange exchange, ClientConfigurations clientConfigurations) {
-        if (ObjectHelper.isEmpty(clientConfigurations.getBucketName())) {
+        if (ObjectHelper.isEmpty(clientConfigurations.bucketName())) {
             throw new IllegalArgumentException("Bucket name is mandatory to list objects");
         }
 
         ListObjectsRequest.Builder requestBuilder = ListObjectsRequest.newBuilder()
-                .bucket(clientConfigurations.getBucketName());
+                .bucket(clientConfigurations.bucketName());
 
-        if (ObjectHelper.isNotEmpty(clientConfigurations.getPrefix())) {
-            requestBuilder.prefix(clientConfigurations.getPrefix());
+        if (ObjectHelper.isNotEmpty(clientConfigurations.prefix())) {
+            requestBuilder.prefix(clientConfigurations.prefix());
         }
-        if (clientConfigurations.getMaxKeys() != null) {
-            requestBuilder.maxKeys(clientConfigurations.getMaxKeys().longValue());
+        if (clientConfigurations.maxKeys() != null) {
+            requestBuilder.maxKeys(clientConfigurations.maxKeys().longValue());
         }
 
         List<Map<String, Object>> objects = new ArrayList<>();
         ListObjectsResult result;
         ListObjectsRequest request = requestBuilder.build();
-        long maxKeysLimit = clientConfigurations.getMaxKeys() != null
-                ? clientConfigurations.getMaxKeys().longValue()
+        long maxKeysLimit = clientConfigurations.maxKeys() != null
+                ? clientConfigurations.maxKeys().longValue()
                 : Long.MAX_VALUE;
         do {
             result = ossClient.listObjects(request);
@@ -223,7 +223,7 @@ public class OSSProducer extends DefaultProducer {
                         break;
                     }
                     Map<String, Object> objectMap = new HashMap<>();
-                    objectMap.put("bucketName", clientConfigurations.getBucketName());
+                    objectMap.put("bucketName", clientConfigurations.bucketName());
                     objectMap.put("objectKey", summary.key());
                     objectMap.put("size", summary.size());
                     objectMap.put("eTag", summary.eTag());
@@ -245,14 +245,14 @@ public class OSSProducer extends DefaultProducer {
     }
 
     private void deleteObject(Exchange exchange, ClientConfigurations clientConfigurations) {
-        if (ObjectHelper.isEmpty(clientConfigurations.getBucketName())
-                || ObjectHelper.isEmpty(clientConfigurations.getObjectName())) {
+        if (ObjectHelper.isEmpty(clientConfigurations.bucketName())
+                || ObjectHelper.isEmpty(clientConfigurations.objectName())) {
             throw new IllegalArgumentException("Bucket and object names are mandatory to delete objects");
         }
 
         DeleteObjectResult result = ossClient.deleteObject(DeleteObjectRequest.newBuilder()
-                .bucket(clientConfigurations.getBucketName())
-                .key(clientConfigurations.getObjectName())
+                .bucket(clientConfigurations.bucketName())
+                .key(clientConfigurations.objectName())
                 .build());
 
         Map<String, Object> map = new HashMap<>();
@@ -264,19 +264,19 @@ public class OSSProducer extends DefaultProducer {
     }
 
     private void copyObject(Exchange exchange, ClientConfigurations clientConfigurations) {
-        if (ObjectHelper.isEmpty(clientConfigurations.getSourceBucketName())
-                || ObjectHelper.isEmpty(clientConfigurations.getSourceObjectName())
-                || ObjectHelper.isEmpty(clientConfigurations.getBucketName())
-                || ObjectHelper.isEmpty(clientConfigurations.getObjectName())) {
+        if (ObjectHelper.isEmpty(clientConfigurations.sourceBucketName())
+                || ObjectHelper.isEmpty(clientConfigurations.sourceObjectName())
+                || ObjectHelper.isEmpty(clientConfigurations.bucketName())
+                || ObjectHelper.isEmpty(clientConfigurations.objectName())) {
             throw new IllegalArgumentException(
                     "Source bucket, source object, destination bucket and destination object names are mandatory to copy objects");
         }
 
         CopyObjectResult result = ossClient.copyObject(CopyObjectRequest.newBuilder()
-                .sourceBucket(clientConfigurations.getSourceBucketName())
-                .sourceKey(clientConfigurations.getSourceObjectName())
-                .bucket(clientConfigurations.getBucketName())
-                .key(clientConfigurations.getObjectName())
+                .sourceBucket(clientConfigurations.sourceBucketName())
+                .sourceKey(clientConfigurations.sourceObjectName())
+                .bucket(clientConfigurations.bucketName())
+                .key(clientConfigurations.objectName())
                 .build());
 
         Map<String, Object> map = new HashMap<>();
@@ -288,14 +288,14 @@ public class OSSProducer extends DefaultProducer {
     }
 
     private void headObject(Exchange exchange, ClientConfigurations clientConfigurations) {
-        if (ObjectHelper.isEmpty(clientConfigurations.getBucketName())
-                || ObjectHelper.isEmpty(clientConfigurations.getObjectName())) {
+        if (ObjectHelper.isEmpty(clientConfigurations.bucketName())
+                || ObjectHelper.isEmpty(clientConfigurations.objectName())) {
             throw new IllegalArgumentException("Bucket and object names are mandatory to head objects");
         }
 
         HeadObjectResult result = ossClient.headObject(HeadObjectRequest.newBuilder()
-                .bucket(clientConfigurations.getBucketName())
-                .key(clientConfigurations.getObjectName())
+                .bucket(clientConfigurations.bucketName())
+                .key(clientConfigurations.objectName())
                 .build());
 
         Map<String, Object> map = new HashMap<>();

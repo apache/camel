@@ -80,7 +80,9 @@ class InvokeFunctionTest extends CamelTestSupport {
         mock.assertIsSatisfied();
 
         Exchange exchange = mock.getExchanges().get(0);
-        assertThat(exchange.getMessage().getBody(Map.class))
+        @SuppressWarnings("unchecked")
+        Map<String, Object> body = exchange.getMessage().getBody(Map.class);
+        assertThat(body)
                 .containsEntry("statusCode", 200)
                 .containsEntry("body", "hello fc".getBytes(StandardCharsets.UTF_8));
 

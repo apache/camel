@@ -46,7 +46,7 @@ public class MNSProducer extends DefaultProducer {
         endpoint.initClient();
 
         ClientConfigurations configuration = MNSUtils.createClientConfigurations(endpoint, exchange);
-        String operation = configuration.getOperation();
+        String operation = configuration.operation();
 
         switch (operation) {
             case MNSOperations.SEND_MESSAGE -> sendMessage(endpoint, exchange, configuration);
@@ -57,7 +57,7 @@ public class MNSProducer extends DefaultProducer {
     }
 
     private void sendMessage(MNSEndpoint endpoint, Exchange exchange, ClientConfigurations configuration) throws Exception {
-        CloudQueue queue = endpoint.getMnsClient().getQueueRef(configuration.getQueueName());
+        CloudQueue queue = endpoint.getMnsClient().getQueueRef(configuration.queueName());
         Message message = new Message();
         message.setMessageBody(MNSUtils.resolveMessageBody(exchange));
 
@@ -81,12 +81,12 @@ public class MNSProducer extends DefaultProducer {
             throw new IllegalArgumentException("Receipt handle is required for deleteMessage operation");
         }
 
-        CloudQueue queue = endpoint.getMnsClient().getQueueRef(configuration.getQueueName());
+        CloudQueue queue = endpoint.getMnsClient().getQueueRef(configuration.queueName());
         queue.deleteMessage(receiptHandle);
     }
 
     private void publishMessage(MNSEndpoint endpoint, Exchange exchange, ClientConfigurations configuration) throws Exception {
-        String topic = configuration.getTopicName();
+        String topic = configuration.topicName();
         if (ObjectHelper.isEmpty(topic)) {
             throw new IllegalArgumentException("Topic name is required for publishMessage operation");
         }

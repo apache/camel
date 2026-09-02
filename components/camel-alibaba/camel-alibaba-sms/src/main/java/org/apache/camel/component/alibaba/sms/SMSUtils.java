@@ -64,19 +64,13 @@ public final class SMSUtils {
     }
 
     public static ClientConfigurations createClientConfigurations(SMSEndpoint endpoint, Exchange exchange) {
-        ClientConfigurations configuration = new ClientConfigurations();
-        configuration
-                .setOperation(OpenApiClientSupport.resolveString(exchange, SMSProperties.OPERATION, endpoint.getOperation()));
-        configuration.setPhoneNumbers(
-                OpenApiClientSupport.resolveString(exchange, SMSProperties.PHONE_NUMBERS, endpoint.getPhoneNumbers()));
-        configuration
-                .setSignName(OpenApiClientSupport.resolveString(exchange, SMSProperties.SIGN_NAME, endpoint.getSignName()));
-        configuration.setTemplateCode(
-                OpenApiClientSupport.resolveString(exchange, SMSProperties.TEMPLATE_CODE, endpoint.getTemplateCode()));
-        configuration.setTemplateParam(
-                OpenApiClientSupport.resolveString(exchange, SMSProperties.TEMPLATE_PARAM, endpoint.getTemplateParam()));
-        configuration.setOutId(OpenApiClientSupport.resolveString(exchange, SMSProperties.OUT_ID, endpoint.getOutId()));
-        return configuration;
+        return new ClientConfigurations(
+                OpenApiClientSupport.resolveString(exchange, SMSProperties.OPERATION, endpoint.getOperation()),
+                OpenApiClientSupport.resolveString(exchange, SMSProperties.PHONE_NUMBERS, endpoint.getPhoneNumbers()),
+                OpenApiClientSupport.resolveString(exchange, SMSProperties.SIGN_NAME, endpoint.getSignName()),
+                OpenApiClientSupport.resolveString(exchange, SMSProperties.TEMPLATE_CODE, endpoint.getTemplateCode()),
+                OpenApiClientSupport.resolveString(exchange, SMSProperties.TEMPLATE_PARAM, endpoint.getTemplateParam()),
+                OpenApiClientSupport.resolveString(exchange, SMSProperties.OUT_ID, endpoint.getOutId()));
     }
 
     public static Map<String, Object> toSendSmsMap(SendSmsResponse response) {

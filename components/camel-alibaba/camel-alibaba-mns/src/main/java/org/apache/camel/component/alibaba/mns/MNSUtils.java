@@ -62,15 +62,14 @@ public final class MNSUtils {
     }
 
     public static ClientConfigurations createClientConfigurations(MNSEndpoint endpoint, Exchange exchange) {
-        ClientConfigurations configuration = new ClientConfigurations();
-        configuration.setOperation(resolveOperation(endpoint, exchange));
-        configuration.setAccessKey(resolveAccessKey(endpoint));
-        configuration.setSecretKey(resolveSecretKey(endpoint));
-        configuration.setRegion(endpoint.getRegion());
-        configuration.setAccountEndpoint(endpoint.getAccountEndpoint());
-        configuration.setQueueName(resolveQueueName(endpoint, exchange));
-        configuration.setTopicName(resolveTopicName(endpoint, exchange));
-        return configuration;
+        return new ClientConfigurations(
+                resolveOperation(endpoint, exchange),
+                resolveAccessKey(endpoint),
+                resolveSecretKey(endpoint),
+                endpoint.getRegion(),
+                endpoint.getAccountEndpoint(),
+                resolveQueueName(endpoint, exchange),
+                resolveTopicName(endpoint, exchange));
     }
 
     public static String resolveOperation(MNSEndpoint endpoint, Exchange exchange) {
