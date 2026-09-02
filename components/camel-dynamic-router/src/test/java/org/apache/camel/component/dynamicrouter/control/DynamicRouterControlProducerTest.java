@@ -48,6 +48,7 @@ import static org.apache.camel.component.dynamicrouter.control.DynamicRouterCont
 import static org.apache.camel.component.dynamicrouter.control.DynamicRouterControlConstants.CONTROL_PRIORITY;
 import static org.apache.camel.component.dynamicrouter.control.DynamicRouterControlConstants.CONTROL_SUBSCRIBE_CHANNEL;
 import static org.apache.camel.component.dynamicrouter.control.DynamicRouterControlConstants.CONTROL_SUBSCRIPTION_ID;
+import static org.apache.camel.component.dynamicrouter.control.DynamicRouterControlConstants.ERROR_PREDICATE_FROM_MESSAGE_NOT_ALLOWED;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.when;
@@ -89,6 +90,7 @@ class DynamicRouterControlProducerTest {
 
     @Test
     void performSubscribeAction() {
+        when(configuration.isAllowPredicateFromMessage()).thenReturn(true);
         String subscribeChannel = "testChannel";
         Map<String, Object> headers = Map.of(
                 CONTROL_ACTION_HEADER, CONTROL_ACTION_SUBSCRIBE,
@@ -107,6 +109,7 @@ class DynamicRouterControlProducerTest {
 
     @Test
     void performSubscribeActionWithEmptyExpressionLanguage() {
+        when(configuration.isAllowPredicateFromMessage()).thenReturn(true);
         String subscribeChannel = "testChannel";
         Map<String, Object> headers = Map.of(
                 CONTROL_ACTION_HEADER, CONTROL_ACTION_SUBSCRIBE,
@@ -155,6 +158,7 @@ class DynamicRouterControlProducerTest {
 
     @Test
     void performUpdateAction() {
+        when(configuration.isAllowPredicateFromMessage()).thenReturn(true);
         // First, perform initial subscription
         String subscribeChannel = "testChannel";
         Map<String, Object> headers = Map.of(
@@ -229,6 +233,7 @@ class DynamicRouterControlProducerTest {
 
     @Test
     void performSubscribeActionWithMessageInBody() {
+        when(configuration.isAllowPredicateFromMessage()).thenReturn(true);
         String subscribeChannel = "testChannel";
         DynamicRouterControlMessage subMsg = DynamicRouterControlMessage.Builder.newBuilder()
                 .subscribeChannel(subscribeChannel)
@@ -249,6 +254,7 @@ class DynamicRouterControlProducerTest {
 
     @Test
     void performSubscribeActionWithMessageInBodyWithEmptyExpressionLanguage() {
+        when(configuration.isAllowPredicateFromMessage()).thenReturn(true);
         String subscribeChannel = "testChannel";
         DynamicRouterControlMessage subMsg = DynamicRouterControlMessage.Builder.newBuilder()
                 .subscribeChannel(subscribeChannel)
@@ -266,6 +272,7 @@ class DynamicRouterControlProducerTest {
 
     @Test
     void performSubscribeActionWithMessageInBodyWithEmptyExpression() {
+        when(configuration.isAllowPredicateFromMessage()).thenReturn(true);
         String subscribeChannel = "testChannel";
         DynamicRouterControlMessage subMsg = DynamicRouterControlMessage.Builder.newBuilder()
                 .subscribeChannel(subscribeChannel)
@@ -302,6 +309,7 @@ class DynamicRouterControlProducerTest {
 
     @Test
     void performUpdateActionWithMessageInBody() {
+        when(configuration.isAllowPredicateFromMessage()).thenReturn(true);
         String subscribeChannel = "testChannel";
         DynamicRouterControlMessage subMsg = DynamicRouterControlMessage.Builder.newBuilder()
                 .subscribeChannel(subscribeChannel)
@@ -318,6 +326,124 @@ class DynamicRouterControlProducerTest {
         Mockito.verify(controlService, Mockito.times(1))
                 .subscribeWithPredicateExpression(
                         subscribeChannel, "testId", "mock://test", 10, "true", "simple", true);
+    }
+
+    @Test
+    void performSubscribeActionRejectsPredicateFromHeadersByDefault() {
+        Map<String, Object> headers = Map.of(
+                CONTROL_ACTION_HEADER, CONTROL_ACTION_SUBSCRIBE,
+                CONTROL_SUBSCRIBE_CHANNEL, "testChannel",
+                CONTROL_SUBSCRIPTION_ID, "testId",
+                CONTROL_DESTINATION_URI, "mock://test",
+                CONTROL_PREDICATE, "true",
+                CONTROL_EXPRESSION_LANGUAGE, "simple",
+                CONTROL_PRIORITY, 10);
+        when(message.getHeaders()).thenReturn(headers);
+        Exception ex = assertThrows(IllegalArgumentException.class, () -> producer.performSubscribe(message, callback));
+        assertEquals(ERROR_PREDICATE_FROM_MESSAGE_NOT_ALLOWED, ex.getMessage());
+        Mockito.verifyNoInteractions(controlService);
+    }
+
+    @Test
+    void performSubscribeActionRejectsExpressionLanguageFromHeadersByDefault() {
+        Map<String, Object> headers = Map.of(
+                CONTROL_ACTION_HEADER, CONTROL_ACTION_SUBSCRIBE,
+                CONTROL_SUBSCRIBE_CHANNEL, "testChannel",
+                CONTROL_SUBSCRIPTION_ID, "testId",
+                CONTROL_DESTINATION_URI, "mock://test",
+                CONTROL_EXPRESSION_LANGUAGE, "simple",
+                CONTROL_PRIORITY, 10);
+        when(message.getHeaders()).thenReturn(headers);
+        Exception ex = assertThrows(IllegalArgumentException.class, () -> producer.performSubscribe(message, callback));
+        assertEquals(ERROR_PREDICATE_FROM_MESSAGE_NOT_ALLOWED, ex.getMessage());
+        Mockito.verifyNoInteractions(controlService);
+    }
+
+    @Test
+    void performSubscribeActionRejectsPredicateFromMessageBodyByDefault() {
+        DynamicRouterControlMessage subMsg = DynamicRouterControlMessage.Builder.newBuilder()
+                .subscribeChannel("testChannel")
+                .subscriptionId("testId")
+                .destinationUri("mock://test")
+                .priority(10)
+                .predicate("true")
+                .expressionLanguage("simple")
+                .build();
+        when(message.getBody()).thenReturn(subMsg);
+        when(message.getBody(DynamicRouterControlMessage.class)).thenReturn(subMsg);
+        Exception ex = assertThrows(IllegalArgumentException.class, () -> producer.performSubscribe(message, callback));
+        assertEquals(ERROR_PREDICATE_FROM_MESSAGE_NOT_ALLOWED, ex.getMessage());
+        Mockito.verifyNoInteractions(controlService);
+    }
+
+    @Test
+    void performUpdateActionRejectsPredicateFromMessageBodyByDefault() {
+        DynamicRouterControlMessage subMsg = DynamicRouterControlMessage.Builder.newBuilder()
+                .subscribeChannel("testChannel")
+                .subscriptionId("testId")
+                .destinationUri("mock://test")
+                .priority(10)
+                .predicate("true")
+                .expressionLanguage("simple")
+                .build();
+        when(message.getBody()).thenReturn(subMsg);
+        when(message.getBody(DynamicRouterControlMessage.class)).thenReturn(subMsg);
+        Exception ex = assertThrows(IllegalArgumentException.class, () -> producer.performUpdate(message, callback));
+        assertEquals(ERROR_PREDICATE_FROM_MESSAGE_NOT_ALLOWED, ex.getMessage());
+        Mockito.verifyNoInteractions(controlService);
+    }
+
+    @Test
+    void performSubscribeActionUsesEndpointPredicateWhenMessageSuppliesNone() {
+        String subscribeChannel = "testChannel";
+        Map<String, Object> headers = Map.of(
+                CONTROL_ACTION_HEADER, CONTROL_ACTION_SUBSCRIBE,
+                CONTROL_SUBSCRIBE_CHANNEL, subscribeChannel,
+                CONTROL_SUBSCRIPTION_ID, "testId",
+                CONTROL_DESTINATION_URI, "mock://test",
+                CONTROL_PRIORITY, 10);
+        when(message.getHeaders()).thenReturn(headers);
+        when(configuration.getPredicate()).thenReturn("true");
+        when(configuration.getExpressionLanguage()).thenReturn("simple");
+        Mockito.doNothing().when(callback).done(false);
+        producer.performSubscribe(message, callback);
+        Mockito.verify(controlService, Mockito.times(1)).subscribeWithPredicateExpression(
+                subscribeChannel, "testId", "mock://test", 10, "true", "simple", false);
+    }
+
+    @Test
+    void performSubscribeActionFallsBackToEndpointParametersWhenHeadersAreAbsent() {
+        Map<String, Object> headers = Map.of(CONTROL_ACTION_HEADER, CONTROL_ACTION_SUBSCRIBE);
+        when(message.getHeaders()).thenReturn(headers);
+        when(configuration.getSubscribeChannel()).thenReturn("testChannel");
+        when(configuration.getSubscriptionId()).thenReturn("testId");
+        when(configuration.getDestinationUri()).thenReturn("mock://test");
+        when(configuration.getPriority()).thenReturn(10);
+        when(configuration.getPredicate()).thenReturn("true");
+        when(configuration.getExpressionLanguage()).thenReturn("simple");
+        Mockito.doNothing().when(callback).done(false);
+        producer.performSubscribe(message, callback);
+        Mockito.verify(controlService, Mockito.times(1)).subscribeWithPredicateExpression(
+                "testChannel", "testId", "mock://test", 10, "true", "simple", false);
+    }
+
+    @Test
+    void performSubscribeActionWithPredicateBeanIsUnaffectedByTheGate() {
+        String subscribeChannel = "testChannel";
+        Map<String, Object> headers = Map.of(
+                CONTROL_ACTION_HEADER, CONTROL_ACTION_SUBSCRIBE,
+                CONTROL_SUBSCRIBE_CHANNEL, subscribeChannel,
+                CONTROL_SUBSCRIPTION_ID, "testId",
+                CONTROL_DESTINATION_URI, "mock://test",
+                CONTROL_PREDICATE, "true",
+                CONTROL_EXPRESSION_LANGUAGE, "simple",
+                CONTROL_PRIORITY, 10,
+                CONTROL_PREDICATE_BEAN, "testPredicate");
+        when(message.getHeaders()).thenReturn(headers);
+        Mockito.doNothing().when(callback).done(false);
+        producer.performSubscribe(message, callback);
+        Mockito.verify(controlService, Mockito.times(1)).subscribeWithPredicateBean(
+                subscribeChannel, "testId", "mock://test", 10, "testPredicate", false);
     }
 
     @Test
