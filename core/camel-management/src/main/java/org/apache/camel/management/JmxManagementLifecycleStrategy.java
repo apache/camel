@@ -153,6 +153,9 @@ public class JmxManagementLifecycleStrategy extends ServiceSupport implements Li
     private final Map<BacklogTracer, ManagedBacklogTracer> managedBacklogTracers = new HashMap<>();
     private final Map<DefaultBacklogDebugger, ManagedBacklogDebugger> managedBacklogDebuggers = new HashMap<>();
     private final Map<Object, Object> managedThreadPools = new HashMap<>();
+    // route group MBean is shared by all routes in the same group, so its performance counters
+    // aggregate the statistics across all the member routes
+    private final Map<String, ManagedRouteGroup> managedRouteGroups = new HashMap<>();
 
     public JmxManagementLifecycleStrategy() {
     }
@@ -675,8 +678,15 @@ public class JmxManagementLifecycleStrategy extends ServiceSupport implements Li
                 LOG.trace("The route is already managed: {}", route);
                 continue;
             }
-            ManagedRouteGroup mrg = (ManagedRouteGroup) getManagementObjectStrategy()
-                    .getManagedObjectForRouteGroup(camelContext, route.getGroup());
+            // the route group MBean is shared by all the routes in the same group, so its
+            // performance counters aggregate the statistics across all the member routes. Only
+            // the first route in a group creates and registers it; the rest reuse the same instance
+            ManagedRouteGroup mrg = null;
+            String group = route.getGroup();
+            if (group != null) {
+                mrg = managedRouteGroups.computeIfAbsent(group, g -> (ManagedRouteGroup) getManagementObjectStrategy()
+                        .getManagedObjectForRouteGroup(camelContext, g));
+            }
 
             // get the wrapped instrumentation processor from this route
             // and set me as the counter
@@ -746,12 +756,13 @@ public class JmxManagementLifecycleStrategy extends ServiceSupport implements Li
                 int size = camelContext.getRoutesByGroup(route.getGroup()).size();
                 // if size is 1 then it is because its ourselves that we are currently removing
                 if (size <= 1) {
-                    ManagedRouteGroup mrg = (ManagedRouteGroup) getManagementObjectStrategy()
-                            .getManagedObjectForRouteGroup(camelContext, route.getGroup());
-                    try {
-                        unmanageObject(mrg);
-                    } catch (Exception e) {
-                        LOG.warn("Could not unregister Route Group MBean", e);
+                    ManagedRouteGroup mrg = managedRouteGroups.remove(route.getGroup());
+                    if (mrg != null) {
+                        try {
+                            unmanageObject(mrg);
+                        } catch (Exception e) {
+                            LOG.warn("Could not unregister Route Group MBean", e);
+                        }
                     }
                 }
             }
@@ -1129,6 +1140,7 @@ public class JmxManagementLifecycleStrategy extends ServiceSupport implements Li
         managedBacklogTracers.clear();
         managedBacklogDebuggers.clear();
         managedThreadPools.clear();
+        managedRouteGroups.clear();
     }
 
 }
