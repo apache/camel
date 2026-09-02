@@ -17,9 +17,10 @@
 package org.apache.camel.dsl.jbang.core.common;
 
 import java.io.File;
+import java.lang.management.ManagementFactory;
+import java.net.URI;
 import java.net.URL;
-import java.net.URLDecoder;
-import java.nio.charset.StandardCharsets;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -46,9 +47,13 @@ public final class LauncherHelper {
             return true;
         }
 
-        // Check JAR path as fallback
+        // Check filename only — substring match on full path could hit any app embedding camel-jbang-core
         String jarPath = getLauncherJarPath();
-        return jarPath != null && jarPath.contains("camel-launcher");
+        if (jarPath == null) {
+            return false;
+        }
+        String filename = Path.of(jarPath).getFileName().toString();
+        return filename.startsWith("camel-launcher");
     }
 
     /**
@@ -66,24 +71,47 @@ public final class LauncherHelper {
             URL location = LauncherHelper.class.getProtectionDomain()
                     .getCodeSource().getLocation();
             if (location != null) {
-                String urlStr = location.toString();
-                // Handle nested JAR (Spring Boot loader)
-                if (urlStr.startsWith("jar:file:")) {
-                    int idx = urlStr.indexOf("!/");
-                    if (idx > 0) {
-                        String path = urlStr.substring(9, idx);
-                        // Decode URL-encoded characters (spaces, special chars)
-                        return URLDecoder.decode(path, StandardCharsets.UTF_8);
-                    }
-                }
-                // Handle direct file URL
-                if (urlStr.startsWith("file:")) {
-                    String path = urlStr.substring(5);
-                    return URLDecoder.decode(path, StandardCharsets.UTF_8);
-                }
+                return parseJarPath(location.toString());
             }
         } catch (Exception e) {
             System.err.println("WARN: Failed to detect launcher JAR path: " + e.getMessage());
+        }
+        return null;
+    }
+
+    /**
+     * Parses a code-source URL string and returns the filesystem path to the outer JAR.
+     * Handles three URL forms:
+     * <ul>
+     *   <li>{@code jar:nested:/outer.jar/!BOOT-INF/lib/inner.jar!/} — Spring Boot 3.2+/4.x loader</li>
+     *   <li>{@code jar:file:/outer.jar!/BOOT-INF/classes/} — Spring Boot 2.x / shade plugin</li>
+     *   <li>{@code file:/path/to/app.jar} — direct file URL</li>
+     * </ul>
+     * Uses {@link URI}-based path decoding to correctly handle percent-encoded characters
+     * and Windows drive-letter paths (e.g. {@code /C:/...} → {@code C:\...}).
+     * {@code indexOf("/!")} is used rather than {@code lastIndexOf} so that a JAR whose
+     * path itself contains {@code /!} (unlikely but possible) does not lose its prefix.
+     */
+    static String parseJarPath(String urlStr) {
+        try {
+            if (urlStr.startsWith("jar:nested:")) {
+                // Spring Boot 3.2+/4.x: jar:nested:/outer.jar/!BOOT-INF/lib/inner.jar!/
+                String path = urlStr.substring("jar:nested:".length());
+                int idx = path.indexOf("/!");
+                if (idx > 0) {
+                    return Path.of(URI.create("file:" + path.substring(0, idx))).toString();
+                }
+            } else if (urlStr.startsWith("jar:file:")) {
+                // Spring Boot 2.x / shade plugin: jar:file:/outer.jar!/BOOT-INF/classes/
+                int idx = urlStr.indexOf("!/");
+                if (idx > 0) {
+                    return Path.of(URI.create(urlStr.substring("jar:".length(), idx))).toString();
+                }
+            } else if (urlStr.startsWith("file:")) {
+                return Path.of(URI.create(urlStr)).toString();
+            }
+        } catch (Exception e) {
+            System.err.println("WARN: Failed to parse JAR path from URL '" + urlStr + "': " + e.getMessage());
         }
         return null;
     }
@@ -98,9 +126,24 @@ public final class LauncherHelper {
             String jarPath = getLauncherJarPath();
             if (jarPath != null) {
                 cmds.add(getJavaCommand());
+                // Forward -D and -X JVM arguments so child processes inherit proxy, truststore,
+                // and memory settings. Skips -javaagent/-agentlib flags to avoid port conflicts.
+                ManagementFactory.getRuntimeMXBean().getInputArguments().stream()
+                        .filter(arg -> arg.startsWith("-D") || arg.startsWith("-X"))
+                        .forEach(cmds::add);
                 cmds.add("-jar");
                 cmds.add(jarPath);
                 return cmds;
+            }
+            // Launcher detected but JAR path unresolvable — log raw URL to aid diagnosis
+            try {
+                URL location = LauncherHelper.class.getProtectionDomain().getCodeSource().getLocation();
+                System.err.println(
+                        "WARN: Running from launcher but JAR path could not be resolved; falling back to 'camel'. Code-source URL: "
+                                   + location);
+            } catch (Exception ignored) {
+                System.err.println(
+                        "WARN: Running from launcher but JAR path could not be resolved; falling back to 'camel'.");
             }
         }
 
