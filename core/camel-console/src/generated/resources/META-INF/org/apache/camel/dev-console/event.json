@@ -35,6 +35,11 @@
             "message": {
               "type": "string",
               "description": "The event's string representation"
+            },
+            "details": {
+              "type": "object",
+              "additionalProperties": true,
+              "description": "Structured event metadata as JSON"
             }
           }
         },
@@ -60,6 +65,11 @@
             "message": {
               "type": "string",
               "description": "The event's string representation"
+            },
+            "details": {
+              "type": "object",
+              "additionalProperties": true,
+              "description": "Structured event metadata as JSON"
             }
           }
         },
@@ -85,6 +95,11 @@
             "message": {
               "type": "string",
               "description": "The event's string representation"
+            },
+            "details": {
+              "type": "object",
+              "additionalProperties": true,
+              "description": "Structured event metadata as JSON"
             }
           }
         },
