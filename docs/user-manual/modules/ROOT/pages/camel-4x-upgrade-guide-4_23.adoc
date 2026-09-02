@@ -1193,3 +1193,23 @@ Local downloads configured with a plain `downloadFileName` directory now resolve
 path segments before checking that the destination remains inside that directory. Downloads through a
 symbolic link that resolves outside the configured directory are rejected. Valid object names using `/`
 as a pseudo-directory separator continue to work.
+
+=== camel-alibaba-eventbridge
+
+==== CloudEvents 1.0 specification validation enabled by default
+
+The `camel-alibaba-eventbridge` producer now enables `validateEventSpec` by default (`validateEventSpec=true`) for Map payloads. This validates CloudEvents 1.0 specification constraints, requiring `specversion="1.0"`, valid RFC 3339 / ISO-8601 timestamps for `time`, and non-blank event identifiers (`id`).
+
+Existing routes that produce Map bodies with non-standard specification versions or empty `id` fields should either update their payload maps to conform to CloudEvents 1.0 or explicitly disable specification validation:
+
+[source,text]
+----
+alibaba-eventbridge:putEvents?validateEventSpec=false&...
+----
+
+==== 3-level hierarchical event validation and fail-closed cloud validation
+
+The component introduces fine-grained multi-bus and source-scoped event validation (`validateEventSource`, `validateEventType`, and `allowedEventSources`) with cached metadata in `EventSourceCache`.
+
+When cloud validation is enabled (`validateEventSource=true` or `validateEventType=true`), validation operates fail-closed: if the Alibaba Cloud EventBridge API is unreachable or returns an error, the producer will fail fast by throwing an exception rather than silently permitting unvalidated messages.
+

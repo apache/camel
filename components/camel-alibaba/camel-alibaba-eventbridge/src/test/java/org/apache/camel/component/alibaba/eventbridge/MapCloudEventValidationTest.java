@@ -329,4 +329,193 @@ class MapCloudEventValidationTest extends CamelTestSupport {
         assertThat(events.get(0).getSource().toString()).isEqualTo("app.one");
         assertThat(events.get(1).getSource().toString()).isEqualTo("app.two");
     }
+
+    @Test
+    void testValidateCloudEventDirectObjectValidation() {
+        AllowedEventSource allowedSource = new AllowedEventSource("app.orders", Set.of("OrderCreated"));
+        AllowedEventBus allowedBus = new AllowedEventBus("orders-bus", Map.of("app.orders", allowedSource));
+        ClientConfigurations config = new ClientConfigurations(
+                null, "orders-bus", null, null, null, false, false, true,
+                Map.of("orders-bus", allowedBus), 300000L);
+
+        CloudEvent validEvent = com.aliyun.eventbridge.util.EventBuilder.builder()
+                .withAliyunEventBus("orders-bus")
+                .withSource(java.net.URI.create("app.orders"))
+                .withType("OrderCreated")
+                .withId("event-123")
+                .build();
+
+        validator.validateCloudEvent(validEvent, config, eventBridgeClient);
+
+        CloudEvent invalidEvent = com.aliyun.eventbridge.util.EventBuilder.builder()
+                .withAliyunEventBus("orders-bus")
+                .withSource(java.net.URI.create("app.unauthorized"))
+                .withType("OrderCreated")
+                .withId("event-124")
+                .build();
+
+        assertThatThrownBy(() -> validator.validateCloudEvent(invalidEvent, config, eventBridgeClient))
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessageContaining("Event source 'app.unauthorized' is not in the allowed sources list");
+    }
+
+    @Test
+    void testCloudApiFailureFailsClosedOnBusCheck() {
+        when(eventBridgeClient.listEventBuses(any(ListEventBusesRequest.class)))
+                .thenThrow(new RuntimeException("Cloud API connection timeout"));
+
+        ClientConfigurations config = new ClientConfigurations(
+                null, "cloud-orders-bus", null, null, null, true, false, true, Map.of(), 300000L);
+
+        Map<String, Object> event = Map.of(
+                "eventBusName", "cloud-orders-bus",
+                "source", "app.orders",
+                "type", "OrderCreated");
+
+        assertThatThrownBy(() -> validator.validateAndBuild(event, config, eventBridgeClient))
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessageContaining(
+                        "Failed to verify event bus 'cloud-orders-bus' existence via Alibaba Cloud EventBridge API")
+                .hasCauseInstanceOf(RuntimeException.class);
+    }
+
+    @Test
+    void testCloudApiFailureFailsClosedOnRulesCheck() {
+        EventBusEntry busEntry = new EventBusEntry();
+        busEntry.setEventBusName("cloud-orders-bus");
+        ListEventBusesResponse busResponse = new ListEventBusesResponse();
+        busResponse.setEventBuses(List.of(busEntry));
+        when(eventBridgeClient.listEventBuses(any(ListEventBusesRequest.class))).thenReturn(busResponse);
+
+        when(eventBridgeClient.listRules(any(ListRulesRequest.class)))
+                .thenThrow(new RuntimeException("API rate limit exceeded"));
+
+        AllowedEventSource allowedSource = new AllowedEventSource("app.orders", Set.of("OrderCreated"));
+        AllowedEventBus allowedBus = new AllowedEventBus("cloud-orders-bus", Map.of("app.orders", allowedSource));
+
+        ClientConfigurations config = new ClientConfigurations(
+                null, "cloud-orders-bus", null, null, null, true, true, true,
+                Map.of("cloud-orders-bus", allowedBus), 300000L);
+
+        Map<String, Object> event = Map.of(
+                "eventBusName", "cloud-orders-bus",
+                "source", "app.orders",
+                "type", "OrderCreated");
+
+        assertThatThrownBy(() -> validator.validateAndBuild(event, config, eventBridgeClient))
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessageContaining(
+                        "Failed to query rules for event bus 'cloud-orders-bus' via Alibaba Cloud EventBridge API")
+                .hasCauseInstanceOf(RuntimeException.class);
+    }
+
+    @Test
+    void testPrefixFilterPatternMatching() {
+        EventBusEntry busEntry = new EventBusEntry();
+        busEntry.setEventBusName("cloud-orders-bus");
+        ListEventBusesResponse busResponse = new ListEventBusesResponse();
+        busResponse.setEventBuses(List.of(busEntry));
+        when(eventBridgeClient.listEventBuses(any(ListEventBusesRequest.class))).thenReturn(busResponse);
+
+        EventRuleDTO ruleDTO = new EventRuleDTO();
+        ruleDTO.setFilterPattern(
+                "{\"source\":[{\"prefix\":\"acs:oss:\"}],\"type\":[{\"prefix\":\"oss:ObjectCreated:\"}]}");
+        ListRulesResponse rulesResponse = new ListRulesResponse();
+        rulesResponse.setRules(List.of(ruleDTO));
+        when(eventBridgeClient.listRules(any(ListRulesRequest.class))).thenReturn(rulesResponse);
+
+        ClientConfigurations config = new ClientConfigurations(
+                null, "cloud-orders-bus", null, null, null, true, true, true, Map.of(), 300000L);
+
+        Map<String, Object> validEvent = Map.of(
+                "eventBusName", "cloud-orders-bus",
+                "source", "acs:oss:cn-hangzhou:12345:my-bucket",
+                "type", "oss:ObjectCreated:PutObject");
+
+        CloudEvent event = validator.validateAndBuild(validEvent, config, eventBridgeClient);
+        assertThat(event).isNotNull();
+
+        Map<String, Object> invalidEvent = Map.of(
+                "eventBusName", "cloud-orders-bus",
+                "source", "acs:oss:cn-hangzhou:12345:my-bucket",
+                "type", "oss:ObjectDeleted:DeleteObject");
+
+        assertThatThrownBy(() -> validator.validateAndBuild(invalidEvent, config, eventBridgeClient))
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessageContaining("Event type 'oss:ObjectDeleted:DeleteObject' is not valid for event source");
+    }
+
+    @Test
+    void testValidateEventSpecFalseAllowsNonStandardValues() {
+        ClientConfigurations config = new ClientConfigurations(
+                null, "test-bus", null, null, null, false, false, false, Map.of(), 300000L);
+
+        Map<String, Object> map = new HashMap<>();
+        map.put("source", "my.source");
+        map.put("type", "my.type");
+        map.put("specversion", "0.3");
+        map.put("id", "");
+
+        CloudEvent event = validator.validateAndBuild(map, config, eventBridgeClient);
+        assertThat(event).isNotNull();
+    }
+
+    @Test
+    void testPerMessageCacheTtlHeaderOverride() {
+        EventBusEntry busEntry = new EventBusEntry();
+        busEntry.setEventBusName("custom-ttl-bus");
+        ListEventBusesResponse busResponse = new ListEventBusesResponse();
+        busResponse.setEventBuses(List.of(busEntry));
+        when(eventBridgeClient.listEventBuses(any(ListEventBusesRequest.class))).thenReturn(busResponse);
+
+        EventRuleDTO ruleDTO = new EventRuleDTO();
+        ruleDTO.setFilterPattern("{\"source\":[\"app.orders\"]}");
+        ListRulesResponse rulesResponse = new ListRulesResponse();
+        rulesResponse.setRules(List.of(ruleDTO));
+        when(eventBridgeClient.listRules(any(ListRulesRequest.class))).thenReturn(rulesResponse);
+
+        long customTtl = 50000L;
+        long before = System.currentTimeMillis();
+
+        ClientConfigurations config = new ClientConfigurations(
+                null, "custom-ttl-bus", null, null, null, true, false, true, Map.of(), customTtl);
+
+        Map<String, Object> event = Map.of(
+                "eventBusName", "custom-ttl-bus",
+                "source", "app.orders",
+                "type", "OrderCreated");
+
+        validator.validateAndBuild(event, config, eventBridgeClient);
+
+        EventSourceCache.CacheEntry<EventSourceCache.BusMetadata> entry = eventSourceCache.getCachedEntry("custom-ttl-bus");
+        assertThat(entry).isNotNull();
+        assertThat(entry.expiryTime()).isGreaterThanOrEqualTo(before + customTtl);
+    }
+
+    @Test
+    void testRejectionWhenMapBodyOverridesBusOrSourceOutsideWhitelist() {
+        AllowedEventSource allowedSource = new AllowedEventSource("app.orders", Set.of("OrderCreated"));
+        AllowedEventBus allowedBus = new AllowedEventBus("orders-bus", Map.of("app.orders", allowedSource));
+        ClientConfigurations config = new ClientConfigurations(
+                null, "orders-bus", null, null, null, false, false, true,
+                Map.of("orders-bus", allowedBus), 300000L);
+
+        Map<String, Object> unauthorizedBusEvent = Map.of(
+                "eventBusName", "unauthorized-bus",
+                "source", "app.orders",
+                "type", "OrderCreated");
+
+        assertThatThrownBy(() -> validator.validateAndBuild(unauthorizedBusEvent, config, eventBridgeClient))
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessageContaining("Event bus 'unauthorized-bus' is not in the allowed event buses list");
+
+        Map<String, Object> unauthorizedSourceEvent = Map.of(
+                "eventBusName", "orders-bus",
+                "source", "unauthorized.source",
+                "type", "OrderCreated");
+
+        assertThatThrownBy(() -> validator.validateAndBuild(unauthorizedSourceEvent, config, eventBridgeClient))
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessageContaining("Event source 'unauthorized.source' is not in the allowed sources list");
+    }
 }

@@ -201,20 +201,25 @@ final class MapCloudEventValidator {
                     eventBusName, allowedBus,
                     configuration.validateEventSource(),
                     configuration.validateEventType(),
+                    configuration.eventSourceCacheTtl(),
                     client);
 
-            if (!eventSourceCache.isKnownEventBus(eventBusName, client)) {
+            if (!eventSourceCache.isKnownEventBus(eventBusName, configuration.eventSourceCacheTtl(), client)) {
                 throw new IllegalArgumentException(
                         String.format("Event bus '%s' does not exist in Alibaba Cloud EventBridge", eventBusName));
             }
 
-            if (configuration.validateEventSource() && !eventSourceCache.isKnownEventSource(eventBusName, source, client)) {
+            if (configuration.validateEventSource()
+                    && !eventSourceCache.isKnownEventSource(eventBusName, source, configuration.eventSourceCacheTtl(),
+                            client)) {
                 throw new IllegalArgumentException(
                         String.format("Event source '%s' is not registered on event bus '%s' in Alibaba Cloud EventBridge",
                                 source, eventBusName));
             }
 
-            if (configuration.validateEventType() && !eventSourceCache.isKnownEventType(eventBusName, source, type, client)) {
+            if (configuration.validateEventType()
+                    && !eventSourceCache.isKnownEventType(eventBusName, source, type, configuration.eventSourceCacheTtl(),
+                            client)) {
                 throw new IllegalArgumentException(
                         String.format(
                                 "Event type '%s' is not valid for event source '%s' on event bus '%s' in Alibaba Cloud EventBridge",

@@ -96,7 +96,9 @@ class PutEventsTest extends CamelTestSupport {
         mock.assertIsSatisfied();
 
         Exchange exchange = mock.getExchanges().get(0);
-        assertThat(exchange.getMessage().getBody(Map.class))
+        @SuppressWarnings("unchecked")
+        Map<String, Object> body = exchange.getMessage().getBody(Map.class);
+        assertThat(body)
                 .containsEntry(AlibabaEventBridgeConstants.EVENT_RESPONSE_REQUEST_IDENTIFIER, "req-eb-1")
                 .containsEntry(AlibabaEventBridgeConstants.EVENT_RESPONSE_FAILED_ENTRY_COUNT, 0);
         assertThat(exchange.getMessage().getHeader(AlibabaEventBridgeHeaders.REQUEST_ID)).isEqualTo("req-eb-1");
