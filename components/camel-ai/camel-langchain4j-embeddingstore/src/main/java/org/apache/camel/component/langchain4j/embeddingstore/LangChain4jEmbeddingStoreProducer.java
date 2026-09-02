@@ -254,6 +254,10 @@ public class LangChain4jEmbeddingStoreProducer extends DefaultProducer {
         // Batch removal by collection of IDs
         if (body instanceof Collection) {
             Collection<String> ids = (Collection<String>) body;
+            if (ids.isEmpty()) {
+                throw new IllegalArgumentException(
+                        "REMOVE action requires a non-empty Collection<String> body for batch ID removal");
+            }
             store.removeAll(ids);
             return;
         }

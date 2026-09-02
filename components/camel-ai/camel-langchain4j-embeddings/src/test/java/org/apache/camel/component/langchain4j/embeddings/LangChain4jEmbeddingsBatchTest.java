@@ -75,6 +75,8 @@ class LangChain4jEmbeddingsBatchTest extends CamelTestSupport {
 
         // Token usage should be reported for batch operations
         assertThat(result.getHeader(LangChain4jEmbeddingsHeaders.EMBEDDINGS)).isNotNull();
+        assertThat(result.getHeader(LangChain4jEmbeddingsHeaders.INPUT_TOKEN_COUNT, Integer.class)).isNotNull().isPositive();
+        assertThat(result.getHeader(LangChain4jEmbeddingsHeaders.TOTAL_TOKEN_COUNT, Integer.class)).isNotNull().isPositive();
     }
 
     @Test

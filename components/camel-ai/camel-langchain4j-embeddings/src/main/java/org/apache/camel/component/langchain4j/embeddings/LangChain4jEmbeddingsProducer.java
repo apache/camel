@@ -52,7 +52,12 @@ public class LangChain4jEmbeddingsProducer extends DefaultProducer {
         Object body = message.getBody();
 
         if (body instanceof List) {
-            processBatch(exchange, model, message, (List<Object>) body);
+            List<Object> bodyList = (List<Object>) body;
+            if (bodyList.isEmpty()) {
+                throw new IllegalArgumentException(
+                        "Batch embedding requires a non-empty List body");
+            }
+            processBatch(exchange, model, message, bodyList);
         } else {
             processSingle(exchange, model, message);
         }
