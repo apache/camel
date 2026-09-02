@@ -1240,6 +1240,263 @@ unaffected.
 
 `String` to `java.io.File` is unchanged: there the `String` genuinely is a path.
 
+==== camel-observability-services-starter narrows its injected defaults
+
+The starter contributes a set of management defaults as soon as it is on the classpath. Three of them were
+wider than the Spring Boot or Camel setting they replaced, and have been brought back in line.
+
+The management listener now binds to loopback. `management.server.port` was injected without a matching
+`management.server.address`, so adding the starter opened a second listener on every interface. Spring Boot
+ships no separate management listener at all, so that listener and its reach are now both a deliberate choice.
+
+Deployments whose kubelet probes or Prometheus scrapers reach the pod over the network — which is every
+Kubernetes deployment using the health and metrics endpoints — must widen the bind address explicitly:
+
+[source,properties]
+----
+management.server.address = 0.0.0.0
+----
+
+Doing so should be paired with a `NetworkPolicy` or with authentication in front of the management port.
+
+`management.endpoint.health.show-details` is now `when-authorized` instead of `always`, so the aggregate
+`/observe/health` endpoint shows its individual indicators to an authenticated caller and a bare status to
+everybody else. Camel health checks report on the resources a route talks to, and their detail can identify
+those resources. With no Spring Security on the classpath the endpoint behaves as `never`. To restore the
+previous behaviour:
+
+[source,properties]
+----
+management.endpoint.health.show-details = always
+----
+
+The `live` and `ready` health groups keep `show-details=always`. The kubelet reads them unauthenticated and
+puts the response body into the probe-failure event, so `kubectl describe pod` still names the indicator that
+took the pod down, and those groups hold availability-state indicators that report a status and carry no data.
+
+`camel.health.exposure-level` is no longer forced to `full` and now follows the Camel default of `default`,
+which filters health check metadata — endpoint URIs, route and consumer identifiers — out of the health
+response while keeping the check names, error messages and stack traces. To opt back in:
+
+[source,properties]
+----
+camel.health.exposure-level = full
+----
+
+The defaults are still registered as the lowest precedence property source, so all three settings are
+overridden by ordinary application configuration. The full injected set is documented in the
+xref:spring-boot::starters/observability-services.adoc[starter documentation].
+
+
+==== camel-debug-starter no longer opens a JMX connector by default
+
+`camel.debug.jmx-connector-enabled` now defaults to `false` instead of `true`. Adding
+`camel-debug-starter` to the classpath still installs and enables the `BacklogDebugger`, which is what
+the starter is for, but it no longer creates an RMI registry and JMX RMI server on
+`camel.debug.jmx-connector-port` (`1099`). Nothing listens until the connector is asked for.
+
+Unlike camel-main, where `camel.debug.enabled` defaults to `false` and so the connector is only reached
+after the debugger is explicitly turned on, the starter enables the debugger as soon as it is on the
+classpath. That made the dependency alone enough to open a port, and the connector is created without
+authentication or transport security: anyone able to reach it can suspend routes and read message
+payloads.
+
+Tooling that attaches to the debugger from another process — the IntelliJ IDEA and VS Code Camel
+plugins — needs the connector, and must now request it:
+
+[source,properties]
+----
+camel.debug.jmx-connector-enabled = true
+camel.debug.jmx-connector-port = 1099
+----
+
+Enable it only on a trusted network, with the port bound to a loopback interface or protected by a
+firewall.
+
+The `camel debug` command of Camel JBang is unaffected: it drives a Spring Boot application through the
+local CLI connector from `camel-cli-connector-starter`, not through JMX.
+
+
+==== camel-spring-boot health check stack traces moved to the full exposure level
+
+The Camel health indicator added the full stack trace of a failed health check as `error.stacktrace` to the
+per-check data in `/actuator/health` at every exposure level except `oneline`. A DOWN check whose result
+carries an exception — a consumer that lost its broker, a pool that cannot connect — therefore serialised the
+whole cause chain into the actuator response at the default exposure level.
+
+`error.stacktrace` is now emitted only when the exposure level is `full`. `error.message` is still reported at
+the `default` level, which mirrors what Spring Boot's own health indicators expose, and matches how the other
+runtimes report a failed check: camel-main's management endpoint includes `error-stacktrace` only when the
+caller asks for it with `?stackTrace=true`, and camel-quarkus-microprofile-health never emits one. It also
+matches the documented meaning of the levels, where `full` is the level that includes all details from the
+invoked health checks. The trace is unchanged in the application log.
+
+A deployment that consumed the trace from the actuator response can opt back in with:
+
+[source,properties]
+----
+camel.health.exposure-level = full
+----
+
+Note that `full` also stops filtering the health check metadata out of the per-check data, so the output is
+more verbose than the previous default in other respects too.
+
+
+==== camel-platform-http-starter deletes multipart uploads when the exchange completes
+
+Multipart file uploads are copied out of the servlet container into the servlet temporary directory so that they
+remain readable after the HTTP request has completed. These temporary copies were never removed and accumulated for
+the lifetime of the application. They are now deleted when the exchange is done being routed, that is after the
+response has been written, which aligns the starter with the `deleteUploadedFilesOnEnd` option of
+`camel-platform-http-vertx` and with `camel-http-common`, where the container deletes its own part files.
+
+Routes that consume the upload while the exchange is being routed (saving it with the file producer, streaming it to
+a remote system, unmarshalling it) are unaffected. A route that stores the temporary path and reads the file after
+the exchange has completed must opt out and delete the file itself:
+
+[source,properties]
+----
+camel.component.platform-http.server.delete-uploaded-files-on-end=false
+----
+
+
+==== camel-platform-http-starter path variables follow the matched path
+
+Path variable headers are now taken from the path Spring matched the request against, instead of from
+the undecoded request URI. The values are therefore percent-decoded and carry no matrix parameters,
+which is what the vertx engine has always provided.
+
+For a consumer such as `platform-http:/greeting/{name}`:
+
+[cols="1,1,1"]
+|===
+|Request |Header `name` before |Header `name` now
+
+|`/greeting/%61dmin`
+|`%61dmin`
+|`admin`
+
+|`/greeting/John%20Doe`
+|`John%20Doe`
+|`John Doe`
+
+|`/greeting/name;v=1`
+|`name;v=1`
+|`name`
+|===
+
+An application that decoded the header itself, or that parsed matrix parameters out of it, must drop
+that handling. Requests whose path variables contain no percent-encoding and no matrix parameters are
+unaffected.
+
+`CamelHttpPath` (`Exchange.HTTP_PATH`) is unchanged: it still reports the raw request path with the
+servlet context-path removed.
+
+
+==== camel-micrometer-starter bounds the uri tag
+
+The starter contributes the `uri` low cardinality tag of the `http.server.requests` metrics when
+`camel.metrics.uri-tag-enabled = true`. Two things change in this release.
+
+First, the property is now matched in its documented kebab-case form. The auto-configuration was conditional on
+`camel.metrics.uriTagEnabled`, a spelling that Spring Boot cannot resolve from a relaxed binding source, so an
+application that configured `camel.metrics.uri-tag-enabled = true`, the name listed in the starter
+documentation, never got the Camel uri tag at all. Both spellings now enable it. An application that had the
+kebab-case property set therefore starts seeing Camel consumer paths in the `uri` tag where it previously saw
+the value computed by Spring.
+
+Second, when a request does not resolve to a Camel HTTP consumer — a 404, or any request served by something
+else than the Camel servlet — the tag was the requested path (servlet path plus path info) verbatim. Micrometer
+registers a meter per distinct tag value and keeps it for the lifetime of the process, so the number of meters
+followed the number of distinct paths that had been requested, instead of the number of routes. Such requests
+now keep the `uri` value computed by Spring's own `DefaultServerRequestObservationConvention`: the mapped
+pattern for a Spring MVC endpoint, and a constant such as `UNKNOWN`, `NOT_FOUND` or `REDIRECTION` otherwise.
+This is what `camel.metrics.uri-tag-enabled` already documents ("will be marked as UNKNOWN"). Requests that do
+resolve to a Camel consumer are unchanged, the tag is the static consumer path, such as `/users/{id}`.
+
+With `camel.metrics.uri-tag-dynamic = true` the requested path is still used, such as `/camel/users/123`, but
+only for requests that resolve to a Camel consumer, and the tag value is now capped at 200 characters.
+
+Dashboards and alerts that matched on the raw path of requests that are not served by Camel must use the Spring
+value instead, for example the mapped pattern `/actuator/health` of a Spring MVC endpoint.
+
+
+==== camel-jasypt-starter defaults to PBEWITHHMACSHA256ANDAES_256
+
+`camel.component.jasypt.algorithm` now defaults to `PBEWITHHMACSHA256ANDAES_256` instead of `PBEWithMD5AndDES`.
+The starter already recognises that algorithm as one that requires an initialization vector, so
+`org.jasypt.iv.RandomIvGenerator` is installed automatically when `camel.component.jasypt.iv-generator-class-name`
+is not set.
+
+This is a breaking change for existing encrypted values: a value produced under `PBEWithMD5AndDES` cannot be
+decrypted with the new default, and startup fails with an `EncryptionOperationNotPossibleException` when the
+property is resolved. Either re-encrypt the values with the new algorithm, or pin the previous default:
+
+[source,properties]
+----
+camel.component.jasypt.algorithm = PBEWithMD5AndDES
+----
+
+Whichever Jasypt tooling is used to produce the ciphertext must be given the same algorithm *and* a random IV
+generator — the Jasypt CLI defaults to no IV generator, and a value encrypted without one cannot be decrypted by
+the starter:
+
+[source,bash]
+----
+jbang org.apache.camel:camel-jasypt:<camel-version> \
+  -c encrypt -p "$JASYPT_PASSWORD" -i my-secret-value \
+  -a PBEWITHHMACSHA256ANDAES_256 -riga SHA1PRNG
+----
+
+The `camel-jasypt` component itself is unchanged: `JasyptPropertiesParser` leaves the algorithm unset, so it still
+falls back to the Jasypt library default of `PBEWithMD5AndDES`. Aligning the component with the starter is a
+separate change; until it lands, an application that configures `JasyptPropertiesParser` directly keeps the old
+algorithm unless it sets one.
+
+The starter's usage documentation no longer shows the master password next to the encrypted value it protects. Use
+the `sysenv:` or `sys:` prefixes of `camel.component.jasypt.password` to read it from the environment or a JVM
+system property, or inject it from an external secret store.
+
+
+==== Starter configuration options that cannot be bound are reported
+
+The starters bind `camel.component.*`, `camel.dataformat.*` and `camel.language.*` onto the Camel component,
+data format or language they configure. Two steps of that binding used to discard a configured value without
+reporting it, so a mistyped or unbindable option left the target at its default and nothing appeared in the
+log. Both now report the value they cannot use, which matches what `camel.rest.*` has always done.
+
+An option of a complex (object) type is configured with a reference to a bean, such as:
+
+[source,properties]
+----
+camel.component.http.ssl-context-parameters = #bean:mySslContextParameters
+----
+
+The generated converter used to return `null` for any value that did not start with `#`, and for a value
+naming a bean that does not exist. A typo in the bean id therefore produced a component with the option
+unset. Such a value now aborts startup with a message naming the value, the target type and the
+configuration prefix it was set under. A plain bean id with no `#` prefix — `mySslContextParameters` — is
+resolved rather than discarded, as are `#autowired` and `#type:com.foo.MyType`.
+
+The generated customizers copied the whole configuration onto the target with `failIfNotSet=false`, so an
+option with no matching setter on the target was dropped without a log line. An option that the application
+configured itself and that cannot be set now aborts startup. An option that only carries the default the
+generator took from the Camel catalog is logged at `DEBUG` and ignored, since the target keeps its own
+default and there is nothing to fix in the application. The options belonging to the auto-configuration
+layer itself — `enabled` and `customizer` — are removed before the copy, as they were never options on the
+Camel target.
+
+An application that set an option which never took effect will therefore now fail to start. The remedy is
+to correct or remove the reported option. To restore the previous tolerance while doing so:
+
+[source,properties]
+----
+camel.springboot.lenient-configuration-binding = true
+----
+
+Such an option is then logged at `WARN` with its name, instead of being dropped silently as before.
+
+
 === camel-azure-storage-blob and camel-azure-storage-datalake
 
 Local downloads configured with `fileDir` now resolve existing filesystem path segments before checking
