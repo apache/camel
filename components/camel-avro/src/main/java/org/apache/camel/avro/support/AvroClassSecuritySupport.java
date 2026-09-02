@@ -17,11 +17,14 @@
 package org.apache.camel.avro.support;
 
 import java.util.Arrays;
-import java.util.NavigableSet;
+import java.util.HashSet;
+import java.util.LinkedHashSet;
+import java.util.List;
 import java.util.Set;
-import java.util.TreeSet;
-import java.util.concurrent.ConcurrentHashMap;
+import java.util.stream.Collectors;
 
+import org.apache.avro.Protocol;
+import org.apache.avro.Schema;
 import org.apache.avro.util.ClassSecurityValidator;
 import org.apache.avro.util.ClassSecurityValidator.ClassSecurityPredicate;
 
@@ -37,9 +40,9 @@ import org.apache.avro.util.ClassSecurityValidator.ClassSecurityPredicate;
  */
 public final class AvroClassSecuritySupport {
 
-    private static final Set<String> TRUSTED_PACKAGES = ConcurrentHashMap.newKeySet();
+    private static final Set<String> TRUSTED_PACKAGES = java.util.concurrent.ConcurrentHashMap.newKeySet();
 
-    private static final Set<String> TRUSTED_CLASSES = ConcurrentHashMap.newKeySet();
+    private static final Set<String> TRUSTED_CLASSES = java.util.concurrent.ConcurrentHashMap.newKeySet();
 
     private static final Object LOCK = new Object();
 
@@ -49,7 +52,7 @@ public final class AvroClassSecuritySupport {
 
     private static volatile ClassSecurityPredicate installedGlobal;
 
-    private static volatile NavigableSet<String> normalizedPackagePrefixes = new TreeSet<>();
+    private static volatile List<String> normalizedPackagePrefixes = List.of();
 
     private AvroClassSecuritySupport() {
     }
@@ -69,13 +72,25 @@ public final class AvroClassSecuritySupport {
             return;
         }
         synchronized (LOCK) {
-            TRUSTED_CLASSES.add(className);
-            int lastDot = className.lastIndexOf('.');
-            if (lastDot > 0) {
-                TRUSTED_PACKAGES.add(normalizePackage(className.substring(0, lastDot)));
+            if (!applyClassNameTrust(className, true)) {
+                return;
             }
-            rebuildNormalizedPackagePrefixes();
-            refreshGlobal();
+            commitTrustChanges();
+        }
+    }
+
+    /**
+     * Trusts only the exact class name without trusting its whole package.
+     */
+    public static void trustClassNameOnly(String className) {
+        if (className == null || className.isBlank()) {
+            return;
+        }
+        synchronized (LOCK) {
+            if (!applyClassNameTrust(className, false)) {
+                return;
+            }
+            commitTrustChanges();
         }
     }
 
@@ -97,13 +112,67 @@ public final class AvroClassSecuritySupport {
             return;
         }
         synchronized (LOCK) {
+            boolean changed = false;
             for (String pkg : packages) {
                 if (pkg != null && !pkg.isBlank()) {
-                    TRUSTED_PACKAGES.add(normalizePackage(pkg));
+                    String normalized = normalizePackage(pkg);
+                    if (!isSystemPackage(normalized)) {
+                        changed |= TRUSTED_PACKAGES.add(normalized);
+                    }
                 }
             }
-            rebuildNormalizedPackagePrefixes();
-            refreshGlobal();
+            if (!changed) {
+                return;
+            }
+            commitTrustChanges();
+        }
+    }
+
+    /**
+     * Trusts all named types reachable from the given schema graph.
+     */
+    public static void trustSchema(Schema schema) {
+        if (schema == null) {
+            return;
+        }
+        synchronized (LOCK) {
+            Set<Schema> visited = new HashSet<>();
+            boolean changed = collectSchemaTrust(schema, visited);
+            if (!changed) {
+                return;
+            }
+            commitTrustChanges();
+        }
+    }
+
+    /**
+     * Trusts all named types reachable from the given RPC protocol.
+     */
+    public static void trustProtocol(Protocol protocol) {
+        if (protocol == null) {
+            return;
+        }
+        synchronized (LOCK) {
+            boolean changed = false;
+            String namespace = protocol.getNamespace();
+            if (namespace != null && !namespace.isBlank() && !isSystemPackage(namespace)) {
+                changed |= TRUSTED_PACKAGES.add(normalizePackage(namespace));
+            }
+            Set<Schema> visited = new HashSet<>();
+            for (Schema type : protocol.getTypes()) {
+                if (!type.isError()) {
+                    changed |= collectSchemaTrust(type, visited);
+                }
+            }
+            for (Protocol.Message message : protocol.getMessages().values()) {
+                changed |= collectSchemaTrust(message.getRequest(), visited);
+                changed |= collectSchemaTrust(message.getResponse(), visited);
+                changed |= collectSchemaTrust(message.getErrors(), visited);
+            }
+            if (!changed) {
+                return;
+            }
+            commitTrustChanges();
         }
     }
 
@@ -114,19 +183,75 @@ public final class AvroClassSecuritySupport {
         synchronized (LOCK) {
             TRUSTED_PACKAGES.clear();
             TRUSTED_CLASSES.clear();
-            normalizedPackagePrefixes = new TreeSet<>();
+            normalizedPackagePrefixes = List.of();
             baseValidator = ClassSecurityValidator.DEFAULT;
             installedGlobal = null;
             ClassSecurityValidator.setGlobal(ClassSecurityValidator.DEFAULT);
         }
     }
 
+    private static boolean applyClassNameTrust(String className, boolean trustPackage) {
+        boolean changed = TRUSTED_CLASSES.add(className);
+        if (trustPackage) {
+            int lastDot = className.lastIndexOf('.');
+            if (lastDot > 0) {
+                String pkg = normalizePackage(className.substring(0, lastDot));
+                if (!isSystemPackage(pkg)) {
+                    changed |= TRUSTED_PACKAGES.add(pkg);
+                }
+            }
+        }
+        return changed;
+    }
+
+    private static boolean collectSchemaTrust(Schema schema, Set<Schema> visited) {
+        if (schema == null || !visited.add(schema)) {
+            return false;
+        }
+        boolean changed = false;
+        switch (schema.getType()) {
+            case RECORD, ENUM, FIXED -> {
+                String namespace = schema.getNamespace();
+                if (namespace != null && !namespace.isBlank() && !isSystemPackage(namespace)) {
+                    changed |= TRUSTED_PACKAGES.add(normalizePackage(namespace));
+                }
+                String fullName = schema.getFullName();
+                if (fullName != null && !fullName.isBlank()) {
+                    changed |= TRUSTED_CLASSES.add(fullName);
+                }
+                if (schema.getType() == Schema.Type.RECORD) {
+                    for (Schema.Field field : schema.getFields()) {
+                        changed |= collectSchemaTrust(field.schema(), visited);
+                    }
+                }
+            }
+            case ARRAY -> changed |= collectSchemaTrust(schema.getElementType(), visited);
+            case MAP -> changed |= collectSchemaTrust(schema.getValueType(), visited);
+            case UNION -> {
+                for (Schema branch : schema.getTypes()) {
+                    changed |= collectSchemaTrust(branch, visited);
+                }
+            }
+            default -> {
+                // primitives and other non-named roots
+            }
+        }
+        return changed;
+    }
+
+    private static void commitTrustChanges() {
+        rebuildNormalizedPackagePrefixes();
+        refreshGlobal();
+    }
+
     private static void refreshGlobal() {
+        ClassSecurityPredicate current = ClassSecurityValidator.getGlobal();
         if (installedGlobal == null) {
-            ClassSecurityPredicate current = ClassSecurityValidator.getGlobal();
             if (current != null && current != ClassSecurityValidator.DEFAULT) {
                 baseValidator = current;
             }
+        } else if (current != installedGlobal) {
+            baseValidator = current;
         }
         installedGlobal = ClassSecurityValidator.composite(baseValidator, CAMEL_TRUSTED);
         ClassSecurityValidator.setGlobal(installedGlobal);
@@ -137,17 +262,19 @@ public final class AvroClassSecuritySupport {
         if (TRUSTED_CLASSES.contains(className)) {
             return true;
         }
-        NavigableSet<String> packages = normalizedPackagePrefixes;
-        String lower = packages.lower(className);
-        return lower != null && className.startsWith(lower);
+        for (String prefix : normalizedPackagePrefixes) {
+            if (className.startsWith(prefix)) {
+                return true;
+            }
+        }
+        return false;
     }
 
     private static void rebuildNormalizedPackagePrefixes() {
-        NavigableSet<String> normalized = new TreeSet<>();
-        for (String pkg : TRUSTED_PACKAGES) {
-            normalized.add(normalizePackage(pkg) + ".");
-        }
-        normalizedPackagePrefixes = normalized;
+        normalizedPackagePrefixes = TRUSTED_PACKAGES.stream()
+                .map(pkg -> normalizePackage(pkg) + ".")
+                .sorted()
+                .toList();
     }
 
     private static Set<String> parsePackages(String packages) {
@@ -155,7 +282,7 @@ public final class AvroClassSecuritySupport {
                 .map(String::trim)
                 .filter(s -> !s.isEmpty())
                 .map(AvroClassSecuritySupport::normalizePackage)
-                .collect(java.util.stream.Collectors.toCollection(java.util.LinkedHashSet::new));
+                .collect(Collectors.toCollection(LinkedHashSet::new));
     }
 
     private static String normalizePackage(String pkg) {
@@ -168,5 +295,15 @@ public final class AvroClassSecuritySupport {
             normalized = normalized.substring(0, normalized.length() - 1);
         }
         return normalized;
+    }
+
+    static boolean isSystemPackage(String pkg) {
+        if (pkg == null || pkg.isBlank()) {
+            return true;
+        }
+        return pkg.startsWith("java.")
+                || pkg.startsWith("javax.")
+                || pkg.startsWith("jdk.")
+                || pkg.startsWith("sun.");
     }
 }

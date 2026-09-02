@@ -99,8 +99,7 @@ public class AvroDataFormat extends ServiceSupport implements DataFormat, DataFo
         }
 
         if (actualSchema != null) {
-            AvroClassSecuritySupport.trustPackages(actualSchema.getNamespace());
-            AvroClassSecuritySupport.trustClassName(actualSchema.getFullName());
+            AvroClassSecuritySupport.trustSchema(actualSchema);
         }
     }
 
@@ -158,11 +157,11 @@ public class AvroDataFormat extends ServiceSupport implements DataFormat, DataFo
 
     @Override
     public void marshal(Exchange exchange, Object graph, OutputStream outputStream) throws Exception {
-        if (actualSchema == null) {
-            AvroClassSecuritySupport.trustClassName(graph.getClass().getName());
-        }
         // the schema should be from the graph class name
         Schema useSchema = actualSchema != null ? actualSchema : loadSchema(graph.getClass().getName());
+        if (actualSchema == null) {
+            AvroClassSecuritySupport.trustClassNameOnly(graph.getClass().getName());
+        }
 
         SpecificData specificData = getSpecificData(useSchema);
 

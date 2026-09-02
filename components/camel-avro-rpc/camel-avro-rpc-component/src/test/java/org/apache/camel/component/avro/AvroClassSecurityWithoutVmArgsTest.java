@@ -72,6 +72,16 @@ class AvroClassSecurityWithoutVmArgsTest extends CamelTestSupport {
     }
 
     @Test
+    void shouldTrustParentPackageFromSerializablePackagesOption() throws Exception {
+        context.getEndpoint(
+                "avro:netty:localhost:9999?protocolClassName=org.apache.camel.avro.generated.KeyValueProtocol"
+                            + "&serializablePackages=org.apache.camel.avro",
+                AvroEndpoint.class);
+
+        assertDoesNotThrow(() -> ClassSecurityValidator.validate(TestPojo.class));
+    }
+
+    @Test
     void shouldRejectClassesOutsideConfiguredProtocolPackages() throws Exception {
         context.getEndpoint(
                 "avro:netty:localhost:9999?protocolClassName=org.apache.camel.avro.generated.KeyValueProtocol",

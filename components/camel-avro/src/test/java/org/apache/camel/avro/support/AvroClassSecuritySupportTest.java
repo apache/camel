@@ -16,6 +16,10 @@
  */
 package org.apache.camel.avro.support;
 
+import java.io.IOException;
+import java.util.UUID;
+
+import org.apache.avro.Schema;
 import org.apache.avro.util.ClassSecurityValidator;
 import org.apache.camel.dataformat.avro.example.Value;
 import org.junit.jupiter.api.BeforeEach;
@@ -54,10 +58,12 @@ class AvroClassSecuritySupportTest {
     }
 
     @Test
-    void shouldMergePackagesAcrossCalls() {
+    void shouldTrustParentPackageWhenChildPackageIsAlsoTrusted() {
         AvroClassSecuritySupport.trustPackages("org.apache.camel.dataformat.avro.example");
-        AvroClassSecuritySupport.trustPackages("org.apache.camel.dataformat.avro.example.extra");
+        AvroClassSecuritySupport.trustPackages("org.apache.camel.dataformat.avro.example.nested");
 
+        assertDoesNotThrow(() -> ClassSecurityValidator.validate(
+                org.apache.camel.dataformat.avro.example.nested.NestedFoo.class));
         assertDoesNotThrow(() -> ClassSecurityValidator.validate(Value.class));
     }
 
@@ -77,5 +83,40 @@ class AvroClassSecuritySupportTest {
 
         assertDoesNotThrow(() -> ClassSecurityValidator.validate(String.class));
         assertDoesNotThrow(() -> ClassSecurityValidator.validate(Value.class));
+    }
+
+    @Test
+    void shouldPreserveValidatorInstalledAfterFirstTrustCall() {
+        AvroClassSecuritySupport.trustPackages("a.b");
+        ClassSecurityValidator.setGlobal(
+                ClassSecurityValidator.composite(ClassSecurityValidator.getGlobal(), c -> c == UUID.class));
+
+        AvroClassSecuritySupport.trustPackages("c.d");
+
+        assertDoesNotThrow(() -> ClassSecurityValidator.validate(UUID.class));
+    }
+
+    @Test
+    void shouldTrustNonNamedRootSchemaGraph() {
+        Schema arraySchema = Schema.createArray(Value.SCHEMA$);
+
+        assertDoesNotThrow(() -> AvroClassSecuritySupport.trustSchema(arraySchema));
+        assertDoesNotThrow(() -> ClassSecurityValidator.validate(Value.class));
+    }
+
+    @Test
+    void shouldNotTrustSystemPackagesFromClassName() {
+        AvroClassSecuritySupport.trustClassName(IOException.class.getName());
+
+        assertThrows(SecurityException.class, () -> ClassSecurityValidator.validate(java.io.ObjectInputStream.class));
+    }
+
+    @Test
+    void shouldTrustExactClassWithoutPackageWhenUsingClassNameOnly() {
+        AvroClassSecuritySupport.trustClassNameOnly(Value.class.getName());
+
+        assertDoesNotThrow(() -> ClassSecurityValidator.validate(Value.class));
+        assertThrows(SecurityException.class,
+                () -> ClassSecurityValidator.validate(org.apache.camel.dataformat.avro.example.DateRecord.class));
     }
 }

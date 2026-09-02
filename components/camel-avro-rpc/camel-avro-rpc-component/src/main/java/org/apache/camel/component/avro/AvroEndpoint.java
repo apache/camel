@@ -21,7 +21,6 @@ import java.util.Collections;
 import java.util.Map;
 
 import org.apache.avro.Protocol;
-import org.apache.avro.Schema;
 import org.apache.avro.reflect.ReflectData;
 import org.apache.camel.AsyncEndpoint;
 import org.apache.camel.Category;
@@ -120,19 +119,10 @@ public abstract class AvroEndpoint extends DefaultEndpoint implements AsyncEndpo
     }
 
     private void configureClassSecurity(AvroConfiguration config) {
-        AvroClassSecuritySupport.ensureAvroIpcPackagesTrusted();
         AvroClassSecuritySupport.trustPackages(config.getSerializablePackages());
         AvroClassSecuritySupport.trustClassName(config.getProtocolClassName());
         if (config.getProtocol() != null) {
-            AvroClassSecuritySupport.trustPackages(config.getProtocol().getNamespace());
-            for (Schema type : config.getProtocol().getTypes()) {
-                if (type.getNamespace() != null) {
-                    AvroClassSecuritySupport.trustPackages(type.getNamespace());
-                }
-                if (type.getFullName() != null) {
-                    AvroClassSecuritySupport.trustClassName(type.getFullName());
-                }
-            }
+            AvroClassSecuritySupport.trustProtocol(config.getProtocol());
         }
     }
 }
