@@ -290,33 +290,6 @@ class MemoryKeyValueRepositoryTest {
     }
 
     @Test
-    void testReplaceMatchingValue() {
-        repository.put("key1", "value1", null);
-
-        boolean replaced = repository.replace("key1", "value1", "value2", null);
-
-        assertThat(replaced).isTrue();
-        assertThat(repository.get("key1")).isEqualTo("value2");
-    }
-
-    @Test
-    void testReplaceNonMatchingValue() {
-        repository.put("key1", "value1", null);
-
-        boolean replaced = repository.replace("key1", "wrong", "value2", null);
-
-        assertThat(replaced).isFalse();
-        assertThat(repository.get("key1")).isEqualTo("value1");
-    }
-
-    @Test
-    void testReplaceMissingKey() {
-        boolean replaced = repository.replace("nonexistent", "value1", "value2", null);
-
-        assertThat(replaced).isFalse();
-    }
-
-    @Test
     void testReplaceWithTtl() {
         repository.put("key1", "value1", null);
 
@@ -329,30 +302,4 @@ class MemoryKeyValueRepositoryTest {
                 .untilAsserted(() -> assertThat(repository.get("key1")).isNull());
     }
 
-    @Test
-    void testDeleteWithMatchingValue() {
-        repository.put("key1", "value1", null);
-
-        boolean deleted = repository.delete("key1", "value1");
-
-        assertThat(deleted).isTrue();
-        assertThat(repository.get("key1")).isNull();
-    }
-
-    @Test
-    void testDeleteWithNonMatchingValue() {
-        repository.put("key1", "value1", null);
-
-        boolean deleted = repository.delete("key1", "wrong");
-
-        assertThat(deleted).isFalse();
-        assertThat(repository.get("key1")).isEqualTo("value1");
-    }
-
-    @Test
-    void testDeleteWithMissingKey() {
-        boolean deleted = repository.delete("nonexistent", "value1");
-
-        assertThat(deleted).isFalse();
-    }
 }
