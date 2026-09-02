@@ -20,6 +20,7 @@ import java.time.Duration;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
+import com.hazelcast.config.Config;
 import com.hazelcast.core.Hazelcast;
 import com.hazelcast.core.HazelcastInstance;
 import com.hazelcast.map.IMap;
@@ -49,7 +50,8 @@ class HazelcastKeyValueRepositoryTest {
 
     @BeforeAll
     void setupHazelcast() throws Exception {
-        hazelcastInstance = Hazelcast.newHazelcastInstance(null);
+        Config config = hazelcastService.createConfiguration(null, 0, null, MAP_NAME);
+        hazelcastInstance = Hazelcast.newHazelcastInstance(config);
         repository = new HazelcastKeyValueRepository(hazelcastInstance, MAP_NAME);
         repository.start();
         map = hazelcastInstance.getMap(MAP_NAME);
