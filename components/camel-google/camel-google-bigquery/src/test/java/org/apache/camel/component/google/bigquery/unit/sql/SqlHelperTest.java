@@ -27,6 +27,7 @@ import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -107,6 +108,16 @@ public class SqlHelperTest {
         when(message.getHeader(eq("report"), eq(String.class))).thenReturn("report_data");
         assertThrows(RuntimeExchangeException.class,
                 () -> SqlHelper.translateQuery(query, exchange));
+    }
+
+    @Test
+    public void testTranslateQueryKeepsSubstitutingNonIdentifierValues() {
+        when(exchange.getMessage()).thenReturn(message);
+        when(message.getHeader(eq("custId"), eq(String.class))).thenReturn("O'Brien");
+
+        String answer = SqlHelper.translateQuery("SELECT id FROM orders WHERE customer_id = '${custId}'", exchange);
+
+        assertThat(answer).isEqualTo("SELECT id FROM orders WHERE customer_id = 'O'Brien'");
     }
 
     @Test

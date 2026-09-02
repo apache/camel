@@ -82,10 +82,8 @@ google-bigquery-sql://project-17248459:delete * from test.table where id=@myId
 
 google-bigquery-sql://project-17248459:delete * from ${datasetId}.${tableId} where id=@myId
 ----
-where
-
- * parameters in form $\{name} are extracted from message headers and formed the translated query.
- * parameters in form @name are extracted from body or message headers and sent to Google Bigquery. The `com.google.cloud.bigquery.StandardSQLTypeName` of the parameter is detected from the type of the parameter using `<T> QueryParameterValue<T>.of(T value, Class<T> type)`
+The query can contain two kinds of placeholder, `@name` and `$\{name}`. They are not
+interchangeable: see xref:#_query_placeholders[Query Placeholders] below.
 
 You can externalize your SQL queries to files in the classpath or file system as shown:
 
@@ -103,6 +101,57 @@ include::partial$component-endpoint-headers.adoc[]
 == Producer Endpoints
 
 Google BigQuery SQL endpoint expects the payload to be either empty or a map of query parameters.
+
+== Query Placeholders
+
+A query may contain two kinds of placeholder. They cover different positions in a SQL
+statement and are not interchangeable.
+
+[cols="1,2,3",options="header"]
+|===
+|Form |Substitutes |Mechanism
+
+|`@name`
+|Values
+|Sent to BigQuery as a named query parameter, separately from the query text.
+
+|`$\{name}`
+|Identifiers, such as dataset and table names
+|Spliced into the query text as literal characters before the query is sent.
+|===
+
+=== @name - query parameters
+
+Use `@name` for every value.
+
+Parameters in the form `@name` are taken from the message body when it is a `Map`,
+otherwise from the message headers, and are bound as BigQuery named query parameters.
+The `com.google.cloud.bigquery.StandardSQLTypeName` of the parameter is detected from
+the Java type of the value using `<T> QueryParameterValue<T>.of(T value, Class<T> type)`.
+
+Because the value is sent to BigQuery separately from the query text, it cannot alter
+the structure of the query. It is always treated as data.
+
+=== $\{name} - literal identifier substitution
+
+Parameters in the form `$\{name}` are replaced with the `String` value of the matching
+message header, or of the exchange property when no such header exists, before the query
+is sent. If neither is present, the exchange fails with a `RuntimeExchangeException`.
+
+The substitution is a literal text splice: the value is inserted into the query exactly
+as it appears, with no quoting or escaping applied. This form exists because BigQuery
+named query parameters can bind values but cannot bind identifiers, so a dataset or table
+name cannot be supplied through `@name`:
+
+----
+google-bigquery-sql://project-17248459:delete * from ${datasetId}.${tableId} where id=@myId
+----
+
+IMPORTANT: `$\{name}` is not parameter binding. Use it only for identifiers such as dataset
+and table names, and only with values that your route controls. A value containing SQL
+syntax changes the structure of the executed query instead of being treated as data, so a
+`$\{name}` placeholder must never be populated from message content supplied by an untrusted
+sender. Use `@name` for values.
 
 == Query Types
 
