@@ -49,8 +49,8 @@ CREATE TABLE camel_ks.CAMEL_AGGREGATION (
   PRIMARY KEY (KEY)
 );
 
-CREATE TABLE camel_ks.CAMEL_KEYVALUE (
-  KEY varchar,
-  VALUE blob,
-  PRIMARY KEY (KEY)
+CREATE TABLE camel_ks.camel_keyvalue (
+  key varchar,
+  value blob,
+  PRIMARY KEY (key)
 );

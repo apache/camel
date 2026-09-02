@@ -176,5 +176,5 @@ Camel provides `KeyValueRepository` implementations for JDBC, JPA, Cassandra, Ka
 Ehcache, JCache, Hazelcast, Redis, and Infinispan. Any of these can be used as the backend
 for the State Store component, the Idempotent Consumer, the Aggregator, and the Cache EIP.
 
-See xref:manual::key-value-repository.adoc[KeyValueRepository] for the full list of available
+See the KeyValueRepository section in the User Manual for the full list of available
 backends, configuration examples, and instructions for writing a custom backend.

@@ -75,13 +75,13 @@ public class CassandraKeyValueRepository extends ServiceSupport implements KeyVa
 
     private static final Logger LOGGER = LoggerFactory.getLogger(CassandraKeyValueRepository.class);
 
-    private static final String KEY_COLUMN = "KEY";
-    private static final String VALUE_COLUMN = "VALUE";
+    private static final String KEY_COLUMN = "key";
+    private static final String VALUE_COLUMN = "value";
 
     @Metadata(description = "Cassandra session", required = true)
     private CassandraSessionHolder session;
-    @Metadata(description = "The table name for storing the data", defaultValue = "CAMEL_KEYVALUE")
-    private String table = "CAMEL_KEYVALUE";
+    @Metadata(description = "The table name for storing the data", defaultValue = "camel_keyvalue")
+    private String table = "camel_keyvalue";
     @Metadata(description = "Write consistency level",
               enums = "ANY,ONE,TWO,THREE,QUORUM,ALL,LOCAL_ONE,LOCAL_QUORUM,EACH_QUORUM,SERIAL,LOCAL_SERIAL")
     private ConsistencyLevel writeConsistencyLevel;
