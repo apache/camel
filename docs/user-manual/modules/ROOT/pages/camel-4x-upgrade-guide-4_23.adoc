@@ -1325,11 +1325,12 @@ carries an exception — a consumer that lost its broker, a pool that cannot con
 whole cause chain into the actuator response at the default exposure level.
 
 `error.stacktrace` is now emitted only when the exposure level is `full`. `error.message` is still reported at
-the `default` level, which mirrors what Spring Boot's own health indicators expose, and matches how the other
-runtimes report a failed check: camel-main's management endpoint includes `error-stacktrace` only when the
-caller asks for it with `?stackTrace=true`, and camel-quarkus-microprofile-health never emits one. It also
-matches the documented meaning of the levels, where `full` is the level that includes all details from the
-invoked health checks. The trace is unchanged in the application log.
+the `default` level, which mirrors what Spring Boot's own health indicators expose; camel-main's management
+endpoint is stricter still and includes `error-stacktrace` only when the caller asks for it with
+`?stackTrace=true`. `camel-microprofile-health`, through which Camel Quarkus builds its health responses, applies
+the same gating from this release so the runtimes stay aligned. It also matches the documented meaning of the
+levels, where `full` is the level that includes all details from the invoked health checks. The trace is
+unchanged in the application log.
 
 A deployment that consumed the trace from the actuator response can opt back in with:
 
