@@ -1817,6 +1817,11 @@ public abstract class BaseMainSupport extends BaseService {
                 LOG.warn("Property not auto-configured: camel.errorRegistry.{}={}", k, v);
             });
         }
+        if (!aiObservabilityProperties.isEmpty()) {
+            aiObservabilityProperties.forEach((k, v) -> {
+                LOG.warn("Property not auto-configured: camel.aiObservability.{}={}", k, v);
+            });
+        }
         if (!devConsoleProperties.isEmpty()) {
             devConsoleProperties.forEach((k, v) -> {
                 LOG.warn("Property not auto-configured: camel.devConsole.{}={}", k, v);
