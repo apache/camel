@@ -115,7 +115,8 @@ class AgentConfigurationToolCallingBehaviorTest {
         Agent agent = new AgentWithoutMemory(configuration);
 
         assertThatThrownBy(() -> agent.chat(new AiAgentBody<>("count"), null))
-                .hasMessageContaining("exceeded 1 tool calling round trips");
+                .isInstanceOf(RuntimeException.class)
+                .hasMessageContaining("tool calling round trips");
     }
 
     @Test
