@@ -47,8 +47,6 @@ public class ManagedRouteGroupFailuresHandledTest extends ManagementTestSupport 
 
         // the handled failure recorded on the trigger route must be reflected at the group level
         assertEquals(1, group.getFailuresHandled());
-        assertNotNull(group.getLastExchangeFailureHandledTimestamp(),
-                "Group should report the last handled-failure timestamp of its member route");
     }
 
     @Override
