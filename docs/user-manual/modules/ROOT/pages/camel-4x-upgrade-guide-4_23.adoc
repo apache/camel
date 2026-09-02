@@ -1145,6 +1145,22 @@ A custom `CamelSagaService` that relies on the header to join sagas started by a
 override the new method. Everything else is unaffected: the header is still set on the exchange, and
 routes reading it continue to work.
 
+=== camel-microprofile-health
+
+The `error.stacktrace` entry of a failed health check is now only included in the response when
+`camel.health.exposure-level` is `full`. At the `default` level the check still reports `error.message`, but no
+longer serialises the whole cause chain of the exception into the health response. The trace is unchanged in the
+application log.
+
+This aligns the MicroProfile health output (and therefore Camel Quarkus, which builds its health responses through
+this module) with the Spring Boot actuator and with the documented meaning of the levels, where `full` is the
+level that includes all details from the invoked health checks. To get the trace back in the response:
+
+[source,properties]
+----
+camel.health.exposure-level = full
+----
+
 === camel-spring-boot
 
 A set of starter defaults changed in this release. Each is a deliberate change to what an application gets
