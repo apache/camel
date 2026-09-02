@@ -72,11 +72,11 @@ class GenAiDependencyDiscoveryTest {
     Path tempDir;
 
     @Test
-    void shouldDiscoverLangChain4jComponentAndProvider() throws Exception {
+    void shouldDiscoverLangChain4jComponentAndProviderWithObserve() throws Exception {
         Path route = tempDir.resolve("ai-route.yaml");
         Files.writeString(route, LANGCHAIN4J_ROUTE);
 
-        Collection<String> deps = GenAiDependencyDiscovery.discover(List.of(route.toString()), new Properties(), false);
+        Collection<String> deps = GenAiDependencyDiscovery.discover(List.of(route.toString()), new Properties(), true);
 
         assertThat(deps).contains("camel:langchain4j-chat");
         assertThat(deps).contains("mvn:dev.langchain4j:langchain4j-ollama:${langchain4j-version}");
@@ -84,14 +84,27 @@ class GenAiDependencyDiscoveryTest {
     }
 
     @Test
-    void shouldDiscoverOpenAiComponent() throws Exception {
+    void shouldDiscoverOpenAiComponentWithExplicitObservabilityProperty() throws Exception {
+        Path route = tempDir.resolve("openai-route.yaml");
+        Files.writeString(route, OPENAI_ROUTE);
+        Properties properties = new Properties();
+        properties.setProperty(GenAiDependencyDiscovery.AI_OBSERVABILITY_ENABLED, "true");
+
+        Collection<String> deps = GenAiDependencyDiscovery.discover(List.of(route.toString()), properties, false);
+
+        assertThat(deps).contains("camel:openai");
+        assertThat(deps).contains("camel:ai-observability");
+    }
+
+    @Test
+    void shouldNotAddAiObservabilityByDefaultWithoutObserve() throws Exception {
         Path route = tempDir.resolve("openai-route.yaml");
         Files.writeString(route, OPENAI_ROUTE);
 
         Collection<String> deps = GenAiDependencyDiscovery.discover(List.of(route.toString()), new Properties(), false);
 
         assertThat(deps).contains("camel:openai");
-        assertThat(deps).contains("camel:ai-observability");
+        assertThat(deps).doesNotContain("camel:ai-observability");
     }
 
     @Test
@@ -99,7 +112,7 @@ class GenAiDependencyDiscoveryTest {
         Path route = tempDir.resolve("ai-route.xml");
         Files.writeString(route, XML_ROUTE);
 
-        Collection<String> deps = GenAiDependencyDiscovery.discover(List.of(route.toString()), new Properties(), false);
+        Collection<String> deps = GenAiDependencyDiscovery.discover(List.of(route.toString()), new Properties(), true);
 
         assertThat(deps).contains("camel:langchain4j-chat");
         assertThat(deps).contains("camel:ai-observability");
@@ -110,7 +123,7 @@ class GenAiDependencyDiscoveryTest {
         Path route = tempDir.resolve("AiRoute.java");
         Files.writeString(route, JAVA_ROUTE);
 
-        Collection<String> deps = GenAiDependencyDiscovery.discover(List.of(route.toString()), new Properties(), false);
+        Collection<String> deps = GenAiDependencyDiscovery.discover(List.of(route.toString()), new Properties(), true);
 
         assertThat(deps).contains("camel:langchain4j-chat");
         assertThat(deps).contains("camel:ai-observability");
@@ -130,16 +143,20 @@ class GenAiDependencyDiscoveryTest {
     }
 
     @Test
-    void shouldIncludeAiObservabilityWhenExplicitlyEnabled() {
+    void shouldIncludeAiObservabilityForProviderOnlySourceWhenEnabled() throws Exception {
+        Path beans = tempDir.resolve("beans.yaml");
+        Files.writeString(beans, """
+                - beans:
+                  - name: chatModel
+                    type: dev.langchain4j.model.ollama.OllamaChatModel
+                """);
         Properties properties = new Properties();
         properties.setProperty(GenAiDependencyDiscovery.AI_OBSERVABILITY_ENABLED, "true");
 
-        assertThat(GenAiDependencyDiscovery.includeAiObservability(properties, false)).isTrue();
-    }
+        Collection<String> deps = GenAiDependencyDiscovery.discover(List.of(beans.toString()), properties, false);
 
-    @Test
-    void shouldIncludeAiObservabilityWithObserveFlag() {
-        assertThat(GenAiDependencyDiscovery.includeAiObservability(new Properties(), true)).isTrue();
+        assertThat(deps).contains("mvn:dev.langchain4j:langchain4j-ollama:${langchain4j-version}");
+        assertThat(deps).contains("camel:ai-observability");
     }
 
     @Test
@@ -152,7 +169,7 @@ class GenAiDependencyDiscoveryTest {
                       - to: log:info
                 """);
 
-        Collection<String> deps = GenAiDependencyDiscovery.discover(List.of(route.toString()), new Properties(), false);
+        Collection<String> deps = GenAiDependencyDiscovery.discover(List.of(route.toString()), new Properties(), true);
 
         assertThat(deps).isEmpty();
     }
@@ -160,7 +177,7 @@ class GenAiDependencyDiscoveryTest {
     @Test
     void shouldDiscoverFromClasspathResource() {
         Collection<String> deps = GenAiDependencyDiscovery.discover(
-                List.of("classpath:genai/langchain4j-route.yaml"), new Properties(), false);
+                List.of("classpath:genai/langchain4j-route.yaml"), new Properties(), true);
 
         assertThat(deps).contains("camel:langchain4j-chat");
         assertThat(deps).contains("camel:ai-observability");
@@ -172,7 +189,7 @@ class GenAiDependencyDiscoveryTest {
         Files.writeString(route, OPENAI_ROUTE);
 
         Path settings = tempDir.resolve("camel-runner.properties");
-        Files.writeString(settings, "yaml=" + route + "\n");
+        Files.writeString(settings, "camel.main.routesIncludePattern=" + route + "\n");
 
         Path profile = tempDir.resolve("application.properties");
         Files.writeString(profile, "camel.aiObservability.enabled=true\n");
@@ -185,8 +202,25 @@ class GenAiDependencyDiscoveryTest {
 
     @Test
     void shouldExtractSchemesFromYamlAndXml() {
-        assertThat(GenAiDependencyDiscovery.extractSchemes(OPENAI_ROUTE)).containsExactly("timer", "openai");
-        assertThat(GenAiDependencyDiscovery.extractSchemes(XML_ROUTE)).containsExactly("timer", "langchain4j-chat");
+        assertThat(GenAiDependencyDiscovery.extractSchemes(OPENAI_ROUTE, "yaml")).containsExactly("timer", "openai");
+        assertThat(GenAiDependencyDiscovery.extractSchemes(XML_ROUTE, "xml")).containsExactly("timer", "langchain4j-chat");
+    }
+
+    @Test
+    void shouldIgnoreYamlCommentsAndPropertyFalsePositives() throws Exception {
+        Path route = tempDir.resolve("false-positive.yaml");
+        Files.writeString(route, """
+                model: "openai:gpt-4"
+                # from: openai:completion
+                - from:
+                    uri: timer:tick
+                    steps:
+                      - to: log:info
+                """);
+
+        Collection<String> deps = GenAiDependencyDiscovery.discover(List.of(route.toString()), new Properties(), true);
+
+        assertThat(deps).isEmpty();
     }
 
     @Test
@@ -212,7 +246,7 @@ class GenAiDependencyDiscoveryTest {
         };
 
         Collection<String> deps = GenAiDependencyDiscovery.discover(
-                List.of(route.toString()), new Properties(), false, catalog);
+                List.of(route.toString()), new Properties(), true, catalog);
 
         assertThat(deps).isEmpty();
     }

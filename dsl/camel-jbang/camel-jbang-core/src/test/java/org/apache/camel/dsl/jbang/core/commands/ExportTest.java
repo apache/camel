@@ -838,7 +838,8 @@ class ExportTest {
                 "--dir=" + workingDir,
                 "--quiet",
                 "--runtime=main",
-                "src/test/resources/genai-route.yaml");
+                "--observe=true",
+                "src/test/resources/genai/langchain4j-route.yaml");
         int exit = command.doCall();
 
         Assertions.assertEquals(0, exit);
