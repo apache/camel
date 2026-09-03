@@ -138,6 +138,22 @@ class CacheProcessorTest extends ContextTestSupport {
     }
 
     @Test
+    void testCacheNullBodyCachedWhenCacheNullTrue() throws Exception {
+        MockEndpoint service = getMockEndpoint("mock:cache-null-service");
+
+        // First call — null body result IS cached when cacheNull(true)
+        service.expectedMessageCount(1);
+        template.sendBodyAndHeader("direct:cached-null-true", "req1", "productId", "A");
+        MockEndpoint.assertIsSatisfied(context);
+
+        // Second call — cache hit (null WAS cached), service is NOT called again
+        service.reset();
+        service.expectedMessageCount(0);
+        template.sendBodyAndHeader("direct:cached-null-true", "req2", "productId", "A");
+        MockEndpoint.assertIsSatisfied(context);
+    }
+
+    @Test
     void testCacheExpressionClauseForm() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:clause-result");
         MockEndpoint service = getMockEndpoint("mock:clause-service");
@@ -194,6 +210,14 @@ class CacheProcessorTest extends ContextTestSupport {
                             .setBody(constant(null))
                         .end()
                         .to("mock:null-result");
+
+                // Cache with null body and cacheNull=true
+                from("direct:cached-null-true")
+                        .cache(simple("${header.productId}")).cacheNull(true)
+                            .to("mock:cache-null-service")
+                            .setBody(constant(null))
+                        .end()
+                        .to("mock:cache-null-result");
 
                 // Expression clause form
                 from("direct:cached-clause")

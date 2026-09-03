@@ -31,6 +31,8 @@ public class JdbcKeyValueRepositoryConfigurer extends org.apache.camel.support.c
         case "createTableIfNotExists": target.setCreateTableIfNotExists(property(camelContext, boolean.class, value)); return true;
         case "deleteexpiredstring":
         case "deleteExpiredString": target.setDeleteExpiredString(property(camelContext, java.lang.String.class, value)); return true;
+        case "deleteifvaluestring":
+        case "deleteIfValueString": target.setDeleteIfValueString(property(camelContext, java.lang.String.class, value)); return true;
         case "deletestring":
         case "deleteString": target.setDeleteString(property(camelContext, java.lang.String.class, value)); return true;
         case "insertstring":
@@ -47,6 +49,8 @@ public class JdbcKeyValueRepositoryConfigurer extends org.apache.camel.support.c
         case "tableName": target.setTableName(property(camelContext, java.lang.String.class, value)); return true;
         case "transactiontemplate":
         case "transactionTemplate": target.setTransactionTemplate(property(camelContext, org.springframework.transaction.support.TransactionTemplate.class, value)); return true;
+        case "updateifvaluestring":
+        case "updateIfValueString": target.setUpdateIfValueString(property(camelContext, java.lang.String.class, value)); return true;
         default: return false;
         }
     }
@@ -62,6 +66,8 @@ public class JdbcKeyValueRepositoryConfigurer extends org.apache.camel.support.c
         case "createTableIfNotExists": return boolean.class;
         case "deleteexpiredstring":
         case "deleteExpiredString": return java.lang.String.class;
+        case "deleteifvaluestring":
+        case "deleteIfValueString": return java.lang.String.class;
         case "deletestring":
         case "deleteString": return java.lang.String.class;
         case "insertstring":
@@ -78,6 +84,8 @@ public class JdbcKeyValueRepositoryConfigurer extends org.apache.camel.support.c
         case "tableName": return java.lang.String.class;
         case "transactiontemplate":
         case "transactionTemplate": return org.springframework.transaction.support.TransactionTemplate.class;
+        case "updateifvaluestring":
+        case "updateIfValueString": return java.lang.String.class;
         default: return null;
         }
     }
@@ -94,6 +102,8 @@ public class JdbcKeyValueRepositoryConfigurer extends org.apache.camel.support.c
         case "createTableIfNotExists": return target.isCreateTableIfNotExists();
         case "deleteexpiredstring":
         case "deleteExpiredString": return target.getDeleteExpiredString();
+        case "deleteifvaluestring":
+        case "deleteIfValueString": return target.getDeleteIfValueString();
         case "deletestring":
         case "deleteString": return target.getDeleteString();
         case "insertstring":
@@ -110,6 +120,8 @@ public class JdbcKeyValueRepositoryConfigurer extends org.apache.camel.support.c
         case "tableName": return target.getTableName();
         case "transactiontemplate":
         case "transactionTemplate": return target.getTransactionTemplate();
+        case "updateifvaluestring":
+        case "updateIfValueString": return target.getUpdateIfValueString();
         default: return null;
         }
     }

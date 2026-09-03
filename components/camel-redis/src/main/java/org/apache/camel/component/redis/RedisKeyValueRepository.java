@@ -104,11 +104,11 @@ public class RedisKeyValueRepository extends ServiceSupport implements KeyValueR
     public @Nullable Object put(String key, Object value, Duration ttl) {
         RBucket<byte[]> bucket = redisson.getBucket(toRedisKey(key), ByteArrayCodec.INSTANCE);
         byte[] serialized = KeyValueRepositoryHelper.serialize(value);
-        byte[] previous = bucket.get();
+        byte[] previous;
         if (hasPositiveTtl(ttl)) {
-            bucket.set(serialized, ttl);
+            previous = bucket.getAndSet(serialized, ttl);
         } else {
-            bucket.set(serialized);
+            previous = bucket.getAndSet(serialized);
         }
         return previous != null ? KeyValueRepositoryHelper.deserialize(previous) : null;
     }

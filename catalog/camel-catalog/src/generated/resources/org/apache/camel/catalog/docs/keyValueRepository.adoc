@@ -1,0 +1,1161 @@
+= KeyValueRepository Backends
+:doctitle: KeyValueRepository Backends
+:shortname: keyValueRepository
+:description: Unified storage SPI backing the Cache EIP, Idempotent Consumer, and Aggregator patterns. Documents all available backends and how to configure them as beans.
+:since: 4.23
+:supportlevel: Stable
+:tabs-sync-option:
+
+`KeyValueRepository` is the unified storage SPI used by the
+xref:cache-eip.adoc[Cache EIP],
+xref:idempotentConsumer-eip.adoc[Idempotent Consumer], and
+xref:aggregate-eip.adoc[Aggregator] patterns.
+It provides a simple `get / put / delete / clear` contract — plus an optional atomic
+`putIfAbsent` — that Camel maps onto many storage technologies through pluggable backend
+implementations.
+
+Choosing the right backend is typically a matter of:
+
+* *Scope* — in-process memory, distributed in-memory, durable on-disk, or remote service.
+* *Atomicity* — whether the backend natively provides an atomic Compare-And-Swap (CAS)
+  operation (required for exactly-once idempotency under concurrent load).
+* *TTL* — whether expiration is handled natively by the store or requires client-side logic.
+* *Operational footprint* — whether extra infrastructure (Redis, Kafka, Cassandra …) is
+  acceptable.
+
+== Available Backends
+
+[cols="2,3,3,1,1",options="header"]
+|===
+| Backend class | Module | Key features | Atomic CAS | Native TTL
+
+| `MemoryKeyValueRepository`
+| `camel-support`
+| JVM-local `ConcurrentHashMap`; zero deps; auto-created when no KVR bean is registered
+| ✓
+| ✗
+
+| `CaffeineKeyValueRepository`
+| `camel-caffeine`
+| High-throughput in-process cache; configurable size; near-cache for distributed setups
+| ✓
+| ✗ (client-side via Cache EIP `ttl`)
+
+| `EhcacheKeyValueRepository`
+| `camel-ehcache`
+| Ehcache 3; heap + off-heap + disk tiers; native TTL per cache config
+| ✓
+| ✓ (Ehcache XML config)
+
+| `JCacheKeyValueRepository`
+| `camel-jcache`
+| JSR-107 provider-agnostic; works with Ehcache, Hazelcast, Infinispan, …
+| ✓ (provider-dependent)
+| ✓ (via `javax.cache.expiry`)
+
+| `HazelcastKeyValueRepository`
+| `camel-hazelcast`
+| Distributed, partitioned `IMap`; cluster-aware; near-cache optional
+| ✓
+| ✓ (map TTL config)
+
+| `RedisKeyValueRepository`
+| `camel-redis`
+| Redis `SET`/`GET`; atomic via `SET NX`; native TTL via `EXPIRE`
+| ✓
+| ✓ (native `EXPIRE`)
+
+| `InfinispanRemoteKeyValueRepository`
+| `camel-infinispan`
+| Hot Rod client to remote Infinispan/Data Grid cluster; distributed, transactional
+| ✓
+| ✓ (per-entry lifespan)
+
+| `JdbcKeyValueRepository`
+| `camel-sql`
+| Any JDBC DataSource; portable; optional auto-DDL; ACID via DataSource transactions
+| ✗ (non-atomic)
+| ✗ (client-side)
+
+| `JpaKeyValueRepository`
+| `camel-jpa`
+| JPA entity-backed; works with any JPA 2 provider (Hibernate, EclipseLink…)
+| ✗ (non-atomic)
+| ✗ (client-side)
+
+| `CassandraKeyValueRepository`
+| `camel-cassandraql`
+| Cassandra wide-column store; configurable consistency levels; naturally distributed
+| ✗ (non-atomic)
+| ✓ (Cassandra TTL)
+
+| `KafkaKeyValueRepository`
+| `camel-kafka`
+| Kafka topic as a compacted key-value log; state rebuilt on startup; eventually consistent
+| ✗ (non-atomic)
+| ✗ (topic retention)
+
+|===
+
+NOTE: _Atomic CAS_ means `putIfAbsent` is implemented without an external lock — required
+for safe concurrent use as an Idempotent Repository. Non-atomic backends can still be used
+with the Cache EIP and Aggregator when access is serialized or best-effort semantics are
+acceptable.
+
+== Backend Configuration
+
+Each backend is registered as a named bean in the Camel registry and then referenced from
+a route or EIP by name (or auto-discovered when only one bean is present).
+
+=== MemoryKeyValueRepository
+
+Provided by `camel-support` (always on the classpath). No extra dependencies.
+
+[tabs]
+====
+Java DSL::
++
+[source,java]
+----
+import org.apache.camel.support.MemoryKeyValueRepository;
+
+@BindToRegistry("myMemoryKvr")
+public KeyValueRepository myMemoryKvr() {
+    return new MemoryKeyValueRepository();
+}
+----
+
+YAML DSL::
++
+[source,yaml]
+----
+- beans:
+    - name: myMemoryKvr
+      type: org.apache.camel.support.MemoryKeyValueRepository
+----
+====
+
+Because `MemoryKeyValueRepository` has no required properties, registering it by type alone
+is enough. When *no* `KeyValueRepository` bean is registered at all, the Cache EIP
+auto-creates a private `MemoryKeyValueRepository` per block — no explicit bean needed.
+
+=== CaffeineKeyValueRepository
+
+[source,xml,role=dependency]
+----
+<dependency>
+  <groupId>org.apache.camel</groupId>
+  <artifactId>camel-caffeine</artifactId>
+</dependency>
+----
+
+Optional property:
+
+* `maximumSize` — maximum number of entries before eviction (default: unbounded).
+
+[tabs]
+====
+Java DSL::
++
+[source,java]
+----
+import org.apache.camel.component.caffeine.cache.CaffeineKeyValueRepository;
+
+@BindToRegistry("caffeineKvr")
+public KeyValueRepository caffeineKvr() {
+    CaffeineKeyValueRepository kvr = new CaffeineKeyValueRepository();
+    kvr.setMaximumSize(10_000);
+    return kvr;
+}
+----
+
+YAML DSL::
++
+[source,yaml]
+----
+- beans:
+    - name: caffeineKvr
+      type: org.apache.camel.component.caffeine.cache.CaffeineKeyValueRepository
+      properties:
+        maximumSize: 10000
+----
+====
+
+TTL is not natively managed by Caffeine in this adapter. Use the Cache EIP `ttl` option
+for time-based expiration, which wraps values with an expiry timestamp stored in the entry.
+
+=== EhcacheKeyValueRepository
+
+[source,xml,role=dependency]
+----
+<dependency>
+  <groupId>org.apache.camel</groupId>
+  <artifactId>camel-ehcache</artifactId>
+</dependency>
+----
+
+Required property:
+
+* `cacheManager` — a configured `org.ehcache.CacheManager` bean.
+
+Optional property:
+
+* `cacheName` — logical cache name within the `CacheManager` (default: `"camel-kvr"`).
+
+[tabs]
+====
+Java DSL::
++
+[source,java]
+----
+import org.apache.camel.component.ehcache.EhcacheKeyValueRepository;
+import org.ehcache.CacheManager;
+import org.ehcache.config.builders.CacheConfigurationBuilder;
+import org.ehcache.config.builders.CacheManagerBuilder;
+import org.ehcache.config.builders.ResourcePoolsBuilder;
+import org.ehcache.expiry.ExpiryPolicy;
+
+import java.time.Duration;
+
+@BindToRegistry("ehcacheManager")
+public CacheManager ehcacheManager() {
+    return CacheManagerBuilder.newCacheManagerBuilder()
+        .withCache("products",
+            CacheConfigurationBuilder
+                .newCacheConfigurationBuilder(String.class, Object.class,
+                    ResourcePoolsBuilder.heap(10_000))
+                .withExpiry(ExpiryPolicy.BASE_EXPIRY  // or a custom ExpiryPolicy
+                    .timeToLiveExpiration(Duration.ofMinutes(30)))
+        )
+        .build(true); // true = init on build
+}
+
+@BindToRegistry("ehcacheKvr")
+public KeyValueRepository ehcacheKvr(CacheManager ehcacheManager) {
+    EhcacheKeyValueRepository kvr = new EhcacheKeyValueRepository();
+    kvr.setCacheManager(ehcacheManager);
+    kvr.setCacheName("products");
+    return kvr;
+}
+----
+
+YAML DSL::
++
+[source,yaml]
+----
+- beans:
+    - name: ehcacheKvr
+      type: org.apache.camel.component.ehcache.EhcacheKeyValueRepository
+      properties:
+        cacheManager: "#bean:ehcacheManager"
+        cacheName: products
+----
+====
+
+Native TTL is configured on the `CacheManager` / `CacheConfiguration`, not on the
+`KeyValueRepository` bean itself.
+
+=== JCacheKeyValueRepository
+
+[source,xml,role=dependency]
+----
+<dependency>
+  <groupId>org.apache.camel</groupId>
+  <artifactId>camel-jcache</artifactId>
+</dependency>
+<!-- Plus a JSR-107 provider, e.g.: -->
+<dependency>
+  <groupId>org.ehcache</groupId>
+  <artifactId>ehcache</artifactId>
+</dependency>
+----
+
+Optional properties:
+
+* `configuration` — a `javax.cache.configuration.Configuration` (or `MutableConfiguration`) bean.
+* `cacheName` — name of the JCache cache (default: `"camel-kvr"`).
+
+[tabs]
+====
+Java DSL::
++
+[source,java]
+----
+import org.apache.camel.component.jcache.JCacheKeyValueRepository;
+import javax.cache.configuration.MutableConfiguration;
+import javax.cache.expiry.CreatedExpiryPolicy;
+import javax.cache.expiry.Duration;
+
+@BindToRegistry("jcacheConfig")
+public MutableConfiguration<String, Object> jcacheConfig() {
+    return new MutableConfiguration<String, Object>()
+        .setTypes(String.class, Object.class)
+        .setExpiryPolicyFactory(
+            CreatedExpiryPolicy.factoryOf(new Duration(java.util.concurrent.TimeUnit.MINUTES, 30)))
+        .setStatisticsEnabled(true);
+}
+
+@BindToRegistry("jcacheKvr")
+public KeyValueRepository jcacheKvr(MutableConfiguration<String, Object> jcacheConfig) {
+    JCacheKeyValueRepository kvr = new JCacheKeyValueRepository();
+    kvr.setConfiguration(jcacheConfig);
+    kvr.setCacheName("products");
+    return kvr;
+}
+----
+
+YAML DSL::
++
+[source,yaml]
+----
+- beans:
+    - name: jcacheKvr
+      type: org.apache.camel.component.jcache.JCacheKeyValueRepository
+      properties:
+        cacheName: products
+        configuration: "#bean:jcacheConfig"
+----
+====
+
+Whether `putIfAbsent` is truly atomic depends on the JSR-107 provider. Most production
+providers (Ehcache 3, Hazelcast, Infinispan) implement it atomically.
+
+=== HazelcastKeyValueRepository
+
+[source,xml,role=dependency]
+----
+<dependency>
+  <groupId>org.apache.camel</groupId>
+  <artifactId>camel-hazelcast</artifactId>
+</dependency>
+----
+
+Optional properties:
+
+* `hazelcastInstance` — an existing `HazelcastInstance` bean (default: auto-created).
+* `mapName` — name of the distributed `IMap` (default: `"camel-kvr"`).
+
+[tabs]
+====
+Java DSL::
++
+[source,java]
+----
+import org.apache.camel.component.hazelcast.HazelcastKeyValueRepository;
+import com.hazelcast.core.Hazelcast;
+import com.hazelcast.core.HazelcastInstance;
+import com.hazelcast.config.Config;
+import com.hazelcast.config.MapConfig;
+
+@BindToRegistry("hazelcastInstance")
+public HazelcastInstance hazelcastInstance() {
+    Config config = new Config();
+    config.addMapConfig(new MapConfig("camel-products")
+        .setTimeToLiveSeconds(1800)); // 30-minute TTL
+    return Hazelcast.newHazelcastInstance(config);
+}
+
+@BindToRegistry("hazelcastKvr")
+public KeyValueRepository hazelcastKvr(HazelcastInstance hazelcastInstance) {
+    HazelcastKeyValueRepository kvr = new HazelcastKeyValueRepository();
+    kvr.setHazelcastInstance(hazelcastInstance);
+    kvr.setMapName("camel-products");
+    return kvr;
+}
+----
+
+YAML DSL::
++
+[source,yaml]
+----
+- beans:
+    - name: hazelcastKvr
+      type: org.apache.camel.component.hazelcast.HazelcastKeyValueRepository
+      properties:
+        hazelcastInstance: "#bean:hazelcastInstance"
+        mapName: camel-products
+----
+====
+
+TTL is configured on the Hazelcast `MapConfig`, not on the `KeyValueRepository`.
+`putIfAbsent` maps to `IMap.putIfAbsent`, which is atomic across the cluster.
+
+=== RedisKeyValueRepository
+
+[source,xml,role=dependency]
+----
+<dependency>
+  <groupId>org.apache.camel</groupId>
+  <artifactId>camel-redis</artifactId>
+</dependency>
+----
+
+Required property:
+
+* `endpoint` — a `camel-redis` endpoint URI string (e.g. `"redis://localhost:6379"`).
+
+Optional properties:
+
+* `keyPrefix` — a string prefix applied to all keys (useful to namespace multiple stores in one Redis DB).
+* `redisson` — a pre-configured `RedissonClient` bean (alternative to `endpoint`).
+
+[tabs]
+====
+Java DSL::
++
+[source,java]
+----
+import org.apache.camel.component.redis.RedisKeyValueRepository;
+
+@BindToRegistry("redisKvr")
+public KeyValueRepository redisKvr() {
+    RedisKeyValueRepository kvr = new RedisKeyValueRepository();
+    kvr.setEndpoint("redis://localhost:6379");
+    kvr.setKeyPrefix("myapp:");
+    return kvr;
+}
+----
+
+With a custom `RedissonClient`::
++
+[source,java]
+----
+import org.redisson.Redisson;
+import org.redisson.api.RedissonClient;
+import org.redisson.config.Config;
+
+@BindToRegistry("redissonClient")
+public RedissonClient redissonClient() {
+    Config config = new Config();
+    config.useSingleServer()
+          .setAddress("redis://localhost:6379")
+          .setPassword("secret");
+    return Redisson.create(config);
+}
+
+@BindToRegistry("redisKvr")
+public KeyValueRepository redisKvr(RedissonClient redissonClient) {
+    RedisKeyValueRepository kvr = new RedisKeyValueRepository();
+    kvr.setRedisson(redissonClient);
+    kvr.setKeyPrefix("myapp:");
+    return kvr;
+}
+----
+
+YAML DSL::
++
+[source,yaml]
+----
+- beans:
+    - name: redisKvr
+      type: org.apache.camel.component.redis.RedisKeyValueRepository
+      properties:
+        endpoint: "redis://localhost:6379"
+        keyPrefix: "myapp:"
+----
+====
+
+Redis provides native TTL via `EXPIRE` / `SET … EX`. `putIfAbsent` maps to `SET NX`, which
+is atomic. The Cache EIP `ttl` option is respected and propagated to the underlying
+`EXPIRE` call.
+
+=== InfinispanRemoteKeyValueRepository
+
+[source,xml,role=dependency]
+----
+<dependency>
+  <groupId>org.apache.camel</groupId>
+  <artifactId>camel-infinispan</artifactId>
+</dependency>
+----
+
+Required property:
+
+* `cacheName` — the remote Infinispan cache name.
+
+Optional properties:
+
+* `configuration` — a `org.infinispan.client.hotrod.configuration.Configuration` bean.
+* `cacheContainer` — a pre-built `RemoteCacheManager` bean (takes priority over `configuration`).
+
+[tabs]
+====
+Java DSL::
++
+[source,java]
+----
+import org.apache.camel.component.infinispan.remote.InfinispanRemoteKeyValueRepository;
+import org.infinispan.client.hotrod.RemoteCacheManager;
+import org.infinispan.client.hotrod.configuration.ConfigurationBuilder;
+
+@BindToRegistry("infinispanManager")
+public RemoteCacheManager infinispanManager() {
+    return new RemoteCacheManager(
+        new ConfigurationBuilder()
+            .addServer().host("infinispan-host").port(11222)
+            .security().authentication()
+                .username("camel").password("secret")
+            .build());
+}
+
+@BindToRegistry("infinispanKvr")
+public KeyValueRepository infinispanKvr(RemoteCacheManager infinispanManager) {
+    InfinispanRemoteKeyValueRepository kvr = new InfinispanRemoteKeyValueRepository();
+    kvr.setCacheContainer(infinispanManager);
+    kvr.setCacheName("products");
+    return kvr;
+}
+----
+
+YAML DSL::
++
+[source,yaml]
+----
+- beans:
+    - name: infinispanKvr
+      type: org.apache.camel.component.infinispan.remote.InfinispanRemoteKeyValueRepository
+      properties:
+        cacheContainer: "#bean:infinispanManager"
+        cacheName: products
+----
+====
+
+Infinispan supports per-entry lifespan and max-idle TTL natively. `putIfAbsent` is
+implemented via the `PUTIFABSENT` Hot Rod operation, which is atomic.
+
+=== JdbcKeyValueRepository
+
+[source,xml,role=dependency]
+----
+<dependency>
+  <groupId>org.apache.camel</groupId>
+  <artifactId>camel-sql</artifactId>
+</dependency>
+----
+
+Required property:
+
+* `dataSource` — a `javax.sql.DataSource` bean.
+
+Optional properties:
+
+* `tableName` — the table used for storage (default: `"camel_kvr"`).
+* `createTableIfNotExists` — auto-create the table at startup if absent (default: `true`).
+
+The auto-created table schema:
+
+[source,sql]
+----
+CREATE TABLE camel_kvr (
+    kvr_key   VARCHAR(255) NOT NULL PRIMARY KEY,
+    kvr_value TEXT
+);
+----
+
+[tabs]
+====
+Java DSL::
++
+[source,java]
+----
+import org.apache.camel.component.sql.JdbcKeyValueRepository;
+import org.springframework.jdbc.datasource.DriverManagerDataSource;
+import javax.sql.DataSource;
+
+@BindToRegistry("myDataSource")
+public DataSource myDataSource() {
+    DriverManagerDataSource ds = new DriverManagerDataSource();
+    ds.setDriverClassName("org.postgresql.Driver");
+    ds.setUrl("jdbc:postgresql://localhost:5432/mydb");
+    ds.setUsername("camel");
+    ds.setPassword("secret");
+    return ds;
+}
+
+@BindToRegistry("jdbcKvr")
+public KeyValueRepository jdbcKvr(DataSource myDataSource) {
+    JdbcKeyValueRepository kvr = new JdbcKeyValueRepository();
+    kvr.setDataSource(myDataSource);
+    kvr.setTableName("product_cache");
+    kvr.setCreateTableIfNotExists(true);
+    return kvr;
+}
+----
+
+YAML DSL::
++
+[source,yaml]
+----
+- beans:
+    - name: jdbcKvr
+      type: org.apache.camel.component.sql.JdbcKeyValueRepository
+      properties:
+        dataSource: "#bean:myDataSource"
+        tableName: product_cache
+        createTableIfNotExists: true
+----
+====
+
+NOTE: `JdbcKeyValueRepository` does not implement atomic `putIfAbsent` — concurrent inserts
+may produce duplicate-key exceptions that are caught and treated as a "key already exists"
+condition. This is safe for idempotency at low concurrency, but for high-throughput
+exactly-once semantics, prefer a backend with native CAS.
+
+=== JpaKeyValueRepository
+
+[source,xml,role=dependency]
+----
+<dependency>
+  <groupId>org.apache.camel</groupId>
+  <artifactId>camel-jpa</artifactId>
+</dependency>
+----
+
+Required property:
+
+* `entityManagerFactory` — a `javax.persistence.EntityManagerFactory` bean.
+
+Optional properties:
+
+* `joinTransaction` — whether to participate in an existing JTA transaction (default: `true`).
+* `sharedEntityManager` — use a shared/thread-bound `EntityManager` (Spring integration, default: `false`).
+
+[tabs]
+====
+Java DSL::
++
+[source,java]
+----
+import org.apache.camel.component.jpa.JpaKeyValueRepository;
+import javax.persistence.EntityManagerFactory;
+import javax.persistence.Persistence;
+
+@BindToRegistry("emf")
+public EntityManagerFactory emf() {
+    return Persistence.createEntityManagerFactory("myPersistenceUnit");
+}
+
+@BindToRegistry("jpaKvr")
+public KeyValueRepository jpaKvr(EntityManagerFactory emf) {
+    JpaKeyValueRepository kvr = new JpaKeyValueRepository();
+    kvr.setEntityManagerFactory(emf);
+    kvr.setJoinTransaction(false); // standalone, no JTA
+    return kvr;
+}
+----
+
+YAML DSL::
++
+[source,yaml]
+----
+- beans:
+    - name: jpaKvr
+      type: org.apache.camel.component.jpa.JpaKeyValueRepository
+      properties:
+        entityManagerFactory: "#bean:emf"
+        joinTransaction: false
+----
+====
+
+NOTE: Like `JdbcKeyValueRepository`, the JPA backend does not provide atomic
+`putIfAbsent`. Idempotency under concurrent load relies on unique-constraint violations
+being caught at the database level.
+
+=== CassandraKeyValueRepository
+
+[source,xml,role=dependency]
+----
+<dependency>
+  <groupId>org.apache.camel</groupId>
+  <artifactId>camel-cassandraql</artifactId>
+</dependency>
+----
+
+Required property:
+
+* `session` — a `com.datastax.oss.driver.api.core.CqlSession` bean.
+
+Optional properties:
+
+* `table` — Cassandra table name (default: `"camel_kvr"`).
+* `readConsistencyLevel` — `ConsistencyLevel` for reads (default: `LOCAL_ONE`).
+* `writeConsistencyLevel` — `ConsistencyLevel` for writes (default: `LOCAL_ONE`).
+
+[tabs]
+====
+Java DSL::
++
+[source,java]
+----
+import org.apache.camel.component.cassandra.CassandraKeyValueRepository;
+import com.datastax.oss.driver.api.core.CqlSession;
+import com.datastax.oss.driver.api.core.ConsistencyLevel;
+import java.net.InetSocketAddress;
+
+@BindToRegistry("cassandraSession")
+public CqlSession cassandraSession() {
+    return CqlSession.builder()
+        .addContactPoint(new InetSocketAddress("cassandra-host", 9042))
+        .withLocalDatacenter("datacenter1")
+        .withKeyspace("myapp")
+        .build();
+}
+
+@BindToRegistry("cassandraKvr")
+public KeyValueRepository cassandraKvr(CqlSession cassandraSession) {
+    CassandraKeyValueRepository kvr = new CassandraKeyValueRepository();
+    kvr.setSession(cassandraSession);
+    kvr.setTable("product_cache");
+    kvr.setReadConsistencyLevel(ConsistencyLevel.LOCAL_QUORUM);
+    kvr.setWriteConsistencyLevel(ConsistencyLevel.LOCAL_QUORUM);
+    return kvr;
+}
+----
+
+YAML DSL::
++
+[source,yaml]
+----
+- beans:
+    - name: cassandraKvr
+      type: org.apache.camel.component.cassandra.CassandraKeyValueRepository
+      properties:
+        session: "#bean:cassandraSession"
+        table: product_cache
+        readConsistencyLevel: LOCAL_QUORUM
+        writeConsistencyLevel: LOCAL_QUORUM
+----
+====
+
+Cassandra supports native TTL via the `USING TTL` clause on `INSERT`/`UPDATE`.
+The Cache EIP `ttl` option is forwarded to the Cassandra write operation as a native TTL,
+so entries expire automatically at the storage layer.
+
+`putIfAbsent` uses Cassandra's lightweight transaction (`INSERT … IF NOT EXISTS`).
+Although this is CAS at the Cassandra level, it is _not_ classified as fully atomic in the
+table above because it is subject to Paxos latency and only provides linearizability within
+a single partition.
+
+=== KafkaKeyValueRepository
+
+[source,xml,role=dependency]
+----
+<dependency>
+  <groupId>org.apache.camel</groupId>
+  <artifactId>camel-kafka</artifactId>
+</dependency>
+----
+
+Required properties:
+
+* `topic` — the compacted Kafka topic used as the key-value store.
+* `bootstrapServers` — comma-separated list of Kafka broker addresses.
+
+Optional properties:
+
+* `maxCacheSize` — maximum number of entries to hold in the local in-memory replica (default: unlimited).
+* `pollDurationMs` — poll timeout in milliseconds when rebuilding state at startup (default: `100`).
+* `startupOnly` — if `true`, the consumer only reads the topic once at startup and does not keep polling (default: `false`).
+* `groupId` — Kafka consumer group ID (default: auto-generated).
+
+[tabs]
+====
+Java DSL::
++
+[source,java]
+----
+import org.apache.camel.component.kafka.KafkaKeyValueRepository;
+
+@BindToRegistry("kafkaKvr")
+public KeyValueRepository kafkaKvr() {
+    KafkaKeyValueRepository kvr = new KafkaKeyValueRepository();
+    kvr.setTopic("camel-kvr-products");
+    kvr.setBootstrapServers("kafka1:9092,kafka2:9092");
+    kvr.setMaxCacheSize(50_000);
+    kvr.setGroupId("camel-kvr-consumer");
+    return kvr;
+}
+----
+
+YAML DSL::
++
+[source,yaml]
+----
+- beans:
+    - name: kafkaKvr
+      type: org.apache.camel.component.kafka.KafkaKeyValueRepository
+      properties:
+        topic: camel-kvr-products
+        bootstrapServers: "kafka1:9092,kafka2:9092"
+        maxCacheSize: 50000
+        groupId: camel-kvr-consumer
+----
+====
+
+IMPORTANT: The Kafka backend reconstructs its state by replaying the topic log on startup.
+This means startup time scales with topic size. Use a
+https://kafka.apache.org/documentation/#topicconfigs_cleanup.policy[log-compacted topic]
+(`cleanup.policy=compact`) to keep the log bounded.
+
+TTL is not natively supported — entry retention is governed by topic-level
+`retention.ms` / `retention.bytes`, which affects all entries equally, not individual ones.
+`putIfAbsent` is *not* atomic: reads and writes go through the local in-memory replica with
+no distributed locking.
+
+== Atomicity Guarantees
+
+The `putIfAbsent(key, value)` method is the critical operation for the
+xref:idempotentConsumer-eip.adoc[Idempotent Consumer] — it must return `true` only for the
+_first_ caller and `false` for all subsequent callers with the same key.
+
+[cols="2,1,3",options="header"]
+|===
+| Backend | Atomic CAS | Mechanism
+
+| `MemoryKeyValueRepository`
+| ✓
+| `ConcurrentHashMap.putIfAbsent` — JVM-local, lock-free
+
+| `CaffeineKeyValueRepository`
+| ✓
+| Caffeine's internal lock-free `putIfAbsent`
+
+| `EhcacheKeyValueRepository`
+| ✓
+| `Cache.putIfAbsent` (JSR-107) — segment-locked
+
+| `JCacheKeyValueRepository`
+| ✓ (provider)
+| Delegates to the JSR-107 provider's `putIfAbsent`
+
+| `HazelcastKeyValueRepository`
+| ✓
+| `IMap.putIfAbsent` — distributed CAS with CP subsystem optional
+
+| `RedisKeyValueRepository`
+| ✓
+| `SET key value NX` — single-command atomic in Redis
+
+| `InfinispanRemoteKeyValueRepository`
+| ✓
+| Hot Rod `PUTIFABSENT` operation — cluster-wide atomic
+
+| `JdbcKeyValueRepository`
+| ✓
+| `UPDATE … WHERE value = ?` — single-statement CAS within a transaction
+
+| `JpaKeyValueRepository`
+| ✗
+| Optimistic INSERT + constraint catch; `replace` / `delete(key, expected)` fall back to non-atomic defaults
+
+| `CassandraKeyValueRepository`
+| ✓
+| Lightweight transactions: `INSERT … IF NOT EXISTS`, `UPDATE … IF value = ?`, `DELETE … IF value = ?`
+
+| `KafkaKeyValueRepository`
+| ✗
+| In-memory replica check — no distributed coordination
+
+|===
+
+For non-atomic backends, use the Cache EIP (where idempotency is not required) or accept
+at-least-once semantics in idempotency-sensitive flows. Alternatively, front a non-atomic
+backend with a distributed lock (e.g. via `camel-hazelcast` `ILock`).
+
+== TTL Behavior
+
+[cols="2,1,3",options="header"]
+|===
+| Backend | Native TTL | Notes
+
+| `MemoryKeyValueRepository`
+| ✗
+| Cache EIP wraps values with an expiry timestamp; expired entries are evicted on read
+
+| `CaffeineKeyValueRepository`
+| ✗
+| Same as Memory — client-side expiry envelope
+
+| `EhcacheKeyValueRepository`
+| ✓
+| `ExpiryPolicy` configured on the `CacheManager`; Cache EIP TTL forwarded when possible
+
+| `JCacheKeyValueRepository`
+| ✓ (provider)
+| `javax.cache.expiry.ExpiryPolicy` on the `MutableConfiguration`
+
+| `HazelcastKeyValueRepository`
+| ✓
+| `MapConfig.timeToLiveSeconds`; per-entry TTL also available via `IMap.put(k, v, ttl, unit)`
+
+| `RedisKeyValueRepository`
+| ✓
+| `EXPIRE` set atomically alongside each `PUT`; Cache EIP `ttl` forwarded as `EX` seconds
+
+| `InfinispanRemoteKeyValueRepository`
+| ✓
+| Per-entry `lifespan` (max-idle also available); Cache EIP `ttl` forwarded
+
+| `JdbcKeyValueRepository`
+| ✗
+| Client-side expiry envelope; a periodic cleanup query is needed to purge expired rows
+
+| `JpaKeyValueRepository`
+| ✗
+| Client-side expiry envelope; schedule a `DELETE … WHERE expires < now()` query
+
+| `CassandraKeyValueRepository`
+| ✓
+| `USING TTL <seconds>` clause; Cache EIP `ttl` forwarded; expired rows deleted by Cassandra
+
+| `KafkaKeyValueRepository`
+| ✗
+| Topic-level retention only; all entries expire at the same time based on `retention.ms`
+
+|===
+
+NOTE: For backends *without native TTL*, the Cache EIP stores an expiry timestamp inside
+the serialized value and skips (evicts on read) entries whose timestamp has passed. This
+means the storage layer may accumulate stale entries that are never explicitly deleted —
+size them accordingly or run periodic cleanup jobs.
+
+== Distributed Deployment
+
+When running multiple Camel instances (e.g. behind a load balancer or in a Kubernetes cluster), the choice of
+backend determines whether state is shared and whether CAS operations are safe across nodes.
+
+[cols="2,1,1,1,3",options="header"]
+|===
+| Backend | Shared state | Distributed CAS | Distributed-safe | Notes
+
+| `MemoryKeyValueRepository`
+| ✗
+| ✗
+| ❌
+| JVM-local only. Each node has its own isolated store.
+
+| `CaffeineKeyValueRepository`
+| ✗
+| ✗
+| ❌
+| JVM-local only. Suitable as a near-cache in front of a distributed backend.
+
+| `EhcacheKeyValueRepository`
+| ✗ (unless clustered)
+| ✗
+| ❌
+| JVM-local by default. Ehcache clustering requires additional configuration outside of this integration.
+
+| `JCacheKeyValueRepository`
+| Depends on provider
+| Depends on provider
+| ⚠️
+| With a distributed provider (Hazelcast, Infinispan), state is shared. CAS atomicity depends on the provider.
+
+| `HazelcastKeyValueRepository`
+| ✓
+| ✓
+| ✅
+| Distributed `IMap` with cluster-wide `putIfAbsent`, `replace`, and `remove(key, value)`.
+
+| `RedisKeyValueRepository`
+| ✓
+| ✓
+| ✅
+| Shared Redis server. `setIfAbsent` and `compareAndSet` are atomic. `replace` with TTL has a brief non-atomic window (see Javadoc).
+
+| `InfinispanRemoteKeyValueRepository`
+| ✓
+| ✓
+| ✅
+| Remote cache with version-based optimistic CAS via `replaceWithVersion` / `removeWithVersion`.
+
+| `JdbcKeyValueRepository`
+| ✓
+| ✓
+| ✅
+| Shared database. `putIfAbsent` uses unique-key constraint; `replace` and `delete(key, expected)` use SQL `WHERE value = ?`.
+
+| `JpaKeyValueRepository`
+| ✓
+| ⚠️
+| ⚠️
+| Shared database. `putIfAbsent` catches constraint violations, but `replace` and `delete(key, expected)` fall back to non-atomic defaults (read-compare-write in Java).
+
+| `CassandraKeyValueRepository`
+| ✓
+| ✓
+| ✅
+| Shared cluster. Full lightweight transaction (LWT) support: `IF NOT EXISTS`, `IF value = ?`.
+
+| `KafkaKeyValueRepository`
+| ✓ (eventually)
+| ✗
+| ⚠️
+| State is shared via the topic, but CAS is local-only. Suitable for best-effort deduplication, not strict exactly-once across nodes.
+
+|===
+
+*Recommendations:*
+
+* **Idempotent Consumer in a cluster** — use Hazelcast, Redis, Infinispan, JDBC, or Cassandra for guaranteed exactly-once deduplication.
+* **Aggregator in a cluster** — use any shared-state backend (recovery requires the same backend to be visible from the recovering node).
+* **Cache EIP in a cluster** — any backend works. JVM-local backends give each node its own cache (fine for read-through caching); distributed backends share cached values.
+* **Single-node deployment** — any backend works, including Memory and Caffeine.
+
+== Using Adapters: Idempotent Consumer and Aggregator
+
+A `KeyValueRepository` can be adapted to the specialized repository interfaces required by
+the Idempotent Consumer and Aggregator EIPs via two adapter classes.
+
+=== KeyValueIdempotentRepository
+
+`KeyValueIdempotentRepository` wraps any `KeyValueRepository` as a
+`org.apache.camel.spi.IdempotentRepository`, making it usable with
+xref:idempotentConsumer-eip.adoc[Idempotent Consumer].
+
+[tabs]
+====
+Java DSL::
++
+[source,java]
+----
+import org.apache.camel.support.KeyValueIdempotentRepository;
+import org.apache.camel.component.redis.RedisKeyValueRepository;
+
+@BindToRegistry("redisKvr")
+public KeyValueRepository redisKvr() {
+    RedisKeyValueRepository kvr = new RedisKeyValueRepository();
+    kvr.setEndpoint("redis://localhost:6379");
+    kvr.setKeyPrefix("idempotent:");
+    return kvr;
+}
+
+@BindToRegistry("idempotentRepo")
+public IdempotentRepository idempotentRepo(KeyValueRepository redisKvr) {
+    return new KeyValueIdempotentRepository(redisKvr);
+}
+----
++
+Then reference it in a route:
++
+[source,java]
+----
+from("jms:queue:orders")
+    .idempotentConsumer(header("JMSMessageID"))
+        .idempotentRepository("idempotentRepo")
+    .to("direct:processOrder");
+----
+
+XML DSL::
++
+[source,xml]
+----
+<route>
+  <from uri="jms:queue:orders"/>
+  <idempotentConsumer idempotentRepository="idempotentRepo">
+    <header>JMSMessageID</header>
+    <to uri="direct:processOrder"/>
+  </idempotentConsumer>
+</route>
+----
+
+YAML DSL::
++
+[source,yaml]
+----
+- from:
+    uri: jms:queue:orders
+    steps:
+      - idempotentConsumer:
+          header: JMSMessageID
+          idempotentRepository: idempotentRepo
+          steps:
+            - to: direct:processOrder
+----
+====
+
+=== KeyValueAggregationRepository
+
+`KeyValueAggregationRepository` wraps any `KeyValueRepository` as a
+`org.apache.camel.spi.AggregationRepository`, making it usable with
+xref:aggregate-eip.adoc[Aggregator].
+
+[tabs]
+====
+Java DSL::
++
+[source,java]
+----
+import org.apache.camel.support.KeyValueAggregationRepository;
+import org.apache.camel.component.hazelcast.HazelcastKeyValueRepository;
+
+@BindToRegistry("hazelcastKvr")
+public KeyValueRepository hazelcastKvr() {
+    HazelcastKeyValueRepository kvr = new HazelcastKeyValueRepository();
+    kvr.setMapName("aggregation-store");
+    return kvr;
+}
+
+@BindToRegistry("aggregationRepo")
+public AggregationRepository aggregationRepo(KeyValueRepository hazelcastKvr) {
+    return new KeyValueAggregationRepository(hazelcastKvr);
+}
+----
++
+Then reference it in a route:
++
+[source,java]
+----
+from("direct:start")
+    .aggregate(header("orderId"), new GroupedBodyAggregationStrategy())
+        .aggregationRepository("aggregationRepo")
+        .completionSize(10)
+    .to("direct:process");
+----
+
+XML DSL::
++
+[source,xml]
+----
+<route>
+  <from uri="direct:start"/>
+  <aggregate strategyRef="groupedBodyStrategy"
+             aggregationRepositoryRef="aggregationRepo"
+             completionSize="10">
+    <correlationExpression>
+      <header>orderId</header>
+    </correlationExpression>
+    <to uri="direct:process"/>
+  </aggregate>
+</route>
+----
+
+YAML DSL::
++
+[source,yaml]
+----
+- from:
+    uri: direct:start
+    steps:
+      - aggregate:
+          correlationExpression:
+            header: orderId
+          strategyRef: groupedBodyStrategy
+          aggregationRepository: aggregationRepo
+          completionSize: 10
+          steps:
+            - to: direct:process
+----
+====
+
+NOTE: `KeyValueAggregationRepository` serializes the entire `Exchange` to the backing
+store. For backends without native TTL (JDBC, JPA, Kafka), aggregation-in-progress entries
+persist until completion. Use a backend with durable storage (JDBC, JPA, Infinispan) when
+crash recovery of in-flight aggregations is required.
+
+== See Also
+
+* xref:cache-eip.adoc[Cache EIP]
+* xref:idempotentConsumer-eip.adoc[Idempotent Consumer EIP]
+* xref:aggregate-eip.adoc[Aggregator EIP]

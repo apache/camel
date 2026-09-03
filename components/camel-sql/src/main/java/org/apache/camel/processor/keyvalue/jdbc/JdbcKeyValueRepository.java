@@ -75,6 +75,10 @@ public class JdbcKeyValueRepository extends ServiceSupport implements KeyValueRe
             = "SELECT ITEM_KEY FROM CAMEL_KEYVALUE WHERE EXPIRES_AT = 0 OR EXPIRES_AT > ?";
     protected static final String DEFAULT_DELETE_EXPIRED_STRING
             = "DELETE FROM CAMEL_KEYVALUE WHERE EXPIRES_AT > 0 AND EXPIRES_AT <= ?";
+    protected static final String DEFAULT_UPDATE_IF_VALUE_STRING
+            = "UPDATE CAMEL_KEYVALUE SET ITEM_VALUE = ?, EXPIRES_AT = ? WHERE ITEM_KEY = ? AND ITEM_VALUE = ?";
+    protected static final String DEFAULT_DELETE_IF_VALUE_STRING
+            = "DELETE FROM CAMEL_KEYVALUE WHERE ITEM_KEY = ? AND ITEM_VALUE = ?";
 
     private static final Logger LOG = LoggerFactory.getLogger(JdbcKeyValueRepository.class);
 
@@ -105,6 +109,10 @@ public class JdbcKeyValueRepository extends ServiceSupport implements KeyValueRe
     private String selectKeysString = DEFAULT_SELECT_KEYS_STRING;
     @Metadata(label = "advanced", description = "SQL query to use for deleting expired entries")
     private String deleteExpiredString = DEFAULT_DELETE_EXPIRED_STRING;
+    @Metadata(label = "advanced", description = "SQL query to use for conditional update (CAS replace)")
+    private String updateIfValueString = DEFAULT_UPDATE_IF_VALUE_STRING;
+    @Metadata(label = "advanced", description = "SQL query to use for conditional delete (CAS delete)")
+    private String deleteIfValueString = DEFAULT_DELETE_IF_VALUE_STRING;
 
     /**
      * Creates a new JDBC key-value repository. A {@link DataSource} or {@link JdbcTemplate} must be set before
@@ -169,6 +177,8 @@ public class JdbcKeyValueRepository extends ServiceSupport implements KeyValueRe
             clearString = DEFAULT_CLEAR_STRING.replace(DEFAULT_TABLENAME, tableName);
             selectKeysString = DEFAULT_SELECT_KEYS_STRING.replace(DEFAULT_TABLENAME, tableName);
             deleteExpiredString = DEFAULT_DELETE_EXPIRED_STRING.replace(DEFAULT_TABLENAME, tableName);
+            updateIfValueString = DEFAULT_UPDATE_IF_VALUE_STRING.replace(DEFAULT_TABLENAME, tableName);
+            deleteIfValueString = DEFAULT_DELETE_IF_VALUE_STRING.replace(DEFAULT_TABLENAME, tableName);
         }
     }
 
@@ -287,6 +297,53 @@ public class JdbcKeyValueRepository extends ServiceSupport implements KeyValueRe
                 return concurrentValue;
             }
         });
+    }
+
+    /**
+     * Atomically replaces the value for {@code key} only if the current stored value equals {@code expectedOldValue}.
+     * <p/>
+     * The comparison is performed on the serialized (byte[]) representation of the values. This works correctly for
+     * well-behaved {@link java.io.Serializable} types whose serialized form is deterministic (i.e. two independently
+     * serialized instances of the same logical value produce identical bytes). Classes that override
+     * {@code writeObject} with non-deterministic output (e.g. including timestamps or random salts) will not compare
+     * correctly and should not be used as expected values.
+     *
+     * @param  key              the key whose value should be conditionally replaced
+     * @param  expectedOldValue the value that must currently be stored (compared by serialized bytes)
+     * @param  newValue         the new value to store if the condition is met
+     * @param  ttl              the time-to-live for the new entry, or {@code null} / zero for no expiry
+     * @return                  {@code true} if the value was replaced, {@code false} if the current value did not match
+     */
+    @Override
+    public boolean replace(String key, Object expectedOldValue, Object newValue, Duration ttl) {
+        Boolean result = transactionTemplate.execute(status -> {
+            long expiresAt = toExpiresAt(ttl);
+            byte[] newBytes = KeyValueRepositoryHelper.serialize(newValue);
+            byte[] expectedBytes = KeyValueRepositoryHelper.serialize(expectedOldValue);
+            int updated = jdbcTemplate.update(getUpdateIfValueString(), newBytes, expiresAt, key, expectedBytes);
+            return updated > 0;
+        });
+        return result != null && result;
+    }
+
+    /**
+     * Atomically deletes the entry for {@code key} only if the current stored value equals {@code expectedValue}.
+     * <p/>
+     * The comparison is performed on the serialized (byte[]) representation of the value. See the note on
+     * {@link #replace(String, Object, Object, Duration)} for caveats about non-deterministic serialization.
+     *
+     * @param  key           the key to conditionally delete
+     * @param  expectedValue the value that must currently be stored (compared by serialized bytes)
+     * @return               {@code true} if the entry was deleted, {@code false} if the current value did not match
+     */
+    @Override
+    public boolean delete(String key, Object expectedValue) {
+        Boolean result = transactionTemplate.execute(status -> {
+            byte[] expectedBytes = KeyValueRepositoryHelper.serialize(expectedValue);
+            int deleted = jdbcTemplate.update(getDeleteIfValueString(), key, expectedBytes);
+            return deleted > 0;
+        });
+        return result != null && result;
     }
 
     @Override
@@ -444,5 +501,21 @@ public class JdbcKeyValueRepository extends ServiceSupport implements KeyValueRe
 
     public void setDeleteExpiredString(String deleteExpiredString) {
         this.deleteExpiredString = deleteExpiredString;
+    }
+
+    public String getUpdateIfValueString() {
+        return updateIfValueString;
+    }
+
+    public void setUpdateIfValueString(String updateIfValueString) {
+        this.updateIfValueString = updateIfValueString;
+    }
+
+    public String getDeleteIfValueString() {
+        return deleteIfValueString;
+    }
+
+    public void setDeleteIfValueString(String deleteIfValueString) {
+        this.deleteIfValueString = deleteIfValueString;
     }
 }

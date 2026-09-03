@@ -16,8 +16,6 @@
  */
 package org.apache.camel.component.jcache.processor;
 
-import java.io.Serial;
-import java.io.Serializable;
 import java.time.Duration;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -36,6 +34,7 @@ import org.apache.camel.component.jcache.JCacheManager;
 import org.apache.camel.spi.Configurer;
 import org.apache.camel.spi.KeyValueRepository;
 import org.apache.camel.spi.Metadata;
+import org.apache.camel.support.KeyValueTtlValue;
 import org.apache.camel.support.service.ServiceSupport;
 import org.apache.camel.util.ObjectHelper;
 
@@ -43,8 +42,8 @@ import org.apache.camel.util.ObjectHelper;
  * A {@link KeyValueRepository} implementation backed by a JCache (JSR-107) {@link Cache}.
  * <p/>
  * JCache does not support per-entry TTL natively (expiry is configured at the cache level via
- * {@link javax.cache.expiry.ExpiryPolicy}). This implementation wraps each value in a {@link TtlValue} that records the
- * entry's expiration timestamp. Expired entries are removed lazily on access and during key scans.
+ * {@link javax.cache.expiry.ExpiryPolicy}). This implementation wraps each value in a {@link KeyValueTtlValue} that
+ * records the entry's expiration timestamp. Expired entries are removed lazily on access and during key scans.
  * <p/>
  * This single implementation can serve as idempotent repository, aggregation repository, and state store via the
  * adapters in {@code camel-support} ({@code KeyValueIdempotentRepository} and {@code KeyValueAggregationRepository}).
@@ -58,34 +57,9 @@ import org.apache.camel.util.ObjectHelper;
 @ManagedResource(description = "JCache based key-value repository")
 public class JCacheKeyValueRepository extends ServiceSupport implements CamelContextAware, KeyValueRepository {
 
-    /**
-     * Internal value wrapper that holds the actual value and an expiration timestamp.
-     */
-    static final class TtlValue implements Serializable {
-
-        @Serial
-        private static final long serialVersionUID = 1L;
-
-        private final Object value;
-        private final long expiresAt;
-
-        TtlValue(Object value, long expiresAt) {
-            this.value = value;
-            this.expiresAt = expiresAt;
-        }
-
-        Object value() {
-            return value;
-        }
-
-        boolean isExpired() {
-            return System.currentTimeMillis() >= expiresAt;
-        }
-    }
-
     private CamelContext camelContext;
-    private Cache<String, TtlValue> cache;
-    private JCacheManager<String, TtlValue> cacheManager;
+    private Cache<String, KeyValueTtlValue> cache;
+    private JCacheManager<String, KeyValueTtlValue> cacheManager;
 
     @Metadata(description = "Configuration for JCache")
     private JCacheConfiguration configuration;
@@ -115,11 +89,11 @@ public class JCacheKeyValueRepository extends ServiceSupport implements CamelCon
         this.configuration = configuration;
     }
 
-    public Cache<String, TtlValue> getCache() {
+    public Cache<String, KeyValueTtlValue> getCache() {
         return cache;
     }
 
-    public void setCache(Cache<String, TtlValue> cache) {
+    public void setCache(Cache<String, KeyValueTtlValue> cache) {
         this.cache = cache;
     }
 
@@ -135,7 +109,7 @@ public class JCacheKeyValueRepository extends ServiceSupport implements CamelCon
     @Override
     @ManagedOperation(description = "Get value by key")
     public Object get(String key) {
-        TtlValue entry = cache.get(key);
+        KeyValueTtlValue entry = cache.get(key);
         if (entry == null) {
             return null;
         }
@@ -146,12 +120,20 @@ public class JCacheKeyValueRepository extends ServiceSupport implements CamelCon
         return entry.value();
     }
 
+    /**
+     * Stores a value with optional TTL.
+     * <p/>
+     * <b>Note:</b> The previous value is read in a separate call before the put. This is not atomic — another thread
+     * could modify the entry between the read and the write. The stored value is always correct, but the returned
+     * previous value may be stale. JCache does not provide a {@code getAndPut} equivalent that also accepts a custom
+     * value type with per-entry TTL.
+     */
     @Override
     @ManagedOperation(description = "Put a key-value pair with optional TTL")
     public Object put(String key, Object value, Duration ttl) {
         long expiresAt = hasPositiveTtl(ttl) ? System.currentTimeMillis() + ttl.toMillis() : Long.MAX_VALUE;
-        TtlValue previous = cache.get(key);
-        cache.put(key, new TtlValue(value, expiresAt));
+        KeyValueTtlValue previous = cache.get(key);
+        cache.put(key, new KeyValueTtlValue(value, expiresAt));
         if (previous == null || previous.isExpired()) {
             return null;
         }
@@ -161,7 +143,7 @@ public class JCacheKeyValueRepository extends ServiceSupport implements CamelCon
     @Override
     @ManagedOperation(description = "Delete a key")
     public Object delete(String key) {
-        TtlValue entry = cache.get(key);
+        KeyValueTtlValue entry = cache.get(key);
         cache.remove(key);
         if (entry == null || entry.isExpired()) {
             return null;
@@ -172,7 +154,7 @@ public class JCacheKeyValueRepository extends ServiceSupport implements CamelCon
     @Override
     @ManagedOperation(description = "Check if key exists")
     public boolean contains(String key) {
-        TtlValue entry = cache.get(key);
+        KeyValueTtlValue entry = cache.get(key);
         if (entry == null) {
             return false;
         }
@@ -186,9 +168,9 @@ public class JCacheKeyValueRepository extends ServiceSupport implements CamelCon
     @Override
     public Set<String> keys() {
         Set<String> keys = new HashSet<>();
-        Iterator<Cache.Entry<String, TtlValue>> it = cache.iterator();
+        Iterator<Cache.Entry<String, KeyValueTtlValue>> it = cache.iterator();
         while (it.hasNext()) {
-            Cache.Entry<String, TtlValue> entry = it.next();
+            Cache.Entry<String, KeyValueTtlValue> entry = it.next();
             if (!entry.getValue().isExpired()) {
                 keys.add(entry.getKey());
             } else {

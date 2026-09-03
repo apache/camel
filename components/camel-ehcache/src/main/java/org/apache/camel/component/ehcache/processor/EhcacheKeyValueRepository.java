@@ -16,8 +16,6 @@
  */
 package org.apache.camel.component.ehcache.processor;
 
-import java.io.Serial;
-import java.io.Serializable;
 import java.time.Duration;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -30,6 +28,7 @@ import org.apache.camel.component.ehcache.EhcacheManager;
 import org.apache.camel.spi.Configurer;
 import org.apache.camel.spi.KeyValueRepository;
 import org.apache.camel.spi.Metadata;
+import org.apache.camel.support.KeyValueTtlValue;
 import org.apache.camel.support.service.ServiceSupport;
 import org.apache.camel.util.ObjectHelper;
 import org.ehcache.Cache;
@@ -39,8 +38,8 @@ import org.ehcache.CacheManager;
  * A {@link KeyValueRepository} implementation backed by an Ehcache {@link Cache}.
  * <p/>
  * Ehcache does not support per-entry TTL natively (TTL is set at the cache configuration level). This implementation
- * wraps each value in a {@link TtlValue} that records the entry's expiration timestamp. Expired entries are removed
- * lazily on access and during key scans, similar to how {@code MemoryKeyValueRepository} handles TTL.
+ * wraps each value in a {@link KeyValueTtlValue} that records the entry's expiration timestamp. Expired entries are
+ * removed lazily on access and during key scans, similar to how {@code MemoryKeyValueRepository} handles TTL.
  * <p/>
  * This single implementation can serve as idempotent repository, aggregation repository, and state store via the
  * adapters in {@code camel-support} ({@code KeyValueIdempotentRepository} and {@code KeyValueAggregationRepository}).
@@ -54,32 +53,7 @@ import org.ehcache.CacheManager;
 @ManagedResource(description = "Ehcache based key-value repository")
 public class EhcacheKeyValueRepository extends ServiceSupport implements KeyValueRepository {
 
-    /**
-     * Internal value wrapper that holds the actual value and an expiration timestamp.
-     */
-    static final class TtlValue implements Serializable {
-
-        @Serial
-        private static final long serialVersionUID = 1L;
-
-        private final Object value;
-        private final long expiresAt;
-
-        TtlValue(Object value, long expiresAt) {
-            this.value = value;
-            this.expiresAt = expiresAt;
-        }
-
-        Object value() {
-            return value;
-        }
-
-        boolean isExpired() {
-            return System.currentTimeMillis() >= expiresAt;
-        }
-    }
-
-    private Cache<String, TtlValue> cache;
+    private Cache<String, KeyValueTtlValue> cache;
     private EhcacheManager ehcacheManager;
 
     @Metadata(description = "Name of cache", defaultValue = "EhcacheKeyValueRepository")
@@ -129,7 +103,7 @@ public class EhcacheKeyValueRepository extends ServiceSupport implements KeyValu
     @Override
     @ManagedOperation(description = "Get value by key")
     public Object get(String key) {
-        TtlValue entry = cache.get(key);
+        KeyValueTtlValue entry = cache.get(key);
         if (entry == null) {
             return null;
         }
@@ -140,12 +114,20 @@ public class EhcacheKeyValueRepository extends ServiceSupport implements KeyValu
         return entry.value();
     }
 
+    /**
+     * Stores a value with optional TTL.
+     * <p/>
+     * <b>Note:</b> The previous value is read in a separate call before the put. This is not atomic — another thread
+     * could modify the entry between the read and the write. The stored value is always correct, but the returned
+     * previous value may be stale. Ehcache does not provide a native {@code getAndPut} equivalent for its
+     * {@code Cache<K,V>} API.
+     */
     @Override
     @ManagedOperation(description = "Put a key-value pair with optional TTL")
     public Object put(String key, Object value, Duration ttl) {
         long expiresAt = hasPositiveTtl(ttl) ? System.currentTimeMillis() + ttl.toMillis() : Long.MAX_VALUE;
-        TtlValue previous = cache.get(key);
-        cache.put(key, new TtlValue(value, expiresAt));
+        KeyValueTtlValue previous = cache.get(key);
+        cache.put(key, new KeyValueTtlValue(value, expiresAt));
         if (previous == null || previous.isExpired()) {
             return null;
         }
@@ -155,7 +137,7 @@ public class EhcacheKeyValueRepository extends ServiceSupport implements KeyValu
     @Override
     @ManagedOperation(description = "Delete a key")
     public Object delete(String key) {
-        TtlValue entry = cache.get(key);
+        KeyValueTtlValue entry = cache.get(key);
         cache.remove(key);
         if (entry == null || entry.isExpired()) {
             return null;
@@ -166,7 +148,7 @@ public class EhcacheKeyValueRepository extends ServiceSupport implements KeyValu
     @Override
     @ManagedOperation(description = "Check if key exists")
     public boolean contains(String key) {
-        TtlValue entry = cache.get(key);
+        KeyValueTtlValue entry = cache.get(key);
         if (entry == null) {
             return false;
         }
@@ -180,9 +162,9 @@ public class EhcacheKeyValueRepository extends ServiceSupport implements KeyValu
     @Override
     public Set<String> keys() {
         Set<String> keys = new HashSet<>();
-        Iterator<Cache.Entry<String, TtlValue>> it = cache.iterator();
+        Iterator<Cache.Entry<String, KeyValueTtlValue>> it = cache.iterator();
         while (it.hasNext()) {
-            Cache.Entry<String, TtlValue> entry = it.next();
+            Cache.Entry<String, KeyValueTtlValue> entry = it.next();
             if (!entry.getValue().isExpired()) {
                 keys.add(entry.getKey());
             } else {
@@ -213,7 +195,7 @@ public class EhcacheKeyValueRepository extends ServiceSupport implements KeyValu
         ObjectHelper.notNull(cacheManager, "cacheManager");
         ehcacheManager = new EhcacheManager(cacheManager, false, null);
         ehcacheManager.start();
-        cache = ehcacheManager.getCache(cacheName, String.class, TtlValue.class);
+        cache = ehcacheManager.getCache(cacheName, String.class, KeyValueTtlValue.class);
     }
 
     @Override
