@@ -28,9 +28,11 @@ import com.datastax.oss.driver.api.core.cql.PreparedStatement;
 import com.datastax.oss.driver.api.core.cql.ResultSet;
 import com.datastax.oss.driver.api.core.cql.Row;
 import com.datastax.oss.driver.api.core.cql.SimpleStatement;
+import com.datastax.oss.driver.api.querybuilder.QueryBuilder;
 import com.datastax.oss.driver.api.querybuilder.delete.Delete;
 import com.datastax.oss.driver.api.querybuilder.select.Select;
 import com.datastax.oss.driver.api.querybuilder.truncate.Truncate;
+import com.datastax.oss.driver.api.querybuilder.update.Update;
 import org.apache.camel.api.management.ManagedAttribute;
 import org.apache.camel.api.management.ManagedOperation;
 import org.apache.camel.api.management.ManagedResource;
@@ -58,8 +60,13 @@ import static org.apache.camel.utils.cassandra.CassandraUtils.generateTruncate;
  * stored as {@code TEXT}. Time-to-live is handled natively by Cassandra's {@code USING TTL} clause on {@code INSERT}
  * statements, so expired entries are removed automatically by Cassandra without any client-side eviction logic.
  * <p/>
- * The {@link #putIfAbsent(String, Object, long)} method is implemented atomically using Cassandra's lightweight
- * transactions ({@code INSERT ... IF NOT EXISTS}).
+ * The CAS (compare-and-swap) methods are implemented atomically using Cassandra's lightweight transactions (LWT):
+ * <ul>
+ * <li>{@link #putIfAbsent(String, Object, Duration)} uses {@code INSERT ... IF NOT EXISTS}</li>
+ * <li>{@link #replace(String, Object, Object, Duration)} uses
+ * {@code UPDATE ... SET value = ? WHERE key = ? IF value = ?}</li>
+ * <li>{@link #delete(String, Object)} uses {@code DELETE FROM ... WHERE key = ? IF value = ?}</li>
+ * </ul>
  * <p/>
  * Advice: use LeveledCompaction for the backing table and tune read/write consistency levels for your use case.
  *
@@ -97,6 +104,9 @@ public class CassandraKeyValueRepository extends ServiceSupport implements KeyVa
     private PreparedStatement truncateStatement;
     private PreparedStatement insertIfNotExistsStatement;
     private PreparedStatement insertIfNotExistsWithTtlStatement;
+    private PreparedStatement updateIfValueStatement;
+    private PreparedStatement updateIfValueWithTtlStatement;
+    private PreparedStatement deleteIfValueStatement;
 
     public CassandraKeyValueRepository() {
     }
@@ -134,6 +144,9 @@ public class CassandraKeyValueRepository extends ServiceSupport implements KeyVa
         initClearStatement();
         initInsertIfNotExistsStatement();
         initInsertIfNotExistsWithTtlStatement();
+        initUpdateIfValueStatement();
+        initUpdateIfValueWithTtlStatement();
+        initDeleteIfValueStatement();
     }
 
     @Override
@@ -220,6 +233,38 @@ public class CassandraKeyValueRepository extends ServiceSupport implements KeyVa
                 writeConsistencyLevel);
         LOGGER.debug("Generated Insert if not exists with TTL {}", statement);
         insertIfNotExistsWithTtlStatement = getSession().prepare(statement);
+    }
+
+    protected void initUpdateIfValueStatement() {
+        // UPDATE table SET value = ? WHERE key = ? IF value = ?
+        Update update = QueryBuilder.update(table)
+                .setColumn(VALUE_COLUMN, bindMarker())
+                .whereColumn(KEY_COLUMN).isEqualTo(bindMarker())
+                .ifColumn(VALUE_COLUMN).isEqualTo(bindMarker());
+        SimpleStatement statement = applyConsistencyLevel(update.build(), writeConsistencyLevel);
+        LOGGER.debug("Generated Update if value {}", statement);
+        updateIfValueStatement = getSession().prepare(statement);
+    }
+
+    protected void initUpdateIfValueWithTtlStatement() {
+        // UPDATE table USING TTL ? SET value = ? WHERE key = ? IF value = ?
+        Update update = QueryBuilder.update(table)
+                .usingTtl(bindMarker())
+                .setColumn(VALUE_COLUMN, bindMarker())
+                .whereColumn(KEY_COLUMN).isEqualTo(bindMarker())
+                .ifColumn(VALUE_COLUMN).isEqualTo(bindMarker());
+        SimpleStatement statement = applyConsistencyLevel(update.build(), writeConsistencyLevel);
+        LOGGER.debug("Generated Update if value with TTL {}", statement);
+        updateIfValueWithTtlStatement = getSession().prepare(statement);
+    }
+
+    protected void initDeleteIfValueStatement() {
+        // DELETE FROM table WHERE key = ? IF value = ?
+        Delete delete = generateDelete(table, new String[] { KEY_COLUMN }, false)
+                .ifColumn(VALUE_COLUMN).isEqualTo(bindMarker());
+        SimpleStatement statement = applyConsistencyLevel(delete.build(), writeConsistencyLevel);
+        LOGGER.debug("Generated Delete if value {}", statement);
+        deleteIfValueStatement = getSession().prepare(statement);
     }
 
     // -------------------------------------------------------------------------
@@ -317,6 +362,64 @@ public class CassandraKeyValueRepository extends ServiceSupport implements KeyVa
         // Insert was not applied; return the existing value from the result row
         ByteBuffer existingBuffer = row.getByteBuffer(VALUE_COLUMN);
         return existingBuffer != null ? KeyValueRepositoryHelper.deserialize(existingBuffer) : null;
+    }
+
+    /**
+     * Atomically replaces the value for the given key only if the current value equals the expected old value, using
+     * Cassandra's lightweight transaction ({@code UPDATE ... SET value = ? WHERE key = ? IF value = ?}).
+     * <p/>
+     * <b>Note:</b> the comparison is performed server-side on the <em>serialized</em> byte representation of the value,
+     * not via {@link java.util.Objects#equals(Object, Object)} on the deserialized objects (as the default SPI
+     * implementation does). Two objects that are {@code .equals()} but serialize to different bytes (e.g. maps/sets
+     * with non-deterministic iteration order) would cause this method to return {@code false} where the default
+     * implementation would return {@code true}.
+     *
+     * @param  expectedOldValue the value that must currently be associated with the key
+     * @param  newValue         the new value to store
+     * @param  ttl              the time-to-live for the new entry; {@code null}, zero, or negative means no expiration
+     * @return                  {@code true} if the value was replaced, {@code false} if the current value did not match
+     */
+    @Override
+    public boolean replace(String key, Object expectedOldValue, Object newValue, Duration ttl) {
+        LOGGER.debug("Replacing key {} if value matches, TTL {}", key, ttl);
+        ByteBuffer serializedNewValue = KeyValueRepositoryHelper.serializeToByteBuffer(newValue);
+        ByteBuffer serializedExpectedValue = KeyValueRepositoryHelper.serializeToByteBuffer(expectedOldValue);
+        ResultSet rs;
+        int ttlSeconds = toTtlSeconds(ttl);
+        if (ttlSeconds > 0) {
+            // bind order: TTL, newValue (SET), key (WHERE), expectedValue (IF)
+            rs = getSession().execute(
+                    updateIfValueWithTtlStatement.bind(ttlSeconds, serializedNewValue, key, serializedExpectedValue));
+        } else {
+            // bind order: newValue (SET), key (WHERE), expectedValue (IF)
+            rs = getSession().execute(
+                    updateIfValueStatement.bind(serializedNewValue, key, serializedExpectedValue));
+        }
+        return isApplied(rs);
+    }
+
+    /**
+     * Atomically removes the entry for the given key only if the current value equals the expected value, using
+     * Cassandra's lightweight transaction ({@code DELETE FROM ... WHERE key = ? IF value = ?}).
+     * <p/>
+     * <b>Note:</b> the comparison is performed server-side on the <em>serialized</em> byte representation of the value,
+     * not via {@link java.util.Objects#equals(Object, Object)} on the deserialized objects (as the default SPI
+     * implementation does). Two objects that are {@code .equals()} but serialize to different bytes (e.g. maps/sets
+     * with non-deterministic iteration order) would cause this method to return {@code false} where the default
+     * implementation would return {@code true}.
+     *
+     * @param  key           the key to remove
+     * @param  expectedValue the value that must currently be associated with the key
+     * @return               {@code true} if the entry was removed, {@code false} if the current value did not match or
+     *                       the key was not present
+     */
+    @Override
+    public boolean delete(String key, Object expectedValue) {
+        LOGGER.debug("Deleting key {} if value matches", key);
+        ByteBuffer serializedExpectedValue = KeyValueRepositoryHelper.serializeToByteBuffer(expectedValue);
+        // bind order: key (WHERE), expectedValue (IF)
+        ResultSet rs = getSession().execute(deleteIfValueStatement.bind(key, serializedExpectedValue));
+        return isApplied(rs);
     }
 
     @Override
