@@ -23,6 +23,7 @@ import java.util.Map;
 import com.aliyun.sls20201230.Client;
 import com.aliyun.sls20201230.models.GetLogsRequest;
 import com.aliyun.sls20201230.models.GetLogsResponse;
+import com.aliyun.sls20201230.models.GetLogsResponseBody;
 import org.apache.camel.BindToRegistry;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
@@ -73,7 +74,9 @@ class GetLogsTest extends CamelTestSupport {
         GetLogsResponse response = new GetLogsResponse();
         response.setStatusCode(200);
         response.setHeaders(Collections.singletonMap("x-log-requestid", "req-456"));
-        response.setBody(List.of(Map.of("message", "log line")));
+        GetLogsResponseBody logsResponseBody = new GetLogsResponseBody();
+        logsResponseBody.setData(List.of(Map.of("message", "log line")));
+        response.setBody(logsResponseBody);
 
         when(slsClient.getLogs(
                 eq(testConfiguration.getProperty("project")),
@@ -91,7 +94,11 @@ class GetLogsTest extends CamelTestSupport {
         Map<String, Object> body = exchange.getMessage().getBody(Map.class);
         assertThat(body)
                 .containsEntry("statusCode", 200)
-                .containsEntry("body", List.of(Map.of("message", "log line")));
+                .containsKey("body");
+        assertThat(body.get("body"))
+                .isInstanceOf(GetLogsResponseBody.class);
+        assertThat(((GetLogsResponseBody) body.get("body")).getData())
+                .contains(Map.of("message", "log line"));
         assertThat(exchange.getMessage().getHeader(AlibabaSlsHeaders.STATUS_CODE)).isEqualTo(200);
         assertThat(exchange.getMessage().getHeader(AlibabaSlsHeaders.REQUEST_ID)).isEqualTo("req-456");
 
