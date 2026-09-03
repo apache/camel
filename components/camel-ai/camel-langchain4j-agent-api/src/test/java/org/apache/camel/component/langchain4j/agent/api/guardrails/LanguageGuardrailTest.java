@@ -153,4 +153,17 @@ class LanguageGuardrailTest {
 
         assertTrue(guardrail.getBlockedLanguages().contains(LanguageGuardrail.Language.CYRILLIC));
     }
+
+    @Test
+    void testMinLanguageRatioIsEnforced() {
+        LanguageGuardrail guardrail = LanguageGuardrail.builder()
+                .allowedLanguages(LanguageGuardrail.Language.LATIN_SCRIPT)
+                .minLanguageRatio(0.8)
+                .build();
+
+        // "Hello 你好世界": 5 Latin characters out of 9 non-whitespace ~= 0.56, below the 0.8 threshold
+        assertFalse(guardrail.validate(UserMessage.from("Hello 你好世界")).isSuccess());
+        // All-Latin text meets the ratio
+        assertTrue(guardrail.validate(UserMessage.from("Hello world")).isSuccess());
+    }
 }

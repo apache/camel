@@ -212,7 +212,36 @@ public class LanguageGuardrail implements InputGuardrail {
             }
         }
 
+        // Enforce the minimum ratio of allowed-language characters, when configured
+        if (minLanguageRatio > 0.0) {
+            double ratio = allowedLanguageRatio(text);
+            if (ratio < minLanguageRatio) {
+                return failure(String.format(
+                        "Message does not meet the minimum allowed-language ratio (required %.2f, found %.2f).",
+                        minLanguageRatio, ratio));
+            }
+        }
+
         return success();
+    }
+
+    /**
+     * Fraction of the non-whitespace characters that belong to at least one allowed language/script. Returns 1.0 when
+     * there are no non-whitespace characters.
+     */
+    private double allowedLanguageRatio(String text) {
+        long total = text.codePoints().filter(cp -> !Character.isWhitespace(cp)).count();
+        if (total == 0) {
+            return 1.0;
+        }
+        long allowed = text.codePoints()
+                .filter(cp -> !Character.isWhitespace(cp))
+                .filter(cp -> {
+                    String ch = new String(Character.toChars(cp));
+                    return allowedLanguages.stream().anyMatch(lang -> lang.isPresent(ch));
+                })
+                .count();
+        return (double) allowed / total;
     }
 
     /**
@@ -227,6 +256,13 @@ public class LanguageGuardrail implements InputGuardrail {
      */
     public Set<Language> getBlockedLanguages() {
         return new HashSet<>(blockedLanguages);
+    }
+
+    /**
+     * @return the minimum required ratio of allowed-language characters (0.0 disables the check)
+     */
+    public double getMinLanguageRatio() {
+        return minLanguageRatio;
     }
 
     /**
