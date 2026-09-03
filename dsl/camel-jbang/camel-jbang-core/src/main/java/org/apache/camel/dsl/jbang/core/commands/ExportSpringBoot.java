@@ -421,7 +421,8 @@ class ExportSpringBoot extends Export {
         }
         if (hawtio) {
             answer.add("mvn:org.apache.camel:camel-management");
-            answer.add("mvn:io.hawt:hawtio-springboot:" + hawtioVersion);
+            String hawtioArtifact = springBootVersion.startsWith("4.") ? "hawtio-springboot4" : "hawtio-springboot";
+            answer.add("mvn:io.hawt:" + hawtioArtifact + ":" + hawtioVersion);
         }
 
         return answer;
