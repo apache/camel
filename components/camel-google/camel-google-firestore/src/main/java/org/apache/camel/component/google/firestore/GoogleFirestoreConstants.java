@@ -73,6 +73,12 @@ public final class GoogleFirestoreConstants {
     @Metadata(label = "consumer", description = "The document read time.", javaType = "com.google.cloud.Timestamp")
     public static final String RESPONSE_READ_TIME = "CamelGoogleFirestoreResponseReadTime";
 
+    @Metadata(label = "consumer",
+              description = "The type of change reported by the realtime listener: ADDED, MODIFIED or REMOVED."
+                            + " Only set when realtimeUpdates is enabled.",
+              javaType = "String")
+    public static final String CHANGE_TYPE = "CamelGoogleFirestoreChangeType";
+
     // Set/update options
     @Metadata(label = "producer", description = "When true, merge the data with existing document data instead of overwriting.",
               javaType = "Boolean", defaultValue = "false")
