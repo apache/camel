@@ -20,6 +20,7 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URLConnection;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.util.Base64;
 
@@ -195,8 +196,8 @@ public final class LangChain4jAgentConverter {
      */
     @Converter
     public static AiAgentBody<?> inputStreamToAiAgentBody(InputStream inputStream, Exchange exchange) {
-        try {
-            byte[] data = inputStream.readAllBytes();
+        try (InputStream in = inputStream) {
+            byte[] data = in.readAllBytes();
             return byteArrayToAiAgentBody(data, exchange);
         } catch (IOException e) {
             throw new IllegalArgumentException("Failed to read input stream", e);
@@ -248,7 +249,7 @@ public final class LangChain4jAgentConverter {
                     .build();
             return PdfFileContent.from(pdfFile);
         } else if (mimeType.startsWith("text/")) {
-            return TextContent.from(new String(data));
+            return TextContent.from(new String(data, StandardCharsets.UTF_8));
         } else {
             throw new IllegalArgumentException(
                     "Unsupported MIME type: " + mimeType
@@ -271,13 +272,13 @@ public final class LangChain4jAgentConverter {
         // Check agent-specific header first (highest priority)
         String mediaType = exchange.getMessage().getHeader(MEDIA_TYPE, String.class);
         if (mediaType != null) {
-            return mediaType;
+            return normalizeContentType(mediaType);
         }
 
         // Check file component's content type header
         String fileContentType = exchange.getMessage().getHeader(Exchange.FILE_CONTENT_TYPE, String.class);
         if (fileContentType != null) {
-            return fileContentType;
+            return normalizeContentType(fileContentType);
         }
 
         if (fileName == null) {
