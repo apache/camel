@@ -69,7 +69,7 @@
         <aliyun-fc-open-version>2.1.0</aliyun-fc-open-version>
         <aliyun-dysmsapi-version>4.6.0</aliyun-dysmsapi-version>
         <aliyun-kms-version>2.3.0</aliyun-kms-version>
-        <aliyun-sls-version>5.16.0</aliyun-sls-version>
+        <aliyun-sls-version>5.17.0</aliyun-sls-version>
         <aliyun-eventbridge-version>7.3.0</aliyun-eventbridge-version>
         <aliyun-eventbridge-client-version>1.3.14</aliyun-eventbridge-client-version>
         <aliyun-tablestore-version>5.17.13</aliyun-tablestore-version>
