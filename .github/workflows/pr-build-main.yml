@@ -23,6 +23,7 @@ on:
       - main
     # CI-only changes don't need a full build. Use workflow_dispatch to
     # test CI changes: gh workflow run "Build and test" -f pr_number=XXXX -f pr_ref=branch-name
+    # -f pr_repo=owner/camel (pr_repo only needed when the branch lives on a fork)
     paths-ignore:
       - .claude-plugin/**
       - .idea/**
@@ -44,6 +45,11 @@ on:
         description: 'Git ref of the pull request branch'
         required: true
         type: string
+      pr_repo:
+        description: 'Repository the branch lives on (owner/camel), only needed for a fork branch'
+        required: false
+        type: string
+        default: ''
       extra_modules:
         description: 'Additional modules to test (comma-separated paths, e.g. from /component-test)'
         required: false
@@ -83,6 +89,7 @@ jobs:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           persist-credentials: false
+          repository: ${{ inputs.pr_repo || github.repository }}
           ref: ${{ inputs.pr_ref || '' }}
       - name: Fetch base branch for Scalpel change detection
         if: ${{ !inputs.skip_full_build }}
@@ -198,18 +205,34 @@ jobs:
           skip-mvnd-install: 'true'
           extra-modules: ${{ inputs.extra_modules || '' }}
           maven-extra-args: ${{ matrix.maven_extra_args || '' }}
+          flake-label: JDK ${{ matrix.java }}
       - name: archive incremental test logs
         uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
         if: always()
         with:
           name: incremental-test-java-${{ matrix.java }}.log
           path: incremental-test.log
+      # Recovered flakes (tests that failed then passed on retry) leave the build
+      # green, so this artifact is the only durable record of them. Aggregating it
+      # across PRs is what turns flakiness into evidence instead of anecdote.
+      - name: Upload recovered-flake report
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        if: always() && !matrix.experimental && hashFiles('flakes.json') != ''
+        with:
+          name: flakes-java-${{ matrix.java }}
+          path: flakes.json
       # All non-experimental JDK matrix entries upload with overwrite: true.
       # The comment content is identical across JDKs (same modules tested),
       # so last writer wins. However, we only upload (and overwrite) when the
       # comment file actually exists — a cancelled build (e.g., JDK 25 killed
       # while JDK 17 fails) won't have the file and must not overwrite an
       # artifact from a matrix entry that did produce it.
+      #
+      # The recovered-flake section is the one part that is NOT identical across
+      # JDKs, so it names its JDK (flake-label above) and the reader can tell
+      # which entry it came from. Last writer still wins, so the comment shows
+      # one JDK's flakes; the per-JDK flakes-java-* artifacts above are the
+      # complete record.
       - name: Save PR number and test comment for commenter workflow
         if: always() && !matrix.experimental
         shell: bash

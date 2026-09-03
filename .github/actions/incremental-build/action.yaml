@@ -41,6 +41,10 @@ inputs:
     description: 'Extra Maven arguments to pass to the build (e.g. -Denforcer.phase=none)'
     required: false
     default: ''
+  flake-label:
+    description: 'Names the matrix entry in the recovered-flake report (e.g. "JDK 17"), so a reader can tell which entry a reported flake came from'
+    required: false
+    default: ''
 runs:
   using: "composite"
   steps:
@@ -48,6 +52,15 @@ runs:
       uses: apache/camel/.github/actions/install-mvnd@main
       with:
         dry-run: ${{ inputs.skip-mvnd-install }}
+    # collect-flakes.py declares its dependencies inline (PEP 723); uv is what
+    # honours that block. Installed here rather than in the caller so the action
+    # stays self-contained for downstream repos that reuse it.
+    - id: install-uv
+      uses: astral-sh/setup-uv@20cfd1bf945f4377ade1205e4dbc17946fc9a30d # v10.0.1
+      with:
+        enable-cache: true
+        version: "0.12.5"
+        python-version: "3.11"
     - name: maven test
       env:
         GITHUB_TOKEN: ${{ inputs.github-token }}
@@ -55,5 +68,6 @@ runs:
         GITHUB_REPO: ${{ inputs.github-repo }}
         EXTRA_MODULES: ${{ inputs.extra-modules }}
         MAVEN_EXTRA_ARGS: ${{ inputs.maven-extra-args }}
+        FLAKE_LABEL: ${{ inputs.flake-label }}
       shell: bash
       run: ${{ github.action_path }}/incremental-build.sh ${{ steps.install-mvnd.outputs.mvnd-dir }}/mvnd "$PR_ID" "$GITHUB_REPO" "$EXTRA_MODULES"

@@ -414,6 +414,44 @@ checkManualItTests() {
   fi
 }
 
+# ── Recovered flake reporting ──────────────────────────────────────────
+#
+# Surefire retries failing tests (rerunFailingTestsCount, set project-wide in
+# parent/pom.xml). A test that fails and then passes leaves the build green and
+# leaves nothing in the console output, so it is invisible unless the XML
+# reports are read. parse_errors.sh cannot cover this: it reads .txt reports,
+# which carry no flake data, and it only runs when the build failed.
+#
+# Appends a section to the PR comment and writes flakes.json for aggregation
+# across PRs. Never fails the build: by this point the verdict is already set.
+reportRecoveredFlakes() {
+  local comment_file="$1"
+  local script_dir
+  script_dir="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+
+  if ! command -v uv >/dev/null 2>&1; then
+    echo "uv not found, skipping recovered-flake reporting"
+    return
+  fi
+
+  local extra_args=()
+  if [ -n "${GITHUB_STEP_SUMMARY:-}" ]; then
+    extra_args+=(--step-summary "$GITHUB_STEP_SUMMARY")
+  fi
+  # Names the matrix entry in the section. The PR comment is overwritten
+  # last-writer-wins across the JDK matrix, and flake data, unlike the rest of
+  # the comment, differs between entries.
+  if [ -n "${FLAKE_LABEL:-}" ]; then
+    extra_args+=(--label "$FLAKE_LABEL")
+  fi
+
+  uv run --quiet "${script_dir}/collect-flakes.py" . \
+    --comment-file "$comment_file" \
+    --json-out flakes.json \
+    "${extra_args[@]}" \
+    || echo "WARNING: recovered-flake reporting failed, continuing"
+}
+
 # ── Scalpel shadow comparison ──────────────────────────────────────────
 
 # Write Scalpel shadow comparison section to the PR comment.
@@ -960,6 +998,23 @@ main() {
   local comment_file="incremental-test-comment.md"
   writeComment "$comment_file" "$pl" "$grep_dep_module_ids" "$grep_changed_props" "$testedDependents" "$extraModules"
 
+  # Step summary header. Written before anything else appends to the summary so
+  # the reader gets "what was built" before "what happened while building it".
+  if [ -n "${GITHUB_STEP_SUMMARY:-}" ]; then
+    {
+      echo ""
+      echo "### Tested modules"
+      echo ""
+      for w in $(echo "$final_pl" | tr ',' '\n'); do
+        echo "- \`$w\`"
+      done
+      echo ""
+    } >> "$GITHUB_STEP_SUMMARY"
+  fi
+
+  # Recovered flakes: a green build can still have retried its way there
+  reportRecoveredFlakes "$comment_file"
+
   # Scalpel shadow comparison (observation only — after separator)
   # Filter reactor_ids through EXCLUSION_LIST so the comparison is
   # apples-to-apples: both sides exclude the same meta/generated modules.
@@ -1023,19 +1078,6 @@ main() {
       echo "" >> "$comment_file"
       echo "</details>" >> "$comment_file"
     fi
-  fi
-
-  # Write step summary header
-  if [ -n "${GITHUB_STEP_SUMMARY:-}" ]; then
-    {
-      echo ""
-      echo "### Tested modules"
-      echo ""
-      for w in $(echo "$final_pl" | tr ',' '\n'); do
-        echo "- \`$w\`"
-      done
-      echo ""
-    } >> "$GITHUB_STEP_SUMMARY"
   fi
 
   if [[ ${ret} -ne 0 ]]; then

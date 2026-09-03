@@ -22,6 +22,7 @@ on:
       - main
     paths:
       - '.github/actions/check-container-upgrade/**'
+      - '.github/actions/incremental-build/**'
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
@@ -45,3 +46,15 @@ jobs:
         run: |
           cd .github/actions/check-container-upgrade
           python3 -m unittest discover --verbose
+
+      # collect-flakes.py declares defusedxml inline (PEP 723); uv resolves it.
+      - name: Install uv
+        uses: astral-sh/setup-uv@20cfd1bf945f4377ade1205e4dbc17946fc9a30d # v10.0.1
+        with:
+          enable-cache: true
+
+      - name: Test the incremental build scripts
+        shell: bash
+        run: |
+          cd .github/actions/incremental-build
+          uv run --with defusedxml python3 -m unittest discover --verbose

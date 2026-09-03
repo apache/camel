@@ -1,0 +1,25 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<testsuite xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="https://maven.apache.org/surefire/maven-surefire-plugin/xsd/surefire-test-report.xsd" version="3.0.2" name="org.apache.camel.component.probe.ProbeTest" time="0.002" tests="3" errors="0" skipped="0" failures="1" flakes="1">
+  <testcase name="alwaysFails" classname="org.apache.camel.component.probe.ProbeTest" time="0.013">
+    <failure message="deliberate permanent failure" type="org.opentest4j.AssertionFailedError">
+</failure>
+    <rerunFailure message="deliberate permanent failure" type="org.opentest4j.AssertionFailedError">
+      <stackTrace>org.opentest4j.AssertionFailedError: &lt;elided&gt;
+	at ProbeTest.java
+</stackTrace>
+    </rerunFailure>
+    <rerunFailure message="deliberate permanent failure" type="org.opentest4j.AssertionFailedError">
+      <stackTrace>org.opentest4j.AssertionFailedError: &lt;elided&gt;
+	at ProbeTest.java
+</stackTrace>
+    </rerunFailure>
+  </testcase>
+  <testcase name="alwaysPasses" classname="org.apache.camel.component.probe.ProbeTest" time="0.001" />
+  <testcase name="flakyPassesOnRetry" classname="org.apache.camel.component.probe.ProbeTest" time="0.001">
+    <flakyFailure message="deliberate first-attempt failure" type="org.opentest4j.AssertionFailedError">
+      <stackTrace>org.opentest4j.AssertionFailedError: &lt;elided&gt;
+	at ProbeTest.java
+</stackTrace>
+    </flakyFailure>
+  </testcase>
+</testsuite>

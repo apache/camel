@@ -102,7 +102,59 @@ The script also:
 - Detects tests disabled in CI (`@DisabledIfSystemProperty(named = "ci.env.name")`)
 - Applies an exclusion list for generated/meta modules
 - Checks for excluded modules with associated integration tests (via `manual-it-mapping.txt`) and advises contributors to run them manually
+- Reports recovered flaky tests (see below)
 - Generates a unified PR comment with all test information
+
+#### Recovered flake reporting (`collect-flakes.py`)
+
+Surefire retries failing tests: `surefire.rerunFailingTestsCount` defaults to `2`
+in the `full` profile of `parent/pom.xml`, and both CI systems pass it again
+explicitly. A test that fails and then passes within those attempts is a
+**recovered flake**. The build stays green and nothing appears in the console
+output, so without this step the retry is invisible.
+
+`collect-flakes.py` runs on the always-path (a recovered flake means exit code 0,
+so it cannot live in the failure branch where `parse_errors.sh` runs). It walks
+`**/target/{surefire,failsafe}-reports/TEST-*.xml` and reports every `<testcase>`
+carrying `<flakyFailure>`/`<flakyError>` children. Tests with
+`<rerunFailure>`/`<rerunError>` failed every attempt and already fail the build,
+so they are deliberately excluded.
+
+Two outputs:
+
+- A section appended to the PR comment and the job summary, naming the module,
+  test, attempt count and first failure message. Nothing is emitted when no test
+  was retried.
+- `flakes.json`, uploaded as `flakes-java-<version>` on PRs and
+  `flakes-main-java-<version>` on `main`. Develocity's flaky-test data does not
+  cover fork PRs (`.mvn/develocity.xml` publishes build scans only when
+  authenticated), so this artifact is the only per-PR record.
+
+Notes:
+
+- **The section names its JDK** (`flake-label` on the action, `--label` on the
+  script, also recorded in `flakes.json`). The PR-comment artifact is uploaded
+  with `overwrite: true` across the JDK matrix on the grounds that the content is
+  identical between entries. Flake data is the one part that is not: if JDK 17
+  flakes and JDK 25 does not, whichever finishes last decides what the comment
+  shows. The label means the reader can tell which entry a shown flake came from,
+  and the per-JDK artifacts remain the complete record.
+
+- **No time figure is reported.** Surefire records no per-attempt timing, and
+  `<testcase time>` reflects only the final successful attempt. Estimating cost
+  from it would understate timeout-driven flakes, which are the common kind.
+- The script declares its dependencies inline via
+  [PEP 723](https://peps.python.org/pep-0723/) and must be run with `uv run`;
+  plain `python3` ignores the metadata block. `uv` is installed by the action.
+- XML is parsed with `defusedxml`, with `forbid_dtd=True` passed explicitly —
+  the default only forbids entity *declarations*, which would let a bare
+  `<!DOCTYPE .. SYSTEM ..>` through. A pre-parse byte scan for `<!DOCTYPE` is
+  not sufficient either: it misses a UTF-16 document, where the marker is
+  interleaved with NUL bytes. `testdata/TEST-utf16-doctype-rejected.xml` covers
+  that case.
+- Failures are logged and skipped. This step must never be the reason a job fails.
+
+Unit tests live in `test_collect_flakes.py` and run in `pr-ci-scripts-validation.yml`.
 
 ### `install-mvnd`
 
