@@ -39,6 +39,7 @@
 ** xref:idempotentConsumer-eip.adoc[Idempotent Consumer]
 ** xref:intercept.adoc[Intercept]
 ** xref:kamelet-eip.adoc[Kamelet]
+** xref:keyValueRepository.adoc[KeyValueRepository Backends]
 ** xref:loadBalance-eip.adoc[Load Balance]
 ** xref:log-eip.adoc[Logger]
 ** xref:loop-eip.adoc[Loop]
