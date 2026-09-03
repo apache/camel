@@ -24,6 +24,7 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
 import jakarta.persistence.Lob;
 import jakarta.persistence.Table;
+import jakarta.persistence.Transient;
 
 /**
  * JPA entity representing a single key-value entry in the {@code CAMEL_KEYVALUE} table.
@@ -97,6 +98,7 @@ public class KeyValueEntry implements Serializable {
      *
      * @return whether the entry is expired
      */
+    @Transient
     public boolean isExpired() {
         return expiresAt > 0 && System.currentTimeMillis() >= expiresAt;
     }
