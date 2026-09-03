@@ -35,7 +35,10 @@
       <property name="hibernate.dialect" value="org.hibernate.dialect.H2Dialect"/>
       <property name="hibernate.connection.driver_class" value="org.h2.Driver"/>
       <property name="hibernate.connection.url" value="jdbc:h2:./target/h2;DB_CLOSE_DELAY=-1"/>
-      <property name="hibernate.hbm2ddl.auto" value="create"/>
+      <!-- update, not create: several tests use multiple JPA endpoints, each creating its own
+           EntityManagerFactory against this database; "create" would drop and recreate the schema
+           mid-test. OpenJPA's SynchronizeMappings=buildSchema is additive in the same way. -->
+      <property name="hibernate.hbm2ddl.auto" value="update"/>
     </properties>
   </persistence-unit>
 
@@ -85,8 +88,9 @@
     <class>org.apache.camel.processor.keyvalue.jpa.KeyValueEntry</class>
 
     <properties>
-      <property name="jakarta.persistence.jdbc.driver" value="org.h2.Driver"/>
-      <property name="jakarta.persistence.jdbc.url" value="jdbc:h2:./target/keyvalueTest;DB_CLOSE_DELAY=-1"/>
+      <property name="hibernate.dialect" value="org.hibernate.dialect.H2Dialect"/>
+      <property name="hibernate.connection.driver_class" value="org.h2.Driver"/>
+      <property name="hibernate.connection.url" value="jdbc:h2:./target/keyvalueTest;DB_CLOSE_DELAY=-1"/>
       <property name="hibernate.hbm2ddl.auto" value="create"/>
     </properties>
   </persistence-unit>

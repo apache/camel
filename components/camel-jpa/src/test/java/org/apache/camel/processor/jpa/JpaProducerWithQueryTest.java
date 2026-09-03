@@ -134,7 +134,10 @@ public class JpaProducerWithQueryTest {
                 from("direct:namedQuery")
                         .to("jpa://" + Customer.class.getName() + "?namedQuery=findAllCustomersWithName&parameters=#params");
                 from("direct:nativeQuery")
-                        .to("jpa://" + MultiSteps.class.getName() + "?nativeQuery=select * from MultiSteps where step = 1");
+                        // explicit column list: the column order of "select *" depends on the DDL the
+                        // JPA provider generated, so positional access to the result would not be stable
+                        .to("jpa://" + MultiSteps.class.getName()
+                            + "?nativeQuery=select id, address, step from MultiSteps where step = 1");
                 from("direct:nativeQueryWithResultClass")
                         .to("jpa://" + MultiSteps.class.getName()
                             + "?resultClass=org.apache.camel.examples.MultiSteps&nativeQuery=select * from MultiSteps where step = 1");
