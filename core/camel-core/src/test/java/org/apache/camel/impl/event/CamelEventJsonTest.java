@@ -200,6 +200,41 @@ class CamelEventJsonTest extends ContextTestSupport {
     }
 
     @Test
+    void testDefaultCamelEventToJsonEscapesSpecialCharacters() {
+        CamelEvent event = new CamelEvent() {
+            @Override
+            public Type getType() {
+                return Type.Custom;
+            }
+
+            @Override
+            public Object getSource() {
+                return "source";
+            }
+
+            @Override
+            public long getTimestamp() {
+                return 42;
+            }
+
+            @Override
+            public void setTimestamp(long timestamp) {
+            }
+
+            @Override
+            public String toString() {
+                return "Route \"my-route\" failed\nline2";
+            }
+        };
+
+        String json = event.toJSon(0);
+
+        assertThat(json)
+                .isEqualTo("{\"type\":\"Custom\",\"timestamp\":42,\"message\":\"Route \\\"my-route\\\" failed\\nline2\"}");
+        assertThat(json).doesNotContain("\"my-route\" failed");
+    }
+
+    @Test
     void testAsJsonReturnsJsonObjectCompatibleMap() {
         CamelEvent event = new CamelContextInitializedEvent(context);
 

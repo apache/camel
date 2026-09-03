@@ -119,7 +119,7 @@ public interface CamelEvent {
             if (indent > 0) {
                 sb.append('\n').append(indentText);
             }
-            sb.append(StringQuoteHelper.doubleQuote(entry.getKey())).append(':');
+            sb.append(StringQuoteHelper.jsonQuote(entry.getKey())).append(':');
             if (indent > 0) {
                 sb.append(' ');
             }
@@ -127,7 +127,7 @@ public interface CamelEvent {
             if (value instanceof Number || value instanceof Boolean) {
                 sb.append(value);
             } else {
-                sb.append(StringQuoteHelper.doubleQuote(String.valueOf(value)));
+                sb.append(StringQuoteHelper.jsonQuote(String.valueOf(value)));
             }
         }
         if (indent > 0) {
