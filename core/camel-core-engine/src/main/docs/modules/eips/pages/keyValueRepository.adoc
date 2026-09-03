@@ -841,16 +841,16 @@ _first_ caller and `false` for all subsequent callers with the same key.
 | Hot Rod `PUTIFABSENT` operation — cluster-wide atomic
 
 | `JdbcKeyValueRepository`
-| ✗
-| Optimistic INSERT + unique-key constraint catch
+| ✓
+| `UPDATE … WHERE value = ?` — single-statement CAS within a transaction
 
 | `JpaKeyValueRepository`
 | ✗
-| Optimistic INSERT + constraint catch (provider-dependent)
+| Optimistic INSERT + constraint catch; `replace` / `delete(key, expected)` fall back to non-atomic defaults
 
 | `CassandraKeyValueRepository`
-| ✗
-| `INSERT … IF NOT EXISTS` (Paxos, not linearizable across restarts)
+| ✓
+| Lightweight transactions: `INSERT … IF NOT EXISTS`, `UPDATE … IF value = ?`, `DELETE … IF value = ?`
 
 | `KafkaKeyValueRepository`
 | ✗
@@ -918,6 +918,90 @@ NOTE: For backends *without native TTL*, the Cache EIP stores an expiry timestam
 the serialized value and skips (evicts on read) entries whose timestamp has passed. This
 means the storage layer may accumulate stale entries that are never explicitly deleted —
 size them accordingly or run periodic cleanup jobs.
+
+== Distributed Deployment
+
+When running multiple Camel instances (e.g. behind a load balancer or in a Kubernetes cluster), the choice of
+backend determines whether state is shared and whether CAS operations are safe across nodes.
+
+[cols="2,1,1,1,3",options="header"]
+|===
+| Backend | Shared state | Distributed CAS | Distributed-safe | Notes
+
+| `MemoryKeyValueRepository`
+| ✗
+| ✗
+| ❌
+| JVM-local only. Each node has its own isolated store.
+
+| `CaffeineKeyValueRepository`
+| ✗
+| ✗
+| ❌
+| JVM-local only. Suitable as a near-cache in front of a distributed backend.
+
+| `EhcacheKeyValueRepository`
+| ✗ (unless clustered)
+| ✗
+| ❌
+| JVM-local by default. Ehcache clustering requires additional configuration outside of this integration.
+
+| `JCacheKeyValueRepository`
+| Depends on provider
+| Depends on provider
+| ⚠️
+| With a distributed provider (Hazelcast, Infinispan), state is shared. CAS atomicity depends on the provider.
+
+| `HazelcastKeyValueRepository`
+| ✓
+| ✓
+| ✅
+| Distributed `IMap` with cluster-wide `putIfAbsent`, `replace`, and `remove(key, value)`.
+
+| `RedisKeyValueRepository`
+| ✓
+| ✓
+| ✅
+| Shared Redis server. `setIfAbsent` and `compareAndSet` are atomic. `replace` with TTL has a brief non-atomic window (see Javadoc).
+
+| `InfinispanRemoteKeyValueRepository`
+| ✓
+| ✓
+| ✅
+| Remote cache with version-based optimistic CAS via `replaceWithVersion` / `removeWithVersion`.
+
+| `JdbcKeyValueRepository`
+| ✓
+| ✓
+| ✅
+| Shared database. `putIfAbsent` uses unique-key constraint; `replace` and `delete(key, expected)` use SQL `WHERE value = ?`.
+
+| `JpaKeyValueRepository`
+| ✓
+| ⚠️
+| ⚠️
+| Shared database. `putIfAbsent` catches constraint violations, but `replace` and `delete(key, expected)` fall back to non-atomic defaults (read-compare-write in Java).
+
+| `CassandraKeyValueRepository`
+| ✓
+| ✓
+| ✅
+| Shared cluster. Full lightweight transaction (LWT) support: `IF NOT EXISTS`, `IF value = ?`.
+
+| `KafkaKeyValueRepository`
+| ✓ (eventually)
+| ✗
+| ⚠️
+| State is shared via the topic, but CAS is local-only. Suitable for best-effort deduplication, not strict exactly-once across nodes.
+
+|===
+
+*Recommendations:*
+
+* **Idempotent Consumer in a cluster** — use Hazelcast, Redis, Infinispan, JDBC, or Cassandra for guaranteed exactly-once deduplication.
+* **Aggregator in a cluster** — use any shared-state backend (recovery requires the same backend to be visible from the recovering node).
+* **Cache EIP in a cluster** — any backend works. JVM-local backends give each node its own cache (fine for read-through caching); distributed backends share cached values.
+* **Single-node deployment** — any backend works, including Memory and Caffeine.
 
 == Using Adapters: Idempotent Consumer and Aggregator
 
