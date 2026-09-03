@@ -21,6 +21,7 @@ on:
   pull_request:
     branches:
       - main
+      - reduceGitFetchTimeForScalpel-base-for-pr
     # CI-only changes don't need a full build. Use workflow_dispatch to
     # test CI changes: gh workflow run "Build and test" -f pr_number=XXXX -f pr_ref=branch-name
     paths-ignore:
