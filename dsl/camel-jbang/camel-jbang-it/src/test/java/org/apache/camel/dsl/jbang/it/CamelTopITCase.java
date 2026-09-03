@@ -19,7 +19,6 @@ package org.apache.camel.dsl.jbang.it;
 import java.io.IOException;
 
 import org.apache.camel.dsl.jbang.it.support.JBangTestSupport;
-import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.DisabledOnOs;
 
@@ -27,11 +26,6 @@ import static org.junit.jupiter.api.condition.OS.WINDOWS;
 
 @DisabledOnOs(WINDOWS)
 public class CamelTopITCase extends JBangTestSupport {
-
-    @AfterEach
-    void stopAll() {
-        execute("stop");
-    }
 
     @Test
     public void testTop() throws IOException {
