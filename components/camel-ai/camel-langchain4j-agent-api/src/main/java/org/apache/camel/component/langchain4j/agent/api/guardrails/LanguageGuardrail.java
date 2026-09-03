@@ -206,7 +206,12 @@ public class LanguageGuardrail implements InputGuardrail {
         if (!allowMixed && detectedLanguages.size() > 1) {
             // Check if all detected languages are in allowed set
             for (Language detected : detectedLanguages) {
-                if (!allowedLanguages.contains(detected) && detected != Language.ENGLISH) {
+                // ENGLISH and LATIN_SCRIPT overlap (ASCII letters match both), so LATIN_SCRIPT must not be
+                // treated as foreign when ENGLISH is allowed - otherwise plain English is falsely rejected.
+                boolean acceptable = allowedLanguages.contains(detected)
+                        || detected == Language.ENGLISH
+                        || (detected == Language.LATIN_SCRIPT && allowedLanguages.contains(Language.ENGLISH));
+                if (!acceptable) {
                     return failure("Mixed language content is not allowed.");
                 }
             }
