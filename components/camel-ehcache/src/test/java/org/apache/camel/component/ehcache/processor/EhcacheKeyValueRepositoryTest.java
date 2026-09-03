@@ -20,6 +20,7 @@ import java.time.Duration;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
+import org.apache.camel.support.KeyValueTtlValue;
 import org.ehcache.CacheManager;
 import org.ehcache.config.builders.CacheConfigurationBuilder;
 import org.ehcache.config.builders.CacheManagerBuilder;
@@ -44,7 +45,7 @@ class EhcacheKeyValueRepositoryTest {
                 .withCache(CACHE_NAME,
                         CacheConfigurationBuilder.newCacheConfigurationBuilder(
                                 String.class,
-                                EhcacheKeyValueRepository.TtlValue.class,
+                                KeyValueTtlValue.class,
                                 ResourcePoolsBuilder.heap(100)))
                 .build(true);
 

@@ -26,6 +26,7 @@ import org.apache.camel.component.jcache.JCacheConfiguration;
 import org.apache.camel.component.jcache.JCacheHelper;
 import org.apache.camel.component.jcache.JCacheManager;
 import org.apache.camel.component.jcache.support.HazelcastTest;
+import org.apache.camel.support.KeyValueTtlValue;
 import org.apache.camel.test.junit6.CamelTestSupport;
 import org.junit.jupiter.api.Test;
 
@@ -35,8 +36,8 @@ import static org.awaitility.Awaitility.await;
 @HazelcastTest
 class JCacheKeyValueRepositoryTest extends CamelTestSupport {
 
-    private JCacheManager<String, JCacheKeyValueRepository.TtlValue> cacheManager;
-    private Cache<String, JCacheKeyValueRepository.TtlValue> cache;
+    private JCacheManager<String, KeyValueTtlValue> cacheManager;
+    private Cache<String, KeyValueTtlValue> cache;
     private JCacheKeyValueRepository repository;
 
     @Override
