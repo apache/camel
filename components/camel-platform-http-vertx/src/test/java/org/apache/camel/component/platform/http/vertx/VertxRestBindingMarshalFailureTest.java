@@ -17,6 +17,7 @@
 package org.apache.camel.component.platform.http.vertx;
 
 import org.apache.camel.CamelContext;
+import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.model.rest.RestBindingMode;
 import org.junit.jupiter.api.Test;
@@ -103,6 +104,43 @@ public class VertxRestBindingMarshalFailureTest {
                     // ...and it happened while the REST DSL binding marshalled the response body
                     .body(containsString("RestBindingAdvice"))
                     .body(containsString("MarshalProcessor"));
+        } finally {
+            context.stop();
+        }
+    }
+
+    @Test
+    public void testExplicitResponseCodeStillWinsOnMarshalFailure() throws Exception {
+        final CamelContext context = VertxPlatformHttpEngineTest.createCamelContext();
+
+        try {
+            context.addRoutes(new RouteBuilder() {
+                @Override
+                public void configure() {
+                    restConfiguration().bindingMode(RestBindingMode.json);
+
+                    rest("/demo")
+                            .get("/{id}").to("direct:demo");
+
+                    from("direct:demo")
+                            // an explicitly set response code must still win, even though the response marshalling
+                            // fails afterwards (the failure is logged server-side, but does not override the code)
+                            .process(e -> {
+                                e.getMessage().setHeader(Exchange.HTTP_RESPONSE_CODE, 200);
+                                e.getMessage().setBody(new BadPojo());
+                            });
+                }
+            });
+
+            VertxPlatformHttpEngineTest.startCamelContext(context);
+
+            given()
+                    .when()
+                    .get("/demo/42")
+                    .then()
+                    // the explicitly set 200 wins over the marshal failure, consistent with plain routes
+                    .statusCode(200)
+                    .body(emptyString());
         } finally {
             context.stop();
         }
