@@ -351,3 +351,5 @@ using JMX in this fashion:
 SedaEndpoint seda = context.getEndpoint("seda:xxxx");
 int size = seda.getExchanges().size();
 ----
+
+// Backport bot test - safe to remove
