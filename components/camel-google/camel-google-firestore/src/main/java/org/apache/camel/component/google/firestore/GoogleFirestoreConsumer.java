@@ -166,7 +166,7 @@ public class GoogleFirestoreConsumer extends ScheduledBatchPollingConsumer {
         message.setHeader(GoogleFirestoreConstants.RESPONSE_READ_TIME, document.getReadTime());
 
         if (changeType != null) {
-            message.setHeader("CamelGoogleFirestoreChangeType", changeType.name());
+            message.setHeader(GoogleFirestoreConstants.CHANGE_TYPE, changeType.name());
         }
 
         return exchange;
