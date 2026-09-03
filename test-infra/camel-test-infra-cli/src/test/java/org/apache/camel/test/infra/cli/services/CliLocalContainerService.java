@@ -197,10 +197,16 @@ public class CliLocalContainerService implements CliService, ContainerService<Cl
                 .orElseGet(() -> {
                     final String versionSummary = execute("version");
                     if (versionSummary.contains("User configuration") && versionSummary.contains("camel-version = ")) {
-                        version = StringHelper.between(versionSummary, "camel-version = ", "\n").trim();
+                        String v = StringHelper.between(versionSummary, "camel-version = ", "\n");
+                        if (v != null) {
+                            version = v.trim();
+                        }
                     }
                     if (version == null) {
-                        version = StringHelper.between(versionSummary, "Camel JBang version:", "\n").trim();
+                        String v = StringHelper.between(versionSummary, "Camel JBang version:", "\n");
+                        if (v != null) {
+                            version = v.trim();
+                        }
                     }
                     return version;
                 });
