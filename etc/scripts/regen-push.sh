@@ -15,31 +15,6 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
-#
-# regen-push.sh — Automatically push regen patches to PRs that need them.
-#
-# When the CI build regenerates files and finds uncommitted changes, it uploads
-# a "regen-patch" artifact. This script discovers those artifacts, downloads the
-# patch, and pushes a "Regen" commit to the PR branch.
-#
-# Works for both same-repo and fork PRs (requires maintainer access and
-# "Allow edits from maintainers" enabled on the PR).
-#
-# Uses ETag-based conditional requests on the Artifacts API to avoid
-# unnecessary work when no new regen artifacts have appeared.
-#
-# Usage:
-#   ./regen-push.sh [--repo OWNER/REPO] [--state PATH] [--dry-run]
-#
-# Environment:
-#   GH_TOKEN — GitHub token with repo scope (or gh CLI already authenticated)
-#
-# Exit codes:
-#   0 — success (patches pushed, or nothing to do)
-#   1 — error
-#
-# Designed to run as a cron job (e.g. every 5 minutes). ETag polling makes
-# idle ticks free (no API quota consumed on 304).
 
 set -euo pipefail
 
