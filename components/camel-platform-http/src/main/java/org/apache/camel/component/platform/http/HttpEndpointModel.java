@@ -25,7 +25,7 @@ import org.apache.camel.util.StringHelper;
 /**
  * Model of available http endpoints.
  */
-public class HttpEndpointModel {
+public class HttpEndpointModel implements Comparable<HttpEndpointModel> {
 
     private final String uri;
     private String verbs;
@@ -102,5 +102,23 @@ public class HttpEndpointModel {
     @Override
     public int hashCode() {
         return Objects.hash(uri, consumer);
+    }
+
+    @Override
+    public int compareTo(HttpEndpointModel o) {
+        int cmp = uri.compareTo(o.uri);
+        if (cmp != 0) {
+            return cmp;
+        }
+        if (consumer == o.consumer) {
+            return 0;
+        }
+        if (consumer == null) {
+            return -1;
+        }
+        if (o.consumer == null) {
+            return 1;
+        }
+        return Integer.compare(System.identityHashCode(consumer), System.identityHashCode(o.consumer));
     }
 }

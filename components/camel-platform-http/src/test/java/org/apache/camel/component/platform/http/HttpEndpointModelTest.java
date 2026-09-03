@@ -56,4 +56,17 @@ class HttpEndpointModelTest {
         assertEquals(firstModel, sameConsumerModel);
         assertEquals(firstModel.hashCode(), sameConsumerModel.hashCode());
     }
+
+    @Test
+    void compareToIsConsistentWithEquals() {
+        Consumer first = mock(Consumer.class);
+        Consumer second = mock(Consumer.class);
+
+        HttpEndpointModel firstModel = new HttpEndpointModel("/shared", "GET", null, null, first);
+        HttpEndpointModel secondModel = new HttpEndpointModel("/shared", "POST", null, null, second);
+        HttpEndpointModel sameConsumerModel = new HttpEndpointModel("/shared", "GET", null, null, first);
+
+        assertEquals(0, firstModel.compareTo(sameConsumerModel));
+        assertNotEquals(0, firstModel.compareTo(secondModel));
+    }
 }
