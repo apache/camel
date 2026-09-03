@@ -166,4 +166,15 @@ class LanguageGuardrailTest {
         // All-Latin text meets the ratio
         assertTrue(guardrail.validate(UserMessage.from("Hello world")).isSuccess());
     }
+
+    @Test
+    void allowMixedFalseWithEnglishAllowsPlainEnglish() {
+        LanguageGuardrail guardrail = LanguageGuardrail.builder()
+                .allowedLanguages(LanguageGuardrail.Language.ENGLISH)
+                .allowMixed(false)
+                .build();
+
+        // Plain English detects both ENGLISH and the overlapping LATIN_SCRIPT; it must not be rejected as mixed.
+        assertTrue(guardrail.validate(UserMessage.from("Hello world, this is plain English.")).isSuccess());
+    }
 }
