@@ -63,7 +63,8 @@ import static org.apache.camel.utils.cassandra.CassandraUtils.generateTruncate;
  * The CAS (compare-and-swap) methods are implemented atomically using Cassandra's lightweight transactions (LWT):
  * <ul>
  * <li>{@link #putIfAbsent(String, Object, Duration)} uses {@code INSERT ... IF NOT EXISTS}</li>
- * <li>{@link #replace(String, Object, Object, Duration)} uses {@code UPDATE ... SET value = ? WHERE key = ? IF value = ?}</li>
+ * <li>{@link #replace(String, Object, Object, Duration)} uses
+ * {@code UPDATE ... SET value = ? WHERE key = ? IF value = ?}</li>
  * <li>{@link #delete(String, Object)} uses {@code DELETE FROM ... WHERE key = ? IF value = ?}</li>
  * </ul>
  * <p/>
@@ -369,8 +370,8 @@ public class CassandraKeyValueRepository extends ServiceSupport implements KeyVa
      * <p/>
      * <b>Note:</b> the comparison is performed server-side on the <em>serialized</em> byte representation of the value,
      * not via {@link java.util.Objects#equals(Object, Object)} on the deserialized objects (as the default SPI
-     * implementation does). Two objects that are {@code .equals()} but serialize to different bytes (e.g. maps/sets with
-     * non-deterministic iteration order) would cause this method to return {@code false} where the default
+     * implementation does). Two objects that are {@code .equals()} but serialize to different bytes (e.g. maps/sets
+     * with non-deterministic iteration order) would cause this method to return {@code false} where the default
      * implementation would return {@code true}.
      *
      * @param  expectedOldValue the value that must currently be associated with the key
@@ -403,8 +404,8 @@ public class CassandraKeyValueRepository extends ServiceSupport implements KeyVa
      * <p/>
      * <b>Note:</b> the comparison is performed server-side on the <em>serialized</em> byte representation of the value,
      * not via {@link java.util.Objects#equals(Object, Object)} on the deserialized objects (as the default SPI
-     * implementation does). Two objects that are {@code .equals()} but serialize to different bytes (e.g. maps/sets with
-     * non-deterministic iteration order) would cause this method to return {@code false} where the default
+     * implementation does). Two objects that are {@code .equals()} but serialize to different bytes (e.g. maps/sets
+     * with non-deterministic iteration order) would cause this method to return {@code false} where the default
      * implementation would return {@code true}.
      *
      * @param  key           the key to remove
