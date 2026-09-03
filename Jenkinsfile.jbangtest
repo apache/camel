@@ -58,7 +58,7 @@ pipeline {
         stage('Build Camel SNAPSHOT and run Camel Jbang IT Tests') {
             when {
                 anyOf {
-                    branch 'main'
+                    branch 'camel-4.22.x'
                 }
             }
             steps {
