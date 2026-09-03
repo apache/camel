@@ -92,8 +92,8 @@ public class MainHttpServerUtil {
 
             private String endpointSignature(HttpEndpointModel model) {
                 return model.getUri() + "|" + Objects.toString(model.getVerbs(), "") + "|"
-                        + Objects.toString(model.getConsumes(), "") + "|"
-                        + Objects.toString(model.getProduces(), "");
+                       + Objects.toString(model.getConsumes(), "") + "|"
+                       + Objects.toString(model.getProduces(), "");
             }
 
             private String getEndpoint(HttpEndpointModel httpEndpointModel, boolean ssl) {
