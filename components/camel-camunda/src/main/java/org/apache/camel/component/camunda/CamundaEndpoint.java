@@ -34,6 +34,8 @@ import org.apache.camel.util.ObjectHelper;
 
 /**
  * Interact with Camunda 8 Orchestration Clusters using the Camunda Java Client.
+ * 
+ * Dummy change to trigger PR build for testing
  */
 @UriEndpoint(firstVersion = "4.19.0", scheme = "camunda", title = "Camunda",
              syntax = "camunda:operationName",
