@@ -20,6 +20,7 @@ import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.StandardOpenOption;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -169,10 +170,13 @@ class SourceViewer {
     private boolean diffOverlay;
     private int diffScrollY;
     private BiConsumer<String, Boolean> notificationCallback;
+    private Runnable onFileCreated;
+    private Consumer<Path> onFileLoaded;
     private AutocompletePopup.AutocompleteProvider autocompleteProvider;
     private AutocompletePopup.ValueProvider autocompleteValueProvider;
     private java.util.function.Predicate<String> listItemNodeChecker;
     private AutocompletePopup autocompletePopup;
+    private RefactorPopup refactorPopup;
     private boolean validateOnSave = true;
     private org.apache.camel.dsl.yaml.validator.YamlValidator yamlValidator;
     private PropertiesValidator propertiesValidator;
@@ -210,6 +214,14 @@ class SourceViewer {
 
     void setNotificationCallback(BiConsumer<String, Boolean> callback) {
         this.notificationCallback = callback;
+    }
+
+    void setOnFileCreated(Runnable callback) {
+        this.onFileCreated = callback;
+    }
+
+    void setOnFileLoaded(Consumer<Path> callback) {
+        this.onFileLoaded = callback;
     }
 
     void setAutocompleteProvider(AutocompletePopup.AutocompleteProvider provider) {
@@ -342,6 +354,10 @@ class SourceViewer {
         }
         if (autocompletePopup != null) {
             autocompletePopup = null;
+            return true;
+        }
+        if (refactorPopup != null && refactorPopup.isVisible()) {
+            refactorPopup.close();
             return true;
         }
         if (pendingDiscard) {
@@ -634,6 +650,14 @@ class SourceViewer {
             }
             return true;
         }
+        if (refactorPopup != null && refactorPopup.isVisible()) {
+            refactorPopup.handleKeyEvent(ke);
+            RefactorPopup.Request req = refactorPopup.consumeResult();
+            if (req != null) {
+                applyRefactoring(req);
+            }
+            return true;
+        }
         if (autocompletePopup != null) {
             boolean wasValueMode = autocompletePopup.isValueMode();
             boolean wasListItem = autocompletePopup.isListItemInsertion();
@@ -693,6 +717,10 @@ class SourceViewer {
         }
         if (ke.hasCtrl() && ke.isCharIgnoreCase('k') && !ke.hasShift()) {
             applyBlockEdit(YamlBlockEditor.deleteLine(editLines(), editState.cursorRow()));
+            return true;
+        }
+        if (ke.hasCtrl() && ke.isCharIgnoreCase('r') && isCamelYamlFile()) {
+            openRefactorPopup();
             return true;
         }
         if (ke.isKey(KeyCode.LEFT) && ke.hasCtrl()) {
@@ -857,6 +885,7 @@ class SourceViewer {
         editState.clear();
         editHistory.clear();
         autocompletePopup = null;
+        refactorPopup = null;
         validationErrors = null;
         inlineErrors = Collections.emptyMap();
         lastBackgroundValidationTime = 0;
@@ -2844,6 +2873,9 @@ class SourceViewer {
         if (pendingDiscard) {
             renderDiscardPopup(frame, area);
         }
+        if (refactorPopup != null && refactorPopup.isVisible()) {
+            refactorPopup.render(frame, area);
+        }
     }
 
     private void applySyntaxHighlightOverlay(Frame frame, Rect editorArea) {
@@ -3060,6 +3092,10 @@ class SourceViewer {
             return;
         }
         if (editMode) {
+            if (refactorPopup != null && refactorPopup.isVisible()) {
+                refactorPopup.renderFooter(spans);
+                return;
+            }
             TuiHelper.hint(spans, "Esc", "cancel");
             TuiHelper.hint(spans, "Ctrl+S", "save");
             TuiHelper.hint(spans, "F5", "save & close");
@@ -3078,7 +3114,9 @@ class SourceViewer {
             if (!inlineErrors.isEmpty()) {
                 TuiHelper.hint(spans, "F9", "next error");
             }
-            TuiHelper.hint(spans, TuiIcons.HINT_SCROLL, "move");
+            if (isCamelYamlFile()) {
+                TuiHelper.hint(spans, "Ctrl+R", "refactor");
+            }
             return;
         }
         if (markdownMode) {
@@ -3113,6 +3151,343 @@ class SourceViewer {
         if (onLineSelected != null) {
             TuiHelper.hint(spans, "Enter", "select node");
         }
+    }
+
+    // ---- Refactoring (F5 / Ctrl+R in view mode) ----
+
+    private void openRefactorPopup() {
+        int row = editState.cursorRow();
+        if (row < 0 || row >= editState.lineCount()) {
+            return;
+        }
+        String rawLine = editState.getLine(row);
+        List<RefactorPopup.Action> actions = new ArrayList<>();
+        // Extract to new file: available on any EIP step block in a YAML route
+        if (isCamelYamlFile()) {
+            List<String> lines = editLines();
+            YamlBlockEditor.BlockRange block = YamlBlockEditor.findBlock(lines, row, true);
+            if (block != null && !block.isEmpty() && isExtractableStep(lines.get(block.startRow()))) {
+                actions.add(RefactorPopup.Action.EXTRACT_TO_FILE);
+            }
+        }
+        String currentUri = extractUriFromLine(rawLine);
+        if (currentUri != null) {
+            actions.add(RefactorPopup.Action.REPLACE_URI);
+        }
+        if (currentUri == null && extractValueFromLine(rawLine) != null) {
+            actions.add(RefactorPopup.Action.EXTRACT_TO_PROPERTY);
+        }
+        if (actions.isEmpty()) {
+            return;
+        }
+        refactorPopup = new RefactorPopup();
+        refactorPopup.open(actions, currentUri);
+    }
+
+    private void applyRefactoring(RefactorPopup.Request req) {
+        int row = editState.cursorRow();
+        if (row < 0 || row >= editState.lineCount()) {
+            return;
+        }
+        String rawLine = editState.getLine(row);
+        switch (req.action()) {
+            case EXTRACT_TO_FILE -> applyExtractToFile(row, req.value());
+            case REPLACE_URI -> applyReplaceUri(row, rawLine, req.value());
+            case EXTRACT_TO_PROPERTY -> applyExtractToProperty(row, rawLine, req.value());
+        }
+    }
+
+    private void applyExtractToFile(int cursorRow, String name) {
+        if (editableFile == null) {
+            notifySave("Cannot extract: file is not writable", true);
+            return;
+        }
+        name = sanitizeFileName(name);
+        if (name.isEmpty()) {
+            notifySave("Cannot extract: invalid file name", true);
+            return;
+        }
+        List<String> lines = editLines();
+        YamlBlockEditor.BlockRange block = YamlBlockEditor.findBlock(lines, cursorRow, true);
+        if (block == null || block.isEmpty()) {
+            return;
+        }
+        String stepLine = lines.get(block.startRow());
+        if (!isExtractableStep(stepLine)) {
+            return;
+        }
+        int stepIndent = YamlBlockEditor.leadingSpaces(stepLine);
+        List<String> blockLines = new ArrayList<>(lines.subList(block.startRow(), block.endRow() + 1));
+        String newFileContent = buildExtractedRouteYaml(name, blockLines, stepIndent);
+        // Use canonical block-form notation:
+        //   - to:
+        //       uri: direct:<name>
+        String indentStr = " ".repeat(stepIndent);
+        String toLine = indentStr + "- to:";
+        String uriLine = indentStr + "    uri: direct:" + name;
+        recordEditChange();
+        List<String> newLines = new ArrayList<>(lines);
+        newLines.subList(block.startRow(), block.endRow() + 1).clear();
+        newLines.add(block.startRow(), uriLine);
+        newLines.add(block.startRow(), toLine);
+        editState.setText(YamlBlockEditor.fromLines(newLines));
+        SourceEditorNavigation.positionCursor(editState, block.startRow(), stepIndent);
+        // Auto-save the original file so the route index captures the refactoring change on disk.
+        // Without this, the new file's reverse jump link cannot be resolved until a manual save.
+        try {
+            Files.writeString(editableFile, editState.text(), StandardCharsets.UTF_8);
+            dirty = false;
+            originalEditText = editState.text();
+            lineStatuses = null;
+        } catch (IOException ignored) {
+            // best effort; extraction still proceeds
+        }
+        String newFileName = name + ".camel.yaml";
+        Path newFile = editableFile.getParent().resolve(newFileName);
+        boolean existed = Files.exists(newFile);
+        try {
+            if (existed) {
+                // Append as an additional route (blank line separator before the new block)
+                Files.writeString(newFile, "\n" + newFileContent, StandardCharsets.UTF_8, StandardOpenOption.APPEND);
+            } else {
+                Files.writeString(newFile, newFileContent, StandardCharsets.UTF_8, StandardOpenOption.CREATE_NEW);
+            }
+        } catch (IOException e) {
+            notifySave("Failed to write " + newFileName + ": " + e.getMessage(), true);
+            return;
+        }
+        if (!existed && onFileCreated != null) {
+            onFileCreated.run();
+        }
+        notifySave(existed ? "Added route to " + newFileName : "Extracted to " + newFileName, false);
+    }
+
+    /**
+     * Sanitizes a user-supplied string into a safe file base-name: replaces whitespace and illegal characters with
+     * hyphens, collapses consecutive hyphens, and strips leading/trailing hyphens.
+     */
+    static String sanitizeFileName(String name) {
+        if (name == null) {
+            return "";
+        }
+        // Replace whitespace and any char that is not alphanumeric, hyphen, underscore, or dot with a hyphen
+        String sanitized = name.trim().replaceAll("[^a-zA-Z0-9._-]", "-");
+        // Collapse consecutive hyphens
+        sanitized = sanitized.replaceAll("-{2,}", "-");
+        // Strip leading/trailing hyphens
+        sanitized = sanitized.replaceAll("^-+|-+$", "");
+        return sanitized;
+    }
+
+    /**
+     * Builds the YAML content for a new standalone route file containing the extracted step block.
+     */
+    static String buildExtractedRouteYaml(String name, List<String> blockLines, int stepIndent) {
+        // Standard Camel YAML route indentation: step items at column 6.
+        String stepPrefix = "      ";
+        StringBuilder sb = new StringBuilder();
+        sb.append("- route:\n");
+        sb.append("    from:\n");
+        sb.append("      uri: direct:").append(name).append("\n");
+        sb.append("    steps:\n");
+        for (String line : blockLines) {
+            String stripped = line.length() >= stepIndent ? line.substring(stepIndent) : line.stripLeading();
+            sb.append(stepPrefix).append(stripped).append("\n");
+        }
+        return sb.toString();
+    }
+
+    /**
+     * Returns {@code true} if the line represents an EIP step list item that can be extracted to a new file. Excludes
+     * {@code - route:} and {@code - from:} which are structural, not steps.
+     */
+    static boolean isExtractableStep(String line) {
+        if (line == null) {
+            return false;
+        }
+        String trimmed = line.trim();
+        return trimmed.startsWith("- ") && !trimmed.equals("- ")
+                && !trimmed.startsWith("- route:") && !trimmed.startsWith("- from:");
+    }
+
+    private void applyReplaceUri(int row, String rawLine, String newUri) {
+        String newLine = replaceUriOnLine(rawLine, newUri);
+        recordEditChange();
+        List<String> lines = editLines();
+        lines.set(row, newLine);
+        removeParametersBlock(lines, row, rawLine);
+        editState.setText(YamlBlockEditor.fromLines(lines));
+        SourceEditorNavigation.positionCursor(editState, row, countLeadingSpaces(newLine));
+        notifySave("Replaced URI with: " + newUri, false);
+    }
+
+    /**
+     * Removes the {@code parameters:} sibling block immediately after a {@code uri:} line when the URI is replaced.
+     * Only applies to block-form {@code uri:} lines; inline-form URIs carry no separate parameters block.
+     */
+    static void removeParametersBlock(List<String> lines, int uriRow, String uriLine) {
+        if (uriLine == null || !uriLine.trim().startsWith("uri:")) {
+            return;
+        }
+        int uriIndent = YamlBlockEditor.leadingSpaces(uriLine);
+        int paramsStart = -1;
+        int paramsEnd = -1;
+        for (int i = uriRow + 1; i < lines.size(); i++) {
+            String line = lines.get(i);
+            if (line.isBlank()) {
+                continue;
+            }
+            int indent = YamlBlockEditor.leadingSpaces(line);
+            if (indent < uriIndent) {
+                break;
+            }
+            if (indent == uriIndent) {
+                if (line.trim().startsWith("parameters:")) {
+                    paramsStart = i;
+                    paramsEnd = i;
+                    // Extend to all child lines (indented deeper than uriIndent)
+                    for (int j = i + 1; j < lines.size(); j++) {
+                        String next = lines.get(j);
+                        if (next.isBlank()) {
+                            continue;
+                        }
+                        if (YamlBlockEditor.leadingSpaces(next) <= uriIndent) {
+                            break;
+                        }
+                        paramsEnd = j;
+                    }
+                }
+                break; // another sibling key — stop regardless
+            }
+        }
+        if (paramsStart >= 0) {
+            lines.subList(paramsStart, paramsEnd + 1).clear();
+        }
+    }
+
+    private void applyExtractToProperty(int row, String rawLine, String propKey) {
+        String value = extractValueFromLine(rawLine);
+        if (value == null) {
+            return;
+        }
+        String newLine = replaceValueWithPlaceholder(rawLine, propKey);
+        recordEditChange();
+        List<String> lines = editLines();
+        lines.set(row, newLine);
+        editState.setText(YamlBlockEditor.fromLines(lines));
+        SourceEditorNavigation.positionCursor(editState, row, countLeadingSpaces(newLine));
+        if (editableFile != null) {
+            try {
+                Path propsFile = editableFile.getParent().resolve("application.properties");
+                Files.writeString(propsFile, propKey + "=" + value + "\n", StandardCharsets.UTF_8,
+                        StandardOpenOption.CREATE,
+                        StandardOpenOption.APPEND);
+            } catch (IOException e) {
+                notifySave("Warning: could not write application.properties: " + e.getMessage(), true);
+                return;
+            }
+        }
+        notifySave("Extracted to property: " + propKey, false);
+    }
+
+    /**
+     * Extracts the URI (without query parameters) from a YAML endpoint line, or {@code null} if the line is not a
+     * recognized endpoint/URI line.
+     */
+    static String extractUriFromLine(String line) {
+        if (line == null) {
+            return null;
+        }
+        String trimmed = line.trim();
+        for (String prefix : List.of(
+                "- to:", "- from:", "from:", "- toD:", "- to-d:", "- wireTap:", "- wire-tap:",
+                "- enrich:", "- pollEnrich:", "- poll-enrich:", "- poll:", "uri:")) {
+            if (trimmed.startsWith(prefix)) {
+                String val = trimmed.substring(prefix.length()).trim();
+                val = unquoteYaml(val);
+                if (val.isEmpty() || val.startsWith("{") || val.startsWith("#")) {
+                    return null;
+                }
+                int q = val.indexOf('?');
+                return q >= 0 ? val.substring(0, q) : val;
+            }
+        }
+        return null;
+    }
+
+    /**
+     * Replaces the URI on a YAML endpoint line, stripping any existing query parameters.
+     */
+    static String replaceUriOnLine(String line, String newUri) {
+        if (line == null) {
+            return line;
+        }
+        String trimmed = line.trim();
+        int indent = countLeadingSpaces(line);
+        String indentStr = line.substring(0, indent);
+        for (String prefix : List.of(
+                "- to:", "- from:", "from:", "- toD:", "- to-d:", "- wireTap:", "- wire-tap:",
+                "- enrich:", "- pollEnrich:", "- poll-enrich:", "- poll:", "uri:")) {
+            if (trimmed.startsWith(prefix)) {
+                return indentStr + prefix + " " + newUri;
+            }
+        }
+        return line;
+    }
+
+    /**
+     * Extracts the plain-string value from a {@code key: value} YAML line, or {@code null} if the line does not carry
+     * an extractable literal (empty, structural, already a placeholder, or a URI endpoint line).
+     */
+    static String extractValueFromLine(String line) {
+        if (line == null) {
+            return null;
+        }
+        String trimmed = line.trim();
+        if (trimmed.isEmpty() || trimmed.startsWith("#") || trimmed.startsWith("- ")) {
+            return null;
+        }
+        int colon = trimmed.indexOf(':');
+        if (colon <= 0) {
+            return null;
+        }
+        String val = trimmed.substring(colon + 1).trim();
+        if (val.isEmpty() || val.startsWith("[") || val.startsWith("*")) {
+            return null;
+        }
+        val = unquoteYaml(val);
+        // Skip YAML maps and existing property placeholders
+        if (val.startsWith("{") || (val.startsWith("{{") && val.endsWith("}}"))) {
+            return null;
+        }
+        return val;
+    }
+
+    /**
+     * Replaces the value on a YAML {@code key: value} line with {@code {{propKey}}}, preserving indentation and key.
+     */
+    static String replaceValueWithPlaceholder(String line, String propKey) {
+        if (line == null) {
+            return line;
+        }
+        String trimmed = line.trim();
+        int indent = countLeadingSpaces(line);
+        String indentStr = line.substring(0, indent);
+        int colon = trimmed.indexOf(':');
+        if (colon <= 0) {
+            return line;
+        }
+        return indentStr + trimmed.substring(0, colon + 1) + " \"{{" + propKey + "}}\"";
+    }
+
+    private static String unquoteYaml(String val) {
+        if (val.length() >= 2 && val.startsWith("\"") && val.endsWith("\"")) {
+            return val.substring(1, val.length() - 1);
+        }
+        if (val.length() >= 2 && val.startsWith("'") && val.endsWith("'")) {
+            return val.substring(1, val.length() - 1);
+        }
+        return val;
     }
 
     /**
@@ -3165,6 +3540,9 @@ class SourceViewer {
             editableFile = Files.isWritable(filePath) ? filePath : null;
             scanDeprecatedLines();
             jumpLinks = Collections.emptyMap();
+            if (onFileLoaded != null) {
+                onFileLoaded.accept(filePath);
+            }
         } catch (IOException e) {
             title = fileName;
             lines = List.of("(Failed to read file: " + e.getMessage() + ")");

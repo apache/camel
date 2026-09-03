@@ -147,6 +147,12 @@ class SourceTab extends AbstractTab {
                 ctx.notificationCallback.accept(msg, error);
             }
         });
+        sourceViewer.setOnFileCreated(this::refreshFiles);
+        sourceViewer.setOnFileLoaded(p -> {
+            if (isCamelSourceFile(p)) {
+                sourceViewer.setJumpLinks(computeJumpLinks(p));
+            }
+        });
         sourceViewer.setValidateOnSave(ctx.validateOnSave);
         sourceViewer.setOnJumpLink(this::handleJumpLink);
     }
@@ -474,7 +480,8 @@ class SourceTab extends AbstractTab {
                 - **F4** — edit local file (plain text; only when file is writable)
                 - **Esc** — cancel edit (in edit mode) or close viewer
                 - **Ctrl+S** — save file and continue editing (Camel dev mode auto-reloads)
-                - **F5** — save file and close editor
+                - **F5** — save file and close editor (in edit mode)
+                - **Ctrl+R** — open refactoring menu in edit mode (YAML files only; choose an action for the current line)
                 - **Space** — cycle format (YAML/Java/XML) for Camel routes
                 - Quick documentation panel is shown at the bottom for Camel source files
                 - **/** — search in source
@@ -679,6 +686,15 @@ class SourceTab extends AbstractTab {
         listState.select(sel);
         currentDir = dir;
         buildRouteIndex();
+        // Recompute jump links for the currently viewed file so forward/reverse links
+        // are immediately usable after the route index is rebuilt (e.g. after extraction).
+        String viewedPath = sourceViewer.getCurrentFilePath();
+        if (viewedPath != null) {
+            Path viewedFile = Path.of(viewedPath);
+            if (isCamelSourceFile(viewedFile)) {
+                sourceViewer.setJumpLinks(computeJumpLinks(viewedFile));
+            }
+        }
         return true;
     }
 
