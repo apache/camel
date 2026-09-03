@@ -80,17 +80,15 @@ public final class LauncherHelper {
     }
 
     /**
-     * Parses a code-source URL string and returns the filesystem path to the outer JAR.
-     * Handles three URL forms:
+     * Parses a code-source URL string and returns the filesystem path to the outer JAR. Handles three URL forms:
      * <ul>
-     *   <li>{@code jar:nested:/outer.jar/!BOOT-INF/lib/inner.jar!/} — Spring Boot 3.2+/4.x loader</li>
-     *   <li>{@code jar:file:/outer.jar!/BOOT-INF/classes/} — Spring Boot 2.x / shade plugin</li>
-     *   <li>{@code file:/path/to/app.jar} — direct file URL</li>
+     * <li>{@code jar:nested:/outer.jar/!BOOT-INF/lib/inner.jar!/} — Spring Boot 3.2+/4.x loader</li>
+     * <li>{@code jar:file:/outer.jar!/BOOT-INF/classes/} — Spring Boot 2.x / shade plugin</li>
+     * <li>{@code file:/path/to/app.jar} — direct file URL</li>
      * </ul>
-     * Uses {@link URI}-based path decoding to correctly handle percent-encoded characters
-     * and Windows drive-letter paths (e.g. {@code /C:/...} → {@code C:\...}).
-     * {@code indexOf("/!")} is used rather than {@code lastIndexOf} so that a JAR whose
-     * path itself contains {@code /!} (unlikely but possible) does not lose its prefix.
+     * Uses {@link URI}-based path decoding to correctly handle percent-encoded characters and Windows drive-letter
+     * paths (e.g. {@code /C:/...} → {@code C:\...}). {@code indexOf("/!")} is used rather than {@code lastIndexOf} so
+     * that a JAR whose path itself contains {@code /!} (unlikely but possible) does not lose its prefix.
      */
     static String parseJarPath(String urlStr) {
         try {
