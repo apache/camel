@@ -19,6 +19,7 @@ package org.apache.camel.component.chatscript;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.camel.Exchange;
 import org.apache.camel.support.DefaultProducer;
+import org.apache.camel.util.ObjectHelper;
 
 /**
  * The ChatScript producer.
@@ -30,14 +31,14 @@ public class ChatScriptProducer extends DefaultProducer {
     public ChatScriptProducer(ChatScriptEndpoint endpoint) {
         super(endpoint);
         this.endpoint = endpoint;
-
-        if (endpoint.isResetChat()) {
-            this.endpoint.getBot().reset();
-        }
     }
 
     @Override
     public void process(Exchange exchange) throws Exception {
+        // Start a fresh conversation on every exchange when requested (resetChat).
+        if (endpoint.isResetChat()) {
+            endpoint.getBot().reset();
+        }
 
         Object body = exchange.getIn().getBody();
         ChatScriptMessage inputMessage;
@@ -48,17 +49,22 @@ public class ChatScriptProducer extends DefaultProducer {
             inputMessage = (ChatScriptMessage) body;
         }
         inputMessage.setBotName(endpoint.getBotName());
+        // Honour the configured chatUserName as the conversation user when the message does not carry one.
+        if (ObjectHelper.isEmpty(inputMessage.getUserName())) {
+            inputMessage.setUserName(endpoint.getBot().getUserName());
+        }
         String response = this.endpoint.getBot().sendChat(inputMessage);
         inputMessage.setReply(response);
         exchange.getOut().setBody(inputMessage);
     }
 
     private ChatScriptMessage buildMessage(Object body) throws Exception {
-
         if (body instanceof String) {
             return createMessage(String.valueOf(body));
         }
-        return null;
+        throw new IllegalArgumentException(
+                "Unsupported ChatScript body type: " + (body == null ? "null" : body.getClass().getName())
+                                           + ". The body must be a ChatScriptMessage or a String (its JSON form).");
     }
 
     private ChatScriptMessage createMessage(String message) throws Exception {
