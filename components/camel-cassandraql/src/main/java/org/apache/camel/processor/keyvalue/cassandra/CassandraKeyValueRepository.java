@@ -283,6 +283,13 @@ public class CassandraKeyValueRepository extends ServiceSupport implements KeyVa
         return buffer != null ? KeyValueRepositoryHelper.deserialize(buffer) : null;
     }
 
+    /**
+     * Stores a value with optional TTL.
+     * <p/>
+     * <b>Note:</b> The previous value is read in a separate query before the upsert. This is not atomic — another
+     * client could modify the entry between the read and the write. The stored value is always correct, but the
+     * returned previous value may be stale. Cassandra does not provide a native {@code getAndSet} equivalent.
+     */
     @Override
     @ManagedOperation(description = "Put a key-value pair with optional TTL")
     public Object put(String key, Object value, Duration ttl) {

@@ -80,6 +80,14 @@ import org.slf4j.LoggerFactory;
  * <p/>
  * The topic used must be unique per logical repository. TTL is managed locally via expiration timestamps in the cache;
  * expired entries are lazily evicted on access.
+ * <p/>
+ * <b>Note on TTL and topic growth:</b> TTL expiration is managed locally in the LRU cache. The Kafka topic retains
+ * all entries (including expired ones) indefinitely. On restart, expired entries are replayed from the topic and
+ * re-populated in the cache with their original expiration timestamps (they will appear as expired immediately).
+ * To prevent unbounded topic growth, configure the topic with Kafka's built-in log compaction
+ * ({@code cleanup.policy=compact}) and optionally {@code min.compaction.lag.ms} / {@code delete.retention.ms}
+ * to control retention. Deleted entries (tombstones) are represented as records with a {@code DELETE} action byte,
+ * which log compaction will eventually remove.
  *
  * @since 4.23
  */
@@ -242,6 +250,24 @@ public class KafkaKeyValueRepository extends ServiceSupport implements KeyValueR
         }
     }
 
+    /**
+     * Associates {@code value} with {@code key} only if {@code key} is not already present (or its entry has expired).
+     * Returns the existing (non-expired) value if one was already mapped, or {@code null} if the insertion succeeded.
+     *
+     * <p/>
+     * <b>Note on atomicity:</b> The check-then-act sequence is locally atomic with respect to other threads in this
+     * JVM (backed by {@link java.util.concurrent.ConcurrentMap#putIfAbsent}), but the subsequent broadcast to Kafka
+     * is a separate, non-atomic step. In a multi-instance deployment, two nodes may each observe the key as absent,
+     * both insert locally, and both broadcast — resulting in the last broadcast winning in the Kafka topic and
+     * propagating to all other instances. This implementation therefore does <em>not</em> provide distributed
+     * compare-and-swap (CAS) semantics; it is suitable only for best-effort deduplication within a single JVM or
+     * in scenarios where occasional duplicates across instances are acceptable.
+     *
+     * @param key   the key to insert
+     * @param value the value to associate
+     * @param ttl   optional time-to-live; {@code null} or zero means no expiration
+     * @return the existing value if already present and not expired, or {@code null} if the entry was inserted
+     */
     @Override
     public Object putIfAbsent(String key, Object value, Duration ttl) {
         CacheEntry existing = cache.get(key);

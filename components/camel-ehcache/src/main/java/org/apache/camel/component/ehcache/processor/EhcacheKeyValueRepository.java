@@ -114,6 +114,14 @@ public class EhcacheKeyValueRepository extends ServiceSupport implements KeyValu
         return entry.value();
     }
 
+    /**
+     * Stores a value with optional TTL.
+     * <p/>
+     * <b>Note:</b> The previous value is read in a separate call before the put. This is not atomic — another thread
+     * could modify the entry between the read and the write. The stored value is always correct, but the returned
+     * previous value may be stale. Ehcache does not provide a native {@code getAndPut} equivalent for its
+     * {@code Cache<K,V>} API.
+     */
     @Override
     @ManagedOperation(description = "Put a key-value pair with optional TTL")
     public Object put(String key, Object value, Duration ttl) {

@@ -120,6 +120,14 @@ public class JCacheKeyValueRepository extends ServiceSupport implements CamelCon
         return entry.value();
     }
 
+    /**
+     * Stores a value with optional TTL.
+     * <p/>
+     * <b>Note:</b> The previous value is read in a separate call before the put. This is not atomic — another thread
+     * could modify the entry between the read and the write. The stored value is always correct, but the returned
+     * previous value may be stale. JCache does not provide a {@code getAndPut} equivalent that also accepts a custom
+     * value type with per-entry TTL.
+     */
     @Override
     @ManagedOperation(description = "Put a key-value pair with optional TTL")
     public Object put(String key, Object value, Duration ttl) {
