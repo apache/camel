@@ -2099,3 +2099,10 @@ that resolve outside the configured directory are rejected.
 
 If `downloadFileName` is configured with an expression (i.e. it contains `$`), the local
 path is built by that expression as before and is not subject to this check.
+
+=== camel-core - REST client request validation and binary bodies
+
+When `clientRequestValidation` is enabled and the REST service declares a required body, the incoming
+message body is no longer replaced with a `String` version of itself. That conversion corrupted binary
+payloads such as `application/octet-stream`. The body is still read to check that it is present, using
+stream caching so it stays re-readable, but it now keeps its original type.
