@@ -87,11 +87,6 @@ public abstract class JBangTestSupport {
     @AfterEach
     protected void afterEach(TestInfo testInfo) {
         logger.debug("ending {}#{} using data folder {}", getClass().getName(), testInfo.getDisplayName(), getDataFolder());
-        execute("config unset runtime");
-        execute("config unset gav");
-        execute("config unset directory");
-        execute("config unset camel-version");
-        execInContainer("rm -f " + DEFAULT_ROUTE_FOLDER + "/application.properties");
         assertNoErrors();
         logger.debug("clean up data folder");
         if (containerDataFolder != null) {
