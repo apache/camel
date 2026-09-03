@@ -1814,3 +1814,10 @@ The `backOffMaxAttempts` option now bounds the attempts to start the delegated c
 The retry task previously also carried the default five second duration of its budget, which ended the
 task before the second attempt for any `backOffDelay` at or above the default of five seconds. A delegate
 that fails to start is therefore retried for longer than before, up to `backOffMaxAttempts` times.
+
+=== camel-core - REST client request validation and binary bodies
+
+When `clientRequestValidation` is enabled and the REST service declares a required body, the incoming
+message body is no longer replaced with a `String` version of itself. That conversion corrupted binary
+payloads such as `application/octet-stream`. The body is still read to check that it is present, using
+stream caching so it stays re-readable, but it now keeps its original type.
