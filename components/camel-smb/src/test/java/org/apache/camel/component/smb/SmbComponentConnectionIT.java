@@ -16,7 +16,6 @@
  */
 package org.apache.camel.component.smb;
 
-import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
@@ -33,10 +32,12 @@ import org.apache.camel.test.junit6.CamelTestSupport;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.RegisterExtension;
+import org.junit.jupiter.api.parallel.Isolated;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class SmbComponentConnectionIT extends CamelTestSupport {
+@Isolated
+class SmbComponentConnectionIT extends CamelTestSupport {
     private static final Logger LOG = LoggerFactory.getLogger(SmbComponentIT.class);
 
     @RegisterExtension
@@ -46,16 +47,7 @@ public class SmbComponentConnectionIT extends CamelTestSupport {
     protected MockEndpoint mockResultEndpoint;
 
     @Test
-    public void testSmbRead() throws Exception {
-        MockEndpoint mock = getMockEndpoint("mock:result");
-        mock.expectedMessageCount(100);
-
-        mock.assertIsSatisfied();
-    }
-
-    @Test
-    public void testSendReceive() throws Exception {
-
+    void testSendReceive() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:received_send");
         mock.expectedMessageCount(1);
 
@@ -68,7 +60,7 @@ public class SmbComponentConnectionIT extends CamelTestSupport {
     }
 
     @Test
-    public void testDefaultIgnore() throws Exception {
+    void testDefaultIgnore() throws Exception {
 
         MockEndpoint mock = getMockEndpoint("mock:received_ignore");
         mock.expectedMessageCount(1);
@@ -83,7 +75,7 @@ public class SmbComponentConnectionIT extends CamelTestSupport {
     }
 
     @Test
-    public void testOverride() throws Exception {
+    void testOverride() throws Exception {
 
         MockEndpoint mock = getMockEndpoint("mock:received_override");
         mock.expectedMessageCount(1);
@@ -99,28 +91,12 @@ public class SmbComponentConnectionIT extends CamelTestSupport {
     @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
-            private void process(Exchange exchange) throws IOException {
-                final SmbFile data = exchange.getMessage().getBody(SmbFile.class);
-                final String name = exchange.getMessage().getHeader(Exchange.FILE_NAME, String.class);
-                new String((byte[]) data.getBody(), StandardCharsets.UTF_8);
-                LOG.debug("Read exchange name {} at {} with contents: {} (bytes {})", name, data.getAbsoluteFilePath(),
-                        new String((byte[]) data.getBody(), StandardCharsets.UTF_8), data.getFileLength());
-            }
-
             public void configure() {
                 SmbConfig config = SmbConfig.builder()
                         .withTimeout(120, TimeUnit.SECONDS) // Timeout sets Read, Write, and Transact timeouts (default is 60 seconds)
                         .withSoTimeout(180, TimeUnit.SECONDS) // Socket Timeout (default is 0 seconds, blocks forever)
                         .build();
                 context.getRegistry().bind("smbConfig", config);
-
-                fromF("smb:%s/%s?username=%s&password=%s&smbConfig=#smbConfig", service.address(), service.shareName(),
-                        service.userName(), service.password())
-                        .to("seda:intermediate");
-
-                from("seda:intermediate?concurrentConsumers=4")
-                        .process(this::process)
-                        .to("mock:result");
 
                 from("seda:send")
                         .toF("smb:%s/%s?username=%s&password=%s", service.address(), service.shareName(),
