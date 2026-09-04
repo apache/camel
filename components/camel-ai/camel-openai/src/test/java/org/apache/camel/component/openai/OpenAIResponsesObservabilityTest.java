@@ -19,6 +19,7 @@ package org.apache.camel.component.openai;
 import java.util.Map;
 
 import org.apache.camel.CamelContext;
+import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.ai.observability.GenAiAttributes;
 import org.apache.camel.test.infra.openai.mock.OpenAIMock;
@@ -55,15 +56,20 @@ class OpenAIResponsesObservabilityTest extends CamelTestSupport {
 
     @Test
     void shouldEmitGenAiSpanFromResponsesProducer() {
-        template.sendBody("direct:responses", "hello-responses");
+        Exchange result = template.request("direct:responses", e -> e.getIn().setBody("hello-responses"));
+
+        assertThat(result.getMessage().getBody(String.class)).isEqualTo("Hi from responses mock");
 
         OpenAIObservabilityTestSupport.RecordingTracer tracer
                 = OpenAIObservabilityTestSupport.tracer(context);
         assertThat(tracer.genAiSpans()).hasSize(1);
         Map<String, String> tags = tracer.genAiSpans().get(0).tags();
-        assertThat(tags.get(GenAiAttributes.OPERATION_NAME)).isEqualTo("generate_content");
+        assertThat(tags.get(GenAiAttributes.OPERATION_NAME)).isEqualTo("chat");
         assertThat(tags.get(GenAiAttributes.SYSTEM)).isEqualTo("openai");
         assertThat(tags.get(GenAiAttributes.REQUEST_MODEL)).isEqualTo("gpt-4o");
         assertThat(tags.get(GenAiAttributes.CAMEL_COMPONENT)).isEqualTo("openai");
+        assertThat(tags.get(GenAiAttributes.INPUT_TOKENS)).isEqualTo("10");
+        assertThat(tags.get(GenAiAttributes.OUTPUT_TOKENS)).isEqualTo("5");
+        assertThat(tags.get(GenAiAttributes.FINISH_REASONS)).isEqualTo("stop");
     }
 }

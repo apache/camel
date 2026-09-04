@@ -100,23 +100,9 @@ public class OpenAIModerationProducer extends DefaultAsyncProducer {
                 .componentScheme("openai")
                 .build();
         GenAiObservation observation = GenAiObservability.start(exchange, observationContext);
+        ModerationCreateResponse response;
         try {
-            ModerationCreateResponse response = getEndpoint().getClient()
-                    .moderations().create(paramsBuilder.build());
-
-            if (response.results().size() != inputs.size()) {
-                throw new CamelExchangeException(
-                        "Moderation returned " + response.results().size() + " result(s) for " + inputs.size()
-                                                 + " input(s)",
-                        exchange);
-            }
-
-            if (config.isStoreFullResponse()) {
-                exchange.setProperty(OpenAIConstants.MODERATION_RESPONSE, response);
-            }
-
-            setResponseHeaders(exchange.getMessage(), response, inputs, batch);
-
+            response = getEndpoint().getClient().moderations().create(paramsBuilder.build());
             observation.recordSuccess(GenAiUsage.of(null, null, null, response.model()));
         } catch (Exception e) {
             GenAiErrorSupport.apply(exchange, e);
@@ -125,6 +111,19 @@ public class OpenAIModerationProducer extends DefaultAsyncProducer {
         } finally {
             observation.close();
         }
+
+        if (response.results().size() != inputs.size()) {
+            throw new CamelExchangeException(
+                    "Moderation returned " + response.results().size() + " result(s) for " + inputs.size()
+                                             + " input(s)",
+                    exchange);
+        }
+
+        if (config.isStoreFullResponse()) {
+            exchange.setProperty(OpenAIConstants.MODERATION_RESPONSE, response);
+        }
+
+        setResponseHeaders(exchange.getMessage(), response, inputs, batch);
     }
 
     private List<String> extractInputs(Exchange exchange) {

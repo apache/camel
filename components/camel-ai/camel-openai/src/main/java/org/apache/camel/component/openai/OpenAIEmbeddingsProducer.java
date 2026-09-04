@@ -112,31 +112,9 @@ public class OpenAIEmbeddingsProducer extends DefaultAsyncProducer {
                 .componentScheme("openai")
                 .build();
         GenAiObservation observation = GenAiObservability.start(exchange, observationContext);
+        CreateEmbeddingResponse response;
         try {
-            CreateEmbeddingResponse response = getEndpoint().getClient()
-                    .embeddings().create(params);
-
-            if (config.isStoreFullResponse()) {
-                exchange.setProperty(OpenAIConstants.RESPONSE, response);
-            }
-
-            List<List<Float>> embeddings = new ArrayList<>();
-            for (Embedding embedding : response.data()) {
-                embeddings.add(embedding.embedding());
-            }
-
-            Message out = exchange.getMessage();
-            if (inputs.size() == 1) {
-                out.setBody(embeddings.isEmpty() ? List.of() : embeddings.get(0));
-                out.setHeader(OpenAIConstants.ORIGINAL_TEXT, inputs.get(0));
-            } else {
-                out.setBody(embeddings);
-                out.setHeader(OpenAIConstants.ORIGINAL_TEXT, inputs);
-            }
-
-            setResponseHeaders(out, response, embeddings);
-            calculateSimilarityIfRequested(exchange, embeddings);
-
+            response = getEndpoint().getClient().embeddings().create(params);
             var usage = response.usage();
             observation.recordSuccess(GenAiUsage.of(
                     usage != null ? toTokenCount(usage.promptTokens()) : null,
@@ -150,6 +128,27 @@ public class OpenAIEmbeddingsProducer extends DefaultAsyncProducer {
         } finally {
             observation.close();
         }
+
+        if (config.isStoreFullResponse()) {
+            exchange.setProperty(OpenAIConstants.RESPONSE, response);
+        }
+
+        List<List<Float>> embeddings = new ArrayList<>();
+        for (Embedding embedding : response.data()) {
+            embeddings.add(embedding.embedding());
+        }
+
+        Message out = exchange.getMessage();
+        if (inputs.size() == 1) {
+            out.setBody(embeddings.isEmpty() ? List.of() : embeddings.get(0));
+            out.setHeader(OpenAIConstants.ORIGINAL_TEXT, inputs.get(0));
+        } else {
+            out.setBody(embeddings);
+            out.setHeader(OpenAIConstants.ORIGINAL_TEXT, inputs);
+        }
+
+        setResponseHeaders(out, response, embeddings);
+        calculateSimilarityIfRequested(exchange, embeddings);
     }
 
     private static Integer toTokenCount(long tokens) {

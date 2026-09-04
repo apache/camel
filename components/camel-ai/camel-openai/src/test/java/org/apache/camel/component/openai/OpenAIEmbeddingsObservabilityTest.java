@@ -16,10 +16,12 @@
  */
 package org.apache.camel.component.openai;
 
+import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 
 import org.apache.camel.CamelContext;
+import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.ai.observability.GenAiAttributes;
 import org.apache.camel.component.ai.observability.GenAiObservabilityProperties;
@@ -32,9 +34,11 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 class OpenAIEmbeddingsObservabilityTest extends CamelTestSupport {
 
+    private static final String INPUT = "What is Apache Camel?";
+
     @RegisterExtension
     static OpenAIMock openAIMock = new OpenAIMock().builder()
-            .whenEmbedding("What is Apache Camel?")
+            .whenEmbedding(INPUT)
             .replyWithEmbedding(new float[] { 0.1f, 0.2f, 0.3f, 0.4f })
             .end()
             .build();
@@ -58,7 +62,11 @@ class OpenAIEmbeddingsObservabilityTest extends CamelTestSupport {
 
     @Test
     void shouldEmitGenAiSpanFromEmbeddingsProducer() {
-        template.sendBody("direct:embedding", "What is Apache Camel?");
+        Exchange result = template.request("direct:embedding", e -> e.getIn().setBody(INPUT));
+
+        @SuppressWarnings("unchecked")
+        List<Float> embedding = result.getMessage().getBody(List.class);
+        assertThat(embedding).hasSize(4);
 
         OpenAIObservabilityTestSupport.RecordingTracer tracer
                 = OpenAIObservabilityTestSupport.tracer(context);
@@ -68,16 +76,16 @@ class OpenAIEmbeddingsObservabilityTest extends CamelTestSupport {
         assertThat(tags.get(GenAiAttributes.SYSTEM)).isEqualTo("openai");
         assertThat(tags.get(GenAiAttributes.REQUEST_MODEL)).isEqualTo("text-embedding-ada-002");
         assertThat(tags.get(GenAiAttributes.CAMEL_COMPONENT)).isEqualTo("openai");
-        assertThat(tags.get(GenAiAttributes.INPUT_TOKENS)).isNotBlank();
+        assertThat(tags.get(GenAiAttributes.INPUT_TOKENS)).isEqualTo(Integer.toString(INPUT.length()));
     }
 
     @Test
     void shouldNotEmitSpanWhenObservabilityDisabled() throws Exception {
         Properties properties = new Properties();
         properties.setProperty(GenAiObservabilityProperties.ENABLED, "false");
-        context.getPropertiesComponent().setInitialProperties(properties);
+        context.getPropertiesComponent().setOverrideProperties(properties);
 
-        template.sendBody("direct:embedding", "What is Apache Camel?");
+        template.sendBody("direct:embedding", INPUT);
 
         assertThat(OpenAIObservabilityTestSupport.tracer(context).genAiSpans()).isEmpty();
     }

@@ -19,6 +19,7 @@ package org.apache.camel.component.openai;
 import java.util.Map;
 
 import org.apache.camel.CamelContext;
+import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.ai.observability.GenAiAttributes;
 import org.apache.camel.test.infra.openai.mock.OpenAIMock;
@@ -30,9 +31,11 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 class OpenAIModerationObservabilityTest extends CamelTestSupport {
 
+    private static final String INPUT = "Apache Camel is an integration framework";
+
     @RegisterExtension
     static OpenAIMock openAIMock = new OpenAIMock().builder()
-            .whenModeration("Apache Camel is an integration framework")
+            .whenModeration(INPUT)
             .replyWithModerationAllowed()
             .end()
             .build();
@@ -56,7 +59,9 @@ class OpenAIModerationObservabilityTest extends CamelTestSupport {
 
     @Test
     void shouldEmitGenAiSpanFromModerationProducer() {
-        template.sendBody("direct:moderation", "Apache Camel is an integration framework");
+        Exchange result = template.request("direct:moderation", e -> e.getIn().setBody(INPUT));
+
+        assertThat(result.getMessage().getHeader(OpenAIConstants.MODERATION_FLAGGED, Boolean.class)).isFalse();
 
         OpenAIObservabilityTestSupport.RecordingTracer tracer
                 = OpenAIObservabilityTestSupport.tracer(context);
@@ -66,5 +71,6 @@ class OpenAIModerationObservabilityTest extends CamelTestSupport {
         assertThat(tags.get(GenAiAttributes.SYSTEM)).isEqualTo("openai");
         assertThat(tags.get(GenAiAttributes.REQUEST_MODEL)).isEqualTo("omni-moderation-latest");
         assertThat(tags.get(GenAiAttributes.CAMEL_COMPONENT)).isEqualTo("openai");
+        assertThat(tags.get(GenAiAttributes.INPUT_TOKENS)).isNull();
     }
 }

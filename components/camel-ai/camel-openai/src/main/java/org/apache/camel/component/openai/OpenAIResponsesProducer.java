@@ -165,7 +165,7 @@ public class OpenAIResponsesProducer extends DefaultAsyncProducer {
 
     private Response createResponse(Exchange exchange, String model, ResponseCreateParams params) throws Exception {
         GenAiObservationContext observationContext = GenAiObservationContext.builder()
-                .operationName(GenAiOperationName.GENERATE_CONTENT)
+                .operationName(GenAiOperationName.CHAT)
                 .system("openai")
                 .requestModel(model)
                 .componentScheme("openai")
@@ -188,7 +188,7 @@ public class OpenAIResponsesProducer extends DefaultAsyncProducer {
             Exchange exchange, String model, StructuredResponseCreateParams<?> structuredParams)
             throws Exception {
         GenAiObservationContext observationContext = GenAiObservationContext.builder()
-                .operationName(GenAiOperationName.GENERATE_CONTENT)
+                .operationName(GenAiOperationName.CHAT)
                 .system("openai")
                 .requestModel(model)
                 .componentScheme("openai")

@@ -442,8 +442,9 @@ that report `long` token counts are recorded without lossy casts.
 OpenAI streaming chat sets `stream_options.include_usage=true` only when GenAI observability is enabled,
 adding a final chunk with token usage for span/metric recording.
 
-OpenAI `embeddings`, `moderation`, and `responses` producers emit the same GenAI spans and metrics as
-`chat-completion`.
+OpenAI `embeddings`, `moderation`, and `responses` producers emit GenAI spans with the same attribute keys as
+`chat-completion`. Moderation records model metadata only (no token usage). Embeddings records input tokens when
+the API returns usage.
 
 LangChain4j components also expose request model names on new exchange headers
 (`CamelLangChain4j*RequestModel`). The response model header (`CamelLangChain4j*ResponseModel`) is set when
