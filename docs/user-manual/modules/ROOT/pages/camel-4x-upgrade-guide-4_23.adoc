@@ -1689,3 +1689,9 @@ it the result is placed in the message body, as before.
 The `CamelInfinispanIgnoreReturnValues` header is now documented as a producer header rather than a consumer
 one. It has always been read on the producer path, so only its group in the catalog and in the documentation
 changes.
+
+=== camel-file, camel-ftp, camel-smb, camel-mina-sftp and camel-azure-files
+
+Downloads to a configured `localWorkDirectory` now resolve existing filesystem path segments before
+checking that the destination remains inside that directory. Downloads through a symbolic link that
+resolves outside the `localWorkDirectory` are rejected. Valid nested download paths continue to work.
