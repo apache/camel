@@ -103,7 +103,7 @@ public class OpenAIModerationProducer extends DefaultAsyncProducer {
         ModerationCreateResponse response;
         try {
             response = getEndpoint().getClient().moderations().create(paramsBuilder.build());
-            observation.recordSuccess(GenAiUsage.of(null, null, null, response.model()));
+            observation.recordSuccess(GenAiUsage.of((Long) null, null, null, response.model()));
         } catch (Exception e) {
             GenAiErrorSupport.apply(exchange, e);
             observation.recordError(e);
@@ -112,6 +112,8 @@ public class OpenAIModerationProducer extends DefaultAsyncProducer {
             observation.close();
         }
 
+        // this operation is used to gate untrusted content, so a missing verdict must fail the exchange
+        // instead of leaving CamelOpenAIModerationFlagged false and letting the message through
         if (response.results().size() != inputs.size()) {
             throw new CamelExchangeException(
                     "Moderation returned " + response.results().size() + " result(s) for " + inputs.size()
@@ -119,6 +121,7 @@ public class OpenAIModerationProducer extends DefaultAsyncProducer {
                     exchange);
         }
 
+        // stored only once the response is known to be complete, so a failed exchange carries no verdict
         if (config.isStoreFullResponse()) {
             exchange.setProperty(OpenAIConstants.MODERATION_RESPONSE, response);
         }

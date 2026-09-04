@@ -117,7 +117,7 @@ public class OpenAIEmbeddingsProducer extends DefaultAsyncProducer {
             response = getEndpoint().getClient().embeddings().create(params);
             var usage = response.usage();
             observation.recordSuccess(GenAiUsage.of(
-                    usage != null ? toTokenCount(usage.promptTokens()) : null,
+                    usage != null ? usage.promptTokens() : null,
                     null,
                     null,
                     response.model()));
@@ -149,10 +149,6 @@ public class OpenAIEmbeddingsProducer extends DefaultAsyncProducer {
 
         setResponseHeaders(out, response, embeddings);
         calculateSimilarityIfRequested(exchange, embeddings);
-    }
-
-    private static Integer toTokenCount(long tokens) {
-        return Math.toIntExact(tokens);
     }
 
     @SuppressWarnings("unchecked")

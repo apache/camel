@@ -20,7 +20,6 @@ import java.io.InputStream;
 
 import com.openai.models.responses.Response;
 import com.openai.models.responses.ResponseCreateParams;
-import com.openai.models.responses.StructuredResponse;
 import com.openai.models.responses.StructuredResponseCreateParams;
 import org.apache.camel.AsyncCallback;
 import org.apache.camel.Exchange;
@@ -34,6 +33,7 @@ import org.apache.camel.component.ai.observability.GenAiUsage;
 import org.apache.camel.support.DefaultAsyncProducer;
 import org.apache.camel.support.ResourceHelper;
 import org.apache.camel.util.ObjectHelper;
+import org.apache.camel.util.function.ThrowingSupplier;
 
 /**
  * OpenAI producer for the Responses API (non-streaming).
@@ -164,28 +164,17 @@ public class OpenAIResponsesProducer extends DefaultAsyncProducer {
     }
 
     private Response createResponse(Exchange exchange, String model, ResponseCreateParams params) throws Exception {
-        GenAiObservationContext observationContext = GenAiObservationContext.builder()
-                .operationName(GenAiOperationName.CHAT)
-                .system("openai")
-                .requestModel(model)
-                .componentScheme("openai")
-                .build();
-        GenAiObservation observation = GenAiObservability.start(exchange, observationContext);
-        try {
-            Response response = getEndpoint().getClient().responses().create(params);
-            recordResponseSuccess(observation, response);
-            return response;
-        } catch (Exception e) {
-            GenAiErrorSupport.apply(exchange, e);
-            observation.recordError(e);
-            throw e;
-        } finally {
-            observation.close();
-        }
+        return observedCall(exchange, model, () -> getEndpoint().getClient().responses().create(params));
     }
 
     private Response createStructuredResponse(
             Exchange exchange, String model, StructuredResponseCreateParams<?> structuredParams)
+            throws Exception {
+        return observedCall(exchange, model,
+                () -> getEndpoint().getClient().responses().create(structuredParams).rawResponse());
+    }
+
+    private Response observedCall(Exchange exchange, String model, ThrowingSupplier<Response, Exception> call)
             throws Exception {
         GenAiObservationContext observationContext = GenAiObservationContext.builder()
                 .operationName(GenAiOperationName.CHAT)
@@ -195,10 +184,9 @@ public class OpenAIResponsesProducer extends DefaultAsyncProducer {
                 .build();
         GenAiObservation observation = GenAiObservability.start(exchange, observationContext);
         try {
-            StructuredResponse<?> structured = getEndpoint().getClient().responses().create(structuredParams);
-            Response raw = structured.rawResponse();
-            recordResponseSuccess(observation, raw);
-            return raw;
+            Response response = call.get();
+            recordResponseSuccess(observation, response);
+            return response;
         } catch (Exception e) {
             GenAiErrorSupport.apply(exchange, e);
             observation.recordError(e);
@@ -214,15 +202,11 @@ public class OpenAIResponsesProducer extends DefaultAsyncProducer {
                 .orElse(null);
         response.usage().ifPresentOrElse(
                 usage -> observation.recordSuccess(GenAiUsage.of(
-                        toTokenCount(usage.inputTokens()),
-                        toTokenCount(usage.outputTokens()),
+                        usage.inputTokens(),
+                        usage.outputTokens(),
                         finishReason,
                         response.model().toString())),
-                () -> observation.recordSuccess(GenAiUsage.of(null, null, finishReason, response.model().toString())));
-    }
-
-    private static Integer toTokenCount(long tokens) {
-        return Math.toIntExact(tokens);
+                () -> observation.recordSuccess(GenAiUsage.of((Long) null, null, finishReason, response.model().toString())));
     }
 
     private void finishExchange(Exchange exchange, OpenAIConfiguration config, Response response, String body) {
