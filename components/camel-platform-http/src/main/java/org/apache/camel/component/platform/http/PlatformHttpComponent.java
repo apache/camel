@@ -18,10 +18,11 @@ package org.apache.camel.component.platform.http;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.TreeSet;
+import java.util.function.Predicate;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.CamelContextAware;
@@ -72,8 +73,8 @@ public class PlatformHttpComponent extends HeaderFilterStrategyComponent
                             + " or all requests must be handled by Camel.")
     private boolean serverRequestValidation = true;
 
-    private final Set<HttpEndpointModel> httpEndpoints = new TreeSet<>();
-    private final Set<HttpEndpointModel> httpManagementEndpoints = new TreeSet<>();
+    private final Set<HttpEndpointModel> httpEndpoints = new LinkedHashSet<>();
+    private final Set<HttpEndpointModel> httpManagementEndpoints = new LinkedHashSet<>();
     private final List<PlatformHttpListener> listeners = new ArrayList<>();
     private volatile boolean localEngine;
 
@@ -164,19 +165,54 @@ public class PlatformHttpComponent extends HeaderFilterStrategyComponent
      * Removes a known http endpoint managed by this component.
      */
     public void removeHttpEndpoint(String uri) {
-        this.removeHttpEndpoint(this.httpEndpoints, uri);
+        removeHttpEndpoints(this.httpEndpoints, e -> e.getUri().equals(uri));
+    }
+
+    /**
+     * Removes the http endpoint registered for the given consumer.
+     */
+    public void removeHttpEndpoint(Consumer consumer) {
+        if (consumer == null) {
+            return;
+        }
+        removeHttpEndpoints(this.httpEndpoints, e -> e.getConsumer() == consumer);
+    }
+
+    /**
+     * Removes the http endpoint registered for the given uri and consumer reference.
+     * <p>
+     * Use this when multiple registrations share the same uri but have different consumers, or when the registration
+     * used a {@code null} consumer (for example MCP server metadata).
+     * </p>
+     */
+    public void removeHttpEndpoint(String uri, Consumer consumer) {
+        removeHttpEndpoints(this.httpEndpoints, e -> e.getUri().equals(uri) && e.getConsumer() == consumer);
     }
 
     /**
      * Removes a known http endpoint managed by this component.
      */
     public void removeHttpManagementEndpoint(String uri) {
-        this.removeHttpEndpoint(this.httpManagementEndpoints, uri);
+        removeHttpEndpoints(this.httpManagementEndpoints, e -> e.getUri().equals(uri));
     }
 
-    private void removeHttpEndpoint(Set<HttpEndpointModel> endpoints, String uri) {
+    /**
+     * Removes the http management endpoint registered for the given consumer.
+     * <p>
+     * Provided for symmetry with {@link #removeHttpManagementEndpoint(String)} for callers that track a management
+     * consumer reference.
+     * </p>
+     */
+    public void removeHttpManagementEndpoint(Consumer consumer) {
+        if (consumer == null) {
+            return;
+        }
+        removeHttpEndpoints(this.httpManagementEndpoints, e -> e.getConsumer() == consumer);
+    }
+
+    private void removeHttpEndpoints(Set<HttpEndpointModel> endpoints, Predicate<HttpEndpointModel> filter) {
         List<HttpEndpointModel> toRemove = new ArrayList<>();
-        endpoints.stream().filter(e -> e.getUri().equals(uri)).forEach(model -> {
+        endpoints.stream().filter(filter).forEach(model -> {
             toRemove.add(model);
             for (PlatformHttpListener listener : listeners) {
                 try {

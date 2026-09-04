@@ -17,7 +17,9 @@
 package org.apache.camel.component.platform.http.main;
 
 import java.util.HashSet;
+import java.util.Objects;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.StartupListener;
@@ -35,14 +37,15 @@ public class MainHttpServerUtil {
             CamelContext camelContext, Set<HttpEndpointModel> endpoints, int serverPort, boolean ssl, String header)
             throws Exception {
         camelContext.addStartupListener(new StartupListener() {
-            private volatile Set<HttpEndpointModel> last;
+            private volatile Set<String> lastEndpointSignatures;
 
             private void logSummary() {
                 if (endpoints.isEmpty()) {
                     return;
                 }
-                // log only if changed
-                if (last == null || last.size() != endpoints.size() || !last.containsAll(endpoints)) {
+                // log only if changed (ignore consumer identity on route reload)
+                Set<String> currentSignatures = endpointSignatures(endpoints);
+                if (lastEndpointSignatures == null || !lastEndpointSignatures.equals(currentSignatures)) {
                     LOG.info(header);
                     int longestEndpoint = 0;
                     int longestVerbs = 0;
@@ -78,8 +81,19 @@ public class MainHttpServerUtil {
                     }
                 }
 
-                // use a defensive copy of last known endpoints
-                last = new HashSet<>(endpoints);
+                lastEndpointSignatures = currentSignatures;
+            }
+
+            private Set<String> endpointSignatures(Set<HttpEndpointModel> endpointModels) {
+                return endpointModels.stream()
+                        .map(this::endpointSignature)
+                        .collect(Collectors.toCollection(HashSet::new));
+            }
+
+            private String endpointSignature(HttpEndpointModel model) {
+                return model.getUri() + "|" + Objects.toString(model.getVerbs(), "") + "|"
+                       + Objects.toString(model.getConsumes(), "") + "|"
+                       + Objects.toString(model.getProduces(), "");
             }
 
             private String getEndpoint(HttpEndpointModel httpEndpointModel, boolean ssl) {

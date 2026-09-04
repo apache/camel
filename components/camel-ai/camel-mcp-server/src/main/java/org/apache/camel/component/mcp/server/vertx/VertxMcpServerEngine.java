@@ -147,7 +147,7 @@ public class VertxMcpServerEngine extends ServiceSupport implements McpServerEng
         PlatformHttpComponent platformHttpComponent
                 = (PlatformHttpComponent) camelContext.hasComponent("platform-http");
         if (platformHttpComponent != null && info != null) {
-            platformHttpComponent.removeHttpEndpoint(info.path());
+            platformHttpComponent.removeHttpEndpoint(info.path(), null);
         }
         transport = null;
     }

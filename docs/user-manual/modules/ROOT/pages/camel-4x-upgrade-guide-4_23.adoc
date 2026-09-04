@@ -1627,3 +1627,22 @@ The `backOffMaxAttempts` option now bounds the attempts to start the delegated c
 The retry task previously also carried the default five second duration of its budget, which ended the
 task before the second attempt for any `backOffDelay` at or above the default of five seconds. A delegate
 that fails to start is therefore retried for longer than before, up to `backOffMaxAttempts` times.
+
+=== camel-platform-http - shared path endpoint registry
+
+`HttpEndpointModel` identity now includes the registered consumer reference, so multiple consumers can
+share the same path with different HTTP methods without overwriting each other in
+`PlatformHttpComponent#getHttpEndpoints()`.
+
+* `getHttpEndpoints()` and `getHttpManagementEndpoints()` may list multiple entries for the same URI
+  (one per consumer). Ordering follows registration order (`LinkedHashSet`) instead of URI sort order
+  (`TreeSet`).
+* `DefaultPlatformHttpConsumer` removes its own registration on stop via
+  `removeHttpEndpoint(Consumer)` instead of removing every endpoint on the path.
+* `removeHttpEndpoint(String)` still removes all registrations for a URI (for example bulk cleanup).
+  Prefer `removeHttpEndpoint(Consumer)` or `removeHttpEndpoint(String, Consumer)` when only one
+  registration should be removed.
+* `HttpEndpointModel#compareTo` remains available and is consistent with the consumer-aware
+  `equals`/`hashCode` implementation.
+
+Stopping one `platform-http` route on a shared path no longer unregisters sibling consumers on that path.
