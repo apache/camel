@@ -965,7 +965,10 @@ public interface ActiveMQEndpointBuilderFactory {
          * Custom is specified, the MessageListenerContainerFactory defined by
          * the messageListenerContainerFactory option will determine what
          * org.springframework.jms.listener.AbstractMessageListenerContainer to
-         * use.
+         * use. When consuming from topics, the consumer type is automatically
+         * set to Simple (if not explicitly configured) to avoid potential
+         * broker resource issues (e.g. OOM from accumulating non-durable queues
+         * on Artemis).
          * 
          * The option is a:
          * <code>org.apache.camel.component.jms.ConsumerType</code> type.
@@ -990,7 +993,10 @@ public interface ActiveMQEndpointBuilderFactory {
          * Custom is specified, the MessageListenerContainerFactory defined by
          * the messageListenerContainerFactory option will determine what
          * org.springframework.jms.listener.AbstractMessageListenerContainer to
-         * use.
+         * use. When consuming from topics, the consumer type is automatically
+         * set to Simple (if not explicitly configured) to avoid potential
+         * broker resource issues (e.g. OOM from accumulating non-durable queues
+         * on Artemis).
          * 
          * The option will be converted to a
          * <code>org.apache.camel.component.jms.ConsumerType</code> type.
