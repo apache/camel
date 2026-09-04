@@ -20,6 +20,8 @@ import java.time.Duration;
 import java.util.concurrent.Future;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.atomic.AtomicReference;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
 
 import org.apache.camel.Consumer;
 import org.apache.camel.Endpoint;
@@ -61,9 +63,14 @@ public class MasterConsumer extends DefaultConsumer implements ResumeAware<Resum
     private volatile CamelClusterView view;
     private ResumeStrategy resumeStrategy;
     private ScheduledExecutorService leaderPool;
-    // leadership state and the pending start task are guarded by lock, which is also held by the
-    // service lifecycle methods, so a leadership event cannot interleave with start/stop of this consumer
+    // leadership state and the pending start task are guarded by leadershipLock. This is deliberately not
+    // the lock of BaseService: the cluster view dispatches events while holding its own read lock and then
+    // needs this lock, while doStop holds the service lock and needs the write lock of the view to remove
+    // the listener. Guarding the leadership with the service lock closes that into a lock cycle, and it also
+    // makes every leadership event and start attempt wait for whatever lifecycle operation is in progress
+    private final Lock leadershipLock = new ReentrantLock();
     private boolean leadershipTaken;
+    private BackgroundTask leaderTask;
     private Future<?> leaderTaskFuture;
 
     public MasterConsumer(MasterEndpoint masterEndpoint, Processor processor, CamelClusterService clusterService) {
@@ -109,14 +116,19 @@ public class MasterConsumer extends DefaultConsumer implements ResumeAware<Resum
     protected void doStop() throws Exception {
         super.doStop();
 
-        // a start can still be pending, cancel it first so it cannot start the delegated consumer
-        // after this consumer has been stopped
-        leadershipTaken = false;
-        cancelLeaderTask(true);
+        leadershipLock.lock();
+        try {
+            // a start can still be pending, cancel it first so it cannot start the delegated consumer
+            // after this consumer has been stopped
+            leadershipTaken = false;
+            cancelLeaderTask(true);
+        } finally {
+            leadershipLock.unlock();
+        }
 
-        // note: removeEventListener below needs the cluster view lock while this thread holds the lock of
-        // this service, which is the opposite order of an event dispatch. Nothing that runs under this lock
-        // may wait for the view, and the listener bails out before locking once this consumer is stopping
+        // note: removeEventListener below needs the write lock of the cluster view, while an event dispatch
+        // takes the read lock of the view and then leadershipLock. This thread must not hold leadershipLock
+        // here, or the two orders deadlock
 
         if (view != null) {
             view.removeEventListener(leadershipListener);
@@ -160,6 +172,7 @@ public class MasterConsumer extends DefaultConsumer implements ResumeAware<Resum
                 .withBudget(Budgets.iterationTimeBudget()
                         .withInterval(Duration.ofMillis(masterEndpoint.getComponent().getBackOffDelay()))
                         .withInitialDelay(Duration.ofSeconds(1))
+                        // 0 or less leaves the unlimited default of the builder in place
                         .withMaxIterations(masterEndpoint.getComponent().getBackOffMaxAttempts())
                         // the attempts are bounded by backOffMaxAttempts, not by the 5s default duration of
                         // the builder, which would otherwise end the task before the second attempt
@@ -170,7 +183,7 @@ public class MasterConsumer extends DefaultConsumer implements ResumeAware<Resum
     }
 
     private void onLeadershipTaken() {
-        lock.lock();
+        leadershipLock.lock();
         try {
             if (!isRunAllowed()) {
                 return;
@@ -188,14 +201,15 @@ public class MasterConsumer extends DefaultConsumer implements ResumeAware<Resum
             final BackgroundTask task = createTask();
             // the consumer is created once and re-used by the start attempts of this task
             final AtomicReference<Consumer> attempt = new AtomicReference<>();
+            leaderTask = task;
             leaderTaskFuture = task.schedule(getEndpoint().getCamelContext(), () -> startDelegatedConsumer(task, attempt));
         } finally {
-            lock.unlock();
+            leadershipLock.unlock();
         }
     }
 
     private boolean startDelegatedConsumer(BackgroundTask task, AtomicReference<Consumer> attempt) {
-        lock.lock();
+        leadershipLock.lock();
         try {
             if (!isRunAllowed()) {
                 return false;
@@ -212,14 +226,14 @@ public class MasterConsumer extends DefaultConsumer implements ResumeAware<Resum
                 return true; // no more attempts
             }
         } finally {
-            lock.unlock();
+            leadershipLock.unlock();
         }
 
         LOG.info("Leadership taken. Attempt #{} to start consumer: {}", task.iteration(), delegatedEndpoint);
 
         // the delegate is created and started without holding the lock. It can block for a long time, and the
-        // lock is taken by the service lifecycle and by the cluster view event dispatch, which must not wait
-        // for a broker connect. The leadership is re-checked below before the consumer is published
+        // lock is taken by the cluster view event dispatch and by doStop, which must not wait for a broker
+        // connect. The leadership is re-checked below before the consumer is published
         Consumer consumer = attempt.get();
         Exception cause = null;
         try {
@@ -247,7 +261,7 @@ public class MasterConsumer extends DefaultConsumer implements ResumeAware<Resum
             cause = e;
         }
 
-        lock.lock();
+        leadershipLock.lock();
         try {
             if (cause != null) {
                 // the consumer is kept for the next attempt. It is not stopped here: a consumer that failed to
@@ -282,12 +296,12 @@ public class MasterConsumer extends DefaultConsumer implements ResumeAware<Resum
             cancelLeaderTask(false);
             return true; // no more attempts
         } finally {
-            lock.unlock();
+            leadershipLock.unlock();
         }
     }
 
     private void onLeadershipLost() {
-        lock.lock();
+        leadershipLock.lock();
         try {
             leadershipTaken = false;
             // a start scheduled by the leadership taken event may not have run yet, cancel it so it
@@ -306,7 +320,7 @@ public class MasterConsumer extends DefaultConsumer implements ResumeAware<Resum
             }
             LOG.info("Leadership lost. Consumer stopped: {}", delegatedEndpoint);
         } finally {
-            lock.unlock();
+            leadershipLock.unlock();
         }
     }
 
@@ -315,8 +329,12 @@ public class MasterConsumer extends DefaultConsumer implements ResumeAware<Resum
     }
 
     private void cancelLeaderTask(boolean mayInterruptIfRunning) {
-        if (leaderTaskFuture != null) {
-            leaderTaskFuture.cancel(mayInterruptIfRunning);
+        if (leaderTask != null) {
+            // cancelled through the task and not through its future, so the task also leaves the
+            // TaskManagerRegistry. Only a run of the task removes it from there, and once the schedule
+            // is cancelled no run is coming
+            leaderTask.cancel(mayInterruptIfRunning);
+            leaderTask = null;
             leaderTaskFuture = null;
         }
     }
@@ -329,13 +347,12 @@ public class MasterConsumer extends DefaultConsumer implements ResumeAware<Resum
         @Override
         public void leadershipChanged(CamelClusterView view, CamelClusterMember leader) {
             if (!isRunAllowed()) {
-                // checked before taking the lock: this runs on the cluster view dispatch thread while that
-                // view holds its own lock, and a consumer that is stopping holds this lock while it removes
-                // this listener from the view
+                // this runs on the dispatch thread of the cluster view, holding the lock of that view, so
+                // do no work at all for a consumer that is stopping
                 return;
             }
 
-            lock.lock();
+            leadershipLock.lock();
             try {
                 if (!isRunAllowed()) {
                     return;
@@ -360,7 +377,7 @@ public class MasterConsumer extends DefaultConsumer implements ResumeAware<Resum
                     }
                 }
             } finally {
-                lock.unlock();
+                leadershipLock.unlock();
             }
         }
     }
