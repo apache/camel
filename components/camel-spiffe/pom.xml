@@ -43,6 +43,11 @@
             <artifactId>java-spiffe-core</artifactId>
             <version>${java-spiffe-version}</version>
         </dependency>
+        <dependency>
+            <groupId>io.spiffe</groupId>
+            <artifactId>java-spiffe-provider</artifactId>
+            <version>${java-spiffe-version}</version>
+        </dependency>
 
         <!-- for testing -->
         <dependency>
