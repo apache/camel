@@ -101,6 +101,10 @@ public interface CamelEvent {
     /**
      * Dumps the full event as a pretty-printed JSON string.
      *
+     * The default implementation serializes flat scalar values ({@link Number}, {@link Boolean}, and {@link String})
+     * from {@link #asJSon()}. If a custom implementer overrides {@link #asJSon()} to include nested {@link Map} or
+     * {@link List} objects, they should also override this method to produce valid JSON.
+     *
      * @param  indent number of spaces to indent
      * @return        JSON representation of this event
      * @since         4.23
