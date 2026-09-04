@@ -138,7 +138,7 @@ class OpenAIParallelToolExecutionTest extends CamelTestSupport {
                 .toList();
 
         endpoint.setMcpToolState(new McpToolState(
-                McpToolConverter.convert(mcpTools), toolClients, Map.of(), returnDirectToolNames));
+                McpToolConverter.convert(mcpTools), toolClients, Map.of(), returnDirectToolNames, Map.of()));
     }
 
     private McpSyncClient rendezvousClient(String resultText) {

@@ -47,6 +47,8 @@ public class AiToolComponentConfigurer extends PropertyConfigurerSupport impleme
         case "parameters": getOrCreateConfiguration(target).setParameters(property(camelContext, java.util.Map.class, value)); return true;
         case "readonlyhint":
         case "readOnlyHint": getOrCreateConfiguration(target).setReadOnlyHint(property(camelContext, java.lang.Boolean.class, value)); return true;
+        case "returndirect":
+        case "returnDirect": getOrCreateConfiguration(target).setReturnDirect(property(camelContext, java.lang.Boolean.class, value)); return true;
         case "tags": getOrCreateConfiguration(target).setTags(property(camelContext, java.lang.String.class, value)); return true;
         case "title": getOrCreateConfiguration(target).setTitle(property(camelContext, java.lang.String.class, value)); return true;
         default: return false;
@@ -73,6 +75,8 @@ public class AiToolComponentConfigurer extends PropertyConfigurerSupport impleme
         case "parameters": return java.util.Map.class;
         case "readonlyhint":
         case "readOnlyHint": return java.lang.Boolean.class;
+        case "returndirect":
+        case "returnDirect": return java.lang.Boolean.class;
         case "tags": return java.lang.String.class;
         case "title": return java.lang.String.class;
         default: return null;
@@ -100,6 +104,8 @@ public class AiToolComponentConfigurer extends PropertyConfigurerSupport impleme
         case "parameters": return getOrCreateConfiguration(target).getParameters();
         case "readonlyhint":
         case "readOnlyHint": return getOrCreateConfiguration(target).getReadOnlyHint();
+        case "returndirect":
+        case "returnDirect": return getOrCreateConfiguration(target).getReturnDirect();
         case "tags": return getOrCreateConfiguration(target).getTags();
         case "title": return getOrCreateConfiguration(target).getTitle();
         default: return null;

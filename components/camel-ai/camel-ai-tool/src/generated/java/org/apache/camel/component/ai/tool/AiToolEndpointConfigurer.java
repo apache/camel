@@ -41,6 +41,8 @@ public class AiToolEndpointConfigurer extends PropertyConfigurerSupport implemen
         case "parameters": target.getConfiguration().setParameters(property(camelContext, java.util.Map.class, value)); return true;
         case "readonlyhint":
         case "readOnlyHint": target.getConfiguration().setReadOnlyHint(property(camelContext, java.lang.Boolean.class, value)); return true;
+        case "returndirect":
+        case "returnDirect": target.getConfiguration().setReturnDirect(property(camelContext, java.lang.Boolean.class, value)); return true;
         case "tags": target.getConfiguration().setTags(property(camelContext, java.lang.String.class, value)); return true;
         case "title": target.getConfiguration().setTitle(property(camelContext, java.lang.String.class, value)); return true;
         default: return false;
@@ -68,6 +70,8 @@ public class AiToolEndpointConfigurer extends PropertyConfigurerSupport implemen
         case "parameters": return java.util.Map.class;
         case "readonlyhint":
         case "readOnlyHint": return java.lang.Boolean.class;
+        case "returndirect":
+        case "returnDirect": return java.lang.Boolean.class;
         case "tags": return java.lang.String.class;
         case "title": return java.lang.String.class;
         default: return null;
@@ -96,6 +100,8 @@ public class AiToolEndpointConfigurer extends PropertyConfigurerSupport implemen
         case "parameters": return target.getConfiguration().getParameters();
         case "readonlyhint":
         case "readOnlyHint": return target.getConfiguration().getReadOnlyHint();
+        case "returndirect":
+        case "returnDirect": return target.getConfiguration().getReturnDirect();
         case "tags": return target.getConfiguration().getTags();
         case "title": return target.getConfiguration().getTitle();
         default: return null;

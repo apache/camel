@@ -309,7 +309,7 @@ class McpToolCallExecutorTest {
         OpenAIEndpoint endpoint = new OpenAIEndpoint("openai:chat-completion", component, configuration);
         endpoint.setCamelContext(context);
         endpoint.setMcpToolState(new McpToolState(
-                List.of(), toolClients, Map.of(), returnDirectTools));
+                List.of(), toolClients, Map.of(), returnDirectTools, Map.of()));
         return endpoint;
     }
 
