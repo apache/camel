@@ -71,7 +71,7 @@ final class GenAiMicrometerSupport implements GenAiMetricsBackend {
     }
 
     private void recordTokenCounter(
-            Integer tokens, String tokenType, GenAiObservationContext context, Throwable error) {
+            Long tokens, String tokenType, GenAiObservationContext context, Throwable error) {
         if (tokens == null || tokens <= 0) {
             return;
         }
@@ -79,7 +79,7 @@ final class GenAiMicrometerSupport implements GenAiMetricsBackend {
                 .tags(baseTags(context, error))
                 .tag(GenAiMetrics.TAG_TOKEN_TYPE, tokenType)
                 .register(meterRegistry)
-                .increment(tokens);
+                .increment(tokens.doubleValue());
     }
 
     private static Iterable<Tag> baseTags(GenAiObservationContext context, Throwable error) {
