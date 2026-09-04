@@ -169,7 +169,10 @@ public class OpenAIConfiguration implements Cloneable {
     @Metadata(description = "Store the full SDK response in non-streaming mode: chat-completion uses exchange property "
                             + "'CamelOpenAIResponse'; responses uses 'CamelOpenAIResponsesResponse'; "
                             + "moderation uses 'CamelOpenAIModerationResponse'; "
-                            + "image-generation and image-edit use 'CamelOpenAIImageResponse'")
+                            + "image-generation and image-edit use 'CamelOpenAIImageResponse'; "
+                            + "embeddings uses 'CamelOpenAIEmbeddingsResponse'; "
+                            + "audio transcription uses 'CamelOpenAIAudioTranscriptionResponse'; "
+                            + "audio translation uses 'CamelOpenAIAudioTranslationResponse'")
     private boolean storeFullResponse = false;
 
     @UriParam(defaultValue = "false")

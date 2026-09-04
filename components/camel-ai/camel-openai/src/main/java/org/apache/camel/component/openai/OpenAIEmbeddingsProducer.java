@@ -130,7 +130,7 @@ public class OpenAIEmbeddingsProducer extends DefaultAsyncProducer {
         }
 
         if (config.isStoreFullResponse()) {
-            exchange.setProperty(OpenAIConstants.RESPONSE, response);
+            exchange.setProperty(OpenAIConstants.EMBEDDINGS_RESPONSE, response);
         }
 
         List<List<Float>> embeddings = new ArrayList<>();

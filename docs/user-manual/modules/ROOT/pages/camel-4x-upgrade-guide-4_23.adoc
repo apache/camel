@@ -1664,3 +1664,17 @@ share the same path with different HTTP methods without overwriting each other i
   `equals`/`hashCode` implementation.
 
 Stopping one `platform-http` route on a shared path no longer unregisters sibling consumers on that path.
+
+=== camel-openai
+
+When `storeFullResponse=true`, the embeddings and audio operations now store their full SDK response
+under an operation-specific exchange property instead of the chat-completion property `CamelOpenAIResponse`.
+That property is typed as the chat-completion response (`com.openai.models.chat.completions.ChatCompletion`),
+so a downstream reader that expected that type received an incompatible object.
+
+* embeddings now use `CamelOpenAIEmbeddingsResponse` (`com.openai.models.embeddings.CreateEmbeddingResponse`).
+* audio transcription now uses `CamelOpenAIAudioTranscriptionResponse` (`com.openai.models.audio.transcriptions.TranscriptionCreateResponse`).
+* audio translation now uses `CamelOpenAIAudioTranslationResponse` (`com.openai.models.audio.translations.TranslationCreateResponse`).
+
+A route that reads the full embeddings or audio response from `CamelOpenAIResponse` must switch to the
+matching property. The chat-completion, responses, moderation and image operations are unchanged.

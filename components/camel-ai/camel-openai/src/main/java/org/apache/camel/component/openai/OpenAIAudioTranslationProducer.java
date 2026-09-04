@@ -90,7 +90,7 @@ public class OpenAIAudioTranslationProducer extends DefaultProducer {
         }
 
         if (config.isStoreFullResponse()) {
-            exchange.setProperty(OpenAIConstants.RESPONSE, response);
+            exchange.setProperty(OpenAIConstants.AUDIO_TRANSLATION_RESPONSE, response);
         }
     }
 }
