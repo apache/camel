@@ -92,6 +92,17 @@ public class FopProducer extends DefaultProducer {
         Fop fop = fopFactory.newFop(outputFormat, userAgent, out);
         TransformerFactory transformerFactory = TransformerFactory.newInstance();
         transformerFactory.setFeature(XMLConstants.FEATURE_SECURE_PROCESSING, Boolean.TRUE);
+        // align with Camel's standard secure XML processing: do not allow access to external DTD/stylesheet
+        try {
+            transformerFactory.setAttribute(XMLConstants.ACCESS_EXTERNAL_DTD, "");
+        } catch (Exception e) {
+            // ignore if the factory does not support the attribute
+        }
+        try {
+            transformerFactory.setAttribute(XMLConstants.ACCESS_EXTERNAL_STYLESHEET, "");
+        } catch (Exception e) {
+            // ignore if the factory does not support the attribute
+        }
         Transformer transformer = transformerFactory.newTransformer();
 
         Result res = new SAXResult(fop.getDefaultHandler());
