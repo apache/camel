@@ -271,8 +271,11 @@ public class SimpleMessageListenerContainer extends ServiceSupport
             endpoint.getCamelContext().getExecutorServiceManager().shutdown(recoverPool);
             recoverPool = null;
         }
-        if (recoverFuture != null && recoverTask != null && recoverTask.isRunning()) {
-            recoverFuture.cancel(true);
+        if (recoverTask != null && recoverTask.isRunning()) {
+            // cancelled through the task and not through its future, so the task also leaves the
+            // TaskManagerRegistry. Only a run of the task removes it from there, and once the schedule
+            // is cancelled no run is coming
+            recoverTask.cancel(true);
             recoverTask = null;
             recoverFuture = null;
         }
