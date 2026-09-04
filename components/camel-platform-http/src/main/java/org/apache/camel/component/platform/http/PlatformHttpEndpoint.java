@@ -104,6 +104,18 @@ public class PlatformHttpEndpoint extends DefaultEndpoint
               description = "Whether or not the consumer should try to find a target consumer "
                             + "by matching the URI prefix if no exact match is found.")
     private boolean matchOnUriPrefix;
+    @UriParam(label = "consumer", defaultValue = "false",
+              description = "Whether to strip the registered consumer path from CamelHttpPath after the request has been"
+                            + " matched, so the exchange sees the path relative to this consumer instead of the full raw"
+                            + " request path. Combined with the http producer's bridgeEndpoint option this allows building a"
+                            + " path-based reverse proxy without manual header manipulation, e.g. a route on"
+                            + " platform-http:/reverse-proxy with matchOnUriPrefix=true and stripUriPrefix=true bridged to"
+                            + " http://backend forwards /reverse-proxy/get to http://backend/get instead of"
+                            + " http://backend/reverse-proxy/get. CamelHttpUri and CamelHttpUrl are left untouched. The other"
+                            + " HTTP consumers (camel-servlet, camel-jetty, camel-netty-http, camel-undertow) already behave"
+                            + " this way by default; this option brings platform-http in line with them without changing its"
+                            + " default behavior.")
+    private boolean stripUriPrefix;
     @UriParam(label = "consumer", description = "A comma separated list of HTTP methods to serve, e.g. GET,POST ."
                                                 + " If no methods are specified, all methods will be served.")
     private String httpMethodRestrict;
@@ -269,6 +281,21 @@ public class PlatformHttpEndpoint extends DefaultEndpoint
 
     public void setMatchOnUriPrefix(boolean matchOnUriPrefix) {
         this.matchOnUriPrefix = matchOnUriPrefix;
+    }
+
+    public boolean isStripUriPrefix() {
+        return stripUriPrefix;
+    }
+
+    /**
+     * If the option is true, the registered consumer path is stripped from the CamelHttpPath header after the request
+     * has been matched, so the exchange sees the path relative to this consumer instead of the full raw request path.
+     * This is useful in reverse proxy applications built with the http producer's bridgeEndpoint option, where the
+     * downstream target should receive the path with this consumer's own prefix removed. CamelHttpUri and CamelHttpUrl
+     * are left untouched.
+     */
+    public void setStripUriPrefix(boolean stripUriPrefix) {
+        this.stripUriPrefix = stripUriPrefix;
     }
 
     public String getHttpMethodRestrict() {
