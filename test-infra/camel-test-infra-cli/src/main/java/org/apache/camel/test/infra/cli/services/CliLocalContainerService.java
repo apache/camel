@@ -48,7 +48,7 @@ public class CliLocalContainerService implements CliService, ContainerService<Cl
     public CliLocalContainerService() {
         this(new CliBuiltContainer.CliBuiltContainerParams()
                 .setCamelRepo(System.getProperty(CliProperties.REPO, "apache/camel"))
-                .setCamelRef(System.getProperty(CliProperties.BRANCH, "main"))
+                .setCamelRef(System.getProperty(CliProperties.BRANCH, "camel-4.22.x"))
                 .setCamelJBangVersion(System.getProperty(CliProperties.VERSION, "default"))
                 .setKeepContainerRunning(true)
                 .setDataFolder(System.getProperty(CliProperties.DATA_FOLDER))

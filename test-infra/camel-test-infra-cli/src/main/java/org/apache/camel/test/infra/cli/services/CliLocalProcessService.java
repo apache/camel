@@ -65,7 +65,7 @@ public class CliLocalProcessService implements CliService {
 
     public CliLocalProcessService() {
         this.repo = System.getProperty(CliProperties.REPO, "apache/camel");
-        this.branch = System.getProperty(CliProperties.BRANCH, "main");
+        this.branch = System.getProperty(CliProperties.BRANCH, "camel-4.22.x");
         this.jbangVersion = System.getProperty(CliProperties.VERSION, "default");
         this.forceToRunVersion = System.getProperty(CliProperties.FORCE_RUN_VERSION, "");
         this.mavenRepos = System.getProperty(CliProperties.MVN_REPOS);
