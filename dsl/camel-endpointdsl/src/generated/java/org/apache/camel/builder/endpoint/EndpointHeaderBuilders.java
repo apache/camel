@@ -2633,6 +2633,20 @@ public class EndpointHeaderBuilders {
         return LangChain4jEmbeddingStoreEndpointBuilderFactory.LangChain4jEmbeddingStoreHeaderNameBuilder.INSTANCE;
     }
     /**
+     * LangChain4j Ingest (camel-langchain4j-ingest)
+     * Ingest documents into a LangChain4j EmbeddingStore: split, embed and
+     * store the message body.
+     * 
+     * Category: ai
+     * Since: 4.23
+     * Maven coordinates: org.apache.camel:camel-langchain4j-ingest
+     * 
+     * @return the dsl builder for the headers' name.
+     */
+    public static LangChain4jIngestEndpointBuilderFactory.LangChain4jIngestHeaderNameBuilder langchain4jIngest() {
+        return LangChain4jIngestEndpointBuilderFactory.LangChain4jIngestHeaderNameBuilder.INSTANCE;
+    }
+    /**
      * Language (camel-language)
      * Execute scripts in any of the languages supported by Camel.
      * 

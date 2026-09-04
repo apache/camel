@@ -1,0 +1,1 @@
+../../../../../components/camel-ai/camel-langchain4j-ingest/src/main/docs/langchain4j-ingest-component.adoc
