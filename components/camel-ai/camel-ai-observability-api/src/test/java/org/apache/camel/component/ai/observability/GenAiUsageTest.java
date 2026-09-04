@@ -62,6 +62,14 @@ class GenAiUsageTest {
     }
 
     @Test
+    void shouldConvertNullIntegerFactoryArgumentsToNullLongFields() {
+        GenAiUsage usage = GenAiUsage.of((Integer) null, (Integer) null, null, "gpt-4o");
+
+        assertThat(usage.inputTokens()).isNull();
+        assertThat(usage.outputTokens()).isNull();
+    }
+
+    @Test
     void shouldStringifyNonStringFinishReason() {
         GenAiUsage usage = GenAiUsage.of(1L, 2L, FinishReason.STOP, "model");
 

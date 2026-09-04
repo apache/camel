@@ -99,6 +99,24 @@ class GenAiObservabilityTest extends ExchangeTestSupport {
     }
 
     @Test
+    void shouldSkipMicrometerTokenCountersWhenUsageIsNullOrZero() {
+        SimpleMeterRegistry registry = new SimpleMeterRegistry();
+        context.getRegistry().bind("metricsRegistry", registry);
+
+        Exchange exchange = new DefaultExchange(context);
+        GenAiObservation observation = GenAiObservability.start(exchange, GenAiObservationContext.builder()
+                .operationName(GenAiOperationName.CHAT)
+                .system("openai")
+                .requestModel("gpt-4o")
+                .componentScheme("openai")
+                .build());
+        observation.recordSuccess(GenAiUsage.of((Long) null, 0L, "stop", "gpt-4o"));
+        observation.close();
+
+        assertThat(registry.find(GenAiMetrics.CLIENT_TOKEN_USAGE).counter()).isNull();
+    }
+
+    @Test
     void shouldReturnNoopWhenDisabled() {
         Properties properties = new Properties();
         properties.setProperty(GenAiObservabilityProperties.ENABLED, "false");

@@ -156,8 +156,8 @@ public class OpenAIEmbeddingsProducer extends DefaultAsyncProducer {
         if (response != null) {
             message.setHeader(OpenAIConstants.EMBEDDING_RESPONSE_MODEL, response.model());
             if (response.usage() != null) {
-                message.setHeader(OpenAIConstants.PROMPT_TOKENS, (int) response.usage().promptTokens());
-                message.setHeader(OpenAIConstants.TOTAL_TOKENS, (int) response.usage().totalTokens());
+                message.setHeader(OpenAIConstants.PROMPT_TOKENS, response.usage().promptTokens());
+                message.setHeader(OpenAIConstants.TOTAL_TOKENS, response.usage().totalTokens());
             }
         }
         message.setHeader(OpenAIConstants.EMBEDDING_COUNT, embeddings.size());
