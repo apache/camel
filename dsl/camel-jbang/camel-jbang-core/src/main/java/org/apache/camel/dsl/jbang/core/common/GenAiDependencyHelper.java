@@ -21,6 +21,8 @@ import java.util.Properties;
 
 import org.apache.camel.catalog.CamelCatalog;
 import org.apache.camel.catalog.DefaultCamelCatalog;
+import org.apache.camel.tooling.maven.MavenGav;
+import org.apache.camel.tooling.model.ArtifactModel;
 import org.apache.camel.tooling.model.ComponentModel;
 
 /**
@@ -32,7 +34,10 @@ import org.apache.camel.tooling.model.ComponentModel;
  */
 public final class GenAiDependencyHelper {
 
-    public static final String AI_OBSERVABILITY_ENABLED = "camel.aiObservability.enabled";
+    static final String AI_OBSERVABILITY_ENABLED = "camel.aiObservability.enabled";
+
+    private static final String AI_OBSERVABILITY_ARTIFACT = "camel-ai-observability";
+    private static final String AI_OBSERVABILITY_SCHEME = "ai-observability";
 
     private GenAiDependencyHelper() {
     }
@@ -53,7 +58,10 @@ public final class GenAiDependencyHelper {
         if (!hasGenAiDependency(deps, catalog)) {
             return;
         }
-        if (catalog.otherModel("ai-observability") != null) {
+        if (alreadyHasAiObservability(deps)) {
+            return;
+        }
+        if (catalog.otherModel(AI_OBSERVABILITY_SCHEME) != null) {
             deps.add("camel:ai-observability");
         }
     }
@@ -71,7 +79,10 @@ public final class GenAiDependencyHelper {
             if (dep == null || dep.isBlank()) {
                 continue;
             }
-            if (isGenAiCamelComponent(dep, catalog)) {
+            if (isGenAiCamelScheme(dep, catalog)) {
+                return true;
+            }
+            if (isGenAiMavenArtifact(dep, catalog)) {
                 return true;
             }
             if (isLangChain4jProviderJar(dep)) {
@@ -81,36 +92,58 @@ public final class GenAiDependencyHelper {
         return false;
     }
 
-    private static boolean isGenAiCamelComponent(String dep, CamelCatalog catalog) {
-        if (dep.startsWith("camel:")) {
-            String scheme = dep.substring("camel:".length());
-            int query = scheme.indexOf('?');
-            if (query > 0) {
-                scheme = scheme.substring(0, query);
-            }
-            ComponentModel model = catalog.componentModel(scheme);
-            return model != null && isAiLabel(model.getLabel());
-        }
-        return dep.contains(":camel-") && isAiArtifactId(dep);
-    }
-
-    private static boolean isAiArtifactId(String dep) {
-        int idx = dep.indexOf(":camel-");
-        if (idx < 0) {
+    private static boolean isGenAiCamelScheme(String dep, CamelCatalog catalog) {
+        if (!dep.startsWith("camel:")) {
             return false;
         }
-        String artifact = dep.substring(idx + 1);
-        int colon = artifact.indexOf(':');
-        if (colon > 0) {
-            artifact = artifact.substring(0, colon);
+        String scheme = dep.substring("camel:".length());
+        int query = scheme.indexOf('?');
+        if (query > 0) {
+            scheme = scheme.substring(0, query);
         }
-        return artifact.startsWith("camel-langchain4j")
-                || artifact.startsWith("camel-openai")
-                || artifact.startsWith("camel-spring-ai")
-                || artifact.startsWith("camel-aws-bedrock")
-                || artifact.startsWith("camel-google-vertexai")
-                || artifact.startsWith("camel-ai-")
-                || artifact.contains("-ai-");
+        if (AI_OBSERVABILITY_SCHEME.equals(scheme)) {
+            return false;
+        }
+        ComponentModel model = catalog.componentModel(scheme);
+        return model != null && isAiLabel(model.getLabel());
+    }
+
+    private static boolean isGenAiMavenArtifact(String dep, CamelCatalog catalog) {
+        if (!dep.startsWith("mvn:")) {
+            return false;
+        }
+        try {
+            MavenGav gav = MavenGav.parseGav(dep.substring(4));
+            String artifactId = gav.getArtifactId();
+            if (artifactId == null || AI_OBSERVABILITY_ARTIFACT.equals(artifactId)) {
+                return false;
+            }
+            ArtifactModel<?> model = catalog.modelFromMavenGAV(gav.getGroupId(), artifactId, gav.getVersion());
+            return model != null && isAiLabel(model.getLabel());
+        } catch (Exception e) {
+            return false;
+        }
+    }
+
+    private static boolean alreadyHasAiObservability(Collection<String> deps) {
+        for (String dep : deps) {
+            if (dep == null || dep.isBlank()) {
+                continue;
+            }
+            if (dep.startsWith("camel:")) {
+                String scheme = dep.substring("camel:".length());
+                int query = scheme.indexOf('?');
+                if (query > 0) {
+                    scheme = scheme.substring(0, query);
+                }
+                if (AI_OBSERVABILITY_SCHEME.equals(scheme)) {
+                    return true;
+                }
+            } else if (dep.startsWith("mvn:") && dep.contains(":" + AI_OBSERVABILITY_ARTIFACT)) {
+                return true;
+            }
+        }
+        return false;
     }
 
     private static boolean isLangChain4jProviderJar(String dep) {

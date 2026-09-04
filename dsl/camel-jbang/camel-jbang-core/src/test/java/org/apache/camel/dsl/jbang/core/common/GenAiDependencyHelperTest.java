@@ -23,12 +23,9 @@ import java.util.Properties;
 
 import org.apache.camel.catalog.CamelCatalog;
 import org.apache.camel.catalog.DefaultCamelCatalog;
-import org.apache.camel.tooling.model.ComponentModel;
 import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
 
 class GenAiDependencyHelperTest {
 
@@ -83,16 +80,30 @@ class GenAiDependencyHelperTest {
 
     @Test
     void detectsGenAiComponentFromCatalogLabel() {
-        CamelCatalog mockCatalog = mock(CamelCatalog.class);
-        ComponentModel model = new ComponentModel();
-        model.setLabel("ai");
-        when(mockCatalog.componentModel("openai")).thenReturn(model);
-
-        assertThat(GenAiDependencyHelper.hasGenAiDependency(List.of("camel:openai"), mockCatalog)).isTrue();
+        assertThat(GenAiDependencyHelper.hasGenAiDependency(List.of("camel:openai"), catalog)).isTrue();
     }
 
     @Test
     void timerComponentIsNotGenAi() {
         assertThat(GenAiDependencyHelper.hasGenAiDependency(List.of("camel:timer"), catalog)).isFalse();
+    }
+
+    @Test
+    void explicitAiObservabilityMavenDepDoesNotCountAsGenAiRouteDependency() {
+        assertThat(GenAiDependencyHelper.hasGenAiDependency(
+                List.of("mvn:org.apache.camel:camel-ai-observability"), catalog)).isFalse();
+    }
+
+    @Test
+    void doesNotDuplicateAiObservabilityWhenExplicitlyProvided() {
+        List<String> deps = new ArrayList<>(
+                List.of(
+                        "camel:openai",
+                        "mvn:org.apache.camel:camel-ai-observability"));
+
+        GenAiDependencyHelper.addAiObservabilityIfNeeded(deps, new Properties(), true, catalog);
+
+        assertThat(deps).contains("mvn:org.apache.camel:camel-ai-observability");
+        assertThat(deps.stream().filter("camel:ai-observability"::equals)).hasSize(0);
     }
 }
