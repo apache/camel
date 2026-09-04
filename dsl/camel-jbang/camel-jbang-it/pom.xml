@@ -206,7 +206,7 @@
             <properties>
                 <cli.jbang.version>${project.version}</cli.jbang.version>
                 <cli.jbang.repo>apache/camel</cli.jbang.repo>
-                <cli.jbang.branch>main</cli.jbang.branch>
+                <cli.jbang.branch>camel-4.22.x</cli.jbang.branch>
                 <cli.jbang.docker.file />
                 <cli.service.command>camel</cli.service.command>
                 <export.runtime />
