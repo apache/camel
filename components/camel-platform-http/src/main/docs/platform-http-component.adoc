@@ -201,6 +201,34 @@ Platform HTTP component can act as a reverse proxy. In that case, some headers a
 
 At this moment, this feature is only supported for Quarkus implemented in `camel-platform-http-vertx` component.
 
+=== Forwarding requests under a path prefix (path-based reverse proxy)
+
+This is a different scenario from the `platform-http:proxy` forward proxy described above, which is a `Host` header
+based forward proxy and only supported in `camel-platform-http-vertx`. Here, the consumer is registered under an
+ordinary path, e.g. `/reverse-proxy`, and requests received under that path should be forwarded to a fixed backend
+with the prefix stripped, using the xref:components::http-component.adoc[http] producer's `bridgeEndpoint` option.
+
+Enable the consumer option `stripUriPrefix` so the matched consumer path is removed from `CamelHttpPath` before the
+route runs:
+
+[source,java]
+----
+from("platform-http:/reverse-proxy?matchOnUriPrefix=true&stripUriPrefix=true")
+    .to("http://backend?bridgeEndpoint=true");
+----
+
+|===
+| Incoming request | `CamelHttpPath` (`stripUriPrefix=false`, default) | `CamelHttpPath` (`stripUriPrefix=true`) | Forwarded to
+
+| `GET /reverse-proxy/get`
+| `/reverse-proxy/get`
+| `/get`
+| `http://backend/get`
+|===
+
+`CamelHttpUri`/`CamelHttpUrl` still hold the full original request, only `CamelHttpPath` is rewritten. This option is
+currently implemented in `camel-platform-http-vertx`.
+
 === File Attachments handling
 
 Since Apache Camel 4.10, multipart file uploads are easier and harmonized across all runtimes. When a single file is uploaded, the Apache Camel framework provides the following:
