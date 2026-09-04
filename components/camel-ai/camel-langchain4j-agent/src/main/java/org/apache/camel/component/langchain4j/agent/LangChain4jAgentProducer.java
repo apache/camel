@@ -164,6 +164,18 @@ public class LangChain4jAgentProducer extends DefaultProducer {
         String tags = endpoint.getConfiguration().getTags();
 
         Agent agent = agentFactory != null ? agentFactory.createAgent(exchange) : this.agent;
+        if (agent == null && agentFactory == null) {
+            // Support an agent configured on the endpoint after the route started, and give a clear error
+            // instead of an opaque NullPointerException when nothing resolves to an agent.
+            agent = endpoint.getConfiguration().getAgent();
+            if (agent == null) {
+                throw new IllegalArgumentException(
+                        "No agent could be resolved for endpoint " + endpoint.getEndpointUri()
+                                                   + ". Configure 'agent', 'agentConfiguration' or 'agentFactory', or bind a bean named '"
+                                                   + endpoint.getAgentId() + "' of type " + Agent.class.getName()
+                                                   + " in the registry.");
+            }
+        }
 
         AiAgentBody<?> aiAgentBody = exchange.getMessage().getMandatoryBody(AiAgentBody.class);
 
