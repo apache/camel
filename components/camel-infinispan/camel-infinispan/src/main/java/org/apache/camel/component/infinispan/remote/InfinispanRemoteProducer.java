@@ -17,13 +17,20 @@
 package org.apache.camel.component.infinispan.remote;
 
 import org.apache.camel.Message;
+import org.apache.camel.component.infinispan.InfinispanConstants;
 import org.apache.camel.component.infinispan.InfinispanEndpoint;
+import org.apache.camel.component.infinispan.InfinispanOperation;
 import org.apache.camel.component.infinispan.InfinispanProducer;
+import org.apache.camel.component.infinispan.InfinispanQueryBuilder;
 import org.apache.camel.spi.InvokeOnHeader;
 import org.infinispan.client.hotrod.RemoteCache;
 import org.infinispan.commons.api.query.Query;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class InfinispanRemoteProducer extends InfinispanProducer<InfinispanRemoteManager, InfinispanRemoteConfiguration> {
+
+    private static final Logger LOG = LoggerFactory.getLogger(InfinispanRemoteProducer.class);
 
     public InfinispanRemoteProducer(InfinispanEndpoint endpoint,
                                     String cacheName,
@@ -49,11 +56,26 @@ public class InfinispanRemoteProducer extends InfinispanProducer<InfinispanRemot
     @SuppressWarnings("unchecked")
     @InvokeOnHeader("QUERY")
     public void onQuery(Message message) {
-        final RemoteCache<Object, Object> cache = getManager().getCache(message, getCacheName(), RemoteCache.class);
-        final Query<?> query = InfinispanRemoteUtil.buildQuery(getConfiguration(), cache, message);
-
-        if (query != null) {
-            setResult(message, query.execute().list());
+        // resolved before the cache is opened, so a misconfigured route does not pay a remote call
+        final InfinispanQueryBuilder builder = InfinispanRemoteUtil.resolveQueryBuilder(getConfiguration(), message);
+        if (builder == null) {
+            warnNoQueryBuilder();
+            return;
         }
+
+        final RemoteCache<Object, Object> cache = getManager().getCache(message, getCacheName(), RemoteCache.class);
+        final Query<?> query = InfinispanRemoteUtil.buildQuery(builder, cache);
+        if (query == null) {
+            warnNoQueryBuilder();
+            return;
+        }
+
+        setResult(message, query.execute().list());
+    }
+
+    private void warnNoQueryBuilder() {
+        LOG.warn("No query to run for the {} operation on cache {}, the message is passed through unchanged."
+                 + " Set a query builder on the endpoint with the queryBuilder option, or per message with the {} header.",
+                InfinispanOperation.QUERY, getCacheName(), InfinispanConstants.QUERY_BUILDER);
     }
 }
