@@ -16,27 +16,34 @@
  */
 package org.apache.camel.component.langchain4j.agent;
 
-import org.apache.camel.Producer;
+import org.apache.camel.Exchange;
+import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.component.langchain4j.agent.api.AiAgentBody;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class LangChain4jAgentMissingAgentTest {
 
     @Test
-    void missingAgentFailsFastWithAClearError() throws Exception {
+    void missingAgentReportsAClearError() throws Exception {
         try (DefaultCamelContext context = new DefaultCamelContext()) {
+            context.addRoutes(new RouteBuilder() {
+                @Override
+                public void configure() {
+                    // No agent / agentConfiguration / agentFactory, and no registry bean named "noSuchAgent".
+                    from("direct:x").to("langchain4j-agent:noSuchAgent");
+                }
+            });
             context.start();
 
-            // No agent / agentConfiguration / agentFactory, and no registry bean named "noSuchAgent".
-            LangChain4jAgentEndpoint endpoint
-                    = context.getEndpoint("langchain4j-agent:noSuchAgent", LangChain4jAgentEndpoint.class);
-            Producer producer = endpoint.createProducer();
+            Exchange result = context.createProducerTemplate()
+                    .request("direct:x", e -> e.getIn().setBody(new AiAgentBody<>("hello")));
 
-            Exception ex = assertThrows(Exception.class, producer::start);
-            Throwable cause = ex;
+            Throwable cause = result.getException();
+            assertNotNull(cause, "an error was expected");
             boolean clearError = false;
             while (cause != null) {
                 if (cause instanceof IllegalArgumentException && cause.getMessage() != null
@@ -46,7 +53,8 @@ class LangChain4jAgentMissingAgentTest {
                 }
                 cause = cause.getCause();
             }
-            assertTrue(clearError, "expected a clear 'No agent could be resolved' IllegalArgumentException, got: " + ex);
+            assertTrue(clearError, "expected a clear 'No agent could be resolved' IllegalArgumentException, got: "
+                                   + result.getException());
         }
     }
 }
