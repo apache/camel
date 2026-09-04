@@ -680,8 +680,8 @@ public class OpenAIProducer extends DefaultAsyncProducer {
                 CompletionUsage usage = usageRef.get();
                 String responseModel = responseModelRef.get() != null ? responseModelRef.get() : requestModel;
                 observation.recordSuccess(GenAiUsage.of(
-                        usage != null ? toTokenCount(usage.promptTokens()) : null,
-                        usage != null ? toTokenCount(usage.completionTokens()) : null,
+                        usage != null ? usage.promptTokens() : null,
+                        usage != null ? usage.completionTokens() : null,
                         null,
                         responseModel));
                 observation.close();
@@ -731,10 +731,6 @@ public class OpenAIProducer extends DefaultAsyncProducer {
                 .orElse("stop");
     }
 
-    private static Integer toTokenCount(long tokens) {
-        return Math.toIntExact(tokens);
-    }
-
     private ChatCompletion createChatCompletion(Exchange exchange, ChatCompletionCreateParams params) {
         String requestModel = params.model().toString();
         GenAiObservationContext observationContext = GenAiObservationContext.builder()
@@ -748,8 +744,8 @@ public class OpenAIProducer extends DefaultAsyncProducer {
             ChatCompletion response = getEndpoint().getClient().chat().completions().create(params);
             CompletionUsage usage = response.usage().orElse(null);
             observation.recordSuccess(GenAiUsage.of(
-                    usage != null ? toTokenCount(usage.promptTokens()) : null,
-                    usage != null ? toTokenCount(usage.completionTokens()) : null,
+                    usage != null ? usage.promptTokens() : null,
+                    usage != null ? usage.completionTokens() : null,
                     response.choices().isEmpty() ? null : getFinishReasonString(response.choices().get(0)),
                     response.model()));
             return response;

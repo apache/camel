@@ -71,6 +71,34 @@ class GenAiObservabilityTest extends ExchangeTestSupport {
     }
 
     @Test
+    void shouldRecordLargeTokenCountsInMicrometerMetrics() {
+        long largeInput = Integer.MAX_VALUE + 1024L;
+        long largeOutput = Integer.MAX_VALUE + 2048L;
+
+        SimpleMeterRegistry registry = new SimpleMeterRegistry();
+        context.getRegistry().bind("metricsRegistry", registry);
+
+        Exchange exchange = new DefaultExchange(context);
+        GenAiObservation observation = GenAiObservability.start(exchange, GenAiObservationContext.builder()
+                .operationName(GenAiOperationName.CHAT)
+                .system("openai")
+                .requestModel("gpt-4.1")
+                .componentScheme("openai")
+                .build());
+        observation.recordSuccess(GenAiUsage.of(largeInput, largeOutput, "stop", "gpt-4.1"));
+        observation.close();
+
+        assertThat(registry.find(GenAiMetrics.CLIENT_TOKEN_USAGE)
+                .tag(GenAiMetrics.TAG_TOKEN_TYPE, GenAiMetrics.TOKEN_TYPE_INPUT)
+                .counter()
+                .count()).isEqualTo((double) largeInput);
+        assertThat(registry.find(GenAiMetrics.CLIENT_TOKEN_USAGE)
+                .tag(GenAiMetrics.TAG_TOKEN_TYPE, GenAiMetrics.TOKEN_TYPE_OUTPUT)
+                .counter()
+                .count()).isEqualTo((double) largeOutput);
+    }
+
+    @Test
     void shouldReturnNoopWhenDisabled() {
         Properties properties = new Properties();
         properties.setProperty(GenAiObservabilityProperties.ENABLED, "false");
