@@ -62,8 +62,10 @@ public class InfinispanEmbeddedConsumer
 
     @Override
     protected void doStop() throws Exception {
-        super.doStop();
+        // the listener has to go before the consumer is stopped, or an event arriving in between is
+        // processed against a consumer that is already down
         ServiceHelper.stopService(handler);
+        super.doStop();
     }
 
     // *********************************

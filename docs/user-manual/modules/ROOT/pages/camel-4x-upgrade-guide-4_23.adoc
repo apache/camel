@@ -1664,3 +1664,14 @@ share the same path with different HTTP methods without overwriting each other i
   `equals`/`hashCode` implementation.
 
 Stopping one `platform-http` route on a shared path no longer unregisters sibling consumers on that path.
+
+=== camel-infinispan
+
+The `CamelInfinispanOperationResult` header is deprecated. It has not been set or read by the component
+since the remote and embedded components were split, so a route reading it received nothing. Use
+`CamelInfinispanOperationResultHeader` to name the header that carries the result of an operation; without
+it the result is placed in the message body, as before.
+
+The `CamelInfinispanIgnoreReturnValues` header is now documented as a producer header rather than a consumer
+one. It has always been read on the producer path, so only its group in the catalog and in the documentation
+changes.
