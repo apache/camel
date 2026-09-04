@@ -1244,6 +1244,18 @@ public class CamelCatalogTest {
     }
 
     @Test
+    public void testValidateSimpleJSonPathFunction() {
+        // CAMEL-24585: a simple expression that delegates to the jsonpath language must validate
+        // even though the tooling uses a bare CamelContext without a type converter
+        LanguageValidationResult result = catalog.validateLanguageExpression(null, "simple", "${jsonpath($.foo)}");
+        assertTrue(result.isSuccess());
+        assertEquals("${jsonpath($.foo)}", result.getText());
+
+        result = catalog.validateLanguagePredicate(null, "simple", "${jsonpath($.store.book[?(@.price < 10)])} != null");
+        assertTrue(result.isSuccess());
+    }
+
+    @Test
     public void testValidateJQLanguage() {
         LanguageValidationResult result = catalog.validateLanguagePredicate(null, "jq", ".foo == \"bar\"");
         assertTrue(result.isSuccess());

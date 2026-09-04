@@ -145,7 +145,7 @@ class KeyValueIdempotentRepositoryTest {
     @Test
     void testClearDoesNotAffectOtherPrefixes() {
         // Simulate another adapter storing entries under a different prefix
-        kvRepository.put("aggregate:order-1", "exchange-holder", 0);
+        kvRepository.put("aggregate:order-1", "exchange-holder");
 
         // Add idempotent entries and clear them
         idempotentRepository.add("msg-001");
@@ -166,7 +166,7 @@ class KeyValueIdempotentRepositoryTest {
         idempotentRepository.add("order-1");
 
         // A different adapter storing under its own prefix should not collide
-        kvRepository.put("aggregate:order-1", "exchange-data", 0);
+        kvRepository.put("aggregate:order-1", "exchange-data");
 
         // The idempotent entry should still resolve correctly
         assertThat(idempotentRepository.contains("order-1")).isTrue();

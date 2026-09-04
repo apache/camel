@@ -79,7 +79,8 @@ class UpdateRowTest extends CamelTestSupport {
         mock.assertIsSatisfied();
 
         Exchange exchange = mock.getExchanges().get(0);
-        assertThat(exchange.getMessage().getBody(Map.class))
+        Map<String, Object> body = exchange.getMessage().getBody(Map.class);
+        assertThat(body)
                 .containsEntry("requestId", "req-update-row")
                 .containsKey("consumedCapacity");
 

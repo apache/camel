@@ -24,6 +24,7 @@ import java.util.concurrent.Future;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.BooleanSupplier;
 
 import org.apache.camel.CamelContext;
@@ -81,6 +82,8 @@ public class BackgroundTask extends AbstractTask implements BlockingTask {
     private Duration elapsed = Duration.ZERO;
     private final AtomicBoolean running = new AtomicBoolean();
     private final AtomicBoolean completed = new AtomicBoolean();
+    // only set when scheduled via schedule(), run() cancels the future it owns itself
+    private final AtomicReference<Future<?>> scheduledFuture = new AtomicReference<>();
     private volatile boolean registeredByRun;
     private volatile boolean attempting;
 
@@ -93,6 +96,8 @@ public class BackgroundTask extends AbstractTask implements BlockingTask {
     private void runTaskWrapper(CamelContext camelContext, BooleanSupplier supplier) {
         LOG.trace("Current latch value: {}", latch.getCount());
         if (latch.getCount() == 0) {
+            // the task is done and every further run is a no-op, so stop being rescheduled
+            unschedule();
             return;
         }
 
@@ -111,6 +116,7 @@ public class BackgroundTask extends AbstractTask implements BlockingTask {
                 registry.removeTask(this);
             }
             latch.countDown();
+            unschedule();
             return;
         }
 
@@ -126,6 +132,7 @@ public class BackgroundTask extends AbstractTask implements BlockingTask {
                     registry.removeTask(this);
                 }
                 latch.countDown();
+                unschedule();
                 LOG.trace("Task {} succeeded and the current task is unscheduled: {}", getName(), latch.getCount());
             }
         } catch (Exception e) {
@@ -154,8 +161,25 @@ public class BackgroundTask extends AbstractTask implements BlockingTask {
      */
     public Future<?> schedule(CamelContext camelContext, BooleanSupplier supplier) {
         running.set(true);
-        return service.scheduleWithFixedDelay(() -> runTaskWrapper(camelContext, supplier), budget.initialDelay(),
-                budget.interval(), TimeUnit.MILLISECONDS);
+        Future<?> future = service.scheduleWithFixedDelay(() -> runTaskWrapper(camelContext, supplier),
+                budget.initialDelay(), budget.interval(), TimeUnit.MILLISECONDS);
+        scheduledFuture.set(future);
+        if (latch.getCount() == 0) {
+            // the task already finished before the future was published, so it could not unschedule itself
+            unschedule();
+        }
+        return future;
+    }
+
+    /**
+     * Cancels the repeating schedule created by {@link #schedule(CamelContext, BooleanSupplier)}, so a task that has
+     * nothing left to do does not keep occupying the scheduler for the lifetime of its executor.
+     */
+    private void unschedule() {
+        Future<?> future = scheduledFuture.getAndSet(null);
+        if (future != null) {
+            future.cancel(false);
+        }
     }
 
     @Override

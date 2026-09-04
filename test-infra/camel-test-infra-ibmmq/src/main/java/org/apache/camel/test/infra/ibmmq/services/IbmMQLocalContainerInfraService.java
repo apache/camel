@@ -108,7 +108,7 @@ public class IbmMQLocalContainerInfraService implements IbmMQInfraService, Conta
 
     private void waitForJmsConnection() {
         Awaitility.await("IBM MQ accepting JMS connections")
-                .atMost(30, TimeUnit.SECONDS)
+                .atMost(60, TimeUnit.SECONDS)
                 .pollInterval(1, TimeUnit.SECONDS)
                 .ignoreExceptionsInstanceOf(JMSException.class)
                 .until(() -> {

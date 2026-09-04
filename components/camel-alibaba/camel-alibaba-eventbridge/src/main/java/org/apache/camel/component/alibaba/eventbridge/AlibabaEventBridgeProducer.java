@@ -41,7 +41,7 @@ public class AlibabaEventBridgeProducer extends DefaultProducer {
         AlibabaEventBridgeEndpoint endpoint = getEndpoint();
         ClientConfigurations configuration = AlibabaEventBridgeUtils.createClientConfigurations(endpoint, exchange);
 
-        if (ObjectHelper.isEmpty(configuration.getOperation())) {
+        if (ObjectHelper.isEmpty(configuration.operation())) {
             throw new IllegalArgumentException("Operation name not found");
         }
 
@@ -49,14 +49,16 @@ public class AlibabaEventBridgeProducer extends DefaultProducer {
             eventBridgeClient = endpoint.initClient();
         }
 
-        switch (configuration.getOperation()) {
+        switch (configuration.operation()) {
             case AlibabaEventBridgeOperations.PUT_EVENTS -> putEvents(exchange, configuration);
-            default -> throw new UnsupportedOperationException("Unsupported operation: " + configuration.getOperation());
+            default -> throw new UnsupportedOperationException("Unsupported operation: " + configuration.operation());
         }
     }
 
     private void putEvents(Exchange exchange, ClientConfigurations configuration) {
-        List<CloudEvent> events = AlibabaEventBridgeUtils.resolveCloudEvents(exchange, configuration);
+        AlibabaEventBridgeEndpoint endpoint = getEndpoint();
+        List<CloudEvent> events = AlibabaEventBridgeUtils.resolveCloudEvents(
+                exchange, configuration, endpoint.getEventSourceCache(), eventBridgeClient);
         if (events.isEmpty()) {
             throw new IllegalArgumentException("At least one event is required for putEvents");
         }

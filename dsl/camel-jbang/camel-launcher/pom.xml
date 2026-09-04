@@ -61,7 +61,7 @@
         <commons-codec-version>1.22.1</commons-codec-version>
         <jcl-over-slf4j-version>${slf4j-version}</jcl-over-slf4j-version>
         <commonmark-version>0.30.0</commonmark-version>
-        <jreleaser-plugin-version>1.25.0</jreleaser-plugin-version>
+        <jreleaser-plugin-version>1.26.0</jreleaser-plugin-version>
     </properties>
 
     <dependencyManagement>

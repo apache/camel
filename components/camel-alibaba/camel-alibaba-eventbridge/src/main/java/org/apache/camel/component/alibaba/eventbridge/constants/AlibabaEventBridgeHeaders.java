@@ -32,6 +32,27 @@ public sealed class AlibabaEventBridgeHeaders permits AlibabaEventBridgeProperti
     @Metadata(label = "producer", description = "Event subject override", javaType = "String")
     public static final String EVENT_SUBJECT = "CamelAlibabaEventBridgeEventSubject";
 
+    @Metadata(label = "producer", description = "Validate event source against Alibaba Cloud EventBridge",
+              javaType = "Boolean")
+    public static final String VALIDATE_EVENT_SOURCE = "CamelAlibabaEventBridgeValidateEventSource";
+
+    @Metadata(label = "producer", description = "Validate event type against Alibaba Cloud EventBridge rule filter patterns",
+              javaType = "Boolean")
+    public static final String VALIDATE_EVENT_TYPE = "CamelAlibabaEventBridgeValidateEventType";
+
+    @Metadata(label = "producer", description = "Validate CloudEvents 1.0 specification constraints on map fields",
+              javaType = "Boolean")
+    public static final String VALIDATE_EVENT_SPEC = "CamelAlibabaEventBridgeValidateEventSpec";
+
+    @Metadata(label = "producer",
+              description = "Allowed event sources and source-scoped event types per event bus (DSL string, JSON, Map, or List)",
+              javaType = "Object")
+    public static final String ALLOWED_EVENT_SOURCES = "CamelAlibabaEventBridgeAllowedEventSources";
+
+    @Metadata(label = "producer", description = "TTL in milliseconds for cached bus event sources and types",
+              javaType = "Long")
+    public static final String EVENT_SOURCE_CACHE_TTL = "CamelAlibabaEventBridgeEventSourceCacheTtl";
+
     @Metadata(label = "producer", description = "Alibaba Cloud request id", javaType = "String")
     public static final String REQUEST_ID = "CamelAlibabaEventBridgeRequestId";
 

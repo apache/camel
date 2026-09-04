@@ -43,46 +43,27 @@ public final class OSSUtils {
     }
 
     public static ClientConfigurations createClientConfigurations(OSSEndpoint endpoint, Exchange exchange) {
-        ClientConfigurations clientConfigurations = new ClientConfigurations();
-
         String operation = resolveString(exchange, OSSProperties.OPERATION, endpoint.getOperation());
         if (ObjectHelper.isEmpty(operation)) {
             LOG.error("No operation name given. Cannot proceed with OSS operations.");
             throw new IllegalArgumentException("Operation name not found");
         }
-        clientConfigurations.setOperation(operation);
 
         String bucketName = resolveString(exchange, OSSProperties.BUCKET_NAME, endpoint.getBucketName());
-        if (ObjectHelper.isNotEmpty(bucketName)) {
-            clientConfigurations.setBucketName(bucketName);
-        }
-
         String objectName = resolveString(exchange, OSSProperties.OBJECT_NAME, endpoint.getObjectName());
-        if (ObjectHelper.isNotEmpty(objectName)) {
-            clientConfigurations.setObjectName(objectName);
-        }
-
         String sourceBucketName = resolveString(exchange, OSSProperties.SOURCE_BUCKET_NAME, null);
-        if (ObjectHelper.isNotEmpty(sourceBucketName)) {
-            clientConfigurations.setSourceBucketName(sourceBucketName);
-        }
-
         String sourceObjectName = resolveString(exchange, OSSProperties.SOURCE_OBJECT_NAME, null);
-        if (ObjectHelper.isNotEmpty(sourceObjectName)) {
-            clientConfigurations.setSourceObjectName(sourceObjectName);
-        }
-
         String prefix = resolveString(exchange, OSSProperties.PREFIX, endpoint.getPrefix());
-        if (ObjectHelper.isNotEmpty(prefix)) {
-            clientConfigurations.setPrefix(prefix);
-        }
-
         Integer maxKeys = resolveInteger(exchange, OSSProperties.MAX_KEYS, endpoint.getMaxKeys());
-        if (maxKeys != null) {
-            clientConfigurations.setMaxKeys(maxKeys);
-        }
 
-        return clientConfigurations;
+        return new ClientConfigurations(
+                operation,
+                bucketName,
+                objectName,
+                sourceBucketName,
+                sourceObjectName,
+                prefix,
+                maxKeys);
     }
 
     private static String resolveString(Exchange exchange, String name, String endpointValue) {

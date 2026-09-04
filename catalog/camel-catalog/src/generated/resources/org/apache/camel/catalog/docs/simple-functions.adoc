@@ -578,6 +578,15 @@ The `substring`, `substringBefore`, and `substringAfter` functions are all simil
 Suppose the message body contains `ABCDEFGHIJK` then `${substring(3)}` returns `DEFGHIJK`, and `${substring(-3)}` returns `ABCDEFGH`.
 If you want to clip the first and last character you can use `${substring(1,-1)}` returning `BCDEFGHIJ`.
 
+[NOTE]
+====
+These `substring` functions are Camel functions with their own semantics (such as negative numbers clipping
+from the end). They are *not* the same as calling Java's `java.lang.String.substring` via
+xref:simple-ognl.adoc[OGNL]. For example `${substring(-3)}` (function) clips the last three characters,
+whereas `${body.substring(-3)}` (OGNL) invokes `String.substring(-3)` directly and throws
+`StringIndexOutOfBoundsException`.
+====
+
 Now suppose the message body contains `Hello great big World how are you`.
 
 Then `${substringBefore('World')}` return `"Hello great big "`.

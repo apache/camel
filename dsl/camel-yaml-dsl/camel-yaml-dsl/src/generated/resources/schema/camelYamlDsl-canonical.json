@@ -19,6 +19,9 @@
           "bean" : {
             "$ref" : "#/items/definitions/org.apache.camel.model.BeanDefinition"
           },
+          "cache" : {
+            "$ref" : "#/items/definitions/org.apache.camel.model.CacheDefinition"
+          },
           "doCatch" : {
             "$ref" : "#/items/definitions/org.apache.camel.model.CatchDefinition"
           },
@@ -683,6 +686,63 @@
           }
         },
         "required" : [ "name", "type" ]
+      },
+      "org.apache.camel.model.CacheDefinition" : {
+        "title" : "Cache",
+        "description" : "Caches the result of the nested processing steps. On cache hit, skips the block and sets the body from cache. On cache miss, executes the block and caches the result body.",
+        "type" : "object",
+        "additionalProperties" : false,
+        "properties" : {
+          "cacheNull" : {
+            "type" : "boolean",
+            "title" : "Cache Null",
+            "description" : "Whether to cache null results. By default, null message bodies are not cached.",
+            "default" : false
+          },
+          "description" : {
+            "type" : "string",
+            "title" : "Description",
+            "description" : "The description for this node"
+          },
+          "disabled" : {
+            "type" : "boolean",
+            "title" : "Disabled",
+            "description" : "Whether to disable this EIP from the route during build time. Once an EIP has been disabled then it cannot be enabled later at runtime.",
+            "default" : false
+          },
+          "expression" : {
+            "title" : "Expression",
+            "description" : "Expression to compute the cache key. Messages with the same key share the cached result.",
+            "$ref" : "#/items/definitions/org.apache.camel.model.language.ExpressionDefinition"
+          },
+          "id" : {
+            "type" : "string",
+            "title" : "Id",
+            "description" : "The id of this node"
+          },
+          "keyValueRepository" : {
+            "type" : "string",
+            "title" : "Key Value Repository",
+            "description" : "Sets the reference name of the KeyValueRepository to use as the cache backing store. If not set, a MemoryKeyValueRepository is auto-created."
+          },
+          "note" : {
+            "type" : "string",
+            "title" : "Note",
+            "description" : "The note for this node"
+          },
+          "steps" : {
+            "type" : "array",
+            "items" : {
+              "$ref" : "#/items/definitions/org.apache.camel.model.ProcessorDefinition"
+            }
+          },
+          "ttl" : {
+            "type" : "string",
+            "title" : "Ttl",
+            "description" : "Sets the time-to-live for cached entries. Supports duration syntax (e.g. 10m, 1h) or milliseconds. Default: -1 (no expiration).",
+            "default" : "-1"
+          }
+        }
       },
       "org.apache.camel.model.CatchDefinition" : {
         "title" : "Do Catch",
@@ -6303,6 +6363,11 @@
             "type" : "string",
             "title" : "Schema Resolver",
             "description" : "Optional schema resolver used to lookup schemas for the data in transit."
+          },
+          "serializablePackages" : {
+            "type" : "string",
+            "title" : "Serializable Packages",
+            "description" : "Comma-separated list of additional packages that contain trusted Avro model classes. Avro 1.12 validates classes resolved from schemas; Camel automatically trusts packages derived from the configured schema or instance class."
           },
           "timezone" : {
             "type" : "string",

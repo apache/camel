@@ -89,6 +89,7 @@
 ** xref:injector.adoc[Injector]
 ** xref:components:eips:intercept.adoc[Intercept]
 ** xref:jmx.adoc[JMX]
+** xref:key-value-repository.adoc[KeyValueRepository]
 ** xref:lifecycle.adoc[Camel Lifecycle]
 ** xref:message-size.adoc[Message Size]
 ** xref:oncompletion.adoc[OnCompletion]

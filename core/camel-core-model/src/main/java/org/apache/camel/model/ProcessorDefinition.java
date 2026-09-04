@@ -1406,6 +1406,37 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
     }
 
     /**
+     * Creates a Cache EIP that caches the result of the nested processing steps.
+     * <p/>
+     * The cache key is computed from the given expression. On cache hit, the cached value is set as the message body
+     * and the nested steps are skipped. On cache miss, the nested steps execute and the result is cached.
+     *
+     * @return the clause to set the cache key expression
+     * @since  4.23
+     */
+    public ExpressionClause<CacheDefinition> cache() {
+        CacheDefinition answer = new CacheDefinition();
+        addOutput(answer);
+        return createAndSetExpression(answer);
+    }
+
+    /**
+     * Creates a Cache EIP that caches the result of the nested processing steps.
+     * <p/>
+     * The cache key is computed from the given expression. On cache hit, the cached value is set as the message body
+     * and the nested steps are skipped. On cache miss, the nested steps execute and the result is cached.
+     *
+     * @param  cacheKeyExpression expression to compute the cache key
+     * @return                    the builder
+     * @since                     4.23
+     */
+    public CacheDefinition cache(Expression cacheKeyExpression) {
+        CacheDefinition answer = new CacheDefinition(cacheKeyExpression);
+        addOutput(answer);
+        return answer;
+    }
+
+    /**
      * Creates a Circuit Breaker EIP.
      * <p/>
      * This requires having an implementation on the classpath such as camel-microprofile-fault-tolerance.

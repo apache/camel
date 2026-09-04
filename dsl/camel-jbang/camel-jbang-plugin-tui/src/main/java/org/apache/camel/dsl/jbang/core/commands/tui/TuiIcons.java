@@ -51,6 +51,16 @@ final class TuiIcons {
     static final String DOCUMENT = "📄";
     static final String README = "📖";
 
+    // ---- File actions ----
+    static final String NEW_FILE = "📄";
+    static final String NEW_FOLDER = "📁";
+    // memo (📝) reads as "edit"; the letters glyph reads as changing the name
+    static final String RENAME = "🔤";
+    static final String DUPLICATE = "📑";
+    // NOTE: the wastebasket emoji (🗑) is width-ambiguous and TamboUI does not align it correctly yet, so use the
+    // cross-mark instead until that is fixed upstream.
+    static final String DELETE = "❌";
+
     // ---- Actions menu ----
     static final String GO_TO = "🔍";
     static final String MESSAGE = "📩";

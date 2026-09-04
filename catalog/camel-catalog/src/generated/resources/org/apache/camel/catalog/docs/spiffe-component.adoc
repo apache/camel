@@ -86,4 +86,34 @@ from("direct:start")
     .to("http://backend.example.org/api");
 ------------------------------------------------------------
 
+== Mutual TLS with SPIFFE (SSLContextParameters)
+
+For X.509-based zero-trust mTLS, the component provides
+`org.apache.camel.component.spiffe.SpiffeSSLContextParameters`, an `SSLContextParameters` whose `SSLContext` is
+backed by the SPIFFE Workload API. The X.509-SVID and trust bundles are fetched live and rotated automatically,
+so any Camel component that accepts an `sslContextParameters` reference (camel-http, camel-netty-http,
+camel-jetty, camel-vertx-http, ...) can obtain SPIFFE mTLS.
+
+Peer authentication must be constrained explicitly: set `acceptedSpiffeIds` to an allow-list of peer SPIFFE IDs,
+or `acceptAnySpiffeId=true` to accept any SVID that validates against the trust bundle. The two are mutually
+exclusive, and setting neither fails closed.
+
+Because it extends `SSLContextParameters`, the inherited configuration is still honoured: set
+`serverParameters.clientAuthentication` (for a server that must require client certificates), `cipherSuites` and
+`secureSocketProtocols` as usual, and the base handshake protocol comes from `secureSocketProtocol` (default
+`TLSv1.3`). The underlying `X509Source` is created lazily (bounded by `initTimeout`, default 30s), closed on
+`CamelContext` shutdown, and the cached context is invalidated at the same time so a restarted context rebuilds a
+fresh source.
+
+[source,java]
+------------------------------------------------------------
+SpiffeSSLContextParameters ssl = new SpiffeSSLContextParameters();
+// ssl.setSpiffeSocketPath("unix:///tmp/spire-agent/public/api.sock"); // or SPIFFE_ENDPOINT_SOCKET
+ssl.setAcceptedSpiffeIds("spiffe://example.org/backend");
+getCamelContext().getRegistry().bind("spiffeSsl", ssl);
+
+from("direct:start")
+    .to("https://backend.example.org/api?sslContextParameters=#spiffeSsl");
+------------------------------------------------------------
+
 include::spring-boot:partial$starter.adoc[]

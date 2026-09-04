@@ -13,6 +13,85 @@ See the xref:camel-upgrade-recipes-tool.adoc[documentation] page for details.
 
 == Upgrading Camel 4.22 to 4.23
 
+=== Apache Avro trusted packages
+
+Camel now uses Apache Avro 1.12.2. Avro validates classes resolved from schemas
+and no longer trusts application packages by default. The `camel-avro` data format
+and `camel-avro-rpc` component automatically trust the Avro IPC packages and packages
+derived from the configured schema or protocol. For any additional model packages,
+use the `serializablePackages` option on the endpoint or data format, or configure
+the `org.apache.avro.SERIALIZABLE_PACKAGES` JVM system property with the
+comma-separated packages that contain only your trusted Avro model classes.
+
+For example, if generated records are in `com.example.orders.avro`, add the
+following JVM option when not using Camel's automatic package detection:
+
+[source]
+----
+-Dorg.apache.avro.SERIALIZABLE_PACKAGES=com.example.orders.avro
+----
+
+Alternatively, configure the endpoint or data format:
+
+[source]
+----
+avro:netty:localhost:8080?protocolClassName=com.example.orders.avro.OrderProtocol&serializablePackages=com.example.orders.avro
+----
+
+[source]
+----
+from("kafka:orders")
+    .marshal().avro(AvroLibrary.ApacheAvro, Value.getClassSchema())
+    .to("kafka:orders-avro");
+----
+
+For additional packages not inferred from the schema, configure the data format in Java:
+
+[source,java]
+----
+AvroDataFormat avro = new AvroDataFormat(Value.getClassSchema());
+avro.setSerializablePackages("com.example.orders.avro");
+----
+
+If you use `camel-avro-rpc`, Camel automatically trusts `org.apache.avro`, which contains the
+Avro IPC handshake classes. You only need `serializablePackages` or the JVM property for
+packages not inferred from the configured protocol.
+
+Do not use `*`, as it disables Avro's class-loading protection.
+
+=== camel-dynamic-router
+
+The `dynamic-router-control` endpoint no longer takes the subscription `predicate`, or the
+`expressionLanguage` used to compile it, from the incoming control message. A control message that
+supplies either is now rejected with an `IllegalArgumentException`.
+
+The predicate is compiled and then evaluated against every exchange on the channel, so letting the
+control message choose both the language and the expression means the sender of that message decides
+what runs inside the Camel process. Only enable this when control messages can only come from a
+trusted source:
+
+[source,java]
+----
+from("kafka:subscriptions")
+    .unmarshal().json(DynamicRouterControlMessage.class)
+    .to("dynamic-router-control:subscribe?allowPredicateFromMessage=true");
+----
+
+The option is annotated `security = "insecure:dev"`, so with `camel.main.profile = prod` the default
+policy for that category is `fail`, and an endpoint that sets `allowPredicateFromMessage=true` will
+not start unless you relax `camel.security.insecureDevPolicy`.
+
+Two alternatives avoid the flag entirely. A control message may still name a `predicateBean`, which
+selects a `Predicate` that the route author bound in the registry; that path is unchanged. The
+control endpoint may also carry `predicate` and `expressionLanguage` as URI parameters, in which case
+every subscription made through that endpoint uses the route author's expression. Subscription
+parameters that the control message does not carry now fall back to the values configured on the
+endpoint.
+
+The `dynamic-router` endpoint gained an `allowedSchemes` option, an optional comma-separated
+allow-list of component schemes that a subscription destination may resolve to. It is unset by
+default, which allows any scheme, matching the previous behaviour.
+
 === camel-exec
 
 `allowControlHeaders` is now annotated `security = "insecure:dev"`.
@@ -357,6 +436,9 @@ the registry has tracing and meter handlers respectively. Token usage counters s
 `MeterRegistry`. Applications without an `ObservationRegistry` bean keep the previous OpenTelemetry
 and MeterRegistry behavior. `camel-micrometer-observability` is not required.
 
+`GenAiUsage` token fields (`inputTokens`, `outputTokens`) are `Long` so OpenAI and other providers
+that report `long` token counts are recorded without lossy casts.
+
 OpenAI streaming chat sets `stream_options.include_usage=true` only when GenAI observability is enabled,
 adding a final chunk with token usage for span/metric recording.
 
@@ -590,6 +672,29 @@ Camel then no longer controls how the payload is read.
 
 The legacy `sse` `transportType` has been removed. It follows the support removal in 
 https://github.com/langchain4j/langchain4j/commit/7f4e99fd637137ab9d3bf116eb62047ac757a818[langchain4j-core 1.19.0].
+
+=== camel-langchain4j-embeddings
+
+The `langchain4j-embeddings` component now supports **batch embedding**. When the message body is a `List`
+(of `String` or `TextSegment`), the producer calls `model.embedAll()` instead of `model.embed()`.
+The resulting `List<Embedding>` is set in the `CamelLangChain4jEmbeddingsEmbeddings` header, and the
+original text segments are preserved in the `CamelLangChain4jEmbeddingsTextSegments` header for downstream
+use by the embedding store component.
+
+=== camel-langchain4j-embeddingstore
+
+The ADD operation now supports **batch operations** (via `addAll`) and **caller-supplied IDs**.
+When the `CamelLangChain4jEmbeddingsEmbeddings` header is present with a `List<Embedding>`,
+the component uses batch operations. Caller-supplied IDs are provided via the
+`CamelLangchain4jEmbeddingStoreEmbeddingId` (single) or `CamelLangchain4jEmbeddingStoreEmbeddingIds`
+(batch) headers.
+
+The REMOVE operation now supports **batch removal by collection of IDs** (pass a `Collection<String>`
+as the body) and **filter-based removal** (set a `Filter` in the
+`CamelLangchain4jEmbeddingStoreFilter` header). Previously, passing a null or empty body to REMOVE
+would pass `null` to the underlying store's `remove()` method, which threw an opaque exception
+from langchain4j. It now throws `IllegalArgumentException` with a clear message listing the
+expected inputs.
 
 === camel-ftp, camel-sftp, camel-ftps, camel-mina-sftp, camel-azure-files, camel-smb
 
@@ -1086,6 +1191,22 @@ A custom `CamelSagaService` that relies on the header to join sagas started by a
 override the new method. Everything else is unaffected: the header is still set on the exchange, and
 routes reading it continue to work.
 
+=== camel-microprofile-health
+
+The `error.stacktrace` entry of a failed health check is now only included in the response when
+`camel.health.exposure-level` is `full`. At the `default` level the check still reports `error.message`, but no
+longer serialises the whole cause chain of the exception into the health response. The trace is unchanged in the
+application log.
+
+This aligns the MicroProfile health output (and therefore Camel Quarkus, which builds its health responses through
+this module) with the Spring Boot actuator and with the documented meaning of the levels, where `full` is the
+level that includes all details from the invoked health checks. To get the trace back in the response:
+
+[source,properties]
+----
+camel.health.exposure-level = full
+----
+
 === camel-spring-boot
 
 A set of starter defaults changed in this release. Each is a deliberate change to what an application gets
@@ -1181,6 +1302,278 @@ unaffected.
 
 `String` to `java.io.File` is unchanged: there the `String` genuinely is a path.
 
+==== camel-observability-services-starter narrows its injected defaults
+
+The starter contributes a set of management defaults as soon as it is on the classpath. Three of them were
+wider than the Spring Boot or Camel setting they replaced, and have been brought back in line.
+
+The management listener now binds to loopback. `management.server.port` was injected without a matching
+`management.server.address`, so adding the starter opened a second listener on every interface. Spring Boot
+ships no separate management listener at all, so that listener and its reach are now both a deliberate choice.
+
+Deployments whose kubelet probes or Prometheus scrapers reach the pod over the network — which is every
+Kubernetes deployment using the health and metrics endpoints — must widen the bind address explicitly:
+
+[source,properties]
+----
+management.server.address = 0.0.0.0
+----
+
+Doing so should be paired with a `NetworkPolicy` or with authentication in front of the management port.
+
+`management.endpoint.health.show-details` is now `when-authorized` instead of `always`, so the aggregate
+`/observe/health` endpoint shows its individual indicators to an authenticated caller and a bare status to
+everybody else. Camel health checks report on the resources a route talks to, and their detail can identify
+those resources. With no Spring Security on the classpath the endpoint behaves as `never`. To restore the
+previous behaviour:
+
+[source,properties]
+----
+management.endpoint.health.show-details = always
+----
+
+The `live` and `ready` health groups keep `show-details=always`. The kubelet reads them unauthenticated and
+puts the response body into the probe-failure event, so `kubectl describe pod` still names the indicator that
+took the pod down, and those groups hold availability-state indicators that report a status and carry no data.
+
+`camel.health.exposure-level` is no longer forced to `full` and now follows the Camel default of `default`,
+which filters health check metadata — endpoint URIs, route and consumer identifiers — out of the health
+response while keeping the check names, error messages and stack traces. To opt back in:
+
+[source,properties]
+----
+camel.health.exposure-level = full
+----
+
+The defaults are still registered as the lowest precedence property source, so all three settings are
+overridden by ordinary application configuration. The full injected set is documented in the
+https://camel.apache.org/camel-spring-boot/next/starters/observability-services.html[starter documentation].
+
+
+==== camel-debug-starter no longer opens a JMX connector by default
+
+`camel.debug.jmx-connector-enabled` now defaults to `false` instead of `true`. Adding
+`camel-debug-starter` to the classpath still installs and enables the `BacklogDebugger`, which is what
+the starter is for, but it no longer creates an RMI registry and JMX RMI server on
+`camel.debug.jmx-connector-port` (`1099`). Nothing listens until the connector is asked for.
+
+Unlike camel-main, where `camel.debug.enabled` defaults to `false` and so the connector is only reached
+after the debugger is explicitly turned on, the starter enables the debugger as soon as it is on the
+classpath. That made the dependency alone enough to open a port, and the connector is created without
+authentication or transport security: anyone able to reach it can suspend routes and read message
+payloads.
+
+Tooling that attaches to the debugger from another process — the IntelliJ IDEA and VS Code Camel
+plugins — needs the connector, and must now request it:
+
+[source,properties]
+----
+camel.debug.jmx-connector-enabled = true
+camel.debug.jmx-connector-port = 1099
+----
+
+Enable it only on a trusted network, with the port bound to a loopback interface or protected by a
+firewall.
+
+The `camel debug` command of Camel JBang is unaffected: it drives a Spring Boot application through the
+local CLI connector from `camel-cli-connector-starter`, not through JMX.
+
+
+==== camel-spring-boot health check stack traces moved to the full exposure level
+
+The Camel health indicator added the full stack trace of a failed health check as `error.stacktrace` to the
+per-check data in `/actuator/health` at every exposure level except `oneline`. A DOWN check whose result
+carries an exception — a consumer that lost its broker, a pool that cannot connect — therefore serialised the
+whole cause chain into the actuator response at the default exposure level.
+
+`error.stacktrace` is now emitted only when the exposure level is `full`. `error.message` is still reported at
+the `default` level, which mirrors what Spring Boot's own health indicators expose; camel-main's management
+endpoint is stricter still and includes `error-stacktrace` only when the caller asks for it with
+`?stackTrace=true`. `camel-microprofile-health`, through which Camel Quarkus builds its health responses, applies
+the same gating from this release so the runtimes stay aligned. It also matches the documented meaning of the
+levels, where `full` is the level that includes all details from the invoked health checks. The trace is
+unchanged in the application log.
+
+A deployment that consumed the trace from the actuator response can opt back in with:
+
+[source,properties]
+----
+camel.health.exposure-level = full
+----
+
+Note that `full` also stops filtering the health check metadata out of the per-check data, so the output is
+more verbose than the previous default in other respects too.
+
+
+==== camel-platform-http-starter deletes multipart uploads when the exchange completes
+
+Multipart file uploads are copied out of the servlet container into the servlet temporary directory so that they
+remain readable after the HTTP request has completed. These temporary copies were never removed and accumulated for
+the lifetime of the application. They are now deleted when the exchange is done being routed, that is after the
+response has been written, which aligns the starter with the `deleteUploadedFilesOnEnd` option of
+`camel-platform-http-vertx` and with `camel-http-common`, where the container deletes its own part files.
+
+Routes that consume the upload while the exchange is being routed (saving it with the file producer, streaming it to
+a remote system, unmarshalling it) are unaffected. A route that stores the temporary path and reads the file after
+the exchange has completed must opt out and delete the file itself:
+
+[source,properties]
+----
+camel.component.platform-http.server.delete-uploaded-files-on-end=false
+----
+
+
+==== camel-platform-http-starter path variables follow the matched path
+
+Path variable headers are now taken from the path Spring matched the request against, instead of from
+the undecoded request URI. The values are therefore percent-decoded and carry no matrix parameters,
+which is what the vertx engine has always provided.
+
+For a consumer such as `platform-http:/greeting/{name}`:
+
+[cols="1,1,1"]
+|===
+|Request |Header `name` before |Header `name` now
+
+|`/greeting/%61dmin`
+|`%61dmin`
+|`admin`
+
+|`/greeting/John%20Doe`
+|`John%20Doe`
+|`John Doe`
+
+|`/greeting/name;v=1`
+|`name;v=1`
+|`name`
+|===
+
+An application that decoded the header itself, or that parsed matrix parameters out of it, must drop
+that handling. Requests whose path variables contain no percent-encoding and no matrix parameters are
+unaffected.
+
+`CamelHttpPath` (`Exchange.HTTP_PATH`) is unchanged: it still reports the raw request path with the
+servlet context-path removed.
+
+
+==== camel-micrometer-starter bounds the uri tag
+
+The starter contributes the `uri` low cardinality tag of the `http.server.requests` metrics when
+`camel.metrics.uri-tag-enabled = true`. Two things change in this release.
+
+First, the property is now matched in its documented kebab-case form. The auto-configuration was conditional on
+`camel.metrics.uriTagEnabled`, a spelling that Spring Boot cannot resolve from a relaxed binding source, so an
+application that configured `camel.metrics.uri-tag-enabled = true`, the name listed in the starter
+documentation, never got the Camel uri tag at all. Both spellings now enable it. An application that had the
+kebab-case property set therefore starts seeing Camel consumer paths in the `uri` tag where it previously saw
+the value computed by Spring.
+
+Second, when a request does not resolve to a Camel HTTP consumer — a 404, or any request served by something
+else than the Camel servlet — the tag was the requested path (servlet path plus path info) verbatim. Micrometer
+registers a meter per distinct tag value and keeps it for the lifetime of the process, so the number of meters
+followed the number of distinct paths that had been requested, instead of the number of routes. Such requests
+now keep the `uri` value computed by Spring's own `DefaultServerRequestObservationConvention`: the mapped
+pattern for a Spring MVC endpoint, and a constant such as `UNKNOWN`, `NOT_FOUND` or `REDIRECTION` otherwise.
+This is what `camel.metrics.uri-tag-enabled` already documents ("will be marked as UNKNOWN"). Requests that do
+resolve to a Camel consumer are unchanged, the tag is the static consumer path, such as `/users/{id}`.
+
+With `camel.metrics.uri-tag-dynamic = true` the requested path is still used, such as `/camel/users/123`, but
+only for requests that resolve to a Camel consumer, and the tag value is now capped at 200 characters.
+
+Dashboards and alerts that matched on the raw path of requests that are not served by Camel must use the Spring
+value instead, for example the mapped pattern `/actuator/health` of a Spring MVC endpoint.
+
+
+==== camel-jasypt-starter defaults to PBEWITHHMACSHA256ANDAES_256
+
+`camel.component.jasypt.algorithm` now defaults to `PBEWITHHMACSHA256ANDAES_256` instead of `PBEWithMD5AndDES`.
+The starter already recognises that algorithm as one that requires an initialization vector, so
+`org.jasypt.iv.RandomIvGenerator` is installed automatically when `camel.component.jasypt.iv-generator-class-name`
+is not set.
+
+This is a breaking change for existing encrypted values: a value produced under `PBEWithMD5AndDES` cannot be
+decrypted with the new default, and startup fails with an `EncryptionOperationNotPossibleException` when the
+property is resolved. Either re-encrypt the values with the new algorithm, or pin the previous default:
+
+[source,properties]
+----
+camel.component.jasypt.algorithm = PBEWithMD5AndDES
+----
+
+Whichever Jasypt tooling is used to produce the ciphertext must be given the same algorithm *and* a random IV
+generator — the Jasypt CLI defaults to no IV generator, and a value encrypted without one cannot be decrypted by
+the starter:
+
+[source,bash]
+----
+jbang org.apache.camel:camel-jasypt:<camel-version> \
+  -c encrypt -p "$JASYPT_PASSWORD" -i my-secret-value \
+  -a PBEWITHHMACSHA256ANDAES_256 -riga SHA1PRNG
+----
+
+The `camel-jasypt` component itself is unchanged: `JasyptPropertiesParser` leaves the algorithm unset, so it still
+falls back to the Jasypt library default of `PBEWithMD5AndDES`. Aligning the component with the starter is a
+separate change; until it lands, an application that configures `JasyptPropertiesParser` directly keeps the old
+algorithm unless it sets one.
+
+The starter's usage documentation no longer shows the master password next to the encrypted value it protects. Use
+the `sysenv:` or `sys:` prefixes of `camel.component.jasypt.password` to read it from the environment or a JVM
+system property, or inject it from an external secret store.
+
+
+==== Starter configuration options that cannot be bound are reported
+
+The starters bind `camel.component.*`, `camel.dataformat.*` and `camel.language.*` onto the Camel component,
+data format or language they configure. Two steps of that binding used to discard a configured value without
+reporting it, so a mistyped or unbindable option left the target at its default and nothing appeared in the
+log. Both now report the value they cannot use, which matches what `camel.rest.*` has always done.
+
+An option of a complex (object) type is configured with a reference to a bean, such as:
+
+[source,properties]
+----
+camel.component.http.ssl-context-parameters = #bean:mySslContextParameters
+----
+
+The generated converter used to return `null` for any value that did not start with `#`, and for a value
+naming a bean that does not exist. A typo in the bean id therefore produced a component with the option
+unset. Such a value now aborts startup with a message naming the value, the target type and the
+configuration prefix it was set under. A plain bean id with no `#` prefix — `mySslContextParameters` — is
+resolved rather than discarded, as are `#autowired` and `#type:com.foo.MyType`.
+
+These converters are registered with `@ConfigurationPropertiesBinding` and therefore take part in every
+`@ConfigurationProperties` binding in the application, not only in Camel's own. A binding whose target class
+is neither under `org.apache.camel` nor annotated with `@ConfigurationProperties` for a `camel.` prefix keeps
+the previous behaviour, so adding a starter to the classpath cannot make an unrelated application property
+fail to bind.
+
+The generated customizers copied the whole configuration onto the target with `failIfNotSet=false`, so an
+option with no matching setter on the target was dropped without a log line. An option that the application
+configured itself and that cannot be set now aborts startup. An option that only carries the default the
+generator took from the Camel catalog is logged at `DEBUG` and ignored, since the target keeps its own
+default and there is nothing to fix in the application. The options belonging to the auto-configuration
+layer itself — `enabled` and `customizer` — are removed before the copy, as they were never options on the
+Camel target.
+
+An application that set an option which never took effect will therefore now fail to start. The remedy is
+to correct or remove the reported option. To restore the previous tolerance while doing so:
+
+[source,properties]
+----
+camel.springboot.lenient-configuration-binding = true
+----
+
+Such an option is then logged at `WARN` with its name, instead of being dropped silently as before.
+
+This affects hand-written code as well. `CamelPropertiesHelper.setCamelProperties(context, target, properties,
+false)`, and `CamelPropertiesHelper.copyProperties` which calls it, are public API used by hand-written
+customizers and auto-configuration outside the generated starters. They keep ignoring an option that cannot
+be set — that behaviour is unchanged — but each such option is now logged at `WARN` naming the option and the
+target class, where previously nothing was logged at all. Applications with hand-written customizers may
+therefore see new `WARN` lines at startup for options that have never been applied. The generated starters no
+longer use that path; they call `CamelPropertiesHelper.copyConfigurationProperties` instead.
+
+
 === camel-azure-storage-blob and camel-azure-storage-datalake
 
 Local downloads configured with `fileDir` now resolve existing filesystem path segments before checking
@@ -1193,3 +1586,44 @@ Local downloads configured with a plain `downloadFileName` directory now resolve
 path segments before checking that the destination remains inside that directory. Downloads through a
 symbolic link that resolves outside the configured directory are rejected. Valid object names using `/`
 as a pseudo-directory separator continue to work.
+
+=== camel-alibaba-eventbridge
+
+==== CloudEvents 1.0 specification validation enabled by default
+
+The `camel-alibaba-eventbridge` producer now enables `validateEventSpec` by default (`validateEventSpec=true`) for Map payloads. This validates CloudEvents 1.0 specification constraints, requiring `specversion="1.0"`, valid RFC 3339 / ISO-8601 timestamps for `time`, and non-blank event identifiers (`id`).
+
+Existing routes that produce Map bodies with non-standard specification versions or empty `id` fields should either update their payload maps to conform to CloudEvents 1.0 or explicitly disable specification validation:
+
+[source,text]
+----
+alibaba-eventbridge:putEvents?validateEventSpec=false&...
+----
+
+==== 3-level hierarchical event validation and fail-closed cloud validation
+
+The component introduces fine-grained multi-bus and source-scoped event validation (`validateEventSource`, `validateEventType`, and `allowedEventSources`) with cached metadata in `EventSourceCache`.
+
+When cloud validation is enabled (`validateEventSource=true` or `validateEventType=true`), validation operates fail-closed: if the Alibaba Cloud EventBridge API is unreachable or returns an error, the producer will fail fast by throwing an exception rather than silently permitting unvalidated messages.
+
+=== camel-core - REST client request validation and binary bodies
+
+When `clientRequestValidation` is enabled and the REST service declares a required body, the incoming
+message body is no longer replaced with a `String` version of itself. That conversion corrupted binary
+payloads such as `application/octet-stream`. The body is still read to check that it is present, using
+stream caching so it stays re-readable, but it now keeps its original type.
+
+=== camel-support
+
+`BackgroundTask.schedule` now cancels the repeating schedule it created once the task has completed or has
+run out of budget. Previously the returned `Future` stayed armed and the task kept being re-run as a no-op
+for the lifetime of the executor. Callers that inspect the returned `Future` will see `isCancelled()`
+return `true` after the task is done, where it previously stayed live. Callers that already cancel the
+`Future` themselves are unaffected.
+
+=== camel-master
+
+The `backOffMaxAttempts` option now bounds the attempts to start the delegated consumer as documented.
+The retry task previously also carried the default five second duration of its budget, which ended the
+task before the second attempt for any `backOffDelay` at or above the default of five seconds. A delegate
+that fails to start is therefore retried for longer than before, up to `backOffMaxAttempts` times.

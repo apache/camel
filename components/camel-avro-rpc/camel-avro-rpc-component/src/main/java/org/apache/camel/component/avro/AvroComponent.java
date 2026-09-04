@@ -23,6 +23,7 @@ import java.util.concurrent.ConcurrentMap;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
+import org.apache.camel.avro.support.AvroClassSecuritySupport;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.annotations.Component;
 import org.apache.camel.support.DefaultComponent;
@@ -41,6 +42,12 @@ public class AvroComponent extends DefaultComponent {
 
     public AvroComponent(CamelContext context) {
         super(context);
+    }
+
+    @Override
+    protected void doInit() throws Exception {
+        AvroClassSecuritySupport.ensureAvroIpcPackagesTrusted();
+        super.doInit();
     }
 
     /**

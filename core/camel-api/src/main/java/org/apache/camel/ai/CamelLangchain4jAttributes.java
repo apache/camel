@@ -25,4 +25,18 @@ public interface CamelLangchain4jAttributes {
     String CAMEL_LANGCHAIN4J_EMBEDDING = "CamelLangChain4jEmbeddingsEmbedding";
     String CAMEL_LANGCHAIN4J_EMBEDDING_VECTOR = "CamelLangChain4jEmbeddingsVector";
     String CAMEL_LANGCHAIN4J_TEXT_SEGMENT = "CamelLangChain4jEmbeddingsTextSegment";
+
+    /**
+     * List of embeddings from a batch embedAll operation.
+     *
+     * @since 4.23
+     */
+    String CAMEL_LANGCHAIN4J_EMBEDDINGS = "CamelLangChain4jEmbeddingsEmbeddings";
+
+    /**
+     * List of text segments from a batch embedAll operation.
+     *
+     * @since 4.23
+     */
+    String CAMEL_LANGCHAIN4J_TEXT_SEGMENTS = "CamelLangChain4jEmbeddingsTextSegments";
 }

@@ -1385,6 +1385,19 @@ public interface GoogleFirestoreEndpointBuilderFactory {
             return "CamelGoogleFirestoreResponseReadTime";
         }
         /**
+         * The type of change reported by the realtime listener: ADDED, MODIFIED
+         * or REMOVED. Only set when realtimeUpdates is enabled.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: consumer
+         * 
+         * @return the name of the header {@code GoogleFirestoreChangeType}.
+         */
+        public String googleFirestoreChangeType() {
+            return "CamelGoogleFirestoreChangeType";
+        }
+        /**
          * When true, merge the data with existing document data instead of
          * overwriting.
          * 

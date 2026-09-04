@@ -568,7 +568,8 @@ class SettingsPopup {
                     .cursorStyle(Style.EMPTY.reversed())
                     .placeholder(placeholder)
                     .build();
-            frame.renderStatefulWidget(textInput, area, input);
+            // renderWithCursor (not renderStatefulWidget) so the caret is painted on the active field
+            textInput.renderWithCursor(area, frame.buffer(), input, frame);
         } else {
             String text = input.text();
             Style style = text.isEmpty() ? Style.EMPTY.dim() : Style.EMPTY;

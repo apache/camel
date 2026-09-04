@@ -70,23 +70,18 @@ public final class KMSUtils {
     }
 
     public static ClientConfigurations createClientConfigurations(KMSEndpoint endpoint, Exchange exchange) {
-        ClientConfigurations configuration = new ClientConfigurations();
-        configuration
-                .setOperation(OpenApiClientSupport.resolveString(exchange, KMSProperties.OPERATION, endpoint.getOperation()));
-        configuration.setKeyId(OpenApiClientSupport.resolveString(exchange, KMSProperties.KEY_ID, endpoint.getKeyId()));
-        configuration
-                .setPlaintext(OpenApiClientSupport.resolveString(exchange, KMSProperties.PLAINTEXT, endpoint.getPlaintext()));
-        configuration.setCiphertextBlob(
-                OpenApiClientSupport.resolveString(exchange, KMSProperties.CIPHERTEXT_BLOB, endpoint.getCiphertextBlob()));
-        configuration.setKeySpec(OpenApiClientSupport.resolveString(exchange, KMSProperties.KEY_SPEC, endpoint.getKeySpec()));
-        configuration.setNumberOfBytes(
+        return new ClientConfigurations(
+                OpenApiClientSupport.resolveString(exchange, KMSProperties.OPERATION, endpoint.getOperation()),
+                OpenApiClientSupport.resolveString(exchange, KMSProperties.KEY_ID, endpoint.getKeyId()),
+                OpenApiClientSupport.resolveString(exchange, KMSProperties.PLAINTEXT, endpoint.getPlaintext()),
+                OpenApiClientSupport.resolveString(exchange, KMSProperties.CIPHERTEXT_BLOB, endpoint.getCiphertextBlob()),
+                OpenApiClientSupport.resolveString(exchange, KMSProperties.KEY_SPEC, endpoint.getKeySpec()),
                 OpenApiClientSupport.resolveInteger(exchange, KMSProperties.NUMBER_OF_BYTES, endpoint.getNumberOfBytes()));
-        return configuration;
     }
 
     public static String encodePlaintextForEncrypt(Exchange exchange, ClientConfigurations configuration) throws Exception {
-        if (ObjectHelper.isNotEmpty(configuration.getPlaintext())) {
-            return Base64.getEncoder().encodeToString(configuration.getPlaintext().getBytes(StandardCharsets.UTF_8));
+        if (ObjectHelper.isNotEmpty(configuration.plaintext())) {
+            return Base64.getEncoder().encodeToString(configuration.plaintext().getBytes(StandardCharsets.UTF_8));
         }
         Object body = exchange.getMessage().getBody();
         if (body instanceof byte[] bytes) {

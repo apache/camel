@@ -69,6 +69,15 @@ public final class QueueReference {
         }
     }
 
+    boolean isReferenced(SedaEndpoint endpoint) {
+        lock.lock();
+        try {
+            return endpoints.contains(endpoint);
+        } finally {
+            lock.unlock();
+        }
+    }
+
     /**
      * Gets the reference counter
      */

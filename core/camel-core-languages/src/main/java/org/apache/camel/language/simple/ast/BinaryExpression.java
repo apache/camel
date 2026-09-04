@@ -133,6 +133,11 @@ public class BinaryExpression extends BaseSimpleNode {
         } else if (operator == BinaryOperatorType.NOT_ENDS_WITH) {
             return createExpression(camelContext, leftExp, rightExp,
                     PredicateBuilder.not(PredicateBuilder.endsWith(leftExp, rightExp)));
+        } else if (operator == BinaryOperatorType.EQUALS) {
+            return createExpression(camelContext, leftExp, rightExp, PredicateBuilder.equalsString(leftExp, rightExp));
+        } else if (operator == BinaryOperatorType.NOT_EQUALS) {
+            return createExpression(camelContext, leftExp, rightExp,
+                    PredicateBuilder.not(PredicateBuilder.equalsString(leftExp, rightExp)));
         }
 
         throw new SimpleParserException("Unknown binary operator " + operator, token.getIndex());

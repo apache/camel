@@ -16,11 +16,15 @@
  */
 package org.apache.camel.component.ai.observability;
 
+import java.util.concurrent.atomic.AtomicBoolean;
+
 import io.micrometer.observation.Observation;
 import io.micrometer.observation.ObservationRegistry;
 import org.apache.camel.CamelContext;
 import org.apache.camel.support.CamelContextHelper;
 import org.apache.camel.util.ObjectHelper;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Micrometer Observation-backed instrumentation. Loaded reflectively only when {@link ObservationRegistry} is on the
@@ -28,7 +32,14 @@ import org.apache.camel.util.ObjectHelper;
  */
 final class GenAiMicrometerObservationSupport implements GenAiMicrometerObservationBackend {
 
+    private static final Logger LOG = LoggerFactory.getLogger(GenAiMicrometerObservationSupport.class);
+    private static final String TRACING_CONTEXT_CLASS_NAME
+            = "io.micrometer.tracing.handler.TracingObservationHandler$TracingContext";
+    private static volatile Class<?> tracingContextClass;
+    private static volatile boolean tracingContextClassResolved;
+
     private final ObservationRegistry observationRegistry;
+    private final AtomicBoolean missingTracingReported = new AtomicBoolean();
 
     GenAiMicrometerObservationSupport(CamelContext camelContext) {
         ObservationRegistry registry = CamelContextHelper.findSingleByType(camelContext, ObservationRegistry.class);
@@ -57,6 +68,12 @@ final class GenAiMicrometerObservationSupport implements GenAiMicrometerObservat
         if (observation.isNoop()) {
             return null;
         }
+        if (!hasTracingContext(observation)
+                && missingTracingReported.compareAndSet(false, true)) {
+            LOG.info(
+                    "No Micrometer tracing context was created for GenAI observations; "
+                     + "configure a tracing handler and exporter");
+        }
         try {
             return new ObservationHandle(observation, observation.openScope());
         } catch (RuntimeException e) {
@@ -67,6 +84,33 @@ final class GenAiMicrometerObservationSupport implements GenAiMicrometerObservat
 
     private static boolean isUsable(ObservationRegistry registry) {
         return registry != null && registry != ObservationRegistry.NOOP;
+    }
+
+    private static boolean hasTracingContext(Observation observation) {
+        Class<?> contextClass = resolveTracingContextClass();
+        if (contextClass == null) {
+            return false;
+        }
+        return observation.getContextView().get(contextClass) != null;
+    }
+
+    private static Class<?> resolveTracingContextClass() {
+        if (!tracingContextClassResolved) {
+            synchronized (GenAiMicrometerObservationSupport.class) {
+                if (!tracingContextClassResolved) {
+                    try {
+                        tracingContextClass = Class.forName(TRACING_CONTEXT_CLASS_NAME);
+                    } catch (ClassNotFoundException e) {
+                        if (LOG.isDebugEnabled()) {
+                            LOG.debug("Micrometer tracing context unavailable for GenAI observation diagnostics", e);
+                        }
+                        tracingContextClass = null;
+                    }
+                    tracingContextClassResolved = true;
+                }
+            }
+        }
+        return tracingContextClass;
     }
 
     private static String nullToUnknown(String value) {

@@ -54,6 +54,8 @@ public class AvroConfiguration implements Cloneable {
     private boolean reflectionProtocol;
     @UriParam
     private boolean singleParameter;
+    @UriParam(label = "security", security = "insecure:serialization")
+    private String serializablePackages;
 
     public AvroConfiguration copy() {
         try {
@@ -199,5 +201,18 @@ public class AvroConfiguration implements Cloneable {
      */
     public void setSingleParameter(boolean singleParameter) {
         this.singleParameter = singleParameter;
+    }
+
+    public String getSerializablePackages() {
+        return serializablePackages;
+    }
+
+    /**
+     * Comma-separated list of additional packages that contain trusted Avro model classes. Avro 1.12+ validates classes
+     * resolved from schemas; Camel automatically trusts {@code org.apache.avro} for IPC and packages derived from the
+     * configured protocol. Use this option for any additional model packages not inferred from the protocol.
+     */
+    public void setSerializablePackages(String serializablePackages) {
+        this.serializablePackages = serializablePackages;
     }
 }

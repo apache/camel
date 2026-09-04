@@ -45,6 +45,22 @@ public interface AlibabaEventBridgeEndpointBuilderFactory {
         }
 
         /**
+         * Allowed event sources and source-scoped event types per event bus.
+         * Supports multi-bus DSL (bussrc - type1,type2), single-bus shorthand
+         * (src - type1,type2), JSON string, or Map/List objects.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: producer
+         * 
+         * @param allowedEventSources the value to set
+         * @return the dsl builder
+         */
+        default AlibabaEventBridgeEndpointBuilder allowedEventSources(String allowedEventSources) {
+            doSetProperty("allowedEventSources", allowedEventSources);
+            return this;
+        }
+        /**
          * EventBridge endpoint URL. Carries higher precedence than region based
          * client initialization.
          * 
@@ -131,6 +147,106 @@ public interface AlibabaEventBridgeEndpointBuilderFactory {
             return this;
         }
         /**
+         * When true, verifies that the target event bus exists in Alibaba Cloud
+         * EventBridge using listEventBuses before publishing. Also validates
+         * the CloudEvent source URI against the allowedEventSources whitelist
+         * when that option is set.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: producer
+         * 
+         * @param validateEventSource the value to set
+         * @return the dsl builder
+         */
+        default AlibabaEventBridgeEndpointBuilder validateEventSource(boolean validateEventSource) {
+            doSetProperty("validateEventSource", validateEventSource);
+            return this;
+        }
+        /**
+         * When true, verifies that the target event bus exists in Alibaba Cloud
+         * EventBridge using listEventBuses before publishing. Also validates
+         * the CloudEvent source URI against the allowedEventSources whitelist
+         * when that option is set.
+         * 
+         * The option will be converted to a <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: producer
+         * 
+         * @param validateEventSource the value to set
+         * @return the dsl builder
+         */
+        default AlibabaEventBridgeEndpointBuilder validateEventSource(String validateEventSource) {
+            doSetProperty("validateEventSource", validateEventSource);
+            return this;
+        }
+        /**
+         * Validate CloudEvents 1.0 specification constraints on map fields.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: true
+         * Group: producer
+         * 
+         * @param validateEventSpec the value to set
+         * @return the dsl builder
+         */
+        default AlibabaEventBridgeEndpointBuilder validateEventSpec(boolean validateEventSpec) {
+            doSetProperty("validateEventSpec", validateEventSpec);
+            return this;
+        }
+        /**
+         * Validate CloudEvents 1.0 specification constraints on map fields.
+         * 
+         * The option will be converted to a <code>boolean</code> type.
+         * 
+         * Default: true
+         * Group: producer
+         * 
+         * @param validateEventSpec the value to set
+         * @return the dsl builder
+         */
+        default AlibabaEventBridgeEndpointBuilder validateEventSpec(String validateEventSpec) {
+            doSetProperty("validateEventSpec", validateEventSpec);
+            return this;
+        }
+        /**
+         * When true, verifies that the CloudEvent event type is valid for the
+         * event source on the target event bus against Alibaba Cloud rule
+         * filter patterns before publishing.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: producer
+         * 
+         * @param validateEventType the value to set
+         * @return the dsl builder
+         */
+        default AlibabaEventBridgeEndpointBuilder validateEventType(boolean validateEventType) {
+            doSetProperty("validateEventType", validateEventType);
+            return this;
+        }
+        /**
+         * When true, verifies that the CloudEvent event type is valid for the
+         * event source on the target event bus against Alibaba Cloud rule
+         * filter patterns before publishing.
+         * 
+         * The option will be converted to a <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: producer
+         * 
+         * @param validateEventType the value to set
+         * @return the dsl builder
+         */
+        default AlibabaEventBridgeEndpointBuilder validateEventType(String validateEventType) {
+            doSetProperty("validateEventType", validateEventType);
+            return this;
+        }
+        /**
          * Access key for the cloud user.
          * 
          * The option is a: <code>java.lang.String</code> type.
@@ -200,6 +316,38 @@ public interface AlibabaEventBridgeEndpointBuilderFactory {
             return (AlibabaEventBridgeEndpointBuilder) this;
         }
 
+        /**
+         * TTL in milliseconds for caching event bus existence lookups per bus
+         * name. Applies only when validateEventSource is true.
+         * 
+         * The option is a: <code>long</code> type.
+         * 
+         * Default: 300000
+         * Group: producer (advanced)
+         * 
+         * @param eventSourceCacheTtl the value to set
+         * @return the dsl builder
+         */
+        default AdvancedAlibabaEventBridgeEndpointBuilder eventSourceCacheTtl(long eventSourceCacheTtl) {
+            doSetProperty("eventSourceCacheTtl", eventSourceCacheTtl);
+            return this;
+        }
+        /**
+         * TTL in milliseconds for caching event bus existence lookups per bus
+         * name. Applies only when validateEventSource is true.
+         * 
+         * The option will be converted to a <code>long</code> type.
+         * 
+         * Default: 300000
+         * Group: producer (advanced)
+         * 
+         * @param eventSourceCacheTtl the value to set
+         * @return the dsl builder
+         */
+        default AdvancedAlibabaEventBridgeEndpointBuilder eventSourceCacheTtl(String eventSourceCacheTtl) {
+            doSetProperty("eventSourceCacheTtl", eventSourceCacheTtl);
+            return this;
+        }
         /**
          * Whether the producer should be started lazy (on the first message).
          * By starting lazy you can use this to allow CamelContext and routes to
@@ -395,6 +543,73 @@ public interface AlibabaEventBridgeEndpointBuilderFactory {
          */
         public String alibabaEventBridgeEventSubject() {
             return "CamelAlibabaEventBridgeEventSubject";
+        }
+        /**
+         * Validate event source against Alibaba Cloud EventBridge.
+         * 
+         * The option is a: {@code Boolean} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code
+         * AlibabaEventBridgeValidateEventSource}.
+         */
+        public String alibabaEventBridgeValidateEventSource() {
+            return "CamelAlibabaEventBridgeValidateEventSource";
+        }
+        /**
+         * Validate event type against Alibaba Cloud EventBridge rule filter
+         * patterns.
+         * 
+         * The option is a: {@code Boolean} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code
+         * AlibabaEventBridgeValidateEventType}.
+         */
+        public String alibabaEventBridgeValidateEventType() {
+            return "CamelAlibabaEventBridgeValidateEventType";
+        }
+        /**
+         * Validate CloudEvents 1.0 specification constraints on map fields.
+         * 
+         * The option is a: {@code Boolean} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code
+         * AlibabaEventBridgeValidateEventSpec}.
+         */
+        public String alibabaEventBridgeValidateEventSpec() {
+            return "CamelAlibabaEventBridgeValidateEventSpec";
+        }
+        /**
+         * Allowed event sources and source-scoped event types per event bus
+         * (DSL string, JSON, Map, or List).
+         * 
+         * The option is a: {@code Object} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code
+         * AlibabaEventBridgeAllowedEventSources}.
+         */
+        public String alibabaEventBridgeAllowedEventSources() {
+            return "CamelAlibabaEventBridgeAllowedEventSources";
+        }
+        /**
+         * TTL in milliseconds for cached bus event sources and types.
+         * 
+         * The option is a: {@code Long} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code
+         * AlibabaEventBridgeEventSourceCacheTtl}.
+         */
+        public String alibabaEventBridgeEventSourceCacheTtl() {
+            return "CamelAlibabaEventBridgeEventSourceCacheTtl";
         }
         /**
          * Alibaba Cloud request id.

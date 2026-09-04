@@ -148,6 +148,16 @@ messages)
       </xs:documentation>
     </xs:annotation>
   </xs:element>
+  <xs:element name="cache" type="tns:cacheDefinition">
+    <xs:annotation>
+      <xs:documentation xml:lang="en">
+<![CDATA[
+Caches the result of the nested processing steps. On cache hit, skips the block and sets the body from cache. On cache
+miss, executes the block and caches the result body.
+]]>
+      </xs:documentation>
+    </xs:annotation>
+  </xs:element>
   <xs:element name="camel" type="tns:applicationDefinition">
     <xs:annotation>
       <xs:documentation xml:lang="en">
@@ -3114,6 +3124,7 @@ configuration.
             <xs:element ref="tns:a2aSubTask"/>
             <xs:element ref="tns:aggregate"/>
             <xs:element ref="tns:bean"/>
+            <xs:element ref="tns:cache"/>
             <xs:element ref="tns:doCatch"/>
             <xs:element ref="tns:choice"/>
             <xs:element ref="tns:circuitBreaker"/>
@@ -3327,6 +3338,7 @@ values.
             <xs:element ref="tns:a2aSubTask"/>
             <xs:element ref="tns:aggregate"/>
             <xs:element ref="tns:bean"/>
+            <xs:element ref="tns:cache"/>
             <xs:element ref="tns:doCatch"/>
             <xs:element ref="tns:choice"/>
             <xs:element ref="tns:circuitBreaker"/>
@@ -3932,6 +3944,148 @@ Whether the script should support using Camel property placeholder syntax {{ }}.
     <xs:attribute name="key" type="xs:string"/>
     <xs:attribute name="value" type="xs:string"/>
   </xs:complexType>
+  <xs:complexType name="cacheDefinition">
+    <xs:complexContent>
+      <xs:extension base="tns:processorDefinition">
+        <xs:sequence>
+          <xs:choice>
+            <xs:element ref="tns:expressionDefinition"/>
+            <xs:element ref="tns:constant"/>
+            <xs:element ref="tns:datasonnet"/>
+            <xs:element ref="tns:exchangeProperty"/>
+            <xs:element ref="tns:groovy"/>
+            <xs:element ref="tns:header"/>
+            <xs:element ref="tns:hl7terser"/>
+            <xs:element ref="tns:jactl"/>
+            <xs:element ref="tns:java"/>
+            <xs:element ref="tns:js"/>
+            <xs:element ref="tns:joor"/>
+            <xs:element ref="tns:jq"/>
+            <xs:element ref="tns:jsonpath"/>
+            <xs:element ref="tns:language"/>
+            <xs:element ref="tns:method"/>
+            <xs:element ref="tns:mvel"/>
+            <xs:element ref="tns:ognl"/>
+            <xs:element ref="tns:python3"/>
+            <xs:element ref="tns:python"/>
+            <xs:element ref="tns:quickjs"/>
+            <xs:element ref="tns:ref"/>
+            <xs:element ref="tns:simple"/>
+            <xs:element ref="tns:spel"/>
+            <xs:element ref="tns:tokenize"/>
+            <xs:element ref="tns:variable"/>
+            <xs:element ref="tns:wasm"/>
+            <xs:element ref="tns:xtokenize"/>
+            <xs:element ref="tns:xpath"/>
+            <xs:element ref="tns:xquery"/>
+          </xs:choice>
+          <xs:choice maxOccurs="unbounded" minOccurs="0">
+            <xs:element ref="tns:a2aSubTask"/>
+            <xs:element ref="tns:aggregate"/>
+            <xs:element ref="tns:bean"/>
+            <xs:element ref="tns:cache"/>
+            <xs:element ref="tns:doCatch"/>
+            <xs:element ref="tns:choice"/>
+            <xs:element ref="tns:circuitBreaker"/>
+            <xs:element ref="tns:claimCheck"/>
+            <xs:element ref="tns:convertBodyTo"/>
+            <xs:element ref="tns:convertHeaderTo"/>
+            <xs:element ref="tns:convertVariableTo"/>
+            <xs:element ref="tns:delay"/>
+            <xs:element ref="tns:dynamicRouter"/>
+            <xs:element ref="tns:enrich"/>
+            <xs:element ref="tns:filter"/>
+            <xs:element ref="tns:doFinally"/>
+            <xs:element ref="tns:idempotentConsumer"/>
+            <xs:element ref="tns:intercept"/>
+            <xs:element ref="tns:interceptFrom"/>
+            <xs:element ref="tns:interceptSendToEndpoint"/>
+            <xs:element ref="tns:kamelet"/>
+            <xs:element ref="tns:loadBalance"/>
+            <xs:element ref="tns:log"/>
+            <xs:element ref="tns:loop"/>
+            <xs:element ref="tns:marshal"/>
+            <xs:element ref="tns:multicast"/>
+            <xs:element ref="tns:onCompletion"/>
+            <xs:element ref="tns:onException"/>
+            <xs:element ref="tns:pausable"/>
+            <xs:element ref="tns:pipeline"/>
+            <xs:element ref="tns:policy"/>
+            <xs:element ref="tns:poll"/>
+            <xs:element ref="tns:pollEnrich"/>
+            <xs:element ref="tns:process"/>
+            <xs:element ref="tns:recipientList"/>
+            <xs:element ref="tns:removeHeader"/>
+            <xs:element ref="tns:removeHeaders"/>
+            <xs:element ref="tns:removeProperties"/>
+            <xs:element ref="tns:removeProperty"/>
+            <xs:element ref="tns:removeVariable"/>
+            <xs:element ref="tns:resequence"/>
+            <xs:element ref="tns:resumable"/>
+            <xs:element ref="tns:rollback"/>
+            <xs:element ref="tns:route"/>
+            <xs:element ref="tns:routingSlip"/>
+            <xs:element ref="tns:saga"/>
+            <xs:element ref="tns:sample"/>
+            <xs:element ref="tns:script"/>
+            <xs:element ref="tns:setBody"/>
+            <xs:element ref="tns:setExchangePattern"/>
+            <xs:element ref="tns:setHeader"/>
+            <xs:element ref="tns:setHeaders"/>
+            <xs:element ref="tns:setProperty"/>
+            <xs:element ref="tns:setVariable"/>
+            <xs:element ref="tns:setVariables"/>
+            <xs:element ref="tns:sort"/>
+            <xs:element ref="tns:split"/>
+            <xs:element ref="tns:step"/>
+            <xs:element ref="tns:stop"/>
+            <xs:element ref="tns:threads"/>
+            <xs:element ref="tns:throttle"/>
+            <xs:element ref="tns:throwException"/>
+            <xs:element ref="tns:to"/>
+            <xs:element ref="tns:toD"/>
+            <xs:element ref="tns:tokenizer"/>
+            <xs:element ref="tns:transacted"/>
+            <xs:element ref="tns:transformDataType"/>
+            <xs:element ref="tns:transform"/>
+            <xs:element ref="tns:doTry"/>
+            <xs:element ref="tns:unmarshal"/>
+            <xs:element ref="tns:validate"/>
+            <xs:element ref="tns:wireTap"/>
+          </xs:choice>
+        </xs:sequence>
+        <xs:attribute name="keyValueRepository" type="xs:string">
+          <xs:annotation>
+            <xs:documentation xml:lang="en">
+<![CDATA[
+Sets the reference name of the KeyValueRepository to use as the cache backing store. If not set, a
+MemoryKeyValueRepository is auto-created.
+]]>
+            </xs:documentation>
+          </xs:annotation>
+        </xs:attribute>
+        <xs:attribute name="ttl" type="xs:string">
+          <xs:annotation>
+            <xs:documentation xml:lang="en">
+<![CDATA[
+Sets the time-to-live for cached entries. Supports duration syntax (e.g. 10m, 1h) or milliseconds. Default: -1 (no
+expiration). Default value: -1
+]]>
+            </xs:documentation>
+          </xs:annotation>
+        </xs:attribute>
+        <xs:attribute name="cacheNull" type="xs:string">
+          <xs:annotation>
+            <xs:documentation xml:lang="en">
+<![CDATA[
+Whether to cache null results. By default, null message bodies are not cached. Default value: false
+]]>
+            </xs:documentation>
+          </xs:annotation>
+        </xs:attribute>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
   <xs:complexType name="catchDefinition">
     <xs:complexContent>
       <xs:extension base="tns:output">
@@ -3950,6 +4104,7 @@ The exception class names (fully qualified) to catch.
             <xs:element ref="tns:a2aSubTask"/>
             <xs:element ref="tns:aggregate"/>
             <xs:element ref="tns:bean"/>
+            <xs:element ref="tns:cache"/>
             <xs:element ref="tns:doCatch"/>
             <xs:element ref="tns:choice"/>
             <xs:element ref="tns:circuitBreaker"/>
@@ -4119,6 +4274,7 @@ placeholders or simple expressions using only property placeholders are supporte
             <xs:element ref="tns:a2aSubTask"/>
             <xs:element ref="tns:aggregate"/>
             <xs:element ref="tns:bean"/>
+            <xs:element ref="tns:cache"/>
             <xs:element ref="tns:doCatch"/>
             <xs:element ref="tns:choice"/>
             <xs:element ref="tns:circuitBreaker"/>
@@ -4209,6 +4365,7 @@ Disables this EIP from the route. Default value: false
             <xs:element ref="tns:a2aSubTask"/>
             <xs:element ref="tns:aggregate"/>
             <xs:element ref="tns:bean"/>
+            <xs:element ref="tns:cache"/>
             <xs:element ref="tns:doCatch"/>
             <xs:element ref="tns:choice"/>
             <xs:element ref="tns:circuitBreaker"/>
@@ -4301,6 +4458,7 @@ Disables this EIP from the route. Default value: false
             <xs:element ref="tns:a2aSubTask"/>
             <xs:element ref="tns:aggregate"/>
             <xs:element ref="tns:bean"/>
+            <xs:element ref="tns:cache"/>
             <xs:element ref="tns:doCatch"/>
             <xs:element ref="tns:choice"/>
             <xs:element ref="tns:circuitBreaker"/>
@@ -4803,6 +4961,7 @@ References a custom thread pool to use when offloading a guarded action to anoth
             <xs:element ref="tns:a2aSubTask"/>
             <xs:element ref="tns:aggregate"/>
             <xs:element ref="tns:bean"/>
+            <xs:element ref="tns:cache"/>
             <xs:element ref="tns:doCatch"/>
             <xs:element ref="tns:choice"/>
             <xs:element ref="tns:circuitBreaker"/>
@@ -5925,6 +6084,7 @@ The logging level to use for logging transactional rollback. Default is WARN. De
             <xs:element ref="tns:a2aSubTask"/>
             <xs:element ref="tns:aggregate"/>
             <xs:element ref="tns:bean"/>
+            <xs:element ref="tns:cache"/>
             <xs:element ref="tns:doCatch"/>
             <xs:element ref="tns:choice"/>
             <xs:element ref="tns:circuitBreaker"/>
@@ -6015,6 +6175,7 @@ Name of an exchange property to store whether the filter predicate matched or no
             <xs:element ref="tns:a2aSubTask"/>
             <xs:element ref="tns:aggregate"/>
             <xs:element ref="tns:bean"/>
+            <xs:element ref="tns:cache"/>
             <xs:element ref="tns:doCatch"/>
             <xs:element ref="tns:choice"/>
             <xs:element ref="tns:circuitBreaker"/>
@@ -6179,6 +6340,7 @@ Global option value.
             <xs:element ref="tns:a2aSubTask"/>
             <xs:element ref="tns:aggregate"/>
             <xs:element ref="tns:bean"/>
+            <xs:element ref="tns:cache"/>
             <xs:element ref="tns:doCatch"/>
             <xs:element ref="tns:choice"/>
             <xs:element ref="tns:circuitBreaker"/>
@@ -6334,6 +6496,7 @@ Whether validation is required for this input type. Default value: false
             <xs:element ref="tns:a2aSubTask"/>
             <xs:element ref="tns:aggregate"/>
             <xs:element ref="tns:bean"/>
+            <xs:element ref="tns:cache"/>
             <xs:element ref="tns:doCatch"/>
             <xs:element ref="tns:choice"/>
             <xs:element ref="tns:circuitBreaker"/>
@@ -6432,6 +6595,7 @@ Intercept incoming messages from the uri or uri pattern. If not configured, then
             <xs:element ref="tns:a2aSubTask"/>
             <xs:element ref="tns:aggregate"/>
             <xs:element ref="tns:bean"/>
+            <xs:element ref="tns:cache"/>
             <xs:element ref="tns:doCatch"/>
             <xs:element ref="tns:choice"/>
             <xs:element ref="tns:circuitBreaker"/>
@@ -6541,6 +6705,7 @@ After sending to the endpoint then send the message to this uri which allows to 
             <xs:element ref="tns:a2aSubTask"/>
             <xs:element ref="tns:aggregate"/>
             <xs:element ref="tns:bean"/>
+            <xs:element ref="tns:cache"/>
             <xs:element ref="tns:doCatch"/>
             <xs:element ref="tns:choice"/>
             <xs:element ref="tns:circuitBreaker"/>
@@ -6641,6 +6806,7 @@ mynamecount=4&type=gold.
             <xs:element ref="tns:a2aSubTask"/>
             <xs:element ref="tns:aggregate"/>
             <xs:element ref="tns:bean"/>
+            <xs:element ref="tns:cache"/>
             <xs:element ref="tns:doCatch"/>
             <xs:element ref="tns:choice"/>
             <xs:element ref="tns:circuitBreaker"/>
@@ -6970,6 +7136,7 @@ The language to use for evaluating the log message, such as simple, groovy, or o
             <xs:element ref="tns:a2aSubTask"/>
             <xs:element ref="tns:aggregate"/>
             <xs:element ref="tns:bean"/>
+            <xs:element ref="tns:cache"/>
             <xs:element ref="tns:doCatch"/>
             <xs:element ref="tns:choice"/>
             <xs:element ref="tns:circuitBreaker"/>
@@ -7376,6 +7543,16 @@ Optional schema resolver used to lookup schemas for the data in transit.
             <xs:documentation xml:lang="en">
 <![CDATA[
 When not disabled, the SchemaResolver will be looked up into the registry. Default value: true
+]]>
+            </xs:documentation>
+          </xs:annotation>
+        </xs:attribute>
+        <xs:attribute name="serializablePackages" type="xs:string">
+          <xs:annotation>
+            <xs:documentation xml:lang="en">
+<![CDATA[
+Comma-separated list of additional packages that contain trusted Avro model classes. Avro 1.12 validates classes
+resolved from schemas; Camel automatically trusts packages derived from the configured schema or instance class.
 ]]>
             </xs:documentation>
           </xs:annotation>
@@ -10704,6 +10881,7 @@ gigabyte. Set to -1 to disable setting a maximum decompressed size. Default valu
             <xs:element ref="tns:a2aSubTask"/>
             <xs:element ref="tns:aggregate"/>
             <xs:element ref="tns:bean"/>
+            <xs:element ref="tns:cache"/>
             <xs:element ref="tns:doCatch"/>
             <xs:element ref="tns:choice"/>
             <xs:element ref="tns:circuitBreaker"/>
@@ -10906,6 +11084,7 @@ own individual unit of work. Default value: false
             <xs:element ref="tns:a2aSubTask"/>
             <xs:element ref="tns:aggregate"/>
             <xs:element ref="tns:bean"/>
+            <xs:element ref="tns:cache"/>
             <xs:element ref="tns:doCatch"/>
             <xs:element ref="tns:choice"/>
             <xs:element ref="tns:circuitBreaker"/>
@@ -11091,6 +11270,7 @@ onException steps complete. The exception is considered handled as well.
             <xs:element ref="tns:a2aSubTask"/>
             <xs:element ref="tns:aggregate"/>
             <xs:element ref="tns:bean"/>
+            <xs:element ref="tns:cache"/>
             <xs:element ref="tns:doCatch"/>
             <xs:element ref="tns:choice"/>
             <xs:element ref="tns:circuitBreaker"/>
@@ -11303,6 +11483,7 @@ Predicate to evaluate whether the processing can resume. Returns true if consump
             <xs:element ref="tns:a2aSubTask"/>
             <xs:element ref="tns:aggregate"/>
             <xs:element ref="tns:bean"/>
+            <xs:element ref="tns:cache"/>
             <xs:element ref="tns:doCatch"/>
             <xs:element ref="tns:choice"/>
             <xs:element ref="tns:circuitBreaker"/>
@@ -11384,6 +11565,7 @@ Predicate to evaluate whether the processing can resume. Returns true if consump
             <xs:element ref="tns:a2aSubTask"/>
             <xs:element ref="tns:aggregate"/>
             <xs:element ref="tns:bean"/>
+            <xs:element ref="tns:cache"/>
             <xs:element ref="tns:doCatch"/>
             <xs:element ref="tns:choice"/>
             <xs:element ref="tns:circuitBreaker"/>
@@ -12054,6 +12236,7 @@ Name of the variable to remove.
             <xs:element ref="tns:a2aSubTask"/>
             <xs:element ref="tns:aggregate"/>
             <xs:element ref="tns:bean"/>
+            <xs:element ref="tns:cache"/>
             <xs:element ref="tns:doCatch"/>
             <xs:element ref="tns:choice"/>
             <xs:element ref="tns:circuitBreaker"/>
@@ -12412,6 +12595,7 @@ Reference to the routes in the xml-dsl.
             <xs:element ref="tns:a2aSubTask"/>
             <xs:element ref="tns:aggregate"/>
             <xs:element ref="tns:bean"/>
+            <xs:element ref="tns:cache"/>
             <xs:element ref="tns:doCatch"/>
             <xs:element ref="tns:choice"/>
             <xs:element ref="tns:circuitBreaker"/>
@@ -12810,6 +12994,7 @@ Option values will be transformed into input headers of the compensation/complet
             <xs:element ref="tns:a2aSubTask"/>
             <xs:element ref="tns:aggregate"/>
             <xs:element ref="tns:bean"/>
+            <xs:element ref="tns:cache"/>
             <xs:element ref="tns:doCatch"/>
             <xs:element ref="tns:choice"/>
             <xs:element ref="tns:circuitBreaker"/>
@@ -13321,6 +13506,7 @@ Sets a reference to lookup for the comparator to use for sorting.
             <xs:element ref="tns:a2aSubTask"/>
             <xs:element ref="tns:aggregate"/>
             <xs:element ref="tns:bean"/>
+            <xs:element ref="tns:cache"/>
             <xs:element ref="tns:doCatch"/>
             <xs:element ref="tns:choice"/>
             <xs:element ref="tns:circuitBreaker"/>
@@ -13596,6 +13782,7 @@ enables value-based watermarking instead of index-based. The expression is evalu
             <xs:element ref="tns:a2aSubTask"/>
             <xs:element ref="tns:aggregate"/>
             <xs:element ref="tns:bean"/>
+            <xs:element ref="tns:cache"/>
             <xs:element ref="tns:doCatch"/>
             <xs:element ref="tns:choice"/>
             <xs:element ref="tns:circuitBreaker"/>
@@ -14320,6 +14507,7 @@ The underlying model name used by the tokenizer. Providing this switches to comp
             <xs:element ref="tns:a2aSubTask"/>
             <xs:element ref="tns:aggregate"/>
             <xs:element ref="tns:bean"/>
+            <xs:element ref="tns:cache"/>
             <xs:element ref="tns:doCatch"/>
             <xs:element ref="tns:choice"/>
             <xs:element ref="tns:circuitBreaker"/>
@@ -14474,6 +14662,7 @@ into.
             <xs:element ref="tns:a2aSubTask"/>
             <xs:element ref="tns:aggregate"/>
             <xs:element ref="tns:bean"/>
+            <xs:element ref="tns:cache"/>
             <xs:element ref="tns:doCatch"/>
             <xs:element ref="tns:choice"/>
             <xs:element ref="tns:circuitBreaker"/>

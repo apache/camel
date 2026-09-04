@@ -69,6 +69,13 @@ public class JavaDslModelWriter extends JavaDslModelWriterSupport {
         doWriteBeanFactoryDefinition(sb, def);
         return sb.toString();
     }
+    public String writeCacheDefinition(CacheDefinition def) {
+        resetState();
+        StringBuilder sb = new StringBuilder();
+        beginStep(sb, "cache", def);
+        doWriteCacheDefinition(sb, def);
+        return sb.toString();
+    }
     public String writeCatchDefinition(CatchDefinition def) {
         resetState();
         StringBuilder sb = new StringBuilder();
@@ -1821,6 +1828,13 @@ public class JavaDslModelWriter extends JavaDslModelWriterSupport {
             doWriteAttribute(sb, "script", def.getScript(), null);
         }
     }
+    protected void doWriteCacheDefinition(StringBuilder sb, CacheDefinition def) {
+        doWriteProcessorDefinitionAttributes(sb, def);
+        doWriteAttribute(sb, "keyValueRepository", def.getKeyValueRepository(), null);
+        doWriteAttribute(sb, "ttl", def.getTtl(), "-1");
+        doWriteAttribute(sb, "cacheNull", def.getCacheNull(), "false");
+        doWriteOutputExpressionNodeElements(sb, def);
+    }
     protected void doWriteCatchDefinition(StringBuilder sb, CatchDefinition def) {
         doWriteProcessorDefinitionAttributes(sb, def);
         doWriteStringList(sb, null, "exception", def.getExceptions());
@@ -2849,9 +2863,9 @@ public class JavaDslModelWriter extends JavaDslModelWriterSupport {
     }
     protected void doWriteAvroDataFormat(StringBuilder sb, AvroDataFormat def) {
         doWriteIdentifiedTypeAttributes(sb, def);
-        doWriteAttribute(sb, "unmarshalType", def.getUnmarshalTypeName(), null);
         doWriteAttribute(sb, "collectionType", def.getCollectionTypeName(), null);
         doWriteAttribute(sb, "jsonView", def.getJsonViewTypeName(), null);
+        doWriteAttribute(sb, "unmarshalType", def.getUnmarshalTypeName(), null);
         doWriteAttribute(sb, "instanceClassName", def.getInstanceClassName(), null);
         doWriteAttribute(sb, "library", toString(def.getLibrary()), "avroJackson");
         doWriteAttribute(sb, "objectMapper", def.getObjectMapper(), null);
@@ -2869,6 +2883,7 @@ public class JavaDslModelWriter extends JavaDslModelWriterSupport {
         doWriteAttribute(sb, "contentTypeHeader", def.getContentTypeHeader(), "true");
         doWriteAttribute(sb, "schemaResolver", def.getSchemaResolver(), null);
         doWriteAttribute(sb, "autoDiscoverSchemaResolver", def.getAutoDiscoverSchemaResolver(), "true");
+        doWriteAttribute(sb, "serializablePackages", def.getSerializablePackages(), null);
     }
     protected void doWriteBarcodeDataFormat(StringBuilder sb, BarcodeDataFormat def) {
         doWriteIdentifiedTypeAttributes(sb, def);
@@ -4121,6 +4136,22 @@ public class JavaDslModelWriter extends JavaDslModelWriterSupport {
                     doWriteBeanDefinition(sb, _d);
                     endStep(sb, "bean", v);
                 }
+                case "CacheDefinition" -> {
+                    CacheDefinition _d = (CacheDefinition) v;
+                    handledAttributes.clear();
+                    sb.append("\n").append(indent()).append(".cache(");
+                    boolean _first = true;
+                    if (_d.getExpression() != null) {
+                        if (!_first) sb.append(", ");
+                        _first = false;
+                        sb.append(expressionDsl(_d.getExpression()));
+                    }
+                    handledAttributes.add("expression");
+                    handledAttributes.add("expression");
+                    sb.append(")");
+                    doWriteCacheDefinition(sb, _d);
+                    endStep(sb, "cache", v);
+                }
                 case "CatchDefinition" -> {
                     CatchDefinition _d = (CatchDefinition) v;
                     handledAttributes.clear();
@@ -5251,6 +5282,22 @@ public class JavaDslModelWriter extends JavaDslModelWriterSupport {
                     sb.append(")");
                     doWriteBeanDefinition(sb, _d);
                     endStep(sb, "bean", v);
+                }
+                case "CacheDefinition" -> {
+                    CacheDefinition _d = (CacheDefinition) v;
+                    handledAttributes.clear();
+                    sb.append("\n").append(indent()).append(".cache(");
+                    boolean _first = true;
+                    if (_d.getExpression() != null) {
+                        if (!_first) sb.append(", ");
+                        _first = false;
+                        sb.append(expressionDsl(_d.getExpression()));
+                    }
+                    handledAttributes.add("expression");
+                    handledAttributes.add("expression");
+                    sb.append(")");
+                    doWriteCacheDefinition(sb, _d);
+                    endStep(sb, "cache", v);
                 }
                 case "CatchDefinition" -> {
                     CatchDefinition _d = (CatchDefinition) v;

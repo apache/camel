@@ -206,13 +206,47 @@ public class LanguageGuardrail implements InputGuardrail {
         if (!allowMixed && detectedLanguages.size() > 1) {
             // Check if all detected languages are in allowed set
             for (Language detected : detectedLanguages) {
-                if (!allowedLanguages.contains(detected) && detected != Language.ENGLISH) {
+                // ENGLISH and LATIN_SCRIPT overlap (ASCII letters match both), so LATIN_SCRIPT must not be
+                // treated as foreign when ENGLISH is allowed - otherwise plain English is falsely rejected.
+                boolean acceptable = allowedLanguages.contains(detected)
+                        || detected == Language.ENGLISH
+                        || (detected == Language.LATIN_SCRIPT && allowedLanguages.contains(Language.ENGLISH));
+                if (!acceptable) {
                     return failure("Mixed language content is not allowed.");
                 }
             }
         }
 
+        // Enforce the minimum ratio of allowed-language characters, when configured
+        if (minLanguageRatio > 0.0) {
+            double ratio = allowedLanguageRatio(text);
+            if (ratio < minLanguageRatio) {
+                return failure(String.format(
+                        "Message does not meet the minimum allowed-language ratio (required %.2f, found %.2f).",
+                        minLanguageRatio, ratio));
+            }
+        }
+
         return success();
+    }
+
+    /**
+     * Fraction of the non-whitespace characters that belong to at least one allowed language/script. Returns 1.0 when
+     * there are no non-whitespace characters.
+     */
+    private double allowedLanguageRatio(String text) {
+        long total = text.codePoints().filter(cp -> !Character.isWhitespace(cp)).count();
+        if (total == 0) {
+            return 1.0;
+        }
+        long allowed = text.codePoints()
+                .filter(cp -> !Character.isWhitespace(cp))
+                .filter(cp -> {
+                    String ch = new String(Character.toChars(cp));
+                    return allowedLanguages.stream().anyMatch(lang -> lang.isPresent(ch));
+                })
+                .count();
+        return (double) allowed / total;
     }
 
     /**
@@ -227,6 +261,13 @@ public class LanguageGuardrail implements InputGuardrail {
      */
     public Set<Language> getBlockedLanguages() {
         return new HashSet<>(blockedLanguages);
+    }
+
+    /**
+     * @return the minimum required ratio of allowed-language characters (0.0 disables the check)
+     */
+    public double getMinLanguageRatio() {
+        return minLanguageRatio;
     }
 
     /**

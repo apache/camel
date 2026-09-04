@@ -75,6 +75,26 @@ class GenAiObservabilitySpanTest extends ExchangeTestSupport {
     }
 
     @Test
+    void shouldRecordLargeTokenCountsOnSpanAttributes() {
+        long largeInput = Integer.MAX_VALUE + 4096L;
+        long largeOutput = Integer.MAX_VALUE + 8192L;
+
+        Exchange exchange = new DefaultExchange(context);
+        GenAiObservation observation = GenAiObservability.start(exchange, GenAiObservationContext.builder()
+                .operationName(GenAiOperationName.CHAT)
+                .system("openai")
+                .requestModel("gpt-4.1")
+                .componentScheme("openai")
+                .build());
+        observation.recordSuccess(GenAiUsage.of(largeInput, largeOutput, "stop", "gpt-4.1"));
+        observation.close();
+
+        Map<String, String> tags = tracer.closedSpans().get(0).tags();
+        assertThat(tags.get(GenAiAttributes.INPUT_TOKENS)).isEqualTo(Long.toString(largeInput));
+        assertThat(tags.get(GenAiAttributes.OUTPUT_TOKENS)).isEqualTo(Long.toString(largeOutput));
+    }
+
+    @Test
     void shouldMarkSpanAsErrorWhenFailureRecorded() {
         Exchange exchange = new DefaultExchange(context);
         GenAiObservation observation = GenAiObservability.start(exchange, GenAiObservationContext.builder()

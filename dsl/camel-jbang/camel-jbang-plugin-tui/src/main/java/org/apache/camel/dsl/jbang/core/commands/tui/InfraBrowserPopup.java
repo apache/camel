@@ -463,7 +463,8 @@ class InfraBrowserPopup {
                     .cursorStyle(Style.EMPTY.reversed())
                     .placeholder("default")
                     .build();
-            frame.renderStatefulWidget(textInput, portArea, portState);
+            // renderWithCursor (not renderStatefulWidget) so the caret is painted on the active field
+            textInput.renderWithCursor(portArea, frame.buffer(), portState, frame);
         } else {
             String portText = portState != null ? portState.text() : "";
             frame.renderWidget(Paragraph.from(Line.from(

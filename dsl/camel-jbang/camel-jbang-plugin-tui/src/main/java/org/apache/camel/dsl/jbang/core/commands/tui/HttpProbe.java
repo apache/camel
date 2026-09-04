@@ -1309,7 +1309,8 @@ class HttpProbe {
         Rect pathArea = new Rect(innerX + labelW, row, fieldW, 1);
         if (probeField == PROBE_PATH && !probeSending.get()) {
             TextInput textInput = TextInput.builder().cursorStyle(Style.EMPTY.reversed()).build();
-            frame.renderStatefulWidget(textInput, pathArea, probePathState);
+            // renderWithCursor (not renderStatefulWidget) so the caret is painted on the active field
+            textInput.renderWithCursor(pathArea, frame.buffer(), probePathState, frame);
         } else {
             String pathText = probePathState.text();
             frame.renderWidget(Paragraph.from(Line.from(
@@ -1342,7 +1343,8 @@ class HttpProbe {
                             .cursorStyle(Style.EMPTY.reversed())
                             .placeholder("value for {" + pp.name + "}")
                             .build();
-                    frame.renderStatefulWidget(textInput, paramInputArea, pp.input);
+                    // renderWithCursor (not renderStatefulWidget) so the caret is painted on the active field
+                    textInput.renderWithCursor(paramInputArea, frame.buffer(), pp.input, frame);
                 } else {
                     String val = pp.input.text();
                     frame.renderWidget(Paragraph.from(Line.from(
@@ -1436,7 +1438,8 @@ class HttpProbe {
             Rect keyArea = new Rect(fieldX, row, keyW, 1);
             if (isSelected && editingKey && !probeSending.get()) {
                 TextInput keyInput = TextInput.builder().cursorStyle(Style.EMPTY.reversed()).build();
-                frame.renderStatefulWidget(keyInput, keyArea, he.keyInput());
+                // renderWithCursor (not renderStatefulWidget) so the caret is painted on the active field
+                keyInput.renderWithCursor(keyArea, frame.buffer(), he.keyInput(), frame);
             } else {
                 String keyText = he.keyInput().text();
                 Style keyStyle = keyText.isEmpty() ? Style.EMPTY.dim()
@@ -1452,7 +1455,8 @@ class HttpProbe {
             Rect valArea = new Rect(fieldX + keyW + 3, row, valW, 1);
             if (isSelected && !editingKey && !probeSending.get()) {
                 TextInput valInput = TextInput.builder().cursorStyle(Style.EMPTY.reversed()).build();
-                frame.renderStatefulWidget(valInput, valArea, he.valueInput());
+                // renderWithCursor (not renderStatefulWidget) so the caret is painted on the active field
+                valInput.renderWithCursor(valArea, frame.buffer(), he.valueInput(), frame);
             } else {
                 String valText = he.valueInput().text();
                 Style valStyle = valText.isEmpty() ? Style.EMPTY.dim()

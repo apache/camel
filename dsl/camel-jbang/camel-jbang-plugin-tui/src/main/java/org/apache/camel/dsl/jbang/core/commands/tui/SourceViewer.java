@@ -20,6 +20,7 @@ import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.StandardOpenOption;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -169,10 +170,13 @@ class SourceViewer {
     private boolean diffOverlay;
     private int diffScrollY;
     private BiConsumer<String, Boolean> notificationCallback;
+    private Runnable onFileCreated;
+    private Consumer<Path> onFileLoaded;
     private AutocompletePopup.AutocompleteProvider autocompleteProvider;
     private AutocompletePopup.ValueProvider autocompleteValueProvider;
     private java.util.function.Predicate<String> listItemNodeChecker;
     private AutocompletePopup autocompletePopup;
+    private RefactorPopup refactorPopup;
     private boolean validateOnSave = true;
     private org.apache.camel.dsl.yaml.validator.YamlValidator yamlValidator;
     private PropertiesValidator propertiesValidator;
@@ -210,6 +214,14 @@ class SourceViewer {
 
     void setNotificationCallback(BiConsumer<String, Boolean> callback) {
         this.notificationCallback = callback;
+    }
+
+    void setOnFileCreated(Runnable callback) {
+        this.onFileCreated = callback;
+    }
+
+    void setOnFileLoaded(Consumer<Path> callback) {
+        this.onFileLoaded = callback;
     }
 
     void setAutocompleteProvider(AutocompletePopup.AutocompleteProvider provider) {
@@ -342,6 +354,10 @@ class SourceViewer {
         }
         if (autocompletePopup != null) {
             autocompletePopup = null;
+            return true;
+        }
+        if (refactorPopup != null && refactorPopup.isVisible()) {
+            refactorPopup.close();
             return true;
         }
         if (pendingDiscard) {
@@ -634,6 +650,14 @@ class SourceViewer {
             }
             return true;
         }
+        if (refactorPopup != null && refactorPopup.isVisible()) {
+            refactorPopup.handleKeyEvent(ke);
+            RefactorPopup.Request req = refactorPopup.consumeResult();
+            if (req != null) {
+                applyRefactoring(req);
+            }
+            return true;
+        }
         if (autocompletePopup != null) {
             boolean wasValueMode = autocompletePopup.isValueMode();
             boolean wasListItem = autocompletePopup.isListItemInsertion();
@@ -693,6 +717,10 @@ class SourceViewer {
         }
         if (ke.hasCtrl() && ke.isCharIgnoreCase('k') && !ke.hasShift()) {
             applyBlockEdit(YamlBlockEditor.deleteLine(editLines(), editState.cursorRow()));
+            return true;
+        }
+        if (ke.hasCtrl() && ke.isCharIgnoreCase('r') && isCamelYamlFile()) {
+            openRefactorPopup();
             return true;
         }
         if (ke.isKey(KeyCode.LEFT) && ke.hasCtrl()) {
@@ -808,6 +836,10 @@ class SourceViewer {
             editState.deleteForward();
             return true;
         }
+        if (ke.isKey(KeyCode.TAB) && ke.hasShift()) {
+            moveCursorToPreviousIndentStop();
+            return true;
+        }
         if (ke.isKey(KeyCode.TAB) && autocompleteProvider != null) {
             openAutocomplete();
             return true;
@@ -853,6 +885,7 @@ class SourceViewer {
         editState.clear();
         editHistory.clear();
         autocompletePopup = null;
+        refactorPopup = null;
         validationErrors = null;
         inlineErrors = Collections.emptyMap();
         lastBackgroundValidationTime = 0;
@@ -894,33 +927,39 @@ class SourceViewer {
 
     YamlEndpointContext findEnclosingComponent(int fromRow) {
         String cursorLine = editState.getLine(fromRow);
-        int cursorIndent = countLeadingSpaces(cursorLine);
+        // a blank line's own leading whitespace can be stale after a Shift+Tab dedent (see
+        // effectiveBlankIndent) — use the cursor's real column so a cursor dedented back out of
+        // an endpoint's parameters: block isn't mistaken for still being inside it
+        int cursorIndent = cursorLine.isBlank() ? effectiveBlankIndent(fromRow) : countLeadingSpaces(cursorLine);
 
         // list items (- key:) are inside steps, not inside parameters
         if (!cursorLine.isBlank() && cursorLine.trim().startsWith("- ")) {
             return null;
         }
 
-        // blank lines: find the nearest preceding non-blank line for context
+        // blank line positioned as a sibling of a uri: line with no parameters: block yet —
+        // offer to create one. Scan siblings at exactly cursorIndent; a shallower line ends it.
         if (cursorLine.isBlank()) {
             for (int i = fromRow - 1; i >= 0; i--) {
-                String prev = editState.getLine(i);
-                if (!prev.isBlank()) {
-                    String pt = prev.trim();
-                    if (pt.startsWith("parameters:")) {
-                        // blank line right after parameters: — cursor is inside the block
-                        cursorIndent = countLeadingSpaces(prev) + 1;
-                        fromRow = i;
-                    } else if (pt.startsWith("- ") || pt.startsWith("steps:")) {
-                        // inside a steps block or list item — not inside parameters
-                        return null;
-                    } else if (pt.startsWith("uri:") || pt.startsWith("id:")) {
-                        // below uri: or id: — look for uri: sibling to offer component options
-                        return findComponentFromUriSibling(i);
-                    } else {
-                        return findEnclosingComponent(i);
-                    }
+                String line = editState.getLine(i);
+                if (line.isBlank()) {
+                    continue;
+                }
+                int indent = countLeadingSpaces(line);
+                if (indent < cursorIndent) {
                     break;
+                }
+                if (indent == cursorIndent) {
+                    String trimmed = line.trim();
+                    if (trimmed.startsWith("parameters:")) {
+                        // a parameters: block already exists as a sibling here — nothing to
+                        // auto-create, and the cursor isn't inside it either (it's a sibling,
+                        // not a child); fall through to generic EIP-field completion instead
+                        return null;
+                    }
+                    if (trimmed.startsWith("uri:") || trimmed.startsWith("- uri:")) {
+                        return findComponentFromUriSibling(i);
+                    }
                 }
             }
         }
@@ -1240,22 +1279,57 @@ class SourceViewer {
         return 0;
     }
 
+    /**
+     * Shift+Tab: move the cursor left, within the current line's leading whitespace, to the nearest enclosing
+     * structural indent level — the same indent a completion inserted at this position would have used one level up.
+     * Only acts while the cursor sits inside leading whitespace (nothing typed yet on the line); otherwise it is a
+     * no-op.
+     */
+    void moveCursorToPreviousIndentStop() {
+        int row = editState.cursorRow();
+        String line = editState.getLine(row);
+        int col = Math.min(editState.cursorCol(), line.length());
+        if (col <= 0 || !line.substring(0, col).isBlank()) {
+            return;
+        }
+
+        int target = 0;
+        for (int i = row - 1; i >= 0; i--) {
+            String prev = editState.getLine(i);
+            if (prev.isBlank()) {
+                continue;
+            }
+            int indent = countLeadingSpaces(prev);
+            if (indent < col) {
+                target = indent;
+                break;
+            }
+        }
+        SourceEditorNavigation.positionCursor(editState, row, target);
+    }
+
+    /**
+     * Effective indent for a possibly-blank line. On the live cursor row, the line's own leading whitespace can be
+     * stale — Shift+Tab (see {@link #moveCursorToPreviousIndentStop()}) repositions the cursor within existing
+     * whitespace without trimming it — so the cursor's column is the source of truth there. For any other row (e.g.
+     * tests resolving an arbitrary row without moving the live cursor there), trust the row's own real whitespace when
+     * it has any, and only derive from the preceding line when it is truly empty.
+     */
+    private int effectiveBlankIndent(int row) {
+        if (row == editState.cursorRow()) {
+            return editState.cursorCol();
+        }
+        int literal = countLeadingSpaces(editState.getLine(row));
+        return literal > 0 ? literal : deriveBlankLineIndent(row);
+    }
+
     String findParentYamlKey(int fromRow) {
         String cursorLine = editState.getLine(fromRow);
 
-        // on a blank line, use the scope line (the highlighted EIP) as parent
-        if (cursorLine.isBlank()) {
-            int scopeRow = findScopeLineRow(fromRow);
-            if (scopeRow >= 0) {
-                String scopeLine = editState.getLine(scopeRow);
-                String scopeKey = extractEipName(scopeLine.trim());
-                if (scopeKey != null) {
-                    return dashToCamelCase(scopeKey);
-                }
-            }
-        }
-
-        int cursorIndent = countLeadingSpaces(cursorLine);
+        // a blank line has no real indentation yet — derive the intended nesting level so a
+        // cursor nested under e.g. "expression:" resolves to that key, not to the enclosing EIP
+        // (which would otherwise re-offer already-set fields like name/expression)
+        int cursorIndent = cursorLine.isBlank() ? effectiveBlankIndent(fromRow) : countLeadingSpaces(cursorLine);
 
         // walk up to find parent key at lower indent
         for (int i = fromRow; i >= 0; i--) {
@@ -1285,11 +1359,7 @@ class SourceViewer {
 
     YamlEipContext findEnclosingEip(int fromRow) {
         String cursorLine = editState.getLine(fromRow);
-        int cursorIndent = countLeadingSpaces(cursorLine);
-
-        if (cursorLine.isBlank() && cursorIndent == 0) {
-            cursorIndent = deriveBlankLineIndent(fromRow);
-        }
+        int cursorIndent = cursorLine.isBlank() ? effectiveBlankIndent(fromRow) : countLeadingSpaces(cursorLine);
 
         // if cursor is inside a parameters: block, defer to component completion
         for (int i = fromRow; i >= 0; i--) {
@@ -1335,11 +1405,7 @@ class SourceViewer {
     java.util.Set<String> collectExistingSiblingKeys(int fromRow) {
         java.util.Set<String> keys = new java.util.LinkedHashSet<>();
         String cursorLine = editState.getLine(fromRow);
-        int cursorIndent = countLeadingSpaces(cursorLine);
-
-        if (cursorLine.isBlank() && cursorIndent == 0) {
-            cursorIndent = deriveBlankLineIndent(fromRow);
-        }
+        int cursorIndent = cursorLine.isBlank() ? effectiveBlankIndent(fromRow) : countLeadingSpaces(cursorLine);
 
         // scan upward for siblings at same indent
         for (int i = fromRow - 1; i >= 0; i--) {
@@ -1504,10 +1570,10 @@ class SourceViewer {
         }
         List<String> parts = new ArrayList<>();
         String cursorLine = editState.getLine(cursorRow);
-        int cursorIndent = countLeadingSpaces(cursorLine);
-        if (cursorLine.isBlank()) {
-            cursorIndent = Integer.MAX_VALUE;
-        }
+        // a blank line's own leading whitespace can be stale (see effectiveBlankIndent), so use
+        // the cursor's real column rather than assuming the deepest nesting implied by the line
+        // above — otherwise dedenting with Shift+Tab wouldn't be reflected in the breadcrumb
+        int cursorIndent = cursorLine.isBlank() ? effectiveBlankIndent(cursorRow) : countLeadingSpaces(cursorLine);
 
         int prevIndent = cursorIndent;
         for (int i = cursorRow - 1; i >= 0; i--) {
@@ -1548,29 +1614,64 @@ class SourceViewer {
     }
 
     private String adjustPasteIndent(String text, int cursorRow) {
-        int targetIndent = editState.cursorCol();
-        // when cursor is at col 0, infer indent from the previous non-blank line
-        if (targetIndent == 0) {
-            for (int i = cursorRow - 1; i >= 0; i--) {
-                String l = editState.getLine(i);
-                if (!l.isBlank()) {
-                    targetIndent = countLeadingSpaces(l);
-                    String trimmed = l.trim();
-                    if (trimmed.startsWith("- ")) {
-                        trimmed = trimmed.substring(2).trim();
-                    }
-                    // if previous line is a parent key, indent children deeper
-                    if (trimmed.endsWith(":")) {
-                        targetIndent += 2;
-                    }
-                    break;
-                }
-            }
+        String current = editState.getLine(cursorRow);
+        int targetIndent;
+        if (current == null || current.isBlank()) {
+            // on a blank line (including one carrying ENTER auto-indent whitespace, which handlePaste
+            // strips before inserting): infer the block indent from the context above the cursor and
+            // apply it to every pasted line
+            int fallback = current == null ? 0 : countLeadingSpaces(current);
+            targetIndent = inferBlankLineIndent(text, cursorRow, fallback);
+        } else if (editState.cursorCol() == 0) {
+            // inserting before an existing line: match that line's own indent
+            targetIndent = countLeadingSpaces(current);
+        } else {
+            // pasting into the middle of existing content: keep the cursor column
+            targetIndent = editState.cursorCol();
         }
         return reindentBlock(text, targetIndent);
     }
 
+    private int inferBlankLineIndent(String text, int cursorRow, int fallback) {
+        int prevIndent = -1;
+        boolean prevIsParentKey = false;
+        int listIndent = -1;
+        for (int i = cursorRow - 1; i >= 0; i--) {
+            String l = editState.getLine(i);
+            if (l.isBlank()) {
+                continue;
+            }
+            if (prevIndent < 0) {
+                // nearest non-blank line: its indent, and whether it opens a child block
+                prevIndent = countLeadingSpaces(l);
+                String t = l.trim();
+                if (t.startsWith("- ")) {
+                    t = t.substring(2).trim();
+                }
+                prevIsParentKey = t.endsWith(":");
+            }
+            if (l.trim().startsWith("- ")) {
+                // nearest existing list item — the sibling level for a pasted list item
+                listIndent = countLeadingSpaces(l);
+                break;
+            }
+        }
+        String firstTrimmed = firstNonBlankTrimmed(text);
+        boolean pasteIsListItem = firstTrimmed.startsWith("- ") || firstTrimmed.equals("-");
+        if (pasteIsListItem && listIndent >= 0) {
+            // align a pasted step with the nearest existing sibling step
+            return listIndent;
+        } else if (prevIndent >= 0) {
+            // otherwise follow the previous line, indenting deeper under a parent key
+            return prevIndent + (prevIsParentKey ? 2 : 0);
+        }
+        return fallback;
+    }
+
     static String reindentBlock(String text, int targetIndent) {
+        // normalize line endings: some terminals deliver pasted line breaks as \r\n or bare \r,
+        // which would otherwise collapse a multi-line paste into a single line
+        text = text.replace("\r\n", "\n").replace('\r', '\n');
         text = text.replace("\t", "  ");
         String[] pasteLines = text.split("\n", -1);
         int minIndent = Integer.MAX_VALUE;
@@ -1602,6 +1703,15 @@ class SourceViewer {
             }
         }
         return sb.toString();
+    }
+
+    private static String firstNonBlankTrimmed(String text) {
+        for (String line : text.split("\r\n|\r|\n", -1)) {
+            if (!line.isBlank()) {
+                return line.trim();
+            }
+        }
+        return "";
     }
 
     private static int countLeadingSpaces(String line) {
@@ -1782,7 +1892,12 @@ class SourceViewer {
             } else {
                 // auto-insert parameters: block if cursor is below uri: without one
                 if (ctx.needsParameters() && lineText.isBlank()) {
-                    int indent = deriveInsertionIndent(row);
+                    // parameters: must be a sibling of uri:, so use the cursor's real column
+                    // (matching uri:'s indent via Enter-key auto-indent) rather than
+                    // deriveInsertionIndent's EIP-scope heuristic, which resolves the scope to
+                    // the uri: line itself here and then adds a level, nesting parameters: one
+                    // level too deep and breaking findEnclosingComponent's uri-sibling lookup
+                    int indent = effectiveBlankIndent(row);
                     String indentStr = " ".repeat(indent);
                     editState.moveCursorToLineStart();
                     editState.insert(indentStr + "parameters:");
@@ -1889,14 +2004,31 @@ class SourceViewer {
     }
 
     void insertYamlCompletion(AutocompletePopup.CompletionItem item, boolean valueMode, String currentLine) {
-        insertYamlCompletion(item, valueMode, currentLine, false);
+        // no explicit cursor column given (e.g. direct test calls) — assume the cursor sits at
+        // the end of the given line, matching this method's original, column-agnostic behavior
+        insertYamlCompletion(item, valueMode, currentLine, false, currentLine.length());
     }
 
     private void insertYamlCompletion(
             AutocompletePopup.CompletionItem item, boolean valueMode, String currentLine, boolean listItem) {
-        int indent = countLeadingSpaces(currentLine);
-        if (currentLine.isBlank()) {
+        insertYamlCompletion(item, valueMode, currentLine, listItem, editState.cursorCol());
+    }
+
+    /** Package-private (rather than private) so tests can exercise an explicit cursor column. */
+    void insertYamlCompletion(
+            AutocompletePopup.CompletionItem item, boolean valueMode, String currentLine, boolean listItem,
+            int cursorCol) {
+        int indent;
+        if (currentLine.isEmpty()) {
+            // truly empty line (no auto-inserted whitespace yet) — derive from the enclosing EIP
             indent = deriveInsertionIndent(editState.cursorRow());
+        } else if (currentLine.isBlank()) {
+            // whitespace-only line: the cursor's column is the real, intended nesting depth —
+            // Shift+Tab (see moveCursorToPreviousIndentStop()) can dedent it within the existing
+            // whitespace without trimming the line, so the line's own length would be stale here
+            indent = Math.min(cursorCol, currentLine.length());
+        } else {
+            indent = countLeadingSpaces(currentLine);
         }
         String indentStr = " ".repeat(indent);
 
@@ -2098,6 +2230,42 @@ class SourceViewer {
         inlineErrors = msgs.isEmpty() ? Collections.emptyMap() : buildInlineErrors(msgs, content);
     }
 
+    /**
+     * Inline errors to actually display right now. A line with no value typed yet (e.g. a field just added via
+     * Tab-completion, "key:" with nothing after it) is still being filled in, so its error — which is really just "you
+     * haven't finished this" — is suppressed. This is value-based rather than cursor-based: a genuinely wrong,
+     * non-empty value (e.g. a Simple language typo) still flags immediately, without needing to move the cursor away
+     * first.
+     */
+    private Map<Integer, String> visibleInlineErrors() {
+        if (inlineErrors.isEmpty()) {
+            return inlineErrors;
+        }
+        Map<Integer, String> visible = null;
+        for (Integer line : inlineErrors.keySet()) {
+            if (line >= 0 && line < editState.lineCount() && isEmptyValueLine(editState.getLine(line))) {
+                if (visible == null) {
+                    visible = new java.util.LinkedHashMap<>(inlineErrors);
+                }
+                visible.remove(line);
+            }
+        }
+        return visible != null ? visible : inlineErrors;
+    }
+
+    /** Package-private (rather than private) so tests can exercise it directly. */
+    static boolean isEmptyValueLine(String line) {
+        String trimmed = line.trim();
+        if (trimmed.startsWith("- ")) {
+            trimmed = trimmed.substring(2).trim();
+        }
+        int colon = trimmed.indexOf(':');
+        if (colon < 0) {
+            return trimmed.isEmpty();
+        }
+        return trimmed.substring(colon + 1).trim().isEmpty();
+    }
+
     static Map<Integer, String> buildInlineErrors(List<String> errors, String content) {
         Map<Integer, String> result = new java.util.LinkedHashMap<>();
         java.util.regex.Pattern linePattern = java.util.regex.Pattern.compile("^Line (\\d+): (.*)");
@@ -2271,7 +2439,19 @@ class SourceViewer {
             }
             if (text != null && !text.isEmpty()) {
                 recordEditChange();
-                editState.insert(text);
+                int row = editState.cursorRow();
+                String current = editState.getLine(row);
+                String adjusted = adjustPasteIndent(text, row);
+                if (current != null && current.isBlank() && !current.isEmpty()) {
+                    // strip the blank line's leading whitespace (e.g. from ENTER auto-indent) so the
+                    // reindented block's own indent is not stacked on top of it
+                    editState.moveCursorToLineStart();
+                    int n = current.length();
+                    for (int i = 0; i < n; i++) {
+                        editState.deleteForward();
+                    }
+                }
+                editState.insert(adjusted);
             }
             return;
         }
@@ -2472,6 +2652,7 @@ class SourceViewer {
     }
 
     private void renderEditMode(Frame frame, Rect area) {
+        Map<Integer, String> visibleErrors = visibleInlineErrors();
         Style ts = titleStyle != null ? titleStyle : Style.EMPTY;
         List<Span> titleSpans = new ArrayList<>();
         String info = title != null ? title : "";
@@ -2505,10 +2686,10 @@ class SourceViewer {
             blockBuilder.borders(Borders.ALL)
                     .title(Title.from(Line.from(titleSpans)))
                     .titleBottom(posTitle);
-            if (!inlineErrors.isEmpty()) {
+            if (!visibleErrors.isEmpty()) {
                 Style errorStyle = Style.EMPTY.fg(dev.tamboui.style.Color.rgb(0xFF, 0x66, 0x66));
                 blockBuilder.title(Title.from(Line.from(
-                        Span.styled(" errors: " + inlineErrors.size() + " ", errorStyle))).right());
+                        Span.styled(" errors: " + visibleErrors.size() + " ", errorStyle))).right());
             }
         }
         if (borderStyle != null) {
@@ -2620,11 +2801,11 @@ class SourceViewer {
         }
 
         // error gutter markers — red line number for lines with validation errors
-        if (!inlineErrors.isEmpty() && !plainMode) {
+        if (!visibleErrors.isEmpty() && !plainMode) {
             int gutterWidth = Math.max(2, String.valueOf(editState.lineCount()).length()) + 2;
             for (int r = 0; r < editorArea.height(); r++) {
                 int lineIdx = editState.scrollRow() + r;
-                if (inlineErrors.containsKey(lineIdx)) {
+                if (visibleErrors.containsKey(lineIdx)) {
                     Style errorBg = Style.EMPTY.fg(dev.tamboui.style.Color.WHITE)
                             .bg(dev.tamboui.style.Color.rgb(0x8B, 0x00, 0x00));
                     int screenY = editorArea.top() + r;
@@ -2639,7 +2820,7 @@ class SourceViewer {
 
         // quick doc panel at the bottom — errors take priority over doc
         if (docArea != null) {
-            String cursorError = inlineErrors.get(editState.cursorRow());
+            String cursorError = visibleErrors.get(editState.cursorRow());
             List<Line> docLines = new ArrayList<>();
             String titleText = null;
             if (cursorError != null) {
@@ -2691,6 +2872,9 @@ class SourceViewer {
         }
         if (pendingDiscard) {
             renderDiscardPopup(frame, area);
+        }
+        if (refactorPopup != null && refactorPopup.isVisible()) {
+            refactorPopup.render(frame, area);
         }
     }
 
@@ -2852,7 +3036,8 @@ class SourceViewer {
     }
 
     private void renderDiscardPopup(Frame frame, Rect area) {
-        int popupW = Math.min(40, area.width() - 4);
+        int popupW = Math.max(40, Math.min(44, area.width() - 4));
+        popupW = Math.min(popupW, area.width() - 2);
         int popupH = 6;
         int x = area.left() + Math.max(0, (area.width() - popupW) / 2);
         int y = area.top() + Math.max(0, (area.height() - popupH) / 2);
@@ -2862,18 +3047,19 @@ class SourceViewer {
 
         Block block = Block.builder()
                 .borderType(BorderType.ROUNDED).borders(Borders.ALL)
+                .borderStyle(Theme.warning())
                 .title(Title.from(Line.from(Span.styled(" Discard Changes? ", Theme.warning().bold()))))
                 .build();
         frame.renderWidget(block, popup);
         Rect inner = block.inner(popup);
 
         frame.renderWidget(
-                Paragraph.builder().text(Text.from(
+                Paragraph.builder().centered().text(Text.from(
                         Line.empty(),
-                        Line.from(Span.raw(" Unsaved changes will be lost.")),
+                        Line.from(Span.raw("Unsaved changes will be lost.")),
                         Line.empty(),
-                        Line.from(Span.raw("  "),
-                                Span.styled("Enter", Style.EMPTY.bold()), Span.raw(" confirm  "),
+                        Line.from(
+                                Span.styled("Enter", Style.EMPTY.bold()), Span.raw(" confirm    "),
                                 Span.styled("Esc", Style.EMPTY.bold()), Span.raw(" cancel"))))
                         .build(),
                 inner);
@@ -2906,6 +3092,10 @@ class SourceViewer {
             return;
         }
         if (editMode) {
+            if (refactorPopup != null && refactorPopup.isVisible()) {
+                refactorPopup.renderFooter(spans);
+                return;
+            }
             TuiHelper.hint(spans, "Esc", "cancel");
             TuiHelper.hint(spans, "Ctrl+S", "save");
             TuiHelper.hint(spans, "F5", "save & close");
@@ -2920,10 +3110,13 @@ class SourceViewer {
             if (autocompleteProvider != null) {
                 TuiHelper.hint(spans, "Tab", "complete");
             }
+            TuiHelper.hint(spans, "Shift+Tab", "dedent");
             if (!inlineErrors.isEmpty()) {
                 TuiHelper.hint(spans, "F9", "next error");
             }
-            TuiHelper.hint(spans, TuiIcons.HINT_SCROLL, "move");
+            if (isCamelYamlFile()) {
+                TuiHelper.hint(spans, "Ctrl+R", "refactor");
+            }
             return;
         }
         if (markdownMode) {
@@ -2958,6 +3151,343 @@ class SourceViewer {
         if (onLineSelected != null) {
             TuiHelper.hint(spans, "Enter", "select node");
         }
+    }
+
+    // ---- Refactoring (F5 / Ctrl+R in view mode) ----
+
+    private void openRefactorPopup() {
+        int row = editState.cursorRow();
+        if (row < 0 || row >= editState.lineCount()) {
+            return;
+        }
+        String rawLine = editState.getLine(row);
+        List<RefactorPopup.Action> actions = new ArrayList<>();
+        // Extract to new file: available on any EIP step block in a YAML route
+        if (isCamelYamlFile()) {
+            List<String> lines = editLines();
+            YamlBlockEditor.BlockRange block = YamlBlockEditor.findBlock(lines, row, true);
+            if (block != null && !block.isEmpty() && isExtractableStep(lines.get(block.startRow()))) {
+                actions.add(RefactorPopup.Action.EXTRACT_TO_FILE);
+            }
+        }
+        String currentUri = extractUriFromLine(rawLine);
+        if (currentUri != null) {
+            actions.add(RefactorPopup.Action.REPLACE_URI);
+        }
+        if (currentUri == null && extractValueFromLine(rawLine) != null) {
+            actions.add(RefactorPopup.Action.EXTRACT_TO_PROPERTY);
+        }
+        if (actions.isEmpty()) {
+            return;
+        }
+        refactorPopup = new RefactorPopup();
+        refactorPopup.open(actions, currentUri);
+    }
+
+    private void applyRefactoring(RefactorPopup.Request req) {
+        int row = editState.cursorRow();
+        if (row < 0 || row >= editState.lineCount()) {
+            return;
+        }
+        String rawLine = editState.getLine(row);
+        switch (req.action()) {
+            case EXTRACT_TO_FILE -> applyExtractToFile(row, req.value());
+            case REPLACE_URI -> applyReplaceUri(row, rawLine, req.value());
+            case EXTRACT_TO_PROPERTY -> applyExtractToProperty(row, rawLine, req.value());
+        }
+    }
+
+    private void applyExtractToFile(int cursorRow, String name) {
+        if (editableFile == null) {
+            notifySave("Cannot extract: file is not writable", true);
+            return;
+        }
+        name = sanitizeFileName(name);
+        if (name.isEmpty()) {
+            notifySave("Cannot extract: invalid file name", true);
+            return;
+        }
+        List<String> lines = editLines();
+        YamlBlockEditor.BlockRange block = YamlBlockEditor.findBlock(lines, cursorRow, true);
+        if (block == null || block.isEmpty()) {
+            return;
+        }
+        String stepLine = lines.get(block.startRow());
+        if (!isExtractableStep(stepLine)) {
+            return;
+        }
+        int stepIndent = YamlBlockEditor.leadingSpaces(stepLine);
+        List<String> blockLines = new ArrayList<>(lines.subList(block.startRow(), block.endRow() + 1));
+        String newFileContent = buildExtractedRouteYaml(name, blockLines, stepIndent);
+        // Use canonical block-form notation:
+        //   - to:
+        //       uri: direct:<name>
+        String indentStr = " ".repeat(stepIndent);
+        String toLine = indentStr + "- to:";
+        String uriLine = indentStr + "    uri: direct:" + name;
+        recordEditChange();
+        List<String> newLines = new ArrayList<>(lines);
+        newLines.subList(block.startRow(), block.endRow() + 1).clear();
+        newLines.add(block.startRow(), uriLine);
+        newLines.add(block.startRow(), toLine);
+        editState.setText(YamlBlockEditor.fromLines(newLines));
+        SourceEditorNavigation.positionCursor(editState, block.startRow(), stepIndent);
+        // Auto-save the original file so the route index captures the refactoring change on disk.
+        // Without this, the new file's reverse jump link cannot be resolved until a manual save.
+        try {
+            Files.writeString(editableFile, editState.text(), StandardCharsets.UTF_8);
+            dirty = false;
+            originalEditText = editState.text();
+            lineStatuses = null;
+        } catch (IOException ignored) {
+            // best effort; extraction still proceeds
+        }
+        String newFileName = name + ".camel.yaml";
+        Path newFile = editableFile.getParent().resolve(newFileName);
+        boolean existed = Files.exists(newFile);
+        try {
+            if (existed) {
+                // Append as an additional route (blank line separator before the new block)
+                Files.writeString(newFile, "\n" + newFileContent, StandardCharsets.UTF_8, StandardOpenOption.APPEND);
+            } else {
+                Files.writeString(newFile, newFileContent, StandardCharsets.UTF_8, StandardOpenOption.CREATE_NEW);
+            }
+        } catch (IOException e) {
+            notifySave("Failed to write " + newFileName + ": " + e.getMessage(), true);
+            return;
+        }
+        if (!existed && onFileCreated != null) {
+            onFileCreated.run();
+        }
+        notifySave(existed ? "Added route to " + newFileName : "Extracted to " + newFileName, false);
+    }
+
+    /**
+     * Sanitizes a user-supplied string into a safe file base-name: replaces whitespace and illegal characters with
+     * hyphens, collapses consecutive hyphens, and strips leading/trailing hyphens.
+     */
+    static String sanitizeFileName(String name) {
+        if (name == null) {
+            return "";
+        }
+        // Replace whitespace and any char that is not alphanumeric, hyphen, underscore, or dot with a hyphen
+        String sanitized = name.trim().replaceAll("[^a-zA-Z0-9._-]", "-");
+        // Collapse consecutive hyphens
+        sanitized = sanitized.replaceAll("-{2,}", "-");
+        // Strip leading/trailing hyphens
+        sanitized = sanitized.replaceAll("^-+|-+$", "");
+        return sanitized;
+    }
+
+    /**
+     * Builds the YAML content for a new standalone route file containing the extracted step block.
+     */
+    static String buildExtractedRouteYaml(String name, List<String> blockLines, int stepIndent) {
+        // Standard Camel YAML route indentation: step items at column 6.
+        String stepPrefix = "      ";
+        StringBuilder sb = new StringBuilder();
+        sb.append("- route:\n");
+        sb.append("    from:\n");
+        sb.append("      uri: direct:").append(name).append("\n");
+        sb.append("    steps:\n");
+        for (String line : blockLines) {
+            String stripped = line.length() >= stepIndent ? line.substring(stepIndent) : line.stripLeading();
+            sb.append(stepPrefix).append(stripped).append("\n");
+        }
+        return sb.toString();
+    }
+
+    /**
+     * Returns {@code true} if the line represents an EIP step list item that can be extracted to a new file. Excludes
+     * {@code - route:} and {@code - from:} which are structural, not steps.
+     */
+    static boolean isExtractableStep(String line) {
+        if (line == null) {
+            return false;
+        }
+        String trimmed = line.trim();
+        return trimmed.startsWith("- ") && !trimmed.equals("- ")
+                && !trimmed.startsWith("- route:") && !trimmed.startsWith("- from:");
+    }
+
+    private void applyReplaceUri(int row, String rawLine, String newUri) {
+        String newLine = replaceUriOnLine(rawLine, newUri);
+        recordEditChange();
+        List<String> lines = editLines();
+        lines.set(row, newLine);
+        removeParametersBlock(lines, row, rawLine);
+        editState.setText(YamlBlockEditor.fromLines(lines));
+        SourceEditorNavigation.positionCursor(editState, row, countLeadingSpaces(newLine));
+        notifySave("Replaced URI with: " + newUri, false);
+    }
+
+    /**
+     * Removes the {@code parameters:} sibling block immediately after a {@code uri:} line when the URI is replaced.
+     * Only applies to block-form {@code uri:} lines; inline-form URIs carry no separate parameters block.
+     */
+    static void removeParametersBlock(List<String> lines, int uriRow, String uriLine) {
+        if (uriLine == null || !uriLine.trim().startsWith("uri:")) {
+            return;
+        }
+        int uriIndent = YamlBlockEditor.leadingSpaces(uriLine);
+        int paramsStart = -1;
+        int paramsEnd = -1;
+        for (int i = uriRow + 1; i < lines.size(); i++) {
+            String line = lines.get(i);
+            if (line.isBlank()) {
+                continue;
+            }
+            int indent = YamlBlockEditor.leadingSpaces(line);
+            if (indent < uriIndent) {
+                break;
+            }
+            if (indent == uriIndent) {
+                if (line.trim().startsWith("parameters:")) {
+                    paramsStart = i;
+                    paramsEnd = i;
+                    // Extend to all child lines (indented deeper than uriIndent)
+                    for (int j = i + 1; j < lines.size(); j++) {
+                        String next = lines.get(j);
+                        if (next.isBlank()) {
+                            continue;
+                        }
+                        if (YamlBlockEditor.leadingSpaces(next) <= uriIndent) {
+                            break;
+                        }
+                        paramsEnd = j;
+                    }
+                }
+                break; // another sibling key — stop regardless
+            }
+        }
+        if (paramsStart >= 0) {
+            lines.subList(paramsStart, paramsEnd + 1).clear();
+        }
+    }
+
+    private void applyExtractToProperty(int row, String rawLine, String propKey) {
+        String value = extractValueFromLine(rawLine);
+        if (value == null) {
+            return;
+        }
+        String newLine = replaceValueWithPlaceholder(rawLine, propKey);
+        recordEditChange();
+        List<String> lines = editLines();
+        lines.set(row, newLine);
+        editState.setText(YamlBlockEditor.fromLines(lines));
+        SourceEditorNavigation.positionCursor(editState, row, countLeadingSpaces(newLine));
+        if (editableFile != null) {
+            try {
+                Path propsFile = editableFile.getParent().resolve("application.properties");
+                Files.writeString(propsFile, propKey + "=" + value + "\n", StandardCharsets.UTF_8,
+                        StandardOpenOption.CREATE,
+                        StandardOpenOption.APPEND);
+            } catch (IOException e) {
+                notifySave("Warning: could not write application.properties: " + e.getMessage(), true);
+                return;
+            }
+        }
+        notifySave("Extracted to property: " + propKey, false);
+    }
+
+    /**
+     * Extracts the URI (without query parameters) from a YAML endpoint line, or {@code null} if the line is not a
+     * recognized endpoint/URI line.
+     */
+    static String extractUriFromLine(String line) {
+        if (line == null) {
+            return null;
+        }
+        String trimmed = line.trim();
+        for (String prefix : List.of(
+                "- to:", "- from:", "from:", "- toD:", "- to-d:", "- wireTap:", "- wire-tap:",
+                "- enrich:", "- pollEnrich:", "- poll-enrich:", "- poll:", "uri:")) {
+            if (trimmed.startsWith(prefix)) {
+                String val = trimmed.substring(prefix.length()).trim();
+                val = unquoteYaml(val);
+                if (val.isEmpty() || val.startsWith("{") || val.startsWith("#")) {
+                    return null;
+                }
+                int q = val.indexOf('?');
+                return q >= 0 ? val.substring(0, q) : val;
+            }
+        }
+        return null;
+    }
+
+    /**
+     * Replaces the URI on a YAML endpoint line, stripping any existing query parameters.
+     */
+    static String replaceUriOnLine(String line, String newUri) {
+        if (line == null) {
+            return line;
+        }
+        String trimmed = line.trim();
+        int indent = countLeadingSpaces(line);
+        String indentStr = line.substring(0, indent);
+        for (String prefix : List.of(
+                "- to:", "- from:", "from:", "- toD:", "- to-d:", "- wireTap:", "- wire-tap:",
+                "- enrich:", "- pollEnrich:", "- poll-enrich:", "- poll:", "uri:")) {
+            if (trimmed.startsWith(prefix)) {
+                return indentStr + prefix + " " + newUri;
+            }
+        }
+        return line;
+    }
+
+    /**
+     * Extracts the plain-string value from a {@code key: value} YAML line, or {@code null} if the line does not carry
+     * an extractable literal (empty, structural, already a placeholder, or a URI endpoint line).
+     */
+    static String extractValueFromLine(String line) {
+        if (line == null) {
+            return null;
+        }
+        String trimmed = line.trim();
+        if (trimmed.isEmpty() || trimmed.startsWith("#") || trimmed.startsWith("- ")) {
+            return null;
+        }
+        int colon = trimmed.indexOf(':');
+        if (colon <= 0) {
+            return null;
+        }
+        String val = trimmed.substring(colon + 1).trim();
+        if (val.isEmpty() || val.startsWith("[") || val.startsWith("*")) {
+            return null;
+        }
+        val = unquoteYaml(val);
+        // Skip YAML maps and existing property placeholders
+        if (val.startsWith("{") || (val.startsWith("{{") && val.endsWith("}}"))) {
+            return null;
+        }
+        return val;
+    }
+
+    /**
+     * Replaces the value on a YAML {@code key: value} line with {@code {{propKey}}}, preserving indentation and key.
+     */
+    static String replaceValueWithPlaceholder(String line, String propKey) {
+        if (line == null) {
+            return line;
+        }
+        String trimmed = line.trim();
+        int indent = countLeadingSpaces(line);
+        String indentStr = line.substring(0, indent);
+        int colon = trimmed.indexOf(':');
+        if (colon <= 0) {
+            return line;
+        }
+        return indentStr + trimmed.substring(0, colon + 1) + " \"{{" + propKey + "}}\"";
+    }
+
+    private static String unquoteYaml(String val) {
+        if (val.length() >= 2 && val.startsWith("\"") && val.endsWith("\"")) {
+            return val.substring(1, val.length() - 1);
+        }
+        if (val.length() >= 2 && val.startsWith("'") && val.endsWith("'")) {
+            return val.substring(1, val.length() - 1);
+        }
+        return val;
     }
 
     /**
@@ -3010,6 +3540,9 @@ class SourceViewer {
             editableFile = Files.isWritable(filePath) ? filePath : null;
             scanDeprecatedLines();
             jumpLinks = Collections.emptyMap();
+            if (onFileLoaded != null) {
+                onFileLoaded.accept(filePath);
+            }
         } catch (IOException e) {
             title = fileName;
             lines = List.of("(Failed to read file: " + e.getMessage() + ")");

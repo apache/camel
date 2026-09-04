@@ -74,12 +74,38 @@ public class AlibabaEventBridgeEndpoint extends DefaultEndpoint {
     @UriParam(description = "Default event subject", displayName = "Event Subject")
     private String eventSubject;
 
+    @UriParam(description = "When true, verifies that the target event bus exists in Alibaba Cloud EventBridge"
+                            + " using listEventBuses before publishing. Also validates the CloudEvent source URI against the"
+                            + " allowedEventSources whitelist when that option is set.",
+              displayName = "Validate Event Source", label = "producer", defaultValue = "false")
+    private boolean validateEventSource;
+
+    @UriParam(description = "When true, verifies that the CloudEvent event type is valid for the event source on the"
+                            + " target event bus against Alibaba Cloud rule filter patterns before publishing.",
+              displayName = "Validate Event Type", label = "producer", defaultValue = "false")
+    private boolean validateEventType;
+
+    @UriParam(description = "Validate CloudEvents 1.0 specification constraints on map fields",
+              displayName = "Validate Event Spec", label = "producer", defaultValue = "true")
+    private boolean validateEventSpec = true;
+
+    @UriParam(description = "Allowed event sources and source-scoped event types per event bus. Supports multi-bus DSL"
+                            + " (bus[src -> type1,type2]), single-bus shorthand (src -> type1,type2), JSON string, or Map/List objects.",
+              displayName = "Allowed Event Sources", label = "producer")
+    private String allowedEventSources;
+
+    @UriParam(description = "TTL in milliseconds for caching event bus existence lookups per bus name."
+                            + " Applies only when validateEventSource is true.",
+              displayName = "Event Source Cache TTL", label = "producer,advanced", defaultValue = "300000")
+    private long eventSourceCacheTtl = 300000L;
+
     @UriParam(description = "Autowire an existing EventBridge client instance", displayName = "EventBridge Client",
               label = "advanced")
     @Metadata(autowired = true)
     private EventBridgeClient eventBridgeClient;
 
     private boolean autowiredEventBridgeClient;
+    private EventSourceCache eventSourceCache;
 
     public AlibabaEventBridgeEndpoint() {
     }
@@ -108,9 +134,21 @@ public class AlibabaEventBridgeEndpoint extends DefaultEndpoint {
     }
 
     @Override
+    protected void doStart() throws Exception {
+        super.doStart();
+        if (eventSourceCache == null) {
+            eventSourceCache = new EventSourceCache(eventSourceCacheTtl);
+        }
+    }
+
+    @Override
     protected void doStop() throws Exception {
         if (eventBridgeClient != null && !autowiredEventBridgeClient) {
             eventBridgeClient = null;
+        }
+        if (eventSourceCache != null) {
+            eventSourceCache.clear();
+            eventSourceCache = null;
         }
         super.doStop();
     }
@@ -193,6 +231,54 @@ public class AlibabaEventBridgeEndpoint extends DefaultEndpoint {
 
     public void setEventSubject(String eventSubject) {
         this.eventSubject = eventSubject;
+    }
+
+    public boolean isValidateEventSource() {
+        return validateEventSource;
+    }
+
+    public void setValidateEventSource(boolean validateEventSource) {
+        this.validateEventSource = validateEventSource;
+    }
+
+    public boolean isValidateEventType() {
+        return validateEventType;
+    }
+
+    public void setValidateEventType(boolean validateEventType) {
+        this.validateEventType = validateEventType;
+    }
+
+    public boolean isValidateEventSpec() {
+        return validateEventSpec;
+    }
+
+    public void setValidateEventSpec(boolean validateEventSpec) {
+        this.validateEventSpec = validateEventSpec;
+    }
+
+    public String getAllowedEventSources() {
+        return allowedEventSources;
+    }
+
+    public void setAllowedEventSources(String allowedEventSources) {
+        this.allowedEventSources = allowedEventSources;
+    }
+
+    public long getEventSourceCacheTtl() {
+        return eventSourceCacheTtl;
+    }
+
+    public void setEventSourceCacheTtl(long eventSourceCacheTtl) {
+        this.eventSourceCacheTtl = eventSourceCacheTtl;
+    }
+
+    public EventSourceCache getEventSourceCache() {
+        return eventSourceCache;
+    }
+
+    public void setEventSourceCache(EventSourceCache eventSourceCache) {
+        this.eventSourceCache = eventSourceCache;
     }
 
     public EventBridgeClient getEventBridgeClient() {

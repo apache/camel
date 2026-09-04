@@ -358,7 +358,8 @@ class FolderInputPopup {
                 .cursorStyle(Style.EMPTY.reversed())
                 .placeholder("/path/to/folder")
                 .build();
-        frame.renderStatefulWidget(textInput, inputArea, inputState);
+        // renderWithCursor (not renderStatefulWidget) so the caret is visible while typing
+        textInput.renderWithCursor(inputArea, frame.buffer(), inputState, frame);
     }
 
     private void doLaunchFolder(String folder, String pomPath, String displayName, List<String> extraArgs) {

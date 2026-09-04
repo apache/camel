@@ -857,7 +857,8 @@ class RunOptionsForm {
             TextInput textInput = TextInput.builder()
                     .cursorStyle(Style.EMPTY.reversed())
                     .build();
-            frame.renderStatefulWidget(textInput, inputArea, state);
+            // renderWithCursor (not renderStatefulWidget) so the caret is painted on the active field
+            textInput.renderWithCursor(inputArea, frame.buffer(), state, frame);
         } else {
             String text = state.text();
             if (text.isEmpty() && hint != null) {

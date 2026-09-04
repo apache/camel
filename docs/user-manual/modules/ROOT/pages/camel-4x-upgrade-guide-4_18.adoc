@@ -42,6 +42,34 @@ It is unset by default, which keeps the previous behaviour of accepting any path
 Additionally, a local input path that does not exist is now reported as a `File not found` `IOException`
 before Docling is invoked. Previously the size check silently skipped a path that resolved to nothing and
 the failure surfaced later, from the Docling process or API call.
+=== camel-dynamic-router
+
+The `dynamic-router-control` endpoint no longer takes the subscription `predicate`, or the
+`expressionLanguage` used to compile it, from the incoming control message. A control message that
+supplies either is now rejected with an `IllegalArgumentException`.
+
+The predicate is compiled and then evaluated against every exchange on the channel, so letting the
+control message choose both the language and the expression means the sender of that message decides
+what runs inside the Camel process. Only enable this when control messages can only come from a
+trusted source:
+
+[source,java]
+----
+from("kafka:subscriptions")
+    .unmarshal().json(DynamicRouterControlMessage.class)
+    .to("dynamic-router-control:subscribe?allowPredicateFromMessage=true");
+----
+
+Two alternatives avoid the flag entirely. A control message may still name a `predicateBean`, which
+selects a `Predicate` that the route author bound in the registry; that path is unchanged. The
+control endpoint may also carry `predicate` and `expressionLanguage` as URI parameters, in which case
+every subscription made through that endpoint uses the route author's expression. Subscription
+parameters that the control message does not carry now fall back to the values configured on the
+endpoint.
+
+Note that this release line does not carry the `allowedSchemes` option added to the `dynamic-router`
+endpoint on newer lines, nor the `security = "insecure:dev"` marker on `allowPredicateFromMessage`,
+because neither the option allow-list nor the security policy framework exists in 4.18.
 
 === camel-ftp, camel-sftp, camel-ftps, camel-mina-sftp, camel-azure-files, camel-smb
 
@@ -2100,3 +2128,10 @@ that resolve outside the configured directory are rejected.
 
 If `downloadFileName` is configured with an expression (i.e. it contains `$`), the local
 path is built by that expression as before and is not subject to this check.
+
+=== camel-core - REST client request validation and binary bodies
+
+When `clientRequestValidation` is enabled and the REST service declares a required body, the incoming
+message body is no longer replaced with a `String` version of itself. That conversion corrupted binary
+payloads such as `application/octet-stream`. The body is still read to check that it is present, using
+stream caching so it stays re-readable, but it now keeps its original type.

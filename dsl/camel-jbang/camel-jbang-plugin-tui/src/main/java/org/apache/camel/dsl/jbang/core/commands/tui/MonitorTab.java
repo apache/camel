@@ -58,6 +58,13 @@ interface MonitorTab {
     default void renderFooter(List<Span> spans) {
     }
 
+    /**
+     * Contributes tab-specific F-key hints that should render grouped with the global F-key hints (F1/F2/F10) in the
+     * footer, rather than at the tail with the other tab hints. Appended right after the global F-keys.
+     */
+    default void renderFKeyHints(List<Span> spans) {
+    }
+
     default void onTabSelected() {
     }
 

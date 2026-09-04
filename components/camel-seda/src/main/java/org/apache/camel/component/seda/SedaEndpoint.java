@@ -227,14 +227,15 @@ public class SedaEndpoint extends DefaultEndpoint implements AsyncEndpoint, Brow
     public BlockingQueue<Exchange> getQueue() {
         lock.lock();
         try {
-            if (queue == null) {
+            if (queue == null || (getComponent() != null && (ref == null || !ref.isReferenced(this)))) {
                 // prefer to lookup queue from component, so if this endpoint is re-created or re-started
                 // then the existing queue from the component can be used, so new producers and consumers
-                // can use the already existing queue referenced from the component
+                // can use the already existing queue referenced from the component; a released or
+                // de-listed reference must not be reused as the component no longer tracks it
                 if (getComponent() != null) {
                     // use null to indicate default size (= use what the existing queue has been configured with)
                     Integer size = (getSize() == Integer.MAX_VALUE || getSize() == SedaConstants.QUEUE_SIZE) ? null : getSize();
-                    QueueReference ref = getComponent().getOrCreateQueue(this, size, isMultipleConsumers(), queueFactory);
+                    ref = getComponent().getOrCreateQueue(this, size, isMultipleConsumers(), queueFactory);
                     queue = ref.getQueue();
                     String key = getComponent().getQueueKey(getEndpointUri());
                     LOG.debug("Endpoint {} is using shared queue: {} with size: {}", this, key,
@@ -605,12 +606,7 @@ public class SedaEndpoint extends DefaultEndpoint implements AsyncEndpoint, Brow
 
     void onStarted(SedaProducer producer) {
         producers.add(producer);
-        if (getComponent() != null && (ref == null || queue == null)) {
-            // re-register queue reference when producer restarts after queue was released on stop
-            Integer size = (getSize() == Integer.MAX_VALUE || getSize() == SedaConstants.QUEUE_SIZE) ? null : getSize();
-            ref = getComponent().getOrCreateQueue(this, size, isMultipleConsumers(), queueFactory);
-            queue = ref.getQueue();
-        }
+        registerQueueIfStale();
     }
 
     void onStopped(SedaProducer producer) {
@@ -623,6 +619,7 @@ public class SedaEndpoint extends DefaultEndpoint implements AsyncEndpoint, Brow
 
     void onStarted(SedaConsumer consumer) throws Exception {
         consumers.add(consumer);
+        registerQueueIfStale();
         if (isMultipleConsumers()) {
             updateMulticastProcessor();
         }
@@ -632,6 +629,17 @@ public class SedaEndpoint extends DefaultEndpoint implements AsyncEndpoint, Brow
         consumers.remove(consumer);
         if (isMultipleConsumers()) {
             updateMulticastProcessor();
+        }
+    }
+
+    private void registerQueueIfStale() {
+        if (getComponent() != null && (ref == null || queue == null || !ref.isReferenced(this))) {
+            // re-register when a producer or consumer restarts after the queue was released on stop, or
+            // when this endpoint was dropped from a reference still shared with other endpoints; the
+            // stale ref/queue fields may be non-null while no longer registered with the component
+            Integer size = (getSize() == Integer.MAX_VALUE || getSize() == SedaConstants.QUEUE_SIZE) ? null : getSize();
+            ref = getComponent().getOrCreateQueue(this, size, isMultipleConsumers(), queueFactory);
+            queue = ref.getQueue();
         }
     }
 
@@ -709,5 +717,4 @@ public class SedaEndpoint extends DefaultEndpoint implements AsyncEndpoint, Brow
         queue = null;
         ref = null;
     }
-
 }

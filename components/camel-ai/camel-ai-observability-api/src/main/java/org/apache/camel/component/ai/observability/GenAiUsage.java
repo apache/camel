@@ -20,13 +20,24 @@ package org.apache.camel.component.ai.observability;
  * Token usage and completion metadata captured after a GenAI operation.
  */
 public record GenAiUsage(
-        Integer inputTokens,
-        Integer outputTokens,
+        Long inputTokens,
+        Long outputTokens,
         String finishReason,
         String responseModel) {
 
-    public static GenAiUsage of(Integer inputTokens, Integer outputTokens, Object finishReason, String responseModel) {
+    public static GenAiUsage of(Long inputTokens, Long outputTokens, Object finishReason, String responseModel) {
         String reason = finishReason == null ? null : finishReason.toString();
         return new GenAiUsage(inputTokens, outputTokens, reason, responseModel);
+    }
+
+    /**
+     * Convenience factory when token counts come from APIs that expose {@code Integer} counts (e.g. LangChain4j).
+     */
+    public static GenAiUsage of(Integer inputTokens, Integer outputTokens, Object finishReason, String responseModel) {
+        return of(toLong(inputTokens), toLong(outputTokens), finishReason, responseModel);
+    }
+
+    private static Long toLong(Integer value) {
+        return value == null ? null : value.longValue();
     }
 }

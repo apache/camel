@@ -159,6 +159,48 @@ Agents are configured using the `AgentConfiguration` class which provides a flue
 * Retrieval Augmentor (for RAG functionality)
 * Input and Output Guardrails
 * Concurrent tool execution (`withExecuteToolsConcurrently`) for parallel Camel route tools and MCP tools within one LLM round trip
+* Tool-calling control: round-trip limits, hallucinated tool handling, and error compensation
+* AiServices builder customizer for advanced LangChain4j options
+
+==== Tool-calling options
+
+`AgentConfiguration` exposes the most common LangChain4j `AiServices` tool-calling settings as first-class fluent methods. These are applied automatically when Camel creates an agent from the configuration bean (inline agent mode or a registered `AgentWithMemory` / `AgentWithoutMemory` bean):
+
+[cols="1,2"]
+|===
+| Method | Purpose
+
+| `withMaxToolCallingRoundTrips(int)` | Limits how many tool-calling round trips the LLM may perform per request (`0` = unset)
+| `withHallucinatedToolNameStrategy(...)` | Handles requests for tool names that do not exist (for example a hallucinated `task_complete` tool)
+| `withToolExecutionErrorHandler(...)` | Converts tool execution exceptions into tool result messages for the LLM
+| `withToolArgumentsErrorHandler(...)` | Handles invalid or unparsable tool arguments
+| `withCompensateOnToolErrors(Boolean)` | Sends tool errors back to the LLM so it can recover instead of failing the exchange
+| `withExecuteToolsConcurrently()` / `withExecuteToolsConcurrently(Executor)` | Runs multiple tool calls from one LLM turn in parallel
+|===
+
+._Java-only: recover from a hallucinated tool name_
+[source,java]
+----
+AgentConfiguration configuration = new AgentConfiguration()
+    .withChatModel(chatModel)
+    .withMaxToolCallingRoundTrips(5)
+    .withHallucinatedToolNameStrategy(request ->
+        ToolExecutionResultMessage.from(request, "Unknown tool: " + request.name()));
+----
+
+Some LangChain4j builder options (for example `beforeToolExecution`, `afterToolExecution`, or `toolSearchStrategy`) are not wrapped individually. Use the customizer escape hatch instead:
+
+._Java-only: configure any remaining AiServices builder option_
+[source,java]
+----
+AgentConfiguration configuration = new AgentConfiguration()
+    .withChatModel(chatModel)
+    .withAiServicesCustomizer(builder -> builder
+        .beforeToolExecution(ctx -> log.info("Calling tool {}", ctx.toolExecutionRequest().name()))
+        .afterToolExecution(exec -> log.info("Tool finished: {}", exec.result())));
+----
+
+The customizer runs in `AbstractAgent.configureBuilder()` after all standard Camel wiring (tool providers, MCP, guardrails, RAG, and the first-class tool-calling options above) and before `build()` is called.
 
 ==== Concurrent tool execution
 

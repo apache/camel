@@ -65,6 +65,9 @@ public class ModelWriter extends BaseWriter {
     public void writeBeanFactoryDefinition(BeanFactoryDefinition def) throws IOException {
         doWriteBeanFactoryDefinition("beanFactory", def);
     }
+    public void writeCacheDefinition(CacheDefinition def) throws IOException {
+        doWriteCacheDefinition("cache", def);
+    }
     public void writeCatchDefinition(CatchDefinition def) throws IOException {
         doWriteCatchDefinition("doCatch", def);
     }
@@ -871,6 +874,15 @@ public class ModelWriter extends BaseWriter {
         doWriteElement("constructors", new BeanConstructorsAdapter().marshal(def.getConstructors()), this::doWriteBeanConstructorsDefinition);
         doWriteElement("properties", new BeanPropertiesAdapter().marshal(def.getProperties()), this::doWriteBeanPropertiesDefinition);
         doWriteElement("script", def.getScript(), this::doWriteString);
+        endElement(name);
+    }
+    protected void doWriteCacheDefinition(String name, CacheDefinition def) throws IOException {
+        startElement(name);
+        doWriteProcessorDefinitionAttributes(def);
+        doWriteAttribute("keyValueRepository", def.getKeyValueRepository(), null);
+        doWriteAttribute("ttl", def.getTtl(), "-1");
+        doWriteAttribute("cacheNull", def.getCacheNull(), "false");
+        doWriteOutputExpressionNodeElements(def);
         endElement(name);
     }
     protected void doWriteCatchDefinition(String name, CatchDefinition def) throws IOException {
@@ -2156,9 +2168,9 @@ public class ModelWriter extends BaseWriter {
     protected void doWriteAvroDataFormat(String name, AvroDataFormat def) throws IOException {
         startElement(name);
         doWriteIdentifiedTypeAttributes(def);
-        doWriteAttribute("unmarshalType", def.getUnmarshalTypeName(), null);
         doWriteAttribute("collectionType", def.getCollectionTypeName(), null);
         doWriteAttribute("jsonView", def.getJsonViewTypeName(), null);
+        doWriteAttribute("unmarshalType", def.getUnmarshalTypeName(), null);
         doWriteAttribute("instanceClassName", def.getInstanceClassName(), null);
         doWriteAttribute("library", toString(def.getLibrary()), "avroJackson");
         doWriteAttribute("objectMapper", def.getObjectMapper(), null);
@@ -2176,6 +2188,7 @@ public class ModelWriter extends BaseWriter {
         doWriteAttribute("contentTypeHeader", def.getContentTypeHeader(), "true");
         doWriteAttribute("schemaResolver", def.getSchemaResolver(), null);
         doWriteAttribute("autoDiscoverSchemaResolver", def.getAutoDiscoverSchemaResolver(), "true");
+        doWriteAttribute("serializablePackages", def.getSerializablePackages(), null);
         endElement(name);
     }
     protected void doWriteBarcodeDataFormat(String name, BarcodeDataFormat def) throws IOException {
@@ -3654,6 +3667,7 @@ public class ModelWriter extends BaseWriter {
                 case "A2ASubTaskDefinition" -> doWriteA2ASubTaskDefinition("a2aSubTask", (A2ASubTaskDefinition) v);
                 case "AggregateDefinition" -> doWriteAggregateDefinition("aggregate", (AggregateDefinition) v);
                 case "BeanDefinition" -> doWriteBeanDefinition("bean", (BeanDefinition) v);
+                case "CacheDefinition" -> doWriteCacheDefinition("cache", (CacheDefinition) v);
                 case "CatchDefinition" -> doWriteCatchDefinition("doCatch", (CatchDefinition) v);
                 case "ChoiceDefinition" -> doWriteChoiceDefinition("choice", (ChoiceDefinition) v);
                 case "CircuitBreakerDefinition" -> doWriteCircuitBreakerDefinition("circuitBreaker", (CircuitBreakerDefinition) v);
@@ -3762,6 +3776,7 @@ public class ModelWriter extends BaseWriter {
                 case "A2ASubTaskDefinition" -> doWriteA2ASubTaskDefinition("a2aSubTask", (A2ASubTaskDefinition) v);
                 case "AggregateDefinition" -> doWriteAggregateDefinition("aggregate", (AggregateDefinition) v);
                 case "BeanDefinition" -> doWriteBeanDefinition("bean", (BeanDefinition) v);
+                case "CacheDefinition" -> doWriteCacheDefinition("cache", (CacheDefinition) v);
                 case "CatchDefinition" -> doWriteCatchDefinition("doCatch", (CatchDefinition) v);
                 case "ChoiceDefinition" -> doWriteChoiceDefinition("choice", (ChoiceDefinition) v);
                 case "CircuitBreakerDefinition" -> doWriteCircuitBreakerDefinition("circuitBreaker", (CircuitBreakerDefinition) v);

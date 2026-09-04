@@ -61,6 +61,7 @@ public final class SecurityUtils {
         map.put("allowfilepathsource", new SecurityOption(INSECURE_DEV, "true"));
         map.put("allowjavaserializedobject", new SecurityOption(INSECURE_SERIALIZATION, "true"));
         map.put("allowlocalwebhookurls", new SecurityOption(INSECURE_DEV, "true"));
+        map.put("allowpredicatefrommessage", new SecurityOption(INSECURE_DEV, "true"));
         map.put("allowserializedheaders", new SecurityOption(INSECURE_SERIALIZATION, "true"));
         map.put("allowurlbody", new SecurityOption(INSECURE_DEV, "true"));
         map.put("allowurlsource", new SecurityOption(INSECURE_DEV, "true"));
@@ -75,6 +76,7 @@ public final class SecurityUtils {
         map.put("objectcodecpattern", new SecurityOption(INSECURE_SERIALIZATION, ""));
         map.put("objectmessageenabled", new SecurityOption(INSECURE_SERIALIZATION, "true"));
         map.put("sendenabled", new SecurityOption(INSECURE_DEV, "true"));
+        map.put("serializablepackages", new SecurityOption(INSECURE_SERIALIZATION, ""));
         map.put("skiptlsverify", new SecurityOption(INSECURE_SSL, "true"));
         map.put("sslendpointalgorithm", new SecurityOption(INSECURE_SSL, "none"));
         map.put("stricthostkeychecking", new SecurityOption(INSECURE_SSL, ""));

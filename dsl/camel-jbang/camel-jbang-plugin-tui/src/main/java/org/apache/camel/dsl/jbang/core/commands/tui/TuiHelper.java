@@ -723,7 +723,10 @@ final class TuiHelper {
         if ("pom.xml".equals(lower)) {
             return detectPomEmoji(path);
         }
-        if (lower.endsWith(".kamelet.yaml") || lower.endsWith(".kamelet.yml")) {
+        if (lower.endsWith(".kamelet.yaml") || lower.endsWith(".kamelet.yml")
+                || lower.endsWith(".camel.yaml") || lower.endsWith(".camel.yml")) {
+            // the .camel.yaml / .kamelet.yaml naming convention denotes a Camel file by name, so a
+            // freshly created (still empty) file shows the Camel icon without needing content
             return TuiIcons.CAMEL;
         }
         if (lower.endsWith(".yaml") || lower.endsWith(".yml")) {
@@ -952,5 +955,30 @@ final class TuiHelper {
         t.setDaemon(true);
         t.setName("heap-dump-" + pid);
         t.start();
+    }
+
+    /**
+     * Copies the given text to the system clipboard using the platform's native clipboard command ({@code pbcopy} on
+     * macOS, {@code clip} on Windows, {@code xclip} on Linux).
+     */
+    static void copyToClipboard(String text) throws IOException {
+        String os = System.getProperty("os.name", "").toLowerCase(Locale.ROOT);
+        String[] cmd;
+        if (os.contains("mac")) {
+            cmd = new String[] { "pbcopy" };
+        } else if (os.contains("win")) {
+            cmd = new String[] { "clip" };
+        } else {
+            cmd = new String[] { "xclip", "-selection", "clipboard" };
+        }
+        Process p = new ProcessBuilder(cmd).start();
+        try (java.io.OutputStream out = p.getOutputStream()) {
+            out.write(text.getBytes(StandardCharsets.UTF_8));
+        }
+        try {
+            p.waitFor(5, java.util.concurrent.TimeUnit.SECONDS);
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
+        }
     }
 }

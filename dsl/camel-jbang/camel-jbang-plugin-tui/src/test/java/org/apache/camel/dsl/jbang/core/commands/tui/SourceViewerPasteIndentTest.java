@@ -89,6 +89,21 @@ class SourceViewerPasteIndentTest {
     }
 
     @Test
+    void carriageReturnLineEndingsNormalized() {
+        // bare \r line endings (some terminals) must not collapse into a single line
+        String paste = "- to:\r    uri: mock:dead";
+        String result = SourceViewer.reindentBlock(paste, 8);
+        assertThat(result).isEqualTo("        - to:\n            uri: mock:dead");
+    }
+
+    @Test
+    void crlfLineEndingsNormalized() {
+        String paste = "- to:\r\n    uri: mock:dead";
+        String result = SourceViewer.reindentBlock(paste, 8);
+        assertThat(result).isEqualTo("        - to:\n            uri: mock:dead");
+    }
+
+    @Test
     void trailingNewlinePreserved() {
         String paste = "- log:\n    message: Hello\n";
         String result = SourceViewer.reindentBlock(paste, 4);

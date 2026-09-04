@@ -152,6 +152,13 @@
         "description" : "Invokes a method on a Java bean, with automatic parameter binding from the message body, headers, and exchange properties",
         "label" : "eip,endpoint"
       }, {
+        "name" : "cache",
+        "type" : "object",
+        "ref" : "cache",
+        "title" : "Cache",
+        "description" : "Caches the result of the nested processing steps. On cache hit, skips the block and sets the body from cache. On cache miss, executes the block and caches the result body.",
+        "label" : "eip,routing,caching"
+      }, {
         "name" : "choice",
         "type" : "object",
         "ref" : "choice",
@@ -1567,6 +1574,97 @@
         "index" : 12,
         "group" : "advanced",
         "label" : "advanced"
+      } ]
+    },
+    "cache" : {
+      "title" : "Cache",
+      "description" : "Caches the result of the nested processing steps. On cache hit, skips the block and sets the body from cache. On cache miss, executes the block and caches the result body.",
+      "label" : "eip,routing,caching",
+      "input" : true,
+      "output" : true,
+      "isListItem" : true,
+      "children" : [ {
+        "name" : "id",
+        "type" : "string",
+        "description" : "The id of this node",
+        "title" : "Id",
+        "displayName" : "Id",
+        "kind" : "attribute",
+        "index" : 0,
+        "group" : "common"
+      }, {
+        "name" : "note",
+        "type" : "string",
+        "description" : "The note for this node",
+        "title" : "Note",
+        "displayName" : "Note",
+        "kind" : "attribute",
+        "index" : 1,
+        "group" : "common"
+      }, {
+        "name" : "description",
+        "type" : "string",
+        "description" : "The description for this node",
+        "title" : "Description",
+        "displayName" : "Description",
+        "kind" : "attribute",
+        "index" : 2,
+        "group" : "common"
+      }, {
+        "name" : "disabled",
+        "type" : "boolean",
+        "description" : "Whether to disable this EIP from the route during build time. Once an EIP has been disabled then it cannot be enabled later at runtime.",
+        "title" : "Disabled",
+        "default" : "false",
+        "displayName" : "Disabled",
+        "kind" : "attribute",
+        "index" : 3,
+        "group" : "advanced",
+        "label" : "advanced"
+      }, {
+        "name" : "expression",
+        "type" : "object",
+        "ref" : "expression",
+        "description" : "Expression to compute the cache key. Messages with the same key share the cached result.",
+        "title" : "Expression",
+        "displayName" : "Expression",
+        "kind" : "expression",
+        "index" : 4,
+        "group" : "common",
+        "required" : true
+      }, {
+        "name" : "keyValueRepository",
+        "type" : "string",
+        "description" : "Sets the reference name of the KeyValueRepository to use as the cache backing store. If not set, a MemoryKeyValueRepository is auto-created.",
+        "title" : "Key Value Repository",
+        "displayName" : "Key Value Repository",
+        "kind" : "attribute",
+        "index" : 5,
+        "group" : "common"
+      }, {
+        "name" : "ttl",
+        "type" : "string",
+        "description" : "Sets the time-to-live for cached entries. Supports duration syntax (e.g. 10m, 1h) or milliseconds. Default: -1 (no expiration).",
+        "title" : "Ttl",
+        "default" : "-1",
+        "displayName" : "Ttl",
+        "kind" : "attribute",
+        "index" : 6,
+        "group" : "common"
+      }, {
+        "name" : "cacheNull",
+        "type" : "boolean",
+        "description" : "Whether to cache null results. By default, null message bodies are not cached.",
+        "title" : "Cache Null",
+        "default" : "false",
+        "displayName" : "Cache Null",
+        "kind" : "attribute",
+        "index" : 7,
+        "group" : "common"
+      }, {
+        "name" : "steps",
+        "type" : "array",
+        "ref" : "steps"
       } ]
     },
     "doCatch" : {
@@ -10340,6 +10438,16 @@
         "index" : 20,
         "group" : "advanced",
         "label" : "advanced"
+      }, {
+        "name" : "serializablePackages",
+        "type" : "string",
+        "description" : "Comma-separated list of additional packages that contain trusted Avro model classes. Avro 1.12 validates classes resolved from schemas; Camel automatically trusts packages derived from the configured schema or instance class.",
+        "title" : "Serializable Packages",
+        "displayName" : "Serializable Packages",
+        "kind" : "attribute",
+        "index" : 21,
+        "group" : "security",
+        "label" : "security"
       } ]
     },
     "barcode" : {

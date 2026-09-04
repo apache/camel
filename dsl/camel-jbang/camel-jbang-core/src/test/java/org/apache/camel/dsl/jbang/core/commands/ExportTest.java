@@ -1018,7 +1018,7 @@ class ExportTest {
                             null));
             Assertions.assertTrue(
                     containsDependency(model.getDependencies(), "io.hawt",
-                            "hawtio-springboot", HawtioVersion.HAWTIO_VERSION));
+                            "hawtio-springboot4", HawtioVersion.HAWTIO_VERSION));
             // Application properties
             File appProperties = new File(workingDir + "/src/main/resources", "application.properties");
             String content = IOHelper.loadText(new FileInputStream(appProperties));
@@ -1040,6 +1040,21 @@ class ExportTest {
             Assertions.assertTrue(content.contains("quarkus.hawtio.authenticationEnabled=false"),
                     "should contain quarkus.hawtio.authenticationEnabled property, was " + content);
         }
+    }
+
+    @Test
+    public void shouldExportHawtioWithSpringBoot3() throws Exception {
+        LOG.info("shouldExportHawtioWithSpringBoot3");
+        Export command = new Export(new CamelJBangMain());
+        CommandLine.populateCommand(command, "--gav=examples:route:1.0.0", "--dir=" + workingDir,
+                "--runtime=spring-boot", "--camel-version=" + RELEASED_CAMEL_VERSION,
+                "--spring-boot-version=3.5.14", "--hawtio=true", "target/test-classes/route.yaml");
+        int exit = command.doCall();
+
+        Assertions.assertEquals(0, exit);
+        Model model = readMavenModel();
+        Assertions.assertTrue(containsDependency(model.getDependencies(), "io.hawt",
+                "hawtio-springboot", HawtioVersion.HAWTIO_VERSION));
     }
 
     @ParameterizedTest

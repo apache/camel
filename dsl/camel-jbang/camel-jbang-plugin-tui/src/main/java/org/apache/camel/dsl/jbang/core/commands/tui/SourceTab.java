@@ -138,12 +138,19 @@ class SourceTab extends AbstractTab {
     private List<ToEntry> toIndex = Collections.emptyList();
     private final GotoRoutePopup gotoRoutePopup = new GotoRoutePopup();
     private final GotoSourceNodePopup gotoSourceNodePopup = new GotoSourceNodePopup();
+    private final FileActionsPopup fileActionsPopup = new FileActionsPopup();
 
     SourceTab(MonitorContext ctx) {
         super(ctx);
         sourceViewer.setNotificationCallback((msg, error) -> {
             if (ctx.notificationCallback != null) {
                 ctx.notificationCallback.accept(msg, error);
+            }
+        });
+        sourceViewer.setOnFileCreated(this::refreshFiles);
+        sourceViewer.setOnFileLoaded(p -> {
+            if (isCamelSourceFile(p)) {
+                sourceViewer.setJumpLinks(computeJumpLinks(p));
             }
         });
         sourceViewer.setValidateOnSave(ctx.validateOnSave);
@@ -155,7 +162,9 @@ class SourceTab extends AbstractTab {
     }
 
     boolean isSourceViewerTextInputActive() {
-        return sourceViewer.isTextInputActive();
+        // also treat the file-actions menu as active input so global single-key shortcuts (q, ?, ...)
+        // do not fire while the menu, its name prompt, or delete confirmation is open
+        return sourceViewer.isTextInputActive() || fileActionsPopup.isVisible();
     }
 
     void handlePaste(String text) {
@@ -193,6 +202,15 @@ class SourceTab extends AbstractTab {
 
     @Override
     public boolean handleKeyEvent(KeyEvent ke) {
+        if (fileActionsPopup.isVisible()) {
+            fileActionsPopup.handleKeyEvent(ke);
+            FileActionsPopup.Request req = fileActionsPopup.consumeResult();
+            if (req != null) {
+                executeFileAction(req);
+            }
+            return true;
+        }
+
         if (gotoRoutePopup.isVisible()) {
             gotoRoutePopup.handleKeyEvent(ke);
             GotoRoutePopup.RouteItem sel = gotoRoutePopup.consumeSelection();
@@ -302,12 +320,16 @@ class SourceTab extends AbstractTab {
 
     @Override
     public boolean isOverlayActive() {
-        return focusOnViewer && sourceViewer.isTextInputActive();
+        return fileActionsPopup.isVisible() || (focusOnViewer && sourceViewer.isTextInputActive());
     }
 
     @Override
     public boolean handleEscape() {
         // Esc is routed here from CamelMonitor before tab key handling — cancel overlays locally
+        if (fileActionsPopup.isVisible()) {
+            fileActionsPopup.handleKeyEvent(KeyEvent.ofKey(KeyCode.ESCAPE));
+            return true;
+        }
         if (gotoRoutePopup.isVisible()) {
             gotoRoutePopup.close();
             return true;
@@ -389,10 +411,17 @@ class SourceTab extends AbstractTab {
         if (gotoSourceNodePopup.isVisible()) {
             gotoSourceNodePopup.render(frame, area);
         }
+        if (fileActionsPopup.isVisible()) {
+            fileActionsPopup.render(frame, area);
+        }
     }
 
     @Override
     public void renderFooter(List<Span> spans) {
+        if (fileActionsPopup.isVisible()) {
+            fileActionsPopup.renderFooter(spans);
+            return;
+        }
         if (focusOnViewer && sourceViewer.isVisible()) {
             sourceViewer.renderFooter(spans);
             if (!sourceViewer.isEditMode()) {
@@ -417,6 +446,15 @@ class SourceTab extends AbstractTab {
     }
 
     @Override
+    public void renderFKeyHints(List<Span> spans) {
+        // Group the F12 file-actions hint with the global F-keys (next to F10) rather than at the tail. Only shown
+        // when the file list is focused (not the viewer) and no dialog is open.
+        if (!fileActionsPopup.isVisible() && !(focusOnViewer && sourceViewer.isVisible())) {
+            TuiHelper.hint(spans, "F12", "file actions");
+        }
+    }
+
+    @Override
     public String description() {
         return "Browse and view source files of the integration";
     }
@@ -434,6 +472,7 @@ class SourceTab extends AbstractTab {
                 - **Up/Down** — navigate files
                 - **Enter** — open file or directory
                 - **F4** — open file directly in edit mode
+                - **F12** — file actions menu (new file, new folder, rename, duplicate, delete, copy path)
                 - **Backspace** — go to parent directory
 
                 ## Source Viewer (right panel)
@@ -441,7 +480,8 @@ class SourceTab extends AbstractTab {
                 - **F4** — edit local file (plain text; only when file is writable)
                 - **Esc** — cancel edit (in edit mode) or close viewer
                 - **Ctrl+S** — save file and continue editing (Camel dev mode auto-reloads)
-                - **F5** — save file and close editor
+                - **F5** — save file and close editor (in edit mode)
+                - **Ctrl+R** — open refactoring menu in edit mode (YAML files only; choose an action for the current line)
                 - **Space** — cycle format (YAML/Java/XML) for Camel routes
                 - Quick documentation panel is shown at the bottom for Camel source files
                 - **/** — search in source
@@ -588,6 +628,10 @@ class SourceTab extends AbstractTab {
     }
 
     private boolean loadDirectory(Path dir) {
+        return loadDirectory(dir, null);
+    }
+
+    private boolean loadDirectory(Path dir, String selectName) {
         List<FilesBrowser.FileEntry> dirs = new ArrayList<>();
         List<FilesBrowser.FileEntry> files = new ArrayList<>();
         try (var stream = Files.list(dir)) {
@@ -613,6 +657,12 @@ class SourceTab extends AbstractTab {
         dirs.sort(Comparator.comparing(FilesBrowser.FileEntry::name, String.CASE_INSENSITIVE_ORDER));
         files.sort(Comparator.comparing(FilesBrowser.FileEntry::name, String.CASE_INSENSITIVE_ORDER));
 
+        // auto-descend through empty middle folders (no files and exactly one sub folder)
+        // when navigating forward (not when restoring position while navigating back)
+        if (selectName == null && files.isEmpty() && dirs.size() == 1) {
+            return loadDirectory(Path.of(dirs.get(0).path()));
+        }
+
         List<FilesBrowser.FileEntry> found = new ArrayList<>();
         if (!dir.equals(rootDir)) {
             found.add(new FilesBrowser.FileEntry(TuiIcons.FOLDER, "..", -1, dir.getParent().toString(), true));
@@ -624,10 +674,71 @@ class SourceTab extends AbstractTab {
             return false;
         }
         entries = found;
-        listState.select(0);
+        int sel = 0;
+        if (selectName != null) {
+            for (int i = 0; i < found.size(); i++) {
+                if (found.get(i).name().equals(selectName)) {
+                    sel = i;
+                    break;
+                }
+            }
+        }
+        listState.select(sel);
         currentDir = dir;
         buildRouteIndex();
+        // Recompute jump links for the currently viewed file so forward/reverse links
+        // are immediately usable after the route index is rebuilt (e.g. after extraction).
+        String viewedPath = sourceViewer.getCurrentFilePath();
+        if (viewedPath != null) {
+            Path viewedFile = Path.of(viewedPath);
+            if (isCamelSourceFile(viewedFile)) {
+                sourceViewer.setJumpLinks(computeJumpLinks(viewedFile));
+            }
+        }
         return true;
+    }
+
+    private void navigateBack() {
+        if (currentDir == null || currentDir.equals(rootDir)) {
+            return;
+        }
+        Path child = currentDir;
+        Path parent = currentDir.getParent();
+        // skip back through empty middle folders (parent has no files and only this one sub folder),
+        // but never above the root directory
+        while (parent != null && !parent.equals(rootDir) && parent.getParent() != null
+                && isEmptyMiddleFolder(parent)) {
+            child = parent;
+            parent = parent.getParent();
+        }
+        loadDirectory(parent, child.getFileName().toString());
+    }
+
+    private boolean isEmptyMiddleFolder(Path dir) {
+        int dirCount = 0;
+        try (var stream = Files.list(dir)) {
+            var it = stream.iterator();
+            while (it.hasNext()) {
+                Path p = it.next();
+                String name = p.getFileName().toString();
+                if (Files.isDirectory(p)) {
+                    if (name.startsWith(".")) {
+                        // hidden directories are not shown
+                        continue;
+                    }
+                    dirCount++;
+                    if (dirCount > 1) {
+                        return false;
+                    }
+                } else if (Files.isRegularFile(p)) {
+                    // has at least one visible file
+                    return false;
+                }
+            }
+        } catch (IOException e) {
+            return false;
+        }
+        return dirCount == 1;
     }
 
     private boolean handleFileListKey(KeyEvent ke) {
@@ -660,9 +771,7 @@ class SourceTab extends AbstractTab {
             return true;
         }
         if (ke.isDeleteBackward()) {
-            if (currentDir != null && !currentDir.equals(rootDir)) {
-                loadDirectory(currentDir.getParent());
-            }
+            navigateBack();
             return true;
         }
         if (ke.isConfirm()) {
@@ -676,7 +785,89 @@ class SourceTab extends AbstractTab {
             }
             return true;
         }
+        if (ke.isKey(KeyCode.F12)) {
+            openFileActionsMenu();
+            return true;
+        }
         return false;
+    }
+
+    private void openFileActionsMenu() {
+        if (currentDir == null) {
+            return;
+        }
+        FilesBrowser.FileEntry entry = selectedEntry();
+        boolean hasTarget = entry != null && !"..".equals(entry.name());
+        fileActionsPopup.open(hasTarget ? entry.name() : null, hasTarget);
+    }
+
+    private FilesBrowser.FileEntry selectedEntry() {
+        Integer sel = listState.selected();
+        if (sel != null && sel >= 0 && sel < entries.size()) {
+            return entries.get(sel);
+        }
+        return null;
+    }
+
+    private void executeFileAction(FileActionsPopup.Request req) {
+        FilesBrowser.FileEntry entry = selectedEntry();
+        try {
+            switch (req.action()) {
+                case NEW_FILE -> {
+                    // TODO: a future template wizard will let the user pick a starter route here
+                    Path p = SourceFileOps.createFile(currentDir, req.name());
+                    if (loadDirectory(currentDir, p.getFileName().toString())) {
+                        openSelectedEntry();
+                    }
+                    notify("Created " + p.getFileName(), false);
+                }
+                case NEW_FOLDER -> {
+                    Path p = SourceFileOps.createFolder(currentDir, req.name());
+                    loadDirectory(currentDir, p.getFileName().toString());
+                    notify("Created " + p.getFileName() + "/", false);
+                }
+                case RENAME -> {
+                    if (entry == null) {
+                        return;
+                    }
+                    Path p = SourceFileOps.rename(Path.of(entry.path()), req.name());
+                    loadDirectory(currentDir, p.getFileName().toString());
+                    notify("Renamed to " + p.getFileName(), false);
+                }
+                case DUPLICATE -> {
+                    if (entry == null) {
+                        return;
+                    }
+                    Path p = SourceFileOps.copy(Path.of(entry.path()), req.name());
+                    loadDirectory(currentDir, p.getFileName().toString());
+                    notify("Duplicated to " + p.getFileName(), false);
+                }
+                case DELETE -> {
+                    if (entry == null) {
+                        return;
+                    }
+                    String name = entry.name();
+                    SourceFileOps.delete(Path.of(entry.path()));
+                    loadDirectory(currentDir);
+                    notify("Deleted " + name, false);
+                }
+                case COPY_PATH -> {
+                    if (entry == null) {
+                        return;
+                    }
+                    TuiHelper.copyToClipboard(entry.path());
+                    notify("Copied path to clipboard", false);
+                }
+            }
+        } catch (Exception e) {
+            notify(e.getMessage() != null ? e.getMessage() : e.toString(), true);
+        }
+    }
+
+    private void notify(String msg, boolean error) {
+        if (ctx.notificationCallback != null) {
+            ctx.notificationCallback.accept(msg, error);
+        }
     }
 
     private void openSelectedEntry() {
@@ -687,7 +878,11 @@ class SourceTab extends AbstractTab {
         if (sel != null && sel < entries.size()) {
             FilesBrowser.FileEntry entry = entries.get(sel);
             if (entry.directory()) {
-                loadDirectory(Path.of(entry.path()));
+                if ("..".equals(entry.name())) {
+                    navigateBack();
+                } else {
+                    loadDirectory(Path.of(entry.path()));
+                }
             } else {
                 Path filePath = Path.of(entry.path());
                 if (isCamelSourceFile(filePath)) {

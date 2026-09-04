@@ -76,8 +76,6 @@ public class ChatScriptEndpoint extends DefaultEndpoint {
             throw new IllegalArgumentException(ChatScriptConstants.URI_ERROR);
         }
         botName = botName.substring(1);
-        setBot(new ChatScriptBot(getHost(), getPort(), getBotName(), ""));
-
     }
 
     public boolean isResetChat() {
@@ -135,6 +133,13 @@ public class ChatScriptEndpoint extends DefaultEndpoint {
     }
 
     public ChatScriptBot getBot() {
+        if (bot == null) {
+            // Created lazily so the chatUserName option (bound after the constructor) is honoured as the
+            // conversation user name instead of the previous hardcoded empty string.
+            bot = new ChatScriptBot(
+                    getHost(), getPort(), getBotName(),
+                    ObjectHelper.isNotEmpty(chatUserName) ? chatUserName : "");
+        }
         return bot;
     }
 

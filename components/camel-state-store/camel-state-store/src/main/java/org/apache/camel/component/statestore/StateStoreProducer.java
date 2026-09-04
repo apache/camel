@@ -16,6 +16,7 @@
  */
 package org.apache.camel.component.statestore;
 
+import java.time.Duration;
 import java.util.Arrays;
 
 import org.apache.camel.Exchange;
@@ -46,14 +47,17 @@ public class StateStoreProducer extends DefaultProducer {
         }
 
         KeyValueRepository backend = endpoint.getBackend();
-        long ttl = determineTtl(exchange);
+        long ttlMillis = determineTtl(exchange);
+        Duration ttl = ttlMillis > 0 ? Duration.ofMillis(ttlMillis) : null;
         Message message = exchange.getMessage();
 
         switch (op) {
             case put -> {
                 String key = requireKey(message);
                 Object value = message.getBody();
-                Object previous = backend.put(key, value, ttl);
+                // KeyValueRepository.put() is void; retrieve old value first for backward compat
+                Object previous = backend.get(key);
+                backend.put(key, value, ttl);
                 message.setBody(previous);
             }
             case putIfAbsent -> {

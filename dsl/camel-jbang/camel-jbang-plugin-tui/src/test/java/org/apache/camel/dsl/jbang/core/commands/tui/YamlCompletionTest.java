@@ -239,6 +239,90 @@ class YamlCompletionTest {
         assertThat(ctx.consumer()).isFalse();
     }
 
+    @Test
+    void findEnclosingComponentReturnsNullAfterDedentPastParameters() throws IOException {
+        // reproduces the cursor being Shift+Tab-dedented from inside an endpoint's parameters:
+        // block back down to the steps list-item level — findEnclosingComponent must stop
+        // offering that endpoint's options once the cursor is no longer really inside them,
+        // even though the blank line's own leftover whitespace still looks "deep"
+        String yaml = String.join("\n",
+                "- from:",
+                "    uri: timer:tick",
+                "    steps:",
+                "      - to:",
+                "          uri: file:xxx",
+                "          parameters:",
+                "            autoCreate: true",
+                "");
+
+        Path file = tempDir.resolve("route.camel.yaml");
+        Files.writeString(file, yaml);
+
+        SourceViewer viewer = new SourceViewer();
+        viewer.loadFile(file);
+        viewer.enterEditMode();
+        viewer.editState().moveCursorToStart();
+        for (int i = 0; i < 6; i++) {
+            viewer.editState().moveCursorDown();
+        }
+        viewer.editState().moveCursorToLineEnd();
+
+        // sanity check: still inside the file endpoint's parameters here
+        SourceViewer.YamlEndpointContext before = viewer.findEnclosingComponent(viewer.editState().cursorRow());
+        assertThat(before).isNotNull();
+        assertThat(before.component()).isEqualTo("file");
+
+        viewer.handleKeyEvent(dev.tamboui.tui.event.KeyEvent.ofKey(
+                dev.tamboui.tui.event.KeyCode.ENTER, dev.tamboui.tui.event.KeyModifiers.NONE));
+        viewer.handleKeyEvent(dev.tamboui.tui.event.KeyEvent.ofKey(
+                dev.tamboui.tui.event.KeyCode.TAB, dev.tamboui.tui.event.KeyModifiers.SHIFT));
+        viewer.handleKeyEvent(dev.tamboui.tui.event.KeyEvent.ofKey(
+                dev.tamboui.tui.event.KeyCode.TAB, dev.tamboui.tui.event.KeyModifiers.SHIFT));
+
+        SourceViewer.YamlEndpointContext after = viewer.findEnclosingComponent(viewer.editState().cursorRow());
+        assertThat(after).isNull();
+    }
+
+    @Test
+    void findEnclosingComponentDoesNotOfferToRecreateExistingParameters() throws IOException {
+        // reproduces the cursor dedenting exactly one level — from inside parameters: down to
+        // being a sibling of both uri: and parameters: — which must not be treated as "needs a
+        // parameters: block" (parameters already exists there), or Tab ends up inserting a
+        // second, duplicate "parameters:" key
+        String yaml = String.join("\n",
+                "- from:",
+                "    uri: timer:tick",
+                "    steps:",
+                "      - to:",
+                "          uri: file:xxx",
+                "          parameters:",
+                "            autoCreate: true",
+                "");
+
+        Path file = tempDir.resolve("route.camel.yaml");
+        Files.writeString(file, yaml);
+
+        SourceViewer viewer = new SourceViewer();
+        viewer.loadFile(file);
+        viewer.enterEditMode();
+        viewer.editState().moveCursorToStart();
+        for (int i = 0; i < 6; i++) {
+            viewer.editState().moveCursorDown();
+        }
+        viewer.editState().moveCursorToLineEnd();
+
+        viewer.handleKeyEvent(dev.tamboui.tui.event.KeyEvent.ofKey(
+                dev.tamboui.tui.event.KeyCode.ENTER, dev.tamboui.tui.event.KeyModifiers.NONE));
+        viewer.handleKeyEvent(dev.tamboui.tui.event.KeyEvent.ofKey(
+                dev.tamboui.tui.event.KeyCode.TAB, dev.tamboui.tui.event.KeyModifiers.SHIFT));
+
+        // now a sibling of uri:/parameters: (indent 10), not inside parameters: children (12)
+        assertThat(viewer.editState().cursorCol()).isEqualTo(10);
+
+        SourceViewer.YamlEndpointContext ctx = viewer.findEnclosingComponent(viewer.editState().cursorRow());
+        assertThat(ctx).isNull();
+    }
+
     // --- Key completion from catalog ---
 
     @Test
@@ -818,6 +902,26 @@ class YamlCompletionTest {
         assertThat(SourceViewer.dashToCamelCase(null)).isNull();
     }
 
+    // --- isEmptyValueLine (drives suppressing inline validation errors while a value is
+    // still being typed, without hiding a genuinely wrong, non-empty value) ---
+
+    @Test
+    void isEmptyValueLineDetectsMissingValue() {
+        assertThat(SourceViewer.isEmptyValueLine("            checksumFileAlgorithm:")).isTrue();
+        assertThat(SourceViewer.isEmptyValueLine("            checksumFileAlgorithm: ")).isTrue();
+        assertThat(SourceViewer.isEmptyValueLine("        - to:")).isTrue();
+        assertThat(SourceViewer.isEmptyValueLine("")).isTrue();
+    }
+
+    @Test
+    void isEmptyValueLineKeepsGenuinelyWrongValues() {
+        // a typo in a Simple expression (or any other non-empty, wrong value) must not be
+        // treated as "still being typed" — it should keep flagging immediately
+        assertThat(SourceViewer.isEmptyValueLine("              expression: ${bdoy}")).isFalse();
+        assertThat(SourceViewer.isEmptyValueLine("            checksumFileAlgorithm: NOT_REAL")).isFalse();
+        assertThat(SourceViewer.isEmptyValueLine("        - to: file:xxx")).isFalse();
+    }
+
     // --- findScopeLineRow ---
 
     @Test
@@ -1009,6 +1113,29 @@ class YamlCompletionTest {
         viewer.enterEditMode();
 
         assertThat(viewer.findParentYamlKey(6)).isEqualTo("simple");
+    }
+
+    @Test
+    void findParentYamlKeyOnEmptyLineUnderExpression() throws IOException {
+        // reproduces a truly empty cursor line (no pre-typed indentation), which relies on the
+        // preceding "expression:" line to derive the intended nesting level
+        String yaml = String.join("\n",
+                "- from:",
+                "    uri: timer:tick",
+                "    steps:",
+                "      - setVariable:",
+                "          name: cheese",
+                "          expression:",
+                "");
+
+        Path file = tempDir.resolve("route.camel.yaml");
+        Files.writeString(file, yaml);
+
+        SourceViewer viewer = new SourceViewer();
+        viewer.loadFile(file);
+        viewer.enterEditMode();
+
+        assertThat(viewer.findParentYamlKey(6)).isEqualTo("expression");
     }
 
     @Test
@@ -1294,6 +1421,198 @@ class YamlCompletionTest {
         String result = viewer.editState().text();
         // after steps:, the new line should have "- " list item prefix
         assertThat(result).contains("            steps:\n              - ");
+    }
+
+    @Test
+    void insertLanguageKeyUnderExpressionKeepsNestedIndent() throws IOException {
+        // reproduces choosing "expression:" (object) then a language (e.g. "constant") for its
+        // auto-inserted child line — the language must nest under expression, not become its sibling
+        String yaml = String.join("\n",
+                "- from:",
+                "    uri: timer:tick",
+                "    steps:",
+                "      - setVariable:",
+                "          name: cheese",
+                "          ",
+                "");
+
+        Path file = tempDir.resolve("route.camel.yaml");
+        Files.writeString(file, yaml);
+
+        SourceViewer viewer = new SourceViewer();
+        viewer.loadFile(file);
+        viewer.enterEditMode();
+        viewer.editState().moveCursorToStart();
+        for (int i = 0; i < 5; i++) {
+            viewer.editState().moveCursorDown();
+        }
+
+        AutocompletePopup.CompletionItem expressionItem = new AutocompletePopup.CompletionItem(
+                "expression", "The expression", "object", null, false, null, "common", true);
+        viewer.insertYamlCompletion(expressionItem, false, "          ");
+
+        // cursor now sits on the auto-inserted (whitespace-only, but real) child line
+        String childLine = viewer.editState().getLine(viewer.editState().cursorRow());
+        AutocompletePopup.CompletionItem constantItem = new AutocompletePopup.CompletionItem(
+                "constant", "A fixed value", "object", null, false, null, "language,core");
+        viewer.insertYamlCompletion(constantItem, false, childLine);
+
+        String result = viewer.editState().text();
+        assertThat(result).contains("          expression:\n            constant:");
+    }
+
+    @Test
+    void shiftTabMovesCursorToPreviousIndentStop() throws IOException {
+        String yaml = String.join("\n",
+                "- from:",
+                "    uri: timer:tick",
+                "    steps:",
+                "      - setVariable:",
+                "          name: cheese",
+                "          expression:",
+                "            ",
+                "");
+
+        Path file = tempDir.resolve("route.camel.yaml");
+        Files.writeString(file, yaml);
+
+        SourceViewer viewer = new SourceViewer();
+        viewer.loadFile(file);
+        viewer.enterEditMode();
+        viewer.editState().moveCursorToStart();
+        for (int i = 0; i < 6; i++) {
+            viewer.editState().moveCursorDown();
+        }
+        viewer.editState().moveCursorToLineEnd();
+        assertThat(viewer.editState().cursorCol()).isEqualTo(12);
+        String before = viewer.editState().text();
+
+        viewer.handleKeyEvent(dev.tamboui.tui.event.KeyEvent.ofKey(
+                dev.tamboui.tui.event.KeyCode.TAB, dev.tamboui.tui.event.KeyModifiers.SHIFT));
+        assertThat(viewer.editState().cursorRow()).isEqualTo(6);
+        assertThat(viewer.editState().cursorCol()).isEqualTo(10);
+
+        // second Shift+Tab dedents past the "name"/"expression" siblings (indent 10) to the
+        // enclosing "- setVariable:" line's own indent
+        viewer.handleKeyEvent(dev.tamboui.tui.event.KeyEvent.ofKey(
+                dev.tamboui.tui.event.KeyCode.TAB, dev.tamboui.tui.event.KeyModifiers.SHIFT));
+        assertThat(viewer.editState().cursorCol()).isEqualTo(6);
+
+        // buffer content must be untouched — this is cursor movement only
+        assertThat(viewer.editState().text()).isEqualTo(before);
+    }
+
+    @Test
+    void insertListItemUsesDedentedCursorColumnNotStaleLineLength() throws IOException {
+        // reproduces inserting a "steps" EIP (e.g. "bean") as a list item after Shift+Tab
+        // dedented the cursor within a longer, pre-existing whitespace-only line: the insert
+        // must land at the cursor's column, not at the stale, deeper length of that line
+        String yaml = String.join("\n",
+                "- from:",
+                "    uri: timer:tick",
+                "    steps:",
+                "      - setVariable:",
+                "          name: cheese",
+                "          expression:",
+                "            ",
+                "");
+
+        Path file = tempDir.resolve("route.camel.yaml");
+        Files.writeString(file, yaml);
+
+        SourceViewer viewer = new SourceViewer();
+        viewer.loadFile(file);
+        viewer.enterEditMode();
+        viewer.setListItemNodeChecker(key -> "steps".equals(key) || "root".equals(key));
+        viewer.editState().moveCursorToStart();
+        for (int i = 0; i < 6; i++) {
+            viewer.editState().moveCursorDown();
+        }
+        viewer.editState().moveCursorToLineEnd();
+
+        // dedent to the "- setVariable:" list-item indent (6), without touching the buffer
+        viewer.handleKeyEvent(dev.tamboui.tui.event.KeyEvent.ofKey(
+                dev.tamboui.tui.event.KeyCode.TAB, dev.tamboui.tui.event.KeyModifiers.SHIFT));
+        viewer.handleKeyEvent(dev.tamboui.tui.event.KeyEvent.ofKey(
+                dev.tamboui.tui.event.KeyCode.TAB, dev.tamboui.tui.event.KeyModifiers.SHIFT));
+        assertThat(viewer.editState().cursorCol()).isEqualTo(6);
+        String currentLine = viewer.editState().getLine(viewer.editState().cursorRow());
+        assertThat(currentLine.length()).isEqualTo(12);
+
+        AutocompletePopup.CompletionItem beanItem = new AutocompletePopup.CompletionItem(
+                "bean", "Invokes a method on a bean", "object", null, false, null, "eip,endpoint");
+        viewer.insertYamlCompletion(beanItem, false, currentLine, true, viewer.editState().cursorCol());
+
+        String result = viewer.editState().text();
+        assertThat(result).contains("      - bean:");
+        assertThat(result).doesNotContain("            - bean:");
+    }
+
+    @Test
+    void autoInsertedParametersBlockAlignsWithUriIndent() throws IOException {
+        // reproduces the auto-inserted "parameters:" block landing one level too deep relative
+        // to "uri:" (it must be a sibling), which then broke findEnclosingComponent's
+        // uri-sibling lookup for every parameter added afterward
+        String yaml = String.join("\n",
+                "- route:",
+                "    from:",
+                "      uri: timer:tick",
+                "      steps:",
+                "        - to:",
+                "            uri: file:xxx",
+                "            ",
+                "");
+
+        Path file = tempDir.resolve("route.camel.yaml");
+        Files.writeString(file, yaml);
+
+        SourceViewer viewer = new SourceViewer();
+        viewer.loadFile(file);
+        viewer.enterEditMode();
+        viewer.setAutocompleteProvider(context -> List.of());
+        viewer.editState().moveCursorToStart();
+        for (int i = 0; i < 6; i++) {
+            viewer.editState().moveCursorDown();
+        }
+        viewer.editState().moveCursorToLineEnd();
+
+        viewer.handleKeyEvent(dev.tamboui.tui.event.KeyEvent.ofKey(
+                dev.tamboui.tui.event.KeyCode.TAB, dev.tamboui.tui.event.KeyModifiers.NONE));
+
+        String result = viewer.editState().text();
+        assertThat(result).contains("            uri: file:xxx\n            parameters:");
+        assertThat(result).doesNotContain("              parameters:");
+    }
+
+    @Test
+    void shiftTabIsNoOpWhenLineHasTypedContent() throws IOException {
+        String yaml = String.join("\n",
+                "- from:",
+                "    uri: timer:tick",
+                "    steps:",
+                "      - setVariable:",
+                "          name: cheese",
+                "");
+
+        Path file = tempDir.resolve("route.camel.yaml");
+        Files.writeString(file, yaml);
+
+        SourceViewer viewer = new SourceViewer();
+        viewer.loadFile(file);
+        viewer.enterEditMode();
+        viewer.editState().moveCursorToStart();
+        for (int i = 0; i < 4; i++) {
+            viewer.editState().moveCursorDown();
+        }
+        viewer.editState().moveCursorToLineEnd();
+        int colBefore = viewer.editState().cursorCol();
+        String before = viewer.editState().text();
+
+        viewer.handleKeyEvent(dev.tamboui.tui.event.KeyEvent.ofKey(
+                dev.tamboui.tui.event.KeyCode.TAB, dev.tamboui.tui.event.KeyModifiers.SHIFT));
+
+        assertThat(viewer.editState().cursorCol()).isEqualTo(colBefore);
+        assertThat(viewer.editState().text()).isEqualTo(before);
     }
 
     // --- Helpers that replicate SourceTab logic for testing ---

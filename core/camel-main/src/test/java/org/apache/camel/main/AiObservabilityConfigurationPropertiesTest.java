@@ -16,10 +16,14 @@
  */
 package org.apache.camel.main;
 
+import org.apache.camel.PropertyBindingException;
 import org.apache.camel.component.ai.observability.GenAiObservability;
+import org.apache.camel.impl.DefaultCamelContext;
+import org.apache.camel.util.OrderedLocationProperties;
 import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 class AiObservabilityConfigurationPropertiesTest {
 
@@ -61,5 +65,101 @@ class AiObservabilityConfigurationPropertiesTest {
         } finally {
             main.stop();
         }
+    }
+
+    @Test
+    void shouldLeaveUnknownAiObservabilityPropertyWhenFailFastIsDisabled() throws Exception {
+        DefaultCamelContext context = new DefaultCamelContext();
+        MainConfigurationProperties mainConfig = new MainConfigurationProperties();
+        AiObservabilityConfigurationProperties config = mainConfig.aiObservability();
+        OrderedLocationProperties properties = new OrderedLocationProperties();
+        properties.put("test", "enable", "false");
+        OrderedLocationProperties autoConfiguredProperties = new OrderedLocationProperties();
+
+        MainHelper.setPropertiesOnTarget(context, config, properties, "camel.aiObservability.",
+                false, true, autoConfiguredProperties);
+
+        assertThat(properties.asMap()).containsEntry("enable", "false");
+        assertThat(autoConfiguredProperties.asMap()).doesNotContainKey("camel.aiObservability.enable");
+    }
+
+    @Test
+    void shouldLeaveOnlyUnknownAiObservabilityPropertyWhenKnownPropertyIsPresent() throws Exception {
+        DefaultCamelContext context = new DefaultCamelContext();
+        MainConfigurationProperties mainConfig = new MainConfigurationProperties();
+        AiObservabilityConfigurationProperties config = mainConfig.aiObservability();
+        OrderedLocationProperties properties = new OrderedLocationProperties();
+        properties.put("test", "enabled", "false");
+        properties.put("test", "enable", "true");
+        OrderedLocationProperties autoConfiguredProperties = new OrderedLocationProperties();
+
+        MainHelper.setPropertiesOnTarget(context, config, properties, "camel.aiObservability.",
+                false, true, autoConfiguredProperties);
+
+        assertThat(properties.asMap()).containsEntry("enable", "true");
+        assertThat(config.isEnabled()).isFalse();
+        assertThat(autoConfiguredProperties.asMap()).containsEntry("camel.aiObservability.enabled", "false");
+    }
+
+    @Test
+    void shouldFailFastWhenUnknownAiObservabilityPropertyIsPresent() {
+        Main main = new Main();
+        try {
+            main.addInitialProperty("camel.aiObservability.enable", "true");
+            assertThatThrownBy(main::start)
+                    .hasRootCauseInstanceOf(PropertyBindingException.class)
+                    .rootCause()
+                    .hasMessageContaining("enable");
+        } finally {
+            main.stop();
+        }
+    }
+
+    @Test
+    void shouldIgnoreUnknownAiObservabilityPropertyWhenFailFastIsDisabled() throws Exception {
+        Main main = new Main();
+        main.configure().withAutoConfigurationFailFast(false);
+        main.addInitialProperty("camel.aiObservability.enabled", "false");
+        main.addInitialProperty("camel.aiObservability.enable", "true");
+
+        main.start();
+
+        try {
+            assertThat(GenAiObservability.isEnabled(main.getCamelContext())).isFalse();
+        } finally {
+            main.stop();
+        }
+    }
+
+    @Test
+    void shouldIgnoreUnknownAiObservabilityPropertyFromPropertiesFileWhenFailFastIsDisabled() throws Exception {
+        Main main = new Main();
+        main.configure().withAutoConfigurationFailFast(false);
+        main.setDefaultPropertyPlaceholderLocation("classpath:ai-observability-unknown.properties");
+
+        main.start();
+
+        try {
+            assertThat(GenAiObservability.isEnabled(main.getCamelContext())).isTrue();
+        } finally {
+            main.stop();
+        }
+    }
+
+    @Test
+    void shouldConsumeKnownAiObservabilityPropertyWithoutLeavingItForWarning() throws Exception {
+        DefaultCamelContext context = new DefaultCamelContext();
+        MainConfigurationProperties mainConfig = new MainConfigurationProperties();
+        AiObservabilityConfigurationProperties config = mainConfig.aiObservability();
+        OrderedLocationProperties properties = new OrderedLocationProperties();
+        properties.put("test", "enabled", "false");
+        OrderedLocationProperties autoConfiguredProperties = new OrderedLocationProperties();
+
+        MainHelper.setPropertiesOnTarget(context, config, properties, "camel.aiObservability.",
+                false, true, autoConfiguredProperties);
+
+        assertThat(properties.asMap()).isEmpty();
+        assertThat(config.isEnabled()).isFalse();
+        assertThat(autoConfiguredProperties.asMap()).containsEntry("camel.aiObservability.enabled", "false");
     }
 }

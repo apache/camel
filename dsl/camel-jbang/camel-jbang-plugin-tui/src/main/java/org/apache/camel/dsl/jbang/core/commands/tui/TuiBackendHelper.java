@@ -41,7 +41,8 @@ final class TuiBackendHelper {
     }
 
     static TuiRunner createTuiRunner(Backend backend) throws Exception {
-        return TuiRunner.create(TuiConfig.builder().backend(applyRecording(backend)).mouseCapture(true).build());
+        return TuiRunner.create(
+                TuiConfig.builder().backend(applyRecording(backend)).mouseCapture(true).bracketedPaste(true).build());
     }
 
     /**

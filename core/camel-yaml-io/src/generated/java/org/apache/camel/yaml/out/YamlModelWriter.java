@@ -58,6 +58,9 @@ public class YamlModelWriter extends YamlModelWriterSupport {
     public JsonObject writeBeanFactoryDefinition(BeanFactoryDefinition def) {
         return wrapNode("beanFactory", doWriteBeanFactoryDefinition(def));
     }
+    public JsonObject writeCacheDefinition(CacheDefinition def) {
+        return wrapNode("cache", doWriteCacheDefinition(def));
+    }
     public JsonObject writeCatchDefinition(CatchDefinition def) {
         return wrapNode("doCatch", doWriteCatchDefinition(def));
     }
@@ -866,6 +869,15 @@ public class YamlModelWriter extends YamlModelWriterSupport {
         if (def.getScript() != null) {
             jo.put("script", def.getScript());
         }
+        return jo;
+    }
+    protected JsonObject doWriteCacheDefinition(CacheDefinition def) {
+        JsonObject jo = new JsonObject();
+        doWriteProcessorDefinitionAttributes(jo, def);
+        doWriteAttribute(jo, "keyValueRepository", def.getKeyValueRepository(), null);
+        doWriteAttribute(jo, "ttl", def.getTtl(), "-1");
+        doWriteAttribute(jo, "cacheNull", def.getCacheNull(), "false");
+        doWriteOutputExpressionNodeElements(jo, def);
         return jo;
     }
     protected JsonObject doWriteCatchDefinition(CatchDefinition def) {
@@ -2152,9 +2164,9 @@ public class YamlModelWriter extends YamlModelWriterSupport {
     protected JsonObject doWriteAvroDataFormat(AvroDataFormat def) {
         JsonObject jo = new JsonObject();
         doWriteIdentifiedTypeAttributes(jo, def);
-        doWriteAttribute(jo, "unmarshalType", def.getUnmarshalTypeName(), null);
         doWriteAttribute(jo, "collectionType", def.getCollectionTypeName(), null);
         doWriteAttribute(jo, "jsonView", def.getJsonViewTypeName(), null);
+        doWriteAttribute(jo, "unmarshalType", def.getUnmarshalTypeName(), null);
         doWriteAttribute(jo, "instanceClassName", def.getInstanceClassName(), null);
         doWriteAttribute(jo, "library", toString(def.getLibrary()), "avroJackson");
         doWriteAttribute(jo, "objectMapper", def.getObjectMapper(), null);
@@ -2172,6 +2184,7 @@ public class YamlModelWriter extends YamlModelWriterSupport {
         doWriteAttribute(jo, "contentTypeHeader", def.getContentTypeHeader(), "true");
         doWriteAttribute(jo, "schemaResolver", def.getSchemaResolver(), null);
         doWriteAttribute(jo, "autoDiscoverSchemaResolver", def.getAutoDiscoverSchemaResolver(), "true");
+        doWriteAttribute(jo, "serializablePackages", def.getSerializablePackages(), null);
         return jo;
     }
     protected JsonObject doWriteBarcodeDataFormat(BarcodeDataFormat def) {
@@ -3662,6 +3675,7 @@ public class YamlModelWriter extends YamlModelWriterSupport {
                 case "A2ASubTaskDefinition" -> wrapNode("a2aSubTask", doWriteA2ASubTaskDefinition((A2ASubTaskDefinition) v));
                 case "AggregateDefinition" -> wrapNode("aggregate", doWriteAggregateDefinition((AggregateDefinition) v));
                 case "BeanDefinition" -> wrapNode("bean", doWriteBeanDefinition((BeanDefinition) v));
+                case "CacheDefinition" -> wrapNode("cache", doWriteCacheDefinition((CacheDefinition) v));
                 case "CatchDefinition" -> wrapNode("doCatch", doWriteCatchDefinition((CatchDefinition) v));
                 case "ChoiceDefinition" -> wrapNode("choice", doWriteChoiceDefinition((ChoiceDefinition) v));
                 case "CircuitBreakerDefinition" -> wrapNode("circuitBreaker", doWriteCircuitBreakerDefinition((CircuitBreakerDefinition) v));
@@ -3774,6 +3788,7 @@ public class YamlModelWriter extends YamlModelWriterSupport {
                 case "A2ASubTaskDefinition" -> wrapNode("a2aSubTask", doWriteA2ASubTaskDefinition((A2ASubTaskDefinition) v));
                 case "AggregateDefinition" -> wrapNode("aggregate", doWriteAggregateDefinition((AggregateDefinition) v));
                 case "BeanDefinition" -> wrapNode("bean", doWriteBeanDefinition((BeanDefinition) v));
+                case "CacheDefinition" -> wrapNode("cache", doWriteCacheDefinition((CacheDefinition) v));
                 case "CatchDefinition" -> wrapNode("doCatch", doWriteCatchDefinition((CatchDefinition) v));
                 case "ChoiceDefinition" -> wrapNode("choice", doWriteChoiceDefinition((ChoiceDefinition) v));
                 case "CircuitBreakerDefinition" -> wrapNode("circuitBreaker", doWriteCircuitBreakerDefinition((CircuitBreakerDefinition) v));
