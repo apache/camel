@@ -40,12 +40,20 @@ public final class InfinispanEmbeddedUtil extends InfinispanUtil {
     public static Query<?> buildQuery(
             InfinispanConfiguration configuration, Cache<Object, Object> cache, Message message) {
 
+        return buildQuery(resolveQueryBuilder(configuration, message), cache);
+    }
+
+    /**
+     * The query builder to use for a message: the one carried by the {@link InfinispanConstants#QUERY_BUILDER} header
+     * if there is one, the one configured on the endpoint otherwise. Returns {@code null} when neither is set.
+     */
+    public static InfinispanQueryBuilder resolveQueryBuilder(InfinispanConfiguration configuration, Message message) {
         InfinispanQueryBuilder builder = message.getHeader(InfinispanConstants.QUERY_BUILDER, InfinispanQueryBuilder.class);
         if (builder == null) {
             builder = configuration.getQueryBuilder();
         }
 
-        return buildQuery(builder, cache);
+        return builder;
     }
 
     public static Query<?> buildQuery(InfinispanConfiguration configuration, Cache<Object, Object> cache) {
