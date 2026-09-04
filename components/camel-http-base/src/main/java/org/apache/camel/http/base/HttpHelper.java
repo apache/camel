@@ -136,6 +136,92 @@ public final class HttpHelper {
     }
 
     /**
+     * Removes the leading portion of a request path that was matched by a consumer's registered path, so that what
+     * remains is the path relative to that consumer - the same way {@code camel-servlet}, {@code camel-jetty},
+     * {@code camel-netty-http} and {@code camel-undertow} already behave by default.
+     * <p/>
+     * This is a pure, defensive function: it never throws for malformed input, and whenever the match is anything less
+     * than a full, boundary-respecting match of every consumer path segment, it returns {@code requestPath} unchanged
+     * rather than risk producing a partial or incorrect result. In particular a {@code consumerPath} of {@code null},
+     * blank, {@code "/"} or {@code ""} (once normalized) is treated as "no prefix to strip" and always returns
+     * {@code requestPath} unchanged - this is what makes the platform-http {@code proxy} pseudo-path (whose consumer
+     * path is {@code "/"}) provably unaffected by callers of this method.
+     * <p/>
+     * The consumer path may contain REST-DSL style {@code {name}} placeholder segments, which match any single
+     * non-empty request segment.
+     *
+     * @param  requestPath  the incoming request path, e.g. {@code /reverse-proxy/get}
+     * @param  consumerPath the path the consumer is registered under, e.g. {@code /reverse-proxy} or
+     *                      {@code /reverse-proxy*}
+     * @return              the remaining path after stripping the matched consumer path, always starting with a
+     *                      {@code /}, or {@code requestPath} unchanged if the consumer path does not match (or there is
+     *                      nothing to strip)
+     */
+    public static String stripUriPrefix(String requestPath, String consumerPath) {
+        if (requestPath == null) {
+            return null;
+        }
+        if (consumerPath == null || consumerPath.isBlank()) {
+            return requestPath;
+        }
+
+        String normalized = consumerPath.trim();
+        if (!normalized.startsWith("/")) {
+            normalized = "/" + normalized;
+        }
+        if (normalized.endsWith("*")) {
+            normalized = normalized.substring(0, normalized.length() - 1);
+        }
+        while (normalized.length() > 1 && normalized.endsWith("/")) {
+            normalized = normalized.substring(0, normalized.length() - 1);
+        }
+        if (normalized.isEmpty() || "/".equals(normalized)) {
+            return requestPath;
+        }
+
+        // split using single char / is optimized in the jdk
+        final String[] consumerSegments = normalized.split("/");
+        final String[] requestSegments = requestPath.split("/", -1);
+
+        if (requestSegments.length < consumerSegments.length) {
+            return requestPath;
+        }
+
+        for (int i = 0; i < consumerSegments.length; i++) {
+            String consumerSegment = consumerSegments[i];
+            if (consumerSegment.isEmpty()) {
+                // leading empty segment produced by the split on the initial '/'
+                continue;
+            }
+            String requestSegment = i < requestSegments.length ? requestSegments[i] : null;
+            boolean placeholder = consumerSegment.startsWith("{") && consumerSegment.endsWith("}");
+            if (placeholder) {
+                if (requestSegment == null || requestSegment.isEmpty()) {
+                    return requestPath;
+                }
+            } else if (requestSegment == null || !consumerSegment.equalsIgnoreCase(requestSegment)) {
+                return requestPath;
+            }
+        }
+
+        int matchedSegments = consumerSegments.length;
+        if (matchedSegments == requestSegments.length) {
+            // exact match, nothing remains
+            return "/";
+        }
+
+        // boundary check: the next request segment marks a '/' boundary, so this is always safe - anything else
+        // (e.g. /reverse-proxyfoo when the consumer path is /reverse-proxy) was already rejected above because the
+        // last matched request segment would not have equaled the consumer's last segment
+        StringBuilder remainder = new StringBuilder();
+        for (int i = matchedSegments; i < requestSegments.length; i++) {
+            remainder.append('/').append(requestSegments[i]);
+        }
+        String result = remainder.toString();
+        return result.isEmpty() ? "/" : result;
+    }
+
+    /**
      * In the endpoint the user may have defined rest {} placeholders. This helper method map those placeholders with
      * data from the incoming request context path
      *

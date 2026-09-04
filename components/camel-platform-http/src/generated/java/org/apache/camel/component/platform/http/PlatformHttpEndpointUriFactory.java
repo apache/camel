@@ -24,7 +24,7 @@ public class PlatformHttpEndpointUriFactory extends org.apache.camel.support.com
     private static final Set<String> ENDPOINT_IDENTITY_PROPERTY_NAMES;
     private static final Map<String, String> MULTI_VALUE_PREFIXES;
     static {
-        Set<String> props = new HashSet<>(26);
+        Set<String> props = new HashSet<>(27);
         props.add("bridgeErrorHandler");
         props.add("consumes");
         props.add("cookieDomain");
@@ -48,6 +48,7 @@ public class PlatformHttpEndpointUriFactory extends org.apache.camel.support.com
         props.add("produces");
         props.add("requestTimeout");
         props.add("returnHttpRequestHeaders");
+        props.add("stripUriPrefix");
         props.add("useBodyHandler");
         props.add("useCookieHandler");
         props.add("useStreaming");
