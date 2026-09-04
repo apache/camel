@@ -217,8 +217,67 @@ public class JmsEndpointConfigurationTest implements CamelTestSupportHelper {
 
     @Test
     public void testCacheConsumerEnabledForTopic() throws Exception {
+        // Topic endpoints now default to Simple consumer type (not Default)
+        // to avoid broker resource issues (CAMEL-24619)
         JmsEndpoint endpoint = resolveMandatoryEndpoint("jms:topic:Foo.Bar.JmsEndpointConfigurationTest", JmsEndpoint.class);
-        assertCacheLevel(endpoint, DefaultMessageListenerContainer.CACHE_AUTO);
+        JmsConsumer consumer = endpoint.createConsumer(dummyProcessor);
+
+        AbstractMessageListenerContainer container = consumer.getListenerContainer();
+        assertInstanceOf(SimpleMessageListenerContainer.class, container,
+                "Topic endpoints should default to SimpleMessageListenerContainer");
+    }
+
+    @Test
+    public void testTopicConsumerDefaultsToSimple() throws Exception {
+        // CAMEL-24619: Topic endpoints should default to Simple consumer type
+        // to avoid accumulation of temporary queues on brokers like Artemis
+        JmsEndpoint endpoint
+                = resolveMandatoryEndpoint("jms:topic:Foo.Bar.testTopicConsumerDefaultsToSimple", JmsEndpoint.class);
+        JmsConsumer consumer = endpoint.createConsumer(dummyProcessor);
+
+        AbstractMessageListenerContainer container = consumer.getListenerContainer();
+        assertInstanceOf(SimpleMessageListenerContainer.class, container,
+                "Topic consumer should default to SimpleMessageListenerContainer");
+    }
+
+    @Test
+    public void testQueueConsumerStillDefaultsToDefault() throws Exception {
+        // CAMEL-24619: Queue endpoints should still use Default consumer type
+        JmsEndpoint endpoint
+                = resolveMandatoryEndpoint("jms:queue:Foo.Bar.testQueueConsumerStillDefaultsToDefault", JmsEndpoint.class);
+        JmsConsumer consumer = endpoint.createConsumer(dummyProcessor);
+
+        AbstractMessageListenerContainer container = consumer.getListenerContainer();
+        assertInstanceOf(DefaultMessageListenerContainer.class, container,
+                "Queue consumer should still default to DefaultMessageListenerContainer");
+    }
+
+    @Test
+    public void testTopicConsumerExplicitDefault() throws Exception {
+        // CAMEL-24619: When user explicitly sets consumerType=Default on a topic,
+        // the explicit setting should be respected
+        JmsEndpoint endpoint
+                = resolveMandatoryEndpoint(
+                        "jms:topic:Foo.Bar.testTopicConsumerExplicitDefault?consumerType=Default", JmsEndpoint.class);
+        JmsConsumer consumer = endpoint.createConsumer(dummyProcessor);
+
+        AbstractMessageListenerContainer container = consumer.getListenerContainer();
+        assertInstanceOf(DefaultMessageListenerContainer.class, container,
+                "Topic consumer with explicit consumerType=Default should use DefaultMessageListenerContainer");
+    }
+
+    @Test
+    public void testTopicConsumerExplicitSimple() throws Exception {
+        // CAMEL-24619: When user explicitly sets consumerType=Simple on a topic,
+        // the explicit setting should be respected
+        JmsEndpoint endpoint
+                = resolveMandatoryEndpoint(
+                        "jms:topic:Foo.Bar.testTopicConsumerExplicitSimple?consumerType=Simple", JmsEndpoint.class);
+        JmsConsumer consumer = endpoint.createConsumer(dummyProcessor);
+
+        AbstractMessageListenerContainer container = consumer.getListenerContainer();
+        assertInstanceOf(SimpleMessageListenerContainer.class, container,
+                "Topic consumer with explicit consumerType=Simple should use SimpleMessageListenerContainer");
     }
 
     @Test

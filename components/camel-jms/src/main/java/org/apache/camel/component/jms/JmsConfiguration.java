@@ -95,8 +95,11 @@ public class JmsConfiguration implements Cloneable {
                             + " The consumer type determines which Spring JMS listener to use. Default will use org.springframework.jms.listener.DefaultMessageListenerContainer,"
                             + " Simple will use org.springframework.jms.listener.SimpleMessageListenerContainer."
                             + " When Custom is specified, the MessageListenerContainerFactory defined by the messageListenerContainerFactory option"
-                            + " will determine what org.springframework.jms.listener.AbstractMessageListenerContainer to use.")
+                            + " will determine what org.springframework.jms.listener.AbstractMessageListenerContainer to use."
+                            + " When consuming from topics, the consumer type is automatically set to Simple (if not explicitly configured)"
+                            + " to avoid potential broker resource issues (e.g. OOM from accumulating non-durable queues on Artemis).")
     private ConsumerType consumerType = ConsumerType.Default;
+    private boolean consumerTypeExplicitlySet;
     @UriParam(label = "consumer,advanced", defaultValue = "Default",
               description = "The consumer type of the reply consumer (when doing request/reply), which can be one of: Simple, Default, or Custom."
                             + " The consumer type determines which Spring JMS listener to use. Default will use org.springframework.jms.listener.DefaultMessageListenerContainer,"
@@ -834,7 +837,20 @@ public class JmsConfiguration implements Cloneable {
     }
 
     public AbstractMessageListenerContainer createMessageListenerContainer(JmsEndpoint endpoint) {
-        AbstractMessageListenerContainer container = chooseMessageListenerContainerImplementation(endpoint);
+        ConsumerType type = consumerType;
+        // When consuming from a topic and the user has not explicitly set a consumer type,
+        // use Simple instead of Default. The Default consumer type uses
+        // DefaultMessageListenerContainer which repeatedly calls session.createConsumer()
+        // on each poll cycle. On some brokers (e.g. Artemis), this creates a new non-durable
+        // queue for each call that accumulates until the connection is closed, causing OOM.
+        if (endpoint.isPubSubDomain() && !consumerTypeExplicitlySet && type == ConsumerType.Default) {
+            LOG.info("Using Simple consumer type for topic endpoint '{}'"
+                     + " to avoid accumulation of temporary queues on the broker."
+                     + " Set consumerType=Default explicitly to override this behavior.",
+                    endpoint.getEndpointUri());
+            type = ConsumerType.Simple;
+        }
+        AbstractMessageListenerContainer container = chooseMessageListenerContainerImplementation(endpoint, type);
         configureMessageListenerContainer(container, endpoint);
         return container;
     }
@@ -881,6 +897,7 @@ public class JmsConfiguration implements Cloneable {
      */
     public void setConsumerType(ConsumerType consumerType) {
         this.consumerType = consumerType;
+        this.consumerTypeExplicitlySet = true;
     }
 
     public ConsumerType getReplyToConsumerType() {
