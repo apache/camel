@@ -93,6 +93,10 @@ public class DependencyUpdate extends DependencyList {
             String ext = FileUtil.onlyExt(name, true);
             if ("pom.xml".equals(name) || "java".equals(ext)) {
                 updateTargets.add(file);
+            } else {
+                // route definition files (YAML, XML) are used as source files
+                // for the export pipeline dependency resolution
+                this.files.add(file.toString());
             }
         }
 
