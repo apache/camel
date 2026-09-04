@@ -29,6 +29,12 @@ import com.openai.models.embeddings.EmbeddingCreateParams.EncodingFormat;
 import org.apache.camel.AsyncCallback;
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
+import org.apache.camel.component.ai.observability.GenAiErrorSupport;
+import org.apache.camel.component.ai.observability.GenAiObservability;
+import org.apache.camel.component.ai.observability.GenAiObservation;
+import org.apache.camel.component.ai.observability.GenAiObservationContext;
+import org.apache.camel.component.ai.observability.GenAiOperationName;
+import org.apache.camel.component.ai.observability.GenAiUsage;
 import org.apache.camel.support.DefaultAsyncProducer;
 import org.apache.camel.util.ObjectHelper;
 
@@ -99,32 +105,55 @@ public class OpenAIEmbeddingsProducer extends DefaultAsyncProducer {
 
         EmbeddingCreateParams params = paramsBuilder.build();
 
-        // Execute request
-        CreateEmbeddingResponse response = getEndpoint().getClient()
-                .embeddings().create(params);
+        GenAiObservationContext observationContext = GenAiObservationContext.builder()
+                .operationName(GenAiOperationName.EMBEDDINGS)
+                .system("openai")
+                .requestModel(model)
+                .componentScheme("openai")
+                .build();
+        GenAiObservation observation = GenAiObservability.start(exchange, observationContext);
+        try {
+            CreateEmbeddingResponse response = getEndpoint().getClient()
+                    .embeddings().create(params);
 
-        if (config.isStoreFullResponse()) {
-            exchange.setProperty(OpenAIConstants.RESPONSE, response);
+            if (config.isStoreFullResponse()) {
+                exchange.setProperty(OpenAIConstants.RESPONSE, response);
+            }
+
+            List<List<Float>> embeddings = new ArrayList<>();
+            for (Embedding embedding : response.data()) {
+                embeddings.add(embedding.embedding());
+            }
+
+            Message out = exchange.getMessage();
+            if (inputs.size() == 1) {
+                out.setBody(embeddings.isEmpty() ? List.of() : embeddings.get(0));
+                out.setHeader(OpenAIConstants.ORIGINAL_TEXT, inputs.get(0));
+            } else {
+                out.setBody(embeddings);
+                out.setHeader(OpenAIConstants.ORIGINAL_TEXT, inputs);
+            }
+
+            setResponseHeaders(out, response, embeddings);
+            calculateSimilarityIfRequested(exchange, embeddings);
+
+            var usage = response.usage();
+            observation.recordSuccess(GenAiUsage.of(
+                    usage != null ? toTokenCount(usage.promptTokens()) : null,
+                    null,
+                    null,
+                    response.model()));
+        } catch (Exception e) {
+            GenAiErrorSupport.apply(exchange, e);
+            observation.recordError(e);
+            throw e;
+        } finally {
+            observation.close();
         }
+    }
 
-        // Extract embeddings
-        List<List<Float>> embeddings = new ArrayList<>();
-        for (Embedding embedding : response.data()) {
-            embeddings.add(embedding.embedding());
-        }
-
-        // Set output body (metadata is exposed via headers)
-        Message out = exchange.getMessage();
-        if (inputs.size() == 1) {
-            out.setBody(embeddings.isEmpty() ? List.of() : embeddings.get(0));
-            out.setHeader(OpenAIConstants.ORIGINAL_TEXT, inputs.get(0));
-        } else {
-            out.setBody(embeddings);
-            out.setHeader(OpenAIConstants.ORIGINAL_TEXT, inputs);
-        }
-
-        setResponseHeaders(out, response, embeddings);
-        calculateSimilarityIfRequested(exchange, embeddings);
+    private static Integer toTokenCount(long tokens) {
+        return Math.toIntExact(tokens);
     }
 
     @SuppressWarnings("unchecked")

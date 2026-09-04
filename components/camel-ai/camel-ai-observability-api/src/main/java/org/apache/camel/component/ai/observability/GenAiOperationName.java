@@ -22,7 +22,9 @@ package org.apache.camel.component.ai.observability;
 public enum GenAiOperationName {
     CHAT("chat"),
     EMBEDDINGS("embeddings"),
-    GENERATE_CONTENT("generate_content");
+    GENERATE_CONTENT("generate_content"),
+    /** OpenAI moderation and similar content-policy checks. */
+    MODERATION("moderation");
 
     private final String value;
 

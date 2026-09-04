@@ -28,6 +28,12 @@ import org.apache.camel.AsyncCallback;
 import org.apache.camel.CamelExchangeException;
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
+import org.apache.camel.component.ai.observability.GenAiErrorSupport;
+import org.apache.camel.component.ai.observability.GenAiObservability;
+import org.apache.camel.component.ai.observability.GenAiObservation;
+import org.apache.camel.component.ai.observability.GenAiObservationContext;
+import org.apache.camel.component.ai.observability.GenAiOperationName;
+import org.apache.camel.component.ai.observability.GenAiUsage;
 import org.apache.camel.support.DefaultAsyncProducer;
 import org.apache.camel.util.ObjectHelper;
 
@@ -87,24 +93,38 @@ public class OpenAIModerationProducer extends DefaultAsyncProducer {
             paramsBuilder.inputOfStrings(inputs);
         }
 
-        ModerationCreateResponse response = getEndpoint().getClient()
-                .moderations().create(paramsBuilder.build());
+        GenAiObservationContext observationContext = GenAiObservationContext.builder()
+                .operationName(GenAiOperationName.MODERATION)
+                .system("openai")
+                .requestModel(model)
+                .componentScheme("openai")
+                .build();
+        GenAiObservation observation = GenAiObservability.start(exchange, observationContext);
+        try {
+            ModerationCreateResponse response = getEndpoint().getClient()
+                    .moderations().create(paramsBuilder.build());
 
-        // this operation is used to gate untrusted content, so a missing verdict must fail the exchange
-        // instead of leaving CamelOpenAIModerationFlagged false and letting the message through
-        if (response.results().size() != inputs.size()) {
-            throw new CamelExchangeException(
-                    "Moderation returned " + response.results().size() + " result(s) for " + inputs.size()
-                                             + " input(s)",
-                    exchange);
+            if (response.results().size() != inputs.size()) {
+                throw new CamelExchangeException(
+                        "Moderation returned " + response.results().size() + " result(s) for " + inputs.size()
+                                                 + " input(s)",
+                        exchange);
+            }
+
+            if (config.isStoreFullResponse()) {
+                exchange.setProperty(OpenAIConstants.MODERATION_RESPONSE, response);
+            }
+
+            setResponseHeaders(exchange.getMessage(), response, inputs, batch);
+
+            observation.recordSuccess(GenAiUsage.of(null, null, null, response.model()));
+        } catch (Exception e) {
+            GenAiErrorSupport.apply(exchange, e);
+            observation.recordError(e);
+            throw e;
+        } finally {
+            observation.close();
         }
-
-        // stored only once the response is known to be complete, so a failed exchange carries no verdict
-        if (config.isStoreFullResponse()) {
-            exchange.setProperty(OpenAIConstants.MODERATION_RESPONSE, response);
-        }
-
-        setResponseHeaders(exchange.getMessage(), response, inputs, batch);
     }
 
     private List<String> extractInputs(Exchange exchange) {

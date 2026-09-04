@@ -25,6 +25,12 @@ import com.openai.models.responses.StructuredResponseCreateParams;
 import org.apache.camel.AsyncCallback;
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
+import org.apache.camel.component.ai.observability.GenAiErrorSupport;
+import org.apache.camel.component.ai.observability.GenAiObservability;
+import org.apache.camel.component.ai.observability.GenAiObservation;
+import org.apache.camel.component.ai.observability.GenAiObservationContext;
+import org.apache.camel.component.ai.observability.GenAiOperationName;
+import org.apache.camel.component.ai.observability.GenAiUsage;
 import org.apache.camel.support.DefaultAsyncProducer;
 import org.apache.camel.support.ResourceHelper;
 import org.apache.camel.util.ObjectHelper;
@@ -136,7 +142,7 @@ public class OpenAIResponsesProducer extends DefaultAsyncProducer {
 
         Class<?> responseClass = resolveOutputClass(in, outputClass);
         if (responseClass != null) {
-            processStructured(exchange, config, paramsBuilder, responseClass);
+            processStructured(exchange, config, paramsBuilder, responseClass, model);
             return;
         }
         if (ObjectHelper.isNotEmpty(jsonSchema)) {
@@ -144,18 +150,79 @@ public class OpenAIResponsesProducer extends DefaultAsyncProducer {
         }
 
         ResponseCreateParams params = paramsBuilder.build();
-        Response response = getEndpoint().getClient().responses().create(params);
+        Response response = createResponse(exchange, model, params);
         finishExchange(exchange, config, response, OpenAIResponsesSupport.extractAssistantText(response));
     }
 
     private void processStructured(
             Exchange exchange, OpenAIConfiguration config, ResponseCreateParams.Builder paramsBuilder,
-            Class<?> responseClass)
+            Class<?> responseClass, String model)
             throws Exception {
         StructuredResponseCreateParams<?> structuredParams = paramsBuilder.text(responseClass).build();
-        StructuredResponse<?> structured = getEndpoint().getClient().responses().create(structuredParams);
-        Response raw = structured.rawResponse();
+        Response raw = createStructuredResponse(exchange, model, structuredParams);
         finishExchange(exchange, config, raw, OpenAIResponsesSupport.extractAssistantText(raw));
+    }
+
+    private Response createResponse(Exchange exchange, String model, ResponseCreateParams params) throws Exception {
+        GenAiObservationContext observationContext = GenAiObservationContext.builder()
+                .operationName(GenAiOperationName.GENERATE_CONTENT)
+                .system("openai")
+                .requestModel(model)
+                .componentScheme("openai")
+                .build();
+        GenAiObservation observation = GenAiObservability.start(exchange, observationContext);
+        try {
+            Response response = getEndpoint().getClient().responses().create(params);
+            recordResponseSuccess(observation, response);
+            return response;
+        } catch (Exception e) {
+            GenAiErrorSupport.apply(exchange, e);
+            observation.recordError(e);
+            throw e;
+        } finally {
+            observation.close();
+        }
+    }
+
+    private Response createStructuredResponse(
+            Exchange exchange, String model, StructuredResponseCreateParams<?> structuredParams)
+            throws Exception {
+        GenAiObservationContext observationContext = GenAiObservationContext.builder()
+                .operationName(GenAiOperationName.GENERATE_CONTENT)
+                .system("openai")
+                .requestModel(model)
+                .componentScheme("openai")
+                .build();
+        GenAiObservation observation = GenAiObservability.start(exchange, observationContext);
+        try {
+            StructuredResponse<?> structured = getEndpoint().getClient().responses().create(structuredParams);
+            Response raw = structured.rawResponse();
+            recordResponseSuccess(observation, raw);
+            return raw;
+        } catch (Exception e) {
+            GenAiErrorSupport.apply(exchange, e);
+            observation.recordError(e);
+            throw e;
+        } finally {
+            observation.close();
+        }
+    }
+
+    private static void recordResponseSuccess(GenAiObservation observation, Response response) {
+        String finishReason = OpenAIResponsesSupport.extractFinishStatus(response)
+                .map(OpenAIResponsesProducer::mapFinishReason)
+                .orElse(null);
+        response.usage().ifPresentOrElse(
+                usage -> observation.recordSuccess(GenAiUsage.of(
+                        toTokenCount(usage.inputTokens()),
+                        toTokenCount(usage.outputTokens()),
+                        finishReason,
+                        response.model().toString())),
+                () -> observation.recordSuccess(GenAiUsage.of(null, null, finishReason, response.model().toString())));
+    }
+
+    private static Integer toTokenCount(long tokens) {
+        return Math.toIntExact(tokens);
     }
 
     private void finishExchange(Exchange exchange, OpenAIConfiguration config, Response response, String body) {
