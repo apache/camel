@@ -50,6 +50,7 @@ import org.apache.camel.catalog.DefaultCamelCatalog;
 import org.apache.camel.dsl.jbang.core.common.CommandLineHelper;
 import org.apache.camel.dsl.jbang.core.common.EnvironmentHelper;
 import org.apache.camel.dsl.jbang.core.common.ExampleHelper;
+import org.apache.camel.dsl.jbang.core.common.GenAiDependencyHelper;
 import org.apache.camel.dsl.jbang.core.common.JavaVersionCompletionCandidates;
 import org.apache.camel.dsl.jbang.core.common.LauncherHelper;
 import org.apache.camel.dsl.jbang.core.common.LoggingLevelCompletionCandidates;
@@ -1261,6 +1262,7 @@ public class Run extends CamelCommand {
             dependencies.add("camel:observability-services");
             main.addOverrideProperty("camel.metrics.logMetricsOnShutdown", "false");
         }
+        GenAiDependencyHelper.addAiObservabilityIfNeeded(dependencies, profileProperties, serverOptions.observe);
         if (serverOptions.openapiUi) {
             dependencies.add("camel:platform-http-main");
             dependencies.add("camel:openapi-java");
