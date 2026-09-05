@@ -17,12 +17,15 @@
 package org.apache.camel.component.ai.observability;
 
 /**
- * GenAI operation names from the OpenTelemetry semantic conventions.
+ * GenAI operation names aligned with the OpenTelemetry GenAI semantic conventions where applicable. Custom values (for
+ * example {@link #MODERATION}) are Camel extensions for operations not yet defined in the stable OTel subset.
  */
 public enum GenAiOperationName {
     CHAT("chat"),
     EMBEDDINGS("embeddings"),
-    GENERATE_CONTENT("generate_content");
+    GENERATE_CONTENT("generate_content"),
+    /** OpenAI moderation and similar content-policy checks. */
+    MODERATION("moderation");
 
     private final String value;
 
