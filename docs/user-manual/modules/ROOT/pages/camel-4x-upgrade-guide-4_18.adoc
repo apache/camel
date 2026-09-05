@@ -1662,3 +1662,21 @@ When `clientRequestValidation` is enabled and the REST service declares a requir
 message body is no longer replaced with a `String` version of itself. That conversion corrupted binary
 payloads such as `application/octet-stream`. The body is still read to check that it is present, using
 stream caching so it stays re-readable, but it now keeps its original type.
+
+=== camel-infinispan - the aggregation repository keeps completed exchanges for recovery
+
+`InfinispanAggregationRepository` implements `RecoverableAggregationRepository`, but it had no recovery
+store: `remove` deleted the completed exchange outright, `confirm` removed the exchange id from a cache
+keyed by correlation key, and `scan` returned the correlation keys of the aggregations still in progress.
+The recovery task therefore re-delivered aggregations that were still accumulating, marked them
+`CamelRedelivered`, and sent them to the dead letter channel once `maximumRedeliveries` was reached, while
+exchanges that genuinely failed after completion could never be recovered.
+
+A completed exchange is now kept in the same cache under a `camel-recovery:<exchange id>` key until it is
+confirmed, which is what `scan` reports and `recover` reads. `getKeys` continues to report only the
+aggregations in progress.
+
+Routes that set `useRecovery=false` are unaffected. Routes that left recovery enabled, which is the
+default, stop seeing in-progress aggregations re-delivered, and start seeing genuine recovery. The cache
+now also holds one entry per completed and not yet confirmed exchange; those entries are removed on
+confirmation.
