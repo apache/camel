@@ -25,8 +25,6 @@ import org.apache.camel.examples.Address;
 import org.apache.camel.examples.Customer;
 import org.apache.camel.test.junit6.CamelTestSupport;
 import org.junit.jupiter.api.AfterEach;
-import org.springframework.transaction.TransactionStatus;
-import org.springframework.transaction.support.TransactionCallback;
 import org.springframework.transaction.support.TransactionTemplate;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -53,27 +51,24 @@ public class AbstractJpaMethodSupport extends CamelTestSupport {
         }
         entityManager = endpoint.getEntityManagerFactory().createEntityManager();
 
-        transactionTemplate.execute(new TransactionCallback<Object>() {
-            public Object doInTransaction(TransactionStatus status) {
-                entityManager.joinTransaction();
-                entityManager.createQuery("delete from " + Customer.class.getName()).executeUpdate();
-                return null;
-            }
-        });
+        // use a plain resource-local transaction: em.joinTransaction() enlists with the Spring-managed
+        // transaction only under OpenJPA; under Hibernate it silently begins a local transaction that
+        // is never committed, so the cleanup would be lost
+        entityManager.getTransaction().begin();
+        entityManager.createQuery("delete from " + Customer.class.getName()).executeUpdate();
+        // bulk delete does not cascade, so remove the orphaned addresses explicitly
+        entityManager.createQuery("delete from " + Address.class.getName()).executeUpdate();
+        entityManager.getTransaction().commit();
 
         assertEntitiesInDatabase(0, Customer.class.getName());
         assertEntitiesInDatabase(0, Address.class.getName());
     }
 
     protected void save(final Object persistable) {
-        transactionTemplate.execute(new TransactionCallback<Object>() {
-            public Object doInTransaction(TransactionStatus status) {
-                entityManager.joinTransaction();
-                entityManager.persist(persistable);
-                entityManager.flush();
-                return null;
-            }
-        });
+        entityManager.getTransaction().begin();
+        entityManager.persist(persistable);
+        entityManager.flush();
+        entityManager.getTransaction().commit();
     }
 
     protected void assertEntitiesInDatabase(int count, String entity) {
