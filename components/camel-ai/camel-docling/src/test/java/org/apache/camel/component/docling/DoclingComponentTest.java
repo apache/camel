@@ -50,6 +50,27 @@ public class DoclingComponentTest extends CamelTestSupport {
     }
 
     @Test
+    public void testOperationIdSelectsOperation() throws Exception {
+        Endpoint endpoint = context.getEndpoint("docling:EXTRACT_STRUCTURED_DATA");
+        assertNotNull(endpoint);
+        assertTrue(endpoint instanceof DoclingEndpoint);
+
+        DoclingEndpoint doclingEndpoint = (DoclingEndpoint) endpoint;
+        assertEquals("EXTRACT_STRUCTURED_DATA", doclingEndpoint.getOperationId());
+        assertEquals(DoclingOperations.EXTRACT_STRUCTURED_DATA, doclingEndpoint.getConfiguration().getOperation());
+    }
+
+    @Test
+    public void testExplicitOperationParameterOverridesOperationId() throws Exception {
+        // a recognized operationId must still be overridable via an explicit "operation" parameter
+        Endpoint endpoint = context.getEndpoint("docling:CONVERT_TO_MARKDOWN?operation=EXTRACT_TEXT");
+        assertNotNull(endpoint);
+
+        DoclingEndpoint doclingEndpoint = (DoclingEndpoint) endpoint;
+        assertEquals(DoclingOperations.EXTRACT_TEXT, doclingEndpoint.getConfiguration().getOperation());
+    }
+
+    @Test
     public void testProducerCreation() throws Exception {
         DoclingEndpoint endpoint = (DoclingEndpoint) context.getEndpoint("docling:convert");
         assertNotNull(endpoint.createProducer());
