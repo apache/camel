@@ -23,6 +23,7 @@ import org.apache.camel.Endpoint;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.annotations.Component;
 import org.apache.camel.support.DefaultComponent;
+import org.apache.camel.util.ObjectHelper;
 
 /**
  * Component for integrating with Docling document processing library.
@@ -45,6 +46,15 @@ public class DoclingComponent extends DefaultComponent {
     @Override
     protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
         DoclingConfiguration config = this.configuration.copy();
+        // operationId (e.g. docling:CONVERT_TO_MARKDOWN) selects the operation; applied before
+        // setProperties() below so an explicit ?operation=... parameter still takes precedence.
+        if (ObjectHelper.isNotEmpty(remaining)) {
+            try {
+                config.setOperation(DoclingOperations.valueOf(remaining));
+            } catch (IllegalArgumentException e) {
+                // not a recognized operation name - leave the configured/default operation as-is
+            }
+        }
         DoclingEndpoint endpoint = new DoclingEndpoint(uri, this, remaining, config);
         setProperties(endpoint, parameters);
         return endpoint;
