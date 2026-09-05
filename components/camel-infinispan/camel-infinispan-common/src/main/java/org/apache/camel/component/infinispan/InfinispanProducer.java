@@ -25,9 +25,13 @@ import org.apache.camel.spi.InvokeOnHeader;
 import org.apache.camel.support.HeaderSelectorProducer;
 import org.apache.camel.util.ObjectHelper;
 import org.infinispan.commons.api.BasicCache;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public abstract class InfinispanProducer<M extends InfinispanManager, C extends InfinispanConfiguration>
         extends HeaderSelectorProducer {
+
+    private static final Logger LOG = LoggerFactory.getLogger(InfinispanProducer.class);
 
     private final String cacheName;
     private final C configuration;
@@ -430,5 +434,11 @@ public abstract class InfinispanProducer<M extends InfinispanManager, C extends 
         } else {
             message.setBody(result);
         }
+    }
+
+    protected void warnNoQueryBuilder() {
+        LOG.warn("No query to run for the {} operation on cache {}, the message is passed through unchanged."
+                 + " Set a query builder on the endpoint with the queryBuilder option, or per message with the {} header.",
+                InfinispanOperation.QUERY, getCacheName(), InfinispanConstants.QUERY_BUILDER);
     }
 }

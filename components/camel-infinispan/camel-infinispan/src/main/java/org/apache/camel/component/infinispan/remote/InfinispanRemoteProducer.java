@@ -19,6 +19,7 @@ package org.apache.camel.component.infinispan.remote;
 import org.apache.camel.Message;
 import org.apache.camel.component.infinispan.InfinispanEndpoint;
 import org.apache.camel.component.infinispan.InfinispanProducer;
+import org.apache.camel.component.infinispan.InfinispanQueryBuilder;
 import org.apache.camel.spi.InvokeOnHeader;
 import org.infinispan.client.hotrod.RemoteCache;
 import org.infinispan.commons.api.query.Query;
@@ -49,11 +50,16 @@ public class InfinispanRemoteProducer extends InfinispanProducer<InfinispanRemot
     @SuppressWarnings("unchecked")
     @InvokeOnHeader("QUERY")
     public void onQuery(Message message) {
-        final RemoteCache<Object, Object> cache = getManager().getCache(message, getCacheName(), RemoteCache.class);
-        final Query<?> query = InfinispanRemoteUtil.buildQuery(getConfiguration(), cache, message);
-
-        if (query != null) {
-            setResult(message, query.execute().list());
+        // resolved before the cache is opened, so a misconfigured route does not pay a remote call
+        final InfinispanQueryBuilder builder = InfinispanRemoteUtil.resolveQueryBuilder(getConfiguration(), message);
+        if (builder == null) {
+            warnNoQueryBuilder();
+            return;
         }
+
+        final RemoteCache<Object, Object> cache = getManager().getCache(message, getCacheName(), RemoteCache.class);
+        final Query<?> query = InfinispanRemoteUtil.buildQuery(builder, cache);
+
+        setResult(message, query.execute().list());
     }
 }
