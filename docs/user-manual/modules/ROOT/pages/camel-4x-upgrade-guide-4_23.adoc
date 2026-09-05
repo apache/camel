@@ -1365,7 +1365,7 @@ camel.health.exposure-level = full
 
 The defaults are still registered as the lowest precedence property source, so all three settings are
 overridden by ordinary application configuration. The full injected set is documented in the
-https://camel.apache.org/camel-spring-boot/next/starters/observability-services.html[starter documentation].
+xref:next@camel-spring-boot:starters:observability-services.adoc[starter documentation].
 
 
 ==== camel-debug-starter no longer opens a JMX connector by default
