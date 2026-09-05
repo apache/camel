@@ -145,19 +145,20 @@ public class InfinispanRemoteAggregationRepositoryOperationsIT extends Infinispa
     @Test
     public void testConfirmExist() {
         // Given
-        for (int i = 1; i < 4; i++) {
-            String key = "Confirm_" + i;
-            Exchange exchange = new DefaultExchange(context());
-            exchange.setExchangeId("Exchange_" + i);
-            aggregationRepository.add(context(), key, exchange);
-            assertTrue(exists(key));
-        }
+        Exchange exchange = new DefaultExchange(context());
+        exchange.setExchangeId("Exchange_Confirm");
+        aggregationRepository.add(context(), "Confirm_1", exchange);
+        // completing the aggregation moves the exchange into the recovery store
+        aggregationRepository.remove(context(), "Confirm_1", exchange);
+        assertFalse(exists("Confirm_1"));
+        assertNotNull(aggregationRepository.recover(context(), "Exchange_Confirm"));
+
         // When
-        aggregationRepository.confirm(context(), "Confirm_2");
+        aggregationRepository.confirm(context(), "Exchange_Confirm");
+
         // Then
-        assertTrue(exists("Confirm_1"));
-        assertFalse(exists("Confirm_2"));
-        assertTrue(exists("Confirm_3"));
+        assertNull(aggregationRepository.recover(context(), "Exchange_Confirm"));
+        assertTrue(aggregationRepository.scan(context()).isEmpty());
     }
 
     @Test
@@ -194,25 +195,54 @@ public class InfinispanRemoteAggregationRepositoryOperationsIT extends Infinispa
         // Given
         String[] keys = { "Scan1", "Scan2" };
         addExchanges(keys);
+        for (String key : keys) {
+            Exchange exchange = new DefaultExchange(context());
+            exchange.setExchangeId("Exchange-" + key);
+            aggregationRepository.remove(context(), key, exchange);
+        }
+
         // When
         Set<String> exchangeIdSet = aggregationRepository.scan(context());
-        // Then
+
+        // Then - the scan reports exchange ids to recover, not the correlation keys still aggregating
         for (String key : keys) {
-            assertTrue(exchangeIdSet.contains(key));
+            assertTrue(exchangeIdSet.contains("Exchange-" + key));
+            assertFalse(exchangeIdSet.contains(key));
         }
     }
 
     @Test
     public void testRecover() {
         // Given
-        String[] keys = { "Recover1", "Recover2" };
-        addExchanges(keys);
+        Exchange exchange = new DefaultExchange(context());
+        exchange.setExchangeId("Exchange-Recover1");
+        aggregationRepository.add(context(), "Recover1", exchange);
+        aggregationRepository.remove(context(), "Recover1", exchange);
+
         // When
-        Exchange exchange2 = aggregationRepository.recover(context(), "Recover2");
-        Exchange exchange3 = aggregationRepository.recover(context(), "Recover3");
+        Exchange recovered = aggregationRepository.recover(context(), "Exchange-Recover1");
+        Exchange unknown = aggregationRepository.recover(context(), "Exchange-Recover2");
+
         // Then
-        assertNotNull(exchange2);
-        assertNull(exchange3);
+        assertNotNull(recovered);
+        assertNull(unknown);
+    }
+
+    @Test
+    public void testGetKeysIgnoresExchangesToRecover() {
+        // Given
+        Exchange exchange = new DefaultExchange(context());
+        exchange.setExchangeId("Exchange-Keys1");
+        aggregationRepository.add(context(), "Keys1", exchange);
+        aggregationRepository.add(context(), "Keys2", exchange);
+        aggregationRepository.remove(context(), "Keys1", exchange);
+
+        // When
+        Set<String> keys = aggregationRepository.getKeys();
+
+        // Then - only the aggregation still in progress is reported
+        assertEquals(1, keys.size());
+        assertTrue(keys.contains("Keys2"));
     }
 
 }
