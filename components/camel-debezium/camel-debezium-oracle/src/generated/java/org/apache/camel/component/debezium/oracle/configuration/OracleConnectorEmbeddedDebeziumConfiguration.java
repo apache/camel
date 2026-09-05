@@ -182,6 +182,8 @@ public class OracleConnectorEmbeddedDebeziumConfiguration
     private boolean legacySnapshotMaxThreads = false;
     @UriParam(label = LABEL_NAME, defaultValue = "__debezium_unavailable_value")
     private String unavailableValuePlaceholder = "__debezium_unavailable_value";
+    @UriParam(label = LABEL_NAME, defaultValue = "4")
+    private int logMiningLogCountGrowthMax = 4;
     @UriParam(label = LABEL_NAME)
     private String logMiningClientidIncludeList;
     @UriParam(label = LABEL_NAME)
@@ -1471,6 +1473,22 @@ public class OracleConnectorEmbeddedDebeziumConfiguration
     }
 
     /**
+     * Specifies the maximum number of logs per redo thread the mining window
+     * grows to automatically when a long-running transaction holds the window
+     * start in place. Defaults to 4. A 'log.mining.log.count.min' above this
+     * value takes precedence. The mining window may exceed this count when
+     * re-covering previously mined logs; the value bounds automatic growth, not
+     * the window itself.
+     */
+    public void setLogMiningLogCountGrowthMax(int logMiningLogCountGrowthMax) {
+        this.logMiningLogCountGrowthMax = logMiningLogCountGrowthMax;
+    }
+
+    public int getLogMiningLogCountGrowthMax() {
+        return logMiningLogCountGrowthMax;
+    }
+
+    /**
      * Comma separated list of client ids to include from LogMiner query.
      */
     public void setLogMiningClientidIncludeList(
@@ -2397,6 +2415,7 @@ public class OracleConnectorEmbeddedDebeziumConfiguration
         addPropertyIfNotNull(configBuilder, "log.mining.buffer.ehcache.global.config", logMiningBufferEhcacheGlobalConfig);
         addPropertyIfNotNull(configBuilder, "legacy.snapshot.max.threads", legacySnapshotMaxThreads);
         addPropertyIfNotNull(configBuilder, "unavailable.value.placeholder", unavailableValuePlaceholder);
+        addPropertyIfNotNull(configBuilder, "log.mining.log.count.growth.max", logMiningLogCountGrowthMax);
         addPropertyIfNotNull(configBuilder, "log.mining.clientid.include.list", logMiningClientidIncludeList);
         addPropertyIfNotNull(configBuilder, "heartbeat.action.query", heartbeatActionQuery);
         addPropertyIfNotNull(configBuilder, "log.mining.clientid.exclude.list", logMiningClientidExcludeList);

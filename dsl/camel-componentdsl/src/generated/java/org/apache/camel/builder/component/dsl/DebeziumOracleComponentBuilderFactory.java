@@ -1562,6 +1562,28 @@ public interface DebeziumOracleComponentBuilderFactory {
     
         
         /**
+         * Specifies the maximum number of logs per redo thread the mining
+         * window grows to automatically when a long-running transaction holds
+         * the window start in place. Defaults to 4. A
+         * 'log.mining.log.count.min' above this value takes precedence. The
+         * mining window may exceed this count when re-covering previously mined
+         * logs; the value bounds automatic growth, not the window itself.
+         * 
+         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
+         * 
+         * Default: 4
+         * Group: oracle
+         * 
+         * @param logMiningLogCountGrowthMax the value to set
+         * @return the dsl builder
+         */
+        default DebeziumOracleComponentBuilder logMiningLogCountGrowthMax(int logMiningLogCountGrowthMax) {
+            doSetProperty("logMiningLogCountGrowthMax", logMiningLogCountGrowthMax);
+            return this;
+        }
+    
+        
+        /**
          * Specifies the minimum number of logs to mine per redo thread. Setting
          * this to 0 disables the cap, and all available logs are mined in a
          * single pass.
@@ -3133,6 +3155,7 @@ public interface DebeziumOracleComponentBuilderFactory {
             case "logMiningClientidIncludeList": getOrCreateConfiguration((DebeziumOracleComponent) component).setLogMiningClientidIncludeList((java.lang.String) value); return true;
             case "logMiningFlushTableName": getOrCreateConfiguration((DebeziumOracleComponent) component).setLogMiningFlushTableName((java.lang.String) value); return true;
             case "logMiningIncludeRedoSql": getOrCreateConfiguration((DebeziumOracleComponent) component).setLogMiningIncludeRedoSql((boolean) value); return true;
+            case "logMiningLogCountGrowthMax": getOrCreateConfiguration((DebeziumOracleComponent) component).setLogMiningLogCountGrowthMax((int) value); return true;
             case "logMiningLogCountMin": getOrCreateConfiguration((DebeziumOracleComponent) component).setLogMiningLogCountMin((int) value); return true;
             case "logMiningPathDictionary": getOrCreateConfiguration((DebeziumOracleComponent) component).setLogMiningPathDictionary((java.lang.String) value); return true;
             case "logMiningQueryFilterMode": getOrCreateConfiguration((DebeziumOracleComponent) component).setLogMiningQueryFilterMode((java.lang.String) value); return true;

@@ -176,6 +176,8 @@ public class DebeziumOracleComponentConfigurer extends PropertyConfigurerSupport
         case "logMiningFlushTableName": getOrCreateConfiguration(target).setLogMiningFlushTableName(property(camelContext, java.lang.String.class, value)); return true;
         case "logminingincluderedosql":
         case "logMiningIncludeRedoSql": getOrCreateConfiguration(target).setLogMiningIncludeRedoSql(property(camelContext, boolean.class, value)); return true;
+        case "logmininglogcountgrowthmax":
+        case "logMiningLogCountGrowthMax": getOrCreateConfiguration(target).setLogMiningLogCountGrowthMax(property(camelContext, int.class, value)); return true;
         case "logmininglogcountmin":
         case "logMiningLogCountMin": getOrCreateConfiguration(target).setLogMiningLogCountMin(property(camelContext, int.class, value)); return true;
         case "logminingpathdictionary":
@@ -503,6 +505,8 @@ public class DebeziumOracleComponentConfigurer extends PropertyConfigurerSupport
         case "logMiningFlushTableName": return java.lang.String.class;
         case "logminingincluderedosql":
         case "logMiningIncludeRedoSql": return boolean.class;
+        case "logmininglogcountgrowthmax":
+        case "logMiningLogCountGrowthMax": return int.class;
         case "logmininglogcountmin":
         case "logMiningLogCountMin": return int.class;
         case "logminingpathdictionary":
@@ -831,6 +835,8 @@ public class DebeziumOracleComponentConfigurer extends PropertyConfigurerSupport
         case "logMiningFlushTableName": return getOrCreateConfiguration(target).getLogMiningFlushTableName();
         case "logminingincluderedosql":
         case "logMiningIncludeRedoSql": return getOrCreateConfiguration(target).isLogMiningIncludeRedoSql();
+        case "logmininglogcountgrowthmax":
+        case "logMiningLogCountGrowthMax": return getOrCreateConfiguration(target).getLogMiningLogCountGrowthMax();
         case "logmininglogcountmin":
         case "logMiningLogCountMin": return getOrCreateConfiguration(target).getLogMiningLogCountMin();
         case "logminingpathdictionary":
