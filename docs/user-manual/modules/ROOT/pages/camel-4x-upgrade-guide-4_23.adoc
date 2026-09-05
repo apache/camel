@@ -1447,7 +1447,7 @@ Path variable headers are now taken from the path Spring matched the request aga
 the undecoded request URI. The values are therefore percent-decoded and carry no matrix parameters,
 which is what the vertx engine has always provided.
 
-For a consumer such as `platform-http:/greeting/{name}`:
+For a consumer such as `+platform-http:/greeting/{name}+`:
 
 [cols="1,1,1"]
 |===
@@ -1493,7 +1493,7 @@ followed the number of distinct paths that had been requested, instead of the nu
 now keep the `uri` value computed by Spring's own `DefaultServerRequestObservationConvention`: the mapped
 pattern for a Spring MVC endpoint, and a constant such as `UNKNOWN`, `NOT_FOUND` or `REDIRECTION` otherwise.
 This is what `camel.metrics.uri-tag-enabled` already documents ("will be marked as UNKNOWN"). Requests that do
-resolve to a Camel consumer are unchanged, the tag is the static consumer path, such as `/users/{id}`.
+resolve to a Camel consumer are unchanged, the tag is the static consumer path, such as `+/users/{id}+`.
 
 With `camel.metrics.uri-tag-dynamic = true` the requested path is still used, such as `/camel/users/123`, but
 only for requests that resolve to a Camel consumer, and the tag value is now capped at 200 characters.

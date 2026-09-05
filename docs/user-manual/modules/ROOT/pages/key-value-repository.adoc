@@ -11,8 +11,8 @@ implementation can serve as the backing store for multiple Camel patterns:
 
 * *xref:components:eips:idempotentConsumer-eip.adoc[Idempotent Consumer]* -- via `KeyValueIdempotentRepository`
 * *xref:components:eips:aggregate-eip.adoc[Aggregator]* -- via `KeyValueAggregationRepository`
-* *xref:components:eips:cache-eip.adoc[Cache EIP]* -- uses `KeyValueRepository` directly as cache backend
-* *xref:components:ROOT:state-store-component.adoc[State Store component]* -- key-value operations in routes
+* *xref:next@components:eips:cache-eip.adoc[Cache EIP]* -- uses `KeyValueRepository` directly as cache backend
+* *xref:next@components:ROOT:state-store-component.adoc[State Store component]* -- key-value operations in routes
 
 This means you can configure a single backend (e.g. Redis) and use it across all four patterns
 without duplicating configuration or managing separate repository instances.
