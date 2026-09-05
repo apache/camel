@@ -17,6 +17,10 @@
 package org.apache.camel.component.file;
 
 import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.LinkOption;
+import java.nio.file.Path;
 import java.util.function.Supplier;
 
 import org.apache.camel.Exchange;
@@ -47,6 +51,43 @@ public final class GenericFileHelper {
                                                           + " as it is jailed to the local work directory: "
                                                           + compactWork);
         }
+        // defense-in-depth: the lexical check above cannot see symbolic links, so also resolve the existing
+        // filesystem path segments (following links) and re-check. This prevents a symbolic link inside the
+        // local work directory that resolves outside of it from being used to write files elsewhere. Valid
+        // nested paths continue to work unchanged. Skipped when no work directory boundary is configured.
+        if (!compactWork.isEmpty()) {
+            try {
+                Path resolvedWork = resolveExistingPathSegments(localWorkDirectory.toPath());
+                Path resolvedTarget = resolveExistingPathSegments(target.toPath());
+                if (!resolvedTarget.startsWith(resolvedWork)) {
+                    throw new GenericFileOperationFailedException(
+                            "Cannot retrieve file to local work file: " + compactTarget
+                                                                  + " as it is jailed to the local work directory: "
+                                                                  + compactWork);
+                }
+            } catch (IOException e) {
+                throw new GenericFileOperationFailedException(
+                        "Cannot verify local work file: " + compactTarget
+                                                              + " is within the local work directory: " + compactWork,
+                        e);
+            }
+        }
+    }
+
+    private static Path resolveExistingPathSegments(Path path) throws IOException {
+        // Preserve the raw path segments here. Normalizing before resolving links changes the filesystem meaning of
+        // paths such as link/../file when link points to another directory.
+        final Path absolutePath = path.toAbsolutePath();
+        Path existingPath = absolutePath;
+        while (existingPath != null && !Files.exists(existingPath, LinkOption.NOFOLLOW_LINKS)) {
+            existingPath = existingPath.getParent();
+        }
+        if (existingPath == null) {
+            throw new IOException("No existing ancestor found for " + path);
+        }
+
+        final Path resolvedExistingPath = existingPath.toRealPath();
+        return resolvedExistingPath.resolve(existingPath.relativize(absolutePath)).normalize();
     }
 
     /**
