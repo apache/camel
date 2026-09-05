@@ -17,8 +17,13 @@
 package org.apache.camel.component.file;
 
 import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
 
+import org.junit.jupiter.api.Assumptions;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.io.TempDir;
 
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertFalse;
@@ -49,6 +54,30 @@ public class GenericFileHelperTest {
         // a sibling directory whose name merely extends the work directory name must also be rejected
         assertThrows(GenericFileOperationFailedException.class,
                 () -> GenericFileHelper.jailToLocalWorkDirectory(new File(workDir, "../localworkEVIL/file.txt"), workDir));
+    }
+
+    @Test
+    public void shouldRejectSymlinkEscapingLocalWorkDirectory(@TempDir Path tmp) throws IOException {
+        Path work = Files.createDirectories(tmp.resolve("work"));
+        Path outside = Files.createDirectories(tmp.resolve("outside"));
+
+        // a symbolic link inside the work directory that points outside of it
+        Path link = work.resolve("link");
+        try {
+            Files.createSymbolicLink(link, outside);
+        } catch (UnsupportedOperationException | IOException e) {
+            Assumptions.abort("Symbolic links are not supported on this platform: " + e.getMessage());
+        }
+
+        // a file written through the symlink resolves outside the work directory and must be rejected, even though
+        // it passes a lexical-only containment check
+        File escaping = new File(link.toFile(), "evil.txt");
+        assertThrows(GenericFileOperationFailedException.class,
+                () -> GenericFileHelper.jailToLocalWorkDirectory(escaping, work.toFile()));
+
+        // a legitimate file within a real (not-yet-existing) subdirectory of the work directory is still allowed
+        File legit = new File(work.toFile(), "sub/ok.txt");
+        assertDoesNotThrow(() -> GenericFileHelper.jailToLocalWorkDirectory(legit, work.toFile()));
     }
 
     @Test
