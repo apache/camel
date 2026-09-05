@@ -79,6 +79,18 @@
     </properties>
   </persistence-unit>
 
+  <persistence-unit name="keyvalueDb" transaction-type="RESOURCE_LOCAL">
+    <provider>org.hibernate.jpa.HibernatePersistenceProvider</provider>
+
+    <class>org.apache.camel.processor.keyvalue.jpa.KeyValueEntry</class>
+
+    <properties>
+      <property name="jakarta.persistence.jdbc.driver" value="org.h2.Driver"/>
+      <property name="jakarta.persistence.jdbc.url" value="jdbc:h2:./target/keyvalueTest;DB_CLOSE_DELAY=-1"/>
+      <property name="hibernate.hbm2ddl.auto" value="create"/>
+    </properties>
+  </persistence-unit>
+
   <persistence-unit name="skipLockedEntiy" transaction-type="RESOURCE_LOCAL">
     <provider>org.hibernate.jpa.HibernatePersistenceProvider</provider>
 
