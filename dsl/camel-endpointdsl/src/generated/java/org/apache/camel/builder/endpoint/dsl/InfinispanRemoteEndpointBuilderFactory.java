@@ -1811,7 +1811,10 @@ public interface InfinispanRemoteEndpointBuilderFactory {
             return "CamelInfinispanOperation";
         }
         /**
-         * The name of the header whose value is the result.
+         * The name of the header whose value is the result. Deprecation note:
+         * Never set nor read by the component. Use
+         * CamelInfinispanOperationResultHeader to choose the header that
+         * carries the result of an operation.
          * 
          * The option is a: {@code String} type.
          * 
@@ -1819,6 +1822,7 @@ public interface InfinispanRemoteEndpointBuilderFactory {
          * 
          * @return the name of the header {@code InfinispanOperationResult}.
          */
+        @Deprecated
         public String infinispanOperationResult() {
             return "CamelInfinispanOperationResult";
         }
@@ -1899,7 +1903,7 @@ public interface InfinispanRemoteEndpointBuilderFactory {
         }
         /**
          * The QueryBuilder to use for QUERY command, if not present the command
-         * defaults to InifinispanConfiguration's one.
+         * defaults to the InfinispanConfiguration one.
          * 
          * The option is a: {@code
          * org.apache.camel.component.infinispan.InfinispanQueryBuilder} type.
