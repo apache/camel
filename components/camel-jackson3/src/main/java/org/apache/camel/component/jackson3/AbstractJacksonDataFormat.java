@@ -55,6 +55,10 @@ import tools.jackson.databind.ObjectWriter;
 import tools.jackson.databind.PropertyNamingStrategies;
 import tools.jackson.databind.PropertyNamingStrategy;
 import tools.jackson.databind.SerializationFeature;
+import tools.jackson.databind.cfg.DatatypeFeature;
+import tools.jackson.databind.cfg.DateTimeFeature;
+import tools.jackson.databind.cfg.EnumFeature;
+import tools.jackson.databind.cfg.JsonNodeFeature;
 import tools.jackson.databind.type.CollectionType;
 
 /**
@@ -551,6 +555,14 @@ public abstract class AbstractJacksonDataFormat extends ServiceSupport
         }
     }
 
+    public void enableFeature(Enum<? extends DatatypeFeature> feature) {
+        if (enableFeatures == null) {
+            enableFeatures = feature.name();
+        } else {
+            enableFeatures += "," + feature.name();
+        }
+    }
+
     public void disableFeature(SerializationFeature feature) {
         if (disableFeatures == null) {
             disableFeatures = feature.name();
@@ -568,6 +580,14 @@ public abstract class AbstractJacksonDataFormat extends ServiceSupport
     }
 
     public void disableFeature(MapperFeature feature) {
+        if (disableFeatures == null) {
+            disableFeatures = feature.name();
+        } else {
+            disableFeatures += "," + feature.name();
+        }
+    }
+
+    public void disableFeature(Enum<? extends DatatypeFeature> feature) {
         if (disableFeatures == null) {
             disableFeatures = feature.name();
         } else {
@@ -702,9 +722,27 @@ public abstract class AbstractJacksonDataFormat extends ServiceSupport
                 setObjectMapper(om);
                 continue;
             }
+            DateTimeFeature dtf = getCamelContext().getTypeConverter().tryConvertTo(DateTimeFeature.class, enable);
+            if (dtf != null) {
+                ObjectMapper om = objectMapper.rebuild().enable(dtf).build();
+                setObjectMapper(om);
+                continue;
+            }
+            EnumFeature ef = getCamelContext().getTypeConverter().tryConvertTo(EnumFeature.class, enable);
+            if (ef != null) {
+                ObjectMapper om = objectMapper.rebuild().enable(ef).build();
+                setObjectMapper(om);
+                continue;
+            }
+            JsonNodeFeature jnf = getCamelContext().getTypeConverter().tryConvertTo(JsonNodeFeature.class, enable);
+            if (jnf != null) {
+                ObjectMapper om = objectMapper.rebuild().enable(jnf).build();
+                setObjectMapper(om);
+                continue;
+            }
             throw new IllegalArgumentException(
                     "Enable feature: " + enable
-                                               + " cannot be converted to an accepted enum of types [SerializationFeature,DeserializationFeature,MapperFeature]");
+                                               + " cannot be converted to an accepted enum of types [SerializationFeature,DeserializationFeature,MapperFeature,DateTimeFeature,EnumFeature,JsonNodeFeature]");
         }
     }
 
@@ -803,9 +841,27 @@ public abstract class AbstractJacksonDataFormat extends ServiceSupport
                 setObjectMapper(om);
                 continue;
             }
+            DateTimeFeature dtf = getCamelContext().getTypeConverter().tryConvertTo(DateTimeFeature.class, disable);
+            if (dtf != null) {
+                ObjectMapper om = objectMapper.rebuild().disable(dtf).build();
+                setObjectMapper(om);
+                continue;
+            }
+            EnumFeature ef = getCamelContext().getTypeConverter().tryConvertTo(EnumFeature.class, disable);
+            if (ef != null) {
+                ObjectMapper om = objectMapper.rebuild().disable(ef).build();
+                setObjectMapper(om);
+                continue;
+            }
+            JsonNodeFeature jnf = getCamelContext().getTypeConverter().tryConvertTo(JsonNodeFeature.class, disable);
+            if (jnf != null) {
+                ObjectMapper om = objectMapper.rebuild().disable(jnf).build();
+                setObjectMapper(om);
+                continue;
+            }
             throw new IllegalArgumentException(
                     "Disable feature: " + disable
-                                               + " cannot be converted to an accepted enum of types [SerializationFeature,DeserializationFeature,MapperFeature]");
+                                               + " cannot be converted to an accepted enum of types [SerializationFeature,DeserializationFeature,MapperFeature,DateTimeFeature,EnumFeature,JsonNodeFeature]");
         }
     }
 
