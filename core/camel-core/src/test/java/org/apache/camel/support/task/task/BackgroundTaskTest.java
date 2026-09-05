@@ -22,8 +22,10 @@ import java.util.concurrent.Future;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
+import org.apache.camel.support.PluginHelper;
 import org.apache.camel.support.task.BackgroundTask;
 import org.apache.camel.support.task.Task;
+import org.apache.camel.support.task.TaskManagerRegistry;
 import org.apache.camel.support.task.Tasks;
 import org.apache.camel.support.task.budget.Budgets;
 import org.junit.jupiter.api.DisplayName;
@@ -264,6 +266,74 @@ public class BackgroundTaskTest extends TaskTestSupport {
                     "An exhausted task should not stay scheduled"));
             assertEquals(maxIterations, taskCount.intValue());
             assertEquals(Task.Status.Exhausted, task.getStatus());
+        } finally {
+            executor.shutdownNow();
+        }
+    }
+
+    @DisplayName("Test that a cancelled task is unscheduled and leaves the task registry")
+    @Test
+    @Timeout(20)
+    void testCancelUnschedulesAndDeregisters() {
+        ScheduledExecutorService executor = Executors.newSingleThreadScheduledExecutor();
+        try {
+            BackgroundTask task = Tasks.backgroundTask()
+                    .withScheduledExecutor(executor)
+                    .withBudget(Budgets.iterationTimeBudget()
+                            .withInterval(Duration.ofMillis(100))
+                            .withInitialDelay(Duration.ZERO)
+                            .withUnlimitedDuration()
+                            .build())
+                    .withName("cancelled")
+                    .build();
+
+            TaskManagerRegistry registry = PluginHelper.getTaskManagerRegistry(camelContext.getCamelContextExtension());
+            Future<?> future = task.schedule(camelContext, this::booleanSupplier);
+            await().atMost(5, TimeUnit.SECONDS).until(() -> registry.getTasks().contains(task));
+
+            task.cancel(false);
+
+            assertTrue(future.isCancelled(), "A cancelled task should not stay scheduled");
+            // a run that had already started may still have re-added itself, it then removes itself again
+            await().atMost(5, TimeUnit.SECONDS).untilAsserted(() -> assertFalse(registry.getTasks().contains(task),
+                    "A cancelled task should not stay in the task registry"));
+            assertEquals(Task.Status.Inactive, task.getStatus());
+            assertFalse(task.isRunning(), "A cancelled task should not report itself as running");
+
+            int attempts = taskCount.intValue();
+            await().pollDelay(1, TimeUnit.SECONDS).atMost(5, TimeUnit.SECONDS).untilAsserted(
+                    () -> assertEquals(attempts, taskCount.intValue(), "A cancelled task should not run again"));
+        } finally {
+            executor.shutdownNow();
+        }
+    }
+
+    @DisplayName("Test that cancelling a task before its first run leaves nothing behind")
+    @Test
+    @Timeout(20)
+    void testCancelBeforeTheFirstRun() {
+        ScheduledExecutorService executor = Executors.newSingleThreadScheduledExecutor();
+        try {
+            BackgroundTask task = Tasks.backgroundTask()
+                    .withScheduledExecutor(executor)
+                    .withBudget(Budgets.iterationTimeBudget()
+                            .withInterval(Duration.ofMillis(100))
+                            // long enough that the cancel below lands before the first run
+                            .withInitialDelay(Duration.ofSeconds(3))
+                            .withUnlimitedDuration()
+                            .build())
+                    .withName("cancelled-before-first-run")
+                    .build();
+
+            TaskManagerRegistry registry = PluginHelper.getTaskManagerRegistry(camelContext.getCamelContextExtension());
+            Future<?> future = task.schedule(camelContext, this::booleanSupplier);
+
+            task.cancel(false);
+
+            assertTrue(future.isCancelled(), "A cancelled task should not stay scheduled");
+            assertFalse(registry.getTasks().contains(task), "A cancelled task should not stay in the task registry");
+            await().pollDelay(1, TimeUnit.SECONDS).atMost(10, TimeUnit.SECONDS).untilAsserted(() -> assertEquals(0,
+                    taskCount.intValue(), "The supplier of a task cancelled before its first run should never run"));
         } finally {
             executor.shutdownNow();
         }

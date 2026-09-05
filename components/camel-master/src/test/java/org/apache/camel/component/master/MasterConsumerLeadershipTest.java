@@ -36,8 +36,10 @@ import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.support.DefaultComponent;
 import org.apache.camel.support.DefaultConsumer;
 import org.apache.camel.support.DefaultEndpoint;
+import org.apache.camel.support.PluginHelper;
 import org.apache.camel.support.cluster.AbstractCamelClusterService;
 import org.apache.camel.support.cluster.AbstractCamelClusterView;
+import org.apache.camel.support.task.TaskManagerRegistry;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -45,6 +47,8 @@ import org.junit.jupiter.api.Timeout;
 
 import static org.awaitility.Awaitility.await;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  * Verifies that the delegated consumer only ever runs while this node holds the leadership, also when the leadership
@@ -83,6 +87,8 @@ public class MasterConsumerLeadershipTest {
 
     @AfterEach
     void tearDown() {
+        // a test that fails while the delegate is parked on a gate would otherwise wedge the stop below
+        probe.releaseGates();
         if (context != null) {
             context.stop();
         }
@@ -224,6 +230,66 @@ public class MasterConsumerLeadershipTest {
         assertEquals(0, probe.started.get());
     }
 
+    @Test
+    @Timeout(60)
+    void testCancellingAPendingStartRemovesTheTaskFromTheRegistry() {
+        TestClusterView view = clusterService.getTestView();
+        TaskManagerRegistry registry = PluginHelper.getTaskManagerRegistry(context.getCamelContextExtension());
+        MasterComponent master = context.getComponent("master", MasterComponent.class);
+        // the task must still be retrying when the leadership is lost below, not exhausted by then
+        master.setBackOffMaxAttempts(1000);
+
+        probe.failStart.set(true);
+        view.setLeader(true);
+
+        // the task adds itself to the registry from its first run
+        await().atMost(20, TimeUnit.SECONDS).until(() -> probe.startAttempts.get() >= 1);
+        await().atMost(20, TimeUnit.SECONDS).until(() -> hasLeadershipTask(registry));
+
+        view.setLeader(false);
+
+        // only a run of the task removes it from the registry, and after the cancel no run is coming
+        await().atMost(20, TimeUnit.SECONDS).untilAsserted(() -> assertFalse(hasLeadershipTask(registry),
+                "The cancelled start task must not stay in the task registry"));
+    }
+
+    @Test
+    @Timeout(60)
+    void testEventDispatchIsNotBlockedByALifecycleOperation() throws Exception {
+        TestClusterView view = clusterService.getTestView();
+
+        view.setLeader(true);
+        await().atMost(10, TimeUnit.SECONDS).untilAsserted(() -> assertEquals(1, probe.started.get()));
+
+        CountDownLatch suspendEntered = new CountDownLatch(1);
+        CountDownLatch suspendGate = new CountDownLatch(1);
+        probe.suspendEntered.set(suspendEntered);
+        probe.suspendGate.set(suspendGate);
+
+        // suspending holds the service lock of the master consumer for as long as the delegate takes
+        MasterConsumer consumer = (MasterConsumer) context.getRoute("master-route").getConsumer();
+        Thread suspender = new Thread(consumer::suspend, "suspend");
+        suspender.start();
+        assertTrue(suspendEntered.await(20, TimeUnit.SECONDS), "The suspend of the delegate should have started");
+
+        // the cluster view dispatches its events while holding its own lock, and needs that same lock again
+        // to remove the listener when the consumer stops. An event that waits here for the service lock of
+        // the consumer is what closes that into a deadlock, so the leadership must not be guarded by it
+        Thread dispatcher = new Thread(() -> view.setLeader(true), "leadership-taken");
+        dispatcher.start();
+        try {
+            dispatcher.join(TimeUnit.SECONDS.toMillis(20));
+            assertFalse(dispatcher.isAlive(), "An event dispatch must not wait for the service lock of the consumer");
+        } finally {
+            suspendGate.countDown();
+            suspender.join(TimeUnit.SECONDS.toMillis(20));
+        }
+    }
+
+    private static boolean hasLeadershipTask(TaskManagerRegistry registry) {
+        return registry.getTasks().stream().anyMatch(task -> "Leadership".equals(task.getName()));
+    }
+
     // ************************************
     // Delegated endpoint under observation
     // ************************************
@@ -235,10 +301,21 @@ public class MasterConsumerLeadershipTest {
         private final AtomicInteger stopped = new AtomicInteger();
         private final AtomicBoolean failStart = new AtomicBoolean();
         private final AtomicReference<CountDownLatch> startGate = new AtomicReference<>();
+        private final AtomicReference<CountDownLatch> suspendEntered = new AtomicReference<>();
+        private final AtomicReference<CountDownLatch> suspendGate = new AtomicReference<>();
 
         @Override
         protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) {
             return new ProbeEndpoint(uri, this);
+        }
+
+        void releaseGates() {
+            List.of(startGate, suspendGate).forEach(gate -> {
+                CountDownLatch latch = gate.get();
+                if (latch != null) {
+                    latch.countDown();
+                }
+            });
         }
     }
 
@@ -294,6 +371,19 @@ public class MasterConsumerLeadershipTest {
         protected void doStop() throws Exception {
             super.doStop();
             component.stopped.incrementAndGet();
+        }
+
+        @Override
+        protected void doSuspend() throws Exception {
+            super.doSuspend();
+            CountDownLatch entered = component.suspendEntered.get();
+            if (entered != null) {
+                entered.countDown();
+            }
+            CountDownLatch gate = component.suspendGate.get();
+            if (gate != null) {
+                gate.await();
+            }
         }
     }
 
