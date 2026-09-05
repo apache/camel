@@ -65,6 +65,8 @@ public class PlatformHttpEndpointConfigurer extends PropertyConfigurerSupport im
         case "requestTimeout": target.setRequestTimeout(property(camelContext, long.class, value)); return true;
         case "returnhttprequestheaders":
         case "returnHttpRequestHeaders": target.setReturnHttpRequestHeaders(property(camelContext, boolean.class, value)); return true;
+        case "stripuriprefix":
+        case "stripUriPrefix": target.setStripUriPrefix(property(camelContext, boolean.class, value)); return true;
         case "usebodyhandler":
         case "useBodyHandler": target.setUseBodyHandler(property(camelContext, boolean.class, value)); return true;
         case "usecookiehandler":
@@ -120,6 +122,8 @@ public class PlatformHttpEndpointConfigurer extends PropertyConfigurerSupport im
         case "requestTimeout": return long.class;
         case "returnhttprequestheaders":
         case "returnHttpRequestHeaders": return boolean.class;
+        case "stripuriprefix":
+        case "stripUriPrefix": return boolean.class;
         case "usebodyhandler":
         case "useBodyHandler": return boolean.class;
         case "usecookiehandler":
@@ -176,6 +180,8 @@ public class PlatformHttpEndpointConfigurer extends PropertyConfigurerSupport im
         case "requestTimeout": return target.getRequestTimeout();
         case "returnhttprequestheaders":
         case "returnHttpRequestHeaders": return target.isReturnHttpRequestHeaders();
+        case "stripuriprefix":
+        case "stripUriPrefix": return target.isStripUriPrefix();
         case "usebodyhandler":
         case "useBodyHandler": return target.isUseBodyHandler();
         case "usecookiehandler":
