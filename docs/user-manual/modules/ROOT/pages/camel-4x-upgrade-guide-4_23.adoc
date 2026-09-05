@@ -59,6 +59,20 @@ packages not inferred from the configured protocol.
 
 Do not use `*`, as it disables Avro's class-loading protection.
 
+=== CamelEvent JSON serialization
+
+`CamelEvent` now provides `asJSon()` and `toJSon(int indent)` with default implementations that
+return a minimal JSON map (`type`, optional `timestamp`, and `message`). Camel's built-in event
+classes override these methods to include structured metadata such as exchange, route, and
+exception details.
+
+Custom `CamelEvent` implementations continue to compile without changes. Override the new methods
+only if you need richer JSON output than the default `type`/`timestamp`/`message` map.
+
+The Event developer console now exposes the full structured JSON payload in the `details` field of
+each event entry, while keeping the existing flat `type`, `timestamp`, `exchangeId`, and
+`message` fields for backwards compatibility.
+
 === camel-dynamic-router
 
 The `dynamic-router-control` endpoint no longer takes the subscription `predicate`, or the
