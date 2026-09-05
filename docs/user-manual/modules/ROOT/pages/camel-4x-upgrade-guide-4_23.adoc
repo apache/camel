@@ -1695,3 +1695,21 @@ changes.
 Downloads to a configured `localWorkDirectory` now resolve existing filesystem path segments before
 checking that the destination remains inside that directory. Downloads through a symbolic link that
 resolves outside the `localWorkDirectory` are rejected. Valid nested download paths continue to work.
+
+=== camel-infinispan - the aggregation repository keeps completed exchanges for recovery
+
+`InfinispanAggregationRepository` implements `RecoverableAggregationRepository`, but it had no recovery
+store: `remove` deleted the completed exchange outright, `confirm` removed the exchange id from a cache
+keyed by correlation key, and `scan` returned the correlation keys of the aggregations still in progress.
+The recovery task therefore re-delivered aggregations that were still accumulating, marked them
+`CamelRedelivered`, and sent them to the dead letter channel once `maximumRedeliveries` was reached, while
+exchanges that genuinely failed after completion could never be recovered.
+
+A completed exchange is now kept in the same cache under a `camel-recovery:<exchange id>` key until it is
+confirmed, which is what `scan` reports and `recover` reads. `getKeys` continues to report only the
+aggregations in progress.
+
+Routes that set `useRecovery=false` are unaffected. Routes that left recovery enabled, which is the
+default, stop seeing in-progress aggregations re-delivered, and start seeing genuine recovery. The cache
+now also holds one entry per completed and not yet confirmed exchange; those entries are removed on
+confirmation.
