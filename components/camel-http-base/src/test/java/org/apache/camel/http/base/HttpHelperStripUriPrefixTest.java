@@ -41,9 +41,6 @@ class HttpHelperStripUriPrefixTest {
                 // boundary: only strip on a '/' (or end of string) boundary
                 Arguments.of("/reverse-proxyfoo", "/reverse-proxy", "/reverse-proxyfoo"),
                 Arguments.of("/other/x", "/reverse-proxy", "/other/x"),
-                // case-insensitive literal segment match
-                Arguments.of("/Reverse-Proxy/get", "/reverse-proxy", "/get"),
-                Arguments.of("/REVERSE-PROXY", "/reverse-proxy", "/"),
                 // REST-DSL {name} placeholder segment matches any single non-empty segment
                 Arguments.of("/user/123/orders", "/user/{id}", "/orders"),
                 Arguments.of("/user/123", "/user/{id}", "/"),

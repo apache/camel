@@ -199,7 +199,7 @@ public final class HttpHelper {
                 if (requestSegment == null || requestSegment.isEmpty()) {
                     return requestPath;
                 }
-            } else if (requestSegment == null || !consumerSegment.equalsIgnoreCase(requestSegment)) {
+            } else if (requestSegment == null || !consumerSegment.equals(requestSegment)) {
                 return requestPath;
             }
         }

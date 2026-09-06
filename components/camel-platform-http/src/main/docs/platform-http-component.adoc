@@ -217,6 +217,9 @@ from("platform-http:/reverse-proxy?matchOnUriPrefix=true&stripUriPrefix=true")
     .to("http://backend?bridgeEndpoint=true");
 ----
 
+`matchOnUriPrefix` is not required for `stripUriPrefix`; it is only needed to also forward requests under sub-paths.
+On an exact match (e.g. `GET /reverse-proxy`) the path is stripped to `/`.
+
 |===
 | Incoming request | `CamelHttpPath` (`stripUriPrefix=false`, default) | `CamelHttpPath` (`stripUriPrefix=true`) | Forwarded to
 

@@ -116,12 +116,13 @@ public class VertxPlatformHttpStripUriPrefixTest {
 
     @Test
     void stripUriPrefixOnAnExactMatchLeavesTheRootPath() throws Exception {
+        // matchOnUriPrefix is not required for stripUriPrefix: on an exact match the path is stripped to "/"
         final CamelContext context = VertxPlatformHttpEngineTest.createCamelContext(camelPort.getPort());
         try {
             context.addRoutes(new RouteBuilder() {
                 @Override
                 public void configure() {
-                    from("platform-http:/reverse-proxy?matchOnUriPrefix=true&stripUriPrefix=true")
+                    from("platform-http:/reverse-proxy?stripUriPrefix=true")
                             .to("http://localhost:" + backendPort.getPort() + "?bridgeEndpoint=true");
                 }
             });
