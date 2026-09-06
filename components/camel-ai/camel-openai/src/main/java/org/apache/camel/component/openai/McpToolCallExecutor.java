@@ -76,7 +76,8 @@ class McpToolCallExecutor extends ServiceSupport {
      * @param content      the textual result to feed back to the model
      * @param returnDirect whether the call succeeded and the tool is annotated with {@code returnDirect}
      */
-    record ToolResult(String toolCallId, String toolName, String content, boolean returnDirect) {
+    record ToolResult(String toolCallId, String toolName, String content, boolean returnDirect, long durationMs,
+            boolean success) {
     }
 
     @Override
@@ -211,13 +212,14 @@ class McpToolCallExecutor extends ServiceSupport {
     }
 
     private ToolResult executeOne(ChatCompletionMessageToolCall toolCall, McpToolState toolState) throws Exception {
+        long startNanos = System.nanoTime();
         OpenAIConfiguration config = endpoint.getConfiguration();
         String toolName = toolCall.asFunction().function().name();
         String argsJson = toolCall.asFunction().function().arguments();
 
         AiToolSpec routeSpec = toolState.routeTools().get(toolName);
         if (routeSpec != null) {
-            return executeRouteTool(toolCall, routeSpec, toolState, config);
+            return timed(startNanos, executeRouteTool(toolCall, routeSpec, toolState, config));
         }
 
         McpSyncClient mcpClient = toolState.toolClientMap().get(toolName);
@@ -228,8 +230,8 @@ class McpToolCallExecutor extends ServiceSupport {
             // repromptModel: send a corrective tool result listing available tools
             String available = String.join(", ", toolState.knownToolNames());
             LOG.warn("Hallucinated tool name '{}', sending corrective result to model", toolName);
-            return errorResult(toolCall,
-                    "Error: tool '" + toolName + "' does not exist. Available tools: " + available);
+            return timed(startNanos, errorResult(toolCall,
+                    "Error: tool '" + toolName + "' does not exist. Available tools: " + available));
         }
 
         LOG.debug("Executing MCP tool '{}' with args: {}", toolName, argsJson);
@@ -241,25 +243,26 @@ class McpToolCallExecutor extends ServiceSupport {
             if (Boolean.TRUE.equals(toolResult.isError())) {
                 String content = "Error: " + extractTextContent(toolResult.content());
                 LOG.warn("MCP tool '{}' returned error: {}", toolName, content);
-                return errorResult(toolCall, content);
+                return timed(startNanos, errorResult(toolCall, content));
             }
 
             String content = extractTextContent(toolResult.content());
             LOG.debug("Tool '{}' result: {}", toolName, content);
-            return new ToolResult(
-                    toolCall.asFunction().id(), toolName, content, toolState.returnDirectTools().contains(toolName));
+            return timed(startNanos, new ToolResult(
+                    toolCall.asFunction().id(), toolName, content, toolState.returnDirectTools().contains(toolName), 0,
+                    true));
         } catch (JsonProcessingException e) {
             if (config.getToolExecutionErrorStrategy() == ToolExecutionErrorStrategy.FAIL_EXCHANGE) {
                 throw e;
             }
             LOG.warn("Invalid tool arguments for '{}': {}", toolName, argsJson, e);
-            return errorResult(toolCall, "Error: invalid tool arguments: " + e.getMessage());
+            return timed(startNanos, errorResult(toolCall, "Error: invalid tool arguments: " + e.getMessage()));
         } catch (Exception e) {
             if (config.getToolExecutionErrorStrategy() == ToolExecutionErrorStrategy.FAIL_EXCHANGE) {
                 throw e;
             }
             LOG.warn("MCP tool '{}' execution failed: {}", toolName, e.getMessage(), e);
-            return errorResult(toolCall, "Error: Tool execution failed: " + e.getMessage());
+            return timed(startNanos, errorResult(toolCall, "Error: Tool execution failed: " + e.getMessage()));
         }
     }
 
@@ -283,7 +286,7 @@ class McpToolCallExecutor extends ServiceSupport {
                     LOG.debug("Route tool '{}' result: {}", toolName, success.value());
                     return new ToolResult(
                             toolCall.asFunction().id(), toolName, success.value(),
-                            toolState.returnDirectTools().contains(toolName));
+                            toolState.returnDirectTools().contains(toolName), 0, true);
                 } else if (result instanceof AiToolResult.ArgumentError error) {
                     LOG.warn("Route tool '{}' argument error: {}", toolName, error.message());
                     return errorResult(toolCall, "Error: invalid tool arguments: " + error.message());
@@ -312,7 +315,14 @@ class McpToolCallExecutor extends ServiceSupport {
 
     private static ToolResult errorResult(ChatCompletionMessageToolCall toolCall, String content) {
         return new ToolResult(
-                toolCall.asFunction().id(), toolCall.asFunction().function().name(), content, false);
+                toolCall.asFunction().id(), toolCall.asFunction().function().name(), content, false, 0, false);
+    }
+
+    private static ToolResult timed(long startNanos, ToolResult result) {
+        long durationMs = TimeUnit.NANOSECONDS.toMillis(System.nanoTime() - startNanos);
+        return new ToolResult(
+                result.toolCallId(), result.toolName(), result.content(), result.returnDirect(), durationMs,
+                result.success());
     }
 
     private static String extractTextContent(List<McpSchema.Content> contents) {
