@@ -738,6 +738,73 @@ server that lets AI coding assistants interact with the dashboard.
 
 The TUI is fully functional on its own -- AI integration is entirely optional.
 
+=== Choosing an AI provider
+
+Press *F8* to open the built-in AI prompt panel. The panel auto-detects a provider in this order:
+
+1. `ANTHROPIC_API_KEY` → Anthropic Claude
+2. `CLOUD_ML_REGION` + `ANTHROPIC_VERTEX_PROJECT_ID` → Vertex AI
+3. `AZURE_OPENAI_API_KEY` + `AZURE_OPENAI_ENDPOINT` → Azure OpenAI
+4. `GEMINI_API_KEY` → Google Gemini
+5. `OPENAI_API_KEY` → OpenAI
+6. `LLM_API_KEY` + optional `LLM_BASE_URL` → any OpenAI-compatible server
+7. Ollama at `localhost:11434` → local Ollama (auto-detected, no key needed)
+
+Press *Ctrl+P* inside the AI panel to switch provider or model at any time.
+
+==== Using Ollama (local, no API key)
+
+Install Ollama natively for best performance — the native binary uses GPU acceleration
+(Metal on macOS, CUDA/ROCm on Linux):
+
+[source,bash]
+----
+# macOS
+brew install ollama
+
+# Linux
+curl -fsSL https://ollama.com/install.sh | sh
+
+# Pull a model — then open the TUI and press F8
+ollama pull qwen2.5:32b
+camel tui
+----
+
+Ollama at `localhost:11434` is auto-detected. No configuration needed.
+
+IMPORTANT: The F8 AI panel works by invoking built-in tools to inspect your running Camel process.
+Models smaller than ~14B do not reliably call tools and answer from training knowledge instead.
+Use at least a 14B model; 32B is recommended.
+
+*Models that work well* (tool-calling capable, ≥14B, default Q4_K_M quantization):
+
+[options="header"]
+|===
+| Model | RAM | Notes
+| `qwen2.5:14b` | ~9 GB | Minimum recommended
+| `qwen2.5:32b` | ~20 GB | Best balance of speed and quality
+| `deepseek-r1:32b` | ~20 GB | Strong reasoning
+| `hermes3:70b` | ~43 GB | Excellent tool calling, needs 64 GB+
+| `llama3.3:70b` | ~43 GB | Best open model, needs 64 GB+
+|===
+
+NOTE: `camel infra run ollama` runs Ollama in Docker and bypasses GPU acceleration,
+making inference significantly slower. Native install is preferred for development.
+
+==== Using an OpenAI-compatible local server
+
+Set `LLM_API_KEY` and `LLM_BASE_URL` to connect to any OpenAI-compatible server
+(LM Studio, vLLM, llama.cpp, GPT4All, …):
+
+[source,bash]
+----
+export LLM_API_KEY=any-value
+export LLM_BASE_URL=http://localhost:1234
+camel tui
+----
+
+`OPENAI_BASE_URL` is also accepted as an alternative to `LLM_BASE_URL`.
+
 === Why This Matters
 
 When an AI agent connects to the TUI via MCP, it gains the same level of visibility that you

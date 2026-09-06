@@ -19,7 +19,13 @@ package org.apache.camel.dsl.jbang.core.commands;
 import java.io.File;
 import java.io.OutputStream;
 import java.net.ServerSocket;
+import java.net.URI;
+import java.net.http.HttpClient;
+import java.net.http.HttpRequest;
+import java.net.http.HttpResponse;
 import java.nio.file.Path;
+import java.time.Duration;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
@@ -31,6 +37,9 @@ import org.apache.camel.dsl.jbang.core.common.VersionHelper;
 import org.apache.camel.tooling.maven.MavenDownloaderImpl;
 import org.apache.camel.tooling.maven.MavenResolutionException;
 import org.apache.camel.util.StringHelper;
+import org.apache.camel.util.json.JsonArray;
+import org.apache.camel.util.json.JsonObject;
+import org.apache.camel.util.json.Jsoner;
 import picocli.CommandLine.Command;
 
 @Command(name = "doctor", description = "Checks the environment and reports potential issues",
@@ -55,6 +64,7 @@ public class Doctor extends CamelCommand {
         checkJBang();
         checkMavenRepository();
         checkContainerRuntime();
+        checkOllama();
         checkCommonPorts();
         checkDiskSpace();
 
@@ -131,6 +141,54 @@ public class Doctor extends CamelCommand {
             }
         }
         printer().printf("  Container:   Not found (optional — needed for running external infra services)%n");
+    }
+
+    private void checkOllama() {
+        try {
+            HttpClient client = HttpClient.newBuilder()
+                    .connectTimeout(Duration.ofSeconds(3))
+                    .build();
+            HttpRequest request = HttpRequest.newBuilder()
+                    .uri(URI.create("http://localhost:11434/api/tags"))
+                    .timeout(Duration.ofSeconds(3))
+                    .GET()
+                    .build();
+            HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
+            if (response.statusCode() == 200) {
+                List<String> models = parseOllamaModels(response.body());
+                if (models.isEmpty()) {
+                    printer().printf("  Ollama:      Running at localhost:11434 — no models pulled yet%n");
+                } else {
+                    printer().printf("  Ollama:      Running at localhost:11434 — models: %s%n",
+                            String.join(", ", models));
+                }
+            } else {
+                printer().printf("  Ollama:      Not detected (optional — start for local AI with F8 in TUI)%n");
+            }
+        } catch (Exception e) {
+            printer().printf("  Ollama:      Not detected (optional — start for local AI with F8 in TUI)%n");
+        }
+    }
+
+    private List<String> parseOllamaModels(String json) {
+        List<String> names = new ArrayList<>();
+        try {
+            JsonObject root = (JsonObject) Jsoner.deserialize(json);
+            JsonArray models = (JsonArray) root.get("models");
+            if (models != null) {
+                for (Object entry : models) {
+                    if (entry instanceof JsonObject model) {
+                        Object name = model.get("name");
+                        if (name != null) {
+                            names.add(name.toString());
+                        }
+                    }
+                }
+            }
+        } catch (Exception e) {
+            // ignore parse errors — not critical
+        }
+        return names;
     }
 
     private void checkCommonPorts() {

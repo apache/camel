@@ -1795,7 +1795,13 @@ public class LlmClient {
             apiKey = key;
             openAiAuthMode = OpenAiAuthMode.bearer;
             if (url == null || url.isBlank()) {
-                url = "https://api.openai.com";
+                // LLM_BASE_URL / OPENAI_BASE_URL let users point at any OpenAI-compatible
+                // server (LM Studio, vLLM, LocalAI, Jan, …) without a CLI flag
+                String baseUrl = System.getenv("LLM_BASE_URL");
+                if (baseUrl == null || baseUrl.isBlank()) {
+                    baseUrl = System.getenv("OPENAI_BASE_URL");
+                }
+                url = (baseUrl != null && !baseUrl.isBlank()) ? stripTrailingSlash(baseUrl) : "https://api.openai.com";
             }
             return true;
         }

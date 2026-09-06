@@ -19,6 +19,11 @@ package org.apache.camel.dsl.jbang.core.commands.tui;
 import java.io.File;
 import java.io.OutputStream;
 import java.net.ServerSocket;
+import java.net.URI;
+import java.net.http.HttpClient;
+import java.net.http.HttpRequest;
+import java.net.http.HttpResponse;
+import java.time.Duration;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
@@ -42,6 +47,9 @@ import org.apache.camel.catalog.DefaultCamelCatalog;
 import org.apache.camel.dsl.jbang.core.common.VersionHelper;
 import org.apache.camel.tooling.maven.MavenDownloaderImpl;
 import org.apache.camel.tooling.maven.MavenResolutionException;
+import org.apache.camel.util.json.JsonArray;
+import org.apache.camel.util.json.JsonObject;
+import org.apache.camel.util.json.Jsoner;
 
 import static org.apache.camel.dsl.jbang.core.commands.tui.TuiHelper.hintLast;
 
@@ -70,6 +78,7 @@ class DoctorPopup {
         checkJBang(lines);
         checkMavenRepository(lines);
         checkContainerRuntime(lines);
+        checkOllama(lines);
         checkCommonPorts(lines);
         checkDiskSpace(lines);
         checkAiProvider(lines);
@@ -277,6 +286,117 @@ class DoctorPopup {
         }
     }
 
+    private void checkOllama(List<Line> result) {
+        try {
+            HttpClient client = HttpClient.newBuilder()
+                    .connectTimeout(Duration.ofSeconds(3))
+                    .build();
+            HttpRequest request = HttpRequest.newBuilder()
+                    .uri(URI.create("http://localhost:11434/api/tags"))
+                    .timeout(Duration.ofSeconds(3))
+                    .GET()
+                    .build();
+            HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
+            if (response.statusCode() == 200) {
+                List<String> models = parseOllamaModels(response.body());
+                if (models.isEmpty()) {
+                    result.add(Line.from(
+                            Span.raw(TuiIcons.indent(TuiIcons.MCP)),
+                            Span.styled(String.format("%-14s", "Ollama"), Theme.muted()),
+                            Span.raw(String.format("%-30s", "Running — no models pulled yet")),
+                            Span.raw(" " + TuiIcons.WARN)));
+                    result.add(Line.from(Span.styled("                    Run: ollama pull qwen2.5:14b",
+                            Style.EMPTY.dim())));
+                } else {
+                    boolean allSmall = models.stream().allMatch(DoctorPopup::isSmallModel);
+                    String icon = allSmall ? TuiIcons.WARN : TuiIcons.OK;
+                    result.add(Line.from(
+                            Span.raw(TuiIcons.indent(TuiIcons.MCP)),
+                            Span.styled(String.format("%-14s", "Ollama"), Theme.muted()),
+                            Span.raw(String.format("%-30s", models.size() + " model(s) available")),
+                            Span.raw(" " + icon)));
+                    result.add(Line.from(Span.styled(
+                            "                    " + TuiHelper.truncate(String.join(", ", models), 44),
+                            Style.EMPTY.dim())));
+                    if (allSmall) {
+                        result.add(Line.from(Span.styled(
+                                "                    F8 needs ≥14B — run: ollama pull qwen2.5:14b",
+                                Style.EMPTY.dim())));
+                    }
+                }
+            } else {
+                result.add(Line.from(
+                        Span.raw(TuiIcons.indent(TuiIcons.MCP)),
+                        Span.styled(String.format("%-14s", "Ollama"), Theme.muted()),
+                        Span.raw(String.format("%-30s", "Not running (optional)")),
+                        Span.raw(" " + TuiIcons.WARN)));
+                result.add(Line.from(Span.styled("                    Run: ollama serve",
+                        Style.EMPTY.dim())));
+            }
+        } catch (Exception e) {
+            result.add(Line.from(
+                    Span.raw(TuiIcons.indent(TuiIcons.MCP)),
+                    Span.styled(String.format("%-14s", "Ollama"), Theme.muted()),
+                    Span.raw(String.format("%-30s", "Not running (optional)")),
+                    Span.raw(" " + TuiIcons.WARN)));
+            result.add(Line.from(Span.styled("                    Run: ollama serve",
+                    Style.EMPTY.dim())));
+        }
+    }
+
+    private boolean isOllamaRunning() {
+        try {
+            HttpClient client = HttpClient.newBuilder()
+                    .connectTimeout(Duration.ofSeconds(2))
+                    .build();
+            HttpRequest request = HttpRequest.newBuilder()
+                    .uri(URI.create("http://localhost:11434/api/tags"))
+                    .timeout(Duration.ofSeconds(2))
+                    .GET()
+                    .build();
+            return client.send(request, HttpResponse.BodyHandlers.discarding()).statusCode() == 200;
+        } catch (Exception e) {
+            return false;
+        }
+    }
+
+    private static boolean isSmallModel(String name) {
+        // heuristic: extract the size suffix like :3b, :7b, :8b, :11b from the model name
+        int colon = name.lastIndexOf(':');
+        String tag = colon >= 0 ? name.substring(colon + 1).toLowerCase() : "";
+        if (tag.matches("\\d+b.*")) {
+            int b = tag.indexOf('b');
+            try {
+                int params = Integer.parseInt(tag.substring(0, b));
+                return params < 14;
+            } catch (NumberFormatException e) {
+                return false;
+            }
+        }
+        return false;
+    }
+
+    private List<String> parseOllamaModels(String json) {
+        List<String> names = new ArrayList<>();
+        try {
+            JsonObject root = (JsonObject) Jsoner.deserialize(json);
+            JsonArray models = (JsonArray) root.get("models");
+            if (models != null) {
+                for (Object entry : models) {
+                    if (entry instanceof JsonObject model) {
+                        Object name = model.get("name");
+                        if (name != null) {
+                            names.add(name.toString());
+                        }
+                    }
+                }
+            }
+        } catch (Exception e) {
+            // ignore parse errors
+        }
+        return names;
+    }
+
     private static boolean envSet(String name) {
         String v = System.getenv(name);
         return v != null && !v.isBlank();
@@ -298,6 +418,8 @@ class DoctorPopup {
             provider = "watsonx.ai";
         } else if (envSet("LLM_API_KEY")) {
             provider = "Custom (LLM_API_KEY)";
+        } else if (isOllamaRunning()) {
+            provider = "Ollama (local)";
         }
         if (provider != null) {
             result.add(Line.from(
@@ -309,10 +431,10 @@ class DoctorPopup {
             result.add(Line.from(
                     Span.raw(TuiIcons.indent(TuiIcons.MCP)),
                     Span.styled(String.format("%-14s", "AI"), Theme.muted()),
-                    Span.raw(String.format("%-30s", "No API key configured")),
+                    Span.raw(String.format("%-30s", "No AI provider configured")),
                     Span.raw(" " + TuiIcons.WARN)));
             result.add(Line.from(Span.styled(
-                    "                    Set ANTHROPIC_API_KEY, AZURE_OPENAI_*, GEMINI_API_KEY, OPENAI_API_KEY, or WATSONX_APIKEY",
+                    "                    Set ANTHROPIC_API_KEY, OPENAI_API_KEY, GEMINI_API_KEY, AZURE_OPENAI_*, WATSONX_APIKEY, LLM_API_KEY+LLM_BASE_URL, or start Ollama",
                     Style.EMPTY.dim())));
         }
     }
