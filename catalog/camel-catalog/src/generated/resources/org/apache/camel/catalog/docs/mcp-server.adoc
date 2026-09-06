@@ -345,18 +345,11 @@ following rules:
   message; the cause is logged server-side and never sent to the client.
   Argument validation messages (missing or invalid parameters) are returned
   as-is.
-<<<<<<< HEAD
 * *Bounded execution*: every call is subject to the `toolTimeout` and every
   read to the `resourceTimeout`. Note that a timed-out route keeps running
   server-side until it completes; the timeout bounds the MCP request, not the
   route.
-* *Authentication*: the MCP endpoint is served through the main HTTP server
-=======
-* *Bounded execution*: every call is subject to the `toolTimeout`. Note that a
-  timed-out route keeps running server-side until it completes; the timeout
-  bounds the MCP request, not the route.
 * *Authentication (HTTP)*: the MCP endpoint is served through the main HTTP server
->>>>>>> 156e1db07c7 (CAMEL-24352: Address review findings for MCP stdio transport)
   router, so platform-http authentication (basic, JWT via
   `camel.server.authentication*` options) applies to it. The MCP
   specification's authorization model is OAuth 2.1; see

@@ -360,10 +360,9 @@ public class HttpServerConfigurationProperties implements BootstrapCloseable {
     }
 
     /**
-     * Whether to expose ai-tool routes as MCP tools and ai-resource routes as MCP resources.
-     * Requires camel-mcp-server on the classpath. Use {@link #setMcpTransport(String)} to choose
-     * streamable HTTP (default) or stdio for IDE subprocess integration. By default, the MCP server is
-     * not enabled.
+     * Whether to expose ai-tool routes as MCP tools and ai-resource routes as MCP resources. Requires camel-mcp-server
+     * on the classpath. Use {@link #setMcpTransport(String)} to choose streamable HTTP (default) or stdio for IDE
+     * subprocess integration. By default, the MCP server is not enabled.
      */
     public void setMcpEnabled(boolean mcpEnabled) {
         this.mcpEnabled = mcpEnabled;
@@ -702,10 +701,9 @@ public class HttpServerConfigurationProperties implements BootstrapCloseable {
     }
 
     /**
-     * Whether to expose ai-tool routes as MCP tools and ai-resource routes as MCP resources.
-     * Requires camel-mcp-server on the classpath. Use {@link #setMcpTransport(String)} to choose
-     * streamable HTTP (default) or stdio for IDE subprocess integration. By default, the MCP server is
-     * not enabled.
+     * Whether to expose ai-tool routes as MCP tools and ai-resource routes as MCP resources. Requires camel-mcp-server
+     * on the classpath. Use {@link #setMcpTransport(String)} to choose streamable HTTP (default) or stdio for IDE
+     * subprocess integration. By default, the MCP server is not enabled.
      */
     public HttpServerConfigurationProperties withMcpEnabled(boolean mcpEnabled) {
         this.mcpEnabled = mcpEnabled;
