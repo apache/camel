@@ -46,4 +46,9 @@ public final class OpenAIAgenticLoopStartedEvent extends AbstractOpenAIExchangeE
     public int getMaxIterations() {
         return maxIterations;
     }
+
+    @Override
+    public String toString() {
+        return "OpenAIAgenticLoopStartedEvent{toolCount=" + toolCount + ", maxIterations=" + maxIterations + "}";
+    }
 }

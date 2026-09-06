@@ -161,7 +161,7 @@ class McpToolCallExecutor extends ServiceSupport {
                 if (timedOut != null) {
                     failure = failure != null ? failure : timedOut;
                 } else {
-                    results[i] = errorResult(toolCall, "Error: tool execution timed out after " + timeout + " ms");
+                    results[i] = timeoutResult(toolCall, timeout);
                 }
             } catch (ExecutionException e) {
                 // executeOne only throws when the configured strategy is to fail the exchange
@@ -316,6 +316,16 @@ class McpToolCallExecutor extends ServiceSupport {
     private static ToolResult errorResult(ChatCompletionMessageToolCall toolCall, String content) {
         return new ToolResult(
                 toolCall.asFunction().id(), toolCall.asFunction().function().name(), content, false, 0, false);
+    }
+
+    private static ToolResult timeoutResult(ChatCompletionMessageToolCall toolCall, long timeoutMs) {
+        return new ToolResult(
+                toolCall.asFunction().id(),
+                toolCall.asFunction().function().name(),
+                "Error: tool execution timed out after " + timeoutMs + " ms",
+                false,
+                timeoutMs,
+                false);
     }
 
     private static ToolResult timed(long startNanos, ToolResult result) {

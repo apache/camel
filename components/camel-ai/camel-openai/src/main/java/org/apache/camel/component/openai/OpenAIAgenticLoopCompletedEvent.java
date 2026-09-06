@@ -53,4 +53,10 @@ public final class OpenAIAgenticLoopCompletedEvent extends AbstractOpenAIExchang
     public String getStopReason() {
         return stopReason;
     }
+
+    @Override
+    public String toString() {
+        return "OpenAIAgenticLoopCompletedEvent{iterationCount=" + iterationCount + ", totalTokens=" + totalTokens
+               + ", stopReason='" + stopReason + "'}";
+    }
 }

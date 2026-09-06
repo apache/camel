@@ -22,16 +22,22 @@ import java.util.concurrent.TimeUnit;
 
 import com.openai.models.chat.completions.ChatCompletionMessageToolCall;
 import org.apache.camel.Exchange;
+import org.apache.camel.spi.CamelEvent;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Collects per-iteration agentic traces and emits lightweight lifecycle events for EventNotifier listeners.
  */
 final class OpenAIAgenticObservability {
 
+    private static final Logger LOG = LoggerFactory.getLogger(OpenAIAgenticObservability.class);
     static final int MAX_TRACE_TEXT_LENGTH = 512;
 
     private final Exchange exchange;
     private final List<AgenticIterationTrace> trace = new ArrayList<>();
+    private boolean loopStarted;
+    private boolean loopCompleted;
 
     OpenAIAgenticObservability(Exchange exchange) {
         this.exchange = exchange;
@@ -42,18 +48,32 @@ final class OpenAIAgenticObservability {
     }
 
     void onLoopStarted(int toolCount, int maxIterations) {
+        loopStarted = true;
         notify(new OpenAIAgenticLoopStartedEvent(exchange, toolCount, maxIterations));
     }
 
     void onLoopCompleted(int iterationCount, OpenAIAgenticTokenTracker tokenTracker, String stopReason) {
+        loopCompleted = true;
         notify(new OpenAIAgenticLoopCompletedEvent(
                 exchange, iterationCount, tokenTracker.getTotalTokens(), stopReason));
-        exchange.setProperty(OpenAIConstants.AGENTIC_TRACE, List.copyOf(trace));
+        publishTrace();
     }
 
     void onToolCallExecuted(int iteration, McpToolCallExecutor.ToolResult result) {
         notify(new OpenAIAgenticToolCallExecutedEvent(
                 exchange, iteration, result.toolName(), result.durationMs(), result.success()));
+    }
+
+    void publishTrace() {
+        exchange.setProperty(OpenAIConstants.AGENTIC_TRACE, List.copyOf(trace));
+    }
+
+    void finalizeObservability(OpenAIAgenticTokenTracker tokenTracker, int iterationCount, String stopReason) {
+        if (loopStarted && !loopCompleted) {
+            onLoopCompleted(iterationCount, tokenTracker, stopReason);
+        } else if (!trace.isEmpty()) {
+            publishTrace();
+        }
     }
 
     AgenticIterationTrace recordIteration(
@@ -82,16 +102,13 @@ final class OpenAIAgenticObservability {
         return iterationTrace;
     }
 
-    AgenticIterationTrace recordFinalIteration(
+    void recordFinalIteration(
             int iteration,
             long iterationStartNanos,
             long promptTokens,
             long completionTokens) {
         long durationMs = TimeUnit.NANOSECONDS.toMillis(System.nanoTime() - iterationStartNanos);
-        AgenticIterationTrace iterationTrace
-                = new AgenticIterationTrace(iteration, List.of(), promptTokens, completionTokens, durationMs);
-        trace.add(iterationTrace);
-        return iterationTrace;
+        trace.add(new AgenticIterationTrace(iteration, List.of(), promptTokens, completionTokens, durationMs));
     }
 
     static String summarize(String value) {
@@ -104,11 +121,16 @@ final class OpenAIAgenticObservability {
         return value.substring(0, MAX_TRACE_TEXT_LENGTH) + "...";
     }
 
-    private void notify(org.apache.camel.spi.CamelEvent event) {
+    private void notify(CamelEvent event) {
+        if (exchange.getContext().getManagementStrategy().getEventNotifiers().isEmpty()) {
+            return;
+        }
         try {
             exchange.getContext().getManagementStrategy().notify(event);
         } catch (Exception e) {
-            // Event notifiers must not break the agentic loop
+            if (LOG.isDebugEnabled()) {
+                LOG.debug("Unable to notify agentic lifecycle event {}", event.getClass().getSimpleName(), e);
+            }
         }
     }
 }

@@ -60,4 +60,10 @@ public final class OpenAIAgenticToolCallExecutedEvent extends AbstractOpenAIExch
     public boolean isSuccess() {
         return success;
     }
+
+    @Override
+    public String toString() {
+        return "OpenAIAgenticToolCallExecutedEvent{iteration=" + iteration + ", toolName='" + toolName
+               + "', durationMs=" + durationMs + ", success=" + success + "}";
+    }
 }

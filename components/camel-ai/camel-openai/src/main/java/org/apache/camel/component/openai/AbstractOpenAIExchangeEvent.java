@@ -21,7 +21,13 @@ import java.util.EventObject;
 import org.apache.camel.Exchange;
 import org.apache.camel.spi.CamelEvent;
 
-abstract class AbstractOpenAIExchangeEvent extends EventObject implements CamelEvent, CamelEvent.ExchangeEvent {
+/**
+ * Base class for OpenAI agentic loop {@link CamelEvent} notifications.
+ * <p>
+ * These are {@link CamelEvent.Type#Custom} events and are not {@link CamelEvent.ExchangeEvent} instances so they do not
+ * pollute generic exchange lifecycle metrics.
+ */
+abstract class AbstractOpenAIExchangeEvent extends EventObject implements CamelEvent {
 
     private final Exchange exchange;
     private long timestamp;
@@ -31,8 +37,12 @@ abstract class AbstractOpenAIExchangeEvent extends EventObject implements CamelE
         this.exchange = exchange;
     }
 
-    @Override
     public Exchange getExchange() {
+        return exchange;
+    }
+
+    @Override
+    public Object getSource() {
         return exchange;
     }
 

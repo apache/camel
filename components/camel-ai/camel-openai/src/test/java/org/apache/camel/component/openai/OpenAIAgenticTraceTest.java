@@ -61,6 +61,19 @@ class OpenAIAgenticTraceTest extends CamelTestSupport {
             .withUsage(3, 2)
             .replyWith("Just a text response")
             .end()
+            .when("expensive tool call")
+            .withUsage(70, 50)
+            .invokeTool("get_weather")
+            .withParam("city", "Paris")
+            .replyWith("Should not reach this response")
+            .end()
+            .when("keep calling tools")
+            .invokeTool("get_weather")
+            .withParam("city", "A")
+            .andThenInvokeTool("get_weather")
+            .withParam("city", "B")
+            .replyWith("Should not reach this response")
+            .end()
             .build();
 
     @Override
@@ -70,6 +83,16 @@ class OpenAIAgenticTraceTest extends CamelTestSupport {
             public void configure() {
                 from("direct:mcp-chat")
                         .toF("openai:chat-completion?model=gpt-5&apiKey=dummy&autoToolExecution=true&baseUrl=%s/v1",
+                                openAIMock.getBaseUrl());
+
+                from("direct:token-budget-fail")
+                        .toF("openai:chat-completion?model=gpt-5&apiKey=dummy&autoToolExecution=true"
+                             + "&maxAgenticTokens=100&maxToolIterations=5&baseUrl=%s/v1",
+                                openAIMock.getBaseUrl());
+
+                from("direct:max-iterations-fail")
+                        .toF("openai:chat-completion?model=gpt-5&apiKey=dummy&autoToolExecution=true"
+                             + "&maxToolIterations=1&baseUrl=%s/v1",
                                 openAIMock.getBaseUrl());
             }
         };
@@ -86,8 +109,11 @@ class OpenAIAgenticTraceTest extends CamelTestSupport {
     }
 
     private void injectMcpTools(Map<String, McpSyncClient> toolClients) {
-        OpenAIEndpoint endpoint = context.getEndpoint(String.format(ENDPOINT_URI, openAIMock.getBaseUrl()),
-                OpenAIEndpoint.class);
+        injectMcpTools(String.format(ENDPOINT_URI, openAIMock.getBaseUrl()), toolClients);
+    }
+
+    private void injectMcpTools(String endpointUri, Map<String, McpSyncClient> toolClients) {
+        OpenAIEndpoint endpoint = context.getEndpoint(endpointUri, OpenAIEndpoint.class);
         List<McpSchema.Tool> mcpTools = toolClients.keySet().stream()
                 .map(name -> McpSchema.Tool.builder(name, Map.of("type", "object"))
                         .description("Mock tool: " + name)
@@ -178,5 +204,48 @@ class OpenAIAgenticTraceTest extends CamelTestSupport {
         assertThat(exchange.getMessage().getHeader(OpenAIConstants.AGENTIC_PROMPT_TOKENS, Long.class)).isPositive();
         assertThat(exchange.getMessage().getHeader(OpenAIConstants.AGENTIC_TOTAL_TOKENS, Long.class)).isPositive();
         assertThat(exchange.getProperty(OpenAIConstants.AGENTIC_TRACE)).isNotNull();
+    }
+
+    @Test
+    void shouldPublishTraceWhenTokenBudgetExceeded() {
+        Map<String, McpSyncClient> toolClients = new HashMap<>();
+        toolClients.put("get_weather", createMockMcpClient("Sunny, 22°C"));
+        String endpointUri = String.format(
+                "openai:chat-completion?model=gpt-5&apiKey=dummy&autoToolExecution=true"
+                                           + "&maxAgenticTokens=100&maxToolIterations=5&baseUrl=%s/v1",
+                openAIMock.getBaseUrl());
+        injectMcpTools(endpointUri, toolClients);
+
+        Exchange exchange = template.request("direct:token-budget-fail", e -> e.getIn().setBody("expensive tool call"));
+
+        assertThat(exchange.getException()).isInstanceOf(IllegalStateException.class);
+        @SuppressWarnings("unchecked")
+        List<AgenticIterationTrace> trace
+                = exchange.getProperty(OpenAIConstants.AGENTIC_TRACE, List.class);
+        assertThat(trace).isNotNull().hasSize(1);
+        assertThat(trace.get(0).iteration()).isZero();
+        assertThat(trace.get(0).toolCalls()).isEmpty();
+        assertThat(trace.get(0).promptTokens()).isEqualTo(70);
+        assertThat(trace.get(0).completionTokens()).isEqualTo(50);
+    }
+
+    @Test
+    void shouldPublishTraceWhenMaxIterationsExceeded() {
+        Map<String, McpSyncClient> toolClients = new HashMap<>();
+        toolClients.put("get_weather", createMockMcpClient("Sunny, 22°C"));
+        String endpointUri = String.format(
+                "openai:chat-completion?model=gpt-5&apiKey=dummy&autoToolExecution=true"
+                                           + "&maxToolIterations=1&baseUrl=%s/v1",
+                openAIMock.getBaseUrl());
+        injectMcpTools(endpointUri, toolClients);
+
+        Exchange exchange = template.request("direct:max-iterations-fail", e -> e.getIn().setBody("keep calling tools"));
+
+        assertThat(exchange.getException()).isInstanceOf(IllegalStateException.class);
+        @SuppressWarnings("unchecked")
+        List<AgenticIterationTrace> trace
+                = exchange.getProperty(OpenAIConstants.AGENTIC_TRACE, List.class);
+        assertThat(trace).isNotNull().isNotEmpty();
+        assertThat(trace.get(0).toolCalls()).isNotEmpty();
     }
 }

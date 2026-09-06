@@ -53,6 +53,12 @@ class OpenAIAgenticEventNotifierTest extends CamelTestSupport {
             .withParam("city", "London")
             .replyWith("The weather in London is sunny.")
             .end()
+            .when("expensive tool call")
+            .withUsage(70, 50)
+            .invokeTool("get_weather")
+            .withParam("city", "Paris")
+            .replyWith("Should not reach this response")
+            .end()
             .build();
 
     @Override
@@ -62,6 +68,11 @@ class OpenAIAgenticEventNotifierTest extends CamelTestSupport {
             public void configure() {
                 from("direct:mcp-chat")
                         .toF("openai:chat-completion?model=gpt-5&apiKey=dummy&autoToolExecution=true&baseUrl=%s/v1",
+                                openAIMock.getBaseUrl());
+
+                from("direct:token-budget-fail")
+                        .toF("openai:chat-completion?model=gpt-5&apiKey=dummy&autoToolExecution=true"
+                             + "&maxAgenticTokens=100&maxToolIterations=5&baseUrl=%s/v1",
                                 openAIMock.getBaseUrl());
             }
         };
@@ -96,8 +107,11 @@ class OpenAIAgenticEventNotifierTest extends CamelTestSupport {
     }
 
     private void injectMcpTools(Map<String, McpSyncClient> toolClients) {
-        OpenAIEndpoint endpoint = context.getEndpoint(String.format(ENDPOINT_URI, openAIMock.getBaseUrl()),
-                OpenAIEndpoint.class);
+        injectMcpTools(String.format(ENDPOINT_URI, openAIMock.getBaseUrl()), toolClients);
+    }
+
+    private void injectMcpTools(String endpointUri, Map<String, McpSyncClient> toolClients) {
+        OpenAIEndpoint endpoint = context.getEndpoint(endpointUri, OpenAIEndpoint.class);
         List<McpSchema.Tool> mcpTools = toolClients.keySet().stream()
                 .map(name -> McpSchema.Tool.builder(name, Map.of("type", "object"))
                         .description("Mock tool: " + name)
@@ -142,5 +156,27 @@ class OpenAIAgenticEventNotifierTest extends CamelTestSupport {
         assertThat(completed.get(0).getIterationCount()).isEqualTo(1);
         assertThat(completed.get(0).getTotalTokens()).isPositive();
         assertThat(completed.get(0).getStopReason()).isNotBlank();
+    }
+
+    @Test
+    void shouldEmitLoopCompletedEventWhenTokenBudgetExceeded() {
+        Map<String, McpSyncClient> toolClients = new HashMap<>();
+        toolClients.put("get_weather", createMockMcpClient("Sunny, 22°C"));
+        String endpointUri = String.format(
+                "openai:chat-completion?model=gpt-5&apiKey=dummy&autoToolExecution=true"
+                                           + "&maxAgenticTokens=100&maxToolIterations=5&baseUrl=%s/v1",
+                openAIMock.getBaseUrl());
+        injectMcpTools(endpointUri, toolClients);
+
+        template.request("direct:token-budget-fail", e -> e.getIn().setBody("expensive tool call"));
+
+        List<OpenAIAgenticLoopCompletedEvent> completed = events.stream()
+                .filter(OpenAIAgenticLoopCompletedEvent.class::isInstance)
+                .map(OpenAIAgenticLoopCompletedEvent.class::cast)
+                .toList();
+
+        assertThat(completed).hasSize(1);
+        assertThat(completed.get(0).getStopReason()).isEqualTo("token_budget_exceeded");
+        assertThat(completed.get(0).getTotalTokens()).isEqualTo(120L);
     }
 }
