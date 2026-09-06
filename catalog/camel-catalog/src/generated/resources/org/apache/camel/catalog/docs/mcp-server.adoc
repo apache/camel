@@ -203,7 +203,11 @@ camel run tools.yaml --mcp-stdio --mcp-tags=crm,agent
 ----
 
 Logging and startup summaries are routed to stderr so stdout carries MCP
-JSON-RPC only. Configure your MCP client (for example in `mcp.json`) to launch
+JSON-RPC only. Camel JBang configures a stderr Log4j2 appender automatically
+when `--mcp-stdio` is used or when `camel.server.mcp-transport=stdio` is set
+in the profile. On Camel Main, configure logging to stderr yourself (for
+example using the `log4j2-mcp-stdio.properties` resource shipped in
+`camel-mcp-server`). Configure your MCP client (for example in `mcp.json`) to launch
 the Camel process as a subprocess:
 
 [source,json]
@@ -341,17 +345,28 @@ following rules:
   message; the cause is logged server-side and never sent to the client.
   Argument validation messages (missing or invalid parameters) are returned
   as-is.
+<<<<<<< HEAD
 * *Bounded execution*: every call is subject to the `toolTimeout` and every
   read to the `resourceTimeout`. Note that a timed-out route keeps running
   server-side until it completes; the timeout bounds the MCP request, not the
   route.
 * *Authentication*: the MCP endpoint is served through the main HTTP server
+=======
+* *Bounded execution*: every call is subject to the `toolTimeout`. Note that a
+  timed-out route keeps running server-side until it completes; the timeout
+  bounds the MCP request, not the route.
+* *Authentication (HTTP)*: the MCP endpoint is served through the main HTTP server
+>>>>>>> 156e1db07c7 (CAMEL-24352: Address review findings for MCP stdio transport)
   router, so platform-http authentication (basic, JWT via
   `camel.server.authentication*` options) applies to it. The MCP
   specification's authorization model is OAuth 2.1; see
   xref:oauth.adoc[camel-oauth] for resource-server style
   protection. On Quarkus and Spring Boot, authentication is owned by the
   native runtime security.
+* *Authentication (stdio)*: stdio mode has no HTTP transport and therefore no
+  HTTP authentication layer. Trust is the parent process that launched the
+  Camel subprocess (local IDE or agent). Route authors remain fully trusted;
+  only explicitly tagged tools are exposed.
 
 == Runtime notes
 

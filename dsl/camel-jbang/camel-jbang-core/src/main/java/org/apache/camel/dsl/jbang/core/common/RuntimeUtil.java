@@ -43,6 +43,13 @@ public final class RuntimeUtil {
             String level, boolean color, boolean json, boolean script, boolean export, String loggingConfigPath,
             List<String> loggingCategories)
             throws Exception {
+        configureLog(level, color, json, script, export, loggingConfigPath, loggingCategories, false);
+    }
+
+    public static void configureLog(
+            String level, boolean color, boolean json, boolean script, boolean export, String loggingConfigPath,
+            List<String> loggingCategories, boolean mcpStdio)
+            throws Exception {
         if (INIT_DONE.compareAndSet(false, true)) {
             long pid = ProcessHandle.current().pid();
             System.setProperty("pid", Long.toString(pid));
@@ -52,6 +59,8 @@ public final class RuntimeUtil {
             if (loggingConfigPath != null) {
                 // ust custom logging configuration as-is
                 Configurator.initialize("CamelJBang", "file://" + Path.of(loggingConfigPath).toAbsolutePath());
+            } else if (mcpStdio) {
+                Configurator.initialize("CamelJBang", "log4j2-mcp-stdio.properties");
             } else if (loggingCategories != null && !loggingCategories.isEmpty()) {
                 // enrich logging file with custom logging categories
                 String name = "log4j2-no-color.properties";

@@ -16,10 +16,14 @@
  */
 package org.apache.camel.dsl.jbang.core.commands;
 
+import java.util.Properties;
+
+import org.apache.camel.main.KameletMain;
 import org.junit.jupiter.api.Test;
 import picocli.CommandLine;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 class RunMcpStdioOptionTest {
 
@@ -41,10 +45,43 @@ class RunMcpStdioOptionTest {
     }
 
     @Test
+    void applyMcpStdioOverridesProfileHttpTransport() {
+        Run run = new Run(new CamelJBangMain());
+        new CommandLine(run).parseArgs("--mcp-stdio", "--mcp-tags=agent", "tools.yaml");
+        KameletMain main = new KameletMain("jbang");
+        Properties profile = new Properties();
+        profile.setProperty("camel.server.mcp-transport", "http");
+        profile.setProperty("camel.server.mcp-enabled", "false");
+
+        run.applyMcpStdioRuntimeOptions(main, profile);
+
+        assertThat(main.getOverrideProperties().getProperty("camel.server.mcp-transport")).isEqualTo("stdio");
+        assertThat(main.getOverrideProperties().getProperty("camel.server.mcp-enabled")).isEqualTo("true");
+        assertThat(main.getOverrideProperties().getProperty("camel.server.mcp-tags")).isEqualTo("agent");
+        assertThat(main.getOverrideProperties().getProperty("camel.main.startupSummaryLevel")).isEqualTo("Off");
+    }
+
+    @Test
     void mcpStdioIsExclusiveFromDevMcpFlag() {
         Run run = new Run(new CamelJBangMain());
-        run.serverOptions.mcpStdio = true;
-        run.serverOptions.mcp = true;
-        assertThat(run.serverOptions.mcpStdio && run.serverOptions.mcp).isTrue();
+        new CommandLine(run).parseArgs("--mcp-stdio", "--mcp", "tools.yaml");
+        KameletMain main = new KameletMain("jbang");
+
+        assertThatThrownBy(() -> run.applyMcpStdioRuntimeOptions(main, null))
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessageContaining("--mcp-stdio and --mcp cannot be used together");
+    }
+
+    @Test
+    void mcpStdioIsExclusiveFromProfileDevMcpFlag() {
+        Run run = new Run(new CamelJBangMain());
+        new CommandLine(run).parseArgs("--mcp-stdio", "tools.yaml");
+        KameletMain main = new KameletMain("jbang");
+        Properties profile = new Properties();
+        profile.setProperty("camel.jbang.mcp", "true");
+
+        assertThatThrownBy(() -> run.applyMcpStdioRuntimeOptions(main, profile))
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessageContaining("--mcp-stdio and --mcp cannot be used together");
     }
 }

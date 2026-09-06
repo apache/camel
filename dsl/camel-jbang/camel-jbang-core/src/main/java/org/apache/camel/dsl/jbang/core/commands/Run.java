@@ -167,6 +167,7 @@ public class Run extends CamelCommand {
     public long spawnPid;
 
     private Printer quietPrinter;
+    private boolean mcpStdioMode;
 
     @Parameters(description = "The Camel file(s) to run. If no files specified then application.properties is used as source for which files to run.",
                 arity = "0..9", paramLabel = "<files>", parameterConsumer = FilesConsumer.class)
@@ -705,7 +706,8 @@ public class Run extends CamelCommand {
         }
 
         Properties profileProperties = !empty ? loadProfileProperties(baseDir) : null;
-        configureLogging(baseDir);
+        mcpStdioMode = isMcpStdioEnabled(profileProperties);
+        configureLogging(baseDir, profileProperties);
         if (openapi != null) {
             generateOpenApi();
         }
@@ -2682,7 +2684,7 @@ public class Run extends CamelCommand {
         return main;
     }
 
-    private void configureLogging(Path baseDir) throws Exception {
+    private void configureLogging(Path baseDir, Properties profileProperties) throws Exception {
         if (loggingOptions.logging) {
             // allow to configure individual logging levels in application.properties
             Properties prop = loadProfileProperties(baseDir);
@@ -2711,7 +2713,7 @@ public class Run extends CamelCommand {
             }
             RuntimeUtil.configureLog(loggingOptions.loggingLevel, loggingOptions.loggingColor,
                     loggingOptions.loggingJson, scriptRun, false, loggingOptions.loggingConfigPath,
-                    loggingOptions.loggingCategory);
+                    loggingOptions.loggingCategory, mcpStdioMode);
             writeSettings("loggingLevel", loggingOptions.loggingLevel);
             writeSettings("loggingColor", loggingOptions.loggingColor ? "true" : "false");
             writeSettings("loggingJson", loggingOptions.loggingJson ? "true" : "false");
@@ -3181,18 +3183,22 @@ public class Run extends CamelCommand {
         if (!isMcpStdioEnabled(profileProperties)) {
             return;
         }
-        if (serverOptions.mcp) {
+        if (isMcpEnabled(profileProperties)) {
             throw new IllegalArgumentException(
                     "--mcp-stdio and --mcp cannot be used together: --mcp serves dev/diagnostics "
                                                + "tools over HTTP management, while --mcp-stdio serves ai-tool routes over stdin/stdout.");
         }
-        System.setProperty("log4j2.configurationFile", "classpath:log4j2-mcp-stdio.properties");
-        writeSetting(main, profileProperties, "camel.server.mcp-enabled", "true");
-        writeSetting(main, profileProperties, "camel.server.mcp-transport", "stdio");
-        if (serverOptions.mcpTags != null && !serverOptions.mcpTags.isBlank()) {
-            writeSetting(main, profileProperties, "camel.server.mcp-tags", serverOptions.mcpTags);
+        if (serverOptions.mcpStdio) {
+            main.addOverrideProperty("camel.server.mcp-enabled", "true");
+            main.addOverrideProperty("camel.server.mcp-transport", "stdio");
+            if (serverOptions.mcpTags != null && !serverOptions.mcpTags.isBlank()) {
+                main.addOverrideProperty("camel.server.mcp-tags", serverOptions.mcpTags);
+            }
+        } else {
+            writeSetting(main, profileProperties, "camel.server.mcp-enabled", "true");
+            writeSetting(main, profileProperties, "camel.server.mcp-transport", "stdio");
         }
-        writeSetting(main, profileProperties, "camel.main.startupSummaryLevel", "Off");
+        main.addOverrideProperty("camel.main.startupSummaryLevel", "Off");
         main.setSilent(true);
     }
 
@@ -3243,7 +3249,7 @@ public class Run extends CamelCommand {
 
     @Override
     protected Printer printer() {
-        if (serverOptions.mcpStdio || (exportRun && (!loggingOptions.logging && !verbose))) {
+        if (mcpStdioMode || (exportRun && (!loggingOptions.logging && !verbose))) {
             // MCP stdio mode and export silent runs must not write diagnostics to stdout
             if (quietPrinter == null) {
                 quietPrinter = new Printer.QuietPrinter(super.printer());

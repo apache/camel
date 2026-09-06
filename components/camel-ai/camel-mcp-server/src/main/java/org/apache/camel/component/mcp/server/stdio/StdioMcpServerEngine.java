@@ -91,7 +91,7 @@ public class StdioMcpServerEngine extends ServiceSupport implements McpServerEng
 
     @Override
     public boolean consumesServingConfiguration() {
-        return false;
+        return true;
     }
 
     @Override

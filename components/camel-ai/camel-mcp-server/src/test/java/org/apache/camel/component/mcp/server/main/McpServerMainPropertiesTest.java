@@ -16,6 +16,8 @@
  */
 package org.apache.camel.component.mcp.server.main;
 
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.time.Duration;
 import java.util.Map;
 
@@ -24,6 +26,7 @@ import io.modelcontextprotocol.client.McpSyncClient;
 import io.modelcontextprotocol.client.transport.HttpClientStreamableHttpTransport;
 import io.modelcontextprotocol.spec.McpSchema;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.component.mcp.server.stdio.StdioMcpServerEngine;
 import org.apache.camel.main.Main;
 import org.apache.camel.test.AvailablePortFinder;
 import org.junit.jupiter.api.Test;
@@ -117,6 +120,9 @@ class McpServerMainPropertiesTest {
         main.addInitialProperty("camel.server.mcp-enabled", "true");
         main.addInitialProperty("camel.server.mcp-transport", "stdio");
         main.addInitialProperty("camel.server.mcp-tags", "crm");
+        StdioMcpServerEngine engine = new StdioMcpServerEngine();
+        engine.setTransportStreams(new ByteArrayInputStream(new byte[0]), new ByteArrayOutputStream());
+        main.bind("mcpServerEngine", engine);
 
         try {
             main.start();

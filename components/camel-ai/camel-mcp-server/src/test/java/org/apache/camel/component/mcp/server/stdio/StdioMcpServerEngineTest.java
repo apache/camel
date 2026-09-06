@@ -16,6 +16,9 @@
  */
 package org.apache.camel.component.mcp.server.stdio;
 
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+
 import org.apache.camel.CamelContext;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mcp.server.McpServerBridge;
@@ -32,7 +35,9 @@ class StdioMcpServerEngineTest extends CamelTestSupport {
     @Override
     protected CamelContext createCamelContext() throws Exception {
         CamelContext camelContext = super.createCamelContext();
-        camelContext.getRegistry().bind("mcpServerEngine", new StdioMcpServerEngine());
+        StdioMcpServerEngine engine = new StdioMcpServerEngine();
+        engine.setTransportStreams(new ByteArrayInputStream(new byte[0]), new ByteArrayOutputStream());
+        camelContext.getRegistry().bind("mcpServerEngine", engine);
         McpServerConfiguration configuration = new McpServerConfiguration();
         configuration.setTags("stdio");
         configuration.setToolTimeout(5000);
@@ -57,6 +62,6 @@ class StdioMcpServerEngineTest extends CamelTestSupport {
     void bridgeResolvesStdioEngineWithoutHttpServer() {
         assertThat(bridge.getEngine()).isInstanceOf(StdioMcpServerEngine.class);
         assertThat(bridge.isStarted()).isTrue();
-        assertThat(bridge.getEngine().consumesServingConfiguration()).isFalse();
+        assertThat(bridge.getEngine().consumesServingConfiguration()).isTrue();
     }
 }
