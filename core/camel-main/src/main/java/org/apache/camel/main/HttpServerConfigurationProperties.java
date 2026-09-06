@@ -73,6 +73,8 @@ public class HttpServerConfigurationProperties implements BootstrapCloseable {
 
     @Metadata
     private boolean mcpEnabled;
+    @Metadata(defaultValue = "http", enums = "http,stdio")
+    private String mcpTransport = "http";
     @Metadata
     private String mcpTags;
     @Metadata(defaultValue = "20000")
@@ -358,11 +360,25 @@ public class HttpServerConfigurationProperties implements BootstrapCloseable {
     }
 
     /**
-     * Whether to expose ai-tool routes as MCP tools and ai-resource routes as MCP resources over streamable HTTP.
-     * Requires camel-mcp-server on the classpath. By default, the MCP server is not enabled.
+     * Whether to expose ai-tool routes as MCP tools and ai-resource routes as MCP resources.
+     * Requires camel-mcp-server on the classpath. Use {@link #setMcpTransport(String)} to choose
+     * streamable HTTP (default) or stdio for IDE subprocess integration. By default, the MCP server is
+     * not enabled.
      */
     public void setMcpEnabled(boolean mcpEnabled) {
         this.mcpEnabled = mcpEnabled;
+    }
+
+    public String getMcpTransport() {
+        return mcpTransport;
+    }
+
+    /**
+     * MCP transport for ai-tool routes: {@code http} (streamable HTTP on the embedded server, default) or {@code stdio}
+     * (JSON-RPC on process stdin/stdout for local agent subprocesses).
+     */
+    public void setMcpTransport(String mcpTransport) {
+        this.mcpTransport = mcpTransport;
     }
 
     public String getMcpTags() {
@@ -686,11 +702,21 @@ public class HttpServerConfigurationProperties implements BootstrapCloseable {
     }
 
     /**
-     * Whether to expose ai-tool routes as MCP tools and ai-resource routes as MCP resources over streamable HTTP.
-     * Requires camel-mcp-server on the classpath. By default, the MCP server is not enabled.
+     * Whether to expose ai-tool routes as MCP tools and ai-resource routes as MCP resources.
+     * Requires camel-mcp-server on the classpath. Use {@link #setMcpTransport(String)} to choose
+     * streamable HTTP (default) or stdio for IDE subprocess integration. By default, the MCP server is
+     * not enabled.
      */
     public HttpServerConfigurationProperties withMcpEnabled(boolean mcpEnabled) {
         this.mcpEnabled = mcpEnabled;
+        return this;
+    }
+
+    /**
+     * MCP transport for ai-tool routes: {@code http} (default) or {@code stdio}.
+     */
+    public HttpServerConfigurationProperties withMcpTransport(String mcpTransport) {
+        this.mcpTransport = mcpTransport;
         return this;
     }
 

@@ -88,14 +88,43 @@ class McpServerMainPropertiesTest {
     }
 
     @Test
-    void testMcpEnabledWithoutHttpServerFailsFast() {
+    void testMcpEnabledWithoutHttpServerFailsFastForHttpTransport() {
         Main main = new Main();
         main.addInitialProperty("camel.server.mcp-enabled", "true");
+        main.addInitialProperty("camel.server.mcp-transport", "http");
         main.addInitialProperty("camel.server.mcp-tags", "crm");
 
         try {
             assertThatThrownBy(main::start)
                     .hasStackTraceContaining("Vert.x platform HTTP server");
+        } finally {
+            main.stop();
+        }
+    }
+
+    @Test
+    void testMcpStdioStartsWithoutHttpServer() throws Exception {
+        Main main = new Main();
+        main.configure().setStartupSummaryLevel(org.apache.camel.StartupSummaryLevel.Off);
+        main.configure().addRoutesBuilder(new RouteBuilder() {
+            @Override
+            public void configure() {
+                from("ai-tool:say_hello?tags=crm&description=Say hello"
+                     + "&parameter.name=string&parameter.name.required=true")
+                        .setBody(simple("Hello ${header.name}"));
+            }
+        });
+        main.addInitialProperty("camel.server.mcp-enabled", "true");
+        main.addInitialProperty("camel.server.mcp-transport", "stdio");
+        main.addInitialProperty("camel.server.mcp-tags", "crm");
+
+        try {
+            main.start();
+            org.apache.camel.component.mcp.server.McpServerBridge bridge
+                    = main.getCamelContext().hasService(org.apache.camel.component.mcp.server.McpServerBridge.class);
+            assertThat(bridge).isNotNull();
+            assertThat(bridge.getEngine()).isInstanceOf(
+                    org.apache.camel.component.mcp.server.stdio.StdioMcpServerEngine.class);
         } finally {
             main.stop();
         }

@@ -35,6 +35,16 @@ public final class McpServerConstants {
     public static final String DEFAULT_PATH = "/mcp";
 
     /**
+     * MCP transport served over streamable HTTP (default).
+     */
+    public static final String TRANSPORT_HTTP = "http";
+
+    /**
+     * MCP transport served over process stdin/stdout (JSON-RPC).
+     */
+    public static final String TRANSPORT_STDIO = "stdio";
+
+    /**
      * Default per-call tool execution timeout in milliseconds.
      */
     public static final long DEFAULT_TOOL_TIMEOUT = 20_000;

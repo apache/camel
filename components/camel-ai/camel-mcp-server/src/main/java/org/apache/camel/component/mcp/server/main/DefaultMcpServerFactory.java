@@ -20,6 +20,9 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.Service;
 import org.apache.camel.component.mcp.server.McpServerBridge;
 import org.apache.camel.component.mcp.server.McpServerConfiguration;
+import org.apache.camel.component.mcp.server.McpServerConstants;
+import org.apache.camel.component.mcp.server.McpServerEngine;
+import org.apache.camel.component.mcp.server.stdio.StdioMcpServerEngine;
 import org.apache.camel.main.HttpServerConfigurationProperties;
 import org.apache.camel.main.MainConstants;
 import org.apache.camel.main.McpServerFactory;
@@ -34,6 +37,10 @@ public class DefaultMcpServerFactory implements McpServerFactory {
 
     @Override
     public Service newMcpServer(CamelContext camelContext, HttpServerConfigurationProperties configuration) {
+        if (isStdioTransport(configuration.getMcpTransport())
+                && camelContext.getRegistry().findSingleByType(McpServerEngine.class) == null) {
+            camelContext.getRegistry().bind("mcpServerEngine", new StdioMcpServerEngine());
+        }
         McpServerConfiguration mcpConfiguration = new McpServerConfiguration();
         mcpConfiguration.setTags(configuration.getMcpTags());
         mcpConfiguration.setToolTimeout(configuration.getMcpToolTimeout());
@@ -48,5 +55,9 @@ public class DefaultMcpServerFactory implements McpServerFactory {
         mcpConfiguration.setSessionKeepAliveInterval(configuration.getMcpSessionKeepAliveInterval());
         mcpConfiguration.setSessionIdleTtl(configuration.getMcpSessionIdleTtl());
         return new McpServerBridge(mcpConfiguration);
+    }
+
+    static boolean isStdioTransport(String transport) {
+        return transport != null && McpServerConstants.TRANSPORT_STDIO.equalsIgnoreCase(transport.trim());
     }
 }

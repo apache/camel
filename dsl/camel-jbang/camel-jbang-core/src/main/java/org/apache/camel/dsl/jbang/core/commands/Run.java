@@ -610,6 +610,14 @@ public class Run extends CamelCommand {
         return "true".equals(val);
     }
 
+    private boolean isMcpStdioEnabled(Properties profileProperties) {
+        if (serverOptions.mcpStdio) {
+            return true;
+        }
+        return profileProperties != null
+                && "stdio".equalsIgnoreCase(profileProperties.getProperty("camel.server.mcp-transport", "").trim());
+    }
+
     private void writeSetting(KameletMain main, Properties existing, String key, Supplier<String> value) {
         String val = existing != null ? existing.getProperty(key, value.get()) : value.get();
         if (val != null) {
@@ -1268,7 +1276,10 @@ public class Run extends CamelCommand {
             dependencies.add("camel:openapi-java");
             applyOpenApiUiRuntimeOptions(main);
         }
-        if (isMcpEnabled(profileProperties)) {
+        if (isMcpStdioEnabled(profileProperties)) {
+            dependencies.add("camel:mcp-server");
+            applyMcpStdioRuntimeOptions(main, profileProperties);
+        } else if (isMcpEnabled(profileProperties)) {
             dependencies.add("camel:platform-http-main");
             dependencies.add("camel:mcp-server");
         }
@@ -3109,6 +3120,17 @@ public class Run extends CamelCommand {
                               + "Also binds the management server to 127.0.0.1 (affecting health/metrics when --observe is used).")
         boolean mcp;
 
+        @Option(names = { "--mcp-stdio" }, defaultValue = "false",
+                description = "Expose tagged ai-tool routes as MCP tools over process stdin/stdout for IDE subprocess "
+                              + "integration (no HTTP port). Requires --mcp-tags or camel.server.mcp-tags. "
+                              + "Logging and startup summaries are routed to stderr so stdout carries MCP protocol only.")
+        boolean mcpStdio;
+
+        @Option(names = { "--mcp-tags" },
+                description = "Comma-separated ai-tool tags to expose when --mcp-stdio is enabled (maps to "
+                              + "camel.server.mcp-tags)")
+        String mcpTags;
+
         @Option(names = { "--openapi-ui" }, defaultValue = "false",
                 description = "Swagger UI for REST OpenAPI at /q/openapi (OpenAPI document at /q/openapi.json; port 8080 by default)")
         boolean openapiUi;
@@ -3153,6 +3175,25 @@ public class Run extends CamelCommand {
         main.addOverrideProperty("camel.management.openapiUiEnabled", "true");
         main.addOverrideProperty("camel.server.enabled", "true");
         main.addOverrideProperty("camel.management.enabled", "true");
+    }
+
+    void applyMcpStdioRuntimeOptions(KameletMain main, Properties profileProperties) {
+        if (!isMcpStdioEnabled(profileProperties)) {
+            return;
+        }
+        if (serverOptions.mcp) {
+            throw new IllegalArgumentException(
+                    "--mcp-stdio and --mcp cannot be used together: --mcp serves dev/diagnostics "
+                                               + "tools over HTTP management, while --mcp-stdio serves ai-tool routes over stdin/stdout.");
+        }
+        System.setProperty("log4j2.configurationFile", "classpath:log4j2-mcp-stdio.properties");
+        writeSetting(main, profileProperties, "camel.server.mcp-enabled", "true");
+        writeSetting(main, profileProperties, "camel.server.mcp-transport", "stdio");
+        if (serverOptions.mcpTags != null && !serverOptions.mcpTags.isBlank()) {
+            writeSetting(main, profileProperties, "camel.server.mcp-tags", serverOptions.mcpTags);
+        }
+        writeSetting(main, profileProperties, "camel.main.startupSummaryLevel", "Off");
+        main.setSilent(true);
     }
 
     static class FilesConsumer extends ParameterConsumer<Run> {
@@ -3202,8 +3243,8 @@ public class Run extends CamelCommand {
 
     @Override
     protected Printer printer() {
-        if (exportRun && (!loggingOptions.logging && !verbose)) {
-            // Export run should be silent unless in logging or verbose mode
+        if (serverOptions.mcpStdio || (exportRun && (!loggingOptions.logging && !verbose))) {
+            // MCP stdio mode and export silent runs must not write diagnostics to stdout
             if (quietPrinter == null) {
                 quietPrinter = new Printer.QuietPrinter(super.printer());
             }

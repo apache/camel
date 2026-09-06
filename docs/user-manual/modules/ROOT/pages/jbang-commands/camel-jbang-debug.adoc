@@ -62,6 +62,8 @@ camel debug [options]
 | `--max-messages` | Max number of messages to process before stopping | 0 | int
 | `--max-seconds` | Max seconds to run before stopping | 0 | int
 | `--mcp` | Embed dev/diagnostics MCP tools on the local HTTP management server (/mcp by default). When management shares the main HTTP port, MCP is served on the main server bind address. Also binds the management server to 127.0.0.1 (affecting health/metrics when --observe is used). | false | boolean
+| `--mcp-stdio` | Expose tagged ai-tool routes as MCP tools over process stdin/stdout for IDE subprocess integration (no HTTP port). Requires --mcp-tags or camel.server.mcp-tags. Logging and startup summaries are routed to stderr so stdout carries MCP protocol only. | false | boolean
+| `--mcp-tags` | Comma-separated ai-tool tags to expose when --mcp-stdio is enabled (maps to camel.server.mcp-tags) |  | String
 | `--metrics` _(deprecated)_ | Deprecated: use --observe instead. Metrics (Micrometer and Prometheus) at /q/metrics on local HTTP server (port 8080 by default) | false | boolean
 | `--modeline` | Whether to support JBang style //DEPS to specify additional dependencies | true | boolean
 | `--name` | The name of the Camel application | CamelJBang | String

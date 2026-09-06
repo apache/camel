@@ -2,7 +2,7 @@
 :doctitle: MCP Server
 :shortname: mcp-server
 :artifactid: camel-mcp-server
-:description: Expose ai-tool routes as MCP tools and ai-resource routes as MCP resources over streamable HTTP
+:description: Expose ai-tool routes as MCP tools and ai-resource routes as MCP resources over streamable HTTP or stdio
 :since: 4.22
 :supportlevel: Preview
 :tabs-sync-option:
@@ -13,10 +13,10 @@ The camel-mcp-server module exposes Camel routes registered via the
 xref:ROOT:ai-tool-component.adoc[ai-tool] and xref:ROOT:ai-resource-component.adoc[ai-resource]
 components as tools and resources of a
 https://modelcontextprotocol.io[Model Context Protocol] (MCP) server, served
-over MCP streamable HTTP. No route is needed for the server itself: add the
-dependency, configure which tags to expose, and every matching `ai-tool` route
-becomes an MCP tool and every matching `ai-resource` route an MCP resource,
-discoverable by any MCP client (another Camel application, an IDE, a coding
+over MCP streamable HTTP or stdio (stdin/stdout JSON-RPC). No route is needed for the
+server itself: add the dependency, configure which tags to expose, and every matching
+`ai-tool` route becomes an MCP tool and every matching `ai-resource` route an MCP
+resource, discoverable by any MCP client (another Camel application, an IDE, a coding
 agent).
 
 Maven users will need to add the following dependency to their `pom.xml`:
@@ -41,10 +41,11 @@ The module is split in two artifacts:
   sanitization) and reacts to `AiToolRegistry` and `AiResourceRegistry` changes
   when routes start and stop. It has no dependency on the MCP Java SDK.
 * `camel-mcp-server` — the serving engine for Camel Main and Camel JBang,
-  built on the official MCP Java SDK with a Vert.x streamable HTTP transport.
-  The MCP endpoint is registered on the Camel main HTTP server's router, so it
-  serves on the main server port (`camel.server.port`) and inherits its
-  lifecycle, authentication and CORS configuration.
+  built on the official MCP Java SDK. Streamable HTTP uses a Vert.x transport
+  registered on the Camel main HTTP server's router (port `camel.server.port`,
+  lifecycle, authentication and CORS). Stdio uses the MCP Java SDK
+  `StdioServerTransportProvider` so a local IDE or agent can launch the Camel
+  process as a subprocess with MCP JSON-RPC on stdin/stdout.
 
 Engine resolution mirrors the platform-http engine: a bean of type
 `McpServerEngine` in the Camel registry wins; otherwise the engine is
@@ -145,7 +146,9 @@ xref:ROOT:ai-tool-component.adoc#_mcp_tool_annotation_hints[MCP Tool Annotation 
 for configuration examples. Hints are advisory UX metadata only — not authorization.
 
 On Camel Main and Camel JBang no code is needed — like Jolokia or
-Prometheus, the server starts from configuration properties alone:
+Prometheus, the server starts from configuration properties alone.
+
+=== Streamable HTTP (default)
 
 [source,properties]
 ----
@@ -163,22 +166,6 @@ camel.server.mcp-server-icons = [{"src":"https://example.com/icon.png","mimeType
 Tag patterns support wildcards: use `*` to expose all tagged tools, or a
 prefix pattern like `crm*` to expose all tags starting with `crm`:
 
-On other runtimes, or when wiring programmatically, add the
-`McpServerBridge` service to the CamelContext instead:
-
-[source,java]
-----
-McpServerConfiguration configuration = new McpServerConfiguration();
-configuration.setTags("crm,notify");
-configuration.setServerName("my-integration-app");
-configuration.setServerTitle("My Integration MCP");
-configuration.setServerDescription("Tools for customer operations");
-configuration.setServerWebsiteUrl("https://example.com/docs");
-configuration.setInstructions("Use these tools to operate the integration.");
-configuration.setServerIcons(List.of(new McpServerIcon("https://example.com/icon.png", "image/png", List.of("48x48"), "light")));
-camelContext.addService(new McpServerBridge(configuration));
-----
-
 The MCP endpoint is then served at `http://<host>:<port>/mcp` on the Camel
 main HTTP server. Any MCP client can connect over streamable HTTP, for
 example another Camel integration using the
@@ -194,6 +181,43 @@ from("direct:agent")
         + "&mcpServer.myCamelTools.url=http://localhost:8080/mcp");
 ----
 
+=== Stdio (local IDE / agent subprocess)
+
+For local IDE or agent integration, serve MCP over process stdin/stdout instead
+of HTTP. Set `camel.server.mcp-transport=stdio` (or use the Camel JBang
+`--mcp-stdio` flag). Stdio mode does not require the Camel main HTTP server.
+
+[source,properties]
+----
+camel.server.mcp-enabled = true
+camel.server.mcp-transport = stdio
+camel.server.mcp-tags = crm,agent
+camel.server.mcp-server-name = my-camel-tools
+----
+
+With Camel JBang:
+
+[source,shell]
+----
+camel run tools.yaml --mcp-stdio --mcp-tags=crm,agent
+----
+
+Logging and startup summaries are routed to stderr so stdout carries MCP
+JSON-RPC only. Configure your MCP client (for example in `mcp.json`) to launch
+the Camel process as a subprocess:
+
+[source,json]
+----
+{
+  "mcpServers": {
+    "my-camel-tools": {
+      "command": "camel",
+      "args": ["run", "tools.yaml", "--mcp-stdio", "--mcp-tags=crm,agent"]
+    }
+  }
+}
+----
+
 == Options
 
 The options, configurable as `camel.server.mcp-*` properties on Camel Main /
@@ -205,7 +229,10 @@ JBang (see the xref:main.adoc[camel-main] options) or on
 | Option | Description | Default | Owner
 
 | `camel.server.mcp-enabled` | Whether to expose ai-tool routes as MCP tools
-  and ai-resource routes as MCP resources over streamable HTTP. | `false` | bridge
+  and ai-resource routes as MCP resources. | `false` | bridge
+| `camel.server.mcp-transport` | MCP transport: `http` (streamable HTTP on the
+  embedded server, default) or `stdio` (JSON-RPC on process stdin/stdout for
+  local agent subprocesses). Stdio exposes tools only. | `http` | engine
 | `camel.server.mcp-tags` | Comma-separated list of tag patterns selecting the
   ai-tool and ai-resource routes to expose. Patterns support exact match,
   wildcard prefix (`foo*`), and `*` to match all tags. Only routes registered
@@ -245,17 +272,30 @@ JBang (see the xref:main.adoc[camel-main] options) or on
 |===
 
 Bridge-owned options are honored identically on every runtime. Engine-owned
-options are consumed by the Vert.x engine only; on runtimes with a native
-engine (Quarkus, Spring Boot) the native configuration decides serving
-concerns and a startup WARN is logged when an ignored option is set.
+options are consumed by the Vert.x HTTP engine or the stdio engine on Camel
+Main/JBang; on runtimes with a native engine (Quarkus, Spring Boot) the native
+configuration decides serving concerns and a startup WARN is logged when an
+ignored option is set.
+
+On other runtimes, or when wiring programmatically, add the
+`McpServerBridge` service to the CamelContext instead:
+
+[source,java]
+----
+McpServerConfiguration configuration = new McpServerConfiguration();
+configuration.setTags("crm,notify");
+camelContext.addService(new McpServerBridge(configuration));
+----
 
 == Protocol
 
-This section describes the Vert.x engine shipped in `camel-mcp-server`, which
-serves on Camel Main and Camel JBang. On Quarkus and Spring Boot the transport
-is owned by the native engine instead — quarkus-mcp-server and the Spring Boot
-embedded HTTP server (Spring AI MCP server) respectively — and the details
-below do not apply.
+This section describes the engines shipped in `camel-mcp-server` for Camel
+Main and Camel JBang. On Quarkus and Spring Boot the transport is owned by
+the native engine instead — quarkus-mcp-server and the Spring Boot embedded
+HTTP server (Spring AI MCP server) respectively — and the details below do not
+apply.
+
+=== Streamable HTTP (Vert.x engine)
 
 The Vert.x engine implements the MCP streamable HTTP transport:
 
@@ -276,6 +316,14 @@ emit `notifications/tools/list_changed` and
 `notifications/resources/list_changed` to connected clients. Per-resource
 subscriptions (`resources/subscribe`) are not offered: the server advertises
 `resources` with `listChanged` only.
+
+=== Stdio engine
+
+The stdio engine uses the MCP Java SDK `StdioServerTransportProvider`. MCP
+JSON-RPC is read from stdin and written to stdout. Logging and startup banners
+must not appear on stdout — Camel Main/JBang configure Log4j2 to write logs to
+stderr in stdio mode. No HTTP port is opened and no session management headers
+apply.
 
 == Security
 
@@ -307,11 +355,14 @@ following rules:
 
 == Runtime notes
 
-* *Camel Main / JBang*: requires the Camel main HTTP server
+* *Camel Main / JBang (HTTP)*: requires the Camel main HTTP server
   (`camel.server.enabled=true` with `camel-platform-http-main`, automatic
   with Camel JBang) or a `VertxPlatformHttpServer` service. Serving is fully
   asynchronous: tool calls are offloaded to the Vert.x worker pool and the
   long-lived SSE channel does not occupy a worker thread.
+* *Camel Main / JBang (stdio)*: set `camel.server.mcp-transport=stdio` or use
+  `--mcp-stdio`. Does not require the HTTP server. Distinct from the `--mcp`
+  JBang flag, which exposes dev/diagnostics tools over HTTP management.
 * *Quarkus*: use the `camel-quarkus-mcp-server` extension (serves through
   quarkus-mcp-server; the MCP Java SDK is not on the classpath).
 * *Spring Boot*: use the `camel-mcp-server-starter` (serves through the
