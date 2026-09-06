@@ -21,7 +21,7 @@ import java.util.List;
 /**
  * Trace entry for one iteration of the OpenAI MCP agentic loop.
  *
- * @param iteration        1-based iteration number for tool-call batches (0 when the model answered without tools)
+ * @param iteration        1-based sequence number for each model call in the agentic loop
  * @param toolCalls        tool calls executed in this iteration, empty when the model produced a final answer
  * @param promptTokens     prompt tokens consumed by the model call in this iteration
  * @param completionTokens completion tokens consumed by the model call in this iteration

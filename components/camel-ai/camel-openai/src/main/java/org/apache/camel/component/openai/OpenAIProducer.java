@@ -510,10 +510,12 @@ public class OpenAIProducer extends DefaultAsyncProducer {
         OpenAIAgenticObservability observability = new OpenAIAgenticObservability(exchange);
         observability.onLoopStarted(getEndpoint().getMcpToolState().knownToolNames().size(), maxIterations);
         int iteration = 0;
+        int modelCall = 0;
         String stopReason = "unknown";
 
         try {
             while (iteration < maxIterations) {
+                modelCall++;
                 long iterationStartNanos = System.nanoTime();
                 OpenAIAgenticTokenTracker.Snapshot tokensBefore = tokenTracker.snapshot();
 
@@ -532,7 +534,7 @@ public class OpenAIProducer extends DefaultAsyncProducer {
                             getFinishReasonString(choice));
                     stopReason = getFinishReasonString(choice);
                     observability.recordFinalIteration(
-                            iteration, iterationStartNanos, iterationPromptTokens, iterationCompletionTokens);
+                            modelCall, iterationStartNanos, iterationPromptTokens, iterationCompletionTokens);
                     observability.onLoopCompleted(iteration, tokenTracker, stopReason);
                     String content = choice.message().content().orElse("");
                     content = processThinkingContent(exchange, content, config);
@@ -550,9 +552,15 @@ public class OpenAIProducer extends DefaultAsyncProducer {
                     return;
                 }
 
-                enforceAgenticTokenBudget(
-                        config, tokenTracker, iteration, observability, iterationStartNanos, iterationPromptTokens,
-                        iterationCompletionTokens);
+                if (tokenBudgetExceeded(config, tokenTracker)) {
+                    observability.recordFinalIteration(
+                            modelCall, iterationStartNanos, iterationPromptTokens, iterationCompletionTokens);
+                    stopReason = "token_budget_exceeded";
+                    throw new IllegalStateException(
+                            "Max agentic tokens (%d) exceeded at iteration %d. Cumulative usage: prompt=%d, completion=%d, total=%d"
+                                    .formatted(config.getMaxAgenticTokens(), iteration, tokenTracker.getPromptTokens(),
+                                            tokenTracker.getCompletionTokens(), tokenTracker.getTotalTokens()));
+                }
 
                 iteration++;
                 LOG.debug("Iteration {}: model requested {} tool call(s)", iteration,
@@ -577,7 +585,7 @@ public class OpenAIProducer extends DefaultAsyncProducer {
                 // Execute all tool calls in this batch
                 List<McpToolCallExecutor.ToolResult> batchResults = toolCallExecutor.execute(toolCalls);
                 observability.recordIteration(
-                        iteration, iterationStartNanos, iterationPromptTokens, iterationCompletionTokens, toolCalls,
+                        modelCall, iterationStartNanos, iterationPromptTokens, iterationCompletionTokens, toolCalls,
                         batchResults);
                 boolean allReturnDirect = batchResults.stream().allMatch(McpToolCallExecutor.ToolResult::returnDirect);
 
@@ -618,13 +626,7 @@ public class OpenAIProducer extends DefaultAsyncProducer {
                     "Max tool iterations (%d) exceeded. Tools called: %s".formatted(maxIterations, toolCallsLog));
         } catch (IllegalStateException e) {
             if ("unknown".equals(stopReason)) {
-                if (e.getMessage() != null && e.getMessage().contains("Max agentic tokens")) {
-                    stopReason = "token_budget_exceeded";
-                } else if (e.getMessage() != null && e.getMessage().contains("Max tool iterations")) {
-                    stopReason = "max_iterations_exceeded";
-                } else {
-                    stopReason = "error";
-                }
+                stopReason = "error";
             }
             throw e;
         } catch (Exception e) {
@@ -641,23 +643,9 @@ public class OpenAIProducer extends DefaultAsyncProducer {
         message.setHeader(OpenAIConstants.AGENTIC_TOTAL_TOKENS, tokenTracker.getTotalTokens());
     }
 
-    private void enforceAgenticTokenBudget(
-            OpenAIConfiguration config,
-            OpenAIAgenticTokenTracker tokenTracker,
-            int iteration,
-            OpenAIAgenticObservability observability,
-            long iterationStartNanos,
-            long iterationPromptTokens,
-            long iterationCompletionTokens) {
+    private static boolean tokenBudgetExceeded(OpenAIConfiguration config, OpenAIAgenticTokenTracker tokenTracker) {
         long maxAgenticTokens = config.getMaxAgenticTokens();
-        if (maxAgenticTokens <= 0 || tokenTracker.getTotalTokens() <= maxAgenticTokens) {
-            return;
-        }
-        observability.recordFinalIteration(iteration, iterationStartNanos, iterationPromptTokens, iterationCompletionTokens);
-        throw new IllegalStateException(
-                "Max agentic tokens (%d) exceeded at iteration %d. Cumulative usage: prompt=%d, completion=%d, total=%d"
-                        .formatted(maxAgenticTokens, iteration, tokenTracker.getPromptTokens(),
-                                tokenTracker.getCompletionTokens(), tokenTracker.getTotalTokens()));
+        return maxAgenticTokens > 0 && tokenTracker.getTotalTokens() > maxAgenticTokens;
     }
 
     private void processStreaming(Exchange exchange, ChatCompletionCreateParams params) {

@@ -148,7 +148,7 @@ class OpenAIAgenticTraceTest extends CamelTestSupport {
         assertThat(trace.get(0).toolCalls().get(0).success()).isTrue();
         assertThat(trace.get(0).promptTokens()).isEqualTo(10);
         assertThat(trace.get(0).completionTokens()).isEqualTo(5);
-        assertThat(trace.get(1).iteration()).isEqualTo(1);
+        assertThat(trace.get(1).iteration()).isEqualTo(2);
         assertThat(trace.get(1).toolCalls()).isEmpty();
         assertThat(trace.get(1).promptTokens()).isGreaterThan(0);
     }
@@ -187,7 +187,7 @@ class OpenAIAgenticTraceTest extends CamelTestSupport {
                 = exchange.getProperty(OpenAIConstants.AGENTIC_TRACE, List.class);
 
         assertThat(trace).hasSize(1);
-        assertThat(trace.get(0).iteration()).isZero();
+        assertThat(trace.get(0).iteration()).isEqualTo(1);
         assertThat(trace.get(0).toolCalls()).isEmpty();
         assertThat(trace.get(0).promptTokens()).isEqualTo(3);
         assertThat(trace.get(0).completionTokens()).isEqualTo(2);
@@ -223,7 +223,7 @@ class OpenAIAgenticTraceTest extends CamelTestSupport {
         List<AgenticIterationTrace> trace
                 = exchange.getProperty(OpenAIConstants.AGENTIC_TRACE, List.class);
         assertThat(trace).isNotNull().hasSize(1);
-        assertThat(trace.get(0).iteration()).isZero();
+        assertThat(trace.get(0).iteration()).isEqualTo(1);
         assertThat(trace.get(0).toolCalls()).isEmpty();
         assertThat(trace.get(0).promptTokens()).isEqualTo(70);
         assertThat(trace.get(0).completionTokens()).isEqualTo(50);
