@@ -27,6 +27,7 @@ import com.openai.core.ClientOptions;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.test.infra.ollama.services.OllamaService;
+import org.apache.camel.test.infra.ollama.services.OllamaServiceConfiguration;
 import org.apache.camel.test.infra.ollama.services.OllamaServiceFactory;
 import org.apache.camel.test.junit6.CamelTestSupport;
 import org.junit.jupiter.api.Test;
@@ -67,7 +68,18 @@ public class SpringAiImageOllamaIT extends CamelTestSupport {
     Path tempDir;
 
     @RegisterExtension
-    static OllamaService OLLAMA = OllamaServiceFactory.createSingletonService();
+    static OllamaService OLLAMA = OllamaServiceFactory.createSingletonServiceWithConfiguration(
+            new OllamaServiceConfiguration() {
+                @Override
+                public String modelName() {
+                    return IMAGE_MODEL_NAME;
+                }
+
+                @Override
+                public String apiKey() {
+                    return "unused";
+                }
+            });
 
     private ImageModel imageModel;
 
