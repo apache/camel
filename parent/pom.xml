@@ -4546,6 +4546,40 @@
             </build>
         </profile>
         <profile>
+            <!-- Propagate ci.env.name to forked surefire/failsafe JVMs so that
+                 @DisabledIfSystemProperty(named = "ci.env.name") conditions work correctly.
+                 Maven does not automatically forward user properties to forked test JVMs; this
+                 profile ensures the property is available when it is set (e.g. in MVND_OPTS). -->
+            <id>ci-env-name</id>
+            <activation>
+                <property>
+                    <name>ci.env.name</name>
+                </property>
+            </activation>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-surefire-plugin</artifactId>
+                        <configuration combine.children="merge">
+                            <systemPropertyVariables>
+                                <ci.env.name>${ci.env.name}</ci.env.name>
+                            </systemPropertyVariables>
+                        </configuration>
+                    </plugin>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-failsafe-plugin</artifactId>
+                        <configuration combine.children="merge">
+                            <systemPropertyVariables>
+                                <ci.env.name>${ci.env.name}</ci.env.name>
+                            </systemPropertyVariables>
+                        </configuration>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+        <profile>
             <id>nullcheck</id>
             <dependencies>
                 <dependency>
