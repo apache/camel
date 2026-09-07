@@ -487,7 +487,7 @@ public class OpenAIProducer extends DefaultAsyncProducer {
 
         int maxIterations = config.getMaxToolIterations();
         LOG.debug("Starting agentic loop with maxToolIterations={}, available tools: {}", maxIterations,
-                getEndpoint().getMcpToolState().toolClientMap().keySet());
+                getEndpoint().getMcpToolState().knownToolNames());
 
         // Rebuild the builder from the immutable params so we can accumulate messages
         ChatCompletionCreateParams.Builder paramsBuilder = params.toBuilder();

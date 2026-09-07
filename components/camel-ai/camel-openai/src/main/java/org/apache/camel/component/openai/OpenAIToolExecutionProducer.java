@@ -133,10 +133,11 @@ public class OpenAIToolExecutionProducer extends DefaultProducer {
                         .toolCalls(toolCalls)
                         .build()));
 
-        // Execute each tool call via MCP and add tool result messages
-        if (getEndpoint().getMcpToolState().toolClientMap().isEmpty()) {
+        // Execute each tool call via MCP or route tools and add tool result messages
+        McpToolState toolState = getEndpoint().getMcpToolState();
+        if (toolState.toolClientMap().isEmpty() && toolState.routeTools().isEmpty()) {
             throw new IllegalStateException(
-                    "No MCP tool clients configured on the endpoint. Configure mcpServer.* parameters.");
+                    "No tools configured on the endpoint. Configure mcpServer.* parameters and/or the tags option.");
         }
 
         List<McpToolCallExecutor.ToolResult> results = toolCallExecutor.execute(toolCalls);

@@ -112,7 +112,7 @@ class OpenAIAgenticLoopMalformedToolArgumentsTest extends CamelTestSupport {
                 McpToolConverter.convert(mcpTools),
                 Map.of("get_weather", client),
                 Map.of(),
-                Set.of()));
+                Set.of(), Map.of()));
 
         Exchange result = template.request("direct:mcp-chat", e -> e.getIn().setBody("call bad tool"));
 

@@ -261,6 +261,43 @@ public interface AiToolEndpointBuilderFactory {
             return this;
         }
         /**
+         * When true, AI producers that support agentic tool loops (such as
+         * camel-openai) return this tool's result directly to the caller
+         * without sending it back to the model. Also published as an MCP tool
+         * annotation when the tool is exposed via camel-mcp-server.
+         * 
+         * The option is a: <code>java.lang.Boolean</code> type.
+         * 
+         * Default: false
+         * Group: consumer
+         * 
+         * @param returnDirect the value to set
+         * @return the dsl builder
+         */
+        default AiToolEndpointBuilder returnDirect(Boolean returnDirect) {
+            doSetProperty("returnDirect", returnDirect);
+            return this;
+        }
+        /**
+         * When true, AI producers that support agentic tool loops (such as
+         * camel-openai) return this tool's result directly to the caller
+         * without sending it back to the model. Also published as an MCP tool
+         * annotation when the tool is exposed via camel-mcp-server.
+         * 
+         * The option will be converted to a <code>java.lang.Boolean</code>
+         * type.
+         * 
+         * Default: false
+         * Group: consumer
+         * 
+         * @param returnDirect the value to set
+         * @return the dsl builder
+         */
+        default AiToolEndpointBuilder returnDirect(String returnDirect) {
+            doSetProperty("returnDirect", returnDirect);
+            return this;
+        }
+        /**
          * Comma-separated list of tags used to group tools. Producers filter
          * the registry by these tags to select which tools to expose to the
          * LLM. When omitted, the tool goes into a default pool available to all

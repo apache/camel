@@ -237,7 +237,7 @@ class OpenAIEndpointMcpToolRefreshTest {
         });
 
         endpoint.setMcpToolState(
-                new McpToolState(allTools, clientMap, toolToServer, current.returnDirectTools()));
+                new McpToolState(allTools, clientMap, toolToServer, current.returnDirectTools(), Map.of()));
     }
 
     private static List<String> toolNames(OpenAIEndpoint endpoint) {

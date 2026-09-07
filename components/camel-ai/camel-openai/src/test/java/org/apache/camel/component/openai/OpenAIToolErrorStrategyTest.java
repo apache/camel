@@ -151,7 +151,7 @@ class OpenAIToolErrorStrategyTest extends CamelTestSupport {
                 McpToolConverter.convert(mcpTools),
                 Map.of("get_weather", client),
                 Map.of(),
-                Set.of()));
+                Set.of(), Map.of()));
 
         Exchange result = template.request("direct:hallucinated-reprompt",
                 e -> e.getIn().setBody("use hallucinated tool"));
@@ -178,7 +178,7 @@ class OpenAIToolErrorStrategyTest extends CamelTestSupport {
                 McpToolConverter.convert(mcpTools),
                 Map.of("get_weather", client),
                 Map.of(),
-                Set.of()));
+                Set.of(), Map.of()));
 
         // The default hallucinatedToolNameStrategy is failExchange, so this should throw
         assertThatThrownBy(() -> template.requestBody(defaultUri, "use hallucinated tool"))
@@ -205,7 +205,7 @@ class OpenAIToolErrorStrategyTest extends CamelTestSupport {
                 McpToolConverter.convert(mcpTools),
                 Map.of("get_weather", client),
                 Map.of(),
-                Set.of()));
+                Set.of(), Map.of()));
 
         // The default toolExecutionErrorStrategy is failExchange, so this should propagate
         assertThatThrownBy(() -> template.requestBody("direct:error-fail-exchange", "trigger tool error"))
@@ -233,7 +233,7 @@ class OpenAIToolErrorStrategyTest extends CamelTestSupport {
                 McpToolConverter.convert(mcpTools),
                 Map.of("get_weather", client),
                 Map.of(),
-                Set.of()));
+                Set.of(), Map.of()));
 
         Exchange result = template.request("direct:error-reprompt",
                 e -> e.getIn().setBody("trigger tool error reprompt"));

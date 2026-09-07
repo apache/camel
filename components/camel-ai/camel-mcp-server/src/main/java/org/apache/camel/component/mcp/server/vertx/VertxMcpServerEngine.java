@@ -206,6 +206,10 @@ public class VertxMcpServerEngine extends ServiceSupport implements McpServerEng
             hintBuilder.openWorldHint(annotations.openWorldHint());
             hasHints = true;
         }
+        if (annotations.returnDirect() != null) {
+            hintBuilder.returnDirect(annotations.returnDirect());
+            hasHints = true;
+        }
         if (hasHints) {
             builder.annotations(hintBuilder.build());
         }
