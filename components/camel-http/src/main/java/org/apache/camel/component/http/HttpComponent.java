@@ -264,7 +264,7 @@ public class HttpComponent extends HttpCommonComponent implements RestProducerFa
         }
         HttpCredentialsHelper credentialsProvider = new HttpCredentialsHelper();
         configurer = configureBasicAuthentication(parameters, configurer, credentialsProvider, targetUri);
-        configurer = configureHttpProxy(parameters, configurer, secure, credentialsProvider);
+        configurer = configureHttpProxy(parameters, configurer, credentialsProvider);
         configurer = configureOAuth2Authentication(parameters, configurer, targetUri);
 
         return configurer;
@@ -379,7 +379,7 @@ public class HttpComponent extends HttpCommonComponent implements RestProducerFa
     }
 
     private HttpClientConfigurer configureHttpProxy(
-            Map<String, Object> parameters, HttpClientConfigurer configurer, boolean secure,
+            Map<String, Object> parameters, HttpClientConfigurer configurer,
             HttpCredentialsHelper credentialsProvider) {
 
         String nonProxyhosts = getParameter(parameters, "nonProxyHosts", String.class, getNonProxyHosts());
