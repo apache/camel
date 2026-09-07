@@ -34,7 +34,7 @@ import org.apache.camel.component.docling.DoclingHeaders;
 import org.apache.camel.component.docling.DoclingOperations;
 import org.awaitility.Awaitility;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.condition.DisabledIfSystemProperty;
+import org.junit.jupiter.api.condition.DisabledIfEnvironmentVariable;
 import org.junit.jupiter.api.io.TempDir;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -47,7 +47,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
  * This test demonstrates how to use the camel-test-infra-docling module to automatically spin up a Docling-Serve
  * container for testing without manual setup.
  */
-@DisabledIfSystemProperty(named = "ci.env.name", matches = ".*", disabledReason = "Too much resources on GitHub Actions")
+@DisabledIfEnvironmentVariable(named = "CI", matches = "true", disabledReason = "Too much resources on GitHub Actions")
 class DoclingServeProducerIT extends DoclingITestSupport {
 
     @TempDir
