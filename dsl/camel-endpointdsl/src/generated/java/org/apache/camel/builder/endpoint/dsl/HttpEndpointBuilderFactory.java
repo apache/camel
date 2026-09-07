@@ -546,10 +546,13 @@ public interface HttpEndpointBuilderFactory {
             return this;
         }
         /**
-         * Proxy server authentication protocol scheme to use.
+         * Proxy server connection protocol scheme. Defaults to http regardless
+         * of the target endpoint scheme, because most corporate HTTP proxies
+         * expect a plain HTTP connection on their listener port.
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default: http
          * Group: proxy
          * 
          * @param proxyAuthScheme the value to set

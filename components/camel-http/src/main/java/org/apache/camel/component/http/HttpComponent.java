@@ -148,8 +148,9 @@ public class HttpComponent extends HttpCommonComponent implements RestProducerFa
     @Metadata(label = "producer,proxy", description = "Comma-separated list of hosts that should bypass the proxy. "
                                                       + "Supports wildcards, e.g., localhost,*.example.com,192.168.*.")
     protected String nonProxyHosts;
-    @Metadata(label = "producer,proxy", enums = "http,https",
-              description = "Proxy server authentication protocol scheme to use")
+    @Metadata(label = "producer,proxy", enums = "http,https", defaultValue = "http",
+              description = "Proxy server connection protocol scheme. Defaults to http regardless of the target endpoint scheme,"
+                            + " because most corporate HTTP proxies expect a plain HTTP connection on their listener port.")
     protected String proxyAuthScheme;
     @Metadata(label = "producer,proxy", enums = "Basic,Digest,NTLM",
               description = "Proxy authentication method to use (NTLM is deprecated)")
@@ -263,7 +264,7 @@ public class HttpComponent extends HttpCommonComponent implements RestProducerFa
         }
         HttpCredentialsHelper credentialsProvider = new HttpCredentialsHelper();
         configurer = configureBasicAuthentication(parameters, configurer, credentialsProvider, targetUri);
-        configurer = configureHttpProxy(parameters, configurer, secure, credentialsProvider);
+        configurer = configureHttpProxy(parameters, configurer, credentialsProvider);
         configurer = configureOAuth2Authentication(parameters, configurer, targetUri);
 
         return configurer;
@@ -378,14 +379,14 @@ public class HttpComponent extends HttpCommonComponent implements RestProducerFa
     }
 
     private HttpClientConfigurer configureHttpProxy(
-            Map<String, Object> parameters, HttpClientConfigurer configurer, boolean secure,
+            Map<String, Object> parameters, HttpClientConfigurer configurer,
             HttpCredentialsHelper credentialsProvider) {
 
         String nonProxyhosts = getParameter(parameters, "nonProxyHosts", String.class, getNonProxyHosts());
         String proxyAuthScheme = getParameter(parameters, "proxyAuthScheme", String.class, getProxyAuthScheme());
         if (proxyAuthScheme == null) {
-            // fallback and use either http or https depending on secure
-            proxyAuthScheme = secure ? "https" : "http";
+            // proxy connection itself uses http by default regardless of the target endpoint scheme
+            proxyAuthScheme = "http";
         }
         // these are old names and are deprecated
         String proxyAuthHost = getParameter(parameters, "proxyAuthHost", String.class, getProxyAuthHost());
