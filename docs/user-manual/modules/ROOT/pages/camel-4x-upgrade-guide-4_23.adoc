@@ -764,12 +764,13 @@ Deployments that rely on authenticating to a partner's asynchronous MDN endpoint
 partner's host to `asyncMdnAllowedHosts`.
 
 Two further checks are applied to the delivery address regardless of the option: the scheme must be
-`http`, and an address with no explicit port now uses 80 rather than being passed to the socket as `-1`.
+`http` or `https`, and an address with no explicit port now uses 80 for `http` (443 for `https`) rather
+than being passed to the socket as `-1`.
 
-`https` is refused. `AS2AsynchronousMDNManager` delivers over a plain socket and has no TLS support, so an
-`https` address was never actually delivered over TLS — the request was written in cleartext to the TLS
-port and the peer reset the connection. Such an address is now refused outright rather than attempted, and
-TLS delivery of asynchronous MDNs remains unsupported.
+`https` delivery is supported when the AS2 endpoint has `sslContextParameters` configured: the manager
+builds an `SSLSocket` from it, defaults the port to 443, and verifies the delivery host against the
+certificate the peer presents. When no `sslContextParameters` is configured an `https` address is refused
+(fail-closed) rather than written in cleartext to the TLS port.
 
 === camel-ibm-cos
 

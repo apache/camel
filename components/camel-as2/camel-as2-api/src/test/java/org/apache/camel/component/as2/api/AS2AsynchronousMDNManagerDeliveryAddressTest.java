@@ -16,6 +16,8 @@
  */
 package org.apache.camel.component.as2.api;
 
+import javax.net.ssl.SSLContext;
+
 import org.apache.camel.component.as2.api.entity.MultipartMimeEntity;
 import org.apache.hc.core5.http.ContentType;
 import org.apache.hc.core5.http.HttpException;
@@ -33,22 +35,45 @@ class AS2AsynchronousMDNManagerDeliveryAddressTest {
 
     private static final String ALLOWED = "partner.example";
 
-    /**
-     * https in particular: this class delivers over a plain {@link java.net.Socket} and has no TLS, so accepting an
-     * https address would write the request - including the Authorization header - in cleartext to the TLS port. Before
-     * the delivery address was validated at all, an https address without an explicit port failed closed on
-     * {@code new Socket(host, -1)}; resolving it to 443 instead would have been a regression.
-     */
     @Test
-    void aSchemeOtherThanHttpIsRefused() {
+    void aSchemeOtherThanHttpOrHttpsIsRefused() {
         for (String address : new String[] {
-                "https://partner.example/receipts", "https://partner.example:443/receipts",
                 "file:///etc/passwd", "ftp://partner.example/x", "gopher://partner.example:70/x", "//partner.example/x" }) {
             HttpException e = assertThrows(HttpException.class, () -> deliver(address, ALLOWED),
                     "expected " + address + " to be refused");
-            assertTrue(e.getMessage().contains("must use http") || e.getMessage().contains("no host"),
+            assertTrue(e.getMessage().contains("must use http or https") || e.getMessage().contains("no host"),
                     "unexpected message for " + address + ": " + e.getMessage());
         }
+    }
+
+    /**
+     * https is fail-closed: without SSLContextParameters the manager has no way to deliver over TLS, so it must refuse
+     * rather than write the MDN and the Authorization header in cleartext to the TLS port. This preserves the behaviour
+     * introduced by CAMEL-24417 for a deployment that has not opted in.
+     */
+    @Test
+    void httpsWithoutAnSslContextIsRefused() {
+        for (String address : new String[] {
+                "https://partner.example/receipts", "https://partner.example:443/receipts" }) {
+            HttpException e = assertThrows(HttpException.class, () -> deliver(address, ALLOWED),
+                    "expected " + address + " to be refused without an SSLContext");
+            assertTrue(e.getMessage().contains("https") && e.getMessage().contains("SSLContextParameters"),
+                    "unexpected message for " + address + ": " + e.getMessage());
+        }
+    }
+
+    /**
+     * With an SSLContext configured, an https address is accepted: it gets past the scheme checks and fails on the
+     * connection instead, which is what tells us the address itself was accepted.
+     */
+    @Test
+    void httpsWithAnSslContextIsAccepted() throws Exception {
+        SSLContext sslContext = SSLContext.getInstance("TLS");
+        sslContext.init(null, null, null);
+        Exception e = assertThrows(Exception.class,
+                () -> deliver("https://localhost:1/receipts", ALLOWED, sslContext));
+        assertTrue(!(e instanceof HttpException) || !e.getMessage().contains("must use http"),
+                "an https address must be accepted when an SSLContext is configured: " + e.getMessage());
     }
 
     @Test
@@ -79,8 +104,12 @@ class AS2AsynchronousMDNManagerDeliveryAddressTest {
     }
 
     private static void deliver(String deliveryAddress, String allowedHosts) throws Exception {
+        deliver(deliveryAddress, allowedHosts, null);
+    }
+
+    private static void deliver(String deliveryAddress, String allowedHosts, SSLContext sslContext) throws Exception {
         AS2AsynchronousMDNManager manager = new AS2AsynchronousMDNManager(
-                "1.1", "Camel", "sender.example.com", null, null, "user", "password", null, allowedHosts);
+                "1.1", "Camel", "sender.example.com", null, null, "user", "password", null, allowedHosts, sslContext);
         manager.send(new TestEntity(), AS2MimeType.MULTIPART_REPORT, deliveryAddress);
     }
 
