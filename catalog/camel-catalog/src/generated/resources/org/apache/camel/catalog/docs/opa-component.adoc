@@ -119,9 +119,13 @@ allow if {
 is enabled: bodies can be large or streaming, and most authorization decisions do not need them. When you do
 enable it on a streaming body, enable stream caching so the body is still readable by the rest of the route.
 
-Header and body values that are not JSON-native are converted to their string form. The component's own
-`CamelOpa*` decision headers are never sent back to OPA, so a policy cannot be shown a verdict that an inbound
-message claimed for itself.
+Header and body values that are not JSON-native are converted to their string form. That conversion is
+shallow: a `Map` or `List` value is passed through as-is, so anything non-JSON-native nested inside it is left
+for the OPA SDK's serializer to render. A policy that reads nested structures should not assume the same string
+conversion applies at depth.
+
+The component's own `CamelOpa*` decision headers are never sent back to OPA, so a policy cannot be shown a
+verdict that an inbound message claimed for itself.
 
 == Reading the verdict
 
