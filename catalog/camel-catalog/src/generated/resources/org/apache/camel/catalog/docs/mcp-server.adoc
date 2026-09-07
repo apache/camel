@@ -288,6 +288,13 @@ On other runtimes, or when wiring programmatically, add the
 ----
 McpServerConfiguration configuration = new McpServerConfiguration();
 configuration.setTags("crm,notify");
+configuration.setServerName("my-integration-app");
+configuration.setServerTitle("My Integration MCP");
+configuration.setServerDescription("Tools for customer operations");
+configuration.setServerWebsiteUrl("https://example.com/docs");
+configuration.setInstructions("Use these tools to operate the integration.");
+configuration.setServerIcons(List.of(new McpServerIcon(
+        "https://example.com/icon.png", "image/png", List.of("48x48"), "light")));
 camelContext.addService(new McpServerBridge(configuration));
 ----
 

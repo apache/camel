@@ -113,6 +113,7 @@ public class StdioMcpServerEngine extends ServiceSupport implements McpServerEng
     @Override
     protected void doStop() throws Exception {
         if (server != null) {
+            // closeGracefully() shuts down the MCP sync server and its stdio transport provider.
             server.closeGracefully();
             server = null;
         }
@@ -139,6 +140,9 @@ public class StdioMcpServerEngine extends ServiceSupport implements McpServerEng
 
     @Override
     public void toolRemoved(String toolName) {
+        if (server == null) {
+            return;
+        }
         try {
             server.removeTool(toolName);
             LOG.debug("MCP tool removed: {}", toolName);
