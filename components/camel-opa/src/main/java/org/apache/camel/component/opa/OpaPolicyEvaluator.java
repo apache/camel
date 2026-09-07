@@ -186,6 +186,10 @@ public class OpaPolicyEvaluator {
     /**
      * Converts a value into something the JSON serializer of the OPA SDK can handle. Anything that is not already a
      * JSON-native type is converted to its string representation, and dropped when it cannot be converted.
+     * <p/>
+     * The conversion is shallow: a {@link Map} or {@link List} is passed through as-is, so any non-JSON-native value
+     * nested inside it is left for the SDK serializer to render. Policies that read nested structures should not assume
+     * the same string conversion applies at depth.
      */
     private static Object toJsonSafe(Exchange exchange, Object value) {
         if (value == null || value instanceof String || value instanceof Number || value instanceof Boolean
