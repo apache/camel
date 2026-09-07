@@ -253,12 +253,17 @@ public class AS2AsynchronousMDNManager {
             return new Socket(host, port);
         }
         SSLSocket sslSocket = (SSLSocket) sslContext.getSocketFactory().createSocket(host, port);
-        // verify the delivery host against the certificate the peer presents during the handshake
-        SSLParameters sslParameters = sslSocket.getSSLParameters();
-        sslParameters.setEndpointIdentificationAlgorithm("HTTPS");
-        sslSocket.setSSLParameters(sslParameters);
-        // handshake now so a certificate or hostname mismatch fails before the MDN and any credentials are written
-        sslSocket.startHandshake();
+        try {
+            // verify the delivery host against the certificate the peer presents during the handshake
+            SSLParameters sslParameters = sslSocket.getSSLParameters();
+            sslParameters.setEndpointIdentificationAlgorithm("HTTPS");
+            sslSocket.setSSLParameters(sslParameters);
+            // handshake now so a certificate or hostname mismatch fails before the MDN and any credentials are written
+            sslSocket.startHandshake();
+        } catch (IOException e) {
+            sslSocket.close();
+            throw e;
+        }
         return sslSocket;
     }
 
