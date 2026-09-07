@@ -28,7 +28,7 @@ import org.apache.camel.component.docling.DoclingHeaders;
 import org.apache.camel.component.docling.DocumentMetadata;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.condition.DisabledIfSystemProperty;
+import org.junit.jupiter.api.condition.DisabledIfEnvironmentVariable;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertFalse;
@@ -38,7 +38,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 /**
  * Integration test for metadata extraction operations using test-infra for container management.
  */
-@DisabledIfSystemProperty(named = "ci.env.name", matches = ".*", disabledReason = "Too much resources on GitHub Actions")
+@DisabledIfEnvironmentVariable(named = "CI", matches = "true", disabledReason = "Too much resources on GitHub Actions")
 class MetadataExtractionIT extends DoclingITestSupport {
 
     @Test
