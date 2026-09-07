@@ -2513,21 +2513,6 @@ public interface OpenAIEndpointBuilderFactory {
             return "CamelOpenAIAgenticTotalTokens";
         }
         /**
-         * Per-iteration breakdown of the OpenAI MCP agentic loop, including
-         * tool calls, truncated arguments/results, token usage, and duration
-         * for each iteration.
-         * 
-         * The option is a: {@code
-         * java.util.List<org.apache.camel.component.openai.AgenticIterationTrace>} type.
-         * 
-         * Group: producer
-         * 
-         * @return the name of the header {@code OpenAIAgenticTrace}.
-         */
-        public String openAIAgenticTrace() {
-            return "CamelOpenAIAgenticTrace";
-        }
-        /**
          * The complete OpenAI chat completion response object.
          * 
          * The option is a: {@code

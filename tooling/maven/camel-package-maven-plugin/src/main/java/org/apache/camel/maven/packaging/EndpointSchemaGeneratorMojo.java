@@ -409,6 +409,9 @@ public class EndpointSchemaGeneratorMojo extends AbstractGeneratorMojo {
             }
             return false;
         }
+        if (metadata.skip()) {
+            return false;
+        }
         final String[] applicableFor = metadata.applicableFor();
         if (applicableFor.length > 0 && Arrays.stream(applicableFor).noneMatch(s -> s.equals(scheme))) {
             if (getLog().isDebugEnabled()) {
@@ -423,8 +426,7 @@ public class EndpointSchemaGeneratorMojo extends AbstractGeneratorMojo {
             description = getHeaderFieldJavadoc(field);
         }
         header.setDescription(description);
-        String kind = metadata.kind();
-        header.setKind(kind.isEmpty() ? "header" : kind);
+        header.setKind("header");
         header.setDisplayName(metadata.displayName());
         header.setJavaType(metadata.javaType());
         header.setRequired(metadata.required());

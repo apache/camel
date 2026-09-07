@@ -16,6 +16,7 @@
  */
 package org.apache.camel.component.openai;
 
+import java.io.Serial;
 import java.util.EventObject;
 
 import org.apache.camel.Exchange;
@@ -30,6 +31,9 @@ import org.apache.camel.spi.CamelEvent;
  */
 abstract class AbstractOpenAIExchangeEvent extends EventObject implements CamelEvent {
 
+    @Serial
+    private static final long serialVersionUID = 1L;
+
     private final Exchange exchange;
     private long timestamp;
 
@@ -39,11 +43,6 @@ abstract class AbstractOpenAIExchangeEvent extends EventObject implements CamelE
     }
 
     public Exchange getExchange() {
-        return exchange;
-    }
-
-    @Override
-    public Object getSource() {
         return exchange;
     }
 
