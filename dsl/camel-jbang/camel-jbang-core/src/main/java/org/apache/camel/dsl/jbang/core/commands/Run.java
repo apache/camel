@@ -619,6 +619,20 @@ public class Run extends CamelCommand {
                 && "stdio".equalsIgnoreCase(profileProperties.getProperty("camel.server.mcp-transport", "").trim());
     }
 
+    boolean isAiToolMcpServerEnabled(Properties profileProperties) {
+        if (isMcpStdioEnabled(profileProperties)) {
+            return true;
+        }
+        return profileProperties != null
+                && "true".equalsIgnoreCase(profileProperties.getProperty("camel.server.mcp-enabled", "").trim());
+    }
+
+    void applyMcpTagsOverride(KameletMain main) {
+        if (serverOptions.mcpTags != null && !serverOptions.mcpTags.isBlank()) {
+            main.addOverrideProperty("camel.server.mcp-tags", serverOptions.mcpTags);
+        }
+    }
+
     private void writeSetting(KameletMain main, Properties existing, String key, Supplier<String> value) {
         String val = existing != null ? existing.getProperty(key, value.get()) : value.get();
         if (val != null) {
@@ -1281,6 +1295,10 @@ public class Run extends CamelCommand {
         if (isMcpStdioEnabled(profileProperties)) {
             dependencies.add("camel:mcp-server");
             applyMcpStdioRuntimeOptions(main, profileProperties);
+        } else if (isAiToolMcpServerEnabled(profileProperties)) {
+            dependencies.add("camel:platform-http-main");
+            dependencies.add("camel:mcp-server");
+            applyMcpTagsOverride(main);
         } else if (isMcpEnabled(profileProperties)) {
             dependencies.add("camel:platform-http-main");
             dependencies.add("camel:mcp-server");
@@ -3129,8 +3147,9 @@ public class Run extends CamelCommand {
         boolean mcpStdio;
 
         @Option(names = { "--mcp-tags" },
-                description = "Comma-separated ai-tool tags to expose when --mcp-stdio is enabled (maps to "
-                              + "camel.server.mcp-tags)")
+                description = "Comma-separated ai-tool tags to expose on the ai-tool MCP server (maps to "
+                              + "camel.server.mcp-tags). Use with --mcp-stdio or when camel.server.mcp-enabled is "
+                              + "configured for HTTP transport. Not used by --mcp (dev/diagnostics MCP).")
         String mcpTags;
 
         @Option(names = { "--openapi-ui" }, defaultValue = "false",
@@ -3191,9 +3210,7 @@ public class Run extends CamelCommand {
         if (serverOptions.mcpStdio) {
             main.addOverrideProperty("camel.server.mcp-enabled", "true");
             main.addOverrideProperty("camel.server.mcp-transport", "stdio");
-            if (serverOptions.mcpTags != null && !serverOptions.mcpTags.isBlank()) {
-                main.addOverrideProperty("camel.server.mcp-tags", serverOptions.mcpTags);
-            }
+            applyMcpTagsOverride(main);
         } else {
             writeSetting(main, profileProperties, "camel.server.mcp-enabled", "true");
             writeSetting(main, profileProperties, "camel.server.mcp-transport", "stdio");

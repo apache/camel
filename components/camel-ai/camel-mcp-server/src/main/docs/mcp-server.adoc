@@ -202,6 +202,10 @@ With Camel JBang:
 camel run tools.yaml --mcp-stdio --mcp-tags=crm,agent
 ----
 
+NOTE: `--mcp-tags` configures the ai-tool MCP server (`camel.server.mcp-tags`) and works with
+`--mcp-stdio` or HTTP transport when `camel.server.mcp-enabled` is set in properties. It is
+not used by `--mcp`, which exposes dev/diagnostics MCP tools on the management HTTP server.
+
 Logging and startup summaries are routed to stderr so stdout carries MCP
 JSON-RPC only. Camel JBang configures a stderr Log4j2 appender automatically
 when `--mcp-stdio` is used or when `camel.server.mcp-transport=stdio` is set

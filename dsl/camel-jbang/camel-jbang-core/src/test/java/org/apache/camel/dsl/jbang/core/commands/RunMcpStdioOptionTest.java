@@ -84,4 +84,18 @@ class RunMcpStdioOptionTest {
                 .isInstanceOf(IllegalArgumentException.class)
                 .hasMessageContaining("--mcp-stdio and --mcp cannot be used together");
     }
+
+    @Test
+    void applyMcpTagsOverrideForHttpAiToolServer() {
+        Run run = new Run(new CamelJBangMain());
+        new CommandLine(run).parseArgs("--mcp-tags=crm,notify", "tools.yaml");
+        KameletMain main = new KameletMain("jbang");
+        Properties profile = new Properties();
+        profile.setProperty("camel.server.mcp-enabled", "true");
+
+        assertThat(run.isAiToolMcpServerEnabled(profile)).isTrue();
+        run.applyMcpTagsOverride(main);
+
+        assertThat(main.getOverrideProperties().getProperty("camel.server.mcp-tags")).isEqualTo("crm,notify");
+    }
 }
