@@ -407,7 +407,7 @@
         <mybatis-version>3.5.19</mybatis-version>
         <narayana-version>7.3.4.Final</narayana-version>
         <neo4j-version>6.2.1</neo4j-version>
-        <netty-version>4.2.16.Final</netty-version>
+        <netty-version>4.2.17.Final</netty-version>
         <networknt-json-schema-validator-version>2.0.1</networknt-json-schema-validator-version>
         <nimbus-jose-jwt>10.9.1</nimbus-jose-jwt>
         <olingo2-version>2.0.13</olingo2-version>
