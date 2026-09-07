@@ -13,6 +13,20 @@ See the xref:camel-upgrade-recipes-tool.adoc[documentation] page for details.
 
 == Upgrading Camel 4.22 to 4.23
 
+=== Context reload now re-applies placeholder based component options
+
+When a context reload is triggered, for example by one of the vault components detecting that a secret was rotated,
+Camel now also re-applies the `camel.component.`, `camel.dataformat.` and `camel.language.` options whose configured
+value is a property placeholder, and notifies any bean implementing the new
+`org.apache.camel.spi.SecretRotationAware` SPI. Previously only the property placeholders and the routes were
+reloaded, so a rotated secret never reached a component option that had been resolved at bootstrap.
+
+Re-applying such an option re-creates the component, as it already does when the option changes in a watched
+properties file. Only options whose value is a placeholder are affected, and only when running with Camel Main,
+Camel Spring Boot or Camel Quarkus. If a component must not be re-created on reload, configure it programmatically
+rather than with a placeholder based property.
+
+
 === Apache Avro trusted packages
 
 Camel now uses Apache Avro 1.12.2. Avro validates classes resolved from schemas
