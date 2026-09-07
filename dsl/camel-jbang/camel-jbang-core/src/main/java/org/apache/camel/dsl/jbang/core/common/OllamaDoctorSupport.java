@@ -101,8 +101,8 @@ public final class OllamaDoctorSupport {
     }
 
     /**
-     * Returns true when the model tag suggests fewer than 14B parameters.
-     * Tool-calling in the TUI F8 panel requires at least 14B.
+     * Returns true when the model tag suggests fewer than 14B parameters. Tool-calling in the TUI F8 panel requires at
+     * least 14B.
      */
     public static boolean isSmallModel(String name) {
         int colon = name.lastIndexOf(':');
