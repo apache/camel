@@ -114,6 +114,11 @@ allow if {
 }
 ------------------------------------------------------------
 
+The component's integration test runs a real OPA server against
+https://github.com/apache/camel/blob/main/components/camel-opa/src/test/resources/authz.rego[`authz.rego`],
+which is a worked example of both a plain boolean rule and a decision object with deny reasons; `OpaIT`
+alongside it shows the matching routes end to end.
+
 `headers` carries every message header by default. Set `includeHeaders` to a comma-separated list of names
 (matched case-insensitively) when the policy only needs a few of them. `body` is *not* sent unless `includeBody`
 is enabled: bodies can be large or streaming, and most authorization decisions do not need them. When you do
