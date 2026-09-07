@@ -37,6 +37,7 @@ import org.apache.camel.ManagementStatisticsLevel;
 import org.apache.camel.Producer;
 import org.apache.camel.ProducerTemplate;
 import org.apache.camel.Route;
+import org.apache.camel.ServiceStatus;
 import org.apache.camel.api.management.ManagedResource;
 import org.apache.camel.api.management.mbean.ManagedCamelContextMBean;
 import org.apache.camel.api.management.mbean.ManagedProcessorMBean;
@@ -311,7 +312,8 @@ public class ManagedCamelContext extends ManagedPerformanceCounter implements Ma
     public Integer getStartedRoutes() {
         int started = 0;
         for (Route route : context.getRoutes()) {
-            if (context.getRouteController().getRouteStatus(route.getId()).isStarted()) {
+            ServiceStatus status = context.getRouteController().getRouteStatus(route.getId());
+            if (status != null && status.isStarted()) {
                 started++;
             }
         }

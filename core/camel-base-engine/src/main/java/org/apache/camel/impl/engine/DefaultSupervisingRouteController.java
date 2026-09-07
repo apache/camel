@@ -362,6 +362,26 @@ public class DefaultSupervisingRouteController extends DefaultRouteController im
     }
 
     @Override
+    public void removeAllRoutes() throws Exception {
+        clearSupervisedState();
+        super.removeAllRoutes();
+    }
+
+    private void clearSupervisedState() {
+        lock.lock();
+        try {
+            new ArrayList<>(routeManager.routes.keySet()).forEach(routeManager::release);
+            routeManager.routes.clear();
+            routeManager.exhausted.clear();
+            routeManager.exceptions.clear();
+            routes.clear();
+            nonSupervisedRoutes.clear();
+        } finally {
+            lock.unlock();
+        }
+    }
+
+    @Override
     public void suspendRoute(String routeId) throws Exception {
         final Optional<RouteHolder> route = routes.stream().filter(r -> r.getId().equals(routeId)).findFirst();
 
@@ -945,8 +965,17 @@ public class DefaultSupervisingRouteController extends DefaultRouteController im
         public void onRemove(Route route) {
             lock.lock();
             try {
-                routes.removeIf(
-                        r -> ObjectHelper.equal(r.get(), route) || ObjectHelper.equal(r.getId(), route.getId()));
+                String routeId = route.getRouteId();
+                List<RouteHolder> holders = routes.stream()
+                        .filter(r -> ObjectHelper.equal(r.get(), route) || ObjectHelper.equal(r.getId(), routeId))
+                        .toList();
+                for (RouteHolder holder : holders) {
+                    routeManager.release(holder);
+                    routes.remove(holder);
+                }
+                routeManager.exhausted.keySet().removeIf(h -> ObjectHelper.equal(h.getId(), routeId));
+                routeManager.exceptions.remove(routeId);
+                nonSupervisedRoutes.remove(routeId);
             } finally {
                 lock.unlock();
             }

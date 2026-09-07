@@ -31,6 +31,7 @@ import javax.management.openmbean.TabularDataSupport;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Route;
 import org.apache.camel.RuntimeCamelException;
+import org.apache.camel.ServiceStatus;
 import org.apache.camel.api.management.ManagedResource;
 import org.apache.camel.api.management.mbean.CamelOpenMBeanTypes;
 import org.apache.camel.api.management.mbean.ManagedSupervisingRouteControllerMBean;
@@ -199,7 +200,8 @@ public class ManagedSupervisingRouteController extends ManagedService implements
                 CompositeType ct = CamelOpenMBeanTypes.supervisingRouteControllerRouteStatusCompositeType();
 
                 String routeId = route.getRouteId();
-                String status = controller.getRouteStatus(routeId).name();
+                ServiceStatus routeStatus = controller.getRouteStatus(routeId);
+                String status = routeStatus != null ? routeStatus.name() : "Unknown";
                 BackOffTimer.Task state = controller.getRestartingRouteState(routeId);
                 String supervising = state != null ? state.getStatus().name() : "";
                 long attempts = state != null ? state.getCurrentAttempts() : 0;
