@@ -33,6 +33,12 @@ import java.lang.annotation.Target;
 public @interface Metadata {
 
     /**
+     * The catalog kind for this metadata entry (for example {@code header} or {@code exchangeProperty}). When empty,
+     * tooling applies its default classification.
+     */
+    String kind() default "";
+
+    /**
      * A human display name of the parameter.
      *
      * This is used for documentation and tooling only.

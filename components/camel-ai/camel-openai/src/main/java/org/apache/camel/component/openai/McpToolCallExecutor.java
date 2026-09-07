@@ -319,6 +319,7 @@ class McpToolCallExecutor extends ServiceSupport {
     }
 
     private static ToolResult timeoutResult(ChatCompletionMessageToolCall toolCall, long timeoutMs) {
+        // Use the configured parallelToolTimeout as durationMs: the wait already consumed that budget.
         return new ToolResult(
                 toolCall.asFunction().id(),
                 toolCall.asFunction().function().name(),

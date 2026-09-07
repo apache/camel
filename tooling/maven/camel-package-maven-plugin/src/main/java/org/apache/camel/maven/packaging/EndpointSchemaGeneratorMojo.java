@@ -423,7 +423,8 @@ public class EndpointSchemaGeneratorMojo extends AbstractGeneratorMojo {
             description = getHeaderFieldJavadoc(field);
         }
         header.setDescription(description);
-        header.setKind("header");
+        String kind = metadata.kind();
+        header.setKind(kind.isEmpty() ? "header" : kind);
         header.setDisplayName(metadata.displayName());
         header.setJavaType(metadata.javaType());
         header.setRequired(metadata.required());

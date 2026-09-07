@@ -25,7 +25,8 @@ import org.apache.camel.spi.CamelEvent;
  * Base class for OpenAI agentic loop {@link CamelEvent} notifications.
  * <p>
  * These are {@link CamelEvent.Type#Custom} events and are not {@link CamelEvent.ExchangeEvent} instances so they do not
- * pollute generic exchange lifecycle metrics.
+ * pollute generic exchange lifecycle metrics. {@link #getExchange()} is public so {@code EventNotifier} listeners can
+ * correlate events with the exchange (for example route id or exchange id) without implementing {@code ExchangeEvent}.
  */
 abstract class AbstractOpenAIExchangeEvent extends EventObject implements CamelEvent {
 

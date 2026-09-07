@@ -95,7 +95,8 @@ public final class OpenAIConstants {
     public static final String AGENTIC_TOTAL_TOKENS = "CamelOpenAIAgenticTotalTokens";
 
     // Output Exchange Properties
-    @Metadata(description = "Per-iteration breakdown of the OpenAI MCP agentic loop, including tool calls, "
+    @Metadata(kind = "exchangeProperty",
+              description = "Per-iteration breakdown of the OpenAI MCP agentic loop, including tool calls, "
                             + "truncated arguments/results, token usage, and duration for each iteration",
               javaType = "java.util.List<org.apache.camel.component.openai.AgenticIterationTrace>")
     public static final String AGENTIC_TRACE = "CamelOpenAIAgenticTrace";

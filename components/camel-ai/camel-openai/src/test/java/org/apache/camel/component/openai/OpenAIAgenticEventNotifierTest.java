@@ -25,6 +25,7 @@ import java.util.concurrent.CopyOnWriteArrayList;
 
 import io.modelcontextprotocol.client.McpSyncClient;
 import io.modelcontextprotocol.spec.McpSchema;
+import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.spi.CamelEvent;
 import org.apache.camel.support.EventNotifierSupport;
@@ -168,7 +169,9 @@ class OpenAIAgenticEventNotifierTest extends CamelTestSupport {
                 openAIMock.getBaseUrl());
         injectMcpTools(endpointUri, toolClients);
 
-        template.request("direct:token-budget-fail", e -> e.getIn().setBody("expensive tool call"));
+        Exchange exchange = template.request("direct:token-budget-fail", e -> e.getIn().setBody("expensive tool call"));
+
+        assertThat(exchange.getException()).isInstanceOf(IllegalStateException.class);
 
         List<OpenAIAgenticLoopCompletedEvent> completed = events.stream()
                 .filter(OpenAIAgenticLoopCompletedEvent.class::isInstance)
