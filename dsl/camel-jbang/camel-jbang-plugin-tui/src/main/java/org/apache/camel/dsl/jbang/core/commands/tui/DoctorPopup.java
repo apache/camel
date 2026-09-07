@@ -351,15 +351,22 @@ class DoctorPopup {
 
     static void addOllamaLines(List<Line> result, OllamaDoctorSupport.Status status) {
         if (status.running()) {
+            boolean allSmall = OllamaDoctorSupport.allModelsSmall(status.models());
+            String icon = (status.models().isEmpty() || allSmall) ? TuiIcons.WARN : TuiIcons.OK;
             result.add(Line.from(
                     Span.raw(TuiIcons.indent(TuiIcons.MCP)),
                     Span.styled(String.format("%-14s", "Ollama"), Theme.muted()),
                     Span.raw(String.format("%-30s", OllamaDoctorSupport.tuiRunningSummary(status, 30))),
-                    Span.raw(" " + TuiIcons.OK)));
+                    Span.raw(" " + icon)));
             String models = OllamaDoctorSupport.formatModels(status.models());
             result.add(Line.from(Span.styled(
                     "                    models: " + TuiHelper.truncate(models, 34),
                     Style.EMPTY.dim())));
+            if (allSmall) {
+                result.add(Line.from(Span.styled(
+                        "                    F8 needs ≥14B — run: ollama pull qwen2.5:14b",
+                        Style.EMPTY.dim())));
+            }
         } else {
             result.add(Line.from(
                     Span.raw(TuiIcons.indent(TuiIcons.MCP)),

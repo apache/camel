@@ -99,4 +99,27 @@ public final class OllamaDoctorSupport {
         int count = models.size();
         return count + (count == 1 ? " model" : " models");
     }
+
+    /**
+     * Returns true when the model tag suggests fewer than 14B parameters.
+     * Tool-calling in the TUI F8 panel requires at least 14B.
+     */
+    public static boolean isSmallModel(String name) {
+        int colon = name.lastIndexOf(':');
+        String tag = colon >= 0 ? name.substring(colon + 1).toLowerCase() : "";
+        if (tag.matches("\\d+b.*")) {
+            int b = tag.indexOf('b');
+            try {
+                int params = Integer.parseInt(tag.substring(0, b));
+                return params < 14;
+            } catch (NumberFormatException e) {
+                return false;
+            }
+        }
+        return false;
+    }
+
+    public static boolean allModelsSmall(List<String> models) {
+        return models != null && !models.isEmpty() && models.stream().allMatch(OllamaDoctorSupport::isSmallModel);
+    }
 }
