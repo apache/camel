@@ -16,13 +16,18 @@
  */
 package org.apache.camel.component.fop;
 
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+
 import org.apache.camel.CamelExecutionException;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.test.junit6.CamelTestSupport;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.io.TempDir;
 
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  * Verifies that the FOP producer configures its {@code TransformerFactory} to not resolve external DTDs/stylesheets,
@@ -30,31 +35,26 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
  */
 public class FopExternalEntityTest extends CamelTestSupport {
 
-    private static final String FO_WITH_EXTERNAL_DTD
-            = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n"
-              + "<!DOCTYPE fo:root SYSTEM \"file:///non-existent-external.dtd\">\n"
-              + FopHelper.decorateTextWithXSLFO("Hello");
-
     @Test
-    public void externalDtdIsNotResolved() {
-        CamelExecutionException ex = assertThrows(CamelExecutionException.class,
-                () -> template.sendBody("direct:start", FO_WITH_EXTERNAL_DTD));
+    public void externalDtdIsNotResolved(@TempDir Path tempDir) throws IOException {
+        // the referenced DTD exists and is perfectly readable, so the transformation would succeed if the
+        // producer resolved it. The failure below therefore proves the external DTD was never fetched, without
+        // depending on the wording of the JDK error message (which differs across JDK releases)
+        Path dtd = tempDir.resolve("external.dtd");
+        Files.writeString(dtd, "<!ELEMENT fo:root ANY>\n");
 
-        String messages = collectMessages(ex);
-        assertTrue(messages.contains("accessExternalDTD"),
-                "Transformation should be blocked by the accessExternalDTD restriction, but failed with: " + messages);
+        String body = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n"
+                      + "<!DOCTYPE fo:root SYSTEM \"" + dtd.toUri() + "\">\n"
+                      + FopHelper.decorateTextWithXSLFO("Hello");
+
+        assertThrows(CamelExecutionException.class, () -> template.sendBody("direct:start", body));
     }
 
-    private static String collectMessages(Throwable throwable) {
-        StringBuilder sb = new StringBuilder();
-        Throwable current = throwable;
-        while (current != null) {
-            if (current.getMessage() != null) {
-                sb.append(current.getMessage()).append('\n');
-            }
-            current = current.getCause();
-        }
-        return sb.toString();
+    @Test
+    public void documentWithoutExternalDtdIsRendered() {
+        // guards the test above from passing for the wrong reason: the very same document renders fine as long
+        // as it does not point at an external DTD
+        assertDoesNotThrow(() -> template.sendBody("direct:start", FopHelper.decorateTextWithXSLFO("Hello")));
     }
 
     @Override
