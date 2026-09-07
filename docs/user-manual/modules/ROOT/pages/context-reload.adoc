@@ -14,7 +14,7 @@ The context reload refreshes the following on reload:
 - all beans implementing `SecretRotationAware`, so they can re-authenticate in place (see below)
 - all existing xref:routes.adoc[routes] (no changes to structure of routes; see xref:route-reload.adoc[]])
 
-Other general services in xref:camelcontext.adoc[CamelContext] and java beans or Camel xref:processor.adoc[] is not
+Other general services in xref:camelcontext.adoc[CamelContext] and java beans or Camel xref:processor.adoc[] are not
 updated.
 
 Re-applying the component options is what allows a rotated secret to reach a component, as an option such as the

@@ -21,10 +21,15 @@ value is a property placeholder, and notifies any bean implementing the new
 `org.apache.camel.spi.SecretRotationAware` SPI. Previously only the property placeholders and the routes were
 reloaded, so a rotated secret never reached a component option that had been resolved at bootstrap.
 
-Re-applying such an option re-creates the component, as it already does when the option changes in a watched
-properties file. Only options whose value is a placeholder are affected, and only when running with Camel Main,
-Camel Spring Boot or Camel Quarkus. If a component must not be re-created on reload, configure it programmatically
-rather than with a placeholder based property.
+Re-applying such an option removes the component and resolves it again, as it already does when the option changes
+in a watched properties file. The component is stopped either way, and what comes back depends on how it was
+registered: a component auto-detected from the classpath is replaced by a new instance, while a component registered
+as a bean is the same instance, re-configured and started again. A component that holds a connection will therefore
+close it on reload.
+
+Only options whose value is a placeholder are affected, and only when running with Camel Main, Camel Spring Boot or
+Camel Quarkus. If a component must not be stopped on reload, configure it programmatically rather than with a
+placeholder based property.
 
 
 === Apache Avro trusted packages

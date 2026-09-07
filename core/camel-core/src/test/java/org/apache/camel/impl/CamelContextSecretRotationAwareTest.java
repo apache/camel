@@ -18,15 +18,18 @@ package org.apache.camel.impl;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.ContextTestSupport;
+import org.apache.camel.Endpoint;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.spi.ContextReloadStrategy;
 import org.apache.camel.spi.PropertiesComponent;
 import org.apache.camel.spi.PropertiesSource;
 import org.apache.camel.spi.SecretRotationAware;
+import org.apache.camel.support.DefaultComponent;
 import org.apache.camel.support.DefaultContextReloadStrategy;
 import org.apache.camel.support.service.ServiceHelper;
 import org.apache.camel.support.service.ServiceSupport;
@@ -35,17 +38,19 @@ import org.junit.jupiter.api.Test;
 import static org.assertj.core.api.Assertions.assertThat;
 
 /**
- * Tests that {@link SecretRotationAware} beans are notified when the context is reloaded, so they can re-authenticate
- * with a rotated secret before the routes are restarted.
+ * Tests that {@link SecretRotationAware} components and beans are notified when the context is reloaded, so they can
+ * re-authenticate with a rotated secret before the routes are restarted.
  */
 public class CamelContextSecretRotationAwareTest extends ContextTestSupport {
 
     private final MyRotationAware bean = new MyRotationAware();
     private final FailingRotationAware failing = new FailingRotationAware();
+    private final MyRotationAwareComponent component = new MyRotationAwareComponent();
+    private final MyRotationAwareComponent sharedComponent = new MyRotationAwareComponent();
     private final List<String> order = new ArrayList<>();
 
     @Test
-    public void testRegistryBeanIsNotified() throws Exception {
+    public void testRegistryBeanIsNotified() {
         assertThat(bean.getCounter()).isZero();
 
         ContextReloadStrategy crs = context.hasService(ContextReloadStrategy.class);
@@ -57,12 +62,35 @@ public class CamelContextSecretRotationAwareTest extends ContextTestSupport {
     }
 
     @Test
+    public void testComponentIsNotified() {
+        assertThat(component.getCounter()).isZero();
+
+        ContextReloadStrategy crs = context.hasService(ContextReloadStrategy.class);
+        crs.onReload("CamelContextSecretRotationAwareTest");
+
+        // a component is the primary adopter of the SPI, as it is what holds the authenticated connection
+        assertThat(component.getCounter()).isOne();
+        assertThat(component.getLastSource()).isEqualTo("CamelContextSecretRotationAwareTest");
+    }
+
+    @Test
+    public void testComponentAlsoInRegistryIsNotifiedOnce() {
+        ContextReloadStrategy crs = context.hasService(ContextReloadStrategy.class);
+        crs.onReload("CamelContextSecretRotationAwareTest");
+
+        // the same instance is both an added component and a registry bean, as happens on Spring Boot,
+        // and must not be notified twice
+        assertThat(sharedComponent.getCounter()).isOne();
+    }
+
+    @Test
     public void testNotifiedOnEveryReload() {
         ContextReloadStrategy crs = context.hasService(ContextReloadStrategy.class);
         crs.onReload("first");
         crs.onReload("second");
 
         assertThat(bean.getCounter()).isEqualTo(2);
+        assertThat(component.getCounter()).isEqualTo(2);
         assertThat(bean.getLastSource()).isEqualTo("second");
     }
 
@@ -71,9 +99,10 @@ public class CamelContextSecretRotationAwareTest extends ContextTestSupport {
         ContextReloadStrategy crs = context.hasService(ContextReloadStrategy.class);
         crs.onReload("boom");
 
-        // the failing listener was invoked, but the reload still succeeded and the other listener was notified
+        // the failing listener was invoked, but the reload still succeeded and the others were notified
         assertThat(failing.getCounter()).isOne();
         assertThat(bean.getCounter()).isOne();
+        assertThat(component.getCounter()).isOne();
         assertThat(crs.getLastError()).isNull();
         assertThat(context.getRoutes()).hasSize(1);
     }
@@ -99,6 +128,11 @@ public class CamelContextSecretRotationAwareTest extends ContextTestSupport {
 
         context.getRegistry().bind("myRotationAware", bean);
         context.getRegistry().bind("failingRotationAware", failing);
+
+        context.addComponent("myrotate", component);
+        // the shared component is reachable both as a component and as a registry bean
+        context.addComponent("mysharedrotate", sharedComponent);
+        context.getRegistry().bind("mySharedRotateComponent", sharedComponent);
 
         ContextReloadStrategy crs = new DefaultContextReloadStrategy() {
             @Override
@@ -162,6 +196,31 @@ public class CamelContextSecretRotationAwareTest extends ContextTestSupport {
 
         int getCounter() {
             return counter.get();
+        }
+    }
+
+    private static class MyRotationAwareComponent extends DefaultComponent implements SecretRotationAware {
+
+        private final AtomicInteger counter = new AtomicInteger();
+        private volatile String lastSource;
+
+        @Override
+        protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) {
+            throw new UnsupportedOperationException();
+        }
+
+        @Override
+        public void onSecretRotation(Object source) {
+            counter.incrementAndGet();
+            lastSource = source != null ? source.toString() : null;
+        }
+
+        int getCounter() {
+            return counter.get();
+        }
+
+        String getLastSource() {
+            return lastSource;
         }
     }
 
