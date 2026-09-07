@@ -32,7 +32,7 @@ import org.apache.camel.test.infra.ollama.services.OllamaServiceFactory;
 import org.apache.camel.test.junit6.CamelTestSupport;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.Timeout;
-import org.junit.jupiter.api.condition.DisabledIfSystemProperty;
+import org.junit.jupiter.api.condition.DisabledIfEnvironmentVariable;
 import org.junit.jupiter.api.extension.RegisterExtension;
 import org.junit.jupiter.api.io.TempDir;
 import org.slf4j.Logger;
@@ -54,7 +54,7 @@ import static org.assertj.core.api.Assertions.assertThat;
  * Since Spring AI 2.0 the OpenAI models are built on the official openai-java SDK, so the Ollama endpoint is configured
  * through the SDK client options rather than through a Spring RestClient.
  */
-@DisabledIfSystemProperty(named = "ci.env.name", matches = ".*", disabledReason = "Disabled unless running in CI")
+@DisabledIfEnvironmentVariable(named = "CI", matches = "true", disabledReason = "Disabled on CI (requires Ollama with flux2-klein model)")
 @Timeout(180)
 public class SpringAiImageOllamaIT extends CamelTestSupport {
 
