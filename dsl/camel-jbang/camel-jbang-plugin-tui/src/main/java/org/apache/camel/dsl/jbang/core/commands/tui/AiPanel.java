@@ -1054,7 +1054,11 @@ class AiPanel {
         StringBuilder md = new StringBuilder();
 
         if (initError != null) {
-            md.append("**Error:** ").append(initError).append("\n\n");
+            if (initError.startsWith("No LLM service reachable")) {
+                md.append(buildAiSetupGuide());
+            } else {
+                md.append("**Error:** ").append(initError).append("\n\n");
+            }
         } else if (conversation.isEmpty() && !thinking.get() && !slashHintsVisible) {
             frame.renderWidget(
                     Paragraph.from(Line.from(Span.styled("Ask a question about your Camel application...", Style.EMPTY.dim()))),
@@ -1554,6 +1558,78 @@ class AiPanel {
             }
         }
         frame.renderWidget(Paragraph.from(new dev.tamboui.text.Text(lines, dev.tamboui.layout.Alignment.LEFT)), area);
+    }
+
+    private String buildAiSetupGuide() {
+        return """
+                ## AI Assistant — Getting Started
+
+                No LLM provider was detected. Choose one of the options below, then press **F8** to reopen this panel.
+
+                > **Tool calling is required.** This panel inspects your Camel process by
+                > invoking built-in tools. Models smaller than ~14B do not reliably call
+                > tools and will answer from training knowledge instead — use at least 14B,
+                > 32B recommended.
+
+                ---
+
+                ### Option A: Local — Ollama (no API key needed)
+
+                Run models entirely on your machine — no data leaves your host.
+
+                ```
+                # macOS
+                brew install ollama
+
+                # Linux
+                curl -fsSL https://ollama.com/install.sh | sh
+
+                # then on both:
+                ollama serve             # start the daemon (skip if auto-started)
+                ollama pull qwen2.5:32b  # recommended
+                ```
+
+                Ollama is auto-detected at `localhost:11434` — no configuration needed.
+
+                **Models that work well** (tool-calling capable, ≥14B):
+
+                | Model | RAM | Notes |
+                |---|---|---|
+                | qwen2.5:14b | ~9 GB | Minimum recommended |
+                | qwen2.5:32b | ~20 GB | Best balance of speed and quality |
+                | deepseek-r1:32b | ~20 GB | Strong reasoning |
+                | hermes3:70b  | ~43 GB | Excellent tool calling, needs 64 GB+ |
+                | llama3.3:70b | ~43 GB | Best open model, needs 64 GB+ |
+
+                **Tip:** Install Ollama natively — `camel infra run ollama` uses Docker and
+                loses GPU acceleration (Metal on macOS, CUDA on Linux), making inference
+                much slower. Native install is always preferred for development use.
+
+                ---
+
+                ### Option B: Cloud provider (API key required)
+
+                Set one environment variable before starting the TUI:
+
+                | Variable | Provider |
+                |---|---|
+                | `ANTHROPIC_API_KEY` | Claude |
+                | `OPENAI_API_KEY` | OpenAI (GPT-4o etc.) |
+                | `GEMINI_API_KEY` | Gemini |
+                | `AZURE_OPENAI_API_KEY` + `AZURE_OPENAI_ENDPOINT` | Azure OpenAI |
+                | `WATSONX_APIKEY` | IBM watsonx.ai |
+
+                For any **OpenAI-compatible** server (LM Studio, vLLM, llama.cpp, GPT4All, …):
+
+                ```
+                export LLM_API_KEY=any-value
+                export LLM_BASE_URL=http://localhost:1234
+                ```
+
+                `OPENAI_BASE_URL` is also supported as an alternative to `LLM_BASE_URL`.
+
+                Or press **Ctrl+P** to select and configure a provider now.
+                """;
     }
 
     private String buildSystemPrompt() {

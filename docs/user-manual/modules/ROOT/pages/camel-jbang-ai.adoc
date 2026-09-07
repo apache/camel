@@ -118,9 +118,10 @@ All commands auto-detect the LLM provider. The detection order is:
 2. `CLOUD_ML_REGION` + `ANTHROPIC_VERTEX_PROJECT_ID` → Vertex AI (`ask` and `explain` only)
 3. `AZURE_OPENAI_API_KEY` + `AZURE_OPENAI_ENDPOINT` → Azure OpenAI (uses the `api-key` header; optional `AZURE_OPENAI_DEPLOYMENT_NAME` and `AZURE_OPENAI_API_VERSION`)
 4. `GEMINI_API_KEY` environment variable → Google Gemini native API (`generativelanguage.googleapis.com`). With `--api-type=gemini`, `GOOGLE_API_KEY` is also accepted.
-5. `OPENAI_API_KEY` or `LLM_API_KEY` → OpenAI-compatible API
-6. Ollama running via `camel infra` → local Ollama
-7. Ollama at `localhost:11434` → local Ollama
+5. `OPENAI_API_KEY` → OpenAI API (`api.openai.com`)
+6. `LLM_API_KEY` + optional `LLM_BASE_URL` (or `OPENAI_BASE_URL`) → any OpenAI-compatible API
+7. Ollama running via `camel infra` → local Ollama
+8. Ollama at `localhost:11434` → local Ollama
 
 Override with explicit options:
 
@@ -134,16 +135,65 @@ camel ask "check health" --api-type=ollama --model=llama3.1
 
 === Using a local model with Ollama
 
-Start Ollama as a dev service and the CLI detects it automatically:
+Install Ollama natively for the best performance — the native binary uses GPU acceleration
+(Metal on macOS, CUDA/ROCm on Linux). Running Ollama through Docker (`camel infra run ollama`)
+bypasses the GPU and makes inference much slower.
 
 [source,bash]
 ----
-camel infra run ollama
+# macOS
+brew install ollama
+
+# Linux
+curl -fsSL https://ollama.com/install.sh | sh
+
+# Pull a model and start asking
+ollama pull qwen2.5:32b
 camel ask "what routes are running?"
 ----
 
-The default model is `llama3.2`. When using Ollama, the CLI checks what models are available
-locally and auto-selects a suitable one if a better model is installed.
+Ollama at `localhost:11434` is auto-detected — no environment variable needed.
+The CLI checks what models are available and auto-selects a suitable one.
 
-TIP: For best results with the `ask` command's tool-calling capabilities,
-use a model that supports function calling well (e.g., `llama3.1`, `qwen3`, `mistral-nemo`).
+==== Model requirements
+
+`camel ask` and the TUI F8 panel rely on tool calling to inspect your running Camel process.
+Models smaller than ~14B do not reliably invoke tools and answer from training knowledge instead.
+Use at least a 14B model; 32B is recommended.
+
+[options="header"]
+|===
+| Model | RAM (Q4) | Notes
+| `qwen2.5:14b` | ~9 GB | Minimum recommended
+| `qwen2.5:32b` | ~20 GB | Best balance of speed and quality
+| `deepseek-r1:32b` | ~20 GB | Strong reasoning
+| `hermes3:70b` | ~43 GB | Excellent tool calling, needs 64 GB+
+| `llama3.3:70b` | ~43 GB | Best open model, needs 64 GB+
+|===
+
+On Apple Silicon, all RAM is unified — a 64 GB M-series Mac can run `llama3.3:70b` comfortably alongside the OS and other dev tools.
+
+=== Using an OpenAI-compatible local server
+
+Many local LLM servers expose an OpenAI-compatible API. Use `LLM_API_KEY` and `LLM_BASE_URL`
+to point the CLI at any of them:
+
+[source,bash]
+----
+export LLM_API_KEY=any-value      # required but can be any non-empty string
+export LLM_BASE_URL=http://localhost:1234   # your server's base URL
+camel ask "what routes are running?"
+----
+
+`OPENAI_BASE_URL` is accepted as an alternative to `LLM_BASE_URL` (common in other tools).
+
+Common OpenAI-compatible servers:
+
+[options="header"]
+|===
+| Server | Default port | Notes
+| https://lmstudio.ai[LM Studio] | 1234 | GUI app, Mac/Windows/Linux
+| https://github.com/vllm-project/vllm[vLLM] | 8000 | Production-grade, NVIDIA GPU
+| https://github.com/ggerganov/llama.cpp[llama.cpp server] | 8080 | Runs on CPU and GPU
+| https://gpt4all.io[GPT4All] | 4891 | Desktop app
+|===

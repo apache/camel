@@ -25,8 +25,8 @@ cd `dirname "$0"`/../..
 git clean -fd
 rm -Rf **/src/generated/
 
-# Regenerate everything
-if ./mvnw -T1C --batch-mode -Pregen -DskipTests ${MAVEN_EXTRA_ARGS} install > build-regen.log 2>&1; then
+# Regenerate everything (-DskipTests skips Surefire; -DskipITs skips Failsafe ITs)
+if ./mvnw -T1C --batch-mode -Pregen -DskipTests -DskipITs ${MAVEN_EXTRA_ARGS} install > build-regen.log 2>&1; then
   echo "✅ mvn -Pregen succeeded."
 else
   echo "❌ mvn -Pregen failed. Last 50 lines of build-regen.log:"

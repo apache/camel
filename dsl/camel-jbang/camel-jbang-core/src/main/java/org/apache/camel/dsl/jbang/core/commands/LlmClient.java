@@ -187,6 +187,13 @@ public class LlmClient {
         return apiType;
     }
 
+    /**
+     * Resolved LLM endpoint URL after {@link #detectEndpoint()}, or the configured URL when set explicitly.
+     */
+    public String endpointUrl() {
+        return url;
+    }
+
     // -- Builder --
 
     public static LlmClient create() {
@@ -1795,7 +1802,17 @@ public class LlmClient {
             apiKey = key;
             openAiAuthMode = OpenAiAuthMode.bearer;
             if (url == null || url.isBlank()) {
-                url = "https://api.openai.com";
+                // LLM_BASE_URL / OPENAI_BASE_URL let users point at any OpenAI-compatible
+                // server (LM Studio, vLLM, LocalAI, Jan, …) without a CLI flag
+                String baseUrl = System.getenv("OPENAI_BASE_URL");
+                if (baseUrl == null || baseUrl.isBlank()) {
+                    // Only consult LLM_BASE_URL when the key came from LLM_API_KEY to avoid
+                    // redirecting a real OPENAI_API_KEY to an unintended server
+                    if (System.getenv("OPENAI_API_KEY") == null || System.getenv("OPENAI_API_KEY").isBlank()) {
+                        baseUrl = System.getenv("LLM_BASE_URL");
+                    }
+                }
+                url = (baseUrl != null && !baseUrl.isBlank()) ? stripTrailingSlash(baseUrl) : "https://api.openai.com";
             }
             return true;
         }
