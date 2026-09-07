@@ -311,8 +311,8 @@ public class ManagedCamelContext extends ManagedPerformanceCounter implements Ma
     @Override
     public Integer getStartedRoutes() {
         int started = 0;
-        for (Route route : context.getRoutes()) {
-            ServiceStatus status = context.getRouteController().getRouteStatus(route.getId());
+        for (String routeId : context.getRouteIds()) {
+            ServiceStatus status = context.getRouteController().getRouteStatus(routeId);
             if (status != null && status.isStarted()) {
                 started++;
             }

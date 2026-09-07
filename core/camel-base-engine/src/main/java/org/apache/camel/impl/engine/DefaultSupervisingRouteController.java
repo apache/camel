@@ -100,6 +100,7 @@ public class DefaultSupervisingRouteController extends DefaultRouteController im
     private double backOffMultiplier = 1.0d;
     private boolean unhealthyOnExhausted = true;
     private boolean unhealthyOnRestarting = true;
+    private volatile long supervisionEpoch;
 
     public DefaultSupervisingRouteController() {
         this.lock = new ReentrantLock();
@@ -363,13 +364,14 @@ public class DefaultSupervisingRouteController extends DefaultRouteController im
 
     @Override
     public void removeAllRoutes() throws Exception {
-        clearSupervisedState();
         super.removeAllRoutes();
+        clearSupervisedState();
     }
 
     private void clearSupervisedState() {
         lock.lock();
         try {
+            supervisionEpoch++;
             new ArrayList<>(routeManager.routes.keySet()).forEach(routeManager::release);
             routeManager.routes.clear();
             routeManager.exhausted.clear();
@@ -951,7 +953,12 @@ public class DefaultSupervisingRouteController extends DefaultRouteController im
                     // Eventually delay the startup of the route a later time
                     if (initialDelay > 0) {
                         LOG.debug("Route {} will be started in {} millis", holder.getId(), initialDelay);
-                        executorService.schedule(() -> startRoute(holder), initialDelay, TimeUnit.MILLISECONDS);
+                        long epoch = supervisionEpoch;
+                        executorService.schedule(() -> {
+                            if (epoch == supervisionEpoch) {
+                                startRoute(holder);
+                            }
+                        }, initialDelay, TimeUnit.MILLISECONDS);
                     } else {
                         startRoute(holder);
                     }
@@ -1024,8 +1031,12 @@ public class DefaultSupervisingRouteController extends DefaultRouteController im
                 // Eventually delay the startup of the routes a later time
                 if (initialDelay > 0) {
                     LOG.debug("Supervised routes will be started in {} millis", initialDelay);
-                    executorService.schedule(DefaultSupervisingRouteController.this::startSupervisedRoutes, initialDelay,
-                            TimeUnit.MILLISECONDS);
+                    long epoch = supervisionEpoch;
+                    executorService.schedule(() -> {
+                        if (epoch == supervisionEpoch) {
+                            startSupervisedRoutes();
+                        }
+                    }, initialDelay, TimeUnit.MILLISECONDS);
                 } else {
                     startSupervisedRoutes();
                 }

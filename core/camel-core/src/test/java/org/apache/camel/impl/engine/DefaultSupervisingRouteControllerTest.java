@@ -17,6 +17,7 @@
 package org.apache.camel.impl.engine;
 
 import java.time.Duration;
+import java.time.Duration;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -198,22 +199,26 @@ public class DefaultSupervisingRouteControllerTest extends ContextTestSupport {
         context.addRoutes(reloadRoutes());
         context.start();
 
-        Thread.sleep(200);
+        await().atMost(Duration.ofSeconds(5)).untilAsserted(() -> {
+            assertEquals("Started", context.getRouteController().getRouteStatus("reload-a").toString());
+            assertEquals("Started", context.getRouteController().getRouteStatus("reload-b").toString());
+        });
 
         for (int reload = 0; reload < 2; reload++) {
             src.removeAllRoutes();
             context.getEndpointRegistry().clear();
             context.addRoutes(reloadRoutes());
             src.startRoutes(true);
-            Thread.sleep(200);
 
-            assertEquals(2, context.getRoutesSize(), "route count after reload " + reload);
-            assertEquals(2, context.getRouteIds().size(), "unique route ids after reload " + reload);
-            assertEquals(2, src.getControlledRoutes().size(), "controlled routes after reload " + reload);
-            for (Route route : context.getRoutes()) {
-                assertNotNull(src.getRouteStatus(route.getId()),
-                        "route status for " + route.getId() + " after reload " + reload);
-            }
+            await().atMost(Duration.ofSeconds(5)).untilAsserted(() -> {
+                assertEquals(2, context.getRoutesSize(), "route count after reload " + reload);
+                assertEquals(2, context.getRouteIds().size(), "unique route ids after reload " + reload);
+                assertEquals(2, src.getControlledRoutes().size(), "controlled routes after reload " + reload);
+                for (Route route : context.getRoutes()) {
+                    assertNotNull(src.getRouteStatus(route.getId()),
+                            "route status for " + route.getId() + " after reload " + reload);
+                }
+            });
         }
     }
 

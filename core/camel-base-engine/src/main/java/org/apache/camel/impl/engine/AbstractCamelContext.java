@@ -1305,7 +1305,8 @@ public abstract class AbstractCamelContext extends BaseService
         }
         // remove orphan route entries left when duplicate route ids were registered
         for (Route route : new ArrayList<>(getRoutes())) {
-            if (routeServices.get(route.getRouteId()) == null) {
+            RouteService routeService = routeServices.get(route.getRouteId());
+            if (routeService == null || routeService.getRoute() != route) {
                 LOG.debug("Removing orphan route from context: {}", route.getRouteId());
                 getCamelContextExtension().removeRoute(route);
             }

@@ -16,29 +16,28 @@
  */
 package org.apache.camel.component.kamelet;
 
+import java.time.Duration;
+import java.util.HashSet;
+import java.util.Set;
+
 import org.apache.camel.RoutesBuilder;
 import org.apache.camel.ServiceStatus;
-import org.apache.camel.api.management.ManagedCamelContext;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.management.mbean.ManagedCamelContext;
 import org.apache.camel.spi.SupervisingRouteController;
 import org.apache.camel.test.junit6.CamelTestSupport;
 import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatCode;
+import static org.awaitility.Awaitility.await;
 
 /**
- * CAMEL-24630: reloading kamelet routes under a supervising route controller must not leave duplicate route entries or
- * break {@code ManagedCamelContext.getStartedRoutes()}.
+ * CAMEL-24630: reloading kamelet routes under a supervising route controller must not leave duplicate route entries
+ * or break {@code ManagedCamelContext.getStartedRoutes()}.
  */
 public class KameletSupervisedReloadTest extends CamelTestSupport {
 
     private static final int INITIAL_DELAY = 200;
-
-    @Override
-    protected RoutesBuilder createRouteBuilder() {
-        return routes();
-    }
 
     @Override
     public boolean isUseRouteBuilder() {
@@ -53,10 +52,10 @@ public class KameletSupervisedReloadTest extends CamelTestSupport {
         context.addRoutes(routes());
         context.start();
 
-        ManagedCamelContext managed = context.getCamelContextExtension().getContextPlugin(ManagedCamelContext.class);
+        ManagedCamelContext managed = new ManagedCamelContext(context);
 
         for (int reload = 0; reload <= 2; reload++) {
-            Thread.sleep(INITIAL_DELAY + 300L);
+            awaitReloadStable(supervising);
             assertReloadState(reload, supervising, managed);
             if (reload == 2) {
                 break;
@@ -65,24 +64,35 @@ public class KameletSupervisedReloadTest extends CamelTestSupport {
         }
     }
 
+    private void awaitReloadStable(SupervisingRouteController supervising) {
+        await().atMost(Duration.ofSeconds(10)).untilAsserted(() -> {
+            assertThat(context.getRoutesSize()).isEqualTo(2);
+            for (String routeId : context.getRouteIds()) {
+                ServiceStatus status = supervising.getRouteStatus(routeId);
+                assertThat(status).isNotNull();
+                assertThat(status.isStarted()).isTrue();
+            }
+        });
+    }
+
     private void assertReloadState(int reload, SupervisingRouteController supervising, ManagedCamelContext managed) {
-        int routeCount = context.getRoutesSize();
-        assertThat(routeCount).as("route count after reload %s", reload).isLessThanOrEqualTo(2);
+        assertThat(context.getRoutesSize()).as("route count after reload %s", reload).isEqualTo(2);
+        assertThat(context.getRouteIds()).as("unique route ids after reload %s", reload).hasSize(2);
 
-        assertThat(context.getRouteIds()).as("unique route ids after reload %s", reload).hasSize(routeCount);
-
+        Set<String> routeIdsFromInstances = new HashSet<>();
         for (var route : context.getRoutes()) {
-            ServiceStatus status = supervising.getRouteStatus(route.getId());
-            assertThat(status).as("status for route %s after reload %s", route.getId(), reload).isNotNull();
+            assertThat(routeIdsFromInstances.add(route.getId()))
+                    .as("duplicate route instance for id %s after reload %s", route.getId(), reload)
+                    .isTrue();
+            assertThat(supervising.getRouteStatus(route.getId()))
+                    .as("status for route %s after reload %s", route.getId(), reload)
+                    .isNotNull();
         }
 
-        assertThat(supervising.getControlledRoutes()).as("controlled routes after reload %s", reload)
-                .allMatch(route -> supervising.getRouteStatus(route.getId()) != null);
+        assertThat(supervising.getControlledRoutes()).as("controlled routes after reload %s", reload).hasSize(2);
 
-        assertThatCode(() -> {
-            Integer started = managed.getManagedCamelContext().getStartedRoutes();
-            assertThat(started).as("started routes after reload %s", reload).isNotNull().isGreaterThanOrEqualTo(0);
-        }).doesNotThrowAnyException();
+        Integer started = managed.getStartedRoutes();
+        assertThat(started).as("started routes after reload %s", reload).isEqualTo(2);
     }
 
     private void reloadRoutes() throws Exception {
@@ -91,7 +101,6 @@ public class KameletSupervisedReloadTest extends CamelTestSupport {
         context.removeRouteTemplates("*");
         context.getEndpointRegistry().clear();
         context.addRoutes(routes());
-        supervising.startRoutes(true);
     }
 
     private static RouteBuilder routes() {
