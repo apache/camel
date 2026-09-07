@@ -68,7 +68,9 @@ public class HttpConfiguration implements Serializable {
     private String proxyHost;
     @Metadata(label = "producer,proxy", description = "Proxy port to use")
     private int proxyPort;
-    @Metadata(label = "producer,proxy", enums = "http,https", description = "Authentication scheme to use")
+    @Metadata(label = "producer,proxy", enums = "http,https", defaultValue = "http",
+              description = "Proxy server connection protocol scheme. Defaults to http regardless of the target endpoint scheme,"
+                            + " because most corporate HTTP proxies expect a plain HTTP connection on their listener port.")
     private String proxyAuthScheme;
     @Metadata(label = "producer,proxy", enums = "Basic,Bearer,NTLM", description = "Proxy authentication method to use")
     private String proxyAuthMethod;
