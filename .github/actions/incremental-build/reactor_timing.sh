@@ -17,6 +17,8 @@
 
 # Helpers for parsing Maven reactor timing lines from incremental-test.log.
 
+TOP_SLOWEST_LIMIT=20
+
 parse_reactor_duration_seconds() {
   local line="$1"
   if [[ "$line" =~ \[[[:space:]]*([0-9]+(\.[0-9]+)?)[[:space:]]*s\][[:space:]]*$ ]]; then
@@ -130,7 +132,7 @@ sum_elapsed_seconds_from_tsv() {
 
 render_top_slowest_modules() {
   local tsv="$1"
-  local limit="${2:-5}"
+  local limit="${2:-${TOP_SLOWEST_LIMIT}}"
   echo "$tsv" | awk -F '\t' '
     $2 != "" && $2 ~ /^[0-9]+(\.[0-9]+)?$/ {
       printf "%s\t%s\n", $2, $1
@@ -139,6 +141,65 @@ render_top_slowest_modules() {
     formatted=$(format_elapsed_seconds "$seconds")
     echo "- \`${module}\` (${formatted})"
   done
+}
+
+_write_timing_section() {
+  local tsv="$1"
+  local slowest="$2"
+  local total_formatted="$3"
+  local reactor_label="$4"
+  local count="$5"
+  local outfile="$6"
+  local bold_summary="${7:-false}"
+
+  if [[ "$bold_summary" == "true" ]]; then
+    {
+      echo ""
+      echo "<details><summary><b>${reactor_label} (${count} modules, ${total_formatted} total)</b></summary>"
+      echo ""
+      echo "**Total reactor time:** ${total_formatted}"
+      echo ""
+      echo "| Module | Duration | Status |"
+      echo "| --- | --- | --- |"
+    } >> "$outfile"
+  else
+    {
+      echo ""
+      echo "<details><summary>${reactor_label} (${count} modules, ${total_formatted} total)</summary>"
+      echo ""
+      echo "**Total reactor time:** ${total_formatted}"
+      echo ""
+      echo "| Module | Duration | Status |"
+      echo "| --- | --- | --- |"
+    } >> "$outfile"
+  fi
+
+  echo "$tsv" | awk -F '\t' '
+    $2 != "" && $2 ~ /^[0-9]+(\.[0-9]+)?$/ {
+      printf "%s\t%s\t%s\n", $2, $1, $3
+    }
+    $2 == "" {
+      printf "-1\t%s\t%s\n", $1, $3
+    }' | sort -t $'\t' -k1,1nr | while IFS=$'\t' read -r sort_key module status; do
+    local duration_display="n/a"
+    if [[ "$sort_key" != "-1" ]]; then
+      duration_display=$(format_elapsed_seconds "$sort_key")
+    fi
+    echo "| ${module} | ${duration_display} | ${status:-} |" >> "$outfile"
+  done
+
+  if [[ -n "$slowest" ]]; then
+    {
+      echo ""
+      echo "**Top ${TOP_SLOWEST_LIMIT} slowest modules:**"
+      echo "$slowest"
+    } >> "$outfile"
+  fi
+
+  {
+    echo ""
+    echo "</details>"
+  } >> "$outfile"
 }
 
 append_reactor_timing_report() {
@@ -157,86 +218,15 @@ append_reactor_timing_report() {
     return 0
   fi
 
-  local count total_seconds total_formatted
+  local count total_seconds total_formatted slowest
   count=$(echo "$tsv" | grep -c . || true)
   total_seconds=$(sum_elapsed_seconds_from_tsv "$tsv")
   total_formatted=$(format_elapsed_seconds "$total_seconds")
+  slowest=$(render_top_slowest_modules "$tsv" "$TOP_SLOWEST_LIMIT")
 
-  {
-    echo ""
-    echo "<details><summary>${reactor_label} (${count} modules, ${total_formatted} total)</summary>"
-    echo ""
-    echo "**Total reactor time:** ${total_formatted}"
-    echo ""
-    echo "| Module | Duration | Status |"
-    echo "| --- | --- | --- |"
-  } >> "$comment_file"
-
-  echo "$tsv" | awk -F '\t' '
-    $2 != "" && $2 ~ /^[0-9]+(\.[0-9]+)?$/ {
-      printf "%s\t%s\t%s\n", $2, $1, $3
-    }
-    $2 == "" {
-      printf "-1\t%s\t%s\n", $1, $3
-    }' | sort -t $'\t' -k1,1nr | while IFS=$'\t' read -r sort_key module status; do
-    local duration_display="n/a"
-    if [[ "$sort_key" != "-1" ]]; then
-      duration_display=$(format_elapsed_seconds "$sort_key")
-    fi
-    echo "| ${module} | ${duration_display} | ${status:-} |" >> "$comment_file"
-  done
-
-  local slowest
-  slowest=$(render_top_slowest_modules "$tsv" 5)
-  if [[ -n "$slowest" ]]; then
-    {
-      echo ""
-      echo "**Top 5 slowest modules:**"
-      echo "$slowest"
-    } >> "$comment_file"
-  fi
-
-  {
-    echo ""
-    echo "</details>"
-  } >> "$comment_file"
+  _write_timing_section "$tsv" "$slowest" "$total_formatted" "$reactor_label" "$count" "$comment_file" "false"
 
   if [[ -n "$step_summary_file" ]]; then
-    {
-      echo ""
-      echo "<details><summary><b>${reactor_label} (${count} modules, ${total_formatted} total)</b></summary>"
-      echo ""
-      echo "**Total reactor time:** ${total_formatted}"
-      echo ""
-      echo "| Module | Duration | Status |"
-      echo "| --- | --- | --- |"
-    } >> "$step_summary_file"
-
-    echo "$tsv" | awk -F '\t' '
-      $2 != "" && $2 ~ /^[0-9]+(\.[0-9]+)?$/ {
-        printf "%s\t%s\t%s\n", $2, $1, $3
-      }
-      $2 == "" {
-        printf "-1\t%s\t%s\n", $1, $3
-      }' | sort -t $'\t' -k1,1nr | while IFS=$'\t' read -r sort_key module status; do
-      local duration_display="n/a"
-      if [[ "$sort_key" != "-1" ]]; then
-        duration_display=$(format_elapsed_seconds "$sort_key")
-      fi
-      echo "| ${module} | ${duration_display} | ${status:-} |" >> "$step_summary_file"
-    done
-
-    if [[ -n "$slowest" ]]; then
-      {
-        echo ""
-        echo "**Top 5 slowest modules:**"
-        echo "$slowest"
-      } >> "$step_summary_file"
-    fi
-
-    {
-      echo ""
-      echo "</details>"
-    } >> "$step_summary_file"
+    _write_timing_section "$tsv" "$slowest" "$total_formatted" "$reactor_label" "$count" "$step_summary_file" "true"
   fi
 }

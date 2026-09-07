@@ -58,6 +58,11 @@ assert_eq "252.500" "$(parse_reactor_duration_seconds "$SAMPLE_LINE")" "parse du
 assert_eq "SUCCESS" "$(parse_reactor_status "$SAMPLE_LINE")" "parse status from success line"
 assert_eq "Camel :: Kafka :: camel-kafka" "$(parse_reactor_module_name "$SAMPLE_LINE")" "parse module name"
 
+NO_DOTS_LINE='[INFO] Camel :: CSimple Maven Plugin (deprecated) SUCCESS [  2.123 s]'
+assert_eq "2.123" "$(parse_reactor_duration_seconds "$NO_DOTS_LINE")" "parse duration from no-dots line"
+assert_eq "SUCCESS" "$(parse_reactor_status "$NO_DOTS_LINE")" "parse status from no-dots line"
+assert_eq "Camel :: CSimple Maven Plugin (deprecated)" "$(parse_reactor_module_name "$NO_DOTS_LINE")" "parse module name without dot padding"
+
 FAILURE_LINE='[INFO] Camel :: Exec .................................... FAILURE [  1.234 s]'
 assert_eq "1.234" "$(parse_reactor_duration_seconds "$FAILURE_LINE")" "parse duration from failure line"
 assert_eq "FAILURE" "$(parse_reactor_status "$FAILURE_LINE")" "parse status from failure line"
@@ -95,7 +100,7 @@ else
 fi
 assert_contains "$report_content" "2m 46s total" "report includes formatted total time"
 assert_contains "$report_content" "| Camel :: Kafka :: camel-kafka | 2m 0s | SUCCESS |" "slowest module listed first"
-assert_contains "$report_content" "**Top 5 slowest modules:**" "report includes slowest section"
+assert_contains "$report_content" "**Top ${TOP_SLOWEST_LIMIT} slowest modules:**" "report includes slowest section"
 assert_contains "$report_content" "\`Camel :: Kafka :: camel-kafka\` (2m 0s)" "slowest bullet uses formatted duration"
 
 rm -f "$fixture" "$report_file"
