@@ -12679,6 +12679,56 @@ public class StaticEndpointBuilders {
         return OnceEndpointBuilderFactory.endpointBuilder(componentName, path);
     }
     /**
+     * OPA (camel-opa)
+     * Evaluate Open Policy Agent (Rego) policies against an Exchange and record
+     * the allow/deny decision on it.
+     * 
+     * Category: security
+     * Since: 4.23
+     * Maven coordinates: org.apache.camel:camel-opa
+     * 
+     * Syntax: <code>opa:policyPath</code>
+     * 
+     * Path parameter: policyPath (required)
+     * Path of the Rego rule head to evaluate, relative to the OPA data
+     * document. For a rule named allow in a policy declaring package
+     * authz.orders, this is authz/orders/allow. The path is taken from the
+     * endpoint only: it is deliberately not overridable by a message header, so
+     * that an inbound message cannot select which policy judges it.
+     * 
+     * @param path policyPath
+     * @return the dsl builder
+     */
+    public static OpaEndpointBuilderFactory.OpaEndpointBuilder opa(String path) {
+        return opa("opa", path);
+    }
+    /**
+     * OPA (camel-opa)
+     * Evaluate Open Policy Agent (Rego) policies against an Exchange and record
+     * the allow/deny decision on it.
+     * 
+     * Category: security
+     * Since: 4.23
+     * Maven coordinates: org.apache.camel:camel-opa
+     * 
+     * Syntax: <code>opa:policyPath</code>
+     * 
+     * Path parameter: policyPath (required)
+     * Path of the Rego rule head to evaluate, relative to the OPA data
+     * document. For a rule named allow in a policy declaring package
+     * authz.orders, this is authz/orders/allow. The path is taken from the
+     * endpoint only: it is deliberately not overridable by a message header, so
+     * that an inbound message cannot select which policy judges it.
+     * 
+     * @param componentName to use a custom component name for the endpoint
+     * instead of the default name
+     * @param path policyPath
+     * @return the dsl builder
+     */
+    public static OpaEndpointBuilderFactory.OpaEndpointBuilder opa(String componentName, String path) {
+        return OpaEndpointBuilderFactory.endpointBuilder(componentName, path);
+    }
+    /**
      * OpenAI (camel-openai)
      * OpenAI endpoint for chat completion, Responses API, embeddings, audio
      * transcription, audio translation, and text-to-speech.

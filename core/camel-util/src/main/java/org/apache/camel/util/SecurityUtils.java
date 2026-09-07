@@ -68,6 +68,7 @@ public final class SecurityUtils {
         map.put("devconsoleenabled", new SecurityOption(INSECURE_DEV, "true"));
         map.put("downloadenabled", new SecurityOption(INSECURE_DEV, "true"));
         map.put("failonunknownhost", new SecurityOption(INSECURE_SSL, VALUE_FALSE));
+        map.put("failopen", new SecurityOption(INSECURE_DEV, "true"));
         map.put("hostnameverification", new SecurityOption(INSECURE_SSL, VALUE_FALSE));
         map.put("httpshostnameverificationenabled", new SecurityOption(INSECURE_SSL, VALUE_FALSE));
         map.put("ignoresslverification", new SecurityOption(INSECURE_SSL, "true"));

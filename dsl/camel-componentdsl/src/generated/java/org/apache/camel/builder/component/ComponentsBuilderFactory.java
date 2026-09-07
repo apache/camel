@@ -3825,6 +3825,20 @@ public interface ComponentsBuilderFactory {
         return OnceComponentBuilderFactory.once();
     }
     /**
+     * OPA (camel-opa)
+     * Evaluate Open Policy Agent (Rego) policies against an Exchange and record
+     * the allow/deny decision on it.
+     * 
+     * Category: security
+     * Since: 4.23
+     * Maven coordinates: org.apache.camel:camel-opa
+     * 
+     * @return the dsl builder
+     */
+    static OpaComponentBuilderFactory.OpaComponentBuilder opa() {
+        return OpaComponentBuilderFactory.opa();
+    }
+    /**
      * OpenAI (camel-openai)
      * OpenAI endpoint for chat completion, Responses API, embeddings, audio
      * transcription, audio translation, and text-to-speech.

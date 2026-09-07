@@ -340,6 +340,17 @@
   "serviceVersion" : "0.3",
   "uiSupported" : false
 }, {
+  "service" : "org.apache.camel.test.infra.opa.services.OpaInfraService",
+  "description" : "Open Policy Agent, a policy engine evaluating Rego policies",
+  "implementation" : "org.apache.camel.test.infra.opa.services.OpaLocalContainerInfraService",
+  "alias" : [ "opa" ],
+  "aliasImplementation" : [ ],
+  "groupId" : "org.apache.camel",
+  "artifactId" : "camel-test-infra-opa",
+  "version" : "4.23.0-SNAPSHOT",
+  "serviceVersion" : "1.9.0-static",
+  "uiSupported" : false
+}, {
   "service" : "org.apache.camel.test.infra.cyberark.vault.services.CyberArkVaultInfraService",
   "description" : "CyberArk Conjur is an open source secrets management solution",
   "implementation" : "org.apache.camel.test.infra.cyberark.vault.services.CyberArkVaultLocalContainerInfraService",
