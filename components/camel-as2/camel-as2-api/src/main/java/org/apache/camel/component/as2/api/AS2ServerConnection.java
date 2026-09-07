@@ -93,6 +93,7 @@ public class AS2ServerConnection {
     private final String password;
     private final String accessToken;
     private final String asyncMdnAllowedHosts;
+    private final SSLContext sslContext;
 
     /**
      * Stores the configuration for each consumer endpoint path (e.g., "/consumerA"). Uses LinkedHashMap to preserve
@@ -532,7 +533,8 @@ public class AS2ServerConnection {
                                 AS2ServerConnection.this.userName,
                                 AS2ServerConnection.this.password,
                                 AS2ServerConnection.this.accessToken,
-                                AS2ServerConnection.this.asyncMdnAllowedHosts);
+                                AS2ServerConnection.this.asyncMdnAllowedHosts,
+                                AS2ServerConnection.this.sslContext);
 
                         HttpRequest request = coreContext.getRequest();
                         AS2SignedDataGenerator gen = ResponseMDN.createSigningGenerator(
@@ -613,6 +615,7 @@ public class AS2ServerConnection {
                                String asyncMdnAllowedHosts)
                                                             throws IOException {
         this.asyncMdnAllowedHosts = asyncMdnAllowedHosts;
+        this.sslContext = sslContext;
         this.as2Version = ObjectHelper.notNull(as2Version, "as2Version");
         this.originServer = ObjectHelper.notNull(originServer, "userAgent");
         this.serverFqdn = ObjectHelper.notNull(serverFqdn, "serverFqdn");
