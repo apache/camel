@@ -2,7 +2,7 @@
 :doctitle: MCP Server
 :shortname: mcp-server
 :artifactid: camel-mcp-server
-:description: Expose ai-tool routes as MCP tools and ai-resource routes as MCP resources over streamable HTTP or stdio
+:description: Expose ai-tool routes as MCP tools and ai-resource routes as MCP resources over streamable HTTP
 :since: 4.22
 :supportlevel: Preview
 :tabs-sync-option:

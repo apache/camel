@@ -195,7 +195,7 @@ The camel.routecontroller supports 12 options, which are listed below.
 
 
 === Camel Embedded HTTP Server (only for standalone; not Spring Boot or Quarkus) configurations
-The camel.server supports 34 options, which are listed below.
+The camel.server supports 35 options, which are listed below.
 
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
@@ -215,7 +215,7 @@ The camel.server supports 34 options, which are listed below.
 | *camel.server.jwtKeystorePath* | Path to the keystore file used for JWT tokens validation. |  | String
 | *camel.server.jwtKeystoreType* | Type of the keystore used for JWT tokens validation (jks, pkcs12, etc.). |  | String
 | *camel.server.maxBodySize* | Maximum HTTP body size the embedded HTTP server can accept. |  | Long
-| *camel.server.mcpEnabled* | Whether to expose ai-tool routes as MCP tools and ai-resource routes as MCP resources over streamable HTTP. Requires camel-mcp-server on the classpath. By default, the MCP server is not enabled. | false | boolean
+| *camel.server.mcpEnabled* | Whether to expose ai-tool routes as MCP tools and ai-resource routes as MCP resources. Requires camel-mcp-server on the classpath. Use setMcpTransport(String) to choose streamable HTTP (default) or stdio for IDE subprocess integration. By default, the MCP server is not enabled. | false | boolean
 | *camel.server.mcpInstructions* | Top-level MCP instructions returned to clients on initialize. |  | String
 | *camel.server.mcpPath* | HTTP path where the MCP endpoint is served. | /mcp | String
 | *camel.server.mcpResourceTimeout* | Per-read MCP resource execution timeout in milliseconds. A read exceeding the timeout returns an error to the MCP client; the underlying route keeps running until it completes on its own. | 20000 | long
@@ -228,6 +228,7 @@ The camel.server supports 34 options, which are listed below.
 | *camel.server.mcpSessionKeepAliveInterval* | Keep-alive ping interval in milliseconds for MCP sessions on the Vert.x streamable transport. Dead sessions are evicted after consecutive ping failures. 0 disables keep-alive pings. | 30000 | long
 | *camel.server.mcpTags* | Comma-separated list of tag patterns selecting the ai-tool routes to expose as MCP tools and the ai-resource routes to expose as MCP resources. Matching is case-insensitive and supports exact match, wildcard prefix ( {code foo} ), and {code } to match all tags. Only routes registered under a matching tag are exposed; the untagged default pools are never exposed. When not set, nothing is exposed. |  | String
 | *camel.server.mcpToolTimeout* | Per-call MCP tool execution timeout in milliseconds. A call exceeding the timeout returns an error result to the MCP client; the underlying route keeps running until it completes on its own. | 20000 | long
+| *camel.server.mcpTransport* | MCP transport for ai-tool routes: http (streamable HTTP on the embedded server, default) or stdio (JSON-RPC on process stdin/stdout for local agent subprocesses). | http | String
 | *camel.server.path* | Context-path to use for embedded HTTP server | / | String
 | *camel.server.port* | Port to use for binding embedded HTTP server. Use 0 to dynamic assign a free random port number. | 8080 | int
 | *camel.server.staticContextPath* | The context-path to use for serving static content. By default, the root path is used. And if there is an index.html page then this is automatically loaded. | / | String
