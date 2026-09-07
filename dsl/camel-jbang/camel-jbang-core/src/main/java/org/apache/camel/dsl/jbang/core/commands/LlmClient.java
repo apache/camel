@@ -1804,9 +1804,13 @@ public class LlmClient {
             if (url == null || url.isBlank()) {
                 // LLM_BASE_URL / OPENAI_BASE_URL let users point at any OpenAI-compatible
                 // server (LM Studio, vLLM, LocalAI, Jan, …) without a CLI flag
-                String baseUrl = System.getenv("LLM_BASE_URL");
+                String baseUrl = System.getenv("OPENAI_BASE_URL");
                 if (baseUrl == null || baseUrl.isBlank()) {
-                    baseUrl = System.getenv("OPENAI_BASE_URL");
+                    // Only consult LLM_BASE_URL when the key came from LLM_API_KEY to avoid
+                    // redirecting a real OPENAI_API_KEY to an unintended server
+                    if (System.getenv("OPENAI_API_KEY") == null || System.getenv("OPENAI_API_KEY").isBlank()) {
+                        baseUrl = System.getenv("LLM_BASE_URL");
+                    }
                 }
                 url = (baseUrl != null && !baseUrl.isBlank()) ? stripTrailingSlash(baseUrl) : "https://api.openai.com";
             }

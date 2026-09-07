@@ -119,7 +119,29 @@ public final class OllamaDoctorSupport {
         return false;
     }
 
+    /**
+     * Returns true when the model tag confirms >= 14B parameters.
+     */
+    static boolean isLargeModel(String name) {
+        int colon = name.lastIndexOf(':');
+        String tag = colon >= 0 ? name.substring(colon + 1).toLowerCase() : "";
+        if (tag.matches("\\d+b.*")) {
+            int b = tag.indexOf('b');
+            try {
+                return Integer.parseInt(tag.substring(0, b)) >= 14;
+            } catch (NumberFormatException e) {
+                return false;
+            }
+        }
+        return false;
+    }
+
+    /**
+     * Returns true when no model in the list is known to be >= 14B. Models without an explicit numeric size tag (e.g.
+     * {@code llama3.2:latest}) are treated as unknown and counted as "not large", so callers should warn when this
+     * returns true.
+     */
     public static boolean allModelsSmall(List<String> models) {
-        return models != null && !models.isEmpty() && models.stream().allMatch(OllamaDoctorSupport::isSmallModel);
+        return models != null && !models.isEmpty() && models.stream().noneMatch(OllamaDoctorSupport::isLargeModel);
     }
 }

@@ -110,6 +110,55 @@ class OllamaDoctorSupportTest {
         assertThat(OllamaDoctorSupport.modelCountLabel(List.of("one"))).isEqualTo("1 model");
     }
 
+    // --- isSmallModel ---
+
+    @Test
+    void isSmallModelReturnsTrueForSmallTag() {
+        assertThat(OllamaDoctorSupport.isSmallModel("qwen2.5:7b")).isTrue();
+        assertThat(OllamaDoctorSupport.isSmallModel("gemma3:1b-it")).isTrue();
+    }
+
+    @Test
+    void isSmallModelReturnsFalseForLargeTag() {
+        assertThat(OllamaDoctorSupport.isSmallModel("qwen2.5:32b")).isFalse();
+        assertThat(OllamaDoctorSupport.isSmallModel("llama3.1:70b")).isFalse();
+    }
+
+    @Test
+    void isSmallModelReturnsFalseForNonNumericTag() {
+        assertThat(OllamaDoctorSupport.isSmallModel("llama3.2:latest")).isFalse();
+        assertThat(OllamaDoctorSupport.isSmallModel("phi4-mini:latest")).isFalse();
+    }
+
+    @Test
+    void isSmallModelReturnsFalseForModelWithoutColon() {
+        assertThat(OllamaDoctorSupport.isSmallModel("model-without-colon")).isFalse();
+    }
+
+    // --- allModelsSmall ---
+
+    @Test
+    void allModelsSmallReturnsTrueWhenAllTagsAreSmall() {
+        assertThat(OllamaDoctorSupport.allModelsSmall(List.of("qwen2.5:7b", "gemma3:1b-it"))).isTrue();
+    }
+
+    @Test
+    void allModelsSmallReturnsFalseWhenAnyTagIsLarge() {
+        assertThat(OllamaDoctorSupport.allModelsSmall(List.of("qwen2.5:7b", "qwen2.5:32b"))).isFalse();
+    }
+
+    @Test
+    void allModelsSmallReturnsTrueForUnknownSizeTag() {
+        // llama3.2:latest is 3B but has no numeric size tag — treated as "not known to be large"
+        assertThat(OllamaDoctorSupport.allModelsSmall(List.of("llama3.2:latest"))).isTrue();
+    }
+
+    @Test
+    void allModelsSmallReturnsFalseForEmptyList() {
+        assertThat(OllamaDoctorSupport.allModelsSmall(List.of())).isFalse();
+        assertThat(OllamaDoctorSupport.allModelsSmall(null)).isFalse();
+    }
+
     private OllamaDoctorSupport.Status detectAt(String baseUrl) {
         LlmClient client = LlmClient.create().withApiType(LlmClient.ApiType.ollama).withUrl(baseUrl);
         assertThat(client.detectEndpoint()).isTrue();
