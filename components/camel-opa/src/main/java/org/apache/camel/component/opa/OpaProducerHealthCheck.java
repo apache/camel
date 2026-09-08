@@ -38,17 +38,21 @@ public class OpaProducerHealthCheck extends AbstractHealthCheck {
 
     private static final Duration TIMEOUT = Duration.ofSeconds(5);
 
+    // java.net.http.HttpClient only became AutoCloseable in Java 21 (JEP 480); on Camel's Java 17 baseline there
+    // is no way to shut down its internal executor/selector threads, so a per-instance client would leak a thread
+    // pool on every producer start. Share a single client across all checks - the per-request URL and bearer token
+    // are set on the HttpRequest, so nothing endpoint-specific needs to live on the client.
+    private static final HttpClient HTTP_CLIENT = HttpClient.newBuilder().connectTimeout(TIMEOUT).build();
+
     private final String serverUrl;
     private final String bearerToken;
     private final String policyPath;
-    private final HttpClient httpClient;
 
     public OpaProducerHealthCheck(String serverUrl, String bearerToken, String policyPath, String id) {
         super("camel", "producer:opa-" + id);
         this.serverUrl = serverUrl;
         this.bearerToken = bearerToken;
         this.policyPath = policyPath;
-        this.httpClient = HttpClient.newBuilder().connectTimeout(TIMEOUT).build();
     }
 
     @Override
@@ -65,7 +69,7 @@ public class OpaProducerHealthCheck extends AbstractHealthCheck {
         }
 
         try {
-            HttpResponse<Void> response = httpClient.send(request.build(), HttpResponse.BodyHandlers.discarding());
+            HttpResponse<Void> response = HTTP_CLIENT.send(request.build(), HttpResponse.BodyHandlers.discarding());
             if (response.statusCode() == 200) {
                 builder.up();
             } else {
