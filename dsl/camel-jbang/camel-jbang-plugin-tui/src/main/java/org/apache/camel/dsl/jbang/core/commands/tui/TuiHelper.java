@@ -452,6 +452,27 @@ final class TuiHelper {
         spans.add(Span.raw(" " + label));
     }
 
+    /**
+     * Builds one line of key hints in the footer style, e.g. {@code hintLine("Enter", "confirm", "Esc", "cancel")}. Use
+     * this for hints drawn inside a dialog so they match the footer bar.
+     *
+     * @param keyLabelPairs alternating key and label, must have an even length
+     */
+    static Line hintLine(String... keyLabelPairs) {
+        if (keyLabelPairs.length % 2 != 0) {
+            throw new IllegalArgumentException("keyLabelPairs must be key/label pairs");
+        }
+        List<Span> spans = new ArrayList<>();
+        for (int i = 0; i < keyLabelPairs.length; i += 2) {
+            if (i + 2 < keyLabelPairs.length) {
+                hint(spans, keyLabelPairs[i], keyLabelPairs[i + 1]);
+            } else {
+                hintLast(spans, keyLabelPairs[i], keyLabelPairs[i + 1]);
+            }
+        }
+        return Line.from(spans);
+    }
+
     static boolean contains(Rect rect, int x, int y) {
         return rect != null
                 && x >= rect.x() && x < rect.x() + rect.width()

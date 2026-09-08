@@ -74,6 +74,7 @@ import sun.misc.Signal;
 
 import static org.apache.camel.dsl.jbang.core.commands.tui.TabRegistry.*;
 import static org.apache.camel.dsl.jbang.core.commands.tui.TuiHelper.hint;
+import static org.apache.camel.dsl.jbang.core.commands.tui.TuiHelper.hintLast;
 
 @Command(name = "monitor",
          description = "Live dashboard for monitoring Camel integrations",
@@ -391,6 +392,16 @@ public class CamelMonitor extends CamelCommand {
             @Override
             public void restartSelectedProcess() {
                 CamelMonitor.this.restartSelectedProcess();
+            }
+
+            @Override
+            public void showKillConfirm() {
+                popupManager.showKillConfirm();
+            }
+
+            @Override
+            public void showConfirm(String title, String message, Runnable onConfirm) {
+                popupManager.showConfirm(title, message, onConfirm);
             }
 
             @Override
@@ -2263,16 +2274,23 @@ public class CamelMonitor extends CamelCommand {
             return;
         }
 
+        // Modal popups own the footer no matter which tab is active, so the hints always describe
+        // the keys that the topmost dialog will actually receive.
         if (filesBrowser.isVisible()) {
             filesBrowser.renderFooter(spans);
+        } else if (popupManager.isKillConfirmVisible() || popupManager.isConfirmVisible()) {
+            hint(spans, "Enter", "confirm");
+            hintLast(spans, "Esc", "cancel");
         } else if (popupManager.isSwitchPopupVisible()) {
-            hint(spans, "Up/Down", "select");
             hint(spans, "Enter", "switch");
-            hint(spans, "Esc", "close");
+            hintLast(spans, "Esc", "close");
         } else if (popupManager.isMorePopupVisible()) {
-            hint(spans, "Up/Down", "select");
             hint(spans, "Enter", "open");
-            hint(spans, "Esc", "close");
+            hintLast(spans, "Esc", "close");
+        } else if (actionsPopup.isVisible()) {
+            actionsPopup.renderFooter(spans);
+        } else if (processControlPopup.isVisible()) {
+            processControlPopup.renderFooter(spans);
         } else if (shellPanel.isOpen()) {
             shellPanel.renderFooter(spans);
         } else if (aiPanel.isOpen()) {
@@ -2401,14 +2419,6 @@ public class CamelMonitor extends CamelCommand {
     }
 
     private int renderOverviewFooter(List<Span> spans) {
-        if (actionsPopup.isVisible()) {
-            actionsPopup.renderFooter(spans);
-            return 0;
-        }
-        if (processControlPopup.isVisible()) {
-            processControlPopup.renderFooter(spans);
-            return 0;
-        }
         tabRegistry.overviewTab().renderFooter(spans);
         int fKeyTotal = insertFKeyHints(spans);
         return fKeyTotal;

@@ -802,7 +802,6 @@ class HistoryTab extends AbstractTab {
             if (!showWaterfall) {
                 hint(spans, "Tab", detailFocused ? "table" : "detail");
             }
-            hint(spans, TuiIcons.HINT_SCROLL, "navigate");
             if (!showWaterfall && !traceWordWrap) {
                 hint(spans, TuiIcons.HINT_H, "h-scroll");
             }
@@ -815,7 +814,6 @@ class HistoryTab extends AbstractTab {
             hintLast(spans, "w", "wrap" + (traceWordWrap ? " [on]" : " [off]"));
         } else if (tracerActive) {
             hint(spans, "Esc", "back");
-            hint(spans, TuiIcons.HINT_SCROLL, "navigate");
             hint(spans, "s", "sort");
             hint(spans, "n", "description" + (showDescription ? " [on]" : ""));
             hint(spans, "d", "diagram");
@@ -826,7 +824,6 @@ class HistoryTab extends AbstractTab {
             if (!showWaterfall) {
                 hint(spans, "Tab", detailFocused ? "table" : "detail");
             }
-            hint(spans, TuiIcons.HINT_SCROLL, "navigate");
             if (!showWaterfall && !historyWordWrap) {
                 hint(spans, TuiIcons.HINT_H, "h-scroll");
             }

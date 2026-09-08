@@ -180,7 +180,7 @@ class ThemePopup {
     void renderFooter(List<Span> spans) {
         hint(spans, TuiIcons.HINT_SCROLL, "preview");
         hint(spans, "Enter", "apply");
-        hintLast(spans, "Esc", "back");
+        hintLast(spans, "Esc", "cancel");
     }
 
     List<String> getLabels() {

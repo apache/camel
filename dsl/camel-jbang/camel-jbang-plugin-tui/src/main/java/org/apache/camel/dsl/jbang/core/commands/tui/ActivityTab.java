@@ -289,7 +289,6 @@ class ActivityTab extends AbstractTableTab {
     @Override
     public void renderFooter(List<Span> spans) {
         TuiHelper.hint(spans, "Esc", "back");
-        TuiHelper.hint(spans, TuiIcons.HINT_SCROLL, "navigate");
         TuiHelper.hint(spans, "PgUp/Dn", "detail");
         if (!wordWrap) {
             TuiHelper.hint(spans, TuiIcons.HINT_H, "h-scroll");

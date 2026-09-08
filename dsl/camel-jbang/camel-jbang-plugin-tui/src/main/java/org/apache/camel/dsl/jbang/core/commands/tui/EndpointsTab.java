@@ -392,7 +392,6 @@ class EndpointsTab extends AbstractTableTab {
     @Override
     public void renderFooter(List<Span> spans) {
         hint(spans, "Esc", "back");
-        hint(spans, TuiIcons.HINT_SCROLL, "navigate");
         hint(spans, "s", "sort");
         String[] filterLabels = { "all", "remote", "remote+stub" };
         hint(spans, "f", "filter [" + filterLabels[filter] + "]");
@@ -405,7 +404,6 @@ class EndpointsTab extends AbstractTableTab {
         hint(spans, "d", "detail " + (panelMode == PANEL_DETAIL ? "[on]" : "[off]"));
         if (panelMode == PANEL_DETAIL) {
             hint(spans, "Tab", detailFocused ? "table" : "detail");
-            hintLast(spans, TuiIcons.HINT_SCROLL, "navigate");
         }
     }
 

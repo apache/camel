@@ -129,7 +129,6 @@ class TransformersTab extends AbstractTableTab {
     @Override
     public void renderFooter(List<Span> spans) {
         hint(spans, "Esc", "back");
-        hint(spans, TuiIcons.HINT_SCROLL, "navigate");
         hintLast(spans, "s", "sort");
     }
 

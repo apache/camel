@@ -1252,6 +1252,10 @@ class AiPanel {
     }
 
     void renderFooter(List<Span> spans) {
+        if (providerSwitchPopup.isVisible()) {
+            providerSwitchPopup.renderFooter(spans);
+            return;
+        }
         TuiHelper.hint(spans, "F8", "close");
         if (statsView) {
             TuiHelper.hint(spans, "Ctrl+U", "chat");

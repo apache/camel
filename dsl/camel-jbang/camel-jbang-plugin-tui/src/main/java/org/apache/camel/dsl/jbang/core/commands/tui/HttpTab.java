@@ -234,7 +234,6 @@ class HttpTab extends AbstractTableTab {
         }
         if (showSpec) {
             hint(spans, "c/Esc", "close");
-            hint(spans, TuiIcons.HINT_SCROLL, "scroll");
             hintLast(spans, "PgUp/PgDn", "page");
             return;
         }

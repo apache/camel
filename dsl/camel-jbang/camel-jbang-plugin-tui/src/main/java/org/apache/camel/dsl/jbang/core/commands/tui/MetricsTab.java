@@ -616,7 +616,6 @@ class MetricsTab extends AbstractTableTab {
     public void renderFooter(List<Span> spans) {
         if (showRaw) {
             hint(spans, "Esc", "close");
-            hint(spans, TuiIcons.HINT_SCROLL, "scroll");
             hint(spans, "PgUp/Dn", "page");
             hint(spans, "F5", "refresh");
             return;

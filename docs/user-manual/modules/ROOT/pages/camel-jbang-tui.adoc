@@ -752,6 +752,10 @@ Press *F8* to open the built-in AI prompt panel. The panel auto-detects a provid
 
 Press *Ctrl+P* inside the AI panel to switch provider or model at any time.
 
+The same guidance, together with the provider that is currently detected, is available inside the TUI
+via *F2* -> _AI & MCP_ -> _Setup AI_. Use *F2* -> _Settings_ to pin a provider, model or base URL
+(`camel.tui.ai.provider`, `camel.tui.ai.model`, `camel.tui.ai.url`) regardless of the environment.
+
 ==== Using Ollama (local, no API key)
 
 Install Ollama natively for best performance — the native binary uses GPU acceleration

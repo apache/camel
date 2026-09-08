@@ -30,7 +30,6 @@ import dev.tamboui.widgets.Clear;
 import dev.tamboui.widgets.block.Block;
 import dev.tamboui.widgets.block.BorderType;
 import dev.tamboui.widgets.block.Borders;
-import dev.tamboui.widgets.input.TextInput;
 import dev.tamboui.widgets.input.TextInputState;
 import dev.tamboui.widgets.paragraph.Paragraph;
 import org.apache.camel.dsl.jbang.core.commands.LlmClient;
@@ -466,7 +465,6 @@ class SettingsPopup {
     }
 
     void renderFooter(List<Span> spans) {
-        hint(spans, TuiIcons.HINT_SCROLL, "navigate");
         if (selectedRow == ROW_THEME || selectedRow == ROW_START_TAB || selectedRow == ROW_SELECT_TAB
                 || selectedRow == ROW_LOG_PIN || selectedRow == ROW_RATE_PER
                 || selectedRow == ROW_CONFIRM_ACTIONS || selectedRow == ROW_VALIDATE_ON_SAVE
@@ -546,8 +544,7 @@ class SettingsPopup {
     }
 
     private void renderLabel(Frame frame, int x, int y, int w, String label, boolean selected) {
-        Style style = selected ? Style.EMPTY.bold() : Style.EMPTY.dim();
-        frame.renderWidget(Paragraph.from(Line.from(Span.styled(label, style))), new Rect(x, y, w, 1));
+        FormHelper.renderLabel(frame, x, y, w, label, selected);
     }
 
     private void renderValue(Frame frame, int x, int y, int w, String text, boolean selected) {
@@ -562,20 +559,7 @@ class SettingsPopup {
     private void renderTextInput(
             Frame frame, int x, int y, int w, TextInputState input, boolean active,
             String placeholder) {
-        Rect area = new Rect(x, y, w, 1);
-        if (active) {
-            TextInput textInput = TextInput.builder()
-                    .cursorStyle(Style.EMPTY.reversed())
-                    .placeholder(placeholder)
-                    .build();
-            // renderWithCursor (not renderStatefulWidget) so the caret is painted on the active field
-            textInput.renderWithCursor(area, frame.buffer(), input, frame);
-        } else {
-            String text = input.text();
-            Style style = text.isEmpty() ? Style.EMPTY.dim() : Style.EMPTY;
-            frame.renderWidget(Paragraph.from(Line.from(
-                    Span.styled(text.isEmpty() ? placeholder : text, style))), area);
-        }
+        FormHelper.renderTextField(frame, new Rect(x, y, w, 1), input, active, placeholder);
     }
 
     // ---- Test accessors ----

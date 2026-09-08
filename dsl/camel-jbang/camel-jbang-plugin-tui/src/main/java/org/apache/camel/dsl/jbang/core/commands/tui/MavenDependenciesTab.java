@@ -320,7 +320,6 @@ class MavenDependenciesTab extends AbstractTableTab {
         } else {
             hint(spans, "/", "filter");
         }
-        hintLast(spans, TuiIcons.HINT_SCROLL, "navigate");
     }
 
     private int sortDep(DependencyLoader.DepEntry a, DependencyLoader.DepEntry b) {

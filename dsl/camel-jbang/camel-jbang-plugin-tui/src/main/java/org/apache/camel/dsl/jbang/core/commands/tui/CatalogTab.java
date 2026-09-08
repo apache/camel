@@ -426,7 +426,6 @@ class CatalogTab extends AbstractTableTab {
         } else {
             hint(spans, "/", "filter");
         }
-        hintLast(spans, TuiIcons.HINT_SCROLL, "navigate");
     }
 
     private int sortEntry(CatalogEntry a, CatalogEntry b) {

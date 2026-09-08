@@ -54,6 +54,43 @@ class DoctorPopup {
     private int mcpPort;
     private Supplier<String> mcpConnectedClient;
 
+    /** Fixed popup width; detail rows are word-wrapped to fit instead of widening the popup. */
+    private static final int POPUP_WIDTH = 64;
+    /** Detail rows are indented to line up with the value column. */
+    private static final String DETAIL_INDENT = "                    ";
+    private static final int DETAIL_WIDTH = POPUP_WIDTH - 2 - DETAIL_INDENT.length() - 1;
+
+    /**
+     * Adds a dimmed detail row under a check, word-wrapped so it never runs into the popup border.
+     */
+    private static void addDetail(List<Line> result, String text) {
+        for (String part : wrapWords(text, DETAIL_WIDTH)) {
+            result.add(Line.from(Span.styled(DETAIL_INDENT + part, Style.EMPTY.dim())));
+        }
+    }
+
+    static List<String> wrapWords(String text, int width) {
+        List<String> out = new ArrayList<>();
+        if (text == null || text.isBlank()) {
+            return out;
+        }
+        StringBuilder line = new StringBuilder();
+        for (String word : text.trim().split("\\s+")) {
+            if (line.length() > 0 && line.length() + 1 + word.length() > width) {
+                out.add(line.toString());
+                line.setLength(0);
+            }
+            if (line.length() > 0) {
+                line.append(' ');
+            }
+            line.append(word);
+        }
+        if (line.length() > 0) {
+            out.add(line.toString());
+        }
+        return out;
+    }
+
     boolean isVisible() {
         return visible;
     }
@@ -98,7 +135,7 @@ class DoctorPopup {
         if (lines == null || lines.isEmpty()) {
             return;
         }
-        int popupW = Math.min(62, area.width() - 4);
+        int popupW = Math.min(POPUP_WIDTH, area.width() - 4);
         int popupH = Math.min(lines.size() + 2, area.height() - 4);
         int x = area.left() + Math.max(0, (area.width() - popupW) / 2);
         int y = area.top() + 2;
@@ -116,7 +153,7 @@ class DoctorPopup {
     }
 
     void renderFooter(List<Span> spans) {
-        hintLast(spans, "Esc", "back");
+        hintLast(spans, "Esc", "close");
     }
 
     // ---- Checks ----
@@ -143,7 +180,7 @@ class DoctorPopup {
                 Span.raw(String.format("%-30s", version + " (" + vendor + ")")),
                 Span.raw(" " + emoji)));
         if (status != null) {
-            result.add(Line.from(Span.styled("                    " + status, Style.EMPTY.dim())));
+            addDetail(result, status);
         }
     }
 
@@ -201,16 +238,14 @@ class DoctorPopup {
                     Span.styled(String.format("%-14s", "Maven"), Theme.muted()),
                     Span.raw(String.format("%-30s", "Resolution failed")),
                     Span.raw(" " + TuiIcons.FAIL)));
-            result.add(Line.from(Span.styled("                    " + TuiHelper.truncate(e.getMessage(), 40),
-                    Style.EMPTY.dim())));
+            addDetail(result, e.getMessage());
         } catch (Exception e) {
             result.add(Line.from(
                     Span.raw(TuiIcons.indent(TuiIcons.INFRA)),
                     Span.styled(String.format("%-14s", "Maven"), Theme.muted()),
                     Span.raw(String.format("%-30s", "Error")),
                     Span.raw(" " + TuiIcons.FAIL)));
-            result.add(Line.from(Span.styled("                    " + TuiHelper.truncate(e.getMessage(), 40),
-                    Style.EMPTY.dim())));
+            addDetail(result, e.getMessage());
         }
     }
 
@@ -313,10 +348,8 @@ class DoctorPopup {
                     Span.styled(String.format("%-14s", "AI"), Theme.muted()),
                     Span.raw(String.format("%-30s", "No API key configured")),
                     Span.raw(" " + TuiIcons.WARN)));
-            result.add(Line.from(Span.styled(
-                    "                    Set ANTHROPIC_API_KEY, AZURE_OPENAI_*, GEMINI_API_KEY, OPENAI_API_KEY,"
-                                             + " WATSONX_APIKEY, or start Ollama",
-                    Style.EMPTY.dim())));
+            addDetail(result, "Set ANTHROPIC_API_KEY, AZURE_OPENAI_*, GEMINI_API_KEY, OPENAI_API_KEY,"
+                              + " WATSONX_APIKEY, or start Ollama");
         }
     }
 
@@ -373,9 +406,7 @@ class DoctorPopup {
                     Span.styled(String.format("%-14s", "Ollama"), Theme.muted()),
                     Span.raw(String.format("%-30s", "Not detected (optional)")),
                     Span.raw(" " + TuiIcons.WARN)));
-            result.add(Line.from(Span.styled(
-                    "                    " + TuiHelper.truncate("Start Ollama (ollama serve) for local AI", 40),
-                    Style.EMPTY.dim())));
+            addDetail(result, "Start Ollama (ollama serve) for local AI");
         }
     }
 
@@ -394,8 +425,7 @@ class DoctorPopup {
                         Span.styled(String.format("%-14s", "MCP"), Theme.muted()),
                         Span.raw(String.format("%-30s", "Listening on port " + mcpPort)),
                         Span.raw(" " + TuiIcons.WARN)));
-                result.add(Line.from(Span.styled("                    No AI client connected",
-                        Style.EMPTY.dim())));
+                addDetail(result, "No AI client connected");
             }
         } else {
             result.add(Line.from(

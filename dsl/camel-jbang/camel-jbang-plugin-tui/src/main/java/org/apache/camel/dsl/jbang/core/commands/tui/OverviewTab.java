@@ -1033,7 +1033,6 @@ class OverviewTab extends AbstractTab {
         if (ctx.selectedPid != null) {
             hint(spans, "Esc", "unselect");
         }
-        hint(spans, TuiIcons.HINT_SCROLL, "navigate");
         if (!ctx.infraData.get().isEmpty()) {
             hint(spans, "Tab", infraFocused ? "integrations" : "infra");
         }
@@ -1050,9 +1049,7 @@ class OverviewTab extends AbstractTab {
                 default -> "[off]";
             });
         }
-        if (ctx.selectedPid != null) {
-            hint(spans, "F10", "run");
-        }
+        // F10 is added by the global F-key hints, so it must not be repeated here.
     }
 
     @Override

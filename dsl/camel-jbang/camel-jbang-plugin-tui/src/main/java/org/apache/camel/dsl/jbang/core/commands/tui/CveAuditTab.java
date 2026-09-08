@@ -373,7 +373,6 @@ class CveAuditTab extends AbstractTableTab {
         hint(spans, "Esc", "back");
         hint(spans, "r", "rescan");
         super.renderFooter(spans);
-        hintLast(spans, "↑↓", "navigate");
     }
 
     private void rescan() {

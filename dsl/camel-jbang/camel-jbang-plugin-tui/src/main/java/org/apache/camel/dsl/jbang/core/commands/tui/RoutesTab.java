@@ -890,7 +890,6 @@ class RoutesTab extends AbstractTab {
             hint(spans, "n", "description" + (diagram.isShowDescription() ? " [on]" : " [off]"));
         } else {
             hint(spans, "Esc", "back");
-            hint(spans, TuiIcons.HINT_SCROLL, "navigate");
             hint(spans, "Enter", "diagram");
             hint(spans, "s", "sort");
             hint(spans, "n", "description" + (showDescription ? " [on]" : " [off]"));

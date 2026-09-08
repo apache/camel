@@ -209,7 +209,6 @@ class OverviewTabRenderTest {
                 .reduce("", String::concat);
 
         assertTrue(footer.contains("sort"), "Footer should contain sort hint");
-        assertTrue(footer.contains("navigate"), "Footer should contain navigate hint");
     }
 
     @Test

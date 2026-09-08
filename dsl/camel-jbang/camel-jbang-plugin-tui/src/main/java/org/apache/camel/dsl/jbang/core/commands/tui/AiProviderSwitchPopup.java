@@ -133,9 +133,7 @@ final class AiProviderSwitchPopup {
     void render(Frame frame, Rect area) {
         int popupW = Math.max(1, Math.min(72, area.width() - 4));
         int popupH = Math.max(1, Math.min(choices.size() + 2, area.height() - 4));
-        int x = area.left() + Math.max(0, (area.width() - popupW) / 2);
-        int y = area.top() + Math.max(0, (area.height() - popupH) / 4);
-        Rect popup = new Rect(x, y, Math.min(popupW, area.width()), Math.min(popupH, area.height()));
+        Rect popup = DialogHelper.centered(area, popupW, popupH);
         this.popupRect = popup;
         frame.renderWidget(Clear.INSTANCE, popup);
         Block block = Block.builder()
@@ -155,5 +153,10 @@ final class AiProviderSwitchPopup {
                 .highlightSymbol("")
                 .build();
         frame.renderStatefulWidget(list, block.inner(popup), listState);
+    }
+
+    void renderFooter(List<Span> spans) {
+        TuiHelper.hint(spans, "Enter", "select");
+        TuiHelper.hintLast(spans, "Esc", "close");
     }
 }

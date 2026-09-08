@@ -414,7 +414,6 @@ class LogTab extends AbstractTab {
         }
         if (showLogLevelPopup) {
             hint(spans, "Esc", "cancel");
-            hint(spans, TuiIcons.HINT_SCROLL, "navigate");
             hintLast(spans, "Enter", "set level");
             return;
         }
@@ -424,7 +423,6 @@ class LogTab extends AbstractTab {
         } else {
             hint(spans, "Esc", "back");
         }
-        hint(spans, TuiIcons.HINT_SCROLL, "scroll");
         search.renderSearchHints(spans);
         hint(spans, "w", "wrap" + (wordWrap ? " [on]" : " [off]"));
         if (!ctx.isInfraSelected()) {

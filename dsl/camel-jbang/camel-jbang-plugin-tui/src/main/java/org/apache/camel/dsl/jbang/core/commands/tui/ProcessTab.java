@@ -199,7 +199,6 @@ class ProcessTab extends AbstractTab {
     @Override
     public void renderFooter(List<Span> spans) {
         hint(spans, "Esc", "back");
-        hint(spans, TuiIcons.HINT_SCROLL, "scroll");
         hint(spans, "w", "wrap [" + (wrap ? "on" : "off") + "]");
     }
 

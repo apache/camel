@@ -297,7 +297,6 @@ class ThreadsTab extends AbstractTableTab {
         hint(spans, "s", "sort");
         hint(spans, "f", "filter [" + FILTER_LABELS[filter] + "]");
         hint(spans, "Tab", detailFocused ? "table" : "trace");
-        hint(spans, TuiIcons.HINT_SCROLL, "navigate");
         hintLast(spans, "PgUp/Dn", "scroll");
     }
 

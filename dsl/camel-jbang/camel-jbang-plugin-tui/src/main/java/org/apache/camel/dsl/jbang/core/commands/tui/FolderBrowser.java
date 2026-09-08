@@ -409,7 +409,6 @@ class FolderBrowser {
             sourceViewer.renderFooter(spans);
             return;
         }
-        TuiHelper.hint(spans, TuiIcons.HINT_SCROLL, "navigate");
         TuiHelper.hint(spans, "Enter", fileSelectMode ? "select" : "open");
         if (!fileSelectMode) {
             TuiHelper.hint(spans, "Tab", "select");

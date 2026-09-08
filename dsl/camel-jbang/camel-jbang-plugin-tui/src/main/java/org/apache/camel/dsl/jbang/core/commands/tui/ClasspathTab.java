@@ -288,7 +288,6 @@ class ClasspathTab extends AbstractTab {
         } else {
             hint(spans, "/", "filter");
         }
-        hintLast(spans, TuiIcons.HINT_SCROLL, "navigate");
     }
 
     private void loadClasspath() {

@@ -507,7 +507,6 @@ class BrowseTab extends AbstractTab {
         hint(spans, "Esc", "back");
         if (view == VIEW_DETAIL) {
             hint(spans, "Tab", detailFocused ? "messages" : "detail");
-            hint(spans, TuiIcons.HINT_SCROLL, "navigate");
             hintLast(spans, "p", "pretty" + (prettyPrint ? " [on]" : ""));
         } else if (view == VIEW_MESSAGES) {
             hint(spans, "r", "refresh");

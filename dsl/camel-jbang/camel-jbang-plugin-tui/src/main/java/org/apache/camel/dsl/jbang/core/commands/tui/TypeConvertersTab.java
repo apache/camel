@@ -207,7 +207,6 @@ class TypeConvertersTab extends AbstractTableTab {
         } else {
             hint(spans, "/", "filter");
         }
-        hint(spans, TuiIcons.HINT_SCROLL, "navigate");
         hintLast(spans, "s", "sort");
     }
 

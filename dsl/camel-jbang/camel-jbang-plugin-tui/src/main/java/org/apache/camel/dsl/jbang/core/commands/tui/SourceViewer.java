@@ -3002,8 +3002,7 @@ class SourceViewer {
             wrapText(msg, innerW, allLines);
         }
         allLines.add(Line.empty());
-        allLines.add(Line.from(Span.raw("  "),
-                Span.styled("Esc", Style.EMPTY.bold()), Span.raw(" close")));
+        allLines.add(TuiHelper.hintLine("Esc", "close"));
 
         int contentH = allLines.size();
         int popupH = Math.min(contentH + 2, area.height() - 4);
@@ -3017,6 +3016,7 @@ class SourceViewer {
                            + (validationErrors.size() > 1 ? "s" : "") + " ";
         Block block = Block.builder()
                 .borderType(BorderType.ROUNDED).borders(Borders.ALL)
+                .borderStyle(Theme.error())
                 .title(Title.from(Line.from(Span.styled(titleText, Theme.error().bold()))))
                 .build();
         frame.renderWidget(block, popup);
@@ -3036,33 +3036,7 @@ class SourceViewer {
     }
 
     private void renderDiscardPopup(Frame frame, Rect area) {
-        int popupW = Math.max(40, Math.min(44, area.width() - 4));
-        popupW = Math.min(popupW, area.width() - 2);
-        int popupH = 6;
-        int x = area.left() + Math.max(0, (area.width() - popupW) / 2);
-        int y = area.top() + Math.max(0, (area.height() - popupH) / 2);
-        Rect popup = new Rect(x, y, popupW, popupH);
-
-        frame.renderWidget(Clear.INSTANCE, popup);
-
-        Block block = Block.builder()
-                .borderType(BorderType.ROUNDED).borders(Borders.ALL)
-                .borderStyle(Theme.warning())
-                .title(Title.from(Line.from(Span.styled(" Discard Changes? ", Theme.warning().bold()))))
-                .build();
-        frame.renderWidget(block, popup);
-        Rect inner = block.inner(popup);
-
-        frame.renderWidget(
-                Paragraph.builder().centered().text(Text.from(
-                        Line.empty(),
-                        Line.from(Span.raw("Unsaved changes will be lost.")),
-                        Line.empty(),
-                        Line.from(
-                                Span.styled("Enter", Style.EMPTY.bold()), Span.raw(" confirm    "),
-                                Span.styled("Esc", Style.EMPTY.bold()), Span.raw(" cancel"))))
-                        .build(),
-                inner);
+        DialogHelper.renderConfirm(frame, area, "Discard Changes?", "Unsaved changes will be lost.", false);
     }
 
     private static void wrapText(String text, int width, List<Line> out) {
@@ -3081,14 +3055,17 @@ class SourceViewer {
     }
 
     void renderFooter(List<Span> spans) {
+        if (pendingDiscard) {
+            TuiHelper.hint(spans, "Enter", "confirm");
+            TuiHelper.hintLast(spans, "Esc", "cancel");
+            return;
+        }
         if (editMode && validationErrors != null) {
-            TuiHelper.hint(spans, TuiIcons.HINT_SCROLL, "scroll");
             TuiHelper.hintLast(spans, "Esc", "close");
             return;
         }
         if (editMode && diffOverlay) {
             TuiHelper.hint(spans, "Esc/F7", "close diff");
-            TuiHelper.hint(spans, TuiIcons.HINT_SCROLL, "scroll");
             return;
         }
         if (editMode) {
@@ -3121,7 +3098,6 @@ class SourceViewer {
         }
         if (markdownMode) {
             TuiHelper.hint(spans, "Esc/c", "close");
-            TuiHelper.hint(spans, TuiIcons.HINT_SCROLL, "scroll");
             TuiHelper.hint(spans, "Space", "format");
             TuiHelper.hint(spans, "PgUp/PgDn", "page");
             if (isEditable()) {
@@ -3141,7 +3117,6 @@ class SourceViewer {
         if (isEditable()) {
             TuiHelper.hint(spans, "F4", "edit");
         }
-        TuiHelper.hint(spans, TuiIcons.HINT_SCROLL, "navigate");
         if (isMarkdownFile || currentRouteId != null) {
             TuiHelper.hint(spans, "Space", "format");
         }

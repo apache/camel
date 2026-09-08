@@ -40,6 +40,7 @@ import org.apache.camel.util.json.JsonArray;
 import org.apache.camel.util.json.JsonObject;
 
 import static org.apache.camel.dsl.jbang.core.commands.tui.TuiHelper.hint;
+import static org.apache.camel.dsl.jbang.core.commands.tui.TuiHelper.hintLast;
 
 /**
  * Facade that exposes monitor state and actions to the MCP server.
@@ -612,13 +613,11 @@ class McpFacade {
             filesBrowser.renderFooter(spans);
         } else if (bridge.isSwitchPopupVisible() || bridge.isMorePopupVisible()) {
             if (bridge.isSwitchPopupVisible()) {
-                hint(spans, "Up/Down", "select");
                 hint(spans, "Enter", "switch");
-                hint(spans, "Esc", "close");
+                hintLast(spans, "Esc", "close");
             } else {
-                hint(spans, "Up/Down", "select");
                 hint(spans, "Enter", "open");
-                hint(spans, "Esc", "close");
+                hintLast(spans, "Esc", "close");
             }
         } else {
             MonitorTab tab = bridge.activeTab();

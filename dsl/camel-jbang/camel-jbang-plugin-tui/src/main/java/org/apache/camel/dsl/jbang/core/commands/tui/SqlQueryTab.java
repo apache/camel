@@ -807,13 +807,8 @@ class SqlQueryTab extends AbstractTab {
         int footerY = inner.top() + visibleRows + 1;
         if (footerY < popup.bottom() - 1) {
             Rect footerArea = new Rect(inner.left(), footerY, inner.width(), 1);
-            frame.renderWidget(Paragraph.from(Line.from(
-                    Span.styled(" F5", Theme.label().bold()),
-                    Span.styled("=Save  ", Theme.muted()),
-                    Span.styled("Esc", Theme.label().bold()),
-                    Span.styled("=Cancel  ", Theme.muted()),
-                    Span.styled("*", Theme.muted()),
-                    Span.styled("=Primary Key", Theme.muted()))), footerArea);
+            frame.renderWidget(Paragraph.from(
+                    TuiHelper.hintLine("F5", "save", "Esc", "cancel", "*", "primary key")), footerArea);
         }
     }
 
@@ -837,7 +832,6 @@ class SqlQueryTab extends AbstractTab {
         } else {
             hint(spans, "Esc", "back");
             hint(spans, "Tab", "input");
-            hint(spans, TuiIcons.HINT_SCROLL, "navigate");
             if (isEditable()) {
                 hint(spans, "F4", "edit");
             }

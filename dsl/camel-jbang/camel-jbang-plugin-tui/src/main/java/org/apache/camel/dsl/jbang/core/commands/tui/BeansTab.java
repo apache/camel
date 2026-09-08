@@ -346,7 +346,6 @@ class BeansTab extends AbstractTableTab {
             hint(spans, "/", "filter");
         }
         hint(spans, "Tab", detailFocused ? "table" : "detail");
-        hint(spans, TuiIcons.HINT_SCROLL, "navigate");
         hintLast(spans, "PgUp/Dn", "scroll");
     }
 

@@ -47,6 +47,7 @@ import dev.tamboui.widgets.list.ScrollMode;
 import dev.tamboui.widgets.paragraph.Paragraph;
 import dev.tamboui.widgets.scrollbar.Scrollbar;
 import dev.tamboui.widgets.scrollbar.ScrollbarState;
+import org.apache.camel.dsl.jbang.core.common.OllamaDoctorSupport;
 
 import static org.apache.camel.dsl.jbang.core.commands.tui.TuiHelper.hint;
 import static org.apache.camel.dsl.jbang.core.commands.tui.TuiHelper.hintLast;
@@ -280,17 +281,15 @@ class DocViewerPopup {
     void renderFooter(List<Span> spans) {
         if (showViewer) {
             hint(spans, "Esc", "back");
-            hint(spans, "↑↓", "scroll");
             if (docContent != null) {
                 hint(spans, "t", "toc");
             }
             if (catalogEntryName != null) {
-                hintLast(spans, "o", "options");
+                hint(spans, "o", "options");
             }
         } else if (showPicker) {
-            hint(spans, "↑↓", "navigate");
             hint(spans, "Enter", "view");
-            hintLast(spans, "Esc", "back");
+            hintLast(spans, "Esc", "close");
         }
     }
 
@@ -381,31 +380,80 @@ class DocViewerPopup {
     }
 
     void openSetupAI() {
+        // current detection, mirroring the Doctor popup so both screens agree
+        String cloud = DoctorPopup.resolveCloudAiProvider();
+        OllamaDoctorSupport.Status ollama = OllamaDoctorSupport.detect();
+        String status;
+        if (cloud != null) {
+            status = "**Detected:** " + cloud + " (from environment)";
+        } else if (ollama.running() && ollama.models() != null && !ollama.models().isEmpty()) {
+            status = "**Detected:** Ollama at " + OllamaDoctorSupport.formatDisplayHost(ollama.baseUrl())
+                     + " with " + OllamaDoctorSupport.modelCountLabel(ollama.models());
+        } else if (ollama.running()) {
+            status = "**Detected:** Ollama is running but has no models. Run `ollama pull qwen2.5:32b`.";
+        } else {
+            status = "**Status:** No AI provider detected. Set an API key or start Ollama, then press F8.";
+        }
         String url = "http://localhost:" + mcpPort + "/mcp";
-        String client = mcpConnectedClient != null ? mcpConnectedClient.get() : null;
-        String status = client != null
-                ? "**Connected:** " + client + "\n\nYour AI agent is already connected and ready to use."
-                : "**Status:** Waiting for connection";
-        openMarkdown("Setup MCP",
-                "# Setup MCP\n\n"
-                                  + status + "\n\n"
-                                  + "## Connect Claude Code\n\n"
-                                  + "Run this command in your terminal:\n\n"
-                                  + "    claude mcp add --transport http camel-tui " + url + "\n\n"
-                                  + "Then start a new Claude Code session. The TUI footer will turn green\n"
-                                  + "when the AI agent connects.\n\n"
-                                  + "## Alternative: .mcp.json\n\n"
-                                  + "A `.mcp.json` file is auto-generated in the current directory while the\n"
-                                  + "TUI runs with `--mcp`. AI agents that scan for `.mcp.json` will discover\n"
-                                  + "the MCP server automatically.\n\n"
-                                  + "## What the AI Can Do\n\n"
-                                  + "Once connected, your AI agent can:\n\n"
-                                  + "- See the TUI screen and follow your key presses\n"
-                                  + "- Navigate tabs and select integrations\n"
-                                  + "- Read route diagrams and health status\n"
-                                  + "- Send test messages to endpoints\n"
-                                  + "- Record VHS tapes for documentation\n\n"
-                                  + "Try asking: *\"What's on my Camel TUI screen right now?\"*\n");
+        openMarkdown("Setup AI",
+                "# Setup AI\n\n"
+                                 + status + "\n\n"
+                                 + "Press **F8** to open the AI prompt panel. The panel answers questions about your running\n"
+                                 + "integrations by calling built-in tools (routes, logs, errors, traces, health).\n\n"
+                                 + "## 1. Choose a provider\n\n"
+                                 + "The panel auto-detects a provider from environment variables, in this order:\n\n"
+                                 + "| Environment | Provider |\n"
+                                 + "|-------------|----------|\n"
+                                 + "| `ANTHROPIC_API_KEY` | Anthropic Claude |\n"
+                                 + "| `CLOUD_ML_REGION` + `ANTHROPIC_VERTEX_PROJECT_ID` | Vertex AI |\n"
+                                 + "| `AZURE_OPENAI_API_KEY` + `AZURE_OPENAI_ENDPOINT` | Azure OpenAI |\n"
+                                 + "| `GEMINI_API_KEY` | Google Gemini |\n"
+                                 + "| `OPENAI_API_KEY` | OpenAI |\n"
+                                 + "| `WATSONX_APIKEY` | IBM watsonx.ai |\n"
+                                 + "| `LLM_API_KEY` + `LLM_BASE_URL` | Any OpenAI-compatible server |\n"
+                                 + "| Ollama at `localhost:11434` | Local Ollama (no key needed) |\n\n"
+                                 + "Export the variable before starting the TUI, for example:\n\n"
+                                 + "    export ANTHROPIC_API_KEY=sk-ant-...\n"
+                                 + "    camel tui\n\n"
+                                 + "To pin a provider, model or URL regardless of the environment, open\n"
+                                 + "**F2 → Settings** and set *AI Provider*, *AI Model* and *AI Base URL*\n"
+                                 + "(stored as `camel.tui.ai.provider`, `camel.tui.ai.model`, `camel.tui.ai.url`).\n\n"
+                                 + "## 2. Local AI with Ollama (no API key)\n\n"
+                                 + "Install Ollama natively for GPU acceleration, pull a model, then press F8:\n\n"
+                                 + "    brew install ollama                          # macOS\n"
+                                 + "    curl -fsSL https://ollama.com/install.sh | sh  # Linux\n"
+                                 + "    ollama pull qwen2.5:32b\n\n"
+                                 + "The AI panel relies on tool calling. Models smaller than ~14B do not call tools\n"
+                                 + "reliably and answer from training data instead. Use at least 14B; 32B is recommended.\n\n"
+                                 + "| Model | RAM | Notes |\n"
+                                 + "|-------|-----|-------|\n"
+                                 + "| `qwen2.5:14b` | ~9 GB | Minimum recommended |\n"
+                                 + "| `qwen2.5:32b` | ~20 GB | Best balance of speed and quality |\n"
+                                 + "| `deepseek-r1:32b` | ~20 GB | Strong reasoning |\n"
+                                 + "| `hermes3:70b` | ~43 GB | Excellent tool calling, needs 64 GB+ |\n"
+                                 + "| `llama3.3:70b` | ~43 GB | Best open model, needs 64 GB+ |\n\n"
+                                 + "`camel infra run ollama` runs Ollama in Docker without GPU acceleration, which is\n"
+                                 + "much slower. Prefer the native install for development.\n\n"
+                                 + "## 3. OpenAI-compatible local servers\n\n"
+                                 + "LM Studio, vLLM, llama.cpp, GPT4All and similar servers work through `LLM_BASE_URL`:\n\n"
+                                 + "    export LLM_API_KEY=any-value\n"
+                                 + "    export LLM_BASE_URL=http://localhost:1234\n"
+                                 + "    camel tui\n\n"
+                                 + "`OPENAI_BASE_URL` is accepted as an alternative to `LLM_BASE_URL`.\n\n"
+                                 + "## 4. Using the AI panel\n\n"
+                                 + "- **F8** opens and closes the panel; **Enter** sends the prompt\n"
+                                 + "- **Ctrl+P** (or `/provider`) switches provider or model for the session\n"
+                                 + "- `/model <name>` switches the model, `/clear` resets the conversation\n"
+                                 + "- `/run`, `/infra` and `/send` run Camel CLI commands from the prompt\n"
+                                 + "- **Ctrl+U** toggles the usage view with token consumption\n"
+                                 + "- `/help` lists all slash commands; **↑/↓** recalls earlier prompts\n\n"
+                                 + "Check **F2 → Run Doctor** to verify the detected provider and Ollama models.\n\n"
+                                 + "## 5. Let an AI coding agent drive the TUI (optional)\n\n"
+                                 + "Start the TUI with `--mcp` to expose an MCP server, then connect an agent such as\n"
+                                 + "Claude Code:\n\n"
+                                 + "    claude mcp add --transport http camel-tui " + url + "\n\n"
+                                 + "The footer turns green when the agent connects. See **F2 → AI & MCP → MCP Info**\n"
+                                 + "for the available tools and a `.mcp.json` example.\n");
     }
 
     void openMcpInfo() {
@@ -488,24 +536,9 @@ class DocViewerPopup {
         } else {
             title = Title.from(" " + docTitle + " ");
         }
-        List<Span> footerSpans = new ArrayList<>();
-        footerSpans.add(Span.styled(" Esc ", Theme.hintKey()));
-        footerSpans.add(Span.raw(" back  "));
-        footerSpans.add(Span.styled(" ↑↓ ", Theme.hintKey()));
-        footerSpans.add(Span.raw(" scroll  "));
-        if (docContent != null) {
-            footerSpans.add(Span.styled(" t ", Theme.hintKey()));
-            footerSpans.add(Span.raw(" toc  "));
-        }
-        if (catalogEntryName != null) {
-            footerSpans.add(Span.styled(" o ", Theme.hintKey()));
-            footerSpans.add(Span.raw(" options "));
-        }
-        Title footer = Title.from(Line.from(footerSpans));
         Block block = Block.builder()
                 .borderType(BorderType.ROUNDED).borders(Borders.ALL)
                 .title(title)
-                .titleBottom(footer)
                 .build();
         if (docLines != null) {
             frame.renderWidget(block, area);

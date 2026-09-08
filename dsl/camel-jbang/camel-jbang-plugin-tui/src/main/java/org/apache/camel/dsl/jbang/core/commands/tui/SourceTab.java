@@ -428,7 +428,6 @@ class SourceTab extends AbstractTab {
                 TuiHelper.hint(spans, "Tab", "files");
             }
         } else {
-            TuiHelper.hint(spans, TuiIcons.HINT_SCROLL, "navigate");
             TuiHelper.hint(spans, "Enter", "open");
             if (currentDir != null && rootDir != null && !currentDir.equals(rootDir)) {
                 TuiHelper.hint(spans, "Bksp", "parent");
