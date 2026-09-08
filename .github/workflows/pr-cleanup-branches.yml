@@ -33,7 +33,7 @@ jobs:
       && github.event.pull_request.head.ref != 'main'
       && !startsWith(github.event.pull_request.head.ref, 'camel-')
       && !startsWith(github.event.pull_request.head.ref, 'regen_bot_')
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-slim
     steps:
       - name: Delete branch
         env:
