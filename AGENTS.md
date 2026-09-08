@@ -50,6 +50,14 @@ These rules apply to ALL AI agents working on this codebase.
 - An agent MUST ONLY pick up **Unassigned** JIRA tickets.
 - If a ticket is already assigned to a human, the agent must not reassign it or work on it.
 - Before starting work, the agent must assign the ticket to its operator and transition it to "In Progress".
+  The CAMEL workflow uses stable numeric transition IDs:
+  - `4` -> Start Progress (In Progress)
+  - `5` -> Resolve Issue (Resolved)
+  - `2` -> Close Issue (Closed)
+
+  Still query the issue's `/transitions` endpoint before firing one of these IDs. A transition is
+  only offered from certain states, so the list above saves a lookup, it does not replace the
+  availability check.
 - Before closing a ticket, always set the correct `fixVersions` field.
   Note: `fixVersions` cannot be set on an already-closed issue — set it before closing,
   or reopen/set/close if needed.
