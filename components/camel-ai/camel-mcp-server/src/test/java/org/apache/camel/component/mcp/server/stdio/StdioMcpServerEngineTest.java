@@ -23,10 +23,14 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mcp.server.McpServerBridge;
 import org.apache.camel.component.mcp.server.McpServerConfiguration;
+import org.apache.camel.component.mcp.server.McpServerTool;
+import org.apache.camel.component.mcp.server.McpToolCallHandler;
+import org.apache.camel.component.mcp.server.McpToolCallResult;
 import org.apache.camel.test.junit6.CamelTestSupport;
 import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatCode;
 
 class StdioMcpServerEngineTest extends CamelTestSupport {
 
@@ -63,5 +67,66 @@ class StdioMcpServerEngineTest extends CamelTestSupport {
         assertThat(bridge.getEngine()).isInstanceOf(StdioMcpServerEngine.class);
         assertThat(bridge.isStarted()).isTrue();
         assertThat(bridge.getEngine().consumesServingConfiguration()).isTrue();
+    }
+
+    @Test
+    void toolAddedBeforeStartIsQueuedWithoutNpe() {
+        StdioMcpServerEngine engine = new StdioMcpServerEngine();
+        engine.initialize(new org.apache.camel.component.mcp.server.McpServerInfo(
+                "test", "1.0", "/mcp", 0, 0, null, null, null, null, null));
+
+        assertThatCode(() -> engine.toolAdded(sampleTool("queued_tool", "Queued before start")))
+                .doesNotThrowAnyException();
+        assertThatCode(() -> engine.toolRemoved("queued_tool")).doesNotThrowAnyException();
+    }
+
+    @Test
+    void toolRemovedBeforeStartDoesNotThrow() {
+        StdioMcpServerEngine engine = new StdioMcpServerEngine();
+        engine.initialize(new org.apache.camel.component.mcp.server.McpServerInfo(
+                "test", "1.0", "/mcp", 0, 0, null, null, null, null, null));
+
+        engine.toolAdded(sampleTool("ephemeral", "Removed before start"));
+        assertThatCode(() -> engine.toolRemoved("ephemeral")).doesNotThrowAnyException();
+    }
+
+    private static McpServerTool sampleTool(String name, String description) {
+        McpToolCallHandler handler = arguments -> new McpToolCallResult("ok", false);
+        return new McpServerTool() {
+            @Override
+            public String name() {
+                return name;
+            }
+
+            @Override
+            public String description() {
+                return description;
+            }
+
+            @Override
+            public String inputSchemaJson() {
+                return null;
+            }
+
+            @Override
+            public java.util.Map<String, org.apache.camel.component.ai.tool.AiToolParameterHelper.ParameterDef> parameters() {
+                return java.util.Map.of();
+            }
+
+            @Override
+            public McpToolCallHandler handler() {
+                return handler;
+            }
+
+            @Override
+            public org.apache.camel.component.ai.tool.AiToolAnnotations annotations() {
+                return null;
+            }
+
+            @Override
+            public String outputSchemaJson() {
+                return null;
+            }
+        };
     }
 }

@@ -18,6 +18,9 @@ package org.apache.camel.component.mcp.server.stdio;
 
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 
 import io.modelcontextprotocol.json.McpJsonDefaults;
@@ -64,6 +67,7 @@ public class StdioMcpServerEngine extends ServiceSupport implements McpServerEng
     private McpSyncServer server;
     private InputStream inputStream;
     private OutputStream outputStream;
+    private final List<McpServerFeatures.SyncToolSpecification> pendingTools = new ArrayList<>();
 
     @Override
     public CamelContext getCamelContext() {
@@ -78,6 +82,7 @@ public class StdioMcpServerEngine extends ServiceSupport implements McpServerEng
     @Override
     public void initialize(McpServerInfo info) {
         this.info = info;
+        this.jsonMapper = McpJsonDefaults.getMapper();
     }
 
     /**
@@ -96,7 +101,9 @@ public class StdioMcpServerEngine extends ServiceSupport implements McpServerEng
 
     @Override
     protected void doStart() throws Exception {
-        jsonMapper = McpJsonDefaults.getMapper();
+        if (jsonMapper == null) {
+            jsonMapper = McpJsonDefaults.getMapper();
+        }
         if (inputStream != null && outputStream != null) {
             transport = new StdioServerTransportProvider(jsonMapper, inputStream, outputStream);
         } else {
@@ -107,23 +114,62 @@ public class StdioMcpServerEngine extends ServiceSupport implements McpServerEng
                 .capabilities(McpSchema.ServerCapabilities.builder().tools(true).build())
                 .immediateExecution(true)
                 .build();
+        for (McpServerFeatures.SyncToolSpecification spec : pendingTools) {
+            server.addTool(spec);
+        }
+        pendingTools.clear();
         LOG.info("MCP server '{}' serving ai-tool routes over stdio", info.serverName());
     }
 
     @Override
     protected void doStop() throws Exception {
         if (server != null) {
-            // closeGracefully() shuts down the MCP sync server and its stdio transport provider.
+            // closeGracefully() shuts down the MCP sync server and its stdio transport provider
+            // (including custom stdin/stdout streams when setTransportStreams was used).
             server.closeGracefully();
             server = null;
         }
+        pendingTools.clear();
         transport = null;
     }
 
     @Override
     public void toolAdded(McpServerTool tool) {
+        McpServerFeatures.SyncToolSpecification spec = buildToolSpecification(tool);
+        if (server == null) {
+            pendingTools.add(spec);
+            LOG.debug("MCP tool queued until stdio server starts: {}", tool.name());
+            return;
+        }
+        server.addTool(spec);
+        LOG.debug("MCP tool added: {}", tool.name());
+    }
+
+    @Override
+    public void toolRemoved(String toolName) {
+        removePendingTool(toolName);
+        if (server == null) {
+            return;
+        }
+        try {
+            server.removeTool(toolName);
+            LOG.debug("MCP tool removed: {}", toolName);
+        } catch (Exception e) {
+            LOG.debug("Failed to remove MCP tool {}: {}", toolName, e.getMessage());
+        }
+    }
+
+    private void removePendingTool(String toolName) {
+        for (Iterator<McpServerFeatures.SyncToolSpecification> iterator = pendingTools.iterator(); iterator.hasNext();) {
+            if (toolName.equals(iterator.next().tool().name())) {
+                iterator.remove();
+            }
+        }
+    }
+
+    private McpServerFeatures.SyncToolSpecification buildToolSpecification(McpServerTool tool) {
         McpSchema.Tool mcpTool = buildMcpTool(tool);
-        McpServerFeatures.SyncToolSpecification spec = McpServerFeatures.SyncToolSpecification.builder()
+        return McpServerFeatures.SyncToolSpecification.builder()
                 .tool(mcpTool)
                 .callHandler((exchange, request) -> {
                     Map<String, Object> arguments = request.arguments() != null ? request.arguments() : Map.of();
@@ -134,21 +180,6 @@ public class StdioMcpServerEngine extends ServiceSupport implements McpServerEng
                             .build();
                 })
                 .build();
-        server.addTool(spec);
-        LOG.debug("MCP tool added: {}", tool.name());
-    }
-
-    @Override
-    public void toolRemoved(String toolName) {
-        if (server == null) {
-            return;
-        }
-        try {
-            server.removeTool(toolName);
-            LOG.debug("MCP tool removed: {}", toolName);
-        } catch (Exception e) {
-            LOG.debug("Failed to remove MCP tool {}: {}", toolName, e.getMessage());
-        }
     }
 
     private McpSchema.Tool buildMcpTool(McpServerTool tool) {
