@@ -67,6 +67,7 @@
   "sasljaasconfig",
   "saslpassword",
   "sassignature",
+  "sastoken",
   "secret",
   "secretkey",
   "securerandom",
