@@ -1,0 +1,185 @@
+= LangChain4j Ingest Component
+:doctitle: LangChain4j Ingest
+:shortname: langchain4j-ingest
+:artifactid: camel-langchain4j-ingest
+:description: Ingest documents into a LangChain4j EmbeddingStore: split, embed and store the message body.
+:since: 4.23
+:supportlevel: Preview
+:tabs-sync-option:
+:component-header: Only producer is supported
+//Manually maintained attributes
+:group: AI
+
+*Since Camel {since}*
+
+*{component-header}*
+
+The LangChain4j Ingest component feeds documents into a
+https://github.com/langchain4j/langchain4j[LangChain4j] `EmbeddingStore`: the message body is
+split into overlapping segments, embedded in batches and written to the store. It is the
+ingestion half of a Retrieval-Augmented Generation (RAG) setup — retrieval is served by the
+xref:langchain4j-embeddingstore-component.adoc[LangChain4j Embedding Store] component or a
+LangChain4j retriever over the same store.
+
+Every written segment carries two metadata entries, so retrieval can cite where an answer came
+from and a future synchronising engine can find a document's vectors again:
+
+* `camel_ingest_pipeline` — the pipeline name from the endpoint URI
+* `camel_ingest_document_id` — the stable document id of the ingested payload
+
+== URI format
+
+----
+langchain4j-ingest:pipelineName[?options]
+----
+
+// component options: START
+include::partial$component-configure-options.adoc[]
+include::partial$component-endpoint-options.adoc[]
+include::partial$component-endpoint-headers.adoc[]
+// component options: END
+
+== Usage
+
+=== Ingesting a directory
+
+Point a file consumer at a folder and the files in it become a knowledge base:
+
+[source,java]
+----
+from("file:/var/data/product-docs?noop=true&recursive=true&readLock=changed&charset=UTF-8")
+    .to("langchain4j-ingest:products?documentIdHeader=CamelFileName");
+----
+
+Each file is read as UTF-8 text, split into overlapping segments (`maxSegmentSize`,
+`maxOverlapSize`), embedded in batches (`embeddingBatchSize`, 32 by default) and written to
+the store; a document is held in memory whole while it is split. Providers with generous
+per-request limits ingest large documents faster with a bigger batch — a batch carries at
+most `embeddingBatchSize × maxSegmentSize` characters, so tune the two together against the
+provider's token limits. A custom LangChain4j `DocumentSplitter` bean can replace the default
+recursive splitting (`documentSplitter=#bean:name`); the two size options are then ignored,
+and segments are re-stamped with the identity metadata regardless of what the splitter
+returns. `noop=true` leaves the documents where they are — a knowledge base
+reads its source, it does not consume it — and already implies the file consumer's idempotent
+register, so unchanged files are not re-ingested within a run. The `changed` read lock keeps a
+file still being copied in from being half-ingested.
+
+The `embeddingStore` and `embeddingModel` options may be omitted when the registry holds
+exactly one bean of each type — the endpoint autowires them. With zero or several candidates
+the endpoint fails to start with a message naming the option to set.
+
+[NOTE]
+====
+This component keeps no record of what it wrote: an edited document re-ingests on top of its
+old segments, and removing a document from the source removes nothing from the store. What can
+be remembered is which document ids were already ingested — the `idempotentRepository` option
+below.
+====
+
+=== Any consumer as the source
+
+Any Camel consumer can feed the endpoint; where the document id lives in the exchange is the
+consumer's business, and `documentIdHeader` names it:
+
+[source,java]
+----
+from("aws2-s3://product-docs?region=eu-west-1&deleteAfterRead=false")
+    .to("langchain4j-ingest:s3docs?documentIdHeader=CamelAwsS3Key"
+        + "&embeddingStore=#bean:productsStore&embeddingModel=#bean:miniLm");
+----
+
+Mind each component's own defaults: the `aws2-s3` consumer *deletes objects after reading
+them* unless `deleteAfterRead=false` is set. Without a `documentIdHeader` the producer expects
+the `CamelLangChain4jIngestDocumentId` header and fails the exchange when no id is found — identity is
+what update and delete semantics are built on, so a generated fallback would silently break
+replacement.
+
+After ingestion the message body is replaced with the `IngestResult`, so a request-reply
+caller receives the outcome of its call: the pipeline, the document id, the number of segments
+written and the outcome — `ingested`, `empty` (blank document, nothing written) or `skipped`
+(duplicate id, see below).
+
+=== Deduplicating deliveries
+
+With an `idempotentRepository` configured, the producer claims each document id before
+writing: a redelivered record or re-listed object ingests once, and a duplicate is answered
+`skipped` instead of being written twice — first write wins per id. An update arriving under
+the same id is skipped, not replaced; streams that carry updates need a version-aware id. Only
+a delivery that wrote segments keeps its claim: a blank document answers `empty` and releases
+it, so an object created empty and populated later under the same id still ingests, and a
+failed write releases it so the delivery can be retried. The claim is eager — a duplicate
+racing an in-flight first delivery is answered `skipped` even if that delivery then fails.
+
+[source,java]
+----
+from("kafka:ingest-events?groupId=ingest")
+    .to("langchain4j-ingest:events?documentIdHeader=CamelKafkaKey"
+        + "&idempotentRepository=#bean:eventsRegister");
+----
+
+The repository is any `IdempotentRepository` bean — in-memory, file-backed or, to deduplicate
+across application instances, a JDBC one. It is referenced by name on purpose: an application
+may hold unrelated idempotent repositories, so none is picked up by type. The endpoint starts
+the repository but never stops it (the bean may be shared); a persistent repository's
+lifecycle belongs to whoever created it.
+
+Two limits of this deduplication are worth knowing. The claim is *eager*: a duplicate racing
+an in-flight first delivery is answered `skipped` even if that delivery then fails and
+releases the id — with an at-least-once source the skipped duplicate is acknowledged, so the
+failed original must be redelivered by its own source or the document ends up in neither the
+store nor a queue. And deduplication tracks *document ids, not segments*: the store is written
+in one call after all segments are embedded, so a mid-embedding failure writes nothing — but a
+store that fails half-way through that one write leaves the written half behind, and the
+retried delivery then duplicates it. The synchronising engine, which can replace a document's
+segments by their identity metadata, is the eventual answer to both.
+
+=== Parsed documents and the id property
+
+A parser such as Tika copies document metadata over the message headers, so a route that
+parses untrusted documents must capture the id *before* the parse — a crafted document could
+otherwise forge its own identity. The `CamelLangChain4jIngestDocumentId` exchange property
+exists for exactly this and always wins over the header:
+
+[source,java]
+----
+from("file:/var/data/reports?noop=true&readLock=changed")
+    .setProperty(LangChain4jIngest.DOCUMENT_ID_PROPERTY, header(Exchange.FILE_NAME))
+    .to("tika:parse?tikaParseOutputFormat=text&tikaParseOutputEncoding=UTF-8")
+    .process(new TikaTextDecode())
+    .to("langchain4j-ingest:reports");
+----
+
+`TikaTextDecode` ships with this component for exactly this route shape: it decodes Tika's
+text output as the pinned UTF-8 without consulting the exchange — a plain
+`getBody(String.class)` resolves its charset from the `CamelCharsetName` *header* first (then
+the property), so a message-supplied `CamelCharsetName` surviving up to the conversion would
+steer the decode. `convertBodyTo(String.class, "UTF-8")` is no substitute: that option sets
+the exchange property, which the injected header outranks. Tika also copies the parsed
+document's remaining metadata over the message headers (Camel-namespace names are filtered
+out by camel-tika); when the route continues past ingestion, sweep them with a
+`removeHeaders` step — the same hygiene the docling recipe applies to `CamelDocling*` — so
+document-chosen values do not leak into later steps.
+
+=== Limiting document size
+
+The pipeline holds a document in memory whole — the parsed text, its segments and their
+embeddings all exist at once — so a single oversized document can exhaust the heap. The
+`maxDocumentSize` option caps it: unset (the default) means no limit, which is fine for a
+directory of documents you control, while a consumer-fed pipeline accepts whatever its source
+delivers and should set the cap.
+
+The cap counts the text handed to the endpoint, in characters, before splitting — a route
+with a parse step in front should bound the raw payload as well, since a parse is itself
+memory- and CPU-expensive and a small file can still parse into a lot of text. An oversized
+document fails the exchange like any other error (see below) and releases its dedup claim, so
+a trimmed re-delivery under the same id still ingests.
+
+=== When ingestion fails
+
+A failure while splitting, embedding or storing — a rate-limited model, an unreachable store —
+propagates to the consumer, and a claimed document id is released. For a file consumer the
+file stays where it is and is retried on the next poll; a permanently failing file is retried
+forever, loudly, on every poll, so remove or fix such a file, or use the file consumer's
+`moveFailed` option to quarantine failures. For other consumers the component's own error
+handling applies: a request-reply caller receives the exception, while a Kafka consumer with
+default settings logs the failure and commits the offset, so the record is dropped.

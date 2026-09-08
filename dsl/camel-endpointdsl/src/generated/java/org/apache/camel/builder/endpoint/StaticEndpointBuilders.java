@@ -11039,6 +11039,50 @@ public class StaticEndpointBuilders {
         return LangChain4jEmbeddingStoreEndpointBuilderFactory.endpointBuilder(componentName, path);
     }
     /**
+     * LangChain4j Ingest (camel-langchain4j-ingest)
+     * Ingest documents into a LangChain4j EmbeddingStore: split, embed and
+     * store the message body.
+     * 
+     * Category: ai
+     * Since: 4.23
+     * Maven coordinates: org.apache.camel:camel-langchain4j-ingest
+     * 
+     * Syntax: <code>langchain4j-ingest:pipelineName</code>
+     * 
+     * Path parameter: pipelineName (required)
+     * The pipeline name, stamped on every written segment as the
+     * camel_ingest_pipeline metadata and used in error messages
+     * 
+     * @param path pipelineName
+     * @return the dsl builder
+     */
+    public static LangChain4jIngestEndpointBuilderFactory.LangChain4jIngestEndpointBuilder langchain4jIngest(String path) {
+        return langchain4jIngest("langchain4j-ingest", path);
+    }
+    /**
+     * LangChain4j Ingest (camel-langchain4j-ingest)
+     * Ingest documents into a LangChain4j EmbeddingStore: split, embed and
+     * store the message body.
+     * 
+     * Category: ai
+     * Since: 4.23
+     * Maven coordinates: org.apache.camel:camel-langchain4j-ingest
+     * 
+     * Syntax: <code>langchain4j-ingest:pipelineName</code>
+     * 
+     * Path parameter: pipelineName (required)
+     * The pipeline name, stamped on every written segment as the
+     * camel_ingest_pipeline metadata and used in error messages
+     * 
+     * @param componentName to use a custom component name for the endpoint
+     * instead of the default name
+     * @param path pipelineName
+     * @return the dsl builder
+     */
+    public static LangChain4jIngestEndpointBuilderFactory.LangChain4jIngestEndpointBuilder langchain4jIngest(String componentName, String path) {
+        return LangChain4jIngestEndpointBuilderFactory.endpointBuilder(componentName, path);
+    }
+    /**
      * LangChain4j Web Search (camel-langchain4j-web-search)
      * LangChain4j Web Search Engine
      * 
