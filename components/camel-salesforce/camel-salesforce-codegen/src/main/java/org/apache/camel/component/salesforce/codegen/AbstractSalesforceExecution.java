@@ -25,6 +25,7 @@ import java.util.Set;
 import java.util.concurrent.ExecutorService;
 
 import org.apache.camel.CamelContext;
+import org.apache.camel.component.salesforce.AuthenticationType;
 import org.apache.camel.component.salesforce.SalesforceHttpClient;
 import org.apache.camel.component.salesforce.SalesforceLoginConfig;
 import org.apache.camel.component.salesforce.api.SalesforceException;
@@ -156,6 +157,11 @@ public abstract class AbstractSalesforceExecution {
      * Salesforce username.
      */
     String userName;
+
+    /**
+     * Salesforce authentication type.
+     */
+    AuthenticationType authenticationType;
 
     /**
      * Salesforce API version.
@@ -321,14 +327,16 @@ public abstract class AbstractSalesforceExecution {
     }
 
     private SalesforceLoginConfig getSalesforceLoginSession() {
-        if (keyStoreParameters != null) {
-            SalesforceLoginConfig salesforceLoginConfig
-                    = new SalesforceLoginConfig(loginUrl, clientId, userName, keyStoreParameters, false);
-            salesforceLoginConfig.setJwtAudience(jwtAudience);
-
-            return salesforceLoginConfig;
-        }
-        return new SalesforceLoginConfig(loginUrl, clientId, clientSecret, userName, password, false);
+        SalesforceLoginConfig config = new SalesforceLoginConfig();
+        config.setLoginUrl(loginUrl);
+        config.setClientId(clientId);
+        config.setClientSecret(clientSecret);
+        config.setUserName(userName);
+        config.setPassword(password);
+        config.setKeystore(keyStoreParameters);
+        config.setJwtAudience(jwtAudience);
+        config.setType(authenticationType);
+        return config;
     }
 
     private void disconnectFromSalesforce(final RestClient restClient) {
@@ -414,6 +422,10 @@ public abstract class AbstractSalesforceExecution {
 
     public void setKeyStoreParameters(KeyStoreParameters keyStoreParameters) {
         this.keyStoreParameters = keyStoreParameters;
+    }
+
+    public void setAuthenticationType(AuthenticationType authenticationType) {
+        this.authenticationType = authenticationType;
     }
 
     public void setUserName(String userName) {
