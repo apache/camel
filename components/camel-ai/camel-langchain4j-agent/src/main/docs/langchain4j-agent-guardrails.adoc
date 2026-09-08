@@ -610,6 +610,37 @@ public class AgentConfig {
 }
 ----
 
+=== Content Moderation
+
+LangChain4j supports provider-based content moderation through a `ModerationModel` combined with the `@Moderate`
+annotation on AI service methods. The langchain4j-agent component wires moderation automatically when you configure
+`AgentConfiguration.withModerationModel(...)`. Flagged user input raises `ModerationException` before the agent
+response is returned. The producer sets exchange headers `CamelLangChain4jAgentModeration` and
+`CamelLangChain4jAgentModerationFlaggedText` when moderation fails so routes can return a controlled refusal.
+
+Moderation complements guardrails: guardrails are deterministic Java rules you implement; moderation delegates policy
+checks to an LLM provider API (OpenAI Moderation, Mistral moderation, etc.).
+
+._Java-only: public support chatbot with moderation and controlled refusal_
+[source,java]
+----
+AgentConfiguration configuration = new AgentConfiguration()
+    .withChatModel(chatModel)
+    .withModerationModel(openAiModerationModel);
+
+context.getRegistry().bind("supportAgentConfig", configuration);
+
+onException(ModerationException.class)
+    .handled(true)
+    .setHeader(Exchange.HTTP_RESPONSE_CODE, constant(422))
+    .setBody(constant("Sorry, your message violates our usage policy."));
+
+from("platform-http:/support/chat")
+    .to("langchain4j-agent:support?agentConfiguration=#supportAgentConfig&tags=orders,billing");
+----
+
+In Spring Boot, inject an auto-configured `ModerationModel` bean from the LangChain4j starter alongside `ChatModel`.
+
 === Guardrail Behavior Summary
 
 [cols="1,1,2"]

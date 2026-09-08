@@ -158,6 +158,7 @@ Agents are configured using the `AgentConfiguration` class which provides a flue
 * Chat Memory Provider (for memory-enabled agents)
 * Retrieval Augmentor (for RAG functionality)
 * Input and Output Guardrails
+* Content moderation (`withModerationModel`)
 * Concurrent tool execution (`withExecuteToolsConcurrently`) for parallel Camel route tools and MCP tools within one LLM round trip
 * Tool-calling control: round-trip limits, hallucinated tool handling, and error compensation
 * AiServices builder customizer for advanced LangChain4j options
@@ -176,6 +177,7 @@ Agents are configured using the `AgentConfiguration` class which provides a flue
 | `withToolArgumentsErrorHandler(...)` | Handles invalid or unparsable tool arguments
 | `withCompensateOnToolErrors(Boolean)` | Sends tool errors back to the LLM so it can recover instead of failing the exchange
 | `withExecuteToolsConcurrently()` / `withExecuteToolsConcurrently(Executor)` | Runs multiple tool calls from one LLM turn in parallel
+| `withModerationModel(ModerationModel)` | Enables LangChain4j `@Moderate` checks on agent chat methods; flagged input raises `ModerationException`
 |===
 
 ._Java-only: recover from a hallucinated tool name_

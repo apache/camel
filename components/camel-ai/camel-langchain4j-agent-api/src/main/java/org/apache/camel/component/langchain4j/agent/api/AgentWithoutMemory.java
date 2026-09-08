@@ -36,30 +36,44 @@ public class AgentWithoutMemory extends AbstractAgent<AiAgentWithoutMemoryServic
 
     @Override
     public Result<String> chat(AiAgentBody<?> aiAgentBody, ToolProvider toolProvider) {
-        AiAgentWithoutMemoryService agentService = createAiAgentService(toolProvider);
-
         String userMessage = aiAgentBody.getUserMessage();
         String systemMessage = aiAgentBody.getSystemMessage();
         Content content = aiAgentBody.getContent();
 
-        if (content != null) {
-            // Multi-modal message with content
-            return systemMessage != null
-                    ? agentService.chat(userMessage, content, systemMessage)
-                    : agentService.chat(userMessage, content);
-        } else {
-            // Text-only message
+        if (configuration.getModerationModel() != null) {
+            AiAgentWithoutMemoryModeratedService agentService = createModeratedAiAgentService(toolProvider);
+            if (content != null) {
+                return systemMessage != null
+                        ? agentService.chat(userMessage, content, systemMessage)
+                        : agentService.chat(userMessage, content);
+            }
             return systemMessage != null
                     ? agentService.chat(userMessage, systemMessage)
                     : agentService.chat(userMessage);
         }
+
+        AiAgentWithoutMemoryService agentService = createAiAgentService(toolProvider);
+        if (content != null) {
+            return systemMessage != null
+                    ? agentService.chat(userMessage, content, systemMessage)
+                    : agentService.chat(userMessage, content);
+        }
+        return systemMessage != null
+                ? agentService.chat(userMessage, systemMessage)
+                : agentService.chat(userMessage);
     }
 
-    /**
-     * Create AI service with common configurations (no memory provider).
-     */
     private AiAgentWithoutMemoryService createAiAgentService(ToolProvider toolProvider) {
         var builder = AiServices.builder(AiAgentWithoutMemoryService.class)
+                .chatModel(configuration.getChatModel());
+
+        configureBuilder(builder, toolProvider);
+
+        return builder.build();
+    }
+
+    private AiAgentWithoutMemoryModeratedService createModeratedAiAgentService(ToolProvider toolProvider) {
+        var builder = AiServices.builder(AiAgentWithoutMemoryModeratedService.class)
                 .chatModel(configuration.getChatModel());
 
         configureBuilder(builder, toolProvider);

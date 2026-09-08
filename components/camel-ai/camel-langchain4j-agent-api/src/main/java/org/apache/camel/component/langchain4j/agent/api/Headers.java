@@ -71,4 +71,12 @@ public class Headers {
     @Metadata(description = "Tool executions performed during agent invocation.",
               javaType = "java.util.List<dev.langchain4j.service.tool.ToolExecution>")
     public static final String TOOL_EXECUTIONS = "CamelLangChain4jAgentToolExecutions";
+
+    @Metadata(description = "LangChain4j moderation result when input is flagged by the configured moderation model.",
+              javaType = "dev.langchain4j.model.moderation.Moderation")
+    public static final String MODERATION = "CamelLangChain4jAgentModeration";
+
+    @Metadata(description = "Text flagged by the moderation model, when available.",
+              javaType = "String")
+    public static final String MODERATION_FLAGGED_TEXT = "CamelLangChain4jAgentModerationFlaggedText";
 }

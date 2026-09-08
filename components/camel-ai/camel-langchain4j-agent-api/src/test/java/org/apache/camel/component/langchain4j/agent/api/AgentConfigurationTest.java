@@ -32,6 +32,7 @@ import dev.langchain4j.data.message.ToolExecutionResultMessage;
 import dev.langchain4j.model.chat.ChatModel;
 import dev.langchain4j.model.chat.request.ChatRequest;
 import dev.langchain4j.model.chat.response.ChatResponse;
+import dev.langchain4j.model.moderation.ModerationModel;
 import dev.langchain4j.service.tool.ToolArgumentsErrorHandler;
 import dev.langchain4j.service.tool.ToolExecutionErrorHandler;
 import org.junit.jupiter.api.Test;
@@ -340,6 +341,16 @@ class AgentConfigurationTest {
 
         assertSame(config, result);
         assertNotNull(config.getAiServicesCustomizer());
+    }
+
+    @Test
+    void testWithModerationModel() {
+        ModerationModel moderationModel = new FlaggingModerationModel("never-used");
+
+        AgentConfiguration config = new AgentConfiguration()
+                .withModerationModel(moderationModel);
+
+        assertSame(moderationModel, config.getModerationModel());
     }
 
     @Test

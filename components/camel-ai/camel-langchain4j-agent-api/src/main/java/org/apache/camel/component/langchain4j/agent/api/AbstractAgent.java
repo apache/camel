@@ -41,6 +41,7 @@ import org.apache.camel.util.ObjectHelper;
  * <li>Custom LangChain4j tools</li>
  * <li>RAG (Retrieval Augmented Generation)</li>
  * <li>Input and Output Guardrails</li>
+ * <li>Content moderation ({@code ModerationModel})</li>
  * </ul>
  *
  * <p>
@@ -126,7 +127,7 @@ public abstract class AbstractAgent<S> implements Agent {
      * @param toolProvider the Apache Camel tool provider (may be null)
      */
     @SuppressWarnings("unchecked")
-    protected void configureBuilder(AiServices<S> builder, ToolProvider toolProvider) {
+    protected void configureBuilder(AiServices<?> builder, ToolProvider toolProvider) {
         // Collect all tool providers to compose them into a single provider
         List<ToolProvider> toolProviders = new ArrayList<>();
 
@@ -173,6 +174,11 @@ public abstract class AbstractAgent<S> implements Agent {
         // Output Guardrails
         if (configuration.getOutputGuardrailClasses() != null && !configuration.getOutputGuardrailClasses().isEmpty()) {
             builder.outputGuardrailClasses((List) configuration.getOutputGuardrailClasses());
+        }
+
+        // Content moderation (@Moderate on service interface methods)
+        if (configuration.getModerationModel() != null) {
+            builder.moderationModel(configuration.getModerationModel());
         }
 
         // Response Format (structured output): set once at startup via setResponseFormat(), used here per request

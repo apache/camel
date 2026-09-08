@@ -1,0 +1,44 @@
+/*
+ * Licensed to the Apache Software Foundation (ASF) under one or more
+ * contributor license agreements.  See the NOTICE file distributed with
+ * this work for additional information regarding copyright ownership.
+ * The ASF licenses this file to You under the Apache License, Version 2.0
+ * (the "License"); you may not use this file except in compliance with
+ * the License.  You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+package org.apache.camel.component.langchain4j.agent.api;
+
+import dev.langchain4j.data.message.Content;
+import dev.langchain4j.service.Moderate;
+import dev.langchain4j.service.Result;
+import dev.langchain4j.service.SystemMessage;
+import dev.langchain4j.service.UserMessage;
+import dev.langchain4j.service.V;
+
+/**
+ * Moderated variant of {@link AiAgentWithoutMemoryService} used when a {@code ModerationModel} is configured.
+ */
+interface AiAgentWithoutMemoryModeratedService {
+
+    @Moderate
+    Result<String> chat(@UserMessage String message);
+
+    @Moderate
+    Result<String> chat(@UserMessage String message, @UserMessage Content content);
+
+    @SystemMessage("{{prompt}}")
+    @Moderate
+    Result<String> chat(@UserMessage String message, @V("prompt") String prompt);
+
+    @SystemMessage("{{prompt}}")
+    @Moderate
+    Result<String> chat(@UserMessage String message, @UserMessage Content content, @V("prompt") String prompt);
+}

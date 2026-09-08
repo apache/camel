@@ -33,6 +33,7 @@ import dev.langchain4j.data.message.ToolExecutionResultMessage;
 import dev.langchain4j.mcp.client.McpClient;
 import dev.langchain4j.memory.chat.ChatMemoryProvider;
 import dev.langchain4j.model.chat.ChatModel;
+import dev.langchain4j.model.moderation.ModerationModel;
 import dev.langchain4j.rag.RetrievalAugmentor;
 import dev.langchain4j.service.AiServices;
 import dev.langchain4j.service.tool.ToolArgumentsErrorHandler;
@@ -58,6 +59,7 @@ import org.slf4j.LoggerFactory;
  * <li><strong>Retrieval Augmentor:</strong> For RAG (Retrieval-Augmented Generation) capabilities</li>
  * <li><strong>Input Guardrails:</strong> Security filters applied to incoming messages</li>
  * <li><strong>Output Guardrails:</strong> Security filters applied to agent responses</li>
+ * <li><strong>Moderation Model:</strong> LangChain4j content moderation for {@code @Moderate} service methods</li>
  * <li><strong>Custom Tools:</strong> Custom LangChain4j tools with @Tool annotations</li>
  * <li><strong>MCP Clients:</strong> Model Context Protocol clients for external tool integration</li>
  * <li><strong>MCP Tool Filters:</strong> Filters for controlling which MCP tools are available</li>
@@ -69,6 +71,7 @@ public class AgentConfiguration {
     private static final Logger LOG = LoggerFactory.getLogger(AgentConfiguration.class);
 
     private ChatModel chatModel;
+    private ModerationModel moderationModel;
     private ChatMemoryProvider chatMemoryProvider;
     private RetrievalAugmentor retrievalAugmentor;
     private List<Class<?>> inputGuardrailClasses;
@@ -102,6 +105,30 @@ public class AgentConfiguration {
      */
     public AgentConfiguration withChatModel(ChatModel chatModel) {
         this.chatModel = chatModel;
+        return this;
+    }
+
+    /**
+     * Gets the configured moderation model.
+     *
+     * @return the moderation model instance, or {@code null} if not configured
+     * @since  4.23
+     */
+    public ModerationModel getModerationModel() {
+        return moderationModel;
+    }
+
+    /**
+     * Sets the LangChain4j moderation model for content policy checks on agent chat methods annotated with
+     * {@code @Moderate}. When configured, flagged user input raises {@code ModerationException} before the agent
+     * response is returned to the route.
+     *
+     * @param  moderationModel the moderation model (for example OpenAI or Mistral moderation APIs)
+     * @return                 this configuration instance for method chaining
+     * @since                  4.23
+     */
+    public AgentConfiguration withModerationModel(ModerationModel moderationModel) {
+        this.moderationModel = moderationModel;
         return this;
     }
 
@@ -539,6 +566,7 @@ public class AgentConfiguration {
     public AgentConfiguration duplicate() {
         AgentConfiguration copy = new AgentConfiguration();
         copy.chatModel = chatModel;
+        copy.moderationModel = moderationModel;
         copy.chatMemoryProvider = chatMemoryProvider;
         copy.retrievalAugmentor = retrievalAugmentor;
         copy.inputGuardrailClasses = inputGuardrailClasses;
