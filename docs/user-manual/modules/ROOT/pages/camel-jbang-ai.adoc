@@ -148,7 +148,7 @@ brew install ollama
 curl -fsSL https://ollama.com/install.sh | sh
 
 # Pull a model and start asking
-ollama pull qwen2.5:32b
+ollama pull qwen3.6:35b-a3b
 camel ask "what routes are running?"
 ----
 
@@ -159,19 +159,24 @@ The CLI checks what models are available and auto-selects a suitable one.
 
 `camel ask` and the TUI F8 panel rely on tool calling to inspect your running Camel process.
 Models smaller than ~14B do not reliably invoke tools and answer from training knowledge instead.
-Use at least a 14B model; 32B is recommended.
+Use at least a 14B model. Prefer a mixture-of-experts model such as `qwen3.6:35b-a3b`: with only
+3B parameters active per token it processes the tool-heavy prompt many times faster than a dense
+27B/32B model, so answers start in seconds instead of a minute.
 
 [options="header"]
 |===
 | Model | RAM (Q4) | Notes
-| `qwen2.5:14b` | ~9 GB | Minimum recommended
-| `qwen2.5:32b` | ~20 GB | Best balance of speed and quality
-| `deepseek-r1:32b` | ~20 GB | Strong reasoning
+| `qwen3.6:35b-a3b` | ~23 GB | Recommended: fastest prompt processing, needs 32 GB+
+| `qwen2.5:14b` | ~9 GB | Minimum for 16 GB machines
+| `qwen3.6:27b` | ~18 GB | Strong dense model, several times slower prompt processing
+| `qwen2.5:32b` | ~20 GB | Good quality, slow prompt processing
 | `hermes3:70b` | ~43 GB | Excellent tool calling, needs 64 GB+
 | `llama3.3:70b` | ~43 GB | Best open model, needs 64 GB+
 |===
 
 On Apple Silicon, all RAM is unified — a 64 GB M-series Mac can run `llama3.3:70b` comfortably alongside the OS and other dev tools.
+Use the default (GGUF) tags rather than the `-mlx` tags: the Ollama MLX engine cannot yet reuse the
+cached prompt for Qwen 3.x models, so every question re-processes the whole prompt.
 
 === Using an OpenAI-compatible local server
 

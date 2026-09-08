@@ -397,7 +397,7 @@ class DoctorPopup {
                     Style.EMPTY.dim())));
             if (allSmall) {
                 result.add(Line.from(Span.styled(
-                        "                    F8 needs ≥14B — run: ollama pull qwen2.5:14b",
+                        "                    F8 needs ≥14B — run: ollama pull qwen3.6:35b-a3b",
                         Style.EMPTY.dim())));
             }
         } else {

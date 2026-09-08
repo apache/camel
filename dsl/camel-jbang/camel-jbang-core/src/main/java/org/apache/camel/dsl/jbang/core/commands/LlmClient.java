@@ -1965,7 +1965,7 @@ public class LlmClient {
             }
 
             List<String> preferred
-                    = List.of("qwen3.5", "qwen3", "nemotron-3-nano", "mistral-nemo",
+                    = List.of("qwen3.6", "qwen3.5", "qwen3", "nemotron-3-nano", "mistral-nemo",
                             "qwen2.5", "granite4.1", "llama3.1", "llama3.3", "mistral");
             for (String pref : preferred) {
                 for (String avail : available) {

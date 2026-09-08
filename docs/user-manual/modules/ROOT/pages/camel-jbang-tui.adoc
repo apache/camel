@@ -782,7 +782,7 @@ brew install ollama
 curl -fsSL https://ollama.com/install.sh | sh
 
 # Pull a model — then open the TUI and press F8
-ollama pull qwen2.5:32b
+ollama pull qwen3.6:35b-a3b
 camel tui
 ----
 
@@ -790,22 +790,29 @@ Ollama at `localhost:11434` is auto-detected. No configuration needed.
 
 IMPORTANT: The F8 AI panel works by invoking built-in tools to inspect your running Camel process.
 Models smaller than ~14B do not reliably call tools and answer from training knowledge instead.
-Use at least a 14B model; 32B is recommended.
+Use at least a 14B model. Prefer a mixture-of-experts model such as `qwen3.6:35b-a3b`: with only
+3B parameters active per token it processes the tool-heavy prompt many times faster than a dense
+27B/32B model, so answers start in seconds instead of a minute.
 
 *Models that work well* (tool-calling capable, ≥14B, default Q4_K_M quantization):
 
 [options="header"]
 |===
 | Model | RAM | Notes
-| `qwen2.5:14b` | ~9 GB | Minimum recommended
-| `qwen2.5:32b` | ~20 GB | Best balance of speed and quality
-| `deepseek-r1:32b` | ~20 GB | Strong reasoning
+| `qwen3.6:35b-a3b` | ~23 GB | Recommended: fastest prompt processing, needs 32 GB+
+| `qwen2.5:14b` | ~9 GB | Minimum for 16 GB machines
+| `qwen3.6:27b` | ~18 GB | Strong dense model, several times slower prompt processing
+| `qwen2.5:32b` | ~20 GB | Good quality, slow prompt processing
 | `hermes3:70b` | ~43 GB | Excellent tool calling, needs 64 GB+
 | `llama3.3:70b` | ~43 GB | Best open model, needs 64 GB+
 |===
 
 NOTE: `camel infra run ollama` runs Ollama in Docker and bypasses GPU acceleration,
 making inference significantly slower. Native install is preferred for development.
+
+NOTE: On Apple Silicon, use the default (GGUF) tags rather than the `-mlx` tags. The Ollama MLX
+engine cannot yet reuse the cached prompt for Qwen 3.x models, so every question re-processes the
+whole prompt, while the default engine reuses it and only processes what is new.
 
 ==== Using an OpenAI-compatible local server
 

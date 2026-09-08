@@ -1595,8 +1595,9 @@ class AiPanel {
 
                 > **Tool calling is required.** This panel inspects your Camel process by
                 > invoking built-in tools. Models smaller than ~14B do not reliably call
-                > tools and will answer from training knowledge instead — use at least 14B,
-                > 32B recommended.
+                > tools and will answer from training knowledge instead — use at least 14B.
+                > Prefer a mixture-of-experts model such as qwen3.6:35b-a3b: it processes
+                > the tool-heavy prompt many times faster than a dense 27B/32B model.
 
                 ---
 
@@ -1613,7 +1614,7 @@ class AiPanel {
 
                 # then on both:
                 ollama serve             # start the daemon (skip if auto-started)
-                ollama pull qwen2.5:32b  # recommended
+                ollama pull qwen3.6:35b-a3b  # recommended
                 ```
 
                 Ollama is auto-detected at `localhost:11434` — no configuration needed.
@@ -1622,9 +1623,10 @@ class AiPanel {
 
                 | Model | RAM | Notes |
                 |---|---|---|
-                | qwen2.5:14b | ~9 GB | Minimum recommended |
-                | qwen2.5:32b | ~20 GB | Best balance of speed and quality |
-                | deepseek-r1:32b | ~20 GB | Strong reasoning |
+                | qwen3.6:35b-a3b | ~23 GB | Recommended: only 3B active per token, fastest prompt processing |
+                | qwen2.5:14b | ~9 GB | Minimum for 16 GB machines |
+                | qwen3.6:27b | ~18 GB | Strong dense model, several times slower prompt processing |
+                | qwen2.5:32b | ~20 GB | Good quality, slow prompt processing |
                 | hermes3:70b  | ~43 GB | Excellent tool calling, needs 64 GB+ |
                 | llama3.3:70b | ~43 GB | Best open model, needs 64 GB+ |
 
