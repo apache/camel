@@ -168,6 +168,8 @@ The following headers are set after an embeddings request:
 | `CamelOpenAISimilarityScore` | Double | Cosine similarity (if reference embedding provided)
 |===
 
+Set `storeFullResponse=true` to keep the complete SDK response in the `CamelOpenAIEmbeddingsResponse` exchange property.
+
 == Moderation Operation
 
 The `moderation` operation checks text against the OpenAI usage policies. It is the canonical pre-filter for untrusted
@@ -362,6 +364,8 @@ Supported audio formats: flac, mp3, mp4, mpeg, mpga, m4a, ogg, wav, webm.
 | `CamelOpenAIAudioDetectedLanguage` | String | Language detected in the audio (verbose_json only)
 |===
 
+Set `storeFullResponse=true` to keep the complete SDK response in the `CamelOpenAIAudioTranscriptionResponse` exchange property.
+
 === Audio Models by Provider
 
 [cols="1,2,3"]
@@ -500,6 +504,8 @@ NOTE: The translation operation always outputs English text, so it does not acce
 | `CamelOpenAIAudioDuration` | Double | Duration of the audio in seconds (verbose_json only)
 | `CamelOpenAIAudioDetectedLanguage` | String | Source language detected in the audio (verbose_json only)
 |===
+
+Set `storeFullResponse=true` to keep the complete SDK response in the `CamelOpenAIAudioTranslationResponse` exchange property.
 
 == Audio Speech (Text-to-Speech) Operation
 
