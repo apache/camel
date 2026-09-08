@@ -18,6 +18,7 @@ package org.apache.camel.test.oauth;
 
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.net.ConnectException;
 import java.net.URI;
 import java.security.KeyStore;
 import java.security.cert.CertificateException;
@@ -38,6 +39,9 @@ import org.slf4j.LoggerFactory;
 class SSLCertTrustTest extends AbstractKeycloakTest {
 
     private static final Logger LOG = LoggerFactory.getLogger(SSLCertTrustTest.class);
+
+    private static final int CONNECT_TIMEOUT_MS = 10_000;
+    private static final int READ_TIMEOUT_MS = 10_000;
 
     @Test
     void testCheckClusterCertificateTrust() throws Exception {
@@ -79,12 +83,25 @@ class SSLCertTrustTest extends AbstractKeycloakTest {
     @Test
     void testUntrustedCertificate() {
         String url = "https://untrusted-root.badssl.com"; // Example of an untrusted cert
-        Assertions.assertThrows(SSLHandshakeException.class, () -> connectToUrl(url), "Certificate should not be trusted");
+        try {
+            connectToUrl(url);
+            Assertions.fail("Certificate should not be trusted");
+        } catch (SSLHandshakeException e) {
+            // Expected: untrusted certificate
+        } catch (ConnectException e) {
+            // External site unreachable (e.g. CI network restrictions) — skip test
+            Assumptions.assumeTrue(false, "External site unreachable: " + e.getMessage());
+        } catch (IOException e) {
+            // Other network errors (timeout, etc.) — skip test rather than fail
+            Assumptions.assumeTrue(false, "External site unreachable: " + e.getMessage());
+        }
     }
 
     private static void connectToUrl(String httpsUrl) throws IOException {
         var url = URI.create(httpsUrl).toURL();
         var con = (HttpsURLConnection) url.openConnection();
+        con.setConnectTimeout(CONNECT_TIMEOUT_MS);
+        con.setReadTimeout(READ_TIMEOUT_MS);
         con.connect();
     }
 }
