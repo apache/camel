@@ -18,6 +18,7 @@ package org.apache.camel.dsl.jbang.core.commands.tui;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -89,7 +90,8 @@ class TuiToolRegistry {
             "tui_get_state", "tui_get_options", "tui_get_table", "tui_get_log", "tui_get_errors",
             "tui_get_diagram", "tui_get_topology", "tui_get_processor_detail", "tui_catalog_doc",
             "tui_get_history", "tui_get_spans", "tui_control", "tui_send_message", "tui_get_files",
-            "tui_get_readme", "tui_navigate", "tui_set_log_level", "tui_filter", "tui_get_status");
+            "tui_get_readme", "tui_navigate", "tui_set_log_level", "tui_filter", "tui_get_status",
+            "tui_infra");
 
     /**
      * Returns all tool definitions. The result is cached since it is immutable.
@@ -148,6 +150,7 @@ class TuiToolRegistry {
             case "tui_toggle_trace_display" -> callToggleTraceDisplay(args);
             case "tui_get_readme" -> callGetReadme(args);
             case "tui_control" -> callControl(args);
+            case "tui_infra" -> callInfra(args);
             case "tui_open_project" -> callOpenProject(args);
             case "tui_get_files" -> callGetFiles(args);
             case "tui_get_spans" -> callGetSpans(args);
@@ -371,10 +374,12 @@ class TuiToolRegistry {
                 List.of("section"))));
         tools.add(toToolDef(toolDef(
                 "tui_action",
-                "Invokes a TUI action by name, bypassing fragile key sequences. "
-                              + "Actions: reset-stats, reset-screen, screenshot, show-keystrokes, "
+                "Invokes a TUI action by name or by its F2 menu label (as listed in tui_get_options actions), "
+                              + "bypassing fragile key sequences. "
+                              + "Names: reset-stats, reset-screen, screenshot, show-keystrokes, "
                               + "tape-recording, doctor, caption, mcp-info, mcp-log, toggle-theme.",
-                Map.of("action", propDef("string", "Action name in kebab-case (e.g. 'reset-stats', 'screenshot')")),
+                Map.of("action", propDef("string",
+                        "Action name in kebab-case (e.g. 'reset-stats') or menu label (e.g. 'Run Doctor')")),
                 List.of("action"))));
         tools.add(toToolDef(toolDef(
                 "tui_get_themes",
@@ -389,10 +394,12 @@ class TuiToolRegistry {
         tools.add(toToolDef(toolDef(
                 "tui_get_log",
                 "Returns recent log lines as structured data with optional filtering. "
-                               + "Returns newest entries first.",
+                               + "Returns newest entries first. Reads the selected integration's log, or an infra "
+                               + "service's log when infra=<alias> is given.",
                 Map.of("limit", propDef("integer", "Maximum lines to return (default 50)"),
                         "filter", propDef("string", "Case-insensitive substring filter on log message"),
-                        "level", propDef("string", "Filter by log level (INFO, WARN, ERROR, DEBUG, TRACE)")))));
+                        "level", propDef("string", "Filter by log level (INFO, WARN, ERROR, DEBUG, TRACE)"),
+                        "infra", propDef("string", "Infra service alias whose log to read instead")))));
         tools.add(toToolDef(toolDef(
                 "tui_get_errors",
                 "Returns structured error data from the Errors tab. "
@@ -528,6 +535,17 @@ class TuiToolRegistry {
                 Map.of("action", propDef("string",
                         "Control action: reset-stats, stop-routes, start-routes, pause, resume, restart, stop, kill, "
                                                    + "stop-all, or close")),
+                List.of("action"))));
+        tools.add(toToolDef(toolDef(
+                "tui_infra",
+                "Lists and controls infra services (brokers, databases started with camel infra run, e.g. "
+                             + "mosquitto, kafka, postgres). Actions: list — running services with alias, pid, "
+                             + "version and connection properties; log — newest lines of a service's log; "
+                             + "start, stop, restart — change state, only when the user asked.",
+                Map.of("action", propDef("string", "list, log, start, stop or restart"),
+                        "alias", propDef("string", "Service alias (required except for list)"),
+                        "limit", propDef("integer", "log: maximum lines to return (default 50)"),
+                        "filter", propDef("string", "log: case-insensitive substring filter")),
                 List.of("action"))));
         tools.add(toToolDef(toolDef(
                 "tui_open_project",
@@ -709,6 +727,7 @@ class TuiToolRegistry {
             result.put("selectedIntegration", name);
         }
         result.put("integrationCount", facade.getIntegrationCount());
+        addInfraContext(result);
         result.put("keystrokesVisible", facade.isKeystrokesVisible());
         result.put("captionVisible", facade.isCaptionVisible());
         addSelectionContext(result);
@@ -926,19 +945,22 @@ class TuiToolRegistry {
             result.put("selectedIntegration", selected);
         }
         result.put("integrationCount", facade.getIntegrationCount());
+        JsonArray infraArray = new JsonArray();
+        for (InfraInfo info : facade.liveInfraServices()) {
+            infraArray.add(InfraSupport.toJson(info));
+        }
+        result.put("infraServices", infraArray);
+        addInfraContext(result);
 
-        List<String> actions = facade.getActionLabels();
+        // Menu entries by label only: tui_action takes a label, which is sturdier (and far smaller on the wire) than
+        // the F2 + n x Down + Enter key sequences this used to spell out per entry.
         JsonArray actionsArray = new JsonArray();
-        for (int i = 0; i < actions.size(); i++) {
-            JsonObject action = new JsonObject();
-            action.put("index", i);
-            action.put("label", actions.get(i));
-            action.put("keys", actionKeys(i, actions.size()));
-            actionsArray.add(action);
+        for (String label : facade.getActionLabels()) {
+            if (!label.startsWith("─")) {
+                actionsArray.add(label);
+            }
         }
         result.put("actions", actionsArray);
-        result.put("actionsHint",
-                "Press F2 to open the Actions menu, then use Down arrow to reach the item by index, then Enter to select.");
 
         return Jsoner.serialize(result);
     }
@@ -1351,8 +1373,9 @@ class TuiToolRegistry {
             return "Action '" + action + "' executed";
         }
         return "Unknown or unsupported action: " + action
-               + ". Available: reset-stats, reset-screen, screenshot, show-keystrokes, "
-               + "tape-recording, doctor, caption, mcp-info, mcp-log, toggle-theme";
+               + ". Use a name (reset-stats, reset-screen, screenshot, show-keystrokes, "
+               + "tape-recording, doctor, caption, mcp-info, mcp-log, toggle-theme) "
+               + "or a menu label from tui_get_options actions";
     }
 
     private String callGetThemes() {
@@ -1399,8 +1422,106 @@ class TuiToolRegistry {
         }
         String filter = args.get("filter") instanceof String s ? s : null;
         String level = args.get("level") instanceof String s ? s : null;
+        if (args.get("infra") instanceof String alias && !alias.isBlank()) {
+            return infraLog(alias, limit, filter);
+        }
         JsonObject data = facade.getLogData(limit, filter, level);
         return Jsoner.serialize(data);
+    }
+
+    private void addInfraContext(JsonObject result) {
+        result.put("infraCount", facade.liveInfraServices().size());
+        String selectedInfra = facade.getSelectedInfraAlias();
+        if (selectedInfra != null) {
+            result.put("selectedInfra", selectedInfra);
+        }
+    }
+
+    private String infraLog(String alias, int limit, String filter) {
+        InfraInfo info = facade.findInfra(alias);
+        if (info == null) {
+            return unknownInfra(alias);
+        }
+        try {
+            return Jsoner.serialize(facade.getInfraLogData(info, limit, filter));
+        } catch (Exception e) {
+            return "Error: cannot read log of infra service " + info.alias + ": " + e.getMessage();
+        }
+    }
+
+    private String unknownInfra(String alias) {
+        List<String> running = facade.liveInfraServices().stream().map(i -> i.alias).toList();
+        return "Error: no running infra service named '" + alias + "'. Running: "
+               + (running.isEmpty() ? "none" : String.join(", ", running));
+    }
+
+    private String callInfra(Map<String, Object> args) {
+        String action = args.get("action") instanceof String s ? s.strip().toLowerCase(Locale.ROOT) : "";
+        if (action.isEmpty()) {
+            return "Error: action is required (list, log, start, stop, restart)";
+        }
+        if ("list".equals(action) || "ps".equals(action)) {
+            JsonArray arr = new JsonArray();
+            for (InfraInfo info : facade.liveInfraServices()) {
+                arr.add(InfraSupport.toJson(info));
+            }
+            JsonObject result = new JsonObject();
+            result.put("infraServices", arr);
+            result.put("count", arr.size());
+            return Jsoner.serialize(result);
+        }
+        String alias = args.get("alias") instanceof String s ? s.strip() : "";
+        if (alias.isEmpty()) {
+            return "Error: alias is required for " + action;
+        }
+        return switch (action) {
+            case "log" -> {
+                int limit = 50;
+                if (args.get("limit") instanceof Number n) {
+                    limit = Math.max(1, Math.min(1000, n.intValue()));
+                }
+                String filter = args.get("filter") instanceof String s ? s : null;
+                yield infraLog(alias, limit, filter);
+            }
+            case "start", "run" -> {
+                if (facade.findInfra(alias) != null) {
+                    yield "Infra service " + alias + " is already running";
+                }
+                yield startInfra(alias);
+            }
+            case "stop" -> {
+                InfraInfo info = facade.findInfra(alias);
+                if (info == null) {
+                    yield unknownInfra(alias);
+                }
+                yield facade.stopInfra(info)
+                        ? "Stopping infra service " + info.alias + " (pid " + info.pid + ")"
+                        : "Error: infra service " + info.alias + " (pid " + info.pid + ") is not running";
+            }
+            case "restart" -> {
+                InfraInfo info = facade.findInfra(alias);
+                if (info == null) {
+                    yield unknownInfra(alias);
+                }
+                facade.stopInfra(info);
+                yield startInfra(info.alias).replace("Starting", "Restarting");
+            }
+            default -> "Unknown action: " + action + ". Available: list, log, start, stop, restart";
+        };
+    }
+
+    private String startInfra(String alias) {
+        LaunchManager lm = launchManager;
+        if (lm == null) {
+            return "Error: launching is not available";
+        }
+        try {
+            lm.startInfra(alias);
+            return "Starting infra service " + alias + " (Docker/Podman required); "
+                   + "it appears in tui_infra list once ready, typically within a few seconds";
+        } catch (Exception e) {
+            return "Error: failed to start infra service " + alias + ": " + e.getMessage();
+        }
     }
 
     private String callGetErrors() {
@@ -2350,15 +2471,6 @@ class TuiToolRegistry {
             camelArgs.add("--profile=" + profile);
         }
         return camelArgs;
-    }
-
-    private static String actionKeys(int index, int totalActions) {
-        StringBuilder sb = new StringBuilder("F2");
-        for (int i = 0; i < index; i++) {
-            sb.append(",Down");
-        }
-        sb.append(",Enter");
-        return sb.toString();
     }
 
     private static JsonArray toJsonArray(List<String> list) {

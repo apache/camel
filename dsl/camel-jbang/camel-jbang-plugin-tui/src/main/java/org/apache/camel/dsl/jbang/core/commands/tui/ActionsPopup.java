@@ -19,6 +19,7 @@ package org.apache.camel.dsl.jbang.core.commands.tui;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 import java.util.Set;
 import java.util.function.BiConsumer;
 import java.util.function.IntPredicate;
@@ -1356,15 +1357,62 @@ class ActionsPopup {
         docViewerPopup.showFailureLog(name, logFile);
     }
 
+    /**
+     * Maps an F2 menu label (as {@link #getActionLabels()} lists it) to its action. Trailing "..." and shortcut hints
+     * such as "(F3)" are ignored, as is case, so "run doctor", "Run Doctor" and "Screen..." all resolve. Submenu
+     * entries and the ".." back entry have no action of their own and resolve to null.
+     */
+    static Action actionForLabel(String label) {
+        if (label == null) {
+            return null;
+        }
+        String key = label.strip().toLowerCase(Locale.ROOT)
+                .replaceAll("\\s*\\(.*\\)$", "")
+                .replaceAll("\\.+$", "")
+                .strip();
+        return switch (key) {
+            case "go to" -> Action.GOTO_TAB;
+            case "switch integration" -> Action.SWITCH_INTEGRATION;
+            case "send message" -> Action.SEND_MESSAGE;
+            case "run an example", "run example" -> Action.RUN_EXAMPLE;
+            case "open project" -> Action.OPEN_PROJECT;
+            case "run dev/infra service", "run infra service", "run infra" -> Action.RUN_INFRA;
+            case "browse files" -> Action.BROWSE_FILES;
+            case "run doctor" -> Action.DOCTOR;
+            case "reset stats" -> Action.RESET_STATS;
+            case "settings" -> Action.SETTINGS;
+            case "shell" -> Action.SHELL;
+            case "take screenshot" -> Action.SCREENSHOT;
+            case "reset screen" -> Action.RESET_SCREEN;
+            case "start tape recording", "stop tape recording" -> Action.TAPE_RECORDING;
+            case "tape recording guide" -> Action.TAPE_INSTRUCTIONS;
+            case "caption" -> Action.CAPTION;
+            case "show keystrokes", "hide keystrokes" -> Action.SHOW_KEYSTROKES;
+            case "camel animation" -> Action.CAMEL_ANIMATION;
+            case "ai prompt" -> Action.AI_PROMPT;
+            case "setup ai" -> Action.SETUP_AI;
+            case "ai log" -> Action.AI_LOG;
+            case "mcp info" -> Action.MCP_INFO;
+            case "mcp log" -> Action.MCP_LOG;
+            default -> null;
+        };
+    }
+
+    /**
+     * Executes an action given as a kebab-case name ({@code reset-stats}) or as an F2 menu label ({@code Run Doctor}).
+     */
     boolean executeActionByName(String name) {
         if (name == null || name.isBlank()) {
             return false;
         }
-        String normalized = name.replace("-", "_").toUpperCase();
+        String normalized = name.strip().replace("-", "_").toUpperCase(Locale.ROOT);
         Action action;
         try {
             action = Action.valueOf(normalized);
         } catch (IllegalArgumentException e) {
+            action = actionForLabel(name);
+        }
+        if (action == null) {
             return false;
         }
         switch (action) {
@@ -1401,10 +1449,42 @@ class ActionsPopup {
                     camelAnimationAction.run();
                 }
             }
+            // menu entries that open a popup or view, mirroring what Enter does on them
+            case GOTO_TAB -> gotoTabPopup.open();
+            case SETTINGS -> settingsPopup.open();
+            case RUN_EXAMPLE -> exampleBrowserPopup.open();
+            case OPEN_PROJECT -> folderInputPopup.open();
+            case RUN_INFRA -> infraBrowserPopup.open();
+            case TAPE_INSTRUCTIONS -> openTapeInstructions();
+            case SEND_MESSAGE -> {
+                if (ctx == null || ctx.selectedPid == null || ctx.isInfraSelected()) {
+                    return false;
+                }
+                openSendMessage();
+            }
+            case BROWSE_FILES -> {
+                if (ctx == null || ctx.selectedPid == null || ctx.isInfraSelected() || browseFilesAction == null) {
+                    return false;
+                }
+                browseFilesAction.run();
+            }
+            case SWITCH_INTEGRATION -> {
+                if (!hasMultipleIntegrations() || switchIntegrationAction == null) {
+                    return false;
+                }
+                switchIntegrationAction.run();
+            }
+            case SHELL -> {
+                if (openShellAction == null) {
+                    return false;
+                }
+                openShellAction.run();
+            }
             default -> {
                 return false;
             }
         }
+        showActionsMenu = false;
         return true;
     }
 

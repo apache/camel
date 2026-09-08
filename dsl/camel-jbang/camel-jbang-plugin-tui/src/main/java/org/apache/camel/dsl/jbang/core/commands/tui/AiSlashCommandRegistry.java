@@ -84,9 +84,16 @@ final class AiSlashCommandRegistry {
                         ? CommandResult.system("")
                         : CommandResult.error("No question to retry. Ask something first.")));
         commands.add(new Descriptor(
-                "usage", List.of("u"), "Show AI usage so far: requests, tokens, latency (Ctrl+U opens the full view)",
-                null,
-                (context, arguments) -> CommandResult.system(context.usageSummary())));
+                "usage", List.of("u"),
+                "Show AI usage so far: requests, tokens, latency (Ctrl+U opens the full view); 'reset' clears it",
+                "[reset]",
+                (context, arguments) -> {
+                    if ("reset".equalsIgnoreCase(arguments == null ? "" : arguments.strip())) {
+                        context.resetUsage();
+                        return CommandResult.system("AI usage statistics reset");
+                    }
+                    return CommandResult.system(context.usageSummary());
+                }));
         commands.add(new Descriptor(
                 "copy", List.of("y"), "Copy the last AI response to the clipboard (Ctrl+Y)", null,
                 (context, arguments) -> {

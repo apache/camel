@@ -126,21 +126,29 @@ class LaunchManager {
                 .anyMatch(i -> i.alive && "jaeger".equals(i.alias));
     }
 
+    /**
+     * Starts an infra service in the background via {@code camel infra run <alias> --background}. The launch is
+     * monitored like any other, so a failure surfaces through the failure log callback.
+     */
+    void startInfra(String alias) throws IOException {
+        List<String> cmd = new ArrayList<>(LauncherHelper.getCamelCommand());
+        cmd.add("infra");
+        cmd.add("run");
+        cmd.add(alias);
+        cmd.add("--background");
+        Path outputFile = createSecureTempFile("camel-infra-", ".log");
+        outputFile.toFile().deleteOnExit();
+        ProcessBuilder pb = new ProcessBuilder(cmd);
+        pb.redirectErrorStream(true);
+        pb.redirectOutput(outputFile.toFile());
+        Process process = pb.start();
+        pendingLaunches.add(new PendingLaunch(alias, process, outputFile, System.currentTimeMillis()));
+    }
+
     void startMissingInfraAndDefer(List<String> missingInfra, String displayName, Runnable launchAction) {
         for (String alias : missingInfra) {
             try {
-                List<String> cmd = new ArrayList<>(LauncherHelper.getCamelCommand());
-                cmd.add("infra");
-                cmd.add("run");
-                cmd.add(alias);
-                cmd.add("--background");
-                Path outputFile = createSecureTempFile("camel-infra-", ".log");
-                outputFile.toFile().deleteOnExit();
-                ProcessBuilder pb = new ProcessBuilder(cmd);
-                pb.redirectErrorStream(true);
-                pb.redirectOutput(outputFile.toFile());
-                Process process = pb.start();
-                pendingLaunches.add(new PendingLaunch(alias, process, outputFile, System.currentTimeMillis()));
+                startInfra(alias);
             } catch (Exception e) {
                 notify("Failed to start infra: " + alias + " - " + e.getMessage(), true);
                 return;

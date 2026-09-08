@@ -72,7 +72,7 @@ class AiPanelGenAiUsageTest {
         String rendered = TuiTestHelper.bufferToString(buffer);
         assertThat(rendered).contains("AI Usage");
         assertThat(rendered).contains("TUI:");
-        assertThat(rendered).contains("routes:");
+        assertThat(rendered).contains("integration:");
         assertThat(rendered).contains("[tui]");
         assertThat(rendered).contains("[route:orders]");
     }

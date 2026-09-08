@@ -812,31 +812,71 @@ class LogTab extends AbstractTab {
     }
 
     JsonObject getLogDataAsJson(int limit, String filter, String level) {
-        List<LogEntry> entries = filteredLogEntries;
+        return buildLogDataJson(filteredLogEntries, limit, filter, level);
+    }
+
+    /** Continuation lines kept per log record before the rest is summarised as a count. */
+    static final int MAX_DETAIL_LINES = 20;
+
+    /** A timestamped log line together with the continuation lines (stack trace, wrapped text) that followed it. */
+    record LogRecord(LogEntry head, List<String> detail, int hiddenDetailLines) {
+    }
+
+    /**
+     * Groups raw log lines into records: a line without a timestamp (a stack frame, a "Caused by:", wrapped text)
+     * belongs to the timestamped line before it. The MCP log tool returns records, so a stack trace is one entry with a
+     * {@code detail} block rather than fifty entries that all claim to be INFO lines with no time.
+     */
+    static List<LogRecord> toRecords(List<LogEntry> entries) {
+        List<LogRecord> records = new ArrayList<>();
+        LogEntry head = null;
+        List<String> detail = null;
+        int hidden = 0;
+        for (LogEntry e : entries) {
+            boolean continuation = (e.time == null || e.time.isEmpty()) && head != null;
+            if (continuation) {
+                if (detail.size() < MAX_DETAIL_LINES) {
+                    detail.add(e.message);
+                } else {
+                    hidden++;
+                }
+                continue;
+            }
+            if (head != null) {
+                records.add(new LogRecord(head, detail, hidden));
+            }
+            head = e;
+            detail = new ArrayList<>();
+            hidden = 0;
+        }
+        if (head != null) {
+            records.add(new LogRecord(head, detail, hidden));
+        }
+        return records;
+    }
+
+    static JsonObject buildLogDataJson(List<LogEntry> entries, int limit, String filter, String level) {
+        JsonObject result = new JsonObject();
+        JsonArray rows = new JsonArray();
         if (entries == null || entries.isEmpty()) {
-            JsonObject result = new JsonObject();
-            result.put("lines", new JsonArray());
+            result.put("lines", rows);
             result.put("totalLines", 0);
             result.put("returnedLines", 0);
             return result;
         }
 
-        List<LogEntry> filtered = new ArrayList<>();
-        for (int i = entries.size() - 1; i >= 0 && filtered.size() < limit; i--) {
-            LogEntry e = entries.get(i);
+        List<LogRecord> records = toRecords(entries);
+        String needle = filter == null || filter.isBlank() ? null : filter.toLowerCase();
+        for (int i = records.size() - 1; i >= 0 && rows.size() < limit; i--) {
+            LogRecord r = records.get(i);
+            LogEntry e = r.head();
             if (level != null && !level.isBlank() && !level.equalsIgnoreCase(e.level)) {
                 continue;
             }
-            if (filter != null && !filter.isBlank()
-                    && !e.message.toLowerCase().contains(filter.toLowerCase())) {
+            if (needle != null && !e.message.toLowerCase().contains(needle)
+                    && r.detail().stream().noneMatch(d -> d.toLowerCase().contains(needle))) {
                 continue;
             }
-            filtered.add(e);
-        }
-
-        JsonObject result = new JsonObject();
-        JsonArray rows = new JsonArray();
-        for (LogEntry e : filtered) {
             JsonObject row = new JsonObject();
             row.put("time", e.time);
             row.put("level", e.level);
@@ -844,11 +884,18 @@ class LogTab extends AbstractTab {
                 row.put("logger", e.logger);
             }
             row.put("message", e.message);
+            if (!r.detail().isEmpty()) {
+                String detail = String.join("\n", r.detail());
+                if (r.hiddenDetailLines() > 0) {
+                    detail += "\n... " + r.hiddenDetailLines() + " more lines";
+                }
+                row.put("detail", detail);
+            }
             rows.add(row);
         }
         result.put("lines", rows);
         result.put("totalLines", entries.size());
-        result.put("returnedLines", filtered.size());
+        result.put("returnedLines", rows.size());
         return result;
     }
 }

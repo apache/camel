@@ -648,6 +648,32 @@ class AiPanelTest {
     }
 
     @Test
+    void renderMarksUserTurnWithGutterBarAndLeavesAnswerPlain() throws Exception {
+        AiPanel panel = new AiPanel();
+        RecordingLlmClient client = new RecordingLlmClient("There are three routes running.");
+        panel.setClientForTesting(client);
+        panel.open();
+
+        type(panel, "how many routes");
+        panel.handleKeyEvent(KeyEvent.ofKey(KeyCode.ENTER, KeyModifiers.NONE));
+        assertTrue(client.awaitAnswer(5, TimeUnit.SECONDS));
+        await().atMost(5, TimeUnit.SECONDS).untilAsserted(
+                () -> assertFalse(panel.isAgentThreadRunningForTesting(), "agent thread should finish within 5 seconds"));
+
+        Rect area = new Rect(0, 0, 80, 12);
+        Buffer buffer = Buffer.empty(area);
+        panel.render(Frame.forTesting(buffer), area);
+        String rendered = TuiTestHelper.bufferToString(buffer);
+
+        // the question is rendered as a blockquote whose prefix is the accent gutter bar
+        assertTrue(rendered.contains("\u258e how many routes"), rendered);
+        assertTrue(rendered.contains("There are three routes running."), rendered);
+        // the old bold role labels are gone: the bar marks the turn, the answer needs no label
+        assertFalse(rendered.contains("You:"), rendered);
+        assertFalse(rendered.contains("TUI:"), rendered);
+    }
+
+    @Test
     void tabCompletesSingleMatchAndAppendsSpace() {
         AiPanel panel = new AiPanel();
         panel.open();
@@ -923,6 +949,65 @@ class AiPanelTest {
     }
 
     @Test
+    void tokensPerQuestionChartGroupsRoundTripsByQuestionNotByPause() {
+        AiPanel panel = new AiPanel();
+        panel.setClientForTesting(new RecordingLlmClient("ok"));
+        panel.open();
+        Instant now = Instant.now();
+        // two round trips for question 1 (tool call, then answer) and one for a follow-up typed seconds later
+        panel.recordUsageForTesting(usage(3000, now, 1));
+        panel.recordUsageForTesting(usage(3500, now.plusSeconds(4), 1));
+        panel.recordUsageForTesting(usage(4000, now.plusSeconds(10), 2));
+        panel.toggleStatsViewForTesting();
+
+        Rect area = new Rect(0, 0, 100, 24);
+        Buffer buffer = Buffer.empty(area);
+        panel.render(Frame.forTesting(buffer), area);
+
+        assertTrue(TuiTestHelper.bufferToString(buffer).contains("Tokens per question:"),
+                "two questions asked within seconds of each other must still give two bars");
+    }
+
+    @Test
+    void tokensPerQuestionChartIsHiddenForASingleQuestion() {
+        AiPanel panel = new AiPanel();
+        panel.setClientForTesting(new RecordingLlmClient("ok"));
+        panel.open();
+        Instant now = Instant.now();
+        // one question whose round trips were spread over more than the old 30s pause threshold
+        panel.recordUsageForTesting(usage(3000, now, 1));
+        panel.recordUsageForTesting(usage(3500, now.plusSeconds(45), 1));
+        panel.toggleStatsViewForTesting();
+
+        Rect area = new Rect(0, 0, 100, 24);
+        Buffer buffer = Buffer.empty(area);
+        panel.render(Frame.forTesting(buffer), area);
+
+        assertFalse(TuiTestHelper.bufferToString(buffer).contains("Tokens per question:"));
+    }
+
+    private static AiPanel.AiUsageEntry usage(int tokens, Instant at, int question) {
+        return new AiPanel.AiUsageEntry(
+                "qwen3.6:35b-a3b", "ollama", tokens - 100, 100, tokens, 1000, "end_turn", at,
+                AiPanel.AiUsageSource.TUI, null, question);
+    }
+
+    @Test
+    void usageResetSlashCommandClearsTheStatistics() {
+        AiPanel panel = new AiPanel();
+        panel.setClientForTesting(new RecordingLlmClient("ok"));
+        panel.open();
+        panel.recordUsageForTesting(usage(3000, Instant.now(), 1));
+        assertTrue(panel.usageSummary().startsWith("Requests: 1"), panel.usageSummary());
+
+        panel.executeSlashCommandForTesting("/usage reset");
+
+        assertTrue(panel.usageSummary().startsWith("No AI usage yet"), panel.usageSummary());
+        assertTrue(panel.conversationForTesting().stream()
+                .anyMatch(e -> e.role() == AiRole.SYSTEM && e.text().contains("AI usage statistics reset")));
+    }
+
+    @Test
     void retryWithoutAQuestionIsRefused() {
         AiPanel panel = new AiPanel();
         panel.setClientForTesting(new RecordingLlmClient("ok"));
@@ -1145,6 +1230,10 @@ class AiPanelTest {
         @Override
         public String usageSummary() {
             return "";
+        }
+
+        @Override
+        public void resetUsage() {
         }
 
         @Override

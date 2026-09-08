@@ -20,6 +20,7 @@ import dev.tamboui.layout.Rect;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
 
 /**
  * Tests for {@link ActionsPopup#listItemAt}, which maps a click to an entry in a single-line, bordered list popup. The
@@ -28,6 +29,27 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
  * entry, so on-screen row r maps to entry {@code offset + (r - firstRow)}.
  */
 class ActionsPopupTest {
+
+    @Test
+    void menuLabelsResolveToActionsIgnoringCaseEllipsisAndShortcutHints() {
+        assertEquals(ActionsPopup.Action.DOCTOR, ActionsPopup.actionForLabel("Run Doctor"));
+        assertEquals(ActionsPopup.Action.DOCTOR, ActionsPopup.actionForLabel("run doctor"));
+        assertEquals(ActionsPopup.Action.RUN_EXAMPLE, ActionsPopup.actionForLabel("Run an Example..."));
+        assertEquals(ActionsPopup.Action.GOTO_TAB, ActionsPopup.actionForLabel("Go to... (Shift+F2)"));
+        assertEquals(ActionsPopup.Action.SWITCH_INTEGRATION, ActionsPopup.actionForLabel("Switch Integration (F3)"));
+        assertEquals(ActionsPopup.Action.RUN_INFRA, ActionsPopup.actionForLabel("Run Dev/Infra Service..."));
+        assertEquals(ActionsPopup.Action.TAPE_RECORDING, ActionsPopup.actionForLabel("Stop Tape Recording"));
+        assertEquals(ActionsPopup.Action.SHOW_KEYSTROKES, ActionsPopup.actionForLabel("Hide Keystrokes"));
+    }
+
+    @Test
+    void submenuAndDividerLabelsHaveNoAction() {
+        assertNull(ActionsPopup.actionForLabel("Screen..."));
+        assertNull(ActionsPopup.actionForLabel("AI & MCP..."));
+        assertNull(ActionsPopup.actionForLabel(".."));
+        assertNull(ActionsPopup.actionForLabel("───"));
+        assertNull(ActionsPopup.actionForLabel(null));
+    }
 
     @Test
     void resolvesClicksToEntriesWhenNotScrolled() {

@@ -395,6 +395,10 @@ class AiSlashCommandRegistryTest {
         }
 
         @Override
+        public void resetUsage() {
+        }
+
+        @Override
         public void copyLastResponse() {
         }
 

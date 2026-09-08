@@ -35,6 +35,7 @@ import dev.tamboui.tui.event.KeyCode;
 import dev.tamboui.tui.event.KeyEvent;
 import dev.tamboui.tui.event.KeyModifiers;
 import dev.tamboui.widgets.tabs.TabsState;
+import org.apache.camel.dsl.jbang.core.common.CommandLineHelper;
 import org.apache.camel.dsl.jbang.core.common.RuntimeHelper;
 import org.apache.camel.util.json.JsonArray;
 import org.apache.camel.util.json.JsonObject;
@@ -365,6 +366,43 @@ class McpFacade {
                 .filter(i -> !i.vanishing)
                 .map(i -> i.name != null ? i.name : i.pid)
                 .toList();
+    }
+
+    /**
+     * Infra services (brokers, databases, ...) started with {@code camel infra run} that are still alive.
+     */
+    List<InfraInfo> liveInfraServices() {
+        if (ctx == null || ctx.infraData == null) {
+            return List.of();
+        }
+        List<InfraInfo> all = ctx.infraData.get();
+        return all == null ? List.of() : all.stream().filter(i -> !i.vanishing).toList();
+    }
+
+    InfraInfo findInfra(String aliasOrPid) {
+        return InfraSupport.find(liveInfraServices(), aliasOrPid);
+    }
+
+    /** Alias of the infra service selected in Overview, or null when an integration (or nothing) is selected. */
+    String getSelectedInfraAlias() {
+        InfraInfo infra = ctx != null ? ctx.findSelectedInfra() : null;
+        return infra != null ? infra.alias : null;
+    }
+
+    JsonObject getInfraLogData(InfraInfo info, int limit, String filter) throws IOException {
+        List<String> lines = InfraSupport.readLogTail(CommandLineHelper.getCamelDir(), info, limit, filter);
+        JsonObject result = new JsonObject();
+        result.put("infra", info.alias);
+        result.put("pid", info.pid);
+        JsonArray arr = new JsonArray();
+        arr.addAll(lines);
+        result.put("lines", arr);
+        result.put("returnedLines", lines.size());
+        return result;
+    }
+
+    boolean stopInfra(InfraInfo info) {
+        return InfraSupport.stop(CommandLineHelper.getCamelDir(), info);
     }
 
     // ---- Key injection ----

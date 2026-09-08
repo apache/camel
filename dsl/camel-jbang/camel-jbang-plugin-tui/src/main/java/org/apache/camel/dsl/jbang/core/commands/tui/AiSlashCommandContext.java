@@ -70,6 +70,9 @@ interface AiSlashCommandContext {
      */
     String usageSummary();
 
+    /** Clears the usage statistics so the summary and the Ctrl+U view start from zero. */
+    void resetUsage();
+
     void copyLastResponse();
 
     void exportConversation();

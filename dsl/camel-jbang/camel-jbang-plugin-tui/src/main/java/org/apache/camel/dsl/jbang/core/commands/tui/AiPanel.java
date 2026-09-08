@@ -230,6 +230,10 @@ class AiPanel {
 
     // AI usage stats
     private final List<AiUsageEntry> usageHistory = new CopyOnWriteArrayList<>();
+    /** Sequence number of the current question; tags the usage entries recorded while answering it. */
+    private volatile int questionCounter;
+    /** Route usage (GenAI spans) recorded before this instant is left out after a {@code /usage reset}. */
+    private volatile Instant usageResetAt = Instant.EPOCH;
     private AtomicReference<List<SpanEntry>> otelSpans = new AtomicReference<>(List.of());
     private final TableState statsTableState = new TableState();
     private boolean statsView;
@@ -247,14 +251,26 @@ class AiPanel {
         }
     }
 
+    /**
+     * One model round trip. {@code question} is the sequence number of the panel question the request was made for (a
+     * question takes several round trips when the model calls tools), so usage can be grouped per question; it is 0 for
+     * route requests, which belong to no question.
+     */
     record AiUsageEntry(String model, String provider, int inputTokens, int outputTokens,
             int totalTokens, long latencyMs, String stopReason, Instant timestamp,
-            AiUsageSource source, String routeId) {
+            AiUsageSource source, String routeId, int question) {
 
         AiUsageEntry(String model, String provider, int inputTokens, int outputTokens,
                      int totalTokens, long latencyMs, String stopReason, Instant timestamp) {
             this(model, provider, inputTokens, outputTokens, totalTokens, latencyMs, stopReason, timestamp,
-                 AiUsageSource.TUI, null);
+                 AiUsageSource.TUI, null, 0);
+        }
+
+        AiUsageEntry(String model, String provider, int inputTokens, int outputTokens,
+                     int totalTokens, long latencyMs, String stopReason, Instant timestamp,
+                     AiUsageSource source, String routeId) {
+            this(model, provider, inputTokens, outputTokens, totalTokens, latencyMs, stopReason, timestamp,
+                 source, routeId, 0);
         }
     }
 
@@ -1012,6 +1028,7 @@ class AiPanel {
             return;
         }
         conversation.add(new ConversationEntry(AiRole.USER, question));
+        questionCounter++;
         log(LogLevel.QUESTION, "Question", question);
         thinkingVerb = THINKING_VERBS.get(ThreadLocalRandom.current().nextInt(THINKING_VERBS.size()));
         thinkingStartTime = System.currentTimeMillis();
@@ -1166,7 +1183,8 @@ class AiPanel {
                 model, provider,
                 response.usage().inputTokens(), response.usage().outputTokens(),
                 response.usage().totalTokens(), latencyMs,
-                response.stopReason(), Instant.now()));
+                response.stopReason(), Instant.now(),
+                AiUsageSource.TUI, null, questionCounter));
     }
 
     void render(Frame frame, Rect area) {
@@ -1289,10 +1307,13 @@ class AiPanel {
             return;
         }
 
+        // The user's question is a blockquote: with the chat styles that becomes an accent-coloured gutter bar, which
+        // is what the eye picks up when scanning for where the next turn starts. The answer is plain, without a label,
+        // as it always directly follows its question.
         for (ConversationEntry entry : conversation) {
             switch (entry.role()) {
-                case USER -> md.append("**You:** ").append(entry.text()).append("\n\n");
-                case ASSISTANT -> md.append("**TUI:** ").append(toHardBreaks(entry.text())).append("\n\n");
+                case USER -> md.append("> ").append(entry.text().replace("\n", "\n> ")).append("\n\n");
+                case ASSISTANT -> md.append(toHardBreaks(entry.text())).append("\n\n");
                 case ERROR -> md.append("**Error:** ").append(entry.text()).append("\n\n");
                 case SYSTEM -> md.append(toHardBreaks(entry.text())).append("\n\n");
             }
@@ -1334,7 +1355,7 @@ class AiPanel {
         // couple of lines hidden below the visible area.
         MarkdownView.Builder viewBuilder = MarkdownView.builder()
                 .source(source)
-                .styles(Theme.markdownStyles());
+                .styles(Theme.chatMarkdownStyles());
         MarkdownView measure = viewBuilder.build();
         int totalLines = measure.computeHeight(mdArea.width());
 
@@ -1563,7 +1584,7 @@ class AiPanel {
         if (entries.isEmpty()) {
             frame.renderWidget(
                     Paragraph.from(Line.from(Span.styled(
-                            "No AI usage data yet. Ask a question in the AI panel, or run routes with GenAI observability and OTel span export (--observe).",
+                            "No AI usage data yet. Ask a question, or run an integration with GenAI observability and --observe.",
                             Style.EMPTY.dim()))),
                     area);
             return;
@@ -1600,24 +1621,18 @@ class AiPanel {
             stats[3] += e.totalTokens();
         }
 
-        // Per-conversation token totals (TUI ask sessions only)
+        // Tokens per question (panel requests only): the round trips made for one question share its sequence
+        // number. Grouping by that, rather than by a pause between requests, keeps a follow-up typed right after the
+        // previous answer as its own bar.
         List<Integer> turnTokens = new ArrayList<>();
-        int currentTurn = 0;
-        int turnIndex = 0;
+        int lastQuestion = -1;
         for (AiUsageEntry e : usageHistory) {
-            if (turnIndex > 0) {
-                AiUsageEntry prev = usageHistory.get(turnIndex - 1);
-                long gap = e.timestamp().toEpochMilli() - prev.timestamp().toEpochMilli();
-                if (gap > 30_000) {
-                    turnTokens.add(currentTurn);
-                    currentTurn = 0;
-                }
+            if (e.question() != lastQuestion) {
+                turnTokens.add(0);
+                lastQuestion = e.question();
             }
-            currentTurn += e.totalTokens();
-            turnIndex++;
-        }
-        if (currentTurn > 0) {
-            turnTokens.add(currentTurn);
+            int last = turnTokens.size() - 1;
+            turnTokens.set(last, turnTokens.get(last) + e.totalTokens());
         }
 
         // Layout: summary (2 rows) + model table (header + models + 1 blank) + chart (fill)
@@ -1646,7 +1661,7 @@ class AiPanel {
                 Span.styled(String.valueOf(requestCount), cyanStyle),
                 Span.styled(" (TUI: ", dimStyle),
                 Span.styled(String.valueOf(tuiRequests), cyanStyle),
-                Span.styled(" / routes: ", dimStyle),
+                Span.styled(" / integration: ", dimStyle),
                 Span.styled(String.valueOf(routeRequests), cyanStyle),
                 Span.styled(")   Total tokens: ", dimStyle),
                 Span.styled(LlmClient.formatTokens(totalTokens), cyanStyle),
@@ -1737,9 +1752,24 @@ class AiPanel {
         combined.addAll(usageHistory);
         List<SpanEntry> spans = otelSpans.get();
         if (spans != null && !spans.isEmpty()) {
-            combined.addAll(GenAiSpanUsageExtractor.extract(spans));
+            Instant since = usageResetAt;
+            for (AiUsageEntry entry : GenAiSpanUsageExtractor.extract(spans)) {
+                if (!entry.timestamp().isBefore(since)) {
+                    combined.add(entry);
+                }
+            }
         }
         return combined;
+    }
+
+    /**
+     * Forgets the usage recorded so far: the panel's own requests are dropped, and route usage from spans that were
+     * exported before now is hidden (the spans themselves stay, as the Spans tab owns them).
+     */
+    void resetUsage() {
+        usageHistory.clear();
+        usageResetAt = Instant.now();
+        statsScrollOffset = 0;
     }
 
     private static String modelTableKey(AiUsageEntry entry) {
@@ -1884,7 +1914,9 @@ class AiPanel {
         sb.append("- Be concise and actionable; when something looks wrong, explain what it means and suggest fixes\n");
         sb.append("- tui_control stops/starts routes and integrations gracefully; its reset-stats action clears ");
         sb.append("statistics without touching the routes\n");
-        sb.append("- Never restart, stop or kill an integration unless the user explicitly asked for that\n");
+        sb.append("- tui_infra lists infra services (brokers, databases) and reads their logs\n");
+        sb.append("- Never restart, stop or kill an integration or infra service unless the user explicitly ");
+        sb.append("asked for that\n");
         sb.append("- If a tool call returns an error, do not repeat it with the same arguments; ");
         sb.append("tell the user what failed and what to try\n");
         sb.append("- To feed a route that consumes from a broker (MQTT, Kafka, JMS), tui_send_message can publish ");
@@ -2184,7 +2216,7 @@ class AiPanel {
     String usageSummary() {
         List<AiUsageEntry> entries = combinedUsageEntries();
         if (entries.isEmpty()) {
-            return "No AI usage yet. Ask a question, or run routes with GenAI observability and --observe to see "
+            return "No AI usage yet. Ask a question, or run an integration with GenAI observability and --observe to see "
                    + "their usage here.";
         }
         int totalInput = 0;
@@ -2215,7 +2247,7 @@ class AiPanel {
         sb.append("Requests: ").append(entries.size());
         if (routeRequests > 0) {
             sb.append(" (").append(tuiRequests).append(" from this panel, ").append(routeRequests)
-                    .append(" from routes)");
+                    .append(" from the integration)");
         }
         sb.append(", tokens: ").append(LlmClient.formatTokens(totalTokens))
                 .append(" (in ").append(LlmClient.formatTokens(totalInput))
@@ -2495,6 +2527,11 @@ class AiPanel {
         @Override
         public String usageSummary() {
             return AiPanel.this.usageSummary();
+        }
+
+        @Override
+        public void resetUsage() {
+            AiPanel.this.resetUsage();
         }
 
         @Override

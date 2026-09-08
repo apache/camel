@@ -266,6 +266,23 @@ public final class Theme {
 
     /** Theme-aware markdown styles for MarkdownView headings and other elements. */
     public static dev.tamboui.markdown.MarkdownStyles markdownStyles() {
+        return markdownStylesBuilder().build();
+    }
+
+    /**
+     * Markdown styles for the AI chat conversation. The user's question is rendered as a blockquote, so the blockquote
+     * becomes an accent-coloured gutter bar with bold text that marks where each new turn starts, while the answer that
+     * follows is plain markdown.
+     */
+    public static dev.tamboui.markdown.MarkdownStyles chatMarkdownStyles() {
+        return markdownStylesBuilder()
+                .blockquotePrefix("\u258e")
+                .blockquote(Style.EMPTY.fg(accent()).bold())
+                .horizontalRule(Style.EMPTY.dim())
+                .build();
+    }
+
+    private static dev.tamboui.markdown.MarkdownStyles.Builder markdownStylesBuilder() {
         return dev.tamboui.markdown.MarkdownStyles.builder()
                 .heading(1, label().bold())
                 .heading(2, label().bold())
@@ -273,8 +290,7 @@ public final class Theme {
                 .inlineCode(Style.EMPTY.fg(accent()))
                 .codeBlock(muted())
                 .listMarker(Style.EMPTY.fg(accent()))
-                .link(Style.EMPTY.fg(accent()).underlined())
-                .build();
+                .link(Style.EMPTY.fg(accent()).underlined());
     }
 
     /** Diagram box-drawing border color. */
