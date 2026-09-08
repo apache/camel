@@ -116,6 +116,13 @@ class AiPanel {
     private List<String> completionMatches;
     private int completionCycleIndex = -1;
     private String completionSnapshot;
+    // Buffer offset of the token being completed: 1 for a command name (after the slash), or the start of the
+    // first argument for commands that complete arguments (/model, /tools).
+    private int completionStart = 1;
+    // Models offered by TAB after "/model ". Fetched once in the background (a provider round trip) on the first TAB
+    // and reset whenever the client or provider changes.
+    private volatile List<String> modelCompletionCache;
+    private final AtomicBoolean modelCompletionFetch = new AtomicBoolean();
 
     // Conversation display. CopyOnWriteArrayList because entries are appended from the agent thread and the
     // CLI-command-completion callback while the render thread iterates the list concurrently.
@@ -300,6 +307,7 @@ class AiPanel {
     }
 
     private void initClient() {
+        modelCompletionCache = null;
         try {
             LlmClient created = LlmClient.create()
                     .withTemperature(0.3)
@@ -641,6 +649,13 @@ class AiPanel {
      * reachable with TAB alone). A single match is completed fully and a trailing space is appended. Shift+TAB cycles
      * backward. TAB is a no-op unless the buffer is a partial command name (starts with {@code /}, no arguments yet).
      */
+    /**
+     * Completes the slash command name at the cursor, or the first argument of {@code /model} (against the models the
+     * provider reports) and {@code /tools} (auto, core, full). With multiple matches, TAB first fills in the longest
+     * common prefix; once no further prefix can be added it cycles forward through the matches (wrapping so every match
+     * is reachable with TAB alone). A single match is completed fully and a trailing space is appended. Shift+TAB
+     * cycles backward.
+     */
     private void handleTabCompletion(boolean backward) {
         String text = inputBuffer.toString();
         boolean continuing = text.equals(completionSnapshot) && completionMatches != null && completionMatches.size() > 1;
@@ -657,9 +672,20 @@ class AiPanel {
             return;
         }
 
-        List<String> names = slashCommands.completionsFor(text).stream()
-                .map(AiSlashCommandRegistry.Descriptor::name)
-                .toList();
+        List<String> names;
+        String currentToken;
+        ArgumentCompletion argument = argumentCompletion(text);
+        if (argument != null) {
+            names = argument.candidates();
+            currentToken = argument.token();
+            completionStart = argument.start();
+        } else {
+            names = slashCommands.completionsFor(text).stream()
+                    .map(AiSlashCommandRegistry.Descriptor::name)
+                    .toList();
+            currentToken = text.length() > 1 ? text.substring(1) : "";
+            completionStart = 1;
+        }
         if (names.isEmpty()) {
             completionMatches = null;
             completionCycleIndex = -1;
@@ -674,7 +700,6 @@ class AiPanel {
             completionSnapshot = null;
             return;
         }
-        String currentToken = text.substring(1);
         String prefix = longestCommonPrefix(names);
         completionMatches = names;
         if (prefix.length() > currentToken.length()) {
@@ -686,9 +711,78 @@ class AiPanel {
         }
     }
 
+    private record ArgumentCompletion(int start, String token, List<String> candidates) {
+    }
+
+    /**
+     * Returns the argument completion for {@code /model <prefix>} or {@code /tools <prefix>} (aliases included), or
+     * {@code null} when the buffer is not at the first argument of one of those commands. The model list comes from the
+     * provider, so the first TAB kicks off a background fetch and returns nothing; TAB again once it is loaded.
+     */
+    private ArgumentCompletion argumentCompletion(String text) {
+        if (!text.startsWith("/")) {
+            return null;
+        }
+        int separator = -1;
+        for (int i = 1; i < text.length(); i++) {
+            if (Character.isWhitespace(text.charAt(i))) {
+                separator = i;
+                break;
+            }
+        }
+        if (separator < 0) {
+            return null;
+        }
+        Optional<AiSlashCommandRegistry.Descriptor> descriptor = slashCommands.lookup(text.substring(1, separator));
+        if (descriptor.isEmpty()) {
+            return null;
+        }
+        int start = separator;
+        while (start < text.length() && Character.isWhitespace(text.charAt(start))) {
+            start++;
+        }
+        String token = text.substring(start);
+        if (token.chars().anyMatch(Character::isWhitespace)) {
+            return null;
+        }
+        List<String> candidates = switch (descriptor.get().name()) {
+            case "model" -> modelCompletionCandidates();
+            case "tools" -> List.of(TOOL_MODE_AUTO, TOOL_MODE_CORE, TOOL_MODE_FULL);
+            default -> null;
+        };
+        if (candidates == null) {
+            return null;
+        }
+        String lower = token.toLowerCase();
+        List<String> matches = candidates.stream()
+                .filter(candidate -> candidate.toLowerCase().startsWith(lower))
+                .toList();
+        return new ArgumentCompletion(start, token, matches);
+    }
+
+    private List<String> modelCompletionCandidates() {
+        List<String> cached = modelCompletionCache;
+        if (cached != null) {
+            return cached;
+        }
+        if (client != null && modelCompletionFetch.compareAndSet(false, true)) {
+            conversation.add(new ConversationEntry(AiRole.SYSTEM, "Fetching available models, press TAB again..."));
+            Thread worker = new Thread(() -> {
+                try {
+                    modelCompletionCache = slashCommandContext.availableModels();
+                } finally {
+                    modelCompletionFetch.set(false);
+                }
+            }, "tui-ai-model-completion");
+            worker.setDaemon(true);
+            worker.start();
+        }
+        return List.of();
+    }
+
     private void applyCompletionToken(String token, boolean trailingSpace) {
-        inputBuffer.setLength(0);
-        inputBuffer.append('/').append(token);
+        inputBuffer.setLength(completionStart);
+        inputBuffer.append(token);
         if (trailingSpace) {
             inputBuffer.append(' ');
         }
@@ -781,6 +875,7 @@ class AiPanel {
         conversation.add(new ConversationEntry(AiRole.SYSTEM, "Fetching available models..."));
         Thread worker = new Thread(() -> {
             List<String> models = slashCommandContext.availableModels();
+            modelCompletionCache = models;
             conversation.add(new ConversationEntry(
                     AiRole.SYSTEM,
                     AiSlashCommandRegistry.formatModelListing(slashCommandContext.currentModel(), models)));

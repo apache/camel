@@ -728,6 +728,67 @@ class AiPanelTest {
         assertEquals("/clear-history", panel.inputBufferForTesting());
     }
 
+    // ---- argument completion tests ----
+
+    @Test
+    void tabCompletesModelNameFromProviderList() {
+        AiPanel panel = new AiPanel();
+        panel.setClientForTesting(new ModelListingLlmClient(List.of("qwen3.6:35b-a3b", "llama3.3:70b")));
+        panel.open();
+        type(panel, "/model qw");
+
+        // The first TAB only starts the background fetch of the model list; once it has arrived TAB completes.
+        tab(panel);
+        await().atMost(5, TimeUnit.SECONDS).untilAsserted(() -> {
+            tab(panel);
+            assertEquals("/model qwen3.6:35b-a3b ", panel.inputBufferForTesting());
+        });
+    }
+
+    @Test
+    void tabCyclesModelsSharingAPrefixAndHonoursAliases() {
+        AiPanel panel = new AiPanel();
+        panel.setClientForTesting(new ModelListingLlmClient(List.of("qwen2.5:14b", "qwen2.5:32b", "hermes3:8b")));
+        panel.open();
+        type(panel, "/m q");
+
+        tab(panel);
+        await().atMost(5, TimeUnit.SECONDS).untilAsserted(() -> {
+            tab(panel);
+            assertEquals("/m qwen2.5:", panel.inputBufferForTesting());
+        });
+
+        // No further common prefix, so TAB cycles through the matches and wraps around.
+        tab(panel);
+        assertEquals("/m qwen2.5:14b", panel.inputBufferForTesting());
+        tab(panel);
+        assertEquals("/m qwen2.5:32b", panel.inputBufferForTesting());
+        tab(panel);
+        assertEquals("/m qwen2.5:14b", panel.inputBufferForTesting());
+    }
+
+    @Test
+    void tabCompletesToolModeArgument() {
+        AiPanel panel = new AiPanel();
+        panel.open();
+        type(panel, "/tools c");
+
+        tab(panel);
+
+        assertEquals("/tools core ", panel.inputBufferForTesting());
+    }
+
+    @Test
+    void tabDoesNotCompleteArgumentsOfOtherCommands() {
+        AiPanel panel = new AiPanel();
+        panel.open();
+        type(panel, "/run --exam");
+
+        tab(panel);
+
+        assertEquals("/run --exam", panel.inputBufferForTesting());
+    }
+
     // ---- tool set and system prompt tests ----
 
     @Test

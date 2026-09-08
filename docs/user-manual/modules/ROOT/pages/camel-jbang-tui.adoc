@@ -875,6 +875,12 @@ Use *F2* -> _MCP Info_ to see server details and _MCP Log_ to view the tool call
 
 When the AI panel is open, input that starts with `/` runs a local panel command instead of sending a question to the configured AI provider. `/provider` and `/model` are unavailable while a response or command is already in progress; the panel shows a message asking you to wait.
 
+Press *Tab* to complete a command name. After `/model ` *Tab* completes the model name against the
+models the current provider reports (the list is fetched in the background on the first press, so
+press *Tab* again once it has arrived), and after `/tools ` it completes `auto`, `core` or `full`.
+With several matches *Tab* fills in the common prefix and then cycles through them; *Shift+Tab*
+cycles backward.
+
 [cols="1,3",options="header"]
 |===
 | Command | Description
