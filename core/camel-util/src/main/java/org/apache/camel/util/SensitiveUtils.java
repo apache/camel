@@ -89,6 +89,7 @@ public final class SensitiveUtils {
                     "sasljaasconfig",
                     "saslpassword",
                     "sassignature",
+                    "sastoken",
                     "secret",
                     "secretkey",
                     "securerandom",
@@ -179,6 +180,7 @@ public final class SensitiveUtils {
                                                     + "|\\Qsasljaasconfig\\E"
                                                     + "|\\Qsaslpassword\\E"
                                                     + "|\\Qsassignature\\E"
+                                                    + "|\\Qsastoken\\E"
                                                     + "|\\Qsecret\\E"
                                                     + "|\\Qsecretkey\\E"
                                                     + "|\\Qsecurerandom\\E"

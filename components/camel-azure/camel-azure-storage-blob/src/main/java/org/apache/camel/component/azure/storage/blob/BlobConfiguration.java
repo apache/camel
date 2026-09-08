@@ -41,7 +41,7 @@ public class BlobConfiguration implements Cloneable {
     @UriParam
     @Metadata(autowired = true)
     private StorageSharedKeyCredential credentials;
-    @UriParam
+    @UriParam(label = "security", secret = true)
     private String sasToken;
     @UriParam
     @Metadata(autowired = true)
