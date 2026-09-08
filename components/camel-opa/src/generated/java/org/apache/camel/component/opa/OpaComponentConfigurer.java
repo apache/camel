@@ -43,6 +43,8 @@ public class OpaComponentConfigurer extends PropertyConfigurerSupport implements
         case "includeBody": getOrCreateConfiguration(target).setIncludeBody(property(camelContext, boolean.class, value)); return true;
         case "includeheaders":
         case "includeHeaders": getOrCreateConfiguration(target).setIncludeHeaders(property(camelContext, java.lang.String.class, value)); return true;
+        case "includeproperties":
+        case "includeProperties": getOrCreateConfiguration(target).setIncludeProperties(property(camelContext, java.lang.String.class, value)); return true;
         case "lazystartproducer":
         case "lazyStartProducer": target.setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
         case "opaclient":
@@ -74,6 +76,8 @@ public class OpaComponentConfigurer extends PropertyConfigurerSupport implements
         case "includeBody": return boolean.class;
         case "includeheaders":
         case "includeHeaders": return java.lang.String.class;
+        case "includeproperties":
+        case "includeProperties": return java.lang.String.class;
         case "lazystartproducer":
         case "lazyStartProducer": return boolean.class;
         case "opaclient":
@@ -101,6 +105,8 @@ public class OpaComponentConfigurer extends PropertyConfigurerSupport implements
         case "includeBody": return getOrCreateConfiguration(target).isIncludeBody();
         case "includeheaders":
         case "includeHeaders": return getOrCreateConfiguration(target).getIncludeHeaders();
+        case "includeproperties":
+        case "includeProperties": return getOrCreateConfiguration(target).getIncludeProperties();
         case "lazystartproducer":
         case "lazyStartProducer": return target.isLazyStartProducer();
         case "opaclient":

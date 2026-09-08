@@ -38,21 +38,25 @@ public class OpaPolicyEvaluator {
 
     private static final Logger LOG = LoggerFactory.getLogger(OpaPolicyEvaluator.class);
 
-    private static final String ALL_HEADERS = "*";
+    private static final String ALL_NAMES = "*";
 
     private final OPAClient client;
     private final String policyPath;
     private final String allowKey;
     private final Set<String> includedHeaders;
+    private final Set<String> includedProperties;
     private final boolean includeBody;
     private final boolean failOpen;
 
     public OpaPolicyEvaluator(OPAClient client, String policyPath, String allowKey, String includeHeaders,
-                              boolean includeBody, boolean failOpen) {
+                              String includeProperties, boolean includeBody, boolean failOpen) {
         this.client = ObjectHelper.notNull(client, "client");
         this.policyPath = ObjectHelper.notNull(policyPath, "policyPath");
         this.allowKey = ObjectHelper.isNotEmpty(allowKey) ? allowKey : "allow";
-        this.includedHeaders = parseIncludedHeaders(includeHeaders);
+        // headers default to all of them, exchange properties to none: properties are mostly used to carry
+        // state between processors, so sending them all would be noise the policy has to wade through
+        this.includedHeaders = parseNameFilter(includeHeaders, true);
+        this.includedProperties = parseNameFilter(includeProperties, false);
         this.includeBody = includeBody;
         this.failOpen = failOpen;
     }
@@ -111,7 +115,7 @@ public class OpaPolicyEvaluator {
             String name = entry.getKey();
             // never feed our own decision headers back in: a policy must not be able to read a verdict
             // that an inbound message claimed for itself
-            if (isDecisionHeader(name) || !isIncluded(name)) {
+            if (isDecisionHeader(name) || !isIncluded(includedHeaders, name)) {
                 continue;
             }
             Object value = toJsonSafe(exchange, entry.getValue());
@@ -120,6 +124,23 @@ public class OpaPolicyEvaluator {
             }
         }
         input.put("headers", headers);
+        if (includesAnything(includedProperties)) {
+            Map<String, Object> properties = new LinkedHashMap<>();
+            for (Map.Entry<String, Object> entry : exchange.getProperties().entrySet()) {
+                if (!isIncluded(includedProperties, entry.getKey())) {
+                    continue;
+                }
+                Object value = toJsonSafe(exchange, entry.getValue());
+                if (value != null) {
+                    properties.put(entry.getKey(), value);
+                }
+            }
+            // only expose "properties" when something was actually collected, so a Rego policy doing
+            // has(input, "properties") is not misled into seeing an (empty) identity that is not there
+            if (!properties.isEmpty()) {
+                input.put("properties", properties);
+            }
+        }
         if (includeBody) {
             input.put("body", toJsonSafe(exchange, exchange.getMessage().getBody()));
         }
@@ -156,8 +177,12 @@ public class OpaPolicyEvaluator {
         exchange.getMessage().setHeader(OpaConstants.POLICY_PATH, policyPath);
     }
 
-    private boolean isIncluded(String name) {
-        return includedHeaders == null || includedHeaders.contains(name);
+    private static boolean isIncluded(Set<String> filter, String name) {
+        return filter == null || filter.contains(name);
+    }
+
+    private static boolean includesAnything(Set<String> filter) {
+        return filter == null || !filter.isEmpty();
     }
 
     private static boolean isDecisionHeader(String name) {
@@ -167,20 +192,27 @@ public class OpaPolicyEvaluator {
     }
 
     /**
-     * @return the header names to include, or null when every header is included
+     * Parses a comma-separated name filter.
+     *
+     * @param  names         the configured value, or {@code *} for everything
+     * @param  emptyMeansAll whether leaving the option unset includes every name or none of them
+     * @return               the names to include, or null when every name is included
      */
-    private static Set<String> parseIncludedHeaders(String includeHeaders) {
-        if (ObjectHelper.isEmpty(includeHeaders) || ALL_HEADERS.equals(includeHeaders.trim())) {
+    private static Set<String> parseNameFilter(String names, boolean emptyMeansAll) {
+        if (ObjectHelper.isEmpty(names)) {
+            return emptyMeansAll ? null : Set.of();
+        }
+        if (ALL_NAMES.equals(names.trim())) {
             return null;
         }
-        Set<String> names = new TreeSet<>(String.CASE_INSENSITIVE_ORDER);
-        for (String name : includeHeaders.split(",")) {
+        Set<String> filter = new TreeSet<>(String.CASE_INSENSITIVE_ORDER);
+        for (String name : names.split(",")) {
             String trimmed = name.trim();
             if (!trimmed.isEmpty()) {
-                names.add(trimmed);
+                filter.add(trimmed);
             }
         }
-        return names;
+        return filter;
     }
 
     /**

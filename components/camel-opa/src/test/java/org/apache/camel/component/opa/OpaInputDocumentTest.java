@@ -130,6 +130,75 @@ class OpaInputDocumentTest extends CamelTestSupport {
     }
 
     @SuppressWarnings("unchecked")
+    private static Map<String, Object> propertiesOf(Map<String, Object> input) {
+        return (Map<String, Object>) input.get("properties");
+    }
+
+    @Test
+    void sendsNoExchangePropertiesByDefault() throws Exception {
+        Map<String, Object> input = inputSentFor(ENDPOINT, e -> e.setProperty("subject", "alice"));
+
+        assertThat(input).doesNotContainKey("properties");
+    }
+
+    @Test
+    void sendsOnlyTheListedExchangeProperties() throws Exception {
+        Map<String, Object> input = inputSentFor(ENDPOINT + "&includeProperties=subject", e -> {
+            e.setProperty("subject", "alice");
+            e.setProperty("internalScratch", "not for the policy");
+        });
+
+        assertThat(propertiesOf(input)).containsOnlyKeys("subject").containsEntry("subject", "alice");
+    }
+
+    @Test
+    void omitsPropertiesKeyWhenIncludeMatchesNothing() throws Exception {
+        // includeProperties is configured but the exchange carries none of the listed properties, so the
+        // "properties" key must be absent rather than present-and-empty (otherwise has(input, "properties") lies)
+        Map<String, Object> input = inputSentFor(ENDPOINT + "&includeProperties=subject",
+                e -> e.setProperty("internalScratch", "not for the policy"));
+
+        assertThat(input).doesNotContainKey("properties");
+    }
+
+    @Test
+    void sendsEveryExchangePropertyWhenAskedForAll() throws Exception {
+        Map<String, Object> input = inputSentFor(ENDPOINT + "&includeProperties=*", e -> {
+            e.setProperty("subject", "alice");
+            e.setProperty("tenant", "acme");
+        });
+
+        assertThat(propertiesOf(input)).containsEntry("subject", "alice").containsEntry("tenant", "acme");
+    }
+
+    @Test
+    void matchesTheListedPropertyNamesCaseInsensitively() throws Exception {
+        Map<String, Object> input = inputSentFor(ENDPOINT + "&includeProperties=subject",
+                e -> e.setProperty("SUBJECT", "alice"));
+
+        assertThat(propertiesOf(input)).containsEntry("SUBJECT", "alice");
+    }
+
+    @Test
+    void convertsANonJsonPropertyValueToItsStringForm() throws Exception {
+        Map<String, Object> input = inputSentFor(ENDPOINT + "&includeProperties=when",
+                e -> e.setProperty("when", new Date(0)));
+
+        assertThat(propertiesOf(input).get("when")).isInstanceOf(String.class);
+    }
+
+    @Test
+    void keepsHeadersAndPropertiesInSeparateObjects() throws Exception {
+        Map<String, Object> input = inputSentFor(ENDPOINT + "&includeProperties=subject", e -> {
+            e.getMessage().setHeader("subject", "mallory");
+            e.setProperty("subject", "alice");
+        });
+
+        assertThat(headersOf(input)).containsEntry("subject", "mallory");
+        assertThat(propertiesOf(input)).containsEntry("subject", "alice");
+    }
+
+    @SuppressWarnings("unchecked")
     @Test
     void reportsTheRouteTheExchangeCameFrom() throws Exception {
         when(client.evaluate(eq(PATH), anyMap(), eq(Object.class))).thenReturn(Boolean.TRUE);

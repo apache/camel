@@ -62,7 +62,7 @@ public class OpaEndpoint extends DefaultEndpoint {
                 : OpaPolicyEvaluator.createClient(configuration.getServerUrl(), configuration.getBearerToken());
         evaluator = new OpaPolicyEvaluator(
                 opaClient, policyPath, configuration.getAllowKey(), configuration.getIncludeHeaders(),
-                configuration.isIncludeBody(), configuration.isFailOpen());
+                configuration.getIncludeProperties(), configuration.isIncludeBody(), configuration.isFailOpen());
     }
 
     @Override

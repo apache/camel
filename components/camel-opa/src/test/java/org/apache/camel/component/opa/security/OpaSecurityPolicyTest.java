@@ -28,11 +28,13 @@ import org.apache.camel.component.opa.OpaConstants;
 import org.apache.camel.component.opa.OpaPolicyEvaluationException;
 import org.apache.camel.test.junit6.CamelTestSupport;
 import org.junit.jupiter.api.Test;
+import org.mockito.ArgumentCaptor;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.anyMap;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 class OpaSecurityPolicyTest extends CamelTestSupport {
@@ -46,6 +48,7 @@ class OpaSecurityPolicyTest extends CamelTestSupport {
     protected RouteBuilder createRouteBuilder() {
         policy.setPolicyPath(PATH);
         policy.setOpaClient(client);
+        policy.setIncludeProperties("subject");
         return new RouteBuilder() {
             @Override
             public void configure() {
@@ -109,6 +112,19 @@ class OpaSecurityPolicyTest extends CamelTestSupport {
         assertThat(out.getException()).isInstanceOf(CamelAuthorizationException.class)
                 .hasCauseInstanceOf(OpaPolicyEvaluationException.class);
         result.assertIsSatisfied();
+    }
+
+    @SuppressWarnings("unchecked")
+    @Test
+    void handsThePolicyAnIdentityCarriedAsAnExchangeProperty() throws Exception {
+        givenDecision(Boolean.TRUE);
+
+        template.request("direct:start", e -> e.setProperty("subject", "alice"));
+
+        ArgumentCaptor<Map<String, Object>> captor = ArgumentCaptor.forClass(Map.class);
+        verify(client).evaluate(eq(PATH), captor.capture(), eq(Object.class));
+        assertThat((Map<String, Object>) captor.getValue().get("properties"))
+                .containsEntry("subject", "alice");
     }
 
     @Test
