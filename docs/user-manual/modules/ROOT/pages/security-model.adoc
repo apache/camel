@@ -739,6 +739,19 @@ while breaking either one:
   and authorization each normalize a path, a host or an identifier, they have
   to normalize it identically; a divergence between them is an auth bypass
   even when both sides are individually correct.
++
+The same divergence appears away from authorization, and two variants are
+worth naming because the protocol decides how bad they are. CAMEL-24453
+compared request header names case-sensitively when suppressing a header echo;
+HTTP header names are case-insensitive, so varying the case defeated it - and
+because HTTP/2 requires lowercase names on the wire the comparison never
+matched at all, leaving the suppression inert for every request on an HTTP/2
+connection. A guard that is merely bypassable under HTTP/1.1 can be
+unconditionally absent under HTTP/2. CAMEL-24455 is the prefix variant:
+`camel-platform-http` selected proxy mode by testing whether the configured
+path *started with* `proxy`, so an endpoint named `proxyStatus` silently became
+a proxy. Match the exact value unless a prefix is what the feature actually
+means.
 
 ==== Information disclosure of secrets or sensitive Exchange state
 
@@ -753,12 +766,60 @@ CVE-2026-56139 (`camel-undertow`) - the `muteException` consumer option
 defaulting to `false`, so a processing error returned the full exception and
 stack trace to the caller.
 
+That last shape has since been found in every consumer that writes a failure
+back to its caller, not only the HTTP ones: `camel-knative` returned the stack
+trace as the response body, `camel-mina` wrote the exception over the socket
+(its class and message under a textline codec, its serialised form with the
+cause chain under the object codec), `camel-cxf` described undeclared route
+exceptions in the SOAP fault, and `camel-grpc` copied the exception message
+into the gRPC status description, which is transmitted to the client while the
+status *cause* stays local. The rule generalises past HTTP: *a consumer must
+not return the route's exception to the party that sent the message.* Any
+consumer with a reply path needs a `muteException` option defaulting to `true`,
+and faults the service contract declares - a JAX-WS `@WebFault`, for instance -
+are the only exceptions, because suppressing those breaks the contract rather
+than protecting anything.
+
 Judged against the default production log levels (INFO, WARN, ERROR);
 findings whose impact only manifests when the operator has enabled the
 diagnostic DEBUG or TRACE levels are out of scope, since those levels are
 operator-enabled diagnostic configurations expected to log internal
 `Exchange`, route and configuration detail (see the diagnostic-logging
 entry under _Known non-findings_).
+
+==== State shared between exchanges
+
+A component that holds mutable state outside the Exchange - a parsed target
+object, a `java.security.Signature`, per-request key material, a process-wide
+cache - and reuses it across exchanges lets one message observe or alter what
+another message is doing. The party that sends message A does not have to be
+the party that sends message B, so this crosses a trust boundary whenever a
+route serves more than one sender, tenant or partner.
+
+Four advisories in the 2026 batch share it. `camel-thrift` unmarshalled into
+the type's shared `defaultInstance` and returned it as the body, so fields
+absent from a later payload retained the previous sender's values.
+`camel-pqc` used one unsynchronized `Signature` instance for every exchange;
+`Signature` accumulates state in `update()` and consumes it in `verify()`, so
+interleaved use can report a verification success for data the signature never
+covered. `camel-as2` kept per-request signing material in shared state, so an
+MDN could be signed with a different trading partner's key. `camel-http` keyed
+its JVM-global OAuth2 token cache on fewer fields than shape the token -
+omitting the scope, the resource indicator and the token endpoint - so an
+endpoint could be served a token minted for a different authority.
+
+Two questions decide it. *Is the state per-exchange in fact as well as in
+name?* Anything reachable from a producer or consumer field, a static, or a
+component-level cache is shared until proven otherwise, and "the endpoint is
+single-threaded" is a property of one deployment rather than of the code.
+*Does the cache key contain everything that changes the value?* A key that
+omits a field which alters what the cached object authorises is the same defect
+as no key at all.
+
+Concurrency is what makes these reachable, but the class is not "a race
+condition is a vulnerability": an interleaving that only corrupts the failing
+exchange's own result is a correctness bug. It is in scope when the shared
+state carries authority, identity or another party's data.
 
 ==== Insecure defaults
 
@@ -774,6 +835,29 @@ CVE-2026-43865 are insecure-default cases that also fall into the
 deserialisation class; CVE-2026-49365 and CVE-2026-56139 (`muteException`
 defaulting to `false`) are insecure-default cases in the
 information-disclosure class.
+
+Two shapes recur often enough to be worth stating on their own:
+
+* *Turning a protection on must not be what turns another one off.* Enabling
+  SSL on the `camel-knative` HTTP client without configuring a truststore fell
+  back to trusting every certificate rather than to the JVM default trust
+  anchors, so the deployment got an encrypted connection with no peer
+  authentication. The dangerous state was reached by omission, not by an
+  opt-in, which is what separates it from `trustAllCertificates=true` - that
+  one is out of scope precisely because the operator asked for it. Where a
+  security-relevant setting is absent, fall back to the platform default and
+  keep "trust everything" reachable only by name.
+* *Enabling CORS must not grant credentials to an origin nobody named.*
+  `camel-platform-http-vertx` set `Access-Control-Allow-Credentials` outside
+  the origin check and, with no origin list configured, echoed the caller's own
+  `Origin` back; `camel-jetty` installed Jetty's `CrossOriginFilter` stock
+  defaults when `enableCORS` was set. Both produce the credentialed any-origin
+  policy the fetch specification refuses to express as a literal `*`, which is
+  why reflecting the origin is the usual way around that rule. Reflecting an
+  origin is acceptable; reflecting one *and* allowing credentials is not,
+  unless the operator listed that origin. Set `Vary: Origin` whenever the
+  origin is reflected, so a shared cache cannot serve one origin's response to
+  another.
 
 ==== Injection into back-end queries built by Camel
 
@@ -1505,6 +1589,28 @@ front of you:
   value as the dispatch decision (CVE-2026-40022, CAMEL-24412). A denial path
   must also stop the exchange, not merely set a response that a later step
   can overwrite.
+* *Does the component keep state between exchanges?* Any field on a producer
+  or consumer, any static, any component-level cache outlives the exchange that
+  wrote it. Ask whether a second sender could read or disturb it: a shared
+  deserialization target hands one sender's fields to the next
+  (CAMEL-24442), a shared `Signature` can report success for data it never
+  covered (CAMEL-24445), shared per-request key material signs one partner's
+  receipt with another's key (CAMEL-24429). If the state is a cache, the key
+  must contain every field that changes what the cached value authorises -
+  scope, resource, issuing endpoint (CAMEL-24456). "It is single-threaded in
+  practice" is a property of one deployment, not of the code.
+* *Does the component send a credential somewhere the route did not choose?*
+  Credentials belong to the authority the endpoint was configured with. If the
+  component follows redirects, the target of a redirect is chosen by the remote
+  server, so credentials must not be re-attached across an authority change,
+  and credentials must not be registered against a wildcard host scope
+  (CAMEL-24452). The same holds for any address the peer supplies - an
+  asynchronous receipt destination, a callback URL, a re-login endpoint
+  (CAMEL-24417).
+* *Does the component write a reply to the party that sent the message?* If it
+  can return a route failure, it needs a `muteException` option defaulting to
+  `true`; see the information-disclosure class above for the shape and for the
+  declared-fault exception.
 * *Does the change relax a default?* New defaults err toward "denied unless
   opted in" for the four `security` categories. If a default must be relaxed,
   the change requires a corresponding upgrade-guide entry and PMC review.
