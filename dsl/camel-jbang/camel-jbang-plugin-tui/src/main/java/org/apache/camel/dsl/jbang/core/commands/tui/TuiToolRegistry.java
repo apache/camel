@@ -19,6 +19,7 @@ package org.apache.camel.dsl.jbang.core.commands.tui;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import dev.tamboui.buffer.Buffer;
@@ -79,7 +80,19 @@ class TuiToolRegistry {
     }
 
     /**
-     * Returns all 42 tool definitions. The result is cached since it is immutable.
+     * The tools needed to answer questions and troubleshoot from the built-in AI panel. The remaining tools drive the
+     * screen (drawing, animation, key presses, tape recording, themes) and exist for external MCP agents. Every tool
+     * schema is sent on every request, and a local model pays for that in prompt-processing time, so the AI panel sends
+     * only this subset to local providers unless configured otherwise.
+     */
+    static final Set<String> CORE_TOOLS = Set.of(
+            "tui_get_state", "tui_get_options", "tui_get_table", "tui_get_log", "tui_get_errors",
+            "tui_get_diagram", "tui_get_topology", "tui_get_processor_detail", "tui_catalog_doc",
+            "tui_get_history", "tui_get_spans", "tui_control", "tui_send_message", "tui_get_files",
+            "tui_get_readme", "tui_navigate", "tui_set_log_level", "tui_filter");
+
+    /**
+     * Returns all tool definitions. The result is cached since it is immutable.
      */
     List<ToolDef> getToolDefinitions() {
         List<ToolDef> tools = cachedTools;
@@ -89,6 +102,13 @@ class TuiToolRegistry {
         tools = buildToolDefinitions();
         cachedTools = tools;
         return tools;
+    }
+
+    /**
+     * Returns only the {@link #CORE_TOOLS} definitions, in registry order.
+     */
+    List<ToolDef> getCoreToolDefinitions() {
+        return getToolDefinitions().stream().filter(t -> CORE_TOOLS.contains(t.name())).toList();
     }
 
     /**

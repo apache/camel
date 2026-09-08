@@ -814,6 +814,19 @@ NOTE: On Apple Silicon, use the default (GGUF) tags rather than the `-mlx` tags.
 engine cannot yet reuse the cached prompt for Qwen 3.x models, so every question re-processes the
 whole prompt, while the default engine reuses it and only processes what is new.
 
+==== Tool set for local models
+
+Every question sends the definitions of the `tui_*` tools the model may call, and a local model
+pays for each of them in prompt-processing time. The panel therefore sends only the core set of
+tools (state, tables, logs, errors, diagrams, topology, processor details, catalog docs, traces,
+spans, route control, sending messages, source files, navigation, log level and filters) to Ollama
+and to any provider on `localhost`, which roughly halves the prompt. Hosted providers get every
+tool, including the drawing, animation and automation tools. Use `/tools full` in the panel to send
+all tools to a local model too, `/tools core` to trim the set for a hosted one, or set
+`camel.tui.ai.tools` in `.camel-cli.properties`. Ollama requests also ask the server to keep the
+model loaded for 30 minutes and use a 32k context window (`OLLAMA_CONTEXT_LENGTH` overrides it),
+so follow-up questions reuse the cached prompt instead of reloading the model.
+
 ==== Using an OpenAI-compatible local server
 
 Set `LLM_API_KEY` and `LLM_BASE_URL` to connect to any OpenAI-compatible server
@@ -874,6 +887,9 @@ When the AI panel is open, input that starts with `/` runs a local panel command
 
 | `/model [model-name]` (`/m`)
 | Show the current model, or switch the session model.
+
+| `/tools [auto\|core\|full]` (`/t`)
+| Show which tool set is sent to the model, or switch it. `auto` (default) sends the core set to local providers and every tool to hosted ones; the choice is saved as `camel.tui.ai.tools`.
 
 | `/clear` (`/c`)
 | Clear the AI conversation, usage counters, and model context without changing the provider or model.

@@ -728,6 +728,67 @@ class AiPanelTest {
         assertEquals("/clear-history", panel.inputBufferForTesting());
     }
 
+    // ---- tool set and system prompt tests ----
+
+    @Test
+    void localProviderGetsCoreToolsAndHostedProviderGetsAll() {
+        AiPanel panel = new AiPanel();
+        panel.setToolRegistryForTesting(new TuiToolRegistry(null));
+        RecordingLlmClient client = new RecordingLlmClient("ok");
+        panel.setClientForTesting(client);
+
+        // auto mode: a hosted provider gets every tool
+        assertEquals(new TuiToolRegistry(null).getToolDefinitions().size(), panel.toolDefinitionsForTesting().size());
+        assertTrue(panel.systemPromptForTesting().contains("tui_draw_shape"));
+
+        // auto mode: a local provider only gets the core set, and the prompt no longer suggests drawing tools
+        client.withApiType(LlmClient.ApiType.ollama);
+        assertEquals(TuiToolRegistry.CORE_TOOLS.size(), panel.toolDefinitionsForTesting().size());
+        assertTrue(panel.toolDefinitionsForTesting().stream()
+                .allMatch(def -> TuiToolRegistry.CORE_TOOLS.contains(def.name())));
+        assertFalse(panel.systemPromptForTesting().contains("tui_draw_shape"));
+        assertTrue(panel.describeToolModeForTesting().startsWith("core (18 of "));
+    }
+
+    @Test
+    void explicitToolModeOverridesProviderDetection() {
+        AiPanel panel = new AiPanel();
+        panel.setToolRegistryForTesting(new TuiToolRegistry(null));
+        RecordingLlmClient client = new RecordingLlmClient("ok");
+        client.withApiType(LlmClient.ApiType.ollama);
+        panel.setClientForTesting(client);
+
+        panel.setToolModeForTesting("full");
+        assertEquals(new TuiToolRegistry(null).getToolDefinitions().size(), panel.toolDefinitionsForTesting().size());
+
+        panel.setToolModeForTesting("core");
+        client.withApiType(LlmClient.ApiType.openai);
+        assertEquals(TuiToolRegistry.CORE_TOOLS.size(), panel.toolDefinitionsForTesting().size());
+    }
+
+    @Test
+    void systemPromptIsStableAndDoesNotRepeatTheToolList() {
+        AiPanel panel = new AiPanel();
+        panel.setToolRegistryForTesting(new TuiToolRegistry(null));
+        panel.setClientForTesting(new RecordingLlmClient("ok"));
+
+        String prompt = panel.systemPromptForTesting();
+
+        // the tool definitions already describe every tool, so the prompt must not list them again
+        assertFalse(prompt.contains("- tui_get_table:"));
+        assertFalse(prompt.contains("The user is monitoring"));
+        assertEquals(prompt, panel.systemPromptForTesting());
+    }
+
+    @Test
+    void normalizeToolModeAcceptsKnownValuesOnly() {
+        assertEquals("auto", AiPanel.normalizeToolMode(null));
+        assertEquals("auto", AiPanel.normalizeToolMode("  "));
+        assertEquals("core", AiPanel.normalizeToolMode("Core"));
+        assertEquals("full", AiPanel.normalizeToolMode("FULL"));
+        assertNull(AiPanel.normalizeToolMode("bogus"));
+    }
+
     // ---- paste tests ----
 
     @Test
@@ -852,6 +913,16 @@ class AiPanelTest {
     }
 
     static final class FakeSlashContext implements AiSlashCommandContext {
+
+        @Override
+        public String describeToolMode() {
+            return "full (46 of 46 tools), mode auto";
+        }
+
+        @Override
+        public boolean switchToolMode(String mode) {
+            return true;
+        }
 
         boolean exitRequested;
         boolean cancelRequested;

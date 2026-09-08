@@ -76,6 +76,9 @@ class AiPanel {
     private static final DateTimeFormatter TIME_FMT
             = DateTimeFormatter.ofPattern("HH:mm:ss").withZone(ZoneId.systemDefault());
     private static final String INPUT_PROMPT = "❯ ";
+    static final String TOOL_MODE_AUTO = "auto";
+    static final String TOOL_MODE_CORE = "core";
+    static final String TOOL_MODE_FULL = "full";
     private static final List<String> THINKING_VERBS = List.of(
             "Herding thoughts", "Chewing the cud", "Crossing the desert", "Loading the caravan",
             "Sniffing out an oasis", "Trekking onward", "Kicking up sand", "Grazing on context",
@@ -133,6 +136,8 @@ class AiPanel {
     // Slash commands
     private final AiSlashCommandRegistry slashCommands = AiSlashCommandRegistry.defaults();
     private AiSlashCommandContext slashCommandContext = new PanelSlashCommandContext();
+    // auto | core | full, see useCoreTools(); loaded from camel.tui.ai.tools, null means auto
+    private volatile String toolMode;
     private final AiCliCommandExecutor cliCommandExecutor = new AiCliCommandExecutor();
     private volatile CompletableFuture<AiCliCommandExecutor.Result> activeCliCommand;
     private Runnable exitCallback;
@@ -306,6 +311,9 @@ class AiPanel {
             } else {
                 TuiSettings settings = TuiSettings.load();
                 providerSelector.applyChoice(created, settings.getAiProvider(), settings.getAiModel(), settings.getAiUrl());
+            }
+            if (toolMode == null) {
+                toolMode = normalizeToolMode(TuiSettings.load().getAiTools());
             }
             client = created;
             if (!client.detectEndpoint()) {
@@ -887,7 +895,7 @@ class AiPanel {
         if (messages == null) {
             messages = new ArrayList<>();
         }
-        messages.add(LlmClient.Message.user(question));
+        messages.add(LlmClient.Message.user(contextualize(question)));
 
         LlmClient.TokenUsage totalUsage = LlmClient.TokenUsage.EMPTY;
         for (int i = 0; i < MAX_ITERATIONS; i++) {
@@ -1661,67 +1669,31 @@ class AiPanel {
                 """;
     }
 
+    /**
+     * The static prefix sent with every request. It deliberately contains nothing that changes between turns (the
+     * selected integration travels in the user message instead) so a local model's prompt cache can reuse it, and it
+     * does not repeat the tool list because the tool definitions already carry every description.
+     */
     private String buildSystemPrompt() {
         StringBuilder sb = new StringBuilder();
         sb.append("You are an Apache Camel assistant running inside the Camel TUI terminal console. ");
         sb.append("You help users understand and troubleshoot their running Camel integrations.\n\n");
 
-        String selectedName = mcpFacade != null ? mcpFacade.getSelectedIntegrationName() : null;
-        String selectedPid = mcpFacade != null ? mcpFacade.getSelectedPid() : null;
-        if (selectedName != null && selectedPid != null) {
-            sb.append("The user is monitoring: ").append(selectedName);
-            sb.append(" (PID ").append(selectedPid).append(").\n\n");
-        }
-
-        sb.append("You have tui_* tools to observe and interact with the TUI:\n");
-        sb.append("- tui_get_state: see which tab is active and which integration is selected\n");
-        sb.append("- tui_get_table: get structured data from any tab WITHOUT navigating to it ");
-        sb.append("(Memory, Routes, Endpoints, Health, Process, Threads, Metrics, Startup, Heap Histogram, etc.)\n");
-        sb.append("- tui_get_log: read application logs with filtering, WITHOUT navigating to the Log tab\n");
-        sb.append("- tui_get_errors: get error details with stack traces, WITHOUT navigating to the Errors tab\n");
-        sb.append("- tui_get_diagram: view route diagrams as text, WITHOUT navigating to the Diagram tab\n");
-        sb.append("- tui_get_topology: see how routes connect to each other, WITHOUT navigating to the Topology tab\n");
-        sb.append("- tui_get_processor_detail: get configured options for all processors in a route as structured JSON. ");
-        sb.append("USE THIS to explain what a route does, walk through each step, or understand EIP/component configuration. ");
-        sb.append("Set includeDocs=true to get catalog documentation for each option\n");
-        sb.append("- tui_catalog_doc: look up Camel catalog documentation for any component, EIP, data format, or language\n");
-        sb.append("- tui_get_ai_log: view the AI panel's own activity log (questions, tool calls, responses)\n");
-        sb.append("- tui_get_mcp_log: view the MCP server's tool call log (external client connections and requests)\n");
-        sb.append("- tui_get_history: trace exchange processing steps, WITHOUT navigating to the History tab\n");
-        sb.append("- tui_get_spans: OpenTelemetry span data, WITHOUT navigating to the Spans tab\n");
-        sb.append("- tui_navigate: switch tabs, select integrations, select routes ");
-        sb.append("- ONLY use when the user explicitly wants to change the view\n");
-        sb.append("- tui_control: stop/start routes, restart or stop integrations\n");
-        sb.append("- tui_send_message: send test messages to endpoints\n");
-        sb.append("- tui_filter: set or clear text filters on any tab\n");
-        sb.append("- tui_execute_sql: run SQL queries against a DataSource in the integration\n");
-        sb.append("- tui_set_log_level: change the runtime log level\n");
-        sb.append("- tui_draw_shape: draw shapes (box, highlight, arrow, underline, text) on screen to annotate problems\n");
-        sb.append("- tui_draw_clear: clear drawing overlay\n");
-        sb.append("- tui_locate: find elements on screen by text or diagram node ID, returns coordinates for drawing\n");
-        sb.append("- tui_show_caption: display a message to the user on screen\n");
-        sb.append("- tui_action: invoke TUI actions (reset-stats, screenshot, toggle-theme, etc.)\n");
-        sb.append("- tui_get_themes / tui_set_theme: list and switch TUI themes\n");
-        sb.append("- tui_get_files / tui_get_readme: read source files and README from integrations\n");
-        sb.append("- tui_update_row: update a database row via PreparedStatement\n");
-        sb.append("- tui_set_input: set input field values on tabs directly\n");
-        sb.append("- tui_toggle_trace_display: control which sections show in History detail view\n");
-        sb.append("- tui_canvas_open / tui_canvas_close: open/close a blank canvas for free-form drawing\n");
-        sb.append("- tui_animate: run built-in animations on the canvas\n");
-        sb.append("- tui_send_keys: send key presses to the TUI\n");
-        sb.append("- tui_get_events: see recent user interaction events\n");
-        sb.append("- tui_tape_start / tui_tape_stop: record TUI interactions as .tape files\n");
-        sb.append("- tui_wait_for_idle / tui_sleep: timing tools for pacing interactions\n\n");
+        sb.append("You have tui_* tools to observe and interact with the TUI; the tool definitions describe each one. ");
+        sb.append("All tui_get_* tools fetch data directly from any tab without changing what the user sees.\n\n");
         sb.append("Guidelines:\n");
-        sb.append("- NEVER call tui_navigate just to read data ");
-        sb.append("- all tui_get_* tools fetch data directly from any tab without changing the active tab\n");
+        sb.append("- NEVER call tui_navigate just to read data - use the tui_get_* tools instead\n");
         sb.append("- Prefer tui_get_table over tui_get_screen for structured data ");
-        sb.append("- it fetches from any tab directly using the tab parameter, no navigation needed\n");
-        sb.append("- Use tui_get_state first to understand context before acting, if needed\n");
+        sb.append("- it fetches from any tab using the tab parameter, no navigation needed\n");
+        sb.append("- Call tui_get_options only when unsure which tab holds the data you need\n");
+        sb.append("- Use tui_get_state to learn which integration and tab is selected, if the question depends on it\n");
+        sb.append("- Use tui_get_processor_detail to explain what a route does or how its steps are configured\n");
         sb.append("- Be concise and actionable in your answers\n");
         sb.append("- When something looks wrong, explain what it means and suggest fixes\n");
         sb.append("- For stopping routes or applications, use tui_control for graceful shutdown\n");
-        sb.append("- Use tui_locate + tui_draw_shape to visually highlight problems on screen for the user\n");
+        if (!useCoreTools()) {
+            sb.append("- Use tui_locate + tui_draw_shape to visually highlight problems on screen for the user\n");
+        }
         if (mcpServerActive) {
             sb.append("\nThe TUI MCP server is available at http://localhost:")
                     .append(mcpServerPort).append("/mcp for external AI agents.");
@@ -1729,12 +1701,54 @@ class AiPanel {
         return sb.toString();
     }
 
+    /**
+     * Prefixes the question with the integration the user is looking at. This used to live in the system prompt, but
+     * there it invalidated the model's cached prompt prefix every time the selection changed.
+     */
+    private String contextualize(String question) {
+        String selectedName = mcpFacade != null ? mcpFacade.getSelectedIntegrationName() : null;
+        String selectedPid = mcpFacade != null ? mcpFacade.getSelectedPid() : null;
+        if (selectedName != null && selectedPid != null) {
+            return "[Monitoring " + selectedName + " (PID " + selectedPid + ")]\n" + question;
+        }
+        return question;
+    }
+
+    /**
+     * Whether only the {@link TuiToolRegistry#CORE_TOOLS} are sent: always in {@code core} mode, never in {@code full}
+     * mode, and for local providers in {@code auto} mode.
+     */
+    private boolean useCoreTools() {
+        String mode = toolMode == null ? TOOL_MODE_AUTO : toolMode;
+        if (TOOL_MODE_CORE.equals(mode)) {
+            return true;
+        }
+        if (TOOL_MODE_FULL.equals(mode)) {
+            return false;
+        }
+        return client != null && client.isLocalEndpoint();
+    }
+
+    private String describeToolMode() {
+        if (toolRegistry == null) {
+            return "no tools available";
+        }
+        int total = toolRegistry.getToolDefinitions().size();
+        int active = useCoreTools() ? toolRegistry.getCoreToolDefinitions().size() : total;
+        String mode = toolMode == null ? TOOL_MODE_AUTO : toolMode;
+        String detail = TOOL_MODE_AUTO.equals(mode)
+                ? (useCoreTools() ? " (local provider)" : " (hosted provider)") : "";
+        return (useCoreTools() ? "core" : "full") + " (" + active + " of " + total + " tools), mode " + mode + detail;
+    }
+
     private List<LlmClient.ToolDef> buildTuiToolDefinitions() {
         if (toolRegistry == null) {
             return List.of();
         }
         List<LlmClient.ToolDef> defs = new ArrayList<>();
-        for (TuiToolRegistry.ToolDef td : toolRegistry.getToolDefinitions()) {
+        List<TuiToolRegistry.ToolDef> source
+                = useCoreTools() ? toolRegistry.getCoreToolDefinitions() : toolRegistry.getToolDefinitions();
+        for (TuiToolRegistry.ToolDef td : source) {
             defs.add(new LlmClient.ToolDef(td.name(), td.description(), td.inputSchema()));
         }
         return defs;
@@ -1841,6 +1855,41 @@ class AiPanel {
         return inputBuffer.toString();
     }
 
+    /**
+     * Maps a configured tool mode to {@code auto}, {@code core} or {@code full}; blank means {@code auto}, anything
+     * else is rejected with {@code null}.
+     */
+    static String normalizeToolMode(String mode) {
+        if (mode == null || mode.isBlank()) {
+            return TOOL_MODE_AUTO;
+        }
+        String value = mode.trim().toLowerCase();
+        return switch (value) {
+            case TOOL_MODE_AUTO, TOOL_MODE_CORE, TOOL_MODE_FULL -> value;
+            default -> null;
+        };
+    }
+
+    void setToolRegistryForTesting(TuiToolRegistry registry) {
+        this.toolRegistry = registry;
+    }
+
+    void setToolModeForTesting(String mode) {
+        this.toolMode = normalizeToolMode(mode);
+    }
+
+    String systemPromptForTesting() {
+        return buildSystemPrompt();
+    }
+
+    List<LlmClient.ToolDef> toolDefinitionsForTesting() {
+        return buildTuiToolDefinitions();
+    }
+
+    String describeToolModeForTesting() {
+        return describeToolMode();
+    }
+
     void setExitCallbackForTestingOrRuntime(Runnable callback) {
         this.exitCallback = callback;
     }
@@ -1916,6 +1965,24 @@ class AiPanel {
         @Override
         public String selectedProcessName() {
             return ctx != null ? ctx.selectedName() : null;
+        }
+
+        @Override
+        public String describeToolMode() {
+            return AiPanel.this.describeToolMode();
+        }
+
+        @Override
+        public boolean switchToolMode(String mode) {
+            String normalized = normalizeToolMode(mode);
+            if (normalized == null) {
+                return false;
+            }
+            toolMode = normalized;
+            TuiSettings settings = TuiSettings.load();
+            settings.setAiTools(TOOL_MODE_AUTO.equals(normalized) ? null : normalized);
+            settings.save();
+            return true;
         }
 
         @Override

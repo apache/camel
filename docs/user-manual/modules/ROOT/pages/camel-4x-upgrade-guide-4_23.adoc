@@ -612,6 +612,14 @@ shape. The `camel get variable` CLI command has already been updated accordingly
 
 === camel-jbang (TUI)
 
+The F8 AI panel now sends only a core subset of its `tui_*` tools to local providers (Ollama, or any
+provider on `localhost`); the drawing, animation and automation tools are left out to keep the
+prompt small for local models. Hosted providers are unaffected. Use `/tools full` in the panel, or
+set `camel.tui.ai.tools=full`, to restore the previous behaviour. Requests to Ollama now also set
+`keep_alive` to 30 minutes and `num_ctx` to 32768 (or `OLLAMA_CONTEXT_LENGTH` when that is set in the
+environment), which can cause a one-time model reload if the model was loaded with a different
+context size.
+
 `camel tui --record` is now rejected when combined with `--web`. The recording configuration applies
 to the whole process, so a browser session served by `--web` would be recorded into the same `.cast`
 file as the local session. Previously the combination was accepted, but recording never produced any

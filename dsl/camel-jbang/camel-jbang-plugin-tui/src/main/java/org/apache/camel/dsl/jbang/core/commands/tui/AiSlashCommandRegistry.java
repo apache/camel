@@ -69,6 +69,9 @@ final class AiSlashCommandRegistry {
                 "model", List.of("m"), "Show or switch the AI model", "<model>",
                 AiSlashCommandRegistry::executeModel));
         commands.add(new Descriptor(
+                "tools", List.of("t"), "Show or switch the tool set sent to the model", "[auto|core|full]",
+                AiSlashCommandRegistry::executeTools));
+        commands.add(new Descriptor(
                 "clear", List.of("c"), "Clear the conversation", null,
                 (context, arguments) -> {
                     context.clearConversation();
@@ -294,6 +297,17 @@ final class AiSlashCommandRegistry {
             return CommandResult.system("Switched model to " + arguments);
         }
         return CommandResult.listModels();
+    }
+
+    private static CommandResult executeTools(AiSlashCommandContext context, String arguments) {
+        if (arguments.isBlank()) {
+            return CommandResult.system("Tool set: " + context.describeToolMode());
+        }
+        String mode = arguments.trim().toLowerCase();
+        if (!context.switchToolMode(mode)) {
+            return CommandResult.error("Unknown tool mode '" + arguments.trim() + "'. Use auto, core or full.");
+        }
+        return CommandResult.system("Tool set: " + context.describeToolMode());
     }
 
     private static int firstWhitespace(String value) {

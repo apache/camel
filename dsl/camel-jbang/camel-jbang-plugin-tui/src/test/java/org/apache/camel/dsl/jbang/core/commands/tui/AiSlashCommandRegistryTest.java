@@ -33,7 +33,9 @@ class AiSlashCommandRegistryTest {
     void descriptorsKeepStableOrder() {
         AiSlashCommandRegistry registry = AiSlashCommandRegistry.defaults();
 
-        assertEquals(List.of("help", "provider", "model", "clear", "clear-history", "close", "quit", "run", "infra", "send"),
+        assertEquals(
+                List.of("help", "provider", "model", "tools", "clear", "clear-history", "close", "quit", "run", "infra",
+                        "send"),
                 registry.descriptors().stream().map(AiSlashCommandRegistry.Descriptor::name).toList());
     }
 
@@ -73,7 +75,7 @@ class AiSlashCommandRegistryTest {
     void completionsIncludeAllCommandsForBareSlash() {
         AiSlashCommandRegistry registry = AiSlashCommandRegistry.defaults();
 
-        assertEquals(10, registry.completionsFor("/").size());
+        assertEquals(11, registry.completionsFor("/").size());
         assertFalse(registry.completionsFor("/").stream().anyMatch(descriptor -> "exit".equals(descriptor.name())));
     }
 
@@ -272,7 +274,70 @@ class AiSlashCommandRegistryTest {
         }
     }
 
+    @Test
+    void toolsWithoutArgumentsDescribesCurrentToolSet() {
+        AiSlashCommandRegistry registry = AiSlashCommandRegistry.defaults();
+        ToolModeContext context = new ToolModeContext();
+
+        AiSlashCommandRegistry.CommandResult result = registry.execute("/tools", context);
+
+        assertEquals("Tool set: core (18 of 46 tools), mode auto", result.text());
+        assertNull(context.switchedTo);
+    }
+
+    @Test
+    void toolsSwitchesModeCaseInsensitively() {
+        AiSlashCommandRegistry registry = AiSlashCommandRegistry.defaults();
+        ToolModeContext context = new ToolModeContext();
+
+        AiSlashCommandRegistry.CommandResult result = registry.execute("/t Full", context);
+
+        assertEquals("full", context.switchedTo);
+        assertEquals(AiRole.SYSTEM, result.role());
+    }
+
+    @Test
+    void toolsRejectsUnknownMode() {
+        AiSlashCommandRegistry registry = AiSlashCommandRegistry.defaults();
+        ToolModeContext context = new ToolModeContext();
+
+        AiSlashCommandRegistry.CommandResult result = registry.execute("/tools bogus", context);
+
+        assertEquals(AiRole.ERROR, result.role());
+        assertTrue(result.text().contains("bogus"));
+        assertNull(context.switchedTo);
+    }
+
+    private static final class ToolModeContext extends NoopSlashContext {
+
+        private String switchedTo;
+
+        @Override
+        public String describeToolMode() {
+            return "core (18 of 46 tools), mode auto";
+        }
+
+        @Override
+        public boolean switchToolMode(String mode) {
+            if (!List.of("auto", "core", "full").contains(mode)) {
+                return false;
+            }
+            switchedTo = mode;
+            return true;
+        }
+    }
+
     private static class NoopSlashContext implements AiSlashCommandContext {
+
+        @Override
+        public String describeToolMode() {
+            return "";
+        }
+
+        @Override
+        public boolean switchToolMode(String mode) {
+            return false;
+        }
 
         @Override
         public void closePanel() {

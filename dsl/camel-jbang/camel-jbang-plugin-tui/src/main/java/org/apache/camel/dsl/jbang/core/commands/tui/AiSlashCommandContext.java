@@ -42,6 +42,17 @@ interface AiSlashCommandContext {
 
     String selectedProcessName();
 
+    /**
+     * Describes the tool set currently sent to the model, for example {@code core (18 of 46 tools), mode auto}.
+     */
+    String describeToolMode();
+
+    /**
+     * Switches the tool mode to {@code auto}, {@code core} or {@code full} and persists it. Returns {@code false} when
+     * the mode is not one of those values.
+     */
+    boolean switchToolMode(String mode);
+
     CompletableFuture<AiCliCommandExecutor.Result> executeCli(AiCliCommandExecutor.Request request);
 
     void cancelCli();
