@@ -1732,3 +1732,14 @@ Routes that set `useRecovery=false` are unaffected. Routes that left recovery en
 default, stop seeing in-progress aggregations re-delivered, and start seeing genuine recovery. The cache
 now also holds one entry per completed and not yet confirmed exchange; those entries are removed on
 confirmation.
+
+=== camel-qdrant - the PayloadSelector header is now honoured
+
+`QdrantHeaders.PAYLOAD_SELECTOR` (`CamelQdrantPointsPayloadSelector`) was declared and advertised in
+the component metadata but never read. The `RETRIEVE` and `SIMILARITY_SEARCH` operations only honoured
+the `CamelQdrantWithPayload` boolean, so a route that set a `Points.WithPayloadSelector` to request
+specific payload fields was silently given the whole payload.
+
+Both operations now use the header when it is present, and fall back to the `CamelQdrantWithPayload`
+boolean otherwise. A route that already sets the header starts receiving only the payload fields it
+selected; a route that does not set it is unaffected.
