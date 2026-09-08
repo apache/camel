@@ -100,7 +100,6 @@ public class DefaultSupervisingRouteController extends DefaultRouteController im
     private double backOffMultiplier = 1.0d;
     private boolean unhealthyOnExhausted = true;
     private boolean unhealthyOnRestarting = true;
-    private volatile long supervisionEpoch;
 
     public DefaultSupervisingRouteController() {
         this.lock = new ReentrantLock();
@@ -359,27 +358,6 @@ public class DefaultSupervisingRouteController extends DefaultRouteController im
 
             doStopRoute(route.get(), true, r -> result.set(super.stopRoute(r.getId(), timeout, timeUnit, abortAfterTimeout)));
             return result.get();
-        }
-    }
-
-    @Override
-    public void removeAllRoutes() throws Exception {
-        super.removeAllRoutes();
-        clearSupervisedState();
-    }
-
-    private void clearSupervisedState() {
-        lock.lock();
-        try {
-            supervisionEpoch++;
-            new ArrayList<>(routeManager.routes.keySet()).forEach(routeManager::release);
-            routeManager.routes.clear();
-            routeManager.exhausted.clear();
-            routeManager.exceptions.clear();
-            routes.clear();
-            nonSupervisedRoutes.clear();
-        } finally {
-            lock.unlock();
         }
     }
 
@@ -953,12 +931,7 @@ public class DefaultSupervisingRouteController extends DefaultRouteController im
                     // Eventually delay the startup of the route a later time
                     if (initialDelay > 0) {
                         LOG.debug("Route {} will be started in {} millis", holder.getId(), initialDelay);
-                        long epoch = supervisionEpoch;
-                        executorService.schedule(() -> {
-                            if (epoch == supervisionEpoch) {
-                                startRoute(holder);
-                            }
-                        }, initialDelay, TimeUnit.MILLISECONDS);
+                        executorService.schedule(() -> startRoute(holder), initialDelay, TimeUnit.MILLISECONDS);
                     } else {
                         startRoute(holder);
                     }
@@ -972,17 +945,8 @@ public class DefaultSupervisingRouteController extends DefaultRouteController im
         public void onRemove(Route route) {
             lock.lock();
             try {
-                String routeId = route.getRouteId();
-                List<RouteHolder> holders = routes.stream()
-                        .filter(r -> ObjectHelper.equal(r.get(), route) || ObjectHelper.equal(r.getId(), routeId))
-                        .toList();
-                for (RouteHolder holder : holders) {
-                    routeManager.release(holder);
-                    routes.remove(holder);
-                }
-                routeManager.exhausted.keySet().removeIf(h -> ObjectHelper.equal(h.getId(), routeId));
-                routeManager.exceptions.remove(routeId);
-                nonSupervisedRoutes.remove(routeId);
+                routes.removeIf(
+                        r -> ObjectHelper.equal(r.get(), route) || ObjectHelper.equal(r.getId(), route.getId()));
             } finally {
                 lock.unlock();
             }
@@ -1031,12 +995,8 @@ public class DefaultSupervisingRouteController extends DefaultRouteController im
                 // Eventually delay the startup of the routes a later time
                 if (initialDelay > 0) {
                     LOG.debug("Supervised routes will be started in {} millis", initialDelay);
-                    long epoch = supervisionEpoch;
-                    executorService.schedule(() -> {
-                        if (epoch == supervisionEpoch) {
-                            startSupervisedRoutes();
-                        }
-                    }, initialDelay, TimeUnit.MILLISECONDS);
+                    executorService.schedule(DefaultSupervisingRouteController.this::startSupervisedRoutes, initialDelay,
+                            TimeUnit.MILLISECONDS);
                 } else {
                     startSupervisedRoutes();
                 }

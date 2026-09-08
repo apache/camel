@@ -17,7 +17,6 @@
 package org.apache.camel.impl.engine;
 
 import java.time.Duration;
-import java.time.Duration;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -204,7 +203,8 @@ public class DefaultSupervisingRouteControllerTest extends ContextTestSupport {
             assertEquals("Started", context.getRouteController().getRouteStatus("reload-b").toString());
         });
 
-        for (int reload = 0; reload < 2; reload++) {
+        for (int i = 0; i < 2; i++) {
+            final int reload = i;
             src.removeAllRoutes();
             context.getEndpointRegistry().clear();
             context.addRoutes(reloadRoutes());

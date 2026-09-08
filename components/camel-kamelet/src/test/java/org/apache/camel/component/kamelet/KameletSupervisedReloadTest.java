@@ -20,10 +20,11 @@ import java.time.Duration;
 import java.util.HashSet;
 import java.util.Set;
 
-import org.apache.camel.RoutesBuilder;
+import org.apache.camel.CamelContext;
 import org.apache.camel.ServiceStatus;
+import org.apache.camel.api.management.ManagedCamelContext;
+import org.apache.camel.api.management.mbean.ManagedCamelContextMBean;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.management.mbean.ManagedCamelContext;
 import org.apache.camel.spi.SupervisingRouteController;
 import org.apache.camel.test.junit6.CamelTestSupport;
 import org.junit.jupiter.api.Test;
@@ -32,8 +33,8 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.awaitility.Awaitility.await;
 
 /**
- * CAMEL-24630: reloading kamelet routes under a supervising route controller must not leave duplicate route entries
- * or break {@code ManagedCamelContext.getStartedRoutes()}.
+ * CAMEL-24630: reloading kamelet routes under a supervising route controller must not leave duplicate route entries or
+ * break {@code ManagedCamelContext.getStartedRoutes()}.
  */
 public class KameletSupervisedReloadTest extends CamelTestSupport {
 
@@ -44,6 +45,18 @@ public class KameletSupervisedReloadTest extends CamelTestSupport {
         return false;
     }
 
+    @Override
+    protected boolean useJmx() {
+        return true;
+    }
+
+    @Override
+    protected CamelContext createCamelContext() throws Exception {
+        CamelContext context = super.createCamelContext();
+        context.getManagementStrategy().getManagementAgent().setRegisterRoutesCreateByKamelet(true);
+        return context;
+    }
+
     @Test
     void supervisedKameletReloadDoesNotDuplicateRoutesOrBreakManagement() throws Exception {
         SupervisingRouteController supervising = context.getRouteController().supervising();
@@ -52,9 +65,10 @@ public class KameletSupervisedReloadTest extends CamelTestSupport {
         context.addRoutes(routes());
         context.start();
 
-        ManagedCamelContext managed = new ManagedCamelContext(context);
+        ManagedCamelContextMBean managed = resolveManagedCamelContextMBean();
 
-        for (int reload = 0; reload <= 2; reload++) {
+        for (int i = 0; i <= 2; i++) {
+            final int reload = i;
             awaitReloadStable(supervising);
             assertReloadState(reload, supervising, managed);
             if (reload == 2) {
@@ -62,6 +76,15 @@ public class KameletSupervisedReloadTest extends CamelTestSupport {
             }
             reloadRoutes();
         }
+    }
+
+    private ManagedCamelContextMBean resolveManagedCamelContextMBean() {
+        // Same lookup path as ContextDevConsole / JBang dev console (not direct MBean construction)
+        ManagedCamelContext plugin = context.getCamelContextExtension().getContextPlugin(ManagedCamelContext.class);
+        assertThat(plugin).isNotNull();
+        ManagedCamelContextMBean managed = plugin.getManagedCamelContext();
+        assertThat(managed).isNotNull();
+        return managed;
     }
 
     private void awaitReloadStable(SupervisingRouteController supervising) {
@@ -75,7 +98,7 @@ public class KameletSupervisedReloadTest extends CamelTestSupport {
         });
     }
 
-    private void assertReloadState(int reload, SupervisingRouteController supervising, ManagedCamelContext managed) {
+    private void assertReloadState(int reload, SupervisingRouteController supervising, ManagedCamelContextMBean managed) {
         assertThat(context.getRoutesSize()).as("route count after reload %s", reload).isEqualTo(2);
         assertThat(context.getRouteIds()).as("unique route ids after reload %s", reload).hasSize(2);
 
