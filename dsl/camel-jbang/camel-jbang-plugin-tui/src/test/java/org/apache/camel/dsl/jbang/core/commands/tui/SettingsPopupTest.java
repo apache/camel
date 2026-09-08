@@ -32,6 +32,7 @@ import org.junit.jupiter.api.parallel.Isolated;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
@@ -217,6 +218,46 @@ class SettingsPopupTest {
     }
 
     @Test
+    void aiToolsRowCyclesModesAndPersistsNonDefault(@TempDir Path tempDir) {
+        useHome(tempDir);
+        SettingsPopup popup = new SettingsPopup();
+        popup.setTabEntries(tabs());
+        popup.open();
+
+        // navigate to AI Tools (row 16)
+        for (int i = 0; i < 16; i++) {
+            popup.handleKeyEvent(key(KeyCode.DOWN));
+        }
+        assertEquals(16, popup.selectedRow());
+        assertEquals("auto", popup.selectedAiTools());
+
+        popup.handleKeyEvent(KeyEvent.ofChar(' '));
+        assertEquals("core", popup.selectedAiTools());
+        popup.handleKeyEvent(key(KeyCode.RIGHT));
+        assertEquals("full", popup.selectedAiTools());
+        popup.handleKeyEvent(key(KeyCode.RIGHT));
+        assertEquals("auto", popup.selectedAiTools());
+        popup.handleKeyEvent(key(KeyCode.LEFT));
+        assertEquals("full", popup.selectedAiTools());
+
+        popup.handleKeyEvent(key(KeyCode.ENTER));
+        assertEquals("full", TuiSettings.load().getAiTools());
+
+        // auto is the default and is not written to the settings file
+        SettingsPopup reopened = new SettingsPopup();
+        reopened.setTabEntries(tabs());
+        reopened.open();
+        assertEquals("full", reopened.selectedAiTools());
+        for (int i = 0; i < 16; i++) {
+            reopened.handleKeyEvent(key(KeyCode.DOWN));
+        }
+        reopened.handleKeyEvent(key(KeyCode.RIGHT));
+        assertEquals("auto", reopened.selectedAiTools());
+        reopened.handleKeyEvent(key(KeyCode.ENTER));
+        assertNull(TuiSettings.load().getAiTools());
+    }
+
+    @Test
     void historyFieldsPersistValues(@TempDir Path tempDir) {
         useHome(tempDir);
         SettingsPopup popup = new SettingsPopup();
@@ -233,11 +274,11 @@ class SettingsPopupTest {
         }
         assertEquals("50", popup.shellHistoryText());
 
-        // navigate to AI Prompt History (row 14)
-        for (int i = 0; i < 4; i++) {
+        // navigate to AI Prompt History (row 17)
+        for (int i = 0; i < 5; i++) {
             popup.handleKeyEvent(key(KeyCode.DOWN));
         }
-        assertEquals(16, popup.selectedRow());
+        assertEquals(17, popup.selectedRow());
         for (char c : "200".toCharArray()) {
             popup.handleKeyEvent(KeyEvent.ofChar(c));
         }

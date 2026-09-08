@@ -964,7 +964,11 @@ class AiPanel {
         thinkingStartTime = System.currentTimeMillis();
         thinking.set(true);
 
-        // rebuild tools in case mcpFacade was wired after init
+        // re-read the tool mode so a change made in F2 -> Settings applies to the next question, and rebuild the
+        // tools in case mcpFacade was wired after init
+        if (!testingClientInjected) {
+            toolMode = normalizeToolMode(TuiSettings.load().getAiTools());
+        }
         tools = buildTuiToolDefinitions();
         String systemPrompt = buildSystemPrompt();
 

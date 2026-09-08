@@ -61,13 +61,16 @@ class SettingsPopup {
     private static final int ROW_AI_PROVIDER = 13;
     private static final int ROW_AI_MODEL = 14;
     private static final int ROW_AI_URL = 15;
-    private static final int ROW_AI_PROMPT_HISTORY = 16;
-    private static final int ROW_COUNT = 17;
+    private static final int ROW_AI_TOOLS = 16;
+    private static final int ROW_AI_PROMPT_HISTORY = 17;
+    private static final int ROW_COUNT = 18;
 
     private static final String[] LOG_PIN_OPTIONS = { "off", "25", "50", "75" };
     private static final String[] RATE_PER_OPTIONS = { "seconds", "minutes" };
     private static final String[] PANEL_POSITION_OPTIONS = { "bottom", "top" };
     private static final String[] PANEL_SPACE_OPTIONS = { "move", "overlay" };
+    private static final String[] AI_TOOLS_OPTIONS
+            = { AiPanel.TOOL_MODE_AUTO, AiPanel.TOOL_MODE_CORE, AiPanel.TOOL_MODE_FULL };
     private static final List<String> AI_PROVIDERS = buildAiProviderList();
 
     private static List<String> buildAiProviderList() {
@@ -93,6 +96,7 @@ class SettingsPopup {
     private int confirmActionsIndex;
     private int validateOnSaveIndex;
     private int aiProviderIndex;
+    private int aiToolsIndex;
     private TextInputState folderInput;
     private TextInputState proxyHostInput;
     private TextInputState proxyPortInput;
@@ -181,6 +185,9 @@ class SettingsPopup {
         aiProviderIndex = providerIdx >= 0 ? providerIdx : AI_PROVIDERS.indexOf("auto");
         aiModelInput = new TextInputState(settings.getAiModel() != null ? settings.getAiModel() : "");
         aiUrlInput = new TextInputState(settings.getAiUrl() != null ? settings.getAiUrl() : "");
+        String currentTools = AiPanel.normalizeToolMode(settings.getAiTools());
+        int toolsIdx = List.of(AI_TOOLS_OPTIONS).indexOf(currentTools != null ? currentTools : AiPanel.TOOL_MODE_AUTO);
+        aiToolsIndex = Math.max(0, toolsIdx);
         aiPromptHistoryInput = new TextInputState(
                 settings.getAiPromptHistory() != null ? settings.getAiPromptHistory() : "");
         selectedRow = ROW_THEME;
@@ -323,6 +330,14 @@ class SettingsPopup {
             handleTextInput(ke, aiUrlInput);
             return true;
         }
+        if (selectedRow == ROW_AI_TOOLS) {
+            if (ke.isChar(' ') || ke.isRight()) {
+                aiToolsIndex = (aiToolsIndex + 1) % AI_TOOLS_OPTIONS.length;
+            } else if (ke.isLeft()) {
+                aiToolsIndex = (aiToolsIndex - 1 + AI_TOOLS_OPTIONS.length) % AI_TOOLS_OPTIONS.length;
+            }
+            return true;
+        }
         if (selectedRow == ROW_AI_PROMPT_HISTORY) {
             handleTextInput(ke, aiPromptHistoryInput);
             return true;
@@ -368,6 +383,8 @@ class SettingsPopup {
         settings.setAiProvider(AI_PROVIDERS.get(aiProviderIndex));
         settings.setAiModel(stripControlChars(aiModelInput.text().trim()));
         settings.setAiUrl(stripControlChars(aiUrlInput.text().trim()));
+        String aiToolsValue = AI_TOOLS_OPTIONS[aiToolsIndex];
+        settings.setAiTools(AiPanel.TOOL_MODE_AUTO.equals(aiToolsValue) ? null : aiToolsValue);
         settings.setAiPromptHistory(stripControlChars(aiPromptHistoryInput.text().trim()));
         settings.save();
         if (Theme.mode().equals(selectedThemeId)) {
@@ -495,6 +512,10 @@ class SettingsPopup {
         renderTextInput(frame, innerX + labelW, rowY, fieldW, aiUrlInput, selectedRow == ROW_AI_URL, "(auto)");
         rowY++;
 
+        renderLabel(frame, innerX, rowY, labelW, "AI Tools:", selectedRow == ROW_AI_TOOLS);
+        renderValue(frame, innerX + labelW, rowY, fieldW, aiToolsLabel(), selectedRow == ROW_AI_TOOLS);
+        rowY++;
+
         renderLabel(frame, innerX, rowY, labelW, "AI History:", selectedRow == ROW_AI_PROMPT_HISTORY);
         renderTextInput(frame, innerX + labelW, rowY, fieldW, aiPromptHistoryInput,
                 selectedRow == ROW_AI_PROMPT_HISTORY, "(100)");
@@ -505,7 +526,7 @@ class SettingsPopup {
                 || selectedRow == ROW_LOG_PIN || selectedRow == ROW_RATE_PER
                 || selectedRow == ROW_PANEL_POSITION || selectedRow == ROW_PANEL_SPACE
                 || selectedRow == ROW_CONFIRM_ACTIONS || selectedRow == ROW_VALIDATE_ON_SAVE
-                || selectedRow == ROW_AI_PROVIDER) {
+                || selectedRow == ROW_AI_PROVIDER || selectedRow == ROW_AI_TOOLS) {
             hint(spans, "Space", "cycle");
         }
         hint(spans, "Enter", "save");
@@ -635,6 +656,18 @@ class SettingsPopup {
 
     String selectedAiProvider() {
         return AI_PROVIDERS.get(aiProviderIndex);
+    }
+
+    String selectedAiTools() {
+        return AI_TOOLS_OPTIONS[aiToolsIndex];
+    }
+
+    private String aiToolsLabel() {
+        return switch (AI_TOOLS_OPTIONS[aiToolsIndex]) {
+            case AiPanel.TOOL_MODE_CORE -> "core (troubleshooting only)";
+            case AiPanel.TOOL_MODE_FULL -> "full (all tools)";
+            default -> "auto (core if local model)";
+        };
     }
 
     String aiModelText() {

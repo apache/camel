@@ -557,7 +557,8 @@ edit the default folder, *Enter* to save, and *Esc* to cancel.
 Settings are stored under `camel.tui.*` keys (`camel.tui.theme`, `camel.tui.startTab`,
 `camel.tui.selectTab`, `camel.tui.confirmActions`, `camel.tui.defaultFolder`,
 `camel.tui.panelPosition`, `camel.tui.panelSpace`,
-`camel.tui.shell.history`, `camel.tui.ai.promptHistory`) in the Camel CLI configuration file. Each key is read from and
+`camel.tui.shell.history`, `camel.tui.ai.provider`, `camel.tui.ai.model`, `camel.tui.ai.url`,
+`camel.tui.ai.tools`, `camel.tui.ai.promptHistory`) in the Camel CLI configuration file. Each key is read from and
 written back to the file where it currently lives: a key present in the local
 `./camel-cli.properties` is treated as a project-level override and stays local, while every
 other key defaults to the global `~/.camel-cli.properties`. This means a project can
@@ -822,8 +823,8 @@ tools (state, tables, logs, errors, diagrams, topology, processor details, catal
 spans, route control, sending messages, source files, navigation, log level and filters) to Ollama
 and to any provider on `localhost`, which roughly halves the prompt. Hosted providers get every
 tool, including the drawing, animation and automation tools. Use `/tools full` in the panel to send
-all tools to a local model too, `/tools core` to trim the set for a hosted one, or set
-`camel.tui.ai.tools` in `.camel-cli.properties`. Ollama requests also ask the server to keep the
+all tools to a local model too, `/tools core` to trim the set for a hosted one, pick *AI Tools* in
+*F2 -> Settings*, or set `camel.tui.ai.tools` in `.camel-cli.properties`. Ollama requests also ask the server to keep the
 model loaded for 30 minutes and use a 32k context window (`OLLAMA_CONTEXT_LENGTH` overrides it),
 so follow-up questions reuse the cached prompt instead of reloading the model.
 
