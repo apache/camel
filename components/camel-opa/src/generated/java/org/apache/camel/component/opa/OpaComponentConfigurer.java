@@ -39,6 +39,10 @@ public class OpaComponentConfigurer extends PropertyConfigurerSupport implements
         case "configuration": target.setConfiguration(property(camelContext, org.apache.camel.component.opa.OpaConfiguration.class, value)); return true;
         case "failopen":
         case "failOpen": getOrCreateConfiguration(target).setFailOpen(property(camelContext, boolean.class, value)); return true;
+        case "healthcheckconsumerenabled":
+        case "healthCheckConsumerEnabled": target.setHealthCheckConsumerEnabled(property(camelContext, boolean.class, value)); return true;
+        case "healthcheckproducerenabled":
+        case "healthCheckProducerEnabled": target.setHealthCheckProducerEnabled(property(camelContext, boolean.class, value)); return true;
         case "includebody":
         case "includeBody": getOrCreateConfiguration(target).setIncludeBody(property(camelContext, boolean.class, value)); return true;
         case "includeheaders":
@@ -72,6 +76,10 @@ public class OpaComponentConfigurer extends PropertyConfigurerSupport implements
         case "configuration": return org.apache.camel.component.opa.OpaConfiguration.class;
         case "failopen":
         case "failOpen": return boolean.class;
+        case "healthcheckconsumerenabled":
+        case "healthCheckConsumerEnabled": return boolean.class;
+        case "healthcheckproducerenabled":
+        case "healthCheckProducerEnabled": return boolean.class;
         case "includebody":
         case "includeBody": return boolean.class;
         case "includeheaders":
@@ -101,6 +109,10 @@ public class OpaComponentConfigurer extends PropertyConfigurerSupport implements
         case "configuration": return target.getConfiguration();
         case "failopen":
         case "failOpen": return getOrCreateConfiguration(target).isFailOpen();
+        case "healthcheckconsumerenabled":
+        case "healthCheckConsumerEnabled": return target.isHealthCheckConsumerEnabled();
+        case "healthcheckproducerenabled":
+        case "healthCheckProducerEnabled": return target.isHealthCheckProducerEnabled();
         case "includebody":
         case "includeBody": return getOrCreateConfiguration(target).isIncludeBody();
         case "includeheaders":

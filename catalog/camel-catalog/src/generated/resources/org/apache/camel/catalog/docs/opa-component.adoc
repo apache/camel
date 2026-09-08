@@ -206,6 +206,20 @@ Note that OPA reports an *undefined* decision — no rule matched and the policy
 rather than as a deny, so it fails closed as well. Give every decision rule a default, as in the example above,
 so the policy always returns a verdict.
 
+== Health check
+
+Because the component fails closed, an OPA server that cannot be reached fails *every* exchange through the route.
+The producer registers a readiness check that probes the server's `/health` endpoint, so an unavailable policy
+decision point shows up in the health registry rather than only in the error logs once traffic starts failing.
+
+Camel disables producer health checks by default; turn them on with `camel.health.producersEnabled=true`, or per
+component with `healthCheckProducerEnabled`. The check reports DOWN with the underlying reason — an unreachable
+server and a server answering its health endpoint with an error are reported differently, so a deny is never
+confused with an outage.
+
+The check is only registered when the endpoint was given a `serverUrl`. An injected `opaClient` may point anywhere
+and the endpoint has no way to ask it where, so no probe is registered in that case.
+
 == Security notes
 
 * The policy path comes from the endpoint only. It is deliberately not overridable by a message header, so an

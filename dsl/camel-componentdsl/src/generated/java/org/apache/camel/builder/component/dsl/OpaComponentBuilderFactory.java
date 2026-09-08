@@ -235,6 +235,44 @@ public interface OpaComponentBuilderFactory {
             return this;
         }
     
+        
+        /**
+         * Used for enabling or disabling all consumer based health checks from
+         * this component.
+         * 
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * 
+         * Default: true
+         * Group: health
+         * 
+         * @param healthCheckConsumerEnabled the value to set
+         * @return the dsl builder
+         */
+        default OpaComponentBuilder healthCheckConsumerEnabled(boolean healthCheckConsumerEnabled) {
+            doSetProperty("healthCheckConsumerEnabled", healthCheckConsumerEnabled);
+            return this;
+        }
+    
+        
+        /**
+         * Used for enabling or disabling all producer based health checks from
+         * this component. Notice: Camel has by default disabled all producer
+         * based health-checks. You can turn on producer checks globally by
+         * setting camel.health.producersEnabled=true.
+         * 
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * 
+         * Default: true
+         * Group: health
+         * 
+         * @param healthCheckProducerEnabled the value to set
+         * @return the dsl builder
+         */
+        default OpaComponentBuilder healthCheckProducerEnabled(boolean healthCheckProducerEnabled) {
+            doSetProperty("healthCheckProducerEnabled", healthCheckProducerEnabled);
+            return this;
+        }
+    
         /**
          * Bearer token sent to the OPA server in the Authorization header, for
          * an OPA instance that has its API authentication enabled.
@@ -300,6 +338,8 @@ public interface OpaComponentBuilderFactory {
             case "serverUrl": getOrCreateConfiguration((OpaComponent) component).setServerUrl((java.lang.String) value); return true;
             case "autowiredEnabled": ((OpaComponent) component).setAutowiredEnabled((boolean) value); return true;
             case "opaClient": getOrCreateConfiguration((OpaComponent) component).setOpaClient((com.styra.opa.OPAClient) value); return true;
+            case "healthCheckConsumerEnabled": ((OpaComponent) component).setHealthCheckConsumerEnabled((boolean) value); return true;
+            case "healthCheckProducerEnabled": ((OpaComponent) component).setHealthCheckProducerEnabled((boolean) value); return true;
             case "bearerToken": getOrCreateConfiguration((OpaComponent) component).setBearerToken((java.lang.String) value); return true;
             case "failOpen": getOrCreateConfiguration((OpaComponent) component).setFailOpen((boolean) value); return true;
             default: return false;
