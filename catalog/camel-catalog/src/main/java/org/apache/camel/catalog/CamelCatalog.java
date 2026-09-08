@@ -267,6 +267,51 @@ public interface CamelCatalog {
     List<String> findOtherNames(String filter);
 
     /**
+     * Finds component names that match a term such as a protocol or product name, best match first: the exact scheme,
+     * then declared aliases, alternative schemes, words of the title, words of the scheme, and finally schemes
+     * containing the term. Components that share one implementation under several schemes (such as imap, pop3 and smtp)
+     * are returned once, by the scheme that matched or otherwise their primary scheme.
+     * <p>
+     * For example <tt>mqtt</tt> finds <tt>paho-mqtt5</tt>, <tt>s3</tt> finds <tt>aws2-s3</tt>, and <tt>amq</tt> finds
+     * <tt>activemq</tt>.
+     *
+     * @param  term the protocol, product, or component name to look for
+     * @param  max  the maximum number of names to return, or 0 for no limit
+     * @return      the matching component names, or an empty list if none match
+     * @since       4.23
+     */
+    default List<String> suggestComponentNames(String term, int max) {
+        return CatalogTermMatcher.suggestComponentNames(this, term, max);
+    }
+
+    /**
+     * Finds data format names that match a term such as a format or library name (for example <tt>yaml</tt> finds
+     * <tt>snakeYaml</tt>), best match first: the exact name, then declared aliases, words of the title, words of the
+     * name, and finally names containing the term.
+     *
+     * @param  term the format, library, or data format name to look for
+     * @param  max  the maximum number of names to return, or 0 for no limit
+     * @return      the matching data format names, or an empty list if none match
+     * @since       4.23
+     */
+    default List<String> suggestDataFormatNames(String term, int max) {
+        return CatalogTermMatcher.suggestNames(findDataFormatNames(), this::dataFormatModel, term, max);
+    }
+
+    /**
+     * Finds language names that match a term, best match first: the exact name, then declared aliases, words of the
+     * title, words of the name, and finally names containing the term.
+     *
+     * @param  term the language name to look for
+     * @param  max  the maximum number of names to return, or 0 for no limit
+     * @return      the matching language names, or an empty list if none match
+     * @since       4.23
+     */
+    default List<String> suggestLanguageNames(String term, int max) {
+        return CatalogTermMatcher.suggestNames(findLanguageNames(), this::languageModel, term, max);
+    }
+
+    /**
      * Returns the component information as JSON format.
      *
      * @param  name the component name

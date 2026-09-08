@@ -183,6 +183,65 @@ public class CamelCatalogTest {
     }
 
     @Test
+    public void testComponentAliases() {
+        // aliases declared via @Metadata on the endpoint class end up in the component model
+        ComponentModel mail = catalog.componentModel("imap");
+        assertNotNull(mail);
+        assertTrue(mail.getAliases().contains("mail"));
+        assertTrue(mail.getAliases().contains("email"));
+        assertTrue(catalog.componentModel("activemq").getAliases().contains("amq"));
+    }
+
+    @Test
+    public void testSuggestComponentNames() {
+        // exact scheme first, then words of the title or scheme
+        assertEquals(List.of("aws2-s3", "aws2-s3-vectors"), catalog.suggestComponentNames("s3", 0));
+        assertEquals(List.of("aws2-sqs"), catalog.suggestComponentNames("sqs", 0));
+        assertEquals(List.of("paho-mqtt5"), catalog.suggestComponentNames("mqtt", 0));
+        assertEquals(List.of("spring-rabbitmq"), catalog.suggestComponentNames("rabbitmq", 0));
+        assertEquals(List.of("google-pubsub"), catalog.suggestComponentNames("pubsub", 0));
+        assertEquals(List.of("azure-servicebus"), catalog.suggestComponentNames("servicebus", 0));
+        assertEquals(List.of("azure-servicebus"), catalog.suggestComponentNames("Service-Bus", 0));
+        assertEquals(List.of("kafka", "aws2-msk"), catalog.suggestComponentNames("kafka", 0));
+        // aliases rank right after the exact scheme, substring matches last
+        assertEquals(List.of("activemq", "activemq6", "amqp"), catalog.suggestComponentNames("amq", 0));
+        assertEquals(List.of("paho-mqtt5"), catalog.suggestComponentNames("paho-mqtt", 0));
+        assertTrue(catalog.suggestComponentNames("xyzq", 0).isEmpty());
+        assertTrue(catalog.suggestComponentNames("", 5).isEmpty());
+        assertTrue(catalog.suggestComponentNames(null, 5).isEmpty());
+        // max caps the result
+        List<String> aws = catalog.suggestComponentNames("aws", 0);
+        assertTrue(aws.size() > 5, "aws should match many components, was: " + aws);
+        assertEquals(aws.subList(0, 5), catalog.suggestComponentNames("aws", 5));
+    }
+
+    @Test
+    public void testSuggestComponentNamesDedupesAlternativeSchemes() {
+        // one implementation under several schemes is suggested once, by the scheme that matched
+        assertEquals(List.of("smtp"), catalog.suggestComponentNames("smtp", 0));
+        assertEquals(List.of("https"), catalog.suggestComponentNames("https", 0));
+        // or by its primary scheme when the match came from an alias
+        List<String> mail = catalog.suggestComponentNames("mail", 0);
+        assertEquals("imap", mail.get(0), "mail should suggest the mail component first, was: " + mail);
+        assertFalse(mail.contains("smtp"), "mail should not repeat the mail component, was: " + mail);
+        assertTrue(mail.contains("google-mail"), "mail should also suggest google-mail, was: " + mail);
+    }
+
+    @Test
+    public void testSuggestDataFormatAndLanguageNames() {
+        assertEquals(List.of("snakeYaml"), catalog.suggestDataFormatNames("yaml", 0));
+        List<String> json = catalog.suggestDataFormatNames("json", 0);
+        assertTrue(json.contains("jackson"), "json should suggest jackson, was: " + json);
+        assertTrue(json.contains("gson"), "json should suggest gson, was: " + json);
+        assertEquals("jackson", catalog.suggestDataFormatNames("jackson", 0).get(0));
+
+        assertEquals("simple", catalog.suggestLanguageNames("simple", 0).get(0));
+        List<String> path = catalog.suggestLanguageNames("path", 0);
+        assertTrue(path.contains("xpath"), "path should suggest xpath, was: " + path);
+        assertTrue(path.contains("jsonpath"), "path should suggest jsonpath, was: " + path);
+    }
+
+    @Test
     public void testEipModelAliases() {
         // verify aliases are present in the EIP model
         EipModel multicast = catalog.eipModel("multicast");

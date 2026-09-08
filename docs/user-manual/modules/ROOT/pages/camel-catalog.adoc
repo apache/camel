@@ -88,6 +88,40 @@ nesting level in the YAML DSL, with types, descriptions, required flags, default
 and enum choices. It can be used by third-party tooling (editors, IDE plugins, visual
 designers) to provide context-aware code completion and validation for YAML DSL routes.
 
+=== Finding components by protocol or product name
+
+People, and AI agents driving Camel through tooling, often refer to a component by the protocol or
+product it connects to rather than by its Camel scheme: _mqtt_ (the component is `paho-mqtt5`),
+_s3_ (`aws2-s3`), _rabbitmq_ (`spring-rabbitmq`), _pubsub_ (`google-pubsub`). The catalog can look
+components, data formats and languages up by such a term, ranking the best matches first:
+the exact scheme or name, then declared aliases, alternative schemes, words of the title, words of the
+scheme or name, and finally names containing the term. A component that shares one implementation under
+several schemes (such as `imap`, `pop3` and `smtp`) is returned once.
+
+[source,java]
+----
+CamelCatalog catalog = new DefaultCamelCatalog();
+
+catalog.suggestComponentNames("mqtt", 5);       // [paho-mqtt5]
+catalog.suggestComponentNames("s3", 5);         // [aws2-s3, aws2-s3-vectors]
+catalog.suggestComponentNames("amq", 5);        // [activemq, activemq6, amqp]
+catalog.suggestComponentNames("aws", 5);        // at most five of the many AWS components
+catalog.suggestDataFormatNames("yaml", 5);      // [snakeYaml]
+catalog.suggestLanguageNames("path", 5);        // [jsonpath, xpath]
+----
+
+Component developers can declare the shorthands a title cannot provide with the `aliases` attribute of
+`@Metadata` on the endpoint class, as the mail component does for _mail_ and _email_:
+
+[source,java]
+----
+@Metadata(aliases = { "mail", "email" })
+@UriEndpoint(firstVersion = "1.0.0", scheme = "imap,imaps,pop3,pop3s,smtp,smtps", ...)
+public class MailEndpoint extends ScheduledPollEndpoint {
+----
+
+Aliases are descriptive names for discovery only; they cannot be used as the scheme in an endpoint URI.
+
 === Documentation in the Catalog
 
 The catalog includes the AsciiDoc documentation pages from all modules. This makes the full

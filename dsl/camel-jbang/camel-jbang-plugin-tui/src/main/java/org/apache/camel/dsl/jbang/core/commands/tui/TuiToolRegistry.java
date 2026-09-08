@@ -1608,17 +1608,16 @@ class TuiToolRegistry {
             return null;
         }
         String scheme = endpoint.substring(0, colon).toLowerCase();
-        List<String> names;
+        List<String> similar;
         try {
             CamelCatalog catalog = CatalogLoader.loadCatalog(null, facade.getSelectedCamelVersion(), true);
-            names = catalog.findComponentNames();
+            if (catalog.findComponentNames().contains(scheme)) {
+                return null;
+            }
+            similar = catalog.suggestComponentNames(scheme, 5);
         } catch (Exception e) {
             return null;
         }
-        if (names.contains(scheme)) {
-            return null;
-        }
-        List<String> similar = suggestComponents(scheme, names);
         if (similar.isEmpty()) {
             return "Camel has no component named '" + scheme + "'. Use tui_catalog_doc to find the right component, "
                    + "then send again with its scheme.";
@@ -1626,40 +1625,6 @@ class TuiToolRegistry {
         return "Camel has no component named '" + scheme + "'. Similar components in the catalog: "
                + String.join(", ", similar) + ". Send again with one of those schemes, e.g. '" + similar.get(0)
                + endpoint.substring(colon) + "'.";
-    }
-
-    /** Well-known names people use for a protocol that differ from the Camel component name. */
-    private static final Map<String, List<String>> SCHEME_ALIASES = Map.of(
-            "mqtt", List.of("paho-mqtt5", "paho"),
-            "mqtt5", List.of("paho-mqtt5"),
-            "rabbitmq", List.of("spring-rabbitmq"),
-            "amq", List.of("activemq", "jms"),
-            "rest", List.of("rest", "platform-http", "http"),
-            "s3", List.of("aws2-s3"),
-            "sqs", List.of("aws2-sqs"),
-            "sns", List.of("aws2-sns"),
-            "pubsub", List.of("google-pubsub"),
-            "servicebus", List.of("azure-servicebus"));
-
-    /**
-     * Catalog component names that resemble the scheme: known aliases first, then names containing the scheme (or
-     * contained in it), at most five.
-     */
-    static List<String> suggestComponents(String scheme, List<String> componentNames) {
-        List<String> result = new ArrayList<>();
-        for (String alias : SCHEME_ALIASES.getOrDefault(scheme, List.of())) {
-            if (componentNames.contains(alias) && !result.contains(alias)) {
-                result.add(alias);
-            }
-        }
-        if (scheme.length() >= 3) {
-            for (String name : componentNames) {
-                if ((name.contains(scheme) || scheme.contains(name)) && !name.equals(scheme) && !result.contains(name)) {
-                    result.add(name);
-                }
-            }
-        }
-        return result.size() > 5 ? result.subList(0, 5) : result;
     }
 
     private String callExecuteSql(Map<String, Object> args) {
@@ -1939,7 +1904,7 @@ class TuiToolRegistry {
                 return buildComponentDocJson(cm, lowerFilter, includeOptions, doc);
             }
             if (kind != null) {
-                return "{\"error\": \"Component not found: " + name + "\"}";
+                return notFound("Component", name, catalog.suggestComponentNames(name, 5));
             }
         }
         if (kind == null || "dataformat".equals(kind)) {
@@ -1949,7 +1914,7 @@ class TuiToolRegistry {
                 return buildDataFormatDocJson(dm, lowerFilter, includeOptions, doc);
             }
             if (kind != null) {
-                return "{\"error\": \"Data format not found: " + name + "\"}";
+                return notFound("Data format", name, catalog.suggestDataFormatNames(name, 5));
             }
         }
         if (kind == null || "language".equals(kind)) {
@@ -1959,7 +1924,7 @@ class TuiToolRegistry {
                 return buildLanguageDocJson(lm, lowerFilter, includeOptions, doc);
             }
             if (kind != null) {
-                return "{\"error\": \"Language not found: " + name + "\"}";
+                return notFound("Language", name, catalog.suggestLanguageNames(name, 5));
             }
         }
         if (kind == null || "eip".equals(kind)) {
@@ -1972,7 +1937,23 @@ class TuiToolRegistry {
                 return "{\"error\": \"EIP not found: " + name + "\"}";
             }
         }
-        return "{\"error\": \"Artifact not found: " + name + "\"}";
+        List<String> suggestions = new ArrayList<>(catalog.suggestComponentNames(name, 5));
+        suggestions.addAll(catalog.suggestDataFormatNames(name, 3));
+        suggestions.addAll(catalog.suggestLanguageNames(name, 3));
+        return notFound("Artifact", name, suggestions);
+    }
+
+    /**
+     * Error for a catalog lookup that found nothing, with the names the catalog suggests for the term (a protocol or
+     * product name such as mqtt or s3) so the next call can use one of them.
+     */
+    private static String notFound(String kind, String name, List<String> suggestions) {
+        JsonObject error = new JsonObject();
+        error.put("error", kind + " not found: " + name);
+        if (!suggestions.isEmpty()) {
+            error.put("suggestions", new JsonArray(suggestions));
+        }
+        return error.toJson();
     }
 
     @SuppressWarnings("unchecked")
