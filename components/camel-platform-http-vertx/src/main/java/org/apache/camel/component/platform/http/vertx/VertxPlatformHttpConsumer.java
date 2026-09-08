@@ -161,13 +161,25 @@ public class VertxPlatformHttpConsumer extends DefaultConsumer
     protected void doStart() throws Exception {
         super.doStart();
 
+        boolean catchAll = false;
         if (restRegistry != null && startRestServicesContractFirst()) {
-            // rest-dsl contract first using multiple routers per api endpoint
-            return;
+            // rest-dsl contract-first using multiple routers per api endpoint
+            boolean routeUnmatchedToCamel = "camel".equalsIgnoreCase(getEndpoint().getUnmatchedRequestHandling());
+            if (!routeUnmatchedToCamel) {
+                return;
+            }
+            // unmatchedRequestHandling=camel: fall through and also register a catch-all route
+            catchAll = true;
         }
 
         // standard http consumer using a single router
         final Route newRoute = router.route(path);
+        if (catchAll) {
+            // evaluate the catch-all after all other routes on the router so it cannot shadow
+            // operation routes of other consumers
+            // The call to .last() must stay the first call after router.route(path) for this to work
+            newRoute.last();
+        }
         if (getEndpoint().getRequestTimeout() > 0) {
             newRoute.handler(TimeoutHandler.create(getEndpoint().getRequestTimeout()));
         }

@@ -15534,6 +15534,16 @@ Default value: fail
             </xs:documentation>
           </xs:annotation>
         </xs:attribute>
+        <xs:attribute name="unmatchedRequestHandling" type="xs:string">
+          <xs:annotation>
+            <xs:documentation xml:lang="en">
+<![CDATA[
+Who answers requests that match no operation in the OpenAPI specification: the HTTP layer (platform) or Camel via the
+unmatched request handler (camel). Default value: platform
+]]>
+            </xs:documentation>
+          </xs:annotation>
+        </xs:attribute>
         <xs:attribute name="mockIncludePattern" type="xs:string">
           <xs:annotation>
             <xs:documentation xml:lang="en">
