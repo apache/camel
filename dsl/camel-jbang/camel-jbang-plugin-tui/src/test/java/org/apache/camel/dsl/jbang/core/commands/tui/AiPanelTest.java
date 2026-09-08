@@ -1008,6 +1008,22 @@ class AiPanelTest {
     }
 
     @Test
+    void responseLogShowsPrefillAndGenerationTimeForOllamaAndCachedTokensForHostedApis() {
+        assertEquals("", AiPanel.describeCacheSignal(new LlmClient.TokenUsage(100, 10, 110)));
+        assertEquals("", AiPanel.describeCacheSignal(null));
+        // Ollama: a cached prompt is a near-zero prefill; the token count alone cannot tell
+        assertEquals(", prefill 0.2s, gen 2.6s",
+                AiPanel.describeCacheSignal(new LlmClient.TokenUsage(4500, 130, 4630, 0, 170, 2600)));
+        // hosted API: cache hits are reported as tokens
+        assertEquals(", cached 3.2k",
+                AiPanel.describeCacheSignal(new LlmClient.TokenUsage(4500, 130, 4630, 3200, 0, 0)));
+        // several round trips add up
+        LlmClient.TokenUsage sum = new LlmClient.TokenUsage(4500, 30, 4530, 0, 170, 600)
+                .add(new LlmClient.TokenUsage(4800, 130, 4930, 0, 210, 2600));
+        assertEquals(", prefill 0.4s, gen 3.2s", AiPanel.describeCacheSignal(sum));
+    }
+
+    @Test
     void retryWithoutAQuestionIsRefused() {
         AiPanel panel = new AiPanel();
         panel.setClientForTesting(new RecordingLlmClient("ok"));

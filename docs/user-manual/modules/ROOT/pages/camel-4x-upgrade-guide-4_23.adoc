@@ -91,6 +91,16 @@ The Event developer console now exposes the full structured JSON payload in the 
 each event entry, while keeping the existing flat `type`, `timestamp`, `exchangeId`, and
 `message` fields for backwards compatibility.
 
+=== camel-console
+
+The `context` developer console no longer counts routes created by Kamelets in its `routesTotal` and `routesStarted`
+statistics (nor in the `Routes:` line of its text output). A Kamelet is implemented as a route inside the Kamelet, and
+such routes are not registered with JMX by default, so the `route` developer console never listed them; the counts now
+agree with that list. This affects consumers of the context status, such as the Camel JBang status document
+(`~/.camel/<pid>-status.json`) and the Camel TUI. If the management agent is configured to register Kamelet routes
+(`registerRoutesCreateByKamelet=true`), they are counted as before. The JMX `ManagedCamelContext` MBean attributes
+`TotalRoutes` and `StartedRoutes` are unchanged and still count every route.
+
 === camel-dynamic-router
 
 The `dynamic-router-control` endpoint no longer takes the subscription `predicate`, or the

@@ -36,6 +36,7 @@ import org.apache.camel.tooling.model.ComponentModel;
 import org.apache.camel.tooling.model.DataFormatModel;
 import org.apache.camel.tooling.model.EipModel;
 import org.apache.camel.tooling.model.LanguageModel;
+import org.apache.camel.util.TimeUtils;
 import org.apache.camel.util.json.JsonArray;
 import org.apache.camel.util.json.JsonObject;
 import org.apache.camel.util.json.Jsoner;
@@ -362,8 +363,9 @@ class TuiToolRegistry {
         tools.add(toToolDef(toolDef(
                 "tui_get_status",
                 "One top-level section of the integration's full status document (~/.camel/<pid>-status.json). "
-                                  + "Use it for data no tab shows: context (name, version, state, uptime millis, "
-                                  + "startTimestamp, statistics), runtime (pid, directory, java), healthChecks, "
+                                  + "Use it for data no tab shows: context (name, version, state, uptime in millis "
+                                  + "with uptimeText human readable, startTimestamp, statistics), runtime (pid, "
+                                  + "directory, java), healthChecks, "
                                   + "properties, main-configuration, routeController, services, transformers, rests, "
                                   + "consumers, producers, endpoints, dataSources, memory, threads, gc, classLoading, "
                                   + "trace, events. section='sections' lists them. Request only the section you need.",
@@ -1356,11 +1358,33 @@ class TuiToolRegistry {
         if (value == null) {
             return "Unknown section '" + section + "' for PID " + pid + ". Available: " + String.join(", ", sections);
         }
+        addUptimeText(value);
         JsonObject result = new JsonObject();
         result.put("pid", pid);
         result.put("section", section);
         result.put("data", value);
         return Jsoner.serialize(result);
+    }
+
+    /**
+     * Adds a human-readable {@code uptimeText} ("3h13m") next to every numeric {@code uptime}, which the status
+     * document holds in milliseconds without saying so; a small model otherwise guesses the unit (13,800,803 was read
+     * as 13.8 seconds). The route entries already carry their uptime as text and are left alone.
+     */
+    static void addUptimeText(Object value) {
+        if (value instanceof JsonObject jo) {
+            Object uptime = jo.get("uptime");
+            if (uptime instanceof Number n && !jo.containsKey("uptimeText")) {
+                jo.put("uptimeText", TimeUtils.printDuration(n.longValue()));
+            }
+            for (Object child : jo.values()) {
+                addUptimeText(child);
+            }
+        } else if (value instanceof JsonArray arr) {
+            for (Object child : arr) {
+                addUptimeText(child);
+            }
+        }
     }
 
     private String callAction(Map<String, Object> args) {

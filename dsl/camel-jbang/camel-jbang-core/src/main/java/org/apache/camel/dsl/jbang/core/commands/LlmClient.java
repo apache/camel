@@ -124,14 +124,34 @@ public class LlmClient {
         }
     }
 
-    public record TokenUsage(int inputTokens, int outputTokens, int totalTokens) {
+    /**
+     * Token usage of one request, plus whatever the provider reveals about its prompt cache: hosted APIs report how
+     * many input tokens were served from cache ({@code cachedTokens}: OpenAI {@code cached_tokens}, Anthropic
+     * {@code cache_read_input_tokens}, Gemini {@code cachedContentTokenCount}), while Ollama reports no cache figure
+     * but does report how long prompt processing and generation took ({@code prefillMillis}, {@code generationMillis}),
+     * and a prompt served from its KV cache shows as a near-zero prefill. Zero means not reported.
+     */
+    public record TokenUsage(int inputTokens, int outputTokens, int totalTokens,
+            int cachedTokens, long prefillMillis, long generationMillis) {
         public static final TokenUsage EMPTY = new TokenUsage(0, 0, 0);
+
+        public TokenUsage(int inputTokens, int outputTokens, int totalTokens) {
+            this(inputTokens, outputTokens, totalTokens, 0, 0, 0);
+        }
 
         public TokenUsage add(TokenUsage other) {
             return new TokenUsage(
                     inputTokens + other.inputTokens,
                     outputTokens + other.outputTokens,
-                    totalTokens + other.totalTokens);
+                    totalTokens + other.totalTokens,
+                    cachedTokens + other.cachedTokens,
+                    prefillMillis + other.prefillMillis,
+                    generationMillis + other.generationMillis);
+        }
+
+        /** Whether the provider reported a prompt-cache figure or a timing split. */
+        public boolean hasCacheSignal() {
+            return cachedTokens > 0 || prefillMillis > 0 || generationMillis > 0;
         }
     }
 
@@ -846,7 +866,7 @@ public class LlmClient {
         if (total == 0) {
             total = input + output;
         }
-        return new TokenUsage(input, output, total);
+        return new TokenUsage(input, output, total, getIntValue(usageMetadata, "cachedContentTokenCount"), 0, 0);
     }
 
     private JsonObject sendGeminiRequest(String requestUrl, JsonObject body) {
@@ -1040,6 +1060,7 @@ public class LlmClient {
             List<ToolCall> toolCalls = new ArrayList<>();
             String[] doneReasonHolder = { null };
             int[] tokenHolder = { 0, 0 };
+            long[] durationHolder = { 0, 0 };
 
             response.body().forEach(line -> {
                 if (line.isBlank()) {
@@ -1091,6 +1112,8 @@ public class LlmClient {
                         doneReasonHolder[0] = chunk.getString("done_reason");
                         tokenHolder[0] = getIntValue(chunk, "prompt_eval_count");
                         tokenHolder[1] = getIntValue(chunk, "eval_count");
+                        durationHolder[0] = getLongValue(chunk, "prompt_eval_duration") / 1_000_000;
+                        durationHolder[1] = getLongValue(chunk, "eval_duration") / 1_000_000;
                     }
                 } catch (Exception e) {
                     // skip malformed chunks
@@ -1105,7 +1128,9 @@ public class LlmClient {
             String stopReason
                     = !toolCalls.isEmpty() ? "tool_calls" : (doneReasonHolder[0] != null ? doneReasonHolder[0] : "stop");
 
-            TokenUsage usage = new TokenUsage(tokenHolder[0], tokenHolder[1], tokenHolder[0] + tokenHolder[1]);
+            TokenUsage usage = new TokenUsage(
+                    tokenHolder[0], tokenHolder[1], tokenHolder[0] + tokenHolder[1], 0,
+                    durationHolder[0], durationHolder[1]);
             if (verbose) {
                 printer.println("[verbose] Streamed Ollama: text=" + (text != null ? truncateVerbose(text) : "null")
                                 + ", toolCalls=" + toolCalls.size() + ", doneReason=" + doneReasonHolder[0]
@@ -1453,7 +1478,10 @@ public class LlmClient {
 
         int inputTokens = getIntValue(response, "prompt_eval_count");
         int outputTokens = getIntValue(response, "eval_count");
-        TokenUsage usage = new TokenUsage(inputTokens, outputTokens, inputTokens + outputTokens);
+        TokenUsage usage = new TokenUsage(
+                inputTokens, outputTokens, inputTokens + outputTokens, 0,
+                getLongValue(response, "prompt_eval_duration") / 1_000_000,
+                getLongValue(response, "eval_duration") / 1_000_000);
 
         if (verbose) {
             printer.println("[verbose] Parsed Ollama: text=" + (content != null ? truncateVerbose(content) : "null")
@@ -1502,10 +1530,12 @@ public class LlmClient {
         int prompt = getIntValue(usage, "prompt_tokens");
         int completion = getIntValue(usage, "completion_tokens");
         int total = getIntValue(usage, "total_tokens");
+        int cached = usage.get("prompt_tokens_details") instanceof JsonObject details
+                ? getIntValue(details, "cached_tokens") : 0;
         if (total == 0) {
             total = prompt + completion;
         }
-        return new TokenUsage(prompt, completion, total);
+        return new TokenUsage(prompt, completion, total, cached, 0, 0);
     }
 
     private TokenUsage extractAnthropicUsage(JsonObject response) {
@@ -1515,13 +1545,21 @@ public class LlmClient {
         }
         int input = getIntValue(usage, "input_tokens");
         int output = getIntValue(usage, "output_tokens");
-        return new TokenUsage(input, output, input + output);
+        return new TokenUsage(input, output, input + output, getIntValue(usage, "cache_read_input_tokens"), 0, 0);
     }
 
     private static int getIntValue(JsonObject obj, String key) {
         Object val = obj.get(key);
         if (val instanceof Number n) {
             return n.intValue();
+        }
+        return 0;
+    }
+
+    private static long getLongValue(JsonObject obj, String key) {
+        Object val = obj.get(key);
+        if (val instanceof Number n) {
+            return n.longValue();
         }
         return 0;
     }

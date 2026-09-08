@@ -56,11 +56,11 @@
         "properties": {
           "routesTotal": {
             "type": "integer",
-            "description": "Total number of routes"
+            "description": "Total number of routes (routes created by Kamelets are not counted unless the management agent registers them)"
           },
           "routesStarted": {
             "type": "integer",
-            "description": "Number of started routes"
+            "description": "Number of started routes (routes created by Kamelets are not counted unless the management agent registers them)"
           },
           "load01": {
             "type": "string",

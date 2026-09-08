@@ -24,6 +24,7 @@ import org.apache.camel.util.json.JsonObject;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -44,6 +45,22 @@ class AiPanelHistoryCompactionTest {
 
     private static String toolResultContent(LlmClient.Message message) {
         return message.toolResults().get(0).content();
+    }
+
+    @Test
+    void hostedEndpointsCompactAfterEveryTurn() {
+        assertTrue(AiPanel.shouldCompactAfterTurn(false, 0));
+        assertTrue(AiPanel.shouldCompactAfterTurn(false, 1_000));
+    }
+
+    @Test
+    void localEndpointsDeferCompactionUntilTheHistoryBudgetIsExceeded() {
+        long budgetChars = (long) AiPanel.LOCAL_HISTORY_BUDGET_TOKENS * 4;
+        // an untouched history keeps the local server's KV cache valid, so nothing is rewritten while it fits
+        assertFalse(AiPanel.shouldCompactAfterTurn(true, 0));
+        assertFalse(AiPanel.shouldCompactAfterTurn(true, budgetChars));
+        // once the history would crowd the context window, compaction resumes as for hosted endpoints
+        assertTrue(AiPanel.shouldCompactAfterTurn(true, budgetChars + 4_000));
     }
 
     @Test

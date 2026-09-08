@@ -23,13 +23,19 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 
+import org.apache.camel.CamelContext;
 import org.apache.camel.ContextEvents;
+import org.apache.camel.Route;
+import org.apache.camel.ServiceStatus;
 import org.apache.camel.api.management.ManagedCamelContext;
 import org.apache.camel.api.management.mbean.ManagedCamelContextMBean;
 import org.apache.camel.clock.Clock;
+import org.apache.camel.spi.ManagementAgent;
+import org.apache.camel.spi.ManagementStrategy;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.ReloadStrategy;
 import org.apache.camel.spi.ResourceReloadStrategy;
+import org.apache.camel.spi.RouteController;
 import org.apache.camel.spi.annotations.DevConsole;
 import org.apache.camel.support.CamelContextHelper;
 import org.apache.camel.support.ExceptionHelper;
@@ -52,8 +58,10 @@ public class ContextDevConsole extends AbstractDevConsole {
     }
 
     public record Statistics(
-            @Metadata(description = "Total number of routes") int routesTotal,
-            @Metadata(description = "Number of started routes") int routesStarted,
+            @Metadata(description = "Total number of routes (routes created by Kamelets are not counted unless the "
+                                    + "management agent registers them)") int routesTotal,
+            @Metadata(description = "Number of started routes (routes created by Kamelets are not counted unless the "
+                                    + "management agent registers them)") int routesStarted,
             @Metadata(description = "1 minute load average (only present when available)") String load01,
             @Metadata(description = "5 minute load average (only present when available)") String load05,
             @Metadata(description = "15 minute load average (only present when available)") String load15,
@@ -120,9 +128,8 @@ public class ContextDevConsole extends AbstractDevConsole {
         if (mcc != null) {
             ManagedCamelContextMBean mb = mcc.getManagedCamelContext();
             if (mb != null) {
-                int total = mb.getTotalRoutes();
-                int started = mb.getStartedRoutes();
-                sb.append(String.format("%n    Routes: %s (started: %s)", total, started));
+                int[] routes = countRoutes(getCamelContext());
+                sb.append(String.format("%n    Routes: %s (started: %s)", routes[0], routes[1]));
 
                 int reloaded = 0;
                 int reloadedFailed = 0;
@@ -212,6 +219,37 @@ public class ContextDevConsole extends AbstractDevConsole {
         return JsonRecordSupport.toJsonObject(response);
     }
 
+    /**
+     * Counts routes the way the route console lists them. A Kamelet is implemented as a route inside the Kamelet, and
+     * such routes are not registered with JMX by default, so the route console does not show them; they are left out
+     * here too so the totals match what the routes list shows, unless the management agent is configured to register
+     * Kamelet routes (in which case both include them). The MBean totals, by contrast, count every route.
+     *
+     * @return total and started route counts
+     */
+    static int[] countRoutes(CamelContext camelContext) {
+        boolean includeKamelet = false;
+        ManagementStrategy ms = camelContext.getManagementStrategy();
+        ManagementAgent agent = ms != null ? ms.getManagementAgent() : null;
+        if (agent != null && Boolean.TRUE.equals(agent.getRegisterRoutesCreateByKamelet())) {
+            includeKamelet = true;
+        }
+        int total = 0;
+        int started = 0;
+        RouteController controller = camelContext.getRouteController();
+        for (Route route : camelContext.getRoutes()) {
+            if (!includeKamelet && route.isCreatedByKamelet()) {
+                continue;
+            }
+            total++;
+            ServiceStatus status = controller.getRouteStatus(route.getRouteId());
+            if (status != null && status.isStarted()) {
+                started++;
+            }
+        }
+        return new int[] { total, started };
+    }
+
     private Statistics buildStatistics(ManagedCamelContextMBean mb) {
         String load1 = getLoad1(mb);
         String load5 = getLoad5(mb);
@@ -260,8 +298,9 @@ public class ContextDevConsole extends AbstractDevConsole {
         }
         Reload reload = new Reload(reloaded, reloadedFailed, lastError);
 
+        int[] routes = countRoutes(getCamelContext());
         return new Statistics(
-                mb.getTotalRoutes(), mb.getStartedRoutes(),
+                routes[0], routes[1],
                 hasLoad ? load1 : null, hasLoad ? load5 : null, hasLoad ? load15 : null,
                 thp.isEmpty() ? null : thp,
                 mb.getIdleSince(), mb.getExchangesTotal(), mb.getExchangesFailed(), mb.getExchangesInflight(),

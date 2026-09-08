@@ -29,6 +29,7 @@ import java.util.Deque;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
@@ -96,6 +97,16 @@ class AiPanel {
      * Oldest turns are dropped beyond this many user questions in one conversation.
      */
     static final int MAX_HISTORY_TURNS = 20;
+    /**
+     * With a local endpoint the history is left untouched until it is estimated to exceed this many tokens. A local
+     * server (Ollama) keeps the KV cache of the previous request, so a request that merely extends the conversation
+     * only pays for its new tokens, whereas rewriting an earlier message forces the whole tail from that point to be
+     * processed again (measured at one to two seconds per question with a 35B MoE model on Apple silicon, against 0.2s
+     * when the history is untouched). Compacting saves counted tokens, which is what a hosted API bills for, but costs
+     * time locally, so it is deferred until the context actually needs the room: half of the 32k window the client
+     * requests from Ollama, leaving space for the static prefix and the current turn's tool results.
+     */
+    static final int LOCAL_HISTORY_BUDGET_TOKENS = 16_000;
     private static final int MAX_LOG_ENTRIES = 200;
     private static final DateTimeFormatter TIME_FMT
             = DateTimeFormatter.ofPattern("HH:mm:ss").withZone(ZoneId.systemDefault());
@@ -1135,7 +1146,8 @@ class AiPanel {
                     String tokenInfo = totalUsage.totalTokens() > 0
                             ? ", " + LlmClient.formatTokens(totalUsage.totalTokens()) + " tokens"
                             : "";
-                    log(LogLevel.RESPONSE, "Response (" + elapsed + "s" + tokenInfo + ")", text);
+                    log(LogLevel.RESPONSE, "Response (" + elapsed + "s" + tokenInfo + describeCacheSignal(totalUsage) + ")",
+                            text);
                 } else {
                     String err = "Empty response from LLM.";
                     conversation.add(new ConversationEntry(AiRole.ERROR, err));
@@ -1143,7 +1155,7 @@ class AiPanel {
                 }
                 scrollOffset = 0;
                 messages.add(LlmClient.Message.assistantWithToolCalls(text, List.of()));
-                compactHistory(messages, MAX_HISTORY_TURNS, COMPACT_TOOL_RESULT_CHARS);
+                compactHistoryAfterTurn();
                 return;
             }
         }
@@ -1162,7 +1174,48 @@ class AiPanel {
         // keep the history consistent: the turn ends without an answer, so the next question starts fresh from here
         messages.add(LlmClient.Message.assistantWithToolCalls(
                 "(no answer: the iteration limit was reached while calling tools)", List.of()));
-        compactHistory(messages, MAX_HISTORY_TURNS, COMPACT_TOOL_RESULT_CHARS);
+        compactHistoryAfterTurn();
+    }
+
+    /**
+     * Compacts the history after a turn unless the endpoint is local and the history is still within
+     * {@link #LOCAL_HISTORY_BUDGET_TOKENS}; see there for why rewriting history is the slower choice locally.
+     * {@code /compact} bypasses this and always compacts.
+     */
+    private void compactHistoryAfterTurn() {
+        boolean local = client != null && client.isLocalEndpoint();
+        if (shouldCompactAfterTurn(local, historyChars(messages))) {
+            compactHistory(messages, MAX_HISTORY_TURNS, COMPACT_TOOL_RESULT_CHARS);
+        }
+    }
+
+    static boolean shouldCompactAfterTurn(boolean localEndpoint, long historyChars) {
+        return !localEndpoint || estimateTokens(historyChars) > LOCAL_HISTORY_BUDGET_TOKENS;
+    }
+
+    /**
+     * What the provider revealed about its prompt cache for the request(s) of a question, for the AI log: with Ollama
+     * the time spent on prompt processing versus generation (a cached prompt shows as a near-zero prefill even though
+     * the token count always reports the full prompt), with hosted APIs how many input tokens came from the cache.
+     * Empty when the provider reported nothing.
+     */
+    static String describeCacheSignal(LlmClient.TokenUsage usage) {
+        if (usage == null || !usage.hasCacheSignal()) {
+            return "";
+        }
+        StringBuilder sb = new StringBuilder();
+        if (usage.prefillMillis() > 0 || usage.generationMillis() > 0) {
+            sb.append(", prefill ").append(formatSeconds(usage.prefillMillis()))
+                    .append(", gen ").append(formatSeconds(usage.generationMillis()));
+        }
+        if (usage.cachedTokens() > 0) {
+            sb.append(", cached ").append(LlmClient.formatTokens(usage.cachedTokens()));
+        }
+        return sb.toString();
+    }
+
+    private static String formatSeconds(long millis) {
+        return String.format(Locale.ROOT, "%.1fs", millis / 1000.0);
     }
 
     private static String summarize(String text, int max) {
