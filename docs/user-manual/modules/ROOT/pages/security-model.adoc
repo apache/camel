@@ -739,6 +739,17 @@ while breaking either one:
   and authorization each normalize a path, a host or an identifier, they have
   to normalize it identically; a divergence between them is an auth bypass
   even when both sides are individually correct.
++
+The same divergence appears away from authorization, and the protocol decides
+how bad it is. A comparison that is case-sensitive where the protocol is
+case-insensitive can be defeated by varying the case - and where the protocol
+normalizes on the wire, the comparison may never match at all: HTTP/2 requires
+lowercase header names, so a case-sensitive header check is not merely
+bypassable there but unconditionally absent. Test the same guard under every
+protocol version the component accepts. The prefix variant is the same error in
+another shape: selecting a behaviour by testing whether a configured value
+*starts with* a token means every value sharing that prefix selects it too.
+Match the exact value unless a prefix is what the feature actually means.
 
 ==== Information disclosure of secrets or sensitive Exchange state
 
@@ -753,12 +764,52 @@ CVE-2026-56139 (`camel-undertow`) - the `muteException` consumer option
 defaulting to `false`, so a processing error returned the full exception and
 stack trace to the caller.
 
+That shape is not specific to HTTP. Any consumer with a reply path can hand the
+route's failure back to whoever sent the message - as a response body, over a
+socket, inside a protocol fault, or in a status field that is transmitted to the
+caller even when the underlying cause stays on the server. Stated generally:
+*a consumer must not return the route's exception to the party that sent the
+message.* A consumer that can reply needs a `muteException` option defaulting to
+`true`. Faults that the service contract declares are the exception, since
+clients are written against those and suppressing them breaks the contract
+rather than protecting anything.
+
 Judged against the default production log levels (INFO, WARN, ERROR);
 findings whose impact only manifests when the operator has enabled the
 diagnostic DEBUG or TRACE levels are out of scope, since those levels are
 operator-enabled diagnostic configurations expected to log internal
 `Exchange`, route and configuration detail (see the diagnostic-logging
 entry under _Known non-findings_).
+
+==== State shared between exchanges
+
+A component that holds mutable state outside the Exchange and reuses it across
+messages lets one message observe or alter what another is doing. The party
+that sent the earlier message need not be the party that sends the next, so
+this crosses a trust boundary whenever a route serves more than one sender,
+tenant or partner.
+
+The state takes several forms: an object a data format unmarshals into and
+returns as the body; a stateful cryptographic primitive that accumulates input
+in one call and consumes it in another; key or credential material belonging to
+one request but stored where the next can reach it; a cache shared across the
+process.
+
+Two questions decide it:
+
+* *Is the state per-exchange in fact as well as in name?* Anything reachable
+  from a producer or consumer field, from a static, or from a component-level
+  cache outlives the exchange that wrote it and is shared until shown
+  otherwise. "It is single-threaded in practice" is a property of one
+  deployment, not of the code.
+* *Does the cache key contain everything that changes the value?* Where the
+  shared object is a cache of something an endpoint is authorised to use, a key
+  that omits a field which alters what the cached value permits is the same
+  defect as having no key at all.
+
+This is not "any race condition is a vulnerability". An interleaving that only
+corrupts the failing exchange's own result is a correctness bug. It is in scope
+when the shared state carries authority, identity, or another party's data.
 
 ==== Insecure defaults
 
@@ -774,6 +825,26 @@ CVE-2026-43865 are insecure-default cases that also fall into the
 deserialisation class; CVE-2026-49365 and CVE-2026-56139 (`muteException`
 defaulting to `false`) are insecure-default cases in the
 information-disclosure class.
+
+Two shapes are worth stating on their own, because in both the dangerous state
+is reached by omission rather than by an opt-in - which is what separates them
+from the documented opt-ins that are out of scope:
+
+* *Turning a protection on must not be what turns another one off.* Enabling
+  transport security while leaving the peer-verification material unconfigured
+  must fall back to the platform default trust anchors, never to accepting
+  every peer. An encrypted connection with no peer authentication is worth
+  little against an attacker on the network path, and an operator who asked for
+  TLS has not thereby asked to skip certificate validation. Keep "trust
+  everything" reachable only by naming it.
+* *Enabling CORS must not grant credentials to an origin nobody named.*
+  Reflecting the request origin is acceptable on its own; reflecting it *and*
+  allowing credentials is not, unless the operator listed that origin. The two
+  together produce the credentialed any-origin policy the fetch specification
+  refuses to express as a literal `*`, which is exactly why reflecting the
+  origin is the usual way around that rule. Send `Vary: Origin` whenever the
+  origin is reflected, so a shared cache cannot serve one origin's response to
+  another.
 
 ==== Injection into back-end queries built by Camel
 
@@ -1505,6 +1576,24 @@ front of you:
   value as the dispatch decision (CVE-2026-40022, CAMEL-24412). A denial path
   must also stop the exchange, not merely set a response that a later step
   can overwrite.
+* *Does the component keep state between exchanges?* Any field on a producer or
+  consumer, any static, any component-level cache outlives the exchange that
+  wrote it. Ask whether a later sender could read or disturb it, and treat a
+  shared unmarshalling target, a stateful cryptographic object, and
+  request-scoped key material stored outside the request as the cases to look
+  for first. Where the shared object is a cache, the key must contain every
+  field that changes what the cached value permits.
+* *Does the component send a credential somewhere the route did not choose?*
+  Credentials belong to the authority the endpoint was configured with. If the
+  component follows redirects, the destination is chosen by the remote server,
+  so credentials must not be re-attached once the authority changes, and must
+  not be registered against a wildcard host scope. The same holds for any
+  address the peer supplies rather than the operator: a callback URL, a
+  receipt destination, a re-login endpoint.
+* *Does the component write a reply to the party that sent the message?* If it
+  can return a route failure, it needs a `muteException` option defaulting to
+  `true`. See the information-disclosure class above for the rule and for the
+  declared-fault exception.
 * *Does the change relax a default?* New defaults err toward "denied unless
   opted in" for the four `security` categories. If a default must be relaxed,
   the change requires a corresponding upgrade-guide entry and PMC review.
