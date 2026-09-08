@@ -728,6 +728,53 @@ class AiPanelTest {
         assertEquals("/clear-history", panel.inputBufferForTesting());
     }
 
+    // ---- paste tests ----
+
+    @Test
+    void pasteInsertsTextAtCursor() {
+        AiPanel panel = new AiPanel();
+        panel.open();
+        type(panel, "/model ");
+
+        panel.handlePaste("qwen3.6:35b-a3b");
+
+        assertEquals("/model qwen3.6:35b-a3b", panel.inputBufferForTesting());
+    }
+
+    @Test
+    void pasteInsertsInTheMiddleOfTheBuffer() {
+        AiPanel panel = new AiPanel();
+        panel.open();
+        type(panel, "ac");
+        panel.handleKeyEvent(KeyEvent.ofKey(KeyCode.LEFT, KeyModifiers.NONE));
+
+        panel.handlePaste("b");
+        type(panel, "d");
+
+        // The cursor advances past the pasted text so typing continues right after it.
+        assertEquals("abdc", panel.inputBufferForTesting());
+    }
+
+    @Test
+    void pasteCollapsesLineBreaksToSpaces() {
+        AiPanel panel = new AiPanel();
+        panel.open();
+
+        panel.handlePaste("why is\nthe route\r\nstopped?");
+
+        // A multi-line paste becomes a single prompt instead of submitting on the first newline.
+        assertEquals("why is the route stopped?", panel.inputBufferForTesting());
+    }
+
+    @Test
+    void pasteIsIgnoredWhileClosed() {
+        AiPanel panel = new AiPanel();
+
+        panel.handlePaste("ignored");
+
+        assertEquals("", panel.inputBufferForTesting());
+    }
+
     private static void type(AiPanel panel, String text) {
         for (char ch : text.toCharArray()) {
             panel.handleKeyEvent(KeyEvent.ofChar(ch));

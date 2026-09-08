@@ -248,6 +248,21 @@ class ShellPanelTest {
         assertFalse(spans.get(2).style().effectiveModifiers().contains(Modifier.REVERSED));
     }
 
+    // ---- encodePaste tests ----
+
+    @Test
+    void encodePastePlainText() {
+        byte[] result = ShellPanel.encodePaste("ollama run qwen3.6:35b-a3b");
+        assertArrayEquals("ollama run qwen3.6:35b-a3b".getBytes(StandardCharsets.UTF_8), result);
+    }
+
+    @Test
+    void encodePasteSendsLineBreaksAsCarriageReturns() {
+        byte[] result = ShellPanel.encodePaste("ls\npwd\r\ndate\n");
+        // Each line break becomes the single \r a real terminal sends for Enter, never \r\r
+        assertArrayEquals("ls\rpwd\rdate\r".getBytes(StandardCharsets.UTF_8), result);
+    }
+
     // ---- encodeKeyEvent tests ----
 
     @Test

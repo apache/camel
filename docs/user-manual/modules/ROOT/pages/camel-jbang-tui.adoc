@@ -573,6 +573,13 @@ respectively. Use *↑*/*↓* on the input line to walk previous entries. Limits
 `100` each; set to `0` to disable recall and persistence). Shell history is stored in
 `~/.camel/tui-shell.history`; AI prompt history in `~/.camel/tui-ai-prompt.history`.
 
+=== Pasting
+
+Both panels accept text pasted from the terminal (for example a model name such as
+`qwen3.6:35b-a3b` after `/model`). In the AI prompt, line breaks in the pasted text are collapsed
+to spaces so the paste stays a single prompt you can review before pressing *Enter*. In the shell,
+line breaks are sent as *Enter*, so a multi-line paste runs line by line as in a regular terminal.
+
 == Keyboard Shortcuts
 
 === Global (All Tabs)

@@ -600,6 +600,29 @@ class AiPanel {
         return historySearchActive;
     }
 
+    /**
+     * Inserts pasted text at the cursor. Line breaks are collapsed to single spaces so a multi-line paste still forms
+     * one prompt that can be reviewed and submitted with Enter, rather than submitting on the first newline. While the
+     * reverse-i-search is active the text is appended to the search term instead.
+     */
+    void handlePaste(String text) {
+        if (!visible || text == null || text.isEmpty() || providerSwitchPopup.isVisible()) {
+            return;
+        }
+        String flat = text.replace("\r\n", "\n").replace('\r', '\n').replace('\n', ' ');
+        if (historySearchActive) {
+            searchTerm.append(flat);
+            performSearch(searchIndex >= 0 ? searchIndex : promptHistory.size() - 1);
+            return;
+        }
+        if (promptHistory != null) {
+            promptHistory.resetNavigation();
+        }
+        completionMatches = null;
+        inputBuffer.insert(cursorPos, flat);
+        cursorPos += flat.length();
+    }
+
     String searchTermForTesting() {
         return searchTerm.toString();
     }

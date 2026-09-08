@@ -1439,8 +1439,17 @@ public class CamelMonitor extends CamelCommand {
     }
 
     private boolean handlePasteEvent(PasteEvent pe) {
+        // Same precedence as key events: an open shell holds input focus, then popups, then the AI panel
+        if (shellPanel.isOpen()) {
+            shellPanel.handlePaste(pe.text());
+            return true;
+        }
         if (actionsPopup.isVisible()) {
             actionsPopup.handlePaste(pe.text());
+            return true;
+        }
+        if (aiPanel.isOpen()) {
+            aiPanel.handlePaste(pe.text());
             return true;
         }
         if (tabRegistry.httpTab().isProbeMode()) {
