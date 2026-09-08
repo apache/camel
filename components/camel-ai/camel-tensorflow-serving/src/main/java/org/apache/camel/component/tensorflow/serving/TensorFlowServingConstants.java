@@ -23,6 +23,11 @@ import org.apache.camel.spi.Metadata;
  */
 public interface TensorFlowServingConstants {
 
+    /**
+     * @deprecated Never read by the component. The gRPC channel is built once when the endpoint is initialised, so it
+     *             cannot be redirected per exchange. Use the {@code target} endpoint option instead, or route to a
+     *             different endpoint with {@code toD} when the destination varies per message.
+     */
     @Metadata(description = "The target of the client. See: https://grpc.github.io/grpc-java/javadoc/io/grpc/Grpc.html#newChannelBuilder%28java.lang.String,io.grpc.ChannelCredentials%29",
               javaType = "String",
               deprecationNote = "Never read by the component. The gRPC channel is built once when the endpoint is"
@@ -30,6 +35,10 @@ public interface TensorFlowServingConstants {
     @Deprecated
     String TARGET = "CamelTensorFlowServingTarget";
 
+    /**
+     * @deprecated Never read by the component. The gRPC channel is built once when the endpoint is initialised, so it
+     *             cannot be re-authenticated per exchange. Use the {@code credentials} endpoint option instead.
+     */
     @Metadata(description = "The credentials of the client.", javaType = "io.grpc.ChannelCredentials",
               deprecationNote = "Never read by the component. The gRPC channel is built once when the endpoint is"
                                 + " initialised, so it cannot be re-authenticated per exchange. Use the credentials"
