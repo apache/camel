@@ -159,6 +159,10 @@ classpath. The TUI adapts to show only what's relevant to your integration.
 Tab badges show live counts -- the Errors tab shows a red badge when errors exist
 and Routes shows the route count.
 
+Two panels can be opened on top of any tab: *F6* opens an <<_embedded_shell_f6,embedded shell>>
+for running `camel` commands, and *F8* opens the <<_ai_integration_mcp,AI prompt>> for asking
+questions about the running integrations.
+
 == Source Code Browser
 
 The Source tab (Tab 2) gives you a file explorer into your project code. The left panel shows
@@ -513,6 +517,17 @@ The Doctor checks your development environment and reports issues:
 * Common port conflicts (8080, 8443, 9090)
 * Disk space in temp directory
 
+== Embedded Shell (F6)
+
+Press *F6* to open an embedded Camel JBang shell at the bottom (or top) of the screen. Any `camel`
+command can be run there -- `camel run`, `camel infra run kafka`, `camel cmd send`, `camel get` and
+so on -- without leaving the dashboard, and the tabs keep updating while the command runs. Press
+*F6* again to close the panel, *Shift+F6* to cycle its height, *PgUp*/*PgDn* to scroll the output
+and *↑*/*↓* to recall earlier commands (see <<_input_history>>).
+
+The shell and the AI prompt panel (*F8*) share the same space: opening one closes the other. Both
+open at the bottom by default; see *Panel Position* in <<_settings>>.
+
 == Theme
 
 The TUI ships with 15 color themes defined as CSS stylesheets:
@@ -594,6 +609,8 @@ line breaks are sent as *Enter*, so a multi-line paste runs line by line as in a
 | *F1* / *?* | Context-sensitive help (toggle)
 | *F2* | Actions menu
 | *F3* | Switch between integrations (when multiple running)
+| *F6* / *Shift+F6* | Toggle the embedded shell panel / cycle its height
+| *F8* / *Shift+F8* | Toggle the AI prompt panel / cycle its height
 | *F10* | Run menu (run, stop, restart, kill)
 | *Shift+F5* | Take screenshot
 | *Ctrl+C* / *Q* | Quit
@@ -820,7 +837,8 @@ whole prompt, while the default engine reuses it and only processes what is new.
 Every question sends the definitions of the `tui_*` tools the model may call, and a local model
 pays for each of them in prompt-processing time. The panel therefore sends only the core set of
 tools (state, tables, logs, errors, diagrams, topology, processor details, catalog docs, traces,
-spans, route control, sending messages, source files, navigation, log level and filters) to Ollama
+spans, route control, sending messages, source files, infra services, navigation, log level and
+filters) to Ollama
 and to any provider on `localhost`, which roughly halves the prompt. Hosted providers get every
 tool, including the drawing, animation and automation tools. Use `/tools full` in the panel to send
 all tools to a local model too, `/tools core` to trim the set for a hosted one, pick *AI Tools* in
@@ -931,13 +949,13 @@ cycles backward.
 | Show what the next request costs: provider and model, tool set, static prefix size, history size and the session total. Useful with local models, where prompt size is time.
 
 | `/compact`
-| Shrink the conversation history sent to the model right away: older tool results are cut to their first lines and the oldest turns are dropped. The panel does this automatically after each answer for all but the latest turn.
+| Shrink the conversation history sent to the model right away: older tool results are cut to their first lines and the oldest turns are dropped. With a hosted provider the panel does this automatically after each answer for all but the latest turn. With Ollama or another `localhost` provider it waits until the history grows past roughly 16k tokens, because a local server can reuse its cached prompt only while the conversation is appended to, and rewriting the history would make it process the whole prompt again.
 
 | `/retry`
 | Send the last question again, starting from a clean turn in the model history.
 
-| `/usage` (`/u`)
-| Print the AI usage so far in the chat: requests, tokens in and out, average latency, one line per model (and per route when GenAI spans are observed), and the last request. *Ctrl+U* opens the full view with the per-turn chart.
+| `/usage [reset]` (`/u`)
+| Print the AI usage so far in the chat: requests, tokens in and out, average latency, one line per model (and per route when GenAI spans are observed), and the last request. *Ctrl+U* opens the full view with the per-question chart. `/usage reset` clears the counters and the chart without touching the conversation; GenAI spans recorded before the reset are hidden from the view as well.
 
 | `/copy` (`/y`), `/export` (`/e`)
 | The same as *Ctrl+Y* (copy the last response) and *Ctrl+E* (export the conversation to Markdown).
@@ -968,8 +986,22 @@ Submitted prompts (including slash commands) participate in AI prompt history wh
 `camel.tui.ai.promptHistory` is not `0`. Use *↑*/*↓* on the prompt line to recall them.
 
 Press *Ctrl+U* while the AI panel is open to toggle the AI Usage view. It shows token consumption from
-the embedded AI prompt (*TUI ask*) and from monitored route LLM calls exported as OpenTelemetry GenAI spans
-when observability is enabled on the integration.
+the embedded AI prompt (*TUI ask*) and from LLM calls made by the monitored integration (*integration*),
+the latter taken from OpenTelemetry GenAI spans when observability is enabled on the integration. The
+*Tokens per question* chart has one bar per question you asked, so a question that needed several tool
+calls shows as a single bar.
+
+=== AI log
+
+Every request the panel makes is recorded in the AI log (*F2* -> _AI & MCP_ -> _AI Log_, or the
+`tui_get_ai_log` tool): the question, each tool the model called with its arguments and the size of
+the result, and a `Response` line with the elapsed time and the token counts. The `Response` line
+also shows whether the provider reused its cached prompt. For Ollama it prints the prompt-processing
+(`prefill`) and generation (`gen`) time reported by the server -- a prefill of a fraction of a second
+on a 10k-token prompt means the cache was hit, while a prefill of several seconds means the whole
+prompt was processed again. For OpenAI, Anthropic and Gemini it prints the number of `cached` input
+tokens the provider reported. Use it to check that follow-up questions are cheap before blaming the
+model for being slow.
 
 === Connecting an AI Agent
 
@@ -992,9 +1024,11 @@ To connect Claude Code to the TUI, add the MCP server to your project configurat
 
 The MCP server exposes tools organized by purpose:
 
-* *Observe* -- read the screen, get structured state, query tables/logs/errors/traces/topology/diagram/files
+* *Observe* -- read the screen, get structured state, query tables/logs/errors/traces/topology/diagram/files,
+  list the running infra services (brokers, databases) and read their logs
 * *Navigate* -- switch tabs, select integrations, select routes, send keystrokes, apply filters
-* *Act* -- send test messages to endpoints, start/stop/restart routes, change log levels
+* *Act* -- send test messages to endpoints, start/stop/restart routes, change log levels,
+  start/stop/restart infra services, run any entry of the *F2* actions menu by its label
 * *Annotate* -- locate text and diagram nodes by coordinates, draw shapes (boxes, highlights,
   arrows, underlines, text labels), show captions with typewriter animation
 * *Present* -- take screenshots, record tape sessions, control demo pacing

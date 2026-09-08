@@ -1363,6 +1363,27 @@ class OverviewTab extends AbstractTab {
                 the sort columns of the focused panel (integration columns: PID, NAME,
                 VERSION, STATUS, TOTAL, FAIL; infra columns: SERVICE, VERSION, PORT, STATUS).
 
+                ## Shell and AI Panels
+
+                Two panels can be opened on top of any tab. Opening one closes the other.
+
+                - `F6` — **Shell**: an embedded Camel JBang shell where you can run any `camel`
+                  command (`run`, `infra`, `cmd send`, `get`, ...) without leaving the TUI. Press
+                  `F6` again to close it and `Shift+F6` to cycle its height. `PgUp/PgDn` scrolls
+                  the output and `Up/Down` recalls earlier commands
+                - `F8` — **AI Prompt**: ask questions about the running integrations in plain
+                  English. The AI answers by calling the same tools an MCP agent uses (status,
+                  routes, log, errors, traces, infra services). It needs an API key in the
+                  environment or a local Ollama model; `F2` → `AI & MCP` → `Setup AI` explains
+                  the options. Press `F8` again to close it and `Shift+F8` to cycle its height.
+                  Inside the panel `Ctrl+U` toggles the AI usage view, `Ctrl+P` switches
+                  provider or model, `Ctrl+Y` copies the last answer and `Ctrl+E` exports the
+                  conversation. Type `/help` for the slash commands
+
+                Where the panels open (bottom or top) is configured in Settings
+                (`F2` → `Settings...` → `Panel Position`). The tool calls and answers of the AI panel
+                are recorded in `F2` → `AI & MCP` → `AI Log`.
+
                 ## Keys
 
                 - `Up/Down` — select within the focused panel
@@ -1373,6 +1394,8 @@ class OverviewTab extends AbstractTab {
                 - `S` — reverse sort order
                 - `F2` — actions menu (includes theme toggle, go to tab, etc.)
                 - `F3` — switch integration
+                - `F6` — toggle the embedded shell panel
+                - `F8` — toggle the AI prompt panel
 
                 ## Run
 
