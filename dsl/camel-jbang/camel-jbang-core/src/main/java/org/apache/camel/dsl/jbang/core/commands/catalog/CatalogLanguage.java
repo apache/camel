@@ -58,4 +58,9 @@ public class CatalogLanguage extends CatalogBaseCommand {
         return rows;
     }
 
+    @Override
+    List<String> suggestNames(String term) {
+        return catalog.suggestLanguageNames(term, 5);
+    }
+
 }

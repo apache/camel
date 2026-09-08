@@ -57,4 +57,9 @@ public class CatalogDataFormat extends CatalogBaseCommand {
         return rows;
     }
 
+    @Override
+    List<String> suggestNames(String term) {
+        return catalog.suggestDataFormatNames(term, 5);
+    }
+
 }

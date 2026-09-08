@@ -859,6 +859,12 @@ public class EndpointSchemaGeneratorMojo extends AbstractGeneratorMojo {
             model.setFirstVersion(firstVersion);
         }
 
+        // aliases (protocol or product names people use for the component) come from @Metadata on the endpoint class
+        Metadata endpointMetadata = endpointClassElement.getAnnotation(Metadata.class);
+        if (endpointMetadata != null && endpointMetadata.aliases().length > 0) {
+            model.setAliases(new ArrayList<>(Arrays.asList(endpointMetadata.aliases())));
+        }
+
         model.setDescription(project.getDescription());
         model.setGroupId(project.getGroupId());
         model.setArtifactId(project.getArtifactId());
