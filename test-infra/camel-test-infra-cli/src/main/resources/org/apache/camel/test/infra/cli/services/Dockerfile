@@ -54,7 +54,7 @@ ENV JAVA_HOME=/usr/lib/jvm/java
 RUN echo "Installing JBang..."
 RUN curl -Ls https://sh.jbang.dev | bash -s - app setup \
     && source ~/.bashrc \
-    && jbang trust add https://github.com/$CAMEL_REPO/ \
+    && jbang trust add https://github.com/$CAMEL_REPO/
 
 RUN echo "Using JBang $CAMEL_JBANG_VERSION version from $CAMEL_REPO/$CAMEL_REF"
 RUN source ~/.bashrc \
