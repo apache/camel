@@ -48,6 +48,8 @@ class SSLCertTrustTest extends AbstractKeycloakTest {
     /** PKCS12 keystore containing a self-signed certificate not in any default trust store. */
     private static final String SELFSIGNED_KEYSTORE = "selfsigned-keystore.p12";
     private static final String KEYSTORE_PASSWORD = "changeit";
+    private static final int CONNECT_TIMEOUT_MS = 10_000;
+    private static final int READ_TIMEOUT_MS = 10_000;
 
     private static SSLServerSocket serverSocket;
     private static Thread serverThread;
@@ -77,7 +79,7 @@ class SSLCertTrustTest extends AbstractKeycloakTest {
                 try (var socket = serverSocket.accept()) {
                     // Read enough to satisfy the HTTP request, then send a minimal response
                     socket.getInputStream().read(new byte[1]);
-                    socket.getOutputStream().write("HTTP/1.1 200 OK\r\nContent-Length: 0\r\n\r\n".getBytes());
+                    socket.getOutputStream().write("HTTP/1.1 200 OK\r\nContent-Length: 0\r\n\r\n".getBytes(java.nio.charset.StandardCharsets.US_ASCII));
                     socket.getOutputStream().flush();
                 } catch (IOException e) {
                     if (!serverSocket.isClosed()) {
@@ -150,8 +152,8 @@ class SSLCertTrustTest extends AbstractKeycloakTest {
     private static void connectToUrl(String httpsUrl) throws IOException {
         var url = URI.create(httpsUrl).toURL();
         var con = (HttpsURLConnection) url.openConnection();
-        con.setConnectTimeout(10_000);
-        con.setReadTimeout(10_000);
+        con.setConnectTimeout(CONNECT_TIMEOUT_MS);
+        con.setReadTimeout(READ_TIMEOUT_MS);
         con.connect();
     }
 }
