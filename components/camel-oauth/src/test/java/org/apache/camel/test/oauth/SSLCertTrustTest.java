@@ -79,7 +79,8 @@ class SSLCertTrustTest extends AbstractKeycloakTest {
                 try (var socket = serverSocket.accept()) {
                     // Read enough to satisfy the HTTP request, then send a minimal response
                     socket.getInputStream().read(new byte[1]);
-                    socket.getOutputStream().write("HTTP/1.1 200 OK\r\nContent-Length: 0\r\n\r\n".getBytes(java.nio.charset.StandardCharsets.US_ASCII));
+                    socket.getOutputStream().write("HTTP/1.1 200 OK\r\nContent-Length: 0\r\n\r\n"
+                            .getBytes(java.nio.charset.StandardCharsets.US_ASCII));
                     socket.getOutputStream().flush();
                 } catch (IOException e) {
                     if (!serverSocket.isClosed()) {
