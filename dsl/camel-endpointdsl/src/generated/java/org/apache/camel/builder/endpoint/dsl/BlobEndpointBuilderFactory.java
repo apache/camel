@@ -482,21 +482,6 @@ public interface BlobEndpointBuilderFactory {
             return this;
         }
         /**
-         * In case of usage of Shared Access Signature we'll need to set a SAS
-         * Token.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: common
-         * 
-         * @param sasToken the value to set
-         * @return the dsl builder
-         */
-        default BlobEndpointConsumerBuilder sasToken(String sasToken) {
-            doSetProperty("sasToken", sasToken);
-            return this;
-        }
-        /**
          * Client to a storage account. This client does not hold any state
          * about a particular storage account but is instead a convenient way of
          * sending off appropriate requests to the resource on the service. It
@@ -1324,6 +1309,21 @@ public interface BlobEndpointBuilderFactory {
             return this;
         }
         /**
+         * In case of usage of Shared Access Signature we'll need to set a SAS
+         * Token.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: security
+         * 
+         * @param sasToken the value to set
+         * @return the dsl builder
+         */
+        default BlobEndpointConsumerBuilder sasToken(String sasToken) {
+            doSetProperty("sasToken", sasToken);
+            return this;
+        }
+        /**
          * Source Blob Access Key: for copyblob operation, sadly, we need to
          * have an accessKey for the source blob we want to copy Passing an
          * accessKey as header, it's unsafe so we could set as key.
@@ -1951,21 +1951,6 @@ public interface BlobEndpointBuilderFactory {
          */
         default BlobEndpointProducerBuilder regex(String regex) {
             doSetProperty("regex", regex);
-            return this;
-        }
-        /**
-         * In case of usage of Shared Access Signature we'll need to set a SAS
-         * Token.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: common
-         * 
-         * @param sasToken the value to set
-         * @return the dsl builder
-         */
-        default BlobEndpointProducerBuilder sasToken(String sasToken) {
-            doSetProperty("sasToken", sasToken);
             return this;
         }
         /**
@@ -2632,6 +2617,21 @@ public interface BlobEndpointBuilderFactory {
             return this;
         }
         /**
+         * In case of usage of Shared Access Signature we'll need to set a SAS
+         * Token.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: security
+         * 
+         * @param sasToken the value to set
+         * @return the dsl builder
+         */
+        default BlobEndpointProducerBuilder sasToken(String sasToken) {
+            doSetProperty("sasToken", sasToken);
+            return this;
+        }
+        /**
          * Source Blob Access Key: for copyblob operation, sadly, we need to
          * have an accessKey for the source blob we want to copy Passing an
          * accessKey as header, it's unsafe so we could set as key.
@@ -3155,21 +3155,6 @@ public interface BlobEndpointBuilderFactory {
             return this;
         }
         /**
-         * In case of usage of Shared Access Signature we'll need to set a SAS
-         * Token.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: common
-         * 
-         * @param sasToken the value to set
-         * @return the dsl builder
-         */
-        default BlobEndpointBuilder sasToken(String sasToken) {
-            doSetProperty("sasToken", sasToken);
-            return this;
-        }
-        /**
          * Client to a storage account. This client does not hold any state
          * about a particular storage account but is instead a convenient way of
          * sending off appropriate requests to the resource on the service. It
@@ -3338,6 +3323,21 @@ public interface BlobEndpointBuilderFactory {
          */
         default BlobEndpointBuilder azureTenantId(String azureTenantId) {
             doSetProperty("azureTenantId", azureTenantId);
+            return this;
+        }
+        /**
+         * In case of usage of Shared Access Signature we'll need to set a SAS
+         * Token.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: security
+         * 
+         * @param sasToken the value to set
+         * @return the dsl builder
+         */
+        default BlobEndpointBuilder sasToken(String sasToken) {
+            doSetProperty("sasToken", sasToken);
             return this;
         }
         /**
