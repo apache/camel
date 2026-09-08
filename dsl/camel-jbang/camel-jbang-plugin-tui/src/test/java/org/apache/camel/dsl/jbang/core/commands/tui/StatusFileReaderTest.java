@@ -57,6 +57,26 @@ class StatusFileReaderTest {
     }
 
     @Test
+    void tailsTheLogFromTheEndWithoutLoadingItWhole(@TempDir Path dir) throws Exception {
+        StringBuilder log = new StringBuilder();
+        for (int i = 1; i <= 3000; i++) {
+            log.append("2026-09-08 line ").append(i).append(" ").append("padding ".repeat(20)).append('\n');
+        }
+        Files.writeString(dir.resolve("4711.log"), log.toString());
+        StatusFileReader reader = new StatusFileReader(dir);
+
+        assertTrue(reader.hasLog("4711"));
+        String tail = reader.tailLog("4711", 3);
+        assertTrue(tail.startsWith("2026-09-08 line 2998 "), tail.substring(0, 40));
+        assertEquals(3, tail.strip().split("\n").length);
+        assertTrue(tail.strip().endsWith("line 3000 " + "padding ".repeat(20).strip()));
+
+        // more lines than the file has yields the whole file
+        assertEquals(log.toString(), reader.tailLog("4711", StatusFileReader.MAX_LOG_LINES));
+        assertNull(reader.tailLog("9999", 10));
+    }
+
+    @Test
     void missingOrCorruptFilesReadAsAbsent(@TempDir Path dir) throws Exception {
         Files.writeString(dir.resolve("99-status.json"), "{ not json");
         StatusFileReader reader = new StatusFileReader(dir);

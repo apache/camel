@@ -16,6 +16,7 @@
  */
 package org.apache.camel.dsl.jbang.core.commands.tui;
 
+import java.io.RandomAccessFile;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -33,6 +34,8 @@ import org.apache.camel.util.json.Jsoner;
 final class StatusFileReader {
 
     static final String SECTION_LIST = "sections";
+    static final int DEFAULT_LOG_LINES = 200;
+    static final int MAX_LOG_LINES = 5000;
 
     private final Path camelDir;
 
@@ -46,6 +49,70 @@ final class StatusFileReader {
 
     Path statusFile(String pid) {
         return camelDir.resolve(pid + "-status.json");
+    }
+
+    Path logFile(String pid) {
+        return camelDir.resolve(pid + ".log");
+    }
+
+    boolean hasLog(String pid) {
+        return pid != null && !pid.isBlank() && Files.isRegularFile(logFile(pid.trim()));
+    }
+
+    /**
+     * The last {@code lines} lines of the process log ({@code ~/.camel/<pid>.log}), read from the end of the file so a
+     * large log is not loaded whole; {@code null} when there is no log file. {@code lines} is clamped to
+     * {@link #MAX_LOG_LINES}.
+     */
+    String tailLog(String pid, int lines) {
+        if (!hasLog(pid)) {
+            return null;
+        }
+        int wanted = Math.max(1, Math.min(lines, MAX_LOG_LINES));
+        Path file = logFile(pid.trim());
+        try (RandomAccessFile raf = new RandomAccessFile(file.toFile(), "r")) {
+            long length = raf.length();
+            if (length == 0) {
+                return "";
+            }
+            // read backwards in chunks until the buffer holds more line breaks than lines wanted (or the whole file)
+            int chunk = 64 * 1024;
+            byte[] tail = new byte[0];
+            long position = length;
+            while (position > 0 && countNewlines(tail) <= wanted) {
+                int size = (int) Math.min(chunk, position);
+                position -= size;
+                raf.seek(position);
+                byte[] merged = new byte[size + tail.length];
+                raf.readFully(merged, 0, size);
+                System.arraycopy(tail, 0, merged, size, tail.length);
+                tail = merged;
+            }
+            // skip the final line break, then step back over 'wanted' line breaks
+            int cut = tail.length;
+            if (cut > 0 && tail[cut - 1] == '\n') {
+                cut--;
+            }
+            int seen = 0;
+            for (int i = cut - 1; i >= 0; i--) {
+                if (tail[i] == '\n' && ++seen == wanted) {
+                    return new String(tail, i + 1, tail.length - i - 1, StandardCharsets.UTF_8);
+                }
+            }
+            return new String(tail, StandardCharsets.UTF_8);
+        } catch (Exception e) {
+            return null;
+        }
+    }
+
+    private static int countNewlines(byte[] bytes) {
+        int count = 0;
+        for (byte b : bytes) {
+            if (b == '\n') {
+                count++;
+            }
+        }
+        return count;
     }
 
     /**

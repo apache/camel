@@ -55,9 +55,29 @@ class TuiMcpServerResourcesTest {
     }
 
     @Test
-    void listsWholeDocumentThenEachSectionPerIntegration(@TempDir Path dir) throws Exception {
+    void parsesLogUrisWithOptionalLineCount() {
+        TuiMcpServer.LogUri plain = TuiMcpServer.LogUri.parse("camel://log/4711");
+        assertEquals("4711", plain.pid());
+        assertEquals(StatusFileReader.DEFAULT_LOG_LINES, plain.lines());
+        assertEquals("camel://log/4711", plain.uri());
+
+        TuiMcpServer.LogUri sized = TuiMcpServer.LogUri.parse("camel://log/4711?lines=50");
+        assertEquals(50, sized.lines());
+        assertEquals("camel://log/4711?lines=50", sized.uri());
+        assertEquals(StatusFileReader.MAX_LOG_LINES, TuiMcpServer.LogUri.parse("camel://log/4711?lines=999999").lines());
+
+        assertNull(TuiMcpServer.LogUri.parse("camel://log/"));
+        assertNull(TuiMcpServer.LogUri.parse("camel://log/abc"));
+        assertNull(TuiMcpServer.LogUri.parse("camel://log/4711?lines=0"));
+        assertNull(TuiMcpServer.LogUri.parse("camel://log/4711?tail=5"));
+        assertNull(TuiMcpServer.LogUri.parse("camel://status/4711"));
+    }
+
+    @Test
+    void listsLogThenWholeDocumentThenEachSectionPerIntegration(@TempDir Path dir) throws Exception {
         Files.writeString(dir.resolve("4711-status.json"),
                 "{\"runtime\":{\"pid\":4711},\"context\":{\"name\":\"timer-log\"}}");
+        Files.writeString(dir.resolve("4711.log"), "hello\n");
         IntegrationInfo running = new IntegrationInfo();
         running.pid = "4711";
         running.name = "timer-log";
@@ -67,12 +87,16 @@ class TuiMcpServerResourcesTest {
 
         JsonArray resources = TuiMcpServer.buildResourceList(List.of(running, gone), new StatusFileReader(dir));
 
-        assertEquals(3, resources.size());
-        JsonObject whole = (JsonObject) resources.get(0);
+        assertEquals(4, resources.size());
+        JsonObject log = (JsonObject) resources.get(0);
+        assertEquals("camel://log/4711", log.get("uri"));
+        assertEquals("timer-log log", log.get("name"));
+        assertEquals("text/plain", log.get("mimeType"));
+        JsonObject whole = (JsonObject) resources.get(1);
         assertEquals("camel://status/4711", whole.get("uri"));
         assertEquals("timer-log status", whole.get("name"));
         assertEquals("application/json", whole.get("mimeType"));
-        assertEquals("camel://status/4711/runtime", ((JsonObject) resources.get(1)).get("uri"));
-        assertEquals("camel://status/4711/context", ((JsonObject) resources.get(2)).get("uri"));
+        assertEquals("camel://status/4711/runtime", ((JsonObject) resources.get(2)).get("uri"));
+        assertEquals("camel://status/4711/context", ((JsonObject) resources.get(3)).get("uri"));
     }
 }

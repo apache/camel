@@ -879,13 +879,17 @@ once a second by `camel-cli-connector`. The tabs show a digest of it; the MCP se
 whole document as resources so an agent can fetch exactly the section it needs instead of
 paging through tabs:
 
+* `camel://log/<pid>` -- the last 200 lines of the integration's log (`~/.camel/<pid>.log`);
+  `camel://log/<pid>?lines=<n>` for a different tail length (up to 5000). The Log tab shows only a
+  window of this file, so an agent that needs to know which lines the user is looking at should
+  use the `tui_get_screen` tool instead.
 * `camel://status/<pid>` -- the whole document
 * `camel://status/<pid>/<section>` -- one top-level section, for example `context` (name, version,
   state, uptime, start timestamp, statistics), `runtime`, `routes`, `endpoints`, `healthChecks`,
   `properties`, `main-configuration`, `routeController`, `memory`, `threads`, `gc` or `events`
 
-`resources/list` enumerates the document and its sections for every monitored integration, and a
-`resources/templates/list` template describes the URI shape. The same data is available to the
+`resources/list` enumerates the log, the document and its sections for every monitored
+integration, and `resources/templates/list` describes the URI shapes. The same data is available to the
 F8 AI panel (and as an MCP tool) through `tui_get_status`, which takes a `section` argument and
 returns that section only; pass `sections` to list what the document contains. Sections such as
 `events` can be large, so ask for the one you need.
