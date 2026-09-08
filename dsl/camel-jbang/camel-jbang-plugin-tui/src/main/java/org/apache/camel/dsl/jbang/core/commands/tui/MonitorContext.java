@@ -26,6 +26,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.BiConsumer;
 
+import dev.tamboui.style.Style;
 import dev.tamboui.tui.TuiRunner;
 import org.apache.camel.catalog.CamelCatalog;
 import org.apache.camel.dsl.jbang.core.common.CommandLineHelper;
@@ -57,6 +58,12 @@ class MonitorContext {
     boolean ratePerMinute;
     boolean confirmActions;
     boolean validateOnSave = true;
+    /** True while the shell (F6) or AI (F8) panel is open and owns keyboard focus. */
+    boolean bottomPanelFocused;
+    /** Shell/AI panel opens at the top of the content area instead of the bottom. */
+    boolean panelTop;
+    /** Shell/AI panel is drawn over the tab instead of taking space away from it. */
+    boolean panelOverlay;
     BiConsumer<String, Boolean> notificationCallback;
     BiConsumer<String, String> openMarkdownCallback;
     OpenOptionsCallback openOptionsCallback;
@@ -96,6 +103,21 @@ class MonitorContext {
 
     boolean isInfraSelected() {
         return findSelectedInfra() != null;
+    }
+
+    /**
+     * Border style for a focusable pane. The accent color marks the pane that receives keys; while the shell or AI
+     * panel is open that panel owns the focus, so every tab pane is drawn muted.
+     */
+    Style paneBorder(boolean focused) {
+        return paneBorder(focused, Theme.muted());
+    }
+
+    /**
+     * Same as {@link #paneBorder(boolean)} with a custom style for the unfocused state.
+     */
+    Style paneBorder(boolean focused, Style unfocused) {
+        return focused && !bottomPanelFocused ? Style.EMPTY.fg(Theme.accent()) : unfocused;
     }
 
     String selectedName() {

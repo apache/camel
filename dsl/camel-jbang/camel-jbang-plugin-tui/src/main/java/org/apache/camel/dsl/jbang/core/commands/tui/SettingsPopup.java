@@ -50,20 +50,24 @@ class SettingsPopup {
     private static final int ROW_SELECT_TAB = 2;
     private static final int ROW_LOG_PIN = 3;
     private static final int ROW_RATE_PER = 4;
-    private static final int ROW_CONFIRM_ACTIONS = 5;
-    private static final int ROW_VALIDATE_ON_SAVE = 6;
-    private static final int ROW_FOLDER = 7;
-    private static final int ROW_PROXY_HOST = 8;
-    private static final int ROW_PROXY_PORT = 9;
-    private static final int ROW_SHELL_HISTORY = 10;
-    private static final int ROW_AI_PROVIDER = 11;
-    private static final int ROW_AI_MODEL = 12;
-    private static final int ROW_AI_URL = 13;
-    private static final int ROW_AI_PROMPT_HISTORY = 14;
-    private static final int ROW_COUNT = 15;
+    private static final int ROW_PANEL_POSITION = 5;
+    private static final int ROW_PANEL_SPACE = 6;
+    private static final int ROW_CONFIRM_ACTIONS = 7;
+    private static final int ROW_VALIDATE_ON_SAVE = 8;
+    private static final int ROW_FOLDER = 9;
+    private static final int ROW_PROXY_HOST = 10;
+    private static final int ROW_PROXY_PORT = 11;
+    private static final int ROW_SHELL_HISTORY = 12;
+    private static final int ROW_AI_PROVIDER = 13;
+    private static final int ROW_AI_MODEL = 14;
+    private static final int ROW_AI_URL = 15;
+    private static final int ROW_AI_PROMPT_HISTORY = 16;
+    private static final int ROW_COUNT = 17;
 
     private static final String[] LOG_PIN_OPTIONS = { "off", "25", "50", "75" };
     private static final String[] RATE_PER_OPTIONS = { "seconds", "minutes" };
+    private static final String[] PANEL_POSITION_OPTIONS = { "bottom", "top" };
+    private static final String[] PANEL_SPACE_OPTIONS = { "move", "overlay" };
     private static final List<String> AI_PROVIDERS = buildAiProviderList();
 
     private static List<String> buildAiProviderList() {
@@ -84,6 +88,8 @@ class SettingsPopup {
     private int selectTabIndex;
     private int logPinIndex;
     private int ratePerIndex;
+    private int panelPositionIndex;
+    private int panelSpaceIndex;
     private int confirmActionsIndex;
     private int validateOnSaveIndex;
     private int aiProviderIndex;
@@ -160,6 +166,8 @@ class SettingsPopup {
 
         String currentRatePer = settings.getRatePer() != null ? settings.getRatePer() : "seconds";
         ratePerIndex = "minutes".equals(currentRatePer) ? 1 : 0;
+        panelPositionIndex = settings.isPanelTop() ? 1 : 0;
+        panelSpaceIndex = settings.isPanelOverlay() ? 1 : 0;
 
         confirmActionsIndex = settings.isConfirmActions() ? 1 : 0;
         validateOnSaveIndex = settings.isValidateOnSave() ? 1 : 0;
@@ -259,6 +267,18 @@ class SettingsPopup {
             }
             return true;
         }
+        if (selectedRow == ROW_PANEL_POSITION) {
+            if (ke.isChar(' ') || ke.isRight() || ke.isLeft()) {
+                panelPositionIndex = panelPositionIndex == 0 ? 1 : 0;
+            }
+            return true;
+        }
+        if (selectedRow == ROW_PANEL_SPACE) {
+            if (ke.isChar(' ') || ke.isRight() || ke.isLeft()) {
+                panelSpaceIndex = panelSpaceIndex == 0 ? 1 : 0;
+            }
+            return true;
+        }
         if (selectedRow == ROW_CONFIRM_ACTIONS) {
             if (ke.isChar(' ') || ke.isRight() || ke.isLeft()) {
                 confirmActionsIndex = confirmActionsIndex == 0 ? 1 : 0;
@@ -326,6 +346,12 @@ class SettingsPopup {
         settings.setRatePer("seconds".equals(ratePerValue) ? null : ratePerValue);
         if (monitorContext != null) {
             monitorContext.ratePerMinute = "minutes".equals(ratePerValue);
+        }
+        settings.setPanelPosition(panelPositionIndex == 1 ? "top" : null);
+        settings.setPanelSpace(panelSpaceIndex == 1 ? "overlay" : null);
+        if (monitorContext != null) {
+            monitorContext.panelTop = panelPositionIndex == 1;
+            monitorContext.panelOverlay = panelSpaceIndex == 1;
         }
         settings.setConfirmActions(confirmActionsIndex == 1 ? "true" : "false");
         if (monitorContext != null) {
@@ -405,6 +431,16 @@ class SettingsPopup {
         renderValue(frame, innerX + labelW, rowY, fieldW, RATE_PER_OPTIONS[ratePerIndex], selectedRow == ROW_RATE_PER);
         rowY++;
 
+        renderLabel(frame, innerX, rowY, labelW, "Panel Position:", selectedRow == ROW_PANEL_POSITION);
+        renderValue(frame, innerX + labelW, rowY, fieldW, PANEL_POSITION_OPTIONS[panelPositionIndex],
+                selectedRow == ROW_PANEL_POSITION);
+        rowY++;
+
+        renderLabel(frame, innerX, rowY, labelW, "Panel Space:", selectedRow == ROW_PANEL_SPACE);
+        renderValue(frame, innerX + labelW, rowY, fieldW, PANEL_SPACE_OPTIONS[panelSpaceIndex],
+                selectedRow == ROW_PANEL_SPACE);
+        rowY++;
+
         renderDivider(frame, innerX, rowY, innerW);
         rowY++;
 
@@ -467,6 +503,7 @@ class SettingsPopup {
     void renderFooter(List<Span> spans) {
         if (selectedRow == ROW_THEME || selectedRow == ROW_START_TAB || selectedRow == ROW_SELECT_TAB
                 || selectedRow == ROW_LOG_PIN || selectedRow == ROW_RATE_PER
+                || selectedRow == ROW_PANEL_POSITION || selectedRow == ROW_PANEL_SPACE
                 || selectedRow == ROW_CONFIRM_ACTIONS || selectedRow == ROW_VALIDATE_ON_SAVE
                 || selectedRow == ROW_AI_PROVIDER) {
             hint(spans, "Space", "cycle");
@@ -582,6 +619,14 @@ class SettingsPopup {
 
     String selectedLogPin() {
         return LOG_PIN_OPTIONS[logPinIndex];
+    }
+
+    String selectedPanelPosition() {
+        return PANEL_POSITION_OPTIONS[panelPositionIndex];
+    }
+
+    String selectedPanelSpace() {
+        return PANEL_SPACE_OPTIONS[panelSpaceIndex];
     }
 
     String folderText() {

@@ -45,6 +45,8 @@ final class TuiSettings {
     static final String PROP_AI_PROMPT_HISTORY = "camel.tui.ai.promptHistory";
     static final String PROP_CONFIRM_ACTIONS = "camel.tui.confirmActions";
     static final String PROP_VALIDATE_ON_SAVE = "camel.tui.validateOnSave";
+    static final String PROP_PANEL_POSITION = "camel.tui.panelPosition";
+    static final String PROP_PANEL_SPACE = "camel.tui.panelSpace";
 
     private String themeId;
     private String startTab;
@@ -61,6 +63,8 @@ final class TuiSettings {
     private String aiPromptHistory;
     private String confirmActions;
     private String validateOnSave;
+    private String panelPosition;
+    private String panelSpace;
 
     String getThemeId() {
         return themeId;
@@ -198,6 +202,32 @@ final class TuiSettings {
         return !"false".equals(validateOnSave);
     }
 
+    /** Where the shell (F6) and AI (F8) panels open: {@code bottom} (default) or {@code top}. */
+    String getPanelPosition() {
+        return panelPosition;
+    }
+
+    void setPanelPosition(String panelPosition) {
+        this.panelPosition = panelPosition;
+    }
+
+    boolean isPanelTop() {
+        return "top".equalsIgnoreCase(panelPosition);
+    }
+
+    /** Whether those panels push the tab aside ({@code move}, default) or are drawn over it ({@code overlay}). */
+    String getPanelSpace() {
+        return panelSpace;
+    }
+
+    void setPanelSpace(String panelSpace) {
+        this.panelSpace = panelSpace;
+    }
+
+    boolean isPanelOverlay() {
+        return "overlay".equalsIgnoreCase(panelSpace);
+    }
+
     /**
      * Loads the current settings, resolving each key with per-key local/global precedence via {@link TuiUserConfig}.
      * Unset keys yield {@code null} fields; a read failure yields an object with {@code null} fields rather than
@@ -221,6 +251,8 @@ final class TuiSettings {
             settings.aiPromptHistory = trimToNull(TuiUserConfig.read(PROP_AI_PROMPT_HISTORY));
             settings.confirmActions = trimToNull(TuiUserConfig.read(PROP_CONFIRM_ACTIONS));
             settings.validateOnSave = trimToNull(TuiUserConfig.read(PROP_VALIDATE_ON_SAVE));
+            settings.panelPosition = trimToNull(TuiUserConfig.read(PROP_PANEL_POSITION));
+            settings.panelSpace = trimToNull(TuiUserConfig.read(PROP_PANEL_SPACE));
         } catch (RuntimeException e) {
             // best-effort: return an object with null fields on read failure
         }
@@ -249,6 +281,8 @@ final class TuiSettings {
             TuiUserConfig.write(PROP_AI_PROMPT_HISTORY, aiPromptHistory);
             TuiUserConfig.write(PROP_CONFIRM_ACTIONS, confirmActions);
             TuiUserConfig.write(PROP_VALIDATE_ON_SAVE, validateOnSave);
+            TuiUserConfig.write(PROP_PANEL_POSITION, panelPosition);
+            TuiUserConfig.write(PROP_PANEL_SPACE, panelSpace);
         } catch (RuntimeException e) {
             // best-effort: a save failure must not disrupt the TUI
         }

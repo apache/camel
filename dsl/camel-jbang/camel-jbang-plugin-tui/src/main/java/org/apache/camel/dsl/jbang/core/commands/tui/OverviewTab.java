@@ -571,7 +571,7 @@ class OverviewTab extends AbstractTab {
         }
 
         String integrationTitle = infraCount > 0 ? " Integrations " : " Overview ";
-        Style intBorderStyle = infraFocused ? Theme.muted() : Style.EMPTY.fg(Theme.accent());
+        Style intBorderStyle = ctx.paneBorder(!infraFocused);
         Style intTitleStyle = infraFocused ? Style.EMPTY.fg(Theme.accent()) : Theme.title();
         Table.Builder tableBuilder = Table.builder()
                 .rows(rows)
@@ -995,7 +995,7 @@ class OverviewTab extends AbstractTab {
                         Constraint.fill())
                 .highlightSpacing(Table.HighlightSpacing.ALWAYS)
                 .block(Block.builder().borderType(BorderType.ROUNDED).borders(Borders.ALL)
-                        .borderStyle(infraFocused ? Style.EMPTY.fg(Theme.accent()) : Theme.muted())
+                        .borderStyle(ctx.paneBorder(infraFocused))
                         .title(Title.from(Line.from(
                                 Span.styled(" Dev/Infra Services ",
                                         infraFocused ? Theme.title() : Style.EMPTY.fg(Theme.accent())))))

@@ -190,7 +190,7 @@ class ConfigurationTab extends AbstractTableTab {
 
         String title = String.format(" Configuration [%d] ", props.size());
 
-        Style tableBorderStyle = detailFocused ? Theme.muted() : Style.EMPTY.fg(Theme.accent());
+        Style tableBorderStyle = ctx.paneBorder(!detailFocused);
         Style tableTitleStyle = detailFocused ? Style.EMPTY.fg(Theme.accent()) : Theme.title();
 
         Table table = Table.builder()
@@ -216,7 +216,7 @@ class ConfigurationTab extends AbstractTableTab {
     }
 
     private void renderDetail(Frame frame, Rect area, List<ConfigProperty> props) {
-        Style detailBorderStyle = detailFocused ? Style.EMPTY.fg(Theme.accent()) : Theme.muted();
+        Style detailBorderStyle = ctx.paneBorder(detailFocused);
         Style detailTitleStyle = detailFocused ? Theme.title() : Style.EMPTY.fg(Theme.accent());
 
         Integer sel = tableState.selected();

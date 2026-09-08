@@ -33,6 +33,7 @@ import java.util.Queue;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.TimeUnit;
+import java.util.function.BiConsumer;
 import java.util.stream.Collectors;
 
 import dev.tamboui.buffer.Buffer;
@@ -57,6 +58,7 @@ import dev.tamboui.tui.event.MouseEvent;
 import dev.tamboui.tui.event.MouseEventKind;
 import dev.tamboui.tui.event.PasteEvent;
 import dev.tamboui.tui.event.TickEvent;
+import dev.tamboui.widgets.Clear;
 import dev.tamboui.widgets.paragraph.Paragraph;
 import dev.tamboui.widgets.tabs.Tabs;
 import dev.tamboui.widgets.tabs.TabsState;
@@ -797,6 +799,80 @@ public class CamelMonitor extends CamelCommand {
         ctx.logPinPercent = Integer.parseInt(logPin);
     }
 
+    /**
+     * Renders the shell or AI panel according to the panel settings: at the bottom or top of the content area, and
+     * either taking space away from the tab (move) or drawn on top of it (overlay).
+     */
+    private void renderSidePanel(Frame frame, Rect contentArea, int ph, BiConsumer<Frame, Rect> panel) {
+        // A panel at the top leaves the bottom free, so a pinned log stays visible there.
+        Rect upper = contentArea;
+        Rect pinArea = null;
+        boolean showPin = ctx.panelTop && logPinned && tabRegistry.selectedTabIndex() != TAB_LOG;
+        if (showPin) {
+            logPinAnim.initHeight(contentArea.height());
+            int pinH = pinnedLogHeight(contentArea.height(), ph, logPinAnim.panelHeight());
+            if (pinH > 0) {
+                upper = new Rect(contentArea.x(), contentArea.y(), contentArea.width(), contentArea.height() - pinH);
+                pinArea = new Rect(contentArea.x(), upper.bottom(), contentArea.width(), pinH);
+            }
+        }
+        ctx.logPinVisible = pinArea != null;
+
+        Rect[] layout = panelLayout(upper, ph, ctx.panelTop, ctx.panelOverlay);
+        Rect tabArea = layout[0];
+        Rect panelArea = layout[1];
+        // tabs hide their charts when little space is left: report how much of the area they lost
+        ctx.shellPercent = (contentArea.height() - tabArea.height()) * 100 / Math.max(1, contentArea.height());
+        if (tabArea.height() > 0) {
+            renderContent(frame, tabArea);
+        }
+        if (pinArea != null) {
+            tabRegistry.logTab().render(frame, pinArea);
+        }
+        if (ctx.panelOverlay) {
+            frame.renderWidget(Clear.INSTANCE, panelArea);
+        }
+        panel.accept(frame, panelArea);
+        // the draggable border is the panel edge that faces the tab
+        panelSplit.setBorderPos(ctx.panelTop ? panelArea.bottom() - 1 : panelArea.y());
+    }
+
+    /**
+     * Rows for the pinned log below a top panel: the requested pin height, reduced so the panel and at least three rows
+     * of tab remain; zero when there is no room.
+     */
+    static int pinnedLogHeight(int contentHeight, int panelHeight, int pinHeight) {
+        int room = contentHeight - panelHeight - 3;
+        return Math.max(0, Math.min(pinHeight, room));
+    }
+
+    /**
+     * Splits the content area between the tab and a side panel of {@code panelHeight} rows.
+     *
+     * @param  top     place the panel at the top of the area instead of the bottom
+     * @param  overlay keep the full area for the tab and let the panel cover part of it
+     * @return         the tab area (height 0 when the panel fills everything) and the panel area
+     */
+    static Rect[] panelLayout(Rect content, int panelHeight, boolean top, boolean overlay) {
+        int h = content.height();
+        int ph = Math.max(0, Math.min(panelHeight, h));
+        if (ph >= h) {
+            return new Rect[] { new Rect(content.x(), content.y(), content.width(), 0), content };
+        }
+        Rect panelArea = top
+                ? new Rect(content.x(), content.y(), content.width(), ph)
+                : new Rect(content.x(), content.y() + h - ph, content.width(), ph);
+        Rect tabArea;
+        if (overlay) {
+            tabArea = content;
+        } else if (top) {
+            tabArea = new Rect(content.x(), content.y() + ph, content.width(), h - ph);
+        } else {
+            tabArea = new Rect(content.x(), content.y(), content.width(), h - ph);
+        }
+        return new Rect[] { tabArea, panelArea };
+    }
+
     private void applyRatePer() {
         String ratePer = TuiSettings.load().getRatePer();
         ctx.ratePerMinute = "minutes".equals(ratePer);
@@ -806,6 +882,8 @@ public class CamelMonitor extends CamelCommand {
         TuiSettings settings = TuiSettings.load();
         ctx.confirmActions = settings.isConfirmActions();
         ctx.validateOnSave = settings.isValidateOnSave();
+        ctx.panelTop = settings.isPanelTop();
+        ctx.panelOverlay = settings.isPanelOverlay();
     }
 
     // ---- Event Handling ----
@@ -1147,7 +1225,10 @@ public class CamelMonitor extends CamelCommand {
             if (panelSplit.isDragging() && me.kind() == MouseEventKind.DRAG) {
                 int contentHeight = lastContentArea.height();
                 if (contentHeight > 0) {
-                    int newHeight = lastContentArea.y() + contentHeight - me.y();
+                    boolean top = ctx.panelTop && (shellPanel.isOpen() || aiPanel.isOpen());
+                    int newHeight = top
+                            ? me.y() - lastContentArea.y() + 1
+                            : lastContentArea.y() + contentHeight - me.y();
                     newHeight = Math.max(3, Math.min(contentHeight - 3, newHeight));
                     if (shellPanel.isOpen()) {
                         shellPanel.setPanelHeight(newHeight);
@@ -1499,33 +1580,15 @@ public class CamelMonitor extends CamelCommand {
         shellPanel.tickAnimation();
         aiPanel.tickAnimation();
         logPinAnim.tickAnimation();
+        ctx.bottomPanelFocused = shellPanel.isOpen() || aiPanel.isOpen();
         if (canvasOverlay.isVisible()) {
             canvasOverlay.render(frame, contentArea);
         } else if (shellPanel.isOpen()) {
             shellPanel.initHeight(contentArea.height());
-            int ph = shellPanel.panelHeight();
-            ctx.shellPercent = ph * 100 / Math.max(1, contentArea.height());
-            if (ph >= contentArea.height()) {
-                shellPanel.render(frame, contentArea);
-                panelSplit.setBorderPos(contentArea.y());
-            } else {
-                List<Rect> splitChunks = Layout.vertical()
-                        .constraints(Constraint.fill(), Constraint.length(ph))
-                        .split(contentArea);
-                renderContent(frame, splitChunks.get(0));
-                shellPanel.render(frame, splitChunks.get(1));
-                panelSplit.setBorderPos(splitChunks.get(1).y());
-            }
+            renderSidePanel(frame, contentArea, shellPanel.panelHeight(), shellPanel::render);
         } else if (aiPanel.isOpen()) {
             aiPanel.initHeight(contentArea.height());
-            int ph = aiPanel.panelHeight();
-            ctx.shellPercent = ph * 100 / Math.max(1, contentArea.height());
-            List<Rect> splitChunks = Layout.vertical()
-                    .constraints(Constraint.fill(), Constraint.length(ph))
-                    .split(contentArea);
-            renderContent(frame, splitChunks.get(0));
-            aiPanel.render(frame, splitChunks.get(1));
-            panelSplit.setBorderPos(splitChunks.get(1).y());
+            renderSidePanel(frame, contentArea, aiPanel.panelHeight(), aiPanel::render);
         } else if (logPinned && tabRegistry.selectedTabIndex() != TAB_LOG) {
             logPinAnim.initHeight(contentArea.height());
             int ph = logPinAnim.panelHeight();

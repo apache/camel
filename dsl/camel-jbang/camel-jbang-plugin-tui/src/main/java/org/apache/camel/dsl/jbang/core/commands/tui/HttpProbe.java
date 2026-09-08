@@ -1273,7 +1273,7 @@ class HttpProbe {
                 Span.raw(" " + probePathState.text() + " ")));
 
         boolean requestFocused = probeField != PROBE_HISTORY;
-        Style borderStyle = requestFocused ? Style.EMPTY.fg(Theme.accent()) : Style.EMPTY;
+        Style borderStyle = ctx.paneBorder(requestFocused, Style.EMPTY);
         Block block = Block.builder().borderType(BorderType.ROUNDED).borders(Borders.ALL)
                 .borderStyle(borderStyle).title(title).build();
         frame.renderWidget(block, area);
@@ -1382,7 +1382,7 @@ class HttpProbe {
         int bodyH = 6;
         FormHelper.renderLabel(frame, innerX, row, labelW, "Body:", probeField == PROBE_BODY);
         Rect bodyArea = new Rect(innerX + labelW, row, fieldW, bodyH);
-        Style bodyBorderStyle = probeField == PROBE_BODY ? Style.EMPTY.fg(Theme.accent()) : Theme.muted();
+        Style bodyBorderStyle = ctx.paneBorder(probeField == PROBE_BODY);
         Block bodyBlock = Block.builder()
                 .borders(Borders.ALL)
                 .borderType(BorderType.ROUNDED)
@@ -1627,7 +1627,7 @@ class HttpProbe {
     private void renderProbeHistory(Frame frame, Rect area) {
         String title = " History [" + probeHistory.size() + "] ";
         boolean historyFocused = probeField == PROBE_HISTORY;
-        Style histBorderStyle = historyFocused ? Style.EMPTY.fg(Theme.accent()) : Style.EMPTY;
+        Style histBorderStyle = ctx.paneBorder(historyFocused, Style.EMPTY);
 
         if (probeHistory.isEmpty()) {
             frame.renderWidget(

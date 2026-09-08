@@ -411,9 +411,9 @@ class BrowseTab extends AbstractTab {
     }
 
     private void renderDetail(Frame frame, Rect area) {
-        Style tableBorderStyle = detailFocused ? Theme.muted() : Style.EMPTY.fg(Theme.accent());
+        Style tableBorderStyle = ctx.paneBorder(!detailFocused);
         Style tableHighlight = detailFocused ? Theme.selectionBg().dim() : Theme.selectionBg();
-        Style detailBorderStyle = detailFocused ? Style.EMPTY.fg(Theme.accent()) : Theme.muted();
+        Style detailBorderStyle = ctx.paneBorder(detailFocused);
         Style detailTitleStyle = detailFocused ? Theme.title() : Style.EMPTY.fg(Theme.accent());
 
         Integer sel = messageTableState.selected();

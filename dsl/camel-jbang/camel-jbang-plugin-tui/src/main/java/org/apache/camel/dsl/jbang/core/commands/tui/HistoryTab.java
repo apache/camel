@@ -1295,7 +1295,7 @@ class HistoryTab extends AbstractTab {
         String stepTitle
                 = String.format(" Trace [%s] — %d steps ", TuiHelper.truncate(traceSelectedExchangeId, 30), steps.size());
         boolean showFocus = !showWaterfall;
-        Style tableBorderStyle = showFocus && detailFocused ? Theme.muted() : Style.EMPTY.fg(Theme.accent());
+        Style tableBorderStyle = ctx.paneBorder(!(showFocus && detailFocused));
         Style tableHighlight = showFocus && detailFocused ? Theme.selectionBg().dim() : Theme.selectionBg();
         lastTraceStepArea = chunks.get(0);
         detailSplit.setBorderPos(chunks.get(1).y());
@@ -1317,7 +1317,7 @@ class HistoryTab extends AbstractTab {
     }
 
     private void renderTraceStepDetail(Frame frame, Rect area, List<TraceEntry> steps) {
-        Style detailBorderStyle = detailFocused ? Style.EMPTY.fg(Theme.accent()) : Theme.muted();
+        Style detailBorderStyle = ctx.paneBorder(detailFocused);
         Style detailTitleStyle = detailFocused ? Theme.title() : Style.EMPTY.fg(Theme.accent());
         Integer sel = traceStepTableState.selected();
 
@@ -1581,7 +1581,7 @@ class HistoryTab extends AbstractTab {
 
         Title historyTitle = buildHistoryTitle(current);
         boolean showFocus = !showWaterfall;
-        Style tableBorderStyle = showFocus && detailFocused ? Theme.muted() : Style.EMPTY.fg(Theme.accent());
+        Style tableBorderStyle = ctx.paneBorder(!(showFocus && detailFocused));
         Style tableHighlight = showFocus && detailFocused ? Theme.selectionBg().dim() : Theme.selectionBg();
         lastHistoryTableArea = chunks.get(0);
         vSplit.setBorderPos(chunks.get(1).y());
@@ -1603,7 +1603,7 @@ class HistoryTab extends AbstractTab {
     }
 
     private void renderHistoryDetail(Frame frame, Rect area, List<HistoryEntry> current) {
-        Style detailBorderStyle = detailFocused ? Style.EMPTY.fg(Theme.accent()) : Theme.muted();
+        Style detailBorderStyle = ctx.paneBorder(detailFocused);
         Style detailTitleStyle = detailFocused ? Theme.title() : Style.EMPTY.fg(Theme.accent());
         Integer sel = historyTableState.selected();
 

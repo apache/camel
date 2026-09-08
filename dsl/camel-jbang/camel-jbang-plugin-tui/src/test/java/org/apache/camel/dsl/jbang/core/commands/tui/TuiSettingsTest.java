@@ -65,6 +65,8 @@ class TuiSettingsTest {
         settings.setAiUrl("https://generativelanguage.googleapis.com");
         settings.setShellHistory("25");
         settings.setAiPromptHistory("50");
+        settings.setPanelPosition("top");
+        settings.setPanelSpace("overlay");
         settings.save();
 
         TuiSettings loaded = TuiSettings.load();
@@ -76,6 +78,10 @@ class TuiSettingsTest {
         assertThat(loaded.getAiUrl()).isEqualTo("https://generativelanguage.googleapis.com");
         assertThat(loaded.getShellHistory()).isEqualTo("25");
         assertThat(loaded.getAiPromptHistory()).isEqualTo("50");
+        assertThat(loaded.getPanelPosition()).isEqualTo("top");
+        assertThat(loaded.isPanelTop()).isTrue();
+        assertThat(loaded.getPanelSpace()).isEqualTo("overlay");
+        assertThat(loaded.isPanelOverlay()).isTrue();
     }
 
     @Test

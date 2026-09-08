@@ -546,12 +546,17 @@ Open the *F2* actions menu and choose *Settings...* to change TUI preferences in
   of this setting.
 * *Default Folder* -- the folder pre-filled in *Run from Folder*. The most recently used folder
   still takes precedence; this default is used only when there is no remembered folder.
+* *Panel Position* -- where the shell (*F6*) and AI (*F8*) panels open: *bottom* (default) or
+  *top*.
+* *Panel Space* -- whether those panels push the tab content aside (*move*, default) or are drawn
+  on top of it (*overlay*), so the tab keeps its full height underneath.
 
 Use *↑*/*↓* to move between rows, *Space* (or *←*/*→*) to cycle the theme and tab settings, type to
 edit the default folder, *Enter* to save, and *Esc* to cancel.
 
 Settings are stored under `camel.tui.*` keys (`camel.tui.theme`, `camel.tui.startTab`,
 `camel.tui.selectTab`, `camel.tui.confirmActions`, `camel.tui.defaultFolder`,
+`camel.tui.panelPosition`, `camel.tui.panelSpace`,
 `camel.tui.shell.history`, `camel.tui.ai.promptHistory`) in the Camel CLI configuration file. Each key is read from and
 written back to the file where it currently lives: a key present in the local
 `./camel-cli.properties` is treated as a project-level override and stays local, while every
