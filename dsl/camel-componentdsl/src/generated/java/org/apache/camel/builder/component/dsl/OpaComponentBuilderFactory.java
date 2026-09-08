@@ -128,6 +128,31 @@ public interface OpaComponentBuilderFactory {
             return this;
         }
     
+        /**
+         * Comma-separated list of exchange property names to send to OPA in the
+         * input document, or {code } for all of them. Empty by default, so no
+         * properties are sent unless asked for. This is where the
+         * authentication components put the identity they verified: {code
+         * camel-keycloak} stores the access token and its subject as exchange
+         * properties and prefers them over the equivalent headers, precisely
+         * because headers can be set by the caller. List those property names
+         * here to let a policy authorize the identity an earlier step
+         * established, instead of copying it into a header first. Only custom
+         * properties are sent; Camel's own internal exchange properties are
+         * never included.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: producer
+         * 
+         * @param includeProperties the value to set
+         * @return the dsl builder
+         */
+        default OpaComponentBuilder includeProperties(java.lang.String includeProperties) {
+            doSetProperty("includeProperties", includeProperties);
+            return this;
+        }
+    
         
         /**
          * Whether the producer should be started lazy (on the first message).
@@ -270,6 +295,7 @@ public interface OpaComponentBuilderFactory {
             case "configuration": ((OpaComponent) component).setConfiguration((org.apache.camel.component.opa.OpaConfiguration) value); return true;
             case "includeBody": getOrCreateConfiguration((OpaComponent) component).setIncludeBody((boolean) value); return true;
             case "includeHeaders": getOrCreateConfiguration((OpaComponent) component).setIncludeHeaders((java.lang.String) value); return true;
+            case "includeProperties": getOrCreateConfiguration((OpaComponent) component).setIncludeProperties((java.lang.String) value); return true;
             case "lazyStartProducer": ((OpaComponent) component).setLazyStartProducer((boolean) value); return true;
             case "serverUrl": getOrCreateConfiguration((OpaComponent) component).setServerUrl((java.lang.String) value); return true;
             case "autowiredEnabled": ((OpaComponent) component).setAutowiredEnabled((boolean) value); return true;

@@ -95,6 +95,7 @@ Camel sends OPA an `input` document shaped like this:
 ------------------------------------------------------------
 {
   "headers": { "user": "alice", "CamelHttpMethod": "POST" },
+  "properties": { "CamelKeycloakTokenSubject": "alice" },
   "body": "...",
   "exchangeId": "1767DC33923810E-0000000000000000",
   "routeId": "orders"
@@ -124,6 +125,8 @@ alongside it shows the matching routes end to end.
 is enabled: bodies can be large or streaming, and most authorization decisions do not need them. When you do
 enable it on a streaming body, enable stream caching so the body is still readable by the rest of the route.
 
+`properties` is empty unless you ask for it — see <<authorizing-an-identity>> below.
+
 Header and body values that are not JSON-native are converted to their string form. That conversion is
 shallow: a `Map` or `List` value is passed through as-is, so anything non-JSON-native nested inside it is left
 for the OPA SDK's serializer to render. A policy that reads nested structures should not assume the same string
@@ -145,6 +148,48 @@ boolean verdict read out of it:
 
 Both headers are written on every evaluation, so a verdict set by an inbound message never survives into the
 route.
+
+[#authorizing-an-identity]
+== Authorizing an identity
+
+The component decides; it does not authenticate. Establish who the caller is first, then let the policy authorize
+the identity that step produced.
+
+The catch is that Camel's authentication components deliberately keep the identity they verified in *exchange
+properties* rather than in headers — `camel-keycloak` stores the access token and its subject that way and its
+`preferPropertyOverHeader` option defaults to `true`, precisely because a header can be set by the caller. So the
+identity you want to authorize is usually not in the header map.
+
+Name those properties in `includeProperties` and they arrive in the input document under `properties`:
+
+[source,java]
+------------------------------------------------------------
+from("platform-http:/orders")
+    .policy(keycloakPolicy)                                  // authenticates, stores the subject as a property
+    .to("opa:authz/orders/allow?includeProperties=CamelKeycloakTokenSubject")
+    .filter(header(OpaConstants.DECISION_ALLOW).isEqualTo(true))
+        .to("direct:handleOrder");
+------------------------------------------------------------
+
+and the policy reads them the same way it reads headers:
+
+[source,rego]
+------------------------------------------------------------
+allow if {
+    input.properties.CamelKeycloakTokenSubject == "alice"
+}
+------------------------------------------------------------
+
+`includeProperties` takes a comma-separated list, or `*` for all of them, and matches names case-insensitively.
+Unlike `includeHeaders` it is *empty by default*: exchange properties are mostly used to carry state between
+processors, so sending them all would be noise the policy has to wade through. Only custom properties are sent —
+Camel's own internal exchange properties are never included.
+
+Prefer this over copying the identity into a header before the `opa:` endpoint. A header is exactly the channel the
+authentication step treated as untrusted, so moving a verified identity into one to get it past this component
+undoes the check that produced it.
+
+`OpaSecurityPolicy` takes the same option through `setIncludeProperties`.
 
 == Failure handling
 
@@ -168,5 +213,5 @@ so the policy always returns a verdict.
 * OPA is a trusted component, typically running as a sidecar reachable only from the application. When it is not,
   put the connection on a trusted network and authenticate to it with `bearerToken`.
 * The component decides; it does not authenticate. Establish *who* the caller is first — with SPIFFE workload
-  identity, a verified JWT, or the surrounding transport's authentication — and let the policy authorize the
-  identity that step produced.
+  identity, a verified JWT, or the surrounding transport's authentication — and hand the policy that identity
+  through `includeProperties` rather than through a header, as <<authorizing-an-identity>> explains.

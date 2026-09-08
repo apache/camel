@@ -49,6 +49,7 @@ public class OpaSecurityPolicy implements AuthorizationPolicy {
     private String policyPath;
     private String allowKey = "allow";
     private String includeHeaders = "*";
+    private String includeProperties;
     private boolean includeBody;
     private String bearerToken;
     private boolean failOpen;
@@ -71,7 +72,8 @@ public class OpaSecurityPolicy implements AuthorizationPolicy {
             if (opaClient == null) {
                 opaClient = OpaPolicyEvaluator.createClient(serverUrl, bearerToken);
             }
-            evaluator = new OpaPolicyEvaluator(opaClient, policyPath, allowKey, includeHeaders, includeBody, failOpen);
+            evaluator = new OpaPolicyEvaluator(
+                    opaClient, policyPath, allowKey, includeHeaders, includeProperties, includeBody, failOpen);
         }
     }
 
@@ -129,6 +131,18 @@ public class OpaSecurityPolicy implements AuthorizationPolicy {
      */
     public void setIncludeHeaders(String includeHeaders) {
         this.includeHeaders = includeHeaders;
+    }
+
+    public String getIncludeProperties() {
+        return includeProperties;
+    }
+
+    /**
+     * Comma-separated list of exchange property names to send to OPA, or {@code *} for all of them. Empty by default.
+     * Use it to hand the policy an identity that an earlier authentication step stored as an exchange property.
+     */
+    public void setIncludeProperties(String includeProperties) {
+        this.includeProperties = includeProperties;
     }
 
     public boolean isIncludeBody() {
