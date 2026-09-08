@@ -183,7 +183,7 @@
   "groupId" : "org.apache.camel",
   "artifactId" : "camel-test-infra-hashicorp-vault",
   "version" : "4.23.0-SNAPSHOT",
-  "serviceVersion" : "2.0.4",
+  "serviceVersion" : "2.1.0",
   "uiSupported" : true
 }, {
   "service" : "org.apache.camel.test.infra.aws.common.services.AWSInfraService",
@@ -271,7 +271,7 @@
   "groupId" : "org.apache.camel",
   "artifactId" : "camel-test-infra-keycloak",
   "version" : "4.23.0-SNAPSHOT",
-  "serviceVersion" : "26.7.2",
+  "serviceVersion" : "26.7.3",
   "uiSupported" : true
 }, {
   "service" : "org.apache.camel.test.infra.hivemq.services.HiveMQInfraService",
@@ -340,6 +340,17 @@
   "serviceVersion" : "0.3",
   "uiSupported" : false
 }, {
+  "service" : "org.apache.camel.test.infra.opa.services.OpaInfraService",
+  "description" : "Open Policy Agent, a policy engine evaluating Rego policies",
+  "implementation" : "org.apache.camel.test.infra.opa.services.OpaLocalContainerInfraService",
+  "alias" : [ "opa" ],
+  "aliasImplementation" : [ ],
+  "groupId" : "org.apache.camel",
+  "artifactId" : "camel-test-infra-opa",
+  "version" : "4.23.0-SNAPSHOT",
+  "serviceVersion" : "1.9.0-static",
+  "uiSupported" : false
+}, {
   "service" : "org.apache.camel.test.infra.cyberark.vault.services.CyberArkVaultInfraService",
   "description" : "CyberArk Conjur is an open source secrets management solution",
   "implementation" : "org.apache.camel.test.infra.cyberark.vault.services.CyberArkVaultLocalContainerInfraService",
@@ -370,7 +381,7 @@
   "groupId" : "org.apache.camel",
   "artifactId" : "camel-test-infra-pulsar",
   "version" : "4.23.0-SNAPSHOT",
-  "serviceVersion" : "4.2.3",
+  "serviceVersion" : "4.2.4",
   "uiSupported" : false
 }, {
   "service" : "org.apache.camel.test.infra.artemis.services.ArtemisInfraService",
@@ -722,7 +733,7 @@
   "groupId" : "org.apache.camel",
   "artifactId" : "camel-test-infra-ollama",
   "version" : "4.23.0-SNAPSHOT",
-  "serviceVersion" : "0.33.2",
+  "serviceVersion" : "0.33.3",
   "uiSupported" : false
 }, {
   "service" : "org.apache.camel.test.infra.azure.common.services.AzureInfraService",
@@ -744,7 +755,7 @@
   "groupId" : "org.apache.camel",
   "artifactId" : "camel-test-infra-docling",
   "version" : "4.23.0-SNAPSHOT",
-  "serviceVersion" : "v1.31.0",
+  "serviceVersion" : "v1.32.0",
   "uiSupported" : false
 }, {
   "service" : "org.apache.camel.test.infra.aws.common.services.AWSInfraService",

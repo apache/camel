@@ -42,6 +42,49 @@ interface AiSlashCommandContext {
 
     String selectedProcessName();
 
+    /**
+     * Describes the tool set currently sent to the model, for example {@code core (18 of 46 tools), mode auto}.
+     */
+    String describeToolMode();
+
+    /**
+     * Multi-line summary of what the next request will cost: provider and model, tool set, static prefix size,
+     * conversation history size and the session total so far.
+     */
+    String describeContext();
+
+    /**
+     * Compacts the model history now (older tool results shrunk, oldest turns dropped) and returns a one-line summary
+     * of the effect.
+     */
+    String compactHistoryNow();
+
+    /**
+     * Resends the last question. Returns {@code false} when there is no question to retry or no client to send it to.
+     */
+    boolean retryLastQuestion();
+
+    /**
+     * Text summary of the AI usage so far (requests, tokens, latency, per model), the same figures the Ctrl+U view
+     * shows.
+     */
+    String usageSummary();
+
+    void copyLastResponse();
+
+    void exportConversation();
+
+    /**
+     * The system prompt the panel sends with every request.
+     */
+    String systemPrompt();
+
+    /**
+     * Switches the tool mode to {@code auto}, {@code core} or {@code full} and persists it. Returns {@code false} when
+     * the mode is not one of those values.
+     */
+    boolean switchToolMode(String mode);
+
     CompletableFuture<AiCliCommandExecutor.Result> executeCli(AiCliCommandExecutor.Request request);
 
     void cancelCli();

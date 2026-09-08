@@ -1,38 +1,36 @@
 ## Test execution
 
-### MacOS or Linux without nvidia graphic card
-If ollama is already installed on the system execute the test with
+### Local Ollama (recommended)
+Use Ollama's OpenAI-compatible endpoint and the validated Qwen3.5 model:
 
 ```bash
-mvn verify -Dollama.endpoint=http://localhost:11434/ -Dollama.model=granite4:tiny-h -Dollama.instance.type=remote
+ollama pull qwen3.5:9b
+
+mvn verify -Dollama.instance.type=openai \
+    -Dopenai.endpoint=http://localhost:11434/v1/ \
+    -Dopenai.model=qwen3.5:9b \
+    -Dopenai.api.key=dummy
 ```
 
-The Ollama docker image is really slow without nvidia hardware acceleration
+The OpenAI-compatible test model disables reasoning mode and uses a zero temperature so that assertions receive
+the final assistant content rather than an unfinished reasoning trace.
 
-### Linux with Nvidia graphic card
-The hardware acceleration can be used, and the test can be executed with
+### OpenAI
+
+```bash
+mvn verify -Dollama.instance.type=openai \
+    -Dopenai.api.key=sk-your-api-key \
+    -Dopenai.model=gpt-4o-mini
+```
+
+### Ollama container with NVIDIA GPU
 
 ```bash
 mvn verify -Dollama.container.enable.gpu=enabled
 ```
 
-### OpenAI or OpenAI-compatible endpoints
-To run tests against OpenAI or any OpenAI-compatible endpoint (including local Ollama via its OpenAI-compatible API):
-
-```bash
-# Using real OpenAI
-mvn verify -Dollama.instance.type=openai \
-    -Dopenai.api.key=sk-your-api-key \
-    -Dopenai.model=gpt-4o-mini
-
-# Using local Ollama as OpenAI-compatible endpoint
-mvn verify -Dollama.instance.type=openai \
-    -Dopenai.endpoint=http://localhost:11434/v1/ \
-    -Dopenai.model=granite4:tiny-h \
-    -Dopenai.api.key=dummy
-```
-
 Available OpenAI properties:
-- `openai.api.key` - API key (required for real OpenAI, use "dummy" for Ollama)
-- `openai.endpoint` - Base URL (defaults to `https://api.openai.com/v1/`)
-- `openai.model` - Model name (defaults to `gpt-4o-mini`)
+
+- `openai.api.key` - API key (required for OpenAI; use `dummy` for local Ollama)
+- `openai.endpoint` - base URL (defaults to `https://api.openai.com/v1/`)
+- `openai.model` - chat model (defaults to `gpt-4o-mini`)

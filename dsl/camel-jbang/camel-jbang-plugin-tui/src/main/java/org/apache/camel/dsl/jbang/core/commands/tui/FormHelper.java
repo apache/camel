@@ -23,6 +23,7 @@ import dev.tamboui.text.Line;
 import dev.tamboui.text.Span;
 import dev.tamboui.tui.event.KeyCode;
 import dev.tamboui.tui.event.KeyEvent;
+import dev.tamboui.widgets.input.TextInput;
 import dev.tamboui.widgets.input.TextInputState;
 import dev.tamboui.widgets.paragraph.Paragraph;
 
@@ -56,6 +57,34 @@ final class FormHelper {
         Style style = selected ? Style.EMPTY.bold() : Style.EMPTY.dim();
         Rect labelArea = new Rect(x, y, w, 1);
         frame.renderWidget(Paragraph.from(Line.from(Span.styled(label, style))), labelArea);
+    }
+
+    /**
+     * Renders a single-line text field. The active field paints a reversed caret at the cursor so the user can see
+     * where they type; an inactive field shows its text, or the placeholder dimmed while it is empty.
+     *
+     * @param state       the field state, may be {@code null} for an inactive field with no value yet
+     * @param active      whether the field currently has focus
+     * @param placeholder dimmed text shown while the field is empty, may be {@code null}
+     */
+    static void renderTextField(Frame frame, Rect area, TextInputState state, boolean active, String placeholder) {
+        if (active && state != null) {
+            TextInput.Builder builder = TextInput.builder().cursorStyle(Style.EMPTY.reversed());
+            if (placeholder != null) {
+                builder.placeholder(placeholder);
+            }
+            // renderWithCursor (not renderStatefulWidget, which paints no cursor cell) so the caret is visible
+            builder.build().renderWithCursor(area, frame.buffer(), state, frame);
+            return;
+        }
+        String text = state != null ? state.text() : "";
+        if (text.isEmpty()) {
+            if (placeholder != null) {
+                frame.renderWidget(Paragraph.from(Line.from(Span.styled(placeholder, Style.EMPTY.dim()))), area);
+            }
+        } else {
+            frame.renderWidget(Paragraph.from(Line.from(Span.raw(text))), area);
+        }
     }
 
     static void handlePaste(String text, TextInputState target) {

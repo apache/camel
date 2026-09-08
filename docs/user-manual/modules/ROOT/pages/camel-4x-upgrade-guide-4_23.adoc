@@ -13,6 +13,24 @@ See the xref:camel-upgrade-recipes-tool.adoc[documentation] page for details.
 
 == Upgrading Camel 4.22 to 4.23
 
+=== Context reload now re-applies placeholder based component options
+
+When a context reload is triggered, for example by one of the vault components detecting that a secret was rotated,
+Camel now also re-applies the `camel.component.`, `camel.dataformat.` and `camel.language.` options whose configured
+value is a property placeholder, and notifies any bean implementing the new
+`org.apache.camel.spi.SecretRotationAware` SPI. Previously only the property placeholders and the routes were
+reloaded, so a rotated secret never reached a component option that had been resolved at bootstrap.
+
+Re-applying such an option removes the component and resolves it again, as it already does when the option changes
+in a watched properties file. The component is stopped either way, and what comes back depends on how it was
+registered: a component auto-detected from the classpath is replaced by a new instance, while a component registered
+as a bean is the same instance, re-configured and started again. A component that holds a connection will therefore
+close it on reload.
+
+Only options whose value is a placeholder are affected, and only when running with Camel Main, Camel Spring Boot or
+Camel Quarkus. If a component must not be stopped on reload, configure it programmatically rather than with a
+placeholder based property.
+
 === Apache Avro trusted packages
 
 Camel now uses Apache Avro 1.12.2. Avro validates classes resolved from schemas
@@ -594,6 +612,14 @@ shape. The `camel get variable` CLI command has already been updated accordingly
 
 === camel-jbang (TUI)
 
+The F8 AI panel now sends only a core subset of its `tui_*` tools to local providers (Ollama, or any
+provider on `localhost`); the drawing, animation and automation tools are left out to keep the
+prompt small for local models. Hosted providers are unaffected. Use `/tools full` in the panel, or
+set `camel.tui.ai.tools=full`, to restore the previous behaviour. Requests to Ollama now also set
+`keep_alive` to 30 minutes and `num_ctx` to 32768 (or `OLLAMA_CONTEXT_LENGTH` when that is set in the
+environment), which can cause a one-time model reload if the model was loaded with a different
+context size.
+
 `camel tui --record` is now rejected when combined with `--web`. The recording configuration applies
 to the whole process, so a browser session served by `--web` would be recorded into the same `.cast`
 file as the local session. Previously the combination was accepted, but recording never produced any
@@ -764,12 +790,13 @@ Deployments that rely on authenticating to a partner's asynchronous MDN endpoint
 partner's host to `asyncMdnAllowedHosts`.
 
 Two further checks are applied to the delivery address regardless of the option: the scheme must be
-`http`, and an address with no explicit port now uses 80 rather than being passed to the socket as `-1`.
+`http` or `https`, and an address with no explicit port now uses 80 for `http` (443 for `https`) rather
+than being passed to the socket as `-1`.
 
-`https` is refused. `AS2AsynchronousMDNManager` delivers over a plain socket and has no TLS support, so an
-`https` address was never actually delivered over TLS — the request was written in cleartext to the TLS
-port and the peer reset the connection. Such an address is now refused outright rather than attempted, and
-TLS delivery of asynchronous MDNs remains unsupported.
+`https` delivery is supported when the AS2 endpoint has `sslContextParameters` configured: the manager
+builds an `SSLSocket` from it, defaults the port to 443, and verifies the delivery host against the
+certificate the peer presents. When no `sslContextParameters` is configured an `https` address is refused
+(fail-closed) rather than written in cleartext to the TLS port.
 
 === camel-ibm-cos
 
@@ -1366,7 +1393,6 @@ camel.health.exposure-level = full
 The defaults are still registered as the lowest precedence property source, so all three settings are
 overridden by ordinary application configuration.
 
-
 ==== camel-debug-starter no longer opens a JMX connector by default
 
 `camel.debug.jmx-connector-enabled` now defaults to `false` instead of `true`. Adding
@@ -1395,7 +1421,6 @@ firewall.
 The `camel debug` command of Camel JBang is unaffected: it drives a Spring Boot application through the
 local CLI connector from `camel-cli-connector-starter`, not through JMX.
 
-
 ==== camel-spring-boot health check stack traces moved to the full exposure level
 
 The Camel health indicator added the full stack trace of a failed health check as `error.stacktrace` to the
@@ -1421,7 +1446,6 @@ camel.health.exposure-level = full
 Note that `full` also stops filtering the health check metadata out of the per-check data, so the output is
 more verbose than the previous default in other respects too.
 
-
 ==== camel-platform-http-starter deletes multipart uploads when the exchange completes
 
 Multipart file uploads are copied out of the servlet container into the servlet temporary directory so that they
@@ -1438,7 +1462,6 @@ the exchange has completed must opt out and delete the file itself:
 ----
 camel.component.platform-http.server.delete-uploaded-files-on-end=false
 ----
-
 
 ==== camel-platform-http-starter path variables follow the matched path
 
@@ -1472,7 +1495,6 @@ unaffected.
 `CamelHttpPath` (`Exchange.HTTP_PATH`) is unchanged: it still reports the raw request path with the
 servlet context-path removed.
 
-
 ==== camel-micrometer-starter bounds the uri tag
 
 The starter contributes the `uri` low cardinality tag of the `http.server.requests` metrics when
@@ -1499,7 +1521,6 @@ only for requests that resolve to a Camel consumer, and the tag value is now cap
 
 Dashboards and alerts that matched on the raw path of requests that are not served by Camel must use the Spring
 value instead, for example the mapped pattern `/actuator/health` of a Spring MVC endpoint.
-
 
 ==== camel-jasypt-starter defaults to PBEWITHHMACSHA256ANDAES_256
 
@@ -1536,7 +1557,6 @@ algorithm unless it sets one.
 The starter's usage documentation no longer shows the master password next to the encrypted value it protects. Use
 the `sysenv:` or `sys:` prefixes of `camel.component.jasypt.password` to read it from the environment or a JVM
 system property, or inject it from an external secret store.
-
 
 ==== Starter configuration options that cannot be bound are reported
 
@@ -1589,7 +1609,6 @@ be set — that behaviour is unchanged — but each such option is now logged at
 target class, where previously nothing was logged at all. Applications with hand-written customizers may
 therefore see new `WARN` lines at startup for options that have never been applied. The generated starters no
 longer use that path; they call `CamelPropertiesHelper.copyConfigurationProperties` instead.
-
 
 === camel-azure-storage-blob and camel-azure-storage-datalake
 
@@ -1712,3 +1731,59 @@ Routes that set `useRecovery=false` are unaffected. Routes that left recovery en
 default, stop seeing in-progress aggregations re-delivered, and start seeing genuine recovery. The cache
 now also holds one entry per completed and not yet confirmed exchange; those entries are removed on
 confirmation.
+
+=== camel-qdrant - the PayloadSelector header is now honoured
+
+`QdrantHeaders.PAYLOAD_SELECTOR` (`CamelQdrantPointsPayloadSelector`) was declared and advertised in
+the component metadata but never read. The `RETRIEVE` and `SIMILARITY_SEARCH` operations only honoured
+the `CamelQdrantWithPayload` boolean, so a route that set a `Points.WithPayloadSelector` to request
+specific payload fields was silently given the whole payload.
+
+Both operations now use the header when it is present, and fall back to the `CamelQdrantWithPayload`
+boolean otherwise. A route that already sets the header starts receiving only the payload fields it
+selected; a route that does not set it is unaffected.
+
+=== camel-vertx-http - the REST producer applies the outbound header filter
+
+`VertxHttpRestHeaderFilterStrategy.applyFilterToCamelHeaders` delegated to
+`applyFilterToExternalHeaders`, so it consulted the inbound filter while implementing the outbound
+direction. The outbound filter that `VertxHttpHeaderFilterStrategy` installs was therefore never
+applied, and the sibling REST strategies in `camel-http-common`, `camel-netty-http` and
+`camel-undertow` all delegate to the matching method.
+
+A REST producer that resolves to `vertx-http` and does not configure its own `headerFilterStrategy`
+now filters the common HTTP headers on the outbound direction, as the other HTTP components already
+did. A message header named `Content-Length`, `Content-Type`, `Host`, `Cache-Control`, `Connection`,
+`Date`, `Pragma`, `Trailer`, `Transfer-Encoding`, `Upgrade`, `Via` or `Warning` is no longer copied
+onto the outgoing request; the `Content-Type` of the request is still taken from the exchange as
+before. Headers consumed by the URI template or the query parameters continue to be filtered, and a
+custom `headerFilterStrategy` is used as-is and is unaffected.
+
+Routes that relied on one of those headers reaching the wire must set it through the endpoint
+configuration or supply a `headerFilterStrategy` that permits it.
+
+=== camel-servlet, camel-jetty - the multipart upload whitelist is enforced against the submitted file name
+
+`fileNameExtWhitelist` accepts file name extensions, but `camel-servlet`'s `AttachmentHttpBinding`
+checked it against `Part.getName()`, which is the multipart *field* name rather than the submitted
+file name. A field named `file` carries no extension, so the check found nothing to compare and every
+upload was accepted. The option is now checked against `Part.getSubmittedFileName()`, which is what
+`camel-platform-http-vertx` already does.
+
+A `camel-servlet` consumer that sets `fileNameExtWhitelist` together with `attachmentMultipartBinding=true`
+therefore starts rejecting uploads whose file extension is not listed, which is what the option always
+advertised. Uploads with no file name, such as plain form fields, are unaffected, and a route that does
+not set the option is unaffected. Review the configured extension list before upgrading.
+
+The `camel-jetty` binding performed no whitelist check at all, although `fileNameExtWhitelist` can be
+set on its `HttpBinding`. It now applies the same check.
+
+The `camel-jetty` binding also stored the attachment under the multipart field name but looked it up
+again by the submitted file name, and passed that file name to `HttpHelper.appendHeader`. The lookup
+therefore only succeeded when the two happened to be equal, and when it did the header was named by
+the client-supplied file name. The attachment is now looked up and exposed under the field name it is
+stored with, and only for parts that carry a file name — a plain form field is mapped by
+`populateRequestParameters` as before. Because the old lookup by file name returned `null` whenever the
+two names differed, that header never carried a usable `DataHandler` in the first place; only when the
+names happened to be equal did it resolve, and then the name is unchanged. A route that expected the
+attachment header under the uploaded file name should read it under the multipart field name.

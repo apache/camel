@@ -929,15 +929,13 @@ class ActionsPopup {
         }
         if (gotoTabPopup.isVisible()) {
             hint(spans, "type", "filter");
-            hint(spans, TuiIcons.HINT_SCROLL, "navigate");
             hint(spans, "Enter", "go to");
             hintLast(spans, "Esc", "back");
             return;
         }
         if (showActionsMenu) {
-            hint(spans, TuiIcons.HINT_SCROLL, "navigate");
             hint(spans, "Enter", "select");
-            hintLast(spans, "Esc", currentSubmenu != null ? "back" : "cancel");
+            hintLast(spans, "Esc", currentSubmenu != null ? "back" : "close");
         }
     }
 

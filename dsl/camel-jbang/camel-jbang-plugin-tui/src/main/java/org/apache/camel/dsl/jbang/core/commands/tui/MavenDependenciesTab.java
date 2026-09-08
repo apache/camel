@@ -61,11 +61,11 @@ class MavenDependenciesTab extends AbstractTableTab {
     private TextInputState filterInputState = new TextInputState("");
     private String filterTerm;
     private int scopeIndex;
-    private List<DependencyLoader.DepEntry> allEntries = Collections.emptyList();
-    private List<DependencyLoader.DepEntry> filteredEntries = Collections.emptyList();
+    private volatile List<DependencyLoader.DepEntry> allEntries = Collections.emptyList();
+    private volatile List<DependencyLoader.DepEntry> filteredEntries = Collections.emptyList();
     private String lastPid;
-    private String errorMessage;
-    private boolean dataLoaded;
+    private volatile String errorMessage;
+    private volatile boolean dataLoaded;
     private String dataSource;
     private boolean transitiveMode;
     private boolean transitiveLoading;
@@ -87,6 +87,23 @@ class MavenDependenciesTab extends AbstractTableTab {
         if (!dataLoaded) {
             loadDependencies();
         }
+    }
+
+    @Override
+    public boolean ensureDataLoaded() {
+        onTabSelected();
+        return true;
+    }
+
+    @Override
+    public String dataLoadError() {
+        if (!dataLoaded) {
+            return null;
+        }
+        if (errorMessage != null) {
+            return errorMessage;
+        }
+        return allEntries.isEmpty() ? "No Maven dependencies found for the selected integration" : null;
     }
 
     @Override
@@ -320,7 +337,6 @@ class MavenDependenciesTab extends AbstractTableTab {
         } else {
             hint(spans, "/", "filter");
         }
-        hintLast(spans, TuiIcons.HINT_SCROLL, "navigate");
     }
 
     private int sortDep(DependencyLoader.DepEntry a, DependencyLoader.DepEntry b) {

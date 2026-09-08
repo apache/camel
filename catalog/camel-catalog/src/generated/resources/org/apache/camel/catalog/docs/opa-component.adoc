@@ -1,0 +1,217 @@
+= OPA Component
+:doctitle: OPA
+:shortname: opa
+:artifactid: camel-opa
+:description: Evaluate Open Policy Agent (Rego) policies against an Exchange and record the allow/deny decision on it.
+:since: 4.23
+:supportlevel: Preview
+:tabs-sync-option:
+:component-header: Only producer is supported
+
+*Since Camel {since}*
+
+*{component-header}*
+
+The OPA component turns a Camel route into a Policy Enforcement Point (PEP) in front of
+https://www.openpolicyagent.org/[Open Policy Agent], the CNCF policy engine whose policies are written in Rego.
+Camel builds an `input` document out of the Exchange, OPA evaluates the policy against it, and the resulting
+decision is recorded on the Exchange.
+
+This keeps authorization *out* of the route: the rules live in Rego and can be updated, versioned and tested
+independently of the integration, instead of being hand-coded in a processor.
+
+Maven users will need to add the following dependency to their `pom.xml`.
+
+[source,xml]
+------------------------------------------------------------
+<dependency>
+    <groupId>org.apache.camel</groupId>
+    <artifactId>camel-opa</artifactId>
+    <version>x.x.x</version>
+    <!-- use the same version as your Camel core version -->
+</dependency>
+------------------------------------------------------------
+
+== URI Format
+
+------------------------------------------------------------
+opa:policyPath[?options]
+------------------------------------------------------------
+
+Where `policyPath` is the path of the Rego rule head to evaluate, relative to the OPA data document. For a rule
+named `allow` in a policy declaring `package authz.orders`, the path is `authz/orders/allow`, which OPA serves at
+`/v1/data/authz/orders/allow`.
+
+// component options: START
+include::partial$component-configure-options.adoc[]
+include::partial$component-endpoint-options.adoc[]
+include::partial$component-endpoint-headers.adoc[]
+// component options: END
+
+== Usage
+
+The component is used in one of two ways, depending on whether a denied message should be filtered out or should
+stop the route.
+
+=== As a producer, deciding with a filter
+
+The producer evaluates the policy and records the verdict in the `CamelOpaDecisionAllow` header, leaving the
+message body untouched. The route then decides what to do with it:
+
+[source,java]
+------------------------------------------------------------
+from("platform-http:/orders")
+    .to("opa:authz/orders/allow")
+    .filter(header(OpaConstants.DECISION_ALLOW).isEqualTo(true))
+        .to("direct:handleOrder");
+------------------------------------------------------------
+
+This is the right shape when a denied message is simply not routed further, or when the route wants to inspect
+the full decision document — a policy that returns obligations, row filters or deny reasons rather than a plain
+boolean puts them in the `CamelOpaDecision` header.
+
+=== As a security policy, enforcing on a route segment
+
+`OpaSecurityPolicy` is an `AuthorizationPolicy`, so it can wrap part of a route. A deny throws a
+`CamelAuthorizationException` and the wrapped part never runs, which makes it composable with `onException`:
+
+[source,java]
+------------------------------------------------------------
+OpaSecurityPolicy opaPolicy = new OpaSecurityPolicy("http://localhost:8181", "authz/orders/allow");
+
+from("platform-http:/orders")
+    .policy(opaPolicy)
+        .to("direct:handleOrder");
+------------------------------------------------------------
+
+The decision headers are set here too, so an `onException(CamelAuthorizationException.class)` handler can read
+`CamelOpaDecision` to build a meaningful error response.
+
+== The input document
+
+Camel sends OPA an `input` document shaped like this:
+
+[source,json]
+------------------------------------------------------------
+{
+  "headers": { "user": "alice", "CamelHttpMethod": "POST" },
+  "properties": { "CamelKeycloakTokenSubject": "alice" },
+  "body": "...",
+  "exchangeId": "1767DC33923810E-0000000000000000",
+  "routeId": "orders"
+}
+------------------------------------------------------------
+
+so a policy reads it as:
+
+[source,rego]
+------------------------------------------------------------
+package authz.orders
+
+default allow := false
+
+allow if {
+    input.headers.CamelHttpMethod == "GET"
+}
+------------------------------------------------------------
+
+The component's integration test runs a real OPA server against
+https://github.com/apache/camel/blob/main/components/camel-opa/src/test/resources/authz.rego[`authz.rego`],
+which is a worked example of both a plain boolean rule and a decision object with deny reasons; `OpaIT`
+alongside it shows the matching routes end to end.
+
+`headers` carries every message header by default. Set `includeHeaders` to a comma-separated list of names
+(matched case-insensitively) when the policy only needs a few of them. `body` is *not* sent unless `includeBody`
+is enabled: bodies can be large or streaming, and most authorization decisions do not need them. When you do
+enable it on a streaming body, enable stream caching so the body is still readable by the rest of the route.
+
+`properties` is empty unless you ask for it — see <<authorizing-an-identity>> below.
+
+Header and body values that are not JSON-native are converted to their string form. That conversion is
+shallow: a `Map` or `List` value is passed through as-is, so anything non-JSON-native nested inside it is left
+for the OPA SDK's serializer to render. A policy that reads nested structures should not assume the same string
+conversion applies at depth.
+
+The component's own `CamelOpa*` decision headers are never sent back to OPA, so a policy cannot be shown a
+verdict that an inbound message claimed for itself.
+
+== Reading the verdict
+
+`CamelOpaDecision` holds the decision document exactly as OPA returned it. `CamelOpaDecisionAllow` holds the
+boolean verdict read out of it:
+
+* a decision that *is* a boolean is the verdict;
+* a decision that is an object is searched for the `allowKey` entry (`allow` by default), which must itself be a
+  boolean;
+* anything else cannot be read as a verdict and counts as a deny, with the raw document still available for the
+  route to inspect.
+
+Both headers are written on every evaluation, so a verdict set by an inbound message never survives into the
+route.
+
+[#authorizing-an-identity]
+== Authorizing an identity
+
+The component decides; it does not authenticate. Establish who the caller is first, then let the policy authorize
+the identity that step produced.
+
+The catch is that Camel's authentication components deliberately keep the identity they verified in *exchange
+properties* rather than in headers — `camel-keycloak` stores the access token and its subject that way and its
+`preferPropertyOverHeader` option defaults to `true`, precisely because a header can be set by the caller. So the
+identity you want to authorize is usually not in the header map.
+
+Name those properties in `includeProperties` and they arrive in the input document under `properties`:
+
+[source,java]
+------------------------------------------------------------
+from("platform-http:/orders")
+    .policy(keycloakPolicy)                                  // authenticates, stores the subject as a property
+    .to("opa:authz/orders/allow?includeProperties=CamelKeycloakTokenSubject")
+    .filter(header(OpaConstants.DECISION_ALLOW).isEqualTo(true))
+        .to("direct:handleOrder");
+------------------------------------------------------------
+
+and the policy reads them the same way it reads headers:
+
+[source,rego]
+------------------------------------------------------------
+allow if {
+    input.properties.CamelKeycloakTokenSubject == "alice"
+}
+------------------------------------------------------------
+
+`includeProperties` takes a comma-separated list, or `*` for all of them, and matches names case-insensitively.
+Unlike `includeHeaders` it is *empty by default*: exchange properties are mostly used to carry state between
+processors, so sending them all would be noise the policy has to wade through. Only custom properties are sent —
+Camel's own internal exchange properties are never included.
+
+Prefer this over copying the identity into a header before the `opa:` endpoint. A header is exactly the channel the
+authentication step treated as untrusted, so moving a verified identity into one to get it past this component
+undoes the check that produced it.
+
+`OpaSecurityPolicy` takes the same option through `setIncludeProperties`.
+
+== Failure handling
+
+The component fails closed. If the policy cannot be evaluated at all — the OPA server is unreachable, times out,
+or answers with an error — the producer throws an `OpaPolicyEvaluationException` and `OpaSecurityPolicy` throws a
+`CamelAuthorizationException`; in neither case does the message proceed as allowed. This is deliberately
+different from a deny, which is a decision rather than a failure, so a route can tell "denied" from "no policy
+decision point available".
+
+Setting `failOpen=true` reverses this and lets the exchange proceed when the policy cannot be evaluated. It exists
+for development and for non-critical policies, and should not be enabled in production.
+
+Note that OPA reports an *undefined* decision — no rule matched and the policy declares no default — as an error
+rather than as a deny, so it fails closed as well. Give every decision rule a default, as in the example above,
+so the policy always returns a verdict.
+
+== Security notes
+
+* The policy path comes from the endpoint only. It is deliberately not overridable by a message header, so an
+  inbound message cannot pick which policy judges it.
+* OPA is a trusted component, typically running as a sidecar reachable only from the application. When it is not,
+  put the connection on a trusted network and authenticate to it with `bearerToken`.
+* The component decides; it does not authenticate. Establish *who* the caller is first — with SPIFFE workload
+  identity, a verified JWT, or the surrounding transport's authentication — and hand the policy that identity
+  through `includeProperties` rather than through a header, as <<authorizing-an-identity>> explains.

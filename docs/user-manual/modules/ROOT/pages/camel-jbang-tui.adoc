@@ -546,13 +546,19 @@ Open the *F2* actions menu and choose *Settings...* to change TUI preferences in
   of this setting.
 * *Default Folder* -- the folder pre-filled in *Run from Folder*. The most recently used folder
   still takes precedence; this default is used only when there is no remembered folder.
+* *Panel Position* -- where the shell (*F6*) and AI (*F8*) panels open: *bottom* (default) or
+  *top*.
+* *Panel Space* -- whether those panels push the tab content aside (*move*, default) or are drawn
+  on top of it (*overlay*), so the tab keeps its full height underneath.
 
 Use *↑*/*↓* to move between rows, *Space* (or *←*/*→*) to cycle the theme and tab settings, type to
 edit the default folder, *Enter* to save, and *Esc* to cancel.
 
 Settings are stored under `camel.tui.*` keys (`camel.tui.theme`, `camel.tui.startTab`,
 `camel.tui.selectTab`, `camel.tui.confirmActions`, `camel.tui.defaultFolder`,
-`camel.tui.shell.history`, `camel.tui.ai.promptHistory`) in the Camel CLI configuration file. Each key is read from and
+`camel.tui.panelPosition`, `camel.tui.panelSpace`,
+`camel.tui.shell.history`, `camel.tui.ai.provider`, `camel.tui.ai.model`, `camel.tui.ai.url`,
+`camel.tui.ai.tools`, `camel.tui.ai.promptHistory`) in the Camel CLI configuration file. Each key is read from and
 written back to the file where it currently lives: a key present in the local
 `./camel-cli.properties` is treated as a project-level override and stays local, while every
 other key defaults to the global `~/.camel-cli.properties`. This means a project can
@@ -567,6 +573,13 @@ respectively. Use *↑*/*↓* on the input line to walk previous entries. Limits
 `camel.tui.shell.history` and `camel.tui.ai.promptHistory` in `.camel-cli.properties` (default
 `100` each; set to `0` to disable recall and persistence). Shell history is stored in
 `~/.camel/tui-shell.history`; AI prompt history in `~/.camel/tui-ai-prompt.history`.
+
+=== Pasting
+
+Both panels accept text pasted from the terminal (for example a model name such as
+`qwen3.6:35b-a3b` after `/model`). In the AI prompt, line breaks in the pasted text are collapsed
+to spaces so the paste stays a single prompt you can review before pressing *Enter*. In the shell,
+line breaks are sent as *Enter*, so a multi-line paste runs line by line as in a regular terminal.
 
 == Keyboard Shortcuts
 
@@ -738,6 +751,104 @@ server that lets AI coding assistants interact with the dashboard.
 
 The TUI is fully functional on its own -- AI integration is entirely optional.
 
+=== Choosing an AI provider
+
+Press *F8* to open the built-in AI prompt panel. The panel auto-detects a provider in this order:
+
+1. `ANTHROPIC_API_KEY` → Anthropic Claude
+2. `CLOUD_ML_REGION` + `ANTHROPIC_VERTEX_PROJECT_ID` → Vertex AI
+3. `AZURE_OPENAI_API_KEY` + `AZURE_OPENAI_ENDPOINT` → Azure OpenAI
+4. `GEMINI_API_KEY` → Google Gemini
+5. `OPENAI_API_KEY` → OpenAI
+6. `LLM_API_KEY` + optional `LLM_BASE_URL` → any OpenAI-compatible server
+7. Ollama at `localhost:11434` → local Ollama (auto-detected, no key needed)
+
+Press *Ctrl+P* inside the AI panel to switch provider or model at any time.
+
+The same guidance, together with the provider that is currently detected, is available inside the TUI
+via *F2* -> _AI & MCP_ -> _Setup AI_. Use *F2* -> _Settings_ to pin a provider, model or base URL
+(`camel.tui.ai.provider`, `camel.tui.ai.model`, `camel.tui.ai.url`) regardless of the environment.
+
+==== Using Ollama (local, no API key)
+
+Install Ollama natively for best performance — the native binary uses GPU acceleration
+(Metal on macOS, CUDA/ROCm on Linux):
+
+[source,bash]
+----
+# macOS
+brew install ollama
+
+# Linux
+curl -fsSL https://ollama.com/install.sh | sh
+
+# Pull a model — then open the TUI and press F8
+ollama pull qwen3.6:35b-a3b
+camel tui
+----
+
+Ollama at `localhost:11434` is auto-detected. No configuration needed.
+
+IMPORTANT: The F8 AI panel works by invoking built-in tools to inspect your running Camel process.
+Models smaller than ~14B do not reliably call tools and answer from training knowledge instead.
+Use at least a 14B model. Prefer a mixture-of-experts model such as `qwen3.6:35b-a3b`: with only
+3B parameters active per token it processes the tool-heavy prompt many times faster than a dense
+27B/32B model, so answers start in seconds instead of a minute.
+
+*Models that work well* (tool-calling capable, ≥14B, default Q4_K_M quantization):
+
+[options="header"]
+|===
+| Model | RAM | Notes
+| `qwen3.6:35b-a3b` | ~23 GB | Recommended: fastest prompt processing, needs 32 GB+
+| `qwen2.5:14b` | ~9 GB | Minimum for 16 GB machines
+| `qwen3.6:27b` | ~18 GB | Strong dense model, several times slower prompt processing
+| `qwen2.5:32b` | ~20 GB | Good quality, slow prompt processing
+| `hermes3:70b` | ~43 GB | Excellent tool calling, needs 64 GB+
+| `llama3.3:70b` | ~43 GB | Best open model, needs 64 GB+
+|===
+
+NOTE: `camel infra run ollama` runs Ollama in Docker and bypasses GPU acceleration,
+making inference significantly slower. Native install is preferred for development.
+
+NOTE: On Apple Silicon, use the default (GGUF) tags rather than the `-mlx` tags. The Ollama MLX
+engine cannot yet reuse the cached prompt for Qwen 3.x models, so every question re-processes the
+whole prompt, while the default engine reuses it and only processes what is new.
+
+==== Tool set for local models
+
+Every question sends the definitions of the `tui_*` tools the model may call, and a local model
+pays for each of them in prompt-processing time. The panel therefore sends only the core set of
+tools (state, tables, logs, errors, diagrams, topology, processor details, catalog docs, traces,
+spans, route control, sending messages, source files, navigation, log level and filters) to Ollama
+and to any provider on `localhost`, which roughly halves the prompt. Hosted providers get every
+tool, including the drawing, animation and automation tools. Use `/tools full` in the panel to send
+all tools to a local model too, `/tools core` to trim the set for a hosted one, pick *AI Tools* in
+*F2 -> Settings*, or set `camel.tui.ai.tools` in `.camel-cli.properties`. Ollama requests also ask the server to keep the
+model loaded for 30 minutes and use a 32k context window (`OLLAMA_CONTEXT_LENGTH` overrides it),
+so follow-up questions reuse the cached prompt instead of reloading the model.
+
+==== Using an OpenAI-compatible local server
+
+Set `LLM_API_KEY` and `LLM_BASE_URL` to connect to any OpenAI-compatible server
+(LM Studio, vLLM, llama.cpp, GPT4All, …):
+
+[source,bash]
+----
+export LLM_API_KEY=any-value
+export LLM_BASE_URL=http://localhost:1234
+camel tui
+----
+
+`OPENAI_BASE_URL` is also accepted as an alternative to `LLM_BASE_URL`.
+
+The panel uses the first model the server lists on `/v1/models`. To use another one, run
+`/model <name>` in the panel (`/model` alone lists what the server offers), set *AI Model* in
+*F2 -> Settings*, or set `camel.tui.ai.model`. The model must support tool calling, otherwise the
+panel answers from training data instead of inspecting your integration. When a request fails, the
+panel shows the HTTP status and the server's error message, for example a model that the server
+does not host.
+
 === Why This Matters
 
 When an AI agent connects to the TUI via MCP, it gains the same level of visibility that you
@@ -768,9 +879,37 @@ The server is bound to `127.0.0.1` only -- it never listens on external interfac
 When MCP is active, the TUI footer shows the connection status.
 Use *F2* -> _MCP Info_ to see server details and _MCP Log_ to view the tool call history.
 
+=== Status document resources
+
+Every running integration keeps a full status document in `~/.camel/<pid>-status.json`, written
+once a second by `camel-cli-connector`. The tabs show a digest of it; the MCP server exposes the
+whole document as resources so an agent can fetch exactly the section it needs instead of
+paging through tabs:
+
+* `camel://log/<pid>` -- the last 200 lines of the integration's log (`~/.camel/<pid>.log`);
+  `camel://log/<pid>?lines=<n>` for a different tail length (up to 5000). The Log tab shows only a
+  window of this file, so an agent that needs to know which lines the user is looking at should
+  use the `tui_get_screen` tool instead.
+* `camel://status/<pid>` -- the whole document
+* `camel://status/<pid>/<section>` -- one top-level section, for example `context` (name, version,
+  state, uptime, start timestamp, statistics), `runtime`, `routes`, `endpoints`, `healthChecks`,
+  `properties`, `main-configuration`, `routeController`, `memory`, `threads`, `gc` or `events`
+
+`resources/list` enumerates the log, the document and its sections for every monitored
+integration, and `resources/templates/list` describes the URI shapes. The same data is available to the
+F8 AI panel (and as an MCP tool) through `tui_get_status`, which takes a `section` argument and
+returns that section only; pass `sections` to list what the document contains. Sections such as
+`events` can be large, so ask for the one you need.
+
 === AI panel slash commands
 
 When the AI panel is open, input that starts with `/` runs a local panel command instead of sending a question to the configured AI provider. `/provider` and `/model` are unavailable while a response or command is already in progress; the panel shows a message asking you to wait.
+
+Press *Tab* to complete a command name. After `/model ` *Tab* completes the model name against the
+models the current provider reports (the list is fetched in the background on the first press, so
+press *Tab* again once it has arrived), and after `/tools ` it completes `auto`, `core` or `full`.
+With several matches *Tab* fills in the common prefix and then cycles through them; *Shift+Tab*
+cycles backward.
 
 [cols="1,3",options="header"]
 |===
@@ -784,6 +923,27 @@ When the AI panel is open, input that starts with `/` runs a local panel command
 
 | `/model [model-name]` (`/m`)
 | Show the current model, or switch the session model.
+
+| `/tools [auto\|core\|full]` (`/t`)
+| Show which tool set is sent to the model, or switch it. `auto` (default) sends the core set to local providers and every tool to hosted ones; the choice is saved as `camel.tui.ai.tools`.
+
+| `/context` (`/ctx`)
+| Show what the next request costs: provider and model, tool set, static prefix size, history size and the session total. Useful with local models, where prompt size is time.
+
+| `/compact`
+| Shrink the conversation history sent to the model right away: older tool results are cut to their first lines and the oldest turns are dropped. The panel does this automatically after each answer for all but the latest turn.
+
+| `/retry`
+| Send the last question again, starting from a clean turn in the model history.
+
+| `/usage` (`/u`)
+| Print the AI usage so far in the chat: requests, tokens in and out, average latency, one line per model (and per route when GenAI spans are observed), and the last request. *Ctrl+U* opens the full view with the per-turn chart.
+
+| `/copy` (`/y`), `/export` (`/e`)
+| The same as *Ctrl+Y* (copy the last response) and *Ctrl+E* (export the conversation to Markdown).
+
+| `/prompt`
+| Show the system prompt the panel sends with every request.
 
 | `/clear` (`/c`)
 | Clear the AI conversation, usage counters, and model context without changing the provider or model.

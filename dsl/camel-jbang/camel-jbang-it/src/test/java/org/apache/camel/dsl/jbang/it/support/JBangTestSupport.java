@@ -87,10 +87,33 @@ public abstract class JBangTestSupport {
     @AfterEach
     protected void afterEach(TestInfo testInfo) {
         logger.debug("ending {}#{} using data folder {}", getClass().getName(), testInfo.getDisplayName(), getDataFolder());
-        assertNoErrors();
-        logger.debug("clean up data folder");
-        if (containerDataFolder != null) {
-            FileUtil.removeDir(new File(containerDataFolder));
+        try {
+            assertNoErrors();
+        } finally {
+            try {
+                execute("stop");
+            } catch (Exception | AssertionError e) {
+                logger.debug("failed to stop running integrations: {}", e.getMessage());
+            }
+            try {
+                Awaitility.await()
+                        .atMost(30, TimeUnit.SECONDS)
+                        .pollInterval(500, TimeUnit.MILLISECONDS)
+                        .until(() -> execute("ps").trim().isEmpty());
+            } catch (Exception | AssertionError e) {
+                logger.warn("integrations did not stop within timeout: {}", e.getMessage());
+            }
+            // Remove non-hidden files/dirs from /home/jbang to prevent cross-test contamination.
+            // The JBang installation baseline is entirely hidden (.jbang/, .bashrc, .camel-jbang/).
+            try {
+                execInContainer("find /home/jbang -maxdepth 1 -mindepth 1 -not -name '.*' -exec rm -rf {} +");
+            } catch (Exception e) {
+                logger.debug("failed to clean up test files from /home/jbang: {}", e.getMessage());
+            }
+            logger.debug("clean up data folder");
+            if (containerDataFolder != null) {
+                FileUtil.removeDir(new File(containerDataFolder));
+            }
         }
     }
 

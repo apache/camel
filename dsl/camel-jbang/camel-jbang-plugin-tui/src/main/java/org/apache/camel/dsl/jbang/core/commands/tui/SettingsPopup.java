@@ -30,7 +30,6 @@ import dev.tamboui.widgets.Clear;
 import dev.tamboui.widgets.block.Block;
 import dev.tamboui.widgets.block.BorderType;
 import dev.tamboui.widgets.block.Borders;
-import dev.tamboui.widgets.input.TextInput;
 import dev.tamboui.widgets.input.TextInputState;
 import dev.tamboui.widgets.paragraph.Paragraph;
 import org.apache.camel.dsl.jbang.core.commands.LlmClient;
@@ -51,20 +50,27 @@ class SettingsPopup {
     private static final int ROW_SELECT_TAB = 2;
     private static final int ROW_LOG_PIN = 3;
     private static final int ROW_RATE_PER = 4;
-    private static final int ROW_CONFIRM_ACTIONS = 5;
-    private static final int ROW_VALIDATE_ON_SAVE = 6;
-    private static final int ROW_FOLDER = 7;
-    private static final int ROW_PROXY_HOST = 8;
-    private static final int ROW_PROXY_PORT = 9;
-    private static final int ROW_SHELL_HISTORY = 10;
-    private static final int ROW_AI_PROVIDER = 11;
-    private static final int ROW_AI_MODEL = 12;
-    private static final int ROW_AI_URL = 13;
-    private static final int ROW_AI_PROMPT_HISTORY = 14;
-    private static final int ROW_COUNT = 15;
+    private static final int ROW_PANEL_POSITION = 5;
+    private static final int ROW_PANEL_SPACE = 6;
+    private static final int ROW_CONFIRM_ACTIONS = 7;
+    private static final int ROW_VALIDATE_ON_SAVE = 8;
+    private static final int ROW_FOLDER = 9;
+    private static final int ROW_PROXY_HOST = 10;
+    private static final int ROW_PROXY_PORT = 11;
+    private static final int ROW_SHELL_HISTORY = 12;
+    private static final int ROW_AI_PROVIDER = 13;
+    private static final int ROW_AI_MODEL = 14;
+    private static final int ROW_AI_URL = 15;
+    private static final int ROW_AI_TOOLS = 16;
+    private static final int ROW_AI_PROMPT_HISTORY = 17;
+    private static final int ROW_COUNT = 18;
 
     private static final String[] LOG_PIN_OPTIONS = { "off", "25", "50", "75" };
     private static final String[] RATE_PER_OPTIONS = { "seconds", "minutes" };
+    private static final String[] PANEL_POSITION_OPTIONS = { "bottom", "top" };
+    private static final String[] PANEL_SPACE_OPTIONS = { "move", "overlay" };
+    private static final String[] AI_TOOLS_OPTIONS
+            = { AiPanel.TOOL_MODE_AUTO, AiPanel.TOOL_MODE_CORE, AiPanel.TOOL_MODE_FULL };
     private static final List<String> AI_PROVIDERS = buildAiProviderList();
 
     private static List<String> buildAiProviderList() {
@@ -85,9 +91,12 @@ class SettingsPopup {
     private int selectTabIndex;
     private int logPinIndex;
     private int ratePerIndex;
+    private int panelPositionIndex;
+    private int panelSpaceIndex;
     private int confirmActionsIndex;
     private int validateOnSaveIndex;
     private int aiProviderIndex;
+    private int aiToolsIndex;
     private TextInputState folderInput;
     private TextInputState proxyHostInput;
     private TextInputState proxyPortInput;
@@ -161,6 +170,8 @@ class SettingsPopup {
 
         String currentRatePer = settings.getRatePer() != null ? settings.getRatePer() : "seconds";
         ratePerIndex = "minutes".equals(currentRatePer) ? 1 : 0;
+        panelPositionIndex = settings.isPanelTop() ? 1 : 0;
+        panelSpaceIndex = settings.isPanelOverlay() ? 1 : 0;
 
         confirmActionsIndex = settings.isConfirmActions() ? 1 : 0;
         validateOnSaveIndex = settings.isValidateOnSave() ? 1 : 0;
@@ -174,6 +185,9 @@ class SettingsPopup {
         aiProviderIndex = providerIdx >= 0 ? providerIdx : AI_PROVIDERS.indexOf("auto");
         aiModelInput = new TextInputState(settings.getAiModel() != null ? settings.getAiModel() : "");
         aiUrlInput = new TextInputState(settings.getAiUrl() != null ? settings.getAiUrl() : "");
+        String currentTools = AiPanel.normalizeToolMode(settings.getAiTools());
+        int toolsIdx = List.of(AI_TOOLS_OPTIONS).indexOf(currentTools != null ? currentTools : AiPanel.TOOL_MODE_AUTO);
+        aiToolsIndex = Math.max(0, toolsIdx);
         aiPromptHistoryInput = new TextInputState(
                 settings.getAiPromptHistory() != null ? settings.getAiPromptHistory() : "");
         selectedRow = ROW_THEME;
@@ -260,6 +274,18 @@ class SettingsPopup {
             }
             return true;
         }
+        if (selectedRow == ROW_PANEL_POSITION) {
+            if (ke.isChar(' ') || ke.isRight() || ke.isLeft()) {
+                panelPositionIndex = panelPositionIndex == 0 ? 1 : 0;
+            }
+            return true;
+        }
+        if (selectedRow == ROW_PANEL_SPACE) {
+            if (ke.isChar(' ') || ke.isRight() || ke.isLeft()) {
+                panelSpaceIndex = panelSpaceIndex == 0 ? 1 : 0;
+            }
+            return true;
+        }
         if (selectedRow == ROW_CONFIRM_ACTIONS) {
             if (ke.isChar(' ') || ke.isRight() || ke.isLeft()) {
                 confirmActionsIndex = confirmActionsIndex == 0 ? 1 : 0;
@@ -304,6 +330,14 @@ class SettingsPopup {
             handleTextInput(ke, aiUrlInput);
             return true;
         }
+        if (selectedRow == ROW_AI_TOOLS) {
+            if (ke.isChar(' ') || ke.isRight()) {
+                aiToolsIndex = (aiToolsIndex + 1) % AI_TOOLS_OPTIONS.length;
+            } else if (ke.isLeft()) {
+                aiToolsIndex = (aiToolsIndex - 1 + AI_TOOLS_OPTIONS.length) % AI_TOOLS_OPTIONS.length;
+            }
+            return true;
+        }
         if (selectedRow == ROW_AI_PROMPT_HISTORY) {
             handleTextInput(ke, aiPromptHistoryInput);
             return true;
@@ -328,6 +362,12 @@ class SettingsPopup {
         if (monitorContext != null) {
             monitorContext.ratePerMinute = "minutes".equals(ratePerValue);
         }
+        settings.setPanelPosition(panelPositionIndex == 1 ? "top" : null);
+        settings.setPanelSpace(panelSpaceIndex == 1 ? "overlay" : null);
+        if (monitorContext != null) {
+            monitorContext.panelTop = panelPositionIndex == 1;
+            monitorContext.panelOverlay = panelSpaceIndex == 1;
+        }
         settings.setConfirmActions(confirmActionsIndex == 1 ? "true" : "false");
         if (monitorContext != null) {
             monitorContext.confirmActions = confirmActionsIndex == 1;
@@ -343,6 +383,8 @@ class SettingsPopup {
         settings.setAiProvider(AI_PROVIDERS.get(aiProviderIndex));
         settings.setAiModel(stripControlChars(aiModelInput.text().trim()));
         settings.setAiUrl(stripControlChars(aiUrlInput.text().trim()));
+        String aiToolsValue = AI_TOOLS_OPTIONS[aiToolsIndex];
+        settings.setAiTools(AiPanel.TOOL_MODE_AUTO.equals(aiToolsValue) ? null : aiToolsValue);
         settings.setAiPromptHistory(stripControlChars(aiPromptHistoryInput.text().trim()));
         settings.save();
         if (Theme.mode().equals(selectedThemeId)) {
@@ -406,6 +448,16 @@ class SettingsPopup {
         renderValue(frame, innerX + labelW, rowY, fieldW, RATE_PER_OPTIONS[ratePerIndex], selectedRow == ROW_RATE_PER);
         rowY++;
 
+        renderLabel(frame, innerX, rowY, labelW, "Panel Position:", selectedRow == ROW_PANEL_POSITION);
+        renderValue(frame, innerX + labelW, rowY, fieldW, PANEL_POSITION_OPTIONS[panelPositionIndex],
+                selectedRow == ROW_PANEL_POSITION);
+        rowY++;
+
+        renderLabel(frame, innerX, rowY, labelW, "Panel Space:", selectedRow == ROW_PANEL_SPACE);
+        renderValue(frame, innerX + labelW, rowY, fieldW, PANEL_SPACE_OPTIONS[panelSpaceIndex],
+                selectedRow == ROW_PANEL_SPACE);
+        rowY++;
+
         renderDivider(frame, innerX, rowY, innerW);
         rowY++;
 
@@ -460,17 +512,21 @@ class SettingsPopup {
         renderTextInput(frame, innerX + labelW, rowY, fieldW, aiUrlInput, selectedRow == ROW_AI_URL, "(auto)");
         rowY++;
 
+        renderLabel(frame, innerX, rowY, labelW, "AI Tools:", selectedRow == ROW_AI_TOOLS);
+        renderValue(frame, innerX + labelW, rowY, fieldW, aiToolsLabel(), selectedRow == ROW_AI_TOOLS);
+        rowY++;
+
         renderLabel(frame, innerX, rowY, labelW, "AI History:", selectedRow == ROW_AI_PROMPT_HISTORY);
         renderTextInput(frame, innerX + labelW, rowY, fieldW, aiPromptHistoryInput,
                 selectedRow == ROW_AI_PROMPT_HISTORY, "(100)");
     }
 
     void renderFooter(List<Span> spans) {
-        hint(spans, TuiIcons.HINT_SCROLL, "navigate");
         if (selectedRow == ROW_THEME || selectedRow == ROW_START_TAB || selectedRow == ROW_SELECT_TAB
                 || selectedRow == ROW_LOG_PIN || selectedRow == ROW_RATE_PER
+                || selectedRow == ROW_PANEL_POSITION || selectedRow == ROW_PANEL_SPACE
                 || selectedRow == ROW_CONFIRM_ACTIONS || selectedRow == ROW_VALIDATE_ON_SAVE
-                || selectedRow == ROW_AI_PROVIDER) {
+                || selectedRow == ROW_AI_PROVIDER || selectedRow == ROW_AI_TOOLS) {
             hint(spans, "Space", "cycle");
         }
         hint(spans, "Enter", "save");
@@ -546,8 +602,7 @@ class SettingsPopup {
     }
 
     private void renderLabel(Frame frame, int x, int y, int w, String label, boolean selected) {
-        Style style = selected ? Style.EMPTY.bold() : Style.EMPTY.dim();
-        frame.renderWidget(Paragraph.from(Line.from(Span.styled(label, style))), new Rect(x, y, w, 1));
+        FormHelper.renderLabel(frame, x, y, w, label, selected);
     }
 
     private void renderValue(Frame frame, int x, int y, int w, String text, boolean selected) {
@@ -562,20 +617,7 @@ class SettingsPopup {
     private void renderTextInput(
             Frame frame, int x, int y, int w, TextInputState input, boolean active,
             String placeholder) {
-        Rect area = new Rect(x, y, w, 1);
-        if (active) {
-            TextInput textInput = TextInput.builder()
-                    .cursorStyle(Style.EMPTY.reversed())
-                    .placeholder(placeholder)
-                    .build();
-            // renderWithCursor (not renderStatefulWidget) so the caret is painted on the active field
-            textInput.renderWithCursor(area, frame.buffer(), input, frame);
-        } else {
-            String text = input.text();
-            Style style = text.isEmpty() ? Style.EMPTY.dim() : Style.EMPTY;
-            frame.renderWidget(Paragraph.from(Line.from(
-                    Span.styled(text.isEmpty() ? placeholder : text, style))), area);
-        }
+        FormHelper.renderTextField(frame, new Rect(x, y, w, 1), input, active, placeholder);
     }
 
     // ---- Test accessors ----
@@ -600,12 +642,32 @@ class SettingsPopup {
         return LOG_PIN_OPTIONS[logPinIndex];
     }
 
+    String selectedPanelPosition() {
+        return PANEL_POSITION_OPTIONS[panelPositionIndex];
+    }
+
+    String selectedPanelSpace() {
+        return PANEL_SPACE_OPTIONS[panelSpaceIndex];
+    }
+
     String folderText() {
         return folderInput != null ? folderInput.text() : "";
     }
 
     String selectedAiProvider() {
         return AI_PROVIDERS.get(aiProviderIndex);
+    }
+
+    String selectedAiTools() {
+        return AI_TOOLS_OPTIONS[aiToolsIndex];
+    }
+
+    private String aiToolsLabel() {
+        return switch (AI_TOOLS_OPTIONS[aiToolsIndex]) {
+            case AiPanel.TOOL_MODE_CORE -> "core (troubleshooting only)";
+            case AiPanel.TOOL_MODE_FULL -> "full (all tools)";
+            default -> "auto (core if local model)";
+        };
     }
 
     String aiModelText() {

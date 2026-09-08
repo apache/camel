@@ -21,11 +21,9 @@ import java.util.List;
 
 import dev.tamboui.layout.Padding;
 import dev.tamboui.layout.Rect;
-import dev.tamboui.style.Style;
 import dev.tamboui.terminal.Frame;
 import dev.tamboui.text.Line;
 import dev.tamboui.text.Span;
-import dev.tamboui.text.Text;
 import dev.tamboui.tui.event.KeyCode;
 import dev.tamboui.tui.event.KeyEvent;
 import dev.tamboui.widgets.Clear;
@@ -33,13 +31,11 @@ import dev.tamboui.widgets.block.Block;
 import dev.tamboui.widgets.block.BorderType;
 import dev.tamboui.widgets.block.Borders;
 import dev.tamboui.widgets.block.Title;
-import dev.tamboui.widgets.input.TextInput;
 import dev.tamboui.widgets.input.TextInputState;
 import dev.tamboui.widgets.list.ListItem;
 import dev.tamboui.widgets.list.ListState;
 import dev.tamboui.widgets.list.ListWidget;
 import dev.tamboui.widgets.list.ScrollMode;
-import dev.tamboui.widgets.paragraph.Paragraph;
 
 /**
  * File-actions menu for the Source tab file list (opened with F12). Presents basic file management (new file, new
@@ -222,14 +218,16 @@ class FileActionsPopup {
     }
 
     private boolean handleConfirmKey(KeyEvent ke) {
-        // Delete is a destructive action: only an explicit "y" confirms it. Enter must NOT delete, so it
-        // (and Esc, "n", or any other key) simply returns to the menu.
+        // Delete is a destructive action: only an explicit "y" confirms it. Enter must NOT delete. Esc (or "n")
+        // returns to the menu; any other key is swallowed so a stray keystroke neither deletes nor dismisses.
         if (ke.code() == KeyCode.CHAR && "y".equalsIgnoreCase(ke.string())) {
             result = new Request(Action.DELETE, null);
             close();
             return true;
         }
-        phase = Phase.MENU;
+        if (ke.isCancel() || (ke.code() == KeyCode.CHAR && "n".equalsIgnoreCase(ke.string()))) {
+            phase = Phase.MENU;
+        }
         return true;
     }
 
@@ -285,69 +283,13 @@ class FileActionsPopup {
     }
 
     private void renderInput(Frame frame, Rect area) {
-        int popupW = Math.max(50, Math.min(64, area.width() - 4));
-        popupW = Math.min(popupW, area.width() - 2);
-        int popupH = 5;
-        int x = area.left() + Math.max(0, (area.width() - popupW) / 2);
-        int y = area.top() + Math.max(0, (area.height() - popupH) / 3);
-        Rect popup = new Rect(x, y, popupW, Math.min(popupH, area.height()));
-        this.popupRect = popup;
-
-        frame.renderWidget(Clear.INSTANCE, popup);
-        Block block = Block.builder()
-                .borderType(BorderType.ROUNDED).borders(Borders.ALL)
-                .borderStyle(Theme.borderFocused())
-                .title(Title.from(Line.from(Span.styled(" " + inputTitle + " ", Theme.title().bold()))))
-                .build();
-        frame.renderWidget(block, popup);
-        Rect inner = block.inner(popup);
-
-        // Place the input on the middle row with a small horizontal margin, leaving a blank line above and below so
-        // the dialog does not feel cramped.
-        int pad = 2;
-        int fieldW = Math.max(1, inner.width() - 2 * pad);
-        int fieldY = inner.top() + Math.max(0, (inner.height() - 1) / 2);
-        Rect field = new Rect(inner.left() + pad, fieldY, fieldW, 1);
-
-        TextInput textInput = TextInput.builder()
-                .cursorStyle(Style.EMPTY.reversed())
-                .placeholder("name")
-                .build();
-        // Use renderWithCursor (not renderStatefulWidget, which calls render() and paints no cursor cell) so the
-        // caret is visible while typing the name.
-        textInput.renderWithCursor(field, frame.buffer(), inputState, frame);
+        this.popupRect = DialogHelper.renderInputDialog(frame, area, inputTitle, inputState, "name");
     }
 
     private void renderConfirm(Frame frame, Rect area) {
-        String msg = "Delete " + targetName + "?";
-        int popupW = Math.max(40, Math.min(60, msg.length() + 6));
-        popupW = Math.min(popupW, area.width() - 4);
-        int popupH = 6;
-        int x = area.left() + Math.max(0, (area.width() - popupW) / 2);
-        int y = area.top() + Math.max(0, (area.height() - popupH) / 3);
-        Rect popup = new Rect(x, y, Math.min(popupW, area.width()), Math.min(popupH, area.height()));
-        this.popupRect = popup;
-
-        frame.renderWidget(Clear.INSTANCE, popup);
-        Block block = Block.builder()
-                .borderType(BorderType.ROUNDED).borders(Borders.ALL)
-                .borderStyle(Theme.warning())
-                .title(Title.from(Line.from(Span.styled(" " + TuiIcons.DELETE + " Delete file? ", Theme.warning().bold()))))
-                .build();
-        frame.renderWidget(block, popup);
-        Rect inner = block.inner(popup);
-        frame.renderWidget(
-                Paragraph.builder()
-                        .centered()
-                        .text(Text.from(
-                                Line.empty(),
-                                Line.from(Span.styled(msg, Theme.warning().bold())),
-                                Line.empty(),
-                                Line.from(
-                                        Span.styled("y", Style.EMPTY.bold()), Span.raw(" delete    "),
-                                        Span.styled("Esc", Style.EMPTY.bold()), Span.raw(" cancel"))))
-                        .build(),
-                inner);
+        // Deleting a file is irreversible, so this dialog is error-styled and deliberately accepts "y" only.
+        this.popupRect = DialogHelper.renderConfirm(frame, area, TuiIcons.DELETE + " Delete file?",
+                "Delete " + targetName + "?", true, "y", "delete");
     }
 
     void renderFooter(List<Span> spans) {
@@ -356,7 +298,6 @@ class FileActionsPopup {
         }
         switch (phase) {
             case MENU -> {
-                TuiHelper.hint(spans, TuiIcons.HINT_SCROLL, "navigate");
                 TuiHelper.hint(spans, "Enter", "select");
                 TuiHelper.hintLast(spans, "Esc", "close");
             }

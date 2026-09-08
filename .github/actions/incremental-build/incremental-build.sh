@@ -30,6 +30,10 @@
 
 set -euo pipefail
 
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+# shellcheck source=reactor_timing.sh
+source "${SCRIPT_DIR}/reactor_timing.sh"
+
 echo "Using MVND_OPTS=$MVND_OPTS"
 echo "Using MAVEN_EXTRA_ARGS=${MAVEN_EXTRA_ARGS:-}"
 
@@ -987,42 +991,15 @@ main() {
   # Check for excluded IT suites that should be run manually
   checkManualItTests "$final_pl" "$comment_file"
 
-  # Append reactor module list from build log
+  # Append reactor module list from build log (with per-module elapsed time)
   if [[ -f "$log" ]]; then
-    local reactor_modules
-    reactor_modules=$(grep '^\[INFO\] Camel ::' "$log" | sed 's/\[INFO\] //' | sed 's/ \..*$//' | sed 's/  *\[.*\]$//' | sed 's/ SUCCESS$//' | sed 's/ FAILURE$//' | sed 's/ SKIPPED$//' | sed 's/  *$//' | sort -u || true)
-    if [[ -n "$reactor_modules" ]]; then
-      local count
-      count=$(echo "$reactor_modules" | wc -l | tr -d ' ')
-      local reactor_label
-      if [[ "${testedDependents}" = "false" ]]; then
-        reactor_label="Build reactor — dependencies compiled but only changed modules were tested"
-      else
-        reactor_label="All tested modules"
-      fi
-
-      echo "" >> "$comment_file"
-      echo "<details><summary>${reactor_label} ($count modules)</summary>" >> "$comment_file"
-      echo "" >> "$comment_file"
-
-      if [ -n "${GITHUB_STEP_SUMMARY:-}" ]; then
-        echo "" >> "$GITHUB_STEP_SUMMARY"
-        echo "<details><summary><b>${reactor_label} ($count)</b></summary>" >> "$GITHUB_STEP_SUMMARY"
-        echo "" >> "$GITHUB_STEP_SUMMARY"
-      fi
-
-      echo "$reactor_modules" | while read -r m; do
-        [ -n "${GITHUB_STEP_SUMMARY:-}" ] && echo "- $m" >> "$GITHUB_STEP_SUMMARY"
-        echo "- $m" >> "$comment_file"
-      done
-
-      if [ -n "${GITHUB_STEP_SUMMARY:-}" ]; then
-        echo "" >> "$GITHUB_STEP_SUMMARY"
-        echo "</details>" >> "$GITHUB_STEP_SUMMARY"
-      fi
-      echo "" >> "$comment_file"
-      echo "</details>" >> "$comment_file"
+    local reactor_label
+    if [[ "${testedDependents}" = "false" ]]; then
+      reactor_label="Build reactor — dependencies compiled but only changed modules were tested"
+    else
+      reactor_label="All tested modules"
     fi
+    append_reactor_timing_report "$log" "$comment_file" "$reactor_label" "${GITHUB_STEP_SUMMARY:-}"
   fi
 
   # Write step summary header

@@ -103,6 +103,9 @@ The script also:
 - Applies an exclusion list for generated/meta modules
 - Checks for excluded modules with associated integration tests (via `manual-it-mapping.txt`) and advises contributors to run them manually
 - Generates a unified PR comment with all test information
+- Parses Maven reactor output from `incremental-test.log` and reports **per-module elapsed time**, total reactor duration, and the top 20 slowest modules (see `reactor_timing.sh`)
+
+Unit tests for reactor timing parsing live in `reactor_timing_test.sh`.
 
 ### `install-mvnd`
 

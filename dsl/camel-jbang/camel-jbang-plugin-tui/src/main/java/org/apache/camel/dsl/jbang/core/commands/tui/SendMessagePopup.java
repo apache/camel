@@ -1125,7 +1125,7 @@ class SendMessagePopup {
             fileBrowser.renderFooter(spans);
             return;
         }
-        hint(spans, "Esc", "back");
+        hint(spans, "Esc", "close");
         hint(spans, "Tab", "fields");
         hint(spans, "F5", "send");
         hint(spans, "Ctrl+F", "file");

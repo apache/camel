@@ -21,6 +21,7 @@ import java.util.List;
 import java.util.Optional;
 
 import org.apache.camel.dsl.jbang.core.common.InstallDetector;
+import org.apache.camel.dsl.jbang.core.common.OllamaDoctorSupport;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
@@ -91,6 +92,38 @@ class DoctorTest extends CamelCommandBaseTestSupport {
 
         List<String> lines = printer.getLines();
         Assertions.assertTrue(lines.size() >= 7, "Doctor should output at least 7 lines (banner + checks)");
+    }
+
+    @Test
+    void shouldReportOllamaSection() throws Exception {
+        Doctor command = new Doctor(new CamelJBangMain().withPrinter(printer));
+        command.doCall();
+
+        assertThat(printer.getOutput()).contains("Ollama:");
+    }
+
+    @Test
+    void shouldReportOllamaNotDetectedWhenUnavailable() throws Exception {
+        Doctor command = new Doctor(new CamelJBangMain().withPrinter(printer));
+        command.printOllamaStatus(OllamaDoctorSupport.Status.notRunning());
+
+        assertThat(printer.getOutput())
+                .contains("Ollama:")
+                .contains("Not detected");
+    }
+
+    @Test
+    void shouldPrintRunningOllamaWithModels() throws Exception {
+        Doctor command = new Doctor(new CamelJBangMain().withPrinter(printer));
+        OllamaDoctorSupport.Status status = new OllamaDoctorSupport.Status(
+                true, "http://localhost:11434", List.of("qwen2.5:32b", "llama3.2:latest"));
+
+        command.printOllamaStatus(status);
+
+        assertThat(printer.getOutput())
+                .contains("Ollama:")
+                .contains("Running at localhost:11434")
+                .contains("qwen2.5:32b, llama3.2:latest");
     }
 
     @Test

@@ -32,7 +32,6 @@ import dev.tamboui.widgets.Clear;
 import dev.tamboui.widgets.block.Block;
 import dev.tamboui.widgets.block.BorderType;
 import dev.tamboui.widgets.block.Borders;
-import dev.tamboui.widgets.block.Title;
 import dev.tamboui.widgets.list.ListItem;
 import dev.tamboui.widgets.list.ListState;
 import dev.tamboui.widgets.list.ListWidget;
@@ -102,8 +101,6 @@ class AiLogPopup {
             Block block = Block.builder()
                     .borderType(BorderType.ROUNDED).borders(Borders.ALL)
                     .title(" AI Log ")
-                    .titleBottom(Title.from(Line.from(
-                            Span.styled(" Esc", Theme.hintKey()), Span.raw(" back "))))
                     .build();
             frame.renderWidget(block, popup);
             Rect inner = block.inner(popup);
@@ -124,7 +121,7 @@ class AiLogPopup {
     void renderFooter(List<Span> spans) {
         hint(spans, TuiIcons.HINT_SCROLL, "select");
         hint(spans, "PgUp/Dn", "detail");
-        hintLast(spans, "Esc", "back");
+        hintLast(spans, "Esc", "close");
     }
 
     private void renderMaster(Frame frame, Rect area) {

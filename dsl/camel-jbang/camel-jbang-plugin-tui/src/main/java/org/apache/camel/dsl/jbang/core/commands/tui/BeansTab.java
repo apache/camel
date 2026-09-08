@@ -227,7 +227,7 @@ class BeansTab extends AbstractTableTab {
                 ? String.format(" Beans [%d] scope:%s filter:\"%s\" ", visible.size(), mode, filterTerm)
                 : String.format(" Beans [%d] scope:%s ", visible.size(), mode);
 
-        Style tableBorderStyle = detailFocused ? Theme.muted() : Style.EMPTY.fg(Theme.accent());
+        Style tableBorderStyle = ctx.paneBorder(!detailFocused);
         Style tableTitleStyle = detailFocused ? Style.EMPTY.fg(Theme.accent()) : Theme.title();
 
         Table table = Table.builder()
@@ -251,7 +251,7 @@ class BeansTab extends AbstractTableTab {
     }
 
     private void renderDetail(Frame frame, Rect area, List<BeanData> visible) {
-        Style detailBorderStyle = detailFocused ? Style.EMPTY.fg(Theme.accent()) : Theme.muted();
+        Style detailBorderStyle = ctx.paneBorder(detailFocused);
         Style detailTitleStyle = detailFocused ? Theme.title() : Style.EMPTY.fg(Theme.accent());
 
         Integer sel = tableState.selected();
@@ -346,7 +346,6 @@ class BeansTab extends AbstractTableTab {
             hint(spans, "/", "filter");
         }
         hint(spans, "Tab", detailFocused ? "table" : "detail");
-        hint(spans, TuiIcons.HINT_SCROLL, "navigate");
         hintLast(spans, "PgUp/Dn", "scroll");
     }
 

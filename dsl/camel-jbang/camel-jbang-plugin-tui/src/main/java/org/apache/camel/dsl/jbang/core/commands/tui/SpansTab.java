@@ -646,7 +646,6 @@ class SpansTab extends AbstractTab {
             hint(spans, "F5", "refresh");
             hint(spans, "c", camelOnly ? "camel-only [on]" : "camel-only [off]");
             hint(spans, "p", showProcessors ? "processors [on]" : "processors [off]");
-            hint(spans, TuiIcons.HINT_SCROLL, "navigate");
             hintLast(spans, "PgUp/Dn", "page");
         } else if (filterInputActive) {
             spans.add(Span.styled(" /", Theme.label().bold()));
@@ -663,7 +662,6 @@ class SpansTab extends AbstractTab {
             } else {
                 hint(spans, "/", "filter");
             }
-            hintLast(spans, TuiIcons.HINT_SCROLL, "navigate");
         }
     }
 

@@ -39,12 +39,15 @@ final class TuiSettings {
     static final String PROP_AI_PROVIDER = "camel.tui.ai.provider";
     static final String PROP_AI_MODEL = "camel.tui.ai.model";
     static final String PROP_AI_URL = "camel.tui.ai.url";
+    static final String PROP_AI_TOOLS = "camel.tui.ai.tools";
     static final String PROP_PROXY_HOST = "camel.tui.proxyHost";
     static final String PROP_PROXY_PORT = "camel.tui.proxyPort";
     static final String PROP_SHELL_HISTORY = "camel.tui.shell.history";
     static final String PROP_AI_PROMPT_HISTORY = "camel.tui.ai.promptHistory";
     static final String PROP_CONFIRM_ACTIONS = "camel.tui.confirmActions";
     static final String PROP_VALIDATE_ON_SAVE = "camel.tui.validateOnSave";
+    static final String PROP_PANEL_POSITION = "camel.tui.panelPosition";
+    static final String PROP_PANEL_SPACE = "camel.tui.panelSpace";
 
     private String themeId;
     private String startTab;
@@ -57,10 +60,13 @@ final class TuiSettings {
     private String aiProvider;
     private String aiModel;
     private String aiUrl;
+    private String aiTools;
     private String shellHistory;
     private String aiPromptHistory;
     private String confirmActions;
     private String validateOnSave;
+    private String panelPosition;
+    private String panelSpace;
 
     String getThemeId() {
         return themeId;
@@ -150,6 +156,18 @@ final class TuiSettings {
         this.aiUrl = aiUrl;
     }
 
+    /**
+     * Which tui_* tools the AI panel sends to the model: {@code auto} (default: the core set for local providers, all
+     * tools otherwise), {@code core} or {@code full}.
+     */
+    String getAiTools() {
+        return aiTools;
+    }
+
+    void setAiTools(String aiTools) {
+        this.aiTools = aiTools;
+    }
+
     String getShellHistory() {
         return shellHistory;
     }
@@ -198,6 +216,32 @@ final class TuiSettings {
         return !"false".equals(validateOnSave);
     }
 
+    /** Where the shell (F6) and AI (F8) panels open: {@code bottom} (default) or {@code top}. */
+    String getPanelPosition() {
+        return panelPosition;
+    }
+
+    void setPanelPosition(String panelPosition) {
+        this.panelPosition = panelPosition;
+    }
+
+    boolean isPanelTop() {
+        return "top".equalsIgnoreCase(panelPosition);
+    }
+
+    /** Whether those panels push the tab aside ({@code move}, default) or are drawn over it ({@code overlay}). */
+    String getPanelSpace() {
+        return panelSpace;
+    }
+
+    void setPanelSpace(String panelSpace) {
+        this.panelSpace = panelSpace;
+    }
+
+    boolean isPanelOverlay() {
+        return "overlay".equalsIgnoreCase(panelSpace);
+    }
+
     /**
      * Loads the current settings, resolving each key with per-key local/global precedence via {@link TuiUserConfig}.
      * Unset keys yield {@code null} fields; a read failure yields an object with {@code null} fields rather than
@@ -217,10 +261,13 @@ final class TuiSettings {
             settings.aiProvider = trimToNull(TuiUserConfig.read(PROP_AI_PROVIDER));
             settings.aiModel = trimToNull(TuiUserConfig.read(PROP_AI_MODEL));
             settings.aiUrl = trimToNull(TuiUserConfig.read(PROP_AI_URL));
+            settings.aiTools = trimToNull(TuiUserConfig.read(PROP_AI_TOOLS));
             settings.shellHistory = trimToNull(TuiUserConfig.read(PROP_SHELL_HISTORY));
             settings.aiPromptHistory = trimToNull(TuiUserConfig.read(PROP_AI_PROMPT_HISTORY));
             settings.confirmActions = trimToNull(TuiUserConfig.read(PROP_CONFIRM_ACTIONS));
             settings.validateOnSave = trimToNull(TuiUserConfig.read(PROP_VALIDATE_ON_SAVE));
+            settings.panelPosition = trimToNull(TuiUserConfig.read(PROP_PANEL_POSITION));
+            settings.panelSpace = trimToNull(TuiUserConfig.read(PROP_PANEL_SPACE));
         } catch (RuntimeException e) {
             // best-effort: return an object with null fields on read failure
         }
@@ -245,10 +292,13 @@ final class TuiSettings {
             TuiUserConfig.write(PROP_AI_PROVIDER, aiProvider);
             TuiUserConfig.write(PROP_AI_MODEL, aiModel);
             TuiUserConfig.write(PROP_AI_URL, aiUrl);
+            TuiUserConfig.write(PROP_AI_TOOLS, aiTools);
             TuiUserConfig.write(PROP_SHELL_HISTORY, shellHistory);
             TuiUserConfig.write(PROP_AI_PROMPT_HISTORY, aiPromptHistory);
             TuiUserConfig.write(PROP_CONFIRM_ACTIONS, confirmActions);
             TuiUserConfig.write(PROP_VALIDATE_ON_SAVE, validateOnSave);
+            TuiUserConfig.write(PROP_PANEL_POSITION, panelPosition);
+            TuiUserConfig.write(PROP_PANEL_SPACE, panelSpace);
         } catch (RuntimeException e) {
             // best-effort: a save failure must not disrupt the TUI
         }

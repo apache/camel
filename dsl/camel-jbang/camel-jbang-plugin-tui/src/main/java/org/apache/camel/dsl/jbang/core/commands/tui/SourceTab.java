@@ -428,7 +428,6 @@ class SourceTab extends AbstractTab {
                 TuiHelper.hint(spans, "Tab", "files");
             }
         } else {
-            TuiHelper.hint(spans, TuiIcons.HINT_SCROLL, "navigate");
             TuiHelper.hint(spans, "Enter", "open");
             if (currentDir != null && rootDir != null && !currentDir.equals(rootDir)) {
                 TuiHelper.hint(spans, "Bksp", "parent");
@@ -2802,7 +2801,7 @@ class SourceTab extends AbstractTab {
     }
 
     private void renderFileList(Frame frame, Rect area) {
-        Style fileBorderStyle = focusOnViewer ? Theme.muted() : Style.EMPTY.fg(Theme.accent());
+        Style fileBorderStyle = ctx.paneBorder(!focusOnViewer);
         if (entries.isEmpty()) {
             String noFilesMsg = rootDir == null ? "No source directory found" : "No files found";
             frame.renderWidget(
@@ -2904,7 +2903,7 @@ class SourceTab extends AbstractTab {
             }
         }
 
-        Style infoBorderStyle = focusOnViewer ? Theme.muted() : Style.EMPTY.fg(Theme.accent());
+        Style infoBorderStyle = ctx.paneBorder(!focusOnViewer);
         frame.renderWidget(
                 Paragraph.builder()
                         .text(Text.from(lines))
@@ -2920,7 +2919,7 @@ class SourceTab extends AbstractTab {
 
     private void renderSourcePanel(Frame frame, Rect area) {
         Style sourceTitleStyle = focusOnViewer ? Theme.title() : Style.EMPTY.fg(Theme.accent());
-        Style sourceBorderStyle = focusOnViewer ? Style.EMPTY.fg(Theme.accent()) : Theme.muted();
+        Style sourceBorderStyle = ctx.paneBorder(focusOnViewer);
         if (sourceViewer.isVisible()) {
             sourceViewer.setTitleStyle(sourceTitleStyle);
             sourceViewer.setBorderStyle(sourceBorderStyle);

@@ -23,9 +23,7 @@ import java.util.List;
 import java.util.function.BiConsumer;
 
 import dev.tamboui.layout.Rect;
-import dev.tamboui.style.Style;
 import dev.tamboui.terminal.Frame;
-import dev.tamboui.text.Line;
 import dev.tamboui.text.Span;
 import dev.tamboui.tui.event.KeyCode;
 import dev.tamboui.tui.event.KeyEvent;
@@ -34,9 +32,7 @@ import dev.tamboui.widgets.Clear;
 import dev.tamboui.widgets.block.Block;
 import dev.tamboui.widgets.block.BorderType;
 import dev.tamboui.widgets.block.Borders;
-import dev.tamboui.widgets.input.TextInput;
 import dev.tamboui.widgets.input.TextInputState;
-import dev.tamboui.widgets.paragraph.Paragraph;
 import org.apache.camel.dsl.jbang.core.common.LauncherHelper;
 
 class FolderInputPopup {
@@ -201,11 +197,11 @@ class FolderInputPopup {
             folderBrowser.renderFooter(spans);
         } else if (showInput) {
             if (!folderHistory.isEmpty()) {
-                TuiHelper.hint(spans, "↑↓", "history");
+                TuiHelper.hint(spans, TuiIcons.HINT_SCROLL, "history");
             }
             TuiHelper.hint(spans, "Tab", "browse");
             TuiHelper.hint(spans, "Enter", "open");
-            TuiHelper.hintLast(spans, "Esc", "back");
+            TuiHelper.hintLast(spans, "Esc", "cancel");
         }
     }
 
@@ -332,10 +328,7 @@ class FolderInputPopup {
 
     private void renderInput(Frame frame, Rect area) {
         int popupW = Math.min(70, area.width() - 4);
-        int popupH = 4;
-        int x = area.left() + Math.max(0, (area.width() - popupW) / 2);
-        int y = area.top() + Math.max(0, (area.height() - 17) / 4);
-        Rect popup = new Rect(x, y, Math.min(popupW, area.width()), Math.min(popupH, area.height()));
+        Rect popup = DialogHelper.centered(area, popupW, DialogHelper.INPUT_HEIGHT);
 
         frame.renderWidget(Clear.INSTANCE, popup);
 
@@ -346,20 +339,15 @@ class FolderInputPopup {
         frame.renderWidget(block, popup);
         Rect inner = block.inner(popup);
 
+        int pad = 1;
         int labelW = 9;
-        int fieldW = inner.width() - labelW;
-        int row = inner.top();
-        int ix = inner.left();
+        int fieldW = Math.max(1, inner.width() - labelW - 2 * pad);
+        // middle row, with a blank line above and below like the other input dialogs
+        int row = inner.top() + Math.max(0, (inner.height() - 1) / 2);
+        int ix = inner.left() + pad;
 
-        Rect labelArea = new Rect(ix, row, labelW, 1);
-        frame.renderWidget(Paragraph.from(Line.from(Span.styled("Folder:", Style.EMPTY.bold()))), labelArea);
-        Rect inputArea = new Rect(ix + labelW, row, fieldW, 1);
-        TextInput textInput = TextInput.builder()
-                .cursorStyle(Style.EMPTY.reversed())
-                .placeholder("/path/to/folder")
-                .build();
-        // renderWithCursor (not renderStatefulWidget) so the caret is visible while typing
-        textInput.renderWithCursor(inputArea, frame.buffer(), inputState, frame);
+        FormHelper.renderLabel(frame, ix, row, labelW, "Folder:", true);
+        FormHelper.renderTextField(frame, new Rect(ix + labelW, row, fieldW, 1), inputState, true, "/path/to/folder");
     }
 
     private void doLaunchFolder(String folder, String pomPath, String displayName, List<String> extraArgs) {

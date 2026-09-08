@@ -66,11 +66,11 @@ class CatalogTab extends AbstractTableTab {
     private int scopeIndex;
     private boolean fullCatalog;
     private CamelCatalog catalog;
-    private List<CatalogEntry> allEntries = Collections.emptyList();
-    private List<CatalogEntry> filteredEntries = Collections.emptyList();
+    private volatile List<CatalogEntry> allEntries = Collections.emptyList();
+    private volatile List<CatalogEntry> filteredEntries = Collections.emptyList();
     private String lastPid;
-    private String errorMessage;
-    private boolean dataLoaded;
+    private volatile String errorMessage;
+    private volatile boolean dataLoaded;
 
     CatalogTab(MonitorContext ctx) {
         super(ctx, "name", "kind", "description");
@@ -87,6 +87,23 @@ class CatalogTab extends AbstractTableTab {
         if (!dataLoaded) {
             loadCatalogData();
         }
+    }
+
+    @Override
+    public boolean ensureDataLoaded() {
+        onTabSelected();
+        return true;
+    }
+
+    @Override
+    public String dataLoadError() {
+        if (!dataLoaded) {
+            return null;
+        }
+        if (errorMessage != null) {
+            return errorMessage;
+        }
+        return allEntries.isEmpty() ? "No catalog entries for the selected integration" : null;
     }
 
     @Override
@@ -426,7 +443,6 @@ class CatalogTab extends AbstractTableTab {
         } else {
             hint(spans, "/", "filter");
         }
-        hintLast(spans, TuiIcons.HINT_SCROLL, "navigate");
     }
 
     private int sortEntry(CatalogEntry a, CatalogEntry b) {

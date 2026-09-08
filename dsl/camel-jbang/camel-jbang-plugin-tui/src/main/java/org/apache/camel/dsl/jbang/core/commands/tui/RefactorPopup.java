@@ -21,7 +21,6 @@ import java.util.List;
 
 import dev.tamboui.layout.Padding;
 import dev.tamboui.layout.Rect;
-import dev.tamboui.style.Style;
 import dev.tamboui.terminal.Frame;
 import dev.tamboui.text.Line;
 import dev.tamboui.text.Span;
@@ -32,7 +31,6 @@ import dev.tamboui.widgets.block.Block;
 import dev.tamboui.widgets.block.BorderType;
 import dev.tamboui.widgets.block.Borders;
 import dev.tamboui.widgets.block.Title;
-import dev.tamboui.widgets.input.TextInput;
 import dev.tamboui.widgets.input.TextInputState;
 import dev.tamboui.widgets.list.ListItem;
 import dev.tamboui.widgets.list.ListState;
@@ -244,32 +242,7 @@ class RefactorPopup {
     }
 
     private void renderInput(Frame frame, Rect area) {
-        int popupW = Math.max(50, Math.min(64, area.width() - 4));
-        popupW = Math.min(popupW, area.width() - 2);
-        int popupH = 5;
-        int x = area.left() + Math.max(0, (area.width() - popupW) / 2);
-        int y = area.top() + Math.max(0, (area.height() - popupH) / 3);
-        Rect popup = new Rect(x, y, popupW, Math.min(popupH, area.height()));
-
-        frame.renderWidget(Clear.INSTANCE, popup);
-        Block block = Block.builder()
-                .borderType(BorderType.ROUNDED).borders(Borders.ALL)
-                .borderStyle(Theme.borderFocused())
-                .title(Title.from(Line.from(Span.styled(" " + inputTitle + " ", Theme.title().bold()))))
-                .build();
-        frame.renderWidget(block, popup);
-        Rect inner = block.inner(popup);
-
-        int pad = 2;
-        int fieldW = Math.max(1, inner.width() - 2 * pad);
-        int fieldY = inner.top() + Math.max(0, (inner.height() - 1) / 2);
-        Rect field = new Rect(inner.left() + pad, fieldY, fieldW, 1);
-
-        TextInput textInput = TextInput.builder()
-                .cursorStyle(Style.EMPTY.reversed())
-                .placeholder(inputPlaceholder)
-                .build();
-        textInput.renderWithCursor(field, frame.buffer(), inputState, frame);
+        DialogHelper.renderInputDialog(frame, area, inputTitle, inputState, inputPlaceholder);
     }
 
     void renderFooter(List<Span> spans) {
@@ -278,7 +251,6 @@ class RefactorPopup {
         }
         switch (phase) {
             case MENU -> {
-                TuiHelper.hint(spans, TuiIcons.HINT_SCROLL, "navigate");
                 TuiHelper.hint(spans, "Enter", "select");
                 TuiHelper.hintLast(spans, "Esc", "close");
             }

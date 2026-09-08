@@ -94,7 +94,9 @@ public final class OpenAIConstants {
     @Metadata(description = "Cumulative total tokens consumed across all agentic loop iterations", javaType = "Long")
     public static final String AGENTIC_TOTAL_TOKENS = "CamelOpenAIAgenticTotalTokens";
 
-    // Output Exchange Properties
+    // Output Exchange Properties (documented in openai-mcp.adoc; omitted from catalog headers)
+    @Metadata(skip = true)
+    public static final String AGENTIC_TRACE = "CamelOpenAIAgenticTrace";
     @Metadata(description = "The complete OpenAI chat completion response object",
               javaType = "com.openai.models.chat.completions.ChatCompletion")
     public static final String RESPONSE = "CamelOpenAIResponse";

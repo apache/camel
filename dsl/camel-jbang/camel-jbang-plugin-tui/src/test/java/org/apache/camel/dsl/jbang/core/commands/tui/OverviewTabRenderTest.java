@@ -16,6 +16,7 @@
  */
 package org.apache.camel.dsl.jbang.core.commands.tui;
 
+import java.time.Instant;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -31,6 +32,8 @@ import dev.tamboui.tui.event.KeyEvent;
 import dev.tamboui.tui.event.KeyModifiers;
 import dev.tamboui.tui.event.MouseButton;
 import dev.tamboui.tui.event.MouseEvent;
+import org.apache.camel.util.json.JsonArray;
+import org.apache.camel.util.json.JsonObject;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -79,6 +82,23 @@ class OverviewTabRenderTest {
         assertTrue(rendered.contains("NAME"), "Should show NAME header");
         assertTrue(rendered.contains("STATUS"), "Should show STATUS header");
         assertTrue(rendered.contains("TOTAL"), "Should show TOTAL header");
+    }
+
+    @Test
+    void tableDataExportsUptimeAsDurationNotStartTimestamp() {
+        info.state = 5;
+        info.uptime = System.currentTimeMillis() - 2 * 60 * 1000;
+        info.ago = "2m0s";
+
+        OverviewTab tab = new OverviewTab(ctx, new MetricsCollector(), new HashSet<>(), () -> {
+        });
+        JsonObject data = tab.getTableDataAsJson();
+        JsonObject row = (JsonObject) ((JsonArray) data.get("rows")).get(0);
+
+        assertEquals("2m0s", row.get("uptime"), "uptime must be the elapsed duration shown on screen");
+        long millis = ((Number) row.get("uptimeMillis")).longValue();
+        assertTrue(millis >= 2 * 60 * 1000 && millis < 3 * 60 * 1000, "uptimeMillis was " + millis);
+        assertEquals(Instant.ofEpochMilli(info.uptime).toString(), row.get("startedAt"));
     }
 
     @Test
@@ -209,7 +229,6 @@ class OverviewTabRenderTest {
                 .reduce("", String::concat);
 
         assertTrue(footer.contains("sort"), "Footer should contain sort hint");
-        assertTrue(footer.contains("navigate"), "Footer should contain navigate hint");
     }
 
     @Test

@@ -16,6 +16,7 @@
  */
 package org.apache.camel.dsl.jbang.core.commands.tui;
 
+import java.time.Instant;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
@@ -49,6 +50,7 @@ import dev.tamboui.widgets.table.Cell;
 import dev.tamboui.widgets.table.Row;
 import dev.tamboui.widgets.table.Table;
 import dev.tamboui.widgets.table.TableState;
+import org.apache.camel.util.TimeUtils;
 import org.apache.camel.util.json.JsonArray;
 import org.apache.camel.util.json.JsonObject;
 
@@ -571,7 +573,7 @@ class OverviewTab extends AbstractTab {
         }
 
         String integrationTitle = infraCount > 0 ? " Integrations " : " Overview ";
-        Style intBorderStyle = infraFocused ? Theme.muted() : Style.EMPTY.fg(Theme.accent());
+        Style intBorderStyle = ctx.paneBorder(!infraFocused);
         Style intTitleStyle = infraFocused ? Style.EMPTY.fg(Theme.accent()) : Theme.title();
         Table.Builder tableBuilder = Table.builder()
                 .rows(rows)
@@ -995,7 +997,7 @@ class OverviewTab extends AbstractTab {
                         Constraint.fill())
                 .highlightSpacing(Table.HighlightSpacing.ALWAYS)
                 .block(Block.builder().borderType(BorderType.ROUNDED).borders(Borders.ALL)
-                        .borderStyle(infraFocused ? Style.EMPTY.fg(Theme.accent()) : Theme.muted())
+                        .borderStyle(ctx.paneBorder(infraFocused))
                         .title(Title.from(Line.from(
                                 Span.styled(" Dev/Infra Services ",
                                         infraFocused ? Theme.title() : Style.EMPTY.fg(Theme.accent())))))
@@ -1033,7 +1035,6 @@ class OverviewTab extends AbstractTab {
         if (ctx.selectedPid != null) {
             hint(spans, "Esc", "unselect");
         }
-        hint(spans, TuiIcons.HINT_SCROLL, "navigate");
         if (!ctx.infraData.get().isEmpty()) {
             hint(spans, "Tab", infraFocused ? "integrations" : "infra");
         }
@@ -1050,9 +1051,7 @@ class OverviewTab extends AbstractTab {
                 default -> "[off]";
             });
         }
-        if (ctx.selectedPid != null) {
-            hint(spans, "F10", "run");
-        }
+        // F10 is added by the global F-key hints, so it must not be repeated here.
     }
 
     @Override
@@ -1402,7 +1401,14 @@ class OverviewTab extends AbstractTab {
             row.put("platform", info.platform);
             row.put("state", info.state);
             row.put("ready", info.ready);
-            row.put("uptime", info.uptime);
+            // info.uptime holds the process start time (epoch millis), which the screen shows as an elapsed
+            // duration; export the same duration plus the raw values with unambiguous names so an AI reading
+            // the row does not mistake the timestamp for a duration
+            row.put("uptime", info.ago != null ? info.ago : (info.uptime > 0 ? TimeUtils.printSince(info.uptime) : ""));
+            if (info.uptime > 0) {
+                row.put("uptimeMillis", Math.max(0, System.currentTimeMillis() - info.uptime));
+                row.put("startedAt", Instant.ofEpochMilli(info.uptime).toString());
+            }
             row.put("exchangesTotal", info.exchangesTotal);
             row.put("failed", info.failed);
             row.put("inflight", info.inflight);

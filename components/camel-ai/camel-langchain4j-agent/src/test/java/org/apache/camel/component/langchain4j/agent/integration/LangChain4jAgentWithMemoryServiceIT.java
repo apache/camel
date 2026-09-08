@@ -135,7 +135,8 @@ public class LangChain4jAgentWithMemoryServiceIT extends AbstractRAGIT {
 
         AiAgentBody<?> request = new AiAgentBody<>(
                 """
-                        Please provide user 123's information in this exact JSON format:
+                        You MUST call the userDb tool for user ID 123 and use its result to provide the information
+                        in this exact JSON format:
                         {
                           "userId": "string",
                           "name": "string",

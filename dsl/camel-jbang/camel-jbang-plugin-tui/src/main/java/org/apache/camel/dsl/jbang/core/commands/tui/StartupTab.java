@@ -53,14 +53,14 @@ class StartupTab extends AbstractTab {
     private final ScrollbarState scrollbarState = new ScrollbarState();
     private final AtomicBoolean loading = new AtomicBoolean(false);
 
-    private List<StartupStep> steps = Collections.emptyList();
+    private volatile List<StartupStep> steps = Collections.emptyList();
     private int scrollOffset;
     private long totalDuration;
     private long maxDuration;
     private long minDurationColor;
     private long maxDurationColor;
-    private String errorMessage;
-    private boolean dataLoaded;
+    private volatile String errorMessage;
+    private volatile boolean dataLoaded;
 
     StartupTab(MonitorContext ctx) {
         super(ctx);
@@ -71,6 +71,23 @@ class StartupTab extends AbstractTab {
         if (!dataLoaded) {
             loadStartupData();
         }
+    }
+
+    @Override
+    public boolean ensureDataLoaded() {
+        onTabSelected();
+        return true;
+    }
+
+    @Override
+    public String dataLoadError() {
+        if (!dataLoaded) {
+            return null;
+        }
+        if (errorMessage != null) {
+            return errorMessage;
+        }
+        return steps.isEmpty() ? "No startup data available for the selected integration" : null;
     }
 
     @Override
@@ -255,7 +272,6 @@ class StartupTab extends AbstractTab {
     @Override
     public void renderFooter(List<Span> spans) {
         hint(spans, "Esc", "back");
-        hint(spans, TuiIcons.HINT_SCROLL, "scroll");
         hintLast(spans, "PgUp/Dn", "page");
     }
 

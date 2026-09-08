@@ -32,6 +32,7 @@ import org.junit.jupiter.api.parallel.Isolated;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
@@ -139,7 +140,9 @@ class SettingsPopupTest {
         popup.handleKeyEvent(key(KeyCode.DOWN));
         popup.handleKeyEvent(key(KeyCode.DOWN));
         popup.handleKeyEvent(key(KeyCode.DOWN));
-        assertEquals(7, popup.selectedRow());
+        popup.handleKeyEvent(key(KeyCode.DOWN));
+        popup.handleKeyEvent(key(KeyCode.DOWN));
+        assertEquals(9, popup.selectedRow());
         popup.handleKeyEvent(KeyEvent.ofChar('/'));
         popup.handleKeyEvent(KeyEvent.ofChar('a'));
         assertEquals("/a", popup.folderText());
@@ -159,7 +162,9 @@ class SettingsPopupTest {
         popup.handleKeyEvent(key(KeyCode.DOWN));
         popup.handleKeyEvent(key(KeyCode.DOWN));
         popup.handleKeyEvent(key(KeyCode.DOWN));
-        assertEquals(7, popup.selectedRow());
+        popup.handleKeyEvent(key(KeyCode.DOWN));
+        popup.handleKeyEvent(key(KeyCode.DOWN));
+        assertEquals(9, popup.selectedRow());
         popup.handleKeyEvent(KeyEvent.ofChar(0x01));
         popup.handleKeyEvent(KeyEvent.ofChar(0x00));
         popup.handleKeyEvent(KeyEvent.ofChar('x'));
@@ -185,7 +190,9 @@ class SettingsPopupTest {
         popup.handleKeyEvent(key(KeyCode.DOWN));
         popup.handleKeyEvent(key(KeyCode.DOWN));
         popup.handleKeyEvent(key(KeyCode.DOWN));
-        assertEquals(11, popup.selectedRow());
+        popup.handleKeyEvent(key(KeyCode.DOWN));
+        popup.handleKeyEvent(key(KeyCode.DOWN));
+        assertEquals(13, popup.selectedRow());
         assertEquals("auto", popup.selectedAiProvider());
         popup.handleKeyEvent(KeyEvent.ofChar(' '));
         assertEquals("ollama", popup.selectedAiProvider());
@@ -211,6 +218,46 @@ class SettingsPopupTest {
     }
 
     @Test
+    void aiToolsRowCyclesModesAndPersistsNonDefault(@TempDir Path tempDir) {
+        useHome(tempDir);
+        SettingsPopup popup = new SettingsPopup();
+        popup.setTabEntries(tabs());
+        popup.open();
+
+        // navigate to AI Tools (row 16)
+        for (int i = 0; i < 16; i++) {
+            popup.handleKeyEvent(key(KeyCode.DOWN));
+        }
+        assertEquals(16, popup.selectedRow());
+        assertEquals("auto", popup.selectedAiTools());
+
+        popup.handleKeyEvent(KeyEvent.ofChar(' '));
+        assertEquals("core", popup.selectedAiTools());
+        popup.handleKeyEvent(key(KeyCode.RIGHT));
+        assertEquals("full", popup.selectedAiTools());
+        popup.handleKeyEvent(key(KeyCode.RIGHT));
+        assertEquals("auto", popup.selectedAiTools());
+        popup.handleKeyEvent(key(KeyCode.LEFT));
+        assertEquals("full", popup.selectedAiTools());
+
+        popup.handleKeyEvent(key(KeyCode.ENTER));
+        assertEquals("full", TuiSettings.load().getAiTools());
+
+        // auto is the default and is not written to the settings file
+        SettingsPopup reopened = new SettingsPopup();
+        reopened.setTabEntries(tabs());
+        reopened.open();
+        assertEquals("full", reopened.selectedAiTools());
+        for (int i = 0; i < 16; i++) {
+            reopened.handleKeyEvent(key(KeyCode.DOWN));
+        }
+        reopened.handleKeyEvent(key(KeyCode.RIGHT));
+        assertEquals("auto", reopened.selectedAiTools());
+        reopened.handleKeyEvent(key(KeyCode.ENTER));
+        assertNull(TuiSettings.load().getAiTools());
+    }
+
+    @Test
     void historyFieldsPersistValues(@TempDir Path tempDir) {
         useHome(tempDir);
         SettingsPopup popup = new SettingsPopup();
@@ -218,20 +265,20 @@ class SettingsPopupTest {
         popup.open();
 
         // navigate to Shell History (row 10)
-        for (int i = 0; i < 10; i++) {
+        for (int i = 0; i < 12; i++) {
             popup.handleKeyEvent(key(KeyCode.DOWN));
         }
-        assertEquals(10, popup.selectedRow());
+        assertEquals(12, popup.selectedRow());
         for (char c : "50".toCharArray()) {
             popup.handleKeyEvent(KeyEvent.ofChar(c));
         }
         assertEquals("50", popup.shellHistoryText());
 
-        // navigate to AI Prompt History (row 14)
-        for (int i = 0; i < 4; i++) {
+        // navigate to AI Prompt History (row 17)
+        for (int i = 0; i < 5; i++) {
             popup.handleKeyEvent(key(KeyCode.DOWN));
         }
-        assertEquals(14, popup.selectedRow());
+        assertEquals(17, popup.selectedRow());
         for (char c : "200".toCharArray()) {
             popup.handleKeyEvent(KeyEvent.ofChar(c));
         }
@@ -264,6 +311,8 @@ class SettingsPopupTest {
         popup.handleKeyEvent(key(KeyCode.DOWN)); // select tab
         popup.handleKeyEvent(key(KeyCode.DOWN)); // log pin
         popup.handleKeyEvent(key(KeyCode.DOWN)); // rate per
+        popup.handleKeyEvent(key(KeyCode.DOWN)); // panel position
+        popup.handleKeyEvent(key(KeyCode.DOWN)); // panel space
         popup.handleKeyEvent(key(KeyCode.DOWN)); // confirm actions
         popup.handleKeyEvent(key(KeyCode.DOWN)); // validate on save
         popup.handleKeyEvent(key(KeyCode.DOWN)); // folder
@@ -314,5 +363,49 @@ class SettingsPopupTest {
         assertTrue(popup.isVisible(), "cycling the theme row must not close the dialog");
         assertEquals("light", Theme.mode(), "the previewed theme must apply immediately, without saving");
         assertTrue(cleared[0], "the screen must refresh so the live preview is visible");
+    }
+
+    @Test
+    void panelRowsPersistPositionAndSpace(@TempDir Path tempDir) {
+        useHome(tempDir);
+        SettingsPopup popup = new SettingsPopup();
+        popup.setTabEntries(tabs());
+        popup.open();
+
+        for (int i = 0; i < 5; i++) {
+            popup.handleKeyEvent(key(KeyCode.DOWN));
+        }
+        assertEquals(5, popup.selectedRow());
+        assertEquals("bottom", popup.selectedPanelPosition(), "panels open at the bottom by default");
+        popup.handleKeyEvent(KeyEvent.ofChar(' '));
+        assertEquals("top", popup.selectedPanelPosition());
+
+        popup.handleKeyEvent(key(KeyCode.DOWN));
+        assertEquals("move", popup.selectedPanelSpace(), "panels take space from the tab by default");
+        popup.handleKeyEvent(KeyEvent.ofChar(' '));
+        assertEquals("overlay", popup.selectedPanelSpace());
+
+        popup.handleKeyEvent(key(KeyCode.ENTER));
+
+        TuiSettings persisted = TuiSettings.load();
+        assertEquals("top", persisted.getPanelPosition());
+        assertEquals("overlay", persisted.getPanelSpace());
+        assertTrue(persisted.isPanelTop());
+        assertTrue(persisted.isPanelOverlay());
+    }
+
+    @Test
+    void panelRowsDefaultValuesAreNotPersisted(@TempDir Path tempDir) {
+        useHome(tempDir);
+        SettingsPopup popup = new SettingsPopup();
+        popup.setTabEntries(tabs());
+        popup.open();
+        popup.handleKeyEvent(key(KeyCode.ENTER));
+
+        TuiSettings persisted = TuiSettings.load();
+        assertEquals(null, persisted.getPanelPosition(), "the default position is not written to the config file");
+        assertEquals(null, persisted.getPanelSpace(), "the default space mode is not written to the config file");
+        assertFalse(persisted.isPanelTop());
+        assertFalse(persisted.isPanelOverlay());
     }
 }

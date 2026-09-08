@@ -63,6 +63,16 @@ class ProcessControlPopup {
 
         void restartSelectedProcess();
 
+        /**
+         * Shows the kill confirm dialog; the dialog itself force-kills the selected process on Enter.
+         */
+        void showKillConfirm();
+
+        /**
+         * Shows a generic confirm dialog that runs {@code onConfirm} on Enter and does nothing on Esc.
+         */
+        void showConfirm(String title, String message, Runnable onConfirm);
+
         void onRunPhantom(IntegrationInfo phantom);
 
         void onStopAll();
@@ -181,7 +191,7 @@ class ProcessControlPopup {
 
     void renderFooter(List<Span> spans) {
         hint(spans, "Enter", "select");
-        hintLast(spans, "Esc", "cancel");
+        hintLast(spans, "Esc", "close");
     }
 
     private void executeAction(ControlAction action) {
@@ -204,10 +214,30 @@ class ProcessControlPopup {
             }
             case STOP_ROUTES -> actions.sendRouteCommand(ctx.selectedPid, "*", "stop");
             case START_ROUTES -> actions.sendRouteCommand(ctx.selectedPid, "*", "start");
-            case RESTART -> actions.restartSelectedProcess();
-            case STOP -> actions.stopSelectedProcess(false);
-            case KILL -> actions.stopSelectedProcess(true);
+            case RESTART -> confirmThen("Confirm Restart", "Restart", () -> actions.restartSelectedProcess());
+            case STOP -> confirmThen("Confirm Stop", "Stop", () -> actions.stopSelectedProcess(false));
+            case KILL -> {
+                // Kill has a dedicated (error-styled) confirm dialog that performs the force-kill itself.
+                if (ctx.confirmActions) {
+                    actions.showKillConfirm();
+                } else {
+                    actions.stopSelectedProcess(true);
+                }
+            }
             case STOP_ALL -> actions.onStopAll();
         }
+    }
+
+    /**
+     * Runs {@code action} directly when confirmations are disabled in settings, otherwise asks first. Stop, Restart and
+     * Kill all terminate a running process, so they share the same "are you sure?" gate as Quit and Stop All.
+     */
+    private void confirmThen(String title, String verb, Runnable action) {
+        if (!ctx.confirmActions) {
+            action.run();
+            return;
+        }
+        String msg = " " + verb + " " + ctx.selectedName() + " (PID: " + ctx.selectedPid + ")? ";
+        actions.showConfirm(title, msg, action);
     }
 }

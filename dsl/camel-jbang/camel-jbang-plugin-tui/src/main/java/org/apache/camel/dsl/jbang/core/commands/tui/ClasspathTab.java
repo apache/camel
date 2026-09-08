@@ -60,11 +60,11 @@ class ClasspathTab extends AbstractTab {
     private TextInputState filterInputState = new TextInputState("");
     private String filterTerm;
     private int scopeIndex;
-    private List<JarEntry> allEntries = Collections.emptyList();
-    private List<JarEntry> filteredEntries = Collections.emptyList();
+    private volatile List<JarEntry> allEntries = Collections.emptyList();
+    private volatile List<JarEntry> filteredEntries = Collections.emptyList();
     private String lastPid;
-    private String errorMessage;
-    private boolean dataLoaded;
+    private volatile String errorMessage;
+    private volatile boolean dataLoaded;
 
     ClasspathTab(MonitorContext ctx) {
         super(ctx);
@@ -81,6 +81,23 @@ class ClasspathTab extends AbstractTab {
         if (!dataLoaded) {
             loadClasspath();
         }
+    }
+
+    @Override
+    public boolean ensureDataLoaded() {
+        onTabSelected();
+        return true;
+    }
+
+    @Override
+    public String dataLoadError() {
+        if (!dataLoaded) {
+            return null;
+        }
+        if (errorMessage != null) {
+            return errorMessage;
+        }
+        return allEntries.isEmpty() ? "No JARs on the classpath of the selected integration" : null;
     }
 
     @Override
@@ -288,7 +305,6 @@ class ClasspathTab extends AbstractTab {
         } else {
             hint(spans, "/", "filter");
         }
-        hintLast(spans, TuiIcons.HINT_SCROLL, "navigate");
     }
 
     private void loadClasspath() {

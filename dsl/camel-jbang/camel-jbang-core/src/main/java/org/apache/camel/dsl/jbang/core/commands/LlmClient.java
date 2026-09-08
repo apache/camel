@@ -53,6 +53,18 @@ public class LlmClient {
     private static final String DEFAULT_ANTHROPIC_MODEL = "claude-sonnet-4-6";
     private static final String DEFAULT_OPENAI_MODEL = "gpt-4o-mini";
     private static final String DEFAULT_OLLAMA_MODEL = "llama3.2";
+    /**
+     * Keep the model (and its prompt cache) loaded between turns of a conversation. Ollama's default of five minutes is
+     * shorter than a slow local answer plus the time the user spends reading it, after which the next request pays for
+     * a full model reload and re-processes the whole prompt.
+     */
+    private static final String OLLAMA_KEEP_ALIVE = "30m";
+    /**
+     * Context window requested from Ollama. The tool-calling system prompt alone is several thousand tokens, and older
+     * Ollama releases default to 4096 which silently truncates it; 32k leaves room for a long conversation with tool
+     * results while keeping the KV cache modest. {@code OLLAMA_CONTEXT_LENGTH} in the environment overrides it.
+     */
+    private static final int OLLAMA_NUM_CTX = 32768;
     private static final String DEFAULT_WATSONX_URL = "https://us-south.ml.cloud.ibm.com";
     private static final String DEFAULT_WATSONX_MODEL = "ibm/granite-4-1-8b-instruct";
     private static final String DEFAULT_AZURE_API_VERSION = "2024-10-21";
@@ -187,6 +199,34 @@ public class LlmClient {
         return apiType;
     }
 
+    /**
+     * Resolved LLM endpoint URL after {@link #detectEndpoint()}, or the configured URL when set explicitly.
+     */
+    public String endpointUrl() {
+        return url;
+    }
+
+    /**
+     * Whether the model runs on this machine: the Ollama provider, or any provider whose endpoint host is a loopback
+     * address (LM Studio, llama.cpp server, vLLM and similar OpenAI-compatible servers). Local models process prompts
+     * far slower than hosted ones, so callers use this to trim what they send per request.
+     */
+    public boolean isLocalEndpoint() {
+        if (apiType == ApiType.ollama) {
+            return true;
+        }
+        if (url == null) {
+            return false;
+        }
+        try {
+            String host = URI.create(url).getHost();
+            return host != null && (host.equalsIgnoreCase("localhost") || host.equals("127.0.0.1")
+                    || host.equals("::1") || host.equals("[::1]") || host.equals("0.0.0.0"));
+        } catch (IllegalArgumentException e) {
+            return false;
+        }
+    }
+
     // -- Builder --
 
     public static LlmClient create() {
@@ -295,8 +335,8 @@ public class LlmClient {
                 if (openAiAuthMode == OpenAiAuthMode.api_key
                         || (url != null && isAzureOpenAiEndpoint(url))) {
                     resolveAzureOpenAiModel();
-                } else if (model == null || model.isBlank()) {
-                    model = DEFAULT_OPENAI_MODEL;
+                } else if (model == null || model.isBlank() || DEFAULT_OLLAMA_MODEL.equals(model)) {
+                    model = isOpenAiCompatibleServer() ? resolveOpenAiCompatibleModel() : DEFAULT_OPENAI_MODEL;
                 }
             }
             case gemini -> {
@@ -552,10 +592,8 @@ public class LlmClient {
         request.put("prompt", userPrompt);
         request.put("system", systemPrompt);
         request.put("stream", stream);
-
-        JsonObject options = new JsonObject();
-        options.put("temperature", temperature);
-        request.put("options", options);
+        request.put("keep_alive", OLLAMA_KEEP_ALIVE);
+        request.put("options", ollamaOptions());
 
         if (stream) {
             return sendStreamingRequest(url + "/api/generate", request, null, "response");
@@ -929,6 +967,28 @@ public class LlmClient {
         return parseOpenAiChatResponse(response);
     }
 
+    private JsonObject ollamaOptions() {
+        JsonObject options = new JsonObject();
+        options.put("temperature", temperature);
+        options.put("num_ctx", ollamaNumCtx());
+        return options;
+    }
+
+    static int ollamaNumCtx() {
+        String env = System.getenv("OLLAMA_CONTEXT_LENGTH");
+        if (env != null && !env.isBlank()) {
+            try {
+                int value = Integer.parseInt(env.trim());
+                if (value > 0) {
+                    return value;
+                }
+            } catch (NumberFormatException e) {
+                // fall through to the default
+            }
+        }
+        return OLLAMA_NUM_CTX;
+    }
+
     // ---- Ollama native chat with tools ----
 
     private ChatResponse chatOllamaFormat(String systemPrompt, List<Message> messages, List<ToolDef> tools) {
@@ -942,10 +1002,8 @@ public class LlmClient {
         if (jsonTools != null) {
             request.put("tools", jsonTools);
         }
-
-        JsonObject options = new JsonObject();
-        options.put("temperature", temperature);
-        request.put("options", options);
+        request.put("keep_alive", OLLAMA_KEEP_ALIVE);
+        request.put("options", ollamaOptions());
 
         if (stream) {
             request.put("stream", true);
@@ -1795,7 +1853,17 @@ public class LlmClient {
             apiKey = key;
             openAiAuthMode = OpenAiAuthMode.bearer;
             if (url == null || url.isBlank()) {
-                url = "https://api.openai.com";
+                // LLM_BASE_URL / OPENAI_BASE_URL let users point at any OpenAI-compatible
+                // server (LM Studio, vLLM, LocalAI, Jan, …) without a CLI flag
+                String baseUrl = System.getenv("OPENAI_BASE_URL");
+                if (baseUrl == null || baseUrl.isBlank()) {
+                    // Only consult LLM_BASE_URL when the key came from LLM_API_KEY to avoid
+                    // redirecting a real OPENAI_API_KEY to an unintended server
+                    if (System.getenv("OPENAI_API_KEY") == null || System.getenv("OPENAI_API_KEY").isBlank()) {
+                        baseUrl = System.getenv("LLM_BASE_URL");
+                    }
+                }
+                url = (baseUrl != null && !baseUrl.isBlank()) ? stripTrailingSlash(baseUrl) : "https://api.openai.com";
             }
             return true;
         }
@@ -1921,6 +1989,33 @@ public class LlmClient {
                 .orElse(available.get(0));
     }
 
+    /**
+     * Whether the OpenAI-style endpoint is something other than OpenAI itself (LM Studio, vLLM, llama.cpp server,
+     * LocalAI and friends reached through {@code LLM_BASE_URL} / {@code OPENAI_BASE_URL}). Those servers only know the
+     * models they host, so OpenAI's default model name is rejected there.
+     */
+    private boolean isOpenAiCompatibleServer() {
+        return url != null && !url.contains("api.openai.com");
+    }
+
+    /**
+     * Picks the first model an OpenAI-compatible server reports on {@code /v1/models}, since a hard-coded OpenAI model
+     * name would be rejected with "model not found". Falls back to the OpenAI default when the list is empty or the
+     * endpoint does not implement it.
+     */
+    private String resolveOpenAiCompatibleModel() {
+        try {
+            List<String> available = listOpenAiModels();
+            if (!available.isEmpty()) {
+                printer.println("Auto-selected model: " + available.get(0) + " (first model reported by " + url + ")");
+                return available.get(0);
+            }
+        } catch (Exception e) {
+            // best-effort, keep default
+        }
+        return DEFAULT_OPENAI_MODEL;
+    }
+
     private void resolveOllamaModel() {
         try {
             HttpRequest request = HttpRequest.newBuilder()
@@ -1948,7 +2043,7 @@ public class LlmClient {
             }
 
             List<String> preferred
-                    = List.of("qwen3.5", "qwen3", "nemotron-3-nano", "mistral-nemo",
+                    = List.of("qwen3.6", "qwen3.5", "qwen3", "nemotron-3-nano", "mistral-nemo",
                             "qwen2.5", "granite4.1", "llama3.1", "llama3.3", "mistral");
             for (String pref : preferred) {
                 for (String avail : available) {

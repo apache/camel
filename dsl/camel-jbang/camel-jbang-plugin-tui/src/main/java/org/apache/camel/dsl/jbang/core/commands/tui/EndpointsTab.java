@@ -292,7 +292,7 @@ class EndpointsTab extends AbstractTableTab {
         widths.add(Constraint.fill());
 
         boolean showDetailFocus = panelMode == PANEL_DETAIL;
-        Style tableBorderStyle = showDetailFocus && detailFocused ? Theme.muted() : Style.EMPTY.fg(Theme.accent());
+        Style tableBorderStyle = ctx.paneBorder(!(showDetailFocus && detailFocused));
         Style tableTitleStyle = showDetailFocus && detailFocused ? Style.EMPTY.fg(Theme.accent()) : Theme.title();
         String tableTitle = " Endpoints"
                             + (filter == 1 ? " filter:remote" : filter == 2 ? " filter:remote+stub" : "")
@@ -392,7 +392,6 @@ class EndpointsTab extends AbstractTableTab {
     @Override
     public void renderFooter(List<Span> spans) {
         hint(spans, "Esc", "back");
-        hint(spans, TuiIcons.HINT_SCROLL, "navigate");
         hint(spans, "s", "sort");
         String[] filterLabels = { "all", "remote", "remote+stub" };
         hint(spans, "f", "filter [" + filterLabels[filter] + "]");
@@ -405,7 +404,6 @@ class EndpointsTab extends AbstractTableTab {
         hint(spans, "d", "detail " + (panelMode == PANEL_DETAIL ? "[on]" : "[off]"));
         if (panelMode == PANEL_DETAIL) {
             hint(spans, "Tab", detailFocused ? "table" : "detail");
-            hintLast(spans, TuiIcons.HINT_SCROLL, "navigate");
         }
     }
 
@@ -561,7 +559,7 @@ class EndpointsTab extends AbstractTableTab {
     }
 
     private void renderDetail(Frame frame, Rect area, List<EndpointInfo> sortedEndpoints, IntegrationInfo info) {
-        Style detailBorderStyle = detailFocused ? Style.EMPTY.fg(Theme.accent()) : Theme.muted();
+        Style detailBorderStyle = ctx.paneBorder(detailFocused);
         Style detailTitleStyle = detailFocused ? Theme.title() : Style.EMPTY.fg(Theme.accent());
 
         Integer sel = tableState.selected();

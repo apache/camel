@@ -16,6 +16,8 @@
  */
 package org.apache.camel.component.jackson3;
 
+import java.util.Date;
+
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.junit6.CamelTestSupport;
@@ -23,17 +25,17 @@ import org.junit.jupiter.api.Test;
 import tools.jackson.databind.DeserializationFeature;
 import tools.jackson.databind.MapperFeature;
 import tools.jackson.databind.SerializationFeature;
+import tools.jackson.databind.cfg.DateTimeFeature;
 
 public class JacksonFeaturesTest extends CamelTestSupport {
 
     @Test
     public void testEnableDeserializationFeature() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
+        mock.expectedMessageCount(1);
         mock.message(0).body().isNull();
 
         template.send("direct:format", exchange -> exchange.getIn().setBody("[]"));
-
-        mock.expectedMessageCount(1);
 
         mock.assertIsSatisfied();
     }
@@ -41,11 +43,33 @@ public class JacksonFeaturesTest extends CamelTestSupport {
     @Test
     public void testEnableMapperFeature() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
+        mock.expectedMessageCount(1);
         mock.message(0).body().isInstanceOf(TestPojo.class);
 
         template.send("direct:format", exchange -> exchange.getIn().setBody("{\"nAmE\": \"test\"}"));
 
+        mock.assertIsSatisfied();
+    }
+
+    @Test
+    public void testEnableDatatypeFeature() throws Exception {
+        MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMessageCount(1);
+        mock.message(0).body(String.class).isEqualTo("123");
+
+        template.send("direct:unformat", exchange -> exchange.getIn().setBody(new Date(123)));
+
+        mock.assertIsSatisfied();
+    }
+
+    @Test
+    public void testEnableDatatypeFeatureViaModelString() throws Exception {
+        MockEndpoint mock = getMockEndpoint("mock:result");
+        mock.expectedMessageCount(1);
+        mock.message(0).body(String.class).isEqualTo("123");
+
+        template.send("direct:unformat-model", exchange -> exchange.getIn().setBody(new Date(123)));
+
         mock.assertIsSatisfied();
     }
 
@@ -61,8 +85,15 @@ public class JacksonFeaturesTest extends CamelTestSupport {
                 format.disableFeature(SerializationFeature.INDENT_OUTPUT);
                 format.disableFeature(DeserializationFeature.ACCEPT_EMPTY_STRING_AS_NULL_OBJECT);
                 format.disableFeature(MapperFeature.APPLY_DEFAULT_VALUES);
+                format.enableFeature(DateTimeFeature.WRITE_DATES_AS_TIMESTAMPS);
 
                 from("direct:format").unmarshal(format).to("mock:result");
+                from("direct:unformat").marshal(format).to("mock:result");
+
+                JacksonDataFormat formatModel = new JacksonDataFormat();
+                formatModel.setEnableFeatures("WRITE_DATES_AS_TIMESTAMPS");
+
+                from("direct:unformat-model").marshal(formatModel).to("mock:result");
             }
         };
     }

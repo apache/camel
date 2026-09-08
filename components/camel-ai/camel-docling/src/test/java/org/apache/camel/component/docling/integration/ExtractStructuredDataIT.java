@@ -31,11 +31,11 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.docling.DoclingHeaders;
 import org.apache.camel.component.docling.DoclingOperations;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.condition.DisabledIfSystemProperty;
+import org.junit.jupiter.api.condition.DisabledIfEnvironmentVariable;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-@DisabledIfSystemProperty(named = "ci.env.name", matches = ".*", disabledReason = "Too much resources on GitHub Actions")
+@DisabledIfEnvironmentVariable(named = "CI", matches = "true", disabledReason = "Too much resources on GitHub Actions")
 class ExtractStructuredDataIT extends DoclingITestSupport {
 
     @Test

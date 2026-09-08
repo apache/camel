@@ -19,6 +19,7 @@ package org.apache.camel.dsl.jbang.core.commands.tui;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import dev.tamboui.buffer.Buffer;
@@ -79,7 +80,19 @@ class TuiToolRegistry {
     }
 
     /**
-     * Returns all 42 tool definitions. The result is cached since it is immutable.
+     * The tools needed to answer questions and troubleshoot from the built-in AI panel. The remaining tools drive the
+     * screen (drawing, animation, key presses, tape recording, themes) and exist for external MCP agents. Every tool
+     * schema is sent on every request, and a local model pays for that in prompt-processing time, so the AI panel sends
+     * only this subset to local providers unless configured otherwise.
+     */
+    static final Set<String> CORE_TOOLS = Set.of(
+            "tui_get_state", "tui_get_options", "tui_get_table", "tui_get_log", "tui_get_errors",
+            "tui_get_diagram", "tui_get_topology", "tui_get_processor_detail", "tui_catalog_doc",
+            "tui_get_history", "tui_get_spans", "tui_control", "tui_send_message", "tui_get_files",
+            "tui_get_readme", "tui_navigate", "tui_set_log_level", "tui_filter", "tui_get_status");
+
+    /**
+     * Returns all tool definitions. The result is cached since it is immutable.
      */
     List<ToolDef> getToolDefinitions() {
         List<ToolDef> tools = cachedTools;
@@ -92,6 +105,13 @@ class TuiToolRegistry {
     }
 
     /**
+     * Returns only the {@link #CORE_TOOLS} definitions, in registry order.
+     */
+    List<ToolDef> getCoreToolDefinitions() {
+        return getToolDefinitions().stream().filter(t -> CORE_TOOLS.contains(t.name())).toList();
+    }
+
+    /**
      * Executes a tool by name, returns result string.
      */
     String execute(String name, Map<String, Object> args) throws Exception {
@@ -99,6 +119,7 @@ class TuiToolRegistry {
             case "tui_get_screen" -> callGetScreen(args);
             case "tui_get_events" -> callGetEvents(args);
             case "tui_get_state" -> callGetState();
+            case "tui_get_status" -> callGetStatus(args);
             case "tui_show_caption" -> callShowCaption(args);
             case "tui_navigate" -> callNavigate(args);
             case "tui_send_keys" -> callSendKeys(args);
@@ -166,14 +187,9 @@ class TuiToolRegistry {
                 Map.of("limit", propDef("integer", "Maximum number of events to return (default 50)")))));
         tools.add(toToolDef(toolDef(
                 "tui_get_state",
-                "Returns the current TUI navigation state: active tab, selected integration, "
-                                 + "and integration count. "
-                                 + "Includes a 'selection' field with structured metadata about the active list/table. "
-                                 + "captionVisible indicates if a caption overlay is on screen. "
-                                 + "keystrokesVisible indicates if the keystroke overlay is on. "
-                                 + "detailFocused (boolean, present on tabs with master/detail panels) indicates "
-                                 + "which panel has focus: true=detail panel, false=table panel. "
-                                 + "Press Tab to toggle focus. Up/Down and PgUp/PgDn operate on the focused panel.",
+                "Current TUI navigation state: active tab, selected integration and PID, integration count, the "
+                                 + "active list/table selection, overlay flags and (on master/detail tabs) which "
+                                 + "panel has focus.",
                 Map.of())));
         tools.add(toToolDef(toolDef(
                 "tui_show_caption",
@@ -187,20 +203,14 @@ class TuiToolRegistry {
                 List.of("text"))));
         tools.add(toToolDef(toolDef(
                 "tui_navigate",
-                "Navigates the TUI: switch tabs and/or select an integration. "
-                                + "All parameters are optional — set whichever you want to change. "
-                                + "Tab names: Overview, Log, Activity, Diagram, Routes, Endpoints, HTTP, Inspect, "
-                                + "Circuit Breaker, Health, Spans, Process. "
-                                + "Use 'route' to select a route in the Diagram topology, "
-                                + "and 'node' to drill down into a route and select a specific processor/EIP node. "
-                                + "Returns screen content and selection metadata after navigating.",
-                Map.of("tab", propDef("string", "Tab to switch to (e.g. 'Routes', 'Activity', 'Diagram')"),
+                "Changes what the user sees: switch tab, select an integration, select a route in the Diagram "
+                                + "tab, or drill into a processor node. Every parameter is optional. Returns the screen "
+                                + "and selection afterwards. Do not use it just to read data; the tui_get_* tools do that.",
+                Map.of("tab", propDef("string", "Tab to switch to, e.g. Routes, Log, Diagram (see tui_get_options)"),
                         "integration", propDef("string", "Integration name or PID to select"),
-                        "route", propDef("string",
-                                "Route ID to select in the Diagram tab topology (e.g. 'order-dispatcher')"),
+                        "route", propDef("string", "Route ID to select in the Diagram tab"),
                         "node", propDef("string",
-                                "Processor/EIP node ID to select within a drilled-down route (e.g. 'multicast1'). "
-                                                  + "If 'route' is also provided, drills into that route first")))));
+                                "Processor/EIP node ID to select inside the route (drills into 'route' first when given)")))));
 
         tools.add(toToolDef(toolDef(
                 "tui_send_keys",
@@ -218,13 +228,9 @@ class TuiToolRegistry {
                 List.of("keys"))));
         tools.add(toToolDef(toolDef(
                 "tui_get_options",
-                "IMPORTANT: Call this FIRST before any other tui_ tool when starting a new task. "
-                                   + "Returns all available tabs with descriptions and running integrations. "
-                                   + "Each tab description says what data it provides — match the user's question "
-                                   + "keywords to tab descriptions to find the right data source in one step "
-                                   + "(e.g. 'kafka offset' → find Kafka tab → tui_get_table(tab='Kafka')). "
-                                   + "This avoids wasting calls piecing data from logs, spans, and endpoints "
-                                   + "when a dedicated tab already has exactly the needed information.",
+                "Lists every tab with a description of the data it provides, plus the running integrations. "
+                                   + "Use it when unsure which tab holds the data for a question (e.g. 'kafka offset' "
+                                   + "-> Kafka tab), then read that tab with tui_get_table.",
                 Map.of())));
         tools.add(toToolDef(toolDef(
                 "tui_wait_for_idle",
@@ -260,36 +266,18 @@ class TuiToolRegistry {
                 List.of("seconds"))));
         tools.add(toToolDef(toolDef(
                 "tui_draw",
-                "Draws characters at specific screen coordinates as an overlay on top of the TUI. "
-                            + "Use this to highlight areas, annotate the screen for the human, "
-                            + "draw shapes, or create fun emoji art. "
-                            + "All cells are sent in a single call to avoid chatty networking. "
-                            + "Coordinates are 0-based and match the screen grid from tui_get_screen. "
-                            + "Characters can be any unicode including emoji. "
-                            + "The drawing overlays on top of existing content without modifying it. "
-                            + "Use with tui_show_caption to explain what you drew.",
+                "Draws an overlay on top of the TUI screen in one call: many shapes (batch of the tui_draw_shape "
+                            + "parameters) and/or individual characters, including emoji. Coordinates are 0-based and "
+                            + "match tui_get_screen. Use with tui_show_caption to explain what you drew.",
                 Map.of("cells", propDef("array",
-                        "Array of cell objects to draw. Each cell has: "
-                                                 + "x (integer, column), y (integer, row), "
-                                                 + "char (string, character to draw), "
-                                                 + "fg (string, optional foreground color: red/green/blue/yellow/cyan/magenta/white/gray/black), "
-                                                 + "bg (string, optional background color, same values), "
-                                                 + "bold (boolean, optional)"),
+                        "Cell objects: x, y, char, optional fg/bg color name, optional bold"),
                         "shapes", propDef("array",
-                                "Array of shape objects to draw (batch mode). Each shape has: "
-                                                   + "shape (string, required: box/highlight/underline/arrow-down/arrow-up/arrow-left/arrow-right/text), "
-                                                   + "x (integer, column), y (integer, row), "
-                                                   + "width (integer, for box/highlight/underline), "
-                                                   + "height (integer, for box/highlight), "
-                                                   + "length (integer, for arrows), "
-                                                   + "text (string, for text shape), "
-                                                   + "color (string: red/green/blue/yellow/cyan/magenta/white/gray/black). "
-                                                   + "Use shapes instead of cells for high-level drawing in a single call."),
+                                "Shape objects with the same fields as tui_draw_shape: shape, x, y, width, height, "
+                                                   + "length, text, color"),
                         "duration", propDef("integer",
-                                "Auto-dismiss drawing after this many seconds. "
-                                                       + "If omitted, drawing stays until cleared with tui_draw_clear or replaced by another tui_draw call."),
+                                "Auto-dismiss after this many seconds; otherwise stays until tui_draw_clear or the next tui_draw"),
                         "append", propDef("boolean",
-                                "If true, add cells to the existing drawing instead of replacing it. Default false.")),
+                                "Add to the existing drawing instead of replacing it (default false)")),
                 List.of())));
         tools.add(toToolDef(toolDef(
                 "tui_draw_clear",
@@ -299,13 +287,10 @@ class TuiToolRegistry {
 
         tools.add(toToolDef(toolDef(
                 "tui_draw_shape",
-                "Draws a predefined shape on the TUI screen overlay. "
-                                  + "Much easier than constructing individual cells with tui_draw. "
-                                  + "Combine with tui_locate for precise positioning.",
+                "Draws one shape on the TUI screen overlay. Combine with tui_locate for precise positioning.",
                 Map.of("shape", propDef("string",
-                        "Shape to draw: box (rectangle border), highlight (background color on existing text like a marker pen), "
-                                                  + "underline (horizontal line), arrow-down, arrow-up, arrow-left, arrow-right, "
-                                                  + "text (draw text string at position)"),
+                        "box (border), highlight (marker-pen background), underline, arrow-down, arrow-up, "
+                                                  + "arrow-left, arrow-right, or text"),
                         "x", propDef("integer", "X coordinate (column) of the shape origin"),
                         "y", propDef("integer", "Y coordinate (row) of the shape origin"),
                         "width", propDef("integer", "Width of the shape (for box, highlight, underline)"),
@@ -313,11 +298,10 @@ class TuiToolRegistry {
                         "length", propDef("integer", "Length of arrows"),
                         "text", propDef("string", "Text content to draw (for text shape)"),
                         "color", propDef("string",
-                                "Color: red, green, blue, yellow, cyan, magenta, white, gray, black. Default: red for box/underline/arrow, yellow for highlight."),
-                        "duration",
-                        propDef("integer", "Auto-dismiss after this many seconds. If omitted, stays until cleared."),
-                        "append", propDef("boolean",
-                                "If true, add to existing drawing instead of replacing it. Default false.")),
+                                "red, green, blue, yellow, cyan, magenta, white, gray or black (default red, "
+                                                   + "yellow for highlight)"),
+                        "duration", propDef("integer", "Auto-dismiss after this many seconds; otherwise stays until cleared"),
+                        "append", propDef("boolean", "Add to the existing drawing instead of replacing it (default false)")),
                 List.of("shape", "x", "y"))));
 
         tools.add(toToolDef(toolDef(
@@ -372,6 +356,19 @@ class TuiToolRegistry {
                         "Tab name to get data from (e.g. 'Routes', 'Endpoints', 'Kafka'). "
                                                 + "Use tui_get_options to discover available tab names. "
                                                 + "If omitted, uses the active tab.")))));
+        tools.add(toToolDef(toolDef(
+                "tui_get_status",
+                "One top-level section of the integration's full status document (~/.camel/<pid>-status.json). "
+                                  + "Use it for data no tab shows: context (name, version, state, uptime millis, "
+                                  + "startTimestamp, statistics), runtime (pid, directory, java), healthChecks, "
+                                  + "properties, main-configuration, routeController, services, transformers, rests, "
+                                  + "consumers, producers, endpoints, dataSources, memory, threads, gc, classLoading, "
+                                  + "trace, events. section='sections' lists them. Request only the section you need.",
+                Map.of("section", propDef("string",
+                        "Top-level section name, or 'sections' to list the available names"),
+                        "pid", propDef("string",
+                                "Process id of the integration; defaults to the selected integration")),
+                List.of("section"))));
         tools.add(toToolDef(toolDef(
                 "tui_action",
                 "Invokes a TUI action by name, bypassing fragile key sequences. "
@@ -430,9 +427,13 @@ class TuiToolRegistry {
                 Map.of())));
         tools.add(toToolDef(toolDef(
                 "tui_send_message",
-                "Sends a message to a Camel endpoint in the selected integration. "
-                                    + "Uses the file-based IPC protocol to deliver the message directly.",
-                Map.of("endpoint", propDef("string", "Endpoint URI to send to (e.g. 'direct:myRoute', 'seda:queue')"),
+                "Sends a message to any Camel endpoint URI from inside the selected integration: direct:/seda: "
+                                    + "to feed a route, or a producer such as paho-mqtt5:, kafka:, jms:, http:, file: "
+                                    + "to publish to the system a route consumes from. A route that only consumes from "
+                                    + "a broker has no direct: endpoint; publish to the broker with the same component "
+                                    + "and options the route uses.",
+                Map.of("endpoint", propDef("string",
+                        "Endpoint URI, e.g. 'direct:myRoute', 'paho-mqtt5:temperature?brokerUrl=tcp://localhost:1883'"),
                         "body", propDef("string", "Message body to send"),
                         "headers", propDef("string", "Message headers as key=value pairs separated by newlines")),
                 List.of("endpoint"))));
@@ -514,8 +515,10 @@ class TuiToolRegistry {
                         "Integration name. If omitted, uses the currently selected integration.")))));
         tools.add(toToolDef(toolDef(
                 "tui_control",
-                "Controls the selected integration: stop/start routes, restart, stop, or kill the process. "
-                               + "Actions: stop-routes (or pause) — suspend all routes; "
+                "Controls the selected integration: reset statistics, stop/start routes, restart, stop, or kill "
+                               + "the process. Actions: reset-stats (or clear-stats) — clear exchange statistics, "
+                               + "activity, errors and traces without touching the routes; "
+                               + "stop-routes (or pause) — suspend all routes; "
                                + "start-routes (or resume) — resume all routes; "
                                + "restart — gracefully restart the integration; "
                                + "stop — gracefully stop the process; "
@@ -523,7 +526,8 @@ class TuiToolRegistry {
                                + "stop-all — stop all running processes; "
                                + "close — close a phantom (opened but not running) project.",
                 Map.of("action", propDef("string",
-                        "Control action: stop-routes, start-routes, pause, resume, restart, stop, kill, stop-all, or close")),
+                        "Control action: reset-stats, stop-routes, start-routes, pause, resume, restart, stop, kill, "
+                                                   + "stop-all, or close")),
                 List.of("action"))));
         tools.add(toToolDef(toolDef(
                 "tui_open_project",
@@ -573,26 +577,17 @@ class TuiToolRegistry {
 
         tools.add(toToolDef(toolDef(
                 "tui_catalog_doc",
-                "Get documentation for a Camel catalog artifact (component, data format, language, EIP) "
-                                   + "including description, options, and Maven coordinates. "
-                                   + "Use optionsFilter to search options by keyword (e.g., 'security', 'ssl', 'timeout'). "
-                                   + "This enables queries like 'what options are there on kafka about security'. "
-                                   + "Set includeDoc=true to get the full AsciiDoc documentation for deep-dive questions. "
-                                   + "Uses the Camel version from the selected integration.",
-                Map.of("name", propDef("string",
-                        "Artifact name (e.g., kafka, json-jackson, simple, timer, choice, split)"),
+                "Camel catalog documentation for a component, data format, language or EIP: description, options "
+                                   + "and Maven coordinates, for the Camel version of the selected integration. "
+                                   + "Use optionsFilter for questions like 'which kafka options are about security'.",
+                Map.of("name", propDef("string", "Artifact name, e.g. kafka, json-jackson, simple, timer, choice, split"),
                         "kind", propDef("string",
-                                "Artifact kind: component, dataformat, language, or eip. "
-                                                  + "If omitted, auto-detects by trying component first, then dataformat, then language, then eip."),
-                        "includeOptions", propDef("boolean",
-                                "Whether to include configuration options in the response (default: true). "
-                                                             + "Set to false for a lightweight response with just metadata."),
+                                "component, dataformat, language or eip; auto-detected in that order when omitted"),
+                        "includeOptions", propDef("boolean", "Include the configuration options (default true)"),
                         "includeDoc", propDef("boolean",
-                                "Whether to include the full AsciiDoc documentation text in the response (default: false). "
-                                                         + "Useful for deep-dive questions about usage, examples, and configuration patterns."),
+                                "Include the full AsciiDoc page for usage examples and patterns (default false)"),
                         "optionsFilter", propDef("string",
-                                "Filter options by keyword in name or description (case-insensitive substring match). "
-                                                           + "Only used when includeOptions is true.")),
+                                "Case-insensitive keyword to match in option names or descriptions")),
                 List.of("name"))));
 
         tools.add(toToolDef(toolDef(
@@ -1310,9 +1305,40 @@ class TuiToolRegistry {
         String tab = args.get("tab") instanceof String s ? s : null;
         JsonObject data = facade.getTableData(tab);
         if (data == null) {
-            return "No table data available" + (tab != null ? " for tab: " + tab : "");
+            return facade.tableDataError(tab);
         }
         return Jsoner.serialize(data);
+    }
+
+    private String callGetStatus(Map<String, Object> args) {
+        String section = args.get("section") instanceof String s ? s.trim() : "";
+        if (section.isEmpty()) {
+            return "Error: section is required (use 'sections' to list the available names)";
+        }
+        String pid = args.get("pid") instanceof String s && !s.isBlank() ? s.trim() : facade.getSelectedPid();
+        if (pid == null || pid.isBlank()) {
+            return "No integration selected";
+        }
+        StatusFileReader reader = facade.statusFiles();
+        List<String> sections = reader.sections(pid);
+        if (sections.isEmpty()) {
+            return "No status document available for PID " + pid;
+        }
+        if (StatusFileReader.SECTION_LIST.equals(section)) {
+            JsonObject result = new JsonObject();
+            result.put("pid", pid);
+            result.put("sections", new JsonArray(sections));
+            return Jsoner.serialize(result);
+        }
+        Object value = reader.section(pid, section);
+        if (value == null) {
+            return "Unknown section '" + section + "' for PID " + pid + ". Available: " + String.join(", ", sections);
+        }
+        JsonObject result = new JsonObject();
+        result.put("pid", pid);
+        result.put("section", section);
+        result.put("data", value);
+        return Jsoner.serialize(result);
     }
 
     private String callAction(Map<String, Object> args) {
@@ -1439,7 +1465,80 @@ class TuiToolRegistry {
         if (response == null) {
             return "Error: no integration selected or PID unavailable";
         }
+        String hint = unknownSchemeHint(endpoint, Jsoner.serialize(response));
+        if (hint != null) {
+            response.put("hint", hint);
+        }
         return Jsoner.serialize(response);
+    }
+
+    /**
+     * When a send failed because the endpoint scheme is not a Camel component (a model guessing {@code mqt t:} for
+     * {@code paho-mqtt5:}), names the catalog components that look like what was meant so the next call can use one.
+     */
+    private String unknownSchemeHint(String endpoint, String result) {
+        int colon = endpoint.indexOf(':');
+        if (colon <= 0 || result == null) {
+            return null;
+        }
+        String lower = result.toLowerCase();
+        if (!(lower.contains("no component found") || lower.contains("nosuchendpoint")
+                || lower.contains("failed to resolve endpoint") || lower.contains("cannot find component"))) {
+            return null;
+        }
+        String scheme = endpoint.substring(0, colon).toLowerCase();
+        List<String> names;
+        try {
+            CamelCatalog catalog = CatalogLoader.loadCatalog(null, facade.getSelectedCamelVersion(), true);
+            names = catalog.findComponentNames();
+        } catch (Exception e) {
+            return null;
+        }
+        if (names.contains(scheme)) {
+            return null;
+        }
+        List<String> similar = suggestComponents(scheme, names);
+        if (similar.isEmpty()) {
+            return "Camel has no component named '" + scheme + "'. Use tui_catalog_doc to find the right component, "
+                   + "then send again with its scheme.";
+        }
+        return "Camel has no component named '" + scheme + "'. Similar components in the catalog: "
+               + String.join(", ", similar) + ". Send again with one of those schemes, e.g. '" + similar.get(0)
+               + endpoint.substring(colon) + "'.";
+    }
+
+    /** Well-known names people use for a protocol that differ from the Camel component name. */
+    private static final Map<String, List<String>> SCHEME_ALIASES = Map.of(
+            "mqtt", List.of("paho-mqtt5", "paho"),
+            "mqtt5", List.of("paho-mqtt5"),
+            "rabbitmq", List.of("spring-rabbitmq"),
+            "amq", List.of("activemq", "jms"),
+            "rest", List.of("rest", "platform-http", "http"),
+            "s3", List.of("aws2-s3"),
+            "sqs", List.of("aws2-sqs"),
+            "sns", List.of("aws2-sns"),
+            "pubsub", List.of("google-pubsub"),
+            "servicebus", List.of("azure-servicebus"));
+
+    /**
+     * Catalog component names that resemble the scheme: known aliases first, then names containing the scheme (or
+     * contained in it), at most five.
+     */
+    static List<String> suggestComponents(String scheme, List<String> componentNames) {
+        List<String> result = new ArrayList<>();
+        for (String alias : SCHEME_ALIASES.getOrDefault(scheme, List.of())) {
+            if (componentNames.contains(alias) && !result.contains(alias)) {
+                result.add(alias);
+            }
+        }
+        if (scheme.length() >= 3) {
+            for (String name : componentNames) {
+                if ((name.contains(scheme) || scheme.contains(name)) && !name.equals(scheme) && !result.contains(name)) {
+                    result.add(name);
+                }
+            }
+        }
+        return result.size() > 5 ? result.subList(0, 5) : result;
     }
 
     private String callExecuteSql(Map<String, Object> args) {

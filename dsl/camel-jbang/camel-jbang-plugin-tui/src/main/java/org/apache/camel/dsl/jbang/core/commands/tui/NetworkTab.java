@@ -404,7 +404,6 @@ class NetworkTab extends AbstractTableTab {
     @Override
     public void renderFooter(List<Span> spans) {
         hint(spans, "Esc", "back");
-        hint(spans, TuiIcons.HINT_SCROLL, "navigate");
         hint(spans, "s", "sort");
         String chartLabel = switch (chartMode) {
             case CHART_ALL -> "[all]";
