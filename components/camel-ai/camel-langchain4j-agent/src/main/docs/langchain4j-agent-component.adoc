@@ -181,7 +181,7 @@ Agents are configured using the `AgentConfiguration` class which provides a flue
 
 ==== Content moderation
 
-When `AgentConfiguration.withModerationModel(ModerationModel)` is set, Camel pre-moderates the user message before invoking the chat model. Flagged input raises `ModerationException` before tools run or memory is updated. The producer sets the `CamelLangChain4jAgentModerationFlagged` header to `true` on failure so routes can return a controlled refusal. See xref:others:langchain4j-agent-guardrails.adoc#_content_moderation[Content Moderation] for route examples. Category details are available on `${exception.moderation}` when handling `ModerationException`.
+When `AgentConfiguration.withModerationModel(ModerationModel)` is set, Camel pre-moderates the user message before invoking the chat model. Flagged input raises `ModerationException` before tools run or memory is updated. The producer sets the `CamelLangChain4jAgentModerationFlagged` header to `true` on failure so routes can return a controlled refusal. See xref:others:langchain4j-agent-guardrails.adoc#_content_moderation[Content Moderation] for route examples. The flagged text is available via `${exception.moderation}` when handling `ModerationException`.
 
 ._Java-only: public support chatbot with moderation_
 [source,java]

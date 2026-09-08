@@ -42,7 +42,8 @@ public final class ModerationSupport {
      * <p/>
      * Only non-empty user message text is moderated. Multimodal {@code Content} without a user message is not sent to
      * the moderation model. When a moderation model is configured, a missing verdict fails closed and raises
-     * {@link ModerationException}.
+     * {@link ModerationException} without marking the input as flagged. Provider infrastructure failures (timeouts,
+     * rate limits, auth errors) are rethrown so callers can classify and retry them appropriately.
      *
      * @param  moderationModel     the moderation model, may be {@code null}
      * @param  userMessage         the user message to check
@@ -53,24 +54,16 @@ public final class ModerationSupport {
             return;
         }
 
-        try {
-            Response<Moderation> response = moderationModel.moderate(userMessage);
-            if (response == null || response.content() == null) {
-                throw new ModerationException(
-                        "Moderation model returned no verdict for user message",
-                        Moderation.flagged(userMessage));
-            }
-
-            Moderation moderation = response.content();
-            if (moderation.flagged()) {
-                throw new ModerationException("User message flagged by moderation model", moderation);
-            }
-        } catch (ModerationException e) {
-            throw e;
-        } catch (RuntimeException e) {
+        Response<Moderation> response = moderationModel.moderate(userMessage);
+        if (response == null || response.content() == null) {
             throw new ModerationException(
-                    "Moderation model failed to evaluate user message: " + e.getMessage(),
-                    Moderation.flagged(userMessage));
+                    "Moderation model returned no verdict for user message",
+                    Moderation.notFlagged());
+        }
+
+        Moderation moderation = response.content();
+        if (moderation.flagged()) {
+            throw new ModerationException("User message flagged by moderation model", moderation);
         }
     }
 }

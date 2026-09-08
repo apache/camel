@@ -38,22 +38,29 @@ public class AgentWithMemory extends AbstractAgent<AiAgentWithMemoryService> {
     public Result<String> chat(AiAgentBody<?> aiAgentBody, ToolProvider toolProvider) {
         ModerationSupport.moderateUserMessage(configuration.getModerationModel(), aiAgentBody.getUserMessage());
 
+        AiAgentWithMemoryService agentService = createAiAgentService(toolProvider);
+
         String userMessage = aiAgentBody.getUserMessage();
         Object memoryId = aiAgentBody.getMemoryId();
         String systemMessage = aiAgentBody.getSystemMessage();
         Content content = aiAgentBody.getContent();
 
-        AiAgentWithMemoryService agentService = createAiAgentService(toolProvider);
         if (content != null) {
+            // Multi-modal message with content
             return systemMessage != null
                     ? agentService.chat(memoryId, userMessage, content, systemMessage)
                     : agentService.chat(memoryId, userMessage, content);
+        } else {
+            // Text-only message
+            return systemMessage != null
+                    ? agentService.chat(memoryId, userMessage, systemMessage)
+                    : agentService.chat(memoryId, userMessage);
         }
-        return systemMessage != null
-                ? agentService.chat(memoryId, userMessage, systemMessage)
-                : agentService.chat(memoryId, userMessage);
     }
 
+    /**
+     * Create AI service with memory provider and common configurations.
+     */
     private AiAgentWithMemoryService createAiAgentService(ToolProvider toolProvider) {
         var builder = AiServices.builder(AiAgentWithMemoryService.class)
                 .chatModel(configuration.getChatModel())

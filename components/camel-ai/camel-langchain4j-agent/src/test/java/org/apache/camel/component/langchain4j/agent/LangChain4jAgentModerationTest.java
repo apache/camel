@@ -23,6 +23,7 @@ import java.util.concurrent.atomic.AtomicReference;
 
 import dev.langchain4j.data.message.AiMessage;
 import dev.langchain4j.memory.chat.ChatMemoryProvider;
+import dev.langchain4j.memory.chat.MessageWindowChatMemory;
 import dev.langchain4j.model.chat.ChatModel;
 import dev.langchain4j.model.chat.request.ChatRequest;
 import dev.langchain4j.model.chat.response.ChatResponse;
@@ -166,7 +167,7 @@ class LangChain4jAgentModerationTest extends CamelTestSupport {
     }
 
     private static AgentConfiguration memoryModeratedAgentConfiguration(AtomicInteger chatInvocations) {
-        ChatMemoryProvider memoryProvider = memoryId -> dev.langchain4j.memory.chat.MessageWindowChatMemory.builder()
+        ChatMemoryProvider memoryProvider = memoryId -> MessageWindowChatMemory.builder()
                 .id(memoryId)
                 .maxMessages(10)
                 .build();

@@ -20,11 +20,15 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 import dev.langchain4j.data.message.AiMessage;
 import dev.langchain4j.memory.chat.ChatMemoryProvider;
+import dev.langchain4j.memory.chat.MessageWindowChatMemory;
 import dev.langchain4j.model.chat.ChatModel;
 import dev.langchain4j.model.chat.request.ChatRequest;
 import dev.langchain4j.model.chat.response.ChatResponse;
 import dev.langchain4j.model.moderation.Moderation;
 import dev.langchain4j.model.moderation.ModerationModel;
+import dev.langchain4j.model.moderation.ModerationRequest;
+import dev.langchain4j.model.moderation.ModerationResponse;
+import dev.langchain4j.model.output.Response;
 import dev.langchain4j.service.ModerationException;
 import dev.langchain4j.service.Result;
 import org.junit.jupiter.api.Test;
@@ -81,7 +85,7 @@ class AgentModerationTest {
 
     @Test
     void agentWithMemoryRejectsFlaggedInputWhenModerationConfigured() {
-        ChatMemoryProvider memoryProvider = memoryId -> dev.langchain4j.memory.chat.MessageWindowChatMemory.builder()
+        ChatMemoryProvider memoryProvider = memoryId -> MessageWindowChatMemory.builder()
                 .id(memoryId)
                 .maxMessages(10)
                 .build();
@@ -97,7 +101,7 @@ class AgentModerationTest {
     @Test
     void agentWithMemoryDoesNotInvokeChatModelWhenInputIsFlagged() {
         AtomicInteger chatInvocations = new AtomicInteger();
-        ChatMemoryProvider memoryProvider = memoryId -> dev.langchain4j.memory.chat.MessageWindowChatMemory.builder()
+        ChatMemoryProvider memoryProvider = memoryId -> MessageWindowChatMemory.builder()
                 .id(memoryId)
                 .maxMessages(10)
                 .build();
@@ -114,7 +118,7 @@ class AgentModerationTest {
 
     @Test
     void agentWithMemoryAllowsCleanInputWhenModerationConfigured() {
-        ChatMemoryProvider memoryProvider = memoryId -> dev.langchain4j.memory.chat.MessageWindowChatMemory.builder()
+        ChatMemoryProvider memoryProvider = memoryId -> MessageWindowChatMemory.builder()
                 .id(memoryId)
                 .maxMessages(10)
                 .build();
@@ -132,8 +136,7 @@ class AgentModerationTest {
     void moderationSupportFailsClosedWhenModelReturnsNoVerdict() {
         ModerationModel moderationModel = new ModerationModel() {
             @Override
-            public dev.langchain4j.model.moderation.ModerationResponse doModerate(
-                    dev.langchain4j.model.moderation.ModerationRequest request) {
+            public Response<Moderation> moderate(String text) {
                 return null;
             }
         };
@@ -143,8 +146,39 @@ class AgentModerationTest {
                 .satisfies(error -> {
                     ModerationException moderationException = (ModerationException) error;
                     assertThat(moderationException.moderation()).isNotNull();
-                    assertThat(moderationException.moderation().flagged()).isTrue();
+                    assertThat(moderationException.moderation().flagged()).isFalse();
                 });
+    }
+
+    @Test
+    void moderationSupportRethrowsProviderFailures() {
+        RuntimeException providerFailure = new RuntimeException("moderation API unavailable");
+        ModerationModel moderationModel = new ModerationModel() {
+            @Override
+            public ModerationResponse doModerate(ModerationRequest request) {
+                throw providerFailure;
+            }
+        };
+
+        assertThatThrownBy(() -> ModerationSupport.moderateUserMessage(moderationModel, "hello"))
+                .isSameAs(providerFailure);
+    }
+
+    @Test
+    void agentWithoutMemoryRethrowsModerationProviderFailures() {
+        RuntimeException providerFailure = new RuntimeException("moderation API unavailable");
+        AgentConfiguration configuration = new AgentConfiguration()
+                .withChatModel(countingChatModel(new AtomicInteger()))
+                .withModerationModel(new ModerationModel() {
+                    @Override
+                    public ModerationResponse doModerate(ModerationRequest request) {
+                        throw providerFailure;
+                    }
+                });
+        Agent agent = new AgentWithoutMemory(configuration);
+
+        assertThatThrownBy(() -> agent.chat(new AiAgentBody<>("hello"), null))
+                .isSameAs(providerFailure);
     }
 
     @Test
@@ -152,7 +186,7 @@ class AgentModerationTest {
         AtomicInteger memoryProviderInvocations = new AtomicInteger();
         ChatMemoryProvider memoryProvider = memoryId -> {
             memoryProviderInvocations.incrementAndGet();
-            return dev.langchain4j.memory.chat.MessageWindowChatMemory.builder()
+            return MessageWindowChatMemory.builder()
                     .id(memoryId)
                     .maxMessages(10)
                     .build();
