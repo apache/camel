@@ -335,8 +335,8 @@ public class LlmClient {
                 if (openAiAuthMode == OpenAiAuthMode.api_key
                         || (url != null && isAzureOpenAiEndpoint(url))) {
                     resolveAzureOpenAiModel();
-                } else if (model == null || model.isBlank()) {
-                    model = DEFAULT_OPENAI_MODEL;
+                } else if (model == null || model.isBlank() || DEFAULT_OLLAMA_MODEL.equals(model)) {
+                    model = isOpenAiCompatibleServer() ? resolveOpenAiCompatibleModel() : DEFAULT_OPENAI_MODEL;
                 }
             }
             case gemini -> {
@@ -1987,6 +1987,33 @@ public class LlmClient {
                 .filter(name -> name.equals(DEFAULT_OLLAMA_MODEL) || name.startsWith(DEFAULT_OLLAMA_MODEL + ":"))
                 .findFirst()
                 .orElse(available.get(0));
+    }
+
+    /**
+     * Whether the OpenAI-style endpoint is something other than OpenAI itself (LM Studio, vLLM, llama.cpp server,
+     * LocalAI and friends reached through {@code LLM_BASE_URL} / {@code OPENAI_BASE_URL}). Those servers only know the
+     * models they host, so OpenAI's default model name is rejected there.
+     */
+    private boolean isOpenAiCompatibleServer() {
+        return url != null && !url.contains("api.openai.com");
+    }
+
+    /**
+     * Picks the first model an OpenAI-compatible server reports on {@code /v1/models}, since a hard-coded OpenAI model
+     * name would be rejected with "model not found". Falls back to the OpenAI default when the list is empty or the
+     * endpoint does not implement it.
+     */
+    private String resolveOpenAiCompatibleModel() {
+        try {
+            List<String> available = listOpenAiModels();
+            if (!available.isEmpty()) {
+                printer.println("Auto-selected model: " + available.get(0) + " (first model reported by " + url + ")");
+                return available.get(0);
+            }
+        } catch (Exception e) {
+            // best-effort, keep default
+        }
+        return DEFAULT_OPENAI_MODEL;
     }
 
     private void resolveOllamaModel() {

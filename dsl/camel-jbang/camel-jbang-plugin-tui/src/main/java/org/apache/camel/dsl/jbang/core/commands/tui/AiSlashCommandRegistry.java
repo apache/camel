@@ -72,6 +72,37 @@ final class AiSlashCommandRegistry {
                 "tools", List.of("t"), "Show or switch the tool set sent to the model", "[auto|core|full]",
                 AiSlashCommandRegistry::executeTools));
         commands.add(new Descriptor(
+                "context", List.of("ctx"), "Show what the next request costs: provider, tools, prompt and history size",
+                null,
+                (context, arguments) -> CommandResult.system(context.describeContext())));
+        commands.add(new Descriptor(
+                "compact", List.of(), "Shrink the conversation history sent to the model", null,
+                (context, arguments) -> CommandResult.system(context.compactHistoryNow())));
+        commands.add(new Descriptor(
+                "retry", List.of(), "Send the last question again", null,
+                (context, arguments) -> context.retryLastQuestion()
+                        ? CommandResult.system("")
+                        : CommandResult.error("No question to retry. Ask something first.")));
+        commands.add(new Descriptor(
+                "usage", List.of("u"), "Show AI usage so far: requests, tokens, latency (Ctrl+U opens the full view)",
+                null,
+                (context, arguments) -> CommandResult.system(context.usageSummary())));
+        commands.add(new Descriptor(
+                "copy", List.of("y"), "Copy the last AI response to the clipboard (Ctrl+Y)", null,
+                (context, arguments) -> {
+                    context.copyLastResponse();
+                    return CommandResult.system("");
+                }));
+        commands.add(new Descriptor(
+                "export", List.of("e"), "Export the conversation to a Markdown file (Ctrl+E)", null,
+                (context, arguments) -> {
+                    context.exportConversation();
+                    return CommandResult.system("");
+                }));
+        commands.add(new Descriptor(
+                "prompt", List.of(), "Show the system prompt sent to the model", null,
+                (context, arguments) -> CommandResult.system(context.systemPrompt())));
+        commands.add(new Descriptor(
                 "clear", List.of("c"), "Clear the conversation", null,
                 (context, arguments) -> {
                     context.clearConversation();

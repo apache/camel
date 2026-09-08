@@ -17,6 +17,7 @@
 package org.apache.camel.dsl.jbang.core.commands.tui;
 
 import java.nio.file.Path;
+import java.time.Instant;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CountDownLatch;
@@ -31,6 +32,7 @@ import dev.tamboui.tui.event.KeyEvent;
 import dev.tamboui.tui.event.KeyModifiers;
 import org.apache.camel.dsl.jbang.core.commands.LlmClient;
 import org.apache.camel.dsl.jbang.core.common.CommandLineHelper;
+import org.apache.camel.util.json.JsonObject;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
 
@@ -661,13 +663,28 @@ class AiPanelTest {
     void tabCompletesLongestCommonPrefixThenCyclesForward() {
         AiPanel panel = new AiPanel();
         panel.open();
-        type(panel, "/c");
+        type(panel, "/cle");
 
-        // /c matches /clear, /clear-history, and /close, so the first TAB fills in their common prefix.
+        // /cle matches /clear and /clear-history, so the first TAB fills in their common prefix.
         tab(panel);
-        assertEquals("/cl", panel.inputBufferForTesting());
+        assertEquals("/clear", panel.inputBufferForTesting());
 
         // No further prefix can be added, so subsequent TABs cycle through the matches and wrap around.
+        tab(panel);
+        assertEquals("/clear", panel.inputBufferForTesting());
+        tab(panel);
+        assertEquals("/clear-history", panel.inputBufferForTesting());
+        tab(panel);
+        assertEquals("/clear", panel.inputBufferForTesting());
+    }
+
+    @Test
+    void tabCyclesThroughMatchesWhenNoPrefixCanBeAdded() {
+        AiPanel panel = new AiPanel();
+        panel.open();
+        type(panel, "/cl");
+
+        // /cl matches /clear, /clear-history and /close and is already their common prefix, so TAB cycles.
         tab(panel);
         assertEquals("/clear", panel.inputBufferForTesting());
         tab(panel);
@@ -682,11 +699,9 @@ class AiPanelTest {
     void shiftTabCyclesBackward() {
         AiPanel panel = new AiPanel();
         panel.open();
-        type(panel, "/c");
-        tab(panel);
-        assertEquals("/cl", panel.inputBufferForTesting());
+        type(panel, "/cl");
 
-        // Shift+TAB from the common prefix selects the last match, then walks backward through the list.
+        // Shift+TAB selects the last match, then walks backward through the list.
         shiftTab(panel);
         assertEquals("/close", panel.inputBufferForTesting());
         shiftTab(panel);
@@ -710,8 +725,7 @@ class AiPanelTest {
     void editingResetsCompletionCycle() {
         AiPanel panel = new AiPanel();
         panel.open();
-        type(panel, "/c");
-        tab(panel);
+        type(panel, "/cl");
         tab(panel);
         assertEquals("/clear", panel.inputBufferForTesting());
 
@@ -787,6 +801,133 @@ class AiPanelTest {
         tab(panel);
 
         assertEquals("/run --exam", panel.inputBufferForTesting());
+    }
+
+    // ---- stuck tool loops ----
+
+    @Test
+    void repeatedIdenticalToolCallsEndTheTurnWithAnExplanation() throws Exception {
+        AiPanel panel = new AiPanel();
+        panel.setToolRegistryForTesting(new TuiToolRegistry(null));
+        LoopingLlmClient client = new LoopingLlmClient();
+        panel.setClientForTesting(client);
+        panel.open();
+        type(panel, "send a message to the mqtt topic");
+        panel.handleKeyEvent(KeyEvent.ofKey(KeyCode.ENTER, KeyModifiers.NONE));
+        await().atMost(10, TimeUnit.SECONDS).until(() -> !panel.isAgentThreadRunningForTesting());
+
+        AiPanel.ConversationEntry last = panel.conversationForTesting().get(panel.conversationForTesting().size() - 1);
+        assertEquals(AiRole.ERROR, last.role());
+        assertTrue(last.text().contains("Reached maximum iterations"), last.text());
+        assertTrue(last.text().contains("tui_send_message"), last.text());
+        assertTrue(last.text().contains("AI Log"), last.text());
+        // after the third identical call the tool is no longer executed; the model is told to stop instead
+        assertTrue(client.sawStopNote, "the model must be told to stop repeating the call");
+        assertEquals(AiPanel.MAX_IDENTICAL_TOOL_CALLS, client.executedResults,
+                "the tool must not run again once the repeat limit is reached");
+    }
+
+    /** Always asks for the same tool call, like a model stuck on a failing send. */
+    private static final class LoopingLlmClient extends LlmClient {
+
+        volatile boolean sawStopNote;
+        volatile int executedResults;
+
+        LoopingLlmClient() {
+            withModel("test-model");
+            withApiType(ApiType.openai);
+        }
+
+        @Override
+        public boolean detectEndpoint() {
+            return true;
+        }
+
+        @Override
+        public ChatResponse chatWithTools(String systemPrompt, List<Message> messages, List<ToolDef> tools) {
+            Message lastMessage = messages.get(messages.size() - 1);
+            if (lastMessage.toolResults() != null) {
+                for (ToolResult result : lastMessage.toolResults()) {
+                    if (result.content().contains("Stop calling tools now")) {
+                        sawStopNote = true;
+                    } else {
+                        executedResults++;
+                    }
+                }
+            }
+            JsonObject args = new JsonObject();
+            args.put("endpoint", "direct:mqtt");
+            args.put("body", "25");
+            return new ChatResponse(
+                    null, List.of(new ToolCall("call-1", "tui_send_message", args)), "tool_use", false,
+                    TokenUsage.EMPTY);
+        }
+    }
+
+    // ---- /context and /retry ----
+
+    @Test
+    void contextDescribesProviderToolsPrefixAndHistory() {
+        AiPanel panel = new AiPanel();
+        panel.setToolRegistryForTesting(new TuiToolRegistry(null));
+        RecordingLlmClient client = new RecordingLlmClient("ok");
+        client.withApiType(LlmClient.ApiType.ollama);
+        panel.setClientForTesting(client);
+
+        String context = panel.describeContext();
+
+        assertTrue(context.contains("Provider: ollama"), context);
+        assertTrue(context.contains("(local)"), context);
+        assertTrue(context.contains("Tools: core ("), context);
+        assertTrue(context.contains("Static prefix: ~"), context);
+        assertTrue(context.contains("History: 0 turn(s)"), context);
+    }
+
+    @Test
+    void retryResendsTheLastQuestionFromACleanTurn() throws Exception {
+        AiPanel panel = new AiPanel();
+        RecordingLlmClient client = new RecordingLlmClient("first answer");
+        panel.setClientForTesting(client);
+        panel.open();
+        type(panel, "what routes are running?");
+        panel.handleKeyEvent(KeyEvent.ofKey(KeyCode.ENTER, KeyModifiers.NONE));
+        assertTrue(client.awaitAnswer(5, TimeUnit.SECONDS));
+        await().atMost(5, TimeUnit.SECONDS).until(() -> !panel.isAgentThreadRunningForTesting());
+        int messagesAfterFirst = panel.messageCountForTesting();
+
+        assertTrue(panel.retryLastQuestion());
+        await().atMost(5, TimeUnit.SECONDS).until(() -> !panel.isAgentThreadRunningForTesting());
+
+        assertEquals("what routes are running?", client.lastQuestion());
+        // the retried turn replaced the earlier one in the model history instead of stacking on top of it
+        assertEquals(messagesAfterFirst, panel.messageCountForTesting());
+        assertEquals(2, panel.conversationForTesting().stream().filter(e -> e.role() == AiRole.USER).count());
+    }
+
+    @Test
+    void usageSummaryReportsTotalsPerModelAndLastRequest() {
+        AiPanel panel = new AiPanel();
+        panel.setClientForTesting(new RecordingLlmClient("ok"));
+        assertTrue(panel.usageSummary().startsWith("No AI usage yet"));
+
+        panel.recordUsageForTesting(new AiPanel.AiUsageEntry(
+                "qwen3.6:35b-a3b", "ollama", 3000, 100, 3100, 5000, "end_turn", Instant.now()));
+        panel.recordUsageForTesting(new AiPanel.AiUsageEntry(
+                "qwen3.6:35b-a3b", "ollama", 3200, 200, 3400, 2000, "end_turn", Instant.now()));
+
+        String summary = panel.usageSummary();
+
+        assertTrue(summary.startsWith("Requests: 2, tokens: 6.5k (in 6.2k, out 300), avg latency: 3500 ms"), summary);
+        assertTrue(summary.contains("- [tui] qwen3.6:35b-a3b (ollama): 2 request(s), 6.5k tokens"), summary);
+        assertTrue(summary.contains("Last request: 3.4k tokens in 2000 ms"), summary);
+    }
+
+    @Test
+    void retryWithoutAQuestionIsRefused() {
+        AiPanel panel = new AiPanel();
+        panel.setClientForTesting(new RecordingLlmClient("ok"));
+
+        assertFalse(panel.retryLastQuestion());
     }
 
     // ---- tool set and system prompt tests ----
@@ -984,6 +1125,39 @@ class AiPanelTest {
         @Override
         public boolean switchToolMode(String mode) {
             return true;
+        }
+
+        @Override
+        public String describeContext() {
+            return "";
+        }
+
+        @Override
+        public String compactHistoryNow() {
+            return "";
+        }
+
+        @Override
+        public boolean retryLastQuestion() {
+            return false;
+        }
+
+        @Override
+        public String usageSummary() {
+            return "";
+        }
+
+        @Override
+        public void copyLastResponse() {
+        }
+
+        @Override
+        public void exportConversation() {
+        }
+
+        @Override
+        public String systemPrompt() {
+            return "";
         }
 
         boolean exitRequested;

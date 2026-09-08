@@ -23,7 +23,10 @@ import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
+import java.util.ArrayDeque;
 import java.util.ArrayList;
+import java.util.Deque;
+import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -63,6 +66,7 @@ import dev.tamboui.widgets.table.Table;
 import dev.tamboui.widgets.table.TableState;
 import org.apache.camel.dsl.jbang.core.commands.LlmClient;
 import org.apache.camel.dsl.jbang.core.common.ExampleHelper;
+import org.apache.camel.dsl.jbang.core.common.Printer;
 import org.apache.camel.util.json.JsonObject;
 
 /**
@@ -72,6 +76,11 @@ import org.apache.camel.util.json.JsonObject;
 class AiPanel {
 
     private static final int MAX_ITERATIONS = 10;
+    /**
+     * A tool call repeated this many times with identical arguments in one turn is not executed again; the model gets a
+     * note instead, so a stuck loop ends with an explanation rather than at the iteration limit.
+     */
+    static final int MAX_IDENTICAL_TOOL_CALLS = 3;
     /**
      * Longest tool result handed to the model. The AI log keeps the full text; the model gets the head plus a note,
      * because a single log or table dump can otherwise be larger than the whole system prompt.
@@ -158,6 +167,37 @@ class AiPanel {
     // Slash commands
     private final AiSlashCommandRegistry slashCommands = AiSlashCommandRegistry.defaults();
     private AiSlashCommandContext slashCommandContext = new PanelSlashCommandContext();
+    // Lines the LLM client prints while detecting the endpoint or failing a request (HTTP status, provider error
+    // message, auto-selected model). The TUI hides stdout, so they are collected here and shown with the error.
+    private final Deque<String> clientOutput = new ArrayDeque<>();
+    private final Printer clientPrinter = new Printer() {
+        @Override
+        public void println() {
+        }
+
+        @Override
+        public void println(String line) {
+            print(line);
+        }
+
+        @Override
+        public void print(String output) {
+            if (output == null || output.isBlank()) {
+                return;
+            }
+            synchronized (clientOutput) {
+                clientOutput.addLast(output.strip());
+                while (clientOutput.size() > 6) {
+                    clientOutput.removeFirst();
+                }
+            }
+        }
+
+        @Override
+        public void printf(String format, Object... args) {
+            print(String.format(format, args));
+        }
+    };
     // auto | core | full, see useCoreTools(); loaded from camel.tui.ai.tools, null means auto
     private volatile String toolMode;
     private final AiCliCommandExecutor cliCommandExecutor = new AiCliCommandExecutor();
@@ -327,7 +367,8 @@ class AiPanel {
             LlmClient created = LlmClient.create()
                     .withTemperature(0.3)
                     .withTimeout(120)
-                    .withMaxTokens(4096);
+                    .withMaxTokens(4096)
+                    .withPrinter(clientPrinter);
             if (sessionProviderChoice != null) {
                 providerSelector.applyChoice(created, sessionProviderChoice.provider(), sessionProviderChoice.model(),
                         sessionProviderChoice.url());
@@ -451,11 +492,7 @@ class AiPanel {
             return true;
         }
         if (ke.hasCtrl() && ke.isCharIgnoreCase('u')) {
-            statsView = !statsView;
-            statsScrollOffset = 0;
-            if (statsView) {
-                spanRefreshRequested = true;
-            }
+            toggleUsageView();
             return true;
         }
         if (ke.hasCtrl() && ke.isCharIgnoreCase('y')) {
@@ -854,10 +891,11 @@ class AiPanel {
         Optional<AiSlashCommandRegistry.ParsedCommand> parsed = slashCommands.parse(input);
         if (parsed.isPresent() && (thinking.get() || activeCliCommand != null)) {
             String name = parsed.get().descriptor().name();
-            if ("provider".equals(name) || "model".equals(name)) {
+            if ("provider".equals(name) || "model".equals(name) || "retry".equals(name)
+                    || "compact".equals(name)) {
                 conversation.add(new ConversationEntry(
                         AiRole.SYSTEM,
-                        "Wait for the current operation to finish before changing provider or model."));
+                        "Wait for the current operation to finish before running /" + name + "."));
                 return;
             }
         }
@@ -1012,12 +1050,15 @@ class AiPanel {
         messages.add(LlmClient.Message.user(contextualize(question)));
 
         LlmClient.TokenUsage totalUsage = LlmClient.TokenUsage.EMPTY;
+        Map<String, Integer> callCounts = new HashMap<>();
+        List<String> recentCalls = new ArrayList<>();
         for (int i = 0; i < MAX_ITERATIONS; i++) {
             if (Thread.interrupted()) {
                 throw new InterruptedException();
             }
 
             long callStart = System.currentTimeMillis();
+            drainClientOutput();
             LlmClient.ChatResponse response = client.chatWithTools(systemPrompt, messages, tools);
             long callLatency = System.currentTimeMillis() - callStart;
             if (response == null) {
@@ -1033,7 +1074,11 @@ class AiPanel {
             if ("error".equals(response.stopReason())
                     && (response.toolCalls() == null || response.toolCalls().isEmpty())
                     && response.text() == null) {
-                String err = "LLM request failed. Check API key and endpoint.";
+                String detail = drainClientOutput();
+                String err = detail.isEmpty()
+                        ? "LLM request failed. Check API key and endpoint."
+                        : "LLM request failed: " + detail
+                          + "\nCheck the endpoint and model (/model lists what the provider offers).";
                 conversation.add(new ConversationEntry(AiRole.ERROR, err));
                 log(LogLevel.ERROR, "Error", err);
                 return;
@@ -1047,9 +1092,20 @@ class AiPanel {
                     if (Thread.interrupted()) {
                         throw new InterruptedException();
                     }
-                    log(LogLevel.TOOL, toolCall.name(), toolCall.arguments().toJson());
-                    String result = executeTuiTool(toolCall.name(), toolCall.arguments());
+                    String arguments = toolCall.arguments() != null ? toolCall.arguments().toJson() : "{}";
+                    log(LogLevel.TOOL, toolCall.name(), arguments);
+                    String key = toolCall.name() + " " + arguments;
+                    int repeats = callCounts.merge(key, 1, Integer::sum);
+                    String result;
+                    if (repeats > MAX_IDENTICAL_TOOL_CALLS) {
+                        result = "You have already called " + toolCall.name() + " with these exact arguments "
+                                 + (repeats - 1) + " times in this turn and the result will not change. Stop calling "
+                                 + "tools now: tell the user what you found, what failed, and what they could try instead.";
+                    } else {
+                        result = executeTuiTool(toolCall.name(), toolCall.arguments());
+                    }
                     log(LogLevel.RESULT, toolCall.name(), result);
+                    recentCalls.add(toolCall.name() + " " + summarize(arguments, 80) + " -> " + summarize(result, 120));
                     results.add(new LlmClient.ToolResult(toolCall.id(), truncateToolResult(result)));
                 }
                 messages.add(LlmClient.Message.toolResults(results));
@@ -1074,9 +1130,30 @@ class AiPanel {
                 return;
             }
         }
-        conversation.add(new ConversationEntry(
-                AiRole.ERROR,
-                "Reached maximum iterations (" + MAX_ITERATIONS + ") without a final answer."));
+        StringBuilder sb = new StringBuilder();
+        sb.append("Reached maximum iterations (").append(MAX_ITERATIONS).append(") without a final answer. ");
+        sb.append("The model kept calling tools instead of answering; the last calls were:");
+        int from = Math.max(0, recentCalls.size() - 4);
+        for (String call : recentCalls.subList(from, recentCalls.size())) {
+            sb.append("\n- ").append(call);
+        }
+        sb.append("\nSee F2 -> AI Log for the full results, then rephrase with more detail (for example the exact ");
+        sb.append("endpoint URI or topic) or /retry.");
+        sessionTotalTokens += totalUsage.totalTokens();
+        conversation.add(new ConversationEntry(AiRole.ERROR, sb.toString()));
+        log(LogLevel.ERROR, "Error", sb.toString());
+        // keep the history consistent: the turn ends without an answer, so the next question starts fresh from here
+        messages.add(LlmClient.Message.assistantWithToolCalls(
+                "(no answer: the iteration limit was reached while calling tools)", List.of()));
+        compactHistory(messages, MAX_HISTORY_TURNS, COMPACT_TOOL_RESULT_CHARS);
+    }
+
+    private static String summarize(String text, int max) {
+        if (text == null) {
+            return "";
+        }
+        String flat = text.replace('\n', ' ').replace('\r', ' ').strip();
+        return flat.length() <= max ? flat : flat.substring(0, max) + "...";
     }
 
     private void recordUsage(LlmClient.ChatResponse response, long latencyMs) {
@@ -1797,20 +1874,21 @@ class AiPanel {
         sb.append("You have tui_* tools to observe and interact with the TUI; the tool definitions describe each one. ");
         sb.append("All tui_get_* tools fetch data directly from any tab without changing what the user sees.\n\n");
         sb.append("Guidelines:\n");
-        sb.append("- NEVER call tui_navigate just to read data - use the tui_get_* tools instead\n");
-        sb.append("- Prefer tui_get_table over tui_get_screen for structured data ");
-        sb.append("- it fetches from any tab using the tab parameter, no navigation needed\n");
-        sb.append("- Call tui_get_options only when unsure which tab holds the data you need\n");
-        sb.append("- Use tui_get_state to learn which integration and tab is selected, if the question depends on it\n");
-        sb.append("- Use tui_get_processor_detail to explain what a route does or how its steps are configured\n");
-        sb.append("- Use tui_get_status for data no tab shows (context, runtime, health checks, properties, ...)\n");
+        sb.append("- NEVER call tui_navigate just to read data; the tui_get_* tools read any tab without navigating\n");
+        sb.append("- Prefer tui_get_table over tui_get_screen for structured data; ");
+        sb.append("call tui_get_options only when unsure which tab holds the data\n");
+        sb.append("- tui_get_state tells which integration and tab is selected; tui_get_processor_detail explains ");
+        sb.append("a route's steps; tui_get_status has data no tab shows (context, runtime, health, properties)\n");
         sb.append("- Your own tool calls are recorded in the AI log (tui_get_ai_log, F2 -> AI Log); ");
         sb.append("the MCP log only records external clients\n");
-        sb.append("- Be concise and actionable in your answers\n");
-        sb.append("- When something looks wrong, explain what it means and suggest fixes\n");
-        sb.append("- For stopping routes or applications, use tui_control for graceful shutdown; ");
-        sb.append("tui_control reset-stats clears statistics without touching the routes\n");
+        sb.append("- Be concise and actionable; when something looks wrong, explain what it means and suggest fixes\n");
+        sb.append("- tui_control stops/starts routes and integrations gracefully; its reset-stats action clears ");
+        sb.append("statistics without touching the routes\n");
         sb.append("- Never restart, stop or kill an integration unless the user explicitly asked for that\n");
+        sb.append("- If a tool call returns an error, do not repeat it with the same arguments; ");
+        sb.append("tell the user what failed and what to try\n");
+        sb.append("- To feed a route that consumes from a broker (MQTT, Kafka, JMS), tui_send_message can publish ");
+        sb.append("to the broker with the route's own component and options\n");
         if (!useCoreTools()) {
             sb.append("- Use tui_locate + tui_draw_shape to visually highlight problems on screen for the user\n");
         }
@@ -1875,6 +1953,17 @@ class AiPanel {
     }
 
     /**
+     * Returns and clears what the LLM client printed since the last drain, joined on one line.
+     */
+    private String drainClientOutput() {
+        synchronized (clientOutput) {
+            String joined = String.join(" | ", clientOutput);
+            clientOutput.clear();
+            return joined;
+        }
+    }
+
+    /**
      * Caps a tool result before it enters the model history; the AI log keeps the full text.
      */
     static String truncateToolResult(String result) {
@@ -1893,6 +1982,16 @@ class AiPanel {
      * message through the final answer) so assistant tool calls never lose their matching results.
      */
     static void compactHistory(List<LlmClient.Message> history, int maxTurns, int compactChars) {
+        compactHistory(history, maxTurns, compactChars, true);
+    }
+
+    /**
+     * As {@link #compactHistory(List, int, int)}; with {@code keepPreviousTurn} false the most recent answered turn is
+     * compacted as well (used by {@code /compact}).
+     */
+    static void compactHistory(
+            List<LlmClient.Message> history, int maxTurns, int compactChars,
+            boolean keepPreviousTurn) {
         if (history == null || history.isEmpty()) {
             return;
         }
@@ -1910,11 +2009,13 @@ class AiPanel {
             userIndexes = userIndexes.subList(dropped, userIndexes.size()).stream()
                     .map(index -> index - keepFrom).toList();
         }
-        // everything before the previous turn (i.e. before the second-last user message) is compacted
-        if (userIndexes.size() < 2) {
+        // everything before the previous turn (i.e. before the second-last user message) is compacted; /compact
+        // also compacts the previous turn itself
+        int keep = keepPreviousTurn ? 2 : 1;
+        if (userIndexes.size() < keep) {
             return;
         }
-        int compactBefore = userIndexes.get(userIndexes.size() - 2);
+        int compactBefore = keepPreviousTurn ? userIndexes.get(userIndexes.size() - 2) : history.size();
         for (int i = 0; i < compactBefore; i++) {
             LlmClient.Message m = history.get(i);
             if (m.toolResults() == null || m.toolResults().isEmpty()) {
@@ -1934,6 +2035,214 @@ class AiPanel {
             if (changed) {
                 history.set(i, LlmClient.Message.toolResults(compacted));
             }
+        }
+    }
+
+    /**
+     * Rough token count for prompt text and JSON: about four characters per token for the mix of English and JSON the
+     * panel sends.
+     */
+    static int estimateTokens(long chars) {
+        return (int) ((chars + 3) / 4);
+    }
+
+    static long historyChars(List<LlmClient.Message> history) {
+        if (history == null) {
+            return 0;
+        }
+        long chars = 0;
+        for (LlmClient.Message m : history) {
+            if (m.content() != null) {
+                chars += m.content().length();
+            }
+            if (m.toolCalls() != null) {
+                for (LlmClient.ToolCall tc : m.toolCalls()) {
+                    chars += tc.name().length() + (tc.arguments() != null ? tc.arguments().toJson().length() : 0);
+                }
+            }
+            if (m.toolResults() != null) {
+                for (LlmClient.ToolResult tr : m.toolResults()) {
+                    chars += tr.content() != null ? tr.content().length() : 0;
+                }
+            }
+        }
+        return chars;
+    }
+
+    private static long toolResultChars(List<LlmClient.Message> history) {
+        long chars = 0;
+        if (history != null) {
+            for (LlmClient.Message m : history) {
+                if (m.toolResults() != null) {
+                    for (LlmClient.ToolResult tr : m.toolResults()) {
+                        chars += tr.content() != null ? tr.content().length() : 0;
+                    }
+                }
+            }
+        }
+        return chars;
+    }
+
+    private static int countTurns(List<LlmClient.Message> history) {
+        int turns = 0;
+        if (history != null) {
+            for (LlmClient.Message m : history) {
+                if ("user".equals(m.role()) && m.toolCalls() == null && m.toolResults() == null) {
+                    turns++;
+                }
+            }
+        }
+        return turns;
+    }
+
+    private long toolSchemaChars() {
+        long chars = 0;
+        for (LlmClient.ToolDef def : buildTuiToolDefinitions()) {
+            chars += 40 + def.name().length() + (def.description() != null ? def.description().length() : 0)
+                     + (def.parameters() != null ? def.parameters().toJson().length() : 0);
+        }
+        return chars;
+    }
+
+    String describeContext() {
+        StringBuilder sb = new StringBuilder();
+        if (client == null) {
+            sb.append("Provider: none (").append(initError != null ? initError : "no LLM client").append(")\n");
+        } else {
+            sb.append("Provider: ").append(client.apiType() != null ? client.apiType().name() : "unknown");
+            if (client.endpointUrl() != null) {
+                sb.append(" at ").append(client.endpointUrl());
+            }
+            sb.append(", model ").append(client.model() != null ? client.model() : "auto");
+            sb.append(client.isLocalEndpoint() ? " (local)" : " (hosted)").append('\n');
+        }
+        sb.append("Tools: ").append(describeToolMode()).append('\n');
+        int promptTokens = estimateTokens(buildSystemPrompt().length());
+        int toolTokens = estimateTokens(toolSchemaChars());
+        sb.append("Static prefix: ~").append(LlmClient.formatTokens(promptTokens + toolTokens))
+                .append(" tokens (system prompt ~").append(LlmClient.formatTokens(promptTokens))
+                .append(", tool schemas ~").append(LlmClient.formatTokens(toolTokens)).append(")\n");
+        int historyTokens = estimateTokens(historyChars(messages));
+        int resultTokens = estimateTokens(toolResultChars(messages));
+        sb.append("History: ").append(countTurns(messages)).append(" turn(s), ")
+                .append(messages != null ? messages.size() : 0).append(" message(s), ~")
+                .append(LlmClient.formatTokens(historyTokens)).append(" tokens (tool results ~")
+                .append(LlmClient.formatTokens(resultTokens)).append("); /compact shrinks it, /clear resets it\n");
+        sb.append("Next request: ~").append(LlmClient.formatTokens(promptTokens + toolTokens + historyTokens))
+                .append(" tokens before your question; session total so far ")
+                .append(LlmClient.formatTokens(sessionTotalTokens)).append(" tokens");
+        return sb.toString();
+    }
+
+    String compactHistoryNow() {
+        if (messages == null || messages.isEmpty()) {
+            return "History is empty, nothing to compact";
+        }
+        int before = estimateTokens(historyChars(messages));
+        int messagesBefore = messages.size();
+        compactHistory(messages, MAX_HISTORY_TURNS, COMPACT_TOOL_RESULT_CHARS, false);
+        int after = estimateTokens(historyChars(messages));
+        return "Compacted history: " + messagesBefore + " -> " + messages.size() + " message(s), ~"
+               + LlmClient.formatTokens(before) + " -> ~" + LlmClient.formatTokens(after) + " tokens";
+    }
+
+    /**
+     * Resends the last question. Any messages from the previous attempt (the question and whatever followed it) are
+     * removed from the model history first so the retry starts from a clean turn.
+     */
+    boolean retryLastQuestion() {
+        if (client == null || thinking.get()) {
+            return false;
+        }
+        String question = null;
+        for (int i = conversation.size() - 1; i >= 0; i--) {
+            if (conversation.get(i).role() == AiRole.USER) {
+                question = conversation.get(i).text();
+                break;
+            }
+        }
+        if (question == null || question.isBlank()) {
+            return false;
+        }
+        if (messages != null) {
+            for (int i = messages.size() - 1; i >= 0; i--) {
+                LlmClient.Message m = messages.get(i);
+                if ("user".equals(m.role()) && m.toolCalls() == null && m.toolResults() == null) {
+                    messages.subList(i, messages.size()).clear();
+                    break;
+                }
+            }
+        }
+        submitQuestion(question);
+        return true;
+    }
+
+    /**
+     * The usage figures of the Ctrl+U view as text for the chat: totals, then one line per model (and per route for
+     * GenAI spans from the monitored integration).
+     */
+    String usageSummary() {
+        List<AiUsageEntry> entries = combinedUsageEntries();
+        if (entries.isEmpty()) {
+            return "No AI usage yet. Ask a question, or run routes with GenAI observability and --observe to see "
+                   + "their usage here.";
+        }
+        int totalInput = 0;
+        int totalOutput = 0;
+        int totalTokens = 0;
+        long totalLatency = 0;
+        int tuiRequests = 0;
+        int routeRequests = 0;
+        Map<String, long[]> perModel = new LinkedHashMap<>();
+        for (AiUsageEntry e : entries) {
+            totalInput += e.inputTokens();
+            totalOutput += e.outputTokens();
+            totalTokens += e.totalTokens();
+            totalLatency += e.latencyMs();
+            if (e.source() == AiUsageSource.ROUTE) {
+                routeRequests++;
+            } else {
+                tuiRequests++;
+            }
+            long[] stats = perModel.computeIfAbsent(modelTableKey(e), k -> new long[5]);
+            stats[0]++;
+            stats[1] += e.inputTokens();
+            stats[2] += e.outputTokens();
+            stats[3] += e.totalTokens();
+            stats[4] += e.latencyMs();
+        }
+        StringBuilder sb = new StringBuilder();
+        sb.append("Requests: ").append(entries.size());
+        if (routeRequests > 0) {
+            sb.append(" (").append(tuiRequests).append(" from this panel, ").append(routeRequests)
+                    .append(" from routes)");
+        }
+        sb.append(", tokens: ").append(LlmClient.formatTokens(totalTokens))
+                .append(" (in ").append(LlmClient.formatTokens(totalInput))
+                .append(", out ").append(LlmClient.formatTokens(totalOutput))
+                .append("), avg latency: ").append(totalLatency / entries.size()).append(" ms\n");
+        for (Map.Entry<String, long[]> entry : perModel.entrySet()) {
+            long[] stats = entry.getValue();
+            sb.append("- ").append(entry.getKey()).append(": ").append(stats[0]).append(" request(s), ")
+                    .append(LlmClient.formatTokens((int) stats[3])).append(" tokens (in ")
+                    .append(LlmClient.formatTokens((int) stats[1])).append(", out ")
+                    .append(LlmClient.formatTokens((int) stats[2])).append("), avg ")
+                    .append(stats[4] / stats[0]).append(" ms\n");
+        }
+        AiUsageEntry last = usageHistory.isEmpty() ? null : usageHistory.get(usageHistory.size() - 1);
+        if (last != null) {
+            sb.append("Last request: ").append(LlmClient.formatTokens(last.totalTokens())).append(" tokens in ")
+                    .append(last.latencyMs()).append(" ms\n");
+        }
+        sb.append("Ctrl+U opens the full usage view with the per-turn chart.");
+        return sb.toString().strip();
+    }
+
+    private void toggleUsageView() {
+        statsView = !statsView;
+        statsScrollOffset = 0;
+        if (statsView) {
+            spanRefreshRequested = true;
         }
     }
 
@@ -2166,6 +2475,41 @@ class AiPanel {
             settings.setAiTools(TOOL_MODE_AUTO.equals(normalized) ? null : normalized);
             settings.save();
             return true;
+        }
+
+        @Override
+        public String describeContext() {
+            return AiPanel.this.describeContext();
+        }
+
+        @Override
+        public String compactHistoryNow() {
+            return AiPanel.this.compactHistoryNow();
+        }
+
+        @Override
+        public boolean retryLastQuestion() {
+            return AiPanel.this.retryLastQuestion();
+        }
+
+        @Override
+        public String usageSummary() {
+            return AiPanel.this.usageSummary();
+        }
+
+        @Override
+        public void copyLastResponse() {
+            copyLastResponseToClipboard();
+        }
+
+        @Override
+        public void exportConversation() {
+            exportChatToFile();
+        }
+
+        @Override
+        public String systemPrompt() {
+            return buildSystemPrompt();
         }
 
         @Override

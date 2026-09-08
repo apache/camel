@@ -192,6 +192,9 @@ camel ask "what routes are running?"
 
 `OPENAI_BASE_URL` is accepted as an alternative to `LLM_BASE_URL` (common in other tools).
 
+The first model the server lists on `/v1/models` is used unless `--model` names another one; the
+model must support tool calling.
+
 Common OpenAI-compatible servers:
 
 [options="header"]

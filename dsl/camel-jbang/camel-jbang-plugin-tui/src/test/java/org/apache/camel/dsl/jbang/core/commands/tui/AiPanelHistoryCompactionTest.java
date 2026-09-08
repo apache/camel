@@ -79,6 +79,19 @@ class AiPanelHistoryCompactionTest {
     }
 
     @Test
+    void forcedCompactionAlsoShrinksThePreviousTurn() {
+        List<LlmClient.Message> history = new ArrayList<>();
+        history.addAll(turn("q1", BIG));
+        history.addAll(turn("q2", BIG));
+
+        AiPanel.compactHistory(history, 20, 400, false);
+
+        assertTrue(toolResultContent(history.get(2)).contains("[earlier result compacted"));
+        assertTrue(toolResultContent(history.get(6)).contains("[earlier result compacted"));
+        assertEquals(8, history.size());
+    }
+
+    @Test
     void dropsWholeOldestTurnsBeyondTheLimit() {
         List<LlmClient.Message> history = new ArrayList<>();
         for (int i = 1; i <= 5; i++) {

@@ -70,10 +70,10 @@ class CveAuditTab extends AbstractTableTab {
     private int detailScroll;
 
     private List<DependencyLoader.DepEntry> depEntries = Collections.emptyList();
-    private List<VulnGroup> allGroups = Collections.emptyList();
+    private volatile List<VulnGroup> allGroups = Collections.emptyList();
     private String lastPid;
-    private String errorMessage;
-    private boolean dataLoaded;
+    private volatile String errorMessage;
+    private volatile boolean dataLoaded;
     private int scannedCount;
 
     CveAuditTab(MonitorContext ctx) {
@@ -96,6 +96,23 @@ class CveAuditTab extends AbstractTableTab {
         if (!dataLoaded) {
             loadAndScan();
         }
+    }
+
+    @Override
+    public boolean ensureDataLoaded() {
+        onTabSelected();
+        return true;
+    }
+
+    @Override
+    public String dataLoadError() {
+        if (!dataLoaded) {
+            return null;
+        }
+        if (errorMessage != null) {
+            return errorMessage;
+        }
+        return allGroups.isEmpty() ? "No known vulnerabilities found for the selected integration" : null;
     }
 
     @Override

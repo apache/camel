@@ -427,9 +427,13 @@ class TuiToolRegistry {
                 Map.of())));
         tools.add(toToolDef(toolDef(
                 "tui_send_message",
-                "Sends a message to a Camel endpoint in the selected integration. "
-                                    + "Uses the file-based IPC protocol to deliver the message directly.",
-                Map.of("endpoint", propDef("string", "Endpoint URI to send to (e.g. 'direct:myRoute', 'seda:queue')"),
+                "Sends a message to any Camel endpoint URI from inside the selected integration: direct:/seda: "
+                                    + "to feed a route, or a producer such as paho-mqtt5:, kafka:, jms:, http:, file: "
+                                    + "to publish to the system a route consumes from. A route that only consumes from "
+                                    + "a broker has no direct: endpoint; publish to the broker with the same component "
+                                    + "and options the route uses.",
+                Map.of("endpoint", propDef("string",
+                        "Endpoint URI, e.g. 'direct:myRoute', 'paho-mqtt5:temperature?brokerUrl=tcp://localhost:1883'"),
                         "body", propDef("string", "Message body to send"),
                         "headers", propDef("string", "Message headers as key=value pairs separated by newlines")),
                 List.of("endpoint"))));
@@ -1301,7 +1305,7 @@ class TuiToolRegistry {
         String tab = args.get("tab") instanceof String s ? s : null;
         JsonObject data = facade.getTableData(tab);
         if (data == null) {
-            return "No table data available" + (tab != null ? " for tab: " + tab : "");
+            return facade.tableDataError(tab);
         }
         return Jsoner.serialize(data);
     }
@@ -1461,7 +1465,80 @@ class TuiToolRegistry {
         if (response == null) {
             return "Error: no integration selected or PID unavailable";
         }
+        String hint = unknownSchemeHint(endpoint, Jsoner.serialize(response));
+        if (hint != null) {
+            response.put("hint", hint);
+        }
         return Jsoner.serialize(response);
+    }
+
+    /**
+     * When a send failed because the endpoint scheme is not a Camel component (a model guessing {@code mqt t:} for
+     * {@code paho-mqtt5:}), names the catalog components that look like what was meant so the next call can use one.
+     */
+    private String unknownSchemeHint(String endpoint, String result) {
+        int colon = endpoint.indexOf(':');
+        if (colon <= 0 || result == null) {
+            return null;
+        }
+        String lower = result.toLowerCase();
+        if (!(lower.contains("no component found") || lower.contains("nosuchendpoint")
+                || lower.contains("failed to resolve endpoint") || lower.contains("cannot find component"))) {
+            return null;
+        }
+        String scheme = endpoint.substring(0, colon).toLowerCase();
+        List<String> names;
+        try {
+            CamelCatalog catalog = CatalogLoader.loadCatalog(null, facade.getSelectedCamelVersion(), true);
+            names = catalog.findComponentNames();
+        } catch (Exception e) {
+            return null;
+        }
+        if (names.contains(scheme)) {
+            return null;
+        }
+        List<String> similar = suggestComponents(scheme, names);
+        if (similar.isEmpty()) {
+            return "Camel has no component named '" + scheme + "'. Use tui_catalog_doc to find the right component, "
+                   + "then send again with its scheme.";
+        }
+        return "Camel has no component named '" + scheme + "'. Similar components in the catalog: "
+               + String.join(", ", similar) + ". Send again with one of those schemes, e.g. '" + similar.get(0)
+               + endpoint.substring(colon) + "'.";
+    }
+
+    /** Well-known names people use for a protocol that differ from the Camel component name. */
+    private static final Map<String, List<String>> SCHEME_ALIASES = Map.of(
+            "mqtt", List.of("paho-mqtt5", "paho"),
+            "mqtt5", List.of("paho-mqtt5"),
+            "rabbitmq", List.of("spring-rabbitmq"),
+            "amq", List.of("activemq", "jms"),
+            "rest", List.of("rest", "platform-http", "http"),
+            "s3", List.of("aws2-s3"),
+            "sqs", List.of("aws2-sqs"),
+            "sns", List.of("aws2-sns"),
+            "pubsub", List.of("google-pubsub"),
+            "servicebus", List.of("azure-servicebus"));
+
+    /**
+     * Catalog component names that resemble the scheme: known aliases first, then names containing the scheme (or
+     * contained in it), at most five.
+     */
+    static List<String> suggestComponents(String scheme, List<String> componentNames) {
+        List<String> result = new ArrayList<>();
+        for (String alias : SCHEME_ALIASES.getOrDefault(scheme, List.of())) {
+            if (componentNames.contains(alias) && !result.contains(alias)) {
+                result.add(alias);
+            }
+        }
+        if (scheme.length() >= 3) {
+            for (String name : componentNames) {
+                if ((name.contains(scheme) || scheme.contains(name)) && !name.equals(scheme) && !result.contains(name)) {
+                    result.add(name);
+                }
+            }
+        }
+        return result.size() > 5 ? result.subList(0, 5) : result;
     }
 
     private String callExecuteSql(Map<String, Object> args) {

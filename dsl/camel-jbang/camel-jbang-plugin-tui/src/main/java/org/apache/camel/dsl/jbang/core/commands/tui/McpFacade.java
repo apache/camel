@@ -448,17 +448,54 @@ class McpFacade {
 
     // ---- Data access ----
 
+    /** How long a table read waits for a tab that loads its data on demand. The connector action timeout is 5s. */
+    static final long ON_DEMAND_LOAD_TIMEOUT_MS = 8_000;
+
     JsonObject getTableData(String tabName) {
-        MonitorTab tab;
-        if (tabName != null && !tabName.isBlank()) {
-            tab = tabRegistry.findTabByName(tabName);
-            if (tab == null) {
-                return null;
-            }
-        } else {
-            tab = bridge.activeTab();
+        MonitorTab tab = resolveTab(tabName);
+        return tab != null ? awaitTableData(tab, ON_DEMAND_LOAD_TIMEOUT_MS) : null;
+    }
+
+    /**
+     * Why {@link #getTableData(String)} returned nothing for the tab: unknown tab, a load error, or an empty tab.
+     */
+    String tableDataError(String tabName) {
+        MonitorTab tab = resolveTab(tabName);
+        if (tab == null) {
+            return tabName != null && !tabName.isBlank() ? "Unknown tab: " + tabName : "No active tab";
         }
-        return tab != null ? tab.getTableDataAsJson() : null;
+        String error = tab.dataLoadError();
+        return error != null ? error : "No table data available for tab: " + tabName;
+    }
+
+    private MonitorTab resolveTab(String tabName) {
+        if (tabName != null && !tabName.isBlank()) {
+            return tabRegistry.findTabByName(tabName);
+        }
+        return bridge.activeTab();
+    }
+
+    /**
+     * Reads the tab's table, and when the tab loads its data on demand and has none yet, starts the load and waits
+     * (polling) until data arrives, the load reports an error or an empty result, or the timeout passes. Must not be
+     * called on the render thread, since the loads complete there.
+     */
+    static JsonObject awaitTableData(MonitorTab tab, long timeoutMs) {
+        JsonObject data = tab.getTableDataAsJson();
+        if (data != null || !tab.ensureDataLoaded()) {
+            return data;
+        }
+        long deadline = System.currentTimeMillis() + timeoutMs;
+        while (data == null && System.currentTimeMillis() < deadline && tab.dataLoadError() == null) {
+            try {
+                Thread.sleep(100);
+            } catch (InterruptedException e) {
+                Thread.currentThread().interrupt();
+                break;
+            }
+            data = tab.getTableDataAsJson();
+        }
+        return data;
     }
 
     boolean executeAction(String actionName) {

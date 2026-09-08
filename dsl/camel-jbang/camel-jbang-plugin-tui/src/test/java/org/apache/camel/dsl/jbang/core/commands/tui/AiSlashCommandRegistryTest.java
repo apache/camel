@@ -34,8 +34,8 @@ class AiSlashCommandRegistryTest {
         AiSlashCommandRegistry registry = AiSlashCommandRegistry.defaults();
 
         assertEquals(
-                List.of("help", "provider", "model", "tools", "clear", "clear-history", "close", "quit", "run", "infra",
-                        "send"),
+                List.of("help", "provider", "model", "tools", "context", "compact", "retry", "usage", "copy", "export",
+                        "prompt", "clear", "clear-history", "close", "quit", "run", "infra", "send"),
                 registry.descriptors().stream().map(AiSlashCommandRegistry.Descriptor::name).toList());
     }
 
@@ -75,7 +75,7 @@ class AiSlashCommandRegistryTest {
     void completionsIncludeAllCommandsForBareSlash() {
         AiSlashCommandRegistry registry = AiSlashCommandRegistry.defaults();
 
-        assertEquals(11, registry.completionsFor("/").size());
+        assertEquals(18, registry.completionsFor("/").size());
         assertFalse(registry.completionsFor("/").stream().anyMatch(descriptor -> "exit".equals(descriptor.name())));
     }
 
@@ -308,6 +308,41 @@ class AiSlashCommandRegistryTest {
         assertNull(context.switchedTo);
     }
 
+    @Test
+    void retryReportsWhenThereIsNothingToRetry() {
+        AiSlashCommandRegistry registry = AiSlashCommandRegistry.defaults();
+
+        AiSlashCommandRegistry.CommandResult result = registry.execute("/retry", new NoopSlashContext());
+
+        assertEquals(AiRole.ERROR, result.role());
+        assertTrue(result.text().contains("No question to retry"));
+    }
+
+    @Test
+    void contextCompactAndPromptRelayTheContextText() {
+        AiSlashCommandRegistry registry = AiSlashCommandRegistry.defaults();
+        NoopSlashContext context = new NoopSlashContext() {
+            @Override
+            public String describeContext() {
+                return "Provider: ollama";
+            }
+
+            @Override
+            public String compactHistoryNow() {
+                return "Compacted history";
+            }
+
+            @Override
+            public String systemPrompt() {
+                return "You are an Apache Camel assistant";
+            }
+        };
+
+        assertEquals("Provider: ollama", registry.execute("/ctx", context).text());
+        assertEquals("Compacted history", registry.execute("/compact", context).text());
+        assertEquals("You are an Apache Camel assistant", registry.execute("/prompt", context).text());
+    }
+
     private static final class ToolModeContext extends NoopSlashContext {
 
         private String switchedTo;
@@ -337,6 +372,39 @@ class AiSlashCommandRegistryTest {
         @Override
         public boolean switchToolMode(String mode) {
             return false;
+        }
+
+        @Override
+        public String describeContext() {
+            return "";
+        }
+
+        @Override
+        public String compactHistoryNow() {
+            return "";
+        }
+
+        @Override
+        public boolean retryLastQuestion() {
+            return false;
+        }
+
+        @Override
+        public String usageSummary() {
+            return "";
+        }
+
+        @Override
+        public void copyLastResponse() {
+        }
+
+        @Override
+        public void exportConversation() {
+        }
+
+        @Override
+        public String systemPrompt() {
+            return "";
         }
 
         @Override

@@ -842,6 +842,13 @@ camel tui
 
 `OPENAI_BASE_URL` is also accepted as an alternative to `LLM_BASE_URL`.
 
+The panel uses the first model the server lists on `/v1/models`. To use another one, run
+`/model <name>` in the panel (`/model` alone lists what the server offers), set *AI Model* in
+*F2 -> Settings*, or set `camel.tui.ai.model`. The model must support tool calling, otherwise the
+panel answers from training data instead of inspecting your integration. When a request fails, the
+panel shows the HTTP status and the server's error message, for example a model that the server
+does not host.
+
 === Why This Matters
 
 When an AI agent connects to the TUI via MCP, it gains the same level of visibility that you
@@ -919,6 +926,24 @@ cycles backward.
 
 | `/tools [auto\|core\|full]` (`/t`)
 | Show which tool set is sent to the model, or switch it. `auto` (default) sends the core set to local providers and every tool to hosted ones; the choice is saved as `camel.tui.ai.tools`.
+
+| `/context` (`/ctx`)
+| Show what the next request costs: provider and model, tool set, static prefix size, history size and the session total. Useful with local models, where prompt size is time.
+
+| `/compact`
+| Shrink the conversation history sent to the model right away: older tool results are cut to their first lines and the oldest turns are dropped. The panel does this automatically after each answer for all but the latest turn.
+
+| `/retry`
+| Send the last question again, starting from a clean turn in the model history.
+
+| `/usage` (`/u`)
+| Print the AI usage so far in the chat: requests, tokens in and out, average latency, one line per model (and per route when GenAI spans are observed), and the last request. *Ctrl+U* opens the full view with the per-turn chart.
+
+| `/copy` (`/y`), `/export` (`/e`)
+| The same as *Ctrl+Y* (copy the last response) and *Ctrl+E* (export the conversation to Markdown).
+
+| `/prompt`
+| Show the system prompt the panel sends with every request.
 
 | `/clear` (`/c`)
 | Clear the AI conversation, usage counters, and model context without changing the provider or model.
