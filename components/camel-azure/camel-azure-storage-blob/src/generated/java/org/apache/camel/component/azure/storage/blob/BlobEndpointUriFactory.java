@@ -94,10 +94,11 @@ public class BlobEndpointUriFactory extends org.apache.camel.support.component.E
         props.add("useFixedDelay");
         props.add("versionId");
         PROPERTY_NAMES = Collections.unmodifiableSet(props);
-        Set<String> secretProps = new HashSet<>(4);
+        Set<String> secretProps = new HashSet<>(5);
         secretProps.add("accessKey");
         secretProps.add("azureClientId");
         secretProps.add("azureClientSecret");
+        secretProps.add("sasToken");
         secretProps.add("sourceBlobAccessKey");
         SECRET_PROPERTY_NAMES = Collections.unmodifiableSet(secretProps);
         ENDPOINT_IDENTITY_PROPERTY_NAMES = Collections.emptySet();
