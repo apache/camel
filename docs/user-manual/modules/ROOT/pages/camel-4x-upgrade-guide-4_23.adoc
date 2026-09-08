@@ -31,7 +31,6 @@ Only options whose value is a placeholder are affected, and only when running wi
 Camel Quarkus. If a component must not be stopped on reload, configure it programmatically rather than with a
 placeholder based property.
 
-
 === Apache Avro trusted packages
 
 Camel now uses Apache Avro 1.12.2. Avro validates classes resolved from schemas
@@ -1386,7 +1385,6 @@ camel.health.exposure-level = full
 The defaults are still registered as the lowest precedence property source, so all three settings are
 overridden by ordinary application configuration.
 
-
 ==== camel-debug-starter no longer opens a JMX connector by default
 
 `camel.debug.jmx-connector-enabled` now defaults to `false` instead of `true`. Adding
@@ -1415,7 +1413,6 @@ firewall.
 The `camel debug` command of Camel JBang is unaffected: it drives a Spring Boot application through the
 local CLI connector from `camel-cli-connector-starter`, not through JMX.
 
-
 ==== camel-spring-boot health check stack traces moved to the full exposure level
 
 The Camel health indicator added the full stack trace of a failed health check as `error.stacktrace` to the
@@ -1441,7 +1438,6 @@ camel.health.exposure-level = full
 Note that `full` also stops filtering the health check metadata out of the per-check data, so the output is
 more verbose than the previous default in other respects too.
 
-
 ==== camel-platform-http-starter deletes multipart uploads when the exchange completes
 
 Multipart file uploads are copied out of the servlet container into the servlet temporary directory so that they
@@ -1458,7 +1454,6 @@ the exchange has completed must opt out and delete the file itself:
 ----
 camel.component.platform-http.server.delete-uploaded-files-on-end=false
 ----
-
 
 ==== camel-platform-http-starter path variables follow the matched path
 
@@ -1492,7 +1487,6 @@ unaffected.
 `CamelHttpPath` (`Exchange.HTTP_PATH`) is unchanged: it still reports the raw request path with the
 servlet context-path removed.
 
-
 ==== camel-micrometer-starter bounds the uri tag
 
 The starter contributes the `uri` low cardinality tag of the `http.server.requests` metrics when
@@ -1519,7 +1513,6 @@ only for requests that resolve to a Camel consumer, and the tag value is now cap
 
 Dashboards and alerts that matched on the raw path of requests that are not served by Camel must use the Spring
 value instead, for example the mapped pattern `/actuator/health` of a Spring MVC endpoint.
-
 
 ==== camel-jasypt-starter defaults to PBEWITHHMACSHA256ANDAES_256
 
@@ -1556,7 +1549,6 @@ algorithm unless it sets one.
 The starter's usage documentation no longer shows the master password next to the encrypted value it protects. Use
 the `sysenv:` or `sys:` prefixes of `camel.component.jasypt.password` to read it from the environment or a JVM
 system property, or inject it from an external secret store.
-
 
 ==== Starter configuration options that cannot be bound are reported
 
@@ -1609,7 +1601,6 @@ be set — that behaviour is unchanged — but each such option is now logged at
 target class, where previously nothing was logged at all. Applications with hand-written customizers may
 therefore see new `WARN` lines at startup for options that have never been applied. The generated starters no
 longer use that path; they call `CamelPropertiesHelper.copyConfigurationProperties` instead.
-
 
 === camel-azure-storage-blob and camel-azure-storage-datalake
 
@@ -1743,3 +1734,22 @@ specific payload fields was silently given the whole payload.
 Both operations now use the header when it is present, and fall back to the `CamelQdrantWithPayload`
 boolean otherwise. A route that already sets the header starts receiving only the payload fields it
 selected; a route that does not set it is unaffected.
+
+=== camel-vertx-http - the REST producer applies the outbound header filter
+
+`VertxHttpRestHeaderFilterStrategy.applyFilterToCamelHeaders` delegated to
+`applyFilterToExternalHeaders`, so it consulted the inbound filter while implementing the outbound
+direction. The outbound filter that `VertxHttpHeaderFilterStrategy` installs was therefore never
+applied, and the sibling REST strategies in `camel-http-common`, `camel-netty-http` and
+`camel-undertow` all delegate to the matching method.
+
+A REST producer that resolves to `vertx-http` and does not configure its own `headerFilterStrategy`
+now filters the common HTTP headers on the outbound direction, as the other HTTP components already
+did. A message header named `Content-Length`, `Content-Type`, `Host`, `Cache-Control`, `Connection`,
+`Date`, `Pragma`, `Trailer`, `Transfer-Encoding`, `Upgrade`, `Via` or `Warning` is no longer copied
+onto the outgoing request; the `Content-Type` of the request is still taken from the exchange as
+before. Headers consumed by the URI template or the query parameters continue to be filtered, and a
+custom `headerFilterStrategy` is used as-is and is unaffected.
+
+Routes that relied on one of those headers reaching the wire must set it through the endpoint
+configuration or supply a `headerFilterStrategy` that permits it.
