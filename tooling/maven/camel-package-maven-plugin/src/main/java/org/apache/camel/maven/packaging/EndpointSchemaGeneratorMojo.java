@@ -409,6 +409,9 @@ public class EndpointSchemaGeneratorMojo extends AbstractGeneratorMojo {
             }
             return false;
         }
+        if (metadata.skip()) {
+            return false;
+        }
         final String[] applicableFor = metadata.applicableFor();
         if (applicableFor.length > 0 && Arrays.stream(applicableFor).noneMatch(s -> s.equals(scheme))) {
             if (getLog().isDebugEnabled()) {

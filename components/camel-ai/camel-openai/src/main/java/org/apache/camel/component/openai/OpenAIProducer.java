@@ -507,92 +507,134 @@ public class OpenAIProducer extends DefaultAsyncProducer {
         List<ChatCompletionMessageParam> agenticMessages = new ArrayList<>();
         List<String> toolCallsLog = new ArrayList<>();
         OpenAIAgenticTokenTracker tokenTracker = new OpenAIAgenticTokenTracker();
+        OpenAIAgenticObservability observability = new OpenAIAgenticObservability(exchange);
+        observability.onLoopStarted(getEndpoint().getMcpToolState().knownToolNames().size(), maxIterations);
         int iteration = 0;
+        int modelCall = 0;
+        String stopReason = "unknown";
 
-        while (iteration < maxIterations) {
-            ChatCompletion response = createChatCompletion(exchange, paramsBuilder.build());
-            tokenTracker.addUsage(response);
-            setAgenticTokenHeaders(exchange.getMessage(), tokenTracker);
+        try {
+            while (iteration < maxIterations) {
+                modelCall++;
+                long iterationStartNanos = System.nanoTime();
+                OpenAIAgenticTokenTracker.Snapshot tokensBefore = tokenTracker.snapshot();
 
-            ChatCompletion.Choice choice = requireFirstChoice(exchange, response);
+                ChatCompletion response = createChatCompletion(exchange, paramsBuilder.build());
+                tokenTracker.addUsage(response);
+                setAgenticTokenHeaders(exchange.getMessage(), tokenTracker);
 
-            if (!isToolCallsFinishReason(choice)) {
-                // Final LLM response
-                LOG.debug("Agentic loop completed after {} iterations, finish reason: {}", iteration,
-                        getFinishReasonString(choice));
-                String content = choice.message().content().orElse("");
-                content = processThinkingContent(exchange, content, config);
-                exchange.getMessage().setBody(content);
-                extractReasoningContent(exchange, choice.message());
-                extractAdditionalResponseHeaders(exchange, choice.message());
-                setResponseHeaders(exchange.getMessage(), response);
-                exchange.getMessage().setHeader(OpenAIConstants.TOOL_ITERATIONS, iteration);
-                exchange.getMessage().setHeader(OpenAIConstants.MCP_TOOL_CALLS, toolCallsLog);
-                exchange.getMessage().setHeader(OpenAIConstants.MCP_RETURN_DIRECT, false);
-                if (config.isStoreFullResponse()) {
-                    exchange.setProperty(OpenAIConstants.RESPONSE, response);
+                long iterationPromptTokens = tokenTracker.promptTokensSince(tokensBefore);
+                long iterationCompletionTokens = tokenTracker.completionTokensSince(tokensBefore);
+
+                ChatCompletion.Choice choice = requireFirstChoice(exchange, response);
+
+                if (!isToolCallsFinishReason(choice)) {
+                    // Final LLM response
+                    LOG.debug("Agentic loop completed after {} iterations, finish reason: {}", iteration,
+                            getFinishReasonString(choice));
+                    stopReason = getFinishReasonString(choice);
+                    observability.recordFinalIteration(
+                            modelCall, iterationStartNanos, iterationPromptTokens, iterationCompletionTokens);
+                    observability.onLoopCompleted(iteration, tokenTracker, stopReason);
+                    String content = choice.message().content().orElse("");
+                    content = processThinkingContent(exchange, content, config);
+                    exchange.getMessage().setBody(content);
+                    extractReasoningContent(exchange, choice.message());
+                    extractAdditionalResponseHeaders(exchange, choice.message());
+                    setResponseHeaders(exchange.getMessage(), response);
+                    exchange.getMessage().setHeader(OpenAIConstants.TOOL_ITERATIONS, iteration);
+                    exchange.getMessage().setHeader(OpenAIConstants.MCP_TOOL_CALLS, toolCallsLog);
+                    exchange.getMessage().setHeader(OpenAIConstants.MCP_RETURN_DIRECT, false);
+                    if (config.isStoreFullResponse()) {
+                        exchange.setProperty(OpenAIConstants.RESPONSE, response);
+                    }
+                    updateConversationHistory(exchange, agenticMessages, response);
+                    return;
                 }
-                updateConversationHistory(exchange, agenticMessages, response);
-                return;
-            }
 
-            enforceAgenticTokenBudget(config, tokenTracker, iteration);
+                if (tokenBudgetExceeded(config, tokenTracker)) {
+                    observability.recordFinalIteration(
+                            modelCall, iterationStartNanos, iterationPromptTokens, iterationCompletionTokens);
+                    stopReason = "token_budget_exceeded";
+                    throw new IllegalStateException(
+                            "Max agentic tokens (%d) exceeded at iteration %d. Cumulative usage: prompt=%d, completion=%d, total=%d"
+                                    .formatted(config.getMaxAgenticTokens(), iteration, tokenTracker.getPromptTokens(),
+                                            tokenTracker.getCompletionTokens(), tokenTracker.getTotalTokens()));
+                }
 
-            iteration++;
-            LOG.debug("Iteration {}: model requested {} tool call(s)", iteration,
-                    choice.message().toolCalls().map(List::size).orElse(0));
+                iteration++;
+                LOG.debug("Iteration {}: model requested {} tool call(s)", iteration,
+                        choice.message().toolCalls().map(List::size).orElse(0));
 
-            // Add assistant message with tool_calls to conversation
-            ChatCompletionMessage assistantMsg = choice.message();
-            List<ChatCompletionMessageToolCall> toolCalls = assistantMsg.toolCalls().orElse(List.of());
-            ChatCompletionMessageParam assistantParam = ChatCompletionMessageParam.ofAssistant(
-                    ChatCompletionAssistantMessageParam.builder()
-                            .toolCalls(toolCalls)
-                            .build());
-            paramsBuilder.addMessage(assistantParam);
-            agenticMessages.add(assistantParam);
-
-            // Record the requested tools up front so the log keeps the model's ordering regardless of
-            // whether the batch is executed sequentially or in parallel
-            for (ChatCompletionMessageToolCall toolCall : toolCalls) {
-                toolCallsLog.add(toolCall.asFunction().function().name());
-            }
-
-            // Execute all tool calls in this batch
-            List<McpToolCallExecutor.ToolResult> batchResults = toolCallExecutor.execute(toolCalls);
-            boolean allReturnDirect = batchResults.stream().allMatch(McpToolCallExecutor.ToolResult::returnDirect);
-
-            // returnDirect check: if ALL tools in this batch are returnDirect, short-circuit
-            if (allReturnDirect && !batchResults.isEmpty()) {
-                LOG.debug("All tools in batch have returnDirect=true, short-circuiting agentic loop");
-                String directResult = batchResults.stream()
-                        .map(McpToolCallExecutor.ToolResult::content)
-                        .collect(Collectors.joining("\n"));
-
-                exchange.getMessage().setBody(directResult);
-                setResponseHeaders(exchange.getMessage(), response);
-                exchange.getMessage().setHeader(OpenAIConstants.TOOL_ITERATIONS, iteration);
-                exchange.getMessage().setHeader(OpenAIConstants.MCP_TOOL_CALLS, toolCallsLog);
-                exchange.getMessage().setHeader(OpenAIConstants.MCP_RETURN_DIRECT, true);
-                updateConversationHistory(exchange, agenticMessages, directResult);
-                return;
-            }
-
-            // Normal path: feed tool results back to LLM
-            LOG.debug("Feeding {} tool result(s) back to the model", batchResults.size());
-            for (McpToolCallExecutor.ToolResult entry : batchResults) {
-                ChatCompletionMessageParam toolMsg = ChatCompletionMessageParam.ofTool(
-                        ChatCompletionToolMessageParam.builder()
-                                .toolCallId(entry.toolCallId())
-                                .content(entry.content())
+                // Add assistant message with tool_calls to conversation
+                ChatCompletionMessage assistantMsg = choice.message();
+                List<ChatCompletionMessageToolCall> toolCalls = assistantMsg.toolCalls().orElse(List.of());
+                ChatCompletionMessageParam assistantParam = ChatCompletionMessageParam.ofAssistant(
+                        ChatCompletionAssistantMessageParam.builder()
+                                .toolCalls(toolCalls)
                                 .build());
-                paramsBuilder.addMessage(toolMsg);
-                agenticMessages.add(toolMsg);
-            }
-        }
+                paramsBuilder.addMessage(assistantParam);
+                agenticMessages.add(assistantParam);
 
-        throw new IllegalStateException(
-                "Max tool iterations (%d) exceeded. Tools called: %s".formatted(maxIterations, toolCallsLog));
+                // Record the requested tools up front so the log keeps the model's ordering regardless of
+                // whether the batch is executed sequentially or in parallel
+                for (ChatCompletionMessageToolCall toolCall : toolCalls) {
+                    toolCallsLog.add(toolCall.asFunction().function().name());
+                }
+
+                // Execute all tool calls in this batch
+                List<McpToolCallExecutor.ToolResult> batchResults = toolCallExecutor.execute(toolCalls);
+                observability.recordIteration(
+                        modelCall, iterationStartNanos, iterationPromptTokens, iterationCompletionTokens, toolCalls,
+                        batchResults);
+                boolean allReturnDirect = batchResults.stream().allMatch(McpToolCallExecutor.ToolResult::returnDirect);
+
+                // returnDirect check: if ALL tools in this batch are returnDirect, short-circuit
+                if (allReturnDirect && !batchResults.isEmpty()) {
+                    LOG.debug("All tools in batch have returnDirect=true, short-circuiting agentic loop");
+                    String directResult = batchResults.stream()
+                            .map(McpToolCallExecutor.ToolResult::content)
+                            .collect(Collectors.joining("\n"));
+
+                    exchange.getMessage().setBody(directResult);
+                    setResponseHeaders(exchange.getMessage(), response);
+                    exchange.getMessage().setHeader(OpenAIConstants.TOOL_ITERATIONS, iteration);
+                    exchange.getMessage().setHeader(OpenAIConstants.MCP_TOOL_CALLS, toolCallsLog);
+                    exchange.getMessage().setHeader(OpenAIConstants.MCP_RETURN_DIRECT, true);
+                    stopReason = "return_direct";
+                    observability.onLoopCompleted(iteration, tokenTracker, stopReason);
+                    updateConversationHistory(exchange, agenticMessages, directResult);
+                    return;
+                }
+
+                // Normal path: feed tool results back to LLM
+                LOG.debug("Feeding {} tool result(s) back to the model", batchResults.size());
+                for (McpToolCallExecutor.ToolResult entry : batchResults) {
+                    ChatCompletionMessageParam toolMsg = ChatCompletionMessageParam.ofTool(
+                            ChatCompletionToolMessageParam.builder()
+                                    .toolCallId(entry.toolCallId())
+                                    .content(entry.content())
+                                    .build());
+                    paramsBuilder.addMessage(toolMsg);
+                    agenticMessages.add(toolMsg);
+                }
+            }
+
+            stopReason = "max_iterations_exceeded";
+            observability.onLoopCompleted(maxIterations, tokenTracker, stopReason);
+            throw new IllegalStateException(
+                    "Max tool iterations (%d) exceeded. Tools called: %s".formatted(maxIterations, toolCallsLog));
+        } catch (IllegalStateException e) {
+            if ("unknown".equals(stopReason)) {
+                stopReason = "error";
+            }
+            throw e;
+        } catch (Exception e) {
+            stopReason = "error";
+            throw e;
+        } finally {
+            observability.finalizeObservability(tokenTracker, iteration, stopReason);
+        }
     }
 
     private void setAgenticTokenHeaders(Message message, OpenAIAgenticTokenTracker tokenTracker) {
@@ -601,16 +643,9 @@ public class OpenAIProducer extends DefaultAsyncProducer {
         message.setHeader(OpenAIConstants.AGENTIC_TOTAL_TOKENS, tokenTracker.getTotalTokens());
     }
 
-    private void enforceAgenticTokenBudget(
-            OpenAIConfiguration config, OpenAIAgenticTokenTracker tokenTracker, int iteration) {
+    private static boolean tokenBudgetExceeded(OpenAIConfiguration config, OpenAIAgenticTokenTracker tokenTracker) {
         long maxAgenticTokens = config.getMaxAgenticTokens();
-        if (maxAgenticTokens <= 0 || tokenTracker.getTotalTokens() <= maxAgenticTokens) {
-            return;
-        }
-        throw new IllegalStateException(
-                "Max agentic tokens (%d) exceeded at iteration %d. Cumulative usage: prompt=%d, completion=%d, total=%d"
-                        .formatted(maxAgenticTokens, iteration, tokenTracker.getPromptTokens(),
-                                tokenTracker.getCompletionTokens(), tokenTracker.getTotalTokens()));
+        return maxAgenticTokens > 0 && tokenTracker.getTotalTokens() > maxAgenticTokens;
     }
 
     private void processStreaming(Exchange exchange, ChatCompletionCreateParams params) {
