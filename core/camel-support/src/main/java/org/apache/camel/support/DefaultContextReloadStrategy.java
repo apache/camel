@@ -106,8 +106,8 @@ public class DefaultContextReloadStrategy extends ServiceSupport implements Cont
      * A component option such as <tt>camel.component.kafka.saslJaasConfig</tt> has its placeholder resolved once, when
      * the component is configured, and the resolved value is what is stored on the component. Reloading the routes
      * rebuilds the endpoints from that same already-resolved value, so without this step a rotated secret would never
-     * reach the component. Only <tt>camel.</tt> options whose value is a placeholder are re-applied, as they are the
-     * only ones whose resolved value can change while the raw configuration stays the same.
+     * reach the component. Only <tt>camel.</tt> options whose value is a placeholder are handed to the listener, as
+     * they are the only ones whose resolved value can change while the raw configuration stays the same.
      */
     protected void reloadComponentProperties(Object source) throws Exception {
         PropertiesReload pr = getCamelContext().hasService(PropertiesReload.class);
@@ -118,6 +118,9 @@ public class DefaultContextReloadStrategy extends ServiceSupport implements Cont
 
         PropertiesComponent pc = getCamelContext().getPropertiesComponent();
         Properties prop = pc.loadProperties();
+        // filter on camel. rather than on the individual option prefixes: PropertiesReload is a generic SPI and
+        // each implementation decides which options it acts on. MainPropertiesReload, for example, re-applies only
+        // camel.component., camel.dataformat. and camel.language., and silently ignores everything else
         // stringPropertyNames is a live view of the keys, so snapshot before removing
         Set<String> keys = new LinkedHashSet<>(prop.stringPropertyNames());
         for (String key : keys) {
