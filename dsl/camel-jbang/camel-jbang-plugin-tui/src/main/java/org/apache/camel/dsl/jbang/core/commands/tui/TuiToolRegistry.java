@@ -187,14 +187,9 @@ class TuiToolRegistry {
                 Map.of("limit", propDef("integer", "Maximum number of events to return (default 50)")))));
         tools.add(toToolDef(toolDef(
                 "tui_get_state",
-                "Returns the current TUI navigation state: active tab, selected integration, "
-                                 + "and integration count. "
-                                 + "Includes a 'selection' field with structured metadata about the active list/table. "
-                                 + "captionVisible indicates if a caption overlay is on screen. "
-                                 + "keystrokesVisible indicates if the keystroke overlay is on. "
-                                 + "detailFocused (boolean, present on tabs with master/detail panels) indicates "
-                                 + "which panel has focus: true=detail panel, false=table panel. "
-                                 + "Press Tab to toggle focus. Up/Down and PgUp/PgDn operate on the focused panel.",
+                "Current TUI navigation state: active tab, selected integration and PID, integration count, the "
+                                 + "active list/table selection, overlay flags and (on master/detail tabs) which "
+                                 + "panel has focus.",
                 Map.of())));
         tools.add(toToolDef(toolDef(
                 "tui_show_caption",
@@ -208,20 +203,14 @@ class TuiToolRegistry {
                 List.of("text"))));
         tools.add(toToolDef(toolDef(
                 "tui_navigate",
-                "Navigates the TUI: switch tabs and/or select an integration. "
-                                + "All parameters are optional — set whichever you want to change. "
-                                + "Tab names: Overview, Log, Activity, Diagram, Routes, Endpoints, HTTP, Inspect, "
-                                + "Circuit Breaker, Health, Spans, Process. "
-                                + "Use 'route' to select a route in the Diagram topology, "
-                                + "and 'node' to drill down into a route and select a specific processor/EIP node. "
-                                + "Returns screen content and selection metadata after navigating.",
-                Map.of("tab", propDef("string", "Tab to switch to (e.g. 'Routes', 'Activity', 'Diagram')"),
+                "Changes what the user sees: switch tab, select an integration, select a route in the Diagram "
+                                + "tab, or drill into a processor node. Every parameter is optional. Returns the screen "
+                                + "and selection afterwards. Do not use it just to read data; the tui_get_* tools do that.",
+                Map.of("tab", propDef("string", "Tab to switch to, e.g. Routes, Log, Diagram (see tui_get_options)"),
                         "integration", propDef("string", "Integration name or PID to select"),
-                        "route", propDef("string",
-                                "Route ID to select in the Diagram tab topology (e.g. 'order-dispatcher')"),
+                        "route", propDef("string", "Route ID to select in the Diagram tab"),
                         "node", propDef("string",
-                                "Processor/EIP node ID to select within a drilled-down route (e.g. 'multicast1'). "
-                                                  + "If 'route' is also provided, drills into that route first")))));
+                                "Processor/EIP node ID to select inside the route (drills into 'route' first when given)")))));
 
         tools.add(toToolDef(toolDef(
                 "tui_send_keys",
@@ -239,13 +228,9 @@ class TuiToolRegistry {
                 List.of("keys"))));
         tools.add(toToolDef(toolDef(
                 "tui_get_options",
-                "IMPORTANT: Call this FIRST before any other tui_ tool when starting a new task. "
-                                   + "Returns all available tabs with descriptions and running integrations. "
-                                   + "Each tab description says what data it provides — match the user's question "
-                                   + "keywords to tab descriptions to find the right data source in one step "
-                                   + "(e.g. 'kafka offset' → find Kafka tab → tui_get_table(tab='Kafka')). "
-                                   + "This avoids wasting calls piecing data from logs, spans, and endpoints "
-                                   + "when a dedicated tab already has exactly the needed information.",
+                "Lists every tab with a description of the data it provides, plus the running integrations. "
+                                   + "Use it when unsure which tab holds the data for a question (e.g. 'kafka offset' "
+                                   + "-> Kafka tab), then read that tab with tui_get_table.",
                 Map.of())));
         tools.add(toToolDef(toolDef(
                 "tui_wait_for_idle",
@@ -281,36 +266,18 @@ class TuiToolRegistry {
                 List.of("seconds"))));
         tools.add(toToolDef(toolDef(
                 "tui_draw",
-                "Draws characters at specific screen coordinates as an overlay on top of the TUI. "
-                            + "Use this to highlight areas, annotate the screen for the human, "
-                            + "draw shapes, or create fun emoji art. "
-                            + "All cells are sent in a single call to avoid chatty networking. "
-                            + "Coordinates are 0-based and match the screen grid from tui_get_screen. "
-                            + "Characters can be any unicode including emoji. "
-                            + "The drawing overlays on top of existing content without modifying it. "
-                            + "Use with tui_show_caption to explain what you drew.",
+                "Draws an overlay on top of the TUI screen in one call: many shapes (batch of the tui_draw_shape "
+                            + "parameters) and/or individual characters, including emoji. Coordinates are 0-based and "
+                            + "match tui_get_screen. Use with tui_show_caption to explain what you drew.",
                 Map.of("cells", propDef("array",
-                        "Array of cell objects to draw. Each cell has: "
-                                                 + "x (integer, column), y (integer, row), "
-                                                 + "char (string, character to draw), "
-                                                 + "fg (string, optional foreground color: red/green/blue/yellow/cyan/magenta/white/gray/black), "
-                                                 + "bg (string, optional background color, same values), "
-                                                 + "bold (boolean, optional)"),
+                        "Cell objects: x, y, char, optional fg/bg color name, optional bold"),
                         "shapes", propDef("array",
-                                "Array of shape objects to draw (batch mode). Each shape has: "
-                                                   + "shape (string, required: box/highlight/underline/arrow-down/arrow-up/arrow-left/arrow-right/text), "
-                                                   + "x (integer, column), y (integer, row), "
-                                                   + "width (integer, for box/highlight/underline), "
-                                                   + "height (integer, for box/highlight), "
-                                                   + "length (integer, for arrows), "
-                                                   + "text (string, for text shape), "
-                                                   + "color (string: red/green/blue/yellow/cyan/magenta/white/gray/black). "
-                                                   + "Use shapes instead of cells for high-level drawing in a single call."),
+                                "Shape objects with the same fields as tui_draw_shape: shape, x, y, width, height, "
+                                                   + "length, text, color"),
                         "duration", propDef("integer",
-                                "Auto-dismiss drawing after this many seconds. "
-                                                       + "If omitted, drawing stays until cleared with tui_draw_clear or replaced by another tui_draw call."),
+                                "Auto-dismiss after this many seconds; otherwise stays until tui_draw_clear or the next tui_draw"),
                         "append", propDef("boolean",
-                                "If true, add cells to the existing drawing instead of replacing it. Default false.")),
+                                "Add to the existing drawing instead of replacing it (default false)")),
                 List.of())));
         tools.add(toToolDef(toolDef(
                 "tui_draw_clear",
@@ -320,13 +287,10 @@ class TuiToolRegistry {
 
         tools.add(toToolDef(toolDef(
                 "tui_draw_shape",
-                "Draws a predefined shape on the TUI screen overlay. "
-                                  + "Much easier than constructing individual cells with tui_draw. "
-                                  + "Combine with tui_locate for precise positioning.",
+                "Draws one shape on the TUI screen overlay. Combine with tui_locate for precise positioning.",
                 Map.of("shape", propDef("string",
-                        "Shape to draw: box (rectangle border), highlight (background color on existing text like a marker pen), "
-                                                  + "underline (horizontal line), arrow-down, arrow-up, arrow-left, arrow-right, "
-                                                  + "text (draw text string at position)"),
+                        "box (border), highlight (marker-pen background), underline, arrow-down, arrow-up, "
+                                                  + "arrow-left, arrow-right, or text"),
                         "x", propDef("integer", "X coordinate (column) of the shape origin"),
                         "y", propDef("integer", "Y coordinate (row) of the shape origin"),
                         "width", propDef("integer", "Width of the shape (for box, highlight, underline)"),
@@ -334,11 +298,10 @@ class TuiToolRegistry {
                         "length", propDef("integer", "Length of arrows"),
                         "text", propDef("string", "Text content to draw (for text shape)"),
                         "color", propDef("string",
-                                "Color: red, green, blue, yellow, cyan, magenta, white, gray, black. Default: red for box/underline/arrow, yellow for highlight."),
-                        "duration",
-                        propDef("integer", "Auto-dismiss after this many seconds. If omitted, stays until cleared."),
-                        "append", propDef("boolean",
-                                "If true, add to existing drawing instead of replacing it. Default false.")),
+                                "red, green, blue, yellow, cyan, magenta, white, gray or black (default red, "
+                                                   + "yellow for highlight)"),
+                        "duration", propDef("integer", "Auto-dismiss after this many seconds; otherwise stays until cleared"),
+                        "append", propDef("boolean", "Add to the existing drawing instead of replacing it (default false)")),
                 List.of("shape", "x", "y"))));
 
         tools.add(toToolDef(toolDef(
@@ -395,14 +358,12 @@ class TuiToolRegistry {
                                                 + "If omitted, uses the active tab.")))));
         tools.add(toToolDef(toolDef(
                 "tui_get_status",
-                "Returns one top-level section of the integration's full status document, the same JSON the Camel "
-                                  + "CLI reads from ~/.camel/<pid>-status.json. Use it for data the tabs do not show: "
-                                  + "'context' (name, version, state, uptime in millis, startTimestamp, statistics), "
-                                  + "'runtime' (pid, directory, java version), 'healthChecks', 'properties', "
-                                  + "'main-configuration', 'routeController', 'services', 'transformers', 'rests', "
-                                  + "'consumers', 'producers', 'endpoints', 'dataSources', 'memory', 'threads', 'gc', "
-                                  + "'classLoading', 'trace', 'events'. Pass section='sections' to list what the "
-                                  + "document contains. Sections can be large, so request only the one you need.",
+                "One top-level section of the integration's full status document (~/.camel/<pid>-status.json). "
+                                  + "Use it for data no tab shows: context (name, version, state, uptime millis, "
+                                  + "startTimestamp, statistics), runtime (pid, directory, java), healthChecks, "
+                                  + "properties, main-configuration, routeController, services, transformers, rests, "
+                                  + "consumers, producers, endpoints, dataSources, memory, threads, gc, classLoading, "
+                                  + "trace, events. section='sections' lists them. Request only the section you need.",
                 Map.of("section", propDef("string",
                         "Top-level section name, or 'sections' to list the available names"),
                         "pid", propDef("string",
@@ -609,26 +570,17 @@ class TuiToolRegistry {
 
         tools.add(toToolDef(toolDef(
                 "tui_catalog_doc",
-                "Get documentation for a Camel catalog artifact (component, data format, language, EIP) "
-                                   + "including description, options, and Maven coordinates. "
-                                   + "Use optionsFilter to search options by keyword (e.g., 'security', 'ssl', 'timeout'). "
-                                   + "This enables queries like 'what options are there on kafka about security'. "
-                                   + "Set includeDoc=true to get the full AsciiDoc documentation for deep-dive questions. "
-                                   + "Uses the Camel version from the selected integration.",
-                Map.of("name", propDef("string",
-                        "Artifact name (e.g., kafka, json-jackson, simple, timer, choice, split)"),
+                "Camel catalog documentation for a component, data format, language or EIP: description, options "
+                                   + "and Maven coordinates, for the Camel version of the selected integration. "
+                                   + "Use optionsFilter for questions like 'which kafka options are about security'.",
+                Map.of("name", propDef("string", "Artifact name, e.g. kafka, json-jackson, simple, timer, choice, split"),
                         "kind", propDef("string",
-                                "Artifact kind: component, dataformat, language, or eip. "
-                                                  + "If omitted, auto-detects by trying component first, then dataformat, then language, then eip."),
-                        "includeOptions", propDef("boolean",
-                                "Whether to include configuration options in the response (default: true). "
-                                                             + "Set to false for a lightweight response with just metadata."),
+                                "component, dataformat, language or eip; auto-detected in that order when omitted"),
+                        "includeOptions", propDef("boolean", "Include the configuration options (default true)"),
                         "includeDoc", propDef("boolean",
-                                "Whether to include the full AsciiDoc documentation text in the response (default: false). "
-                                                         + "Useful for deep-dive questions about usage, examples, and configuration patterns."),
+                                "Include the full AsciiDoc page for usage examples and patterns (default false)"),
                         "optionsFilter", propDef("string",
-                                "Filter options by keyword in name or description (case-insensitive substring match). "
-                                                           + "Only used when includeOptions is true.")),
+                                "Case-insensitive keyword to match in option names or descriptions")),
                 List.of("name"))));
 
         tools.add(toToolDef(toolDef(

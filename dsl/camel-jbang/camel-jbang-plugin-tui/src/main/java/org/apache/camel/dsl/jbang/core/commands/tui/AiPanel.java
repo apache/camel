@@ -72,6 +72,21 @@ import org.apache.camel.util.json.JsonObject;
 class AiPanel {
 
     private static final int MAX_ITERATIONS = 10;
+    /**
+     * Longest tool result handed to the model. The AI log keeps the full text; the model gets the head plus a note,
+     * because a single log or table dump can otherwise be larger than the whole system prompt.
+     */
+    static final int MAX_TOOL_RESULT_CHARS = 16_000;
+    /**
+     * Tool results from turns before the previous one are shrunk to this many characters once the turn is answered. The
+     * model's own answer already summarises them, and the whole history is re-sent (and re-processed by a local model)
+     * on every request.
+     */
+    static final int COMPACT_TOOL_RESULT_CHARS = 400;
+    /**
+     * Oldest turns are dropped beyond this many user questions in one conversation.
+     */
+    static final int MAX_HISTORY_TURNS = 20;
     private static final int MAX_LOG_ENTRIES = 200;
     private static final DateTimeFormatter TIME_FMT
             = DateTimeFormatter.ofPattern("HH:mm:ss").withZone(ZoneId.systemDefault());
@@ -1035,7 +1050,7 @@ class AiPanel {
                     log(LogLevel.TOOL, toolCall.name(), toolCall.arguments().toJson());
                     String result = executeTuiTool(toolCall.name(), toolCall.arguments());
                     log(LogLevel.RESULT, toolCall.name(), result);
-                    results.add(new LlmClient.ToolResult(toolCall.id(), result));
+                    results.add(new LlmClient.ToolResult(toolCall.id(), truncateToolResult(result)));
                 }
                 messages.add(LlmClient.Message.toolResults(results));
             } else {
@@ -1055,6 +1070,7 @@ class AiPanel {
                 }
                 scrollOffset = 0;
                 messages.add(LlmClient.Message.assistantWithToolCalls(text, List.of()));
+                compactHistory(messages, MAX_HISTORY_TURNS, COMPACT_TOOL_RESULT_CHARS);
                 return;
             }
         }
@@ -1854,6 +1870,69 @@ class AiPanel {
             defs.add(new LlmClient.ToolDef(td.name(), td.description(), td.inputSchema()));
         }
         return defs;
+    }
+
+    /**
+     * Caps a tool result before it enters the model history; the AI log keeps the full text.
+     */
+    static String truncateToolResult(String result) {
+        if (result == null || result.length() <= MAX_TOOL_RESULT_CHARS) {
+            return result;
+        }
+        return result.substring(0, MAX_TOOL_RESULT_CHARS)
+               + "\n... [truncated, " + (result.length() - MAX_TOOL_RESULT_CHARS)
+               + " more characters; narrow the request (filter, limit, section) to see the rest]";
+    }
+
+    /**
+     * Keeps the model history bounded after a turn is answered: tool results from turns before the previous one are
+     * shrunk to their head, and the oldest turns are dropped beyond {@code maxTurns} user questions. The previous turn
+     * is kept intact so an immediate follow-up can still refer to what was just fetched. Whole turns are removed (user
+     * message through the final answer) so assistant tool calls never lose their matching results.
+     */
+    static void compactHistory(List<LlmClient.Message> history, int maxTurns, int compactChars) {
+        if (history == null || history.isEmpty()) {
+            return;
+        }
+        List<Integer> userIndexes = new ArrayList<>();
+        for (int i = 0; i < history.size(); i++) {
+            LlmClient.Message m = history.get(i);
+            if ("user".equals(m.role()) && m.toolCalls() == null && m.toolResults() == null) {
+                userIndexes.add(i);
+            }
+        }
+        if (userIndexes.size() > maxTurns) {
+            int keepFrom = userIndexes.get(userIndexes.size() - maxTurns);
+            history.subList(0, keepFrom).clear();
+            int dropped = userIndexes.size() - maxTurns;
+            userIndexes = userIndexes.subList(dropped, userIndexes.size()).stream()
+                    .map(index -> index - keepFrom).toList();
+        }
+        // everything before the previous turn (i.e. before the second-last user message) is compacted
+        if (userIndexes.size() < 2) {
+            return;
+        }
+        int compactBefore = userIndexes.get(userIndexes.size() - 2);
+        for (int i = 0; i < compactBefore; i++) {
+            LlmClient.Message m = history.get(i);
+            if (m.toolResults() == null || m.toolResults().isEmpty()) {
+                continue;
+            }
+            boolean changed = false;
+            List<LlmClient.ToolResult> compacted = new ArrayList<>(m.toolResults().size());
+            for (LlmClient.ToolResult tr : m.toolResults()) {
+                String content = tr.content();
+                if (content != null && content.length() > compactChars) {
+                    content = content.substring(0, compactChars)
+                              + "\n... [earlier result compacted; call the tool again for the full data]";
+                    changed = true;
+                }
+                compacted.add(new LlmClient.ToolResult(tr.toolCallId(), content));
+            }
+            if (changed) {
+                history.set(i, LlmClient.Message.toolResults(compacted));
+            }
+        }
     }
 
     private String executeTuiTool(String name, JsonObject args) {
