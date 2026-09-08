@@ -1753,3 +1753,29 @@ custom `headerFilterStrategy` is used as-is and is unaffected.
 
 Routes that relied on one of those headers reaching the wire must set it through the endpoint
 configuration or supply a `headerFilterStrategy` that permits it.
+
+=== camel-servlet, camel-jetty - the multipart upload whitelist is enforced against the submitted file name
+
+`fileNameExtWhitelist` accepts file name extensions, but `camel-servlet`'s `AttachmentHttpBinding`
+checked it against `Part.getName()`, which is the multipart *field* name rather than the submitted
+file name. A field named `file` carries no extension, so the check found nothing to compare and every
+upload was accepted. The option is now checked against `Part.getSubmittedFileName()`, which is what
+`camel-platform-http-vertx` already does.
+
+A `camel-servlet` consumer that sets `fileNameExtWhitelist` together with `attachmentMultipartBinding=true`
+therefore starts rejecting uploads whose file extension is not listed, which is what the option always
+advertised. Uploads with no file name, such as plain form fields, are unaffected, and a route that does
+not set the option is unaffected. Review the configured extension list before upgrading.
+
+The `camel-jetty` binding performed no whitelist check at all, although `fileNameExtWhitelist` can be
+set on its `HttpBinding`. It now applies the same check.
+
+The `camel-jetty` binding also stored the attachment under the multipart field name but looked it up
+again by the submitted file name, and passed that file name to `HttpHelper.appendHeader`. The lookup
+therefore only succeeded when the two happened to be equal, and when it did the header was named by
+the client-supplied file name. The attachment is now looked up and exposed under the field name it is
+stored with, and only for parts that carry a file name — a plain form field is mapped by
+`populateRequestParameters` as before. Because the old lookup by file name returned `null` whenever the
+two names differed, that header never carried a usable `DataHandler` in the first place; only when the
+names happened to be equal did it resolve, and then the name is unchanged. A route that expected the
+attachment header under the uploaded file name should read it under the multipart field name.
