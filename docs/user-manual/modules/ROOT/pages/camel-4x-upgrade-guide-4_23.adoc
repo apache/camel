@@ -1775,5 +1775,7 @@ again by the submitted file name, and passed that file name to `HttpHelper.appen
 therefore only succeeded when the two happened to be equal, and when it did the header was named by
 the client-supplied file name. The attachment is now looked up and exposed under the field name it is
 stored with, and only for parts that carry a file name — a plain form field is mapped by
-`populateRequestParameters` as before. A route that read the attachment header under the uploaded file
-name must read it under the multipart field name instead.
+`populateRequestParameters` as before. Because the old lookup by file name returned `null` whenever the
+two names differed, that header never carried a usable `DataHandler` in the first place; only when the
+names happened to be equal did it resolve, and then the name is unchanged. A route that expected the
+attachment header under the uploaded file name should read it under the multipart field name.

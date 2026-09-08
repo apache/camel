@@ -28,7 +28,7 @@ import org.apache.camel.attachment.AttachmentMessage;
 import org.apache.camel.builder.RouteBuilder;
 import org.junit.jupiter.api.Test;
 
-import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 /**
  * The test harness posts a part whose multipart field name is {@code file} and whose submitted file name is
@@ -45,12 +45,18 @@ public class MultipartUploadFileNameExtWhitelistTest extends ServletCamelRouterT
 
     @Test
     void testUploadAcceptedWhenExtensionIsWhitelisted() throws IOException {
-        assertThat(upload("allowed")).isEqualTo("accepted");
+        assertEquals("accepted", upload("allowed"));
     }
 
     @Test
     void testUploadRejectedWhenExtensionIsNotWhitelisted() throws IOException {
-        assertThat(upload("rejected")).isEqualTo("no attachment");
+        assertEquals("no attachment", upload("rejected"));
+    }
+
+    @Test
+    void testUploadRejectedWhenExtensionIsOnlyASubstringOfTheWhitelist() throws IOException {
+        // the whitelist "txtdoc" must not accept a "test.txt" upload just because "txtdoc".contains("txt")
+        assertEquals("no attachment", upload("substring"));
     }
 
     private String upload(String path) throws IOException {
@@ -69,6 +75,9 @@ public class MultipartUploadFileNameExtWhitelistTest extends ServletCamelRouterT
                         .process(MultipartUploadFileNameExtWhitelistTest::reportAttachment);
 
                 from("servlet:rejected?attachmentMultipartBinding=true&fileNameExtWhitelist=pdf")
+                        .process(MultipartUploadFileNameExtWhitelistTest::reportAttachment);
+
+                from("servlet:substring?attachmentMultipartBinding=true&fileNameExtWhitelist=txtdoc")
                         .process(MultipartUploadFileNameExtWhitelistTest::reportAttachment);
             }
         };

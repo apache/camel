@@ -67,7 +67,7 @@ final class AttachmentHttpBinding extends DefaultHttpBinding {
                     if (!isFileNameAccepted(fileName)) {
                         LOG.debug(
                                 "Cannot add file as attachment: {} because the file is not accepted according to fileNameExtWhitelist: {}",
-                                fileName, getFileNameExtWhitelist());
+                                HttpHelper.sanitizeLog(fileName), getFileNameExtWhitelist());
                         continue;
                     }
 
@@ -112,7 +112,17 @@ final class AttachmentHttpBinding extends DefaultHttpBinding {
         }
         ext = ext.toLowerCase(Locale.US);
         whitelist = whitelist.toLowerCase(Locale.US);
-        return whitelist.equals("*") || whitelist.contains(ext);
+        if (whitelist.equals("*")) {
+            return true;
+        }
+        // compare against each comma-separated extension exactly, not as a substring: a whitelist of "txt"
+        // must not accept an upload named "evil.x" just because "txt".contains("x")
+        for (String allowed : whitelist.split(",")) {
+            if (allowed.trim().equals(ext)) {
+                return true;
+            }
+        }
+        return false;
     }
 
     @Override

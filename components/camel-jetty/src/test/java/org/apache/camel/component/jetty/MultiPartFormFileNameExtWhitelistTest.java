@@ -52,6 +52,12 @@ public class MultiPartFormFileNameExtWhitelistTest extends BaseJettyTest {
         assertThat(upload("/rejected")).isEqualTo("attachment=false,headerIsAttachment=false,fileNameHeader=false");
     }
 
+    @Test
+    public void testUploadRejectedWhenExtensionIsOnlyASubstringOfTheWhitelist() {
+        // "propertiesx".contains("properties") is true, but exact matching must reject the upload
+        assertThat(upload("/substring")).isEqualTo("attachment=false,headerIsAttachment=false,fileNameHeader=false");
+    }
+
     private String upload(String path) {
         File file = new File("src/test/resources/log4j2.properties");
         HttpEntity entity = MultipartEntityBuilder.create()
@@ -69,6 +75,8 @@ public class MultiPartFormFileNameExtWhitelistTest extends BaseJettyTest {
                 from(whitelisted("/allowed", "properties"))
                         .process(MultiPartFormFileNameExtWhitelistTest::reportAttachment);
                 from(whitelisted("/rejected", "pdf"))
+                        .process(MultiPartFormFileNameExtWhitelistTest::reportAttachment);
+                from(whitelisted("/substring", "propertiesx"))
                         .process(MultiPartFormFileNameExtWhitelistTest::reportAttachment);
             }
 
