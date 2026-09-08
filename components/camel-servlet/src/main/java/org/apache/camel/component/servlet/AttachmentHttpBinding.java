@@ -54,7 +54,9 @@ public final class AttachmentHttpBinding extends DefaultHttpBinding {
         try {
             Collection<Part> parts = request.getParts();
             for (Part part : parts) {
-                String fileName = part.getName();
+                // the whitelist accepts file name extensions, so it must be checked against the submitted file
+                // name and not against Part.getName(), which is the multipart field name
+                String fileName = part.getSubmittedFileName();
                 // is the file name accepted
                 boolean accepted = true;
                 if (getFileNameExtWhitelist() != null) {

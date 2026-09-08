@@ -21,6 +21,7 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.Collection;
 import java.util.Enumeration;
+import java.util.Locale;
 import java.util.Map;
 
 import jakarta.activation.DataHandler;
@@ -37,6 +38,7 @@ import org.apache.camel.attachment.DefaultAttachmentMessage;
 import org.apache.camel.component.jetty.MultiPartFilter;
 import org.apache.camel.http.common.DefaultHttpBinding;
 import org.apache.camel.http.common.HttpHelper;
+import org.apache.camel.util.FileUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -59,6 +61,16 @@ final class AttachmentHttpBinding extends DefaultHttpBinding {
             try {
                 parts = request.getParts();
                 for (Part part : parts) {
+                    // the whitelist accepts file name extensions, so it must be checked against the submitted
+                    // file name and not against Part.getName(), which is the multipart field name
+                    String fileName = part.getSubmittedFileName();
+                    if (!isFileNameAccepted(fileName)) {
+                        LOG.debug(
+                                "Cannot add file as attachment: {} because the file is not accepted according to fileNameExtWhitelist: {}",
+                                fileName, getFileNameExtWhitelist());
+                        continue;
+                    }
+
                     DataSource ds = new PartDataSource(part);
                     Attachment attachment = new DefaultAttachment(ds);
                     for (String headerName : part.getHeaderNames()) {
@@ -67,21 +79,40 @@ final class AttachmentHttpBinding extends DefaultHttpBinding {
                         }
                     }
                     AttachmentMessage am = new DefaultAttachmentMessage(message);
-                    am.addAttachmentObject(part.getName(), attachment);
-                    String name = part.getSubmittedFileName();
-                    Object value = am.getAttachment(name);
-                    Map<String, Object> headers = message.getHeaders();
-                    if (getHeaderFilterStrategy() != null
-                            && !getHeaderFilterStrategy().applyFilterToExternalHeaders(name, value, message.getExchange())
-                            && name != null) {
-                        HttpHelper.appendHeader(headers, name, value);
+                    String name = part.getName();
+                    am.addAttachmentObject(name, attachment);
+                    // a file part is also exposed as a header carrying the DataHandler. The attachment is keyed on
+                    // the multipart field name, so the header must be looked up and named by that same key and not
+                    // by the client supplied file name. A plain form field carries no file name and is mapped by
+                    // populateRequestParameters instead, so it is left alone here.
+                    if (fileName != null && name != null) {
+                        Object value = am.getAttachment(name);
+                        Map<String, Object> headers = message.getHeaders();
+                        if (getHeaderFilterStrategy() != null
+                                && !getHeaderFilterStrategy().applyFilterToExternalHeaders(name, value,
+                                        message.getExchange())) {
+                            HttpHelper.appendHeader(headers, name, value);
+                        }
                     }
-
                 }
             } catch (Exception e) {
                 throw new RuntimeCamelException("Cannot populate attachments", e);
             }
         }
+    }
+
+    private boolean isFileNameAccepted(String fileName) {
+        String whitelist = getFileNameExtWhitelist();
+        if (whitelist == null) {
+            return true;
+        }
+        String ext = FileUtil.onlyExt(fileName);
+        if (ext == null) {
+            return true;
+        }
+        ext = ext.toLowerCase(Locale.US);
+        whitelist = whitelist.toLowerCase(Locale.US);
+        return whitelist.equals("*") || whitelist.contains(ext);
     }
 
     @Override
