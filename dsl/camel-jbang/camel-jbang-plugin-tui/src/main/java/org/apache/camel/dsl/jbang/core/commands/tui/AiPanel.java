@@ -1808,7 +1808,9 @@ class AiPanel {
         sb.append("the MCP log only records external clients\n");
         sb.append("- Be concise and actionable in your answers\n");
         sb.append("- When something looks wrong, explain what it means and suggest fixes\n");
-        sb.append("- For stopping routes or applications, use tui_control for graceful shutdown\n");
+        sb.append("- For stopping routes or applications, use tui_control for graceful shutdown; ");
+        sb.append("tui_control reset-stats clears statistics without touching the routes\n");
+        sb.append("- Never restart, stop or kill an integration unless the user explicitly asked for that\n");
         if (!useCoreTools()) {
             sb.append("- Use tui_locate + tui_draw_shape to visually highlight problems on screen for the user\n");
         }

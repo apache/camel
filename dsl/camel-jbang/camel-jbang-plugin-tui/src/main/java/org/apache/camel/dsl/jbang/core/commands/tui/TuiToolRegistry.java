@@ -511,8 +511,10 @@ class TuiToolRegistry {
                         "Integration name. If omitted, uses the currently selected integration.")))));
         tools.add(toToolDef(toolDef(
                 "tui_control",
-                "Controls the selected integration: stop/start routes, restart, stop, or kill the process. "
-                               + "Actions: stop-routes (or pause) — suspend all routes; "
+                "Controls the selected integration: reset statistics, stop/start routes, restart, stop, or kill "
+                               + "the process. Actions: reset-stats (or clear-stats) — clear exchange statistics, "
+                               + "activity, errors and traces without touching the routes; "
+                               + "stop-routes (or pause) — suspend all routes; "
                                + "start-routes (or resume) — resume all routes; "
                                + "restart — gracefully restart the integration; "
                                + "stop — gracefully stop the process; "
@@ -520,7 +522,8 @@ class TuiToolRegistry {
                                + "stop-all — stop all running processes; "
                                + "close — close a phantom (opened but not running) project.",
                 Map.of("action", propDef("string",
-                        "Control action: stop-routes, start-routes, pause, resume, restart, stop, kill, stop-all, or close")),
+                        "Control action: reset-stats, stop-routes, start-routes, pause, resume, restart, stop, kill, "
+                                                   + "stop-all, or close")),
                 List.of("action"))));
         tools.add(toToolDef(toolDef(
                 "tui_open_project",

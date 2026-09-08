@@ -877,6 +877,13 @@ class McpFacade {
         }
         String name = ctx.selectedName();
         return switch (action) {
+            case "reset-stats", "clear-stats" -> {
+                if (ctx.isInfraSelected()) {
+                    yield "Error: cannot reset statistics on infra service";
+                }
+                actionsPopup.executeActionByName("reset-stats");
+                yield "Statistics reset for " + name;
+            }
             case "stop-routes", "pause" -> {
                 if (ctx.isInfraSelected()) {
                     yield "Error: cannot stop routes on infra service";
