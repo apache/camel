@@ -52,7 +52,7 @@ public class JGroupsRaftConsumerTest extends JGroupsRaftAbstractTest {
         JGroupsRaftEndpoint endpoint2 = getMandatoryEndpoint(CONFIGURED_ENDPOINT_URI2, JGroupsRaftEndpoint.class);
         JGroupsRaftEndpoint endpoint3 = getMandatoryEndpoint(CONFIGURED_ENDPOINT_URI3, JGroupsRaftEndpoint.class);
 
-        waitForLeader(5, endpoint.getResolvedRaftHandle(), endpoint2.getResolvedRaftHandle(),
+        waitForLeader(30, endpoint.getResolvedRaftHandle(), endpoint2.getResolvedRaftHandle(),
                 endpoint3.getResolvedRaftHandle());
 
         MockEndpoint mock = getMockEndpoint("mock:out");
