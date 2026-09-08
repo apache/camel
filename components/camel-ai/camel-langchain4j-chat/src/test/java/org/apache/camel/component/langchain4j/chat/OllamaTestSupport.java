@@ -16,6 +16,8 @@
  */
 package org.apache.camel.component.langchain4j.chat;
 
+import java.util.Map;
+
 import dev.langchain4j.model.chat.ChatModel;
 import dev.langchain4j.model.ollama.OllamaChatModel;
 import dev.langchain4j.model.openai.OpenAiChatModel;
@@ -47,7 +49,8 @@ public class OllamaTestSupport extends CamelTestSupport {
                     .apiKey(OLLAMA.apiKey())
                     .baseUrl(OLLAMA.baseUrl())
                     .modelName(OLLAMA.modelName())
-                    .temperature(0.3)
+                    .temperature(0.0)
+                    .customParameters(Map.of("reasoning_effort", "none"))
                     .timeout(ofSeconds(60))
                     .logRequests(true)
                     .logResponses(true)
@@ -56,7 +59,7 @@ public class OllamaTestSupport extends CamelTestSupport {
         return OllamaChatModel.builder()
                 .baseUrl(OLLAMA.baseUrl())
                 .modelName(OLLAMA.modelName())
-                .temperature(0.3)
+                .temperature(0.0)
                 .timeout(ofSeconds(60))
                 .build();
     }
