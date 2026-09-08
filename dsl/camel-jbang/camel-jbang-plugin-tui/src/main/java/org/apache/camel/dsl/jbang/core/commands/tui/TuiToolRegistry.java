@@ -89,7 +89,7 @@ class TuiToolRegistry {
             "tui_get_state", "tui_get_options", "tui_get_table", "tui_get_log", "tui_get_errors",
             "tui_get_diagram", "tui_get_topology", "tui_get_processor_detail", "tui_catalog_doc",
             "tui_get_history", "tui_get_spans", "tui_control", "tui_send_message", "tui_get_files",
-            "tui_get_readme", "tui_navigate", "tui_set_log_level", "tui_filter");
+            "tui_get_readme", "tui_navigate", "tui_set_log_level", "tui_filter", "tui_get_status");
 
     /**
      * Returns all tool definitions. The result is cached since it is immutable.
@@ -119,6 +119,7 @@ class TuiToolRegistry {
             case "tui_get_screen" -> callGetScreen(args);
             case "tui_get_events" -> callGetEvents(args);
             case "tui_get_state" -> callGetState();
+            case "tui_get_status" -> callGetStatus(args);
             case "tui_show_caption" -> callShowCaption(args);
             case "tui_navigate" -> callNavigate(args);
             case "tui_send_keys" -> callSendKeys(args);
@@ -392,6 +393,21 @@ class TuiToolRegistry {
                         "Tab name to get data from (e.g. 'Routes', 'Endpoints', 'Kafka'). "
                                                 + "Use tui_get_options to discover available tab names. "
                                                 + "If omitted, uses the active tab.")))));
+        tools.add(toToolDef(toolDef(
+                "tui_get_status",
+                "Returns one top-level section of the integration's full status document, the same JSON the Camel "
+                                  + "CLI reads from ~/.camel/<pid>-status.json. Use it for data the tabs do not show: "
+                                  + "'context' (name, version, state, uptime in millis, startTimestamp, statistics), "
+                                  + "'runtime' (pid, directory, java version), 'healthChecks', 'properties', "
+                                  + "'main-configuration', 'routeController', 'services', 'transformers', 'rests', "
+                                  + "'consumers', 'producers', 'endpoints', 'dataSources', 'memory', 'threads', 'gc', "
+                                  + "'classLoading', 'trace', 'events'. Pass section='sections' to list what the "
+                                  + "document contains. Sections can be large, so request only the one you need.",
+                Map.of("section", propDef("string",
+                        "Top-level section name, or 'sections' to list the available names"),
+                        "pid", propDef("string",
+                                "Process id of the integration; defaults to the selected integration")),
+                List.of("section"))));
         tools.add(toToolDef(toolDef(
                 "tui_action",
                 "Invokes a TUI action by name, bypassing fragile key sequences. "
@@ -1333,6 +1349,37 @@ class TuiToolRegistry {
             return "No table data available" + (tab != null ? " for tab: " + tab : "");
         }
         return Jsoner.serialize(data);
+    }
+
+    private String callGetStatus(Map<String, Object> args) {
+        String section = args.get("section") instanceof String s ? s.trim() : "";
+        if (section.isEmpty()) {
+            return "Error: section is required (use 'sections' to list the available names)";
+        }
+        String pid = args.get("pid") instanceof String s && !s.isBlank() ? s.trim() : facade.getSelectedPid();
+        if (pid == null || pid.isBlank()) {
+            return "No integration selected";
+        }
+        StatusFileReader reader = facade.statusFiles();
+        List<String> sections = reader.sections(pid);
+        if (sections.isEmpty()) {
+            return "No status document available for PID " + pid;
+        }
+        if (StatusFileReader.SECTION_LIST.equals(section)) {
+            JsonObject result = new JsonObject();
+            result.put("pid", pid);
+            result.put("sections", new JsonArray(sections));
+            return Jsoner.serialize(result);
+        }
+        Object value = reader.section(pid, section);
+        if (value == null) {
+            return "Unknown section '" + section + "' for PID " + pid + ". Available: " + String.join(", ", sections);
+        }
+        JsonObject result = new JsonObject();
+        result.put("pid", pid);
+        result.put("section", section);
+        result.put("data", value);
+        return Jsoner.serialize(result);
     }
 
     private String callAction(Map<String, Object> args) {

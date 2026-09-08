@@ -872,6 +872,24 @@ The server is bound to `127.0.0.1` only -- it never listens on external interfac
 When MCP is active, the TUI footer shows the connection status.
 Use *F2* -> _MCP Info_ to see server details and _MCP Log_ to view the tool call history.
 
+=== Status document resources
+
+Every running integration keeps a full status document in `~/.camel/<pid>-status.json`, written
+once a second by `camel-cli-connector`. The tabs show a digest of it; the MCP server exposes the
+whole document as resources so an agent can fetch exactly the section it needs instead of
+paging through tabs:
+
+* `camel://status/<pid>` -- the whole document
+* `camel://status/<pid>/<section>` -- one top-level section, for example `context` (name, version,
+  state, uptime, start timestamp, statistics), `runtime`, `routes`, `endpoints`, `healthChecks`,
+  `properties`, `main-configuration`, `routeController`, `memory`, `threads`, `gc` or `events`
+
+`resources/list` enumerates the document and its sections for every monitored integration, and a
+`resources/templates/list` template describes the URI shape. The same data is available to the
+F8 AI panel (and as an MCP tool) through `tui_get_status`, which takes a `section` argument and
+returns that section only; pass `sections` to list what the document contains. Sections such as
+`events` can be large, so ask for the one you need.
+
 === AI panel slash commands
 
 When the AI panel is open, input that starts with `/` runs a local panel command instead of sending a question to the configured AI provider. `/provider` and `/model` are unavailable while a response or command is already in progress; the panel shows a message asking you to wait.

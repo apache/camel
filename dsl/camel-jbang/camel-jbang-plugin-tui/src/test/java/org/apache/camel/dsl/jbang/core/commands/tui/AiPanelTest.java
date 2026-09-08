@@ -808,7 +808,8 @@ class AiPanelTest {
         assertTrue(panel.toolDefinitionsForTesting().stream()
                 .allMatch(def -> TuiToolRegistry.CORE_TOOLS.contains(def.name())));
         assertFalse(panel.systemPromptForTesting().contains("tui_draw_shape"));
-        assertTrue(panel.describeToolModeForTesting().startsWith("core (18 of "));
+        assertTrue(panel.describeToolModeForTesting()
+                .startsWith("core (" + TuiToolRegistry.CORE_TOOLS.size() + " of "));
     }
 
     @Test

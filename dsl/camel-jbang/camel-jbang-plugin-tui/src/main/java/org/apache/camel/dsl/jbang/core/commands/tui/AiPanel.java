@@ -1787,6 +1787,9 @@ class AiPanel {
         sb.append("- Call tui_get_options only when unsure which tab holds the data you need\n");
         sb.append("- Use tui_get_state to learn which integration and tab is selected, if the question depends on it\n");
         sb.append("- Use tui_get_processor_detail to explain what a route does or how its steps are configured\n");
+        sb.append("- Use tui_get_status for data no tab shows (context, runtime, health checks, properties, ...)\n");
+        sb.append("- Your own tool calls are recorded in the AI log (tui_get_ai_log, F2 -> AI Log); ");
+        sb.append("the MCP log only records external clients\n");
         sb.append("- Be concise and actionable in your answers\n");
         sb.append("- When something looks wrong, explain what it means and suggest fixes\n");
         sb.append("- For stopping routes or applications, use tui_control for graceful shutdown\n");

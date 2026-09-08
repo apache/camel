@@ -107,6 +107,7 @@ class McpFacade {
     private final MonitorBridge bridge;
 
     private volatile Supplier<List<AiPanel.LogEntry>> aiActivityLog;
+    private volatile StatusFileReader statusFiles = StatusFileReader.defaultReader();
     private volatile Supplier<List<TuiMcpServer.LogEntry>> mcpActivityLog;
     private volatile Supplier<Integer> mcpToolCallCount;
 
@@ -338,6 +339,25 @@ class McpFacade {
     Boolean isDetailFocused() {
         MonitorTab tab = bridge.activeTab();
         return tab != null ? tab.isDetailFocused() : null;
+    }
+
+    /**
+     * Reader for the per-process status documents; replaceable so tests can point it at a temporary directory.
+     */
+    StatusFileReader statusFiles() {
+        return statusFiles;
+    }
+
+    void setStatusFiles(StatusFileReader statusFiles) {
+        this.statusFiles = statusFiles;
+    }
+
+    /**
+     * Integrations currently monitored (vanished processes excluded), for callers that need pid and name.
+     */
+    List<IntegrationInfo> liveIntegrations() {
+        List<IntegrationInfo> all = data.get();
+        return all == null ? List.of() : all.stream().filter(i -> !i.vanishing).toList();
     }
 
     List<String> getIntegrationNames() {
