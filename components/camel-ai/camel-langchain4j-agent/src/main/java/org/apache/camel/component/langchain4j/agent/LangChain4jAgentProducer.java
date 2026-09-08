@@ -209,13 +209,16 @@ public class LangChain4jAgentProducer extends DefaultProducer {
     }
 
     private void applyModerationHeaders(Exchange exchange, RuntimeException error) {
-        if (!(error instanceof ModerationException moderationException)) {
-            return;
+        Throwable current = error;
+        while (current != null) {
+            if (current instanceof ModerationException moderationException) {
+                if (moderationException.moderation() != null && moderationException.moderation().flagged()) {
+                    exchange.getMessage().setHeader(Headers.MODERATION_FLAGGED, Boolean.TRUE);
+                }
+                return;
+            }
+            current = current.getCause();
         }
-        if (moderationException.moderation() == null || !moderationException.moderation().flagged()) {
-            return;
-        }
-        exchange.getMessage().setHeader(Headers.MODERATION_FLAGGED, Boolean.TRUE);
     }
 
     private Object resolveChatModel(Agent agent) {

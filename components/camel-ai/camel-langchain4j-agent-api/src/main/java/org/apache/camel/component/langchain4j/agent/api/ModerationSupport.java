@@ -16,12 +16,9 @@
  */
 package org.apache.camel.component.langchain4j.agent.api;
 
-import java.util.List;
-
 import dev.langchain4j.model.moderation.Moderation;
 import dev.langchain4j.model.moderation.ModerationModel;
-import dev.langchain4j.model.moderation.ModerationRequest;
-import dev.langchain4j.model.moderation.ModerationResponse;
+import dev.langchain4j.model.output.Response;
 import dev.langchain4j.service.ModerationException;
 import org.apache.camel.util.ObjectHelper;
 
@@ -29,38 +26,51 @@ import org.apache.camel.util.ObjectHelper;
  * Pre-invocation content moderation for agent chat requests.
  * <p/>
  * Camel runs moderation before building the LangChain4j AI service call so flagged user input is rejected before the
- * chat model, tools, or memory are updated.
+ * chat model, tools, or memory are updated. Custom {@link Agent} implementations should call
+ * {@link #moderateUserMessage(ModerationModel, String)} with the same semantics when they bypass
+ * {@link AgentWithMemory} or {@link AgentWithoutMemory}.
  *
  * @since 4.23
  */
-final class ModerationSupport {
+public final class ModerationSupport {
 
     private ModerationSupport() {
     }
 
     /**
      * Moderates the user message when a {@link ModerationModel} is configured.
+     * <p/>
+     * Only non-empty user message text is moderated. Multimodal {@code Content} without a user message is not sent to
+     * the moderation model. When a moderation model is configured, a missing verdict fails closed and raises
+     * {@link ModerationException}.
      *
      * @param  moderationModel     the moderation model, may be {@code null}
      * @param  userMessage         the user message to check
-     * @throws ModerationException when the moderation model flags the input
+     * @throws ModerationException when the moderation model flags the input or returns no verdict
      */
-    static void moderateUserMessage(ModerationModel moderationModel, String userMessage) {
+    public static void moderateUserMessage(ModerationModel moderationModel, String userMessage) {
         if (moderationModel == null || ObjectHelper.isEmpty(userMessage)) {
             return;
         }
 
-        ModerationRequest request = ModerationRequest.builder()
-                .texts(List.of(userMessage))
-                .build();
-        ModerationResponse response = moderationModel.doModerate(request);
-        if (response == null || response.moderation() == null) {
-            return;
-        }
+        try {
+            Response<Moderation> response = moderationModel.moderate(userMessage);
+            if (response == null || response.content() == null) {
+                throw new ModerationException(
+                        "Moderation model returned no verdict for user message",
+                        Moderation.flagged(userMessage));
+            }
 
-        Moderation moderation = response.moderation();
-        if (moderation.flagged()) {
-            throw new ModerationException("User message flagged by moderation model", moderation);
+            Moderation moderation = response.content();
+            if (moderation.flagged()) {
+                throw new ModerationException("User message flagged by moderation model", moderation);
+            }
+        } catch (ModerationException e) {
+            throw e;
+        } catch (RuntimeException e) {
+            throw new ModerationException(
+                    "Moderation model failed to evaluate user message: " + e.getMessage(),
+                    Moderation.flagged(userMessage));
         }
     }
 }

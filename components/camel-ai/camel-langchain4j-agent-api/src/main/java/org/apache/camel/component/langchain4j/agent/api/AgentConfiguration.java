@@ -59,7 +59,7 @@ import org.slf4j.LoggerFactory;
  * <li><strong>Retrieval Augmentor:</strong> For RAG (Retrieval-Augmented Generation) capabilities</li>
  * <li><strong>Input Guardrails:</strong> Security filters applied to incoming messages</li>
  * <li><strong>Output Guardrails:</strong> Security filters applied to agent responses</li>
- * <li><strong>Moderation Model:</strong> LangChain4j content moderation for {@code @Moderate} service methods</li>
+ * <li><strong>Moderation Model:</strong> Pre-moderation of user message text before the chat model is invoked</li>
  * <li><strong>Custom Tools:</strong> Custom LangChain4j tools with @Tool annotations</li>
  * <li><strong>MCP Clients:</strong> Model Context Protocol clients for external tool integration</li>
  * <li><strong>MCP Tool Filters:</strong> Filters for controlling which MCP tools are available</li>

@@ -72,7 +72,7 @@ public class Headers {
               javaType = "java.util.List<dev.langchain4j.service.tool.ToolExecution>")
     public static final String TOOL_EXECUTIONS = "CamelLangChain4jAgentToolExecutions";
 
-    @Metadata(description = "Whether the user message was flagged by the configured moderation model.",
+    @Metadata(description = "Set to true when user input is rejected by the configured moderation model; not set on success.",
               javaType = "Boolean")
     public static final String MODERATION_FLAGGED = "CamelLangChain4jAgentModerationFlagged";
 }

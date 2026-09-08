@@ -370,6 +370,7 @@ class AgentConfigurationTest {
 
             AgentConfiguration original = new AgentConfiguration()
                     .withChatModel(chatModel)
+                    .withModerationModel(new FlaggingModerationModel("never-used"))
                     .withMaxToolCallingRoundTrips(11)
                     .withHallucinatedToolNameStrategy(strategy)
                     .withToolExecutionErrorHandler(execHandler)

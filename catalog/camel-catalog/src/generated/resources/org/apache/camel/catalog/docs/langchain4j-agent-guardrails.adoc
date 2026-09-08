@@ -616,7 +616,7 @@ Configure a LangChain4j `ModerationModel` on `AgentConfiguration.withModerationM
 
 Moderation complements guardrails: guardrails are deterministic Java rules you implement; moderation delegates policy checks to a provider API (OpenAI Moderation, Mistral moderation, etc.). Only the user message text is moderated; system prompts configured by the route author are not sent to the moderation model.
 
-Custom `Agent` implementations must call moderation themselves if they bypass `AgentWithMemory` / `AgentWithoutMemory`.
+Custom `Agent` implementations should call `ModerationSupport.moderateUserMessage(...)` when they bypass `AgentWithMemory` / `AgentWithoutMemory`. Moderation failures are policy rejections (`GenAiErrorCategory.VALIDATION`), not malformed requests to retry blindly.
 
 ._Java-only: public support chatbot with moderation and controlled refusal_
 [source,java]

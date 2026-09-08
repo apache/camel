@@ -41,7 +41,6 @@ import org.apache.camel.util.ObjectHelper;
  * <li>Custom LangChain4j tools</li>
  * <li>RAG (Retrieval Augmented Generation)</li>
  * <li>Input and Output Guardrails</li>
- * <li>Content moderation ({@code ModerationModel})</li>
  * </ul>
  *
  * <p>

@@ -21,6 +21,8 @@ import dev.langchain4j.exception.HttpException;
 import dev.langchain4j.exception.InternalServerException;
 import dev.langchain4j.exception.InvalidRequestException;
 import dev.langchain4j.exception.RateLimitException;
+import dev.langchain4j.model.moderation.Moderation;
+import dev.langchain4j.service.ModerationException;
 import org.apache.camel.support.DefaultExchange;
 import org.apache.camel.test.junit6.CamelTestSupport;
 import org.junit.jupiter.api.Test;
@@ -100,9 +102,25 @@ class GenAiErrorSupportTest extends CamelTestSupport {
 
     @Test
     void shouldClassifyModerationExceptionAsValidation() {
-        dev.langchain4j.model.moderation.Moderation moderation = dev.langchain4j.model.moderation.Moderation.flagged("bad");
-        assertThat(GenAiErrorSupport.classify(new dev.langchain4j.service.ModerationException("flagged", moderation)))
+        Moderation moderation = Moderation.flagged("bad");
+        assertThat(GenAiErrorSupport.classify(new ModerationException("flagged", moderation)))
                 .isEqualTo(GenAiErrorCategory.VALIDATION);
+    }
+
+    @Test
+    void shouldClassifyWrappedModerationExceptionAsValidation() {
+        Moderation moderation = Moderation.flagged("bad");
+        RuntimeException wrapped = new RuntimeException("outer", new ModerationException("flagged", moderation));
+        assertThat(GenAiErrorSupport.classify(wrapped)).isEqualTo(GenAiErrorCategory.VALIDATION);
+    }
+
+    @Test
+    void shouldApplyModerationExceptionCategoryToExchange() {
+        DefaultExchange exchange = new DefaultExchange(context);
+        GenAiErrorSupport.apply(exchange, new ModerationException("flagged", Moderation.flagged("bad")));
+
+        assertThat(exchange.getProperty(GenAiErrorProperties.ERROR_CATEGORY, String.class))
+                .isEqualTo(GenAiErrorCategory.VALIDATION.name());
     }
 
     @Test

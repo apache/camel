@@ -40,6 +40,7 @@ import org.apache.camel.component.langchain4j.agent.api.Headers;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.spi.Registry;
 import org.apache.camel.test.junit6.CamelTestSupport;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -50,6 +51,12 @@ class LangChain4jAgentModerationTest extends CamelTestSupport {
 
     private final AtomicReference<Exchange> moderatedExchange = new AtomicReference<>();
     private final AtomicInteger chatInvocations = new AtomicInteger();
+
+    @BeforeEach
+    void resetModeratedExchange() {
+        moderatedExchange.set(null);
+        chatInvocations.set(0);
+    }
 
     @Override
     protected void bindToRegistry(Registry registry) {
@@ -106,7 +113,6 @@ class LangChain4jAgentModerationTest extends CamelTestSupport {
 
     @Test
     void shouldNotInvokeChatModelWhenInputIsFlagged() throws Exception {
-        chatInvocations.set(0);
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMessageCount(0);
 

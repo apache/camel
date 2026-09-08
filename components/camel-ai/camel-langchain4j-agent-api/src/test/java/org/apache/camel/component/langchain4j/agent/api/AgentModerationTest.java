@@ -129,6 +129,46 @@ class AgentModerationTest {
     }
 
     @Test
+    void moderationSupportFailsClosedWhenModelReturnsNoVerdict() {
+        ModerationModel moderationModel = new ModerationModel() {
+            @Override
+            public dev.langchain4j.model.moderation.ModerationResponse doModerate(
+                    dev.langchain4j.model.moderation.ModerationRequest request) {
+                return null;
+            }
+        };
+
+        assertThatThrownBy(() -> ModerationSupport.moderateUserMessage(moderationModel, "hello"))
+                .isInstanceOf(ModerationException.class)
+                .satisfies(error -> {
+                    ModerationException moderationException = (ModerationException) error;
+                    assertThat(moderationException.moderation()).isNotNull();
+                    assertThat(moderationException.moderation().flagged()).isTrue();
+                });
+    }
+
+    @Test
+    void agentWithMemoryDoesNotAccessMemoryProviderWhenInputIsFlagged() {
+        AtomicInteger memoryProviderInvocations = new AtomicInteger();
+        ChatMemoryProvider memoryProvider = memoryId -> {
+            memoryProviderInvocations.incrementAndGet();
+            return dev.langchain4j.memory.chat.MessageWindowChatMemory.builder()
+                    .id(memoryId)
+                    .maxMessages(10)
+                    .build();
+        };
+
+        AgentConfiguration configuration = moderatedConfiguration(countingChatModel(new AtomicInteger()))
+                .withChatMemoryProvider(memoryProvider);
+        Agent agent = new AgentWithMemory(configuration);
+
+        assertThatThrownBy(() -> agent.chat(new AiAgentBody<>("message with " + FLAGGED_TOKEN, null, "session-1"), null))
+                .isInstanceOf(ModerationException.class);
+
+        assertThat(memoryProviderInvocations.get()).isZero();
+    }
+
+    @Test
     void moderationSupportSkipsEmptyUserMessage() {
         ModerationModel moderationModel = new FlaggingModerationModel(FLAGGED_TOKEN);
 
