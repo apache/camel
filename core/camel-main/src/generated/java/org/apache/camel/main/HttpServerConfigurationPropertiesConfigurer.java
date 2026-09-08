@@ -50,6 +50,7 @@ public class HttpServerConfigurationPropertiesConfigurer extends org.apache.came
         map.put("McpSessionKeepAliveInterval", long.class);
         map.put("McpTags", java.lang.String.class);
         map.put("McpToolTimeout", long.class);
+        map.put("McpTransport", java.lang.String.class);
         map.put("Path", java.lang.String.class);
         map.put("Port", int.class);
         map.put("StaticContextPath", java.lang.String.class);
@@ -117,6 +118,8 @@ public class HttpServerConfigurationPropertiesConfigurer extends org.apache.came
         case "mcpTags": target.setMcpTags(property(camelContext, java.lang.String.class, value)); return true;
         case "mcptooltimeout":
         case "mcpToolTimeout": target.setMcpToolTimeout(property(camelContext, long.class, value)); return true;
+        case "mcptransport":
+        case "mcpTransport": target.setMcpTransport(property(camelContext, java.lang.String.class, value)); return true;
         case "path": target.setPath(property(camelContext, java.lang.String.class, value)); return true;
         case "port": target.setPort(property(camelContext, int.class, value)); return true;
         case "staticcontextpath":
@@ -193,6 +196,8 @@ public class HttpServerConfigurationPropertiesConfigurer extends org.apache.came
         case "mcpTags": return java.lang.String.class;
         case "mcptooltimeout":
         case "mcpToolTimeout": return long.class;
+        case "mcptransport":
+        case "mcpTransport": return java.lang.String.class;
         case "path": return java.lang.String.class;
         case "port": return int.class;
         case "staticcontextpath":
@@ -265,6 +270,8 @@ public class HttpServerConfigurationPropertiesConfigurer extends org.apache.came
         case "mcpTags": return target.getMcpTags();
         case "mcptooltimeout":
         case "mcpToolTimeout": return target.getMcpToolTimeout();
+        case "mcptransport":
+        case "mcpTransport": return target.getMcpTransport();
         case "path": return target.getPath();
         case "port": return target.getPort();
         case "staticcontextpath":
