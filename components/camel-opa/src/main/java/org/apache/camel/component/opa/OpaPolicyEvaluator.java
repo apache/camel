@@ -135,7 +135,11 @@ public class OpaPolicyEvaluator {
                     properties.put(entry.getKey(), value);
                 }
             }
-            input.put("properties", properties);
+            // only expose "properties" when something was actually collected, so a Rego policy doing
+            // has(input, "properties") is not misled into seeing an (empty) identity that is not there
+            if (!properties.isEmpty()) {
+                input.put("properties", properties);
+            }
         }
         if (includeBody) {
             input.put("body", toJsonSafe(exchange, exchange.getMessage().getBody()));

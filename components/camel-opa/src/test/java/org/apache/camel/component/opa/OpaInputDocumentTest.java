@@ -152,6 +152,16 @@ class OpaInputDocumentTest extends CamelTestSupport {
     }
 
     @Test
+    void omitsPropertiesKeyWhenIncludeMatchesNothing() throws Exception {
+        // includeProperties is configured but the exchange carries none of the listed properties, so the
+        // "properties" key must be absent rather than present-and-empty (otherwise has(input, "properties") lies)
+        Map<String, Object> input = inputSentFor(ENDPOINT + "&includeProperties=subject",
+                e -> e.setProperty("internalScratch", "not for the policy"));
+
+        assertThat(input).doesNotContainKey("properties");
+    }
+
+    @Test
     void sendsEveryExchangePropertyWhenAskedForAll() throws Exception {
         Map<String, Object> input = inputSentFor(ENDPOINT + "&includeProperties=*", e -> {
             e.setProperty("subject", "alice");
