@@ -612,14 +612,11 @@ public class AgentConfig {
 
 === Content Moderation
 
-LangChain4j supports provider-based content moderation through a `ModerationModel` combined with the `@Moderate`
-annotation on AI service methods. The langchain4j-agent component wires moderation automatically when you configure
-`AgentConfiguration.withModerationModel(...)`. Flagged user input raises `ModerationException` before the agent
-response is returned. The producer sets exchange headers `CamelLangChain4jAgentModeration` and
-`CamelLangChain4jAgentModerationFlaggedText` when moderation fails so routes can return a controlled refusal.
+Configure a LangChain4j `ModerationModel` on `AgentConfiguration.withModerationModel(...)`. Camel pre-moderates the user message before the chat model is invoked, so flagged input raises `ModerationException` before tools run or conversation memory is updated. The producer sets the `CamelLangChain4jAgentModerationFlagged` header to `true` when moderation fails so routes can return a controlled refusal.
 
-Moderation complements guardrails: guardrails are deterministic Java rules you implement; moderation delegates policy
-checks to an LLM provider API (OpenAI Moderation, Mistral moderation, etc.).
+Moderation complements guardrails: guardrails are deterministic Java rules you implement; moderation delegates policy checks to a provider API (OpenAI Moderation, Mistral moderation, etc.). Only the user message text is moderated; system prompts configured by the route author are not sent to the moderation model.
+
+Custom `Agent` implementations must call moderation themselves if they bypass `AgentWithMemory` / `AgentWithoutMemory`.
 
 ._Java-only: public support chatbot with moderation and controlled refusal_
 [source,java]

@@ -212,15 +212,10 @@ public class LangChain4jAgentProducer extends DefaultProducer {
         if (!(error instanceof ModerationException moderationException)) {
             return;
         }
-        if (moderationException.moderation() == null) {
+        if (moderationException.moderation() == null || !moderationException.moderation().flagged()) {
             return;
         }
-        Message message = exchange.getMessage();
-        message.setHeader(Headers.MODERATION, moderationException.moderation());
-        String flaggedText = moderationException.moderation().flaggedText();
-        if (flaggedText != null) {
-            message.setHeader(Headers.MODERATION_FLAGGED_TEXT, flaggedText);
-        }
+        exchange.getMessage().setHeader(Headers.MODERATION_FLAGGED, Boolean.TRUE);
     }
 
     private Object resolveChatModel(Agent agent) {

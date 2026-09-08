@@ -16,11 +16,14 @@
  */
 package org.apache.camel.component.langchain4j.agent.api;
 
+import java.util.concurrent.atomic.AtomicInteger;
+
 import dev.langchain4j.data.message.AiMessage;
 import dev.langchain4j.memory.chat.ChatMemoryProvider;
 import dev.langchain4j.model.chat.ChatModel;
 import dev.langchain4j.model.chat.request.ChatRequest;
 import dev.langchain4j.model.chat.response.ChatResponse;
+import dev.langchain4j.model.moderation.Moderation;
 import dev.langchain4j.model.moderation.ModerationModel;
 import dev.langchain4j.service.ModerationException;
 import dev.langchain4j.service.Result;
@@ -35,7 +38,7 @@ class AgentModerationTest {
 
     @Test
     void agentWithoutMemoryAllowsCleanInputWhenModerationConfigured() {
-        Agent agent = new AgentWithoutMemory(moderatedConfiguration());
+        Agent agent = new AgentWithoutMemory(moderatedConfiguration(countingChatModel(new AtomicInteger())));
 
         Result<String> result = agent.chat(new AiAgentBody<>("Hello support team"), null);
 
@@ -44,7 +47,7 @@ class AgentModerationTest {
 
     @Test
     void agentWithoutMemoryRejectsFlaggedInputWhenModerationConfigured() {
-        Agent agent = new AgentWithoutMemory(moderatedConfiguration());
+        Agent agent = new AgentWithoutMemory(moderatedConfiguration(countingChatModel(new AtomicInteger())));
 
         assertThatThrownBy(() -> agent.chat(new AiAgentBody<>("message with " + FLAGGED_TOKEN), null))
                 .isInstanceOf(ModerationException.class)
@@ -52,9 +55,18 @@ class AgentModerationTest {
                     ModerationException moderationException = (ModerationException) error;
                     assertThat(moderationException.moderation()).isNotNull();
                     assertThat(moderationException.moderation().flagged()).isTrue();
-                    assertThat(moderationException.moderation().flaggedText())
-                            .contains(FLAGGED_TOKEN);
                 });
+    }
+
+    @Test
+    void agentWithoutMemoryDoesNotInvokeChatModelWhenInputIsFlagged() {
+        AtomicInteger chatInvocations = new AtomicInteger();
+        Agent agent = new AgentWithoutMemory(moderatedConfiguration(countingChatModel(chatInvocations)));
+
+        assertThatThrownBy(() -> agent.chat(new AiAgentBody<>("message with " + FLAGGED_TOKEN), null))
+                .isInstanceOf(ModerationException.class);
+
+        assertThat(chatInvocations.get()).isZero();
     }
 
     @Test
@@ -74,11 +86,30 @@ class AgentModerationTest {
                 .maxMessages(10)
                 .build();
 
-        AgentConfiguration configuration = moderatedConfiguration().withChatMemoryProvider(memoryProvider);
+        AgentConfiguration configuration = moderatedConfiguration(countingChatModel(new AtomicInteger()))
+                .withChatMemoryProvider(memoryProvider);
         Agent agent = new AgentWithMemory(configuration);
 
         assertThatThrownBy(() -> agent.chat(new AiAgentBody<>("message with " + FLAGGED_TOKEN, null, "session-1"), null))
                 .isInstanceOf(ModerationException.class);
+    }
+
+    @Test
+    void agentWithMemoryDoesNotInvokeChatModelWhenInputIsFlagged() {
+        AtomicInteger chatInvocations = new AtomicInteger();
+        ChatMemoryProvider memoryProvider = memoryId -> dev.langchain4j.memory.chat.MessageWindowChatMemory.builder()
+                .id(memoryId)
+                .maxMessages(10)
+                .build();
+
+        AgentConfiguration configuration = moderatedConfiguration(countingChatModel(chatInvocations))
+                .withChatMemoryProvider(memoryProvider);
+        Agent agent = new AgentWithMemory(configuration);
+
+        assertThatThrownBy(() -> agent.chat(new AiAgentBody<>("message with " + FLAGGED_TOKEN, null, "session-1"), null))
+                .isInstanceOf(ModerationException.class);
+
+        assertThat(chatInvocations.get()).isZero();
     }
 
     @Test
@@ -88,7 +119,8 @@ class AgentModerationTest {
                 .maxMessages(10)
                 .build();
 
-        AgentConfiguration configuration = moderatedConfiguration().withChatMemoryProvider(memoryProvider);
+        AgentConfiguration configuration = moderatedConfiguration(countingChatModel(new AtomicInteger()))
+                .withChatMemoryProvider(memoryProvider);
         Agent agent = new AgentWithMemory(configuration);
 
         Result<String> result = agent.chat(new AiAgentBody<>("Hello", null, "session-2"), null);
@@ -96,19 +128,44 @@ class AgentModerationTest {
         assertThat(result.content()).isEqualTo("ok");
     }
 
-    private static AgentConfiguration moderatedConfiguration() {
+    @Test
+    void moderationSupportSkipsEmptyUserMessage() {
+        ModerationModel moderationModel = new FlaggingModerationModel(FLAGGED_TOKEN);
+
+        ModerationSupport.moderateUserMessage(moderationModel, null);
+        ModerationSupport.moderateUserMessage(moderationModel, "");
+    }
+
+    @Test
+    void moderationSupportThrowsWhenModelFlagsInput() {
+        ModerationModel moderationModel = new FlaggingModerationModel(FLAGGED_TOKEN);
+
+        assertThatThrownBy(() -> ModerationSupport.moderateUserMessage(moderationModel, "contains " + FLAGGED_TOKEN))
+                .isInstanceOf(ModerationException.class)
+                .extracting(error -> ((ModerationException) error).moderation())
+                .isNotNull()
+                .extracting(Moderation::flagged)
+                .isEqualTo(true);
+    }
+
+    private static AgentConfiguration moderatedConfiguration(ChatModel chatModel) {
         return new AgentConfiguration()
-                .withChatModel(noopChatModel())
+                .withChatModel(chatModel)
                 .withModerationModel(flaggingModerationModel());
     }
 
-    private static ChatModel noopChatModel() {
+    private static ChatModel countingChatModel(AtomicInteger counter) {
         return new ChatModel() {
             @Override
             public ChatResponse doChat(ChatRequest request) {
+                counter.incrementAndGet();
                 return ChatResponse.builder().aiMessage(AiMessage.from("ok")).build();
             }
         };
+    }
+
+    private static ChatModel noopChatModel() {
+        return countingChatModel(new AtomicInteger());
     }
 
     private static ModerationModel flaggingModerationModel() {

@@ -99,6 +99,13 @@ class GenAiErrorSupportTest extends CamelTestSupport {
     }
 
     @Test
+    void shouldClassifyModerationExceptionAsValidation() {
+        dev.langchain4j.model.moderation.Moderation moderation = dev.langchain4j.model.moderation.Moderation.flagged("bad");
+        assertThat(GenAiErrorSupport.classify(new dev.langchain4j.service.ModerationException("flagged", moderation)))
+                .isEqualTo(GenAiErrorCategory.VALIDATION);
+    }
+
+    @Test
     void shouldReturnUnknownForUnrecognizedException() {
         assertThat(GenAiErrorSupport.classify(new IllegalStateException("boom")))
                 .isEqualTo(GenAiErrorCategory.UNKNOWN);

@@ -176,11 +176,6 @@ public abstract class AbstractAgent<S> implements Agent {
             builder.outputGuardrailClasses((List) configuration.getOutputGuardrailClasses());
         }
 
-        // Content moderation (@Moderate on service interface methods)
-        if (configuration.getModerationModel() != null) {
-            builder.moderationModel(configuration.getModerationModel());
-        }
-
         // Response Format (structured output): set once at startup via setResponseFormat(), used here per request
         if (responseFormat != null) {
             builder.chatRequestTransformer(chatRequest -> chatRequest.toBuilder().responseFormat(responseFormat).build());

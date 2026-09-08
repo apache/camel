@@ -48,7 +48,8 @@ public final class GenAiErrorSupport {
             Map.entry("dev.langchain4j.exception.InvalidRequestException", GenAiErrorCategory.VALIDATION),
             Map.entry("dev.langchain4j.exception.ContentFilteredException", GenAiErrorCategory.VALIDATION),
             Map.entry("dev.langchain4j.exception.ModelNotFoundException", GenAiErrorCategory.VALIDATION),
-            Map.entry("dev.langchain4j.exception.ToolArgumentsException", GenAiErrorCategory.VALIDATION));
+            Map.entry("dev.langchain4j.exception.ToolArgumentsException", GenAiErrorCategory.VALIDATION),
+            Map.entry("dev.langchain4j.service.ModerationException", GenAiErrorCategory.VALIDATION));
 
     private static final Map<String, GenAiErrorCategory> OPENAI_EXCEPTION_CATEGORIES = Map.ofEntries(
             Map.entry("com.openai.errors.RateLimitException", GenAiErrorCategory.RATE_LIMIT),

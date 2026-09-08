@@ -119,9 +119,9 @@ public class AgentConfiguration {
     }
 
     /**
-     * Sets the LangChain4j moderation model for content policy checks on agent chat methods annotated with
-     * {@code @Moderate}. When configured, flagged user input raises {@code ModerationException} before the agent
-     * response is returned to the route.
+     * Sets the LangChain4j moderation model for content policy checks on agent user messages. When configured, flagged
+     * user input raises {@code ModerationException} before the chat model is invoked, so tools and memory are not
+     * updated for rejected input.
      *
      * @param  moderationModel the moderation model (for example OpenAI or Mistral moderation APIs)
      * @return                 this configuration instance for method chaining

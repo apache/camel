@@ -177,8 +177,29 @@ Agents are configured using the `AgentConfiguration` class which provides a flue
 | `withToolArgumentsErrorHandler(...)` | Handles invalid or unparsable tool arguments
 | `withCompensateOnToolErrors(Boolean)` | Sends tool errors back to the LLM so it can recover instead of failing the exchange
 | `withExecuteToolsConcurrently()` / `withExecuteToolsConcurrently(Executor)` | Runs multiple tool calls from one LLM turn in parallel
-| `withModerationModel(ModerationModel)` | Enables LangChain4j `@Moderate` checks on agent chat methods; flagged input raises `ModerationException`
 |===
+
+==== Content moderation
+
+When `AgentConfiguration.withModerationModel(ModerationModel)` is set, Camel pre-moderates the user message before invoking the chat model. Flagged input raises `ModerationException` before tools run or memory is updated. The producer sets the `CamelLangChain4jAgentModerationFlagged` header to `true` on failure so routes can return a controlled refusal. See xref:langchain4j-agent-guardrails.adoc#_content_moderation[Content Moderation] for route examples.
+
+._Java-only: public support chatbot with moderation_
+[source,java]
+----
+AgentConfiguration configuration = new AgentConfiguration()
+    .withChatModel(chatModel)
+    .withModerationModel(openAiModerationModel);
+
+context.getRegistry().bind("supportAgentConfig", configuration);
+
+onException(ModerationException.class)
+    .handled(true)
+    .setHeader(Exchange.HTTP_RESPONSE_CODE, constant(422))
+    .setBody(constant("Sorry, your message violates our usage policy."));
+
+from("platform-http:/support/chat")
+    .to("langchain4j-agent:support?agentConfiguration=#supportAgentConfig&tags=orders,billing");
+----
 
 ._Java-only: recover from a hallucinated tool name_
 [source,java]
