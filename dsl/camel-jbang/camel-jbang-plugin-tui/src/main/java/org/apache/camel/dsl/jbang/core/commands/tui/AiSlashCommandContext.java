@@ -47,6 +47,16 @@ interface AiSlashCommandContext {
      */
     String describeToolMode();
 
+    /** How file writes by the model are handled: {@code confirm} (dialog for every write) or {@code auto}. */
+    default String describeWriteMode() {
+        return "confirm";
+    }
+
+    /** Switches the write mode; returns false for an unknown mode. */
+    default boolean switchWriteMode(String mode) {
+        return false;
+    }
+
     /**
      * Multi-line summary of what the next request will cost: provider and model, tool set, static prefix size,
      * conversation history size and the session total so far.

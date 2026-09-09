@@ -90,7 +90,8 @@ class TuiToolRegistry {
     static final Set<String> CORE_TOOLS = Set.of(
             "tui_get_state", "tui_get_options", "tui_get_table", "tui_get_log", "tui_get_errors",
             "tui_get_diagram", "tui_get_topology", "tui_get_processor_detail", "tui_catalog_doc",
-            "tui_get_history", "tui_get_spans", "tui_control", "tui_send_message", "tui_get_files",
+            "tui_get_history", "tui_get_spans", "tui_control", "tui_send_message", "tui_get_files", "tui_write_file",
+            "tui_validate_source",
             "tui_get_readme", "tui_navigate", "tui_set_log_level", "tui_filter", "tui_get_status",
             "tui_infra");
 
@@ -154,6 +155,8 @@ class TuiToolRegistry {
             case "tui_infra" -> callInfra(args);
             case "tui_open_project" -> callOpenProject(args);
             case "tui_get_files" -> callGetFiles(args);
+            case "tui_write_file" -> callWriteFile(args);
+            case "tui_validate_source" -> callValidateSource(args);
             case "tui_get_spans" -> callGetSpans(args);
             case "tui_locate" -> callLocate(args);
             case "tui_draw_shape" -> callDrawShape(args);
@@ -1281,6 +1284,27 @@ class TuiToolRegistry {
                     : "No source files found for the selected integration";
         }
         return Jsoner.serialize(response);
+    }
+
+    /** Time the last tool call spent waiting for the user (a tui_write_file confirmation), see the AI panel. */
+    long consumeConfirmWaitMs() {
+        return facade != null ? facade.consumeConfirmWaitMs() : 0;
+    }
+
+    private String callWriteFile(Map<String, Object> args) {
+        String name = args.get("name") instanceof String s ? s : null;
+        String file = args.get("file") instanceof String s ? s : null;
+        String content = args.get("content") instanceof String s ? s : null;
+        boolean confirm = !Boolean.FALSE.equals(args.get("confirm"));
+        boolean validate = !Boolean.FALSE.equals(args.get("validate"));
+        return Jsoner.serialize(facade.writeFile(name, file, content, confirm, validate));
+    }
+
+    private String callValidateSource(Map<String, Object> args) {
+        String name = args.get("name") instanceof String s ? s : null;
+        String file = args.get("file") instanceof String s ? s : null;
+        String content = args.get("content") instanceof String s ? s : null;
+        return Jsoner.serialize(facade.validateSource(name, file, content));
     }
 
     @SuppressWarnings("unchecked")

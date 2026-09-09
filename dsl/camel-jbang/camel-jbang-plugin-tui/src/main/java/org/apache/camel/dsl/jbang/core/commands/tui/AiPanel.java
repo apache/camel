@@ -76,7 +76,13 @@ import org.apache.camel.util.json.JsonObject;
  */
 class AiPanel {
 
-    private static final int MAX_ITERATIONS = 10;
+    /**
+     * Model round trips allowed per question. Local models return one tool call per round trip, so an
+     * investigate-then-act task easily takes ten or more; a runaway loop is caught earlier by
+     * {@link #MAX_IDENTICAL_TOOL_CALLS}. When the limit is reached the model is asked once more, without tools, to
+     * answer with what it has.
+     */
+    static final int MAX_ITERATIONS = 25;
     /**
      * A tool call repeated this many times with identical arguments in one turn is not executed again; the model gets a
      * note instead, so a stuck loop ends with an explanation rather than at the iteration limit.
@@ -227,6 +233,8 @@ class AiPanel {
 
     // Provider switch popup
     private final AiProviderSwitchPopup providerSwitchPopup = new AiProviderSwitchPopup();
+    private final AiCopyPopup copyPopup = new AiCopyPopup();
+    private ClipboardWriter clipboard = TuiHelper::copyToClipboard;
     private final AiProviderSelector providerSelector = new AiProviderSelector();
     private AiProviderSwitchPopup.ProviderChoice sessionProviderChoice;
     private List<AiProviderSwitchPopup.ProviderChoice> providerChoicesForTesting;
@@ -234,6 +242,8 @@ class AiPanel {
 
     // MCP facade for TUI tool access from the AI panel
     private McpFacade mcpFacade;
+    // /write auto lets the model write files without the confirm dialog (tool argument confirm=false); off by default
+    private boolean unconfirmedWrites;
     private TuiToolRegistry toolRegistry;
     private boolean mcpServerActive;
     private int mcpServerPort;
@@ -317,6 +327,9 @@ class AiPanel {
 
     void setMcpFacade(McpFacade mcpFacade) {
         this.mcpFacade = mcpFacade;
+        if (mcpFacade != null) {
+            mcpFacade.setUnconfirmedWritesAllowed(unconfirmedWrites);
+        }
         if (mcpFacade != null) {
             this.toolRegistry = new TuiToolRegistry(mcpFacade);
             if (launchManager != null) {
@@ -495,6 +508,11 @@ class AiPanel {
         if (providerSwitchPopup.isVisible()) {
             return providerSwitchPopup.handleMouseEvent(me);
         }
+        if (copyPopup.isVisible()) {
+            boolean handled = copyPopup.handleMouseEvent(me);
+            copyChoice(copyPopup.consumePendingChoice());
+            return handled;
+        }
         if (!TuiHelper.contains(lastArea, me.x(), me.y())) {
             return false;
         }
@@ -516,6 +534,11 @@ class AiPanel {
             if (choice != null) {
                 applyProviderChoice(choice);
             }
+            return true;
+        }
+        if (copyPopup.isVisible()) {
+            copyPopup.handleKeyEvent(ke);
+            copyChoice(copyPopup.consumePendingChoice());
             return true;
         }
         if (historySearchActive) {
@@ -643,7 +666,19 @@ class AiPanel {
             cursorPos++;
             return true;
         }
+        if (isGlobalShortcut(ke)) {
+            // function keys (F2 actions, F3 switch integration, F10 run, ...), Ctrl+F (browse files) and Ctrl+L
+            // (log pin) keep working while the panel has the focus
+            return false;
+        }
         return true;
+    }
+
+    private static boolean isGlobalShortcut(KeyEvent ke) {
+        if (ke.code() != null && ke.code() != KeyCode.F8 && ke.code().name().matches("F\\d+")) {
+            return true;
+        }
+        return ke.hasCtrl() && (ke.isCharIgnoreCase('f') || ke.isCharIgnoreCase('l'));
     }
 
     // ---- Reverse-i-search (Ctrl+R) ----
@@ -846,6 +881,7 @@ class AiPanel {
         List<String> candidates = switch (descriptor.get().name()) {
             case "model" -> modelCompletionCandidates();
             case "tools" -> List.of(TOOL_MODE_AUTO, TOOL_MODE_CORE, TOOL_MODE_FULL);
+            case "write" -> List.of("confirm", "auto");
             default -> null;
         };
         if (candidates == null) {
@@ -1157,6 +1193,10 @@ class AiPanel {
                         result = executeTuiTool(toolCall.name(), toolCall.arguments());
                     }
                     long toolElapsed = System.currentTimeMillis() - toolStart;
+                    if (toolRegistry != null) {
+                        // waiting for the user to confirm a file write is not tool time
+                        toolElapsed = Math.max(0, toolElapsed - toolRegistry.consumeConfirmWaitMs());
+                    }
                     turnToolMs += toolElapsed;
                     turnToolCalls++;
                     sessionToolTimeMs += toolElapsed;
@@ -1167,32 +1207,30 @@ class AiPanel {
                 }
                 messages.add(LlmClient.Message.toolResults(results));
             } else {
-                String text = response.text();
-                sessionTotalTokens += totalUsage.totalTokens();
-                if (text != null && !text.isBlank()) {
-                    long elapsed = System.currentTimeMillis() - thinkingStartTime;
-                    ConversationEntry entry = new ConversationEntry(
-                            AiRole.ASSISTANT, text, elapsed, turnAiMs, turnToolMs, turnToolCalls,
-                            totalUsage.totalTokens());
-                    conversation.add(entry);
-                    turnTimings.add(new long[] { turnAiMs, turnToolMs, turnToolCalls });
-                    String tokenInfo = totalUsage.totalTokens() > 0
-                            ? ", " + LlmClient.formatTokens(totalUsage.totalTokens()) + " tokens"
-                            : "";
-                    log(LogLevel.RESPONSE,
-                            "Response (" + entry.timing() + tokenInfo + describeCacheSignal(totalUsage) + ")",
-                            text);
-                } else {
-                    String err = "Empty response from LLM.";
-                    conversation.add(new ConversationEntry(AiRole.ERROR, err));
-                    log(LogLevel.ERROR, "Error", err);
-                }
-                scrollOffset = 0;
-                messages.add(LlmClient.Message.assistantWithToolCalls(text, List.of()));
-                compactHistoryAfterTurn();
+                completeTurn(response.text(), false, totalUsage, turnAiMs, turnToolMs, turnToolCalls, messages);
                 return;
             }
         }
+
+        // out of round trips: ask the model once more, without tools, so the user gets an answer rather than an error
+        messages.add(LlmClient.Message.user(
+                "You have used all " + MAX_ITERATIONS + " tool calls available for this question and cannot call any"
+                                            + " more. Answer now: summarize what you did, what you found, what"
+                                            + " failed, and what the user could try next."));
+        long wrapUpStart = System.currentTimeMillis();
+        drainClientOutput();
+        LlmClient.ChatResponse wrapUp = client.chatWithTools(systemPrompt, messages, List.of());
+        long wrapUpLatency = System.currentTimeMillis() - wrapUpStart;
+        turnAiMs += wrapUpLatency;
+        if (wrapUp != null) {
+            totalUsage = totalUsage.add(wrapUp.usage());
+            recordUsage(wrapUp, wrapUpLatency);
+            if (wrapUp.text() != null && !wrapUp.text().isBlank()) {
+                completeTurn(wrapUp.text(), true, totalUsage, turnAiMs, turnToolMs, turnToolCalls, messages);
+                return;
+            }
+        }
+
         StringBuilder sb = new StringBuilder();
         sb.append("Reached maximum iterations (").append(MAX_ITERATIONS).append(") without a final answer. ");
         sb.append("The model kept calling tools instead of answering; the last calls were:");
@@ -1208,6 +1246,36 @@ class AiPanel {
         // keep the history consistent: the turn ends without an answer, so the next question starts fresh from here
         messages.add(LlmClient.Message.assistantWithToolCalls(
                 "(no answer: the iteration limit was reached while calling tools)", List.of()));
+        compactHistoryAfterTurn();
+    }
+
+    /**
+     * Ends the turn with the model's answer: records it in the conversation, the usage charts and the AI log.
+     * {@code wrapUp} marks an answer that was forced after the tool call limit was reached.
+     */
+    private void completeTurn(
+            String text, boolean wrapUp, LlmClient.TokenUsage totalUsage, long turnAiMs, long turnToolMs,
+            int turnToolCalls, List<LlmClient.Message> messages) {
+        sessionTotalTokens += totalUsage.totalTokens();
+        if (text != null && !text.isBlank()) {
+            long elapsed = System.currentTimeMillis() - thinkingStartTime;
+            ConversationEntry entry = new ConversationEntry(
+                    AiRole.ASSISTANT, text, elapsed, turnAiMs, turnToolMs, turnToolCalls,
+                    totalUsage.totalTokens());
+            conversation.add(entry);
+            turnTimings.add(new long[] { turnAiMs, turnToolMs, turnToolCalls });
+            String tokenInfo = totalUsage.totalTokens() > 0
+                    ? ", " + LlmClient.formatTokens(totalUsage.totalTokens()) + " tokens"
+                    : "";
+            String label = wrapUp ? "Response after reaching the tool call limit (" : "Response (";
+            log(LogLevel.RESPONSE, label + entry.timing() + tokenInfo + describeCacheSignal(totalUsage) + ")", text);
+        } else {
+            String err = "Empty response from LLM.";
+            conversation.add(new ConversationEntry(AiRole.ERROR, err));
+            log(LogLevel.ERROR, "Error", err);
+        }
+        scrollOffset = 0;
+        messages.add(LlmClient.Message.assistantWithToolCalls(text, List.of()));
         compactHistoryAfterTurn();
     }
 
@@ -1319,6 +1387,9 @@ class AiPanel {
             if (providerSwitchPopup.isVisible()) {
                 providerSwitchPopup.render(frame, inner);
             }
+            if (copyPopup.isVisible()) {
+                copyPopup.render(frame, inner);
+            }
             return;
         }
 
@@ -1350,6 +1421,9 @@ class AiPanel {
         renderInput(frame, inputArea);
         if (providerSwitchPopup.isVisible()) {
             providerSwitchPopup.render(frame, inner);
+        }
+        if (copyPopup.isVisible()) {
+            copyPopup.render(frame, inner);
         }
     }
 
@@ -1597,6 +1671,10 @@ class AiPanel {
             providerSwitchPopup.renderFooter(spans);
             return;
         }
+        if (copyPopup.isVisible()) {
+            copyPopup.renderFooter(spans);
+            return;
+        }
         TuiHelper.hint(spans, "F8", "close");
         if (statsView) {
             TuiHelper.hint(spans, "Ctrl+U", "chat");
@@ -1618,15 +1696,23 @@ class AiPanel {
         }
     }
 
+    /**
+     * Copies the last answer: the code alone when the answer has one fenced code block (that is what one usually wants,
+     * and selecting it with the mouse drags the panel borders along), a choice of the blocks or the whole answer when
+     * there are several, and the whole answer when there is no code.
+     */
     private void copyLastResponseToClipboard() {
         for (int i = conversation.size() - 1; i >= 0; i--) {
             ConversationEntry entry = conversation.get(i);
             if (entry.role() == AiRole.ASSISTANT && entry.text() != null && !entry.text().isEmpty()) {
-                try {
-                    copyToSystemClipboard(entry.text());
-                    notify("Copied to clipboard", false);
-                } catch (Exception e) {
-                    notify("Clipboard not available: " + e.getMessage(), true);
+                List<AiCodeBlocks.CodeBlock> blocks = AiCodeBlocks.parse(entry.text());
+                if (blocks.isEmpty()) {
+                    copyChoice(new AiCopyPopup.Choice("", "response", entry.text()));
+                } else if (blocks.size() == 1) {
+                    AiCodeBlocks.CodeBlock block = blocks.get(0);
+                    copyChoice(new AiCopyPopup.Choice("", block.label(), block.code()));
+                } else {
+                    copyPopup.open(entry.text(), blocks);
                 }
                 return;
             }
@@ -1634,8 +1720,29 @@ class AiPanel {
         notify("No AI response to copy", true);
     }
 
-    private static void copyToSystemClipboard(String text) throws IOException {
-        TuiHelper.copyToClipboard(text);
+    private void copyChoice(AiCopyPopup.Choice choice) {
+        if (choice == null) {
+            return;
+        }
+        try {
+            clipboard.copy(choice.text());
+            notify("Copied " + choice.what() + " to clipboard", false);
+        } catch (Exception e) {
+            notify("Clipboard not available: " + e.getMessage(), true);
+        }
+    }
+
+    /** Writes to the system clipboard; replaced in tests. */
+    interface ClipboardWriter {
+        void copy(String text) throws IOException;
+    }
+
+    void setClipboardForTesting(ClipboardWriter clipboard) {
+        this.clipboard = clipboard;
+    }
+
+    boolean isCopyPopupVisibleForTesting() {
+        return copyPopup.isVisible();
     }
 
     private void exportChatToFile() {
@@ -2084,6 +2191,18 @@ class AiPanel {
         sb.append("tell the user what failed and what to try\n");
         sb.append("- To feed a route that consumes from a broker (MQTT, Kafka, JMS), tui_send_message can publish ");
         sb.append("to the broker with the route's own component and options\n");
+        sb.append("- tui_set_log_level changes the application's root logger (WARN silences all INFO output); use it ");
+        sb.append("only when the user asks about the logging output. 'Log at WARN' in a route means the log step's ");
+        sb.append("logLevel in the route source\n");
+        sb.append("- To change a route or a configuration file: tui_get_files tells where the sources are and whether ");
+        sb.append("edits take effect (devMode, temporary, editing); read the file with tui_get_files, then write the ");
+        sb.append("complete new content with tui_write_file. The user confirms each write in the TUI (Esc rejects it; ");
+        sb.append("never retry a rejected write). confirm=false skips the dialog only when the user has enabled that ");
+        sb.append("with /write auto, so do not pass it unless the user told you to\n");
+        sb.append("- Validate YAML routes and application.properties with tui_validate_source before writing them ");
+        sb.append("(unknown options such as logLevel instead of loggingLevel are reported); tui_write_file refuses ");
+        sb.append("invalid content and returns the errors, so fix them rather than guessing. tui_catalog_doc looks up ");
+        sb.append("option names\n");
         if (!useCoreTools()) {
             sb.append("- Use tui_locate + tui_draw_shape to visually highlight problems on screen for the user\n");
         }
@@ -2585,6 +2704,16 @@ class AiPanel {
         return buildTuiToolDefinitions();
     }
 
+    private String describeWriteMode() {
+        return unconfirmedWrites
+                ? "auto (the model may write files without asking, when it passes confirm=false)"
+                : "confirm (every file write is confirmed in the TUI; /write auto lets the model skip the dialog)";
+    }
+
+    String describeWriteModeForTesting() {
+        return describeWriteMode();
+    }
+
     String describeToolModeForTesting() {
         return describeToolMode();
     }
@@ -2681,6 +2810,24 @@ class AiPanel {
             TuiSettings settings = TuiSettings.load();
             settings.setAiTools(TOOL_MODE_AUTO.equals(normalized) ? null : normalized);
             settings.save();
+            return true;
+        }
+
+        @Override
+        public String describeWriteMode() {
+            return AiPanel.this.describeWriteMode();
+        }
+
+        @Override
+        public boolean switchWriteMode(String mode) {
+            String normalized = mode == null ? "" : mode.trim().toLowerCase(Locale.ROOT);
+            if (!"confirm".equals(normalized) && !"auto".equals(normalized)) {
+                return false;
+            }
+            unconfirmedWrites = "auto".equals(normalized);
+            if (mcpFacade != null) {
+                mcpFacade.setUnconfirmedWritesAllowed(unconfirmedWrites);
+            }
             return true;
         }
 

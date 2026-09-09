@@ -1256,23 +1256,7 @@ class SourceViewer {
     private void validateAndNotify(String content) {
         if (validateOnSave && isCamelYamlFile()) {
             List<String> msgs = new ArrayList<>();
-            List<Error> errors = validateYaml(content);
-            if (errors != null && !errors.isEmpty()) {
-                for (Error error : errors) {
-                    String msg = error.getMessage();
-                    if (msg != null) {
-                        String loc = error.getInstanceLocation() != null
-                                ? error.getInstanceLocation().toString() : null;
-                        String node = extractNodeName(loc);
-                        String clean = cleanValidationMessage(msg);
-                        if (node != null) {
-                            msgs.add(node + ": " + clean);
-                        } else {
-                            msgs.add(clean);
-                        }
-                    }
-                }
-            }
+            msgs.addAll(SourceValidationSupport.formatSchemaErrors(validateYaml(content)));
             if (endpointValidator != null) {
                 List<String> endpointErrors = endpointValidator.validate(content);
                 if (endpointErrors != null) {
@@ -1379,22 +1363,7 @@ class SourceViewer {
     }
 
     private List<String> validateProperties(String content) {
-        List<String> msgs = new ArrayList<>();
-        String[] lines = content.split("\n", -1);
-        for (int i = 0; i < lines.length; i++) {
-            String line = lines[i].trim();
-            if (line.isEmpty() || line.startsWith("#") || line.startsWith("!")) {
-                continue;
-            }
-            if (!line.contains("=")) {
-                continue;
-            }
-            String error = propertiesValidator.validate(lines[i]);
-            if (error != null) {
-                msgs.add("Line " + (i + 1) + ": " + error);
-            }
-        }
-        return msgs;
+        return SourceValidationSupport.validatePropertiesLines(content, propertiesValidator::validate);
     }
 
     private List<Error> validateYaml(String content) {
@@ -1994,61 +1963,7 @@ class SourceViewer {
     private void renderDiffContent(Frame frame, Rect inner) {
         List<String> orig = YamlBlockEditor.toLines(originalEditText);
         List<EditDiff.DiffEntry> entries = EditDiff.unifiedDiff(orig, editLines(), 3);
-        if (entries.isEmpty()) {
-            entries = List.of(new EditDiff.DiffEntry(' ', "(no changes)", 0));
-        }
-
-        int maxLineNum = entries.stream().mapToInt(EditDiff.DiffEntry::lineNum).max().orElse(1);
-        int lineDigits = Math.max(2, String.valueOf(maxLineNum).length());
-        int gutterWidth = lineDigits + 2;
-
-        diffScrollY = Math.max(0, Math.min(diffScrollY, Math.max(0, entries.size() - inner.height())));
-        for (int r = 0; r < inner.height(); r++) {
-            int idx = diffScrollY + r;
-            if (idx >= entries.size()) {
-                break;
-            }
-            int screenY = inner.top() + r;
-            EditDiff.DiffEntry entry = entries.get(idx);
-            Style lineStyle;
-            Style gutterStyle;
-            if (entry.type() == '-') {
-                lineStyle = Style.EMPTY.fg(dev.tamboui.style.Color.WHITE).bg(dev.tamboui.style.Color.rgb(0x6E, 0x1B, 0x1B));
-                gutterStyle = lineStyle;
-            } else if (entry.type() == '+') {
-                lineStyle = Style.EMPTY.fg(dev.tamboui.style.Color.WHITE).bg(dev.tamboui.style.Color.rgb(0x1B, 0x4D, 0x1B));
-                gutterStyle = lineStyle;
-            } else if (entry.type() == '~') {
-                lineStyle = Style.EMPTY.dim();
-                gutterStyle = Style.EMPTY.dim();
-            } else {
-                lineStyle = Style.EMPTY;
-                gutterStyle = Style.EMPTY.dim();
-            }
-
-            // fill entire row with background for changed lines
-            if (entry.type() == '-' || entry.type() == '+') {
-                Rect rowRect = new Rect(inner.left(), screenY, inner.width(), 1);
-                frame.buffer().setStyle(rowRect, lineStyle);
-            }
-
-            // line number from original file (for -) or current file (for + and context)
-            String lineNum = entry.lineNum() > 0
-                    ? String.format("%" + lineDigits + "d ", entry.lineNum())
-                    : " ".repeat(lineDigits + 1);
-            frame.buffer().setString(inner.left(), screenY, lineNum, gutterStyle);
-            frame.buffer().set(inner.left() + gutterWidth - 1, screenY,
-                    new dev.tamboui.buffer.Cell("│", gutterStyle));
-
-            int textX = inner.left() + gutterWidth;
-            int maxWidth = Math.max(0, inner.width() - gutterWidth);
-            String prefix = entry.type() == ' ' ? "  " : entry.type() + " ";
-            String text = prefix + entry.text();
-            if (text.length() > maxWidth) {
-                text = text.substring(0, maxWidth);
-            }
-            frame.buffer().setString(textX, screenY, text, lineStyle);
-        }
+        diffScrollY = EditDiff.render(frame, inner, entries, diffScrollY);
     }
 
     private void renderValidationPopup(Frame frame, Rect area) {

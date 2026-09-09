@@ -89,6 +89,7 @@ class PopupManager {
     private String confirmTitle;
     private String confirmMessage;
     private Runnable confirmCallback;
+    private Runnable cancelCallback;
 
     // Last rendered popup rects for mouse hit-testing
     private Rect lastMorePopupRect;
@@ -222,6 +223,7 @@ class PopupManager {
         showKillConfirm = false;
         showConfirm = false;
         confirmCallback = null;
+        cancelCallback = null;
         filesBrowser.reset();
     }
 
@@ -234,10 +236,23 @@ class PopupManager {
     }
 
     void showConfirm(String title, String message, Runnable onConfirm) {
+        showConfirm(title, message, onConfirm, null);
+    }
+
+    /** As {@link #showConfirm(String, String, Runnable)}, with a callback when the dialog is dismissed instead. */
+    void showConfirm(String title, String message, Runnable onConfirm, Runnable onCancel) {
         this.confirmTitle = title;
         this.confirmMessage = message;
         this.confirmCallback = onConfirm;
+        this.cancelCallback = onCancel;
         this.showConfirm = true;
+    }
+
+    /** Closes the generic confirm dialog without running either callback (for example on a timeout). */
+    void dismissConfirm() {
+        showConfirm = false;
+        confirmCallback = null;
+        cancelCallback = null;
     }
 
     void selectMorePopupEntry(int moreIndex) {
@@ -426,12 +441,18 @@ class PopupManager {
             showConfirm = false;
             Runnable cb = confirmCallback;
             confirmCallback = null;
+            cancelCallback = null;
             if (cb != null) {
                 cb.run();
             }
         } else if (ke.isCancel()) {
             showConfirm = false;
+            Runnable cb = cancelCallback;
             confirmCallback = null;
+            cancelCallback = null;
+            if (cb != null) {
+                cb.run();
+            }
         }
         return true;
     }

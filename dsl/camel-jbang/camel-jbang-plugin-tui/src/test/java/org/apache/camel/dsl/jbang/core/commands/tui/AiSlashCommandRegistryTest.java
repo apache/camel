@@ -34,7 +34,7 @@ class AiSlashCommandRegistryTest {
         AiSlashCommandRegistry registry = AiSlashCommandRegistry.defaults();
 
         assertEquals(
-                List.of("help", "provider", "model", "tools", "context", "compact", "retry", "usage", "copy", "export",
+                List.of("help", "provider", "model", "tools", "write", "context", "compact", "retry", "usage", "copy", "export",
                         "prompt", "clear", "clear-history", "close", "quit", "run", "infra", "send"),
                 registry.descriptors().stream().map(AiSlashCommandRegistry.Descriptor::name).toList());
     }
@@ -75,7 +75,7 @@ class AiSlashCommandRegistryTest {
     void completionsIncludeAllCommandsForBareSlash() {
         AiSlashCommandRegistry registry = AiSlashCommandRegistry.defaults();
 
-        assertEquals(18, registry.completionsFor("/").size());
+        assertEquals(19, registry.completionsFor("/").size());
         assertFalse(registry.completionsFor("/").stream().anyMatch(descriptor -> "exit".equals(descriptor.name())));
     }
 

@@ -305,7 +305,8 @@ class LogTab extends AbstractTab {
             titleSpans.add(Span.raw(" Log "));
         }
         if (hasNew) {
-            titleSpans.add(Span.styled("(*)", Theme.label()));
+            // follow mode is off (a scroll or Home/PgUp switches it off) and lines arrived below the view
+            titleSpans.add(Span.styled("(paused, End follows)", Theme.warning()));
             titleSpans.add(Span.raw(" "));
         }
         if (ctx.logPinned && ctx.logPinPercent > 0 && ctx.logPinVisible) {

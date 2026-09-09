@@ -371,6 +371,16 @@ class FilesBrowser {
     }
 
     static Path resolveSourceDirectory(IntegrationInfo info) {
+        // dev mode reloads from a directory: that is where the original (editable) files are, also when the
+        // integration runs from an exported copy (camel run --runtime=main --dev) or from --source-dir
+        for (ConfigurationTab.ConfigProperty cp : info.configProperties) {
+            if ("camel.main.routesReloadDirectory".equals(cp.key) && cp.value != null && !cp.value.isBlank()) {
+                Path dir = Path.of(cp.value);
+                if (Files.isDirectory(dir)) {
+                    return dir;
+                }
+            }
+        }
         for (ConfigurationTab.ConfigProperty cp : info.configProperties) {
             if ("camel.main.routesIncludePattern".equals(cp.key) && cp.value != null) {
                 for (String part : cp.value.split(",")) {
@@ -410,6 +420,30 @@ class FilesBrowser {
             return Path.of(info.directory);
         }
         return null;
+    }
+
+    /**
+     * Whether the directory is a temporary copy of the sources (an example extracted by camel run, or an exported
+     * project in .camel-jbang-run), where edits are lost when the integration stops.
+     */
+    static boolean isTemporaryDirectory(Path dir) {
+        if (dir == null) {
+            return false;
+        }
+        String s = dir.toAbsolutePath().normalize().toString();
+        if (s.contains(".camel-jbang-run") || s.contains(".camel-jbang")) {
+            return true;
+        }
+        String tmp = System.getProperty("java.io.tmpdir");
+        if (tmp != null && !tmp.isBlank()) {
+            try {
+                Path tmpDir = Path.of(tmp).toRealPath();
+                return dir.toRealPath().startsWith(tmpDir);
+            } catch (IOException e) {
+                return s.startsWith(Path.of(tmp).toAbsolutePath().normalize().toString());
+            }
+        }
+        return false;
     }
 
     static String formatFileSize(long bytes) {

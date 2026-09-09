@@ -609,6 +609,7 @@ line breaks are sent as *Enter*, so a multi-line paste runs line by line as in a
 | *F1* / *?* | Context-sensitive help (toggle)
 | *F2* | Actions menu
 | *F3* | Switch between integrations (when multiple running)
+| *Ctrl+F* | Browse the selected integration's source files (the Overview tab also has plain *f*)
 | *F6* / *Shift+F6* | Toggle the embedded shell panel / cycle its height
 | *F8* / *Shift+F8* | Toggle the AI prompt panel / cycle its height
 | *F10* | Run menu (run, stop, restart, kill)
@@ -942,6 +943,9 @@ cycles backward.
 | `/model [model-name]` (`/m`)
 | Show the current model, or switch the session model.
 
+| `/write [confirm\|auto]` (`/w`)
+| Show or switch how file writes by the model (`tui_write_file`) are confirmed. `confirm` (default) shows the confirm dialog for every write, whatever the model passes; `auto` lets the model skip the dialog with `confirm=false`. The mode lasts for the session.
+
 | `/tools [auto\|core\|full]` (`/t`)
 | Show which tool set is sent to the model, or switch it. `auto` (default) sends the core set to local providers and every tool to hosted ones; the choice is saved as `camel.tui.ai.tools`.
 
@@ -958,7 +962,7 @@ cycles backward.
 | Print the AI usage so far in the chat: requests, tokens in and out, average latency, one line per model (and per route when GenAI spans are observed), and the last request. *Ctrl+U* opens the full view with the per-question chart. `/usage reset` clears the counters and the chart without touching the conversation; GenAI spans recorded before the reset are hidden from the view as well.
 
 | `/copy` (`/y`), `/export` (`/e`)
-| The same as *Ctrl+Y* (copy the last response) and *Ctrl+E* (export the conversation to Markdown).
+| The same as *Ctrl+Y* (copy the last response) and *Ctrl+E* (export the conversation to Markdown). Copying is code-aware: when the response has one fenced code block only the code is copied (without the fences and the prose, which is what selecting it with the mouse cannot give you because of the panel borders); when it has several, a picker lists the blocks with their language and size plus the whole response; when it has none, the whole response is copied.
 
 | `/prompt`
 | Show the system prompt the panel sends with every request.
@@ -1034,9 +1038,38 @@ The MCP server exposes tools organized by purpose:
 * *Navigate* -- switch tabs, select integrations, select routes, send keystrokes, apply filters
 * *Act* -- send test messages to endpoints, start/stop/restart routes, change log levels,
   start/stop/restart infra services, run any entry of the *F2* actions menu by its label
+* *Edit* -- write a source file in the integration's source directory (`tui_write_file`), see below
 * *Annotate* -- locate text and diagram nodes by coordinates, draw shapes (boxes, highlights,
   arrows, underlines, text labels), show captions with typewriter animation
 * *Present* -- take screenshots, record tape sessions, control demo pacing
+
+=== Editing source files from an AI agent
+
+The TUI is for prototyping, human and AI together, so an agent (the built-in *F8* panel or an
+external MCP client) can change the routes it is looking at. `tui_get_files` tells the agent where
+the sources are, which differs with how the integration was started (plain files, `--source-dir`,
+an example extracted to a temporary folder, or an exported project), and whether editing makes
+sense: `devMode` (changes are reloaded automatically), `temporary` (a copy that is lost when the
+integration stops) and an `editing` hint. `tui_write_file` then writes the complete new content of
+a file in that directory.
+
+Every write is confirmed in the TUI first: a dialog names the file, the directory and the size of the
+change (`+3 -1` lines); press *d* to see the change as a unified diff, with removed lines on red and
+added lines on green like the Source tab's *F7* diff, and scroll it with the arrow keys; *Enter*, *Esc* or
+*d* returns to the summary. In the summary *Enter* applies the write and *Esc* rejects it, in which case the
+agent is told that the file is unchanged and not to retry. The dialog cannot be skipped by the agent on
+its own: `confirm=false` is honoured only after you switched to `/write auto` in the AI panel (the default
+`/write confirm` shows the dialog for every write, whatever the agent passes). Only plain file names in the source
+directory are accepted; the tool cannot write elsewhere, and there is no git integration, so the
+worst case is a wrong route file in a folder you are watching.
+
+Before writing, an agent can check its content with `tui_validate_source`, which runs the same checks as
+the Source tab's save: YAML routes against the Camel YAML DSL schema (a misspelled option such as `logLevel`
+instead of `loggingLevel` is reported) plus endpoint URIs and simple expressions, and `.properties` files
+against the catalog of `camel.*` and Spring Boot options. `tui_write_file` runs that validation itself and
+refuses to write an invalid file, returning the errors instead, so a model fixes them rather than the user
+finding them in the log after the reload (`validate=false` writes anyway). Both tools are part of the core
+tool set, so local models (Ollama) get them as well.
 
 === Example Workflows
 

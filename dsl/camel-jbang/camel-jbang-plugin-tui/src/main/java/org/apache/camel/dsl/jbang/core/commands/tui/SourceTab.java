@@ -80,6 +80,10 @@ class SourceTab extends AbstractTab {
 
     private final SourceEditAssist assist = new SourceEditAssist(ctx);
 
+    SourceEditAssist editAssist() {
+        return assist;
+    }
+
     private static final Set<String> LINKABLE_KEYWORDS = Set.of(
             "to", "toD", "wireTap", "enrich", "pollEnrich", "deadLetterChannel");
 

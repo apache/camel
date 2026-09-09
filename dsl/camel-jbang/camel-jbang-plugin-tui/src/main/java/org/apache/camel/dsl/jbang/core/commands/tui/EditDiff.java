@@ -90,6 +90,80 @@ final class EditDiff {
     record DiffEntry(char type, String text, int lineNum) {
     }
 
+    /** Added and removed line counts of a diff, as "+3 -1". */
+    static String summary(List<DiffEntry> entries) {
+        long added = entries.stream().filter(e -> e.type() == '+').count();
+        long removed = entries.stream().filter(e -> e.type() == '-').count();
+        return "+" + added + " -" + removed;
+    }
+
+    /**
+     * Renders unified diff entries the way the source editor's F7 overlay does (removed lines on red, added lines on
+     * green, a line number gutter), starting at {@code scrollY}. Returns the scroll offset actually used, clamped so
+     * the last entry stays visible.
+     */
+    static int render(
+            dev.tamboui.terminal.Frame frame, dev.tamboui.layout.Rect inner, List<DiffEntry> entries,
+            int scrollY) {
+        if (entries.isEmpty()) {
+            entries = List.of(new DiffEntry(' ', "(no changes)", 0));
+        }
+        int maxLineNum = entries.stream().mapToInt(DiffEntry::lineNum).max().orElse(1);
+        int lineDigits = Math.max(2, String.valueOf(maxLineNum).length());
+        int gutterWidth = lineDigits + 2;
+
+        scrollY = Math.max(0, Math.min(scrollY, Math.max(0, entries.size() - inner.height())));
+        for (int r = 0; r < inner.height(); r++) {
+            int idx = scrollY + r;
+            if (idx >= entries.size()) {
+                break;
+            }
+            int screenY = inner.top() + r;
+            DiffEntry entry = entries.get(idx);
+            dev.tamboui.style.Style lineStyle;
+            dev.tamboui.style.Style gutterStyle;
+            if (entry.type() == '-') {
+                lineStyle = dev.tamboui.style.Style.EMPTY.fg(dev.tamboui.style.Color.WHITE)
+                        .bg(dev.tamboui.style.Color.rgb(0x6E, 0x1B, 0x1B));
+                gutterStyle = lineStyle;
+            } else if (entry.type() == '+') {
+                lineStyle = dev.tamboui.style.Style.EMPTY.fg(dev.tamboui.style.Color.WHITE)
+                        .bg(dev.tamboui.style.Color.rgb(0x1B, 0x4D, 0x1B));
+                gutterStyle = lineStyle;
+            } else if (entry.type() == '~') {
+                lineStyle = dev.tamboui.style.Style.EMPTY.dim();
+                gutterStyle = dev.tamboui.style.Style.EMPTY.dim();
+            } else {
+                lineStyle = dev.tamboui.style.Style.EMPTY;
+                gutterStyle = dev.tamboui.style.Style.EMPTY.dim();
+            }
+
+            // fill entire row with background for changed lines
+            if (entry.type() == '-' || entry.type() == '+') {
+                dev.tamboui.layout.Rect rowRect = new dev.tamboui.layout.Rect(inner.left(), screenY, inner.width(), 1);
+                frame.buffer().setStyle(rowRect, lineStyle);
+            }
+
+            // line number from original file (for -) or current file (for + and context)
+            String lineNum = entry.lineNum() > 0
+                    ? String.format("%" + lineDigits + "d ", entry.lineNum())
+                    : " ".repeat(lineDigits + 1);
+            frame.buffer().setString(inner.left(), screenY, lineNum, gutterStyle);
+            frame.buffer().set(inner.left() + gutterWidth - 1, screenY,
+                    new dev.tamboui.buffer.Cell("│", gutterStyle));
+
+            int textX = inner.left() + gutterWidth;
+            int maxWidth = Math.max(0, inner.width() - gutterWidth);
+            String prefix = entry.type() == ' ' ? "  " : entry.type() + " ";
+            String text = prefix + entry.text();
+            if (text.length() > maxWidth) {
+                text = text.substring(0, maxWidth);
+            }
+            frame.buffer().setString(textX, screenY, text, lineStyle);
+        }
+        return scrollY;
+    }
+
     static final DiffEntry SEPARATOR = new DiffEntry('~', "───", -1);
 
     static List<DiffEntry> unifiedDiff(List<String> original, List<String> current, int contextLines) {

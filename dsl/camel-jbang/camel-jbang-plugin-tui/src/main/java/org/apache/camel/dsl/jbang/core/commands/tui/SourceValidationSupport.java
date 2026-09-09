@@ -76,6 +76,45 @@ final class SourceValidationSupport {
         return msg;
     }
 
+    /** Validates a properties file line by line with the given validator, reporting {@code Line n: message}. */
+    static List<String> validatePropertiesLines(String content, java.util.function.Function<String, String> lineValidator) {
+        List<String> msgs = new java.util.ArrayList<>();
+        if (content == null) {
+            return msgs;
+        }
+        String[] lines = content.split("\n", -1);
+        for (int i = 0; i < lines.length; i++) {
+            String line = lines[i].trim();
+            if (line.isEmpty() || line.startsWith("#") || line.startsWith("!") || !line.contains("=")) {
+                continue;
+            }
+            String error = lineValidator.apply(lines[i]);
+            if (error != null) {
+                msgs.add("Line " + (i + 1) + ": " + error);
+            }
+        }
+        return msgs;
+    }
+
+    /** Formats YAML DSL schema errors the way the editor shows them: {@code node: message}. */
+    static List<String> formatSchemaErrors(List<com.networknt.schema.Error> errors) {
+        List<String> msgs = new java.util.ArrayList<>();
+        if (errors == null) {
+            return msgs;
+        }
+        for (com.networknt.schema.Error error : errors) {
+            String msg = error.getMessage();
+            if (msg == null) {
+                continue;
+            }
+            String loc = error.getInstanceLocation() != null ? error.getInstanceLocation().toString() : null;
+            String node = extractNodeName(loc);
+            String clean = cleanValidationMessage(msg);
+            msgs.add(node != null ? node + ": " + clean : clean);
+        }
+        return msgs;
+    }
+
     static String extractNodeName(String instanceLocation) {
         if (instanceLocation == null || instanceLocation.isEmpty()) {
             return null;

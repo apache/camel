@@ -25,6 +25,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Queue;
 import java.util.concurrent.atomic.AtomicReference;
+import java.util.function.BiFunction;
 import java.util.function.Supplier;
 
 import dev.tamboui.buffer.Buffer;
@@ -85,6 +86,22 @@ class McpFacade {
         void stopAll();
 
         void resetIntegrationTabState();
+
+        /**
+         * Asks the user to confirm a file write requested by an AI tool, blocking the calling (tool) thread until the
+         * user answers. Returns false when the user declines, or when no one answers.
+         */
+        default boolean confirmFileWrite(FileWrite request) {
+            return false;
+        }
+    }
+
+    /**
+     * A file write requested by an AI tool, waiting for the user's confirmation. {@code oldContent} is null when the
+     * file does not exist yet.
+     */
+    record FileWrite(String file, Path directory, String oldContent, String newContent, boolean temporary,
+            boolean devMode) {
     }
 
     // Tab name constants
@@ -819,19 +836,111 @@ class McpFacade {
         }
     }
 
-    JsonObject getFiles(String name, String file) {
-        List<IntegrationInfo> integrations = data.get();
-        IntegrationInfo target = null;
+    private IntegrationInfo findIntegration(String name) {
         if (name != null && !name.isEmpty()) {
-            for (IntegrationInfo info : integrations) {
+            for (IntegrationInfo info : data.get()) {
                 if (!info.vanishing && name.equals(info.name)) {
-                    target = info;
-                    break;
+                    return info;
                 }
             }
-        } else {
-            target = ctx != null ? ctx.findSelectedIntegration() : null;
+            return null;
         }
+        return ctx != null ? ctx.findSelectedIntegration() : null;
+    }
+
+    /**
+     * Tells an agent where the sources are and whether editing them makes sense: the directory differs with how the
+     * integration was started (plain files, --source-dir, an example extracted to a temporary folder, an exported
+     * project), and edits only take effect on reload (dev mode) or restart.
+     */
+    // time the last tui_write_file spent waiting for the user's confirmation; the AI panel subtracts it from the
+    // tool time of the call so the usage statistics show what the tool did, not how long the user thought about it
+    private volatile long lastConfirmWaitMs;
+
+    // whether a tool may write without the confirm dialog (confirm=false); only the user enables this, with the
+    // /write auto command in the AI panel, because a model asked to respect a rejection may simply retry without it
+    private volatile boolean unconfirmedWritesAllowed;
+
+    void setUnconfirmedWritesAllowed(boolean allowed) {
+        this.unconfirmedWritesAllowed = allowed;
+    }
+
+    boolean isUnconfirmedWritesAllowed() {
+        return unconfirmedWritesAllowed;
+    }
+
+    // validates source by file type (Camel YAML DSL, application.properties) with the editor's own checks,
+    // see SourceEditAssist#validateSource
+    private BiFunction<String, String, List<String>> sourceValidator;
+
+    void setSourceValidator(BiFunction<String, String, List<String>> sourceValidator) {
+        this.sourceValidator = sourceValidator;
+    }
+
+    /**
+     * Validates source before it is written: {@code content} when given (the file name decides the checks), otherwise
+     * the file from the integration's source directory. A YAML file is validated as Camel YAML DSL and a .properties
+     * file as Camel and Spring Boot options.
+     */
+    JsonObject validateSource(String name, String file, String content) {
+        if (file == null || file.isBlank()) {
+            if (content == null) {
+                return writeError("file is required (and content, unless the file exists in the source directory)");
+            }
+            file = "source.camel.yaml";
+        }
+        if (content == null) {
+            JsonObject existing = getFiles(name, file);
+            if (existing == null) {
+                return writeError("No such file in the source directory: " + file);
+            }
+            content = existing.getString("content");
+        }
+        if (sourceValidator == null) {
+            return writeError("Validation is not available");
+        }
+        if (!SourceEditAssist.isValidatableFile(file)) {
+            return writeError("No validation for " + file + ": only YAML routes and .properties files are validated");
+        }
+        List<String> errors = sourceValidator.apply(file, content);
+        JsonObject result = new JsonObject();
+        result.put("valid", errors.isEmpty());
+        result.put("file", file);
+        JsonArray arr = new JsonArray();
+        arr.addAll(errors);
+        result.put("errors", arr);
+        result.put("message", errors.isEmpty()
+                ? "The source is valid"
+                : errors.size() + " problem(s) found; fix them before writing the file");
+        return result;
+    }
+
+    long consumeConfirmWaitMs() {
+        long wait = lastConfirmWaitMs;
+        lastConfirmWaitMs = 0;
+        return wait;
+    }
+
+    private static void describeSourceDirectory(IntegrationInfo info, Path dir, JsonObject result) {
+        boolean temporary = FilesBrowser.isTemporaryDirectory(dir);
+        result.put("directory", dir.toString());
+        result.put("devMode", info.devMode);
+        result.put("temporary", temporary);
+        String editing;
+        if (temporary) {
+            editing = "The directory is a temporary copy of the sources; edits made with tui_write_file are lost when"
+                      + " the integration stops"
+                      + (info.devMode ? ", but are reloaded while it runs (dev mode)." : ".");
+        } else if (info.devMode) {
+            editing = "Files can be edited with tui_write_file; changes are reloaded automatically (dev mode).";
+        } else {
+            editing = "Files can be edited with tui_write_file; restart the integration for changes to take effect.";
+        }
+        result.put("editing", editing);
+    }
+
+    JsonObject getFiles(String name, String file) {
+        IntegrationInfo target = findIntegration(name);
         if (target == null) {
             return null;
         }
@@ -848,7 +957,7 @@ class McpFacade {
                 String content = Files.readString(filePath, StandardCharsets.UTF_8);
                 JsonObject result = new JsonObject();
                 result.put("file", file);
-                result.put("directory", dir.toString());
+                describeSourceDirectory(target, dir, result);
                 result.put("size", FilesBrowser.formatFileSize(Files.size(filePath)));
                 result.put("type", FilesBrowser.fileType(filePath));
                 result.put("content", content);
@@ -880,9 +989,107 @@ class McpFacade {
             return null;
         }
         JsonObject result = new JsonObject();
-        result.put("directory", dir.toString());
+        describeSourceDirectory(target, dir, result);
         result.put("files", files);
         result.put("totalFiles", files.size());
+        return result;
+    }
+
+    /**
+     * Writes (creates or replaces) a file in the integration's source directory, after the user confirmed it in the TUI
+     * unless {@code confirm} is false. The file must be a plain file name in that directory.
+     */
+    JsonObject writeFile(String name, String file, String content, boolean confirm) {
+        return writeFile(name, file, content, confirm, true);
+    }
+
+    /**
+     * As {@link #writeFile(String, String, String, boolean)}; with {@code validate} a YAML route or .properties file is
+     * validated first (the editor's checks) and not written when it has errors, so a model fixes them instead of the
+     * user finding them in the log after the reload.
+     */
+    JsonObject writeFile(String name, String file, String content, boolean confirm, boolean validate) {
+        IntegrationInfo target = findIntegration(name);
+        if (target == null) {
+            return writeError(name != null && !name.isEmpty()
+                    ? "No integration named '" + name + "'" : "No integration selected");
+        }
+        Path dir = FilesBrowser.resolveSourceDirectory(target);
+        if (dir == null || !Files.isDirectory(dir)) {
+            return writeError("No source directory found for the integration");
+        }
+        if (file == null || file.isBlank()) {
+            return writeError("file is required");
+        }
+        if (content == null) {
+            return writeError("content is required");
+        }
+        Path filePath = dir.resolve(file).normalize();
+        if (!filePath.startsWith(dir) || !dir.equals(filePath.getParent())) {
+            return writeError("file must be a plain file name in the source directory " + dir);
+        }
+        boolean exists = Files.exists(filePath);
+        if (exists && !Files.isRegularFile(filePath)) {
+            return writeError(file + " is not a regular file");
+        }
+        if (validate && sourceValidator != null && SourceEditAssist.isValidatableFile(file)) {
+            List<String> errors = sourceValidator.apply(file, content);
+            if (!errors.isEmpty()) {
+                JsonObject result = new JsonObject();
+                result.put("status", "invalid");
+                result.put("file", file);
+                JsonArray arr = new JsonArray();
+                arr.addAll(errors);
+                result.put("errors", arr);
+                result.put("message", "The file was not written: the content has validation errors. Fix them and"
+                                      + " call tui_write_file again (validate=false writes it anyway).");
+                return result;
+            }
+        }
+        int lines = content.isEmpty() ? 0 : (int) content.lines().count();
+        if (confirm || !unconfirmedWritesAllowed) {
+            String oldContent = null;
+            if (exists) {
+                try {
+                    oldContent = Files.readString(filePath, StandardCharsets.UTF_8);
+                } catch (IOException e) {
+                    oldContent = "";
+                }
+            }
+            FileWrite request = new FileWrite(
+                    file, dir, oldContent, content, FilesBrowser.isTemporaryDirectory(dir), target.devMode);
+            long waitStart = System.currentTimeMillis();
+            boolean confirmed = bridge != null && bridge.confirmFileWrite(request);
+            lastConfirmWaitMs = System.currentTimeMillis() - waitStart;
+            if (!confirmed) {
+                JsonObject result = new JsonObject();
+                result.put("status", "rejected");
+                result.put("file", file);
+                result.put("message", "The user rejected the change to " + file + " in the TUI; the file is"
+                                      + " unchanged and nothing is pending. Do not say you are waiting for a"
+                                      + " confirmation, and do not retry unless the user asks for it. Passing"
+                                      + " confirm=false does not skip the dialog; only the user can turn it off.");
+                return result;
+            }
+        }
+        try {
+            Files.writeString(filePath, content, StandardCharsets.UTF_8);
+        } catch (IOException e) {
+            return writeError("Failed to write " + filePath + ": " + e.getMessage());
+        }
+        JsonObject result = new JsonObject();
+        result.put("status", exists ? "overwritten" : "created");
+        result.put("file", file);
+        describeSourceDirectory(target, dir, result);
+        result.put("lines", lines);
+        result.put("bytes", content.getBytes(StandardCharsets.UTF_8).length);
+        return result;
+    }
+
+    private static JsonObject writeError(String message) {
+        JsonObject result = new JsonObject();
+        result.put("status", "error");
+        result.put("error", message);
         return result;
     }
 

@@ -91,7 +91,7 @@ with the mouse.
 - `N` — previous match
 - `h` — highlight a word
 - `l` — change log level
-- `f` — toggle follow mode
+- `f` — toggle follow mode (`End` turns it on). Scrolling with the mouse wheel, `Up`, `PgUp` or `Home` turns it off; the title then shows `(paused, End follows)` when new lines arrive below the view
 - `w` — toggle word wrap
 - `Ctrl+L` — pin/cycle/unpin log panel (works from any tab)
 - `Esc` — clear find / back

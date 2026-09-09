@@ -355,9 +355,11 @@ final class TuiToolDefinitions {
                 List.of("table", "primaryKeyValues", "columnValues"))));
         tools.add(toToolDef(toolDef(
                 "tui_set_log_level",
-                "Changes the runtime log level of the selected integration. "
-                                     + "This sends a command to the running Camel application to change "
-                                     + "the root logger level.",
+                "Changes the ROOT LOGGER level of the running application, i.e. which messages the whole "
+                                     + "application writes to its log (WARN silences all INFO output). Only use it "
+                                     + "when the user asks to change the application's logging output. It does not "
+                                     + "change the logLevel of a route's log step; that is a change to the route "
+                                     + "source (tui_write_file).",
                 Map.of("level", propDef("string",
                         "Log level to set: ERROR, WARN, INFO, DEBUG, or TRACE")),
                 List.of("level"))));
@@ -448,6 +450,44 @@ final class TuiToolDefinitions {
                         "Integration name. If omitted, uses the currently selected integration."),
                         "file", propDef("string",
                                 "Filename to read. If omitted, returns the file list instead.")))));
+        tools.add(toToolDef(toolDef(
+                "tui_write_file",
+                "Writes (creates or replaces) a source file in the selected integration's source directory, "
+                                  + "the directory that tui_get_files reports together with whether editing makes sense "
+                                  + "(devMode, temporary, editing). Read the file with tui_get_files first and write the "
+                                  + "complete new content. The user confirms the write in the TUI (Enter/Esc) before the "
+                                  + "file is touched; in dev mode the change is reloaded automatically, otherwise the "
+                                  + "integration must be restarted.",
+                Map.of("name", propDef("string",
+                        "Integration name. If omitted, uses the currently selected integration."),
+                        "file", propDef("string", "File name in the source directory (no paths)."),
+                        "content", propDef("string", "The complete new content of the file."),
+                        "confirm", propDef("boolean",
+                                "Whether the user must confirm the write in the TUI (default true). false skips the "
+                                                      + "dialog only when the user enabled that with /write auto in the AI panel; "
+                                                      + "otherwise the dialog is shown anyway. Never use it to retry a rejected write."),
+                        "validate", propDef("boolean",
+                                "Whether the content is validated first (default true): YAML files as Camel YAML DSL,"
+                                                       + " .properties files as Camel/Spring Boot options. An invalid file is not"
+                                                       + " written and the errors are returned.")),
+                List.of("file", "content"))));
+        tools.add(toToolDef(toolDef(
+                "tui_validate_source",
+                "Validates source without writing anything, with the same checks the Source tab runs on save. "
+                                       + "YAML routes: the Camel YAML DSL schema (unknown or misspelled options such as "
+                                       + "logLevel instead of loggingLevel, wrong structure), endpoint URIs and simple "
+                                       + "expressions. .properties files: unknown or misspelled camel.* and Spring Boot "
+                                       + "options. Use it on content you are about to write with tui_write_file (pass the "
+                                       + "target file name so the right checks apply), or on an existing file (file "
+                                       + "parameter, no content) to explain a startup or reload error. Returns valid=true "
+                                       + "or the list of errors.",
+                Map.of("name", propDef("string",
+                        "Integration name. If omitted, uses the currently selected integration."),
+                        "file", propDef("string",
+                                "File name (in the source directory); decides the checks by extension, and is read when"
+                                                  + " no content is given."),
+                        "content", propDef("string", "The source to validate (defaults to the file's content).")),
+                List.of("file"))));
         tools.add(toToolDef(toolDef(
                 "tui_get_spans",
                 "Returns raw OpenTelemetry span data as structured JSON from the selected integration. "

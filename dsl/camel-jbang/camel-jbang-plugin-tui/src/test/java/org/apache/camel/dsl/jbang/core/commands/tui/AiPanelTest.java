@@ -18,6 +18,7 @@ package org.apache.camel.dsl.jbang.core.commands.tui;
 
 import java.nio.file.Path;
 import java.time.Instant;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CountDownLatch;
@@ -829,6 +830,117 @@ class AiPanelTest {
         assertEquals("/run --exam", panel.inputBufferForTesting());
     }
 
+    // ---- global shortcuts pass through ----
+
+    @Test
+    void globalShortcutsAreNotSwallowedByTheOpenPanel() {
+        AiPanel panel = new AiPanel();
+        panel.open();
+
+        assertFalse(panel.handleKeyEvent(KeyEvent.ofKey(KeyCode.F3, KeyModifiers.NONE)), "F3 switches integration");
+        assertFalse(panel.handleKeyEvent(KeyEvent.ofKey(KeyCode.F2, KeyModifiers.NONE)), "F2 opens the actions menu");
+        assertFalse(panel.handleKeyEvent(KeyEvent.ofChar('f', KeyModifiers.of(true, false, false))),
+                "Ctrl+F browses files");
+        assertFalse(panel.handleKeyEvent(KeyEvent.ofChar('l', KeyModifiers.of(true, false, false))),
+                "Ctrl+L pins the log");
+        assertTrue(panel.handleKeyEvent(KeyEvent.ofChar('f')), "plain f is typed into the prompt");
+        assertEquals("f", panel.inputBufferForTesting());
+        assertTrue(panel.handleKeyEvent(KeyEvent.ofChar('u', KeyModifiers.of(true, false, false))),
+                "Ctrl+U is the panel's own usage view");
+    }
+
+    // ---- /write ----
+
+    @Test
+    void writeCommandShowsAndSwitchesTheConfirmationMode() {
+        AiPanel panel = new AiPanel();
+        panel.open();
+
+        type(panel, "/write");
+        panel.handleKeyEvent(KeyEvent.ofKey(KeyCode.ENTER, KeyModifiers.NONE));
+        assertTrue(panel.conversationForTesting().stream()
+                .anyMatch(e -> e.role() == AiRole.SYSTEM && e.text().contains("confirm (every file write")));
+
+        type(panel, "/write auto");
+        panel.handleKeyEvent(KeyEvent.ofKey(KeyCode.ENTER, KeyModifiers.NONE));
+        assertTrue(panel.describeWriteModeForTesting().startsWith("auto"));
+
+        type(panel, "/write bogus");
+        panel.handleKeyEvent(KeyEvent.ofKey(KeyCode.ENTER, KeyModifiers.NONE));
+        assertTrue(panel.conversationForTesting().stream()
+                .anyMatch(e -> e.role() == AiRole.ERROR && e.text().contains("Unknown write mode")));
+        assertTrue(panel.describeWriteModeForTesting().startsWith("auto"), "an unknown mode changes nothing");
+
+        type(panel, "/write confirm");
+        panel.handleKeyEvent(KeyEvent.ofKey(KeyCode.ENTER, KeyModifiers.NONE));
+        assertTrue(panel.describeWriteModeForTesting().startsWith("confirm"));
+    }
+
+    // ---- Ctrl+Y copy ----
+
+    private static AiPanel panelWithAnswer(String answer, List<String> copied) throws Exception {
+        AiPanel panel = new AiPanel();
+        panel.setToolRegistryForTesting(new TuiToolRegistry(null));
+        RecordingLlmClient client = new RecordingLlmClient(answer);
+        panel.setClientForTesting(client);
+        panel.setClipboardForTesting(copied::add);
+        panel.open();
+        type(panel, "show me the route");
+        panel.handleKeyEvent(KeyEvent.ofKey(KeyCode.ENTER, KeyModifiers.NONE));
+        assertTrue(client.awaitAnswer(5, TimeUnit.SECONDS));
+        await().atMost(5, TimeUnit.SECONDS).until(() -> !panel.isAgentThreadRunningForTesting());
+        return panel;
+    }
+
+    private static void ctrlY(AiPanel panel) {
+        panel.handleKeyEvent(KeyEvent.ofChar('y', KeyModifiers.of(true, false, false)));
+    }
+
+    @Test
+    void copyTakesTheCodeAloneWhenTheAnswerHasOneCodeBlock() throws Exception {
+        List<String> copied = new ArrayList<>();
+        AiPanel panel = panelWithAnswer(
+                "Here you go:\n```yaml\n- route:\n    from:\n      uri: timer:tick\n```\nPaste it into the file.", copied);
+
+        ctrlY(panel);
+
+        assertFalse(panel.isCopyPopupVisibleForTesting());
+        assertEquals(List.of("- route:\n    from:\n      uri: timer:tick"), copied);
+    }
+
+    @Test
+    void copyOffersAPickerWhenTheAnswerHasSeveralCodeBlocks() throws Exception {
+        List<String> copied = new ArrayList<>();
+        String answer = "YAML:\n```yaml\n- route: {}\n```\nJava:\n```java\nfrom(\"a\").to(\"b\");\n```\n";
+        AiPanel panel = panelWithAnswer(answer, copied);
+
+        ctrlY(panel);
+        assertTrue(panel.isCopyPopupVisibleForTesting());
+        assertTrue(copied.isEmpty());
+
+        // the second row is the Java block
+        panel.handleKeyEvent(KeyEvent.ofKey(KeyCode.DOWN, KeyModifiers.NONE));
+        panel.handleKeyEvent(KeyEvent.ofKey(KeyCode.ENTER, KeyModifiers.NONE));
+        assertFalse(panel.isCopyPopupVisibleForTesting());
+        assertEquals(List.of("from(\"a\").to(\"b\");"), copied);
+
+        // digits pick directly; the last row is the whole answer
+        ctrlY(panel);
+        panel.handleKeyEvent(KeyEvent.ofChar('3'));
+        assertFalse(panel.isCopyPopupVisibleForTesting());
+        assertEquals(answer, copied.get(1));
+    }
+
+    @Test
+    void copyTakesTheWholeAnswerWhenThereIsNoCode() throws Exception {
+        List<String> copied = new ArrayList<>();
+        AiPanel panel = panelWithAnswer("The route is started and healthy.", copied);
+
+        ctrlY(panel);
+
+        assertEquals(List.of("The route is started and healthy."), copied);
+    }
+
     // ---- stuck tool loops ----
 
     @Test
@@ -851,6 +963,67 @@ class AiPanelTest {
         assertTrue(client.sawStopNote, "the model must be told to stop repeating the call");
         assertEquals(AiPanel.MAX_IDENTICAL_TOOL_CALLS, client.executedResults,
                 "the tool must not run again once the repeat limit is reached");
+    }
+
+    @Test
+    void reachingTheToolCallLimitAsksTheModelToAnswerWithoutTools() throws Exception {
+        AiPanel panel = new AiPanel();
+        panel.setToolRegistryForTesting(new TuiToolRegistry(null));
+        BusyLlmClient client = new BusyLlmClient();
+        panel.setClientForTesting(client);
+        panel.open();
+        type(panel, "send a few messages into the app");
+        panel.handleKeyEvent(KeyEvent.ofKey(KeyCode.ENTER, KeyModifiers.NONE));
+        await().atMost(10, TimeUnit.SECONDS).until(() -> !panel.isAgentThreadRunningForTesting());
+
+        AiPanel.ConversationEntry last = panel.conversationForTesting().get(panel.conversationForTesting().size() - 1);
+        assertEquals(AiRole.ASSISTANT, last.role(), last.text());
+        assertEquals("I sent the messages; they all failed in the jq transform.", last.text());
+        assertEquals(AiPanel.MAX_ITERATIONS, last.toolCalls(), "every round trip before the wrap-up made a tool call");
+        assertEquals(AiPanel.MAX_ITERATIONS, client.toolRoundTrips);
+        assertTrue(client.sawWrapUpRequest, "the model must be told the tool budget is spent");
+        assertTrue(panel.conversationForTesting().stream().noneMatch(e -> e.role() == AiRole.ERROR),
+                "reaching the limit must not surface as an error when the model can still answer");
+    }
+
+    /**
+     * Calls a different tool on every round trip (a long but legitimate investigation), and answers only once it is
+     * asked without tools.
+     */
+    private static final class BusyLlmClient extends LlmClient {
+
+        volatile int toolRoundTrips;
+        volatile boolean sawWrapUpRequest;
+
+        BusyLlmClient() {
+            withModel("test-model");
+            withApiType(ApiType.openai);
+        }
+
+        @Override
+        public boolean detectEndpoint() {
+            return true;
+        }
+
+        @Override
+        public ChatResponse chatWithTools(String systemPrompt, List<Message> messages, List<ToolDef> tools) {
+            if (tools.isEmpty()) {
+                Message lastMessage = messages.get(messages.size() - 1);
+                if (lastMessage.content() != null && lastMessage.content().contains("cannot call any more")) {
+                    sawWrapUpRequest = true;
+                }
+                return new ChatResponse(
+                        "I sent the messages; they all failed in the jq transform.", List.of(), "stop", false,
+                        TokenUsage.EMPTY);
+            }
+            toolRoundTrips++;
+            JsonObject args = new JsonObject();
+            args.put("endpoint", "direct:mqtt");
+            args.put("body", String.valueOf(toolRoundTrips));
+            return new ChatResponse(
+                    null, List.of(new ToolCall("call-" + toolRoundTrips, "tui_send_message", args)), "tool_use", false,
+                    TokenUsage.EMPTY);
+        }
     }
 
     /** Always asks for the same tool call, like a model stuck on a failing send. */

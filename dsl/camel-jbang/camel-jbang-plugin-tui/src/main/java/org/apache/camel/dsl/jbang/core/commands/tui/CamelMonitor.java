@@ -186,6 +186,7 @@ public class CamelMonitor extends CamelCommand {
 
     private ActionsPopup actionsPopup;
     private ProcessControlPopup processControlPopup;
+    private final FileWritePopup fileWritePopup = new FileWritePopup();
     private TuiRunner runner;
     // Set by TuiWebServer for browser sessions; local terminal sessions leave this null
     // and let TuiBackendHelper auto-detect the active terminal instead.
@@ -744,6 +745,18 @@ public class CamelMonitor extends CamelCommand {
                     }
 
                     @Override
+                    public boolean confirmFileWrite(McpFacade.FileWrite request) {
+                        CompletableFuture<Boolean> answer = new CompletableFuture<>();
+                        fileWritePopup.open(request, answer);
+                        try {
+                            return answer.get(2, TimeUnit.MINUTES);
+                        } catch (Exception e) {
+                            fileWritePopup.close();
+                            return false;
+                        }
+                    }
+
+                    @Override
                     public void stopAll() {
                         actionsPopup.openStopAll();
                     }
@@ -753,6 +766,7 @@ public class CamelMonitor extends CamelCommand {
                         CamelMonitor.this.resetIntegrationTabState();
                     }
                 });
+        mcpFacade.setSourceValidator(tabRegistry.sourceTab().editAssist()::validateSource);
         aiPanel.setMcpFacade(mcpFacade);
         aiPanel.setOtelSpans(dataService.otelSpans());
         mcpFacade.setAiActivityLog(aiPanel::getActivityLog);
@@ -1021,6 +1035,9 @@ public class CamelMonitor extends CamelCommand {
             if (processControlPopup.isVisible()) {
                 return processControlPopup.handleKeyEvent(ke);
             }
+            if (fileWritePopup.isVisible()) {
+                return fileWritePopup.handleKeyEvent(ke);
+            }
             if (popupManager.handleKeyEvent(ke, tabRegistry.selectedTabIndex(), TAB_LOG)) {
                 return true;
             }
@@ -1220,6 +1237,14 @@ public class CamelMonitor extends CamelCommand {
                     shellPanel.close();
                 }
                 aiPanel.open();
+            }
+            return true;
+        }
+        if (ke.hasCtrl() && ke.isCharIgnoreCase('f')) {
+            // browse the selected integration's files from any tab (the Overview tab also has plain f), and from
+            // the AI panel, which lets this key through
+            if (ctx.selectedPid != null && !ctx.isInfraSelected()) {
+                openFilesPopup();
             }
             return true;
         }
@@ -1759,6 +1784,7 @@ public class CamelMonitor extends CamelCommand {
         }
         actionsPopup.render(frame, contentArea);
         processControlPopup.render(frame, contentArea);
+        fileWritePopup.render(frame, contentArea);
         if (captionOverlay.isCaptionVisible()) {
             captionOverlay.render(frame, contentArea);
         }
@@ -2487,6 +2513,8 @@ public class CamelMonitor extends CamelCommand {
             actionsPopup.renderFooter(spans);
         } else if (processControlPopup.isVisible()) {
             processControlPopup.renderFooter(spans);
+        } else if (fileWritePopup.isVisible()) {
+            fileWritePopup.renderFooter(spans);
         } else if (shellPanel.isOpen()) {
             shellPanel.renderFooter(spans);
         } else if (aiPanel.isOpen()) {

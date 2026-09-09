@@ -72,6 +72,9 @@ final class AiSlashCommandRegistry {
                 "tools", List.of("t"), "Show or switch the tool set sent to the model", "[auto|core|full]",
                 AiSlashCommandRegistry::executeTools));
         commands.add(new Descriptor(
+                "write", List.of("w"), "Show or switch how file writes by the model are confirmed", "[confirm|auto]",
+                AiSlashCommandRegistry::executeWrite));
+        commands.add(new Descriptor(
                 "context", List.of("ctx"), "Show what the next request costs: provider, tools, prompt and history size",
                 null,
                 (context, arguments) -> CommandResult.system(context.describeContext())));
@@ -95,7 +98,8 @@ final class AiSlashCommandRegistry {
                     return CommandResult.system(context.usageSummary());
                 }));
         commands.add(new Descriptor(
-                "copy", List.of("y"), "Copy the last AI response to the clipboard (Ctrl+Y)", null,
+                "copy", List.of("y"),
+                "Copy the code from the last AI response, or the whole response, to the clipboard (Ctrl+Y)", null,
                 (context, arguments) -> {
                     context.copyLastResponse();
                     return CommandResult.system("");
@@ -346,6 +350,17 @@ final class AiSlashCommandRegistry {
             return CommandResult.error("Unknown tool mode '" + arguments.trim() + "'. Use auto, core or full.");
         }
         return CommandResult.system("Tool set: " + context.describeToolMode());
+    }
+
+    private static CommandResult executeWrite(AiSlashCommandContext context, String arguments) {
+        if (arguments.isBlank()) {
+            return CommandResult.system("File writes: " + context.describeWriteMode());
+        }
+        String mode = arguments.trim().toLowerCase();
+        if (!context.switchWriteMode(mode)) {
+            return CommandResult.error("Unknown write mode '" + arguments.trim() + "'. Use confirm or auto.");
+        }
+        return CommandResult.system("File writes: " + context.describeWriteMode());
     }
 
     private static int firstWhitespace(String value) {

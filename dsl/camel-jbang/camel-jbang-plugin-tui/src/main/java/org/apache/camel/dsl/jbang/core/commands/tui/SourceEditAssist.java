@@ -1498,6 +1498,57 @@ final class SourceEditAssist {
         return null;
     }
 
+    private org.apache.camel.dsl.yaml.validator.YamlValidator yamlValidator;
+
+    /**
+     * Validates Camel YAML DSL source the way the editor does on save: the YAML DSL schema (unknown or misspelled
+     * options, wrong structure), then endpoint URIs and simple expressions against the catalog. Returns the messages,
+     * empty when the source is valid.
+     */
+    List<String> validateCamelYaml(String content) {
+        List<String> msgs = new ArrayList<>();
+        if (content == null || content.isBlank()) {
+            return msgs;
+        }
+        try {
+            if (yamlValidator == null) {
+                yamlValidator = new org.apache.camel.dsl.yaml.validator.YamlValidator();
+            }
+            msgs.addAll(SourceValidationSupport.formatSchemaErrors(yamlValidator.validate(content)));
+        } catch (Exception e) {
+            msgs.add("Invalid YAML: " + e.getMessage());
+            return msgs;
+        }
+        msgs.addAll(validateYamlEndpoints(content));
+        msgs.addAll(validateYamlSimple(content));
+        return msgs;
+    }
+
+    /** Validates a properties file (application.properties) line by line against the catalog, as the editor does. */
+    List<String> validateProperties(String content) {
+        return SourceValidationSupport.validatePropertiesLines(content, this::validatePropertyLine);
+    }
+
+    /**
+     * Validates source by file type with the same checks the editor runs on save: Camel YAML DSL for .yaml/.yml files,
+     * Camel and Spring Boot options for .properties files. Other file types have no validation and yield no messages.
+     */
+    List<String> validateSource(String fileName, String content) {
+        String name = fileName == null ? "" : fileName.toLowerCase(java.util.Locale.ROOT);
+        if (name.endsWith(".yaml") || name.endsWith(".yml")) {
+            return validateCamelYaml(content);
+        }
+        if (name.endsWith(".properties")) {
+            return validateProperties(content);
+        }
+        return List.of();
+    }
+
+    static boolean isValidatableFile(String fileName) {
+        String name = fileName == null ? "" : fileName.toLowerCase(java.util.Locale.ROOT);
+        return name.endsWith(".yaml") || name.endsWith(".yml") || name.endsWith(".properties");
+    }
+
     List<String> validateYamlEndpoints(String content) {
         CamelCatalog catalog = getCatalog();
         if (catalog == null) {

@@ -114,8 +114,12 @@ Two panels can be opened on top of any tab. Opening one closes the other.
   the options. Press `F8` again to close it and `Shift+F8` to cycle its height.
   Inside the panel `Ctrl+U` toggles the AI usage view (tokens per model and
   per question, and how much time went to the model versus tool calls),
-  `Ctrl+P` switches provider or model, `Ctrl+Y` copies the last answer and
-  `Ctrl+E` exports the conversation. Type `/help` for the slash commands
+  `Ctrl+P` switches provider or model, `Ctrl+Y` copies the last answer
+  (just the code when the answer has a code block, with a picker when it
+  has several) and `Ctrl+E` exports the conversation. The AI can also edit
+  the source files of the selected integration; a dialog asks you to confirm
+  each write (`Enter` applies, `d` shows the diff, `Esc` rejects) unless you
+  switched to `/write auto`. Type `/help` for the slash commands
 
 Where the panels open (bottom or top) is configured in Settings
 (`F2` → `Settings...` → `Panel Position`). The tool calls and answers of the AI panel
@@ -131,6 +135,7 @@ are recorded in `F2` → `AI & MCP` → `AI Log`.
 - `S` — reverse sort order
 - `F2` — actions menu (includes theme toggle, go to tab, etc.)
 - `F3` — switch integration
+- `Ctrl+F` — browse the selected integration's files (plain `f` on the Overview tab)
 - `F6` — toggle the embedded shell panel
 - `F8` — toggle the AI prompt panel
 
