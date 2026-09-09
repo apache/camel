@@ -132,6 +132,8 @@ final class AcpAgentClient implements AutoCloseable {
     private volatile Thread stderrThread;
     private volatile AcpException exitFailure;
     private volatile List<AgentCommand> availableCommands = List.of();
+    /** The session {@link #availableCommands} came from, tracked because the update may precede session/new's reply. */
+    private volatile String commandsSession;
     private volatile String currentSession;
     private volatile CompletableFuture<JsonObject> cancelledTurn;
 
@@ -261,12 +263,19 @@ final class AcpAgentClient implements AutoCloseable {
         JsonObject params = new JsonObject();
         params.put("cwd", cwd.toAbsolutePath().toString());
         params.put("mcpServers", servers);
+        // the agent may advertise the new session's commands before it answers, so the old list goes first
+        currentSession = null;
+        commandsSession = null;
+        availableCommands = List.of();
         JsonObject result = request("session/new", params, timeout);
         String sessionId = result.getString("sessionId");
         if (sessionId == null) {
             throw new AcpException(CONNECTION, "session/new returned no sessionId");
         }
         currentSession = sessionId;
+        if (commandsSession != null && !commandsSession.equals(sessionId)) {
+            availableCommands = List.of();
+        }
         return sessionId;
     }
 
@@ -566,6 +575,7 @@ final class AcpAgentClient implements AutoCloseable {
                 // an update from a session abandoned (for example after /clear) must not reach the new session
                 return;
             }
+            commandsSession = updateSession;
             List<AgentCommand> commands = new ArrayList<>();
             if (update.get("availableCommands") instanceof JsonArray array) {
                 for (Object o : array) {

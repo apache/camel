@@ -392,24 +392,28 @@ class AcpAgentClientTest {
     void commandsFromAnotherSessionAreIgnored() {
         client.initialize(T);
         String session = client.newSession(Path.of("."), "http://127.0.0.1:1/mcp", T);
-        JsonObject review = new JsonObject();
-        review.put("name", "review");
-        JsonArray reviewCommands = new JsonArray();
-        reviewCommands.add(review);
-        JsonObject staleUpdate = new JsonObject();
-        staleUpdate.put("sessionUpdate", "available_commands_update");
-        staleUpdate.put("availableCommands", reviewCommands);
-        agent.sendNotification("session/update", update("sess-OLD", staleUpdate));
-        JsonObject commit = new JsonObject();
-        commit.put("name", "commit");
-        JsonArray commitCommands = new JsonArray();
-        commitCommands.add(commit);
-        JsonObject currentUpdate = new JsonObject();
-        currentUpdate.put("sessionUpdate", "available_commands_update");
-        currentUpdate.put("availableCommands", commitCommands);
-        agent.sendNotification("session/update", update(session, currentUpdate));
+        agent.sendNotification("session/update", update("sess-OLD", commandsUpdate("review")));
+        agent.sendNotification("session/update", update(session, commandsUpdate("commit")));
         await().atMost(5, TimeUnit.SECONDS).until(() -> client.availableCommands().size() == 1);
         assertEquals("commit", client.availableCommands().get(0).name());
+    }
+
+    @Test
+    void commandsSentWhileTheSessionIsCreatedReplaceTheOldOnes() {
+        AtomicInteger sessions = new AtomicInteger();
+        agent.onRequest("session/new", params -> {
+            String id = "sess-" + sessions.incrementAndGet();
+            agent.sendNotification("session/update", update(id, commandsUpdate("cmd-" + id)));
+            JsonObject r = new JsonObject();
+            r.put("sessionId", id);
+            return r;
+        });
+        client.initialize(T);
+        client.newSession(Path.of("."), "http://127.0.0.1:1/mcp", T);
+        assertEquals("cmd-sess-1", client.availableCommands().get(0).name());
+        client.newSession(Path.of("."), "http://127.0.0.1:1/mcp", T);
+        assertEquals(1, client.availableCommands().size());
+        assertEquals("cmd-sess-2", client.availableCommands().get(0).name());
     }
 
     private static JsonObject update(String sessionId, JsonObject update) {
@@ -417,6 +421,18 @@ class AcpAgentClientTest {
         params.put("sessionId", sessionId);
         params.put("update", update);
         return params;
+    }
+
+    /** An available_commands_update carrying a single command with that name. */
+    private static JsonObject commandsUpdate(String name) {
+        JsonObject command = new JsonObject();
+        command.put("name", name);
+        JsonArray commands = new JsonArray();
+        commands.add(command);
+        JsonObject update = new JsonObject();
+        update.put("sessionUpdate", "available_commands_update");
+        update.put("availableCommands", commands);
+        return update;
     }
 
     private static JsonObject chunk(String text) {
