@@ -546,7 +546,7 @@
   "groupId" : "org.apache.camel",
   "artifactId" : "camel-test-infra-cassandra",
   "version" : "4.23.0-SNAPSHOT",
-  "serviceVersion" : "5.0.8",
+  "serviceVersion" : "5.0.9",
   "uiSupported" : false
 }, {
   "service" : "org.apache.camel.test.infra.aws.common.services.AWSInfraService",
