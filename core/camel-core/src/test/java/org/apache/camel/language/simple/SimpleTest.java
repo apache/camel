@@ -778,6 +778,14 @@ public class SimpleTest extends LanguageTestSupport {
     }
 
     @Test
+    public void testExceptionStacktraceNoException() {
+        // CAMEL-24651
+        String out = context.resolveLanguage("simple").createExpression("${exception.stacktrace}").evaluate(exchange,
+                String.class);
+        assertNull(out);
+    }
+
+    @Test
     public void testException() {
         exchange.setException(new IllegalArgumentException("Just testing"));
 
