@@ -238,6 +238,7 @@ public class Export extends ExportBaseCommand {
         cmd.port = this.port;
         cmd.managementPort = this.managementPort;
         cmd.observe = this.observe;
+        cmd.console = this.console;
         cmd.gav = this.gav;
         cmd.parentPom = this.parentPom;
         cmd.mavenSettings = this.mavenSettings;

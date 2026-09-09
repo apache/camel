@@ -1718,6 +1718,8 @@ public class Run extends CamelCommand {
         eq.ignoreLoadingError = this.ignoreLoadingError;
         eq.lazyBean = this.lazyBean;
         eq.profile = this.profile;
+        eq.observe = this.serverOptions.observe;
+        eq.console = this.serverOptions.console;
         eq.applicationProperties = this.property;
 
         printer().println("Running using Camel Main (preparing and downloading files)");

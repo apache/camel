@@ -253,6 +253,9 @@ Limitations compared to the `jbang` runtime:
 - Startup is slower, as the project must be built with Maven first (the first run also downloads
   the Maven wrapper and plugins).
 - New components cannot be auto-detected while running (stop and run again to update dependencies).
+- `--console` is supported with Camel Main (the exported project enables the developer console, health, info
+  and Jolokia), but not yet with Spring Boot and Quarkus. The deprecated `--health` and `--metrics` options
+  are not supported in a separate JVM; use `--observe` instead.
 - Options that only work in-process are not supported: `--background`, `--code`, `--open-api`,
   `--empty` and `--mcp-stdio`.
 - Dev mode reloads YAML and XML route files from the original source directory; Java sources cannot

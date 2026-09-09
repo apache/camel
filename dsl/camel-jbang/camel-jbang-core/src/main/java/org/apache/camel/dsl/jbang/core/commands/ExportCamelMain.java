@@ -30,6 +30,7 @@ import java.util.Set;
 
 import org.apache.camel.catalog.CamelCatalog;
 import org.apache.camel.catalog.DefaultCamelCatalog;
+import org.apache.camel.dsl.jbang.core.common.CamelJBangConstants;
 import org.apache.camel.dsl.jbang.core.common.CommandLineHelper;
 import org.apache.camel.dsl.jbang.core.common.PathUtils;
 import org.apache.camel.dsl.jbang.core.common.RuntimeUtil;
@@ -38,6 +39,7 @@ import org.apache.camel.dsl.jbang.core.common.VersionHelper;
 import org.apache.camel.tooling.maven.MavenGav;
 import org.apache.camel.util.CamelCaseOrderedProperties;
 import org.apache.camel.util.ObjectHelper;
+import org.apache.camel.util.StringHelper;
 
 import static org.apache.camel.dsl.jbang.core.commands.ExportHelper.exportPackageName;
 
@@ -154,6 +156,18 @@ class ExportCamelMain extends Export {
                     if (port != -1) {
                         prop.put("camel.management.enabled", "true");
                         prop.put("camel.management.port", port);
+                    }
+                    // developer console (--console) is configured in-process by camel-jbang, so export the
+                    // equivalent settings (same as KameletMain: console with health, info and jolokia)
+                    if (settingsFlag(settings, CamelJBangConstants.CONSOLE)) {
+                        prop.put("camel.management.enabled", "true");
+                        for (String key : List.of("camel.main.devConsoleEnabled", "camel.management.devConsoleEnabled",
+                                "camel.management.healthCheckEnabled", "camel.management.infoEnabled",
+                                "camel.management.jolokiaEnabled")) {
+                            if (!prop.containsKey(key) && !prop.containsKey(StringHelper.camelCaseToDash(key))) {
+                                prop.put(key, "true");
+                            }
+                        }
                     }
                     return prop;
                 });
@@ -312,6 +326,15 @@ class ExportCamelMain extends Export {
             if (prop.containsKey("camel.management.healthCheckEnabled")) {
                 answer.add("camel:health");
             }
+        }
+
+        if (settingsFlag(settings, CamelJBangConstants.CONSOLE)) {
+            // developer console (--console) with health, info and jolokia
+            answer.add("mvn:org.apache.camel:camel-console");
+            answer.add("mvn:org.apache.camel:camel-management");
+            answer.add("mvn:org.apache.camel:camel-health");
+            answer.add("mvn:org.apache.camel:camel-platform-http-main");
+            answer.add("mvn:org.apache.camel:camel-platform-http-jolokia");
         }
 
         boolean main = answer.stream().anyMatch(s -> s.contains("mvn:org.apache.camel:camel-platform-http-main"));
