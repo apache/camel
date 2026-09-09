@@ -22,7 +22,7 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.annotations.Component;
-import org.apache.camel.support.DefaultComponent;
+import org.apache.camel.support.HealthCheckComponent;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.StringHelper;
 
@@ -30,7 +30,7 @@ import org.apache.camel.util.StringHelper;
  * Open Policy Agent component.
  */
 @Component("opa")
-public class OpaComponent extends DefaultComponent {
+public class OpaComponent extends HealthCheckComponent {
 
     @Metadata
     private OpaConfiguration configuration = new OpaConfiguration();

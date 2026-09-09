@@ -17,9 +17,15 @@
 package org.apache.camel.component.opa;
 
 import org.apache.camel.Exchange;
+import org.apache.camel.health.HealthCheckHelper;
+import org.apache.camel.health.WritableHealthCheckRepository;
 import org.apache.camel.support.DefaultProducer;
+import org.apache.camel.util.ObjectHelper;
 
 public class OpaProducer extends DefaultProducer {
+
+    private OpaProducerHealthCheck producerHealthCheck;
+    private WritableHealthCheckRepository healthCheckRepository;
 
     public OpaProducer(final OpaEndpoint endpoint) {
         super(endpoint);
@@ -28,6 +34,43 @@ public class OpaProducer extends DefaultProducer {
     @Override
     public OpaEndpoint getEndpoint() {
         return (OpaEndpoint) super.getEndpoint();
+    }
+
+    @Override
+    protected void doStart() throws Exception {
+        super.doStart();
+
+        OpaConfiguration configuration = getEndpoint().getConfiguration();
+        // an injected client can point anywhere, and the endpoint has no way to ask it where; only probe a
+        // server we were told the address of
+        if (configuration.getOpaClient() != null || ObjectHelper.isEmpty(configuration.getServerUrl())) {
+            return;
+        }
+
+        // health-check is optional so discover and resolve
+        healthCheckRepository = HealthCheckHelper.getHealthCheckRepository(
+                getEndpoint().getCamelContext(),
+                "producers",
+                WritableHealthCheckRepository.class);
+
+        if (healthCheckRepository != null) {
+            producerHealthCheck = new OpaProducerHealthCheck(
+                    configuration.getServerUrl(), configuration.getBearerToken(),
+                    // the endpoint URI is unique within the context, so two endpoints sharing a policy path but
+                    // pointing at different servers get distinct health-check ids instead of colliding
+                    getEndpoint().getPolicyPath(), getEndpoint().getEndpointUri());
+            producerHealthCheck.setEnabled(getEndpoint().getComponent().isHealthCheckProducerEnabled());
+            healthCheckRepository.addHealthCheck(producerHealthCheck);
+        }
+    }
+
+    @Override
+    protected void doStop() throws Exception {
+        if (healthCheckRepository != null && producerHealthCheck != null) {
+            healthCheckRepository.removeHealthCheck(producerHealthCheck);
+            producerHealthCheck = null;
+        }
+        super.doStop();
     }
 
     @Override

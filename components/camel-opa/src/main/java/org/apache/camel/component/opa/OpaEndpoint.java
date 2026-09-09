@@ -73,6 +73,11 @@ public class OpaEndpoint extends DefaultEndpoint {
     }
 
     @Override
+    public OpaComponent getComponent() {
+        return (OpaComponent) super.getComponent();
+    }
+
+    @Override
     public Producer createProducer() throws Exception {
         return new OpaProducer(this);
     }
