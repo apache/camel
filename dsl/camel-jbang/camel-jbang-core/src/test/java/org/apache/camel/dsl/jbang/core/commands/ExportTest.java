@@ -592,6 +592,14 @@ class ExportTest {
     }
 
     @Test
+    public void shouldExportJBangRuntimeAsCamelMain() throws Exception {
+        Export command = new Export(new CamelJBangMain());
+        CommandLine.populateCommand(command, "--runtime=jbang", "route.yaml");
+
+        assertThat(command.runtime).isEqualTo(RuntimeType.main);
+    }
+
+    @Test
     public void olderQuarkusVersion() throws Exception {
         LOG.info("olderQuarkusVersion");
         // We need a real file as we want to test the generated content

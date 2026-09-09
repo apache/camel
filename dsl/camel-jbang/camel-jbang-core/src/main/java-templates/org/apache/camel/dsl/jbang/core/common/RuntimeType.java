@@ -22,6 +22,11 @@ import org.apache.camel.catalog.DefaultCamelCatalog;
 
 public enum RuntimeType {
 
+    /**
+     * Runs in-process in the Camel CLI (jbang) JVM. Only used by {@code camel run} for fast prototyping; when exporting
+     * this is the same as {@link #main}.
+     */
+    jbang,
     springBoot,
     quarkus,
     main;
@@ -33,6 +38,7 @@ public enum RuntimeType {
     public static RuntimeType fromValue(String value) {
         value = value.toLowerCase(Locale.ROOT);
         return switch (value) {
+            case "jbang", "camel-jbang" -> RuntimeType.jbang;
             case "spring", "spring-boot", "camel-spring-boot" -> RuntimeType.springBoot;
             case "quarkus", "camel-quarkus" -> RuntimeType.quarkus;
             case "main", "camel-main", "camel" -> RuntimeType.main;
@@ -40,8 +46,17 @@ public enum RuntimeType {
         };
     }
 
+    /**
+     * The runtime to use when exporting. The {@link #jbang} runtime is only for running in-process, and is exported as
+     * {@link #main}.
+     */
+    public RuntimeType exportRuntime() {
+        return this == jbang ? main : this;
+    }
+
     public String runtime() {
         return switch (this) {
+            case jbang -> "jbang";
             case springBoot -> "spring-boot";
             case quarkus -> "quarkus";
             case main -> "main";
@@ -52,7 +67,7 @@ public enum RuntimeType {
         return switch (this) {
             case springBoot -> SPRING_BOOT_VERSION;
             case quarkus -> throw new UnsupportedOperationException("There is no built in version for Quarkus Runtime. The caller should resolve it at runtime using QuarkusPlatformMixin.resolve()");
-            case main -> new DefaultCamelCatalog().getCatalogVersion();
+            case main, jbang -> new DefaultCamelCatalog().getCatalogVersion();
         };
     }
 

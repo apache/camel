@@ -88,7 +88,7 @@ camel debug [options]
 | `--remote-attach` | Attaches debugger remotely to an existing running Camel integration. (Add camel-cli-debug JAR to the existing Camel application and run before attaching this debugger) |  | boolean
 | `--repo,--repos` | Additional maven repositories for download on-demand (Use commas to separate multiple repositories) |  | String
 | `--resource-dir,--resource-dirs` | Additional resource directories to include on the classpath (recursive, preserving structure) |  | List
-| `--runtime` | Runtime (camel-main, spring-boot, quarkus) | camel-main | RuntimeType
+| `--runtime` | Runtime (jbang, camel-main, spring-boot, quarkus). The jbang runtime runs in-process in the Camel CLI JVM which is fast and intended for prototyping. The other runtimes export to a temporary project and run in a separate JVM via Maven, similar to a production deployment. | jbang | RuntimeType
 | `--show-body` | Show message body in debug messages | true | boolean
 | `--show-exception` | Show exception and stacktrace for failed messages | true | boolean
 | `--show-exchange-properties` | Show exchange properties in debug messages | false | boolean

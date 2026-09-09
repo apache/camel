@@ -624,6 +624,21 @@ id being a dynamic top-level JSON key. Anything that parses this console's raw J
 (custom tooling, or scripts calling the dev console HTTP endpoint) must be updated to the new
 shape. The `camel get variable` CLI command has already been updated accordingly.
 
+=== camel-jbang
+
+The `--runtime` option of `camel run` has a new default value `jbang`, which is the existing in-process
+behaviour (the integration runs inside the Camel CLI JVM). The `main` (or `camel-main`) runtime now
+behaves like `spring-boot` and `quarkus`: the integration is exported to a temporary Camel Main project,
+built with Maven, and run in a separate JVM (the packaged runner JAR is started with `java`). This gives
+a JVM with the same classpath as an exported project, which resembles a production deployment, at the
+cost of a slower startup. If you passed `--runtime=main` explicitly and want the previous fast in-process
+run, use `--runtime=jbang` (or leave the option out). The options `--background`, `--code`, `--open-api`,
+`--empty` and `--mcp-stdio` are not supported with `--runtime=main`.
+
+Running an existing Maven project (`camel run pom.xml`) is unchanged, and still detects the runtime
+from the `pom.xml`. The other commands that take `--runtime` (such as `camel export`,
+`camel dependency list` and `camel version list`) accept `jbang` as an alias for `main`.
+
 === camel-jbang (TUI)
 
 The F8 AI panel now sends only a core subset of its `tui_*` tools to local providers (Ollama, or any

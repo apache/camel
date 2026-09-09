@@ -68,12 +68,15 @@ class RunOptionsForm {
 
     private static final String[] MAX_MODES = { "Max seconds:", "Max messages:", "Max idle secs:" };
     private static final String[] MAX_FLAGS = { "--max-seconds=", "--max-messages=", "--max-idle-seconds=" };
+    // the runtime is always passed explicitly: the Camel CLI defaults to the in-process jbang runtime, but the TUI
+    // prefers running in a separate JVM (Camel Main, Spring Boot or Quarkus) which resembles a production deployment
     private static final String[] RUNTIME_LABELS = {
             TuiIcons.labeled(TuiIcons.CAMEL, "Camel Main"),
             TuiIcons.labeled(TuiIcons.SPRING_BOOT, "Spring Boot"),
-            TuiIcons.labeled(TuiIcons.QUARKUS, "Quarkus")
+            TuiIcons.labeled(TuiIcons.QUARKUS, "Quarkus"),
+            TuiIcons.labeled(TuiIcons.JBANG, "JBang (in-process)")
     };
-    private static final String[] RUNTIME_VALUES = { "camel-main", "spring-boot", "quarkus" };
+    private static final String[] RUNTIME_VALUES = { "camel-main", "spring-boot", "quarkus", "jbang" };
     private static final String[] PROFILE_LABELS = {
             TuiIcons.labeled(TuiIcons.DEV_PROFILE, "dev"),
             TuiIcons.labeled(TuiIcons.PROD_PROFILE, "prod")
@@ -229,9 +232,7 @@ class RunOptionsForm {
         if (!name.isEmpty()) {
             args.add("--name=" + name);
         }
-        if (runtimeMode > 0) {
-            args.add("--runtime=" + RUNTIME_VALUES[runtimeMode]);
-        }
+        args.add("--runtime=" + RUNTIME_VALUES[runtimeMode]);
         args.add("--profile=" + PROFILE_VALUES[profileMode]);
         String port = portInput.text().trim();
         if (!port.isEmpty()) {

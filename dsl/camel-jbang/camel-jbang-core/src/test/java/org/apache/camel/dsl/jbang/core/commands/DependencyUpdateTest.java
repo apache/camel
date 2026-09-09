@@ -406,7 +406,7 @@ class DependencyUpdateTest extends CamelCommandBaseTestSupport {
         String pomResource = switch (rt) {
             case quarkus -> "dependency-update/quarkus-pom.xml";
             case springBoot -> "dependency-update/springboot-pom.xml";
-            case main -> "dependency-update/main-pom.xml";
+            case main, jbang -> "dependency-update/main-pom.xml";
         };
 
         // copy pom.xml

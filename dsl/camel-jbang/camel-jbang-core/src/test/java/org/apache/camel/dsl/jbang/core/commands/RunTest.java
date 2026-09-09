@@ -17,6 +17,7 @@
 
 package org.apache.camel.dsl.jbang.core.commands;
 
+import org.apache.camel.dsl.jbang.core.common.RuntimeType;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import picocli.CommandLine;
@@ -25,6 +26,33 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 class RunTest extends CamelCommandBaseTestSupport {
+
+    @Test
+    public void shouldDefaultToJBangRuntime() throws Exception {
+        Run command = new Run(new CamelJBangMain());
+        CommandLine.populateCommand(command, "route.yaml");
+
+        assertThat(command.runtime).isEqualTo(RuntimeType.jbang);
+    }
+
+    @Test
+    public void shouldParseRuntimeOption() throws Exception {
+        Run command = new Run(new CamelJBangMain());
+        CommandLine.populateCommand(command, "--runtime=main", "route.yaml");
+        assertThat(command.runtime).isEqualTo(RuntimeType.main);
+
+        command = new Run(new CamelJBangMain());
+        CommandLine.populateCommand(command, "--runtime=camel-main", "route.yaml");
+        assertThat(command.runtime).isEqualTo(RuntimeType.main);
+
+        command = new Run(new CamelJBangMain());
+        CommandLine.populateCommand(command, "--runtime=jbang", "route.yaml");
+        assertThat(command.runtime).isEqualTo(RuntimeType.jbang);
+
+        command = new Run(new CamelJBangMain());
+        CommandLine.populateCommand(command, "--runtime=spring-boot", "route.yaml");
+        assertThat(command.runtime).isEqualTo(RuntimeType.springBoot);
+    }
 
     @Test
     public void shouldParseJavaVersionOption() throws Exception {
