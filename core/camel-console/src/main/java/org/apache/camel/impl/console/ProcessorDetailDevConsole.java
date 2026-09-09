@@ -136,6 +136,9 @@ public class ProcessorDetailDevConsole extends AbstractDevConsole {
             }
             List<RouteDetail> routes = new ArrayList<>();
             for (ManagedRouteMBean mr : managedRoutes) {
+                if (mr == null) {
+                    continue;
+                }
                 RouteDetail routeDetail = buildRouteDetail(mr);
                 if (routeDetail != null) {
                     routes.add(routeDetail);

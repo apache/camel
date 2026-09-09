@@ -163,7 +163,10 @@ public class ManagedCamelContextImpl implements ManagedCamelContext {
                     ObjectName on = getManagementStrategy().getManagementObjectNameStrategy().getObjectNameForRoute(route);
                     ManagedRouteMBean mr
                             = getManagementStrategy().getManagementAgent().newProxyClient(on, ManagedRouteMBean.class);
-                    answer.add(mr);
+                    // routes may not be registered in JMX (such as routes created by Kamelets)
+                    if (mr != null) {
+                        answer.add(mr);
+                    }
                 } catch (MalformedObjectNameException e) {
                     throw RuntimeCamelException.wrapRuntimeCamelException(e);
                 }
