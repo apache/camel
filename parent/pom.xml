@@ -153,7 +153,7 @@
         <directory-watcher-version>0.19.1</directory-watcher-version>
         <disruptor-version>3.4.4</disruptor-version>
         <dnsjava-version>3.6.5</dnsjava-version>
-        <djl-version>0.36.0</djl-version>
+        <djl-version>0.37.0</djl-version>
         <djl-python-version>0.34.0</djl-python-version>
         <docling-java-version>0.6.1</docling-java-version>
         <docker-java-version>3.7.1</docker-java-version>
