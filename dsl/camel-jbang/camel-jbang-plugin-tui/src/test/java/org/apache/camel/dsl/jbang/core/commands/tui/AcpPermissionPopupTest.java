@@ -73,6 +73,20 @@ class AcpPermissionPopupTest {
     }
 
     @Test
+    void optionsStayVisibleOnAShortScreen() {
+        AcpPermissionPopup popup = new AcpPermissionPopup();
+        popup.open(toolCall(), options());
+        Rect area = new Rect(0, 0, 80, 8);
+        Buffer buffer = Buffer.empty(area);
+        popup.render(Frame.forTesting(buffer), area);
+        String rendered = TuiTestHelper.bufferToString(buffer);
+        assertTrue(rendered.contains("Write /tmp/route.yaml"), rendered);
+        assertTrue(rendered.contains("Allow once"), rendered);
+        assertTrue(rendered.contains("Always allow"), rendered);
+        assertTrue(rendered.contains("Reject"), rendered);
+    }
+
+    @Test
     void enterSelectsTheHighlightedOption() {
         AcpPermissionPopup popup = new AcpPermissionPopup();
         popup.open(toolCall(), options());

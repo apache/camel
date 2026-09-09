@@ -154,8 +154,11 @@ final class AcpPermissionPopup {
                 .build();
         frame.renderWidget(block, popup);
         Rect inner = block.inner(popup);
+        // the choices come first: on a short screen the header is clipped (title first, so it survives longest)
+        int optionRows = Math.min(options.size(), Math.max(1, inner.height() - 1));
+        int headerHeight = Math.max(0, Math.min(headerRows, inner.height() - optionRows));
         List<Rect> parts = Layout.vertical()
-                .constraints(Constraint.length(Math.min(headerRows, inner.height())), Constraint.fill())
+                .constraints(Constraint.length(headerHeight), Constraint.fill())
                 .split(inner);
 
         List<Line> header = new ArrayList<>();
