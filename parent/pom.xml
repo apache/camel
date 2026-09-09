@@ -74,7 +74,7 @@
         <aliyun-eventbridge-client-version>1.3.14</aliyun-eventbridge-client-version>
         <aliyun-tablestore-version>5.17.13</aliyun-tablestore-version>
         <tea-openapi-version>0.3.15</tea-openapi-version>
-        <amazon-kinesis-client-version>3.5.1</amazon-kinesis-client-version>
+        <amazon-kinesis-client-version>3.5.2</amazon-kinesis-client-version>
         <angus-mail-version>2.0.5</angus-mail-version>
         <apacheds-version>2.0.0.AM27</apacheds-version>
         <apache-drill-version>1.22.0</apache-drill-version>
