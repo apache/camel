@@ -40,7 +40,7 @@ public class OpaConfiguration implements Cloneable {
     @UriParam
     private boolean includeBody;
 
-    @UriParam(label = "security", secret = true)
+    @UriParam(label = "security", security = "secret")
     private String bearerToken;
 
     @UriParam(label = "security", security = "insecure:dev")
