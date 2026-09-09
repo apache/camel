@@ -363,14 +363,8 @@ public class Run extends CamelCommand {
         if (exportRun) {
             return false;
         }
-        if (RuntimeType.quarkus == runtime) {
-            return true;
-        } else if (RuntimeType.springBoot == runtime) {
-            return true;
-        } else if (RuntimeType.main == runtime) {
-            return true;
-        }
-        return false;
+        // every runtime except the in-process jbang runtime spawns a separate JVM
+        return RuntimeType.jbang != runtime;
     }
 
     @Override
