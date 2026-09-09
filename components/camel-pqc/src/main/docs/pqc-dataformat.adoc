@@ -55,9 +55,11 @@ The authenticated wire format was introduced in Camel 4.22. Data encrypted by ea
 
 == Basic Usage
 
-=== Java DSL
-
-._Java-only: PQC DataFormat basic encrypt and decrypt routes_
+.PQC DataFormat basic encrypt and decrypt routes
+[tabs]
+====
+Java::
++
 [source,java]
 ----
 // Create PQC DataFormat
@@ -75,8 +77,8 @@ from("file:encrypted")
     .to("direct:decrypted");
 ----
 
-=== YAML DSL
-
+YAML::
++
 [source,yaml]
 ----
 - route:
@@ -105,6 +107,7 @@ from("file:encrypted")
       - to:
           uri: direct:decrypted
 ----
+====
 
 == Configuration Options
 
