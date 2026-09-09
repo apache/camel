@@ -65,7 +65,9 @@ class SettingsPopup {
     private static final int ROW_AI_PROMPT_HISTORY = 17;
     private static final int ROW_AI_ACP_COMMAND = 18;
     private static final int ROW_AI_ACP_LOGOS = 19;
-    private static final int ROW_COUNT = 20;
+    static final int ROW_COUNT = 20;
+    /** Separator lines drawn between the row groups, after rows 2, 6, 9 and 12. */
+    static final int DIVIDERS = 4;
 
     private static final String[] LOG_PIN_OPTIONS = { "off", "25", "50", "75" };
     private static final String[] RATE_PER_OPTIONS = { "seconds", "minutes" };
@@ -435,9 +437,8 @@ class SettingsPopup {
     }
 
     void render(Frame frame, Rect area) {
-        int dividers = 4;
         int popupW = Math.min(70, area.width() - 4);
-        int popupH = 2 + ROW_COUNT + dividers;
+        int popupH = 2 + ROW_COUNT + DIVIDERS;
         int x = area.left() + Math.max(0, (area.width() - popupW) / 2);
         int y = area.top() + 2;
         Rect popup = new Rect(x, y, Math.min(popupW, area.width()), Math.min(popupH, area.height() - 2));
@@ -451,7 +452,7 @@ class SettingsPopup {
         frame.renderWidget(block, popup);
 
         int visibleLines = popup.height() - 2;
-        int contentLines = ROW_COUNT + dividers;
+        int contentLines = ROW_COUNT + DIVIDERS;
         int selectedLine = lineOf(selectedRow);
         if (selectedLine < scrollTop) {
             scrollTop = selectedLine;

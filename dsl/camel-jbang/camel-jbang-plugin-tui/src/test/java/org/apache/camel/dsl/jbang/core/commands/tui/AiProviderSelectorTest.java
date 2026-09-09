@@ -227,6 +227,7 @@ class AiProviderSelectorTest {
         String path = tempDir.toString();
         assertEquals(bob.toString(), AiProviderSelector.resolveExecutable("fakebob", path));
         assertEquals(npx.toString(), AiProviderSelector.resolveExecutable("fakenpx", path));
+        assertEquals(npx.toString(), AiProviderSelector.resolveExecutable(tempDir.resolve("fakenpx").toString(), path));
         assertNull(AiProviderSelector.resolveExecutable("definitely-not-a-real-binary-42", path));
     }
 }

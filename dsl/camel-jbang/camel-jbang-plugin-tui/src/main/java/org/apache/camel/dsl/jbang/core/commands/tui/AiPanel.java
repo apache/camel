@@ -43,7 +43,6 @@ import java.util.concurrent.ThreadLocalRandom;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.Predicate;
-import java.util.regex.Pattern;
 
 import dev.tamboui.layout.Alignment;
 import dev.tamboui.layout.Constraint;
@@ -263,7 +262,6 @@ class AiPanel {
     private static final Duration ACP_AUTH_TIMEOUT = Duration.ofSeconds(300);
     private static final String TUI_TOOL_PREFIX = "mcp__camel-tui__";
     private static final Set<String> FILE_OR_SHELL_KINDS = Set.of("edit", "delete", "move", "execute", "fetch");
-    private static final Pattern TUI_TOOL_NAME = Pattern.compile("tui_[a-z0-9_]+");
     private static final String AGENT_COMMAND_PREFIX = "/agent:";
     private volatile AiProviderSelector.AcpPreset acpPreset;
     private volatile AcpAgentClient acpClient;
@@ -1955,11 +1953,8 @@ class AiPanel {
 
     private boolean isRegisteredTuiTool(String tool) {
         TuiToolRegistry registry = toolRegistry;
-        if (registry != null) {
-            return registry.getToolDefinitions().stream().anyMatch(td -> td.name().equals(tool));
-        }
-        // no registry wired yet (tests, or before the MCP facade exists): accept the TUI's own naming scheme
-        return TUI_TOOL_NAME.matcher(tool).matches();
+        // no registry wired yet: nothing is a known TUI tool, so the user is asked rather than the call approved
+        return registry != null && registry.getToolDefinitions().stream().anyMatch(td -> td.name().equals(tool));
     }
 
     private static String firstOptionOfKind(List<JsonObject> options, String kind) {

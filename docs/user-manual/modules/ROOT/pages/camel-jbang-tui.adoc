@@ -1042,13 +1042,13 @@ Press *Ctrl+P* in the AI panel and pick one of the agents:
 | `acp:custom` | the value of `camel.tui.ai.acp.command` | depends on the agent
 |===
 
-The `npx` entries need Node.js 22 or newer (the Claude adapter requires it). The agent starts with your first question; the first start can take a
-while when `npx` has to download the adapter. Once the session is open the panel shows a two-row header with the
-agent's logo (in terminals with Kitty, iTerm2 or Sixel graphics, for example Kitty, Ghostty, WezTerm, iTerm2) or a
-coloured glyph, the agent's name and version, the session id, the working directory and the number of commands it
-advertises. `camel.tui.ai.acp.logos` (`auto`, `on`, `off`) forces or disables the logos; `auto` detects the terminal
-from its environment variables. Use *F2* -> _Settings_ to make an agent the default provider or to set the custom
-command (a plain command line split on whitespace, no quoting).
+The `npx` entries need Node.js 22 or newer (the Claude adapter requires it). The agent starts with your first
+question; the first start can take a while when `npx` has to download the adapter. Once the session is open the
+panel shows a two-row header with the agent's logo (in terminals with Kitty, iTerm2 or Sixel graphics, for example
+Kitty, Ghostty, WezTerm, iTerm2) or a coloured glyph, the agent's name and version, the session id, the working
+directory and the number of commands it advertises. `camel.tui.ai.acp.logos` (`auto`, `on`, `off`) forces or
+disables the logos; `auto` detects the terminal from its environment variables. Use *F2* -> _Settings_ to make an
+agent the default provider or to set the custom command (a plain command line split on whitespace, no quoting).
 
 The MCP server is started automatically on a random localhost port when an agent needs it, so `--mcp` is not
 required. *F2* -> _MCP Info_ shows the port and the tool calls the agent makes. Like the server started with

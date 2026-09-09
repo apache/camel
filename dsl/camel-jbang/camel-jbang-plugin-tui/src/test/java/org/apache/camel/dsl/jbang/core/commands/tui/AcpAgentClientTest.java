@@ -29,6 +29,7 @@ import org.apache.camel.util.json.JsonObject;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Timeout;
 import org.junit.jupiter.api.condition.EnabledOnOs;
 import org.junit.jupiter.api.condition.OS;
 
@@ -287,6 +288,7 @@ class AcpAgentClientTest {
     }
 
     @Test
+    @Timeout(30)
     void nextPromptWaitsForTheCancelledTurnToFinish() throws Exception {
         CountDownLatch lateSent = new CountDownLatch(1);
         CountDownLatch release = new CountDownLatch(1);
@@ -322,7 +324,8 @@ class AcpAgentClientTest {
         esc.setDaemon(true);
         esc.start();
         assertEquals("cancelled", client.prompt(session, "one", new NoopListener()));
-        assertTrue(Thread.interrupted(), "prompt leaves the caller interrupted");
+        boolean interrupted = Thread.interrupted();
+        assertTrue(interrupted, "prompt leaves the caller interrupted");
         RecordingListener second = new RecordingListener();
         String[] result = new String[1];
         Thread next = new Thread(() -> result[0] = client.prompt(session, "two", second));
@@ -334,6 +337,41 @@ class AcpAgentClientTest {
         assertEquals("end_turn", result[0]);
         assertEquals(List.of("text:new"), second.events);
         assertEquals(2, agent.receivedCount("session/prompt"));
+    }
+
+    @Test
+    @Timeout(30)
+    void newSessionForgetsTheCancelledTurn() {
+        CountDownLatch never = new CountDownLatch(1);
+        AtomicInteger calls = new AtomicInteger();
+        agent.onRequest("session/prompt", params -> {
+            JsonObject r = new JsonObject();
+            if (calls.incrementAndGet() == 1) {
+                try {
+                    never.await(30, TimeUnit.SECONDS); // the cancelled turn is never answered
+                } catch (InterruptedException e) {
+                    Thread.currentThread().interrupt();
+                }
+                r.put("stopReason", "cancelled");
+                return r;
+            }
+            r.put("stopReason", "end_turn");
+            return r;
+        });
+        client.initialize(T);
+        String first = client.newSession(Path.of("."), "http://127.0.0.1:1/mcp", T);
+        Thread caller = Thread.currentThread();
+        Thread esc = new Thread(() -> {
+            agent.awaitReceived("session/prompt", T);
+            caller.interrupt();
+        });
+        esc.setDaemon(true);
+        esc.start();
+        assertEquals("cancelled", client.prompt(first, "one", new NoopListener()));
+        Thread.interrupted();
+        String second = client.newSession(Path.of("."), "http://127.0.0.1:1/mcp", T);
+        assertEquals("end_turn", client.prompt(second, "two", new NoopListener()));
+        assertFalse(diagnostics.stream().anyMatch(d -> d.contains("cancelled turn")), diagnostics.toString());
     }
 
     @Test

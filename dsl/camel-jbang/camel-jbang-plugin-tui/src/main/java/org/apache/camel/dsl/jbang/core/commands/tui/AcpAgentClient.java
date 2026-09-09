@@ -267,6 +267,8 @@ final class AcpAgentClient implements AutoCloseable {
         currentSession = null;
         commandsSession = null;
         availableCommands = List.of();
+        // an old session's owed response must not delay this session's first question; its updates are filtered anyway
+        cancelledTurn = null;
         JsonObject result = request("session/new", params, timeout);
         String sessionId = result.getString("sessionId");
         if (sessionId == null) {

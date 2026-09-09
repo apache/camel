@@ -32,6 +32,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
 import org.junit.jupiter.api.parallel.Isolated;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -90,6 +91,12 @@ class SettingsPopupRenderTest {
         assertTrue(rendered.contains("AI History"), "the AI History row should be shown");
         assertTrue(rendered.contains("ACP Command"), "the ACP Command row should be shown");
         assertTrue(rendered.contains("ACP Logos"), "the ACP Logos row should be shown");
+    }
+
+    @Test
+    void lineOfAccountsForEveryRowAndDivider() {
+        assertEquals(SettingsPopup.ROW_COUNT + SettingsPopup.DIVIDERS,
+                SettingsPopup.lineOf(SettingsPopup.ROW_COUNT - 1) + 1);
     }
 
     @Test

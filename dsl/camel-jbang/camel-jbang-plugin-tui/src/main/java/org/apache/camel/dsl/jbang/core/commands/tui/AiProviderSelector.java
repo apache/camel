@@ -138,7 +138,7 @@ final class AiProviderSelector {
     static String resolveExecutable(String executable, String path) {
         Path direct = Path.of(executable);
         if (direct.isAbsolute()) {
-            return Files.isExecutable(direct) ? direct.toString() : null;
+            return firstExecutable(direct);
         }
         if (path == null) {
             return null;
@@ -147,11 +147,19 @@ final class AiProviderSelector {
             if (dir.isBlank()) {
                 continue;
             }
-            Path candidate = Path.of(dir).resolve(executable);
-            for (Path variant : List.of(candidate, Path.of(candidate + ".cmd"), Path.of(candidate + ".exe"))) {
-                if (Files.isExecutable(variant)) {
-                    return variant.toString();
-                }
+            String found = firstExecutable(Path.of(dir).resolve(executable));
+            if (found != null) {
+                return found;
+            }
+        }
+        return null;
+    }
+
+    /** The candidate itself or its {@code .cmd}/{@code .exe} sibling, whichever is executable; null when none is. */
+    private static String firstExecutable(Path candidate) {
+        for (Path variant : List.of(candidate, Path.of(candidate + ".cmd"), Path.of(candidate + ".exe"))) {
+            if (Files.isExecutable(variant)) {
+                return variant.toString();
             }
         }
         return null;

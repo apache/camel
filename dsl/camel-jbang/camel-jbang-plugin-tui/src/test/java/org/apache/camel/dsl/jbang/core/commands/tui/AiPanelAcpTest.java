@@ -99,8 +99,14 @@ class AiPanelAcpTest {
 
     /** Panel wired to a fresh fake agent, with the Claude preset selected. */
     private AiPanel acpPanel() throws IOException {
+        return acpPanel(new TuiToolRegistry(null));
+    }
+
+    /** Same, with the tool registry the panel should check tool names against ({@code null} = none wired yet). */
+    private AiPanel acpPanel(TuiToolRegistry registry) throws IOException {
         agent = new FakeAcpAgent();
         AiPanel panel = new AiPanel();
+        panel.setToolRegistryForTesting(registry);
         panel.setAcpClientFactoryForTesting((preset, cwd) -> {
             AcpAgentClient client = new AcpAgentClient(agent.clientInput(), agent.clientOutput(), s -> {
             });
@@ -499,6 +505,30 @@ class AiPanelAcpTest {
         ask(panel, "hi");
         awaitIdle(panel);
         assertTrue(hasEntry(panel, AiRole.SYSTEM, "(stopped: opt-always)"));
+    }
+
+    @Test
+    void withoutAToolRegistryNothingIsAutoApproved() throws Exception {
+        AiPanel panel = acpPanel(null);
+        askPermissionDuringPrompt(permissionParams("mcp__camel-tui__tui_get_state", "tui_get_state"));
+        ask(panel, "hi");
+        await().atMost(5, TimeUnit.SECONDS).untilAsserted(() -> assertTrue(panel.isPermissionPopupVisibleForTesting()));
+        panel.handleKeyEvent(KeyEvent.ofKey(KeyCode.ESCAPE, KeyModifiers.NONE));
+        awaitIdle(panel);
+        assertTrue(hasEntry(panel, AiRole.SYSTEM, "(stopped: opt-reject)"), "no registry means no known TUI tool");
+    }
+
+    @Test
+    void executeKindIsNotAutoApprovedEvenForARegisteredTuiTool() throws Exception {
+        AiPanel panel = acpPanel();
+        JsonObject permission = permissionParams("mcp__camel-tui__tui_get_state", "tui_get_state");
+        permission.getJsonObject("toolCall").put("kind", "execute");
+        askPermissionDuringPrompt(permission);
+        ask(panel, "hi");
+        await().atMost(5, TimeUnit.SECONDS).untilAsserted(() -> assertTrue(panel.isPermissionPopupVisibleForTesting()));
+        panel.handleKeyEvent(KeyEvent.ofKey(KeyCode.ESCAPE, KeyModifiers.NONE));
+        awaitIdle(panel);
+        assertTrue(hasEntry(panel, AiRole.SYSTEM, "(stopped: opt-reject)"), "a shell call is never a TUI tool call");
     }
 
     @Test
