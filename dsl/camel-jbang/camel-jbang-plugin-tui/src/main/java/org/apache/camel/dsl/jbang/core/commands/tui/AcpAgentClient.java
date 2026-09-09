@@ -64,6 +64,8 @@ final class AcpAgentClient implements AutoCloseable {
     static final int TIMEOUT = -2;
     static final int INTERRUPTED = -3;
     private static final int STDERR_TAIL_LINES = 50;
+    /** How long the next prompt waits for the response the agent still owes the turn cancelled before it. */
+    private static final Duration CANCELLED_TURN_GRACE = Duration.ofSeconds(10);
 
     /** Receives session/update notifications during a prompt turn. Called on the reader thread. */
     interface Listener {
@@ -97,6 +99,10 @@ final class AcpAgentClient implements AutoCloseable {
     record AgentCommand(String name, String description, String hint) {
     }
 
+    /** A request already written to the agent, with the future its response completes. */
+    private record Sent(long id, CompletableFuture<JsonObject> future) {
+    }
+
     static final class AcpException extends RuntimeException {
         private final int code;
 
@@ -127,6 +133,7 @@ final class AcpAgentClient implements AutoCloseable {
     private volatile AcpException exitFailure;
     private volatile List<AgentCommand> availableCommands = List.of();
     private volatile String currentSession;
+    private volatile CompletableFuture<JsonObject> cancelledTurn;
 
     AcpAgentClient(InputStream fromAgent, OutputStream toAgent, Consumer<String> diagnostics) {
         this(fromAgent, toAgent, null, diagnostics);
@@ -270,9 +277,11 @@ final class AcpAgentClient implements AutoCloseable {
      * prompt may be in flight per client, because the client keeps a single listener for the turn.
      */
     String prompt(String sessionId, String text, Listener listener) {
-        this.listenerSession = sessionId;
-        this.listener = listener;
+        Sent sent = null;
         try {
+            awaitCancelledTurn();
+            this.listenerSession = sessionId;
+            this.listener = listener;
             JsonObject block = new JsonObject();
             block.put("type", "text");
             block.put("text", text);
@@ -281,10 +290,14 @@ final class AcpAgentClient implements AutoCloseable {
             JsonObject params = new JsonObject();
             params.put("sessionId", sessionId);
             params.put("prompt", prompt);
-            JsonObject result = request("session/prompt", params, null);
+            sent = sendRequest("session/prompt", params);
+            JsonObject result = await(sent, "session/prompt", null);
             return result.getStringOrDefault("stopReason", "end_turn");
         } catch (AcpException e) {
             if (e.code() == INTERRUPTED) {
+                if (sent != null) {
+                    cancelledTurn = sent.future();
+                }
                 cancel(sessionId);
                 return "cancelled";
             }
@@ -293,6 +306,29 @@ final class AcpAgentClient implements AutoCloseable {
             this.listener = null;
             this.listenerSession = null;
         }
+    }
+
+    /**
+     * Waits for the agent to answer the prompt cancelled last: ACP lets it keep streaming until that response, and
+     * those late updates must not reach the next turn's listener. Bounded, so a stuck agent cannot block the panel; on
+     * timeout the old turn is forgotten and the new prompt goes ahead.
+     */
+    private void awaitCancelledTurn() {
+        CompletableFuture<JsonObject> turn = cancelledTurn;
+        if (turn == null) {
+            return;
+        }
+        try {
+            turn.get(CANCELLED_TURN_GRACE.toMillis(), TimeUnit.MILLISECONDS);
+        } catch (ExecutionException e) {
+            // the agent died or the stream closed: the next request reports that
+        } catch (TimeoutException e) {
+            diagnostics.accept("The cancelled turn did not finish within " + CANCELLED_TURN_GRACE.toSeconds() + "s");
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
+            throw new AcpException(INTERRUPTED, "session/prompt interrupted");
+        }
+        cancelledTurn = null;
     }
 
     void cancel(String sessionId) {
@@ -341,6 +377,10 @@ final class AcpAgentClient implements AutoCloseable {
     }
 
     JsonObject request(String method, JsonObject params, Duration timeout) {
+        return await(sendRequest(method, params), method, timeout);
+    }
+
+    private Sent sendRequest(String method, JsonObject params) {
         long id = nextId.getAndIncrement();
         CompletableFuture<JsonObject> future = new CompletableFuture<>();
         pending.put(id, future);
@@ -367,17 +407,23 @@ final class AcpAgentClient implements AutoCloseable {
             }
             throw e;
         }
+        return new Sent(id, future);
+    }
+
+    private JsonObject await(Sent sent, String method, Duration timeout) {
+        CompletableFuture<JsonObject> future = sent.future();
         try {
             return timeout == null ? future.get() : future.get(timeout.toMillis(), TimeUnit.MILLISECONDS);
         } catch (ExecutionException e) {
             Throwable cause = e.getCause();
             throw cause instanceof AcpException acp ? acp : new AcpException(CONNECTION, String.valueOf(cause));
         } catch (TimeoutException e) {
-            pending.remove(id);
+            pending.remove(sent.id());
             throw new AcpException(TIMEOUT, method + " timed out after " + timeout.toSeconds() + "s");
         } catch (InterruptedException e) {
+            // the entry stays pending on purpose: a late response completes an unread future, which is what the next
+            // prompt waits for before installing its own listener
             Thread.currentThread().interrupt();
-            pending.remove(id);
             throw new AcpException(INTERRUPTED, method + " interrupted");
         }
     }

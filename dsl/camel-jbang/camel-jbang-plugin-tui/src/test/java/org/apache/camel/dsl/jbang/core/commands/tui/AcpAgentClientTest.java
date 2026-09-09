@@ -22,6 +22,7 @@ import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import org.apache.camel.util.json.JsonArray;
 import org.apache.camel.util.json.JsonObject;
@@ -283,6 +284,56 @@ class AcpAgentClientTest {
         assertEquals("cancelled", result[0]);
         agent.awaitReceived("session/cancel", T);
         assertEquals(1, agent.receivedCount("session/cancel"));
+    }
+
+    @Test
+    void nextPromptWaitsForTheCancelledTurnToFinish() throws Exception {
+        CountDownLatch lateSent = new CountDownLatch(1);
+        CountDownLatch release = new CountDownLatch(1);
+        AtomicInteger calls = new AtomicInteger();
+        agent.onRequest("session/prompt", params -> {
+            String sessionId = params.getString("sessionId");
+            JsonObject r = new JsonObject();
+            if (calls.incrementAndGet() == 1) {
+                agent.awaitReceived("session/cancel", Duration.ofSeconds(30));
+                agent.sendNotification("session/update", update(sessionId, chunk("late-old")));
+                lateSent.countDown();
+                try {
+                    release.await(30, TimeUnit.SECONDS);
+                } catch (InterruptedException e) {
+                    Thread.currentThread().interrupt();
+                }
+                r.put("stopReason", "cancelled");
+                return r;
+            }
+            agent.sendNotification("session/update", update(sessionId, chunk("new")));
+            r.put("stopReason", "end_turn");
+            return r;
+        });
+        client.initialize(T);
+        String session = client.newSession(Path.of("."), "http://127.0.0.1:1/mcp", T);
+        // the first turn runs on the test thread, like cancelSendsNotificationAndPromptReturnsCancelled: a piped
+        // stream breaks as soon as the thread that last wrote to it dies, so the writer has to outlive the test
+        Thread caller = Thread.currentThread();
+        Thread esc = new Thread(() -> {
+            agent.awaitReceived("session/prompt", T);
+            caller.interrupt();
+        });
+        esc.setDaemon(true);
+        esc.start();
+        assertEquals("cancelled", client.prompt(session, "one", new NoopListener()));
+        assertTrue(Thread.interrupted(), "prompt leaves the caller interrupted");
+        RecordingListener second = new RecordingListener();
+        String[] result = new String[1];
+        Thread next = new Thread(() -> result[0] = client.prompt(session, "two", second));
+        next.start();
+        assertTrue(lateSent.await(5, TimeUnit.SECONDS));
+        assertEquals(1, agent.receivedCount("session/prompt"), "the second prompt waits for the cancelled turn");
+        release.countDown();
+        next.join(10_000);
+        assertEquals("end_turn", result[0]);
+        assertEquals(List.of("text:new"), second.events);
+        assertEquals(2, agent.receivedCount("session/prompt"));
     }
 
     @Test
