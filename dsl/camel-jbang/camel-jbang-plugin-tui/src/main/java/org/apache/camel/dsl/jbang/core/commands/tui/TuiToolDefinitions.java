@@ -242,17 +242,13 @@ final class TuiToolDefinitions {
                                                 + "If omitted, uses the active tab.")))));
         tools.add(toToolDef(toolDef(
                 "tui_get_status",
-                "One top-level section of the integration's full status document (~/.camel/<pid>-status.json). "
-                                  + "Use it for data no tab shows: context (name, version, state, uptime in millis "
-                                  + "with uptimeText human readable, startTimestamp, statistics), runtime (pid, "
-                                  + "directory, java), healthChecks, "
+                "One section of the integration's status document, for data no tab shows: context (name, version, "
+                                  + "state, uptime, statistics), runtime (pid, directory, java), healthChecks, "
                                   + "properties, main-configuration, routeController, services, transformers, rests, "
                                   + "consumers, producers, endpoints, dataSources, memory, threads, gc, classLoading, "
-                                  + "trace, events. section='sections' lists them. Request only the section you need.",
-                Map.of("section", propDef("string",
-                        "Top-level section name, or 'sections' to list the available names"),
-                        "pid", propDef("string",
-                                "Process id of the integration; defaults to the selected integration")),
+                                  + "trace, events. section='sections' lists them.",
+                Map.of("section", propDef("string", "Section name, or 'sections' to list them"),
+                        "pid", propDef("string", "Process id (default: the selected integration)")),
                 List.of("section"))));
         tools.add(toToolDef(toolDef(
                 "tui_action",
@@ -294,16 +290,11 @@ final class TuiToolDefinitions {
                 Map.of())));
         tools.add(toToolDef(toolDef(
                 "tui_get_history",
-                "Returns rich trace and history data from the History tab as structured JSON. "
-                                   + "Includes ALL exchange details: body with type, headers with types, "
-                                   + "exchange properties, exchange variables, thread name, source location, "
-                                   + "node level, and node labels. Much richer than tui_get_table on History. "
-                                   + "Returns different shapes depending on the History tab's current mode: "
-                                   + "Traces (exchange ID list), Trace Steps (per-step detail), "
-                                   + "or History (message history steps).",
+                "Trace and history data of the History tab with all exchange details (body and headers with types, "
+                                   + "properties, variables, thread, source location, node labels); richer than "
+                                   + "tui_get_table. The shape follows the tab's mode: traces, trace steps or history.",
                 Map.of("exchangeId", propDef("string",
-                        "If provided, returns trace steps for this specific exchange ID. "
-                                                       + "Otherwise returns data for the current History tab view.")))));
+                        "Trace steps of this exchange; otherwise the current History tab view")))));
         tools.add(toToolDef(toolDef(
                 "tui_get_topology",
                 "Returns the route topology as a structured JSON graph with nodes and edges arrays. "
@@ -355,11 +346,8 @@ final class TuiToolDefinitions {
                 List.of("table", "primaryKeyValues", "columnValues"))));
         tools.add(toToolDef(toolDef(
                 "tui_set_log_level",
-                "Changes the ROOT LOGGER level of the running application, i.e. which messages the whole "
-                                     + "application writes to its log (WARN silences all INFO output). Only use it "
-                                     + "when the user asks to change the application's logging output. It does not "
-                                     + "change the logLevel of a route's log step; that is a change to the route "
-                                     + "source (tui_write_file).",
+                "Sets the application's root logger level (WARN silences INFO). Only when the user asks about the "
+                                     + "application logging; a route log step's level is a source edit instead.",
                 Map.of("level", propDef("string",
                         "Log level to set: ERROR, WARN, INFO, DEBUG, or TRACE")),
                 List.of("level"))));
@@ -406,19 +394,11 @@ final class TuiToolDefinitions {
                         "Integration name. If omitted, uses the currently selected integration.")))));
         tools.add(toToolDef(toolDef(
                 "tui_control",
-                "Controls the selected integration: reset statistics, stop/start routes, restart, stop, or kill "
-                               + "the process. Actions: reset-stats (or clear-stats) — clear exchange statistics, "
-                               + "activity, errors and traces without touching the routes; "
-                               + "stop-routes (or pause) — suspend all routes; "
-                               + "start-routes (or resume) — resume all routes; "
-                               + "restart — gracefully restart the integration; "
-                               + "stop — gracefully stop the process; "
-                               + "kill — forcefully terminate the process; "
-                               + "stop-all — stop all running processes; "
-                               + "close — close a phantom (opened but not running) project.",
+                "Controls the selected integration. Actions: reset-stats (clear statistics, activity, errors and "
+                               + "traces, routes untouched), stop-routes/pause, start-routes/resume, restart, stop "
+                               + "(graceful), kill, stop-all (every process), close (a phantom project).",
                 Map.of("action", propDef("string",
-                        "Control action: reset-stats, stop-routes, start-routes, pause, resume, restart, stop, kill, "
-                                                   + "stop-all, or close")),
+                        "reset-stats, stop-routes, start-routes, pause, resume, restart, stop, kill, stop-all or close")),
                 List.of("action"))));
         tools.add(toToolDef(toolDef(
                 "tui_infra",
@@ -452,54 +432,34 @@ final class TuiToolDefinitions {
                                 "Filename to read. If omitted, returns the file list instead.")))));
         tools.add(toToolDef(toolDef(
                 "tui_write_file",
-                "Writes (creates or replaces) a source file in the selected integration's source directory, "
-                                  + "the directory that tui_get_files reports together with whether editing makes sense "
-                                  + "(devMode, temporary, editing). Read the file with tui_get_files first and write the "
-                                  + "complete new content. The user confirms the write in the TUI (Enter/Esc) before the "
-                                  + "file is touched; in dev mode the change is reloaded automatically, otherwise the "
-                                  + "integration must be restarted.",
-                Map.of("name", propDef("string",
-                        "Integration name. If omitted, uses the currently selected integration."),
-                        "file", propDef("string", "File name in the source directory (no paths)."),
-                        "content", propDef("string", "The complete new content of the file."),
+                "Writes the complete content of a file in the integration's source directory (tui_get_files tells "
+                                  + "the directory and whether edits reload). The user confirms in the TUI. YAML and "
+                                  + ".properties content is validated first; invalid content is not written and the "
+                                  + "errors are returned.",
+                Map.of("name", propDef("string", "Integration name (default: the selected one)."),
+                        "file", propDef("string", "File name, no path."),
+                        "content", propDef("string", "The complete new content."),
                         "confirm", propDef("boolean",
-                                "Whether the user must confirm the write in the TUI (default true). false skips the "
-                                                      + "dialog only when the user enabled that with /write auto in the AI panel; "
-                                                      + "otherwise the dialog is shown anyway. Never use it to retry a rejected write."),
-                        "validate", propDef("boolean",
-                                "Whether the content is validated first (default true): YAML files as Camel YAML DSL,"
-                                                       + " .properties files as Camel/Spring Boot options. An invalid file is not"
-                                                       + " written and the errors are returned.")),
+                                "Set false only when the user enabled /write auto; never to retry a rejected write."),
+                        "validate", propDef("boolean", "Validate before writing (default true).")),
                 List.of("file", "content"))));
         tools.add(toToolDef(toolDef(
                 "tui_validate_source",
-                "Validates source without writing anything, with the same checks the Source tab runs on save. "
-                                       + "YAML routes: the Camel YAML DSL schema (unknown or misspelled options such as "
-                                       + "logLevel instead of loggingLevel, wrong structure), endpoint URIs and simple "
-                                       + "expressions. .properties files: unknown or misspelled camel.* and Spring Boot "
-                                       + "options. Use it on content you are about to write with tui_write_file (pass the "
-                                       + "target file name so the right checks apply), or on an existing file (file "
-                                       + "parameter, no content) to explain a startup or reload error. Returns valid=true "
-                                       + "or the list of errors.",
-                Map.of("name", propDef("string",
-                        "Integration name. If omitted, uses the currently selected integration."),
-                        "file", propDef("string",
-                                "File name (in the source directory); decides the checks by extension, and is read when"
-                                                  + " no content is given."),
-                        "content", propDef("string", "The source to validate (defaults to the file's content).")),
+                "Validates Camel YAML DSL or .properties source without writing: schema (misspelled options such as "
+                                       + "logLevel instead of loggingLevel), endpoint URIs, simple expressions, camel.* "
+                                       + "options. Use on content before writing it, or on an existing file (no content) "
+                                       + "to explain a reload error.",
+                Map.of("name", propDef("string", "Integration name (default: the selected one)."),
+                        "file", propDef("string", "File name; picks the checks by extension, read when no content."),
+                        "content", propDef("string", "The source to validate.")),
                 List.of("file"))));
         tools.add(toToolDef(toolDef(
                 "tui_get_spans",
-                "Returns raw OpenTelemetry span data as structured JSON from the selected integration. "
-                                 + "Each span includes: traceId, spanId, parentSpanId, name, kind, status, "
-                                 + "startEpochNanos, endEpochNanos, durationMs, routeId, processorId, and attributes. "
-                                 + "Use traceId to filter spans for a specific trace. "
-                                 + "The parentSpanId chain shows the span hierarchy for building waterfall views.",
-                Map.of("traceId", propDef("string",
-                        "Filter to spans matching this trace ID (substring match). "
-                                                    + "If omitted, returns all recent spans."),
-                        "limit", propDef("integer",
-                                "Maximum number of spans to return (default 500)")))));
+                "OpenTelemetry spans of the selected integration (traceId, spanId, parentSpanId, name, kind, "
+                                 + "status, start/end nanos, durationMs, routeId, processorId, attributes); the "
+                                 + "parentSpanId chain gives the hierarchy.",
+                Map.of("traceId", propDef("string", "Only spans of this trace (substring match)"),
+                        "limit", propDef("integer", "Maximum number of spans (default 500)")))));
         tools.add(toToolDef(toolDef(
                 "tui_locate",
                 "Locates elements on the TUI screen and returns their exact screen coordinates (x, y, width, height). "
@@ -520,32 +480,23 @@ final class TuiToolDefinitions {
     private static void addCatalogTools(List<ToolDef> tools) {
         tools.add(toToolDef(toolDef(
                 "tui_catalog_doc",
-                "Camel catalog documentation for a component, data format, language or EIP: description, options "
-                                   + "and Maven coordinates, for the Camel version of the selected integration. "
-                                   + "Use optionsFilter for questions like 'which kafka options are about security'.",
-                Map.of("name", propDef("string", "Artifact name, e.g. kafka, json-jackson, simple, timer, choice, split"),
-                        "kind", propDef("string",
-                                "component, dataformat, language or eip; auto-detected in that order when omitted"),
-                        "includeOptions", propDef("boolean", "Include the configuration options (default true)"),
-                        "includeDoc", propDef("boolean",
-                                "Include the full AsciiDoc page for usage examples and patterns (default false)"),
-                        "optionsFilter", propDef("string",
-                                "Case-insensitive keyword to match in option names or descriptions")),
+                "Camel catalog documentation of a component, data format, language or EIP (description, options, "
+                                   + "Maven coordinates) for the integration's Camel version.",
+                Map.of("name", propDef("string", "Name, e.g. kafka, json-jackson, simple, timer, choice, split"),
+                        "kind", propDef("string", "component, dataformat, language or eip (auto-detected)"),
+                        "includeOptions", propDef("boolean", "Include the options (default true)"),
+                        "includeDoc", propDef("boolean", "Include the full AsciiDoc page (default false)"),
+                        "optionsFilter", propDef("string", "Keyword to match in option names or descriptions")),
                 List.of("name"))));
 
         tools.add(toToolDef(toolDef(
                 "tui_get_processor_detail",
-                "Returns configured options for all processors in a route as structured JSON. "
-                                            + "Each processor entry includes type, id, endpointUri (for from/to), "
-                                            + "and the configured options (attributes, expressions). "
-                                            + "Use includeDocs=true to enrich the response with documentation from "
-                                            + "the Camel catalog for each EIP option and component endpoint option. "
-                                            + "This is the programmatic equivalent of the Diagram tab's detail panel.",
-                Map.of("routeId", propDef("string",
-                        "Route ID to inspect (use * for all routes). Defaults to * if omitted."),
+                "The processors of a route with their configured options (type, id, endpointUri, attributes, "
+                                            + "expressions), like the Diagram tab's detail panel. includeDocs adds the "
+                                            + "catalog documentation of each option.",
+                Map.of("routeId", propDef("string", "Route ID, or * for all routes (default)"),
                         "includeDocs", propDef("boolean",
-                                "If true, enrich each processor's options with documentation from the Camel catalog "
-                                                          + "(description, type, group, defaultValue, required, deprecated, enum values)")))));
+                                "Add description, type, default, required, deprecated and enum values per option")))));
     }
 
     /**

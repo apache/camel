@@ -33,9 +33,11 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 class AiPanelPromptBudgetTest {
 
     /** Measured ~3.0k tokens for 19 core tools. */
-    static final int CORE_BUDGET_TOKENS = 3_500;
+    // raised from 3500 when file editing (tui_write_file and its guidance) joined the core set for local models
+    static final int CORE_BUDGET_TOKENS = 3_800;
     /** Measured ~6.9k tokens for 47 tools. */
-    static final int FULL_BUDGET_TOKENS = 7_500;
+    // raised from 7500 with tui_write_file and tui_validate_source
+    static final int FULL_BUDGET_TOKENS = 7_900;
 
     record Prefix(String mode, int tools, long promptChars, long toolChars) {
 
@@ -110,7 +112,8 @@ class AiPanelPromptBudgetTest {
         String prompt = panel.systemPromptForTesting();
 
         // the tool definitions already describe every tool; repeating them in prose doubles the cost
-        assertTrue(AiPanel.estimateTokens(prompt.length()) <= 450,
+        // 450 before the file editing guidance (two bullets) was added
+        assertTrue(AiPanel.estimateTokens(prompt.length()) <= 530,
                 "system prompt grew to ~" + AiPanel.estimateTokens(prompt.length()) + " tokens");
         assertTrue(!prompt.contains("- tui_get_table:"), "system prompt must not list the tools again");
     }

@@ -2192,18 +2192,11 @@ class AiPanel {
         sb.append("tell the user what failed and what to try\n");
         sb.append("- To feed a route that consumes from a broker (MQTT, Kafka, JMS), tui_send_message can publish ");
         sb.append("to the broker with the route's own component and options\n");
-        sb.append("- tui_set_log_level changes the application's root logger (WARN silences all INFO output); use it ");
-        sb.append("only when the user asks about the logging output. 'Log at WARN' in a route means the log step's ");
-        sb.append("logLevel in the route source\n");
-        sb.append("- To change a route or a configuration file: tui_get_files tells where the sources are and whether ");
-        sb.append("edits take effect (devMode, temporary, editing); read the file with tui_get_files, then write the ");
-        sb.append("complete new content with tui_write_file. The user confirms each write in the TUI (Esc rejects it; ");
-        sb.append("never retry a rejected write). confirm=false skips the dialog only when the user has enabled that ");
-        sb.append("with /write auto, so do not pass it unless the user told you to\n");
-        sb.append("- Validate YAML routes and application.properties with tui_validate_source before writing them ");
-        sb.append("(unknown options such as logLevel instead of loggingLevel are reported); tui_write_file refuses ");
-        sb.append("invalid content and returns the errors, so fix them rather than guessing. tui_catalog_doc looks up ");
-        sb.append("option names\n");
+        sb.append("- To edit: tui_get_files, then tui_write_file with the complete file; the user confirms, never retry ");
+        sb.append("a rejected write. Invalid YAML/properties is refused with errors: fix them (tui_catalog_doc has the ");
+        sb.append("option names)\n");
+        sb.append("- tui_set_log_level is the app's root logger, only when asked; 'log at WARN' in a route is the log ");
+        sb.append("step's loggingLevel in the source\n");
         if (!useCoreTools()) {
             sb.append("- Use tui_locate + tui_draw_shape to visually highlight problems on screen for the user\n");
         }
