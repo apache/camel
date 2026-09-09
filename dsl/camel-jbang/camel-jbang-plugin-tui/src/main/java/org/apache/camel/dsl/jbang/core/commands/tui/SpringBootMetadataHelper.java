@@ -66,7 +66,7 @@ final class SpringBootMetadataHelper {
         StringBuilder sb = new StringBuilder();
         String description = prop.getString("description");
         if (description != null && !description.isEmpty()) {
-            sb.append(RoutesTab.truncateText(description, 80));
+            sb.append(EipDocSupport.truncateText(description, 80));
         }
 
         List<String> meta = new ArrayList<>();

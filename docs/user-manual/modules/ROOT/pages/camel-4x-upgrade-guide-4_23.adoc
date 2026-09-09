@@ -101,6 +101,10 @@ agree with that list. This affects consumers of the context status, such as the 
 (`registerRoutesCreateByKamelet=true`), they are counted as before. The JMX `ManagedCamelContext` MBean attributes
 `TotalRoutes` and `StartedRoutes` are unchanged and still count every route.
 
+The `route-topology` developer console (used by `camel cmd route-topology` and the Camel TUI diagram) no longer
+includes routes created by Kamelets, as these are an implementation detail of the Kamelet and were already hidden
+from the route console. Set the `kamelets=true` option (or `--kamelets` on the CLI) to include them.
+
 === camel-dynamic-router
 
 The `dynamic-router-control` endpoint no longer takes the subscription `predicate`, or the

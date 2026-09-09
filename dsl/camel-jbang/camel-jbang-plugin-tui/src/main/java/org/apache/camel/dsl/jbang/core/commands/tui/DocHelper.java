@@ -24,12 +24,31 @@ import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 import java.nio.charset.StandardCharsets;
 import java.time.Duration;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 import org.apache.camel.dsl.jbang.core.common.ExampleHelper;
 
 final class DocHelper {
 
+    private static final Map<String, String> HELP_CACHE = new ConcurrentHashMap<>();
+
     private DocHelper() {
+    }
+
+    /**
+     * Loads the markdown help text for a tab from {@code tui/help/<name>.md} on the classpath. Results are cached;
+     * returns null when no help resource exists for the name.
+     */
+    static String loadHelpText(String name) {
+        String cached = HELP_CACHE.get(name);
+        if (cached == null) {
+            cached = loadResourceContent("tui/help/" + name + ".md");
+            if (cached != null) {
+                HELP_CACHE.put(name, cached);
+            }
+        }
+        return cached;
     }
 
     static String loadResourceContent(String resourcePath) {

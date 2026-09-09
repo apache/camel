@@ -70,7 +70,7 @@ class YamlCompletionTest {
         viewer.enterEditMode();
 
         // cursor on "brokers: localhost" (line 9, 0-based)
-        SourceViewer.YamlEndpointContext ctx = viewer.findEnclosingComponent(9);
+        YamlSourceContext.YamlEndpointContext ctx = viewer.yamlContext().findEnclosingComponent(9);
         assertThat(ctx).isNotNull();
         assertThat(ctx.component()).isEqualTo("kafka");
         assertThat(ctx.consumer()).isFalse();
@@ -94,7 +94,7 @@ class YamlCompletionTest {
         viewer.enterEditMode();
 
         // cursor on "period: 1000" (line 4, 0-based)
-        SourceViewer.YamlEndpointContext ctx = viewer.findEnclosingComponent(4);
+        YamlSourceContext.YamlEndpointContext ctx = viewer.yamlContext().findEnclosingComponent(4);
         assertThat(ctx).isNotNull();
         assertThat(ctx.component()).isEqualTo("timer");
         assertThat(ctx.consumer()).isTrue();
@@ -118,7 +118,7 @@ class YamlCompletionTest {
         viewer.enterEditMode();
 
         // cursor on "timerName: tick" (line 4, 0-based)
-        SourceViewer.YamlEndpointContext ctx = viewer.findEnclosingComponent(4);
+        YamlSourceContext.YamlEndpointContext ctx = viewer.yamlContext().findEnclosingComponent(4);
         assertThat(ctx).isNotNull();
         assertThat(ctx.component()).isEqualTo("timer");
         assertThat(ctx.consumer()).isTrue();
@@ -143,7 +143,7 @@ class YamlCompletionTest {
         viewer.enterEditMode();
 
         // cursor on the blank line (line 5, 0-based) — still inside parameters block
-        SourceViewer.YamlEndpointContext ctx = viewer.findEnclosingComponent(5);
+        YamlSourceContext.YamlEndpointContext ctx = viewer.yamlContext().findEnclosingComponent(5);
         assertThat(ctx).isNotNull();
         assertThat(ctx.component()).isEqualTo("timer");
         assertThat(ctx.consumer()).isTrue();
@@ -166,7 +166,7 @@ class YamlCompletionTest {
         viewer.enterEditMode();
 
         // cursor on blank line right after parameters: (line 3)
-        SourceViewer.YamlEndpointContext ctx = viewer.findEnclosingComponent(3);
+        YamlSourceContext.YamlEndpointContext ctx = viewer.yamlContext().findEnclosingComponent(3);
         assertThat(ctx).isNotNull();
         assertThat(ctx.component()).isEqualTo("kafka");
         assertThat(ctx.consumer()).isTrue();
@@ -190,7 +190,7 @@ class YamlCompletionTest {
         viewer.enterEditMode();
 
         // cursor on "- log:" (line 4, 0-based) — inside steps, not parameters
-        SourceViewer.YamlEndpointContext ctx = viewer.findEnclosingComponent(4);
+        YamlSourceContext.YamlEndpointContext ctx = viewer.yamlContext().findEnclosingComponent(4);
         assertThat(ctx).isNull();
     }
 
@@ -210,7 +210,7 @@ class YamlCompletionTest {
         viewer.enterEditMode();
 
         // cursor on "from:" (line 1, 0-based)
-        SourceViewer.YamlEndpointContext ctx = viewer.findEnclosingComponent(1);
+        YamlSourceContext.YamlEndpointContext ctx = viewer.yamlContext().findEnclosingComponent(1);
         assertThat(ctx).isNull();
     }
 
@@ -233,7 +233,7 @@ class YamlCompletionTest {
         viewer.enterEditMode();
 
         // cursor on "brokers: localhost" (line 5, 0-based)
-        SourceViewer.YamlEndpointContext ctx = viewer.findEnclosingComponent(5);
+        YamlSourceContext.YamlEndpointContext ctx = viewer.yamlContext().findEnclosingComponent(5);
         assertThat(ctx).isNotNull();
         assertThat(ctx.component()).isEqualTo("kafka");
         assertThat(ctx.consumer()).isFalse();
@@ -268,7 +268,8 @@ class YamlCompletionTest {
         viewer.editState().moveCursorToLineEnd();
 
         // sanity check: still inside the file endpoint's parameters here
-        SourceViewer.YamlEndpointContext before = viewer.findEnclosingComponent(viewer.editState().cursorRow());
+        YamlSourceContext.YamlEndpointContext before
+                = viewer.yamlContext().findEnclosingComponent(viewer.editState().cursorRow());
         assertThat(before).isNotNull();
         assertThat(before.component()).isEqualTo("file");
 
@@ -279,7 +280,8 @@ class YamlCompletionTest {
         viewer.handleKeyEvent(dev.tamboui.tui.event.KeyEvent.ofKey(
                 dev.tamboui.tui.event.KeyCode.TAB, dev.tamboui.tui.event.KeyModifiers.SHIFT));
 
-        SourceViewer.YamlEndpointContext after = viewer.findEnclosingComponent(viewer.editState().cursorRow());
+        YamlSourceContext.YamlEndpointContext after
+                = viewer.yamlContext().findEnclosingComponent(viewer.editState().cursorRow());
         assertThat(after).isNull();
     }
 
@@ -319,7 +321,7 @@ class YamlCompletionTest {
         // now a sibling of uri:/parameters: (indent 10), not inside parameters: children (12)
         assertThat(viewer.editState().cursorCol()).isEqualTo(10);
 
-        SourceViewer.YamlEndpointContext ctx = viewer.findEnclosingComponent(viewer.editState().cursorRow());
+        YamlSourceContext.YamlEndpointContext ctx = viewer.yamlContext().findEnclosingComponent(viewer.editState().cursorRow());
         assertThat(ctx).isNull();
     }
 
@@ -488,7 +490,7 @@ class YamlCompletionTest {
         viewer.loadFile(file);
         viewer.enterEditMode();
 
-        SourceViewer.YamlUriContext ctx = viewer.findUriContext(1);
+        YamlSourceContext.YamlUriContext ctx = viewer.yamlContext().findUriContext(1);
         assertThat(ctx).isNotNull();
         assertThat(ctx.consumer()).isTrue();
         assertThat(ctx.prefix()).isEmpty();
@@ -511,7 +513,7 @@ class YamlCompletionTest {
         viewer.loadFile(file);
         viewer.enterEditMode();
 
-        SourceViewer.YamlUriContext ctx = viewer.findUriContext(4);
+        YamlSourceContext.YamlUriContext ctx = viewer.yamlContext().findUriContext(4);
         assertThat(ctx).isNotNull();
         assertThat(ctx.consumer()).isFalse();
         assertThat(ctx.prefix()).isEmpty();
@@ -531,7 +533,7 @@ class YamlCompletionTest {
         viewer.loadFile(file);
         viewer.enterEditMode();
 
-        SourceViewer.YamlUriContext ctx = viewer.findUriContext(1);
+        YamlSourceContext.YamlUriContext ctx = viewer.yamlContext().findUriContext(1);
         assertThat(ctx).isNotNull();
         assertThat(ctx.consumer()).isTrue();
         assertThat(ctx.prefix()).isEqualTo("ka");
@@ -552,7 +554,7 @@ class YamlCompletionTest {
         viewer.enterEditMode();
 
         // scheme already has a colon — no component completion needed
-        SourceViewer.YamlUriContext ctx = viewer.findUriContext(1);
+        YamlSourceContext.YamlUriContext ctx = viewer.yamlContext().findUriContext(1);
         assertThat(ctx).isNull();
     }
 
@@ -572,7 +574,7 @@ class YamlCompletionTest {
         viewer.loadFile(file);
         viewer.enterEditMode();
 
-        SourceViewer.YamlUriContext ctx = viewer.findUriContext(3);
+        YamlSourceContext.YamlUriContext ctx = viewer.yamlContext().findUriContext(3);
         assertThat(ctx).isNotNull();
         assertThat(ctx.consumer()).isFalse();
     }
@@ -594,7 +596,7 @@ class YamlCompletionTest {
         viewer.loadFile(file);
         viewer.enterEditMode();
 
-        SourceViewer.YamlUriContext ctx = viewer.findUriContext(4);
+        YamlSourceContext.YamlUriContext ctx = viewer.yamlContext().findUriContext(4);
         assertThat(ctx).isNotNull();
         assertThat(ctx.consumer()).isTrue();
     }
@@ -710,7 +712,7 @@ class YamlCompletionTest {
         viewer.enterEditMode();
 
         // cursor on blank line (line 5) inside parameters
-        Set<String> existing = viewer.collectExistingParameters(5);
+        Set<String> existing = viewer.yamlContext().collectExistingParameters(5);
         assertThat(existing).containsExactlyInAnyOrder("brokers", "topic");
     }
 
@@ -732,7 +734,7 @@ class YamlCompletionTest {
         viewer.enterEditMode();
 
         // cursor on blank line right after parameters: (line 3)
-        Set<String> existing = viewer.collectExistingParameters(3);
+        Set<String> existing = viewer.yamlContext().collectExistingParameters(3);
         assertThat(existing).contains("brokers");
     }
 
@@ -768,7 +770,7 @@ class YamlCompletionTest {
         viewer.loadFile(file);
         viewer.enterEditMode();
 
-        SourceViewer.YamlEipContext ctx = viewer.findEnclosingEip(6);
+        YamlSourceContext.YamlEipContext ctx = viewer.yamlContext().findEnclosingEip(6);
         assertThat(ctx).isNotNull();
         assertThat(ctx.eipName()).isEqualTo("split");
     }
@@ -790,7 +792,7 @@ class YamlCompletionTest {
         viewer.loadFile(file);
         viewer.enterEditMode();
 
-        SourceViewer.YamlEipContext ctx = viewer.findEnclosingEip(4);
+        YamlSourceContext.YamlEipContext ctx = viewer.yamlContext().findEnclosingEip(4);
         assertThat(ctx).isNull();
     }
 
@@ -811,7 +813,7 @@ class YamlCompletionTest {
         viewer.loadFile(file);
         viewer.enterEditMode();
 
-        SourceViewer.YamlEipContext ctx = viewer.findEnclosingEip(4);
+        YamlSourceContext.YamlEipContext ctx = viewer.yamlContext().findEnclosingEip(4);
         assertThat(ctx).isNotNull();
         assertThat(ctx.eipName()).isEqualTo("circuitBreaker");
     }
@@ -838,7 +840,7 @@ class YamlCompletionTest {
         viewer.enterEditMode();
 
         // cursor inside log: block (nested in split's steps)
-        SourceViewer.YamlEipContext ctx = viewer.findEnclosingEip(8);
+        YamlSourceContext.YamlEipContext ctx = viewer.yamlContext().findEnclosingEip(8);
         assertThat(ctx).isNotNull();
         assertThat(ctx.eipName()).isEqualTo("log");
     }
@@ -862,7 +864,7 @@ class YamlCompletionTest {
         viewer.enterEditMode();
 
         // empty line between log: and message: should detect log as enclosing EIP
-        SourceViewer.YamlEipContext ctx = viewer.findEnclosingEip(4);
+        YamlSourceContext.YamlEipContext ctx = viewer.yamlContext().findEnclosingEip(4);
         assertThat(ctx).isNotNull();
         assertThat(ctx.eipName()).isEqualTo("log");
     }
@@ -888,7 +890,7 @@ class YamlCompletionTest {
         viewer.loadFile(file);
         viewer.enterEditMode();
 
-        Set<String> keys = viewer.collectExistingSiblingKeys(6);
+        Set<String> keys = viewer.yamlContext().collectExistingSiblingKeys(6);
         assertThat(keys).containsExactlyInAnyOrder("streaming", "delimiter");
     }
 
@@ -896,10 +898,10 @@ class YamlCompletionTest {
 
     @Test
     void dashToCamelCaseConverts() {
-        assertThat(SourceViewer.dashToCamelCase("circuit-breaker")).isEqualTo("circuitBreaker");
-        assertThat(SourceViewer.dashToCamelCase("wire-tap")).isEqualTo("wireTap");
-        assertThat(SourceViewer.dashToCamelCase("split")).isEqualTo("split");
-        assertThat(SourceViewer.dashToCamelCase(null)).isNull();
+        assertThat(YamlSourceContext.dashToCamelCase("circuit-breaker")).isEqualTo("circuitBreaker");
+        assertThat(YamlSourceContext.dashToCamelCase("wire-tap")).isEqualTo("wireTap");
+        assertThat(YamlSourceContext.dashToCamelCase("split")).isEqualTo("split");
+        assertThat(YamlSourceContext.dashToCamelCase(null)).isNull();
     }
 
     // --- isEmptyValueLine (drives suppressing inline validation errors while a value is
@@ -907,19 +909,19 @@ class YamlCompletionTest {
 
     @Test
     void isEmptyValueLineDetectsMissingValue() {
-        assertThat(SourceViewer.isEmptyValueLine("            checksumFileAlgorithm:")).isTrue();
-        assertThat(SourceViewer.isEmptyValueLine("            checksumFileAlgorithm: ")).isTrue();
-        assertThat(SourceViewer.isEmptyValueLine("        - to:")).isTrue();
-        assertThat(SourceViewer.isEmptyValueLine("")).isTrue();
+        assertThat(SourceValidationSupport.isEmptyValueLine("            checksumFileAlgorithm:")).isTrue();
+        assertThat(SourceValidationSupport.isEmptyValueLine("            checksumFileAlgorithm: ")).isTrue();
+        assertThat(SourceValidationSupport.isEmptyValueLine("        - to:")).isTrue();
+        assertThat(SourceValidationSupport.isEmptyValueLine("")).isTrue();
     }
 
     @Test
     void isEmptyValueLineKeepsGenuinelyWrongValues() {
         // a typo in a Simple expression (or any other non-empty, wrong value) must not be
         // treated as "still being typed" — it should keep flagging immediately
-        assertThat(SourceViewer.isEmptyValueLine("              expression: ${bdoy}")).isFalse();
-        assertThat(SourceViewer.isEmptyValueLine("            checksumFileAlgorithm: NOT_REAL")).isFalse();
-        assertThat(SourceViewer.isEmptyValueLine("        - to: file:xxx")).isFalse();
+        assertThat(SourceValidationSupport.isEmptyValueLine("              expression: ${bdoy}")).isFalse();
+        assertThat(SourceValidationSupport.isEmptyValueLine("            checksumFileAlgorithm: NOT_REAL")).isFalse();
+        assertThat(SourceValidationSupport.isEmptyValueLine("        - to: file:xxx")).isFalse();
     }
 
     // --- findScopeLineRow ---
@@ -942,8 +944,8 @@ class YamlCompletionTest {
         viewer.enterEditMode();
 
         // cursor on uri: line → scope is that row
-        assertThat(viewer.findScopeLineRow(1)).isEqualTo(1);
-        assertThat(viewer.findScopeLineRow(4)).isEqualTo(4);
+        assertThat(viewer.yamlContext().findScopeLineRow(1)).isEqualTo(1);
+        assertThat(viewer.yamlContext().findScopeLineRow(4)).isEqualTo(4);
     }
 
     @Test
@@ -964,8 +966,8 @@ class YamlCompletionTest {
         viewer.enterEditMode();
 
         // cursor inside parameters: block → scope is the uri: line
-        assertThat(viewer.findScopeLineRow(3)).isEqualTo(1);
-        assertThat(viewer.findScopeLineRow(4)).isEqualTo(1);
+        assertThat(viewer.yamlContext().findScopeLineRow(3)).isEqualTo(1);
+        assertThat(viewer.yamlContext().findScopeLineRow(4)).isEqualTo(1);
     }
 
     @Test
@@ -988,7 +990,7 @@ class YamlCompletionTest {
         viewer.enterEditMode();
 
         // cursor on streaming: → scope is split: line
-        assertThat(viewer.findScopeLineRow(6)).isEqualTo(3);
+        assertThat(viewer.yamlContext().findScopeLineRow(6)).isEqualTo(3);
     }
 
     @Test
@@ -1009,7 +1011,7 @@ class YamlCompletionTest {
         viewer.enterEditMode();
 
         // cursor on the split: line itself → returns that row
-        assertThat(viewer.findScopeLineRow(3)).isEqualTo(3);
+        assertThat(viewer.yamlContext().findScopeLineRow(3)).isEqualTo(3);
     }
 
     @Test
@@ -1027,7 +1029,7 @@ class YamlCompletionTest {
         viewer.enterEditMode();
 
         // cursor on top-level from: → no parent scope
-        assertThat(viewer.findScopeLineRow(0)).isEqualTo(-1);
+        assertThat(viewer.yamlContext().findScopeLineRow(0)).isEqualTo(-1);
     }
 
     @Test
@@ -1047,7 +1049,7 @@ class YamlCompletionTest {
         viewer.enterEditMode();
 
         // cursor on inline to: line → scope is that row
-        assertThat(viewer.findScopeLineRow(3)).isEqualTo(3);
+        assertThat(viewer.yamlContext().findScopeLineRow(3)).isEqualTo(3);
     }
 
     // --- findParentYamlKey context detection (tree-driven) ---
@@ -1069,7 +1071,7 @@ class YamlCompletionTest {
         viewer.loadFile(file);
         viewer.enterEditMode();
 
-        assertThat(viewer.findParentYamlKey(4)).isEqualTo("split");
+        assertThat(viewer.yamlContext().findParentYamlKey(4)).isEqualTo("split");
     }
 
     @Test
@@ -1090,7 +1092,7 @@ class YamlCompletionTest {
         viewer.loadFile(file);
         viewer.enterEditMode();
 
-        assertThat(viewer.findParentYamlKey(5)).isEqualTo("expression");
+        assertThat(viewer.yamlContext().findParentYamlKey(5)).isEqualTo("expression");
     }
 
     @Test
@@ -1112,7 +1114,7 @@ class YamlCompletionTest {
         viewer.loadFile(file);
         viewer.enterEditMode();
 
-        assertThat(viewer.findParentYamlKey(6)).isEqualTo("simple");
+        assertThat(viewer.yamlContext().findParentYamlKey(6)).isEqualTo("simple");
     }
 
     @Test
@@ -1135,7 +1137,7 @@ class YamlCompletionTest {
         viewer.loadFile(file);
         viewer.enterEditMode();
 
-        assertThat(viewer.findParentYamlKey(6)).isEqualTo("expression");
+        assertThat(viewer.yamlContext().findParentYamlKey(6)).isEqualTo("expression");
     }
 
     @Test
@@ -1154,7 +1156,7 @@ class YamlCompletionTest {
         viewer.loadFile(file);
         viewer.enterEditMode();
 
-        assertThat(viewer.findParentYamlKey(3)).isEqualTo("from");
+        assertThat(viewer.yamlContext().findParentYamlKey(3)).isEqualTo("from");
     }
 
     @Test
@@ -1173,7 +1175,7 @@ class YamlCompletionTest {
         viewer.loadFile(file);
         viewer.enterEditMode();
 
-        assertThat(viewer.findParentYamlKey(3)).isEqualTo("steps");
+        assertThat(viewer.yamlContext().findParentYamlKey(3)).isEqualTo("steps");
     }
 
     @Test
@@ -1193,8 +1195,8 @@ class YamlCompletionTest {
         viewer.enterEditMode();
 
         // "      - " is a list item starter inside steps
-        assertThat(viewer.findParentYamlKey(3)).isEqualTo("steps");
-        assertThat(viewer.findEnclosingComponent(3)).isNull();
+        assertThat(viewer.yamlContext().findParentYamlKey(3)).isEqualTo("steps");
+        assertThat(viewer.yamlContext().findEnclosingComponent(3)).isNull();
     }
 
     @Test
@@ -1211,7 +1213,7 @@ class YamlCompletionTest {
         viewer.loadFile(file);
         viewer.enterEditMode();
 
-        assertThat(viewer.findParentYamlKey(1)).isEqualTo("route");
+        assertThat(viewer.yamlContext().findParentYamlKey(1)).isEqualTo("route");
     }
 
     @Test
@@ -1231,7 +1233,7 @@ class YamlCompletionTest {
         viewer.loadFile(file);
         viewer.enterEditMode();
 
-        assertThat(viewer.findParentYamlKey(4)).isEqualTo("marshal");
+        assertThat(viewer.yamlContext().findParentYamlKey(4)).isEqualTo("marshal");
     }
 
     @Test
@@ -1252,7 +1254,7 @@ class YamlCompletionTest {
         viewer.loadFile(file);
         viewer.enterEditMode();
 
-        assertThat(viewer.findParentYamlKey(5)).isEqualTo("csv");
+        assertThat(viewer.yamlContext().findParentYamlKey(5)).isEqualTo("csv");
     }
 
     @Test
@@ -1268,7 +1270,7 @@ class YamlCompletionTest {
         viewer.loadFile(file);
         viewer.enterEditMode();
 
-        assertThat(viewer.findParentYamlKey(0)).isEqualTo("root");
+        assertThat(viewer.yamlContext().findParentYamlKey(0)).isEqualTo("root");
     }
 
     @Test
@@ -1288,7 +1290,7 @@ class YamlCompletionTest {
         viewer.loadFile(file);
         viewer.enterEditMode();
 
-        assertThat(viewer.findParentYamlKey(4)).isEqualTo("circuitBreaker");
+        assertThat(viewer.yamlContext().findParentYamlKey(4)).isEqualTo("circuitBreaker");
     }
 
     // --- Insertion behavior ---

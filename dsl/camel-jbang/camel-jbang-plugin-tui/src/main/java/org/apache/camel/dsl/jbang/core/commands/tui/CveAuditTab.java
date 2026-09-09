@@ -732,47 +732,7 @@ class CveAuditTab extends AbstractTableTab {
 
     @Override
     public String getHelpText() {
-        return """
-                # CVE Audit
-
-                The CVE Audit tab scans the integration's classpath dependencies
-                against the **OSV.dev** vulnerability database (https://osv.dev).
-                OSV.dev aggregates vulnerabilities from multiple sources including
-                the GitHub Advisory Database (GHSA), the National Vulnerability
-                Database (NVD/CVE), and other ecosystem-specific databases.
-
-                It queries all Maven JARs using the OSV batch API and displays
-                known CVEs grouped by severity.
-
-                ## Table Columns
-
-                - **SEVERITY** — CRITICAL (red), HIGH (red), MEDIUM (yellow), LOW (dim)
-                - **CVE ID** — the canonical vulnerability identifier (prefers CVE- over GHSA-)
-                - **ARTIFACT** — the affected Maven artifact (groupId:artifactId:version)
-                - **VIA** — the direct dependency that pulls in the affected artifact (transitive dependency chain)
-                - **SUMMARY** — brief description of the vulnerability
-
-                ## Detail View
-
-                The detail panel at the bottom shows the full summary, affected
-                artifacts, aliases (e.g., both CVE and GHSA IDs for the same issue),
-                published date, and a link to the OSV.dev page.
-
-                ## Caching
-
-                Results are cached globally so re-visiting the tab is instant.
-                Switching to another integration that shares the same JARs will
-                also benefit from the cache. Press `r` to force a rescan.
-
-                ## Keys
-
-                - `Up/Down` — navigate vulnerabilities
-                - `PgUp/PgDn` — scroll detail panel
-                - `s` — cycle sort column
-                - `S` — reverse sort order
-                - `r` — rescan (clear cache and re-query)
-                - `Esc` — back
-                """;
+        return DocHelper.loadHelpText("cve-audit");
     }
 
     @Override

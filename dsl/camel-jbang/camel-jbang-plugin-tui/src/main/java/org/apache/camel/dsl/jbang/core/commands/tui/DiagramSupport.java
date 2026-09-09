@@ -2106,4 +2106,48 @@ class DiagramSupport {
         lr.labelY -= shift;
         lr.maxY -= shift;
     }
+
+    /**
+     * Finds the index of the EIP node box whose source line is closest to the given line, preferring the closest node
+     * at or before the line. Returns -1 when there are no boxes with line information.
+     */
+    int findClosestEipNode(int sourceLine) {
+        var boxes = getEipNodeBoxes();
+        if (boxes.isEmpty()) {
+            return -1;
+        }
+        // Prefer the closest node at or before the cursor line
+        int bestBeforeIdx = -1;
+        int bestBeforeDist = Integer.MAX_VALUE;
+        int bestAfterIdx = -1;
+        int bestAfterDist = Integer.MAX_VALUE;
+        for (int i = 0; i < boxes.size(); i++) {
+            var box = boxes.get(i);
+            if (box.layoutNode() == null || box.layoutNode().treeNode == null) {
+                continue;
+            }
+            int nodeLine = box.layoutNode().treeNode.info.line;
+            if (nodeLine <= 0) {
+                continue;
+            }
+            if (nodeLine == sourceLine) {
+                return i;
+            }
+            if (nodeLine < sourceLine) {
+                int dist = sourceLine - nodeLine;
+                if (dist < bestBeforeDist) {
+                    bestBeforeDist = dist;
+                    bestBeforeIdx = i;
+                }
+            } else {
+                int dist = nodeLine - sourceLine;
+                if (dist < bestAfterDist) {
+                    bestAfterDist = dist;
+                    bestAfterIdx = i;
+                }
+            }
+        }
+        return bestBeforeIdx >= 0 ? bestBeforeIdx : bestAfterIdx;
+    }
+
 }

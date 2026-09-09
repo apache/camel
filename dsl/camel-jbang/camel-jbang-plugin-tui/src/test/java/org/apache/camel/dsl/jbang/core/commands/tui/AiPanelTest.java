@@ -943,9 +943,11 @@ class AiPanelTest {
 
         String summary = panel.usageSummary();
 
-        assertTrue(summary.startsWith("Requests: 2, tokens: 6.5k (in 6.2k, out 300), avg latency: 3500 ms"), summary);
-        assertTrue(summary.contains("- [tui] qwen3.6:35b-a3b (ollama): 2 request(s), 6.5k tokens"), summary);
-        assertTrue(summary.contains("Last request: 3.4k tokens in 2000 ms"), summary);
+        assertTrue(summary.startsWith("**AI usage:** 2 request(s)"), summary);
+        assertTrue(summary.contains("- **Tokens:** 6.5k (in 6.2k, out 300)"), summary);
+        assertTrue(summary.contains("- **Avg latency:** 3.5s"), summary);
+        assertTrue(summary.contains("| [tui] qwen3.6:35b-a3b (ollama) | 2 | 6.2k | 300 | 6.5k | 3.5s |"), summary);
+        assertTrue(summary.contains("- **Last request:** 3.4k tokens in 2.0s"), summary);
     }
 
     @Test
@@ -998,7 +1000,7 @@ class AiPanelTest {
         panel.setClientForTesting(new RecordingLlmClient("ok"));
         panel.open();
         panel.recordUsageForTesting(usage(3000, Instant.now(), 1));
-        assertTrue(panel.usageSummary().startsWith("Requests: 1"), panel.usageSummary());
+        assertTrue(panel.usageSummary().startsWith("**AI usage:** 1 request(s)"), panel.usageSummary());
 
         panel.executeSlashCommandForTesting("/usage reset");
 

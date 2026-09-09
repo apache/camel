@@ -19,9 +19,12 @@ package org.apache.camel.impl.console;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
+import org.apache.camel.Route;
 import org.apache.camel.api.management.ManagedCamelContext;
 import org.apache.camel.api.management.mbean.ManagedRouteMBean;
 import org.apache.camel.api.management.mbean.ManagedSendProcessorMBean;
@@ -90,6 +93,11 @@ public class RouteTopologyDevConsole extends AbstractDevConsole {
               defaultValue = "false", javaType = "java.lang.Boolean")
     public static final String ROUTES = "routes";
 
+    @Metadata(label = "query",
+              description = "Whether to include routes created by Kamelets. These are hidden by default, as they are an implementation detail of the Kamelet",
+              defaultValue = "false", javaType = "java.lang.Boolean")
+    public static final String KAMELETS = "kamelets";
+
     public RouteTopologyDevConsole() {
         super("camel", "route-topology", "Route Topology", "Route topology showing inter-route connections");
     }
@@ -100,7 +108,7 @@ public class RouteTopologyDevConsole extends AbstractDevConsole {
         if (dumper == null) {
             return "";
         }
-        TopologyResult result = dumper.dumpTopology(getCamelContext());
+        TopologyResult result = filterKamelets(dumper.dumpTopology(getCamelContext()), options);
         boolean external = optionBoolean(options, EXTERNAL, false);
 
         StringBuilder sb = new StringBuilder();
@@ -135,7 +143,7 @@ public class RouteTopologyDevConsole extends AbstractDevConsole {
         if (dumper == null) {
             return JsonRecordSupport.toJsonObject(new Response(null, null, null, null));
         }
-        TopologyResult result = dumper.dumpTopology(getCamelContext());
+        TopologyResult result = filterKamelets(dumper.dumpTopology(getCamelContext()), options);
 
         boolean metric = optionBoolean(options, METRIC, false);
         boolean external = optionBoolean(options, EXTERNAL, false);
@@ -225,6 +233,34 @@ public class RouteTopologyDevConsole extends AbstractDevConsole {
 
         Response response = new Response(nodes, edges, externalEndpoints, routes);
         return JsonRecordSupport.toJsonObject(response);
+    }
+
+    /**
+     * Removes the routes created by Kamelets, together with the edges and external endpoints that belong to them,
+     * unless the {@link #KAMELETS} option asks for them. Kamelet routes are an implementation detail of the Kamelet and
+     * are hidden the same way as in the route console (they are not registered in JMX by default).
+     */
+    private TopologyResult filterKamelets(TopologyResult result, Map<String, Object> options) {
+        if (optionBoolean(options, KAMELETS, false)) {
+            return result;
+        }
+        Set<String> hidden = new HashSet<>();
+        for (TopologyNode node : result.nodes()) {
+            Route route = getCamelContext().getRoute(node.routeId());
+            if (route != null && route.isCreatedByKamelet()) {
+                hidden.add(node.routeId());
+            }
+        }
+        if (hidden.isEmpty()) {
+            return result;
+        }
+        List<TopologyNode> nodes = result.nodes().stream()
+                .filter(n -> !hidden.contains(n.routeId())).toList();
+        List<TopologyEdge> edges = result.edges().stream()
+                .filter(e -> !hidden.contains(e.fromRouteId()) && !hidden.contains(e.toRouteId())).toList();
+        List<TopologyExternalEndpoint> externalEndpoints = result.externalEndpoints().stream()
+                .filter(e -> !hidden.contains(e.routeId())).toList();
+        return new TopologyResult(nodes, edges, externalEndpoints);
     }
 
     /**

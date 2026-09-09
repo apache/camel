@@ -989,13 +989,18 @@ Press *Ctrl+U* while the AI panel is open to toggle the AI Usage view. It shows 
 the embedded AI prompt (*TUI ask*) and from LLM calls made by the monitored integration (*integration*),
 the latter taken from OpenTelemetry GenAI spans when observability is enabled on the integration. The
 *Tokens per question* chart has one bar per question you asked, so a question that needed several tool
-calls shows as a single bar.
+calls shows as a single bar. The summary line splits the session time into *AI time* (waiting for the
+model) and *Tool time* (running the TUI tools the model called, with the number of calls), the model
+table has an *AVG* latency column, and the *Time per question* chart next to the token chart shows the
+two side by side for each question, so you can see whether a slow answer was the model or the tools.
 
 === AI log
 
 Every request the panel makes is recorded in the AI log (*F2* -> _AI & MCP_ -> _AI Log_, or the
-`tui_get_ai_log` tool): the question, each tool the model called with its arguments and the size of
-the result, and a `Response` line with the elapsed time and the token counts. The `Response` line
+`tui_get_ai_log` tool): the question, each tool the model called with its arguments, the result with
+how long the tool took, and a `Response` line with the elapsed time and the token counts. When the
+model called tools, the elapsed time is broken down into the time spent waiting for the model and the
+time spent in tool calls (for example `5.2s, ai 4.1s, tools 1.1s/3`). The `Response` line
 also shows whether the provider reused its cached prompt. For Ollama it prints the prompt-processing
 (`prefill`) and generation (`gen`) time reported by the server -- a prefill of a fraction of a second
 on a 10k-token prompt means the cache was hit, while a prefill of several seconds means the whole

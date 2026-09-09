@@ -30,80 +30,80 @@ class SourceViewerRefactorTest {
 
     @Test
     void extractUriInlineToWithQueryParams() {
-        assertThat(SourceViewer.extractUriFromLine("    - to: timer:tick?period=1000"))
+        assertThat(SourceRefactorings.extractUriFromLine("    - to: timer:tick?period=1000"))
                 .isEqualTo("timer:tick");
     }
 
     @Test
     void extractUriInlineFrom() {
-        assertThat(SourceViewer.extractUriFromLine("  - from: timer:tick"))
+        assertThat(SourceRefactorings.extractUriFromLine("  - from: timer:tick"))
                 .isEqualTo("timer:tick");
     }
 
     @Test
     void extractUriBlockUriLine() {
-        assertThat(SourceViewer.extractUriFromLine("    uri: log:out?showAll=true"))
+        assertThat(SourceRefactorings.extractUriFromLine("    uri: log:out?showAll=true"))
                 .isEqualTo("log:out");
     }
 
     @Test
     void extractUriRouteFromNoDash() {
         // route-level "from:" without a leading dash (inside "- route:")
-        assertThat(SourceViewer.extractUriFromLine("    from: timer:tick?period=1000"))
+        assertThat(SourceRefactorings.extractUriFromLine("    from: timer:tick?period=1000"))
                 .isEqualTo("timer:tick");
     }
 
     @Test
     void extractUriInlineToD() {
-        assertThat(SourceViewer.extractUriFromLine("    - toD: ${header.target}"))
+        assertThat(SourceRefactorings.extractUriFromLine("    - toD: ${header.target}"))
                 .isEqualTo("${header.target}");
     }
 
     @Test
     void extractUriQuoted() {
-        assertThat(SourceViewer.extractUriFromLine("    - to: \"http://example.com/path?q=1\""))
+        assertThat(SourceRefactorings.extractUriFromLine("    - to: \"http://example.com/path?q=1\""))
                 .isEqualTo("http://example.com/path");
     }
 
     @Test
     void extractUriNotAUriLine() {
-        assertThat(SourceViewer.extractUriFromLine("    constant: Hello World")).isNull();
+        assertThat(SourceRefactorings.extractUriFromLine("    constant: Hello World")).isNull();
     }
 
     @Test
     void extractUriEmptyBlock() {
-        assertThat(SourceViewer.extractUriFromLine("    - to:")).isNull();
+        assertThat(SourceRefactorings.extractUriFromLine("    - to:")).isNull();
     }
 
     @Test
     void extractUriNull() {
-        assertThat(SourceViewer.extractUriFromLine(null)).isNull();
+        assertThat(SourceRefactorings.extractUriFromLine(null)).isNull();
     }
 
     // ---- replaceUriOnLine ----
 
     @Test
     void replaceUriInlineTo() {
-        assertThat(SourceViewer.replaceUriOnLine("    - to: timer:tick?period=1000", "log:out"))
+        assertThat(SourceRefactorings.replaceUriOnLine("    - to: timer:tick?period=1000", "log:out"))
                 .isEqualTo("    - to: log:out");
     }
 
     @Test
     void replaceUriInlineFrom() {
-        assertThat(SourceViewer.replaceUriOnLine("  - from: timer:tick", "direct:start"))
+        assertThat(SourceRefactorings.replaceUriOnLine("  - from: timer:tick", "direct:start"))
                 .isEqualTo("  - from: direct:start");
     }
 
     @Test
     void replaceUriBlockUri() {
-        assertThat(SourceViewer.replaceUriOnLine("      uri: log:out?showAll=true", "kafka:my-topic"))
+        assertThat(SourceRefactorings.replaceUriOnLine("      uri: log:out?showAll=true", "kafka:my-topic"))
                 .isEqualTo("      uri: kafka:my-topic");
     }
 
     @Test
     void replaceUriPreservesIndent() {
         String line = "        - to: mock:result";
-        assertThat(SourceViewer.replaceUriOnLine(line, "log:replaced"))
+        assertThat(SourceRefactorings.replaceUriOnLine(line, "log:replaced"))
                 .isEqualTo("        - to: log:replaced");
     }
 
@@ -111,64 +111,64 @@ class SourceViewerRefactorTest {
 
     @Test
     void extractValuePlainString() {
-        assertThat(SourceViewer.extractValueFromLine("    constant: Hello World"))
+        assertThat(SourceRefactorings.extractValueFromLine("    constant: Hello World"))
                 .isEqualTo("Hello World");
     }
 
     @Test
     void extractValueQuoted() {
-        assertThat(SourceViewer.extractValueFromLine("    message: \"some text\""))
+        assertThat(SourceRefactorings.extractValueFromLine("    message: \"some text\""))
                 .isEqualTo("some text");
     }
 
     @Test
     void extractValueSingleQuoted() {
-        assertThat(SourceViewer.extractValueFromLine("    constant: 'fixed text'"))
+        assertThat(SourceRefactorings.extractValueFromLine("    constant: 'fixed text'"))
                 .isEqualTo("fixed text");
     }
 
     @Test
     void extractValueAlreadyPlaceholder() {
-        assertThat(SourceViewer.extractValueFromLine("    constant: {{my.key}}")).isNull();
+        assertThat(SourceRefactorings.extractValueFromLine("    constant: {{my.key}}")).isNull();
     }
 
     @Test
     void extractValueAlreadyPlaceholderQuoted() {
-        assertThat(SourceViewer.extractValueFromLine("    expression: \"{{greeting.message}}\"")).isNull();
+        assertThat(SourceRefactorings.extractValueFromLine("    expression: \"{{greeting.message}}\"")).isNull();
     }
 
     @Test
     void extractValueListItem() {
-        assertThat(SourceViewer.extractValueFromLine("    - to: timer:tick")).isNull();
+        assertThat(SourceRefactorings.extractValueFromLine("    - to: timer:tick")).isNull();
     }
 
     @Test
     void extractValueEmptyValue() {
-        assertThat(SourceViewer.extractValueFromLine("    steps:")).isNull();
+        assertThat(SourceRefactorings.extractValueFromLine("    steps:")).isNull();
     }
 
     @Test
     void extractValueYamlMap() {
-        assertThat(SourceViewer.extractValueFromLine("    parameters: {period: 1000}")).isNull();
+        assertThat(SourceRefactorings.extractValueFromLine("    parameters: {period: 1000}")).isNull();
     }
 
     // ---- replaceValueWithPlaceholder ----
 
     @Test
     void replaceValueSimple() {
-        assertThat(SourceViewer.replaceValueWithPlaceholder("    constant: Hello World", "greeting.message"))
+        assertThat(SourceRefactorings.replaceValueWithPlaceholder("    constant: Hello World", "greeting.message"))
                 .isEqualTo("    constant: \"{{greeting.message}}\"");
     }
 
     @Test
     void replaceValuePreservesIndent() {
-        assertThat(SourceViewer.replaceValueWithPlaceholder("      message: some text", "my.msg"))
+        assertThat(SourceRefactorings.replaceValueWithPlaceholder("      message: some text", "my.msg"))
                 .isEqualTo("      message: \"{{my.msg}}\"");
     }
 
     @Test
     void replaceValueQuotedOriginal() {
-        assertThat(SourceViewer.replaceValueWithPlaceholder("    constant: \"Hello\"", "my.key"))
+        assertThat(SourceRefactorings.replaceValueWithPlaceholder("    constant: \"Hello\"", "my.key"))
                 .isEqualTo("    constant: \"{{my.key}}\"");
     }
 
@@ -188,7 +188,7 @@ class SourceViewerRefactorTest {
                 "          fixedRate: true",
                 "    - to: log:out");
         int uriRow = 1;
-        SourceViewer.removeParametersBlock(input, uriRow, input.get(uriRow));
+        SourceRefactorings.removeParametersBlock(input, uriRow, input.get(uriRow));
         assertThat(input).containsExactly(
                 "    - from:",
                 "        uri: timer:tick",
@@ -201,7 +201,7 @@ class SourceViewerRefactorTest {
                 "        uri: log:out",
                 "        parameters:",
                 "          showAll: true");
-        SourceViewer.removeParametersBlock(input, 0, input.get(0));
+        SourceRefactorings.removeParametersBlock(input, 0, input.get(0));
         assertThat(input).containsExactly("        uri: log:out");
     }
 
@@ -210,7 +210,7 @@ class SourceViewerRefactorTest {
         List<String> input = lines(
                 "        uri: log:out",
                 "        id: my-step");
-        SourceViewer.removeParametersBlock(input, 0, input.get(0));
+        SourceRefactorings.removeParametersBlock(input, 0, input.get(0));
         assertThat(input).containsExactly(
                 "        uri: log:out",
                 "        id: my-step");
@@ -222,7 +222,7 @@ class SourceViewerRefactorTest {
         List<String> input = lines(
                 "    - to: timer:tick?period=1000",
                 "    - log: \"done\"");
-        SourceViewer.removeParametersBlock(input, 0, input.get(0));
+        SourceRefactorings.removeParametersBlock(input, 0, input.get(0));
         assertThat(input).containsExactly(
                 "    - to: timer:tick?period=1000",
                 "    - log: \"done\"");
@@ -231,7 +231,7 @@ class SourceViewerRefactorTest {
     @Test
     void removeParametersBlockNullLineSkips() {
         List<String> input = lines("        uri: log:out");
-        SourceViewer.removeParametersBlock(input, 0, null);
+        SourceRefactorings.removeParametersBlock(input, 0, null);
         assertThat(input).containsExactly("        uri: log:out");
     }
 
@@ -239,38 +239,38 @@ class SourceViewerRefactorTest {
 
     @Test
     void isExtractableStepSetBody() {
-        assertThat(SourceViewer.isExtractableStep("      - setBody:")).isTrue();
+        assertThat(SourceRefactorings.isExtractableStep("      - setBody:")).isTrue();
     }
 
     @Test
     void isExtractableStepChoice() {
-        assertThat(SourceViewer.isExtractableStep("    - choice:")).isTrue();
+        assertThat(SourceRefactorings.isExtractableStep("    - choice:")).isTrue();
     }
 
     @Test
     void isExtractableStepToIsExtractable() {
         // "- to:" steps can be extracted (wrapped in a new route)
-        assertThat(SourceViewer.isExtractableStep("      - to: log:out")).isTrue();
+        assertThat(SourceRefactorings.isExtractableStep("      - to: log:out")).isTrue();
     }
 
     @Test
     void isExtractableStepRouteExcluded() {
-        assertThat(SourceViewer.isExtractableStep("- route:")).isFalse();
+        assertThat(SourceRefactorings.isExtractableStep("- route:")).isFalse();
     }
 
     @Test
     void isExtractableStepFromExcluded() {
-        assertThat(SourceViewer.isExtractableStep("  - from: timer:tick")).isFalse();
+        assertThat(SourceRefactorings.isExtractableStep("  - from: timer:tick")).isFalse();
     }
 
     @Test
     void isExtractableStepNullFalse() {
-        assertThat(SourceViewer.isExtractableStep(null)).isFalse();
+        assertThat(SourceRefactorings.isExtractableStep(null)).isFalse();
     }
 
     @Test
     void isExtractableStepNonListItem() {
-        assertThat(SourceViewer.isExtractableStep("    steps:")).isFalse();
+        assertThat(SourceRefactorings.isExtractableStep("    steps:")).isFalse();
     }
 
     // ---- buildExtractedRouteYaml ----
@@ -281,7 +281,7 @@ class SourceViewerRefactorTest {
                 "      - setBody:",
                 "          expression:",
                 "            constant: Hello");
-        String result = SourceViewer.buildExtractedRouteYaml("my-sub", block, 6);
+        String result = SourceRefactorings.buildExtractedRouteYaml("my-sub", block, 6);
         assertThat(result).isEqualTo(
                 "- route:\n" +
                                      "    from:\n" +
@@ -300,7 +300,7 @@ class SourceViewerRefactorTest {
                 "            - simple: \"${body} != null\"",
                 "              steps:",
                 "                - to: log:info");
-        String result = SourceViewer.buildExtractedRouteYaml("check-body", block, 6);
+        String result = SourceRefactorings.buildExtractedRouteYaml("check-body", block, 6);
         assertThat(result).startsWith("- route:\n    from:\n      uri: direct:check-body\n    steps:\n");
         assertThat(result).contains("      - choice:\n");
         assertThat(result).contains("          when:\n");
@@ -310,37 +310,37 @@ class SourceViewerRefactorTest {
 
     @Test
     void sanitizeFileNamePlain() {
-        assertThat(SourceViewer.sanitizeFileName("my-sub-route")).isEqualTo("my-sub-route");
+        assertThat(SourceRefactorings.sanitizeFileName("my-sub-route")).isEqualTo("my-sub-route");
     }
 
     @Test
     void sanitizeFileNameSpacesReplaced() {
-        assertThat(SourceViewer.sanitizeFileName("my sub route")).isEqualTo("my-sub-route");
+        assertThat(SourceRefactorings.sanitizeFileName("my sub route")).isEqualTo("my-sub-route");
     }
 
     @Test
     void sanitizeFileNameSpecialCharsReplaced() {
-        assertThat(SourceViewer.sanitizeFileName("hello world!@#")).isEqualTo("hello-world");
+        assertThat(SourceRefactorings.sanitizeFileName("hello world!@#")).isEqualTo("hello-world");
     }
 
     @Test
     void sanitizeFileNameColonsAndSlashesReplaced() {
-        assertThat(SourceViewer.sanitizeFileName("timer:tick/sub")).isEqualTo("timer-tick-sub");
+        assertThat(SourceRefactorings.sanitizeFileName("timer:tick/sub")).isEqualTo("timer-tick-sub");
     }
 
     @Test
     void sanitizeFileNameConsecutiveHyphensCollapsed() {
-        assertThat(SourceViewer.sanitizeFileName("a  b")).isEqualTo("a-b");
+        assertThat(SourceRefactorings.sanitizeFileName("a  b")).isEqualTo("a-b");
     }
 
     @Test
     void sanitizeFileNameLeadingTrailingHyphensStripped() {
-        assertThat(SourceViewer.sanitizeFileName("  -my-route-  ")).isEqualTo("my-route");
+        assertThat(SourceRefactorings.sanitizeFileName("  -my-route-  ")).isEqualTo("my-route");
     }
 
     @Test
     void sanitizeFileNameNullEmpty() {
-        assertThat(SourceViewer.sanitizeFileName(null)).isEmpty();
-        assertThat(SourceViewer.sanitizeFileName("   ")).isEmpty();
+        assertThat(SourceRefactorings.sanitizeFileName(null)).isEmpty();
+        assertThat(SourceRefactorings.sanitizeFileName("   ")).isEmpty();
     }
 }

@@ -43,7 +43,7 @@ class YamlSimpleValidationTest {
                       - setBody:
                           simple: "${body}"
                 """;
-        List<String> errors = SourceTab.doValidateYamlSimple(yaml, catalog);
+        List<String> errors = SourceEditAssist.doValidateYamlSimple(yaml, catalog);
         assertThat(errors).isEmpty();
     }
 
@@ -56,7 +56,7 @@ class YamlSimpleValidationTest {
                       - setBody:
                           simple: "${body"
                 """;
-        List<String> errors = SourceTab.doValidateYamlSimple(yaml, catalog);
+        List<String> errors = SourceEditAssist.doValidateYamlSimple(yaml, catalog);
         assertThat(errors).hasSize(1);
         assertThat(errors.get(0)).contains("Simple syntax error");
     }
@@ -70,7 +70,7 @@ class YamlSimpleValidationTest {
                       - filter:
                           simple: "${header.foo} == 'bar'"
                 """;
-        List<String> errors = SourceTab.doValidateYamlSimple(yaml, catalog);
+        List<String> errors = SourceEditAssist.doValidateYamlSimple(yaml, catalog);
         assertThat(errors).isEmpty();
     }
 
@@ -85,7 +85,7 @@ class YamlSimpleValidationTest {
                             simple:
                               expression: "${header.name}"
                 """;
-        List<String> errors = SourceTab.doValidateYamlSimple(yaml, catalog);
+        List<String> errors = SourceEditAssist.doValidateYamlSimple(yaml, catalog);
         assertThat(errors).isEmpty();
     }
 
@@ -100,7 +100,7 @@ class YamlSimpleValidationTest {
                             simple:
                               expression: "${body"
                 """;
-        List<String> errors = SourceTab.doValidateYamlSimple(yaml, catalog);
+        List<String> errors = SourceEditAssist.doValidateYamlSimple(yaml, catalog);
         assertThat(errors).hasSize(1);
         assertThat(errors.get(0)).contains("Simple syntax error");
     }
@@ -114,7 +114,7 @@ class YamlSimpleValidationTest {
                       - setBody:
                           simple: "{{myPlaceholder}}"
                 """;
-        List<String> errors = SourceTab.doValidateYamlSimple(yaml, catalog);
+        List<String> errors = SourceEditAssist.doValidateYamlSimple(yaml, catalog);
         assertThat(errors).isEmpty();
     }
 
@@ -127,7 +127,7 @@ class YamlSimpleValidationTest {
                       - log:
                           message: "${body"
                 """;
-        List<String> errors = SourceTab.doValidateYamlSimple(yaml, catalog);
+        List<String> errors = SourceEditAssist.doValidateYamlSimple(yaml, catalog);
         assertThat(errors).hasSize(1);
         assertThat(errors.get(0)).contains("Simple syntax error");
     }
@@ -141,7 +141,7 @@ class YamlSimpleValidationTest {
                       - log:
                           message: "Order: ${body}"
                 """;
-        List<String> errors = SourceTab.doValidateYamlSimple(yaml, catalog);
+        List<String> errors = SourceEditAssist.doValidateYamlSimple(yaml, catalog);
         assertThat(errors).isEmpty();
     }
 
@@ -158,7 +158,7 @@ class YamlSimpleValidationTest {
                               steps:
                                 - log: "big"
                 """;
-        List<String> errors = SourceTab.doValidateYamlSimple(yaml, catalog);
+        List<String> errors = SourceEditAssist.doValidateYamlSimple(yaml, catalog);
         assertThat(errors).hasSize(1);
         assertThat(errors.get(0)).contains("Simple syntax error");
     }
@@ -175,7 +175,7 @@ class YamlSimpleValidationTest {
                               steps:
                                 - log: "big"
                 """;
-        List<String> errors = SourceTab.doValidateYamlSimple(yaml, catalog);
+        List<String> errors = SourceEditAssist.doValidateYamlSimple(yaml, catalog);
         assertThat(errors).isEmpty();
     }
 
@@ -191,7 +191,7 @@ class YamlSimpleValidationTest {
                           name: foo
                           simple: "${header.bar"
                 """;
-        List<String> errors = SourceTab.doValidateYamlSimple(yaml, catalog);
+        List<String> errors = SourceEditAssist.doValidateYamlSimple(yaml, catalog);
         assertThat(errors).hasSizeGreaterThanOrEqualTo(2);
     }
 }

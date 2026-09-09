@@ -45,7 +45,7 @@ class YamlEndpointValidationTest {
                   steps:
                     - log: "${body}"
                 """;
-        List<String> errors = SourceTab.doValidateYamlEndpoints(yaml, catalog);
+        List<String> errors = SourceEditAssist.doValidateYamlEndpoints(yaml, catalog);
         assertThat(errors).isEmpty();
     }
 
@@ -60,7 +60,7 @@ class YamlEndpointValidationTest {
                   steps:
                     - log: "${body}"
                 """;
-        List<String> errors = SourceTab.doValidateYamlEndpoints(yaml, catalog);
+        List<String> errors = SourceEditAssist.doValidateYamlEndpoints(yaml, catalog);
         assertThat(errors).isNotEmpty();
         assertThat(errors.get(0)).contains("timer:");
         assertThat(errors.get(0)).containsIgnoringCase("unknown");
@@ -76,7 +76,7 @@ class YamlEndpointValidationTest {
                   steps:
                     - log: "${body}"
                 """;
-        List<String> errors = SourceTab.doValidateYamlEndpoints(yaml, catalog);
+        List<String> errors = SourceEditAssist.doValidateYamlEndpoints(yaml, catalog);
         assertThat(errors).isNotEmpty();
         assertThat(errors.get(0)).contains("timer:");
     }
@@ -88,7 +88,7 @@ class YamlEndpointValidationTest {
                   steps:
                     - to: log:myLogger
                 """;
-        List<String> errors = SourceTab.doValidateYamlEndpoints(yaml, catalog);
+        List<String> errors = SourceEditAssist.doValidateYamlEndpoints(yaml, catalog);
         assertThat(errors).isEmpty();
     }
 
@@ -99,7 +99,7 @@ class YamlEndpointValidationTest {
                   steps:
                     - log: "${body}"
                 """;
-        List<String> errors = SourceTab.doValidateYamlEndpoints(yaml, catalog);
+        List<String> errors = SourceEditAssist.doValidateYamlEndpoints(yaml, catalog);
         assertThat(errors).isNotEmpty();
         assertThat(errors.get(0)).contains("timer:");
         assertThat(errors.get(0)).containsIgnoringCase("unknown");
@@ -113,7 +113,7 @@ class YamlEndpointValidationTest {
                   steps:
                     - log: "${body}"
                 """;
-        List<String> errors = SourceTab.doValidateYamlEndpoints(yaml, catalog);
+        List<String> errors = SourceEditAssist.doValidateYamlEndpoints(yaml, catalog);
         assertThat(errors).isEmpty();
     }
 
@@ -127,7 +127,7 @@ class YamlEndpointValidationTest {
                   steps:
                     - log: "${body}"
                 """;
-        List<String> errors = SourceTab.doValidateYamlEndpoints(yaml, catalog);
+        List<String> errors = SourceEditAssist.doValidateYamlEndpoints(yaml, catalog);
         assertThat(errors).isEmpty();
     }
 
@@ -141,7 +141,7 @@ class YamlEndpointValidationTest {
                   steps:
                     - log: "${body}"
                 """;
-        List<String> errors = SourceTab.doValidateYamlEndpoints(yaml, catalog);
+        List<String> errors = SourceEditAssist.doValidateYamlEndpoints(yaml, catalog);
         assertThat(errors).isNotEmpty();
         assertThat(errors.get(0)).contains("timer:");
     }
@@ -159,7 +159,7 @@ class YamlEndpointValidationTest {
                         parameters:
                           badOption: xyz
                 """;
-        List<String> errors = SourceTab.doValidateYamlEndpoints(yaml, catalog);
+        List<String> errors = SourceEditAssist.doValidateYamlEndpoints(yaml, catalog);
         assertThat(errors).isNotEmpty();
         assertThat(errors).allSatisfy(e -> assertThat(e).contains("log:"));
         assertThat(errors).noneSatisfy(e -> assertThat(e).contains("timer:"));
@@ -172,7 +172,7 @@ class YamlEndpointValidationTest {
                   steps:
                     - log: "${body}"
                 """;
-        List<String> errors = SourceTab.doValidateYamlEndpoints(yaml, catalog);
+        List<String> errors = SourceEditAssist.doValidateYamlEndpoints(yaml, catalog);
         assertThat(errors).isEmpty();
     }
 
@@ -186,7 +186,7 @@ class YamlEndpointValidationTest {
                   steps:
                     - log: "${body}"
                 """;
-        List<String> errors = SourceTab.doValidateYamlEndpoints(yaml, catalog);
+        List<String> errors = SourceEditAssist.doValidateYamlEndpoints(yaml, catalog);
         assertThat(errors).isEmpty();
     }
 
@@ -201,7 +201,7 @@ class YamlEndpointValidationTest {
                   steps:
                     - log: "${body}"
                 """;
-        List<String> errors = SourceTab.doValidateYamlEndpoints(yaml, catalog);
+        List<String> errors = SourceEditAssist.doValidateYamlEndpoints(yaml, catalog);
         assertThat(errors).isEmpty();
     }
 
@@ -212,7 +212,7 @@ class YamlEndpointValidationTest {
                   steps:
                     - to: seda:myQueue?badOption=xyz
                 """;
-        List<String> errors = SourceTab.doValidateYamlEndpoints(yaml, catalog);
+        List<String> errors = SourceEditAssist.doValidateYamlEndpoints(yaml, catalog);
         assertThat(errors).hasSize(1);
         assertThat(errors.get(0)).contains("seda:");
     }
@@ -231,7 +231,7 @@ class YamlEndpointValidationTest {
                     - to:
                         uri: seda:result
                 """;
-        List<String> errors = SourceTab.doValidateYamlEndpoints(yaml, catalog);
+        List<String> errors = SourceEditAssist.doValidateYamlEndpoints(yaml, catalog);
         assertThat(errors).isEmpty();
     }
 
@@ -250,7 +250,7 @@ class YamlEndpointValidationTest {
                         - log:
                             message: "${body}"
                 """;
-        List<String> errors = SourceTab.doValidateYamlEndpoints(yaml, catalog);
+        List<String> errors = SourceEditAssist.doValidateYamlEndpoints(yaml, catalog);
         assertThat(errors).isNotEmpty();
         assertThat(errors).anyMatch(e -> e.contains("timer:") && e.contains("bridgeErrorHandler2"));
     }
@@ -270,7 +270,7 @@ class YamlEndpointValidationTest {
                         - log:
                             message: "${body}"
                 """;
-        List<String> errors = SourceTab.doValidateYamlEndpoints(yaml, catalog);
+        List<String> errors = SourceEditAssist.doValidateYamlEndpoints(yaml, catalog);
         assertThat(errors).isEmpty();
     }
 
@@ -285,7 +285,7 @@ class YamlEndpointValidationTest {
                   steps:
                     - log: "${body}"
                 """;
-        List<String> errors = SourceTab.doValidateYamlEndpoints(yaml, catalog);
+        List<String> errors = SourceEditAssist.doValidateYamlEndpoints(yaml, catalog);
         assertThat(errors).isEmpty();
     }
 }

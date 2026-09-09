@@ -1002,4 +1002,16 @@ final class TuiHelper {
             Thread.currentThread().interrupt();
         }
     }
+
+    /**
+     * Width (in characters) needed to right-align the largest absolute value in the given numbers.
+     */
+    static int numWidth(long... values) {
+        long max = 0;
+        for (long v : values) {
+            max = Math.max(max, Math.abs(v));
+        }
+        return Math.max(1, String.valueOf(max).length());
+    }
+
 }

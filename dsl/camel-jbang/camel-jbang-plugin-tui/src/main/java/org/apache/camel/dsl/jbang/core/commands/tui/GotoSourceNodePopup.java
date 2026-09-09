@@ -213,7 +213,7 @@ class GotoSourceNodePopup {
                 String prefix = buildTreePrefix(filteredEntries, idx, entry);
                 spans.add(Span.styled(prefix, treeStyle));
                 String typeTag = entry.type();
-                Color eipColor = DiagramColors.getEipColor(SourceViewer.dashToCamelCase(typeTag));
+                Color eipColor = DiagramColors.getEipColor(YamlSourceContext.dashToCamelCase(typeTag));
                 String label = entry.label().isBlank() ? "" : entry.label();
                 if (label.length() > maxLabelW && maxLabelW > 3) {
                     label = label.substring(0, maxLabelW - 1) + "…";

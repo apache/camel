@@ -174,6 +174,10 @@ class AiPanel {
     private long thinkingStartTime;
     private volatile String thinkingVerb;
     private volatile int sessionTotalTokens;
+    private volatile long sessionToolTimeMs;
+    private volatile int sessionToolCalls;
+    /** Per answered question: [aiMs, toolMs, toolCalls], in order, for the time chart in the usage view. */
+    private final List<long[]> turnTimings = new CopyOnWriteArrayList<>();
 
     // Slash commands
     private final AiSlashCommandRegistry slashCommands = AiSlashCommandRegistry.defaults();
@@ -256,9 +260,24 @@ class AiPanel {
         ROUTE
     }
 
-    record ConversationEntry(AiRole role, String text, long elapsedSeconds, int totalTokens) {
+    /**
+     * One conversation line. For assistant replies {@code elapsedMs} is the wall-clock time of the whole turn,
+     * {@code aiMs} the part spent waiting for the model and {@code toolMs} the part spent executing the
+     * {@code toolCalls} TUI tool calls the model made.
+     */
+    record ConversationEntry(AiRole role, String text, long elapsedMs, long aiMs, long toolMs, int toolCalls,
+            int totalTokens) {
         ConversationEntry(AiRole role, String text) {
-            this(role, text, -1, 0);
+            this(role, text, -1, 0, 0, 0, 0);
+        }
+
+        /** "5.2s" or, when tools were called, "5.2s, ai 4.1s, tools 1.1s/3". */
+        String timing() {
+            String t = formatSeconds(elapsedMs);
+            if (toolCalls > 0) {
+                t += ", ai " + formatSeconds(aiMs) + ", tools " + formatSeconds(toolMs) + "/" + toolCalls;
+            }
+            return t;
         }
     }
 
@@ -351,7 +370,7 @@ class AiPanel {
             return -1;
         }
         ConversationEntry last = conversation.get(conversation.size() - 1);
-        return last.role() == AiRole.ASSISTANT ? last.elapsedSeconds() : -1;
+        return last.role() == AiRole.ASSISTANT ? last.elapsedMs() : -1;
     }
 
     private int lastResponseTokens() {
@@ -1080,6 +1099,9 @@ class AiPanel {
         LlmClient.TokenUsage totalUsage = LlmClient.TokenUsage.EMPTY;
         Map<String, Integer> callCounts = new HashMap<>();
         List<String> recentCalls = new ArrayList<>();
+        long turnAiMs = 0;
+        long turnToolMs = 0;
+        int turnToolCalls = 0;
         for (int i = 0; i < MAX_ITERATIONS; i++) {
             if (Thread.interrupted()) {
                 throw new InterruptedException();
@@ -1089,6 +1111,7 @@ class AiPanel {
             drainClientOutput();
             LlmClient.ChatResponse response = client.chatWithTools(systemPrompt, messages, tools);
             long callLatency = System.currentTimeMillis() - callStart;
+            turnAiMs += callLatency;
             if (response == null) {
                 String err = "No response from LLM";
                 conversation.add(new ConversationEntry(AiRole.ERROR, err));
@@ -1125,6 +1148,7 @@ class AiPanel {
                     String key = toolCall.name() + " " + arguments;
                     int repeats = callCounts.merge(key, 1, Integer::sum);
                     String result;
+                    long toolStart = System.currentTimeMillis();
                     if (repeats > MAX_IDENTICAL_TOOL_CALLS) {
                         result = "You have already called " + toolCall.name() + " with these exact arguments "
                                  + (repeats - 1) + " times in this turn and the result will not change. Stop calling "
@@ -1132,7 +1156,12 @@ class AiPanel {
                     } else {
                         result = executeTuiTool(toolCall.name(), toolCall.arguments());
                     }
-                    log(LogLevel.RESULT, toolCall.name(), result);
+                    long toolElapsed = System.currentTimeMillis() - toolStart;
+                    turnToolMs += toolElapsed;
+                    turnToolCalls++;
+                    sessionToolTimeMs += toolElapsed;
+                    sessionToolCalls++;
+                    log(LogLevel.RESULT, toolCall.name() + " (" + formatToolTime(toolElapsed) + ")", result);
                     recentCalls.add(toolCall.name() + " " + summarize(arguments, 80) + " -> " + summarize(result, 120));
                     results.add(new LlmClient.ToolResult(toolCall.id(), truncateToolResult(result)));
                 }
@@ -1141,12 +1170,17 @@ class AiPanel {
                 String text = response.text();
                 sessionTotalTokens += totalUsage.totalTokens();
                 if (text != null && !text.isBlank()) {
-                    long elapsed = (System.currentTimeMillis() - thinkingStartTime) / 1000;
-                    conversation.add(new ConversationEntry(AiRole.ASSISTANT, text, elapsed, totalUsage.totalTokens()));
+                    long elapsed = System.currentTimeMillis() - thinkingStartTime;
+                    ConversationEntry entry = new ConversationEntry(
+                            AiRole.ASSISTANT, text, elapsed, turnAiMs, turnToolMs, turnToolCalls,
+                            totalUsage.totalTokens());
+                    conversation.add(entry);
+                    turnTimings.add(new long[] { turnAiMs, turnToolMs, turnToolCalls });
                     String tokenInfo = totalUsage.totalTokens() > 0
                             ? ", " + LlmClient.formatTokens(totalUsage.totalTokens()) + " tokens"
                             : "";
-                    log(LogLevel.RESPONSE, "Response (" + elapsed + "s" + tokenInfo + describeCacheSignal(totalUsage) + ")",
+                    log(LogLevel.RESPONSE,
+                            "Response (" + entry.timing() + tokenInfo + describeCacheSignal(totalUsage) + ")",
                             text);
                 } else {
                     String err = "Empty response from LLM.";
@@ -1218,6 +1252,13 @@ class AiPanel {
         return String.format(Locale.ROOT, "%.1fs", millis / 1000.0);
     }
 
+    /**
+     * Tool calls are usually fast, so show milliseconds below one second and one decimal second above.
+     */
+    private static String formatToolTime(long millis) {
+        return millis < 1000 ? millis + "ms" : formatSeconds(millis);
+    }
+
     private static String summarize(String text, int max) {
         if (text == null) {
             return "";
@@ -1252,7 +1293,7 @@ class AiPanel {
             String tokenSuffix = titleTokens > 0 ? ", " + LlmClient.formatTokens(titleTokens) + " tokens" : "";
             titleLine = Line.from(
                     Span.styled(" AI ", Style.EMPTY.bold()),
-                    Span.styled("(" + titleElapsed + "s" + tokenSuffix + ") ", Style.EMPTY.dim()));
+                    Span.styled("(" + formatSeconds(titleElapsed) + tokenSuffix + ") ", Style.EMPTY.dim()));
         } else if (sessionTotalTokens > 0) {
             titleLine = Line.from(
                     Span.styled(" AI ", Style.EMPTY.bold()),
@@ -1374,11 +1415,13 @@ class AiPanel {
 
         // Show elapsed time and token count as a dimmed line below the markdown when at the bottom
         long lastElapsed = -1;
+        String lastTiming = "";
         int lastTokens = 0;
         if (!thinking.get() && !conversation.isEmpty()) {
             ConversationEntry last = conversation.get(conversation.size() - 1);
-            if (last.role() == AiRole.ASSISTANT && last.elapsedSeconds() >= 0) {
-                lastElapsed = last.elapsedSeconds();
+            if (last.role() == AiRole.ASSISTANT && last.elapsedMs() >= 0) {
+                lastElapsed = last.elapsedMs();
+                lastTiming = last.timing();
                 lastTokens = last.totalTokens();
             }
         }
@@ -1443,7 +1486,8 @@ class AiPanel {
         if (elapsedArea != null && lastElapsed >= 0) {
             String tokenSuffix = lastTokens > 0 ? ", " + LlmClient.formatTokens(lastTokens) + " tokens" : "";
             frame.renderWidget(
-                    Paragraph.from(Line.from(Span.styled("(" + lastElapsed + "s" + tokenSuffix + ")", Style.EMPTY.dim()))),
+                    Paragraph.from(
+                            Line.from(Span.styled("(" + lastTiming + tokenSuffix + ")", Style.EMPTY.dim()))),
                     elapsedArea);
         }
         if (statusArea != null) {
@@ -1664,14 +1708,15 @@ class AiPanel {
         int requestCount = entries.size();
 
         // Per-model aggregation
-        Map<String, int[]> perModel = new LinkedHashMap<>();
+        Map<String, long[]> perModel = new LinkedHashMap<>();
         for (AiUsageEntry e : entries) {
             String key = modelTableKey(e);
-            int[] stats = perModel.computeIfAbsent(key, k -> new int[4]);
+            long[] stats = perModel.computeIfAbsent(key, k -> new long[5]);
             stats[0]++; // requests
             stats[1] += e.inputTokens();
             stats[2] += e.outputTokens();
             stats[3] += e.totalTokens();
+            stats[4] += e.latencyMs();
         }
 
         // Tokens per question (panel requests only): the round trips made for one question share its sequence
@@ -1725,9 +1770,12 @@ class AiPanel {
                 Span.styled(")", dimStyle)));
         summaryLines.add(Line.from(
                 Span.styled("Avg latency: ", dimStyle),
-                Span.styled((totalLatency / requestCount / 1000) + "s", cyanStyle),
-                Span.styled("   Total time: ", dimStyle),
-                Span.styled((totalLatency / 1000) + "s", cyanStyle)));
+                Span.styled(formatSeconds(totalLatency / requestCount), cyanStyle),
+                Span.styled("   AI time: ", dimStyle),
+                Span.styled(formatSeconds(totalLatency), cyanStyle),
+                Span.styled("   Tool time: ", dimStyle),
+                Span.styled(formatSeconds(sessionToolTimeMs), cyanStyle),
+                Span.styled(" (" + sessionToolCalls + " calls)", dimStyle)));
         frame.renderWidget(
                 Paragraph.from(new dev.tamboui.text.Text(summaryLines, dev.tamboui.layout.Alignment.LEFT)),
                 summaryArea);
@@ -1735,14 +1783,15 @@ class AiPanel {
         // --- Per-model table ---
         Rect tableArea = sections.get(1);
         List<Row> rows = new ArrayList<>();
-        for (Map.Entry<String, int[]> entry : perModel.entrySet()) {
-            int[] s = entry.getValue();
+        for (Map.Entry<String, long[]> entry : perModel.entrySet()) {
+            long[] s = entry.getValue();
             rows.add(Row.from(
                     Cell.from(Span.styled(entry.getKey(), cyanStyle)),
                     Cell.from(String.valueOf(s[0])),
-                    Cell.from(LlmClient.formatTokens(s[1])),
-                    Cell.from(LlmClient.formatTokens(s[2])),
-                    Cell.from(LlmClient.formatTokens(s[3]))));
+                    Cell.from(LlmClient.formatTokens((int) s[1])),
+                    Cell.from(LlmClient.formatTokens((int) s[2])),
+                    Cell.from(LlmClient.formatTokens((int) s[3])),
+                    Cell.from(formatSeconds(s[4] / s[0]))));
         }
         Table table = Table.builder()
                 .rows(rows)
@@ -1751,19 +1800,38 @@ class AiPanel {
                         Cell.from(Span.styled("REQS", Style.EMPTY.bold())),
                         Cell.from(Span.styled("INPUT", Style.EMPTY.bold())),
                         Cell.from(Span.styled("OUTPUT", Style.EMPTY.bold())),
-                        Cell.from(Span.styled("TOTAL", Style.EMPTY.bold()))))
+                        Cell.from(Span.styled("TOTAL", Style.EMPTY.bold())),
+                        Cell.from(Span.styled("AVG", Style.EMPTY.bold()))))
                 .widths(
                         Constraint.fill(),
                         Constraint.length(6),
                         Constraint.length(8),
                         Constraint.length(8),
-                        Constraint.length(8))
+                        Constraint.length(8),
+                        Constraint.length(7))
                 .build();
         frame.renderStatefulWidget(table, tableArea, statsTableState);
 
-        // --- Token bar chart per turn ---
-        if (hasChart && turnTokens.size() > 1) {
-            Rect chartArea = sections.get(2);
+        // --- Charts per question: tokens on the left, AI vs tool time on the right ---
+        if (hasChart && (turnTokens.size() > 1 || turnTimings.size() > 1)) {
+            Rect chartsArea = sections.get(2);
+            List<long[]> timings = new ArrayList<>(turnTimings);
+            boolean showTime = timings.size() > 1 && chartsArea.width() >= 40;
+            List<Rect> halves = showTime
+                    ? Layout.horizontal().constraints(Constraint.fill(), Constraint.length(1), Constraint.fill())
+                            .split(chartsArea)
+                    : List.of(chartsArea);
+            if (turnTokens.size() > 1) {
+                renderTokensPerQuestion(frame, halves.get(0), turnTokens);
+            }
+            if (showTime) {
+                renderTimePerQuestion(frame, halves.get(2), timings);
+            }
+        }
+    }
+
+    private void renderTokensPerQuestion(Frame frame, Rect chartArea, List<Integer> turnTokens) {
+        {
 
             // Title row + chart
             List<Rect> chartParts = Layout.vertical()
@@ -1800,6 +1868,47 @@ class AiPanel {
         }
     }
 
+    /**
+     * One group of two bars per answered question: time waiting for the model next to time spent in tool calls.
+     */
+    private void renderTimePerQuestion(Frame frame, Rect chartArea, List<long[]> timings) {
+        List<Rect> chartParts = Layout.vertical()
+                .constraints(Constraint.length(1), Constraint.fill())
+                .split(chartArea);
+        Style aiStyle = Style.EMPTY.fg(Theme.accent());
+        Style toolStyle = Theme.warning();
+        frame.renderWidget(
+                Paragraph.from(Line.from(
+                        Span.styled("Time per question: ", Style.EMPTY.bold()),
+                        Span.styled("\u25a0 ai ", aiStyle),
+                        Span.styled("\u25a0 tools", toolStyle))),
+                chartParts.get(0));
+
+        Rect barArea = chartParts.get(1);
+        long maxMs = 1;
+        for (long[] t : timings) {
+            maxMs = Math.max(maxMs, Math.max(t[0], t[1]));
+        }
+        // each question takes two 1-wide bars plus a gap
+        int maxGroups = Math.max(1, barArea.width() / 3);
+        int startIdx = Math.max(0, timings.size() - maxGroups);
+        List<BarGroup> groups = new ArrayList<>();
+        for (int i = startIdx; i < timings.size(); i++) {
+            long[] t = timings.get(i);
+            groups.add(BarGroup.of(
+                    Bar.builder().value(t[0]).textValue("").style(aiStyle).build(),
+                    Bar.builder().value(t[1]).textValue("").style(toolStyle).build()));
+        }
+        BarChart barChart = BarChart.builder()
+                .data(groups)
+                .max(maxMs + maxMs / 20)
+                .barWidth(1)
+                .barGap(0)
+                .groupGap(1)
+                .build();
+        frame.renderWidget(barChart, barArea);
+    }
+
     private List<AiUsageEntry> combinedUsageEntries() {
         List<AiUsageEntry> combined = new ArrayList<>(usageHistory.size() + 8);
         combined.addAll(usageHistory);
@@ -1821,6 +1930,7 @@ class AiPanel {
      */
     void resetUsage() {
         usageHistory.clear();
+        turnTimings.clear();
         usageResetAt = Instant.now();
         statsScrollOffset = 0;
     }
@@ -2297,29 +2407,38 @@ class AiPanel {
             stats[4] += e.latencyMs();
         }
         StringBuilder sb = new StringBuilder();
-        sb.append("Requests: ").append(entries.size());
+        sb.append("**AI usage:** ").append(entries.size()).append(" request(s)");
         if (routeRequests > 0) {
             sb.append(" (").append(tuiRequests).append(" from this panel, ").append(routeRequests)
                     .append(" from the integration)");
         }
-        sb.append(", tokens: ").append(LlmClient.formatTokens(totalTokens))
+        sb.append("\n\n");
+        sb.append("- **Tokens:** ").append(LlmClient.formatTokens(totalTokens))
                 .append(" (in ").append(LlmClient.formatTokens(totalInput))
-                .append(", out ").append(LlmClient.formatTokens(totalOutput))
-                .append("), avg latency: ").append(totalLatency / entries.size()).append(" ms\n");
-        for (Map.Entry<String, long[]> entry : perModel.entrySet()) {
-            long[] stats = entry.getValue();
-            sb.append("- ").append(entry.getKey()).append(": ").append(stats[0]).append(" request(s), ")
-                    .append(LlmClient.formatTokens((int) stats[3])).append(" tokens (in ")
-                    .append(LlmClient.formatTokens((int) stats[1])).append(", out ")
-                    .append(LlmClient.formatTokens((int) stats[2])).append("), avg ")
-                    .append(stats[4] / stats[0]).append(" ms\n");
+                .append(", out ").append(LlmClient.formatTokens(totalOutput)).append(")\n");
+        sb.append("- **Avg latency:** ").append(formatSeconds(totalLatency / entries.size())).append("\n");
+        if (sessionToolCalls > 0) {
+            sb.append("- **AI time:** ").append(formatSeconds(totalLatency))
+                    .append(", **Tool time:** ").append(formatSeconds(sessionToolTimeMs))
+                    .append(" in ").append(sessionToolCalls).append(" tool call(s)\n");
         }
         AiUsageEntry last = usageHistory.isEmpty() ? null : usageHistory.get(usageHistory.size() - 1);
         if (last != null) {
-            sb.append("Last request: ").append(LlmClient.formatTokens(last.totalTokens())).append(" tokens in ")
-                    .append(last.latencyMs()).append(" ms\n");
+            sb.append("- **Last request:** ").append(LlmClient.formatTokens(last.totalTokens()))
+                    .append(" tokens in ").append(formatSeconds(last.latencyMs())).append("\n");
         }
-        sb.append("Ctrl+U opens the full usage view with the per-turn chart.");
+        sb.append("\n| Model | Reqs | In | Out | Total | Avg |\n|---|---|---|---|---|---|\n");
+        for (Map.Entry<String, long[]> entry : perModel.entrySet()) {
+            long[] stats = entry.getValue();
+            sb.append("| ").append(entry.getKey())
+                    .append(" | ").append(stats[0])
+                    .append(" | ").append(LlmClient.formatTokens((int) stats[1]))
+                    .append(" | ").append(LlmClient.formatTokens((int) stats[2]))
+                    .append(" | ").append(LlmClient.formatTokens((int) stats[3]))
+                    .append(" | ").append(formatSeconds(stats[4] / stats[0]))
+                    .append(" |\n");
+        }
+        sb.append("\n_Ctrl+U opens the full usage view with the per-question charts._");
         return sb.toString().strip();
     }
 
@@ -2374,8 +2493,11 @@ class AiPanel {
         cursorPos = 0;
         scrollOffset = 0;
         usageHistory.clear();
+        turnTimings.clear();
         statsScrollOffset = 0;
         sessionTotalTokens = 0;
+        sessionToolTimeMs = 0;
+        sessionToolCalls = 0;
         if (messages != null) {
             messages.clear();
         }

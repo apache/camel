@@ -63,6 +63,10 @@ import org.apache.camel.util.json.JsonArray;
 import org.apache.camel.util.json.JsonObject;
 import org.apache.camel.util.json.Jsoner;
 
+import static org.apache.camel.dsl.jbang.core.commands.tui.SourceRefactorings.*;
+import static org.apache.camel.dsl.jbang.core.commands.tui.SourceValidationSupport.*;
+import static org.apache.camel.dsl.jbang.core.commands.tui.YamlSourceContext.*;
+
 /**
  * Reusable source code viewer with syntax highlighting, scrolling, and line-number display. Can be used by any tab that
  * needs to show route source code. Supports a plain-text edit mode for local files (dev mode / local folder).
@@ -161,6 +165,7 @@ class SourceViewer {
     private Path editableFile;
     private boolean editMode;
     private final TextAreaState editState = new TextAreaState();
+    private final YamlSourceContext yaml = new YamlSourceContext(editState);
     /** Markdown render mode prior to entering edit; restored on cancel. */
     private boolean markdownModeBeforeEdit;
     private boolean dirty;
@@ -319,6 +324,11 @@ class SourceViewer {
     /** Package-private for tests that drive the edit buffer directly. */
     TextAreaState editState() {
         return editState;
+    }
+
+    /** The YAML structure analysis over the edit buffer; package-private for tests. */
+    YamlSourceContext yamlContext() {
+        return yaml;
     }
 
     boolean isEditable() {
@@ -837,7 +847,7 @@ class SourceViewer {
             return true;
         }
         if (ke.isKey(KeyCode.TAB) && ke.hasShift()) {
-            moveCursorToPreviousIndentStop();
+            yaml.moveCursorToPreviousIndentStop();
             return true;
         }
         if (ke.isKey(KeyCode.TAB) && autocompleteProvider != null) {
@@ -913,891 +923,6 @@ class SourceViewer {
         return name.endsWith(".yaml") || name.endsWith(".yml");
     }
 
-    record YamlEndpointContext(String component, boolean consumer, String uri, boolean needsParameters) {
-        YamlEndpointContext(String component, boolean consumer, String uri) {
-            this(component, consumer, uri, false);
-        }
-    }
-
-    static final java.util.Set<String> CONSUMER_EIPS
-            = java.util.Set.of("from", "pollEnrich", "poll-enrich", "poll", "interceptFrom", "intercept-from");
-    static final java.util.Set<String> PRODUCER_EIPS
-            = java.util.Set.of("to", "toD", "to-d", "wireTap", "wire-tap", "enrich",
-                    "interceptSendToEndpoint", "intercept-send-to-endpoint");
-
-    YamlEndpointContext findEnclosingComponent(int fromRow) {
-        String cursorLine = editState.getLine(fromRow);
-        // a blank line's own leading whitespace can be stale after a Shift+Tab dedent (see
-        // effectiveBlankIndent) — use the cursor's real column so a cursor dedented back out of
-        // an endpoint's parameters: block isn't mistaken for still being inside it
-        int cursorIndent = cursorLine.isBlank() ? effectiveBlankIndent(fromRow) : countLeadingSpaces(cursorLine);
-
-        // list items (- key:) are inside steps, not inside parameters
-        if (!cursorLine.isBlank() && cursorLine.trim().startsWith("- ")) {
-            return null;
-        }
-
-        // blank line positioned as a sibling of a uri: line with no parameters: block yet —
-        // offer to create one. Scan siblings at exactly cursorIndent; a shallower line ends it.
-        if (cursorLine.isBlank()) {
-            for (int i = fromRow - 1; i >= 0; i--) {
-                String line = editState.getLine(i);
-                if (line.isBlank()) {
-                    continue;
-                }
-                int indent = countLeadingSpaces(line);
-                if (indent < cursorIndent) {
-                    break;
-                }
-                if (indent == cursorIndent) {
-                    String trimmed = line.trim();
-                    if (trimmed.startsWith("parameters:")) {
-                        // a parameters: block already exists as a sibling here — nothing to
-                        // auto-create, and the cursor isn't inside it either (it's a sibling,
-                        // not a child); fall through to generic EIP-field completion instead
-                        return null;
-                    }
-                    if (trimmed.startsWith("uri:") || trimmed.startsWith("- uri:")) {
-                        return findComponentFromUriSibling(i);
-                    }
-                }
-            }
-        }
-
-        int parametersRow = -1;
-        int parametersIndent = -1;
-
-        for (int i = fromRow; i >= 0; i--) {
-            String line = editState.getLine(i);
-            if (line.isBlank()) {
-                continue;
-            }
-            int indent = countLeadingSpaces(line);
-            String trimmed = line.trim();
-
-            if (trimmed.startsWith("parameters:") && indent < cursorIndent) {
-                parametersRow = i;
-                parametersIndent = indent;
-                break;
-            }
-            if (i < fromRow && indent < cursorIndent && !trimmed.startsWith("#")) {
-                // stop if we hit a structural boundary (steps:, from:, etc.)
-                break;
-            }
-            // also stop if we hit a list item at a shallower or equal indent — we've left the parameters scope
-            if (i < fromRow && indent <= cursorIndent) {
-                String key = extractEipName(trimmed);
-                if (key != null && ("steps".equals(key) || "from".equals(key)
-                        || trimmed.startsWith("- "))) {
-                    break;
-                }
-            }
-        }
-
-        if (parametersRow < 0) {
-            return null;
-        }
-
-        String foundScheme = null;
-        String foundUri = null;
-        for (int i = parametersRow - 1; i >= 0; i--) {
-            String line = editState.getLine(i);
-            if (line.isBlank()) {
-                continue;
-            }
-            int indent = countLeadingSpaces(line);
-            String trimmed = line.trim();
-
-            if (indent == parametersIndent) {
-                if (foundScheme == null && (trimmed.startsWith("uri:") || trimmed.startsWith("- uri:"))) {
-                    foundScheme = extractSchemeFromUriLine(trimmed);
-                    foundUri = extractUriValue(trimmed);
-                }
-            }
-
-            if (indent < parametersIndent) {
-                String eipName = extractEipName(trimmed);
-                if (foundScheme == null) {
-                    foundScheme = extractInlineUri(trimmed);
-                    foundUri = foundScheme;
-                }
-                if (foundScheme != null) {
-                    boolean consumer = eipName != null && CONSUMER_EIPS.contains(eipName);
-                    return new YamlEndpointContext(foundScheme, consumer, foundUri);
-                }
-                break;
-            }
-        }
-
-        if (foundScheme != null) {
-            return new YamlEndpointContext(foundScheme, false, foundUri);
-        }
-        return null;
-    }
-
-    /**
-     * When cursor is below a uri: line (no parameters: block), find the uri: among siblings and build the endpoint
-     * context. Walks up to find the parent EIP to determine consumer vs producer.
-     */
-    private YamlEndpointContext findComponentFromUriSibling(int uriOrSiblingRow) {
-        int indent = countLeadingSpaces(editState.getLine(uriOrSiblingRow));
-
-        // find the uri: line among siblings at the same indent
-        String uriValue = null;
-        String scheme = null;
-        for (int i = uriOrSiblingRow; i >= 0; i--) {
-            String line = editState.getLine(i);
-            if (line.isBlank()) {
-                continue;
-            }
-            int li = countLeadingSpaces(line);
-            if (li < indent) {
-                break;
-            }
-            if (li == indent && line.trim().startsWith("uri:")) {
-                scheme = extractSchemeFromUriLine(line.trim());
-                uriValue = extractUriValue(line.trim());
-                break;
-            }
-        }
-        if (scheme == null) {
-            return null;
-        }
-
-        // find the parent EIP to determine consumer vs producer
-        boolean consumer = false;
-        for (int i = uriOrSiblingRow; i >= 0; i--) {
-            String line = editState.getLine(i);
-            if (line.isBlank()) {
-                continue;
-            }
-            int li = countLeadingSpaces(line);
-            if (li < indent) {
-                String eipName = extractEipName(line.trim());
-                if (eipName != null) {
-                    consumer = CONSUMER_EIPS.contains(eipName);
-                }
-                break;
-            }
-        }
-        return new YamlEndpointContext(scheme, consumer, uriValue, true);
-    }
-
-    java.util.Set<String> collectExistingParameters(int fromRow) {
-        java.util.Set<String> keys = new java.util.LinkedHashSet<>();
-        // find the parameters: row by walking up
-        int parametersRow = -1;
-        int parametersIndent = -1;
-        String cursorLine = editState.getLine(fromRow);
-        int cursorIndent = countLeadingSpaces(cursorLine);
-
-        // blank lines: derive indent from nearest preceding non-blank line
-        if (cursorLine.isBlank()) {
-            for (int i = fromRow - 1; i >= 0; i--) {
-                String prev = editState.getLine(i);
-                if (!prev.isBlank()) {
-                    if (prev.trim().startsWith("parameters:")) {
-                        parametersRow = i;
-                        parametersIndent = countLeadingSpaces(prev);
-                    } else {
-                        cursorIndent = countLeadingSpaces(prev);
-                    }
-                    break;
-                }
-            }
-        }
-
-        if (parametersRow < 0) {
-            for (int i = fromRow; i >= 0; i--) {
-                String line = editState.getLine(i);
-                if (line.isBlank()) {
-                    continue;
-                }
-                String trimmed = line.trim();
-                int indent = countLeadingSpaces(line);
-                if (trimmed.startsWith("parameters:") && indent < cursorIndent) {
-                    parametersRow = i;
-                    parametersIndent = indent;
-                    break;
-                }
-                if (i < fromRow && indent < cursorIndent && !trimmed.startsWith("#")) {
-                    break;
-                }
-            }
-        }
-        if (parametersRow < 0) {
-            return keys;
-        }
-        int childIndent = parametersIndent + 2;
-        for (int i = parametersRow + 1; i < editState.lineCount(); i++) {
-            if (i == fromRow) {
-                continue;
-            }
-            String line = editState.getLine(i);
-            if (line.isBlank()) {
-                continue;
-            }
-            int indent = countLeadingSpaces(line);
-            if (indent < childIndent) {
-                break;
-            }
-            if (indent == childIndent) {
-                String trimmed = line.trim();
-                int colonIdx = trimmed.indexOf(':');
-                if (colonIdx > 0) {
-                    keys.add(trimmed.substring(0, colonIdx).trim());
-                }
-            }
-        }
-        return keys;
-    }
-
-    record YamlUriContext(boolean consumer, String prefix) {
-    }
-
-    YamlUriContext findUriContext(int row) {
-        String lineText = editState.getLine(row);
-        String trimmed = lineText.trim();
-        if (trimmed.startsWith("- ")) {
-            trimmed = trimmed.substring(2).trim();
-        }
-
-        // Check if cursor is on a "uri:" line (possibly with partial value)
-        if (trimmed.startsWith("uri:")) {
-            String value = trimmed.substring(4).trim();
-            if (value.startsWith("\"") || value.startsWith("'")) {
-                value = value.substring(1);
-            }
-            if (value.endsWith("\"") || value.endsWith("'")) {
-                value = value.substring(0, value.length() - 1);
-            }
-            // if value already contains a colon, scheme is already typed
-            if (value.contains(":")) {
-                return null;
-            }
-            // walk up to find the parent EIP
-            int indent = countLeadingSpaces(lineText);
-            for (int i = row - 1; i >= 0; i--) {
-                String prev = editState.getLine(i);
-                if (prev.isBlank()) {
-                    continue;
-                }
-                int prevIndent = countLeadingSpaces(prev);
-                if (prevIndent < indent) {
-                    String eipName = extractEipName(prev.trim());
-                    if (eipName != null) {
-                        boolean consumer = CONSUMER_EIPS.contains(eipName);
-                        return new YamlUriContext(consumer, value);
-                    }
-                    break;
-                }
-            }
-            return null;
-        }
-
-        // Check if cursor is on an inline EIP line: "to: " or "from: kafka" (no colon in value)
-        int colonIdx = trimmed.indexOf(':');
-        if (colonIdx > 0) {
-            String eipName = trimmed.substring(0, colonIdx).trim();
-            if (CONSUMER_EIPS.contains(eipName) || PRODUCER_EIPS.contains(eipName)) {
-                String value = trimmed.substring(colonIdx + 1).trim();
-                if (value.startsWith("\"") || value.startsWith("'")) {
-                    value = value.substring(1);
-                }
-                if (value.endsWith("\"") || value.endsWith("'")) {
-                    value = value.substring(0, value.length() - 1);
-                }
-                if (value.contains(":")) {
-                    return null;
-                }
-                boolean consumer = CONSUMER_EIPS.contains(eipName);
-                return new YamlUriContext(consumer, value);
-            }
-        }
-        return null;
-    }
-
-    record YamlEipContext(String eipName) {
-    }
-
-    int deriveBlankLineIndent(int fromRow) {
-        return deriveIndentFromPredecessor(fromRow);
-    }
-
-    private int deriveInsertionIndent(int fromRow) {
-        // use the scope line (parent EIP) to derive indent for correct nesting
-        int scopeRow = findScopeLineRow(fromRow);
-        if (scopeRow >= 0) {
-            String scopeLine = editState.getLine(scopeRow);
-            int scopeIndent = countLeadingSpaces(scopeLine);
-            String scopeTrimmed = scopeLine.trim();
-            if (scopeTrimmed.startsWith("- ")) {
-                return scopeIndent + 4;
-            }
-            return scopeIndent + 2;
-        }
-        // on a blank line with whitespace, walk up to find the parent EIP at lower indent
-        String cursorLine = editState.getLine(fromRow);
-        if (cursorLine.isBlank()) {
-            int wsIndent = cursorLine.length();
-            if (wsIndent > 0) {
-                for (int i = fromRow - 1; i >= 0; i--) {
-                    String line = editState.getLine(i);
-                    if (line.isBlank()) {
-                        continue;
-                    }
-                    int indent = countLeadingSpaces(line);
-                    if (indent < wsIndent) {
-                        String t = line.trim();
-                        if (t.startsWith("- ")) {
-                            t = t.substring(2).trim();
-                        }
-                        if (t.endsWith(":") && !STRUCTURAL_KEYS.contains(extractEipName(t))) {
-                            return indent + (line.trim().startsWith("- ") ? 4 : 2);
-                        }
-                        wsIndent = indent;
-                    }
-                }
-            }
-        }
-        return deriveIndentFromPredecessor(fromRow);
-    }
-
-    private int deriveIndentFromPredecessor(int fromRow) {
-        for (int i = fromRow - 1; i >= 0; i--) {
-            String prev = editState.getLine(i);
-            if (prev.isBlank()) {
-                continue;
-            }
-            int indent = countLeadingSpaces(prev);
-            String pt = prev.trim();
-            if (pt.endsWith(":")) {
-                return indent + (pt.startsWith("- ") ? 4 : 2);
-            }
-            return indent;
-        }
-        return 0;
-    }
-
-    /**
-     * Shift+Tab: move the cursor left, within the current line's leading whitespace, to the nearest enclosing
-     * structural indent level — the same indent a completion inserted at this position would have used one level up.
-     * Only acts while the cursor sits inside leading whitespace (nothing typed yet on the line); otherwise it is a
-     * no-op.
-     */
-    void moveCursorToPreviousIndentStop() {
-        int row = editState.cursorRow();
-        String line = editState.getLine(row);
-        int col = Math.min(editState.cursorCol(), line.length());
-        if (col <= 0 || !line.substring(0, col).isBlank()) {
-            return;
-        }
-
-        int target = 0;
-        for (int i = row - 1; i >= 0; i--) {
-            String prev = editState.getLine(i);
-            if (prev.isBlank()) {
-                continue;
-            }
-            int indent = countLeadingSpaces(prev);
-            if (indent < col) {
-                target = indent;
-                break;
-            }
-        }
-        SourceEditorNavigation.positionCursor(editState, row, target);
-    }
-
-    /**
-     * Effective indent for a possibly-blank line. On the live cursor row, the line's own leading whitespace can be
-     * stale — Shift+Tab (see {@link #moveCursorToPreviousIndentStop()}) repositions the cursor within existing
-     * whitespace without trimming it — so the cursor's column is the source of truth there. For any other row (e.g.
-     * tests resolving an arbitrary row without moving the live cursor there), trust the row's own real whitespace when
-     * it has any, and only derive from the preceding line when it is truly empty.
-     */
-    private int effectiveBlankIndent(int row) {
-        if (row == editState.cursorRow()) {
-            return editState.cursorCol();
-        }
-        int literal = countLeadingSpaces(editState.getLine(row));
-        return literal > 0 ? literal : deriveBlankLineIndent(row);
-    }
-
-    String findParentYamlKey(int fromRow) {
-        String cursorLine = editState.getLine(fromRow);
-
-        // a blank line has no real indentation yet — derive the intended nesting level so a
-        // cursor nested under e.g. "expression:" resolves to that key, not to the enclosing EIP
-        // (which would otherwise re-offer already-set fields like name/expression)
-        int cursorIndent = cursorLine.isBlank() ? effectiveBlankIndent(fromRow) : countLeadingSpaces(cursorLine);
-
-        // walk up to find parent key at lower indent
-        for (int i = fromRow; i >= 0; i--) {
-            String line = editState.getLine(i);
-            if (line.isBlank()) {
-                continue;
-            }
-            int indent = countLeadingSpaces(line);
-            if (indent < cursorIndent) {
-                String key = extractEipName(line.trim());
-                if (key != null) {
-                    return dashToCamelCase(key);
-                }
-                break;
-            }
-        }
-        return "root";
-    }
-
-    private static final java.util.Set<String> STRUCTURAL_KEYS
-            = java.util.Set.of("steps", "uri", "parameters", "from", "expression", "routeConfiguration",
-                    "routeTemplate", "templatedRoute", "rest", "beans");
-
-    private static final java.util.Set<String> BREADCRUMB_SKIP_KEYS
-            = java.util.Set.of("steps", "uri", "expression",
-                    "routeConfiguration", "routeTemplate", "templatedRoute", "rest", "beans");
-
-    YamlEipContext findEnclosingEip(int fromRow) {
-        String cursorLine = editState.getLine(fromRow);
-        int cursorIndent = cursorLine.isBlank() ? effectiveBlankIndent(fromRow) : countLeadingSpaces(cursorLine);
-
-        // if cursor is inside a parameters: block, defer to component completion
-        for (int i = fromRow; i >= 0; i--) {
-            String line = editState.getLine(i);
-            if (line.isBlank()) {
-                continue;
-            }
-            int indent = countLeadingSpaces(line);
-            String trimmed = line.trim();
-            if (trimmed.startsWith("parameters:") && indent < cursorIndent) {
-                return null;
-            }
-            if (i < fromRow && indent < cursorIndent) {
-                break;
-            }
-        }
-
-        // walk up to find the parent EIP
-        boolean skippedStructural = false;
-        for (int i = fromRow; i >= 0; i--) {
-            String line = editState.getLine(i);
-            if (line.isBlank()) {
-                continue;
-            }
-            int indent = countLeadingSpaces(line);
-            if (indent < cursorIndent) {
-                String eipName = extractEipName(line.trim());
-                if (eipName != null && !STRUCTURAL_KEYS.contains(eipName)) {
-                    if (skippedStructural) {
-                        return null;
-                    }
-                    String camelName = dashToCamelCase(eipName);
-                    return new YamlEipContext(camelName);
-                }
-                // keep walking up if we hit a structural key
-                skippedStructural = true;
-                cursorIndent = indent;
-            }
-        }
-        return null;
-    }
-
-    java.util.Set<String> collectExistingSiblingKeys(int fromRow) {
-        java.util.Set<String> keys = new java.util.LinkedHashSet<>();
-        String cursorLine = editState.getLine(fromRow);
-        int cursorIndent = cursorLine.isBlank() ? effectiveBlankIndent(fromRow) : countLeadingSpaces(cursorLine);
-
-        // scan upward for siblings at same indent
-        for (int i = fromRow - 1; i >= 0; i--) {
-            String line = editState.getLine(i);
-            if (line.isBlank()) {
-                continue;
-            }
-            int indent = countLeadingSpaces(line);
-            if (indent < cursorIndent) {
-                break;
-            }
-            if (indent == cursorIndent) {
-                String trimmed = line.trim();
-                int colonIdx = trimmed.indexOf(':');
-                if (colonIdx > 0) {
-                    keys.add(trimmed.substring(0, colonIdx).trim());
-                }
-            }
-        }
-        // scan downward for siblings at same indent
-        int lineCount = editState.lineCount();
-        for (int i = fromRow + 1; i < lineCount; i++) {
-            String line = editState.getLine(i);
-            if (line.isBlank()) {
-                continue;
-            }
-            int indent = countLeadingSpaces(line);
-            if (indent < cursorIndent) {
-                break;
-            }
-            if (indent == cursorIndent) {
-                String trimmed = line.trim();
-                int colonIdx = trimmed.indexOf(':');
-                if (colonIdx > 0) {
-                    keys.add(trimmed.substring(0, colonIdx).trim());
-                }
-            }
-        }
-        return keys;
-    }
-
-    static String dashToCamelCase(String text) {
-        if (text == null || !text.contains("-")) {
-            return text;
-        }
-        StringBuilder sb = new StringBuilder(text.length());
-        boolean upper = false;
-        for (int i = 0; i < text.length(); i++) {
-            char c = text.charAt(i);
-            if (c == '-') {
-                upper = true;
-            } else {
-                sb.append(upper ? Character.toUpperCase(c) : c);
-                upper = false;
-            }
-        }
-        return sb.toString();
-    }
-
-    int findScopeLineRow(int cursorRow) {
-        if (cursorRow < 0 || cursorRow >= editState.lineCount()) {
-            return -1;
-        }
-        String cursorLine = editState.getLine(cursorRow);
-        String trimmed = cursorLine.trim();
-        if (trimmed.startsWith("- ")) {
-            trimmed = trimmed.substring(2).trim();
-        }
-
-        // bare list item (- ) with no key yet — no scope
-        if (cursorLine.trim().startsWith("- ") && trimmed.isEmpty()) {
-            return -1;
-        }
-
-        // if cursor is on a uri: line, scope is this row
-        if (trimmed.startsWith("uri:")) {
-            return cursorRow;
-        }
-        int colonIdx = trimmed.indexOf(':');
-        if (colonIdx > 0) {
-            String key = trimmed.substring(0, colonIdx).trim();
-            // inline producer/consumer EIP (to:, enrich:) — exclude structural keys like from:
-            if (!STRUCTURAL_KEYS.contains(key)
-                    && (CONSUMER_EIPS.contains(key) || PRODUCER_EIPS.contains(key))) {
-                return cursorRow;
-            }
-            // EIP definition line in a list (e.g., "- split:", "- log:")
-            if (!STRUCTURAL_KEYS.contains(key) && cursorLine.trim().startsWith("- ")) {
-                return cursorRow;
-            }
-        }
-
-        int cursorIndent = countLeadingSpaces(cursorLine);
-
-        if (cursorLine.isBlank()) {
-            cursorIndent = editState.cursorCol();
-        }
-
-        // walk up looking for the scope line
-        int parametersRow = -1;
-        int parametersIndent = -1;
-        for (int i = cursorRow; i >= 0; i--) {
-            String line = editState.getLine(i);
-            if (line.isBlank()) {
-                continue;
-            }
-            int indent = countLeadingSpaces(line);
-            String t = line.trim();
-
-            if (t.startsWith("parameters:") && indent < cursorIndent) {
-                parametersRow = i;
-                parametersIndent = indent;
-                break;
-            }
-            if (i < cursorRow && indent < cursorIndent) {
-                String eipName = extractEipName(t);
-                if (eipName != null && !STRUCTURAL_KEYS.contains(eipName)) {
-                    // for from:/to: blocks, scope to the uri: line if cursor is below it
-                    if ("from".equals(eipName) || CONSUMER_EIPS.contains(eipName)
-                            || PRODUCER_EIPS.contains(eipName)) {
-                        for (int j = i + 1; j < cursorRow; j++) {
-                            String jl = editState.getLine(j);
-                            if (!jl.isBlank() && jl.trim().startsWith("uri:")) {
-                                return j;
-                            }
-                        }
-                    }
-                    return i;
-                }
-                cursorIndent = indent;
-            }
-        }
-
-        // inside parameters: block — find the uri: line at the same indent
-        if (parametersRow >= 0) {
-            for (int i = parametersRow - 1; i >= 0; i--) {
-                String line = editState.getLine(i);
-                if (line.isBlank()) {
-                    continue;
-                }
-                int indent = countLeadingSpaces(line);
-                String t = line.trim();
-                if (indent == parametersIndent && (t.startsWith("uri:") || t.startsWith("- uri:"))) {
-                    return i;
-                }
-                if (indent < parametersIndent) {
-                    // check for inline uri on the EIP line itself
-                    String eipName = extractEipName(t);
-                    if (eipName != null && (CONSUMER_EIPS.contains(eipName) || PRODUCER_EIPS.contains(eipName))) {
-                        return i;
-                    }
-                    break;
-                }
-            }
-        }
-        return -1;
-    }
-
-    private String buildBreadcrumb(int cursorRow) {
-        if (cursorRow < 0 || cursorRow >= editState.lineCount()) {
-            return "";
-        }
-        List<String> parts = new ArrayList<>();
-        String cursorLine = editState.getLine(cursorRow);
-        // a blank line's own leading whitespace can be stale (see effectiveBlankIndent), so use
-        // the cursor's real column rather than assuming the deepest nesting implied by the line
-        // above — otherwise dedenting with Shift+Tab wouldn't be reflected in the breadcrumb
-        int cursorIndent = cursorLine.isBlank() ? effectiveBlankIndent(cursorRow) : countLeadingSpaces(cursorLine);
-
-        int prevIndent = cursorIndent;
-        for (int i = cursorRow - 1; i >= 0; i--) {
-            String line = editState.getLine(i);
-            if (line.isBlank()) {
-                continue;
-            }
-            int indent = countLeadingSpaces(line);
-            if (indent < prevIndent) {
-                String trimmed = line.trim();
-                if (trimmed.startsWith("- ")) {
-                    trimmed = trimmed.substring(2).trim();
-                }
-                // only include structural parent keys (lines ending with ":" with no value)
-                if (!trimmed.endsWith(":")) {
-                    prevIndent = indent;
-                    continue;
-                }
-                String key = extractEipName(line.trim());
-                if (key != null) {
-                    if (!BREADCRUMB_SKIP_KEYS.contains(key)
-                            && !key.endsWith("Configuration")) {
-                        parts.add(key);
-                    }
-                    if ("route".equals(key)) {
-                        break;
-                    }
-                }
-                prevIndent = indent;
-            }
-        }
-
-        if (parts.isEmpty()) {
-            return "";
-        }
-        Collections.reverse(parts);
-        return String.join(" > ", parts);
-    }
-
-    private String adjustPasteIndent(String text, int cursorRow) {
-        String current = editState.getLine(cursorRow);
-        int targetIndent;
-        if (current == null || current.isBlank()) {
-            // on a blank line (including one carrying ENTER auto-indent whitespace, which handlePaste
-            // strips before inserting): infer the block indent from the context above the cursor and
-            // apply it to every pasted line
-            int fallback = current == null ? 0 : countLeadingSpaces(current);
-            targetIndent = inferBlankLineIndent(text, cursorRow, fallback);
-        } else if (editState.cursorCol() == 0) {
-            // inserting before an existing line: match that line's own indent
-            targetIndent = countLeadingSpaces(current);
-        } else {
-            // pasting into the middle of existing content: keep the cursor column
-            targetIndent = editState.cursorCol();
-        }
-        return reindentBlock(text, targetIndent);
-    }
-
-    private int inferBlankLineIndent(String text, int cursorRow, int fallback) {
-        int prevIndent = -1;
-        boolean prevIsParentKey = false;
-        int listIndent = -1;
-        for (int i = cursorRow - 1; i >= 0; i--) {
-            String l = editState.getLine(i);
-            if (l.isBlank()) {
-                continue;
-            }
-            if (prevIndent < 0) {
-                // nearest non-blank line: its indent, and whether it opens a child block
-                prevIndent = countLeadingSpaces(l);
-                String t = l.trim();
-                if (t.startsWith("- ")) {
-                    t = t.substring(2).trim();
-                }
-                prevIsParentKey = t.endsWith(":");
-            }
-            if (l.trim().startsWith("- ")) {
-                // nearest existing list item — the sibling level for a pasted list item
-                listIndent = countLeadingSpaces(l);
-                break;
-            }
-        }
-        String firstTrimmed = firstNonBlankTrimmed(text);
-        boolean pasteIsListItem = firstTrimmed.startsWith("- ") || firstTrimmed.equals("-");
-        if (pasteIsListItem && listIndent >= 0) {
-            // align a pasted step with the nearest existing sibling step
-            return listIndent;
-        } else if (prevIndent >= 0) {
-            // otherwise follow the previous line, indenting deeper under a parent key
-            return prevIndent + (prevIsParentKey ? 2 : 0);
-        }
-        return fallback;
-    }
-
-    static String reindentBlock(String text, int targetIndent) {
-        // normalize line endings: some terminals deliver pasted line breaks as \r\n or bare \r,
-        // which would otherwise collapse a multi-line paste into a single line
-        text = text.replace("\r\n", "\n").replace('\r', '\n');
-        text = text.replace("\t", "  ");
-        String[] pasteLines = text.split("\n", -1);
-        int minIndent = Integer.MAX_VALUE;
-        for (String pl : pasteLines) {
-            if (!pl.isBlank()) {
-                minIndent = Math.min(minIndent, countLeadingSpaces(pl));
-            }
-        }
-        if (minIndent == Integer.MAX_VALUE) {
-            minIndent = 0;
-        }
-        int delta = targetIndent - minIndent;
-        if (delta == 0) {
-            return text;
-        }
-        StringBuilder sb = new StringBuilder();
-        for (int i = 0; i < pasteLines.length; i++) {
-            if (i > 0) {
-                sb.append('\n');
-            }
-            String pl = pasteLines[i];
-            if (pl.isBlank()) {
-                sb.append(pl);
-            } else if (delta > 0) {
-                sb.append(" ".repeat(delta)).append(pl);
-            } else {
-                int strip = Math.min(-delta, countLeadingSpaces(pl));
-                sb.append(pl.substring(strip));
-            }
-        }
-        return sb.toString();
-    }
-
-    private static String firstNonBlankTrimmed(String text) {
-        for (String line : text.split("\r\n|\r|\n", -1)) {
-            if (!line.isBlank()) {
-                return line.trim();
-            }
-        }
-        return "";
-    }
-
-    private static int countLeadingSpaces(String line) {
-        int count = 0;
-        for (int i = 0; i < line.length(); i++) {
-            if (line.charAt(i) == ' ') {
-                count++;
-            } else {
-                break;
-            }
-        }
-        return count;
-    }
-
-    private static String extractSchemeFromUriLine(String trimmed) {
-        String value = extractUriValue(trimmed);
-        if (value == null) {
-            return null;
-        }
-        int schemeEnd = value.indexOf(':');
-        if (schemeEnd > 0) {
-            return value.substring(0, schemeEnd);
-        }
-        return value;
-    }
-
-    static String extractUriValue(String trimmed) {
-        int colonIdx = trimmed.indexOf(':');
-        if (colonIdx < 0) {
-            return null;
-        }
-        String value = trimmed.substring(colonIdx + 1).trim();
-        if (value.startsWith("\"") || value.startsWith("'")) {
-            value = value.substring(1);
-        }
-        if (value.endsWith("\"") || value.endsWith("'")) {
-            value = value.substring(0, value.length() - 1);
-        }
-        if (!value.isEmpty()) {
-            return value;
-        }
-        return null;
-    }
-
-    private static String extractEipName(String trimmed) {
-        String line = trimmed;
-        if (line.startsWith("- ")) {
-            line = line.substring(2).trim();
-        }
-        int colonIdx = line.indexOf(':');
-        if (colonIdx > 0) {
-            return line.substring(0, colonIdx).trim();
-        }
-        return null;
-    }
-
-    private static String extractInlineUri(String trimmed) {
-        String line = trimmed;
-        if (line.startsWith("- ")) {
-            line = line.substring(2).trim();
-        }
-        int colonIdx = line.indexOf(':');
-        if (colonIdx <= 0) {
-            return null;
-        }
-        String eipPart = line.substring(0, colonIdx).trim();
-        if (!CONSUMER_EIPS.contains(eipPart) && !PRODUCER_EIPS.contains(eipPart)) {
-            return null;
-        }
-        String uriPart = line.substring(colonIdx + 1).trim();
-        if (uriPart.isEmpty()) {
-            return null;
-        }
-        if (uriPart.startsWith("\"") || uriPart.startsWith("'")) {
-            uriPart = uriPart.substring(1);
-        }
-        if (uriPart.endsWith("\"") || uriPart.endsWith("'")) {
-            uriPart = uriPart.substring(0, uriPart.length() - 1);
-        }
-        int schemeEnd = uriPart.indexOf(':');
-        if (schemeEnd > 0) {
-            return uriPart.substring(0, schemeEnd);
-        }
-        return null;
-    }
-
     private void openAutocomplete() {
         if (isCamelYamlFile()) {
             openYamlAutocomplete();
@@ -1846,7 +971,7 @@ class SourceViewer {
 
     private void openYamlAutocomplete() {
         int row = editState.cursorRow();
-        if (findScopeLineRow(row) < 0) {
+        if (yaml.findScopeLineRow(row) < 0) {
             return;
         }
         String lineText = editState.getLine(row);
@@ -1858,7 +983,7 @@ class SourceViewer {
         }
 
         // try component name completion on uri: lines first
-        YamlUriContext uriCtx = findUriContext(row);
+        YamlUriContext uriCtx = yaml.findUriContext(row);
         if (uriCtx != null && autocompleteProvider != null) {
             String role = uriCtx.consumer() ? "consumer" : "producer";
             String context = "yaml-uri:" + role;
@@ -1870,7 +995,7 @@ class SourceViewer {
             return;
         }
 
-        YamlEndpointContext ctx = findEnclosingComponent(row);
+        YamlEndpointContext ctx = yaml.findEnclosingComponent(row);
         if (ctx != null) {
             int colonIdx = trimmed.indexOf(':');
             if (colonIdx > 0) {
@@ -1897,7 +1022,7 @@ class SourceViewer {
                     // deriveInsertionIndent's EIP-scope heuristic, which resolves the scope to
                     // the uri: line itself here and then adds a level, nesting parameters: one
                     // level too deep and breaking findEnclosingComponent's uri-sibling lookup
-                    int indent = effectiveBlankIndent(row);
+                    int indent = yaml.effectiveBlankIndent(row);
                     String indentStr = " ".repeat(indent);
                     editState.moveCursorToLineStart();
                     editState.insert(indentStr + "parameters:");
@@ -1909,7 +1034,7 @@ class SourceViewer {
 
                 String filter = trimmed;
                 String role = ctx.consumer() ? "consumer" : "producer";
-                java.util.Set<String> existing = collectExistingParameters(editState.cursorRow());
+                java.util.Set<String> existing = yaml.collectExistingParameters(editState.cursorRow());
                 String context = "yaml:" + ctx.component() + ":" + role;
                 if (!existing.isEmpty()) {
                     context += ":" + String.join(",", existing);
@@ -1928,7 +1053,7 @@ class SourceViewer {
 
         // tree-driven completion — walk up to find parent key, use completion tree
         if (autocompleteProvider != null) {
-            String parentKey = findParentYamlKey(row);
+            String parentKey = yaml.findParentYamlKey(row);
             int colonIdx = trimmed.indexOf(':');
 
             if (colonIdx > 0) {
@@ -1951,7 +1076,7 @@ class SourceViewer {
             } else {
                 // key completion
                 String filter = trimmed;
-                java.util.Set<String> existing = collectExistingSiblingKeys(row);
+                java.util.Set<String> existing = yaml.collectExistingSiblingKeys(row);
                 String context = "yaml-tree:" + parentKey;
                 if (!existing.isEmpty()) {
                     context += ":" + String.join(",", existing);
@@ -2021,10 +1146,10 @@ class SourceViewer {
         int indent;
         if (currentLine.isEmpty()) {
             // truly empty line (no auto-inserted whitespace yet) — derive from the enclosing EIP
-            indent = deriveInsertionIndent(editState.cursorRow());
+            indent = yaml.deriveInsertionIndent(editState.cursorRow());
         } else if (currentLine.isBlank()) {
             // whitespace-only line: the cursor's column is the real, intended nesting depth —
-            // Shift+Tab (see moveCursorToPreviousIndentStop()) can dedent it within the existing
+            // Shift+Tab (see yaml.moveCursorToPreviousIndentStop()) can dedent it within the existing
             // whitespace without trimming the line, so the line's own length would be stale here
             indent = Math.min(cursorCol, currentLine.length());
         } else {
@@ -2253,32 +1378,6 @@ class SourceViewer {
         return visible != null ? visible : inlineErrors;
     }
 
-    /** Package-private (rather than private) so tests can exercise it directly. */
-    static boolean isEmptyValueLine(String line) {
-        String trimmed = line.trim();
-        if (trimmed.startsWith("- ")) {
-            trimmed = trimmed.substring(2).trim();
-        }
-        int colon = trimmed.indexOf(':');
-        if (colon < 0) {
-            return trimmed.isEmpty();
-        }
-        return trimmed.substring(colon + 1).trim().isEmpty();
-    }
-
-    static Map<Integer, String> buildInlineErrors(List<String> errors, String content) {
-        Map<Integer, String> result = new java.util.LinkedHashMap<>();
-        java.util.regex.Pattern linePattern = java.util.regex.Pattern.compile("^Line (\\d+): (.*)");
-        for (String error : errors) {
-            java.util.regex.Matcher m = linePattern.matcher(error);
-            if (m.matches()) {
-                int lineNum = Integer.parseInt(m.group(1)) - 1;
-                result.putIfAbsent(lineNum, m.group(2));
-            }
-        }
-        return result;
-    }
-
     private List<String> validateProperties(String content) {
         List<String> msgs = new ArrayList<>();
         String[] lines = content.split("\n", -1);
@@ -2306,43 +1405,6 @@ class SourceViewer {
             return yamlValidator.validate(content);
         } catch (Exception e) {
             return List.of();
-        }
-    }
-
-    private static String cleanValidationMessage(String msg) {
-        // strip FQCN prefix like "com.fasterxml...MarkedYAMLException: "
-        int colonSpace = msg.indexOf(": ");
-        if (colonSpace > 0) {
-            String prefix = msg.substring(0, colonSpace);
-            if (prefix.contains(".") && !prefix.contains(" ")) {
-                msg = msg.substring(colonSpace + 2);
-            }
-        }
-        // strip "at [Source: (StringReader); line: N, column: N]"
-        int atSource = msg.indexOf("at [Source:");
-        if (atSource > 0) {
-            msg = msg.substring(0, atSource).stripTrailing();
-        }
-        // strip "in 'reader', " prefix from snakeyaml messages
-        msg = msg.replace("in 'reader', ", "");
-        return msg;
-    }
-
-    private static String extractNodeName(String instanceLocation) {
-        if (instanceLocation == null || instanceLocation.isEmpty()) {
-            return null;
-        }
-        int slash = instanceLocation.lastIndexOf('/');
-        String last = slash >= 0 ? instanceLocation.substring(slash + 1) : instanceLocation;
-        if (last.isEmpty()) {
-            return null;
-        }
-        // skip pure numeric segments (array indices)
-        try {
-            Integer.parseInt(last);
-            return null;
-        } catch (NumberFormatException e) {
-            return last;
         }
     }
 
@@ -2441,7 +1503,7 @@ class SourceViewer {
                 recordEditChange();
                 int row = editState.cursorRow();
                 String current = editState.getLine(row);
-                String adjusted = adjustPasteIndent(text, row);
+                String adjusted = yaml.adjustPasteIndent(text, row);
                 if (current != null && current.isBlank() && !current.isEmpty()) {
                     // strip the blank line's leading whitespace (e.g. from ENTER auto-indent) so the
                     // reindented block's own indent is not stacked on top of it
@@ -2661,7 +1723,7 @@ class SourceViewer {
         } else {
             titleSpans.add(Span.styled(" Edit [" + info + (dirty ? " *" : "") + "] ", ts));
             if (isCamelYamlFile()) {
-                String breadcrumb = buildBreadcrumb(editState.cursorRow());
+                String breadcrumb = yaml.buildBreadcrumb(editState.cursorRow());
                 if (!breadcrumb.isEmpty()) {
                     titleSpans.add(Span.styled(" " + breadcrumb + " ", Style.EMPTY.dim().italic()));
                 }
@@ -2764,7 +1826,7 @@ class SourceViewer {
 
         // scope line highlight — shows which EIP or uri: line the cursor belongs to
         if (isCamelYamlFile()) {
-            int scopeRow = findScopeLineRow(editState.cursorRow());
+            int scopeRow = yaml.findScopeLineRow(editState.cursorRow());
             if (scopeRow >= 0 && scopeRow != editState.cursorRow()) {
                 int relativeRow = scopeRow - editState.scrollRow();
                 if (relativeRow >= 0 && relativeRow < editorArea.height()) {
@@ -3237,54 +2299,6 @@ class SourceViewer {
         notifySave(existed ? "Added route to " + newFileName : "Extracted to " + newFileName, false);
     }
 
-    /**
-     * Sanitizes a user-supplied string into a safe file base-name: replaces whitespace and illegal characters with
-     * hyphens, collapses consecutive hyphens, and strips leading/trailing hyphens.
-     */
-    static String sanitizeFileName(String name) {
-        if (name == null) {
-            return "";
-        }
-        // Replace whitespace and any char that is not alphanumeric, hyphen, underscore, or dot with a hyphen
-        String sanitized = name.trim().replaceAll("[^a-zA-Z0-9._-]", "-");
-        // Collapse consecutive hyphens
-        sanitized = sanitized.replaceAll("-{2,}", "-");
-        // Strip leading/trailing hyphens
-        sanitized = sanitized.replaceAll("^-+|-+$", "");
-        return sanitized;
-    }
-
-    /**
-     * Builds the YAML content for a new standalone route file containing the extracted step block.
-     */
-    static String buildExtractedRouteYaml(String name, List<String> blockLines, int stepIndent) {
-        // Standard Camel YAML route indentation: step items at column 6.
-        String stepPrefix = "      ";
-        StringBuilder sb = new StringBuilder();
-        sb.append("- route:\n");
-        sb.append("    from:\n");
-        sb.append("      uri: direct:").append(name).append("\n");
-        sb.append("    steps:\n");
-        for (String line : blockLines) {
-            String stripped = line.length() >= stepIndent ? line.substring(stepIndent) : line.stripLeading();
-            sb.append(stepPrefix).append(stripped).append("\n");
-        }
-        return sb.toString();
-    }
-
-    /**
-     * Returns {@code true} if the line represents an EIP step list item that can be extracted to a new file. Excludes
-     * {@code - route:} and {@code - from:} which are structural, not steps.
-     */
-    static boolean isExtractableStep(String line) {
-        if (line == null) {
-            return false;
-        }
-        String trimmed = line.trim();
-        return trimmed.startsWith("- ") && !trimmed.equals("- ")
-                && !trimmed.startsWith("- route:") && !trimmed.startsWith("- from:");
-    }
-
     private void applyReplaceUri(int row, String rawLine, String newUri) {
         String newLine = replaceUriOnLine(rawLine, newUri);
         recordEditChange();
@@ -3294,50 +2308,6 @@ class SourceViewer {
         editState.setText(YamlBlockEditor.fromLines(lines));
         SourceEditorNavigation.positionCursor(editState, row, countLeadingSpaces(newLine));
         notifySave("Replaced URI with: " + newUri, false);
-    }
-
-    /**
-     * Removes the {@code parameters:} sibling block immediately after a {@code uri:} line when the URI is replaced.
-     * Only applies to block-form {@code uri:} lines; inline-form URIs carry no separate parameters block.
-     */
-    static void removeParametersBlock(List<String> lines, int uriRow, String uriLine) {
-        if (uriLine == null || !uriLine.trim().startsWith("uri:")) {
-            return;
-        }
-        int uriIndent = YamlBlockEditor.leadingSpaces(uriLine);
-        int paramsStart = -1;
-        int paramsEnd = -1;
-        for (int i = uriRow + 1; i < lines.size(); i++) {
-            String line = lines.get(i);
-            if (line.isBlank()) {
-                continue;
-            }
-            int indent = YamlBlockEditor.leadingSpaces(line);
-            if (indent < uriIndent) {
-                break;
-            }
-            if (indent == uriIndent) {
-                if (line.trim().startsWith("parameters:")) {
-                    paramsStart = i;
-                    paramsEnd = i;
-                    // Extend to all child lines (indented deeper than uriIndent)
-                    for (int j = i + 1; j < lines.size(); j++) {
-                        String next = lines.get(j);
-                        if (next.isBlank()) {
-                            continue;
-                        }
-                        if (YamlBlockEditor.leadingSpaces(next) <= uriIndent) {
-                            break;
-                        }
-                        paramsEnd = j;
-                    }
-                }
-                break; // another sibling key — stop regardless
-            }
-        }
-        if (paramsStart >= 0) {
-            lines.subList(paramsStart, paramsEnd + 1).clear();
-        }
     }
 
     private void applyExtractToProperty(int row, String rawLine, String propKey) {
@@ -3363,106 +2333,6 @@ class SourceViewer {
             }
         }
         notifySave("Extracted to property: " + propKey, false);
-    }
-
-    /**
-     * Extracts the URI (without query parameters) from a YAML endpoint line, or {@code null} if the line is not a
-     * recognized endpoint/URI line.
-     */
-    static String extractUriFromLine(String line) {
-        if (line == null) {
-            return null;
-        }
-        String trimmed = line.trim();
-        for (String prefix : List.of(
-                "- to:", "- from:", "from:", "- toD:", "- to-d:", "- wireTap:", "- wire-tap:",
-                "- enrich:", "- pollEnrich:", "- poll-enrich:", "- poll:", "uri:")) {
-            if (trimmed.startsWith(prefix)) {
-                String val = trimmed.substring(prefix.length()).trim();
-                val = unquoteYaml(val);
-                if (val.isEmpty() || val.startsWith("{") || val.startsWith("#")) {
-                    return null;
-                }
-                int q = val.indexOf('?');
-                return q >= 0 ? val.substring(0, q) : val;
-            }
-        }
-        return null;
-    }
-
-    /**
-     * Replaces the URI on a YAML endpoint line, stripping any existing query parameters.
-     */
-    static String replaceUriOnLine(String line, String newUri) {
-        if (line == null) {
-            return line;
-        }
-        String trimmed = line.trim();
-        int indent = countLeadingSpaces(line);
-        String indentStr = line.substring(0, indent);
-        for (String prefix : List.of(
-                "- to:", "- from:", "from:", "- toD:", "- to-d:", "- wireTap:", "- wire-tap:",
-                "- enrich:", "- pollEnrich:", "- poll-enrich:", "- poll:", "uri:")) {
-            if (trimmed.startsWith(prefix)) {
-                return indentStr + prefix + " " + newUri;
-            }
-        }
-        return line;
-    }
-
-    /**
-     * Extracts the plain-string value from a {@code key: value} YAML line, or {@code null} if the line does not carry
-     * an extractable literal (empty, structural, already a placeholder, or a URI endpoint line).
-     */
-    static String extractValueFromLine(String line) {
-        if (line == null) {
-            return null;
-        }
-        String trimmed = line.trim();
-        if (trimmed.isEmpty() || trimmed.startsWith("#") || trimmed.startsWith("- ")) {
-            return null;
-        }
-        int colon = trimmed.indexOf(':');
-        if (colon <= 0) {
-            return null;
-        }
-        String val = trimmed.substring(colon + 1).trim();
-        if (val.isEmpty() || val.startsWith("[") || val.startsWith("*")) {
-            return null;
-        }
-        val = unquoteYaml(val);
-        // Skip YAML maps and existing property placeholders
-        if (val.startsWith("{") || (val.startsWith("{{") && val.endsWith("}}"))) {
-            return null;
-        }
-        return val;
-    }
-
-    /**
-     * Replaces the value on a YAML {@code key: value} line with {@code {{propKey}}}, preserving indentation and key.
-     */
-    static String replaceValueWithPlaceholder(String line, String propKey) {
-        if (line == null) {
-            return line;
-        }
-        String trimmed = line.trim();
-        int indent = countLeadingSpaces(line);
-        String indentStr = line.substring(0, indent);
-        int colon = trimmed.indexOf(':');
-        if (colon <= 0) {
-            return line;
-        }
-        return indentStr + trimmed.substring(0, colon + 1) + " \"{{" + propKey + "}}\"";
-    }
-
-    private static String unquoteYaml(String val) {
-        if (val.length() >= 2 && val.startsWith("\"") && val.endsWith("\"")) {
-            return val.substring(1, val.length() - 1);
-        }
-        if (val.length() >= 2 && val.startsWith("'") && val.endsWith("'")) {
-            return val.substring(1, val.length() - 1);
-        }
-        return val;
     }
 
     /**

@@ -25,7 +25,7 @@ class SourceViewerPasteIndentTest {
     @Test
     void noIndentPastedAtIndent8() {
         String paste = "- log:\n    message: Hello\n- to:\n    uri: kafka:orders";
-        String result = SourceViewer.reindentBlock(paste, 8);
+        String result = YamlSourceContext.reindentBlock(paste, 8);
         assertThat(result).isEqualTo(
                 "        - log:\n            message: Hello\n        - to:\n            uri: kafka:orders");
     }
@@ -33,21 +33,21 @@ class SourceViewerPasteIndentTest {
     @Test
     void alreadyCorrectIndent() {
         String paste = "    - log:\n        message: Hello";
-        String result = SourceViewer.reindentBlock(paste, 4);
+        String result = YamlSourceContext.reindentBlock(paste, 4);
         assertThat(result).isEqualTo(paste);
     }
 
     @Test
     void reduceIndent() {
         String paste = "        - log:\n            message: Hello";
-        String result = SourceViewer.reindentBlock(paste, 4);
+        String result = YamlSourceContext.reindentBlock(paste, 4);
         assertThat(result).isEqualTo("    - log:\n        message: Hello");
     }
 
     @Test
     void preservesRelativeIndentation() {
         String paste = "- split:\n    expression:\n      simple: ${body}\n    steps:\n      - log:\n          message: part";
-        String result = SourceViewer.reindentBlock(paste, 6);
+        String result = YamlSourceContext.reindentBlock(paste, 6);
         assertThat(result).isEqualTo(
                 "      - split:\n          expression:\n            simple: ${body}\n          steps:\n            - log:\n                message: part");
     }
@@ -55,7 +55,7 @@ class SourceViewerPasteIndentTest {
     @Test
     void blankLinesPreserved() {
         String paste = "- log:\n    message: Hello\n\n- to:\n    uri: direct:foo";
-        String result = SourceViewer.reindentBlock(paste, 4);
+        String result = YamlSourceContext.reindentBlock(paste, 4);
         assertThat(result).isEqualTo(
                 "    - log:\n        message: Hello\n\n    - to:\n        uri: direct:foo");
     }
@@ -63,28 +63,28 @@ class SourceViewerPasteIndentTest {
     @Test
     void singleLineNoChange() {
         String paste = "message: Hello";
-        String result = SourceViewer.reindentBlock(paste, 0);
+        String result = YamlSourceContext.reindentBlock(paste, 0);
         assertThat(result).isEqualTo("message: Hello");
     }
 
     @Test
     void singleLineIndented() {
         String paste = "message: Hello";
-        String result = SourceViewer.reindentBlock(paste, 6);
+        String result = YamlSourceContext.reindentBlock(paste, 6);
         assertThat(result).isEqualTo("      message: Hello");
     }
 
     @Test
     void pasteWithExistingIndentShiftedUp() {
         String paste = "            brokers: localhost:9092\n            groupId: my-group";
-        String result = SourceViewer.reindentBlock(paste, 8);
+        String result = YamlSourceContext.reindentBlock(paste, 8);
         assertThat(result).isEqualTo("        brokers: localhost:9092\n        groupId: my-group");
     }
 
     @Test
     void zeroTargetStripsIndent() {
         String paste = "    - log:\n        message: Hello";
-        String result = SourceViewer.reindentBlock(paste, 0);
+        String result = YamlSourceContext.reindentBlock(paste, 0);
         assertThat(result).isEqualTo("- log:\n    message: Hello");
     }
 
@@ -92,21 +92,21 @@ class SourceViewerPasteIndentTest {
     void carriageReturnLineEndingsNormalized() {
         // bare \r line endings (some terminals) must not collapse into a single line
         String paste = "- to:\r    uri: mock:dead";
-        String result = SourceViewer.reindentBlock(paste, 8);
+        String result = YamlSourceContext.reindentBlock(paste, 8);
         assertThat(result).isEqualTo("        - to:\n            uri: mock:dead");
     }
 
     @Test
     void crlfLineEndingsNormalized() {
         String paste = "- to:\r\n    uri: mock:dead";
-        String result = SourceViewer.reindentBlock(paste, 8);
+        String result = YamlSourceContext.reindentBlock(paste, 8);
         assertThat(result).isEqualTo("        - to:\n            uri: mock:dead");
     }
 
     @Test
     void trailingNewlinePreserved() {
         String paste = "- log:\n    message: Hello\n";
-        String result = SourceViewer.reindentBlock(paste, 4);
+        String result = YamlSourceContext.reindentBlock(paste, 4);
         assertThat(result).isEqualTo("    - log:\n        message: Hello\n");
     }
 }

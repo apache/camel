@@ -724,20 +724,6 @@ public interface LangChain4jAgentEndpointBuilderFactory {
         public String langChain4jAgentToolExecutions() {
             return "CamelLangChain4jAgentToolExecutions";
         }
-        /**
-         * Set to true when user input is rejected by the configured moderation
-         * model; not set on success.
-         * 
-         * The option is a: {@code Boolean} type.
-         * 
-         * Group: producer
-         * 
-         * @return the name of the header {@code
-         * LangChain4jAgentModerationFlagged}.
-         */
-        public String langChain4jAgentModerationFlagged() {
-            return "CamelLangChain4jAgentModerationFlagged";
-        }
     }
     static LangChain4jAgentEndpointBuilder endpointBuilder(String componentName, String path) {
         class LangChain4jAgentEndpointBuilderImpl extends AbstractEndpointBuilder implements LangChain4jAgentEndpointBuilder, AdvancedLangChain4jAgentEndpointBuilder {

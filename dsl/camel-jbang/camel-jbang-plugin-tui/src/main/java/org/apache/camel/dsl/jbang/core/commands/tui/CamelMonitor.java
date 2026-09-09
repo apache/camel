@@ -170,6 +170,7 @@ public class CamelMonitor extends CamelCommand {
     private String lastWaveNotification;
     private boolean mcpInjectedKey;
     private TuiMcpServer mcpServer;
+    private Path mcpJsonFile;
     private TuiWebServer webServer;
     private McpFacade mcpFacade;
     private final Queue<McpFacade.PendingKey> pendingKeys = new ConcurrentLinkedQueue<>();
@@ -282,6 +283,43 @@ public class CamelMonitor extends CamelCommand {
     public Integer doCall() throws Exception {
         System.setProperty("java.awt.headless", "true");
 
+        String openDir = resolveOpenDirectory();
+        applyThemeOption();
+        configureRecording();
+        recordingManager.init(record != null);
+
+        // to make ServiceLoader work with tamboui for downloaded JARs
+        Thread.currentThread().setContextClassLoader(classLoader);
+
+        // data service first: tabs and popups reference its state
+        createDataService();
+        ctx = new MonitorContext(dataService.data(), dataService.infraData());
+        dataService.setContext(ctx);
+
+        // popups, tabs and their cross-wiring
+        createActionsPopup();
+        createProcessControlPopup();
+        wireContextCallbacks();
+        createTabRegistry();
+        setupGotoTabSupport();
+        createPopupManager();
+        wireOverviewActions();
+
+        loadInitialData(openDir);
+
+        // optional integrations: AI/MCP facade, MCP server, web server
+        createMcpFacade();
+        startMcpServer();
+        startWebServer();
+
+        runTui();
+        return 0;
+    }
+
+    /**
+     * If the name argument is a directory, returns it (and resets the name filter) so it can be opened as a project.
+     */
+    private String resolveOpenDirectory() {
         // Detect if name arg is a directory path — open it as a project instead of using it as a name/PID filter
         String openDir = null;
         if (!"*".equals(name)) {
@@ -291,7 +329,13 @@ public class CamelMonitor extends CamelCommand {
                 name = "*";
             }
         }
+        return openDir;
+    }
 
+    /**
+     * Validates and applies the --theme option.
+     */
+    private void applyThemeOption() {
         if (theme != null) {
             if (!Theme.isValidMode(theme)) {
                 String expected = String.join("' or '", ThemeMode.ids());
@@ -301,15 +345,12 @@ public class CamelMonitor extends CamelCommand {
             }
             Theme.applyStartupMode(theme);
         }
+    }
 
-        // Configure TamboUI recording if --record is specified
-        configureRecording();
-
-        recordingManager.init(record != null);
-
-        // to make ServiceLoader work with tamboui for downloaded JARs
-        Thread.currentThread().setContextClassLoader(classLoader);
-
+    /**
+     * Creates the data refresh service; tabs and popups reference its state so it is created first.
+     */
+    private void createDataService() {
         // Create data refresh service first — tabs and popups reference its state
         dataService = new DataRefreshService(
                 name,
@@ -351,11 +392,12 @@ public class CamelMonitor extends CamelCommand {
                 },
                 this::getStatusFile,
                 this::getErrorFile);
+    }
 
-        // Create shared context and tab instances
-        ctx = new MonitorContext(dataService.data(), dataService.infraData());
-        dataService.setContext(ctx);
-
+    /**
+     * Creates the actions popup (F2) wired to the data service and recording manager.
+     */
+    private void createActionsPopup() {
         actionsPopup = new ActionsPopup(
                 () -> dataService.data().get().stream()
                         .filter(i -> !i.vanishing && i.name != null)
@@ -378,7 +420,12 @@ public class CamelMonitor extends CamelCommand {
         actionsPopup.setContext(ctx);
         actionsPopup.setMonitorContext(ctx);
         actionsPopup.setNotificationCallback((msg, error) -> setNotification(msg, error));
+    }
 
+    /**
+     * Creates the process control popup and its bridge back to this monitor.
+     */
+    private void createProcessControlPopup() {
         processControlPopup = new ProcessControlPopup(ctx);
         processControlPopup.setActions(new ProcessControlPopup.ControlActions() {
             @Override
@@ -421,6 +468,12 @@ public class CamelMonitor extends CamelCommand {
                 return actionsPopup.hasRunningProcesses();
             }
         });
+    }
+
+    /**
+     * Wires the shared MonitorContext callbacks and connects the shell and AI panels.
+     */
+    private void wireContextCallbacks() {
         ctx.notificationCallback = (msg, error) -> setNotification(msg, error);
         ctx.openMarkdownCallback = actionsPopup::openMarkdown;
         ctx.openOptionsCallback = actionsPopup::openOptions;
@@ -434,7 +487,12 @@ public class CamelMonitor extends CamelCommand {
         actionsPopup.setBrowseFilesAction(this::openFilesPopup);
         actionsPopup.setSwitchIntegrationAction(
                 () -> popupManager.openSwitchPopup(ctx.selectedPid, getNonVanishingIntegrations()));
+    }
 
+    /**
+     * Creates the tab registry, initialises all tabs and wires their data refresh callbacks.
+     */
+    private void createTabRegistry() {
         tabRegistry = new TabRegistry(tabsState);
         tabRegistry.initTabs(ctx, dataService, this::resetIntegrationTabState);
         tabRegistry.setCallbacks(new TabRegistry.TabCallbacks() {
@@ -478,7 +536,12 @@ public class CamelMonitor extends CamelCommand {
                 popupManager.selectMorePopupEntry(index);
             }
         });
+    }
 
+    /**
+     * Registers the go-to-tab entries (including the pseudo entries for switch, shell and AI) in the actions popup.
+     */
+    private void setupGotoTabSupport() {
         List<TabRegistry.TabEntry> gotoEntries = tabRegistry.allTabEntries();
         gotoEntries.add(
                 new TabRegistry.TabEntry(TuiIcons.SWITCH, "Switch Integration", "Switch between integrations", "F3", -10, -1));
@@ -501,7 +564,12 @@ public class CamelMonitor extends CamelCommand {
             }
         });
         actionsPopup.setActiveTabFilter(ctx::findSelectedIntegration, tabRegistry::moreTabs);
+    }
 
+    /**
+     * Creates the popup manager that owns the switch, more, confirm and files popups.
+     */
+    private void createPopupManager() {
         popupManager = new PopupManager(
                 ctx, this::getNonVanishingIntegrations, tabRegistry::moreTabs, filesBrowser,
                 new PopupManager.PopupCallbacks() {
@@ -541,7 +609,12 @@ public class CamelMonitor extends CamelCommand {
                         }
                     }
                 });
+    }
 
+    /**
+     * Wires the Overview tab actions back to this monitor and the popups.
+     */
+    private void wireOverviewActions() {
         tabRegistry.overviewTab().setActions(new OverviewTab.OverviewActions() {
             @Override
             public void sendRouteCommand(String pid, String routeId, String command) {
@@ -578,7 +651,13 @@ public class CamelMonitor extends CamelCommand {
                 popupManager.showConfirm(title, message, onConfirm);
             }
         });
+    }
 
+    /**
+     * Performs the synchronous initial data load and either opens the given directory as a project or auto-selects the
+     * single running integration.
+     */
+    private void loadInitialData(String openDir) throws Exception {
         // Initial data load (synchronous before TUI starts)
         dataService.refreshSync(this::refreshLogData, this::refreshConditionalData);
 
@@ -592,7 +671,12 @@ public class CamelMonitor extends CamelCommand {
             // Auto-select if there's exactly one integration running
             tabRegistry.overviewTab().selectCurrentIntegration();
         }
+    }
 
+    /**
+     * Creates the MCP facade that exposes the TUI to AI agents, and connects it to the AI panel and overlays.
+     */
+    private void createMcpFacade() {
         canvasOverlay.setOnOpen(() -> {
             popupManager.dismissAll();
             actionsPopup.close();
@@ -672,8 +756,13 @@ public class CamelMonitor extends CamelCommand {
         aiPanel.setMcpFacade(mcpFacade);
         aiPanel.setOtelSpans(dataService.otelSpans());
         mcpFacade.setAiActivityLog(aiPanel::getActivityLog);
-        Path mcpJsonFile = null;
         actionsPopup.setAiActivityLog(aiPanel::getActivityLog);
+    }
+
+    /**
+     * Starts the embedded MCP server when --mcp is enabled.
+     */
+    private void startMcpServer() throws Exception {
         if (mcp) {
             mcpServer = new TuiMcpServer(mcpPort, mcpFacade);
             try {
@@ -690,7 +779,12 @@ public class CamelMonitor extends CamelCommand {
             }
         }
         aiPanel.setMcpInfo(mcp, mcpPort);
+    }
 
+    /**
+     * Starts the embedded web server when --web is enabled.
+     */
+    private void startWebServer() throws Exception {
         if (web) {
             webServer = new TuiWebServer(webPort, getMain(), classLoader, name, refreshInterval, theme);
             try {
@@ -702,7 +796,13 @@ public class CamelMonitor extends CamelCommand {
                 web = false;
             }
         }
+    }
 
+    /**
+     * Creates the TamboUI runner, completes the runtime wiring, runs the event loop and shuts everything down
+     * afterwards.
+     */
+    private void runTui() throws Exception {
         try (var tui = webBackend != null
                 ? TuiBackendHelper.createTuiRunner(webBackend)
                 : TuiBackendHelper.createTuiRunner()) {
@@ -749,7 +849,6 @@ public class CamelMonitor extends CamelCommand {
                 clearRecordingProperties();
             }
         }
-        return 0;
     }
 
     /**
@@ -984,6 +1083,46 @@ public class CamelMonitor extends CamelCommand {
             }
             return true;
         }
+        boolean textEditing = isTextInputActive();
+        // Each session (the local terminal, or a browser tab connected via --web) owns an
+        // independent CamelMonitor/TuiRunner, so quitting here only ends this session.
+        if (!textEditing && (ke.isCharIgnoreCase('q') || ke.isCtrlC())) {
+            if (!ke.isCtrlC() && ctx.confirmActions) {
+                popupManager.showConfirm("Confirm Quit", " Quit the TUI? ", () -> runner.quit());
+            } else {
+                runner.quit();
+            }
+            return true;
+        }
+        if (ke.isCtrlC()) {
+            runner.quit();
+            return true;
+        }
+        if (!textEditing && handleTabDigitKeys(ke)) {
+            return true;
+        }
+        MonitorTab activeMonitorTab = tabRegistry.activeTab();
+        boolean overlayActive = activeMonitorTab != null && activeMonitorTab.isOverlayActive();
+        if (opensHelp(ke, textEditing)) {
+            // Only opens the overlay: while it is visible, dispatch delegates to
+            // helpOverlay.handleKeyEvent (which handles F1/?/q/Esc to close) before reaching here.
+            MonitorTab tab = tabRegistry.activeTab();
+            if (tab != null) {
+                String help = tab.getHelpText();
+                if (help != null) {
+                    helpOverlay.open(help);
+                }
+            }
+            return true;
+        }
+        return handleFunctionKeys(ke);
+    }
+
+    /**
+     * Whether a text input (probe editor, search or filter field, SQL input, source editor) currently has focus, in
+     * which case single-letter global shortcuts must not fire.
+     */
+    private boolean isTextInputActive() {
         boolean probeEditing = tabRegistry.selectedTabIndex() == TAB_MORE
                 && tabRegistry.getActiveMoreTab() == tabRegistry.httpTab()
                 && tabRegistry.httpTab().isProbeMode();
@@ -1010,73 +1149,58 @@ public class CamelMonitor extends CamelCommand {
                 && tabRegistry.getActiveMoreTab() == tabRegistry.catalogTab()
                 && tabRegistry.catalogTab().isFilterInputActive();
         boolean filesBrowserTextActive = filesBrowser.isVisible() && filesBrowser.isSourceViewerTextInputActive();
-        boolean textEditing = probeEditing || sourceSearchActive || logSearchActive || spanFilterActive
+        return probeEditing || sourceSearchActive || logSearchActive || spanFilterActive
                 || beanFilterActive || classpathFilterActive || mavenDepsFilterActive || sqlInputActive
                 || catalogFilterActive || filesBrowserTextActive;
-        // Each session (the local terminal, or a browser tab connected via --web) owns an
-        // independent CamelMonitor/TuiRunner, so quitting here only ends this session.
-        if (!textEditing && (ke.isCharIgnoreCase('q') || ke.isCtrlC())) {
-            if (!ke.isCtrlC() && ctx.confirmActions) {
-                popupManager.showConfirm("Confirm Quit", " Quit the TUI? ", () -> runner.quit());
-            } else {
-                runner.quit();
-            }
-            return true;
+    }
+
+    /**
+     * Digit keys 1-0 switch tabs directly. Source needs an integration (not infra); the data tabs additionally need a
+     * running (non-phantom) integration.
+     */
+    private boolean handleTabDigitKeys(KeyEvent ke) {
+        if (ke.isChar('1')) {
+            return tabRegistry.handleTabKey(TAB_OVERVIEW, ctx, dataService);
         }
-        if (ke.isCtrlC()) {
-            runner.quit();
-            return true;
+        if (ke.isChar('3')) {
+            return tabRegistry.handleTabKey(TAB_LOG, ctx, dataService);
         }
-        if (!textEditing) {
-            if (ke.isChar('1')) {
-                return tabRegistry.handleTabKey(TAB_OVERVIEW, ctx, dataService);
+        if (!isInfraSelected()) {
+            if (ke.isChar('2')) {
+                return tabRegistry.handleTabKey(TAB_SOURCE, ctx, dataService);
             }
-            if (ke.isChar('3')) {
-                return tabRegistry.handleTabKey(TAB_LOG, ctx, dataService);
-            }
-            if (!isInfraSelected()) {
-                if (ke.isChar('2')) {
-                    return tabRegistry.handleTabKey(TAB_SOURCE, ctx, dataService);
+            if (!isPhantomSelected()) {
+                if (ke.isChar('4')) {
+                    return tabRegistry.handleTabKey(TAB_ACTIVITY, ctx, dataService);
                 }
-                if (!isPhantomSelected()) {
-                    if (ke.isChar('4')) {
-                        return tabRegistry.handleTabKey(TAB_ACTIVITY, ctx, dataService);
-                    }
-                    if (ke.isChar('5')) {
-                        return tabRegistry.handleTabKey(TAB_DIAGRAM, ctx, dataService);
-                    }
-                    if (ke.isChar('6')) {
-                        return tabRegistry.handleTabKey(TAB_ROUTES, ctx, dataService);
-                    }
-                    if (ke.isChar('7')) {
-                        return tabRegistry.handleTabKey(TAB_ENDPOINTS, ctx, dataService);
-                    }
-                    if (ke.isChar('8')) {
-                        return tabRegistry.handleTabKey(TAB_HISTORY, ctx, dataService);
-                    }
-                    if (ke.isChar('9')) {
-                        return tabRegistry.handleTabKey(TAB_ERRORS, ctx, dataService);
-                    }
-                    if (ke.isChar('0')) {
-                        return tabRegistry.handleTabKey(TAB_MORE, ctx, dataService);
-                    }
+                if (ke.isChar('5')) {
+                    return tabRegistry.handleTabKey(TAB_DIAGRAM, ctx, dataService);
+                }
+                if (ke.isChar('6')) {
+                    return tabRegistry.handleTabKey(TAB_ROUTES, ctx, dataService);
+                }
+                if (ke.isChar('7')) {
+                    return tabRegistry.handleTabKey(TAB_ENDPOINTS, ctx, dataService);
+                }
+                if (ke.isChar('8')) {
+                    return tabRegistry.handleTabKey(TAB_HISTORY, ctx, dataService);
+                }
+                if (ke.isChar('9')) {
+                    return tabRegistry.handleTabKey(TAB_ERRORS, ctx, dataService);
+                }
+                if (ke.isChar('0')) {
+                    return tabRegistry.handleTabKey(TAB_MORE, ctx, dataService);
                 }
             }
         }
-        MonitorTab activeMonitorTab = tabRegistry.activeTab();
-        boolean overlayActive = activeMonitorTab != null && activeMonitorTab.isOverlayActive();
-        if (opensHelp(ke, textEditing)) {
-            // Only opens the overlay: while it is visible, dispatch delegates to
-            // helpOverlay.handleKeyEvent (which handles F1/?/q/Esc to close) before reaching here.
-            MonitorTab tab = tabRegistry.activeTab();
-            if (tab != null) {
-                String help = tab.getHelpText();
-                if (help != null) {
-                    helpOverlay.open(help);
-                }
-            }
-            return true;
-        }
+        return false;
+    }
+
+    /**
+     * F6 shell, F8 AI panel, Ctrl+L log pin, Shift+F2 go-to tab, F2 actions, F3 switch integration, F10 process
+     * control.
+     */
+    private boolean handleFunctionKeys(KeyEvent ke) {
         if (ke.isKey(KeyCode.F6)) {
             if (shellPanel.isOpen()) {
                 shellPanel.close();
