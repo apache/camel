@@ -943,8 +943,8 @@ cycles backward.
 | `/model [model-name]` (`/m`)
 | Show the current model, or switch the session model.
 
-| `/write [confirm\|auto]` (`/w`)
-| Show or switch how file writes by the model (`tui_write_file`) are confirmed. `confirm` (default) shows the confirm dialog for every write, whatever the model passes; `auto` lets the model skip the dialog with `confirm=false`. The mode lasts for the session.
+| `/write [confirm\|auto\|live]` (`/w`)
+| Show or switch how file writes by the model (`tui_write_file`) are handled. `confirm` (default) shows the confirm dialog for every write, whatever the model passes; `auto` lets the model skip the dialog with `confirm=false`; `live` replays the edit in the Source editor so you watch it happen (see below). The mode lasts for the session.
 
 | `/tools [auto\|core\|full]` (`/t`)
 | Show which tool set is sent to the model, or switch it. `auto` (default) sends the core set to local providers and every tool to hosted ones; the choice is saved as `camel.tui.ai.tools`.
@@ -1070,6 +1070,21 @@ against the catalog of `camel.*` and Spring Boot options. `tui_write_file` runs 
 refuses to write an invalid file, returning the errors instead, so a model fixes them rather than the user
 finding them in the log after the reload (`validate=false` writes anyway). Both tools are part of the core
 tool set, so local models (Ollama) get them as well.
+
+==== Watching the AI edit (live mode)
+
+With `/write live` the change is not shown as a diff but replayed in the Source tab's editor: the AI
+panel hides so the editor has the whole screen, the file opens in edit mode, the cursor jumps to the
+first change, removed lines disappear and added lines are typed at a readable pace. The AI panel comes
+back once you have saved or discarded. This is meant for learning Camel and the YAML DSL: you see the edit land in
+the full, syntax-highlighted file and can look up what the new lines mean. Between changes the replay
+pauses: *Enter* continues with the next change, *Esc* stops (what was typed stays in the editor), any
+other key finishes the current change at once, and *F4* (the editor's edit key) hands the keyboard to you
+so you can edit yourself; *F9* then continues with the remaining changes. Those are located by their surrounding lines,
+so your own edits elsewhere in the file shift them rather than break them; a change whose surroundings
+you edited is skipped and reported to the agent. When the replay is over you review with *F7* and
+save with *Ctrl+S* or *F5*, which is the confirmation, or discard with *Esc*. The agent waits until then
+and is told what was applied, what was skipped, and the content of the saved file if you changed it.
 
 === Example Workflows
 

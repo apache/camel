@@ -84,6 +84,42 @@ class SourceTab extends AbstractTab {
         return assist;
     }
 
+    /**
+     * Opens the file in the editor for an AI edit replay: the files list is refreshed, the file loaded and edit mode
+     * entered with the focus on the viewer. Returns null when the file cannot be edited (or unsaved edits are open).
+     */
+    EditReplay.Editor openFileForReplay(Path file) {
+        if (sourceViewer.isEditMode() && sourceViewer.isDirty()) {
+            if (ctx.notificationCallback != null) {
+                ctx.notificationCallback.accept("Save or discard your edits first; the AI edit was not applied", true);
+            }
+            return null;
+        }
+        refreshFiles();
+        for (int idx = 0; idx < entries.size(); idx++) {
+            FilesBrowser.FileEntry entry = entries.get(idx);
+            if (!entry.directory() && entry.path().equals(file.toString())) {
+                listState.select(idx);
+                break;
+            }
+        }
+        configureEditAssist(file);
+        sourceViewer.loadFile(file);
+        if (isCamelSourceFile(file)) {
+            sourceViewer.setJumpLinks(computeJumpLinks(file));
+        }
+        if (!sourceViewer.isEditable()) {
+            return null;
+        }
+        sourceViewer.enterEditMode();
+        focusOnViewer = true;
+        return sourceViewer.replayEditor();
+    }
+
+    boolean isViewerEditing() {
+        return sourceViewer.isEditMode();
+    }
+
     private static final Set<String> LINKABLE_KEYWORDS = Set.of(
             "to", "toD", "wireTap", "enrich", "pollEnrich", "deadLetterChannel");
 

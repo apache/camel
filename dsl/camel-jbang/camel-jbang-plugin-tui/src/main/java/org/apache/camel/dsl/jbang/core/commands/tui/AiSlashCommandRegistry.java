@@ -72,7 +72,7 @@ final class AiSlashCommandRegistry {
                 "tools", List.of("t"), "Show or switch the tool set sent to the model", "[auto|core|full]",
                 AiSlashCommandRegistry::executeTools));
         commands.add(new Descriptor(
-                "write", List.of("w"), "Show or switch how file writes by the model are confirmed", "[confirm|auto]",
+                "write", List.of("w"), "Show or switch how file writes by the model are confirmed", "[confirm|auto|live]",
                 AiSlashCommandRegistry::executeWrite));
         commands.add(new Descriptor(
                 "context", List.of("ctx"), "Show what the next request costs: provider, tools, prompt and history size",
@@ -358,7 +358,7 @@ final class AiSlashCommandRegistry {
         }
         String mode = arguments.trim().toLowerCase();
         if (!context.switchWriteMode(mode)) {
-            return CommandResult.error("Unknown write mode '" + arguments.trim() + "'. Use confirm or auto.");
+            return CommandResult.error("Unknown write mode '" + arguments.trim() + "'. Use confirm, auto or live.");
         }
         return CommandResult.system("File writes: " + context.describeWriteMode());
     }

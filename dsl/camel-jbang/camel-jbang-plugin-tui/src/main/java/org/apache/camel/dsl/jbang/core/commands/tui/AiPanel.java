@@ -242,8 +242,9 @@ class AiPanel {
 
     // MCP facade for TUI tool access from the AI panel
     private McpFacade mcpFacade;
-    // /write auto lets the model write files without the confirm dialog (tool argument confirm=false); off by default
-    private boolean unconfirmedWrites;
+    // /write: confirm (dialog per write), auto (the model may skip it with confirm=false) or live (the edit is replayed
+    // in the source editor and the user saves or discards it)
+    private McpFacade.WriteMode writeMode = McpFacade.WriteMode.CONFIRM;
     private TuiToolRegistry toolRegistry;
     private boolean mcpServerActive;
     private int mcpServerPort;
@@ -328,7 +329,7 @@ class AiPanel {
     void setMcpFacade(McpFacade mcpFacade) {
         this.mcpFacade = mcpFacade;
         if (mcpFacade != null) {
-            mcpFacade.setUnconfirmedWritesAllowed(unconfirmedWrites);
+            mcpFacade.setWriteMode(writeMode);
         }
         if (mcpFacade != null) {
             this.toolRegistry = new TuiToolRegistry(mcpFacade);
@@ -881,7 +882,7 @@ class AiPanel {
         List<String> candidates = switch (descriptor.get().name()) {
             case "model" -> modelCompletionCandidates();
             case "tools" -> List.of(TOOL_MODE_AUTO, TOOL_MODE_CORE, TOOL_MODE_FULL);
-            case "write" -> List.of("confirm", "auto");
+            case "write" -> List.of("confirm", "auto", "live");
             default -> null;
         };
         if (candidates == null) {
@@ -2705,9 +2706,13 @@ class AiPanel {
     }
 
     private String describeWriteMode() {
-        return unconfirmedWrites
-                ? "auto (the model may write files without asking, when it passes confirm=false)"
-                : "confirm (every file write is confirmed in the TUI; /write auto lets the model skip the dialog)";
+        return switch (writeMode) {
+            case AUTO -> "auto (the model may write files without asking, when it passes confirm=false)";
+            case LIVE -> "live (the edit is replayed in the Source editor: Enter continues, F4 lets you edit, Esc stops;"
+                         + " then Ctrl+S saves or Esc discards)";
+            default -> "confirm (every file write is confirmed in the TUI; /write auto skips the dialog,"
+                       + " /write live replays the edit in the Source editor)";
+        };
     }
 
     String describeWriteModeForTesting() {
@@ -2821,12 +2826,18 @@ class AiPanel {
         @Override
         public boolean switchWriteMode(String mode) {
             String normalized = mode == null ? "" : mode.trim().toLowerCase(Locale.ROOT);
-            if (!"confirm".equals(normalized) && !"auto".equals(normalized)) {
+            McpFacade.WriteMode selected = switch (normalized) {
+                case "confirm" -> McpFacade.WriteMode.CONFIRM;
+                case "auto" -> McpFacade.WriteMode.AUTO;
+                case "live" -> McpFacade.WriteMode.LIVE;
+                default -> null;
+            };
+            if (selected == null) {
                 return false;
             }
-            unconfirmedWrites = "auto".equals(normalized);
+            writeMode = selected;
             if (mcpFacade != null) {
-                mcpFacade.setUnconfirmedWritesAllowed(unconfirmedWrites);
+                mcpFacade.setWriteMode(writeMode);
             }
             return true;
         }

@@ -21,6 +21,7 @@ import java.io.IOException;
 import java.lang.System.Logger;
 import java.lang.System.Logger.Level;
 import java.net.BindException;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
@@ -187,6 +188,14 @@ public class CamelMonitor extends CamelCommand {
     private ActionsPopup actionsPopup;
     private ProcessControlPopup processControlPopup;
     private final FileWritePopup fileWritePopup = new FileWritePopup();
+    private final EditReplay editReplay = new EditReplay();
+    // a live write waiting to start on the UI thread, and the promise its tool thread waits on
+    private volatile McpFacade.FileWrite pendingReplay;
+    private volatile CompletableFuture<McpFacade.ReplayOutcome> pendingReplayOutcome;
+    private McpFacade.FileWrite activeReplay;
+    private CompletableFuture<McpFacade.ReplayOutcome> activeReplayOutcome;
+    // the AI panel overlays the editor, so it is hidden while an edit is replayed and shown again afterwards
+    private boolean replayHidAiPanel;
     private TuiRunner runner;
     // Set by TuiWebServer for browser sessions; local terminal sessions leave this null
     // and let TuiBackendHelper auto-detect the active terminal instead.
@@ -745,6 +754,26 @@ public class CamelMonitor extends CamelCommand {
                     }
 
                     @Override
+                    public McpFacade.ReplayOutcome replayFileWrite(McpFacade.FileWrite request) {
+                        if (pendingReplay != null || activeReplay != null) {
+                            return null;
+                        }
+                        CompletableFuture<McpFacade.ReplayOutcome> outcome = new CompletableFuture<>();
+                        pendingReplayOutcome = outcome;
+                        pendingReplay = request;
+                        try {
+                            // the user decides when this ends (save or discard); give up after a long while
+                            return outcome.get(30, TimeUnit.MINUTES);
+                        } catch (Exception e) {
+                            pendingReplay = null;
+                            editReplay.abort();
+                            activeReplay = null;
+                            activeReplayOutcome = null;
+                            return new McpFacade.ReplayOutcome(false, 0, List.of(), null);
+                        }
+                    }
+
+                    @Override
                     public boolean confirmFileWrite(McpFacade.FileWrite request) {
                         CompletableFuture<Boolean> answer = new CompletableFuture<>();
                         fileWritePopup.open(request, answer);
@@ -771,6 +800,63 @@ public class CamelMonitor extends CamelCommand {
         aiPanel.setOtelSpans(dataService.otelSpans());
         mcpFacade.setAiActivityLog(aiPanel::getActivityLog);
         actionsPopup.setAiActivityLog(aiPanel::getActivityLog);
+    }
+
+    /**
+     * Drives a live AI edit: starts a pending replay in the source editor, advances the typing, and once the user has
+     * saved or discarded the buffer completes the outcome the tool thread is waiting for.
+     */
+    private void tickEditReplay(long now) {
+        McpFacade.FileWrite request = pendingReplay;
+        if (request != null) {
+            pendingReplay = null;
+            CompletableFuture<McpFacade.ReplayOutcome> outcome = pendingReplayOutcome;
+            pendingReplayOutcome = null;
+            Path file = request.directory().resolve(request.file());
+            tabRegistry.handleTabKey(TabRegistry.TAB_SOURCE, ctx, dataService);
+            EditReplay.Editor editor = tabRegistry.sourceTab().openFileForReplay(file);
+            if (editor == null) {
+                outcome.complete(null);
+                return;
+            }
+            List<String> before = request.oldContent() == null ? List.of() : request.oldContent().lines().toList();
+            List<String> after = request.newContent().isEmpty() ? List.of() : request.newContent().lines().toList();
+            editReplay.start(editor, EditDiff.hunks(before, after, 3));
+            activeReplay = request;
+            activeReplayOutcome = outcome;
+            replayHidAiPanel = aiPanel.isOpen();
+            if (replayHidAiPanel) {
+                // hiding the panel only hides it; the request keeps waiting for the outcome
+                aiPanel.close();
+            }
+            setNotification("AI edit: watch the change in the editor, then save (Ctrl+S) or discard (Esc)", false);
+        }
+        if (activeReplay == null) {
+            return;
+        }
+        editReplay.tick(now);
+        // the replay is over (finished, stopped or handed over) once the user leaves edit mode or the file changes
+        Path file = activeReplay.directory().resolve(activeReplay.file());
+        String onDisk;
+        try {
+            onDisk = Files.readString(file, StandardCharsets.UTF_8);
+        } catch (IOException e) {
+            onDisk = null;
+        }
+        boolean editing = tabRegistry.sourceTab().isViewerEditing();
+        boolean saved = onDisk != null && !onDisk.equals(activeReplay.oldContent());
+        if (saved || !editing) {
+            McpFacade.ReplayOutcome outcome = new McpFacade.ReplayOutcome(
+                    saved, editReplay.applied(), editReplay.skippedHunks(), onDisk);
+            editReplay.abort();
+            activeReplayOutcome.complete(outcome);
+            activeReplay = null;
+            activeReplayOutcome = null;
+            if (replayHidAiPanel) {
+                replayHidAiPanel = false;
+                aiPanel.open();
+            }
+        }
     }
 
     /**
@@ -1037,6 +1123,9 @@ public class CamelMonitor extends CamelCommand {
             }
             if (fileWritePopup.isVisible()) {
                 return fileWritePopup.handleKeyEvent(ke);
+            }
+            if (editReplay.isActive() && editReplay.handleKeyEvent(ke)) {
+                return true;
             }
             if (popupManager.handleKeyEvent(ke, tabRegistry.selectedTabIndex(), TAB_LOG)) {
                 return true;
@@ -1642,6 +1731,7 @@ public class CamelMonitor extends CamelCommand {
         actionsPopup.tick(now);
         drawOverlay.tick(now);
         captionOverlay.tick(now);
+        tickEditReplay(now);
         recordingManager.tickRecentKeys(now);
         boolean anyDiagramShowing = tabRegistry.routesTab().isShowDiagram()
                 || tabRegistry.diagramTab().isShowDiagram();
@@ -2515,6 +2605,18 @@ public class CamelMonitor extends CamelCommand {
             processControlPopup.renderFooter(spans);
         } else if (fileWritePopup.isVisible()) {
             fileWritePopup.renderFooter(spans);
+        } else if (editReplay.isActive() && editReplay.capturesKeys()) {
+            editReplay.renderFooter(spans);
+        } else if (editReplay.isActive()) {
+            editReplay.renderFooter(spans);
+            hint(spans, "Ctrl+S", "save");
+            hint(spans, "F7", "diff");
+            hintLast(spans, "Esc", "discard");
+        } else if (activeReplay != null) {
+            hint(spans, "AI edit done", "");
+            hint(spans, "Ctrl+S/F5", "save (apply)");
+            hint(spans, "F7", "diff");
+            hintLast(spans, "Esc", "discard");
         } else if (shellPanel.isOpen()) {
             shellPanel.renderFooter(spans);
         } else if (aiPanel.isOpen()) {

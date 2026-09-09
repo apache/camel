@@ -889,6 +889,59 @@ class SourceViewer {
         refreshEditFindMatches();
     }
 
+    /** The editor operations the AI edit replay drives; only meaningful while in edit mode. */
+    EditReplay.Editor replayEditor() {
+        return new EditReplay.Editor() {
+            @Override
+            public List<String> lines() {
+                return editLines();
+            }
+
+            @Override
+            public void moveToRow(int targetRow) {
+                editState.moveCursorToStart();
+                int max = Math.max(0, editState.lineCount() - 1);
+                for (int i = 0; i < Math.min(targetRow, max); i++) {
+                    editState.moveCursorDown();
+                }
+                editState.moveCursorToLineStart();
+                if (targetRow > max) {
+                    // append: the row does not exist yet, so the text goes after the last line
+                    editState.moveCursorToLineEnd();
+                    editState.insert('\n');
+                }
+                editInitialScroll = true;
+            }
+
+            @Override
+            public void insertAtCursor(String text) {
+                recordEditChange();
+                editState.insert(text);
+            }
+
+            @Override
+            public void deleteCurrentLine() {
+                recordEditChange();
+                editState.moveCursorToLineStart();
+                int current = editState.cursorRow();
+                String line = editState.getLine(current);
+                for (int i = 0; i < line.length(); i++) {
+                    editState.deleteForward();
+                }
+                if (current < editState.lineCount() - 1) {
+                    editState.deleteForward();
+                } else if (current > 0) {
+                    editState.deleteBackward();
+                }
+            }
+
+            @Override
+            public boolean isEditing() {
+                return editMode;
+            }
+        };
+    }
+
     private void exitEditMode() {
         boolean wasEditing = editMode;
         editMode = false;

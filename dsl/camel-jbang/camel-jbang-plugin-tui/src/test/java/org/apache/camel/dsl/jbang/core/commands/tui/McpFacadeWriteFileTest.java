@@ -173,7 +173,7 @@ class McpFacadeWriteFileTest {
         assertEquals(1, bridge.asked);
         assertTrue(asked.getString("message").contains("confirm=false does not skip"), asked.getString("message"));
 
-        facade.setUnconfirmedWritesAllowed(true);
+        facade.setWriteMode(McpFacade.WriteMode.AUTO);
         JsonObject result = facade.writeFile("demo", "demo.camel.yaml", "- route:\n    id: y\n", false);
 
         assertEquals("overwritten", result.getString("status"));

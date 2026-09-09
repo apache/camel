@@ -94,6 +94,29 @@ class McpFacade {
         default boolean confirmFileWrite(FileWrite request) {
             return false;
         }
+
+        /**
+         * Replays a file write in the source editor so the user watches the edit happen and then saves or discards it
+         * (write mode {@code live}), blocking the calling (tool) thread until then. Returns null when the replay could
+         * not start, in which case the caller falls back to the confirm dialog.
+         */
+        default ReplayOutcome replayFileWrite(FileWrite request) {
+            return null;
+        }
+    }
+
+    /** How file writes requested by tools are handled; set by the user with /write in the AI panel. */
+    enum WriteMode {
+        CONFIRM,
+        AUTO,
+        LIVE
+    }
+
+    /**
+     * What happened to a file write replayed in the editor: whether the user saved it, how many hunks were applied,
+     * which were skipped (their context was changed by the user), and the content of the file afterwards.
+     */
+    record ReplayOutcome(boolean saved, int applied, List<Integer> skipped, String content) {
     }
 
     /**
@@ -857,16 +880,16 @@ class McpFacade {
     // tool time of the call so the usage statistics show what the tool did, not how long the user thought about it
     private volatile long lastConfirmWaitMs;
 
-    // whether a tool may write without the confirm dialog (confirm=false); only the user enables this, with the
-    // /write auto command in the AI panel, because a model asked to respect a rejection may simply retry without it
-    private volatile boolean unconfirmedWritesAllowed;
+    // only the user chooses how writes are handled (/write in the AI panel): a model asked to respect a rejection
+    // may simply retry with confirm=false, so that argument is honoured in AUTO mode only
+    private volatile WriteMode writeMode = WriteMode.CONFIRM;
 
-    void setUnconfirmedWritesAllowed(boolean allowed) {
-        this.unconfirmedWritesAllowed = allowed;
+    void setWriteMode(WriteMode writeMode) {
+        this.writeMode = writeMode;
     }
 
-    boolean isUnconfirmedWritesAllowed() {
-        return unconfirmedWritesAllowed;
+    WriteMode getWriteMode() {
+        return writeMode;
     }
 
     // validates source by file type (Camel YAML DSL, application.properties) with the editor's own checks,
@@ -1047,17 +1070,26 @@ class McpFacade {
             }
         }
         int lines = content.isEmpty() ? 0 : (int) content.lines().count();
-        if (confirm || !unconfirmedWritesAllowed) {
-            String oldContent = null;
-            if (exists) {
-                try {
-                    oldContent = Files.readString(filePath, StandardCharsets.UTF_8);
-                } catch (IOException e) {
-                    oldContent = "";
-                }
+        String oldContent = null;
+        if (exists) {
+            try {
+                oldContent = Files.readString(filePath, StandardCharsets.UTF_8);
+            } catch (IOException e) {
+                oldContent = "";
             }
-            FileWrite request = new FileWrite(
-                    file, dir, oldContent, content, FilesBrowser.isTemporaryDirectory(dir), target.devMode);
+        }
+        FileWrite request = new FileWrite(
+                file, dir, oldContent, content, FilesBrowser.isTemporaryDirectory(dir), target.devMode);
+        if (writeMode == WriteMode.LIVE && exists && bridge != null) {
+            long waitStart = System.currentTimeMillis();
+            ReplayOutcome outcome = bridge.replayFileWrite(request);
+            lastConfirmWaitMs = System.currentTimeMillis() - waitStart;
+            if (outcome != null) {
+                return replayResult(target, dir, file, content, outcome);
+            }
+            // could not replay (for example unsaved edits in the editor): fall back to the dialog
+        }
+        if (confirm || writeMode != WriteMode.AUTO) {
             long waitStart = System.currentTimeMillis();
             boolean confirmed = bridge != null && bridge.confirmFileWrite(request);
             lastConfirmWaitMs = System.currentTimeMillis() - waitStart;
@@ -1083,6 +1115,39 @@ class McpFacade {
         describeSourceDirectory(target, dir, result);
         result.put("lines", lines);
         result.put("bytes", content.getBytes(StandardCharsets.UTF_8).length);
+        return result;
+    }
+
+    private JsonObject replayResult(
+            IntegrationInfo target, Path dir, String file, String requested, ReplayOutcome outcome) {
+        JsonObject result = new JsonObject();
+        result.put("file", file);
+        JsonArray skipped = new JsonArray();
+        skipped.addAll(outcome.skipped());
+        if (!outcome.saved()) {
+            result.put("status", "rejected");
+            result.put("message", "The change was replayed in the editor and the user discarded it; the file is"
+                                  + " unchanged and nothing is pending. Do not retry unless the user asks for it.");
+            return result;
+        }
+        result.put("status", "written");
+        describeSourceDirectory(target, dir, result);
+        result.put("appliedHunks", outcome.applied());
+        result.put("skippedHunks", skipped);
+        String content = outcome.content() != null ? outcome.content() : "";
+        result.put("lines", content.isEmpty() ? 0 : (int) content.lines().count());
+        StringBuilder message = new StringBuilder();
+        message.append("The change was replayed in the editor and the user saved the file");
+        if (!outcome.skipped().isEmpty()) {
+            message.append("; edit(s) ").append(outcome.skipped())
+                    .append(" were skipped because the user changed that part of the file in the meantime");
+        }
+        if (!content.equals(requested)) {
+            message.append(". The saved file differs from what you sent (the user edited it); its content is in"
+                           + " 'content', use that as the current state");
+            result.put("content", content);
+        }
+        result.put("message", message.toString());
         return result;
     }
 

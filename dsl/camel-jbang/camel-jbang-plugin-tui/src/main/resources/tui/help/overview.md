@@ -119,7 +119,9 @@ Two panels can be opened on top of any tab. Opening one closes the other.
   has several) and `Ctrl+E` exports the conversation. The AI can also edit
   the source files of the selected integration; a dialog asks you to confirm
   each write (`Enter` applies, `d` shows the diff, `Esc` rejects) unless you
-  switched to `/write auto`. Type `/help` for the slash commands
+  switched to `/write auto`; `/write live` replays the edit in the Source
+  editor instead, so you watch it being typed (`Enter` next change, `F4` edit
+  yourself, `F9` continue, `Esc` stop; then `Ctrl+S` saves or `Esc` discards). Type `/help` for the slash commands
 
 Where the panels open (bottom or top) is configured in Settings
 (`F2` → `Settings...` → `Panel Position`). The tool calls and answers of the AI panel

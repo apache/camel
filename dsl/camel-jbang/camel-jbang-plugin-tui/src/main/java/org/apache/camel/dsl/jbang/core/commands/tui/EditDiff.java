@@ -166,6 +166,149 @@ final class EditDiff {
 
     static final DiffEntry SEPARATOR = new DiffEntry('~', "───", -1);
 
+    /**
+     * One change of a diff, anchored by context lines the way a unified diff hunk is, so it can be applied to a buffer
+     * whose line numbers have shifted (the context is searched, not assumed). {@code body} holds the lines of the hunk
+     * in order: context (' '), removed ('-') and added ('+').
+     */
+    record Hunk(List<String> before, List<DiffEntry> body, List<String> after) {
+
+        /** The lines of the original text this hunk expects: context before, body context and removed lines, after. */
+        List<String> originalLines() {
+            List<String> lines = new ArrayList<>(before);
+            for (DiffEntry e : body) {
+                if (e.type() != '+') {
+                    lines.add(e.text());
+                }
+            }
+            lines.addAll(after);
+            return lines;
+        }
+
+        int added() {
+            return (int) body.stream().filter(e -> e.type() == '+').count();
+        }
+
+        int removed() {
+            return (int) body.stream().filter(e -> e.type() == '-').count();
+        }
+
+        /**
+         * Where the given lines contain this hunk's original lines, starting the search at {@code fromRow}; -1 if not.
+         */
+        int locate(List<String> lines, int fromRow) {
+            List<String> pattern = originalLines();
+            if (pattern.isEmpty()) {
+                return Math.min(Math.max(0, fromRow), lines.size());
+            }
+            for (int start = Math.max(0, fromRow); start + pattern.size() <= lines.size(); start++) {
+                boolean match = true;
+                for (int i = 0; i < pattern.size(); i++) {
+                    if (!lines.get(start + i).equals(pattern.get(i))) {
+                        match = false;
+                        break;
+                    }
+                }
+                if (match) {
+                    return start;
+                }
+            }
+            return -1;
+        }
+    }
+
+    /**
+     * Splits the changes between {@code original} and {@code current} into hunks with {@code contextLines} lines of
+     * context; changes closer to each other than twice the context share a hunk.
+     */
+    static List<Hunk> hunks(List<String> original, List<String> current, int contextLines) {
+        List<DiffEntry> raw = rawDiff(original, current);
+        List<Hunk> hunks = new ArrayList<>();
+        int k = 0;
+        while (k < raw.size()) {
+            if (raw.get(k).type() == ' ') {
+                k++;
+                continue;
+            }
+            // start of a hunk: context before
+            int bodyStart = k;
+            List<String> before = new ArrayList<>();
+            for (int c = Math.max(0, bodyStart - contextLines); c < bodyStart; c++) {
+                before.add(raw.get(c).text());
+            }
+            // extend the body over changes separated by short equal runs
+            int bodyEnd = k;
+            int j = k;
+            while (j < raw.size()) {
+                if (raw.get(j).type() != ' ') {
+                    bodyEnd = j + 1;
+                    j++;
+                    continue;
+                }
+                int run = 0;
+                while (j + run < raw.size() && raw.get(j + run).type() == ' ') {
+                    run++;
+                }
+                if (j + run < raw.size() && run <= 2 * contextLines) {
+                    j += run;
+                } else {
+                    break;
+                }
+            }
+            List<DiffEntry> body = new ArrayList<>(raw.subList(bodyStart, bodyEnd));
+            List<String> after = new ArrayList<>();
+            for (int c = bodyEnd; c < Math.min(raw.size(), bodyEnd + contextLines); c++) {
+                after.add(raw.get(c).text());
+            }
+            hunks.add(new Hunk(before, body, after));
+            k = bodyEnd;
+        }
+        return hunks;
+    }
+
+    private static List<DiffEntry> rawDiff(List<String> original, List<String> current) {
+        int m = original.size();
+        int n = current.size();
+        List<DiffEntry> rawDiff = new ArrayList<>();
+        if (m == 0 && n == 0) {
+            return rawDiff;
+        }
+        int[][] dp = new int[m + 1][n + 1];
+        for (int i = m - 1; i >= 0; i--) {
+            for (int j = n - 1; j >= 0; j--) {
+                if (original.get(i).equals(current.get(j))) {
+                    dp[i][j] = dp[i + 1][j + 1] + 1;
+                } else {
+                    dp[i][j] = Math.max(dp[i + 1][j], dp[i][j + 1]);
+                }
+            }
+        }
+        int i = 0;
+        int j = 0;
+        while (i < m && j < n) {
+            if (original.get(i).equals(current.get(j))) {
+                rawDiff.add(new DiffEntry(' ', original.get(i), j + 1));
+                i++;
+                j++;
+            } else if (dp[i + 1][j] >= dp[i][j + 1]) {
+                rawDiff.add(new DiffEntry('-', original.get(i), i + 1));
+                i++;
+            } else {
+                rawDiff.add(new DiffEntry('+', current.get(j), j + 1));
+                j++;
+            }
+        }
+        while (i < m) {
+            rawDiff.add(new DiffEntry('-', original.get(i), i + 1));
+            i++;
+        }
+        while (j < n) {
+            rawDiff.add(new DiffEntry('+', current.get(j), j + 1));
+            j++;
+        }
+        return rawDiff;
+    }
+
     static List<DiffEntry> unifiedDiff(List<String> original, List<String> current, int contextLines) {
         int m = original.size();
         int n = current.size();

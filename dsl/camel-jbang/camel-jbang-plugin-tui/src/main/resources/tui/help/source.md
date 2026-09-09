@@ -92,3 +92,18 @@ Jump indicators are hidden in plain mode.
 - **Tab** — toggle focus between file list and source viewer
 - The focused panel title is highlighted; the unfocused panel dims
 - Drag the split border with the mouse to resize panels
+
+## AI live edit
+
+With `/write live` in the AI panel (`F8`), a change the AI makes is replayed
+here instead of shown as a diff: the AI panel hides, the file opens in edit
+mode and the change is typed hunk by hunk so you can follow it in context.
+
+- **Enter** — continue with the next change
+- **any other key** — finish the current change at once
+- **F4** — edit yourself; the remaining changes wait
+- **F9** — continue the AI changes after editing yourself (a change whose
+  surrounding lines you edited is skipped and reported to the AI)
+- **Esc** — stop; what was typed stays in the editor
+- then **Ctrl+S** / **F5** saves (this is the confirmation, dev mode reloads),
+  **F7** shows the diff, **Esc** discards; the AI panel comes back afterwards
