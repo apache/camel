@@ -74,7 +74,7 @@ class RunOptionsForm {
             TuiIcons.labeled(TuiIcons.CAMEL, "Camel Main"),
             TuiIcons.labeled(TuiIcons.SPRING_BOOT, "Spring Boot"),
             TuiIcons.labeled(TuiIcons.QUARKUS, "Quarkus"),
-            TuiIcons.labeled(TuiIcons.JBANG, "JBang (in-process)")
+            TuiIcons.labeled(TuiIcons.JBANG, "JBang")
     };
     private static final String[] RUNTIME_VALUES = { "camel-main", "spring-boot", "quarkus", "jbang" };
     private static final String[] PROFILE_LABELS = {
@@ -504,7 +504,8 @@ class RunOptionsForm {
     // ---- Rendering ----
 
     private void renderOptionsPage(Frame frame, Rect area) {
-        int popupW = Math.min(68, area.width() - 4);
+        // wide enough for the runtime cycler to show all runtimes (Camel Main, Spring Boot, Quarkus, JBang)
+        int popupW = Math.min(80, area.width() - 4);
         int popupH = errorMessage != null ? PAGE1_HEIGHT + 1 : PAGE1_HEIGHT;
         Rect popup = DialogHelper.centered(area, popupW, popupH);
 
