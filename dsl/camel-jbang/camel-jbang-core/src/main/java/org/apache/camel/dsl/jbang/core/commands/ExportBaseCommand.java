@@ -223,6 +223,10 @@ public abstract class ExportBaseCommand extends CamelCommand {
                         description = "Enable observability services")
     protected boolean observe;
 
+    @CommandLine.Option(names = { "--console" }, defaultValue = "false",
+                        description = "Developer console at /q/dev on local HTTP server (port 8080 by default). Camel Main runtime only.")
+    protected boolean console;
+
     @CommandLine.Option(names = {
             "--dir",
             "--directory" }, description = "Directory where the project will be exported", defaultValue = ".")
@@ -574,6 +578,7 @@ public abstract class ExportBaseCommand extends CamelCommand {
         run.excludes = excludes;
         run.openapi = openapi;
         run.serverOptions.observe = observe;
+        run.serverOptions.console = console;
         run.mavenResolver = mavenResolver;
         run.packageScanJars = packageScanJars;
         run.runtime = runtime;
@@ -1309,6 +1314,19 @@ public abstract class ExportBaseCommand extends CamelCommand {
             // ignore
         }
         return -1;
+    }
+
+    /**
+     * Whether the given camel-jbang setting (such as {@code camel.jbang.console}) is enabled in the run settings.
+     */
+    protected static boolean settingsFlag(Path settings, String key) {
+        try {
+            List<String> lines = RuntimeUtil.loadPropertiesLines(settings);
+            return lines.stream().anyMatch(l -> l.equals(key + "=true"));
+        } catch (Exception e) {
+            // ignore
+        }
+        return false;
     }
 
     protected static int httpManagementPort(Path settings) {

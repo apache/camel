@@ -49,8 +49,10 @@ camel tui
 . Press *Enter* to launch the selected example
 
 Before launching, a run options form lets you choose the *runtime*: Camel Main (standalone),
-Spring Boot, or Quarkus. This makes it easy to try any example on all three runtimes without
-changing a single line of code. You can also set the integration name, toggle dev mode, and
+Spring Boot, Quarkus, or JBang. This makes it easy to try any example on all three runtimes without
+changing a single line of code. The first three run the example in a separate JVM that only
+contains the dependencies of the example (like a production deployment), while JBang runs it
+in-process in the Camel CLI JVM, which starts faster but has the CLI on the classpath as well. You can also set the integration name, toggle dev mode, and
 add extra dependencies.
 
 The example starts running in the background. The TUI auto-selects it as soon as it appears.

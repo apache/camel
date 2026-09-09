@@ -30,6 +30,7 @@ final class TuiIcons {
     static final String CAMEL = "🐪";
     static final String SPRING_BOOT = "🍃";
     static final String QUARKUS = "🚀";
+    static final String JBANG = "⚡";
     static final String DEV_PROFILE = "🔨";
     static final String PROD_PROFILE = "📦";
     static final String INFRA = "🔧";

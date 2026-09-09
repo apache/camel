@@ -189,7 +189,7 @@ public class Export extends ExportBaseCommand {
             // read runtime and gav from profile if not configured
             String rt = props.getProperty(CamelJBangConstants.RUNTIME);
             if (rt != null) {
-                this.runtime = RuntimeType.fromValue(rt);
+                this.runtime = RuntimeType.fromValue(rt).exportRuntime();
             }
             this.gav = props.getProperty(GAV, this.gav);
             this.parentPom = props.getProperty(PARENT_POM, this.parentPom);
@@ -238,6 +238,7 @@ public class Export extends ExportBaseCommand {
         cmd.port = this.port;
         cmd.managementPort = this.managementPort;
         cmd.observe = this.observe;
+        cmd.console = this.console;
         cmd.gav = this.gav;
         cmd.parentPom = this.parentPom;
         cmd.mavenSettings = this.mavenSettings;

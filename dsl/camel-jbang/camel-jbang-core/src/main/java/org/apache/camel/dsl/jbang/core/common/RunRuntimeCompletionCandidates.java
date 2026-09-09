@@ -16,15 +16,21 @@
  */
 package org.apache.camel.dsl.jbang.core.common;
 
-import picocli.CommandLine;
+import java.util.Iterator;
+import java.util.List;
 
 /**
- * Converts the {@code --runtime} option for commands that export or inspect a project. The {@code jbang} runtime only
- * exists for {@code camel run} and is treated as {@code main} here (see {@link RunRuntimeTypeConverter}).
+ * Completion candidates for the {@code --runtime} option of {@code camel run}, which also offers the in-process
+ * {@code jbang} runtime.
  */
-public class RuntimeTypeConverter implements CommandLine.ITypeConverter<RuntimeType> {
+public class RunRuntimeCompletionCandidates implements Iterable<String> {
 
-    public RuntimeType convert(String value) throws Exception {
-        return RuntimeType.fromValue(value).exportRuntime();
+    public RunRuntimeCompletionCandidates() {
     }
+
+    @Override
+    public Iterator<String> iterator() {
+        return List.of("jbang", "camel-main", "spring-boot", "quarkus").iterator();
+    }
+
 }

@@ -61,9 +61,9 @@ import org.apache.camel.dsl.jbang.core.common.Printer;
 import org.apache.camel.dsl.jbang.core.common.ProfileCompletionCandidates;
 import org.apache.camel.dsl.jbang.core.common.PropertyResolver;
 import org.apache.camel.dsl.jbang.core.common.QuarkusHelper.QuarkusPlatformBom;
-import org.apache.camel.dsl.jbang.core.common.RuntimeCompletionCandidates;
+import org.apache.camel.dsl.jbang.core.common.RunRuntimeCompletionCandidates;
+import org.apache.camel.dsl.jbang.core.common.RunRuntimeTypeConverter;
 import org.apache.camel.dsl.jbang.core.common.RuntimeType;
-import org.apache.camel.dsl.jbang.core.common.RuntimeTypeConverter;
 import org.apache.camel.dsl.jbang.core.common.RuntimeUtil;
 import org.apache.camel.dsl.jbang.core.common.Source;
 import org.apache.camel.dsl.jbang.core.common.SourceHelper;
@@ -176,11 +176,13 @@ public class Run extends CamelCommand {
     public List<String> files = new ArrayList<>();
 
     @Option(names = { "--runtime" },
-            completionCandidates = RuntimeCompletionCandidates.class,
-            defaultValue = "camel-main",
-            converter = RuntimeTypeConverter.class,
-            description = "Runtime (${COMPLETION-CANDIDATES})")
-    RuntimeType runtime = RuntimeType.main;
+            completionCandidates = RunRuntimeCompletionCandidates.class,
+            defaultValue = "jbang",
+            converter = RunRuntimeTypeConverter.class,
+            description = "Runtime (${COMPLETION-CANDIDATES}). The jbang runtime runs in-process in the Camel CLI JVM"
+                          + " which is fast and intended for prototyping. The other runtimes export to a temporary project"
+                          + " and run in a separate JVM via Maven, similar to a production deployment.")
+    RuntimeType runtime = RuntimeType.jbang;
 
     @Option(names = { "--source-dir" },
             description = "Source directory for dynamically loading Camel file(s) to run. When using this, then files cannot be specified at the same time.")
@@ -361,12 +363,8 @@ public class Run extends CamelCommand {
         if (exportRun) {
             return false;
         }
-        if (RuntimeType.quarkus == runtime) {
-            return true;
-        } else if (RuntimeType.springBoot == runtime) {
-            return true;
-        }
-        return false;
+        // every runtime except the in-process jbang runtime spawns a separate JVM
+        return RuntimeType.jbang != runtime;
     }
 
     @Override
@@ -689,13 +687,11 @@ public class Run extends CamelCommand {
             }
         }
 
-        // auto-detect runtime from pom.xml before dispatch
-        if (!exportRun && RuntimeType.main == runtime
+        // auto-detect runtime from pom.xml before dispatch (an existing Maven project cannot run in-process)
+        if (!exportRun && RuntimeType.jbang == runtime
                 && files != null && files.size() == 1 && files.get(0).endsWith("pom.xml")) {
             RuntimeType detected = RunHelper.detectRuntimeFromPom(Path.of(files.get(0)).toAbsolutePath());
-            if (detected != null) {
-                runtime = detected;
-            }
+            runtime = detected != null ? detected : RuntimeType.main;
         }
 
         if (!exportRun) {
@@ -703,9 +699,8 @@ public class Run extends CamelCommand {
                 return runQuarkus();
             } else if (RuntimeType.springBoot == runtime) {
                 return runSpringBoot();
-            } else if (RuntimeType.main == runtime
-                    && files != null && files.size() == 1 && files.get(0).endsWith("pom.xml")) {
-                return runExistingCamelMainProject();
+            } else if (RuntimeType.main == runtime) {
+                return runCamelMain();
             }
         }
 
@@ -1391,7 +1386,7 @@ public class Run extends CamelCommand {
         String runtimeSpecificDeps = null;
 
         switch (runtime) {
-            case main -> runtimeSpecificDeps = profileProperties.getProperty(DEPENDENCIES_MAIN);
+            case main, jbang -> runtimeSpecificDeps = profileProperties.getProperty(DEPENDENCIES_MAIN);
             case springBoot -> runtimeSpecificDeps = profileProperties.getProperty(DEPENDENCIES_SPRING_BOOT);
             case quarkus -> runtimeSpecificDeps = profileProperties.getProperty(DEPENDENCIES_QUARKUS);
         }
@@ -1594,6 +1589,297 @@ public class Run extends CamelCommand {
         this.spawnPid = p.pid();
         // wait for that process to exit as we run in foreground
         return p.waitFor();
+    }
+
+    /**
+     * Runs using Camel Main in a separate JVM: the sources are exported to a temporary Camel Main project, packaged
+     * with Maven, and the resulting runner JAR is started with plain {@code java}. This gives a JVM with the same
+     * dependencies as an exported project (unlike the in-process jbang runtime, whose classpath also contains the Camel
+     * CLI and its dependencies).
+     */
+    protected int runCamelMain() throws Exception {
+        if (background) {
+            printer().printErr("Run Camel Main with --background is not supported (use --runtime=jbang)");
+            return 1;
+        }
+
+        // existing Maven project: run directly without export
+        if (files != null && files.size() == 1 && files.get(0).endsWith("pom.xml")) {
+            return runExistingCamelMainProject();
+        }
+
+        String unsupported = null;
+        if (code != null) {
+            unsupported = "--code";
+        } else if (openapi != null) {
+            unsupported = "--open-api";
+        } else if (serverOptions.mcpStdio) {
+            unsupported = "--mcp-stdio";
+        } else if (empty) {
+            unsupported = "--empty";
+        }
+        if (unsupported != null) {
+            printer().printErr("Run Camel Main with " + unsupported + " is not supported (use --runtime=jbang)");
+            return 1;
+        }
+
+        // source-dir is the directory with the files to run (and reload in dev mode)
+        if (sourceDir != null) {
+            if (files.isEmpty()) {
+                RunHelper.dirToFiles(sourceDir, files);
+            }
+            if (files.isEmpty()) {
+                printer().printErr("No files to run in source-dir: " + sourceDir);
+                return 1;
+            }
+        }
+
+        AtomicReference<Process> processRef = new AtomicReference<>();
+        AtomicReference<String> appNameRef = new AtomicReference<>();
+
+        // create temp run dir
+        Path runDirPath = Paths.get(RUN_PLATFORM_DIR, Long.toString(System.currentTimeMillis()));
+        // Mark for deletion on exit
+        Runtime.getRuntime().addShutdownHook(new Thread(() -> {
+            try {
+                // We need to wait for the process to exit before doing any cleanup
+                Process process = processRef.get();
+                if (process != null) {
+                    process.destroy();
+
+                    for (int i = 0; i < 30; i++) {
+                        if (!process.isAlive()) {
+                            break;
+                        }
+
+                        try {
+                            Thread.sleep(1000);
+                        } catch (InterruptedException e) {
+                            Thread.currentThread().interrupt();
+                        }
+                    }
+                }
+
+                removeDir(runDirPath);
+                // cleanup log file
+                String appName = appNameRef.get();
+                if (appName != null) {
+                    Files.deleteIfExists(CommandLineHelper.getCamelDir().resolve(appName + ".log"));
+                }
+            } catch (Exception e) {
+                // Ignore
+            }
+        }));
+        Files.createDirectories(runDirPath);
+
+        // export to hidden folder
+        ExportCamelMain eq = new ExportCamelMain(getMain());
+        eq.exportBaseDir = this.exportBaseDir;
+        eq.javaLiveReload = false;
+        eq.symbolicLink = false;
+        eq.mavenWrapper = true;
+        eq.javaVersion = this.javaVersion;
+        eq.camelVersion = this.camelVersion;
+        eq.kameletsVersion = this.kameletsVersion;
+        eq.exportDir = runDirPath.toString();
+        eq.localKameletDir = this.localKameletDir;
+        eq.excludes = this.excludes;
+        eq.filePaths = this.filePaths;
+        eq.files = this.files;
+        eq.name = this.name;
+        eq.verbose = this.verbose;
+        eq.port = this.serverOptions.port;
+        eq.managementPort = this.serverOptions.managementPort;
+        eq.gav = this.gav;
+        eq.mavenResolver = this.mavenResolver;
+        eq.runtime = RuntimeType.main;
+        if (eq.gav == null) {
+            if (eq.name == null) {
+                eq.name = "jbang-run-dummy";
+            }
+            eq.gav = "org.example.project:" + eq.name + ":1.0-SNAPSHOT";
+        }
+        eq.dependencies.addAll(this.dependencies);
+        eq.addDependencies("camel:cli-connector");
+        if (jfrEnabled()) {
+            eq.addDependencies("camel:jfr");
+        }
+        eq.skipPlugins = this.skipPlugins;
+        eq.packageScanJars = this.packageScanJars;
+        eq.quiet = true;
+        eq.logging = false;
+        eq.loggingLevel = "off";
+        eq.ignoreLoadingError = this.ignoreLoadingError;
+        eq.lazyBean = this.lazyBean;
+        eq.profile = this.profile;
+        eq.observe = this.serverOptions.observe;
+        eq.console = this.serverOptions.console;
+        eq.applicationProperties = this.property;
+
+        printer().println("Running using Camel Main (preparing and downloading files)");
+
+        // run export
+        int exit = eq.export();
+        if (exit != 0) {
+            return exit;
+        }
+        // the exported project may have derived the application name from the source files
+        String appName = resolveExportedAppName(runDirPath, eq.name);
+        appNameRef.set(appName);
+
+        // log to console and to file in ~/.camel (so camel log and the TUI can tail the logs)
+        writeCamelMainRunLogConfig(runDirPath, appName);
+
+        // package via maven (the runner JAR contains all dependencies)
+        String mvnw = "/mvnw";
+        if (FileUtil.isWindows()) {
+            mvnw = "/mvnw.cmd";
+        }
+        List<String> mvnCmd = new ArrayList<>();
+        mvnCmd.add(runDirPath + mvnw);
+        mvnCmd.add("--quiet");
+        mvnCmd.add("--file");
+        mvnCmd.add(runDirPath.toRealPath().resolve("pom.xml").toString());
+        mvnCmd.add("-DskipTests");
+        mvnCmd.add("package");
+
+        ProcessBuilder pb = new ProcessBuilder();
+        pb.command(mvnCmd);
+        pb.inheritIO();
+        Process p = pb.start();
+        processRef.set(p);
+        exit = p.waitFor();
+        if (exit != 0) {
+            printer().printErr("Failed to build Camel Main project in: " + runDirPath);
+            return exit;
+        }
+
+        Path jar = findRunnerJar(runDirPath.resolve("target"));
+        if (jar == null) {
+            printer().printErr("Cannot find runner JAR in: " + runDirPath.resolve("target"));
+            return 1;
+        }
+
+        // run in a plain JVM
+        List<String> javaCmd = new ArrayList<>();
+        javaCmd.add(Paths.get(System.getProperty("java.home"), "bin", "java").toString());
+        String runJvmArgs = mergeJvmArgs(jvmArgs, buildJfrJvmArgs());
+        if (runJvmArgs != null && !runJvmArgs.isBlank()) {
+            javaCmd.addAll(Arrays.asList(runJvmArgs.trim().split("\\s+")));
+        }
+        if (jvmDebugPort > 0) {
+            javaCmd.add("-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=*:" + jvmDebugPort);
+        }
+        if (profile != null) {
+            javaCmd.add("-Dcamel.main.profile=" + profile);
+        }
+        if (dev) {
+            javaCmd.addAll(buildCamelMainReloadArgs());
+        }
+        if (executionLimitOptions.maxSeconds > 0) {
+            javaCmd.add("-Dcamel.main.durationMaxSeconds=" + executionLimitOptions.maxSeconds);
+        }
+        if (executionLimitOptions.maxMessages > 0) {
+            javaCmd.add("-Dcamel.main.durationMaxMessages=" + executionLimitOptions.maxMessages);
+        }
+        if (executionLimitOptions.maxIdleSeconds > 0) {
+            javaCmd.add("-Dcamel.main.durationMaxIdleSeconds=" + executionLimitOptions.maxIdleSeconds);
+        }
+        javaCmd.add("-jar");
+        javaCmd.add(jar.toAbsolutePath().toString());
+
+        pb = new ProcessBuilder();
+        pb.command(javaCmd);
+        pb.directory(runDirPath.toFile());
+        pb.inheritIO(); // run in foreground (with IO so logs are visible)
+        p = pb.start();
+        processRef.set(p);
+        this.spawnPid = p.pid();
+        // wait for that process to exit as we run in foreground
+        return p.waitFor();
+    }
+
+    /**
+     * The application name as configured in the exported project ({@code camel.main.name}), which is what the running
+     * application reports to the CLI and the TUI.
+     */
+    private static String resolveExportedAppName(Path runDirPath, String fallback) {
+        Path props = runDirPath.resolve("src/main/resources/application.properties");
+        if (Files.exists(props)) {
+            try (InputStream is = Files.newInputStream(props)) {
+                Properties p = new Properties();
+                p.load(is);
+                String name = p.getProperty("camel.main.name");
+                if (name != null && !name.isBlank()) {
+                    return name.trim();
+                }
+            } catch (IOException e) {
+                // ignore
+            }
+        }
+        return fallback;
+    }
+
+    /**
+     * Writes a log4j2 configuration to the exported Camel Main project that logs to the console, and to the
+     * {@code <name>.log} file in the {@code ~/.camel} directory.
+     */
+    private void writeCamelMainRunLogConfig(Path runDirPath, String appName) throws IOException {
+        Path logFile = CommandLineHelper.getCamelDir().resolve(appName + ".log");
+        Files.deleteIfExists(logFile);
+        String fileName = logFile.toAbsolutePath().toString().replace("\\", "/");
+        try (InputStream is = Run.class.getClassLoader().getResourceAsStream("camel-main-run-log4j2.properties")) {
+            String content = new String(is.readAllBytes(), StandardCharsets.UTF_8)
+                    .replace("{{logFile}}", fileName)
+                    .replace("{{level}}", loggingOptions.loggingLevel != null ? loggingOptions.loggingLevel : "info");
+            Path target = runDirPath.resolve("src/main/resources/log4j2.properties");
+            Files.createDirectories(target.getParent());
+            Files.writeString(target, content);
+        }
+    }
+
+    /**
+     * Route reload (dev mode) for Camel Main watches the original source files, as the exported project only contains
+     * copies of them.
+     */
+    private List<String> buildCamelMainReloadArgs() {
+        List<String> args = new ArrayList<>();
+        String reloadDir;
+        String pattern;
+        if (sourceDir != null) {
+            reloadDir = sourceDir;
+            pattern = "*";
+        } else {
+            // use the directory of the first file that is in another folder than the current dir
+            reloadDir = ".";
+            StringJoiner sj = new StringJoiner(",");
+            for (String f : files) {
+                String path = FileUtil.onlyPath(f);
+                if (path != null && !path.equals(".camel-jbang") && ".".equals(reloadDir)) {
+                    reloadDir = path;
+                }
+                sj.add(FileUtil.stripPath(f));
+            }
+            pattern = sj.toString();
+        }
+        args.add("-Dcamel.main.routesReloadEnabled=true");
+        args.add("-Dcamel.main.routesReloadDirectory=" + Paths.get(reloadDir).toAbsolutePath().normalize());
+        args.add("-Dcamel.main.routesReloadPattern=" + pattern);
+        args.add("-Dcamel.main.routesReloadDirectoryRecursive=" + (sourceDir != null ? "true" : "false"));
+        args.add("-Dcamel.main.routesReloadRemoveAllRoutes=true");
+        return args;
+    }
+
+    private static Path findRunnerJar(Path target) throws IOException {
+        if (!Files.isDirectory(target)) {
+            return null;
+        }
+        try (Stream<Path> paths = Files.list(target)) {
+            return paths
+                    .filter(f -> f.getFileName().toString().endsWith(".jar"))
+                    .filter(f -> !f.getFileName().toString().startsWith("original-"))
+                    .findFirst().orElse(null);
+        }
     }
 
     private int runExistingCamelMainProject() throws Exception {

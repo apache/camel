@@ -33,6 +33,7 @@ import org.apache.camel.dsl.jbang.core.common.HawtioVersion;
 import org.apache.camel.dsl.jbang.core.common.RuntimeType;
 import org.apache.camel.util.FileUtil;
 import org.apache.camel.util.IOHelper;
+import org.apache.camel.util.StringHelper;
 import org.apache.maven.model.Dependency;
 import org.apache.maven.model.Model;
 import org.apache.maven.model.io.xpp3.MavenXpp3Reader;
@@ -592,6 +593,14 @@ class ExportTest {
     }
 
     @Test
+    public void shouldExportJBangRuntimeAsCamelMain() throws Exception {
+        Export command = new Export(new CamelJBangMain());
+        CommandLine.populateCommand(command, "--runtime=jbang", "route.yaml");
+
+        assertThat(command.runtime).isEqualTo(RuntimeType.main);
+    }
+
+    @Test
     public void olderQuarkusVersion() throws Exception {
         LOG.info("olderQuarkusVersion");
         // We need a real file as we want to test the generated content
@@ -848,6 +857,69 @@ class ExportTest {
                 containsDependency(model.getDependencies(), "org.apache.camel", "camel-langchain4j-chat", null));
         Assertions.assertTrue(
                 containsDependency(model.getDependencies(), "org.apache.camel", "camel-ai-observability", null));
+    }
+
+    @Test
+    public void shouldExportConsoleForCamelMain() throws Exception {
+        Export command = new Export(new CamelJBangMain());
+        CommandLine.populateCommand(command,
+                "--gav=examples:route:1.0.0",
+                "--dir=" + workingDir,
+                "--quiet",
+                "--runtime=main",
+                "--console",
+                "target/test-classes/route.yaml");
+        int exit = command.doCall();
+
+        Assertions.assertEquals(0, exit);
+        Model model = readMavenModel();
+        for (String artifact : List.of("camel-console", "camel-management", "camel-health",
+                "camel-platform-http-main", "camel-platform-http-jolokia")) {
+            Assertions.assertTrue(containsDependency(model.getDependencies(), "org.apache.camel", artifact, null),
+                    "Missing dependency " + artifact);
+        }
+
+        Properties props = new Properties();
+        try (FileInputStream fis = new FileInputStream(new File(workingDir, "src/main/resources/application.properties"))) {
+            props.load(fis);
+        }
+        for (String key : List.of("camel.main.devConsoleEnabled", "camel.management.enabled",
+                "camel.management.devConsoleEnabled", "camel.management.healthCheckEnabled",
+                "camel.management.infoEnabled", "camel.management.jolokiaEnabled")) {
+            Assertions.assertEquals("true", exportedProperty(props, key), "Missing property " + key);
+        }
+        // internal camel-jbang settings must not leak into the exported project
+        Assertions.assertNull(props.getProperty("camel.jbang.console"));
+    }
+
+    @Test
+    public void shouldNotExportConsoleByDefault() throws Exception {
+        Export command = new Export(new CamelJBangMain());
+        CommandLine.populateCommand(command,
+                "--gav=examples:route:1.0.0",
+                "--dir=" + workingDir,
+                "--quiet",
+                "--runtime=main",
+                "target/test-classes/route.yaml");
+        int exit = command.doCall();
+
+        Assertions.assertEquals(0, exit);
+        Model model = readMavenModel();
+        Assertions.assertFalse(containsDependency(model.getDependencies(), "org.apache.camel", "camel-console", null));
+
+        Properties props = new Properties();
+        try (FileInputStream fis = new FileInputStream(new File(workingDir, "src/main/resources/application.properties"))) {
+            props.load(fis);
+        }
+        Assertions.assertNull(exportedProperty(props, "camel.management.devConsoleEnabled"));
+    }
+
+    /**
+     * The exported application.properties uses dash-style keys, so look up both styles.
+     */
+    private static String exportedProperty(Properties props, String key) {
+        String v = props.getProperty(key);
+        return v != null ? v : props.getProperty(StringHelper.camelCaseToDash(key));
     }
 
     @ParameterizedTest
