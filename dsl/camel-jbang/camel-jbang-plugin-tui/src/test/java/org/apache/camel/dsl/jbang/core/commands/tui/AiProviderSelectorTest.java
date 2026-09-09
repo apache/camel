@@ -16,6 +16,7 @@
  */
 package org.apache.camel.dsl.jbang.core.commands.tui;
 
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.List;
 
@@ -215,5 +216,17 @@ class AiProviderSelectorTest {
     void isOnPathFindsShellButNotNonsense() {
         assertTrue(AiProviderSelector.isOnPath("sh"));
         assertFalse(AiProviderSelector.isOnPath("definitely-not-a-real-binary-42"));
+    }
+
+    @Test
+    void resolveExecutableReturnsTheFileItFoundIncludingACmdShim(@TempDir Path tempDir) throws Exception {
+        Path bob = Files.createFile(tempDir.resolve("fakebob"));
+        assertTrue(bob.toFile().setExecutable(true));
+        Path npx = Files.createFile(tempDir.resolve("fakenpx.cmd"));
+        assertTrue(npx.toFile().setExecutable(true));
+        String path = tempDir.toString();
+        assertEquals(bob.toString(), AiProviderSelector.resolveExecutable("fakebob", path));
+        assertEquals(npx.toString(), AiProviderSelector.resolveExecutable("fakenpx", path));
+        assertNull(AiProviderSelector.resolveExecutable("definitely-not-a-real-binary-42", path));
     }
 }

@@ -131,27 +131,40 @@ final class AiProviderSelector {
         throw new IllegalArgumentException("Unknown ACP provider '" + provider + "'.");
     }
 
-    /** True when {@code executable} is an absolute path to an executable file or is found on the PATH. */
-    static boolean isOnPath(String executable) {
+    /**
+     * Where {@code executable} is found on {@code path}, with the {@code .cmd}/{@code .exe} suffix Windows needs; null
+     * when absent. An absolute {@code executable} resolves to itself when it is executable.
+     */
+    static String resolveExecutable(String executable, String path) {
         Path direct = Path.of(executable);
         if (direct.isAbsolute()) {
-            return Files.isExecutable(direct);
+            return Files.isExecutable(direct) ? direct.toString() : null;
         }
-        String path = System.getenv("PATH");
         if (path == null) {
-            return false;
+            return null;
         }
         for (String dir : path.split(File.pathSeparator)) {
             if (dir.isBlank()) {
                 continue;
             }
             Path candidate = Path.of(dir).resolve(executable);
-            if (Files.isExecutable(candidate) || Files.isExecutable(Path.of(candidate + ".cmd"))
-                    || Files.isExecutable(Path.of(candidate + ".exe"))) {
-                return true;
+            for (Path variant : List.of(candidate, Path.of(candidate + ".cmd"), Path.of(candidate + ".exe"))) {
+                if (Files.isExecutable(variant)) {
+                    return variant.toString();
+                }
             }
         }
-        return false;
+        return null;
+    }
+
+    /** Same, on the process PATH: what {@code ProcessBuilder} must be given so a Windows shim is actually launched. */
+    static String resolveExecutable(String executable) {
+        return resolveExecutable(executable, System.getenv("PATH"));
+    }
+
+    /** True when {@code executable} is an absolute path to an executable file or is found on the PATH. */
+    static boolean isOnPath(String executable) {
+        return resolveExecutable(executable) != null;
     }
 
     /**

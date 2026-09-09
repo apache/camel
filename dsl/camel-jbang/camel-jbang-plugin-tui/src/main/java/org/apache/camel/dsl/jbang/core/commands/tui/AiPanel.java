@@ -3404,10 +3404,16 @@ class AiPanel {
     }
 
     private AcpAgentClient spawnAcpAgent(AiProviderSelector.AcpPreset preset, Path cwd) throws IOException {
-        if (!AiProviderSelector.isOnPath(preset.executable())) {
+        // ProcessBuilder only tries .exe on Windows, so the resolved file (npx.cmd and friends) has to be launched
+        String resolved = AiProviderSelector.resolveExecutable(preset.executable());
+        if (resolved == null) {
             throw new IOException(preset.installHint());
         }
-        return AcpAgentClient.spawn(preset.command(), cwd, line -> log(LogLevel.ERROR, "ACP", line));
+        List<String> command = new ArrayList<>(preset.command());
+        if (!command.isEmpty() && command.get(0).equals(preset.executable())) {
+            command.set(0, resolved);
+        }
+        return AcpAgentClient.spawn(command, cwd, line -> log(LogLevel.ERROR, "ACP", line));
     }
 
     void setSlashCommandContextForTesting(AiSlashCommandContext context) {
