@@ -91,6 +91,10 @@ class SettingsPopup {
 
     private boolean visible;
     private int selectedRow;
+    /** First content line drawn, so the selected row stays inside a popup shorter than its 24 lines. */
+    private int scrollTop;
+    private int clipTop;
+    private int clipBottom;
 
     private TuiSettings settings;
     private int themeIndex;
@@ -208,6 +212,7 @@ class SettingsPopup {
             }
         }
         selectedRow = ROW_THEME;
+        scrollTop = 0;
         visible = true;
     }
 
@@ -445,11 +450,23 @@ class SettingsPopup {
                 .build();
         frame.renderWidget(block, popup);
 
+        int visibleLines = popup.height() - 2;
+        int contentLines = ROW_COUNT + dividers;
+        int selectedLine = lineOf(selectedRow);
+        if (selectedLine < scrollTop) {
+            scrollTop = selectedLine;
+        } else if (selectedLine >= scrollTop + visibleLines) {
+            scrollTop = selectedLine - visibleLines + 1;
+        }
+        scrollTop = Math.max(0, Math.min(scrollTop, Math.max(0, contentLines - visibleLines)));
+        clipTop = popup.top() + 1;
+        clipBottom = popup.top() + popup.height() - 2;
+
         int innerX = popup.left() + 2;
         int innerW = popup.width() - 4;
         int labelW = 24;
         int fieldW = innerW - labelW;
-        int rowY = popup.top() + 1;
+        int rowY = popup.top() + 1 - scrollTop;
 
         // --- Appearance ---
         renderLabel(frame, innerX, rowY, labelW, "Theme:", selectedRow == ROW_THEME);
@@ -639,15 +656,34 @@ class SettingsPopup {
         return sb.toString();
     }
 
+    /** The content line a row is drawn on, counting the dividers that follow rows 2, 6, 9 and 12. */
+    static int lineOf(int row) {
+        return row + (row > 2 ? 1 : 0) + (row > 6 ? 1 : 0) + (row > 9 ? 1 : 0) + (row > 12 ? 1 : 0);
+    }
+
+    /** True when a scrolled line falls outside the popup's inner area and must not be drawn. */
+    private boolean clipped(int y) {
+        return y < clipTop || y > clipBottom;
+    }
+
     private void renderDivider(Frame frame, int x, int y, int w) {
+        if (clipped(y)) {
+            return;
+        }
         frame.renderWidget(Paragraph.from(Line.from(Span.styled("─".repeat(w), Style.EMPTY.dim()))), new Rect(x, y, w, 1));
     }
 
     private void renderLabel(Frame frame, int x, int y, int w, String label, boolean selected) {
+        if (clipped(y)) {
+            return;
+        }
         FormHelper.renderLabel(frame, x, y, w, label, selected);
     }
 
     private void renderValue(Frame frame, int x, int y, int w, String text, boolean selected) {
+        if (clipped(y)) {
+            return;
+        }
         Style style = selected ? Style.EMPTY.bold() : Style.EMPTY;
         frame.renderWidget(Paragraph.from(Line.from(Span.styled("[" + text + "]", style))), new Rect(x, y, w, 1));
     }
@@ -659,6 +695,9 @@ class SettingsPopup {
     private void renderTextInput(
             Frame frame, int x, int y, int w, TextInputState input, boolean active,
             String placeholder) {
+        if (clipped(y)) {
+            return;
+        }
         FormHelper.renderTextField(frame, new Rect(x, y, w, 1), input, active, placeholder);
     }
 
