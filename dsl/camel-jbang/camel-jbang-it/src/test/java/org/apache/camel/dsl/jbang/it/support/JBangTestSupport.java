@@ -215,6 +215,12 @@ public abstract class JBangTestSupport {
                 .contains(contains);
     }
 
+    protected void checkCommandOutputs(String command, String... contains) {
+        Assertions.assertThat(execute(command))
+                .as("command  " + getMainCommand() + " " + command + " should output each of these lines " + contains)
+                .contains(contains);
+    }
+
     protected void checkCommandFailsWithError(String command, String error) {
         Assertions.assertThat(execute(command, true, true))
                 .as("command " + getMainCommand() + " " + command + " should fail with error " + error)

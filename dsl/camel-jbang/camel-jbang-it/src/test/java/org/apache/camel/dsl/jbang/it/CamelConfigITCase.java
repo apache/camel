@@ -37,9 +37,10 @@ public class CamelConfigITCase extends JBangTestSupport {
         execute("config set runtime=quarkus");
         execute("config set directory=" + mountPoint());
         checkCommandOutputs("config list",
-                "gav = com.foo:acme:1.0-SNAPSHOT\n" +
-                                           "runtime = quarkus\n" +
-                                           "directory = " + mountPoint());
+                new String[] {
+                        "gav = com.foo:acme:1.0-SNAPSHOT",
+                        "runtime = quarkus",
+                        "directory = " + mountPoint() });
     }
 
     @Test
