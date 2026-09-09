@@ -429,6 +429,28 @@ public class MllpSocketBuffer {
         return false;
     }
 
+    /**
+     * Determine whether a complete MLLP envelope begins at the supplied buffer position.
+     *
+     * @param  startIndex the position expected to contain {@link MllpProtocolConstants#START_OF_BLOCK}
+     * @return            {@code true} if a complete envelope begins at {@code startIndex}
+     */
+    public synchronized boolean isCompleteEnvelopeAt(int startIndex) {
+        if (startIndex < 0 || startIndex >= availableByteCount
+                || buffer[startIndex] != MllpProtocolConstants.START_OF_BLOCK) {
+            return false;
+        }
+
+        for (int i = startIndex + 1; i < availableByteCount; i++) {
+            if (buffer[i] == MllpProtocolConstants.END_OF_BLOCK) {
+                return !isEndOfDataRequired()
+                        || i + 1 < availableByteCount && buffer[i + 1] == MllpProtocolConstants.END_OF_DATA;
+            }
+        }
+
+        return false;
+    }
+
     public synchronized boolean hasStartOfBlock() {
         return startOfBlockIndex >= 0;
     }
