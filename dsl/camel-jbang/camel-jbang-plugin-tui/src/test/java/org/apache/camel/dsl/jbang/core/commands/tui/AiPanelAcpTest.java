@@ -45,6 +45,7 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
 
 @Isolated
 class AiPanelAcpTest {
@@ -85,6 +86,15 @@ class AiPanelAcpTest {
     private static boolean hasEntry(AiPanel panel, AiRole role, String fragment) {
         return panel.conversationForTesting().stream()
                 .anyMatch(e -> e.role() == role && e.text().contains(fragment));
+    }
+
+    /** Text of the last conversation entry with that role. */
+    private static String lastEntry(AiPanel panel, AiRole role) {
+        return panel.conversationForTesting().stream()
+                .filter(e -> e.role() == role)
+                .reduce((first, last) -> last)
+                .map(AiPanel.ConversationEntry::text)
+                .orElseGet(() -> fail("no " + role + " entry in the conversation"));
     }
 
     /** Panel wired to a fresh fake agent, with the Claude preset selected. */
@@ -169,15 +179,31 @@ class AiPanelAcpTest {
 
     /** Makes the fake agent advertise a "review" command via available_commands_update from its session/new handler. */
     private void advertiseReviewCommand() {
+        JsonObject review = new JsonObject();
+        review.put("name", "review");
+        review.put("description", "Review the current changes");
+        JsonObject input = new JsonObject();
+        input.put("hint", "focus area");
+        review.put("input", input);
+        JsonArray commands = new JsonArray();
+        commands.add(review);
+        advertise(commands);
+    }
+
+    /** Same, for commands that only carry a name and a description. */
+    private void advertiseCommands(String... names) {
+        JsonArray commands = new JsonArray();
+        for (String name : names) {
+            JsonObject command = new JsonObject();
+            command.put("name", name);
+            command.put("description", "The agent's own /" + name);
+            commands.add(command);
+        }
+        advertise(commands);
+    }
+
+    private void advertise(JsonArray commands) {
         agent.onRequest("session/new", params -> {
-            JsonObject review = new JsonObject();
-            review.put("name", "review");
-            review.put("description", "Review the current changes");
-            JsonObject input = new JsonObject();
-            input.put("hint", "focus area");
-            review.put("input", input);
-            JsonArray commands = new JsonArray();
-            commands.add(review);
             JsonObject update = new JsonObject();
             update.put("sessionUpdate", "available_commands_update");
             update.put("availableCommands", commands);
@@ -683,5 +709,85 @@ class AiPanelAcpTest {
         assertTrue(TuiTestHelper.bufferToString(buffer).contains("/agent:review"));
         panel.handleKeyEvent(KeyEvent.ofKey(KeyCode.TAB, KeyModifiers.NONE));
         assertEquals("/agent:review ", panel.inputBufferForTesting());
+    }
+
+    @Test
+    void retryResendsTheLastQuestionToTheAgent() throws Exception {
+        AiPanel panel = acpPanel();
+        ask(panel, "/retry");
+        assertTrue(hasEntry(panel, AiRole.ERROR, "No question to retry"));
+        ask(panel, "hello");
+        awaitIdle(panel);
+        ask(panel, "/retry");
+        awaitIdle(panel);
+        assertEquals(2, agent.receivedCount("session/prompt"));
+        assertEquals("hello", promptText(agent.received("session/prompt").get(1)), "the preamble is not repeated");
+        assertEquals(2, panel.conversationForTesting().stream().filter(e -> e.role() == AiRole.USER).count());
+    }
+
+    @Test
+    void retryReplaysAnAgentCommandWithoutThePrefix() throws Exception {
+        AiPanel panel = acpPanel();
+        ask(panel, "/agent:clear");
+        awaitIdle(panel);
+        ask(panel, "/retry");
+        awaitIdle(panel);
+        assertEquals("/clear", promptText(agent.received("session/prompt").get(1)));
+    }
+
+    @Test
+    void contextDescribesTheAgentSession() throws Exception {
+        AiPanel panel = acpPanel();
+        advertiseReviewCommand();
+        ask(panel, "/context");
+        assertTrue(hasEntry(panel, AiRole.SYSTEM, "not started yet"));
+        assertEquals(0, agent.receivedCount("session/prompt"));
+        ask(panel, "hello");
+        awaitIdle(panel);
+        ask(panel, "/context");
+        String text = lastEntry(panel, AiRole.SYSTEM);
+        assertTrue(text.contains("Session: sess-cmd"), text);
+        assertTrue(text.contains("MCP: http://127.0.0.1:4242/mcp"), text);
+        assertTrue(text.contains("Agent commands: 1"), text);
+        assertTrue(text.contains("Preamble: ~"), text);
+        assertTrue(text.contains("/compact and /tools do not apply"), text);
+        assertEquals(1, agent.receivedCount("session/prompt"), "/context is answered by the panel");
+    }
+
+    @Test
+    void compactAndToolsExplainThatTheAgentOwnsThem() throws Exception {
+        AiPanel panel = acpPanel();
+        advertiseCommands("compact");
+        ask(panel, "hello");
+        awaitIdle(panel);
+        ask(panel, "/compact");
+        assertTrue(hasEntry(panel, AiRole.SYSTEM, "manages its own conversation history"));
+        assertTrue(hasEntry(panel, AiRole.SYSTEM, "Use /agent:compact"));
+        ask(panel, "/tools");
+        assertTrue(hasEntry(panel, AiRole.SYSTEM, "through the MCP server directly"));
+        ask(panel, "/tools core");
+        assertTrue(hasEntry(panel, AiRole.ERROR, "only applies to LLM providers"));
+        assertNull(TuiSettings.load().getAiTools(), "the LLM tool set was not changed");
+        assertEquals(1, agent.receivedCount("session/prompt"), "nothing was forwarded to the agent");
+    }
+
+    @Test
+    void compactWithoutAnAgentCommandGivesNoHint() {
+        AiPanel panel = new AiPanel();
+        panel.open();
+        panel.selectProviderForTesting("acp:codex");
+        ask(panel, "/compact");
+        assertTrue(hasEntry(panel, AiRole.SYSTEM, "Codex (ACP) manages its own conversation history"));
+        assertFalse(hasEntry(panel, AiRole.SYSTEM, "/agent:compact"));
+    }
+
+    @Test
+    void promptShowsThePreambleSentToTheAgent() {
+        AiPanel panel = new AiPanel();
+        panel.open();
+        panel.selectProviderForTesting("acp:codex");
+        ask(panel, "/prompt");
+        assertTrue(hasEntry(panel, AiRole.SYSTEM, "Sent to Codex (ACP) ahead of the first prompt"));
+        assertTrue(hasEntry(panel, AiRole.SYSTEM, "Apache Camel assistant"));
     }
 }

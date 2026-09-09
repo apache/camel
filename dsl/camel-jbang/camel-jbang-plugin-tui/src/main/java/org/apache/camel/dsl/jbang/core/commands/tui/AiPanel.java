@@ -2886,6 +2886,10 @@ class AiPanel {
     }
 
     private String describeToolMode() {
+        if (acpPreset != null) {
+            return acpLabel() + " reaches the camel-tui tools through the MCP server directly; "
+                   + "the tool set only applies to LLM providers";
+        }
         if (toolRegistry == null) {
             return "no tools available";
         }
@@ -3063,6 +3067,9 @@ class AiPanel {
     }
 
     String describeContext() {
+        if (acpPreset != null) {
+            return describeAcpContext();
+        }
         StringBuilder sb = new StringBuilder();
         if (client == null) {
             sb.append("Provider: none (").append(initError != null ? initError : "no LLM client").append(")\n");
@@ -3092,7 +3099,50 @@ class AiPanel {
         return sb.toString();
     }
 
+    /**
+     * The {@code /context} answer while an ACP agent is selected. The agent owns the conversation history and runs its
+     * own tools, so the interesting figures are its session, the MCP server it was given and the preamble the panel
+     * prepends to the first prompt.
+     */
+    private String describeAcpContext() {
+        AiProviderSelector.AcpPreset preset = acpPreset;
+        AcpAgentClient agent = acpClient;
+        StringBuilder sb = new StringBuilder();
+        sb.append("Agent: ").append(acpLabel())
+                .append(" (preset ").append(preset != null ? preset.id() : "acp").append(")\n");
+        if (acpSessionId != null) {
+            sb.append("Session: ").append(acpSessionId).append(" in ").append(acpCwd).append('\n');
+            sb.append("MCP: ").append(acpMcpUrl).append(" (camel-tui tools are approved automatically)\n");
+        } else {
+            sb.append("Session: not started yet; the next prompt opens one and starts the MCP server on demand\n");
+        }
+        sb.append("Agent commands: ").append(agent != null ? agent.availableCommands().size() : 0)
+                .append(" (/agent: lists them)\n");
+        sb.append("Preamble: ~").append(LlmClient.formatTokens(estimateTokens(buildSystemPrompt().length())))
+                .append(" tokens, sent once per session ahead of the first prompt (/prompt shows it); ")
+                .append(acpPreambleSent ? "sent" : "not sent yet").append('\n');
+        sb.append("Tokens reported by the agent so far: ").append(LlmClient.formatTokens(sessionTotalTokens))
+                .append('\n');
+        sb.append("History and tools are managed by the agent: /compact and /tools do not apply here");
+        return sb.toString();
+    }
+
+    /**
+     * Explains that a panel command has no meaning while an agent is selected, pointing at the agent's own command of
+     * the same name when it advertises one.
+     */
+    private String acpNotApplicable(String command, String what) {
+        AcpAgentClient agent = acpClient;
+        boolean offered = agent != null
+                && agent.availableCommands().stream().anyMatch(c -> command.equals(c.name()));
+        return "/" + command + " does not apply here: " + acpLabel() + " " + what + "."
+               + (offered ? " Use /agent:" + command + "." : "");
+    }
+
     String compactHistoryNow() {
+        if (acpPreset != null) {
+            return acpNotApplicable("compact", "manages its own conversation history");
+        }
         if (messages == null || messages.isEmpty()) {
             return "History is empty, nothing to compact";
         }
@@ -3106,10 +3156,11 @@ class AiPanel {
 
     /**
      * Resends the last question. Any messages from the previous attempt (the question and whatever followed it) are
-     * removed from the model history first so the retry starts from a clean turn.
+     * removed from the model history first so the retry starts from a clean turn; an ACP agent keeps its own history,
+     * so the question is simply sent again.
      */
     boolean retryLastQuestion() {
-        if (client == null || thinking.get()) {
+        if ((client == null && acpPreset == null) || thinking.get()) {
             return false;
         }
         String question = null;
@@ -3122,7 +3173,7 @@ class AiPanel {
         if (question == null || question.isBlank()) {
             return false;
         }
-        if (messages != null) {
+        if (acpPreset == null && messages != null) {
             for (int i = messages.size() - 1; i >= 0; i--) {
                 LlmClient.Message m = messages.get(i);
                 if ("user".equals(m.role()) && m.toolCalls() == null && m.toolResults() == null) {
@@ -3502,6 +3553,11 @@ class AiPanel {
 
         @Override
         public boolean switchToolMode(String mode) {
+            if (acpPreset != null) {
+                throw new IllegalStateException(
+                        "The tool set only applies to LLM providers; " + acpLabel()
+                                                + " reaches the camel-tui tools through the MCP server directly.");
+            }
             String normalized = normalizeToolMode(mode);
             if (normalized == null) {
                 return false;
@@ -3574,6 +3630,9 @@ class AiPanel {
 
         @Override
         public String systemPrompt() {
+            if (acpPreset != null) {
+                return "Sent to " + acpLabel() + " ahead of the first prompt of each session:\n\n" + buildSystemPrompt();
+            }
             return buildSystemPrompt();
         }
 

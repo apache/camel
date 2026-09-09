@@ -1066,6 +1066,12 @@ hints once the session is open; `/agent:` alone lists them. `/agent:<name> …` 
 the name is also a panel command (`/agent:clear` clears the agent's context, `/clear` the panel). Anything else
 starting with `/` that is not a panel command is sent to the agent as is.
 
+The panel's own `/retry` resends the last question (or `/agent:` command) to the agent. `/context` shows the agent,
+its session, working directory, MCP server and the size of the preamble instead of a model history, and `/prompt`
+shows that preamble, sent once per session ahead of the first prompt. `/compact` and `/tools` do not apply while an
+agent is selected: the agent manages its own history and reaches the camel-tui tools through the MCP server; the panel
+says so and points to `/agent:compact` when the agent offers that command.
+
 If the agent asks for authentication and can sign you in itself, the TUI triggers that flow once; otherwise the
 panel shows the login command from the table above.
 
