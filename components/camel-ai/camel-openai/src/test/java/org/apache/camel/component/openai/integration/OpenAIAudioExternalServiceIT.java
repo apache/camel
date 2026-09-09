@@ -23,7 +23,7 @@ import org.junit.jupiter.api.condition.EnabledIfSystemProperty;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-@EnabledIfSystemProperty(named = "openai.live.tests", matches = "true",
+@EnabledIfSystemProperty(named = OpenAIExternalServiceTestSupport.ENABLE_LIVE_TESTS, matches = "true",
                          disabledReason = "Set -Dopenai.live.tests=true and configure an OpenAI-compatible audio service")
 public class OpenAIAudioExternalServiceIT extends OpenAIExternalServiceTestSupport {
 
