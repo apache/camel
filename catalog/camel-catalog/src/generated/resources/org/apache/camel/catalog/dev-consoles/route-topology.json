@@ -28,8 +28,23 @@
       "defaultValue": false,
       "description": "Whether to include external systems (databases, messaging brokers, etc.) as nodes"
     },
-    "metric": {
+    "kamelets": {
       "index": 1,
+      "kind": "option",
+      "displayName": "Kamelets",
+      "group": "query",
+      "label": "query",
+      "required": false,
+      "type": "boolean",
+      "javaType": "java.lang.Boolean",
+      "deprecated": false,
+      "autowired": false,
+      "secret": false,
+      "defaultValue": false,
+      "description": "Whether to include routes created by Kamelets. These are hidden by default, as they are an implementation detail of the Kamelet"
+    },
+    "metric": {
+      "index": 2,
       "kind": "option",
       "displayName": "Metric",
       "group": "query",
@@ -44,7 +59,7 @@
       "description": "Whether to include live metrics (message counts) on nodes and edges"
     },
     "routes": {
-      "index": 2,
+      "index": 3,
       "kind": "option",
       "displayName": "Routes",
       "group": "query",

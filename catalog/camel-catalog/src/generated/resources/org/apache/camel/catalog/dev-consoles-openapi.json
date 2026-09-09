@@ -6843,6 +6843,16 @@
 						}
 					},
 					{
+						"name": "kamelets",
+						"in": "query",
+						"description": "Whether to include routes created by Kamelets. These are hidden by default, as they are an implementation detail of the Kamelet",
+						"required": false,
+						"schema": {
+							"type": "boolean",
+							"default": false
+						}
+					},
+					{
 						"name": "metric",
 						"in": "query",
 						"description": "Whether to include live metrics (message counts) on nodes and edges",
