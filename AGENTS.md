@@ -50,6 +50,15 @@ These rules apply to ALL AI agents working on this codebase.
 - An agent MUST ONLY pick up **Unassigned** JIRA tickets.
 - If a ticket is already assigned to a human, the agent must not reassign it or work on it.
 - Before starting work, the agent must assign the ticket to its operator and transition it to "In Progress".
+  The CAMEL workflow (ASF JIRA) uses these numeric transition IDs:
+  - `4` → Start Progress (In Progress)
+  - `5` → Resolve Issue (Resolved)
+  - `2` → Close Issue (Closed)
+
+  Still query the issue's `/transitions` endpoint before firing one of these IDs. Availability
+  depends on both the current state and on the caller — `4` is only offered once the issue is
+  assigned to you, which is why the assign step above comes first. The list saves a lookup, it
+  does not replace the availability check.
 - Before closing a ticket, always set the correct `fixVersions` field.
   Note: `fixVersions` cannot be set on an already-closed issue — set it before closing,
   or reopen/set/close if needed.
@@ -158,6 +167,7 @@ When merging a PR, an agent MUST perform the following steps **in order**:
 
 6. **Close the JIRA issue**:
    - Transition the JIRA issue to **Resolved/Fixed** (ensure `fixVersions` is already set from step 2).
+     The transition IDs are listed under "JIRA Ticket Ownership" above.
    - Add a comment linking to the merged PR.
 
 7. **Clean up the branch**:
