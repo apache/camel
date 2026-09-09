@@ -48,7 +48,7 @@
 [/#if]
         <quarkus.package.jar.type>[=QuarkusPackageType]</quarkus.package.jar.type>
         <skipITs>true</skipITs>
-        <surefire-plugin.version>3.5.5</surefire-plugin.version>
+        <surefire-plugin.version>3.5.6</surefire-plugin.version>
     </properties>
 
     <dependencyManagement>
