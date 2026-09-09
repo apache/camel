@@ -348,7 +348,7 @@
   "groupId" : "org.apache.camel",
   "artifactId" : "camel-test-infra-opa",
   "version" : "4.23.0-SNAPSHOT",
-  "serviceVersion" : "1.9.0-static",
+  "serviceVersion" : "1.20.2-static",
   "uiSupported" : false
 }, {
   "service" : "org.apache.camel.test.infra.cyberark.vault.services.CyberArkVaultInfraService",
