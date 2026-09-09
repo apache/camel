@@ -34,6 +34,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Optional;
+import java.util.Set;
 import java.util.concurrent.Callable;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CopyOnWriteArrayList;
@@ -42,6 +43,7 @@ import java.util.concurrent.ThreadLocalRandom;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.Predicate;
+import java.util.regex.Pattern;
 
 import dev.tamboui.layout.Alignment;
 import dev.tamboui.layout.Constraint;
@@ -260,6 +262,8 @@ class AiPanel {
     private static final Duration ACP_SESSION_TIMEOUT = Duration.ofSeconds(60);
     private static final Duration ACP_AUTH_TIMEOUT = Duration.ofSeconds(300);
     private static final String TUI_TOOL_PREFIX = "mcp__camel-tui__";
+    private static final Set<String> FILE_OR_SHELL_KINDS = Set.of("edit", "delete", "move", "execute", "fetch");
+    private static final Pattern TUI_TOOL_NAME = Pattern.compile("tui_[a-z0-9_]+");
     private static final String AGENT_COMMAND_PREFIX = "/agent:";
     private volatile AiProviderSelector.AcpPreset acpPreset;
     private volatile AcpAgentClient acpClient;
@@ -1897,7 +1901,8 @@ class AiPanel {
         public String decide(JsonObject toolCall, List<JsonObject> options) {
             String name = String.valueOf(toolCall.getStringOrDefault("name", ""));
             String title = String.valueOf(toolCall.getStringOrDefault("title", ""));
-            if (name.startsWith(TUI_TOOL_PREFIX) || title.contains("camel-tui")) {
+            String kind = String.valueOf(toolCall.getStringOrDefault("kind", ""));
+            if (isTuiTool(name, title, kind)) {
                 String optionId = firstOptionOfKind(options, "allow_always");
                 if (optionId == null) {
                     optionId = firstOptionOfKind(options, "allow_once");
@@ -1924,6 +1929,37 @@ class AiPanel {
                 permissionPopup.close();
             }
         }
+    }
+
+    /**
+     * Only a call to a tool the TUI itself registers counts as a camel-tui tool: the name the Claude adapter sends
+     * ({@code mcp__camel-tui__tui_get_state}) or a title of the form {@code tui_get_state (camel-tui MCP Server)}.
+     * Kinds that touch files or run commands never qualify, whatever the title says: a path containing "camel-tui" is
+     * not a tool identity.
+     */
+    private boolean isTuiTool(String name, String title, String kind) {
+        if (FILE_OR_SHELL_KINDS.contains(kind)) {
+            return false;
+        }
+        String tool = null;
+        if (name.startsWith(TUI_TOOL_PREFIX)) {
+            tool = name.substring(TUI_TOOL_PREFIX.length());
+        } else {
+            int paren = title.indexOf("(camel-tui");
+            if (paren > 0) {
+                tool = title.substring(0, paren).strip();
+            }
+        }
+        return tool != null && isRegisteredTuiTool(tool);
+    }
+
+    private boolean isRegisteredTuiTool(String tool) {
+        TuiToolRegistry registry = toolRegistry;
+        if (registry != null) {
+            return registry.getToolDefinitions().stream().anyMatch(td -> td.name().equals(tool));
+        }
+        // no registry wired yet (tests, or before the MCP facade exists): accept the TUI's own naming scheme
+        return TUI_TOOL_NAME.matcher(tool).matches();
     }
 
     private static String firstOptionOfKind(List<JsonObject> options, String kind) {

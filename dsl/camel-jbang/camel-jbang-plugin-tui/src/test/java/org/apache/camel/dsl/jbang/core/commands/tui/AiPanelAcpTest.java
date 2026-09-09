@@ -502,6 +502,30 @@ class AiPanelAcpTest {
     }
 
     @Test
+    void fileEditWithCamelTuiInThePathIsNotAutoApproved() throws Exception {
+        AiPanel panel = acpPanel();
+        JsonObject permission = permissionParams(null, "Edit /tmp/camel-tui/route.yaml");
+        permission.getJsonObject("toolCall").put("kind", "edit");
+        askPermissionDuringPrompt(permission);
+        ask(panel, "hi");
+        await().atMost(5, TimeUnit.SECONDS).untilAsserted(() -> assertTrue(panel.isPermissionPopupVisibleForTesting()));
+        panel.handleKeyEvent(KeyEvent.ofKey(KeyCode.ESCAPE, KeyModifiers.NONE));
+        awaitIdle(panel);
+        assertTrue(hasEntry(panel, AiRole.SYSTEM, "(stopped: opt-reject)"), "a path is not a tool identity");
+    }
+
+    @Test
+    void unregisteredToolWithCamelTuiTitleIsNotAutoApproved() throws Exception {
+        AiPanel panel = acpPanel();
+        askPermissionDuringPrompt(permissionParams(null, "rm -rf / (camel-tui MCP Server)"));
+        ask(panel, "hi");
+        await().atMost(5, TimeUnit.SECONDS).untilAsserted(() -> assertTrue(panel.isPermissionPopupVisibleForTesting()));
+        panel.handleKeyEvent(KeyEvent.ofKey(KeyCode.ESCAPE, KeyModifiers.NONE));
+        awaitIdle(panel);
+        assertTrue(hasEntry(panel, AiRole.SYSTEM, "(stopped: opt-reject)"), "the TUI registers no such tool");
+    }
+
+    @Test
     void tuiToolWithoutAllowAlwaysFallsBackToAllowOnce() throws Exception {
         AiPanel panel = acpPanel();
         askPermissionDuringPrompt(permissionParams("mcp__camel-tui__tui_get_state", "tui_get_state",
