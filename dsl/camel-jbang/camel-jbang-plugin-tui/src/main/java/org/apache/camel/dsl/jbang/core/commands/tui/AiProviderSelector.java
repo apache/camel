@@ -38,7 +38,7 @@ final class AiProviderSelector {
 
     static final String ACP_PREFIX = "acp:";
     static final String ACP_CUSTOM = "acp:custom";
-    private static final String NPX_HINT = "npx not found: install Node.js 18 or newer (https://nodejs.org) and try again.";
+    private static final String NPX_HINT = "npx not found: install Node.js 22 or newer (https://nodejs.org) and try again.";
 
     /**
      * One external ACP agent the panel knows how to launch. {@code executable} is the first token of the command,
