@@ -23,12 +23,17 @@ import org.apache.camel.dsl.jbang.core.commands.LlmClient;
 import org.apache.camel.dsl.jbang.core.common.CommandLineHelper;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.condition.EnabledOnOs;
+import org.junit.jupiter.api.condition.OS;
 import org.junit.jupiter.api.io.TempDir;
 import org.junit.jupiter.api.parallel.Isolated;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
@@ -59,7 +64,8 @@ class AiProviderSelectorTest {
 
         List<AiProviderSwitchPopup.ProviderChoice> choices = selector.buildChoices();
 
-        assertEquals(List.of("auto", "anthropic", "openai", "gemini", "ollama", "watsonx"),
+        assertEquals(List.of("auto", "anthropic", "openai", "gemini", "ollama", "watsonx",
+                "acp:claude", "acp:codex", "acp:bob", "acp:qwen", "acp:opencode", "acp:dsh"),
                 choices.stream().map(AiProviderSwitchPopup.ProviderChoice::provider).toList(),
                 "all known providers must be offered, even without a detected API key, so they remain selectable");
         assertTrue(choices.get(0).persistedDefault());
@@ -74,7 +80,8 @@ class AiProviderSelectorTest {
 
         List<AiProviderSwitchPopup.ProviderChoice> choices = selector.buildChoices();
 
-        assertEquals(List.of("anthropic", "openai", "gemini", "ollama", "watsonx"),
+        assertEquals(List.of("anthropic", "openai", "gemini", "ollama", "watsonx",
+                "acp:claude", "acp:codex", "acp:bob", "acp:qwen", "acp:opencode", "acp:dsh"),
                 choices.stream().map(AiProviderSwitchPopup.ProviderChoice::provider).toList(),
                 "anthropic must not be listed twice when it's already the default");
     }
@@ -88,7 +95,8 @@ class AiProviderSelectorTest {
 
         List<AiProviderSwitchPopup.ProviderChoice> choices = selector.buildChoices();
 
-        assertEquals(List.of("ollama", "anthropic", "openai", "gemini", "watsonx"),
+        assertEquals(List.of("ollama", "anthropic", "openai", "gemini", "watsonx",
+                "acp:claude", "acp:codex", "acp:bob", "acp:qwen", "acp:opencode", "acp:dsh"),
                 choices.stream().map(AiProviderSwitchPopup.ProviderChoice::provider).toList());
     }
 
@@ -101,7 +109,8 @@ class AiProviderSelectorTest {
 
         List<AiProviderSwitchPopup.ProviderChoice> choices = selector.buildChoices();
 
-        assertEquals(List.of("watsonx", "anthropic", "openai", "gemini", "ollama"),
+        assertEquals(List.of("watsonx", "anthropic", "openai", "gemini", "ollama",
+                "acp:claude", "acp:codex", "acp:bob", "acp:qwen", "acp:opencode", "acp:dsh"),
                 choices.stream().map(AiProviderSwitchPopup.ProviderChoice::provider).toList());
     }
 
@@ -149,5 +158,62 @@ class AiProviderSelectorTest {
                 .hasMessageContaining("openai")
                 .hasMessageContaining("anthropic")
                 .hasMessageContaining("watsonx");
+    }
+
+    @Test
+    void customAcpRowAppearsOnlyWhenCommandIsConfigured(@TempDir Path tempDir) {
+        useHome(tempDir);
+        assertFalse(selector.buildChoices().stream().anyMatch(c -> "acp:custom".equals(c.provider())));
+        TuiSettings settings = TuiSettings.load();
+        settings.setAiAcpCommand("npx -y pi-acp");
+        settings.save();
+        assertTrue(selector.buildChoices().stream().anyMatch(c -> "acp:custom".equals(c.provider())));
+    }
+
+    @Test
+    void acpDefaultIsListedFirstAndNotDuplicated(@TempDir Path tempDir) {
+        useHome(tempDir);
+        TuiSettings settings = TuiSettings.load();
+        settings.setAiProvider("acp:codex");
+        settings.save();
+        List<String> ids = selector.buildChoices().stream().map(AiProviderSwitchPopup.ProviderChoice::provider).toList();
+        assertEquals("acp:codex", ids.get(0));
+        assertEquals(1, ids.stream().filter("acp:codex"::equals).count());
+    }
+
+    @Test
+    void applyChoiceLeavesLlmClientUntouchedForAcpProviders() {
+        LlmClient client = LlmClient.create();
+        LlmClient.ApiType before = client.apiType();
+        selector.applyChoice(client, "acp:claude", "", "");
+        assertEquals(before, client.apiType());
+    }
+
+    @Test
+    void acpPresetResolvesCommandsAndCustomCommand(@TempDir Path tempDir) {
+        useHome(tempDir);
+        TuiSettings settings = TuiSettings.load();
+        AiProviderSelector.AcpPreset claude = selector.acpPreset("acp:claude", settings);
+        assertEquals(List.of("npx", "-y", "@agentclientprotocol/claude-agent-acp"), claude.command());
+        assertEquals("npx", claude.executable());
+        assertEquals("Claude Code (ACP)", AiProviderSelector.acpLabel("acp:claude"));
+        assertThrows(IllegalArgumentException.class, () -> selector.acpPreset("acp:custom", settings));
+        settings.setAiAcpCommand("  /opt/agent/bin/agent   --acp ");
+        AiProviderSelector.AcpPreset custom = selector.acpPreset("acp:custom", settings);
+        assertEquals(List.of("/opt/agent/bin/agent", "--acp"), custom.command());
+        assertEquals("/opt/agent/bin/agent", custom.executable());
+        assertEquals("Custom (ACP)", custom.label());
+        assertEquals("claude", claude.logo());
+        assertEquals("✱", claude.glyph());
+        assertNull(custom.logo());
+        assertEquals("●", custom.glyph());
+        assertThrows(IllegalArgumentException.class, () -> selector.acpPreset("acp:nope", settings));
+    }
+
+    @Test
+    @EnabledOnOs({ OS.LINUX, OS.MAC })
+    void isOnPathFindsShellButNotNonsense() {
+        assertTrue(AiProviderSelector.isOnPath("sh"));
+        assertFalse(AiProviderSelector.isOnPath("definitely-not-a-real-binary-42"));
     }
 }

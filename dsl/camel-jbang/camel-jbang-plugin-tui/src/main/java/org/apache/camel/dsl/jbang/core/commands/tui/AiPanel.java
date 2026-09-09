@@ -19,12 +19,14 @@ package org.apache.camel.dsl.jbang.core.commands.tui;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.time.Duration;
 import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayDeque;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.Deque;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
@@ -32,8 +34,10 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Optional;
+import java.util.concurrent.Callable;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ThreadLocalRandom;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicReference;
@@ -250,6 +254,32 @@ class AiPanel {
     private List<AiProviderSwitchPopup.ProviderChoice> providerChoicesForTesting;
     private boolean testingClientInjected;
 
+    // ACP backend: set when the selected provider is an external coding agent (provider id "acp:*"). The agent
+    // process is spawned lazily on the first prompt so a slow first npx download never freezes the UI.
+    private static final Duration ACP_INIT_TIMEOUT = Duration.ofSeconds(120);
+    private static final Duration ACP_SESSION_TIMEOUT = Duration.ofSeconds(60);
+    private static final Duration ACP_AUTH_TIMEOUT = Duration.ofSeconds(300);
+    private static final String TUI_TOOL_PREFIX = "mcp__camel-tui__";
+    private static final String AGENT_COMMAND_PREFIX = "/agent:";
+    private volatile AiProviderSelector.AcpPreset acpPreset;
+    private volatile AcpAgentClient acpClient;
+    private volatile AcpAgentClient.AgentInfo acpAgentInfo;
+    private volatile String acpSessionId;
+    private volatile boolean acpPreambleSent;
+    private volatile AcpHeaderStrip.LogoMode acpLogoMode = AcpHeaderStrip.LogoMode.AUTO;
+    private AcpHeaderStrip acpHeader = new AcpHeaderStrip();
+    private String acpMcpUrl;
+    private Path acpCwd;
+    private AcpClientFactory acpClientFactory = this::spawnAcpAgent;
+    private Callable<String> mcpUrlSupplier;
+    private final AcpPermissionPopup permissionPopup = new AcpPermissionPopup();
+    private volatile CompletableFuture<String> pendingPermission;
+
+    /** Creates the client for a preset; replaced in tests with one backed by {@code FakeAcpAgent}. */
+    interface AcpClientFactory {
+        AcpAgentClient create(AiProviderSelector.AcpPreset preset, Path cwd) throws IOException;
+    }
+
     // MCP facade for TUI tool access from the AI panel
     private McpFacade mcpFacade;
     // /write: confirm (dialog per write), auto (the model may skip it with confirm=false) or live (the edit is replayed
@@ -457,10 +487,27 @@ class AiPanel {
     void destroy() {
         close();
         stopAgentThread();
+        closeAcpClient();
     }
 
     private void initClient() {
         modelCompletionCache = null;
+        String provider = sessionProviderChoice != null
+                ? sessionProviderChoice.provider() : TuiSettings.load().getAiProvider();
+        if (AiProviderSelector.isAcp(provider)) {
+            try {
+                TuiSettings settings = TuiSettings.load();
+                acpPreset = providerSelector.acpPreset(provider, settings);
+                acpLogoMode = AcpHeaderStrip.LogoMode.parse(settings.getAiAcpLogos());
+                initError = null;
+            } catch (IllegalArgumentException e) {
+                acpPreset = null;
+                initError = e.getMessage();
+            }
+            client = null;
+            return;
+        }
+        acpPreset = null;
         try {
             LlmClient created = LlmClient.create()
                     .withTemperature(0.3)
@@ -495,7 +542,27 @@ class AiPanel {
 
     private void applyProviderChoice(AiProviderSwitchPopup.ProviderChoice choice) {
         stopAgentThread();
+        closeAcpClient();
         sessionProviderChoice = choice;
+        if (AiProviderSelector.isAcp(choice.provider())) {
+            client = null;
+            initError = null;
+            try {
+                TuiSettings settings = TuiSettings.load();
+                acpPreset = providerSelector.acpPreset(choice.provider(), settings);
+                acpLogoMode = AcpHeaderStrip.LogoMode.parse(settings.getAiAcpLogos());
+            } catch (IllegalArgumentException e) {
+                acpPreset = null;
+                sessionProviderChoice = null;
+                conversation.add(new ConversationEntry(AiRole.ERROR, e.getMessage()));
+                return;
+            }
+            conversation.add(new ConversationEntry(
+                    AiRole.SYSTEM,
+                    "Selected " + acpPreset.label() + ". The agent starts with your first question."));
+            return;
+        }
+        acpPreset = null;
         if (testingClientInjected && client != null) {
             // Keep tests independent of the locally installed camel-jbang-core artifact.
         } else {
@@ -512,6 +579,30 @@ class AiPanel {
                     AiRole.ERROR,
                     "Failed to switch to " + choice.provider() + ": " + initError));
         }
+    }
+
+    private void closeAcpClient() {
+        AcpAgentClient agent = acpClient;
+        acpClient = null;
+        acpSessionId = null;
+        acpAgentInfo = null;
+        acpPreambleSent = false;
+        if (agent != null) {
+            // Do not block the TUI event thread: close() destroys the agent process and waits up to 5 seconds for
+            // it to die. Nothing here observes the shutdown, so it runs on a short-lived daemon thread.
+            Thread closer = new Thread(agent::close, "tui-acp-close");
+            closer.setDaemon(true);
+            closer.start();
+        }
+    }
+
+    private String acpLabel() {
+        AcpAgentClient.AgentInfo info = acpAgentInfo;
+        AiProviderSelector.AcpPreset preset = acpPreset;
+        if (info != null) {
+            return info.label();
+        }
+        return preset != null ? preset.label() : "ACP agent";
     }
 
     private String displayModel(AiProviderSwitchPopup.ProviderChoice choice) {
@@ -552,6 +643,15 @@ class AiPanel {
             copyChoice(copyPopup.consumePendingChoice());
             return handled;
         }
+        if (permissionPopup.isVisible()) {
+            boolean handled = permissionPopup.handleMouseEvent(me);
+            AcpPermissionPopup.Decision decision = permissionPopup.consumeDecision();
+            CompletableFuture<String> pending = pendingPermission;
+            if (decision != null && pending != null) {
+                pending.complete(decision.optionId());
+            }
+            return handled;
+        }
         if (!TuiHelper.contains(lastArea, me.x(), me.y())) {
             return false;
         }
@@ -567,6 +667,21 @@ class AiPanel {
     }
 
     boolean handleKeyEvent(KeyEvent ke) {
+        if (permissionPopup.isVisible()) {
+            if (ke.isCtrlC()) {
+                interruptBusyOperation();
+                return true;
+            }
+            permissionPopup.handleKeyEvent(ke);
+            AcpPermissionPopup.Decision decision = permissionPopup.consumeDecision();
+            if (decision != null) {
+                CompletableFuture<String> pending = pendingPermission;
+                if (pending != null) {
+                    pending.complete(decision.optionId());
+                }
+            }
+            return true;
+        }
         if (providerSwitchPopup.isVisible()) {
             providerSwitchPopup.handleKeyEvent(ke);
             AiProviderSwitchPopup.ProviderChoice choice = providerSwitchPopup.consumePendingChoice();
@@ -916,7 +1031,7 @@ class AiPanel {
             currentToken = argument.token();
             completionStart = argument.start();
         } else {
-            names = slashCommands.completionsFor(text).stream()
+            names = slashCommands.completionsFor(text, agentCommandDescriptors()).stream()
                     .map(AiSlashCommandRegistry.Descriptor::name)
                     .toList();
             currentToken = text.length() > 1 ? text.substring(1) : "";
@@ -1084,6 +1199,17 @@ class AiPanel {
     }
 
     private void executeSlashCommand(String input) {
+        if (acpPreset != null && input.startsWith(AGENT_COMMAND_PREFIX)) {
+            String rest = input.substring(AGENT_COMMAND_PREFIX.length()).strip();
+            if (rest.isEmpty()) {
+                conversation.add(new ConversationEntry(AiRole.SYSTEM, agentCommandListing()));
+                return;
+            }
+            // explicit escape: reaches the agent even when the name is also a panel command
+            submitQuestion(input);
+            return;
+        }
+
         Optional<AiSlashCommandRegistry.ParsedCommand> parsed = slashCommands.parse(input);
         if (parsed.isPresent() && (thinking.get() || activeCliCommand != null)) {
             String name = parsed.get().descriptor().name();
@@ -1094,6 +1220,12 @@ class AiPanel {
                         "Wait for the current operation to finish before running /" + name + "."));
                 return;
             }
+        }
+
+        if (parsed.isEmpty() && acpPreset != null) {
+            // not a panel command: hand it to the agent verbatim (its own slash commands and skills)
+            submitQuestion(input);
+            return;
         }
 
         AiSlashCommandRegistry.CommandResult result = slashCommands.execute(input, slashCommandContext);
@@ -1171,6 +1303,20 @@ class AiPanel {
             conversation.add(new ConversationEntry(AiRole.SYSTEM, "(command cancelled)"));
         }
         if (thinking.get()) {
+            CompletableFuture<String> permission = pendingPermission;
+            if (permission != null) {
+                permission.complete(null);
+                permissionPopup.close();
+            }
+            AcpAgentClient agent = acpClient;
+            String session = acpSessionId;
+            if (agent != null && session != null) {
+                // Do not block the TUI event thread: cancel() writes to the agent under the client's writer lock.
+                // prompt() sends the same notification on its own interrupt path; a duplicate cancel is harmless.
+                Thread canceller = new Thread(() -> agent.cancel(session), "tui-acp-cancel");
+                canceller.setDaemon(true);
+                canceller.start();
+            }
             stopAgentThread();
             conversation.add(new ConversationEntry(AiRole.SYSTEM, "(cancelled)"));
         }
@@ -1201,6 +1347,10 @@ class AiPanel {
 
     private void submitQuestion(String question) {
         stopAgentThread();
+        if (acpPreset != null) {
+            submitAcpQuestion(question);
+            return;
+        }
         if (client == null) {
             conversation.add(new ConversationEntry(
                     AiRole.ERROR,
@@ -1451,6 +1601,340 @@ class AiPanel {
         return flat.length() <= max ? flat : flat.substring(0, max) + "...";
     }
 
+    private void submitAcpQuestion(String question) {
+        conversation.add(new ConversationEntry(AiRole.USER, question));
+        log(LogLevel.QUESTION, "Question", question);
+        thinkingVerb = THINKING_VERBS.get(ThreadLocalRandom.current().nextInt(THINKING_VERBS.size()));
+        thinkingStartTime = System.currentTimeMillis();
+        thinking.set(true);
+        // The panel keeps showing exactly what was typed (including an explicit /agent: escape), but the agent
+        // itself only ever sees its own command name: /agent:clear reaches it as /clear.
+        String wireQuestion = question.startsWith(AGENT_COMMAND_PREFIX)
+                ? "/" + question.substring(AGENT_COMMAND_PREFIX.length())
+                : question;
+        agentThread = new Thread(() -> {
+            try {
+                runAcpTurn(wireQuestion);
+            } catch (IOException | RuntimeException e) {
+                reportAcpTurnFailure(e);
+            } finally {
+                if (agentThread == Thread.currentThread()) {
+                    thinking.set(false);
+                    agentThread = null;
+                }
+            }
+        }, "tui-ai-agent");
+        agentThread.setDaemon(true);
+        agentThread.start();
+    }
+
+    /**
+     * Reports a failed ACP turn. The agent process and its session are only thrown away when the failure means they are
+     * gone anyway, so a JSON-RPC error from a healthy agent does not cost the user the conversation context. An
+     * interrupted turn is already reported as "(cancelled)" by {@link #interruptBusyOperation()}.
+     */
+    private void reportAcpTurnFailure(Exception e) {
+        AcpAgentClient.AcpException acp = e instanceof AcpAgentClient.AcpException a ? a : null;
+        if (acp != null && acp.code() == AcpAgentClient.INTERRUPTED) {
+            return;
+        }
+        String message = e.getMessage() != null ? e.getMessage() : e.toString();
+        conversation.add(new ConversationEntry(AiRole.ERROR, message));
+        log(LogLevel.ERROR, "ACP error", message);
+        AcpAgentClient agent = acpClient;
+        boolean dead = agent == null || !agent.isAlive()
+                || (acp != null && (acp.code() == AcpAgentClient.CONNECTION || acp.code() == AcpAgentClient.TIMEOUT));
+        if (dead) {
+            closeAcpClient();
+        }
+    }
+
+    private void runAcpTurn(String question) throws IOException {
+        AcpAgentClient agent = ensureAcpSession();
+        boolean agentCommand = question.startsWith("/");
+        String text = acpPreambleSent || agentCommand ? question : buildSystemPrompt() + "\n\n" + question;
+        AcpTurnListener listener = new AcpTurnListener();
+        String stopReason = agent.prompt(acpSessionId, text, listener);
+        if (!agentCommand) {
+            acpPreambleSent = true;
+        }
+        listener.finish(stopReason);
+        scrollOffset = 0;
+    }
+
+    /**
+     * The ACP agent's advertised commands as display-only descriptors (null executor: they are forwarded, never run
+     * locally). Displayed and completed under the {@code agent:} name so they never collide with a panel command of the
+     * same name; the bare name is registered as an alias so typing it still suggests the prefixed form.
+     */
+    private List<AiSlashCommandRegistry.Descriptor> agentCommandDescriptors() {
+        AcpAgentClient agent = acpClient;
+        if (acpPreset == null || agent == null) {
+            return List.of();
+        }
+        List<AiSlashCommandRegistry.Descriptor> out = new ArrayList<>();
+        for (AcpAgentClient.AgentCommand command : agent.availableCommands()) {
+            out.add(new AiSlashCommandRegistry.Descriptor(
+                    "agent:" + command.name(), List.of(command.name()), command.description(), command.hint(), null));
+        }
+        return out;
+    }
+
+    /**
+     * Formats the {@code /agent:} listing shown when the prefix is typed alone, e.g. {@code /agent:review focus area}.
+     */
+    private String agentCommandListing() {
+        List<AiSlashCommandRegistry.Descriptor> commands = agentCommandDescriptors();
+        if (commands.isEmpty()) {
+            return "The agent has not advertised any commands yet.";
+        }
+        List<AiSlashCommandRegistry.Descriptor> sorted = commands.stream()
+                .sorted(Comparator.comparing(AiSlashCommandRegistry.Descriptor::name))
+                .toList();
+        int width = AiSlashCommandRegistry.commandColumnWidth(sorted);
+        StringBuilder sb = new StringBuilder("Agent commands (").append(sorted.size()).append(")\n\n```\n");
+        for (AiSlashCommandRegistry.Descriptor descriptor : sorted) {
+            sb.append(AiSlashCommandRegistry.formatAlignedLine(descriptor, width)).append('\n');
+        }
+        return sb.append("```").toString();
+    }
+
+    /**
+     * Spawns the agent and negotiates the protocol on first use, then opens a session when none is active (first
+     * prompt, or after /clear). Runs on the agent thread; every failure is reported by the caller.
+     */
+    private AcpAgentClient ensureAcpSession() throws IOException {
+        AiProviderSelector.AcpPreset preset = acpPreset;
+        AcpAgentClient agent = acpClient;
+        if (agent == null || !agent.isAlive()) {
+            closeAcpClient();
+            String mcpUrl;
+            try {
+                mcpUrl = mcpUrlSupplier != null ? mcpUrlSupplier.call() : null;
+            } catch (Exception e) {
+                throw new IllegalStateException("Could not start the TUI MCP server: " + e.getMessage(), e);
+            }
+            if (mcpUrl == null) {
+                throw new IllegalStateException("The TUI MCP server is not available in this session.");
+            }
+            Path cwd = acpWorkingDir();
+            conversation.add(new ConversationEntry(AiRole.SYSTEM, "Starting " + preset.label() + "…"));
+            agent = acpClientFactory.create(preset, cwd);
+            agent.setPermissionHandler(new AcpPanelPermissionHandler());
+            AcpAgentClient.AgentInfo info;
+            try {
+                info = agent.initialize(ACP_INIT_TIMEOUT);
+                if (info.protocolVersion() != AcpAgentClient.PROTOCOL_VERSION) {
+                    String mismatch = preset.label() + " negotiated ACP protocol version " + info.protocolVersion()
+                                      + "; the TUI supports version " + AcpAgentClient.PROTOCOL_VERSION + ".";
+                    throw new IllegalStateException(mismatch);
+                }
+                if (!info.httpMcp()) {
+                    throw new IllegalStateException(
+                            preset.label() + " does not support HTTP MCP servers, so it cannot reach the TUI tools.");
+                }
+            } catch (RuntimeException e) {
+                agent.close();
+                throw e;
+            }
+            acpAgentInfo = info;
+            // written before the volatile acpClient write below, which publishes them to the other threads
+            acpMcpUrl = mcpUrl;
+            acpCwd = cwd;
+            acpClient = agent;
+            acpSessionId = null;
+            log(LogLevel.RESULT, "ACP agent started", info.label() + " cwd=" + cwd);
+        }
+        if (acpSessionId == null) {
+            acpSessionId = openAcpSession(agent, acpAgentInfo, acpMcpUrl, acpCwd);
+            acpPreambleSent = false;
+            log(LogLevel.RESULT, "ACP session", acpSessionId);
+        }
+        return agent;
+    }
+
+    private String openAcpSession(AcpAgentClient agent, AcpAgentClient.AgentInfo info, String mcpUrl, Path cwd) {
+        try {
+            return agent.newSession(cwd, mcpUrl, ACP_SESSION_TIMEOUT);
+        } catch (AcpAgentClient.AcpException e) {
+            if (e.code() != AcpAgentClient.AUTH_REQUIRED) {
+                throw e;
+            }
+            AcpAgentClient.AuthMethod method = info.authMethods().stream()
+                    .filter(m -> m.id() != null && (m.type() == null || "agent".equals(m.type())))
+                    .findFirst()
+                    .orElse(null);
+            if (method == null) {
+                throw new IllegalStateException("Authentication required. " + acpPreset.loginHint());
+            }
+            conversation.add(new ConversationEntry(
+                    AiRole.SYSTEM, "Authenticating with " + info.label() + " (" + method.name() + ")…"));
+            try {
+                agent.authenticate(method.id(), ACP_AUTH_TIMEOUT);
+                return agent.newSession(cwd, mcpUrl, ACP_SESSION_TIMEOUT);
+            } catch (AcpAgentClient.AcpException retry) {
+                throw new IllegalStateException(
+                        "Authentication failed: " + retry.getMessage() + ". " + acpPreset.loginHint());
+            }
+        }
+    }
+
+    private AcpHeaderStrip.Model acpHeaderModel() {
+        AiProviderSelector.AcpPreset preset = acpPreset;
+        AcpAgentClient agent = acpClient;
+        int commands = agent != null ? agent.availableCommands().size() : 0;
+        return new AcpHeaderStrip.Model(
+                preset.label(), preset.glyph(), preset.color(), preset.logo(), acpLabel(),
+                acpSessionId, acpCwd, commands);
+    }
+
+    private Path acpWorkingDir() {
+        IntegrationInfo info = ctx != null ? ctx.findSelectedIntegration() : null;
+        if (info != null && info.configProperties != null) {
+            Path dir = FilesBrowser.resolveSourceDirectory(info);
+            if (dir != null && Files.isDirectory(dir)) {
+                return dir.toAbsolutePath();
+            }
+        }
+        return Path.of("").toAbsolutePath();
+    }
+
+    private int replaceOrAppend(int index, ConversationEntry entry) {
+        if (index >= 0 && index < conversation.size()) {
+            conversation.set(index, entry);
+            return index;
+        }
+        conversation.add(entry);
+        return conversation.size() - 1;
+    }
+
+    /**
+     * Turns agent updates into conversation entries. The callbacks run on the ACP reader thread while
+     * {@link #finish(String)} runs on the agent thread, and cancelling a turn returns from
+     * {@link AcpAgentClient#prompt} without waiting for the reader, so every method is synchronized on the listener.
+     */
+    private final class AcpTurnListener implements AcpAgentClient.Listener {
+        private final StringBuilder text = new StringBuilder();
+        private int liveIndex = -1;
+        private final Map<String, Integer> toolLines = new HashMap<>();
+        private final Map<String, String> toolTitles = new HashMap<>();
+        private volatile long usedTokens;
+
+        @Override
+        public synchronized void onTextChunk(String chunk) {
+            text.append(chunk);
+            liveIndex = replaceOrAppend(liveIndex, new ConversationEntry(AiRole.ASSISTANT, text.toString()));
+            scrollOffset = 0;
+        }
+
+        @Override
+        public synchronized void onToolCall(String toolCallId, String title, String kind, JsonObject rawInput) {
+            conversation.add(new ConversationEntry(AiRole.SYSTEM, TuiIcons.GEAR + " " + title));
+            if (toolCallId != null) {
+                toolLines.put(toolCallId, conversation.size() - 1);
+                toolTitles.put(toolCallId, title);
+            }
+            // text after a tool call starts a new assistant entry below the tool line
+            liveIndex = -1;
+            text.setLength(0);
+            log(LogLevel.TOOL, title, rawInput != null ? rawInput.toJson() : "");
+        }
+
+        @Override
+        public synchronized void onToolCallUpdate(String toolCallId, String status, String contentText) {
+            Integer index = toolCallId != null ? toolLines.get(toolCallId) : null;
+            if (index == null) {
+                return;
+            }
+            String title = toolTitles.getOrDefault(toolCallId, "tool");
+            if ("completed".equals(status)) {
+                replaceOrAppend(index, new ConversationEntry(AiRole.SYSTEM, TuiIcons.CHECK + " " + title));
+                log(LogLevel.RESULT, title, contentText != null ? contentText : "completed");
+            } else if ("failed".equals(status)) {
+                replaceOrAppend(index, new ConversationEntry(AiRole.SYSTEM, TuiIcons.CROSS + " " + title));
+                log(LogLevel.ERROR, title, contentText != null ? contentText : "failed");
+            }
+        }
+
+        @Override
+        public synchronized void onUsage(long used, long size) {
+            usedTokens = used;
+        }
+
+        synchronized void finish(String stopReason) {
+            long elapsed = System.currentTimeMillis() - thinkingStartTime;
+            int tokens = (int) Math.min(Integer.MAX_VALUE, usedTokens);
+            if (liveIndex >= 0) {
+                // the agent runs its own tools, so ACP reports no ai/tool split to fill in
+                replaceOrAppend(liveIndex,
+                        new ConversationEntry(AiRole.ASSISTANT, text.toString(), elapsed, 0, 0, 0, tokens));
+            }
+            if (tokens > 0) {
+                AiProviderSelector.AcpPreset preset = acpPreset;
+                sessionTotalTokens = tokens;
+                usageHistory.add(new AiUsageEntry(
+                        acpLabel(), preset != null ? preset.id() : "acp", 0, 0, tokens, elapsed,
+                        stopReason, Instant.now()));
+            }
+            switch (stopReason) {
+                case "end_turn", "cancelled" -> {
+                    // cancelled is reported by interruptBusyOperation()
+                }
+                case "refusal" -> conversation.add(new ConversationEntry(AiRole.ERROR, "The agent refused to continue."));
+                default -> conversation.add(new ConversationEntry(AiRole.SYSTEM, "(stopped: " + stopReason + ")"));
+            }
+            log(LogLevel.RESPONSE, "Response (" + formatSeconds(elapsed) + ", " + stopReason + ")", text.toString());
+        }
+    }
+
+    /**
+     * Policy A from the design: calls to the camel-tui MCP server are approved silently (allow-always preferred),
+     * everything else is put in front of the user. Runs on the ACP request thread and blocks until the user answers or
+     * the turn is cancelled.
+     */
+    private final class AcpPanelPermissionHandler implements AcpAgentClient.PermissionHandler {
+        @Override
+        public String decide(JsonObject toolCall, List<JsonObject> options) {
+            String name = String.valueOf(toolCall.getStringOrDefault("name", ""));
+            String title = String.valueOf(toolCall.getStringOrDefault("title", ""));
+            if (name.startsWith(TUI_TOOL_PREFIX) || title.contains("camel-tui")) {
+                String optionId = firstOptionOfKind(options, "allow_always");
+                if (optionId == null) {
+                    optionId = firstOptionOfKind(options, "allow_once");
+                }
+                if (optionId == null && !options.isEmpty()) {
+                    optionId = options.get(0).getString("optionId");
+                }
+                log(LogLevel.TOOL, "Auto-approved TUI tool", title);
+                return optionId;
+            }
+            CompletableFuture<String> decision = new CompletableFuture<>();
+            pendingPermission = decision;
+            permissionPopup.open(toolCall, options);
+            log(LogLevel.TOOL, "Permission requested", title);
+            try {
+                return decision.get();
+            } catch (InterruptedException e) {
+                Thread.currentThread().interrupt();
+                return null;
+            } catch (ExecutionException e) {
+                return null;
+            } finally {
+                pendingPermission = null;
+                permissionPopup.close();
+            }
+        }
+    }
+
+    private static String firstOptionOfKind(List<JsonObject> options, String kind) {
+        for (JsonObject option : options) {
+            if (kind.equals(option.getString("kind"))) {
+                return option.getString("optionId");
+            }
+        }
+        return null;
+    }
+
     private void recordUsage(LlmClient.ChatResponse response, long latencyMs) {
         if (client == null || response.usage().totalTokens() == 0) {
             return;
@@ -1478,6 +1962,10 @@ class AiPanel {
             titleLine = Line.from(
                     Span.styled(" AI ", Style.EMPTY.bold()),
                     Span.styled("(" + formatSeconds(titleElapsed) + tokenSuffix + ") ", Style.EMPTY.dim()));
+        } else if (acpPreset != null) {
+            titleLine = Line.from(
+                    Span.styled(" AI ", Style.EMPTY.bold()),
+                    Span.styled("· " + acpLabel() + " ", Style.EMPTY.dim()));
         } else if (sessionTotalTokens > 0) {
             titleLine = Line.from(
                     Span.styled(" AI ", Style.EMPTY.bold()),
@@ -1495,10 +1983,12 @@ class AiPanel {
         frame.renderWidget(block, area);
         Rect inner = block.inner(area);
         if (inner.height() < 2) {
+            acpHeader.hide(frame);
             return;
         }
 
         if (statsView) {
+            acpHeader.hide(frame);
             renderStats(frame, inner);
             if (providerSwitchPopup.isVisible()) {
                 providerSwitchPopup.render(frame, inner);
@@ -1506,10 +1996,26 @@ class AiPanel {
             if (copyPopup.isVisible()) {
                 copyPopup.render(frame, inner);
             }
+            if (permissionPopup.isVisible()) {
+                permissionPopup.render(frame, inner);
+            }
             return;
         }
 
-        // Split inner area: conversation (fill) + optional slash hints + separator (1 row) + input (1 row per line)
+        Rect body = inner;
+        if (acpPreset != null && acpSessionId != null && inner.height() >= 8) {
+            List<Rect> top = Layout.vertical()
+                    .constraints(Constraint.length(AcpHeaderStrip.ROWS), Constraint.length(1), Constraint.fill())
+                    .split(inner);
+            acpHeader.render(frame, top.get(0), acpHeaderModel(), acpLogoMode);
+            frame.renderWidget(Paragraph.from(Line.from(Span.styled("─".repeat(top.get(1).width()), Style.EMPTY.dim()))),
+                    top.get(1));
+            body = top.get(2);
+        } else {
+            acpHeader.hide(frame);
+        }
+
+        // Split the body area: conversation (fill) + optional slash hints + separator (1 row) + input (1 row per line)
         List<AiSlashCommandRegistry.Descriptor> slashHints = slashCommandHints();
         int hintRows = slashHints.isEmpty() ? 0 : slashHints.size();
         int inputRows = historySearchActive ? 1 : inputRows();
@@ -1517,12 +2023,12 @@ class AiPanel {
         if (hintRows == 0) {
             parts = Layout.vertical()
                     .constraints(Constraint.fill(), Constraint.length(1), Constraint.length(inputRows))
-                    .split(inner);
+                    .split(body);
         } else {
             parts = Layout.vertical()
                     .constraints(Constraint.fill(), Constraint.length(hintRows), Constraint.length(1),
                             Constraint.length(inputRows))
-                    .split(inner);
+                    .split(body);
         }
         Rect conversationArea = parts.get(0);
         Rect separatorArea = parts.get(hintRows == 0 ? 1 : 2);
@@ -1543,13 +2049,16 @@ class AiPanel {
         if (copyPopup.isVisible()) {
             copyPopup.render(frame, inner);
         }
+        if (permissionPopup.isVisible()) {
+            permissionPopup.render(frame, inner);
+        }
     }
 
     private List<AiSlashCommandRegistry.Descriptor> slashCommandHints() {
         if (thinking.get() || statsView || providerSwitchPopup.isVisible()) {
             return List.of();
         }
-        return slashCommands.completionsFor(inputBuffer.toString());
+        return slashCommands.completionsFor(inputBuffer.toString(), agentCommandDescriptors());
     }
 
     private void renderSlashCommandHints(Frame frame, Rect area, List<AiSlashCommandRegistry.Descriptor> hints) {
@@ -1800,6 +2309,10 @@ class AiPanel {
     }
 
     void renderFooter(List<Span> spans) {
+        if (permissionPopup.isVisible()) {
+            permissionPopup.renderFooter(spans);
+            return;
+        }
         if (providerSwitchPopup.isVisible()) {
             providerSwitchPopup.renderFooter(spans);
             return;
@@ -2737,6 +3250,10 @@ class AiPanel {
     }
 
     void clearConversation() {
+        if (acpPreset != null && thinking.get()) {
+            // an abandoned ACP turn would keep writing into the list we are about to clear
+            interruptBusyOperation();
+        }
         conversation.clear();
         activityLog.clear();
         inputBuffer.setLength(0);
@@ -2751,6 +3268,9 @@ class AiPanel {
         if (messages != null) {
             messages.clear();
         }
+        // the next prompt opens a fresh agent session (context reset), keeping the process
+        acpSessionId = null;
+        acpPreambleSent = false;
     }
 
     void setPromptHistoryForTesting(TuiPromptHistory history) {
@@ -2766,6 +3286,41 @@ class AiPanel {
         this.initError = null;
         this.messages = new ArrayList<>();
         this.testingClientInjected = true;
+    }
+
+    void selectProviderForTesting(String providerId) {
+        applyProviderChoice(new AiProviderSwitchPopup.ProviderChoice(providerId, "", "", false));
+    }
+
+    boolean isAcpProviderForTesting() {
+        return acpPreset != null;
+    }
+
+    void setAcpHeaderForTesting(AcpHeaderStrip strip) {
+        this.acpHeader = strip;
+    }
+
+    void setAcpClientFactoryForTesting(AcpClientFactory factory) {
+        this.acpClientFactory = factory;
+    }
+
+    void setMcpUrlSupplierForTestingOrRuntime(Callable<String> supplier) {
+        this.mcpUrlSupplier = supplier;
+    }
+
+    String acpSessionIdForTesting() {
+        return acpSessionId;
+    }
+
+    boolean isPermissionPopupVisibleForTesting() {
+        return permissionPopup.isVisible();
+    }
+
+    private AcpAgentClient spawnAcpAgent(AiProviderSelector.AcpPreset preset, Path cwd) throws IOException {
+        if (!AiProviderSelector.isOnPath(preset.executable())) {
+            throw new IOException(preset.installHint());
+        }
+        return AcpAgentClient.spawn(preset.command(), cwd, line -> log(LogLevel.ERROR, "ACP", line));
     }
 
     void setSlashCommandContextForTesting(AiSlashCommandContext context) {
@@ -2907,16 +3462,26 @@ class AiPanel {
 
         @Override
         public String currentModel() {
+            if (acpPreset != null) {
+                return acpLabel();
+            }
             return client != null && client.model() != null ? client.model() : "unknown";
         }
 
         @Override
         public List<String> availableModels() {
+            if (acpPreset != null) {
+                return List.of();
+            }
             return client != null ? client.listModels() : List.of();
         }
 
         @Override
         public boolean switchModel(String model) {
+            if (acpPreset != null) {
+                throw new IllegalStateException(
+                        "The model is configured in the agent (" + acpLabel() + "), not in the TUI.");
+            }
             if (client == null) {
                 return false;
             }

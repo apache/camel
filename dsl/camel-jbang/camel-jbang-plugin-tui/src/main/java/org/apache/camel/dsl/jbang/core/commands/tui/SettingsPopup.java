@@ -63,7 +63,9 @@ class SettingsPopup {
     private static final int ROW_AI_URL = 15;
     private static final int ROW_AI_TOOLS = 16;
     private static final int ROW_AI_PROMPT_HISTORY = 17;
-    private static final int ROW_COUNT = 18;
+    private static final int ROW_AI_ACP_COMMAND = 18;
+    private static final int ROW_AI_ACP_LOGOS = 19;
+    private static final int ROW_COUNT = 20;
 
     private static final String[] LOG_PIN_OPTIONS = { "off", "25", "50", "75" };
     private static final String[] RATE_PER_OPTIONS = { "seconds", "minutes" };
@@ -71,6 +73,7 @@ class SettingsPopup {
     private static final String[] PANEL_SPACE_OPTIONS = { "move", "overlay" };
     private static final String[] AI_TOOLS_OPTIONS
             = { AiPanel.TOOL_MODE_AUTO, AiPanel.TOOL_MODE_CORE, AiPanel.TOOL_MODE_FULL };
+    private static final String[] AI_ACP_LOGOS_OPTIONS = { "auto", "on", "off" };
     private static final List<String> AI_PROVIDERS = buildAiProviderList();
 
     private static List<String> buildAiProviderList() {
@@ -78,6 +81,10 @@ class SettingsPopup {
         for (LlmClient.ApiType apiType : LlmClient.ApiType.values()) {
             providers.add(apiType.name());
         }
+        for (AiProviderSelector.AcpPreset preset : AiProviderSelector.acpPresets()) {
+            providers.add(preset.id());
+        }
+        providers.add(AiProviderSelector.ACP_CUSTOM);
         providers.add("auto");
         return providers;
     }
@@ -97,6 +104,7 @@ class SettingsPopup {
     private int validateOnSaveIndex;
     private int aiProviderIndex;
     private int aiToolsIndex;
+    private int aiAcpLogosIndex;
     private TextInputState folderInput;
     private TextInputState proxyHostInput;
     private TextInputState proxyPortInput;
@@ -104,6 +112,7 @@ class SettingsPopup {
     private TextInputState aiModelInput;
     private TextInputState aiUrlInput;
     private TextInputState aiPromptHistoryInput;
+    private TextInputState aiAcpCommandInput;
     private List<String> tabNames = new ArrayList<>();
 
     private List<TabRegistry.TabEntry> tabEntries;
@@ -190,6 +199,14 @@ class SettingsPopup {
         aiToolsIndex = Math.max(0, toolsIdx);
         aiPromptHistoryInput = new TextInputState(
                 settings.getAiPromptHistory() != null ? settings.getAiPromptHistory() : "");
+        aiAcpCommandInput = new TextInputState(settings.getAiAcpCommand() != null ? settings.getAiAcpCommand() : "");
+        aiAcpLogosIndex = 0;
+        for (int i = 0; i < AI_ACP_LOGOS_OPTIONS.length; i++) {
+            if (AI_ACP_LOGOS_OPTIONS[i].equals(settings.getAiAcpLogos())) {
+                aiAcpLogosIndex = i;
+                break;
+            }
+        }
         selectedRow = ROW_THEME;
         visible = true;
     }
@@ -342,6 +359,18 @@ class SettingsPopup {
             handleTextInput(ke, aiPromptHistoryInput);
             return true;
         }
+        if (selectedRow == ROW_AI_ACP_COMMAND) {
+            handleTextInput(ke, aiAcpCommandInput);
+            return true;
+        }
+        if (selectedRow == ROW_AI_ACP_LOGOS) {
+            if (ke.isChar(' ') || ke.isRight()) {
+                aiAcpLogosIndex = (aiAcpLogosIndex + 1) % AI_ACP_LOGOS_OPTIONS.length;
+            } else if (ke.isLeft()) {
+                aiAcpLogosIndex = (aiAcpLogosIndex - 1 + AI_ACP_LOGOS_OPTIONS.length) % AI_ACP_LOGOS_OPTIONS.length;
+            }
+            return true;
+        }
         return true;
     }
 
@@ -386,6 +415,8 @@ class SettingsPopup {
         String aiToolsValue = AI_TOOLS_OPTIONS[aiToolsIndex];
         settings.setAiTools(AiPanel.TOOL_MODE_AUTO.equals(aiToolsValue) ? null : aiToolsValue);
         settings.setAiPromptHistory(stripControlChars(aiPromptHistoryInput.text().trim()));
+        settings.setAiAcpCommand(stripControlChars(aiAcpCommandInput.text().trim()));
+        settings.setAiAcpLogos(AI_ACP_LOGOS_OPTIONS[aiAcpLogosIndex]);
         settings.save();
         if (Theme.mode().equals(selectedThemeId)) {
             // Already active via live preview (or unchanged): just persist and clear the preview marker.
@@ -519,6 +550,16 @@ class SettingsPopup {
         renderLabel(frame, innerX, rowY, labelW, "AI History:", selectedRow == ROW_AI_PROMPT_HISTORY);
         renderTextInput(frame, innerX + labelW, rowY, fieldW, aiPromptHistoryInput,
                 selectedRow == ROW_AI_PROMPT_HISTORY, "(100)");
+        rowY++;
+
+        renderLabel(frame, innerX, rowY, labelW, "ACP Command:", selectedRow == ROW_AI_ACP_COMMAND);
+        renderTextInput(frame, innerX + labelW, rowY, fieldW, aiAcpCommandInput,
+                selectedRow == ROW_AI_ACP_COMMAND, "(none)");
+        rowY++;
+
+        renderLabel(frame, innerX, rowY, labelW, "ACP Logos:", selectedRow == ROW_AI_ACP_LOGOS);
+        renderValue(frame, innerX + labelW, rowY, fieldW, AI_ACP_LOGOS_OPTIONS[aiAcpLogosIndex],
+                selectedRow == ROW_AI_ACP_LOGOS);
     }
 
     void renderFooter(List<Span> spans) {
@@ -526,7 +567,8 @@ class SettingsPopup {
                 || selectedRow == ROW_LOG_PIN || selectedRow == ROW_RATE_PER
                 || selectedRow == ROW_PANEL_POSITION || selectedRow == ROW_PANEL_SPACE
                 || selectedRow == ROW_CONFIRM_ACTIONS || selectedRow == ROW_VALIDATE_ON_SAVE
-                || selectedRow == ROW_AI_PROVIDER || selectedRow == ROW_AI_TOOLS) {
+                || selectedRow == ROW_AI_PROVIDER || selectedRow == ROW_AI_TOOLS
+                || selectedRow == ROW_AI_ACP_LOGOS) {
             hint(spans, "Space", "cycle");
         }
         hint(spans, "Enter", "save");
@@ -668,6 +710,14 @@ class SettingsPopup {
             case AiPanel.TOOL_MODE_FULL -> "full (all tools)";
             default -> "auto (core if local model)";
         };
+    }
+
+    String selectedAiAcpLogos() {
+        return AI_ACP_LOGOS_OPTIONS[aiAcpLogosIndex];
+    }
+
+    List<String> aiProviderOptionsForTesting() {
+        return AI_PROVIDERS;
     }
 
     String aiModelText() {

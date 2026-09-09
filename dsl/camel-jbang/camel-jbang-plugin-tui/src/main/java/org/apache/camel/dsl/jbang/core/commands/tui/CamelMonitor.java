@@ -141,7 +141,8 @@ public class CamelMonitor extends CamelCommand {
     @CommandLine.Option(names = { "--mcp-port" },
                         description = "MCP server port (default: ${DEFAULT-VALUE})",
                         defaultValue = "8123")
-    int mcpPort = 8123;
+    // written by ensureMcpServer() on the AI panel's agent thread, read on the event and main threads
+    volatile int mcpPort = 8123;
 
     @CommandLine.Option(names = { "--web" },
                         description = "Enable browser-accessible terminal (WebSocket) server")
@@ -170,7 +171,7 @@ public class CamelMonitor extends CamelCommand {
     private final WaveTextState notificationWaveState = new WaveTextState();
     private String lastWaveNotification;
     private boolean mcpInjectedKey;
-    private TuiMcpServer mcpServer;
+    private volatile TuiMcpServer mcpServer;
     private Path mcpJsonFile;
     private TuiWebServer webServer;
     private McpFacade mcpFacade;
@@ -967,9 +968,7 @@ public class CamelMonitor extends CamelCommand {
             mcpServer = new TuiMcpServer(mcpPort, mcpFacade);
             try {
                 mcpServer.start();
-                mcpFacade.setMcpActivityLog(mcpServer::getActivityLog, mcpServer::getToolCallCount);
-                actionsPopup.setMcpEnabled(true, mcpPort, mcpServer::getConnectedClient,
-                        mcpServer::getActivityLog, mcpServer::getToolCallCount);
+                wireMcpServer(mcpServer);
                 mcpJsonFile = writeMcpJson(mcpPort);
             } catch (BindException e) {
                 System.err.println("MCP server failed to start: port " + mcpPort + " is already in use.");
@@ -979,6 +978,7 @@ public class CamelMonitor extends CamelCommand {
             }
         }
         aiPanel.setMcpInfo(mcp, mcpPort);
+        aiPanel.setMcpUrlSupplierForTestingOrRuntime(this::ensureMcpServer);
     }
 
     /**
@@ -2961,6 +2961,31 @@ public class CamelMonitor extends CamelCommand {
     }
 
     // ---- MCP .mcp.json lifecycle ----
+
+    /**
+     * Returns the Streamable HTTP URL of the embedded MCP server, starting it on an ephemeral localhost port if neither
+     * --mcp nor an earlier call did. Used by the AI panel to hand the TUI tools to an ACP agent. No .mcp.json is
+     * written for an on-demand server. Called from the AI panel's agent thread.
+     */
+    synchronized String ensureMcpServer() throws IOException {
+        TuiMcpServer server = mcpServer;
+        if (server == null) {
+            server = new TuiMcpServer(mcp ? mcpPort : 0, mcpFacade);
+            server.start();
+            mcpServer = server;
+            mcpPort = server.getPort();
+            wireMcpServer(server);
+        }
+        return "http://127.0.0.1:" + server.getPort() + "/mcp";
+    }
+
+    /** Hands a started MCP server to the facade, the actions popup and the AI panel. */
+    private void wireMcpServer(TuiMcpServer server) {
+        mcpFacade.setMcpActivityLog(server::getActivityLog, server::getToolCallCount);
+        actionsPopup.setMcpEnabled(true, mcpPort, server::getConnectedClient,
+                server::getActivityLog, server::getToolCallCount);
+        aiPanel.setMcpInfo(true, mcpPort);
+    }
 
     private static Path writeMcpJson(int port) {
         Path path = Path.of(".mcp.json");

@@ -40,6 +40,8 @@ final class TuiSettings {
     static final String PROP_AI_MODEL = "camel.tui.ai.model";
     static final String PROP_AI_URL = "camel.tui.ai.url";
     static final String PROP_AI_TOOLS = "camel.tui.ai.tools";
+    static final String PROP_AI_ACP_COMMAND = "camel.tui.ai.acp.command";
+    static final String PROP_AI_ACP_LOGOS = "camel.tui.ai.acp.logos";
     static final String PROP_PROXY_HOST = "camel.tui.proxyHost";
     static final String PROP_PROXY_PORT = "camel.tui.proxyPort";
     static final String PROP_SHELL_HISTORY = "camel.tui.shell.history";
@@ -61,6 +63,8 @@ final class TuiSettings {
     private String aiModel;
     private String aiUrl;
     private String aiTools;
+    private String aiAcpCommand;
+    private String aiAcpLogos;
     private String shellHistory;
     private String aiPromptHistory;
     private String confirmActions;
@@ -168,6 +172,22 @@ final class TuiSettings {
         this.aiTools = aiTools;
     }
 
+    String getAiAcpCommand() {
+        return aiAcpCommand;
+    }
+
+    void setAiAcpCommand(String aiAcpCommand) {
+        this.aiAcpCommand = aiAcpCommand;
+    }
+
+    String getAiAcpLogos() {
+        return aiAcpLogos;
+    }
+
+    void setAiAcpLogos(String aiAcpLogos) {
+        this.aiAcpLogos = aiAcpLogos;
+    }
+
     String getShellHistory() {
         return shellHistory;
     }
@@ -262,6 +282,8 @@ final class TuiSettings {
             settings.aiModel = trimToNull(TuiUserConfig.read(PROP_AI_MODEL));
             settings.aiUrl = trimToNull(TuiUserConfig.read(PROP_AI_URL));
             settings.aiTools = trimToNull(TuiUserConfig.read(PROP_AI_TOOLS));
+            settings.aiAcpCommand = trimToNull(TuiUserConfig.read(PROP_AI_ACP_COMMAND));
+            settings.aiAcpLogos = trimToNull(TuiUserConfig.read(PROP_AI_ACP_LOGOS));
             settings.shellHistory = trimToNull(TuiUserConfig.read(PROP_SHELL_HISTORY));
             settings.aiPromptHistory = trimToNull(TuiUserConfig.read(PROP_AI_PROMPT_HISTORY));
             settings.confirmActions = trimToNull(TuiUserConfig.read(PROP_CONFIRM_ACTIONS));
@@ -293,6 +315,8 @@ final class TuiSettings {
             TuiUserConfig.write(PROP_AI_MODEL, aiModel);
             TuiUserConfig.write(PROP_AI_URL, aiUrl);
             TuiUserConfig.write(PROP_AI_TOOLS, aiTools);
+            TuiUserConfig.write(PROP_AI_ACP_COMMAND, aiAcpCommand);
+            TuiUserConfig.write(PROP_AI_ACP_LOGOS, aiAcpLogos);
             TuiUserConfig.write(PROP_SHELL_HISTORY, shellHistory);
             TuiUserConfig.write(PROP_AI_PROMPT_HISTORY, aiPromptHistory);
             TuiUserConfig.write(PROP_CONFIRM_ACTIONS, confirmActions);
