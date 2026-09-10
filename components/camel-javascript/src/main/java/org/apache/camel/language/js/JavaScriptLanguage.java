@@ -25,13 +25,12 @@ import org.apache.camel.Predicate;
 import org.apache.camel.Service;
 import org.apache.camel.spi.ScriptingLanguage;
 import org.apache.camel.spi.annotations.Language;
+import org.apache.camel.support.LRUCacheFactory;
 import org.apache.camel.support.TypedLanguageSupport;
 import org.graalvm.polyglot.Context;
 import org.graalvm.polyglot.Engine;
 import org.graalvm.polyglot.Source;
 import org.graalvm.polyglot.Value;
-
-import static org.graalvm.polyglot.Source.newBuilder;
 
 /**
  * Camel expression language for JavaScript via <a href="https://www.graalvm.org/javascript/">GraalJS</a>.
@@ -43,6 +42,7 @@ import static org.graalvm.polyglot.Source.newBuilder;
 @Language("js")
 public class JavaScriptLanguage extends TypedLanguageSupport implements ScriptingLanguage, Service {
 
+    private final Map<String, Source> sourceCache = LRUCacheFactory.newLRUSoftCache(16, 1000, true);
     private final Lock engineLock = new ReentrantLock();
     private volatile Engine engine;
 
@@ -53,6 +53,7 @@ public class JavaScriptLanguage extends TypedLanguageSupport implements Scriptin
 
     @Override
     public void stop() {
+        sourceCache.clear();
         Engine toClose;
         engineLock.lock();
         try {
@@ -84,9 +85,7 @@ public class JavaScriptLanguage extends TypedLanguageSupport implements Scriptin
                 Value b = cx.getBindings("js");
                 bindings.forEach(b::putMember);
             }
-            Source source = newBuilder("js", script, "Unnamed")
-                    .mimeType("application/javascript+module").buildLiteral();
-            Value o = cx.eval(source);
+            Value o = cx.eval(source(script));
             Object answer = o != null ? o.as(resultType) : null;
             return resultType.cast(answer);
         }
@@ -97,6 +96,21 @@ public class JavaScriptLanguage extends TypedLanguageSupport implements Scriptin
      */
     Context newContext() {
         return JavaScriptHelper.newContext(engine());
+    }
+
+    /**
+     * Returns the {@link Source} for the script text, building it once per distinct script so the shared engine can
+     * reuse its parsed and compiled form across contexts.
+     */
+    Source source(String script) {
+        Source cached = sourceCache.get(script);
+        if (cached != null) {
+            return cached;
+        }
+        Source created = Source.newBuilder("js", script, "Unnamed")
+                .mimeType("application/javascript+module").buildLiteral();
+        sourceCache.put(script, created);
+        return created;
     }
 
     private Engine engine() {

@@ -19,10 +19,7 @@ package org.apache.camel.language.js;
 import org.apache.camel.Exchange;
 import org.apache.camel.support.ExpressionSupport;
 import org.graalvm.polyglot.Context;
-import org.graalvm.polyglot.Source;
 import org.graalvm.polyglot.Value;
-
-import static org.graalvm.polyglot.Source.newBuilder;
 
 public class JavaScriptExpression extends ExpressionSupport {
 
@@ -52,7 +49,8 @@ public class JavaScriptExpression extends ExpressionSupport {
     @SuppressWarnings("unchecked")
     @Override
     public <T> T evaluate(Exchange exchange, Class<T> type) {
-        try (Context cx = language(exchange).newContext()) {
+        JavaScriptLanguage lang = language(exchange);
+        try (Context cx = lang.newContext()) {
             Value b = cx.getBindings("js");
 
             b.putMember("exchange", exchange);
@@ -63,9 +61,7 @@ public class JavaScriptExpression extends ExpressionSupport {
             b.putMember("properties", exchange.getAllProperties());
             b.putMember("body", exchange.getMessage().getBody());
 
-            Source source = newBuilder("js", expressionString, "Unnamed")
-                    .mimeType("application/javascript+module").buildLiteral();
-            Value o = cx.eval(source);
+            Value o = cx.eval(lang.source(expressionString));
             Object answer = o != null ? o.as(Object.class) : null;
             if (type == Object.class) {
                 return (T) answer;
