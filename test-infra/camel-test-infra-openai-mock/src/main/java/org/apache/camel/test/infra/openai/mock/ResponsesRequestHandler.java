@@ -55,22 +55,63 @@ public class ResponsesRequestHandler {
         if (expectation == null) {
             return responseBuilder.createErrorResponse(404, "No matching expectation for input: " + userInput, exchange);
         }
+        int promptTokens = expectation.getUsagePromptTokens() != null
+                ? expectation.getUsagePromptTokens() : ResponseBuilder.DEFAULT_PROMPT_TOKENS;
+        int completionTokens = expectation.getUsageCompletionTokens() != null
+                ? expectation.getUsageCompletionTokens() : ResponseBuilder.DEFAULT_COMPLETION_TOKENS;
+
+        JsonNode input = root.path("input");
+        if (endsWithFunctionCallOutput(input) && !expectation.getToolSequence().isEmpty()) {
+            return handleFunctionCallOutput(expectation, input, promptTokens, completionTokens);
+        }
+
+        expectation.resetToolSequence();
         if (expectation.getRequestAssertion() != null) {
             expectation.getRequestAssertion().accept(requestBody);
         }
         if (expectation.getCustomResponseFunction() != null) {
             return expectation.getCustomResponseFunction().apply(exchange, userInput);
         }
-        int promptTokens = expectation.getUsagePromptTokens() != null
-                ? expectation.getUsagePromptTokens() : ResponseBuilder.DEFAULT_PROMPT_TOKENS;
-        int completionTokens = expectation.getUsageCompletionTokens() != null
-                ? expectation.getUsageCompletionTokens() : ResponseBuilder.DEFAULT_COMPLETION_TOKENS;
+        if (expectation.getResponseType() == MockResponseType.TOOL_CALLS) {
+            return responseBuilder.createResponsesFunctionCallResponse(
+                    expectation.getCurrentToolStep().getToolCalls(), promptTokens, completionTokens);
+        }
         if (expectation.getResponsesOutput() != null) {
             return responseBuilder.createResponsesOutputResponse(
                     expectation.getResponsesOutput(), promptTokens, completionTokens);
         }
         return responseBuilder.createResponsesTextResponse(
                 expectation.getExpectedResponse(), promptTokens, completionTokens);
+    }
+
+    /**
+     * Answers a request that feeds function call results back to the model: the next step of the tool sequence is
+     * returned as function calls and, once the sequence is exhausted, the final text.
+     */
+    private String handleFunctionCallOutput(
+            MockExpectation expectation, JsonNode input, int promptTokens, int completionTokens)
+            throws Exception {
+        expectation.advanceToNextToolStep();
+        if (expectation.hasMoreToolSteps()) {
+            return responseBuilder.createResponsesFunctionCallResponse(
+                    expectation.getCurrentToolStep().getToolCalls(), promptTokens, completionTokens);
+        }
+
+        String lastOutput = input.get(input.size() - 1).path("output").asText();
+        String text;
+        if (expectation.getExpectedResponse() != null) {
+            text = expectation.getExpectedResponse();
+        } else if (expectation.getToolContentResponse() != null) {
+            text = lastOutput + " " + expectation.getToolContentResponse();
+        } else {
+            text = lastOutput;
+        }
+        return responseBuilder.createResponsesTextResponse(text, promptTokens, completionTokens);
+    }
+
+    private static boolean endsWithFunctionCallOutput(JsonNode input) {
+        return input.isArray() && !input.isEmpty()
+                && "function_call_output".equals(input.get(input.size() - 1).path("type").asText());
     }
 
     private MockExpectation findExpectationByInput(String input) {

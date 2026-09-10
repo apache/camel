@@ -91,3 +91,7 @@ MCP approval request or a message whose text carries citations:
           "name": "ask_question", "arguments": "{}"}]""")
 .end()
 ```
+
+`invokeTool` sequences work for the Responses API too. The mock replies with `function_call` items, and a
+follow-up request whose input ends with `function_call_output` items gets the next step of the sequence, then the
+`replyWith` text.

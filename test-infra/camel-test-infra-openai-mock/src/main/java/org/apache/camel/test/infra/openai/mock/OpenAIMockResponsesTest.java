@@ -39,7 +39,29 @@ public class OpenAIMockResponsesTest {
             .when("custom")
             .thenRespondWith((exchange, input) -> "{\"id\":\"resp_custom\",\"object\":\"response\",\"output\":[]}")
             .end()
+            .when("weather in Rome")
+            .invokeTool("get_weather")
+            .withParam("city", "Rome")
+            .replyWith("It is sunny in Rome")
+            .end()
             .build();
+
+    @Test
+    public void testFunctionCallsAreFollowedByTheFinalAnswer() throws Exception {
+        JsonNode first = post("{\"model\":\"gpt-5\",\"input\":\"weather in Rome\"}");
+        JsonNode call = first.path("output").get(0);
+        assertEquals("function_call", call.path("type").asText());
+        assertEquals("get_weather", call.path("name").asText());
+        assertEquals("Rome", new ObjectMapper().readTree(call.path("arguments").asText()).path("city").asText());
+
+        String callId = call.path("call_id").asText();
+        JsonNode second = post("""
+                {"model":"gpt-5","input":[
+                  {"role":"user","content":"weather in Rome"},
+                  {"type":"function_call","call_id":"%s","name":"get_weather","arguments":"{}"},
+                  {"type":"function_call_output","call_id":"%s","output":"sunny"}]}""".formatted(callId, callId));
+        assertEquals("It is sunny in Rome", second.path("output").get(0).path("content").get(0).path("text").asText());
+    }
 
     @Test
     public void testOutputItemsAreReturned() throws Exception {
