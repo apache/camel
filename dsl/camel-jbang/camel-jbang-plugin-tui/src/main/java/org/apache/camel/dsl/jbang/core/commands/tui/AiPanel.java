@@ -195,6 +195,9 @@ class AiPanel {
     private long thinkingStartTime;
     private volatile String thinkingVerb;
     private volatile int sessionTotalTokens;
+    /** What the ACP agent last reported in its context window, and how big that window is (0 = not reported). */
+    private volatile long acpContextUsed;
+    private volatile long acpContextSize;
     private volatile long sessionToolTimeMs;
     private volatile int sessionToolCalls;
     /** Per answered question: [aiMs, toolMs, toolCalls], in order, for the time chart in the usage view. */
@@ -589,6 +592,8 @@ class AiPanel {
         acpSessionId = null;
         acpAgentInfo = null;
         acpPreambleSent = false;
+        acpContextUsed = 0;
+        acpContextSize = 0;
         if (agent != null) {
             // Do not block the TUI event thread: close() destroys the agent process and waits up to 5 seconds for
             // it to die. Nothing here observes the shutdown, so it runs on a short-lived daemon thread.
@@ -1750,6 +1755,8 @@ class AiPanel {
         if (acpSessionId == null) {
             acpSessionId = openAcpSession(agent, acpAgentInfo, acpMcpUrl, acpCwd);
             acpPreambleSent = false;
+            acpContextUsed = 0;
+            acpContextSize = 0;
             log(LogLevel.RESULT, "ACP session", acpSessionId);
         }
         return agent;
@@ -1821,6 +1828,7 @@ class AiPanel {
         private final Map<String, Integer> toolLines = new HashMap<>();
         private final Map<String, String> toolTitles = new HashMap<>();
         private volatile long usedTokens;
+        private volatile long contextSize;
 
         @Override
         public synchronized void onTextChunk(String chunk) {
@@ -1861,19 +1869,25 @@ class AiPanel {
         @Override
         public synchronized void onUsage(long used, long size) {
             usedTokens = used;
+            contextSize = size;
         }
 
         synchronized void finish(String stopReason) {
             long elapsed = System.currentTimeMillis() - thinkingStartTime;
-            int tokens = (int) Math.min(Integer.MAX_VALUE, usedTokens);
+            // the agent reports what its context holds now, not what the turn spent: the turn is the growth, and a
+            // context that shrank because the agent compacted spends nothing
+            long previous = acpContextUsed;
+            acpContextUsed = usedTokens;
+            acpContextSize = contextSize;
+            int tokens = (int) Math.min(Integer.MAX_VALUE, Math.max(0, usedTokens - previous));
             if (liveIndex >= 0) {
                 // the agent runs its own tools, so ACP reports no ai/tool split to fill in
                 replaceOrAppend(liveIndex,
                         new ConversationEntry(AiRole.ASSISTANT, text.toString(), elapsed, 0, 0, 0, tokens));
             }
-            if (tokens > 0) {
+            if (usedTokens > 0) {
                 AiProviderSelector.AcpPreset preset = acpPreset;
-                sessionTotalTokens = tokens;
+                sessionTotalTokens += tokens;
                 usageHistory.add(new AiUsageEntry(
                         acpLabel(), preset != null ? preset.id() : "acp", 0, 0, tokens, elapsed,
                         stopReason, Instant.now()));
@@ -1991,7 +2005,7 @@ class AiPanel {
         } else if (acpPreset != null) {
             titleLine = Line.from(
                     Span.styled(" AI ", Style.EMPTY.bold()),
-                    Span.styled("· " + acpLabel() + " ", Style.EMPTY.dim()));
+                    Span.styled("· " + acpLabel() + describeAcpContextSuffix() + " ", Style.EMPTY.dim()));
         } else if (sessionTotalTokens > 0) {
             titleLine = Line.from(
                     Span.styled(" AI ", Style.EMPTY.bold()),
@@ -3125,6 +3139,20 @@ class AiPanel {
         return sb.toString();
     }
 
+    /** The title's context figure, empty until the agent reports one. */
+    private String describeAcpContextSuffix() {
+        long used = acpContextUsed;
+        if (used <= 0) {
+            return "";
+        }
+        long size = acpContextSize;
+        return " (context: " + formatAcpTokens(used) + (size > 0 ? "/" + formatAcpTokens(size) : "") + " tokens)";
+    }
+
+    private static String formatAcpTokens(long tokens) {
+        return LlmClient.formatTokens((int) Math.min(Integer.MAX_VALUE, tokens));
+    }
+
     /**
      * The {@code /context} answer while an ACP agent is selected. The agent owns the conversation history and runs its
      * own tools, so the interesting figures are its session, the MCP server it was given and the preamble the panel
@@ -3147,8 +3175,15 @@ class AiPanel {
         sb.append("Preamble: ~").append(LlmClient.formatTokens(estimateTokens(buildSystemPrompt().length())))
                 .append(" tokens, sent once per session ahead of the first prompt (/prompt shows it); ")
                 .append(acpPreambleSent ? "sent" : "not sent yet").append('\n');
-        sb.append("Tokens reported by the agent so far: ").append(LlmClient.formatTokens(sessionTotalTokens))
-                .append('\n');
+        if (acpContextUsed > 0) {
+            sb.append("Context: ").append(formatAcpTokens(acpContextUsed));
+            if (acpContextSize > 0) {
+                sb.append(" of ").append(formatAcpTokens(acpContextSize));
+            }
+            sb.append(" tokens in the agent's window\n");
+        } else {
+            sb.append("Context: not reported yet\n");
+        }
         sb.append("History and tools are managed by the agent: /compact and /tools do not apply here");
         return sb.toString();
     }
@@ -3348,6 +3383,8 @@ class AiPanel {
         // the next prompt opens a fresh agent session (context reset), keeping the process
         acpSessionId = null;
         acpPreambleSent = false;
+        acpContextUsed = 0;
+        acpContextSize = 0;
     }
 
     void setPromptHistoryForTesting(TuiPromptHistory history) {
@@ -3420,6 +3457,10 @@ class AiPanel {
 
     int sessionTotalTokensForTesting() {
         return sessionTotalTokens;
+    }
+
+    long[] acpContextForTesting() {
+        return new long[] { acpContextUsed, acpContextSize };
     }
 
     int messageCountForTesting() {

@@ -30,6 +30,7 @@ import dev.tamboui.terminal.Frame;
 import dev.tamboui.tui.event.KeyCode;
 import dev.tamboui.tui.event.KeyEvent;
 import dev.tamboui.tui.event.KeyModifiers;
+import org.apache.camel.dsl.jbang.core.commands.LlmClient;
 import org.apache.camel.dsl.jbang.core.common.CommandLineHelper;
 import org.apache.camel.util.json.JsonArray;
 import org.apache.camel.util.json.JsonObject;
@@ -40,6 +41,7 @@ import org.junit.jupiter.api.io.TempDir;
 import org.junit.jupiter.api.parallel.Isolated;
 
 import static org.awaitility.Awaitility.await;
+import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
@@ -454,21 +456,45 @@ class AiPanelAcpTest {
         assertTrue(hasEntry(panel, AiRole.ERROR, "refused"));
     }
 
-    @Test
-    void usageUpdateFeedsTheTokenCounter() throws Exception {
-        AiPanel panel = acpPanel();
+    /** Makes the fake agent report a context usage of that size for the next turn. */
+    private void reportUsage(long used, long size) {
         agent.onRequest("session/prompt", params -> {
             JsonObject usage = new JsonObject();
             usage.put("sessionUpdate", "usage_update");
-            usage.put("used", 1234);
-            usage.put("size", 200000);
+            usage.put("used", used);
+            usage.put("size", size);
             agent.sendNotification("session/update", update(params, usage));
             agent.sendNotification("session/update", update(params, chunk("ok")));
             return stop("end_turn");
         });
+    }
+
+    @Test
+    void usageUpdateFeedsTheTokenCounter() throws Exception {
+        AiPanel panel = acpPanel();
+        reportUsage(1234, 200000);
         ask(panel, "hi");
         awaitIdle(panel);
         assertEquals(1234, panel.sessionTotalTokensForTesting());
+        assertArrayEquals(new long[] { 1234, 200000 }, panel.acpContextForTesting());
+
+        // the agent reports what is in its context now, so the second turn only adds its own 66 tokens
+        reportUsage(1300, 200000);
+        ask(panel, "and now?");
+        awaitIdle(panel);
+        assertEquals(1300, panel.sessionTotalTokensForTesting(), "1234 + the 66 this turn added");
+        assertArrayEquals(new long[] { 1300, 200000 }, panel.acpContextForTesting());
+        ask(panel, "/context");
+        String text = lastEntry(panel, AiRole.SYSTEM);
+        assertTrue(text.contains("Context: " + LlmClient.formatTokens(1300) + " of " + LlmClient.formatTokens(200000)),
+                text);
+
+        // the agent compacted: the context shrank, which is not a negative token spend
+        reportUsage(900, 200000);
+        ask(panel, "still there?");
+        awaitIdle(panel);
+        assertEquals(1300, panel.sessionTotalTokensForTesting(), "a smaller context spends nothing");
+        assertArrayEquals(new long[] { 900, 200000 }, panel.acpContextForTesting());
     }
 
     @Test
