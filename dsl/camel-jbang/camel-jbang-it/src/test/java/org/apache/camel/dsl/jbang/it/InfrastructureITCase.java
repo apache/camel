@@ -37,9 +37,8 @@ public class InfrastructureITCase extends JBangTestSupport {
     private static final String IMPLEMENTATION = "amqp";
 
     /**
-     * Stops the services started by the tests, even when a test failed before reaching its own stop command. A leaked
-     * service cascades into the following tests, because {@code infra ps} lists a single row per alias and would keep
-     * reporting the stale PID.
+     * Stops the services started by the tests, even when a test failed before reaching its own stop command, so a
+     * leaked container does not keep holding its port and resources for the following tests.
      */
     @AfterEach
     public void stopInfraServices() {
