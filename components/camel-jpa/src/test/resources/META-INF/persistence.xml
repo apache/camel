@@ -24,10 +24,11 @@
 
   <persistence-unit name="camel" transaction-type="RESOURCE_LOCAL">
     <!--
-        The default provider can be OpenJPA, or some other product.
-        This element is optional if OpenJPA is the only JPA provider
-        in the current classloading environment, but can be specified
-        in cases where there are multiple JPA implementations available.
+        <provider> is required in every unit of this file: hibernate-core is
+        unconditionally on the test classpath (so that the shipped entities are
+        mapping-checked with Hibernate in every build), which makes it the first
+        JPA provider discovered. Without an explicit provider Hibernate would
+        claim these units, which are configured for OpenJPA.
     -->
     <provider>
       org.apache.openjpa.persistence.PersistenceProviderImpl

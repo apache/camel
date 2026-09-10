@@ -14,8 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.processor.keyvalue.jpa;
+package org.apache.camel.processor.jpa;
 
+import org.apache.camel.processor.idempotent.jpa.MessageProcessed;
+import org.apache.camel.processor.keyvalue.jpa.KeyValueEntry;
 import org.hibernate.boot.MetadataSources;
 import org.hibernate.boot.registry.StandardServiceRegistry;
 import org.hibernate.boot.registry.StandardServiceRegistryBuilder;
@@ -24,29 +26,32 @@ import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 
 /**
- * Verifies in every build (not only with -Dhibernate) that Hibernate can map {@link KeyValueEntry}. The entity is
- * shipped in the camel-jpa jar and e.g. Quarkus auto-discovers it from the classpath and always maps it with Hibernate,
- * so a mapping problem breaks applications that never use the KeyValueRepository (CAMEL-24604: a derived getter
- * without @Transient made Hibernate fail with "Could not locate setter method for property 'expired'").
+ * Verifies in every build (not only with -Dhibernate) that Hibernate can map every {@code @Entity} shipped in the
+ * camel-jpa jar. Runtimes such as Quarkus auto-discover these entities from the classpath and map them all with
+ * Hibernate in a single persistence unit, so a mapping problem in any one of them breaks applications that merely have
+ * camel-jpa on the classpath and never use the entity themselves (CAMEL-24604: a derived getter without a setter made
+ * Hibernate fail with "Could not locate setter method for property 'expired'").
  * <p>
- * Uses the native Hibernate bootstrap on purpose: it does not go through jakarta.persistence provider resolution, so
- * the rest of the test suite keeps using the provider selected by the active maven profile.
+ * All shipped entities are mapped together, the way an auto-discovering runtime does it. Uses the native Hibernate
+ * bootstrap on purpose: it does not go through jakarta.persistence provider resolution, so the rest of the test suite
+ * keeps using the provider selected by the active maven profile.
  */
-class KeyValueEntryHibernateMappingTest {
+class ShippedEntitiesHibernateMappingTest {
 
     @Test
-    void hibernateMustBeAbleToMapKeyValueEntry() {
+    void hibernateMustBeAbleToMapAllShippedEntities() {
         StandardServiceRegistry registry = new StandardServiceRegistryBuilder()
                 .applySetting("hibernate.connection.driver_class", "org.h2.Driver")
-                .applySetting("hibernate.connection.url", "jdbc:h2:mem:camel24604")
+                .applySetting("hibernate.connection.url", "jdbc:h2:mem:camelJpaEntityMapping")
                 .build();
         try {
             assertDoesNotThrow(() -> new MetadataSources(registry)
                     .addAnnotatedClass(KeyValueEntry.class)
+                    .addAnnotatedClass(MessageProcessed.class)
                     .buildMetadata()
                     .buildSessionFactory()
                     .close(),
-                    "Hibernate should be able to build a SessionFactory for KeyValueEntry");
+                    "Hibernate should be able to build a SessionFactory for the entities shipped in camel-jpa");
         } finally {
             StandardServiceRegistryBuilder.destroy(registry);
         }
