@@ -3166,7 +3166,7 @@ class AiPanel {
                 .append(" (preset ").append(preset != null ? preset.id() : "acp").append(")\n");
         if (acpSessionId != null) {
             sb.append("Session: ").append(acpSessionId).append(" in ").append(acpCwd).append('\n');
-            sb.append("MCP: ").append(acpMcpUrl).append(" (camel-tui tools are approved automatically)\n");
+            sb.append("MCP: ").append(acpMcpUrl).append(" (read-only camel-tui tools are approved automatically)\n");
         } else {
             sb.append("Session: not started yet; the next prompt opens one and starts the MCP server on demand\n");
         }
