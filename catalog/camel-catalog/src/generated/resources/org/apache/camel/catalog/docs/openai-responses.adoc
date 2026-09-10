@@ -4,7 +4,8 @@
 xref:ROOT:openai-component.adoc[Back to OpenAI Component]
 
 The `responses` operation calls the OpenAI Responses API (non-streaming). It supports the same text and image
-input ergonomics as `chat-completion`, maps `systemMessage` to API `instructions`, and exposes
+input ergonomics as `chat-completion`, maps `systemMessage` to API `instructions`, sends `developerMessage` /
+`CamelOpenAIDeveloperMessage` as a developer message before the user input, and exposes
 `CamelOpenAIResponseId` plus token usage headers. Use `previousResponseId` / `CamelOpenAIPreviousResponseId` for
 server-side conversation state.
 
