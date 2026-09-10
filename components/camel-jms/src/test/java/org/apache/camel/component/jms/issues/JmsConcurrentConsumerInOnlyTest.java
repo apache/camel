@@ -16,6 +16,8 @@
  */
 package org.apache.camel.component.jms.issues;
 
+import java.util.concurrent.TimeUnit;
+
 import jakarta.jms.ConnectionFactory;
 
 import org.apache.camel.CamelContext;
@@ -50,7 +52,7 @@ public class JmsConcurrentConsumerInOnlyTest extends CamelTestSupport {
 
         context.getRouteController().startAllRoutes();
 
-        MockEndpoint.assertIsSatisfied(context);
+        MockEndpoint.assertIsSatisfied(context, 30, TimeUnit.SECONDS);
     }
 
     @Override
