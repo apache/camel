@@ -136,10 +136,6 @@ class AiPanel {
     private volatile CompletableFuture<AiCliCommandExecutor.Result> activeCliCommand;
     private Runnable exitCallback;
 
-    // Detached launches (/run, /infra run) go through the same LaunchManager the F2 Actions menu uses, so they are
-    // spawned as tracked background processes instead of blocking in-process. Null in tests that construct the panel
-    // directly; the slash context reports an error in that case.
-    private LaunchManager launchManager;
     private volatile List<JsonObject> exampleCatalog;
 
     // Provider switch popup
@@ -180,20 +176,18 @@ class AiPanel {
         this.ctx = ctx;
     }
 
-    void setLaunchManager(LaunchManager launchManager) {
-        this.launchManager = launchManager;
-        if (toolRegistry != null) {
-            toolRegistry.setLaunchManager(launchManager);
-        }
+    // Detached launches (/run, /infra run) go through the same LaunchManager the F2 Actions menu uses, so they are
+    // spawned as tracked background processes instead of blocking in-process. It comes from the facade, the one place
+    // the TUI wires it; null in tests that construct the panel directly, where the slash context reports an error.
+    private LaunchManager launchManager() {
+        return mcpFacade != null ? mcpFacade.getLaunchManager() : null;
     }
 
     void setMcpFacade(McpFacade mcpFacade) {
         this.mcpFacade = mcpFacade;
         if (mcpFacade != null) {
+            mcpFacade.setWriteMode(writeMode);
             this.toolRegistry = new TuiToolRegistry(mcpFacade);
-            if (launchManager != null) {
-                toolRegistry.setLaunchManager(launchManager);
-            }
         }
     }
 
@@ -1766,6 +1760,7 @@ class AiPanel {
 
         @Override
         public String launchDetached(AiSlashCommandRegistry.LaunchSpec spec) {
+            LaunchManager launchManager = launchManager();
             if (launchManager == null) {
                 throw new IllegalStateException("Launching commands is not available in this session.");
             }
@@ -1799,7 +1794,7 @@ class AiPanel {
      */
     private void launchDetachedQuietly(AiSlashCommandRegistry.LaunchSpec spec) {
         try {
-            launchManager.launchDetached(spec.displayName(), spec.camelArgs());
+            launchManager().launchDetached(spec.displayName(), spec.camelArgs());
         } catch (IOException e) {
             conversation.add(new ConversationEntry(
                     AiRole.ERROR, "Failed to start: " + spec.displayName() + " - " + e.getMessage()));
