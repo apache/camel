@@ -28,10 +28,16 @@ public class JavaScriptExpression extends ExpressionSupport {
 
     private final String expressionString;
     private final Class<?> type;
+    private volatile JavaScriptLanguage language;
 
     public JavaScriptExpression(String expressionString, Class<?> type) {
+        this(expressionString, type, null);
+    }
+
+    JavaScriptExpression(String expressionString, Class<?> type, JavaScriptLanguage language) {
         this.expressionString = expressionString;
         this.type = type;
+        this.language = language;
     }
 
     public static JavaScriptExpression js(String expression) {
@@ -46,7 +52,7 @@ public class JavaScriptExpression extends ExpressionSupport {
     @SuppressWarnings("unchecked")
     @Override
     public <T> T evaluate(Exchange exchange, Class<T> type) {
-        try (Context cx = JavaScriptHelper.newContext()) {
+        try (Context cx = language(exchange).newContext()) {
             Value b = cx.getBindings("js");
 
             b.putMember("exchange", exchange);
@@ -66,6 +72,19 @@ public class JavaScriptExpression extends ExpressionSupport {
             }
             return exchange.getContext().getTypeConverter().convertTo(type, exchange, answer);
         }
+    }
+
+    /**
+     * The language owning the shared engine. Expressions created through the language already have it; expressions
+     * created directly (for example via {@link #js(String)}) resolve it from the exchange on first use.
+     */
+    private JavaScriptLanguage language(Exchange exchange) {
+        JavaScriptLanguage lang = language;
+        if (lang == null) {
+            lang = (JavaScriptLanguage) exchange.getContext().resolveLanguage("js");
+            language = lang;
+        }
+        return lang;
     }
 
     public Class<?> getType() {
