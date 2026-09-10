@@ -23,6 +23,8 @@ import java.util.Optional;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.openai.core.JsonValue;
+import com.openai.models.ChatModel;
+import com.openai.models.ResponsesModel;
 import com.openai.models.responses.FileSearchTool;
 import com.openai.models.responses.Response;
 import com.openai.models.responses.ResponseCreateParams;
@@ -183,6 +185,16 @@ final class OpenAIResponsesSupport {
             }
         }
         return text.toString();
+    }
+
+    /**
+     * Returns the model id. {@code ResponsesModel} is a union type whose {@code toString()} includes the variant name.
+     */
+    static String modelName(ResponsesModel model) {
+        return model.string()
+                .or(() -> model.chat().map(ChatModel::asString))
+                .or(() -> model.only().map(ResponsesModel.ResponsesOnlyModel::asString))
+                .orElseGet(model::toString);
     }
 
     static Optional<String> extractFinishStatus(Response response) {

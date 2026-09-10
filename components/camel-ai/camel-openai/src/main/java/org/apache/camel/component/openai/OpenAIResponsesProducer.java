@@ -205,8 +205,9 @@ public class OpenAIResponsesProducer extends DefaultAsyncProducer {
                         usage.inputTokens(),
                         usage.outputTokens(),
                         finishReason,
-                        response.model().toString())),
-                () -> observation.recordSuccess(GenAiUsage.of((Long) null, null, finishReason, response.model().toString())));
+                        OpenAIResponsesSupport.modelName(response.model()))),
+                () -> observation.recordSuccess(
+                        GenAiUsage.of((Long) null, null, finishReason, OpenAIResponsesSupport.modelName(response.model()))));
     }
 
     private void finishExchange(Exchange exchange, OpenAIConfiguration config, Response response, String body) {
@@ -220,7 +221,7 @@ public class OpenAIResponsesProducer extends DefaultAsyncProducer {
 
     private void setResponseHeaders(Message message, Response response) {
         message.setHeader(OpenAIConstants.RESPONSE_ID, response.id());
-        message.setHeader(OpenAIConstants.RESPONSE_MODEL, response.model().toString());
+        message.setHeader(OpenAIConstants.RESPONSE_MODEL, OpenAIResponsesSupport.modelName(response.model()));
         OpenAIResponsesSupport.extractFinishStatus(response)
                 .ifPresent(status -> message.setHeader(OpenAIConstants.FINISH_REASON, mapFinishReason(status)));
         response.usage().ifPresent(usage -> {
