@@ -812,6 +812,7 @@ public class CamelMonitor extends CamelCommand {
                     }
                 });
         mcpFacade.setSourceValidator(tabRegistry.sourceTab().editAssist()::validateSource);
+        mcpFacade.setLaunchManager(actionsPopup.getLaunchManager());
         aiPanel.setMcpFacade(mcpFacade);
         aiPanel.setOtelSpans(dataService.otelSpans());
         mcpFacade.setAiActivityLog(aiPanel::getActivityLog);

@@ -172,6 +172,9 @@ class McpFacade {
     private volatile StatusFileReader statusFiles = StatusFileReader.defaultReader();
     private volatile Supplier<List<TuiMcpServer.LogEntry>> mcpActivityLog;
     private volatile Supplier<Integer> mcpToolCallCount;
+    // the F2 menu's launcher: starts examples (tui_run_example) and infra services (tui_infra start). It is held
+    // here, not in the tool registry, so the AI panel's registry and the MCP server's registry both see it.
+    private volatile LaunchManager launchManager;
 
     McpFacade(
               MonitorContext ctx,
@@ -209,6 +212,14 @@ class McpFacade {
     void setMcpActivityLog(Supplier<List<TuiMcpServer.LogEntry>> mcpActivityLog, Supplier<Integer> mcpToolCallCount) {
         this.mcpActivityLog = mcpActivityLog;
         this.mcpToolCallCount = mcpToolCallCount;
+    }
+
+    void setLaunchManager(LaunchManager launchManager) {
+        this.launchManager = launchManager;
+    }
+
+    LaunchManager getLaunchManager() {
+        return launchManager;
     }
 
     List<AiPanel.LogEntry> getAiActivityLog() {

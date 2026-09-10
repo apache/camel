@@ -1109,7 +1109,8 @@ The MCP server exposes tools organized by purpose:
   list the running infra services (brokers, databases) and read their logs
 * *Navigate* -- switch tabs, select integrations, select routes, send keystrokes, apply filters
 * *Act* -- send test messages to endpoints, start/stop/restart routes, change log levels,
-  start/stop/restart infra services, run any entry of the *F2* actions menu by its label
+  list and launch the bundled examples, start/stop/restart infra services, run any entry of
+  the *F2* actions menu by its label
 * *Edit* -- write a source file in the integration's source directory (`tui_write_file`), see below
 * *Annotate* -- locate text and diagram nodes by coordinates, draw shapes (boxes, highlights,
   arrows, underlines, text labels), show captions with typewriter animation

@@ -365,21 +365,13 @@ class AiPanel {
 
     void setLaunchManager(LaunchManager launchManager) {
         this.launchManager = launchManager;
-        if (toolRegistry != null) {
-            toolRegistry.setLaunchManager(launchManager);
-        }
     }
 
     void setMcpFacade(McpFacade mcpFacade) {
         this.mcpFacade = mcpFacade;
         if (mcpFacade != null) {
             mcpFacade.setWriteMode(writeMode);
-        }
-        if (mcpFacade != null) {
             this.toolRegistry = new TuiToolRegistry(mcpFacade);
-            if (launchManager != null) {
-                toolRegistry.setLaunchManager(launchManager);
-            }
         }
     }
 
