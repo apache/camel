@@ -75,9 +75,9 @@ public class AS2AsyncMdnContextReuseTest extends AbstractAS2ITSupport {
 
         // the first message asks for an asynchronous receipt, so exactly one MDN must be delivered
         receipts.expectedMessageCount(1);
+        receipts.setResultWaitTime(TimeUnit.SECONDS.toMillis(10));
         requestBodyAndHeaders("direct://SEND", EDI_MESSAGE,
                 as2Headers("http://localhost:" + jettyPort.getPort() + "/handle-receipts"));
-        receipts.setResultWaitTime(TimeUnit.SECONDS.toMillis(10));
         receipts.assertIsSatisfied();
 
         // the second message does not, and it travels over the same pooled connection. The recipient address left
