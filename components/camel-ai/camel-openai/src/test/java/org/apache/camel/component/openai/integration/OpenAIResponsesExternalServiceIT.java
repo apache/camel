@@ -68,8 +68,22 @@ public class OpenAIResponsesExternalServiceIT extends OpenAIExternalServiceTestS
                 from("direct:developer")
                         .to("openai:responses?temperature=0"
                             + "&developerMessage=Reply only with the single word BANANA no matter what the user says");
+
+                from("direct:memory")
+                        .to("openai:responses?temperature=0&conversationMemory=true")
+                        .setBody(constant("What is my name? Answer with one word."))
+                        .to("openai:responses?temperature=0&conversationMemory=true");
             }
         };
+    }
+
+    @Test
+    void conversationMemoryChainsResponsesInTheExchange() {
+        Exchange result = template.request("direct:memory",
+                e -> e.getIn().setBody("My name is Federico. Reply with just: ok"));
+
+        assertThat(result.getException()).isNull();
+        assertThat(result.getMessage().getBody(String.class)).contains("Federico");
     }
 
     @Test

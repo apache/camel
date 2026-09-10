@@ -13,6 +13,11 @@ server-side conversation state, or `conversationId` / `CamelOpenAIConversationId
 conversation created with the OpenAI Conversations API, which keeps its items across exchanges. The API does not
 accept both at once.
 
+With `conversationMemory=true`, the operation stores the id of each response in the exchange property named by
+`conversationHistoryProperty` and sends it as `previous_response_id` on the next `responses` call of the same exchange,
+unless a previous response id is set explicitly. The conversation itself stays on the server, so the server must store
+responses: OpenAI does by default, vLLM needs `VLLM_ENABLE_RESPONSES_API_STORE=1`, and Ollama does not support it.
+
 Hosted tools: set `builtinTools` to a comma-separated list (`web_search`, `file_search`, `code_interpreter`).
 `file_search` requires `fileSearchVectorStoreIds`.
 
