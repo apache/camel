@@ -17,10 +17,15 @@
 package org.apache.camel.component.openai;
 
 import java.io.InputStream;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.stream.Collectors;
 
+import com.openai.models.chat.completions.ChatCompletionFunctionTool;
 import com.openai.models.responses.Response;
 import com.openai.models.responses.ResponseCreateParams;
-import com.openai.models.responses.StructuredResponseCreateParams;
+import com.openai.models.responses.ResponseFunctionToolCall;
+import com.openai.models.responses.ResponseInputItem;
 import org.apache.camel.AsyncCallback;
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
@@ -32,6 +37,7 @@ import org.apache.camel.component.ai.observability.GenAiOperationName;
 import org.apache.camel.component.ai.observability.GenAiUsage;
 import org.apache.camel.support.DefaultAsyncProducer;
 import org.apache.camel.support.ResourceHelper;
+import org.apache.camel.support.service.ServiceHelper;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.function.ThrowingSupplier;
 
@@ -41,6 +47,7 @@ import org.apache.camel.util.function.ThrowingSupplier;
 public class OpenAIResponsesProducer extends DefaultAsyncProducer {
 
     private Class<?> outputClassResolved;
+    private McpToolCallExecutor toolCallExecutor;
 
     public OpenAIResponsesProducer(OpenAIEndpoint endpoint) {
         super(endpoint);
@@ -54,6 +61,10 @@ public class OpenAIResponsesProducer extends DefaultAsyncProducer {
     @Override
     protected void doStart() throws Exception {
         OpenAIConfiguration config = getEndpoint().getConfiguration();
+
+        toolCallExecutor = new McpToolCallExecutor(getEndpoint());
+        ServiceHelper.startService(toolCallExecutor);
+
         if (ObjectHelper.isNotEmpty(config.getOutputClass())) {
             outputClassResolved = getEndpoint().getCamelContext().getClassResolver()
                     .resolveMandatoryClass(config.getOutputClass());
@@ -68,6 +79,12 @@ public class OpenAIResponsesProducer extends DefaultAsyncProducer {
             }
         }
         super.doStart();
+    }
+
+    @Override
+    protected void doStop() throws Exception {
+        ServiceHelper.stopService(toolCallExecutor);
+        super.doStop();
     }
 
     @Override
@@ -156,38 +173,87 @@ public class OpenAIResponsesProducer extends DefaultAsyncProducer {
         OpenAIResponsesSupport.applyHostedMcpTools(paramsBuilder, config.getHostedMcpTools());
         OpenAIResponsesSupport.applyAdditionalBodyProperties(paramsBuilder, config.getAdditionalBodyProperty());
 
+        // the MCP servers and route tools of the endpoint are sent as function tools
+        List<ChatCompletionFunctionTool> tools = getEndpoint().getMcpToolState().tools();
+        tools.forEach(tool -> paramsBuilder.addTool(OpenAIResponsesSupport.toFunctionTool(tool)));
+
+        ResponseCreateParams params;
         Class<?> responseClass = resolveOutputClass(in, outputClass);
         if (responseClass != null) {
-            processStructured(exchange, config, paramsBuilder, responseClass, model);
+            params = paramsBuilder.text(responseClass).build().rawParams();
+        } else {
+            if (ObjectHelper.isNotEmpty(jsonSchema)) {
+                OpenAIResponsesSupport.applyJsonSchemaTextFormat(paramsBuilder, jsonSchema);
+            }
+            params = paramsBuilder.build();
+        }
+
+        if (!tools.isEmpty() && config.isAutoToolExecution()) {
+            processToolLoop(exchange, config, params, inputSpec.items(), model);
             return;
         }
-        if (ObjectHelper.isNotEmpty(jsonSchema)) {
-            OpenAIResponsesSupport.applyJsonSchemaTextFormat(paramsBuilder, jsonSchema);
-        }
 
-        ResponseCreateParams params = paramsBuilder.build();
         Response response = createResponse(exchange, model, params);
-        finishExchange(exchange, config, response, OpenAIResponsesSupport.extractAssistantText(response));
+        List<ResponseFunctionToolCall> functionCalls = OpenAIResponsesSupport.extractFunctionCalls(response);
+        // with autoToolExecution=false the route handles the function calls requested by the model
+        Object body = functionCalls.isEmpty() ? OpenAIResponsesSupport.extractAssistantText(response) : functionCalls;
+        finishExchange(exchange, config, response, body);
     }
 
-    private void processStructured(
-            Exchange exchange, OpenAIConfiguration config, ResponseCreateParams.Builder paramsBuilder,
-            Class<?> responseClass, String model)
+    /**
+     * Runs the tool loop: the function calls requested by the model are executed on the MCP servers and route tools of
+     * the endpoint, and their results are sent back with the conversation so far until the model answers.
+     */
+    private void processToolLoop(
+            Exchange exchange, OpenAIConfiguration config, ResponseCreateParams params, List<ResponseInputItem> input,
+            String model)
             throws Exception {
-        StructuredResponseCreateParams<?> structuredParams = paramsBuilder.text(responseClass).build();
-        Response raw = createStructuredResponse(exchange, model, structuredParams);
-        finishExchange(exchange, config, raw, OpenAIResponsesSupport.extractAssistantText(raw));
+        List<ResponseInputItem> conversation = new ArrayList<>(input);
+        List<String> toolCallsLog = new ArrayList<>();
+        int iteration = 0;
+
+        while (true) {
+            Response response = createResponse(exchange, model, params.toBuilder().inputOfResponse(conversation).build());
+            List<ResponseFunctionToolCall> functionCalls = OpenAIResponsesSupport.extractFunctionCalls(response);
+            if (functionCalls.isEmpty()) {
+                finishExchange(exchange, config, response, OpenAIResponsesSupport.extractAssistantText(response));
+                setToolHeaders(exchange.getMessage(), iteration, toolCallsLog, false);
+                return;
+            }
+            if (iteration == config.getMaxToolIterations()) {
+                throw new IllegalStateException(
+                        "Max tool iterations (%d) exceeded. Tools called: %s"
+                                .formatted(config.getMaxToolIterations(), toolCallsLog));
+            }
+            iteration++;
+
+            // the function calls, and the reasoning that led to them, must precede their results
+            conversation.addAll(OpenAIResponsesSupport.toInputItems(response));
+            functionCalls.forEach(call -> toolCallsLog.add(call.name()));
+            List<McpToolCallExecutor.ToolResult> results
+                    = toolCallExecutor.execute(OpenAIResponsesSupport.toChatToolCalls(functionCalls));
+
+            if (results.stream().allMatch(McpToolCallExecutor.ToolResult::returnDirect)) {
+                // the results are not sent back, so conversation memory is not moved to this response
+                Message out = exchange.getMessage();
+                out.setBody(results.stream()
+                        .map(McpToolCallExecutor.ToolResult::content)
+                        .collect(Collectors.joining("\n")));
+                setResponseHeaders(out, response);
+                setToolHeaders(out, iteration, toolCallsLog, true);
+                return;
+            }
+            for (McpToolCallExecutor.ToolResult result : results) {
+                conversation.add(ResponseInputItem.ofFunctionCallOutput(ResponseInputItem.FunctionCallOutput.builder()
+                        .callId(result.toolCallId())
+                        .output(result.content())
+                        .build()));
+            }
+        }
     }
 
     private Response createResponse(Exchange exchange, String model, ResponseCreateParams params) throws Exception {
         return observedCall(exchange, model, () -> getEndpoint().getClient().responses().create(params));
-    }
-
-    private Response createStructuredResponse(
-            Exchange exchange, String model, StructuredResponseCreateParams<?> structuredParams)
-            throws Exception {
-        return observedCall(exchange, model,
-                () -> getEndpoint().getClient().responses().create(structuredParams).rawResponse());
     }
 
     private Response observedCall(Exchange exchange, String model, ThrowingSupplier<Response, Exception> call)
@@ -226,7 +292,7 @@ public class OpenAIResponsesProducer extends DefaultAsyncProducer {
                         GenAiUsage.of((Long) null, null, finishReason, OpenAIResponsesSupport.modelName(response.model()))));
     }
 
-    private void finishExchange(Exchange exchange, OpenAIConfiguration config, Response response, String body)
+    private void finishExchange(Exchange exchange, OpenAIConfiguration config, Response response, Object body)
             throws Exception {
         if (config.isStoreFullResponse()) {
             exchange.setProperty(OpenAIConstants.RESPONSES_RESPONSE, response);
@@ -265,6 +331,12 @@ public class OpenAIResponsesProducer extends DefaultAsyncProducer {
         if (!annotations.isEmpty()) {
             message.setHeader(OpenAIConstants.RESPONSE_ANNOTATIONS, annotations);
         }
+    }
+
+    private static void setToolHeaders(Message message, int iterations, List<String> toolCalls, boolean returnDirect) {
+        message.setHeader(OpenAIConstants.TOOL_ITERATIONS, iterations);
+        message.setHeader(OpenAIConstants.MCP_TOOL_CALLS, toolCalls);
+        message.setHeader(OpenAIConstants.MCP_RETURN_DIRECT, returnDirect);
     }
 
     private Class<?> resolveOutputClass(Message in, String outputClass) throws ClassNotFoundException {

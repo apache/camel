@@ -16,6 +16,7 @@
  */
 package org.apache.camel.component.openai;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -27,12 +28,19 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.openai.core.JsonValue;
 import com.openai.core.ObjectMappers;
 import com.openai.models.ChatModel;
+import com.openai.models.FunctionDefinition;
 import com.openai.models.ResponsesModel;
+import com.openai.models.chat.completions.ChatCompletionFunctionTool;
+import com.openai.models.chat.completions.ChatCompletionMessageFunctionToolCall;
+import com.openai.models.chat.completions.ChatCompletionMessageToolCall;
 import com.openai.models.responses.FileSearchTool;
+import com.openai.models.responses.FunctionTool;
 import com.openai.models.responses.Response;
 import com.openai.models.responses.ResponseCreateParams;
 import com.openai.models.responses.ResponseFormatTextConfig;
 import com.openai.models.responses.ResponseFormatTextJsonSchemaConfig;
+import com.openai.models.responses.ResponseFunctionToolCall;
+import com.openai.models.responses.ResponseInputItem;
 import com.openai.models.responses.ResponseOutputItem;
 import com.openai.models.responses.ResponseOutputMessage;
 import com.openai.models.responses.ResponseOutputText;
@@ -129,6 +137,22 @@ final class OpenAIResponsesSupport {
         }
     }
 
+    /**
+     * Converts a tool of the endpoint tool state, which holds the MCP and route tools as chat completion tools, into a
+     * Responses API function tool.
+     */
+    static FunctionTool toFunctionTool(ChatCompletionFunctionTool tool) {
+        FunctionDefinition function = tool.function();
+        FunctionTool.Parameters.Builder parameters = FunctionTool.Parameters.builder();
+        function.parameters().ifPresent(schema -> parameters.putAllAdditionalProperties(schema._additionalProperties()));
+        FunctionTool.Builder builder = FunctionTool.builder()
+                .name(function.name())
+                .parameters(parameters.build())
+                .strict(false);
+        function.description().ifPresent(builder::description);
+        return builder.build();
+    }
+
     static void applyJsonSchemaTextFormat(ResponseCreateParams.Builder paramsBuilder, String jsonSchema)
             throws Exception {
         Map<String, Object> root = OBJECT_MAPPER.readValue(jsonSchema, Map.class);
@@ -189,6 +213,47 @@ final class OpenAIResponsesSupport {
             }
         }
         return text.toString();
+    }
+
+    static List<ResponseFunctionToolCall> extractFunctionCalls(Response response) {
+        return response.output().stream()
+                .filter(ResponseOutputItem::isFunctionCall)
+                .map(ResponseOutputItem::asFunctionCall)
+                .toList();
+    }
+
+    /**
+     * Returns the output items to send back as input before the function call results: the function calls themselves,
+     * and the reasoning and messages that came with them.
+     */
+    static List<ResponseInputItem> toInputItems(Response response) {
+        List<ResponseInputItem> items = new ArrayList<>();
+        for (ResponseOutputItem item : response.output()) {
+            if (item.isFunctionCall()) {
+                items.add(ResponseInputItem.ofFunctionCall(item.asFunctionCall()));
+            } else if (item.isReasoning()) {
+                items.add(ResponseInputItem.ofReasoning(item.asReasoning()));
+            } else if (item.isMessage()) {
+                items.add(ResponseInputItem.ofResponseOutputMessage(item.asMessage()));
+            }
+        }
+        return items;
+    }
+
+    /**
+     * Converts function calls into the chat completion tool calls executed by {@link McpToolCallExecutor}. The call id
+     * becomes the tool call id, so that each result pairs back with its call.
+     */
+    static List<ChatCompletionMessageToolCall> toChatToolCalls(List<ResponseFunctionToolCall> functionCalls) {
+        return functionCalls.stream()
+                .map(call -> ChatCompletionMessageToolCall.ofFunction(ChatCompletionMessageFunctionToolCall.builder()
+                        .id(call.callId())
+                        .function(ChatCompletionMessageFunctionToolCall.Function.builder()
+                                .name(call.name())
+                                .arguments(call.arguments())
+                                .build())
+                        .build()))
+                .toList();
     }
 
     /**

@@ -93,4 +93,15 @@ YAML::
 
 Streaming is not supported on this operation; use `chat-completion` for streaming.
 
-Function tools wired to Camel routes are not yet supported on this operation.
+== Tools
+
+Like `chat-completion`, the operation exposes the tools of the MCP servers configured with `mcpServer.*` and the route
+tools discovered with `tags` to the model as function tools. When the model calls them, the operation runs the tool
+loop: it executes the calls, sends their results back together with the conversation so far, and repeats until the
+model answers or `maxToolIterations` is exceeded. `toolExecutionErrorStrategy`, `hallucinatedToolNameStrategy`,
+`parallelToolExecution` and tools returning directly behave as they do for `chat-completion`, and the
+`CamelOpenAIToolIterations`, `CamelOpenAIMcpToolCalls` and `CamelOpenAIMcpReturnDirect` headers report what the loop did.
+`maxAgenticTokens` and the agentic trace and events are only supported by `chat-completion`.
+
+With `autoToolExecution=false`, the model is not called again: the function calls it requested are returned as the
+message body, a `List` of `com.openai.models.responses.ResponseFunctionToolCall`, for the route to handle.
