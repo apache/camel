@@ -94,8 +94,10 @@ class AcpAgentClientTest {
         agent.sendRaw("[1,2,3]");
         AcpAgentClient.AgentInfo info = client.initialize(T);
         assertEquals(1, info.protocolVersion());
-        assertTrue(diagnostics.stream().anyMatch(d -> d.contains("this is not json")), diagnostics.toString());
-        assertTrue(diagnostics.stream().anyMatch(d -> d.contains("[1,2,3]")), diagnostics.toString());
+        assertTrue(diagnostics.stream()
+                .anyMatch(d -> d.contains("not a JSON-RPC object") && d.contains("this is not json")), diagnostics.toString());
+        assertTrue(diagnostics.stream()
+                .anyMatch(d -> d.contains("not a JSON-RPC object") && d.contains("[1,2,3]")), diagnostics.toString());
     }
 
     @Test

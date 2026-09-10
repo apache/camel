@@ -471,7 +471,7 @@ final class AcpAgentClient implements AutoCloseable {
                 }
                 JsonObject msg = Jsoner.deserialize(line, (JsonObject) null);
                 if (msg == null || !msg.containsKey("jsonrpc")) {
-                    diagnostics.accept("Ignoring malformed line from agent: " + abbreviate(line));
+                    diagnostics.accept("Ignoring line that is not a JSON-RPC object: " + abbreviate(line));
                     continue;
                 }
                 try {
