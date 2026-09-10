@@ -112,7 +112,6 @@ public class JGroupsEndpoint extends DefaultEndpoint {
                                        + " deserializationFilter");
         }
     }
-    }
 
     public Exchange createExchange(View view) {
         Exchange exchange = createExchange();
