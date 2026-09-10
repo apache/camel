@@ -58,10 +58,17 @@ public class ResponsesRequestHandler {
         if (expectation.getRequestAssertion() != null) {
             expectation.getRequestAssertion().accept(requestBody);
         }
+        if (expectation.getCustomResponseFunction() != null) {
+            return expectation.getCustomResponseFunction().apply(exchange, userInput);
+        }
         int promptTokens = expectation.getUsagePromptTokens() != null
                 ? expectation.getUsagePromptTokens() : ResponseBuilder.DEFAULT_PROMPT_TOKENS;
         int completionTokens = expectation.getUsageCompletionTokens() != null
                 ? expectation.getUsageCompletionTokens() : ResponseBuilder.DEFAULT_COMPLETION_TOKENS;
+        if (expectation.getResponsesOutput() != null) {
+            return responseBuilder.createResponsesOutputResponse(
+                    expectation.getResponsesOutput(), promptTokens, completionTokens);
+        }
         return responseBuilder.createResponsesTextResponse(
                 expectation.getExpectedResponse(), promptTokens, completionTokens);
     }

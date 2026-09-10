@@ -78,12 +78,27 @@ public class ResponseBuilder {
         message.put("status", "completed");
         message.put("content", List.of(outputText));
 
+        return createResponsesResponse(objectMapper.valueToTree(List.of(message)), inputTokens, outputTokens);
+    }
+
+    /**
+     * Creates a Responses API response holding the given output items.
+     *
+     * @param outputItemsJson a JSON array of Responses API output items
+     */
+    public String createResponsesOutputResponse(String outputItemsJson, int inputTokens, int outputTokens)
+            throws Exception {
+        return createResponsesResponse(objectMapper.readTree(outputItemsJson), inputTokens, outputTokens);
+    }
+
+    private String createResponsesResponse(JsonNode output, int inputTokens, int outputTokens) throws Exception {
         Map<String, Object> response = new HashMap<>();
         response.put("id", "resp_" + UUID.randomUUID());
         response.put("object", "response");
         response.put("created_at", System.currentTimeMillis() / 1000.0);
         response.put("model", "openai-mock");
-        response.put("output", List.of(message));
+        response.put("status", "completed");
+        response.put("output", output);
         response.put("parallel_tool_calls", true);
         response.put("tool_choice", "auto");
         response.put("tools", List.of());

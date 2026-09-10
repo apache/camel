@@ -124,6 +124,19 @@ public class OpenAIMockBuilder {
         return this;
     }
 
+    /**
+     * Replies to a Responses API request with the given output items instead of a single text message, for example MCP
+     * approval requests or messages whose text carries citations.
+     *
+     * @param outputItemsJson a JSON array of Responses API output items
+     */
+    public OpenAIMockBuilder replyWithResponsesOutput(String outputItemsJson) {
+        validateCurrentExpectation("replyWithResponsesOutput()");
+        log.debug("Setting Responses API output items: {}", outputItemsJson);
+        currentExpectation.setResponsesOutput(outputItemsJson);
+        return this;
+    }
+
     public OpenAIMockBuilder withParam(String key, Object value) {
         validateCurrentExpectation("withParam()");
         validateHasToolSteps("withParam()");

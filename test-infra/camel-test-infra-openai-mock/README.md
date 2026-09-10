@@ -77,3 +77,17 @@ assertEquals("gpt-5", request.bodyAsJson().path("model").asText());
 ```
 
 `getReceivedRequests()` returns all of them in arrival order. The list is cleared when the mock server starts.
+
+## Responses API
+
+`when(...)` expectations also answer `POST /v1/responses`, matched on the last input text. `replyWith` returns a
+single text message, `thenRespondWith` a custom body, and `replyWithResponsesOutput` any output items, for example an
+MCP approval request or a message whose text carries citations:
+
+```java
+.when("What is Apache Camel?")
+    .replyWithResponsesOutput("""
+        [{"type": "mcp_approval_request", "id": "mcpr_1", "server_label": "deepwiki",
+          "name": "ask_question", "arguments": "{}"}]""")
+.end()
+```
