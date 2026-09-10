@@ -73,6 +73,9 @@ public class ResponsesRequestHandler {
         if (expectation.getRequestAssertion() != null) {
             expectation.getRequestAssertion().accept(requestBody);
         }
+        if (expectation.hasError()) {
+            return responseBuilder.createApiErrorResponse(expectation, exchange);
+        }
         if (expectation.getCustomResponseFunction() != null) {
             return expectation.getCustomResponseFunction().apply(exchange, userInput);
         }

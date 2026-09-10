@@ -99,3 +99,18 @@ follow-up request whose input ends with `function_call_output` items gets the ne
 Every response is stored, so `GET /v1/responses/{id}` returns it and `POST /v1/responses/{id}/cancel` cancels it.
 A request with `"background": true` is answered with a `queued` response without output, and retrieving it returns
 the completed response.
+
+## Error replies
+
+`replyWithError` answers a chat completion or Responses API request with an OpenAI API error, and `withRetryAfter`
+adds a `Retry-After` header:
+
+```java
+.when("slow down")
+    .replyWithError(429, "rate_limit_exceeded", "Rate limit reached")
+    .withRetryAfter(7)
+.end()
+```
+
+The OpenAI SDK retries 408, 409, 429 and 5xx responses on its own, so configure the client under test with no retries
+to observe the error at once.

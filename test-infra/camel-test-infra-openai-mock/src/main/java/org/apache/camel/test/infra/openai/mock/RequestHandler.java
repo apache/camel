@@ -111,6 +111,10 @@ public class RequestHandler {
             expectation.getRequestAssertion().accept(requestBody);
         }
 
+        if (expectation.hasError()) {
+            return responseBuilder.createApiErrorResponse(expectation, exchange);
+        }
+
         return createResponse(expectation, userInput, exchange);
     }
 

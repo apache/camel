@@ -17,6 +17,7 @@
 package org.apache.camel.test.infra.openai.mock;
 
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -186,6 +187,25 @@ public class ResponseBuilder {
 
     public String createFinalToolResponse(JsonNode messagesNode, String fallbackContent) throws Exception {
         return createFinalToolResponse(messagesNode, fallbackContent, null, null);
+    }
+
+    /**
+     * Sends the OpenAI API error configured on the expectation: its status code, an optional {@code Retry-After} header
+     * and an error body shaped like the one returned by OpenAI.
+     */
+    public String createApiErrorResponse(MockExpectation expectation, HttpExchange exchange) throws IOException {
+        Map<String, Object> error = new HashMap<>();
+        error.put("message", expectation.getErrorMessage());
+        error.put("type", expectation.getErrorType());
+        error.put("code", expectation.getErrorType());
+        String body = objectMapper.writeValueAsString(Map.of("error", error));
+
+        exchange.getResponseHeaders().set("Content-Type", "application/json");
+        if (expectation.getRetryAfterSeconds() != null) {
+            exchange.getResponseHeaders().set("Retry-After", String.valueOf(expectation.getRetryAfterSeconds()));
+        }
+        exchange.sendResponseHeaders(expectation.getErrorStatusCode(), body.getBytes(StandardCharsets.UTF_8).length);
+        return body;
     }
 
     public String createErrorResponse(int statusCode, String errorMessage, HttpExchange exchange) {
