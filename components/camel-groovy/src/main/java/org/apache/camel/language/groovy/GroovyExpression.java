@@ -19,16 +19,20 @@ package org.apache.camel.language.groovy;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
 
 import groovy.lang.Binding;
 import groovy.lang.GroovyShell;
 import groovy.lang.Script;
+import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
+import org.apache.camel.Message;
 import org.apache.camel.attachment.AttachmentMessage;
 import org.apache.camel.attachment.DefaultAttachmentMessage;
 import org.apache.camel.support.ExchangeHelper;
 import org.apache.camel.support.ExpressionSupport;
+import org.apache.camel.support.LanguageHelper;
 import org.apache.camel.support.ObjectHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -38,6 +42,11 @@ public class GroovyExpression extends ExpressionSupport {
     private static final Logger LOG = LoggerFactory.getLogger(GroovyExpression.class);
 
     private final String text;
+
+    // the language and shell factory of the CamelContext, resolved once instead of on every evaluation
+    private volatile Resolved resolved;
+    // the compiled script of this expression, so a cache eviction in the language does not force a recompilation
+    private volatile CompiledScript compiled;
 
     public GroovyExpression(String text) {
         this.text = text;
@@ -54,8 +63,15 @@ public class GroovyExpression extends ExpressionSupport {
     }
 
     @Override
+    public void init(CamelContext context) {
+        super.init(context);
+        resolve(context);
+    }
+
+    @Override
     public <T> T evaluate(Exchange exchange, Class<T> type) {
-        Map<String, Object> globalVariables = new HashMap<>();
+        Resolved r = resolve(exchange.getContext());
+        Map<String, Object> globalVariables = r.shellFactory != null ? new HashMap<>() : Collections.emptyMap();
         Script script = instantiateScript(exchange, globalVariables);
         script.setBinding(createBinding(exchange, globalVariables));
 
@@ -66,41 +82,201 @@ public class GroovyExpression extends ExpressionSupport {
 
     @SuppressWarnings("unchecked")
     protected Script instantiateScript(Exchange exchange, Map<String, Object> globalVariables) {
-        // Get the script from the cache, or create a new instance
-        GroovyLanguage language = (GroovyLanguage) exchange.getContext().resolveLanguage("groovy");
-        Set<GroovyShellFactory> shellFactories = exchange.getContext().getRegistry().findByType(GroovyShellFactory.class);
-        GroovyShellFactory shellFactory = null;
+        Resolved r = resolve(exchange.getContext());
+        GroovyShellFactory shellFactory = r.shellFactory;
         String fileName = null;
-        if (shellFactories.size() == 1) {
-            shellFactory = shellFactories.iterator().next();
+        if (shellFactory != null) {
             fileName = shellFactory.getFileName(exchange);
             globalVariables.putAll(shellFactory.getVariables(exchange));
         }
-        final String key = fileName != null ? fileName + text : text;
-        Class<Script> scriptClass = language.getScriptFromCache(key);
+
+        int generation = r.language.getGeneration();
+        CompiledScript c = compiled;
+        Class<Script> scriptClass = null;
+        if (c != null && c.generation == generation && c.resolved == r && Objects.equals(c.fileName, fileName)) {
+            scriptClass = c.scriptClass;
+        }
         if (scriptClass == null) {
-            // prefer to use classloader from groovy script compiler, and if not fallback to app context
-            ClassLoader cl = exchange.getContext().getCamelContextExtension().getContextPlugin(GroovyScriptClassLoader.class);
-            GroovyShell shell = shellFactory != null ? shellFactory.createGroovyShell(exchange)
-                    : cl != null ? new GroovyShell(cl) : new GroovyShell();
-            scriptClass = fileName != null
-                    ? shell.getClassLoader().parseClass(text, fileName) : shell.getClassLoader().parseClass(text);
-            language.addScriptToCache(key, scriptClass);
+            // Get the script from the cache, or create a new instance
+            final String key = fileName != null ? fileName + text : text;
+            scriptClass = r.language.getScriptFromCache(key);
+            if (scriptClass == null) {
+                // prefer to use classloader from groovy script compiler, and if not fallback to app context
+                ClassLoader cl
+                        = exchange.getContext().getCamelContextExtension().getContextPlugin(GroovyScriptClassLoader.class);
+                GroovyShell shell = shellFactory != null ? shellFactory.createGroovyShell(exchange)
+                        : cl != null ? new GroovyShell(cl) : new GroovyShell();
+                scriptClass = fileName != null
+                        ? shell.getClassLoader().parseClass(text, fileName) : shell.getClassLoader().parseClass(text);
+                r.language.addScriptToCache(key, scriptClass);
+            }
+            compiled = new CompiledScript(r, generation, fileName, scriptClass);
         }
         // New instance of the script
         return ObjectHelper.newInstance(scriptClass, Script.class);
     }
 
     protected Binding createBinding(Exchange exchange, Map<String, Object> globalVariables) {
-        Map<String, Object> map = new HashMap<>(globalVariables);
-        ExchangeHelper.populateVariableMap(exchange, map, true);
-        AttachmentMessage am = new DefaultAttachmentMessage(exchange.getMessage());
-        if (am.hasAttachments()) {
-            map.put("attachments", am.getAttachments());
-        } else {
-            map.put("attachments", Collections.EMPTY_MAP);
+        return new ExchangeBinding(exchange, globalVariables);
+    }
+
+    private Resolved resolve(CamelContext context) {
+        Resolved r = resolved;
+        if (r == null || r.context != context) {
+            GroovyLanguage language = (GroovyLanguage) context.resolveLanguage("groovy");
+            Set<GroovyShellFactory> shellFactories = context.getRegistry().findByType(GroovyShellFactory.class);
+            GroovyShellFactory shellFactory = shellFactories.size() == 1 ? shellFactories.iterator().next() : null;
+            r = new Resolved(context, language, shellFactory);
+            resolved = r;
         }
-        map.put("log", LOG);
-        return new Binding(map);
+        return r;
+    }
+
+    private record Resolved(CamelContext context, GroovyLanguage language, GroovyShellFactory shellFactory) {
+    }
+
+    private record CompiledScript(Resolved resolved, int generation, String fileName, Class<Script> scriptClass) {
+    }
+
+    /**
+     * Binding with the same variables as {@link ExchangeHelper#populateVariableMap(Exchange, Map, boolean)} plus
+     * attachments and log, where the values that are costly to create (a copy of the exchange properties, the variable
+     * repository and the attachment message) are only created when the script uses them.
+     */
+    private static final class ExchangeBinding extends Binding {
+
+        private final Exchange exchange;
+        private final Message in;
+        private final Object body;
+        private final Map<String, Object> headers;
+        private final Exception exception;
+        private final Message out;
+        private Map<String, Object> exchangeProperties;
+        private boolean materialized;
+
+        ExchangeBinding(Exchange exchange, Map<String, Object> globalVariables) {
+            super(new HashMap<>());
+            this.exchange = exchange;
+            this.in = exchange.getIn();
+            this.body = in.getBody();
+            this.headers = in.getHeaders();
+            this.exception = LanguageHelper.exception(exchange);
+            this.out = ExchangeHelper.isOutCapable(exchange) ? exchange.getMessage() : null;
+            if (!globalVariables.isEmpty()) {
+                Map<String, Object> variables = super.getVariables();
+                // the exchange variables take precedence over global variables with the same name
+                globalVariables.forEach((k, v) -> {
+                    if (!isExchangeVariable(k)) {
+                        variables.put(k, v);
+                    }
+                });
+            }
+        }
+
+        @Override
+        public Object getVariable(String name) {
+            Map<String, Object> variables = super.getVariables();
+            Object value = variables.get(name);
+            if (value != null || variables.containsKey(name) || materialized) {
+                return super.getVariable(name);
+            }
+            switch (name) {
+                case "body":
+                    return body;
+                case "header":
+                case "headers":
+                    return headers;
+                case "variable":
+                case "variables":
+                    return exchange.getVariables();
+                case "exception":
+                    return exception;
+                case "in":
+                case "request":
+                    return in;
+                case "exchange":
+                    return exchange;
+                case "exchangeProperty":
+                case "exchangeProperties":
+                    if (exchangeProperties == null) {
+                        exchangeProperties = exchange.getAllProperties();
+                    }
+                    return exchangeProperties;
+                case "out":
+                case "response":
+                    if (out != null) {
+                        return out;
+                    }
+                    break;
+                case "camelContext":
+                    return exchange.getContext();
+                case "attachments":
+                    return attachments();
+                case "log":
+                    return LOG;
+                default:
+                    break;
+            }
+            // throws MissingPropertyException
+            return super.getVariable(name);
+        }
+
+        @Override
+        public boolean hasVariable(String name) {
+            if (!materialized && isExchangeVariable(name)) {
+                return out != null || !("out".equals(name) || "response".equals(name));
+            }
+            return super.hasVariable(name);
+        }
+
+        @Override
+        public Map getVariables() {
+            if (!materialized) {
+                Map<String, Object> variables = super.getVariables();
+                Map<String, Object> map = new HashMap<>();
+                ExchangeHelper.populateVariableMap(exchange, map, true);
+                map.put("attachments", attachments());
+                map.put("log", LOG);
+                // variables set by the script win
+                map.forEach(variables::putIfAbsent);
+                materialized = true;
+            }
+            return super.getVariables();
+        }
+
+        @Override
+        public void removeVariable(String name) {
+            getVariables();
+            super.removeVariable(name);
+        }
+
+        private Object attachments() {
+            AttachmentMessage am = new DefaultAttachmentMessage(exchange.getMessage());
+            return am.hasAttachments() ? am.getAttachments() : Collections.EMPTY_MAP;
+        }
+
+        private static boolean isExchangeVariable(String name) {
+            switch (name) {
+                case "body":
+                case "header":
+                case "headers":
+                case "variable":
+                case "variables":
+                case "exception":
+                case "in":
+                case "request":
+                case "exchange":
+                case "exchangeProperty":
+                case "exchangeProperties":
+                case "out":
+                case "response":
+                case "camelContext":
+                case "attachments":
+                case "log":
+                    return true;
+                default:
+                    return false;
+            }
+        }
     }
 }

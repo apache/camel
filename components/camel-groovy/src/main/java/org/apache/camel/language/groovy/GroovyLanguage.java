@@ -19,6 +19,7 @@ package org.apache.camel.language.groovy;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import groovy.lang.Binding;
 import groovy.lang.GroovyShell;
@@ -58,6 +59,11 @@ public class GroovyLanguage extends TypedLanguageSupport implements ScriptingLan
      */
     private final Map<String, GroovyClassService> scriptCache;
 
+    /**
+     * Incremented whenever the script cache is cleared, so expressions holding a compiled script know it is stale.
+     */
+    private final AtomicInteger generation = new AtomicInteger();
+
     private EventNotifier notifier;
 
     private GroovyLanguage(Map<String, GroovyClassService> scriptCache, boolean loadExternalResource) {
@@ -87,6 +93,7 @@ public class GroovyLanguage extends TypedLanguageSupport implements ScriptingLan
     public void stop() {
         ServiceHelper.stopService(scriptCache.values());
         scriptCache.clear();
+        generation.incrementAndGet();
         if (notifier != null) {
             getCamelContext().getManagementStrategy().removeEventNotifier(notifier);
             notifier = null;
@@ -101,6 +108,7 @@ public class GroovyLanguage extends TypedLanguageSupport implements ScriptingLan
             if (event instanceof CamelEvent.CamelContextReloadingEvent || event instanceof CamelEvent.RouteReloadedEvent) {
                 ServiceHelper.stopService(scriptCache.values());
                 scriptCache.clear();
+                generation.incrementAndGet();
             }
         }
 
@@ -191,6 +199,10 @@ public class GroovyLanguage extends TypedLanguageSupport implements ScriptingLan
     // use by tooling
     public boolean validatePredicate(String expression) throws GroovyValidationException {
         return validateExpression(expression);
+    }
+
+    int getGeneration() {
+        return generation.get();
     }
 
     Class<Script> getScriptFromCache(String script) {
