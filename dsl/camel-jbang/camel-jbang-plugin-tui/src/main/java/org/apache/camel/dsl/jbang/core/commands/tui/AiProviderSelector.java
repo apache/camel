@@ -43,12 +43,10 @@ final class AiProviderSelector {
     /**
      * One external ACP agent the panel knows how to launch. {@code executable} is the first token of the command,
      * checked on the PATH before spawning so a missing tool yields {@code installHint} instead of an obscure error.
-     * {@code glyph}, {@code color} and {@code logo} identify the agent in the panel's header strip: the logo names a
-     * {@code /tui/logos/<logo>.png} resource drawn in terminals with native graphics, the glyph is the fallback
-     * everywhere else.
+     * {@code glyph} and {@code color} identify the agent in the panel's header strip.
      */
     record AcpPreset(String id, String label, List<String> command, String executable, String loginHint,
-            String installHint, String glyph, Color color, String logo) {
+            String installHint, String glyph, Color color) {
     }
 
     private static final List<AcpPreset> ACP_PRESETS = List.of(
@@ -56,35 +54,35 @@ final class AiProviderSelector {
                     "acp:claude", "Claude Code (ACP)",
                     List.of("npx", "-y", "@agentclientprotocol/claude-agent-acp"), "npx",
                     "Log in with the claude CLI or set ANTHROPIC_API_KEY, then ask again.", NPX_HINT,
-                    "✱", Color.rgb(0xD9, 0x77, 0x57), "claude"),
+                    "✱", Color.rgb(0xD9, 0x77, 0x57)),
             new AcpPreset(
                     "acp:codex", "Codex (ACP)",
                     List.of("npx", "-y", "@agentclientprotocol/codex-acp"), "npx",
                     "Run `codex login` or set OPENAI_API_KEY, then ask again.", NPX_HINT,
-                    "⬢", Color.rgb(0x10, 0xA3, 0x7F), "codex"),
+                    "⬢", Color.rgb(0x10, 0xA3, 0x7F)),
             new AcpPreset(
                     "acp:bob", "IBM Bob (ACP)",
                     List.of("bob", "acp"), "bob",
                     "Set BOBSHELL_API_KEY or run `bob` once to sign in, then ask again.",
                     "bob not found: install Bob Shell (https://bob.ibm.com/docs/shell) and try again.",
-                    "◆", Color.rgb(0x0F, 0x62, 0xFE), "bob"),
+                    "◆", Color.rgb(0x0F, 0x62, 0xFE)),
             new AcpPreset(
                     "acp:qwen", "Qwen Code (ACP)",
                     List.of("qwen", "--acp"), "qwen",
                     "Set OPENAI_API_KEY and OPENAI_BASE_URL for Qwen Code, then ask again.",
                     "qwen not found: npm install -g @qwen-code/qwen-code and try again.",
-                    "✦", Color.rgb(0x61, 0x5C, 0xED), "qwen"),
+                    "✦", Color.rgb(0x61, 0x5C, 0xED)),
             new AcpPreset(
                     "acp:opencode", "OpenCode (ACP)",
                     List.of("opencode", "acp"), "opencode",
                     "Run `opencode auth login`, then ask again.",
                     "opencode not found: install it from https://opencode.ai and try again.",
-                    "▣", Color.rgb(0x9F, 0xD3, 0x5B), "opencode"),
+                    "▣", Color.rgb(0x9F, 0xD3, 0x5B)),
             new AcpPreset(
                     "acp:dsh", "DeepSeek Harness (ACP, preview)",
                     List.of("npx", "-y", "@deepseek-ai/dsh", "--profile", "acp"), "npx",
                     "Configure the model key in DeepSeek Harness, then ask again.", NPX_HINT,
-                    "◉", Color.rgb(0x4D, 0x6B, 0xFE), "dsh"));
+                    "◉", Color.rgb(0x4D, 0x6B, 0xFE)));
 
     static List<AcpPreset> acpPresets() {
         return ACP_PRESETS;
@@ -126,7 +124,7 @@ final class AiProviderSelector {
                     ACP_CUSTOM, "Custom (ACP)", command, command.get(0),
                     "Check the agent's own login instructions, then ask again.",
                     command.get(0) + " not found: check camel.tui.ai.acp.command.",
-                    "●", Theme.ACCENT, null);
+                    "●", Theme.ACCENT);
         }
         throw new IllegalArgumentException("Unknown ACP provider '" + provider + "'.");
     }

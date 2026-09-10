@@ -205,9 +205,7 @@ class AiProviderSelectorTest {
         assertEquals(List.of("/opt/agent/bin/agent", "--acp"), custom.command());
         assertEquals("/opt/agent/bin/agent", custom.executable());
         assertEquals("Custom (ACP)", custom.label());
-        assertEquals("claude", claude.logo());
         assertEquals("✱", claude.glyph());
-        assertNull(custom.logo());
         assertEquals("●", custom.glyph());
         assertThrows(IllegalArgumentException.class, () -> selector.acpPreset("acp:nope", settings));
     }

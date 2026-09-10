@@ -258,28 +258,6 @@ class SettingsPopupTest {
     }
 
     @Test
-    void acpLogosRowCyclesAndPersists(@TempDir Path tempDir) {
-        useHome(tempDir);
-        SettingsPopup popup = new SettingsPopup();
-        popup.setTabEntries(tabs());
-        popup.open();
-
-        // navigate to ACP Logos (row 19)
-        for (int i = 0; i < 19; i++) {
-            popup.handleKeyEvent(key(KeyCode.DOWN));
-        }
-        assertEquals(19, popup.selectedRow());
-        assertEquals("auto", popup.selectedAiAcpLogos());
-        popup.handleKeyEvent(KeyEvent.ofChar(' '));
-        assertEquals("on", popup.selectedAiAcpLogos());
-        popup.handleKeyEvent(KeyEvent.ofChar(' '));
-        assertEquals("off", popup.selectedAiAcpLogos());
-
-        popup.handleKeyEvent(key(KeyCode.ENTER));
-        assertEquals("off", TuiSettings.load().getAiAcpLogos());
-    }
-
-    @Test
     void historyFieldsPersistValues(@TempDir Path tempDir) {
         useHome(tempDir);
         SettingsPopup popup = new SettingsPopup();

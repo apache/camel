@@ -271,8 +271,7 @@ class AiPanel {
     private volatile AcpAgentClient.AgentInfo acpAgentInfo;
     private volatile String acpSessionId;
     private volatile boolean acpPreambleSent;
-    private volatile AcpHeaderStrip.LogoMode acpLogoMode = AcpHeaderStrip.LogoMode.AUTO;
-    private AcpHeaderStrip acpHeader = new AcpHeaderStrip();
+    private final AcpHeaderStrip acpHeader = new AcpHeaderStrip();
     private String acpMcpUrl;
     private Path acpCwd;
     private AcpClientFactory acpClientFactory = this::spawnAcpAgent;
@@ -503,7 +502,6 @@ class AiPanel {
             try {
                 TuiSettings settings = TuiSettings.load();
                 acpPreset = providerSelector.acpPreset(provider, settings);
-                acpLogoMode = AcpHeaderStrip.LogoMode.parse(settings.getAiAcpLogos());
                 initError = null;
             } catch (IllegalArgumentException e) {
                 acpPreset = null;
@@ -555,7 +553,6 @@ class AiPanel {
             try {
                 TuiSettings settings = TuiSettings.load();
                 acpPreset = providerSelector.acpPreset(choice.provider(), settings);
-                acpLogoMode = AcpHeaderStrip.LogoMode.parse(settings.getAiAcpLogos());
             } catch (IllegalArgumentException e) {
                 acpPreset = null;
                 sessionProviderChoice = null;
@@ -1793,8 +1790,7 @@ class AiPanel {
         AcpAgentClient agent = acpClient;
         int commands = agent != null ? agent.availableCommands().size() : 0;
         return new AcpHeaderStrip.Model(
-                preset.label(), preset.glyph(), preset.color(), preset.logo(), acpLabel(),
-                acpSessionId, acpCwd, commands);
+                preset.label(), preset.glyph(), preset.color(), acpLabel(), acpSessionId, acpCwd, commands);
     }
 
     private Path acpWorkingDir() {
@@ -2023,12 +2019,10 @@ class AiPanel {
         frame.renderWidget(block, area);
         Rect inner = block.inner(area);
         if (inner.height() < 2) {
-            acpHeader.hide(frame);
             return;
         }
 
         if (statsView) {
-            acpHeader.hide(frame);
             renderStats(frame, inner);
             if (providerSwitchPopup.isVisible()) {
                 providerSwitchPopup.render(frame, inner);
@@ -2047,12 +2041,10 @@ class AiPanel {
             List<Rect> top = Layout.vertical()
                     .constraints(Constraint.length(AcpHeaderStrip.ROWS), Constraint.length(1), Constraint.fill())
                     .split(inner);
-            acpHeader.render(frame, top.get(0), acpHeaderModel(), acpLogoMode);
+            acpHeader.render(frame, top.get(0), acpHeaderModel());
             frame.renderWidget(Paragraph.from(Line.from(Span.styled("─".repeat(top.get(1).width()), Style.EMPTY.dim()))),
                     top.get(1));
             body = top.get(2);
-        } else {
-            acpHeader.hide(frame);
         }
 
         // Split the body area: conversation (fill) + optional slash hints + separator (1 row) + input (1 row per line)
@@ -3408,10 +3400,6 @@ class AiPanel {
 
     boolean isAcpProviderForTesting() {
         return acpPreset != null;
-    }
-
-    void setAcpHeaderForTesting(AcpHeaderStrip strip) {
-        this.acpHeader = strip;
     }
 
     void setAcpClientFactoryForTesting(AcpClientFactory factory) {

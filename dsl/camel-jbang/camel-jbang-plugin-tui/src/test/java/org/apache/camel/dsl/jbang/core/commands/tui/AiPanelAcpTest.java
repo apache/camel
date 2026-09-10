@@ -19,12 +19,9 @@ package org.apache.camel.dsl.jbang.core.commands.tui;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.time.Duration;
-import java.util.EnumSet;
 import java.util.concurrent.TimeUnit;
 
 import dev.tamboui.buffer.Buffer;
-import dev.tamboui.image.capability.TerminalImageCapabilities;
-import dev.tamboui.image.capability.TerminalImageProtocol;
 import dev.tamboui.layout.Rect;
 import dev.tamboui.terminal.Frame;
 import dev.tamboui.tui.event.KeyCode;
@@ -697,8 +694,6 @@ class AiPanelAcpTest {
     @Test
     void headerStripAppearsOnceTheSessionIsOpen() throws Exception {
         AiPanel panel = acpPanel();
-        panel.setAcpHeaderForTesting(new AcpHeaderStrip(
-                TerminalImageCapabilities.withSupport(EnumSet.of(TerminalImageProtocol.HALF_BLOCK))));
         // wide enough that the meta line is never clipped by a deep checkout path
         Rect area = new Rect(0, 0, 200, 20);
         Buffer before = Buffer.empty(area);

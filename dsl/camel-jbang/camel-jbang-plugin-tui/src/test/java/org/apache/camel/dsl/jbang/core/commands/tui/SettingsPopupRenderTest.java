@@ -90,7 +90,6 @@ class SettingsPopupRenderTest {
         assertTrue(rendered.contains("Shell History"), "the Shell History row should be shown");
         assertTrue(rendered.contains("AI History"), "the AI History row should be shown");
         assertTrue(rendered.contains("ACP Command"), "the ACP Command row should be shown");
-        assertTrue(rendered.contains("ACP Logos"), "the ACP Logos row should be shown");
     }
 
     @Test
@@ -112,14 +111,14 @@ class SettingsPopupRenderTest {
         popup.render(Frame.forTesting(buffer), area);
         String rendered = TuiTestHelper.bufferToString(buffer);
         assertTrue(rendered.contains("Theme:"), rendered);
-        assertFalse(rendered.contains("ACP Logos"), "the last rows do not fit in 25 lines");
-        for (int i = 0; i < 19; i++) {
+        assertFalse(rendered.contains("ACP Command"), "the last rows do not fit in 25 lines");
+        for (int i = 0; i < 18; i++) {
             popup.handleKeyEvent(KeyEvent.ofKey(KeyCode.DOWN, KeyModifiers.NONE));
         }
         buffer = Buffer.empty(area);
         popup.render(Frame.forTesting(buffer), area);
         rendered = TuiTestHelper.bufferToString(buffer);
-        assertTrue(rendered.contains("ACP Logos"), rendered);
+        assertTrue(rendered.contains("ACP Command"), rendered);
         assertTrue(rendered.contains("AI History"), rendered);
         assertFalse(rendered.contains("Theme:"), "the first rows scrolled out");
     }
