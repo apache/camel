@@ -1890,9 +1890,9 @@ class AiPanel {
     }
 
     /**
-     * Policy A from the design: calls to the camel-tui MCP server are approved silently (allow-always preferred),
-     * everything else is put in front of the user. Runs on the ACP request thread and blocks until the user answers or
-     * the turn is cancelled.
+     * Policy A from the design: calls to the TUI's read-only tools are approved silently (allow-always preferred),
+     * everything else, including a TUI tool that changes something, is put in front of the user. Runs on the ACP
+     * request thread and blocks until the user answers or the turn is cancelled.
      */
     private final class AcpPanelPermissionHandler implements AcpAgentClient.PermissionHandler {
         @Override
@@ -1908,7 +1908,7 @@ class AiPanel {
                 if (optionId == null && !options.isEmpty()) {
                     optionId = options.get(0).getString("optionId");
                 }
-                log(LogLevel.TOOL, "Auto-approved TUI tool", title);
+                log(LogLevel.TOOL, "Auto-approved read-only TUI tool", title);
                 return optionId;
             }
             CompletableFuture<String> decision = new CompletableFuture<>();
@@ -1930,10 +1930,11 @@ class AiPanel {
     }
 
     /**
-     * Only a call to a tool the TUI itself registers counts as a camel-tui tool: the name the Claude adapter sends
-     * ({@code mcp__camel-tui__tui_get_state}) or a title of the form {@code tui_get_state (camel-tui MCP Server)}.
-     * Kinds that touch files or run commands never qualify, whatever the title says: a path containing "camel-tui" is
-     * not a tool identity.
+     * Only a call to one of the TUI's {@link TuiToolRegistry#READ_ONLY_TOOLS} counts as auto-approvable: the name the
+     * Claude adapter sends ({@code mcp__camel-tui__tui_get_state}) or a title of the form
+     * {@code tui_get_state (camel-tui MCP Server)}. A TUI tool that changes anything is not in that set and goes to the
+     * user. Kinds that touch files or run commands never qualify, whatever the title says: a path containing
+     * "camel-tui" is not a tool identity.
      */
     private boolean isTuiTool(String name, String title, String kind) {
         if (FILE_OR_SHELL_KINDS.contains(kind)) {
@@ -1948,13 +1949,7 @@ class AiPanel {
                 tool = title.substring(0, paren).strip();
             }
         }
-        return tool != null && isRegisteredTuiTool(tool);
-    }
-
-    private boolean isRegisteredTuiTool(String tool) {
-        TuiToolRegistry registry = toolRegistry;
-        // no registry wired yet: nothing is a known TUI tool, so the user is asked rather than the call approved
-        return registry != null && registry.getToolDefinitions().stream().anyMatch(td -> td.name().equals(tool));
+        return tool != null && TuiToolRegistry.READ_ONLY_TOOLS.contains(tool);
     }
 
     private static String firstOptionOfKind(List<JsonObject> options, String kind) {

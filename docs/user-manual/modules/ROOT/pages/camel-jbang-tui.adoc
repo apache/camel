@@ -1055,7 +1055,10 @@ required. *F2* -> _MCP Info_ shows the port and the tool calls the agent makes. 
 `--mcp`, it is bound to `127.0.0.1` with no authentication, and it rejects requests that carry an `Origin`
 header (so a web page cannot reach it) or that are not JSON.
 
-Permissions: calls to the TUI's own tools are approved without asking. For anything else the agent wants to do,
+Permissions: calls to the TUI's read-only tools (the `tui_get_*` tools, catalog documentation, locate, validate)
+are approved without asking. A tool that changes anything, such as `tui_control`, `tui_send_message` or
+`tui_execute_sql`, opens the same popup as any other request; answering "Always allow" makes it a one-time
+question per tool. For anything else the agent wants to do,
 such as editing a file or running a command, a popup shows the agent's options; *Enter* selects, *Esc* rejects
 that one call and lets the turn continue, and *Ctrl+C* cancels the whole turn.
 "Always allow" choices are remembered by the agent for the session. The model, reasoning settings and any

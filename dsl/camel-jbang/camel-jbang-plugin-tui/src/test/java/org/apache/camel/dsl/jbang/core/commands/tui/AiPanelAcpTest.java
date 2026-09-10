@@ -99,14 +99,9 @@ class AiPanelAcpTest {
 
     /** Panel wired to a fresh fake agent, with the Claude preset selected. */
     private AiPanel acpPanel() throws IOException {
-        return acpPanel(new TuiToolRegistry(null));
-    }
-
-    /** Same, with the tool registry the panel should check tool names against ({@code null} = none wired yet). */
-    private AiPanel acpPanel(TuiToolRegistry registry) throws IOException {
         agent = new FakeAcpAgent();
         AiPanel panel = new AiPanel();
-        panel.setToolRegistryForTesting(registry);
+        panel.setToolRegistryForTesting(new TuiToolRegistry(null));
         panel.setAcpClientFactoryForTesting((preset, cwd) -> {
             AcpAgentClient client = new AcpAgentClient(agent.clientInput(), agent.clientOutput(), s -> {
             });
@@ -508,14 +503,14 @@ class AiPanelAcpTest {
     }
 
     @Test
-    void withoutAToolRegistryNothingIsAutoApproved() throws Exception {
-        AiPanel panel = acpPanel(null);
-        askPermissionDuringPrompt(permissionParams("mcp__camel-tui__tui_get_state", "tui_get_state"));
+    void mutatingTuiToolOpensThePopupEvenByName() throws Exception {
+        AiPanel panel = acpPanel();
+        askPermissionDuringPrompt(permissionParams("mcp__camel-tui__tui_control", "tui_control"));
         ask(panel, "hi");
         await().atMost(5, TimeUnit.SECONDS).untilAsserted(() -> assertTrue(panel.isPermissionPopupVisibleForTesting()));
         panel.handleKeyEvent(KeyEvent.ofKey(KeyCode.ESCAPE, KeyModifiers.NONE));
         awaitIdle(panel);
-        assertTrue(hasEntry(panel, AiRole.SYSTEM, "(stopped: opt-reject)"), "no registry means no known TUI tool");
+        assertTrue(hasEntry(panel, AiRole.SYSTEM, "(stopped: opt-reject)"), "tui_control is not read-only");
     }
 
     @Test
