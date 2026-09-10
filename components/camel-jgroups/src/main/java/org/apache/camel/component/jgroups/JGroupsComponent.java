@@ -36,6 +36,15 @@ public class JGroupsComponent extends DefaultComponent {
     private String channelProperties;
     @Metadata(label = "consumer")
     private boolean enableViewMessages;
+    @Metadata(label = "consumer,security",
+              description = "Restricts the Java classes accepted when a message received from the cluster is"
+                            + " deserialized. The value is a JEP-290 ObjectInputFilter pattern; the type of the"
+                            + " message body is checked against it before the exchange is routed, and a rejected"
+                            + " type is refused. This is a defense-in-depth allow-list applied after JGroups has"
+                            + " deserialized the message: the primary mitigations remain a JVM-wide jdk.serialFilter"
+                            + " and a JChannel secured with AUTH and encryption. When not set, no additional class"
+                            + " check is performed.")
+    private String deserializationFilter;
 
     public JGroupsComponent() {
     }
@@ -43,6 +52,7 @@ public class JGroupsComponent extends DefaultComponent {
     @Override
     protected Endpoint createEndpoint(String uri, String clusterName, Map<String, Object> parameters) throws Exception {
         JGroupsEndpoint endpoint = new JGroupsEndpoint(uri, this, channel, clusterName, channelProperties, enableViewMessages);
+        endpoint.setDeserializationFilter(deserializationFilter);
         setProperties(endpoint, parameters);
         return endpoint;
     }
@@ -79,6 +89,21 @@ public class JGroupsComponent extends DefaultComponent {
      */
     public void setEnableViewMessages(boolean enableViewMessages) {
         this.enableViewMessages = enableViewMessages;
+    }
+
+    public String getDeserializationFilter() {
+        return deserializationFilter;
+    }
+
+    /**
+     * Restricts the Java classes accepted when a message received from the cluster is deserialized. The value is a
+     * JEP-290 ObjectInputFilter pattern; the type of the message body is checked against it before the exchange is
+     * routed, and a rejected type is refused. This is a defense-in-depth allow-list applied after JGroups has
+     * deserialized the message: the primary mitigations remain a JVM-wide {@code jdk.serialFilter} and a
+     * {@code JChannel} secured with AUTH and encryption. When not set, no additional class check is performed.
+     */
+    public void setDeserializationFilter(String deserializationFilter) {
+        this.deserializationFilter = deserializationFilter;
     }
 
 }

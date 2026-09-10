@@ -92,6 +92,27 @@ public interface JGroupsEndpointBuilderFactory {
             doSetProperty("enableViewMessages", enableViewMessages);
             return this;
         }
+        /**
+         * Restricts the Java classes accepted when a message received from the
+         * cluster is deserialized. The value is a JEP-290 ObjectInputFilter
+         * pattern; the type of the message body is checked against it before
+         * the exchange is routed, and a rejected type is refused. This is a
+         * defense-in-depth allow-list applied after JGroups has deserialized
+         * the message: the primary mitigations remain a JVM-wide
+         * jdk.serialFilter and a JChannel secured with AUTH and encryption.
+         * When not set, no additional class check is performed.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: security
+         * 
+         * @param deserializationFilter the value to set
+         * @return the dsl builder
+         */
+        default JGroupsEndpointConsumerBuilder deserializationFilter(String deserializationFilter) {
+            doSetProperty("deserializationFilter", deserializationFilter);
+            return this;
+        }
     }
 
     /**

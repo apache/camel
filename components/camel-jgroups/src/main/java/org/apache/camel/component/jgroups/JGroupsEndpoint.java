@@ -16,6 +16,7 @@
  */
 package org.apache.camel.component.jgroups;
 
+import java.io.ObjectInputFilter;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import org.apache.camel.Category;
@@ -29,6 +30,7 @@ import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriPath;
 import org.apache.camel.support.DefaultEndpoint;
+import org.apache.camel.support.DeserializationFilterHelper;
 import org.jgroups.JChannel;
 import org.jgroups.Message;
 import org.jgroups.View;
@@ -55,6 +57,15 @@ public class JGroupsEndpoint extends DefaultEndpoint {
     private String channelProperties;
     @UriParam(label = "consumer")
     private boolean enableViewMessages;
+    @UriParam(label = "consumer,security",
+              description = "Restricts the Java classes accepted when a message received from the cluster is"
+                            + " deserialized. The value is a JEP-290 ObjectInputFilter pattern; the type of the"
+                            + " message body is checked against it before the exchange is routed, and a rejected"
+                            + " type is refused. This is a defense-in-depth allow-list applied after JGroups has"
+                            + " deserialized the message: the primary mitigations remain a JVM-wide jdk.serialFilter"
+                            + " and a JChannel secured with AUTH and encryption. When not set, no additional class"
+                            + " check is performed.")
+    private String deserializationFilter;
 
     public JGroupsEndpoint(String endpointUri, Component component, JChannel channel, String clusterName,
                            String channelProperties, boolean enableViewMessages) {
@@ -82,8 +93,22 @@ public class JGroupsEndpoint extends DefaultEndpoint {
         exchange.getIn().setHeader(JGroupsConstants.HEADER_JGROUPS_ORIGINAL_MESSAGE, message);
         exchange.getIn().setHeader(JGroupsConstants.HEADER_JGROUPS_SRC, message.getSrc());
         exchange.getIn().setHeader(JGroupsConstants.HEADER_JGROUPS_DEST, message.getDest());
-        exchange.getIn().setBody(message.getObject());
+        Object body = message.getObject();
+        if (body != null && deserializationFilter != null && !deserializationFilter.isBlank()) {
+            checkDeserializedType(body.getClass());
+        }
+        exchange.getIn().setBody(body);
         return exchange;
+    }
+
+    private void checkDeserializedType(Class<?> type) {
+        ObjectInputFilter filter = DeserializationFilterHelper.resolveDeserializationFilter(deserializationFilter);
+        if (DeserializationFilterHelper.checkClass(filter, type) == ObjectInputFilter.Status.REJECTED) {
+            throw new JGroupsException(
+                    "Rejected message body of type " + type.getName()
+                                       + " received from the JGroups cluster: it is not permitted by the configured"
+                                       + " deserializationFilter");
+        }
     }
 
     public Exchange createExchange(View view) {
@@ -190,6 +215,21 @@ public class JGroupsEndpoint extends DefaultEndpoint {
      */
     public void setEnableViewMessages(boolean enableViewMessages) {
         this.enableViewMessages = enableViewMessages;
+    }
+
+    public String getDeserializationFilter() {
+        return deserializationFilter;
+    }
+
+    /**
+     * Restricts the Java classes accepted when a message received from the cluster is deserialized. The value is a
+     * JEP-290 {@link ObjectInputFilter} pattern; the type of the message body is checked against it before the exchange
+     * is routed, and a rejected type is refused. This is a defense-in-depth allow-list applied after JGroups has
+     * deserialized the message: the primary mitigations remain a JVM-wide {@code jdk.serialFilter} and a
+     * {@code JChannel} secured with AUTH and encryption. When not set, no additional class check is performed.
+     */
+    public void setDeserializationFilter(String deserializationFilter) {
+        this.deserializationFilter = deserializationFilter;
     }
 
 }

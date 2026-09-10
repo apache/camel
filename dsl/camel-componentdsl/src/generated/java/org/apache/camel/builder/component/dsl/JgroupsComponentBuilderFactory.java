@@ -174,6 +174,28 @@ public interface JgroupsComponentBuilderFactory {
             doSetProperty("autowiredEnabled", autowiredEnabled);
             return this;
         }
+    
+        /**
+         * Restricts the Java classes accepted when a message received from the
+         * cluster is deserialized. The value is a JEP-290 ObjectInputFilter
+         * pattern; the type of the message body is checked against it before
+         * the exchange is routed, and a rejected type is refused. This is a
+         * defense-in-depth allow-list applied after JGroups has deserialized
+         * the message: the primary mitigations remain a JVM-wide
+         * jdk.serialFilter and a JChannel secured with AUTH and encryption.
+         * When not set, no additional class check is performed.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: security
+         * 
+         * @param deserializationFilter the value to set
+         * @return the dsl builder
+         */
+        default JgroupsComponentBuilder deserializationFilter(java.lang.String deserializationFilter) {
+            doSetProperty("deserializationFilter", deserializationFilter);
+            return this;
+        }
     }
 
     class JgroupsComponentBuilderImpl
@@ -195,6 +217,7 @@ public interface JgroupsComponentBuilderFactory {
             case "enableViewMessages": ((JGroupsComponent) component).setEnableViewMessages((boolean) value); return true;
             case "lazyStartProducer": ((JGroupsComponent) component).setLazyStartProducer((boolean) value); return true;
             case "autowiredEnabled": ((JGroupsComponent) component).setAutowiredEnabled((boolean) value); return true;
+            case "deserializationFilter": ((JGroupsComponent) component).setDeserializationFilter((java.lang.String) value); return true;
             default: return false;
             }
         }

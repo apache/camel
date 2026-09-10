@@ -45,6 +45,45 @@ include::partial$component-endpoint-options.adoc[]
 include::partial$component-endpoint-headers.adoc[]
 // component options: END
 
+== Security
+
+The `jgroups` consumer converts an incoming cluster message into the exchange
+body by calling `org.jgroups.Message.getObject()`, which Java-deserializes the
+payload carried by the message. Deserialization is performed by JGroups on its
+own receive path, and the bodies a consumer receives originate from any peer
+that has joined the cluster.
+
+The default JGroups protocol stack (`udp.xml`) multicasts over UDP and does
+*not* authenticate or encrypt peers: any host able to reach the cluster's
+multicast group or bind port can join and send messages. Treat cluster peers as
+part of your trust boundary and harden the deployment accordingly.
+
+* *Authenticate and encrypt the channel.* Supply a hardened JGroups
+configuration through the `channelProperties` option and add the `AUTH`
+protocol together with `SYM_ENCRYPT` or `ASYM_ENCRYPT`, so that only trusted
+peers can join and message contents are protected on the wire. See the
+https://www.jgroups.org[JGroups documentation] for the protocol-stack reference.
+* *Constrain deserialization at the JVM.* Set a JVM-wide JEP-290 serialization
+filter (`-Djdk.serialFilter=...` or `ObjectInputFilter.Config.setSerialFilter(...)`)
+to restrict which classes may be deserialized from the network. Because JGroups
+deserializes messages inside its own receive path, the JVM-wide filter is the
+mechanism that constrains that deserialization.
+* *Restrict the accepted body types in Camel.* The consumer `deserializationFilter`
+option applies a JEP-290 `ObjectInputFilter` pattern to the type of the message
+body before the exchange is routed, rejecting bodies whose type is not allowed.
+This is a defense-in-depth allow-list applied _after_ JGroups has deserialized
+the message; it complements, but does not replace, the JVM-wide `jdk.serialFilter`
+and the channel authentication and encryption above.
+
+The snippet below accepts only `String` bodies from the cluster, on top of a
+hardened, authenticated and encrypted channel supplied through `channelProperties`.
+
+[source,java]
+----
+from("jgroups:clusterName?channelProperties=secure-udp.xml&deserializationFilter=java.lang.String;!*")
+  .to("seda:queue");
+----
+
 == Usage
 
 Using `jgroups` component on the consumer side of the route will capture
