@@ -44,6 +44,9 @@ public class OpenAIMockResponsesTest {
             .withParam("city", "Rome")
             .replyWith("It is sunny in Rome")
             .end()
+            .when("count to three")
+            .replyWith("1, 2, 3")
+            .end()
             .build();
 
     @Test
@@ -79,12 +82,48 @@ public class OpenAIMockResponsesTest {
         assertEquals("resp_custom", response.path("id").asText());
     }
 
-    private JsonNode post(String body) throws Exception {
+    @Test
+    public void testBackgroundResponseIsQueuedThenRetrievedCompleted() throws Exception {
+        JsonNode queued = post("{\"model\":\"gpt-5\",\"input\":\"count to three\",\"background\":true}");
+        assertEquals("queued", queued.path("status").asText());
+        assertEquals(0, queued.path("output").size());
+
+        JsonNode retrieved = send("GET", "/v1/responses/" + queued.path("id").asText(), null);
+        assertEquals("completed", retrieved.path("status").asText());
+        assertEquals("1, 2, 3", retrieved.path("output").get(0).path("content").get(0).path("text").asText());
+    }
+
+    @Test
+    public void testResponseCanBeCancelled() throws Exception {
+        JsonNode queued = post("{\"model\":\"gpt-5\",\"input\":\"count to three\",\"background\":true}");
+        String path = "/v1/responses/" + queued.path("id").asText();
+
+        assertEquals("cancelled", send("POST", path + "/cancel", "").path("status").asText());
+        assertEquals("cancelled", send("GET", path, null).path("status").asText());
+    }
+
+    @Test
+    public void testUnknownResponseIdIsNotFound() throws Exception {
         try (CloseableHttpClient hc = new CloseableHttpClient()) {
             HttpRequest request = HttpRequest.newBuilder()
-                    .uri(URI.create(openAIMock.getBaseUrl() + "/v1/responses"))
+                    .uri(URI.create(openAIMock.getBaseUrl() + "/v1/responses/resp_unknown"))
+                    .GET()
+                    .build();
+            assertEquals(404, hc.send(request, HttpResponse.BodyHandlers.ofString()).statusCode());
+        }
+    }
+
+    private JsonNode post(String body) throws Exception {
+        return send("POST", "/v1/responses", body);
+    }
+
+    private JsonNode send(String method, String path, String body) throws Exception {
+        try (CloseableHttpClient hc = new CloseableHttpClient()) {
+            HttpRequest request = HttpRequest.newBuilder()
+                    .uri(URI.create(openAIMock.getBaseUrl() + path))
                     .header("Content-Type", "application/json")
-                    .POST(HttpRequest.BodyPublishers.ofString(body))
+                    .method(method, body != null
+                            ? HttpRequest.BodyPublishers.ofString(body) : HttpRequest.BodyPublishers.noBody())
                     .build();
             return new ObjectMapper().readTree(hc.send(request, HttpResponse.BodyHandlers.ofString()).body());
         }

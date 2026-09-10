@@ -19,9 +19,12 @@ package org.apache.camel.test.infra.openai.mock;
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
 import java.util.List;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.sun.net.httpserver.HttpExchange;
 
 /**
@@ -30,6 +33,7 @@ import com.sun.net.httpserver.HttpExchange;
 public class ResponsesRequestHandler {
 
     private final List<MockExpectation> expectations;
+    private final Map<String, ObjectNode> storedResponses = new ConcurrentHashMap<>();
     private final ResponseBuilder responseBuilder;
     private final ObjectMapper objectMapper;
 
@@ -62,7 +66,7 @@ public class ResponsesRequestHandler {
 
         JsonNode input = root.path("input");
         if (endsWithFunctionCallOutput(input) && !expectation.getToolSequence().isEmpty()) {
-            return handleFunctionCallOutput(expectation, input, promptTokens, completionTokens);
+            return store(handleFunctionCallOutput(expectation, input, promptTokens, completionTokens), root);
         }
 
         expectation.resetToolSequence();
@@ -72,16 +76,60 @@ public class ResponsesRequestHandler {
         if (expectation.getCustomResponseFunction() != null) {
             return expectation.getCustomResponseFunction().apply(exchange, userInput);
         }
+        String response;
         if (expectation.getResponseType() == MockResponseType.TOOL_CALLS) {
-            return responseBuilder.createResponsesFunctionCallResponse(
+            response = responseBuilder.createResponsesFunctionCallResponse(
                     expectation.getCurrentToolStep().getToolCalls(), promptTokens, completionTokens);
-        }
-        if (expectation.getResponsesOutput() != null) {
-            return responseBuilder.createResponsesOutputResponse(
+        } else if (expectation.getResponsesOutput() != null) {
+            response = responseBuilder.createResponsesOutputResponse(
                     expectation.getResponsesOutput(), promptTokens, completionTokens);
+        } else {
+            response = responseBuilder.createResponsesTextResponse(
+                    expectation.getExpectedResponse(), promptTokens, completionTokens);
         }
-        return responseBuilder.createResponsesTextResponse(
-                expectation.getExpectedResponse(), promptTokens, completionTokens);
+        return store(response, root);
+    }
+
+    /**
+     * Serves {@code GET /v1/responses/{id}} and {@code POST /v1/responses/{id}/cancel} for the responses created by
+     * this mock.
+     */
+    public String handleStoredResponse(HttpExchange exchange) throws Exception {
+        String path = exchange.getRequestURI().getPath();
+        boolean cancel = path.endsWith("/cancel");
+        String id = path.substring(path.indexOf("/responses/") + "/responses/".length());
+        if (cancel) {
+            id = id.substring(0, id.length() - "/cancel".length());
+        }
+        ObjectNode response = storedResponses.get(id);
+        if (response == null) {
+            return responseBuilder.createErrorResponse(404, "No response found with id: " + id, exchange);
+        }
+        if (cancel) {
+            response = withoutOutput(response, "cancelled");
+            storedResponses.put(id, response);
+        }
+        return objectMapper.writeValueAsString(response);
+    }
+
+    /**
+     * Stores the response so that it can be retrieved or cancelled. A background request is answered with a queued copy
+     * without output, and retrieving it returns the completed response.
+     */
+    private String store(String responseJson, JsonNode request) throws Exception {
+        ObjectNode response = (ObjectNode) objectMapper.readTree(responseJson);
+        storedResponses.put(response.path("id").asText(), response);
+        if (!request.path("background").asBoolean(false)) {
+            return responseJson;
+        }
+        return objectMapper.writeValueAsString(withoutOutput(response, "queued"));
+    }
+
+    private static ObjectNode withoutOutput(ObjectNode response, String status) {
+        ObjectNode copy = response.deepCopy();
+        copy.put("status", status);
+        copy.putArray("output");
+        return copy;
     }
 
     /**
