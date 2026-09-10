@@ -64,6 +64,7 @@ class TuiSettingsTest {
         settings.setAiModel("gemini-3.5-flash");
         settings.setAiUrl("https://generativelanguage.googleapis.com");
         settings.setAiTools("core");
+        settings.setAiAcpCommand("npx -y pi-acp");
         settings.setShellHistory("25");
         settings.setAiPromptHistory("50");
         settings.setPanelPosition("top");
@@ -78,6 +79,7 @@ class TuiSettingsTest {
         assertThat(loaded.getAiModel()).isEqualTo("gemini-3.5-flash");
         assertThat(loaded.getAiUrl()).isEqualTo("https://generativelanguage.googleapis.com");
         assertThat(loaded.getAiTools()).isEqualTo("core");
+        assertThat(loaded.getAiAcpCommand()).isEqualTo("npx -y pi-acp");
         assertThat(loaded.getShellHistory()).isEqualTo("25");
         assertThat(loaded.getAiPromptHistory()).isEqualTo("50");
         assertThat(loaded.getPanelPosition()).isEqualTo("top");

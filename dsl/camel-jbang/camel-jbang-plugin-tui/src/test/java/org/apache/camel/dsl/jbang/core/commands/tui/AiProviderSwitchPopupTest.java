@@ -51,6 +51,14 @@ class AiProviderSwitchPopupTest {
     }
 
     @Test
+    void acpChoiceIsLabelledWithTheAgentName() {
+        assertEquals("Claude Code (ACP)  default",
+                new AiProviderSwitchPopup.ProviderChoice("acp:claude", "", "", true).label());
+        assertEquals("Claude Code (ACP)",
+                new AiProviderSwitchPopup.ProviderChoice("acp:claude", "", "", false).label());
+    }
+
+    @Test
     void escapeCancelsWithoutSelection() {
         AiProviderSwitchPopup popup = new AiProviderSwitchPopup();
         popup.open(List.of(new AiProviderSwitchPopup.ProviderChoice("auto", "", "", true)));

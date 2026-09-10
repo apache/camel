@@ -47,6 +47,9 @@ final class AiProviderSwitchPopup {
         }
 
         String label() {
+            if (AiProviderSelector.isAcp(provider)) {
+                return AiProviderSelector.acpLabel(provider) + (persistedDefault ? "  default" : "");
+            }
             String modelLabel = model == null || model.isBlank() ? "auto" : model;
             return provider + "  " + modelLabel + (persistedDefault ? "  default" : "");
         }

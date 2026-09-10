@@ -99,6 +99,18 @@ class TuiToolRegistry {
             "tui_infra");
 
     /**
+     * Tools that only return information and never change the TUI, the integration or its data. The ACP permission
+     * handler approves calls to these without asking; anything else, including tui_control, tui_send_message and
+     * tui_execute_sql, is put in front of the user.
+     */
+    static final Set<String> READ_ONLY_TOOLS = Set.of(
+            "tui_catalog_doc", "tui_get_ai_log", "tui_get_diagram", "tui_get_errors", "tui_get_events",
+            "tui_get_files", "tui_get_history", "tui_get_log", "tui_get_mcp_log", "tui_get_options",
+            "tui_get_processor_detail", "tui_get_readme", "tui_get_screen", "tui_get_spans", "tui_get_state",
+            "tui_get_status", "tui_get_table", "tui_get_themes", "tui_get_topology", "tui_list_examples",
+            "tui_locate", "tui_validate_source", "tui_wait_for_idle");
+
+    /**
      * Returns all tool definitions. The result is cached since it is immutable.
      */
     List<ToolDef> getToolDefinitions() {

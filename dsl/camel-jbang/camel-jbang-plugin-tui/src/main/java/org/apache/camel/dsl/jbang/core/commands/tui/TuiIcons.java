@@ -44,6 +44,8 @@ final class TuiIcons {
     static final String HEALTH_WARN = "⚠";
     static final String STOPPED = "✖";
     static final String CROSS = "✗";
+    static final String GEAR = "⚙";
+    static final String CHECK = "✓";
 
     // ---- Files & folders ----
     static final String FOLDER = "📁";

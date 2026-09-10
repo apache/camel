@@ -91,7 +91,7 @@ class TuiMcpServer {
             return t;
         }));
         server.start();
-        log(LogLevel.INFO, "Server started on port " + port);
+        log(LogLevel.INFO, "Server started on port " + getPort());
     }
 
     void stop() {
@@ -101,6 +101,13 @@ class TuiMcpServer {
                 es.shutdownNow();
             }
         }
+    }
+
+    /**
+     * The port the server is bound to. Differs from the constructor argument when {@code 0} (ephemeral) was requested.
+     */
+    int getPort() {
+        return server != null ? server.getAddress().getPort() : port;
     }
 
     synchronized List<LogEntry> getActivityLog() {

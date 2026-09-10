@@ -58,4 +58,23 @@ class TuiToolRegistryCoreToolsTest {
 
         assertFalse(TuiToolRegistry.CORE_TOOLS.stream().anyMatch(automation::contains));
     }
+
+    @Test
+    void readOnlyToolsAreRegisteredAndCoverEveryGetter() {
+        TuiToolRegistry registry = new TuiToolRegistry(null);
+        Set<String> all = registry.getToolDefinitions().stream()
+                .map(TuiToolRegistry.ToolDef::name).collect(Collectors.toSet());
+
+        assertTrue(all.containsAll(TuiToolRegistry.READ_ONLY_TOOLS),
+                "read-only tools missing from registry: " + TuiToolRegistry.READ_ONLY_TOOLS.stream()
+                        .filter(name -> !all.contains(name)).toList());
+        List<String> getters = all.stream().filter(name -> name.startsWith("tui_get_")).sorted().toList();
+        assertTrue(TuiToolRegistry.READ_ONLY_TOOLS.containsAll(getters),
+                "a new getter must be classified deliberately: " + getters.stream()
+                        .filter(name -> !TuiToolRegistry.READ_ONLY_TOOLS.contains(name)).toList());
+        for (String mutating : List.of("tui_control", "tui_execute_sql", "tui_send_message", "tui_write_file",
+                "tui_infra")) {
+            assertFalse(TuiToolRegistry.READ_ONLY_TOOLS.contains(mutating), mutating + " changes something");
+        }
+    }
 }

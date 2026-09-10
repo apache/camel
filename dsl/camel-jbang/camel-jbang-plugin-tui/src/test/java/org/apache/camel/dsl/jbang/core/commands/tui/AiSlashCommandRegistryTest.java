@@ -95,6 +95,39 @@ class AiSlashCommandRegistryTest {
     }
 
     @Test
+    void completionsIncludeExtraDescriptorsButRegistryCommandsWin() {
+        AiSlashCommandRegistry registry = AiSlashCommandRegistry.defaults();
+        List<AiSlashCommandRegistry.Descriptor> extra = List.of(
+                new AiSlashCommandRegistry.Descriptor("review", List.of(), "Review changes", "focus", null),
+                new AiSlashCommandRegistry.Descriptor("help", List.of(), "Agent help", null, null));
+        List<String> all = registry.completionsFor("/", extra).stream().map(AiSlashCommandRegistry.Descriptor::name).toList();
+        assertTrue(all.contains("review"));
+        assertEquals(1, all.stream().filter("help"::equals).count(), "the panel's /help wins over the agent's");
+        assertEquals(List.of("review"),
+                registry.completionsFor("/rev", extra).stream().map(AiSlashCommandRegistry.Descriptor::name).toList());
+        assertTrue(registry.completionsFor("/review ", extra).isEmpty(),
+                "a complete command followed by a space hides the hints");
+        assertTrue(registry.completionsFor("/review focus", extra).isEmpty());
+    }
+
+    @Test
+    void prefixedAgentDescriptorsMatchByAliasAndHideWhenComplete() {
+        AiSlashCommandRegistry registry = AiSlashCommandRegistry.defaults();
+        List<AiSlashCommandRegistry.Descriptor> extra = List.of(
+                new AiSlashCommandRegistry.Descriptor("agent:review", List.of("review"), "Review changes", "focus", null),
+                new AiSlashCommandRegistry.Descriptor("agent:clear", List.of("clear"), "Clear the agent context", null, null));
+        assertEquals(List.of("agent:review"),
+                registry.completionsFor("/rev", extra).stream().map(AiSlashCommandRegistry.Descriptor::name).toList());
+        assertEquals(List.of("agent:review", "agent:clear"),
+                registry.completionsFor("/agent:", extra).stream().map(AiSlashCommandRegistry.Descriptor::name).toList());
+        assertTrue(registry.completionsFor("/agent:review ", extra).isEmpty());
+        assertTrue(registry.completionsFor("/review ", extra).isEmpty(),
+                "a complete alias followed by a space hides the hints too");
+        assertTrue(registry.completionsFor("/clear", extra).stream().anyMatch(d -> "agent:clear".equals(d.name())),
+                "the agent's clear is offered next to the panel's because its display name does not collide");
+    }
+
+    @Test
     void placeholderUsesRegistryDescriptor() {
         AiSlashCommandRegistry registry = AiSlashCommandRegistry.defaults();
 

@@ -792,6 +792,7 @@ A question can span several lines: *Ctrl+N* starts a new line (terminals deliver
 The same guidance, together with the provider that is currently detected, is available inside the TUI
 via *F2* -> _AI & MCP_ -> _Setup AI_. Use *F2* -> _Settings_ to pin a provider, model or base URL
 (`camel.tui.ai.provider`, `camel.tui.ai.model`, `camel.tui.ai.url`) regardless of the environment.
+`camel.tui.ai.acp.command` sets the command line of the custom ACP agent (`acp:custom`).
 
 ==== Using Ollama (local, no API key)
 
@@ -1017,6 +1018,66 @@ on a 10k-token prompt means the cache was hit, while a prefill of several second
 prompt was processed again. For OpenAI, Anthropic and Gemini it prints the number of `cached` input
 tokens the provider reported. Use it to check that follow-up questions are cheap before blaming the
 model for being slow.
+
+=== Using a coding agent (ACP)
+
+Instead of talking to a model directly, the AI panel can hand the conversation to an external coding agent that
+speaks the https://agentclientprotocol.com[Agent Client Protocol] (ACP). The TUI starts the agent as a subprocess,
+gives it the TUI's own MCP server, and shows the agent's answer, tool calls and questions in the panel. The agent
+drives the TUI through the same `tui_*` tools that external MCP clients use, and can also read and edit your
+route sources with its own tools.
+
+Press *Ctrl+P* in the AI panel and pick one of the agents:
+
+[options="header"]
+|===
+| Provider | Command the TUI runs | Before the first question
+| `acp:claude` | `npx -y @agentclientprotocol/claude-agent-acp` | log in with the `claude` CLI, or set `ANTHROPIC_API_KEY`
+| `acp:codex` | `npx -y @agentclientprotocol/codex-acp` | `codex login`, or set `OPENAI_API_KEY`
+| `acp:bob` | `bob acp` | set `BOBSHELL_API_KEY`, or run `bob` once to sign in
+| `acp:qwen` | `qwen --acp` | set `OPENAI_API_KEY` and `OPENAI_BASE_URL`
+| `acp:opencode` | `opencode acp` | `opencode auth login`
+| `acp:dsh` | `npx -y @deepseek-ai/dsh --profile acp` | configure the model key in DeepSeek Harness (developer preview)
+| `acp:custom` | the value of `camel.tui.ai.acp.command` | depends on the agent
+|===
+
+The `npx` entries need Node.js 22 or newer (the Claude adapter requires it). The agent starts with your first
+question; the first start can take a while when `npx` has to download the adapter. Once the session is open the
+panel shows a two-row header with the agent's coloured glyph, the agent's name and version, the session id, the
+working directory and the number of commands it advertises. Use *F2* -> _Settings_ to make an
+agent the default provider or to set the custom command (a plain command line split on whitespace, no quoting).
+
+The MCP server is started automatically on a random localhost port when an agent needs it, so `--mcp` is not
+required. *F2* -> _MCP Info_ shows the port and the tool calls the agent makes. Like the server started with
+`--mcp`, it is bound to `127.0.0.1` with no authentication, and it rejects requests that carry an `Origin`
+header (so a web page cannot reach it) or that are not JSON.
+
+Permissions: calls to the TUI's read-only tools (the `tui_get_*` tools, catalog documentation, locate, validate)
+are approved without asking. A tool that changes anything, such as `tui_control`, `tui_send_message` or
+`tui_execute_sql`, opens the same popup as any other request; answering "Always allow" makes it a one-time
+question per tool. For anything else the agent wants to do,
+such as editing a file or running a command, a popup shows the agent's options; *Enter* selects, *Esc* rejects
+that one call and lets the turn continue, and *Ctrl+C* cancels the whole turn.
+"Always allow" choices are remembered by the agent for the session. The model, reasoning settings and any
+"always allow" rules are configured in the agent, not in the TUI; `/model` only reports the agent in use.
+
+The agent's own slash commands, for example Claude Code skills, appear as `/agent:<name>` in the `/` completion
+hints once the session is open; `/agent:` alone lists them. `/agent:<name> …` always reaches the agent, even when
+the name is also a panel command (`/agent:clear` clears the agent's context, `/clear` the panel). Anything else
+starting with `/` that is not a panel command is sent to the agent as is.
+
+The panel's own `/retry` resends the last question (or `/agent:` command) to the agent. `/context` shows the agent,
+its session, working directory, MCP server and the size of the preamble instead of a model history, and `/prompt`
+shows that preamble, sent once per session ahead of the first prompt. `/compact` and `/tools` do not apply while an
+agent is selected: the agent manages its own history and reaches the camel-tui tools through the MCP server; the panel
+says so and points to `/agent:compact` when the agent offers that command.
+
+If the agent asks for authentication and can sign you in itself, the TUI triggers that flow once; otherwise the
+panel shows the login command from the table above.
+
+NOTE: Gemini CLI, Google Antigravity and Pi are not offered as presets. Gemini CLI stopped serving personal Google
+accounts in June 2026, Antigravity's CLI has no ACP mode yet, and Pi's community adapter does not pass MCP servers
+through. Any ACP agent can still be tried through `acp:custom`.
 
 === Connecting an AI Agent
 

@@ -63,7 +63,10 @@ class SettingsPopup {
     private static final int ROW_AI_URL = 15;
     private static final int ROW_AI_TOOLS = 16;
     private static final int ROW_AI_PROMPT_HISTORY = 17;
-    private static final int ROW_COUNT = 18;
+    private static final int ROW_AI_ACP_COMMAND = 18;
+    static final int ROW_COUNT = 19;
+    /** Separator lines drawn between the row groups, after rows 2, 6, 9 and 12. */
+    static final int DIVIDERS = 4;
 
     private static final String[] LOG_PIN_OPTIONS = { "off", "25", "50", "75" };
     private static final String[] RATE_PER_OPTIONS = { "seconds", "minutes" };
@@ -78,12 +81,20 @@ class SettingsPopup {
         for (LlmClient.ApiType apiType : LlmClient.ApiType.values()) {
             providers.add(apiType.name());
         }
+        for (AiProviderSelector.AcpPreset preset : AiProviderSelector.acpPresets()) {
+            providers.add(preset.id());
+        }
+        providers.add(AiProviderSelector.ACP_CUSTOM);
         providers.add("auto");
         return providers;
     }
 
     private boolean visible;
     private int selectedRow;
+    /** First content line drawn, so the selected row stays inside a popup shorter than its 24 lines. */
+    private int scrollTop;
+    private int clipTop;
+    private int clipBottom;
 
     private TuiSettings settings;
     private int themeIndex;
@@ -104,6 +115,7 @@ class SettingsPopup {
     private TextInputState aiModelInput;
     private TextInputState aiUrlInput;
     private TextInputState aiPromptHistoryInput;
+    private TextInputState aiAcpCommandInput;
     private List<String> tabNames = new ArrayList<>();
 
     private List<TabRegistry.TabEntry> tabEntries;
@@ -190,7 +202,9 @@ class SettingsPopup {
         aiToolsIndex = Math.max(0, toolsIdx);
         aiPromptHistoryInput = new TextInputState(
                 settings.getAiPromptHistory() != null ? settings.getAiPromptHistory() : "");
+        aiAcpCommandInput = new TextInputState(settings.getAiAcpCommand() != null ? settings.getAiAcpCommand() : "");
         selectedRow = ROW_THEME;
+        scrollTop = 0;
         visible = true;
     }
 
@@ -342,6 +356,10 @@ class SettingsPopup {
             handleTextInput(ke, aiPromptHistoryInput);
             return true;
         }
+        if (selectedRow == ROW_AI_ACP_COMMAND) {
+            handleTextInput(ke, aiAcpCommandInput);
+            return true;
+        }
         return true;
     }
 
@@ -386,6 +404,7 @@ class SettingsPopup {
         String aiToolsValue = AI_TOOLS_OPTIONS[aiToolsIndex];
         settings.setAiTools(AiPanel.TOOL_MODE_AUTO.equals(aiToolsValue) ? null : aiToolsValue);
         settings.setAiPromptHistory(stripControlChars(aiPromptHistoryInput.text().trim()));
+        settings.setAiAcpCommand(stripControlChars(aiAcpCommandInput.text().trim()));
         settings.save();
         if (Theme.mode().equals(selectedThemeId)) {
             // Already active via live preview (or unchanged): just persist and clear the preview marker.
@@ -399,9 +418,8 @@ class SettingsPopup {
     }
 
     void render(Frame frame, Rect area) {
-        int dividers = 4;
         int popupW = Math.min(70, area.width() - 4);
-        int popupH = 2 + ROW_COUNT + dividers;
+        int popupH = 2 + ROW_COUNT + DIVIDERS;
         int x = area.left() + Math.max(0, (area.width() - popupW) / 2);
         int y = area.top() + 2;
         Rect popup = new Rect(x, y, Math.min(popupW, area.width()), Math.min(popupH, area.height() - 2));
@@ -414,11 +432,23 @@ class SettingsPopup {
                 .build();
         frame.renderWidget(block, popup);
 
+        int visibleLines = popup.height() - 2;
+        int contentLines = ROW_COUNT + DIVIDERS;
+        int selectedLine = lineOf(selectedRow);
+        if (selectedLine < scrollTop) {
+            scrollTop = selectedLine;
+        } else if (selectedLine >= scrollTop + visibleLines) {
+            scrollTop = selectedLine - visibleLines + 1;
+        }
+        scrollTop = Math.max(0, Math.min(scrollTop, Math.max(0, contentLines - visibleLines)));
+        clipTop = popup.top() + 1;
+        clipBottom = popup.top() + popup.height() - 2;
+
         int innerX = popup.left() + 2;
         int innerW = popup.width() - 4;
         int labelW = 24;
         int fieldW = innerW - labelW;
-        int rowY = popup.top() + 1;
+        int rowY = popup.top() + 1 - scrollTop;
 
         // --- Appearance ---
         renderLabel(frame, innerX, rowY, labelW, "Theme:", selectedRow == ROW_THEME);
@@ -519,6 +549,11 @@ class SettingsPopup {
         renderLabel(frame, innerX, rowY, labelW, "AI History:", selectedRow == ROW_AI_PROMPT_HISTORY);
         renderTextInput(frame, innerX + labelW, rowY, fieldW, aiPromptHistoryInput,
                 selectedRow == ROW_AI_PROMPT_HISTORY, "(100)");
+        rowY++;
+
+        renderLabel(frame, innerX, rowY, labelW, "ACP Command:", selectedRow == ROW_AI_ACP_COMMAND);
+        renderTextInput(frame, innerX + labelW, rowY, fieldW, aiAcpCommandInput,
+                selectedRow == ROW_AI_ACP_COMMAND, "(none)");
     }
 
     void renderFooter(List<Span> spans) {
@@ -597,15 +632,34 @@ class SettingsPopup {
         return sb.toString();
     }
 
+    /** The content line a row is drawn on, counting the dividers that follow rows 2, 6, 9 and 12. */
+    static int lineOf(int row) {
+        return row + (row > 2 ? 1 : 0) + (row > 6 ? 1 : 0) + (row > 9 ? 1 : 0) + (row > 12 ? 1 : 0);
+    }
+
+    /** True when a scrolled line falls outside the popup's inner area and must not be drawn. */
+    private boolean clipped(int y) {
+        return y < clipTop || y > clipBottom;
+    }
+
     private void renderDivider(Frame frame, int x, int y, int w) {
+        if (clipped(y)) {
+            return;
+        }
         frame.renderWidget(Paragraph.from(Line.from(Span.styled("─".repeat(w), Style.EMPTY.dim()))), new Rect(x, y, w, 1));
     }
 
     private void renderLabel(Frame frame, int x, int y, int w, String label, boolean selected) {
+        if (clipped(y)) {
+            return;
+        }
         FormHelper.renderLabel(frame, x, y, w, label, selected);
     }
 
     private void renderValue(Frame frame, int x, int y, int w, String text, boolean selected) {
+        if (clipped(y)) {
+            return;
+        }
         Style style = selected ? Style.EMPTY.bold() : Style.EMPTY;
         frame.renderWidget(Paragraph.from(Line.from(Span.styled("[" + text + "]", style))), new Rect(x, y, w, 1));
     }
@@ -617,6 +671,9 @@ class SettingsPopup {
     private void renderTextInput(
             Frame frame, int x, int y, int w, TextInputState input, boolean active,
             String placeholder) {
+        if (clipped(y)) {
+            return;
+        }
         FormHelper.renderTextField(frame, new Rect(x, y, w, 1), input, active, placeholder);
     }
 
@@ -668,6 +725,10 @@ class SettingsPopup {
             case AiPanel.TOOL_MODE_FULL -> "full (all tools)";
             default -> "auto (core if local model)";
         };
+    }
+
+    List<String> aiProviderOptionsForTesting() {
+        return AI_PROVIDERS;
     }
 
     String aiModelText() {

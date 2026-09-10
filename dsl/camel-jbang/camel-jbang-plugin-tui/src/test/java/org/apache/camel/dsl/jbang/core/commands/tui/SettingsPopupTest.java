@@ -395,6 +395,15 @@ class SettingsPopupTest {
     }
 
     @Test
+    void aiProviderDropdownOffersAcpAgents() {
+        SettingsPopup popup = new SettingsPopup();
+        popup.open();
+        assertTrue(popup.aiProviderOptionsForTesting().contains("acp:claude"));
+        assertTrue(popup.aiProviderOptionsForTesting().contains("acp:custom"));
+        assertEquals("auto", popup.aiProviderOptionsForTesting().get(popup.aiProviderOptionsForTesting().size() - 1));
+    }
+
+    @Test
     void panelRowsDefaultValuesAreNotPersisted(@TempDir Path tempDir) {
         useHome(tempDir);
         SettingsPopup popup = new SettingsPopup();
