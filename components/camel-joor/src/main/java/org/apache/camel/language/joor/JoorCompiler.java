@@ -81,6 +81,13 @@ public class JoorCompiler extends ServiceSupport implements StaticService {
         return aliases;
     }
 
+    /**
+     * Number of scripts this compiler has compiled so far.
+     */
+    public int getCounter() {
+        return counter;
+    }
+
     public void setAliases(Map<String, String> aliases) {
         this.aliases = aliases;
     }
