@@ -64,3 +64,16 @@ public class MyOpenAIApiTest {
     }
 }
 ```
+
+## Asserting on received requests
+
+The mock records every request it receives. Assert on them after the call, on the test thread, instead of inside
+an `assertRequest` callback, where a failed assertion surfaces as an HTTP error for the client under test:
+
+```java
+RecordedRequest request = openAIMock.getLastRequest();
+assertEquals("/v1/responses", request.path());
+assertEquals("gpt-5", request.bodyAsJson().path("model").asText());
+```
+
+`getReceivedRequests()` returns all of them in arrival order. The list is cleared when the mock server starts.
