@@ -24,7 +24,7 @@ public class ServiceBusEndpointUriFactory extends org.apache.camel.support.compo
     private static final Set<String> ENDPOINT_IDENTITY_PROPERTY_NAMES;
     private static final Map<String, String> MULTI_VALUE_PREFIXES;
     static {
-        Set<String> props = new HashSet<>(30);
+        Set<String> props = new HashSet<>(31);
         props.add("amqpRetryOptions");
         props.add("amqpTransportType");
         props.add("binary");
@@ -40,6 +40,7 @@ public class ServiceBusEndpointUriFactory extends org.apache.camel.support.compo
         props.add("lazyStartProducer");
         props.add("maxAutoLockRenewDuration");
         props.add("maxConcurrentCalls");
+        props.add("maxConcurrentSessions");
         props.add("prefetchCount");
         props.add("processorClient");
         props.add("producerOperation");

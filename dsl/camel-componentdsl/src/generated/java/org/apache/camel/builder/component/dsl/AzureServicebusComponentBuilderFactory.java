@@ -257,6 +257,24 @@ public interface AzureServicebusComponentBuilderFactory {
             return this;
         }
     
+        
+        /**
+         * Sets the maximum number of concurrent sessions to process at any
+         * given time. Only applies when sessionEnabled is true.
+         * 
+         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
+         * 
+         * Default: 1
+         * Group: consumer
+         * 
+         * @param maxConcurrentSessions the value to set
+         * @return the dsl builder
+         */
+        default AzureServicebusComponentBuilder maxConcurrentSessions(int maxConcurrentSessions) {
+            doSetProperty("maxConcurrentSessions", maxConcurrentSessions);
+            return this;
+        }
+    
         /**
          * Sets the prefetch count of the receiver. For both PEEK_LOCK PEEK_LOCK
          * and RECEIVE_AND_DELETE RECEIVE_AND_DELETE receive modes the default
@@ -613,6 +631,7 @@ public interface AzureServicebusComponentBuilderFactory {
             case "enableDeadLettering": getOrCreateConfiguration((ServiceBusComponent) component).setEnableDeadLettering((boolean) value); return true;
             case "maxAutoLockRenewDuration": getOrCreateConfiguration((ServiceBusComponent) component).setMaxAutoLockRenewDuration((long) value); return true;
             case "maxConcurrentCalls": getOrCreateConfiguration((ServiceBusComponent) component).setMaxConcurrentCalls((int) value); return true;
+            case "maxConcurrentSessions": getOrCreateConfiguration((ServiceBusComponent) component).setMaxConcurrentSessions((int) value); return true;
             case "prefetchCount": getOrCreateConfiguration((ServiceBusComponent) component).setPrefetchCount((int) value); return true;
             case "processorClient": getOrCreateConfiguration((ServiceBusComponent) component).setProcessorClient((com.azure.messaging.servicebus.ServiceBusProcessorClient) value); return true;
             case "serviceBusReceiveMode": getOrCreateConfiguration((ServiceBusComponent) component).setServiceBusReceiveMode((com.azure.messaging.servicebus.models.ServiceBusReceiveMode) value); return true;
