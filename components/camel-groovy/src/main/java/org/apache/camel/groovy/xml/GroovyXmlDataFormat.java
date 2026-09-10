@@ -16,25 +16,40 @@
  */
 package org.apache.camel.groovy.xml;
 
+import java.io.BufferedWriter;
+import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
+import java.io.Writer;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.StringJoiner;
 
+import javax.xml.XMLConstants;
+import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.parsers.SAXParser;
+import javax.xml.parsers.SAXParserFactory;
+
+import org.xml.sax.SAXException;
+import org.xml.sax.helpers.DefaultHandler;
+
 import groovy.util.Node;
+import groovy.xml.FactorySupport;
 import groovy.xml.XmlNodePrinter;
 import groovy.xml.XmlParser;
 import groovy.xml.XmlUtil;
 import groovy.xml.slurpersupport.GPathResult;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
+import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.spi.DataFormat;
 import org.apache.camel.spi.DataFormatName;
 import org.apache.camel.spi.annotations.Dataformat;
+import org.apache.camel.support.ExchangeHelper;
 import org.apache.camel.support.service.ServiceSupport;
 import org.apache.camel.util.StringHelper;
 
@@ -45,7 +60,22 @@ public class GroovyXmlDataFormat extends ServiceSupport implements DataFormat, D
     private static final int VALUE = 2;
     private static final int END_TAG = 3;
 
+    // replaces the XmlParser of a thread as content handler of its SAX parser after a parse, so the parsed document
+    // is not retained by the parser
+    private static final DefaultHandler DETACHED = new DefaultHandler();
+
     private boolean attributeMapping = true;
+
+    /**
+     * Configured like the factory of {@code new XmlParser()} (secure processing, DOCTYPE disallowed, namespace aware,
+     * not validating), created once as its lookup and feature setup dominate the cost of parsing small documents.
+     */
+    private volatile SAXParserFactory saxParserFactory;
+
+    /**
+     * A SAX parser is not thread safe but can parse sequentially, so each thread reuses its own.
+     */
+    private final ThreadLocal<SAXParser> saxParser = ThreadLocal.withInitial(this::createSaxParser);
 
     public boolean isAttributeMapping() {
         return attributeMapping;
@@ -60,7 +90,7 @@ public class GroovyXmlDataFormat extends ServiceSupport implements DataFormat, D
         if (graph instanceof GPathResult gp) {
             XmlUtil.serialize(gp, stream);
         } else if (graph instanceof Node n) {
-            serialize(n, stream);
+            serialize(exchange, n, stream);
         } else if (graph instanceof Map map) {
             serialize(exchange, map, stream);
         } else {
@@ -78,8 +108,12 @@ public class GroovyXmlDataFormat extends ServiceSupport implements DataFormat, D
 
     @Override
     public Object unmarshal(Exchange exchange, InputStream stream) throws Exception {
-        XmlParser parser = new XmlParser();
-        return parser.parse(stream);
+        SAXParser parser = saxParser.get();
+        try {
+            return new XmlParser(parser).parse(stream);
+        } finally {
+            parser.getXMLReader().setContentHandler(DETACHED);
+        }
     }
 
     @Override
@@ -87,53 +121,86 @@ public class GroovyXmlDataFormat extends ServiceSupport implements DataFormat, D
         return "groovyXml";
     }
 
-    private void serialize(Node node, OutputStream os) {
-        PrintWriter pw = new PrintWriter(os);
+    @Override
+    protected void doStart() throws Exception {
+        getSaxParserFactory();
+    }
+
+    private SAXParserFactory getSaxParserFactory() throws ParserConfigurationException {
+        SAXParserFactory factory = saxParserFactory;
+        if (factory == null) {
+            synchronized (this) {
+                factory = saxParserFactory;
+                if (factory == null) {
+                    // the same setup as the no-arg XmlParser constructor: secure processing and DOCTYPE disallowed
+                    factory = FactorySupport.createSaxParserFactory();
+                    factory.setNamespaceAware(true);
+                    factory.setValidating(false);
+                    XmlUtil.setFeatureQuietly(factory, XMLConstants.FEATURE_SECURE_PROCESSING, true);
+                    XmlUtil.setFeatureQuietly(factory, "http://apache.org/xml/features/disallow-doctype-decl", true);
+                    saxParserFactory = factory;
+                }
+            }
+        }
+        return factory;
+    }
+
+    private SAXParser createSaxParser() {
+        try {
+            SAXParserFactory factory = getSaxParserFactory();
+            // a factory is not guaranteed to be thread safe, and a thread only creates one parser
+            synchronized (factory) {
+                return factory.newSAXParser();
+            }
+        } catch (ParserConfigurationException | SAXException e) {
+            throw new RuntimeCamelException(e);
+        }
+    }
+
+    private void serialize(Exchange exchange, Node node, OutputStream os) {
+        PrintWriter pw = new PrintWriter(new OutputStreamWriter(os, ExchangeHelper.getCharset(exchange, true)));
         XmlNodePrinter nodePrinter = new XmlNodePrinter(pw);
         nodePrinter.setPreserveWhitespace(true);
         nodePrinter.print(node);
     }
 
-    private void printLines(List<Line> lines, OutputStream os) throws Exception {
+    private void printLines(List<Line> lines, Writer w) throws IOException {
         // add missing root end tag
         lines.add(new Line(lines.get(0).key, null, END_TAG, null));
         int level = 0;
         for (Line line : lines) {
             int kind = line.kind;
             if (kind == START_TAG) {
-                String pad = StringHelper.padString(level);
-                os.write(pad.getBytes());
-                os.write("<".getBytes());
-                os.write(line.key.getBytes());
+                w.write(StringHelper.padString(level));
+                w.write('<');
+                w.write(line.key);
                 if (line.attrs != null) {
                     StringJoiner sj = new StringJoiner(" ");
                     for (var a : line.attrs.entrySet()) {
                         sj.add(a.getKey() + "=\"" + a.getValue() + "\"");
                     }
                     if (sj.length() > 0) {
-                        os.write(" ".getBytes());
-                        os.write(sj.toString().getBytes());
+                        w.write(' ');
+                        w.write(sj.toString());
                     }
                 }
-                os.write(">\n".getBytes());
+                w.write(">\n");
                 level++;
             } else if (kind == END_TAG) {
                 level--;
-                String pad = StringHelper.padString(level);
-                os.write(pad.getBytes());
-                os.write("</".getBytes());
-                os.write(line.key.getBytes());
-                os.write(">\n".getBytes());
+                w.write(StringHelper.padString(level));
+                w.write("</");
+                w.write(line.key);
+                w.write(">\n");
             } else {
-                String pad = StringHelper.padString(level);
-                os.write(pad.getBytes());
-                os.write("<".getBytes());
-                os.write(line.key.getBytes());
-                os.write(">".getBytes());
-                os.write(line.value.getBytes());
-                os.write("</".getBytes());
-                os.write(line.key.getBytes());
-                os.write(">\n".getBytes());
+                w.write(StringHelper.padString(level));
+                w.write('<');
+                w.write(line.key);
+                w.write('>');
+                w.write(line.value);
+                w.write("</");
+                w.write(line.key);
+                w.write(">\n");
             }
         }
     }
@@ -141,7 +208,21 @@ public class GroovyXmlDataFormat extends ServiceSupport implements DataFormat, D
     private void serialize(Exchange exchange, Map<String, Object> map, OutputStream os) throws Exception {
         List<Line> lines = new ArrayList<>();
         doSerialize(exchange.getContext(), map, lines);
-        printLines(lines, os);
+        // the stream is owned by the caller: flush, do not close
+        Writer w = new BufferedWriter(new OutputStreamWriter(os, ExchangeHelper.getCharset(exchange, true)));
+        printLines(lines, w);
+        w.flush();
+    }
+
+    private static String asString(CamelContext context, Object value) {
+        // the type converter returns toString() for these, so skip the lookup
+        if (value instanceof String s) {
+            return s;
+        }
+        if (value instanceof Number || value instanceof Boolean) {
+            return value.toString();
+        }
+        return context.getTypeConverter().convertTo(String.class, value);
     }
 
     private void doSerialize(CamelContext context, Map<String, Object> map, List<Line> lines) {
@@ -151,7 +232,7 @@ public class GroovyXmlDataFormat extends ServiceSupport implements DataFormat, D
         if (attributeMapping) {
             for (String key : map.keySet()) {
                 if (key.startsWith("_") || key.startsWith("@")) {
-                    String val = context.getTypeConverter().convertTo(String.class, map.get(key));
+                    String val = asString(context, map.get(key));
                     if (val != null) {
                         val = val.trim();
                         if (!val.isBlank()) {
@@ -193,7 +274,7 @@ public class GroovyXmlDataFormat extends ServiceSupport implements DataFormat, D
                 } else if (e.getValue() instanceof List cl) {
                     doSerialize(context, cl, key, attrs, lines, root);
                 } else {
-                    String val = context.getTypeConverter().convertTo(String.class, e.getValue());
+                    String val = asString(context, e.getValue());
                     if (val != null) {
                         val = val.trim();
                         if (!val.isBlank()) {
