@@ -6900,14 +6900,16 @@
         "displayName" : "Group",
         "kind" : "attribute",
         "index" : 3,
-        "group" : "common"
+        "group" : "advanced",
+        "label" : "advanced"
       }, {
         "name" : "nodePrefixId",
         "type" : "string",
         "displayName" : "Node Prefix Id",
         "kind" : "attribute",
         "index" : 4,
-        "group" : "common"
+        "group" : "advanced",
+        "label" : "advanced"
       }, {
         "name" : "routeConfigurationId",
         "type" : "string",
@@ -6953,7 +6955,8 @@
         "displayName" : "Message History",
         "kind" : "attribute",
         "index" : 10,
-        "group" : "common",
+        "group" : "advanced",
+        "label" : "advanced",
         "default" : "false"
       }, {
         "name" : "logMask",
@@ -6961,7 +6964,8 @@
         "displayName" : "Log Mask",
         "kind" : "attribute",
         "index" : 11,
-        "group" : "common",
+        "group" : "advanced",
+        "label" : "advanced",
         "default" : "false"
       }, {
         "name" : "errorHandlerRef",
