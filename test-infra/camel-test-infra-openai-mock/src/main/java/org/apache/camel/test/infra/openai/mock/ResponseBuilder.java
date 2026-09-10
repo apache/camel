@@ -91,6 +91,26 @@ public class ResponseBuilder {
         return createResponsesResponse(objectMapper.readTree(outputItemsJson), inputTokens, outputTokens);
     }
 
+    /**
+     * Creates a Responses API response whose output holds one {@code function_call} item per tool call.
+     */
+    public String createResponsesFunctionCallResponse(
+            List<ToolCallDefinition> toolCalls, int inputTokens, int outputTokens)
+            throws Exception {
+        List<Map<String, Object>> output = new ArrayList<>();
+        for (ToolCallDefinition toolCall : toolCalls) {
+            Map<String, Object> functionCall = new HashMap<>();
+            functionCall.put("type", "function_call");
+            functionCall.put("id", "fc_" + UUID.randomUUID());
+            functionCall.put("call_id", "call_" + UUID.randomUUID());
+            functionCall.put("name", toolCall.getName());
+            functionCall.put("arguments", objectMapper.writeValueAsString(toolCall.getArguments()));
+            functionCall.put("status", "completed");
+            output.add(functionCall);
+        }
+        return createResponsesResponse(objectMapper.valueToTree(output), inputTokens, outputTokens);
+    }
+
     private String createResponsesResponse(JsonNode output, int inputTokens, int outputTokens) throws Exception {
         Map<String, Object> response = new HashMap<>();
         response.put("id", "resp_" + UUID.randomUUID());
