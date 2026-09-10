@@ -62,7 +62,7 @@ public class CvImageClassificationLocalTest extends CamelTestSupport {
         context.createProducerTemplate().sendBody("controlbus:route?routeId=infer&action=start", null);
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMinimumMessageCount(98);
-        mock.await();
+        DJLTestSupport.assertMockSatisfied(mock);
         long count = mock.getExchanges().stream().filter(exchange -> exchange.getIn().getBody(Boolean.class)).count();
         assertEquals(97, count);
     }

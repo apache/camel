@@ -55,7 +55,7 @@ public class AudioLocalTest extends CamelTestSupport {
         context.createProducerTemplate().sendBody("controlbus:route?routeId=audio&action=start", null);
         var mock = getMockEndpoint("mock:result");
         mock.expectedMinimumMessageCount(1);
-        mock.await();
+        DJLTestSupport.assertMockSatisfied(mock);
     }
 
     @Override

@@ -33,7 +33,7 @@ public class CvImageGenerationTest extends CamelTestSupport {
     void testDJL() throws Exception {
         var mock = getMockEndpoint("mock:result");
         mock.expectedMinimumMessageCount(5);
-        mock.await();
+        DJLTestSupport.assertMockSatisfied(mock);
     }
 
     @Override
