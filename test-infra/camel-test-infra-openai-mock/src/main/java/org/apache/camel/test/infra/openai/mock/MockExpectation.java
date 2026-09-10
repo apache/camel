@@ -31,6 +31,7 @@ public class MockExpectation {
     private String expectedResponse;
     private String reasoningContent;
     private String toolContentResponse;
+    private String responsesOutput;
     private BiFunction<HttpExchange, String, String> customResponseFunction;
     private Consumer<String> requestAssertion;
     private Integer usagePromptTokens;
@@ -102,6 +103,14 @@ public class MockExpectation {
 
     public Integer getUsageCompletionTokens() {
         return usageCompletionTokens;
+    }
+
+    public String getResponsesOutput() {
+        return responsesOutput;
+    }
+
+    public void setResponsesOutput(String responsesOutput) {
+        this.responsesOutput = responsesOutput;
     }
 
     // Tool sequence delegation methods
