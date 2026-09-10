@@ -53,13 +53,9 @@ public final class PackagePluginUtils {
         Path output = Paths.get(project.getBuild().getOutputDirectory());
         final JandexStore.Jandex jandex = JandexStore.read(output);
 
-        if (jandex.getException() != null) {
-            if (!jandex.doesNotExist()) {
-                throw new MojoExecutionException(
-                        "IOException: " + jandex.getException().getMessage(), jandex.getException());
-            }
-
-            log.warn("Jandex reading failed: " + jandex.getException().getMessage(), jandex.getException());
+        if (jandex.getException() != null && !jandex.doesNotExist()) {
+            throw new MojoExecutionException(
+                    "IOException: " + jandex.getException().getMessage(), jandex.getException());
         }
 
         return jandex.getIndex();
