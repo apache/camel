@@ -16,7 +16,13 @@
  */
 package org.apache.camel.language.js;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.LinkedHashMap;
+import java.util.LinkedHashSet;
+import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 
@@ -86,8 +92,96 @@ public class JavaScriptLanguage extends TypedLanguageSupport implements Scriptin
                 bindings.forEach(b::putMember);
             }
             Value o = cx.eval(source(script));
-            Object answer = o != null ? o.as(resultType) : null;
-            return resultType.cast(answer);
+            Object answer = materialize(o);
+            if (answer == null || resultType == Object.class || resultType.isInstance(answer)) {
+                return resultType.cast(answer);
+            }
+            if (getCamelContext() != null) {
+                return getCamelContext().getTypeConverter().convertTo(resultType, answer);
+            }
+            return resultType.cast(o.as(resultType));
+        }
+    }
+
+    /**
+     * Copies a guest {@link Value} into ordinary Java types so the result remains usable after the per-evaluation
+     * {@link Context} is closed: JS arrays become {@link List}, JS objects and {@code Map} become {@link Map}, JS
+     * {@code Set} becomes {@link Set}, and {@code Date} becomes {@link java.time.Instant}. Nested values are copied
+     * recursively. Primitives, strings and host objects are returned as before; other guest objects such as functions
+     * are left to {@link Value#as(Class) value.as(Object.class)}.
+     */
+    static Object materialize(Value value) {
+        return materialize(value, new HashMap<>());
+    }
+
+    private static Object materialize(Value value, Map<Value, Object> seen) {
+        if (value == null || value.isNull()) {
+            return null;
+        }
+        if (value.isHostObject()) {
+            return value.asHostObject();
+        }
+        if (value.isProxyObject()) {
+            return value.asProxyObject();
+        }
+        if (value.isBoolean() || value.isNumber() || value.isString() || value.canExecute()) {
+            return value.as(Object.class);
+        }
+        if (value.isInstant()) {
+            return value.asInstant();
+        }
+        Object existing = seen.get(value);
+        if (existing != null) {
+            return existing;
+        }
+        if (value.hasArrayElements()) {
+            int size = Math.toIntExact(value.getArraySize());
+            List<Object> list = new ArrayList<>(size);
+            seen.put(value, list);
+            for (int i = 0; i < size; i++) {
+                list.add(materialize(value.getArrayElement(i), seen));
+            }
+            return list;
+        }
+        if (value.hasHashEntries()) {
+            Map<Object, Object> map = new LinkedHashMap<>();
+            seen.put(value, map);
+            Value entries = value.getHashEntriesIterator();
+            while (entries.hasIteratorNextElement()) {
+                Value entry = entries.getIteratorNextElement();
+                map.put(materialize(entry.getArrayElement(0), seen), materialize(entry.getArrayElement(1), seen));
+            }
+            return map;
+        }
+        if (value.hasIterator() && isJsSet(value)) {
+            Set<Object> set = new LinkedHashSet<>();
+            seen.put(value, set);
+            Value iterator = value.getIterator();
+            while (iterator.hasIteratorNextElement()) {
+                set.add(materialize(iterator.getIteratorNextElement(), seen));
+            }
+            return set;
+        }
+        if (value.hasMembers()) {
+            Map<String, Object> map = new LinkedHashMap<>();
+            seen.put(value, map);
+            for (String key : value.getMemberKeys()) {
+                map.put(key, materialize(value.getMember(key), seen));
+            }
+            return map;
+        }
+        return value.as(Object.class);
+    }
+
+    private static boolean isJsSet(Value value) {
+        Value meta = value.getMetaObject();
+        if (meta == null || !meta.isMetaObject()) {
+            return false;
+        }
+        try {
+            return "Set".equals(meta.getMetaSimpleName());
+        } catch (UnsupportedOperationException e) {
+            return false;
         }
     }
 

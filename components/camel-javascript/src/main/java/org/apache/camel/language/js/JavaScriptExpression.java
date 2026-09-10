@@ -62,7 +62,7 @@ public class JavaScriptExpression extends ExpressionSupport {
             b.putMember("body", exchange.getMessage().getBody());
 
             Value o = cx.eval(lang.source(expressionString));
-            Object answer = o != null ? o.as(Object.class) : null;
+            Object answer = JavaScriptLanguage.materialize(o);
             if (type == Object.class) {
                 return (T) answer;
             }
