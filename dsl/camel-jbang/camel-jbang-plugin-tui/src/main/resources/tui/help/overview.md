@@ -110,8 +110,12 @@ Two panels can be opened on top of any tab. Opening one closes the other.
 - `F8` — **AI Prompt**: ask questions about the running integrations in plain
   English. The AI answers by calling the same tools an MCP agent uses (status,
   routes, log, errors, traces, infra services). It needs an API key in the
-  environment or a local Ollama model; `F2` → `AI & MCP` → `Setup AI` explains
-  the options. Press `F8` again to close it and `Shift+F8` to cycle its height.
+  environment, a local Ollama model, or a coding agent you already use (Claude
+  Code, Codex, OpenCode, IBM Bob, Qwen Code, DeepSeek Harness) picked with
+  `Ctrl+P` as `acp:<name>`; that agent then runs inside the panel with its own
+  login, model and skills, and asks you before it changes anything. `F2` →
+  `AI & MCP` → `Setup AI` explains the options. Press `F8` again to close it
+  and `Shift+F8` to cycle its height.
   Inside the panel `Ctrl+U` toggles the AI usage view (tokens per model and
   per question, and how much time went to the model versus tool calls),
   `Ctrl+P` switches provider or model, `Ctrl+Y` copies the last answer

@@ -392,7 +392,8 @@ class DocViewerPopup {
         } else if (ollama.running()) {
             status = "**Detected:** Ollama is running but has no models. Run `ollama pull qwen3.6:35b-a3b`.";
         } else {
-            status = "**Status:** No AI provider detected. Set an API key or start Ollama, then press F8.";
+            status = "**Status:** No AI provider detected. Set an API key, start Ollama, or pick a coding agent "
+                     + "with Ctrl+P in the panel (section 5), then press F8.";
         }
         String url = "http://localhost:" + mcpPort + "/mcp";
         openMarkdown("Setup AI",
@@ -457,9 +458,31 @@ class DocViewerPopup {
                                  + "- **Ctrl+U** toggles the usage view with token consumption\n"
                                  + "- `/help` lists all slash commands; **↑/↓** recalls earlier prompts\n\n"
                                  + "Check **F2 → Run Doctor** to verify the detected provider and Ollama models.\n\n"
-                                 + "## 5. Let an AI coding agent drive the TUI (optional)\n\n"
+                                 + "## 5. Use your coding agent inside the panel (ACP)\n\n"
+                                 + "If you already use Claude Code, Codex, OpenCode, IBM Bob, Qwen Code or DeepSeek Harness,\n"
+                                 + "the panel can hand your questions to it over the Agent Client Protocol. No API key is\n"
+                                 + "needed in the TUI: the agent keeps its own login, model, memory and skills.\n\n"
+                                 + "Press **Ctrl+P** in the panel and pick a preset:\n\n"
+                                 + "| Provider | Runs | Before the first question |\n"
+                                 + "|----------|------|---------------------------|\n"
+                                 + "| `acp:claude` | `npx -y @agentclientprotocol/claude-agent-acp` | log in with the `claude` CLI |\n"
+                                 + "| `acp:codex` | `npx -y @agentclientprotocol/codex-acp` | `codex login` |\n"
+                                 + "| `acp:opencode` | `opencode acp` | `opencode auth login` |\n"
+                                 + "| `acp:bob` | `bob acp` | set `BOBSHELL_API_KEY` or run `bob` once |\n"
+                                 + "| `acp:qwen` | `qwen --acp` | set `OPENAI_API_KEY` and `OPENAI_BASE_URL` |\n"
+                                 + "| `acp:dsh` | `npx -y @deepseek-ai/dsh --profile acp` | configure the model key in DeepSeek Harness |\n"
+                                 + "| `acp:custom` | *ACP Command* in **F2 → Settings** | depends on the agent |\n\n"
+                                 + "The `npx` presets need Node.js 22 or newer. The agent starts with your first question and\n"
+                                 + "gets the TUI's tools through an MCP server that is started on demand, so `--mcp` is not\n"
+                                 + "required. Read-only tools are approved automatically; a tool that changes something, or\n"
+                                 + "a file edit or command of the agent's own, opens a permission popup first (**Enter**\n"
+                                 + "allows, **Esc** rejects, **Ctrl+C** cancels the turn). File edits go through the same\n"
+                                 + "`/write confirm|auto|live` modes as the built-in providers. The agent's skills and\n"
+                                 + "commands appear as `/agent:<name>`. Set *AI Provider* to the preset in **F2 → Settings**\n"
+                                 + "to make it the default.\n\n"
+                                 + "## 6. Connect an agent from outside over MCP (optional)\n\n"
                                  + "Start the TUI with `--mcp` to expose an MCP server, then connect an agent such as\n"
-                                 + "Claude Code:\n\n"
+                                 + "Claude Code from its own terminal:\n\n"
                                  + "    claude mcp add --transport http camel-tui " + url + "\n\n"
                                  + "The footer turns green when the agent connects. See **F2 → AI & MCP → MCP Info**\n"
                                  + "for the available tools and a `.mcp.json` example.\n");

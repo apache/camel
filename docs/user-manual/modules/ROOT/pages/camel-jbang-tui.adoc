@@ -1052,12 +1052,17 @@ required. *F2* -> _MCP Info_ shows the port and the tool calls the agent makes. 
 `--mcp`, it is bound to `127.0.0.1` with no authentication, and it rejects requests that carry an `Origin`
 header (so a web page cannot reach it) or that are not JSON.
 
-Permissions: calls to the TUI's read-only tools (the `tui_get_*` tools, catalog documentation, locate, validate)
-are approved without asking. A tool that changes anything, such as `tui_control`, `tui_send_message` or
-`tui_execute_sql`, opens the same popup as any other request; answering "Always allow" makes it a one-time
-question per tool. For anything else the agent wants to do,
-such as editing a file or running a command, a popup shows the agent's options; *Enter* selects, *Esc* rejects
-that one call and lets the turn continue, and *Ctrl+C* cancels the whole turn.
+Permissions: calls to the TUI's read-only tools (the `tui_get_*` tools, catalog documentation, expression
+evaluation, locate, validate) are approved without asking. So is `tui_write_file` while the write mode is
+`confirm` or `live`, because the TUI itself asks before the file is touched (the diff dialog or the live replay
+in the Source editor); with `/write auto` the permission popup is the only question and stays. A tool that
+changes anything else, such as `tui_control`, `tui_send_message` or `tui_execute_sql`, opens the same popup as
+any other request; answering "Always allow" makes it a one-time question per tool. For anything else the agent
+wants to do, such as editing a file with its own tools or running a command, a popup shows the agent's options;
+*Enter* selects, *Esc* rejects that one call and lets the turn continue, and *Ctrl+C* cancels the whole turn.
+The preamble tells the agent to edit route sources through `tui_write_file` rather than its own file tools, so
+that you see the diff or watch the edit; when it still asks to edit a file directly, the popup says so and *Esc*
+sends it back to `tui_write_file`.
 "Always allow" choices are remembered by the agent for the session. The model, reasoning settings and any
 "always allow" rules are configured in the agent, not in the TUI; `/model` only reports the agent in use.
 

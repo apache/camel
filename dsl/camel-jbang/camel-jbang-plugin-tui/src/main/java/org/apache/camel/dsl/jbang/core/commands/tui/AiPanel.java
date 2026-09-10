@@ -1656,7 +1656,7 @@ class AiPanel {
     private void runAcpTurn(String question) throws IOException {
         AcpAgentClient agent = ensureAcpSession();
         boolean agentCommand = question.startsWith("/");
-        String text = acpPreambleSent || agentCommand ? question : buildSystemPrompt() + "\n\n" + question;
+        String text = acpPreambleSent || agentCommand ? question : acpPreamble() + "\n\n" + question;
         AcpTurnListener listener = new AcpTurnListener();
         String stopReason = agent.prompt(acpSessionId, text, listener);
         if (!agentCommand) {
@@ -1910,7 +1910,13 @@ class AiPanel {
             String name = String.valueOf(toolCall.getStringOrDefault("name", ""));
             String title = String.valueOf(toolCall.getStringOrDefault("title", ""));
             String kind = String.valueOf(toolCall.getStringOrDefault("kind", ""));
-            if (isTuiTool(name, title, kind)) {
+            String tool = tuiToolName(name, title, kind);
+            boolean readOnly = tool != null && TuiToolRegistry.READ_ONLY_TOOLS.contains(tool);
+            // the facade asks the user before a tui_write_file call touches a file (the confirm dialog or the live
+            // replay), so a second question at the ACP layer would only make the user answer twice; in auto mode
+            // nothing else asks and the popup stays
+            boolean confirmedByTui = "tui_write_file".equals(tool) && writeMode != McpFacade.WriteMode.AUTO;
+            if (readOnly || confirmedByTui) {
                 String optionId = firstOptionOfKind(options, "allow_always");
                 if (optionId == null) {
                     optionId = firstOptionOfKind(options, "allow_once");
@@ -1918,12 +1924,14 @@ class AiPanel {
                 if (optionId == null && !options.isEmpty()) {
                     optionId = options.get(0).getString("optionId");
                 }
-                log(LogLevel.TOOL, "Auto-approved read-only TUI tool", title);
+                log(LogLevel.TOOL, readOnly
+                        ? "Auto-approved read-only TUI tool"
+                        : "Auto-approved tui_write_file (the TUI confirms the write itself)", title);
                 return optionId;
             }
             CompletableFuture<String> decision = new CompletableFuture<>();
             pendingPermission = decision;
-            permissionPopup.open(toolCall, options);
+            permissionPopup.open(toolCall, options, permissionHint(kind));
             log(LogLevel.TOOL, "Permission requested", title);
             try {
                 return decision.get();
@@ -1940,26 +1948,36 @@ class AiPanel {
     }
 
     /**
-     * Only a call to one of the TUI's {@link TuiToolRegistry#READ_ONLY_TOOLS} counts as auto-approvable: the name the
-     * Claude adapter sends ({@code mcp__camel-tui__tui_get_state}) or a title of the form
-     * {@code tui_get_state (camel-tui MCP Server)}. A TUI tool that changes anything is not in that set and goes to the
-     * user. Kinds that touch files or run commands never qualify, whatever the title says: a path containing
-     * "camel-tui" is not a tool identity.
+     * The camel-tui tool a permission request is about, or null when it is not one: the name the Claude adapter sends
+     * ({@code mcp__camel-tui__tui_get_state}) or a title of the form {@code tui_get_state (camel-tui MCP Server)}.
+     * Kinds that touch files or run commands never qualify, whatever the title says: a path containing "camel-tui" is
+     * not a tool identity. The caller decides what the tool may do: only {@link TuiToolRegistry#READ_ONLY_TOOLS} and a
+     * write the TUI confirms itself are approved silently, everything else goes to the user.
      */
-    private boolean isTuiTool(String name, String title, String kind) {
+    private static String tuiToolName(String name, String title, String kind) {
         if (FILE_OR_SHELL_KINDS.contains(kind)) {
-            return false;
+            return null;
         }
-        String tool = null;
         if (name.startsWith(TUI_TOOL_PREFIX)) {
-            tool = name.substring(TUI_TOOL_PREFIX.length());
-        } else {
-            int paren = title.indexOf("(camel-tui");
-            if (paren > 0) {
-                tool = title.substring(0, paren).strip();
-            }
+            return name.substring(TUI_TOOL_PREFIX.length());
         }
-        return tool != null && TuiToolRegistry.READ_ONLY_TOOLS.contains(tool);
+        int paren = title.indexOf("(camel-tui");
+        if (paren > 0) {
+            return title.substring(0, paren).strip();
+        }
+        return null;
+    }
+
+    /**
+     * The line the permission popup shows under the tool: an agent that edits a source file with its own tools bypasses
+     * the TUI's diff and live replay, and the user may prefer to reject it and have the agent use tui_write_file, as
+     * the preamble told it to.
+     */
+    private static String permissionHint(String kind) {
+        if ("edit".equals(kind) || "delete".equals(kind) || "move".equals(kind)) {
+            return "The TUI cannot show or replay this change; Esc rejects it so the agent uses tui_write_file";
+        }
+        return null;
     }
 
     private static String firstOptionOfKind(List<JsonObject> options, String kind) {
@@ -2844,6 +2862,18 @@ class AiPanel {
     }
 
     /**
+     * The preamble an ACP agent gets ahead of its first prompt: the panel's system prompt plus the rules that only
+     * matter for an agent with file tools of its own. Not part of the prompt budget, which covers the LLM path.
+     */
+    private String acpPreamble() {
+        String prompt = buildSystemPrompt();
+        return (prompt.endsWith("\n") ? prompt : prompt + "\n")
+               + "- You run inside the Camel TUI: edit the integration's source files only with tui_write_file, "
+               + "never with your own file tools, so the user sees the diff and confirms it, or watches the edit "
+               + "being typed in the Source editor (/write live)\n";
+    }
+
+    /**
      * The static prefix sent with every request. It deliberately contains nothing that changes between turns (the
      * selected integration travels in the user message instead) so a local model's prompt cache can reuse it, and it
      * does not repeat the tool list because the tool definitions already carry every description.
@@ -3164,7 +3194,7 @@ class AiPanel {
         }
         sb.append("Agent commands: ").append(agent != null ? agent.availableCommands().size() : 0)
                 .append(" (/agent: lists them)\n");
-        sb.append("Preamble: ~").append(LlmClient.formatTokens(estimateTokens(buildSystemPrompt().length())))
+        sb.append("Preamble: ~").append(LlmClient.formatTokens(estimateTokens(acpPreamble().length())))
                 .append(" tokens, sent once per session ahead of the first prompt (/prompt shows it); ")
                 .append(acpPreambleSent ? "sent" : "not sent yet").append('\n');
         if (acpContextUsed > 0) {
@@ -3692,7 +3722,7 @@ class AiPanel {
         @Override
         public String systemPrompt() {
             if (acpPreset != null) {
-                return "Sent to " + acpLabel() + " ahead of the first prompt of each session:\n\n" + buildSystemPrompt();
+                return "Sent to " + acpLabel() + " ahead of the first prompt of each session:\n\n" + acpPreamble();
             }
             return buildSystemPrompt();
         }

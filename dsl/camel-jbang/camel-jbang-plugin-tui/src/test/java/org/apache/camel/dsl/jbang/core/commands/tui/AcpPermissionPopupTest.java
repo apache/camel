@@ -100,6 +100,20 @@ class AcpPermissionPopupTest {
     }
 
     @Test
+    void hintIsShownUnderTheKindWhenGiven() {
+        AcpPermissionPopup popup = new AcpPermissionPopup();
+        popup.open(toolCall(), options(), "Esc rejects it so the agent uses tui_write_file");
+        Rect area = new Rect(0, 0, 100, 30);
+        Buffer buffer = Buffer.empty(area);
+        popup.render(Frame.forTesting(buffer), area);
+        String rendered = TuiTestHelper.bufferToString(buffer);
+        assertTrue(rendered.contains("kind: edit"));
+        assertTrue(rendered.contains("Esc rejects it so the agent uses tui_write_file"));
+        assertTrue(rendered.contains("file_path"), "the input still follows the hint");
+        assertTrue(rendered.contains("Allow once"));
+    }
+
+    @Test
     void escapePicksRejectOnceWhenOffered() {
         AcpPermissionPopup popup = new AcpPermissionPopup();
         popup.open(toolCall(), options());

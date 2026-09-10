@@ -61,6 +61,7 @@ final class AcpPermissionPopup {
     private volatile boolean visible;
     private String title = "";
     private String kind = "";
+    private String hint;
     private List<String> inputLines = List.of();
     private List<JsonObject> options = List.of();
     private final ListState listState = new ListState();
@@ -76,8 +77,14 @@ final class AcpPermissionPopup {
     }
 
     void open(JsonObject toolCall, List<JsonObject> options) {
+        open(toolCall, options, null);
+    }
+
+    /** {@code hint} is an extra line shown under the kind, for example why the user may want to reject the call. */
+    void open(JsonObject toolCall, List<JsonObject> options, String hint) {
         this.title = String.valueOf(toolCall.getStringOrDefault("title", "Use tool?"));
         this.kind = String.valueOf(toolCall.getStringOrDefault("kind", "other"));
+        this.hint = hint;
         this.inputLines = formatInput(toolCall.get("rawInput"));
         this.options = new ArrayList<>(options);
         listState.selectFirst();
@@ -143,7 +150,7 @@ final class AcpPermissionPopup {
     }
 
     void render(Frame frame, Rect area) {
-        int headerRows = 2 + inputLines.size() + 1;
+        int headerRows = 2 + (hint != null ? 1 : 0) + inputLines.size() + 1;
         int popupW = Math.max(20, Math.min(80, area.width() - 4));
         int popupH = Math.max(6, Math.min(2 + headerRows + options.size(), area.height() - 2));
         Rect popup = DialogHelper.centered(area, popupW, popupH);
@@ -164,6 +171,9 @@ final class AcpPermissionPopup {
         List<Line> header = new ArrayList<>();
         header.add(Line.from(Span.styled(title, Style.EMPTY.bold())));
         header.add(Line.from(Span.styled("kind: " + kind, Style.EMPTY.dim())));
+        if (hint != null) {
+            header.add(Line.from(Span.styled(hint, Theme.warning())));
+        }
         for (String line : inputLines) {
             header.add(Line.from(Span.styled(line, Style.EMPTY.dim())));
         }

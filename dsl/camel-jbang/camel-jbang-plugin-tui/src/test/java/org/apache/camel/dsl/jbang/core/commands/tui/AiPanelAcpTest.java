@@ -563,6 +563,51 @@ class AiPanelAcpTest {
     }
 
     @Test
+    void writeFileIsAutoApprovedWhenTheTuiConfirmsTheWriteItself() throws Exception {
+        AiPanel panel = acpPanel();
+        assertTrue(panel.describeWriteModeForTesting().startsWith("confirm"));
+        askPermissionDuringPrompt(permissionParams("mcp__camel-tui__tui_write_file", "tui_write_file"));
+        ask(panel, "hi");
+        awaitIdle(panel);
+        assertFalse(panel.isPermissionPopupVisibleForTesting());
+        assertTrue(hasEntry(panel, AiRole.SYSTEM, "(stopped: opt-always)"),
+                "the confirm dialog asks, a second question here would make the user answer twice");
+    }
+
+    @Test
+    void writeFileOpensThePopupWhenWritesAreAutomatic() throws Exception {
+        AiPanel panel = acpPanel();
+        ask(panel, "/write auto");
+        assertTrue(panel.describeWriteModeForTesting().startsWith("auto"));
+        askPermissionDuringPrompt(permissionParams("mcp__camel-tui__tui_write_file", "tui_write_file"));
+        ask(panel, "hi");
+        await().atMost(5, TimeUnit.SECONDS).untilAsserted(() -> assertTrue(panel.isPermissionPopupVisibleForTesting()));
+        panel.handleKeyEvent(KeyEvent.ofKey(KeyCode.ESCAPE, KeyModifiers.NONE));
+        awaitIdle(panel);
+        assertTrue(hasEntry(panel, AiRole.SYSTEM, "(stopped: opt-reject)"), "nothing else asks in auto mode");
+    }
+
+    @Test
+    void evalExpressionIsReadOnly() throws Exception {
+        AiPanel panel = acpPanel();
+        askPermissionDuringPrompt(permissionParams("mcp__camel-tui__tui_eval_expression", "tui_eval_expression"));
+        ask(panel, "hi");
+        awaitIdle(panel);
+        assertFalse(panel.isPermissionPopupVisibleForTesting());
+        assertTrue(hasEntry(panel, AiRole.SYSTEM, "(stopped: opt-always)"));
+    }
+
+    @Test
+    void preambleTellsTheAgentToEditThroughTheTui() throws Exception {
+        AiPanel panel = acpPanel();
+        ask(panel, "hi");
+        awaitIdle(panel);
+        String prompt = promptText(agent.received("session/prompt").get(0));
+        assertTrue(prompt.contains("only with tui_write_file"), prompt);
+        assertTrue(prompt.contains("/write live"), prompt);
+    }
+
+    @Test
     void unregisteredToolWithCamelTuiTitleIsNotAutoApproved() throws Exception {
         AiPanel panel = acpPanel();
         askPermissionDuringPrompt(permissionParams(null, "rm -rf / (camel-tui MCP Server)"));
