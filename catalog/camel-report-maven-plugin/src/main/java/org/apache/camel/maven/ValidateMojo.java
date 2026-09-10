@@ -34,7 +34,6 @@ import org.apache.camel.catalog.EndpointValidationResult;
 import org.apache.camel.catalog.LanguageValidationResult;
 import org.apache.camel.catalog.common.FileUtil;
 import org.apache.camel.catalog.maven.MavenVersionManager;
-import org.apache.camel.catalog.suggest.CatalogSuggestionStrategy;
 import org.apache.camel.parser.RouteBuilderParser;
 import org.apache.camel.parser.XmlRouteParser;
 import org.apache.camel.parser.model.CamelEndpointDetails;
@@ -247,8 +246,6 @@ public class ValidateMojo extends AbstractMojo {
         CamelCatalog catalog = new DefaultCamelCatalog();
         // add activemq as a known component
         catalog.addComponent("activemq", "org.apache.activemq.camel.component.ActiveMQComponent");
-        // enable did you mean
-        catalog.setSuggestionStrategy(new CatalogSuggestionStrategy());
         // enable loading other catalog versions dynamically
         catalog.setVersionManager(
                 new MavenVersionManager(repositorySystem, repositorySystemSession, session.getSettings()));

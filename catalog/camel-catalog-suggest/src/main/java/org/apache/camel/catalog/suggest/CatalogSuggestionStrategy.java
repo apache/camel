@@ -16,19 +16,19 @@
  */
 package org.apache.camel.catalog.suggest;
 
-import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Collections;
-import java.util.List;
-import java.util.Locale;
 import java.util.Set;
 
 import org.apache.camel.catalog.SuggestionStrategy;
-import org.apache.commons.codec.language.Soundex;
+import org.apache.camel.catalog.impl.EditDistanceSuggestionStrategy;
 
 /**
- * Phonetic soundex based {@link SuggestionStrategy}.
+ * Edit distance based {@link SuggestionStrategy}.
+ *
+ * @deprecated since 4.23 the catalog suggests option names by default with {@link EditDistanceSuggestionStrategy} from
+ *             camel-core-catalog; this module is no longer needed.
  */
+@Deprecated(since = "4.23.0")
 public class CatalogSuggestionStrategy implements SuggestionStrategy {
 
     private static final int MAX_SUGGESTIONS = 5;
@@ -39,45 +39,6 @@ public class CatalogSuggestionStrategy implements SuggestionStrategy {
     }
 
     public static String[] suggestEndpointOptions(Collection<String> names, String unknownOption, int maxSuggestions) {
-        List<String> answer = new ArrayList<>();
-        Soundex soundex = Soundex.US_ENGLISH_SIMPLIFIED;
-
-        List<String> sort = new ArrayList<>(names);
-        Collections.sort(sort);
-
-        try {
-            // try highest match first
-            for (String name : sort) {
-                int value = soundex.difference(unknownOption, name);
-                if (value == 4 && answer.size() < maxSuggestions) {
-                    answer.add(name);
-                }
-            }
-            // then the 2nd-best
-            for (String name : sort) {
-                int value = soundex.difference(unknownOption, name);
-                if (value == 3 && answer.size() < maxSuggestions) {
-                    if (!answer.contains(name)) {
-                        answer.add(name);
-                    }
-                }
-            }
-            // then options starting with the same
-            if (answer.size() < maxSuggestions && unknownOption.length() >= 4) {
-                unknownOption = unknownOption.toLowerCase(Locale.ROOT);
-                for (String name : sort) {
-                    String lower = name.toLowerCase(Locale.ROOT);
-                    if (answer.size() < maxSuggestions && lower.startsWith(unknownOption)) {
-                        if (!answer.contains(name)) {
-                            answer.add(name);
-                        }
-                    }
-                }
-            }
-        } catch (Exception e) {
-            // ignore
-        }
-
-        return answer.toArray(new String[0]);
+        return EditDistanceSuggestionStrategy.suggest(names, unknownOption, maxSuggestions);
     }
 }

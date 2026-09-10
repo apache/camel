@@ -82,7 +82,8 @@ public interface CamelCatalog {
     boolean isCaching();
 
     /**
-     * To plugin a custom {@link SuggestionStrategy} to provide suggestion for unknown options
+     * To plugin a custom {@link SuggestionStrategy} to provide suggestion for unknown options. An edit-distance based
+     * strategy is used by default (since 4.23); set null to turn suggestions off.
      */
     void setSuggestionStrategy(SuggestionStrategy suggestionStrategy);
 
