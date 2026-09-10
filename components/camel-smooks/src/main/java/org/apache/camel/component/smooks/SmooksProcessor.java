@@ -85,6 +85,8 @@ public class SmooksProcessor extends ServiceSupport implements Processor, CamelC
     private String reportPath;
     private Boolean allowExecutionContextFromHeader = false;
     private Boolean lazyStartProducer = false;
+    private boolean allowExternalEntities;
+    private boolean hardenXmlInput;
 
     private final Set<VisitorAppender> visitorAppender = new HashSet<>();
     private final Map<String, Visitor> selectorVisitorMap = new HashMap<>();
@@ -118,6 +120,14 @@ public class SmooksProcessor extends ServiceSupport implements Processor, CamelC
 
     public void setAllowExecutionContextFromHeader(Boolean allowExecutionContextFromHeader) {
         this.allowExecutionContextFromHeader = allowExecutionContextFromHeader;
+    }
+
+    public boolean isAllowExternalEntities() {
+        return allowExternalEntities;
+    }
+
+    public void setAllowExternalEntities(boolean allowExternalEntities) {
+        this.allowExternalEntities = allowExternalEntities;
     }
 
     public void process(final Exchange exchange) {
@@ -188,12 +198,21 @@ public class SmooksProcessor extends ServiceSupport implements Processor, CamelC
             return source;
         }
 
-        if (payload instanceof byte[] byteArray) {
-            return new ByteSource(byteArray);
+        if (payload instanceof Node node) {
+            return new DOMSource(node);
         }
 
-        if (payload instanceof Node) {
-            return new DOMSource((Node) payload);
+        if (hardenXmlInput) {
+            // Untrusted XML: parse with a reader that does not resolve external entities before Smooks sees it
+            try {
+                return SmooksSecuritySupport.secureXmlSource(exchange.getIn().getMandatoryBody(InputStream.class));
+            } catch (IOException | SAXException e) {
+                throw new SmooksException(e);
+            }
+        }
+
+        if (payload instanceof byte[] byteArray) {
+            return new ByteSource(byteArray);
         }
 
         if (payload instanceof InputStream inputstream) {
@@ -299,6 +318,8 @@ public class SmooksProcessor extends ServiceSupport implements Processor, CamelC
                 smooks.getApplicationContext().getRegistry().registerObject(CamelContext.class,
                         (NotAppContextScoped.Ref<CamelContext>) () -> camelContext);
             }
+
+            hardenXmlInput = !allowExternalEntities && SmooksSecuritySupport.usesDefaultXmlReader(smooks);
 
             addAppender(smooks, visitorAppender);
             addVisitor(smooks, selectorVisitorMap);

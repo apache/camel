@@ -2629,6 +2629,7 @@ public class ModelWriter extends BaseWriter {
         startElement(name);
         doWriteIdentifiedTypeAttributes(def);
         doWriteAttribute("smooksConfig", def.getSmooksConfig(), null);
+        doWriteAttribute("allowExternalEntities", def.getAllowExternalEntities(), "false");
         endElement(name);
     }
     protected void doWriteSoapDataFormat(String name, SoapDataFormat def) throws IOException {
