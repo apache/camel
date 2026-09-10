@@ -30,12 +30,11 @@ import org.apache.activemq.artemis.jms.client.ActiveMQConnectionFactory;
 import org.apache.camel.CamelContext;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.test.infra.artemis.services.ArtemisContainer;
+import org.apache.camel.test.infra.artemis.services.ArtemisService;
+import org.apache.camel.test.infra.artemis.services.ArtemisServiceFactory;
 import org.apache.camel.test.junit6.CamelTestSupport;
-import org.junit.jupiter.api.AfterAll;
-import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.condition.DisabledOnOs;
+import org.junit.jupiter.api.extension.RegisterExtension;
 
 import static org.awaitility.Awaitility.await;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -51,40 +50,28 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
  * {@code initConsumers()} skips re-creation (because {@code consumers != null}), leaving consumers attached to closed
  * sessions.
  * <p>
- * Uses a real Artemis broker over TCP (via Testcontainers) so that connection close truly kills sessions and consumers,
- * matching the behavior of Oracle AQ and other remote JMS providers.
+ * Uses an embedded Artemis broker with a real TCP acceptor (via
+ * {@link ArtemisServiceFactory#createTCPAllProtocolsService()}) so that connection close truly kills sessions and
+ * consumers, matching the behavior of Oracle AQ and other remote JMS providers. This approach works on all
+ * architectures including s390x, unlike the previous container-based approach which required a platform-specific Docker
+ * image.
  */
-@DisabledOnOs(architectures = { "s390x" },
-              disabledReason = "The container image cannot be started for this test. Maybe because it is using the ArtemisContainer instead fo the service.")
-public class SjmsConnectionRecoveryTest extends CamelTestSupport {
+class SjmsConnectionRecoveryTest extends CamelTestSupport {
 
     private static final String SJMS_QUEUE_NAME = "sjms:queue:SjmsConnectionRecoveryTest";
     private static final String MOCK_RESULT = "mock:result";
     private static final int RECOVERY_INTERVAL_MS = 1000;
 
-    private static ArtemisContainer broker;
+    @RegisterExtension
+    static ArtemisService service = ArtemisServiceFactory.createTCPAllProtocolsService();
+
     private CountingConnectionFactory countingFactory;
-
-    @BeforeAll
-    static void startBroker() {
-        broker = new ArtemisContainer();
-        broker.start();
-    }
-
-    @AfterAll
-    static void stopBroker() {
-        if (broker != null) {
-            broker.stop();
-        }
-    }
 
     @Override
     protected CamelContext createCamelContext() throws Exception {
         CamelContext camelContext = super.createCamelContext();
 
-        ActiveMQConnectionFactory connectionFactory = new ActiveMQConnectionFactory(
-                "tcp://" + broker.getHost() + ":" + broker.defaultAcceptorPort(),
-                broker.username(), broker.password());
+        ActiveMQConnectionFactory connectionFactory = new ActiveMQConnectionFactory(service.serviceAddress());
         connectionFactory.setReconnectAttempts(0);
 
         countingFactory = new CountingConnectionFactory(connectionFactory);
@@ -127,7 +114,7 @@ public class SjmsConnectionRecoveryTest extends CamelTestSupport {
      * are consumed normally.
      */
     @Test
-    public void testRecoveryStopsAfterSuccessfulReconnection() throws Exception {
+    void testRecoveryStopsAfterSuccessfulReconnection() throws Exception {
         MockEndpoint mock = getMockEndpoint(MOCK_RESULT);
 
         // Phase 1: verify normal consumption (also confirms consumer is fully started).
