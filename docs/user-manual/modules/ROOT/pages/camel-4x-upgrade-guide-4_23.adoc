@@ -1864,3 +1864,21 @@ Documents carrying an internal DTD subset still parse.
 To restore the previous behaviour and allow external entity resolution, set the new
 `allowExternalEntities` option to `true` on the data format or on the endpoint
 (`smooks:config.xml?allowExternalEntities=true`).
+
+=== camel-sql, camel-sql-stored - the query/template override headers are gated
+
+A message header could override the endpoint-configured SQL by default, letting an incoming message choose the
+executed statement:
+
+* `camel-sql`: the `CamelSqlQuery` header replaced the endpoint query.
+* `camel-sql-stored`: the `CamelSqlStoredTemplate` header replaced the endpoint template, and its value was
+  resolved through `SqlHelper.resolveQuery`, which resolves `file:` / `http:` / `classpath:` resources.
+
+Both overrides are now disabled by default and must be opted into, matching the `allowTemplateFromHeader`
+convention already used by the template components (camel-freemarker, camel-velocity, camel-xslt, ...):
+
+* `camel-sql`: set `allowQueryFromHeader=true` to honour the `CamelSqlQuery` header again.
+* `camel-sql-stored`: set `allowTemplateFromHeader=true` to honour the `CamelSqlStoredTemplate` header again; a
+  header-supplied template is now resolved with property placeholders only, never as a `file:` / `http:` resource.
+
+A route that relied on either header must set the corresponding option on the endpoint.

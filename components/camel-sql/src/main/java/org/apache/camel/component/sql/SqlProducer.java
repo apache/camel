@@ -101,7 +101,8 @@ public class SqlProducer extends DefaultProducer {
         if (useMessageBodyForSql) {
             sql = exchange.getIn().getBody(String.class);
         } else {
-            String queryHeader = exchange.getIn().getHeader(SqlConstants.SQL_QUERY, String.class);
+            String queryHeader = getEndpoint().isAllowQueryFromHeader()
+                    ? exchange.getIn().getHeader(SqlConstants.SQL_QUERY, String.class) : null;
             if (queryHeader != null) {
                 String placeholder = getEndpoint().isUsePlaceholder() ? getEndpoint().getPlaceholder() : null;
                 sql = SqlHelper.resolvePlaceholders(queryHeader, placeholder);

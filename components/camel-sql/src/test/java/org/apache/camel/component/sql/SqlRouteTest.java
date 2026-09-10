@@ -60,6 +60,22 @@ public class SqlRouteTest extends CamelTestSupport {
     }
 
     @Test
+    public void testQueryFromHeaderIsIgnoredByDefault() throws Exception {
+        // allowQueryFromHeader defaults to false, so the CamelSqlQuery header must not override the endpoint query
+        MockEndpoint mock = getMockEndpoint("mock:result");
+        mock.expectedMessageCount(1);
+
+        template.sendBodyAndHeader("direct:gated", "XXX", SqlConstants.SQL_QUERY,
+                "select * from projects where project = 'Camel' order by id");
+        mock.assertIsSatisfied();
+
+        // the endpoint query (license = 'XXX') ran, not the header-supplied one
+        List<?> received = assertIsInstanceOf(List.class, mock.getReceivedExchanges().get(0).getIn().getBody());
+        Map<?, ?> row = assertIsInstanceOf(Map.class, received.get(0));
+        assertEquals("Linux", row.get("PROJECT"));
+    }
+
+    @Test
     public void testQueryAsHeader() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMessageCount(1);
@@ -292,7 +308,10 @@ public class SqlRouteTest extends CamelTestSupport {
 
                 errorHandler(noErrorHandler());
 
-                from("direct:simple").to("sql:select * from projects where license = # order by id")
+                from("direct:simple").to("sql:select * from projects where license = # order by id?allowQueryFromHeader=true")
+                        .to("mock:result");
+
+                from("direct:gated").to("sql:select * from projects where license = # order by id")
                         .to("mock:result");
 
                 from("direct:list")
