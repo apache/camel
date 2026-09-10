@@ -1742,6 +1742,11 @@ so a downstream reader that expected that type received an incompatible object.
 A route that reads the full embeddings or audio response from `CamelOpenAIResponse` must switch to the
 matching property. The chat-completion, responses, moderation and image operations are unchanged.
 
+The `hostedMcpTools` option of the `responses` operation now sends every field of each MCP tool definition.
+Previously only `server_label`, `server_url` and `server_description` were sent, so fields such as
+`require_approval`, `allowed_tools` and `headers` were silently dropped and the API applied its defaults,
+including asking for approval before every hosted MCP call. The option is now also marked as secret.
+
 === camel-infinispan
 
 The `CamelInfinispanOperationResult` header is deprecated. It has not been set or read by the component

@@ -573,8 +573,10 @@ public interface OpenAIEndpointBuilderFactory {
             return this;
         }
         /**
-         * JSON array of hosted MCP tool definitions (OpenAI Tool.Mcp) passed
-         * through to the Responses API.
+         * JSON array of hosted MCP tool definitions passed to the Responses API
+         * as OpenAI mcp tools. Every field of the API is sent, such as
+         * server_label, server_url, require_approval, allowed_tools, headers
+         * and authorization. Marked secret because it can carry credentials.
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 

@@ -22,7 +22,9 @@ import java.util.Optional;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.openai.core.JsonValue;
+import com.openai.core.ObjectMappers;
 import com.openai.models.ChatModel;
 import com.openai.models.ResponsesModel;
 import com.openai.models.responses.FileSearchTool;
@@ -102,26 +104,25 @@ final class OpenAIResponsesSupport {
         }
         JsonNode root = OBJECT_MAPPER.readTree(hostedMcpToolsJson);
         if (!root.isArray()) {
-            throw new IllegalArgumentException("hostedMcpTools must be a JSON array of Tool.Mcp objects");
+            throw new IllegalArgumentException("hostedMcpTools must be a JSON array of MCP tool objects");
         }
         for (JsonNode node : root) {
-            Tool.Mcp.Builder builder = Tool.Mcp.builder();
-            if (node.hasNonNull("server_label")) {
-                builder.serverLabel(node.get("server_label").asText());
-            } else if (node.hasNonNull("serverLabel")) {
-                builder.serverLabel(node.get("serverLabel").asText());
+            if (!(node instanceof ObjectNode tool)) {
+                throw new IllegalArgumentException("hostedMcpTools must be a JSON array of MCP tool objects");
             }
-            if (node.hasNonNull("server_url")) {
-                builder.serverUrl(node.get("server_url").asText());
-            } else if (node.hasNonNull("serverUrl")) {
-                builder.serverUrl(node.get("serverUrl").asText());
-            }
-            if (node.hasNonNull("server_description")) {
-                builder.serverDescription(node.get("server_description").asText());
-            } else if (node.hasNonNull("serverDescription")) {
-                builder.serverDescription(node.get("serverDescription").asText());
-            }
-            paramsBuilder.addTool(builder.build());
+            ObjectNode mcpTool = tool.deepCopy();
+            mcpTool.put("type", "mcp");
+            // camelCase names were accepted for these fields before every API field was passed through
+            renameField(mcpTool, "serverLabel", "server_label");
+            renameField(mcpTool, "serverUrl", "server_url");
+            renameField(mcpTool, "serverDescription", "server_description");
+            paramsBuilder.addTool(ObjectMappers.jsonMapper().treeToValue(mcpTool, Tool.Mcp.class));
+        }
+    }
+
+    private static void renameField(ObjectNode node, String from, String to) {
+        if (node.has(from) && !node.has(to)) {
+            node.set(to, node.remove(from));
         }
     }
 
