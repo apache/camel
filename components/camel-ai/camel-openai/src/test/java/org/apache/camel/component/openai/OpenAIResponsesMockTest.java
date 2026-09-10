@@ -74,6 +74,11 @@ class OpenAIResponsesMockTest extends CamelTestSupport {
             .when("hosted-mcp")
             .replyWith("Docs found")
             .end()
+            .when("approval-needed")
+            .replyWithResponsesOutput("""
+                    [{"type":"mcp_approval_request","id":"mcpr_1","server_label":"deepwiki",
+                      "name":"ask_question","arguments":"{}"}]""")
+            .end()
             .build();
 
     @Override
@@ -140,6 +145,15 @@ class OpenAIResponsesMockTest extends CamelTestSupport {
         assertThat(tool.path("server_label").asText()).isEqualTo("deepwiki");
         assertThat(tool.path("server_url").asText()).isEqualTo("https://mcp.deepwiki.com/mcp");
         assertThat(tool.path("server_description").asText()).isEqualTo("Docs");
+    }
+
+    @Test
+    void pendingHostedMcpApprovalFailsTheExchange() {
+        Exchange result = template.request("direct:responses-basic", e -> e.getIn().setBody("approval-needed"));
+
+        assertThat(result.getException())
+                .hasMessageContaining("deepwiki/ask_question")
+                .hasMessageContaining("require_approval");
     }
 
     private String responsesUri() {

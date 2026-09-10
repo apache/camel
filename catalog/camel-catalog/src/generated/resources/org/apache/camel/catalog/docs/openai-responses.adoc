@@ -13,8 +13,9 @@ Hosted tools: set `builtinTools` to a comma-separated list (`web_search`, `file_
 
 Pass hosted MCP tools as a JSON array via `hostedMcpTools`. Each entry is sent as an OpenAI `mcp` tool with all its
 fields, such as `require_approval`, `allowed_tools`, `headers`, `authorization` and `connector_id`. The API asks for
-approval before every hosted MCP call unless `require_approval` is `never`. The option is marked secret because it can
-carry credentials.
+approval before every hosted MCP call unless `require_approval` is `never`. The operation cannot grant approvals, so a
+response waiting for one fails the exchange with a `CamelExchangeException` naming the pending calls. The option is
+marked secret because it can carry credentials.
 
 [source,json]
 ----
