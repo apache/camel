@@ -72,7 +72,9 @@ public class GroovyLanguage extends TypedLanguageSupport implements ScriptingLan
     }
 
     public GroovyLanguage() {
-        this(LRUCacheFactory.newLRUSoftCache(16, 1000, true), true);
+        // do not remove the class of an evicted script (stopOnEviction=false): a GroovyExpression may still hold and run
+        // it. Classes are removed when the language stops or the cache is cleared on reload.
+        this(LRUCacheFactory.newLRUSoftCache(16, 1000, false), true);
     }
 
     @Override

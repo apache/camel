@@ -19,6 +19,7 @@ package org.apache.camel.language.groovy;
 import java.util.Map;
 
 import groovy.lang.GroovyShell;
+import groovy.lang.Script;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePattern;
@@ -111,6 +112,52 @@ public class GroovyExpressionBindingTest {
     }
 
     @Test
+    public void testSnapshotIsKeptWhenBindingVariablesIsUsed() {
+        assertEquals("World", evaluate("exchange.in.body = 'Changed'; binding.variables; body"));
+        // the previous script changed the exchange body, the next binding takes its snapshot from there
+        exchange.getIn().setBody("World");
+        assertEquals("World", evaluate("exchange.in.body = 'Again'; binding.variables.body"));
+        assertEquals(Boolean.TRUE, evaluate("def p = exchangeProperties; binding.variables; p.is(exchangeProperties)"));
+        assertEquals(Boolean.TRUE, evaluate("exchangeProperties.is(binding.variables.exchangeProperties)"));
+    }
+
+    @Test
+    public void testExchangePropertiesAreASnapshot() {
+        assertEquals("myValue",
+                evaluate("def p = exchangeProperties; exchange.setProperty('myProperty', 'other'); p.myProperty"));
+        assertEquals("other", exchange.getProperty("myProperty"));
+    }
+
+    @Test
+    public void testRemoveVariable() {
+        assertEquals(Boolean.FALSE, evaluate("binding.removeVariable('body'); binding.hasVariable('body')"));
+    }
+
+    @Test
+    public void testScriptWritesExchangeVariables() {
+        assertEquals("bar", evaluate("variables.foo = 'bar'; variable.foo"));
+        assertEquals("bar", exchange.getVariable("foo"));
+    }
+
+    @Test
+    public void testAttachmentsAreCreatedOncePerEvaluation() {
+        assertEquals(Boolean.TRUE, evaluate("attachments.is(attachments) && attachments.is(binding.variables.attachments)"));
+    }
+
+    @Test
+    public void testSubclassCanAddGlobalVariables() {
+        GroovyExpression expression = new GroovyExpression("answer + 1") {
+            @Override
+            protected Script instantiateScript(Exchange exchange, Map<String, Object> globalVariables) {
+                globalVariables.put("answer", 41);
+                return super.instantiateScript(exchange, globalVariables);
+            }
+        };
+        expression.init(context);
+        assertEquals(42, expression.evaluate(exchange, Integer.class));
+    }
+
+    @Test
     public void testUnknownVariable() {
         Exception e = assertThrows(Exception.class, () -> evaluate("doesNotExist"));
         assertTrue(e.getMessage().contains("doesNotExist"), e.getMessage());
@@ -140,11 +187,17 @@ public class GroovyExpressionBindingTest {
         expression.init(context);
         Class<?> first = expression.evaluate(exchange, Class.class);
 
+        Expression dynamic = language.createExpression("body.toUpperCase() + '-' + headers.name.size()");
+        dynamic.init(context);
+        assertEquals("WORLD-5", dynamic.evaluate(exchange, String.class));
+
         // more distinct scripts than the language cache holds
         for (int i = 0; i < 1100; i++) {
             language.createExpression("getClass() // " + i).evaluate(exchange, Class.class);
         }
         assertSame(first, expression.evaluate(exchange, Class.class));
+        // the evicted class is still usable with dynamic dispatch
+        assertEquals("WORLD-5", dynamic.evaluate(exchange, String.class));
 
         // the cache is cleared when the language stops (and on reload in dev profile)
         language.stop();

@@ -70,8 +70,7 @@ public class GroovyExpression extends ExpressionSupport {
 
     @Override
     public <T> T evaluate(Exchange exchange, Class<T> type) {
-        Resolved r = resolve(exchange.getContext());
-        Map<String, Object> globalVariables = r.shellFactory != null ? new HashMap<>() : Collections.emptyMap();
+        Map<String, Object> globalVariables = new HashMap<>();
         Script script = instantiateScript(exchange, globalVariables);
         script.setBinding(createBinding(exchange, globalVariables));
 
@@ -93,7 +92,8 @@ public class GroovyExpression extends ExpressionSupport {
         int generation = r.language.getGeneration();
         CompiledScript c = compiled;
         Class<Script> scriptClass = null;
-        if (c != null && c.generation == generation && c.resolved == r && Objects.equals(c.fileName, fileName)) {
+        if (c != null && c.generation == generation && c.context == r.context && c.language == r.language
+                && Objects.equals(c.fileName, fileName)) {
             scriptClass = c.scriptClass;
         }
         if (scriptClass == null) {
@@ -110,7 +110,7 @@ public class GroovyExpression extends ExpressionSupport {
                         ? shell.getClassLoader().parseClass(text, fileName) : shell.getClassLoader().parseClass(text);
                 r.language.addScriptToCache(key, scriptClass);
             }
-            compiled = new CompiledScript(r, generation, fileName, scriptClass);
+            compiled = new CompiledScript(r.context, r.language, generation, fileName, scriptClass);
         }
         // New instance of the script
         return ObjectHelper.newInstance(scriptClass, Script.class);
@@ -135,13 +135,15 @@ public class GroovyExpression extends ExpressionSupport {
     private record Resolved(CamelContext context, GroovyLanguage language, GroovyShellFactory shellFactory) {
     }
 
-    private record CompiledScript(Resolved resolved, int generation, String fileName, Class<Script> scriptClass) {
+    private record CompiledScript(
+            CamelContext context, GroovyLanguage language, int generation, String fileName, Class<Script> scriptClass) {
     }
 
     /**
      * Binding with the same variables as {@link ExchangeHelper#populateVariableMap(Exchange, Map, boolean)} plus
-     * attachments and log, where the values that are costly to create (a copy of the exchange properties, the variable
-     * repository and the attachment message) are only created when the script uses them.
+     * attachments and log. All values are one snapshot taken when the binding is created; the values that are costly to
+     * create (a copy of the exchange properties, the variable repository and the attachment message) are only created
+     * when the script uses them, once per binding.
      */
     private static final class ExchangeBinding extends Binding {
 
@@ -152,6 +154,8 @@ public class GroovyExpression extends ExpressionSupport {
         private final Exception exception;
         private final Message out;
         private Map<String, Object> exchangeProperties;
+        private Map<String, Object> exchangeVariables;
+        private Map<?, ?> attachments;
         private boolean materialized;
 
         ExchangeBinding(Exchange exchange, Map<String, Object> globalVariables) {
@@ -176,10 +180,55 @@ public class GroovyExpression extends ExpressionSupport {
         @Override
         public Object getVariable(String name) {
             Map<String, Object> variables = super.getVariables();
-            Object value = variables.get(name);
-            if (value != null || variables.containsKey(name) || materialized) {
+            if (materialized || variables.containsKey(name) || !isExchangeVariable(name)) {
+                // throws MissingPropertyException when the variable does not exist
                 return super.getVariable(name);
             }
+            if (("out".equals(name) || "response".equals(name)) && out == null) {
+                return super.getVariable(name);
+            }
+            return exchangeVariable(name);
+        }
+
+        @Override
+        public boolean hasVariable(String name) {
+            if (!materialized && isExchangeVariable(name)) {
+                return out != null || !("out".equals(name) || "response".equals(name));
+            }
+            return super.hasVariable(name);
+        }
+
+        @Override
+        public Map getVariables() {
+            if (!materialized) {
+                Map<String, Object> variables = super.getVariables();
+                for (String name : new String[] {
+                        "body", "header", "headers", "variable", "variables", "exception", "in", "request", "exchange",
+                        "exchangeProperty", "exchangeProperties", "camelContext", "attachments", "log" }) {
+                    // variables set by the script win
+                    if (!variables.containsKey(name)) {
+                        variables.put(name, exchangeVariable(name));
+                    }
+                }
+                if (out != null) {
+                    variables.putIfAbsent("out", out);
+                    variables.putIfAbsent("response", out);
+                }
+                materialized = true;
+            }
+            return super.getVariables();
+        }
+
+        @Override
+        public void removeVariable(String name) {
+            getVariables();
+            super.removeVariable(name);
+        }
+
+        /**
+         * The value of a well known exchange variable, from the snapshot taken when the binding was created.
+         */
+        private Object exchangeVariable(String name) {
             switch (name) {
                 case "body":
                     return body;
@@ -188,7 +237,10 @@ public class GroovyExpression extends ExpressionSupport {
                     return headers;
                 case "variable":
                 case "variables":
-                    return exchange.getVariables();
+                    if (exchangeVariables == null) {
+                        exchangeVariables = exchange.getVariables();
+                    }
+                    return exchangeVariables;
                 case "exception":
                     return exception;
                 case "in":
@@ -204,55 +256,20 @@ public class GroovyExpression extends ExpressionSupport {
                     return exchangeProperties;
                 case "out":
                 case "response":
-                    if (out != null) {
-                        return out;
-                    }
-                    break;
+                    return out;
                 case "camelContext":
                     return exchange.getContext();
                 case "attachments":
-                    return attachments();
+                    if (attachments == null) {
+                        AttachmentMessage am = new DefaultAttachmentMessage(exchange.getMessage());
+                        attachments = am.hasAttachments() ? am.getAttachments() : Collections.EMPTY_MAP;
+                    }
+                    return attachments;
                 case "log":
                     return LOG;
                 default:
-                    break;
+                    return null;
             }
-            // throws MissingPropertyException
-            return super.getVariable(name);
-        }
-
-        @Override
-        public boolean hasVariable(String name) {
-            if (!materialized && isExchangeVariable(name)) {
-                return out != null || !("out".equals(name) || "response".equals(name));
-            }
-            return super.hasVariable(name);
-        }
-
-        @Override
-        public Map getVariables() {
-            if (!materialized) {
-                Map<String, Object> variables = super.getVariables();
-                Map<String, Object> map = new HashMap<>();
-                ExchangeHelper.populateVariableMap(exchange, map, true);
-                map.put("attachments", attachments());
-                map.put("log", LOG);
-                // variables set by the script win
-                map.forEach(variables::putIfAbsent);
-                materialized = true;
-            }
-            return super.getVariables();
-        }
-
-        @Override
-        public void removeVariable(String name) {
-            getVariables();
-            super.removeVariable(name);
-        }
-
-        private Object attachments() {
-            AttachmentMessage am = new DefaultAttachmentMessage(exchange.getMessage());
-            return am.hasAttachments() ? am.getAttachments() : Collections.EMPTY_MAP;
         }
 
         private static boolean isExchangeVariable(String name) {
