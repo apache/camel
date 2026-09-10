@@ -51,8 +51,9 @@ public class GroovyJSonlDataFormat extends ServiceSupport implements DataFormat,
         if (graph instanceof Map map) {
             serialize(map, stream);
         } else {
-            // optional jackson support (TODO: jackson3)
-            if (graph.getClass().getName().startsWith("com.fasterxml.jackson.databind")) {
+            // optional jackson 2.x or 3.x support
+            String type = graph.getClass().getName();
+            if (type.startsWith("com.fasterxml.jackson.databind") || type.startsWith("tools.jackson.databind")) {
                 var map = exchange.getContext().getTypeConverter().convertTo(Map.class, exchange, graph);
                 serialize(map, stream);
             } else {
@@ -75,7 +76,9 @@ public class GroovyJSonlDataFormat extends ServiceSupport implements DataFormat,
 
     private void serialize(Map map, OutputStream stream) throws IOException {
         String out = JsonOutput.toJson(map);
-        out = prettyPrint ? JsonOutput.prettyPrint(out) : JsonOutput.toJson(out);
+        if (prettyPrint) {
+            out = JsonOutput.prettyPrint(out);
+        }
         stream.write(out.getBytes());
     }
 
