@@ -13234,6 +13234,17 @@
         "kind" : "attribute",
         "index" : 1,
         "group" : "common"
+      }, {
+        "name" : "allowExternalEntities",
+        "type" : "boolean",
+        "description" : "Whether to allow the XML reader used by Smooks to resolve external XML entities (external general and parameter entities) when parsing XML input. This is disabled by default so that external entities in the message body are not resolved; enable it only for trusted legacy configurations that rely on external entity resolution.",
+        "title" : "Allow External Entities",
+        "default" : "false",
+        "displayName" : "Allow External Entities",
+        "kind" : "attribute",
+        "index" : 2,
+        "group" : "security",
+        "label" : "security"
       } ]
     },
     "soap" : {

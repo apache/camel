@@ -2655,6 +2655,7 @@ public class YamlModelWriter extends YamlModelWriterSupport {
         JsonObject jo = new JsonObject();
         doWriteIdentifiedTypeAttributes(jo, def);
         doWriteAttribute(jo, "smooksConfig", def.getSmooksConfig(), null);
+        doWriteAttribute(jo, "allowExternalEntities", def.getAllowExternalEntities(), "false");
         return jo;
     }
     protected JsonObject doWriteSoapDataFormat(SoapDataFormat def) {
