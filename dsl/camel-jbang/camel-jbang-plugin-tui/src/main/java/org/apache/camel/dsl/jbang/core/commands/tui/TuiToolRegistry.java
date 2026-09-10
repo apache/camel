@@ -73,15 +73,15 @@ class TuiToolRegistry {
     private volatile AnimationState currentAnimation;
 
     private volatile List<ToolDef> cachedTools;
-    private volatile LaunchManager launchManager;
     private volatile List<JsonObject> exampleCatalog;
 
     TuiToolRegistry(McpFacade facade) {
         this.facade = facade;
     }
 
-    void setLaunchManager(LaunchManager launchManager) {
-        this.launchManager = launchManager;
+    /** The launcher the TUI wired into the facade, or null when there is none to launch with. */
+    private LaunchManager launcher() {
+        return facade != null ? facade.getLaunchManager() : null;
     }
 
     /**
@@ -1057,7 +1057,7 @@ class TuiToolRegistry {
     }
 
     private String startInfra(String alias) {
-        LaunchManager lm = launchManager;
+        LaunchManager lm = launcher();
         if (lm == null) {
             return "Error: launching is not available";
         }
@@ -2329,7 +2329,7 @@ class TuiToolRegistry {
             return "{\"error\": \"'name' parameter is required\"}";
         }
 
-        LaunchManager lm = launchManager;
+        LaunchManager lm = launcher();
         if (lm == null) {
             return "{\"error\": \"Launching examples is not available in this session\"}";
         }

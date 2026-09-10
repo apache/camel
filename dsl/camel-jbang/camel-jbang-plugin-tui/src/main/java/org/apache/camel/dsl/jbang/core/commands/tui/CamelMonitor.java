@@ -496,7 +496,6 @@ public class CamelMonitor extends CamelCommand {
         actionsPopup.setResetStatsAction(this::resetStats);
         shellPanel.setContext(ctx);
         aiPanel.setContext(ctx);
-        aiPanel.setLaunchManager(actionsPopup.getLaunchManager());
         actionsPopup.setOpenShellAction(shellPanel::open);
         actionsPopup.setOpenAiPromptAction(aiPanel::open);
         actionsPopup.setBrowseFilesAction(this::openFilesPopup);
@@ -812,6 +811,7 @@ public class CamelMonitor extends CamelCommand {
                     }
                 });
         mcpFacade.setSourceValidator(tabRegistry.sourceTab().editAssist()::validateSource);
+        mcpFacade.setLaunchManager(actionsPopup.getLaunchManager());
         aiPanel.setMcpFacade(mcpFacade);
         aiPanel.setOtelSpans(dataService.otelSpans());
         mcpFacade.setAiActivityLog(aiPanel::getActivityLog);
