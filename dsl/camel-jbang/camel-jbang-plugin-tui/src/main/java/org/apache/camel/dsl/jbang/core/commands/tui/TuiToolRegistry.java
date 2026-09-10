@@ -17,6 +17,7 @@
 package org.apache.camel.dsl.jbang.core.commands.tui;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -29,6 +30,7 @@ import dev.tamboui.export.ExportRequest;
 import dev.tamboui.style.Color;
 import dev.tamboui.style.Style;
 import org.apache.camel.catalog.CamelCatalog;
+import org.apache.camel.catalog.EndpointValidationResult;
 import org.apache.camel.dsl.jbang.core.common.CatalogLoader;
 import org.apache.camel.dsl.jbang.core.common.ExampleHelper;
 import org.apache.camel.tooling.model.BaseModel;
@@ -1435,8 +1437,9 @@ class TuiToolRegistry {
 
     private String callCatalogDoc(Map<String, Object> args) {
         String name = args.get("name") instanceof String v ? v : null;
-        if (name == null || name.isEmpty()) {
-            return "{\"error\": \"'name' parameter is required\"}";
+        String endpoint = args.get("endpoint") instanceof String v ? v.trim() : null;
+        if ((name == null || name.isEmpty()) && (endpoint == null || endpoint.isEmpty())) {
+            return "{\"error\": \"'name' or 'endpoint' parameter is required\"}";
         }
         String kind = args.get("kind") instanceof String v ? v : null;
         String optionsFilter = args.get("optionsFilter") instanceof String v ? v : null;
@@ -1449,6 +1452,9 @@ class TuiToolRegistry {
             CamelCatalog catalog = CatalogLoader.loadCatalog(null, version, true);
             if (catalog == null) {
                 return "{\"error\": \"Could not load catalog" + (version != null ? " for version " + version : "") + "\"}";
+            }
+            if (endpoint != null && !endpoint.isEmpty()) {
+                return validateEndpoint(catalog, endpoint);
             }
             return buildCatalogDocResult(catalog, name, kind, optionsFilter, includeOptions, includeDoc, docPage);
         } catch (Exception e) {
@@ -1523,6 +1529,207 @@ class TuiToolRegistry {
     }
 
     /**
+     * Checks an endpoint URI against the catalog the way the YAML validator does on a write: the component is taken
+     * from the scheme, the path is parsed against the component's syntax and every option is checked. The problems come
+     * back in words, with the closest real option name or the allowed values, and the options the URI uses come with
+     * their documentation so a follow-up needs no second call.
+     */
+    String validateEndpoint(CamelCatalog catalog, String endpoint) {
+        int colon = endpoint.indexOf(':');
+        if (colon <= 0) {
+            JsonObject error = new JsonObject();
+            error.put("error", "Not an endpoint URI (scheme:path?options expected): " + endpoint);
+            return error.toJson();
+        }
+        String scheme = endpoint.substring(0, colon).toLowerCase(Locale.ROOT);
+        ComponentModel cm = catalog.componentModel(scheme);
+        if (cm == null) {
+            JsonObject error = new JsonObject();
+            error.put("error", "Camel has no component named '" + scheme + "'");
+            List<String> similar = catalog.suggestComponentNames(scheme, 5);
+            if (!similar.isEmpty()) {
+                error.put("suggestions", new JsonArray(similar));
+                error.put("hint", "Check again with one of those schemes, e.g. '" + similar.get(0)
+                                  + endpoint.substring(colon) + "'.");
+            }
+            return error.toJson();
+        }
+        JsonObject result = new JsonObject();
+        result.put("kind", "component");
+        result.put("name", scheme);
+        result.put("title", cm.getTitle());
+        result.put("endpoint", endpoint);
+        if (cm.getSyntax() != null) {
+            result.put("syntax", cm.getSyntax());
+            result.put("uriSyntax", uriSyntax(cm));
+        }
+        EndpointValidationResult validation;
+        try {
+            validation = catalog.validateEndpointProperties(endpoint, false, false, false);
+        } catch (Exception e) {
+            result.put("valid", false);
+            result.put("problems", new JsonArray(List.of("Cannot parse the URI: " + e.getMessage())));
+            return Jsoner.serialize(result);
+        }
+        List<String> known = new ArrayList<>();
+        if (cm.getEndpointOptions() != null) {
+            for (BaseOptionModel opt : cm.getEndpointOptions()) {
+                known.add(opt.getName());
+            }
+        }
+        List<String> problems = endpointProblems(validation, scheme, known);
+        List<String> warnings = new ArrayList<>();
+        if (validation.getDeprecated() != null) {
+            for (String name : validation.getDeprecated()) {
+                warnings.add("Option '" + name + "' is deprecated");
+            }
+        }
+        if (validation.getDefaultValues() != null) {
+            for (Map.Entry<String, String> entry : validation.getDefaultValues().entrySet()) {
+                warnings.add("Option '" + entry.getKey() + "' is set to its default value " + entry.getValue());
+            }
+        }
+        result.put("valid", problems.isEmpty());
+        result.put("problems", new JsonArray(problems));
+        if (!warnings.isEmpty()) {
+            result.put("warnings", new JsonArray(warnings));
+        }
+        // the options the URI uses (path parts included), with their catalog documentation
+        Map<String, String> used;
+        try {
+            used = catalog.endpointProperties(endpoint);
+        } catch (Exception e) {
+            used = Map.of();
+        }
+        JsonArray options = new JsonArray();
+        if (cm.getEndpointOptions() != null) {
+            for (BaseOptionModel opt : cm.getEndpointOptions()) {
+                if (used.containsKey(opt.getName())) {
+                    JsonObject o = optionToJson(opt, "endpoint");
+                    o.put("value", used.get(opt.getName()));
+                    options.add(o);
+                }
+            }
+        }
+        result.put("usedOptions", options);
+        result.put("message", problems.isEmpty()
+                ? "The URI is valid for the " + scheme + " component"
+                : problems.size() + " problem(s); fix them before using the URI");
+        return Jsoner.serialize(result);
+    }
+
+    static List<String> endpointProblems(EndpointValidationResult r, String scheme, List<String> knownOptions) {
+        List<String> problems = new ArrayList<>();
+        if (r.getSyntaxError() != null) {
+            problems.add("Syntax error: " + r.getSyntaxError());
+        }
+        if (r.getUnknownComponent() != null) {
+            problems.add("Unknown component: " + r.getUnknownComponent());
+        }
+        if (r.getIncapable() != null) {
+            problems.add("Cannot validate: " + r.getIncapable());
+        }
+        if (r.getUnknown() != null) {
+            for (String name : r.getUnknown()) {
+                StringBuilder sb = new StringBuilder("Unknown option '").append(name).append("'");
+                String[] suggestions = r.getUnknownSuggestions() != null ? r.getUnknownSuggestions().get(name) : null;
+                List<String> similar = suggestions != null && suggestions.length > 0
+                        ? Arrays.asList(suggestions) : similarNames(knownOptions, name, 3);
+                if (!similar.isEmpty()) {
+                    sb.append(". Did you mean: ").append(similar);
+                }
+                problems.add(sb.toString());
+            }
+        }
+        if (r.getRequired() != null) {
+            for (String name : r.getRequired()) {
+                problems.add("Missing required option '" + name + "'");
+            }
+        }
+        if (r.getInvalidEnum() != null) {
+            for (Map.Entry<String, String> entry : r.getInvalidEnum().entrySet()) {
+                StringBuilder sb = new StringBuilder("Invalid value '").append(entry.getValue())
+                        .append("' for option '").append(entry.getKey()).append("'");
+                String[] choices = r.getInvalidEnumChoices() != null ? r.getInvalidEnumChoices().get(entry.getKey()) : null;
+                if (choices != null) {
+                    sb.append(". Possible values: ").append(Arrays.asList(choices));
+                }
+                problems.add(sb.toString());
+            }
+        }
+        addInvalid(problems, r.getInvalidBoolean(), "boolean");
+        addInvalid(problems, r.getInvalidInteger(), "integer");
+        addInvalid(problems, r.getInvalidNumber(), "number");
+        addInvalid(problems, r.getInvalidDuration(), "duration");
+        addInvalid(problems, r.getInvalidReference(), "reference (#bean)");
+        addInvalid(problems, r.getInvalidMap(), "map");
+        addInvalid(problems, r.getInvalidArray(), "array");
+        if (r.getNotConsumerOnly() != null) {
+            for (String name : r.getNotConsumerOnly()) {
+                problems.add("Option '" + name + "' is a producer option; not for a from (consumer) endpoint");
+            }
+        }
+        if (r.getNotProducerOnly() != null) {
+            for (String name : r.getNotProducerOnly()) {
+                problems.add("Option '" + name + "' is a consumer option; not for a to (producer) endpoint");
+            }
+        }
+        return problems;
+    }
+
+    /**
+     * The known names closest to a misspelled one (a typo, a case slip or a missing letter), by edit distance; the
+     * catalog's own suggestion strategy is an optional module that is not on the TUI's classpath.
+     */
+    static List<String> similarNames(List<String> known, String name, int max) {
+        String lower = name.toLowerCase(Locale.ROOT);
+        int allowed = Math.max(2, lower.length() / 4);
+        List<Map.Entry<String, Integer>> ranked = new ArrayList<>();
+        for (String candidate : known) {
+            String c = candidate.toLowerCase(Locale.ROOT);
+            int distance = c.contains(lower) || lower.contains(c) ? 1 : editDistance(c, lower);
+            if (distance <= allowed) {
+                ranked.add(Map.entry(candidate, distance));
+            }
+        }
+        ranked.sort(Map.Entry.comparingByValue());
+        List<String> answer = new ArrayList<>();
+        for (Map.Entry<String, Integer> entry : ranked) {
+            if (answer.size() < max) {
+                answer.add(entry.getKey());
+            }
+        }
+        return answer;
+    }
+
+    private static int editDistance(String a, String b) {
+        int[] prev = new int[b.length() + 1];
+        int[] cur = new int[b.length() + 1];
+        for (int j = 0; j <= b.length(); j++) {
+            prev[j] = j;
+        }
+        for (int i = 1; i <= a.length(); i++) {
+            cur[0] = i;
+            for (int j = 1; j <= b.length(); j++) {
+                int cost = a.charAt(i - 1) == b.charAt(j - 1) ? 0 : 1;
+                cur[j] = Math.min(Math.min(cur[j - 1] + 1, prev[j] + 1), prev[j - 1] + cost);
+            }
+            int[] swap = prev;
+            prev = cur;
+            cur = swap;
+        }
+        return prev[b.length()];
+    }
+
+    private static void addInvalid(List<String> problems, Map<String, String> invalid, String type) {
+        if (invalid != null) {
+            for (Map.Entry<String, String> entry : invalid.entrySet()) {
+                problems.add("Invalid " + type + " value '" + entry.getValue() + "' for option '" + entry.getKey() + "'");
+            }
+        }
+    }
+
+    /**
      * Error for a catalog lookup that found nothing, with the names the catalog suggests for the term (a protocol or
      * product name such as mqtt or s3) so the next call can use one of them.
      */
@@ -1557,6 +1764,36 @@ class TuiToolRegistry {
         }
     }
 
+    /**
+     * The rules of an endpoint URI for this component, spelled out with its own path parts: what a small model gets
+     * wrong most is a path option written as a query parameter or the other way round, and the YAML form.
+     */
+    static String uriSyntax(ComponentModel model) {
+        List<String> path = new ArrayList<>();
+        if (model.getEndpointOptions() != null) {
+            for (BaseOptionModel opt : model.getEndpointOptions()) {
+                if ("path".equals(opt.getKind())) {
+                    path.add(opt.getName());
+                }
+            }
+        }
+        StringBuilder sb = new StringBuilder();
+        sb.append("URI: ").append(model.getSyntax()).append("?option=value&option=value. ");
+        if (path.isEmpty()) {
+            sb.append("The path has no options; ");
+        } else {
+            sb.append("The path options (").append(String.join(", ", path))
+                    .append(") go in the path, never as ?name=value; ");
+        }
+        sb.append("every other endpoint option is a query parameter after ?, separated by &.")
+                .append(" In YAML DSL: uri: ").append(model.getScheme()).append(":<path> plus a parameters: map of the")
+                .append(" query options (or the full URI in uri). Values may use {{property.placeholders}};")
+                .append(" wrap a value containing & or + in RAW(value). Component options (scope component) are")
+                .append(" set in application.properties as camel.component.").append(model.getScheme())
+                .append(".<option>=value, not on the URI.");
+        return sb.toString();
+    }
+
     private String buildComponentDocJson(ComponentModel model, String filter, boolean includeOptions, String doc) {
         JsonObject result = new JsonObject();
         result.put("kind", "component");
@@ -1568,6 +1805,7 @@ class TuiToolRegistry {
         }
         if (model.getSyntax() != null) {
             result.put("syntax", model.getSyntax());
+            result.put("uriSyntax", uriSyntax(model));
         }
         result.put("consumerOnly", model.isConsumerOnly());
         result.put("producerOnly", model.isProducerOnly());
@@ -1866,6 +2104,10 @@ class TuiToolRegistry {
         o.put("description", opt.getDescription());
         o.put("type", opt.getType());
         o.put("required", opt.isRequired());
+        if ("path".equals(opt.getKind()) || "parameter".equals(opt.getKind())) {
+            // an endpoint option is either part of the URI path or a query parameter; a model must not mix them up
+            o.put("kind", opt.getKind());
+        }
         if (opt.getDefaultValue() != null) {
             o.put("defaultValue", opt.getDefaultValue().toString());
         }

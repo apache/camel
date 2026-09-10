@@ -17,6 +17,7 @@
 package org.apache.camel.dsl.jbang.core.commands.tui;
 
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -54,6 +55,67 @@ class TuiToolRegistryCatalogDocTest {
         assertNull(result.get("doc"));
         // a plain component or language without functions is unchanged
         assertNull(catalogDoc(Map.of("name", "constant", "kind", "language")).get("functionCount"));
+    }
+
+    @Test
+    void componentOptionsSayWhetherTheyArePathOrQueryAndTheUriRulesComeAlong() throws Exception {
+        JsonObject timer = catalogDoc(Map.of("name", "timer", "kind", "component"));
+
+        assertEquals("timer:timerName", timer.getString("syntax"));
+        String uriSyntax = timer.getString("uriSyntax");
+        assertTrue(uriSyntax.startsWith("URI: timer:timerName?option=value"));
+        assertTrue(uriSyntax.contains("(timerName) go in the path, never as ?name=value"));
+        assertTrue(uriSyntax.contains("parameters: map"));
+        assertTrue(uriSyntax.contains("camel.component.timer.<option>"));
+
+        Map<String, JsonObject> byName = new HashMap<>();
+        for (Object o : timer.getCollection("options")) {
+            JsonObject opt = (JsonObject) o;
+            byName.put(opt.getString("name") + "/" + opt.getString("scope"), opt);
+        }
+        assertEquals("path", byName.get("timerName/endpoint").getString("kind"));
+        assertEquals("parameter", byName.get("period/endpoint").getString("kind"));
+        assertNull(byName.get("bridgeErrorHandler/component").get("kind"), "component options are neither");
+
+        // a component whose syntax has no path options says so
+        JsonObject direct = catalogDoc(Map.of("name", "direct", "kind", "component", "includeOptions", false));
+        assertTrue(direct.getString("uriSyntax").contains("(name) go in the path"));
+    }
+
+    @Test
+    void endpointArgumentValidatesAUriAgainstTheComponent() throws Exception {
+        JsonObject bad = catalogDoc(Map.of("endpoint", "timer:tick?period=5s&fixedRte=true&repeatCount=abc"));
+        assertEquals("timer", bad.getString("name"));
+        assertFalse(bad.getBoolean("valid"));
+        Collection<?> problems = bad.getCollection("problems");
+        assertTrue(problems.stream().anyMatch(p -> p.toString().contains("Unknown option 'fixedRte'")
+                && p.toString().contains("fixedRate")), problems.toString());
+        assertTrue(problems.stream().anyMatch(p -> p.toString().contains("Invalid integer value 'abc'")
+                && p.toString().contains("repeatCount")), problems.toString());
+        assertTrue(bad.getString("uriSyntax").contains("(timerName) go in the path"));
+        // the options the URI uses come with their docs, the path option included
+        Collection<?> used = bad.getCollection("usedOptions");
+        assertTrue(used.stream().map(JsonObject.class::cast).anyMatch(o -> "timerName".equals(o.getString("name"))
+                && "path".equals(o.getString("kind")) && "tick".equals(o.getString("value"))));
+        assertTrue(used.stream().map(JsonObject.class::cast).anyMatch(o -> "period".equals(o.getString("name"))
+                && "5s".equals(o.getString("value")) && o.getString("description") != null));
+
+        JsonObject good = catalogDoc(Map.of("endpoint", "timer:tick?period=5s", "name", "ignored"));
+        assertTrue(good.getBoolean("valid"));
+        assertTrue(good.getCollection("problems").isEmpty());
+        assertTrue(good.getString("message").contains("valid"));
+
+        // a wrong scheme is answered with the closest components, a non-URI with an error
+        JsonObject scheme = catalogDoc(Map.of("endpoint", "mqt:temperature"));
+        assertTrue(scheme.getString("error").contains("no component named 'mqt'"));
+        assertFalse(scheme.getCollection("suggestions").isEmpty());
+        assertTrue(catalogDoc(Map.of("endpoint", "no-scheme-here")).getString("error").contains("Not an endpoint URI"));
+        assertTrue(catalogDoc(Map.of()).getString("error").contains("required"));
+
+        assertEquals(List.of("fixedRate"), TuiToolRegistry.similarNames(List.of("fixedRate", "period", "delay"),
+                "fixedRte", 3));
+        assertEquals(List.of("groupId"), TuiToolRegistry.similarNames(List.of("groupId", "brokers"), "groupid", 3));
+        assertTrue(TuiToolRegistry.similarNames(List.of("period"), "brokers", 3).isEmpty());
     }
 
     @Test

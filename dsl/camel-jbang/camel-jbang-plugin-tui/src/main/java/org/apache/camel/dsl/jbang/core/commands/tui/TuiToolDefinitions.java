@@ -491,15 +491,17 @@ final class TuiToolDefinitions {
                 "Camel catalog documentation of a component, data format, language or EIP (description, options, "
                                    + "Maven coordinates) for the integration's Camel version. For simple also its "
                                    + "syntax rules, functions and operators: count and names by group, or with "
-                                   + "optionsFilter the matching ones with parameters and examples.",
+                                   + "optionsFilter the matching ones with parameters and examples. endpoint "
+                                   + "validates a URI: unknown or invalid options, missing path.",
                 Map.of("name", propDef("string", "Name, e.g. kafka, json-jackson, simple, timer, choice, split"),
+                        "endpoint", propDef("string", "Endpoint URI to check, e.g. kafka:orders?brokers=host:9092"),
                         "kind", propDef("string", "component, dataformat, language or eip (auto-detected)"),
                         "includeOptions", propDef("boolean", "Include the options (default true)"),
                         "includeDoc", propDef("boolean", "Include the full AsciiDoc page (default false)"),
                         "docPage", propDef("string", "A language doc sub-page (simple: functions, operators, ognl, "
                                                      + "advanced) to return as text"),
                         "optionsFilter", propDef("string", "Keyword to match in option names or descriptions")),
-                List.of("name"))));
+                List.of())));
 
         tools.add(toToolDef(toolDef(
                 "tui_get_processor_detail",

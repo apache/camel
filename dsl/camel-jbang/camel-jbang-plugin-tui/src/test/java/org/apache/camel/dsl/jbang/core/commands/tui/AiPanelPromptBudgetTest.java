@@ -33,8 +33,10 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 class AiPanelPromptBudgetTest {
 
     /** Measured ~3.0k tokens for 19 core tools. */
-    // raised from 3500 when file editing (tui_write_file and its guidance) joined the core set for local models
-    static final int CORE_BUDGET_TOKENS = 3_800;
+    // raised from 3500 when file editing (tui_write_file and its guidance) joined the core set for local models,
+    // and from 3800 when tui_catalog_doc gained the endpoint argument (validates a URI, the endpoint counterpart of
+    // tui_eval_expression for simple)
+    static final int CORE_BUDGET_TOKENS = 3_900;
     /** Measured ~6.9k tokens for 47 tools. */
     // raised from 7500 with tui_write_file and tui_validate_source
     static final int FULL_BUDGET_TOKENS = 7_900;

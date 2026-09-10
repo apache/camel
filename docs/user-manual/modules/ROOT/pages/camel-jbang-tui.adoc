@@ -1084,7 +1084,14 @@ together with the catalog's functions and operators (their count and names by gr
 the matching ones with parameters and examples), and `docPage` serves the operators, functions, OGNL and
 advanced documentation pages. `tui_eval_expression` evaluates an expression inside the running integration,
 like `camel cmd eval`, and returns the value or the parser error, so the agent can try an expression before
-it answers or writes it.
+it answers or writes it. Component lookups get the same treatment for endpoint URIs: every endpoint option
+says whether it is part of the URI path or a query parameter, and the result spells out the URI rules for
+that component (its path options, the `?option=value&option=value` form, the YAML `uri` plus `parameters`
+form, placeholders, `RAW()`, and that component options belong in `application.properties`). With
+`endpoint` the same tool checks a URI against the catalog, the way the YAML validator does on a write:
+unknown options with the closest real names, values that are not among the allowed ones, missing path
+parts, consumer options on a producer endpoint and the like, plus the options the URI uses with their
+documentation, so the agent can check an endpoint before it answers or writes it.
 
 ==== Watching the AI edit (live mode)
 
