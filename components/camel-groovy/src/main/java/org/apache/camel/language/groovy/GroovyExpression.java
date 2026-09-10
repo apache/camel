@@ -16,6 +16,9 @@
  */
 package org.apache.camel.language.groovy;
 
+import java.lang.invoke.MethodHandle;
+import java.lang.invoke.MethodHandles;
+import java.lang.invoke.MethodType;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
@@ -28,12 +31,12 @@ import groovy.lang.Script;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
+import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.attachment.AttachmentMessage;
 import org.apache.camel.attachment.DefaultAttachmentMessage;
 import org.apache.camel.support.ExchangeHelper;
 import org.apache.camel.support.ExpressionSupport;
 import org.apache.camel.support.LanguageHelper;
-import org.apache.camel.support.ObjectHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -91,15 +94,11 @@ public class GroovyExpression extends ExpressionSupport {
 
         int generation = r.language.getGeneration();
         CompiledScript c = compiled;
-        Class<Script> scriptClass = null;
-        if (c != null && c.generation == generation && c.context == r.context && c.language == r.language
-                && Objects.equals(c.fileName, fileName)) {
-            scriptClass = c.scriptClass;
-        }
-        if (scriptClass == null) {
+        if (c == null || c.generation != generation || c.context != r.context || c.language != r.language
+                || !Objects.equals(c.fileName, fileName)) {
             // Get the script from the cache, or create a new instance
             final String key = fileName != null ? fileName + text : text;
-            scriptClass = r.language.getScriptFromCache(key);
+            Class<Script> scriptClass = r.language.getScriptFromCache(key);
             if (scriptClass == null) {
                 // prefer to use classloader from groovy script compiler, and if not fallback to app context
                 ClassLoader cl
@@ -110,10 +109,19 @@ public class GroovyExpression extends ExpressionSupport {
                         ? shell.getClassLoader().parseClass(text, fileName) : shell.getClassLoader().parseClass(text);
                 r.language.addScriptToCache(key, scriptClass);
             }
-            compiled = new CompiledScript(r.context, r.language, generation, fileName, scriptClass);
+            c = new CompiledScript(r.context, r.language, generation, fileName, scriptClass, constructor(scriptClass));
+            compiled = c;
         }
         // New instance of the script
-        return ObjectHelper.newInstance(scriptClass, Script.class);
+        return c.newInstance();
+    }
+
+    private static MethodHandle constructor(Class<Script> scriptClass) {
+        try {
+            return MethodHandles.publicLookup().findConstructor(scriptClass, MethodType.methodType(void.class));
+        } catch (NoSuchMethodException | IllegalAccessException e) {
+            throw new RuntimeCamelException(e);
+        }
     }
 
     protected Binding createBinding(Exchange exchange, Map<String, Object> globalVariables) {
@@ -135,8 +143,23 @@ public class GroovyExpression extends ExpressionSupport {
     private record Resolved(CamelContext context, GroovyLanguage language, GroovyShellFactory shellFactory) {
     }
 
+    /**
+     * The compiled class of the script with its no-arg constructor: a method handle bound once is cheaper to invoke
+     * than {@code Class.getDeclaredConstructor().newInstance()}, which copies the constructor on every call.
+     */
     private record CompiledScript(
-            CamelContext context, GroovyLanguage language, int generation, String fileName, Class<Script> scriptClass) {
+            CamelContext context, GroovyLanguage language, int generation, String fileName, Class<Script> scriptClass,
+            MethodHandle constructor) {
+
+        Script newInstance() {
+            try {
+                return (Script) constructor.invoke();
+            } catch (Error e) {
+                throw e;
+            } catch (Throwable e) {
+                throw new RuntimeCamelException(e);
+            }
+        }
     }
 
     /**

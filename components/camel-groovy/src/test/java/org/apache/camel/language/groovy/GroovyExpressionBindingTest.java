@@ -24,6 +24,7 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePattern;
 import org.apache.camel.Expression;
+import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.support.DefaultExchange;
 import org.junit.jupiter.api.AfterEach;
@@ -31,6 +32,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNotSame;
 import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -202,6 +204,29 @@ public class GroovyExpressionBindingTest {
         exchange.setPattern(ExchangePattern.InOut);
         assertSame(exchange.getMessage(), evaluate("out"));
         assertSame(exchange.getMessage(), evaluate("binding.variables.response"));
+    }
+
+    @Test
+    public void testNewScriptInstancePerEvaluation() {
+        Expression expression = context.resolveLanguage("groovy").createExpression("this");
+        expression.init(context);
+        Script first = expression.evaluate(exchange, Script.class);
+        Script second = expression.evaluate(exchange, Script.class);
+        assertNotSame(first, second);
+        assertSame(first.getClass(), second.getClass());
+    }
+
+    @Test
+    public void testScriptConstructorError() {
+        // a @Field initializer runs in the constructor of the script class
+        RuntimeCamelException e = assertThrows(RuntimeCamelException.class,
+                () -> evaluate("@groovy.transform.Field String boom = { throw new IllegalStateException('boom') }(); 'x'"));
+        Throwable cause = e;
+        while (cause != null && !(cause instanceof IllegalStateException)) {
+            cause = cause.getCause();
+        }
+        assertNotNull(cause);
+        assertEquals("boom", cause.getMessage());
     }
 
     @Test
