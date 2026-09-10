@@ -118,6 +118,11 @@ class OpenAIResponsesMockTest extends CamelTestSupport {
 
                 from("direct:responses-streaming")
                         .to("openai:responses?model=gpt-5&apiKey=dummy&streaming=true&baseUrl=" + base);
+
+                from("direct:responses-memory")
+                        .to("openai:responses?model=gpt-5&apiKey=dummy&conversationMemory=true&baseUrl=" + base)
+                        .setBody(constant("turn-two"))
+                        .to("openai:responses?model=gpt-5&apiKey=dummy&conversationMemory=true&baseUrl=" + base);
             }
         };
     }
@@ -220,6 +225,23 @@ class OpenAIResponsesMockTest extends CamelTestSupport {
 
         assertThat(result.getException()).isNull();
         assertThat(openAIMock.getLastRequest().bodyAsJson().path("conversation").asText()).isEqualTo("conv_123");
+    }
+
+    @Test
+    void conversationMemoryChainsResponsesWithPreviousResponseId() {
+        Exchange result = template.request("direct:responses-memory", e -> e.getIn().setBody("hello-responses"));
+
+        assertThat(result.getException()).isNull();
+        assertThat(result.getMessage().getBody(String.class)).isEqualTo("Second turn answer");
+        String lastResponseId = result.getMessage().getHeader(OpenAIConstants.RESPONSE_ID, String.class);
+        assertThat(result.getProperty("CamelOpenAIConversationHistory", String.class)).isEqualTo(lastResponseId);
+
+        var requests = openAIMock.getReceivedRequests();
+        assertThat(requests).hasSize(2);
+        assertThat(requests.get(0).bodyAsJson().has("previous_response_id")).isFalse();
+        assertThat(requests.get(1).bodyAsJson().path("previous_response_id").asText())
+                .startsWith("resp_")
+                .isNotEqualTo(lastResponseId);
     }
 
     private String responsesUri() {

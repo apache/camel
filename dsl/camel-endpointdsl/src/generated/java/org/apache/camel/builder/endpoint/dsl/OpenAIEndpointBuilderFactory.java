@@ -425,7 +425,12 @@ public interface OpenAIEndpointBuilderFactory {
             return this;
         }
         /**
-         * Enable conversation memory per Exchange.
+         * Enable conversation memory per Exchange. The chat-completion
+         * operation keeps the message history in the
+         * conversationHistoryProperty exchange property. The responses
+         * operation keeps the conversation on the server, stores the last
+         * response id in that property and sends it as previous_response_id,
+         * which requires a server that stores responses.
          * 
          * The option is a: <code>boolean</code> type.
          * 
@@ -440,7 +445,12 @@ public interface OpenAIEndpointBuilderFactory {
             return this;
         }
         /**
-         * Enable conversation memory per Exchange.
+         * Enable conversation memory per Exchange. The chat-completion
+         * operation keeps the message history in the
+         * conversationHistoryProperty exchange property. The responses
+         * operation keeps the conversation on the server, stores the last
+         * response id in that property and sends it as previous_response_id,
+         * which requires a server that stores responses.
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 

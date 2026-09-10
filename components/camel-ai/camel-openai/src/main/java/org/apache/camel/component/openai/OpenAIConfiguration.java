@@ -137,7 +137,10 @@ public class OpenAIConfiguration implements Cloneable {
     private String fileSearchVectorStoreIds;
 
     @UriParam(defaultValue = "false")
-    @Metadata(description = "Enable conversation memory per Exchange")
+    @Metadata(description = "Enable conversation memory per Exchange. The chat-completion operation keeps the message "
+                            + "history in the conversationHistoryProperty exchange property. The responses operation "
+                            + "keeps the conversation on the server, stores the last response id in that property and "
+                            + "sends it as previous_response_id, which requires a server that stores responses")
     private boolean conversationMemory = false;
 
     @UriParam(defaultValue = "CamelOpenAIConversationHistory")

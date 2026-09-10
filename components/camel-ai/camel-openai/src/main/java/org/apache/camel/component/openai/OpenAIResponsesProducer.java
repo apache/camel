@@ -105,6 +105,9 @@ public class OpenAIResponsesProducer extends DefaultAsyncProducer {
         String jsonSchema = resolveParameter(in, OpenAIConstants.JSON_SCHEMA, config.getJsonSchema(), String.class);
         String previousResponseId = resolveParameter(in, OpenAIConstants.PREVIOUS_RESPONSE_ID,
                 config.getPreviousResponseId(), String.class);
+        if (ObjectHelper.isEmpty(previousResponseId) && config.isConversationMemory()) {
+            previousResponseId = previousResponseIdFromMemory(exchange, config);
+        }
 
         String instructions = in.getHeader(OpenAIConstants.SYSTEM_MESSAGE, String.class);
         if ((instructions == null || instructions.isEmpty()) && ObjectHelper.isNotEmpty(config.getSystemMessage())) {
@@ -229,9 +232,21 @@ public class OpenAIResponsesProducer extends DefaultAsyncProducer {
             exchange.setProperty(OpenAIConstants.RESPONSES_RESPONSE, response);
         }
         OpenAIResponsesSupport.requireNoPendingMcpApprovals(exchange, response);
+        if (config.isConversationMemory()) {
+            // the conversation stays on the server, so the next call of the exchange only needs this response id
+            exchange.setProperty(config.getConversationHistoryProperty(), response.id());
+        }
         Message out = exchange.getMessage();
         out.setBody(body);
         setResponseHeaders(out, response);
+    }
+
+    /**
+     * Returns the response id stored by conversation memory. The chat-completion operation stores its message history
+     * under the same property, which is not a response id and is ignored.
+     */
+    private static String previousResponseIdFromMemory(Exchange exchange, OpenAIConfiguration config) {
+        return exchange.getProperty(config.getConversationHistoryProperty()) instanceof String id ? id : null;
     }
 
     private void setResponseHeaders(Message message, Response response) {
