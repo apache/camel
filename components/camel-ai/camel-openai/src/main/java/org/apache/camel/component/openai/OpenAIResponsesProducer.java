@@ -210,10 +210,12 @@ public class OpenAIResponsesProducer extends DefaultAsyncProducer {
                         GenAiUsage.of((Long) null, null, finishReason, OpenAIResponsesSupport.modelName(response.model()))));
     }
 
-    private void finishExchange(Exchange exchange, OpenAIConfiguration config, Response response, String body) {
+    private void finishExchange(Exchange exchange, OpenAIConfiguration config, Response response, String body)
+            throws Exception {
         if (config.isStoreFullResponse()) {
             exchange.setProperty(OpenAIConstants.RESPONSES_RESPONSE, response);
         }
+        OpenAIResponsesSupport.requireNoPendingMcpApprovals(exchange, response);
         Message out = exchange.getMessage();
         out.setBody(body);
         setResponseHeaders(out, response);

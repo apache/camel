@@ -1747,6 +1747,9 @@ Previously only `server_label`, `server_url` and `server_description` were sent,
 `require_approval`, `allowed_tools` and `headers` were silently dropped and the API applied its defaults,
 including asking for approval before every hosted MCP call. The option is now also marked as secret.
 
+A `responses` call whose output asks for the approval of hosted MCP tool calls now fails with a
+`CamelExchangeException` naming the pending calls. Previously the exchange completed with an empty body.
+
 === camel-infinispan
 
 The `CamelInfinispanOperationResult` header is deprecated. It has not been set or read by the component

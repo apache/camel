@@ -16,6 +16,7 @@
  */
 package org.apache.camel.component.openai;
 
+import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Optional;
@@ -38,6 +39,8 @@ import com.openai.models.responses.ResponseOutputText;
 import com.openai.models.responses.ResponseTextConfig;
 import com.openai.models.responses.Tool;
 import com.openai.models.responses.WebSearchTool;
+import org.apache.camel.CamelExchangeException;
+import org.apache.camel.Exchange;
 import org.apache.camel.util.ObjectHelper;
 
 /**
@@ -186,6 +189,25 @@ final class OpenAIResponsesSupport {
             }
         }
         return text.toString();
+    }
+
+    /**
+     * Fails when the model waits for the approval of hosted MCP tool calls. The operation cannot grant approvals, so
+     * the exchange would otherwise complete with an empty body.
+     */
+    static void requireNoPendingMcpApprovals(Exchange exchange, Response response) throws CamelExchangeException {
+        List<String> pending = response.output().stream()
+                .filter(ResponseOutputItem::isMcpApprovalRequest)
+                .map(ResponseOutputItem::asMcpApprovalRequest)
+                .map(request -> request.serverLabel() + "/" + request.name())
+                .toList();
+        if (!pending.isEmpty()) {
+            throw new CamelExchangeException(
+                    "The model requested approval for the hosted MCP tool calls " + pending
+                                             + ", which the responses operation cannot grant. Set require_approval "
+                                             + "to never in hostedMcpTools",
+                    exchange);
+        }
     }
 
     /**
