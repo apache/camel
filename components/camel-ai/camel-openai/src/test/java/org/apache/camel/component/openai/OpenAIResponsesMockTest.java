@@ -211,6 +211,17 @@ class OpenAIResponsesMockTest extends CamelTestSupport {
         assertThat(file.path("file_data").asText()).startsWith("data:application/pdf;base64,");
     }
 
+    @Test
+    void conversationIdIsSent() {
+        Exchange result = template.request("direct:responses-basic", e -> {
+            e.getIn().setBody("hello-responses");
+            e.getIn().setHeader(OpenAIConstants.CONVERSATION_ID, "conv_123");
+        });
+
+        assertThat(result.getException()).isNull();
+        assertThat(openAIMock.getLastRequest().bodyAsJson().path("conversation").asText()).isEqualTo("conv_123");
+    }
+
     private String responsesUri() {
         return "openai:responses?model=gpt-5&apiKey=dummy&baseUrl=" + openAIMock.getBaseUrl() + "/v1";
     }

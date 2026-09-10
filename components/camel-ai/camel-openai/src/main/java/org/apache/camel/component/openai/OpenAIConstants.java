@@ -42,6 +42,10 @@ public final class OpenAIConstants {
     public static final String MAX_TOKENS = "CamelOpenAIMaxTokens";
     @Metadata(description = "Previous response id for server-side conversation state on the Responses API", javaType = "String")
     public static final String PREVIOUS_RESPONSE_ID = "CamelOpenAIPreviousResponseId";
+    @Metadata(description = "The id of a conversation created with the Conversations API to run the Responses API "
+                            + "request in",
+              javaType = "String")
+    public static final String CONVERSATION_ID = "CamelOpenAIConversationId";
     @Metadata(description = "Whether to stream the response back incrementally", javaType = "Boolean")
     public static final String STREAMING = "CamelOpenAIStreaming";
     @Metadata(description = "The Java class name (FQCN) to use for structured output parsing", javaType = "String")

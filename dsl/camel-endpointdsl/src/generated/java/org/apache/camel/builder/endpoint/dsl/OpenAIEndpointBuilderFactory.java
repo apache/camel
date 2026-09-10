@@ -409,6 +409,22 @@ public interface OpenAIEndpointBuilderFactory {
             return this;
         }
         /**
+         * Id of a conversation created with the OpenAI Conversations API to run
+         * the request in. The conversation keeps its items across exchanges.
+         * Cannot be combined with previousResponseId (Responses API only).
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: producer
+         * 
+         * @param conversationId the value to set
+         * @return the dsl builder
+         */
+        default OpenAIEndpointBuilder conversationId(String conversationId) {
+            doSetProperty("conversationId", conversationId);
+            return this;
+        }
+        /**
          * Enable conversation memory per Exchange.
          * 
          * The option is a: <code>boolean</code> type.
@@ -2277,6 +2293,19 @@ public interface OpenAIEndpointBuilderFactory {
          */
         public String openAIPreviousResponseId() {
             return "CamelOpenAIPreviousResponseId";
+        }
+        /**
+         * The id of a conversation created with the Conversations API to run
+         * the Responses API request in.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code OpenAIConversationId}.
+         */
+        public String openAIConversationId() {
+            return "CamelOpenAIConversationId";
         }
         /**
          * Whether to stream the response back incrementally.

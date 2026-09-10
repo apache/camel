@@ -9,7 +9,9 @@ with the `userMessage` prompt. A PDF is recognized by the `CamelOpenAIMediaType`
 `.pdf` file name. The operation maps `systemMessage` to API `instructions`, sends `developerMessage` /
 `CamelOpenAIDeveloperMessage` as a developer message before the user input, and exposes
 `CamelOpenAIResponseId` plus token usage headers. Use `previousResponseId` / `CamelOpenAIPreviousResponseId` for
-server-side conversation state.
+server-side conversation state, or `conversationId` / `CamelOpenAIConversationId` to run the request in a
+conversation created with the OpenAI Conversations API, which keeps its items across exchanges. The API does not
+accept both at once.
 
 Hosted tools: set `builtinTools` to a comma-separated list (`web_search`, `file_search`, `code_interpreter`).
 `file_search` requires `fileSearchVectorStoreIds`.
