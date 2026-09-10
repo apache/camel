@@ -64,8 +64,9 @@ public class GroovyXmlDataFormat extends ServiceSupport implements DataFormat, D
         } else if (graph instanceof Map map) {
             serialize(exchange, map, stream);
         } else {
-            // optional jackson support (TODO: jackson3)
-            if (graph.getClass().getName().startsWith("com.fasterxml.jackson.databind")) {
+            // optional jackson 2.x or 3.x support
+            String type = graph.getClass().getName();
+            if (type.startsWith("com.fasterxml.jackson.databind") || type.startsWith("tools.jackson.databind")) {
                 var map = exchange.getContext().getTypeConverter().convertTo(Map.class, exchange, graph);
                 serialize(exchange, map, stream);
             } else {
