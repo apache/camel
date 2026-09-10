@@ -167,6 +167,7 @@ class AcpHeaderStripTest {
         assertTrue(png.length > 1000);
         assertEquals((byte) 0x89, png[0]);
         assertNull(strip.logoBytes("nope"));
+        assertTrue(strip.isLogoCachedForTesting("nope"), "a missing logo is not looked up again on every frame");
     }
 
     @Test

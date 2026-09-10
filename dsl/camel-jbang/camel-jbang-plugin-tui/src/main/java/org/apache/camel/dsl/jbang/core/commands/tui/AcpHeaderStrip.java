@@ -114,16 +114,20 @@ final class AcpHeaderStrip {
         if (logo == null) {
             return null;
         }
-        return logos.computeIfAbsent(logo, name -> {
-            try (InputStream in = AcpHeaderStrip.class.getResourceAsStream("/tui/logos/" + name + ".png")) {
-                if (in == null) {
-                    return null;
-                }
-                return ImageData.fromBytes(in.readAllBytes()).resize(LOGO_PIXELS, LOGO_PIXELS);
-            } catch (IOException | RuntimeException e) {
-                return null;
+        // computeIfAbsent does not store a null, so a missing logo would be looked up again on every frame
+        if (logos.containsKey(logo)) {
+            return logos.get(logo);
+        }
+        ImageData image = null;
+        try (InputStream in = AcpHeaderStrip.class.getResourceAsStream("/tui/logos/" + logo + ".png")) {
+            if (in != null) {
+                image = ImageData.fromBytes(in.readAllBytes()).resize(LOGO_PIXELS, LOGO_PIXELS);
             }
-        });
+        } catch (IOException | RuntimeException e) {
+            image = null;
+        }
+        logos.put(logo, image);
+        return image;
     }
 
     /** Raw PNG bytes of the preset logo (cached; null when missing or unreadable). Kitty scales them itself. */
@@ -131,13 +135,19 @@ final class AcpHeaderStrip {
         if (logo == null) {
             return null;
         }
-        return logoBytes.computeIfAbsent(logo, name -> {
-            try (InputStream in = AcpHeaderStrip.class.getResourceAsStream("/tui/logos/" + name + ".png")) {
-                return in != null ? in.readAllBytes() : null;
-            } catch (IOException e) {
-                return null;
+        if (logoBytes.containsKey(logo)) {
+            return logoBytes.get(logo);
+        }
+        byte[] png = null;
+        try (InputStream in = AcpHeaderStrip.class.getResourceAsStream("/tui/logos/" + logo + ".png")) {
+            if (in != null) {
+                png = in.readAllBytes();
             }
-        });
+        } catch (IOException e) {
+            png = null;
+        }
+        logoBytes.put(logo, png);
+        return png;
     }
 
     void render(Frame frame, Rect area, Model model, LogoMode mode) {
@@ -306,6 +316,10 @@ final class AcpHeaderStrip {
     /** Deletes the placements of an image; the transmitted data stays, so the next frame only places it again. */
     static String kittyDelete(int imageId) {
         return APC + "a=d,d=i,i=" + imageId + ",q=2" + ST;
+    }
+
+    boolean isLogoCachedForTesting(String logo) {
+        return logoBytes.containsKey(logo);
     }
 
     Rect lastLogoRectForTesting() {
