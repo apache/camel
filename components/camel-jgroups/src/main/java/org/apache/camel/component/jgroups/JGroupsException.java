@@ -21,7 +21,7 @@ public class JGroupsException extends RuntimeException {
     private static final long serialVersionUID = 1L;
 
     public JGroupsException(String message) {
-        super(message, null);
+        super(message);
     }
 
     public JGroupsException(String message, Throwable cause) {

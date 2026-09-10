@@ -18,6 +18,7 @@ package org.apache.camel.component.jgroups;
 
 import java.util.Date;
 
+import org.apache.camel.BindToRegistry;
 import org.apache.camel.EndpointInject;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
@@ -26,15 +27,23 @@ import org.jgroups.JChannel;
 import org.jgroups.ObjectMessage;
 import org.junit.jupiter.api.Test;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertInstanceOf;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
 /**
  * Verifies that the consumer {@code deserializationFilter} option constrains the message body types accepted from the
- * cluster: a type on the allow-list is routed, a type outside it is refused.
+ * cluster: a type on the allow-list is routed, a type outside it is refused and reported to the consumer's exception
+ * handler.
  */
 public class JGroupsDeserializationFilterTest extends CamelTestSupport {
 
     String clusterName = "deserializationFilterCluster";
 
     JChannel channel;
+
+    @BindToRegistry("filterExceptionHandler")
+    CapturingExceptionHandler exceptionHandler = new CapturingExceptionHandler();
 
     @EndpointInject("mock:test")
     MockEndpoint mockEndpoint;
@@ -45,7 +54,9 @@ public class JGroupsDeserializationFilterTest extends CamelTestSupport {
             @Override
             public void configure() {
                 // allow only String bodies, reject everything else
-                from("jgroups:" + clusterName + "?deserializationFilter=java.lang.String;!*").to(mockEndpoint);
+                from("jgroups:" + clusterName
+                     + "?deserializationFilter=java.lang.String;!*&exceptionHandler=#filterExceptionHandler")
+                        .to(mockEndpoint);
             }
         };
     }
@@ -72,6 +83,7 @@ public class JGroupsDeserializationFilterTest extends CamelTestSupport {
         channel.send(new ObjectMessage(null, "allowed"));
 
         MockEndpoint.assertIsSatisfied(context);
+        assertTrue(exceptionHandler.getExceptions().isEmpty(), "No message should have been refused");
     }
 
     @Test
@@ -86,6 +98,14 @@ public class JGroupsDeserializationFilterTest extends CamelTestSupport {
         channel.send(new ObjectMessage(null, "sentinel"));
 
         MockEndpoint.assertIsSatisfied(context);
+
+        // the refused message is not silently dropped, but reported to the consumer's exception handler. The
+        // sentinel was sent after the Date and has already been routed, so the refusal has happened by now.
+        assertEquals(1, exceptionHandler.getExceptions().size(), "The Date should have been refused");
+        Throwable refused = exceptionHandler.getExceptions().get(0);
+        assertInstanceOf(JGroupsException.class, refused);
+        assertTrue(refused.getMessage().contains(Date.class.getName()),
+                "Should report the refused type, but was: " + refused.getMessage());
     }
 
 }

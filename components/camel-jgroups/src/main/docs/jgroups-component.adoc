@@ -68,21 +68,43 @@ filter (`-Djdk.serialFilter=...` or `ObjectInputFilter.Config.setSerialFilter(..
 to restrict which classes may be deserialized from the network. Because JGroups
 deserializes messages inside its own receive path, the JVM-wide filter is the
 mechanism that constrains that deserialization.
-* *Restrict the accepted body types in Camel.* The consumer `deserializationFilter`
-option applies a JEP-290 `ObjectInputFilter` pattern to the type of the message
-body before the exchange is routed, rejecting bodies whose type is not allowed.
-This is a defense-in-depth allow-list applied _after_ JGroups has deserialized
-the message; it complements, but does not replace, the JVM-wide `jdk.serialFilter`
+* *Restrict the accepted body types in Camel.* The consumer applies a JEP-290
+`ObjectInputFilter` pattern to the type of the message body before the exchange
+is routed, and refuses bodies whose type is not allowed. This is a
+defense-in-depth allow-list applied _after_ JGroups has deserialized the
+message; it complements, but does not replace, the JVM-wide `jdk.serialFilter`
 and the channel authentication and encryption above.
 
+=== The consumer deserialization filter
+
+The class check is applied by default. When the `deserializationFilter` option
+is not configured, the JVM-wide `jdk.serialFilter` is honoured if it is set,
+otherwise the shared Camel default allow-list is applied: it permits standard
+Java and Apache Camel types, denies `java.net.**`, and rejects everything else.
+
+A route that exchanges its own classes over the cluster must widen the filter
+through the `deserializationFilter` option, listing the packages it accepts:
+
+[source,java]
+----
+from("jgroups:clusterName?deserializationFilter=com.example.model.**;java.**;!*")
+  .to("seda:queue");
+----
+
 The snippet below accepts only `String` bodies from the cluster, on top of a
-hardened, authenticated and encrypted channel supplied through `channelProperties`.
+hardened, authenticated and encrypted channel supplied through `channelProperties`:
 
 [source,java]
 ----
 from("jgroups:clusterName?channelProperties=secure-udp.xml&deserializationFilter=java.lang.String;!*")
   .to("seda:queue");
 ----
+
+Setting `deserializationFilter=*` accepts any type and so opts out of the check.
+
+A refused message is not routed. It is reported to the consumer's
+`ExceptionHandler`, which logs it at WARN level by default, and is passed to the
+route error handler when `bridgeErrorHandler=true` is set.
 
 == Usage
 

@@ -176,14 +176,17 @@ public interface JgroupsComponentBuilderFactory {
         }
     
         /**
-         * Restricts the Java classes accepted when a message received from the
-         * cluster is deserialized. The value is a JEP-290 ObjectInputFilter
-         * pattern; the type of the message body is checked against it before
-         * the exchange is routed, and a rejected type is refused. This is a
-         * defense-in-depth allow-list applied after JGroups has deserialized
-         * the message: the primary mitigations remain a JVM-wide
-         * jdk.serialFilter and a JChannel secured with AUTH and encryption.
-         * When not set, no additional class check is performed.
+         * Sets an ObjectInputFilter pattern (jdk.serialFilter syntax) applied
+         * as a defense-in-depth check on the class of the message body
+         * deserialized by org.jgroups.Message.getObject(). The pattern is
+         * evaluated after JGroups has deserialized the payload, so this option
+         * alone does not prevent gadget-chain execution that happens inside the
+         * JGroups receive path; to block such attacks, also configure the
+         * JVM-wide -Djdk.serialFilter and secure the channel with AUTH and
+         * encryption. When this option is not set and no JVM-wide filter is
+         * configured, a conservative default filter denying java.net. and
+         * otherwise allowing java., javax. and org.apache.camel. is applied.
+         * Use to accept any type.
          * 
          * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
