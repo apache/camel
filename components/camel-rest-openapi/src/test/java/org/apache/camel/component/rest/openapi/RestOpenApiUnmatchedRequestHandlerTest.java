@@ -16,8 +16,11 @@
  */
 package org.apache.camel.component.rest.openapi;
 
+import java.io.ByteArrayInputStream;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 import io.swagger.v3.oas.models.OpenAPI;
 import org.apache.camel.CamelContext;
@@ -29,6 +32,9 @@ import org.apache.camel.component.platform.http.PlatformHttpEndpoint;
 import org.apache.camel.component.platform.http.spi.PlatformHttpConsumer;
 import org.apache.camel.component.platform.http.spi.PlatformHttpConsumerAware;
 import org.apache.camel.impl.DefaultCamelContext;
+import org.apache.camel.impl.engine.DefaultFactoryFinder;
+import org.apache.camel.spi.ClassResolver;
+import org.apache.camel.spi.FactoryFinder;
 import org.apache.camel.support.DefaultExchange;
 import org.apache.camel.support.service.ServiceHelper;
 import org.junit.jupiter.api.AfterEach;
@@ -171,6 +177,37 @@ class RestOpenApiUnmatchedRequestHandlerTest extends ManagedCamelTestSupport {
         assertEquals(List.of(List.of(), List.of("GET", "POST")), handler.allowedMethods);
     }
 
+    @Test
+    void testCustomHandlerFromFactoryFinderIsCalled() throws Exception {
+        // Since we want to be ablet to test both a bean regitered directly into
+        // the registry and the factory finder we can not just put the factory
+        // file into src/test/resources/META-INF/services that breaks other tests
+        ClassResolver classResolver = mock(ClassResolver.class);
+        String properties = "class=" + FactoryFoundHandler.class.getName();
+        when(classResolver.loadResourceAsStream(
+                FactoryFinder.DEFAULT_PATH + RestOpenApiUnmatchedRequestHandler.FACTORY))
+                .thenAnswer(invocation -> new ByteArrayInputStream(properties.getBytes(StandardCharsets.UTF_8)));
+        when(classResolver.resolveClass(FactoryFoundHandler.class.getName()))
+                .thenAnswer(invocation -> FactoryFoundHandler.class);
+
+        FactoryFinder realFinder = camelContext.getCamelContextExtension().getBootstrapFactoryFinder();
+        FactoryFinder factoryFinder = new DefaultFactoryFinder(classResolver, FactoryFinder.DEFAULT_PATH) {
+            @Override
+            public Optional<Class<?>> findOptionalClass(String key) {
+                return RestOpenApiUnmatchedRequestHandler.FACTORY.equals(key)
+                        ? super.findOptionalClass(key)
+                        : realFinder.findOptionalClass(key);
+            }
+        };
+        camelContext.getCamelContextExtension().setBootstrapFactoryFinder(factoryFinder);
+
+        RestOpenApiProcessor processor = createProcessor();
+        Exchange exchange = send(processor, "/unknown", "GET");
+
+        assertEquals(404, exchange.getMessage().getHeader(Exchange.HTTP_RESPONSE_CODE, Integer.class));
+        assertEquals("{\"error\":\"from factory finder\"}", exchange.getMessage().getBody(String.class));
+    }
+
     @AfterEach
     void stopProcessor() throws Exception {
         if (openApiProcessor != null) {
@@ -193,6 +230,15 @@ class RestOpenApiUnmatchedRequestHandlerTest extends ManagedCamelTestSupport {
                 exchange.getMessage().setHeader("Allow", String.join(", ", allowedMethods));
             }
             exchange.getMessage().setBody("{\"error\":\"not found\"}");
+        }
+    }
+
+    public static final class FactoryFoundHandler implements RestOpenApiUnmatchedRequestHandler {
+
+        @Override
+        public void handle(Exchange exchange, int statusCode, List<String> allowedMethods) {
+            exchange.getMessage().setHeader(Exchange.HTTP_RESPONSE_CODE, statusCode);
+            exchange.getMessage().setBody("{\"error\":\"from factory finder\"}");
         }
     }
 }
