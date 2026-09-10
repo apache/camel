@@ -38,29 +38,37 @@ import org.slf4j.LoggerFactory;
 
 public class JoorCompiler extends ServiceSupport implements StaticService {
 
+    // quoted name: 'foo' or "foo"
+    private static final String QUOTED_NAME = "(['\"][A-Za-z0-9.$]*['\"])";
+    // default value: anything but parentheses, or a single level of balanced parentheses (eg new Date(), '(none)'),
+    // so a default value can never span from one headerAs/exchangePropertyAs call into the next one on the same line
+    private static final String DEFAULT_VALUE = "((?:[^()]|\\([^()]*\\))+?)";
+    private static final String TYPE_CLASS = "([A-Za-z0-9.$]*\\.class)";
+    private static final String TYPE_NO_CLASS = "([A-Za-z0-9.$]*)";
+
     private static final Pattern BEAN_INJECTION_PATTERN = Pattern.compile("(#bean:)([A-Za-z0-9-_]*)");
-    private static final Pattern BODY_AS_PATTERN = Pattern.compile("(optionalBodyAs|bodyAs)\\(([A-Za-z0-9.$]*)(.class)\\)");
+    private static final Pattern BODY_AS_PATTERN = Pattern.compile("(optionalBodyAs|bodyAs)\\(([A-Za-z0-9.$]*)(\\.class)\\)");
     private static final Pattern BODY_AS_PATTERN_NO_CLASS = Pattern.compile("(optionalBodyAs|bodyAs)\\(([A-Za-z0-9.$]*)\\)");
     private static final Pattern HEADER_AS_PATTERN
-            = Pattern.compile("(optionalHeaderAs|headerAs)\\((['|\"][A-Za-z0-9.$]*['|\"]\\s*),\\s*([A-Za-z0-9.$]*.class)\\)");
+            = Pattern.compile("(optionalHeaderAs|headerAs)\\(" + QUOTED_NAME + "\\s*,\\s*" + TYPE_CLASS + "\\)");
     private static final Pattern HEADER_AS_PATTERN_NO_CLASS
-            = Pattern.compile("(optionalHeaderAs|headerAs)\\((['|\"][A-Za-z0-9.$]*['|\"])\\s*,\\s*([A-Za-z0-9.$]*)\\)");
+            = Pattern.compile("(optionalHeaderAs|headerAs)\\(" + QUOTED_NAME + "\\s*,\\s*" + TYPE_NO_CLASS + "\\)");
     private static final Pattern HEADER_AS_DEFAULT_VALUE_PATTERN
-            = Pattern.compile("(headerAs)\\((['|\"][A-Za-z0-9.$]*['|\"])\\s*,(.+),\\s*([A-Za-z0-9.$]*.class)\\)");
+            = Pattern.compile("(headerAs)\\(" + QUOTED_NAME + "\\s*," + DEFAULT_VALUE + ",\\s*" + TYPE_CLASS + "\\)");
     private static final Pattern HEADER_AS_DEFAULT_VALUE_PATTERN_NO_CLASS
-            = Pattern.compile("(headerAs)\\((['|\"][A-Za-z0-9.$]*['|\"])\\s*,(.+),\\s*([A-Za-z0-9.$]*)\\)");
+            = Pattern.compile("(headerAs)\\(" + QUOTED_NAME + "\\s*," + DEFAULT_VALUE + ",\\s*" + TYPE_NO_CLASS + "\\)");
     private static final Pattern EXCHANGE_PROPERTY_AS_PATTERN
             = Pattern.compile(
-                    "(optionalExchangePropertyAs|exchangePropertyAs)\\((['|\"][A-Za-z0-9.$]*['|\"])\\s*,\\s*([A-Za-z0-9.$]*.class)\\)");
+                    "(optionalExchangePropertyAs|exchangePropertyAs)\\(" + QUOTED_NAME + "\\s*,\\s*" + TYPE_CLASS + "\\)");
     private static final Pattern EXCHANGE_PROPERTY_AS_PATTERN_NO_CLASS
             = Pattern.compile(
-                    "(optionalExchangePropertyAs|exchangePropertyAs)\\((['|\"][A-Za-z0-9.$]*['|\"])\\s*,\\s*([A-Za-z0-9.$]*)\\)");
+                    "(optionalExchangePropertyAs|exchangePropertyAs)\\(" + QUOTED_NAME + "\\s*,\\s*" + TYPE_NO_CLASS + "\\)");
     private static final Pattern EXCHANGE_PROPERTY_AS_DEFAULT_VALUE_PATTERN
             = Pattern.compile(
-                    "(exchangePropertyAs)\\((['|\"][A-Za-z0-9.$]*['|\"])\\s*,(.+),\\s*([A-Za-z0-9.$]*.class)\\)");
+                    "(exchangePropertyAs)\\(" + QUOTED_NAME + "\\s*," + DEFAULT_VALUE + ",\\s*" + TYPE_CLASS + "\\)");
     private static final Pattern EXCHANGE_PROPERTY_AS_DEFAULT_VALUE_PATTERN_NO_CLASS
             = Pattern.compile(
-                    "(exchangePropertyAs)\\((['|\"][A-Za-z0-9.$]*['|\"])\\s*,(.+),\\s*([A-Za-z0-9.$]*)\\)");
+                    "(exchangePropertyAs)\\(" + QUOTED_NAME + "\\s*," + DEFAULT_VALUE + ",\\s*" + TYPE_NO_CLASS + "\\)");
 
     private static final Logger LOG = LoggerFactory.getLogger(JoorCompiler.class);
     private static final AtomicInteger UUID = new AtomicInteger();
