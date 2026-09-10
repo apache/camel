@@ -12679,7 +12679,7 @@ Whether to auto start this route. Default value: true
           <xs:annotation>
             <xs:documentation xml:lang="en">
 <![CDATA[
-Whether to slow down processing messages by a given delay in msec. Default value: advanced
+Whether to slow down processing messages by a given delay in msec.
 ]]>
             </xs:documentation>
           </xs:annotation>
