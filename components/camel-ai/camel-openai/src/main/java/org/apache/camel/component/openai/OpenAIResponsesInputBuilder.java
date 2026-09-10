@@ -25,6 +25,7 @@ import java.util.ArrayList;
 import java.util.Base64;
 import java.util.List;
 
+import com.openai.models.responses.EasyInputMessage;
 import com.openai.models.responses.ResponseInputContent;
 import com.openai.models.responses.ResponseInputImage;
 import com.openai.models.responses.ResponseInputItem;
@@ -162,6 +163,33 @@ final class OpenAIResponsesInputBuilder {
 
         boolean isPlainText() {
             return plainText != null;
+        }
+
+        /**
+         * Returns the input as a list of items, turning plain text into a user message, so that other messages can be
+         * sent alongside it.
+         */
+        List<ResponseInputItem> items() {
+            if (isPlainText()) {
+                return List.of(ResponseInputItem.ofEasyInputMessage(EasyInputMessage.builder()
+                        .role(EasyInputMessage.Role.USER)
+                        .content(plainText)
+                        .build()));
+            }
+            return structuredItems;
+        }
+
+        /**
+         * Returns this input preceded by a developer message.
+         */
+        InputSpec withDeveloperMessage(String developerMessage) {
+            List<ResponseInputItem> items = new ArrayList<>();
+            items.add(ResponseInputItem.ofEasyInputMessage(EasyInputMessage.builder()
+                    .role(EasyInputMessage.Role.DEVELOPER)
+                    .content(developerMessage)
+                    .build()));
+            items.addAll(items());
+            return structured(items);
         }
     }
 }

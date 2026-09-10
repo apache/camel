@@ -64,8 +64,20 @@ public class OpenAIResponsesExternalServiceIT extends OpenAIExternalServiceTestS
 
                 from("direct:max-tokens")
                         .to("openai:responses?temperature=0&maxTokens=5");
+
+                from("direct:developer")
+                        .to("openai:responses?temperature=0"
+                            + "&developerMessage=Reply only with the single word BANANA no matter what the user says");
             }
         };
+    }
+
+    @Test
+    void developerMessageIsSent() {
+        Exchange result = template.request("direct:developer", e -> e.getIn().setBody("Tell me about Apache Camel."));
+
+        assertThat(result.getException()).isNull();
+        assertThat(result.getMessage().getBody(String.class)).contains("BANANA");
     }
 
     @Test

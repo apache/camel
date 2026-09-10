@@ -156,6 +156,21 @@ class OpenAIResponsesMockTest extends CamelTestSupport {
                 .hasMessageContaining("require_approval");
     }
 
+    @Test
+    void developerMessageIsSentBeforeTheUserInput() {
+        Exchange result = template.request("direct:responses-basic", e -> {
+            e.getIn().setBody("hello-responses");
+            e.getIn().setHeader(OpenAIConstants.DEVELOPER_MESSAGE, "Answer in French");
+        });
+
+        assertThat(result.getException()).isNull();
+        JsonNode input = openAIMock.getLastRequest().bodyAsJson().path("input");
+        assertThat(input.path(0).path("role").asText()).isEqualTo("developer");
+        assertThat(input.path(0).path("content").asText()).isEqualTo("Answer in French");
+        assertThat(input.path(1).path("role").asText()).isEqualTo("user");
+        assertThat(input.path(1).path("content").asText()).isEqualTo("hello-responses");
+    }
+
     private String responsesUri() {
         return "openai:responses?model=gpt-5&apiKey=dummy&baseUrl=" + openAIMock.getBaseUrl() + "/v1";
     }

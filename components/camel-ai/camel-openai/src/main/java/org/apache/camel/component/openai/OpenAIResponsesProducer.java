@@ -110,8 +110,16 @@ public class OpenAIResponsesProducer extends DefaultAsyncProducer {
         if ((instructions == null || instructions.isEmpty()) && ObjectHelper.isNotEmpty(config.getSystemMessage())) {
             instructions = config.getSystemMessage();
         }
+        String developerMessage = in.getHeader(OpenAIConstants.DEVELOPER_MESSAGE, String.class);
+        if ((developerMessage == null || developerMessage.isEmpty())
+                && ObjectHelper.isNotEmpty(config.getDeveloperMessage())) {
+            developerMessage = config.getDeveloperMessage();
+        }
 
         OpenAIResponsesInputBuilder.InputSpec inputSpec = OpenAIResponsesInputBuilder.buildInput(in, config);
+        if (ObjectHelper.isNotEmpty(developerMessage)) {
+            inputSpec = inputSpec.withDeveloperMessage(developerMessage);
+        }
 
         ResponseCreateParams.Builder paramsBuilder = ResponseCreateParams.builder().model(model);
         if (inputSpec.isPlainText()) {
