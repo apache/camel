@@ -4,7 +4,9 @@
 xref:ROOT:openai-component.adoc[Back to OpenAI Component]
 
 The `responses` operation calls the OpenAI Responses API (non-streaming). It supports the same text and image
-input ergonomics as `chat-completion`, maps `systemMessage` to API `instructions`, sends `developerMessage` /
+input ergonomics as `chat-completion` and also accepts PDF bodies, which are sent as `input_file` content together
+with the `userMessage` prompt. A PDF is recognized by the `CamelOpenAIMediaType` header, a content-type header or the
+`.pdf` file name. The operation maps `systemMessage` to API `instructions`, sends `developerMessage` /
 `CamelOpenAIDeveloperMessage` as a developer message before the user input, and exposes
 `CamelOpenAIResponseId` plus token usage headers. Use `previousResponseId` / `CamelOpenAIPreviousResponseId` for
 server-side conversation state.
