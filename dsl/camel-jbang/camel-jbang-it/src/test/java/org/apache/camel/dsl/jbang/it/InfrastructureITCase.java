@@ -21,6 +21,7 @@ import java.time.Duration;
 import org.apache.camel.dsl.jbang.it.support.JBangTestSupport;
 import org.assertj.core.api.Assertions;
 import org.awaitility.Awaitility;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.DisabledIfSystemProperty;
@@ -34,6 +35,22 @@ public class InfrastructureITCase extends JBangTestSupport {
     private static final String SERVICE = "ftp";
     private static final String IMPL_SERVICE = "artemis";
     private static final String IMPLEMENTATION = "amqp";
+
+    /**
+     * Stops the services started by the tests, even when a test failed before reaching its own stop command. A leaked
+     * service cascades into the following tests, because {@code infra ps} lists a single row per alias and would keep
+     * reporting the stale PID.
+     */
+    @AfterEach
+    public void stopInfraServices() {
+        stopInfraService(SERVICE);
+        stopInfraService(IMPL_SERVICE);
+    }
+
+    private void stopInfraService(String service) {
+        // best effort: the service may or may not be running, so never let the exit code fail the test
+        execInContainer(getMainCommand() + " infra stop " + service + " || true");
+    }
 
     private String getServicePID(String message) {
         return message.split(":")[1].replaceAll("[^0-9]", "");
@@ -52,7 +69,7 @@ public class InfrastructureITCase extends JBangTestSupport {
         String PID = getServicePID(msg);
         Assertions.assertThat(msg).contains(String.format("Running %s in background", SERVICE));
         Awaitility.await()
-                .atMost(Duration.ofSeconds(30))
+                .atMost(Duration.ofSeconds(ASSERTION_WAIT_SECONDS))
                 .pollInterval(Duration.ofSeconds(1))
                 .untilAsserted(() -> Assertions.assertThat(execute("infra ps"))
                         .contains(PID));
@@ -68,7 +85,7 @@ public class InfrastructureITCase extends JBangTestSupport {
         String PID = getServicePID(msg);
         Assertions.assertThat(msg).contains(String.format("Running %s in background", IMPL_SERVICE));
         Awaitility.await()
-                .atMost(Duration.ofSeconds(30))
+                .atMost(Duration.ofSeconds(ASSERTION_WAIT_SECONDS))
                 .pollInterval(Duration.ofSeconds(1))
                 .untilAsserted(() -> Assertions.assertThat(execute("infra ps"))
                         .containsPattern(PID + "\\s+" + IMPL_SERVICE + "\\s+" + IMPLEMENTATION));
@@ -83,7 +100,7 @@ public class InfrastructureITCase extends JBangTestSupport {
         String msg = execute("infra run --background " + SERVICE);
         String PID = getServicePID(msg);
         Awaitility.await()
-                .atMost(Duration.ofSeconds(30))
+                .atMost(Duration.ofSeconds(ASSERTION_WAIT_SECONDS))
                 .pollInterval(Duration.ofSeconds(1))
                 .untilAsserted(() -> Assertions.assertThat(execute("infra ps"))
                         .containsPattern(PID));
