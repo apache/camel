@@ -1571,13 +1571,7 @@ class TuiToolRegistry {
             result.put("problems", new JsonArray(List.of("Cannot parse the URI: " + e.getMessage())));
             return Jsoner.serialize(result);
         }
-        List<String> known = new ArrayList<>();
-        if (cm.getEndpointOptions() != null) {
-            for (BaseOptionModel opt : cm.getEndpointOptions()) {
-                known.add(opt.getName());
-            }
-        }
-        List<String> problems = endpointProblems(validation, scheme, known);
+        List<String> problems = endpointProblems(validation);
         List<String> warnings = new ArrayList<>();
         if (validation.getDeprecated() != null) {
             for (String name : validation.getDeprecated()) {
@@ -1618,7 +1612,7 @@ class TuiToolRegistry {
         return Jsoner.serialize(result);
     }
 
-    static List<String> endpointProblems(EndpointValidationResult r, String scheme, List<String> knownOptions) {
+    static List<String> endpointProblems(EndpointValidationResult r) {
         List<String> problems = new ArrayList<>();
         if (r.getSyntaxError() != null) {
             problems.add("Syntax error: " + r.getSyntaxError());
@@ -1632,11 +1626,10 @@ class TuiToolRegistry {
         if (r.getUnknown() != null) {
             for (String name : r.getUnknown()) {
                 StringBuilder sb = new StringBuilder("Unknown option '").append(name).append("'");
+                // the catalog suggests the closest names itself (edit distance, CAMEL-24666)
                 String[] suggestions = r.getUnknownSuggestions() != null ? r.getUnknownSuggestions().get(name) : null;
-                List<String> similar = suggestions != null && suggestions.length > 0
-                        ? Arrays.asList(suggestions) : similarNames(knownOptions, name, 3);
-                if (!similar.isEmpty()) {
-                    sb.append(". Did you mean: ").append(similar);
+                if (suggestions != null && suggestions.length > 0) {
+                    sb.append(". Did you mean: ").append(Arrays.asList(suggestions));
                 }
                 problems.add(sb.toString());
             }
@@ -1675,50 +1668,6 @@ class TuiToolRegistry {
             }
         }
         return problems;
-    }
-
-    /**
-     * The known names closest to a misspelled one (a typo, a case slip or a missing letter), by edit distance; the
-     * catalog's own suggestion strategy is an optional module that is not on the TUI's classpath.
-     */
-    static List<String> similarNames(List<String> known, String name, int max) {
-        String lower = name.toLowerCase(Locale.ROOT);
-        int allowed = Math.max(2, lower.length() / 4);
-        List<Map.Entry<String, Integer>> ranked = new ArrayList<>();
-        for (String candidate : known) {
-            String c = candidate.toLowerCase(Locale.ROOT);
-            int distance = c.contains(lower) || lower.contains(c) ? 1 : editDistance(c, lower);
-            if (distance <= allowed) {
-                ranked.add(Map.entry(candidate, distance));
-            }
-        }
-        ranked.sort(Map.Entry.comparingByValue());
-        List<String> answer = new ArrayList<>();
-        for (Map.Entry<String, Integer> entry : ranked) {
-            if (answer.size() < max) {
-                answer.add(entry.getKey());
-            }
-        }
-        return answer;
-    }
-
-    private static int editDistance(String a, String b) {
-        int[] prev = new int[b.length() + 1];
-        int[] cur = new int[b.length() + 1];
-        for (int j = 0; j <= b.length(); j++) {
-            prev[j] = j;
-        }
-        for (int i = 1; i <= a.length(); i++) {
-            cur[0] = i;
-            for (int j = 1; j <= b.length(); j++) {
-                int cost = a.charAt(i - 1) == b.charAt(j - 1) ? 0 : 1;
-                cur[j] = Math.min(Math.min(cur[j - 1] + 1, prev[j] + 1), prev[j - 1] + cost);
-            }
-            int[] swap = prev;
-            prev = cur;
-            cur = swap;
-        }
-        return prev[b.length()];
     }
 
     private static void addInvalid(List<String> problems, Map<String, String> invalid, String type) {
