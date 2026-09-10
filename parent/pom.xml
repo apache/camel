@@ -484,16 +484,16 @@
         <solr-version>10.0.0</solr-version>
         <splunk-version>1.9.5_1</splunk-version>
         <spock-version>2.4-groovy-5.0</spock-version>
-        <spring-ai-version>2.0.0</spring-ai-version>
-        <spring-cloud-config-version>5.0.4</spring-cloud-config-version>
-        <spring-batch-version>6.0.4</spring-batch-version>
-        <spring-boot-version>4.1.0</spring-boot-version>
-        <spring-data-redis-version>4.1.0</spring-data-redis-version>
-        <spring-ldap-version>4.1.0</spring-ldap-version>
+        <spring-ai-version>2.0.1</spring-ai-version>
+        <spring-cloud-config-version>5.0.5</spring-cloud-config-version>
+        <spring-batch-version>6.0.5</spring-batch-version>
+        <spring-boot-version>4.1.1</spring-boot-version>
+        <spring-data-redis-version>4.1.1</spring-data-redis-version>
+        <spring-ldap-version>4.1.1</spring-ldap-version>
         <spring-vault-core-version>4.1.0</spring-vault-core-version>
-        <spring-version>7.0.8</spring-version>
-        <spring-rabbitmq-version>4.1.0</spring-rabbitmq-version>
-        <spring-security-version>7.1.0</spring-security-version>
+        <spring-version>7.0.9</spring-version>
+        <spring-rabbitmq-version>4.1.1</spring-rabbitmq-version>
+        <spring-security-version>7.1.1</spring-security-version>
         <spring-ws-version>5.0.2</spring-ws-version>
         <sql-maven-plugin-version>3.0.0</sql-maven-plugin-version>
         <squareup-okhttp5-version>5.4.0</squareup-okhttp5-version>
