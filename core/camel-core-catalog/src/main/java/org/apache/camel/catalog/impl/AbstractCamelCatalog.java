@@ -77,7 +77,7 @@ public abstract class AbstractCamelCatalog {
     private static final Pattern SYNTAX_DASH_PATTERN = Pattern.compile("([\\w.-]+)");
     private static final Pattern COMPONENT_SYNTAX_PARSER = Pattern.compile("([^\\w-]*)([\\w-]+)");
 
-    private SuggestionStrategy suggestionStrategy;
+    private SuggestionStrategy suggestionStrategy = new EditDistanceSuggestionStrategy();
     private JSonSchemaResolver jsonSchemaResolver;
 
     public String componentJSonSchema(String name) {

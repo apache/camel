@@ -54,11 +54,10 @@ public class CamelCatalogSuggestTest {
         EndpointValidationResult result = catalog.validateEndpointProperties("log:mylog?showE=true");
         assertFalse(result.isSuccess());
         assertTrue(result.getUnknown().contains("showE"));
-        assertEquals(4, result.getUnknownSuggestions().get("showE").length);
-        assertEquals("showAll", result.getUnknownSuggestions().get("showE")[0]);
-        assertEquals("showException", result.getUnknownSuggestions().get("showE")[1]);
-        assertEquals("showExchangeId", result.getUnknownSuggestions().get("showE")[2]);
-        assertEquals("showExchangePattern", result.getUnknownSuggestions().get("showE")[3]);
+        assertEquals(3, result.getUnknownSuggestions().get("showE").length);
+        assertEquals("showException", result.getUnknownSuggestions().get("showE")[0]);
+        assertEquals("showExchangeId", result.getUnknownSuggestions().get("showE")[1]);
+        assertEquals("showExchangePattern", result.getUnknownSuggestions().get("showE")[2]);
         assertEquals(1, result.getNumberOfErrors());
     }
 }

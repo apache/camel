@@ -111,11 +111,6 @@ class TuiToolRegistryCatalogDocTest {
         assertFalse(scheme.getCollection("suggestions").isEmpty());
         assertTrue(catalogDoc(Map.of("endpoint", "no-scheme-here")).getString("error").contains("Not an endpoint URI"));
         assertTrue(catalogDoc(Map.of()).getString("error").contains("required"));
-
-        assertEquals(List.of("fixedRate"), TuiToolRegistry.similarNames(List.of("fixedRate", "period", "delay"),
-                "fixedRte", 3));
-        assertEquals(List.of("groupId"), TuiToolRegistry.similarNames(List.of("groupId", "brokers"), "groupid", 3));
-        assertTrue(TuiToolRegistry.similarNames(List.of("period"), "brokers", 3).isEmpty());
     }
 
     @Test

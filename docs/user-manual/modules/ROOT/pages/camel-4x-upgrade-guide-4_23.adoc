@@ -162,7 +162,23 @@ The Maven archetype `camel-archetype-spring` was deprecated in 4.17. Use spring 
 
 ==== camel-catalog-lucene
 
-The maven plugin was deprecated in 4.12. `camel-catalog-suggest` is replacing it.
+The maven plugin was deprecated in 4.12. The catalog now has built-in suggestions (see `camel-catalog` below).
+
+=== camel-catalog - did-you-mean suggestions by default, camel-catalog-suggest deprecated
+
+`CamelCatalog` now suggests the closest option names (and enum values) by default when validation finds an
+unknown one, using the new edit-distance based `org.apache.camel.catalog.impl.EditDistanceSuggestionStrategy`
+from `camel-core-catalog`. Before, suggestions were only produced when a `SuggestionStrategy` had been set
+explicitly, which meant the CLI and the TUI validators never gave any. Code that never wants suggestions can call
+`setSuggestionStrategy(null)`.
+
+The `camel-catalog-suggest` module with its phonetic (Soundex, commons-codec based) `CatalogSuggestionStrategy`
+is deprecated: the class now delegates to the edit-distance strategy and the module no longer depends on
+commons-codec. Remove the dependency and the `setSuggestionStrategy` call; the default gives the same or better
+suggestions. Edit distance also changes what is suggested: a partly typed name lists the names starting with it,
+and a name with a typo lists the names a few edits away, whereas Soundex matched by the sound of the consonants
+(for `showE` the `log` component now suggests `showException`, `showExchangeId` and `showExchangePattern`, no
+longer `showAll`).
 
 ==== camel-digitalocean
 
