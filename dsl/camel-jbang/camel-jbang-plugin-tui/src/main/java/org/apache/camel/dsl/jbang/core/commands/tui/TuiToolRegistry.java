@@ -79,6 +79,11 @@ class TuiToolRegistry {
         this.facade = facade;
     }
 
+    /** The launcher the TUI wired into the facade, or null when there is none to launch with. */
+    private LaunchManager launcher() {
+        return facade != null ? facade.getLaunchManager() : null;
+    }
+
     /**
      * The tools needed to answer questions and troubleshoot from the built-in AI panel. The remaining tools drive the
      * screen (drawing, animation, key presses, tape recording, themes) and exist for external MCP agents. Every tool
@@ -1052,7 +1057,7 @@ class TuiToolRegistry {
     }
 
     private String startInfra(String alias) {
-        LaunchManager lm = facade.getLaunchManager();
+        LaunchManager lm = launcher();
         if (lm == null) {
             return "Error: launching is not available";
         }
@@ -2324,7 +2329,7 @@ class TuiToolRegistry {
             return "{\"error\": \"'name' parameter is required\"}";
         }
 
-        LaunchManager lm = facade.getLaunchManager();
+        LaunchManager lm = launcher();
         if (lm == null) {
             return "{\"error\": \"Launching examples is not available in this session\"}";
         }
