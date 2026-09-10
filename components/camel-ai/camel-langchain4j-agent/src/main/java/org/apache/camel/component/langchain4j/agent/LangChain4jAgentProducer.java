@@ -40,6 +40,7 @@ import dev.langchain4j.model.chat.request.ResponseFormat;
 import dev.langchain4j.model.chat.request.ResponseFormatType;
 import dev.langchain4j.model.chat.request.json.JsonRawSchema;
 import dev.langchain4j.model.chat.request.json.JsonSchema;
+import dev.langchain4j.service.ModerationException;
 import dev.langchain4j.service.Result;
 import dev.langchain4j.service.output.JsonSchemas;
 import dev.langchain4j.service.tool.ToolExecutor;
@@ -198,11 +199,25 @@ public class LangChain4jAgentProducer extends DefaultProducer {
                     result.finishReason(),
                     null));
         } catch (RuntimeException e) {
+            applyModerationHeaders(exchange, e);
             GenAiErrorSupport.apply(exchange, e);
             observation.recordError(e);
             throw e;
         } finally {
             observation.close();
+        }
+    }
+
+    private void applyModerationHeaders(Exchange exchange, RuntimeException error) {
+        Throwable current = error;
+        while (current != null) {
+            if (current instanceof ModerationException moderationException) {
+                if (moderationException.moderation() != null && moderationException.moderation().flagged()) {
+                    exchange.getMessage().setHeader(Headers.MODERATION_FLAGGED, Boolean.TRUE);
+                }
+                return;
+            }
+            current = current.getCause();
         }
     }
 

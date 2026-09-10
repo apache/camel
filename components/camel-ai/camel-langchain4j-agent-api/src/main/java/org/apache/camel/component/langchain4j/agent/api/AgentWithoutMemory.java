@@ -36,6 +36,8 @@ public class AgentWithoutMemory extends AbstractAgent<AiAgentWithoutMemoryServic
 
     @Override
     public Result<String> chat(AiAgentBody<?> aiAgentBody, ToolProvider toolProvider) {
+        ModerationSupport.moderateUserMessage(configuration.getModerationModel(), aiAgentBody.getUserMessage());
+
         AiAgentWithoutMemoryService agentService = createAiAgentService(toolProvider);
 
         String userMessage = aiAgentBody.getUserMessage();

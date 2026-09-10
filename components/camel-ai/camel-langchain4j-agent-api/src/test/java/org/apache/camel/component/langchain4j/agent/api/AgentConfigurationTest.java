@@ -32,6 +32,7 @@ import dev.langchain4j.data.message.ToolExecutionResultMessage;
 import dev.langchain4j.model.chat.ChatModel;
 import dev.langchain4j.model.chat.request.ChatRequest;
 import dev.langchain4j.model.chat.response.ChatResponse;
+import dev.langchain4j.model.moderation.ModerationModel;
 import dev.langchain4j.service.tool.ToolArgumentsErrorHandler;
 import dev.langchain4j.service.tool.ToolExecutionErrorHandler;
 import org.junit.jupiter.api.Test;
@@ -343,6 +344,16 @@ class AgentConfigurationTest {
     }
 
     @Test
+    void testWithModerationModel() {
+        ModerationModel moderationModel = new FlaggingModerationModel("never-used");
+
+        AgentConfiguration config = new AgentConfiguration()
+                .withModerationModel(moderationModel);
+
+        assertSame(moderationModel, config.getModerationModel());
+    }
+
+    @Test
     void duplicateCopiesAllDeclaredInstanceFields() throws Exception {
         Executor executor = Executors.newSingleThreadExecutor();
         try {
@@ -359,6 +370,7 @@ class AgentConfigurationTest {
 
             AgentConfiguration original = new AgentConfiguration()
                     .withChatModel(chatModel)
+                    .withModerationModel(new FlaggingModerationModel("never-used"))
                     .withMaxToolCallingRoundTrips(11)
                     .withHallucinatedToolNameStrategy(strategy)
                     .withToolExecutionErrorHandler(execHandler)

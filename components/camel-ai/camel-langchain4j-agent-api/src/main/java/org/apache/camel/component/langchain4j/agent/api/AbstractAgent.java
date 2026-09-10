@@ -125,7 +125,6 @@ public abstract class AbstractAgent<S> implements Agent {
      * @param builder      the AI services builder to configure
      * @param toolProvider the Apache Camel tool provider (may be null)
      */
-    @SuppressWarnings("unchecked")
     protected void configureBuilder(AiServices<S> builder, ToolProvider toolProvider) {
         // Collect all tool providers to compose them into a single provider
         List<ToolProvider> toolProviders = new ArrayList<>();
