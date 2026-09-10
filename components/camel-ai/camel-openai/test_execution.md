@@ -169,8 +169,11 @@ mvn verify -Dit.test=OpenAIModerationExternalServiceIT -Dopenai.live.tests=true 
 
 ### Opt-in Responses API tests
 
-`OpenAIResponsesExternalServiceIT` exercises the `responses` operation against an endpoint that implements
-`POST /v1/responses`. Like the tests above it is disabled by default and enabled with `-Dopenai.live.tests=true`.
+`OpenAIResponsesExternalServiceIT` exercises the `responses`, `responses-retrieve` and `responses-cancel` operations
+against an endpoint that implements `POST /v1/responses`: instructions and developer messages, structured output,
+conversation memory, route tools, background mode, retrieval and cancellation. `OpenAIResponsesMcpExternalServiceIT`
+runs the tool loop against the MCP Everything server, which it starts as a container, so it also needs Docker. Like
+the tests above they are disabled by default and enabled with `-Dopenai.live.tests=true`.
 
 Local servers implement different parts of the Responses API, so the backend matters:
 
@@ -178,8 +181,8 @@ Local servers implement different parts of the Responses API, so the backend mat
   local baseline for these tests.
 * Ollama implements only the stateless subset: no `previous_response_id`, no conversations, no background mode.
 * LM Studio implements `previous_response_id` and function tools, but not background mode.
-* Hosted tools (`web_search`, `file_search`, `code_interpreter` and hosted MCP) only exist on OpenAI. Those
-  behaviours are covered by unit tests with a stubbed HTTP server instead.
+* Hosted tools (`web_search`, `file_search`, `code_interpreter` and hosted MCP), citations and the Conversations API
+  only exist on OpenAI. Those behaviours are covered by `OpenAIResponsesMockTest` on the OpenAI mock instead.
 
 #### macOS Apple Silicon with vLLM Metal
 
@@ -204,7 +207,7 @@ VLLM_ENABLE_RESPONSES_API_STORE=1 vllm serve mlx-community/Qwen3-4B-Instruct-250
 Then run:
 
 ```bash
-mvn verify -Dit.test=OpenAIResponsesExternalServiceIT -Dopenai.live.tests=true \
+mvn verify -Dit.test='OpenAIResponses*ExternalServiceIT' -Dopenai.live.tests=true \
   -Dopenai.live.baseUrl=http://localhost:8000/v1 \
   -Dopenai.live.responses.model=mlx-community/Qwen3-4B-Instruct-2507-4bit
 ```
