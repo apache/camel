@@ -181,6 +181,30 @@ public class GroovyExpressionBindingTest {
     }
 
     @Test
+    public void testShellFactoryOutVariableOnInOnlyExchange() {
+        context.getRegistry().bind("shellFactory", new GroovyShellFactory() {
+            @Override
+            public GroovyShell createGroovyShell(Exchange exchange) {
+                return new GroovyShell();
+            }
+
+            @Override
+            public Map<String, Object> getVariables(Exchange exchange) {
+                return Map.of("out", "x", "response", "y");
+            }
+        });
+        // the exchange has no out message, so the global variables are not hidden
+        assertEquals("x", evaluate("out"));
+        assertEquals("y", evaluate("response"));
+        assertEquals(Boolean.TRUE, evaluate("binding.hasVariable('out')"));
+        assertEquals("x", evaluate("binding.variables.out"));
+        // with an out message the exchange variables take precedence
+        exchange.setPattern(ExchangePattern.InOut);
+        assertSame(exchange.getMessage(), evaluate("out"));
+        assertSame(exchange.getMessage(), evaluate("binding.variables.response"));
+    }
+
+    @Test
     public void testCompiledScriptIsReusedUntilTheCacheIsCleared() {
         GroovyLanguage language = (GroovyLanguage) context.resolveLanguage("groovy");
         Expression expression = language.createExpression("getClass()");

@@ -141,11 +141,22 @@ public class GroovyExpression extends ExpressionSupport {
 
     /**
      * Binding with the same variables as {@link ExchangeHelper#populateVariableMap(Exchange, Map, boolean)} plus
-     * attachments and log. All values are one snapshot taken when the binding is created; the values that are costly to
-     * create (a copy of the exchange properties, the variable repository and the attachment message) are only created
-     * when the script uses them, once per binding.
+     * attachments and log.
+     * <p>
+     * The body, the headers, the exception and the out message are read when the binding is created. The values that
+     * are costly to create (the copy of the exchange properties, the variable repository and the attachment message)
+     * are created the first time the script uses them (through the variable or {@code binding.variables}), so they
+     * reflect the exchange at that moment: a property set by the script before it reads {@code exchangeProperties} is
+     * visible. Once created a value is kept for the rest of the evaluation.
+     * <p>
+     * A global variable of the {@link GroovyShellFactory} is hidden by the exchange variable with the same name, except
+     * {@code out} and {@code response} when the exchange has no out message, as they are then not exposed.
      */
     private static final class ExchangeBinding extends Binding {
+
+        private static final Set<String> EXCHANGE_VARIABLES = Set.of(
+                "body", "header", "headers", "variable", "variables", "exception", "in", "request", "exchange",
+                "exchangeProperty", "exchangeProperties", "out", "response", "camelContext", "attachments", "log");
 
         private final Exchange exchange;
         private final Message in;
@@ -170,7 +181,7 @@ public class GroovyExpression extends ExpressionSupport {
                 Map<String, Object> variables = super.getVariables();
                 // the exchange variables take precedence over global variables with the same name
                 globalVariables.forEach((k, v) -> {
-                    if (!isExchangeVariable(k)) {
+                    if (!isExposed(k)) {
                         variables.put(k, v);
                     }
                 });
@@ -179,12 +190,8 @@ public class GroovyExpression extends ExpressionSupport {
 
         @Override
         public Object getVariable(String name) {
-            Map<String, Object> variables = super.getVariables();
-            if (materialized || variables.containsKey(name) || !isExchangeVariable(name)) {
+            if (materialized || super.getVariables().containsKey(name) || !isExposed(name)) {
                 // throws MissingPropertyException when the variable does not exist
-                return super.getVariable(name);
-            }
-            if (("out".equals(name) || "response".equals(name)) && out == null) {
                 return super.getVariable(name);
             }
             return exchangeVariable(name);
@@ -192,27 +199,22 @@ public class GroovyExpression extends ExpressionSupport {
 
         @Override
         public boolean hasVariable(String name) {
-            if (!materialized && isExchangeVariable(name)) {
-                return out != null || !("out".equals(name) || "response".equals(name));
+            if (!materialized && isExposed(name)) {
+                return true;
             }
             return super.hasVariable(name);
         }
 
         @Override
+        @SuppressWarnings("rawtypes")
         public Map getVariables() {
             if (!materialized) {
                 Map<String, Object> variables = super.getVariables();
-                for (String name : new String[] {
-                        "body", "header", "headers", "variable", "variables", "exception", "in", "request", "exchange",
-                        "exchangeProperty", "exchangeProperties", "camelContext", "attachments", "log" }) {
+                for (String name : EXCHANGE_VARIABLES) {
                     // variables set by the script win
-                    if (!variables.containsKey(name)) {
+                    if (isExposed(name) && !variables.containsKey(name)) {
                         variables.put(name, exchangeVariable(name));
                     }
-                }
-                if (out != null) {
-                    variables.putIfAbsent("out", out);
-                    variables.putIfAbsent("response", out);
                 }
                 materialized = true;
             }
@@ -226,7 +228,18 @@ public class GroovyExpression extends ExpressionSupport {
         }
 
         /**
-         * The value of a well known exchange variable, from the snapshot taken when the binding was created.
+         * Whether the name is an exchange variable of this binding: out and response only exist when the exchange has
+         * an out message.
+         */
+        private boolean isExposed(String name) {
+            if (!EXCHANGE_VARIABLES.contains(name)) {
+                return false;
+            }
+            return out != null || !("out".equals(name) || "response".equals(name));
+        }
+
+        /**
+         * The value of an exchange variable.
          */
         private Object exchangeVariable(String name) {
             switch (name) {
@@ -262,37 +275,13 @@ public class GroovyExpression extends ExpressionSupport {
                 case "attachments":
                     if (attachments == null) {
                         AttachmentMessage am = new DefaultAttachmentMessage(exchange.getMessage());
-                        attachments = am.hasAttachments() ? am.getAttachments() : Collections.EMPTY_MAP;
+                        attachments = am.hasAttachments() ? am.getAttachments() : Collections.emptyMap();
                     }
                     return attachments;
                 case "log":
                     return LOG;
                 default:
                     return null;
-            }
-        }
-
-        private static boolean isExchangeVariable(String name) {
-            switch (name) {
-                case "body":
-                case "header":
-                case "headers":
-                case "variable":
-                case "variables":
-                case "exception":
-                case "in":
-                case "request":
-                case "exchange":
-                case "exchangeProperty":
-                case "exchangeProperties":
-                case "out":
-                case "response":
-                case "camelContext":
-                case "attachments":
-                case "log":
-                    return true;
-                default:
-                    return false;
             }
         }
     }
