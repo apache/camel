@@ -106,15 +106,27 @@ public class SqlStoredProducer extends DefaultProducer {
 
     private StatementWrapper createStatement(Exchange exchange) throws SQLException {
         String sql;
+        boolean fromHeader = false;
         if (getEndpoint().isUseMessageBodyForTemplate()) {
             sql = exchange.getIn().getBody(String.class);
         } else {
-            String templateHeader = exchange.getIn().getHeader(SqlStoredConstants.SQL_STORED_TEMPLATE, String.class);
-            sql = templateHeader != null ? templateHeader : resolvedTemplate;
+            String templateHeader = getEndpoint().isAllowTemplateFromHeader()
+                    ? exchange.getIn().getHeader(SqlStoredConstants.SQL_STORED_TEMPLATE, String.class) : null;
+            if (templateHeader != null) {
+                sql = templateHeader;
+                fromHeader = true;
+            } else {
+                sql = resolvedTemplate;
+            }
         }
 
         try {
-            sql = SqlHelper.resolveQuery(getEndpoint().getCamelContext(), sql, null);
+            // A header-supplied template is untrusted input, so it must not be resolved as a file:/http: resource
+            // (SqlHelper.resolveQuery -> ResourceHelper does that) - resolve placeholders only. The endpoint-configured
+            // template is already resolved in doInit/doStart.
+            sql = fromHeader
+                    ? SqlHelper.resolvePlaceholders(sql, null)
+                    : SqlHelper.resolveQuery(getEndpoint().getCamelContext(), sql, null);
         } catch (Exception e) {
             throw new SQLException("Error loading template resource: " + sql, e);
         }
