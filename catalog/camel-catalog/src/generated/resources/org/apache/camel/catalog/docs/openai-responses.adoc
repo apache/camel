@@ -9,7 +9,17 @@ input ergonomics as `chat-completion`, maps `systemMessage` to API `instructions
 server-side conversation state.
 
 Hosted tools: set `builtinTools` to a comma-separated list (`web_search`, `file_search`, `code_interpreter`).
-`file_search` requires `fileSearchVectorStoreIds`. Pass hosted MCP tool definitions as JSON via `hostedMcpTools`.
+`file_search` requires `fileSearchVectorStoreIds`.
+
+Pass hosted MCP tools as a JSON array via `hostedMcpTools`. Each entry is sent as an OpenAI `mcp` tool with all its
+fields, such as `require_approval`, `allowed_tools`, `headers`, `authorization` and `connector_id`. The API asks for
+approval before every hosted MCP call unless `require_approval` is `never`. The option is marked secret because it can
+carry credentials.
+
+[source,json]
+----
+[{"server_label": "deepwiki", "server_url": "https://mcp.deepwiki.com/mcp", "require_approval": "never"}]
+----
 
 When `storeFullResponse=true`, the SDK `Response` object is stored on exchange property `CamelOpenAIResponsesResponse`.
 

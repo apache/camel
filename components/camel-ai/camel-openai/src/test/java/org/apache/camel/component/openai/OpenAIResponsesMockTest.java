@@ -71,6 +71,9 @@ class OpenAIResponsesMockTest extends CamelTestSupport {
             })
             .replyWith("Research done")
             .end()
+            .when("hosted-mcp")
+            .replyWith("Docs found")
+            .end()
             .build();
 
     @Override
@@ -102,6 +105,45 @@ class OpenAIResponsesMockTest extends CamelTestSupport {
                         .to("openai:responses?model=gpt-5&apiKey=dummy&streaming=true&baseUrl=" + base);
             }
         };
+    }
+
+    @Test
+    void hostedMcpToolsSendEveryToolField() {
+        OpenAIEndpoint endpoint = context.getEndpoint(responsesUri(), OpenAIEndpoint.class);
+        endpoint.getConfiguration().setHostedMcpTools("""
+                [{"server_label":"deepwiki","server_url":"https://mcp.deepwiki.com/mcp",
+                  "require_approval":"never","allowed_tools":["ask_question"],
+                  "headers":{"X-Api-Key":"secret"}}]""");
+
+        Exchange result = template.request(endpoint, e -> e.getIn().setBody("hosted-mcp"));
+
+        assertThat(result.getException()).isNull();
+        JsonNode tool = openAIMock.getLastRequest().bodyAsJson().path("tools").path(0);
+        assertThat(tool.path("type").asText()).isEqualTo("mcp");
+        assertThat(tool.path("server_label").asText()).isEqualTo("deepwiki");
+        assertThat(tool.path("server_url").asText()).isEqualTo("https://mcp.deepwiki.com/mcp");
+        assertThat(tool.path("require_approval").asText()).isEqualTo("never");
+        assertThat(tool.path("allowed_tools").toString()).isEqualTo("[\"ask_question\"]");
+        assertThat(tool.path("headers").path("X-Api-Key").asText()).isEqualTo("secret");
+    }
+
+    @Test
+    void hostedMcpToolsAcceptCamelCaseServerFields() {
+        OpenAIEndpoint endpoint = context.getEndpoint(responsesUri(), OpenAIEndpoint.class);
+        endpoint.getConfiguration().setHostedMcpTools("""
+                [{"serverLabel":"deepwiki","serverUrl":"https://mcp.deepwiki.com/mcp","serverDescription":"Docs"}]""");
+
+        Exchange result = template.request(endpoint, e -> e.getIn().setBody("hosted-mcp"));
+
+        assertThat(result.getException()).isNull();
+        JsonNode tool = openAIMock.getLastRequest().bodyAsJson().path("tools").path(0);
+        assertThat(tool.path("server_label").asText()).isEqualTo("deepwiki");
+        assertThat(tool.path("server_url").asText()).isEqualTo("https://mcp.deepwiki.com/mcp");
+        assertThat(tool.path("server_description").asText()).isEqualTo("Docs");
+    }
+
+    private String responsesUri() {
+        return "openai:responses?model=gpt-5&apiKey=dummy&baseUrl=" + openAIMock.getBaseUrl() + "/v1";
     }
 
     @Test

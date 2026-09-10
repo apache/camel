@@ -119,9 +119,11 @@ public class OpenAIConfiguration implements Cloneable {
     @Metadata(description = "Comma-separated hosted tools for the Responses API: web_search, file_search, code_interpreter")
     private String builtinTools;
 
-    @UriParam
-    @Metadata(description = "JSON array of hosted MCP tool definitions (OpenAI Tool.Mcp) passed through to the Responses API",
-              inputLanguage = "json", largeInput = true)
+    @UriParam(security = "secret")
+    @Metadata(description = "JSON array of hosted MCP tool definitions passed to the Responses API as OpenAI mcp tools. "
+                            + "Every field of the API is sent, such as server_label, server_url, require_approval, "
+                            + "allowed_tools, headers and authorization. Marked secret because it can carry credentials.",
+              inputLanguage = "json", largeInput = true, security = "secret")
     private String hostedMcpTools;
 
     @UriParam

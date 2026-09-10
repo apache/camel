@@ -111,9 +111,10 @@ public class OpenAIEndpointUriFactory extends org.apache.camel.support.component
         props.add("userMessage");
         props.add("writeTimeout");
         PROPERTY_NAMES = Collections.unmodifiableSet(props);
-        Set<String> secretProps = new HashSet<>(5);
+        Set<String> secretProps = new HashSet<>(6);
         secretProps.add("additionalHeader");
         secretProps.add("apiKey");
+        secretProps.add("hostedMcpTools");
         secretProps.add("sslKeyPassword");
         secretProps.add("sslKeystorePassword");
         secretProps.add("sslTruststorePassword");
