@@ -244,9 +244,15 @@ public class TcpSocketConsumerRunnable implements Runnable {
 
         byte[] trailingData = mllpBuffer.getTrailingOutOfBandData();
         int trailingDataOffset = mllpBuffer.size() - trailingData.length;
+        int leadingLineBreakCount = 0;
+        while (leadingLineBreakCount < trailingData.length && isLineBreak(trailingData[leadingLineBreakCount])) {
+            leadingLineBreakCount++;
+        }
         for (int i = 0; i < trailingData.length; i++) {
             if (trailingData[i] == MllpProtocolConstants.START_OF_BLOCK) {
-                if (i == 0 || mllpBuffer.isCompleteEnvelopeAt(trailingDataOffset + i)) {
+                // A START_OF_BLOCK preceded only by line breaks (e.g. senders terminating frames with <FS><CR><LF>)
+                // starts the next message, even if that message is not complete yet.
+                if (i == leadingLineBreakCount || mllpBuffer.isCompleteEnvelopeAt(trailingDataOffset + i)) {
                     if (i > 0) {
                         byte[] outOfBandData = Arrays.copyOf(trailingData, i);
                         log.warn("Ignoring {} bytes of out-of-band data before next message: {}", i,
@@ -263,6 +269,10 @@ public class TcpSocketConsumerRunnable implements Runnable {
 
         log.warn("Ignoring trailing out-of-band data: {}", hl7Util.convertToLoggableString(trailingData));
         return null;
+    }
+
+    private static boolean isLineBreak(byte b) {
+        return b == '\r' || b == '\n';
     }
 
     private boolean isSocketOpen() {

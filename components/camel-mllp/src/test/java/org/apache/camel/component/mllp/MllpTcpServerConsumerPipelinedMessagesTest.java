@@ -94,6 +94,23 @@ public class MllpTcpServerConsumerPipelinedMessagesTest extends CamelTestSupport
         MockEndpoint.assertIsSatisfied(context, 10, TimeUnit.SECONDS);
     }
 
+    @Test
+    public void testReceivePipelinedMessageSpanningReadsAfterLineFeed() throws Exception {
+        String firstMessage = Hl7TestMessageGenerator.generateMessage(1);
+        StringBuilder secondMessage = new StringBuilder(Hl7TestMessageGenerator.generateMessage(2));
+        // Larger than the read buffer, so the second message is incomplete when the first one is processed
+        for (int i = 1; secondMessage.length() < 32 * 1024; i++) {
+            secondMessage.append("OBX|").append(i).append("|TX|NOTE^Note||Lorem ipsum dolor sit amet||||||F\r");
+        }
+        result.expectedBodiesReceived(firstMessage, secondMessage.toString());
+
+        // Some senders terminate frames with <FS><CR><LF>
+        mllpClient.sendFramedDataPipelined(new byte[] { '\n' }, firstMessage, secondMessage.toString());
+        assertAcknowledgement(1);
+        assertAcknowledgement(2);
+        MockEndpoint.assertIsSatisfied(context, 10, TimeUnit.SECONDS);
+    }
+
     private void assertPipelinedMessagesReceived(int... messageNumbers) throws Exception {
         String[] messages = new String[messageNumbers.length];
         result.expectedMessageCount(messageNumbers.length);
