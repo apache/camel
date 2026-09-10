@@ -70,7 +70,9 @@ public final class OpenAIConstants {
     public static final String REASONING_CONTENT = "CamelOpenAIReasoningContent";
     @Metadata(description = "The model used for the completion response", javaType = "String")
     public static final String RESPONSE_MODEL = "CamelOpenAIResponseModel";
-    @Metadata(description = "The unique identifier for the completion response", javaType = "String")
+    @Metadata(description = "The unique identifier for the completion response. The responses-retrieve and "
+                            + "responses-cancel operations read the id of the response to act on from this header",
+              javaType = "String")
     public static final String RESPONSE_ID = "CamelOpenAIResponseId";
     @Metadata(description = "The reason the completion finished (e.g., stop, length, content_filter)", javaType = "String")
     public static final String FINISH_REASON = "CamelOpenAIFinishReason";

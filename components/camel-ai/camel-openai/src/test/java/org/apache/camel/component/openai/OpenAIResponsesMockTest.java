@@ -155,6 +155,12 @@ class OpenAIResponsesMockTest extends CamelTestSupport {
                 from("direct:responses-background")
                         .to("openai:responses?model=gpt-5&apiKey=dummy&background=true&baseUrl=" + base);
 
+                from("direct:responses-retrieve")
+                        .to("openai:responses-retrieve?apiKey=dummy&baseUrl=" + base);
+
+                from("direct:responses-cancel")
+                        .to("openai:responses-cancel?apiKey=dummy&baseUrl=" + base);
+
                 from("direct:responses-background-tools")
                         .to("openai:responses?model=gpt-5&apiKey=dummy&background=true&tags=responses-tools&baseUrl="
                             + base);
@@ -336,6 +342,43 @@ class OpenAIResponsesMockTest extends CamelTestSupport {
                 .isInstanceOf(IllegalArgumentException.class)
                 .hasMessageContaining("background cannot be combined with automatic tool execution");
         assertThat(openAIMock.getReceivedRequests()).isEmpty();
+    }
+
+    @Test
+    void backgroundResponseCanBeRetrieved() {
+        Exchange queued = template.request("direct:responses-background", e -> e.getIn().setBody("hello-responses"));
+        String id = queued.getMessage().getHeader(OpenAIConstants.RESPONSE_ID, String.class);
+
+        Exchange retrieved = template.request("direct:responses-retrieve",
+                e -> e.getIn().setHeader(OpenAIConstants.RESPONSE_ID, id));
+
+        assertThat(retrieved.getException()).isNull();
+        assertThat(retrieved.getMessage().getBody(String.class)).isEqualTo("Hi from responses mock");
+        assertThat(retrieved.getMessage().getHeader(OpenAIConstants.RESPONSE_STATUS, String.class)).isEqualTo("completed");
+        assertThat(openAIMock.getLastRequest().method()).isEqualTo("GET");
+        assertThat(openAIMock.getLastRequest().path()).isEqualTo("/v1/responses/" + id);
+    }
+
+    @Test
+    void backgroundResponseCanBeCancelled() {
+        Exchange queued = template.request("direct:responses-background", e -> e.getIn().setBody("hello-responses"));
+        String id = queued.getMessage().getHeader(OpenAIConstants.RESPONSE_ID, String.class);
+
+        Exchange cancelled = template.request("direct:responses-cancel",
+                e -> e.getIn().setHeader(OpenAIConstants.RESPONSE_ID, id));
+
+        assertThat(cancelled.getException()).isNull();
+        assertThat(cancelled.getMessage().getHeader(OpenAIConstants.RESPONSE_STATUS, String.class)).isEqualTo("cancelled");
+        assertThat(openAIMock.getLastRequest().path()).isEqualTo("/v1/responses/" + id + "/cancel");
+    }
+
+    @Test
+    void retrieveRequiresTheResponseId() {
+        Exchange result = template.request("direct:responses-retrieve", e -> e.getIn().setBody("no id"));
+
+        assertThat(result.getException())
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessageContaining(OpenAIConstants.RESPONSE_ID);
     }
 
     private String responsesUri() {
