@@ -86,6 +86,9 @@ class OpenAIResponsesMockTest extends CamelTestSupport {
                         "annotations":[{"type":"url_citation","url":"https://camel.apache.org",
                           "title":"Apache Camel","start_index":0,"end_index":12}]}]}]""")
             .end()
+            .when("Summarize this document")
+            .replyWith("A short report")
+            .end()
             .build();
 
     @Override
@@ -187,6 +190,25 @@ class OpenAIResponsesMockTest extends CamelTestSupport {
         assertThat(annotations).singleElement().asString()
                 .contains("type=url_citation")
                 .contains("url=https://camel.apache.org");
+    }
+
+    @Test
+    void pdfBodyIsSentAsInputFile() {
+        byte[] pdf = { '%', 'P', 'D', 'F', '-', '1', '.', '4' };
+
+        Exchange result = template.request("direct:responses-basic", e -> {
+            e.getIn().setBody(pdf);
+            e.getIn().setHeader(OpenAIConstants.MEDIA_TYPE, "application/pdf");
+            e.getIn().setHeader(Exchange.FILE_NAME, "report.pdf");
+            e.getIn().setHeader(OpenAIConstants.USER_MESSAGE, "Summarize this document");
+        });
+
+        assertThat(result.getException()).isNull();
+        assertThat(result.getMessage().getBody(String.class)).isEqualTo("A short report");
+        JsonNode file = openAIMock.getLastRequest().bodyAsJson().path("input").path(0).path("content").path(1);
+        assertThat(file.path("type").asText()).isEqualTo("input_file");
+        assertThat(file.path("filename").asText()).isEqualTo("report.pdf");
+        assertThat(file.path("file_data").asText()).startsWith("data:application/pdf;base64,");
     }
 
     private String responsesUri() {
