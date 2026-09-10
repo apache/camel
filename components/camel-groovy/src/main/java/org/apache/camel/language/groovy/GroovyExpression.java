@@ -98,17 +98,16 @@ public class GroovyExpression extends ExpressionSupport {
                 || !Objects.equals(c.fileName, fileName)) {
             // Get the script from the cache, or create a new instance
             final String key = fileName != null ? fileName + text : text;
-            Class<Script> scriptClass = r.language.getScriptFromCache(key);
-            if (scriptClass == null) {
+            final String name = fileName;
+            Class<Script> scriptClass = r.language.getOrCompile(key, () -> {
                 // prefer to use classloader from groovy script compiler, and if not fallback to app context
                 ClassLoader cl
                         = exchange.getContext().getCamelContextExtension().getContextPlugin(GroovyScriptClassLoader.class);
                 GroovyShell shell = shellFactory != null ? shellFactory.createGroovyShell(exchange)
                         : cl != null ? new GroovyShell(cl) : new GroovyShell();
-                scriptClass = fileName != null
-                        ? shell.getClassLoader().parseClass(text, fileName) : shell.getClassLoader().parseClass(text);
-                r.language.addScriptToCache(key, scriptClass);
-            }
+                return name != null
+                        ? shell.getClassLoader().parseClass(text, name) : shell.getClassLoader().parseClass(text);
+            });
             c = new CompiledScript(r.context, r.language, generation, fileName, scriptClass, constructor(scriptClass));
             compiled = c;
         }
