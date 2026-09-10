@@ -116,6 +116,12 @@ public class OpenAIConfiguration implements Cloneable {
     private String previousResponseId;
 
     @UriParam
+    @Metadata(description = "Id of a conversation created with the OpenAI Conversations API to run the request in. "
+                            + "The conversation keeps its items across exchanges. Cannot be combined with "
+                            + "previousResponseId (Responses API only)")
+    private String conversationId;
+
+    @UriParam
     @Metadata(description = "Comma-separated hosted tools for the Responses API: web_search, file_search, code_interpreter")
     private String builtinTools;
 
@@ -583,6 +589,14 @@ public class OpenAIConfiguration implements Cloneable {
 
     public void setPreviousResponseId(String previousResponseId) {
         this.previousResponseId = previousResponseId;
+    }
+
+    public String getConversationId() {
+        return conversationId;
+    }
+
+    public void setConversationId(String conversationId) {
+        this.conversationId = conversationId;
     }
 
     public String getBuiltinTools() {

@@ -142,6 +142,11 @@ public class OpenAIResponsesProducer extends DefaultAsyncProducer {
         if (ObjectHelper.isNotEmpty(previousResponseId)) {
             paramsBuilder.previousResponseId(previousResponseId);
         }
+        String conversationId = resolveParameter(in, OpenAIConstants.CONVERSATION_ID, config.getConversationId(),
+                String.class);
+        if (ObjectHelper.isNotEmpty(conversationId)) {
+            paramsBuilder.conversation(conversationId);
+        }
 
         OpenAIResponsesSupport.applyBuiltinTools(paramsBuilder, config.getBuiltinTools(),
                 config.getFileSearchVectorStoreIds());
