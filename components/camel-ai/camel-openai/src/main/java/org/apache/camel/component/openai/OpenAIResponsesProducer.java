@@ -324,7 +324,7 @@ public class OpenAIResponsesProducer extends DefaultAsyncProducer {
         return exchange.getProperty(config.getConversationHistoryProperty()) instanceof String id ? id : null;
     }
 
-    private void setResponseHeaders(Message message, Response response) {
+    static void setResponseHeaders(Message message, Response response) {
         message.setHeader(OpenAIConstants.RESPONSE_ID, response.id());
         message.setHeader(OpenAIConstants.RESPONSE_MODEL, OpenAIResponsesSupport.modelName(response.model()));
         response.status().ifPresent(status -> message.setHeader(OpenAIConstants.RESPONSE_STATUS, status.asString()));

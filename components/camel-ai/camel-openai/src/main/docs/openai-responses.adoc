@@ -23,6 +23,56 @@ response is queued, with an empty body and the `CamelOpenAIResponseStatus` heade
 stored under its `CamelOpenAIResponseId`. Background mode needs a server that stores responses and cannot be combined
 with automatic tool execution.
 
+The `responses-retrieve` operation retrieves a stored response, and `responses-cancel` cancels one that is still
+running. Both read the response id from the `CamelOpenAIResponseId` header and set the same headers as `responses`,
+including `CamelOpenAIResponseStatus`, with the answer text as body once the status is `completed`. The route below
+starts a background response and polls it until it is done:
+
+[tabs]
+====
+Java::
++
+[source,java]
+----
+from("direct:report")
+    .to("openai:responses?model=gpt-5&background=true")
+    .loopDoWhile(simple("${header.CamelOpenAIResponseStatus} in 'queued,in_progress'"))
+        .delay(5000)
+        .to("openai:responses-retrieve")
+    .end()
+    .log("${body}");
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:report
+      steps:
+        - to:
+            uri: openai:responses
+            parameters:
+              model: gpt-5
+              background: true
+        - loop:
+            doWhile: true
+            expression:
+              simple:
+                expression: "${header.CamelOpenAIResponseStatus} in 'queued,in_progress'"
+            steps:
+              - delay:
+                  expression:
+                    constant:
+                      expression: 5000
+              - to:
+                  uri: openai:responses-retrieve
+        - log:
+            message: "${body}"
+----
+====
+
 Hosted tools: set `builtinTools` to a comma-separated list (`web_search`, `file_search`, `code_interpreter`).
 `file_search` requires `fileSearchVectorStoreIds`.
 

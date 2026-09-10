@@ -2185,13 +2185,13 @@ public interface OpenAIEndpointBuilderFactory {
          * 
          * Path parameter: operation (required)
          * The operation to perform: 'chat-completion', 'responses',
-         * 'embeddings', 'tool-execution', 'audio-transcription',
-         * 'audio-translation', 'audio-speech', 'moderation',
-         * 'image-generation', or 'image-edit'
-         * There are 10 enums and the value can be one of: chat-completion,
-         * responses, embeddings, tool-execution, audio-transcription,
-         * audio-translation, audio-speech, moderation, image-generation,
-         * image-edit
+         * 'responses-retrieve', 'responses-cancel', 'embeddings',
+         * 'tool-execution', 'audio-transcription', 'audio-translation',
+         * 'audio-speech', 'moderation', 'image-generation', or 'image-edit'
+         * There are 12 enums and the value can be one of: chat-completion,
+         * responses, responses-retrieve, responses-cancel, embeddings,
+         * tool-execution, audio-transcription, audio-translation, audio-speech,
+         * moderation, image-generation, image-edit
          * 
          * @param path operation
          * @return the dsl builder
@@ -2212,13 +2212,13 @@ public interface OpenAIEndpointBuilderFactory {
          * 
          * Path parameter: operation (required)
          * The operation to perform: 'chat-completion', 'responses',
-         * 'embeddings', 'tool-execution', 'audio-transcription',
-         * 'audio-translation', 'audio-speech', 'moderation',
-         * 'image-generation', or 'image-edit'
-         * There are 10 enums and the value can be one of: chat-completion,
-         * responses, embeddings, tool-execution, audio-transcription,
-         * audio-translation, audio-speech, moderation, image-generation,
-         * image-edit
+         * 'responses-retrieve', 'responses-cancel', 'embeddings',
+         * 'tool-execution', 'audio-transcription', 'audio-translation',
+         * 'audio-speech', 'moderation', 'image-generation', or 'image-edit'
+         * There are 12 enums and the value can be one of: chat-completion,
+         * responses, responses-retrieve, responses-cancel, embeddings,
+         * tool-execution, audio-transcription, audio-translation, audio-speech,
+         * moderation, image-generation, image-edit
          * 
          * @param componentName to use a custom component name for the endpoint
          * instead of the default name
@@ -2456,7 +2456,9 @@ public interface OpenAIEndpointBuilderFactory {
             return "CamelOpenAIResponseModel";
         }
         /**
-         * The unique identifier for the completion response.
+         * The unique identifier for the completion response. The
+         * responses-retrieve and responses-cancel operations read the id of the
+         * response to act on from this header.
          * 
          * The option is a: {@code String} type.
          * 

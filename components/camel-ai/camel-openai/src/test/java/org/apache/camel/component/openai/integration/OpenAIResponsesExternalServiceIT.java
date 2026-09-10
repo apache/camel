@@ -16,6 +16,8 @@
  */
 package org.apache.camel.component.openai.integration;
 
+import java.util.concurrent.TimeUnit;
+
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.openai.models.responses.Response;
@@ -29,6 +31,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.EnabledIfSystemProperty;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.awaitility.Awaitility.await;
 
 @EnabledIfSystemProperty(named = OpenAIExternalServiceTestSupport.ENABLE_LIVE_TESTS, matches = "true",
                          disabledReason = "Set -Dopenai.live.tests=true and configure an OpenAI-compatible Responses API service")
@@ -84,8 +87,48 @@ public class OpenAIResponsesExternalServiceIT extends OpenAIExternalServiceTestS
 
                 from("direct:background")
                         .to("openai:responses?temperature=0&background=true");
+
+                from("direct:background-long")
+                        .to("openai:responses?temperature=0&background=true&maxTokens=2000");
+
+                from("direct:retrieve")
+                        .to("openai:responses-retrieve");
+
+                from("direct:cancel")
+                        .to("openai:responses-cancel");
             }
         };
+    }
+
+    @Test
+    void backgroundResponseCanBeRetrievedOnceCompleted() {
+        Exchange queued = template.request("direct:background",
+                e -> e.getIn().setBody("Count from 1 to 5, one number per line."));
+        assertThat(queued.getException()).isNull();
+        String id = queued.getMessage().getHeader(OpenAIConstants.RESPONSE_ID, String.class);
+
+        await().atMost(60, TimeUnit.SECONDS).untilAsserted(() -> {
+            Exchange retrieved = template.request("direct:retrieve",
+                    e -> e.getIn().setHeader(OpenAIConstants.RESPONSE_ID, id));
+            assertThat(retrieved.getException()).isNull();
+            assertThat(retrieved.getMessage().getHeader(OpenAIConstants.RESPONSE_STATUS, String.class))
+                    .isEqualTo("completed");
+            assertThat(retrieved.getMessage().getBody(String.class)).contains("5");
+        });
+    }
+
+    @Test
+    void backgroundResponseCanBeCancelled() {
+        Exchange queued = template.request("direct:background-long",
+                e -> e.getIn().setBody("Write a very long essay about the history of enterprise integration patterns."));
+        assertThat(queued.getException()).isNull();
+        String id = queued.getMessage().getHeader(OpenAIConstants.RESPONSE_ID, String.class);
+
+        Exchange cancelled = template.request("direct:cancel",
+                e -> e.getIn().setHeader(OpenAIConstants.RESPONSE_ID, id));
+
+        assertThat(cancelled.getException()).isNull();
+        assertThat(cancelled.getMessage().getHeader(OpenAIConstants.RESPONSE_STATUS, String.class)).isEqualTo("cancelled");
     }
 
     @Test

@@ -39,8 +39,10 @@ Supported operations:
 
 * `chat-completion` - Generate chat completions using language models
 * `responses` - Call the OpenAI Responses API (hosted tools, server-side conversation state; non-streaming)
+* `responses-retrieve` - Retrieve a stored Responses API response, such as one started in background mode
+* `responses-cancel` - Cancel a Responses API response still running in background mode
 
-See xref:others:openai-responses.adoc[Responses API operation] for usage (`previousResponseId`, builtin tools, MCP pass-through).
+See xref:others:openai-responses.adoc[Responses API operation] for usage (`previousResponseId`, builtin tools, MCP pass-through, background mode).
 
 * `embeddings` - Generate vector embeddings from text for semantic search and RAG applications
 * `tool-execution` - Execute MCP tool calls from a stored chat completion response (used in manual tool loops)
@@ -1291,7 +1293,7 @@ For more details on specific features, see:
 The component may throw the following exceptions:
 
 * `IllegalArgumentException`:
-  ** When an invalid operation is specified (supported: `chat-completion`, `responses`, `embeddings`, `tool-execution`, `audio-transcription`, `audio-translation`, `audio-speech`, `moderation`, `image-generation`, `image-edit`)
+  ** When an invalid operation is specified (supported: `chat-completion`, `responses`, `responses-retrieve`, `responses-cancel`, `embeddings`, `tool-execution`, `audio-transcription`, `audio-translation`, `audio-speech`, `moderation`, `image-generation`, `image-edit`)
   ** When message body or user message is missing
   ** When the audio model is missing (audio-transcription, audio-translation) or the speech model is missing (audio-speech)
   ** When image file is provided without userMessage (chat-completion)
