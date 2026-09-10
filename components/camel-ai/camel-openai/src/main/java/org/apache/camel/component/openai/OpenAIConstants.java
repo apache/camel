@@ -86,6 +86,10 @@ public final class OpenAIConstants {
                             + "map of the API fields",
               javaType = "java.util.List<java.util.Map<String, Object>>")
     public static final String RESPONSE_ANNOTATIONS = "CamelOpenAIResponseAnnotations";
+    @Metadata(description = "The status of a Responses API response: completed, failed, in_progress, cancelled, queued "
+                            + "or incomplete",
+              javaType = "String")
+    public static final String RESPONSE_STATUS = "CamelOpenAIResponseStatus";
 
     // MCP Tool Call Headers
     @Metadata(description = "Number of tool call iterations performed in the agentic loop", javaType = "Integer")

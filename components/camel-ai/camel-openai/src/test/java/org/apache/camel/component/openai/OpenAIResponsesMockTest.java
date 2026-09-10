@@ -151,6 +151,13 @@ class OpenAIResponsesMockTest extends CamelTestSupport {
                 from("direct:responses-manual-tools")
                         .to("openai:responses?model=gpt-5&apiKey=dummy&tags=responses-tools&autoToolExecution=false"
                             + "&baseUrl=" + base);
+
+                from("direct:responses-background")
+                        .to("openai:responses?model=gpt-5&apiKey=dummy&background=true&baseUrl=" + base);
+
+                from("direct:responses-background-tools")
+                        .to("openai:responses?model=gpt-5&apiKey=dummy&background=true&tags=responses-tools&baseUrl="
+                            + base);
             }
         };
     }
@@ -307,6 +314,28 @@ class OpenAIResponsesMockTest extends CamelTestSupport {
         assertThat(result.getException()).isNull();
         assertThat(result.getMessage().getBody(List.class)).singleElement().asString().contains("get_weather");
         assertThat(openAIMock.getReceivedRequests()).hasSize(1);
+    }
+
+    @Test
+    void backgroundResponseIsQueued() {
+        Exchange result = template.request("direct:responses-background", e -> e.getIn().setBody("hello-responses"));
+
+        assertThat(result.getException()).isNull();
+        assertThat(result.getMessage().getBody(String.class)).isEmpty();
+        assertThat(result.getMessage().getHeader(OpenAIConstants.RESPONSE_STATUS, String.class)).isEqualTo("queued");
+        JsonNode request = openAIMock.getLastRequest().bodyAsJson();
+        assertThat(request.path("background").asBoolean()).isTrue();
+        assertThat(request.path("store").asBoolean()).isTrue();
+    }
+
+    @Test
+    void backgroundCannotRunTheToolLoop() {
+        Exchange result = template.request("direct:responses-background-tools", e -> e.getIn().setBody("weather-tool"));
+
+        assertThat(result.getException())
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessageContaining("background cannot be combined with automatic tool execution");
+        assertThat(openAIMock.getReceivedRequests()).isEmpty();
     }
 
     private String responsesUri() {

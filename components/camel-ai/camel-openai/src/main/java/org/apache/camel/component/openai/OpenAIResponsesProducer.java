@@ -167,6 +167,10 @@ public class OpenAIResponsesProducer extends DefaultAsyncProducer {
         if (ObjectHelper.isNotEmpty(conversationId)) {
             paramsBuilder.conversation(conversationId);
         }
+        if (config.isBackground()) {
+            // a background response is only reachable later if the server stores it
+            paramsBuilder.background(true).store(true);
+        }
 
         OpenAIResponsesSupport.applyBuiltinTools(paramsBuilder, config.getBuiltinTools(),
                 config.getFileSearchVectorStoreIds());
@@ -189,6 +193,11 @@ public class OpenAIResponsesProducer extends DefaultAsyncProducer {
         }
 
         if (!tools.isEmpty() && config.isAutoToolExecution()) {
+            if (config.isBackground()) {
+                throw new IllegalArgumentException(
+                        "background cannot be combined with automatic tool execution, the tool loop needs each answer. "
+                                                   + "Set autoToolExecution=false to handle the function calls in the route");
+            }
             processToolLoop(exchange, config, params, inputSpec.items(), model);
             return;
         }
@@ -318,6 +327,7 @@ public class OpenAIResponsesProducer extends DefaultAsyncProducer {
     private void setResponseHeaders(Message message, Response response) {
         message.setHeader(OpenAIConstants.RESPONSE_ID, response.id());
         message.setHeader(OpenAIConstants.RESPONSE_MODEL, OpenAIResponsesSupport.modelName(response.model()));
+        response.status().ifPresent(status -> message.setHeader(OpenAIConstants.RESPONSE_STATUS, status.asString()));
         OpenAIResponsesSupport.extractFinishStatus(response)
                 .ifPresent(status -> message.setHeader(OpenAIConstants.FINISH_REASON, mapFinishReason(status)));
         response.usage().ifPresent(usage -> {

@@ -327,6 +327,44 @@ public interface OpenAIEndpointBuilderFactory {
             return this;
         }
         /**
+         * Run the model response in the background (Responses API only). The
+         * exchange completes as soon as the response is queued, with an empty
+         * body and the CamelOpenAIResponseStatus header, and the response is
+         * stored so that it can be retrieved later. Cannot be combined with
+         * automatic tool execution.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: producer
+         * 
+         * @param background the value to set
+         * @return the dsl builder
+         */
+        default OpenAIEndpointBuilder background(boolean background) {
+            doSetProperty("background", background);
+            return this;
+        }
+        /**
+         * Run the model response in the background (Responses API only). The
+         * exchange completes as soon as the response is queued, with an empty
+         * body and the CamelOpenAIResponseStatus header, and the response is
+         * stored so that it can be retrieved later. Cannot be combined with
+         * automatic tool execution.
+         * 
+         * The option will be converted to a <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: producer
+         * 
+         * @param background the value to set
+         * @return the dsl builder
+         */
+        default OpenAIEndpointBuilder background(String background) {
+            doSetProperty("background", background);
+            return this;
+        }
+        /**
          * Base URL for OpenAI API. Defaults to OpenAI's official endpoint. Can
          * be used for local or third-party providers.
          * 
@@ -2493,6 +2531,19 @@ public interface OpenAIEndpointBuilderFactory {
          */
         public String openAIResponseAnnotations() {
             return "CamelOpenAIResponseAnnotations";
+        }
+        /**
+         * The status of a Responses API response: completed, failed,
+         * in_progress, cancelled, queued or incomplete.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code OpenAIResponseStatus}.
+         */
+        public String openAIResponseStatus() {
+            return "CamelOpenAIResponseStatus";
         }
         /**
          * Number of tool call iterations performed in the agentic loop.

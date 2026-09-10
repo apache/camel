@@ -121,6 +121,13 @@ public class OpenAIConfiguration implements Cloneable {
                             + "previousResponseId (Responses API only)")
     private String conversationId;
 
+    @UriParam(defaultValue = "false")
+    @Metadata(description = "Run the model response in the background (Responses API only). The exchange completes as "
+                            + "soon as the response is queued, with an empty body and the CamelOpenAIResponseStatus "
+                            + "header, and the response is stored so that it can be retrieved later. Cannot be "
+                            + "combined with automatic tool execution")
+    private boolean background;
+
     @UriParam
     @Metadata(description = "Comma-separated hosted tools for the Responses API: web_search, file_search, code_interpreter")
     private String builtinTools;
@@ -600,6 +607,14 @@ public class OpenAIConfiguration implements Cloneable {
 
     public void setConversationId(String conversationId) {
         this.conversationId = conversationId;
+    }
+
+    public boolean isBackground() {
+        return background;
+    }
+
+    public void setBackground(boolean background) {
+        this.background = background;
     }
 
     public String getBuiltinTools() {

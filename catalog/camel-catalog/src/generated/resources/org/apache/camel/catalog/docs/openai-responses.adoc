@@ -18,6 +18,11 @@ With `conversationMemory=true`, the operation stores the id of each response in 
 unless a previous response id is set explicitly. The conversation itself stays on the server, so the server must store
 responses: OpenAI does by default, vLLM needs `VLLM_ENABLE_RESPONSES_API_STORE=1`, and Ollama does not support it.
 
+With `background=true` the request runs in the background on the server: the exchange completes as soon as the
+response is queued, with an empty body and the `CamelOpenAIResponseStatus` header set to `queued`. The response is
+stored under its `CamelOpenAIResponseId`. Background mode needs a server that stores responses and cannot be combined
+with automatic tool execution.
+
 Hosted tools: set `builtinTools` to a comma-separated list (`web_search`, `file_search`, `code_interpreter`).
 `file_search` requires `fileSearchVectorStoreIds`.
 

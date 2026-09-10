@@ -81,8 +81,22 @@ public class OpenAIResponsesExternalServiceIT extends OpenAIExternalServiceTestS
 
                 from("direct:route-tools")
                         .to("openai:responses?temperature=0&tags=responses-it");
+
+                from("direct:background")
+                        .to("openai:responses?temperature=0&background=true");
             }
         };
+    }
+
+    @Test
+    void backgroundResponseIsQueued() {
+        Exchange result = template.request("direct:background", e -> e.getIn().setBody("Count from 1 to 5."));
+
+        assertThat(result.getException()).isNull();
+        assertThat(result.getMessage().getHeader(OpenAIConstants.RESPONSE_ID, String.class)).isNotBlank();
+        assertThat(result.getMessage().getHeader(OpenAIConstants.RESPONSE_STATUS, String.class))
+                .isIn("queued", "in_progress");
+        assertThat(result.getMessage().getBody(String.class)).isEmpty();
     }
 
     @Test

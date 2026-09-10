@@ -45,6 +45,7 @@ public class OpenAIEndpointConfigurer extends PropertyConfigurerSupport implemen
         case "audioTimestampGranularities": target.getConfiguration().setAudioTimestampGranularities(property(camelContext, java.lang.String.class, value)); return true;
         case "autotoolexecution":
         case "autoToolExecution": target.getConfiguration().setAutoToolExecution(property(camelContext, boolean.class, value)); return true;
+        case "background": target.getConfiguration().setBackground(property(camelContext, boolean.class, value)); return true;
         case "baseurl":
         case "baseUrl": target.getConfiguration().setBaseUrl(property(camelContext, java.lang.String.class, value)); return true;
         case "builtintools":
@@ -217,6 +218,7 @@ public class OpenAIEndpointConfigurer extends PropertyConfigurerSupport implemen
         case "audioTimestampGranularities": return java.lang.String.class;
         case "autotoolexecution":
         case "autoToolExecution": return boolean.class;
+        case "background": return boolean.class;
         case "baseurl":
         case "baseUrl": return java.lang.String.class;
         case "builtintools":
@@ -390,6 +392,7 @@ public class OpenAIEndpointConfigurer extends PropertyConfigurerSupport implemen
         case "audioTimestampGranularities": return target.getConfiguration().getAudioTimestampGranularities();
         case "autotoolexecution":
         case "autoToolExecution": return target.getConfiguration().isAutoToolExecution();
+        case "background": return target.getConfiguration().isBackground();
         case "baseurl":
         case "baseUrl": return target.getConfiguration().getBaseUrl();
         case "builtintools":
