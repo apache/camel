@@ -17,6 +17,7 @@
 package org.apache.camel.test.junit.rule.mllp;
 
 import java.io.BufferedOutputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -256,6 +257,59 @@ public class MllpClientResource implements BeforeEachCallback, AfterEachCallback
         if (disconnectAfterSend) {
             log.warn("Closing TCP connection");
             disconnect();
+        }
+    }
+
+    /**
+     * Send multiple complete MLLP envelopes in a single socket write without waiting for their acknowledgements.
+     *
+     * @param hl7Messages messages to send
+     */
+    public void sendFramedDataPipelined(String... hl7Messages) {
+        sendFramedDataPipelined(null, hl7Messages);
+    }
+
+    /**
+     * Send multiple complete MLLP envelopes in a single socket write, inserting raw data after the first envelope.
+     *
+     * @param dataAfterFirstMessage raw data inserted after the first envelope
+     * @param hl7Messages           messages to send
+     */
+    public void sendFramedDataPipelined(byte[] dataAfterFirstMessage, String... hl7Messages) {
+        if (null == clientSocket) {
+            this.connect();
+        }
+
+        if (!clientSocket.isConnected()) {
+            throw new MllpJUnitResourceException("Cannot send message - client is not connected");
+        }
+        if (null == outputStream) {
+            throw new MllpJUnitResourceException("Cannot send message - output stream is null");
+        }
+
+        try {
+            ByteArrayOutputStream framedData = new ByteArrayOutputStream();
+            for (int i = 0; i < hl7Messages.length; i++) {
+                String hl7Message = hl7Messages[i];
+                if (sendStartOfBlock) {
+                    framedData.write(START_OF_BLOCK);
+                }
+                framedData.write(hl7Message.getBytes());
+                if (sendEndOfBlock) {
+                    framedData.write(END_OF_BLOCK);
+                }
+                if (sendEndOfData) {
+                    framedData.write(END_OF_DATA);
+                }
+                if (i == 0 && dataAfterFirstMessage != null) {
+                    framedData.write(dataAfterFirstMessage);
+                }
+            }
+            outputStream.write(framedData.toByteArray());
+            outputStream.flush();
+        } catch (IOException e) {
+            log.error("Unable to send pipelined HL7 messages", e);
+            throw new MllpJUnitResourceException("Unable to send pipelined HL7 messages", e);
         }
     }
 
