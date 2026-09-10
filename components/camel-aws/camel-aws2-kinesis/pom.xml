@@ -32,6 +32,26 @@
     <name>Camel :: AWS2 Kinesis</name>
     <description>Consuming and Producing data to AWS Kinesis Service</description>
 
+    <dependencyManagement>
+        <dependencies>
+            <!-- Pin com.squareup.wire:wire-runtime transitively brought in by amazon-kinesis-client
+                 via software.amazon.glue:schema-registry-serde (still on Wire 5.2.0, no release with
+                 the fix) to remediate CVE-2026-45799. wire-runtime is an empty Kotlin-Multiplatform
+                 stub and wire-runtime-jvm carries the fix; both are pinned because the advisory lists
+                 both coordinates. -->
+            <dependency>
+                <groupId>com.squareup.wire</groupId>
+                <artifactId>wire-runtime</artifactId>
+                <version>${squareup-wire-version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.squareup.wire</groupId>
+                <artifactId>wire-runtime-jvm</artifactId>
+                <version>${squareup-wire-version}</version>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
+
     <dependencies>
         <dependency>
             <groupId>org.apache.camel</groupId>
