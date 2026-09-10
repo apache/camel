@@ -2024,6 +2024,7 @@ public class ModelParser extends BaseParser {
     }
     protected SmooksDataFormat doParseSmooksDataFormat() throws IOException, XmlPullParserException {
         return doParse(new SmooksDataFormat(), (def, key, val) -> switch (key) {
+                case "allowExternalEntities": def.setAllowExternalEntities(val); yield true;
                 case "smooksConfig": def.setSmooksConfig(val); yield true;
                 default: yield identifiedTypeAttributeHandler().accept(def, key, val);
             }, noElementHandler(), noValueHandler());
