@@ -215,6 +215,15 @@ public abstract class JBangTestSupport {
                 .contains(contains);
     }
 
+    /**
+     * Asserts that a single invocation of the command outputs all of the given fragments, in any order.
+     */
+    protected void checkCommandOutputsAll(String command, String... contains) {
+        Assertions.assertThat(execute(command))
+                .as("command  " + getMainCommand() + " " + command + " should output " + String.join(", ", contains))
+                .contains(contains);
+    }
+
     protected void checkCommandFailsWithError(String command, String error) {
         Assertions.assertThat(execute(command, true, true))
                 .as("command " + getMainCommand() + " " + command + " should fail with error " + error)
