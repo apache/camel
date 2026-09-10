@@ -73,8 +73,26 @@ public class OpenAIResponsesExternalServiceIT extends OpenAIExternalServiceTestS
                         .to("openai:responses?temperature=0&conversationMemory=true")
                         .setBody(constant("What is my name? Answer with one word."))
                         .to("openai:responses?temperature=0&conversationMemory=true");
+
+                from("ai-tool:get_weather?tags=responses-it"
+                     + "&description=Get the current weather for a city"
+                     + "&parameter.city=string&parameter.city.required=true")
+                        .setBody(simple("It is 31 degrees and sunny in ${header.city}"));
+
+                from("direct:route-tools")
+                        .to("openai:responses?temperature=0&tags=responses-it");
             }
         };
+    }
+
+    @Test
+    void routeToolsAreCalledByTheModel() {
+        Exchange result = template.request("direct:route-tools",
+                e -> e.getIn().setBody("What is the weather in Rome right now? Use the available tool."));
+
+        assertThat(result.getException()).isNull();
+        assertThat(result.getMessage().getHeader(OpenAIConstants.TOOL_ITERATIONS, Integer.class)).isPositive();
+        assertThat(result.getMessage().getBody(String.class)).contains("31");
     }
 
     @Test

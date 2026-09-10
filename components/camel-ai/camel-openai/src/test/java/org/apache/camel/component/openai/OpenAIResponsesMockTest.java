@@ -89,6 +89,16 @@ class OpenAIResponsesMockTest extends CamelTestSupport {
             .when("Summarize this document")
             .replyWith("A short report")
             .end()
+            .when("weather-tool")
+            .invokeTool("get_weather")
+            .withParam("city", "Rome")
+            .replyWith("It is sunny in Rome")
+            .end()
+            .when("order-tool")
+            .invokeTool("lookup_order")
+            .withParam("id", "42")
+            .replyWith("Not expected, the tool returns directly")
+            .end()
             .build();
 
     @Override
@@ -123,6 +133,24 @@ class OpenAIResponsesMockTest extends CamelTestSupport {
                         .to("openai:responses?model=gpt-5&apiKey=dummy&conversationMemory=true&baseUrl=" + base)
                         .setBody(constant("turn-two"))
                         .to("openai:responses?model=gpt-5&apiKey=dummy&conversationMemory=true&baseUrl=" + base);
+
+                from("ai-tool:get_weather?tags=responses-tools&description=Get the weather for a city"
+                     + "&parameter.city=string&parameter.city.required=true")
+                        .setBody(simple("Sunny in ${header.city}"));
+
+                from("ai-tool:lookup_order?tags=responses-direct&description=Look up an order"
+                     + "&parameter.id=string&parameter.id.required=true&returnDirect=true")
+                        .setBody(simple("Order ${header.id} shipped"));
+
+                from("direct:responses-route-tools")
+                        .to("openai:responses?model=gpt-5&apiKey=dummy&tags=responses-tools&baseUrl=" + base);
+
+                from("direct:responses-return-direct")
+                        .to("openai:responses?model=gpt-5&apiKey=dummy&tags=responses-direct&baseUrl=" + base);
+
+                from("direct:responses-manual-tools")
+                        .to("openai:responses?model=gpt-5&apiKey=dummy&tags=responses-tools&autoToolExecution=false"
+                            + "&baseUrl=" + base);
             }
         };
     }
@@ -242,6 +270,43 @@ class OpenAIResponsesMockTest extends CamelTestSupport {
         assertThat(requests.get(1).bodyAsJson().path("previous_response_id").asText())
                 .startsWith("resp_")
                 .isNotEqualTo(lastResponseId);
+    }
+
+    @Test
+    void routeToolsRunInTheToolLoop() {
+        Exchange result = template.request("direct:responses-route-tools", e -> e.getIn().setBody("weather-tool"));
+
+        assertThat(result.getException()).isNull();
+        assertThat(result.getMessage().getBody(String.class)).isEqualTo("It is sunny in Rome");
+        assertThat(result.getMessage().getHeader(OpenAIConstants.TOOL_ITERATIONS, Integer.class)).isEqualTo(1);
+        assertThat(result.getMessage().getHeader(OpenAIConstants.MCP_TOOL_CALLS, List.class)).containsExactly("get_weather");
+
+        var requests = openAIMock.getReceivedRequests();
+        assertThat(requests).hasSize(2);
+        assertThat(requests.get(0).bodyAsJson().path("tools").path(0).path("name").asText()).isEqualTo("get_weather");
+        JsonNode input = requests.get(1).bodyAsJson().path("input");
+        JsonNode toolOutput = input.path(input.size() - 1);
+        assertThat(toolOutput.path("type").asText()).isEqualTo("function_call_output");
+        assertThat(toolOutput.path("output").asText()).isEqualTo("Sunny in Rome");
+    }
+
+    @Test
+    void returnDirectRouteToolEndsTheToolLoop() {
+        Exchange result = template.request("direct:responses-return-direct", e -> e.getIn().setBody("order-tool"));
+
+        assertThat(result.getException()).isNull();
+        assertThat(result.getMessage().getBody(String.class)).isEqualTo("Order 42 shipped");
+        assertThat(result.getMessage().getHeader(OpenAIConstants.MCP_RETURN_DIRECT, Boolean.class)).isTrue();
+        assertThat(openAIMock.getReceivedRequests()).hasSize(1);
+    }
+
+    @Test
+    void functionCallsAreReturnedWhenAutoToolExecutionIsDisabled() {
+        Exchange result = template.request("direct:responses-manual-tools", e -> e.getIn().setBody("weather-tool"));
+
+        assertThat(result.getException()).isNull();
+        assertThat(result.getMessage().getBody(List.class)).singleElement().asString().contains("get_weather");
+        assertThat(openAIMock.getReceivedRequests()).hasSize(1);
     }
 
     private String responsesUri() {
