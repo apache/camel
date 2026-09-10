@@ -102,13 +102,16 @@ public class JGroupsEndpoint extends DefaultEndpoint {
     }
 
     private void checkDeserializedType(Class<?> type) {
-        ObjectInputFilter filter = DeserializationFilterHelper.resolveDeserializationFilter(deserializationFilter);
-        if (DeserializationFilterHelper.checkClass(filter, type) == ObjectInputFilter.Status.REJECTED) {
+        if (resolvedDeserializationFilter == null) {
+            resolvedDeserializationFilter = DeserializationFilterHelper.resolveDeserializationFilter(deserializationFilter);
+        }
+        if (DeserializationFilterHelper.checkClass(resolvedDeserializationFilter, type) == ObjectInputFilter.Status.REJECTED) {
             throw new JGroupsException(
                     "Rejected message body of type " + type.getName()
                                        + " received from the JGroups cluster: it is not permitted by the configured"
                                        + " deserializationFilter");
         }
+    }
     }
 
     public Exchange createExchange(View view) {
