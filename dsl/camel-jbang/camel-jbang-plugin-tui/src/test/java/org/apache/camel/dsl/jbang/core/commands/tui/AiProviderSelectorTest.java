@@ -33,6 +33,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -213,9 +214,9 @@ class AiProviderSelectorTest {
 
     @Test
     @EnabledOnOs({ OS.LINUX, OS.MAC })
-    void isOnPathFindsShellButNotNonsense() {
-        assertTrue(AiProviderSelector.isOnPath("sh"));
-        assertFalse(AiProviderSelector.isOnPath("definitely-not-a-real-binary-42"));
+    void resolveExecutableFindsShellButNotNonsense() {
+        assertNotNull(AiProviderSelector.resolveExecutable("sh"));
+        assertNull(AiProviderSelector.resolveExecutable("definitely-not-a-real-binary-42"));
     }
 
     @Test

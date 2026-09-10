@@ -170,11 +170,6 @@ final class AiProviderSelector {
         return resolveExecutable(executable, System.getenv("PATH"));
     }
 
-    /** True when {@code executable} is an absolute path to an executable file or is found on the PATH. */
-    static boolean isOnPath(String executable) {
-        return resolveExecutable(executable) != null;
-    }
-
     /**
      * Builds the ordered provider choices for the switch popup: the persisted default first, followed by every other
      * known provider (regardless of whether an API key is currently detected for it, so it stays available for manual
