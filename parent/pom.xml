@@ -213,7 +213,7 @@
         <google-cloud-vision-version>3.95.0</google-cloud-vision-version>
         <google-cloud-speech-version>4.92.0</google-cloud-speech-version>
         <google-cloud-texttospeech-version>2.98.0</google-cloud-texttospeech-version>
-        <google-genai-version>1.68.0</google-genai-version>
+        <google-genai-version>1.70.0</google-genai-version>
         <graalvm-version>25.2.4</graalvm-version>
         <graphql-java-version>26.1</graphql-java-version>
         <greenmail-version>2.1.13</greenmail-version>
