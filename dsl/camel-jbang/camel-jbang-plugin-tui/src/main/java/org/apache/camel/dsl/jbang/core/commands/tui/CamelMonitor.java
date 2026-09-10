@@ -192,8 +192,12 @@ public class CamelMonitor extends CamelCommand {
     // a live write waiting to start on the UI thread, and the promise its tool thread waits on
     private volatile McpFacade.FileWrite pendingReplay;
     private volatile CompletableFuture<McpFacade.ReplayOutcome> pendingReplayOutcome;
-    private McpFacade.FileWrite activeReplay;
-    private CompletableFuture<McpFacade.ReplayOutcome> activeReplayOutcome;
+    // both are read by the tool thread to decide whether a write can be replayed
+    private volatile McpFacade.FileWrite activeReplay;
+    private EditReplay.Editor activeReplayEditor;
+    // null while the replay is parked: the tool call returned early with the user's question about the edit
+    private volatile CompletableFuture<McpFacade.ReplayOutcome> activeReplayOutcome;
+    private volatile String pendingEditQuestion;
     // the AI panel overlays the editor, so it is hidden while an edit is replayed and shown again afterwards
     private boolean replayHidAiPanel;
     private TuiRunner runner;
@@ -755,7 +759,11 @@ public class CamelMonitor extends CamelCommand {
 
                     @Override
                     public McpFacade.ReplayOutcome replayFileWrite(McpFacade.FileWrite request) {
-                        if (pendingReplay != null || activeReplay != null) {
+                        if (pendingReplay != null || (activeReplay != null && activeReplayOutcome != null)) {
+                            return null;
+                        }
+                        if (activeReplay != null && !activeReplay.file().equals(request.file())) {
+                            // a parked replay of another file is still in the editor
                             return null;
                         }
                         CompletableFuture<McpFacade.ReplayOutcome> outcome = new CompletableFuture<>();
@@ -768,9 +776,16 @@ public class CamelMonitor extends CamelCommand {
                             pendingReplay = null;
                             editReplay.abort();
                             activeReplay = null;
+                            activeReplayEditor = null;
                             activeReplayOutcome = null;
                             return new McpFacade.ReplayOutcome(false, 0, List.of(), null);
                         }
+                    }
+
+                    @Override
+                    public String parkedReplayFile() {
+                        McpFacade.FileWrite parked = activeReplay;
+                        return parked != null && activeReplayOutcome == null ? parked.file() : null;
                     }
 
                     @Override
@@ -804,7 +819,9 @@ public class CamelMonitor extends CamelCommand {
 
     /**
      * Drives a live AI edit: starts a pending replay in the source editor, advances the typing, and once the user has
-     * saved or discarded the buffer completes the outcome the tool thread is waiting for.
+     * saved or discarded the buffer completes the outcome the tool thread is waiting for. A question asked at a pause
+     * (F8) completes the outcome early and parks the replay; a later write of the same file continues from the editor's
+     * content, and if none comes the AI is told what became of the parked edit with the next question.
      */
     private void tickEditReplay(long now) {
         McpFacade.FileWrite request = pendingReplay;
@@ -812,27 +829,27 @@ public class CamelMonitor extends CamelCommand {
             pendingReplay = null;
             CompletableFuture<McpFacade.ReplayOutcome> outcome = pendingReplayOutcome;
             pendingReplayOutcome = null;
-            Path file = request.directory().resolve(request.file());
-            tabRegistry.handleTabKey(TabRegistry.TAB_SOURCE, ctx, dataService);
-            EditReplay.Editor editor = tabRegistry.sourceTab().openFileForReplay(file);
-            if (editor == null) {
-                outcome.complete(null);
+            if (!startEditReplay(request, outcome)) {
                 return;
             }
-            List<String> before = request.oldContent() == null ? List.of() : request.oldContent().lines().toList();
-            List<String> after = request.newContent().isEmpty() ? List.of() : request.newContent().lines().toList();
-            editReplay.start(editor, EditDiff.hunks(before, after, 3));
-            activeReplay = request;
-            activeReplayOutcome = outcome;
-            replayHidAiPanel = aiPanel.isOpen();
-            if (replayHidAiPanel) {
-                // hiding the panel only hides it; the request keeps waiting for the outcome
-                aiPanel.close();
-            }
-            setNotification("AI edit: watch the change in the editor, then save (Ctrl+S) or discard (Esc)", false);
         }
         if (activeReplay == null) {
             return;
+        }
+        String question = pendingEditQuestion;
+        if (question != null) {
+            pendingEditQuestion = null;
+            if (activeReplayOutcome != null) {
+                // the tool call returns with the question; the replay stays parked in the editor
+                activeReplayOutcome.complete(new McpFacade.ReplayOutcome(
+                        false, editReplay.applied(), editReplay.skippedHunks(), replayBuffer(), question,
+                        editReplay.remaining()));
+                activeReplayOutcome = null;
+                replayHidAiPanel = false;
+            }
+        }
+        if (editReplay.isAsking() && !aiPanel.isOpen()) {
+            editReplay.endAsking();
         }
         editReplay.tick(now);
         // the replay is over (finished, stopped or handed over) once the user leaves edit mode or the file changes
@@ -849,14 +866,97 @@ public class CamelMonitor extends CamelCommand {
             McpFacade.ReplayOutcome outcome = new McpFacade.ReplayOutcome(
                     saved, editReplay.applied(), editReplay.skippedHunks(), onDisk);
             editReplay.abort();
-            activeReplayOutcome.complete(outcome);
+            if (activeReplayOutcome != null) {
+                activeReplayOutcome.complete(outcome);
+            } else {
+                noteParkedReplayOutcome(activeReplay.file(), outcome);
+            }
             activeReplay = null;
+            activeReplayEditor = null;
             activeReplayOutcome = null;
             if (replayHidAiPanel) {
                 replayHidAiPanel = false;
                 aiPanel.open();
             }
         }
+    }
+
+    /**
+     * Opens the file in the editor and starts replaying the change, or continues a parked replay of the same file from
+     * the editor's current content. Returns false when the replay could not start (the outcome is completed with null
+     * so the tool falls back to the confirm dialog).
+     */
+    private boolean startEditReplay(McpFacade.FileWrite request, CompletableFuture<McpFacade.ReplayOutcome> outcome) {
+        List<String> after = request.newContent().isEmpty() ? List.of() : request.newContent().lines().toList();
+        if (activeReplay != null && activeReplayEditor != null && activeReplayOutcome == null) {
+            List<String> current = EditReplay.contentLines(activeReplayEditor.lines());
+            editReplay.start(activeReplayEditor, EditDiff.hunks(current, after, 3));
+            activeReplay = new McpFacade.FileWrite(
+                    request.file(), request.directory(), activeReplay.oldContent(), request.newContent(),
+                    request.temporary(), request.devMode());
+            activeReplayOutcome = outcome;
+            setNotification("AI edit: the AI revised the change; watch it continue in the editor", false);
+        } else {
+            Path file = request.directory().resolve(request.file());
+            tabRegistry.handleTabKey(TabRegistry.TAB_SOURCE, ctx, dataService);
+            EditReplay.Editor editor = tabRegistry.sourceTab().openFileForReplay(file);
+            if (editor == null) {
+                outcome.complete(null);
+                return false;
+            }
+            List<String> before = request.oldContent() == null ? List.of() : request.oldContent().lines().toList();
+            editReplay.start(editor, EditDiff.hunks(before, after, 3));
+            activeReplay = request;
+            activeReplayEditor = editor;
+            activeReplayOutcome = outcome;
+            setNotification("AI edit: watch the change in the editor, then save (Ctrl+S) or discard (Esc)", false);
+        }
+        if (aiPanel.isOpen()) {
+            // hiding the panel only hides it; the request keeps waiting for the outcome
+            replayHidAiPanel = true;
+            aiPanel.close();
+        }
+        return true;
+    }
+
+    /** The editor buffer of the replayed file as text (the editor keeps a final newline as an empty last line). */
+    private String replayBuffer() {
+        String text = String.join("\n", activeReplayEditor.lines());
+        if (activeReplay.oldContent() != null && activeReplay.oldContent().endsWith("\n") && !text.endsWith("\n")) {
+            text += "\n";
+        }
+        return text;
+    }
+
+    /** F8 at a pause: open the AI panel to ask about the current edit; the question returns the waiting tool call. */
+    private void openEditQuestion() {
+        if (shellPanel.isOpen()) {
+            shellPanel.close();
+        }
+        String prefill = "About edit " + editReplay.current() + " of " + editReplay.total() + ": ";
+        aiPanel.askAboutEdit(prefill, question -> {
+            if (activeReplay != null && activeReplayOutcome != null) {
+                pendingEditQuestion = question;
+                return true;
+            }
+            // the tool call already returned (asked before): a normal question, the AI knows the edit is parked
+            return false;
+        });
+    }
+
+    /** A parked replay ended without the AI being involved: it learns what happened with the next question. */
+    private void noteParkedReplayOutcome(String file, McpFacade.ReplayOutcome outcome) {
+        String note;
+        if (outcome.saved()) {
+            note = "The user saved " + file + " after the paused edit (" + outcome.applied() + " edit(s) applied"
+                   + (outcome.skipped().isEmpty() ? "" : ", skipped " + outcome.skipped())
+                   + "); read it with tui_get_files if you need the current content. Continue with any file"
+                   + " write that was deferred meanwhile.";
+        } else {
+            note = "The user discarded the paused edit of " + file + "; the file is unchanged. Ask before"
+                   + " continuing with any file write that was deferred meanwhile.";
+        }
+        aiPanel.addPendingNote(note);
     }
 
     /**
@@ -1125,6 +1225,15 @@ public class CamelMonitor extends CamelCommand {
                 return fileWritePopup.handleKeyEvent(ke);
             }
             if (editReplay.isActive() && editReplay.handleKeyEvent(ke)) {
+                if (editReplay.isAsking() && !aiPanel.isOpen()) {
+                    openEditQuestion();
+                }
+                return true;
+            }
+            if (ke.isKey(KeyCode.F8) && activeReplay != null && activeReplayOutcome != null && !aiPanel.isOpen()
+                    && editReplay.askAfterFinish()) {
+                // the replay is over (a single change never pauses) but not yet saved or discarded: ask about it
+                openEditQuestion();
                 return true;
             }
             if (popupManager.handleKeyEvent(ke, tabRegistry.selectedTabIndex(), TAB_LOG)) {
@@ -2607,6 +2716,9 @@ public class CamelMonitor extends CamelCommand {
             fileWritePopup.renderFooter(spans);
         } else if (editReplay.isActive() && editReplay.capturesKeys()) {
             editReplay.renderFooter(spans);
+        } else if (aiPanel.isOpen()) {
+            // asking about a paused AI edit, or the panel came back after a replay
+            aiPanel.renderFooter(spans);
         } else if (editReplay.isActive()) {
             editReplay.renderFooter(spans);
             hint(spans, "Ctrl+S", "save");
@@ -2616,11 +2728,12 @@ public class CamelMonitor extends CamelCommand {
             hint(spans, "AI edit done", "");
             hint(spans, "Ctrl+S/F5", "save (apply)");
             hint(spans, "F7", "diff");
+            if (activeReplayOutcome != null) {
+                hint(spans, "F8", "ask the AI about it");
+            }
             hintLast(spans, "Esc", "discard");
         } else if (shellPanel.isOpen()) {
             shellPanel.renderFooter(spans);
-        } else if (aiPanel.isOpen()) {
-            aiPanel.renderFooter(spans);
         } else {
             MonitorTab tab = tabRegistry.activeTab();
 

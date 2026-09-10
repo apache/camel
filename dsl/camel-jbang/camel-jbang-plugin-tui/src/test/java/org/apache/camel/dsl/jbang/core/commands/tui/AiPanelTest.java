@@ -1296,23 +1296,142 @@ class AiPanelTest {
     }
 
     @Test
-    void pasteCollapsesLineBreaksToSpaces() {
-        AiPanel panel = new AiPanel();
-        panel.open();
-
-        panel.handlePaste("why is\nthe route\r\nstopped?");
-
-        // A multi-line paste becomes a single prompt instead of submitting on the first newline.
-        assertEquals("why is the route stopped?", panel.inputBufferForTesting());
-    }
-
-    @Test
     void pasteIsIgnoredWhileClosed() {
         AiPanel panel = new AiPanel();
 
         panel.handlePaste("ignored");
 
         assertEquals("", panel.inputBufferForTesting());
+    }
+
+    @Test
+    void ctrlNMakesAMultiLineQuestionThatIsSentAsTyped() throws Exception {
+        AiPanel panel = new AiPanel();
+        RecordingLlmClient client = new RecordingLlmClient("ok");
+        panel.setClientForTesting(client);
+        panel.open();
+
+        type(panel, "here is my route:");
+        panel.handleKeyEvent(KeyEvent.ofChar('n', KeyModifiers.of(true, false, false)));
+        type(panel, "- from: timer:tick");
+        panel.handleKeyEvent(KeyEvent.ofChar('n', KeyModifiers.of(true, false, false)));
+        type(panel, "why?");
+        assertEquals("here is my route:\n- from: timer:tick\nwhy?", panel.inputBufferForTesting());
+
+        // Up and Down move between the lines (Home/End stay on the line), only then recall history
+        panel.handleKeyEvent(KeyEvent.ofKey(KeyCode.UP, KeyModifiers.NONE));
+        panel.handleKeyEvent(KeyEvent.ofKey(KeyCode.END, KeyModifiers.NONE));
+        type(panel, "?period=1s");
+        assertEquals("here is my route:\n- from: timer:tick?period=1s\nwhy?", panel.inputBufferForTesting());
+        panel.handleKeyEvent(KeyEvent.ofKey(KeyCode.DOWN, KeyModifiers.NONE));
+        panel.handleKeyEvent(KeyEvent.ofKey(KeyCode.END, KeyModifiers.NONE));
+        type(panel, "!");
+
+        panel.handleKeyEvent(KeyEvent.ofKey(KeyCode.ENTER, KeyModifiers.NONE));
+        assertTrue(client.awaitAnswer(5, TimeUnit.SECONDS));
+        assertEquals("here is my route:\n- from: timer:tick?period=1s\nwhy?!", client.lastQuestion());
+        assertEquals("", panel.inputBufferForTesting());
+    }
+
+    @Test
+    void pastedTextKeepsItsLineBreaks() {
+        AiPanel panel = new AiPanel();
+        panel.setClientForTesting(new RecordingLlmClient("ok"));
+        panel.open();
+
+        type(panel, "explain: ");
+        panel.handlePaste("- route:\r\n    from:\n      uri: timer:tick\n");
+
+        assertEquals("explain: - route:\n    from:\n      uri: timer:tick\n", panel.inputBufferForTesting());
+    }
+
+    @Test
+    void askingAboutAPausedEditHandsTheQuestionToTheWaitingToolCall() throws Exception {
+        AiPanel panel = new AiPanel();
+        WaitingLlmClient client = new WaitingLlmClient();
+        panel.setClientForTesting(client);
+        panel.open();
+        type(panel, "add an id to the route");
+        panel.handleKeyEvent(KeyEvent.ofKey(KeyCode.ENTER, KeyModifiers.NONE));
+        assertTrue(client.started.await(5, TimeUnit.SECONDS));
+        assertTrue(panel.isThinkingForTesting(), "the request (and so a tool call) is in flight");
+
+        // the panel was hidden by the replay; F8 at the pause reopens it in ask mode with a prefilled prompt
+        panel.close();
+        AtomicReference<String> handed = new AtomicReference<>();
+        panel.askAboutEdit("About edit 1 of 2: ", question -> {
+            handed.set(question);
+            return true;
+        });
+        assertTrue(panel.isOpen());
+        assertTrue(panel.isAskingAboutEdit());
+        assertEquals("About edit 1 of 2: ", panel.inputBufferForTesting());
+
+        // typing works although the panel is thinking, and Enter hands the question to the waiting call
+        type(panel, "why?");
+        panel.handleKeyEvent(KeyEvent.ofKey(KeyCode.ENTER, KeyModifiers.NONE));
+        assertEquals("About edit 1 of 2: why?", handed.get());
+        assertFalse(panel.isAskingAboutEdit());
+        assertEquals("", panel.inputBufferForTesting());
+        assertTrue(panel.isThinkingForTesting(), "the same turn continues with the model's answer");
+        assertTrue(panel.conversationForTesting().stream()
+                .anyMatch(entry -> entry.role() == AiRole.USER && entry.text().equals("About edit 1 of 2: why?")));
+
+        // Esc in ask mode goes back to the edit without asking, and without interrupting the turn
+        panel.askAboutEdit("About edit 1 of 2: ", question -> true);
+        panel.handleKeyEvent(KeyEvent.ofKey(KeyCode.ESCAPE, KeyModifiers.NONE));
+        assertFalse(panel.isOpen());
+        assertFalse(panel.isAskingAboutEdit());
+        assertTrue(panel.isThinkingForTesting());
+
+        client.release.countDown();
+        await().atMost(5, TimeUnit.SECONDS).until(() -> !panel.isThinkingForTesting());
+    }
+
+    @Test
+    void askingAfterTheToolCallReturnedSendsANormalQuestionWithThePendingNote() throws Exception {
+        AiPanel panel = new AiPanel();
+        RecordingLlmClient client = new RecordingLlmClient("ok");
+        panel.setClientForTesting(client);
+        panel.addPendingNote("The user discarded the paused edit of demo.camel.yaml; the file is unchanged.");
+        panel.askAboutEdit("About edit 2 of 2: ", question -> false);
+
+        type(panel, "what now?");
+        panel.handleKeyEvent(KeyEvent.ofKey(KeyCode.ENTER, KeyModifiers.NONE));
+
+        assertTrue(client.awaitAnswer(5, TimeUnit.SECONDS));
+        assertTrue(client.lastQuestion().startsWith("[The user discarded the paused edit of demo.camel.yaml"));
+        assertTrue(client.lastQuestion().endsWith("About edit 2 of 2: what now?"));
+        assertTrue(panel.conversationForTesting().stream()
+                .anyMatch(entry -> entry.role() == AiRole.SYSTEM && entry.text().contains("told with your next question")));
+    }
+
+    /** Blocks the request until released, like a tool call waiting for the user in the editor. */
+    private static final class WaitingLlmClient extends LlmClient {
+
+        final CountDownLatch started = new CountDownLatch(1);
+        final CountDownLatch release = new CountDownLatch(1);
+
+        WaitingLlmClient() {
+            withModel("test-model");
+            withApiType(ApiType.openai);
+        }
+
+        @Override
+        public boolean detectEndpoint() {
+            return true;
+        }
+
+        @Override
+        public ChatResponse chatWithTools(String systemPrompt, List<Message> messages, List<ToolDef> tools) {
+            started.countDown();
+            try {
+                release.await(10, TimeUnit.SECONDS);
+            } catch (InterruptedException e) {
+                Thread.currentThread().interrupt();
+            }
+            return new ChatResponse("done", null, "end_turn", false, TokenUsage.EMPTY);
+        }
     }
 
     private static void type(AiPanel panel, String text) {

@@ -27,6 +27,7 @@ import java.util.Queue;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.BiFunction;
 import java.util.function.Supplier;
+import java.util.regex.Pattern;
 
 import dev.tamboui.buffer.Buffer;
 import dev.tamboui.export.ExportRequest;
@@ -40,6 +41,7 @@ import org.apache.camel.dsl.jbang.core.common.CommandLineHelper;
 import org.apache.camel.dsl.jbang.core.common.RuntimeHelper;
 import org.apache.camel.util.json.JsonArray;
 import org.apache.camel.util.json.JsonObject;
+import org.apache.camel.util.json.Jsoner;
 
 import static org.apache.camel.dsl.jbang.core.commands.tui.TuiHelper.hint;
 import static org.apache.camel.dsl.jbang.core.commands.tui.TuiHelper.hintLast;
@@ -103,6 +105,14 @@ class McpFacade {
         default ReplayOutcome replayFileWrite(FileWrite request) {
             return null;
         }
+
+        /**
+         * The file of a live edit parked in the editor (the user asked about it and has not continued, saved or
+         * discarded it yet), or null. Another file cannot be replayed until then.
+         */
+        default String parkedReplayFile() {
+            return null;
+        }
     }
 
     /** How file writes requested by tools are handled; set by the user with /write in the AI panel. */
@@ -114,9 +124,20 @@ class McpFacade {
 
     /**
      * What happened to a file write replayed in the editor: whether the user saved it, how many hunks were applied,
-     * which were skipped (their context was changed by the user), and the content of the file afterwards.
+     * which were skipped (their context was changed by the user), and the content of the file afterwards. A
+     * {@link #paused()} outcome means the user paused the replay to ask {@code question} about the edit: the editor
+     * still holds the applied hunks ({@code content} is the buffer, not the file), {@code remaining} hunks wait.
      */
-    record ReplayOutcome(boolean saved, int applied, List<Integer> skipped, String content) {
+    record ReplayOutcome(boolean saved, int applied, List<Integer> skipped, String content, String question,
+            int remaining) {
+
+        ReplayOutcome(boolean saved, int applied, List<Integer> skipped, String content) {
+            this(saved, applied, skipped, content, null, 0);
+        }
+
+        boolean paused() {
+            return question != null;
+        }
     }
 
     /**
@@ -1080,6 +1101,20 @@ class McpFacade {
         }
         FileWrite request = new FileWrite(
                 file, dir, oldContent, content, FilesBrowser.isTemporaryDirectory(dir), target.devMode);
+        if (writeMode == WriteMode.LIVE && bridge != null) {
+            String parked = bridge.parkedReplayFile();
+            if (parked != null && !parked.equals(file)) {
+                JsonObject result = new JsonObject();
+                result.put("status", "deferred");
+                result.put("file", file);
+                result.put("message", "Not written: the editor still holds the paused live edit of " + parked
+                                      + " (the user asked about it and has not continued, saved or discarded it"
+                                      + " yet). Answer the user's question now and end your turn without writing"
+                                      + " more files. The user finishes that edit first; your next message tells"
+                                      + " you what became of it, then write " + file + ".");
+                return result;
+            }
+        }
         if (writeMode == WriteMode.LIVE && exists && bridge != null) {
             long waitStart = System.currentTimeMillis();
             ReplayOutcome outcome = bridge.replayFileWrite(request);
@@ -1124,6 +1159,26 @@ class McpFacade {
         result.put("file", file);
         JsonArray skipped = new JsonArray();
         skipped.addAll(outcome.skipped());
+        if (outcome.paused()) {
+            result.put("status", "paused");
+            result.put("appliedHunks", outcome.applied());
+            result.put("pendingHunks", outcome.remaining());
+            result.put("skippedHunks", skipped);
+            result.put("question", outcome.question());
+            result.put("content", outcome.content() != null ? outcome.content() : "");
+            result.put("message", "The user paused the replay in the editor after " + outcome.applied()
+                                  + " of " + (outcome.applied() + outcome.remaining())
+                                  + " edit(s) and asks: " + outcome.question()
+                                  + "\nAnswer the question briefly (what the edit does and why); look options up with"
+                                  + " tui_catalog_doc rather than listing them from memory. Nothing is written"
+                                  + " yet: 'content' is the editor buffer with the applied edits, the file on disk"
+                                  + " is unchanged. If the user wants the change done differently, call"
+                                  + " tui_write_file again with the complete new content: it continues in the"
+                                  + " editor from 'content'. Otherwise only answer and end your turn: do not write"
+                                  + " other files until the user has finished this edit (Enter continues the"
+                                  + " pending edit(s), then the user saves or discards).");
+            return result;
+        }
         if (!outcome.saved()) {
             result.put("status", "rejected");
             result.put("message", "The change was replayed in the editor and the user discarded it; the file is"
@@ -1171,6 +1226,78 @@ class McpFacade {
             return null;
         }
         return RuntimeHelper.sendMessage(pid, endpoint, body, headers);
+    }
+
+    /**
+     * Evaluates an expression (simple by default) inside the selected integration, the way {@code camel cmd eval} does,
+     * with an optional message body; returns null when no integration is selected. The result is the value or the
+     * parser/evaluation error, so it doubles as a validator the model can try expressions against.
+     */
+    JsonObject evalExpression(String language, String expression, String body) {
+        if (ctx.selectedPid == null) {
+            return null;
+        }
+        long pid;
+        try {
+            pid = Long.parseLong(ctx.selectedPid);
+        } catch (NumberFormatException e) {
+            return null;
+        }
+        String lang = language == null || language.isBlank() ? "simple" : language;
+        boolean predicate = "simple".equals(lang) && looksLikePredicate(expression);
+        String raw = RuntimeHelper.executeAction(pid, "eval", root -> {
+            root.put("language", lang);
+            root.put("predicate", String.valueOf(predicate));
+            root.put("template", Jsoner.escape(expression));
+            if (body != null) {
+                root.put("body", Jsoner.escape(body));
+            }
+        });
+        JsonObject result = new JsonObject();
+        result.put("language", lang);
+        result.put("expression", expression);
+        if (predicate) {
+            result.put("predicate", true);
+        }
+        if (body == null && expression.contains("${body")) {
+            result.put("note", "evaluated with an empty body; pass body to evaluate against a value");
+        }
+        JsonObject out = null;
+        try {
+            out = (JsonObject) Jsoner.deserialize(raw);
+        } catch (Exception e) {
+            // not JSON: a timeout message
+        }
+        if (out == null) {
+            result.put("status", "error");
+            result.put("error", raw);
+            return result;
+        }
+        if ("success".equals(out.getString("status"))) {
+            result.put("status", "ok");
+            result.put("result", out.get("result"));
+            return result;
+        }
+        result.put("status", "error");
+        JsonObject cause = out.getMap("exception");
+        String message = cause != null ? cause.getString("message") : null;
+        result.put("error", message != null ? Jsoner.unescape(message) : "evaluation failed");
+        return result;
+    }
+
+    private static final Pattern PREDICATE_OPERATOR = Pattern.compile(
+            "\\s(==|=~|!=|!=~|>|>=|<|<=|~~|!~~|contains|!contains|regex|!regex|in|!in|is|!is|range|!range"
+                                                                      + "|startsWith|!startsWith|endsWith|!endsWith|equals|!equals|&&|\\|\\|)\\s");
+
+    /**
+     * Whether a simple expression is a predicate (an operator between placeholders, giving true or false) rather than a
+     * value; the ternary and elvis forms contain operators but produce values.
+     */
+    static boolean looksLikePredicate(String expression) {
+        if (expression == null || expression.contains(" ? ") || expression.contains(" ?: ")) {
+            return false;
+        }
+        return PREDICATE_OPERATOR.matcher(expression).find();
     }
 
     JsonObject executeSql(String sql, String datasource, int maxRows, int queryTimeout) {

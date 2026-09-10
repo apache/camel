@@ -150,8 +150,8 @@ class EditReplayTest {
     @Test
     void replaysAllHunksWithEnterBetweenThem() {
         MemoryEditor editor = new MemoryEditor(ORIGINAL);
-        List<EditDiff.Hunk> hunks = EditDiff.hunks(ORIGINAL.lines().toList(), TARGET.lines().toList(), 1);
-        assertEquals(3, hunks.size(), "three separate changes");
+        List<EditDiff.Hunk> hunks = EditDiff.hunks(ORIGINAL.lines().toList(), TARGET.lines().toList(), 3);
+        assertEquals(3, hunks.size(), "three separate changes, each its own step although they are close together");
 
         FakeClock clock = new FakeClock();
         EditReplay replay = replay(clock);
@@ -223,6 +223,89 @@ class EditReplayTest {
         assertTrue(editor.text().contains("changed by me"));
         assertFalse(editor.text().contains("loggingLevel"));
         assertTrue(editor.text().strip().endsWith("uri: log:end"));
+    }
+
+    @Test
+    void askingParksThePauseAndRetargetingContinuesFromTheEditor() {
+        MemoryEditor editor = new MemoryEditor(ORIGINAL);
+        FakeClock clock = new FakeClock();
+        EditReplay replay = replay(clock);
+        replay.start(editor, EditDiff.hunks(ORIGINAL.lines().toList(), TARGET.lines().toList(), 1));
+        runUntilNotTyping(replay, clock);
+        assertEquals(EditReplay.Phase.PAUSED, replay.phase());
+        assertEquals(2, replay.remaining());
+
+        // F8 at the pause parks the replay for a question to the AI; keys go to the AI panel meanwhile
+        assertTrue(replay.handleKeyEvent(KeyEvent.ofKey(KeyCode.F8, KeyModifiers.NONE)));
+        assertEquals(EditReplay.Phase.ASKING, replay.phase());
+        assertTrue(replay.isAsking());
+        assertTrue(replay.isActive());
+        assertFalse(replay.capturesKeys());
+        assertFalse(replay.handleKeyEvent(KeyEvent.ofKey(KeyCode.ENTER, KeyModifiers.NONE)));
+        clock.now += EditReplay.LINE_DELAY_MS * 10;
+        replay.tick(clock.now);
+        assertEquals(EditReplay.Phase.ASKING, replay.phase(), "nothing is typed while asking");
+        assertEquals(1, replay.applied());
+
+        // the panel closes: back to the pause, Enter continues
+        replay.endAsking();
+        assertEquals(EditReplay.Phase.PAUSED, replay.phase());
+        assertTrue(replay.handleKeyEvent(KeyEvent.ofKey(KeyCode.ENTER, KeyModifiers.NONE)));
+        assertEquals(EditReplay.Phase.TYPING, replay.phase());
+        runUntilNotTyping(replay, clock);
+        assertEquals(EditReplay.Phase.PAUSED, replay.phase());
+        assertEquals(2, replay.applied());
+        assertEquals(1, replay.remaining());
+
+        // the AI revises the change after the question: a new replay continues from the editor's current content
+        String revised = editor.text().replace("simple: \"3000\"", "simple: \"5000\"");
+        replay.start(editor, EditDiff.hunks(editor.lines, revised.lines().toList(), 1));
+        assertEquals(EditReplay.Phase.TYPING, replay.phase());
+        assertEquals(1, replay.total());
+        runUntilNotTyping(replay, clock);
+        assertEquals(EditReplay.Phase.FINISHED, replay.phase());
+        assertEquals(revised.strip(), editor.text().strip());
+
+        // F8 while typing is just any key: it finishes the hunk, it does not park
+        MemoryEditor other = new MemoryEditor(ORIGINAL);
+        replay.start(other, EditDiff.hunks(ORIGINAL.lines().toList(), TARGET.lines().toList(), 1));
+        assertTrue(replay.handleKeyEvent(KeyEvent.ofKey(KeyCode.F8, KeyModifiers.NONE)));
+        assertEquals(EditReplay.Phase.PAUSED, replay.phase());
+    }
+
+    @Test
+    void aSingleChangeNeverPausesButCanStillBeAskedAboutOnceDone() {
+        MemoryEditor editor = new MemoryEditor(ORIGINAL);
+        FakeClock clock = new FakeClock();
+        EditReplay replay = replay(clock);
+        String oneChange = ORIGINAL.replace("simple: hello", "simple: hi there");
+        replay.start(editor, EditDiff.hunks(ORIGINAL.lines().toList(), oneChange.lines().toList(), 1));
+        assertFalse(replay.askAfterFinish(), "still typing");
+        runUntilNotTyping(replay, clock);
+        assertEquals(EditReplay.Phase.FINISHED, replay.phase());
+        assertEquals(0, replay.remaining());
+
+        assertTrue(replay.askAfterFinish());
+        assertEquals(EditReplay.Phase.ASKING, replay.phase());
+        assertEquals(1, replay.current());
+        replay.endAsking();
+        assertEquals(EditReplay.Phase.FINISHED, replay.phase(), "back to done, not to a pause");
+        assertEquals(1, replay.applied());
+
+        // nothing to ask about before a replay ran
+        assertFalse(replay(clock).askAfterFinish());
+    }
+
+    @Test
+    void editorLinesDropTheEmptyLastLineThatStandsForTheFinalNewline() {
+        assertEquals(List.of("a", "b"), EditReplay.contentLines(List.of("a", "b", "")));
+        assertEquals(List.of("a", "b"), EditReplay.contentLines(List.of("a", "b")));
+        assertEquals(List.of("a", ""), EditReplay.contentLines(List.of("a", "", "")), "a blank line stays");
+        assertEquals(List.of(), EditReplay.contentLines(List.of("")));
+        assertEquals(List.of(), EditReplay.contentLines(List.of()));
+        // a retarget diff against the editor must not see the final newline as a deleted line
+        List<String> editor = List.of("a", "b", "");
+        assertTrue(EditDiff.hunks(EditReplay.contentLines(editor), "a\nb\n".lines().toList(), 3).isEmpty());
     }
 
     @Test

@@ -35,7 +35,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 class McpFacadeWriteFileTest {
 
     /** Answers the confirm dialog without a UI, and remembers what it was asked. */
-    private static final class ConfirmingBridge implements McpFacade.MonitorBridge {
+    private static class ConfirmingBridge implements McpFacade.MonitorBridge {
         final boolean answer;
         McpFacade.FileWrite request;
         int asked;
@@ -226,6 +226,71 @@ class McpFacadeWriteFileTest {
         assertTrue(facade.validateSource("demo", null, "- route: {}").getBoolean("valid"), "content alone is YAML");
         assertEquals("error", facade.validateSource("demo", "missing.yaml", null).getString("status"));
         assertEquals("error", facade.validateSource("demo", "notes.txt", "x").getString("status"));
+    }
+
+    @Test
+    void liveModePausedForAQuestionReturnsTheEditorStateWithoutWriting(@TempDir Path dir) throws IOException {
+        Files.writeString(dir.resolve("demo.camel.yaml"), "- route: {}\n");
+        ConfirmingBridge bridge = new ConfirmingBridge(true) {
+            @Override
+            public McpFacade.ReplayOutcome replayFileWrite(McpFacade.FileWrite request) {
+                this.request = request;
+                return new McpFacade.ReplayOutcome(
+                        false, 1, List.of(), "- route:\n    id: typed\n", "About edit 1 of 3: why an id?", 2);
+            }
+        };
+        McpFacade facade = facade(dir, true, bridge);
+        facade.setWriteMode(McpFacade.WriteMode.LIVE);
+
+        JsonObject result = facade.writeFile("demo", "demo.camel.yaml", "- route:\n    id: typed\n    from: x\n", true);
+
+        assertEquals("paused", result.getString("status"));
+        assertEquals("About edit 1 of 3: why an id?", result.getString("question"));
+        assertEquals(1, result.getInteger("appliedHunks"));
+        assertEquals(2, result.getInteger("pendingHunks"));
+        assertEquals("- route:\n    id: typed\n", result.getString("content"));
+        assertTrue(result.getString("message").contains("why an id?"));
+        assertTrue(result.getString("message").contains("call tui_write_file again"));
+        assertEquals(0, bridge.asked, "no confirm dialog: the replay is parked in the editor");
+        assertEquals("- route: {}\n", Files.readString(dir.resolve("demo.camel.yaml"), StandardCharsets.UTF_8),
+                "nothing is written while the question is open");
+        assertNotNull(bridge.request);
+        assertEquals("- route: {}\n", bridge.request.oldContent());
+    }
+
+    @Test
+    void liveModeDefersOtherFilesWhileAnEditIsParkedInTheEditor(@TempDir Path dir) throws IOException {
+        Files.writeString(dir.resolve("demo.camel.yaml"), "- route: {}\n");
+        Files.writeString(dir.resolve("application.properties"), "a=1\n");
+        ConfirmingBridge bridge = new ConfirmingBridge(true) {
+            @Override
+            public String parkedReplayFile() {
+                return "demo.camel.yaml";
+            }
+
+            @Override
+            public McpFacade.ReplayOutcome replayFileWrite(McpFacade.FileWrite request) {
+                this.request = request;
+                return new McpFacade.ReplayOutcome(true, 1, List.of(), request.newContent());
+            }
+        };
+        McpFacade facade = facade(dir, true, bridge);
+        facade.setWriteMode(McpFacade.WriteMode.LIVE);
+
+        JsonObject other = facade.writeFile("demo", "application.properties", "a=2\n", true);
+        assertEquals("deferred", other.getString("status"));
+        assertTrue(other.getString("message").contains("demo.camel.yaml"));
+        assertTrue(other.getString("message").contains("end your turn"));
+        assertEquals("a=1\n", Files.readString(dir.resolve("application.properties"), StandardCharsets.UTF_8));
+        assertEquals(0, bridge.asked, "no confirm dialog on top of the parked edit");
+        // a new file is deferred as well, not confirmed
+        assertEquals("deferred", facade.writeFile("demo", "new.camel.yaml", "- route: {}\n", true).getString("status"));
+        assertFalse(Files.exists(dir.resolve("new.camel.yaml")));
+
+        // the parked file itself continues in the editor
+        JsonObject same = facade.writeFile("demo", "demo.camel.yaml", "- route:\n    id: a\n", true);
+        assertEquals("written", same.getString("status"));
+        assertEquals("demo.camel.yaml", bridge.request.file());
     }
 
     @Test

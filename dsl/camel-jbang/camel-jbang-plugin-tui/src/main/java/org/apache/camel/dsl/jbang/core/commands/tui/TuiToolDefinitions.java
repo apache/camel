@@ -454,6 +454,14 @@ final class TuiToolDefinitions {
                         "content", propDef("string", "The source to validate.")),
                 List.of("file"))));
         tools.add(toToolDef(toolDef(
+                "tui_eval_expression",
+                "Evaluates an expression in the running integration: the value (true/false for a predicate), or "
+                                       + "the syntax error. Check simple before answering or writing it.",
+                Map.of("expression", propDef("string", "e.g. ${random(1,10)} or ${body} ?: 'none'"),
+                        "language", propDef("string", "simple (default), jsonpath, xpath, jq"),
+                        "body", propDef("string", "Message body")),
+                List.of("expression"))));
+        tools.add(toToolDef(toolDef(
                 "tui_get_spans",
                 "OpenTelemetry spans of the selected integration (traceId, spanId, parentSpanId, name, kind, "
                                  + "status, start/end nanos, durationMs, routeId, processorId, attributes); the "
@@ -481,11 +489,15 @@ final class TuiToolDefinitions {
         tools.add(toToolDef(toolDef(
                 "tui_catalog_doc",
                 "Camel catalog documentation of a component, data format, language or EIP (description, options, "
-                                   + "Maven coordinates) for the integration's Camel version.",
+                                   + "Maven coordinates) for the integration's Camel version. For simple also its "
+                                   + "syntax rules, functions and operators: count and names by group, or with "
+                                   + "optionsFilter the matching ones with parameters and examples.",
                 Map.of("name", propDef("string", "Name, e.g. kafka, json-jackson, simple, timer, choice, split"),
                         "kind", propDef("string", "component, dataformat, language or eip (auto-detected)"),
                         "includeOptions", propDef("boolean", "Include the options (default true)"),
                         "includeDoc", propDef("boolean", "Include the full AsciiDoc page (default false)"),
+                        "docPage", propDef("string", "A language doc sub-page (simple: functions, operators, ognl, "
+                                                     + "advanced) to return as text"),
                         "optionsFilter", propDef("string", "Keyword to match in option names or descriptions")),
                 List.of("name"))));
 

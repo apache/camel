@@ -785,6 +785,10 @@ Press *F8* to open the built-in AI prompt panel. The panel auto-detects a provid
 
 Press *Ctrl+P* inside the AI panel to switch provider or model at any time.
 
+A question can span several lines: *Ctrl+N* starts a new line (terminals deliver *Shift+Enter* and
+*Alt+Enter* as a plain *Enter*, so they cannot be used), pasted text keeps its line breaks, and *Up* and
+*Down* move between the lines of the question before they recall earlier prompts. *Enter* sends it.
+
 The same guidance, together with the provider that is currently detected, is available inside the TUI
 via *F2* -> _AI & MCP_ -> _Setup AI_. Use *F2* -> _Settings_ to pin a provider, model or base URL
 (`camel.tui.ai.provider`, `camel.tui.ai.model`, `camel.tui.ai.url`) regardless of the environment.
@@ -1073,20 +1077,38 @@ refuses to write an invalid file, returning the errors instead, so a model fixes
 finding them in the log after the reload (`validate=false` writes anyway). Both tools are part of the core
 tool set, so local models (Ollama) get them as well.
 
+Simple expressions get two more helpers, because they are what a small model gets wrong most often
+(functions belong inside the `${...}` placeholder, operators between placeholders: `${header.user} ?: 'Guest'`,
+not `${header.user ?: 'Guest'}`). `tui_catalog_doc` for the `simple` language returns those syntax rules
+together with the catalog's functions and operators (their count and names by group, or with `optionsFilter`
+the matching ones with parameters and examples), and `docPage` serves the operators, functions, OGNL and
+advanced documentation pages. `tui_eval_expression` evaluates an expression inside the running integration,
+like `camel cmd eval`, and returns the value or the parser error, so the agent can try an expression before
+it answers or writes it.
+
 ==== Watching the AI edit (live mode)
 
 With `/write live` the change is not shown as a diff but replayed in the Source tab's editor: the AI
 panel hides so the editor has the whole screen, the file opens in edit mode, the cursor jumps to the
 first change, removed lines disappear and added lines are typed at a readable pace. The AI panel comes
 back once you have saved or discarded. This is meant for learning Camel and the YAML DSL: you see the edit land in
-the full, syntax-highlighted file and can look up what the new lines mean. Between changes the replay
-pauses: *Enter* continues with the next change, *Esc* stops (what was typed stays in the editor), any
+the full, syntax-highlighted file and can look up what the new lines mean. Every change is its own step,
+even when changes sit a line apart, and between them the replay pauses: *Enter* continues with the next change, *Esc* stops (what was typed stays in the editor), any
 other key finishes the current change at once, and *F4* (the editor's edit key) hands the keyboard to you
 so you can edit yourself; *F9* then continues with the remaining changes. Those are located by their surrounding lines,
 so your own edits elsewhere in the file shift them rather than break them; a change whose surroundings
 you edited is skipped and reported to the agent. When the replay is over you review with *F7* and
 save with *Ctrl+S* or *F5*, which is the confirmation, or discard with *Esc*. The agent waits until then
 and is told what was applied, what was skipped, and the content of the saved file if you changed it.
+
+While the replay pauses you can also ask the agent about the change it just made: *F8* opens the AI panel
+with the question prefilled (`About edit 2 of 3:`), you complete it and press *Enter*. The waiting
+`tui_write_file` call returns to the agent with the question, the edits applied so far and the editor's
+content, and the agent answers in the same turn -- nothing is written meanwhile. Close the panel with *F8*
+(or *Esc* to leave without asking) and the pause continues where it was. If your question makes the agent
+revise the change, its next `tui_write_file` of the same file continues in the editor from the current
+content instead of starting over. If you save or discard without the agent being involved again, it is
+told what became of the edit with your next question.
 
 === Example Workflows
 

@@ -21,6 +21,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
+import java.util.TreeMap;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import dev.tamboui.buffer.Buffer;
@@ -91,7 +92,7 @@ class TuiToolRegistry {
             "tui_get_state", "tui_get_options", "tui_get_table", "tui_get_log", "tui_get_errors",
             "tui_get_diagram", "tui_get_topology", "tui_get_processor_detail", "tui_catalog_doc",
             "tui_get_history", "tui_get_spans", "tui_control", "tui_send_message", "tui_get_files", "tui_write_file",
-            "tui_validate_source",
+            "tui_validate_source", "tui_eval_expression",
             "tui_get_readme", "tui_navigate", "tui_set_log_level", "tui_filter", "tui_get_status",
             "tui_infra");
 
@@ -157,6 +158,7 @@ class TuiToolRegistry {
             case "tui_get_files" -> callGetFiles(args);
             case "tui_write_file" -> callWriteFile(args);
             case "tui_validate_source" -> callValidateSource(args);
+            case "tui_eval_expression" -> callEvalExpression(args);
             case "tui_get_spans" -> callGetSpans(args);
             case "tui_locate" -> callLocate(args);
             case "tui_draw_shape" -> callDrawShape(args);
@@ -1103,6 +1105,20 @@ class TuiToolRegistry {
         return Jsoner.serialize(data);
     }
 
+    private String callEvalExpression(Map<String, Object> args) {
+        String expression = args.get("expression") instanceof String s ? s : null;
+        if (expression == null || expression.isBlank()) {
+            return "Error: expression is required";
+        }
+        String language = args.get("language") instanceof String s ? s : null;
+        String body = args.get("body") instanceof String s ? s : null;
+        JsonObject response = facade.evalExpression(language, expression, body);
+        if (response == null) {
+            return "Error: no integration selected or PID unavailable";
+        }
+        return Jsoner.serialize(response);
+    }
+
     private String callSendMessage(Map<String, Object> args) {
         String endpoint = (String) args.get("endpoint");
         if (endpoint == null || endpoint.isBlank()) {
@@ -1426,14 +1442,15 @@ class TuiToolRegistry {
         String optionsFilter = args.get("optionsFilter") instanceof String v ? v : null;
         boolean includeOptions = !Boolean.FALSE.equals(args.get("includeOptions"));
         boolean includeDoc = Boolean.TRUE.equals(args.get("includeDoc"));
+        String docPage = args.get("docPage") instanceof String v ? v.trim().toLowerCase(Locale.ROOT) : null;
 
-        String version = facade.getSelectedCamelVersion();
+        String version = facade != null ? facade.getSelectedCamelVersion() : null;
         try {
             CamelCatalog catalog = CatalogLoader.loadCatalog(null, version, true);
             if (catalog == null) {
                 return "{\"error\": \"Could not load catalog" + (version != null ? " for version " + version : "") + "\"}";
             }
-            return buildCatalogDocResult(catalog, name, kind, optionsFilter, includeOptions, includeDoc);
+            return buildCatalogDocResult(catalog, name, kind, optionsFilter, includeOptions, includeDoc, docPage);
         } catch (Exception e) {
             JsonObject err = new JsonObject();
             err.put("error", "Failed to load catalog: " + e.getMessage());
@@ -1443,7 +1460,7 @@ class TuiToolRegistry {
 
     private String buildCatalogDocResult(
             CamelCatalog catalog, String name, String kind, String optionsFilter,
-            boolean includeOptions, boolean includeDoc) {
+            boolean includeOptions, boolean includeDoc, String docPage) {
         String lowerFilter = optionsFilter != null ? optionsFilter.toLowerCase() : null;
 
         if (kind == null || "component".equals(kind)) {
@@ -1469,8 +1486,21 @@ class TuiToolRegistry {
         if (kind == null || "language".equals(kind)) {
             LanguageModel lm = catalog.languageModel(name);
             if (lm != null) {
-                String doc = includeDoc ? catalog.asciiDoc(name + "-language") : null;
-                return buildLanguageDocJson(lm, lowerFilter, includeOptions, doc);
+                String doc = null;
+                if (docPage != null && !docPage.isEmpty()) {
+                    doc = catalog.asciiDoc(name + "-" + docPage);
+                    if (doc == null) {
+                        JsonObject error = new JsonObject();
+                        error.put("error", "No doc page '" + docPage + "' for language " + name);
+                        error.put("docPages", new JsonArray(languageDocPages(catalog, name)));
+                        return error.toJson();
+                    }
+                } else if (includeDoc) {
+                    doc = catalog.asciiDoc(name + "-language");
+                }
+                boolean docPageOnly = docPage != null && !docPage.isEmpty();
+                return buildLanguageDocJson(
+                        lm, lowerFilter, includeOptions, doc, languageDocPages(catalog, name), docPageOnly);
             }
             if (kind != null) {
                 return notFound("Language", name, catalog.suggestLanguageNames(name, 5));
@@ -1602,7 +1632,34 @@ class TuiToolRegistry {
         return Jsoner.serialize(result);
     }
 
-    private String buildLanguageDocJson(LanguageModel model, String filter, boolean includeOptions, String doc) {
+    /** The sub-pages of a language's documentation (simple has functions, operators, ognl and advanced). */
+    private static List<String> languageDocPages(CamelCatalog catalog, String name) {
+        List<String> pages = new ArrayList<>();
+        for (String page : LANGUAGE_DOC_PAGES) {
+            if (catalog.asciiDoc(name + "-" + page) != null) {
+                pages.add(page);
+            }
+        }
+        return pages;
+    }
+
+    private static final List<String> LANGUAGE_DOC_PAGES = List.of("functions", "operators", "ognl", "advanced");
+
+    /**
+     * The rules a small model gets wrong most: functions live inside the placeholder, operators between placeholders.
+     * Sent with the simple language result so an answer's examples follow the same shape as the catalog's.
+     */
+    static final String SIMPLE_SYNTAX = "Values and functions go inside ${...}: ${body}, ${header.name},"
+                                        + " ${exchangeProperty.name}, ${variable.name}, ${random(1,10)},"
+                                        + " ${date:now:yyyy-MM-dd}. Operators go BETWEEN placeholders, with spaces,"
+                                        + " never inside one: ${header.foo} == 'bar', ${header.user} ?: 'Guest',"
+                                        + " ${header.n} > 5 && ${body} != null, ${header.a} == 'x' ? 'yes' : 'no'."
+                                        + " Text literals are in single quotes; text outside ${...} is kept as is:"
+                                        + " Hello ${header.name}. Nesting works: ${header.${header.key}}.";
+
+    private String buildLanguageDocJson(
+            LanguageModel model, String filter, boolean includeOptions, String doc, List<String> docPages,
+            boolean docPageOnly) {
         JsonObject result = new JsonObject();
         result.put("kind", "language");
         result.put("name", model.getName());
@@ -1615,7 +1672,8 @@ class TuiToolRegistry {
         result.put("artifactId", model.getArtifactId());
         addCommonModelFields(result, model);
 
-        if (includeOptions) {
+        // a requested doc page is the answer; the options, functions and operators would only add tokens around it
+        if (includeOptions && !docPageOnly) {
             JsonArray options = new JsonArray();
             if (model.getOptions() != null) {
                 for (BaseOptionModel opt : model.getOptions()) {
@@ -1627,10 +1685,138 @@ class TuiToolRegistry {
             result.put("options", options);
             result.put("matchedOptions", options.size());
         }
+        if (!docPageOnly) {
+            addLanguageFunctions(result, model, filter);
+        }
+        if ("simple".equals(model.getName()) || "csimple".equals(model.getName())) {
+            result.put("syntax", SIMPLE_SYNTAX);
+        }
+        if (!docPages.isEmpty()) {
+            result.put("docPages", new JsonArray(docPages));
+            result.put("docPagesHint", "docPage=<name> returns that documentation page as text");
+        }
         if (doc != null) {
             result.put("doc", doc);
         }
         return Jsoner.serialize(result);
+    }
+
+    /**
+     * The functions and operators of a language that has them (simple): without a filter their count and names by
+     * group, which answers "what is there" in a few hundred tokens; with a filter the matching ones in full, with
+     * parameters and examples, the way the options are filtered.
+     */
+    private static void addLanguageFunctions(JsonObject result, LanguageModel model, String filter) {
+        List<LanguageModel.LanguageFunctionModel> functions = model.getFunctions();
+        if (functions != null && !functions.isEmpty()) {
+            result.put("functionCount", functions.size());
+            if (filter != null) {
+                JsonArray arr = new JsonArray();
+                for (LanguageModel.LanguageFunctionModel fn : functions) {
+                    if (matchesOptionFilter(fn, filter)
+                            || (fn.getDisplayName() != null && fn.getDisplayName().toLowerCase().contains(filter))) {
+                        arr.add(functionToJson(fn));
+                    }
+                }
+                result.put("functions", arr);
+                result.put("matchedFunctions", arr.size());
+            } else {
+                Map<String, JsonArray> groups = new TreeMap<>();
+                for (LanguageModel.LanguageFunctionModel fn : functions) {
+                    String group = fn.getGroup() != null ? fn.getGroup() : "other";
+                    groups.computeIfAbsent(group, g -> new JsonArray()).add(fn.getName());
+                }
+                result.put("functionGroups", new JsonObject(groups));
+                result.put("functionsHint", "optionsFilter with a function name, a group above or a word from its"
+                                            + " description returns the matching functions with their parameters"
+                                            + " and examples");
+            }
+        }
+        List<LanguageModel.LanguageOperatorModel> operators = model.getOperators();
+        if (operators != null && !operators.isEmpty()) {
+            result.put("operatorCount", operators.size());
+            if (filter != null) {
+                JsonArray arr = new JsonArray();
+                for (LanguageModel.LanguageOperatorModel op : operators) {
+                    if (matchesOptionFilter(op, filter)
+                            || (op.getOperatorKind() != null && op.getOperatorKind().toLowerCase().contains(filter))) {
+                        arr.add(operatorToJson(op));
+                    }
+                }
+                result.put("operators", arr);
+                result.put("matchedOperators", arr.size());
+            } else {
+                JsonArray syntaxes = new JsonArray();
+                for (LanguageModel.LanguageOperatorModel op : operators) {
+                    syntaxes.add(op.getOperatorSyntax() != null ? op.getOperatorSyntax() : op.getName());
+                }
+                result.put("operatorSyntax", syntaxes);
+            }
+        }
+    }
+
+    private static JsonObject functionToJson(LanguageModel.LanguageFunctionModel fn) {
+        JsonObject o = new JsonObject();
+        o.put("name", fn.getName());
+        if (fn.getDisplayName() != null) {
+            o.put("displayName", fn.getDisplayName());
+        }
+        if (fn.getGroup() != null) {
+            o.put("group", fn.getGroup());
+        }
+        if (fn.getJavaType() != null) {
+            o.put("javaType", fn.getJavaType());
+        }
+        if (fn.getDescription() != null) {
+            o.put("description", fn.getDescription());
+        }
+        if (fn.getParams() != null && !fn.getParams().isEmpty()) {
+            JsonArray params = new JsonArray();
+            for (LanguageModel.FunctionParamModel param : fn.getParams()) {
+                JsonObject p = new JsonObject();
+                p.put("name", param.getName());
+                if (param.getJavaType() != null) {
+                    p.put("javaType", param.getJavaType());
+                }
+                p.put("required", param.isRequired());
+                if (param.getDescription() != null) {
+                    p.put("description", param.getDescription());
+                }
+                params.add(p);
+            }
+            o.put("params", params);
+        }
+        if (fn.getExamples() != null && !fn.getExamples().isEmpty()) {
+            o.put("examples", new JsonArray(fn.getExamples()));
+        }
+        if (fn.isOgnl()) {
+            o.put("ognl", true);
+        }
+        if (fn.isDeprecated()) {
+            o.put("deprecated", true);
+        }
+        return o;
+    }
+
+    private static JsonObject operatorToJson(LanguageModel.LanguageOperatorModel op) {
+        JsonObject o = new JsonObject();
+        o.put("name", op.getName());
+        if (op.getDisplayName() != null) {
+            o.put("displayName", op.getDisplayName());
+        }
+        if (op.getOperatorKind() != null) {
+            o.put("kind", op.getOperatorKind());
+        }
+        if (op.getOperatorSyntax() != null) {
+            o.put("syntax", op.getOperatorSyntax());
+        }
+        if (op.getDescription() != null) {
+            o.put("description", op.getDescription());
+        }
+        if (op.getExamples() != null && !op.getExamples().isEmpty()) {
+            o.put("examples", new JsonArray(op.getExamples()));
+        }
+        return o;
     }
 
     private String buildEipDocJson(EipModel model, String filter, boolean includeOptions, String doc) {

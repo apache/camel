@@ -33,7 +33,8 @@ import static org.apache.camel.dsl.jbang.core.commands.tui.TuiHelper.hintLast;
  * continues with the next hunk, Esc stops (what was typed stays in the editor), any other key finishes the current hunk
  * at once, and F4 (the editor's edit key) hands the keyboard to the editor; F9 resumes the remaining hunks afterwards.
  * Hunks are located by their context lines, so edits the user made in between shift them rather than break them, and a
- * hunk whose context is gone is skipped and reported.
+ * hunk whose context is gone is skipped and reported. F8 at a pause parks the replay ({@link Phase#ASKING}) so the user
+ * can ask the AI about the edit in the AI panel; the pause resumes when the panel closes.
  *
  * The replay drives an {@link Editor}; the source viewer implements it, tests use an in-memory one. It advances on UI
  * ticks and never blocks the UI thread.
@@ -60,6 +61,8 @@ final class EditReplay {
         IDLE,
         TYPING,
         PAUSED,
+        /** Parked at a pause while the user asks the AI about the edit. */
+        ASKING,
         HANDED_OVER,
         FINISHED
     }
@@ -82,9 +85,23 @@ final class EditReplay {
     private int charIndex;
     private long nextActionAt;
     private int minRow;
+    // where a question to the AI returns to: the pause, or the finished replay (asked after the last hunk)
+    private Phase askedFrom = Phase.PAUSED;
 
     EditReplay() {
         this(System::currentTimeMillis);
+    }
+
+    /**
+     * The editor's lines as file content lines (what {@link String#lines()} gives for the file text): the editor keeps
+     * a final newline as an empty last line, which is not a line of its own for a diff.
+     */
+    static List<String> contentLines(List<String> editorLines) {
+        List<String> lines = new ArrayList<>(editorLines);
+        if (!lines.isEmpty() && lines.get(lines.size() - 1).isEmpty()) {
+            lines.remove(lines.size() - 1);
+        }
+        return lines;
     }
 
     /** With a clock, for tests that drive the ticks. */
@@ -130,6 +147,35 @@ final class EditReplay {
 
     int current() {
         return hunkIndex + 1;
+    }
+
+    /** Hunks not yet replayed (at a pause the current one is done). */
+    int remaining() {
+        return Math.max(0, hunks.size() - Math.max(0, hunkIndex + 1));
+    }
+
+    boolean isAsking() {
+        return phase == Phase.ASKING;
+    }
+
+    /** Back to the pause (or the finished replay) once the question to the AI is over (the panel closed). */
+    void endAsking() {
+        if (phase == Phase.ASKING) {
+            phase = askedFrom;
+        }
+    }
+
+    /**
+     * Asks about the edit once the replay is over (a single hunk never pauses) but the outcome is still open, that is
+     * before the user saves or discards. Returns false when there is nothing to ask about.
+     */
+    boolean askAfterFinish() {
+        if (phase != Phase.FINISHED || hunks.isEmpty()) {
+            return false;
+        }
+        askedFrom = Phase.FINISHED;
+        phase = Phase.ASKING;
+        return true;
     }
 
     void abort() {
@@ -232,8 +278,9 @@ final class EditReplay {
 
     private void finishHunk() {
         applied.add(hunkIndex + 1);
-        EditDiff.Hunk hunk = hunks.get(hunkIndex);
-        minRow = row + hunk.after().size();
+        // the next hunk is searched from the end of this one; its context before may share lines with the context
+        // after this one, so the search must not skip past that gap
+        minRow = row;
         editor.moveToRow(Math.max(0, row - 1));
         if (hunkIndex + 1 < hunks.size()) {
             phase = Phase.PAUSED;
@@ -263,6 +310,10 @@ final class EditReplay {
                 } else if (ke.isKey(KeyCode.F4)) {
                     // F4 is the Source tab's edit key
                     phase = Phase.HANDED_OVER;
+                } else if (ke.isKey(KeyCode.F8)) {
+                    // F8 opens the AI panel: ask about this edit
+                    askedFrom = Phase.PAUSED;
+                    phase = Phase.ASKING;
                 }
                 return true;
             }
@@ -288,7 +339,11 @@ final class EditReplay {
             case PAUSED -> {
                 hint(spans, "Enter", "next AI edit (" + (current() + 1) + " of " + total() + ")");
                 hint(spans, "F4", "edit yourself");
+                hint(spans, "F8", "ask the AI about it");
                 hintLast(spans, "Esc", "stop");
+            }
+            case ASKING -> {
+                hint(spans, "AI edit " + current() + " of " + total(), "asking the AI");
             }
             case HANDED_OVER -> {
                 hint(spans, "F9", "continue AI edit (" + (total() - current()) + " left)");

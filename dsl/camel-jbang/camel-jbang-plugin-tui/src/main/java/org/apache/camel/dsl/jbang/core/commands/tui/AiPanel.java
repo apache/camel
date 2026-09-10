@@ -37,7 +37,9 @@ import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.ThreadLocalRandom;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicReference;
+import java.util.function.Predicate;
 
+import dev.tamboui.layout.Alignment;
 import dev.tamboui.layout.Constraint;
 import dev.tamboui.layout.Layout;
 import dev.tamboui.layout.Rect;
@@ -46,6 +48,7 @@ import dev.tamboui.style.Style;
 import dev.tamboui.terminal.Frame;
 import dev.tamboui.text.Line;
 import dev.tamboui.text.Span;
+import dev.tamboui.text.Text;
 import dev.tamboui.tui.event.KeyCode;
 import dev.tamboui.tui.event.KeyEvent;
 import dev.tamboui.tui.event.MouseEvent;
@@ -117,6 +120,8 @@ class AiPanel {
     private static final DateTimeFormatter TIME_FMT
             = DateTimeFormatter.ofPattern("HH:mm:ss").withZone(ZoneId.systemDefault());
     private static final String INPUT_PROMPT = "❯ ";
+    /** A multi-line question shows up to this many rows; longer ones scroll to keep the cursor visible. */
+    static final int MAX_INPUT_ROWS = 6;
     static final String TOOL_MODE_AUTO = "auto";
     static final String TOOL_MODE_CORE = "core";
     static final String TOOL_MODE_FULL = "full";
@@ -176,6 +181,11 @@ class AiPanel {
     private List<LlmClient.ToolDef> tools;
     private final AtomicBoolean thinking = new AtomicBoolean();
     private volatile Thread agentThread;
+    // set while the user asks about a paused live edit (F8 at the pause): input is accepted although a tool call is
+    // still running, and Enter hands the question to the waiting call (true) or sends it as a normal question (false)
+    private volatile Predicate<String> editQuestionHandler;
+    // what became of a parked live edit; told to the model with the next question
+    private volatile String pendingNote;
     private String initError;
     private long thinkingStartTime;
     private volatile String thinkingVerb;
@@ -413,7 +423,35 @@ class AiPanel {
 
     void close() {
         visible = false;
+        editQuestionHandler = null;
         providerSwitchPopup.close();
+    }
+
+    /**
+     * Opens the panel to ask about a paused live edit: the input is prefilled and stays usable although the write tool
+     * call is still waiting. On Enter the handler gets the question; it returns true when the waiting tool call takes
+     * it (the model answers within the same turn), false to send it as a normal question. Esc or F8 close the panel
+     * without asking.
+     */
+    void askAboutEdit(String prefill, Predicate<String> handler) {
+        if (client == null) {
+            initClient();
+        }
+        visible = true;
+        statsView = false;
+        scrollOffset = 0;
+        replaceInputBuffer(prefill);
+        editQuestionHandler = handler;
+    }
+
+    boolean isAskingAboutEdit() {
+        return editQuestionHandler != null;
+    }
+
+    /** Prepends a note to the next question (what the user did with a parked live edit). */
+    void addPendingNote(String note) {
+        pendingNote = pendingNote == null ? note : pendingNote + "\n" + note;
+        conversation.add(new ConversationEntry(AiRole.SYSTEM, "(" + note + " The AI is told with your next question.)"));
     }
 
     void destroy() {
@@ -573,6 +611,11 @@ class AiPanel {
             exportChatToFile();
             return true;
         }
+        if (ke.hasCtrl() && ke.isCharIgnoreCase('n') && !statsView && (!thinking.get() || editQuestionHandler != null)) {
+            // a line break in the question; terminals deliver Shift+Enter and Alt+Enter as plain Enter or nothing
+            insertInput("\n");
+            return true;
+        }
         if (ke.isKey(KeyCode.PAGE_UP)) {
             if (statsView) {
                 statsScrollOffset += 5;
@@ -589,6 +632,12 @@ class AiPanel {
             }
             return true;
         }
+        if (!statsView && ke.isKey(KeyCode.UP) && moveCursorLine(-1)) {
+            return true;
+        }
+        if (!statsView && ke.isKey(KeyCode.DOWN) && moveCursorLine(1)) {
+            return true;
+        }
         if (!statsView && ke.isKey(KeyCode.UP) && promptHistory != null && promptHistory.isEnabled()) {
             promptHistory.previous(inputBuffer.toString()).ifPresent(this::replaceInputBuffer);
             return true;
@@ -597,7 +646,12 @@ class AiPanel {
             promptHistory.next(inputBuffer.toString()).ifPresent(this::replaceInputBuffer);
             return true;
         }
-        if (thinking.get()) {
+        if (editQuestionHandler != null && ke.isKey(KeyCode.ESCAPE)) {
+            // back to the paused edit without asking
+            close();
+            return true;
+        }
+        if (thinking.get() && editQuestionHandler == null) {
             if (ke.isCtrlC() || ke.isKey(KeyCode.ESCAPE)) {
                 interruptBusyOperation();
                 return true;
@@ -648,11 +702,11 @@ class AiPanel {
             return true;
         }
         if (ke.isKey(KeyCode.HOME)) {
-            cursorPos = 0;
+            cursorPos = lineStart(cursorPos);
             return true;
         }
         if (ke.isKey(KeyCode.END)) {
-            cursorPos = inputBuffer.length();
+            cursorPos = lineEnd(cursorPos);
             return true;
         }
         if (ke.isKey(KeyCode.TAB)) {
@@ -759,18 +813,66 @@ class AiPanel {
         if (!visible || text == null || text.isEmpty() || providerSwitchPopup.isVisible()) {
             return;
         }
-        String flat = text.replace("\r\n", "\n").replace('\r', '\n').replace('\n', ' ');
+        String normalized = text.replace("\r\n", "\n").replace('\r', '\n');
         if (historySearchActive) {
-            searchTerm.append(flat);
+            searchTerm.append(normalized.replace('\n', ' '));
             performSearch(searchIndex >= 0 ? searchIndex : promptHistory.size() - 1);
             return;
         }
+        // pasted line breaks stay: a multi-line question is sent as typed
+        insertInput(normalized);
+    }
+
+    private void insertInput(String text) {
         if (promptHistory != null) {
             promptHistory.resetNavigation();
         }
         completionMatches = null;
-        inputBuffer.insert(cursorPos, flat);
-        cursorPos += flat.length();
+        inputBuffer.insert(cursorPos, text);
+        cursorPos += text.length();
+    }
+
+    // ---- multi-line input: the buffer holds '\n', the cursor moves by line with Up/Down, Home/End ----
+
+    private int lineStart(int pos) {
+        int nl = inputBuffer.lastIndexOf("\n", Math.max(0, pos - 1));
+        return pos > 0 && nl >= 0 && nl < pos ? nl + 1 : 0;
+    }
+
+    private int lineEnd(int pos) {
+        int nl = inputBuffer.indexOf("\n", pos);
+        return nl < 0 ? inputBuffer.length() : nl;
+    }
+
+    /** Moves the cursor to the previous (-1) or next (1) line of the input; false when there is no such line. */
+    private boolean moveCursorLine(int direction) {
+        int start = lineStart(cursorPos);
+        int column = cursorPos - start;
+        int targetStart;
+        if (direction < 0) {
+            if (start == 0) {
+                return false;
+            }
+            targetStart = lineStart(start - 1);
+        } else {
+            int end = lineEnd(cursorPos);
+            if (end >= inputBuffer.length()) {
+                return false;
+            }
+            targetStart = end + 1;
+        }
+        int targetEnd = lineEnd(targetStart);
+        cursorPos = Math.min(targetStart + column, targetEnd);
+        return true;
+    }
+
+    private List<String> inputLines() {
+        return List.of(inputBuffer.toString().split("\n", -1));
+    }
+
+    /** Rows the input needs: one per line, capped so the conversation keeps most of the panel. */
+    private int inputRows() {
+        return Math.min(MAX_INPUT_ROWS, inputLines().size());
     }
 
     String searchTermForTesting() {
@@ -949,9 +1051,20 @@ class AiPanel {
         scrollOffset = 0;
         if (input.startsWith("/")) {
             executeSlashCommand(input);
-        } else {
-            submitQuestion(input);
+            return;
         }
+        Predicate<String> handler = editQuestionHandler;
+        if (handler != null) {
+            editQuestionHandler = null;
+            if (handler.test(input)) {
+                // the waiting tui_write_file call returns with the question and the model answers in this turn
+                conversation.add(new ConversationEntry(AiRole.USER, input));
+                questionCounter++;
+                log(LogLevel.QUESTION, "Question about the edit", input);
+                return;
+            }
+        }
+        submitQuestion(input);
     }
 
     private void reloadPromptHistory() {
@@ -1131,7 +1244,9 @@ class AiPanel {
         if (messages == null) {
             messages = new ArrayList<>();
         }
-        messages.add(LlmClient.Message.user(contextualize(question)));
+        String note = pendingNote;
+        pendingNote = null;
+        messages.add(LlmClient.Message.user(contextualize(note == null ? question : "[" + note + "]\n" + question)));
 
         LlmClient.TokenUsage totalUsage = LlmClient.TokenUsage.EMPTY;
         Map<String, Integer> callCounts = new HashMap<>();
@@ -1394,17 +1509,19 @@ class AiPanel {
             return;
         }
 
-        // Split inner area: conversation (fill) + optional slash hints + separator (1 row) + input (1 row)
+        // Split inner area: conversation (fill) + optional slash hints + separator (1 row) + input (1 row per line)
         List<AiSlashCommandRegistry.Descriptor> slashHints = slashCommandHints();
         int hintRows = slashHints.isEmpty() ? 0 : slashHints.size();
+        int inputRows = historySearchActive ? 1 : inputRows();
         List<Rect> parts;
         if (hintRows == 0) {
             parts = Layout.vertical()
-                    .constraints(Constraint.fill(), Constraint.length(1), Constraint.length(1))
+                    .constraints(Constraint.fill(), Constraint.length(1), Constraint.length(inputRows))
                     .split(inner);
         } else {
             parts = Layout.vertical()
-                    .constraints(Constraint.fill(), Constraint.length(hintRows), Constraint.length(1), Constraint.length(1))
+                    .constraints(Constraint.fill(), Constraint.length(hintRows), Constraint.length(1),
+                            Constraint.length(inputRows))
                     .split(inner);
         }
         Rect conversationArea = parts.get(0);
@@ -1594,50 +1711,65 @@ class AiPanel {
             renderSearchInput(frame, area);
             return;
         }
-
-        String prompt = INPUT_PROMPT;
-        String text = inputBuffer.toString();
-
-        List<Span> spans = new ArrayList<>();
-        spans.add(Span.styled(prompt, Style.EMPTY.fg(Theme.accent()).bold()));
-
-        if (thinking.get()) {
-            spans.add(Span.styled(text, Style.EMPTY.dim()));
-        } else {
-            // Render with cursor
-            int maxWidth = area.width() - prompt.length();
-            if (maxWidth <= 0) {
-                return;
-            }
-            // Ensure cursor is visible by adjusting text window
-            int windowStart = 0;
-            if (cursorPos > maxWidth - 1) {
-                windowStart = cursorPos - maxWidth + 1;
-            }
-            String visible = text.substring(windowStart,
-                    Math.min(text.length(), windowStart + maxWidth));
-            int cursorInWindow = cursorPos - windowStart;
-
-            if (cursorInWindow >= 0 && cursorInWindow < visible.length()) {
-                spans.add(Span.raw(visible.substring(0, cursorInWindow)));
-                spans.add(Span.styled(String.valueOf(visible.charAt(cursorInWindow)),
-                        Style.EMPTY.reversed()));
-                spans.add(Span.raw(visible.substring(cursorInWindow + 1)));
-            } else {
-                spans.add(Span.raw(visible));
-                if (cursorInWindow == visible.length()) {
-                    spans.add(Span.styled(" ", Style.EMPTY.reversed()));
-                }
-            }
-            if (cursorPos == text.length()) {
-                Optional<String> placeholder = slashCommands.placeholderFor(text);
-                if (placeholder.isPresent()) {
-                    spans.add(Span.styled(" " + placeholder.get(), Style.EMPTY.dim()));
-                }
-            }
+        if (area.height() < 1) {
+            return;
         }
-
-        frame.renderWidget(Paragraph.from(Line.from(spans)), area);
+        String prompt = INPUT_PROMPT;
+        List<String> lines = inputLines();
+        boolean locked = thinking.get() && editQuestionHandler == null;
+        // the line the cursor is on, and which lines are shown when there are more than rows
+        int cursorLine = 0;
+        int cursorColumn = cursorPos;
+        for (int i = 0, offset = 0; i < lines.size(); i++) {
+            int end = offset + lines.get(i).length();
+            if (cursorPos <= end || i == lines.size() - 1) {
+                cursorLine = i;
+                cursorColumn = cursorPos - offset;
+                break;
+            }
+            offset = end + 1;
+        }
+        int rows = Math.max(1, area.height());
+        int firstLine = Math.max(0, Math.min(cursorLine - rows + 1, lines.size() - rows));
+        int maxWidth = area.width() - prompt.length();
+        if (maxWidth <= 0) {
+            return;
+        }
+        List<Line> rendered = new ArrayList<>();
+        for (int i = firstLine; i < Math.min(lines.size(), firstLine + rows); i++) {
+            String text = lines.get(i);
+            List<Span> spans = new ArrayList<>();
+            String gutter = i == 0 ? prompt : " ".repeat(prompt.length());
+            spans.add(Span.styled(gutter, Style.EMPTY.fg(Theme.accent()).bold()));
+            if (locked) {
+                spans.add(Span.styled(text, Style.EMPTY.dim()));
+            } else if (i != cursorLine) {
+                spans.add(Span.raw(text.length() > maxWidth ? text.substring(0, maxWidth) : text));
+            } else {
+                // ensure the cursor is visible by adjusting the text window of its line
+                int windowStart = cursorColumn > maxWidth - 1 ? cursorColumn - maxWidth + 1 : 0;
+                String visible = text.substring(windowStart, Math.min(text.length(), windowStart + maxWidth));
+                int cursorInWindow = cursorColumn - windowStart;
+                if (cursorInWindow >= 0 && cursorInWindow < visible.length()) {
+                    spans.add(Span.raw(visible.substring(0, cursorInWindow)));
+                    spans.add(Span.styled(String.valueOf(visible.charAt(cursorInWindow)), Style.EMPTY.reversed()));
+                    spans.add(Span.raw(visible.substring(cursorInWindow + 1)));
+                } else {
+                    spans.add(Span.raw(visible));
+                    if (cursorInWindow == visible.length()) {
+                        spans.add(Span.styled(" ", Style.EMPTY.reversed()));
+                    }
+                }
+                if (lines.size() == 1 && cursorPos == inputBuffer.length()) {
+                    Optional<String> placeholder = slashCommands.placeholderFor(text);
+                    if (placeholder.isPresent()) {
+                        spans.add(Span.styled(" " + placeholder.get(), Style.EMPTY.dim()));
+                    }
+                }
+            }
+            rendered.add(Line.from(spans));
+        }
+        frame.renderWidget(Paragraph.from(new Text(rendered, Alignment.LEFT)), area);
     }
 
     private void renderSearchInput(Frame frame, Rect area) {
@@ -1688,8 +1820,12 @@ class AiPanel {
         TuiHelper.hint(spans, "Ctrl+E", "export");
         if (!statsView) {
             TuiHelper.hint(spans, "Ctrl+P", "provider");
-            if (!thinking.get()) {
+            if (editQuestionHandler != null) {
+                TuiHelper.hint(spans, "Enter", "ask about the edit");
+                TuiHelper.hint(spans, "Esc", "back to the edit");
+            } else if (!thinking.get()) {
                 TuiHelper.hint(spans, "Enter", "send");
+                TuiHelper.hint(spans, "Ctrl+N", "newline");
                 TuiHelper.hint(spans, "Ctrl+R", "search");
             } else {
                 TuiHelper.hint(spans, "Esc/Ctrl+C", "interrupt");
@@ -1885,7 +2021,7 @@ class AiPanel {
                 Span.styled(formatSeconds(sessionToolTimeMs), cyanStyle),
                 Span.styled(" (" + sessionToolCalls + " calls)", dimStyle)));
         frame.renderWidget(
-                Paragraph.from(new dev.tamboui.text.Text(summaryLines, dev.tamboui.layout.Alignment.LEFT)),
+                Paragraph.from(new Text(summaryLines, Alignment.LEFT)),
                 summaryArea);
 
         // --- Per-model table ---
@@ -2085,7 +2221,7 @@ class AiPanel {
                 lines.add(Line.from(Span.styled("│", Style.EMPTY.dim())));
             }
         }
-        frame.renderWidget(Paragraph.from(new dev.tamboui.text.Text(lines, dev.tamboui.layout.Alignment.LEFT)), area);
+        frame.renderWidget(Paragraph.from(new Text(lines, Alignment.LEFT)), area);
     }
 
     private String buildAiSetupGuide() {
@@ -2177,19 +2313,18 @@ class AiPanel {
         sb.append("Guidelines:\n");
         sb.append("- NEVER call tui_navigate just to read data; the tui_get_* tools read any tab without navigating\n");
         sb.append("- Prefer tui_get_table over tui_get_screen for structured data; ");
-        sb.append("call tui_get_options only when unsure which tab holds the data\n");
+        sb.append("call tui_get_options only when unsure which tab has it\n");
         sb.append("- tui_get_state tells which integration and tab is selected; tui_get_processor_detail explains ");
         sb.append("a route's steps; tui_get_status has data no tab shows (context, runtime, health, properties)\n");
-        sb.append("- Your own tool calls are recorded in the AI log (tui_get_ai_log, F2 -> AI Log); ");
-        sb.append("the MCP log only records external clients\n");
-        sb.append("- Be concise and actionable; when something looks wrong, explain what it means and suggest fixes\n");
+        sb.append("- Your own tool calls are in the AI log (tui_get_ai_log); the MCP log only has external clients\n");
+        sb.append("- Be concise and actionable; when something looks wrong, explain it and suggest fixes\n");
         sb.append("- tui_control stops/starts routes and integrations gracefully; its reset-stats action clears ");
         sb.append("statistics without touching the routes\n");
-        sb.append("- tui_infra lists infra services (brokers, databases) and reads their logs\n");
+        sb.append("- tui_infra lists infra services (brokers, databases) and their logs\n");
         sb.append("- Never restart, stop or kill an integration or infra service unless the user explicitly ");
         sb.append("asked for that\n");
         sb.append("- If a tool call returns an error, do not repeat it with the same arguments; ");
-        sb.append("tell the user what failed and what to try\n");
+        sb.append("say what failed and what to try\n");
         sb.append("- To feed a route that consumes from a broker (MQTT, Kafka, JMS), tui_send_message can publish ");
         sb.append("to the broker with the route's own component and options\n");
         sb.append("- To edit: tui_get_files, then tui_write_file with the complete file; the user confirms, never retry ");
@@ -2197,6 +2332,8 @@ class AiPanel {
         sb.append("option names)\n");
         sb.append("- tui_set_log_level is the app's root logger, only when asked; 'log at WARN' in a route is the log ");
         sb.append("step's loggingLevel in the source\n");
+        sb.append("- Simple: functions inside ${...}, operators between them: ${header.a} == 'b', ");
+        sb.append("${body} ?: 'none'; tui_eval_expression checks one, tui_catalog_doc simple lists them\n");
         if (!useCoreTools()) {
             sb.append("- Use tui_locate + tui_draw_shape to visually highlight problems on screen for the user\n");
         }
@@ -2701,8 +2838,8 @@ class AiPanel {
     private String describeWriteMode() {
         return switch (writeMode) {
             case AUTO -> "auto (the model may write files without asking, when it passes confirm=false)";
-            case LIVE -> "live (the edit is replayed in the Source editor: Enter continues, F4 lets you edit, Esc stops;"
-                         + " then Ctrl+S saves or Esc discards)";
+            case LIVE -> "live (the edit is replayed in the Source editor: Enter continues, F4 lets you edit, F8 asks"
+                         + " the AI about it, Esc stops; then Ctrl+S saves or Esc discards)";
             default -> "confirm (every file write is confirmed in the TUI; /write auto skips the dialog,"
                        + " /write live replays the edit in the Source editor)";
         };

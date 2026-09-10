@@ -104,6 +104,10 @@ mode and the change is typed hunk by hunk so you can follow it in context.
 - **F4** — edit yourself; the remaining changes wait
 - **F9** — continue the AI changes after editing yourself (a change whose
   surrounding lines you edited is skipped and reported to the AI)
+- **F8** — ask the AI about the current change: the AI panel opens with the
+  question prefilled ("About edit 2 of 3: ..."), the answer comes back in the
+  same turn, and closing the panel (`F8` or `Esc`) returns to the pause; if
+  the AI revises the change it continues in the editor from where it is
 - **Esc** — stop; what was typed stays in the editor
 - then **Ctrl+S** / **F5** saves (this is the confirmation, dev mode reloads),
   **F7** shows the diff, **Esc** discards; the AI panel comes back afterwards

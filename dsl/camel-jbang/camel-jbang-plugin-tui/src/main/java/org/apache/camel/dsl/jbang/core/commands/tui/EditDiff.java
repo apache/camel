@@ -218,8 +218,11 @@ final class EditDiff {
     }
 
     /**
-     * Splits the changes between {@code original} and {@code current} into hunks with {@code contextLines} lines of
-     * context; changes closer to each other than twice the context share a hunk.
+     * Splits the changes between {@code original} and {@code current} into hunks, one per run of changed lines, with up
+     * to {@code contextLines} unchanged lines of context on each side. Unlike a unified diff, changes close to each
+     * other are not merged: every change is its own step, so a replay can pause after each one. The context never
+     * reaches past the unchanged gap between two changes, so a hunk stays locatable whether or not the previous one was
+     * applied.
      */
     static List<Hunk> hunks(List<String> original, List<String> current, int contextLines) {
         List<DiffEntry> raw = rawDiff(original, current);
@@ -230,37 +233,20 @@ final class EditDiff {
                 k++;
                 continue;
             }
-            // start of a hunk: context before
             int bodyStart = k;
-            List<String> before = new ArrayList<>();
-            for (int c = Math.max(0, bodyStart - contextLines); c < bodyStart; c++) {
-                before.add(raw.get(c).text());
-            }
-            // extend the body over changes separated by short equal runs
             int bodyEnd = k;
-            int j = k;
-            while (j < raw.size()) {
-                if (raw.get(j).type() != ' ') {
-                    bodyEnd = j + 1;
-                    j++;
-                    continue;
-                }
-                int run = 0;
-                while (j + run < raw.size() && raw.get(j + run).type() == ' ') {
-                    run++;
-                }
-                if (j + run < raw.size() && run <= 2 * contextLines) {
-                    j += run;
-                } else {
-                    break;
-                }
+            while (bodyEnd < raw.size() && raw.get(bodyEnd).type() != ' ') {
+                bodyEnd++;
             }
-            List<DiffEntry> body = new ArrayList<>(raw.subList(bodyStart, bodyEnd));
+            List<String> before = new ArrayList<>();
+            for (int c = bodyStart - 1; c >= 0 && before.size() < contextLines && raw.get(c).type() == ' '; c--) {
+                before.add(0, raw.get(c).text());
+            }
             List<String> after = new ArrayList<>();
-            for (int c = bodyEnd; c < Math.min(raw.size(), bodyEnd + contextLines); c++) {
+            for (int c = bodyEnd; c < raw.size() && after.size() < contextLines && raw.get(c).type() == ' '; c++) {
                 after.add(raw.get(c).text());
             }
-            hunks.add(new Hunk(before, body, after));
+            hunks.add(new Hunk(before, new ArrayList<>(raw.subList(bodyStart, bodyEnd)), after));
             k = bodyEnd;
         }
         return hunks;

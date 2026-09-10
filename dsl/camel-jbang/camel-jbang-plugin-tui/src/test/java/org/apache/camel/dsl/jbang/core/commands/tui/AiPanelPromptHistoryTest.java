@@ -32,6 +32,18 @@ import static org.assertj.core.api.Assertions.assertThat;
 class AiPanelPromptHistoryTest {
 
     @Test
+    void multiLinePromptsSurviveTheHistoryFile(@TempDir Path tempDir) {
+        Path file = tempDir.resolve("history.txt");
+        TuiPromptHistory history = TuiPromptHistory.load(10, file);
+        history.remember("first line\nsecond \\ line");
+        history.remember("plain");
+
+        TuiPromptHistory reloaded = TuiPromptHistory.load(10, file);
+        assertThat(reloaded.entriesForTesting()).containsExactly("first line\nsecond \\ line", "plain");
+        assertThat(TuiPromptHistory.decode(TuiPromptHistory.encode("a\\nb\n"))).isEqualTo("a\\nb\n");
+    }
+
+    @Test
     void promptHistoryRecallWithUpDown(@TempDir Path tempDir) {
         AiPanel panel = new AiPanel();
         panel.setClientForTesting(LlmClient.create());

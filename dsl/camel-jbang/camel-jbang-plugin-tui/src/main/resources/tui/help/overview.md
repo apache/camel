@@ -116,12 +116,16 @@ Two panels can be opened on top of any tab. Opening one closes the other.
   per question, and how much time went to the model versus tool calls),
   `Ctrl+P` switches provider or model, `Ctrl+Y` copies the last answer
   (just the code when the answer has a code block, with a picker when it
-  has several) and `Ctrl+E` exports the conversation. The AI can also edit
+  has several) and `Ctrl+E` exports the conversation. `Ctrl+N` starts a new
+  line in the question (terminals send Shift+Enter as plain Enter), pasted
+  text keeps its line breaks, and `Up`/`Down` move between the lines before
+  they recall earlier prompts. The AI can also edit
   the source files of the selected integration; a dialog asks you to confirm
   each write (`Enter` applies, `d` shows the diff, `Esc` rejects) unless you
   switched to `/write auto`; `/write live` replays the edit in the Source
   editor instead, so you watch it being typed (`Enter` next change, `F4` edit
-  yourself, `F9` continue, `Esc` stop; then `Ctrl+S` saves or `Esc` discards). Type `/help` for the slash commands
+  yourself, `F9` continue, `F8` ask the AI about the edit, `Esc` stop; then
+  `Ctrl+S` saves or `Esc` discards). Type `/help` for the slash commands
 
 Where the panels open (bottom or top) is configured in Settings
 (`F2` → `Settings...` → `Panel Position`). The tool calls and answers of the AI panel
