@@ -50,7 +50,7 @@ public class RestOpenApiProcessor extends AsyncProcessorSupport implements Camel
     private final String apiContextPath;
     private final List<RestConsumerContextPathMatcher.ConsumerPath<Operation>> paths = new ArrayList<>();
     private final RestOpenapiProcessorStrategy restOpenapiProcessorStrategy;
-    private RestOpenApiUnmatchedRequestHandler unmatchedRequestHandler;
+    private RestOpenApiUnmatchedRequestHandler unmatchedRequestHandler = new DefaultRestOpenApiUnmatchedRequestHandler();
     private PlatformHttpConsumerAware platformHttpConsumer;
     private Consumer consumer;
     private OpenApiUtils openApiUtils;
