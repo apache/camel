@@ -98,6 +98,9 @@ public abstract class ExportBaseCommand extends CamelCommand {
     private static final Pattern PACKAGE_PATTERN = Pattern.compile(
             "^\\s*package\\s+([a-zA-Z][.\\w]*)\\s*;.*$", Pattern.MULTILINE);
 
+    private static final String EXTRA_REPOS_PROPERTY = "camel.extra.repos";
+    private static final String EXTRA_REPOS_DEFAULT_VALUE_PROPERTY = "camel.default.extra.repos.default.value";
+
     private static final Set<String> EXCLUDED_GROUP_IDS = Set.of("org.fusesource.jansi", "org.apache.logging.log4j");
 
     protected Path exportBaseDir;
@@ -421,9 +424,17 @@ public abstract class ExportBaseCommand extends CamelCommand {
             int i = 1;
             for (String repo : repos.split(",")) {
                 Map<String, Object> r = new HashMap<>();
-                r.put("id", "custom" + i++);
-                r.put("url", repo);
-                r.put("isSnapshot", repo.contains("snapshots"));
+                // support id=url format (used by camel.extra.repos)
+                int eq = repo.indexOf('=');
+                if (eq > 0 && eq < repo.length() - 1 && !repo.startsWith("http")) {
+                    r.put("id", repo.substring(0, eq));
+                    r.put("url", repo.substring(eq + 1));
+                } else {
+                    r.put("id", "custom" + i++);
+                    r.put("url", repo);
+                }
+                String url = (String) r.get("url");
+                r.put("isSnapshot", url.contains("snapshots"));
                 result.add(r);
             }
         }
@@ -1267,8 +1278,12 @@ public abstract class ExportBaseCommand extends CamelCommand {
         Set<String> answer = new LinkedHashSet<>();
 
         String propRepositories = prop.getProperty(REPOS);
+        if (propRepositories == null) {
+            // fallback to system property
+            propRepositories = System.getProperty(REPOS);
+        }
         if (propRepositories != null) {
-            answer.add(propRepositories);
+            Collections.addAll(answer, propRepositories.split("\\s*,\\s*"));
         }
 
         // include apache snapshot repo if we use SNAPSHOT version of Camel
@@ -1286,7 +1301,18 @@ public abstract class ExportBaseCommand extends CamelCommand {
         }
 
         if (mavenResolver.repos() != null) {
-            Collections.addAll(answer, this.mavenResolver.repos().split(","));
+            Collections.addAll(answer, this.mavenResolver.repos().split("\\s*,\\s*"));
+        }
+
+        // include extra repos from system property
+        String extraRepos = System.getProperty(EXTRA_REPOS_PROPERTY,
+                System.getProperty(EXTRA_REPOS_DEFAULT_VALUE_PROPERTY));
+        if (extraRepos != null && !extraRepos.isBlank()) {
+            for (String r : extraRepos.split("\\s*,\\s*")) {
+                if (!r.isBlank()) {
+                    answer.add(r);
+                }
+            }
         }
 
         return answer.stream()

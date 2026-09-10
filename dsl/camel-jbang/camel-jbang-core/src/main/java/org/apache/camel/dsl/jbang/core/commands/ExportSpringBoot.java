@@ -365,14 +365,14 @@ class ExportSpringBoot extends Export {
      * Legacy method for backward compatibility with catalog-provided templates.
      */
     private static String legacyMavenRepositoriesAsPomXml(String repos) {
+        List<Map<String, Object>> repoList = buildRepositoryList(repos);
         StringBuilder sb = new StringBuilder();
-        int i = 1;
         sb.append("    <repositories>\n");
-        for (String repo : repos.split(",")) {
+        for (Map<String, Object> r : repoList) {
             sb.append("        <repository>\n");
-            sb.append("            <id>custom").append(i++).append("</id>\n");
-            sb.append("            <url>").append(repo).append("</url>\n");
-            if (repo.contains("snapshots")) {
+            sb.append("            <id>").append(r.get("id")).append("</id>\n");
+            sb.append("            <url>").append(r.get("url")).append("</url>\n");
+            if (Boolean.TRUE.equals(r.get("isSnapshot"))) {
                 sb.append("            <releases>\n");
                 sb.append("                <enabled>false</enabled>\n");
                 sb.append("            </releases>\n");
@@ -384,11 +384,11 @@ class ExportSpringBoot extends Export {
         }
         sb.append("    </repositories>\n");
         sb.append("    <pluginRepositories>\n");
-        for (String repo : repos.split(",")) {
+        for (Map<String, Object> r : repoList) {
             sb.append("        <pluginRepository>\n");
-            sb.append("            <id>custom").append(i++).append("</id>\n");
-            sb.append("            <url>").append(repo).append("</url>\n");
-            if (repo.contains("snapshots")) {
+            sb.append("            <id>plugin-").append(r.get("id")).append("</id>\n");
+            sb.append("            <url>").append(r.get("url")).append("</url>\n");
+            if (Boolean.TRUE.equals(r.get("isSnapshot"))) {
                 sb.append("            <releases>\n");
                 sb.append("                <enabled>false</enabled>\n");
                 sb.append("            </releases>\n");
