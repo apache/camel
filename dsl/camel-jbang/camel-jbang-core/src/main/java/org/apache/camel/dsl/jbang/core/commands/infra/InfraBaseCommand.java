@@ -30,9 +30,9 @@ import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
 import java.util.Set;
 import java.util.function.Consumer;
+import java.util.function.LongPredicate;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -50,6 +50,7 @@ import org.apache.camel.dsl.jbang.core.commands.CamelCommand;
 import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
 import org.apache.camel.dsl.jbang.core.common.CamelTableColumns;
 import org.apache.camel.dsl.jbang.core.common.CommandLineHelper;
+import org.apache.camel.dsl.jbang.core.common.PathUtils;
 import org.apache.camel.dsl.jbang.core.common.TerminalWidthHelper;
 import org.apache.camel.dsl.jbang.core.model.InfraBaseDTO;
 import org.apache.camel.support.PatternHelper;
@@ -65,6 +66,12 @@ public abstract class InfraBaseCommand extends CamelCommand {
                         description = "Output in JSON Format")
     boolean jsonOutput;
 
+    /**
+     * Whether the process behind a pid file is still running. Overridable so tests can use synthetic pids in their pid
+     * files without the command pruning them as stale.
+     */
+    protected LongPredicate aliveCheck = pid -> ProcessHandle.of(pid).map(ProcessHandle::isAlive).orElse(false);
+
     protected InfraBaseCommand(CamelJBangMain main) {
         super(main);
 
@@ -77,18 +84,7 @@ public abstract class InfraBaseCommand extends CamelCommand {
     protected static Map<Long, Path> findPids(String name) throws Exception {
         Map<Long, Path> pids = new HashMap<>();
 
-        // we need to know the pids of the running camel integrations
-        if (!name.matches("\\d+")) {
-            if (name.endsWith("!")) {
-                // exclusive this name only
-                name = name.substring(0, name.length() - 1);
-            } else if (!name.endsWith("*")) {
-                // lets be open and match all that starts with this pattern
-                name = name + "*";
-            }
-        }
-
-        final String pattern = name;
+        final String pattern = toPidPattern(name);
 
         try (Stream<Path> files = Files.list(CommandLineHelper.getCamelDir())) {
             List<Path> pidFiles = files.filter(p -> {
@@ -109,6 +105,84 @@ public abstract class InfraBaseCommand extends CamelCommand {
         }
 
         return pids;
+    }
+
+    /**
+     * Normalizes a user supplied service name into the pattern used to match against the service names parsed out of
+     * the pid files. A plain name is widened to a prefix match, a trailing {@code !} pins it to that name only, and a
+     * numeric argument is left as-is so it can be matched against the pid instead.
+     */
+    private static String toPidPattern(String name) {
+        if (!name.matches("\\d+")) {
+            if (name.endsWith("!")) {
+                // exclusive this name only
+                name = name.substring(0, name.length() - 1);
+            } else if (!name.endsWith("*")) {
+                // lets be open and match all that starts with this pattern
+                name = name + "*";
+            }
+        }
+        return name;
+    }
+
+    /**
+     * Finds the infra service instances that are actually running, one per {@code infra-<service>-<pid>.json} pid file,
+     * ordered by service name and then numerically by pid so repeated invocations are stable.
+     * <p>
+     * A service is stopped by deleting its pid file, and {@code infra run} deletes both the pid file and the log file
+     * on shutdown. A pid file whose process is gone therefore means the process was killed hard and never ran its
+     * shutdown hook, so the leftovers are pruned here instead of being reported as a running service.
+     *
+     * @param  name the service name or pid to match, or {@code null} to return every running instance.
+     * @return      the running instances, never {@code null}.
+     */
+    protected List<RunningService> findRunningServices(String name) {
+        List<RunningService> answer = new ArrayList<>();
+
+        final String pattern = name != null ? toPidPattern(name) : null;
+        Path camelDir = CommandLineHelper.getCamelDir();
+
+        try (Stream<Path> files = Files.list(camelDir)) {
+            List<Path> pidFiles = files.filter(p -> {
+                var n = p.getFileName().toString();
+                return n.startsWith("infra-") && n.endsWith(".json");
+            })
+                    .toList();
+            for (Path pidFile : pidFiles) {
+                String fn = pidFile.getFileName().toString();
+                String sn = serviceNameFromPidFile(fn);
+                String pid = pidFromPidFile(fn);
+                long pidNumber;
+                try {
+                    pidNumber = Long.parseLong(pid);
+                } catch (NumberFormatException e) {
+                    // not a file we recognise, so neither report nor prune it
+                    continue;
+                }
+                if (!aliveCheck.test(pidNumber)) {
+                    pruneStaleFiles(camelDir, sn, pid);
+                    continue;
+                }
+                if (pattern == null || pid.equals(pattern) || PatternHelper.matchPattern(sn, pattern)) {
+                    answer.add(new RunningService(sn, pid, pidNumber, pidFile));
+                }
+            }
+        } catch (IOException e) {
+            // camel directory does not exist yet, or cannot be read
+        }
+
+        answer.sort(Comparator.comparing(RunningService::alias).thenComparingLong(RunningService::pidNumber));
+
+        return answer;
+    }
+
+    /**
+     * Removes the pid and log files left behind by an instance whose process is gone, so it stops being reported as
+     * running.
+     */
+    private void pruneStaleFiles(Path camelDir, String service, String pid) {
+        PathUtils.deleteFile(camelDir.resolve(getJsonFileName(service, pid)));
+        PathUtils.deleteFile(camelDir.resolve(getLogFileName(service, pid)));
     }
 
     /**
@@ -152,14 +226,14 @@ public abstract class InfraBaseCommand extends CamelCommand {
         return metadata;
     }
 
-    public int listServices(Consumer<List<Row>> serviceConsumer) throws IOException {
+    /**
+     * Folds the test-infra catalog metadata into the set of known service aliases, merging the implementations and UI
+     * support of every metadata entry that shares an alias.
+     */
+    protected Map<String, InfraServiceAlias> aliasMetadata() throws IOException {
         Map<String, InfraServiceAlias> services = new LinkedHashMap<>();
 
-        List<TestInfraService> metadata = getMetadata();
-
-        List<InfraList.Row> rows = new ArrayList<>(metadata.size());
-
-        for (TestInfraService service : metadata) {
+        for (TestInfraService service : getMetadata()) {
             for (String alias : service.alias()) {
                 if (!services.containsKey(alias)) {
                     services.put(alias, new InfraServiceAlias(service.description()));
@@ -173,32 +247,84 @@ public abstract class InfraBaseCommand extends CamelCommand {
             }
         }
 
-        int width = 0;
+        return services;
+    }
+
+    /**
+     * Builds the table rows.
+     * <p>
+     * This default is the catalog view used by {@code infra list}: one row per known alias, describing what can be run
+     * rather than what is running. When an alias does happen to be running, the lowest pid of its instances supplies
+     * the SERVICE_DATA column. {@code infra ps} overrides this to emit one row per running <em>instance</em> instead,
+     * so two instances of the same service each get their own PID and SERVICE_DATA.
+     */
+    protected List<Row> buildRows(Map<String, InfraServiceAlias> services) {
+        Map<String, List<RunningService>> running = findRunningServices(null).stream()
+                .collect(Collectors.groupingBy(RunningService::alias));
+
+        List<Row> rows = new ArrayList<>(services.size());
         for (Map.Entry<String, InfraServiceAlias> entry : services.entrySet()) {
-            width = Math.max(width, entry.getKey().length());
-            String pid = findPid(entry.getKey());
-            rows.add(new InfraList.Row(
-                    pid,
+            List<RunningService> instances = running.get(entry.getKey());
+            RunningService instance = instances == null || instances.isEmpty() ? null : instances.get(0);
+            rows.add(new Row(
+                    instance != null ? instance.pid() : null,
                     entry.getKey(),
-                    entry.getValue().getAliasImplementation()
-                            .stream()
-                            .sorted()
-                            .collect(Collectors.joining(", ")),
+                    implementationsOf(entry.getValue()),
                     entry.getValue().getDescription(),
-                    getServiceData(entry.getKey(), pid),
+                    instance != null ? readServiceData(instance.pidFile()) : null,
                     entry.getValue().isUiSupported()));
         }
 
-        rows.sort(Comparator.comparing(InfraList.Row::alias));
+        return rows;
+    }
+
+    /**
+     * Renders the implementations of an alias as a stable, comma separated list.
+     */
+    protected static String implementationsOf(InfraServiceAlias alias) {
+        if (alias == null) {
+            return null;
+        }
+        return alias.getAliasImplementation()
+                .stream()
+                .sorted()
+                .collect(Collectors.joining(", "));
+    }
+
+    /**
+     * Reads the connection details an instance wrote to its pid file. Returns {@code null} when the file has since
+     * gone, which happens when the service is stopped while the table is being built.
+     */
+    protected static String readServiceData(Path pidFile) {
+        try {
+            return Files.readString(pidFile);
+        } catch (IOException e) {
+            return null;
+        }
+    }
+
+    public int listServices(Consumer<List<Row>> serviceConsumer) throws IOException {
+        Map<String, InfraServiceAlias> services = aliasMetadata();
+
+        List<Row> rows = buildRows(services);
+
+        // sorting by alias only, which is a stable sort, so the pid ordering that buildRows established within an
+        // alias is preserved
+        rows.sort(Comparator.comparing(Row::alias));
 
         // Do something with the full services list (for example, filter)
         serviceConsumer.accept(rows);
+
+        int width = 0;
+        for (String alias : services.keySet()) {
+            width = Math.max(width, alias.length());
+        }
 
         if (jsonOutput) {
             printer().println(
                     Jsoner.serialize(
                             rows.stream().map(row -> new InfraBaseDTO(
-                                    row.alias, row.aliasImplementation, row.description,
+                                    row.pid, row.alias, row.aliasImplementation, row.description,
                                     parseServiceData(row.serviceData()), row.uiSupported()))
                                     .map(InfraBaseDTO::toMap)
                                     .collect(Collectors.toList())));
@@ -248,34 +374,6 @@ public abstract class InfraBaseCommand extends CamelCommand {
         }
     }
 
-    private String getServiceData(String key, String pid) {
-        Path jsonFilePath = CommandLineHelper.getCamelDir().resolve(getJsonFileName(key, pid));
-        if (jsonFilePath.toFile().exists()) {
-            try {
-                return Files.readString(jsonFilePath);
-            } catch (IOException e) {
-                // ignore
-            }
-        }
-
-        return null;
-    }
-
-    private String findPid(String key) {
-        Path p = CommandLineHelper.getCamelDir();
-        try {
-            Files.createDirectories(p);
-            for (String s : Objects.requireNonNull(p.toFile().list())) {
-                if (s.startsWith("infra-" + key + "-") && s.endsWith(".json")) {
-                    return pidFromPidFile(s);
-                }
-            }
-        } catch (Exception e) {
-            // ignore
-        }
-        return null;
-    }
-
     public String getLogFileName(String service, String pid) {
         return String.format("infra-%s-%s.log", service, pid);
     }
@@ -301,7 +399,19 @@ public abstract class InfraBaseCommand extends CamelCommand {
             boolean uiSupported) {
     }
 
-    private static class InfraServiceAlias {
+    /**
+     * A single running infra service instance, as discovered from its {@code infra-<service>-<pid>.json} pid file.
+     * There can be more than one instance per service alias, each with its own pid and connection details.
+     *
+     * @param alias     the service alias, such as {@code ftp}.
+     * @param pid       the pid as written in the file name, used for display.
+     * @param pidNumber the same pid parsed as a number, used for ordering.
+     * @param pidFile   the pid file holding the connection details of this instance.
+     */
+    protected record RunningService(String alias, String pid, long pidNumber, Path pidFile) {
+    }
+
+    protected static class InfraServiceAlias {
         private final String description;
         private final Set<String> aliasImplementation = new HashSet<>();
         private boolean uiSupported;

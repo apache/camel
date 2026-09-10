@@ -22,10 +22,11 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
-import java.util.stream.Stream;
+import java.util.stream.Collectors;
 
 import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
 import org.apache.camel.dsl.jbang.core.common.CommandLineHelper;
@@ -38,11 +39,12 @@ import picocli.CommandLine;
                      showDefaultValues = true,
                      footer = {
                              "%nExamples:",
+                             "  camel infra log",
                              "  camel infra log kafka" })
 public class InfraLog extends InfraBaseCommand {
 
     @CommandLine.Parameters(description = "Service name", arity = "0..2")
-    private List<String> serviceName;
+    List<String> serviceName;
 
     @CommandLine.Option(names = { "--lines" }, defaultValue = "50",
                         description = "The number of lines from the end of the log to use as starting offset")
@@ -56,51 +58,40 @@ public class InfraLog extends InfraBaseCommand {
         executorService = Executors.newFixedThreadPool(10);
     }
 
+    /**
+     * Tails the log of every running instance, rather than the first log file that happens to match the alias. Two
+     * instances of the same service each have their own log, so both are followed and their lines are prefixed with the
+     * pid to tell them apart.
+     */
     @Override
     public Integer doCall() throws Exception {
+        String name = serviceName == null || serviceName.isEmpty() ? null : serviceName.get(0);
+
+        List<RunningService> instances = findRunningServices(name);
+
+        // only carry the pid in the prefix when there is more than one instance of that alias to disambiguate
+        Map<String, Long> instancesPerAlias = instances.stream()
+                .collect(Collectors.groupingBy(RunningService::alias, Collectors.counting()));
+
         List<Future<?>> futures = new ArrayList<>();
-        if (serviceName == null || serviceName.isEmpty()) {
-            // Log everything
-            try (Stream<Path> files = Files.list(CommandLineHelper.getCamelDir())) {
-                List<Path> logFiles = files.filter(p -> {
-                    String name = p.getFileName().toString();
-                    return name.startsWith("infra-") && name.endsWith(".log");
-                })
-                        .toList();
-
-                for (Path logFile : logFiles) {
-                    String alias = serviceNameFromPidFile(logFile.getFileName().toString());
-                    createTailer(logFile.toFile(), alias, futures);
-                }
-            } catch (IOException e) {
-                // ignore
+        for (RunningService instance : instances) {
+            Path logFile = CommandLineHelper.getCamelDir().resolve(getLogFileName(instance.alias(), instance.pid()));
+            if (!Files.isRegularFile(logFile)) {
+                // the service has not written any log yet
+                continue;
             }
+            String prefix = instancesPerAlias.get(instance.alias()) > 1
+                    ? instance.alias() + "-" + instance.pid() : instance.alias();
+            createTailer(logFile.toFile(), prefix, futures);
+        }
 
-            if (futures.isEmpty()) {
+        if (futures.isEmpty()) {
+            if (name != null) {
+                printer().printErr("Log not found for service " + name);
+            } else {
                 printer().println("There are no running services");
-                return -1;
             }
-        } else {
-            String alias = serviceName.get(0);
-
-            Path logFile = null;
-            try (Stream<Path> files = Files.list(CommandLineHelper.getCamelDir())) {
-                logFile = files.filter(p -> {
-                    String name = p.getFileName().toString();
-                    return name.startsWith("infra-" + alias + "-") && name.endsWith(".log");
-                })
-                        .findFirst()
-                        .orElse(null);
-            } catch (IOException e) {
-                // ignore
-            }
-
-            if (logFile == null) {
-                printer().printErr("Log not found for service " + alias);
-                return -1;
-            }
-
-            createTailer(logFile.toFile(), alias, futures);
+            return -1;
         }
 
         for (Future<?> future : futures) {

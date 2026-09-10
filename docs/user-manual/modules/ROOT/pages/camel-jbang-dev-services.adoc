@@ -93,9 +93,31 @@ camel infra restart kafka --background
 [source,bash]
 ----
 $ camel infra ps
- ALIAS             IMPLEMENTATION  DESCRIPTION
- arangodb                          ArangoDB is a multi-model database for high-performance applications.
+  PID   ALIAS      IMPLEMENTATION  UI  DESCRIPTION                                        SERVICE_DATA
+ 45211  arangodb                       ArangoDB is a multi-model database for high-pe...  {"getServiceAddress":"http:/...
 ----
+
+There is one row per running instance, so starting the same service twice lists both processes, each
+with its own PID and connection details:
+
+[source,bash]
+----
+$ camel infra ps
+  PID   ALIAS  IMPLEMENTATION  UI  DESCRIPTION                                   SERVICE_DATA
+ 45244  ftp                        FTP is a standard communication protocol ...  {"port":21,"host":"localhost"...
+ 45262  ftp                        FTP is a standard communication protocol ...  {"port":2121,"host":"localhos...
+----
+
+Pass a service name to list only its instances, and `--json` to get the full connection details of each
+instance as machine-readable JSON:
+
+[source,bash]
+----
+camel infra ps ftp
+camel infra ps ftp --json
+----
+
+Services whose process is no longer running are not listed, and their leftover files are removed.
 
 == Getting service details
 
@@ -126,6 +148,9 @@ Or from a specific service:
 ----
 camel infra log openldap
 ----
+
+Every running instance of the service is tailed. When more than one instance is running, the log lines
+are prefixed with `<alias>-<pid>` instead of `<alias>` so they can be told apart.
 
 == See Also
 

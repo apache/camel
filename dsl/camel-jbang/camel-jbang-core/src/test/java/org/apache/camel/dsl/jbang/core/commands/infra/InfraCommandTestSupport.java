@@ -62,7 +62,22 @@ abstract class InfraCommandTestSupport extends CamelCommandBaseTestSupport {
      * Writes a pid file named {@code infra-<service>-<pid>.json} into the Camel directory with the given JSON content.
      */
     protected static void writePidFile(String service, long pid, String content) throws IOException {
-        Path pidFile = CommandLineHelper.getCamelDir().resolve("infra-" + service + "-" + pid + ".json");
-        Files.writeString(pidFile, content);
+        Files.writeString(pidFile(service, pid), content);
+    }
+
+    /**
+     * Writes a log file named {@code infra-<service>-<pid>.log} into the Camel directory, as {@code infra run} does
+     * alongside the pid file.
+     */
+    protected static void writeLogFile(String service, long pid, String content) throws IOException {
+        Files.writeString(logFile(service, pid), content);
+    }
+
+    protected static Path pidFile(String service, long pid) {
+        return CommandLineHelper.getCamelDir().resolve("infra-" + service + "-" + pid + ".json");
+    }
+
+    protected static Path logFile(String service, long pid) {
+        return CommandLineHelper.getCamelDir().resolve("infra-" + service + "-" + pid + ".log");
     }
 }
