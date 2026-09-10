@@ -12,6 +12,10 @@ server-side conversation state.
 Hosted tools: set `builtinTools` to a comma-separated list (`web_search`, `file_search`, `code_interpreter`).
 `file_search` requires `fileSearchVectorStoreIds`.
 
+The citations that `web_search` and `file_search` attach to the answer are exposed in the
+`CamelOpenAIResponseAnnotations` header as a list of maps, one per annotation, holding the API fields such as `type`,
+`url`, `title`, `file_id`, `start_index` and `end_index`. The header is not set when the answer has no annotations.
+
 Pass hosted MCP tools as a JSON array via `hostedMcpTools`. Each entry is sent as an OpenAI `mcp` tool with all its
 fields, such as `require_approval`, `allowed_tools`, `headers`, `authorization` and `connector_id`. The API asks for
 approval before every hosted MCP call unless `require_approval` is `never`. The operation cannot grant approvals, so a

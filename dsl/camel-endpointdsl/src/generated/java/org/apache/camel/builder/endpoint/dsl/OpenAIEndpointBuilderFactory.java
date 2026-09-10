@@ -2441,6 +2441,21 @@ public interface OpenAIEndpointBuilderFactory {
             return "CamelOpenAITotalTokens";
         }
         /**
+         * The annotations attached to the output text of a Responses API
+         * answer, such as the url_citation and file_citation citations of
+         * web_search and file_search. Each entry is a map of the API fields.
+         * 
+         * The option is a: {@code java.util.List<java.util.Map<String,
+         * Object>>} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code OpenAIResponseAnnotations}.
+         */
+        public String openAIResponseAnnotations() {
+            return "CamelOpenAIResponseAnnotations";
+        }
+        /**
          * Number of tool call iterations performed in the agentic loop.
          * 
          * The option is a: {@code Integer} type.

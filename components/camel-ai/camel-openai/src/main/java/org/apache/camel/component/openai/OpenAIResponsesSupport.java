@@ -220,6 +220,22 @@ final class OpenAIResponsesSupport {
                 .orElseGet(model::toString);
     }
 
+    /**
+     * Returns the annotations attached to the output text of the answer, such as citations, each converted to a map of
+     * the API fields.
+     */
+    @SuppressWarnings("unchecked")
+    static List<Map<String, Object>> extractAnnotations(Response response) {
+        return response.output().stream()
+                .filter(ResponseOutputItem::isMessage)
+                .flatMap(item -> item.asMessage().content().stream())
+                .filter(ResponseOutputMessage.Content::isOutputText)
+                // OpenAI-compatible servers may omit the field, which the annotations() accessor rejects
+                .flatMap(content -> content.asOutputText()._annotations().asKnown().orElse(List.of()).stream())
+                .map(annotation -> (Map<String, Object>) ObjectMappers.jsonMapper().convertValue(annotation, Map.class))
+                .toList();
+    }
+
     static Optional<String> extractFinishStatus(Response response) {
         for (ResponseOutputItem item : response.output()) {
             if (item.isMessage()) {

@@ -79,6 +79,13 @@ class OpenAIResponsesMockTest extends CamelTestSupport {
                     [{"type":"mcp_approval_request","id":"mcpr_1","server_label":"deepwiki",
                       "name":"ask_question","arguments":"{}"}]""")
             .end()
+            .when("citations")
+            .replyWithResponsesOutput("""
+                    [{"type":"message","id":"msg_1","role":"assistant","status":"completed",
+                      "content":[{"type":"output_text","text":"Apache Camel is an integration framework.",
+                        "annotations":[{"type":"url_citation","url":"https://camel.apache.org",
+                          "title":"Apache Camel","start_index":0,"end_index":12}]}]}]""")
+            .end()
             .build();
 
     @Override
@@ -169,6 +176,17 @@ class OpenAIResponsesMockTest extends CamelTestSupport {
         assertThat(input.path(0).path("content").asText()).isEqualTo("Answer in French");
         assertThat(input.path(1).path("role").asText()).isEqualTo("user");
         assertThat(input.path(1).path("content").asText()).isEqualTo("hello-responses");
+    }
+
+    @Test
+    void outputTextAnnotationsAreExposed() {
+        Exchange result = template.request("direct:responses-basic", e -> e.getIn().setBody("citations"));
+
+        assertThat(result.getException()).isNull();
+        List<?> annotations = result.getMessage().getHeader(OpenAIConstants.RESPONSE_ANNOTATIONS, List.class);
+        assertThat(annotations).singleElement().asString()
+                .contains("type=url_citation")
+                .contains("url=https://camel.apache.org");
     }
 
     private String responsesUri() {

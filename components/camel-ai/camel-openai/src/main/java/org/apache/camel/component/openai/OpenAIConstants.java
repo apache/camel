@@ -77,6 +77,11 @@ public final class OpenAIConstants {
     @Metadata(description = "The total number of tokens used (prompt + completion) for the latest API call",
               javaType = "Long")
     public static final String TOTAL_TOKENS = "CamelOpenAITotalTokens";
+    @Metadata(description = "The annotations attached to the output text of a Responses API answer, such as the "
+                            + "url_citation and file_citation citations of web_search and file_search. Each entry is a "
+                            + "map of the API fields",
+              javaType = "java.util.List<java.util.Map<String, Object>>")
+    public static final String RESPONSE_ANNOTATIONS = "CamelOpenAIResponseAnnotations";
 
     // MCP Tool Call Headers
     @Metadata(description = "Number of tool call iterations performed in the agentic loop", javaType = "Integer")

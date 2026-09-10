@@ -241,6 +241,10 @@ public class OpenAIResponsesProducer extends DefaultAsyncProducer {
         });
         response.previousResponseId()
                 .ifPresent(id -> message.setHeader(OpenAIConstants.PREVIOUS_RESPONSE_ID, id));
+        var annotations = OpenAIResponsesSupport.extractAnnotations(response);
+        if (!annotations.isEmpty()) {
+            message.setHeader(OpenAIConstants.RESPONSE_ANNOTATIONS, annotations);
+        }
     }
 
     private Class<?> resolveOutputClass(Message in, String outputClass) throws ClassNotFoundException {
