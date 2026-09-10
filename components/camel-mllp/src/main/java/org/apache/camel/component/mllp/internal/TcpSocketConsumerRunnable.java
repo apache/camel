@@ -20,8 +20,10 @@ import java.io.IOException;
 import java.net.Socket;
 import java.net.SocketAddress;
 import java.net.SocketTimeoutException;
+import java.util.Arrays;
 
 import org.apache.camel.Route;
+import org.apache.camel.component.mllp.MllpProtocolConstants;
 import org.apache.camel.component.mllp.MllpSocketException;
 import org.apache.camel.component.mllp.MllpTcpServerConsumer;
 import org.apache.camel.spi.UnitOfWork;
@@ -133,12 +135,9 @@ public class TcpSocketConsumerRunnable implements Runnable {
 
         log.debug("Starting {} for {}", this.getClass().getSimpleName(), combinedAddress);
         try {
-            byte[] hl7MessageBytes = null;
             if (mllpBuffer.hasCompleteEnvelope()) {
-                // If we got a complete message on the validation read, process it
-                hl7MessageBytes = mllpBuffer.toMllpPayload();
-                mllpBuffer.reset();
-                consumer.processMessage(hl7MessageBytes, this);
+                // Process all complete messages received during the validation read.
+                processBufferedMessages();
             }
 
             while (running && null != clientSocket && clientSocket.isConnected() && !clientSocket.isClosed()) {
@@ -146,23 +145,7 @@ public class TcpSocketConsumerRunnable implements Runnable {
                 try {
                     mllpBuffer.readFrom(clientSocket);
                     if (mllpBuffer.hasCompleteEnvelope()) {
-                        hl7MessageBytes = mllpBuffer.toMllpPayload();
-                        if (log.isDebugEnabled()) {
-                            log.debug("Received {} byte message {}", hl7MessageBytes.length,
-                                    hl7Util.convertToLoggableString(hl7MessageBytes));
-                        }
-                        if (mllpBuffer.hasLeadingOutOfBandData()) {
-                            // TODO:  Move the conversion utilities to the MllpSocketBuffer to avoid a byte[] copy
-                            log.warn("Ignoring leading out-of-band data: {}",
-                                    hl7Util.convertToLoggableString(mllpBuffer.getLeadingOutOfBandData()));
-                        }
-                        if (mllpBuffer.hasTrailingOutOfBandData()) {
-                            log.warn("Ignoring trailing out-of-band data: {}",
-                                    hl7Util.convertToLoggableString(mllpBuffer.getTrailingOutOfBandData()));
-                        }
-                        mllpBuffer.reset();
-
-                        consumer.processMessage(hl7MessageBytes, this);
+                        processBufferedMessages();
                     } else if (!mllpBuffer.hasStartOfBlock()) {
                         byte[] payload = mllpBuffer.toByteArray();
                         log.warn("Ignoring {} byte un-enveloped payload {}", payload.length,
@@ -213,6 +196,87 @@ public class TcpSocketConsumerRunnable implements Runnable {
 
             mllpBuffer.resetSocket(clientSocket);
         }
+    }
+
+    /**
+     * Process all complete MLLP envelopes currently in the buffer.
+     * <p>
+     * The buffer is reused to generate and send the acknowledgement. Preserve a trailing framed message before
+     * processing the current one and restore it afterwards, so pipelined messages are not lost when the buffer is reset
+     * for the acknowledgement.
+     */
+    private void processBufferedMessages() {
+        do {
+            byte[] hl7MessageBytes = mllpBuffer.toMllpPayload();
+            if (log.isDebugEnabled()) {
+                log.debug("Received {} byte message {}", hl7MessageBytes.length,
+                        hl7Util.convertToLoggableString(hl7MessageBytes));
+            }
+            if (mllpBuffer.hasLeadingOutOfBandData()) {
+                log.warn("Ignoring leading out-of-band data: {}",
+                        hl7Util.convertToLoggableString(mllpBuffer.getLeadingOutOfBandData()));
+            }
+
+            byte[] trailingMessageData = extractTrailingMessageData();
+            mllpBuffer.reset();
+            consumer.processMessage(hl7MessageBytes, this);
+
+            if (trailingMessageData != null) {
+                mllpBuffer.reset();
+                mllpBuffer.write(trailingMessageData);
+            }
+        } while (isSocketOpen() && mllpBuffer.hasCompleteEnvelope());
+
+        if (!mllpBuffer.isEmpty() && !isSocketOpen()) {
+            log.warn("Abandoning {} bytes of unprocessed pipelined data because the connection is closed",
+                    mllpBuffer.size());
+        }
+    }
+
+    /**
+     * Return trailing data beginning with the next START_OF_BLOCK, if present. Data preceding it, and trailing data
+     * with no START_OF_BLOCK, is out-of-band data.
+     */
+    private byte[] extractTrailingMessageData() {
+        if (!mllpBuffer.hasTrailingOutOfBandData()) {
+            return null;
+        }
+
+        byte[] trailingData = mllpBuffer.getTrailingOutOfBandData();
+        int trailingDataOffset = mllpBuffer.size() - trailingData.length;
+        int leadingLineBreakCount = 0;
+        while (leadingLineBreakCount < trailingData.length && isLineBreak(trailingData[leadingLineBreakCount])) {
+            leadingLineBreakCount++;
+        }
+        for (int i = 0; i < trailingData.length; i++) {
+            if (trailingData[i] == MllpProtocolConstants.START_OF_BLOCK) {
+                // A START_OF_BLOCK preceded only by line breaks (e.g. senders terminating frames with <FS><CR><LF>)
+                // starts the next message, even if that message is not complete yet.
+                if (i == leadingLineBreakCount || mllpBuffer.isCompleteEnvelopeAt(trailingDataOffset + i)) {
+                    if (i > 0) {
+                        byte[] outOfBandData = Arrays.copyOf(trailingData, i);
+                        log.warn("Ignoring {} bytes of out-of-band data before next message: {}", i,
+                                hl7Util.convertToLoggableString(outOfBandData));
+                    }
+                    return Arrays.copyOfRange(trailingData, i, trailingData.length);
+                }
+
+                // A START_OF_BLOCK embedded in junk must not be retained as a partial message: doing so would
+                // turn a benign trailing-data warning into a receive-timeout error and reset the connection.
+                continue;
+            }
+        }
+
+        log.warn("Ignoring trailing out-of-band data: {}", hl7Util.convertToLoggableString(trailingData));
+        return null;
+    }
+
+    private static boolean isLineBreak(byte b) {
+        return b == '\r' || b == '\n';
+    }
+
+    private boolean isSocketOpen() {
+        return running && clientSocket != null && clientSocket.isConnected() && !clientSocket.isClosed();
     }
 
     public Socket getSocket() {
