@@ -137,6 +137,30 @@ public class OpenAIMockBuilder {
         return this;
     }
 
+    /**
+     * Replies with an OpenAI API error instead of a result, for example status {@code 429} with type
+     * {@code rate_limit_exceeded}, to exercise retries and error handling. The OpenAI SDK retries 408, 409, 429 and 5xx
+     * responses by default, so set its maximum retries to 0 to observe the error at once.
+     */
+    public OpenAIMockBuilder replyWithError(int statusCode, String type, String message) {
+        validateCurrentExpectation("replyWithError()");
+        log.debug("Setting error reply: {} {} {}", statusCode, type, message);
+        currentExpectation.setError(statusCode, type, message);
+        return this;
+    }
+
+    /**
+     * Adds a {@code Retry-After} header, in seconds, to the error reply.
+     */
+    public OpenAIMockBuilder withRetryAfter(long seconds) {
+        validateCurrentExpectation("withRetryAfter()");
+        if (!currentExpectation.hasError()) {
+            throw new IllegalStateException("Call replyWithError() before withRetryAfter()");
+        }
+        currentExpectation.setRetryAfterSeconds(seconds);
+        return this;
+    }
+
     public OpenAIMockBuilder withParam(String key, Object value) {
         validateCurrentExpectation("withParam()");
         validateHasToolSteps("withParam()");
