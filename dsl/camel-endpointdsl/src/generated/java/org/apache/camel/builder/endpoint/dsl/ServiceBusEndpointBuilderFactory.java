@@ -340,8 +340,8 @@ public interface ServiceBusEndpointBuilderFactory {
             return this;
         }
         /**
-         * Sets the maximum number of concurrent sessions to process at any given
-         * time. Only applies when sessionEnabled is true.
+         * Sets the maximum number of concurrent sessions to process at any
+         * given time. Only applies when sessionEnabled is true.
          * 
          * The option is a: <code>int</code> type.
          * 
@@ -356,8 +356,8 @@ public interface ServiceBusEndpointBuilderFactory {
             return this;
         }
         /**
-         * Sets the maximum number of concurrent sessions to process at any given
-         * time. Only applies when sessionEnabled is true.
+         * Sets the maximum number of concurrent sessions to process at any
+         * given time. Only applies when sessionEnabled is true.
          * 
          * The option will be converted to a <code>int</code> type.
          * 
