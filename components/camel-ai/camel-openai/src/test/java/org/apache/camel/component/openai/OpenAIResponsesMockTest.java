@@ -110,6 +110,7 @@ class OpenAIResponsesMockTest extends CamelTestSupport {
         assertThat(result.getException()).isNull();
         assertThat(result.getMessage().getBody(String.class)).isEqualTo("Hi from responses mock");
         assertThat(result.getMessage().getHeader(OpenAIConstants.RESPONSE_ID, String.class)).startsWith("resp_");
+        assertThat(result.getMessage().getHeader(OpenAIConstants.RESPONSE_MODEL, String.class)).isEqualTo("openai-mock");
         assertThat(result.getMessage().getHeader(OpenAIConstants.PROMPT_TOKENS, Long.class)).isEqualTo(10L);
         assertThat(result.getMessage().getHeader(OpenAIConstants.COMPLETION_TOKENS, Long.class)).isEqualTo(5L);
         assertThat(result.getMessage().getHeader(OpenAIConstants.TOTAL_TOKENS, Long.class)).isEqualTo(15L);
