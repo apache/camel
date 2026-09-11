@@ -201,12 +201,22 @@ You can also configure repositories in `application.properties`:
 camel.jbang.repos=https://packages.atlassian.com/maven-external
 ----
 
-Or set a global default via environment variable:
+Or set a global default with the `camel.extra.repos` JVM system property, which applies to every
+Camel CLI command without having to repeat `--repos`:
 
 [source,bash]
 ----
 export JAVA_TOOL_OPTIONS="-Dcamel.extra.repos=repo1=https://repo1.example.com/maven2,repo2=https://repo2.example.com/releases"
 ----
+
+The value is a comma-separated list of repositories, where each entry is either a plain URL or an
+`id=url` pair. Prefer the `id=url` form when the repository requires authentication, as the id is
+what Camel matches against the `<server>` entries in `~/.m2/settings.xml`.
+
+NOTE: A custom Camel distribution can provide a baseline for this via the
+`camel.default.extra.repos.default.value` system property. It is only consulted when
+`camel.extra.repos` is not set, so setting `camel.extra.repos` replaces that baseline rather than
+adding to it. Apache Camel itself sets neither property.
 
 == Downloading JARs over the internet
 
