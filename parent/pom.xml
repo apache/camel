@@ -97,6 +97,7 @@
         <bouncycastle-version>1.85</bouncycastle-version>
         <box-java-sdk-version>4.16.4</box-java-sdk-version>
         <braintree-gateway-version>3.53.0</braintree-gateway-version>
+        <brotli4j-version>1.23.0</brotli4j-version>
         <build-helper-maven-plugin-version>3.6.1</build-helper-maven-plugin-version>
         <bytebuddy-version>1.18.12</bytebuddy-version>
         <c3p0-version>0.14.1</c3p0-version>

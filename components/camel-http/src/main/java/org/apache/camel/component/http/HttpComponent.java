@@ -20,6 +20,7 @@ import java.io.IOException;
 import java.net.URI;
 import java.security.GeneralSecurityException;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Optional;
 
@@ -58,6 +59,9 @@ import org.apache.camel.util.UnsafeUriCharactersEncoder;
 import org.apache.hc.client5.http.config.ConnectionConfig;
 import org.apache.hc.client5.http.config.RequestConfig;
 import org.apache.hc.client5.http.cookie.CookieStore;
+import org.apache.hc.client5.http.entity.InputStreamFactory;
+import org.apache.hc.client5.http.entity.compress.ContentCodecRegistry;
+import org.apache.hc.client5.http.entity.compress.ContentCoding;
 import org.apache.hc.client5.http.impl.DefaultRedirectStrategy;
 import org.apache.hc.client5.http.impl.classic.HttpClientBuilder;
 import org.apache.hc.client5.http.impl.io.PoolingHttpClientConnectionManager;
@@ -68,6 +72,7 @@ import org.apache.hc.client5.http.ssl.DefaultHostnameVerifier;
 import org.apache.hc.client5.http.ssl.HostnameVerificationPolicy;
 import org.apache.hc.client5.http.ssl.TlsSocketStrategy;
 import org.apache.hc.core5.http.io.SocketConfig;
+import org.apache.hc.core5.http.io.entity.BasicHttpEntity;
 import org.apache.hc.core5.http.protocol.HttpContext;
 import org.apache.hc.core5.pool.PoolConcurrencyPolicy;
 import org.apache.hc.core5.ssl.SSLContexts;
@@ -85,6 +90,7 @@ public class HttpComponent extends HttpCommonComponent implements RestProducerFa
 
     private static final Logger LOG = LoggerFactory.getLogger(HttpComponent.class);
     private static final String TARGET_URI_PARAMETER = HttpComponent.class.getName() + ".targetUri";
+    private static final boolean BROTLI4J_AVAILABLE = isBrotli4jAvailable();
 
     @Metadata(label = "advanced",
               description = "To use the custom HttpClientConfigurer to perform configuration of the HttpClient that will be used.")
@@ -644,6 +650,13 @@ public class HttpComponent extends HttpCommonComponent implements RestProducerFa
         }
         if (contentCompressionDisabled) {
             clientBuilder.disableContentCompression();
+        } else if (!BROTLI4J_AVAILABLE) {
+            // Brotli4j API jar may be on the classpath (e.g. via quarkus-vertx-http) without
+            // the platform-native JNI library. HttpClient's Brotli4jRuntime.available() only
+            // checks class presence, not JNI loadability, so it would advertise "br" in
+            // Accept-Encoding and then fail at decompression time with UnsatisfiedLinkError.
+            // Re-register all available decoders except brotli.
+            clientBuilder.setContentDecoderRegistry(buildDecodersWithoutBrotli());
         }
         if (cookieManagementDisabled) {
             clientBuilder.disableCookieManagement();
@@ -662,6 +675,35 @@ public class HttpComponent extends HttpCommonComponent implements RestProducerFa
         }
 
         return clientBuilder;
+    }
+
+    static boolean isBrotli4jAvailable() {
+        try {
+            Class<?> loader = Class.forName("com.aayushatharva.brotli4j.Brotli4jLoader", true,
+                    HttpComponent.class.getClassLoader());
+            return (boolean) loader.getMethod("isAvailable").invoke(null);
+        } catch (Exception | LinkageError e) {
+            return false;
+        }
+    }
+
+    /**
+     * Builds a content decoder registry containing all HttpClient-supported decoders except Brotli. Called when the
+     * Brotli4j API jar is on the classpath but the platform-native JNI library is missing.
+     */
+    static LinkedHashMap<String, InputStreamFactory> buildDecodersWithoutBrotli() {
+        LinkedHashMap<String, InputStreamFactory> decoders = new LinkedHashMap<>();
+        for (ContentCoding cc : ContentCoding.values()) {
+            if (cc == ContentCoding.BROTLI) {
+                continue;
+            }
+            if (ContentCodecRegistry.decoder(cc) != null) {
+                final ContentCoding coding = cc;
+                decoders.put(cc.token(), in -> ContentCodecRegistry.unwrap(coding,
+                        new BasicHttpEntity(in, null)).getContent());
+            }
+        }
+        return decoders;
     }
 
     protected TlsSocketStrategy createTlsStrategy(
