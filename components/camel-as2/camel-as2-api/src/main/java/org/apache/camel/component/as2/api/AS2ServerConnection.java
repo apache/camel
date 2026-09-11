@@ -510,55 +510,55 @@ public class AS2ServerConnection {
                     HttpCoreContext coreContext = HttpCoreContext.castOrCreate(context);
 
                     try {
-                    // Safely retrieve the AS2 consumer configuration and path from ThreadLocal storage.
-                    AS2ConsumerConfiguration config = Optional.ofNullable(CURRENT_CONSUMER_CONFIG.get())
-                            .map(w -> w.config)
-                            .orElse(null);
+                        // Safely retrieve the AS2 consumer configuration and path from ThreadLocal storage.
+                        AS2ConsumerConfiguration config = Optional.ofNullable(CURRENT_CONSUMER_CONFIG.get())
+                                .map(w -> w.config)
+                                .orElse(null);
 
-                    String recipientAddress = coreContext.getAttribute(AS2AsynchronousMDNManager.RECIPIENT_ADDRESS,
-                            String.class);
+                        String recipientAddress = coreContext.getAttribute(AS2AsynchronousMDNManager.RECIPIENT_ADDRESS,
+                                String.class);
 
-                    if (recipientAddress != null && config != null) {
-                        // Send the MDN asynchronously.
+                        if (recipientAddress != null && config != null) {
+                            // Send the MDN asynchronously.
 
-                        DispositionNotificationMultipartReportEntity multipartReportEntity = coreContext.getAttribute(
-                                AS2AsynchronousMDNManager.ASYNCHRONOUS_MDN,
-                                DispositionNotificationMultipartReportEntity.class);
-                        AS2AsynchronousMDNManager asynchronousMDNManager = new AS2AsynchronousMDNManager(
-                                AS2ServerConnection.this.as2Version,
-                                AS2ServerConnection.this.originServer,
-                                AS2ServerConnection.this.serverFqdn,
-                                config.getSigningCertificateChain(),
-                                config.getSigningPrivateKey(),
-                                AS2ServerConnection.this.userName,
-                                AS2ServerConnection.this.password,
-                                AS2ServerConnection.this.accessToken,
-                                AS2ServerConnection.this.asyncMdnAllowedHosts);
+                            DispositionNotificationMultipartReportEntity multipartReportEntity = coreContext.getAttribute(
+                                    AS2AsynchronousMDNManager.ASYNCHRONOUS_MDN,
+                                    DispositionNotificationMultipartReportEntity.class);
+                            AS2AsynchronousMDNManager asynchronousMDNManager = new AS2AsynchronousMDNManager(
+                                    AS2ServerConnection.this.as2Version,
+                                    AS2ServerConnection.this.originServer,
+                                    AS2ServerConnection.this.serverFqdn,
+                                    config.getSigningCertificateChain(),
+                                    config.getSigningPrivateKey(),
+                                    AS2ServerConnection.this.userName,
+                                    AS2ServerConnection.this.password,
+                                    AS2ServerConnection.this.accessToken,
+                                    AS2ServerConnection.this.asyncMdnAllowedHosts);
 
-                        HttpRequest request = coreContext.getRequest();
-                        AS2SignedDataGenerator gen = ResponseMDN.createSigningGenerator(
-                                request,
-                                config.getSigningAlgorithm(),
-                                config.getSigningCertificateChain(),
-                                config.getSigningPrivateKey());
-                        if (gen != null) {
-                            // send a signed MDN
-                            MultipartSignedEntity multipartSignedEntity = null;
-                            try {
-                                multipartSignedEntity = ResponseMDN.prepareSignedReceipt(gen, multipartReportEntity);
-                            } catch (Exception e) {
-                                LOG.warn("failed to sign MDN");
+                            HttpRequest request = coreContext.getRequest();
+                            AS2SignedDataGenerator gen = ResponseMDN.createSigningGenerator(
+                                    request,
+                                    config.getSigningAlgorithm(),
+                                    config.getSigningCertificateChain(),
+                                    config.getSigningPrivateKey());
+                            if (gen != null) {
+                                // send a signed MDN
+                                MultipartSignedEntity multipartSignedEntity = null;
+                                try {
+                                    multipartSignedEntity = ResponseMDN.prepareSignedReceipt(gen, multipartReportEntity);
+                                } catch (Exception e) {
+                                    LOG.warn("failed to sign MDN");
+                                }
+                                if (multipartSignedEntity != null) {
+                                    asynchronousMDNManager.send(
+                                            multipartSignedEntity, multipartSignedEntity.getContentType(), recipientAddress);
+                                }
+                            } else {
+                                // send an unsigned MDN
+                                asynchronousMDNManager.send(multipartReportEntity,
+                                        multipartReportEntity.getMainMessageContentType(), recipientAddress);
                             }
-                            if (multipartSignedEntity != null) {
-                                asynchronousMDNManager.send(
-                                        multipartSignedEntity, multipartSignedEntity.getContentType(), recipientAddress);
-                            }
-                        } else {
-                            // send an unsigned MDN
-                            asynchronousMDNManager.send(multipartReportEntity,
-                                    multipartReportEntity.getMainMessageContentType(), recipientAddress);
                         }
-                    }
                     } finally {
                         // The context and the ThreadLocal are reused for every request handled on this
                         // connection, and nothing else clears them. Without this, a later request that does not
