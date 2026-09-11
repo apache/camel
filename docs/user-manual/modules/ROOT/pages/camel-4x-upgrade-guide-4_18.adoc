@@ -1734,6 +1734,22 @@ two names differed, that header never carried a usable `DataHandler` in the firs
 names happened to be equal did it resolve, and then the name is unchanged. A route that expected the
 attachment header under the uploaded file name should read it under the multipart field name.
 
+=== camel-tensorflow-serving - the Target and Credentials headers are deprecated
+
+`TensorFlowServingConstants.TARGET` (`CamelTensorFlowServingTarget`) and
+`TensorFlowServingConstants.CREDENTIALS` (`CamelTensorFlowServingCredentials`) are deprecated. Both
+were declared with `@Metadata` and advertised through the endpoint's `headersClass`, but neither has
+ever been read by the component.
+
+The gRPC channel and its stubs are built once in `TensorFlowServingEndpoint.doInit()` from
+`configuration.getTarget()` and `configuration.getCredentials()`, so a per-exchange override supplied
+as a header cannot take effect. A route that set either header was silently ignored. The sibling
+`camel-kserve` component declares neither.
+
+Configure the `target` and `credentials` endpoint options instead, or route to a different endpoint
+with `toD` when the destination varies per message. The constants remain in place for backwards
+compatibility and are now marked deprecated in the component metadata.
+
 === camel-vertx-http - the REST producer applies the outbound header filter
 
 `VertxHttpRestHeaderFilterStrategy.applyFilterToCamelHeaders` delegated to
