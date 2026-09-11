@@ -1723,3 +1723,22 @@ as a header cannot take effect. A route that set either header was silently igno
 Configure the `target` and `credentials` endpoint options instead, or route to a different endpoint
 with `toD` when the destination varies per message. The constants remain in place for backwards
 compatibility and are now marked deprecated in the component metadata.
+
+=== camel-vertx-http - the REST producer applies the outbound header filter
+
+`VertxHttpRestHeaderFilterStrategy.applyFilterToCamelHeaders` delegated to
+`applyFilterToExternalHeaders`, so it consulted the inbound filter while implementing the outbound
+direction. The outbound filter that `VertxHttpHeaderFilterStrategy` installs was therefore never
+applied, and the sibling REST strategies in `camel-http-common`, `camel-netty-http` and
+`camel-undertow` all delegate to the matching method.
+
+A REST producer that resolves to `vertx-http` and does not configure its own `headerFilterStrategy`
+now filters the common HTTP headers on the outbound direction, as the other HTTP components already
+did. A message header named `Content-Length`, `Content-Type`, `Host`, `Cache-Control`, `Connection`,
+`Date`, `Pragma`, `Trailer`, `Transfer-Encoding`, `Upgrade`, `Via` or `Warning` is no longer copied
+onto the outgoing request; the `Content-Type` of the request is still taken from the exchange as
+before. Headers consumed by the URI template or the query parameters continue to be filtered, and a
+custom `headerFilterStrategy` is used as-is and is unaffected.
+
+Routes that relied on one of those headers reaching the wire must set it through the endpoint
+configuration or supply a `headerFilterStrategy` that permits it.
