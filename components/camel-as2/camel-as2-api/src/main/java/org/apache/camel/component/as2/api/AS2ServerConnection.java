@@ -583,7 +583,6 @@ public class AS2ServerConnection {
             }
         }
 
-
     }
 
     public AS2ServerConnection(String as2Version,
