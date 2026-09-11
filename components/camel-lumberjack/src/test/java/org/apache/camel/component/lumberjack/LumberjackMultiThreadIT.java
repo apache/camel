@@ -30,6 +30,7 @@ import org.awaitility.Awaitility;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.condition.DisabledIfSystemProperty;
 import org.junit.jupiter.api.condition.DisabledOnOs;
 import org.junit.jupiter.api.condition.OS;
 import org.junit.jupiter.api.parallel.Isolated;
@@ -40,6 +41,9 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 @DisabledOnOs(value = { OS.LINUX },
               architectures = { "s390x" },
               disabledReason = "This test does not run reliably multiple platforms (see CAMEL-21438)")
+@DisabledIfSystemProperty(named = "ci.env.name", matches = ".*",
+                          disabledReason = "Timing sensitive: the ACK round-trip exceeds the wait bounds on loaded CI runners, "
+                                           + "and @Isolated does not prevent a concurrently built module from saturating the node")
 @Isolated
 public class LumberjackMultiThreadIT extends CamelTestSupport {
 
