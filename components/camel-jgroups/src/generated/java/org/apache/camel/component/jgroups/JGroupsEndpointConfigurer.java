@@ -27,6 +27,8 @@ public class JGroupsEndpointConfigurer extends PropertyConfigurerSupport impleme
         case "bridgeErrorHandler": target.setBridgeErrorHandler(property(camelContext, boolean.class, value)); return true;
         case "channelproperties":
         case "channelProperties": target.setChannelProperties(property(camelContext, java.lang.String.class, value)); return true;
+        case "deserializationfilter":
+        case "deserializationFilter": target.setDeserializationFilter(property(camelContext, java.lang.String.class, value)); return true;
         case "enableviewmessages":
         case "enableViewMessages": target.setEnableViewMessages(property(camelContext, boolean.class, value)); return true;
         case "exceptionhandler":
@@ -46,6 +48,8 @@ public class JGroupsEndpointConfigurer extends PropertyConfigurerSupport impleme
         case "bridgeErrorHandler": return boolean.class;
         case "channelproperties":
         case "channelProperties": return java.lang.String.class;
+        case "deserializationfilter":
+        case "deserializationFilter": return java.lang.String.class;
         case "enableviewmessages":
         case "enableViewMessages": return boolean.class;
         case "exceptionhandler":
@@ -66,6 +70,8 @@ public class JGroupsEndpointConfigurer extends PropertyConfigurerSupport impleme
         case "bridgeErrorHandler": return target.isBridgeErrorHandler();
         case "channelproperties":
         case "channelProperties": return target.getChannelProperties();
+        case "deserializationfilter":
+        case "deserializationFilter": return target.getDeserializationFilter();
         case "enableviewmessages":
         case "enableViewMessages": return target.isEnableViewMessages();
         case "exceptionhandler":
