@@ -1839,3 +1839,29 @@ Routes that set `useRecovery=false` are unaffected. Routes that left recovery en
 default, stop seeing in-progress aggregations re-delivered, and start seeing genuine recovery. The cache
 now also holds one entry per completed and not yet confirmed exchange; those entries are removed on
 confirmation.
+
+=== camel-jgroups - the consumer applies a deserialization filter by default
+
+The consumer maps an incoming cluster message to the exchange body by calling
+`org.jgroups.Message.getObject()`, which Java-deserializes the payload. The class of that body is
+now checked against a JEP-290 `java.io.ObjectInputFilter`, resolved through
+`DeserializationFilterHelper`. Previously no filter was applied at all, and any type a cluster peer
+sent was routed.
+
+When no explicit pattern is configured, the JVM-wide `jdk.serialFilter` is honoured if set,
+otherwise the shared Camel default allow-list is applied (it permits standard Java and Apache Camel
+types and denies `java.net.**`). Routes that exchange their own classes over the cluster must widen
+it through the new `deserializationFilter` endpoint option, for example:
+
+[source,java]
+----
+from("jgroups:clusterName?deserializationFilter=com.example.model.**;java.**;!*")
+----
+
+Setting `deserializationFilter=*` accepts any type and so restores the previous behavior. A refused
+message is not routed; it is reported to the consumer's `ExceptionHandler`, which logs it at WARN
+level by default.
+
+Note that JGroups deserializes the payload inside its own receive path, so this check is a
+defense-in-depth allow-list on the resulting body type. The JVM-wide `jdk.serialFilter`, together
+with a channel secured with `AUTH` and encryption, remain the primary mitigations.
