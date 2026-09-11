@@ -1210,7 +1210,10 @@ public interface OpenAIEndpointBuilderFactory {
         /**
          * Store the full SDK response in non-streaming mode: chat-completion
          * uses exchange property 'CamelOpenAIResponse'; responses uses
-         * 'CamelOpenAIResponsesResponse'.
+         * 'CamelOpenAIResponsesResponse'; embeddings uses
+         * 'CamelOpenAIEmbeddingsResponse'; audio transcription uses
+         * 'CamelOpenAIAudioTranscriptionResponse'; audio translation uses
+         * 'CamelOpenAIAudioTranslationResponse'.
          * 
          * The option is a: <code>boolean</code> type.
          * 
@@ -1227,7 +1230,10 @@ public interface OpenAIEndpointBuilderFactory {
         /**
          * Store the full SDK response in non-streaming mode: chat-completion
          * uses exchange property 'CamelOpenAIResponse'; responses uses
-         * 'CamelOpenAIResponsesResponse'.
+         * 'CamelOpenAIResponsesResponse'; embeddings uses
+         * 'CamelOpenAIEmbeddingsResponse'; audio transcription uses
+         * 'CamelOpenAIAudioTranscriptionResponse'; audio translation uses
+         * 'CamelOpenAIAudioTranslationResponse'.
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
@@ -2174,6 +2180,49 @@ public interface OpenAIEndpointBuilderFactory {
          */
         public String openAIResponsesResponse() {
             return "CamelOpenAIResponsesResponse";
+        }
+        /**
+        /**
+         * The complete OpenAI embeddings response object.
+         * 
+         * The option is a: {@code
+         * com.openai.models.embeddings.CreateEmbeddingResponse} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code OpenAIEmbeddingsResponse}.
+         */
+        public String openAIEmbeddingsResponse() {
+            return "CamelOpenAIEmbeddingsResponse";
+        }
+        /**
+         * The complete OpenAI audio transcription response object.
+         * 
+         * The option is a: {@code
+         * com.openai.models.audio.transcriptions.TranscriptionCreateResponse}
+         * type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code
+         * OpenAIAudioTranscriptionResponse}.
+         */
+        public String openAIAudioTranscriptionResponse() {
+            return "CamelOpenAIAudioTranscriptionResponse";
+        }
+        /**
+         * The complete OpenAI audio translation response object.
+         * 
+         * The option is a: {@code
+         * com.openai.models.audio.translations.TranslationCreateResponse} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code
+         * OpenAIAudioTranslationResponse}.
+         */
+        public String openAIAudioTranslationResponse() {
+            return "CamelOpenAIAudioTranslationResponse";
         }
         /**
          * The model to use for embeddings.

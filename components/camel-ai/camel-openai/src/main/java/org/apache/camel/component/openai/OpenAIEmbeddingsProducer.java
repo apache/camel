@@ -104,7 +104,7 @@ public class OpenAIEmbeddingsProducer extends DefaultAsyncProducer {
                 .embeddings().create(params);
 
         if (config.isStoreFullResponse()) {
-            exchange.setProperty(OpenAIConstants.RESPONSE, response);
+            exchange.setProperty(OpenAIConstants.EMBEDDINGS_RESPONSE, response);
         }
 
         // Extract embeddings
