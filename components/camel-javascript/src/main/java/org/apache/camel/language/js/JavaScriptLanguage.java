@@ -27,7 +27,9 @@ import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 
 import org.apache.camel.Expression;
+import org.apache.camel.NoTypeConversionAvailableException;
 import org.apache.camel.Predicate;
+import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.Service;
 import org.apache.camel.spi.ScriptingLanguage;
 import org.apache.camel.spi.annotations.Language;
@@ -43,12 +45,15 @@ import org.graalvm.polyglot.Value;
  * <p>
  * One {@link Engine} is shared by all evaluations of a language instance so parsed and compiled scripts are reused; a
  * fresh {@link Context} is still created per evaluation so scripts stay isolated from each other. The engine is created
- * lazily on first use and closed when the language is stopped (which happens when the {@code CamelContext} stops).
+ * when the language is started (a language is started as soon as the {@code CamelContext} resolves it, so the GraalJS
+ * engine build happens at route startup rather than on the first message) and closed when it is stopped; the
+ * {@code engine()} accessor also builds it on demand for an expression used before start.
  */
 @Language("js")
 public class JavaScriptLanguage extends TypedLanguageSupport implements ScriptingLanguage, Service {
 
-    private final Map<String, Source> sourceCache = LRUCacheFactory.newLRUSoftCache(16, 1000, true);
+    // Source is not a Service, so nothing is stopped on eviction
+    private final Map<String, Source> sourceCache = LRUCacheFactory.newLRUSoftCache(16, 1000, false);
     private final Lock engineLock = new ReentrantLock();
     private volatile Engine engine;
 
@@ -97,7 +102,12 @@ public class JavaScriptLanguage extends TypedLanguageSupport implements Scriptin
                 return resultType.cast(answer);
             }
             if (getCamelContext() != null) {
-                return getCamelContext().getTypeConverter().convertTo(resultType, answer);
+                try {
+                    // fail loudly on an impossible conversion, as o.as(resultType) did before the result was materialized
+                    return getCamelContext().getTypeConverter().mandatoryConvertTo(resultType, answer);
+                } catch (NoTypeConversionAvailableException e) {
+                    throw RuntimeCamelException.wrapRuntimeCamelException(e);
+                }
             }
             return resultType.cast(o.as(resultType));
         }
@@ -173,6 +183,11 @@ public class JavaScriptLanguage extends TypedLanguageSupport implements Scriptin
         return value.as(Object.class);
     }
 
+    /**
+     * Whether the value is a JavaScript {@code Set}. The polyglot API has no type test for it, so this is a heuristic
+     * on the meta object's simple name: a script-defined {@code class Set} matches too, and a {@code WeakSet} or a
+     * subclass does not (they are then materialized as a list of their iterator).
+     */
     private static boolean isJsSet(Value value) {
         Value meta = value.getMetaObject();
         if (meta == null || !meta.isMetaObject()) {
