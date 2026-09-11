@@ -34,6 +34,7 @@ import org.apache.camel.Service;
 import org.apache.camel.spi.ScriptingLanguage;
 import org.apache.camel.spi.annotations.Language;
 import org.apache.camel.support.TypedLanguageSupport;
+import run.endive.runtime.Memory;
 
 /**
  * Camel expression language for JavaScript via <a href="https://github.com/roastedroot/quickjs4j">QuickJS4J</a>.
@@ -46,6 +47,15 @@ import org.apache.camel.support.TypedLanguageSupport;
  */
 @Language("quickjs")
 public class QuickjsLanguage extends TypedLanguageSupport implements ScriptingLanguage, Service {
+
+    /**
+     * Every evaluation executes a module in the QuickJS runtime, and QuickJS keeps evaluated modules until its context
+     * is freed, so an engine grows with every evaluation (about 12 KB each). An engine is therefore recycled once its
+     * WebAssembly memory exceeds {@link #getEngineMaxMemory()} or it has run {@link #getEngineMaxEvaluations()}
+     * evaluations: it is closed and the thread creates a fresh one on its next evaluation.
+     */
+    private long engineMaxMemory = 64L * 1024 * 1024;
+    private int engineMaxEvaluations = 50_000;
 
     private final AtomicInteger generation = new AtomicInteger();
     private final ConcurrentLinkedQueue<Engine> engines = new ConcurrentLinkedQueue<>();
@@ -130,15 +140,60 @@ public class QuickjsLanguage extends TypedLanguageSupport implements ScriptingLa
         EngineState state = currentEngine();
         state.stderr.reset();
         try {
-            return state.engine.invokeGuestFunction(
+            Object result = state.engine.invokeGuestFunction(
                     QuickjsHelper.MODULE_NAME,
                     QuickjsHelper.FUNCTION_NAME,
                     List.of(bindings, script),
                     QuickjsHelper.EVAL_WRAPPER);
+            if (state.exhausted(engineMaxMemory, engineMaxEvaluations)) {
+                discard(state);
+            }
+            return result;
         } finally {
             // Drop this evaluation's WASI stderr so a reused Engine cannot accumulate it.
             state.stderr.reset();
         }
+    }
+
+    /**
+     * Closes the calling thread's engine; the next evaluation on this thread creates a fresh one.
+     */
+    private void discard(EngineState state) {
+        if (engine.get() == state) {
+            engine.remove();
+        }
+        engines.remove(state.engine);
+        closeUnpublished(state.engine);
+    }
+
+    public long getEngineMaxMemory() {
+        return engineMaxMemory;
+    }
+
+    /**
+     * Recycle a worker thread's engine once its WebAssembly memory exceeds this many bytes (default 64 MB).
+     */
+    public void setEngineMaxMemory(long engineMaxMemory) {
+        this.engineMaxMemory = engineMaxMemory;
+    }
+
+    public int getEngineMaxEvaluations() {
+        return engineMaxEvaluations;
+    }
+
+    /**
+     * Recycle a worker thread's engine after this many evaluations (default 50,000).
+     */
+    public void setEngineMaxEvaluations(int engineMaxEvaluations) {
+        this.engineMaxEvaluations = engineMaxEvaluations;
+    }
+
+    /**
+     * WebAssembly memory of the calling thread's engine, in bytes (for tests).
+     */
+    long engineMemory() {
+        EngineState state = engine.get();
+        return state == null ? 0 : state.memoryBytes();
     }
 
     private EngineState currentEngine() {
@@ -155,7 +210,8 @@ public class QuickjsLanguage extends TypedLanguageSupport implements ScriptingLa
             return state;
         }
         ByteArrayOutputStream stderr = new ByteArrayOutputStream();
-        Engine created = QuickjsHelper.newEngine(stderr);
+        Memory[] memory = new Memory[1];
+        Engine created = QuickjsHelper.newEngine(stderr, memory);
         if (generation.get() != gen) {
             closeUnpublished(created);
             return currentEngine(attempt + 1);
@@ -164,7 +220,7 @@ public class QuickjsLanguage extends TypedLanguageSupport implements ScriptingLa
         try {
             if (generation.get() == gen) {
                 engines.add(created);
-                state = new EngineState(gen, created, stderr);
+                state = new EngineState(gen, created, stderr, memory[0]);
                 engine.set(state);
                 return state;
             }
@@ -211,11 +267,23 @@ public class QuickjsLanguage extends TypedLanguageSupport implements ScriptingLa
         private final int generation;
         private final Engine engine;
         private final ByteArrayOutputStream stderr;
+        private final Memory memory;
+        private int evaluations;
 
-        private EngineState(int generation, Engine engine, ByteArrayOutputStream stderr) {
+        private EngineState(int generation, Engine engine, ByteArrayOutputStream stderr, Memory memory) {
             this.generation = generation;
             this.engine = engine;
             this.stderr = stderr;
+            this.memory = memory;
+        }
+
+        long memoryBytes() {
+            return memory == null ? 0 : (long) memory.pages() * Memory.PAGE_SIZE;
+        }
+
+        boolean exhausted(long maxMemory, int maxEvaluations) {
+            evaluations++;
+            return evaluations >= maxEvaluations || memoryBytes() > maxMemory;
         }
     }
 }
