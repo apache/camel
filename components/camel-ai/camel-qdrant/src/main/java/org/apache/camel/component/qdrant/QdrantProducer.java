@@ -26,7 +26,6 @@ import com.google.common.util.concurrent.FutureCallback;
 import com.google.common.util.concurrent.Futures;
 import com.google.common.util.concurrent.ListenableFuture;
 import io.qdrant.client.QdrantClient;
-import io.qdrant.client.WithPayloadSelectorFactory;
 import io.qdrant.client.WithVectorsSelectorFactory;
 import io.qdrant.client.grpc.Collections.VectorParams;
 import io.qdrant.client.grpc.Common;
@@ -106,6 +105,25 @@ public class QdrantProducer extends DefaultAsyncProducer {
         }
     }
 
+    /**
+     * Resolves the payload selector to send with a read. An explicit {@link QdrantHeaders#PAYLOAD_SELECTOR} wins, so a
+     * route can ask for a subset of the payload fields; otherwise the {@link QdrantHeaders#INCLUDE_PAYLOAD} boolean
+     * selects all or nothing as before.
+     */
+    private static Points.WithPayloadSelector payloadSelector(Message in) {
+        Points.WithPayloadSelector selector = in.getHeader(
+                QdrantHeaders.PAYLOAD_SELECTOR,
+                Points.WithPayloadSelector.class);
+        if (selector != null) {
+            return selector;
+        }
+
+        return enable(in.getHeader(
+                QdrantHeaders.INCLUDE_PAYLOAD,
+                QdrantHeaders.DEFAULT_INCLUDE_PAYLOAD,
+                boolean.class));
+    }
+
     // ***************************************
     //
     // Actions
@@ -151,10 +169,7 @@ public class QdrantProducer extends DefaultAsyncProducer {
                 this.client.retrieveAsync(
                         collection,
                         ids,
-                        WithPayloadSelectorFactory.enable(in.getHeader(
-                                QdrantHeaders.INCLUDE_PAYLOAD,
-                                QdrantHeaders.DEFAULT_INCLUDE_PAYLOAD,
-                                boolean.class)),
+                        payloadSelector(in),
                         WithVectorsSelectorFactory.enable(in.getHeader(
                                 QdrantHeaders.INCLUDE_VECTORS,
                                 QdrantHeaders.DEFAULT_INCLUDE_VECTORS,
@@ -288,10 +303,7 @@ public class QdrantProducer extends DefaultAsyncProducer {
                         QdrantHeaders.INCLUDE_VECTORS,
                         QdrantHeaders.DEFAULT_INCLUDE_VECTORS,
                         boolean.class)))
-                .setWithPayload(enable(in.getHeader(
-                        QdrantHeaders.INCLUDE_PAYLOAD,
-                        QdrantHeaders.DEFAULT_INCLUDE_PAYLOAD,
-                        boolean.class)));
+                .setWithPayload(payloadSelector(in));
 
         if (filter != null) {
             queryRequestBuilder.setFilter(filter);
