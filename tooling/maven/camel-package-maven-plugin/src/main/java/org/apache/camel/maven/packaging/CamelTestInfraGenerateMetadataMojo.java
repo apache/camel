@@ -78,7 +78,7 @@ public class CamelTestInfraGenerateMetadataMojo extends AbstractGeneratorMojo {
         // Collect infra-service.properties from all dependency JARs once (for embedded service GA hints)
         Properties infraServiceProps = collectInfraServiceProperties();
 
-        for (AnnotationInstance ai : PackagePluginUtils.readJandexIndexQuietly(project).getAnnotations(INFRA_SERVICE)) {
+        for (AnnotationInstance ai : PackagePluginUtils.readJandexIndex(project).getAnnotations(INFRA_SERVICE)) {
 
             InfrastructureServiceModel infrastructureServiceModel = new InfrastructureServiceModel();
             String targetClass = ai.target().toString();

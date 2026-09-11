@@ -46,7 +46,6 @@ import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.project.MavenProject;
 import org.codehaus.plexus.build.BuildContext;
 
-import static org.apache.camel.maven.packaging.generics.PackagePluginUtils.joinHeaderAndSource;
 import static org.apache.camel.tooling.util.PackageHelper.loadText;
 
 /**
@@ -179,7 +178,7 @@ public class PrepareKameletMainMojo extends AbstractMojo {
         Path target = outputDir.toPath().resolve(filePath).resolve(fileName);
 
         try {
-            final String code = joinHeaderAndSource(licenseHeader, source);
+            final String code = licenseHeader + "\n" + source;
 
             if (getLog().isDebugEnabled()) {
                 getLog().debug("Source code generated:\n" + code);
