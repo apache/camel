@@ -509,6 +509,7 @@ public class AS2ServerConnection {
 
                     HttpCoreContext coreContext = HttpCoreContext.castOrCreate(context);
 
+                    try {
                     // Safely retrieve the AS2 consumer configuration and path from ThreadLocal storage.
                     AS2ConsumerConfiguration config = Optional.ofNullable(CURRENT_CONSUMER_CONFIG.get())
                             .map(w -> w.config)
@@ -558,7 +559,15 @@ public class AS2ServerConnection {
                                     multipartReportEntity.getMainMessageContentType(), recipientAddress);
                         }
                     }
-
+                    } finally {
+                        // The context and the ThreadLocal are reused for every request handled on this
+                        // connection, and nothing else clears them. Without this, a later request that does not
+                        // ask for an asynchronous receipt still finds the earlier request's recipient address and
+                        // report, and dispatches a second MDN to it (CAMEL-24435).
+                        coreContext.removeAttribute(AS2AsynchronousMDNManager.RECIPIENT_ADDRESS);
+                        coreContext.removeAttribute(AS2AsynchronousMDNManager.ASYNCHRONOUS_MDN);
+                        CURRENT_CONSUMER_CONFIG.remove();
+                    }
                 }
             } catch (final ConnectionClosedException ex) {
                 LOG.info("Client closed connection");
@@ -573,6 +582,7 @@ public class AS2ServerConnection {
                 }
             }
         }
+
 
     }
 
