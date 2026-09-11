@@ -45,6 +45,12 @@
             <artifactId>quickjs4j</artifactId>
             <version>${quickjs4j-version}</version>
         </dependency>
+        <!-- the WebAssembly memory of an engine is observed through the endive runtime API -->
+        <dependency>
+            <groupId>run.endive</groupId>
+            <artifactId>runtime</artifactId>
+            <version>${endive-version}</version>
+        </dependency>
         <dependency>
             <groupId>com.fasterxml.jackson.core</groupId>
             <artifactId>jackson-databind</artifactId>
