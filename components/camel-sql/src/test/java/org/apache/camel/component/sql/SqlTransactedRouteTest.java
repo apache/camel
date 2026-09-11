@@ -41,7 +41,7 @@ public class SqlTransactedRouteTest extends CamelTestSupport {
     private JdbcTemplate jdbc;
 
     private String startEndpoint = "direct:start";
-    private String sqlEndpoint = "sql:overriddenByTheHeader?dataSource=#testdb";
+    private String sqlEndpoint = "sql:overriddenByTheHeader?dataSource=#testdb&allowQueryFromHeader=true";
 
     @Override
     public void doPostSetup() {

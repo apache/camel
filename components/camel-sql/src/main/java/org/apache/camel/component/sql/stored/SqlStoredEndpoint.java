@@ -62,6 +62,11 @@ public class SqlStoredEndpoint extends DefaultEndpoint implements EndpointServic
     private boolean batch;
     @UriParam(description = "Whether to use the message body as the stored procedure template and then headers for parameters. If this option is enabled then the template in the uri is not used.")
     private boolean useMessageBodyForTemplate;
+    @UriParam(defaultValue = "false", label = "security",
+              description = "Whether to allow overriding the endpoint-configured stored-procedure template with the"
+                            + " CamelSqlStoredTemplate header. Disabled by default; a header-supplied template is"
+                            + " resolved with placeholders only, never as a file:/http: resource.")
+    private boolean allowTemplateFromHeader;
     @UriParam(description = "If set, will ignore the results of the stored procedure template and use the existing IN message as the OUT message for the continuation of processing")
     private boolean noop;
     @UriParam(description = "Store the template result in a header instead of the message body. By default, outputHeader == null and the template result is stored"
@@ -193,6 +198,18 @@ public class SqlStoredEndpoint extends DefaultEndpoint implements EndpointServic
 
     public void setUseMessageBodyForTemplate(boolean useMessageBodyForTemplate) {
         this.useMessageBodyForTemplate = useMessageBodyForTemplate;
+    }
+
+    public boolean isAllowTemplateFromHeader() {
+        return allowTemplateFromHeader;
+    }
+
+    /**
+     * Whether to allow overriding the endpoint-configured stored-procedure template with the
+     * {@code CamelSqlStoredTemplate} header. Disabled by default.
+     */
+    public void setAllowTemplateFromHeader(boolean allowTemplateFromHeader) {
+        this.allowTemplateFromHeader = allowTemplateFromHeader;
     }
 
     public boolean isNoop() {

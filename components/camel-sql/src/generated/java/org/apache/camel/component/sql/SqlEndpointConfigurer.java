@@ -25,6 +25,8 @@ public class SqlEndpointConfigurer extends PropertyConfigurerSupport implements 
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "allownamedparameters":
         case "allowNamedParameters": target.setAllowNamedParameters(property(camelContext, boolean.class, value)); return true;
+        case "allowqueryfromheader":
+        case "allowQueryFromHeader": target.setAllowQueryFromHeader(property(camelContext, boolean.class, value)); return true;
         case "alwayspopulatestatement":
         case "alwaysPopulateStatement": target.setAlwaysPopulateStatement(property(camelContext, boolean.class, value)); return true;
         case "backofferrorthreshold":
@@ -125,6 +127,8 @@ public class SqlEndpointConfigurer extends PropertyConfigurerSupport implements 
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "allownamedparameters":
         case "allowNamedParameters": return boolean.class;
+        case "allowqueryfromheader":
+        case "allowQueryFromHeader": return boolean.class;
         case "alwayspopulatestatement":
         case "alwaysPopulateStatement": return boolean.class;
         case "backofferrorthreshold":
@@ -221,6 +225,8 @@ public class SqlEndpointConfigurer extends PropertyConfigurerSupport implements 
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "allownamedparameters":
         case "allowNamedParameters": return target.isAllowNamedParameters();
+        case "allowqueryfromheader":
+        case "allowQueryFromHeader": return target.isAllowQueryFromHeader();
         case "alwayspopulatestatement":
         case "alwaysPopulateStatement": return target.isAlwaysPopulateStatement();
         case "backofferrorthreshold":

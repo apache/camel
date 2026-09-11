@@ -93,6 +93,11 @@ public abstract class DefaultSqlEndpoint extends DefaultPollingEndpoint implemen
     private boolean breakBatchOnConsumeFail;
     @UriParam(defaultValue = "true", description = "Whether to allow using named parameters in the queries.")
     private boolean allowNamedParameters = true;
+    @UriParam(defaultValue = "false", label = "security",
+              description = "Whether to allow overriding the endpoint-configured SQL query with the CamelSqlQuery header."
+                            + " Disabled by default; enable it only when the header source is trusted, since it lets a"
+                            + " message choose the executed SQL.")
+    private boolean allowQueryFromHeader;
     @UriParam(label = "advanced",
               description = "If enabled then the populateStatement method from org.apache.camel.component.sql.SqlPrepareStatementStrategy is always invoked, "
                             + "also if there is no expected parameters to be prepared. When this is false then the populateStatement is only invoked if there is 1"
@@ -289,6 +294,18 @@ public abstract class DefaultSqlEndpoint extends DefaultPollingEndpoint implemen
      */
     public void setAllowNamedParameters(boolean allowNamedParameters) {
         this.allowNamedParameters = allowNamedParameters;
+    }
+
+    public boolean isAllowQueryFromHeader() {
+        return allowQueryFromHeader;
+    }
+
+    /**
+     * Whether to allow overriding the endpoint-configured SQL query with the {@code CamelSqlQuery} header. Disabled by
+     * default.
+     */
+    public void setAllowQueryFromHeader(boolean allowQueryFromHeader) {
+        this.allowQueryFromHeader = allowQueryFromHeader;
     }
 
     public boolean isAlwaysPopulateStatement() {
