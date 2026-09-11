@@ -53,7 +53,6 @@ import org.apache.hc.core5.http.io.HttpRequestHandler;
 import org.apache.hc.core5.http.io.HttpServerConnection;
 import org.apache.hc.core5.http.io.HttpServerRequestHandler;
 import org.apache.hc.core5.http.io.support.BasicHttpServerRequestHandler;
-import org.apache.hc.core5.http.protocol.BasicHttpContext;
 import org.apache.hc.core5.http.protocol.HttpContext;
 import org.apache.hc.core5.http.protocol.HttpCoreContext;
 import org.apache.hc.core5.http.protocol.HttpProcessor;
@@ -466,14 +465,12 @@ public class AS2ServerConnection {
         @Override
         public void run() {
             LOG.info("Processing new AS2 request");
-            final HttpContext context = new BasicHttpContext(null);
+            final HttpCoreContext context = HttpCoreContext.create();
 
             try {
                 while (!Thread.interrupted()) {
 
                     this.httpService.handleRequest(this.serverConnection, context);
-
-                    HttpCoreContext coreContext = HttpCoreContext.adapt(context);
 
                     try {
                         // Safely retrieve the AS2 consumer configuration and path from ThreadLocal storage.
@@ -481,13 +478,13 @@ public class AS2ServerConnection {
                                 .map(w -> w.config)
                                 .orElse(null);
 
-                        String recipientAddress = coreContext.getAttribute(AS2AsynchronousMDNManager.RECIPIENT_ADDRESS,
+                        String recipientAddress = context.getAttribute(AS2AsynchronousMDNManager.RECIPIENT_ADDRESS,
                                 String.class);
 
                         if (recipientAddress != null && config != null) {
                             // Send the MDN asynchronously.
 
-                            DispositionNotificationMultipartReportEntity multipartReportEntity = coreContext.getAttribute(
+                            DispositionNotificationMultipartReportEntity multipartReportEntity = context.getAttribute(
                                     AS2AsynchronousMDNManager.ASYNCHRONOUS_MDN,
                                     DispositionNotificationMultipartReportEntity.class);
                             AS2AsynchronousMDNManager asynchronousMDNManager = new AS2AsynchronousMDNManager(
@@ -501,7 +498,7 @@ public class AS2ServerConnection {
                                     AS2ServerConnection.this.accessToken,
                                     AS2ServerConnection.this.asyncMdnAllowedHosts);
 
-                            HttpRequest request = coreContext.getAttribute(HttpCoreContext.HTTP_REQUEST, HttpRequest.class);
+                            HttpRequest request = context.getAttribute(HttpCoreContext.HTTP_REQUEST, HttpRequest.class);
                             AS2SignedDataGenerator gen = ResponseMDN.createSigningGenerator(
                                     request,
                                     config.getSigningAlgorithm(),
@@ -531,8 +528,8 @@ public class AS2ServerConnection {
                         // connection, and nothing else clears them. Without this, a later request that does not
                         // ask for an asynchronous receipt still finds the earlier request's recipient address and
                         // report, and dispatches a second MDN to it (CAMEL-24435).
-                        coreContext.removeAttribute(AS2AsynchronousMDNManager.RECIPIENT_ADDRESS);
-                        coreContext.removeAttribute(AS2AsynchronousMDNManager.ASYNCHRONOUS_MDN);
+                        context.removeAttribute(AS2AsynchronousMDNManager.RECIPIENT_ADDRESS);
+                        context.removeAttribute(AS2AsynchronousMDNManager.ASYNCHRONOUS_MDN);
                         CURRENT_CONSUMER_CONFIG.remove();
                     }
 
