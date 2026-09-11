@@ -203,6 +203,22 @@ level by default.
 Note that JGroups deserializes the payload inside its own receive path, so this check is a
 defense-in-depth allow-list on the resulting body type. The JVM-wide `jdk.serialFilter`, together
 with a channel secured with `AUTH` and encryption, remain the primary mitigations.
+
+=== camel-smooks - external XML entity resolution disabled by default
+
+The Smooks data format and the Smooks component now parse XML input with a reader that does not
+resolve external general or parameter entities, aligning camel-smooks with the XML parser
+configuration already applied by the other Camel XML components. When a Smooks configuration parses
+XML with the default reader, an untrusted body can no longer pull in external entities (for example
+`<!ENTITY x SYSTEM "file:///...">` or an `http://` reference).
+
+This only affects configurations that use the default XML reader. Configurations that declare their
+own reader — EDI, CSV, JSON, DFDL, or a custom reader — are unchanged, and marshalling is unchanged.
+Documents carrying an internal DTD subset still parse.
+
+To restore the previous behaviour and allow external entity resolution, set the new
+`allowExternalEntities` option to `true` on the data format or on the endpoint
+(`smooks:config.xml?allowExternalEntities=true`).
 == Upgrading Camel 4.21 to 4.22
 
 === camel-tika
