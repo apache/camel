@@ -1979,3 +1979,76 @@ When `clientRequestValidation` is enabled and the REST service declares a requir
 message body is no longer replaced with a `String` version of itself. That conversion corrupted binary
 payloads such as `application/octet-stream`. The body is still read to check that it is present, using
 stream caching so it stays re-readable, but it now keeps its original type.
+
+=== camel-support
+
+`BackgroundTask.schedule` now cancels the repeating schedule it created once the task has completed or has
+run out of budget. Previously the returned `Future` stayed armed and the task kept being re-run as a no-op
+for the lifetime of the executor. Callers that inspect the returned `Future` will see `isCancelled()`
+return `true` after the task is done, where it previously stayed live. Callers that already cancel the
+`Future` themselves are unaffected.
+
+=== camel-master
+
+The `backOffMaxAttempts` option now bounds the attempts to start the delegated consumer as documented.
+The retry task previously also carried the default five second duration of its budget, which ended the
+task before the second attempt for any `backOffDelay` at or above the default of five seconds. A delegate
+that fails to start is therefore retried for longer than before, up to `backOffMaxAttempts` times.
+
+=== camel-servlet, camel-jetty - the multipart upload whitelist is enforced against the submitted file name
+
+`fileNameExtWhitelist` accepts file name extensions, but `camel-servlet`'s `AttachmentHttpBinding`
+checked it against `Part.getName()`, which is the multipart *field* name rather than the submitted
+file name. A field named `file` carries no extension, so the check found nothing to compare and every
+upload was accepted. The option is now checked against `Part.getSubmittedFileName()`, which is what
+`camel-platform-http-vertx` already does.
+
+A `camel-servlet` consumer that sets `fileNameExtWhitelist` together with `attachmentMultipartBinding=true`
+therefore starts rejecting uploads whose file extension is not listed, which is what the option always
+advertised. Uploads with no file name, such as plain form fields, are unaffected, and a route that does
+not set the option is unaffected. Review the configured extension list before upgrading.
+
+The `camel-jetty` binding performed no whitelist check at all, although `fileNameExtWhitelist` can be
+set on its `HttpBinding`. It now applies the same check.
+
+The `camel-jetty` binding also stored the attachment under the multipart field name but looked it up
+again by the submitted file name, and passed that file name to `HttpHelper.appendHeader`. The lookup
+therefore only succeeded when the two happened to be equal, and when it did the header was named by
+the client-supplied file name. The attachment is now looked up and exposed under the field name it is
+stored with, and only for parts that carry a file name — a plain form field is mapped by
+`populateRequestParameters` as before. Because the old lookup by file name returned `null` whenever the
+two names differed, that header never carried a usable `DataHandler` in the first place; only when the
+names happened to be equal did it resolve, and then the name is unchanged. A route that expected the
+attachment header under the uploaded file name should read it under the multipart field name.
+
+=== camel-tensorflow-serving - the Target and Credentials headers are deprecated
+
+`TensorFlowServingConstants.TARGET` (`CamelTensorFlowServingTarget`) and
+`TensorFlowServingConstants.CREDENTIALS` (`CamelTensorFlowServingCredentials`) are deprecated. Both
+were declared with `@Metadata` and advertised through the endpoint's `headersClass`, but neither has
+ever been read by the component.
+
+The gRPC channel and its stubs are built once in `TensorFlowServingEndpoint.doInit()` from
+`configuration.getTarget()` and `configuration.getCredentials()`, so a per-exchange override supplied
+as a header cannot take effect. A route that set either header was silently ignored. The sibling
+`camel-kserve` component declares neither.
+
+Configure the `target` and `credentials` endpoint options instead, or route to a different endpoint
+with `toD` when the destination varies per message. The constants remain in place for backwards
+compatibility and are now marked deprecated in the component metadata.
+
+=== camel-hazelcast - ReplicatedHazelcastAggregationRepository now applies the default serialization filter
+
+`ReplicatedHazelcastAggregationRepository` now applies the same default
+`JavaSerializationFilterConfig` that the other repositories and the component endpoints have applied
+since 4.14.8/4.18.3/4.21.0, when it bootstraps its own `HazelcastInstance` (that is, when no
+`hazelcastInstance` is supplied). It overrides `doStart()` without calling `super.doStart()` and was
+therefore left out of that change.
+
+The default whitelists the class name prefixes `java.`, `javax.`, `org.apache.camel.` and blacklists
+`java.net.`, and a user-supplied `JavaSerializationFilterConfig` is still respected and never
+overwritten.
+
+Applications that aggregate classes outside the default whitelist through the replicated repository
+without supplying their own `hazelcastInstance` must now provide a `Config` with a
+`JavaSerializationFilterConfig` covering their class names.
