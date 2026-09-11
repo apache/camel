@@ -54,8 +54,8 @@ public class QuickjsLanguage extends TypedLanguageSupport implements ScriptingLa
      * WebAssembly memory exceeds {@link #getEngineMaxMemory()} or it has run {@link #getEngineMaxEvaluations()}
      * evaluations: it is closed and the thread creates a fresh one on its next evaluation.
      */
-    private long engineMaxMemory = 64L * 1024 * 1024;
-    private int engineMaxEvaluations = 50_000;
+    private volatile long engineMaxMemory = 64L * 1024 * 1024;
+    private volatile int engineMaxEvaluations = 50_000;
 
     private final AtomicInteger generation = new AtomicInteger();
     private final ConcurrentLinkedQueue<Engine> engines = new ConcurrentLinkedQueue<>();
@@ -140,18 +140,18 @@ public class QuickjsLanguage extends TypedLanguageSupport implements ScriptingLa
         EngineState state = currentEngine();
         state.stderr.reset();
         try {
-            Object result = state.engine.invokeGuestFunction(
+            return state.engine.invokeGuestFunction(
                     QuickjsHelper.MODULE_NAME,
                     QuickjsHelper.FUNCTION_NAME,
                     List.of(bindings, script),
                     QuickjsHelper.EVAL_WRAPPER);
-            if (state.exhausted(engineMaxMemory, engineMaxEvaluations)) {
-                discard(state);
-            }
-            return result;
         } finally {
             // Drop this evaluation's WASI stderr so a reused Engine cannot accumulate it.
             state.stderr.reset();
+            // a script that throws has still evaluated (and QuickJS kept) its module: count it as well
+            if (state.exhausted(engineMaxMemory, engineMaxEvaluations)) {
+                discard(state);
+            }
         }
     }
 
@@ -162,8 +162,10 @@ public class QuickjsLanguage extends TypedLanguageSupport implements ScriptingLa
         if (engine.get() == state) {
             engine.remove();
         }
-        engines.remove(state.engine);
-        closeUnpublished(state.engine);
+        // stop() may have polled this engine off the queue already and closed it: only the remover closes
+        if (engines.remove(state.engine)) {
+            closeUnpublished(state.engine);
+        }
     }
 
     public long getEngineMaxMemory() {

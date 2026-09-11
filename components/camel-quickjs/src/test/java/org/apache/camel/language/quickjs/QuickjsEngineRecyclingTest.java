@@ -18,6 +18,7 @@ package org.apache.camel.language.quickjs;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
+import org.apache.camel.ExpressionEvaluationException;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.support.DefaultExchange;
 import org.junit.jupiter.api.AfterAll;
@@ -25,6 +26,7 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 /**
  * QuickJS keeps every evaluated module, so an engine grows with each evaluation; the language recycles it.
@@ -84,6 +86,34 @@ class QuickjsEngineRecyclingTest {
             assertThat(language.createExpression("body + 9").evaluate(exchange, Integer.class)).isEqualTo(10);
             assertThat(language.trackedEngineCount()).isZero();
             assertThat(language.createExpression("body + 100").evaluate(exchange, Integer.class)).isEqualTo(101);
+            assertThat(language.trackedEngineCount()).isEqualTo(1);
+        } finally {
+            language.setEngineMaxEvaluations(max);
+            language.setEngineMaxMemory(maxMemory);
+        }
+    }
+
+    @Test
+    void throwingScriptsCountTowardsRecycling() {
+        Exchange exchange = exchange(1);
+        int max = language.getEngineMaxEvaluations();
+        long maxMemory = language.getEngineMaxMemory();
+        try {
+            language.setEngineMaxMemory(1);
+            language.createExpression("body").evaluate(exchange, Integer.class);
+            language.setEngineMaxMemory(maxMemory);
+            assertThat(language.trackedEngineCount()).isZero();
+            language.setEngineMaxEvaluations(10);
+            for (int i = 0; i < 9; i++) {
+                assertThatThrownBy(() -> language.createExpression("notDefined + 1").evaluate(exchange, Object.class))
+                        .isInstanceOf(ExpressionEvaluationException.class);
+                assertThat(language.trackedEngineCount()).isEqualTo(1);
+            }
+            // the 10th failed evaluation exhausts the engine like a successful one would
+            assertThatThrownBy(() -> language.createExpression("notDefined + 1").evaluate(exchange, Object.class))
+                    .isInstanceOf(ExpressionEvaluationException.class);
+            assertThat(language.trackedEngineCount()).isZero();
+            assertThat(language.createExpression("body + 1").evaluate(exchange, Integer.class)).isEqualTo(2);
             assertThat(language.trackedEngineCount()).isEqualTo(1);
         } finally {
             language.setEngineMaxEvaluations(max);
