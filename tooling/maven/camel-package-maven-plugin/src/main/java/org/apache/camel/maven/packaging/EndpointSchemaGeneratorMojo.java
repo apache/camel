@@ -151,7 +151,7 @@ public class EndpointSchemaGeneratorMojo extends AbstractGeneratorMojo {
         executeUriEndpoint();
     }
 
-    private void executeUriEndpoint() {
+    private void executeUriEndpoint() throws MojoExecutionException {
         List<Class<?>> classes = new ArrayList<>();
         for (AnnotationInstance ai : getIndex().getAnnotations(URI_ENDPOINT)) {
             Class<?> classElement = loadClass(ai.target().asClass().name().toString());
@@ -195,7 +195,8 @@ public class EndpointSchemaGeneratorMojo extends AbstractGeneratorMojo {
     private void processSchemas(
             Map<Class<?>, ComponentModel> models, Class<?> classElement, UriEndpoint uriEndpoint, String label,
             String[] schemes,
-            String[] titles, String[] extendsSchemes) {
+            String[] titles, String[] extendsSchemes)
+            throws MojoExecutionException {
         for (int i = 0; i < schemes.length; i++) {
             final String alias = schemes[i];
             final String extendsAlias = i < extendsSchemes.length ? extendsSchemes[i] : extendsSchemes[0];
@@ -262,7 +263,8 @@ public class EndpointSchemaGeneratorMojo extends AbstractGeneratorMojo {
     protected ComponentModel writeJSonSchemeAndPropertyConfigurer(
             Class<?> classElement, UriEndpoint uriEndpoint, String title,
             String scheme, String extendsScheme, String label,
-            String[] schemes, ComponentModel parentData) {
+            String[] schemes, ComponentModel parentData)
+            throws MojoExecutionException {
         // gather component information
         ComponentModel componentModel
                 = findComponentProperties(uriEndpoint, classElement, title, scheme, extendsScheme, label, schemes);
@@ -581,7 +583,7 @@ public class EndpointSchemaGeneratorMojo extends AbstractGeneratorMojo {
      * Used for enhancing the component model with apiProperties for API based components (such as twilio, olingo and
      * others)
      */
-    private void enhanceComponentModelWithApiModel(ComponentModel componentModel) {
+    private void enhanceComponentModelWithApiModel(ComponentModel componentModel) throws MojoExecutionException {
         for (AnnotationInstance ai : getIndex().getAnnotations(API_PARAMS)) {
             Class<?> classElement = loadClass(ai.target().asClass().name().toString());
             final ApiParams apiParams = classElement.getAnnotation(ApiParams.class);
@@ -820,7 +822,8 @@ public class EndpointSchemaGeneratorMojo extends AbstractGeneratorMojo {
 
     protected ComponentModel findComponentProperties(
             UriEndpoint uriEndpoint, Class<?> endpointClassElement, String title, String scheme,
-            String extendsScheme, String label, String[] schemes) {
+            String extendsScheme, String label, String[] schemes)
+            throws MojoExecutionException {
         ComponentModel model = new ComponentModel();
         model.setScheme(scheme);
         model.setName(scheme);
@@ -1784,9 +1787,9 @@ public class EndpointSchemaGeneratorMojo extends AbstractGeneratorMojo {
         updateResource(resourcesOutputDir.toPath(), "META-INF/services/org/apache/camel/configurer/" + name, w.toString());
     }
 
-    private IndexView getIndex() {
+    private IndexView getIndex() throws MojoExecutionException {
         if (indexView == null) {
-            indexView = PackagePluginUtils.readJandexIndexQuietly(project);
+            indexView = PackagePluginUtils.readJandexIndex(project);
         }
 
         return indexView;

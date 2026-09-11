@@ -216,7 +216,7 @@ public class SchemaGeneratorMojo extends AbstractGeneratorMojo {
         }
     }
 
-    private void processModelClass(ClassInfo element) {
+    private void processModelClass(ClassInfo element) throws MojoExecutionException {
         // skip abstract classes
         if (Modifier.isAbstract(element.flags())) {
             return;
@@ -312,9 +312,9 @@ public class SchemaGeneratorMojo extends AbstractGeneratorMojo {
                 json);
     }
 
-    private IndexView getIndex() {
+    private IndexView getIndex() throws MojoExecutionException {
         if (indexView == null) {
-            indexView = PackagePluginUtils.readJandexIndexQuietly(project);
+            indexView = PackagePluginUtils.readJandexIndex(project);
         }
         return indexView;
     }
@@ -427,7 +427,8 @@ public class SchemaGeneratorMojo extends AbstractGeneratorMojo {
     protected void findClassProperties(
             Set<EipOptionModel> eipOptions,
             Class<?> originalClassType, Class<?> classElement,
-            String prefix, String modelName) {
+            String prefix, String modelName)
+            throws MojoExecutionException {
         while (true) {
             for (Field fieldElement : classElement.getDeclaredFields()) {
 
@@ -662,7 +663,8 @@ public class SchemaGeneratorMojo extends AbstractGeneratorMojo {
 
     private void processElement(
             Class<?> originalClassType, Class<?> classElement, XmlElement element, Field fieldElement,
-            Set<EipOptionModel> eipOptions, String prefix) {
+            Set<EipOptionModel> eipOptions, String prefix)
+            throws MojoExecutionException {
         String fieldName = fieldElement.getName();
         if (element != null) {
             Metadata metadata = fieldElement.getAnnotation(Metadata.class);
@@ -812,7 +814,7 @@ public class SchemaGeneratorMojo extends AbstractGeneratorMojo {
         eipOptions.add(ep);
     }
 
-    private void processRoute(Class<?> classElement, Set<EipOptionModel> eipOptions) {
+    private void processRoute(Class<?> classElement, Set<EipOptionModel> eipOptions) throws MojoExecutionException {
 
         // group
         String docComment = findJavaDoc(null, "group", null, classElement, true);
@@ -1094,7 +1096,8 @@ public class SchemaGeneratorMojo extends AbstractGeneratorMojo {
      */
     private void processOutputs(
             Class<?> originalClassType, XmlElementRef elementRef,
-            Field fieldElement, Method methodElement, String fieldOrMethodName, Set<EipOptionModel> eipOptions, String prefix) {
+            Field fieldElement, Method methodElement, String fieldOrMethodName, Set<EipOptionModel> eipOptions, String prefix)
+            throws MojoExecutionException {
 
         if ("outputs".equals(fieldOrMethodName) && supportOutputs(originalClassType)) {
             String name = fetchName(elementRef.name(), fieldOrMethodName, prefix);
@@ -1147,7 +1150,8 @@ public class SchemaGeneratorMojo extends AbstractGeneratorMojo {
      */
     private void processVerbs(
             Class<?> originalClassType, XmlElementRef elementRef, Field fieldElement,
-            String fieldName, Set<EipOptionModel> eipOptions, String prefix) {
+            String fieldName, Set<EipOptionModel> eipOptions, String prefix)
+            throws MojoExecutionException {
 
         if ("verbs".equals(fieldName) && supportOutputs(originalClassType)) {
             String name = fetchName(elementRef.name(), fieldName, prefix);
@@ -1226,7 +1230,8 @@ public class SchemaGeneratorMojo extends AbstractGeneratorMojo {
     private void processRefExpression(
             Class<?> originalClassType, Class<?> classElement,
             XmlElementRef elementRef, Field fieldElement,
-            String fieldName, Set<EipOptionModel> eipOptions, String prefix) {
+            String fieldName, Set<EipOptionModel> eipOptions, String prefix)
+            throws MojoExecutionException {
 
         if ("expression".equals(fieldName)) {
             String name = fetchName(elementRef.name(), fieldName, prefix);
@@ -1276,7 +1281,7 @@ public class SchemaGeneratorMojo extends AbstractGeneratorMojo {
         }
     }
 
-    private Set<String> getOneOfs(String[] classes) {
+    private Set<String> getOneOfs(String[] classes) throws MojoExecutionException {
         Set<String> oneOfTypes = new TreeSet<>();
         for (String superclass : classes) {
             for (ClassInfo ci : getIndex().getAllKnownSubclasses(DotName.createSimple(superclass))) {

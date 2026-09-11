@@ -38,35 +38,15 @@ public final class PackagePluginUtils {
         return jandex.getIndex();
     }
 
-    public static Index readJandexIndexQuietly(MavenProject project) {
-        Path output = Paths.get(project.getBuild().getOutputDirectory());
-        final JandexStore.Jandex jandex = JandexStore.read(output);
-        if (jandex.getException() != null) {
-            throw new RuntimeException("IOException: " + jandex.getException(), jandex.getException());
-        }
-
-        return jandex.getIndex();
-    }
-
     public static Index readJandexIndexIgnoreMissing(MavenProject project) throws MojoExecutionException {
         Path output = Paths.get(project.getBuild().getOutputDirectory());
         final JandexStore.Jandex jandex = JandexStore.read(output);
 
         if (jandex.getException() != null && !jandex.doesNotExist()) {
-            throw new MojoExecutionException(
-                    "IOException: " + jandex.getException().getMessage(), jandex.getException());
+            throw new MojoExecutionException("IOException: " + jandex.getException(), jandex.getException());
         }
 
         return jandex.getIndex();
-    }
-
-    public static String joinHeaderAndSource(String licenseHeader, String source) {
-        StringBuilder sb = new StringBuilder(licenseHeader.length() + source.length() + 8);
-
-        sb.append(licenseHeader);
-        sb.append("\n");
-        sb.append(source);
-        return sb.toString();
     }
 
 }
