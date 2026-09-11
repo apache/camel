@@ -1890,3 +1890,21 @@ Documents carrying an internal DTD subset still parse.
 To restore the previous behaviour and allow external entity resolution, set the new
 `allowExternalEntities` option to `true` on the data format or on the endpoint
 (`smooks:config.xml?allowExternalEntities=true`).
+
+=== camel-saxon - external XML entity resolution disabled by default in XQuery
+
+The XQuery language and the `xquery` component now build their default Saxon `Configuration` with a
+hardened XML parser that does not accept a `DOCTYPE` declaration and does not resolve external
+general or parameter entities or external DTDs. This aligns XQuery with the parser configuration
+already applied to the `String`, `byte[]` and `InputStream` body paths through Camel's
+`XmlConverter`, and with `camel-xslt-saxon` (which already defaults `secureProcessing` to `true`).
+
+Previously, when a message body reached XQuery as an already-built `javax.xml.transform.Source` (for
+example after a `convertBodyTo(Source.class)`), it was parsed with the Saxon parser defaults, which
+resolved external entities. A body carrying a `DOCTYPE` declaration on that path is now rejected with
+a parse error. Bodies without a `DOCTYPE` are unaffected.
+
+A deployment that genuinely needs to parse documents with a `DOCTYPE` or external entities can supply
+its own pre-configured Saxon `Configuration` through the `configuration` option of the `xquery`
+endpoint or language (or `XQueryBuilder.setConfiguration(...)`); a user-supplied `Configuration` is
+used as-is and is not modified.
