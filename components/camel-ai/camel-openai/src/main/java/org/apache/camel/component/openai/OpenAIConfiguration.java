@@ -89,7 +89,9 @@ public class OpenAIConfiguration implements Cloneable {
     private String developerMessage;
 
     @UriParam(defaultValue = "false")
-    @Metadata(description = "Store the full response in the exchange property 'CamelOpenAIResponse' in non-streaming mode")
+    @Metadata(description = "Store the full SDK response in non-streaming mode: chat-completion uses exchange property "
+                            + "'CamelOpenAIResponse'; "
+                            + "embeddings uses 'CamelOpenAIEmbeddingsResponse'")
     private boolean storeFullResponse = false;
 
     @UriParam(prefix = "additionalBodyProperty.", multiValue = true)

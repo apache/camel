@@ -57,6 +57,9 @@ public class OpenAIEmbeddingsMockTest extends CamelTestSupport {
                 from("direct:embedding")
                         .to("openai:embeddings?embeddingModel=text-embedding-ada-002&apiKey=dummy&baseUrl="
                             + openAIMock.getBaseUrl() + "/v1");
+                from("direct:embedding-store-response")
+                        .to("openai:embeddings?embeddingModel=text-embedding-ada-002&apiKey=dummy&storeFullResponse=true&baseUrl="
+                            + openAIMock.getBaseUrl() + "/v1");
             }
         };
     }
@@ -172,5 +175,25 @@ public class OpenAIEmbeddingsMockTest extends CamelTestSupport {
         assertEquals(4, result.getMessage().getHeader(OpenAIConstants.EMBEDDING_VECTOR_SIZE));
         assertTrue(result.getMessage().getHeader(OpenAIConstants.PROMPT_TOKENS, Integer.class) > 0);
         assertTrue(result.getMessage().getHeader(OpenAIConstants.TOTAL_TOKENS, Integer.class) > 0);
+    }
+
+    @Test
+    void storeFullResponseStoresEmbeddingResponse() {
+        Exchange result = template.request("direct:embedding-store-response",
+                e -> e.getIn().setBody("What is Apache Camel?"));
+
+        assertNotNull(result.getProperty(OpenAIConstants.EMBEDDINGS_RESPONSE),
+                "storeFullResponse=true must store the full embeddings response in the CamelOpenAIEmbeddingsResponse property");
+        assertNull(result.getProperty(OpenAIConstants.RESPONSE),
+                "the embeddings response must not be stored under the chat-completion CamelOpenAIResponse property");
+    }
+
+    @Test
+    void storeFullResponseDefaultDoesNotStoreResponse() {
+        Exchange result = template.request("direct:embedding",
+                e -> e.getIn().setBody("What is Apache Camel?"));
+
+        assertNull(result.getProperty(OpenAIConstants.EMBEDDINGS_RESPONSE),
+                "storeFullResponse defaults to false, so CamelOpenAIEmbeddingsResponse should not be set");
     }
 }

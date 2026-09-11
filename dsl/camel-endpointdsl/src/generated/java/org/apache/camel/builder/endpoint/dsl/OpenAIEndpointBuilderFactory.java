@@ -314,8 +314,9 @@ public interface OpenAIEndpointBuilderFactory {
             return this;
         }
         /**
-         * Store the full response in the exchange property
-         * 'CamelOpenAIResponse' in non-streaming mode.
+         * Store the full SDK response in non-streaming mode: chat-completion
+         * uses exchange property 'CamelOpenAIResponse'; embeddings uses
+         * 'CamelOpenAIEmbeddingsResponse'.
          * 
          * The option is a: <code>boolean</code> type.
          * 
@@ -330,8 +331,9 @@ public interface OpenAIEndpointBuilderFactory {
             return this;
         }
         /**
-         * Store the full response in the exchange property
-         * 'CamelOpenAIResponse' in non-streaming mode.
+         * Store the full SDK response in non-streaming mode: chat-completion
+         * uses exchange property 'CamelOpenAIResponse'; embeddings uses
+         * 'CamelOpenAIEmbeddingsResponse'.
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
@@ -814,6 +816,19 @@ public interface OpenAIEndpointBuilderFactory {
          */
         public String openAIResponse() {
             return "CamelOpenAIResponse";
+        }
+        /**
+         * The complete OpenAI embeddings response object.
+         * 
+         * The option is a: {@code
+         * com.openai.models.embeddings.CreateEmbeddingResponse} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code OpenAIEmbeddingsResponse}.
+         */
+        public String openAIEmbeddingsResponse() {
+            return "CamelOpenAIEmbeddingsResponse";
         }
         /**
          * The model to use for embeddings.

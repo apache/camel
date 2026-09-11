@@ -70,6 +70,10 @@ public final class OpenAIConstants {
     @Metadata(description = "The complete OpenAI response object", javaType = "com.openai.models.ChatCompletion")
     public static final String RESPONSE = "CamelOpenAIResponse";
 
+    @Metadata(description = "The complete OpenAI embeddings response object",
+              javaType = "com.openai.models.embeddings.CreateEmbeddingResponse")
+    public static final String EMBEDDINGS_RESPONSE = "CamelOpenAIEmbeddingsResponse";
+
     // Embeddings Input Headers
     @Metadata(description = "The model to use for embeddings", javaType = "String")
     public static final String EMBEDDING_MODEL = "CamelOpenAIEmbeddingModel";

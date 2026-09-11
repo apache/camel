@@ -103,6 +103,10 @@ public class OpenAIEmbeddingsProducer extends DefaultAsyncProducer {
         CreateEmbeddingResponse response = getEndpoint().getClient()
                 .embeddings().create(params);
 
+        if (config.isStoreFullResponse()) {
+            exchange.setProperty(OpenAIConstants.EMBEDDINGS_RESPONSE, response);
+        }
+
         // Extract embeddings
         List<List<Float>> embeddings = new ArrayList<>();
         for (Embedding embedding : response.data()) {
