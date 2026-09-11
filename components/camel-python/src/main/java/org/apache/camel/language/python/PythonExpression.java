@@ -29,6 +29,7 @@ public class PythonExpression extends ExpressionSupport {
     private final Class<?> type;
     private final PythonInterpreter compiler;
     private final PyCode compiledExpression;
+    private final Object lock = new Object();
 
     public PythonExpression(String expressionString, Class<?> type) {
         this.expressionString = expressionString;
@@ -49,7 +50,7 @@ public class PythonExpression extends ExpressionSupport {
     public <T> T evaluate(Exchange exchange, Class<T> type) {
         // the interpreter's globals are shared by every evaluation of this expression: bind, run and clean up
         // under one lock so concurrent exchanges cannot see each other's bindings
-        synchronized (compiler) {
+        synchronized (lock) {
             return doEvaluate(exchange, type);
         }
     }

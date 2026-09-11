@@ -38,6 +38,8 @@ public class PythonLanguage extends TypedLanguageSupport implements ScriptingLan
 
     private final PythonInterpreter compiler = new PythonInterpreter();
 
+    private final Object lock = new Object();
+
     private PythonLanguage(Map<String, PyCode> compiledScriptsCache) {
         this.compiledScriptsCache = compiledScriptsCache;
     }
@@ -64,19 +66,18 @@ public class PythonLanguage extends TypedLanguageSupport implements ScriptingLan
     public <T> T evaluate(String script, Map<String, Object> bindings, Class<T> resultType) {
         script = loadResource(script);
 
-        PyCode code = getCompiledScriptFromCache(script);
-
-        if (code == null) {
-            try {
-                code = compiler.compile(script);
-                addCompiledScriptToCache(script, code);
-            } catch (Exception e) {
-                throw new ExpressionIllegalSyntaxException(script, e);
+        // compile, bind, run and clean up under one lock: the interpreter's compiler flags, system state and
+        // globals are all shared by every caller of this method
+        synchronized (lock) {
+            PyCode code = getCompiledScriptFromCache(script);
+            if (code == null) {
+                try {
+                    code = compiler.compile(script);
+                    addCompiledScriptToCache(script, code);
+                } catch (Exception e) {
+                    throw new ExpressionIllegalSyntaxException(script, e);
+                }
             }
-        }
-
-        // the interpreter is shared by every caller of this method: bind, run and clean up under one lock
-        synchronized (compiler) {
             try {
                 if (bindings != null) {
                     bindings.forEach(compiler::set);
