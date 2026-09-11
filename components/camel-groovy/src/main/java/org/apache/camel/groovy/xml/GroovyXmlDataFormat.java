@@ -16,12 +16,12 @@
  */
 package org.apache.camel.groovy.xml;
 
-import java.io.BufferedWriter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
+import java.io.StringWriter;
 import java.io.Writer;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
@@ -208,10 +208,11 @@ public class GroovyXmlDataFormat extends ServiceSupport implements DataFormat, D
     private void serialize(Exchange exchange, Map<String, Object> map, OutputStream os) throws Exception {
         List<Line> lines = new ArrayList<>();
         doSerialize(exchange.getContext(), map, lines);
-        // the stream is owned by the caller: flush, do not close
-        Writer w = new BufferedWriter(new OutputStreamWriter(os, ExchangeHelper.getCharset(exchange, true)));
+        // render in memory and write once: a Writer over the stream costs 16 KB of buffers per call, which is more
+        // than a typical document, and the Marshal EIP already writes into a memory stream
+        StringWriter w = new StringWriter(lines.size() * 32);
         printLines(lines, w);
-        w.flush();
+        os.write(w.toString().getBytes(ExchangeHelper.getCharset(exchange, true)));
     }
 
     private static String asString(CamelContext context, Object value) {
