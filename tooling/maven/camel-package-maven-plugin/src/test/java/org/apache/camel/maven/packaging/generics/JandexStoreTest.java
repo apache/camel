@@ -18,9 +18,9 @@ package org.apache.camel.maven.packaging.generics;
 
 import java.nio.file.NoSuchFileException;
 import java.nio.file.Path;
-import java.nio.file.Paths;
 
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.io.TempDir;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -46,9 +46,9 @@ class JandexStoreTest {
     }
 
     @Test
-    void readReturnsDoesNotExistForMissingJandexFile() {
+    void readReturnsDoesNotExistForMissingJandexFile(@TempDir Path tempDir) {
         // A path that does not exist on disk
-        Path nonExistent = Paths.get(System.getProperty("java.io.tmpdir"), "camel-test-missing-jandex-" + System.nanoTime());
+        Path nonExistent = tempDir.resolve("missing-jandex.idx");
         JandexStore.Jandex jandex = JandexStore.nonCachedRead(nonExistent);
 
         assertThat(jandex.doesNotExist())
