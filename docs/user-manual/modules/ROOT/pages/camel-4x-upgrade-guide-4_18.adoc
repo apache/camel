@@ -1707,3 +1707,19 @@ Routes that set `useRecovery=false` are unaffected. Routes that left recovery en
 default, stop seeing in-progress aggregations re-delivered, and start seeing genuine recovery. The cache
 now also holds one entry per completed and not yet confirmed exchange; those entries are removed on
 confirmation.
+
+=== camel-tensorflow-serving - the Target and Credentials headers are deprecated
+
+`TensorFlowServingConstants.TARGET` (`CamelTensorFlowServingTarget`) and
+`TensorFlowServingConstants.CREDENTIALS` (`CamelTensorFlowServingCredentials`) are deprecated. Both
+were declared with `@Metadata` and advertised through the endpoint's `headersClass`, but neither has
+ever been read by the component.
+
+The gRPC channel and its stubs are built once in `TensorFlowServingEndpoint.doInit()` from
+`configuration.getTarget()` and `configuration.getCredentials()`, so a per-exchange override supplied
+as a header cannot take effect. A route that set either header was silently ignored. The sibling
+`camel-kserve` component declares neither.
+
+Configure the `target` and `credentials` endpoint options instead, or route to a different endpoint
+with `toD` when the destination varies per message. The constants remain in place for backwards
+compatibility and are now marked deprecated in the component metadata.
