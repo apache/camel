@@ -151,6 +151,8 @@
 
         <enforcer.phase>none</enforcer.phase><!-- We do not enforce with -Dquickly, the property is overridden in the full profile -->
 
+        <failOnWarning>false</failOnWarning><!-- dep-check profile: override with -DfailOnWarning=true to enforce dependency hygiene -->
+
         <os.detected.classifier>${nisse.os.classifier}</os.detected.classifier>
     </properties>
 
@@ -992,6 +994,43 @@
                 </pluginRepository>
             </pluginRepositories>
         </profile>
+        <profile>
+            <!--
+                Opt-in dependency analysis profile.
+                Usage: mvn verify -Pdep-check [-DfailOnWarning=true]
+                Runs maven-dependency-plugin:analyze on every module and reports
+                used-undeclared / unused-declared dependencies.  Non-blocking by
+                default (failOnWarning=false); set -DfailOnWarning=true to enforce.
+            -->
+            <id>dep-check</id>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-dependency-plugin</artifactId>
+                        <executions>
+                            <execution>
+                                <id>dep-analyze</id>
+                                <goals>
+                                    <goal>analyze-only</goal>
+                                </goals>
+                                <phase>verify</phase>
+                                <configuration>
+                                    <failOnWarning>${failOnWarning}</failOnWarning>
+                                    <outputXML>true</outputXML>
+                                    <ignoredUnusedDeclaredDependencies>
+                                        <!-- Logging implementations are runtime deps intentionally declared at compile scope -->
+                                        <ignoredUnusedDeclaredDependency>org.apache.logging.log4j:log4j-slf4j2-impl</ignoredUnusedDeclaredDependency>
+                                        <ignoredUnusedDeclaredDependency>org.apache.logging.log4j:log4j-core</ignoredUnusedDeclaredDependency>
+                                    </ignoredUnusedDeclaredDependencies>
+                                </configuration>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+
         <profile>
             <!-- The full profile contains mojos *not* essential for the quick build. -->
             <!-- These are typically various source checks and code generations whose result is stored in git anyway. -->
