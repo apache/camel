@@ -632,6 +632,21 @@
                             build produces no native Windows executables and no WinGet payload.
                         -->
                         <arguments>-Prelease -Dcamel.exe.build=true</arguments>
+                        <!--
+                            After the development SNAPSHOT version is set, rebuild to regenerate
+                            all files in src/generated/ directories that embed the project version.
+                            Without this step, those generated metadata files (JSON descriptors,
+                            configurer sources, endpoint-dsl, etc.) would still carry the just-
+                            released version instead of the new SNAPSHOT, requiring a manual
+                            "refresh" PR after every release (see CAMEL-23376).
+
+                            The same <arguments> above apply here, so tests are skipped and the
+                            release profile is active — but no artifacts are deployed; the rebuilt
+                            jars are installed locally only, and the regenerated src/generated/
+                            files are folded into the "prepare for next development iteration" SCM
+                            commit by the release plugin.
+                        -->
+                        <completionGoals>install</completionGoals>
                         <autoVersionSubmodules>true</autoVersionSubmodules>
                     </configuration>
                 </plugin>
