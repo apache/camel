@@ -1882,3 +1882,10 @@ convention already used by the template components (camel-freemarker, camel-velo
   header-supplied template is now resolved with property placeholders only, never as a `file:` / `http:` resource.
 
 A route that relied on either header must set the corresponding option on the endpoint.
+
+Additionally, `camel-sql-stored` with `useMessageBodyForTemplate=true` now uses the message body verbatim as the
+stored-procedure template text and no longer resolves it through `SqlHelper.resolveQuery`. A body beginning with
+`file:`, `http:`, `https:` or `classpath:` is therefore treated as literal template text instead of being fetched
+as a resource, consistent with how `camel-sql` already treats the body under `useMessageBodyForSql=true`. A route
+that relied on the body being a resource location must resolve it to the template text before the `sql-stored`
+endpoint.
