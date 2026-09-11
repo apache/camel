@@ -41,6 +41,8 @@ import org.apache.camel.Message;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.StreamCache;
 import org.apache.camel.util.StringHelper;
+import run.endive.runtime.ByteArrayMemory;
+import run.endive.runtime.Memory;
 
 /**
  * Helpers for evaluating JavaScript with QuickJS4J using JSON-serializable Exchange bindings.
@@ -99,10 +101,15 @@ final class QuickjsHelper {
     private QuickjsHelper() {
     }
 
-    static Engine newEngine(ByteArrayOutputStream stderr) {
+    static Engine newEngine(ByteArrayOutputStream stderr, Memory[] memory) {
         return Engine.builder()
                 .withStdout(new DiscardingOutputStream())
                 .withStderr(stderr)
+                .withMemoryFactory(limits -> {
+                    // keep a handle on the WebAssembly linear memory so the language can watch it grow
+                    memory[0] = new ByteArrayMemory(limits);
+                    return memory[0];
+                })
                 .addInvokables(Invokables.builder(MODULE_NAME)
                         .add(evalFunction())
                         .build())

@@ -99,6 +99,23 @@ As a predicate (`.when().quickjs(...)` or `.filter().quickjs(...)`), the result 
 boolean with Camel's standard `ObjectHelper.evaluateValuePredicate` rules: a `Boolean` is used
 directly; the strings `true`/`false` are parsed; any other non-empty, non-null value is true.
 
+== Engine lifecycle
+
+Every worker thread owns one QuickJS engine, created on first use and closed when the language stops.
+QuickJS keeps every module it has evaluated until its context is freed, and QuickJS4J evaluates a
+module per call, so an engine grows with every evaluation. The language therefore recycles a
+thread's engine once its WebAssembly memory exceeds `engineMaxMemory` (64 MB) or it has run
+`engineMaxEvaluations` (50,000) evaluations. Both are properties of `QuickjsLanguage` and can be set like any
+language option, for example in `application.properties`:
+
+[source,properties]
+----
+camel.language.quickjs.engineMaxMemory = 134217728
+camel.language.quickjs.engineMaxEvaluations = 100000
+----
+
+or programmatically through `((QuickjsLanguage) context.resolveLanguage("quickjs")).setEngineMaxMemory(...)`.
+
 == Security
 
 JavaScript runs in the QuickJS4J sandbox. The runtime does not expose Java classes, reflection,
