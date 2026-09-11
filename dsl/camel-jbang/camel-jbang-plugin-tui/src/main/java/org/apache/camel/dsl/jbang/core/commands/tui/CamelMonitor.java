@@ -333,7 +333,6 @@ public class CamelMonitor extends CamelCommand {
         actionsPopup.setResetStatsAction(this::resetStats);
         shellPanel.setContext(ctx);
         aiPanel.setContext(ctx);
-        aiPanel.setLaunchManager(actionsPopup.getLaunchManager());
         actionsPopup.setOpenShellAction(shellPanel::open);
         actionsPopup.setOpenAiPromptAction(aiPanel::open);
         actionsPopup.setBrowseFilesAction(this::openFilesPopup);
@@ -574,6 +573,8 @@ public class CamelMonitor extends CamelCommand {
                         CamelMonitor.this.resetIntegrationTabState();
                     }
                 });
+        mcpFacade.setSourceValidator(tabRegistry.sourceTab().editAssist()::validateSource);
+        mcpFacade.setLaunchManager(actionsPopup.getLaunchManager());
         aiPanel.setMcpFacade(mcpFacade);
         mcpFacade.setAiActivityLog(aiPanel::getActivityLog);
         Path mcpJsonFile = null;

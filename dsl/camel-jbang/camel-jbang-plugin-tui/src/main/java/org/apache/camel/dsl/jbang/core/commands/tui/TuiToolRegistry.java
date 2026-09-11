@@ -67,15 +67,15 @@ class TuiToolRegistry {
     private volatile AnimationState currentAnimation;
 
     private volatile List<ToolDef> cachedTools;
-    private volatile LaunchManager launchManager;
     private volatile List<JsonObject> exampleCatalog;
 
     TuiToolRegistry(McpFacade facade) {
         this.facade = facade;
     }
 
-    void setLaunchManager(LaunchManager launchManager) {
-        this.launchManager = launchManager;
+    /** The launcher the TUI wired into the facade, or null when there is none to launch with. */
+    private LaunchManager launcher() {
+        return facade != null ? facade.getLaunchManager() : null;
     }
 
     /**
@@ -1377,6 +1377,101 @@ class TuiToolRegistry {
         return Jsoner.serialize(data);
     }
 
+    private void addInfraContext(JsonObject result) {
+        result.put("infraCount", facade.liveInfraServices().size());
+        String selectedInfra = facade.getSelectedInfraAlias();
+        if (selectedInfra != null) {
+            result.put("selectedInfra", selectedInfra);
+        }
+    }
+
+    private String infraLog(String alias, int limit, String filter) {
+        InfraInfo info = facade.findInfra(alias);
+        if (info == null) {
+            return unknownInfra(alias);
+        }
+        try {
+            return Jsoner.serialize(facade.getInfraLogData(info, limit, filter));
+        } catch (Exception e) {
+            return "Error: cannot read log of infra service " + info.alias + ": " + e.getMessage();
+        }
+    }
+
+    private String unknownInfra(String alias) {
+        List<String> running = facade.liveInfraServices().stream().map(i -> i.alias).toList();
+        return "Error: no running infra service named '" + alias + "'. Running: "
+               + (running.isEmpty() ? "none" : String.join(", ", running));
+    }
+
+    private String callInfra(Map<String, Object> args) {
+        String action = args.get("action") instanceof String s ? s.strip().toLowerCase(Locale.ROOT) : "";
+        if (action.isEmpty()) {
+            return "Error: action is required (list, log, start, stop, restart)";
+        }
+        if ("list".equals(action) || "ps".equals(action)) {
+            JsonArray arr = new JsonArray();
+            for (InfraInfo info : facade.liveInfraServices()) {
+                arr.add(InfraSupport.toJson(info));
+            }
+            JsonObject result = new JsonObject();
+            result.put("infraServices", arr);
+            result.put("count", arr.size());
+            return Jsoner.serialize(result);
+        }
+        String alias = args.get("alias") instanceof String s ? s.strip() : "";
+        if (alias.isEmpty()) {
+            return "Error: alias is required for " + action;
+        }
+        return switch (action) {
+            case "log" -> {
+                int limit = 50;
+                if (args.get("limit") instanceof Number n) {
+                    limit = Math.max(1, Math.min(1000, n.intValue()));
+                }
+                String filter = args.get("filter") instanceof String s ? s : null;
+                yield infraLog(alias, limit, filter);
+            }
+            case "start", "run" -> {
+                if (facade.findInfra(alias) != null) {
+                    yield "Infra service " + alias + " is already running";
+                }
+                yield startInfra(alias);
+            }
+            case "stop" -> {
+                InfraInfo info = facade.findInfra(alias);
+                if (info == null) {
+                    yield unknownInfra(alias);
+                }
+                yield facade.stopInfra(info)
+                        ? "Stopping infra service " + info.alias + " (pid " + info.pid + ")"
+                        : "Error: infra service " + info.alias + " (pid " + info.pid + ") is not running";
+            }
+            case "restart" -> {
+                InfraInfo info = facade.findInfra(alias);
+                if (info == null) {
+                    yield unknownInfra(alias);
+                }
+                facade.stopInfra(info);
+                yield startInfra(info.alias).replace("Starting", "Restarting");
+            }
+            default -> "Unknown action: " + action + ". Available: list, log, start, stop, restart";
+        };
+    }
+
+    private String startInfra(String alias) {
+        LaunchManager lm = launcher();
+        if (lm == null) {
+            return "Error: launching is not available";
+        }
+        try {
+            lm.startInfra(alias);
+            return "Starting infra service " + alias + " (Docker/Podman required); "
+                   + "it appears in tui_infra list once ready, typically within a few seconds";
+        } catch (Exception e) {
+            return "Error: failed to start infra service " + alias + ": " + e.getMessage();
+        }
+    }
+
     private String callGetErrors() {
         JsonObject data = facade.getTableData("Errors");
         if (data == null) {
@@ -2188,7 +2283,7 @@ class TuiToolRegistry {
             return "{\"error\": \"'name' parameter is required\"}";
         }
 
-        LaunchManager lm = launchManager;
+        LaunchManager lm = launcher();
         if (lm == null) {
             return "{\"error\": \"Launching examples is not available in this session\"}";
         }
