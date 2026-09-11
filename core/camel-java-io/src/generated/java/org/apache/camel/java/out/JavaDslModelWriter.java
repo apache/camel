@@ -3242,6 +3242,7 @@ public class JavaDslModelWriter extends JavaDslModelWriterSupport {
     protected void doWriteSmooksDataFormat(StringBuilder sb, SmooksDataFormat def) {
         doWriteIdentifiedTypeAttributes(sb, def);
         doWriteAttribute(sb, "smooksConfig", def.getSmooksConfig(), null);
+        doWriteAttribute(sb, "allowExternalEntities", def.getAllowExternalEntities(), "false");
     }
     protected void doWriteSoapDataFormat(StringBuilder sb, SoapDataFormat def) {
         doWriteIdentifiedTypeAttributes(sb, def);

@@ -16797,6 +16797,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
             description = "Transform and bind XML as well as non-XML data, including EDI, CSV, JSON, and YAML using Smooks",
             deprecated = false,
             properties = {
+                    @YamlProperty(name = "allowExternalEntities", type = "boolean", defaultValue = "false", description = "Whether to allow the XML reader used by Smooks to resolve external XML entities (external general and parameter entities) when parsing XML input. This is disabled by default so that external entities in the message body are not resolved; enable it only for trusted legacy configurations that rely on external entity resolution.", displayName = "Allow External Entities"),
                     @YamlProperty(name = "id", type = "string", description = "The id of this node", displayName = "Id"),
                     @YamlProperty(name = "smooksConfig", type = "string", required = true, description = "Path to the Smooks configuration file.", displayName = "Smooks Config")
             }
@@ -16816,6 +16817,11 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                 String propertyName, Node node) {
             propertyKey = org.apache.camel.util.StringHelper.dashToCamelCase(propertyKey);
             switch(propertyKey) {
+                case "allowExternalEntities": {
+                    String val = asText(node);
+                    target.setAllowExternalEntities(val);
+                    break;
+                }
                 case "id": {
                     String val = asText(node);
                     target.setId(val);

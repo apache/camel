@@ -25,6 +25,8 @@ public class SmooksEndpointConfigurer extends PropertyConfigurerSupport implemen
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "allowexecutioncontextfromheader":
         case "allowExecutionContextFromHeader": target.setAllowExecutionContextFromHeader(property(camelContext, java.lang.Boolean.class, value)); return true;
+        case "allowexternalentities":
+        case "allowExternalEntities": target.setAllowExternalEntities(property(camelContext, boolean.class, value)); return true;
         case "lazystartproducer":
         case "lazyStartProducer": target.setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
         case "reportpath":
@@ -38,6 +40,8 @@ public class SmooksEndpointConfigurer extends PropertyConfigurerSupport implemen
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "allowexecutioncontextfromheader":
         case "allowExecutionContextFromHeader": return java.lang.Boolean.class;
+        case "allowexternalentities":
+        case "allowExternalEntities": return boolean.class;
         case "lazystartproducer":
         case "lazyStartProducer": return boolean.class;
         case "reportpath":
@@ -52,6 +56,8 @@ public class SmooksEndpointConfigurer extends PropertyConfigurerSupport implemen
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "allowexecutioncontextfromheader":
         case "allowExecutionContextFromHeader": return target.getAllowExecutionContextFromHeader();
+        case "allowexternalentities":
+        case "allowExternalEntities": return target.isAllowExternalEntities();
         case "lazystartproducer":
         case "lazyStartProducer": return target.isLazyStartProducer();
         case "reportpath":
