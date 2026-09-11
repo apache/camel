@@ -18,6 +18,8 @@ package org.apache.camel.groovy.xml;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
+import java.io.OutputStreamWriter;
+import java.io.PrintWriter;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -31,7 +33,9 @@ import java.util.concurrent.TimeUnit;
 
 import org.xml.sax.SAXParseException;
 
+import groovy.namespace.QName;
 import groovy.util.Node;
+import groovy.xml.XmlNodePrinter;
 import groovy.xml.XmlParser;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
@@ -44,6 +48,7 @@ import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  * The groovyXml data format reuses its SAX parser configuration and writes with the exchange charset.
@@ -160,12 +165,28 @@ public class GroovyXmlDataFormatReuseTest {
     }
 
     @Test
-    public void testMarshalUsesExchangeCharset() throws Exception {
+    public void testNamespacePrefixesSurviveTheRoundTrip() throws Exception {
+        // XmlParser(SAXParser) leaves namespaceAware false unless it is set: prefixes would be dropped from the QNames
+        String xml = "<ns:library xmlns:ns=\"urn:x\"><ns:book>a</ns:book></ns:library>";
         Exchange exchange = new DefaultExchange(context);
-        exchange.setProperty(Exchange.CHARSET_NAME, "UTF-16BE");
+        Node node = (Node) dataFormat.unmarshal(exchange, new ByteArrayInputStream(xml.getBytes(StandardCharsets.UTF_8)));
+        assertEquals("ns", ((QName) node.name()).getPrefix());
         ByteArrayOutputStream bos = new ByteArrayOutputStream();
-        dataFormat.marshal(exchange, library(), bos);
-        assertArrayEquals(EXPECTED_XML.getBytes(StandardCharsets.UTF_16BE), bos.toByteArray());
+        dataFormat.marshal(exchange, node, bos);
+        String out = bos.toString(StandardCharsets.UTF_8);
+        assertEquals(new String(marshalWithGroovy(xml), StandardCharsets.UTF_8), out);
+        assertTrue(out.contains("<ns:library xmlns:ns=\"urn:x\">"), out);
+        assertTrue(out.contains("<ns:book>a</ns:book>"), out);
+    }
+
+    private static byte[] marshalWithGroovy(String xml) throws Exception {
+        Node node = new XmlParser().parse(new ByteArrayInputStream(xml.getBytes(StandardCharsets.UTF_8)));
+        ByteArrayOutputStream bos = new ByteArrayOutputStream();
+        PrintWriter pw = new PrintWriter(new OutputStreamWriter(bos, StandardCharsets.UTF_8));
+        XmlNodePrinter printer = new XmlNodePrinter(pw);
+        printer.setPreserveWhitespace(true);
+        printer.print(node);
+        return bos.toByteArray();
     }
 
     private static Map<String, Object> library() {

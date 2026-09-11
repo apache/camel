@@ -23,11 +23,15 @@ import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.io.Writer;
+import java.math.BigDecimal;
+import java.math.BigInteger;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.StringJoiner;
+import java.util.concurrent.ConcurrentLinkedQueue;
 
 import javax.xml.XMLConstants;
 import javax.xml.parsers.ParserConfigurationException;
@@ -49,7 +53,6 @@ import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.spi.DataFormat;
 import org.apache.camel.spi.DataFormatName;
 import org.apache.camel.spi.annotations.Dataformat;
-import org.apache.camel.support.ExchangeHelper;
 import org.apache.camel.support.service.ServiceSupport;
 import org.apache.camel.util.StringHelper;
 
@@ -73,9 +76,10 @@ public class GroovyXmlDataFormat extends ServiceSupport implements DataFormat, D
     private volatile SAXParserFactory saxParserFactory;
 
     /**
-     * A SAX parser is not thread safe but can parse sequentially, so each thread reuses its own.
+     * A SAX parser is not thread safe but can parse sequentially: a parser is borrowed for one unmarshal and returned,
+     * so at most one parser per concurrent unmarshal exists, and all of them are released when the data format stops.
      */
-    private final ThreadLocal<SAXParser> saxParser = ThreadLocal.withInitial(this::createSaxParser);
+    private final ConcurrentLinkedQueue<SAXParser> parsers = new ConcurrentLinkedQueue<>();
 
     public boolean isAttributeMapping() {
         return attributeMapping;
@@ -108,11 +112,18 @@ public class GroovyXmlDataFormat extends ServiceSupport implements DataFormat, D
 
     @Override
     public Object unmarshal(Exchange exchange, InputStream stream) throws Exception {
-        SAXParser parser = saxParser.get();
+        SAXParser parser = parsers.poll();
+        if (parser == null) {
+            parser = createSaxParser();
+        }
         try {
-            return new XmlParser(parser).parse(stream);
+            XmlParser xmlParser = new XmlParser(parser);
+            // XmlParser(SAXParser) does not set this, the no-arg constructor does: keep namespace prefixes on the QNames
+            xmlParser.setNamespaceAware(true);
+            return xmlParser.parse(stream);
         } finally {
             parser.getXMLReader().setContentHandler(DETACHED);
+            parsers.offer(parser);
         }
     }
 
@@ -124,6 +135,11 @@ public class GroovyXmlDataFormat extends ServiceSupport implements DataFormat, D
     @Override
     protected void doStart() throws Exception {
         getSaxParserFactory();
+    }
+
+    @Override
+    protected void doStop() throws Exception {
+        parsers.clear();
     }
 
     private SAXParserFactory getSaxParserFactory() throws ParserConfigurationException {
@@ -158,7 +174,8 @@ public class GroovyXmlDataFormat extends ServiceSupport implements DataFormat, D
     }
 
     private void serialize(Exchange exchange, Node node, OutputStream os) {
-        PrintWriter pw = new PrintWriter(new OutputStreamWriter(os, ExchangeHelper.getCharset(exchange, true)));
+        // XmlNodePrinter writes no XML declaration, so the document must be UTF-8 to be self-describing
+        PrintWriter pw = new PrintWriter(new OutputStreamWriter(os, StandardCharsets.UTF_8));
         XmlNodePrinter nodePrinter = new XmlNodePrinter(pw);
         nodePrinter.setPreserveWhitespace(true);
         nodePrinter.print(node);
@@ -212,15 +229,17 @@ public class GroovyXmlDataFormat extends ServiceSupport implements DataFormat, D
         // than a typical document, and the Marshal EIP already writes into a memory stream
         StringWriter w = new StringWriter(lines.size() * 32);
         printLines(lines, w);
-        os.write(w.toString().getBytes(ExchangeHelper.getCharset(exchange, true)));
+        os.write(w.toString().getBytes(StandardCharsets.UTF_8));
     }
 
     private static String asString(CamelContext context, Object value) {
-        // the type converter returns toString() for these, so skip the lookup
         if (value instanceof String s) {
             return s;
         }
-        if (value instanceof Number || value instanceof Boolean) {
+        // final JDK types no user converter can target: the type converter would return toString() for them
+        if (value instanceof Integer || value instanceof Long || value instanceof Double || value instanceof Boolean
+                || value instanceof Short || value instanceof Byte || value instanceof Float
+                || value instanceof BigDecimal || value instanceof BigInteger) {
             return value.toString();
         }
         return context.getTypeConverter().convertTo(String.class, value);
