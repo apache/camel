@@ -75,19 +75,22 @@ public class PythonLanguage extends TypedLanguageSupport implements ScriptingLan
             }
         }
 
-        try {
-            if (bindings != null) {
-                bindings.forEach(compiler::set);
+        // the interpreter is shared by every caller of this method: bind, run and clean up under one lock
+        synchronized (compiler) {
+            try {
+                if (bindings != null) {
+                    bindings.forEach(compiler::set);
+                }
+                PyObject out = compiler.eval(code);
+                if (out != null) {
+                    String value = out.toString();
+                    return getCamelContext().getTypeConverter().convertTo(resultType, value);
+                }
+            } catch (Exception e) {
+                throw new ExpressionIllegalSyntaxException(script, e);
+            } finally {
+                compiler.cleanup();
             }
-            PyObject out = compiler.eval(code);
-            if (out != null) {
-                String value = out.toString();
-                return getCamelContext().getTypeConverter().convertTo(resultType, value);
-            }
-        } catch (Exception e) {
-            throw new ExpressionIllegalSyntaxException(script, e);
-        } finally {
-            compiler.cleanup();
         }
         return null;
     }
