@@ -59,8 +59,14 @@ class QuickjsErrorHandlingTest {
     @Test
     void invalidJavaScriptIsCamelException() {
         Exchange exchange = exchange();
+        // a script that does not parse, as an expression or as statements, is reported before anything runs
         assertThatThrownBy(() -> language().createExpression("function {{{").evaluate(exchange, Object.class))
-                .isInstanceOfAny(ExpressionIllegalSyntaxException.class, ExpressionEvaluationException.class);
+                .isInstanceOf(ExpressionIllegalSyntaxException.class);
+        assertThatThrownBy(() -> language().createExpression("var a = 1; a +* 1").evaluate(exchange, Object.class))
+                .isInstanceOf(ExpressionIllegalSyntaxException.class);
+        // and the engine is still usable afterwards
+        assertThatThrownBy(() -> language().createExpression("body +* 1").evaluate(exchange, Object.class))
+                .isInstanceOf(ExpressionIllegalSyntaxException.class);
     }
 
     @Test
