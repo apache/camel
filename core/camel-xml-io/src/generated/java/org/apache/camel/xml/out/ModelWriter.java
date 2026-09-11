@@ -2886,6 +2886,7 @@ public class ModelWriter extends BaseWriter {
     protected void doWriteSmooksDataFormat(String name, SmooksDataFormat def) throws IOException {
         startElement(name);
         doWriteIdentifiedTypeAttributes(def);
+        doWriteAttribute("allowExternalEntities", def.getAllowExternalEntities(), "false");
         doWriteAttribute("smooksConfig", def.getSmooksConfig(), null);
         endElement(name);
     }

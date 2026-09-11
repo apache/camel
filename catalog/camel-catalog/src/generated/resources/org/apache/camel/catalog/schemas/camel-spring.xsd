@@ -10421,6 +10421,17 @@ Path to the Smooks configuration file.
             </xs:documentation>
           </xs:annotation>
         </xs:attribute>
+        <xs:attribute name="allowExternalEntities" type="xs:string">
+          <xs:annotation>
+            <xs:documentation xml:lang="en">
+<![CDATA[
+Whether to allow the XML reader used by Smooks to resolve external XML entities (external general and parameter
+entities) when parsing XML input. This is disabled by default so that external entities in the message body are not
+resolved; enable it only for trusted legacy configurations that rely on external entity resolution. Default value: false
+]]>
+            </xs:documentation>
+          </xs:annotation>
+        </xs:attribute>
       </xs:extension>
     </xs:complexContent>
   </xs:complexType>

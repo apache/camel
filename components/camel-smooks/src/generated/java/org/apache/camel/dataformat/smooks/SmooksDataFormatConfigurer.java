@@ -22,6 +22,7 @@ public class SmooksDataFormatConfigurer extends org.apache.camel.support.compone
     private static final Map<String, Object> ALL_OPTIONS;
     static {
         Map<String, Object> map = new CaseInsensitiveMap();
+        map.put("AllowExternalEntities", boolean.class);
         map.put("SmooksConfig", java.lang.String.class);
         ALL_OPTIONS = map;
     }
@@ -30,6 +31,8 @@ public class SmooksDataFormatConfigurer extends org.apache.camel.support.compone
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         SmooksDataFormat target = (SmooksDataFormat) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
+        case "allowexternalentities":
+        case "allowExternalEntities": target.setAllowExternalEntities(property(camelContext, boolean.class, value)); return true;
         case "smooksconfig":
         case "smooksConfig": target.setSmooksConfig(property(camelContext, java.lang.String.class, value)); return true;
         default: return false;
@@ -44,6 +47,8 @@ public class SmooksDataFormatConfigurer extends org.apache.camel.support.compone
     @Override
     public Class<?> getOptionType(String name, boolean ignoreCase) {
         switch (ignoreCase ? name.toLowerCase() : name) {
+        case "allowexternalentities":
+        case "allowExternalEntities": return boolean.class;
         case "smooksconfig":
         case "smooksConfig": return java.lang.String.class;
         default: return null;
@@ -54,6 +59,8 @@ public class SmooksDataFormatConfigurer extends org.apache.camel.support.compone
     public Object getOptionValue(Object obj, String name, boolean ignoreCase) {
         SmooksDataFormat target = (SmooksDataFormat) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
+        case "allowexternalentities":
+        case "allowExternalEntities": return target.isAllowExternalEntities();
         case "smooksconfig":
         case "smooksConfig": return target.getSmooksConfig();
         default: return null;
