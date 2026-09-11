@@ -27,6 +27,7 @@ import org.apache.camel.Consumer;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Processor;
+import org.apache.camel.Route;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.component.seda.SedaComponent;
@@ -187,6 +188,48 @@ public class DefaultSupervisingRouteControllerTest extends ContextTestSupport {
         assertEquals(10, failure.size());
         // 2 x 5 restart attempts
         assertEquals(10, events.size());
+    }
+
+    @Test
+    public void testSupervisedRemoveAllRoutesAndReload() throws Exception {
+        SupervisingRouteController src = context.getRouteController().supervising();
+        src.setInitialDelay(100);
+
+        context.addRoutes(reloadRoutes());
+        context.start();
+
+        await().atMost(Duration.ofSeconds(5)).untilAsserted(() -> {
+            assertEquals("Started", context.getRouteController().getRouteStatus("reload-a").toString());
+            assertEquals("Started", context.getRouteController().getRouteStatus("reload-b").toString());
+        });
+
+        for (int i = 0; i < 2; i++) {
+            final int reload = i;
+            src.removeAllRoutes();
+            context.getEndpointRegistry().clear();
+            context.addRoutes(reloadRoutes());
+            src.startRoutes(true);
+
+            await().atMost(Duration.ofSeconds(5)).untilAsserted(() -> {
+                assertEquals(2, context.getRoutesSize(), "route count after reload " + reload);
+                assertEquals(2, context.getRouteIds().size(), "unique route ids after reload " + reload);
+                assertEquals(2, src.getControlledRoutes().size(), "controlled routes after reload " + reload);
+                for (Route route : context.getRoutes()) {
+                    assertNotNull(src.getRouteStatus(route.getId()),
+                            "route status for " + route.getId() + " after reload " + reload);
+                }
+            });
+        }
+    }
+
+    private static RouteBuilder reloadRoutes() {
+        return new RouteBuilder() {
+            @Override
+            public void configure() {
+                from("timer:reloadA?repeatCount=1&delay=10").routeId("reload-a").to("mock:a");
+                from("timer:reloadB?repeatCount=1&delay=10").routeId("reload-b").to("mock:b");
+            }
+        };
     }
 
     private static class MyRoute extends RouteBuilder {
