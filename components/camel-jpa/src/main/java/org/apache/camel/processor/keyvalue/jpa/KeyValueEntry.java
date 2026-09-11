@@ -24,7 +24,6 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
 import jakarta.persistence.Lob;
 import jakarta.persistence.Table;
-import jakarta.persistence.Transient;
 
 /**
  * JPA entity representing a single key-value entry in the {@code CAMEL_KEYVALUE} table.
@@ -41,8 +40,15 @@ public class KeyValueEntry implements Serializable {
     @Serial
     private static final long serialVersionUID = 1L;
 
+    @Id
+    @Column(name = "ITEM_KEY", length = 512)
     private String itemKey;
+
+    @Lob
+    @Column(name = "ITEM_VALUE", nullable = false)
     private byte[] itemValue;
+
+    @Column(name = "EXPIRES_AT", nullable = false)
     private long expiresAt;
 
     /**
@@ -64,8 +70,6 @@ public class KeyValueEntry implements Serializable {
         this.expiresAt = expiresAt;
     }
 
-    @Id
-    @Column(name = "ITEM_KEY", length = 512)
     public String getItemKey() {
         return itemKey;
     }
@@ -74,8 +78,6 @@ public class KeyValueEntry implements Serializable {
         this.itemKey = itemKey;
     }
 
-    @Lob
-    @Column(name = "ITEM_VALUE", nullable = false)
     public byte[] getItemValue() {
         return itemValue;
     }
@@ -84,7 +86,6 @@ public class KeyValueEntry implements Serializable {
         this.itemValue = itemValue;
     }
 
-    @Column(name = "EXPIRES_AT", nullable = false)
     public long getExpiresAt() {
         return expiresAt;
     }
@@ -98,7 +99,6 @@ public class KeyValueEntry implements Serializable {
      *
      * @return whether the entry is expired
      */
-    @Transient
     public boolean isExpired() {
         return expiresAt > 0 && System.currentTimeMillis() >= expiresAt;
     }
