@@ -22,7 +22,7 @@ on:
     branches:
       - main
     # CI-only changes don't need a full build. Use workflow_dispatch to
-    # test CI changes: gh workflow run "Build and test" -f pr_number=XXXX -f pr_ref=branch-name
+    # test CI changes: gh workflow run "Build and test" -f pr_number=XXXX -f pr_ref=refs/pull/XXXX/head
     paths-ignore:
       - .claude-plugin/**
       - .idea/**
@@ -41,7 +41,7 @@ on:
         required: true
         type: string
       pr_ref:
-        description: 'Git ref of the pull request branch'
+        description: 'Git ref of the pull request (e.g. refs/pull/XXXX/head)'
         required: true
         type: string
       extra_modules:
