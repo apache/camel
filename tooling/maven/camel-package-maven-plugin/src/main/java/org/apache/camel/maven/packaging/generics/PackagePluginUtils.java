@@ -20,7 +20,6 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 
 import org.apache.maven.plugin.MojoExecutionException;
-import org.apache.maven.plugin.logging.Log;
 import org.apache.maven.project.MavenProject;
 import org.jboss.jandex.Index;
 
@@ -49,7 +48,7 @@ public final class PackagePluginUtils {
         return jandex.getIndex();
     }
 
-    public static Index readJandexIndexIgnoreMissing(MavenProject project, Log log) throws MojoExecutionException {
+    public static Index readJandexIndexIgnoreMissing(MavenProject project) throws MojoExecutionException {
         Path output = Paths.get(project.getBuild().getOutputDirectory());
         final JandexStore.Jandex jandex = JandexStore.read(output);
 
