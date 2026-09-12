@@ -250,7 +250,7 @@ class McpFacadeWriteFileTest {
         assertEquals(2, result.getInteger("pendingHunks"));
         assertEquals("- route:\n    id: typed\n", result.getString("content"));
         assertTrue(result.getString("message").contains("why an id?"));
-        assertTrue(result.getString("message").contains("call tui_write_file again"));
+        assertTrue(result.getString("message").contains("call camel_write_file again"));
         assertEquals(0, bridge.asked, "no confirm dialog: the replay is parked in the editor");
         assertEquals("- route: {}\n", Files.readString(dir.resolve("demo.camel.yaml"), StandardCharsets.UTF_8),
                 "nothing is written while the question is open");
@@ -312,6 +312,6 @@ class McpFacadeWriteFileTest {
         assertNotNull(files);
         assertEquals(dir.toString(), files.getString("directory"));
         assertTrue(files.getBoolean("devMode"));
-        assertTrue(files.getString("editing").contains("tui_write_file"));
+        assertTrue(files.getString("editing").contains("camel_write_file"));
     }
 }

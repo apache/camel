@@ -21,45 +21,39 @@ import java.util.Map;
 import java.util.concurrent.atomic.AtomicReference;
 
 import org.apache.camel.util.json.JsonObject;
+import org.apache.camel.util.json.Jsoner;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+/**
+ * The shared camel_eval_expression tool as the TUI exposes it (CAMEL-24695): with an integration selected the
+ * expression is evaluated inside it, without one locally, so a simple expression can be checked before it is written.
+ */
 class TuiToolRegistryEvalExpressionTest {
 
     @Test
-    void predicatesAreRecognisedByTheirOperators() {
-        assertTrue(McpFacade.looksLikePredicate("${body} > 200 && ${body} < 300"));
-        assertTrue(McpFacade.looksLikePredicate("${header.type} in 'gold,silver'"));
-        assertTrue(McpFacade.looksLikePredicate("${header.foo} == 'bar' || ${header.bar} != null"));
-        assertTrue(McpFacade.looksLikePredicate("${header.title} contains 'Camel'"));
-        assertFalse(McpFacade.looksLikePredicate("${random(1,10)}"));
-        assertFalse(McpFacade.looksLikePredicate("${header.user} ?: 'Guest'"), "elvis gives a value");
-        assertFalse(McpFacade.looksLikePredicate("${header.a} == 'x' ? 'yes' : 'no'"), "ternary gives a value");
-        assertFalse(McpFacade.looksLikePredicate("Hello ${body}, price>100"), "operators need spaces around them");
-        assertFalse(McpFacade.looksLikePredicate(null));
-    }
-
-    @Test
-    void evalIsACoreToolAndNeedsAnExpressionAndASelectedIntegration() throws Exception {
-        assertTrue(TuiToolRegistry.CORE_TOOLS.contains("tui_eval_expression"), "local models get it too");
+    void evalIsACoreToolAndFallsBackToALocalContextWithoutASelectedIntegration() throws Exception {
+        assertTrue(TuiToolRegistry.CORE_TOOLS.contains("camel_eval_expression"), "local models get it too");
+        assertTrue(TuiToolRegistry.READ_ONLY_TOOLS.contains("camel_eval_expression"));
         assertTrue(new TuiToolRegistry(null).getToolDefinitions().stream()
-                .anyMatch(def -> "tui_eval_expression".equals(def.name())));
-
+                .anyMatch(def -> "camel_eval_expression".equals(def.name())));
         MonitorContext ctx = new MonitorContext(new AtomicReference<>(List.of()), new AtomicReference<>(List.of()));
         McpFacade facade = new McpFacade(
                 ctx, new AtomicReference<>(List.of()), null, null, null, null, null, null, null, null, null, null,
                 null);
         TuiToolRegistry registry = new TuiToolRegistry(facade);
-
         assertEquals("Error: expression is required",
-                registry.execute("tui_eval_expression", new JsonObject(Map.of("language", "simple"))));
-        // nothing selected: the expression cannot be evaluated anywhere
-        assertNull(facade.evalExpression("simple", "${body}", null));
-        assertEquals("Error: no integration selected or PID unavailable",
-                registry.execute("tui_eval_expression", new JsonObject(Map.of("expression", "${body}"))));
+                registry.execute("camel_eval_expression", new JsonObject(Map.of("language", "simple"))));
+        // nothing selected: the expression is evaluated in a scratch context instead
+        JsonObject result = (JsonObject) Jsoner.deserialize(
+                registry.execute("camel_eval_expression", new JsonObject(
+                        Map.of("expression", "${body} == 'x'",
+                                "body", "x"))));
+        assertEquals("ok", result.getString("status"));
+        assertEquals("true", result.getString("result"));
+        assertTrue(result.getBoolean("predicate"));
+        assertTrue(result.getString("evaluatedIn").contains("local"));
     }
 }

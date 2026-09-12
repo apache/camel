@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.dsl.jbang.core.commands.tui;
+package org.apache.camel.dsl.jbang.core.commands.ai;
 
 import java.util.Collection;
 import java.util.HashMap;
@@ -30,11 +30,29 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-class TuiToolRegistryCatalogDocTest {
+/**
+ * The shared camel_catalog_doc tool, as the TUI's AI panel and every Camel MCP server expose it: written for what a
+ * small model gets wrong most (a path option as a query parameter, an operator inside a simple placeholder).
+ */
+class CatalogDocsTest {
 
     private static JsonObject catalogDoc(Map<String, Object> args) throws Exception {
-        String json = new TuiToolRegistry(null).execute("tui_catalog_doc", new JsonObject(args));
+        Map<String, String> stringArgs = new HashMap<>();
+        args.forEach((k, v) -> stringArgs.put(k, String.valueOf(v)));
+        String json = String.valueOf(ToolRegistry.execute("camel_catalog_doc", new ToolContext(), stringArgs));
         return (JsonObject) Jsoner.deserialize(json);
+    }
+
+    @Test
+    void theToolIsSharedAndInTheCoreSubset() {
+        ToolDescriptor td = ToolRegistry.findTool("camel_catalog_doc");
+        assertTrue(td.isCore(), "local models get it too");
+        assertTrue(td.isReadOnly());
+        assertTrue(ToolRegistry.authoringTools().contains(td));
+        JsonObject schema = td.inputSchema();
+        assertEquals("object", schema.getString("type"));
+        assertTrue(schema.getMap("properties").containsKey("endpoint"));
+        assertNull(schema.get("required"), "name or endpoint, neither alone is required");
     }
 
     @Test

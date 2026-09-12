@@ -36,10 +36,14 @@ class AiPanelPromptBudgetTest {
     // raised from 3500 when file editing (tui_write_file and its guidance) joined the core set for local models,
     // and from 3800 when tui_catalog_doc gained the endpoint argument (validates a URI, the endpoint counterpart of
     // tui_eval_expression for simple)
-    static final int CORE_BUDGET_TOKENS = 3_900;
+    // and from 3900 when the authoring tools became the camel_* set shared with camel-jbang-mcp (CAMEL-24695):
+    // their schemas carry the directory and name arguments a server without a selection needs, and
+    // camel_error_diagnose joined the core set
+    static final int CORE_BUDGET_TOKENS = 4_300;
     /** Measured ~6.9k tokens for 47 tools. */
     // raised from 7500 with tui_write_file and tui_validate_source
-    static final int FULL_BUDGET_TOKENS = 7_900;
+    // and from 7900 with the shared camel_* set (camel_catalog_find, camel_run and camel_error_diagnose added)
+    static final int FULL_BUDGET_TOKENS = 8_500;
 
     record Prefix(String mode, int tools, long promptChars, long toolChars) {
 
@@ -115,7 +119,8 @@ class AiPanelPromptBudgetTest {
 
         // the tool definitions already describe every tool; repeating them in prose doubles the cost
         // 450 before the file editing guidance (two bullets) was added
-        assertTrue(AiPanel.estimateTokens(prompt.length()) <= 530,
+        // 530 before the tools were split into camel_* and tui_* in the introduction
+        assertTrue(AiPanel.estimateTokens(prompt.length()) <= 545,
                 "system prompt grew to ~" + AiPanel.estimateTokens(prompt.length()) + " tokens");
         assertTrue(!prompt.contains("- tui_get_table:"), "system prompt must not list the tools again");
     }
