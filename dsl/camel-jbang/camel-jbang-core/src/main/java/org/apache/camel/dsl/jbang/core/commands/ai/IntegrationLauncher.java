@@ -56,19 +56,16 @@ public final class IntegrationLauncher {
      */
     public static JsonObject run(Path directory, List<String> files, String name, boolean dev, List<String> extraArgs) {
         List<String> cmd = new ArrayList<>(LauncherHelper.getCamelCommand());
-        cmd.add("run");
-        cmd.addAll(files);
-        if (dev) {
-            cmd.add("--dev");
-        }
-        if (name != null && !name.isBlank()) {
-            cmd.add("--name=" + name);
-        }
-        cmd.add("--logging-color=false");
-        if (extraArgs != null) {
-            cmd.addAll(extraArgs);
-        }
+        List<String> sources = files == null || files.isEmpty() ? sourceFiles(directory) : files;
+        cmd.addAll(runArguments(sources, name, dev, extraArgs));
         JsonObject result = new JsonObject();
+        if (sources.isEmpty()) {
+            result.put("directory", directory.toString());
+            result.put("status", "failed");
+            result.put("error", "No source files to run in " + directory
+                                + " (route files such as *.camel.yaml, *.xml, *.java, or application.properties)");
+            return result;
+        }
         result.put("directory", directory.toString());
         result.put("command", String.join(" ", cmd));
         Path output;
@@ -99,12 +96,16 @@ public final class IntegrationLauncher {
             }
             RuntimeHelper.ProcessInfo info = findByPid(pid);
             if (info != null) {
+                // the name the other tools find the process by: the one the caller gave, else the Camel context name
+                // (the source file name without its extensions); the pid is in the result as well
+                String started = name != null && !name.isBlank()
+                        ? name : info.contextName() != null && !info.contextName().isBlank() ? info.contextName() : info.name();
                 result.put("status", "started");
                 result.put("pid", pid);
-                result.put("name", info.name());
+                result.put("name", started);
                 result.put("log", LogFileReader.logFile(pid, info.name()).toString());
                 result.put("devMode", dev);
-                result.put("message", "Started " + info.name() + " (pid " + pid + ")"
+                result.put("message", "Started " + started + " (pid " + pid + ")"
                                       + (dev
                                               ? "; dev mode reloads the routes when a source file changes"
                                               : "; restart it after changing a source file")
@@ -124,6 +125,59 @@ public final class IntegrationLauncher {
         result.put("message", "camel run is still starting after " + STARTUP_TIMEOUT_MS / 1000
                               + "s (dependencies may be downloading); list_processes shows it once it is up");
         return result;
+    }
+
+    /** File extensions {@code camel run} loads from a project directory, as {@code camel run *} would pass them. */
+    private static final List<String> SOURCE_EXTENSIONS
+            = List.of(".yaml", ".yml", ".xml", ".java", ".groovy", ".kts", ".js", ".jsh", ".properties");
+
+    /**
+     * The source files {@code camel run} should load from a directory when the caller names none: the regular,
+     * non-hidden files with a source extension, sorted by name. This is what a shell expands {@code camel run *} to;
+     * the process is started without a shell, and {@code camel run} with no files would instead look for an
+     * {@code application.properties} with {@code camel.main.routesIncludePattern} and fail when there is none.
+     *
+     * @param  directory the project directory
+     * @return           the file names relative to the directory, empty when there is nothing to run
+     */
+    static List<String> sourceFiles(Path directory) {
+        List<String> names = new ArrayList<>();
+        try (var stream = Files.list(directory)) {
+            stream.filter(Files::isRegularFile)
+                    .map(p -> p.getFileName().toString())
+                    .filter(n -> !n.startsWith(".") && SOURCE_EXTENSIONS.stream().anyMatch(n::endsWith))
+                    .sorted()
+                    .forEach(names::add);
+        } catch (IOException e) {
+            // an unreadable directory has nothing to run
+        }
+        return names;
+    }
+
+    /**
+     * The {@code camel run} arguments for the given files, name and mode.
+     *
+     * @param  files     the source files, relative to the directory
+     * @param  name      the integration name, or null for the default
+     * @param  dev       whether to run in dev mode
+     * @param  extraArgs further {@code camel run} arguments
+     * @return           the arguments after the camel command itself
+     */
+    static List<String> runArguments(List<String> files, String name, boolean dev, List<String> extraArgs) {
+        List<String> cmd = new ArrayList<>();
+        cmd.add("run");
+        cmd.addAll(files);
+        if (dev) {
+            cmd.add("--dev");
+        }
+        if (name != null && !name.isBlank()) {
+            cmd.add("--name=" + name);
+        }
+        cmd.add("--logging-color=false");
+        if (extraArgs != null) {
+            cmd.addAll(extraArgs);
+        }
+        return cmd;
     }
 
     private static RuntimeHelper.ProcessInfo findByPid(long pid) {

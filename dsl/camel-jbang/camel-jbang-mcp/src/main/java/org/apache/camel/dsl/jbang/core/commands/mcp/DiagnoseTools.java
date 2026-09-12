@@ -51,7 +51,7 @@ public class DiagnoseTools {
                         + "Covers the most common Camel exceptions including NoSuchEndpointException, "
                         + "ResolveEndpointFailedException, FailedToCreateRouteException, and more.")
     public JsonObject camel_error_diagnose(
-            @ToolArg(description = "The Camel stack trace or error message to diagnose") String error,
+            @ToolArg(description = "The Camel stack trace or error message to diagnose", required = true) String error,
             @ToolArg(description = ToolArgDocs.RUNTIME, required = false) String runtime,
             @ToolArg(description = ToolArgDocs.CAMEL_VERSION, required = false) String camelVersion,
             @ToolArg(description = ToolArgDocs.PLATFORM_BOM, required = false) String platformBom) {
