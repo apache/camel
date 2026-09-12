@@ -159,6 +159,34 @@ public class JoorLanguageTest extends LanguageTestSupport {
     }
 
     @Test
+    public void testExchangeHeaderAsTwoCallsInOneExpression() {
+        exchange.getIn().setHeader("amount", 42);
+        exchange.getIn().setHeader("vip", true);
+
+        assertExpression("'order-' + headerAs('amount', Integer) + '-' + headerAs('vip', Boolean)", "order-42-true");
+        assertExpression("'order-' + headerAs('amount', Integer.class) + '-' + headerAs('vip', Boolean.class)",
+                "order-42-true");
+        assertExpression("'order-' + headerAs('amount', int) + '-' + headerAs('vip', Boolean.class)", "order-42-true");
+        assertExpression("headerAs('amount', Integer) + headerAs('amount', Integer)", "84");
+    }
+
+    @Test
+    public void testExchangeHeaderAsDefaultValueTwoCallsInOneExpression() {
+        exchange.getIn().setHeader("a", 40);
+
+        assertExpression("headerAs('a', 1, Integer) + headerAs('b', 2, Integer)", "42");
+        assertExpression("headerAs('a', 1, Integer.class) + headerAs('b', 2, Integer.class)", "42");
+        assertExpression("headerAs('a', 1, Integer) + headerAs('b', 2, Integer.class)", "42");
+        assertExpression("headerAs('a', 1, Integer.class) + headerAs('b', 2, Integer)", "42");
+        // two-argument and three-argument forms mixed on the same line
+        assertExpression("headerAs('a', Integer) + headerAs('b', 2, Integer)", "42");
+        assertExpression("headerAs('b', 2, Integer) + headerAs('a', Integer)", "42");
+        // default values containing parentheses and quotes
+        assertExpression("headerAs('x', '(none)', String) + headerAs('y', \"(n/a)\", String)", "(none)(n/a)");
+        assertExpression("headerAs('b', Integer.valueOf(2), Integer) + headerAs('a', Integer)", "42");
+    }
+
+    @Test
     public void testExchangeOptionalHeaderAs() {
         exchange.getIn().setHeader("foo", 22);
 
@@ -177,6 +205,16 @@ public class JoorLanguageTest extends LanguageTestSupport {
         assertExpression("3 * optionalHeaderAs(\"foo\", java.lang.Integer.class).get()", "66");
         assertExpression("3 * optionalHeaderAs(\"foo\", java.lang.Integer).get()", "66");
         assertExpression("var num = optionalHeaderAs(\"foo\", int).get(); return num * 4", "88");
+    }
+
+    @Test
+    public void testExchangePropertyAsTwoCallsInOneExpression() {
+        exchange.setProperty("a", 40);
+
+        assertExpression("exchangePropertyAs('a', Integer) + exchangePropertyAs('a', Integer.class)", "80");
+        assertExpression("exchangePropertyAs('a', 1, Integer) + exchangePropertyAs('b', 2, Integer)", "42");
+        assertExpression("exchangePropertyAs('a', 1, Integer.class) + exchangePropertyAs('b', 2, Integer.class)", "42");
+        assertExpression("exchangePropertyAs('a', Integer) + exchangePropertyAs('b', 2, Integer)", "42");
     }
 
     @Test
