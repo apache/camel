@@ -198,6 +198,47 @@ If any of the validation checks fail, then a `RestOpenApiValidationException` is
 has a `getValidationErrors` method that returns the error messages from the validator.
 
 
+== Unmatched requests
+
+By default, an incoming request that does not match any operation in the OpenAPI specification is answered
+with HTTP 404, and a request that matches a path but not the HTTP method is answered with HTTP 405 and an
+`Allow` header listing the allowed methods. In both cases the response body is empty.
+
+To return a custom response, for example a JSON error body, register a bean in the
+xref:manual::registry.adoc[Registry] that implements the `RestOpenApiUnmatchedRequestHandler` interface.
+The handler is called with the exchange, the status code (`404` or `405`) and the list of allowed HTTP
+methods (empty for `404`), and can then set the response body, status code and headers as needed. When no
+handler is registered, the default (empty body) response is used.
+
+The handler can also be registered using a factory finder on the classpath. This is done by adding a
+resource file `META-INF/services/org/apache/camel/rest-openapi-unmatched-request-handler-factory`
+with the content `class=com.example.MyHandler`.
+
+Regardless of how the handler is registered *only one* handler is supported: if two or more beans of this type
+are found in the registry, the default handler is used.
+
+[source,java]
+----
+public class JsonErrorHandler implements RestOpenApiUnmatchedRequestHandler {
+
+    @Override
+    public void handle(Exchange exchange, int statusCode, List<String> allowedMethods) {
+        String message = statusCode == 404
+                ? "The requested resource was not found."
+                : "The HTTP method is not allowed for this resource.";
+
+        exchange.getMessage().setHeader(Exchange.HTTP_RESPONSE_CODE, statusCode);
+        exchange.getMessage().setHeader(Exchange.CONTENT_TYPE, "application/json");
+        if (!allowedMethods.isEmpty()) {
+            exchange.getMessage().setHeader("Allow", String.join(", ", allowedMethods));
+        }
+        exchange.getMessage().setBody(String.format(
+                "{\"message\":\"%s\"}", message));
+    }
+}
+----
+
+
 == Examples
 
 === PetStore
