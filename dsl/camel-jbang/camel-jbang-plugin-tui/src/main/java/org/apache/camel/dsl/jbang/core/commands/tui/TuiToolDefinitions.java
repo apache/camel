@@ -20,14 +20,18 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.camel.dsl.jbang.core.commands.ai.ToolDescriptor;
+import org.apache.camel.dsl.jbang.core.commands.ai.ToolRegistry;
 import org.apache.camel.dsl.jbang.core.commands.tui.TuiToolRegistry.ToolDef;
 import org.apache.camel.util.json.JsonArray;
 import org.apache.camel.util.json.JsonObject;
 
 /**
- * The MCP tool definitions (name, description and JSON input schema) exposed by the TUI. This class is pure data; the
- * matching implementations live in {@link TuiToolRegistry} and are dispatched by tool name, so a new tool needs an
- * entry here and a {@code call*} method there.
+ * The MCP tool definitions (name, description and JSON input schema) exposed by the TUI: the {@code camel_} authoring
+ * tools shared with every Camel MCP server ({@link ToolRegistry#authoringTools()}) and the {@code tui_} tools that only
+ * make sense in front of the screen. This class is pure data; the matching implementations live in
+ * {@link TuiToolRegistry} and are dispatched by tool name, so a new TUI tool needs an entry here and a {@code call*}
+ * method there.
  */
 final class TuiToolDefinitions {
 
@@ -41,10 +45,36 @@ final class TuiToolDefinitions {
         List<ToolDef> tools = new ArrayList<>();
         addInteractionTools(tools);
         addStructuredDataTools(tools);
+        addSharedTools(tools);
         addCatalogTools(tools);
         addLogTools(tools);
         addExampleTools(tools);
         return List.copyOf(tools);
+    }
+
+    /**
+     * The neutral authoring tools shared with camel-jbang-mcp (CAMEL-24695): defined once in the shared registry and
+     * exposed here under the same {@code camel_} names, so an agent gets the same Camel through either MCP server. Two
+     * of them get a TUI extra: camel_control also knows the TUI's stop-all and close actions, and camel_get_log also
+     * reads the log of an infra service.
+     */
+    private static void addSharedTools(List<ToolDef> tools) {
+        for (ToolDescriptor td : ToolRegistry.authoringTools()) {
+            JsonObject schema = td.inputSchema();
+            JsonObject properties = (JsonObject) schema.get("properties");
+            // the TUI answers for the selected integration's Camel version; the argument would only cost tokens
+            properties.remove("camelVersion");
+            String description = td.description();
+            if (TuiToolRegistry.CONTROL_TOOL.equals(td.name())) {
+                description += " In the TUI also stop-all (every process) and close (a phantom project).";
+                JsonObject action = (JsonObject) properties.get("action");
+                action.put("description", action.getString("description") + ", or stop-all, close");
+            } else if (TuiToolRegistry.LOG_TOOL.equals(td.name())) {
+                description += " With infra=<alias> the log of an infra service instead.";
+                properties.put("infra", propDef("string", "Infra service alias whose log to read instead"));
+            }
+            tools.add(new ToolDef(td.name(), description, schema));
+        }
     }
 
     /**
@@ -270,20 +300,6 @@ final class TuiToolDefinitions {
                 Map.of("theme", propDef("string", "Theme ID (e.g. 'dracula', 'nord', 'catppuccin-mocha')")),
                 List.of("theme"))));
         tools.add(toToolDef(toolDef(
-                "tui_get_log",
-                "Returns recent log lines as structured data with optional filtering. "
-                               + "Returns newest entries first. Reads the selected integration's log, or an infra "
-                               + "service's log when infra=<alias> is given.",
-                Map.of("limit", propDef("integer", "Maximum lines to return (default 50)"),
-                        "filter", propDef("string", "Case-insensitive substring filter on log message"),
-                        "level", propDef("string", "Filter by log level (INFO, WARN, ERROR, DEBUG, TRACE)"),
-                        "infra", propDef("string", "Infra service alias whose log to read instead")))));
-        tools.add(toToolDef(toolDef(
-                "tui_get_errors",
-                "Returns structured error data from the Errors tab. "
-                                  + "Includes routeId, exchangeId, exception details, stack trace, body, and headers.",
-                Map.of())));
-        tools.add(toToolDef(toolDef(
                 "tui_get_diagram",
                 "Returns the route topology diagram as text. "
                                    + "Shows the ASCII/Unicode art diagram of routes and their connections.",
@@ -393,14 +409,6 @@ final class TuiToolDefinitions {
                 Map.of("name", propDef("string",
                         "Integration name. If omitted, uses the currently selected integration.")))));
         tools.add(toToolDef(toolDef(
-                "tui_control",
-                "Controls the selected integration. Actions: reset-stats (clear statistics, activity, errors and "
-                               + "traces, routes untouched), stop-routes/pause, start-routes/resume, restart, stop "
-                               + "(graceful), kill, stop-all (every process), close (a phantom project).",
-                Map.of("action", propDef("string",
-                        "reset-stats, stop-routes, start-routes, pause, resume, restart, stop, kill, stop-all or close")),
-                List.of("action"))));
-        tools.add(toToolDef(toolDef(
                 "tui_infra",
                 "Lists and controls infra services (brokers, databases started with camel infra run, e.g. "
                              + "mosquitto, kafka, postgres). Actions: list — running services with alias, pid, "
@@ -414,53 +422,12 @@ final class TuiToolDefinitions {
         tools.add(toToolDef(toolDef(
                 "tui_open_project",
                 "Opens a project directory as a phantom integration (shown as Stopped in Overview). "
-                                    + "The project can then be browsed in the Source tab and run via tui_control. "
+                                    + "The project can then be browsed in the Source tab and run via camel_control. "
                                     + "Supports Maven projects (Spring Boot, Quarkus, Camel Main detected via pom.xml) "
                                     + "and flat directories with Camel route files.",
                 Map.of("directory", propDef("string",
                         "Absolute path to the project directory to open")),
                 List.of("directory"))));
-        tools.add(toToolDef(toolDef(
-                "tui_get_files",
-                "Returns source files from the selected integration's directory. "
-                                 + "Without a file parameter, returns the list of files (name, size, type). "
-                                 + "With a file parameter, returns the file's content. "
-                                 + "Useful for reading route source code, configuration, and other integration files.",
-                Map.of("name", propDef("string",
-                        "Integration name. If omitted, uses the currently selected integration."),
-                        "file", propDef("string",
-                                "Filename to read. If omitted, returns the file list instead.")))));
-        tools.add(toToolDef(toolDef(
-                "tui_write_file",
-                "Writes the complete content of a file in the integration's source directory (tui_get_files tells "
-                                  + "the directory and whether edits reload). The user confirms in the TUI. YAML and "
-                                  + ".properties content is validated first; invalid content is not written and the "
-                                  + "errors are returned.",
-                Map.of("name", propDef("string", "Integration name (default: the selected one)."),
-                        "file", propDef("string", "File name, no path."),
-                        "content", propDef("string", "The complete new content."),
-                        "confirm", propDef("boolean",
-                                "Set false only when the user enabled /write auto; never to retry a rejected write."),
-                        "validate", propDef("boolean", "Validate before writing (default true).")),
-                List.of("file", "content"))));
-        tools.add(toToolDef(toolDef(
-                "tui_validate_source",
-                "Validates Camel YAML DSL or .properties source without writing: schema (misspelled options such as "
-                                       + "logLevel instead of loggingLevel), endpoint URIs, simple expressions, camel.* "
-                                       + "options. Use on content before writing it, or on an existing file (no content) "
-                                       + "to explain a reload error.",
-                Map.of("name", propDef("string", "Integration name (default: the selected one)."),
-                        "file", propDef("string", "File name; picks the checks by extension, read when no content."),
-                        "content", propDef("string", "The source to validate.")),
-                List.of("file"))));
-        tools.add(toToolDef(toolDef(
-                "tui_eval_expression",
-                "Evaluates an expression in the running integration: the value (true/false for a predicate), or "
-                                       + "the syntax error. Check simple before answering or writing it.",
-                Map.of("expression", propDef("string", "e.g. ${random(1,10)} or ${body} ?: 'none'"),
-                        "language", propDef("string", "simple (default), jsonpath, xpath, jq"),
-                        "body", propDef("string", "Message body")),
-                List.of("expression"))));
         tools.add(toToolDef(toolDef(
                 "tui_get_spans",
                 "OpenTelemetry spans of the selected integration (traceId, spanId, parentSpanId, name, kind, "
@@ -486,23 +453,6 @@ final class TuiToolDefinitions {
      * Camel catalog documentation tools.
      */
     private static void addCatalogTools(List<ToolDef> tools) {
-        tools.add(toToolDef(toolDef(
-                "tui_catalog_doc",
-                "Camel catalog documentation of a component, data format, language or EIP (description, options, "
-                                   + "Maven coordinates) for the integration's Camel version. For simple also its "
-                                   + "syntax rules, functions and operators: count and names by group, or with "
-                                   + "optionsFilter the matching ones with parameters and examples. endpoint "
-                                   + "validates a URI: unknown or invalid options, missing path.",
-                Map.of("name", propDef("string", "Name, e.g. kafka, json-jackson, simple, timer, choice, split"),
-                        "endpoint", propDef("string", "Endpoint URI to check, e.g. kafka:orders?brokers=host:9092"),
-                        "kind", propDef("string", "component, dataformat, language or eip (auto-detected)"),
-                        "includeOptions", propDef("boolean", "Include the options (default true)"),
-                        "includeDoc", propDef("boolean", "Include the full AsciiDoc page (default false)"),
-                        "docPage", propDef("string", "A language doc sub-page (simple: functions, operators, ognl, "
-                                                     + "advanced) to return as text"),
-                        "optionsFilter", propDef("string", "Keyword to match in option names or descriptions")),
-                List.of())));
-
         tools.add(toToolDef(toolDef(
                 "tui_get_processor_detail",
                 "The processors of a route with their configured options (type, id, endpointUri, attributes, "

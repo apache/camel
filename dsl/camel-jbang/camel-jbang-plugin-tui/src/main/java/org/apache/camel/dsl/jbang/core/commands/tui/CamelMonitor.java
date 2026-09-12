@@ -811,6 +811,7 @@ public class CamelMonitor extends CamelCommand {
                     }
                 });
         mcpFacade.setSourceValidator(tabRegistry.sourceTab().editAssist()::validateSource);
+        mcpFacade.setPropertyLineValidator(tabRegistry.sourceTab().editAssist()::validateSpringBootPropertyLine);
         mcpFacade.setLaunchManager(actionsPopup.getLaunchManager());
         aiPanel.setMcpFacade(mcpFacade);
         aiPanel.setOtelSpans(dataService.otelSpans());
@@ -951,7 +952,7 @@ public class CamelMonitor extends CamelCommand {
         if (outcome.saved()) {
             note = "The user saved " + file + " after the paused edit (" + outcome.applied() + " edit(s) applied"
                    + (outcome.skipped().isEmpty() ? "" : ", skipped " + outcome.skipped())
-                   + "); read it with tui_get_files if you need the current content. Continue with any file"
+                   + "); read it with camel_get_files if you need the current content. Continue with any file"
                    + " write that was deferred meanwhile.";
         } else {
             note = "The user discarded the paused edit of " + file + "; the file is unchanged. Ask before"

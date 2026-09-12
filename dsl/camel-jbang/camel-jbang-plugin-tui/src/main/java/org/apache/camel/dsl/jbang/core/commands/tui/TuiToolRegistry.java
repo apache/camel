@@ -17,28 +17,29 @@
 package org.apache.camel.dsl.jbang.core.commands.tui;
 
 import java.util.ArrayList;
-import java.util.Arrays;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
-import java.util.TreeMap;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import dev.tamboui.buffer.Buffer;
 import dev.tamboui.export.ExportRequest;
 import dev.tamboui.style.Color;
 import dev.tamboui.style.Style;
 import org.apache.camel.catalog.CamelCatalog;
-import org.apache.camel.catalog.EndpointValidationResult;
+import org.apache.camel.dsl.jbang.core.commands.ai.ToolContext;
+import org.apache.camel.dsl.jbang.core.commands.ai.ToolDescriptor;
+import org.apache.camel.dsl.jbang.core.commands.ai.ToolExecutionException;
+import org.apache.camel.dsl.jbang.core.commands.ai.ToolRegistry;
 import org.apache.camel.dsl.jbang.core.common.CatalogLoader;
 import org.apache.camel.dsl.jbang.core.common.ExampleHelper;
-import org.apache.camel.tooling.model.BaseModel;
 import org.apache.camel.tooling.model.BaseOptionModel;
 import org.apache.camel.tooling.model.ComponentModel;
-import org.apache.camel.tooling.model.DataFormatModel;
 import org.apache.camel.tooling.model.EipModel;
-import org.apache.camel.tooling.model.LanguageModel;
 import org.apache.camel.util.TimeUtils;
 import org.apache.camel.util.json.JsonArray;
 import org.apache.camel.util.json.JsonObject;
@@ -85,32 +86,104 @@ class TuiToolRegistry {
     }
 
     /**
+     * Runs a shared {@code camel_} tool with the TUI's extras: the file tools work on the selected integration's source
+     * directory unless a directory is given (a write then goes through the TUI's confirm dialog or live replay),
+     * camel_control knows the TUI's own actions, camel_get_log also reads an infra service log.
+     */
+    private String executeSharedWithTuiExtras(String name, Map<String, Object> args) {
+        boolean hasDirectory = args.get("directory") instanceof String d && !d.isBlank();
+        boolean facadeSelection = facade != null && facade.getSelectedIntegrationName() != null;
+        return switch (name) {
+            case CONTROL_TOOL -> facade != null ? callControl(args) : executeShared(name, args);
+            case LOG_TOOL -> facade != null ? callGetLog(args) : executeShared(name, args);
+            case FILES_TOOL -> !hasDirectory && facadeSelection ? callGetFiles(args) : executeShared(name, args);
+            case WRITE_TOOL -> !hasDirectory && facadeSelection ? callWriteFile(args) : executeShared(name, args);
+            case VALIDATE_TOOL -> !hasDirectory && facadeSelection && args.get("content") == null
+                    ? callValidateSource(args) : executeShared(name, args);
+            default -> executeShared(name, args);
+        };
+    }
+
+    /**
+     * Runs a shared tool from the registry over a context built from the TUI's selection: the selected integration's
+     * pid, Camel version and source directory, and the editor's Spring Boot property check.
+     */
+    private String executeShared(String name, Map<String, Object> args) {
+        ToolDescriptor descriptor = ToolRegistry.findTool(name);
+        if (descriptor == null) {
+            throw new IllegalArgumentException("Unknown tool: " + name);
+        }
+        Map<String, String> stringArgs = new LinkedHashMap<>();
+        for (Map.Entry<String, Object> e : args.entrySet()) {
+            if (e.getValue() != null) {
+                stringArgs.put(e.getKey(), String.valueOf(e.getValue()));
+            }
+        }
+        ToolContext ctx = new ToolContext();
+        // what the user selected is the integration; nothing selected means nothing, not the only one running
+        ctx.setAutoSelectSingleProcess(false);
+        if (facade != null) {
+            String pid = facade.getSelectedPid();
+            if (pid != null) {
+                try {
+                    ctx.selectProcess(Long.parseLong(pid));
+                } catch (NumberFormatException e) {
+                    // a phantom project has no process
+                }
+            }
+            ctx.setCamelVersion(facade.getSelectedCamelVersion());
+            ctx.setDefaultDirectory(facade.getSelectedSourceDirectory());
+            ctx.setPropertyLineValidator(facade.getPropertyLineValidator());
+        }
+        try {
+            Object result = ToolRegistry.execute(name, ctx, stringArgs);
+            return result != null ? result.toString() : "";
+        } catch (ToolExecutionException e) {
+            return "Error: " + e.getMessage();
+        }
+    }
+
+    /**
      * The tools needed to answer questions and troubleshoot from the built-in AI panel. The remaining tools drive the
      * screen (drawing, animation, key presses, tape recording, themes) and exist for external MCP agents. Every tool
      * schema is sent on every request, and a local model pays for that in prompt-processing time, so the AI panel sends
      * only this subset to local providers unless configured otherwise.
      */
-    static final Set<String> CORE_TOOLS = Set.of(
-            "tui_get_state", "tui_get_options", "tui_get_table", "tui_get_log", "tui_get_errors",
-            "tui_get_diagram", "tui_get_topology", "tui_get_processor_detail", "tui_catalog_doc",
-            "tui_get_history", "tui_get_spans", "tui_control", "tui_send_message", "tui_get_files", "tui_write_file",
-            "tui_validate_source", "tui_eval_expression",
-            "tui_get_readme", "tui_navigate", "tui_set_log_level", "tui_filter", "tui_get_status",
-            "tui_infra");
+    static final String SHARED_PREFIX = "camel_";
+    static final String CONTROL_TOOL = "camel_control";
+    static final String LOG_TOOL = "camel_get_log";
+    static final String FILES_TOOL = "camel_get_files";
+    static final String WRITE_TOOL = "camel_write_file";
+    static final String VALIDATE_TOOL = "camel_validate_source";
+
+    /** The TUI's own tools in the core subset; the shared tools add those flagged core in the registry. */
+    private static final Set<String> CORE_TUI_TOOLS = Set.of(
+            "tui_get_state", "tui_get_options", "tui_get_table", "tui_get_diagram", "tui_get_topology",
+            "tui_get_processor_detail", "tui_get_history", "tui_get_spans", "tui_send_message",
+            "tui_get_readme", "tui_navigate", "tui_set_log_level", "tui_filter", "tui_get_status", "tui_infra");
+
+    static final Set<String> CORE_TOOLS = Stream.concat(
+            CORE_TUI_TOOLS.stream(),
+            ToolRegistry.authoringTools().stream().filter(ToolDescriptor::isCore).map(ToolDescriptor::name))
+            .collect(Collectors.toUnmodifiableSet());
+
+    /** The TUI's own read-only tools; the shared tools add those flagged read-only in the registry. */
+    private static final Set<String> READ_ONLY_TUI_TOOLS = Set.of(
+            "tui_get_ai_log", "tui_get_diagram", "tui_get_events", "tui_get_history", "tui_get_mcp_log",
+            "tui_get_options", "tui_get_processor_detail", "tui_get_readme", "tui_get_screen", "tui_get_spans",
+            "tui_get_state", "tui_get_status", "tui_get_table", "tui_get_themes", "tui_get_topology",
+            "tui_list_examples", "tui_locate", "tui_wait_for_idle");
 
     /**
      * Tools that only return information and never change the TUI, the integration or its data. The ACP permission
-     * handler approves calls to these without asking; anything else, including tui_control, tui_send_message and
-     * tui_execute_sql, is put in front of the user. tui_eval_expression is here because it evaluates an expression
-     * against a scratch exchange in the running integration and sends nothing through a route.
+     * handler approves calls to these without asking; anything else, including camel_control, tui_send_message and
+     * tui_execute_sql, is put in front of the user. camel_eval_expression is read-only because it evaluates an
+     * expression against a scratch exchange and sends nothing through a route.
      */
-    static final Set<String> READ_ONLY_TOOLS = Set.of(
-            "tui_catalog_doc", "tui_eval_expression", "tui_get_ai_log", "tui_get_diagram", "tui_get_errors",
-            "tui_get_events",
-            "tui_get_files", "tui_get_history", "tui_get_log", "tui_get_mcp_log", "tui_get_options",
-            "tui_get_processor_detail", "tui_get_readme", "tui_get_screen", "tui_get_spans", "tui_get_state",
-            "tui_get_status", "tui_get_table", "tui_get_themes", "tui_get_topology", "tui_list_examples",
-            "tui_locate", "tui_validate_source", "tui_wait_for_idle");
+    static final Set<String> READ_ONLY_TOOLS = Stream.concat(
+            READ_ONLY_TUI_TOOLS.stream(),
+            ToolRegistry.authoringTools().stream().filter(ToolDescriptor::isReadOnly).map(ToolDescriptor::name))
+            .collect(Collectors.toUnmodifiableSet());
 
     /**
      * Returns all tool definitions. The result is cached since it is immutable.
@@ -136,6 +209,9 @@ class TuiToolRegistry {
      * Executes a tool by name, returns result string.
      */
     String execute(String name, Map<String, Object> args) throws Exception {
+        if (name != null && name.startsWith(SHARED_PREFIX)) {
+            return executeSharedWithTuiExtras(name, args);
+        }
         return switch (name) {
             case "tui_get_screen" -> callGetScreen(args);
             case "tui_get_events" -> callGetEvents(args);
@@ -155,8 +231,6 @@ class TuiToolRegistry {
             case "tui_action" -> callAction(args);
             case "tui_get_themes" -> callGetThemes();
             case "tui_set_theme" -> callSetTheme(args);
-            case "tui_get_log" -> callGetLog(args);
-            case "tui_get_errors" -> callGetErrors();
             case "tui_get_diagram" -> callGetDiagram();
             case "tui_get_history" -> callGetHistory(args);
             case "tui_get_topology" -> callGetTopology();
@@ -168,13 +242,8 @@ class TuiToolRegistry {
             case "tui_set_input" -> callSetInput(args);
             case "tui_toggle_trace_display" -> callToggleTraceDisplay(args);
             case "tui_get_readme" -> callGetReadme(args);
-            case "tui_control" -> callControl(args);
             case "tui_infra" -> callInfra(args);
             case "tui_open_project" -> callOpenProject(args);
-            case "tui_get_files" -> callGetFiles(args);
-            case "tui_write_file" -> callWriteFile(args);
-            case "tui_validate_source" -> callValidateSource(args);
-            case "tui_eval_expression" -> callEvalExpression(args);
             case "tui_get_spans" -> callGetSpans(args);
             case "tui_locate" -> callLocate(args);
             case "tui_draw_shape" -> callDrawShape(args);
@@ -182,7 +251,6 @@ class TuiToolRegistry {
             case "tui_canvas_close" -> callCanvasClose();
             case "tui_animate" -> callAnimate(args);
             case "tui_animate_status" -> callAnimateStatus(args);
-            case "tui_catalog_doc" -> callCatalogDoc(args);
             case "tui_get_processor_detail" -> callGetProcessorDetail(args);
             case "tui_get_ai_log" -> callGetAiLog(args);
             case "tui_get_mcp_log" -> callGetMcpLog(args);
@@ -961,18 +1029,17 @@ class TuiToolRegistry {
         return "Theme switched to '" + themeId + "'";
     }
 
+    /** The shared camel_get_log tool with the TUI extra: infra=<alias> reads the log of an infra service instead. */
     private String callGetLog(Map<String, Object> args) {
-        int limit = 50;
-        if (args.get("limit") instanceof Number n) {
-            limit = Math.max(1, Math.min(1000, n.intValue()));
-        }
-        String filter = args.get("filter") instanceof String s ? s : null;
-        String level = args.get("level") instanceof String s ? s : null;
         if (args.get("infra") instanceof String alias && !alias.isBlank()) {
+            int limit = 50;
+            if (args.get("limit") instanceof Number n) {
+                limit = Math.max(1, Math.min(1000, n.intValue()));
+            }
+            String filter = args.get("filter") instanceof String v ? v : null;
             return infraLog(alias, limit, filter);
         }
-        JsonObject data = facade.getLogData(limit, filter, level);
-        return Jsoner.serialize(data);
+        return executeShared(LOG_TOOL, args);
     }
 
     private void addInfraContext(JsonObject result) {
@@ -1070,18 +1137,6 @@ class TuiToolRegistry {
         }
     }
 
-    private String callGetErrors() {
-        JsonObject data = facade.getTableData("Errors");
-        if (data == null) {
-            JsonObject empty = new JsonObject();
-            empty.put("tab", "Errors");
-            empty.put("rows", new JsonArray());
-            empty.put("totalRows", 0);
-            return Jsoner.serialize(empty);
-        }
-        return Jsoner.serialize(data);
-    }
-
     private String callGetDiagram() {
         JsonObject data = facade.getDiagramData();
         if (data == null) {
@@ -1119,20 +1174,6 @@ class TuiToolRegistry {
         }
         JsonObject data = facade.getSpanData(traceId, limit);
         return Jsoner.serialize(data);
-    }
-
-    private String callEvalExpression(Map<String, Object> args) {
-        String expression = args.get("expression") instanceof String s ? s : null;
-        if (expression == null || expression.isBlank()) {
-            return "Error: expression is required";
-        }
-        String language = args.get("language") instanceof String s ? s : null;
-        String body = args.get("body") instanceof String s ? s : null;
-        JsonObject response = facade.evalExpression(language, expression, body);
-        if (response == null) {
-            return "Error: no integration selected or PID unavailable";
-        }
-        return Jsoner.serialize(response);
     }
 
     private String callSendMessage(Map<String, Object> args) {
@@ -1179,7 +1220,7 @@ class TuiToolRegistry {
             return null;
         }
         if (similar.isEmpty()) {
-            return "Camel has no component named '" + scheme + "'. Use tui_catalog_doc to find the right component, "
+            return "Camel has no component named '" + scheme + "'. Use camel_catalog_find to find the right component, "
                    + "then send again with its scheme.";
         }
         return "Camel has no component named '" + scheme + "'. Similar components in the catalog: "
@@ -1318,7 +1359,7 @@ class TuiToolRegistry {
         return Jsoner.serialize(response);
     }
 
-    /** Time the last tool call spent waiting for the user (a tui_write_file confirmation), see the AI panel. */
+    /** Time the last tool call spent waiting for the user (a camel_write_file confirmation), see the AI panel. */
     long consumeConfirmWaitMs() {
         return facade != null ? facade.consumeConfirmWaitMs() : 0;
     }
@@ -1447,649 +1488,6 @@ class TuiToolRegistry {
             return DrawOverlay.generateText(x, y, text != null ? text : "", color);
         }
         return DrawOverlay.generateShape(shape, x, y, width, height, length, color);
-    }
-
-    private String callCatalogDoc(Map<String, Object> args) {
-        String name = args.get("name") instanceof String v ? v : null;
-        String endpoint = args.get("endpoint") instanceof String v ? v.trim() : null;
-        if ((name == null || name.isEmpty()) && (endpoint == null || endpoint.isEmpty())) {
-            return "{\"error\": \"'name' or 'endpoint' parameter is required\"}";
-        }
-        String kind = args.get("kind") instanceof String v ? v : null;
-        String optionsFilter = args.get("optionsFilter") instanceof String v ? v : null;
-        boolean includeOptions = !Boolean.FALSE.equals(args.get("includeOptions"));
-        boolean includeDoc = Boolean.TRUE.equals(args.get("includeDoc"));
-        String docPage = args.get("docPage") instanceof String v ? v.trim().toLowerCase(Locale.ROOT) : null;
-
-        String version = facade != null ? facade.getSelectedCamelVersion() : null;
-        try {
-            CamelCatalog catalog = CatalogLoader.loadCatalog(null, version, true);
-            if (catalog == null) {
-                return "{\"error\": \"Could not load catalog" + (version != null ? " for version " + version : "") + "\"}";
-            }
-            if (endpoint != null && !endpoint.isEmpty()) {
-                return validateEndpoint(catalog, endpoint);
-            }
-            return buildCatalogDocResult(catalog, name, kind, optionsFilter, includeOptions, includeDoc, docPage);
-        } catch (Exception e) {
-            JsonObject err = new JsonObject();
-            err.put("error", "Failed to load catalog: " + e.getMessage());
-            return Jsoner.serialize(err);
-        }
-    }
-
-    private String buildCatalogDocResult(
-            CamelCatalog catalog, String name, String kind, String optionsFilter,
-            boolean includeOptions, boolean includeDoc, String docPage) {
-        String lowerFilter = optionsFilter != null ? optionsFilter.toLowerCase() : null;
-
-        if (kind == null || "component".equals(kind)) {
-            ComponentModel cm = catalog.componentModel(name);
-            if (cm != null) {
-                String doc = includeDoc ? catalog.asciiDoc(name + "-component") : null;
-                return buildComponentDocJson(cm, lowerFilter, includeOptions, doc);
-            }
-            if (kind != null) {
-                return notFound("Component", name, catalog.suggestComponentNames(name, 5));
-            }
-        }
-        if (kind == null || "dataformat".equals(kind)) {
-            DataFormatModel dm = catalog.dataFormatModel(name);
-            if (dm != null) {
-                String doc = includeDoc ? catalog.asciiDoc(name + "-dataformat") : null;
-                return buildDataFormatDocJson(dm, lowerFilter, includeOptions, doc);
-            }
-            if (kind != null) {
-                return notFound("Data format", name, catalog.suggestDataFormatNames(name, 5));
-            }
-        }
-        if (kind == null || "language".equals(kind)) {
-            LanguageModel lm = catalog.languageModel(name);
-            if (lm != null) {
-                String doc = null;
-                if (docPage != null && !docPage.isEmpty()) {
-                    doc = catalog.asciiDoc(name + "-" + docPage);
-                    if (doc == null) {
-                        JsonObject error = new JsonObject();
-                        error.put("error", "No doc page '" + docPage + "' for language " + name);
-                        error.put("docPages", new JsonArray(languageDocPages(catalog, name)));
-                        return error.toJson();
-                    }
-                } else if (includeDoc) {
-                    doc = catalog.asciiDoc(name + "-language");
-                }
-                boolean docPageOnly = docPage != null && !docPage.isEmpty();
-                return buildLanguageDocJson(
-                        lm, lowerFilter, includeOptions, doc, languageDocPages(catalog, name), docPageOnly);
-            }
-            if (kind != null) {
-                return notFound("Language", name, catalog.suggestLanguageNames(name, 5));
-            }
-        }
-        if (kind == null || "eip".equals(kind)) {
-            EipModel em = catalog.eipModel(name);
-            if (em != null) {
-                String doc = includeDoc ? catalog.asciiDoc(name + "-eip") : null;
-                return buildEipDocJson(em, lowerFilter, includeOptions, doc);
-            }
-            if (kind != null) {
-                return "{\"error\": \"EIP not found: " + name + "\"}";
-            }
-        }
-        List<String> suggestions = new ArrayList<>(catalog.suggestComponentNames(name, 5));
-        suggestions.addAll(catalog.suggestDataFormatNames(name, 3));
-        suggestions.addAll(catalog.suggestLanguageNames(name, 3));
-        return notFound("Artifact", name, suggestions);
-    }
-
-    /**
-     * Checks an endpoint URI against the catalog the way the YAML validator does on a write: the component is taken
-     * from the scheme, the path is parsed against the component's syntax and every option is checked. The problems come
-     * back in words, with the closest real option name or the allowed values, and the options the URI uses come with
-     * their documentation so a follow-up needs no second call.
-     */
-    String validateEndpoint(CamelCatalog catalog, String endpoint) {
-        int colon = endpoint.indexOf(':');
-        if (colon <= 0) {
-            JsonObject error = new JsonObject();
-            error.put("error", "Not an endpoint URI (scheme:path?options expected): " + endpoint);
-            return error.toJson();
-        }
-        String scheme = endpoint.substring(0, colon).toLowerCase(Locale.ROOT);
-        ComponentModel cm = catalog.componentModel(scheme);
-        if (cm == null) {
-            JsonObject error = new JsonObject();
-            error.put("error", "Camel has no component named '" + scheme + "'");
-            List<String> similar = catalog.suggestComponentNames(scheme, 5);
-            if (!similar.isEmpty()) {
-                error.put("suggestions", new JsonArray(similar));
-                error.put("hint", "Check again with one of those schemes, e.g. '" + similar.get(0)
-                                  + endpoint.substring(colon) + "'.");
-            }
-            return error.toJson();
-        }
-        JsonObject result = new JsonObject();
-        result.put("kind", "component");
-        result.put("name", scheme);
-        result.put("title", cm.getTitle());
-        result.put("endpoint", endpoint);
-        if (cm.getSyntax() != null) {
-            result.put("syntax", cm.getSyntax());
-            result.put("uriSyntax", uriSyntax(cm));
-        }
-        EndpointValidationResult validation;
-        try {
-            validation = catalog.validateEndpointProperties(endpoint, false, false, false);
-        } catch (Exception e) {
-            result.put("valid", false);
-            result.put("problems", new JsonArray(List.of("Cannot parse the URI: " + e.getMessage())));
-            return Jsoner.serialize(result);
-        }
-        List<String> problems = endpointProblems(validation);
-        List<String> warnings = new ArrayList<>();
-        if (validation.getDeprecated() != null) {
-            for (String name : validation.getDeprecated()) {
-                warnings.add("Option '" + name + "' is deprecated");
-            }
-        }
-        if (validation.getDefaultValues() != null) {
-            for (Map.Entry<String, String> entry : validation.getDefaultValues().entrySet()) {
-                warnings.add("Option '" + entry.getKey() + "' is set to its default value " + entry.getValue());
-            }
-        }
-        result.put("valid", problems.isEmpty());
-        result.put("problems", new JsonArray(problems));
-        if (!warnings.isEmpty()) {
-            result.put("warnings", new JsonArray(warnings));
-        }
-        // the options the URI uses (path parts included), with their catalog documentation
-        Map<String, String> used;
-        try {
-            used = catalog.endpointProperties(endpoint);
-        } catch (Exception e) {
-            used = Map.of();
-        }
-        JsonArray options = new JsonArray();
-        if (cm.getEndpointOptions() != null) {
-            for (BaseOptionModel opt : cm.getEndpointOptions()) {
-                if (used.containsKey(opt.getName())) {
-                    JsonObject o = optionToJson(opt, "endpoint");
-                    o.put("value", used.get(opt.getName()));
-                    options.add(o);
-                }
-            }
-        }
-        result.put("usedOptions", options);
-        result.put("message", problems.isEmpty()
-                ? "The URI is valid for the " + scheme + " component"
-                : problems.size() + " problem(s); fix them before using the URI");
-        return Jsoner.serialize(result);
-    }
-
-    static List<String> endpointProblems(EndpointValidationResult r) {
-        List<String> problems = new ArrayList<>();
-        if (r.getSyntaxError() != null) {
-            problems.add("Syntax error: " + r.getSyntaxError());
-        }
-        if (r.getUnknownComponent() != null) {
-            problems.add("Unknown component: " + r.getUnknownComponent());
-        }
-        if (r.getIncapable() != null) {
-            problems.add("Cannot validate: " + r.getIncapable());
-        }
-        if (r.getUnknown() != null) {
-            for (String name : r.getUnknown()) {
-                StringBuilder sb = new StringBuilder("Unknown option '").append(name).append("'");
-                // the catalog suggests the closest names itself (edit distance, CAMEL-24666)
-                String[] suggestions = r.getUnknownSuggestions() != null ? r.getUnknownSuggestions().get(name) : null;
-                if (suggestions != null && suggestions.length > 0) {
-                    sb.append(". Did you mean: ").append(Arrays.asList(suggestions));
-                }
-                problems.add(sb.toString());
-            }
-        }
-        if (r.getRequired() != null) {
-            for (String name : r.getRequired()) {
-                problems.add("Missing required option '" + name + "'");
-            }
-        }
-        if (r.getInvalidEnum() != null) {
-            for (Map.Entry<String, String> entry : r.getInvalidEnum().entrySet()) {
-                StringBuilder sb = new StringBuilder("Invalid value '").append(entry.getValue())
-                        .append("' for option '").append(entry.getKey()).append("'");
-                String[] choices = r.getInvalidEnumChoices() != null ? r.getInvalidEnumChoices().get(entry.getKey()) : null;
-                if (choices != null) {
-                    sb.append(". Possible values: ").append(Arrays.asList(choices));
-                }
-                problems.add(sb.toString());
-            }
-        }
-        addInvalid(problems, r.getInvalidBoolean(), "boolean");
-        addInvalid(problems, r.getInvalidInteger(), "integer");
-        addInvalid(problems, r.getInvalidNumber(), "number");
-        addInvalid(problems, r.getInvalidDuration(), "duration");
-        addInvalid(problems, r.getInvalidReference(), "reference (#bean)");
-        addInvalid(problems, r.getInvalidMap(), "map");
-        addInvalid(problems, r.getInvalidArray(), "array");
-        if (r.getNotConsumerOnly() != null) {
-            for (String name : r.getNotConsumerOnly()) {
-                problems.add("Option '" + name + "' is a producer option; not for a from (consumer) endpoint");
-            }
-        }
-        if (r.getNotProducerOnly() != null) {
-            for (String name : r.getNotProducerOnly()) {
-                problems.add("Option '" + name + "' is a consumer option; not for a to (producer) endpoint");
-            }
-        }
-        return problems;
-    }
-
-    private static void addInvalid(List<String> problems, Map<String, String> invalid, String type) {
-        if (invalid != null) {
-            for (Map.Entry<String, String> entry : invalid.entrySet()) {
-                problems.add("Invalid " + type + " value '" + entry.getValue() + "' for option '" + entry.getKey() + "'");
-            }
-        }
-    }
-
-    /**
-     * Error for a catalog lookup that found nothing, with the names the catalog suggests for the term (a protocol or
-     * product name such as mqtt or s3) so the next call can use one of them.
-     */
-    private static String notFound(String kind, String name, List<String> suggestions) {
-        JsonObject error = new JsonObject();
-        error.put("error", kind + " not found: " + name);
-        if (!suggestions.isEmpty()) {
-            error.put("suggestions", new JsonArray(suggestions));
-        }
-        return error.toJson();
-    }
-
-    @SuppressWarnings("unchecked")
-    private static void addCommonModelFields(JsonObject result, BaseModel<?> model) {
-        if (model.getFirstVersion() != null) {
-            result.put("since", model.getFirstVersion());
-        }
-        if (model.getSupportLevel() != null) {
-            result.put("supportLevel", model.getSupportLevel().name());
-        }
-        if (model.isNativeSupported()) {
-            result.put("nativeSupported", true);
-        }
-        if (model.isDeprecated()) {
-            result.put("deprecated", true);
-            if (model.getDeprecatedSince() != null) {
-                result.put("deprecatedSince", model.getDeprecatedSince());
-            }
-            if (model.getDeprecationNote() != null) {
-                result.put("deprecationNote", model.getDeprecationNote());
-            }
-        }
-    }
-
-    /**
-     * The rules of an endpoint URI for this component, spelled out with its own path parts: what a small model gets
-     * wrong most is a path option written as a query parameter or the other way round, and the YAML form.
-     */
-    static String uriSyntax(ComponentModel model) {
-        List<String> path = new ArrayList<>();
-        if (model.getEndpointOptions() != null) {
-            for (BaseOptionModel opt : model.getEndpointOptions()) {
-                if ("path".equals(opt.getKind())) {
-                    path.add(opt.getName());
-                }
-            }
-        }
-        StringBuilder sb = new StringBuilder();
-        sb.append("URI: ").append(model.getSyntax()).append("?option=value&option=value. ");
-        if (path.isEmpty()) {
-            sb.append("The path has no options; ");
-        } else {
-            sb.append("The path options (").append(String.join(", ", path))
-                    .append(") go in the path, never as ?name=value; ");
-        }
-        sb.append("every other endpoint option is a query parameter after ?, separated by &.")
-                .append(" In YAML DSL: uri: ").append(model.getScheme()).append(":<path> plus a parameters: map of the")
-                .append(" query options (or the full URI in uri). Values may use {{property.placeholders}};")
-                .append(" wrap a value containing & or + in RAW(value). Component options (scope component) are")
-                .append(" set in application.properties as camel.component.").append(model.getScheme())
-                .append(".<option>=value, not on the URI.");
-        return sb.toString();
-    }
-
-    private String buildComponentDocJson(ComponentModel model, String filter, boolean includeOptions, String doc) {
-        JsonObject result = new JsonObject();
-        result.put("kind", "component");
-        result.put("name", model.getScheme());
-        result.put("title", model.getTitle());
-        result.put("description", model.getDescription());
-        if (model.getLabel() != null) {
-            result.put("label", model.getLabel());
-        }
-        if (model.getSyntax() != null) {
-            result.put("syntax", model.getSyntax());
-            result.put("uriSyntax", uriSyntax(model));
-        }
-        result.put("consumerOnly", model.isConsumerOnly());
-        result.put("producerOnly", model.isProducerOnly());
-        result.put("remote", model.isRemote());
-        result.put("groupId", model.getGroupId());
-        result.put("artifactId", model.getArtifactId());
-        addCommonModelFields(result, model);
-
-        if (includeOptions) {
-            JsonArray options = new JsonArray();
-            if (model.getComponentOptions() != null) {
-                for (BaseOptionModel opt : model.getComponentOptions()) {
-                    if (matchesOptionFilter(opt, filter)) {
-                        options.add(optionToJson(opt, "component"));
-                    }
-                }
-            }
-            if (model.getEndpointOptions() != null) {
-                for (BaseOptionModel opt : model.getEndpointOptions()) {
-                    if (matchesOptionFilter(opt, filter)) {
-                        options.add(optionToJson(opt, "endpoint"));
-                    }
-                }
-            }
-            result.put("options", options);
-            result.put("matchedOptions", options.size());
-        }
-        if (doc != null) {
-            result.put("doc", doc);
-        }
-        return Jsoner.serialize(result);
-    }
-
-    private String buildDataFormatDocJson(DataFormatModel model, String filter, boolean includeOptions, String doc) {
-        JsonObject result = new JsonObject();
-        result.put("kind", "dataformat");
-        result.put("name", model.getName());
-        result.put("title", model.getTitle());
-        result.put("description", model.getDescription());
-        if (model.getLabel() != null) {
-            result.put("label", model.getLabel());
-        }
-        result.put("groupId", model.getGroupId());
-        result.put("artifactId", model.getArtifactId());
-        addCommonModelFields(result, model);
-
-        if (includeOptions) {
-            JsonArray options = new JsonArray();
-            if (model.getOptions() != null) {
-                for (BaseOptionModel opt : model.getOptions()) {
-                    if (matchesOptionFilter(opt, filter)) {
-                        options.add(optionToJson(opt, null));
-                    }
-                }
-            }
-            result.put("options", options);
-            result.put("matchedOptions", options.size());
-        }
-        if (doc != null) {
-            result.put("doc", doc);
-        }
-        return Jsoner.serialize(result);
-    }
-
-    /** The sub-pages of a language's documentation (simple has functions, operators, ognl and advanced). */
-    private static List<String> languageDocPages(CamelCatalog catalog, String name) {
-        List<String> pages = new ArrayList<>();
-        for (String page : LANGUAGE_DOC_PAGES) {
-            if (catalog.asciiDoc(name + "-" + page) != null) {
-                pages.add(page);
-            }
-        }
-        return pages;
-    }
-
-    private static final List<String> LANGUAGE_DOC_PAGES = List.of("functions", "operators", "ognl", "advanced");
-
-    /**
-     * The rules a small model gets wrong most: functions live inside the placeholder, operators between placeholders.
-     * Sent with the simple language result so an answer's examples follow the same shape as the catalog's.
-     */
-    static final String SIMPLE_SYNTAX = "Values and functions go inside ${...}: ${body}, ${header.name},"
-                                        + " ${exchangeProperty.name}, ${variable.name}, ${random(1,10)},"
-                                        + " ${date:now:yyyy-MM-dd}. Operators go BETWEEN placeholders, with spaces,"
-                                        + " never inside one: ${header.foo} == 'bar', ${header.user} ?: 'Guest',"
-                                        + " ${header.n} > 5 && ${body} != null, ${header.a} == 'x' ? 'yes' : 'no'."
-                                        + " Text literals are in single quotes; text outside ${...} is kept as is:"
-                                        + " Hello ${header.name}. Nesting works: ${header.${header.key}}.";
-
-    private String buildLanguageDocJson(
-            LanguageModel model, String filter, boolean includeOptions, String doc, List<String> docPages,
-            boolean docPageOnly) {
-        JsonObject result = new JsonObject();
-        result.put("kind", "language");
-        result.put("name", model.getName());
-        result.put("title", model.getTitle());
-        result.put("description", model.getDescription());
-        if (model.getLabel() != null) {
-            result.put("label", model.getLabel());
-        }
-        result.put("groupId", model.getGroupId());
-        result.put("artifactId", model.getArtifactId());
-        addCommonModelFields(result, model);
-
-        // a requested doc page is the answer; the options, functions and operators would only add tokens around it
-        if (includeOptions && !docPageOnly) {
-            JsonArray options = new JsonArray();
-            if (model.getOptions() != null) {
-                for (BaseOptionModel opt : model.getOptions()) {
-                    if (matchesOptionFilter(opt, filter)) {
-                        options.add(optionToJson(opt, null));
-                    }
-                }
-            }
-            result.put("options", options);
-            result.put("matchedOptions", options.size());
-        }
-        if (!docPageOnly) {
-            addLanguageFunctions(result, model, filter);
-        }
-        if ("simple".equals(model.getName()) || "csimple".equals(model.getName())) {
-            result.put("syntax", SIMPLE_SYNTAX);
-        }
-        if (!docPages.isEmpty()) {
-            result.put("docPages", new JsonArray(docPages));
-            result.put("docPagesHint", "docPage=<name> returns that documentation page as text");
-        }
-        if (doc != null) {
-            result.put("doc", doc);
-        }
-        return Jsoner.serialize(result);
-    }
-
-    /**
-     * The functions and operators of a language that has them (simple): without a filter their count and names by
-     * group, which answers "what is there" in a few hundred tokens; with a filter the matching ones in full, with
-     * parameters and examples, the way the options are filtered.
-     */
-    private static void addLanguageFunctions(JsonObject result, LanguageModel model, String filter) {
-        List<LanguageModel.LanguageFunctionModel> functions = model.getFunctions();
-        if (functions != null && !functions.isEmpty()) {
-            result.put("functionCount", functions.size());
-            if (filter != null) {
-                JsonArray arr = new JsonArray();
-                for (LanguageModel.LanguageFunctionModel fn : functions) {
-                    if (matchesOptionFilter(fn, filter)
-                            || (fn.getDisplayName() != null && fn.getDisplayName().toLowerCase().contains(filter))) {
-                        arr.add(functionToJson(fn));
-                    }
-                }
-                result.put("functions", arr);
-                result.put("matchedFunctions", arr.size());
-            } else {
-                Map<String, JsonArray> groups = new TreeMap<>();
-                for (LanguageModel.LanguageFunctionModel fn : functions) {
-                    String group = fn.getGroup() != null ? fn.getGroup() : "other";
-                    groups.computeIfAbsent(group, g -> new JsonArray()).add(fn.getName());
-                }
-                result.put("functionGroups", new JsonObject(groups));
-                result.put("functionsHint", "optionsFilter with a function name, a group above or a word from its"
-                                            + " description returns the matching functions with their parameters"
-                                            + " and examples");
-            }
-        }
-        List<LanguageModel.LanguageOperatorModel> operators = model.getOperators();
-        if (operators != null && !operators.isEmpty()) {
-            result.put("operatorCount", operators.size());
-            if (filter != null) {
-                JsonArray arr = new JsonArray();
-                for (LanguageModel.LanguageOperatorModel op : operators) {
-                    if (matchesOptionFilter(op, filter)
-                            || (op.getOperatorKind() != null && op.getOperatorKind().toLowerCase().contains(filter))) {
-                        arr.add(operatorToJson(op));
-                    }
-                }
-                result.put("operators", arr);
-                result.put("matchedOperators", arr.size());
-            } else {
-                JsonArray syntaxes = new JsonArray();
-                for (LanguageModel.LanguageOperatorModel op : operators) {
-                    syntaxes.add(op.getOperatorSyntax() != null ? op.getOperatorSyntax() : op.getName());
-                }
-                result.put("operatorSyntax", syntaxes);
-            }
-        }
-    }
-
-    private static JsonObject functionToJson(LanguageModel.LanguageFunctionModel fn) {
-        JsonObject o = new JsonObject();
-        o.put("name", fn.getName());
-        if (fn.getDisplayName() != null) {
-            o.put("displayName", fn.getDisplayName());
-        }
-        if (fn.getGroup() != null) {
-            o.put("group", fn.getGroup());
-        }
-        if (fn.getJavaType() != null) {
-            o.put("javaType", fn.getJavaType());
-        }
-        if (fn.getDescription() != null) {
-            o.put("description", fn.getDescription());
-        }
-        if (fn.getParams() != null && !fn.getParams().isEmpty()) {
-            JsonArray params = new JsonArray();
-            for (LanguageModel.FunctionParamModel param : fn.getParams()) {
-                JsonObject p = new JsonObject();
-                p.put("name", param.getName());
-                if (param.getJavaType() != null) {
-                    p.put("javaType", param.getJavaType());
-                }
-                p.put("required", param.isRequired());
-                if (param.getDescription() != null) {
-                    p.put("description", param.getDescription());
-                }
-                params.add(p);
-            }
-            o.put("params", params);
-        }
-        if (fn.getExamples() != null && !fn.getExamples().isEmpty()) {
-            o.put("examples", new JsonArray(fn.getExamples()));
-        }
-        if (fn.isOgnl()) {
-            o.put("ognl", true);
-        }
-        if (fn.isDeprecated()) {
-            o.put("deprecated", true);
-        }
-        return o;
-    }
-
-    private static JsonObject operatorToJson(LanguageModel.LanguageOperatorModel op) {
-        JsonObject o = new JsonObject();
-        o.put("name", op.getName());
-        if (op.getDisplayName() != null) {
-            o.put("displayName", op.getDisplayName());
-        }
-        if (op.getOperatorKind() != null) {
-            o.put("kind", op.getOperatorKind());
-        }
-        if (op.getOperatorSyntax() != null) {
-            o.put("syntax", op.getOperatorSyntax());
-        }
-        if (op.getDescription() != null) {
-            o.put("description", op.getDescription());
-        }
-        if (op.getExamples() != null && !op.getExamples().isEmpty()) {
-            o.put("examples", new JsonArray(op.getExamples()));
-        }
-        return o;
-    }
-
-    private String buildEipDocJson(EipModel model, String filter, boolean includeOptions, String doc) {
-        JsonObject result = new JsonObject();
-        result.put("kind", "eip");
-        result.put("name", model.getName());
-        result.put("title", model.getTitle());
-        result.put("description", model.getDescription());
-        if (model.getLabel() != null) {
-            result.put("label", model.getLabel());
-        }
-        result.put("input", model.isInput());
-        result.put("output", model.isOutput());
-        addCommonModelFields(result, model);
-
-        if (includeOptions) {
-            JsonArray options = new JsonArray();
-            if (model.getOptions() != null) {
-                for (BaseOptionModel opt : model.getOptions()) {
-                    if (matchesOptionFilter(opt, filter)) {
-                        options.add(optionToJson(opt, null));
-                    }
-                }
-            }
-            result.put("options", options);
-            result.put("matchedOptions", options.size());
-        }
-        if (doc != null) {
-            result.put("doc", doc);
-        }
-        return Jsoner.serialize(result);
-    }
-
-    private static boolean matchesOptionFilter(BaseOptionModel opt, String filter) {
-        if (filter == null) {
-            return true;
-        }
-        return (opt.getName() != null && opt.getName().toLowerCase().contains(filter))
-                || (opt.getDescription() != null && opt.getDescription().toLowerCase().contains(filter))
-                || (opt.getGroup() != null && opt.getGroup().toLowerCase().contains(filter))
-                || (opt.getLabel() != null && opt.getLabel().toLowerCase().contains(filter));
-    }
-
-    private static JsonObject optionToJson(BaseOptionModel opt, String scope) {
-        JsonObject o = new JsonObject();
-        o.put("name", opt.getName());
-        o.put("description", opt.getDescription());
-        o.put("type", opt.getType());
-        o.put("required", opt.isRequired());
-        if ("path".equals(opt.getKind()) || "parameter".equals(opt.getKind())) {
-            // an endpoint option is either part of the URI path or a query parameter; a model must not mix them up
-            o.put("kind", opt.getKind());
-        }
-        if (opt.getDefaultValue() != null) {
-            o.put("defaultValue", opt.getDefaultValue().toString());
-        }
-        if (opt.getGroup() != null) {
-            o.put("group", opt.getGroup());
-        }
-        if (scope != null) {
-            o.put("scope", scope);
-        }
-        if (opt.isDeprecated()) {
-            o.put("deprecated", true);
-        }
-        if (opt.isSecret()) {
-            o.put("secret", true);
-        }
-        if (opt.getEnums() != null && !opt.getEnums().isEmpty()) {
-            o.put("enumValues", toJsonArray(opt.getEnums()));
-        }
-        return o;
     }
 
     private String callGetProcessorDetail(Map<String, Object> args) {

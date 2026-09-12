@@ -1167,7 +1167,7 @@ class AiPanel {
         if (handler != null) {
             editQuestionHandler = null;
             if (handler.test(input)) {
-                // the waiting tui_write_file call returns with the question and the model answers in this turn
+                // the waiting camel_write_file call returns with the question and the model answers in this turn
                 conversation.add(new ConversationEntry(AiRole.USER, input));
                 questionCounter++;
                 log(LogLevel.QUESTION, "Question about the edit", input);
@@ -1903,10 +1903,10 @@ class AiPanel {
             String kind = String.valueOf(toolCall.getStringOrDefault("kind", ""));
             String tool = tuiToolName(name, title, kind);
             boolean readOnly = tool != null && TuiToolRegistry.READ_ONLY_TOOLS.contains(tool);
-            // the facade asks the user before a tui_write_file call touches a file (the confirm dialog or the live
+            // the facade asks the user before a camel_write_file call touches a file (the confirm dialog or the live
             // replay), so a second question at the ACP layer would only make the user answer twice; in auto mode
             // nothing else asks and the popup stays
-            boolean confirmedByTui = "tui_write_file".equals(tool) && writeMode != McpFacade.WriteMode.AUTO;
+            boolean confirmedByTui = TuiToolRegistry.WRITE_TOOL.equals(tool) && writeMode != McpFacade.WriteMode.AUTO;
             if (readOnly || confirmedByTui) {
                 String optionId = firstOptionOfKind(options, "allow_always");
                 if (optionId == null) {
@@ -1917,7 +1917,7 @@ class AiPanel {
                 }
                 log(LogLevel.TOOL, readOnly
                         ? "Auto-approved read-only TUI tool"
-                        : "Auto-approved tui_write_file (the TUI confirms the write itself)", title);
+                        : "Auto-approved camel_write_file (the TUI confirms the write itself)", title);
                 return optionId;
             }
             CompletableFuture<String> decision = new CompletableFuture<>();
@@ -1961,12 +1961,12 @@ class AiPanel {
 
     /**
      * The line the permission popup shows under the tool: an agent that edits a source file with its own tools bypasses
-     * the TUI's diff and live replay, and the user may prefer to reject it and have the agent use tui_write_file, as
+     * the TUI's diff and live replay, and the user may prefer to reject it and have the agent use camel_write_file, as
      * the preamble told it to.
      */
     private static String permissionHint(String kind) {
         if ("edit".equals(kind) || "delete".equals(kind) || "move".equals(kind)) {
-            return "The TUI cannot show or replay this change; Esc rejects it so the agent uses tui_write_file";
+            return "The TUI cannot show or replay this change; Esc rejects it so the agent uses camel_write_file";
         }
         return null;
     }
@@ -2859,7 +2859,7 @@ class AiPanel {
     private String acpPreamble() {
         String prompt = buildSystemPrompt();
         return (prompt.endsWith("\n") ? prompt : prompt + "\n")
-               + "- You run inside the Camel TUI: edit the integration's source files only with tui_write_file, "
+               + "- You run inside the Camel TUI: edit the integration's source files only with camel_write_file, "
                + "never with your own file tools, so the user sees the diff and confirms it, or watches the edit "
                + "being typed in the Source editor (/write live)\n";
     }
@@ -2874,7 +2874,8 @@ class AiPanel {
         sb.append("You are an Apache Camel assistant running inside the Camel TUI terminal console. ");
         sb.append("You help users understand and troubleshoot their running Camel integrations.\n\n");
 
-        sb.append("You have tui_* tools to observe and interact with the TUI; the tool definitions describe each one. ");
+        sb.append("You have camel_* tools for the integration and tui_* tools for the TUI; the tool definitions ");
+        sb.append("describe each one. ");
         sb.append("All tui_get_* tools fetch data directly from any tab without changing what the user sees.\n\n");
         sb.append("Guidelines:\n");
         sb.append("- NEVER call tui_navigate just to read data; the tui_get_* tools read any tab without navigating\n");
@@ -2884,7 +2885,7 @@ class AiPanel {
         sb.append("a route's steps; tui_get_status has data no tab shows (context, runtime, health, properties)\n");
         sb.append("- Your own tool calls are in the AI log (tui_get_ai_log); the MCP log only has external clients\n");
         sb.append("- Be concise and actionable; when something looks wrong, explain it and suggest fixes\n");
-        sb.append("- tui_control stops/starts routes and integrations gracefully; its reset-stats action clears ");
+        sb.append("- camel_control stops/starts routes and integrations gracefully; its reset-stats action clears ");
         sb.append("statistics without touching the routes\n");
         sb.append("- tui_infra lists infra services (brokers, databases) and their logs\n");
         sb.append("- Never restart, stop or kill an integration or infra service unless the user explicitly ");
@@ -2893,13 +2894,14 @@ class AiPanel {
         sb.append("say what failed and what to try\n");
         sb.append("- To feed a route that consumes from a broker (MQTT, Kafka, JMS), tui_send_message can publish ");
         sb.append("to the broker with the route's own component and options\n");
-        sb.append("- To edit: tui_get_files, then tui_write_file with the complete file; the user confirms, never retry ");
-        sb.append("a rejected write. Invalid YAML/properties is refused with errors: fix them (tui_catalog_doc has the ");
+        sb.append("- To edit: camel_get_files, then camel_write_file with the complete file; the user confirms, never ");
+        sb.append(
+                "retry a rejected write. Invalid YAML/properties is refused with errors: fix them (camel_catalog_doc has the ");
         sb.append("option names)\n");
         sb.append("- tui_set_log_level is the app's root logger, only when asked; 'log at WARN' in a route is the log ");
         sb.append("step's loggingLevel in the source\n");
         sb.append("- Simple: functions inside ${...}, operators between them: ${header.a} == 'b', ");
-        sb.append("${body} ?: 'none'; tui_eval_expression checks one, tui_catalog_doc simple lists them\n");
+        sb.append("${body} ?: 'none'; camel_eval_expression checks one, camel_catalog_doc simple lists them\n");
         if (!useCoreTools()) {
             sb.append("- Use tui_locate + tui_draw_shape to visually highlight problems on screen for the user\n");
         }

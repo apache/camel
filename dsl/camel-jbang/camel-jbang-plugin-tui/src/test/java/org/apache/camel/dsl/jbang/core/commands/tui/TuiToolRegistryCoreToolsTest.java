@@ -72,8 +72,8 @@ class TuiToolRegistryCoreToolsTest {
         assertTrue(TuiToolRegistry.READ_ONLY_TOOLS.containsAll(getters),
                 "a new getter must be classified deliberately: " + getters.stream()
                         .filter(name -> !TuiToolRegistry.READ_ONLY_TOOLS.contains(name)).toList());
-        for (String mutating : List.of("tui_control", "tui_execute_sql", "tui_send_message", "tui_write_file",
-                "tui_infra")) {
+        for (String mutating : List.of("camel_control", "tui_execute_sql", "tui_send_message", "camel_write_file",
+                "camel_run", "tui_infra")) {
             assertFalse(TuiToolRegistry.READ_ONLY_TOOLS.contains(mutating), mutating + " changes something");
         }
     }

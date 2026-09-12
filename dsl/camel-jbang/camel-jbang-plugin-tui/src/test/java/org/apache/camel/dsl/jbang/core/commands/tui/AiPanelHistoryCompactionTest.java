@@ -37,7 +37,7 @@ class AiPanelHistoryCompactionTest {
         List<LlmClient.Message> turn = new ArrayList<>();
         turn.add(LlmClient.Message.user(question));
         turn.add(LlmClient.Message.assistantWithToolCalls(null,
-                List.of(new LlmClient.ToolCall("call-" + question, "tui_get_log", new JsonObject()))));
+                List.of(new LlmClient.ToolCall("call-" + question, "camel_get_log", new JsonObject()))));
         turn.add(LlmClient.Message.toolResults(List.of(new LlmClient.ToolResult("call-" + question, toolResult))));
         turn.add(LlmClient.Message.assistantWithToolCalls("answer to " + question, List.of()));
         return turn;

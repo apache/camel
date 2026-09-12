@@ -22,6 +22,8 @@ import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import org.apache.camel.dsl.jbang.core.commands.ai.SourceValidator;
+
 /**
  * Helpers that turn raw YAML schema / properties validation messages into the inline error map shown in the editor
  * gutter.
@@ -58,78 +60,18 @@ final class SourceValidationSupport {
     }
 
     static String cleanValidationMessage(String msg) {
-        // strip FQCN prefix like "com.fasterxml...MarkedYAMLException: "
-        int colonSpace = msg.indexOf(": ");
-        if (colonSpace > 0) {
-            String prefix = msg.substring(0, colonSpace);
-            if (prefix.contains(".") && !prefix.contains(" ")) {
-                msg = msg.substring(colonSpace + 2);
-            }
-        }
-        // strip "at [Source: (StringReader); line: N, column: N]"
-        int atSource = msg.indexOf("at [Source:");
-        if (atSource > 0) {
-            msg = msg.substring(0, atSource).stripTrailing();
-        }
-        // strip "in 'reader', " prefix from snakeyaml messages
-        msg = msg.replace("in 'reader', ", "");
-        return msg;
+        return SourceValidator.cleanValidationMessage(msg);
     }
 
-    /** Validates a properties file line by line with the given validator, reporting {@code Line n: message}. */
     static List<String> validatePropertiesLines(String content, java.util.function.Function<String, String> lineValidator) {
-        List<String> msgs = new java.util.ArrayList<>();
-        if (content == null) {
-            return msgs;
-        }
-        String[] lines = content.split("\n", -1);
-        for (int i = 0; i < lines.length; i++) {
-            String line = lines[i].trim();
-            if (line.isEmpty() || line.startsWith("#") || line.startsWith("!") || !line.contains("=")) {
-                continue;
-            }
-            String error = lineValidator.apply(lines[i]);
-            if (error != null) {
-                msgs.add("Line " + (i + 1) + ": " + error);
-            }
-        }
-        return msgs;
+        return SourceValidator.validatePropertiesLines(content, lineValidator);
     }
 
-    /** Formats YAML DSL schema errors the way the editor shows them: {@code node: message}. */
     static List<String> formatSchemaErrors(List<com.networknt.schema.Error> errors) {
-        List<String> msgs = new java.util.ArrayList<>();
-        if (errors == null) {
-            return msgs;
-        }
-        for (com.networknt.schema.Error error : errors) {
-            String msg = error.getMessage();
-            if (msg == null) {
-                continue;
-            }
-            String loc = error.getInstanceLocation() != null ? error.getInstanceLocation().toString() : null;
-            String node = extractNodeName(loc);
-            String clean = cleanValidationMessage(msg);
-            msgs.add(node != null ? node + ": " + clean : clean);
-        }
-        return msgs;
+        return SourceValidator.formatSchemaErrors(errors);
     }
 
     static String extractNodeName(String instanceLocation) {
-        if (instanceLocation == null || instanceLocation.isEmpty()) {
-            return null;
-        }
-        int slash = instanceLocation.lastIndexOf('/');
-        String last = slash >= 0 ? instanceLocation.substring(slash + 1) : instanceLocation;
-        if (last.isEmpty()) {
-            return null;
-        }
-        // skip pure numeric segments (array indices)
-        try {
-            Integer.parseInt(last);
-            return null;
-        } catch (NumberFormatException e) {
-            return last;
-        }
+        return SourceValidator.extractNodeName(instanceLocation);
     }
 }

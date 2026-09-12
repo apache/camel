@@ -655,6 +655,28 @@ Running an existing Maven project (`camel run pom.xml`) is unchanged, and still 
 from the `pom.xml`. The other commands that take `--runtime` (such as `camel export`,
 `camel dependency list` and `camel version list`) accept `jbang` as an alias for `main`.
 
+=== camel-jbang (MCP servers)
+
+The Camel authoring tools for AI agents are now defined once, in `camel-jbang-core`, and exposed under the
+same `camel_` names by both MCP servers, `camel mcp` and `camel tui --mcp`: `camel_catalog_doc`,
+`camel_catalog_find`, `camel_validate_source`, `camel_get_files`, `camel_write_file`, `camel_run`,
+`camel_control`, `camel_get_log`, `camel_get_errors`, `camel_eval_expression` and `camel_error_diagnose`.
+
+In the TUI MCP server the tools `tui_catalog_doc`, `tui_validate_source`, `tui_write_file`, `tui_get_files`,
+`tui_control`, `tui_get_log`, `tui_get_errors` and `tui_eval_expression` were renamed to the `camel_` names
+above; the `tui_` prefix is now reserved for the tools that only make sense in front of the screen. Update
+MCP clients, prompts and ACP permission lists that name them. `camel_eval_expression` no longer fails when
+no integration is selected but evaluates the expression in a local scratch context, and `camel_get_errors`
+reads the integration's error file rather than the Errors tab.
+
+In `camel mcp` the `camel_catalog_doc` tool changed: it now takes the artifact `name` and `kind` (not a page
+name such as `kafka-component`) and returns the structured documentation with options and URI rules;
+`includeDoc=true` adds the AsciiDoc page the tool used to return on its own. `camel_error_diagnose` returns
+the same JSON fields as before. The new file, run and control tools are hidden by the `read-only` access
+level of the security layer; the server does not ask before writing a file, that is the MCP client's job.
+
+`camel-jbang-core` now depends on `camel-yaml-dsl-validator` for the source validation behind these tools.
+
 === camel-jbang (TUI)
 
 The F8 AI panel now sends only a core subset of its `tui_*` tools to local providers (Ollama, or any

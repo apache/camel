@@ -951,7 +951,7 @@ cycles backward.
 | Show the current model, or switch the session model.
 
 | `/write [confirm\|auto\|live]` (`/w`)
-| Show or switch how file writes by the model (`tui_write_file`) are handled. `confirm` (default) shows the confirm dialog for every write, whatever the model passes; `auto` lets the model skip the dialog with `confirm=false`; `live` replays the edit in the Source editor so you watch it happen (see below). The mode lasts for the session.
+| Show or switch how file writes by the model (`camel_write_file`) are handled. `confirm` (default) shows the confirm dialog for every write, whatever the model passes; `auto` lets the model skip the dialog with `confirm=false`; `live` replays the edit in the Source editor so you watch it happen (see below). The mode lasts for the session.
 
 | `/tools [auto\|core\|full]` (`/t`)
 | Show which tool set is sent to the model, or switch it. `auto` (default) sends the core set to local providers and every tool to hosted ones; the choice is saved as `camel.tui.ai.tools`.
@@ -1053,16 +1053,16 @@ required. *F2* -> _MCP Info_ shows the port and the tool calls the agent makes. 
 header (so a web page cannot reach it) or that are not JSON.
 
 Permissions: calls to the TUI's read-only tools (the `tui_get_*` tools, catalog documentation, expression
-evaluation, locate, validate) are approved without asking. So is `tui_write_file` while the write mode is
+evaluation, locate, validate) are approved without asking. So is `camel_write_file` while the write mode is
 `confirm` or `live`, because the TUI itself asks before the file is touched (the diff dialog or the live replay
 in the Source editor); with `/write auto` the permission popup is the only question and stays. A tool that
-changes anything else, such as `tui_control`, `tui_send_message` or `tui_execute_sql`, opens the same popup as
+changes anything else, such as `camel_control`, `tui_send_message` or `tui_execute_sql`, opens the same popup as
 any other request; answering "Always allow" makes it a one-time question per tool. For anything else the agent
 wants to do, such as editing a file with its own tools or running a command, a popup shows the agent's options;
 *Enter* selects, *Esc* rejects that one call and lets the turn continue, and *Ctrl+C* cancels the whole turn.
-The preamble tells the agent to edit route sources through `tui_write_file` rather than its own file tools, so
+The preamble tells the agent to edit route sources through `camel_write_file` rather than its own file tools, so
 that you see the diff or watch the edit; when it still asks to edit a file directly, the popup says so and *Esc*
-sends it back to `tui_write_file`.
+sends it back to `camel_write_file`.
 "Always allow" choices are remembered by the agent for the session. The model, reasoning settings and any
 "always allow" rules are configured in the agent, not in the TUI; `/model` only reports the agent in use.
 
@@ -1103,7 +1103,16 @@ To connect Claude Code to the TUI, add the MCP server to your project configurat
 
 === What AI Agents Can Do
 
-The MCP server exposes tools organized by purpose:
+The MCP server exposes two kinds of tools. The `camel_` tools are the Camel authoring set shared with the
+`camel mcp` server (see xref:camel-jbang-mcp.adoc[]): catalog documentation with the endpoint URI rules and the
+simple syntax (`camel_catalog_doc`, `camel_catalog_find`), source validation (`camel_validate_source`), reading
+and writing the source files (`camel_get_files`, `camel_write_file`), running an integration in dev mode and
+controlling it (`camel_run`, `camel_control`), its log and failed exchanges (`camel_get_log`, `camel_get_errors`),
+expression evaluation (`camel_eval_expression`) and error diagnosis (`camel_error_diagnose`). They are defined
+once in the Camel CLI, so an agent gets the same tools, names and answers through either server; in the TUI
+they work on the selected integration unless a `directory` or `name` argument says otherwise, and a write goes
+through the TUI's confirm dialog or live replay. The `tui_` tools are the ones only the TUI can offer, organized
+by purpose:
 
 * *Observe* -- read the screen, get structured state, query tables/logs/errors/traces/topology/diagram/files,
   list the running infra services (brokers, databases) and read their logs
@@ -1111,7 +1120,7 @@ The MCP server exposes tools organized by purpose:
 * *Act* -- send test messages to endpoints, start/stop/restart routes, change log levels,
   list and launch the bundled examples, start/stop/restart infra services, run any entry of
   the *F2* actions menu by its label
-* *Edit* -- write a source file in the integration's source directory (`tui_write_file`), see below
+* *Edit* -- write a source file in the integration's source directory (`camel_write_file`), see below
 * *Annotate* -- locate text and diagram nodes by coordinates, draw shapes (boxes, highlights,
   arrows, underlines, text labels), show captions with typewriter animation
 * *Present* -- take screenshots, record tape sessions, control demo pacing
@@ -1119,11 +1128,11 @@ The MCP server exposes tools organized by purpose:
 === Editing source files from an AI agent
 
 The TUI is for prototyping, human and AI together, so an agent (the built-in *F8* panel or an
-external MCP client) can change the routes it is looking at. `tui_get_files` tells the agent where
+external MCP client) can change the routes it is looking at. `camel_get_files` tells the agent where
 the sources are, which differs with how the integration was started (plain files, `--source-dir`,
 an example extracted to a temporary folder, or an exported project), and whether editing makes
 sense: `devMode` (changes are reloaded automatically), `temporary` (a copy that is lost when the
-integration stops) and an `editing` hint. `tui_write_file` then writes the complete new content of
+integration stops) and an `editing` hint. `camel_write_file` then writes the complete new content of
 a file in that directory.
 
 Every write is confirmed in the TUI first: a dialog names the file, the directory and the size of the
@@ -1136,22 +1145,22 @@ its own: `confirm=false` is honoured only after you switched to `/write auto` in
 directory are accepted; the tool cannot write elsewhere, and there is no git integration, so the
 worst case is a wrong route file in a folder you are watching.
 
-Before writing, an agent can check its content with `tui_validate_source`, which runs the same checks as
+Before writing, an agent can check its content with `camel_validate_source`, which runs the same checks as
 the Source tab's save: YAML routes against the Camel YAML DSL schema (a misspelled option such as `logLevel`
 instead of `loggingLevel` is reported) plus endpoint URIs and simple expressions, and `.properties` files
-against the catalog of `camel.*` and Spring Boot options. `tui_write_file` runs that validation itself and
+against the catalog of `camel.*` and Spring Boot options. `camel_write_file` runs that validation itself and
 refuses to write an invalid file, returning the errors instead, so a model fixes them rather than the user
 finding them in the log after the reload (`validate=false` writes anyway). Both tools are part of the core
 tool set, so local models (Ollama) get them as well.
 
 Simple expressions get two more helpers, because they are what a small model gets wrong most often
 (functions belong inside the `${...}` placeholder, operators between placeholders: `${header.user} ?: 'Guest'`,
-not `${header.user ?: 'Guest'}`). `tui_catalog_doc` for the `simple` language returns those syntax rules
+not `${header.user ?: 'Guest'}`). `camel_catalog_doc` for the `simple` language returns those syntax rules
 together with the catalog's functions and operators (their count and names by group, or with `optionsFilter`
 the matching ones with parameters and examples), and `docPage` serves the operators, functions, OGNL and
-advanced documentation pages. `tui_eval_expression` evaluates an expression inside the running integration,
-like `camel cmd eval`, and returns the value or the parser error, so the agent can try an expression before
-it answers or writes it. Component lookups get the same treatment for endpoint URIs: every endpoint option
+advanced documentation pages. `camel_eval_expression` evaluates an expression inside the running integration,
+like `camel cmd eval`, or locally when no integration is selected, and returns the value or the parser error,
+so the agent can try an expression before it answers or writes it. Component lookups get the same treatment for endpoint URIs: every endpoint option
 says whether it is part of the URI path or a query parameter, and the result spells out the URI rules for
 that component (its path options, the `?option=value&option=value` form, the YAML `uri` plus `parameters`
 form, placeholders, `RAW()`, and that component options belong in `application.properties`). With
@@ -1177,10 +1186,10 @@ and is told what was applied, what was skipped, and the content of the saved fil
 
 While the replay pauses you can also ask the agent about the change it just made: *F8* opens the AI panel
 with the question prefilled (`About edit 2 of 3:`), you complete it and press *Enter*. The waiting
-`tui_write_file` call returns to the agent with the question, the edits applied so far and the editor's
+`camel_write_file` call returns to the agent with the question, the edits applied so far and the editor's
 content, and the agent answers in the same turn -- nothing is written meanwhile. Close the panel with *F8*
 (or *Esc* to leave without asking) and the pause continues where it was. If your question makes the agent
-revise the change, its next `tui_write_file` of the same file continues in the editor from the current
+revise the change, its next `camel_write_file` of the same file continues in the editor from the current
 content instead of starting over. If you save or discard without the agent being involved again, it is
 told what became of the edit with your next question.
 

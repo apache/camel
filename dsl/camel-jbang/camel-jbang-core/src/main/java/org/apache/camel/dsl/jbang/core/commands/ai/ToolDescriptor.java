@@ -21,6 +21,9 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.camel.util.json.JsonArray;
+import org.apache.camel.util.json.JsonObject;
+
 /**
  * Describes a single AI tool: its name, description, parameters, and execution logic. Used by both the Agent REPL and
  * the MCP server to avoid duplicating tool definitions.
@@ -33,6 +36,7 @@ public class ToolDescriptor {
     private ToolExecutor executor;
     private boolean readOnly = true;
     private boolean destructive = false;
+    private boolean core = false;
 
     public record Param(String name, String type, String description, boolean required) {
     }
@@ -69,6 +73,15 @@ public class ToolDescriptor {
         return this;
     }
 
+    /**
+     * Marks the tool as part of the core subset: the tools a small local model gets when every tool schema counts
+     * against its prompt budget. Tools outside the subset are still available to hosted models and MCP clients.
+     */
+    public ToolDescriptor core(boolean v) {
+        core = v;
+        return this;
+    }
+
     public ToolDescriptor executor(ToolExecutor exec) {
         this.executor = exec;
         return this;
@@ -94,6 +107,36 @@ public class ToolDescriptor {
 
     public boolean isDestructive() {
         return destructive;
+    }
+
+    public boolean isCore() {
+        return core;
+    }
+
+    /**
+     * The JSON schema of the tool's arguments, the way an MCP server lists it under {@code inputSchema} and an LLM
+     * client sends it as the function parameters: an object with one property per parameter (its type and description)
+     * and the names of the required ones.
+     */
+    public JsonObject inputSchema() {
+        JsonObject properties = new JsonObject();
+        JsonArray required = new JsonArray();
+        for (Param p : params) {
+            JsonObject prop = new JsonObject();
+            prop.put("type", p.type() != null ? p.type() : "string");
+            prop.put("description", p.description());
+            properties.put(p.name(), prop);
+            if (p.required()) {
+                required.add(p.name());
+            }
+        }
+        JsonObject schema = new JsonObject();
+        schema.put("type", "object");
+        schema.put("properties", properties);
+        if (!required.isEmpty()) {
+            schema.put("required", required);
+        }
+        return schema;
     }
 
     public ToolExecutor executor() {

@@ -73,6 +73,11 @@
             <groupId>org.apache.camel</groupId>
             <artifactId>camel-xml-io-util</artifactId>
         </dependency>
+        <!-- source validation for the shared AI authoring tools (CAMEL-24695) -->
+        <dependency>
+            <groupId>org.apache.camel</groupId>
+            <artifactId>camel-yaml-dsl-validator</artifactId>
+        </dependency>
 
         <!-- yaml -->
         <dependency>
@@ -218,12 +223,12 @@
             <version>${mcp-java-sdk-version}</version>
             <scope>test</scope>
         </dependency>
-        <!-- MCP SDK schema validation needs networknt 2.0.1 (Dialects); wiremock transitively pulls 1.5.x -->
+        <!-- the YAML DSL validator (source validation for the AI authoring tools) and the MCP SDK schema validation
+             in the tests need networknt 2.0.1 (Dialects); wiremock transitively pulls 1.5.x -->
         <dependency>
             <groupId>com.networknt</groupId>
             <artifactId>json-schema-validator</artifactId>
             <version>${networknt-json-schema-validator-version}</version>
-            <scope>test</scope>
         </dependency>
     </dependencies>
 

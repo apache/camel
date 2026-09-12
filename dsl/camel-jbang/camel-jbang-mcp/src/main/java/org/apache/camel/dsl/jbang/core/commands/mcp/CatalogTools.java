@@ -391,8 +391,8 @@ public class CatalogTools {
      */
     @Tool(annotations = @Tool.Annotations(readOnlyHint = true, destructiveHint = false, openWorldHint = false),
           description = "List available AsciiDoc documentation page names from the catalog. "
-                        + "Returns page names (without .adoc extension) that can be passed to camel_catalog_doc "
-                        + "to retrieve the full documentation content. "
+                        + "Returns page names (without .adoc extension), e.g. kafka-component or split-eip; "
+                        + "camel_catalog_doc with includeDoc=true (name kafka, kind component) returns the page. "
                         + "Unlike the structured tools (camel_catalog_component_doc, camel_catalog_eip_doc, etc.) "
                         + "which return parsed JSON with options and metadata, "
                         + "the AsciiDoc pages contain the full human-readable documentation "
@@ -429,59 +429,6 @@ public class CatalogTools {
         } catch (Throwable e) {
             throw new ToolCallException(
                     "Failed to list documentation pages: " + e.getMessage(), e);
-        }
-    }
-
-    /**
-     * Tool to get the full AsciiDoc documentation content for a catalog page.
-     */
-    @Tool(annotations = @Tool.Annotations(readOnlyHint = true, destructiveHint = false, openWorldHint = false),
-          description = "Get the full AsciiDoc documentation page from the catalog. "
-                        + "Returns the complete human-readable documentation with usage examples, "
-                        + "code snippets, configuration guides, and best practices. "
-                        + "This complements the structured tools (camel_catalog_component_doc, "
-                        + "camel_catalog_eip_doc, etc.) which return parsed JSON with options and metadata. "
-                        + "Use camel_catalog_docs to discover available page names. "
-                        + "Naming conventions: components use '<name>-component' (e.g., 'kafka-component'), "
-                        + "data formats use '<name>-dataformat' (e.g., 'jackson-dataformat'), "
-                        + "languages use '<name>-language' (e.g., 'simple-language'), "
-                        + "EIPs use '<name>-eip' (e.g., 'split-eip'), "
-                        + "and others use their plain name (e.g., 'cloudevents', 'debug'). "
-                        + "Only available from Camel 4.22 onwards.")
-    public DocResult camel_catalog_doc(
-            @ToolArg(description = "Documentation page name without .adoc extension "
-                                   + "(e.g., 'kafka-component', 'split-eip', 'simple-language', 'jackson-dataformat')") String name,
-            @ToolArg(description = ToolArgDocs.CAMEL_VERSION) String camelVersion) {
-
-        if (name == null || name.isBlank()) {
-            throw new ToolCallException("Documentation page name is required", null);
-        }
-
-        try {
-            CamelCatalog cat = catalogService.loadCatalog(null, camelVersion, null);
-            String content = cat.asciiDoc(name);
-            if (content == null) {
-                List<String> allNames = cat.findDocNames();
-                if (allNames != null) {
-                    String lower = name.toLowerCase();
-                    List<String> suggestions = allNames.stream()
-                            .filter(n -> n.toLowerCase().contains(lower) || lower.contains(n.toLowerCase()))
-                            .limit(5)
-                            .collect(Collectors.toList());
-                    if (!suggestions.isEmpty()) {
-                        throw new ToolCallException(
-                                "Documentation page not found: " + name + ". Did you mean one of: " + suggestions, null);
-                    }
-                }
-                throw new ToolCallException("Documentation page not found: " + name, null);
-            }
-            return new DocResult(name, content);
-        } catch (ToolCallException e) {
-            throw e;
-        } catch (Throwable e) {
-            throw new ToolCallException(
-                    "Failed to load documentation: " + name + " (" + e.getClass().getName() + "): " + e.getMessage(),
-                    null);
         }
     }
 
@@ -834,8 +781,5 @@ public class CatalogTools {
     }
 
     public record DocListResult(int total, int returned, List<String> names) {
-    }
-
-    public record DocResult(String name, String content) {
     }
 }

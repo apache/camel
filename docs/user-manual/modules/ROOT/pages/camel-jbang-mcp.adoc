@@ -251,6 +251,69 @@ The server exposes catalog tools for exploring components, validating routes, an
 runtime introspection tools for inspecting and interacting with live Camel processes,
 plus prompts that provide structured multi-step workflows.
 
+=== Authoring (shared with the Camel TUI)
+
+The tools an agent needs to build and edit an integration are defined once, in the Camel CLI, and exposed
+under the same `camel_` names by this server and by `camel tui --mcp` (see xref:camel-jbang-tui.adoc[]),
+so an agent gets the same Camel through either door. The tools are self-contained: the file tools take the
+project `directory` as an argument, the runtime tools take the integration `name` (or use the only one running).
+
+[cols="1,3",options="header"]
+|===
+| Tool | Description
+
+| `camel_catalog_doc`
+| Catalog documentation of a component, data format, language or EIP: description, options (with a keyword
+  filter), Maven coordinates, and for a component the rules of its endpoint URI spelled out (which options
+  are path parts, the YAML `uri` plus `parameters` form, placeholders, `RAW()`). For the `simple` language the
+  syntax rules, functions and operators (their count and names by group, or with `optionsFilter` the matching
+  ones with parameters and examples), and `docPage` serves the functions, operators, OGNL and advanced pages.
+  With `endpoint` it checks a URI against the catalog: unknown options with the closest real names, invalid
+  values, missing path parts, consumer options on a producer endpoint. `includeDoc=true` adds the AsciiDoc page.
+
+| `camel_catalog_find`
+| Finds components, data formats and languages by a protocol, product or other term that is not the exact
+  name (`mqtt`, `s3`, `snowflake`, `csv`), best match first with title and description.
+
+| `camel_validate_source`
+| Validates Camel YAML DSL or `.properties` source without writing: the YAML DSL schema (a misspelled option
+  such as `logLevel` instead of `loggingLevel`), endpoint URIs, simple expressions, and `camel.*` options.
+  Takes the content, or reads the file from the project directory.
+
+| `camel_get_files`
+| The source files of a project directory (name, size, type), or the content of one of them.
+
+| `camel_write_file`
+| Writes the complete content of a file in the project directory. YAML and `.properties` content is validated
+  first; invalid content is not written and the errors are returned (`validate=false` writes anyway). Only a
+  plain file name in the directory is accepted. Nobody is asked before the write: the MCP client (Claude Code,
+  Cursor and the others ask before a tool that is not read-only runs) is where the human sits, and the
+  `read-only` access level of the security layer hides the tool altogether.
+
+| `camel_run`
+| Starts an integration from a project directory with `camel run` in a separate process, in dev mode by
+  default so route files reload when written. Returns the pid, name and log file once the integration is up.
+
+| `camel_control`
+| Controls a running integration: `stop`, `kill`, `restart` (picks up edited files without dev mode),
+  `stop-routes`, `start-routes`, `reset-stats`.
+
+| `camel_get_log`
+| Recent log records of a running integration, newest first, filtered by level or text; a stack trace comes
+  as one record with a `detail` block.
+
+| `camel_get_errors`
+| The failed exchanges of a running integration: route, exchange, exception with stack trace, body and headers.
+
+| `camel_eval_expression`
+| Evaluates an expression (simple by default) in the running integration, or locally when none is named,
+  and returns the value (true/false for a predicate) or the syntax error, so an agent can check a simple
+  expression before writing it into a route.
+
+| `camel_error_diagnose`
+| See <<_error_diagnosis,Error Diagnosis>>; the same shared tool.
+|===
+
 === Catalog Exploration
 
 [cols="1,3",options="header"]
@@ -427,7 +490,8 @@ The advisories are also browseable as MCP resources: `camel://security/advisorie
 | `camel_validate_yaml_dsl`
 | Validates a YAML DSL route definition against the Camel YAML DSL JSON schema. Checks for valid DSL elements,
   correct route structure, and returns detailed schema validation errors including instance path, error type,
-  and schema path.
+  and schema path. `camel_validate_source` (above) runs the same schema check plus the endpoint URI and simple
+  expression checks in one call, with the messages by line.
 
 | `camel_transform_route`
 | Assists with route DSL format transformation between YAML and XML.

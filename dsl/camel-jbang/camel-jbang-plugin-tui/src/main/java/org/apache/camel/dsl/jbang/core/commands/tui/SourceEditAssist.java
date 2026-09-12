@@ -34,9 +34,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.apache.camel.catalog.CamelCatalog;
-import org.apache.camel.catalog.ConfigurationPropertiesValidationResult;
-import org.apache.camel.catalog.EndpointValidationResult;
-import org.apache.camel.catalog.LanguageValidationResult;
+import org.apache.camel.dsl.jbang.core.commands.ai.SourceValidator;
 import org.apache.camel.tooling.model.BaseOptionModel;
 import org.apache.camel.tooling.model.ComponentModel;
 import org.apache.camel.tooling.model.DataFormatModel;
@@ -66,12 +64,6 @@ final class SourceEditAssist {
     private List<AutocompletePopup.CompletionItem> placeholderCache;
     private long placeholderCacheTime;
     private Path placeholderCacheDir;
-
-    private static final Set<String> PREDICATE_EIPS = Set.of(
-            "filter", "when", "validate", "onWhen", "on-when",
-            "handled", "continued", "retryWhile", "retry-while",
-            "completionPredicate", "completion-predicate",
-            "completion", "loopDoWhile", "loop-do-while");
 
     // Properties quick-doc caches (invalidated when catalog version changes)
     private String propsCatalogVersion;
@@ -1439,25 +1431,7 @@ final class SourceEditAssist {
     }
 
     String validatePropertyLine(String line) {
-        CamelCatalog catalog = getCatalog();
-        if (catalog != null) {
-            try {
-                ConfigurationPropertiesValidationResult result = catalog.validateConfigurationProperty(line);
-                if (result.isAccepted()) {
-                    if (!result.isSuccess()) {
-                        String msg = result.summaryErrorMessage(false);
-                        if (msg != null) {
-                            return msg.trim();
-                        }
-                    }
-                    return null;
-                }
-            } catch (Exception e) {
-                // ignore validation errors
-            }
-        }
-        // validate Spring Boot properties
-        return validateSpringBootPropertyLine(line);
+        return SourceValidator.validatePropertyLine(line, getCatalog(), this::validateSpringBootPropertyLine);
     }
 
     String validateSpringBootPropertyLine(String line) {
@@ -1498,35 +1472,18 @@ final class SourceEditAssist {
         return null;
     }
 
-    private org.apache.camel.dsl.yaml.validator.YamlValidator yamlValidator;
-
     /**
      * Validates Camel YAML DSL source the way the editor does on save: the YAML DSL schema (unknown or misspelled
      * options, wrong structure), then endpoint URIs and simple expressions against the catalog. Returns the messages,
      * empty when the source is valid.
      */
     List<String> validateCamelYaml(String content) {
-        List<String> msgs = new ArrayList<>();
-        if (content == null || content.isBlank()) {
-            return msgs;
-        }
-        try {
-            if (yamlValidator == null) {
-                yamlValidator = new org.apache.camel.dsl.yaml.validator.YamlValidator();
-            }
-            msgs.addAll(SourceValidationSupport.formatSchemaErrors(yamlValidator.validate(content)));
-        } catch (Exception e) {
-            msgs.add("Invalid YAML: " + e.getMessage());
-            return msgs;
-        }
-        msgs.addAll(validateYamlEndpoints(content));
-        msgs.addAll(validateYamlSimple(content));
-        return msgs;
+        return SourceValidator.validateCamelYaml(content, getCatalog());
     }
 
     /** Validates a properties file (application.properties) line by line against the catalog, as the editor does. */
     List<String> validateProperties(String content) {
-        return SourceValidationSupport.validatePropertiesLines(content, this::validatePropertyLine);
+        return SourceValidator.validateProperties(content, getCatalog(), this::validateSpringBootPropertyLine);
     }
 
     /**
@@ -1534,19 +1491,11 @@ final class SourceEditAssist {
      * Camel and Spring Boot options for .properties files. Other file types have no validation and yield no messages.
      */
     List<String> validateSource(String fileName, String content) {
-        String name = fileName == null ? "" : fileName.toLowerCase(java.util.Locale.ROOT);
-        if (name.endsWith(".yaml") || name.endsWith(".yml")) {
-            return validateCamelYaml(content);
-        }
-        if (name.endsWith(".properties")) {
-            return validateProperties(content);
-        }
-        return List.of();
+        return SourceValidator.validate(fileName, content, getCatalog(), this::validateSpringBootPropertyLine);
     }
 
     static boolean isValidatableFile(String fileName) {
-        String name = fileName == null ? "" : fileName.toLowerCase(java.util.Locale.ROOT);
-        return name.endsWith(".yaml") || name.endsWith(".yml") || name.endsWith(".properties");
+        return SourceValidator.isValidatableFile(fileName);
     }
 
     List<String> validateYamlEndpoints(String content) {
@@ -1554,7 +1503,7 @@ final class SourceEditAssist {
         if (catalog == null) {
             return List.of();
         }
-        return doValidateYamlEndpoints(content, catalog);
+        return SourceValidator.validateYamlEndpoints(content, catalog);
     }
 
     List<String> validateYamlSimple(String content) {
@@ -1562,282 +1511,7 @@ final class SourceEditAssist {
         if (catalog == null) {
             return List.of();
         }
-        return doValidateYamlSimple(content, catalog);
-    }
-
-    static List<String> doValidateYamlSimple(String content, CamelCatalog catalog) {
-        List<String> errors = new ArrayList<>();
-        String[] lines = content.split("\n", -1);
-
-        for (int i = 0; i < lines.length; i++) {
-            String line = lines[i];
-            if (line.isBlank()) {
-                continue;
-            }
-            String trimmed = line.trim();
-            if (trimmed.startsWith("#")) {
-                continue;
-            }
-
-            String simpleText = null;
-            int lineNum = i + 1;
-            int lineIndent = countLeadingSpaces(line);
-            boolean isLogMessage = false;
-
-            // Strip YAML list prefix for matching
-            String key = trimmed.startsWith("- ") ? trimmed.substring(2) : trimmed;
-
-            // Match "simple: <value>" (inline shorthand)
-            if (key.startsWith("simple:") && !key.equals("simple:")) {
-                simpleText = SourceTab.extractYamlValue(key, "simple");
-            }
-            // Match "simple:" followed by "expression: <value>" on next line
-            else if (key.equals("simple:")) {
-                for (int j = i + 1; j < lines.length; j++) {
-                    String next = lines[j].trim();
-                    if (next.isBlank()) {
-                        continue;
-                    }
-                    if (next.startsWith("expression:")) {
-                        simpleText = SourceTab.extractYamlValue(next, "expression");
-                        lineNum = j + 1;
-                    }
-                    break;
-                }
-            }
-            // Match "message: <value>" under log: EIP
-            else if (key.startsWith("message:") && !key.equals("message:")) {
-                String parentEip = findParentEip(lines, i, lineIndent);
-                if ("log".equals(parentEip)) {
-                    simpleText = SourceTab.extractYamlValue(key, "message");
-                    isLogMessage = true;
-                }
-            }
-
-            if (simpleText == null || simpleText.isEmpty()) {
-                continue;
-            }
-            // Skip placeholder-only expressions
-            if (simpleText.startsWith("{{") && simpleText.endsWith("}}")) {
-                continue;
-            }
-
-            // Determine predicate vs expression context
-            boolean predicate = false;
-            if (!isLogMessage) {
-                String parentEip = findParentEip(lines, i, lineIndent);
-                predicate = parentEip != null && PREDICATE_EIPS.contains(parentEip);
-            }
-
-            try {
-                LanguageValidationResult result = predicate
-                        ? catalog.validateLanguagePredicate(null, "simple", simpleText)
-                        : catalog.validateLanguageExpression(null, "simple", simpleText);
-                if (!result.isSuccess()) {
-                    String error = result.getShortError() != null ? result.getShortError() : result.getError();
-                    if (error != null) {
-                        errors.add("Line " + lineNum + ": Simple syntax error: " + error);
-                    }
-                }
-            } catch (Exception e) {
-                // best effort
-            }
-        }
-        return errors;
-    }
-
-    static String findParentEip(String[] lines, int lineIdx, int lineIndent) {
-        for (int j = lineIdx - 1; j >= 0; j--) {
-            String prev = lines[j];
-            if (prev.isBlank()) {
-                continue;
-            }
-            int prevIndent = countLeadingSpaces(prev);
-            if (prevIndent < lineIndent) {
-                return extractEipFromLine(prev.trim());
-            }
-        }
-        return null;
-    }
-
-    static List<String> doValidateYamlEndpoints(String content, CamelCatalog catalog) {
-        List<String> errors = new ArrayList<>();
-        String[] lines = content.split("\n", -1);
-
-        for (int i = 0; i < lines.length; i++) {
-            String line = lines[i];
-            if (line.isBlank()) {
-                continue;
-            }
-            String trimmed = line.trim();
-            if (trimmed.startsWith("#")) {
-                continue;
-            }
-
-            Matcher m = YAML_URI_PATTERN.matcher(line);
-            if (!m.find()) {
-                continue;
-            }
-
-            String uri = m.group(1);
-            if (uri.endsWith("\"")) {
-                uri = uri.substring(0, uri.length() - 1);
-            }
-            if (uri.startsWith("{{")) {
-                continue;
-            }
-            // scheme-only URI (e.g., "uri: timer") needs a colon for catalog parsing
-            if (!uri.contains(":")) {
-                uri = uri + ":";
-            }
-
-            String eipName = extractEipFromLine(trimmed);
-            int lineIndent = countLeadingSpaces(line);
-
-            // for "uri:" lines, walk backwards to find the parent EIP (from, to, etc.)
-            if ("uri".equals(eipName)) {
-                for (int j = i - 1; j >= 0; j--) {
-                    String prev = lines[j];
-                    if (prev.isBlank()) {
-                        continue;
-                    }
-                    int prevIndent = countLeadingSpaces(prev);
-                    if (prevIndent < lineIndent) {
-                        eipName = extractEipFromLine(prev.trim());
-                        break;
-                    }
-                }
-            }
-
-            boolean consumerOnly = eipName != null && YamlSourceContext.CONSUMER_EIPS.contains(eipName);
-            boolean producerOnly = eipName != null && YamlSourceContext.PRODUCER_EIPS.contains(eipName);
-
-            // look ahead for a parameters: block at the same indent level as uri
-            StringBuilder uriBuilder = new StringBuilder(uri);
-            boolean hasParams = uri.contains("?");
-            Map<String, Integer> optionLineMap = new LinkedHashMap<>();
-            for (int j = i + 1; j < lines.length; j++) {
-                String next = lines[j];
-                if (next.isBlank()) {
-                    continue;
-                }
-                int nextIndent = countLeadingSpaces(next);
-                if (nextIndent < lineIndent) {
-                    break;
-                }
-                String nextTrimmed = next.trim();
-                if (nextIndent == lineIndent && nextTrimmed.startsWith("parameters:")) {
-                    int paramBlockIndent = nextIndent;
-                    for (int k = j + 1; k < lines.length; k++) {
-                        String paramLine = lines[k];
-                        if (paramLine.isBlank()) {
-                            continue;
-                        }
-                        int paramIndent = countLeadingSpaces(paramLine);
-                        if (paramIndent <= paramBlockIndent) {
-                            break;
-                        }
-                        String paramTrimmed = paramLine.trim();
-                        int colonPos = paramTrimmed.indexOf(':');
-                        if (colonPos > 0) {
-                            String key = paramTrimmed.substring(0, colonPos).trim();
-                            String val = paramTrimmed.substring(colonPos + 1).trim();
-                            if (val.startsWith("\"") && val.endsWith("\"") && val.length() > 1) {
-                                val = val.substring(1, val.length() - 1);
-                            } else if (val.startsWith("'") && val.endsWith("'") && val.length() > 1) {
-                                val = val.substring(1, val.length() - 1);
-                            }
-                            char sep = hasParams ? '&' : '?';
-                            uriBuilder.append(sep).append(key).append('=').append(val);
-                            hasParams = true;
-                            optionLineMap.put(key, k);
-                        }
-                    }
-                    break;
-                }
-                if (nextIndent == lineIndent) {
-                    break;
-                }
-            }
-
-            String fullUri = uriBuilder.toString();
-            try {
-                EndpointValidationResult result
-                        = catalog.validateEndpointProperties(fullUri, false, consumerOnly, producerOnly);
-                if (!result.isSuccess()) {
-                    String scheme = fullUri.contains(":") ? fullUri.substring(0, fullUri.indexOf(':')) : fullUri;
-                    collectEndpointErrors(errors, result, scheme, i, optionLineMap);
-                }
-            } catch (Exception e) {
-                // ignore validation errors
-            }
-        }
-        return errors;
-    }
-
-    static void collectEndpointErrors(
-            List<String> errors, EndpointValidationResult result, String scheme,
-            int uriLineIdx, Map<String, Integer> optionLineMap) {
-        if (result.getUnknown() != null) {
-            for (String name : result.getUnknown()) {
-                StringBuilder sb = new StringBuilder(scheme).append(": Unknown option '").append(name).append("'");
-                if (result.getUnknownSuggestions() != null) {
-                    String[] suggestions = result.getUnknownSuggestions().get(name);
-                    if (suggestions != null && suggestions.length > 0) {
-                        sb.append(". Did you mean: ").append(Arrays.asList(suggestions));
-                    }
-                }
-                errors.add(linePrefix(optionLineMap.getOrDefault(name, uriLineIdx)) + sb);
-            }
-        }
-        if (result.getInvalidBoolean() != null) {
-            for (Map.Entry<String, String> entry : result.getInvalidBoolean().entrySet()) {
-                errors.add(linePrefix(optionLineMap.getOrDefault(entry.getKey(), uriLineIdx))
-                           + scheme + ": Invalid boolean value '" + entry.getValue() + "' for option '" + entry.getKey() + "'");
-            }
-        }
-        if (result.getInvalidInteger() != null) {
-            for (Map.Entry<String, String> entry : result.getInvalidInteger().entrySet()) {
-                errors.add(linePrefix(optionLineMap.getOrDefault(entry.getKey(), uriLineIdx))
-                           + scheme + ": Invalid integer value '" + entry.getValue() + "' for option '" + entry.getKey() + "'");
-            }
-        }
-        if (result.getInvalidNumber() != null) {
-            for (Map.Entry<String, String> entry : result.getInvalidNumber().entrySet()) {
-                errors.add(linePrefix(optionLineMap.getOrDefault(entry.getKey(), uriLineIdx))
-                           + scheme + ": Invalid number value '" + entry.getValue() + "' for option '" + entry.getKey() + "'");
-            }
-        }
-        if (result.getInvalidEnum() != null) {
-            for (Map.Entry<String, String> entry : result.getInvalidEnum().entrySet()) {
-                StringBuilder sb = new StringBuilder(scheme)
-                        .append(": Invalid enum value '").append(entry.getValue())
-                        .append("' for option '").append(entry.getKey()).append("'");
-                if (result.getInvalidEnumChoices() != null) {
-                    String[] choices = result.getInvalidEnumChoices().get(entry.getKey());
-                    if (choices != null) {
-                        sb.append(". Possible values: ").append(Arrays.asList(choices));
-                    }
-                }
-                errors.add(linePrefix(optionLineMap.getOrDefault(entry.getKey(), uriLineIdx)) + sb);
-            }
-        }
-        if (result.getNotConsumerOnly() != null) {
-            for (String name : result.getNotConsumerOnly()) {
-                errors.add(linePrefix(optionLineMap.getOrDefault(name, uriLineIdx))
-                           + scheme + ": Option '" + name + "' is not applicable in consumer only mode");
-            }
-        }
-        if (result.getNotProducerOnly() != null) {
-            for (String name : result.getNotProducerOnly()) {
-                errors.add(linePrefix(optionLineMap.getOrDefault(name, uriLineIdx))
-                           + scheme + ": Option '" + name + "' is not applicable in producer only mode");
-            }
-        }
-    }
-
-    static String linePrefix(int lineIdx) {
-        return "Line " + (lineIdx + 1) + ": ";
+        return SourceValidator.validateYamlSimple(content, catalog);
     }
 
     static String extractEipFromLine(String trimmed) {
