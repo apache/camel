@@ -29,6 +29,8 @@ public final class MvelHelper {
 
     private static final Pattern URL_ESCAPE = Pattern.compile("(?<!href=\")(http(:?s)?://|(:?s)?ftp(?:s)?://)");
 
+    private static final Pattern PIPE_ESCAPE = Pattern.compile("(?<!\\\\)\\|");
+
     private MvelHelper() {
         // utility class
     }
@@ -40,7 +42,11 @@ public final class MvelHelper {
 
         final String escapedCurlyBrackets = CURLY_BRACKET_ESCAPE.matcher(raw).replaceAll("\\\\$1\\}");
 
-        return URL_ESCAPE.matcher(escapedCurlyBrackets).replaceAll("\\\\$1");
+        // the templates render the escaped text inside table cells, where a bare pipe starts a new cell;
+        // pipes the description already escapes are left alone
+        final String escapedPipes = PIPE_ESCAPE.matcher(escapedCurlyBrackets).replaceAll("\\\\|");
+
+        return URL_ESCAPE.matcher(escapedPipes).replaceAll("\\\\$1");
     }
 
     public static String componentName(String scheme) {
