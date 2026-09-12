@@ -48,7 +48,8 @@ public class MvelHelperTest {
     }
 
     // every template calling escape() renders the result inside a table cell, where an unescaped
-    // pipe starts a new cell and shifts or drops the remaining cells of the row
+    // pipe starts a new cell and shifts or drops the remaining cells of the row; some descriptions
+    // (e.g. the bindy CsvRecord separator javadoc) already escape their pipes, and must be kept as-is
     @ParameterizedTest
     @MethodSource("pipeEscapeCases")
     public void shouldEscapePipes(final String given, final String expected) {
@@ -72,6 +73,9 @@ public class MvelHelperTest {
     static Stream<Arguments> pipeEscapeCases() {
         return Stream.of(
                 arguments("Add error handler (none|log|sink:<endpoint>)", "Add error handler (none\\|log\\|sink:<endpoint>)"),
-                arguments("[source|sink] at http://example.com", "[source\\|sink] at \\http://example.com"));
+                arguments("[source|sink] at http://example.com", "[source\\|sink] at \\http://example.com"),
+                arguments("the '\\|' sign, then you have to mask it, like '\\|'",
+                        "the '\\|' sign, then you have to mask it, like '\\|'"),
+                arguments("none|log and '\\|'", "none\\|log and '\\|'"));
     }
 }
