@@ -84,7 +84,7 @@ public class KameletRoutesBuilderLoader extends YamlRoutesBuilderLoaderSupport {
                 RouteTemplateParameterDefinition rtpd = new RouteTemplateParameterDefinition();
                 rtpd.setName(key);
                 rtpd.setDefaultValue(asText(def));
-                rtpd.setRequired(required.contains(key));
+                rtpd.setRequired(Boolean.toString(required.contains(key)));
                 rtd.getTemplateParameters().add(rtpd);
             }
         }

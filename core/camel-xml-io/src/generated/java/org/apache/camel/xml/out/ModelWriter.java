@@ -1674,7 +1674,7 @@ public class ModelWriter extends BaseWriter {
         startElement(name);
         doWriteAttribute("description", def.getDescription(), null);
         doWriteAttribute("name", def.getName(), null);
-        doWriteAttribute("required", toString(def.getRequired()), null);
+        doWriteAttribute("required", def.getRequired(), null);
         doWriteAttribute("defaultValue", def.getDefaultValue(), null);
         endElement(name);
     }
@@ -3275,7 +3275,7 @@ public class ModelWriter extends BaseWriter {
         doWriteAttribute("name", def.getName(), null);
         doWriteAttribute("type", toString(def.getType()), "path");
         doWriteAttribute("defaultValue", def.getDefaultValue(), null);
-        doWriteAttribute("required", toString(def.getRequired()), "true");
+        doWriteAttribute("required", def.getRequired(), "true");
         doWriteAttribute("collectionFormat", toString(def.getCollectionFormat()), "csv");
         doWriteAttribute("arrayType", def.getArrayType(), "string");
         doWriteAttribute("dataType", def.getDataType(), "string");

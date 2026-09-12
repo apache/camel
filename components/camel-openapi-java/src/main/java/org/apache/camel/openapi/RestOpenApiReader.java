@@ -121,6 +121,15 @@ public class RestOpenApiReader {
         return camelContext.resolvePropertyPlaceholders(text);
     }
 
+    /**
+     * The required flag of a rest parameter. It is a String on the model so that a property placeholder can be used,
+     * and is resolved here.
+     */
+    private static boolean isRequired(CamelContext camelContext, ParamDefinition param) {
+        Boolean required = CamelContextHelper.parseBoolean(camelContext, param.getRequired());
+        return required != null && required;
+    }
+
     private static List<String> getValue(CamelContext camelContext, List<String> list) {
         if (list == null) {
             return null;
@@ -565,7 +574,7 @@ public class RestOpenApiReader {
                 if (org.apache.camel.util.ObjectHelper.isNotEmpty(param.getDescription())) {
                     parameter.setDescription(getValue(camelContext, param.getDescription()));
                 }
-                parameter.setRequired(param.getRequired());
+                parameter.setRequired(isRequired(camelContext, param));
 
                 final String dataType
                         = getValue(camelContext, param.getDataType() != null ? param.getDataType() : "string");
@@ -660,7 +669,7 @@ public class RestOpenApiReader {
                 // In OpenAPI 3x, body parameters are replaced by requestBody
                 if (parameter.getIn().equals("body")) {
                     RequestBody reqBody = new RequestBody().content(new Content());
-                    reqBody.setRequired(param.getRequired());
+                    reqBody.setRequired(isRequired(camelContext, param));
                     reqBody.setDescription(getValue(camelContext, param.getDescription()));
                     op.setRequestBody(reqBody);
                     String type = getValue(camelContext, verb.getType());
@@ -727,7 +736,7 @@ public class RestOpenApiReader {
                     fieldSchema.setDefault(getValue(camelContext, param.getDefaultValue()));
                 }
                 formSchema.addProperty(name, fieldSchema);
-                if (param.getRequired()) {
+                if (isRequired(camelContext, param)) {
                     requiredFields.add(name);
                 }
             }

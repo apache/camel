@@ -117,6 +117,7 @@ public class YamlValidator {
 
     private List<Error> validate(JsonNode target) {
         var errors = filterOneOfNoise(new ArrayList<>(schema.validate(target)));
+        errors.removeIf(YamlValidator::isRuntimeAcceptedScalar);
         if (canonical) {
             checkOneOfCardinality(target, new NodePath(PathType.JSON_POINTER), errors);
         }
@@ -336,6 +337,65 @@ public class YamlValidator {
         return groups;
     }
 
+    /**
+     * Whether the schema rejected a scalar that the Camel runtime accepts, in which case the error is dropped.
+     * <p>
+     * Camel's model declares nearly every scalar attribute as a {@code String} field carrying the real type in
+     * {@code @Metadata(javaType = ...)}, so that property placeholders can be used and the text is converted when the
+     * route starts. The generated schema keeps the real type because tooling (Kaoto forms, TUI completion, catalog
+     * docs) relies on it, which makes the schema stricter than the runtime in two ways:
+     * <ul>
+     * <li>a property placeholder at a typed attribute - the runtime resolves it before converting;</li>
+     * <li>a number or boolean at a string-typed attribute (e.g. a {@code duration}) - the runtime converts any scalar
+     * to text.</li>
+     * </ul>
+     * Quoted scalars that parse as the expected type are already handled by the registry's type-loose mode, see
+     * {@link #init()}. Everything else stays strict: unknown properties, structure, enums, and strings that do not
+     * parse as the expected type.
+     * <p>
+     * This assumes the runtime defers the conversion for every scalar attribute the schema exposes. The few model
+     * attributes that are still converted while deserializing (so a placeholder is never resolved for them) are not
+     * reachable from the schema today - see CAMEL-24696 before exposing one of them.
+     */
+    static boolean isRuntimeAcceptedScalar(Error error) {
+        if (!"type".equals(error.getKeyword())) {
+            return false;
+        }
+        JsonNode instance = error.getInstanceNode();
+        if (instance == null) {
+            return false;
+        }
+        if (instance.isTextual()) {
+            return hasPropertyPlaceholder(instance.asText());
+        }
+        // the runtime converts any scalar to text, so a number or boolean is fine wherever a string is expected
+        return (instance.isNumber() || instance.isBoolean()) && isExpectedType(error, "string");
+    }
+
+    private static boolean hasPropertyPlaceholder(String text) {
+        int start = text.indexOf("{{");
+        return start >= 0 && text.indexOf("}}", start + 2) > start;
+    }
+
+    private static boolean isExpectedType(Error error, String type) {
+        JsonNode schemaNode = error.getSchemaNode();
+        if (schemaNode == null) {
+            return false;
+        }
+        if (schemaNode.isTextual()) {
+            return type.equals(schemaNode.asText());
+        }
+        // "type" may also be declared as an array of accepted types
+        if (schemaNode.isArray()) {
+            for (JsonNode t : schemaNode) {
+                if (type.equals(t.asText())) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
     private static Error parseError(Exception e) {
         String msg = e.getClass().getName() + ": " + e.getMessage();
         return Error.builder()
@@ -349,7 +409,11 @@ public class YamlValidator {
         String location = canonical ? LOCATION_CANONICAL : LOCATION;
         var model = mapper.readTree(YamlValidator.class.getResourceAsStream(location));
         var version = getSpecificationVersion(model).orElse(SpecificationVersion.DRAFT_4);
-        var config = SchemaRegistryConfig.builder().locale(Locale.ENGLISH).build();
+        // typeLoose lets a quoted scalar that parses as the expected type validate (e.g. parallelProcessing: "true"
+        // at a boolean attribute). Camel's runtime accepts it because the model field is a String, so the schema
+        // would otherwise be stricter than the runtime. Values that do not parse (e.g. "yes please") are still
+        // rejected. See isRuntimeAcceptedScalar for the cases typeLoose does not cover.
+        var config = SchemaRegistryConfig.builder().locale(Locale.ENGLISH).typeLoose(true).build();
 
         // Register "deprecated" as a known non-validation keyword to suppress warnings
         Dialect base = getBaseDialect(version);
