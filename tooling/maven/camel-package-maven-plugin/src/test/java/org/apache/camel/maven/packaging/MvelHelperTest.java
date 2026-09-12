@@ -47,6 +47,15 @@ public class MvelHelperTest {
         assertThat(MvelHelper.escape(given)).isEqualTo(expected);
     }
 
+    // every template calling escape() renders the result inside a table cell, where an unescaped
+    // pipe starts a new cell and shifts or drops the remaining cells of the row; some descriptions
+    // (e.g. the bindy CsvRecord separator javadoc) already escape their pipes, and must be kept as-is
+    @ParameterizedTest
+    @MethodSource("pipeEscapeCases")
+    public void shouldEscapePipes(final String given, final String expected) {
+        assertThat(MvelHelper.escape(given)).isEqualTo(expected);
+    }
+
     static Stream<Arguments> curlyBracketEscapeCases() {
         return Stream.of(arguments("some {expression} here", "some \\{expression} here"));
     }
@@ -59,5 +68,14 @@ public class MvelHelperTest {
                 arguments("ftp://example.com", "\\ftp://example.com"),
                 arguments("ftp", "ftp"),
                 arguments("http", "http"));
+    }
+
+    static Stream<Arguments> pipeEscapeCases() {
+        return Stream.of(
+                arguments("Add error handler (none|log|sink:<endpoint>)", "Add error handler (none\\|log\\|sink:<endpoint>)"),
+                arguments("[source|sink] at http://example.com", "[source\\|sink] at \\http://example.com"),
+                arguments("the '\\|' sign, then you have to mask it, like '\\|'",
+                        "the '\\|' sign, then you have to mask it, like '\\|'"),
+                arguments("none|log and '\\|'", "none\\|log and '\\|'"));
     }
 }
