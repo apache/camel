@@ -96,6 +96,10 @@ public class ToolContext {
     /**
      * The Camel version the catalog tools answer for: null for the version of the running CLI, otherwise the version of
      * the integration being worked on (the TUI passes the selected integration's version), downloaded on demand.
+     * <p>
+     * Not synchronized with {@link #catalog()}: a context serves one tool call at a time (the MCP servers and the TUI
+     * build a fresh one per call, {@code camel ask} runs its calls one after the other), and the version is set before
+     * the catalog is first asked for, so a change of version simply drops the cached catalog for the next call.
      */
     public String camelVersion() {
         return camelVersion;
