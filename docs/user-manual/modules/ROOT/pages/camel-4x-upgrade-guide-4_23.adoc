@@ -105,6 +105,17 @@ The `route-topology` developer console (used by `camel cmd route-topology` and t
 includes routes created by Kamelets, as these are an implementation detail of the Kamelet and were already hidden
 from the route console. Set the `kamelets=true` option (or `--kamelets` on the CLI) to include them.
 
+=== camel-groovy
+
+A `GroovyShellFactory` is now looked up in the registry once per `CamelContext`, when the first groovy expression is
+evaluated, instead of on every evaluation. A factory bound to the registry after that point is no longer used; bind
+it before the context starts.
+
+The `exchangeProperties`, `exchangeProperty`, `variables`, `variable` and `attachments` script variables are now read
+from the exchange the first time the script uses them instead of being copied before the script runs. A script that
+changes a property or variable through `exchange` and then reads one of these variables for the first time now sees
+its own change where it previously saw the state from before the script ran.
+
 === camel-dynamic-router
 
 The `dynamic-router-control` endpoint no longer takes the subscription `predicate`, or the

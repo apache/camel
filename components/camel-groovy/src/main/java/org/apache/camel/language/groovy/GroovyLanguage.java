@@ -19,6 +19,10 @@ package org.apache.camel.language.groovy;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentMap;
+import java.util.concurrent.atomic.AtomicInteger;
+import java.util.function.Supplier;
 
 import groovy.lang.Binding;
 import groovy.lang.GroovyShell;
@@ -58,6 +62,16 @@ public class GroovyLanguage extends TypedLanguageSupport implements ScriptingLan
      */
     private final Map<String, GroovyClassService> scriptCache;
 
+    /**
+     * Incremented whenever the script cache is cleared, so expressions holding a compiled script know it is stale.
+     */
+    private final AtomicInteger generation = new AtomicInteger();
+
+    /**
+     * The scripts being compiled, so concurrent cache misses of the same script compile it once.
+     */
+    private final ConcurrentMap<String, Object> compileLocks = new ConcurrentHashMap<>();
+
     private EventNotifier notifier;
 
     private GroovyLanguage(Map<String, GroovyClassService> scriptCache, boolean loadExternalResource) {
@@ -66,7 +80,9 @@ public class GroovyLanguage extends TypedLanguageSupport implements ScriptingLan
     }
 
     public GroovyLanguage() {
-        this(LRUCacheFactory.newLRUSoftCache(16, 1000, true), true);
+        // do not remove the class of an evicted script (stopOnEviction=false): a GroovyExpression may still hold and run
+        // it. Classes are removed when the language stops or the cache is cleared on reload.
+        this(LRUCacheFactory.newLRUSoftCache(16, 1000, false), true);
     }
 
     @Override
@@ -87,6 +103,7 @@ public class GroovyLanguage extends TypedLanguageSupport implements ScriptingLan
     public void stop() {
         ServiceHelper.stopService(scriptCache.values());
         scriptCache.clear();
+        generation.incrementAndGet();
         if (notifier != null) {
             getCamelContext().getManagementStrategy().removeEventNotifier(notifier);
             notifier = null;
@@ -101,6 +118,7 @@ public class GroovyLanguage extends TypedLanguageSupport implements ScriptingLan
             if (event instanceof CamelEvent.CamelContextReloadingEvent || event instanceof CamelEvent.RouteReloadedEvent) {
                 ServiceHelper.stopService(scriptCache.values());
                 scriptCache.clear();
+                generation.incrementAndGet();
             }
         }
 
@@ -155,14 +173,13 @@ public class GroovyLanguage extends TypedLanguageSupport implements ScriptingLan
         if (loadExternalResource) {
             script = loadResource(script);
         }
-        Class<Script> clazz = getScriptFromCache(script);
-        if (clazz == null) {
+        final String text = script;
+        Class<Script> clazz = getOrCompile(text, () -> {
             // prefer to use classloader from groovy script compiler, and if not fallback to app context
             ClassLoader cl = getCamelContext().getCamelContextExtension().getContextPlugin(GroovyScriptClassLoader.class);
             GroovyShell shell = cl != null ? new GroovyShell(cl) : new GroovyShell();
-            clazz = shell.getClassLoader().parseClass(script);
-            addScriptToCache(script, clazz);
-        }
+            return shell.getClassLoader().parseClass(text);
+        });
         Script gs = ObjectHelper.newInstance(clazz, Script.class);
         if (bindings != null) {
             gs.setBinding(new Binding(bindings));
@@ -193,6 +210,10 @@ public class GroovyLanguage extends TypedLanguageSupport implements ScriptingLan
         return validateExpression(expression);
     }
 
+    int getGeneration() {
+        return generation.get();
+    }
+
     Class<Script> getScriptFromCache(String script) {
         final GroovyClassService cached = scriptCache.get(script);
         if (cached == null) {
@@ -203,6 +224,31 @@ public class GroovyLanguage extends TypedLanguageSupport implements ScriptingLan
 
     void addScriptToCache(String script, Class<Script> scriptClass) {
         scriptCache.put(script, new GroovyClassService(scriptClass));
+    }
+
+    /**
+     * Gets the compiled class of the script from the cache, compiling and caching it on a miss. Concurrent misses of
+     * the same key compile the script once: the callers wait for the compilation in flight and then find it in the
+     * cache. The cache hit path does not take a lock.
+     */
+    Class<Script> getOrCompile(String key, Supplier<Class<Script>> compiler) {
+        Class<Script> clazz = getScriptFromCache(key);
+        if (clazz != null) {
+            return clazz;
+        }
+        Object lock = compileLocks.computeIfAbsent(key, k -> new Object());
+        try {
+            synchronized (lock) {
+                clazz = getScriptFromCache(key);
+                if (clazz == null) {
+                    clazz = compiler.get();
+                    addScriptToCache(key, clazz);
+                }
+                return clazz;
+            }
+        } finally {
+            compileLocks.remove(key, lock);
+        }
     }
 
     public static class Builder {
