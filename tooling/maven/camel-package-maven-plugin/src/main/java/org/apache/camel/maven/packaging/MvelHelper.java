@@ -40,7 +40,10 @@ public final class MvelHelper {
 
         final String escapedCurlyBrackets = CURLY_BRACKET_ESCAPE.matcher(raw).replaceAll("\\\\$1\\}");
 
-        return URL_ESCAPE.matcher(escapedCurlyBrackets).replaceAll("\\\\$1");
+        // the templates render the escaped text inside table cells, where a bare pipe starts a new cell
+        final String escapedPipes = escapedCurlyBrackets.replace("|", "\\|");
+
+        return URL_ESCAPE.matcher(escapedPipes).replaceAll("\\\\$1");
     }
 
     public static String componentName(String scheme) {
