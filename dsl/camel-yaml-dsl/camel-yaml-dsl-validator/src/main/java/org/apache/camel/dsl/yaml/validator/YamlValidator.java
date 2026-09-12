@@ -347,11 +347,12 @@ public class YamlValidator {
      * <ul>
      * <li>a property placeholder at a typed attribute - the runtime resolves it before converting;</li>
      * <li>a number or boolean at a string-typed attribute (e.g. a {@code duration}) - the runtime converts any scalar
-     * to text.</li>
+     * to text;</li>
+     * <li>a quoted scalar that parses as the expected type (e.g. {@code parallelProcessing: "true"}) - the runtime
+     * converts the text.</li>
      * </ul>
-     * Quoted scalars that parse as the expected type are already handled by the registry's type-loose mode, see
-     * {@link #init()}. Everything else stays strict: unknown properties, structure, enums, and strings that do not
-     * parse as the expected type.
+     * Everything else stays strict: unknown properties, structure (a map where a list is expected), enums, and
+     * strings that do not parse as the expected type.
      * <p>
      * This assumes the runtime defers the conversion for every scalar attribute the schema exposes. The few model
      * attributes that are still converted while deserializing (so a placeholder is never resolved for them) are not
@@ -366,10 +367,34 @@ public class YamlValidator {
             return false;
         }
         if (instance.isTextual()) {
-            return hasPropertyPlaceholder(instance.asText());
+            String text = instance.asText();
+            if (hasPropertyPlaceholder(text)) {
+                return true;
+            }
+            if (isExpectedType(error, "boolean")) {
+                return isBooleanText(text);
+            }
+            if (isExpectedType(error, "integer") || isExpectedType(error, "number")) {
+                return isNumberText(text);
+            }
+            return false;
         }
         // the runtime converts any scalar to text, so a number or boolean is fine wherever a string is expected
         return (instance.isNumber() || instance.isBoolean()) && isExpectedType(error, "string");
+    }
+
+    private static boolean isBooleanText(String text) {
+        String s = text.trim();
+        return "true".equalsIgnoreCase(s) || "false".equalsIgnoreCase(s);
+    }
+
+    private static boolean isNumberText(String text) {
+        try {
+            Double.parseDouble(text.trim());
+            return true;
+        } catch (NumberFormatException e) {
+            return false;
+        }
     }
 
     private static boolean hasPropertyPlaceholder(String text) {
@@ -409,11 +434,10 @@ public class YamlValidator {
         String location = canonical ? LOCATION_CANONICAL : LOCATION;
         var model = mapper.readTree(YamlValidator.class.getResourceAsStream(location));
         var version = getSpecificationVersion(model).orElse(SpecificationVersion.DRAFT_4);
-        // typeLoose lets a quoted scalar that parses as the expected type validate (e.g. parallelProcessing: "true"
-        // at a boolean attribute). Camel's runtime accepts it because the model field is a String, so the schema
-        // would otherwise be stricter than the runtime. Values that do not parse (e.g. "yes please") are still
-        // rejected. See isRuntimeAcceptedScalar for the cases typeLoose does not cover.
-        var config = SchemaRegistryConfig.builder().locale(Locale.ENGLISH).typeLoose(true).build();
+        // no typeLoose: besides accepting quoted scalars it also accepts a single value where the schema expects a
+        // list (steps: written as a map), which the runtime rejects. The scalar leniency the runtime has is done as
+        // a filter on the reported errors instead, see isRuntimeAcceptedScalar.
+        var config = SchemaRegistryConfig.builder().locale(Locale.ENGLISH).build();
 
         // Register "deprecated" as a known non-validation keyword to suppress warnings
         Dialect base = getBaseDialect(version);

@@ -99,6 +99,75 @@ public class YamlValidatorScalarLeniencyTest {
         assertRejected("split", "cheese: true", "cheese");
     }
 
+    @Test
+    public void testQuotedBooleanCaseInsensitive() {
+        assertAccepted("split", "parallelProcessing: \"TRUE\"");
+    }
+
+    @Test
+    public void testStepsAsMapStillRejected() {
+        // a map where the schema expects a list is what the runtime rejects with "Node type map is invalid, expected array"
+        assertRejectedYaml("""
+                - from:
+                    uri: timer:tick
+                    steps:
+                      log: "hi"
+                """, "array expected");
+    }
+
+    @Test
+    public void testWhenAsMapStillRejected() {
+        assertRejectedYaml("""
+                - from:
+                    uri: timer:tick
+                    steps:
+                      - choice:
+                          when:
+                            simple: "${body} == 1"
+                            steps:
+                              - log: "one"
+                """, "array expected");
+    }
+
+    @Test
+    public void testRestGetAsMapStillRejected() {
+        assertRejectedYaml("""
+                - rest:
+                    get:
+                      path: /hello
+                      to: direct:hello
+                - from:
+                    uri: direct:hello
+                    steps:
+                      - log: "hi"
+                """, "array expected");
+    }
+
+    @Test
+    public void testScalarWhereStepsExpectedStillRejected() {
+        assertRejectedYaml("""
+                - from:
+                    uri: timer:tick
+                    steps: "log:hi"
+                """, "array expected");
+    }
+
+    private void assertRejectedYaml(String yaml, String expectedInMessage) {
+        for (YamlValidator validator : List.of(classic, canonical)) {
+            String mode = validator.isCanonical() ? "canonical" : "classic";
+            List<Error> errors;
+            try {
+                errors = validator.validate(yaml);
+            } catch (Exception e) {
+                throw new AssertionError("Failed to validate:\n" + yaml, e);
+            }
+            assertThat(errors)
+                    .as("must be rejected in %s mode:\n%s", mode, yaml)
+                    .isNotEmpty()
+                    .anyMatch(e -> e.getMessage().contains(expectedInMessage));
+        }
+    }
+
     private void assertAccepted(String eip, String attribute) {
         for (YamlValidator validator : List.of(classic, canonical)) {
             String mode = validator.isCanonical() ? "canonical" : "classic";
