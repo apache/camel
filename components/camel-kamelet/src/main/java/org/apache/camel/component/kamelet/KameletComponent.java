@@ -493,10 +493,9 @@ public class KameletComponent extends DefaultComponent {
                         endpoint.getKameletProperties());
                 RouteDefinition def = context.getRouteDefinition(id);
 
-                // start the route if not already started
+                // start the route if it was not already materialized (avoid duplicate Route instances on reload)
                 ServiceStatus status = context.getRouteController().getRouteStatus(id);
-                boolean started = status != null && status.isStarted();
-                if (!started) {
+                if (status == null) {
                     context.startRouteDefinitions(Collections.singletonList(def));
                 }
 
