@@ -26,8 +26,8 @@ import java.util.Locale;
 import java.util.Queue;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.BiFunction;
+import java.util.function.Function;
 import java.util.function.Supplier;
-import java.util.regex.Pattern;
 
 import dev.tamboui.buffer.Buffer;
 import dev.tamboui.export.ExportRequest;
@@ -37,11 +37,11 @@ import dev.tamboui.tui.event.KeyCode;
 import dev.tamboui.tui.event.KeyEvent;
 import dev.tamboui.tui.event.KeyModifiers;
 import dev.tamboui.widgets.tabs.TabsState;
+import org.apache.camel.dsl.jbang.core.commands.ai.SourceValidator;
 import org.apache.camel.dsl.jbang.core.common.CommandLineHelper;
 import org.apache.camel.dsl.jbang.core.common.RuntimeHelper;
 import org.apache.camel.util.json.JsonArray;
 import org.apache.camel.util.json.JsonObject;
-import org.apache.camel.util.json.Jsoner;
 
 import static org.apache.camel.dsl.jbang.core.commands.tui.TuiHelper.hint;
 import static org.apache.camel.dsl.jbang.core.commands.tui.TuiHelper.hintLast;
@@ -302,6 +302,16 @@ class McpFacade {
         }
         IntegrationInfo info = ctx.findSelectedIntegration();
         return info != null ? info.camelVersion : null;
+    }
+
+    /** The source directory of the selected integration, the default directory of the shared file tools. */
+    Path getSelectedSourceDirectory() {
+        IntegrationInfo info = findIntegration(null);
+        if (info == null) {
+            return null;
+        }
+        Path dir = FilesBrowser.resolveSourceDirectory(info);
+        return dir != null && Files.isDirectory(dir) ? dir : null;
     }
 
     int getIntegrationCount() {
@@ -908,7 +918,7 @@ class McpFacade {
      * integration was started (plain files, --source-dir, an example extracted to a temporary folder, an exported
      * project), and edits only take effect on reload (dev mode) or restart.
      */
-    // time the last tui_write_file spent waiting for the user's confirmation; the AI panel subtracts it from the
+    // time the last camel_write_file spent waiting for the user's confirmation; the AI panel subtracts it from the
     // tool time of the call so the usage statistics show what the tool did, not how long the user thought about it
     private volatile long lastConfirmWaitMs;
 
@@ -927,9 +937,19 @@ class McpFacade {
     // validates source by file type (Camel YAML DSL, application.properties) with the editor's own checks,
     // see SourceEditAssist#validateSource
     private BiFunction<String, String, List<String>> sourceValidator;
+    // the editor's check of a properties line the catalog does not know (Spring Boot), for the shared tools
+    private Function<String, String> propertyLineValidator;
 
     void setSourceValidator(BiFunction<String, String, List<String>> sourceValidator) {
         this.sourceValidator = sourceValidator;
+    }
+
+    void setPropertyLineValidator(Function<String, String> propertyLineValidator) {
+        this.propertyLineValidator = propertyLineValidator;
+    }
+
+    Function<String, String> getPropertyLineValidator() {
+        return propertyLineValidator;
     }
 
     /**
@@ -954,7 +974,7 @@ class McpFacade {
         if (sourceValidator == null) {
             return writeError("Validation is not available");
         }
-        if (!SourceEditAssist.isValidatableFile(file)) {
+        if (!SourceValidator.isValidatableFile(file)) {
             return writeError("No validation for " + file + ": only YAML routes and .properties files are validated");
         }
         List<String> errors = sourceValidator.apply(file, content);
@@ -983,13 +1003,13 @@ class McpFacade {
         result.put("temporary", temporary);
         String editing;
         if (temporary) {
-            editing = "The directory is a temporary copy of the sources; edits made with tui_write_file are lost when"
+            editing = "The directory is a temporary copy of the sources; edits made with camel_write_file are lost when"
                       + " the integration stops"
                       + (info.devMode ? ", but are reloaded while it runs (dev mode)." : ".");
         } else if (info.devMode) {
-            editing = "Files can be edited with tui_write_file; changes are reloaded automatically (dev mode).";
+            editing = "Files can be edited with camel_write_file; changes are reloaded automatically (dev mode).";
         } else {
-            editing = "Files can be edited with tui_write_file; restart the integration for changes to take effect.";
+            editing = "Files can be edited with camel_write_file; restart the integration for changes to take effect.";
         }
         result.put("editing", editing);
     }
@@ -1087,7 +1107,7 @@ class McpFacade {
         if (exists && !Files.isRegularFile(filePath)) {
             return writeError(file + " is not a regular file");
         }
-        if (validate && sourceValidator != null && SourceEditAssist.isValidatableFile(file)) {
+        if (validate && sourceValidator != null && SourceValidator.isValidatableFile(file)) {
             List<String> errors = sourceValidator.apply(file, content);
             if (!errors.isEmpty()) {
                 JsonObject result = new JsonObject();
@@ -1097,7 +1117,7 @@ class McpFacade {
                 arr.addAll(errors);
                 result.put("errors", arr);
                 result.put("message", "The file was not written: the content has validation errors. Fix them and"
-                                      + " call tui_write_file again (validate=false writes it anyway).");
+                                      + " call camel_write_file again (validate=false writes it anyway).");
                 return result;
             }
         }
@@ -1181,10 +1201,10 @@ class McpFacade {
                                   + " of " + (outcome.applied() + outcome.remaining())
                                   + " edit(s) and asks: " + outcome.question()
                                   + "\nAnswer the question briefly (what the edit does and why); look options up with"
-                                  + " tui_catalog_doc rather than listing them from memory. Nothing is written"
+                                  + " camel_catalog_doc rather than listing them from memory. Nothing is written"
                                   + " yet: 'content' is the editor buffer with the applied edits, the file on disk"
                                   + " is unchanged. If the user wants the change done differently, call"
-                                  + " tui_write_file again with the complete new content: it continues in the"
+                                  + " camel_write_file again with the complete new content: it continues in the"
                                   + " editor from 'content'. Otherwise only answer and end your turn: do not write"
                                   + " other files until the user has finished this edit (Enter continues the"
                                   + " pending edit(s), then the user saves or discards).");
@@ -1237,78 +1257,6 @@ class McpFacade {
             return null;
         }
         return RuntimeHelper.sendMessage(pid, endpoint, body, headers);
-    }
-
-    /**
-     * Evaluates an expression (simple by default) inside the selected integration, the way {@code camel cmd eval} does,
-     * with an optional message body; returns null when no integration is selected. The result is the value or the
-     * parser/evaluation error, so it doubles as a validator the model can try expressions against.
-     */
-    JsonObject evalExpression(String language, String expression, String body) {
-        if (ctx.selectedPid == null) {
-            return null;
-        }
-        long pid;
-        try {
-            pid = Long.parseLong(ctx.selectedPid);
-        } catch (NumberFormatException e) {
-            return null;
-        }
-        String lang = language == null || language.isBlank() ? "simple" : language;
-        boolean predicate = "simple".equals(lang) && looksLikePredicate(expression);
-        String raw = RuntimeHelper.executeAction(pid, "eval", root -> {
-            root.put("language", lang);
-            root.put("predicate", String.valueOf(predicate));
-            root.put("template", Jsoner.escape(expression));
-            if (body != null) {
-                root.put("body", Jsoner.escape(body));
-            }
-        });
-        JsonObject result = new JsonObject();
-        result.put("language", lang);
-        result.put("expression", expression);
-        if (predicate) {
-            result.put("predicate", true);
-        }
-        if (body == null && expression.contains("${body")) {
-            result.put("note", "evaluated with an empty body; pass body to evaluate against a value");
-        }
-        JsonObject out = null;
-        try {
-            out = (JsonObject) Jsoner.deserialize(raw);
-        } catch (Exception e) {
-            // not JSON: a timeout message
-        }
-        if (out == null) {
-            result.put("status", "error");
-            result.put("error", raw);
-            return result;
-        }
-        if ("success".equals(out.getString("status"))) {
-            result.put("status", "ok");
-            result.put("result", out.get("result"));
-            return result;
-        }
-        result.put("status", "error");
-        JsonObject cause = out.getMap("exception");
-        String message = cause != null ? cause.getString("message") : null;
-        result.put("error", message != null ? Jsoner.unescape(message) : "evaluation failed");
-        return result;
-    }
-
-    private static final Pattern PREDICATE_OPERATOR = Pattern.compile(
-            "\\s(==|=~|!=|!=~|>|>=|<|<=|~~|!~~|contains|!contains|regex|!regex|in|!in|is|!is|range|!range"
-                                                                      + "|startsWith|!startsWith|endsWith|!endsWith|equals|!equals|&&|\\|\\|)\\s");
-
-    /**
-     * Whether a simple expression is a predicate (an operator between placeholders, giving true or false) rather than a
-     * value; the ternary and elvis forms contain operators but produce values.
-     */
-    static boolean looksLikePredicate(String expression) {
-        if (expression == null || expression.contains(" ? ") || expression.contains(" ?: ")) {
-            return false;
-        }
-        return PREDICATE_OPERATOR.matcher(expression).find();
     }
 
     JsonObject executeSql(String sql, String datasource, int maxRows, int queryTimeout) {
