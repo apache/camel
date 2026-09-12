@@ -101,6 +101,15 @@ public final class OpenAIConstants {
     @Metadata(description = "The complete OpenAI Responses API response object",
               javaType = "com.openai.models.responses.Response")
     public static final String RESPONSES_RESPONSE = "CamelOpenAIResponsesResponse";
+    @Metadata(description = "The complete OpenAI embeddings response object",
+              javaType = "com.openai.models.embeddings.CreateEmbeddingResponse")
+    public static final String EMBEDDINGS_RESPONSE = "CamelOpenAIEmbeddingsResponse";
+    @Metadata(description = "The complete OpenAI audio transcription response object",
+              javaType = "com.openai.models.audio.transcriptions.TranscriptionCreateResponse")
+    public static final String AUDIO_TRANSCRIPTION_RESPONSE = "CamelOpenAIAudioTranscriptionResponse";
+    @Metadata(description = "The complete OpenAI audio translation response object",
+              javaType = "com.openai.models.audio.translations.TranslationCreateResponse")
+    public static final String AUDIO_TRANSLATION_RESPONSE = "CamelOpenAIAudioTranslationResponse";
 
     // Embeddings Input Headers
     @Metadata(description = "The model to use for embeddings", javaType = "String")
