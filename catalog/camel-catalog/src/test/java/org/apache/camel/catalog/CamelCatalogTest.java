@@ -1250,6 +1250,64 @@ public class CamelCatalogTest {
     }
 
     @Test
+    public void testPredicatePlaceholderAsOperand() {
+        // CAMEL-24692: a placeholder used as a bare operand of a binary operator is valid at runtime,
+        // as the placeholder is resolved before the predicate is parsed
+        LanguageValidationResult result = catalog.validateLanguagePredicate(null, "simple", "${body} >= {{hot.threshold}}");
+        assertTrue(result.isSuccess(), result.getError());
+        assertEquals("${body} >= {{hot.threshold}}", result.getText());
+
+        result = catalog.validateLanguagePredicate(null, "simple", "${header.level} == {{level}}");
+        assertTrue(result.isSuccess(), result.getError());
+
+        result = catalog.validateLanguagePredicate(null, "simple", "${body} in {{list}}");
+        assertTrue(result.isSuccess(), result.getError());
+
+        result = catalog.validateLanguagePredicate(null, "simple", "${body} range {{range}}");
+        assertTrue(result.isSuccess(), result.getError());
+
+        result = catalog.validateLanguagePredicate(null, "simple", "${body} regex {{pattern}}");
+        assertTrue(result.isSuccess(), result.getError());
+
+        // the placeholder can also be the entire predicate
+        result = catalog.validateLanguagePredicate(null, "simple", "{{hot.threshold}}");
+        assertTrue(result.isSuccess(), result.getError());
+        assertEquals("{{hot.threshold}}", result.getText());
+    }
+
+    @Test
+    public void testPredicateMultiplePlaceholders() {
+        // CAMEL-24692: each placeholder must be replaced on its own and not as one greedy match
+        LanguageValidationResult result
+                = catalog.validateLanguagePredicate(null, "simple", "${body} == {{a}} && ${header.x} == {{b}}");
+        assertTrue(result.isSuccess(), result.getError());
+        assertEquals("${body} == {{a}} && ${header.x} == {{b}}", result.getText());
+
+        // mixing a quoted and a bare placeholder
+        result = catalog.validateLanguagePredicate(null, "simple", "${body} == '{{a}}' && ${body} != {{b}}");
+        assertTrue(result.isSuccess(), result.getError());
+
+        // and the placeholders must be restored in the error message
+        result = catalog.validateLanguagePredicate(null, "simple", "${bdy} == {{a}} && ${header.x} == {{b}}");
+        assertFalse(result.isSuccess());
+        assertTrue(result.getError().contains("{{a}}"), result.getError());
+        assertTrue(result.getError().contains("{{b}}"), result.getError());
+    }
+
+    @Test
+    public void testExpressionPlaceholder() {
+        LanguageValidationResult result = catalog.validateLanguageExpression(null, "simple", "{{greeting}}");
+        assertTrue(result.isSuccess(), result.getError());
+        assertEquals("{{greeting}}", result.getText());
+
+        result = catalog.validateLanguageExpression(null, "simple", "Hello {{name}} how are you");
+        assertTrue(result.isSuccess(), result.getError());
+
+        result = catalog.validateLanguageExpression(null, "simple", "${body} and {{suffix}}");
+        assertTrue(result.isSuccess(), result.getError());
+    }
+
+    @Test
     public void testValidateLanguage() {
         LanguageValidationResult result = catalog.validateLanguageExpression(null, "simple", "${body}");
         assertTrue(result.isSuccess());
@@ -1341,6 +1399,21 @@ public class CamelCatalogTest {
         assertEquals(code, result.getText());
         assertEquals(23, result.getIndex());
         assertEquals("Unexpected input: '*' @ line 2, column 11.", result.getShortError());
+    }
+
+    @Test
+    public void testValidateGroovyLanguagePlaceholder() {
+        // CAMEL-24692: the groovy validation uses the same placeholder replacement as simple
+        LanguageValidationResult result
+                = catalog.validateLanguageExpression(null, "groovy", "request.body >= {{hot.threshold}}");
+        assertTrue(result.isSuccess(), result.getError());
+        assertEquals("request.body >= {{hot.threshold}}", result.getText());
+
+        result = catalog.validateLanguageExpression(null, "groovy", "{{hot.threshold}}");
+        assertTrue(result.isSuccess(), result.getError());
+
+        result = catalog.validateLanguageExpression(null, "groovy", "request.body == '{{name}}'");
+        assertTrue(result.isSuccess(), result.getError());
     }
 
     @Test
