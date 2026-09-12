@@ -1617,8 +1617,8 @@ final class SourceEditAssist {
             if (simpleText == null || simpleText.isEmpty()) {
                 continue;
             }
-            // Skip placeholder-only expressions
-            if (simpleText.startsWith("{{") && simpleText.endsWith("}}")) {
+            // Skip what the catalog cannot validate because a placeholder is unresolved
+            if (hasPlaceholderAsLogicalOperand(simpleText)) {
                 continue;
             }
 
@@ -1644,6 +1644,55 @@ final class SourceEditAssist {
             }
         }
         return errors;
+    }
+
+    /**
+     * Whether the text uses a property placeholder as an operand of a logical operator, such as
+     * <tt>{{enabled}} && ${body} > 10</tt>.
+     *
+     * A placeholder can expand to an entire predicate, which the catalog cannot know as it validates without a running
+     * Camel application. The catalog substitutes a placeholder with a dummy value, which is what an operand of a binary
+     * operator needs, but a logical operator needs a predicate on either side. Validating those would report an error
+     * for a route that is perfectly valid at runtime, so they are skipped.
+     */
+    static boolean hasPlaceholderAsLogicalOperand(String text) {
+        if (text == null || !text.contains("{{")) {
+            return false;
+        }
+
+        // split into the operands of the logical operators, ignoring any quoted literal
+        List<String> operands = new ArrayList<>();
+        char quote = 0;
+        int start = 0;
+        for (int i = 0; i < text.length(); i++) {
+            char ch = text.charAt(i);
+            if (quote == 0 && (ch == '\'' || ch == '"')) {
+                quote = ch;
+            } else if (quote == ch) {
+                quote = 0;
+            } else if (quote == 0 && i < text.length() - 1) {
+                char next = text.charAt(i + 1);
+                if (ch == '&' && next == '&' || ch == '|' && next == '|') {
+                    operands.add(text.substring(start, i));
+                    i++;
+                    start = i + 1;
+                }
+            }
+        }
+        if (operands.isEmpty()) {
+            // no logical operator so the placeholders are all used as a value which the catalog can validate
+            return false;
+        }
+        operands.add(text.substring(start));
+
+        for (String operand : operands) {
+            String s = operand.trim();
+            // is the operand nothing but a single placeholder
+            if (s.startsWith("{{") && s.endsWith("}}") && s.indexOf("}}") == s.length() - 2) {
+                return true;
+            }
+        }
+        return false;
     }
 
     static String findParentEip(String[] lines, int lineIdx, int lineIndent) {

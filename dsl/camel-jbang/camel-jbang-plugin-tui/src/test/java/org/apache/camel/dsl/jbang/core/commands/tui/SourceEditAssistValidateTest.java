@@ -80,4 +80,48 @@ class SourceEditAssistValidateTest {
         assertTrue(SourceEditAssist.isValidatableFile("routes.YAML"));
         assertFalse(SourceEditAssist.isValidatableFile("Foo.java"));
     }
+
+    @Test
+    void placeholderAsOperandIsValidated() {
+        // CAMEL-24692: the catalog can validate these now, so they must no longer be skipped
+        assertFalse(SourceEditAssist.hasPlaceholderAsLogicalOperand("{{hot.threshold}}"));
+        assertFalse(SourceEditAssist.hasPlaceholderAsLogicalOperand("${body} >= {{hot.threshold}}"));
+        assertFalse(SourceEditAssist.hasPlaceholderAsLogicalOperand("{{a}} == {{b}}"));
+        assertFalse(SourceEditAssist.hasPlaceholderAsLogicalOperand("${body} >= {{t}} && ${body} < {{u}}"));
+        assertFalse(SourceEditAssist.hasPlaceholderAsLogicalOperand("${body} == 'abc'"));
+        assertFalse(SourceEditAssist.hasPlaceholderAsLogicalOperand(null));
+    }
+
+    @Test
+    void placeholderAsLogicalOperandIsSkipped() {
+        // a placeholder can expand to an entire predicate which the catalog cannot know
+        assertTrue(SourceEditAssist.hasPlaceholderAsLogicalOperand("{{a}} && {{b}}"));
+        assertTrue(SourceEditAssist.hasPlaceholderAsLogicalOperand("${body} > 1 && {{flag}}"));
+        assertTrue(SourceEditAssist.hasPlaceholderAsLogicalOperand("{{flag}} || ${body} > 1"));
+        // a logical operator inside a quoted literal is not an operator
+        assertFalse(SourceEditAssist.hasPlaceholderAsLogicalOperand("${body} == '{{a}} && {{b}}'"));
+    }
+
+    @Test
+    void placeholderPredicateIsNotReportedAsError() {
+        List<String> errors = assist().validateSource("placeholder.camel.yaml", """
+                - route:
+                    id: placeholder
+                    from:
+                      uri: timer:tick
+                      steps:
+                        - choice:
+                            when:
+                              - simple: "${body} >= {{hot.threshold}}"
+                                steps:
+                                  - log:
+                                      message: "hot"
+                              - simple: "{{enabled}} && ${body} > 1"
+                                steps:
+                                  - log:
+                                      message: "on"
+                """);
+
+        assertTrue(errors.stream().noneMatch(e -> e.contains("Simple syntax error")), String.valueOf(errors));
+    }
 }
