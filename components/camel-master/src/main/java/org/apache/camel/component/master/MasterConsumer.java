@@ -17,7 +17,11 @@
 package org.apache.camel.component.master;
 
 import java.time.Duration;
+import java.util.concurrent.Future;
 import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.atomic.AtomicReference;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
 
 import org.apache.camel.Consumer;
 import org.apache.camel.Endpoint;
@@ -59,6 +63,15 @@ public class MasterConsumer extends DefaultConsumer implements ResumeAware<Resum
     private volatile CamelClusterView view;
     private ResumeStrategy resumeStrategy;
     private ScheduledExecutorService leaderPool;
+    // leadership state and the pending start task are guarded by leadershipLock. This is deliberately not
+    // the lock of BaseService: the cluster view dispatches events while holding its own read lock and then
+    // needs this lock, while doStop holds the service lock and needs the write lock of the view to remove
+    // the listener. Guarding the leadership with the service lock closes that into a lock cycle, and it also
+    // makes every leadership event and start attempt wait for whatever lifecycle operation is in progress
+    private final Lock leadershipLock = new ReentrantLock();
+    private boolean leadershipTaken;
+    private BackgroundTask leaderTask;
+    private Future<?> leaderTaskFuture;
 
     public MasterConsumer(MasterEndpoint masterEndpoint, Processor processor, CamelClusterService clusterService) {
         super(masterEndpoint, processor);
@@ -103,6 +116,20 @@ public class MasterConsumer extends DefaultConsumer implements ResumeAware<Resum
     protected void doStop() throws Exception {
         super.doStop();
 
+        leadershipLock.lock();
+        try {
+            // a start can still be pending, cancel it first so it cannot start the delegated consumer
+            // after this consumer has been stopped
+            leadershipTaken = false;
+            cancelLeaderTask(true);
+        } finally {
+            leadershipLock.unlock();
+        }
+
+        // note: removeEventListener below needs the write lock of the cluster view, while an event dispatch
+        // takes the read lock of the view and then leadershipLock. This thread must not hold leadershipLock
+        // here, or the two orders deadlock
+
         if (view != null) {
             view.removeEventListener(leadershipListener);
             clusterService.releaseView(view);
@@ -145,74 +172,146 @@ public class MasterConsumer extends DefaultConsumer implements ResumeAware<Resum
                 .withBudget(Budgets.iterationTimeBudget()
                         .withInterval(Duration.ofMillis(masterEndpoint.getComponent().getBackOffDelay()))
                         .withInitialDelay(Duration.ofSeconds(1))
+                        // 0 or less leaves the unlimited default of the builder in place
                         .withMaxIterations(masterEndpoint.getComponent().getBackOffMaxAttempts())
+                        // the attempts are bounded by backOffMaxAttempts, not by the 5s default duration of
+                        // the builder, which would otherwise end the task before the second attempt
+                        .withUnlimitedDuration()
                         .build())
                 .withName("Leadership")
                 .build();
     }
 
-    private void onLeadershipTaken() throws Exception {
-        lock.lock();
+    private void onLeadershipTaken() {
+        leadershipLock.lock();
         try {
             if (!isRunAllowed()) {
                 return;
             }
 
-            if (delegatedConsumer != null) {
+            leadershipTaken = true;
+
+            if (delegatedConsumer != null || isStartPending()) {
                 return;
             }
 
-            final BackgroundTask leaderTask = createTask();
-            leaderTask.schedule(getEndpoint().getCamelContext(), () -> {
-                if (!isRunAllowed()) {
-                    return false;
-                }
-                LOG.info("Leadership taken. Attempt #{} to start consumer: {}", leaderTask.iteration(), delegatedEndpoint);
+            // a task from a previous leadership term may still be scheduled, drop it
+            cancelLeaderTask(false);
 
-                Exception cause = null;
-                try {
-                    if (delegatedConsumer == null) {
-                        delegatedConsumer = delegatedEndpoint.createConsumer(processor);
-                        if (delegatedConsumer instanceof StartupListener) {
-                            getEndpoint().getCamelContext().addStartupListener((StartupListener) delegatedConsumer);
-                        }
-                        if (delegatedConsumer instanceof ResumeAware resumeAwareConsumer && resumeStrategy != null) {
-                            LOG.debug("Setting up the resume adapter for the resume strategy in consumer");
-                            ResumeAdapter resumeAdapter
-                                    = AdapterHelper.eval(clusterService.getCamelContext(), resumeAwareConsumer,
-                                            resumeStrategy);
-                            resumeStrategy.setAdapter(resumeAdapter);
-
-                            LOG.debug("Setting up the resume strategy for consumer");
-                            resumeAwareConsumer.setResumeStrategy(resumeStrategy);
-                        }
-                    }
-                    ServiceHelper.startService(delegatedEndpoint, delegatedConsumer);
-
-                } catch (Exception e) {
-                    cause = e;
-                }
-
-                if (cause != null) {
-                    String message = "Leadership taken. Attempt #" + leaderTask.iteration()
-                                     + " failed to start consumer due to: " + cause.getMessage();
-                    getExceptionHandler().handleException(message, cause);
-                    // make the task runner aware of the exception (will retry)
-                    throw new TaskRunFailureException(message, cause);
-                }
-
-                LOG.info("Leadership taken. Attempt #{} success. Consumer started: {}", leaderTask.iteration(),
-                        delegatedEndpoint);
-                return true; // no more attempts
-            });
+            final BackgroundTask task = createTask();
+            // the consumer is created once and re-used by the start attempts of this task
+            final AtomicReference<Consumer> attempt = new AtomicReference<>();
+            leaderTask = task;
+            leaderTaskFuture = task.schedule(getEndpoint().getCamelContext(), () -> startDelegatedConsumer(task, attempt));
         } finally {
-            lock.unlock();
+            leadershipLock.unlock();
+        }
+    }
+
+    private boolean startDelegatedConsumer(BackgroundTask task, AtomicReference<Consumer> attempt) {
+        leadershipLock.lock();
+        try {
+            if (!isRunAllowed()) {
+                return false;
+            }
+
+            if (!leadershipTaken) {
+                // leadership was lost while this start was pending. Starting now would run the consumer on a
+                // node that is not the leader, and no further leadership event is coming to stop it again
+                LOG.debug("Leadership lost while the start was pending. Not starting consumer: {}", delegatedEndpoint);
+                return true; // no more attempts
+            }
+
+            if (delegatedConsumer != null) {
+                return true; // no more attempts
+            }
+        } finally {
+            leadershipLock.unlock();
+        }
+
+        LOG.info("Leadership taken. Attempt #{} to start consumer: {}", task.iteration(), delegatedEndpoint);
+
+        // the delegate is created and started without holding the lock. It can block for a long time, and the
+        // lock is taken by the cluster view event dispatch and by doStop, which must not wait for a broker
+        // connect. The leadership is re-checked below before the consumer is published
+        Consumer consumer = attempt.get();
+        Exception cause = null;
+        try {
+            if (consumer == null) {
+                consumer = delegatedEndpoint.createConsumer(processor);
+                // held for the attempts of this task, so the startup listener and the resume strategy are
+                // wired once and a retry only starts the consumer again
+                attempt.set(consumer);
+                if (consumer instanceof StartupListener startupListener) {
+                    getEndpoint().getCamelContext().addStartupListener(startupListener);
+                }
+                if (consumer instanceof ResumeAware resumeAwareConsumer && resumeStrategy != null) {
+                    LOG.debug("Setting up the resume adapter for the resume strategy in consumer");
+                    ResumeAdapter resumeAdapter
+                            = AdapterHelper.eval(clusterService.getCamelContext(), resumeAwareConsumer,
+                                    resumeStrategy);
+                    resumeStrategy.setAdapter(resumeAdapter);
+
+                    LOG.debug("Setting up the resume strategy for consumer");
+                    resumeAwareConsumer.setResumeStrategy(resumeStrategy);
+                }
+            }
+            ServiceHelper.startService(delegatedEndpoint, consumer);
+        } catch (Exception e) {
+            cause = e;
+        }
+
+        leadershipLock.lock();
+        try {
+            if (cause != null) {
+                // the consumer is kept for the next attempt. It is not stopped here: a consumer that failed to
+                // start was already stopped by its own start(), and shutting it down would also shut down the
+                // processor of the route, which the next attempt and this consumer still need
+                String message = "Leadership taken. Attempt #" + task.iteration()
+                                 + " failed to start consumer due to: " + cause.getMessage();
+                getExceptionHandler().handleException(message, cause);
+                int maxAttempts = masterEndpoint.getComponent().getBackOffMaxAttempts();
+                if (maxAttempts > 0 && task.iteration() >= maxAttempts) {
+                    LOG.error("Leadership taken. Giving up after {} attempts to start consumer: {}."
+                              + " This node holds the leadership but is not consuming, until the leadership changes again.",
+                            task.iteration(), delegatedEndpoint);
+                }
+                // make the task runner aware of the exception (will retry)
+                throw new TaskRunFailureException(message, cause);
+            }
+
+            if (!leadershipTaken || !isRunAllowed()) {
+                // the leadership went away while the consumer was starting, so stop what was just started
+                // instead of publishing it. No leadership event is going to do it, delegatedConsumer is unset
+                LOG.info("Leadership lost while the consumer was starting. Stopping consumer: {}", delegatedEndpoint);
+                ServiceHelper.stopAndShutdownServices(consumer, delegatedEndpoint);
+                attempt.set(null);
+                return true; // no more attempts
+            }
+
+            delegatedConsumer = consumer;
+            LOG.info("Leadership taken. Attempt #{} success. Consumer started: {}", task.iteration(),
+                    delegatedEndpoint);
+            // release the task, a later leadership term schedules a new one
+            cancelLeaderTask(false);
+            return true; // no more attempts
+        } finally {
+            leadershipLock.unlock();
         }
     }
 
     private void onLeadershipLost() {
-        lock.lock();
+        leadershipLock.lock();
         try {
+            leadershipTaken = false;
+            // a start scheduled by the leadership taken event may not have run yet, cancel it so it
+            // cannot start the consumer on a node that is no longer the leader
+            cancelLeaderTask(false);
+
+            if (delegatedConsumer == null) {
+                return;
+            }
+
             LOG.debug("Leadership lost. Stopping consumer: {}", delegatedEndpoint);
             try {
                 ServiceHelper.stopAndShutdownServices(delegatedConsumer, delegatedEndpoint);
@@ -221,7 +320,22 @@ public class MasterConsumer extends DefaultConsumer implements ResumeAware<Resum
             }
             LOG.info("Leadership lost. Consumer stopped: {}", delegatedEndpoint);
         } finally {
-            lock.unlock();
+            leadershipLock.unlock();
+        }
+    }
+
+    private boolean isStartPending() {
+        return leaderTaskFuture != null && !leaderTaskFuture.isDone();
+    }
+
+    private void cancelLeaderTask(boolean mayInterruptIfRunning) {
+        if (leaderTask != null) {
+            // cancelled through the task and not through its future, so the task also leaves the
+            // TaskManagerRegistry. Only a run of the task removes it from there, and once the schedule
+            // is cancelled no run is coming
+            leaderTask.cancel(mayInterruptIfRunning);
+            leaderTask = null;
+            leaderTaskFuture = null;
         }
     }
 
@@ -233,22 +347,37 @@ public class MasterConsumer extends DefaultConsumer implements ResumeAware<Resum
         @Override
         public void leadershipChanged(CamelClusterView view, CamelClusterMember leader) {
             if (!isRunAllowed()) {
+                // this runs on the dispatch thread of the cluster view, holding the lock of that view, so
+                // do no work at all for a consumer that is stopping
                 return;
             }
 
-            if (view.getLocalMember().isLeader()) {
-                try {
-                    onLeadershipTaken();
-                } catch (Exception e) {
-                    getExceptionHandler().handleException("Error starting consumer while taking leadership", e);
+            leadershipLock.lock();
+            try {
+                if (!isRunAllowed()) {
+                    return;
                 }
-            } else if (delegatedConsumer != null) {
-                try {
-                    onLeadershipLost();
-                } catch (Exception e) {
-                    getExceptionHandler()
-                            .handleException("Error stopping consumer while loosing leadership. This exception is ignored.", e);
+
+                // the leadership is read under the same lock that applies it, so that two events
+                // dispatched concurrently cannot be applied in the wrong order
+                if (view.getLocalMember().isLeader()) {
+                    try {
+                        onLeadershipTaken();
+                    } catch (Exception e) {
+                        getExceptionHandler().handleException("Error starting consumer while taking leadership", e);
+                    }
+                } else {
+                    // dispatched even when there is no consumer yet, as a start may be pending
+                    try {
+                        onLeadershipLost();
+                    } catch (Exception e) {
+                        getExceptionHandler()
+                                .handleException("Error stopping consumer while loosing leadership. This exception is ignored.",
+                                        e);
+                    }
                 }
+            } finally {
+                leadershipLock.unlock();
             }
         }
     }
