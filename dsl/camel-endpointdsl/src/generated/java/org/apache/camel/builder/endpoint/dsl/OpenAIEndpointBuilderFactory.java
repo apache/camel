@@ -327,6 +327,44 @@ public interface OpenAIEndpointBuilderFactory {
             return this;
         }
         /**
+         * Run the model response in the background (Responses API only). The
+         * exchange completes as soon as the response is queued, with an empty
+         * body and the CamelOpenAIResponseStatus header, and the response is
+         * stored so that it can be retrieved later. Cannot be combined with
+         * automatic tool execution.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: producer
+         * 
+         * @param background the value to set
+         * @return the dsl builder
+         */
+        default OpenAIEndpointBuilder background(boolean background) {
+            doSetProperty("background", background);
+            return this;
+        }
+        /**
+         * Run the model response in the background (Responses API only). The
+         * exchange completes as soon as the response is queued, with an empty
+         * body and the CamelOpenAIResponseStatus header, and the response is
+         * stored so that it can be retrieved later. Cannot be combined with
+         * automatic tool execution.
+         * 
+         * The option will be converted to a <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: producer
+         * 
+         * @param background the value to set
+         * @return the dsl builder
+         */
+        default OpenAIEndpointBuilder background(String background) {
+            doSetProperty("background", background);
+            return this;
+        }
+        /**
          * Base URL for OpenAI API. Defaults to OpenAI's official endpoint. Can
          * be used for local or third-party providers.
          * 
@@ -409,7 +447,28 @@ public interface OpenAIEndpointBuilderFactory {
             return this;
         }
         /**
-         * Enable conversation memory per Exchange.
+         * Id of a conversation created with the OpenAI Conversations API to run
+         * the request in. The conversation keeps its items across exchanges.
+         * Cannot be combined with previousResponseId (Responses API only).
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: producer
+         * 
+         * @param conversationId the value to set
+         * @return the dsl builder
+         */
+        default OpenAIEndpointBuilder conversationId(String conversationId) {
+            doSetProperty("conversationId", conversationId);
+            return this;
+        }
+        /**
+         * Enable conversation memory per Exchange. The chat-completion
+         * operation keeps the message history in the
+         * conversationHistoryProperty exchange property. The responses
+         * operation keeps the conversation on the server, stores the last
+         * response id in that property and sends it as previous_response_id,
+         * which requires a server that stores responses.
          * 
          * The option is a: <code>boolean</code> type.
          * 
@@ -424,7 +483,12 @@ public interface OpenAIEndpointBuilderFactory {
             return this;
         }
         /**
-         * Enable conversation memory per Exchange.
+         * Enable conversation memory per Exchange. The chat-completion
+         * operation keeps the message history in the
+         * conversationHistoryProperty exchange property. The responses
+         * operation keeps the conversation on the server, stores the last
+         * response id in that property and sends it as previous_response_id,
+         * which requires a server that stores responses.
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
@@ -573,8 +637,10 @@ public interface OpenAIEndpointBuilderFactory {
             return this;
         }
         /**
-         * JSON array of hosted MCP tool definitions (OpenAI Tool.Mcp) passed
-         * through to the Responses API.
+         * JSON array of hosted MCP tool definitions passed to the Responses API
+         * as OpenAI mcp tools. Every field of the API is sent, such as
+         * server_label, server_url, require_approval, allowed_tools, headers
+         * and authorization. Marked secret because it can carry credentials.
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
@@ -2119,13 +2185,13 @@ public interface OpenAIEndpointBuilderFactory {
          * 
          * Path parameter: operation (required)
          * The operation to perform: 'chat-completion', 'responses',
-         * 'embeddings', 'tool-execution', 'audio-transcription',
-         * 'audio-translation', 'audio-speech', 'moderation',
-         * 'image-generation', or 'image-edit'
-         * There are 10 enums and the value can be one of: chat-completion,
-         * responses, embeddings, tool-execution, audio-transcription,
-         * audio-translation, audio-speech, moderation, image-generation,
-         * image-edit
+         * 'responses-retrieve', 'responses-cancel', 'embeddings',
+         * 'tool-execution', 'audio-transcription', 'audio-translation',
+         * 'audio-speech', 'moderation', 'image-generation', or 'image-edit'
+         * There are 12 enums and the value can be one of: chat-completion,
+         * responses, responses-retrieve, responses-cancel, embeddings,
+         * tool-execution, audio-transcription, audio-translation, audio-speech,
+         * moderation, image-generation, image-edit
          * 
          * @param path operation
          * @return the dsl builder
@@ -2146,13 +2212,13 @@ public interface OpenAIEndpointBuilderFactory {
          * 
          * Path parameter: operation (required)
          * The operation to perform: 'chat-completion', 'responses',
-         * 'embeddings', 'tool-execution', 'audio-transcription',
-         * 'audio-translation', 'audio-speech', 'moderation',
-         * 'image-generation', or 'image-edit'
-         * There are 10 enums and the value can be one of: chat-completion,
-         * responses, embeddings, tool-execution, audio-transcription,
-         * audio-translation, audio-speech, moderation, image-generation,
-         * image-edit
+         * 'responses-retrieve', 'responses-cancel', 'embeddings',
+         * 'tool-execution', 'audio-transcription', 'audio-translation',
+         * 'audio-speech', 'moderation', 'image-generation', or 'image-edit'
+         * There are 12 enums and the value can be one of: chat-completion,
+         * responses, responses-retrieve, responses-cancel, embeddings,
+         * tool-execution, audio-transcription, audio-translation, audio-speech,
+         * moderation, image-generation, image-edit
          * 
          * @param componentName to use a custom component name for the endpoint
          * instead of the default name
@@ -2277,6 +2343,19 @@ public interface OpenAIEndpointBuilderFactory {
             return "CamelOpenAIPreviousResponseId";
         }
         /**
+         * The id of a conversation created with the Conversations API to run
+         * the Responses API request in.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code OpenAIConversationId}.
+         */
+        public String openAIConversationId() {
+            return "CamelOpenAIConversationId";
+        }
+        /**
          * Whether to stream the response back incrementally.
          * 
          * The option is a: {@code Boolean} type.
@@ -2377,7 +2456,9 @@ public interface OpenAIEndpointBuilderFactory {
             return "CamelOpenAIResponseModel";
         }
         /**
-         * The unique identifier for the completion response.
+         * The unique identifier for the completion response. The
+         * responses-retrieve and responses-cancel operations read the id of the
+         * response to act on from this header.
          * 
          * The option is a: {@code String} type.
          * 
@@ -2437,6 +2518,34 @@ public interface OpenAIEndpointBuilderFactory {
          */
         public String openAITotalTokens() {
             return "CamelOpenAITotalTokens";
+        }
+        /**
+         * The annotations attached to the output text of a Responses API
+         * answer, such as the url_citation and file_citation citations of
+         * web_search and file_search. Each entry is a map of the API fields.
+         * 
+         * The option is a: {@code java.util.List<java.util.Map<String,
+         * Object>>} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code OpenAIResponseAnnotations}.
+         */
+        public String openAIResponseAnnotations() {
+            return "CamelOpenAIResponseAnnotations";
+        }
+        /**
+         * The status of a Responses API response: completed, failed,
+         * in_progress, cancelled, queued or incomplete.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code OpenAIResponseStatus}.
+         */
+        public String openAIResponseStatus() {
+            return "CamelOpenAIResponseStatus";
         }
         /**
          * Number of tool call iterations performed in the agentic loop.

@@ -166,3 +166,51 @@ mvn verify -Dit.test=OpenAIModerationExternalServiceIT -Dopenai.live.tests=true 
   -Dopenai.live.apiKey="$OPENAI_API_KEY" \
   -Dopenai.live.moderation.model=omni-moderation-latest
 ```
+
+### Opt-in Responses API tests
+
+`OpenAIResponsesExternalServiceIT` exercises the `responses`, `responses-retrieve` and `responses-cancel` operations
+against an endpoint that implements `POST /v1/responses`: instructions and developer messages, structured output,
+conversation memory, route tools, background mode, retrieval and cancellation. `OpenAIResponsesMcpExternalServiceIT`
+runs the tool loop against the MCP Everything server, which it starts as a container, so it also needs Docker. Like
+the tests above they are disabled by default and enabled with `-Dopenai.live.tests=true`.
+
+Local servers implement different parts of the Responses API, so the backend matters:
+
+* vLLM implements stored responses (`previous_response_id`), function tools and background mode, which makes it the
+  local baseline for these tests.
+* Ollama implements only the stateless subset: no `previous_response_id`, no conversations, no background mode.
+* LM Studio implements `previous_response_id` and function tools, but not background mode.
+* Hosted tools (`web_search`, `file_search`, `code_interpreter` and hosted MCP), citations and the Conversations API
+  only exist on OpenAI. Those behaviours are covered by `OpenAIResponsesMockTest` on the OpenAI mock instead.
+
+#### macOS Apple Silicon with vLLM Metal
+
+Install [vLLM Metal](https://docs.vllm.ai/projects/vllm-metal/en/latest/installation/), which creates the
+`~/.venv-vllm-metal` virtual environment, then download a model. `Qwen3-4B-Instruct-2507` is small enough for a
+32 GB machine, calls tools reliably and does not emit `<think>` blocks.
+
+```bash
+source ~/.venv-vllm-metal/bin/activate
+hf download mlx-community/Qwen3-4B-Instruct-2507-4bit
+```
+
+Start the server. `VLLM_ENABLE_RESPONSES_API_STORE=1` enables stored responses, which `previous_response_id` and
+background mode need. vLLM keeps them in memory and never evicts them, so restart the server between long test
+sessions. `--enable-auto-tool-choice --tool-call-parser hermes` enables function tools for Qwen3.
+
+```bash
+VLLM_ENABLE_RESPONSES_API_STORE=1 vllm serve mlx-community/Qwen3-4B-Instruct-2507-4bit \
+  --enable-auto-tool-choice --tool-call-parser hermes --max-model-len 8192 --port 8000
+```
+
+Then run:
+
+```bash
+mvn verify -Dit.test='OpenAIResponses*ExternalServiceIT' -Dopenai.live.tests=true \
+  -Dopenai.live.baseUrl=http://localhost:8000/v1 \
+  -Dopenai.live.responses.model=mlx-community/Qwen3-4B-Instruct-2507-4bit
+```
+
+The assertions check the content of short, deterministic answers (`temperature=0`), which a 4B model gets right, but
+they can still flake with smaller models.

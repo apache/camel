@@ -71,6 +71,34 @@ class OpenAIResponsesMockTest extends CamelTestSupport {
             })
             .replyWith("Research done")
             .end()
+            .when("hosted-mcp")
+            .replyWith("Docs found")
+            .end()
+            .when("approval-needed")
+            .replyWithResponsesOutput("""
+                    [{"type":"mcp_approval_request","id":"mcpr_1","server_label":"deepwiki",
+                      "name":"ask_question","arguments":"{}"}]""")
+            .end()
+            .when("citations")
+            .replyWithResponsesOutput("""
+                    [{"type":"message","id":"msg_1","role":"assistant","status":"completed",
+                      "content":[{"type":"output_text","text":"Apache Camel is an integration framework.",
+                        "annotations":[{"type":"url_citation","url":"https://camel.apache.org",
+                          "title":"Apache Camel","start_index":0,"end_index":12}]}]}]""")
+            .end()
+            .when("Summarize this document")
+            .replyWith("A short report")
+            .end()
+            .when("weather-tool")
+            .invokeTool("get_weather")
+            .withParam("city", "Rome")
+            .replyWith("It is sunny in Rome")
+            .end()
+            .when("order-tool")
+            .invokeTool("lookup_order")
+            .withParam("id", "42")
+            .replyWith("Not expected, the tool returns directly")
+            .end()
             .build();
 
     @Override
@@ -100,8 +128,261 @@ class OpenAIResponsesMockTest extends CamelTestSupport {
 
                 from("direct:responses-streaming")
                         .to("openai:responses?model=gpt-5&apiKey=dummy&streaming=true&baseUrl=" + base);
+
+                from("direct:responses-memory")
+                        .to("openai:responses?model=gpt-5&apiKey=dummy&conversationMemory=true&baseUrl=" + base)
+                        .setBody(constant("turn-two"))
+                        .to("openai:responses?model=gpt-5&apiKey=dummy&conversationMemory=true&baseUrl=" + base);
+
+                from("ai-tool:get_weather?tags=responses-tools&description=Get the weather for a city"
+                     + "&parameter.city=string&parameter.city.required=true")
+                        .setBody(simple("Sunny in ${header.city}"));
+
+                from("ai-tool:lookup_order?tags=responses-direct&description=Look up an order"
+                     + "&parameter.id=string&parameter.id.required=true&returnDirect=true")
+                        .setBody(simple("Order ${header.id} shipped"));
+
+                from("direct:responses-route-tools")
+                        .to("openai:responses?model=gpt-5&apiKey=dummy&tags=responses-tools&baseUrl=" + base);
+
+                from("direct:responses-return-direct")
+                        .to("openai:responses?model=gpt-5&apiKey=dummy&tags=responses-direct&baseUrl=" + base);
+
+                from("direct:responses-manual-tools")
+                        .to("openai:responses?model=gpt-5&apiKey=dummy&tags=responses-tools&autoToolExecution=false"
+                            + "&baseUrl=" + base);
+
+                from("direct:responses-background")
+                        .to("openai:responses?model=gpt-5&apiKey=dummy&background=true&baseUrl=" + base);
+
+                from("direct:responses-retrieve")
+                        .to("openai:responses-retrieve?apiKey=dummy&baseUrl=" + base);
+
+                from("direct:responses-cancel")
+                        .to("openai:responses-cancel?apiKey=dummy&baseUrl=" + base);
+
+                from("direct:responses-background-tools")
+                        .to("openai:responses?model=gpt-5&apiKey=dummy&background=true&tags=responses-tools&baseUrl="
+                            + base);
             }
         };
+    }
+
+    @Test
+    void hostedMcpToolsSendEveryToolField() {
+        OpenAIEndpoint endpoint = context.getEndpoint(responsesUri(), OpenAIEndpoint.class);
+        endpoint.getConfiguration().setHostedMcpTools("""
+                [{"server_label":"deepwiki","server_url":"https://mcp.deepwiki.com/mcp",
+                  "require_approval":"never","allowed_tools":["ask_question"],
+                  "headers":{"X-Api-Key":"secret"}}]""");
+
+        Exchange result = template.request(endpoint, e -> e.getIn().setBody("hosted-mcp"));
+
+        assertThat(result.getException()).isNull();
+        JsonNode tool = openAIMock.getLastRequest().bodyAsJson().path("tools").path(0);
+        assertThat(tool.path("type").asText()).isEqualTo("mcp");
+        assertThat(tool.path("server_label").asText()).isEqualTo("deepwiki");
+        assertThat(tool.path("server_url").asText()).isEqualTo("https://mcp.deepwiki.com/mcp");
+        assertThat(tool.path("require_approval").asText()).isEqualTo("never");
+        assertThat(tool.path("allowed_tools").toString()).isEqualTo("[\"ask_question\"]");
+        assertThat(tool.path("headers").path("X-Api-Key").asText()).isEqualTo("secret");
+    }
+
+    @Test
+    void hostedMcpToolsAcceptCamelCaseServerFields() {
+        OpenAIEndpoint endpoint = context.getEndpoint(responsesUri(), OpenAIEndpoint.class);
+        endpoint.getConfiguration().setHostedMcpTools("""
+                [{"serverLabel":"deepwiki","serverUrl":"https://mcp.deepwiki.com/mcp","serverDescription":"Docs"}]""");
+
+        Exchange result = template.request(endpoint, e -> e.getIn().setBody("hosted-mcp"));
+
+        assertThat(result.getException()).isNull();
+        JsonNode tool = openAIMock.getLastRequest().bodyAsJson().path("tools").path(0);
+        assertThat(tool.path("server_label").asText()).isEqualTo("deepwiki");
+        assertThat(tool.path("server_url").asText()).isEqualTo("https://mcp.deepwiki.com/mcp");
+        assertThat(tool.path("server_description").asText()).isEqualTo("Docs");
+    }
+
+    @Test
+    void pendingHostedMcpApprovalFailsTheExchange() {
+        Exchange result = template.request("direct:responses-basic", e -> e.getIn().setBody("approval-needed"));
+
+        assertThat(result.getException())
+                .hasMessageContaining("deepwiki/ask_question")
+                .hasMessageContaining("require_approval");
+    }
+
+    @Test
+    void developerMessageIsSentBeforeTheUserInput() {
+        Exchange result = template.request("direct:responses-basic", e -> {
+            e.getIn().setBody("hello-responses");
+            e.getIn().setHeader(OpenAIConstants.DEVELOPER_MESSAGE, "Answer in French");
+        });
+
+        assertThat(result.getException()).isNull();
+        JsonNode input = openAIMock.getLastRequest().bodyAsJson().path("input");
+        assertThat(input.path(0).path("role").asText()).isEqualTo("developer");
+        assertThat(input.path(0).path("content").asText()).isEqualTo("Answer in French");
+        assertThat(input.path(1).path("role").asText()).isEqualTo("user");
+        assertThat(input.path(1).path("content").asText()).isEqualTo("hello-responses");
+    }
+
+    @Test
+    void outputTextAnnotationsAreExposed() {
+        Exchange result = template.request("direct:responses-basic", e -> e.getIn().setBody("citations"));
+
+        assertThat(result.getException()).isNull();
+        List<?> annotations = result.getMessage().getHeader(OpenAIConstants.RESPONSE_ANNOTATIONS, List.class);
+        assertThat(annotations).singleElement().asString()
+                .contains("type=url_citation")
+                .contains("url=https://camel.apache.org");
+    }
+
+    @Test
+    void pdfBodyIsSentAsInputFile() {
+        byte[] pdf = { '%', 'P', 'D', 'F', '-', '1', '.', '4' };
+
+        Exchange result = template.request("direct:responses-basic", e -> {
+            e.getIn().setBody(pdf);
+            e.getIn().setHeader(OpenAIConstants.MEDIA_TYPE, "application/pdf");
+            e.getIn().setHeader(Exchange.FILE_NAME, "report.pdf");
+            e.getIn().setHeader(OpenAIConstants.USER_MESSAGE, "Summarize this document");
+        });
+
+        assertThat(result.getException()).isNull();
+        assertThat(result.getMessage().getBody(String.class)).isEqualTo("A short report");
+        JsonNode file = openAIMock.getLastRequest().bodyAsJson().path("input").path(0).path("content").path(1);
+        assertThat(file.path("type").asText()).isEqualTo("input_file");
+        assertThat(file.path("filename").asText()).isEqualTo("report.pdf");
+        assertThat(file.path("file_data").asText()).startsWith("data:application/pdf;base64,");
+    }
+
+    @Test
+    void conversationIdIsSent() {
+        Exchange result = template.request("direct:responses-basic", e -> {
+            e.getIn().setBody("hello-responses");
+            e.getIn().setHeader(OpenAIConstants.CONVERSATION_ID, "conv_123");
+        });
+
+        assertThat(result.getException()).isNull();
+        assertThat(openAIMock.getLastRequest().bodyAsJson().path("conversation").asText()).isEqualTo("conv_123");
+    }
+
+    @Test
+    void conversationMemoryChainsResponsesWithPreviousResponseId() {
+        Exchange result = template.request("direct:responses-memory", e -> e.getIn().setBody("hello-responses"));
+
+        assertThat(result.getException()).isNull();
+        assertThat(result.getMessage().getBody(String.class)).isEqualTo("Second turn answer");
+        String lastResponseId = result.getMessage().getHeader(OpenAIConstants.RESPONSE_ID, String.class);
+        assertThat(result.getProperty("CamelOpenAIConversationHistory", String.class)).isEqualTo(lastResponseId);
+
+        var requests = openAIMock.getReceivedRequests();
+        assertThat(requests).hasSize(2);
+        assertThat(requests.get(0).bodyAsJson().has("previous_response_id")).isFalse();
+        assertThat(requests.get(1).bodyAsJson().path("previous_response_id").asText())
+                .startsWith("resp_")
+                .isNotEqualTo(lastResponseId);
+    }
+
+    @Test
+    void routeToolsRunInTheToolLoop() {
+        Exchange result = template.request("direct:responses-route-tools", e -> e.getIn().setBody("weather-tool"));
+
+        assertThat(result.getException()).isNull();
+        assertThat(result.getMessage().getBody(String.class)).isEqualTo("It is sunny in Rome");
+        assertThat(result.getMessage().getHeader(OpenAIConstants.TOOL_ITERATIONS, Integer.class)).isEqualTo(1);
+        assertThat(result.getMessage().getHeader(OpenAIConstants.MCP_TOOL_CALLS, List.class)).containsExactly("get_weather");
+
+        var requests = openAIMock.getReceivedRequests();
+        assertThat(requests).hasSize(2);
+        assertThat(requests.get(0).bodyAsJson().path("tools").path(0).path("name").asText()).isEqualTo("get_weather");
+        JsonNode input = requests.get(1).bodyAsJson().path("input");
+        JsonNode toolOutput = input.path(input.size() - 1);
+        assertThat(toolOutput.path("type").asText()).isEqualTo("function_call_output");
+        assertThat(toolOutput.path("output").asText()).isEqualTo("Sunny in Rome");
+    }
+
+    @Test
+    void returnDirectRouteToolEndsTheToolLoop() {
+        Exchange result = template.request("direct:responses-return-direct", e -> e.getIn().setBody("order-tool"));
+
+        assertThat(result.getException()).isNull();
+        assertThat(result.getMessage().getBody(String.class)).isEqualTo("Order 42 shipped");
+        assertThat(result.getMessage().getHeader(OpenAIConstants.MCP_RETURN_DIRECT, Boolean.class)).isTrue();
+        assertThat(openAIMock.getReceivedRequests()).hasSize(1);
+    }
+
+    @Test
+    void functionCallsAreReturnedWhenAutoToolExecutionIsDisabled() {
+        Exchange result = template.request("direct:responses-manual-tools", e -> e.getIn().setBody("weather-tool"));
+
+        assertThat(result.getException()).isNull();
+        assertThat(result.getMessage().getBody(List.class)).singleElement().asString().contains("get_weather");
+        assertThat(openAIMock.getReceivedRequests()).hasSize(1);
+    }
+
+    @Test
+    void backgroundResponseIsQueued() {
+        Exchange result = template.request("direct:responses-background", e -> e.getIn().setBody("hello-responses"));
+
+        assertThat(result.getException()).isNull();
+        assertThat(result.getMessage().getBody(String.class)).isEmpty();
+        assertThat(result.getMessage().getHeader(OpenAIConstants.RESPONSE_STATUS, String.class)).isEqualTo("queued");
+        JsonNode request = openAIMock.getLastRequest().bodyAsJson();
+        assertThat(request.path("background").asBoolean()).isTrue();
+        assertThat(request.path("store").asBoolean()).isTrue();
+    }
+
+    @Test
+    void backgroundCannotRunTheToolLoop() {
+        Exchange result = template.request("direct:responses-background-tools", e -> e.getIn().setBody("weather-tool"));
+
+        assertThat(result.getException())
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessageContaining("background cannot be combined with automatic tool execution");
+        assertThat(openAIMock.getReceivedRequests()).isEmpty();
+    }
+
+    @Test
+    void backgroundResponseCanBeRetrieved() {
+        Exchange queued = template.request("direct:responses-background", e -> e.getIn().setBody("hello-responses"));
+        String id = queued.getMessage().getHeader(OpenAIConstants.RESPONSE_ID, String.class);
+
+        Exchange retrieved = template.request("direct:responses-retrieve",
+                e -> e.getIn().setHeader(OpenAIConstants.RESPONSE_ID, id));
+
+        assertThat(retrieved.getException()).isNull();
+        assertThat(retrieved.getMessage().getBody(String.class)).isEqualTo("Hi from responses mock");
+        assertThat(retrieved.getMessage().getHeader(OpenAIConstants.RESPONSE_STATUS, String.class)).isEqualTo("completed");
+        assertThat(openAIMock.getLastRequest().method()).isEqualTo("GET");
+        assertThat(openAIMock.getLastRequest().path()).isEqualTo("/v1/responses/" + id);
+    }
+
+    @Test
+    void backgroundResponseCanBeCancelled() {
+        Exchange queued = template.request("direct:responses-background", e -> e.getIn().setBody("hello-responses"));
+        String id = queued.getMessage().getHeader(OpenAIConstants.RESPONSE_ID, String.class);
+
+        Exchange cancelled = template.request("direct:responses-cancel",
+                e -> e.getIn().setHeader(OpenAIConstants.RESPONSE_ID, id));
+
+        assertThat(cancelled.getException()).isNull();
+        assertThat(cancelled.getMessage().getHeader(OpenAIConstants.RESPONSE_STATUS, String.class)).isEqualTo("cancelled");
+        assertThat(openAIMock.getLastRequest().path()).isEqualTo("/v1/responses/" + id + "/cancel");
+    }
+
+    @Test
+    void retrieveRequiresTheResponseId() {
+        Exchange result = template.request("direct:responses-retrieve", e -> e.getIn().setBody("no id"));
+
+        assertThat(result.getException())
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessageContaining(OpenAIConstants.RESPONSE_ID);
+    }
+
+    private String responsesUri() {
+        return "openai:responses?model=gpt-5&apiKey=dummy&baseUrl=" + openAIMock.getBaseUrl() + "/v1";
     }
 
     @Test
@@ -110,6 +391,7 @@ class OpenAIResponsesMockTest extends CamelTestSupport {
         assertThat(result.getException()).isNull();
         assertThat(result.getMessage().getBody(String.class)).isEqualTo("Hi from responses mock");
         assertThat(result.getMessage().getHeader(OpenAIConstants.RESPONSE_ID, String.class)).startsWith("resp_");
+        assertThat(result.getMessage().getHeader(OpenAIConstants.RESPONSE_MODEL, String.class)).isEqualTo("openai-mock");
         assertThat(result.getMessage().getHeader(OpenAIConstants.PROMPT_TOKENS, Long.class)).isEqualTo(10L);
         assertThat(result.getMessage().getHeader(OpenAIConstants.COMPLETION_TOKENS, Long.class)).isEqualTo(5L);
         assertThat(result.getMessage().getHeader(OpenAIConstants.TOTAL_TOKENS, Long.class)).isEqualTo(15L);

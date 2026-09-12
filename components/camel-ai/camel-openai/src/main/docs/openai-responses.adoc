@@ -4,12 +4,92 @@
 xref:ROOT:openai-component.adoc[Back to OpenAI Component]
 
 The `responses` operation calls the OpenAI Responses API (non-streaming). It supports the same text and image
-input ergonomics as `chat-completion`, maps `systemMessage` to API `instructions`, and exposes
+input ergonomics as `chat-completion` and also accepts PDF bodies, which are sent as `input_file` content together
+with the `userMessage` prompt. A PDF is recognized by the `CamelOpenAIMediaType` header, a content-type header or the
+`.pdf` file name. The operation maps `systemMessage` to API `instructions`, sends `developerMessage` /
+`CamelOpenAIDeveloperMessage` as a developer message before the user input, and exposes
 `CamelOpenAIResponseId` plus token usage headers. Use `previousResponseId` / `CamelOpenAIPreviousResponseId` for
-server-side conversation state.
+server-side conversation state, or `conversationId` / `CamelOpenAIConversationId` to run the request in a
+conversation created with the OpenAI Conversations API, which keeps its items across exchanges. The API does not
+accept both at once.
+
+With `conversationMemory=true`, the operation stores the id of each response in the exchange property named by
+`conversationHistoryProperty` and sends it as `previous_response_id` on the next `responses` call of the same exchange,
+unless a previous response id is set explicitly. The conversation itself stays on the server, so the server must store
+responses: OpenAI does by default, vLLM needs `VLLM_ENABLE_RESPONSES_API_STORE=1`, and Ollama does not support it.
+
+With `background=true` the request runs in the background on the server: the exchange completes as soon as the
+response is queued, with an empty body and the `CamelOpenAIResponseStatus` header set to `queued`. The response is
+stored under its `CamelOpenAIResponseId`. Background mode needs a server that stores responses and cannot be combined
+with automatic tool execution.
+
+The `responses-retrieve` operation retrieves a stored response, and `responses-cancel` cancels one that is still
+running. Both read the response id from the `CamelOpenAIResponseId` header and set the same headers as `responses`,
+including `CamelOpenAIResponseStatus`, with the answer text as body once the status is `completed`. The route below
+starts a background response and polls it until it is done:
+
+[tabs]
+====
+Java::
++
+[source,java]
+----
+from("direct:report")
+    .to("openai:responses?model=gpt-5&background=true")
+    .loopDoWhile(simple("${header.CamelOpenAIResponseStatus} in 'queued,in_progress'"))
+        .delay(5000)
+        .to("openai:responses-retrieve")
+    .end()
+    .log("${body}");
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:report
+      steps:
+        - to:
+            uri: openai:responses
+            parameters:
+              model: gpt-5
+              background: true
+        - loop:
+            doWhile: true
+            expression:
+              simple:
+                expression: "${header.CamelOpenAIResponseStatus} in 'queued,in_progress'"
+            steps:
+              - delay:
+                  expression:
+                    constant:
+                      expression: 5000
+              - to:
+                  uri: openai:responses-retrieve
+        - log:
+            message: "${body}"
+----
+====
 
 Hosted tools: set `builtinTools` to a comma-separated list (`web_search`, `file_search`, `code_interpreter`).
-`file_search` requires `fileSearchVectorStoreIds`. Pass hosted MCP tool definitions as JSON via `hostedMcpTools`.
+`file_search` requires `fileSearchVectorStoreIds`.
+
+The citations that `web_search` and `file_search` attach to the answer are exposed in the
+`CamelOpenAIResponseAnnotations` header as a list of maps, one per annotation, holding the API fields such as `type`,
+`url`, `title`, `file_id`, `start_index` and `end_index`. The header is not set when the answer has no annotations.
+
+Pass hosted MCP tools as a JSON array via `hostedMcpTools`. Each entry is sent as an OpenAI `mcp` tool with all its
+fields, such as `require_approval`, `allowed_tools`, `headers`, `authorization` and `connector_id`. The API asks for
+approval before every hosted MCP call unless `require_approval` is `never`. The operation cannot grant approvals, so a
+response waiting for one fails the exchange with a `CamelExchangeException` naming the pending calls. The option is
+marked secret because it can carry credentials.
+
+[source,json]
+----
+[{"server_label": "deepwiki", "server_url": "https://mcp.deepwiki.com/mcp", "require_approval": "never"}]
+----
 
 When `storeFullResponse=true`, the SDK `Response` object is stored on exchange property `CamelOpenAIResponsesResponse`.
 
@@ -68,4 +148,15 @@ YAML::
 
 Streaming is not supported on this operation; use `chat-completion` for streaming.
 
-Function tools wired to Camel routes are not yet supported on this operation.
+== Tools
+
+Like `chat-completion`, the operation exposes the tools of the MCP servers configured with `mcpServer.*` and the route
+tools discovered with `tags` to the model as function tools. When the model calls them, the operation runs the tool
+loop: it executes the calls, sends their results back together with the conversation so far, and repeats until the
+model answers or `maxToolIterations` is exceeded. `toolExecutionErrorStrategy`, `hallucinatedToolNameStrategy`,
+`parallelToolExecution` and tools returning directly behave as they do for `chat-completion`, and the
+`CamelOpenAIToolIterations`, `CamelOpenAIMcpToolCalls` and `CamelOpenAIMcpReturnDirect` headers report what the loop did.
+`maxAgenticTokens` and the agentic trace and events are only supported by `chat-completion`.
+
+With `autoToolExecution=false`, the model is not called again: the function calls it requested are returned as the
+message body, a `List` of `com.openai.models.responses.ResponseFunctionToolCall`, for the route to handle.

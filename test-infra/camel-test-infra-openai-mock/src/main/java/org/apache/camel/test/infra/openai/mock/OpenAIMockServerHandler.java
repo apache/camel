@@ -54,10 +54,12 @@ public class OpenAIMockServerHandler implements HttpHandler {
 
     @Override
     public void handle(HttpExchange exchange) throws IOException {
-        if ("POST".equalsIgnoreCase(exchange.getRequestMethod())) {
+        String path = exchange.getRequestURI().getPath();
+        // a stored Responses API response is retrieved with GET and cancelled with POST .../cancel
+        boolean storedResponse = path.contains("/responses/");
+        if ("POST".equalsIgnoreCase(exchange.getRequestMethod())
+                || storedResponse && "GET".equalsIgnoreCase(exchange.getRequestMethod())) {
             try {
-                String path = exchange.getRequestURI().getPath();
-
                 if (path.endsWith("/audio/speech")) {
                     speechRequestHandler.handleRequest(exchange);
                     return;
@@ -65,7 +67,9 @@ public class OpenAIMockServerHandler implements HttpHandler {
 
                 String response;
 
-                if (path.endsWith("/audio/transcriptions")) {
+                if (storedResponse) {
+                    response = responsesRequestHandler.handleStoredResponse(exchange);
+                } else if (path.endsWith("/audio/transcriptions")) {
                     response = audioTranscriptionRequestHandler.handleRequest(exchange);
                 } else if (path.endsWith("/audio/translations")) {
                     response = audioTranslationRequestHandler.handleRequest(exchange);
