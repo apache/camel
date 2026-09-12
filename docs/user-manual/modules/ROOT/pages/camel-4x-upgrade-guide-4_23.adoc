@@ -640,6 +640,19 @@ id being a dynamic top-level JSON key. Anything that parses this console's raw J
 (custom tooling, or scripts calling the dev console HTTP endpoint) must be updated to the new
 shape. The `camel get variable` CLI command has already been updated accordingly.
 
+=== camel-javascript
+
+The `js` language now shares one GraalJS `Engine` per language instance (a `Context` is still created per
+evaluation), so the engine is built when the `CamelContext` starts instead of on every evaluation.
+
+Values returned by a script are now converted to plain Java objects before the script's `Context` is closed. Previously
+a JavaScript object, array, `Map`, `Set` or `Date` came back as a polyglot `Value` bound to a `Context` that had already
+been closed, and reading it failed. A script now returns a `LinkedHashMap` for an object or a JavaScript `Map`, an
+`ArrayList` for an array, a `LinkedHashSet` for a `Set` and a `java.time.Instant` for a `Date`. Code that handled the
+polyglot `Value` itself needs to work with these types instead.
+
+`JavaScriptHelper.newContext()` is deprecated: contexts are created by the language from its shared engine.
+
 === camel-jbang
 
 The `--runtime` option of `camel run` has a new default value `jbang`, which is the existing in-process
