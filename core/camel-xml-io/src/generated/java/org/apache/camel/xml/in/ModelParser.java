@@ -1014,7 +1014,7 @@ public class ModelParser extends BaseParser {
                 case "defaultValue": def.setDefaultValue(val); yield true;
                 case "description": def.setDescription(val); yield true;
                 case "name": def.setName(val); yield true;
-                case "required": def.setRequired(Boolean.valueOf(val)); yield true;
+                case "required": def.setRequired(val); yield true;
                 default: yield false;
             }, noElementHandler(), noValueHandler());
     }
@@ -2531,7 +2531,7 @@ public class ModelParser extends BaseParser {
                 case "defaultValue": def.setDefaultValue(val); yield true;
                 case "description": def.setDescription(val); yield true;
                 case "name": def.setName(val); yield true;
-                case "required": def.setRequired(Boolean.valueOf(val)); yield true;
+                case "required": def.setRequired(val); yield true;
                 case "type": def.setType(RestParamType.valueOf(val)); yield true;
                 default: yield false;
             }, (def, key) -> switch (key) {

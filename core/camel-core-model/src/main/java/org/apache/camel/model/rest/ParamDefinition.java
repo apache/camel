@@ -59,9 +59,9 @@ public class ParamDefinition {
     @Metadata(description = "The default value of the parameter.")
     private String defaultValue;
     @XmlAttribute
-    @Metadata(description = "Sets the parameter required flag.",
+    @Metadata(description = "Sets the parameter required flag.", javaType = "java.lang.Boolean",
               defaultValue = "true")
-    private Boolean required;
+    private String required;
     @XmlAttribute
     @Metadata(description = "Sets the parameter collection format.",
               defaultValue = "csv")
@@ -125,11 +125,11 @@ public class ParamDefinition {
         this.defaultValue = defaultValue;
     }
 
-    public Boolean getRequired() {
-        return required != null ? required : true;
+    public String getRequired() {
+        return required != null ? required : "true";
     }
 
-    public void setRequired(Boolean required) {
+    public void setRequired(String required) {
         this.required = required;
     }
 
@@ -211,6 +211,16 @@ public class ParamDefinition {
      * Whether the parameter is required
      */
     public ParamDefinition required(Boolean required) {
+        setRequired(required != null ? required.toString() : null);
+        return this;
+    }
+
+    /**
+     * Whether the parameter is required.
+     * <p>
+     * The value can be a property placeholder, which is resolved when the route starts.
+     */
+    public ParamDefinition required(String required) {
         setRequired(required);
         return this;
     }

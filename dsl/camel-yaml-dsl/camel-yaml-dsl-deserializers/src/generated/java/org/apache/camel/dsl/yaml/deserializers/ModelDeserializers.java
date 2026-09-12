@@ -11610,7 +11610,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                 }
                 case "required": {
                     String val = asText(node);
-                    target.setRequired(java.lang.Boolean.valueOf(val));
+                    target.setRequired(val);
                     break;
                 }
                 case "type": {
@@ -15771,7 +15771,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                 }
                 case "required": {
                     String val = asText(node);
-                    target.setRequired(java.lang.Boolean.valueOf(val));
+                    target.setRequired(val);
                     break;
                 }
                 default: {

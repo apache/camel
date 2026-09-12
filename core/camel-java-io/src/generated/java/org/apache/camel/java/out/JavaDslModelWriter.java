@@ -2471,7 +2471,7 @@ public class JavaDslModelWriter extends JavaDslModelWriterSupport {
     protected void doWriteRouteTemplateParameterDefinition(StringBuilder sb, RouteTemplateParameterDefinition def) {
         doWriteAttribute(sb, "description", def.getDescription(), null);
         doWriteAttribute(sb, "name", def.getName(), null);
-        doWriteAttribute(sb, "required", toString(def.getRequired()), null);
+        doWriteAttribute(sb, "required", def.getRequired(), null);
         doWriteAttribute(sb, "defaultValue", def.getDefaultValue(), null);
     }
     protected void doWriteRouteTemplatesDefinition(StringBuilder sb, RouteTemplatesDefinition def) {
@@ -3754,7 +3754,7 @@ public class JavaDslModelWriter extends JavaDslModelWriterSupport {
         doWriteAttribute(sb, "name", def.getName(), null);
         doWriteAttribute(sb, "type", toString(def.getType()), "path");
         doWriteAttribute(sb, "defaultValue", def.getDefaultValue(), null);
-        doWriteAttribute(sb, "required", toString(def.getRequired()), "true");
+        doWriteAttribute(sb, "required", def.getRequired(), "true");
         doWriteAttribute(sb, "collectionFormat", toString(def.getCollectionFormat()), "csv");
         doWriteAttribute(sb, "arrayType", def.getArrayType(), "string");
         doWriteAttribute(sb, "dataType", def.getDataType(), "string");
