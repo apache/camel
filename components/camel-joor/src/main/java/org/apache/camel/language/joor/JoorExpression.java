@@ -22,12 +22,13 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
 import org.apache.camel.ExpressionEvaluationException;
 import org.apache.camel.support.ExpressionAdapter;
+import org.apache.camel.support.ScriptHelper;
 
 public class JoorExpression extends ExpressionAdapter {
 
     private final String text;
     private JoorCompiler compiler;
-    private JoorMethod method;
+    private volatile JoorMethod method;
 
     private Class<?> resultType;
     private boolean preCompile = true;
@@ -78,7 +79,13 @@ public class JoorExpression extends ExpressionAdapter {
     public Object evaluate(Exchange exchange) {
         JoorMethod target = this.method;
         if (target == null) {
-            target = compiler.compile(exchange.getContext(), text, singleQuotes);
+            if (ScriptHelper.hasExternalScript(text)) {
+                // preCompile=false with an external resource means hot re-load: recompile on every message
+                target = compiler.compile(exchange.getContext(), text, singleQuotes);
+            } else {
+                // inline script text cannot change, so compile it once lazily and keep it
+                target = compileOnce(exchange.getContext());
+            }
         }
         // optimize as we call the same method all the time so we dont want to find the method every time as joor would do
         // if you use its call method
@@ -96,6 +103,20 @@ public class JoorExpression extends ExpressionAdapter {
         } else {
             return out;
         }
+    }
+
+    private JoorMethod compileOnce(CamelContext context) {
+        JoorMethod target = this.method;
+        if (target == null) {
+            synchronized (this) {
+                target = this.method;
+                if (target == null) {
+                    target = compiler.compile(context, text, singleQuotes);
+                    this.method = target;
+                }
+            }
+        }
+        return target;
     }
 
     @Override
