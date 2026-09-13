@@ -75,7 +75,6 @@ final class BeanRefChecks {
         return types;
     }
 
-    /** The interface an option's bean must implement, for the options where a wrong class is a common mistake. */
     /**
      * Without a catalog: the options whose bean must implement an interface, and which (a subset of the EIP models).
      */
