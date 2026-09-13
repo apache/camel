@@ -74,6 +74,33 @@ public class EvalLanguageDevConsoleTest extends AbstractDevConsoleTest {
     }
 
     @Test
+    public void testEvalResolvesPropertyPlaceholders() {
+        DevConsole con = assertConsoleExists("eval-language", "camel");
+        context.getPropertiesComponent().addInitialProperty("myThreshold", "30");
+
+        JsonObject out = callJson(con, Map.of(
+                "language", "simple",
+                "template", "{{myThreshold}}",
+                "body", ""));
+        Assertions.assertEquals("success", out.getString("status"));
+        Assertions.assertEquals("30", out.getString("result"));
+
+        out = callJson(con, Map.of(
+                "language", "simple",
+                "template", "${body} >= {{myThreshold}}",
+                "predicate", "true",
+                "body", "42"));
+        Assertions.assertEquals("success", out.getString("status"));
+        Assertions.assertEquals("true", out.getString("result"));
+
+        out = callJson(con, Map.of(
+                "language", "simple",
+                "template", "{{unknownKey}}",
+                "body", ""));
+        Assertions.assertEquals("failed", out.getString("status"));
+    }
+
+    @Test
     public void testEvalPredicate() {
         DevConsole con = assertConsoleExists("eval-language", "camel");
 
