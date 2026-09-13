@@ -184,7 +184,7 @@ public class GenerateYamlDeserializersMojo extends GenerateYamlSupportMojo {
                                 .addStatement("ExpressionDefinition answer = constructExpressionType(key, val)")
                                 .beginControlFlow("if (answer == null)")
                                 .addStatement(
-                                        "throw new org.apache.camel.dsl.yaml.common.exception.InvalidExpressionException(node, \"Unknown expression with id: \" + key)")
+                                        "throw new org.apache.camel.dsl.yaml.common.exception.InvalidExpressionException(node, \"Unknown expression with id: \" + key + (\"bean\".equals(key) ? \" (the bean language is written as method: {ref: myBean, method: process})\" : \"\"))")
                                 .endControlFlow()
                                 .addStatement("return answer")
                                 .build())
@@ -295,6 +295,19 @@ public class GenerateYamlDeserializersMojo extends GenerateYamlSupportMojo {
                                         .addAnnotation(Override.class)
                                         .addParameter(Node.class, "node")
                                         .returns(Object.class)
+                                        // CAMEL-24702: a plain value (handled: true) must say what is expected instead
+                                        .beginControlFlow("if (!(node instanceof $T))",
+                                                ClassName.get("org.snakeyaml.engine.v2.nodes", "MappingNode"))
+                                        .addStatement(
+                                                "String text = node instanceof $T ? asText(node) : node.getNodeType().name().toLowerCase()",
+                                                ClassName.get("org.snakeyaml.engine.v2.nodes", "ScalarNode"))
+                                        .addStatement("throw new $T(node, $S + text + $S + text + $S)",
+                                                ClassName.get("org.apache.camel.dsl.yaml.common.exception",
+                                                        "InvalidExpressionException"),
+                                                "an expression is expected here, not a plain value (",
+                                                "): write constant: \"",
+                                                "\" for a fixed value, or simple: \"...\" for a dynamic one")
+                                        .endControlFlow()
                                         .addStatement("$T val = constructExpressionType(node)", CN_EXPRESSION_DEFINITION)
                                         .addStatement("return new org.apache.camel.model.ExpressionSubElementDefinition(val)")
                                         .build())

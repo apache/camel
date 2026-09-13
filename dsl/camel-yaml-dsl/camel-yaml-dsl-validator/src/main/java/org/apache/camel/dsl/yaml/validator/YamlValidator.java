@@ -118,6 +118,7 @@ public class YamlValidator {
     private List<Error> validate(JsonNode target) {
         var errors = filterOneOfNoise(new ArrayList<>(schema.validate(target)));
         errors.removeIf(YamlValidator::isRuntimeAcceptedScalar);
+        errors = withExpressionHints(errors);
         if (canonical) {
             checkOneOfCardinality(target, new NodePath(PathType.JSON_POINTER), errors);
         }
@@ -351,8 +352,8 @@ public class YamlValidator {
      * <li>a quoted scalar that parses as the expected type (e.g. {@code parallelProcessing: "true"}) - the runtime
      * converts the text.</li>
      * </ul>
-     * Everything else stays strict: unknown properties, structure (a map where a list is expected), enums, and
-     * strings that do not parse as the expected type.
+     * Everything else stays strict: unknown properties, structure (a map where a list is expected), enums, and strings
+     * that do not parse as the expected type.
      * <p>
      * This assumes the runtime defers the conversion for every scalar attribute the schema exposes. The few model
      * attributes that are still converted while deserializing (so a placeholder is never resolved for them) are not
@@ -382,6 +383,54 @@ public class YamlValidator {
         // the runtime converts any scalar to text, so a number or boolean is fine wherever a string is expected
         return (instance.isNumber() || instance.isBoolean()) && isExpectedType(error, "string");
     }
+
+    /**
+     * Replaces the schema's "boolean found, object expected" for a plain value at an option that takes an expression
+     * (such as {@code handled: true} on onException, or {@code completionSizeExpression: 10} on aggregate) with a
+     * message that shows the expression form, and drops the duplicates the schema composition produces for it.
+     */
+    static List<Error> withExpressionHints(List<Error> errors) {
+        List<Error> answer = new ArrayList<>(errors.size());
+        Set<String> seen = new LinkedHashSet<>();
+        for (Error error : errors) {
+            Error hinted = withExpressionHint(error);
+            if (hinted == error || seen.add(hinted.getInstanceLocation() + " " + hinted.getMessage())) {
+                answer.add(hinted);
+            }
+        }
+        return answer;
+    }
+
+    static Error withExpressionHint(Error error) {
+        if (!"type".equals(error.getKeyword())) {
+            return error;
+        }
+        JsonNode instance = error.getInstanceNode();
+        if (instance == null || !instance.isValueNode()) {
+            return error;
+        }
+        String schemaLocation = String.valueOf(error.getSchemaLocation());
+        String evaluationPath = String.valueOf(error.getEvaluationPath());
+        if (!schemaLocation.contains(EXPRESSION_SUB_ELEMENT) && !evaluationPath.contains(EXPRESSION_SUB_ELEMENT)) {
+            return error;
+        }
+        String location = String.valueOf(error.getInstanceLocation());
+        String name = location.substring(location.lastIndexOf('/') + 1);
+        String value = instance.asText();
+        String message = String.format(
+                "a plain value (%s) found, an expression expected: write %s: {constant: \"%s\"} for a fixed value, or %s: {simple: \"...\"} for a dynamic one",
+                value, name, value, name);
+        // the message is not a MessageFormat pattern (it contains braces), so pass it as the single argument
+        return Error.builder()
+                .keyword("type")
+                .instanceLocation(error.getInstanceLocation())
+                .messageKey("expression")
+                .format(new MessageFormat("{0}"))
+                .arguments(message)
+                .build();
+    }
+
+    private static final String EXPRESSION_SUB_ELEMENT = "ExpressionSubElementDefinition";
 
     private static boolean isBooleanText(String text) {
         String s = text.trim();
