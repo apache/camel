@@ -39,6 +39,7 @@ public abstract class DefaultConfigurationProperties<T> {
     @Metadata(defaultValue = "Default", enums = "Verbose,Default,Brief,Oneline,Off")
     private StartupSummaryLevel startupSummaryLevel;
     private int durationMaxSeconds;
+    private String duration;
     private int durationMaxIdleSeconds;
     private int durationMaxMessages;
     @Metadata(defaultValue = "shutdown", enums = "shutdown,stop")
@@ -231,6 +232,28 @@ public abstract class DefaultConfigurationProperties<T> {
      */
     public void setDurationMaxSeconds(int durationMaxSeconds) {
         this.durationMaxSeconds = durationMaxSeconds;
+    }
+
+    public String getDuration() {
+        return duration;
+    }
+
+    /**
+     * For how long to keep running before automatic terminating the JVM, as a duration with a time unit such as 15s, 2m
+     * or 1h (a plain number is seconds). An alias of durationMaxSeconds that accepts a unit.
+     */
+    public void setDuration(String duration) {
+        this.duration = duration;
+        if (duration != null && !duration.isBlank()) {
+            String text = duration.trim();
+            if (text.matches("\\d+")) {
+                // a plain number is seconds, as durationMaxSeconds
+                this.durationMaxSeconds = Integer.parseInt(text);
+            } else {
+                long millis = org.apache.camel.util.TimeUtils.toMilliSeconds(text);
+                this.durationMaxSeconds = (int) Math.max(1, (millis + 999) / 1000);
+            }
+        }
     }
 
     public int getDurationMaxIdleSeconds() {
@@ -1822,6 +1845,15 @@ public abstract class DefaultConfigurationProperties<T> {
      */
     public T withProfile(String profile) {
         this.profile = profile;
+        return (T) this;
+    }
+
+    /**
+     * For how long to keep running before automatic terminating the JVM, as a duration with a time unit such as 15s, 2m
+     * or 1h (a plain number is seconds). An alias of durationMaxSeconds that accepts a unit.
+     */
+    public T withDuration(String duration) {
+        setDuration(duration);
         return (T) this;
     }
 

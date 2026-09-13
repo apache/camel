@@ -19,7 +19,7 @@ The following tables lists all the options:
 
 // main options: START
 === Camel Main configurations
-The camel.main supports 130 options, which are listed below.
+The camel.main supports 131 options, which are listed below.
 
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
@@ -56,6 +56,7 @@ The camel.main supports 130 options, which are listed below.
 | `camel.main.dumpRoutesOutput` | Whether to save route dumps to an output file. If the output is a filename, then all content is saved to this file. If the output is a directory name, then one or more files are saved to the directory, where the names are based on the original source file names, or auto generated names. |  | String
 | `camel.main.dumpRoutesResolvePlaceholders` | Whether to resolve property placeholders in the dumped output. Default is true. | true | boolean
 | `camel.main.dumpRoutesUriAsParameters` | When dumping routes to YAML format, then this option controls whether endpoint URIs should be expanded into a key/value parameters. | false | boolean
+| `camel.main.duration` | For how long to keep running before automatic terminating the JVM, as a duration with a time unit such as 15s, 2m or 1h (a plain number is seconds). An alias of durationMaxSeconds that accepts a unit. |  | String
 | `camel.main.durationHitExitCode` | Sets the exit code for the application if duration was hit |  | int
 | `camel.main.durationMaxAction` | Controls whether the Camel application should shutdown the JVM, or stop all routes, when duration max is triggered. | shutdown | String
 | `camel.main.durationMaxIdleSeconds` | To specify for how long time in seconds Camel can be idle before automatic terminating the JVM. You can use this to run Camel for a short while. |  | int
