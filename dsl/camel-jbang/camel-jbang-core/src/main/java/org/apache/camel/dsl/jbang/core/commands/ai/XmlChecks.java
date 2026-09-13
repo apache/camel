@@ -51,6 +51,15 @@ final class XmlChecks {
         if (factory == null) {
             factory = javax.xml.transform.TransformerFactory.newInstance();
         }
+        // compile only: no external DTD or imported stylesheet is fetched (the parse path disallows DTDs the same way)
+        for (String attribute : new String[] {
+                javax.xml.XMLConstants.ACCESS_EXTERNAL_DTD, javax.xml.XMLConstants.ACCESS_EXTERNAL_STYLESHEET }) {
+            try {
+                factory.setAttribute(attribute, "");
+            } catch (IllegalArgumentException e) {
+                // a factory that does not know the attribute
+            }
+        }
         List<String> collected = new ArrayList<>();
         javax.xml.transform.ErrorListener listener = new javax.xml.transform.ErrorListener() {
             @Override
