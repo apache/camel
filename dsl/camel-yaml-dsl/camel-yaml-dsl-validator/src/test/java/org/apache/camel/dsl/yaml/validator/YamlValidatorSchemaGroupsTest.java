@@ -51,27 +51,37 @@ public class YamlValidatorSchemaGroupsTest {
     }
 
     @Test
-    public void testRequiredAlternativeIsExcludedFromNotBranch() {
-        // resequence and setHeaders entries have a required expression; with the "expression:" wrapper the
-        // "not" branch of the group must not match as well, so it has to list "expression" too
+    public void testRequiredExpressionHasNoNotBranch() {
+        // CAMEL-24707: the expression is required on the expression nodes, so their oneOf has no "not" branch (one
+        // alternative must match); sort is the one node whose expression is optional and keeps the branch
         for (String name : List.of("org.apache.camel.model.ResequenceDefinition",
-                "org.apache.camel.model.PropertyExpressionDefinition")) {
-            JsonNode group = definitions.path(name).path("anyOf").get(0).path("oneOf");
-            JsonNode not = null;
+                "org.apache.camel.model.PropertyExpressionDefinition", "org.apache.camel.model.SplitDefinition",
+                "org.apache.camel.model.SetBodyDefinition", "org.apache.camel.model.WhenDefinition")) {
+            JsonNode group = expressionGroup(definitions.path(name));
+            Assertions.assertNotNull(group, name + " should have an expression oneOf group");
             for (JsonNode branch : group) {
-                if (branch.has("not")) {
-                    not = branch.path("not").path("anyOf");
-                }
+                Assertions.assertFalse(branch.has("not"), name + " must not have a not branch");
             }
-            Assertions.assertNotNull(not, name + " should have a not branch");
-            boolean excluded = false;
-            for (JsonNode entry : not) {
-                if (entry.path("required").toString().contains("\"expression\"")) {
-                    excluded = true;
-                }
-            }
-            Assertions.assertTrue(excluded, name + " not branch should exclude expression");
         }
+        JsonNode sort = expressionGroup(definitions.path("org.apache.camel.model.SortDefinition"));
+        boolean sortHasNot = false;
+        for (JsonNode branch : sort) {
+            sortHasNot |= branch.has("not");
+        }
+        Assertions.assertTrue(sortHasNot, "sort keeps the not branch: its expression is optional");
+    }
+
+    private static JsonNode expressionGroup(JsonNode definition) {
+        for (JsonNode any : definition.path("anyOf")) {
+            if (any.has("oneOf")) {
+                for (JsonNode branch : any.path("oneOf")) {
+                    if (branch.path("required").toString().contains("\"expression\"")) {
+                        return any.path("oneOf");
+                    }
+                }
+            }
+        }
+        return null;
     }
 
     @Test
