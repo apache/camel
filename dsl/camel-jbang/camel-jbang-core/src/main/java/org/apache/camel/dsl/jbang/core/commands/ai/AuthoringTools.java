@@ -98,6 +98,20 @@ public final class AuthoringTools {
                             integer(args, "limit", 10)).toJson();
                 }));
 
+        registry.accept(tool("camel_catalog_sample",
+                "A validated YAML DSL sample of an EIP or file entry (onException, aggregate, split, rest, beans) from "
+                                                     + "the docs, with where it goes (a top-level entry or a step). Use before "
+                                                     + "writing an EIP the first time or after a 'not defined in the schema' error.")
+                .param("name", "string", "EIP or entry name, or what to do (read file, call service, retry, batch)", true)
+                .param("limit", "integer", "Maximum samples to return (default 2, max 5)", false)
+                .param("camelVersion", "string", VERSION_DESC, false)
+                .core(true)
+                .executor((ctx, args) -> {
+                    applyVersion(ctx, args);
+                    return CatalogSamples.sample(ctx.catalog(), args.get("name"),
+                            integer(args, "limit", CatalogSamples.DEFAULT_LIMIT));
+                }));
+
         registry.accept(tool("camel_validate_source",
                 "Validates Camel YAML DSL or .properties source without writing: schema (misspelled options such as "
                                                       + "logLevel instead of loggingLevel), endpoint URIs, simple expressions, "

@@ -71,7 +71,8 @@ class AuthoringToolsTest {
     void theSharedSetHasNeutralNamesAndFlags() {
         List<ToolDescriptor> shared = ToolRegistry.authoringTools();
         List<String> names = shared.stream().map(ToolDescriptor::name).toList();
-        assertEquals(List.of("camel_catalog_doc", "camel_catalog_find", "camel_validate_source", "camel_get_files",
+        assertEquals(List.of("camel_catalog_doc", "camel_catalog_find", "camel_catalog_sample", "camel_validate_source",
+                "camel_get_files",
                 "camel_write_file", "camel_run", "camel_control", "camel_get_log", "camel_get_errors",
                 "camel_eval_expression", "camel_error_diagnose"), names);
         for (ToolDescriptor td : shared) {
@@ -83,7 +84,8 @@ class AuthoringToolsTest {
         for (String mutating : List.of("camel_write_file", "camel_run", "camel_control")) {
             assertFalse(ToolRegistry.findTool(mutating).isReadOnly(), mutating);
         }
-        for (String reading : List.of("camel_catalog_doc", "camel_get_files", "camel_get_log", "camel_get_errors",
+        for (String reading : List.of("camel_catalog_doc", "camel_catalog_sample", "camel_get_files", "camel_get_log",
+                "camel_get_errors",
                 "camel_eval_expression", "camel_error_diagnose", "camel_validate_source")) {
             assertTrue(ToolRegistry.findTool(reading).isReadOnly(), reading);
         }
