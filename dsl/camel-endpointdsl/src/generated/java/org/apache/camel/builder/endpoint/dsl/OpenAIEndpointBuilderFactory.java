@@ -2714,6 +2714,20 @@ public interface OpenAIEndpointBuilderFactory {
             return "CamelOpenAIModerationModel";
         }
         /**
+         * Text to moderate together with an image body, such as the caption the
+         * image was posted with. The text and the image are scored as one input
+         * and share a single verdict. Ignored when the body is not an image.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code OpenAIModerationText}.
+         */
+        public String openAIModerationText() {
+            return "CamelOpenAIModerationText";
+        }
+        /**
          * Whether the moderation API flagged the input as violating the usage
          * policies. For a batch of inputs this is true when at least one input
          * was flagged.
@@ -2729,8 +2743,10 @@ public interface OpenAIEndpointBuilderFactory {
         }
         /**
          * One verdict per moderated input, in the order of the inputs. Each
-         * entry holds the keys 'input', 'flagged', 'categories' and
-         * 'categoryScores', so a batch can be split and routed per item.
+         * entry holds the keys 'input', 'flagged', 'categories',
+         * 'categoryScores' and, when the provider reports it,
+         * 'categoryAppliedInputTypes', so a batch can be split and routed per
+         * item.
          * 
          * The option is a: {@code java.util.List<java.util.Map<String,
          * Object>>} type.

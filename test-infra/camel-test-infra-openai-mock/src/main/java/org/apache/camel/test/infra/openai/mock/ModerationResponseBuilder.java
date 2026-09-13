@@ -46,6 +46,14 @@ public class ModerationResponseBuilder {
      */
     private static final List<String> ILLICIT_CATEGORIES = List.of("illicit", "illicit/violent");
 
+    /**
+     * The categories the {@code omni-moderation-*} models also score for image input.
+     */
+    private static final List<String> IMAGE_CATEGORIES = List.of(
+            "self-harm", "self-harm/instructions", "self-harm/intent",
+            "sexual",
+            "violence", "violence/graphic");
+
     private final ObjectMapper objectMapper;
 
     public ModerationResponseBuilder(ObjectMapper objectMapper) {
@@ -94,12 +102,22 @@ public class ModerationResponseBuilder {
     }
 
     /**
-     * The real API reports which input modality triggered each category. The mock only ever moderates text.
+     * The real API reports, per category, the input types the score was computed from. Images are only scored for a
+     * subset of the categories, so a category that does not support images reports an empty list for an image sent
+     * without text.
      */
     private Map<String, List<String>> categoryAppliedInputTypes(ModerationExpectation expectation) {
+        boolean text = !expectation.isImageExpected() || expectation.getExpectedInput() != null;
         Map<String, List<String>> appliedInputTypes = new LinkedHashMap<>();
         for (String category : categories(expectation).keySet()) {
-            appliedInputTypes.put(category, List.of("text"));
+            List<String> inputTypes = new ArrayList<>(2);
+            if (text) {
+                inputTypes.add("text");
+            }
+            if (expectation.isImageExpected() && IMAGE_CATEGORIES.contains(category)) {
+                inputTypes.add("image");
+            }
+            appliedInputTypes.put(category, inputTypes);
         }
         return appliedInputTypes;
     }

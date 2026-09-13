@@ -1790,6 +1790,13 @@ so a downstream reader that expected that type received an incompatible object.
 A route that reads the full embeddings or audio response from `CamelOpenAIResponse` must switch to the
 matching property. The chat-completion, responses, moderation and image operations are unchanged.
 
+The `moderation` operation now sends an image body to the multi-modal input of the moderation API. A `File`,
+`Path`, `WrappedFile`, `byte[]` or `InputStream` body whose detected MIME type is an image type was previously
+converted to a `String` and moderated as text; it is now moderated as an image, which needs a moderation model
+that accepts images, such as the default `omni-moderation-latest`. A list body containing an image file now fails
+with an `IllegalArgumentException` instead of moderating the file content as text; split the list to moderate
+each image on its own.
+
 === camel-infinispan
 
 The `CamelInfinispanOperationResult` header is deprecated. It has not been set or read by the component

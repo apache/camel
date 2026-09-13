@@ -209,6 +209,34 @@ public class OpenAIMockBuilder {
     }
 
     /**
+     * Expects an image moderated on its own, sent as multi-modal input.
+     */
+    public OpenAIMockBuilder whenImageModeration() {
+        return whenImageModeration(null);
+    }
+
+    /**
+     * Expects an image moderated together with the given text, sent as one multi-modal input.
+     *
+     * @param expectedText the text part of the request, or {@code null} for an image sent without text
+     */
+    public OpenAIMockBuilder whenImageModeration(String expectedText) {
+        log.debug("Setting up image moderation expectation with text: {}", expectedText);
+        currentModerationExpectation = new ModerationExpectation(expectedText, true);
+        return this;
+    }
+
+    /**
+     * Asserts the {@code image_url} of the matching image moderation request, typically the data URL built from the
+     * message body.
+     */
+    public OpenAIMockBuilder assertModerationImageUrl(Consumer<String> imageUrlAssertion) {
+        validateCurrentModerationExpectation("assertModerationImageUrl()");
+        currentModerationExpectation.setImageUrlAssertion(imageUrlAssertion);
+        return this;
+    }
+
+    /**
      * Replies with a verdict that violates no category.
      */
     public OpenAIMockBuilder replyWithModerationAllowed() {

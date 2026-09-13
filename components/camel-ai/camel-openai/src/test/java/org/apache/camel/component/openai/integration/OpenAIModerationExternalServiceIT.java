@@ -16,6 +16,15 @@
  */
 package org.apache.camel.component.openai.integration;
 
+import java.awt.Color;
+import java.awt.Graphics2D;
+import java.awt.image.BufferedImage;
+import java.io.ByteArrayOutputStream;
+import java.util.List;
+import java.util.Map;
+
+import javax.imageio.ImageIO;
+
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.openai.OpenAIConstants;
@@ -51,5 +60,43 @@ public class OpenAIModerationExternalServiceIT extends OpenAIExternalServiceTest
         assertThat(result.getMessage().getBody(String.class)).isEqualTo(input);
         assertThat(result.getMessage().getHeader(OpenAIConstants.MODERATION_FLAGGED, Boolean.class)).isNotNull();
         assertThat(result.getMessage().getHeader(OpenAIConstants.MODERATION_RESPONSE_MODEL, String.class)).isNotBlank();
+    }
+
+    @Test
+    void imageAndTextShareOneVerdict() throws Exception {
+        byte[] image = bluePng();
+        Exchange result = template.request("direct:moderate", exchange -> {
+            exchange.getIn().setBody(image);
+            exchange.getIn().setHeader(OpenAIConstants.MEDIA_TYPE, "image/png");
+            exchange.getIn().setHeader(OpenAIConstants.MODERATION_TEXT, "A plain blue square.");
+        });
+
+        assertThat(result.getException())
+                .as("The configured moderation model must accept image input, for example omni-moderation-latest")
+                .isNull();
+        assertThat(result.getMessage().getBody()).isSameAs(image);
+        assertThat(result.getMessage().getHeader(OpenAIConstants.MODERATION_FLAGGED, Boolean.class)).isFalse();
+
+        @SuppressWarnings("unchecked")
+        List<Map<String, Object>> verdicts
+                = result.getMessage().getHeader(OpenAIConstants.MODERATION_RESULTS, List.class);
+        assertThat(verdicts).hasSize(1);
+
+        @SuppressWarnings("unchecked")
+        Map<String, List<String>> inputTypes = (Map<String, List<String>>) verdicts.get(0)
+                .get(OpenAIConstants.MODERATION_RESULT_CATEGORY_APPLIED_INPUT_TYPES);
+        assertThat(inputTypes.get("violence")).contains("text", "image");
+        assertThat(inputTypes.get("hate")).containsExactly("text");
+    }
+
+    private static byte[] bluePng() throws Exception {
+        BufferedImage image = new BufferedImage(64, 64, BufferedImage.TYPE_INT_RGB);
+        Graphics2D graphics = image.createGraphics();
+        graphics.setColor(Color.BLUE);
+        graphics.fillRect(0, 0, 64, 64);
+        graphics.dispose();
+        ByteArrayOutputStream out = new ByteArrayOutputStream();
+        ImageIO.write(image, "png", out);
+        return out.toByteArray();
     }
 }

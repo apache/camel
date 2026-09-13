@@ -144,6 +144,11 @@ public final class OpenAIConstants {
     // Moderation Input Headers
     @Metadata(description = "The model to use for moderation (e.g., omni-moderation-latest)", javaType = "String")
     public static final String MODERATION_MODEL = "CamelOpenAIModerationModel";
+    @Metadata(description = "Text to moderate together with an image body, such as the caption the image was posted "
+                            + "with. The text and the image are scored as one input and share a single verdict. "
+                            + "Ignored when the body is not an image",
+              javaType = "String")
+    public static final String MODERATION_TEXT = "CamelOpenAIModerationText";
 
     // Moderation Output Headers
     @Metadata(description = "Whether the moderation API flagged the input as violating the usage policies. "
@@ -151,8 +156,8 @@ public final class OpenAIConstants {
               javaType = "Boolean")
     public static final String MODERATION_FLAGGED = "CamelOpenAIModerationFlagged";
     @Metadata(description = "One verdict per moderated input, in the order of the inputs. Each entry holds the keys "
-                            + "'input', 'flagged', 'categories' and 'categoryScores', so a batch can be split and "
-                            + "routed per item",
+                            + "'input', 'flagged', 'categories', 'categoryScores' and, when the provider reports it, "
+                            + "'categoryAppliedInputTypes', so a batch can be split and routed per item",
               javaType = "java.util.List<java.util.Map<String, Object>>")
     public static final String MODERATION_RESULTS = "CamelOpenAIModerationResults";
     @Metadata(description = "The moderation categories and whether each one was violated, for a single input. "
@@ -169,6 +174,7 @@ public final class OpenAIConstants {
     public static final String MODERATION_RESULT_FLAGGED = "flagged";
     public static final String MODERATION_RESULT_CATEGORIES = "categories";
     public static final String MODERATION_RESULT_CATEGORY_SCORES = "categoryScores";
+    public static final String MODERATION_RESULT_CATEGORY_APPLIED_INPUT_TYPES = "categoryAppliedInputTypes";
     @Metadata(description = "The moderation model used in the response", javaType = "String")
     public static final String MODERATION_RESPONSE_MODEL = "CamelOpenAIModerationResponseModel";
 

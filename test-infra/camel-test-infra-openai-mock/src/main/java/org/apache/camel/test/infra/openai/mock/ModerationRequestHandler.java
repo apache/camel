@@ -24,6 +24,7 @@ import java.util.List;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.sun.net.httpserver.HttpExchange;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -53,16 +54,23 @@ public class ModerationRequestHandler {
             LOG.debug("Processing moderation request: {}", requestBody);
 
             JsonNode rootNode = objectMapper.readTree(requestBody);
-            List<String> inputs = extractInputs(rootNode);
             String requestedModel = extractModel(rootNode);
 
-            List<ModerationExpectation> matchedExpectations = new ArrayList<>(inputs.size());
-            for (String input : inputs) {
-                matchedExpectations.add(findExpectationByInput(input));
+            List<ModerationExpectation> matchedExpectations;
+            JsonNode inputNode = rootNode.get("input");
+            if (inputNode != null && inputNode.isArray() && !inputNode.isEmpty() && inputNode.get(0).isObject()) {
+                matchedExpectations = List.of(findExpectationByMultiModalInput(inputNode));
+            } else {
+                List<String> inputs = extractInputs(rootNode);
+                matchedExpectations = new ArrayList<>(inputs.size());
+                for (String input : inputs) {
+                    matchedExpectations.add(findExpectationByInput(input));
+                }
             }
 
             return responseBuilder.createModerationResponse(matchedExpectations, requestedModel);
-        } catch (Exception e) {
+        } catch (Exception | AssertionError e) {
+            // a failed request assertion must answer the client, which otherwise waits for its read timeout
             String errorMessage = "Error processing moderation request: " + e.getMessage();
             LOG.error(errorMessage, e);
             return createErrorResponse(500, errorMessage, exchange);
@@ -97,6 +105,38 @@ public class ModerationRequestHandler {
         return inputs;
     }
 
+    /**
+     * The API scores a multi-modal input as a whole and replies with a single result, whatever the number of parts, so
+     * the whole array is matched against one expectation.
+     */
+    private ModerationExpectation findExpectationByMultiModalInput(JsonNode inputNode) {
+        List<String> texts = new ArrayList<>();
+        List<String> imageUrls = new ArrayList<>();
+        for (JsonNode part : inputNode) {
+            String type = part.path("type").asText();
+            if ("text".equals(type)) {
+                texts.add(part.path("text").asText());
+            } else if ("image_url".equals(type)) {
+                imageUrls.add(part.path("image_url").path("url").asText());
+            } else {
+                throw new IllegalArgumentException("Unsupported multi-modal moderation input type: " + type);
+            }
+        }
+
+        String text = texts.isEmpty() ? null : String.join("\n", texts);
+        ModerationExpectation expectation = expectations.stream()
+                .filter(candidate -> candidate.matchesMultiModal(text, !imageUrls.isEmpty()))
+                .findFirst()
+                .orElseThrow(() -> new IllegalStateException(
+                        String.format("No matching moderation expectation found for multi-modal input: text=%s, images=%d",
+                                text, imageUrls.size())));
+
+        if (expectation.getImageUrlAssertion() != null && !imageUrls.isEmpty()) {
+            expectation.getImageUrlAssertion().accept(imageUrls.get(0));
+        }
+        return expectation;
+    }
+
     private ModerationExpectation findExpectationByInput(String input) {
         return expectations.stream()
                 .filter(expectation -> expectation.matches(input))
@@ -106,10 +146,12 @@ public class ModerationRequestHandler {
     }
 
     private String createErrorResponse(int statusCode, String errorMessage, HttpExchange exchange) {
-        String jsonErrorMessage = String.format("{\"error\": {\"message\": \"%s\", \"type\": \"invalid_request_error\"}}",
-                errorMessage);
+        ObjectNode root = objectMapper.createObjectNode();
+        // assertion messages carry quotes and line breaks, so the payload is serialized rather than formatted
+        root.putObject("error").put("message", errorMessage).put("type", "invalid_request_error");
+        String jsonErrorMessage = root.toString();
         try {
-            exchange.sendResponseHeaders(statusCode, jsonErrorMessage.length());
+            exchange.sendResponseHeaders(statusCode, jsonErrorMessage.getBytes().length);
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
