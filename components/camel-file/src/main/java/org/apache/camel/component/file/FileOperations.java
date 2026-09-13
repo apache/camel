@@ -458,9 +458,9 @@ public class FileOperations implements GenericFileOperations<File> {
             }
         } else {
             throw new GenericFileOperationFailedException(
-                    "Cannot write null body to file: " + file + " (to: file: writes the message body to the file; to read"
-                                                          + " a file in the middle of a route use poll: file:... or"
-                                                          + " pollEnrich, and set the body with setBody before writing)");
+                    "Cannot write null body to file (to: file: writes the message body to the file; to read a file in the"
+                                                          + " middle of a route use poll: file:... or pollEnrich, and set"
+                                                          + " the body with setBody before writing): " + file);
         }
     }
 
