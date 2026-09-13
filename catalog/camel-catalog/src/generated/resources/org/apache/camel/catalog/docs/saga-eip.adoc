@@ -673,10 +673,9 @@ Notice the listing below is not using the `Long-Running-Action` header at all.
         - saga:
             propagation: SUPPORTS
             option:
-              key: CreditId
-              expression:
-                simple:
-                  expression: "${body}"
+              - key: CreditId
+                expression:
+                  simple: "${body}"
             compensation: direct:creditRefund
         - bean:
             ref: creditService
