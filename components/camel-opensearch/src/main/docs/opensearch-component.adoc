@@ -70,7 +70,7 @@ You can set the name of the target index by setting the message header with the 
 |`DeleteIndex` |`String` or `DeleteIndexRequest.Builder` index name of the index to delete |Deletes the specified indexName and returns a status code in the body.
 You can set the name of the target index by setting the message header with the key "indexName".
 
-|`Bulk` `Iterable` or `BulkRequest.Builder` of any type that is already accepted (DeleteOperation.Builder for delete operation, UpdateOperation.Builder for update operation, CreateOperation.Builder for create operation, byte[], InputStream, String, Reader, Map or any document type for index operation) | Adds/Updates/Deletes content from/to an index and returns a List<BulkResponseItem> object in the body
+|`Bulk` |`Iterable` or `BulkRequest.Builder` of any type that is already accepted (DeleteOperation.Builder for delete operation, UpdateOperation.Builder for update operation, CreateOperation.Builder for create operation, byte[], InputStream, String, Reader, Map or any document type for index operation) | Adds/Updates/Deletes content from/to an index and returns a List<BulkResponseItem> object in the body
 You can set the name of the target index by setting the message header with the key "indexName".
 
 |`Search` |`Map`, `String` or `SearchRequest.Builder` |Search the content with the map of query string.
