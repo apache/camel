@@ -385,6 +385,20 @@ class SourceValidatorEndpointTest {
     }
 
     @Test
+    void aTimerExchangePropertyUsedAsAHeaderIsNamed() {
+        // TimerConsumer sets the counter, name, period and time as exchange properties; only the fired time is a header
+        List<String> msgs = SourceValidator.validateKnownHeaders("""
+                - from:
+                    uri: "timer:tick?period=1000"
+                    steps:
+                      - log: "${header.CamelTimerCounter} ${header.CamelTimerFiredTime} ${exchangeProperty.CamelTimerName}"
+                """, catalog);
+        assertThat(msgs).hasSize(1);
+        assertThat(msgs.get(0)).contains("CamelTimerCounter is an exchange property set by timer, not a header")
+                .contains("${exchangeProperty.CamelTimerCounter}");
+    }
+
+    @Test
     void aProducerOnlyComponentInFromIsNamed() {
         List<String> msgs = SourceValidator.validateYamlEndpoints("""
                 - from:

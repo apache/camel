@@ -49,6 +49,13 @@ final class HeaderChecks {
      * the value is null at runtime. Checked against the header metadata of every component the file names, with the
      * closest real name.
      */
+    /**
+     * Names a component sets as exchange properties, not headers; the catalog has no metadata for those, so the ones a
+     * beginner reaches for are listed here (TimerConsumer sets them with setProperty).
+     */
+    static final Map<String, List<String>> EXCHANGE_PROPERTIES = Map.of(
+            "timer", List.of("CamelTimerCounter", "CamelTimerName", "CamelTimerPeriod", "CamelTimerTime"));
+
     public static List<String> validateKnownHeaders(String content, CamelCatalog catalog) {
         List<String> msgs = new ArrayList<>();
         if (content == null || catalog == null) {
@@ -94,7 +101,23 @@ final class HeaderChecks {
             Matcher m = CAMEL_HEADER_REF_PATTERN.matcher(lines[i]);
             while (m.find()) {
                 String name = m.group(1);
-                if (known.contains(name) || common.contains(name) || !reported.add(name)) {
+                if (common.contains(name) || reported.contains(name)) {
+                    continue;
+                }
+                String propertyOwner = null;
+                for (String scheme : schemes) {
+                    if (EXCHANGE_PROPERTIES.getOrDefault(scheme, List.of()).contains(name)) {
+                        propertyOwner = scheme;
+                    }
+                }
+                if (propertyOwner != null) {
+                    // before the header metadata: an exchange property is never a header, whatever the metadata says
+                    reported.add(name);
+                    msgs.add("Line " + (i + 1) + ": " + name + " is an exchange property set by " + propertyOwner
+                             + ", not a header (the header would be null): write ${exchangeProperty." + name + "}");
+                    continue;
+                }
+                if (known.contains(name) || !reported.add(name)) {
                     continue;
                 }
                 String best = closestName(name, new ArrayList<>(known));
