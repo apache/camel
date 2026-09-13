@@ -634,4 +634,11 @@ public class YamlValidatorPropertyHintTest {
         assertThat(errors.get(0).getMessage()).contains("//SOURCES is read as text by YAML")
                 .contains("# //SOURCES MyBean.java").doesNotContain("--dep");
     }
+
+    @Test
+    void aMissingFileIsOneError() throws Exception {
+        List<Error> errors = new YamlValidator().validate(new java.io.File("no-such-file.camel.yaml"));
+        assertThat(errors).hasSize(1);
+        assertThat(errors.get(0).getMessage()).contains("no-such-file.camel.yaml");
+    }
 }

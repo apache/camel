@@ -93,7 +93,14 @@ public class YamlValidator {
 
     public List<Error> validate(File file) throws Exception {
         // the same checks as for content, so the CLI and the tools report the same
-        return validate(java.nio.file.Files.readString(file.toPath()));
+        String content;
+        try {
+            content = java.nio.file.Files.readString(file.toPath());
+        } catch (java.io.IOException e) {
+            // a missing or unreadable file is one error, not an exception (the CLI prints the report)
+            return List.of(parseError(e));
+        }
+        return validate(content);
     }
 
     public List<Error> validate(String content) throws Exception {
