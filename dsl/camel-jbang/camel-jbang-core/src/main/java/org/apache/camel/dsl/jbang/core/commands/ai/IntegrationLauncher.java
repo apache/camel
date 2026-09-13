@@ -127,9 +127,11 @@ public final class IntegrationLauncher {
         return result;
     }
 
-    /** File extensions {@code camel run} loads from a project directory, as {@code camel run *} would pass them. */
-    private static final List<String> SOURCE_EXTENSIONS
-            = List.of(".yaml", ".yml", ".xml", ".java", ".groovy", ".kts", ".js", ".jsh", ".properties");
+    /**
+     * File extensions {@code camel run} loads from a project directory, as {@code camel run *} would pass them: the
+     * three DSLs (see {@code SourceHelper.ACCEPTED_FILE_EXT}) and the properties files.
+     */
+    private static final List<String> SOURCE_EXTENSIONS = List.of(".yaml", ".yml", ".xml", ".java", ".properties");
 
     /**
      * The source files {@code camel run} should load from a directory when the caller names none: the regular,
