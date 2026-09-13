@@ -1890,3 +1890,32 @@ Documents carrying an internal DTD subset still parse.
 To restore the previous behaviour and allow external entity resolution, set the new
 `allowExternalEntities` option to `true` on the data format or on the endpoint
 (`smooks:config.xml?allowExternalEntities=true`).
+
+=== camel-core - the required attribute on rest param and route template parameter is now a String
+
+`ParamDefinition.required` (the rest DSL `param`) and `RouteTemplateParameterDefinition.required`
+(the `templateParameter` of a route template) are now declared as `String` instead of `Boolean`, the
+same way nearly every other scalar attribute in the Camel model is declared. This allows a property
+placeholder to be used, which is resolved when the route starts:
+
+[source,yaml]
+----
+- route:
+    templateParameters:
+      - name: greeting
+        required: "{{myRequiredFlag}}"
+----
+
+Before this change the value was converted to a `Boolean` while the route was being loaded, so
+`required: "{{myRequiredFlag}}"` silently evaluated to `false` instead of resolving the placeholder.
+
+The accessors changed accordingly:
+
+* `ParamDefinition.getRequired()` and `setRequired(...)` now use `String` instead of `Boolean`.
+* `RouteTemplateParameterDefinition.getRequired()` and `setRequired(...)` now use `String` instead of
+  `Boolean`. `isRequired()` is unchanged and still returns `boolean`, but it does not resolve property
+  placeholders — use `CamelContextHelper.parseBoolean(camelContext, getRequired())` where a
+  `CamelContext` is available.
+
+The fluent builder `ParamDefinition.required(Boolean)` is unchanged, and a `required(String)` overload
+was added for placeholders. Routes written in XML, YAML or the Java DSL do not need any change.

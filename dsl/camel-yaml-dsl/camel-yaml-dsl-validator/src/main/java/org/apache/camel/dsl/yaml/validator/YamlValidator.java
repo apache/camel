@@ -117,6 +117,7 @@ public class YamlValidator {
 
     private List<Error> validate(JsonNode target) {
         var errors = filterOneOfNoise(new ArrayList<>(schema.validate(target)));
+        errors.removeIf(YamlValidator::isRuntimeAcceptedScalar);
         if (canonical) {
             checkOneOfCardinality(target, new NodePath(PathType.JSON_POINTER), errors);
         }
@@ -336,6 +337,90 @@ public class YamlValidator {
         return groups;
     }
 
+    /**
+     * Whether the schema rejected a scalar that the Camel runtime accepts, in which case the error is dropped.
+     * <p>
+     * Camel's model declares nearly every scalar attribute as a {@code String} field carrying the real type in
+     * {@code @Metadata(javaType = ...)}, so that property placeholders can be used and the text is converted when the
+     * route starts. The generated schema keeps the real type because tooling (Kaoto forms, TUI completion, catalog
+     * docs) relies on it, which makes the schema stricter than the runtime in two ways:
+     * <ul>
+     * <li>a property placeholder at a typed attribute - the runtime resolves it before converting;</li>
+     * <li>a number or boolean at a string-typed attribute (e.g. a {@code duration}) - the runtime converts any scalar
+     * to text;</li>
+     * <li>a quoted scalar that parses as the expected type (e.g. {@code parallelProcessing: "true"}) - the runtime
+     * converts the text.</li>
+     * </ul>
+     * Everything else stays strict: unknown properties, structure (a map where a list is expected), enums, and
+     * strings that do not parse as the expected type.
+     * <p>
+     * This assumes the runtime defers the conversion for every scalar attribute the schema exposes. The few model
+     * attributes that are still converted while deserializing (so a placeholder is never resolved for them) are not
+     * reachable from the schema today - see CAMEL-24696 before exposing one of them.
+     */
+    static boolean isRuntimeAcceptedScalar(Error error) {
+        if (!"type".equals(error.getKeyword())) {
+            return false;
+        }
+        JsonNode instance = error.getInstanceNode();
+        if (instance == null) {
+            return false;
+        }
+        if (instance.isTextual()) {
+            String text = instance.asText();
+            if (hasPropertyPlaceholder(text)) {
+                return true;
+            }
+            if (isExpectedType(error, "boolean")) {
+                return isBooleanText(text);
+            }
+            if (isExpectedType(error, "integer") || isExpectedType(error, "number")) {
+                return isNumberText(text);
+            }
+            return false;
+        }
+        // the runtime converts any scalar to text, so a number or boolean is fine wherever a string is expected
+        return (instance.isNumber() || instance.isBoolean()) && isExpectedType(error, "string");
+    }
+
+    private static boolean isBooleanText(String text) {
+        String s = text.trim();
+        return "true".equalsIgnoreCase(s) || "false".equalsIgnoreCase(s);
+    }
+
+    private static boolean isNumberText(String text) {
+        try {
+            Double.parseDouble(text.trim());
+            return true;
+        } catch (NumberFormatException e) {
+            return false;
+        }
+    }
+
+    private static boolean hasPropertyPlaceholder(String text) {
+        int start = text.indexOf("{{");
+        return start >= 0 && text.indexOf("}}", start + 2) > start;
+    }
+
+    private static boolean isExpectedType(Error error, String type) {
+        JsonNode schemaNode = error.getSchemaNode();
+        if (schemaNode == null) {
+            return false;
+        }
+        if (schemaNode.isTextual()) {
+            return type.equals(schemaNode.asText());
+        }
+        // "type" may also be declared as an array of accepted types
+        if (schemaNode.isArray()) {
+            for (JsonNode t : schemaNode) {
+                if (type.equals(t.asText())) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
     private static Error parseError(Exception e) {
         String msg = e.getClass().getName() + ": " + e.getMessage();
         return Error.builder()
@@ -349,6 +434,9 @@ public class YamlValidator {
         String location = canonical ? LOCATION_CANONICAL : LOCATION;
         var model = mapper.readTree(YamlValidator.class.getResourceAsStream(location));
         var version = getSpecificationVersion(model).orElse(SpecificationVersion.DRAFT_4);
+        // no typeLoose: besides accepting quoted scalars it also accepts a single value where the schema expects a
+        // list (steps: written as a map), which the runtime rejects. The scalar leniency the runtime has is done as
+        // a filter on the reported errors instead, see isRuntimeAcceptedScalar.
         var config = SchemaRegistryConfig.builder().locale(Locale.ENGLISH).build();
 
         // Register "deprecated" as a known non-validation keyword to suppress warnings

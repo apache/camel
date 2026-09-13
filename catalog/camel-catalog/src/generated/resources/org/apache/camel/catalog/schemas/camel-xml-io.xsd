@@ -12006,7 +12006,7 @@ The name of the template parameter.
         </xs:documentation>
       </xs:annotation>
     </xs:attribute>
-    <xs:attribute name="required" type="xs:boolean">
+    <xs:attribute name="required" type="xs:string">
       <xs:annotation>
         <xs:documentation xml:lang="en">
 <![CDATA[
@@ -15136,7 +15136,7 @@ The default value of the parameter.
         </xs:documentation>
       </xs:annotation>
     </xs:attribute>
-    <xs:attribute name="required" type="xs:boolean">
+    <xs:attribute name="required" type="xs:string">
       <xs:annotation>
         <xs:documentation xml:lang="en">
 <![CDATA[

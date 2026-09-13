@@ -1670,7 +1670,7 @@ public class YamlModelWriter extends YamlModelWriterSupport {
         JsonObject jo = new JsonObject();
         doWriteAttribute(jo, "description", def.getDescription(), null);
         doWriteAttribute(jo, "name", def.getName(), null);
-        doWriteAttribute(jo, "required", toString(def.getRequired()), null);
+        doWriteAttribute(jo, "required", def.getRequired(), null);
         doWriteAttribute(jo, "defaultValue", def.getDefaultValue(), null);
         return jo;
     }
@@ -3273,7 +3273,7 @@ public class YamlModelWriter extends YamlModelWriterSupport {
         doWriteAttribute(jo, "name", def.getName(), null);
         doWriteAttribute(jo, "type", toString(def.getType()), "path");
         doWriteAttribute(jo, "defaultValue", def.getDefaultValue(), null);
-        doWriteAttribute(jo, "required", toString(def.getRequired()), "true");
+        doWriteAttribute(jo, "required", def.getRequired(), "true");
         doWriteAttribute(jo, "collectionFormat", toString(def.getCollectionFormat()), "csv");
         doWriteAttribute(jo, "arrayType", def.getArrayType(), "string");
         doWriteAttribute(jo, "dataType", def.getDataType(), "string");

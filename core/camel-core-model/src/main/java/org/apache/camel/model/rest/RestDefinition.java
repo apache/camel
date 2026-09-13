@@ -1201,7 +1201,7 @@ public class RestDefinition extends OptionalIdentifiedDefinition<RestDefinition>
                     binding.addAllowedValue(name, parseText(camelContext, param.getAllowableValuesAsCommaString()));
                 }
                 // register which parameters are required
-                Boolean required = param.getRequired();
+                Boolean required = parseBoolean(camelContext, param.getRequired());
                 if (required != null && required) {
                     if (RestParamType.query == type) {
                         binding.addRequiredQueryParameter(name);

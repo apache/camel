@@ -429,7 +429,7 @@ public abstract class JavaDslModelWriterSupport {
     private void writeTemplateParameter(StringBuilder sb, RouteTemplateParameterDefinition param) {
         boolean hasDefault = param.getDefaultValue() != null;
         boolean hasDescription = param.getDescription() != null;
-        boolean isOptional = Boolean.FALSE.equals(param.getRequired());
+        boolean isOptional = "false".equalsIgnoreCase(param.getRequired());
 
         if (isOptional && !hasDefault) {
             sb.append(NL).append(indent()).append(".templateOptionalParameter(").append(quote(param.getName()));
