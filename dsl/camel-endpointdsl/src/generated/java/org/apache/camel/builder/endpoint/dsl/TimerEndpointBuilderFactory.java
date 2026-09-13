@@ -588,55 +588,6 @@ public interface TimerEndpointBuilderFactory {
             return "CamelTimerFiredTime";
         }
         /**
-         * The counter of the timer, starting at 1 for the first fire and
-         * incremented on each fire.
-         * 
-         * The option is a: {@code long} type.
-         * 
-         * Group: consumer
-         * 
-         * @return the name of the header {@code TimerCounter}.
-         */
-        public String timerCounter() {
-            return "CamelTimerCounter";
-        }
-        /**
-         * The name of the timer.
-         * 
-         * The option is a: {@code String} type.
-         * 
-         * Group: consumer
-         * 
-         * @return the name of the header {@code TimerName}.
-         */
-        public String timerName() {
-            return "CamelTimerName";
-        }
-        /**
-         * The period of the timer in millis.
-         * 
-         * The option is a: {@code long} type.
-         * 
-         * Group: consumer
-         * 
-         * @return the name of the header {@code TimerPeriod}.
-         */
-        public String timerPeriod() {
-            return "CamelTimerPeriod";
-        }
-        /**
-         * The time the timer was scheduled to fire (its trigger time).
-         * 
-         * The option is a: {@code Date} type.
-         * 
-         * Group: consumer
-         * 
-         * @return the name of the header {@code TimerTime}.
-         */
-        public String timerTime() {
-            return "CamelTimerTime";
-        }
-        /**
          * The timestamp of the message.
          * 
          * The option is a: {@code long} type.
