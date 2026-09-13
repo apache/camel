@@ -47,7 +47,7 @@ See xref:others:openai-responses.adoc[Responses API operation] for usage (`previ
 * `audio-transcription` - Transcribe audio files to text using speech-to-text models (e.g., Whisper, GPT-4o Transcribe)
 * `audio-translation` - Transcribe and translate audio files into English text (e.g., Whisper)
 * `audio-speech` - Synthesize spoken audio from text using text-to-speech models (e.g., gpt-4o-mini-tts, tts-1)
-* `moderation` - Check text against the OpenAI usage policies before it reaches a model
+* `moderation` - Check text or an image against the OpenAI usage policies before it reaches a model
 * `image-generation` - Generate images from a text prompt (e.g., gpt-image-1, gpt-image-1-mini)
 * `image-edit` - Edit an existing image, optionally through a mask, from a text prompt
 
@@ -1297,7 +1297,7 @@ The component may throw the following exceptions:
   ** When image file is provided without userMessage (chat-completion)
   ** When unsupported file type is provided (only text and image files are supported)
   ** When invalid JSON schema string is provided
-  ** When the moderation input list is empty or contains null elements (moderation)
+  ** When the moderation input list is empty, contains null elements, or contains an image file (moderation)
   ** When the image model is missing (image-generation, image-edit)
   ** When the prompt is missing (image-generation, image-edit) or the image list is empty (image-edit)
   ** When an unsupported image or mask body type is provided (image-edit)

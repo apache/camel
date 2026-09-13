@@ -18,6 +18,8 @@ package org.apache.camel.test.infra.openai.mock;
 
 import java.util.LinkedHashMap;
 import java.util.Map;
+import java.util.Objects;
+import java.util.function.Consumer;
 
 /**
  * Represents a mock expectation for a moderation request. Contains the expected input text and the moderation verdict
@@ -27,19 +29,46 @@ public class ModerationExpectation {
     private static final String DEFAULT_MODEL = "camel-moderation";
 
     private final String expectedInput;
+    private final boolean imageExpected;
     private final Map<String, Boolean> flaggedCategories = new LinkedHashMap<>();
     private final Map<String, Double> categoryScores = new LinkedHashMap<>();
     private boolean flagged;
     private boolean illicitCategoriesIncluded = true;
     private boolean resultOmitted;
     private String model = DEFAULT_MODEL;
+    private Consumer<String> imageUrlAssertion;
 
     public ModerationExpectation(String expectedInput) {
+        this(expectedInput, false);
+    }
+
+    /**
+     * @param expectedInput the text expected in the request, or {@code null} for an image moderated on its own
+     * @param imageExpected whether the request is expected to carry an image as multi-modal input
+     */
+    public ModerationExpectation(String expectedInput, boolean imageExpected) {
         this.expectedInput = expectedInput;
+        this.imageExpected = imageExpected;
     }
 
     public String getExpectedInput() {
         return expectedInput;
+    }
+
+    public boolean isImageExpected() {
+        return imageExpected;
+    }
+
+    public Consumer<String> getImageUrlAssertion() {
+        return imageUrlAssertion;
+    }
+
+    /**
+     * Runs against the {@code image_url} of a matching multi-modal request, for example to check the data URL built
+     * from the message body.
+     */
+    public void setImageUrlAssertion(Consumer<String> imageUrlAssertion) {
+        this.imageUrlAssertion = imageUrlAssertion;
     }
 
     public boolean isFlagged() {
@@ -109,12 +138,19 @@ public class ModerationExpectation {
     }
 
     public boolean matches(String input) {
-        return expectedInput.equals(input);
+        return !imageExpected && Objects.equals(expectedInput, input);
+    }
+
+    /**
+     * Matches a multi-modal request by its text part, which is {@code null} when the image is sent without text.
+     */
+    public boolean matchesMultiModal(String text, boolean hasImage) {
+        return imageExpected == hasImage && Objects.equals(expectedInput, text);
     }
 
     @Override
     public String toString() {
-        return String.format("ModerationExpectation{input='%s', flagged=%b, categories=%s, model='%s'}",
-                expectedInput, flagged, flaggedCategories.keySet(), model);
+        return String.format("ModerationExpectation{input='%s', image=%b, flagged=%b, categories=%s, model='%s'}",
+                expectedInput, imageExpected, flagged, flaggedCategories.keySet(), model);
     }
 }

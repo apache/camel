@@ -190,7 +190,7 @@ final class OpenAIImageSupport {
         return null;
     }
 
-    private static String fileNameOfBody(Object body) {
+    static String fileNameOfBody(Object body) {
         Object source = body instanceof WrappedFile<?> wrappedFile ? wrappedFile.getFile() : body;
         if (source instanceof File file) {
             return file.getName();

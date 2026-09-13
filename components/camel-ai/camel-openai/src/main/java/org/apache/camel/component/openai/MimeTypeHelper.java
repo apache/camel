@@ -105,7 +105,7 @@ final class MimeTypeHelper {
         return semicolon > 0 ? value.substring(0, semicolon).trim() : value.trim();
     }
 
-    private static String fromFileName(String fileName) {
+    static String fromFileName(String fileName) {
         String mime = org.apache.camel.util.MimeTypeHelper.probeMimeType(fileName);
         if (mime == null) {
             // markdown is not in the camel-util MIME type table
