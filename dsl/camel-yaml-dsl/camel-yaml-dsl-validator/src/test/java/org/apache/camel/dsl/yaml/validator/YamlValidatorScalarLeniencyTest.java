@@ -195,6 +195,9 @@ public class YamlValidatorScalarLeniencyTest {
                       steps:
                         - %s:
                             %s
+                            expression:
+                              tokenize:
+                                token: ","
                             steps:
                               - log:
                                   message: "${body}"

@@ -92,37 +92,391 @@ public class YamlValidator {
     }
 
     public List<Error> validate(File file) throws Exception {
-        if (schema == null) {
-            init();
-        }
-        try {
-            var target = mapper.readTree(file);
-            return validate(target);
-        } catch (Exception e) {
-            return List.of(parseError(e));
-        }
+        // the same checks as for content, so the CLI and the tools report the same
+        return validate(java.nio.file.Files.readString(file.toPath()));
     }
 
     public List<Error> validate(String content) throws Exception {
         if (schema == null) {
             init();
         }
+        Error extra = extraDocument(content);
+        if (extra != null) {
+            return List.of(extra);
+        }
+        Error deps = jbangDirective(content);
+        if (deps != null) {
+            return List.of(deps);
+        }
+        if (content == null || content.isBlank() || content.lines().allMatch(l -> l.isBlank() || l.trim().startsWith("#"))) {
+            return List.of(Error.builder().messageKey("empty").format(new MessageFormat("{0}"))
+                    .arguments("the file has no YAML: a Camel YAML file is a list of entries, each starting with \"- \":"
+                               + " - route:, - from:, - beans:, - rest:, - onException:")
+                    .build());
+        }
         try {
             var target = mapper.readTree(content);
             return validate(target);
         } catch (Exception e) {
-            return List.of(parseError(e));
+            return List.of(parseError(e, content));
         }
+    }
+
+    private static final java.util.regex.Pattern LINE_COLUMN
+            = java.util.regex.Pattern.compile("line:? (\\d+), column:? (\\d+)");
+
+    /**
+     * A YAML parse error whose line is a line of text at column 1 after the routes (an explanation appended to the
+     * file, or a markdown fence) says so; the parser's "while scanning a simple key" does not.
+     */
+    static Error parseError(Exception e, String content) {
+        Error plain = parseError(e);
+        String msg = e.getMessage();
+        if (msg == null || content == null) {
+            return plain;
+        }
+        // the message names several positions (the collection being parsed, then the token that broke it); the
+        // problem is at the last one
+        String[] lines = content.split("\n", -1);
+        int line = -1;
+        String text = null;
+        java.util.regex.Matcher m = LINE_COLUMN.matcher(msg);
+        while (m.find()) {
+            int l = Integer.parseInt(m.group(1));
+            if (!"1".equals(m.group(2)) || l < 2 || l > lines.length) {
+                continue;
+            }
+            String t = lines[l - 1].trim();
+            if (t.isEmpty() || t.startsWith("-") || t.startsWith("#") || t.startsWith("%")) {
+                continue;
+            }
+            line = l;
+            text = t;
+        }
+        if (text == null) {
+            // a value that continues after its closing quote: message: ">>> " + exchange.getIn().getBody()
+            java.util.regex.Matcher any = LINE_COLUMN.matcher(msg);
+            int last = -1;
+            while (any.find()) {
+                last = Integer.parseInt(any.group(1));
+            }
+            if (last >= 1 && last <= lines.length) {
+                String t = lines[last - 1];
+                java.util.regex.Matcher q
+                        = java.util.regex.Pattern.compile(":\\s*(\"(?:[^\"\\\\]|\\\\.)*\"|'[^']*')\\s*\\S").matcher(t);
+                if (q.find()) {
+                    String key = t.trim().contains(":") ? t.trim().substring(0, t.trim().indexOf(':')) : "the value";
+                    return Error.builder()
+                            .messageKey("parser")
+                            .format(new MessageFormat("{0}"))
+                            .arguments("line " + last + ": the value of " + key + " continues after its closing quote"
+                                       + " (\"...\" + ...): a YAML value is one string, there is no concatenation; a"
+                                       + " log message is a simple expression, write it as one quoted text such as"
+                                       + " \">>> ${body}\"")
+                            .build();
+                }
+            }
+            return plain;
+        }
+        String cleaned = msg.replace("\n", " ").replaceAll("\\s+", " ").trim();
+        int cut = cleaned.indexOf("in 'reader'");
+        String head = cut > 0 ? cleaned.substring(0, cut).trim() : cleaned;
+        return Error.builder()
+                .messageKey("parser")
+                .format(new MessageFormat("{0}"))
+                .arguments("line " + line + " is not YAML (\"" + (text.length() > 40 ? text.substring(0, 40) + "..." : text)
+                           + "\"): a route file holds only the YAML, put explanations in a # comment or leave them out"
+                           + " (" + head + ")")
+                .build();
+    }
+
+    /**
+     * {@code //DEPS org.apache.camel:camel-groovy} at the top of a YAML file: JBang's Java directive, which YAML reads
+     * as a plain string so the whole file becomes one scalar ("string found, array expected"). Name it, and say what a
+     * YAML file uses instead.
+     */
+    static Error jbangDirective(String content) {
+        if (content == null) {
+            return null;
+        }
+        String[] lines = content.split("\n", -1);
+        for (int i = 0; i < lines.length; i++) {
+            String t = lines[i].trim();
+            if (t.isEmpty() || t.startsWith("#")) {
+                continue;
+            }
+            if (t.startsWith("//DEPS") || t.startsWith("//JAVA") || t.startsWith("//SOURCES") || t.startsWith("//")) {
+                return Error.builder()
+                        .messageKey("jbang")
+                        .format(new MessageFormat("{0}"))
+                        .arguments("line " + (i + 1) + ": " + t.split("\\s+")[0] + " is read as text by YAML, so the whole"
+                                   + " file becomes one string; write it as a YAML comment: # " + t
+                                   + " (camel-jbang reads //DEPS inside comments), or add the dependency with --dep or"
+                                   + " camel.jbang.dependencies in application.properties")
+                        .build();
+            }
+            break;
+        }
+        return null;
+    }
+
+    /**
+     * A Camel YAML file is one YAML document. The YAML parser used here reads the first document and ignores what
+     * follows a {@code ---} separator (often an explanation the author appended), while the runtime rejects the file
+     * with "expected a single document in the stream"; so it is reported here, with the line of the separator.
+     */
+    static Error extraDocument(String content) {
+        if (content == null) {
+            return null;
+        }
+        String[] lines = content.split("\n", -1);
+        boolean seenContent = false;
+        for (int i = 0; i < lines.length; i++) {
+            String t = lines[i].trim();
+            if (t.equals("---") || t.equals("...")) {
+                if (seenContent) {
+                    return Error.builder()
+                            .messageKey("document")
+                            .format(new MessageFormat("{0}"))
+                            .arguments("line " + (i + 1) + ": the file has more than one YAML document (a " + t
+                                       + " separator): a Camel YAML file is one document, remove the " + t
+                                       + " and everything after it")
+                            .build();
+                }
+            } else if (!t.isEmpty() && !t.startsWith("#") && !t.startsWith("%")) {
+                seenContent = true;
+            }
+        }
+        return null;
     }
 
     private List<Error> validate(JsonNode target) {
         var errors = filterOneOfNoise(new ArrayList<>(schema.validate(target)));
         errors.removeIf(YamlValidator::isRuntimeAcceptedScalar);
         errors = withExpressionHints(errors);
+        errors = withPropertyHints(errors);
+        errors = withListHints(errors);
+        errors = withStepHints(errors);
+        // CAMEL-24707: the schema requires the expression, so a node without one fails its oneOf with "0 are valid"
+        // plus one "required property <language> not found" per language; replace that with one line that says
+        // what to write, at the node's own location
+        List<Error> missing = new ArrayList<>();
+        checkRequiredExpressions(target, new NodePath(PathType.JSON_POINTER), missing);
+        for (Error m : missing) {
+            String at = String.valueOf(m.getInstanceLocation());
+            errors.removeIf(e -> String.valueOf(e.getInstanceLocation()).equals(at)
+                    && ("oneOf".equals(e.getKeyword()) || "required".equals(e.getKeyword())));
+        }
+        errors.addAll(missing);
+        // an unknown property that got a hint (bean: as a language, a header name as the key...) is the cause; the
+        // oneOf and required errors the strict schema adds at the same location only repeat it thirty times
+        java.util.Set<String> hinted = new java.util.HashSet<>();
+        for (Error e : errors) {
+            if ("additionalProperties".equals(e.getKeyword())) {
+                hinted.add(String.valueOf(e.getInstanceLocation()));
+            }
+        }
+        if (!hinted.isEmpty()) {
+            errors.removeIf(e -> hinted.contains(String.valueOf(e.getInstanceLocation()))
+                    && ("oneOf".equals(e.getKeyword()) || "required".equals(e.getKeyword())));
+        }
+        if (errors.isEmpty()) {
+            checkSimpleSyntaxInScripts(target, new NodePath(PathType.JSON_POINTER), errors);
+        }
         if (canonical) {
             checkOneOfCardinality(target, new NodePath(PathType.JSON_POINTER), errors);
         }
         return errors;
+    }
+
+    /**
+     * "must have at most 1 properties" at a step: a step holds one EIP, and the second key is either an option that
+     * belongs under the EIP (indented one level more) or another step (its own - item).
+     */
+    static List<Error> withStepHints(List<Error> errors) {
+        List<Error> answer = new ArrayList<>(errors.size());
+        for (Error error : errors) {
+            String location = String.valueOf(error.getInstanceLocation());
+            if ("maxProperties".equals(error.getKeyword()) && location.matches("/\\d+")) {
+                // - beans:\n  myBean: ... : the second key was meant to be inside the first; it is not indented enough
+                answer.add(Error.builder()
+                        .keyword("maxProperties")
+                        .instanceLocation(error.getInstanceLocation())
+                        .messageKey("maxProperties")
+                        .format(new MessageFormat("{0}"))
+                        .arguments(error.getMessage() + " (a top-level entry is one key: - route:, - beans:, - rest:...;"
+                                   + " the lines that belong to it must be indented under it, a second key at the same"
+                                   + " level as the entry is read as a separate property)")
+                        .build());
+                continue;
+            }
+            if ("maxProperties".equals(error.getKeyword()) && location.matches(".*/steps/\\d+")) {
+                answer.add(Error.builder()
+                        .keyword("maxProperties")
+                        .instanceLocation(error.getInstanceLocation())
+                        .messageKey("maxProperties")
+                        .format(new MessageFormat("{0}"))
+                        .arguments(error.getMessage() + " (a step is one EIP: an option of that EIP is indented under"
+                                   + " its key, and the next EIP is its own - item)")
+                        .build());
+            } else {
+                answer.add(error);
+            }
+        }
+        return answer;
+    }
+
+    /**
+     * The EIPs whose expression the runtime needs: the schema leaves it optional for every expression node, and a split
+     * written with only delimiter: "," (or a filter, setBody, when... with only options) fails when the route is
+     * created with "Unsupported definition: null".
+     */
+    private static final Set<String> LOG_COMPONENT_OPTIONS = Set.of(
+            "showAll", "showBody", "showBodyType", "showHeaders", "showExchangePattern", "showProperties",
+            "showAllProperties", "showVariables", "showExchangeId", "showException", "showCaughtException",
+            "showStackTrace", "showStreams", "showFiles", "showFuture", "showRouteId", "showRouteGroup", "multiline",
+            "maxChars", "skipBodyLineSeparator", "groupSize", "groupInterval", "groupDelay", "groupActiveOnly",
+            "level", "plain", "sourceLocationLoggerName", "style");
+
+    private static final Set<String> EXPRESSION_REQUIRED = Set.of(
+            "split", "filter", "when", "setBody", "setHeader", "setProperty", "setVariable", "transform", "loop",
+            "delay", "recipientList", "routingSlip", "dynamicRouter", "validate", "script", "throttle", "resequence",
+            "idempotentConsumer");
+
+    private static final Map<String, String> EXPRESSION_EXAMPLES = Map.of(
+            "split", "split: {tokenize: \",\"} or split: {simple: \"${body}\"} (delimiter only applies to the result of"
+                     + " the expression)",
+            "filter", "filter: {simple: \"${header.type} == 'urgent'\"}",
+            "when", "when: {simple: \"${body} contains 'x'\"}",
+            "setBody", "setBody: {simple: \"Hello ${body}\"} or setBody: {constant: \"Hello\"}",
+            "setHeader", "setHeader: {name: id, simple: \"${exchangeId}\"}",
+            "loop", "loop: {constant: \"3\"}",
+            "recipientList", "recipientList: {simple: \"${header.to}\"}",
+            "script", "script: {groovy: \"...\"}",
+            "delay", "delay: {constant: \"1000\"}");
+
+    private static final Set<String> SCRIPT_LANGUAGES = Set.of("groovy", "js", "python", "python3", "mvel", "ognl",
+            "jq", "jsonpath", "xpath", "xquery", "spel", "jactl", "java", "joor", "quickjs", "wasm", "datasonnet");
+
+    /**
+     * ${body.value} < 1 written as a groovy expression: Simple syntax inside another language, which groovy reads as a
+     * call to a method named $ and jsonpath as an invalid path. Says which language it is and how to write it there.
+     */
+    void checkSimpleSyntaxInScripts(JsonNode node, NodePath path, List<Error> errors) {
+        if (node == null) {
+            return;
+        }
+        if (node.isArray()) {
+            for (int i = 0; i < node.size(); i++) {
+                checkSimpleSyntaxInScripts(node.get(i), path.append(i), errors);
+            }
+            return;
+        }
+        if (!node.isObject()) {
+            return;
+        }
+        var fields = node.fieldNames();
+        while (fields.hasNext()) {
+            String name = fields.next();
+            JsonNode value = node.get(name);
+            String text = null;
+            if (SCRIPT_LANGUAGES.contains(name)) {
+                if (value.isTextual()) {
+                    text = value.asText();
+                } else if (value.isObject() && value.has("expression") && value.get("expression").isTextual()) {
+                    text = value.get("expression").asText();
+                }
+            }
+            String outsideQuotes
+                    = text != null ? text.replaceAll("\"(?:\\\\.|[^\"\\\\])*\"|'(?:\\\\.|[^'\\\\])*'", "\"\"") : null;
+            if (outsideQuotes != null && outsideQuotes.contains("${") && !name.equals("js") && !name.equals("quickjs")) {
+                // "${x}" inside quotes is a groovy GString (or a JS template) and is fine; ${...} outside quotes is simple
+                String example;
+                if (name.equals("groovy") || name.equals("mvel") || name.equals("ognl") || name.equals("jactl")) {
+                    example = "body.value < 1, headers.foo, exchange.getIn().getBody()";
+                } else if (name.equals("jsonpath") || name.equals("jq")) {
+                    example = "$.value for a JSON body";
+                } else if (name.equals("xpath") || name.equals("xquery")) {
+                    example = "/order/value for an XML body";
+                } else {
+                    example = "the language's own syntax";
+                }
+                errors.add(Error.builder()
+                        .keyword("type")
+                        .instanceLocation(path.append(name))
+                        .messageKey("type")
+                        .format(new MessageFormat("{0}"))
+                        .arguments(name + ": ${...} is simple syntax, not " + name + ": write the expression in " + name
+                                   + " (" + example + "), or use simple: \"" + text.replace("\"", "'") + "\"")
+                        .build());
+            }
+            checkSimpleSyntaxInScripts(value, path.append(name), errors);
+        }
+    }
+
+    /** Adds an error for every expression node in the tree that has neither expression: nor a language key. */
+    void checkRequiredExpressions(JsonNode node, NodePath path, List<Error> errors) {
+        if (node == null) {
+            return;
+        }
+        if (node.isArray()) {
+            for (int i = 0; i < node.size(); i++) {
+                checkRequiredExpressions(node.get(i), path.append(i), errors);
+            }
+            return;
+        }
+        if (!node.isObject()) {
+            return;
+        }
+        var fields = node.fieldNames();
+        while (fields.hasNext()) {
+            String name = fields.next();
+            JsonNode value = node.get(name);
+            if ("when".equals(name) && value != null && value.isArray()) {
+                // choice: {when: [...]}: each item is an expression node
+                for (int i = 0; i < value.size(); i++) {
+                    JsonNode item = value.get(i);
+                    if (item != null && item.isObject() && !hasExpression(item)) {
+                        errors.add(Error.builder()
+                                .keyword("required")
+                                .instanceLocation(path.append(name).append(i))
+                                .messageKey("required")
+                                .format(new MessageFormat("{0}"))
+                                .arguments("when has no expression: write the language as a key, for example "
+                                           + EXPRESSION_EXAMPLES.get("when"))
+                                .build());
+                    }
+                }
+            }
+            if (EXPRESSION_REQUIRED.contains(name) && (value == null || value.isNull() || value.isObject())
+                    && !hasExpression(value)) {
+                String example = EXPRESSION_EXAMPLES.getOrDefault(name,
+                        name + ": {simple: \"...\"} or " + name + ": {constant: \"...\"}");
+                errors.add(Error.builder()
+                        .keyword("required")
+                        .instanceLocation(path.append(name))
+                        .messageKey("required")
+                        .format(new MessageFormat("{0}"))
+                        .arguments(name + " has no expression: write the language as a key, for example " + example)
+                        .build());
+            }
+            checkRequiredExpressions(value, path.append(name), errors);
+        }
+    }
+
+    private boolean hasExpression(JsonNode value) {
+        if (value == null || value.isNull() || !value.isObject()) {
+            return true;
+        }
+        if (value.has("expression")) {
+            return true;
+        }
+        for (String language : languageKeys) {
+            if (value.has(language)) {
+                return true;
+            }
+        }
+        return false;
     }
 
     /**
@@ -432,6 +786,332 @@ public class YamlValidator {
 
     private static final String EXPRESSION_SUB_ELEMENT = "ExpressionSubElementDefinition";
 
+    private JsonNode model;
+    private Set<String> topLevelEntries = Set.of();
+    private Set<String> languageKeys = Set.of();
+    private Set<String> stepNames = Set.of();
+    private Set<String> resilienceProperties = Set.of();
+
+    /**
+     * "object found, array expected" says what the schema wants, not how to write it: a list, each item starting with
+     * "- ". At the root of the file it also names the entries (route, from, beans, rest, onException).
+     */
+    static List<Error> withListHints(List<Error> errors) {
+        List<Error> answer = new ArrayList<>(errors.size());
+        for (Error error : errors) {
+            answer.add(withListHint(error));
+        }
+        return answer;
+    }
+
+    static Error withListHint(Error error) {
+        if (!"type".equals(error.getKeyword()) || error.getMessage() == null) {
+            return error;
+        }
+        String location = String.valueOf(error.getInstanceLocation());
+        if (location.endsWith("/language") && error.getMessage().contains("object expected")) {
+            // script: {language: groovy, text: ...}: the language is the key of the expression, not a property
+            return Error.builder()
+                    .keyword("type")
+                    .instanceLocation(error.getInstanceLocation())
+                    .messageKey("type")
+                    .format(new MessageFormat("{0}"))
+                    .arguments(error.getMessage() + " (an expression is written with the language as the key, e.g."
+                               + " groovy: \"...\", simple: \"...\", constant: \"...\"; the language: form is"
+                               + " language: {language: groovy, expression: \"...\"})")
+                    .build();
+        }
+        if (error.getMessage().contains("object found, string expected")) {
+            // message: {simple: "..."}: a string property that is already an expression, or a plain option
+            String prop = location.substring(location.lastIndexOf('/') + 1);
+            return Error.builder()
+                    .keyword("type")
+                    .instanceLocation(error.getInstanceLocation())
+                    .messageKey("type")
+                    .format(new MessageFormat("{0}"))
+                    .arguments(error.getMessage() + " (" + prop + " is a plain string"
+                               + (location.endsWith("/log/message")
+                                       ? " that is already a simple expression: write message: \"... ${body} ...\""
+                                       : ": write " + prop + ": \"...\", not a language map")
+                               + ")")
+                    .build();
+        }
+        if (location.matches(
+                "/\\d+/(onException|onCompletion|intercept|interceptFrom|interceptSendToEndpoint|errorHandler|route|rest|restConfiguration)")
+                && error.getMessage().contains("array found, object expected")) {
+            // - onException: [ ... ]: the entry is a map; several handlers are several - onException: items
+            String entry = location.substring(location.lastIndexOf('/') + 1);
+            return Error.builder()
+                    .keyword("type")
+                    .instanceLocation(error.getInstanceLocation())
+                    .messageKey("type")
+                    .format(new MessageFormat("{0}"))
+                    .arguments(error.getMessage() + " (" + entry + " is a map, not a list: - " + entry + ": followed by its"
+                               + " properties indented" + (entry.equals("onException")
+                                       ? " (exception: [java.lang.Exception], handled: {constant: \"true\"}, steps: [...])"
+                                       : "")
+                               + "; several of them are several - " + entry + ": items)")
+                    .build();
+        }
+        if (location.matches(".*/(otherwise|doTry|doFinally|doCatch/\\d+)") && error.getMessage().contains("object expected")) {
+            // otherwise: [- log: ...]: the block is a map whose steps: holds the list
+            String eip = location.substring(location.lastIndexOf('/') + 1);
+            if (eip.matches("\\d+")) {
+                eip = "doCatch";
+            }
+            return Error.builder()
+                    .keyword("type")
+                    .instanceLocation(error.getInstanceLocation())
+                    .messageKey("type")
+                    .format(new MessageFormat("{0}"))
+                    .arguments(error.getMessage() + " (" + eip + " holds its EIPs under steps: " + eip
+                               + ": {steps: [- log: \"...\"]}" + (eip.equals("doCatch")
+                                       ? ", each - doCatch: item with"
+                                         + " exception: and steps:"
+                                       : "")
+                               + ")")
+                    .build();
+        }
+        if (!error.getMessage().contains("array expected")) {
+            return error;
+        }
+        String name = location.substring(location.lastIndexOf('/') + 1);
+        String hint;
+        if (location.isEmpty() || location.equals("/")) {
+            hint = "a Camel YAML file is a list of entries, each starting with \"- \": - route:, - from:, - beans:, - rest:,"
+                   + " - onException:";
+        } else if (name.equals("beans")) {
+            hint = "beans is a list: - name: myBean followed by type: \"#class:com.example.MyBean\" (indented under the -)";
+        } else if (name.equals("steps") || name.equals("when") || name.equals("get") || name.equals("post")
+                || name.equals("exception") || name.equals("doCatch")) {
+            hint = name + " is a list: each item starts with \"- \"";
+        } else {
+            hint = "write it as a list: each item starts with \"- \"";
+        }
+        return Error.builder()
+                .keyword("type")
+                .instanceLocation(error.getInstanceLocation())
+                .messageKey("type")
+                .format(new MessageFormat("{0}"))
+                .arguments(error.getMessage() + " (" + hint + ")")
+                .build();
+    }
+
+    /**
+     * Adds a hint to "property 'x' is not defined in the schema": the closest property name of that node (did you mean
+     * 'logName'?), or, when the property is a top-level entry such as onException written inside a route, where it goes
+     * instead.
+     */
+    List<Error> withPropertyHints(List<Error> errors) {
+        List<Error> answer = new ArrayList<>(errors.size());
+        for (Error error : errors) {
+            answer.add(withPropertyHint(error));
+        }
+        return answer;
+    }
+
+    Error withPropertyHint(Error error) {
+        if ("required".equals(error.getKeyword()) && error.getMessage() != null
+                && error.getMessage().contains("required property 'steps' not found")
+                && String.valueOf(error.getInstanceLocation()).matches(".*/route/from")) {
+            return Error.builder()
+                    .keyword("required")
+                    .instanceLocation(error.getInstanceLocation())
+                    .messageKey("required")
+                    .format(new MessageFormat("{0}"))
+                    .arguments(error.getMessage() + " (steps: is a property of from:, next to uri:; a steps: written at"
+                               + " the route level must be indented under from:)")
+                    .build();
+        }
+        if (!"additionalProperties".equals(error.getKeyword()) || error.getMessage() == null) {
+            return error;
+        }
+        String message = error.getMessage();
+        String unknown = between(message, "property '", "'");
+        if (unknown == null) {
+            return error;
+        }
+        String location = String.valueOf(error.getInstanceLocation());
+        String hint = null;
+        if (location.matches("/\\d+/beans/\\d+")
+                && (unknown.equals("id") || unknown.equals("ref") || unknown.equals("class"))) {
+            // - id: myBean / class: ... : the bean properties are name and type
+            hint = "a bean is - name: myBean followed by type: \"#class:com.example.MyBean\" (name instead of " + unknown
+                   + (unknown.equals("class") ? ", type instead of class" : "") + ")";
+        } else if (location.matches("/\\d+/beans/\\d+")) {
+            // - myBean: {type: ...} instead of - name: myBean / type: ...
+            hint = "a bean item is written as - name: " + unknown + " followed by type: \"#class:com.example.MyBean\" "
+                   + "(the name is a property, not the key)";
+        } else if (topLevelEntries.contains(unknown) && location.chars().filter(c -> c == '/').count() >= 2) {
+            hint = "'" + unknown + "' is a top-level entry: write it as a list item at the same level as the route, "
+                   + "not inside it";
+        } else if (location.matches(".*/(onException|doCatch/\\d+)") && unknown.matches("([a-z][\\w]*\\.)+[A-Z]\\w*")) {
+            // onException: {java.lang.Exception: ...}: the class is a list item under exception:
+            String eip = location.endsWith("/onException") ? "onException" : "doCatch";
+            hint = "the exception class is a list item under exception: (" + eip + ": {exception: [" + unknown
+                   + "], steps: [...]})";
+        } else if (location.endsWith("/circuitBreaker") && unknown.equals("name")) {
+            hint = "the circuit breaker's name is its id: circuitBreaker: {id: myBreaker, ...}";
+        } else if (location.endsWith("/circuitBreaker") && !resilienceProperties.isEmpty()
+                && (resilienceProperties.contains(unknown) || closest(unknown, resilienceProperties) != null
+                        || unknown.toLowerCase(Locale.ROOT).contains("threshold")
+                        || unknown.toLowerCase(Locale.ROOT).contains("timeout"))) {
+            // circuitBreaker: {failureThreshold: 5}: the thresholds and timeouts are resilience4j configuration
+            String best = resilienceProperties.contains(unknown) ? unknown : closest(unknown, resilienceProperties);
+            hint = "the thresholds, timeouts and the like are written under resilience4jConfiguration: (circuitBreaker:"
+                   + " {resilience4jConfiguration: {" + (best != null ? best : "failureRateThreshold") + ": ...}, steps:"
+                   + " [...], onFallback: {steps: [...]}})";
+        } else if (location.endsWith("/log") && (unknown.equals("level") || unknown.equals("logLevel"))) {
+            hint = "did you mean 'loggingLevel'?";
+        } else if (location.endsWith("/log") && LOG_COMPONENT_OPTIONS.contains(unknown)) {
+            // log: {message: ..., showHeaders: true}: those are options of the log component endpoint
+            hint = "'" + unknown + "' is an option of the log component, not of the log EIP: write a to: step with"
+                   + " uri: \"log:com.example?" + unknown + "=...\" (the log EIP has message, loggingLevel, logName,"
+                   + " marker)";
+        } else if (unknown.equals("steps") && location.matches(".*/route")) {
+            // - route: {from: {uri: ...}, steps: [...]}: steps belongs under from:
+            hint = "steps: goes under from:, indented at the same level as uri: (route: {from: {uri: ..., steps: [...]}})";
+        } else if (stepNames.contains(unknown) && !location.matches(".*/steps/\\d+")
+                && location.matches(".*/(otherwise|when/\\d+|doTry|doCatch/\\d+|doFinally|split|filter|loop|aggregate"
+                                    + "|circuitBreaker|onFallback|multicast|pipeline|saga|resequence|throttle|delay"
+                                    + "|onException|onCompletion|intercept|interceptFrom|interceptSendToEndpoint|route|from)")) {
+            // otherwise: {log: ...} or when: [- simple: ..., log: ...]: the EIPs go under steps:
+            String eip = location.substring(location.lastIndexOf('/') + 1);
+            if (eip.matches("\\d+")) {
+                String parent = location.substring(0, location.lastIndexOf('/'));
+                eip = parent.substring(parent.lastIndexOf('/') + 1);
+            }
+            hint = "'" + unknown + "' is a step: the steps of " + eip + " go under steps: (" + eip
+                   + ": {steps: [- " + unknown + ": ...]})";
+        } else if (unknown.equals("script") && !location.endsWith("/steps")
+                && (EXPRESSION_REQUIRED.contains(location.substring(location.lastIndexOf('/') + 1))
+                        || location.endsWith("/expression"))) {
+            // setBody: {script: ...}: script is an EIP; the language is the key of an expression
+            hint = "script is an EIP step, not a language: write the language as the key of the expression (groovy:"
+                   + " \"...\", simple: \"...\"), or run a script as its own step with - script: {groovy: \"...\"}";
+        } else if (unknown.equals("bean") && !location.endsWith("/steps")) {
+            // setBody: {bean: myBean} : the bean language is method:
+            hint = "the bean language is written as method: (method: {ref: myBean, method: process}), or call the bean"
+                   + " as a step with - bean: {ref: myBean, method: process}";
+        } else if (location.matches(".*/(setHeader|setProperty|setVariable|removeHeader|removeProperty|removeVariable)")
+                && closest(unknown, knownProperties(String.valueOf(error.getSchemaLocation()))) == null) {
+            // setHeader: {CamelNumberA: {simple: ...}} : the name is a property, not the key
+            String eip = location.substring(location.lastIndexOf('/') + 1);
+            hint = "the name is a property: " + eip + ": {name: " + unknown
+                   + (eip.startsWith("set") ? ", simple: \"...\"}" : "}") + " (" + unknown + " is not the key)";
+        } else if (location.endsWith("/bean")
+                && (unknown.equals("parameters") || unknown.equals("args") || unknown.equals("arguments"))) {
+            hint = "arguments are written in the method call: bean: {ref: myBean, method: \"process(${body}, 'x')\"}";
+        } else {
+            String best = closest(unknown, knownProperties(String.valueOf(error.getSchemaLocation())));
+            if (best != null) {
+                hint = "did you mean '" + best + "'?";
+            }
+        }
+        if (hint == null) {
+            return error;
+        }
+        return Error.builder()
+                .keyword("additionalProperties")
+                .instanceLocation(error.getInstanceLocation())
+                .messageKey("additionalProperties")
+                .format(new MessageFormat("{0}"))
+                .arguments(message + " (" + hint + ")")
+                .build();
+    }
+
+    /** The property names the schema allows at the definition an additionalProperties error points to. */
+    Set<String> knownProperties(String schemaLocation) {
+        Set<String> answer = new LinkedHashSet<>();
+        if (model == null) {
+            return answer;
+        }
+        int hash = schemaLocation.indexOf('#');
+        String pointer = hash >= 0 ? schemaLocation.substring(hash + 1) : schemaLocation;
+        if (pointer.endsWith("/additionalProperties")) {
+            pointer = pointer.substring(0, pointer.length() - "/additionalProperties".length());
+        }
+        collectProperties(model.at(pointer), answer, 0);
+        return answer;
+    }
+
+    private void collectProperties(JsonNode node, Set<String> answer, int depth) {
+        if (node == null || node.isMissingNode() || depth > 3) {
+            return;
+        }
+        JsonNode props = node.get("properties");
+        if (props != null) {
+            props.fieldNames().forEachRemaining(answer::add);
+        }
+        JsonNode ref = node.get("$ref");
+        if (ref != null && ref.isTextual() && ref.asText().startsWith("#")) {
+            collectProperties(model.at(ref.asText().substring(1)), answer, depth + 1);
+        }
+        for (String composition : new String[] { "anyOf", "oneOf", "allOf" }) {
+            JsonNode entries = node.get(composition);
+            if (entries != null && entries.isArray()) {
+                for (JsonNode entry : entries) {
+                    if (!entry.has("not")) {
+                        collectProperties(entry, answer, depth + 1);
+                    }
+                }
+            }
+        }
+    }
+
+    static String closest(String unknown, Set<String> known) {
+        String best = null;
+        int bestDistance = Integer.MAX_VALUE;
+        int threshold = Math.max(2, unknown.length() / 3);
+        String u = unknown.toLowerCase(Locale.ROOT);
+        for (String k : known) {
+            int d = distance(u, k.toLowerCase(Locale.ROOT));
+            if (d <= threshold && (d < bestDistance || d == bestDistance && k.length() < best.length())) {
+                best = k;
+                bestDistance = d;
+            }
+        }
+        if (best == null) {
+            // propertyName, headerName, variableName: the schema property is the last word (name)
+            for (String k : known) {
+                String kl = k.toLowerCase(Locale.ROOT);
+                if (kl.length() >= 3 && u.length() > kl.length() && u.endsWith(kl)
+                        && (best == null || k.length() > best.length())) {
+                    best = k;
+                }
+            }
+        }
+        return best;
+    }
+
+    static int distance(String a, String b) {
+        int[] prev = new int[b.length() + 1];
+        int[] cur = new int[b.length() + 1];
+        for (int j = 0; j <= b.length(); j++) {
+            prev[j] = j;
+        }
+        for (int i = 1; i <= a.length(); i++) {
+            cur[0] = i;
+            for (int j = 1; j <= b.length(); j++) {
+                int cost = a.charAt(i - 1) == b.charAt(j - 1) ? 0 : 1;
+                cur[j] = Math.min(Math.min(cur[j - 1] + 1, prev[j] + 1), prev[j - 1] + cost);
+            }
+            int[] t = prev;
+            prev = cur;
+            cur = t;
+        }
+        return prev[b.length()];
+    }
+
+    private static String between(String text, String start, String end) {
+        int i = text.indexOf(start);
+        if (i < 0) {
+            return null;
+        }
+        int j = text.indexOf(end, i + start.length());
+        return j < 0 ? null : text.substring(i + start.length(), j);
+    }
+
     private static boolean isBooleanText(String text) {
         String s = text.trim();
         return "true".equalsIgnoreCase(s) || "false".equalsIgnoreCase(s);
@@ -482,6 +1162,18 @@ public class YamlValidator {
     public void init() throws Exception {
         String location = canonical ? LOCATION_CANONICAL : LOCATION;
         var model = mapper.readTree(YamlValidator.class.getResourceAsStream(location));
+        this.model = model;
+        this.topLevelEntries = new LinkedHashSet<>();
+        model.at("/items/properties").fieldNames().forEachRemaining(topLevelEntries::add);
+        this.stepNames = new LinkedHashSet<>();
+        model.at("/items/definitions/org.apache.camel.model.ProcessorDefinition/properties").fieldNames()
+                .forEachRemaining(stepNames::add);
+        this.resilienceProperties = new LinkedHashSet<>();
+        model.at("/items/definitions/org.apache.camel.model.Resilience4jConfigurationDefinition/properties").fieldNames()
+                .forEachRemaining(resilienceProperties::add);
+        this.languageKeys = new LinkedHashSet<>();
+        model.at("/items/definitions/org.apache.camel.model.language.ExpressionDefinition/properties").fieldNames()
+                .forEachRemaining(languageKeys::add);
         var version = getSpecificationVersion(model).orElse(SpecificationVersion.DRAFT_4);
         // no typeLoose: besides accepting quoted scalars it also accepts a single value where the schema expects a
         // list (steps: written as a map), which the runtime rejects. The scalar leniency the runtime has is done as

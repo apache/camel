@@ -677,7 +677,13 @@ public class YamlRoutesBuilderLoader extends YamlRoutesBuilderLoaderSupport {
                 composer.getSingleNode()
                         .map(node -> preParseNode(ctx, node));
             } catch (Exception e) {
-                throw new RuntimeCamelException("Error pre-parsing resource: " + ctx.getResource().getLocation(), e);
+                String hint = "";
+                if (e.getMessage() != null && e.getMessage().contains("single document")) {
+                    // a --- separator followed by more text, often an explanation appended to the route file
+                    hint = ": the file has more than one YAML document (a --- separator); a Camel YAML file is one"
+                           + " document, remove the --- and everything after it";
+                }
+                throw new RuntimeCamelException("Error pre-parsing resource: " + ctx.getResource().getLocation() + hint, e);
             } finally {
                 ctx.close();
             }
