@@ -58,9 +58,9 @@ public class DependencySecurityAuditTools {
             @ToolArg(description = "The pom.xml file content") String pomContent,
             @ToolArg(description = "Route definitions (YAML, XML, or Java DSL) to determine which components "
                                    + "are actually used (for reachability analysis)") String routes,
-            @ToolArg(description = ToolArgDocs.RUNTIME) String runtime,
-            @ToolArg(description = ToolArgDocs.CAMEL_VERSION) String camelVersion,
-            @ToolArg(description = ToolArgDocs.PLATFORM_BOM) String platformBom,
+            @ToolArg(description = ToolArgDocs.RUNTIME, required = false) String runtime,
+            @ToolArg(description = ToolArgDocs.CAMEL_VERSION, required = false) String camelVersion,
+            @ToolArg(description = ToolArgDocs.PLATFORM_BOM, required = false) String platformBom,
             @ToolArg(description = "If true (default), mask credentials in POM content") Boolean sanitizePom) {
 
         if (pomContent == null || pomContent.isBlank()) {

@@ -53,9 +53,9 @@ public class ComponentPropertiesTools {
                         "component-level defaults via the same prefix in application.properties.")
     public ComponentPropertiesResult camel_component_properties(
             @ToolArg(description = "Component name / scheme (e.g., kafka, http, file, timer)") String component,
-            @ToolArg(description = ToolArgDocs.RUNTIME) String runtime,
-            @ToolArg(description = ToolArgDocs.VERSION_QUERY) String camelVersion,
-            @ToolArg(description = ToolArgDocs.PLATFORM_BOM) String platformBom) {
+            @ToolArg(description = ToolArgDocs.RUNTIME, required = false) String runtime,
+            @ToolArg(description = ToolArgDocs.VERSION_QUERY, required = false) String camelVersion,
+            @ToolArg(description = ToolArgDocs.PLATFORM_BOM, required = false) String platformBom) {
 
         if (component == null || component.isBlank()) {
             throw new ToolCallException("Component name is required", null);

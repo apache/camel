@@ -58,6 +58,18 @@ class ConfigurationValidateToolsTest {
     }
 
     @Test
+    void theRunningVersionWithoutSnapshotIsTheDefaultCatalog() {
+        // an assistant that reads "4.23.0-SNAPSHOT" from the server asks for 4.23.0, which is not on Maven Central
+        ConfigurationValidateTools tools = createTools();
+        String mine = tools.catalogService.getDefaultCatalog().getCatalogVersion().replace("-SNAPSHOT", "");
+
+        ConfigurationValidateTools.ConfigurationValidateResult result
+                = tools.camel_configuration_validate("camel.main.streamCachingEnabled=true", "main", mine, null);
+
+        assertThat(result.summary().valid()).isEqualTo(1);
+    }
+
+    @Test
     void detectsUnknownOption() {
         ConfigurationValidateTools tools = createTools();
 

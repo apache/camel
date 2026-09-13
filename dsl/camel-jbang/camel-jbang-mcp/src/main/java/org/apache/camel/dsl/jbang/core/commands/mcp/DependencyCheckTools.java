@@ -61,9 +61,9 @@ public class DependencyCheckTools {
                                    + "Sensitive content is automatically detected and masked.") String pomContent,
             @ToolArg(description = "Route definitions (YAML, XML, or Java DSL) to check for missing component dependencies. "
                                    + "Multiple routes can be provided concatenated.") String routes,
-            @ToolArg(description = ToolArgDocs.RUNTIME) String runtime,
-            @ToolArg(description = ToolArgDocs.CAMEL_VERSION) String camelVersion,
-            @ToolArg(description = ToolArgDocs.PLATFORM_BOM) String platformBom,
+            @ToolArg(description = ToolArgDocs.RUNTIME, required = false) String runtime,
+            @ToolArg(description = ToolArgDocs.CAMEL_VERSION, required = false) String camelVersion,
+            @ToolArg(description = ToolArgDocs.PLATFORM_BOM, required = false) String platformBom,
             @ToolArg(description = "If true (default), automatically sanitize POM content by masking credentials") Boolean sanitizePom) {
 
         if (pomContent == null || pomContent.isBlank()) {

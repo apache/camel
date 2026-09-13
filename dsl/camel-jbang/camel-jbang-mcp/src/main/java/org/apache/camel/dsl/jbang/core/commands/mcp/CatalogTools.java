@@ -53,12 +53,14 @@ public class CatalogTools {
                         + "camel_catalog_component_doc for that). "
                         + "Use filter to search by name, label to filter by category.")
     public ComponentListResult camel_catalog_components(
-            @ToolArg(description = "Filter components by name (case-insensitive substring match)") String filter,
-            @ToolArg(description = "Filter by category label (e.g., cloud, messaging, database, file)") String label,
-            @ToolArg(description = "Maximum number of results to return (default: 20)") Integer limit,
-            @ToolArg(description = ToolArgDocs.RUNTIME) String runtime,
-            @ToolArg(description = ToolArgDocs.VERSION_QUERY) String camelVersion,
-            @ToolArg(description = ToolArgDocs.PLATFORM_BOM) String platformBom) {
+            @ToolArg(description = "Filter components by name (case-insensitive substring match)",
+                     required = false) String filter,
+            @ToolArg(description = "Filter by category label (e.g., cloud, messaging, database, file)",
+                     required = false) String label,
+            @ToolArg(description = "Maximum number of results to return (default: 20)", required = false) Integer limit,
+            @ToolArg(description = ToolArgDocs.RUNTIME, required = false) String runtime,
+            @ToolArg(description = ToolArgDocs.VERSION_QUERY, required = false) String camelVersion,
+            @ToolArg(description = ToolArgDocs.PLATFORM_BOM, required = false) String platformBom) {
 
         int maxResults = limit != null ? limit : 20;
 
@@ -106,9 +108,9 @@ public class CatalogTools {
             @ToolArg(description = "Whether to include message headers in the response (default: false). "
                                    + "Headers show the CamelXxx header names, their Java constants, types, and consumer/producer group.",
                      required = false) Boolean includeHeaders,
-            @ToolArg(description = ToolArgDocs.RUNTIME) String runtime,
-            @ToolArg(description = ToolArgDocs.VERSION_QUERY) String camelVersion,
-            @ToolArg(description = ToolArgDocs.PLATFORM_BOM) String platformBom) {
+            @ToolArg(description = ToolArgDocs.RUNTIME, required = false) String runtime,
+            @ToolArg(description = ToolArgDocs.VERSION_QUERY, required = false) String camelVersion,
+            @ToolArg(description = ToolArgDocs.PLATFORM_BOM, required = false) String platformBom) {
 
         if (component == null || component.isBlank()) {
             throw new ToolCallException("Component name is required", null);
@@ -165,9 +167,9 @@ public class CatalogTools {
                         + "for adding it as a dependency.")
     public ComponentMavenResult camel_catalog_component_maven(
             @ToolArg(description = "Component name (e.g., kafka, http, file, timer)") String component,
-            @ToolArg(description = ToolArgDocs.RUNTIME) String runtime,
-            @ToolArg(description = ToolArgDocs.VERSION_QUERY) String camelVersion,
-            @ToolArg(description = ToolArgDocs.PLATFORM_BOM) String platformBom) {
+            @ToolArg(description = ToolArgDocs.RUNTIME, required = false) String runtime,
+            @ToolArg(description = ToolArgDocs.VERSION_QUERY, required = false) String camelVersion,
+            @ToolArg(description = ToolArgDocs.PLATFORM_BOM, required = false) String platformBom) {
 
         if (component == null || component.isBlank()) {
             throw new ToolCallException("Component name is required", null);
@@ -199,11 +201,11 @@ public class CatalogTools {
           description = "List available Camel data formats for marshalling/unmarshalling " +
                         "(e.g., json, xml, csv, avro, protobuf).")
     public DataFormatListResult camel_catalog_dataformats(
-            @ToolArg(description = "Filter by name") String filter,
-            @ToolArg(description = "Maximum results (default: 20)") Integer limit,
-            @ToolArg(description = ToolArgDocs.RUNTIME) String runtime,
-            @ToolArg(description = ToolArgDocs.CAMEL_VERSION) String camelVersion,
-            @ToolArg(description = ToolArgDocs.PLATFORM_BOM) String platformBom) {
+            @ToolArg(description = "Filter by name", required = false) String filter,
+            @ToolArg(description = "Maximum results (default: 20)", required = false) Integer limit,
+            @ToolArg(description = ToolArgDocs.RUNTIME, required = false) String runtime,
+            @ToolArg(description = ToolArgDocs.CAMEL_VERSION, required = false) String camelVersion,
+            @ToolArg(description = ToolArgDocs.PLATFORM_BOM, required = false) String platformBom) {
 
         int maxResults = limit != null ? limit : 20;
 
@@ -232,10 +234,10 @@ public class CatalogTools {
           description = "List available Camel expression languages " +
                         "(e.g., simple, jsonpath, xpath, groovy, jq).")
     public LanguageListResult camel_catalog_languages(
-            @ToolArg(description = "Filter by name") String filter,
-            @ToolArg(description = ToolArgDocs.RUNTIME) String runtime,
-            @ToolArg(description = ToolArgDocs.CAMEL_VERSION) String camelVersion,
-            @ToolArg(description = ToolArgDocs.PLATFORM_BOM) String platformBom) {
+            @ToolArg(description = "Filter by name", required = false) String filter,
+            @ToolArg(description = ToolArgDocs.RUNTIME, required = false) String runtime,
+            @ToolArg(description = ToolArgDocs.CAMEL_VERSION, required = false) String camelVersion,
+            @ToolArg(description = ToolArgDocs.PLATFORM_BOM, required = false) String platformBom) {
 
         try {
             CamelCatalog cat = catalogService.loadCatalog(runtime, camelVersion, platformBom);
@@ -262,9 +264,9 @@ public class CatalogTools {
                         + "Maven coordinates, and configuration parameters.")
     public DataFormatDetailResult camel_catalog_dataformat_doc(
             @ToolArg(description = "Data format name (e.g., json-jackson, avro, csv, protobuf, jaxb)") String dataformat,
-            @ToolArg(description = ToolArgDocs.RUNTIME) String runtime,
-            @ToolArg(description = ToolArgDocs.CAMEL_VERSION) String camelVersion,
-            @ToolArg(description = ToolArgDocs.PLATFORM_BOM) String platformBom) {
+            @ToolArg(description = ToolArgDocs.RUNTIME, required = false) String runtime,
+            @ToolArg(description = ToolArgDocs.CAMEL_VERSION, required = false) String camelVersion,
+            @ToolArg(description = ToolArgDocs.PLATFORM_BOM, required = false) String platformBom) {
 
         if (dataformat == null || dataformat.isBlank()) {
             throw new ToolCallException("Data format name is required", null);
@@ -296,9 +298,9 @@ public class CatalogTools {
                         + "Maven coordinates, and configuration parameters.")
     public LanguageDetailResult camel_catalog_language_doc(
             @ToolArg(description = "Language name (e.g., simple, jsonpath, xpath, jq, groovy)") String language,
-            @ToolArg(description = ToolArgDocs.RUNTIME) String runtime,
-            @ToolArg(description = ToolArgDocs.CAMEL_VERSION) String camelVersion,
-            @ToolArg(description = ToolArgDocs.PLATFORM_BOM) String platformBom) {
+            @ToolArg(description = ToolArgDocs.RUNTIME, required = false) String runtime,
+            @ToolArg(description = ToolArgDocs.CAMEL_VERSION, required = false) String camelVersion,
+            @ToolArg(description = ToolArgDocs.PLATFORM_BOM, required = false) String platformBom) {
 
         if (language == null || language.isBlank()) {
             throw new ToolCallException("Language name is required", null);
@@ -330,11 +332,13 @@ public class CatalogTools {
                         "EIPs have aliases for common AI/modern terms (e.g., fan-out, scatter-gather, retry, dedup). " +
                         "Filter also matches aliases with dash normalization (fan-out, fanout, fanOut all match).")
     public EipListResult camel_catalog_eips(
-            @ToolArg(description = "Filter by name, title, description, or alias (e.g., fan-out, dedup, rate-limit)") String filter,
-            @ToolArg(description = "Filter by category (e.g., routing, transformation, error handling)") String label,
-            @ToolArg(description = ToolArgDocs.RUNTIME) String runtime,
-            @ToolArg(description = ToolArgDocs.CAMEL_VERSION) String camelVersion,
-            @ToolArg(description = ToolArgDocs.PLATFORM_BOM) String platformBom) {
+            @ToolArg(description = "Filter by name, title, description, or alias (e.g., fan-out, dedup, rate-limit)",
+                     required = false) String filter,
+            @ToolArg(description = "Filter by category (e.g., routing, transformation, error handling)",
+                     required = false) String label,
+            @ToolArg(description = ToolArgDocs.RUNTIME, required = false) String runtime,
+            @ToolArg(description = ToolArgDocs.CAMEL_VERSION, required = false) String camelVersion,
+            @ToolArg(description = ToolArgDocs.PLATFORM_BOM, required = false) String platformBom) {
 
         try {
             CamelCatalog cat = catalogService.loadCatalog(runtime, camelVersion, platformBom);
@@ -361,9 +365,9 @@ public class CatalogTools {
           description = "Get detailed documentation for a Camel EIP (Enterprise Integration Pattern).")
     public EipDetailResult camel_catalog_eip_doc(
             @ToolArg(description = "EIP name (e.g., split, aggregate, choice, filter)") String eip,
-            @ToolArg(description = ToolArgDocs.RUNTIME) String runtime,
-            @ToolArg(description = ToolArgDocs.CAMEL_VERSION) String camelVersion,
-            @ToolArg(description = ToolArgDocs.PLATFORM_BOM) String platformBom) {
+            @ToolArg(description = ToolArgDocs.RUNTIME, required = false) String runtime,
+            @ToolArg(description = ToolArgDocs.CAMEL_VERSION, required = false) String camelVersion,
+            @ToolArg(description = ToolArgDocs.PLATFORM_BOM, required = false) String platformBom) {
 
         if (eip == null || eip.isBlank()) {
             throw new ToolCallException("EIP name is required", null);
@@ -373,6 +377,19 @@ public class CatalogTools {
             CamelCatalog cat = catalogService.loadCatalog(runtime, camelVersion, platformBom);
 
             EipModel model = cat.eipModel(eip);
+            if (model == null) {
+                // circuit-breaker, Circuit Breaker: the catalog names EIPs in camelCase
+                String camel = toCamelCase(eip);
+                model = cat.eipModel(camel);
+                if (model == null) {
+                    for (String n : cat.findModelNames()) {
+                        if (n.equalsIgnoreCase(camel)) {
+                            model = cat.eipModel(n);
+                            break;
+                        }
+                    }
+                }
+            }
             if (model == null) {
                 throw new ToolCallException("EIP not found: " + eip, null);
             }
@@ -399,9 +416,9 @@ public class CatalogTools {
                         + "with usage examples, code snippets, and best practices. "
                         + "Only available from Camel 4.22 onwards.")
     public DocListResult camel_catalog_docs(
-            @ToolArg(description = "Filter page names by substring (case-insensitive)") String filter,
-            @ToolArg(description = "Maximum number of results to return (default: 50)") Integer limit,
-            @ToolArg(description = ToolArgDocs.CAMEL_VERSION) String camelVersion) {
+            @ToolArg(description = "Filter page names by substring (case-insensitive)", required = false) String filter,
+            @ToolArg(description = "Maximum number of results to return (default: 50)", required = false) Integer limit,
+            @ToolArg(description = ToolArgDocs.CAMEL_VERSION, required = false) String camelVersion) {
 
         int maxResults = limit != null ? limit : 50;
 
@@ -611,6 +628,21 @@ public class CatalogTools {
                 model.getTitle(),
                 model.getLabel(),
                 model.getAliases().isEmpty() ? null : model.getAliases());
+    }
+
+    /** circuit-breaker, circuit_breaker or "Circuit Breaker" as circuitBreaker. */
+    static String toCamelCase(String name) {
+        StringBuilder sb = new StringBuilder();
+        boolean upper = false;
+        for (char ch : name.trim().toCharArray()) {
+            if (ch == '-' || ch == '_' || ch == ' ') {
+                upper = sb.length() > 0;
+            } else {
+                sb.append(upper ? Character.toUpperCase(ch) : ch);
+                upper = false;
+            }
+        }
+        return sb.toString();
     }
 
     private EipDetailResult toEipDetailResult(EipModel model) {
