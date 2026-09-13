@@ -16,8 +16,11 @@
  */
 package org.apache.camel.dsl.jbang.core.commands.ai;
 
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.ArrayList;
-import java.util.Arrays;
+import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Locale;
@@ -29,10 +32,12 @@ import java.util.regex.Pattern;
 
 import com.networknt.schema.Error;
 import org.apache.camel.catalog.CamelCatalog;
-import org.apache.camel.catalog.ConfigurationPropertiesValidationResult;
-import org.apache.camel.catalog.EndpointValidationResult;
-import org.apache.camel.catalog.LanguageValidationResult;
 import org.apache.camel.dsl.yaml.validator.YamlValidator;
+
+import static org.apache.camel.dsl.jbang.core.commands.ai.JavaChecks.JAVA_CLASS_PATTERN;
+import static org.apache.camel.dsl.jbang.core.commands.ai.JavaChecks.JAVA_PACKAGE_PATTERN;
+import static org.apache.camel.dsl.jbang.core.commands.ai.JavaChecks.publicMethodNames;
+import static org.apache.camel.dsl.jbang.core.commands.ai.JavaChecks.withSiblingClassHints;
 
 /**
  * Validates integration source files the way the Camel TUI's editor does on save, before an AI agent writes them: Camel
@@ -42,21 +47,6 @@ import org.apache.camel.dsl.yaml.validator.YamlValidator;
  */
 public final class SourceValidator {
 
-    private static final Set<String> PREDICATE_EIPS = Set.of(
-            "filter", "when", "validate", "onWhen", "on-when",
-            "handled", "continued", "retryWhile", "retry-while",
-            "completionPredicate", "completion-predicate",
-            "completion", "loopDoWhile", "loop-do-while");
-
-    private static final Set<String> CONSUMER_EIPS
-            = Set.of("from", "pollEnrich", "poll-enrich", "poll", "interceptFrom", "intercept-from");
-    private static final Set<String> PRODUCER_EIPS
-            = Set.of("to", "toD", "to-d", "wireTap", "wire-tap", "enrich",
-                    "interceptSendToEndpoint", "intercept-send-to-endpoint");
-
-    private static final Pattern YAML_URI_PATTERN = Pattern.compile(
-            "^\\s*-?\\s*(?:uri|from|to|toD|wireTap|enrich|pollEnrich|deadLetterChannel):\\s*\"?([a-zA-Z][a-zA-Z0-9+.-]*(?::[^\"\\s]*)?)");
-
     private static volatile YamlValidator yamlValidator;
 
     private SourceValidator() {
@@ -65,7 +55,8 @@ public final class SourceValidator {
     /** Whether the file has a validator: YAML routes and .properties files do, other files have none. */
     public static boolean isValidatableFile(String fileName) {
         String name = fileName == null ? "" : fileName.toLowerCase(Locale.ROOT);
-        return name.endsWith(".yaml") || name.endsWith(".yml") || name.endsWith(".properties");
+        return name.endsWith(".yaml") || name.endsWith(".yml") || name.endsWith(".properties")
+                || name.endsWith(".java") || name.endsWith(".xsl") || name.endsWith(".xslt") || name.endsWith(".xml");
     }
 
     /**
@@ -81,12 +72,42 @@ public final class SourceValidator {
      */
     public static List<String> validate(
             String fileName, String content, CamelCatalog catalog, Function<String, String> extraPropertyLine) {
+        return validate(fileName, content, catalog, extraPropertyLine, null);
+    }
+
+    /**
+     * As {@link #validate(String, String, CamelCatalog, Function)}, and when the directory is given also checks that
+     * every bean the YAML refers to is declared: in the file, in a sibling YAML file, or by a Java class in the
+     * directory annotated with {@code @BindToRegistry} (CAMEL-24698).
+     */
+    public static List<String> validate(
+            String fileName, String content, CamelCatalog catalog, Function<String, String> extraPropertyLine,
+            Path directory) {
         String name = fileName == null ? "" : fileName.toLowerCase(Locale.ROOT);
         if (name.endsWith(".yaml") || name.endsWith(".yml")) {
-            return validateCamelYaml(content, catalog);
+            List<String> msgs = validateCamelYaml(content, catalog);
+            if (directory != null && msgs.isEmpty()) {
+                msgs = new ArrayList<>(msgs);
+                msgs.addAll(validateYamlBeanRefs(content, BeanDeclarations.scan(directory, fileName), catalog));
+                msgs.addAll(validateResourceRefs(content, directory));
+            }
+            return msgs;
         }
         if (name.endsWith(".properties")) {
             return validateProperties(content, catalog, extraPropertyLine);
+        }
+        if (name.endsWith(".java")) {
+            List<String> msgs = validateJava(fileName, content);
+            if (directory != null && !msgs.isEmpty()) {
+                msgs = withSiblingClassHints(msgs, BeanDeclarations.scan(directory, fileName));
+            }
+            return msgs;
+        }
+        if (name.endsWith(".xsl") || name.endsWith(".xslt")) {
+            return validateXslt(content);
+        }
+        if (name.endsWith(".xml")) {
+            return validateXml(content);
         }
         return List.of();
     }
@@ -121,6 +142,7 @@ public final class SourceValidator {
         }
         msgs.addAll(validateYamlEndpoints(content, catalog));
         msgs.addAll(validateYamlSimple(content, catalog));
+        msgs.addAll(validateKnownHeaders(content, catalog));
         return msgs;
     }
 
@@ -139,54 +161,83 @@ public final class SourceValidator {
         return v;
     }
 
+    private static final Pattern BIND_TO_REGISTRY_PATTERN
+            = Pattern.compile("@BindToRegistry(?:\\s*\\(\\s*(?:value\\s*=\\s*)?\"([^\"]+)\"\\s*\\))?");
+
     /**
-     * Validates a properties file line by line: {@code camel.*} keys against the catalog, the rest with the extra
-     * check.
+     * What the directory declares: bean names from sibling YAML files and Java classes annotated with
+     * {@code @BindToRegistry}, plus the Java classes present (simple name to fully qualified name), so that a reference
+     * to an unregistered class can name the fix.
      */
-    public static List<String> validateProperties(
-            String content, CamelCatalog catalog, Function<String, String> extraPropertyLine) {
-        return validatePropertiesLines(content, line -> validatePropertyLine(line, catalog, extraPropertyLine));
-    }
+    public record BeanDeclarations(Set<String> names, Map<String, String> javaClasses, Map<String, String> javaSignatures,
+            Map<String, Integer> javaPublicMethods, Map<String, List<String>> javaPublicMethodNames) {
 
-    /** Validates one properties line: a {@code camel.*} key against the catalog, any other with the extra check. */
-    public static String validatePropertyLine(String line, CamelCatalog catalog, Function<String, String> extra) {
-        if (catalog != null) {
-            try {
-                ConfigurationPropertiesValidationResult result = catalog.validateConfigurationProperty(line);
-                if (result.isAccepted()) {
-                    if (!result.isSuccess()) {
-                        String msg = result.summaryErrorMessage(false);
-                        if (msg != null) {
-                            return msg.trim();
-                        }
+        public BeanDeclarations(Set<String> names, Map<String, String> javaClasses, Map<String, String> javaSignatures) {
+            this(names, javaClasses, javaSignatures, Map.of(), Map.of());
+        }
+
+        public BeanDeclarations(Set<String> names, Map<String, String> javaClasses, Map<String, String> javaSignatures,
+                                Map<String, Integer> javaPublicMethods) {
+            this(names, javaClasses, javaSignatures, javaPublicMethods, Map.of());
+        }
+
+        public static final BeanDeclarations NONE = new BeanDeclarations(Set.of(), Map.of(), Map.of());
+
+        public BeanDeclarations(Set<String> names, Map<String, String> javaClasses) {
+            this(names, javaClasses, Map.of());
+        }
+
+        /** Scans the directory, leaving out the file being validated (its own declarations come from the content). */
+        public static BeanDeclarations scan(Path directory, String excludeFile) {
+            Set<String> names = new HashSet<>();
+            Map<String, String> classes = new LinkedHashMap<>();
+            Map<String, String> signatures = new LinkedHashMap<>();
+            Map<String, Integer> publicMethods = new LinkedHashMap<>();
+            Map<String, List<String>> publicMethodNamesByClass = new LinkedHashMap<>();
+            if (directory == null || !Files.isDirectory(directory)) {
+                return NONE;
+            }
+            try (var stream = Files.list(directory)) {
+                for (Path p : stream.filter(Files::isRegularFile).toList()) {
+                    String fn = p.getFileName().toString();
+                    if (fn.equals(excludeFile)) {
+                        continue;
                     }
-                    return null;
+                    String lower = fn.toLowerCase(Locale.ROOT);
+                    try {
+                        if (lower.endsWith(".yaml") || lower.endsWith(".yml")) {
+                            names.addAll(declaredBeans(Files.readString(p)));
+                        } else if (lower.endsWith(".java")) {
+                            String src = Files.readString(p);
+                            Matcher cm = JAVA_CLASS_PATTERN.matcher(src);
+                            Matcher pm = JAVA_PACKAGE_PATTERN.matcher(src);
+                            String pkg = pm.find() ? pm.group(1) + "." : "";
+                            if (cm.find()) {
+                                String simple = cm.group(1);
+                                classes.put(simple.toLowerCase(Locale.ROOT), pkg + simple);
+                                // the class declaration up to its body: what it extends and implements
+                                int brace = src.indexOf('{', cm.start());
+                                signatures.put(simple.toLowerCase(Locale.ROOT),
+                                        brace > 0 ? src.substring(cm.start(), brace) : src.substring(cm.start()));
+                                List<String> methodNames = publicMethodNames(src, simple);
+                                publicMethods.put(simple.toLowerCase(Locale.ROOT), methodNames.size());
+                                publicMethodNamesByClass.put(simple.toLowerCase(Locale.ROOT), methodNames);
+                                Matcher bm = BIND_TO_REGISTRY_PATTERN.matcher(src);
+                                while (bm.find()) {
+                                    String n = bm.group(1);
+                                    names.add(n != null ? n : Character.toLowerCase(simple.charAt(0)) + simple.substring(1));
+                                }
+                            }
+                        }
+                    } catch (IOException e) {
+                        // unreadable sibling: nothing to learn from it
+                    }
                 }
-            } catch (Exception e) {
-                // ignore validation errors
+            } catch (IOException e) {
+                return NONE;
             }
+            return new BeanDeclarations(names, classes, signatures, publicMethods, publicMethodNamesByClass);
         }
-        return extra != null ? extra.apply(line) : null;
-    }
-
-    /** Runs a line validator over the key=value lines of a properties file, prefixing each message with its line. */
-    public static List<String> validatePropertiesLines(String content, Function<String, String> lineValidator) {
-        List<String> msgs = new ArrayList<>();
-        if (content == null) {
-            return msgs;
-        }
-        String[] lines = content.split("\n", -1);
-        for (int i = 0; i < lines.length; i++) {
-            String line = lines[i].trim();
-            if (line.isEmpty() || line.startsWith("#") || line.startsWith("!") || !line.contains("=")) {
-                continue;
-            }
-            String error = lineValidator.apply(lines[i]);
-            if (error != null) {
-                msgs.add("Line " + (i + 1) + ": " + error);
-            }
-        }
-        return msgs;
     }
 
     /** The YAML DSL schema errors in words: the node they are about and the message without parser noise. */
@@ -245,313 +296,86 @@ public final class SourceValidator {
         }
     }
 
+    /**
+     * Compiles the Java source in memory with the JDK compiler against the classpath of the running CLI, so a bean or
+     * processor that would fail when {@code camel run} compiles it is reported first, one message per diagnostic with
+     * its line. Returns nothing when no compiler is available (a JRE).
+     */
+    public static List<String> validateJava(String fileName, String content) {
+        return JavaChecks.validateJava(fileName, content);
+    }
+
+    /**
+     * Compiles the stylesheet the way the xslt components do: with Saxon when it is on the classpath (preferred, XSLT
+     * 3.0), otherwise with the JDK processor (XSLT 1.0). A stylesheet that declares version 2.0 or 3.0 when only the
+     * JDK processor is available is checked for well-formed XML only, since it is meant for the xslt-saxon component.
+     */
+    public static List<String> validateXslt(String content) {
+        return XmlChecks.validateXslt(content);
+    }
+
+    /** Checks that the XML is well formed (an input file, a Camel XML DSL file or any other XML). */
+    public static List<String> validateXml(String content) {
+        return XmlChecks.validateXml(content);
+    }
+
+    /**
+     * A Camel* header that no component used in the file defines (CamelTimerIndex; the timer sets CamelTimerCounter):
+     * the value is null at runtime. Checked against the header metadata of every component the file names, with the
+     * closest real name.
+     */
+    public static List<String> validateKnownHeaders(String content, CamelCatalog catalog) {
+        return HeaderChecks.validateKnownHeaders(content, catalog);
+    }
+
+    /** The bean names declared under {@code beans:} in the YAML content. */
+    public static Set<String> declaredBeans(String content) {
+        return BeanRefChecks.declaredBeans(content);
+    }
+
+    public static List<String> validateYamlBeanRefs(String content, BeanDeclarations external) {
+        return BeanRefChecks.validateYamlBeanRefs(content, external);
+    }
+
+    /** As above, and with a catalog the messages about a strategy name the built-in implementations. */
+    public static List<String> validateYamlBeanRefs(String content, BeanDeclarations external, CamelCatalog catalog) {
+        return BeanRefChecks.validateYamlBeanRefs(content, external, catalog);
+    }
+
+    /**
+     * Validates a properties file line by line: {@code camel.*} keys against the catalog, the rest with the extra
+     * check.
+     */
+    public static List<String> validateProperties(
+            String content, CamelCatalog catalog, Function<String, String> extraPropertyLine) {
+        return PropertiesChecks.validateProperties(content, catalog, extraPropertyLine);
+    }
+
+    public static String validatePropertyLine(String line, CamelCatalog catalog, Function<String, String> extra) {
+        return PropertiesChecks.validatePropertyLine(line, catalog, extra);
+    }
+
+    /** Runs a line validator over the key=value lines of a properties file, prefixing each message with its line. */
+    public static List<String> validatePropertiesLines(String content, Function<String, String> lineValidator) {
+        return PropertiesChecks.validatePropertiesLines(content, lineValidator);
+    }
+
     /** The simple expressions of a YAML route checked against the catalog, as predicate where the EIP expects one. */
     public static List<String> validateYamlSimple(String content, CamelCatalog catalog) {
-        List<String> errors = new ArrayList<>();
-        String[] lines = content.split("\n", -1);
-
-        for (int i = 0; i < lines.length; i++) {
-            String line = lines[i];
-            if (line.isBlank()) {
-                continue;
-            }
-            String trimmed = line.trim();
-            if (trimmed.startsWith("#")) {
-                continue;
-            }
-
-            String simpleText = null;
-            int lineNum = i + 1;
-            int lineIndent = countLeadingSpaces(line);
-            boolean isLogMessage = false;
-
-            // Strip YAML list prefix for matching
-            String key = trimmed.startsWith("- ") ? trimmed.substring(2) : trimmed;
-
-            // Match "simple: <value>" (inline shorthand)
-            if (key.startsWith("simple:") && !key.equals("simple:")) {
-                simpleText = extractYamlValue(key, "simple");
-            }
-            // Match "simple:" followed by "expression: <value>" on next line
-            else if (key.equals("simple:")) {
-                for (int j = i + 1; j < lines.length; j++) {
-                    String next = lines[j].trim();
-                    if (next.isBlank()) {
-                        continue;
-                    }
-                    if (next.startsWith("expression:")) {
-                        simpleText = extractYamlValue(next, "expression");
-                        lineNum = j + 1;
-                    }
-                    break;
-                }
-            }
-            // Match "message: <value>" under log: EIP
-            else if (key.startsWith("message:") && !key.equals("message:")) {
-                String parentEip = findParentEip(lines, i, lineIndent);
-                if ("log".equals(parentEip)) {
-                    simpleText = extractYamlValue(key, "message");
-                    isLogMessage = true;
-                }
-            }
-
-            if (simpleText == null || simpleText.isEmpty()) {
-                continue;
-            }
-            // Skip placeholder-only expressions
-            if (simpleText.startsWith("{{") && simpleText.endsWith("}}")) {
-                continue;
-            }
-
-            // Determine predicate vs expression context
-            boolean predicate = false;
-            if (!isLogMessage) {
-                String parentEip = findParentEip(lines, i, lineIndent);
-                predicate = parentEip != null && PREDICATE_EIPS.contains(parentEip);
-            }
-
-            try {
-                LanguageValidationResult result = predicate
-                        ? catalog.validateLanguagePredicate(null, "simple", simpleText)
-                        : catalog.validateLanguageExpression(null, "simple", simpleText);
-                if (!result.isSuccess()) {
-                    String error = result.getShortError() != null ? result.getShortError() : result.getError();
-                    if (error != null) {
-                        errors.add("Line " + lineNum + ": Simple syntax error: " + error);
-                    }
-                }
-            } catch (Exception e) {
-                // best effort
-            }
-        }
-        return errors;
+        return SimpleChecks.validateYamlSimple(content, catalog);
     }
 
-    /** The endpoint URIs of a YAML route (uri plus a parameters: map) checked against the catalog. */
+    /**
+     * An xslt:stylesheets/x.xsl (or velocity, freemarker...) whose file is not in the directory fails when the route
+     * starts; with camel run the files next to the route are on the classpath root, so the endpoint names the file
+     * without a folder. Says what is missing and, when a file of that name is in the directory, the endpoint to write.
+     */
+    public static List<String> validateResourceRefs(String content, Path directory) {
+        return BeanRefChecks.validateResourceRefs(content, directory);
+    }
+
     public static List<String> validateYamlEndpoints(String content, CamelCatalog catalog) {
-        List<String> errors = new ArrayList<>();
-        String[] lines = content.split("\n", -1);
-
-        for (int i = 0; i < lines.length; i++) {
-            String line = lines[i];
-            if (line.isBlank()) {
-                continue;
-            }
-            String trimmed = line.trim();
-            if (trimmed.startsWith("#")) {
-                continue;
-            }
-
-            Matcher m = YAML_URI_PATTERN.matcher(line);
-            if (!m.find()) {
-                continue;
-            }
-
-            String uri = m.group(1);
-            if (uri.endsWith("\"")) {
-                uri = uri.substring(0, uri.length() - 1);
-            }
-            if (uri.startsWith("{{")) {
-                continue;
-            }
-            // scheme-only URI (e.g., "uri: timer") needs a colon for catalog parsing
-            if (!uri.contains(":")) {
-                uri = uri + ":";
-            }
-
-            String eipName = extractEipFromLine(trimmed);
-            int lineIndent = countLeadingSpaces(line);
-
-            // for "uri:" lines, walk backwards to find the parent EIP (from, to, etc.)
-            if ("uri".equals(eipName)) {
-                for (int j = i - 1; j >= 0; j--) {
-                    String prev = lines[j];
-                    if (prev.isBlank()) {
-                        continue;
-                    }
-                    int prevIndent = countLeadingSpaces(prev);
-                    if (prevIndent < lineIndent) {
-                        eipName = extractEipFromLine(prev.trim());
-                        break;
-                    }
-                }
-            }
-
-            boolean consumerOnly = eipName != null && CONSUMER_EIPS.contains(eipName);
-            boolean producerOnly = eipName != null && PRODUCER_EIPS.contains(eipName);
-
-            // look ahead for a parameters: block at the same indent level as uri
-            StringBuilder uriBuilder = new StringBuilder(uri);
-            boolean hasParams = uri.contains("?");
-            Map<String, Integer> optionLineMap = new LinkedHashMap<>();
-            for (int j = i + 1; j < lines.length; j++) {
-                String next = lines[j];
-                if (next.isBlank()) {
-                    continue;
-                }
-                int nextIndent = countLeadingSpaces(next);
-                if (nextIndent < lineIndent) {
-                    break;
-                }
-                String nextTrimmed = next.trim();
-                if (nextIndent == lineIndent && nextTrimmed.startsWith("parameters:")) {
-                    int paramBlockIndent = nextIndent;
-                    for (int k = j + 1; k < lines.length; k++) {
-                        String paramLine = lines[k];
-                        if (paramLine.isBlank()) {
-                            continue;
-                        }
-                        int paramIndent = countLeadingSpaces(paramLine);
-                        if (paramIndent <= paramBlockIndent) {
-                            break;
-                        }
-                        String paramTrimmed = paramLine.trim();
-                        int colonPos = paramTrimmed.indexOf(':');
-                        if (colonPos > 0) {
-                            String key = paramTrimmed.substring(0, colonPos).trim();
-                            String val = unquote(paramTrimmed.substring(colonPos + 1).trim());
-                            char sep = hasParams ? '&' : '?';
-                            uriBuilder.append(sep).append(key).append('=').append(val);
-                            hasParams = true;
-                            optionLineMap.put(key, k);
-                        }
-                    }
-                    break;
-                }
-                if (nextIndent == lineIndent) {
-                    break;
-                }
-            }
-
-            String fullUri = uriBuilder.toString();
-            try {
-                EndpointValidationResult result
-                        = catalog.validateEndpointProperties(fullUri, false, consumerOnly, producerOnly);
-                if (!result.isSuccess()) {
-                    String scheme = fullUri.contains(":") ? fullUri.substring(0, fullUri.indexOf(':')) : fullUri;
-                    collectEndpointErrors(errors, result, scheme, i, optionLineMap);
-                }
-            } catch (Exception e) {
-                // ignore validation errors
-            }
-        }
-        return errors;
+        return EndpointChecks.validateYamlEndpoints(content, catalog);
     }
 
-    static void collectEndpointErrors(
-            List<String> errors, EndpointValidationResult result, String scheme,
-            int uriLineIdx, Map<String, Integer> optionLineMap) {
-        if (result.getUnknown() != null) {
-            for (String name : result.getUnknown()) {
-                StringBuilder sb = new StringBuilder(scheme).append(": Unknown option '").append(name).append("'");
-                if (result.getUnknownSuggestions() != null) {
-                    String[] suggestions = result.getUnknownSuggestions().get(name);
-                    if (suggestions != null && suggestions.length > 0) {
-                        sb.append(". Did you mean: ").append(Arrays.asList(suggestions));
-                    }
-                }
-                errors.add(linePrefix(optionLineMap.getOrDefault(name, uriLineIdx)) + sb);
-            }
-        }
-        addInvalid(errors, result.getInvalidBoolean(), "boolean", scheme, uriLineIdx, optionLineMap);
-        addInvalid(errors, result.getInvalidInteger(), "integer", scheme, uriLineIdx, optionLineMap);
-        addInvalid(errors, result.getInvalidNumber(), "number", scheme, uriLineIdx, optionLineMap);
-        if (result.getInvalidEnum() != null) {
-            for (Map.Entry<String, String> entry : result.getInvalidEnum().entrySet()) {
-                StringBuilder sb = new StringBuilder(scheme)
-                        .append(": Invalid enum value '").append(entry.getValue())
-                        .append("' for option '").append(entry.getKey()).append("'");
-                if (result.getInvalidEnumChoices() != null) {
-                    String[] choices = result.getInvalidEnumChoices().get(entry.getKey());
-                    if (choices != null) {
-                        sb.append(". Possible values: ").append(Arrays.asList(choices));
-                    }
-                }
-                errors.add(linePrefix(optionLineMap.getOrDefault(entry.getKey(), uriLineIdx)) + sb);
-            }
-        }
-        if (result.getNotConsumerOnly() != null) {
-            for (String name : result.getNotConsumerOnly()) {
-                errors.add(linePrefix(optionLineMap.getOrDefault(name, uriLineIdx))
-                           + scheme + ": Option '" + name + "' is not applicable in consumer only mode");
-            }
-        }
-        if (result.getNotProducerOnly() != null) {
-            for (String name : result.getNotProducerOnly()) {
-                errors.add(linePrefix(optionLineMap.getOrDefault(name, uriLineIdx))
-                           + scheme + ": Option '" + name + "' is not applicable in producer only mode");
-            }
-        }
-    }
-
-    private static void addInvalid(
-            List<String> errors, Map<String, String> invalid, String type, String scheme, int uriLineIdx,
-            Map<String, Integer> optionLineMap) {
-        if (invalid != null) {
-            for (Map.Entry<String, String> entry : invalid.entrySet()) {
-                errors.add(linePrefix(optionLineMap.getOrDefault(entry.getKey(), uriLineIdx))
-                           + scheme + ": Invalid " + type + " value '" + entry.getValue() + "' for option '"
-                           + entry.getKey() + "'");
-            }
-        }
-    }
-
-    static String linePrefix(int lineIdx) {
-        return "Line " + (lineIdx + 1) + ": ";
-    }
-
-    static String findParentEip(String[] lines, int lineIdx, int lineIndent) {
-        for (int j = lineIdx - 1; j >= 0; j--) {
-            String prev = lines[j];
-            if (prev.isBlank()) {
-                continue;
-            }
-            int prevIndent = countLeadingSpaces(prev);
-            if (prevIndent < lineIndent) {
-                return extractEipFromLine(prev.trim());
-            }
-        }
-        return null;
-    }
-
-    static String extractEipFromLine(String trimmed) {
-        if (trimmed.startsWith("- ")) {
-            trimmed = trimmed.substring(2).trim();
-        }
-        int colon = trimmed.indexOf(':');
-        if (colon > 0) {
-            return trimmed.substring(0, colon).trim();
-        }
-        return null;
-    }
-
-    static String extractYamlValue(String trimmed, String key) {
-        String prefix = key + ":";
-        if (!trimmed.startsWith(prefix)) {
-            return null;
-        }
-        return unquote(trimmed.substring(prefix.length()).trim());
-    }
-
-    static String unquote(String val) {
-        if (val.length() >= 2 && val.startsWith("\"") && val.endsWith("\"")) {
-            return val.substring(1, val.length() - 1);
-        }
-        if (val.length() >= 2 && val.startsWith("'") && val.endsWith("'")) {
-            return val.substring(1, val.length() - 1);
-        }
-        return val;
-    }
-
-    static int countLeadingSpaces(String line) {
-        int count = 0;
-        for (int i = 0; i < line.length(); i++) {
-            if (line.charAt(i) == ' ') {
-                count++;
-            } else {
-                break;
-            }
-        }
-        return count;
-    }
 }

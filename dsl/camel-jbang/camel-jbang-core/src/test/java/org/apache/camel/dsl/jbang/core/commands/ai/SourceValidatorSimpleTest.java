@@ -194,4 +194,49 @@ class SourceValidatorSimpleTest {
         List<String> errors = SourceValidator.validateYamlSimple(yaml, catalog);
         assertThat(errors).hasSizeGreaterThanOrEqualTo(2);
     }
+
+    @Test
+    void aPredicateUnderTheExpressionWrapperIsCheckedAsAPredicate() {
+        List<String> msgs = SourceValidator.validateYamlSimple("""
+                - from:
+                    uri: timer:tick
+                    steps:
+                      - choice:
+                          when:
+                            - expression:
+                                simple: "body contains 'critical'"
+                              steps:
+                                - log: "a"
+                """, catalog);
+        assertThat(msgs).hasSize(1);
+        assertThat(msgs.get(0)).contains("Unexpected token body").contains("did you mean ${body} contains 'critical'?");
+    }
+
+    @Test
+    void sizeInsideAnAggregateNamesTheAggregatedSizeProperty() {
+        List<String> msgs = SourceValidator.validateYamlSimple("""
+                - from:
+                    uri: timer:tick
+                    steps:
+                      - aggregate:
+                          constant: "1"
+                          completionSize: 3
+                          steps:
+                            - log:
+                                message: "Batch complete! Collected ${size} messages"
+                """, catalog);
+        assertThat(msgs).hasSize(1);
+        assertThat(msgs.get(0)).contains("Unknown function: size").contains("${exchangeProperty.CamelAggregatedSize}");
+
+        // outside an aggregate the parser's own suggestion is all there is
+        msgs = SourceValidator.validateYamlSimple("""
+                - from:
+                    uri: timer:tick
+                    steps:
+                      - log:
+                          message: "Collected ${size} messages"
+                """, catalog);
+        assertThat(msgs).hasSize(1);
+        assertThat(msgs.get(0)).contains("Unknown function: size").doesNotContain("CamelAggregatedSize");
+    }
 }

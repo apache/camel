@@ -78,6 +78,8 @@ class SourceEditAssistValidateTest {
         assertTrue(assist().validateSource("README.md", "# whatever").isEmpty());
         assertTrue(SourceEditAssist.isValidatableFile("application.properties"));
         assertTrue(SourceEditAssist.isValidatableFile("routes.YAML"));
-        assertFalse(SourceEditAssist.isValidatableFile("Foo.java"));
+        // Java, XSLT and XML are compiled or parsed at write time since CAMEL-24698
+        assertTrue(SourceEditAssist.isValidatableFile("Foo.java"));
+        assertFalse(SourceEditAssist.isValidatableFile("README.md"));
     }
 }

@@ -58,11 +58,11 @@ public class AuthoringTools {
                      required = false) String name,
             @ToolArg(description = "Endpoint URI to check, e.g. kafka:orders?brokers=host:9092",
                      required = false) String endpoint,
-            @ToolArg(description = "component, dataformat, language or eip (auto-detected)", required = false) String kind,
+            @ToolArg(description = "component, dataformat, language, eip or bean (auto-detected; a bean is a built-in class such as StringAggregationStrategy, with how to declare and use it)",
+                     required = false) String kind,
             @ToolArg(description = "Include the options (default true)", required = false) Boolean includeOptions,
             @ToolArg(description = "Include the full AsciiDoc page (default false)", required = false) Boolean includeDoc,
-            @ToolArg(description = "A language doc sub-page (simple: functions, operators, ognl, advanced) to return"
-                                   + " as text",
+            @ToolArg(description = "simple doc sub-page to return as text (functions, operators, ognl, advanced)",
                      required = false) String docPage,
             @ToolArg(description = "Keyword to match in option names or descriptions", required = false) String optionsFilter,
             @ToolArg(description = VERSION_DESC, required = false) String camelVersion) {
@@ -77,7 +77,8 @@ public class AuthoringTools {
                         + "description. camel_catalog_doc then gives the options of one.")
     public JsonObject camel_catalog_find(
             @ToolArg(description = "What to look for, e.g. mqtt, s3, database, csv", required = true) String term,
-            @ToolArg(description = "component, dataformat or language (default: all)", required = false) String kind,
+            @ToolArg(description = "component, dataformat, language or bean (default: all); bean with an interface name such as AggregationStrategy lists the built-in implementations",
+                     required = false) String kind,
             @ToolArg(description = "Maximum matches per kind (default 10)", required = false) Integer limit,
             @ToolArg(description = VERSION_DESC, required = false) String camelVersion) {
         return call("camel_catalog_find", args("term", term, "kind", kind, "limit", limit,
@@ -137,9 +138,7 @@ public class AuthoringTools {
     }
 
     @Tool(annotations = @Tool.Annotations(readOnlyHint = false, destructiveHint = false, openWorldHint = true),
-          description = "Starts an integration from a project directory with camel run in a separate process, in dev "
-                        + "mode by default (route files reload when written). Returns the pid and log file once it is "
-                        + "up; camel_get_log and camel_get_errors then tell how it does, camel_control stops it.")
+          description = "Starts an integration with camel run in a separate process, in dev mode by default (files reload when written). Returns the pid and log file; camel_get_log, camel_get_errors and camel_control follow it.")
     public JsonObject camel_run(
             @ToolArg(description = "Project directory to run in (absolute path)", required = true) String directory,
             @ToolArg(description = "Source files to run, comma-separated (default: every route file in the"
