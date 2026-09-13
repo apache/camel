@@ -500,9 +500,39 @@ public class MethodInfo {
                     exchange, e);
         } catch (IllegalArgumentException e) {
             throw new RuntimeExchangeException(
-                    "IllegalArgumentException occurred invoking method: " + mth + " using arguments: " + asList(arguments),
+                    "IllegalArgumentException occurred invoking method: " + mth + " using arguments: " + asList(arguments)
+                                               + argumentsHint(mth, arguments),
                     exchange, e);
         }
+    }
+
+    /**
+     * A method with several parameters gets the body as the first and nothing for the others: say that the arguments
+     * are written in the method name.
+     */
+    private static String argumentsHint(Method mth, Object[] arguments) {
+        Class<?>[] types = mth.getParameterTypes();
+        if (types.length < 2 || arguments == null) {
+            return "";
+        }
+        boolean nullForPrimitive = false;
+        for (int i = 0; i < types.length && i < arguments.length; i++) {
+            if (arguments[i] == null && types[i].isPrimitive()) {
+                nullForPrimitive = true;
+            }
+        }
+        if (!nullForPrimitive && arguments.length == types.length) {
+            return "";
+        }
+        StringBuilder sb = new StringBuilder(" (the method takes ").append(types.length)
+                .append(" parameters and only the message body is bound by default: pass them in the method name, for"
+                        + " example method: \"")
+                .append(mth.getName()).append("(${body}");
+        for (int i = 1; i < types.length; i++) {
+            sb.append(", ").append(types[i].isPrimitive() || Number.class.isAssignableFrom(types[i]) ? "1" : "'value'");
+        }
+        sb.append(")\"; ${header.name} and ${exchangeProperty.name} work too)");
+        return sb.toString();
     }
 
     protected Expression[] createParameterExpressions() {

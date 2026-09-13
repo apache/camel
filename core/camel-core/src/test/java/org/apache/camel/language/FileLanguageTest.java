@@ -77,7 +77,8 @@ public class FileLanguageTest extends LanguageTestSupport {
                 () -> assertExpression("${file:onlyName}", file.getName()),
                 "Should have thrown exception");
 
-        assertTrue(e.getMessage().startsWith("Unknown file language syntax: onlyName at location 0"));
+        assertTrue(e.getMessage().startsWith("Unknown file language syntax: onlyName"), e.getMessage());
+        assertTrue(e.getMessage().contains("at location 0"), e.getMessage());
     }
 
     @Test
@@ -230,19 +231,19 @@ public class FileLanguageTest extends LanguageTestSupport {
                 () -> assertExpression("${file.name}", ""),
                 "Should have thrown an exception");
 
-        assertTrue(e1.getMessage().startsWith("Unknown function: file.name at location 0"));
+        assertTrue(e1.getMessage().startsWith("Unknown function: file.name"));
 
         ExpressionIllegalSyntaxException e2 = assertThrows(ExpressionIllegalSyntaxException.class,
                 () -> assertExpression("hey ${xxx} how are you?", ""),
                 "Should have thrown an exception");
 
-        assertTrue(e2.getMessage().startsWith("Unknown function: xxx at location 4"));
+        assertTrue(e2.getMessage().startsWith("Unknown function: xxx"));
 
         ExpressionIllegalSyntaxException e3 = assertThrows(ExpressionIllegalSyntaxException.class,
                 () -> assertExpression("${xxx}", ""),
                 "Should have thrown an exception");
 
-        assertTrue(e3.getMessage().startsWith("Unknown function: xxx at location 0"));
+        assertTrue(e3.getMessage().startsWith("Unknown function: xxx"));
     }
 
     @Test

@@ -100,8 +100,11 @@ public final class BodyFunctionFactory implements SimpleLanguageFunctionFactory 
         }
         if (remainder != null) {
             boolean ognlStart = remainder.startsWith(".") || remainder.startsWith("?") || remainder.startsWith("[");
-            boolean invalid = !ognlStart || OgnlHelper.isInvalidValidOgnlExpression(remainder);
-            if (invalid) {
+            if (!ognlStart) {
+                // bodyy or bodyX: not a body OGNL at all, let the caller report an unknown function with a hint
+                return null;
+            }
+            if (OgnlHelper.isInvalidValidOgnlExpression(remainder)) {
                 throw new SimpleParserException("Valid syntax: ${body.OGNL} was: " + function, index);
             }
             return OgnlExpressionBuilder.bodyOgnlExpression(remainder);

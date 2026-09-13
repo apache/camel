@@ -147,7 +147,7 @@ public class SimplePredicateParser extends BaseSimpleParser {
                     && !token.getType().isEol()) {
                 // okay the symbol was not one of the above, so its not supported
                 // use the previous index as that is where the problem is
-                throw new SimpleParserException("Unexpected token " + token, previousIndex);
+                throw new SimpleParserException(SimpleSyntaxHints.unexpectedToken(expression, previousIndex), previousIndex);
             }
             // take the next token
             nextToken();
@@ -270,7 +270,7 @@ public class SimplePredicateParser extends BaseSimpleParser {
         if (startFunction.get()) {
             // we have a start function, but no ending function
             int index = evalIndex(lastFunction);
-            throw new SimpleParserException("function has no ending token", index);
+            throw new SimpleParserException("function has no ending token: missing } to close ${...}", index);
         }
     }
 
@@ -739,7 +739,8 @@ public class SimplePredicateParser extends BaseSimpleParser {
                 }
             } else {
                 throw new SimpleParserException(
-                        "Binary operator " + operatorType + " does not support token " + token, token.getIndex());
+                        SimpleSyntaxHints.unsupportedOperand("Binary", operatorType, expression, token.getIndex()),
+                        token.getIndex());
             }
             return true;
         }
@@ -766,7 +767,7 @@ public class SimplePredicateParser extends BaseSimpleParser {
                 }
             } else {
                 throw new SimpleParserException(
-                        "Ternary operator does not support token " + token, token.getIndex());
+                        SimpleSyntaxHints.unsupportedOperand("Ternary", "?:", expression, token.getIndex()), token.getIndex());
             }
             return true;
         }
@@ -796,7 +797,8 @@ public class SimplePredicateParser extends BaseSimpleParser {
                 }
             } else {
                 throw new SimpleParserException(
-                        "Other operator " + operatorType + " does not support token " + token, token.getIndex());
+                        SimpleSyntaxHints.unsupportedOperand("Other", operatorType, expression, token.getIndex()),
+                        token.getIndex());
             }
             return true;
         }
@@ -826,7 +828,8 @@ public class SimplePredicateParser extends BaseSimpleParser {
                 }
             } else {
                 throw new SimpleParserException(
-                        "Chain operator " + operatorType + " does not support token " + token, token.getIndex());
+                        SimpleSyntaxHints.unsupportedOperand("Chain", operatorType, expression, token.getIndex()),
+                        token.getIndex());
             }
             return true;
         }
@@ -856,7 +859,8 @@ public class SimplePredicateParser extends BaseSimpleParser {
                 }
             } else {
                 throw new SimpleParserException(
-                        "Logical operator " + operatorType + " does not support token " + token, token.getIndex());
+                        SimpleSyntaxHints.unsupportedOperand("Logical", operatorType, expression, token.getIndex()),
+                        token.getIndex());
             }
             return true;
         }
