@@ -186,7 +186,7 @@ and any type a cluster peer sent was routed.
 
 When no explicit pattern is configured, the JVM-wide `jdk.serialFilter` is honoured if set,
 otherwise a conservative default allow-list is applied
-(`!java.net.**;java.**;javax.**;org.apache.camel.**;!*`), matching the default the other components
+(`+!java.net.**;java.**;javax.**;org.apache.camel.**;!*+`), matching the default the other components
 that can receive Java-serialized payloads have applied since 4.18.3. Routes that exchange their own
 classes over the cluster must widen it through the new `deserializationFilter` endpoint option, for
 example:
@@ -633,7 +633,7 @@ messages from untrusted producers) could override transport-security settings su
 `mail.smtp.ssl.trust` or `mail.smtp.starttls.enable`, or redirect the SMTP connection.
 
 This behaviour is now disabled by default. Routes that legitimately rely on per-message
-`mail.smtp.*` / `mail.smtps.*` headers must opt back in on the endpoint:
+`+mail.smtp.*+` / `+mail.smtps.*+` headers must opt back in on the endpoint:
 
 ._Java-only: opting in to JavaMail session properties from headers_
 [source,java]
@@ -642,7 +642,7 @@ This behaviour is now disabled by default. Routes that legitimately rely on per-
 ----
 
 Even with the opt-in, route authors should still strip the namespace with
-`removeHeaders("mail.smtp.*", "mail.smtps.*")` between any untrusted ingress and the mail producer.
+`+removeHeaders("mail.smtp.*", "mail.smtps.*")+` between any untrusted ingress and the mail producer.
 
 In addition, the inbound `MailHeaderFilterStrategy` now blocks the `mail.smtp.` / `mail.smtps.`
 prefix as well, so an external mail message can no longer inject these into a downstream exchange.
@@ -1394,12 +1394,12 @@ without changes. Routes that set the headers by their literal string value
 
 Because the renamed prefixes now begin with `Camel`, they are stripped by the
 standard transport `HeaderFilterStrategy` (`HttpHeaderFilterStrategy`, etc.)
-when crossing a transport boundary, by design — `Camel*` headers are
+when crossing a transport boundary, by design — `+Camel*+` headers are
 framework-internal and are not propagated over the wire. Routes that bridge an
 external transport (HTTP, JMS, ...) into a `solr:` producer and want to drive
 Solr document fields or query parameters from a header supplied by the sender
 must therefore carry the value in a non-`Camel`-prefixed application header and
-map it to the appropriate `CamelSolrField.*` / `CamelSolrParam.*` header in the
+map it to the appropriate `+CamelSolrField.*+` / `+CamelSolrParam.*+` header in the
 route between the transport `from` and the `solr:` `to`.
 
 === camel-dapr - potential breaking change
@@ -1802,9 +1802,9 @@ effect from 4.18.4 onwards; see the
 entry below.
 ====
 
-`UndertowHeaderFilterStrategy` now also filters the legacy `websocket.*`
-Exchange-header prefix (in addition to the `Camel*` / `camel*` /
-`org.apache.camel.*` prefixes it already filtered). This applies to both the
+`UndertowHeaderFilterStrategy` now also filters the legacy `+websocket.*+`
+Exchange-header prefix (in addition to the `+Camel*+` / `+camel*+` /
+`+org.apache.camel.*+` prefixes it already filtered). This applies to both the
 in (wire -> exchange) and out (exchange -> wire) directions and follows the
 dedicated-filter-strategy shape used by CAMEL-23532 for
 `camel-vertx-websocket` / `camel-atmosphere-websocket` / `camel-iggy`.

@@ -174,7 +174,7 @@ right panel with full syntax highlighting.
 For Camel source files (YAML, XML, Java routes, and `application.properties`), press *i* to toggle
 inline documentation. The TUI uses the Camel catalog to look up every component, EIP, language,
 and data format used in your route and shows their documentation right next to the source code.
-For properties files, it resolves `camel.component.*` and `camel.main.*` keys to their catalog
+For properties files, it resolves `+camel.component.*+` and `+camel.main.*+` keys to their catalog
 descriptions. This makes it easy to understand unfamiliar routes without leaving the terminal.
 
 Additional features:
@@ -200,8 +200,8 @@ Camel routes:
 * *Word navigation* -- *Ctrl+Left/Right* to jump by word
 * *Smart Home* -- *Home* key alternates between content indent and column 0
 * *Tab completion* -- press *Tab* for context-aware completion:
-** In `application.properties`: Camel configuration options (`camel.main.*`, `camel.component.*`, etc.)
-   and Spring Boot auto-configuration properties (`server.*`, `spring.*`, `management.*`, etc.)
+** In `application.properties`: Camel configuration options (`+camel.main.*+`, `+camel.component.*+`, etc.)
+   and Spring Boot auto-configuration properties (`+server.*+`, `+spring.*+`, `+management.*+`, etc.)
    resolved from starter JARs in the local Maven repository — works even for stopped projects
 ** In YAML DSL routes: EIP names, component URIs, option keys and values
 
@@ -931,7 +931,7 @@ returns that section only; pass `sections` to list what the document contains. S
 
 When the AI panel is open, input that starts with `/` runs a local panel command instead of sending a question to the configured AI provider. `/provider` and `/model` are unavailable while a response or command is already in progress; the panel shows a message asking you to wait.
 
-Press *Tab* to complete a command name. After `/model ` *Tab* completes the model name against the
+Press *Tab* to complete a command name. After `++/model ++` *Tab* completes the model name against the
 models the current provider reports (the list is fetched in the background on the first press, so
 press *Tab* again once it has arrived), and after `/tools ` it completes `auto`, `core` or `full`.
 With several matches *Tab* fills in the common prefix and then cycles through them; *Shift+Tab*

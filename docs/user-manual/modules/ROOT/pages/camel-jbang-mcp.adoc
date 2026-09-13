@@ -186,7 +186,7 @@ The assistant discovers components, looks up documentation, builds a YAML route,
 
 === Validation
 
-* _"Validate this endpoint: `kafka:myTopic?brkers=localhost:9092`"_ — detects the typo and suggests `brokers`
+* _"Validate this endpoint: ``kafka:myTopic?brkers=localhost:9092``"_ — detects the typo and suggests `brokers`
 * _"Validate this YAML route"_ — checks against the YAML DSL JSON schema, reports invalid elements
 
 === Understanding, security, and testing

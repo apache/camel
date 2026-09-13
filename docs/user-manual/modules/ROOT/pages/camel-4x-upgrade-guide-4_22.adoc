@@ -1943,8 +1943,8 @@ from("direct:next")
 ----
 
 The sibling websocket components are not affected by this change: `camel-undertow`
-keeps the `websocket.*` values in `UndertowConstants` (as documented in the 4.18
-upgrade guide), and `camel-vertx-websocket` keeps its `CamelVertxWebsocket.*` values.
+keeps the `+websocket.*+` values in `UndertowConstants` (as documented in the 4.18
+upgrade guide), and `camel-vertx-websocket` keeps its `+CamelVertxWebsocket.*+` values.
 
 Note that `WebsocketConstants.SEND_TO_ALL` is not read by this component. Broadcast is
 selected through the `sendToAll` endpoint option, not through the header; the constant

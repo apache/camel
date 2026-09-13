@@ -180,7 +180,7 @@ allow if {
 }
 ------------------------------------------------------------
 
-`includeProperties` takes a comma-separated list, or `*` for all of them, and matches names case-insensitively.
+`includeProperties` takes a comma-separated list, or `+*+` for all of them, and matches names case-insensitively.
 Unlike `includeHeaders` it is *empty by default*: exchange properties are mostly used to carry state between
 processors, so sending them all would be noise the policy has to wade through. Only custom properties are sent —
 Camel's own internal exchange properties are never included.

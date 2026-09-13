@@ -147,7 +147,7 @@ YAML::
 
 === Complex Parameters with argSchema
 
-Use `argSchema` when the flat `parameter.*` syntax is not expressive enough for nested objects, arrays, or other advanced JSON Schema constructs. `argSchema` is mutually exclusive with `parameter.*`.
+Use `argSchema` when the flat `+parameter.*+` syntax is not expressive enough for nested objects, arrays, or other advanced JSON Schema constructs. `argSchema` is mutually exclusive with `+parameter.*+`.
 
 [tabs]
 ====
@@ -199,7 +199,7 @@ The root schema must be a JSON Schema object with a top-level `properties` map. 
 
 === Structured Tool Output (outputSchema)
 
-MCP tools can declare an `outputSchema` and return `structuredContent` (typed JSON) so clients parse tool results reliably instead of re-interpreting free text. Use `outputParameter.*` for flat field definitions or `outputSchema` for raw JSON Schema (mirroring the input-side `parameter.*` / `argSchema` pattern). The two options are mutually exclusive.
+MCP tools can declare an `outputSchema` and return `structuredContent` (typed JSON) so clients parse tool results reliably instead of re-interpreting free text. Use `+outputParameter.*+` for flat field definitions or `outputSchema` for raw JSON Schema (mirroring the input-side `+parameter.*+` / `argSchema` pattern). The two options are mutually exclusive.
 
 When an output schema is declared, the route body must be JSON (a JSON string, `Map`, or `List`). Camel parses it into structured content and forwards it through the MCP bridge as `CallToolResult.structuredContent`. The text representation remains available for LLM adapters (LangChain4j, Spring AI) that consume string tool results.
 
@@ -232,7 +232,7 @@ YAML::
 ----
 ====
 
-Flat `outputParameter.*` options use the same sub-option syntax as input `parameter.*`:
+Flat `+outputParameter.*+` options use the same sub-option syntax as input `+parameter.*+`:
 
 * `outputParameter.NAME=TYPE` — field type (`string`, `integer`, `number`, `boolean`)
 * `outputParameter.NAME.description=TEXT` — field description in the generated JSON Schema
