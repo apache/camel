@@ -104,6 +104,40 @@ public class SourceValidatorBeanRefsTest {
     }
 
     @Test
+    void theRequiredInterfaceComesFromTheEipModels(@TempDir Path dir) throws IOException {
+        // idempotentRepository is not in the static subset; the catalog's EIP model says what it needs
+        org.apache.camel.catalog.CamelCatalog catalog = new org.apache.camel.catalog.DefaultCamelCatalog();
+        assertThat(BeanRefChecks.requiredType(catalog, "idempotentRepository"))
+                .isEqualTo("org.apache.camel.spi.IdempotentRepository");
+        assertThat(BeanRefChecks.requiredType(catalog, "aggregationStrategy"))
+                .isEqualTo("org.apache.camel.AggregationStrategy");
+        assertThat(BeanRefChecks.requiredType(catalog, "ref")).isNull();
+        Files.writeString(dir.resolve("MyRepo.java"), """
+                package com.example;
+                public class MyRepo {
+                }
+                """);
+        String yaml = """
+                - beans:
+                    - name: myRepo
+                      type: "#class:com.example.MyRepo"
+                - from:
+                    uri: timer:tick
+                    steps:
+                      - idempotentConsumer:
+                          simple: "${header.id}"
+                          idempotentRepository: myRepo
+                          steps:
+                            - log: hi
+                """;
+        List<String> msgs = SourceValidator.validateYamlBeanRefs(yaml,
+                SourceValidator.BeanDeclarations.scan(dir, "r.camel.yaml"), catalog);
+        assertThat(msgs).hasSize(1);
+        assertThat(msgs.get(0)).contains("com.example.MyRepo must implement org.apache.camel.spi.IdempotentRepository")
+                .contains("the built-in ones are");
+    }
+
+    @Test
     void declaredClassMustImplementWhatTheOptionNeeds(@TempDir Path dir) throws IOException {
         Files.writeString(dir.resolve("MyAggregator.java"), """
                 package com.example;

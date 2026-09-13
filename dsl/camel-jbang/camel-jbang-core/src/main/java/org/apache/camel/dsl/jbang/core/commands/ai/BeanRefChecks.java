@@ -30,6 +30,7 @@ import java.util.regex.Pattern;
 
 import org.apache.camel.catalog.CamelCatalog;
 import org.apache.camel.dsl.jbang.core.commands.ai.SourceValidator.BeanDeclarations;
+import org.apache.camel.tooling.model.EipModel;
 
 import static org.apache.camel.dsl.jbang.core.commands.ai.YamlLines.YAML_URI_PATTERN;
 import static org.apache.camel.dsl.jbang.core.commands.ai.YamlLines.countLeadingSpaces;
@@ -75,11 +76,66 @@ final class BeanRefChecks {
     }
 
     /** The interface an option's bean must implement, for the options where a wrong class is a common mistake. */
+    /**
+     * Without a catalog: the options whose bean must implement an interface, and which (a subset of the EIP models).
+     */
     static final Map<String, String> REQUIRED_TYPES = Map.of(
-            "aggregationStrategy", "AggregationStrategy",
-            "strategyRef", "AggregationStrategy",
-            "processorRef", "Processor",
-            "processor", "Processor");
+            "aggregationStrategy", "org.apache.camel.AggregationStrategy",
+            "strategyRef", "org.apache.camel.AggregationStrategy",
+            "processorRef", "org.apache.camel.Processor",
+            "processor", "org.apache.camel.Processor");
+
+    private static final Map<CamelCatalog, Map<String, String>> REQUIRED_TYPES_BY_CATALOG
+            = java.util.Collections.synchronizedMap(new java.util.WeakHashMap<>());
+    private static final Map<CamelCatalog, Pattern> BEAN_REF_PATTERN_BY_CATALOG
+            = java.util.Collections.synchronizedMap(new java.util.WeakHashMap<>());
+
+    /**
+     * The interface the bean of an option must implement, from the EIP models of the catalog: every object option whose
+     * javaType is a Camel interface (aggregationStrategy needs org.apache.camel.AggregationStrategy,
+     * idempotentRepository needs org.apache.camel.spi.IdempotentRepository, ...), the same metadata the visual editors
+     * use to offer the built-in beans. Without a catalog the static subset above.
+     */
+    static String requiredType(CamelCatalog catalog, String option) {
+        if (catalog == null) {
+            return REQUIRED_TYPES.get(option);
+        }
+        return requiredTypes(catalog).get(option);
+    }
+
+    private static Map<String, String> requiredTypes(CamelCatalog catalog) {
+        return REQUIRED_TYPES_BY_CATALOG.computeIfAbsent(catalog, c -> {
+            Map<String, String> answer = new java.util.HashMap<>();
+            for (String name : c.findModelNames()) {
+                EipModel model = c.eipModel(name);
+                if (model == null) {
+                    continue;
+                }
+                for (var o : model.getOptions()) {
+                    String jt = o.getJavaType();
+                    if ("object".equals(o.getType()) && jt != null && jt.startsWith("org.apache.camel.")
+                            && !jt.contains(".model.") && !"ref".equals(o.getName())) {
+                        answer.putIfAbsent(o.getName(), jt);
+                    }
+                }
+            }
+            return answer;
+        });
+    }
+
+    /** {@link #BEAN_REF_PATTERN} plus every option the catalog's EIP models type with a Camel interface. */
+    static Pattern beanRefPattern(CamelCatalog catalog) {
+        if (catalog == null) {
+            return BEAN_REF_PATTERN;
+        }
+        return BEAN_REF_PATTERN_BY_CATALOG.computeIfAbsent(catalog, c -> {
+            java.util.Set<String> names = new java.util.TreeSet<>(requiredTypes(c).keySet());
+            names.addAll(List.of("ref", "aggregationStrategy", "strategyRef", "processorRef", "loadBalancerRef",
+                    "executorServiceRef", "onPrepareRef", "onRedeliveryRef", "aggregationRepositoryRef", "comparatorRef",
+                    "bean", "processor"));
+            return Pattern.compile("^\\s*-?\\s*(" + String.join("|", names) + "):\\s*(\\S+)\\s*$");
+        });
+    }
 
     /** The bean names declared under {@code beans:} in the YAML content. */
     public static Set<String> declaredBeans(String content) {
@@ -161,7 +217,7 @@ final class BeanRefChecks {
                 }
                 continue;
             }
-            Matcher m = BEAN_REF_PATTERN.matcher(lines[i]);
+            Matcher m = beanRefPattern(catalog).matcher(lines[i]);
             if (!m.find()) {
                 continue;
             }
@@ -171,12 +227,12 @@ final class BeanRefChecks {
                     || (ref.contains(":") && !ref.startsWith("#class:"))) {
                 continue;
             }
-            String required = REQUIRED_TYPES.get(option);
+            String required = requiredType(catalog, option);
             if (ref.startsWith("#class:")) {
                 String missing = classNotFound(ref.substring("#class:".length()), external);
                 if (missing != null) {
                     msgs.add("Line " + (i + 1) + ": " + option + ": " + missing
-                             + (required != null ? builtInHint(catalog, "org.apache.camel." + required) : ""));
+                             + (required != null ? builtInHint(catalog, required) : ""));
                 }
             }
             if (required != null && external != null) {
@@ -186,7 +242,8 @@ final class BeanRefChecks {
                 if (fqcn != null) {
                     String simple = fqcn.substring(fqcn.lastIndexOf('.') + 1).toLowerCase(Locale.ROOT);
                     String signature = external.javaSignatures().get(simple);
-                    if (signature != null && !signature.contains(required)) {
+                    String requiredSimple = required.substring(required.lastIndexOf('.') + 1);
+                    if (signature != null && !signature.contains(requiredSimple)) {
                         Integer methods = external.javaPublicMethods().get(simple);
                         if (option.equals("aggregationStrategy") && methods != null && methods == 1) {
                             // a POJO with one public method is adapted by the runtime
@@ -194,19 +251,19 @@ final class BeanRefChecks {
                         }
                         if (option.equals("aggregationStrategy") && methods != null && methods > 1) {
                             if (!content.contains("aggregationStrategyMethodName")) {
-                                msgs.add("Line " + (i + 1) + ": " + option + ": " + fqcn + " does not implement org.apache"
-                                         + ".camel." + required + " and has " + methods + " public methods: the runtime"
+                                msgs.add("Line " + (i + 1) + ": " + option + ": " + fqcn + " does not implement "
+                                         + required + " and has " + methods + " public methods: the runtime"
                                          + " cannot pick one, set aggregationStrategyMethodName: <method> or implement"
                                          + " the interface");
                             }
                             continue;
                         }
-                        msgs.add("Line " + (i + 1) + ": " + option + ": " + fqcn + " must implement org.apache.camel."
-                                 + required + " (its declaration is: " + signature.replaceAll("\\s+", " ").trim() + ")"
+                        msgs.add("Line " + (i + 1) + ": " + option + ": " + fqcn + " must implement " + required
+                                 + " (its declaration is: " + signature.replaceAll("\\s+", " ").trim() + ")"
                                  + (option.equals("aggregationStrategy")
                                          ? ", or be a POJO with one public method such as append(String a, String b)"
                                          : "")
-                                 + builtInHint(catalog, "org.apache.camel." + required));
+                                 + builtInHint(catalog, required));
                     }
                 }
             }
