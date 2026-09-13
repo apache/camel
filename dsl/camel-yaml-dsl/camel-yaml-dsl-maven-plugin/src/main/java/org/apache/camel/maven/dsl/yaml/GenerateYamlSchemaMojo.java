@@ -288,22 +288,8 @@ public class GenerateYamlSchemaMojo extends GenerateYamlSupportMojo {
                 // this is an internal name
                 continue;
             }
-            // we want to skip inheritErrorHandler which is only applicable for the load-balancer
-            boolean skip = false;
-            if (propertyName.equals("inheritErrorHandler")) {
-                skip = true;
-                Optional<AnnotationValue> av = annotationValue(info, YAML_TYPE_ANNOTATION, "nodes");
-                if (av.isPresent()) {
-                    String[] sn = av.get().asStringArray();
-                    for (String n : sn) {
-                        if ("load-balance".equals(n) || "loadBalance".equals(n)) {
-                            skip = false;
-                            break;
-                        }
-                    }
-                }
-            }
             // we want to skip pattern from wiretap
+            boolean skip = false;
             if (propertyName.equals("pattern")) {
                 Optional<AnnotationValue> av = annotationValue(info, YAML_TYPE_ANNOTATION, "nodes");
                 if (av.isPresent()) {
@@ -352,6 +338,39 @@ public class GenerateYamlSchemaMojo extends GenerateYamlSupportMojo {
             // demanding all of them at once instead of exactly one.
             if (propertyRequired && StringUtils.isEmpty(propertyOneOf)) {
                 definition.withArray("required").add(propertyName);
+            }
+        }
+        oneOfGroups.values().forEach(this::completeNegation);
+    }
+
+    /**
+     * A oneOf group gets a "not" branch (see {@link #makeOptional}) as soon as one of its alternatives is optional,
+     * which makes the group as a whole optional. That branch must then exclude every alternative of the group,
+     * including the required ones, otherwise choosing a required alternative matches both the alternative and the "not"
+     * branch and the oneOf fails with "2 are valid". The expression of resequence is such a case: the inline languages
+     * are optional (they come from __extends), but the "expression" wrapper is required.
+     */
+    private void completeNegation(ObjectNode group) {
+        ArrayNode oneOf = group.withArray("oneOf");
+        ObjectNode negation = StreamSupport.stream(oneOf.spliterator(), false)
+                .map(ObjectNode.class::cast)
+                .filter(entry -> entry.has("not"))
+                .findAny()
+                .orElse(null);
+        if (negation == null) {
+            return;
+        }
+        ArrayNode excluded = negation.withObject("/not").withArray("anyOf");
+        Set<String> excludedNames = new HashSet<>();
+        excluded.forEach(entry -> entry.path("required").forEach(name -> excludedNames.add(name.asText())));
+        for (JsonNode entry : oneOf) {
+            if (entry.has("not") || !entry.has("required")) {
+                continue;
+            }
+            for (JsonNode name : entry.get("required")) {
+                if (excludedNames.add(name.asText())) {
+                    excluded.addObject().withArray("required").add(name.asText());
+                }
             }
         }
     }

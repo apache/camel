@@ -872,6 +872,12 @@
             "title" : "Id",
             "description" : "The id of this node"
           },
+          "inheritErrorHandler" : {
+            "type" : "boolean",
+            "title" : "Inherit Error Handler",
+            "description" : "Whether to inherit Camel error handling during circuit breaker. By default, Camel error handler is turned off.",
+            "default" : false
+          },
           "note" : {
             "type" : "string",
             "title" : "Note",
@@ -10855,6 +10861,12 @@
             "type" : "string",
             "title" : "Id",
             "description" : "The id of this node"
+          },
+          "inheritErrorHandler" : {
+            "type" : "boolean",
+            "title" : "Inherit Error Handler",
+            "description" : "Whether to inherit the error handler. If turned off, the load balancer will fail over immediately on an error instead of waiting for Camel error handler to exhaust retries.",
+            "default" : true
           },
           "maximumFailoverAttempts" : {
             "type" : "string",

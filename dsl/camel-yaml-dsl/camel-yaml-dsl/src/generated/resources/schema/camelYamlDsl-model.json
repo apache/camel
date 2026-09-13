@@ -1871,6 +1871,17 @@
         "index" : 4,
         "group" : "common"
       }, {
+        "name" : "inheritErrorHandler",
+        "type" : "boolean",
+        "description" : "Whether to inherit Camel error handling during circuit breaker. By default, Camel error handler is turned off.",
+        "title" : "Inherit Error Handler",
+        "default" : "false",
+        "displayName" : "Inherit Error Handler",
+        "kind" : "attribute",
+        "index" : 5,
+        "group" : "advanced",
+        "label" : "advanced"
+      }, {
         "name" : "resilience4jConfiguration",
         "type" : "object",
         "ref" : "resilience4jConfiguration",
@@ -16338,6 +16349,17 @@
         "kind" : "attribute",
         "index" : 4,
         "group" : "common"
+      }, {
+        "name" : "inheritErrorHandler",
+        "type" : "boolean",
+        "description" : "Whether to inherit the error handler. If turned off, the load balancer will fail over immediately on an error instead of waiting for Camel error handler to exhaust retries.",
+        "title" : "Inherit Error Handler",
+        "default" : "true",
+        "displayName" : "Inherit Error Handler",
+        "kind" : "attribute",
+        "index" : 5,
+        "group" : "advanced",
+        "label" : "advanced"
       } ]
     },
     "randomLoadBalancer" : {
