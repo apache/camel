@@ -620,4 +620,18 @@ public class YamlValidatorPropertyHintTest {
         assertThat(YamlValidator.closest("loggerName", java.util.Set.of("logName", "message", "marker"))).isEqualTo("logName");
         assertThat(YamlValidator.closest("cheese", java.util.Set.of("steps", "id"))).isNull();
     }
+
+    @Test
+    void otherJbangDirectivesGetTheCommentHintWithoutTheDependencyAdvice() throws Exception {
+        List<Error> errors = new YamlValidator().validate("""
+                //SOURCES MyBean.java
+                - from:
+                    uri: timer:tick
+                    steps:
+                      - log: hi
+                """);
+        assertThat(errors).hasSize(1);
+        assertThat(errors.get(0).getMessage()).contains("//SOURCES is read as text by YAML")
+                .contains("# //SOURCES MyBean.java").doesNotContain("--dep");
+    }
 }

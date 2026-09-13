@@ -205,14 +205,19 @@ public class YamlValidator {
             if (t.isEmpty() || t.startsWith("#")) {
                 continue;
             }
-            if (t.startsWith("//DEPS") || t.startsWith("//JAVA") || t.startsWith("//SOURCES") || t.startsWith("//")) {
+            if (t.startsWith("//")) {
+                // a camel-jbang directive (//DEPS, //JAVA, //SOURCES) or any other // line: never YAML
+                String directive = t.split("\\s+")[0];
+                String msg = "line " + (i + 1) + ": " + directive + " is read as text by YAML, so the whole file"
+                             + " becomes one string; write it as a YAML comment: # " + t
+                             + " (camel-jbang reads its directives inside comments)";
+                if ("//DEPS".equals(directive)) {
+                    msg += ", or add the dependency with --dep or camel.jbang.dependencies in application.properties";
+                }
                 return Error.builder()
                         .messageKey("jbang")
                         .format(new MessageFormat("{0}"))
-                        .arguments("line " + (i + 1) + ": " + t.split("\\s+")[0] + " is read as text by YAML, so the whole"
-                                   + " file becomes one string; write it as a YAML comment: # " + t
-                                   + " (camel-jbang reads //DEPS inside comments), or add the dependency with --dep or"
-                                   + " camel.jbang.dependencies in application.properties")
+                        .arguments(msg)
                         .build();
             }
             break;
