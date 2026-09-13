@@ -20,7 +20,10 @@ import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.camel.CamelExecutionException;
 import org.apache.camel.Exchange;
+import org.apache.camel.InvalidPayloadException;
+import org.apache.camel.RuntimeCamelException;
 
 /**
  * Method information about the POJO method to call when using the {@link AggregationStrategyBeanAdapter}.
@@ -44,7 +47,7 @@ public class AggregationStrategyMethodInfo {
         List<Object> list = new ArrayList<>(oldParameters.size() + newParameters.size());
         for (AggregationStrategyParameterInfo info : oldParameters) {
             if (oldExchange != null) {
-                Object value = info.getExpression().evaluate(oldExchange, info.getType());
+                Object value = evaluate(info, oldExchange);
                 list.add(value);
             } else {
                 // use a null value as oldExchange is null
@@ -53,7 +56,7 @@ public class AggregationStrategyMethodInfo {
         }
         for (AggregationStrategyParameterInfo info : newParameters) {
             if (newExchange != null) {
-                Object value = info.getExpression().evaluate(newExchange, info.getType());
+                Object value = evaluate(info, newExchange);
                 list.add(value);
             } else {
                 // use a null value as newExchange is null
@@ -63,6 +66,23 @@ public class AggregationStrategyMethodInfo {
 
         Object[] args = list.toArray();
         return method.invoke(pojo, args);
+    }
+
+    private Object evaluate(AggregationStrategyParameterInfo info, Exchange exchange) {
+        try {
+            return info.getExpression().evaluate(exchange, info.getType());
+        } catch (CamelExecutionException e) {
+            if (e.getCause() instanceof InvalidPayloadException && exchange.getMessage().getBody() == null) {
+                // a typed parameter is bound to the message body, and there is none (a timer message is empty)
+                throw new RuntimeCamelException(
+                        "The aggregation strategy method " + method.getName() + " has a parameter of type "
+                                                + info.getType().getSimpleName()
+                                                + " that is bound to the message body, but the message has no body (null):"
+                                                + " set a body before the aggregate (setBody), or declare the parameter as Exchange or Object",
+                        e.getCause());
+            }
+            throw e;
+        }
     }
 
 }

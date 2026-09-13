@@ -79,6 +79,12 @@ public class ExpressionReifier<T extends ExpressionDefinition> extends AbstractR
     public static ExpressionReifier<? extends ExpressionDefinition> reifier(
             CamelContext camelContext, ExpressionDefinition definition) {
 
+        if (definition == null) {
+            // a split, filter, setBody... written without its expression (in YAML: only options such as delimiter)
+            throw new IllegalArgumentException(
+                    "No expression: the EIP needs an expression (a language and its text), for example simple: \"${body}\","
+                                               + " constant: \"...\" or tokenize: \",\"");
+        }
         ExpressionReifier<? extends ExpressionDefinition> answer = null;
         if (!EXPRESSIONS.isEmpty()) {
             // custom take precedence
