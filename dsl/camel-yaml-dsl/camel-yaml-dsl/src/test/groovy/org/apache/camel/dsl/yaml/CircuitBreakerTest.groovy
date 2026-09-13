@@ -67,7 +67,6 @@ class CircuitBreakerTest extends YamlTestSupport {
                     uri: "direct:start"
                     steps:
                       - circuitBreaker: 
-                         # TODO: steps need to be defined before on-fallback             
                          steps:
                            - to: "log:cb"
                          onFallback:
@@ -79,9 +78,42 @@ class CircuitBreakerTest extends YamlTestSupport {
             input.endpointUri == 'direct:start'
 
             with(outputs[0], CircuitBreakerDefinition) {
+                outputs.size() == 1
                 with(outputs[0], ToDefinition) {
                     endpointUri == "log:cb"
                 }
+                onFallback.outputs.size() == 1
+                with(onFallback.outputs[0], ToDefinition) {
+                    endpointUri == "log:fb"
+                }
+            }
+        }
+    }
+
+    // CAMEL-24700: the order of the keys must not matter
+    def "circuitBreaker with onFallback before steps"() {
+        when:
+        loadRoutes '''
+                - from:
+                    uri: "direct:start"
+                    steps:
+                      - circuitBreaker: 
+                         onFallback:
+                             steps:
+                               - to: "log:fb" 
+                         steps:
+                           - to: "log:cb"
+            '''
+        then:
+        with(context.routeDefinitions[0], RouteDefinition) {
+            input.endpointUri == 'direct:start'
+
+            with(outputs[0], CircuitBreakerDefinition) {
+                outputs.size() == 1
+                with(outputs[0], ToDefinition) {
+                    endpointUri == "log:cb"
+                }
+                onFallback.outputs.size() == 1
                 with(onFallback.outputs[0], ToDefinition) {
                     endpointUri == "log:fb"
                 }
