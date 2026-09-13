@@ -85,13 +85,11 @@ public class AuthoringTools {
     }
 
     @Tool(annotations = @Tool.Annotations(readOnlyHint = true, destructiveHint = false, openWorldHint = false),
-          description = "A validated Camel YAML DSL sample of an EIP or file entry (onException, aggregate, "
-                        + "circuitBreaker, split, rest, routeConfiguration) from the Camel documentation, with where it "
-                        + "goes: a top-level entry next to the route, or a step inside steps. Use it before writing an "
-                        + "EIP for the first time and after a 'not defined in the schema' error; camel_catalog_doc has "
-                        + "the options.")
+          description = "A validated YAML DSL sample of an EIP or file entry (onException, aggregate, split, rest, beans) "
+                        + "from the docs, with where it goes (a top-level entry or a step). Use before writing an EIP the "
+                        + "first time or after a 'not defined in the schema' error.")
     public JsonObject camel_catalog_sample(
-            @ToolArg(description = "EIP or entry name (onException, aggregate, circuitBreaker, split, rest), or what to do: read file, call service, batch, retry, router",
+            @ToolArg(description = "EIP or entry name, or what to do (read file, call service, retry, batch)",
                      required = true) String name,
             @ToolArg(description = "Maximum samples to return (default 2, max 5)", required = false) Integer limit,
             @ToolArg(description = VERSION_DESC, required = false) String camelVersion) {

@@ -99,14 +99,10 @@ public final class AuthoringTools {
                 }));
 
         registry.accept(tool("camel_catalog_sample",
-                "A validated Camel YAML DSL sample of an EIP or file entry (onException, aggregate, circuitBreaker, "
-                                                     + "split, rest, routeConfiguration) from the Camel documentation, with "
-                                                     + "where it goes: a top-level entry next to the route, or a step inside "
-                                                     + "steps. Use it before writing an EIP for the first time and after a "
-                                                     + "'not defined in the schema' error; camel_catalog_doc has the options.")
-                .param("name", "string",
-                        "EIP or entry name (onException, aggregate, circuitBreaker, split, rest), or what to do: read file, call service, batch, retry, router",
-                        true)
+                "A validated YAML DSL sample of an EIP or file entry (onException, aggregate, split, rest, beans) from "
+                                                     + "the docs, with where it goes (a top-level entry or a step). Use before "
+                                                     + "writing an EIP the first time or after a 'not defined in the schema' error.")
+                .param("name", "string", "EIP or entry name, or what to do (read file, call service, retry, batch)", true)
                 .param("limit", "integer", "Maximum samples to return (default 2, max 5)", false)
                 .param("camelVersion", "string", VERSION_DESC, false)
                 .core(true)
