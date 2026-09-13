@@ -1493,6 +1493,13 @@ public abstract class AbstractCamelCatalog {
                 cause = e;
             }
 
+            if (cause != null && cause.getMessage() != null
+                    && cause.getMessage().contains("No bean could be found in the registry")) {
+                // ${bean:name...} looks the bean up when the expression is created; there is no registry here, so
+                // the lookup cannot say anything about the syntax, which is what this validates (CAMEL-24698)
+                cause = null;
+            }
+
             if (cause != null) {
 
                 // reverse the dummy placeholders back to {{XXX}}

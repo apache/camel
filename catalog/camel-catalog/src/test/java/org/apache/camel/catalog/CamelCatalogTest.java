@@ -1234,6 +1234,18 @@ public class CamelCatalogTest {
     }
 
     @Test
+    public void testSimpleBeanFunctionIsNotALookupAtValidationTime() {
+        // the bean is only known at runtime; the validator has no registry and must not report it as missing
+        LanguageValidationResult result = catalog.validateLanguageExpression(null, "simple", "${bean:myBean.count}");
+        assertTrue(result.isSuccess(), result.getError());
+        result = catalog.validateLanguagePredicate(null, "simple", "${bean:myBean?method=isReady} == true");
+        assertTrue(result.isSuccess(), result.getError());
+        // a real syntax error next to it is still reported
+        result = catalog.validateLanguageExpression(null, "simple", "${bean:myBean.count");
+        assertFalse(result.isSuccess());
+    }
+
+    @Test
     public void testPredicatePlaceholder() {
         LanguageValidationResult result = catalog.validateLanguagePredicate(null, "simple", "${body} contains '{{danger}}'");
         assertTrue(result.isSuccess());
