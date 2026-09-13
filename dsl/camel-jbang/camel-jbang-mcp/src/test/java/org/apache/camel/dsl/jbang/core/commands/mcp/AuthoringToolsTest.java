@@ -17,13 +17,16 @@
 package org.apache.camel.dsl.jbang.core.commands.mcp;
 
 import java.lang.reflect.Method;
+import java.lang.reflect.Parameter;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import io.quarkiverse.mcp.server.Tool;
+import io.quarkiverse.mcp.server.ToolArg;
 import io.quarkiverse.mcp.server.ToolCallException;
 import org.apache.camel.dsl.jbang.core.commands.ai.ToolDescriptor;
 import org.apache.camel.dsl.jbang.core.commands.ai.ToolRegistry;
@@ -107,5 +110,36 @@ class AuthoringToolsTest {
                 .isInstanceOf(ToolCallException.class).hasMessageContaining("no-such-app-xyz-1");
         assertThatThrownBy(() -> tools.camel_get_log("no-such-app-xyz-1", null, null, null))
                 .isInstanceOf(ToolCallException.class).hasMessageContaining("no-such-app-xyz-1");
+    }
+
+    @Test
+    void everyArgumentIsRequiredExactlyWhenTheSharedDescriptorSaysSo() {
+        // the Quarkus server rejects a call that omits an argument declared required, so an optional argument with a
+        // documented default ("omitted lists the files", "default: the only one running") must not be required here
+        for (Method m : AuthoringTools.class.getMethods()) {
+            if (m.getAnnotation(Tool.class) == null) {
+                continue;
+            }
+            ToolDescriptor td = ToolRegistry.findTool(m.getName());
+            List<ToolDescriptor.Param> params = td.params();
+            Parameter[] args = m.getParameters();
+            assertThat(args).as(m.getName() + " has one argument per descriptor parameter").hasSize(params.size());
+            for (int i = 0; i < args.length; i++) {
+                ToolArg arg = args[i].getAnnotation(ToolArg.class);
+                assertThat(arg).as(m.getName() + " argument " + i).isNotNull();
+                assertThat(arg.required()).as(m.getName() + " argument '" + params.get(i).name() + "' required")
+                        .isEqualTo(params.get(i).required());
+            }
+        }
+    }
+
+    @Test
+    void blankArgumentsAreLeftOutSoTheToolDefaultApplies() {
+        Map<String, String> args = AuthoringTools.args("name", "timer", "kind", "", "limit", 3, "dev", true, "x", null);
+        assertThat(args).containsExactly(Map.entry("name", "timer"), Map.entry("limit", "3"), Map.entry("dev", "true"));
+        // a blank kind means auto-detect, not "a kind called nothing"
+        assertThat(tools.camel_catalog_doc("timer", "", "", null, null, "", "period", "").getString("kind"))
+                .isEqualTo("component");
+        assertThat(tools.camel_catalog_find("mqtt", "", null, "").getInteger("count")).isGreaterThan(0);
     }
 }

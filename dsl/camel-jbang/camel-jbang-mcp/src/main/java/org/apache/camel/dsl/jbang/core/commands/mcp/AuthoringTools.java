@@ -54,15 +54,18 @@ public class AuthoringTools {
                         + "options, missing path. Replaces the former AsciiDoc-only camel_catalog_doc: includeDoc=true "
                         + "adds the AsciiDoc page.")
     public JsonObject camel_catalog_doc(
-            @ToolArg(description = "Name, e.g. kafka, json-jackson, simple, timer, choice, split") String name,
-            @ToolArg(description = "Endpoint URI to check, e.g. kafka:orders?brokers=host:9092") String endpoint,
-            @ToolArg(description = "component, dataformat, language or eip (auto-detected)") String kind,
-            @ToolArg(description = "Include the options (default true)") Boolean includeOptions,
-            @ToolArg(description = "Include the full AsciiDoc page (default false)") Boolean includeDoc,
+            @ToolArg(description = "Name, e.g. kafka, json-jackson, simple, timer, choice, split",
+                     required = false) String name,
+            @ToolArg(description = "Endpoint URI to check, e.g. kafka:orders?brokers=host:9092",
+                     required = false) String endpoint,
+            @ToolArg(description = "component, dataformat, language or eip (auto-detected)", required = false) String kind,
+            @ToolArg(description = "Include the options (default true)", required = false) Boolean includeOptions,
+            @ToolArg(description = "Include the full AsciiDoc page (default false)", required = false) Boolean includeDoc,
             @ToolArg(description = "A language doc sub-page (simple: functions, operators, ognl, advanced) to return"
-                                   + " as text") String docPage,
-            @ToolArg(description = "Keyword to match in option names or descriptions") String optionsFilter,
-            @ToolArg(description = VERSION_DESC) String camelVersion) {
+                                   + " as text",
+                     required = false) String docPage,
+            @ToolArg(description = "Keyword to match in option names or descriptions", required = false) String optionsFilter,
+            @ToolArg(description = VERSION_DESC, required = false) String camelVersion) {
         return call("camel_catalog_doc", args("name", name, "endpoint", endpoint, "kind", kind,
                 "includeOptions", includeOptions, "includeDoc", includeDoc, "docPage", docPage,
                 "optionsFilter", optionsFilter, "camelVersion", camelVersion));
@@ -73,10 +76,10 @@ public class AuthoringTools {
                         + "is not the exact name (mqtt, s3, snowflake, csv): best match first with title and "
                         + "description. camel_catalog_doc then gives the options of one.")
     public JsonObject camel_catalog_find(
-            @ToolArg(description = "What to look for, e.g. mqtt, s3, database, csv") String term,
-            @ToolArg(description = "component, dataformat or language (default: all)") String kind,
-            @ToolArg(description = "Maximum matches per kind (default 10)") Integer limit,
-            @ToolArg(description = VERSION_DESC) String camelVersion) {
+            @ToolArg(description = "What to look for, e.g. mqtt, s3, database, csv", required = true) String term,
+            @ToolArg(description = "component, dataformat or language (default: all)", required = false) String kind,
+            @ToolArg(description = "Maximum matches per kind (default 10)", required = false) Integer limit,
+            @ToolArg(description = VERSION_DESC, required = false) String camelVersion) {
         return call("camel_catalog_find", args("term", term, "kind", kind, "limit", limit,
                 "camelVersion", camelVersion));
     }
@@ -87,10 +90,11 @@ public class AuthoringTools {
                         + "options. Use on content before writing it, or on an existing file (no content) to explain "
                         + "a reload error.")
     public JsonObject camel_validate_source(
-            @ToolArg(description = DIRECTORY_DESC + "; needed when no content is given") String directory,
-            @ToolArg(description = "File name; picks the checks by extension, read when no content") String file,
-            @ToolArg(description = "The source to validate") String content,
-            @ToolArg(description = VERSION_DESC) String camelVersion) {
+            @ToolArg(description = DIRECTORY_DESC + "; needed when no content is given", required = false) String directory,
+            @ToolArg(description = "File name; picks the checks by extension, read when no content",
+                     required = true) String file,
+            @ToolArg(description = "The source to validate", required = false) String content,
+            @ToolArg(description = VERSION_DESC, required = false) String camelVersion) {
         return call("camel_validate_source", args("directory", directory, "file", file, "content", content,
                 "camelVersion", camelVersion));
     }
@@ -100,8 +104,8 @@ public class AuthoringTools {
                         + "file its content. Use before editing to see the routes, configuration and other files of "
                         + "the integration.")
     public JsonObject camel_get_files(
-            @ToolArg(description = DIRECTORY_DESC) String directory,
-            @ToolArg(description = "File name to read; omitted lists the files") String file) {
+            @ToolArg(description = DIRECTORY_DESC, required = false) String directory,
+            @ToolArg(description = "File name to read; omitted lists the files", required = false) String file) {
         return call("camel_get_files", args("directory", directory, "file", file));
     }
 
@@ -111,11 +115,11 @@ public class AuthoringTools {
                         + "An integration running in dev mode reloads the change, otherwise restart it with "
                         + "camel_control.")
     public JsonObject camel_write_file(
-            @ToolArg(description = DIRECTORY_DESC) String directory,
-            @ToolArg(description = "File name, no path") String file,
-            @ToolArg(description = "The complete new content") String content,
-            @ToolArg(description = "Validate before writing (default true)") Boolean validate,
-            @ToolArg(description = VERSION_DESC) String camelVersion) {
+            @ToolArg(description = DIRECTORY_DESC, required = false) String directory,
+            @ToolArg(description = "File name, no path", required = true) String file,
+            @ToolArg(description = "The complete new content", required = true) String content,
+            @ToolArg(description = "Validate before writing (default true)", required = false) Boolean validate,
+            @ToolArg(description = VERSION_DESC, required = false) String camelVersion) {
         return call("camel_write_file", args("directory", directory, "file", file, "content", content,
                 "validate", validate, "camelVersion", camelVersion));
     }
@@ -125,11 +129,12 @@ public class AuthoringTools {
                         + "mode by default (route files reload when written). Returns the pid and log file once it is "
                         + "up; camel_get_log and camel_get_errors then tell how it does, camel_control stops it.")
     public JsonObject camel_run(
-            @ToolArg(description = "Project directory to run in (absolute path)") String directory,
+            @ToolArg(description = "Project directory to run in (absolute path)", required = true) String directory,
             @ToolArg(description = "Source files to run, comma-separated (default: every route file in the"
-                                   + " directory)") String files,
-            @ToolArg(description = "Integration name (default: from the first file)") String name,
-            @ToolArg(description = "Dev mode with reload on file change (default true)") Boolean dev) {
+                                   + " directory)",
+                     required = false) String files,
+            @ToolArg(description = "Integration name (default: from the first file)", required = false) String name,
+            @ToolArg(description = "Dev mode with reload on file change (default true)", required = false) Boolean dev) {
         return call("camel_run", args("directory", directory, "files", files, "name", name, "dev", dev));
     }
 
@@ -138,8 +143,9 @@ public class AuthoringTools {
                         + "without dev mode), stop-routes, start-routes, reset-stats (clears statistics, routes "
                         + "untouched). Never stop, kill or restart unless the user asked for it.")
     public JsonObject camel_control(
-            @ToolArg(description = "stop, kill, restart, stop-routes, start-routes or reset-stats") String action,
-            @ToolArg(description = NAME_DESC) String name) {
+            @ToolArg(description = "stop, kill, restart, stop-routes, start-routes or reset-stats",
+                     required = true) String action,
+            @ToolArg(description = NAME_DESC, required = false) String name) {
         return call("camel_control", args("action", action, "name", name));
     }
 
@@ -147,10 +153,10 @@ public class AuthoringTools {
           description = "Recent log records of a running integration, newest first, with optional filtering; a "
                         + "stack trace comes as one record with a detail block.")
     public JsonObject camel_get_log(
-            @ToolArg(description = NAME_DESC) String name,
-            @ToolArg(description = "Maximum records to return (default 50)") Integer limit,
-            @ToolArg(description = "Case-insensitive substring filter on the message") String filter,
-            @ToolArg(description = "Only this log level (INFO, WARN, ERROR, DEBUG, TRACE)") String level) {
+            @ToolArg(description = NAME_DESC, required = false) String name,
+            @ToolArg(description = "Maximum records to return (default 50)", required = false) Integer limit,
+            @ToolArg(description = "Case-insensitive substring filter on the message", required = false) String filter,
+            @ToolArg(description = "Only this log level (INFO, WARN, ERROR, DEBUG, TRACE)", required = false) String level) {
         return call("camel_get_log", args("name", name, "limit", limit, "filter", filter, "level", level));
     }
 
@@ -158,7 +164,7 @@ public class AuthoringTools {
           description = "The failed exchanges of a running integration: routeId, exchangeId, exception with stack "
                         + "trace, body and headers.")
     public JsonObject camel_get_errors(
-            @ToolArg(description = NAME_DESC) String name) {
+            @ToolArg(description = NAME_DESC, required = false) String name) {
         return call("camel_get_errors", args("name", name));
     }
 
@@ -167,10 +173,10 @@ public class AuthoringTools {
                         + "Returns the value (true/false for a predicate) or the syntax error, so check simple before "
                         + "answering or writing it.")
     public JsonObject camel_eval_expression(
-            @ToolArg(description = "e.g. ${random(1,10)} or ${body} ?: 'none'") String expression,
-            @ToolArg(description = "simple (default), jsonpath, xpath, jq") String language,
-            @ToolArg(description = "Message body") String body,
-            @ToolArg(description = NAME_DESC) String name) {
+            @ToolArg(description = "e.g. ${random(1,10)} or ${body} ?: 'none'", required = true) String expression,
+            @ToolArg(description = "simple (default), jsonpath, xpath, jq", required = false) String language,
+            @ToolArg(description = "Message body", required = false) String body,
+            @ToolArg(description = NAME_DESC, required = false) String name) {
         return call("camel_eval_expression", args("expression", expression, "language", language, "body", body,
                 "name", name));
     }
@@ -184,12 +190,15 @@ public class AuthoringTools {
         }
     }
 
-    /** Name and value pairs into the string arguments of the registry; a null value is left out. */
+    /**
+     * Name and value pairs into the string arguments of the registry. A null or blank value is left out, so an argument
+     * the client did not provide, or sent as an empty string, gets the tool's default.
+     */
     static Map<String, String> args(Object... pairs) {
         Map<String, String> map = new LinkedHashMap<>();
         for (int i = 0; i + 1 < pairs.length; i += 2) {
             Object value = pairs[i + 1];
-            if (value != null) {
+            if (value != null && !(value instanceof String str && str.isBlank())) {
                 map.put(String.valueOf(pairs[i]), String.valueOf(value));
             }
         }
