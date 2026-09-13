@@ -152,7 +152,7 @@ public class SourceValidatorJavaXsltTest {
 
     @Test
     void xslt2FunctionInA10StylesheetPointsToSaxon() {
-        org.junit.jupiter.api.Assumptions.assumeTrue(SourceValidator.saxonFactory() == null, "JDK processor only");
+        org.junit.jupiter.api.Assumptions.assumeTrue(XmlChecks.saxonFactory() == null, "JDK processor only");
         List<String> msgs = SourceValidator.validateXslt("""
                 <?xml version="1.0"?>
                 <xsl:stylesheet version="1.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
@@ -167,7 +167,7 @@ public class SourceValidatorJavaXsltTest {
 
     @Test
     void xslt2StylesheetWithoutSaxonIsOnlyCheckedForWellFormedXml() {
-        org.junit.jupiter.api.Assumptions.assumeTrue(SourceValidator.saxonFactory() == null, "JDK processor only");
+        org.junit.jupiter.api.Assumptions.assumeTrue(XmlChecks.saxonFactory() == null, "JDK processor only");
         assertThat(SourceValidator.validateXslt("""
                 <?xml version="1.0"?>
                 <xsl:stylesheet version="2.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
