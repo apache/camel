@@ -52,9 +52,9 @@ public class DiagnoseTools {
                         + "ResolveEndpointFailedException, FailedToCreateRouteException, and more.")
     public JsonObject camel_error_diagnose(
             @ToolArg(description = "The Camel stack trace or error message to diagnose") String error,
-            @ToolArg(description = ToolArgDocs.RUNTIME) String runtime,
-            @ToolArg(description = ToolArgDocs.CAMEL_VERSION) String camelVersion,
-            @ToolArg(description = ToolArgDocs.PLATFORM_BOM) String platformBom) {
+            @ToolArg(description = ToolArgDocs.RUNTIME, required = false) String runtime,
+            @ToolArg(description = ToolArgDocs.CAMEL_VERSION, required = false) String camelVersion,
+            @ToolArg(description = ToolArgDocs.PLATFORM_BOM, required = false) String platformBom) {
 
         if (error == null || error.isBlank()) {
             throw new ToolCallException("Error message or stack trace is required", null);

@@ -355,4 +355,13 @@ class CatalogToolsTest {
         assertThat(mavenResult.version()).isEqualTo(requestedVersion);
         assertThat(mavenResult.version()).isNotEqualTo(BUILTIN_VERSION);
     }
+
+    @Test
+    void eipDocAcceptsKebabCaseAndAnyCase() {
+        CatalogTools tools = createTools(null);
+        assertThat(tools.camel_catalog_eip_doc("circuit-breaker", null, null, null).name()).isEqualTo("circuitBreaker");
+        assertThat(tools.camel_catalog_eip_doc("circuitbreaker", null, null, null).name()).isEqualTo("circuitBreaker");
+        assertThat(tools.camel_catalog_eip_doc("Circuit Breaker", null, null, null).name()).isEqualTo("circuitBreaker");
+        assertThat(CatalogTools.toCamelCase("poll-enrich")).isEqualTo("pollEnrich");
+    }
 }
