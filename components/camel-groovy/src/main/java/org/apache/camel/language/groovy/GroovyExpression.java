@@ -59,7 +59,26 @@ public class GroovyExpression extends ExpressionSupport {
         Script script = instantiateScript(exchange, globalVariables);
         script.setBinding(createBinding(exchange, globalVariables));
 
-        Object value = script.run();
+        Object value;
+        try {
+            value = script.run();
+        } catch (groovy.lang.MissingPropertyException e) {
+            // a bean name used as a variable (formatter.format(body)): say where beans are, and what the variables are
+            String name = e.getProperty();
+            boolean bean = name != null && exchange.getContext().getRegistry().lookupByName(name) != null;
+            throw new org.apache.camel.RuntimeCamelException(
+                    "No such property: " + name + " in the groovy script"
+                                                             + (bean
+                                                                     ? ": '" + name
+                                                                       + "' is a bean in the registry, not a script variable;"
+                                                                       + " use exchange.getContext().getRegistry().lookupByName('"
+                                                                       + name
+                                                                       + "'), or call it from the route with - bean: {ref: "
+                                                                       + name + "}"
+                                                                     : ": the script variables are exchange, message, body, headers,"
+                                                                       + " variables, exchangeProperties, camelContext, request and log"),
+                    e);
+        }
 
         return exchange.getContext().getTypeConverter().convertTo(type, value);
     }

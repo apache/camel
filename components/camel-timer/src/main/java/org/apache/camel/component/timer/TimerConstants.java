@@ -23,6 +23,15 @@ public final class TimerConstants {
 
     @Metadata(description = "The fired time", javaType = "Date")
     public static final String HEADER_FIRED_TIME = Exchange.TIMER_FIRED_TIME;
+    @Metadata(description = "The counter of the timer, starting at 1 for the first fire and incremented on each fire",
+              javaType = "long")
+    public static final String HEADER_TIMER_COUNTER = Exchange.TIMER_COUNTER;
+    @Metadata(description = "The name of the timer", javaType = "String")
+    public static final String HEADER_TIMER_NAME = Exchange.TIMER_NAME;
+    @Metadata(description = "The period of the timer in millis", javaType = "long")
+    public static final String HEADER_TIMER_PERIOD = Exchange.TIMER_PERIOD;
+    @Metadata(description = "The time the timer was scheduled to fire (its trigger time)", javaType = "Date")
+    public static final String HEADER_TIMER_TIME = Exchange.TIMER_TIME;
     @Metadata(description = "The timestamp of the message", javaType = "long")
     public static final String HEADER_MESSAGE_TIMESTAMP = Exchange.MESSAGE_TIMESTAMP;
 
