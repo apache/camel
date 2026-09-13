@@ -198,7 +198,8 @@ public class BeansDeserializer extends YamlDeserializerSupport implements Constr
     static String classNotFoundHint(Throwable e) {
         for (Throwable t = e; t != null; t = t.getCause()) {
             if (t instanceof ClassNotFoundException || t instanceof NoClassDefFoundError) {
-                String cls = t.getMessage() != null ? t.getMessage().trim() : "";
+                // NoClassDefFoundError names the class in internal form (java/lang/Foo)
+                String cls = t.getMessage() != null ? t.getMessage().trim().replace('/', '.') : "";
                 String simple = cls.substring(cls.lastIndexOf('.') + 1);
                 String hint = ": class " + cls + " was not found";
                 if (simple.endsWith("AggregationStrategy") && !cls.startsWith("org.apache.camel.processor.aggregate.")) {
