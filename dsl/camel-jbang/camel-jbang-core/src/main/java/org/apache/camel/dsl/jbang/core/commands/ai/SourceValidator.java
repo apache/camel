@@ -106,10 +106,21 @@ public final class SourceValidator {
             msgs.add("Invalid YAML: " + e.getMessage());
             return msgs;
         }
-        if (catalog != null) {
-            msgs.addAll(validateYamlEndpoints(content, catalog));
-            msgs.addAll(validateYamlSimple(content, catalog));
+        msgs.addAll(validateYamlCatalog(content, catalog));
+        return msgs;
+    }
+
+    /**
+     * The catalog checks of a YAML route without the schema: endpoint URIs and Simple expressions. For a caller that
+     * has already validated the schema (the CLI, the schema tool).
+     */
+    public static List<String> validateYamlCatalog(String content, CamelCatalog catalog) {
+        List<String> msgs = new ArrayList<>();
+        if (content == null || content.isBlank() || catalog == null) {
+            return msgs;
         }
+        msgs.addAll(validateYamlEndpoints(content, catalog));
+        msgs.addAll(validateYamlSimple(content, catalog));
         return msgs;
     }
 

@@ -37,6 +37,7 @@ import io.quarkiverse.mcp.server.ToolArg;
 import io.quarkiverse.mcp.server.ToolCallException;
 import org.apache.camel.catalog.CamelCatalog;
 import org.apache.camel.catalog.EndpointValidationResult;
+import org.apache.camel.dsl.jbang.core.commands.ai.SourceValidator;
 import org.apache.camel.dsl.yaml.validator.YamlValidator;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.model.RouteDefinition;
@@ -327,8 +328,9 @@ public class TransformTools {
      * Tool to validate a YAML DSL route definition against the Camel YAML DSL JSON schema.
      */
     @Tool(annotations = @Tool.Annotations(readOnlyHint = true, destructiveHint = false, openWorldHint = false),
-          description = "Validate a YAML DSL route definition against the Camel YAML DSL JSON schema. "
-                        + "Checks for valid DSL elements, correct route structure, and returns detailed schema validation errors.")
+          description = "Validate a YAML DSL route definition against the Camel YAML DSL JSON schema, and when the"
+                        + " structure is valid also run the catalog checks of camel_validate_source: endpoint options,"
+                        + " simple expression syntax, header names. Returns detailed error messages with hints.")
     public YamlDslValidationResult camel_validate_yaml_dsl(
             @ToolArg(description = "YAML DSL route definition to validate") String route) {
 
@@ -358,6 +360,18 @@ public class TransformTools {
                             .toList();
                 }
 
+                if (errors.isEmpty()) {
+                    // the structure is fine: the same catalog checks as camel validate yaml and camel_validate_source
+                    // (endpoint options, simple syntax, header names), so both tools give the same answer
+                    List<String> catalogErrors
+                            = SourceValidator.validateYamlCatalog(route, catalogService.getDefaultCatalog());
+                    if (!catalogErrors.isEmpty()) {
+                        errorDetails = catalogErrors.stream()
+                                .map(msg -> new YamlDslError(msg, null, "catalog", null))
+                                .toList();
+                        return new YamlDslValidationResult(false, errorDetails.size(), errorDetails);
+                    }
+                }
                 return new YamlDslValidationResult(errors.isEmpty(), errors.size(), errorDetails);
             } finally {
                 tempFile.delete();
