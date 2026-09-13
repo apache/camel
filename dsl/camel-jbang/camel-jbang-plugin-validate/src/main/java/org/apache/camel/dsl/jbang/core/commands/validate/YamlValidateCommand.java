@@ -72,12 +72,9 @@ public class YamlValidateCommand extends CamelCommand {
                 var report = new ArrayList<>(validator.validate(new File(n)));
                 if (camelCatalog != null && report.isEmpty()) {
                     // the schema is fine: check what the schema cannot, endpoint URIs and simple expressions
-                    // (CAMEL-24698), the same checks the MCP tools and the TUI do before writing a file
+                    // (CAMEL-24698), the same checks the MCP tools do before writing a file
                     String content = Files.readString(new File(n).toPath());
-                    for (String msg : SourceValidator.validateYamlEndpoints(content, camelCatalog)) {
-                        report.add(catalogError(msg));
-                    }
-                    for (String msg : SourceValidator.validateYamlSimple(content, camelCatalog)) {
+                    for (String msg : SourceValidator.validateYamlCatalog(content, camelCatalog)) {
                         report.add(catalogError(msg));
                     }
                 }

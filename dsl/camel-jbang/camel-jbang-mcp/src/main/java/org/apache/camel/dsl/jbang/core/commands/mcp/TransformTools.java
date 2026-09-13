@@ -364,7 +364,7 @@ public class TransformTools {
                     // the structure is fine: the same catalog checks as camel validate yaml and camel_validate_source
                     // (endpoint options, simple syntax, header names), so both tools give the same answer
                     List<String> catalogErrors
-                            = SourceValidator.validateCamelYaml(route, catalogService.getDefaultCatalog());
+                            = SourceValidator.validateYamlCatalog(route, catalogService.getDefaultCatalog());
                     if (!catalogErrors.isEmpty()) {
                         errorDetails = catalogErrors.stream()
                                 .map(msg -> new YamlDslError(msg, null, "catalog", null))
