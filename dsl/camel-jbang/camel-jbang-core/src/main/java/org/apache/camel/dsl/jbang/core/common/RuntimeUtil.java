@@ -83,9 +83,20 @@ public final class RuntimeUtil {
                     String prefix = "custom" + i++;
                     String catName = StringHelper.before(lc, "=", "").trim();
                     String catLevel = StringHelper.after(lc, "=", "").trim();
+                    if ("root".equalsIgnoreCase(catName)) {
+                        // log4j allows one root logger only, which the template already defines: a root category is
+                        // the root logging level
+                        if (!catLevel.isEmpty()) {
+                            level = catLevel;
+                        }
+                        continue;
+                    }
                     if (!catName.isEmpty() && !catLevel.isEmpty()) {
                         sj.add("logger." + prefix + ".name=" + catName);
                         sj.add("logger." + prefix + ".level=" + catLevel);
+                        // the category gets the same appenders as the root logger, so it must not also pass its
+                        // events up to the root, or every line is printed twice (CAMEL-24701)
+                        sj.add("logger." + prefix + ".additivity=false");
                         if (!export && !script) {
                             sj.add("logger." + prefix + ".appenderRef.$1.ref=out");
                         }

@@ -2988,6 +2988,15 @@ public class Run extends CamelCommand {
         return main;
     }
 
+    private boolean isLoggingLevelFromCommandLine() {
+        try {
+            var parsed = spec != null && spec.commandLine() != null ? spec.commandLine().getParseResult() : null;
+            return parsed != null && parsed.hasMatchedOption("--logging-level");
+        } catch (Exception e) {
+            return false;
+        }
+    }
+
     private void configureLogging(Path baseDir, Properties profileProperties) throws Exception {
         if (loggingOptions.logging) {
             // allow to configure individual logging levels in application.properties
@@ -2998,6 +3007,8 @@ public class Run extends CamelCommand {
                     String value = prop.getProperty(key);
                     if (key.startsWith("logging.level.")) {
                         key = key.substring(14);
+                    } else if ("quarkus.log.level".equals(key)) {
+                        key = "root";
                     } else if (key.startsWith("quarkus.log.category.")) {
                         key = key.substring(21);
                         if (key.endsWith(".level")) {
@@ -3007,6 +3018,15 @@ public class Run extends CamelCommand {
                         continue;
                     }
                     key = StringHelper.removeLeadingAndEndingQuotes(key);
+                    if ("root".equalsIgnoreCase(key)) {
+                        // logging.level.root (Spring Boot style) and quarkus.log.level are the root logging level,
+                        // not a logger category (log4j allows one root logger only), so use it as the level unless
+                        // --logging-level was given explicitly
+                        if (!isLoggingLevelFromCommandLine()) {
+                            loggingOptions.loggingLevel = value;
+                        }
+                        continue;
+                    }
                     String line = key + "=" + value;
                     String line2 = key + " = " + value;
                     if (!loggingOptions.loggingCategory.contains(line)
