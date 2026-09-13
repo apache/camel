@@ -125,7 +125,7 @@ public class BeansDeserializer extends YamlDeserializerSupport implements Constr
             } else {
                 String msg
                         = name != null ? "Error creating bean: " + name + " of type: " + type : "Error creating bean: " + type;
-                throw new RuntimeException(msg, e);
+                throw new RuntimeException(msg + classNotFoundHint(e), e);
             }
         }
     }
@@ -190,4 +190,30 @@ public class BeansDeserializer extends YamlDeserializerSupport implements Constr
         model.addCustomBean(def);
     }
 
+    /**
+     * The cause of a bean that could not be created is a ClassNotFoundException more often than not (a wrong package, a
+     * missing dependency); say so, and for a Camel aggregation strategy written in the wrong package name the right
+     * one.
+     */
+    static String classNotFoundHint(Throwable e) {
+        for (Throwable t = e; t != null; t = t.getCause()) {
+            if (t instanceof ClassNotFoundException || t instanceof NoClassDefFoundError) {
+                // NoClassDefFoundError names the class in internal form (java/lang/Foo)
+                String cls = t.getMessage() != null ? t.getMessage().trim().replace('/', '.') : "";
+                String simple = cls.substring(cls.lastIndexOf('.') + 1);
+                String hint = ": class " + cls + " was not found";
+                if (simple.endsWith("AggregationStrategy") && !cls.startsWith("org.apache.camel.processor.aggregate.")) {
+                    String candidate = "org.apache.camel.processor.aggregate." + simple;
+                    try {
+                        Class.forName(candidate, false, BeansDeserializer.class.getClassLoader());
+                        return hint + " (did you mean " + candidate + "?)";
+                    } catch (Throwable ignore) {
+                        // not one of the built-in strategies
+                    }
+                }
+                return hint + " (check the package name; a class from another library needs its dependency added)";
+            }
+        }
+        return "";
+    }
 }

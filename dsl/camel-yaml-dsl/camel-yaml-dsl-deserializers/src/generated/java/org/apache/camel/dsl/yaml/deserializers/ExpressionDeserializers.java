@@ -8,6 +8,7 @@ import java.lang.SuppressWarnings;
 import javax.annotation.processing.Generated;
 import org.apache.camel.dsl.yaml.common.YamlDeserializationContext;
 import org.apache.camel.dsl.yaml.common.YamlDeserializerSupport;
+import org.apache.camel.dsl.yaml.common.exception.InvalidExpressionException;
 import org.apache.camel.model.language.ExpressionDefinition;
 import org.apache.camel.spi.annotations.YamlProperty;
 import org.apache.camel.spi.annotations.YamlType;
@@ -15,6 +16,7 @@ import org.snakeyaml.engine.v2.api.ConstructNode;
 import org.snakeyaml.engine.v2.nodes.MappingNode;
 import org.snakeyaml.engine.v2.nodes.Node;
 import org.snakeyaml.engine.v2.nodes.NodeTuple;
+import org.snakeyaml.engine.v2.nodes.ScalarNode;
 
 /**
  * The model automatically scan all classes, also those one deprecated. They will be dropped when removed from core model.
@@ -37,7 +39,7 @@ public final class ExpressionDeserializers extends YamlDeserializerSupport {
         Node val = setDeserializationContext(nt.getValueNode(), dc);
         ExpressionDefinition answer = constructExpressionType(key, val);
         if (answer == null) {
-            throw new org.apache.camel.dsl.yaml.common.exception.InvalidExpressionException(node, "Unknown expression with id: " + key);
+            throw new org.apache.camel.dsl.yaml.common.exception.InvalidExpressionException(node, "Unknown expression with id: " + key + ("bean".equals(key) ? " (the bean language is written as method: {ref: myBean, method: process})" : ""));
         }
         return answer;
     }
@@ -219,6 +221,10 @@ public final class ExpressionDeserializers extends YamlDeserializerSupport {
     public static class ExpressionSubElementDefinitionDeserializers implements ConstructNode {
         @Override
         public Object construct(Node node) {
+            if (!(node instanceof MappingNode)) {
+                String text = node instanceof ScalarNode ? asText(node) : node.getNodeType().name().toLowerCase();
+                throw new InvalidExpressionException(node, "an expression is expected here, not a plain value (" + text + "): write constant: \"" + text + "\" for a fixed value, or simple: \"...\" for a dynamic one");
+            }
             ExpressionDefinition val = constructExpressionType(node);
             return new org.apache.camel.model.ExpressionSubElementDefinition(val);
         }
