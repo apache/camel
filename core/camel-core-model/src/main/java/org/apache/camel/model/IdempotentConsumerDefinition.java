@@ -188,7 +188,8 @@ public class IdempotentConsumerDefinition extends OutputExpressionNode {
     }
 
     @Override
-    @Metadata(description = "The expression to compute the unique message ID used for duplicate detection. Messages with the same ID are treated as duplicates and skipped.")
+    @Metadata(required = true,
+              description = "The expression to compute the unique message ID used for duplicate detection. Messages with the same ID are treated as duplicates and skipped.")
     public void setExpression(ExpressionDefinition expression) {
         // override to include javadoc what the expression is used for
         super.setExpression(expression);

@@ -83,7 +83,8 @@ public class SortDefinition<T> extends ExpressionNode {
     }
 
     @Override
-    @Metadata(description = "The expression to use for sorting. The message body is split into a list, sorted using this expression as the comparator key, and then reassembled.")
+    @Metadata(required = false,
+              description = "The expression to use for sorting. The message body is split into a list, sorted using this expression as the comparator key, and then reassembled.")
     public void setExpression(ExpressionDefinition expression) {
         // override to include javadoc what the expression is used for
         super.setExpression(expression);

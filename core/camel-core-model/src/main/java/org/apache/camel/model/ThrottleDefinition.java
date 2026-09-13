@@ -363,7 +363,8 @@ public class ThrottleDefinition extends ExpressionNode implements ExecutorServic
     }
 
     @Override
-    @Metadata(description = "The expression to set the maximum request count (for TotalRequests mode) or the maximum number of concurrent requests (for ConcurrentRequests mode).")
+    @Metadata(required = true,
+              description = "The expression to set the maximum request count (for TotalRequests mode) or the maximum number of concurrent requests (for ConcurrentRequests mode).")
     public void setExpression(ExpressionDefinition expression) {
         // override to include javadoc what the expression is used for
         super.setExpression(expression);

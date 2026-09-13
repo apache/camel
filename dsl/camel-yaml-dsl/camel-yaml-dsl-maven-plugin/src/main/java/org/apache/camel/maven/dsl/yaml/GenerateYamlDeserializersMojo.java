@@ -60,6 +60,7 @@ import org.apache.maven.plugins.annotations.ResolutionScope;
 import org.jboss.jandex.AnnotationInstance;
 import org.jboss.jandex.AnnotationValue;
 import org.jboss.jandex.ClassInfo;
+import org.jboss.jandex.DotName;
 import org.jboss.jandex.FieldInfo;
 import org.jboss.jandex.MethodInfo;
 import org.jboss.jandex.ParameterizedType;
@@ -534,7 +535,7 @@ public class GenerateYamlDeserializersMojo extends GenerateYamlSupportMojo {
                 k -> new Schema(MAPPER.createObjectNode(), MAPPER.createObjectNode()));
 
         for (FieldInfo field : fields(info)) {
-            if (generateSetValue(descriptor, modelName.get(), setProperty, field, properties)) {
+            if (generateSetValue(info, descriptor, modelName.get(), setProperty, field, properties)) {
                 caseAdded = true;
             }
         }
@@ -632,10 +633,12 @@ public class GenerateYamlDeserializersMojo extends GenerateYamlSupportMojo {
             setProperty.endControlFlow();
 
             if (!extendsType(info, EXPRESSION_DEFINITION_CLASS)) {
+                // the inline languages are required exactly when the expression is (CAMEL-24707)
                 properties.add(
                         yamlProperty(
                                 "__extends",
                                 "object:org.apache.camel.model.language.ExpressionDefinition",
+                                expressionRequired(info), false,
                                 "expression"));
             }
         } else {
@@ -721,6 +724,7 @@ public class GenerateYamlDeserializersMojo extends GenerateYamlSupportMojo {
 
     @SuppressWarnings("MethodLength")
     private boolean generateSetValue(
+            ClassInfo info,
             Schema descriptor,
             String modelName,
             CodeBlock.Builder cb,
@@ -1257,7 +1261,9 @@ public class GenerateYamlDeserializersMojo extends GenerateYamlSupportMojo {
                         annotations.add(
                                 YamlProperties.annotation(fieldName, "object")
                                         .withSubType(field.type().name().toString())
-                                        .withRequired(isRequired(field))
+                                        .withRequired("expression".equals(fieldName)
+                                                && !extendsType(info, EXPRESSION_DEFINITION_CLASS)
+                                                        ? expressionRequired(info) : isRequired(field))
                                         .withDeprecated(isDeprecated(field))
                                         .withDescription(descriptor.description(fieldName))
                                         .withDisplayName(descriptor.displayName(fieldName))
@@ -1274,6 +1280,39 @@ public class GenerateYamlDeserializersMojo extends GenerateYamlSupportMojo {
 
         cb.endControlFlow();
 
+        return true;
+    }
+
+    /**
+     * Whether the expression of an expression node is required (CAMEL-24707): the @Metadata(required) on the concrete
+     * class's setExpression override when it has one (sort says false), else the @Metadata(required) on the expression
+     * field (true on ExpressionNode), else required.
+     */
+    private boolean expressionRequired(ClassInfo info) {
+        FieldInfo expressionField = null;
+        for (FieldInfo fi : fields(info)) {
+            if ("expression".equals(fi.name()) && expressionField == null) {
+                expressionField = fi;
+            }
+        }
+        ClassInfo current = info;
+        while (current != null
+                && (expressionField == null || !current.name().equals(expressionField.declaringClass().name()))) {
+            for (MethodInfo m : current.methods()) {
+                if ("setExpression".equals(m.name()) && m.parametersCount() == 1) {
+                    AnnotationInstance md = m.declaredAnnotation(METADATA_ANNOTATION_CLASS);
+                    if (md != null) {
+                        return annotationValue(md, "required").map(AnnotationValue::asBoolean).orElse(false);
+                    }
+                }
+            }
+            DotName superName = current.superName();
+            current = superName != null ? view.getClassByName(superName) : null;
+        }
+        if (expressionField != null) {
+            return annotationValue(expressionField, METADATA_ANNOTATION_CLASS, "required")
+                    .map(AnnotationValue::asBoolean).orElse(true);
+        }
         return true;
     }
 

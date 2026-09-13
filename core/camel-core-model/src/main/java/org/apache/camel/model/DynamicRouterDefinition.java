@@ -103,7 +103,8 @@ public class DynamicRouterDefinition<Type extends ProcessorDefinition<Type>> ext
     }
 
     @Override
-    @Metadata(description = "The expression to compute the next endpoint URI to route to. The expression is called iteratively until it returns null to indicate the end of routing.")
+    @Metadata(required = true,
+              description = "The expression to compute the next endpoint URI to route to. The expression is called iteratively until it returns null to indicate the end of routing.")
     public void setExpression(ExpressionDefinition expression) {
         // override to include javadoc what the expression is used for
         super.setExpression(expression);

@@ -756,68 +756,6 @@
           "oneOf" : [ {
             "$ref" : "#/items/definitions/org.apache.camel.model.language.ExpressionDefinition$Inline"
           }, {
-            "not" : {
-              "anyOf" : [ {
-                "required" : [ "expression" ]
-              }, {
-                "required" : [ "constant" ]
-              }, {
-                "required" : [ "datasonnet" ]
-              }, {
-                "required" : [ "exchangeProperty" ]
-              }, {
-                "required" : [ "groovy" ]
-              }, {
-                "required" : [ "header" ]
-              }, {
-                "required" : [ "hl7terser" ]
-              }, {
-                "required" : [ "jactl" ]
-              }, {
-                "required" : [ "java" ]
-              }, {
-                "required" : [ "joor" ]
-              }, {
-                "required" : [ "jq" ]
-              }, {
-                "required" : [ "js" ]
-              }, {
-                "required" : [ "jsonpath" ]
-              }, {
-                "required" : [ "language" ]
-              }, {
-                "required" : [ "method" ]
-              }, {
-                "required" : [ "mvel" ]
-              }, {
-                "required" : [ "ognl" ]
-              }, {
-                "required" : [ "python" ]
-              }, {
-                "required" : [ "python3" ]
-              }, {
-                "required" : [ "quickjs" ]
-              }, {
-                "required" : [ "ref" ]
-              }, {
-                "required" : [ "simple" ]
-              }, {
-                "required" : [ "spel" ]
-              }, {
-                "required" : [ "tokenize" ]
-              }, {
-                "required" : [ "variable" ]
-              }, {
-                "required" : [ "wasm" ]
-              }, {
-                "required" : [ "xpath" ]
-              }, {
-                "required" : [ "xquery" ]
-              }, {
-                "required" : [ "xtokenize" ]
-              } ]
-            }
-          }, {
             "type" : "object",
             "required" : [ "expression" ],
             "properties" : {
@@ -1328,68 +1266,6 @@
           "oneOf" : [ {
             "$ref" : "#/items/definitions/org.apache.camel.model.language.ExpressionDefinition$Inline"
           }, {
-            "not" : {
-              "anyOf" : [ {
-                "required" : [ "expression" ]
-              }, {
-                "required" : [ "constant" ]
-              }, {
-                "required" : [ "datasonnet" ]
-              }, {
-                "required" : [ "exchangeProperty" ]
-              }, {
-                "required" : [ "groovy" ]
-              }, {
-                "required" : [ "header" ]
-              }, {
-                "required" : [ "hl7terser" ]
-              }, {
-                "required" : [ "jactl" ]
-              }, {
-                "required" : [ "java" ]
-              }, {
-                "required" : [ "joor" ]
-              }, {
-                "required" : [ "jq" ]
-              }, {
-                "required" : [ "js" ]
-              }, {
-                "required" : [ "jsonpath" ]
-              }, {
-                "required" : [ "language" ]
-              }, {
-                "required" : [ "method" ]
-              }, {
-                "required" : [ "mvel" ]
-              }, {
-                "required" : [ "ognl" ]
-              }, {
-                "required" : [ "python" ]
-              }, {
-                "required" : [ "python3" ]
-              }, {
-                "required" : [ "quickjs" ]
-              }, {
-                "required" : [ "ref" ]
-              }, {
-                "required" : [ "simple" ]
-              }, {
-                "required" : [ "spel" ]
-              }, {
-                "required" : [ "tokenize" ]
-              }, {
-                "required" : [ "variable" ]
-              }, {
-                "required" : [ "wasm" ]
-              }, {
-                "required" : [ "xpath" ]
-              }, {
-                "required" : [ "xquery" ]
-              }, {
-                "required" : [ "xtokenize" ]
-              } ]
-            }
-          }, {
             "type" : "object",
             "required" : [ "expression" ],
             "properties" : {
@@ -1479,68 +1355,6 @@
         "anyOf" : [ {
           "oneOf" : [ {
             "$ref" : "#/items/definitions/org.apache.camel.model.language.ExpressionDefinition$Inline"
-          }, {
-            "not" : {
-              "anyOf" : [ {
-                "required" : [ "expression" ]
-              }, {
-                "required" : [ "constant" ]
-              }, {
-                "required" : [ "datasonnet" ]
-              }, {
-                "required" : [ "exchangeProperty" ]
-              }, {
-                "required" : [ "groovy" ]
-              }, {
-                "required" : [ "header" ]
-              }, {
-                "required" : [ "hl7terser" ]
-              }, {
-                "required" : [ "jactl" ]
-              }, {
-                "required" : [ "java" ]
-              }, {
-                "required" : [ "joor" ]
-              }, {
-                "required" : [ "jq" ]
-              }, {
-                "required" : [ "js" ]
-              }, {
-                "required" : [ "jsonpath" ]
-              }, {
-                "required" : [ "language" ]
-              }, {
-                "required" : [ "method" ]
-              }, {
-                "required" : [ "mvel" ]
-              }, {
-                "required" : [ "ognl" ]
-              }, {
-                "required" : [ "python" ]
-              }, {
-                "required" : [ "python3" ]
-              }, {
-                "required" : [ "quickjs" ]
-              }, {
-                "required" : [ "ref" ]
-              }, {
-                "required" : [ "simple" ]
-              }, {
-                "required" : [ "spel" ]
-              }, {
-                "required" : [ "tokenize" ]
-              }, {
-                "required" : [ "variable" ]
-              }, {
-                "required" : [ "wasm" ]
-              }, {
-                "required" : [ "xpath" ]
-              }, {
-                "required" : [ "xquery" ]
-              }, {
-                "required" : [ "xtokenize" ]
-              } ]
-            }
           }, {
             "type" : "object",
             "required" : [ "expression" ],
@@ -1636,68 +1450,6 @@
         "anyOf" : [ {
           "oneOf" : [ {
             "$ref" : "#/items/definitions/org.apache.camel.model.language.ExpressionDefinition$Inline"
-          }, {
-            "not" : {
-              "anyOf" : [ {
-                "required" : [ "expression" ]
-              }, {
-                "required" : [ "constant" ]
-              }, {
-                "required" : [ "datasonnet" ]
-              }, {
-                "required" : [ "exchangeProperty" ]
-              }, {
-                "required" : [ "groovy" ]
-              }, {
-                "required" : [ "header" ]
-              }, {
-                "required" : [ "hl7terser" ]
-              }, {
-                "required" : [ "jactl" ]
-              }, {
-                "required" : [ "java" ]
-              }, {
-                "required" : [ "joor" ]
-              }, {
-                "required" : [ "jq" ]
-              }, {
-                "required" : [ "js" ]
-              }, {
-                "required" : [ "jsonpath" ]
-              }, {
-                "required" : [ "language" ]
-              }, {
-                "required" : [ "method" ]
-              }, {
-                "required" : [ "mvel" ]
-              }, {
-                "required" : [ "ognl" ]
-              }, {
-                "required" : [ "python" ]
-              }, {
-                "required" : [ "python3" ]
-              }, {
-                "required" : [ "quickjs" ]
-              }, {
-                "required" : [ "ref" ]
-              }, {
-                "required" : [ "simple" ]
-              }, {
-                "required" : [ "spel" ]
-              }, {
-                "required" : [ "tokenize" ]
-              }, {
-                "required" : [ "variable" ]
-              }, {
-                "required" : [ "wasm" ]
-              }, {
-                "required" : [ "xpath" ]
-              }, {
-                "required" : [ "xquery" ]
-              }, {
-                "required" : [ "xtokenize" ]
-              } ]
-            }
           }, {
             "type" : "object",
             "required" : [ "expression" ],
@@ -2321,68 +2073,6 @@
           "oneOf" : [ {
             "$ref" : "#/items/definitions/org.apache.camel.model.language.ExpressionDefinition$Inline"
           }, {
-            "not" : {
-              "anyOf" : [ {
-                "required" : [ "expression" ]
-              }, {
-                "required" : [ "constant" ]
-              }, {
-                "required" : [ "datasonnet" ]
-              }, {
-                "required" : [ "exchangeProperty" ]
-              }, {
-                "required" : [ "groovy" ]
-              }, {
-                "required" : [ "header" ]
-              }, {
-                "required" : [ "hl7terser" ]
-              }, {
-                "required" : [ "jactl" ]
-              }, {
-                "required" : [ "java" ]
-              }, {
-                "required" : [ "joor" ]
-              }, {
-                "required" : [ "jq" ]
-              }, {
-                "required" : [ "js" ]
-              }, {
-                "required" : [ "jsonpath" ]
-              }, {
-                "required" : [ "language" ]
-              }, {
-                "required" : [ "method" ]
-              }, {
-                "required" : [ "mvel" ]
-              }, {
-                "required" : [ "ognl" ]
-              }, {
-                "required" : [ "python" ]
-              }, {
-                "required" : [ "python3" ]
-              }, {
-                "required" : [ "quickjs" ]
-              }, {
-                "required" : [ "ref" ]
-              }, {
-                "required" : [ "simple" ]
-              }, {
-                "required" : [ "spel" ]
-              }, {
-                "required" : [ "tokenize" ]
-              }, {
-                "required" : [ "variable" ]
-              }, {
-                "required" : [ "wasm" ]
-              }, {
-                "required" : [ "xpath" ]
-              }, {
-                "required" : [ "xquery" ]
-              }, {
-                "required" : [ "xtokenize" ]
-              } ]
-            }
-          }, {
             "type" : "object",
             "required" : [ "expression" ],
             "properties" : {
@@ -2567,68 +2257,6 @@
         "anyOf" : [ {
           "oneOf" : [ {
             "$ref" : "#/items/definitions/org.apache.camel.model.language.ExpressionDefinition$Inline"
-          }, {
-            "not" : {
-              "anyOf" : [ {
-                "required" : [ "expression" ]
-              }, {
-                "required" : [ "constant" ]
-              }, {
-                "required" : [ "datasonnet" ]
-              }, {
-                "required" : [ "exchangeProperty" ]
-              }, {
-                "required" : [ "groovy" ]
-              }, {
-                "required" : [ "header" ]
-              }, {
-                "required" : [ "hl7terser" ]
-              }, {
-                "required" : [ "jactl" ]
-              }, {
-                "required" : [ "java" ]
-              }, {
-                "required" : [ "joor" ]
-              }, {
-                "required" : [ "jq" ]
-              }, {
-                "required" : [ "js" ]
-              }, {
-                "required" : [ "jsonpath" ]
-              }, {
-                "required" : [ "language" ]
-              }, {
-                "required" : [ "method" ]
-              }, {
-                "required" : [ "mvel" ]
-              }, {
-                "required" : [ "ognl" ]
-              }, {
-                "required" : [ "python" ]
-              }, {
-                "required" : [ "python3" ]
-              }, {
-                "required" : [ "quickjs" ]
-              }, {
-                "required" : [ "ref" ]
-              }, {
-                "required" : [ "simple" ]
-              }, {
-                "required" : [ "spel" ]
-              }, {
-                "required" : [ "tokenize" ]
-              }, {
-                "required" : [ "variable" ]
-              }, {
-                "required" : [ "wasm" ]
-              }, {
-                "required" : [ "xpath" ]
-              }, {
-                "required" : [ "xquery" ]
-              }, {
-                "required" : [ "xtokenize" ]
-              } ]
-            }
           }, {
             "type" : "object",
             "required" : [ "expression" ],
@@ -3137,68 +2765,6 @@
         "anyOf" : [ {
           "oneOf" : [ {
             "$ref" : "#/items/definitions/org.apache.camel.model.language.ExpressionDefinition$Inline"
-          }, {
-            "not" : {
-              "anyOf" : [ {
-                "required" : [ "expression" ]
-              }, {
-                "required" : [ "constant" ]
-              }, {
-                "required" : [ "datasonnet" ]
-              }, {
-                "required" : [ "exchangeProperty" ]
-              }, {
-                "required" : [ "groovy" ]
-              }, {
-                "required" : [ "header" ]
-              }, {
-                "required" : [ "hl7terser" ]
-              }, {
-                "required" : [ "jactl" ]
-              }, {
-                "required" : [ "java" ]
-              }, {
-                "required" : [ "joor" ]
-              }, {
-                "required" : [ "jq" ]
-              }, {
-                "required" : [ "js" ]
-              }, {
-                "required" : [ "jsonpath" ]
-              }, {
-                "required" : [ "language" ]
-              }, {
-                "required" : [ "method" ]
-              }, {
-                "required" : [ "mvel" ]
-              }, {
-                "required" : [ "ognl" ]
-              }, {
-                "required" : [ "python" ]
-              }, {
-                "required" : [ "python3" ]
-              }, {
-                "required" : [ "quickjs" ]
-              }, {
-                "required" : [ "ref" ]
-              }, {
-                "required" : [ "simple" ]
-              }, {
-                "required" : [ "spel" ]
-              }, {
-                "required" : [ "tokenize" ]
-              }, {
-                "required" : [ "variable" ]
-              }, {
-                "required" : [ "wasm" ]
-              }, {
-                "required" : [ "xpath" ]
-              }, {
-                "required" : [ "xquery" ]
-              }, {
-                "required" : [ "xtokenize" ]
-              } ]
-            }
           }, {
             "type" : "object",
             "required" : [ "expression" ],
@@ -4105,68 +3671,6 @@
           "oneOf" : [ {
             "$ref" : "#/items/definitions/org.apache.camel.model.language.ExpressionDefinition$Inline"
           }, {
-            "not" : {
-              "anyOf" : [ {
-                "required" : [ "expression" ]
-              }, {
-                "required" : [ "constant" ]
-              }, {
-                "required" : [ "datasonnet" ]
-              }, {
-                "required" : [ "exchangeProperty" ]
-              }, {
-                "required" : [ "groovy" ]
-              }, {
-                "required" : [ "header" ]
-              }, {
-                "required" : [ "hl7terser" ]
-              }, {
-                "required" : [ "jactl" ]
-              }, {
-                "required" : [ "java" ]
-              }, {
-                "required" : [ "joor" ]
-              }, {
-                "required" : [ "jq" ]
-              }, {
-                "required" : [ "js" ]
-              }, {
-                "required" : [ "jsonpath" ]
-              }, {
-                "required" : [ "language" ]
-              }, {
-                "required" : [ "method" ]
-              }, {
-                "required" : [ "mvel" ]
-              }, {
-                "required" : [ "ognl" ]
-              }, {
-                "required" : [ "python" ]
-              }, {
-                "required" : [ "python3" ]
-              }, {
-                "required" : [ "quickjs" ]
-              }, {
-                "required" : [ "ref" ]
-              }, {
-                "required" : [ "simple" ]
-              }, {
-                "required" : [ "spel" ]
-              }, {
-                "required" : [ "tokenize" ]
-              }, {
-                "required" : [ "variable" ]
-              }, {
-                "required" : [ "wasm" ]
-              }, {
-                "required" : [ "xpath" ]
-              }, {
-                "required" : [ "xquery" ]
-              }, {
-                "required" : [ "xtokenize" ]
-              } ]
-            }
-          }, {
             "type" : "object",
             "required" : [ "expression" ],
             "properties" : {
@@ -4566,68 +4070,6 @@
           "oneOf" : [ {
             "$ref" : "#/items/definitions/org.apache.camel.model.language.ExpressionDefinition$Inline"
           }, {
-            "not" : {
-              "anyOf" : [ {
-                "required" : [ "expression" ]
-              }, {
-                "required" : [ "constant" ]
-              }, {
-                "required" : [ "datasonnet" ]
-              }, {
-                "required" : [ "exchangeProperty" ]
-              }, {
-                "required" : [ "groovy" ]
-              }, {
-                "required" : [ "header" ]
-              }, {
-                "required" : [ "hl7terser" ]
-              }, {
-                "required" : [ "jactl" ]
-              }, {
-                "required" : [ "java" ]
-              }, {
-                "required" : [ "joor" ]
-              }, {
-                "required" : [ "jq" ]
-              }, {
-                "required" : [ "js" ]
-              }, {
-                "required" : [ "jsonpath" ]
-              }, {
-                "required" : [ "language" ]
-              }, {
-                "required" : [ "method" ]
-              }, {
-                "required" : [ "mvel" ]
-              }, {
-                "required" : [ "ognl" ]
-              }, {
-                "required" : [ "python" ]
-              }, {
-                "required" : [ "python3" ]
-              }, {
-                "required" : [ "quickjs" ]
-              }, {
-                "required" : [ "ref" ]
-              }, {
-                "required" : [ "simple" ]
-              }, {
-                "required" : [ "spel" ]
-              }, {
-                "required" : [ "tokenize" ]
-              }, {
-                "required" : [ "variable" ]
-              }, {
-                "required" : [ "wasm" ]
-              }, {
-                "required" : [ "xpath" ]
-              }, {
-                "required" : [ "xquery" ]
-              }, {
-                "required" : [ "xtokenize" ]
-              } ]
-            }
-          }, {
             "type" : "object",
             "required" : [ "expression" ],
             "properties" : {
@@ -4815,68 +4257,6 @@
           "oneOf" : [ {
             "$ref" : "#/items/definitions/org.apache.camel.model.language.ExpressionDefinition$Inline"
           }, {
-            "not" : {
-              "anyOf" : [ {
-                "required" : [ "expression" ]
-              }, {
-                "required" : [ "constant" ]
-              }, {
-                "required" : [ "datasonnet" ]
-              }, {
-                "required" : [ "exchangeProperty" ]
-              }, {
-                "required" : [ "groovy" ]
-              }, {
-                "required" : [ "header" ]
-              }, {
-                "required" : [ "hl7terser" ]
-              }, {
-                "required" : [ "jactl" ]
-              }, {
-                "required" : [ "java" ]
-              }, {
-                "required" : [ "joor" ]
-              }, {
-                "required" : [ "jq" ]
-              }, {
-                "required" : [ "js" ]
-              }, {
-                "required" : [ "jsonpath" ]
-              }, {
-                "required" : [ "language" ]
-              }, {
-                "required" : [ "method" ]
-              }, {
-                "required" : [ "mvel" ]
-              }, {
-                "required" : [ "ognl" ]
-              }, {
-                "required" : [ "python" ]
-              }, {
-                "required" : [ "python3" ]
-              }, {
-                "required" : [ "quickjs" ]
-              }, {
-                "required" : [ "ref" ]
-              }, {
-                "required" : [ "simple" ]
-              }, {
-                "required" : [ "spel" ]
-              }, {
-                "required" : [ "tokenize" ]
-              }, {
-                "required" : [ "variable" ]
-              }, {
-                "required" : [ "wasm" ]
-              }, {
-                "required" : [ "xpath" ]
-              }, {
-                "required" : [ "xquery" ]
-              }, {
-                "required" : [ "xtokenize" ]
-              } ]
-            }
-          }, {
             "type" : "object",
             "required" : [ "expression" ],
             "properties" : {
@@ -4934,68 +4314,6 @@
         "anyOf" : [ {
           "oneOf" : [ {
             "$ref" : "#/items/definitions/org.apache.camel.model.language.ExpressionDefinition$Inline"
-          }, {
-            "not" : {
-              "anyOf" : [ {
-                "required" : [ "expression" ]
-              }, {
-                "required" : [ "constant" ]
-              }, {
-                "required" : [ "datasonnet" ]
-              }, {
-                "required" : [ "exchangeProperty" ]
-              }, {
-                "required" : [ "groovy" ]
-              }, {
-                "required" : [ "header" ]
-              }, {
-                "required" : [ "hl7terser" ]
-              }, {
-                "required" : [ "jactl" ]
-              }, {
-                "required" : [ "java" ]
-              }, {
-                "required" : [ "joor" ]
-              }, {
-                "required" : [ "jq" ]
-              }, {
-                "required" : [ "js" ]
-              }, {
-                "required" : [ "jsonpath" ]
-              }, {
-                "required" : [ "language" ]
-              }, {
-                "required" : [ "method" ]
-              }, {
-                "required" : [ "mvel" ]
-              }, {
-                "required" : [ "ognl" ]
-              }, {
-                "required" : [ "python" ]
-              }, {
-                "required" : [ "python3" ]
-              }, {
-                "required" : [ "quickjs" ]
-              }, {
-                "required" : [ "ref" ]
-              }, {
-                "required" : [ "simple" ]
-              }, {
-                "required" : [ "spel" ]
-              }, {
-                "required" : [ "tokenize" ]
-              }, {
-                "required" : [ "variable" ]
-              }, {
-                "required" : [ "wasm" ]
-              }, {
-                "required" : [ "xpath" ]
-              }, {
-                "required" : [ "xquery" ]
-              }, {
-                "required" : [ "xtokenize" ]
-              } ]
-            }
           }, {
             "type" : "object",
             "required" : [ "expression" ],
@@ -5521,68 +4839,6 @@
         "anyOf" : [ {
           "oneOf" : [ {
             "$ref" : "#/items/definitions/org.apache.camel.model.language.ExpressionDefinition$Inline"
-          }, {
-            "not" : {
-              "anyOf" : [ {
-                "required" : [ "expression" ]
-              }, {
-                "required" : [ "constant" ]
-              }, {
-                "required" : [ "datasonnet" ]
-              }, {
-                "required" : [ "exchangeProperty" ]
-              }, {
-                "required" : [ "groovy" ]
-              }, {
-                "required" : [ "header" ]
-              }, {
-                "required" : [ "hl7terser" ]
-              }, {
-                "required" : [ "jactl" ]
-              }, {
-                "required" : [ "java" ]
-              }, {
-                "required" : [ "joor" ]
-              }, {
-                "required" : [ "jq" ]
-              }, {
-                "required" : [ "js" ]
-              }, {
-                "required" : [ "jsonpath" ]
-              }, {
-                "required" : [ "language" ]
-              }, {
-                "required" : [ "method" ]
-              }, {
-                "required" : [ "mvel" ]
-              }, {
-                "required" : [ "ognl" ]
-              }, {
-                "required" : [ "python" ]
-              }, {
-                "required" : [ "python3" ]
-              }, {
-                "required" : [ "quickjs" ]
-              }, {
-                "required" : [ "ref" ]
-              }, {
-                "required" : [ "simple" ]
-              }, {
-                "required" : [ "spel" ]
-              }, {
-                "required" : [ "tokenize" ]
-              }, {
-                "required" : [ "variable" ]
-              }, {
-                "required" : [ "wasm" ]
-              }, {
-                "required" : [ "xpath" ]
-              }, {
-                "required" : [ "xquery" ]
-              }, {
-                "required" : [ "xtokenize" ]
-              } ]
-            }
           }, {
             "type" : "object",
             "required" : [ "expression" ],
@@ -6268,68 +5524,6 @@
             "oneOf" : [ {
               "$ref" : "#/items/definitions/org.apache.camel.model.language.ExpressionDefinition$Inline"
             }, {
-              "not" : {
-                "anyOf" : [ {
-                  "required" : [ "expression" ]
-                }, {
-                  "required" : [ "constant" ]
-                }, {
-                  "required" : [ "datasonnet" ]
-                }, {
-                  "required" : [ "exchangeProperty" ]
-                }, {
-                  "required" : [ "groovy" ]
-                }, {
-                  "required" : [ "header" ]
-                }, {
-                  "required" : [ "hl7terser" ]
-                }, {
-                  "required" : [ "jactl" ]
-                }, {
-                  "required" : [ "java" ]
-                }, {
-                  "required" : [ "joor" ]
-                }, {
-                  "required" : [ "jq" ]
-                }, {
-                  "required" : [ "js" ]
-                }, {
-                  "required" : [ "jsonpath" ]
-                }, {
-                  "required" : [ "language" ]
-                }, {
-                  "required" : [ "method" ]
-                }, {
-                  "required" : [ "mvel" ]
-                }, {
-                  "required" : [ "ognl" ]
-                }, {
-                  "required" : [ "python" ]
-                }, {
-                  "required" : [ "python3" ]
-                }, {
-                  "required" : [ "quickjs" ]
-                }, {
-                  "required" : [ "ref" ]
-                }, {
-                  "required" : [ "simple" ]
-                }, {
-                  "required" : [ "spel" ]
-                }, {
-                  "required" : [ "tokenize" ]
-                }, {
-                  "required" : [ "variable" ]
-                }, {
-                  "required" : [ "wasm" ]
-                }, {
-                  "required" : [ "xpath" ]
-                }, {
-                  "required" : [ "xquery" ]
-                }, {
-                  "required" : [ "xtokenize" ]
-                } ]
-              }
-            }, {
               "type" : "object",
               "required" : [ "expression" ],
               "properties" : {
@@ -6547,68 +5741,6 @@
           "oneOf" : [ {
             "$ref" : "#/items/definitions/org.apache.camel.model.language.ExpressionDefinition$Inline"
           }, {
-            "not" : {
-              "anyOf" : [ {
-                "required" : [ "expression" ]
-              }, {
-                "required" : [ "constant" ]
-              }, {
-                "required" : [ "datasonnet" ]
-              }, {
-                "required" : [ "exchangeProperty" ]
-              }, {
-                "required" : [ "groovy" ]
-              }, {
-                "required" : [ "header" ]
-              }, {
-                "required" : [ "hl7terser" ]
-              }, {
-                "required" : [ "jactl" ]
-              }, {
-                "required" : [ "java" ]
-              }, {
-                "required" : [ "joor" ]
-              }, {
-                "required" : [ "jq" ]
-              }, {
-                "required" : [ "js" ]
-              }, {
-                "required" : [ "jsonpath" ]
-              }, {
-                "required" : [ "language" ]
-              }, {
-                "required" : [ "method" ]
-              }, {
-                "required" : [ "mvel" ]
-              }, {
-                "required" : [ "ognl" ]
-              }, {
-                "required" : [ "python" ]
-              }, {
-                "required" : [ "python3" ]
-              }, {
-                "required" : [ "quickjs" ]
-              }, {
-                "required" : [ "ref" ]
-              }, {
-                "required" : [ "simple" ]
-              }, {
-                "required" : [ "spel" ]
-              }, {
-                "required" : [ "tokenize" ]
-              }, {
-                "required" : [ "variable" ]
-              }, {
-                "required" : [ "wasm" ]
-              }, {
-                "required" : [ "xpath" ]
-              }, {
-                "required" : [ "xquery" ]
-              }, {
-                "required" : [ "xtokenize" ]
-              } ]
-            }
-          }, {
             "type" : "object",
             "required" : [ "expression" ],
             "properties" : {
@@ -6681,68 +5813,6 @@
         "anyOf" : [ {
           "oneOf" : [ {
             "$ref" : "#/items/definitions/org.apache.camel.model.language.ExpressionDefinition$Inline"
-          }, {
-            "not" : {
-              "anyOf" : [ {
-                "required" : [ "expression" ]
-              }, {
-                "required" : [ "constant" ]
-              }, {
-                "required" : [ "datasonnet" ]
-              }, {
-                "required" : [ "exchangeProperty" ]
-              }, {
-                "required" : [ "groovy" ]
-              }, {
-                "required" : [ "header" ]
-              }, {
-                "required" : [ "hl7terser" ]
-              }, {
-                "required" : [ "jactl" ]
-              }, {
-                "required" : [ "java" ]
-              }, {
-                "required" : [ "joor" ]
-              }, {
-                "required" : [ "jq" ]
-              }, {
-                "required" : [ "js" ]
-              }, {
-                "required" : [ "jsonpath" ]
-              }, {
-                "required" : [ "language" ]
-              }, {
-                "required" : [ "method" ]
-              }, {
-                "required" : [ "mvel" ]
-              }, {
-                "required" : [ "ognl" ]
-              }, {
-                "required" : [ "python" ]
-              }, {
-                "required" : [ "python3" ]
-              }, {
-                "required" : [ "quickjs" ]
-              }, {
-                "required" : [ "ref" ]
-              }, {
-                "required" : [ "simple" ]
-              }, {
-                "required" : [ "spel" ]
-              }, {
-                "required" : [ "tokenize" ]
-              }, {
-                "required" : [ "variable" ]
-              }, {
-                "required" : [ "wasm" ]
-              }, {
-                "required" : [ "xpath" ]
-              }, {
-                "required" : [ "xquery" ]
-              }, {
-                "required" : [ "xtokenize" ]
-              } ]
-            }
           }, {
             "type" : "object",
             "required" : [ "expression" ],
@@ -6856,68 +5926,6 @@
         "anyOf" : [ {
           "oneOf" : [ {
             "$ref" : "#/items/definitions/org.apache.camel.model.language.ExpressionDefinition$Inline"
-          }, {
-            "not" : {
-              "anyOf" : [ {
-                "required" : [ "expression" ]
-              }, {
-                "required" : [ "constant" ]
-              }, {
-                "required" : [ "datasonnet" ]
-              }, {
-                "required" : [ "exchangeProperty" ]
-              }, {
-                "required" : [ "groovy" ]
-              }, {
-                "required" : [ "header" ]
-              }, {
-                "required" : [ "hl7terser" ]
-              }, {
-                "required" : [ "jactl" ]
-              }, {
-                "required" : [ "java" ]
-              }, {
-                "required" : [ "joor" ]
-              }, {
-                "required" : [ "jq" ]
-              }, {
-                "required" : [ "js" ]
-              }, {
-                "required" : [ "jsonpath" ]
-              }, {
-                "required" : [ "language" ]
-              }, {
-                "required" : [ "method" ]
-              }, {
-                "required" : [ "mvel" ]
-              }, {
-                "required" : [ "ognl" ]
-              }, {
-                "required" : [ "python" ]
-              }, {
-                "required" : [ "python3" ]
-              }, {
-                "required" : [ "quickjs" ]
-              }, {
-                "required" : [ "ref" ]
-              }, {
-                "required" : [ "simple" ]
-              }, {
-                "required" : [ "spel" ]
-              }, {
-                "required" : [ "tokenize" ]
-              }, {
-                "required" : [ "variable" ]
-              }, {
-                "required" : [ "wasm" ]
-              }, {
-                "required" : [ "xpath" ]
-              }, {
-                "required" : [ "xquery" ]
-              }, {
-                "required" : [ "xtokenize" ]
-              } ]
-            }
           }, {
             "type" : "object",
             "required" : [ "expression" ],
@@ -7035,68 +6043,6 @@
           "oneOf" : [ {
             "$ref" : "#/items/definitions/org.apache.camel.model.language.ExpressionDefinition$Inline"
           }, {
-            "not" : {
-              "anyOf" : [ {
-                "required" : [ "expression" ]
-              }, {
-                "required" : [ "constant" ]
-              }, {
-                "required" : [ "datasonnet" ]
-              }, {
-                "required" : [ "exchangeProperty" ]
-              }, {
-                "required" : [ "groovy" ]
-              }, {
-                "required" : [ "header" ]
-              }, {
-                "required" : [ "hl7terser" ]
-              }, {
-                "required" : [ "jactl" ]
-              }, {
-                "required" : [ "java" ]
-              }, {
-                "required" : [ "joor" ]
-              }, {
-                "required" : [ "jq" ]
-              }, {
-                "required" : [ "js" ]
-              }, {
-                "required" : [ "jsonpath" ]
-              }, {
-                "required" : [ "language" ]
-              }, {
-                "required" : [ "method" ]
-              }, {
-                "required" : [ "mvel" ]
-              }, {
-                "required" : [ "ognl" ]
-              }, {
-                "required" : [ "python" ]
-              }, {
-                "required" : [ "python3" ]
-              }, {
-                "required" : [ "quickjs" ]
-              }, {
-                "required" : [ "ref" ]
-              }, {
-                "required" : [ "simple" ]
-              }, {
-                "required" : [ "spel" ]
-              }, {
-                "required" : [ "tokenize" ]
-              }, {
-                "required" : [ "variable" ]
-              }, {
-                "required" : [ "wasm" ]
-              }, {
-                "required" : [ "xpath" ]
-              }, {
-                "required" : [ "xquery" ]
-              }, {
-                "required" : [ "xtokenize" ]
-              } ]
-            }
-          }, {
             "type" : "object",
             "required" : [ "expression" ],
             "properties" : {
@@ -7175,68 +6121,6 @@
         "anyOf" : [ {
           "oneOf" : [ {
             "$ref" : "#/items/definitions/org.apache.camel.model.language.ExpressionDefinition$Inline"
-          }, {
-            "not" : {
-              "anyOf" : [ {
-                "required" : [ "expression" ]
-              }, {
-                "required" : [ "constant" ]
-              }, {
-                "required" : [ "datasonnet" ]
-              }, {
-                "required" : [ "exchangeProperty" ]
-              }, {
-                "required" : [ "groovy" ]
-              }, {
-                "required" : [ "header" ]
-              }, {
-                "required" : [ "hl7terser" ]
-              }, {
-                "required" : [ "jactl" ]
-              }, {
-                "required" : [ "java" ]
-              }, {
-                "required" : [ "joor" ]
-              }, {
-                "required" : [ "jq" ]
-              }, {
-                "required" : [ "js" ]
-              }, {
-                "required" : [ "jsonpath" ]
-              }, {
-                "required" : [ "language" ]
-              }, {
-                "required" : [ "method" ]
-              }, {
-                "required" : [ "mvel" ]
-              }, {
-                "required" : [ "ognl" ]
-              }, {
-                "required" : [ "python" ]
-              }, {
-                "required" : [ "python3" ]
-              }, {
-                "required" : [ "quickjs" ]
-              }, {
-                "required" : [ "ref" ]
-              }, {
-                "required" : [ "simple" ]
-              }, {
-                "required" : [ "spel" ]
-              }, {
-                "required" : [ "tokenize" ]
-              }, {
-                "required" : [ "variable" ]
-              }, {
-                "required" : [ "wasm" ]
-              }, {
-                "required" : [ "xpath" ]
-              }, {
-                "required" : [ "xquery" ]
-              }, {
-                "required" : [ "xtokenize" ]
-              } ]
-            }
           }, {
             "type" : "object",
             "required" : [ "expression" ],
@@ -7493,68 +6377,6 @@
         "anyOf" : [ {
           "oneOf" : [ {
             "$ref" : "#/items/definitions/org.apache.camel.model.language.ExpressionDefinition$Inline"
-          }, {
-            "not" : {
-              "anyOf" : [ {
-                "required" : [ "expression" ]
-              }, {
-                "required" : [ "constant" ]
-              }, {
-                "required" : [ "datasonnet" ]
-              }, {
-                "required" : [ "exchangeProperty" ]
-              }, {
-                "required" : [ "groovy" ]
-              }, {
-                "required" : [ "header" ]
-              }, {
-                "required" : [ "hl7terser" ]
-              }, {
-                "required" : [ "jactl" ]
-              }, {
-                "required" : [ "java" ]
-              }, {
-                "required" : [ "joor" ]
-              }, {
-                "required" : [ "jq" ]
-              }, {
-                "required" : [ "js" ]
-              }, {
-                "required" : [ "jsonpath" ]
-              }, {
-                "required" : [ "language" ]
-              }, {
-                "required" : [ "method" ]
-              }, {
-                "required" : [ "mvel" ]
-              }, {
-                "required" : [ "ognl" ]
-              }, {
-                "required" : [ "python" ]
-              }, {
-                "required" : [ "python3" ]
-              }, {
-                "required" : [ "quickjs" ]
-              }, {
-                "required" : [ "ref" ]
-              }, {
-                "required" : [ "simple" ]
-              }, {
-                "required" : [ "spel" ]
-              }, {
-                "required" : [ "tokenize" ]
-              }, {
-                "required" : [ "variable" ]
-              }, {
-                "required" : [ "wasm" ]
-              }, {
-                "required" : [ "xpath" ]
-              }, {
-                "required" : [ "xquery" ]
-              }, {
-                "required" : [ "xtokenize" ]
-              } ]
-            }
           }, {
             "type" : "object",
             "required" : [ "expression" ],
@@ -8004,68 +6826,6 @@
         "anyOf" : [ {
           "oneOf" : [ {
             "$ref" : "#/items/definitions/org.apache.camel.model.language.ExpressionDefinition$Inline"
-          }, {
-            "not" : {
-              "anyOf" : [ {
-                "required" : [ "expression" ]
-              }, {
-                "required" : [ "constant" ]
-              }, {
-                "required" : [ "datasonnet" ]
-              }, {
-                "required" : [ "exchangeProperty" ]
-              }, {
-                "required" : [ "groovy" ]
-              }, {
-                "required" : [ "header" ]
-              }, {
-                "required" : [ "hl7terser" ]
-              }, {
-                "required" : [ "jactl" ]
-              }, {
-                "required" : [ "java" ]
-              }, {
-                "required" : [ "joor" ]
-              }, {
-                "required" : [ "jq" ]
-              }, {
-                "required" : [ "js" ]
-              }, {
-                "required" : [ "jsonpath" ]
-              }, {
-                "required" : [ "language" ]
-              }, {
-                "required" : [ "method" ]
-              }, {
-                "required" : [ "mvel" ]
-              }, {
-                "required" : [ "ognl" ]
-              }, {
-                "required" : [ "python" ]
-              }, {
-                "required" : [ "python3" ]
-              }, {
-                "required" : [ "quickjs" ]
-              }, {
-                "required" : [ "ref" ]
-              }, {
-                "required" : [ "simple" ]
-              }, {
-                "required" : [ "spel" ]
-              }, {
-                "required" : [ "tokenize" ]
-              }, {
-                "required" : [ "variable" ]
-              }, {
-                "required" : [ "wasm" ]
-              }, {
-                "required" : [ "xpath" ]
-              }, {
-                "required" : [ "xquery" ]
-              }, {
-                "required" : [ "xtokenize" ]
-              } ]
-            }
           }, {
             "type" : "object",
             "required" : [ "expression" ],
@@ -8548,68 +7308,6 @@
         "anyOf" : [ {
           "oneOf" : [ {
             "$ref" : "#/items/definitions/org.apache.camel.model.language.ExpressionDefinition$Inline"
-          }, {
-            "not" : {
-              "anyOf" : [ {
-                "required" : [ "expression" ]
-              }, {
-                "required" : [ "constant" ]
-              }, {
-                "required" : [ "datasonnet" ]
-              }, {
-                "required" : [ "exchangeProperty" ]
-              }, {
-                "required" : [ "groovy" ]
-              }, {
-                "required" : [ "header" ]
-              }, {
-                "required" : [ "hl7terser" ]
-              }, {
-                "required" : [ "jactl" ]
-              }, {
-                "required" : [ "java" ]
-              }, {
-                "required" : [ "joor" ]
-              }, {
-                "required" : [ "jq" ]
-              }, {
-                "required" : [ "js" ]
-              }, {
-                "required" : [ "jsonpath" ]
-              }, {
-                "required" : [ "language" ]
-              }, {
-                "required" : [ "method" ]
-              }, {
-                "required" : [ "mvel" ]
-              }, {
-                "required" : [ "ognl" ]
-              }, {
-                "required" : [ "python" ]
-              }, {
-                "required" : [ "python3" ]
-              }, {
-                "required" : [ "quickjs" ]
-              }, {
-                "required" : [ "ref" ]
-              }, {
-                "required" : [ "simple" ]
-              }, {
-                "required" : [ "spel" ]
-              }, {
-                "required" : [ "tokenize" ]
-              }, {
-                "required" : [ "variable" ]
-              }, {
-                "required" : [ "wasm" ]
-              }, {
-                "required" : [ "xpath" ]
-              }, {
-                "required" : [ "xquery" ]
-              }, {
-                "required" : [ "xtokenize" ]
-              } ]
-            }
           }, {
             "type" : "object",
             "required" : [ "expression" ],
@@ -9230,68 +7928,6 @@
           "oneOf" : [ {
             "$ref" : "#/items/definitions/org.apache.camel.model.language.ExpressionDefinition$Inline"
           }, {
-            "not" : {
-              "anyOf" : [ {
-                "required" : [ "expression" ]
-              }, {
-                "required" : [ "constant" ]
-              }, {
-                "required" : [ "datasonnet" ]
-              }, {
-                "required" : [ "exchangeProperty" ]
-              }, {
-                "required" : [ "groovy" ]
-              }, {
-                "required" : [ "header" ]
-              }, {
-                "required" : [ "hl7terser" ]
-              }, {
-                "required" : [ "jactl" ]
-              }, {
-                "required" : [ "java" ]
-              }, {
-                "required" : [ "joor" ]
-              }, {
-                "required" : [ "jq" ]
-              }, {
-                "required" : [ "js" ]
-              }, {
-                "required" : [ "jsonpath" ]
-              }, {
-                "required" : [ "language" ]
-              }, {
-                "required" : [ "method" ]
-              }, {
-                "required" : [ "mvel" ]
-              }, {
-                "required" : [ "ognl" ]
-              }, {
-                "required" : [ "python" ]
-              }, {
-                "required" : [ "python3" ]
-              }, {
-                "required" : [ "quickjs" ]
-              }, {
-                "required" : [ "ref" ]
-              }, {
-                "required" : [ "simple" ]
-              }, {
-                "required" : [ "spel" ]
-              }, {
-                "required" : [ "tokenize" ]
-              }, {
-                "required" : [ "variable" ]
-              }, {
-                "required" : [ "wasm" ]
-              }, {
-                "required" : [ "xpath" ]
-              }, {
-                "required" : [ "xquery" ]
-              }, {
-                "required" : [ "xtokenize" ]
-              } ]
-            }
-          }, {
             "type" : "object",
             "required" : [ "expression" ],
             "properties" : {
@@ -9386,68 +8022,6 @@
         "anyOf" : [ {
           "oneOf" : [ {
             "$ref" : "#/items/definitions/org.apache.camel.model.language.ExpressionDefinition$Inline"
-          }, {
-            "not" : {
-              "anyOf" : [ {
-                "required" : [ "expression" ]
-              }, {
-                "required" : [ "constant" ]
-              }, {
-                "required" : [ "datasonnet" ]
-              }, {
-                "required" : [ "exchangeProperty" ]
-              }, {
-                "required" : [ "groovy" ]
-              }, {
-                "required" : [ "header" ]
-              }, {
-                "required" : [ "hl7terser" ]
-              }, {
-                "required" : [ "jactl" ]
-              }, {
-                "required" : [ "java" ]
-              }, {
-                "required" : [ "joor" ]
-              }, {
-                "required" : [ "jq" ]
-              }, {
-                "required" : [ "js" ]
-              }, {
-                "required" : [ "jsonpath" ]
-              }, {
-                "required" : [ "language" ]
-              }, {
-                "required" : [ "method" ]
-              }, {
-                "required" : [ "mvel" ]
-              }, {
-                "required" : [ "ognl" ]
-              }, {
-                "required" : [ "python" ]
-              }, {
-                "required" : [ "python3" ]
-              }, {
-                "required" : [ "quickjs" ]
-              }, {
-                "required" : [ "ref" ]
-              }, {
-                "required" : [ "simple" ]
-              }, {
-                "required" : [ "spel" ]
-              }, {
-                "required" : [ "tokenize" ]
-              }, {
-                "required" : [ "variable" ]
-              }, {
-                "required" : [ "wasm" ]
-              }, {
-                "required" : [ "xpath" ]
-              }, {
-                "required" : [ "xquery" ]
-              }, {
-                "required" : [ "xtokenize" ]
-              } ]
-            }
           }, {
             "type" : "object",
             "required" : [ "expression" ],
@@ -17682,12 +16256,6 @@
                 "description" : "The predicate expression to use for validation.",
                 "$ref" : "#/items/definitions/org.apache.camel.model.language.ExpressionDefinition"
               }
-            }
-          }, {
-            "not" : {
-              "anyOf" : [ {
-                "required" : [ "expression" ]
-              } ]
             }
           } ]
         } ],
