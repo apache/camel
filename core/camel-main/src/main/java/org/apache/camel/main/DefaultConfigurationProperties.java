@@ -1849,10 +1849,6 @@ public abstract class DefaultConfigurationProperties<T> {
     }
 
     /**
-     * To specify for how long time in seconds to keep running the JVM before automatic terminating the JVM. You can use
-     * this to run Camel for a short while.
-     */
-    /**
      * For how long to keep running before automatic terminating the JVM, as a duration with a time unit such as 15s, 2m
      * or 1h (a plain number is seconds). An alias of durationMaxSeconds that accepts a unit.
      */
@@ -1861,6 +1857,10 @@ public abstract class DefaultConfigurationProperties<T> {
         return (T) this;
     }
 
+    /**
+     * To specify for how long time in seconds to keep running the JVM before automatic terminating the JVM. You can use
+     * this to run Camel for a short while.
+     */
     public T withDurationMaxSeconds(int durationMaxSeconds) {
         this.durationMaxSeconds = durationMaxSeconds;
         return (T) this;
