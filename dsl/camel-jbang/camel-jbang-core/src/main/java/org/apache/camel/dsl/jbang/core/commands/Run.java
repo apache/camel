@@ -632,7 +632,19 @@ public class Run extends CamelCommand {
     }
 
     private void writeSetting(KameletMain main, Properties existing, String key, Supplier<String> value) {
-        String val = existing != null ? existing.getProperty(key, value.get()) : value.get();
+        // a flag given on the command line (the supplier answers non-null only then) wins over the profile
+        // properties file; the file is the default when the flag is not given (CAMEL-24705)
+        String val = value.get();
+        if (val != null) {
+            // an explicit flag: an override property, as camel-main loads application.properties itself on top of
+            // the initial properties and the file would win otherwise
+            main.addOverrideProperty(key, val);
+            writeSettings(key, val);
+            return;
+        }
+        if (existing != null) {
+            val = existing.getProperty(key);
+        }
         if (val != null) {
             main.addInitialProperty(key, val);
             writeSettings(key, val);
