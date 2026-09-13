@@ -78,10 +78,12 @@ In YAML you use an empty `stop: {}` node as shown:
       steps:
         - choice:
             when:
-              - steps:
+              - simple: "${body} contains 'Hello'"
+                steps:
                   - to:
                       uri: mock:hello
-              - steps:
+              - simple: "${body} contains 'Bye'"
+                steps:
                   - to:
                       uri: mock:bye
                   - stop: {}
