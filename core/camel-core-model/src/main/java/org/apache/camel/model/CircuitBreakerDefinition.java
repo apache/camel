@@ -24,6 +24,7 @@ import jakarta.xml.bind.annotation.XmlAttribute;
 import jakarta.xml.bind.annotation.XmlElement;
 import jakarta.xml.bind.annotation.XmlElementRef;
 import jakarta.xml.bind.annotation.XmlRootElement;
+import jakarta.xml.bind.annotation.XmlTransient;
 import jakarta.xml.bind.annotation.XmlType;
 
 import org.apache.camel.spi.Metadata;
@@ -58,6 +59,8 @@ public class CircuitBreakerDefinition extends OutputDefinition<CircuitBreakerDef
     @XmlElement
     @Metadata(description = "The fallback route path to execute when the circuit breaker triggers.")
     private OnFallbackDefinition onFallback;
+    @XmlTransient
+    private boolean fallbackViaFluentApi;
 
     public CircuitBreakerDefinition() {
     }
@@ -104,9 +107,17 @@ public class CircuitBreakerDefinition extends OutputDefinition<CircuitBreakerDef
         super.setOutputs(outputs);
     }
 
+    /**
+     * Adds the output to the circuit breaker, or to the fallback while the fallback is being built with the fluent Java
+     * DSL, as in {@code circuitBreaker().to("a").onFallback().to("b").end()}.
+     * <p/>
+     * A fallback set with {@link #setOnFallback(OnFallbackDefinition)} (XML, YAML and the other DSL loaders) carries
+     * its own outputs, so the outputs added here belong to the circuit breaker no matter in which order the loader read
+     * the fallback and the steps.
+     */
     @Override
     public void addOutput(ProcessorDefinition<?> output) {
-        if (onFallback != null) {
+        if (onFallback != null && fallbackViaFluentApi) {
             onFallback.addOutput(output);
         } else {
             super.addOutput(output);
@@ -153,6 +164,7 @@ public class CircuitBreakerDefinition extends OutputDefinition<CircuitBreakerDef
 
     public void setOnFallback(OnFallbackDefinition onFallback) {
         this.onFallback = onFallback;
+        this.fallbackViaFluentApi = false;
     }
 
     // Fluent API
@@ -223,6 +235,7 @@ public class CircuitBreakerDefinition extends OutputDefinition<CircuitBreakerDef
     public CircuitBreakerDefinition onFallback() {
         onFallback = new OnFallbackDefinition();
         onFallback.setParent(this);
+        fallbackViaFluentApi = true;
         return this;
     }
 
@@ -238,6 +251,7 @@ public class CircuitBreakerDefinition extends OutputDefinition<CircuitBreakerDef
         onFallback = new OnFallbackDefinition();
         onFallback.setFallbackViaNetwork(Boolean.toString(true));
         onFallback.setParent(this);
+        fallbackViaFluentApi = true;
         return this;
     }
 
