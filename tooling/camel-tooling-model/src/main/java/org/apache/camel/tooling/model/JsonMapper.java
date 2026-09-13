@@ -337,6 +337,7 @@ public final class JsonMapper {
         PojoBeanModel model = new PojoBeanModel();
         parseModel(mobj, model);
         parseArtifact(mobj, model);
+        model.setInterfaceType(mobj.getString("interfaceType"));
         JsonObject mprp = (JsonObject) mobj.get("properties");
         if (mprp != null) {
             for (Map.Entry<String, Object> entry : mprp.entrySet()) {
@@ -378,6 +379,9 @@ public final class JsonMapper {
     public static JsonObject asJsonObject(PojoBeanModel model) {
         JsonObject obj = new JsonObject();
         baseToJson(model, obj);
+        if (model.getInterfaceType() != null) {
+            obj.put("interfaceType", model.getInterfaceType());
+        }
         artifactToJson(model, obj);
         obj.entrySet().removeIf(e -> e.getValue() == null);
         JsonObject wrapper = new JsonObject();
