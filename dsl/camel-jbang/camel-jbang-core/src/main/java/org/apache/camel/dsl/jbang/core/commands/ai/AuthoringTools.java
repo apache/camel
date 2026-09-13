@@ -61,20 +61,15 @@ public final class AuthoringTools {
     /** Registers the authoring tools; called once by the {@link ToolRegistry}. */
     static void register(Consumer<ToolDescriptor> registry) {
         registry.accept(tool("camel_catalog_doc",
-                "Camel catalog documentation of a component, data format, language or EIP (description, options, "
-                                                  + "Maven coordinates), with the URI rules of a component. For simple also its "
-                                                  + "syntax rules, functions and operators: count and names by group, or with "
-                                                  + "optionsFilter the matching ones with parameters and examples. endpoint "
-                                                  + "validates a URI: unknown or invalid options, missing path.")
+                "Catalog documentation of a component, data format, language, EIP or built-in bean: description, options, Maven coordinates, the URI rules of a component; for simple its functions and operators (optionsFilter narrows them). endpoint validates a URI.")
                 .param("name", "string", "Name, e.g. kafka, json-jackson, simple, timer, choice, split", false)
                 .param("endpoint", "string", "Endpoint URI to check, e.g. kafka:orders?brokers=host:9092", false)
                 .param("kind", "string",
-                        "component, dataformat, language, eip or bean (auto-detected); a bean is a built-in class such as StringAggregationStrategy, with how to declare and use it",
+                        "component, dataformat, language, eip or bean (auto-detected; a bean is a built-in class such as StringAggregationStrategy, with how to declare and use it)",
                         false)
                 .param("includeOptions", "boolean", "Include the options (default true)", false)
                 .param("includeDoc", "boolean", "Include the full AsciiDoc page (default false)", false)
-                .param("docPage", "string", "A language doc sub-page (simple: functions, operators, ognl, advanced)"
-                                            + " to return as text",
+                .param("docPage", "string", "simple doc sub-page to return as text (functions, operators, ognl, advanced)",
                         false)
                 .param("optionsFilter", "string", "Keyword to match in option names or descriptions", false)
                 .param("camelVersion", "string", VERSION_DESC, false)
@@ -92,7 +87,7 @@ public final class AuthoringTools {
                                                    + "description. camel_catalog_doc then gives the options of one.")
                 .param("term", "string", "What to look for, e.g. mqtt, s3, database, csv", true)
                 .param("kind", "string",
-                        "component, dataformat, language or bean (default: all); kind bean with an interface name such as AggregationStrategy lists the built-in implementations with their class names",
+                        "component, dataformat, language or bean (default: all); bean with an interface name such as AggregationStrategy lists the built-in implementations",
                         false)
                 .param("limit", "integer", "Maximum matches per kind (default 10)", false)
                 .param("camelVersion", "string", VERSION_DESC, false)
@@ -180,9 +175,7 @@ public final class AuthoringTools {
                 }));
 
         registry.accept(tool("camel_run",
-                "Starts an integration from a project directory with camel run in a separate process, in dev mode by "
-                                          + "default (route files reload when written). Returns the pid and log file once it is "
-                                          + "up; camel_get_log and camel_get_errors then tell how it does, camel_control stops it.")
+                "Starts an integration with camel run in a separate process, in dev mode by default (files reload when written). Returns the pid and log file; camel_get_log, camel_get_errors and camel_control follow it.")
                 .param("directory", "string", "Project directory to run in", true)
                 .param("files", "string", "Source files to run, comma-separated (default: every route file in the"
                                           + " directory)",
