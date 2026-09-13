@@ -220,6 +220,7 @@ Write methods like put(key, value) and remove(key) do not return the previous va
 
 * Put a key/value into a named cache:
 +
+--
 [source,java]
 ----
 from("direct:start")
@@ -230,9 +231,11 @@ from("direct:start")
 <1> Set the operation to perform
 <2> Set the key used to identify the element in the cache
 <3> Use the configured cache manager `cacheContainer` from the registry to put an element to the cache named `myCacheName`
+--
 +
 It is possible to configure the lifetime and/or the idle time before the entry expires and gets evicted from the cache, as example:
 +
+--
 [source,java]
 ----
 from("direct:start")
@@ -244,6 +247,7 @@ from("direct:start")
 ----
 <1> Set the lifespan of the entry
 <2> Set the time unit for the lifespan
+--
 
 * Queries
 +

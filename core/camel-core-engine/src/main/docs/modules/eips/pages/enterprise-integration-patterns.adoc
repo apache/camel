@@ -327,7 +327,7 @@ a|image::eip/ControlBusIcon.gif[image]
 |xref:log-eip.adoc[Log] |How can I log processing a message?
 
 a|image::eip/RoutingTableIcon.gif[image]
-|xref:step-eip.adoc[Step] | Groups together a set of EIPs into a composite logical unit for metrics and monitoring. |
+|xref:step-eip.adoc[Step] | Groups together a set of EIPs into a composite logical unit for metrics and monitoring.
 
 |===
 
