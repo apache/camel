@@ -22,6 +22,7 @@ import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class NoSuchLanguageTest extends LanguageTestSupport {
 
@@ -31,7 +32,7 @@ public class NoSuchLanguageTest extends LanguageTestSupport {
                 () -> assertPredicate("foo"),
                 "Should have thrown an exception");
 
-        assertEquals("No language could be found for: unknown", e.getMessage());
+        assertTrue(e.getMessage().startsWith("No language could be found for: unknown"), e.getMessage());
         assertEquals("unknown", e.getLanguage());
     }
 

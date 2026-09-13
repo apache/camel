@@ -448,7 +448,7 @@ public class BacklogDebuggerTest extends ManagementTestSupport {
         // validate conditional breakpoint (mistake on purpose)
         Object out = mbeanServer.invoke(on, "validateConditionalBreakpoint",
                 new Object[] { "unknown", "${body contains 'Camel'" }, new String[] { "java.lang.String", "java.lang.String" });
-        assertEquals("No language could be found for: unknown", out);
+        assertTrue(String.valueOf(out).startsWith("No language could be found for: unknown"), String.valueOf(out));
 
         // validate conditional breakpoint (mistake on purpose)
         out = mbeanServer.invoke(on, "validateConditionalBreakpoint", new Object[] { "simple", "${body contains 'Camel'" },

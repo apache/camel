@@ -82,7 +82,8 @@ public final class ExchangeFunctionFactory implements SimpleLanguageFunctionFact
 
         // exchange OGNL
         remainder = ifStartsWithReturnRemainder("exchange", function);
-        if (remainder != null) {
+        if (remainder != null && (remainder.startsWith(".") || remainder.startsWith("?") || remainder.startsWith("["))) {
+            // only ${exchange.OGNL}: ${exchangeCounter} is not an exchange OGNL but an unknown function
             boolean invalid = OgnlHelper.isInvalidValidOgnlExpression(remainder);
             if (invalid) {
                 throw new SimpleParserException("Valid syntax: ${exchange.OGNL} was: " + function, index);

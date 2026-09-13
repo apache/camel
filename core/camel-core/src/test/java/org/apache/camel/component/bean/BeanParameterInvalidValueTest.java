@@ -86,7 +86,7 @@ public class BeanParameterInvalidValueTest extends ContextTestSupport {
                 "Should have thrown exception");
 
         ExpressionEvaluationException cause = assertIsInstanceOf(ExpressionEvaluationException.class, e.getCause());
-        assertTrue(cause.getCause().getMessage().startsWith("Unknown function: xxx at location 0"));
+        assertTrue(cause.getCause().getMessage().startsWith("Unknown function: xxx"));
 
         assertMockEndpointsSatisfied();
     }

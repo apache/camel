@@ -23,6 +23,7 @@ import org.apache.camel.Expression;
 import org.apache.camel.language.simple.FileExpressionBuilder;
 import org.apache.camel.language.simple.SimpleFunctionDispatcher;
 import org.apache.camel.language.simple.SimpleFunctionHelper;
+import org.apache.camel.language.simple.SimpleSyntaxHints;
 import org.apache.camel.language.simple.functions.DirectFunctionFactory;
 import org.apache.camel.language.simple.types.SimpleParserException;
 import org.apache.camel.language.simple.types.SimpleToken;
@@ -98,6 +99,13 @@ public class SimpleFunctionExpression extends LiteralExpression {
     private static final DirectFunctionFactory DIRECT_FACTORY = new DirectFunctionFactory();
 
     private Expression doCreateSimpleExpression(CamelContext camelContext, String function, boolean strict) {
+        if (strict) {
+            // ${body == 'x'}: the operator belongs outside the function (CAMEL-24703)
+            String rewrite = SimpleSyntaxHints.operatorsOutside(function);
+            if (rewrite != null) {
+                throw new SimpleParserException("Operators go outside the function: " + rewrite, token.getIndex());
+            }
+        }
         // return the function directly if we can create function without analyzing the prefix
         Expression answer = DIRECT_FACTORY.createFunction(camelContext, function, token.getIndex());
         if (answer != null) {
@@ -147,7 +155,10 @@ public class SimpleFunctionExpression extends LiteralExpression {
         }
 
         if (strict) {
-            throw new SimpleParserException("Unknown function: " + function, token.getIndex());
+            String hint = SimpleSyntaxHints.unknownFunction(function);
+            throw new SimpleParserException(
+                    "Unknown function: " + function + (hint != null ? " (" + hint + ")" : ""),
+                    token.getIndex());
         } else {
             return null;
         }
@@ -184,7 +195,12 @@ public class SimpleFunctionExpression extends LiteralExpression {
             return FileExpressionBuilder.fileLastModifiedExpression();
         }
         if (strict) {
-            throw new SimpleParserException("Unknown file language syntax: " + remainder, token.getIndex());
+            throw new SimpleParserException(
+                    "Unknown file language syntax: " + remainder + " (the file: functions describe the file being consumed:"
+                                            + " ${file:name}, ${file:size}, ${file:parent}, ${file:absolute.path};"
+                                            + " they do not read a file. To read a file into the body use the poll"
+                                            + " EIP with a file: endpoint)",
+                    token.getIndex());
         }
         return null;
     }

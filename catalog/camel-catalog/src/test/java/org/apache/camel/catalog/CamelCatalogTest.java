@@ -1206,15 +1206,16 @@ public class CamelCatalogTest {
         assertFalse(result.isSuccess());
         assertEquals("${body", result.getText());
         LOG.info(result.getError());
-        assertTrue(result.getError().startsWith("expected symbol functionEnd but was eol at location 5"));
-        assertEquals("expected symbol functionEnd but was eol", result.getShortError());
+        assertTrue(result.getError().startsWith("expected symbol functionEnd but was eol"));
+        assertTrue(result.getError().contains("missing } to close the function at location 5"));
+        assertTrue(result.getShortError().startsWith("expected symbol functionEnd but was eol"));
         assertEquals(5, result.getIndex());
 
         result = catalog.validateLanguageExpression(null, "simple", "${bodyxxx}");
         assertFalse(result.isSuccess());
         assertEquals("${bodyxxx}", result.getText());
         LOG.info(result.getError());
-        assertEquals("Valid syntax: ${body.OGNL} was: bodyxxx", result.getShortError());
+        assertEquals("Unknown function: bodyxxx (did you mean ${body}?)", result.getShortError());
         assertEquals(0, result.getIndex());
     }
 
@@ -1228,8 +1229,9 @@ public class CamelCatalogTest {
         assertFalse(result.isSuccess());
         assertEquals("${body} > ${header.size", result.getText());
         LOG.info(result.getError());
-        assertTrue(result.getError().startsWith("expected symbol functionEnd but was eol at location 22"));
-        assertEquals("expected symbol functionEnd but was eol", result.getShortError());
+        assertTrue(result.getError().startsWith("expected symbol functionEnd but was eol"));
+        assertTrue(result.getError().contains("missing } to close the function at location 22"));
+        assertTrue(result.getShortError().startsWith("expected symbol functionEnd but was eol"));
         assertEquals(22, result.getIndex());
     }
 
@@ -1243,9 +1245,9 @@ public class CamelCatalogTest {
         assertFalse(result.isSuccess());
         assertEquals("${bdy} contains '{{danger}}'", result.getText());
         LOG.info(result.getError());
-        assertTrue(result.getError().startsWith("Unknown function: bdy at location 0"));
+        assertTrue(result.getError().startsWith("Unknown function: bdy (did you mean ${body}?) at location 0"));
         assertTrue(result.getError().contains("'{{danger}}'"));
-        assertEquals("Unknown function: bdy", result.getShortError());
+        assertEquals("Unknown function: bdy (did you mean ${body}?)", result.getShortError());
         assertEquals(0, result.getIndex());
     }
 
@@ -1331,7 +1333,7 @@ public class CamelCatalogTest {
 
         result = catalog.validateLanguagePredicate(null, "simple", "${body.length} =!= 12");
         assertFalse(result.isSuccess());
-        assertEquals("Unexpected token =", result.getShortError());
+        assertTrue(result.getShortError().startsWith("Unknown operator =!=: did you mean !=?"), result.getShortError());
 
         result = catalog.validateLanguageExpression(null, "simple", "${int:body}");
         assertTrue(result.isSuccess());
@@ -1340,7 +1342,7 @@ public class CamelCatalogTest {
         result = catalog.validateLanguageExpression(null, "simple", "${unknown:body}");
         assertFalse(result.isSuccess());
         assertEquals("${unknown:body}", result.getText());
-        assertEquals("Unknown function: unknown:body", result.getShortError());
+        assertTrue(result.getShortError().startsWith("Unknown function: unknown:body"), result.getShortError());
     }
 
     @Test

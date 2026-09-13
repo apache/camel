@@ -31,7 +31,9 @@ public class NoSuchLanguageException extends RuntimeCamelException {
      * @param language the language name that could not be resolved
      */
     public NoSuchLanguageException(String language) {
-        super("No language could be found for: " + Objects.requireNonNull(language, "language"));
+        super("No language could be found for: " + Objects.requireNonNull(language, "language")
+              + (language.matches("[a-z0-9-]+")
+                      ? " (a Camel language needs its dependency on the classpath, e.g. camel-" + language + ")" : ""));
         this.language = language;
     }
 

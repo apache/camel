@@ -469,11 +469,23 @@ public abstract class BaseSimpleParser {
             return;
         } else if (token == null) {
             // use the previous index as that is where the problem is
+            if (expect == TokenType.functionEnd) {
+                throw new SimpleParserException(
+                        "expected symbol " + expect + " but reached eol: missing } to close the function", previousIndex);
+            }
             throw new SimpleParserException("expected symbol " + expect + " but reached eol", previousIndex);
         } else {
             // use the previous index as that is where the problem is
+            String hint = "";
+            if (expect == TokenType.functionEnd && token.getType().isEol()) {
+                hint = ": missing } to close the function";
+            } else if (expect == TokenType.whiteSpace && token.getType().getType() == TokenType.singleQuote) {
+                hint = ": a literal that contains a single quote must be written with double quotes, e.g. \"it's\"";
+            } else if (expect == TokenType.whiteSpace) {
+                hint = ": operators and values must be separated by a space";
+            }
             throw new SimpleParserException(
-                    "expected symbol " + expect + " but was " + token.getType().getType(), previousIndex);
+                    "expected symbol " + expect + " but was " + token.getType().getType() + hint, previousIndex);
         }
     }
 

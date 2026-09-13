@@ -400,7 +400,8 @@ public class SimpleExpressionParser extends BaseSimpleParser {
                 }
             } else {
                 throw new SimpleParserException(
-                        "Other operator " + operatorType + " does not support token " + token, token.getIndex());
+                        SimpleSyntaxHints.unsupportedOperand("Other", operatorType, expression, token.getIndex()),
+                        token.getIndex());
             }
             return true;
         }
@@ -430,7 +431,8 @@ public class SimpleExpressionParser extends BaseSimpleParser {
                 }
             } else {
                 throw new SimpleParserException(
-                        "Chain operator " + operatorType + " does not support token " + token, token.getIndex());
+                        SimpleSyntaxHints.unsupportedOperand("Chain", operatorType, expression, token.getIndex()),
+                        token.getIndex());
             }
             return true;
         }

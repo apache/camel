@@ -111,7 +111,8 @@ public abstract class AbstractBeanProcessor extends AsyncProcessorSupport {
 
         if (invocation == null) {
             exchange.setException(new IllegalStateException(
-                    "No method invocation could be created, no matching method could be found on: " + beanInstance));
+                    "No method invocation could be created, no matching method could be found on: " + beanInstance
+                                                            + methodsHint(beanInfo, explicitMethodName)));
             callback.done(true);
             return true;
         }
@@ -283,5 +284,30 @@ public abstract class AbstractBeanProcessor extends AsyncProcessorSupport {
 
         // fallback and allow using the processor
         return true;
+    }
+
+    /**
+     * The public methods of the bean and how to choose one: a bean with several methods and no method name cannot be
+     * called, and the message alone did not say what to write.
+     */
+    private static String methodsHint(BeanInfo beanInfo, String explicitMethodName) {
+        try {
+            java.util.List<String> names = beanInfo.getMethods().stream()
+                    .map(m -> m.getMethod().getName())
+                    .distinct()
+                    .sorted()
+                    .toList();
+            if (names.isEmpty()) {
+                return " (the bean has no public method to call)";
+            }
+            if (explicitMethodName != null) {
+                return " (method " + explicitMethodName + " was asked for; the bean has: " + String.join(", ", names)
+                       + ")";
+            }
+            return " (the bean has the methods " + String.join(", ", names)
+                   + ": name the one to call with method: <name> on the bean step, or annotate it with @Handler)";
+        } catch (Exception e) {
+            return "";
+        }
     }
 }
