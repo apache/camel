@@ -63,21 +63,19 @@ public class GroovyExpression extends ExpressionSupport {
         try {
             value = script.run();
         } catch (groovy.lang.MissingPropertyException e) {
-            // a bean name used as a variable (formatter.format(body)): say where beans are, and what the variables are
+            // a bean name used as a variable (formatter.format(body)): say where beans are, and what the variables are.
+            // The same exception type with the hint in its message; no cause, as the message would then be built from
+            // the cause and lose the hint
             String name = e.getProperty();
             boolean bean = name != null && exchange.getContext().getRegistry().lookupByName(name) != null;
-            throw new org.apache.camel.RuntimeCamelException(
-                    "No such property: " + name + " in the groovy script"
-                                                             + (bean
-                                                                     ? ": '" + name
-                                                                       + "' is a bean in the registry, not a script variable;"
-                                                                       + " use exchange.getContext().getRegistry().lookupByName('"
-                                                                       + name
-                                                                       + "'), or call it from the route with - bean: {ref: "
-                                                                       + name + "}"
-                                                                     : ": the script variables are exchange, message, body, headers,"
-                                                                       + " variables, exchangeProperties, camelContext, request and log"),
-                    e);
+            String hint = bean
+                    ? "'" + name + "' is a bean in the registry, not a script variable; use"
+                      + " exchange.getContext().getRegistry().lookupByName('" + name + "'), or call it from the route with"
+                      + " - bean: {ref: " + name + "}"
+                    : "the script variables are exchange, message, body, headers, variables, exchangeProperties,"
+                      + " camelContext, request and log";
+            throw new groovy.lang.MissingPropertyException(
+                    e.getMessageWithoutLocationText() + " (" + hint + ")", name, e.getType());
         }
 
         return exchange.getContext().getTypeConverter().convertTo(type, value);
