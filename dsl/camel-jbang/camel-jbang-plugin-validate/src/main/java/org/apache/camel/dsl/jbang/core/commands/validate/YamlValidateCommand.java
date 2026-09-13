@@ -45,9 +45,9 @@ public class YamlValidateCommand extends CamelCommand {
                         description = "Validate against the canonical schema (rejects shorthands and implicit expressions)")
     boolean canonical;
 
-    @CommandLine.Option(names = { "--catalog" }, negatable = true, defaultValue = "true",
+    @CommandLine.Option(names = { "--catalog" }, defaultValue = "true",
                         description = "Also check endpoint URIs and simple expressions against the Camel catalog"
-                                      + " (use --no-catalog for the schema only)")
+                                      + " (use --catalog=false for the schema only)")
     boolean catalog = true;
 
     @CommandLine.Parameters(description = { "The Camel YAML source files to parse." },
