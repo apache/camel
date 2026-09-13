@@ -29,7 +29,8 @@ public class ValidatePlugin implements Plugin {
         var cmd = new CommandLine(new ValidateCommand(main))
                 .addSubcommand("yaml", new CommandLine(new YamlValidateCommand(main)))
                 .addSubcommand("normalize", new CommandLine(new YamlNormalizeCommand(main)))
-                .addSubcommand("properties", new CommandLine(new PropertiesValidateCommand(main)));
+                .addSubcommand("properties", new CommandLine(new PropertiesValidateCommand(main)))
+                .addSubcommand("source", new CommandLine(new SourceValidateCommand(main)));
 
         commandLine.addSubcommand("validate", cmd);
     }

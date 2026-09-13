@@ -68,7 +68,9 @@ public final class AuthoringTools {
                                                   + "validates a URI: unknown or invalid options, missing path.")
                 .param("name", "string", "Name, e.g. kafka, json-jackson, simple, timer, choice, split", false)
                 .param("endpoint", "string", "Endpoint URI to check, e.g. kafka:orders?brokers=host:9092", false)
-                .param("kind", "string", "component, dataformat, language or eip (auto-detected)", false)
+                .param("kind", "string",
+                        "component, dataformat, language, eip or bean (auto-detected); a bean is a built-in class such as StringAggregationStrategy, with how to declare and use it",
+                        false)
                 .param("includeOptions", "boolean", "Include the options (default true)", false)
                 .param("includeDoc", "boolean", "Include the full AsciiDoc page (default false)", false)
                 .param("docPage", "string", "A language doc sub-page (simple: functions, operators, ognl, advanced)"
@@ -89,7 +91,9 @@ public final class AuthoringTools {
                                                    + "the exact name (mqtt, s3, snowflake, csv): best match first with title and "
                                                    + "description. camel_catalog_doc then gives the options of one.")
                 .param("term", "string", "What to look for, e.g. mqtt, s3, database, csv", true)
-                .param("kind", "string", "component, dataformat or language (default: all)", false)
+                .param("kind", "string",
+                        "component, dataformat, language or bean (default: all); kind bean with an interface name such as AggregationStrategy lists the built-in implementations with their class names",
+                        false)
                 .param("limit", "integer", "Maximum matches per kind (default 10)", false)
                 .param("camelVersion", "string", VERSION_DESC, false)
                 .executor((ctx, args) -> {
@@ -126,14 +130,18 @@ public final class AuthoringTools {
                     applyVersion(ctx, args);
                     String file = required(args, "file");
                     String content = args.get("content");
+                    String directory = args.get("directory");
+                    // the directory is needed to read the file, and used for the bean reference check when given
+                    Path dir = content == null || (directory != null && !directory.isBlank())
+                            ? ctx.resolveDirectory(directory) : null;
                     if (content == null) {
-                        Path path = resolveFile(ctx.resolveDirectory(args.get("directory")), file);
+                        Path path = resolveFile(dir, file);
                         if (!Files.isRegularFile(path)) {
                             throw new ToolExecutionException("No such file in the directory: " + file);
                         }
                         content = read(path);
                     }
-                    return validate(ctx, file, content).toJson();
+                    return validate(ctx, dir, file, content).toJson();
                 }));
 
         registry.accept(tool("camel_get_files",
@@ -277,11 +285,16 @@ public final class AuthoringTools {
 
     /** Validates source content for the context's Camel version, as {@code camel_validate_source} answers it. */
     public static JsonObject validate(ToolContext ctx, String file, String content) {
+        return validate(ctx, null, file, content);
+    }
+
+    /** As {@link #validate(ToolContext, String, String)}, with the directory for the bean reference check. */
+    public static JsonObject validate(ToolContext ctx, Path dir, String file, String content) {
         if (!SourceValidator.isValidatableFile(file)) {
             throw new ToolExecutionException(
-                    "No validation for " + file + ": only YAML routes and .properties files are validated");
+                    "No validation for " + file + ": YAML routes, .properties, .java, .xsl and .xml files are validated");
         }
-        List<String> errors = SourceValidator.validate(file, content, ctx.catalog(), ctx.propertyLineValidator());
+        List<String> errors = SourceValidator.validate(file, content, ctx.catalog(), ctx.propertyLineValidator(), dir);
         JsonObject result = new JsonObject();
         result.put("valid", errors.isEmpty());
         result.put("file", file);
@@ -300,7 +313,7 @@ public final class AuthoringTools {
             throw new ToolExecutionException(file + " is not a regular file");
         }
         if (validate && SourceValidator.isValidatableFile(file)) {
-            List<String> errors = SourceValidator.validate(file, content, ctx.catalog(), ctx.propertyLineValidator());
+            List<String> errors = SourceValidator.validate(file, content, ctx.catalog(), ctx.propertyLineValidator(), dir);
             if (!errors.isEmpty()) {
                 JsonObject result = new JsonObject();
                 result.put("status", "invalid");

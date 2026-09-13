@@ -288,4 +288,115 @@ class SourceValidatorEndpointTest {
         List<String> errors = SourceValidator.validateYamlEndpoints(yaml, catalog);
         assertThat(errors).isEmpty();
     }
+
+    @org.junit.jupiter.api.Test
+    void consumerOptionOnAToSaysHowToReadInsteadOfWrite() {
+        String yaml = """
+                - from:
+                    uri: timer:tick
+                    steps:
+                      - to:
+                          uri: "file:data?fileName=input.xml&noop=true"
+                """;
+        java.util.List<String> msgs
+                = SourceValidator.validateYamlEndpoints(yaml, new org.apache.camel.catalog.DefaultCamelCatalog());
+        org.assertj.core.api.Assertions.assertThat(msgs).hasSize(1);
+        org.assertj.core.api.Assertions.assertThat(msgs.get(0))
+                .contains("not applicable in producer only mode")
+                .contains("it writes the body")
+                .contains("poll EIP");
+    }
+
+    @org.junit.jupiter.api.Test
+    void componentDocSaysWhereItGoes() {
+        org.apache.camel.catalog.CamelCatalog catalog = new org.apache.camel.catalog.DefaultCamelCatalog();
+        org.assertj.core.api.Assertions.assertThat(CatalogDocs.usage(catalog.componentModel("file"))).contains("from: consumes")
+                .contains("poll EIP");
+        org.assertj.core.api.Assertions.assertThat(CatalogDocs.usage(catalog.componentModel("timer")))
+                .startsWith("consumer only");
+        org.assertj.core.api.Assertions.assertThat(CatalogDocs.usage(catalog.componentModel("log")))
+                .startsWith("producer only");
+    }
+
+    @Test
+    void anInventedOptionSaysWhatTheComponentDoesInstead() {
+        List<String> msgs = SourceValidator.validateYamlEndpoints("""
+                - from:
+                    uri: timer:tick?interval=1000&body=hello
+                    steps:
+                      - to:
+                          uri: file:output?fileName=report.xml&mkdir=true&body=hello
+                """, catalog);
+        assertThat(msgs).hasSize(4);
+        assertThat(msgs.get(3)).contains("Unknown option 'body'").contains("setBody step before the to: file: step");
+        assertThat(msgs.get(0)).contains("Unknown option 'interval'").contains("write period=<millis>");
+        assertThat(msgs.get(1)).contains("Unknown option 'body'").contains("setBody step");
+        assertThat(msgs.get(2)).contains("Unknown option 'mkdir'").contains("autoCreate=true");
+    }
+
+    @Test
+    void aWildcardInTheFileIncludeOptionIsNamedAsNotARegex() {
+        List<String> msgs = SourceValidator.validateYamlEndpoints("""
+                - from:
+                    uri: file:input?include=*.txt&noop=true
+                    steps:
+                      - log: "${body}"
+                - from:
+                    uri: file:other?include=.*\\.txt
+                    steps:
+                      - log: "${body}"
+                """, catalog);
+        assertThat(msgs).hasSize(1);
+        assertThat(msgs.get(0)).contains("include=*.txt is not a regular expression")
+                .contains("write include=.*\\.txt").contains("antInclude=*.txt");
+    }
+
+    @Test
+    void severalEndpointsInOneToAreNamed() {
+        List<String> msgs = SourceValidator.validateYamlEndpoints("""
+                - from:
+                    uri: timer:tick
+                    steps:
+                      - to:
+                          uri: direct:processA,direct:processB
+                      - to:
+                          uri: "log:a?showAll=true"
+                """, catalog);
+        assertThat(msgs).hasSize(1);
+        assertThat(msgs.get(0)).contains("a to: takes one endpoint").contains("multicast: {to: [...]}")
+                .contains("recipientList");
+    }
+
+    @Test
+    void aHeaderNoComponentSetsIsNamedWithTheClosest() {
+        List<String> msgs = SourceValidator.validateKnownHeaders("""
+                - from:
+                    uri: "file:in?noop=true"
+                    steps:
+                      - log: "${header.CamelFileNam} ${header.CamelFileName} ${header.MyOwn}"
+                      - setHeader:
+                          name: CamelFilePathX
+                          simple: "x"
+                """, catalog);
+        assertThat(msgs).hasSize(2);
+        assertThat(msgs.get(0)).contains("header CamelFileNam is not set by file").contains("did you mean CamelFileName")
+                .contains("The file headers are");
+        assertThat(msgs.get(1)).contains("header CamelFilePathX is not set by file");
+    }
+
+    @Test
+    void aProducerOnlyComponentInFromIsNamed() {
+        List<String> msgs = SourceValidator.validateYamlEndpoints("""
+                - from:
+                    uri: mock:result
+                    steps:
+                      - log: "${body}"
+                - from:
+                    uri: direct:ok
+                    steps:
+                      - to: mock:out
+                """, catalog);
+        assertThat(msgs).hasSize(1);
+        assertThat(msgs.get(0)).contains("mock is a producer-only component: it cannot be a from:").contains("direct:name");
+    }
 }

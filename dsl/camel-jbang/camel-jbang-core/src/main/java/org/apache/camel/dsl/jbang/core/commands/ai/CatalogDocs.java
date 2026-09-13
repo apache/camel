@@ -31,6 +31,7 @@ import org.apache.camel.tooling.model.ComponentModel;
 import org.apache.camel.tooling.model.DataFormatModel;
 import org.apache.camel.tooling.model.EipModel;
 import org.apache.camel.tooling.model.LanguageModel;
+import org.apache.camel.tooling.model.PojoBeanModel;
 import org.apache.camel.util.json.JsonArray;
 import org.apache.camel.util.json.JsonObject;
 
@@ -93,6 +94,11 @@ public final class CatalogDocs {
                 String doc = includeDoc ? catalog.asciiDoc(name + "-component") : null;
                 return componentDoc(cm, lowerFilter, includeOptions, doc);
             }
+            JsonObject group = mainOptionsGroup(catalog, name);
+            if (group != null) {
+                // resilience4j, health, metrics: not a component but a group of camel.<name>.* main options
+                return group;
+            }
             if (kind != null) {
                 return notFound("Component", name, catalog.suggestComponentNames(name, 5));
             }
@@ -138,10 +144,87 @@ public final class CatalogDocs {
                 return error("EIP not found: " + name);
             }
         }
+        if (kind == null || "bean".equals(kind)) {
+            PojoBeanModel bm = catalog.pojoBeanModel(name);
+            if (bm == null) {
+                // by class name or interface: the first match
+                List<PojoBeanModel> beans = findBeans(catalog, name);
+                if (!beans.isEmpty() && (kind != null || name.contains(".") || name.endsWith("Strategy")
+                        || name.endsWith("Repository") || name.endsWith("Policy"))) {
+                    bm = beans.get(0);
+                    name = bm.getName();
+                }
+            }
+            if (bm != null) {
+                return beanDoc(catalog, bm, name);
+            }
+            if (kind != null) {
+                return notFound("Bean", name, findBeans(catalog, name).stream().map(PojoBeanModel::getName).limit(5).toList());
+            }
+        }
+        JsonObject group = mainOptionsGroup(catalog, name);
+        if (group != null) {
+            return group;
+        }
         List<String> suggestions = new ArrayList<>(catalog.suggestComponentNames(name, 5));
         suggestions.addAll(catalog.suggestDataFormatNames(name, 3));
         suggestions.addAll(catalog.suggestLanguageNames(name, 3));
+        suggestions.addAll(findBeans(catalog, name).stream().map(PojoBeanModel::getName).limit(3).toList());
         return notFound("Artifact", name, suggestions);
+    }
+
+    /**
+     * The camel.&lt;name&gt;.* main options when the name is one of their groups (resilience4j, faulttolerance, health,
+     * metrics, threadpool, rest, ...), else null. A model asks for "resilience4j" as a component when it wants the
+     * application.properties keys of the circuit breaker.
+     */
+    static JsonObject mainOptionsGroup(CamelCatalog catalog, String name) {
+        String n = name.trim().toLowerCase(Locale.ROOT);
+        if (n.startsWith("camel.")) {
+            n = n.substring("camel.".length());
+        }
+        if (n.endsWith(".")) {
+            n = n.substring(0, n.length() - 1);
+        }
+        if (n.isEmpty() || n.contains(".")) {
+            return null;
+        }
+        String prefix = "camel." + n + ".";
+        JsonArray options = new JsonArray();
+        try {
+            for (var o : catalog.mainModel().getOptions()) {
+                if (!o.getName().toLowerCase(Locale.ROOT).startsWith(prefix)) {
+                    continue;
+                }
+                JsonObject jo = new JsonObject();
+                jo.put("name", o.getName());
+                if (o.getType() != null) {
+                    jo.put("type", o.getType());
+                }
+                if (o.getDefaultValue() != null) {
+                    jo.put("defaultValue", o.getDefaultValue().toString());
+                }
+                if (o.getDescription() != null) {
+                    jo.put("description", o.getDescription());
+                }
+                options.add(jo);
+            }
+        } catch (Exception e) {
+            return null;
+        }
+        if (options.isEmpty()) {
+            return null;
+        }
+        String group = ((JsonObject) options.get(0)).getString("name");
+        group = group.substring(0, group.lastIndexOf('.'));
+        JsonObject result = new JsonObject();
+        result.put("kind", "main-options");
+        result.put("group", group);
+        result.put("note", name + " is not a component: these are the " + group + ".* keys for application.properties"
+                           + " (camel run reads them at startup)");
+        result.put("count", options.size());
+        result.put("options", options);
+        return result;
     }
 
     /**
@@ -187,6 +270,21 @@ public final class CatalogDocs {
                 }
             }
         }
+        if (kind == null || "bean".equals(kind)) {
+            // the built-in beans: an interface name (AggregationStrategy) lists its implementations
+            int n = 0;
+            for (PojoBeanModel bean : findBeans(catalog, term)) {
+                if (n++ >= max) {
+                    break;
+                }
+                JsonObject o = summary("bean", bean.getName(), bean.getTitle(), bean.getDescription(), null);
+                o.put("javaType", bean.getJavaType());
+                if (bean.getInterfaceType() != null) {
+                    o.put("interfaceType", bean.getInterfaceType());
+                }
+                matches.add(o);
+            }
+        }
         result.put("matches", matches);
         result.put("count", matches.size());
         if (matches.isEmpty()) {
@@ -194,6 +292,105 @@ public final class CatalogDocs {
         } else {
             result.put("message", "Best match first; camel_catalog_doc gives the options of one");
         }
+        return result;
+    }
+
+    /**
+     * The built-in beans whose name, type, interface, title or description contains the term, exact interface and name
+     * matches first.
+     */
+    static List<PojoBeanModel> findBeans(CamelCatalog catalog, String term) {
+        String t = term.toLowerCase(Locale.ROOT).trim();
+        List<PojoBeanModel> exact = new ArrayList<>();
+        List<PojoBeanModel> partial = new ArrayList<>();
+        for (String name : catalog.findBeansNames()) {
+            PojoBeanModel bean = catalog.pojoBeanModel(name);
+            if (bean == null) {
+                continue;
+            }
+            String iface = bean.getInterfaceType() != null ? bean.getInterfaceType() : "";
+            String ifaceSimple = iface.substring(iface.lastIndexOf('.') + 1).toLowerCase(Locale.ROOT);
+            if (name.equalsIgnoreCase(t) || ifaceSimple.equals(t) || iface.equalsIgnoreCase(t)
+                    || String.valueOf(bean.getJavaType()).equalsIgnoreCase(t)) {
+                exact.add(bean);
+            } else if ((name + " " + bean.getJavaType() + " " + iface + " " + bean.getTitle() + " "
+                        + bean.getDescription())
+                    .toLowerCase(Locale.ROOT).contains(t)) {
+                partial.add(bean);
+            }
+        }
+        exact.addAll(partial);
+        return exact;
+    }
+
+    /** The built-in beans of an interface (by simple or full name), as "Name (javaType)" strings. */
+    public static List<String> beansOfInterface(CamelCatalog catalog, String interfaceName) {
+        List<String> answer = new ArrayList<>();
+        if (catalog == null || interfaceName == null) {
+            return answer;
+        }
+        String simple = interfaceName.substring(interfaceName.lastIndexOf('.') + 1);
+        try {
+            for (PojoBeanModel bean : findBeans(catalog, simple)) {
+                String iface = bean.getInterfaceType() != null ? bean.getInterfaceType() : "";
+                if (iface.equals(interfaceName) || iface.endsWith("." + simple)) {
+                    answer.add(bean.getName() + " (" + bean.getJavaType() + ")");
+                }
+            }
+        } catch (Exception e) {
+            // an older catalog without bean metadata
+        }
+        return answer;
+    }
+
+    /** The documentation of a built-in bean: type, interface, options, and how it is declared and used in YAML. */
+    static JsonObject beanDoc(CamelCatalog catalog, PojoBeanModel bm, String name) {
+        JsonObject result = new JsonObject();
+        result.put("kind", "bean");
+        result.put("name", bm.getName());
+        result.put("title", bm.getTitle());
+        result.put("description", bm.getDescription());
+        result.put("javaType", bm.getJavaType());
+        String iface = bm.getInterfaceType();
+        if (iface != null) {
+            result.put("interfaceType", iface);
+        }
+        if (bm.getArtifactId() != null) {
+            result.put("artifactId", bm.getArtifactId());
+        }
+        JsonArray options = new JsonArray();
+        for (var opt : bm.getOptions()) {
+            JsonObject o = new JsonObject();
+            o.put("name", opt.getName());
+            o.put("type", opt.getType());
+            if (opt.getDescription() != null) {
+                o.put("description", opt.getDescription());
+            }
+            if (opt.getDefaultValue() != null) {
+                o.put("defaultValue", String.valueOf(opt.getDefaultValue()));
+            }
+            options.add(o);
+        }
+        result.put("options", options);
+        String beanName = Character.toLowerCase(bm.getName().charAt(0)) + bm.getName().substring(1);
+        String declare = "- beans:\n    - name: " + beanName + "\n      type: \"#class:" + bm.getJavaType() + "\""
+                         + (options.isEmpty()
+                                 ? "" : "\n      properties:\n        " + ((JsonObject) options.get(0)).getString("name")
+                                        + ": ...");
+        String use;
+        String ifaceSimple = iface != null ? iface.substring(iface.lastIndexOf('.') + 1) : "";
+        switch (ifaceSimple) {
+            case "AggregationStrategy" -> use = "aggregate: {aggregationStrategy: " + beanName
+                                                + ", ...} (also split, multicast, recipientList, enrich, pollEnrich)";
+            case "AggregationRepository" -> use = "aggregate: {aggregationRepository: " + beanName + ", ...}";
+            case "IdempotentRepository" -> use = "idempotentConsumer: {idempotentRepository: " + beanName + ", ...}";
+            case "Processor" -> use = "- process: {ref: " + beanName + "}";
+            case "LoadBalancer" -> use = "loadBalance: {customLoadBalancer: {ref: " + beanName + "}}";
+            case "ExceptionPolicyStrategy", "RedeliveryPolicy" -> use = "errorHandler / onException options";
+            default -> use = "the option that takes a " + (iface != null ? iface : "bean") + ", by the bean name " + beanName;
+        }
+        result.put("declare", declare);
+        result.put("use", use);
         return result;
     }
 
@@ -428,6 +625,21 @@ public final class CatalogDocs {
         return sb.toString();
     }
 
+    /**
+     * Where the component goes in a route, which a description such as "Read and write files" does not say: a consumer
+     * is a from:, a producer is a to:, and reading once in the middle of a route is the poll EIP.
+     */
+    static String usage(ComponentModel model) {
+        if (model.isConsumerOnly()) {
+            return "consumer only: use it as from: (a route starts from it); it cannot be used as a to:";
+        }
+        if (model.isProducerOnly()) {
+            return "producer only: use it as a to: (send to it); it cannot start a route";
+        }
+        return "from: consumes (reads or receives, starts a route); to: produces (writes or sends); to consume one message"
+               + " in the middle of a route use the poll EIP (poll: {uri: ...}), or pollEnrich";
+    }
+
     private static JsonObject componentDoc(ComponentModel model, String filter, boolean includeOptions, String doc) {
         JsonObject result = new JsonObject();
         result.put("kind", "component");
@@ -443,6 +655,7 @@ public final class CatalogDocs {
         }
         result.put("consumerOnly", model.isConsumerOnly());
         result.put("producerOnly", model.isProducerOnly());
+        result.put("usage", usage(model));
         result.put("remote", model.isRemote());
         result.put("groupId", model.getGroupId());
         result.put("artifactId", model.getArtifactId());

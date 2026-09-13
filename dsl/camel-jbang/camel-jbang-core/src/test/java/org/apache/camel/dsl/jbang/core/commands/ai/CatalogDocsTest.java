@@ -169,4 +169,52 @@ class CatalogDocsTest {
         JsonObject eq = (JsonObject) binary.getCollection("operators").iterator().next();
         assertEquals("LHS == RHS", eq.getString("syntax"));
     }
+
+    @Test
+    void anInterfaceNameFindsTheBuiltInBeans() {
+        org.apache.camel.catalog.CamelCatalog catalog = new org.apache.camel.catalog.DefaultCamelCatalog();
+        var result = CatalogDocs.find(catalog, "AggregationStrategy", "bean", 20);
+        var matches = (org.apache.camel.util.json.JsonArray) result.get("matches");
+        assertTrue(matches.size() >= 5, "found " + matches.size());
+        var first = (org.apache.camel.util.json.JsonObject) matches.get(0);
+        assertEquals("org.apache.camel.AggregationStrategy", first.getString("interfaceType"));
+        assertTrue(matches.stream().anyMatch(
+                m -> "StringAggregationStrategy".equals(((org.apache.camel.util.json.JsonObject) m).getString("name"))));
+
+        var doc = CatalogDocs.catalogDoc(catalog, "StringAggregationStrategy", null, "bean", null, true, false, null);
+        assertEquals("org.apache.camel.processor.aggregate.StringAggregationStrategy", doc.getString("javaType"));
+        assertTrue(doc.getString("declare")
+                .contains("type: \"#class:org.apache.camel.processor.aggregate.StringAggregationStrategy\""));
+        assertTrue(doc.getString("use").contains("aggregationStrategy: stringAggregationStrategy"));
+
+        assertTrue(CatalogDocs.beansOfInterface(catalog, "org.apache.camel.AggregationStrategy").stream()
+                .anyMatch(b -> b.startsWith("GroupedBodyAggregationStrategy (")));
+    }
+
+    @Test
+    void aMainOptionGroupAskedForAsAComponentListsItsKeys() throws Exception {
+        // a model asked for resilience4j as a component when it wanted the camel.resilience4j.* keys
+        Map<String, String> args = new HashMap<>();
+        args.put("name", "resilience4j");
+        args.put("kind", "component");
+        String json = String.valueOf(ToolRegistry.execute("camel_catalog_doc", new ToolContext(), args));
+        JsonObject o = (JsonObject) Jsoner.deserialize(json);
+        assertEquals("main-options", o.getString("kind"));
+        assertEquals("camel.resilience4j", o.getString("group"));
+        assertTrue(o.getString("note").contains("not a component"), o.getString("note"));
+        assertTrue(json.contains("camel.resilience4j.failureRateThreshold"), json);
+
+        // no kind: the same answer
+        args.remove("kind");
+        json = String.valueOf(ToolRegistry.execute("camel_catalog_doc", new ToolContext(), args));
+        assertEquals("camel.resilience4j", ((JsonObject) Jsoner.deserialize(json)).getString("group"));
+
+        // a real component keeps its answer, an unknown name keeps the not-found answer
+        args.put("name", "timer");
+        json = String.valueOf(ToolRegistry.execute("camel_catalog_doc", new ToolContext(), args));
+        assertEquals("component", ((JsonObject) Jsoner.deserialize(json)).getString("kind"));
+        args.put("name", "nosuchthing");
+        json = String.valueOf(ToolRegistry.execute("camel_catalog_doc", new ToolContext(), args));
+        assertTrue(json.contains("not found"), json);
+    }
 }
