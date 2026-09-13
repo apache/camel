@@ -85,6 +85,7 @@ public class EvalLanguageDevConsole extends AbstractDevConsole {
 
             String out;
             boolean predicate = optionBoolean(options, PREDICATE, false);
+            template = resolvePlaceholders(template);
             if (predicate) {
                 Predicate pre = getCamelContext().resolveLanguage(language).createPredicate(template);
                 out = pre.matches(dummy) ? "true" : "false";
@@ -97,6 +98,17 @@ public class EvalLanguageDevConsole extends AbstractDevConsole {
             sb.append(out);
         }
         return sb.toString();
+    }
+
+    /**
+     * Resolves property placeholders in the template first, as the route loaders do before a language parses the text,
+     * so that {{myPeriod}} or ${body} > {{myThreshold}} evaluate as they would in a route (CAMEL-24698).
+     */
+    private String resolvePlaceholders(String template) {
+        if (template != null && template.contains("{{")) {
+            return getCamelContext().resolvePropertyPlaceholders(template);
+        }
+        return template;
     }
 
     @Override
@@ -127,6 +139,7 @@ public class EvalLanguageDevConsole extends AbstractDevConsole {
             String out = null;
             try {
                 boolean predicate = optionBoolean(options, PREDICATE, false);
+                template = resolvePlaceholders(template);
                 if (predicate) {
                     Predicate pre = getCamelContext().resolveLanguage(language).createPredicate(template);
                     out = pre.matches(dummy) ? "true" : "false";
