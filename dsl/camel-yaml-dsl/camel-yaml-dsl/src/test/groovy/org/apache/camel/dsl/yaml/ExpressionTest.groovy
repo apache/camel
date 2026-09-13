@@ -135,6 +135,8 @@ class ExpressionTest extends YamlTestSupport {
         }
     }
 
+    // CAMEL-24707: an expression node without its expression is rejected when the file is loaded, not when the
+    // route is created (the schema marks the expression required; sort is the only node where it is optional)
     def "no expression"() {
         when:
         var route = '''
@@ -146,7 +148,25 @@ class ExpressionTest extends YamlTestSupport {
                             - steps:
                                 - to: "log:when-a"
             '''
-        loadRoutes(route)
+        then:
+        try {
+            loadRoutes(route)
+            Assertions.fail("Should have thrown exception")
+        } catch (Exception e) {
+            Assertions.assertTrue(e.getMessage().contains("when/0"), e.getMessage())
+        }
+    }
+
+    def "sort without expression is allowed"() {
+        when:
+        loadRoutes('''
+                - from:
+                    uri: "direct:start"
+                    steps:
+                      - sort:
+                          comparator: "#myComparator"
+                      - to: "log:sorted"
+            ''')
         then:
         context.routeDefinitions.size() == 1
     }

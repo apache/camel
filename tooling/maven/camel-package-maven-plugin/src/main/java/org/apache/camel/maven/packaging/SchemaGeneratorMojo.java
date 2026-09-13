@@ -1273,7 +1273,7 @@ public class SchemaGeneratorMojo extends AbstractGeneratorMojo {
             }
 
             final String kind = "expression";
-            final boolean required = expressionRequired(name);
+            final boolean required = expressionRequired(originalClassType, fieldElement, name);
             EipOptionModel ep
                     = createOption(name, displayName, kind, fieldTypeName, required, "", label, docComment, deprecated,
                             deprecationNote, false, null, oneOfTypes, asPredicate, false, important);
@@ -1396,6 +1396,29 @@ public class SchemaGeneratorMojo extends AbstractGeneratorMojo {
         }
 
         return defaultValue;
+    }
+
+    /**
+     * Whether the expression of an expression node is required: the @Metadata(required) on the concrete class's
+     * setExpression override when it has one (sort says false), else the @Metadata(required) on the expression field
+     * (true on ExpressionNode), else required.
+     */
+    private boolean expressionRequired(Class<?> classElement, Field fieldElement, String name) {
+        for (Class<?> c = classElement; c != null && c != fieldElement.getDeclaringClass(); c = c.getSuperclass()) {
+            for (Method m : c.getDeclaredMethods()) {
+                if ("setExpression".equals(m.getName()) && m.getParameterCount() == 1) {
+                    Metadata md = m.getAnnotation(Metadata.class);
+                    if (md != null) {
+                        return md.required();
+                    }
+                }
+            }
+        }
+        Metadata md = fieldElement.getAnnotation(Metadata.class);
+        if (md != null) {
+            return md.required();
+        }
+        return expressionRequired(name);
     }
 
     private boolean expressionRequired(String modelName) {

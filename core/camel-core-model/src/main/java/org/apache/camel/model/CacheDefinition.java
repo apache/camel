@@ -162,8 +162,8 @@ public class CacheDefinition extends OutputExpressionNode {
     }
 
     @Override
-    @Metadata(description = "Expression to compute the cache key."
-                            + " Messages with the same key share the cached result.")
+    @Metadata(required = true, description = "Expression to compute the cache key."
+                                             + " Messages with the same key share the cached result.")
     public void setExpression(ExpressionDefinition expression) {
         // override to include javadoc what the expression is used for
         super.setExpression(expression);

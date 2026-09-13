@@ -801,7 +801,8 @@ public class SplitDefinition extends OutputExpressionNode implements ExecutorSer
     }
 
     @Override
-    @Metadata(description = "The expression that returns the value to use for splitting. The result can be an Iterator, Iterable, Array, Collection, Map, NodeList, or a delimited String.")
+    @Metadata(required = true,
+              description = "The expression that returns the value to use for splitting. The result can be an Iterator, Iterable, Array, Collection, Map, NodeList, or a delimited String.")
     public void setExpression(ExpressionDefinition expression) {
         // override to include javadoc what the expression is used for
         super.setExpression(expression);

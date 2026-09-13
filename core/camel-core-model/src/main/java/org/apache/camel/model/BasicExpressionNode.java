@@ -34,7 +34,8 @@ import org.apache.camel.spi.annotations.DslArg;
 public abstract class BasicExpressionNode<T extends BasicExpressionNode<T>> extends OptionalIdentifiedDefinition<T>
         implements HasExpressionType, CopyableDefinition<T> {
 
-    @Metadata(description = "Expression used as the predicate to evaluate whether this when should trigger and route the message or not.")
+    @Metadata(required = true,
+              description = "Expression used as the predicate to evaluate whether this when should trigger and route the message or not.")
     @XmlElementRef
     @DslArg
     private ExpressionDefinition expression;

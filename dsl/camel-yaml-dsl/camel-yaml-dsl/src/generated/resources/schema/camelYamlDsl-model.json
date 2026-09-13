@@ -7963,8 +7963,7 @@
         "displayName" : "Expression",
         "kind" : "expression",
         "index" : 4,
-        "group" : "common",
-        "required" : true
+        "group" : "common"
       }, {
         "name" : "comparator",
         "type" : "string",

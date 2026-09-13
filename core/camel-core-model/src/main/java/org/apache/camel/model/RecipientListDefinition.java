@@ -582,7 +582,8 @@ public class RecipientListDefinition<Type extends ProcessorDefinition<Type>> ext
     }
 
     @Override
-    @Metadata(description = "The expression to compute the list of recipient endpoint URIs. The result can be a comma-separated string, a Collection, or an Iterator of endpoint URIs.")
+    @Metadata(required = true,
+              description = "The expression to compute the list of recipient endpoint URIs. The result can be a comma-separated string, a Collection, or an Iterator of endpoint URIs.")
     public void setExpression(ExpressionDefinition expression) {
         // override to include javadoc what the expression is used for
         super.setExpression(expression);
