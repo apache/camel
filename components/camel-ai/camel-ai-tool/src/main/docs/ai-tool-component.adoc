@@ -147,7 +147,7 @@ YAML::
 
 === Complex Parameters with argSchema
 
-Use `argSchema` when the flat `parameter.*` syntax is not expressive enough for nested objects, arrays, or other advanced JSON Schema constructs. `argSchema` is mutually exclusive with `parameter.*`.
+Use `argSchema` when the flat `+parameter.*+` syntax is not expressive enough for nested objects, arrays, or other advanced JSON Schema constructs. `argSchema` is mutually exclusive with `+parameter.*+`.
 
 [tabs]
 ====
