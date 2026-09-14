@@ -668,9 +668,9 @@ YAML::
 - route:
     from:
       uri: netty:tcp://0.0.0.0:5150
-    steps:
-      - to:
-          uri: mock:result
+      steps:
+        - to:
+            uri: mock:result
 ----
 ====
 

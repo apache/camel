@@ -745,8 +745,8 @@ YAML::
       uri: jetty:http://0.0.0.0:9080/myservice
       parameters:
         handlers: securityHandler
-    steps:
-      # ...
+      steps:
+        # ...
 ----
 ====
 

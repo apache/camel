@@ -104,9 +104,9 @@ YAML::
       uri: azure-storage-queue://storageAccount/messageQueue
       parameters:
         accessKey: yourAccessKey
-    steps:
-      - to:
-          uri: file://queuedirectory
+      steps:
+        - to:
+            uri: file://queuedirectory
 ----
 ====
 
@@ -243,12 +243,12 @@ YAML::
       parameters:
         serviceClient: "#client"
         maxMessages: 5
-    steps:
-      - to:
-          uri: file://outputFolder
-          parameters:
-            fileName: output.txt
-            fileExist: Append
+      steps:
+        - to:
+            uri: file://outputFolder
+            parameters:
+              fileName: output.txt
+              fileExist: Append
 ----
 ====
 

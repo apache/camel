@@ -102,9 +102,9 @@ YAML::
 - route:
     from:
       uri: file:...
-    steps:
-      - to:
-          uri: box://files/upload/inBody=fileUploadRequest
+      steps:
+        - to:
+            uri: box://files/upload/inBody=fileUploadRequest
 ----
 ====
 
@@ -139,9 +139,9 @@ YAML::
       uri: box://events/listen
       parameters:
         startingPosition: -1
-    steps:
-      - to:
-          uri: bean:blah
+      steps:
+        - to:
+            uri: bean:blah
 ----
 ====
 

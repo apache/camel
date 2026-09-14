@@ -137,16 +137,16 @@ YAML::
 - route:
     from:
       uri: direct:george
-    steps:
-      - to:
-          uri: jt400://GEORGE:EGROEG@LIVERPOOL/QSYS.LIB/BEATLES.LIB/PENNYLANE.DTAQ
+      steps:
+        - to:
+            uri: jt400://GEORGE:EGROEG@LIVERPOOL/QSYS.LIB/BEATLES.LIB/PENNYLANE.DTAQ
 
 - route:
     from:
       uri: jt400://RINGO:OGNIR@LIVERPOOL/QSYS.LIB/BEATLES.LIB/PENNYLANE.DTAQ
-    steps:
-      - to:
-          uri: mock:ringo
+      steps:
+        - to:
+            uri: mock:ringo
 ----
 ====
 
@@ -185,14 +185,14 @@ YAML::
 - route:
     from:
       uri: direct:work
-    steps:
-      - to:
-          uri: jt400://GRUPO:ATWORK@server/QSYS.LIB/assets.LIB/compute.PGM
-          parameters:
-            fieldsLength: “10,10,512”
-            ouputFieldsIdx: “2,3”
-      - to:
-          uri: direct:play
+      steps:
+        - to:
+            uri: jt400://GRUPO:ATWORK@server/QSYS.LIB/assets.LIB/compute.PGM
+            parameters:
+              fieldsLength: “10,10,512”
+              ouputFieldsIdx: “2,3”
+        - to:
+            uri: direct:play
 ----
 ====
 
@@ -247,11 +247,11 @@ YAML::
 - route:
     from:
       uri: jms:queue:input
-    steps:
-      - to:
-          uri: jt400://username:password@system/lib.lib/MSGINDQ.DTAQ
-          parameters:
-            keyed: true
+      steps:
+        - to:
+            uri: jt400://username:password@system/lib.lib/MSGINDQ.DTAQ
+            parameters:
+              keyed: true
 ----
 ====
 
@@ -288,9 +288,9 @@ YAML::
         keyed: true
         searchKey: MYKEY
         searchType: GE
-    steps:
-      - to:
-          uri: jms:queue:output
+      steps:
+        - to:
+            uri: jms:queue:output
 ----
 ====
 
@@ -323,9 +323,9 @@ YAML::
 - route:
     from:
       uri: jms:queue:input
-    steps:
-      - to:
-          uri: jt400://username:password@system/lib.lib/MSGINQ.MSGQ
+      steps:
+        - to:
+            uri: jt400://username:password@system/lib.lib/MSGINQ.MSGQ
 ----
 ====
 
@@ -358,9 +358,9 @@ YAML::
 - route:
     from:
       uri: jt400://username:password@system/lib.lib/MSGOUTQ.MSGQ
-    steps:
-      - to:
-          uri: jms:queue:output
+      steps:
+        - to:
+            uri: jms:queue:output
 ----
 ====
 

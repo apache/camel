@@ -163,9 +163,9 @@ YAML::
 - route:
     from:
       uri: direct:...
-    steps:
-      - to:
-          uri: olingo4://create/People
+      steps:
+        - to:
+            uri: olingo4://create/People
 ----
 ====
 
@@ -199,8 +199,8 @@ YAML::
 - route:
     from:
       uri: direct:...
-    steps:
-      - to:
-          uri: olingo4://action/People
+      steps:
+        - to:
+            uri: olingo4://action/People
 ----
 ====

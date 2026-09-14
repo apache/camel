@@ -266,12 +266,12 @@ YAML::
 - route:
     from:
       uri: direct:delete-znode
-    steps:
-      - setHeader:
-          name: CamelZookeeperOperation
-          constant: DELETE
-      - to:
-          uri: zookeeper://localhost:39913/somepath/somenode
+      steps:
+        - setHeader:
+            name: CamelZookeeperOperation
+            constant: DELETE
+        - to:
+            uri: zookeeper://localhost:39913/somepath/somenode
 ----
 ====
 

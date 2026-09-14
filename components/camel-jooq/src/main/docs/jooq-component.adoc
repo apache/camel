@@ -75,9 +75,9 @@ YAML::
       uri: jooq://org.apache.camel.component.jooq.db.tables.records.BookStoreRecord
       parameters:
         query: "select * from book_store x where x.name = 'test'"
-    steps:
-      - to:
-          uri: bean:myBusinessLogic
+      steps:
+        - to:
+            uri: bean:myBusinessLogic
 ----
 ====
 

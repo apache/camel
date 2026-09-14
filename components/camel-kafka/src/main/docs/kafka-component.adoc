@@ -884,11 +884,11 @@ YAML::
         maxPollRecords: 10
         breakOnFirstError: true
         autoCommitEnable: true
-    steps:
-      - process:
-          ref: batchProcessor
-      - to:
-          uri: mock:result
+      steps:
+        - process:
+            ref: batchProcessor
+        - to:
+            uri: mock:result
 ----
 
 Processor Implementation::
@@ -985,13 +985,13 @@ YAML::
         breakOnFirstError: true
         autoCommitEnable: false
         allowManualCommit: true
-    steps:
-      - process:
-          ref: batchProcessorManual
-      - process:
-          ref: successCommitProcessor
-      - to:
-          uri: mock:result
+      steps:
+        - process:
+            ref: batchProcessorManual
+        - process:
+            ref: successCommitProcessor
+        - to:
+            uri: mock:result
 ----
 
 Processor Implementations::

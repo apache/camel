@@ -72,11 +72,11 @@ YAML::
       uri: file:inputDir
       parameters:
         noop: true
-    steps:
-      - to:
-          uri: smooks:smooks-config.xml
-      - to:
-          uri: jms:queue:order
+      steps:
+        - to:
+            uri: smooks:smooks-config.xml
+        - to:
+            uri: jms:queue:order
 ----
 ====
 
