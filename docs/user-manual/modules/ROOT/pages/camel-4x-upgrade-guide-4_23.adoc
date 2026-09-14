@@ -700,7 +700,7 @@ the Camel message. That strategy filters the `mail.smtp.` and `mail.smtps.` pref
 path in addition to `Camel*`/`camel*`, so the data format now filters the same namespace the mail
 consumer has filtered since 4.14.9/4.18.4/4.22.0.
 
-Routes that relied on `mail.smtp.*` or `mail.smtps.*` headers arriving on the exchange from an
+Routes that relied on `+mail.smtp.*+` or `+mail.smtps.*+` headers arriving on the exchange from an
 unmarshalled MIME message must set those values explicitly on the route instead. Ordinary
 application headers are unaffected.
 
@@ -1037,8 +1037,8 @@ when an endpoint is created, so existing subclasses continue to behave as before
 === camel-jetty
 
 `enableCORS=true` added `new CrossOriginFilter()` with no init parameters, so Jetty's own defaults
-applied: `allowedOrigins=*` together with `allowCredentials=true`. Since the filter reflects the request's
-origin rather than sending `*`, that is the credentialed any-origin configuration the fetch specification
+applied: `+allowedOrigins=*+` together with `allowCredentials=true`. Since the filter reflects the request's
+origin rather than sending `+*+`, that is the credentialed any-origin configuration the fetch specification
 refuses to express — reflecting the origin being the usual way around that rule. An option named "enable
 CORS" should not mean "every origin, with credentials".
 
@@ -1653,10 +1653,10 @@ system property, or inject it from an external secret store.
 
 ==== Starter configuration options that cannot be bound are reported
 
-The starters bind `camel.component.*`, `camel.dataformat.*` and `camel.language.*` onto the Camel component,
+The starters bind `+camel.component.*+`, `+camel.dataformat.*+` and `+camel.language.*+` onto the Camel component,
 data format or language they configure. Two steps of that binding used to discard a configured value without
 reporting it, so a mistyped or unbindable option left the target at its default and nothing appeared in the
-log. Both now report the value they cannot use, which matches what `camel.rest.*` has always done.
+log. Both now report the value they cannot use, which matches what `+camel.rest.*+` has always done.
 
 An option of a complex (object) type is configured with a reference to a bean, such as:
 
@@ -1665,11 +1665,11 @@ An option of a complex (object) type is configured with a reference to a bean, s
 camel.component.http.ssl-context-parameters = #bean:mySslContextParameters
 ----
 
-The generated converter used to return `null` for any value that did not start with `#`, and for a value
+The generated converter used to return `null` for any value that did not start with `+#+`, and for a value
 naming a bean that does not exist. A typo in the bean id therefore produced a component with the option
 unset. Such a value now aborts startup with a message naming the value, the target type and the
-configuration prefix it was set under. A plain bean id with no `#` prefix — `mySslContextParameters` — is
-resolved rather than discarded, as are `#autowired` and `#type:com.foo.MyType`.
+configuration prefix it was set under. A plain bean id with no `+#+` prefix — `mySslContextParameters` — is
+resolved rather than discarded, as are `+#autowired+` and `+#type:com.foo.MyType+`.
 
 These converters are registered with `@ConfigurationPropertiesBinding` and therefore take part in every
 `@ConfigurationProperties` binding in the application, not only in Camel's own. A binding whose target class

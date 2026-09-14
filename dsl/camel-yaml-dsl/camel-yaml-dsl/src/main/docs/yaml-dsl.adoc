@@ -837,7 +837,7 @@ a simpler, more predictable schema structure. The classic schema remains the def
 === Using the schemas with IDEs
 
 The classic schema is registered in the https://www.schemastore.org/[JSON Schema Store] and is automatically
-used by IDEs like VS Code and IntelliJ for files matching `*.camel.yaml` and `*.camelk.yaml`.
+used by IDEs like VS Code and IntelliJ for files matching `+*.camel.yaml+` and `+*.camelk.yaml+`.
 
 To use the canonical schema instead, configure your IDE to point to the canonical schema URL:
 

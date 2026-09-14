@@ -228,7 +228,7 @@ which protective property it breaks.
 | Critical (CVSS 9.0-10.0)
 
 | Untrusted data cannot redirect the route to a different endpoint, bean, method or command
-| A control header injected from the wire changes where the exchange is dispatched, which operation runs, or which transport and credentials are used - whether it is spelled inside the internal namespace (`CamelBeanMethodName`, `CamelExecCommandExecutable`, `CamelHttpUri`, `CamelJmsDestinationName`, ...) or outside it (`websocket.connectionKey`, `gridfs.*`, `irc.sendTo`, `operationName`, `mail.smtp.*`, ...)
+| A control header injected from the wire changes where the exchange is dispatched, which operation runs, or which transport and credentials are used - whether it is spelled inside the internal namespace (`CamelBeanMethodName`, `CamelExecCommandExecutable`, `CamelHttpUri`, `CamelJmsDestinationName`, ...) or outside it (`websocket.connectionKey`, `+gridfs.*+`, `irc.sendTo`, `operationName`, `+mail.smtp.*+`, ...)
 | Critical (CVSS 9.0-9.8)
 
 | Untrusted data is never deserialised into arbitrary Java types
@@ -319,11 +319,11 @@ against core code, and the triager needs the core-side statement to judge it.
 | Out of scope (no engine guarantee)
 |===
 
-A candidate located in a `core/camel-*` module is judged against these
+A candidate located in a `+core/camel-*+` module is judged against these
 invariants first. If the engine upheld the invariant and the violation arises
 only because a route author authored an expression or route over untrusted
 input, or wired an untrusted source straight through without
-`removeHeaders("Camel*")`, the disposition is the route-author position in
+`+removeHeaders("Camel*")+`, the disposition is the route-author position in
 _Out of scope_, not a framework vulnerability - the same line the rest of this
 model draws between the route plus its configuration and the data flowing
 through it.
@@ -422,14 +422,14 @@ the misunderstanding can be closed against the correct contract.
   does not, and cannot, strip the application-level headers a component
   reads as semantic input. Route authors who need application-header
   sanitisation must do it explicitly at the trust boundary.
-* *`removeHeaders("Camel*")` strips the internal-dispatch headers, not
+* *`+removeHeaders("Camel*")+` strips the internal-dispatch headers, not
   every untrusted-origin header.* It is the recommended trust-boundary
   hygiene against the internal-header dispatch class (see _Deployment
   hardening_), and it is necessary; it is not, on its own, sufficient
   to sanitise the application headers a downstream component will trust.
   It also does not match a control header spelled outside the namespace -
-  `websocket.connectionKey`, `gridfs.*`, `irc.sendTo`, `operationName`,
-  `mail.smtp.*`. Those are the framework's responsibility to filter and
+  `websocket.connectionKey`, `+gridfs.*+`, `irc.sendTo`, `operationName`,
+  `+mail.smtp.*+`. Those are the framework's responsibility to filter and
   have been fixed as advisories where they were reachable, but a route
   running against a release that predates the relevant fix needs the
   namespace stripped explicitly as well.
@@ -619,7 +619,7 @@ it is called, when it selects any of:
   CVE-2026-46453 `camel-elasticsearch-rest-client`);
 * *the transport or its credentials* - which host, protocol, TLS posture or
   authentication the component uses (CVE-2026-46584 `camel-mail`, where
-  attacker-supplied `mail.smtp.*` / `mail.smtps.*` headers were applied as
+  attacker-supplied `+mail.smtp.*+` / `+mail.smtps.*+` headers were applied as
   JavaMail session properties, weakening SMTP transport security and, before
   4.19.0, redirecting the connection and disclosing the configured
   credentials).
@@ -648,7 +648,7 @@ needs an effective strategy:
   headers of the message being unmarshalled onto the `Exchange` with no
   filter at all. CAMEL-24419 then showed the second half of the lesson - the
   data format had been given a plain `DefaultHeaderFilterStrategy`, which
-  knows only `Camel*` / `camel*`, so the `mail.smtp.*` namespace that the
+  knows only `+Camel*+` / `+camel*+`, so the `+mail.smtp.*+` namespace that the
   *consumer* path deliberately filters was still admitted through the
   unmarshal path. An entry point that filters a narrower namespace than its
   sibling entry point is a gap, not a difference in configuration.
@@ -677,19 +677,19 @@ outcome. Presence of a defence in the source is not evidence that it executes;
 both the reporter and the triager have to establish that the guard is on the
 live path.
 
-The prefixed headers of the API-based components - `CamelFhir.*`,
-`CamelBox.*`, `CamelOlingo4.*`, `CamelAs2.*` and the other
+The prefixed headers of the API-based components - `+CamelFhir.*+`,
+`+CamelBox.*+`, `+CamelOlingo4.*+`, `+CamelAs2.*+` and the other
 `camel-api-component` generated producers, which select the API method and its
-arguments - sit inside the `Camel*` namespace, so they are governed by exactly
-this rule. The project's position on a `Camel<Api>.*` header reaching an API
+arguments - sit inside the `+Camel*+` namespace, so they are governed by exactly
+this rule. The project's position on a `+Camel<Api>.*+` header reaching an API
 producer from an untrusted source is therefore *conditional, and the condition
 is at the inbound consumer, not at the API producer*; it is not "always out of
-scope". A consumer that admits a `Camel<Api>.*` header from an untrusted source
-without an effective case-insensitive `Camel*` `HeaderFilterStrategy` is in
+scope". A consumer that admits a `+Camel<Api>.*+` header from an untrusted source
+without an effective case-insensitive `+Camel*+` `HeaderFilterStrategy` is in
 scope regardless of which producer ultimately consumes the header - this is the
 same class as the CVE-2025-27636 family. The API producer honouring a
-`Camel<Api>.*` header that reached it only because a route author wired an
-untrusted source straight to the producer without `removeHeaders("Camel*")`,
+`+Camel<Api>.*+` header that reached it only because a route author wired an
+untrusted source straight to the producer without `+removeHeaders("Camel*")+`,
 while the inbound filter was in place and effective, is the documented
 bean-dispatch contract (see _Known limitations_), not a framework
 vulnerability.
@@ -1021,7 +1021,7 @@ they are, the change is announced through the normal upgrade-guide channel.
   side the inbound `Camel*` `HeaderFilterStrategy` is applied by default since
   4.21 (CAMEL-23543), and component authors must not opt out of it.
 * *The framework's automatic header filtering is scoped to the internal
-  `Camel*` namespace.* Since 4.21 (CAMEL-23543) `DefaultHeaderFilterStrategy`
+  `+Camel*+` namespace.* Since 4.21 (CAMEL-23543) `DefaultHeaderFilterStrategy`
   filters that namespace case-insensitively *by default, in both directions,
   for every consumer and producer that uses it*, with no per-component
   configuration; it does not, and cannot, filter
@@ -1094,7 +1094,7 @@ Disposition is `KNOWN-NON-FINDING` (see _Triage dispositions_).
   reference allows RCE."* These are route-author primitives by design.
   Route code is trusted code; see the route-author entry in _Out of
   scope_ and the route-author row in _Roles_.
-* *"A `Camel*` header controls dispatch, therefore
+* *"A `+Camel*+` header controls dispatch, therefore
   the consumer is vulnerable."* Bean-based dispatch via internal headers
   is the public contract for letting a route control component behaviour;
   see the second bullet under _Known limitations_. A finding is in scope
@@ -1118,8 +1118,8 @@ Disposition is `KNOWN-NON-FINDING` (see _Triage dispositions_).
   it is a control header, it is in scope however it is spelled, and the
   disposition is not `KNOWN-NON-FINDING` - see the control-header
   definition under the Camel-header class in _In-scope vulnerability
-  classes_, and the advisories cited there for `websocket.*`, `gridfs.*`,
-  `irc.*`, `operationName` and `mail.smtp.*`. The absence of a `Camel`
+  classes_, and the advisories cited there for `+websocket.*+`, `+gridfs.*+`,
+  `+irc.*+`, `operationName` and `+mail.smtp.*+`. The absence of a `Camel`
   prefix decides nothing on its own.
 * *"`DefaultHeaderFilterStrategy` can be bypassed by changing the case
   (`caMEL`, `CAMEL`)."* The default strategy is case-insensitive out of
@@ -1179,11 +1179,11 @@ Disposition is `KNOWN-NON-FINDING` (see _Triage dispositions_).
   enables an unsafe behaviour."* Documented opt-ins; the operator has
   explicitly accepted the consequence. See the explicit-opt-in entry in
   _Out of scope_.
-* *"A finding lands in a `core/camel-*` module."* Routed first against
+* *"A finding lands in a `+core/camel-*+` module."* Routed first against
   _Core router-engine invariants_. If the engine upheld every listed
   invariant and the violation arises only because a route author
   authored an expression or route over untrusted input, or wired an
-  untrusted source straight through without `removeHeaders("Camel*")`,
+  untrusted source straight through without `+removeHeaders("Camel*")+`,
   the disposition is the route-author position in _Out of scope_.
 
 === Triage dispositions
@@ -1463,13 +1463,13 @@ YAML::
 ----
 ====
 * *On older releases, also strip the control-header namespaces of the
-  components in the route.* The framework filters the `Camel*` namespace by
+  components in the route.* The framework filters the `+Camel*+` namespace by
   default and has fixed the non-prefixed control headers it shipped
-  (`websocket.*`, `gridfs.*`, `irc.*`, `operationName`, `mail.smtp.*`) as
+  (`+websocket.*+`, `+gridfs.*+`, `+irc.*+`, `operationName`, `+mail.smtp.*+`) as
   those were found; each fix names its affected and fixed versions in the
   corresponding advisory at link:/security/[]. Where a deployment cannot yet
   move to a release that carries them, add the relevant prefixes to the
-  `removeHeaders` pattern at the trust boundary alongside `Camel*`.
+  `removeHeaders` pattern at the trust boundary alongside `+Camel*+`.
 * *Do not enable Java serialisation on consumers exposed to untrusted
   networks.* In particular, do not set `allowJavaSerializedObject=true`,
   `transferException=true`, or `mapJmsMessage=true` on a JMS consumer when the

@@ -408,9 +408,9 @@ Set `validateAuth=false` explicitly only when intentionally serving unauthentica
 
 === camel-kafka / Spring Boot
 
-When using `camel-kafka-starter` with Spring Boot, the standard `spring.kafka.*` properties are now automatically
+When using `camel-kafka-starter` with Spring Boot, the standard `+spring.kafka.*+` properties are now automatically
 bridged to the Camel Kafka component configuration (CAMEL-22760). This means you no longer need to duplicate
-Kafka settings under both `spring.kafka.*` and `camel.component.kafka.*`.
+Kafka settings under both `+spring.kafka.*+` and `+camel.component.kafka.*+`.
 
 The bridged properties include `bootstrap-servers`, `security.protocol`, SSL/TLS settings (keystore, truststore),
 `consumer.group-id`, `client-id`, and SASL properties (`sasl.mechanism`, `sasl.jaas.config`, `sasl.kerberos.service.name`).
@@ -427,8 +427,8 @@ camel.component.kafka.bridge-spring-kafka-properties=false
 === Default deserialization filter tightened
 
 The default `ObjectInputFilter` pattern that ships with the components listed below has been tightened
-to explicitly deny classes under `java.net.**` before allowing the rest of `java.**`, `javax.**` and
-`org.apache.camel.**`. The previous default did not deny `java.net.**`, which meant classes whose
+to explicitly deny classes under `+java.net.**+` before allowing the rest of `+java.**+`, `+javax.**+` and
+`+org.apache.camel.**+`. The previous default did not deny `+java.net.**+`, which meant classes whose
 `hashCode`/`equals` methods perform network I/O (notably `java.net.URL` and `java.net.InetAddress`)
 could be deserialized by the in-code default.
 
@@ -446,8 +446,8 @@ The new default is:
 !java.net.**;java.**;javax.**;org.apache.camel.**;!*
 ----
 
-(or `!java.net.**;java.**;org.apache.camel.**;!*` for the aggregation repository components, which
-do not include `javax.**`).
+(or `+!java.net.**;java.**;org.apache.camel.**;!*+` for the aggregation repository components, which
+do not include `+javax.**+`).
 
 The endpoint-level option `deserializationFilter` and the JVM-wide system property
 `-Djdk.serialFilter` continue to override this default. Applications that have a legitimate need to
@@ -1018,12 +1018,12 @@ without changes. Routes that set the headers by their literal string value
 
 Because the renamed prefixes now begin with `Camel`, they are stripped by the
 standard transport `HeaderFilterStrategy` (`HttpHeaderFilterStrategy`, etc.)
-when crossing a transport boundary, by design — `Camel*` headers are
+when crossing a transport boundary, by design — `+Camel*+` headers are
 framework-internal and are not propagated over the wire. Routes that bridge an
 external transport (HTTP, JMS, ...) into a `solr:` producer and want to drive
 Solr document fields or query parameters from a header supplied by the sender
 must therefore carry the value in a non-`Camel`-prefixed application header and
-map it to the appropriate `CamelSolrField.*` / `CamelSolrParam.*` header in the
+map it to the appropriate `+CamelSolrField.*+` / `+CamelSolrParam.*+` header in the
 route between the transport `from` and the `solr:` `to`.
 
 === camel-aws2-s3
@@ -1079,8 +1079,8 @@ The HTTP components (which share `camel-http-common`) now apply a Java deseriali
 `allowJavaSerializedObject` / `transferException` path, aligning them with `camel-netty-http`, `camel-jms`
 and `camel-vertx-http`. A new `deserializationFilter` component option (same syntax as `jdk.serialFilter`)
 can be set to customise it; when unset, the JVM-wide `jdk.serialFilter` is used if present, otherwise a
-conservative default filter (denying `java.net.**`, allowing `java.**` / `javax.**` /
-`org.apache.camel.**`, with JEP-290 graph-shape limits) is applied. This is a defense-in-depth measure on
+conservative default filter (denying `+java.net.**+`, allowing `+java.**+` / `+javax.**+` /
+`+org.apache.camel.**+`, with JEP-290 graph-shape limits) is applied. This is a defense-in-depth measure on
 an already opt-in path; a serialized payload that was accepted before may now be rejected if it references
 a denied class.
 
@@ -1485,9 +1485,9 @@ effect from 4.22.0 onwards; see the
 entry in the 4.21 to 4.22 upgrade guide.
 ====
 
-`UndertowHeaderFilterStrategy` now also filters the legacy `websocket.*`
-Exchange-header prefix (in addition to the `Camel*` / `camel*` /
-`org.apache.camel.*` prefixes it already filtered). This applies to both the
+`UndertowHeaderFilterStrategy` now also filters the legacy `+websocket.*+`
+Exchange-header prefix (in addition to the `+Camel*+` / `+camel*+` /
+`+org.apache.camel.*+` prefixes it already filtered). This applies to both the
 in (wire -> exchange) and out (exchange -> wire) directions and follows the
 dedicated-filter-strategy shape used by CAMEL-23532 for
 `camel-vertx-websocket` / `camel-atmosphere-websocket` / `camel-iggy`.
@@ -2154,10 +2154,10 @@ headers and are unchanged.
 `KafkaConstants.OVERRIDE_TOPIC` and `KafkaConstants.OVERRIDE_TIMESTAMP` are
 producer-read headers consulted by `KafkaProducer.evaluateTopic()` and the
 timestamp override path. The rename also closes the cross-transport
-propagation gap where these headers, in their previous `kafka.*` form,
+propagation gap where these headers, in their previous `+kafka.*+` form,
 would pass through `HttpHeaderFilterStrategy` (which only filters the
 `Camel` prefix) on an upstream HTTP / REST consumer wired to a Kafka
-producer in the same route. With the new `CamelKafka*` values, the default
+producer in the same route. With the new `+CamelKafka*+` values, the default
 filter strategy strips them at the transport boundary.
 
 Routes that reference the constants symbolically (for example
@@ -2238,7 +2238,7 @@ at the old filenames; routes referencing the dataformats by `name` are unaffecte
 
 === camel-platform-http-main
 
-Two new optional configuration properties are available on both `camel.server.*` and `camel.management.*`
+Two new optional configuration properties are available on both `+camel.server.*+` and `+camel.management.*+`
 for the embedded HTTP server:
 
 * `jwtIssuer` — when set, validates the `iss` (issuer) claim of incoming JWT tokens.
@@ -2389,9 +2389,9 @@ The in-code default `ObjectInputFilter` shipped by the following components now 
 
 The new defaults are:
 
-* `!java.net.**;java.**;javax.**;org.apache.camel.**;maxdepth=20;maxrefs=10000;maxbytes=10485760;!*`
+* `+!java.net.**;java.**;javax.**;org.apache.camel.**;maxdepth=20;maxrefs=10000;maxbytes=10485760;!*+`
   (camel-infinispan, camel-mina, camel-netty, camel-netty-http, camel-vertx-http)
-* `!java.net.**;java.**;org.apache.camel.**;maxdepth=20;maxrefs=10000;maxbytes=10485760;!*`
+* `+!java.net.**;java.**;org.apache.camel.**;maxdepth=20;maxrefs=10000;maxbytes=10485760;!*+`
   (camel-leveldb, camel-cassandraql, camel-consul, camel-sql)
 
 These limits provide defense-in-depth so that operators who have not set `-Djdk.serialFilter` still get
