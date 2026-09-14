@@ -417,7 +417,7 @@ public class YamlDeserializationContext extends StandardConstructor implements C
             if ("bean".equals(field)) {
                 hint = " (the bean language is written as expression: {method: {ref: myBean, method: process}})";
             } else if ("expression".equals(field) || "language".equals(field)) {
-                hint = " (an expression is written as expression: with the language as the key: expression: {simple:"
+                hint = " (an expression is written with the expression: wrapper and the language as the key: expression: {simple:"
                        + " {expression: \"...\"}}, expression: {constant: {expression: \"...\"}})";
             }
             throw new YamlDeserializationException(
