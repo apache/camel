@@ -77,8 +77,10 @@ public class OpaConfiguration implements Cloneable {
 
     /**
      * Comma-separated list of message header names to send to OPA in the input document. The default of {@code *} sends
-     * every header. Narrow it when the policy only needs a few headers, or when the message carries headers that should
-     * not leave the JVM.
+     * every header <em>except</em> those that carry a caller credential verbatim - {@code Authorization},
+     * {@code Proxy-Authorization}, {@code Cookie} and {@code Set-Cookie} - which are withheld because OPA's decision
+     * logging ships the whole input document, often off the box. A policy that genuinely needs one can still have it by
+     * naming the header here. Narrow the list when the policy only needs a few headers.
      */
     public String getIncludeHeaders() {
         return includeHeaders;

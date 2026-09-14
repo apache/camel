@@ -120,7 +120,15 @@ https://github.com/apache/camel/blob/main/components/camel-opa/src/test/resource
 which is a worked example of both a plain boolean rule and a decision object with deny reasons; `OpaIT`
 alongside it shows the matching routes end to end.
 
-`headers` carries every message header by default. Set `includeHeaders` to a comma-separated list of names
+`headers` carries every message header by default, with one exception: the headers that carry a caller credential
+verbatim — `Authorization`, `Proxy-Authorization`, `Cookie` and `Set-Cookie` — are *withheld* from the wildcard.
+OPA's decision logging ships the whole `input` document, frequently to a remote collector, so the wildcard should
+not quietly export credentials off the box. A policy that genuinely needs one can still have it by naming the
+header: `includeHeaders=Authorization,user` sends it. Matching is case-insensitive, so `authorization` is withheld
+too.
+
+Prefer `includeProperties` for identity: a token that an earlier step has already *verified* belongs there, as
+<<authorizing-an-identity>> describes, rather than handing the raw credential to the policy to re-check. Set `includeHeaders` to a comma-separated list of names
 (matched case-insensitively) when the policy only needs a few of them. `body` is *not* sent unless `includeBody`
 is enabled: bodies can be large or streaming, and most authorization decisions do not need them. When you do
 enable it on a streaming body, enable stream caching so the body is still readable by the rest of the route.
