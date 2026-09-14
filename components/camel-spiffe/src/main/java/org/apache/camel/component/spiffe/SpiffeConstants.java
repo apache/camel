@@ -21,12 +21,17 @@ import org.apache.camel.spi.Metadata;
 public final class SpiffeConstants {
     private static final String HEADER_PREFIX = "CamelSpiffe";
 
-    @Metadata(label = "producer", description = "Overrides the operation to be used by the producer.",
+    @Metadata(label = "producer",
+              description = "Overrides the operation to be used by the producer. Ignored unless the endpoint sets"
+                            + " allowOperationHeader=true, because the operation decides whether the endpoint"
+                            + " validates a token or mints one.",
               javaType = "org.apache.camel.component.spiffe.SpiffeOperation or String")
     public static final String OPERATION = HEADER_PREFIX + "Operation";
 
     @Metadata(label = "producer",
-              description = "The comma-separated audience(s) for the fetchJwtSvid and validateJwtSvid operations.",
+              description = "The comma-separated audience(s) for the fetchJwtSvid operation. Ignored by"
+                            + " validateJwtSvid, which always validates against the configured audience: there the"
+                            + " audience is the check that binds the token to this workload, not a parameter.",
               javaType = "String")
     public static final String AUDIENCE = HEADER_PREFIX + "Audience";
 

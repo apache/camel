@@ -23,6 +23,8 @@ public class SpiffeEndpointConfigurer extends PropertyConfigurerSupport implemen
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         SpiffeEndpoint target = (SpiffeEndpoint) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
+        case "allowoperationheader":
+        case "allowOperationHeader": target.getConfiguration().setAllowOperationHeader(property(camelContext, boolean.class, value)); return true;
         case "audience": target.getConfiguration().setAudience(property(camelContext, java.lang.String.class, value)); return true;
         case "lazystartproducer":
         case "lazyStartProducer": target.setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
@@ -43,6 +45,8 @@ public class SpiffeEndpointConfigurer extends PropertyConfigurerSupport implemen
     @Override
     public Class<?> getOptionType(String name, boolean ignoreCase) {
         switch (ignoreCase ? name.toLowerCase() : name) {
+        case "allowoperationheader":
+        case "allowOperationHeader": return boolean.class;
         case "audience": return java.lang.String.class;
         case "lazystartproducer":
         case "lazyStartProducer": return boolean.class;
@@ -59,6 +63,8 @@ public class SpiffeEndpointConfigurer extends PropertyConfigurerSupport implemen
     public Object getOptionValue(Object obj, String name, boolean ignoreCase) {
         SpiffeEndpoint target = (SpiffeEndpoint) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
+        case "allowoperationheader":
+        case "allowOperationHeader": return target.getConfiguration().isAllowOperationHeader();
         case "audience": return target.getConfiguration().getAudience();
         case "lazystartproducer":
         case "lazyStartProducer": return target.isLazyStartProducer();
