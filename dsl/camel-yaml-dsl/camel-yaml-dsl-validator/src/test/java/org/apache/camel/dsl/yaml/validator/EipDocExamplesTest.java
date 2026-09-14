@@ -18,19 +18,23 @@ package org.apache.camel.dsl.yaml.validator;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
+import java.util.function.Predicate;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import com.networknt.schema.Error;
 import org.apache.camel.catalog.CamelCatalog;
 import org.apache.camel.catalog.DefaultCamelCatalog;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
 /**
- * Every YAML route example in the EIP documentation must pass the YAML validator (CAMEL-24693): the examples are what
- * people copy and what the camel_catalog_sample tool returns, so a wrong one in the docs fails the build here.
+ * Every YAML route example in the EIP and data format documentation must pass the YAML validator (CAMEL-24693,
+ * CAMEL-24710): the examples are what people copy and what the camel_catalog_sample tool returns, so a wrong one in the
+ * docs fails the build here.
  */
 class EipDocExamplesTest {
 
@@ -43,22 +47,61 @@ class EipDocExamplesTest {
             "point-to-point-channel", "publish-subscribe-channel", "return-address", "scatter-gather",
             "selective-consumer", "service-activator", "transactional-client");
 
+    /**
+     * The xmlSecurity examples write the cipher algorithms as the URIs the data format hands to XMLCipher, while the
+     * model's enums list the XMLCipher constant names, which XMLCipher rejects. The page is checked again once the
+     * model accepts what the data format does.
+     */
+    private static final Set<String> DATA_FORMAT_PAGES_SKIPPED = Set.of("xmlSecurity-dataformat");
+
     private static final Pattern YAML_BLOCK = Pattern.compile("\\[source,yaml\\]\\n-{4}\\n(.*?)\\n-{4}", Pattern.DOTALL);
+
+    private static CamelCatalog catalog;
+    private static YamlValidator validator;
+
+    private record DocExamples(int examples, List<String> failures) {
+    }
+
+    @BeforeAll
+    static void setup() throws Exception {
+        catalog = new DefaultCamelCatalog();
+        validator = new YamlValidator();
+        validator.init();
+    }
 
     @Test
     void everyYamlExampleOfTheEipDocumentationValidates() throws Exception {
-        CamelCatalog catalog = new DefaultCamelCatalog();
-        YamlValidator validator = new YamlValidator();
-        validator.init();
+        List<String> pages = docNames(name -> name.endsWith("-eip"));
+        pages.addAll(PATTERN_PAGES);
 
+        DocExamples result = validate(pages);
+
+        assertThat(result.examples()).as("YAML route examples found in the EIP documentation").isGreaterThan(250);
+        assertThat(result.failures()).as("EIP documentation examples that do not validate").isEmpty();
+    }
+
+    @Test
+    void everyYamlExampleOfTheDataFormatDocumentationValidates() throws Exception {
+        List<String> pages
+                = docNames(name -> name.endsWith("-dataformat") && !DATA_FORMAT_PAGES_SKIPPED.contains(name));
+
+        DocExamples result = validate(pages);
+
+        assertThat(result.examples()).as("YAML route examples found in the data format documentation").isGreaterThan(90);
+        assertThat(result.failures()).as("Data format documentation examples that do not validate").isEmpty();
+    }
+
+    private static List<String> docNames(Predicate<String> filter) {
         List<String> pages = new ArrayList<>();
         for (String name : catalog.findDocNames()) {
-            if (name.endsWith("-eip")) {
+            if (filter.test(name)) {
                 pages.add(name);
             }
         }
-        pages.addAll(PATTERN_PAGES);
+        return pages;
+    }
 
+    private static DocExamples validate(List<String> pages) throws Exception {
         int examples = 0;
         List<String> failures = new ArrayList<>();
         for (String page : pages) {
@@ -82,8 +125,6 @@ class EipDocExamplesTest {
                 }
             }
         }
-
-        assertThat(examples).as("YAML route examples found in the EIP documentation").isGreaterThan(250);
-        assertThat(failures).as("EIP documentation examples that do not validate").isEmpty();
+        return new DocExamples(examples, failures);
     }
 }

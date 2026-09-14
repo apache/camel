@@ -62,11 +62,11 @@ YAML::
 - route:
     from:
       uri: direct:start
-    steps:
-      - marshal:
-          tarFile: {}
-      - to:
-          uri: activemq:queue:MY_QUEUE
+      steps:
+        - marshal:
+            tarFile: {}
+        - to:
+            uri: activemq:queue:MY_QUEUE
 ----
 ====
 
@@ -112,11 +112,11 @@ YAML::
       uri: file:input/directory
       parameters:
         antInclude: "*/.txt"
-    steps:
-      - marshal:
-          tarFile: {}
-      - to:
-          uri: file:output/directory
+      steps:
+        - marshal:
+            tarFile: {}
+        - to:
+            uri: file:output/directory
 ----
 ====
 
@@ -163,14 +163,14 @@ YAML::
 - route:
     from:
       uri: direct:start
-    steps:
-      - setHeader:
-          name: CamelFileName
-          constant: report.txt
-      - marshal:
-          tarFile: {}
-      - to:
-          uri: file:output/directory
+      steps:
+        - setHeader:
+            name: CamelFileName
+            constant: report.txt
+        - marshal:
+            tarFile: {}
+        - to:
+            uri: file:output/directory
 ----
 ====
 

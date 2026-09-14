@@ -95,11 +95,11 @@ YAML::
 - route:
     from:
       uri: direct:marshal
-    steps:
-      - marshal:
-          toon: {}
-      - to:
-          uri: mock:toon
+      steps:
+        - marshal:
+            toon: {}
+        - to:
+            uri: mock:toon
 ----
 ====
 
@@ -136,11 +136,11 @@ YAML::
 - route:
     from:
       uri: direct:unmarshal
-    steps:
-      - unmarshal:
-          toon: {}
-      - to:
-          uri: mock:json
+      steps:
+        - unmarshal:
+            toon: {}
+        - to:
+            uri: mock:json
 ----
 ====
 
