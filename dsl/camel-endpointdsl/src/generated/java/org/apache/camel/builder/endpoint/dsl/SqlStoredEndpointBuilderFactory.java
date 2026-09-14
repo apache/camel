@@ -430,7 +430,9 @@ public interface SqlStoredEndpointBuilderFactory {
         public static final SqlStoredHeaderNameBuilder INSTANCE = new SqlStoredHeaderNameBuilder();
 
         /**
-         * The template.
+         * The stored-procedure template to execute. This header is ignored
+         * unless the endpoint enables allowTemplateFromHeader=true (disabled by
+         * default); when enabled it overrides the endpoint-configured template.
          * 
          * The option is a: {@code String} type.
          * 
