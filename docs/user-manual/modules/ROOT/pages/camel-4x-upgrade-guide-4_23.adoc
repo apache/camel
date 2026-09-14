@@ -438,6 +438,16 @@ set here, because that would reject input that parses today. Routes that genuine
 an external DTD or parameter entity through this converter must supply their own
 `SAXParserFactory`.
 
+=== Component deprecation
+
+==== camel-minio
+
+The Minio GitHub repository has been archived on the 25th April 2026.
+The container images were removed from Docker Hub on September 2026.
+
+MinIO is S3-compatible, so existing deployments can migrate to the `camel-aws2-s3` component by pointing it at the MinIO server, for example:
+`aws2-s3://mybucket?overrideEndpoint=true&uriEndpointOverride=http://localhost:9000&forcePathStyle=true&accessKey=...&secretKey=...`
+
 === camel-tika
 
 The Tika dependency has been upgraded from 3.x to 4.x. Tika 4 removed the `TikaConfig` class and XML

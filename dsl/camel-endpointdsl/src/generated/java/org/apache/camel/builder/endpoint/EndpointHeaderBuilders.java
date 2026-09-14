@@ -2775,6 +2775,7 @@ public class EndpointHeaderBuilders {
      * 
      * @return the dsl builder for the headers' name.
      */
+    @Deprecated
     public static MinioEndpointBuilderFactory.MinioHeaderNameBuilder minio() {
         return MinioEndpointBuilderFactory.MinioHeaderNameBuilder.INSTANCE;
     }

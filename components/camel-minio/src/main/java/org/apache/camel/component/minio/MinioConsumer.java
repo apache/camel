@@ -55,6 +55,7 @@ import static org.apache.camel.util.ObjectHelper.isNotEmpty;
 /**
  * A Consumer of messages from the Minio Storage Service.
  */
+@Deprecated(since = "4.23")
 public class MinioConsumer extends ScheduledBatchPollingConsumer {
 
     private static final Logger LOG = LoggerFactory.getLogger(MinioConsumer.class);

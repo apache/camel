@@ -11904,6 +11904,7 @@ public class StaticEndpointBuilders {
      * @param path bucketName
      * @return the dsl builder
      */
+    @Deprecated
     public static MinioEndpointBuilderFactory.MinioEndpointBuilder minio(String path) {
         return minio("minio", path);
     }
@@ -11925,6 +11926,7 @@ public class StaticEndpointBuilders {
      * @param path bucketName
      * @return the dsl builder
      */
+    @Deprecated
     public static MinioEndpointBuilderFactory.MinioEndpointBuilder minio(String componentName, String path) {
         return MinioEndpointBuilderFactory.endpointBuilder(componentName, path);
     }
