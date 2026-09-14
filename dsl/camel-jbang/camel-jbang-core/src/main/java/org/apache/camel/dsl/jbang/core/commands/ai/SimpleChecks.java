@@ -18,16 +18,19 @@ package org.apache.camel.dsl.jbang.core.commands.ai;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Set;
 
 import org.apache.camel.catalog.CamelCatalog;
 import org.apache.camel.catalog.LanguageValidationResult;
 import org.apache.camel.spi.SimpleLanguageFunctionFactory;
+import org.apache.camel.tooling.model.EipModel;
+import org.apache.camel.util.StringHelper;
 
 import static org.apache.camel.dsl.jbang.core.commands.ai.YamlLines.countLeadingSpaces;
 import static org.apache.camel.dsl.jbang.core.commands.ai.YamlLines.extractEipFromLine;
 import static org.apache.camel.dsl.jbang.core.commands.ai.YamlLines.extractYamlValue;
 import static org.apache.camel.dsl.jbang.core.commands.ai.YamlLines.findParentEip;
+import static org.apache.camel.dsl.jbang.core.commands.ai.YamlLines.findParentEipLine;
+import static org.apache.camel.dsl.jbang.core.commands.ai.YamlLines.findSiblingValue;
 
 /**
  * The Simple language check of {@link SourceValidator}: every simple: value and log message parsed by the catalog, as a
@@ -37,12 +40,6 @@ final class SimpleChecks {
 
     private SimpleChecks() {
     }
-
-    static final Set<String> PREDICATE_EIPS = Set.of(
-            "filter", "when", "validate", "onWhen", "on-when",
-            "handled", "continued", "retryWhile", "retry-while",
-            "completionPredicate", "completion-predicate",
-            "completion", "loopDoWhile", "loop-do-while");
 
     /** The simple expressions of a YAML route checked against the catalog, as predicate where the EIP expects one. */
     public static List<String> validateYamlSimple(String content, CamelCatalog catalog) {
@@ -103,11 +100,7 @@ final class SimpleChecks {
             }
 
             // Determine predicate vs expression context
-            boolean predicate = false;
-            if (!isLogMessage) {
-                String parentEip = findParentEip(lines, i, lineIndent);
-                predicate = parentEip != null && PREDICATE_EIPS.contains(parentEip);
-            }
+            boolean predicate = !isLogMessage && isPredicate(catalog, lines, i, lineIndent);
 
             try {
                 LanguageValidationResult result = predicate
@@ -135,6 +128,44 @@ final class SimpleChecks {
         return error.startsWith("No language could be found for:")
                 || error.startsWith("No " + SimpleLanguageFunctionFactory.FACTORY + "/")
                         && error.contains("service could be found in the classpath");
+    }
+
+    /**
+     * Whether the EIP the line is nested in evaluates the simple text as a predicate: the expression the model marks
+     * with @AsPredicate, which the catalog carries as asPredicate on the option. The parent line is either the EIP
+     * itself (filter, when, validate: its expression option) or an expression option of the EIP above it (the handled
+     * of onException, the completionPredicate of aggregate). loop is the one EIP a flag on the option cannot describe:
+     * its expression is a predicate only when doWhile is true.
+     */
+    static boolean isPredicate(CamelCatalog catalog, String[] lines, int lineIdx, int lineIndent) {
+        int parentIdx = findParentEipLine(lines, lineIdx, lineIndent);
+        if (parentIdx < 0) {
+            return false;
+        }
+        String parent = StringHelper.dashToCamelCase(extractEipFromLine(lines[parentIdx].trim()));
+        if (parent == null) {
+            return false;
+        }
+        if ("loop".equals(parent)) {
+            return "true".equals(findSiblingValue(lines, lineIdx, lineIndent, "doWhile"));
+        }
+        EipModel eip = catalog.eipModel(parent);
+        if (eip != null) {
+            return isPredicateOption(eip, "expression");
+        }
+        // not an EIP but an expression option of the EIP above it
+        int ownerIdx = findParentEipLine(lines, parentIdx, countLeadingSpaces(lines[parentIdx]));
+        if (ownerIdx < 0) {
+            return false;
+        }
+        String ownerName = StringHelper.dashToCamelCase(extractEipFromLine(lines[ownerIdx].trim()));
+        EipModel owner = ownerName != null ? catalog.eipModel(ownerName) : null;
+        return owner != null && isPredicateOption(owner, parent);
+    }
+
+    private static boolean isPredicateOption(EipModel eip, String option) {
+        return eip.getOptions().stream()
+                .anyMatch(o -> option.equals(o.getName()) && "expression".equals(o.getKind()) && o.isAsPredicate());
     }
 
     /**

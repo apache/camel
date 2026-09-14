@@ -24,6 +24,7 @@ import jakarta.xml.bind.annotation.XmlRootElement;
 import org.apache.camel.Expression;
 import org.apache.camel.model.ExpressionNodeHelper;
 import org.apache.camel.model.language.ExpressionDefinition;
+import org.apache.camel.spi.AsPredicate;
 import org.apache.camel.spi.Metadata;
 
 /**
@@ -35,6 +36,7 @@ import org.apache.camel.spi.Metadata;
 public class PredicateValidatorDefinition extends ValidatorDefinition {
 
     @XmlElementRef
+    @AsPredicate
     @Metadata(required = true, description = "The predicate expression to use for validation.")
     private ExpressionDefinition expression;
 
