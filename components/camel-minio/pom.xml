@@ -29,8 +29,8 @@
     <artifactId>camel-minio</artifactId>
     <packaging>jar</packaging>
 
-    <name>Camel :: MinIO</name>
-    <description>Store and retrieve objects from Minio Storage Service</description>
+    <name>Camel :: MinIO (Deprecated)</name>
+    <description>Store and retrieve objects from Minio Storage Service (Deprecated)</description>
 
     <properties>
         <!-- Minio container is not available on s390x -->

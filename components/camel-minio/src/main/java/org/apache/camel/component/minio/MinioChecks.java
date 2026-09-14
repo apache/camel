@@ -23,6 +23,7 @@ import org.apache.camel.RuntimeCamelException;
 
 import static org.apache.camel.util.ObjectHelper.isNotEmpty;
 
+@Deprecated(since = "4.23")
 public final class MinioChecks {
     private MinioChecks() {
         // Prevent instantiation of this factory class.

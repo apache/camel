@@ -4,7 +4,7 @@
     "name": "minio",
     "title": "Minio",
     "description": "Store and retrieve objects from Minio Storage Service using Minio SDK.",
-    "deprecated": false,
+    "deprecated": true,
     "firstVersion": "3.5.0",
     "label": "cloud,file",
     "javaType": "org.apache.camel.component.minio.MinioComponent",

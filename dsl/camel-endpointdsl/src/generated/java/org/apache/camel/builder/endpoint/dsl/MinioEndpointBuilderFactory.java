@@ -2519,6 +2519,7 @@ public interface MinioEndpointBuilderFactory {
          * 
          * @return the dsl builder for the headers' name.
          */
+        @Deprecated
         default MinioHeaderNameBuilder minio() {
             return MinioHeaderNameBuilder.INSTANCE;
         }
@@ -2539,6 +2540,7 @@ public interface MinioEndpointBuilderFactory {
          * @param path bucketName
          * @return the dsl builder
          */
+        @Deprecated
         default MinioEndpointBuilder minio(String path) {
             return MinioEndpointBuilderFactory.endpointBuilder("minio", path);
         }
@@ -2561,6 +2563,7 @@ public interface MinioEndpointBuilderFactory {
          * @param path bucketName
          * @return the dsl builder
          */
+        @Deprecated
         default MinioEndpointBuilder minio(String componentName, String path) {
             return MinioEndpointBuilderFactory.endpointBuilder(componentName, path);
         }
