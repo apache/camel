@@ -34,6 +34,7 @@ public class ResponsesRequestHandler {
 
     private final List<MockExpectation> expectations;
     private final Map<String, ObjectNode> storedResponses = new ConcurrentHashMap<>();
+    private final Map<String, MockExpectation> expectationsByCallId = new ConcurrentHashMap<>();
     private final ResponseBuilder responseBuilder;
     private final ObjectMapper objectMapper;
 
@@ -49,22 +50,29 @@ public class ResponsesRequestHandler {
             requestBody = new String(is.readAllBytes(), StandardCharsets.UTF_8);
         }
         JsonNode root = objectMapper.readTree(requestBody);
-        RequestContext context = new RequestContext(root);
-        String userInput = context.getResponsesInputText();
-        if (userInput == null) {
-            return responseBuilder.createErrorResponse(400, "No input text in Responses API request", exchange);
-        }
+        JsonNode input = root.path("input");
+        String userInput = new RequestContext(root).getResponsesInputText();
 
-        MockExpectation expectation = findExpectationByInput(userInput);
+        // tool results are paired with their call, so that a follow-up in a stored conversation, which only carries
+        // the function_call_output items, is matched as well
+        MockExpectation expectation = endsWithFunctionCallOutput(input)
+                ? expectationsByCallId.get(input.get(input.size() - 1).path("call_id").asText())
+                : null;
         if (expectation == null) {
-            return responseBuilder.createErrorResponse(404, "No matching expectation for input: " + userInput, exchange);
+            if (userInput == null) {
+                return responseBuilder.createErrorResponse(400, "No input text in Responses API request", exchange);
+            }
+            expectation = findExpectationByInput(userInput);
+            if (expectation == null) {
+                return responseBuilder.createErrorResponse(404, "No matching expectation for input: " + userInput,
+                        exchange);
+            }
         }
         int promptTokens = expectation.getUsagePromptTokens() != null
                 ? expectation.getUsagePromptTokens() : ResponseBuilder.DEFAULT_PROMPT_TOKENS;
         int completionTokens = expectation.getUsageCompletionTokens() != null
                 ? expectation.getUsageCompletionTokens() : ResponseBuilder.DEFAULT_COMPLETION_TOKENS;
 
-        JsonNode input = root.path("input");
         if (endsWithFunctionCallOutput(input) && !expectation.getToolSequence().isEmpty()) {
             return store(handleFunctionCallOutput(expectation, input, promptTokens, completionTokens), root);
         }
@@ -81,8 +89,7 @@ public class ResponsesRequestHandler {
         }
         String response;
         if (expectation.getResponseType() == MockResponseType.TOOL_CALLS) {
-            response = responseBuilder.createResponsesFunctionCallResponse(
-                    expectation.getCurrentToolStep().getToolCalls(), promptTokens, completionTokens);
+            response = createFunctionCallResponse(expectation, promptTokens, completionTokens);
         } else if (expectation.getResponsesOutput() != null) {
             response = responseBuilder.createResponsesOutputResponse(
                     expectation.getResponsesOutput(), promptTokens, completionTokens);
@@ -144,8 +151,7 @@ public class ResponsesRequestHandler {
             throws Exception {
         expectation.advanceToNextToolStep();
         if (expectation.hasMoreToolSteps()) {
-            return responseBuilder.createResponsesFunctionCallResponse(
-                    expectation.getCurrentToolStep().getToolCalls(), promptTokens, completionTokens);
+            return createFunctionCallResponse(expectation, promptTokens, completionTokens);
         }
 
         String lastOutput = input.get(input.size() - 1).path("output").asText();
@@ -158,6 +164,19 @@ public class ResponsesRequestHandler {
             text = lastOutput;
         }
         return responseBuilder.createResponsesTextResponse(text, promptTokens, completionTokens);
+    }
+
+    /**
+     * Replies with the function calls of the current tool step and remembers which expectation issued each call id.
+     */
+    private String createFunctionCallResponse(MockExpectation expectation, int promptTokens, int completionTokens)
+            throws Exception {
+        String response = responseBuilder.createResponsesFunctionCallResponse(
+                expectation.getCurrentToolStep().getToolCalls(), promptTokens, completionTokens);
+        for (JsonNode item : objectMapper.readTree(response).path("output")) {
+            expectationsByCallId.put(item.path("call_id").asText(), expectation);
+        }
+        return response;
     }
 
     private static boolean endsWithFunctionCallOutput(JsonNode input) {

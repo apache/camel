@@ -67,6 +67,18 @@ public class OpenAIMockResponsesTest {
     }
 
     @Test
+    public void testFunctionCallOutputIsMatchedByCallIdWithoutTheUserInput() throws Exception {
+        JsonNode first = post("{\"model\":\"gpt-5\",\"conversation\":\"conv_1\",\"input\":\"weather in Rome\"}");
+        String callId = first.path("output").get(0).path("call_id").asText();
+
+        // in a stored conversation the follow-up only carries the tool result
+        JsonNode second = post("""
+                {"model":"gpt-5","conversation":"conv_1","input":[
+                  {"type":"function_call_output","call_id":"%s","output":"sunny"}]}""".formatted(callId));
+        assertEquals("It is sunny in Rome", second.path("output").get(0).path("content").get(0).path("text").asText());
+    }
+
+    @Test
     public void testOutputItemsAreReturned() throws Exception {
         JsonNode response = post("{\"model\":\"gpt-5\",\"input\":\"approval please\"}");
 
