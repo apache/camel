@@ -82,6 +82,14 @@ public interface Task {
     long getNextAttemptTime();
 
     /**
+     * Whether the task is currently attempting to run its supplier (true), or waiting for the next scheduled tick
+     * (false).
+     */
+    default boolean isAttempting() {
+        return false;
+    }
+
+    /**
      * The task failed for some un-expected exception
      */
     Throwable getException();
