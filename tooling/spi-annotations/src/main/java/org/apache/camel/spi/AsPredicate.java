@@ -28,7 +28,11 @@ import java.lang.annotation.Target;
  * For example the EIPs which accepts expression/languages may used them as either expression or predicate. This
  * annotation is used to mark situation where they should be used as predicate. As by default they are used as
  * expression. And example would be the Filter EIP which uses predicate. And the transform EIP uses an expression. <br/>
- * Being able to distinguish between these two situations can be of importance to tooling.
+ * Being able to distinguish between these two situations can be of importance to tooling: the catalog carries the
+ * annotation as <tt>asPredicate</tt> on the option in the model JSON. <br/>
+ * The Loop EIP is the one EIP the annotation cannot describe, as its expression is a predicate only when
+ * <tt>doWhile</tt> is enabled (otherwise it is the number of iterations), so its expression is not annotated and
+ * tooling checks the <tt>doWhile</tt> option instead.
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Documented
