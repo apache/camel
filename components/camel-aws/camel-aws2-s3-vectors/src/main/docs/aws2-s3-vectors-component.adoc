@@ -87,10 +87,7 @@ YAML::
             name: CamelAwsS3VectorsVectorId
             constant: doc-001
         - setBody:
-            constant:
-              - 0.1
-              - 0.2
-              - 0.3
+            groovy: "[0.1f, 0.2f, 0.3f]"
         - to:
             uri: aws2-s3-vectors://my-bucket
             parameters:
@@ -123,10 +120,7 @@ YAML::
       uri: direct:search
       steps:
         - setBody:
-            constant:
-              - 0.15
-              - 0.25
-              - 0.35
+            groovy: "[0.15f, 0.25f, 0.35f]"
         - setHeader:
             name: CamelAwsS3VectorsTopK
             constant: 5

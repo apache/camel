@@ -173,9 +173,9 @@ YAML::
 - route:
     from:
       uri: direct:...
-    steps:
-      - to:
-          uri: olingo2://create/Manufacturers
+      steps:
+        - to:
+            uri: olingo2://create/Manufacturers
 ----
 ====
 
@@ -218,8 +218,8 @@ YAML::
         queryParams: "#paramsBean"
         timeUnit: SECONDS
         delay: 30
-    steps:
-      - to:
-          uri: bean:blah
+      steps:
+        - to:
+            uri: bean:blah
 ----
 ====

@@ -51,7 +51,6 @@ include::partial$component-endpoint-options.adoc[]
 include::partial$component-endpoint-headers.adoc[]
 // component options: END
 
-
 == Usage
 
 === Message body
@@ -145,7 +144,6 @@ YAML::
 
 === Performing operations
 
-
 - `herenow`: obtain information about the current state of a channel including a list of unique user-ids currently subscribed to the channel and the total occupancy count of the channel:
 
 [tabs]
@@ -184,50 +182,6 @@ YAML::
               publishKey: mypublishKey
               subscribeKey: mySubscribeKey
               operation: herenow
-        - to:
-            uri: mock:result
-----
-====
-
-- `wherenow`: obtain information about the current list of channels to which a uuid is subscribed:
-
-[tabs]
-====
-Java::
-+
-[source,java]
-----
-from("direct:control")
-    .to("pubnub:myChannel?publishKey=mypublishKey&subscribeKey=mySubscribeKey&operation=wherenow&uuid=spyonme")
-    .to("mock:result");
-----
-
-XML::
-+
-[source,xml]
-----
-<route>
-  <from uri="direct:control"/>
-  <to uri="pubnub:myChannel?publishKey=mypublishKey&amp;subscribeKey=mySubscribeKey&amp;operation=wherenow&amp;uuid=spyonme"/>
-  <to uri="mock:result"/>
-</route>
-----
-
-YAML::
-+
-[source,yaml]
-----
-- route:
-    from:
-      uri: direct:control
-      steps:
-        - to:
-            uri: pubnub:myChannel
-            parameters:
-              publishKey: mypublishKey
-              subscribeKey: mySubscribeKey
-              operation: wherenow
-              uuid: spyonme
         - to:
             uri: mock:result
 ----

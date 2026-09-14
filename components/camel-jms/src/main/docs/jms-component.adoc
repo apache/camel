@@ -777,7 +777,7 @@ XML::
 <route>
   <from uri="activemq:queue:in"/>
   <to uri="bean:validateOrder"/>
-  <inOnly uri="activemq:topic:order"/>
+  <to uri="activemq:topic:order" pattern="InOnly"/>
   <to uri="bean:handleOrder"/>
 </route>
 ----
@@ -792,8 +792,9 @@ YAML::
       steps:
         - to:
             uri: bean:validateOrder
-        - inOnly:
+        - to:
             uri: activemq:topic:order
+            pattern: InOnly
         - to:
             uri: bean:handleOrder
 ----

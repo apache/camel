@@ -298,9 +298,9 @@ YAML::
       parameters:
         cacheContainer: "#cacheManager"
         customListener: "#myCustomListener"
-    steps:
-      - to:
-          uri: mock:result
+      steps:
+        - to:
+            uri: mock:result
 ----
 ====
 +

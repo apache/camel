@@ -32,9 +32,9 @@ import org.junit.jupiter.api.Test;
 import static org.assertj.core.api.Assertions.assertThat;
 
 /**
- * Every YAML route example in the EIP and data format documentation must pass the YAML validator (CAMEL-24693,
- * CAMEL-24710): the examples are what people copy and what the camel_catalog_sample tool returns, so a wrong one in the
- * docs fails the build here.
+ * The YAML route examples of the documentation bundled in the catalog must pass the YAML validator, one test per page
+ * family (CAMEL-24693, CAMEL-24710): the examples are what people copy and what the camel_catalog_sample tool returns,
+ * so a wrong one in the docs fails the build here.
  */
 class EipDocExamplesTest {
 
@@ -49,8 +49,8 @@ class EipDocExamplesTest {
 
     /**
      * The xmlSecurity examples write the cipher algorithms as the URIs the data format hands to XMLCipher, while the
-     * model's enums list the XMLCipher constant names, which XMLCipher rejects. The page is checked again once the
-     * model accepts what the data format does.
+     * model's enums list the XMLCipher constant names, which XMLCipher rejects (CAMEL-24716). The page is checked again
+     * once the model accepts what the data format does.
      */
     private static final Set<String> DATA_FORMAT_PAGES_SKIPPED = Set.of("xmlSecurity-dataformat");
 
@@ -89,6 +89,16 @@ class EipDocExamplesTest {
 
         assertThat(result.examples()).as("YAML route examples found in the data format documentation").isGreaterThan(90);
         assertThat(result.failures()).as("Data format documentation examples that do not validate").isEmpty();
+    }
+
+    @Test
+    void everyYamlExampleOfTheComponentDocumentationValidates() throws Exception {
+        List<String> pages = docNames(name -> name.endsWith("-component"));
+
+        DocExamples result = validate(pages);
+
+        assertThat(result.examples()).as("YAML route examples found in the component documentation").isGreaterThan(1100);
+        assertThat(result.failures()).as("Component documentation examples that do not validate").isEmpty();
     }
 
     private static List<String> docNames(Predicate<String> filter) {

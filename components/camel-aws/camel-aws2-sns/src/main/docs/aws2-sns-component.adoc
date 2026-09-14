@@ -147,13 +147,13 @@ YAML::
 - route:
     from:
       uri: direct:start
-    steps:
-      - to:
-          uri: aws2-sns://test-camel-sns1
-          parameters:
-            amazonSNSClient: "#amazonSNSClient"
-            subscribeSNStoSQS: true
-            queueArn: "arn:aws:sqs:eu-central-1:123456789012:test_camel"
+      steps:
+        - to:
+            uri: aws2-sns://test-camel-sns1
+            parameters:
+              amazonSNSClient: "#amazonSNSClient"
+              subscribeSNStoSQS: true
+              queueArn: "arn:aws:sqs:eu-central-1:123456789012:test_camel"
 ----
 ====
 
@@ -294,12 +294,12 @@ YAML::
 - route:
     from:
       uri: direct:start
-    steps:
-      - to:
-          uri: aws2-sns://camel-topic
-          parameters:
-            subject: "The+subject+message"
-            autoCreateTopic: true
+      steps:
+        - to:
+            uri: aws2-sns://camel-topic
+            parameters:
+              subject: "The+subject+message"
+              autoCreateTopic: true
 ----
 ====
 

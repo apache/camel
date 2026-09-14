@@ -692,11 +692,11 @@ YAML::
       parameters:
         ruleName: my-rule
         delay: 5000
-    steps:
-      - log:
-          message: "Received EventBridge event: ${body}"
-      - to:
-          uri: direct:process
+      steps:
+        - log:
+            message: "Received EventBridge event: ${body}"
+        - to:
+            uri: direct:process
 ----
 ====
 

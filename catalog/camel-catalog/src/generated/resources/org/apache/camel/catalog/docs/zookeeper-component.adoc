@@ -92,42 +92,7 @@ YAML::
 ----
 ====
 
-If the node does not yet exist, then a flag can be supplied to have the
-endpoint await its creation:
-
-[tabs]
-====
-Java::
-+
-[source,java]
-----
-from("zookeeper://localhost:39913/somepath/somenode?awaitCreation=true").to("mock:result");
-----
-
-XML::
-+
-[source,xml]
-----
-<route>
-  <from uri="zookeeper://localhost:39913/somepath/somenode?awaitCreation=true"/>
-  <to uri="mock:result"/>
-</route>
-----
-
-YAML::
-+
-[source,yaml]
-----
-- route:
-    from:
-      uri: zookeeper://localhost:39913/somepath/somenode
-      parameters:
-        awaitCreation: true
-      steps:
-        - to:
-            uri: mock:result
-----
-====
+If the node does not exist yet, the consumer waits for it to be created before reading it.
 
 === Reading from a _znode_
 
@@ -266,12 +231,12 @@ YAML::
 - route:
     from:
       uri: direct:delete-znode
-    steps:
-      - setHeader:
-          name: CamelZookeeperOperation
-          constant: DELETE
-      - to:
-          uri: zookeeper://localhost:39913/somepath/somenode
+      steps:
+        - setHeader:
+            name: CamelZookeeperOperation
+            constant: DELETE
+        - to:
+            uri: zookeeper://localhost:39913/somepath/somenode
 ----
 ====
 

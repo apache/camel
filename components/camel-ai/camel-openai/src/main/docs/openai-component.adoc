@@ -262,12 +262,13 @@ YAML::
 +
 [source,yaml]
 ----
-- to:
-    uri: openai:chat-completion
-    parameters:
-      model: gpt-4o-mini
-      temperature: 0.1
-      topP: 1.0
+steps:
+  - to:
+      uri: openai:chat-completion
+      parameters:
+        model: gpt-4o-mini
+        temperature: 0.1
+        topP: 1.0
 ----
 
 Java::

@@ -70,14 +70,14 @@ YAML::
 - route:
     from:
       uri: direct:list
-    steps:
-      - to:
-          uri: kubernetes-deployments:///
-          parameters:
-            kubernetesClient: "#kubernetesClient"
-            operation: listDeployments
-      - to:
-          uri: mock:result
+      steps:
+        - to:
+            uri: kubernetes-deployments:///
+            parameters:
+              kubernetesClient: "#kubernetesClient"
+              operation: listDeployments
+        - to:
+            uri: mock:result
 ----
 ====
 
@@ -130,9 +130,9 @@ YAML::
       uri: kubernetes-deployments://{{kubernetes-host}}
       parameters:
         oauthToken: "{{kubernetes-token}}"
-    steps:
-      - to:
-          uri: log:result
+      steps:
+        - to:
+            uri: log:result
 ----
 ====
 

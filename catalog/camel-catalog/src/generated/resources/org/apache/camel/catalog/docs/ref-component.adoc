@@ -107,8 +107,8 @@ YAML::
 - route:
     from:
       uri: ref:endpoint1
-    steps:
-      - to:
-          uri: ref:endpoint2
+      steps:
+        - to:
+            uri: ref:endpoint2
 ----
 ====

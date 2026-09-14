@@ -263,7 +263,7 @@ Java::
 [source,java]
 ----
 from("reactive-streams:readAndMarshal")
-    .marshal() // ... other details
+    .marshal().base64();
 ----
 
 XML::
@@ -273,7 +273,7 @@ XML::
 <route>
   <from uri="reactive-streams:readAndMarshal"/>
   <marshal>
-    <!-- ... other details -->
+    <base64/>
   </marshal>
 </route>
 ----
@@ -286,7 +286,8 @@ YAML::
     from:
       uri: reactive-streams:readAndMarshal
       steps:
-        - marshal: {}
+        - marshal:
+            base64: {}
 ----
 ====
 
@@ -319,7 +320,7 @@ Java::
 [source,java]
 ----
 from("direct:process")
-    .marshal() // ... other details
+    .marshal().base64();
 ----
 
 XML::
@@ -329,7 +330,7 @@ XML::
 <route>
   <from uri="direct:process"/>
   <marshal>
-    <!-- ... other details -->
+    <base64/>
   </marshal>
 </route>
 ----
@@ -342,7 +343,8 @@ YAML::
     from:
       uri: direct:process
       steps:
-        - marshal: {}
+        - marshal:
+            base64: {}
 ----
 ====
 
