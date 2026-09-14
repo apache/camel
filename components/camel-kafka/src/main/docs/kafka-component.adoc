@@ -970,13 +970,16 @@ YAML::
 +
 [source,yaml]
 ----
+- onException:
+    exception:
+      - java.lang.Exception
+    handled:
+      constant:
+        expression: "false"
+    steps:
+      - process:
+          ref: errorCommitProcessor
 - route:
-    on-exception:
-      - exception: java.lang.Exception
-        handled: false
-        steps:
-          - process:
-              ref: errorCommitProcessor
     from:
       uri: kafka:topic
       parameters:
@@ -1214,6 +1217,8 @@ Java::
 ----
 from("direct:start")
     .aggregate(constant(true), new GroupedExchangeAggregationStrategy())
+        .completionSize(100)
+        .completionTimeout(1000)
     .to("kafka:my-topic");
 ----
 
@@ -1223,7 +1228,7 @@ XML::
 ----
 <route>
   <from uri="direct:start"/>
-  <aggregate aggregationStrategy="#groupedExchange">
+  <aggregate aggregationStrategy="#groupedExchange" completionSize="100" completionTimeout="1000">
     <correlationExpression>
       <constant>true</constant>
     </correlationExpression>
@@ -1242,6 +1247,8 @@ YAML::
       steps:
         - aggregate:
             aggregationStrategy: "#groupedExchange"
+            completionSize: 100
+            completionTimeout: 1000
             correlationExpression:
               constant: "true"
             steps:

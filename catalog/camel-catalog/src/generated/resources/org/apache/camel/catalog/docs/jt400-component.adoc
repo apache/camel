@@ -164,7 +164,7 @@ Java::
 +
 [source,java]
 ----
-from(“direct:work”).to(“jt400://GRUPO:ATWORK@server/QSYS.LIB/assets.LIB/compute.PGM?fieldsLength=10,10,512&ouputFieldsIdx=2,3”).to(“direct:play”);
+from("direct:work").to("jt400://GRUPO:ATWORK@server/QSYS.LIB/assets.LIB/compute.PGM?fieldsLength=10,10,512&outputFieldsIdx=2,3").to("direct:play");
 ----
 
 XML::
@@ -172,9 +172,9 @@ XML::
 [source,xml]
 ----
 <route>
-  <from uri=”direct:work”/>
-  <to uri=”jt400://GRUPO:ATWORK@server/QSYS.LIB/assets.LIB/compute.PGM?fieldsLength=10,10,512&amp;ouputFieldsIdx=2,3”/>
-  <to uri=”direct:play”/>
+  <from uri="direct:work"/>
+  <to uri="jt400://GRUPO:ATWORK@server/QSYS.LIB/assets.LIB/compute.PGM?fieldsLength=10,10,512&amp;outputFieldsIdx=2,3"/>
+  <to uri="direct:play"/>
 </route>
 ----
 
@@ -189,8 +189,8 @@ YAML::
         - to:
             uri: jt400://GRUPO:ATWORK@server/QSYS.LIB/assets.LIB/compute.PGM
             parameters:
-              fieldsLength: “10,10,512”
-              ouputFieldsIdx: “2,3”
+              fieldsLength: "10,10,512"
+              outputFieldsIdx: "2,3"
         - to:
             uri: direct:play
 ----

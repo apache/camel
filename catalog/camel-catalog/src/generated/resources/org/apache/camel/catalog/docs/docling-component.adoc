@@ -595,9 +595,6 @@ from("file:///data/documents?include=.*\\.pdf")
         .when(simple("${header.CamelDoclingMetadataLanguage} == 'fr'"))
             .log("French document")
             .to("file:///data/french-docs")
-        .when(simple("${header.CamelDoclingMetadataAuthor} contains 'Smith'"))
-            .log("Document by Smith")
-            .to("file:///data/smith-docs")
         .otherwise()
             .to("file:///data/other-docs")
     .end();
@@ -633,14 +630,6 @@ YAML::
                       message: "French document"
                   - to:
                       uri: file:///data/french-docs
-              - expression:
-                  simple:
-                    expression: "${header.CamelDoclingMetadataAuthor} contains 'Smith'"
-                steps:
-                  - log:
-                      message: "Document by Smith"
-                  - to:
-                      uri: file:///data/smith-docs
             otherwise:
               steps:
                 - to:

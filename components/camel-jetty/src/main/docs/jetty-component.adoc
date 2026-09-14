@@ -446,6 +446,9 @@ YAML::
 ----
 - from:
     uri: jetty:https://0.0.0.0/myapp/myservice/
+    steps:
+      - log:
+          message: "${body}"
 ----
 ====
 
@@ -746,7 +749,8 @@ YAML::
       parameters:
         handlers: securityHandler
       steps:
-        # ...
+        - log:
+            message: "${body}"
 ----
 ====
 
@@ -810,6 +814,9 @@ YAML::
     uri: jetty:https://0.0.0.0/myapp/myservice1/
     parameters:
       enableJmx: true
+    steps:
+      - log:
+          message: "${body}"
 ----
 ====
 
@@ -837,6 +844,9 @@ YAML::
     uri: jetty:https://0.0.0.0/myapp/myservice2/
     parameters:
       enableJmx: false
+    steps:
+      - log:
+          message: "${body}"
 ----
 ====
 

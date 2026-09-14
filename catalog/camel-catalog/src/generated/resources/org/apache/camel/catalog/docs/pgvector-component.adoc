@@ -186,8 +186,8 @@ YAML::
         - setHeader:
             name: CamelPgVectorAction
             constant: UPSERT
-        - transform:
-            dataType: "pgvector:embeddings"
+        - transformDataType:
+            toType: "pgvector:embeddings"
         - to:
             uri: pgvector:myCollection
 
@@ -197,15 +197,15 @@ YAML::
       steps:
         - to:
             uri: langchain4j-embeddings:embed
-        - transform:
-            dataType: "pgvector:embeddings"
+        - transformDataType:
+            toType: "pgvector:embeddings"
         - setHeader:
             name: CamelPgVectorAction
             constant: SIMILARITY_SEARCH
         - to:
             uri: pgvector:myCollection
-        - transform:
-            dataType: "pgvector:rag"
+        - transformDataType:
+            toType: "pgvector:rag"
 ----
 ====
 

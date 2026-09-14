@@ -220,8 +220,8 @@ YAML::
         - setHeader:
             name: CamelQdrantPointId
             constant: 1
-        - transform:
-            dataType: "qdrant:embeddings"
+        - transformDataType:
+            toType: "qdrant:embeddings"
         - to:
             uri: qdrant:myCollection
 ----
@@ -256,18 +256,18 @@ YAML::
       steps:
         - to:
             uri: langchain4j-embeddings:embed
-        - transform:
-            dataType: "qdrant:embeddings"
+        - transformDataType:
+            toType: "qdrant:embeddings"
         - setHeader:
             name: CamelQdrantAction
             constant: SIMILARITY_SEARCH
         - setHeader:
-            name: CamelQdrantIncludePayload
+            name: CamelQdrantWithPayload
             constant: true
         - to:
             uri: qdrant:myCollection
-        - transform:
-            dataType: "qdrant:rag"
+        - transformDataType:
+            toType: "qdrant:rag"
 ----
 ====
 
@@ -301,8 +301,8 @@ YAML::
         - setHeader:
             name: CamelPgVectorAction
             constant: UPSERT
-        - transform:
-            dataType: "pgvector:embeddings"
+        - transformDataType:
+            toType: "pgvector:embeddings"
         - to:
             uri: pgvector:myCollection
 ----
@@ -334,15 +334,15 @@ YAML::
       steps:
         - to:
             uri: langchain4j-embeddings:embed
-        - transform:
-            dataType: "pgvector:embeddings"
+        - transformDataType:
+            toType: "pgvector:embeddings"
         - setHeader:
             name: CamelPgVectorAction
             constant: SIMILARITY_SEARCH
         - to:
             uri: pgvector:myCollection
-        - transform:
-            dataType: "pgvector:rag"
+        - transformDataType:
+            toType: "pgvector:rag"
 ----
 ====
 

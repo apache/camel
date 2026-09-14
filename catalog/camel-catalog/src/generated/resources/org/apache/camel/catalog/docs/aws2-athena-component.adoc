@@ -209,7 +209,8 @@ Java::
 +
 [source,java]
 ----
-from("aws2-athena://MyQuery?amazonAthenaClient=#client")
+from("direct:start")
+    .to("aws2-athena://MyQuery?amazonAthenaClient=#client")
     .to("mock:result");
 ----
 
@@ -218,7 +219,8 @@ XML::
 [source,xml]
 ----
 <route>
-  <from uri="aws2-athena://MyQuery?amazonAthenaClient=#client"/>
+  <from uri="direct:start"/>
+  <to uri="aws2-athena://MyQuery?amazonAthenaClient=#client"/>
   <to uri="mock:result"/>
 </route>
 ----
@@ -229,10 +231,12 @@ YAML::
 ----
 - route:
     from:
-      uri: aws2-athena://MyQuery
-      parameters:
-        amazonAthenaClient: "#client"
+      uri: direct:start
       steps:
+        - to:
+            uri: aws2-athena://MyQuery
+            parameters:
+              amazonAthenaClient: "#client"
         - to:
             uri: mock:result
 ----

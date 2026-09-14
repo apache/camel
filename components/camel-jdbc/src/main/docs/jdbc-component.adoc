@@ -237,7 +237,7 @@ XML::
   <from uri="direct:hello"/>
   <to uri="jdbc:testdb?outputType=StreamList"/>
   <split streaming="true">
-    <body/>
+    <simple>${body}</simple>
     <to uri="mock:result"/>
   </split>
 </route>
@@ -257,7 +257,8 @@ YAML::
               outputType: StreamList
         - split:
             expression:
-              body: {}
+              simple:
+                expression: "${body}"
             streaming: true
             steps:
               - to:
