@@ -151,8 +151,6 @@
 
         <enforcer.phase>none</enforcer.phase><!-- We do not enforce with -Dquickly, the property is overridden in the full profile -->
 
-        <failOnWarning>false</failOnWarning><!-- dep-check profile: override with -DfailOnWarning=true to enforce dependency hygiene -->
-
         <os.detected.classifier>${nisse.os.classifier}</os.detected.classifier>
     </properties>
 
@@ -997,42 +995,37 @@
         <profile>
             <!--
                 Opt-in dependency analysis profile.
-                Usage: mvn verify -Pdep-check [-DfailOnWarning=true]
-                Runs maven-dependency-plugin:analyze on every module and reports
-                used-undeclared / unused-declared dependencies.  Non-blocking by
-                default (failOnWarning=false); set -DfailOnWarning=true to enforce.
+                Usage: mvn test-compile pilot:dependencies -Pdep-check [-Dpilot.action=check]
+                Leverages eu.maveniverse.maven.plugins:pilot-plugin:dependencies for
+                bytecode-level analysis: detects unused declared and used transitive deps.
+                Non-blocking by default (report mode); use -Dpilot.action=check to fail
+                the build on findings, or -Dpilot.action=fix to apply fixes to pom.xml.
+                Use -Dpilot.skipTestScope=true to skip test-scoped dependency analysis.
             -->
             <id>dep-check</id>
             <build>
-                <plugins>
-                    <plugin>
-                        <groupId>org.apache.maven.plugins</groupId>
-                        <artifactId>maven-dependency-plugin</artifactId>
-                        <executions>
-                            <execution>
-                                <id>dep-analyze</id>
-                                <goals>
-                                    <goal>analyze-only</goal>
-                                </goals>
-                                <phase>verify</phase>
-                                <configuration>
-                                    <failOnWarning>${failOnWarning}</failOnWarning>
-                                    <outputXML>true</outputXML>
-                                    <ignoredUnusedDeclaredDependencies>
-                                        <!-- Logging implementations are runtime deps intentionally declared at compile scope -->
-                                        <ignoredUnusedDeclaredDependency>org.apache.logging.log4j:log4j-slf4j2-impl</ignoredUnusedDeclaredDependency>
-                                        <ignoredUnusedDeclaredDependency>org.apache.logging.log4j:log4j-core</ignoredUnusedDeclaredDependency>
-                                        <!-- JUnit aggregator is declared in parent; code compiles against junit-jupiter-api -->
-                                        <ignoredUnusedDeclaredDependency>org.junit.jupiter:junit-jupiter</ignoredUnusedDeclaredDependency>
-                                    </ignoredUnusedDeclaredDependencies>
-                                    <ignoredUsedUndeclaredDependencies>
-                                        <ignoredUsedUndeclaredDependency>org.junit.jupiter:junit-jupiter-api</ignoredUsedUndeclaredDependency>
-                                    </ignoredUsedUndeclaredDependencies>
-                                </configuration>
-                            </execution>
-                        </executions>
-                    </plugin>
-                </plugins>
+                <pluginManagement>
+                    <plugins>
+                        <plugin>
+                            <groupId>eu.maveniverse.maven.plugins</groupId>
+                            <artifactId>pilot-plugin</artifactId>
+                            <version>0.4.0</version>
+                            <configuration>
+                                <ignoredUnusedDeclared>
+                                    <!-- Logging implementations are runtime deps intentionally declared at compile scope -->
+                                    <ignoredUnusedDeclared>org.apache.logging.log4j:log4j-slf4j2-impl</ignoredUnusedDeclared>
+                                    <ignoredUnusedDeclared>org.apache.logging.log4j:log4j-core</ignoredUnusedDeclared>
+                                    <!-- JUnit aggregator is declared in parent; code compiles against junit-jupiter-api -->
+                                    <ignoredUnusedDeclared>org.junit.jupiter:junit-jupiter</ignoredUnusedDeclared>
+                                </ignoredUnusedDeclared>
+                                <ignoredUsedTransitive>
+                                    <ignoredUsedTransitive>org.junit.jupiter:junit-jupiter-api</ignoredUsedTransitive>
+                                    <ignoredUsedTransitive>org.junit.jupiter:junit-jupiter-params</ignoredUsedTransitive>
+                                </ignoredUsedTransitive>
+                            </configuration>
+                        </plugin>
+                    </plugins>
+                </pluginManagement>
             </build>
         </profile>
 

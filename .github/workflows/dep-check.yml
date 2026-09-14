@@ -60,9 +60,15 @@ jobs:
           java-version: '21'
           cache: 'maven'
 
+      - name: Compile (test-compile for accurate test-scope analysis)
+        run: |
+          mvn test-compile -Pdep-check -Dlicense.skip -Dquickly \
+            --no-transfer-progress --batch-mode -q
+
       - name: Run dependency analysis
         run: |
-          mvn verify -Pdep-check -DskipTests -Dlicense.skip -Dquickly \
+          mvn eu.maveniverse.maven.plugins:pilot-plugin:0.4.0:dependencies \
+            -Pdep-check -Dlicense.skip \
             --no-transfer-progress --batch-mode \
             2>&1 | tee dep-check-output.txt
 
