@@ -160,3 +160,25 @@ For instance, if you do some code changes in the camel-ftp component, following 
 cd camel-ftp
 mvn clean install -Psourcecheck
 ----
+
+== Checking dependency hygiene
+
+The opt-in `-Pdep-check` profile runs `maven-dependency-plugin:analyze-only` to detect *used-but-undeclared* and *unused-but-declared* dependencies.
+It is non-blocking by default (`failOnWarning=false`), so it only reports findings without failing the build.
+
+To run it on the full reactor:
+
+[source,bash]
+----
+mvn verify -Pdep-check -DskipTests -Dquickly
+----
+
+Or on a single module:
+
+[source,bash]
+----
+cd components/camel-ftp
+mvn verify -Pdep-check -DskipTests
+----
+
+CI also runs this profile automatically on pull requests targeting `main` (see the *Dependency Analysis* workflow).
