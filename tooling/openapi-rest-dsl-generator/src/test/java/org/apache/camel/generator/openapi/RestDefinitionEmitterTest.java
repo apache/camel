@@ -66,7 +66,7 @@ public class RestDefinitionEmitterTest {
             final ParamDefinition param = params.get(0);
             assertThat(param.getName()).isEqualTo("body");
             assertThat(param.getType()).isEqualTo(RestParamType.body);
-            assertThat(param.getRequired()).isEqualTo(true);
+            assertThat(param.getRequired()).isEqualTo("true");
         }
     }
 }
