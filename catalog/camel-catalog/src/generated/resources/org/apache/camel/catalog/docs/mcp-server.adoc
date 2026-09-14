@@ -48,9 +48,9 @@ Engine resolution mirrors the platform-http engine: a bean of type
 `McpServerEngine` in the Camel registry wins; otherwise the engine is
 discovered on the classpath. Other runtimes plug native engines through the
 same SPI: on Quarkus the `camel-quarkus-mcp-server` extension serves through
-the Quarkiverse `quarkus-mcp-server` (configured via `quarkus.mcp.server.*`),
+the Quarkiverse `quarkus-mcp-server` (configured via `+quarkus.mcp.server.*+`),
 and on Spring Boot the starter serves through the Spring AI MCP server
-(configured via `spring.ai.mcp.server.*`). Bridge behavior — tag selection,
+(configured via `+spring.ai.mcp.server.*+`). Bridge behavior — tag selection,
 timeout, sanitization — is identical on every runtime and verified by a shared
 conformance test kit.
 
@@ -120,8 +120,8 @@ camel.server.mcp-tags = crm,notify
 camel.server.mcp-server-name = my-integration-app
 ----
 
-Tag patterns support wildcards: use `*` to expose all tagged tools, or a
-prefix pattern like `crm*` to expose all tags starting with `crm`:
+Tag patterns support wildcards: use `+*+` to expose all tagged tools, or a
+prefix pattern like `+crm*+` to expose all tags starting with `crm`:
 
 On other runtimes, or when wiring programmatically, add the
 `McpServerBridge` service to the CamelContext instead:

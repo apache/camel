@@ -899,11 +899,11 @@ For example, to provide a dynamic uuid in `mail.smtp.from` (SMTP MAIL command):
 NOTE: This is only supported when *not* using a custom `JavaMailSender`.
 
 WARNING: This feature is *disabled by default* and must be explicitly enabled with
-`useJavaMailSessionPropertiesFromHeaders=true`. The `mail.smtp.*` / `mail.smtps.*` keys are a
+`useJavaMailSessionPropertiesFromHeaders=true`. The `+mail.smtp.*+` / `+mail.smtps.*+` keys are a
 Camel-internal namespace that is not filtered by any `HeaderFilterStrategy`, so if these headers can
 originate from data crossing a trust boundary (for example HTTP query parameters, or JMS/Kafka
 messages from untrusted producers) an attacker could weaken transport security (such as
 `mail.smtp.ssl.trust` or `mail.smtp.starttls.enable`) or redirect the SMTP connection. Only enable
 the option when these headers are set exclusively by trusted route logic, and strip the namespace
-with `removeHeaders("mail.smtp.*", "mail.smtps.*")` before the producer when bridging an untrusted
+with `+removeHeaders("mail.smtp.*", "mail.smtps.*")+` before the producer when bridging an untrusted
 source. See the xref:manual::security-model.adoc[Camel Security Model] for the general pattern.
