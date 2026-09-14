@@ -275,6 +275,16 @@ project `directory` as an argument, the runtime tools take the integration `name
 | Finds components, data formats and languages by a protocol, product or other term that is not the exact
   name (`mqtt`, `s3`, `snowflake`, `csv`), best match first with title and description.
 
+| `camel_catalog_sample`
+| Validated YAML DSL samples of an EIP or file entry (`onException`, `aggregate`, `split`, `rest`, `beans`) taken
+  from the documentation examples, with where it goes: a top-level entry next to the route, or a step inside
+  it. The name can be kebab-case, a part of another EIP (`doCatch`, `when`, `onFallback` show the whole
+  construct) or what to do (`read file`, `call service`, `retry`, `batch`). The EIP samples come from the
+  documentation of the catalog in use, so they follow its Camel version; the file entries come from the user
+  manual examples that the build validates (`generate-doc-samples` in
+  xref:camel-yaml-dsl-validator-maven-plugin.adoc[]). `limit` is 2 by default, at most 5.
+  Use it before writing an EIP the first time, or after a `not defined in the schema` validation error.
+
 | `camel_validate_source`
 | Validates Camel YAML DSL or `.properties` source without writing: the YAML DSL schema (a misspelled option
   such as `logLevel` instead of `loggingLevel`), endpoint URIs, simple expressions, and `camel.*` options.
