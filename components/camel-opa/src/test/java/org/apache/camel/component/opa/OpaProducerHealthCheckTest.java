@@ -58,6 +58,31 @@ class OpaProducerHealthCheckTest {
     }
 
     @Test
+    void neverPublishesTheBearerTokenInTheHealthCheckId() {
+        // the id is derived from the endpoint URI, which carries the token in the clear; the id reaches the
+        // health output, so the token must not survive into it
+        OpaProducerHealthCheck check = new OpaProducerHealthCheck(
+                "http://localhost:8181", "s3cr3t-token", "authz/allow",
+                "opa://authz/allow?bearerToken=s3cr3t-token&serverUrl=http://localhost:8181");
+
+        assertThat(check.getId()).doesNotContain("s3cr3t-token");
+        assertThat(check.getId()).contains("serverUrl=http://localhost:8181");
+    }
+
+    @Test
+    void givesEndpointsOnDifferentServersDistinctIds() {
+        OpaProducerHealthCheck primary = new OpaProducerHealthCheck(
+                "http://opa-primary:8181", null, "authz/allow",
+                "opa://authz/allow?serverUrl=http://opa-primary:8181");
+        OpaProducerHealthCheck secondary = new OpaProducerHealthCheck(
+                "http://opa-secondary:8181", null, "authz/allow",
+                "opa://authz/allow?serverUrl=http://opa-secondary:8181");
+
+        assertThat(primary.getId()).isNotEqualTo(secondary.getId());
+        assertThat(primary).isNotEqualTo(secondary);
+    }
+
+    @Test
     void isUpWhenTheServerIsHealthy() throws Exception {
         HealthCheck.Result result = call(startServer(200));
 
