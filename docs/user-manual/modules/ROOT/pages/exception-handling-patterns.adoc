@@ -281,7 +281,7 @@ And the same example in YAML DSL
 ----
 - beans:
   - name: "orderService"
-    beanType: "org.apache.camel.spring.processor.onexception.OrderService"
+    type: "org.apache.camel.spring.processor.onexception.OrderService"
 - errorHandler:
     deadLetterChannel:
       deadLetterUri: mock:error
@@ -291,9 +291,9 @@ And the same example in YAML DSL
     handled:
       constant:
         expression: "true"
+    redeliveryPolicy:
+      maximumRedeliveries: 1
     steps:
-      - redeliveryPolicy:
-          maximumRedeliveries: 1
       - bean:
           ref: orderService
           method: orderFailed
