@@ -142,11 +142,11 @@ public class QuickjsLanguage extends TypedLanguageSupport implements ScriptingLa
         Object result;
         boolean discarded = false;
         try {
-            result = state.engine.invokeGuestFunction(
+            result = state.engine.invokePrecompiledGuestFunction(
                     QuickjsHelper.MODULE_NAME,
                     QuickjsHelper.FUNCTION_NAME,
                     List.of(jsonBindings, script),
-                    QuickjsHelper.EVAL_WRAPPER);
+                    state.evalWrapper());
         } catch (Exception e) {
             discarded = discardIfPoisoned(state, e);
             throw QuickjsHelper.wrapFailure(script, null, e);
@@ -338,6 +338,7 @@ public class QuickjsLanguage extends TypedLanguageSupport implements ScriptingLa
         private final ByteArrayOutputStream stderr;
         private final Memory memory;
         private int evaluations;
+        private byte[] evalWrapper;
         private final Map<String, byte[]> compiled = new LinkedHashMap<>(64, 0.75f, true) {
             @Override
             protected boolean removeEldestEntry(Map.Entry<String, byte[]> eldest) {
@@ -359,6 +360,16 @@ public class QuickjsLanguage extends TypedLanguageSupport implements ScriptingLa
         boolean exhausted(long maxMemory, int maxEvaluations) {
             evaluations++;
             return evaluations >= maxEvaluations || memoryBytes() > maxMemory;
+        }
+
+        /**
+         * The generic eval wrapper, compiled once per engine (the engine's own script cache is disabled).
+         */
+        byte[] evalWrapper() {
+            if (evalWrapper == null) {
+                evalWrapper = engine.compilePortableGuestFunction(QuickjsHelper.EVAL_WRAPPER);
+            }
+            return evalWrapper;
         }
 
         byte[] compiled(String script) {

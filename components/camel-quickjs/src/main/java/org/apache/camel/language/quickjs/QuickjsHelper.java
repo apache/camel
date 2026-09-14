@@ -113,7 +113,7 @@ final class QuickjsHelper {
                     }),
             new CamelFunction(
                     "removeHeader", List.of("name"), Object.class,
-                    (exchange, args) -> exchange.getMessage().removeHeader(name(args))),
+                    (exchange, args) -> toJsonCompatible(exchange.getMessage().removeHeader(name(args)), exchange, false)),
             new CamelFunction(
                     "getProperty", List.of("name"), Object.class,
                     (exchange, args) -> toJsonCompatible(exchange.getProperty(name(args)), exchange, false)),
@@ -125,7 +125,7 @@ final class QuickjsHelper {
                     }),
             new CamelFunction(
                     "removeProperty", List.of("name"), Object.class,
-                    (exchange, args) -> exchange.removeProperty(name(args))),
+                    (exchange, args) -> toJsonCompatible(exchange.removeProperty(name(args)), exchange, false)),
             new CamelFunction(
                     "getVariable", List.of("name"), Object.class,
                     (exchange, args) -> toJsonCompatible(exchange.getVariable(name(args)), exchange, false)),
@@ -137,7 +137,7 @@ final class QuickjsHelper {
                     }),
             new CamelFunction(
                     "removeVariable", List.of("name"), Object.class,
-                    (exchange, args) -> exchange.removeVariable(name(args))),
+                    (exchange, args) -> toJsonCompatible(exchange.removeVariable(name(args)), exchange, false)),
             new CamelFunction(
                     "log", List.of("level", "message"), Void.class,
                     (exchange, args) -> {
