@@ -49,8 +49,8 @@ class EipDocExamplesTest {
 
     /**
      * The xmlSecurity examples write the cipher algorithms as the URIs the data format hands to XMLCipher, while the
-     * model's enums list the XMLCipher constant names, which XMLCipher rejects. The page is checked again once the
-     * model accepts what the data format does.
+     * model's enums list the XMLCipher constant names, which XMLCipher rejects (CAMEL-24716). The page is checked again
+     * once the model accepts what the data format does.
      */
     private static final Set<String> DATA_FORMAT_PAGES_SKIPPED = Set.of("xmlSecurity-dataformat");
 
