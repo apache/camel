@@ -1022,7 +1022,12 @@
                                         <!-- Logging implementations are runtime deps intentionally declared at compile scope -->
                                         <ignoredUnusedDeclaredDependency>org.apache.logging.log4j:log4j-slf4j2-impl</ignoredUnusedDeclaredDependency>
                                         <ignoredUnusedDeclaredDependency>org.apache.logging.log4j:log4j-core</ignoredUnusedDeclaredDependency>
+                                        <!-- JUnit aggregator is declared in parent; code compiles against junit-jupiter-api -->
+                                        <ignoredUnusedDeclaredDependency>org.junit.jupiter:junit-jupiter</ignoredUnusedDeclaredDependency>
                                     </ignoredUnusedDeclaredDependencies>
+                                    <ignoredUsedUndeclaredDependencies>
+                                        <ignoredUsedUndeclaredDependency>org.junit.jupiter:junit-jupiter-api</ignoredUsedUndeclaredDependency>
+                                    </ignoredUsedUndeclaredDependencies>
                                 </configuration>
                             </execution>
                         </executions>
