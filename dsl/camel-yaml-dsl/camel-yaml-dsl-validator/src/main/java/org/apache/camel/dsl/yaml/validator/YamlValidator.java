@@ -356,16 +356,17 @@ public class YamlValidator {
             "idempotentConsumer");
 
     private static final Map<String, String> EXPRESSION_EXAMPLES = Map.of(
-            "split", "split: {tokenize: \",\"} or split: {simple: \"${body}\"} (delimiter only applies to the result of"
-                     + " the expression)",
-            "filter", "filter: {simple: \"${header.type} == 'urgent'\"}",
-            "when", "when: {simple: \"${body} contains 'x'\"}",
-            "setBody", "setBody: {simple: \"Hello ${body}\"} or setBody: {constant: \"Hello\"}",
-            "setHeader", "setHeader: {name: id, simple: \"${exchangeId}\"}",
-            "loop", "loop: {constant: \"3\"}",
-            "recipientList", "recipientList: {simple: \"${header.to}\"}",
-            "script", "script: {groovy: \"...\"}",
-            "delay", "delay: {constant: \"1000\"}");
+            "split", "split: {expression: {tokenize: {token: \",\"}}} or split: {expression: {simple: {expression:"
+                     + " \"${body}\"}}} (delimiter only applies to the result of the expression)",
+            "filter", "filter: {expression: {simple: {expression: \"${header.type} == 'urgent'\"}}}",
+            "when", "when: {expression: {simple: {expression: \"${body} contains 'x'\"}}}",
+            "setBody", "setBody: {expression: {simple: {expression: \"Hello ${body}\"}}} or setBody: {expression:"
+                       + " {constant: {expression: \"Hello\"}}}",
+            "setHeader", "setHeader: {name: id, expression: {simple: {expression: \"${exchangeId}\"}}}",
+            "loop", "loop: {expression: {constant: {expression: \"3\"}}}",
+            "recipientList", "recipientList: {expression: {simple: {expression: \"${header.to}\"}}}",
+            "script", "script: {expression: {groovy: {expression: \"...\"}}}",
+            "delay", "delay: {expression: {constant: {expression: \"1000\"}}}");
 
     private static final Set<String> SCRIPT_LANGUAGES = Set.of("groovy", "js", "python", "python3", "mvel", "ognl",
             "jq", "jsonpath", "xpath", "xquery", "spel", "jactl", "java", "joor", "quickjs", "wasm", "datasonnet");
@@ -419,7 +420,8 @@ public class YamlValidator {
                         .messageKey("type")
                         .format(new MessageFormat("{0}"))
                         .arguments(name + ": ${...} is simple syntax, not " + name + ": write the expression in " + name
-                                   + " (" + example + "), or use simple: \"" + text.replace("\"", "'") + "\"")
+                                   + " (" + example + "), or use simple: {expression: \"" + text.replace("\"", "'")
+                                   + "\"}")
                         .build());
             }
             checkSimpleSyntaxInScripts(value, path.append(name), errors);
@@ -463,7 +465,8 @@ public class YamlValidator {
             if (EXPRESSION_REQUIRED.contains(name) && (value == null || value.isNull() || value.isObject())
                     && !hasExpression(value)) {
                 String example = EXPRESSION_EXAMPLES.getOrDefault(name,
-                        name + ": {simple: \"...\"} or " + name + ": {constant: \"...\"}");
+                        name + ": {expression: {simple: {expression: \"...\"}}} or " + name
+                                                                        + ": {expression: {constant: {expression: \"...\"}}}");
                 errors.add(Error.builder()
                         .keyword("required")
                         .instanceLocation(path.append(name))
@@ -784,7 +787,7 @@ public class YamlValidator {
         String name = location.substring(location.lastIndexOf('/') + 1);
         String value = instance.asText();
         String message = String.format(
-                "a plain value (%s) found, an expression expected: write %s: {constant: \"%s\"} for a fixed value, or %s: {simple: \"...\"} for a dynamic one",
+                "a plain value (%s) found, an expression expected: write %s: {constant: {expression: \"%s\"}} for a fixed value, or %s: {simple: {expression: \"...\"}} for a dynamic one",
                 value, name, value, name);
         // the message is not a MessageFormat pattern (it contains braces), so pass it as the single argument
         return Error.builder()
@@ -828,8 +831,9 @@ public class YamlValidator {
                     .instanceLocation(error.getInstanceLocation())
                     .messageKey("type")
                     .format(new MessageFormat("{0}"))
-                    .arguments(error.getMessage() + " (an expression is written with the language as the key, e.g."
-                               + " groovy: \"...\", simple: \"...\", constant: \"...\"; the language: form is"
+                    .arguments(error.getMessage() + " (an expression is written with the language as the key and its"
+                               + " expression: property, e.g. groovy: {expression: \"...\"}, simple: {expression: \"...\"},"
+                               + " constant: {expression: \"...\"}; the language: form is"
                                + " language: {language: groovy, expression: \"...\"})")
                     .build();
         }
@@ -860,7 +864,8 @@ public class YamlValidator {
                     .format(new MessageFormat("{0}"))
                     .arguments(error.getMessage() + " (" + entry + " is a map, not a list: - " + entry + ": followed by its"
                                + " properties indented" + (entry.equals("onException")
-                                       ? " (exception: [java.lang.Exception], handled: {constant: \"true\"}, steps: [...])"
+                                       ? " (exception: [java.lang.Exception], handled: {constant: {expression: \"true\"}},"
+                                         + " steps: [...])"
                                        : "")
                                + "; several of them are several - " + entry + ": items)")
                     .build();
@@ -999,18 +1004,20 @@ public class YamlValidator {
                 && (EXPRESSION_REQUIRED.contains(location.substring(location.lastIndexOf('/') + 1))
                         || location.endsWith("/expression"))) {
             // setBody: {script: ...}: script is an EIP; the language is the key of an expression
-            hint = "script is an EIP step, not a language: write the language as the key of the expression (groovy:"
-                   + " \"...\", simple: \"...\"), or run a script as its own step with - script: {groovy: \"...\"}";
+            hint = "script is an EIP step, not a language: write the language as the key of the expression (expression:"
+                   + " {groovy: {expression: \"...\"}}, expression: {simple: {expression: \"...\"}}), or run a script as"
+                   + " its own step with - script: {expression: {groovy: {expression: \"...\"}}}";
         } else if (unknown.equals("bean") && !location.endsWith("/steps")) {
             // setBody: {bean: myBean} : the bean language is method:
-            hint = "the bean language is written as method: (method: {ref: myBean, method: process}), or call the bean"
-                   + " as a step with - bean: {ref: myBean, method: process}";
+            hint = "the bean language is written as method: (expression: {method: {ref: myBean, method: process}}), or"
+                   + " call the bean as a step with - bean: {ref: myBean, method: process}";
         } else if (location.matches(".*/(setHeader|setProperty|setVariable|removeHeader|removeProperty|removeVariable)")
                 && closest(unknown, knownProperties(String.valueOf(error.getSchemaLocation()))) == null) {
             // setHeader: {CamelNumberA: {simple: ...}} : the name is a property, not the key
             String eip = location.substring(location.lastIndexOf('/') + 1);
             hint = "the name is a property: " + eip + ": {name: " + unknown
-                   + (eip.startsWith("set") ? ", simple: \"...\"}" : "}") + " (" + unknown + " is not the key)";
+                   + (eip.startsWith("set") ? ", expression: {simple: {expression: \"...\"}}}" : "}")
+                   + " (" + unknown + " is not the key)";
         } else if (location.endsWith("/bean")
                 && (unknown.equals("parameters") || unknown.equals("args") || unknown.equals("arguments"))) {
             hint = "arguments are written in the method call: bean: {ref: myBean, method: \"process(${body}, 'x')\"}";

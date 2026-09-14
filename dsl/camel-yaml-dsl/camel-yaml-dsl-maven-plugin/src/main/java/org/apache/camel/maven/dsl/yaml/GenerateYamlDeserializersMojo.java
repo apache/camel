@@ -306,8 +306,8 @@ public class GenerateYamlDeserializersMojo extends GenerateYamlSupportMojo {
                                                 ClassName.get("org.apache.camel.dsl.yaml.common.exception",
                                                         "InvalidExpressionException"),
                                                 "an expression is expected here, not a plain value (",
-                                                "): write constant: \"",
-                                                "\" for a fixed value, or simple: \"...\" for a dynamic one")
+                                                "): write constant: {expression: \"",
+                                                "\"} for a fixed value, or simple: {expression: \"...\"} for a dynamic one")
                                         .endControlFlow()
                                         .addStatement("$T val = constructExpressionType(node)", CN_EXPRESSION_DEFINITION)
                                         .addStatement("return new org.apache.camel.model.ExpressionSubElementDefinition(val)")

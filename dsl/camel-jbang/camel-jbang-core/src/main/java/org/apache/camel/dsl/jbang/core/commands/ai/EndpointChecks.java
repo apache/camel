@@ -81,7 +81,8 @@ final class EndpointChecks {
             if (several.find()) {
                 // to: direct:a,direct:b : one endpoint per to:, several go through multicast or recipientList
                 errors.add(linePrefix(i) + "a to: takes one endpoint; \"" + uri + "\" names several: send to each with"
-                           + " multicast: {to: [...]} (all of them) or recipientList: {constant: \"" + uri + "\"}"
+                           + " multicast: {to: [...]} (all of them) or recipientList: {expression: {constant: {expression: \""
+                           + uri + "\"}}}"
                            + " (a list evaluated at runtime), or write one - to: step per endpoint");
                 continue;
             }
@@ -205,9 +206,10 @@ final class EndpointChecks {
             Map.entry("timer:interval", "write period=<millis>"),
             Map.entry("timer:delayMs", "write delay=<millis>"),
             Map.entry("timer:repeat", "write repeatCount=<n>"),
-            Map.entry("timer:body", "a timer message has no body: set it with a setBody step (setBody: {constant: \"...\"})"),
-            Map.entry("timer:message",
-                    "a timer message has no body: set it with a setBody step (setBody: {constant: \"...\"})"),
+            Map.entry("timer:body", "a timer message has no body: set it with a setBody step"
+                                    + " (setBody: {expression: {constant: {expression: \"...\"}}})"),
+            Map.entry("timer:message", "a timer message has no body: set it with a setBody step"
+                                       + " (setBody: {expression: {constant: {expression: \"...\"}}})"),
             Map.entry("timer:cron", "a cron expression is the cron or quartz component: cron:tick?schedule=0/5+*+*+*+*+?"),
             Map.entry("timer:schedule", "a cron expression is the cron or quartz component: cron:tick?schedule=0/5+*+*+*+*+?"),
             Map.entry("log:message", "the message is the body; a text is set with a setBody step or the log EIP"),
