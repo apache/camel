@@ -21,7 +21,9 @@ import org.apache.camel.NamedNode;
 import org.apache.camel.Processor;
 import org.apache.camel.Route;
 import org.apache.camel.component.opa.OpaPolicyEvaluator;
+import org.apache.camel.health.HealthCheckRegistry;
 import org.apache.camel.spi.AuthorizationPolicy;
+import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.StringHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -56,6 +58,7 @@ public class OpaSecurityPolicy implements AuthorizationPolicy {
     private OPAClient opaClient;
 
     private volatile OpaPolicyEvaluator evaluator;
+    private volatile OpaSecurityPolicyHealthCheck healthCheck;
 
     public OpaSecurityPolicy() {
     }
@@ -67,6 +70,7 @@ public class OpaSecurityPolicy implements AuthorizationPolicy {
 
     @Override
     public void beforeWrap(Route route, NamedNode definition) {
+        registerHealthCheck(route);
         if (evaluator == null) {
             StringHelper.notEmpty(policyPath, "policyPath", this);
             if (opaClient == null) {
@@ -75,6 +79,24 @@ public class OpaSecurityPolicy implements AuthorizationPolicy {
             evaluator = new OpaPolicyEvaluator(
                     opaClient, policyPath, allowKey, includeHeaders, includeProperties, includeBody, failOpen);
         }
+    }
+
+    /**
+     * Registers a readiness check for the OPA server, once per policy however many routes it wraps.
+     * <p/>
+     * Skipped when an {@code opaClient} was injected: that client can point anywhere and this policy has no way to ask
+     * it where, so probing the configured URL would report on a server it may never talk to.
+     */
+    private void registerHealthCheck(Route route) {
+        if (healthCheck != null || opaClient != null || ObjectHelper.isEmpty(serverUrl)) {
+            return;
+        }
+        HealthCheckRegistry registry = HealthCheckRegistry.get(route.getCamelContext());
+        if (registry == null) {
+            return;
+        }
+        healthCheck = new OpaSecurityPolicyHealthCheck(serverUrl, bearerToken, policyPath);
+        registry.register(healthCheck);
     }
 
     @Override

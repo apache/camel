@@ -217,8 +217,13 @@ component with `healthCheckProducerEnabled`. The check reports DOWN with the und
 server and a server answering its health endpoint with an error are reported differently, so a deny is never
 confused with an outage.
 
-The check is only registered when the endpoint was given a `serverUrl`. An injected `opaClient` may point anywhere
-and the endpoint has no way to ask it where, so no probe is registered in that case.
+`OpaSecurityPolicy` registers an equivalent check, under an id starting `security-policy:opa-`. It is arguably the
+more important of the two: a denied producer merely records a verdict the route can inspect, while the policy throws
+`CamelAuthorizationException` and stops the exchange, so an unreachable server there fails every message outright.
+
+Neither check is registered when an `opaClient` was injected: that client may point anywhere and neither the
+endpoint nor the policy has a way to ask it where, so probing the configured `serverUrl` would report on a server
+they may never talk to. The endpoint check is also skipped when no `serverUrl` was given.
 
 == Security notes
 
