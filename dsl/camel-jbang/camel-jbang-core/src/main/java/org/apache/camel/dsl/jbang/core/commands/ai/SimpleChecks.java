@@ -22,6 +22,7 @@ import java.util.Set;
 
 import org.apache.camel.catalog.CamelCatalog;
 import org.apache.camel.catalog.LanguageValidationResult;
+import org.apache.camel.spi.SimpleLanguageFunctionFactory;
 
 import static org.apache.camel.dsl.jbang.core.commands.ai.YamlLines.countLeadingSpaces;
 import static org.apache.camel.dsl.jbang.core.commands.ai.YamlLines.extractEipFromLine;
@@ -114,7 +115,7 @@ final class SimpleChecks {
                         : catalog.validateLanguageExpression(null, "simple", simpleText);
                 if (!result.isSuccess()) {
                     String error = result.getShortError() != null ? result.getShortError() : result.getError();
-                    if (error != null) {
+                    if (error != null && !isMissingDependency(error)) {
                         errors.add("Line " + lineNum + ": Simple syntax error: " + error
                                    + aggregatedSizeHint(error, lines, i, lineIndent));
                     }
@@ -124,6 +125,16 @@ final class SimpleChecks {
             }
         }
         return errors;
+    }
+
+    /**
+     * A function served by a language or a component that is not on the classpath of the check (${jsonpath(...)},
+     * ${a2a:text}): the route works when the dependency is there, which the check cannot know, so it is not reported.
+     */
+    static boolean isMissingDependency(String error) {
+        return error.startsWith("No language could be found for:")
+                || error.startsWith("No " + SimpleLanguageFunctionFactory.FACTORY + "/")
+                        && error.contains("service could be found in the classpath");
     }
 
     /**

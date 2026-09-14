@@ -245,7 +245,9 @@ public class YamlValidator {
         boolean seenContent = false;
         for (int i = 0; i < lines.length; i++) {
             String t = lines[i].trim();
-            if (t.equals("---") || t.equals("...")) {
+            // a marker starts at column 1; an indented --- or ... is text, such as a line of a block scalar
+            String marker = lines[i].stripTrailing();
+            if (marker.equals("---") || marker.equals("...")) {
                 if (seenContent) {
                     return Error.builder()
                             .messageKey("document")

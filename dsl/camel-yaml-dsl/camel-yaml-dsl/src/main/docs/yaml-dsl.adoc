@@ -327,17 +327,15 @@ configure _tags_ as a Map:
 [source,yaml]
 ----
 - from:
-    uri: "timer:tick"
+    uri: "plc4x"
     parameters:
-      period: "1000"
+      driver: "some driver url here"
+      tags:
+        "tags_2": "XXX"
+        "tags_6": "YYY"
     steps:
       - to:
-          uri: "plc4x"
-          parameters:
-            driver: "some driver url here"
-            tags:
-              "tags_2": "XXX"
-              "tags_6": "YYY"
+          uri: "log:plc"
 ----
 
 In this example the _tags_ options is of Map type and can be configured using YAML map syntax.
@@ -701,15 +699,15 @@ Classic::
 +
 [source,yaml]
 ----
-- log: "${body}"
+log: "${body}"
 ----
 
 Canonical::
 +
 [source,yaml]
 ----
-- log:
-    message: "${body}"
+log:
+  message: "${body}"
 ----
 ====
 
@@ -721,18 +719,18 @@ Classic::
 +
 [source,yaml]
 ----
-- setBody:
-    simple: "Hello Camel from ${routeId}"
+setBody:
+  simple: "Hello Camel from ${routeId}"
 ----
 
 Canonical::
 +
 [source,yaml]
 ----
-- setBody:
-    expression:
-      simple:
-        expression: "Hello Camel from ${routeId}"
+setBody:
+  expression:
+    simple:
+      expression: "Hello Camel from ${routeId}"
 ----
 ====
 
@@ -744,20 +742,20 @@ Classic::
 +
 [source,yaml]
 ----
-- setHeader:
-    name: Content-Type
-    constant: "application/json"
+setHeader:
+  name: Content-Type
+  constant: "application/json"
 ----
 
 Canonical::
 +
 [source,yaml]
 ----
-- setHeader:
-    name: Content-Type
-    expression:
-      constant:
-        expression: "application/json"
+setHeader:
+  name: Content-Type
+  expression:
+    constant:
+      expression: "application/json"
 ----
 ====
 
@@ -769,42 +767,42 @@ Classic::
 +
 [source,yaml]
 ----
-- choice:
-    when:
-      - simple: "${body} == 'Hello'"
-        steps:
-          - setProperty:
-              name: myProp
-              simple: "${body}"
-    otherwise:
+choice:
+  when:
+    - simple: "${body} == 'Hello'"
       steps:
         - setProperty:
             name: myProp
-            constant: "default"
+            simple: "${body}"
+  otherwise:
+    steps:
+      - setProperty:
+          name: myProp
+          constant: "default"
 ----
 
 Canonical::
 +
 [source,yaml]
 ----
-- choice:
-    when:
-      - expression:
-          simple:
-            expression: "${body} == 'Hello'"
-        steps:
-          - setProperty:
-              name: myProp
-              expression:
-                simple:
-                  expression: "${body}"
-    otherwise:
+choice:
+  when:
+    - expression:
+        simple:
+          expression: "${body} == 'Hello'"
       steps:
         - setProperty:
             name: myProp
             expression:
-              constant:
-                expression: "default"
+              simple:
+                expression: "${body}"
+  otherwise:
+    steps:
+      - setProperty:
+          name: myProp
+          expression:
+            constant:
+              expression: "default"
 ----
 ====
 

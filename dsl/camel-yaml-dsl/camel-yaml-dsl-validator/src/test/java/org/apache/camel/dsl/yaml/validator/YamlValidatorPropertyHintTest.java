@@ -115,6 +115,21 @@ public class YamlValidatorPropertyHintTest {
     }
 
     @Test
+    public void testIndentedDocumentMarkerIsText() throws Exception {
+        // a ... line in a script elides the rest of the code, it is text of the block scalar
+        assertThat(validator.validate("""
+                - beans:
+                  - name: myBean
+                    type: com.acme.MyBean
+                    scriptLanguage: groovy
+                    script: >
+                      bean = new com.acme.MyBean()
+                      ...
+                      return bean
+                """)).isEmpty();
+    }
+
+    @Test
     public void testMapWhereAListIsExpectedSaysHowToWriteIt() throws Exception {
         List<Error> errors = validator.validate("""
                 route:
