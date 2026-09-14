@@ -217,12 +217,16 @@ public class OpenAIResponsesProducer extends DefaultAsyncProducer {
             Exchange exchange, OpenAIConfiguration config, ResponseCreateParams params, List<ResponseInputItem> input,
             String model)
             throws Exception {
+        // a stored conversation keeps every item it receives, so after the first request only the new items are sent,
+        // while otherwise each request carries the whole conversation of the exchange
+        boolean storedConversation = params.conversation().isPresent();
         List<ResponseInputItem> conversation = new ArrayList<>(input);
+        List<ResponseInputItem> requestInput = input;
         List<String> toolCallsLog = new ArrayList<>();
         int iteration = 0;
 
         while (true) {
-            Response response = createResponse(exchange, model, params.toBuilder().inputOfResponse(conversation).build());
+            Response response = createResponse(exchange, model, params.toBuilder().inputOfResponse(requestInput).build());
             List<ResponseFunctionToolCall> functionCalls = OpenAIResponsesSupport.extractFunctionCalls(response);
             if (functionCalls.isEmpty()) {
                 finishExchange(exchange, config, response, OpenAIResponsesSupport.extractAssistantText(response));
@@ -236,8 +240,6 @@ public class OpenAIResponsesProducer extends DefaultAsyncProducer {
             }
             iteration++;
 
-            // the function calls, and the reasoning that led to them, must precede their results
-            conversation.addAll(OpenAIResponsesSupport.toInputItems(response));
             functionCalls.forEach(call -> toolCallsLog.add(call.name()));
             List<McpToolCallExecutor.ToolResult> results
                     = toolCallExecutor.execute(OpenAIResponsesSupport.toChatToolCalls(functionCalls));
@@ -252,11 +254,20 @@ public class OpenAIResponsesProducer extends DefaultAsyncProducer {
                 setToolHeaders(out, iteration, toolCallsLog, true);
                 return;
             }
-            for (McpToolCallExecutor.ToolResult result : results) {
-                conversation.add(ResponseInputItem.ofFunctionCallOutput(ResponseInputItem.FunctionCallOutput.builder()
-                        .callId(result.toolCallId())
-                        .output(result.content())
-                        .build()));
+            List<ResponseInputItem> toolOutputs = results.stream()
+                    .map(result -> ResponseInputItem.ofFunctionCallOutput(ResponseInputItem.FunctionCallOutput.builder()
+                            .callId(result.toolCallId())
+                            .output(result.content())
+                            .build()))
+                    .toList();
+            if (storedConversation) {
+                // the server already added the function calls of this response to the conversation
+                requestInput = toolOutputs;
+            } else {
+                // the function calls, and the reasoning that led to them, must precede their results
+                conversation.addAll(OpenAIResponsesSupport.toInputItems(response));
+                conversation.addAll(toolOutputs);
+                requestInput = conversation;
             }
         }
     }

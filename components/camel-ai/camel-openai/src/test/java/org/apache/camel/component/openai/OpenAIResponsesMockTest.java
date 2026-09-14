@@ -164,6 +164,10 @@ class OpenAIResponsesMockTest extends CamelTestSupport {
                 from("direct:responses-background-tools")
                         .to("openai:responses?model=gpt-5&apiKey=dummy&background=true&tags=responses-tools&baseUrl="
                             + base);
+
+                from("direct:responses-conversation-tools")
+                        .to("openai:responses?model=gpt-5&apiKey=dummy&tags=responses-tools&conversationId=conv_123"
+                            + "&baseUrl=" + base);
             }
         };
     }
@@ -379,6 +383,24 @@ class OpenAIResponsesMockTest extends CamelTestSupport {
         assertThat(result.getException())
                 .isInstanceOf(IllegalArgumentException.class)
                 .hasMessageContaining(OpenAIConstants.RESPONSE_ID);
+    }
+
+    @Test
+    void toolLoopInAStoredConversationOnlySendsNewItems() {
+        Exchange result = template.request("direct:responses-conversation-tools", e -> e.getIn().setBody("weather-tool"));
+
+        assertThat(result.getException()).isNull();
+        assertThat(result.getMessage().getBody(String.class)).isEqualTo("It is sunny in Rome");
+
+        var requests = openAIMock.getReceivedRequests();
+        assertThat(requests).hasSize(2);
+        assertThat(requests.get(0).bodyAsJson().path("conversation").asText()).isEqualTo("conv_123");
+        JsonNode followUp = requests.get(1).bodyAsJson();
+        assertThat(followUp.path("conversation").asText()).isEqualTo("conv_123");
+        // the server already stored the user input and the function calls, so only the tool result is sent
+        assertThat(followUp.path("input")).hasSize(1);
+        assertThat(followUp.path("input").path(0).path("type").asText()).isEqualTo("function_call_output");
+        assertThat(followUp.path("input").path(0).path("output").asText()).isEqualTo("Sunny in Rome");
     }
 
     private String responsesUri() {
