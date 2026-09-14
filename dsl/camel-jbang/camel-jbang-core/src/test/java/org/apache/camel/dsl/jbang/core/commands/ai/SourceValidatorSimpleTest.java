@@ -239,4 +239,19 @@ class SourceValidatorSimpleTest {
         assertThat(msgs).hasSize(1);
         assertThat(msgs.get(0)).contains("Unknown function: size").doesNotContain("CamelAggregatedSize");
     }
+
+    @Test
+    void functionOfALanguageOrComponentNotOnTheClasspathIsNotReported() {
+        List<String> msgs = SourceValidator.validateYamlSimple("""
+                - from:
+                    uri: direct:start
+                    steps:
+                      - setHeader:
+                          name: city
+                          simple: "${jsonpath($.address.city)}"
+                      - log:
+                          message: "Agent replied: ${a2a:text}"
+                """, catalog);
+        assertThat(msgs).isEmpty();
+    }
 }
