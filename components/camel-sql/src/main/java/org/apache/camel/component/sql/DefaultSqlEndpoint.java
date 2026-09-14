@@ -93,7 +93,7 @@ public abstract class DefaultSqlEndpoint extends DefaultPollingEndpoint implemen
     private boolean breakBatchOnConsumeFail;
     @UriParam(defaultValue = "true", description = "Whether to allow using named parameters in the queries.")
     private boolean allowNamedParameters = true;
-    @UriParam(defaultValue = "false", label = "security",
+    @UriParam(defaultValue = "false", label = "producer,security", security = "insecure:dev", insecureValue = "true",
               description = "Whether to allow overriding the endpoint-configured SQL query with the CamelSqlQuery header."
                             + " Disabled by default; enable it only when the header source is trusted, since it lets a"
                             + " message choose the executed SQL.")

@@ -62,7 +62,7 @@ public class SqlStoredEndpoint extends DefaultEndpoint implements EndpointServic
     private boolean batch;
     @UriParam(description = "Whether to use the message body as the stored procedure template and then headers for parameters. If this option is enabled then the template in the uri is not used.")
     private boolean useMessageBodyForTemplate;
-    @UriParam(defaultValue = "false", label = "security",
+    @UriParam(defaultValue = "false", label = "security", security = "insecure:dev", insecureValue = "true",
               description = "Whether to allow overriding the endpoint-configured stored-procedure template with the"
                             + " CamelSqlStoredTemplate header. Disabled by default; a header-supplied template is"
                             + " resolved with placeholders only, never as a file:/http: resource.")

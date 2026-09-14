@@ -19,7 +19,6 @@ package org.apache.camel.component.sql.stored;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.apache.camel.CamelExecutionException;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.test.junit6.CamelTestSupport;
 import org.junit.jupiter.api.Test;
@@ -27,11 +26,22 @@ import org.springframework.jdbc.datasource.embedded.EmbeddedDatabase;
 import org.springframework.jdbc.datasource.embedded.EmbeddedDatabaseBuilder;
 import org.springframework.jdbc.datasource.embedded.EmbeddedDatabaseType;
 
-import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 
+/**
+ * Verifies the {@code allowTemplateFromHeader} gate on {@code sql-stored}.
+ * <p>
+ * Both templates call the same {@code SUBNUMBERS} procedure but declare a different OUT-parameter alias, so the key
+ * present in the result map tells us unambiguously which template text was executed. The endpoint template aliases the
+ * OUT parameter {@code resultfromendpoint}; the {@code CamelSqlStoredTemplate} header aliases it
+ * {@code resultfromheader}. This makes both assertions mutation-resistant: with the gate off the header alias must be
+ * absent, and with the gate on the endpoint alias must be absent.
+ */
 public class SqlStoredAllowTemplateFromHeaderTest extends CamelTestSupport {
 
-    private static final String PROC = "SUBNUMBERS(INTEGER :#num1,INTEGER :#num2,OUT INTEGER resultofsum)";
+    private static final String HEADER_TEMPLATE
+            = "SUBNUMBERS(INTEGER ${headers.num1},INTEGER ${headers.num2},OUT INTEGER resultfromheader)";
 
     private EmbeddedDatabase db;
 
@@ -52,18 +62,30 @@ public class SqlStoredAllowTemplateFromHeaderTest extends CamelTestSupport {
 
     @Test
     public void headerTemplateIgnoredByDefault() {
-        // allowTemplateFromHeader defaults to false, so the CamelSqlStoredTemplate header must not override the
-        // endpoint-configured template; the (placeholder) endpoint template is used instead and fails to parse,
-        // which is what confirms the header was ignored rather than executed.
-        Map<String, Object> params = new HashMap<>();
-        params.put("num1", 3);
-        params.put("num2", 1);
-        Map<String, Object> headers = new HashMap<>();
-        headers.put(SqlStoredConstants.SQL_STORED_TEMPLATE, PROC);
-        headers.put(SqlStoredConstants.SQL_STORED_PARAMETERS, params);
+        // allowTemplateFromHeader defaults to false: the CamelSqlStoredTemplate header must be ignored and the
+        // endpoint-configured template executed instead.
+        Map<String, Object> result = execute("direct:gated");
 
-        assertThrows(CamelExecutionException.class,
-                () -> template.requestBodyAndHeaders("direct:gated", "unused", headers));
+        assertEquals(Integer.valueOf(2), result.get("resultfromendpoint"));
+        assertFalse(result.containsKey("resultfromheader"), "the header-supplied template must not have been executed");
+    }
+
+    @Test
+    public void headerTemplateHonouredWhenAllowed() {
+        // With allowTemplateFromHeader=true the CamelSqlStoredTemplate header overrides the endpoint template.
+        Map<String, Object> result = execute("direct:allowed");
+
+        assertEquals(Integer.valueOf(2), result.get("resultfromheader"));
+        assertFalse(result.containsKey("resultfromendpoint"), "the endpoint-configured template must not have been executed");
+    }
+
+    @SuppressWarnings("unchecked")
+    private Map<String, Object> execute(String uri) {
+        Map<String, Object> headers = new HashMap<>();
+        headers.put("num1", 3);
+        headers.put("num2", 1);
+        headers.put(SqlStoredConstants.SQL_STORED_TEMPLATE, HEADER_TEMPLATE);
+        return template.requestBodyAndHeaders(uri, null, headers, Map.class);
     }
 
     @Override
@@ -73,7 +95,12 @@ public class SqlStoredAllowTemplateFromHeaderTest extends CamelTestSupport {
             public void configure() {
                 getContext().getComponent("sql-stored", SqlStoredComponent.class).setDataSource(db);
 
-                from("direct:gated").to("sql-stored:query").to("mock:result");
+                String endpointTemplate
+                        = "SUBNUMBERS(INTEGER ${headers.num1},INTEGER ${headers.num2},OUT INTEGER resultfromendpoint)";
+
+                from("direct:gated").to("sql-stored:" + endpointTemplate).to("mock:result");
+                from("direct:allowed").to("sql-stored:" + endpointTemplate + "?allowTemplateFromHeader=true")
+                        .to("mock:result");
             }
         };
     }

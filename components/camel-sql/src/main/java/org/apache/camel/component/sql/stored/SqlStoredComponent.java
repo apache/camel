@@ -39,11 +39,18 @@ public class SqlStoredComponent extends DefaultComponent {
                             + " This option can be used to turn this off.",
               defaultValue = "true")
     private boolean serviceLocationEnabled = true;
+    @Metadata(label = "producer,security", defaultValue = "false", security = "insecure:dev", insecureValue = "true",
+              description = "Whether to allow overriding the endpoint-configured stored-procedure template with the"
+                            + " CamelSqlStoredTemplate header. Disabled by default; a header-supplied template is"
+                            + " resolved with placeholders only, never as a file:/http: resource. This is the default for"
+                            + " all sql-stored endpoints and can be overridden per endpoint.")
+    private boolean allowTemplateFromHeader;
 
     @Override
     protected Endpoint createEndpoint(String uri, String template, Map<String, Object> parameters) throws Exception {
         SqlStoredEndpoint endpoint = new SqlStoredEndpoint(uri, this);
         endpoint.setServiceLocationEnabled(serviceLocationEnabled);
+        endpoint.setAllowTemplateFromHeader(isAllowTemplateFromHeader());
         endpoint.setTemplate(template);
         setProperties(endpoint, parameters);
 
@@ -90,6 +97,19 @@ public class SqlStoredComponent extends DefaultComponent {
      */
     public void setServiceLocationEnabled(boolean serviceLocationEnabled) {
         this.serviceLocationEnabled = serviceLocationEnabled;
+    }
+
+    public boolean isAllowTemplateFromHeader() {
+        return allowTemplateFromHeader;
+    }
+
+    /**
+     * Whether to allow overriding the endpoint-configured stored-procedure template with the
+     * {@code CamelSqlStoredTemplate} header. Disabled by default; this is the default for all sql-stored endpoints and
+     * can be overridden per endpoint.
+     */
+    public void setAllowTemplateFromHeader(boolean allowTemplateFromHeader) {
+        this.allowTemplateFromHeader = allowTemplateFromHeader;
     }
 
 }
