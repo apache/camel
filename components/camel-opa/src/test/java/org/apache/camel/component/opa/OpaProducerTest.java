@@ -91,6 +91,38 @@ class OpaProducerTest extends CamelTestSupport {
     }
 
     @Test
+    void readsAVerdictNestedInsideTheDecisionDocument() throws Exception {
+        givenDecision(Map.of("result", Map.of("allow", true)));
+
+        Exchange out = template.request(ENDPOINT + "&allowKey=result.allow", e -> {
+        });
+
+        assertThat(out.getMessage().getHeader(OpaConstants.DECISION_ALLOW)).isEqualTo(true);
+    }
+
+    @Test
+    void deniesWhenADottedPathDoesNotResolve() throws Exception {
+        givenDecision(Map.of("result", Map.of("permitted", true)));
+
+        Exchange out = template.request(ENDPOINT + "&allowKey=result.allow", e -> {
+        });
+
+        // fail closed, and the raw document stays available so the misconfiguration can be seen
+        assertThat(out.getMessage().getHeader(OpaConstants.DECISION_ALLOW)).isEqualTo(false);
+        assertThat(out.getMessage().getHeader(OpaConstants.DECISION)).isNotNull();
+    }
+
+    @Test
+    void deniesWhenADottedPathRunsPastANonMap() throws Exception {
+        givenDecision(Map.of("result", "not-a-map"));
+
+        Exchange out = template.request(ENDPOINT + "&allowKey=result.allow", e -> {
+        });
+
+        assertThat(out.getMessage().getHeader(OpaConstants.DECISION_ALLOW)).isEqualTo(false);
+    }
+
+    @Test
     void deniesWhenTheDecisionObjectHasNoVerdictButKeepsTheRawDocument() throws Exception {
         Map<String, Object> decision = Map.of("deny", List.of("not an owner"));
         givenDecision(decision);

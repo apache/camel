@@ -162,12 +162,31 @@ public class OpaPolicyEvaluator {
         if (decision instanceof Boolean b) {
             return b;
         }
-        if (decision instanceof Map<?, ?> map && map.get(allowKey) instanceof Boolean b) {
+        if (readVerdict(decision) instanceof Boolean b) {
             return b;
         }
-        LOG.debug("Policy {} returned a decision with no boolean '{}' verdict, denying. Decision: {}",
-                policyPath, allowKey, decision);
+        // a decision document we cannot read a verdict from is a configuration problem, not a routine deny, and the
+        // route cannot tell the two apart from the verdict header alone - so say so at WARN rather than DEBUG
+        LOG.warn("Policy {} returned a decision with no boolean '{}' verdict, denying. Check that allowKey matches"
+                 + " the shape the policy returns; the raw document is on the {} header. Decision: {}",
+                policyPath, allowKey, OpaConstants.DECISION, decision);
         return false;
+    }
+
+    /**
+     * Reads {@code allowKey} out of the decision document, walking a dotted path so a verdict nested inside the result
+     * - {@code allowKey=result.allow} against <code>{"result": {"allow": true}}</code> - can be reached. A key with no
+     * dot is looked up directly, exactly as before.
+     */
+    private Object readVerdict(Object decision) {
+        Object current = decision;
+        for (String segment : allowKey.split("\\.", -1)) {
+            if (!(current instanceof Map<?, ?> map)) {
+                return null;
+            }
+            current = map.get(segment);
+        }
+        return current;
     }
 
     private void setDecisionHeaders(Exchange exchange, Object decision, boolean allowed) {
