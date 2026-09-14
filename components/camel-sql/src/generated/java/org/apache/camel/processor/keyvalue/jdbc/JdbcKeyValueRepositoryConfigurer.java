@@ -35,6 +35,8 @@ public class JdbcKeyValueRepositoryConfigurer extends org.apache.camel.support.c
         case "deleteIfValueString": target.setDeleteIfValueString(property(camelContext, java.lang.String.class, value)); return true;
         case "deletestring":
         case "deleteString": target.setDeleteString(property(camelContext, java.lang.String.class, value)); return true;
+        case "deserializationfilter":
+        case "deserializationFilter": target.setDeserializationFilter(property(camelContext, java.lang.String.class, value)); return true;
         case "insertstring":
         case "insertString": target.setInsertString(property(camelContext, java.lang.String.class, value)); return true;
         case "jdbctemplate":
@@ -70,6 +72,8 @@ public class JdbcKeyValueRepositoryConfigurer extends org.apache.camel.support.c
         case "deleteIfValueString": return java.lang.String.class;
         case "deletestring":
         case "deleteString": return java.lang.String.class;
+        case "deserializationfilter":
+        case "deserializationFilter": return java.lang.String.class;
         case "insertstring":
         case "insertString": return java.lang.String.class;
         case "jdbctemplate":
@@ -106,6 +110,8 @@ public class JdbcKeyValueRepositoryConfigurer extends org.apache.camel.support.c
         case "deleteIfValueString": return target.getDeleteIfValueString();
         case "deletestring":
         case "deleteString": return target.getDeleteString();
+        case "deserializationfilter":
+        case "deserializationFilter": return target.getDeserializationFilter();
         case "insertstring":
         case "insertString": return target.getInsertString();
         case "jdbctemplate":

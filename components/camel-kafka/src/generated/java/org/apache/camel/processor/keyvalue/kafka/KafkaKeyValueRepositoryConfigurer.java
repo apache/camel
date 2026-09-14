@@ -27,6 +27,8 @@ public class KafkaKeyValueRepositoryConfigurer extends org.apache.camel.support.
         case "bootstrapServers": target.setBootstrapServers(property(camelContext, java.lang.String.class, value)); return true;
         case "consumerconfig":
         case "consumerConfig": target.setConsumerConfig(property(camelContext, java.util.Properties.class, value)); return true;
+        case "deserializationfilter":
+        case "deserializationFilter": target.setDeserializationFilter(property(camelContext, java.lang.String.class, value)); return true;
         case "groupid":
         case "groupId": target.setGroupId(property(camelContext, java.lang.String.class, value)); return true;
         case "maxcachesize":
@@ -49,6 +51,8 @@ public class KafkaKeyValueRepositoryConfigurer extends org.apache.camel.support.
         case "bootstrapServers": return java.lang.String.class;
         case "consumerconfig":
         case "consumerConfig": return java.util.Properties.class;
+        case "deserializationfilter":
+        case "deserializationFilter": return java.lang.String.class;
         case "groupid":
         case "groupId": return java.lang.String.class;
         case "maxcachesize":
@@ -72,6 +76,8 @@ public class KafkaKeyValueRepositoryConfigurer extends org.apache.camel.support.
         case "bootstrapServers": return target.getBootstrapServers();
         case "consumerconfig":
         case "consumerConfig": return target.getConsumerConfig();
+        case "deserializationfilter":
+        case "deserializationFilter": return target.getDeserializationFilter();
         case "groupid":
         case "groupId": return target.getGroupId();
         case "maxcachesize":

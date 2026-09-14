@@ -83,6 +83,13 @@ public class JpaKeyValueRepository extends ServiceSupport implements KeyValueRep
     private boolean joinTransaction = true;
     @Metadata(description = "Whether to use a shared EntityManager", defaultValue = "false")
     private boolean sharedEntityManager;
+    @Metadata(label = "advanced,security",
+              description = "Sets an ObjectInputFilter pattern (jdk.serialFilter syntax) applied when deserializing"
+                            + " values read back from the repository. When not set, the JVM-wide jdk.serialFilter is"
+                            + " used if present; otherwise a conservative default filter denying java.net.* and"
+                            + " otherwise allowing java.*, javax.* and org.apache.camel.* packages is applied. Widen"
+                            + " this pattern when storing instances of your own classes in the repository.")
+    private String deserializationFilter;
 
     /**
      * Creates a new JPA key-value repository. The {@link #setEntityManagerFactory(EntityManagerFactory)} must be called
@@ -122,7 +129,7 @@ public class JpaKeyValueRepository extends ServiceSupport implements KeyValueRep
                     entityManager.flush();
                     rc[0] = null;
                 } else {
-                    rc[0] = KeyValueRepositoryHelper.deserialize(entry.getItemValue());
+                    rc[0] = KeyValueRepositoryHelper.deserialize(entry.getItemValue(), deserializationFilter);
                 }
             } catch (Exception ex) {
                 String contextInfo = String.format(SOMETHING_WENT_WRONG, ex.getMessage());
@@ -154,7 +161,7 @@ public class JpaKeyValueRepository extends ServiceSupport implements KeyValueRep
                 KeyValueEntry entry = findByKey(entityManager, key);
                 if (entry != null) {
                     if (!entry.isExpired()) {
-                        rc[0] = KeyValueRepositoryHelper.deserialize(entry.getItemValue());
+                        rc[0] = KeyValueRepositoryHelper.deserialize(entry.getItemValue(), deserializationFilter);
                     }
                     entry.setItemValue(serializedValue);
                     entry.setExpiresAt(expiresAt);
@@ -196,7 +203,7 @@ public class JpaKeyValueRepository extends ServiceSupport implements KeyValueRep
                     entityManager.flush();
                     rc[0] = null;
                 } else {
-                    rc[0] = KeyValueRepositoryHelper.deserialize(entry.getItemValue());
+                    rc[0] = KeyValueRepositoryHelper.deserialize(entry.getItemValue(), deserializationFilter);
                     entityManager.remove(entry);
                     entityManager.flush();
                 }
@@ -324,7 +331,7 @@ public class JpaKeyValueRepository extends ServiceSupport implements KeyValueRep
                 KeyValueEntry entry = findByKey(entityManager, key);
                 if (entry != null && !entry.isExpired()) {
                     // key exists and is valid -- return existing value
-                    rc[0] = KeyValueRepositoryHelper.deserialize(entry.getItemValue());
+                    rc[0] = KeyValueRepositoryHelper.deserialize(entry.getItemValue(), deserializationFilter);
                 } else if (entry != null) {
                     // key exists but expired -- update in place
                     entry.setItemValue(serializedValue);
@@ -346,7 +353,8 @@ public class JpaKeyValueRepository extends ServiceSupport implements KeyValueRep
                     // re-read to return the existing value
                     try {
                         KeyValueEntry existing = findByKey(entityManager, key);
-                        rc[0] = existing != null ? KeyValueRepositoryHelper.deserialize(existing.getItemValue()) : null;
+                        rc[0] = existing != null
+                                ? KeyValueRepositoryHelper.deserialize(existing.getItemValue(), deserializationFilter) : null;
                     } catch (Exception inner) {
                         // fall through with null
                         rc[0] = null;
@@ -447,6 +455,20 @@ public class JpaKeyValueRepository extends ServiceSupport implements KeyValueRep
      */
     public void setSharedEntityManager(boolean sharedEntityManager) {
         this.sharedEntityManager = sharedEntityManager;
+    }
+
+    public String getDeserializationFilter() {
+        return deserializationFilter;
+    }
+
+    /**
+     * Sets an {@link java.io.ObjectInputFilter} pattern (same syntax as {@code jdk.serialFilter}) applied when
+     * deserializing values read back from the repository. When not set, the JVM-wide {@code jdk.serialFilter} is used
+     * if present, otherwise a conservative default filter is applied. Widen this pattern when storing instances of your
+     * own classes in the repository.
+     */
+    public void setDeserializationFilter(String deserializationFilter) {
+        this.deserializationFilter = deserializationFilter;
     }
 
     // ---- Lifecycle ----

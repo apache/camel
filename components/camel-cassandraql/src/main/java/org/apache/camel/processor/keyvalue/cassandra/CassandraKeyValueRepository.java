@@ -95,6 +95,13 @@ public class CassandraKeyValueRepository extends ServiceSupport implements KeyVa
     @Metadata(description = "Read consistency level",
               enums = "ANY,ONE,TWO,THREE,QUORUM,ALL,LOCAL_ONE,LOCAL_QUORUM,EACH_QUORUM,SERIAL,LOCAL_SERIAL")
     private ConsistencyLevel readConsistencyLevel;
+    @Metadata(label = "advanced,security",
+              description = "Sets an ObjectInputFilter pattern (jdk.serialFilter syntax) applied when deserializing"
+                            + " values read back from the repository. When not set, the JVM-wide jdk.serialFilter is"
+                            + " used if present; otherwise a conservative default filter denying java.net.* and"
+                            + " otherwise allowing java.*, javax.* and org.apache.camel.* packages is applied. Widen"
+                            + " this pattern when storing instances of your own classes in the repository.")
+    private String deserializationFilter;
 
     private PreparedStatement insertStatement;
     private PreparedStatement insertWithTtlStatement;
@@ -280,7 +287,7 @@ public class CassandraKeyValueRepository extends ServiceSupport implements KeyVa
             return null;
         }
         ByteBuffer buffer = row.getByteBuffer(VALUE_COLUMN);
-        return buffer != null ? KeyValueRepositoryHelper.deserialize(buffer) : null;
+        return buffer != null ? KeyValueRepositoryHelper.deserialize(buffer, deserializationFilter) : null;
     }
 
     /**
@@ -368,7 +375,7 @@ public class CassandraKeyValueRepository extends ServiceSupport implements KeyVa
         }
         // Insert was not applied; return the existing value from the result row
         ByteBuffer existingBuffer = row.getByteBuffer(VALUE_COLUMN);
-        return existingBuffer != null ? KeyValueRepositoryHelper.deserialize(existingBuffer) : null;
+        return existingBuffer != null ? KeyValueRepositoryHelper.deserialize(existingBuffer, deserializationFilter) : null;
     }
 
     /**
@@ -475,5 +482,19 @@ public class CassandraKeyValueRepository extends ServiceSupport implements KeyVa
 
     public void setReadConsistencyLevel(ConsistencyLevel readConsistencyLevel) {
         this.readConsistencyLevel = readConsistencyLevel;
+    }
+
+    public String getDeserializationFilter() {
+        return deserializationFilter;
+    }
+
+    /**
+     * Sets an {@link java.io.ObjectInputFilter} pattern (same syntax as {@code jdk.serialFilter}) applied when
+     * deserializing values read back from the repository. When not set, the JVM-wide {@code jdk.serialFilter} is used
+     * if present, otherwise a conservative default filter is applied. Widen this pattern when storing instances of your
+     * own classes in the repository.
+     */
+    public void setDeserializationFilter(String deserializationFilter) {
+        this.deserializationFilter = deserializationFilter;
     }
 }
