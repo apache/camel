@@ -49,7 +49,6 @@ jobs:
         run: |
           pr="$(gh api /repos/${GH_REPO}/pulls/${PR_NUMBER})"
           head_sha="$(echo "$pr" | jq -r .head.sha)"
-          head_ref="$(echo "$pr" | jq -r .head.ref)"
           # Check that the PR branch was not pushed to after the comment was created.
           commit="$(gh api /repos/${GH_REPO}/commits/${head_sha})"
           committed_at="$(echo "$commit" | jq -r .commit.committer.date)"
@@ -58,7 +57,10 @@ jobs:
               exit 1
           fi
           echo "pr_sha=$head_sha" >> $GITHUB_OUTPUT
-          echo "pr_ref=$head_ref" >> $GITHUB_OUTPUT
+          # Use refs/pull/<N>/head so the ref is resolvable in apache/camel for both
+          # same-repo and fork PRs (head.ref is the branch name in the fork, which
+          # does not exist in the base repository).
+          echo "pr_ref=refs/pull/${PR_NUMBER}/head" >> $GITHUB_OUTPUT
       - name: React to comment
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
