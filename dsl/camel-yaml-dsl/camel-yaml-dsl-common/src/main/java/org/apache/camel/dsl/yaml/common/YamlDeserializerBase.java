@@ -56,10 +56,7 @@ public abstract class YamlDeserializerBase<T> extends YamlDeserializerSupport im
         if (node.getNodeType() == NodeType.SCALAR) {
             ScalarNode mn = (ScalarNode) node;
             target = newInstance(mn.getValue());
-            YamlDeserializationContext ctx = getDeserializationContext(node);
-            if (ctx != null) {
-                ctx.warnCompactNotationOnce(LOG);
-            }
+            warnCompactNotation(node);
             // line number points to the scalar itself, so it should be +1
             if (line != -1) {
                 line++;
@@ -90,6 +87,17 @@ public abstract class YamlDeserializerBase<T> extends YamlDeserializerSupport im
      */
     protected void afterPropertiesSet(T target, Node node) {
         // noop
+    }
+
+    /**
+     * The compact notation (a step or a language written as a string, a language key directly on the EIP) is
+     * deprecated: warns once per resource that the canonical notation is recommended.
+     */
+    protected static void warnCompactNotation(Node node) {
+        YamlDeserializationContext ctx = getDeserializationContext(node);
+        if (ctx != null) {
+            ctx.warnCompactNotationOnce(LOG);
+        }
     }
 
     /**

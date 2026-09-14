@@ -883,7 +883,9 @@ camel validate normalize --output normalized/ myroute.yaml
 === Compact notation warning
 
 Camel logs a WARN message when YAML routes use compact (shorthand) notation instead of
-the canonical (explicit) form. This is to encourage adopting the canonical style which is
+the canonical (explicit) form: a step written as a string (`log: "..."`), a language written as a
+string (`simple: "..."`), or a language key directly on the EIP (`setBody: {simple: ...}`) instead of
+under `expression:`. This is to encourage adopting the canonical style which is
 more friendly for tooling and AI assistants.
 
 The warning is logged once per resource file and looks like:
@@ -910,7 +912,12 @@ To validate YAML routes against the canonical schema:
 camel validate yaml --canonical myroute.yaml
 ----
 
-This reports any shorthands or implicit forms that are not valid in the canonical schema.
+This reports each use of the compact notation with the canonical form to write, for example:
+
+----
+/0/route/from/steps/0/setBody: setBody: {simple: ...} is the deprecated compact notation: an expression is written under expression: (setBody: {expression: {simple: {expression: "..."}}}); camel validate normalize rewrites a file in the canonical format
+/0/route/from/steps/1/log: log: "..." is the deprecated compact notation: write log: {message: "..."}; camel validate normalize rewrites a file in the canonical format
+----
 
 The `YamlValidator` class supports both schemas programmatically:
 
