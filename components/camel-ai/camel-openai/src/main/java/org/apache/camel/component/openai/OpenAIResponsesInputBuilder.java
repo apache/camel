@@ -25,7 +25,9 @@ import java.util.ArrayList;
 import java.util.Base64;
 import java.util.List;
 
+import com.openai.models.responses.EasyInputMessage;
 import com.openai.models.responses.ResponseInputContent;
+import com.openai.models.responses.ResponseInputFile;
 import com.openai.models.responses.ResponseInputImage;
 import com.openai.models.responses.ResponseInputItem;
 import com.openai.models.responses.ResponseInputText;
@@ -35,10 +37,12 @@ import org.apache.camel.WrappedFile;
 import org.apache.camel.util.ObjectHelper;
 
 /**
- * Builds Responses API {@code input} from Camel exchange message bodies (text and image), aligned with chat-completion
- * ergonomics.
+ * Builds Responses API {@code input} from Camel exchange message bodies (text, image and PDF), aligned with
+ * chat-completion ergonomics.
  */
 final class OpenAIResponsesInputBuilder {
+
+    private static final String PDF_MIME_TYPE = "application/pdf";
 
     private OpenAIResponsesInputBuilder() {
     }
@@ -97,6 +101,10 @@ final class OpenAIResponsesInputBuilder {
             byte[] image = inputFile != null ? Files.readAllBytes(inputFile.toPath()) : readBodyBytes(in);
             return buildImageInput(image, mime, userPrompt);
         }
+        if (PDF_MIME_TYPE.equals(mime)) {
+            byte[] document = inputFile != null ? Files.readAllBytes(inputFile.toPath()) : readBodyBytes(in);
+            return buildFileInput(document, mime, fileName(in, inputFile), userPrompt);
+        }
         throw unsupportedMimeType(mime,
                 inputFile != null ? inputFile.getName() : in.getHeader(Exchange.FILE_NAME, String.class));
     }
@@ -106,6 +114,9 @@ final class OpenAIResponsesInputBuilder {
         String mime = MimeTypeHelper.resolveForBinary(in);
         if (MimeTypeHelper.isImage(mime)) {
             return buildImageInput(readBodyBytes(in), mime, userPrompt);
+        }
+        if (PDF_MIME_TYPE.equals(mime)) {
+            return buildFileInput(readBodyBytes(in), mime, fileName(in, null), userPrompt);
         }
         return buildFromText(in, userPrompt, config);
     }
@@ -127,6 +138,33 @@ final class OpenAIResponsesInputBuilder {
         return InputSpec.structured(items);
     }
 
+    private static InputSpec buildFileInput(byte[] document, String mime, String fileName, String userPrompt) {
+        if (userPrompt == null || userPrompt.isEmpty()) {
+            throw new IllegalArgumentException("User message must be set when using a PDF body");
+        }
+        String dataUrl = "data:" + mime + ";base64," + Base64.getEncoder().encodeToString(document);
+        ResponseInputItem.Message message = ResponseInputItem.Message.builder()
+                .role(ResponseInputItem.Message.Role.USER)
+                .addContent(ResponseInputContent.ofInputText(
+                        ResponseInputText.builder().text(userPrompt).build()))
+                .addContent(ResponseInputContent.ofInputFile(
+                        ResponseInputFile.builder().filename(fileName).fileData(dataUrl).build()))
+                .build();
+        return InputSpec.structured(List.of(ResponseInputItem.ofMessage(message)));
+    }
+
+    private static String fileName(Message in, File inputFile) {
+        if (inputFile != null) {
+            return inputFile.getName();
+        }
+        String fileName = in.getHeader(Exchange.FILE_NAME_ONLY, String.class);
+        if (ObjectHelper.isEmpty(fileName)) {
+            fileName = in.getHeader(Exchange.FILE_NAME, String.class);
+        }
+        // the API identifies the document by its file name, so a name without extension is not enough
+        return ObjectHelper.isNotEmpty(fileName) ? fileName : "document.pdf";
+    }
+
     private static byte[] readBodyBytes(Message in) throws IOException {
         Object body = in.getBody();
         if (body instanceof byte[] bytes) {
@@ -144,7 +182,7 @@ final class OpenAIResponsesInputBuilder {
 
     private static IllegalArgumentException unsupportedMimeType(String mime, String fileName) {
         return new IllegalArgumentException(
-                "Only text and image files are supported. Detected MIME type: " + mime
+                "Only text, image and PDF files are supported. Detected MIME type: " + mime
                                             + (fileName != null ? " for file: " + fileName : "")
                                             + ". Set the " + OpenAIConstants.MEDIA_TYPE
                                             + " header to override MIME type detection");
@@ -162,6 +200,33 @@ final class OpenAIResponsesInputBuilder {
 
         boolean isPlainText() {
             return plainText != null;
+        }
+
+        /**
+         * Returns the input as a list of items, turning plain text into a user message, so that other messages can be
+         * sent alongside it.
+         */
+        List<ResponseInputItem> items() {
+            if (isPlainText()) {
+                return List.of(ResponseInputItem.ofEasyInputMessage(EasyInputMessage.builder()
+                        .role(EasyInputMessage.Role.USER)
+                        .content(plainText)
+                        .build()));
+            }
+            return structuredItems;
+        }
+
+        /**
+         * Returns this input preceded by a developer message.
+         */
+        InputSpec withDeveloperMessage(String developerMessage) {
+            List<ResponseInputItem> items = new ArrayList<>();
+            items.add(ResponseInputItem.ofEasyInputMessage(EasyInputMessage.builder()
+                    .role(EasyInputMessage.Role.DEVELOPER)
+                    .content(developerMessage)
+                    .build()));
+            items.addAll(items());
+            return structured(items);
         }
     }
 }

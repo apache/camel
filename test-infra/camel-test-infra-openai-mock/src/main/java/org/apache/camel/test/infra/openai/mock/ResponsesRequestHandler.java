@@ -19,9 +19,12 @@ package org.apache.camel.test.infra.openai.mock;
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
 import java.util.List;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.sun.net.httpserver.HttpExchange;
 
 /**
@@ -30,6 +33,8 @@ import com.sun.net.httpserver.HttpExchange;
 public class ResponsesRequestHandler {
 
     private final List<MockExpectation> expectations;
+    private final Map<String, ObjectNode> storedResponses = new ConcurrentHashMap<>();
+    private final Map<String, MockExpectation> expectationsByCallId = new ConcurrentHashMap<>();
     private final ResponseBuilder responseBuilder;
     private final ObjectMapper objectMapper;
 
@@ -45,25 +50,138 @@ public class ResponsesRequestHandler {
             requestBody = new String(is.readAllBytes(), StandardCharsets.UTF_8);
         }
         JsonNode root = objectMapper.readTree(requestBody);
-        RequestContext context = new RequestContext(root);
-        String userInput = context.getResponsesInputText();
-        if (userInput == null) {
-            return responseBuilder.createErrorResponse(400, "No input text in Responses API request", exchange);
-        }
+        JsonNode input = root.path("input");
+        String userInput = new RequestContext(root).getResponsesInputText();
 
-        MockExpectation expectation = findExpectationByInput(userInput);
+        // tool results are paired with their call, so that a follow-up in a stored conversation, which only carries
+        // the function_call_output items, is matched as well
+        MockExpectation expectation = endsWithFunctionCallOutput(input)
+                ? expectationsByCallId.get(input.get(input.size() - 1).path("call_id").asText())
+                : null;
         if (expectation == null) {
-            return responseBuilder.createErrorResponse(404, "No matching expectation for input: " + userInput, exchange);
-        }
-        if (expectation.getRequestAssertion() != null) {
-            expectation.getRequestAssertion().accept(requestBody);
+            if (userInput == null) {
+                return responseBuilder.createErrorResponse(400, "No input text in Responses API request", exchange);
+            }
+            expectation = findExpectationByInput(userInput);
+            if (expectation == null) {
+                return responseBuilder.createErrorResponse(404, "No matching expectation for input: " + userInput,
+                        exchange);
+            }
         }
         int promptTokens = expectation.getUsagePromptTokens() != null
                 ? expectation.getUsagePromptTokens() : ResponseBuilder.DEFAULT_PROMPT_TOKENS;
         int completionTokens = expectation.getUsageCompletionTokens() != null
                 ? expectation.getUsageCompletionTokens() : ResponseBuilder.DEFAULT_COMPLETION_TOKENS;
-        return responseBuilder.createResponsesTextResponse(
-                expectation.getExpectedResponse(), promptTokens, completionTokens);
+
+        if (endsWithFunctionCallOutput(input) && !expectation.getToolSequence().isEmpty()) {
+            return store(handleFunctionCallOutput(expectation, input, promptTokens, completionTokens), root);
+        }
+
+        expectation.resetToolSequence();
+        if (expectation.getRequestAssertion() != null) {
+            expectation.getRequestAssertion().accept(requestBody);
+        }
+        if (expectation.hasError()) {
+            return responseBuilder.createApiErrorResponse(expectation, exchange);
+        }
+        if (expectation.getCustomResponseFunction() != null) {
+            return expectation.getCustomResponseFunction().apply(exchange, userInput);
+        }
+        String response;
+        if (expectation.getResponseType() == MockResponseType.TOOL_CALLS) {
+            response = createFunctionCallResponse(expectation, promptTokens, completionTokens);
+        } else if (expectation.getResponsesOutput() != null) {
+            response = responseBuilder.createResponsesOutputResponse(
+                    expectation.getResponsesOutput(), promptTokens, completionTokens);
+        } else {
+            response = responseBuilder.createResponsesTextResponse(
+                    expectation.getExpectedResponse(), promptTokens, completionTokens);
+        }
+        return store(response, root);
+    }
+
+    /**
+     * Serves {@code GET /v1/responses/{id}} and {@code POST /v1/responses/{id}/cancel} for the responses created by
+     * this mock.
+     */
+    public String handleStoredResponse(HttpExchange exchange) throws Exception {
+        String path = exchange.getRequestURI().getPath();
+        boolean cancel = path.endsWith("/cancel");
+        String id = path.substring(path.indexOf("/responses/") + "/responses/".length());
+        if (cancel) {
+            id = id.substring(0, id.length() - "/cancel".length());
+        }
+        ObjectNode response = storedResponses.get(id);
+        if (response == null) {
+            return responseBuilder.createErrorResponse(404, "No response found with id: " + id, exchange);
+        }
+        if (cancel) {
+            response = withoutOutput(response, "cancelled");
+            storedResponses.put(id, response);
+        }
+        return objectMapper.writeValueAsString(response);
+    }
+
+    /**
+     * Stores the response so that it can be retrieved or cancelled. A background request is answered with a queued copy
+     * without output, and retrieving it returns the completed response.
+     */
+    private String store(String responseJson, JsonNode request) throws Exception {
+        ObjectNode response = (ObjectNode) objectMapper.readTree(responseJson);
+        storedResponses.put(response.path("id").asText(), response);
+        if (!request.path("background").asBoolean(false)) {
+            return responseJson;
+        }
+        return objectMapper.writeValueAsString(withoutOutput(response, "queued"));
+    }
+
+    private static ObjectNode withoutOutput(ObjectNode response, String status) {
+        ObjectNode copy = response.deepCopy();
+        copy.put("status", status);
+        copy.putArray("output");
+        return copy;
+    }
+
+    /**
+     * Answers a request that feeds function call results back to the model: the next step of the tool sequence is
+     * returned as function calls and, once the sequence is exhausted, the final text.
+     */
+    private String handleFunctionCallOutput(
+            MockExpectation expectation, JsonNode input, int promptTokens, int completionTokens)
+            throws Exception {
+        expectation.advanceToNextToolStep();
+        if (expectation.hasMoreToolSteps()) {
+            return createFunctionCallResponse(expectation, promptTokens, completionTokens);
+        }
+
+        String lastOutput = input.get(input.size() - 1).path("output").asText();
+        String text;
+        if (expectation.getExpectedResponse() != null) {
+            text = expectation.getExpectedResponse();
+        } else if (expectation.getToolContentResponse() != null) {
+            text = lastOutput + " " + expectation.getToolContentResponse();
+        } else {
+            text = lastOutput;
+        }
+        return responseBuilder.createResponsesTextResponse(text, promptTokens, completionTokens);
+    }
+
+    /**
+     * Replies with the function calls of the current tool step and remembers which expectation issued each call id.
+     */
+    private String createFunctionCallResponse(MockExpectation expectation, int promptTokens, int completionTokens)
+            throws Exception {
+        String response = responseBuilder.createResponsesFunctionCallResponse(
+                expectation.getCurrentToolStep().getToolCalls(), promptTokens, completionTokens);
+        for (JsonNode item : objectMapper.readTree(response).path("output")) {
+            expectationsByCallId.put(item.path("call_id").asText(), expectation);
+        }
+        return response;
+    }
+
+    private static boolean endsWithFunctionCallOutput(JsonNode input) {
+        return input.isArray() && !input.isEmpty()
+                && "function_call_output".equals(input.get(input.size() - 1).path("type").asText());
     }
 
     private MockExpectation findExpectationByInput(String input) {

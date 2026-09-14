@@ -116,12 +116,27 @@ public class OpenAIConfiguration implements Cloneable {
     private String previousResponseId;
 
     @UriParam
+    @Metadata(description = "Id of a conversation created with the OpenAI Conversations API to run the request in. "
+                            + "The conversation keeps its items across exchanges. Cannot be combined with "
+                            + "previousResponseId (Responses API only)")
+    private String conversationId;
+
+    @UriParam(defaultValue = "false")
+    @Metadata(description = "Run the model response in the background (Responses API only). The exchange completes as "
+                            + "soon as the response is queued, with an empty body and the CamelOpenAIResponseStatus "
+                            + "header, and the response is stored so that it can be retrieved later. Cannot be "
+                            + "combined with automatic tool execution")
+    private boolean background;
+
+    @UriParam
     @Metadata(description = "Comma-separated hosted tools for the Responses API: web_search, file_search, code_interpreter")
     private String builtinTools;
 
-    @UriParam
-    @Metadata(description = "JSON array of hosted MCP tool definitions (OpenAI Tool.Mcp) passed through to the Responses API",
-              inputLanguage = "json", largeInput = true)
+    @UriParam(security = "secret")
+    @Metadata(description = "JSON array of hosted MCP tool definitions passed to the Responses API as OpenAI mcp tools. "
+                            + "Every field of the API is sent, such as server_label, server_url, require_approval, "
+                            + "allowed_tools, headers and authorization. Marked secret because it can carry credentials.",
+              inputLanguage = "json", largeInput = true, security = "secret")
     private String hostedMcpTools;
 
     @UriParam
@@ -129,7 +144,10 @@ public class OpenAIConfiguration implements Cloneable {
     private String fileSearchVectorStoreIds;
 
     @UriParam(defaultValue = "false")
-    @Metadata(description = "Enable conversation memory per Exchange")
+    @Metadata(description = "Enable conversation memory per Exchange. The chat-completion operation keeps the message "
+                            + "history in the conversationHistoryProperty exchange property. The responses operation "
+                            + "keeps the conversation on the server, stores the last response id in that property and "
+                            + "sends it as previous_response_id, which requires a server that stores responses")
     private boolean conversationMemory = false;
 
     @UriParam(defaultValue = "CamelOpenAIConversationHistory")
@@ -581,6 +599,22 @@ public class OpenAIConfiguration implements Cloneable {
 
     public void setPreviousResponseId(String previousResponseId) {
         this.previousResponseId = previousResponseId;
+    }
+
+    public String getConversationId() {
+        return conversationId;
+    }
+
+    public void setConversationId(String conversationId) {
+        this.conversationId = conversationId;
+    }
+
+    public boolean isBackground() {
+        return background;
+    }
+
+    public void setBackground(boolean background) {
+        this.background = background;
     }
 
     public String getBuiltinTools() {

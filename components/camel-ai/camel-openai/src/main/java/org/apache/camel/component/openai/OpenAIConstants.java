@@ -42,6 +42,10 @@ public final class OpenAIConstants {
     public static final String MAX_TOKENS = "CamelOpenAIMaxTokens";
     @Metadata(description = "Previous response id for server-side conversation state on the Responses API", javaType = "String")
     public static final String PREVIOUS_RESPONSE_ID = "CamelOpenAIPreviousResponseId";
+    @Metadata(description = "The id of a conversation created with the Conversations API to run the Responses API "
+                            + "request in",
+              javaType = "String")
+    public static final String CONVERSATION_ID = "CamelOpenAIConversationId";
     @Metadata(description = "Whether to stream the response back incrementally", javaType = "Boolean")
     public static final String STREAMING = "CamelOpenAIStreaming";
     @Metadata(description = "The Java class name (FQCN) to use for structured output parsing", javaType = "String")
@@ -66,7 +70,9 @@ public final class OpenAIConstants {
     public static final String REASONING_CONTENT = "CamelOpenAIReasoningContent";
     @Metadata(description = "The model used for the completion response", javaType = "String")
     public static final String RESPONSE_MODEL = "CamelOpenAIResponseModel";
-    @Metadata(description = "The unique identifier for the completion response", javaType = "String")
+    @Metadata(description = "The unique identifier for the completion response. The responses-retrieve and "
+                            + "responses-cancel operations read the id of the response to act on from this header",
+              javaType = "String")
     public static final String RESPONSE_ID = "CamelOpenAIResponseId";
     @Metadata(description = "The reason the completion finished (e.g., stop, length, content_filter)", javaType = "String")
     public static final String FINISH_REASON = "CamelOpenAIFinishReason";
@@ -77,6 +83,15 @@ public final class OpenAIConstants {
     @Metadata(description = "The total number of tokens used (prompt + completion) for the latest API call",
               javaType = "Long")
     public static final String TOTAL_TOKENS = "CamelOpenAITotalTokens";
+    @Metadata(description = "The annotations attached to the output text of a Responses API answer, such as the "
+                            + "url_citation and file_citation citations of web_search and file_search. Each entry is a "
+                            + "map of the API fields",
+              javaType = "java.util.List<java.util.Map<String, Object>>")
+    public static final String RESPONSE_ANNOTATIONS = "CamelOpenAIResponseAnnotations";
+    @Metadata(description = "The status of a Responses API response: completed, failed, in_progress, cancelled, queued "
+                            + "or incomplete",
+              javaType = "String")
+    public static final String RESPONSE_STATUS = "CamelOpenAIResponseStatus";
 
     // MCP Tool Call Headers
     @Metadata(description = "Number of tool call iterations performed in the agentic loop", javaType = "Integer")

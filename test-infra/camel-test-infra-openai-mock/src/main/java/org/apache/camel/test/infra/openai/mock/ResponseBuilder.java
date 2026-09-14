@@ -17,6 +17,7 @@
 package org.apache.camel.test.infra.openai.mock;
 
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -78,12 +79,47 @@ public class ResponseBuilder {
         message.put("status", "completed");
         message.put("content", List.of(outputText));
 
+        return createResponsesResponse(objectMapper.valueToTree(List.of(message)), inputTokens, outputTokens);
+    }
+
+    /**
+     * Creates a Responses API response holding the given output items.
+     *
+     * @param outputItemsJson a JSON array of Responses API output items
+     */
+    public String createResponsesOutputResponse(String outputItemsJson, int inputTokens, int outputTokens)
+            throws Exception {
+        return createResponsesResponse(objectMapper.readTree(outputItemsJson), inputTokens, outputTokens);
+    }
+
+    /**
+     * Creates a Responses API response whose output holds one {@code function_call} item per tool call.
+     */
+    public String createResponsesFunctionCallResponse(
+            List<ToolCallDefinition> toolCalls, int inputTokens, int outputTokens)
+            throws Exception {
+        List<Map<String, Object>> output = new ArrayList<>();
+        for (ToolCallDefinition toolCall : toolCalls) {
+            Map<String, Object> functionCall = new HashMap<>();
+            functionCall.put("type", "function_call");
+            functionCall.put("id", "fc_" + UUID.randomUUID());
+            functionCall.put("call_id", "call_" + UUID.randomUUID());
+            functionCall.put("name", toolCall.getName());
+            functionCall.put("arguments", objectMapper.writeValueAsString(toolCall.getArguments()));
+            functionCall.put("status", "completed");
+            output.add(functionCall);
+        }
+        return createResponsesResponse(objectMapper.valueToTree(output), inputTokens, outputTokens);
+    }
+
+    private String createResponsesResponse(JsonNode output, int inputTokens, int outputTokens) throws Exception {
         Map<String, Object> response = new HashMap<>();
         response.put("id", "resp_" + UUID.randomUUID());
         response.put("object", "response");
         response.put("created_at", System.currentTimeMillis() / 1000.0);
         response.put("model", "openai-mock");
-        response.put("output", List.of(message));
+        response.put("status", "completed");
+        response.put("output", output);
         response.put("parallel_tool_calls", true);
         response.put("tool_choice", "auto");
         response.put("tools", List.of());
@@ -151,6 +187,25 @@ public class ResponseBuilder {
 
     public String createFinalToolResponse(JsonNode messagesNode, String fallbackContent) throws Exception {
         return createFinalToolResponse(messagesNode, fallbackContent, null, null);
+    }
+
+    /**
+     * Sends the OpenAI API error configured on the expectation: its status code, an optional {@code Retry-After} header
+     * and an error body shaped like the one returned by OpenAI.
+     */
+    public String createApiErrorResponse(MockExpectation expectation, HttpExchange exchange) throws IOException {
+        Map<String, Object> error = new HashMap<>();
+        error.put("message", expectation.getErrorMessage());
+        error.put("type", expectation.getErrorType());
+        error.put("code", expectation.getErrorType());
+        String body = objectMapper.writeValueAsString(Map.of("error", error));
+
+        exchange.getResponseHeaders().set("Content-Type", "application/json");
+        if (expectation.getRetryAfterSeconds() != null) {
+            exchange.getResponseHeaders().set("Retry-After", String.valueOf(expectation.getRetryAfterSeconds()));
+        }
+        exchange.sendResponseHeaders(expectation.getErrorStatusCode(), body.getBytes(StandardCharsets.UTF_8).length);
+        return body;
     }
 
     public String createErrorResponse(int statusCode, String errorMessage, HttpExchange exchange) {
