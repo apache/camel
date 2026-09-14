@@ -417,13 +417,28 @@ public abstract class InfinispanProducer<M extends InfinispanManager, C extends 
     }
 
     protected boolean hasLifespan(Message message) {
-        return !InfinispanUtil.isHeaderEmpty(message, InfinispanConstants.LIFESPAN_TIME)
-                && !InfinispanUtil.isHeaderEmpty(message, InfinispanConstants.LIFESPAN_TIME_UNIT);
+        return hasExpiry(message, InfinispanConstants.LIFESPAN_TIME, InfinispanConstants.LIFESPAN_TIME_UNIT);
     }
 
     protected boolean hasMaxIdleTime(Message message) {
-        return !InfinispanUtil.isHeaderEmpty(message, InfinispanConstants.MAX_IDLE_TIME)
-                && !InfinispanUtil.isHeaderEmpty(message, InfinispanConstants.MAX_IDLE_TIME_UNIT);
+        return hasExpiry(message, InfinispanConstants.MAX_IDLE_TIME, InfinispanConstants.MAX_IDLE_TIME_UNIT);
+    }
+
+    /**
+     * An expiry needs both an amount and the time unit it is expressed in. When only one of the two is on the message
+     * the expiry cannot be applied, and the entry is stored without it, so report that instead of dropping it quietly.
+     */
+    private boolean hasExpiry(Message message, String timeHeader, String timeUnitHeader) {
+        boolean hasTime = !InfinispanUtil.isHeaderEmpty(message, timeHeader);
+        boolean hasTimeUnit = !InfinispanUtil.isHeaderEmpty(message, timeUnitHeader);
+
+        if (hasTime != hasTimeUnit) {
+            LOG.warn("Both {} and {} are needed to set an expiry on cache {}, but only {} is set on the message,"
+                     + " so the entry is stored without one.",
+                    timeHeader, timeUnitHeader, getCacheName(), hasTime ? timeHeader : timeUnitHeader);
+        }
+
+        return hasTime && hasTimeUnit;
     }
 
     protected void setResult(Message message, Object result) {
