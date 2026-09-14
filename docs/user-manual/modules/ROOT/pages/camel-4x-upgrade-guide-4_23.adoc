@@ -1979,3 +1979,11 @@ The accessors changed accordingly:
 
 The fluent builder `ParamDefinition.required(Boolean)` is unchanged, and a `required(String)` overload
 was added for placeholders. Routes written in XML, YAML or the Java DSL do not need any change.
+
+=== camel-weaviate - removed the unused vector field name header
+
+The `CamelweaviateVectorFieldName` header (`WeaviateVectorDbHeaders.VECTOR_FIELD_NAME`) has been removed.
+It was read by the Weaviate embeddings data-type transformer but its value was never used — the embedding
+vector is always sent as the object vector, so a "vector field name" had no effect (Weaviate has no named
+vector-field concept in this producer). Routes that set this header can simply drop it; behaviour is
+unchanged.
