@@ -283,18 +283,6 @@ public interface WeaviateVectorDbEndpointBuilderFactory {
             return "CamelWeaviateTextFieldName";
         }
         /**
-         * Vector Field Name for Create/Update/Query operation.
-         * 
-         * The option is a: {@code String} type.
-         * 
-         * Group: producer
-         * 
-         * @return the name of the header {@code weaviateVectorFieldName}.
-         */
-        public String weaviateVectorFieldName() {
-            return "CamelweaviateVectorFieldName";
-        }
-        /**
          * Collection Name for all operations.
          * 
          * The option is a: {@code String} type.

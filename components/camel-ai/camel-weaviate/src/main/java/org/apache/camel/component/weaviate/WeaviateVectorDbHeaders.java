@@ -27,9 +27,6 @@ public class WeaviateVectorDbHeaders {
     @Metadata(description = "Text Field Name for Create/Update/Query operation", javaType = "String")
     public static final String TEXT_FIELD_NAME = "CamelWeaviateTextFieldName";
 
-    @Metadata(description = "Vector Field Name for Create/Update/Query operation", javaType = "String")
-    public static final String VECTOR_FIELD_NAME = "CamelweaviateVectorFieldName";
-
     @Metadata(description = "Collection Name for all operations", javaType = "String")
     public static final String COLLECTION_NAME = "CamelWeaviateCollectionName";
 

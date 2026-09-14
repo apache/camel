@@ -43,7 +43,6 @@ public class WeaviateEmbeddingsDataTypeTransformer extends Transformer {
     public void transform(Message message, DataType fromType, DataType toType) {
         Embedding embedding = message.getHeader(CamelLangchain4jAttributes.CAMEL_LANGCHAIN4J_EMBEDDING_VECTOR, Embedding.class);
         String textFieldName = message.getHeader(WeaviateVectorDbHeaders.TEXT_FIELD_NAME, () -> "text", String.class);
-        String vectorFieldName = message.getHeader(WeaviateVectorDbHeaders.VECTOR_FIELD_NAME, () -> "vector", String.class);
         String collectionName = message.getHeader(WeaviateVectorDbHeaders.COLLECTION_NAME, () -> "embeddings", String.class);
         String keyName = message.getHeader(WeaviateVectorDbHeaders.KEY_NAME, () -> "id", String.class);
         Object keyValue = message.getHeader(WeaviateVectorDbHeaders.KEY_VALUE, () -> null);
@@ -51,13 +50,13 @@ public class WeaviateEmbeddingsDataTypeTransformer extends Transformer {
         final WeaviateVectorDbAction action = message.getHeader(WeaviateVectorDbHeaders.ACTION, WeaviateVectorDbAction.class);
         switch (action) {
             case CREATE ->
-                createEmbeddingOperation(message, embedding, vectorFieldName, textFieldName, text, collectionName, keyValue,
+                createEmbeddingOperation(message, embedding, textFieldName, text, collectionName, keyValue,
                         keyName);
             case UPDATE_BY_ID ->
-                updateEmbeddingOperation(message, embedding, vectorFieldName, textFieldName, text, collectionName, keyValue,
+                updateEmbeddingOperation(message, embedding, textFieldName, text, collectionName, keyValue,
                         keyName);
             case QUERY ->
-                queryEmbeddingOperation(message, embedding, vectorFieldName, textFieldName, text, collectionName, keyValue,
+                queryEmbeddingOperation(message, embedding, textFieldName, text, collectionName, keyValue,
                         keyName);
             default ->
                 throw new IllegalStateException("The only operations supported are create, updatebyid and query");
@@ -65,14 +64,14 @@ public class WeaviateEmbeddingsDataTypeTransformer extends Transformer {
     }
 
     private static void createEmbeddingOperation(
-            Message message, Embedding embedding, String vectorFieldName, String textFieldName, TextSegment text,
+            Message message, Embedding embedding, String textFieldName, TextSegment text,
             String collectionName, Object keyValue, String keyName) {
         message.setBody(embedding.vectorAsList(), List.class);
         setProperties(message, textFieldName, text, keyValue, keyName);
     }
 
     private static void updateEmbeddingOperation(
-            Message message, Embedding embedding, String vectorFieldName, String textFieldName, TextSegment text,
+            Message message, Embedding embedding, String textFieldName, TextSegment text,
             String collectionName, Object keyValue, String keyName) {
         message.setBody(embedding.vectorAsList(), List.class);
         setProperties(message, textFieldName, text, keyValue, keyName);
@@ -100,7 +99,7 @@ public class WeaviateEmbeddingsDataTypeTransformer extends Transformer {
     }
 
     private static void queryEmbeddingOperation(
-            Message message, Embedding embedding, String vectorFieldName, String textFieldName, TextSegment text,
+            Message message, Embedding embedding, String textFieldName, TextSegment text,
             String collectionName, Object keyValue, String keyName) {
         message.setBody(embedding.vectorAsList(), List.class);
 
