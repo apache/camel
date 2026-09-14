@@ -94,7 +94,7 @@ public class GroovyXmlDataFormat extends ServiceSupport implements DataFormat, D
         if (graph instanceof GPathResult gp) {
             XmlUtil.serialize(gp, stream);
         } else if (graph instanceof Node n) {
-            serialize(exchange, n, stream);
+            serialize(n, stream);
         } else if (graph instanceof Map map) {
             serialize(exchange, map, stream);
         } else {
@@ -173,7 +173,7 @@ public class GroovyXmlDataFormat extends ServiceSupport implements DataFormat, D
         }
     }
 
-    private void serialize(Exchange exchange, Node node, OutputStream os) {
+    private void serialize(Node node, OutputStream os) {
         // XmlNodePrinter writes no XML declaration, so the document must be UTF-8 to be self-describing
         PrintWriter pw = new PrintWriter(new OutputStreamWriter(os, StandardCharsets.UTF_8));
         XmlNodePrinter nodePrinter = new XmlNodePrinter(pw);
@@ -236,10 +236,11 @@ public class GroovyXmlDataFormat extends ServiceSupport implements DataFormat, D
         if (value instanceof String s) {
             return s;
         }
-        // final JDK types no user converter can target: the type converter would return toString() for them
+        // final JDK types (or exactly BigDecimal/BigInteger, which are not final) no user converter can target: the
+        // type converter would return toString() for them
         if (value instanceof Integer || value instanceof Long || value instanceof Double || value instanceof Boolean
                 || value instanceof Short || value instanceof Byte || value instanceof Float
-                || value instanceof BigDecimal || value instanceof BigInteger) {
+                || value.getClass() == BigDecimal.class || value.getClass() == BigInteger.class) {
             return value.toString();
         }
         return context.getTypeConverter().convertTo(String.class, value);

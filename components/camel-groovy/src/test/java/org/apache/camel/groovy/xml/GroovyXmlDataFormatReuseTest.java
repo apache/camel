@@ -51,7 +51,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
- * The groovyXml data format reuses its SAX parser configuration and writes with the exchange charset.
+ * The groovyXml data format reuses its SAX parser configuration and writes UTF-8.
  */
 public class GroovyXmlDataFormatReuseTest {
 
