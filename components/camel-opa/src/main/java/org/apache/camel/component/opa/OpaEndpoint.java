@@ -27,6 +27,7 @@ import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriPath;
 import org.apache.camel.support.DefaultEndpoint;
+import org.apache.camel.util.ObjectHelper;
 
 /**
  * Evaluate Open Policy Agent (Rego) policies against an Exchange and record the allow/deny decision on it.
@@ -35,6 +36,8 @@ import org.apache.camel.support.DefaultEndpoint;
              syntax = "opa:policyPath", producerOnly = true, category = { Category.SECURITY },
              headersClass = OpaConstants.class)
 public class OpaEndpoint extends DefaultEndpoint {
+
+    private static final String WASM_MODE = "wasm";
 
     @UriPath(description = "Path of the Rego rule head to evaluate, relative to the OPA data document. For a rule"
                            + " named allow in a policy declaring package authz.orders, this is authz/orders/allow."
@@ -57,16 +60,40 @@ public class OpaEndpoint extends DefaultEndpoint {
     @Override
     protected void doStart() throws Exception {
         super.doStart();
-        opaClient = configuration.getOpaClient() != null
-                ? configuration.getOpaClient()
-                : OpaPolicyEvaluator.createClient(configuration.getServerUrl(), configuration.getBearerToken());
-        evaluator = new OpaPolicyEvaluator(
-                opaClient, policyPath, configuration.getAllowKey(), configuration.getIncludeHeaders(),
-                configuration.getIncludeProperties(), configuration.isIncludeBody(), configuration.isFailOpen());
+        if (WASM_MODE.equalsIgnoreCase(configuration.getEvaluationMode())) {
+            evaluator = createWasmEvaluator();
+        } else {
+            opaClient = configuration.getOpaClient() != null
+                    ? configuration.getOpaClient()
+                    : OpaRestEvaluator.createClient(configuration.getServerUrl(), configuration.getBearerToken());
+            evaluator = new OpaRestEvaluator(
+                    opaClient, policyPath, configuration.getAllowKey(), configuration.getIncludeHeaders(),
+                    configuration.getIncludeProperties(), configuration.isIncludeBody(), configuration.isFailOpen());
+        }
+    }
+
+    private OpaPolicyEvaluator createWasmEvaluator() throws Exception {
+        if (ObjectHelper.isEmpty(configuration.getPolicyBundle())) {
+            throw new IllegalArgumentException(
+                    "policyBundle is required when evaluationMode=wasm; build one with"
+                                               + " opa build -t wasm -e <entrypoint> <policy.rego>");
+        }
+        // the entrypoint is fixed at build time and is not the same thing as a data path, but opa build names it
+        // after the rule, so the policy path is the right default
+        String entrypoint = ObjectHelper.isNotEmpty(configuration.getEntrypoint())
+                ? configuration.getEntrypoint() : policyPath;
+        byte[] wasm = OpaWasmEvaluator.loadPolicy(getCamelContext(), configuration.getPolicyBundle());
+        return new OpaWasmEvaluator(
+                wasm, entrypoint, configuration.getPoolSize(), policyPath, configuration.getAllowKey(),
+                configuration.getIncludeHeaders(), configuration.getIncludeProperties(),
+                configuration.isIncludeBody(), configuration.isFailOpen());
     }
 
     @Override
     protected void doStop() throws Exception {
+        if (evaluator instanceof AutoCloseable closeable) {
+            closeable.close();
+        }
         evaluator = null;
         opaClient = null;
         super.doStop();

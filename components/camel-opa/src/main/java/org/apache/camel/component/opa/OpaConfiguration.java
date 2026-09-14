@@ -43,6 +43,18 @@ public class OpaConfiguration implements Cloneable {
     @UriParam(label = "security", security = "secret")
     private String bearerToken;
 
+    @UriParam(defaultValue = "rest", enums = "rest,wasm")
+    private String evaluationMode = "rest";
+
+    @UriParam
+    private String policyBundle;
+
+    @UriParam
+    private String entrypoint;
+
+    @UriParam(label = "advanced", defaultValue = "8")
+    private int poolSize = 8;
+
     @UriParam(label = "security", security = "insecure:dev")
     private boolean failOpen;
 
@@ -129,6 +141,59 @@ public class OpaConfiguration implements Cloneable {
 
     public void setBearerToken(String bearerToken) {
         this.bearerToken = bearerToken;
+    }
+
+    public String getEvaluationMode() {
+        return evaluationMode;
+    }
+
+    /**
+     * How the policy is evaluated. {@code rest} (the default) calls a running OPA server over its Data API.
+     * {@code wasm} evaluates a WebAssembly bundle in-process, with no server involved - so there is no network hop and
+     * no unreachable decision point, at the cost of the policy being a build-time artefact rather than something a
+     * server distributes and updates. {@code serverUrl}, {@code bearerToken} and {@code failOpen} do not apply in
+     * {@code wasm} mode.
+     */
+    public void setEvaluationMode(String evaluationMode) {
+        this.evaluationMode = evaluationMode;
+    }
+
+    public String getPolicyBundle() {
+        return policyBundle;
+    }
+
+    /**
+     * The WebAssembly policy to evaluate in {@code wasm} mode, as produced by {@code opa build -t wasm}. Accepts a
+     * {@code file:}, {@code classpath:} or {@code http:} location holding either the {@code bundle.tar.gz} that
+     * {@code opa build} emits or a bare {@code .wasm} module. Required when {@code evaluationMode=wasm}.
+     */
+    public void setPolicyBundle(String policyBundle) {
+        this.policyBundle = policyBundle;
+    }
+
+    public String getEntrypoint() {
+        return entrypoint;
+    }
+
+    /**
+     * The compiled entrypoint to evaluate in {@code wasm} mode. This is not the same thing as the policy path: an
+     * entrypoint is fixed when the bundle is built, with {@code opa build -e}. Defaults to the endpoint's policy path,
+     * which is the name {@code opa build} gives it.
+     */
+    public void setEntrypoint(String entrypoint) {
+        this.entrypoint = entrypoint;
+    }
+
+    public int getPoolSize() {
+        return poolSize;
+    }
+
+    /**
+     * How many WebAssembly policy instances to pool in {@code wasm} mode. An instance carries mutable state and is not
+     * thread-safe, so each exchange borrows one; this bounds how many exchanges evaluate at once.
+     */
+    public void setPoolSize(int poolSize) {
+        this.poolSize = poolSize;
     }
 
     /**

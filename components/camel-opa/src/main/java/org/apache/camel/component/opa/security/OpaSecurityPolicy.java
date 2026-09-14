@@ -21,6 +21,7 @@ import org.apache.camel.NamedNode;
 import org.apache.camel.Processor;
 import org.apache.camel.Route;
 import org.apache.camel.component.opa.OpaPolicyEvaluator;
+import org.apache.camel.component.opa.OpaRestEvaluator;
 import org.apache.camel.spi.AuthorizationPolicy;
 import org.apache.camel.util.StringHelper;
 import org.slf4j.Logger;
@@ -70,9 +71,9 @@ public class OpaSecurityPolicy implements AuthorizationPolicy {
         if (evaluator == null) {
             StringHelper.notEmpty(policyPath, "policyPath", this);
             if (opaClient == null) {
-                opaClient = OpaPolicyEvaluator.createClient(serverUrl, bearerToken);
+                opaClient = OpaRestEvaluator.createClient(serverUrl, bearerToken);
             }
-            evaluator = new OpaPolicyEvaluator(
+            evaluator = new OpaRestEvaluator(
                     opaClient, policyPath, allowKey, includeHeaders, includeProperties, includeBody, failOpen);
         }
     }
