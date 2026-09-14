@@ -362,6 +362,24 @@ In addition to the general support for creating beans provided by xref:others:ma
 <2> the full qualified class name of the bean
 <3> the properties of the bean to be set
 
+A bean declared this way is bound to the Camel registry, so a route in the same file can refer to it by name, such as
+calling it with the xref:eips:bean-eip.adoc[Bean] EIP:
+
+[source,yaml]
+----
+- beans:
+    - name: myBean
+      type: "#class:com.acme.MyBean"
+- route:
+    from:
+      uri: timer:tick?period=5000
+      steps:
+        - bean:
+            ref: myBean
+            method: hello
+        - log: "${body}"
+----
+
 The properties of the bean can be defined using either a map or properties style, as shown in the example below:
 
 [source,yaml]
@@ -513,8 +531,8 @@ This gives flexibility to use a bit of programming to create and configure the b
     scriptLanguage: groovy
     script: >
       // some groovy script here to create the bean
-      bean = ...
-      ...
+      def bean = new com.acme.MyBean()
+      bean.name = 'Camel'
       return bean
 ----
 
@@ -530,10 +548,9 @@ You can refer to property placeholder values using `{{ }}` syntax inside the scr
     scriptLanguage: groovy
     script: >
       // some groovy script here to create the bean
-      bean = ...
-      bean.street = '{{addressLine1}}`
-      bean.street2 = '{{addressLine2}}`
-      ...
+      def bean = new com.acme.MyBean()
+      bean.street = '{{addressLine1}}'
+      bean.street2 = '{{addressLine2}}'
       return bean
 ----
 
@@ -549,10 +566,9 @@ Instead, you can invoke the APIs on `CamelContext` such as:
     scriptPropertyPlaceholders: false
     script: >
       // some groovy script here to create the bean
-      bean = ...
+      def bean = new com.acme.MyBean()
       bean.street = context.resolvePropertyPlaceholders('addressLine1')
       bean.street2 = context.resolvePropertyPlaceholders('addressLine2')
-      ...
       return bean
 ----
 
