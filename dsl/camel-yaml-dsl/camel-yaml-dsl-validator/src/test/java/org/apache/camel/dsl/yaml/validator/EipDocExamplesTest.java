@@ -18,6 +18,7 @@ package org.apache.camel.dsl.yaml.validator;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.function.Predicate;
 import java.util.regex.Matcher;
@@ -32,9 +33,9 @@ import org.junit.jupiter.api.Test;
 import static org.assertj.core.api.Assertions.assertThat;
 
 /**
- * Every YAML route example in the EIP and data format documentation must pass the YAML validator (CAMEL-24693,
- * CAMEL-24710): the examples are what people copy and what the camel_catalog_sample tool returns, so a wrong one in the
- * docs fails the build here.
+ * The YAML route examples of the documentation bundled in the catalog must pass the YAML validator, one test per page
+ * family (CAMEL-24693, CAMEL-24710): the examples are what people copy and what the camel_catalog_sample tool returns,
+ * so a wrong one in the docs fails the build here.
  */
 class EipDocExamplesTest {
 
@@ -55,6 +56,12 @@ class EipDocExamplesTest {
     private static final Set<String> DATA_FORMAT_PAGES_SKIPPED = Set.of("xmlSecurity-dataformat");
 
     private static final Pattern YAML_BLOCK = Pattern.compile("\\[source,yaml\\]\\n-{4}\\n(.*?)\\n-{4}", Pattern.DOTALL);
+
+    /**
+     * Examples that show YAML the schema cannot know, by page and a text found in the example: the yaml-dsl page shows
+     * a step contributed by a custom YAML deserializer.
+     */
+    private static final Map<String, String> EXAMPLES_SKIPPED = Map.of("yaml-dsl", "myStep:");
 
     private static CamelCatalog catalog;
     private static YamlValidator validator;
@@ -78,6 +85,17 @@ class EipDocExamplesTest {
 
         assertThat(result.examples()).as("YAML route examples found in the EIP documentation").isGreaterThan(250);
         assertThat(result.failures()).as("EIP documentation examples that do not validate").isEmpty();
+    }
+
+    @Test
+    void everyYamlExampleOfTheOtherDocumentationPagesValidates() throws Exception {
+        List<String> pages = docNames(name -> !name.endsWith("-eip") && !PATTERN_PAGES.contains(name)
+                && !name.endsWith("-component") && !name.endsWith("-dataformat"));
+
+        DocExamples result = validate(pages);
+
+        assertThat(result.examples()).as("YAML route examples found in the other documentation pages").isGreaterThan(200);
+        assertThat(result.failures()).as("Documentation examples of the other pages that do not validate").isEmpty();
     }
 
     @Test
@@ -117,8 +135,12 @@ class EipDocExamplesTest {
                     // a fragment (an option list, a snippet), not a route file
                     continue;
                 }
-                examples++;
                 n++;
+                String skipped = EXAMPLES_SKIPPED.get(page);
+                if (skipped != null && yaml.contains(skipped)) {
+                    continue;
+                }
+                examples++;
                 List<Error> errors = validator.validate(yaml);
                 if (!errors.isEmpty()) {
                     failures.add(page + " example " + n + ": " + errors.get(0).getMessage());
