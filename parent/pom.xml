@@ -392,7 +392,7 @@
         <micrometer-version>1.17.1</micrometer-version>
         <micrometer-tracing-version>1.7.1</micrometer-tracing-version>
         <microprofile-config-version>3.1.1</microprofile-config-version>
-        <milo-version>1.1.6</milo-version>
+        <milo-version>1.1.7</milo-version>
         <milvus-client-version>2.6.25</milvus-client-version>
         <mina-version>2.2.9</mina-version>
         <minio-version>9.0.3</minio-version>
