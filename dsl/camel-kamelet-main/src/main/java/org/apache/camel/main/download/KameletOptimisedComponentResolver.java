@@ -16,11 +16,11 @@
  */
 package org.apache.camel.main.download;
 
-import org.apache.camel.CamelContext;
 import org.apache.camel.Component;
 import org.apache.camel.component.kamelet.KameletComponent;
 import org.apache.camel.impl.engine.DefaultOptimisedComponentResolver;
 import org.apache.camel.language.simple.SimpleLanguage;
+import org.apache.camel.model.ModelCamelContext;
 import org.apache.camel.support.ExchangeHelper;
 import org.apache.camel.support.RouteTemplateHelper;
 
@@ -30,9 +30,9 @@ import org.apache.camel.support.RouteTemplateHelper;
  */
 public class KameletOptimisedComponentResolver extends DefaultOptimisedComponentResolver {
 
-    private final CamelContext camelContext;
+    private final ModelCamelContext camelContext;
 
-    public KameletOptimisedComponentResolver(CamelContext camelContext) {
+    public KameletOptimisedComponentResolver(ModelCamelContext camelContext) {
         super(camelContext);
         this.camelContext = camelContext;
     }
@@ -45,7 +45,8 @@ public class KameletOptimisedComponentResolver extends DefaultOptimisedComponent
         if ("kamelet".equals(scheme)) {
             String name = ExchangeHelper.resolveContextPath(uri);
             // must be a static name (so we can load the template and resolve nested dependencies)
-            if (!SimpleLanguage.hasSimpleFunction(name) && answer instanceof KameletComponent kc) {
+            if (!SimpleLanguage.hasSimpleFunction(name) && camelContext.getRouteTemplateDefinition(name) == null
+                    && answer instanceof KameletComponent kc) {
                 // need to resolve dependencies from kamelet also
                 String loc = kc.getLocation();
                 DependencyDownloaderKamelet listener = camelContext.hasService(DependencyDownloaderKamelet.class);
