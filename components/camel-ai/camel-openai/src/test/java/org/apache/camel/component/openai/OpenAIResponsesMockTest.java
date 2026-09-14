@@ -165,6 +165,10 @@ class OpenAIResponsesMockTest extends CamelTestSupport {
                         .to("openai:responses?model=gpt-5&apiKey=dummy&background=true&tags=responses-tools&baseUrl="
                             + base);
 
+                from("direct:responses-one-tool-iteration")
+                        .to("openai:responses?model=gpt-5&apiKey=dummy&tags=responses-tools&maxToolIterations=1"
+                            + "&baseUrl=" + base);
+
                 from("direct:responses-conversation-tools")
                         .to("openai:responses?model=gpt-5&apiKey=dummy&tags=responses-tools&conversationId=conv_123"
                             + "&baseUrl=" + base);
@@ -401,6 +405,16 @@ class OpenAIResponsesMockTest extends CamelTestSupport {
         assertThat(followUp.path("input")).hasSize(1);
         assertThat(followUp.path("input").path(0).path("type").asText()).isEqualTo("function_call_output");
         assertThat(followUp.path("input").path(0).path("output").asText()).isEqualTo("Sunny in Rome");
+    }
+
+    @Test
+    void maxToolIterationsLimitsModelCallsAsChatCompletionDoes() {
+        Exchange result = template.request("direct:responses-one-tool-iteration", e -> e.getIn().setBody("weather-tool"));
+
+        assertThat(result.getException())
+                .isInstanceOf(IllegalStateException.class)
+                .hasMessageContaining("Max tool iterations (1) exceeded");
+        assertThat(openAIMock.getReceivedRequests()).hasSize(1);
     }
 
     private String responsesUri() {

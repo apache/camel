@@ -225,18 +225,14 @@ public class OpenAIResponsesProducer extends DefaultAsyncProducer {
         List<String> toolCallsLog = new ArrayList<>();
         int iteration = 0;
 
-        while (true) {
+        // as in chat-completion, at most maxToolIterations model calls are made
+        while (iteration < config.getMaxToolIterations()) {
             Response response = createResponse(exchange, model, params.toBuilder().inputOfResponse(requestInput).build());
             List<ResponseFunctionToolCall> functionCalls = OpenAIResponsesSupport.extractFunctionCalls(response);
             if (functionCalls.isEmpty()) {
                 finishExchange(exchange, config, response, OpenAIResponsesSupport.extractAssistantText(response));
                 setToolHeaders(exchange.getMessage(), iteration, toolCallsLog, false);
                 return;
-            }
-            if (iteration == config.getMaxToolIterations()) {
-                throw new IllegalStateException(
-                        "Max tool iterations (%d) exceeded. Tools called: %s"
-                                .formatted(config.getMaxToolIterations(), toolCallsLog));
             }
             iteration++;
 
@@ -270,6 +266,8 @@ public class OpenAIResponsesProducer extends DefaultAsyncProducer {
                 requestInput = conversation;
             }
         }
+        throw new IllegalStateException(
+                "Max tool iterations (%d) exceeded. Tools called: %s".formatted(config.getMaxToolIterations(), toolCallsLog));
     }
 
     private Response createResponse(Exchange exchange, String model, ResponseCreateParams params) throws Exception {
