@@ -161,8 +161,8 @@ This goal is used by the Camel build itself, in `camel-jbang-core`, and is not i
 It reads the `[source,yaml]` route examples of the EIP documentation and of the user manual, validates every one of
 them against the YAML DSL JSON Schema, and fails the build when an example does not validate. The examples that pass
 are written to `eip-samples.json`, keyed by the EIP or file entry they show (`split`, `onException`, `rest`, `beans`,
-...), which is what the `camel_catalog_sample` tool of xref:manual::camel-jbang-ai.adoc[Camel JBang AI] returns as
-the fallback when the catalog in use has no documentation for the name.
+...), which is what the `camel_catalog_sample` tool of the xref:manual::camel-jbang-mcp.adoc[Camel JBang MCP server]
+(and of the Camel TUI) returns as the fallback when the catalog in use has no documentation for the name.
 
 The pages are configured in the `pom.xml` of `camel-jbang-core`: the user manual pages whose examples are the samples
 of a file entry (`pages`), the pages whose examples starting with a given entry are its samples (`entryPages`), and the
