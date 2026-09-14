@@ -384,7 +384,7 @@ YAML::
 ----
 +
 You can also refer to a specific thread pool
-to be used, using the `executorServiceRef` option
+to be used, using the `executorService` option
 +
 [source,yaml]
 ----
