@@ -97,6 +97,7 @@ class OpaInputDocumentTest extends CamelTestSupport {
             e.getMessage().setHeader("Authorization", "Bearer s3cr3t");
             e.getMessage().setHeader("Cookie", "session=s3cr3t");
             e.getMessage().setHeader("Proxy-Authorization", "Basic s3cr3t");
+            e.getMessage().setHeader("Set-Cookie", "session=abc; Path=/");
         });
 
         assertThat(headersOf(input)).containsOnlyKeys("user");

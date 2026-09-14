@@ -125,13 +125,14 @@ verbatim — `Authorization`, `Proxy-Authorization`, `Cookie` and `Set-Cookie` �
 OPA's decision logging ships the whole `input` document, frequently to a remote collector, so the wildcard should
 not quietly export credentials off the box. A policy that genuinely needs one can still have it by naming the
 header: `includeHeaders=Authorization,user` sends it. Matching is case-insensitive, so `authorization` is withheld
-too.
+too. Set `includeHeaders` to a comma-separated list of names when the policy only needs a few of them.
 
 Prefer `includeProperties` for identity: a token that an earlier step has already *verified* belongs there, as
-<<authorizing-an-identity>> describes, rather than handing the raw credential to the policy to re-check. Set `includeHeaders` to a comma-separated list of names
-(matched case-insensitively) when the policy only needs a few of them. `body` is *not* sent unless `includeBody`
-is enabled: bodies can be large or streaming, and most authorization decisions do not need them. When you do
-enable it on a streaming body, enable stream caching so the body is still readable by the rest of the route.
+<<authorizing-an-identity>> describes, rather than handing the raw credential to the policy to re-check.
+
+`body` is *not* sent unless `includeBody` is enabled: bodies can be large or streaming, and most authorization
+decisions do not need them. When you do enable it on a streaming body, enable stream caching so the body is still
+readable by the rest of the route.
 
 `properties` is empty unless you ask for it — see <<authorizing-an-identity>> below.
 

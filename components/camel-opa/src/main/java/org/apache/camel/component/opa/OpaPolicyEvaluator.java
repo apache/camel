@@ -16,6 +16,7 @@
  */
 package org.apache.camel.component.opa;
 
+import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -205,7 +206,7 @@ public class OpaPolicyEvaluator {
         names.add("Proxy-Authorization");
         names.add("Cookie");
         names.add("Set-Cookie");
-        return names;
+        return Collections.unmodifiableSet(names);
     }
 
     private static boolean isDecisionHeader(String name) {
