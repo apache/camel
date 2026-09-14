@@ -223,7 +223,7 @@ public final class ExpressionDeserializers extends YamlDeserializerSupport {
         public Object construct(Node node) {
             if (!(node instanceof MappingNode)) {
                 String text = node instanceof ScalarNode ? asText(node) : node.getNodeType().name().toLowerCase();
-                throw new InvalidExpressionException(node, "an expression is expected here, not a plain value (" + text + "): write constant: \"" + text + "\" for a fixed value, or simple: \"...\" for a dynamic one");
+                throw new InvalidExpressionException(node, "an expression is expected here, not a plain value (" + text + "): write constant: {expression: \"" + text + "\"} for a fixed value, or simple: {expression: \"...\"} for a dynamic one");
             }
             ExpressionDefinition val = constructExpressionType(node);
             return new org.apache.camel.model.ExpressionSubElementDefinition(val);

@@ -53,7 +53,7 @@ public class YamlValidatorExpressionHintTest {
                       - log:
                           message: "Error: ${exception.message}"
                 """;
-        assertHint(yaml, "handled: {constant: \"true\"}", "handled: {simple: \"...\"}");
+        assertHint(yaml, "handled: {constant: {expression: \"true\"}}", "handled: {simple: {expression: \"...\"}}");
     }
 
     @Test
@@ -67,7 +67,7 @@ public class YamlValidatorExpressionHintTest {
                       - log:
                           message: "Error: ${exception.message}"
                 """;
-        assertHint(yaml, "continued: {constant: \"true\"}");
+        assertHint(yaml, "continued: {constant: {expression: \"true\"}}");
     }
 
     @Test
@@ -86,7 +86,7 @@ public class YamlValidatorExpressionHintTest {
                             - log:
                                 message: "${body}"
                 """;
-        assertHint(yaml, "completionSizeExpression: {constant: \"10\"}");
+        assertHint(yaml, "completionSizeExpression: {constant: {expression: \"10\"}}");
     }
 
     @Test
