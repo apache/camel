@@ -23,5 +23,8 @@
         period: "1000"
       steps:
         - setBody:
-            simple: Hello Camel from ${routeId}
-        - log: ${body}
+            expression:
+              simple:
+                expression: "Hello Camel from ${routeId}"
+        - log:
+            message: "${body}"
