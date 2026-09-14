@@ -4113,6 +4113,10 @@
           "autoStartup" : {
             "type" : "boolean"
           },
+          "delayer" : {
+            "type" : "string",
+            "description" : "Whether to slow down processing messages by a given delay in msec."
+          },
           "description" : {
             "type" : "string"
           },
