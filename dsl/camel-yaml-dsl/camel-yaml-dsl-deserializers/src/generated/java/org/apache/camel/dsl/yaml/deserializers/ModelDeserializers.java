@@ -1864,6 +1864,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     ed = ExpressionDeserializers.constructExpressionType(propertyKey, node);
                     if (ed != null) {
                         target.setExpressionType(ed);
+                        warnCompactNotation(node);
                     } else {
                         return false;
                     }
@@ -2297,6 +2298,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     ed = ExpressionDeserializers.constructExpressionType(propertyKey, node);
                     if (ed != null) {
                         target.setExpressionType(ed);
+                        warnCompactNotation(node);
                     } else {
                         return false;
                     }
@@ -4204,6 +4206,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     ed = ExpressionDeserializers.constructExpressionType(propertyKey, node);
                     if (ed != null) {
                         target.setExpressionType(ed);
+                        warnCompactNotation(node);
                     } else {
                         return false;
                     }
@@ -4529,6 +4532,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     ed = ExpressionDeserializers.constructExpressionType(propertyKey, node);
                     if (ed != null) {
                         target.setExpressionType(ed);
+                        warnCompactNotation(node);
                     } else {
                         return false;
                     }
@@ -4860,6 +4864,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     ed = ExpressionDeserializers.constructExpressionType(propertyKey, node);
                     if (ed != null) {
                         target.setExpressionType(ed);
+                        warnCompactNotation(node);
                     } else {
                         return false;
                     }
@@ -5125,6 +5130,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     ed = ExpressionDeserializers.constructExpressionType(propertyKey, node);
                     if (ed != null) {
                         target.setExpressionType(ed);
+                        warnCompactNotation(node);
                     } else {
                         return false;
                     }
@@ -5271,6 +5277,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     ed = ExpressionDeserializers.constructExpressionType(propertyKey, node);
                     if (ed != null) {
                         target.setExpressionType(ed);
+                        warnCompactNotation(node);
                     } else {
                         return false;
                     }
@@ -5823,6 +5830,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     ed = ExpressionDeserializers.constructExpressionType(propertyKey, node);
                     if (ed != null) {
                         target.setExpressionType(ed);
+                        warnCompactNotation(node);
                     } else {
                         return false;
                     }
@@ -6423,6 +6431,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     ed = ExpressionDeserializers.constructExpressionType(propertyKey, node);
                     if (ed != null) {
                         target.setExpressionType(ed);
+                        warnCompactNotation(node);
                     } else {
                         return false;
                     }
@@ -6844,6 +6853,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     ed = ExpressionDeserializers.constructExpressionType(propertyKey, node);
                     if (ed != null) {
                         target.setExpressionType(ed);
+                        warnCompactNotation(node);
                     } else {
                         return false;
                     }
@@ -6922,6 +6932,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     ed = ExpressionDeserializers.constructExpressionType(propertyKey, node);
                     if (ed != null) {
                         target.setExpressionType(ed);
+                        warnCompactNotation(node);
                     } else {
                         return false;
                     }
@@ -7075,6 +7086,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     ed = ExpressionDeserializers.constructExpressionType(propertyKey, node);
                     if (ed != null) {
                         target.setExpressionType(ed);
+                        warnCompactNotation(node);
                     } else {
                         return false;
                     }
@@ -7651,6 +7663,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     ed = ExpressionDeserializers.constructExpressionType(propertyKey, node);
                     if (ed != null) {
                         target.setExpressionType(ed);
+                        warnCompactNotation(node);
                     } else {
                         return false;
                     }
@@ -7735,6 +7748,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     ed = ExpressionDeserializers.constructExpressionType(propertyKey, node);
                     if (ed != null) {
                         target.setExpressionType(ed);
+                        warnCompactNotation(node);
                     } else {
                         return false;
                     }
@@ -7807,6 +7821,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     ed = ExpressionDeserializers.constructExpressionType(propertyKey, node);
                     if (ed != null) {
                         target.setExpressionType(ed);
+                        warnCompactNotation(node);
                     } else {
                         return false;
                     }
@@ -8050,6 +8065,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     ed = ExpressionDeserializers.constructExpressionType(propertyKey, node);
                     if (ed != null) {
                         target.setExpressionType(ed);
+                        warnCompactNotation(node);
                     } else {
                         return false;
                     }
@@ -8128,6 +8144,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     ed = ExpressionDeserializers.constructExpressionType(propertyKey, node);
                     if (ed != null) {
                         target.setExpressionType(ed);
+                        warnCompactNotation(node);
                     } else {
                         return false;
                     }
@@ -8475,6 +8492,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     ed = ExpressionDeserializers.constructExpressionType(propertyKey, node);
                     if (ed != null) {
                         target.setExpressionType(ed);
+                        warnCompactNotation(node);
                     } else {
                         return false;
                     }
@@ -9083,6 +9101,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     ed = ExpressionDeserializers.constructExpressionType(propertyKey, node);
                     if (ed != null) {
                         target.setExpressionType(ed);
+                        warnCompactNotation(node);
                     } else {
                         return false;
                     }
@@ -9462,6 +9481,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     ed = ExpressionDeserializers.constructExpressionType(propertyKey, node);
                     if (ed != null) {
                         target.setExpressionType(ed);
+                        warnCompactNotation(node);
                     } else {
                         return false;
                     }
@@ -9932,6 +9952,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     ed = ExpressionDeserializers.constructExpressionType(propertyKey, node);
                     if (ed != null) {
                         target.setExpressionType(ed);
+                        warnCompactNotation(node);
                     } else {
                         return false;
                     }
@@ -10252,6 +10273,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     ed = ExpressionDeserializers.constructExpressionType(propertyKey, node);
                     if (ed != null) {
                         target.setExpressionType(ed);
+                        warnCompactNotation(node);
                     } else {
                         return false;
                     }
@@ -10517,6 +10539,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     ed = ExpressionDeserializers.constructExpressionType(propertyKey, node);
                     if (ed != null) {
                         target.setExpressionType(ed);
+                        warnCompactNotation(node);
                     } else {
                         return false;
                     }
@@ -10880,6 +10903,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     ed = ExpressionDeserializers.constructExpressionType(propertyKey, node);
                     if (ed != null) {
                         target.setExpressionType(ed);
+                        warnCompactNotation(node);
                     } else {
                         return false;
                     }
@@ -12276,6 +12300,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     ed = ExpressionDeserializers.constructExpressionType(propertyKey, node);
                     if (ed != null) {
                         target.setExpressionType(ed);
+                        warnCompactNotation(node);
                     } else {
                         return false;
                     }
@@ -12655,6 +12680,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     ed = ExpressionDeserializers.constructExpressionType(propertyKey, node);
                     if (ed != null) {
                         target.setExpressionType(ed);
+                        warnCompactNotation(node);
                     } else {
                         return false;
                     }
@@ -13068,6 +13094,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     ed = ExpressionDeserializers.constructExpressionType(propertyKey, node);
                     if (ed != null) {
                         target.setExpressionType(ed);
+                        warnCompactNotation(node);
                     } else {
                         return false;
                     }
@@ -13140,6 +13167,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     ed = ExpressionDeserializers.constructExpressionType(propertyKey, node);
                     if (ed != null) {
                         target.setExpressionType(ed);
+                        warnCompactNotation(node);
                     } else {
                         return false;
                     }
@@ -13212,6 +13240,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     ed = ExpressionDeserializers.constructExpressionType(propertyKey, node);
                     if (ed != null) {
                         target.setExpressionType(ed);
+                        warnCompactNotation(node);
                     } else {
                         return false;
                     }
@@ -13418,6 +13447,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     ed = ExpressionDeserializers.constructExpressionType(propertyKey, node);
                     if (ed != null) {
                         target.setExpressionType(ed);
+                        warnCompactNotation(node);
                     } else {
                         return false;
                     }
@@ -13724,6 +13754,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     ed = ExpressionDeserializers.constructExpressionType(propertyKey, node);
                     if (ed != null) {
                         target.setExpressionType(ed);
+                        warnCompactNotation(node);
                     } else {
                         return false;
                     }
@@ -14176,6 +14207,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     ed = ExpressionDeserializers.constructExpressionType(propertyKey, node);
                     if (ed != null) {
                         target.setExpressionType(ed);
+                        warnCompactNotation(node);
                     } else {
                         return false;
                     }
@@ -15876,6 +15908,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     ed = ExpressionDeserializers.constructExpressionType(propertyKey, node);
                     if (ed != null) {
                         target.setExpressionType(ed);
+                        warnCompactNotation(node);
                     } else {
                         return false;
                     }
@@ -16352,6 +16385,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     ed = ExpressionDeserializers.constructExpressionType(propertyKey, node);
                     if (ed != null) {
                         target.setExpressionType(ed);
+                        warnCompactNotation(node);
                     } else {
                         return false;
                     }
@@ -16470,6 +16504,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     ed = ExpressionDeserializers.constructExpressionType(propertyKey, node);
                     if (ed != null) {
                         target.setExpressionType(ed);
+                        warnCompactNotation(node);
                     } else {
                         return false;
                     }
@@ -16618,6 +16653,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     ed = ExpressionDeserializers.constructExpressionType(propertyKey, node);
                     if (ed != null) {
                         target.setExpressionType(ed);
+                        warnCompactNotation(node);
                     } else {
                         return false;
                     }
@@ -16760,6 +16796,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     ed = ExpressionDeserializers.constructExpressionType(propertyKey, node);
                     if (ed != null) {
                         target.setExpressionType(ed);
+                        warnCompactNotation(node);
                     } else {
                         return false;
                     }
@@ -16839,6 +16876,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     ed = ExpressionDeserializers.constructExpressionType(propertyKey, node);
                     if (ed != null) {
                         target.setExpressionType(ed);
+                        warnCompactNotation(node);
                     } else {
                         return false;
                     }
@@ -16992,6 +17030,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     ed = ExpressionDeserializers.constructExpressionType(propertyKey, node);
                     if (ed != null) {
                         target.setExpressionType(ed);
+                        warnCompactNotation(node);
                     } else {
                         return false;
                     }
@@ -17209,6 +17248,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     ed = ExpressionDeserializers.constructExpressionType(propertyKey, node);
                     if (ed != null) {
                         target.setExpressionType(ed);
+                        warnCompactNotation(node);
                     } else {
                         return false;
                     }
@@ -17281,6 +17321,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     ed = ExpressionDeserializers.constructExpressionType(propertyKey, node);
                     if (ed != null) {
                         target.setExpressionType(ed);
+                        warnCompactNotation(node);
                     } else {
                         return false;
                     }
@@ -17473,6 +17514,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     ed = ExpressionDeserializers.constructExpressionType(propertyKey, node);
                     if (ed != null) {
                         target.setExpressionType(ed);
+                        warnCompactNotation(node);
                     } else {
                         return false;
                     }
@@ -18482,6 +18524,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     ed = ExpressionDeserializers.constructExpressionType(propertyKey, node);
                     if (ed != null) {
                         target.setExpressionType(ed);
+                        warnCompactNotation(node);
                     } else {
                         return false;
                     }
@@ -18993,6 +19036,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     ed = ExpressionDeserializers.constructExpressionType(propertyKey, node);
                     if (ed != null) {
                         target.setExpressionType(ed);
+                        warnCompactNotation(node);
                     } else {
                         return false;
                     }
@@ -19342,6 +19386,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     ed = ExpressionDeserializers.constructExpressionType(propertyKey, node);
                     if (ed != null) {
                         target.setExpressionType(ed);
+                        warnCompactNotation(node);
                     } else {
                         return false;
                     }
@@ -20465,6 +20510,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     ed = ExpressionDeserializers.constructExpressionType(propertyKey, node);
                     if (ed != null) {
                         target.setExpressionType(ed);
+                        warnCompactNotation(node);
                     } else {
                         return false;
                     }
@@ -20646,6 +20692,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     ed = ExpressionDeserializers.constructExpressionType(propertyKey, node);
                     if (ed != null) {
                         target.setExpressionType(ed);
+                        warnCompactNotation(node);
                     } else {
                         return false;
                     }
@@ -20724,6 +20771,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     ed = ExpressionDeserializers.constructExpressionType(propertyKey, node);
                     if (ed != null) {
                         target.setExpressionType(ed);
+                        warnCompactNotation(node);
                     } else {
                         return false;
                     }
@@ -20859,6 +20907,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     ed = ExpressionDeserializers.constructExpressionType(propertyKey, node);
                     if (ed != null) {
                         target.setExpressionType(ed);
+                        warnCompactNotation(node);
                     } else {
                         return false;
                     }
@@ -21214,6 +21263,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     ed = ExpressionDeserializers.constructExpressionType(propertyKey, node);
                     if (ed != null) {
                         target.setExpressionType(ed);
+                        warnCompactNotation(node);
                     } else {
                         return false;
                     }
@@ -21352,6 +21402,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     ed = ExpressionDeserializers.constructExpressionType(propertyKey, node);
                     if (ed != null) {
                         target.setExpressionType(ed);
+                        warnCompactNotation(node);
                     } else {
                         return false;
                     }
@@ -21448,6 +21499,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     ed = ExpressionDeserializers.constructExpressionType(propertyKey, node);
                     if (ed != null) {
                         target.setExpressionType(ed);
+                        warnCompactNotation(node);
                     } else {
                         return false;
                     }

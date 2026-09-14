@@ -627,6 +627,8 @@ public class GenerateYamlDeserializersMojo extends GenerateYamlSupportMojo {
             setProperty.addStatement("ed = ExpressionDeserializers.constructExpressionType(propertyKey, node)");
             setProperty.beginControlFlow("if (ed != null)");
             setProperty.addStatement("target.setExpressionType(ed)");
+            // the language key directly on the EIP is the compact notation (canonical is under expression:)
+            setProperty.addStatement("warnCompactNotation(node)");
             setProperty.nextControlFlow("else");
             setProperty.addStatement("return false");
             setProperty.endControlFlow();

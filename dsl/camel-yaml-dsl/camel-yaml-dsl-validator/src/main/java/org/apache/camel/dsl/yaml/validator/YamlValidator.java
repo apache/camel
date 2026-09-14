@@ -265,6 +265,9 @@ public class YamlValidator {
     private List<Error> validate(JsonNode target) {
         var errors = filterOneOfNoise(new ArrayList<>(schema.validate(target)));
         errors.removeIf(YamlValidator::isRuntimeAcceptedScalar);
+        if (canonical) {
+            errors = withCompactNotationHints(errors);
+        }
         errors = withExpressionHints(errors);
         errors = withPropertyHints(errors);
         errors = withListHints(errors);
@@ -299,6 +302,90 @@ public class YamlValidator {
             checkOneOfCardinality(target, new NodePath(PathType.JSON_POINTER), errors);
         }
         return errors;
+    }
+
+    /** The property a step written as a string sets: the argument of the definition's String constructor. */
+    private static final Map<String, String> STRING_STEP_PROPERTY = Map.ofEntries(
+            Map.entry("bean", "ref"), Map.entry("convertBodyTo", "type"), Map.entry("log", "message"),
+            Map.entry("poll", "uri"), Map.entry("removeHeader", "name"), Map.entry("removeHeaders", "pattern"),
+            Map.entry("removeProperties", "pattern"), Map.entry("removeProperty", "name"),
+            Map.entry("removeVariable", "name"), Map.entry("rollback", "message"),
+            Map.entry("setExchangePattern", "pattern"), Map.entry("to", "uri"), Map.entry("toD", "uri"));
+
+    private static final String NORMALIZE_HINT = "; camel validate normalize rewrites a file in the canonical format";
+
+    /**
+     * The canonical schema rejects the compact notation as a schema error that says nothing about it: "property
+     * 'simple' is not defined" for a language key directly on the EIP, "string found, object expected" for a step or a
+     * language written as a string. Each is replaced with a message that names the notation, the canonical form of that
+     * line, and the normalize command.
+     */
+    List<Error> withCompactNotationHints(List<Error> errors) {
+        List<Error> answer = new ArrayList<>(errors.size());
+        for (Error error : errors) {
+            String hint = compactNotationHint(error);
+            if (hint == null) {
+                answer.add(error);
+                continue;
+            }
+            answer.add(Error.builder()
+                    .keyword("compactNotation")
+                    .instanceLocation(error.getInstanceLocation())
+                    .messageKey("compactNotation")
+                    .format(new MessageFormat("{0}"))
+                    .arguments(hint + NORMALIZE_HINT)
+                    .build());
+        }
+        return answer;
+    }
+
+    private String compactNotationHint(Error error) {
+        String message = error.getMessage();
+        if (message == null) {
+            return null;
+        }
+        String location = String.valueOf(error.getInstanceLocation());
+        String name = location.substring(location.lastIndexOf('/') + 1);
+        if ("additionalProperties".equals(error.getKeyword())) {
+            // setBody: {simple: ...} or when: [- simple: ...]: the language key sits on the EIP, not under expression:
+            String unknown = between(message, "property '", "'");
+            if (unknown == null || !languageKeys.contains(unknown)) {
+                return null;
+            }
+            if (name.matches("\\d+")) {
+                String parent = location.substring(0, location.lastIndexOf('/'));
+                name = parent.substring(parent.lastIndexOf('/') + 1);
+                return "a " + name + " item with " + unknown + ": ... is the deprecated compact notation: an expression"
+                       + " is written under expression: (- expression: {" + unknown + ": {" + languageForm(unknown)
+                       + "}})";
+            }
+            return name + ": {" + unknown + ": ...} is the deprecated compact notation: an expression is written under"
+                   + " expression: (" + name + ": {expression: {" + unknown + ": {" + languageForm(unknown) + "}}})";
+        }
+        if ("type".equals(error.getKeyword()) && message.contains("string found, object expected")) {
+            if (languageKeys.contains(name)) {
+                // simple: "..." : the language is a map with its expression
+                return name + ": \"...\" is the deprecated compact notation: write " + name + ": {" + languageForm(name)
+                       + "}";
+            }
+            if (stepNames.contains(name) || topLevelEntries.contains(name)) {
+                // log: "..." : the step is a map with its properties
+                String property = STRING_STEP_PROPERTY.get(name);
+                return name + ": \"...\" is the deprecated compact notation: write " + name
+                       + (property != null ? ": {" + property + ": \"...\"}" : " as a map with its properties");
+            }
+        }
+        return null;
+    }
+
+    /** The canonical body of a language: its expression property, or token for tokenize, as key: "...". */
+    private String languageForm(String language) {
+        JsonNode ref = model.at("/items/definitions/org.apache.camel.model.language.ExpressionDefinition/properties/"
+                                + language + "/$ref");
+        JsonNode properties = ref.isTextual() ? model.at(ref.asText().substring(1) + "/properties") : null;
+        String property = properties != null && properties.has("expression") ? "expression"
+                : properties != null && properties.has("token") ? "token" : "expression";
+        return property + ": \"...\"";
     }
 
     /**
