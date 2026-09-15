@@ -142,9 +142,11 @@ boolean verdict read out of it:
 
 * a decision that *is* a boolean is the verdict;
 * a decision that is an object is searched for the `allowKey` entry (`allow` by default), which must itself be a
-  boolean;
+  boolean. `allowKey` accepts a dotted path, so `allowKey=result.allow` reads a verdict nested inside the document
+  as `{"result": {"allow": true}}`;
 * anything else cannot be read as a verdict and counts as a deny, with the raw document still available for the
-  route to inspect.
+  route to inspect. That case is logged at WARN rather than DEBUG: a document that arrived but could not be read is
+  a configuration problem, and from `CamelOpaDecisionAllow` alone it is indistinguishable from a genuine denial.
 
 Both headers are written on every evaluation, so a verdict set by an inbound message never survives into the
 route.

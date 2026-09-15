@@ -56,7 +56,10 @@ public interface OpaComponentBuilderFactory {
         /**
          * The key to read the allow/deny verdict from when the policy returns
          * an object rather than a plain boolean. For a policy returning {allow:
-         * true, reasons: } the default value of allow is what you want.
+         * true, reasons: } the default value of allow is what you want. A
+         * dotted path reaches a verdict nested inside the document: {code
+         * allowKey=result.allow} reads {result: {allow: true}}. A key with no
+         * dot is looked up directly at the top level.
          * 
          * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 

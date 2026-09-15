@@ -66,6 +66,9 @@ public class OpaConfiguration implements Cloneable {
     /**
      * The key to read the allow/deny verdict from when the policy returns an object rather than a plain boolean. For a
      * policy returning <code>{"allow": true, "reasons": []}</code> the default value of {@code allow} is what you want.
+     * <p/>
+     * A dotted path reaches a verdict nested inside the document: {@code allowKey=result.allow} reads
+     * <code>{"result": {"allow": true}}</code>. A key with no dot is looked up directly at the top level.
      */
     public String getAllowKey() {
         return allowKey;
