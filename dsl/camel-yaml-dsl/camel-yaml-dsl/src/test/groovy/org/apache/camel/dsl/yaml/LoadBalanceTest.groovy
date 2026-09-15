@@ -18,6 +18,9 @@ package org.apache.camel.dsl.yaml
 
 import org.apache.camel.dsl.yaml.support.YamlTestSupport
 import org.apache.camel.component.mock.MockEndpoint
+import org.apache.camel.model.LoadBalanceDefinition
+import org.apache.camel.model.RouteDefinition
+import org.apache.camel.model.loadbalancer.FailoverLoadBalancerDefinition
 import org.junit.jupiter.api.Assertions
 
 class LoadBalanceTest extends YamlTestSupport {
@@ -56,4 +59,30 @@ class LoadBalanceTest extends YamlTestSupport {
             MockEndpoint.assertIsSatisfied(context)
     }
 
+    def "failoverLoadBalancer inheritErrorHandler placeholder"() {
+        when:
+            // the schema types inheritErrorHandler as boolean so skip the strict validation, the runtime accepts a
+            // placeholder that is resolved when the route starts (CAMEL-24696)
+            loadRoutesNoValidate '''
+                - from:
+                   uri: "direct:start"
+                   steps:
+                     - loadBalance:
+                         failoverLoadBalancer:
+                           inheritErrorHandler: "{{myInherit}}"
+                           maximumFailoverAttempts: "3"
+                         steps:
+                           - to: "mock:x"
+                           - to: "mock:y"
+            '''
+        then:
+            with(context.routeDefinitions[0], RouteDefinition) {
+                with(outputs[0], LoadBalanceDefinition) {
+                    with(loadBalancerType, FailoverLoadBalancerDefinition) {
+                        inheritErrorHandler == '{{myInherit}}'
+                        maximumFailoverAttempts == '3'
+                    }
+                }
+            }
+    }
 }

@@ -905,7 +905,7 @@ public class ModelWriter extends BaseWriter {
         startElement(name);
         doWriteProcessorDefinitionAttributes(def);
         doWriteAttribute("configuration", def.getConfiguration(), null);
-        doWriteAttribute("inheritErrorHandler", toString(def.getInheritErrorHandler()), "false");
+        doWriteAttribute("inheritErrorHandler", def.getInheritErrorHandler(), "false");
         doWriteElement("resilience4jConfiguration", def.getResilience4jConfiguration(), this::doWriteResilience4jConfigurationDefinition);
         doWriteElement("faultToleranceConfiguration", def.getFaultToleranceConfiguration(), this::doWriteFaultToleranceConfigurationDefinition);
         doWriteList(null, null, def.getOutputs(), this::doWriteProcessorDefinitionRef);
@@ -3166,7 +3166,7 @@ public class ModelWriter extends BaseWriter {
         doWriteAttribute("roundRobin", def.getRoundRobin(), null);
         doWriteAttribute("sticky", def.getSticky(), null);
         doWriteAttribute("maximumFailoverAttempts", def.getMaximumFailoverAttempts(), "-1");
-        doWriteAttribute("inheritErrorHandler", toString(def.getInheritErrorHandler()), "true");
+        doWriteAttribute("inheritErrorHandler", def.getInheritErrorHandler(), "true");
         doWriteList(null, "exception", def.getExceptions(), this::doWriteString);
         endElement(name);
     }

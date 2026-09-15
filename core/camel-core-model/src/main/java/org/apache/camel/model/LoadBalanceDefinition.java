@@ -159,7 +159,7 @@ public class LoadBalanceDefinition extends OutputDefinition<LoadBalanceDefinitio
         if (roundRobin) {
             def.setRoundRobin(Boolean.toString(roundRobin));
         }
-        def.setInheritErrorHandler(inheritErrorHandler);
+        def.setInheritErrorHandler(Boolean.toString(inheritErrorHandler));
         setLoadBalancerType(def);
         return this;
     }
@@ -189,7 +189,7 @@ public class LoadBalanceDefinition extends OutputDefinition<LoadBalanceDefinitio
         if (sticky) {
             def.setSticky(Boolean.toString(sticky));
         }
-        def.setInheritErrorHandler(inheritErrorHandler);
+        def.setInheritErrorHandler(Boolean.toString(inheritErrorHandler));
         setLoadBalancerType(def);
         return this;
     }

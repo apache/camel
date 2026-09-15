@@ -2075,7 +2075,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                 }
                 case "inheritErrorHandler": {
                     String val = asText(node);
-                    target.setInheritErrorHandler(java.lang.Boolean.valueOf(val));
+                    target.setInheritErrorHandler(val);
                     break;
                 }
                 case "onFallback": {
@@ -5330,7 +5330,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                 }
                 case "inheritErrorHandler": {
                     String val = asText(node);
-                    target.setInheritErrorHandler(java.lang.Boolean.valueOf(val));
+                    target.setInheritErrorHandler(val);
                     break;
                 }
                 case "maximumFailoverAttempts": {

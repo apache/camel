@@ -1850,7 +1850,7 @@ public class JavaDslModelWriter extends JavaDslModelWriterSupport {
     protected void doWriteCircuitBreakerDefinition(StringBuilder sb, CircuitBreakerDefinition def) {
         doWriteProcessorDefinitionAttributes(sb, def);
         doWriteAttribute(sb, "configuration", def.getConfiguration(), null);
-        doWriteAttribute(sb, "inheritErrorHandler", toString(def.getInheritErrorHandler()), "false");
+        doWriteAttribute(sb, "inheritErrorHandler", def.getInheritErrorHandler(), "false");
         doWriteChildElement(sb, "resilience4jConfiguration", def.getResilience4jConfiguration(), this::doWriteResilience4jConfigurationDefinition);
         doWriteChildElement(sb, "faultToleranceConfiguration", def.getFaultToleranceConfiguration(), this::doWriteFaultToleranceConfigurationDefinition);
         doWriteChildElement(sb, "onFallback", def.getOnFallback(), this::doWriteOnFallbackDefinition);
@@ -3677,7 +3677,7 @@ public class JavaDslModelWriter extends JavaDslModelWriterSupport {
         doWriteAttribute(sb, "roundRobin", def.getRoundRobin(), null);
         doWriteAttribute(sb, "sticky", def.getSticky(), null);
         doWriteAttribute(sb, "maximumFailoverAttempts", def.getMaximumFailoverAttempts(), "-1");
-        doWriteAttribute(sb, "inheritErrorHandler", toString(def.getInheritErrorHandler()), "true");
+        doWriteAttribute(sb, "inheritErrorHandler", def.getInheritErrorHandler(), "true");
         doWriteStringList(sb, null, "exception", def.getExceptions());
     }
     protected void doWriteRandomLoadBalancerDefinition(StringBuilder sb, RandomLoadBalancerDefinition def) {

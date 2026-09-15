@@ -296,7 +296,7 @@ public class ModelParser extends BaseParser {
     protected CircuitBreakerDefinition doParseCircuitBreakerDefinition() throws IOException, XmlPullParserException {
         return doParse(new CircuitBreakerDefinition(), (def, key, val) -> switch (key) {
                 case "configuration": def.setConfiguration(val); yield true;
-                case "inheritErrorHandler": def.setInheritErrorHandler(Boolean.valueOf(val)); yield true;
+                case "inheritErrorHandler": def.setInheritErrorHandler(val); yield true;
                 default: yield processorDefinitionAttributeHandler().accept(def, key, val);
             }, (def, key) -> switch (key) {
                 case "faultToleranceConfiguration": def.setFaultToleranceConfiguration(doParseFaultToleranceConfigurationDefinition()); yield true;
@@ -2431,7 +2431,7 @@ public class ModelParser extends BaseParser {
     }
     protected FailoverLoadBalancerDefinition doParseFailoverLoadBalancerDefinition() throws IOException, XmlPullParserException {
         return doParse(new FailoverLoadBalancerDefinition(), (def, key, val) -> switch (key) {
-                case "inheritErrorHandler": def.setInheritErrorHandler(Boolean.valueOf(val)); yield true;
+                case "inheritErrorHandler": def.setInheritErrorHandler(val); yield true;
                 case "maximumFailoverAttempts": def.setMaximumFailoverAttempts(val); yield true;
                 case "roundRobin": def.setRoundRobin(val); yield true;
                 case "sticky": def.setSticky(val); yield true;
