@@ -99,6 +99,7 @@ class HelpOverlay {
                 .scroll(scroll)
                 .block(block)
                 .styles(Theme.markdownStyles())
+                .syntaxTheme(Theme.syntaxTheme())
                 .build();
         frame.renderWidget(view, popup);
     }

@@ -202,6 +202,7 @@ public class CamelMonitor extends CamelCommand {
     // the AI panel overlays the editor, so it is hidden while an edit is replayed and shown again afterwards
     private boolean replayHidAiPanel;
     private TuiRunner runner;
+    private String lastWindowTitle;
     // Set by TuiWebServer for browser sessions; local terminal sessions leave this null
     // and let TuiBackendHelper auto-detect the active terminal instead.
     Backend webBackend;
@@ -1030,6 +1031,7 @@ public class CamelMonitor extends CamelCommand {
                 // session registers it.
                 Signal.handle(new Signal("INT"), sig -> tui.quit());
             }
+            updateWindowTitle();
             tui.run(
                     this::handleEvent,
                     this::render);
@@ -1851,6 +1853,7 @@ public class CamelMonitor extends CamelCommand {
             dataService.refresh(runner, this::refreshLogData, this::refreshConditionalData);
             tabRegistry.routesTab().refreshDiagramIfNeeded();
             tabRegistry.diagramTab().refreshDiagramIfNeeded();
+            updateWindowTitle();
             dataRefreshed = true;
         }
         // Redraw only when the periodic data refresh fired or an animation is in flight.
@@ -3062,6 +3065,18 @@ public class CamelMonitor extends CamelCommand {
         }
         ctx.addPhantom(phantom);
         ctx.selectedPid = phantom.pid;
+    }
+
+    private void updateWindowTitle() {
+        if (runner == null) {
+            return;
+        }
+        String name = ctx != null && ctx.selectedPid != null ? ctx.selectedName() : null;
+        String title = name != null ? "Camel Monitor: " + name : "Camel Monitor";
+        if (!title.equals(lastWindowTitle)) {
+            lastWindowTitle = title;
+            runner.setWindowTitle(title);
+        }
     }
 
     void setRunnerForTesting(Runnable onQuit) {

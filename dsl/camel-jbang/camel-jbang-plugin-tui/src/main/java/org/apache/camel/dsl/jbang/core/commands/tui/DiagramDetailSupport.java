@@ -487,6 +487,7 @@ final class DiagramDetailSupport {
                             .block(Block.builder().borderType(BorderType.ROUNDED).borders(Borders.ALL)
                                     .title(" EIP Detail ").build())
                             .styles(Theme.markdownStyles())
+                            .syntaxTheme(Theme.syntaxTheme())
                             .build(),
                     area);
             return;
@@ -501,6 +502,7 @@ final class DiagramDetailSupport {
                             .block(Block.builder().borderType(BorderType.ROUNDED).borders(Borders.ALL)
                                     .title(" EIP Detail ").build())
                             .styles(Theme.markdownStyles())
+                            .syntaxTheme(Theme.syntaxTheme())
                             .build(),
                     area);
             return;
@@ -551,6 +553,7 @@ final class DiagramDetailSupport {
                         .block(Block.builder().borderType(BorderType.ROUNDED).borders(Borders.ALL)
                                 .title(title).build())
                         .styles(Theme.markdownStyles())
+                        .syntaxTheme(Theme.syntaxTheme())
                         .build(),
                 area);
     }

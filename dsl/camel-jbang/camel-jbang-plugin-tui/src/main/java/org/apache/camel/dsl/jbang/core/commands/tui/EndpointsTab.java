@@ -566,6 +566,7 @@ class EndpointsTab extends AbstractTableTab {
                                     .borderStyle(detailBorderStyle)
                                     .title(Title.from(Line.from(Span.styled(" Endpoint Detail ", detailTitleStyle)))).build())
                             .styles(Theme.markdownStyles())
+                            .syntaxTheme(Theme.syntaxTheme())
                             .build(),
                     area);
             return;
@@ -582,6 +583,7 @@ class EndpointsTab extends AbstractTableTab {
                                     .borderStyle(detailBorderStyle)
                                     .title(Title.from(Line.from(Span.styled(" Endpoint Detail ", detailTitleStyle)))).build())
                             .styles(Theme.markdownStyles())
+                            .syntaxTheme(Theme.syntaxTheme())
                             .build(),
                     area);
             return;
@@ -683,6 +685,7 @@ class EndpointsTab extends AbstractTableTab {
                                 .borderStyle(detailBorderStyle)
                                 .title(Title.from(Line.from(Span.styled(title, detailTitleStyle)))).build())
                         .styles(Theme.markdownStyles())
+                        .syntaxTheme(Theme.syntaxTheme())
                         .build(),
                 area);
     }
