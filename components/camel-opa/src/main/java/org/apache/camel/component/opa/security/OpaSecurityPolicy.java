@@ -21,7 +21,9 @@ import org.apache.camel.NamedNode;
 import org.apache.camel.Processor;
 import org.apache.camel.Route;
 import org.apache.camel.component.opa.OpaPolicyEvaluator;
+import org.apache.camel.health.HealthCheckRegistry;
 import org.apache.camel.spi.AuthorizationPolicy;
+import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.StringHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -55,7 +57,11 @@ public class OpaSecurityPolicy implements AuthorizationPolicy {
     private boolean failOpen;
     private OPAClient opaClient;
 
+    private boolean healthCheckEnabled = true;
+
     private volatile OpaPolicyEvaluator evaluator;
+    private volatile OpaSecurityPolicyHealthCheck healthCheck;
+    private volatile boolean ownsClient;
 
     public OpaSecurityPolicy() {
     }
@@ -71,10 +77,34 @@ public class OpaSecurityPolicy implements AuthorizationPolicy {
             StringHelper.notEmpty(policyPath, "policyPath", this);
             if (opaClient == null) {
                 opaClient = OpaPolicyEvaluator.createClient(serverUrl, bearerToken);
+                ownsClient = true;
             }
             evaluator = new OpaPolicyEvaluator(
                     opaClient, policyPath, allowKey, includeHeaders, includeProperties, includeBody, failOpen);
         }
+        // after validation, so a policy that is missing its policyPath fails without leaving a ".../null" check
+        // behind in the registry
+        registerHealthCheck(route);
+    }
+
+    /**
+     * Registers a readiness check for the OPA server, once per policy however many routes it wraps.
+     * <p/>
+     * Only for a client this policy built itself from {@code serverUrl}. An injected {@code opaClient} can point
+     * anywhere and this policy has no way to ask it where, so probing the configured URL would report on a server it
+     * may never talk to - hence {@code ownsClient} rather than a null check on {@code opaClient}, which by the time
+     * this runs is set either way.
+     */
+    private void registerHealthCheck(Route route) {
+        if (!healthCheckEnabled || healthCheck != null || !ownsClient || ObjectHelper.isEmpty(serverUrl)) {
+            return;
+        }
+        HealthCheckRegistry registry = HealthCheckRegistry.get(route.getCamelContext());
+        if (registry == null) {
+            return;
+        }
+        healthCheck = new OpaSecurityPolicyHealthCheck(serverUrl, bearerToken, policyPath);
+        registry.register(healthCheck);
     }
 
     @Override
@@ -177,6 +207,20 @@ public class OpaSecurityPolicy implements AuthorizationPolicy {
      */
     public void setFailOpen(boolean failOpen) {
         this.failOpen = failOpen;
+    }
+
+    public boolean isHealthCheckEnabled() {
+        return healthCheckEnabled;
+    }
+
+    /**
+     * Whether to register a readiness check for the OPA server this policy queries. Enabled by default: the policy
+     * denies every exchange it guards while the server is unreachable, so a route that is up but cannot reach OPA is
+     * not ready. Disable it for a policy whose route should stay ready regardless - for example one wrapped in
+     * {@code failOpen} - rather than excluding the check by pattern.
+     */
+    public void setHealthCheckEnabled(boolean healthCheckEnabled) {
+        this.healthCheckEnabled = healthCheckEnabled;
     }
 
     public OPAClient getOpaClient() {
