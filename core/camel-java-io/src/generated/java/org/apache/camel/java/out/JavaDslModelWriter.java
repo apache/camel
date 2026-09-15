@@ -3385,7 +3385,7 @@ public class JavaDslModelWriter extends JavaDslModelWriterSupport {
     protected void doWriteXMLSecurityDataFormat(StringBuilder sb, XMLSecurityDataFormat def) {
         doWriteIdentifiedTypeAttributes(sb, def);
         doWriteAttribute(sb, "namespace", def.getNamespaceRef(), null);
-        doWriteAttribute(sb, "xmlCipherAlgorithm", def.getXmlCipherAlgorithm(), "AES-256-GCM");
+        doWriteAttribute(sb, "xmlCipherAlgorithm", def.getXmlCipherAlgorithm(), "AES_256_GCM");
         doWriteAttribute(sb, "passPhrase", def.getPassPhrase(), null);
         doWriteAttribute(sb, "passPhraseByte", toString(def.getPassPhraseByte()), null);
         doWriteAttribute(sb, "secureTag", def.getSecureTag(), null);
