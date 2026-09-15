@@ -230,6 +230,11 @@ opa build -t wasm -e authz/orders/allow roles.rego data.json
 Data that is *not* part of the bundle — what a server would receive through its Data API at runtime — has no
 equivalent in `wasm` mode. A policy depending on it needs `evaluationMode=rest`.
 
+Prefer `classpath:` or `file:` for a bundle shipped with the application, which is what a build-time artefact
+usually is. The bundle is fetched when the endpoint starts, and Camel resolves an `http:` resource with no
+connect or read timeout (CAMEL-24756), so a policy server that accepts the connection and then does not answer
+stalls `CamelContext` startup rather than failing the one route.
+
 Which to choose:
 
 [cols="1,2,2"]
