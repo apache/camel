@@ -24,17 +24,21 @@ public class LangChain4jIngestEndpointUriFactory extends org.apache.camel.suppor
     private static final Set<String> ENDPOINT_IDENTITY_PROPERTY_NAMES;
     private static final Map<String, String> MULTI_VALUE_PREFIXES;
     static {
-        Set<String> props = new HashSet<>(11);
+        Set<String> props = new HashSet<>(15);
+        props.add("documentFilter");
         props.add("documentIdHeader");
         props.add("documentSplitter");
         props.add("embeddingBatchSize");
         props.add("embeddingModel");
         props.add("embeddingStore");
+        props.add("excludeId");
         props.add("idempotentRepository");
+        props.add("includeId");
         props.add("lazyStartProducer");
         props.add("maxDocumentSize");
         props.add("maxOverlapSize");
         props.add("maxSegmentSize");
+        props.add("minDocumentSize");
         props.add("pipelineName");
         PROPERTY_NAMES = Collections.unmodifiableSet(props);
         SECRET_PROPERTY_NAMES = Collections.emptySet();
