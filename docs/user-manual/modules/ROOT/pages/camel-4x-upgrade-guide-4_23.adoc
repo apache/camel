@@ -1997,16 +1997,23 @@ executed statement:
 
 * `camel-sql`: the `CamelSqlQuery` header replaced the endpoint query.
 * `camel-sql-stored`: the `CamelSqlStoredTemplate` header replaced the endpoint template, and its value was
-  resolved through `SqlHelper.resolveQuery`, which resolves `file:` / `http:` / `classpath:` resources.
+  resolved through `SqlHelper.resolveQuery`, which resolves `file:`, `http:`, `https:` and `classpath:` resources.
 
 Both overrides are now disabled by default and must be opted into, matching the `allowTemplateFromHeader`
 convention already used by the template components (camel-freemarker, camel-velocity, camel-xslt, ...):
 
 * `camel-sql`: set `allowQueryFromHeader=true` to honour the `CamelSqlQuery` header again.
 * `camel-sql-stored`: set `allowTemplateFromHeader=true` to honour the `CamelSqlStoredTemplate` header again; a
-  header-supplied template is now resolved with property placeholders only, never as a `file:` / `http:` resource.
+  header-supplied template is now resolved with property placeholders only, never as a `file:`, `http:`, `https:`
+  or `classpath:` resource.
 
 A route that relied on either header must set the corresponding option on the endpoint.
+
+Opting back in is not quite the previous behaviour. `SqlHelper.resolveQuery` applied placeholder resolution only to
+a value that had a scheme, so a schemeless header template used to reach the database untouched; it now always goes
+through `SqlHelper.resolvePlaceholders`, which drops `--` comment lines and blank lines and re-joins the rest with
+newlines. That is immaterial for the single-line call syntax a stored-procedure template normally uses, but a route
+passing a multi-line commented template through the header will see the comments stripped.
 
 Additionally, `camel-sql-stored` with `useMessageBodyForTemplate=true` now uses the message body verbatim as the
 stored-procedure template text and no longer resolves it through `SqlHelper.resolveQuery`. A body beginning with
