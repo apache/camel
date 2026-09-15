@@ -150,7 +150,7 @@ public class SplitReifier extends ExpressionReifier<SplitDefinition> {
     private AggregationStrategy createAggregationStrategy() {
         AggregationStrategy strategy = definition.getAggregationStrategyBean();
         if (strategy == null && definition.getAggregationStrategy() != null) {
-            Object aggStrategy = lookupByName(definition.getAggregationStrategy());
+            Object aggStrategy = lookupByName(definition.getAggregationStrategy(), AggregationStrategy.class);
             if (aggStrategy == null) {
                 aggStrategy = lookupByNameAndType(definition.getAggregationStrategy(), AggregationStrategy.class);
             }
