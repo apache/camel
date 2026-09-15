@@ -180,7 +180,9 @@ public abstract class AbstractReifier implements BeanRepository {
         Object obj = lookupByNameAndType(name, type);
         if (obj == null) {
             // a #class: whose class was not found: say which built-in bean was likely meant
-            throw new NoSuchBeanException(name, type.getName(), PojoBeanHelper.classNotFoundHint(camelContext, name, type));
+            // (a plain bean name that is not in the registry gets no hint as it is not a class)
+            String hint = name.startsWith("#class:") ? PojoBeanHelper.classNotFoundHint(camelContext, name, type) : null;
+            throw new NoSuchBeanException(name, type.getName(), hint);
         }
         return type.cast(obj);
     }
