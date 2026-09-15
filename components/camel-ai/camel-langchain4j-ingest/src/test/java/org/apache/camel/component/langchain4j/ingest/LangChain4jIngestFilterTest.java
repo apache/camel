@@ -56,6 +56,12 @@ class LangChain4jIngestFilterTest extends CamelTestSupport {
         return true;
     };
 
+    @BindToRegistry("requireContent")
+    private final Predicate requireContent = exchange -> {
+        String body = exchange.getMessage().getBody(String.class);
+        return body != null && !body.isBlank();
+    };
+
     @Override
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
@@ -71,6 +77,9 @@ class LangChain4jIngestFilterTest extends CamelTestSupport {
                                          + "&minDocumentSize=25");
                 from("direct:throwing").to("langchain4j-ingest:throwing?documentFilter=#bean:explosive"
                                            + "&idempotentRepository=#bean:register");
+                from("direct:requireContent").to("langchain4j-ingest:require-content"
+                                                 + "?documentFilter=#bean:requireContent"
+                                                 + "&idempotentRepository=#bean:register");
             }
         };
     }
@@ -149,6 +158,25 @@ class LangChain4jIngestFilterTest extends CamelTestSupport {
 
         IngestResult retried = ingest("direct:throwing", "doc-t1", "recovered content");
         assertThat(retried.outcome()).isEqualTo(IngestResult.Outcome.INGESTED);
+    }
+
+    /**
+     * The predicate runs before the blank-document check and must tolerate an absent body: a predicate rejecting a
+     * blank delivery answers FILTERED, one accepting it leaves the blank check to answer EMPTY. Both release the claim.
+     */
+    @Test
+    void blankBodyMeetsThePredicateFirst() {
+        IngestResult rejected = ingest("direct:requireContent", "doc-b1", "   ");
+        assertThat(rejected.outcome()).isEqualTo(IngestResult.Outcome.FILTERED);
+        assertThat(register.contains("doc-b1")).isFalse();
+
+        IngestResult absent = ingest("direct:requireContent", "doc-b2", null);
+        assertThat(absent.outcome()).isEqualTo(IngestResult.Outcome.FILTERED);
+        assertThat(register.contains("doc-b2")).isFalse();
+
+        // the confidential predicate tolerates and accepts a blank body, so EMPTY wins
+        IngestResult accepted = ingest("direct:predicate", "doc-b3", "   ");
+        assertThat(accepted.outcome()).isEqualTo(IngestResult.Outcome.EMPTY);
     }
 
     private IngestResult ingest(String uri, String documentId, String body) {
