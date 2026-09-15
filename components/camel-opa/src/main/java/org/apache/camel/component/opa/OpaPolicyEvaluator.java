@@ -23,7 +23,6 @@ import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
 
-import com.styra.opa.OPAClient;
 import org.apache.camel.Exchange;
 import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;
@@ -35,7 +34,7 @@ import org.slf4j.LoggerFactory;
  * Shared by the {@code opa:} producer and by {@code OpaSecurityPolicy} so that both build the same input document and
  * read the verdict the same way.
  */
-public class OpaPolicyEvaluator {
+public abstract class OpaPolicyEvaluator {
 
     private static final Logger LOG = LoggerFactory.getLogger(OpaPolicyEvaluator.class);
 
@@ -48,7 +47,6 @@ public class OpaPolicyEvaluator {
      */
     private static final Set<String> CREDENTIAL_HEADERS = credentialHeaders();
 
-    private final OPAClient client;
     private final String policyPath;
     private final String allowKey;
     private final Set<String> includedHeaders;
@@ -56,9 +54,8 @@ public class OpaPolicyEvaluator {
     private final boolean includeBody;
     private final boolean failOpen;
 
-    public OpaPolicyEvaluator(OPAClient client, String policyPath, String allowKey, String includeHeaders,
-                              String includeProperties, boolean includeBody, boolean failOpen) {
-        this.client = ObjectHelper.notNull(client, "client");
+    protected OpaPolicyEvaluator(String policyPath, String allowKey, String includeHeaders,
+                                 String includeProperties, boolean includeBody, boolean failOpen) {
         this.policyPath = ObjectHelper.notNull(policyPath, "policyPath");
         this.allowKey = ObjectHelper.isNotEmpty(allowKey) ? allowKey : "allow";
         // headers default to all of them, exchange properties to none: properties are mostly used to carry
@@ -67,19 +64,6 @@ public class OpaPolicyEvaluator {
         this.includedProperties = parseNameFilter(includeProperties, false);
         this.includeBody = includeBody;
         this.failOpen = failOpen;
-    }
-
-    /**
-     * Creates a client for an OPA server, optionally authenticating with a bearer token.
-     *
-     * @param serverUrl   base URL of the OPA server, without the /v1/data suffix
-     * @param bearerToken token for OPA API authentication, or null when OPA does not require one
-     */
-    public static OPAClient createClient(String serverUrl, String bearerToken) {
-        if (ObjectHelper.isNotEmpty(bearerToken)) {
-            return new OPAClient(serverUrl, Map.of("Authorization", "Bearer " + bearerToken));
-        }
-        return new OPAClient(serverUrl);
     }
 
     /**
@@ -92,7 +76,13 @@ public class OpaPolicyEvaluator {
     public boolean evaluate(Exchange exchange) throws OpaPolicyEvaluationException {
         Object decision;
         try {
-            decision = client.evaluate(policyPath, buildInput(exchange), Object.class);
+            decision = evaluateDecision(buildInput(exchange));
+        } catch (InterruptedException e) {
+            // not a policy failure but a shutdown, so failOpen must not turn it into an allow: nothing decided
+            // that this exchange was permitted. Restore the flag the interruptible wait cleared, then fail closed
+            Thread.currentThread().interrupt();
+            throw new OpaPolicyEvaluationException(
+                    "Interrupted while evaluating policy " + policyPath, exchange, e);
         } catch (Exception e) {
             // any failure to reach a verdict is handled the same way, whether it comes from the OPA server
             // (OPAException) or from building and serializing the input document; fail-closed must not depend
@@ -105,12 +95,30 @@ public class OpaPolicyEvaluator {
                 return true;
             }
             throw new OpaPolicyEvaluationException(
-                    "Failed to evaluate policy " + policyPath + " at the OPA server", exchange, e);
+                    "Failed to evaluate policy " + policyPath, exchange, e);
         }
 
         boolean allowed = isAllowed(decision);
         setDecisionHeaders(exchange, decision, allowed);
         return allowed;
+    }
+
+    /**
+     * Evaluates the policy for the given input document and returns the raw decision.
+     * <p/>
+     * The only thing an engine has to supply. Everything that decides what a route sees - how the input document is
+     * built, how the verdict is read out of the decision, what the headers say, and what happens when no verdict can be
+     * reached - lives in this class, so a policy behaves identically whichever engine evaluated it.
+     *
+     * @param  input     the input document
+     * @return           the decision document, already unwrapped to plain JSON types
+     * @throws Exception when no decision could be reached; the caller turns this into a fail-closed error, or an allow
+     *                   when {@code failOpen} is set
+     */
+    protected abstract Object evaluateDecision(Map<String, Object> input) throws Exception;
+
+    protected String getPolicyPath() {
+        return policyPath;
     }
 
     /**

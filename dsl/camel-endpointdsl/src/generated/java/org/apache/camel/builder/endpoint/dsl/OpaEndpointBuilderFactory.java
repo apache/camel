@@ -63,6 +63,44 @@ public interface OpaEndpointBuilderFactory {
             return this;
         }
         /**
+         * The compiled entrypoint to evaluate in wasm mode. This is not the
+         * same thing as the policy path: an entrypoint is fixed when the bundle
+         * is built, with {code opa build -e}. Defaults to the endpoint's policy
+         * path, which is the name {code opa build} gives it.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: producer
+         * 
+         * @param entrypoint the value to set
+         * @return the dsl builder
+         */
+        default OpaEndpointBuilder entrypoint(String entrypoint) {
+            doSetProperty("entrypoint", entrypoint);
+            return this;
+        }
+        /**
+         * How the policy is evaluated. rest (the default) calls a running OPA
+         * server over its Data API. wasm evaluates a WebAssembly bundle
+         * in-process, with no server involved - so there is no network hop and
+         * no unreachable decision point, at the cost of the policy being a
+         * build-time artefact rather than something a server distributes and
+         * updates. serverUrl, bearerToken and failOpen do not apply in wasm
+         * mode.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Default: rest
+         * Group: producer
+         * 
+         * @param evaluationMode the value to set
+         * @return the dsl builder
+         */
+        default OpaEndpointBuilder evaluationMode(String evaluationMode) {
+            doSetProperty("evaluationMode", evaluationMode);
+            return this;
+        }
+        /**
          * Whether to send the message body to OPA as part of the input
          * document. Disabled by default: bodies can be large or streaming, and
          * most authorization decisions only need headers. When enabled on a
@@ -144,6 +182,26 @@ public interface OpaEndpointBuilderFactory {
          */
         default OpaEndpointBuilder includeProperties(String includeProperties) {
             doSetProperty("includeProperties", includeProperties);
+            return this;
+        }
+        /**
+         * The WebAssembly policy to evaluate in wasm mode, as produced by {code
+         * opa build -t wasm}. Accepts a {code file:}, {code classpath:} or
+         * {code http:} location holding either the bundle.tar.gz that {code opa
+         * build} emits or a bare .wasm module. Required when {code
+         * evaluationMode=wasm}. Prefer the bundle: it also carries the data
+         * document the policy reads as {code data.}, which a bare module does
+         * not.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: producer
+         * 
+         * @param policyBundle the value to set
+         * @return the dsl builder
+         */
+        default OpaEndpointBuilder policyBundle(String policyBundle) {
+            doSetProperty("policyBundle", policyBundle);
             return this;
         }
         /**
@@ -272,6 +330,46 @@ public interface OpaEndpointBuilderFactory {
             return this;
         }
         /**
+         * How long an exchange waits for a free WebAssembly policy instance in
+         * wasm mode before the evaluation fails. An exchange that cannot get an
+         * instance is not denied by a policy, so it is reported as an
+         * evaluation failure and handled like any other: failing closed, or
+         * proceeding if failOpen is set. Raise it, or poolSize, for a route
+         * whose concurrency exceeds the pool.
+         * 
+         * The option is a: <code>long</code> type.
+         * 
+         * Default: 30000
+         * Group: advanced
+         * 
+         * @param borrowTimeout the value to set
+         * @return the dsl builder
+         */
+        default AdvancedOpaEndpointBuilder borrowTimeout(long borrowTimeout) {
+            doSetProperty("borrowTimeout", borrowTimeout);
+            return this;
+        }
+        /**
+         * How long an exchange waits for a free WebAssembly policy instance in
+         * wasm mode before the evaluation fails. An exchange that cannot get an
+         * instance is not denied by a policy, so it is reported as an
+         * evaluation failure and handled like any other: failing closed, or
+         * proceeding if failOpen is set. Raise it, or poolSize, for a route
+         * whose concurrency exceeds the pool.
+         * 
+         * The option will be converted to a <code>long</code> type.
+         * 
+         * Default: 30000
+         * Group: advanced
+         * 
+         * @param borrowTimeout the value to set
+         * @return the dsl builder
+         */
+        default AdvancedOpaEndpointBuilder borrowTimeout(String borrowTimeout) {
+            doSetProperty("borrowTimeout", borrowTimeout);
+            return this;
+        }
+        /**
          * An existing OPAClient to use. When set, serverUrl and bearerToken are
          * ignored.
          * 
@@ -300,6 +398,42 @@ public interface OpaEndpointBuilderFactory {
          */
         default AdvancedOpaEndpointBuilder opaClient(String opaClient) {
             doSetProperty("opaClient", opaClient);
+            return this;
+        }
+        /**
+         * How many WebAssembly policy instances to pool in wasm mode. An
+         * instance carries mutable state and is not thread-safe, so each
+         * exchange borrows one; this bounds how many exchanges evaluate at
+         * once.
+         * 
+         * The option is a: <code>int</code> type.
+         * 
+         * Default: 8
+         * Group: advanced
+         * 
+         * @param poolSize the value to set
+         * @return the dsl builder
+         */
+        default AdvancedOpaEndpointBuilder poolSize(int poolSize) {
+            doSetProperty("poolSize", poolSize);
+            return this;
+        }
+        /**
+         * How many WebAssembly policy instances to pool in wasm mode. An
+         * instance carries mutable state and is not thread-safe, so each
+         * exchange borrows one; this bounds how many exchanges evaluate at
+         * once.
+         * 
+         * The option will be converted to a <code>int</code> type.
+         * 
+         * Default: 8
+         * Group: advanced
+         * 
+         * @param poolSize the value to set
+         * @return the dsl builder
+         */
+        default AdvancedOpaEndpointBuilder poolSize(String poolSize) {
+            doSetProperty("poolSize", poolSize);
             return this;
         }
     }

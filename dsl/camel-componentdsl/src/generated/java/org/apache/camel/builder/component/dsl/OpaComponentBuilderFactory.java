@@ -87,6 +87,47 @@ public interface OpaComponentBuilderFactory {
             return this;
         }
     
+        /**
+         * The compiled entrypoint to evaluate in wasm mode. This is not the
+         * same thing as the policy path: an entrypoint is fixed when the bundle
+         * is built, with {code opa build -e}. Defaults to the endpoint's policy
+         * path, which is the name {code opa build} gives it.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: producer
+         * 
+         * @param entrypoint the value to set
+         * @return the dsl builder
+         */
+        default OpaComponentBuilder entrypoint(java.lang.String entrypoint) {
+            doSetProperty("entrypoint", entrypoint);
+            return this;
+        }
+    
+        
+        /**
+         * How the policy is evaluated. rest (the default) calls a running OPA
+         * server over its Data API. wasm evaluates a WebAssembly bundle
+         * in-process, with no server involved - so there is no network hop and
+         * no unreachable decision point, at the cost of the policy being a
+         * build-time artefact rather than something a server distributes and
+         * updates. serverUrl, bearerToken and failOpen do not apply in wasm
+         * mode.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Default: rest
+         * Group: producer
+         * 
+         * @param evaluationMode the value to set
+         * @return the dsl builder
+         */
+        default OpaComponentBuilder evaluationMode(java.lang.String evaluationMode) {
+            doSetProperty("evaluationMode", evaluationMode);
+            return this;
+        }
+    
         
         /**
          * Whether to send the message body to OPA as part of the input
@@ -182,6 +223,27 @@ public interface OpaComponentBuilderFactory {
             return this;
         }
     
+        /**
+         * The WebAssembly policy to evaluate in wasm mode, as produced by {code
+         * opa build -t wasm}. Accepts a {code file:}, {code classpath:} or
+         * {code http:} location holding either the bundle.tar.gz that {code opa
+         * build} emits or a bare .wasm module. Required when {code
+         * evaluationMode=wasm}. Prefer the bundle: it also carries the data
+         * document the policy reads as {code data.}, which a bare module does
+         * not.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: producer
+         * 
+         * @param policyBundle the value to set
+         * @return the dsl builder
+         */
+        default OpaComponentBuilder policyBundle(java.lang.String policyBundle) {
+            doSetProperty("policyBundle", policyBundle);
+            return this;
+        }
+    
         
         /**
          * The base URL of the OPA server, without the {code /v1/data} suffix.
@@ -222,6 +284,28 @@ public interface OpaComponentBuilderFactory {
             return this;
         }
     
+        
+        /**
+         * How long an exchange waits for a free WebAssembly policy instance in
+         * wasm mode before the evaluation fails. An exchange that cannot get an
+         * instance is not denied by a policy, so it is reported as an
+         * evaluation failure and handled like any other: failing closed, or
+         * proceeding if failOpen is set. Raise it, or poolSize, for a route
+         * whose concurrency exceeds the pool.
+         * 
+         * The option is a: &lt;code&gt;long&lt;/code&gt; type.
+         * 
+         * Default: 30000
+         * Group: advanced
+         * 
+         * @param borrowTimeout the value to set
+         * @return the dsl builder
+         */
+        default OpaComponentBuilder borrowTimeout(long borrowTimeout) {
+            doSetProperty("borrowTimeout", borrowTimeout);
+            return this;
+        }
+    
         /**
          * An existing OPAClient to use. When set, serverUrl and bearerToken are
          * ignored.
@@ -236,6 +320,26 @@ public interface OpaComponentBuilderFactory {
          */
         default OpaComponentBuilder opaClient(com.styra.opa.OPAClient opaClient) {
             doSetProperty("opaClient", opaClient);
+            return this;
+        }
+    
+        
+        /**
+         * How many WebAssembly policy instances to pool in wasm mode. An
+         * instance carries mutable state and is not thread-safe, so each
+         * exchange borrows one; this bounds how many exchanges evaluate at
+         * once.
+         * 
+         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
+         * 
+         * Default: 8
+         * Group: advanced
+         * 
+         * @param poolSize the value to set
+         * @return the dsl builder
+         */
+        default OpaComponentBuilder poolSize(int poolSize) {
+            doSetProperty("poolSize", poolSize);
             return this;
         }
     
@@ -335,13 +439,18 @@ public interface OpaComponentBuilderFactory {
             switch (name) {
             case "allowKey": getOrCreateConfiguration((OpaComponent) component).setAllowKey((java.lang.String) value); return true;
             case "configuration": ((OpaComponent) component).setConfiguration((org.apache.camel.component.opa.OpaConfiguration) value); return true;
+            case "entrypoint": getOrCreateConfiguration((OpaComponent) component).setEntrypoint((java.lang.String) value); return true;
+            case "evaluationMode": getOrCreateConfiguration((OpaComponent) component).setEvaluationMode((java.lang.String) value); return true;
             case "includeBody": getOrCreateConfiguration((OpaComponent) component).setIncludeBody((boolean) value); return true;
             case "includeHeaders": getOrCreateConfiguration((OpaComponent) component).setIncludeHeaders((java.lang.String) value); return true;
             case "includeProperties": getOrCreateConfiguration((OpaComponent) component).setIncludeProperties((java.lang.String) value); return true;
             case "lazyStartProducer": ((OpaComponent) component).setLazyStartProducer((boolean) value); return true;
+            case "policyBundle": getOrCreateConfiguration((OpaComponent) component).setPolicyBundle((java.lang.String) value); return true;
             case "serverUrl": getOrCreateConfiguration((OpaComponent) component).setServerUrl((java.lang.String) value); return true;
             case "autowiredEnabled": ((OpaComponent) component).setAutowiredEnabled((boolean) value); return true;
+            case "borrowTimeout": getOrCreateConfiguration((OpaComponent) component).setBorrowTimeout((long) value); return true;
             case "opaClient": getOrCreateConfiguration((OpaComponent) component).setOpaClient((com.styra.opa.OPAClient) value); return true;
+            case "poolSize": getOrCreateConfiguration((OpaComponent) component).setPoolSize((int) value); return true;
             case "healthCheckConsumerEnabled": ((OpaComponent) component).setHealthCheckConsumerEnabled((boolean) value); return true;
             case "healthCheckProducerEnabled": ((OpaComponent) component).setHealthCheckProducerEnabled((boolean) value); return true;
             case "bearerToken": getOrCreateConfiguration((OpaComponent) component).setBearerToken((java.lang.String) value); return true;
