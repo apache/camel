@@ -139,7 +139,7 @@ https://jqlang.github.io/jq/[`jq`]:
 [source,bash]
 ----
 # List every component as group:name:version
-jq -r '.components[] | "\(.group):\(.name):\(.version)"' camel-sbom.json
+jq -r '.components[] | "\(.group // ""):\(.name):\(.version)"' camel-sbom.json
 
 # Find the version of a specific library across the whole graph
 jq -r '.components[] | select(.name | test("jackson")) | "\(.name) \(.version)"' camel-sbom.json
