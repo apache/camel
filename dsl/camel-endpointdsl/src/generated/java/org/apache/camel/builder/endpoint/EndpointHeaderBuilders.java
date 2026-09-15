@@ -1672,21 +1672,6 @@ public class EndpointHeaderBuilders {
         return HashicorpVaultEndpointBuilderFactory.HashicorpVaultHeaderNameBuilder.INSTANCE;
     }
     /**
-     * Hazelcast Atomic Number (camel-hazelcast)
-     * Increment, decrement, set, etc. Hazelcast atomic number (a grid wide
-     * number).
-     * 
-     * Category: cache,clustering
-     * Since: 2.7
-     * Maven coordinates: org.apache.camel:camel-hazelcast
-     * 
-     * @return the dsl builder for the headers' name.
-     */
-    @Deprecated
-    public static HazelcastAtomicnumberEndpointBuilderFactory.HazelcastAtomicnumberHeaderNameBuilder hazelcastAtomicvalue() {
-        return HazelcastAtomicnumberEndpointBuilderFactory.HazelcastAtomicnumberHeaderNameBuilder.INSTANCE;
-    }
-    /**
      * Hazelcast Instance (camel-hazelcast)
      * Consume join/leave events of a cache instance in a Hazelcast cluster.
      * 

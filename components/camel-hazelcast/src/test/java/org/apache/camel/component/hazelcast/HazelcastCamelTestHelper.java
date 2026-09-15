@@ -18,7 +18,6 @@ package org.apache.camel.component.hazelcast;
 
 import com.hazelcast.core.HazelcastInstance;
 import org.apache.camel.CamelContext;
-import org.apache.camel.component.hazelcast.atomicnumber.HazelcastAtomicnumberComponent;
 import org.apache.camel.component.hazelcast.instance.HazelcastInstanceComponent;
 import org.apache.camel.component.hazelcast.list.HazelcastListComponent;
 import org.apache.camel.component.hazelcast.map.HazelcastMapComponent;
@@ -37,9 +36,6 @@ public final class HazelcastCamelTestHelper {
     }
 
     public static void registerHazelcastComponents(CamelContext context, HazelcastInstance hazelcastInstance) {
-        HazelcastAtomicnumberComponent atomic = new HazelcastAtomicnumberComponent(context);
-        atomic.setHazelcastInstance(hazelcastInstance);
-        context.addComponent("hazelcast-atomicvalue", atomic);
         HazelcastInstanceComponent instance = new HazelcastInstanceComponent(context);
         instance.setHazelcastInstance(hazelcastInstance);
         context.addComponent("hazelcast-instance", instance);
