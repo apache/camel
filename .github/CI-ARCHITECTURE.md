@@ -80,7 +80,7 @@ PR comment: /component-test kafka http
 - `pr-cleanup-branches.yml` — Cleans up merged PR branches
 - `alternative-os-build-main.yml` — Tests on non-Linux OSes
 - `check-container-versions.yml` — Checks test container version updates
-- `generate-sbom-main.yml` — Generates SBOM for releases
+- `generate-sbom.yml` — Regenerates the CycloneDX SBOM (`camel-sbom/`) for `main` and each active LTS branch (matrix), opening a PR per branch
 - `security-scan.yml` — Security vulnerability scanning
 
 ## Actions
