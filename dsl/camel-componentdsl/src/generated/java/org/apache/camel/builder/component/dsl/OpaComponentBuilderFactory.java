@@ -280,6 +280,28 @@ public interface OpaComponentBuilderFactory {
             return this;
         }
     
+        
+        /**
+         * How long an exchange waits for a free WebAssembly policy instance in
+         * wasm mode before the evaluation fails. An exchange that cannot get an
+         * instance is not denied by a policy, so it is reported as an
+         * evaluation failure and handled like any other: failing closed, or
+         * proceeding if failOpen is set. Raise it, or poolSize, for a route
+         * whose concurrency exceeds the pool.
+         * 
+         * The option is a: &lt;code&gt;long&lt;/code&gt; type.
+         * 
+         * Default: 30000
+         * Group: advanced
+         * 
+         * @param borrowTimeout the value to set
+         * @return the dsl builder
+         */
+        default OpaComponentBuilder borrowTimeout(long borrowTimeout) {
+            doSetProperty("borrowTimeout", borrowTimeout);
+            return this;
+        }
+    
         /**
          * An existing OPAClient to use. When set, serverUrl and bearerToken are
          * ignored.
@@ -422,6 +444,7 @@ public interface OpaComponentBuilderFactory {
             case "policyBundle": getOrCreateConfiguration((OpaComponent) component).setPolicyBundle((java.lang.String) value); return true;
             case "serverUrl": getOrCreateConfiguration((OpaComponent) component).setServerUrl((java.lang.String) value); return true;
             case "autowiredEnabled": ((OpaComponent) component).setAutowiredEnabled((boolean) value); return true;
+            case "borrowTimeout": getOrCreateConfiguration((OpaComponent) component).setBorrowTimeout((long) value); return true;
             case "opaClient": getOrCreateConfiguration((OpaComponent) component).setOpaClient((com.styra.opa.OPAClient) value); return true;
             case "poolSize": getOrCreateConfiguration((OpaComponent) component).setPoolSize((int) value); return true;
             case "healthCheckConsumerEnabled": ((OpaComponent) component).setHealthCheckConsumerEnabled((boolean) value); return true;

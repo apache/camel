@@ -98,8 +98,9 @@ public class OpaEndpoint extends DefaultEndpoint {
         OpaWasmEvaluator.Bundle bundle
                 = OpaWasmEvaluator.loadPolicy(getCamelContext(), configuration.getPolicyBundle());
         return new OpaWasmEvaluator(
-                bundle.wasm(), bundle.data(), entrypoint, configuration.getPoolSize(), policyPath,
-                configuration.getAllowKey(), configuration.getIncludeHeaders(), configuration.getIncludeProperties(),
+                bundle.wasm(), bundle.data(), entrypoint, configuration.getPoolSize(),
+                configuration.getBorrowTimeout(), policyPath, configuration.getAllowKey(),
+                configuration.getIncludeHeaders(), configuration.getIncludeProperties(),
                 configuration.isIncludeBody(), configuration.isFailOpen());
     }
 

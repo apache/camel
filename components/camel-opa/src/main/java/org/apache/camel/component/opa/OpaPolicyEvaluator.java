@@ -69,6 +69,12 @@ public abstract class OpaPolicyEvaluator {
         Object decision;
         try {
             decision = evaluateDecision(buildInput(exchange));
+        } catch (InterruptedException e) {
+            // not a policy failure but a shutdown, so failOpen must not turn it into an allow: nothing decided
+            // that this exchange was permitted. Restore the flag the interruptible wait cleared, then fail closed
+            Thread.currentThread().interrupt();
+            throw new OpaPolicyEvaluationException(
+                    "Interrupted while evaluating policy " + policyPath, exchange, e);
         } catch (Exception e) {
             // any failure to reach a verdict is handled the same way, whether it comes from the OPA server
             // (OPAException) or from building and serializing the input document; fail-closed must not depend

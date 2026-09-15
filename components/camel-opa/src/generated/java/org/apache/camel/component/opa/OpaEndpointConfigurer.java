@@ -27,6 +27,8 @@ public class OpaEndpointConfigurer extends PropertyConfigurerSupport implements 
         case "allowKey": target.getConfiguration().setAllowKey(property(camelContext, java.lang.String.class, value)); return true;
         case "bearertoken":
         case "bearerToken": target.getConfiguration().setBearerToken(property(camelContext, java.lang.String.class, value)); return true;
+        case "borrowtimeout":
+        case "borrowTimeout": target.getConfiguration().setBorrowTimeout(property(camelContext, java.time.Duration.class, value).toMillis()); return true;
         case "entrypoint": target.getConfiguration().setEntrypoint(property(camelContext, java.lang.String.class, value)); return true;
         case "evaluationmode":
         case "evaluationMode": target.getConfiguration().setEvaluationMode(property(camelContext, java.lang.String.class, value)); return true;
@@ -64,6 +66,8 @@ public class OpaEndpointConfigurer extends PropertyConfigurerSupport implements 
         case "allowKey": return java.lang.String.class;
         case "bearertoken":
         case "bearerToken": return java.lang.String.class;
+        case "borrowtimeout":
+        case "borrowTimeout": return long.class;
         case "entrypoint": return java.lang.String.class;
         case "evaluationmode":
         case "evaluationMode": return java.lang.String.class;
@@ -97,6 +101,8 @@ public class OpaEndpointConfigurer extends PropertyConfigurerSupport implements 
         case "allowKey": return target.getConfiguration().getAllowKey();
         case "bearertoken":
         case "bearerToken": return target.getConfiguration().getBearerToken();
+        case "borrowtimeout":
+        case "borrowTimeout": return target.getConfiguration().getBorrowTimeout();
         case "entrypoint": return target.getConfiguration().getEntrypoint();
         case "evaluationmode":
         case "evaluationMode": return target.getConfiguration().getEvaluationMode();

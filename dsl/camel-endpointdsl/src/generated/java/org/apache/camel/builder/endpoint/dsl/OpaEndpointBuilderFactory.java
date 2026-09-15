@@ -326,6 +326,46 @@ public interface OpaEndpointBuilderFactory {
             return this;
         }
         /**
+         * How long an exchange waits for a free WebAssembly policy instance in
+         * wasm mode before the evaluation fails. An exchange that cannot get an
+         * instance is not denied by a policy, so it is reported as an
+         * evaluation failure and handled like any other: failing closed, or
+         * proceeding if failOpen is set. Raise it, or poolSize, for a route
+         * whose concurrency exceeds the pool.
+         * 
+         * The option is a: <code>long</code> type.
+         * 
+         * Default: 30000
+         * Group: advanced
+         * 
+         * @param borrowTimeout the value to set
+         * @return the dsl builder
+         */
+        default AdvancedOpaEndpointBuilder borrowTimeout(long borrowTimeout) {
+            doSetProperty("borrowTimeout", borrowTimeout);
+            return this;
+        }
+        /**
+         * How long an exchange waits for a free WebAssembly policy instance in
+         * wasm mode before the evaluation fails. An exchange that cannot get an
+         * instance is not denied by a policy, so it is reported as an
+         * evaluation failure and handled like any other: failing closed, or
+         * proceeding if failOpen is set. Raise it, or poolSize, for a route
+         * whose concurrency exceeds the pool.
+         * 
+         * The option will be converted to a <code>long</code> type.
+         * 
+         * Default: 30000
+         * Group: advanced
+         * 
+         * @param borrowTimeout the value to set
+         * @return the dsl builder
+         */
+        default AdvancedOpaEndpointBuilder borrowTimeout(String borrowTimeout) {
+            doSetProperty("borrowTimeout", borrowTimeout);
+            return this;
+        }
+        /**
          * An existing OPAClient to use. When set, serverUrl and bearerToken are
          * ignored.
          * 

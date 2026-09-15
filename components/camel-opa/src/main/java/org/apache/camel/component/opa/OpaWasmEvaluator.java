@@ -20,11 +20,11 @@ import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
 import java.util.Map;
+import java.util.concurrent.TimeoutException;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.styra.opa.wasm.OpaPolicy;
-import com.styra.opa.wasm.OpaPolicyPool;
 import org.apache.camel.CamelContext;
 import org.apache.camel.support.ResourceHelper;
 import org.apache.commons.compress.archivers.tar.TarArchiveEntry;
@@ -43,26 +43,28 @@ public class OpaWasmEvaluator extends OpaPolicyEvaluator implements AutoCloseabl
     private static final String POLICY_WASM = "policy.wasm";
     private static final String DATA_JSON = "data.json";
 
-    private final OpaPolicyPool pool;
+    private final OpaWasmPolicyPool pool;
     private final String entrypoint;
     private final String data;
 
-    public OpaWasmEvaluator(byte[] wasm, String data, String entrypoint, int poolSize, String policyPath,
-                            String allowKey, String includeHeaders, String includeProperties, boolean includeBody,
-                            boolean failOpen) {
+    public OpaWasmEvaluator(byte[] wasm, String data, String entrypoint, int poolSize, long borrowTimeout,
+                            String policyPath, String allowKey, String includeHeaders, String includeProperties,
+                            boolean includeBody, boolean failOpen) {
         super(policyPath, allowKey, includeHeaders, includeProperties, includeBody, failOpen);
         this.entrypoint = entrypoint;
         this.data = data;
         // OpaPolicy carries mutable input/data and is not thread-safe, while a Camel producer is invoked
         // concurrently - so each exchange borrows its own instance rather than sharing one
-        this.pool = OpaPolicyPool.create(() -> OpaPolicy.builder().withPolicy(wasm).build(), poolSize);
+        this.pool = new OpaWasmPolicyPool(() -> OpaPolicy.builder().withPolicy(wasm).build(), poolSize, borrowTimeout);
         // fail at startup rather than on the first exchange: the OpaPolicy constructor is what rejects a module
         // that is not a valid OPA bundle, and the pool creates instances lazily
-        try (OpaPolicyPool.Loan warmup = pool.borrow()) {
+        try (OpaWasmPolicyPool.Lease warmup = pool.borrow()) {
             prepare(warmup.policy());
         } catch (InterruptedException e) {
             Thread.currentThread().interrupt();
             throw new IllegalStateException("Interrupted while loading the WebAssembly policy", e);
+        } catch (TimeoutException e) {
+            throw new IllegalStateException("Timed out loading the WebAssembly policy", e);
         }
     }
 
@@ -136,23 +138,17 @@ public class OpaWasmEvaluator extends OpaPolicyEvaluator implements AutoCloseabl
 
     @Override
     protected Object evaluateDecision(Map<String, Object> input) throws Exception {
-        OpaPolicyPool.Loan loan = pool.borrow();
-        // set before close(), not after: Loan.close() delegates to a method that releases the pool's permit from a
-        // finally block, so the permit is gone whether or not close() then throws. Discarding after a failed close
-        // would release it a second time, and a pool whose semaphore gains permits stops bounding anything.
-        boolean returned = false;
+        OpaWasmPolicyPool.Lease lease = pool.borrow();
         try {
-            prepare(loan.policy());
-            Object decision = unwrap(loan.policy().evaluate(MAPPER.writeValueAsString(input)));
-            returned = true;
-            loan.close();
+            prepare(lease.policy());
+            Object decision = unwrap(lease.policy().evaluate(MAPPER.writeValueAsString(input)));
+            lease.close();
             return decision;
         } catch (Exception e) {
             // a trap part-way through an evaluation can leave the instance in an undefined state, so drop it
-            // rather than hand it to the next exchange
-            if (!returned) {
-                loan.discard();
-            }
+            // rather than hand it to the next exchange. Safe to call unconditionally: a lease ends exactly once,
+            // so this is a no-op when close() above already returned it
+            lease.discard();
             throw e;
         }
     }

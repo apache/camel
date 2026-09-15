@@ -251,7 +251,16 @@ The decision contract is identical in both modes: the same headers, the same `al
 undefined decision fails closed the same way. A route does not need to know which engine evaluated it.
 
 Evaluation instances carry mutable state and are not thread-safe, so `wasm` mode pools them; `poolSize`
-(default 8) bounds how many exchanges evaluate at once.
+(default 8) bounds how many exchanges evaluate at once. An exchange that arrives when all of them are busy waits
+for one, up to `borrowTimeout` (default 30s), and then fails rather than waiting indefinitely — an authorization
+decision that never arrives is not better than one that is denied, and it is much harder to diagnose. That
+failure is an evaluation failure, not a deny, so it fails closed or proceeds under `failOpen` like any other.
+
+Size `poolSize` for the concurrency the route actually sees. A policy that takes a long time to evaluate holds
+its instance for that whole time, so the two options trade against each other: raise `poolSize` when many
+exchanges evaluate at once, and `borrowTimeout` when a single evaluation is legitimately slow. A policy that can
+run long enough to matter is usually better served by `evaluationMode=rest`, where the decision point is a
+separate process that a timeout can abandon.
 
 == Failure handling
 

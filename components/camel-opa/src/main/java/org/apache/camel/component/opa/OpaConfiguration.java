@@ -54,6 +54,8 @@ public class OpaConfiguration implements Cloneable {
 
     @UriParam(label = "advanced", defaultValue = "8")
     private int poolSize = 8;
+    @UriParam(label = "advanced", defaultValue = "30000", javaType = "java.time.Duration")
+    private long borrowTimeout = 30000;
 
     @UriParam(label = "security", security = "insecure:dev")
     private boolean failOpen;
@@ -195,6 +197,20 @@ public class OpaConfiguration implements Cloneable {
      */
     public void setPoolSize(int poolSize) {
         this.poolSize = poolSize;
+    }
+
+    public long getBorrowTimeout() {
+        return borrowTimeout;
+    }
+
+    /**
+     * How long an exchange waits for a free WebAssembly policy instance in {@code wasm} mode before the evaluation
+     * fails. An exchange that cannot get an instance is not denied by a policy, so it is reported as an evaluation
+     * failure and handled like any other: failing closed, or proceeding if {@code failOpen} is set. Raise it, or
+     * {@code poolSize}, for a route whose concurrency exceeds the pool.
+     */
+    public void setBorrowTimeout(long borrowTimeout) {
+        this.borrowTimeout = borrowTimeout;
     }
 
     /**

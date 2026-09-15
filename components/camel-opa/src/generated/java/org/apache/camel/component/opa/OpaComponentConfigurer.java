@@ -36,6 +36,8 @@ public class OpaComponentConfigurer extends PropertyConfigurerSupport implements
         case "autowiredEnabled": target.setAutowiredEnabled(property(camelContext, boolean.class, value)); return true;
         case "bearertoken":
         case "bearerToken": getOrCreateConfiguration(target).setBearerToken(property(camelContext, java.lang.String.class, value)); return true;
+        case "borrowtimeout":
+        case "borrowTimeout": getOrCreateConfiguration(target).setBorrowTimeout(property(camelContext, java.time.Duration.class, value).toMillis()); return true;
         case "configuration": target.setConfiguration(property(camelContext, org.apache.camel.component.opa.OpaConfiguration.class, value)); return true;
         case "entrypoint": getOrCreateConfiguration(target).setEntrypoint(property(camelContext, java.lang.String.class, value)); return true;
         case "evaluationmode":
@@ -80,6 +82,8 @@ public class OpaComponentConfigurer extends PropertyConfigurerSupport implements
         case "autowiredEnabled": return boolean.class;
         case "bearertoken":
         case "bearerToken": return java.lang.String.class;
+        case "borrowtimeout":
+        case "borrowTimeout": return long.class;
         case "configuration": return org.apache.camel.component.opa.OpaConfiguration.class;
         case "entrypoint": return java.lang.String.class;
         case "evaluationmode":
@@ -120,6 +124,8 @@ public class OpaComponentConfigurer extends PropertyConfigurerSupport implements
         case "autowiredEnabled": return target.isAutowiredEnabled();
         case "bearertoken":
         case "bearerToken": return getOrCreateConfiguration(target).getBearerToken();
+        case "borrowtimeout":
+        case "borrowTimeout": return getOrCreateConfiguration(target).getBorrowTimeout();
         case "configuration": return target.getConfiguration();
         case "entrypoint": return getOrCreateConfiguration(target).getEntrypoint();
         case "evaluationmode":
