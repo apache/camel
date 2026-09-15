@@ -149,8 +149,7 @@ public class SimpleSyntaxHintsTest extends ExchangeTestSupport {
         // xquery is a built-in language whose jar (camel-saxon, not camel-xquery) is not on the classpath
         Exception e = assertThrows(Exception.class, () -> context.resolveLanguage("xquery"));
         assertThat(e.getMessage()).contains("No language could be found for: xquery")
-                .contains("the xquery language is in camel-saxon; add camel-saxon to the classpath")
-                .contains("camel-saxon-starter on Spring Boot, camel-quarkus-saxon on Quarkus");
+                .contains("the xquery language is in camel-saxon; add camel-saxon to the classpath)");
     }
 
     @Test

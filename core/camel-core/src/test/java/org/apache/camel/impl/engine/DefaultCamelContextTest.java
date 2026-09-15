@@ -154,7 +154,7 @@ public class DefaultCamelContextTest extends TestSupport {
         assertEquals(
                 "No endpoint could be found for: kafka://myTopic?brokers=localhost, please check your classpath contains"
                      + " the needed Camel component jar (the kafka component is in camel-kafka; add camel-kafka to the"
-                     + " classpath (camel-kafka-starter on Spring Boot, camel-quarkus-kafka on Quarkus)).",
+                     + " classpath).",
                 e.getMessage());
 
         // an alternative scheme is in the same jar as its main scheme

@@ -46,9 +46,7 @@ public class DataFormatMissingJarHintTest extends ContextTestSupport {
         }));
 
         assertTrue(msg.contains("Data format 'jaxb' could not be created."), msg);
-        assertTrue(msg.contains("(the jaxb data format is in camel-jaxb; add camel-jaxb to the classpath"
-                                + " (camel-jaxb-starter on Spring Boot, camel-quarkus-jaxb on Quarkus))"),
-                msg);
+        assertTrue(msg.contains("(the jaxb data format is in camel-jaxb; add camel-jaxb to the classpath)"), msg);
     }
 
     @Test

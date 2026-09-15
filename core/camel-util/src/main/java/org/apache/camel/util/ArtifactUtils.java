@@ -742,17 +742,16 @@ public final class ArtifactUtils {
     }
 
     /**
-     * What to add to the classpath for the artifact: the plain artifactId, and its Spring Boot starter and Quarkus
-     * extension names, as the runtime cannot tell which of the three applies. A core artifact (part of camel-core) has
-     * no starter or extension of its own.
+     * What to add to the classpath for the artifact: the plain artifactId, which is what the runtime knows. The Spring
+     * Boot starter (artifactId-starter) and Quarkus extension (camel-quarkus-name) are a convention for the tooling
+     * that can check they exist, as camel-jbang export does; not every artifact has one. A core artifact is noted as
+     * part of camel-core.
      */
     public static String dependencyHint(String artifactId) {
         if (isCoreArtifact(artifactId)) {
             return "add " + artifactId + " (part of camel-core) to the classpath";
         }
-        String name = artifactId.startsWith("camel-") ? artifactId.substring(6) : artifactId;
-        return "add " + artifactId + " to the classpath (" + artifactId + "-starter on Spring Boot, camel-quarkus-" + name
-               + " on Quarkus)";
+        return "add " + artifactId + " to the classpath";
     }
 
     private static boolean isCoreArtifact(String artifactId) {

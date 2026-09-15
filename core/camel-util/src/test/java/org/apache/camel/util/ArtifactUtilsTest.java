@@ -70,22 +70,20 @@ public class ArtifactUtilsTest {
 
     @Test
     public void testDependencyHint() {
-        assertThat(ArtifactUtils.dependencyHint("camel-saxon"))
-                .isEqualTo(
-                        "add camel-saxon to the classpath (camel-saxon-starter on Spring Boot, camel-quarkus-saxon on Quarkus)");
-        // core artifacts have no starter or extension of their own
+        assertThat(ArtifactUtils.dependencyHint("camel-saxon")).isEqualTo("add camel-saxon to the classpath");
+        // core artifacts are noted as part of camel-core
         assertThat(ArtifactUtils.dependencyHint("camel-core-languages"))
                 .isEqualTo("add camel-core-languages (part of camel-core) to the classpath");
         assertThat(ArtifactUtils.dependencyHint("camel-support"))
                 .isEqualTo("add camel-support (part of camel-core) to the classpath");
         // camel-base64 is a data format, not a core artifact
-        assertThat(ArtifactUtils.dependencyHint("camel-base64")).contains("camel-base64-starter on Spring Boot");
+        assertThat(ArtifactUtils.dependencyHint("camel-base64")).isEqualTo("add camel-base64 to the classpath");
     }
 
     @Test
     public void testHints() {
-        assertThat(ArtifactUtils.componentHint("kafka")).isEqualTo(
-                " (the kafka component is in camel-kafka; add camel-kafka to the classpath (camel-kafka-starter on Spring Boot, camel-quarkus-kafka on Quarkus))");
+        assertThat(ArtifactUtils.componentHint("kafka"))
+                .isEqualTo(" (the kafka component is in camel-kafka; add camel-kafka to the classpath)");
         assertThat(ArtifactUtils.componentHint("kafak")).isEqualTo(" (not a built-in Camel component; did you mean 'kafka'?)");
         assertThat(ArtifactUtils.componentHint("Kafka")).isEqualTo(" (not a built-in Camel component; did you mean 'kafka'?)");
         assertThat(ArtifactUtils.componentHint("cheese")).isEqualTo(" (not a built-in Camel component)");
