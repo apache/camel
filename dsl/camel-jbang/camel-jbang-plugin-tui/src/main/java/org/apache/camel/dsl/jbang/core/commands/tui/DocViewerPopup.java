@@ -264,6 +264,7 @@ class DocViewerPopup {
         int offset = MarkdownView.builder()
                 .source(prefix)
                 .styles(Theme.markdownStyles())
+                .syntaxTheme(Theme.syntaxTheme())
                 .build()
                 .computeHeight(lastContentWidth);
         docScroll = offset;
@@ -618,6 +619,7 @@ class DocViewerPopup {
                     .source(docContent)
                     .scroll(docScroll)
                     .styles(Theme.markdownStyles())
+                    .syntaxTheme(Theme.syntaxTheme())
                     .build();
             frame.renderWidget(view, hChunks.get(0));
             int totalHeight = view.computeHeight(lastContentWidth);
