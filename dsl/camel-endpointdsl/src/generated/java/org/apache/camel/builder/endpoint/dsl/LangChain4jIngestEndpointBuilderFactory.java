@@ -235,6 +235,122 @@ public interface LangChain4jIngestEndpointBuilderFactory {
             doSetProperty("maxSegmentSize", maxSegmentSize);
             return this;
         }
+        /**
+         * A Predicate deciding whether a delivery is ingested, referenced as
+         * #bean:name and evaluated with the message body available. A rejected
+         * delivery is answered with a filtered result and releases its dedup
+         * claim. Runs after the id patterns and after the dedup claim, so a
+         * duplicate is answered skipped without the filter being evaluated. Not
+         * looked up by type on purpose - an application may hold unrelated
+         * predicates.
+         * 
+         * The option is a: <code>org.apache.camel.Predicate</code> type.
+         * 
+         * Group: filter
+         * 
+         * @param documentFilter the value to set
+         * @return the dsl builder
+         */
+        default LangChain4jIngestEndpointBuilder documentFilter(org.apache.camel.Predicate documentFilter) {
+            doSetProperty("documentFilter", documentFilter);
+            return this;
+        }
+        /**
+         * A Predicate deciding whether a delivery is ingested, referenced as
+         * #bean:name and evaluated with the message body available. A rejected
+         * delivery is answered with a filtered result and releases its dedup
+         * claim. Runs after the id patterns and after the dedup claim, so a
+         * duplicate is answered skipped without the filter being evaluated. Not
+         * looked up by type on purpose - an application may hold unrelated
+         * predicates.
+         * 
+         * The option will be converted to a
+         * <code>org.apache.camel.Predicate</code> type.
+         * 
+         * Group: filter
+         * 
+         * @param documentFilter the value to set
+         * @return the dsl builder
+         */
+        default LangChain4jIngestEndpointBuilder documentFilter(String documentFilter) {
+            doSetProperty("documentFilter", documentFilter);
+            return this;
+        }
+        /**
+         * Comma-separated list of Ant-style patterns for document ids to skip.
+         * Exclusion wins over includeId. A matching delivery is answered with a
+         * filtered result, before the dedup claim and without reading the body.
+         * Matching is case-sensitive, and a pattern only matches an id that
+         * agrees with it on a leading path separator. See the component
+         * documentation for pattern examples.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: filter
+         * 
+         * @param excludeId the value to set
+         * @return the dsl builder
+         */
+        default LangChain4jIngestEndpointBuilder excludeId(String excludeId) {
+            doSetProperty("excludeId", excludeId);
+            return this;
+        }
+        /**
+         * Comma-separated list of Ant-style patterns the document id must match
+         * to be ingested. A non-matching delivery is answered with a filtered
+         * result, before the dedup claim and without reading the body. When not
+         * set, every id is accepted. Matching is case-sensitive, and a pattern
+         * only matches an id that agrees with it on a leading path separator -
+         * an id derived from an absolute path needs a pattern starting with
+         * one. See the component documentation for pattern examples.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: filter
+         * 
+         * @param includeId the value to set
+         * @return the dsl builder
+         */
+        default LangChain4jIngestEndpointBuilder includeId(String includeId) {
+            doSetProperty("includeId", includeId);
+            return this;
+        }
+        /**
+         * Minimum size of one document in characters; 0, the default, means no
+         * minimum. A shorter document - boilerplate too small to carry
+         * retrievable content - is answered with a filtered result instead of
+         * being written, and releases its dedup claim like a blank one.
+         * 
+         * The option is a: <code>int</code> type.
+         * 
+         * Default: 0
+         * Group: filter
+         * 
+         * @param minDocumentSize the value to set
+         * @return the dsl builder
+         */
+        default LangChain4jIngestEndpointBuilder minDocumentSize(int minDocumentSize) {
+            doSetProperty("minDocumentSize", minDocumentSize);
+            return this;
+        }
+        /**
+         * Minimum size of one document in characters; 0, the default, means no
+         * minimum. A shorter document - boilerplate too small to carry
+         * retrievable content - is answered with a filtered result instead of
+         * being written, and releases its dedup claim like a blank one.
+         * 
+         * The option will be converted to a <code>int</code> type.
+         * 
+         * Default: 0
+         * Group: filter
+         * 
+         * @param minDocumentSize the value to set
+         * @return the dsl builder
+         */
+        default LangChain4jIngestEndpointBuilder minDocumentSize(String minDocumentSize) {
+            doSetProperty("minDocumentSize", minDocumentSize);
+            return this;
+        }
     }
 
     /**

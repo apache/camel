@@ -29,7 +29,9 @@ public record IngestResult(String pipeline, String documentId, int segmentsWritt
         /** Blank document, nothing written. */
         EMPTY,
         /** Already ingested under the same key, nothing written. */
-        SKIPPED;
+        SKIPPED,
+        /** Rejected by includeId/excludeId, minDocumentSize or documentFilter, nothing written. */
+        FILTERED;
 
         /** The stable wire/log form; not used in this component itself, but consumed by downstream runtimes. */
         public String label() {

@@ -33,6 +33,8 @@ public class LangChain4jIngestComponentConfigurer extends PropertyConfigurerSupp
         case "autowiredenabled":
         case "autowiredEnabled": target.setAutowiredEnabled(property(camelContext, boolean.class, value)); return true;
         case "configuration": target.setConfiguration(property(camelContext, org.apache.camel.component.langchain4j.ingest.LangChain4jIngestConfiguration.class, value)); return true;
+        case "documentfilter":
+        case "documentFilter": getOrCreateConfiguration(target).setDocumentFilter(property(camelContext, org.apache.camel.Predicate.class, value)); return true;
         case "documentidheader":
         case "documentIdHeader": getOrCreateConfiguration(target).setDocumentIdHeader(property(camelContext, java.lang.String.class, value)); return true;
         case "documentsplitter":
@@ -43,8 +45,12 @@ public class LangChain4jIngestComponentConfigurer extends PropertyConfigurerSupp
         case "embeddingModel": getOrCreateConfiguration(target).setEmbeddingModel(property(camelContext, dev.langchain4j.model.embedding.EmbeddingModel.class, value)); return true;
         case "embeddingstore":
         case "embeddingStore": getOrCreateConfiguration(target).setEmbeddingStore(property(camelContext, dev.langchain4j.store.embedding.EmbeddingStore.class, value)); return true;
+        case "excludeid":
+        case "excludeId": getOrCreateConfiguration(target).setExcludeId(property(camelContext, java.lang.String.class, value)); return true;
         case "idempotentrepository":
         case "idempotentRepository": getOrCreateConfiguration(target).setIdempotentRepository(property(camelContext, org.apache.camel.spi.IdempotentRepository.class, value)); return true;
+        case "includeid":
+        case "includeId": getOrCreateConfiguration(target).setIncludeId(property(camelContext, java.lang.String.class, value)); return true;
         case "lazystartproducer":
         case "lazyStartProducer": target.setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
         case "maxdocumentsize":
@@ -53,6 +59,8 @@ public class LangChain4jIngestComponentConfigurer extends PropertyConfigurerSupp
         case "maxOverlapSize": getOrCreateConfiguration(target).setMaxOverlapSize(property(camelContext, int.class, value)); return true;
         case "maxsegmentsize":
         case "maxSegmentSize": getOrCreateConfiguration(target).setMaxSegmentSize(property(camelContext, int.class, value)); return true;
+        case "mindocumentsize":
+        case "minDocumentSize": getOrCreateConfiguration(target).setMinDocumentSize(property(camelContext, int.class, value)); return true;
         default: return false;
         }
     }
@@ -68,6 +76,8 @@ public class LangChain4jIngestComponentConfigurer extends PropertyConfigurerSupp
         case "autowiredenabled":
         case "autowiredEnabled": return boolean.class;
         case "configuration": return org.apache.camel.component.langchain4j.ingest.LangChain4jIngestConfiguration.class;
+        case "documentfilter":
+        case "documentFilter": return org.apache.camel.Predicate.class;
         case "documentidheader":
         case "documentIdHeader": return java.lang.String.class;
         case "documentsplitter":
@@ -78,8 +88,12 @@ public class LangChain4jIngestComponentConfigurer extends PropertyConfigurerSupp
         case "embeddingModel": return dev.langchain4j.model.embedding.EmbeddingModel.class;
         case "embeddingstore":
         case "embeddingStore": return dev.langchain4j.store.embedding.EmbeddingStore.class;
+        case "excludeid":
+        case "excludeId": return java.lang.String.class;
         case "idempotentrepository":
         case "idempotentRepository": return org.apache.camel.spi.IdempotentRepository.class;
+        case "includeid":
+        case "includeId": return java.lang.String.class;
         case "lazystartproducer":
         case "lazyStartProducer": return boolean.class;
         case "maxdocumentsize":
@@ -88,6 +102,8 @@ public class LangChain4jIngestComponentConfigurer extends PropertyConfigurerSupp
         case "maxOverlapSize": return int.class;
         case "maxsegmentsize":
         case "maxSegmentSize": return int.class;
+        case "mindocumentsize":
+        case "minDocumentSize": return int.class;
         default: return null;
         }
     }
@@ -99,6 +115,8 @@ public class LangChain4jIngestComponentConfigurer extends PropertyConfigurerSupp
         case "autowiredenabled":
         case "autowiredEnabled": return target.isAutowiredEnabled();
         case "configuration": return target.getConfiguration();
+        case "documentfilter":
+        case "documentFilter": return getOrCreateConfiguration(target).getDocumentFilter();
         case "documentidheader":
         case "documentIdHeader": return getOrCreateConfiguration(target).getDocumentIdHeader();
         case "documentsplitter":
@@ -109,8 +127,12 @@ public class LangChain4jIngestComponentConfigurer extends PropertyConfigurerSupp
         case "embeddingModel": return getOrCreateConfiguration(target).getEmbeddingModel();
         case "embeddingstore":
         case "embeddingStore": return getOrCreateConfiguration(target).getEmbeddingStore();
+        case "excludeid":
+        case "excludeId": return getOrCreateConfiguration(target).getExcludeId();
         case "idempotentrepository":
         case "idempotentRepository": return getOrCreateConfiguration(target).getIdempotentRepository();
+        case "includeid":
+        case "includeId": return getOrCreateConfiguration(target).getIncludeId();
         case "lazystartproducer":
         case "lazyStartProducer": return target.isLazyStartProducer();
         case "maxdocumentsize":
@@ -119,6 +141,8 @@ public class LangChain4jIngestComponentConfigurer extends PropertyConfigurerSupp
         case "maxOverlapSize": return getOrCreateConfiguration(target).getMaxOverlapSize();
         case "maxsegmentsize":
         case "maxSegmentSize": return getOrCreateConfiguration(target).getMaxSegmentSize();
+        case "mindocumentsize":
+        case "minDocumentSize": return getOrCreateConfiguration(target).getMinDocumentSize();
         default: return null;
         }
     }
