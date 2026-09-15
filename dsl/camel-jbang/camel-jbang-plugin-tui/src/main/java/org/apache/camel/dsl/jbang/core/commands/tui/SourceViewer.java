@@ -1560,6 +1560,7 @@ class SourceViewer {
                     .scroll(markdownScroll)
                     .block(block)
                     .styles(Theme.markdownStyles())
+                    .syntaxTheme(Theme.syntaxTheme())
                     .build();
             frame.renderWidget(view, area);
             return;

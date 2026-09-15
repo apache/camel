@@ -31,6 +31,8 @@ import dev.tamboui.css.Styleable;
 import dev.tamboui.css.engine.StyleEngine;
 import dev.tamboui.style.Color;
 import dev.tamboui.style.Style;
+import dev.tamboui.widgets.syntax.SyntaxTheme;
+import dev.tamboui.widgets.syntax.TokenType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -291,6 +293,39 @@ public final class Theme {
                 .codeBlock(muted())
                 .listMarker(Style.EMPTY.fg(accent()))
                 .link(Style.EMPTY.fg(accent()).underlined());
+    }
+
+    /**
+     * Theme-aware syntax highlighting palette for fenced code blocks in MarkdownView. Reuses the Monokai (dark) and
+     * GitHub-inspired (light) palettes from {@link SyntaxHighlighter}.
+     */
+    public static SyntaxTheme syntaxTheme() {
+        if (isDark()) {
+            return SyntaxTheme.builder()
+                    .token(TokenType.COMMENT, Style.EMPTY.fg(SyntaxHighlighter.MONOKAI_COMMENT))
+                    .token(TokenType.KEYWORD, Style.EMPTY.fg(SyntaxHighlighter.MONOKAI_KEYWORD))
+                    .token(TokenType.TYPE, Style.EMPTY.fg(SyntaxHighlighter.MONOKAI_TYPE))
+                    .token(TokenType.STRING, Style.EMPTY.fg(SyntaxHighlighter.MONOKAI_STRING))
+                    .token(TokenType.NUMBER, Style.EMPTY.fg(SyntaxHighlighter.MONOKAI_CONSTANT))
+                    .token(TokenType.CONSTANT, Style.EMPTY.fg(SyntaxHighlighter.MONOKAI_CONSTANT))
+                    .token(TokenType.FUNCTION, Style.EMPTY.fg(SyntaxHighlighter.MONOKAI_FUNCTION))
+                    .token(TokenType.ANNOTATION, Style.EMPTY.fg(SyntaxHighlighter.MONOKAI_FUNCTION))
+                    .token(TokenType.TAG, Style.EMPTY.fg(SyntaxHighlighter.MONOKAI_KEYWORD))
+                    .token(TokenType.ATTRIBUTE, Style.EMPTY.fg(SyntaxHighlighter.MONOKAI_FUNCTION))
+                    .build();
+        }
+        return SyntaxTheme.builder()
+                .token(TokenType.COMMENT, Style.EMPTY.fg(Color.rgb(106, 115, 125)))
+                .token(TokenType.KEYWORD, Style.EMPTY.fg(Color.rgb(215, 58, 73)))
+                .token(TokenType.TYPE, Style.EMPTY.fg(Color.rgb(0, 92, 197)))
+                .token(TokenType.STRING, Style.EMPTY.fg(Color.rgb(3, 47, 98)))
+                .token(TokenType.NUMBER, Style.EMPTY.fg(Color.rgb(111, 66, 193)))
+                .token(TokenType.CONSTANT, Style.EMPTY.fg(Color.rgb(111, 66, 193)))
+                .token(TokenType.FUNCTION, Style.EMPTY.fg(Color.rgb(0, 92, 197)))
+                .token(TokenType.ANNOTATION, Style.EMPTY.fg(Color.rgb(0, 92, 197)))
+                .token(TokenType.TAG, Style.EMPTY.fg(Color.rgb(215, 58, 73)))
+                .token(TokenType.ATTRIBUTE, Style.EMPTY.fg(Color.rgb(0, 92, 197)))
+                .build();
     }
 
     /** Diagram box-drawing border color. */
