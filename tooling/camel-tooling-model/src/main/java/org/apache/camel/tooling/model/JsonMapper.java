@@ -398,7 +398,6 @@ public final class JsonMapper {
         List<ApiReferenceModel.ApiMethodOptionModel> options = model.getOptions();
         for (int i = 0; i < options.size(); i++) {
             ApiReferenceModel.ApiMethodOptionModel m = options.get(i);
-            m.setIndex(i);
             JsonObject jo = new JsonObject();
             jo.put("index", i);
             jo.put("signatures", new JsonArray(m.getSignatures()));

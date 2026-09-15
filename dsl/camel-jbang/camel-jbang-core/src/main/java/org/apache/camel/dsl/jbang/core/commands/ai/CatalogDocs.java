@@ -414,16 +414,14 @@ public final class CatalogDocs {
         return answer;
     }
 
-    private static volatile CamelCatalog own;
+    /** The catalog of the CLI's own Camel version, created on first use (the holder idiom, no locking needed). */
+    private static final class OwnCatalog {
+        static final CamelCatalog CATALOG = new DefaultCamelCatalog();
+    }
 
     /** The catalog of the CLI's own Camel version, for the API reference an older catalog does not carry. */
     private static CamelCatalog ownCatalog() {
-        CamelCatalog c = own;
-        if (c == null) {
-            c = new DefaultCamelCatalog();
-            own = c;
-        }
-        return c;
+        return OwnCatalog.CATALOG;
     }
 
     /**
