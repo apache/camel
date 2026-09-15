@@ -116,6 +116,11 @@ from the exchange the first time the script uses them instead of being copied be
 changes a property or variable through `exchange` and then reads one of these variables for the first time now sees
 its own change where it previously saw the state from before the script ran.
 
+Groovy scripts now have a `message` variable for the current message (`exchange.getMessage()`), the name the other
+script languages and the Camel 4 API use; `request` and `in` stay as its older names. A `GroovyShellFactory` that
+provided its own global variable named `message` is now hidden by the exchange variable, like the other exchange
+variable names.
+
 === camel-dynamic-router
 
 The `dynamic-router-control` endpoint no longer takes the subscription `predicate`, or the
