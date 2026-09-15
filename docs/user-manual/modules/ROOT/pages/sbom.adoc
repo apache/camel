@@ -127,7 +127,7 @@ schema version, so pass `--input-version v1_6` explicitly:
 cyclonedx validate --input-file camel-sbom.json --input-format json --input-version v1_6 --fail-on-errors
 
 # Convert JSON to XML (use --output-format spdxjson to convert to SPDX)
-cyclonedx convert --input-file camel-sbom.json --output-file camel-sbom.xml
+cyclonedx convert --input-file camel-sbom.json --output-format xml --output-file camel-sbom.xml
 
 # Diff two SBOMs — e.g. what dependencies changed between two Camel releases
 cyclonedx diff camel-4.22.0-sbom.json camel-4.23.0-sbom.json --component-versions
