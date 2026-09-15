@@ -25,7 +25,6 @@ import org.apache.camel.model.language.Hl7TerserExpression;
 import org.apache.camel.model.language.JactlExpression;
 import org.apache.camel.model.language.JavaExpression;
 import org.apache.camel.model.language.JavaScriptExpression;
-import org.apache.camel.model.language.JoorExpression;
 import org.apache.camel.model.language.JqExpression;
 import org.apache.camel.model.language.JsonPathExpression;
 import org.apache.camel.model.language.LanguageExpression;
@@ -192,14 +191,6 @@ public final class LanguageBuilderFactory {
         var builder = java();
         builder.expression(expression);
         return builder;
-    }
-
-    /**
-     * Uses the JOOR language
-     */
-    @Deprecated(since = "4.3.0")
-    public JoorExpression.Builder joor() {
-        return new JoorExpression.Builder();
     }
 
     /**

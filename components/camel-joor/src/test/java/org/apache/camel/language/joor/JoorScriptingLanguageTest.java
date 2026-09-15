@@ -29,7 +29,7 @@ public class JoorScriptingLanguageTest extends CamelTestSupport {
 
     @Test
     public void testScripting() {
-        Language lan = context.resolveLanguage("joor");
+        Language lan = context.resolveLanguage("java");
         Assertions.assertTrue(lan instanceof ScriptingLanguage);
 
         ScriptingLanguage slan = (ScriptingLanguage) lan;

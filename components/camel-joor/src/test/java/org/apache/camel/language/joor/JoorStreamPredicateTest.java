@@ -33,7 +33,7 @@ public class JoorStreamPredicateTest extends CamelTestSupport {
                 from("direct:start")
                         .choice()
                         .when()
-                        .joor("Stream<Integer> s = (Stream<Integer>) body; return s.filter((n) -> n > 10).findAny().isPresent()")
+                        .java("Stream<Integer> s = (Stream<Integer>) body; return s.filter((n) -> n > 10).findAny().isPresent()")
                         .to("mock:high")
                         .otherwise()
                         .to("mock:low");

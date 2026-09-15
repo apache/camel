@@ -56,13 +56,13 @@ public class MainHelperTest {
     @Test
     public void testAddLanguageEnvVariables() {
         Map<String, String> env = MainHelper.filterEnvVariables(new String[] { "CAMEL_LANGUAGE_" });
-        env.put("CAMEL_LANGUAGE_JOOR_PRE_COMPILE", "false");
+        env.put("CAMEL_LANGUAGE_JAVA_PRE_COMPILE", "false");
         Properties prop = new OrderedProperties();
         helper.addLanguageEnvVariables(env, prop, false);
 
         Assertions.assertEquals(0, env.size());
         Assertions.assertEquals(1, prop.size());
-        Assertions.assertEquals("false", prop.getProperty("camel.language.joor.pre-compile"));
+        Assertions.assertEquals("false", prop.getProperty("camel.language.java.pre-compile"));
     }
 
     @Test

@@ -207,6 +207,11 @@ The component camel-ironmq was deprecated in 4.21. The official library used has
 All the other client libraries (in other languages) are unmaintained since the same amount of time.
 The whole iron-io GitHub organization has almost no activity.
 
+==== camel-joor
+
+The language `joor` was deprecated in 4.3.
+The language `java` can be used in-place. It was a renaming. Joor is used underneath for `java` expression.
+
 ==== camel-json-patch
 
 The `camel-json-patch` was deprecated in 4.19. The library it uses is not actively maintained and this module does not work with Jackson 3.
