@@ -194,7 +194,6 @@ public final class ArtifactUtils {
             Map.entry("graphql", "camel-graphql"),
             Map.entry("grpc", "camel-grpc"),
             Map.entry("hashicorp-vault", "camel-hashicorp-vault"),
-            Map.entry("hazelcast-atomicvalue", "camel-hazelcast"),
             Map.entry("hazelcast-instance", "camel-hazelcast"),
             Map.entry("hazelcast-list", "camel-hazelcast"),
             Map.entry("hazelcast-map", "camel-hazelcast"),
