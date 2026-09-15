@@ -67,7 +67,8 @@ public final class AuthoringTools {
                 .param("kind", "string",
                         "component, dataformat, language, eip, bean or api (auto-detected; a bean is a built-in class such as StringAggregationStrategy, with how to declare and use it; api is the Java API to call from a bean or script before writing it: Exchange, Message, CamelContext, Registry, ProducerTemplate, Processor, AggregationStrategy, Predicate, Expression, TypeConverter, or the variables of groovy, js, python, java scripts)",
                         false)
-                .param("includeOptions", "boolean", "Include the options (default true)", false)
+                .param("includeOptions", "string",
+                        "common (default: no deprecated or advanced), required, all or false", false)
                 .param("includeHeaders", "boolean", "Include the message headers of a component (default false)", false)
                 .param("includeDoc", "boolean", "Include the full AsciiDoc page (default false)", false)
                 .param("docPage", "string", "simple doc sub-page to return as text (functions, operators, ognl, advanced)",
@@ -78,7 +79,7 @@ public final class AuthoringTools {
                 .executor((ctx, args) -> {
                     applyVersion(ctx, args);
                     return CatalogDocs.catalogDoc(ctx.catalog(), args.get("name"), args.get("endpoint"),
-                            args.get("kind"), args.get("optionsFilter"), bool(args, "includeOptions", true),
+                            args.get("kind"), args.get("optionsFilter"), args.get("includeOptions"),
                             bool(args, "includeHeaders", false), bool(args, "includeDoc", false),
                             args.get("docPage")).toJson();
                 }));

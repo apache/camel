@@ -31,6 +31,7 @@ import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -189,7 +190,7 @@ class CatalogDocsTest {
         assertTrue(matches.stream().anyMatch(
                 m -> "StringAggregationStrategy".equals(((org.apache.camel.util.json.JsonObject) m).getString("name"))));
 
-        var doc = CatalogDocs.catalogDoc(catalog, "StringAggregationStrategy", null, "bean", null, true, false, false, null);
+        var doc = CatalogDocs.catalogDoc(catalog, "StringAggregationStrategy", null, "bean", null, null, false, false, null);
         assertEquals("org.apache.camel.processor.aggregate.StringAggregationStrategy", doc.getString("javaType"));
         assertTrue(doc.getString("declare")
                 .contains("type: \"#class:org.apache.camel.processor.aggregate.StringAggregationStrategy\""));
@@ -248,6 +249,40 @@ class CatalogDocsTest {
         assertEquals("common", key.getString("group"));
         assertTrue(key.getBoolean("required"));
         assertTrue(key.getString("description").contains("key"));
+    }
+
+    @Test
+    void theCommonOptionsAreTheDefaultAndTheScopeWidensThem() throws Exception {
+        // the answer for kafka stays readable: deprecated and advanced options only on request, said in the answer
+        JsonObject common = catalogDoc(Map.of("name", "kafka", "kind", "component"));
+        int matched = common.getInteger("matchedOptions");
+        int omitted = common.getInteger("omittedOptions");
+        assertTrue(omitted > 10, "kafka has many advanced options, omitted " + omitted);
+        assertTrue(common.getString("optionsHint").contains("includeOptions=all"));
+        assertTrue(common.getCollection("options").stream()
+                .noneMatch(o -> "isolationLevel".equals(((JsonObject) o).getString("name"))), "advanced");
+
+        JsonObject all = catalogDoc(Map.of("name", "kafka", "kind", "component", "includeOptions", "all"));
+        assertEquals(matched + omitted, all.getInteger("matchedOptions"));
+        assertNull(all.get("omittedOptions"));
+        assertTrue(all.getCollection("options").stream()
+                .anyMatch(o -> "isolationLevel".equals(((JsonObject) o).getString("name"))));
+
+        JsonObject required = catalogDoc(Map.of("name", "kafka", "kind", "component", "includeOptions", "required"));
+        assertTrue(required.getInteger("matchedOptions") < 5);
+        assertTrue(required.getCollection("options").stream().allMatch(o -> ((JsonObject) o).getBoolean("required")));
+        assertTrue(required.getString("optionsHint").contains("required options only"));
+
+        // a filter names what it wants, so it searches the advanced options too
+        JsonObject filtered = catalogDoc(Map.of("name", "kafka", "kind", "component", "optionsFilter", "isolationLevel"));
+        assertTrue(filtered.getInteger("matchedOptions") >= 1);
+        assertNull(filtered.get("omittedOptions"));
+
+        // the other kinds scope the same way, true is common and a wrong value is an error
+        assertNotNull(catalogDoc(Map.of("name", "split", "kind", "eip", "includeOptions", "true")).get("options"));
+        assertNull(catalogDoc(Map.of("name", "split", "kind", "eip", "includeOptions", "false")).get("options"));
+        assertTrue(catalogDoc(Map.of("name", "split", "includeOptions", "some")).getString("error")
+                .contains("includeOptions"));
     }
 
     @Test

@@ -265,8 +265,8 @@ project `directory` as an argument, the runtime tools take the integration `name
 | Tool | Description
 
 | `camel_catalog_doc`
-| Catalog documentation of a component, data format, language, EIP or built-in bean: description, options (with
-  a keyword filter), Maven coordinates, and for a component the rules of its endpoint URI spelled out (which
+| Catalog documentation of a component, data format, language, EIP or built-in bean: description, options,
+  Maven coordinates, and for a component the rules of its endpoint URI spelled out (which
   options are path parts, the YAML `uri` plus `parameters` form, placeholders, `RAW()`). For the `simple`
   language the syntax rules, functions and operators (their count and names by group, or with `optionsFilter`
   the matching ones with parameters and examples), and `docPage` serves the functions, operators, OGNL and
@@ -275,6 +275,10 @@ project `directory` as an argument, the runtime tools take the integration `name
   adds the message headers of a component (the `CamelXxx` names, their constants, types and consumer or
   producer group), `includeDoc=true` the AsciiDoc page. An EIP alias (`fan-out`, `dedup`, `rate-limit`) or a
   word of its title finds the EIP; the answer then names the `matchedTerm`.
+  `includeOptions` picks the options listed: `common` (the default) leaves out the deprecated and advanced
+  ones and says how many with `omittedOptions`, `required` lists the required ones, `all` everything, `false`
+  none; `optionsFilter` matches a keyword in the option names, descriptions and groups and searches all
+  options.
   With `kind=api` (or a class name such as `Exchange`) it answers with the compact API reference of the core
   classes a bean or script calls: `Exchange`, `Message`, `CamelContext`, `Registry`, `ProducerTemplate`,
   `Processor`, `AggregationStrategy`, `Predicate`, `Expression` and `TypeConverter`, one line per method with
@@ -296,7 +300,8 @@ project `directory` as an argument, the runtime tools take the integration `name
 | Validated YAML DSL samples of an EIP or file entry (`onException`, `aggregate`, `split`, `rest`, `beans`) taken
   from the documentation examples, with where it goes: a top-level entry next to the route, or a step inside
   it. The name can be kebab-case, a part of another EIP (`doCatch`, `when`, `onFallback` show the whole
-  construct) or what to do (`read file`, `call service`, `retry`, `batch`). The EIP samples come from the
+  construct), an alias of the EIP (`fan-out`, `rate-limit`, from the catalog's EIP models) or what to do
+  (`read file`, `call service`, `retry`, `batch`). The EIP samples come from the
   documentation of the catalog in use, so they follow its Camel version; the file entries come from the user
   manual examples that the build validates (`generate-doc-samples` in
   xref:camel-yaml-dsl-validator-maven-plugin.adoc[]). `limit` is 2 by default, at most 5.
