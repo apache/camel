@@ -427,7 +427,7 @@ public class Jt400Configuration {
             String[] outputArray = outputFieldsIdx.split(",");
             outputFieldsIdxArray = new Integer[outputArray.length];
             for (int i = 0; i < outputArray.length; i++) {
-                String str = outputArray[i];
+                String str = outputArray[i].trim();
                 outputFieldsIdxArray[i] = Integer.parseInt(str);
             }
         }
@@ -443,7 +443,7 @@ public class Jt400Configuration {
             String[] outputArray = fieldsLength.split(",");
             outputFieldsLengthArray = new Integer[outputArray.length];
             for (int i = 0; i < outputArray.length; i++) {
-                String str = outputArray[i];
+                String str = outputArray[i].trim();
                 outputFieldsLengthArray[i] = Integer.parseInt(str);
             }
         }
