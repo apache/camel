@@ -220,6 +220,9 @@ confused with an outage.
 `OpaSecurityPolicy` registers an equivalent check, under an id starting `security-policy:opa-`. It is arguably the
 more important of the two: a denied producer merely records a verdict the route can inspect, while the policy throws
 `CamelAuthorizationException` and stops the exchange, so an unreachable server there fails every message outright.
+That is why the policy's check is on by default rather than opt-in like the producer's. Set
+`healthCheckEnabled=false` on the policy for a route that should stay ready regardless — one running `failOpen`, say
+— in preference to hiding the check with `camel.health.exclude-pattern`.
 
 Neither check is registered when an `opaClient` was injected: that client may point anywhere and neither the
 endpoint nor the policy has a way to ask it where, so probing the configured `serverUrl` would report on a server

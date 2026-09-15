@@ -32,6 +32,7 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.Mockito.mock;
 
 /**
@@ -115,6 +116,34 @@ public class OpaSecurityPolicyHealthCheckTest extends CamelTestSupport {
 
         assertThat(result.getState()).isEqualTo(HealthCheck.State.DOWN);
         assertThat(result.getMessage()).get().asString().contains("Cannot reach the OPA server");
+    }
+
+    @Test
+    void registersNothingWhenTheCheckIsDisabled() {
+        OpaSecurityPolicy disabled = new OpaSecurityPolicy();
+        disabled.setPolicyPath("authz/allow");
+        disabled.setServerUrl("http://unused:8181");
+        disabled.setHealthCheckEnabled(false);
+
+        disabled.beforeWrap(context.getRoutes().get(0), null);
+
+        // still only the one the route under test registered
+        assertThat(registered()).hasSize(1);
+    }
+
+    @Test
+    void registersNothingForAPolicyThatFailsValidation() {
+        // registration used to run before notEmpty(policyPath), which left a ".../null" check in the registry
+        // of a policy whose route then never started
+        OpaSecurityPolicy misconfigured = new OpaSecurityPolicy();
+        misconfigured.setServerUrl("http://unused:8181");
+
+        assertThatThrownBy(() -> misconfigured.beforeWrap(context.getRoutes().get(0), null))
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessageContaining("policyPath");
+
+        assertThat(registered()).hasSize(1);
+        assertThat(registered().get(0).getId()).doesNotContain("null");
     }
 
     @Test
