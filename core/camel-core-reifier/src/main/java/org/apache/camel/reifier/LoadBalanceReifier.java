@@ -62,7 +62,7 @@ public class LoadBalanceReifier extends ProcessorReifier<LoadBalanceDefinition> 
             loadBalancer.addProcessor(channel);
         }
 
-        Boolean inherit = definition.getInheritErrorHandler();
+        Boolean inherit = parseBoolean(definition.getInheritErrorHandler());
         if (definition.getLoadBalancerType() instanceof FailoverLoadBalancerDefinition) {
             // special for failover load balancer where you can configure it to
             // not inherit error handler for its children

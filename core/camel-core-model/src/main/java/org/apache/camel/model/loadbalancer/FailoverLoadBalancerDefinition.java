@@ -67,7 +67,7 @@ public class FailoverLoadBalancerDefinition extends LoadBalancerDefinition {
               description = "Whether to inherit the error handler."
                             + " If turned off, the load balancer will fail over immediately on an error"
                             + " instead of waiting for Camel error handler to exhaust retries.")
-    private Boolean inheritErrorHandler;
+    private String inheritErrorHandler;
 
     public FailoverLoadBalancerDefinition() {
     }
@@ -127,11 +127,11 @@ public class FailoverLoadBalancerDefinition extends LoadBalancerDefinition {
         this.maximumFailoverAttempts = maximumFailoverAttempts;
     }
 
-    public Boolean getInheritErrorHandler() {
+    public String getInheritErrorHandler() {
         return inheritErrorHandler;
     }
 
-    public void setInheritErrorHandler(Boolean inheritErrorHandler) {
+    public void setInheritErrorHandler(String inheritErrorHandler) {
         this.inheritErrorHandler = inheritErrorHandler;
     }
 
