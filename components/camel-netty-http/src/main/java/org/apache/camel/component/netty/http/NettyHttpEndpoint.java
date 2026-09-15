@@ -78,7 +78,7 @@ public class NettyHttpEndpoint extends NettyEndpoint implements HeaderFilterStra
     @UriParam(label = "consumer,advanced",
               description = "To use a custom configured NettyServerBootstrapConfiguration for configuring this endpoint."
                             + " When set, its properties are merged into the endpoint configuration.")
-    private NettyServerBootstrapConfiguration bootstrapConfiguration; // resolved in component createEndpoint, not bound here
+    private NettyServerBootstrapConfiguration bootstrapConfiguration;
     @UriParam(label = "consumer,security")
     private NettyHttpSecurityConfiguration securityConfiguration;
     @UriParam(label = "consumer,security", prefix = "securityConfiguration.", multiValue = true)
@@ -240,8 +240,10 @@ public class NettyHttpEndpoint extends NettyEndpoint implements HeaderFilterStra
     }
 
     /**
-     * To use a custom configured NettyServerBootstrapConfiguration for configuring this endpoint. When set, its
-     * properties are merged into the endpoint configuration.
+     * To use a custom configured NettyServerBootstrapConfiguration for configuring this endpoint. When set via URI
+     * (e.g. {@code ?bootstrapConfiguration=#myBean}), its properties are merged into the endpoint configuration by
+     * {@code NettyHttpComponent.createEndpoint()}. Note: this parameter is URI-resolved by the component and is not
+     * applied when set programmatically via this setter.
      */
     public void setBootstrapConfiguration(NettyServerBootstrapConfiguration bootstrapConfiguration) {
         this.bootstrapConfiguration = bootstrapConfiguration;
