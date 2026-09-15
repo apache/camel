@@ -16,6 +16,7 @@
  */
 package org.apache.camel;
 
+import org.apache.camel.spi.Metadata;
 import org.jspecify.annotations.Nullable;
 
 /**
@@ -30,6 +31,10 @@ import org.jspecify.annotations.Nullable;
  *
  * @see StaticExpression
  */
+@Metadata(label = "api",
+          description = "Computes a value from an exchange for setBody, setHeader, setVariable, split, transform and "
+                        + "recipientList: evaluate(exchange, type). In the DSL an expression is usually a language "
+                        + "(simple, jsonpath, groovy); write it in Java for logic, or return the value from a bean method.")
 public interface Expression {
 
     /**
@@ -39,6 +44,10 @@ public interface Expression {
      * @param  type     the expected type of the evaluation result
      * @return          the value of the expression
      */
+    @Metadata(label = "api",
+              important = true,
+              description = "The value, converted to the type; pass Object.class to keep it as is.",
+              examples = { "(exchange, type) -> exchange.getMessage().getBody(Order.class).getItems()" })
     <T> @Nullable T evaluate(Exchange exchange, Class<T> type);
 
     /**

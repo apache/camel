@@ -81,6 +81,8 @@ public final class JsonMapper {
             return generateEipModel(obj);
         } else if (obj.containsKey("bean")) {
             return generatePojoBeanModel(obj);
+        } else if (obj.containsKey("api")) {
+            return generateApiReferenceModel(obj);
         } else {
             return null;
         }
@@ -348,6 +350,79 @@ public final class JsonMapper {
             }
         }
         return model;
+    }
+
+    public static ApiReferenceModel generateApiReferenceModel(String json) {
+        JsonObject obj = deserialize(json);
+        return generateApiReferenceModel(obj);
+    }
+
+    public static ApiReferenceModel generateApiReferenceModel(JsonObject obj) {
+        JsonObject mobj = (JsonObject) obj.get("api");
+        ApiReferenceModel model = new ApiReferenceModel();
+        parseModel(mobj, model);
+        parseArtifact(mobj, model);
+        JsonObject methods = (JsonObject) mobj.get("methods");
+        if (methods != null) {
+            for (Map.Entry<String, Object> entry : methods.entrySet()) {
+                JsonObject mp = (JsonObject) entry.getValue();
+                ApiReferenceModel.ApiMethodOptionModel method = new ApiReferenceModel.ApiMethodOptionModel();
+                method.setName(entry.getKey());
+                Integer idx = mp.getInteger("index");
+                if (idx != null) {
+                    method.setIndex(idx);
+                }
+                method.setJavaType(mp.getString("javaType"));
+                method.setDescription(mp.getString("description"));
+                method.setDeprecated(mp.getBooleanOrDefault("deprecated", false));
+                method.setImportant(mp.getBooleanOrDefault("important", false));
+                mp.getCollectionOrDefault("signatures", List.of()).forEach(o -> method.addSignature(o.toString()));
+                mp.getCollectionOrDefault("examples", List.of()).forEach(o -> method.addExample(o.toString()));
+                model.addOption(method);
+            }
+        }
+        return model;
+    }
+
+    public static String createParameterJsonSchema(ApiReferenceModel model) {
+        JsonObject wrapper = asJsonObject(model);
+        return serialize(wrapper);
+    }
+
+    public static JsonObject asJsonObject(ApiReferenceModel model) {
+        JsonObject obj = new JsonObject();
+        baseToJson(model, obj);
+        artifactToJson(model, obj);
+        obj.entrySet().removeIf(e -> e.getValue() == null);
+        JsonObject methods = new JsonObject();
+        List<ApiReferenceModel.ApiMethodOptionModel> options = model.getOptions();
+        for (int i = 0; i < options.size(); i++) {
+            ApiReferenceModel.ApiMethodOptionModel m = options.get(i);
+            m.setIndex(i);
+            JsonObject jo = new JsonObject();
+            jo.put("index", i);
+            jo.put("signatures", new JsonArray(m.getSignatures()));
+            if (m.getJavaType() != null) {
+                jo.put("javaType", m.getJavaType());
+            }
+            if (m.isDeprecated()) {
+                jo.put("deprecated", true);
+            }
+            if (m.isImportant()) {
+                jo.put("important", true);
+            }
+            if (m.getDescription() != null) {
+                jo.put("description", m.getDescription());
+            }
+            if (!m.getExamples().isEmpty()) {
+                jo.put("examples", new JsonArray(m.getExamples()));
+            }
+            methods.put(m.getName(), jo);
+        }
+        obj.put("methods", methods);
+        JsonObject wrapper = new JsonObject();
+        wrapper.put("api", obj);
+        return wrapper;
     }
 
     public static String createParameterJsonSchema(EipModel model) {

@@ -86,6 +86,13 @@ public interface RuntimeProvider {
     String getPojoBeanJSonSchemaDirectory();
 
     /**
+     * Gets the directory where the API reference json files are stored in the catalog JAR file
+     */
+    default String getApiReferenceJSonSchemaDirectory() {
+        return "org/apache/camel/catalog/apis";
+    }
+
+    /**
      * Find all the component names from the Camel catalog supported by the provider
      */
     List<String> findComponentNames();
@@ -119,5 +126,13 @@ public interface RuntimeProvider {
      * Find all the pojo beans names from the Camel catalog supported by the provider
      */
     List<String> findBeansNames();
+
+    /**
+     * Find all the API reference names (Exchange, Message, CamelContext, ...) from the Camel catalog supported by the
+     * provider
+     */
+    default List<String> findApiReferenceNames() {
+        return List.of();
+    }
 
 }

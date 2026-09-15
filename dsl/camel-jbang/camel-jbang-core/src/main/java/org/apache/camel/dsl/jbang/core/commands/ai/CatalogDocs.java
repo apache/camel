@@ -18,13 +18,16 @@ package org.apache.camel.dsl.jbang.core.commands.ai;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.TreeMap;
 
 import org.apache.camel.catalog.CamelCatalog;
+import org.apache.camel.catalog.DefaultCamelCatalog;
 import org.apache.camel.catalog.EndpointValidationResult;
+import org.apache.camel.tooling.model.ApiReferenceModel;
 import org.apache.camel.tooling.model.BaseModel;
 import org.apache.camel.tooling.model.BaseOptionModel;
 import org.apache.camel.tooling.model.ComponentModel;
@@ -37,10 +40,11 @@ import org.apache.camel.util.json.JsonObject;
 
 /**
  * The catalog documentation an AI agent authoring an integration asks for: a component, data format, language or EIP
- * with its options, the rules of an endpoint URI spelled out, the simple language's syntax, functions and operators,
- * and an endpoint URI checked against the catalog. Written for what a small model gets wrong most (a path option as a
- * query parameter, an operator inside a placeholder), and shared by the {@code camel_catalog_doc} tool of every Camel
- * MCP server.
+ * with its options, the rules of an endpoint URI spelled out, the simple language's syntax, functions and operators, an
+ * endpoint URI checked against the catalog, and the Java API a route author's code touches (Exchange, Message,
+ * CamelContext, ...) with the variables a script language binds. Written for what a small model gets wrong most (a path
+ * option as a query parameter, an operator inside a placeholder, a bean name used as a Groovy variable), and shared by
+ * the {@code camel_catalog_doc} tool of every Camel MCP server.
  */
 public final class CatalogDocs {
 
@@ -68,7 +72,7 @@ public final class CatalogDocs {
      * @param  catalog        the catalog of the Camel version to answer for
      * @param  name           the artifact name (kafka, json-jackson, simple, choice); ignored when endpoint is given
      * @param  endpoint       an endpoint URI to validate instead of documenting an artifact
-     * @param  kind           component, dataformat, language or eip; null to detect
+     * @param  kind           component, dataformat, language, eip, bean or api; null to detect
      * @param  optionsFilter  keyword to match in option names, descriptions and groups; also picks the simple functions
      *                        and operators to list in full
      * @param  includeOptions whether to list the options
@@ -142,6 +146,14 @@ public final class CatalogDocs {
             }
             if (kind != null) {
                 return error("EIP not found: " + name);
+            }
+        }
+        if (kind == null || "api".equals(kind)) {
+            // the API of a core class (Exchange, AggregationStrategy) before the beans: an exact card name is more
+            // specific than a bean implementing the interface, which the card lists anyway
+            JsonObject api = apiDoc(catalog, name, kind != null);
+            if (api != null) {
+                return api;
             }
         }
         if (kind == null || "bean".equals(kind)) {
@@ -341,6 +353,222 @@ public final class CatalogDocs {
             // an older catalog without bean metadata
         }
         return answer;
+    }
+
+    /** The languages whose script variables are documented, by their catalog name (js is javascript, java is joor). */
+    private static final List<String> SCRIPT_LANGUAGES
+            = List.of("groovy", "js", "python", "python3", "quickjs", "java", "template");
+
+    /** The template components that bind the same variable map, answered by the template card. */
+    private static final List<String> TEMPLATE_COMPONENTS
+            = List.of("velocity", "freemarker", "mvel", "mustache", "chunk", "stringtemplate", "thymeleaf", "jslt");
+
+    /**
+     * The compact API reference of a core Camel class (Exchange, Message, CamelContext, Registry, ProducerTemplate,
+     * Processor, AggregationStrategy, Predicate, Expression, TypeConverter) from the catalog, or the variables a script
+     * language binds; null when the name is neither. An older catalog that has no API reference answers from the CLI's
+     * own, the API is the same.
+     *
+     * @param catalog  the catalog
+     * @param name     a simple or qualified class name, or a script language (groovy, javascript, python, java)
+     * @param explicit whether kind=api was asked for, which makes a miss an error with the names that exist
+     */
+    static JsonObject apiDoc(CamelCatalog catalog, String name, boolean explicit) {
+        String n = name.trim();
+        String simple = n.substring(n.lastIndexOf('.') + 1);
+        CamelCatalog source = catalog.findApiReferenceNames().isEmpty() ? ownCatalog() : catalog;
+        List<String> names = source.findApiReferenceNames();
+        String match = names.stream().filter(c -> c.equalsIgnoreCase(simple)).findFirst().orElse(null);
+        if (match != null) {
+            ApiReferenceModel model = source.apiReferenceModel(match);
+            if (model != null && (n.equals(simple) || model.getJavaType().equalsIgnoreCase(n))) {
+                return apiReferenceDoc(catalog, model, names);
+            }
+        }
+        String lang = n.toLowerCase(Locale.ROOT);
+        if ("joor".equals(lang)) {
+            lang = "java";
+        } else if ("javascript".equals(lang)) {
+            lang = "js";
+        } else if (TEMPLATE_COMPONENTS.contains(lang)) {
+            // the mvel component is a template; the mvel language is asked for without kind and answers as a language
+            lang = "template";
+        }
+        JsonObject script = scriptVariables(lang);
+        if (script != null) {
+            script.put("apis", new JsonArray(apiNames(names)));
+            return script;
+        }
+        if (explicit) {
+            JsonObject err = error("No API reference for '" + name + "'");
+            err.put("apis", new JsonArray(apiNames(names)));
+            return err;
+        }
+        return null;
+    }
+
+    /** The names an api lookup answers: the class cards and the script languages. */
+    private static List<String> apiNames(List<String> classNames) {
+        List<String> answer = new ArrayList<>(classNames);
+        answer.addAll(SCRIPT_LANGUAGES);
+        return answer;
+    }
+
+    private static volatile CamelCatalog own;
+
+    /** The catalog of the CLI's own Camel version, for the API reference an older catalog does not carry. */
+    private static CamelCatalog ownCatalog() {
+        CamelCatalog c = own;
+        if (c == null) {
+            c = new DefaultCamelCatalog();
+            own = c;
+        }
+        return c;
+    }
+
+    /**
+     * The card of a core class: the class description with its common mistakes, then the methods, the important ones
+     * first, each with the signatures of its overloads, a one-line description and examples. For an interface the
+     * built-in implementations of the catalog come along, so AggregationStrategy also says which strategies exist.
+     */
+    private static JsonObject apiReferenceDoc(CamelCatalog catalog, ApiReferenceModel model, List<String> names) {
+        JsonObject result = new JsonObject();
+        result.put("kind", "api");
+        result.put("name", model.getName());
+        result.put("javaType", model.getJavaType());
+        if (model.getDescription() != null) {
+            result.put("description", model.getDescription());
+        }
+        JsonArray methods = new JsonArray();
+        List<ApiReferenceModel.ApiMethodOptionModel> sorted = new ArrayList<>(model.getOptions());
+        sorted.sort(Comparator.comparing((ApiReferenceModel.ApiMethodOptionModel m) -> !m.isImportant())
+                .thenComparing(ApiReferenceModel.ApiMethodOptionModel::getName));
+        for (ApiReferenceModel.ApiMethodOptionModel m : sorted) {
+            JsonObject o = new JsonObject();
+            o.put("name", m.getName());
+            o.put("signatures", new JsonArray(m.getSignatures()));
+            if (m.getDescription() != null) {
+                o.put("description", m.getDescription());
+            }
+            if (!m.getExamples().isEmpty()) {
+                o.put("examples", new JsonArray(m.getExamples()));
+            }
+            if (m.isDeprecated()) {
+                o.put("deprecated", true);
+            }
+            methods.add(o);
+        }
+        result.put("methods", methods);
+        List<String> implementations = beansOfInterface(catalog, model.getJavaType());
+        if (!implementations.isEmpty()) {
+            result.put("implementations", new JsonArray(implementations));
+            result.put("implementationsHint", "built-in beans to declare and use instead of writing one; camel_catalog_doc"
+                                              + " kind=bean gives the options of each");
+        }
+        result.put("apis", new JsonArray(apiNames(names)));
+        return result;
+    }
+
+    /**
+     * The variables a script language binds, hand-written because each language binds its own set with its own names
+     * (groovy has camelContext and no message, javascript has context and message), and how a script reaches the Camel
+     * API and a registry bean from them; null for a language that is not a script.
+     */
+    static JsonObject scriptVariables(String language) {
+        JsonObject variables = new JsonObject();
+        String note;
+        switch (language) {
+            case "groovy" -> {
+                variables.put("exchange", "the Exchange");
+                variables.put("request", "the message (exchange.getMessage()); in is an alias");
+                variables.put("body", "the message body");
+                variables.put("headers", "the message headers (Map); header is an alias");
+                variables.put("variables", "the exchange variables (Map); variable is an alias");
+                variables.put("exchangeProperties", "the exchange properties (Map); exchangeProperty is an alias");
+                variables.put("exception", "the exception when the exchange failed, else null");
+                variables.put("camelContext", "the CamelContext");
+                variables.put("attachments", "the message attachments (Map)");
+                variables.put("log", "an SLF4J logger");
+                variables.put("response", "the out message, only when one exists; out is an alias");
+                note = "There is no message variable: use request (or exchange.message). The value of the last"
+                       + " statement is the result. A registry bean is not a variable: use"
+                       + " camelContext.registry.lookupByName('myBean'). Setting body or headers in the script"
+                       + " does not change the message: use exchange.message.body = ... or exchange.message"
+                       + ".setHeader(name, value). Groovy property syntax works on the Camel API: exchange.message.body,"
+                       + " exchange.context.registry.";
+            }
+            case "js", "python" -> {
+                variables.put("exchange", "the Exchange");
+                variables.put("context", "the CamelContext (not camelContext)");
+                variables.put("exchangeId", "the exchange id");
+                variables.put("message", "the message (exchange.getMessage())");
+                variables.put("headers", "the message headers (Map)");
+                variables.put("properties", "the exchange properties (Map)");
+                variables.put("body", "the message body");
+                note = "The value of the last expression is the result, converted to the expected type. A registry"
+                       + " bean is context.getRegistry().lookupByName('myBean'). To change the message call"
+                       + " message.setBody(...) or message.setHeader(name, value), not body = ...";
+            }
+            case "python3" -> {
+                variables.put("exchangeId", "the exchange id");
+                variables.put("headers", "the message headers (dict)");
+                variables.put("properties", "the exchange properties (dict)");
+                variables.put("body", "the message body");
+                variables.put("exchange", "the Exchange, only when the language was created with host access");
+                variables.put("message", "the message, only with host access");
+                variables.put("context", "the CamelContext, only with host access");
+                note = "The value of the last expression is the result. Without host access there are no Java"
+                       + " objects: work with body, headers and properties as values.";
+            }
+            case "quickjs" -> {
+                variables.put("body", "the message body as a JSON value");
+                variables.put("headers", "the message headers as a JSON object");
+                variables.put("properties", "the exchange properties as a JSON object");
+                variables.put("exchangeId", "the exchange id");
+                variables.put("variables", "the exchange variables as a JSON object");
+                variables.put("exception", "{type, message} when the exchange failed, else null");
+                note = "A sandboxed JavaScript: the values are JSON copies, there is no exchange, message or"
+                       + " context object and no Java API; the result of the script is the value.";
+            }
+            case "java" -> {
+                variables.put("context", "the CamelContext");
+                variables.put("exchange", "the Exchange");
+                variables.put("message", "the message (exchange.getMessage())");
+                variables.put("body", "the message body (Object)");
+                variables.put("optionalBody", "the body as Optional");
+                note = "The java (joor) language compiles the script as the body of a method with these parameters;"
+                       + " bodyAs(String.class) converts the body, #bean:myBean is replaced by the registry bean, and a"
+                       + " script without return returns its last expression.";
+            }
+            case "template" -> {
+                variables.put("body", "the message body");
+                variables.put("headers", "the message headers (Map); header is an alias");
+                variables.put("variables", "the exchange variables (Map); variable is an alias");
+                variables.put("exception", "the exception when the exchange failed, else null");
+                variables.put("exchange", "the Exchange, only with allowContextMapAll=true");
+                variables.put("request", "the message, only with allowContextMapAll=true; in is an alias");
+                variables.put("exchangeProperties", "the exchange properties (Map), only with allowContextMapAll=true;"
+                                                    + " exchangeProperty is an alias");
+                variables.put("camelContext", "the CamelContext, only with allowContextMapAll=true");
+                variables.put("response", "the out message, only with allowContextMapAll=true and when one exists;"
+                                          + " out is an alias");
+                note = "The variables of the template components (" + String.join(", ", TEMPLATE_COMPONENTS)
+                       + "): by default only"
+                       + " body, headers, variables and exception; allowContextMapAll=true on the endpoint adds the"
+                       + " exchange, the message, the properties and the CamelContext.";
+            }
+            default -> {
+                return null;
+            }
+        }
+        JsonObject result = new JsonObject();
+        result.put("kind", "api");
+        result.put("name", language);
+        result.put("title", "template".equals(language)
+                ? "Template variables" : ("js".equals(language) ? "javascript" : language) + " script variables");
+        result.put("variables", variables);
+        result.put("note", note);
+        return result;
     }
 
     /** The documentation of a built-in bean: type, interface, options, and how it is declared and used in YAML. */
@@ -743,6 +971,12 @@ public final class CatalogDocs {
         }
         if ("simple".equals(model.getName()) || "csimple".equals(model.getName())) {
             result.put("syntax", SIMPLE_SYNTAX);
+        }
+        JsonObject script = scriptVariables(model.getName());
+        if (script != null) {
+            // the variables the script sees, and how to reach the Camel API from them
+            result.put("scriptVariables", script.get("variables"));
+            result.put("scriptNote", script.get("note"));
         }
         if (!docPages.isEmpty()) {
             result.put("docPages", new JsonArray(docPages));

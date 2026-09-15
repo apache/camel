@@ -1,0 +1,15 @@
+{
+  "api": {
+    "kind": "api",
+    "name": "Predicate",
+    "title": "Predicate",
+    "description": "A yes\/no test of an exchange for filter, when, loopDoWhile and validate: matches(exchange). In the DSL a predicate is usually a language expression (simple: ${header.foo} == 'bar'); write it in Java when the test needs code, or use a bean method that returns boolean.",
+    "deprecated": false,
+    "javaType": "org.apache.camel.Predicate",
+    "groupId": "org.apache.camel",
+    "artifactId": "camel-api",
+    "version": "4.23.0-SNAPSHOT",
+    "methods": { "matches": { "index": 0, "signatures": [ "boolean matches(Exchange exchange)" ], "javaType": "boolean", "important": true, "description": "true when the exchange passes the test.", "examples": [ "exchange -> exchange.getMessage().getBody(Order.class).getTotal() > 100" ] } }
+  }
+}
+

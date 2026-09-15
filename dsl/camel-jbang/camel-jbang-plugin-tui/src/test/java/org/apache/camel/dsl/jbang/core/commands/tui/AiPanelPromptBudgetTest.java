@@ -43,7 +43,9 @@ class AiPanelPromptBudgetTest {
     /** Measured ~6.9k tokens for 47 tools. */
     // raised from 7500 with tui_write_file and tui_validate_source
     // and from 7900 with the shared camel_* set (camel_catalog_find, camel_run and camel_error_diagnose added)
-    static final int FULL_BUDGET_TOKENS = 8_500;
+    // and from 8500 when camel_catalog_doc gained the api kind (CAMEL-24708): its kind argument names the core
+    // classes and script languages the API reference covers, which is what makes a model ask for them
+    static final int FULL_BUDGET_TOKENS = 8_700;
 
     record Prefix(String mode, int tools, long promptChars, long toolChars) {
 

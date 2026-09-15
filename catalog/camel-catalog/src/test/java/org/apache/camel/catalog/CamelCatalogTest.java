@@ -28,6 +28,7 @@ import java.util.stream.Stream;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.apache.camel.tooling.model.ApiReferenceModel;
 import org.apache.camel.tooling.model.ArtifactModel;
 import org.apache.camel.tooling.model.ComponentModel;
 import org.apache.camel.tooling.model.DataFormatModel;
@@ -1988,6 +1989,57 @@ public class CamelCatalogTest {
         assertEquals("ZipAggregationStrategy", model.getName());
         assertEquals("org.apache.camel.processor.aggregate.zipfile.ZipAggregationStrategy", model.getJavaType());
         assertEquals(7, model.getOptions().size());
+    }
+
+    @Test
+    public void testFindApiReferenceNames() {
+        List<String> names = catalog.findApiReferenceNames();
+
+        assertTrue(names.contains("Exchange"));
+        assertTrue(names.contains("Message"));
+        assertTrue(names.contains("CamelContext"));
+        assertTrue(names.contains("Registry"));
+        assertTrue(names.contains("AggregationStrategy"));
+        assertEquals(names, catalog.findNames(Kind.api));
+    }
+
+    @Test
+    public void testApiReferenceModel() {
+        ApiReferenceModel model = catalog.apiReferenceModel("Exchange");
+        assertNotNull(model);
+
+        assertEquals(Kind.api, model.getKind());
+        assertEquals("Exchange", model.getName());
+        assertEquals("org.apache.camel.Exchange", model.getJavaType());
+        assertEquals("camel-api", model.getArtifactId());
+        // the Camel 4 changes for models trained on older Camel
+        assertTrue(model.getDescription().contains("getOut() is deprecated"));
+
+        var getMessage = model.getOptions().stream().filter(o -> o.getName().equals("getMessage")).findFirst().orElseThrow();
+        assertTrue(getMessage.isImportant());
+        assertEquals("org.apache.camel.Message", getMessage.getJavaType());
+        assertTrue(getMessage.getSignatures().contains("Message getMessage()"));
+        assertTrue(getMessage.getSignatures().contains("<T> T getMessage(Class<T> type)"));
+        assertTrue(getMessage.getExamples().contains("exchange.getMessage().getBody(String.class)"));
+        // the overloads of an annotated method come from the compiled class, so they cannot drift
+        var getProperty = model.getOptions().stream().filter(o -> o.getName().equals("getProperty")).findFirst().orElseThrow();
+        assertTrue(getProperty.getSignatures().contains("<T> T getProperty(String name, Object defaultValue, Class<T> type)"));
+        // a deprecated method is not listed
+        assertTrue(model.getOptions().stream().noneMatch(o -> o.getName().equals("getOut")));
+
+        // the first-call rule of the aggregation strategy
+        ApiReferenceModel as = catalog.apiReferenceModel("AggregationStrategy");
+        assertNotNull(as);
+        assertTrue(as.getDescription().contains("oldExchange is null"));
+        assertEquals(Kind.api, catalog.model(Kind.api, "AggregationStrategy").getKind());
+
+        // inherited methods are part of the card (Registry extends BeanRepository)
+        ApiReferenceModel registry = catalog.apiReferenceModel("Registry");
+        assertNotNull(registry);
+        assertTrue(registry.getOptions().stream().anyMatch(o -> o.getName().equals("lookupByName")));
+        assertTrue(registry.getOptions().stream().anyMatch(o -> o.getName().equals("bind")));
+
+        assertNull(catalog.apiReferenceModel("Unknown"));
     }
 
     @Test

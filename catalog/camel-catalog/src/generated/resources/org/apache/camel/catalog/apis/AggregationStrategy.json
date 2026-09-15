@@ -1,0 +1,15 @@
+{
+  "api": {
+    "kind": "api",
+    "name": "AggregationStrategy",
+    "title": "Aggregation Strategy",
+    "description": "Merges the incoming exchange into the aggregated one, in aggregate, split, multicast, recipientList, enrich and pollEnrich. On the first call oldExchange is null: return newExchange, do not touch oldExchange. Return the exchange to keep, usually oldExchange with the merged body; do not create a new one. The built-in strategies (GroupedBodyAggregationStrategy, StringAggregationStrategy, ...) are catalog beans (camel_catalog_find kind=bean term=AggregationStrategy).",
+    "deprecated": false,
+    "javaType": "org.apache.camel.AggregationStrategy",
+    "groupId": "org.apache.camel",
+    "artifactId": "camel-api",
+    "version": "4.23.0-SNAPSHOT",
+    "methods": { "aggregate": { "index": 0, "signatures": [ "Exchange aggregate(Exchange oldExchange, Exchange newExchange)", "Exchange aggregate(Exchange oldExchange, Exchange newExchange, Exchange inputExchange)" ], "javaType": "org.apache.camel.Exchange", "important": true, "description": "The aggregated exchange: when oldExchange is null (first message) return newExchange, else merge newExchange into oldExchange and return oldExchange. A failed newExchange has its error in newExchange.getException().", "examples": [ "if (oldExchange == null) { return newExchange; } oldExchange.getMessage().setBody(oldExchange.getMessage().getBody(String.class) + newExchange.getMessage().getBody(String.class)); return oldExchange;" ] } }
+  }
+}
+

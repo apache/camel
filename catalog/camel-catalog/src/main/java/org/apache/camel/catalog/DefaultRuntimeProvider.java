@@ -32,6 +32,7 @@ public class DefaultRuntimeProvider implements RuntimeProvider {
     private static final String CONSOLE_DIR = "org/apache/camel/catalog/dev-consoles";
     private static final String OTHER_DIR = "org/apache/camel/catalog/others";
     private static final String BEANS_DIR = "org/apache/camel/catalog/beans";
+    private static final String APIS_DIR = "org/apache/camel/catalog/apis";
     private static final String COMPONENTS_CATALOG = "org/apache/camel/catalog/components.properties";
     private static final String DATA_FORMATS_CATALOG = "org/apache/camel/catalog/dataformats.properties";
     private static final String LANGUAGE_CATALOG = "org/apache/camel/catalog/languages.properties";
@@ -39,6 +40,7 @@ public class DefaultRuntimeProvider implements RuntimeProvider {
     private static final String CONSOLE_CATALOG = "org/apache/camel/catalog/dev-consoles.properties";
     private static final String OTHER_CATALOG = "org/apache/camel/catalog/others.properties";
     private static final String BEANS_CATALOG = "org/apache/camel/catalog/beans.properties";
+    private static final String APIS_CATALOG = "org/apache/camel/catalog/apis.properties";
 
     private CamelCatalog camelCatalog;
 
@@ -109,6 +111,11 @@ public class DefaultRuntimeProvider implements RuntimeProvider {
         return BEANS_DIR;
     }
 
+    @Override
+    public String getApiReferenceJSonSchemaDirectory() {
+        return APIS_DIR;
+    }
+
     protected String getComponentsCatalog() {
         return COMPONENTS_CATALOG;
     }
@@ -170,6 +177,11 @@ public class DefaultRuntimeProvider implements RuntimeProvider {
     @Override
     public List<String> findBeansNames() {
         return find(getBeansCatalog());
+    }
+
+    @Override
+    public List<String> findApiReferenceNames() {
+        return find(APIS_CATALOG);
     }
 
     protected List<String> find(String resourceName) {
