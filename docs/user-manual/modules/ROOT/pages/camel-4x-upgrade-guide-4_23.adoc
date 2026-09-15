@@ -663,6 +663,16 @@ Running an existing Maven project (`camel run pom.xml`) is unchanged, and still 
 from the `pom.xml`. The other commands that take `--runtime` (such as `camel export`,
 `camel dependency list` and `camel version list`) accept `jbang` as an alias for `main`.
 
+The YAML that `camel init` writes (`camel init foo.yaml`, and the Integration and Kamelet templates), the
+bundled examples (`camel init --example`) and the routes the `camel_ai_pipeline_scaffold` and
+`camel_openapi_scaffold` MCP tools generate are now written in the canonical YAML DSL format, with an
+expression under `expression:` and a step as a map of its options
+(`setBody: {expression: {simple: {expression: "..."}}}`, `log: {message: "..."}`, `to: {uri: "..."}`).
+The compact notation they used to be written in (`setBody: {simple: "..."}`, `log: "..."`) is deprecated:
+`camel run` warns about it, `camel validate yaml --canonical` reports it, and `camel validate normalize`
+rewrites a file in the canonical format. Existing files keep working; only the generated starting point
+changed. Scripts that post-process the generated YAML by matching the old text need to be updated.
+
 === camel-jbang (MCP servers)
 
 The Camel authoring tools for AI agents are now defined once, in `camel-jbang-core`, and exposed under the

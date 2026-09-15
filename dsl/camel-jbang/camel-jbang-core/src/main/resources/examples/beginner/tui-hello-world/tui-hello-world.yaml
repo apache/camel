@@ -6,14 +6,20 @@
         repeatCount: 1
       steps:
         - setBody:
-            constant: "Welcome! Open the TUI (camel tui) and press F2 → Send Message to say hello."
-        - log: "${body}"
+            expression:
+              constant:
+                expression: "Welcome! Open the TUI (camel tui) and press F2 → Send Message to say hello."
+        - log:
+            message: "${body}"
 
 - route:
     id: greet
     from:
       uri: direct:greet
       steps:
-        - log: "Received: ${body}"
+        - log:
+            message: "Received: ${body}"
         - setBody:
-            simple: "Hello ${body}!"
+            expression:
+              simple:
+                expression: "Hello ${body}!"

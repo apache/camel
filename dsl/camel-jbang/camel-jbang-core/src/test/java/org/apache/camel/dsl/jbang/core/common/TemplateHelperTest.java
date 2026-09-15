@@ -23,14 +23,28 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.camel.dsl.yaml.validator.YamlValidator;
 import org.apache.camel.util.IOHelper;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
+import org.yaml.snakeyaml.Yaml;
 
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+@SuppressWarnings("unchecked")
 class TemplateHelperTest {
+
+    private static YamlValidator canonicalValidator;
+
+    @BeforeAll
+    static void setUpValidator() throws Exception {
+        canonicalValidator = new YamlValidator(true);
+        canonicalValidator.init();
+    }
 
     // ===== TemplateHelper.processTemplate() tests (FreeMarker-processed templates) =====
 
@@ -485,6 +499,42 @@ class TemplateHelperTest {
     /**
      * Loads a template the same way Init.java does: raw text + header stripping.
      */
+    // ===== the YAML the templates generate is what a user or an AI agent starts from: it must be canonical =====
+
+    @ParameterizedTest
+    @ValueSource(strings = { "yaml.ftl", "rest-dsl.yaml.ftl" })
+    void testInitYamlTemplatesAreCanonical(String name) throws Exception {
+        String content = loadInitTemplate(name).replace("[=Spec]", "petstore.json");
+
+        assertCanonical(name, content);
+    }
+
+    @Test
+    void testInitIntegrationTemplateIsCanonical() throws Exception {
+        String content = loadInitTemplate("integration.yaml.ftl").replace("[=Name]", "my-integration");
+
+        // the Integration CR wraps the routes in spec.flows
+        Map<String, Object> cr = new Yaml().load(content);
+        Map<String, Object> spec = (Map<String, Object>) cr.get("spec");
+        assertCanonical("integration.yaml.ftl", new Yaml().dump(spec.get("flows")));
+    }
+
+    @ParameterizedTest
+    @ValueSource(strings = { "kamelet-source.yaml.ftl", "kamelet-sink.yaml.ftl", "kamelet-action.yaml.ftl" })
+    void testInitKameletTemplatesAreCanonical(String name) throws Exception {
+        String content = loadInitTemplate(name).replace("[=Name]", "my-kamelet");
+
+        // the Kamelet CR wraps the route in spec.template as its from
+        Map<String, Object> cr = new Yaml().load(content);
+        Map<String, Object> spec = (Map<String, Object>) cr.get("spec");
+        assertCanonical(name, new Yaml().dump(List.of(spec.get("template"))));
+    }
+
+    private static void assertCanonical(String name, String yaml) throws Exception {
+        var report = canonicalValidator.validate(yaml);
+        assertTrue(report.isEmpty(), name + " is not in the canonical YAML format:\n" + yaml + "\n" + report);
+    }
+
     private String loadInitTemplate(String name) throws IOException {
         try (InputStream is = getClass().getClassLoader().getResourceAsStream("templates/" + name)) {
             String content = IOHelper.loadText(is);
