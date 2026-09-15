@@ -322,8 +322,8 @@ public interface CamelCatalog {
     }
 
     /**
-     * Finds EIP names that match a term that need not be the EIP name (for example <tt>fan-out</tt> finds
-     * <tt>multicast</tt> and <tt>dedup</tt> finds <tt>idempotentConsumer</tt>), best match first: the exact name, then
+     * Finds EIP names that match a term that need not be the EIP name (for example {@code fan-out} finds
+     * {@code multicast} and {@code dedup} finds {@code idempotentConsumer}), best match first: the exact name, then
      * declared aliases, words of the title, words of the name, and finally names containing the term.
      *
      * @param  term the pattern, alias, or EIP name to look for
