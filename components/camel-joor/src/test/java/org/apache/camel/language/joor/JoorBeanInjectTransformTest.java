@@ -33,7 +33,7 @@ public class JoorBeanInjectTransformTest extends CamelTestSupport {
             @Override
             public void configure() {
                 from("direct:start")
-                        .transform().joor("#bean:myEcho.greet() + #bean:myEcho.echo(bodyAs(String))")
+                        .transform().java("#bean:myEcho.greet() + #bean:myEcho.echo(bodyAs(String))")
                         .to("mock:result");
             }
         };

@@ -50,7 +50,6 @@ import org.apache.camel.model.language.ConstantExpression;
 import org.apache.camel.model.language.DatasonnetExpression;
 import org.apache.camel.model.language.ExpressionDefinition;
 import org.apache.camel.model.language.HeaderExpression;
-import org.apache.camel.model.language.JoorExpression;
 import org.apache.camel.model.language.JqExpression;
 import org.apache.camel.model.language.JsonPathExpression;
 import org.apache.camel.model.language.MethodCallExpression;
@@ -965,9 +964,6 @@ public abstract class JavaDslModelWriterSupport {
         if (expr instanceof JqExpression) {
             return "jq(" + quotedValue + ")";
         }
-        if (expr instanceof JoorExpression) {
-            return "joor(" + quotedValue + ")";
-        }
         if (expr instanceof DatasonnetExpression) {
             return "datasonnet(" + quotedValue + ")";
         }
@@ -1017,9 +1013,6 @@ public abstract class JavaDslModelWriterSupport {
         }
         if (expr instanceof JqExpression) {
             return "jq";
-        }
-        if (expr instanceof JoorExpression) {
-            return "joor";
         }
         if (expr instanceof DatasonnetExpression) {
             return "datasonnet";

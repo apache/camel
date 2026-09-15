@@ -2296,13 +2296,6 @@ public class ModelParser extends BaseParser {
     protected JavaScriptExpression doParseJavaScriptExpression() throws IOException, XmlPullParserException {
         return doParse(new JavaScriptExpression(), typedExpressionDefinitionAttributeHandler(), noElementHandler(), expressionDefinitionValueHandler());
     }
-    protected JoorExpression doParseJoorExpression() throws IOException, XmlPullParserException {
-        return doParse(new JoorExpression(), (def, key, val) -> switch (key) {
-                case "preCompile": def.setPreCompile(val); yield true;
-                case "singleQuotes": def.setSingleQuotes(val); yield true;
-                default: yield typedExpressionDefinitionAttributeHandler().accept(def, key, val);
-            }, noElementHandler(), expressionDefinitionValueHandler());
-    }
     protected JqExpression doParseJqExpression() throws IOException, XmlPullParserException {
         return doParse(new JqExpression(), singleInputTypedExpressionDefinitionAttributeHandler(), noElementHandler(), expressionDefinitionValueHandler());
     }
@@ -2870,7 +2863,6 @@ public class ModelParser extends BaseParser {
             case "jactl": return doParseJactlExpression();
             case "java": return doParseJavaExpression();
             case "js": return doParseJavaScriptExpression();
-            case "joor": return doParseJoorExpression();
             case "jq": return doParseJqExpression();
             case "jsonpath": return doParseJsonPathExpression();
             case "language": return doParseLanguageExpression();

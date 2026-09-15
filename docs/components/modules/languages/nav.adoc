@@ -13,7 +13,6 @@
 ** xref:jactl-language.adoc[Jactl]
 ** xref:java-language.adoc[Java]
 ** xref:js-language.adoc[JavaScript]
-** xref:joor-language.adoc[jOOR]
 ** xref:jq-language.adoc[JQ]
 ** xref:jsonpath-language.adoc[JSONPath]
 ** xref:mvel-language.adoc[MVEL]
