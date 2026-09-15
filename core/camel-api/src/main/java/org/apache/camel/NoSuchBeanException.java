@@ -79,6 +79,18 @@ public class NoSuchBeanException extends RuntimeCamelException {
     }
 
     /**
+     * @param name the bean name that could not be found
+     * @param type the required bean type
+     * @param hint what to do about it, appended to the message (such as the built-in bean that was likely meant)
+     * @since      4.23
+     */
+    public NoSuchBeanException(String name, String type, String hint) {
+        super("No bean could be found in the registry for: " + Objects.requireNonNull(name, "name") + " of type: "
+              + Objects.requireNonNull(type, "type") + (hint != null ? hint : ""));
+        this.name = name;
+    }
+
+    /**
      * @param name    the bean name that could not be found
      * @param message the detail message
      * @param cause   the cause of the failure

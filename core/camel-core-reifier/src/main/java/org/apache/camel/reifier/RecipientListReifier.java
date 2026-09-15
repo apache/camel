@@ -117,7 +117,7 @@ public class RecipientListReifier extends ProcessorReifier<RecipientListDefiniti
         AggregationStrategy strategy = definition.getAggregationStrategyBean();
         String ref = parseString(definition.getAggregationStrategy());
         if (strategy == null && ref != null) {
-            Object aggStrategy = lookupByName(ref);
+            Object aggStrategy = lookupByName(ref, AggregationStrategy.class);
             if (aggStrategy == null) {
                 aggStrategy = lookupByNameAndType(ref, AggregationStrategy.class);
             }

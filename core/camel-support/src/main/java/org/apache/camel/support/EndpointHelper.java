@@ -385,7 +385,9 @@ public final class EndpointHelper {
 
         if (mandatory && answer == null) {
             if (type != null) {
-                throw new NoSuchBeanException(value, type.getTypeName());
+                // a #class: whose class was not found: say which built-in bean was likely meant
+                throw new NoSuchBeanException(
+                        value, type.getTypeName(), PojoBeanHelper.classNotFoundHint(context, value, type));
             } else {
                 throw new NoSuchBeanException(value);
             }
