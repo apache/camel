@@ -16,6 +16,7 @@
  */
 package org.apache.camel.util;
 
+import java.util.Arrays;
 import java.util.List;
 
 import org.junit.jupiter.api.Test;
@@ -112,6 +113,20 @@ public class ArtifactUtilsTest {
         assertThat(ArtifactUtils.closest("cheese", names)).isNull();
         assertThat(ArtifactUtils.closest("", names)).isNull();
         assertThat(ArtifactUtils.closest("kafka", null)).isNull();
+    }
+
+    @Test
+    public void testClosestTie() {
+        List<String> names = List.of("ftp", "ftps", "http", "https", "jms", "jmx");
+        // same distance to ftps and https: the longer shared prefix wins, as typos are seldom in the first letters
+        assertThat(ArtifactUtils.closest("htps", names)).isEqualTo("https");
+        assertThat(ArtifactUtils.closest("htp", names)).isEqualTo("http");
+        // same distance and same prefix to jms and jmx: no guess rather than a wrong one
+        assertThat(ArtifactUtils.closest("jm", names)).isNull();
+        // the real table, which has all of these
+        assertThat(ArtifactUtils.componentHint("htps")).isEqualTo(" (not a built-in Camel component; did you mean 'https'?)");
+        // null candidates are skipped
+        assertThat(ArtifactUtils.closest("kafak", Arrays.asList(null, "kafka"))).isEqualTo("kafka");
     }
 
     @Test

@@ -98,7 +98,8 @@ public abstract class DataFormatReifier<T extends DataFormatDefinition> extends 
             if (type == null) {
                 dataFormat = camelContext.resolveDataFormat(ref);
                 if (dataFormat == null) {
-                    // the ref may be the name of a built-in data format whose jar is missing
+                    // hint only when the ref names a built-in data format whose jar is missing; a custom
+                    // registry ref is a bean name, so it must not get a did-you-mean for a data format
                     String artifact = ArtifactUtils.dataFormatArtifact(ref);
                     throw new IllegalArgumentException(
                             "Cannot find data format in registry with ref: " + ref

@@ -808,9 +808,11 @@ public final class ArtifactUtils {
 
     /**
      * The candidate closest to the name, case-insensitively, when it is within a few edits (one for names up to three
-     * characters, two, or a third of the name's length for longer names); the shorter candidate wins a tie.
+     * characters, two, or a third of the name's length for longer names). Of candidates at the same distance the one
+     * sharing the longer prefix with the name wins, as typos are seldom in the first letters (htps is https, not ftps);
+     * when that still ties there is no answer, as a wrong guess is worse than none.
      *
-     * @return the closest candidate, or null if none is close enough
+     * @return the closest candidate, or null if none is close enough or the closest is ambiguous
      */
     public static String closest(String name, Collection<String> candidates) {
         if (name == null || name.isBlank() || candidates == null) {
@@ -818,16 +820,39 @@ public final class ArtifactUtils {
         }
         String best = null;
         int bestDistance = Integer.MAX_VALUE;
+        int bestPrefix = -1;
+        boolean tie = false;
         int threshold = name.length() <= 3 ? 1 : Math.max(2, name.length() / 3);
         String n = name.toLowerCase(Locale.ROOT);
         for (String candidate : candidates) {
-            int d = distance(n, candidate.toLowerCase(Locale.ROOT));
-            if (d <= threshold && (d < bestDistance || d == bestDistance && candidate.length() < best.length())) {
+            if (candidate == null) {
+                continue;
+            }
+            String c = candidate.toLowerCase(Locale.ROOT);
+            int d = distance(n, c);
+            if (d > threshold || d > bestDistance) {
+                continue;
+            }
+            int prefix = commonPrefix(n, c);
+            if (d < bestDistance || prefix > bestPrefix) {
                 best = candidate;
                 bestDistance = d;
+                bestPrefix = prefix;
+                tie = false;
+            } else if (prefix == bestPrefix) {
+                tie = true;
             }
         }
-        return best;
+        return tie ? null : best;
+    }
+
+    private static int commonPrefix(String a, String b) {
+        int max = Math.min(a.length(), b.length());
+        int i = 0;
+        while (i < max && a.charAt(i) == b.charAt(i)) {
+            i++;
+        }
+        return i;
     }
 
     /**
