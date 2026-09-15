@@ -39,7 +39,7 @@ public final class ExpressionDeserializers extends YamlDeserializerSupport {
         Node val = setDeserializationContext(nt.getValueNode(), dc);
         ExpressionDefinition answer = constructExpressionType(key, val);
         if (answer == null) {
-            throw new org.apache.camel.dsl.yaml.common.exception.InvalidExpressionException(node, "Unknown expression with id: " + key + ("bean".equals(key) ? " (the bean language is written as method: {ref: myBean, method: process})" : ""));
+            throw new org.apache.camel.dsl.yaml.common.exception.InvalidExpressionException(node, "Unknown expression with id: " + key + ("bean".equals(key) ? " (the bean language is written as method: {ref: myBean, method: process})" : org.apache.camel.util.ArtifactUtils.languageHint(key)));
         }
         return answer;
     }

@@ -35,6 +35,7 @@ import org.apache.camel.support.CamelContextHelper;
 import org.apache.camel.support.PluginHelper;
 import org.apache.camel.support.PropertyBindingSupport;
 import org.apache.camel.support.PropertyConfigurerHelper;
+import org.apache.camel.util.ArtifactUtils;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.StringHelper;
 import org.slf4j.Logger;
@@ -97,7 +98,11 @@ public abstract class DataFormatReifier<T extends DataFormatDefinition> extends 
             if (type == null) {
                 dataFormat = camelContext.resolveDataFormat(ref);
                 if (dataFormat == null) {
-                    throw new IllegalArgumentException("Cannot find data format in registry with ref: " + ref);
+                    // the ref may be the name of a built-in data format whose jar is missing
+                    String artifact = ArtifactUtils.dataFormatArtifact(ref);
+                    throw new IllegalArgumentException(
+                            "Cannot find data format in registry with ref: " + ref
+                                                       + (artifact != null ? ArtifactUtils.dataFormatHint(ref) : ""));
                 }
 
                 return dataFormat;
@@ -253,10 +258,12 @@ public abstract class DataFormatReifier<T extends DataFormatDefinition> extends 
                 // configure the rest of the options
                 configureDataFormat(dataFormat, definition.getDataFormatName());
             } else {
+                String name = definition.getDataFormatName();
                 throw new IllegalArgumentException(
-                        "Data format '" + (definition.getDataFormatName() != null ? definition.getDataFormatName() : "<null>")
+                        "Data format '" + (name != null ? name : "<null>")
                                                    + "' could not be created. "
-                                                   + "Ensure that the data format is valid and the associated Camel component is present on the classpath");
+                                                   + "Ensure that the data format is valid and the associated Camel component is present on the classpath"
+                                                   + ArtifactUtils.dataFormatHint(name));
             }
         }
         return dataFormat;
