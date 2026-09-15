@@ -93,6 +93,11 @@ class InfinispanEmbeddedProducerExpiryTest {
         Message maxIdle = message();
         maxIdle.setHeader(InfinispanConstants.MAX_IDLE_TIME, 100L);
         assertThat(producer.maxIdleTime(maxIdle)).isFalse();
+
+        // a route that gets this wrong gets it wrong for every message, so the verdict must not change
+        // when the pair is reported only the first time
+        assertThat(producer.lifespan(lifespan)).isFalse();
+        assertThat(producer.maxIdleTime(maxIdle)).isFalse();
     }
 
     @Test
