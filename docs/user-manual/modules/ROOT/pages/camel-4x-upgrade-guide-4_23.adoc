@@ -980,9 +980,10 @@ was only logged at ERROR level with no recovery action, leaving the route in `St
 silently consuming no messages (zombie state).
 
 If the resubscribe fails and the consumer owns the MQTT client (the default), it automatically stops
-and restarts the route to force a clean reconnect. With `cleanSession=true`, the consumer unsubscribes
-before disconnecting; with `cleanSession=false`, it keeps the durable subscription. Routes using a
-user-provided client are not affected by this change. Configuring Camel's `SupervisingRouteController`
+and restarts the route to force a clean reconnect. If the restart also fails (for example, the broker
+is still unavailable), the route is left in `Stopped` state. With `cleanSession=true`, the consumer
+unsubscribes before disconnecting; with `cleanSession=false`, it keeps the durable subscription. Routes
+using a user-provided client are not affected by this change. Configuring Camel's `SupervisingRouteController`
 allows the framework to keep retrying with exponential backoff until the broker recovers:
 
 [source,properties]
