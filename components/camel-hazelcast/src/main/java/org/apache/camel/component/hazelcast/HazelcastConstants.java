@@ -23,7 +23,6 @@ public final class HazelcastConstants {
     /**
      * All the schemes
      */
-    public static final String SCHEME_ATOMIC_VALUE = "hazelcast-atomicvalue";
     public static final String SCHEME_INSTANCE = "hazelcast-instance";
     public static final String SCHEME_LIST = "hazelcast-list";
     public static final String SCHEME_MAP = "hazelcast-map";
@@ -42,7 +41,6 @@ public final class HazelcastConstants {
     public static final String MAP_PREFIX = "map:";
     public static final String MULTIMAP_PREFIX = "multimap:";
     public static final String REPLICATEDMAP_PREFIX = "replicatedmap:";
-    public static final String ATOMICNUMBER_PREFIX = "atomicvalue:";
     public static final String INSTANCE_PREFIX = "instance:";
     public static final String PNCOUNTER_PREFIX = "pncounter:";
     public static final String QUEUE_PREFIX = "queue:";
@@ -110,7 +108,7 @@ public final class HazelcastConstants {
     @Metadata(label = "producer", description = "The operation to perform", javaType = "String",
               applicableFor = {
                       SCHEME_MULTIMAP, SCHEME_REPLICATED_MAP, SCHEME_LIST, SCHEME_QUEUE, SCHEME_SET, SCHEME_MAP, SCHEME_TOPIC,
-                      SCHEME_ATOMIC_VALUE, SCHEME_RING_BUFFER })
+                      SCHEME_RING_BUFFER })
     public static final String OPERATION = "CamelHazelcastOperationType";
 
     /**

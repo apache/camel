@@ -163,7 +163,6 @@ public interface EndpointBuilderFactory
             org.apache.camel.builder.endpoint.dsl.GridFsEndpointBuilderFactory.GridFsBuilders,
             org.apache.camel.builder.endpoint.dsl.GrpcEndpointBuilderFactory.GrpcBuilders,
             org.apache.camel.builder.endpoint.dsl.HashicorpVaultEndpointBuilderFactory.HashicorpVaultBuilders,
-            org.apache.camel.builder.endpoint.dsl.HazelcastAtomicnumberEndpointBuilderFactory.HazelcastAtomicnumberBuilders,
             org.apache.camel.builder.endpoint.dsl.HazelcastInstanceEndpointBuilderFactory.HazelcastInstanceBuilders,
             org.apache.camel.builder.endpoint.dsl.HazelcastListEndpointBuilderFactory.HazelcastListBuilders,
             org.apache.camel.builder.endpoint.dsl.HazelcastMapEndpointBuilderFactory.HazelcastMapBuilders,

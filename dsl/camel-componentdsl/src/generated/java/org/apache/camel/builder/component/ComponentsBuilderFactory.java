@@ -2174,20 +2174,6 @@ public interface ComponentsBuilderFactory {
         return HashicorpVaultComponentBuilderFactory.hashicorpVault();
     }
     /**
-     * Hazelcast Atomic Number (camel-hazelcast)
-     * Increment, decrement, set, etc. Hazelcast atomic number (a grid wide
-     * number).
-     * 
-     * Category: cache,clustering
-     * Since: 2.7
-     * Maven coordinates: org.apache.camel:camel-hazelcast
-     * 
-     * @return the dsl builder
-     */
-    static HazelcastAtomicvalueComponentBuilderFactory.HazelcastAtomicvalueComponentBuilder hazelcastAtomicvalue() {
-        return HazelcastAtomicvalueComponentBuilderFactory.hazelcastAtomicvalue();
-    }
-    /**
      * Hazelcast Instance (camel-hazelcast)
      * Consume join/leave events of a cache instance in a Hazelcast cluster.
      * 
